@@ -55,3 +55,9 @@ Survey date: 2026-10-13. All probes read-only: `coredumpctl`, `journalctl`, `ls`
 
 ## Summary
 Host plazir27 retains a rich, user-readable crash surface: systemd-coredump (sole collector, `core_pattern` piped, `ulimit -c` unlimited) holds 174 zstd ELF cores (~4.0 GB) over 5 days — 133 chromium, 39 deliberate `crash-godot` self-kills (SI_USER test noise), and 3 organic crashes (godot, waybar, localsearch) — all reachable unprivileged via `coredumpctl info/debug` + gdb/eu-stack; journal keeps 10 boots (165.3M) with no kernel panics and only sr0 I/O noise; retention is already decaying oldest-first.
+
+## Errata (round 2)
+
+- `journalctl --list-boots` now reports 13 boots (was 10) — journal retention
+  grew. Core corpus unchanged: still 175 entries / 174 present / same 133/39/3
+  split, ACLs intact. (audit-C)

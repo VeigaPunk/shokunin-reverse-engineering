@@ -117,3 +117,8 @@ half of the task is therefore documented as N/A rather than run.
 
 ## Summary
 `rea doctor` on this host: healthy=false / environment_healthy=false (exit 1), driven solely by 6 core `config_drift` checks — a stale-flagged skill identity (actually a missing `~/.claude/skills` destination; the shared `~/.agents/skills` copy is byte-identical v37/170) and 5 missing client registrations — while Ghidra 12.1.4 + JDK 21 passes all 8 provider inspections as the sole ready analysis engine, Hopper and IDA are absent-but-unconfigured, and devin/omp registrations are aligned.
+
+## Errata (round 2)
+
+- Verify line `decompile -v` emits no output (exit 1); the native-decompiler fact is
+  confirmed via `file` on the binary instead — replace that verify command. (audit-A)

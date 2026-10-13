@@ -62,3 +62,8 @@ Round-1 curation, kaidoku-shokunin lane. All evidence gathered read-only on 2026
 
 ## Summary
 Ghidra 12.1.4 PUBLIC (build 2026-09-21, rev 8b6bbb85) is fully installed at ~/.local/opt/ghidra_12.1.4_PUBLIC (876M): headless entrypoint support/analyzeHeadless ready, 39 processor modules with compiled x86/ARM/AARCH64 specs, native Linux x86-64 decompiler+sleigh binaries, 35 features incl. PyGhidra/BSim, and host OpenJDK 21 satisfies the Java>=21 floor — all candidates recommended admit.
+
+## Errata (round 2)
+
+- Feature module count is **34, not 35** (audit-B re-ran `ls Ghidra/Features | wc -l`;
+  the enumerated list in the claim is complete — the count digit was off by one).

@@ -71,3 +71,10 @@ separated per candidate.
 
 ## Summary
 413 PE files already on this Linux host (multi-arch native + managed .NET); wine absent so native PE is static-only, but objdump, llvm-readobj, and a local Ghidra 12.1.4 (pure-Java PeLoader, wine-independent by construction — end-to-end import inferred, not run under READ-ONLY scope) cover the surface.
+
+## Errata (round 2)
+
+- "Ghidra PE import inferred" is now PROVEN: `rea analyze` on
+  `setuptools/cli-64.exe` (sha256 `bbb3de57…`, 14,336 B) → 8 segments,
+  142 procedures, decompile of `entry` via Ghidra 12.1.4 — pure-Java PeLoader,
+  wine-independent. See `2026-10-13-r2-pe-e2e-proof`. (round 2)

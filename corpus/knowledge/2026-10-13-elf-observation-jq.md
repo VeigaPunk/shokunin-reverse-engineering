@@ -183,3 +183,10 @@ interpretation through a tool's field name.
 ## Summary
 
 Eight commands, six candidates: five admissions rest on verbatim tool output (ELF64 PIE x86-64; three NEEDED deps + interp; stripped-with-`jq.debug` debuglink; runtime `jq-1.8.2` absent from static strings; BIND_NOW/RELR/CET notes), one rejection demonstrates inference passed off as observation (entry point ≠ `main`), and every inference is quarantined with its own verification command.
+
+## Errata (round 2)
+
+- "full RELRO unverified" is now resolved: `readelf -lW` shows `PT_GNU_RELRO` —
+  BIND_NOW + RELRO both hold; the binary is full-RELRO. (audit-B)
+- Raw-note slips (claims unaffected): `grep -c symtab` prints 0, not the
+  predicted 1; property note reads `x86 ISA used` not `x86 feature used`. (audit-B)

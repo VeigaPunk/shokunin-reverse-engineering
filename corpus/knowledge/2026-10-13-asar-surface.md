@@ -76,3 +76,8 @@ Axes for this sweep: **coverage** (what asar-bearing apps exist on the host), **
 
 ## Summary
 Six ASARs across obsidian (split main/renderer bundles + native .node in .unpacked), signal-desktop, 1Password (webpack-flattened), and two electron runtime stubs; `@electron/asar list` enumerates all read-only while `file` misses one and `extract-file` writes to cwd; REA 6.4.0 resolves with a healthy Ghidra provider and owns the analysis layer (`analyze-javascript-application`, source recovery, runtime reconciliation) that raw asar enumeration cannot reach.
+
+## Errata (round 2)
+
+- `.unpacked` surface is larger than claimed: `signal-desktop` and `1Password`
+  also ship `index.node` natives, not only obsidian's btime/get-fonts. (audit-C)

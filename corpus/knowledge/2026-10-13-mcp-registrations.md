@@ -78,3 +78,11 @@ no client config was modified.
 
 ## Summary
 REA is registered for 3 of 7 surfaces (omp via `~/.omp/agent/mcp.json`, devin via `~/.config/devin/mcp_config.json`, kimi via `~/.kimi-code/config.toml`), all launching pinned `npx -y rea-agents@6.4.0 mcp` with `GHIDRA_INSTALL_DIR`/`JAVA_HOME`; codex and opencode are installed but unregistered, cursor and grok are not installed, and the only fragility is npx resolving through a session-scoped fnm shim.
+
+## Errata (round 2)
+
+- The recorded verify `grep -ni 'mcp\|rea\|ghidra' ~/.omp/agent/config.yml | wc -l → 0`
+  actually returns 17 (bare `rea` substring in comment prose). The underlying claim
+  holds — `grep 'rea-agents\|ghidra\|"rea"\|mcpServers\|mcp_servers'` and
+  `grep -c 'mcp'` both return 0. Verify line corrected to the strict pattern. (audit-A)
+- kimi stanza header is `config.toml:1284` (startup_timeout_sec at 1287), not 1285/1288. (audit-A, consistency)

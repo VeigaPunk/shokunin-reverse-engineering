@@ -125,3 +125,12 @@ Every `rea` invocation below was `timeout 600 npx -y rea-agents@6.4.0 <verb> ...
 
 ## Summary
 REA 6.4.0 ran a real end-to-end ELF pass on /usr/bin/jq — `analyze` (167 procs/190 strings/30 segments), procedure+string `search`, and two `decompile`s including jq's `process()` loop — each in ~5–6s through ephemeral, self-cleaning `/tmp/rea-ghidra-*` Ghidra sessions; `--snapshot` gives opt-in JSON persistence; `inspect-binary-layout` fails typed-and-fast without pwntools.
+
+## Errata (round 2)
+
+- `/tmp/rea-jq.snap.json` was lost to host reboot — expected (ephemeral); the
+  snapshot mechanism was re-proven with a fresh snapshot in round 2. (audit-C)
+- The identification `FUN_00103fa0` = jq `process()` is decompiler-derived
+  inference; the entry asserts it as fact — a criterion-5 labeling violation
+  flagged by the consistency audit. Reading stands (jq_start/jq_next/jv_dump
+  call sites corroborate) but must be cited as inference. (audit-consistency)

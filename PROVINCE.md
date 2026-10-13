@@ -38,6 +38,9 @@ Surfaces owned now — each verified on this host 2026-10-13.
 | Native ELF via Ghidra | `rea analyze/search/decompile <path>`; sessions `mkdtemp /tmp/rea-ghidra-*`, `-readOnly -deleteProject`, self-cleaning | `rea analyze <elf>` → overview + procedure inventory | `/usr/bin/jq`: 30 segments, 167 procedures, 190 strings, ~5.5s; `decompile 0x103fa0` recovered `process()` loop |
 | Electron/ASAR/JavaScript | `analyze_javascript_application` on `.asar` or extracted tree; `inspect_analysis_view` paging; 6 asar archives on host (obsidian ×2, signal, 1Password, electron39/43 stubs) | `analyze_javascript_application` `detail:"summary"` on a small asar | `default_app.asar` (electron43) → 5 files, 41 findings, evidence `ev_2628de89…` |
 | Archive/package inventory | `inspect_artifact`/`extract_artifact` (`available:true` in live session); pacman `.pkg.tar.zst` corpus 1556 signed archives; `.MTREE` per-file sha256; `pacman -Qkk` verify | `binary_session {}` capabilities | installed `jq` verified byte-identical to signed archive member |
+| Native PE via Ghidra | `rea analyze/search/decompile <pe>` — pure-Java `PeLoader`, wine-independent | `rea analyze <pe>` → segments/procedures | `cli-64.exe` (sha256 `bbb3de57…`): 8 segments, 142 procedures, `entry` decompiled; deterministic re-run (r2-05) |
+| Cross-version compare | `rea function --procedure` + `compare_functions` (8 typed dims, CLI); `rea compare` membership diff; `record_pairs` verdicts are MCP-only | function-level diff on two versions | expac 10-12↔10-13 `entry`/`main` compared; `REA_GHIDRA_STARTUP_TIMEOUT_MS` needed past ~40MB targets (r2-08) |
+| Recorded crashes (mechanism) | `inspect_recorded_crash <elf-core>` — caller must `coredumpctl dump`/`zstd -d` first; **32 MiB decompressed cap**; `REA_PWNTOOLS_PYTHON` + optional `REA_PWNDBG_GDBINIT` | live run on a ≤32MiB core | crash-godot core → `ev_3686f9…`, 27 regs × threads, notes retained (r2-06) |
 | Evidence discipline | `detail:"summary"` + `parent_evidence_id` paging; `get_evidence_bundle` filters; `inspect-evidence-bundle`; `--snapshot <path>` JSON bundle | every Core probe emits `evidence_id` + `limitations[]`/`unknowns[]` | snapshot is evidence persistence, not a Ghidra DB cache (timed) |
 | Host fallback readers | `file`, `readelf`, `objdump`, `llvm-readobj`, `nm`, `strings`, `unzip`, `tar`, `gdb`, `eu-stack`, `coredumpctl`, `pacman`, `zstd`, `gpg`, `python3`, node/npx | `command -v <tool>` | absent: `7z`, `cabextract`, `xxd`, radare2/rizin, strace/ltrace, upx, pacman-contrib |
 
@@ -51,39 +54,40 @@ each round.
 Claimed in MINT.md, not yet held. Each moves to Core by a `LOG.md` entry citing
 the corpus entries that earned it.
 
-- **PE binaries under this Linux host** — 413 PE files exist locally (Godot
-  export templates, setuptools launchers, dotnet assemblies); Ghidra's
-  `PeLoader` is pure-Java (wine-independent by construction — end-to-end
-  import INFERRED, unprobed). First move: `open_binary` + overview on a real
-  PE, e.g. a Godot `windows_release_x86_64.exe`.
+- **PE subtypes** — native x86-64 held (Core); ARM64 and managed-arch PE not
+  yet exercised end-to-end.
 - **Managed PE/CLI assemblies** — `inspect_managed_artifact` family reports
   `available:true` but rejected a real AnyCPU `Microsoft.*.dll` as
   `unsupported PE architecture`; no SDK/`ilspycmd`/Mono on host (Pinta's
   Mono.Cecil is a reader substrate but no compiler to build a harness).
-- **Firmware images** — `inspect_firmware_regions` catalog-listed; real
-  targets `/usr/lib/firmware/nvidia/610.57.04/*.bin`; `extract_firmware` needs
-  absent Binwalk/Unblob (operator-owned prerequisite).
-- **Recorded crashes** — `inspect_recorded_crash` catalog-listed, unprobed;
-  174 zstd cores retained via `coredumpctl` (3 organic: godot, waybar,
-  localsearch) with unprivileged ACL read + gdb/`eu-stack` path confirmed;
-  retention decays oldest-first.
-- **Offline ELF layout** — `inspect-binary-layout` fails
-  `provider_unavailable`: needs `REA_PWNTOOLS_PYTHON` (pwntools 4.15.0 +
-  pyelftools 0.33 + Unicorn 2.1.2); REA never installs Python.
+- **Firmware images** — `inspect-firmware-regions` probed r2: requires
+  `REA_BINWALK_COMMAND` (Binwalk 3.1.x, version-gated) — NOT Binwalk-free as
+  catalog prose suggested; `extract-firmware` needs `REA_UNBLOB_COMMAND`
+  (Unblob 26.6.x). Targets ready (`ucodes_tu10x.bin` 12KB, GSP blobs are ELF64
+  RISC-V). REA's `analyze` refuses all firmware bytes — no fallback path.
+- **Recorded crashes >32 MiB** — mechanism held (Core); all 3 organic cores
+  exceed the cap (waybar 434MB). Needs a cap-raising knob or partial-core
+  intake — neither exists. Retention decays oldest-first.
+- **Offline ELF layout** — `inspect-binary-layout` still gated on
+  `REA_PWNTOOLS_PYTHON`; the uv-venv provisioning recipe is documented
+  (r2 lessons) but not persisted — operator-owned.
 - **Alternate providers** — IDA (`REA_IDA_MCP_CONFIG` unset), Hopper (absent),
   JEB (unprobed). Engine installs are operator-owned.
-- **Android APK** — `inspect_android_package` + adb family catalog-listed;
-  apktool/jadx/adb presence and APK corpus unprobed.
-- **Runtime observation** — `list_browser_targets`, `list_electron_targets`,
-  `observe_javascript_runtime`, `capture_*_scenario`, HAR inspection:
-  catalog-listed, need user-owned targets or caller-supplied captures.
+- **Android APK** — 2 real APKs exist (Godot export templates); decode route
+  needs `REA_JADX_MCP_JAR` (jadx-headless-mcp 0.7.1, absent) — archive
+  inventory of an APK is already Core via `inspect_artifact`.
+- **Runtime observation** — substrate present (system chromium, playwright
+  1.64, electron39/43 binaries) but zero debug ports currently bound; next
+  probe: self-launch `chromium --remote-debugging-port=9222` →
+  `list_browser_targets` (electron targets default :9223).
 - **Cross-version diffing** — `compare_application_versions`,
   `compare_bundles`, `compare_javascript_export_shapes`: catalog-listed; needs
   a two-version artifact pair (pacman cache already retains multi-version
   archives — e.g. `1password-cli` 2.34.1-1 + 2.40.0-2).
 - **macOS-only surfaces** — Mach-O/plist/LLDB/asset-catalog ops report
   `unsupported_host` on Linux; recorded so the lane never claims them.
-- **EVM bytecode** — `inspect_evm_interface` catalog-listed; no carrier probed.
+- **EVM bytecode** — unblocked: 6.4.0 bundles EVMole 0.9.3/WASM (r1's
+  "needs pwntools" belief corrected); needs only a synthetic hex carrier.
 
 ## Adjacent
 

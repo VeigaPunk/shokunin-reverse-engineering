@@ -12,3 +12,12 @@
   import, recorded crashes, firmware regions, managed AnyCPU (typed
   `unsupported PE architecture`), offline ELF layout (`provider_unavailable`).
 
+- 2026-10-13 — round 2: audit + expansion wave (16 lanes, fleet
+  `.ufo/waves/kaidoku-r2/`). Round-1 audit: ~100 verify commands re-run, all
+  admit/reject verdicts upheld; 1 factual erratum (34 Ghidra features), 2
+  verify-command defects, criterion-5 labeling gap recorded. Promoted to Core:
+  PE-via-Ghidra (proven e2e), cross-version compare machinery, crash-inspect
+  mechanism (32 MiB cap found). Headline: `~/.local/bin/jq` verified
+  byte-identical to upstream jq-1.8.2 release — benign. Firmware blocked on
+  `REA_BINWALK_COMMAND`; AnyCPU managed still rejected; ev_-id session scoping
+  and +0x100000 .so rebase rules learned.
