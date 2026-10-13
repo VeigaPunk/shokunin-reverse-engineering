@@ -217,3 +217,21 @@ same version — PATH-order shadowing changes which *equally genuine* 1.8.2
 artifact runs, nothing more. Judgment: **benign payload, genuine artifact**;
 residual items are host hygiene (untracked PATH-shadowing binary, unknown
 install vector — see Unknown candidate above), not binary compromise.
+
+## Errata (round 3)
+
+- **Candidate 3 mechanism note corrected (r3 audit-A, verified 2026-10-13):** the claim that
+  `search --kind procedures` "returns 0 rows for any pattern" is WRONG. Verbatim re-run on
+  `~/.local/bin/jq` returns **2,279 rows** (2,207 `FUN_*`, 59 `thunk_FUN_*`, 13 named
+  `entry`/`switchD_` labels). The census verdict itself is unchanged — the binary is still
+  stripped of local symbols — but the mechanism is "corpus indexes recovered `FUN_*` names",
+  not "search indexes named symbols only".
+- **Criterion-5 violation (r3 audit-04):** several `FUN_*` → `jq_init`/`__libc_start_main`/
+  process-loop identifications in this entry are asserted as flat facts rather than labeled
+  inference. Same class as the r1 `FUN_00103fa0` erratum. Identifications remain plausibly
+  correct (upstream-hash match corroborates) but were under-labeled.
+- **Provenance Unknown CLOSED (r3):** `~/.local/bin/jq` was installed by agent-2 of a
+  kimi-code agent swarm on 2026-10-03 18:34:03 -0300 during the operator's bootstrap task —
+  fetched `jq-linux-amd64` from `jqlang/jq` release `jq-1.8.2` via the GitHub releases API.
+  Full chain in `2026-10-13-r3-jq-provenance.md`. Verdict refined from "benign, origin
+  unknown" to "benign, intentional agent-installed".

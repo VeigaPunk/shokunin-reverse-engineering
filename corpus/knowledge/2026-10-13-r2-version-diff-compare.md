@@ -219,3 +219,13 @@ native); scaling bound lands at ~40 MB stripped Go where default 330 s Ghidra st
 times out unless `REA_GHIDRA_STARTUP_TIMEOUT_MS` is raised (overviews then complete;
 dossier-level at that scale untested — priced at one ~10 min import per side via a
 snapshot). Scratch dir `/tmp/rea-vercmp` removed; no files outside this report touched.
+
+## Errata (round 3)
+
+- **Host-surface attribution sharpened (r3 audit-04/audit-B):** `compare_functions`/`compareFunctions`
+  has NO CLI verb — `rea --help` shows none; it runs via `node --input-type=module` domain calls
+  or the MCP `compare_functions` tool. Corpus index and PROVINCE rows that read "on CLI" were
+  corrected this round.
+- **Partial-pairing rule discovered (r3 MCP lane):** `compare_bundles` + `record_pairs` reaches
+  `status:changed` only when ALL bundle members are paired; pairing 2 of 4 records leaves the
+  verdict `unknown` with `unresolved:2` even though pairs classify `observed_change`.

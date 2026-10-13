@@ -17,6 +17,8 @@ naming the row it supersedes, never rewritten.
 | 7 | The entry names what was NOT examined: detail level (summary vs complete), truncated/paged views, unvisited modules, providers absent on this host | REA SKILL.md "preserve limitations and incomplete coverage"; r1 wave-16 frontier records | — |
 | 8 | Capability claims pin tool/provider versions (rea-agents@6.4.0, Ghidra 12.1.4, JDK 21) and the claim source (live tool list vs installed skill text) | skill v37 vs release skew; `binary_session result.tool_availability` is the live verdict (r1 doctor taxonomy) | — |
 | 9 | Runtime-behavior claims are admitted only with runtime-evidence provenance (recorded crash, capture, observed target); never from a static graph | REA SKILL.md "never imply that static analysis observed execution"; r1 `jq-1.8.2` runtime-vs-static evidence-class split | — |
+| 10 | "Held/works" is admitted only for verbs run on a real or synthesized carrier this round; `capabilities[].available:true` is *declared* capability — the gate is provider-level `availability.status` | r3 keyed-archive lane: all three carrierless ops proved working only when given carriers; r3 audit-B: `available:true` inside unavailable providers (hopper 36/36) | sharpens 8 |
+| 11 | Empty/zero findings must state whether the surface was parsed-and-empty or excluded-from-inventory (`parse_failures:0` on an unparsed member is an exclusion, not a result) | r3 typora lane: `.jsc` = 99.4% of archive bytes got zero graph nodes — "all-zero IPC summary" meant nothing | — |
 
 ## Signals of weak material
 

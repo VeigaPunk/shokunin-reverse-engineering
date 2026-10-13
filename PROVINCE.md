@@ -31,7 +31,7 @@ Surfaces owned now — each verified on this host 2026-10-13.
 
 | Surface | Ports / paths / config keys | Liveness / readiness probe | Verified evidence |
 |---|---|---|---|
-| REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml:1285` — all spawn `npx -y rea-agents@6.4.0 mcp` with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` in an attached client → `analysis_provider_candidates` + `capabilities[]`; CLI: `rea doctor` (devin `aligned`, omp `aligned`) | doctor run 2026-10-13; wave 04 file-level verification |
+| REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml:1284` — all spawn `npx -y rea-agents@6.4.0 mcp` with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` in an attached client → `analysis_provider_candidates` + `capabilities[]`; CLI: `rea doctor` (devin `aligned`, omp `aligned`) | doctor run 2026-10-13; wave 04 file-level verification |
 | `rea` CLI | npx cache `~/.npm/_npx/*/node_modules/rea-agents` — no `rea` on PATH; 127 commands | `npx -y rea-agents@6.4.0 --version` → `6.4.0` | wave 01/02/03 catalogs |
 | Ghidra provider | `GHIDRA_INSTALL_DIR` (876 MB install); headless `support/analyzeHeadless`; native decompiler `Ghidra/Features/Decompiler/os/linux_x86_64/decompile`; 39 processor modules; 35 features incl. PyGhidra/BSim | `rea doctor` → providerInspections `ghidra: configured+available`, 8/8 checks | `application.version=12.1.4`, build 2026-09-21, rev 8b6bbb85 |
 | JDK 21 substrate | `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`, exported in `.bashrc:24` + `.profile:4`; sole Java on host | `java -version` → 21.0.12.1 full JDK | meets Ghidra `java.min=21` exactly; single-Java fragility noted |
@@ -39,7 +39,14 @@ Surfaces owned now — each verified on this host 2026-10-13.
 | Electron/ASAR/JavaScript | `analyze_javascript_application` on `.asar` or extracted tree; `inspect_analysis_view` paging; 6 asar archives on host (obsidian ×2, signal, 1Password, electron39/43 stubs) | `analyze_javascript_application` `detail:"summary"` on a small asar | `default_app.asar` (electron43) → 5 files, 41 findings, evidence `ev_2628de89…` |
 | Archive/package inventory | `inspect_artifact`/`extract_artifact` (`available:true` in live session); pacman `.pkg.tar.zst` corpus 1556 signed archives; `.MTREE` per-file sha256; `pacman -Qkk` verify | `binary_session {}` capabilities | installed `jq` verified byte-identical to signed archive member |
 | Native PE via Ghidra | `rea analyze/search/decompile <pe>` — pure-Java `PeLoader`, wine-independent | `rea analyze <pe>` → segments/procedures | `cli-64.exe` (sha256 `bbb3de57…`): 8 segments, 142 procedures, `entry` decompiled; deterministic re-run (r2-05) |
-| Cross-version compare | `rea function --procedure` + `compare_functions` (8 typed dims, CLI); `rea compare` membership diff; `record_pairs` verdicts are MCP-only | function-level diff on two versions | expac 10-12↔10-13 `entry`/`main` compared; `REA_GHIDRA_STARTUP_TIMEOUT_MS` needed past ~40MB targets (r2-08) |
+| Cross-version compare | `rea function --procedure`; `compare_functions`/`compareFunctions` (8 typed dims — domain API or MCP only, **no CLI verb**); `rea compare` membership diff; `record_pairs` verdicts are MCP-session-only (changed verdict requires ALL members paired — r3) | function-level diff on two versions | expac 10-12↔10-13 `entry`/`main` compared; `REA_GHIDRA_STARTUP_TIMEOUT_MS` needed past ~40MB targets (r2-08) |
+| Runtime observation (CDP) | self-launched targets: `chromium --headless --remote-debugging-port=9222`, `xvfb-run electron --remote-debugging-port=9223`; `list_browser_targets`, `inspect-web-page`, `list_electron_targets`, `inspect-electron-page`, `capture-browser-scenario` | `list-browser-targets http://127.0.0.1:9222` on own instance | both legs held r3 (05): CDP enumerate+inspect verified, connect-mode scenario capture ran |
+| EVM interface | `rea inspect-evm-interface <file> <raw|hex>` — encoding is POSITIONAL (no `--encoding` flag despite schema); bundled EVMole 0.9.3/WASM | synthetic hex carrier → selector extraction | hand-assembled 81-byte dispatcher recovered all 3 planted ERC-20 selectors; `dispatch:"abi"` (r3-07) |
+| Carrierless-macOS surface via synth carriers | `inspect-keyed-archive <plist> [archive]` (archive positional), `decode-interface-builder` (needs `CFBundleExecutable` in Info.plist), `trace-dylib-resolution` (8-aligned cmdsize) | synth carriers (plistlib, hand-rolled Mach-O) — recipes in r3-13 | all three WORK on Linux; `inspect-plist` alone hard-gates macOS |
+| APK archive inventory | `rea inspect-artifact <apk>` → content-addressed node graph; `.so` members extract→`analyze` | `inspect-artifact` on a real APK | Godot `android_debug.apk`: 120 nodes, all 130 occurrences hash-verified; extracted `libc++_shared.so` → 3,009 procedures (r3-06) |
+| `.node` native addons | ELF shared objects in `*.asar.unpacked`; N-API taxonomy: `nm -D | grep -c ' U napi'` >0 = classic, =0 = napi-rs/Neon | `rea analyze` on a `.node` | btime/get-fonts decompiled; +0x100000 rebase rule holds on `.node` too (r3-11) |
+| MCP retained-evidence session | `binary_session`→`open_binary`→`inspect_analysis_view` paging (`parent_evidence_id`, coverage cursors) — CLI-inexpressible; retention epoch-scoped, `evidence_links` pin | live `rea` MCP tools | `record_pairs`→`status:changed` demonstrated r3-14; view gate: only inspect_binary_layout/analyze_js/analyze_function parents pageable |
+| Verb families | `xrefs` (inbound-only, GOT+DWARF decomp), `trace` (literal feature, no from/to), `read-bytes`, `address-to-file-offset`, `function` dossier, `instructions` — address is POSITIONAL on all | `rea xrefs <path> <addr>` on libjq | exercised r3-15: read-bytes byte-exact vs objdump; addr→file-offset confirms rebase |
 | Recorded crashes (mechanism) | `inspect_recorded_crash <elf-core>` — caller must `coredumpctl dump`/`zstd -d` first; **32 MiB decompressed cap**; `REA_PWNTOOLS_PYTHON` + optional `REA_PWNDBG_GDBINIT` | live run on a ≤32MiB core | crash-godot core → `ev_3686f9…`, 27 regs × threads, notes retained (r2-06) |
 | Evidence discipline | `detail:"summary"` + `parent_evidence_id` paging; `get_evidence_bundle` filters; `inspect-evidence-bundle`; `--snapshot <path>` JSON bundle | every Core probe emits `evidence_id` + `limitations[]`/`unknowns[]` | snapshot is evidence persistence, not a Ghidra DB cache (timed) |
 | Host fallback readers | `file`, `readelf`, `objdump`, `llvm-readobj`, `nm`, `strings`, `unzip`, `tar`, `gdb`, `eu-stack`, `coredumpctl`, `pacman`, `zstd`, `gpg`, `python3`, node/npx | `command -v <tool>` | absent: `7z`, `cabextract`, `xxd`, radare2/rizin, strace/ltrace, upx, pacman-contrib |
@@ -54,8 +61,8 @@ each round.
 Claimed in MINT.md, not yet held. Each moves to Core by a `LOG.md` entry citing
 the corpus entries that earned it.
 
-- **PE subtypes** — native x86-64 held (Core); ARM64 and managed-arch PE not
-  yet exercised end-to-end.
+- **PE subtypes** — x86-64 AND ARM64 both held (r3-08: cli-arm64.exe, 136
+  procedures via Ghidra). Reserve: 91MB Godot ARM64 template, ARM64X hybrids.
 - **Managed PE/CLI assemblies** — `inspect_managed_artifact` family reports
   `available:true` but rejected a real AnyCPU `Microsoft.*.dll` as
   `unsupported PE architecture`; no SDK/`ilspycmd`/Mono on host (Pinta's
@@ -73,21 +80,22 @@ the corpus entries that earned it.
   (r2 lessons) but not persisted — operator-owned.
 - **Alternate providers** — IDA (`REA_IDA_MCP_CONFIG` unset), Hopper (absent),
   JEB (unprobed). Engine installs are operator-owned.
-- **Android APK** — 2 real APKs exist (Godot export templates); decode route
-  needs `REA_JADX_MCP_JAR` (jadx-headless-mcp 0.7.1, absent) — archive
-  inventory of an APK is already Core via `inspect_artifact`.
-- **Runtime observation** — substrate present (system chromium, playwright
-  1.64, electron39/43 binaries) but zero debug ports currently bound; next
-  probe: self-launch `chromium --remote-debugging-port=9222` →
-  `list_browser_targets` (electron targets default :9223).
-- **Cross-version diffing** — `compare_application_versions`,
-  `compare_bundles`, `compare_javascript_export_shapes`: catalog-listed; needs
-  a two-version artifact pair (pacman cache already retains multi-version
-  archives — e.g. `1password-cli` 2.34.1-1 + 2.40.0-2).
+- **Android APK decode** — archive inventory held (Core, r3-06: 120-node
+  verified content graph); dex/manifest/resources need `REA_JADX_MCP_JAR`
+  (jadx-headless-mcp 0.7.1) + `REA_APKTOOL_COMMAND` — both absent.
+- **Runtime observation (extended)** — CDP enumerate/inspect held (Core);
+  unexercised: `observe-web-session`, `observe-web-execution`,
+  `list/observe-javascript-runtime` (needs `--inspect` node), 
+  `capture-electron-scenario`, `reconcile_javascript_runtime`.
+- **Cross-version diffing (extended)** — machinery held incl. a real
+  `status:changed` pair (r3-14); `compare-application-versions` probe-refused
+  r2; unexercised: `compare_javascript_export_shapes`, multi-version pacman
+  pairs beyond expac.
 - **macOS-only surfaces** — Mach-O/plist/LLDB/asset-catalog ops report
   `unsupported_host` on Linux; recorded so the lane never claims them.
-- **EVM bytecode** — unblocked: 6.4.0 bundles EVMole 0.9.3/WASM (r1's
-  "needs pwntools" belief corrected); needs only a synthetic hex carrier.
+- **EVM bytecode (extended)** — selectors held on synthetic dispatcher
+  (Core, r3-07); real solc/vyper-compiled bytecode untested; selectors stay
+  bare hashes (no signature DB → no name resolution).
 
 ## Adjacent
 

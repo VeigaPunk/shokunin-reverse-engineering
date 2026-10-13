@@ -103,3 +103,11 @@ operator-owned: install Binwalk 3.1.x and/or Unblob 26.6.x and export the absolu
 `REA_*_COMMAND` paths — after which `ucodes_tu10x.bin` (12 KiB, `NVUCODES` magic)
 is the designated first probe target. Note the doctor/providers blind spot: this
 surface's readiness is invisible to `rea doctor`; it must stay tracked in PROVINCE.
+
+## Errata (round 3)
+
+- **Defective verify command (r3 audit-B):** `rea providers --format json | grep -i firmware`
+  is NOT empty — it matches `firmware-provider` surface tags inside embedded
+  `catalog.tools[]`. The underlying claim (zero firmware ops in `capabilities[]`, doctor sees
+  only ghidra+ida providers) stands; the verify-as-written does not isolate it. Corrected
+  verify: `rea capabilities --format json | python3 -c "import json,sys; print([c for c in json.load(sys.stdin).get('capabilities',[]) if 'firmware' in str(c).lower()])"` → `[]`.

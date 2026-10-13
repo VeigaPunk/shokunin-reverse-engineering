@@ -123,3 +123,14 @@ Closes the r1-01 flag: "actual provider list on this host not yet captured".
 - **Key semantics**: per-op `available` inside a candidate is *declared* capability — the real gate is provider-level `availability.status`. `capability_unavailable` exits 0; `provider_unavailable` exits 1 with `retryable:true`.
 - **Drift anchors**: catalog counts 127 CLI / 170 MCP tools / 6 prompts; `tools_sha256:25802f6d…`, `combined_sha256:85d80276…`; skill expected_version 37.
 - Open thread for later rounds: `provider_operation_health`, `analysis_provider_binding`, `analysis_run`, `analysis_activity.providers[]` are only observable after a target `open` — an open-target rerun would capture the bound-provider view.
+
+## Errata (round 3)
+
+- **"`capability_unavailable` exits 0" is WRONG (r3 audit-B, verified 2026-10-13):** verbatim
+  re-runs of `list-adb-devices`, `inspect-adb-client`, `inspect-jeb-client` all exit **1** —
+  identical to `provider_unavailable`. The real differentiator between the two failure kinds
+  is the `retryable` field (`false` vs `true`), not the exit code. Rows in the table above
+  recording "fail (exit 0)" reflect the report's misreading of pipe-masked exit status.
+- **`record_pairs` confirmed MCP-only (r3 audit-B):** `grep -rn record_pairs dist/` hits only
+  `dist/domain/bundleComparison.js` + `dist/server/registerBundleComparisonTool.js` — zero
+  under `dist/cli/`. `rea compare --schema` exposes only `left`/`right`.
