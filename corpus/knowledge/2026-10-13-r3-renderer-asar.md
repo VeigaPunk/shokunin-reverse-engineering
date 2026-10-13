@@ -105,3 +105,17 @@ Axes: **depth** (25,787,463 B / 380 entries vs r2's 480 KB / 54-entry launcher),
 ## Summary
 
 The 25 MB `obsidian.asar` is the real Obsidian application — the 480 KB `app.asar` analyzed in r2 is only its launcher. `rea-agents@6.4.0 analyze-javascript-application` digests it end-to-end in ~3.5 min into a 47.66 MB sealed Evidence bundle (`ev_e8a2c4ba…`, sha256-pinned): a 235-node application graph + 23,527-node semantic graph with 7,956 typed unknowns, `findings` 1,492, zero parse failures. The headline reconstruction: **45 literal `ipcMain` operations in `main.js`** (44 `on` channels — vault-*, open-url, request-url, print-to-pdf, copy-asar, register-cli `handle`, create-browser-session, trash, update machinery — each with a source range) verified 1:1 against grep, plus **2 BrowserWindows** whose `webPreferences` are honestly flagged `dynamic` but grep proves `contextIsolation:false, nodeIntegration:true, nodeIntegrationInWorker:true, webviewTag:true` — the classic Obsidian fully-privileged renderer, mitigated in-source by a deny-and-relock `setWindowOpenHandler` (sandbox:true, nodeIntegration:false, webviewTag:false), https-only `will-navigate`, `will-attach-webview` prevention, and preload-stripping webview attach. Exactly **1 sender validation** was observed (`process-id === f.processId`, enforcement unknown) against 45 handlers — the remaining 44 handlers show no static sender check in this Evidence. Coverage is honestly partitioned: ~20 large minified files hit resource limits — `app.js` (3.9 MB) OOM'd the analyzer worker even at `--max-heap-mb 8192`, and a second untunable "parent result budget" caps expanded relations; a rerun at 8 GiB produced a *different* coverage partition (285 vs 235 graph nodes) but an identical security surface, proving the surface deterministic and the budget the variable. Deeper tools: `recover-javascript-sources` fails closed typed (`capability_unavailable` — external Wakaru binary required, nothing bundled); `trace-application-feature` succeeds and mints lineage-chained Evidence — a `module` seed on `app.js` traces all 235 nodes / 102 terminal paths (378 observed facts), while a `channel` seed returns typed `no-match` because this bundle's IPC facts live on file nodes, not graph channel nodes. Next-round frontier: per-file analysis of extracted `app.js` via `--artifact-format directory`, or a Wakaru install, to crack open the renderer internals the 8 GiB worker still could not hold.
+
+## Errata (round 4)
+
+- **Verify-recipe defect (r4 audit-B, verified 2026-10-13):** `grep -c 'ipcMain'
+  /tmp/main.js` counts matching LINES — on the 69-line minified file it yields 1, not 45.
+  Correct recipe: `grep -o 'ipcMain' | wc -l` → 45 (44 `on` + 1 `handle` confirmed).
+  Same defect in the renderer-side checks (`grep -c ipcRenderer` → 1 vs `grep -o|wc -l` →
+  64/8/5). Claims all reproduce; the recorded verify commands were wrong as written.
+- **Resource-constraint census (r4 audit-B):** exactly **29** `Resource constraint`
+  records (6 heap-exhaustion + 22 named budget + 1 generic), not "~24". The hedge covered
+  the direction and partition; the exact count is 29.
+- **`inspect` ≡ `analyze` proven (r4 audit-B):** `rea inspect` produced an evidence_id
+  byte-identical to `rea analyze` on the same input — normalized bundle → same evidence
+  hash. The two commands are the same analysis.

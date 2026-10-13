@@ -146,3 +146,13 @@ behavioral refinement and one new mechanism: `status:changed` requires every
 bundle member paired (unpaired leftovers pin the verdict at `unknown`), and
 session retention is epoch-scoped — records evict at target switch unless
 re-cited, with content-addressed ids making re-collection byte-identical.
+
+## Errata (round 4)
+
+- **Evidence-id sensitivity refined (r4, three-lane corroboration):** evidence ids are
+  `f(content, path, params)` — content-addressed AND path-sensitive. Same bytes at a
+  different path mint a different id (independently confirmed by the revenger verifier:
+  `ev_8efa2368…` vs `ev_50038b96…`; jadx verbs mint per-run ids via mkdtemp paths; apktool
+  verb ids are deterministic on identical invocations; `trace-application-feature` re-mints
+  the identical id on same-path re-run). Cite `subject.digest.sha256` for cross-path
+  identity; "content-addressed" alone is incomplete.

@@ -146,3 +146,14 @@ Linux/x86_64 — the r2 "carrierless" gap was host-corpus, not
 implementation. Synthesized carriers close it for all three. Two honest
 quirks logged: schema `archive` arg maps to a positional (not `--archive`),
 and `trace_dylib_resolution` enforces 8-aligned load-command cmdsize.
+
+## Errata (round 4)
+
+- **Weak dylib edges (r4 audit-B, verified 2026-10-13):** weak dylib imports are emitted
+  as `undetermined` edges, not silently omitted — the entry's "omitted" phrasing was
+  wrong. Resolution verdicts carry a distinct `undetermined` status.
+- **Synthesis recipe drift (r4 audit-B):** re-running the NSKeyedArchiver recipe yields a
+  **363 B** plist, not 365 B — content-bound evidence ids differ across rebuilds
+  (`ev_464caf10…` vs r3's `ev_0524ef94…`). Recipes are reproducible in shape, not byte
+  identity; claim byte-exactness only for pinned fixture bytes, never for re-synthesized
+  carriers.

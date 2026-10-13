@@ -64,3 +64,14 @@ Probe date: 2026-10-13. Tool: `npx -y rea-agents@6.4.0`. Round 1 (`kaidoku-r1/14
 
 ## Summary
 Recorded-crash inspection is **held as a mechanism, still frontier as coverage**. Held (observed, reproducible): the full provisioning recipe (`REA_PWNTOOLS_PYTHON` → `uv`-built Python 3.11 venv pinned to pwntools 4.15.0/pyelftools 0.33/unicorn 2.1.2), a completed end-to-end Evidence emission on a real recorded core (per-thread register set ×27, siginfo signal/code/errno, 40-entry segment table, 8 retained notes incl. NT_FILE/PRPSINFO/AUXV with byte-level locations and sha256'd subject), and a complete refusal taxonomy (provider_unavailable → invalid_format → unsupported_target → out_of_range → capability_unavailable). Frontier (unresolved): every *organic* core on this host (waybar 434M, localsearch 71.8M, godot ≥16M-compressed) exceeds REA's fixed 32 MiB input cap, so REA currently cannot inspect a real application crash here — only the ~708K crash-godot test cores fit; frames/unwinding and module-map interpretation are explicitly out of scope of the verb (raw-retained only); `--debugger-context` awaits an operator-installed pwndbg. Next cheap moves: find/generate a <32 MiB organic core (e.g., `gcore` a small live process), or push for a configurable cap upstream.
+
+## Errata (round 4)
+
+- **Oversize-core rejection class (r4 audit-consistency, verified 2026-10-13):** >32 MiB
+  core inputs are refused `invalid_request`/`out_of_range` — not `unsupported_target`.
+  The entry's error-code wording conflated the two envelopes; see the r3 capability
+  taxonomy for the corrected mapping.
+- **`coredumpctl dump` output is already decompressed (r4 pwntools-persist, verified
+  2026-10-13):** the documented `| zstd -d` step is unnecessary (and wrong) when piping
+  `coredumpctl dump` output — it emits raw ELF. Retained: pwntools env is now persistent
+  at `~/.local/share/kaidoku-pwnenv` (see `2026-10-13-r4-13-pwntools-persist.md`).

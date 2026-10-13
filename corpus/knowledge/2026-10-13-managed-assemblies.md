@@ -49,3 +49,13 @@ tooling on this Linux host.
 
 ## Summary
 Managed surface is real but narrow: a working `dotnet` host (runtimes 9.0.19 + 10.0.11, no SDK), ~341 framework DLLs, and exactly one managed application (Pinta 3.1.2, 36 Cecil-readable assemblies, incl. Mono.Cecil itself); no Mono, no decompiler, no NuGet cache — all remaining PE artifacts are native, so managed RE here means triage + runtime execution + a future precompiled-reader path.
+
+## Errata (round 4)
+
+- **"AnyCPU rejected" corrected (r4 managed-unlock + frontier-rescan, verified
+  2026-10-13):** the refused class is x86-64 ReadyToRun/`0xfd1d` (ILibrary-family) and
+  x64 IL-only non-`0x14c` variants — NOT "AnyCPU" broadly. `pei-i386` (`0x14c`) IL-only
+  assemblies are accepted on all 196 local .dlls probed; `inspect-managed-artifact`
+  succeeds (Pinta.dll `ev_471d085b…`). Members-level coverage splits on the 64 MiB
+  representation budget, and GENERICINST (`element type 0x15`) forms are unsupported.
+  Full map in `2026-10-13-r4-11-managed-unlock.md` and `2026-10-13-r4u-04-dnfile-il.md`.

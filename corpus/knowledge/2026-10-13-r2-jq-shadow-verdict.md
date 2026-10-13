@@ -235,3 +235,8 @@ install vector — see Unknown candidate above), not binary compromise.
   fetched `jq-linux-amd64` from `jqlang/jq` release `jq-1.8.2` via the GitHub releases API.
   Full chain in `2026-10-13-r3-jq-provenance.md`. Verdict refined from "benign, origin
   unknown" to "benign, intentional agent-installed".
+
+- **Timestamp precision (r4 audit-C, verified 2026-10-13):** the jq-shadow binary's birth
+  and modify timestamps differ by ~1 ms, not exactly equal. The provenance chain
+  (download-then-rename) conclusion is unchanged; the "identical" phrasing overstated the
+  match precision.

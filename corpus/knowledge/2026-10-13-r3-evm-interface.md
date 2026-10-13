@@ -145,3 +145,11 @@ and `bytecode.kind` stayed `unknown` even on a creation-code blob. Remaining
 EVM frontier: real solc/vyper-compiled bytecode (argument + mutability
 inference with real signal, `kind` classification), larger dispatch tables,
 and Vyper-style selector layouts vs Solidity's.
+
+## Errata (round 4)
+
+- **`bytecodeOffset` semantics corrected (r4 audit-A, verified 2026-10-13):** the selector
+  findings' `bytecodeOffset` records the **JUMPDEST dispatch-target position**, not the
+  PUSH4 comparison site. Carrier 3's recorded offsets (62/68/74) sit at jump destinations.
+  The selector→push-site mapping is still derivable from the disassembly but is not what
+  the field emits.

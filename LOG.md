@@ -43,3 +43,41 @@
   ids are content-addressed and reproduce across sessions. SKILL.md grown to
   full decision tables + error patterns — all SHONEN.md gates now closed;
   eligible for roster promotion pending operator decision.
+## 2026-10-13 — Round 4 + unlock wave (audit r3 + expansion + operator-authorized provisioning)
+
+Round-4 wave: 16 lanes under `.ufo/waves/kaidoku-r4/`. Four audit lanes
+re-verified all r3 knowledge entries and corpus consistency; twelve expansion
+lanes pushed frontier. All r3 claims survived re-verification — ten errata
+appended (EVM bytecodeOffset semantics, typora 99.38%, list-* census 11 +
+MCP-only verbs, renderer-asar grep-recipe + constraint census 29, managed
+AnyCPU precision, jq-shadow timestamp ~1ms, crash oversize-class +
+coredumpctl-decompression, keyed-archive weak-dylib `undetermined` + recipe
+363B, appimage error-envelope precision, evidence-id `f(content,path,params)` —
+three-lane corroborated). Also corrected from r4 consistency audit: the r3
+LOG had omitted the verb-family promotion and QUALITY criteria 10–11 (they
+landed in files, not the log — recorded here).
+
+Expansion held: 1Password asar + 188MB Rust N-API core; typora `.jsc`
+Ignition disassembly via version-matched electron run-as-node; four
+runtime-observation verbs; `compare-javascript-export-shapes` e2e; managed
+surface mapped (`0x14c` works, `0xfd1d` refused — dnfile/dncil covers all);
+91.6MB ARM64 PE measured scale wall (`provider_timeout` ~900s internal);
+`inspect-binary-layout` first-held (jq full RELRO, persistent pwnenv);
+AppImage inner asar reachable via unblob/7z carve ("Grok Bot" = Cursor `sand`);
+libsignal anatomy; frontier rescan → r5 roadmap.
+
+Unlock wave (operator-authorized installs): 6 lanes under
+`.ufo/waves/kaidoku-r4u/`. Firmware regions + extract exercised on nvidia
+blobs (RISC-V `target_unavailable` is REA's own gate); full Android surface
+opened (jadx-headless-mcp 0.7.1-all sha256-pinned + apktool 3.0.3 — real Java
+decompile); unblob extract live (pacman pkg carved 100% where binwalk saw 0);
+dnfile+dncil full-IL coverage; wakaru spawn-OOM ROOT-CAUSED and FIXED
+(`prlimit --as=1GiB` vs node shim — bind `@wakaru/cli-linux-x64` ELF; fix
+applied `.bashrc:63`, `recover-javascript-sources` held `ev_4898906e…`); adb
+surface mapped device-free (2/24 serial-free verbs, telemetry bug noted).
+
+New QUALITY criteria 12–14 (synth-carrier bytes, grep -o|wc -l, evidence-id
+domain) + weak-signal 6 (blame-the-tool before checking the spawn wrapper).
+SKILL decision table expanded to the whole held surface; known-limits section
+moved to r4. Two expansion lanes (signal-asar, real version-pair) still in
+flight at integration — their entries land on return.

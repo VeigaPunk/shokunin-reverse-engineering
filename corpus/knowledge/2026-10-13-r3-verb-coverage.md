@@ -222,3 +222,14 @@ address-to-file-offset / function / instructions**. Notable pitfall for
 runbook: several verbs take the address as a **positional** arg — `--address`
 is a typed refusal, and exported-symbol calls are GOT-indirect so `xrefs`
 is the tool that reveals callers (objdump direct-call grep finds none).
+
+## Errata (round 4)
+
+- **`list-*` census corrected (r4 audit-C, verified 2026-10-13):** the CLI exposes **11**
+  `list-*` verbs, not 10 — the census missed one (all `list-adb-*` + `list-architectures`
+  family members plus `list-functions`/`list-segments` do exist as CLI verbs despite the
+  entry's "does not exist" wording for `list-functions`/`list-segments`). Additionally the
+  MCP surface exposes `list_procedures`, `list_segments`, and `list_names` as MCP-only
+  verbs not mirrored on the CLI. Re-audit the refusal claims: `list-architectures` on ELF
+  remains refused (macOS-only) but the census count and the "no such verb" statements are
+  wrong. See `2026-10-13-r4-06-adb-surface`→r4u for the adb list verbs live.
