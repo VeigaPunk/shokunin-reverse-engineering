@@ -1,50 +1,44 @@
 # MINT.md — kaidoku-shokunin
 
-**Minted by:** <integrator session / operator directive, `YYYY-MM-DD`>, on <evidence basis —
-e.g. aggregator evidence: N independent demand instances of the same unplaceable defect
-class>.
+**Minted by:** operator directive, `2026-10-13` (Devin CLI session, home-machine reorganization),
+under the kimi-shokunin protocol with the LEARNING.md learning path.
 
-**Domain claimed:** reverse engineering of shipped artifacts with REA on this Linux host — native ELF/PE through the Ghidra 12.1.4 provider, Electron/ASAR/JavaScript bundles, archives and packages, managed assemblies, firmware images and recorded crashes; evidence-first static analysis that keeps observation, inference and unknowns separate — <surfaces, drift-sensitive values, probe and reconciliation
-concerns; cite real paths / process names / config keys in backticks as they are verified>.
+**Domain claimed:** reverse engineering of shipped artifacts with REA on this Linux host —
+native ELF/PE through the Ghidra provider (`/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC`,
+JDK 21 at `/usr/lib/jvm/java-21-openjdk`), Electron/ASAR/JavaScript bundles, archives and
+packages, managed assemblies, firmware images and recorded crashes. REA is reached as the
+`rea` MCP server (`npx -y rea-agents@6.4.0 mcp`, registered for Devin in
+`~/.config/devin/mcp_config.json` and for OMP) and its CLI; its shipped skill is
+`~/.agents/skills/reverse-engineer-anything/`.
 
 ## Reasoning and cause
 
-<NUMBER> *independent* lanes discovered the same unplaceable defect class, on different
-surfaces, in different rounds:
-
-1. **<lane id> round <N>** (`.ufo/reports/round-<N>/kaidoku.md`): <demand instance — what
-   was observed, with cited paths, values, and command outputs>.
-2. **<lane id> round <N>** (`.ufo/reports/round-<N>/kaidoku.md` + <corroborating pointer,
-   e.g. an aggregator routing-table row>): <second demand instance — same defect class,
-   different surface>.
-
-<Optional: any additional drift / absence evidence supporting the same defect class — e.g.
-a path or endpoint a sibling's config cited that no longer resolves.>
+Operator directive (mint bar clause (b)): the operator chose reverse engineering as the
+first domain to mint and train end to end under the learning path. No demand instances are
+claimed.
 
 ## Roster scan (rejected fits)
 
-`MANIFEST.json` roster at mint time, and why none absorb this:
-
 | Lane | Province | Why the demand doesn't fit |
 |---|---|---|
-| <lane id> | <lane province> | <why this lane cannot absorb the demand> |
-| <lane id> | <lane province> | <why this lane cannot absorb the demand> |
-
-<Aggregator rulings: which rounds found the lane mint-eligible, that the surface has no
-owning province, and any standing mint-table row — each dated.>
+| (none) | — | This fleet root (`~/Projects/shokunin`) has no lanes besides the two main-repo lanes, which own protocol and cross-lane review, not a domain. |
+| prymeagnt-archive lanes (harness-integrity, rlm-dispatch, gate-evidence, skill-discovery, game-dev-2d, audio, lore) | prime-agent harness and craft domains | A different fleet; none claims artifact reverse engineering. |
+| ompskills archived keepers (26, 2026-10-09) | UFO-FSD internals | Archived, not roster lanes; none claims artifact reverse engineering. |
 
 ## Domain boundary (claimed)
 
-**Owns:** <the surfaces this lane owns — processes, their ports/paths, config values
-referenced by consumers, identity-vs-reality reconciliation, probe conventions, drift
-detection, the cross-lane registry of which consumer config points at which surface>.
+**Core:** REA operation on this host — target routing, provider readiness (`rea doctor`),
+evidence paging and retention, native/JS/archive/managed/firmware workflows, and the
+honest observation/inference/unknown discipline.
 
-**Refuses:** <quality/eval concern> (<sibling lane id>), <credential material / auth flows>
-(<sibling lane id>), <dispatch / route mechanism> (<sibling lane id>), <remote surfaces>
-(<sibling lane id>). Boundary rule: kaidoku answers "<the identity/liveness question this
-lane answers>" — never "<the quality question>" or "<the request-safety question>".
+**Frontier:** IDA and Hopper providers (absent on this host), Android APK analysis, runtime
+observation of browser/Electron targets, firmware extraction prerequisites (Binwalk/Unblob),
+cross-version diffing.
+
+**Adjacent:** ordinary source-repository architecture analysis (not REA's job, per its skill);
+installing analysis engines or editing client configs (operator-owned).
 
 ## Probation
 
-Per PROTOCOL.md §Lifecycle "Sibling mint": this lane self-iterates ≥3 verified rounds
-building `corpus/` + `PROVINCE.md` before the operator adds a `MANIFEST.json` roster row.
+Per PROTOCOL.md §Lifecycle: this lane self-iterates ≥3 verified rounds building `corpus/` +
+`PROVINCE.md` before the operator adds a `MANIFEST.json` roster row.
