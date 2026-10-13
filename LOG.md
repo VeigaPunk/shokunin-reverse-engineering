@@ -103,10 +103,3 @@ domain `compareBundles`+`record_pairs` reaches `status:changed` only with ALL
 members paired. Round-5 audit-A (landed early) confirmed all three audited
 r4 files HOLD; five minor errata appended (1Password file-count wording,
 .jsc disassembly nondeterminism + recipe ordering, xvfb GPU flag nuance).
-
-## 2026-10-13 — HOURS.md ledger opened
-
-- Operator seed per PROTOCOL.md §Craft-hours: shonen→shokunin now requires
-  ≥10,000 verified craft-hours AND the SHONEN gate. Ledger starts at 0;
-  instrumented rounds accrue collective in-domain lane-minutes.
-- Evidence: fleet commit; PROTOCOL.md §Craft-hours.
