@@ -208,3 +208,13 @@ short), so the standing cheapest-complete path is the run-as-node disasm
 feeding a View8/jsc2js-style text mapper, or a jscd 14.8 table drop.
 Scratch artifacts at `/tmp/jsc-probe/` (extracted jsc, jscd binary,
 disasm.txt); repo tree untouched except this file.
+
+## Errata (round 5 audit)
+
+- **Disassembly nondeterminism (r5 audit-A):** `--print-bytecode` re-run yields
+  531,851 B / **115** function blocks vs the recorded 530,020 B / 116 — treat
+  block count as a nondeterminism band, not a pinned constant.
+- **Recipe ordering caveat:** `--print-bytecode` must be set BEFORE the
+  flag-hash dummy patch is applied — naive ordering yields a false
+  `cachedDataRejected=true`. Correct ordering confirms the recipe.
+

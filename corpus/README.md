@@ -18,7 +18,7 @@ A row is written when its file exists, never before.
 | Provider readiness | `2026-10-13-ghidra-install`, `2026-10-13-java-runtime` | held — Ghidra 12.1.4 8/8 checks, JDK 21.0.12.1 |
 | Native ELF | `2026-10-13-elf-observation-jq`, `2026-10-13-rea-live-jq-e2e`, `2026-10-13-r2-libjq-engine`, `2026-10-13-r3-verb-coverage` | held — e2e on `/usr/bin/jq` + `libjq.so.1` (jq_next bytecode VM); xrefs/trace/read-bytes/function exercised |
 | PE cross-format | `2026-10-13-pe-surface`, `2026-10-13-r2-pe-e2e-proof`, `2026-10-13-r3-pe-arm64` | held — x86-64 + ARM64 both e2e via Ghidra |
-| Electron/ASAR/JS | `2026-10-13-asar-surface`, `2026-10-13-r2-asar-deep-obsidian`, `2026-10-13-r3-renderer-asar`, `2026-10-13-r3-typora-signal`, `2026-10-13-r3-node-addons` | held — obsidian app.asar (launcher) + obsidian.asar (real app: 45 ipcMain ops); N-API taxonomy; .jsc bytecode loader identified |
+| Electron/ASAR/JS | `2026-10-13-asar-surface`, `2026-10-13-r2-asar-deep-obsidian`, `2026-10-13-r3-renderer-asar`, `2026-10-13-r3-typora-signal`, `2026-10-13-r3-node-addons`, `2026-10-13-r4-05-signal-asar`, `2026-10-13-r4-06-1password-asar` | held — obsidian app.asar (launcher) + obsidian.asar (real app: 45 ipcMain ops); N-API taxonomy; .jsc bytecode loader identified |
 | Archives & packages | `2026-10-13-pacman-packages`, `2026-10-13-r3-apk-inventory`, `2026-10-13-r3-appimage` | held — signed corpus; APK content graph (120 nodes verified); AppImage = ELF+unaddressable payload segment |
 | Managed assemblies | `2026-10-13-managed-assemblies`, `2026-10-13-r4-11-managed-unlock`, `2026-10-13-r4u-04-dnfile-il` | held — REA verbs on `0x14c` IL-only (196 dlls accepted); dnfile/dncil covers all classes incl. `0xfd1d`; 64MiB budget + GENERICINST limits mapped |
 | Recorded crashes | `2026-10-13-crash-evidence`, `2026-10-13-r2-crash-inspect-probe` | mechanism held (32 MiB cap) — organic cores too big, coverage frontier |
@@ -83,6 +83,8 @@ A row is written when its file exists, never before.
 | `2026-10-13-r4-14-libsignal` | libsignal 188MB Rust N-API anatomy | `nm`/`file`/REA on signal-desktop `.node` | 2026-10-13 |
 | `2026-10-13-r4-15-appimage-inner` | AppImage squashfs carved via unblob/7z; inner asar analyzes — "Grok Bot" = Anysphere/Cursor `sand` (715 members, full Electron surface) | unblob + 7z + `analyze-javascript-application` | 2026-10-13 |
 | `2026-10-13-r4-16-frontier-rescan` | r5 roadmap: ~26 self-provisionable + ~45 env-gated ops; managed REA verbs proven in-lane | doctor/capabilities rescan | 2026-10-13 |
+| `2026-10-13-r4-05-signal-asar` | signal-desktop 8.26.0 (38.5MB, 1,866 entries): three honest walls (integrity-mismatch on distro-postprocessed `.node` natives; per-source timeout aborts whole run; 68-92KB webpack chunks exhaust 8GiB worker heap) routed around via `--artifact-format directory` on 9.2MB pruned core → 173 IPC ops / 95 literal channels / zero sender validations; strict-CSP + V8-cachedData preload (Typora-like loader shape) | `analyze-javascript-application` ×3 + directory-format route | 2026-10-13 |
+| `2026-10-13-r4-10-real-version-pair` | full compare pipeline at 41-43MB (1password `op` 2.34.1→2.40.0, ~6-7min per verb — every verb re-imports fresh); CLI `rea compare` caps at `status:unknown`/6 unresolved_branch vs domain `compareBundles`+`record_pairs` → `status:changed` (ALL members paired); NEW HAZARD: Go toolchain bump (1.25.7→1.26.8) collapses symbol recovery 33,060→11,595 procs (11,588 `FUN_*`) — symbol-keyed pairing unsafe across Go versions, pair by ELF role/address | `rea analyze`/`compare`/domain compareBundles | 2026-10-13 |
 | `2026-10-13-r4u-01-firmware-deep` | GSP blobs = ELF64 RISC-V signature wrappers (56/156 regions); ucodes are stub containers (correct-empty); RISC-V `target_unavailable` REA-side | binwalk regions + unblob extract on 4 nvidia blobs | 2026-10-13 |
 | `2026-10-13-r4u-02-jadx-decode` | Android surface fully open: package inspect, manifest decode, class search, real Java decompile; jadx mints per-run ev ids (mkdtemp) vs apktool deterministic | jadx-headless-mcp 0.7.1 + apktool 3.0.3 on Godot APKs | 2026-10-13 |
 | `2026-10-13-r4u-03-unblob-extract` | `extract-firmware` live; pkg.tar.zst 100% carved (binwalk saw zero); squashfs needs sasquatch (7z fallback); per-run ev ids | unblob 26.6.4 on 3 candidates | 2026-10-13 |
@@ -108,7 +110,7 @@ A row is written when its file exists, never before.
 - `capture-electron-scenario` — typed refusal (Playwright handshake) despite same app launching manually.
 - sasquatch (AUR) — unblob squashfs recursion; 7z fallback covers today.
 - adb device surface — 22/24 verbs need a live device/emulator.
-- PE reserve: ARM64X hybrids; signal-desktop 38.5MB asar lane in flight.
+- PE reserve: ARM64X hybrids; signal-desktop 38.5MB asar held r4-05 (directory-format route-around for chunk-heap walls).
 - Runtime-obs extended: process-capture, managed `verify`/`project` ops, native call-target resolution (per r4-16 rescan: ~26 self-provisionable).
 - Blocked-on-operator: IDA (`REA_IDA_MCP_CONFIG`), Hopper (`HOPPER_LAUNCHER_PATH`), JEB — all absent.
 

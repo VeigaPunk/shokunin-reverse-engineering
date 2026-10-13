@@ -281,3 +281,11 @@ evidence or held by a recorded typed refusal. Remaining adjacent
 unexercised surface on this axis: `capture-web-screenshot` (named in
 r3-05), `capture-native-ui-scenario` / `observe-native-ui` /
 `observe-native-calls` (native-UI leg, different provider family).
+
+## Errata (round 5 audit)
+
+- **xvfb nuance (r5 audit-A):** `xvfb electron43 --no-sandbox --disable-gpu`
+  FATALs on GPU on this host (r4's control reportedly stayed up); `--no-sandbox`
+  alone stays up. Substance unchanged — all six envelopes reproduced verbatim
+  including the byte-identical `capture-electron-scenario` refusal.
+

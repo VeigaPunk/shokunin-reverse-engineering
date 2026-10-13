@@ -321,3 +321,14 @@ output path), user-gated `saveContentToFile` that auto-`openPath`s, renderer-con
 REA ran clean (0 parse failures, integrity contradictions none) but hit its result
 budget on every large bundle — treat its `browser_windows:0`/`main_handlers:0` as false
 negatives; the manual grep pass above is the corrected boundary record.
+
+## Errata (round 5 audit)
+
+- **File-count wording (r5 audit-A):** "423 inventory files" conflates REA's
+  `relevant_files:423` with archive membership — the asar actually lists **480**
+  files (the entry's own census sums to 480). "limitations ≈560" reproduces as
+  **288** top-level entries (413 nested "Resource constraint" occurrences);
+  graph nodes 3,058 vs the stated 3,059. All substantive claims (80 `rpc.handle`
+  channels, `file://` prefix gate, 84-method preload allowlist, full-REA
+  statistics byte-identical) confirmed verbatim.
+

@@ -81,3 +81,25 @@ domain) + weak-signal 6 (blame-the-tool before checking the spawn wrapper).
 SKILL decision table expanded to the whole held surface; known-limits section
 moved to r4. Two expansion lanes (signal-asar, real version-pair) still in
 flight at integration — their entries land on return.
+
+## 2026-10-13 — Round 4 follow-up: final two lanes landed
+
+Signal-asar and real-version-pair lanes returned after the main integration
+and are now admitted as `2026-10-13-r4-05-signal-asar.md` and
+`2026-10-13-r4-10-real-version-pair.md`. Signal's 38.5MB asar hit three honest
+walls (integrity-mismatch on distro-postprocessed `.node` natives —
+`record-and-continue` marks them observed-untrusted; per-source timeout
+aborting the whole run; 68-92KB webpack chunks exhausting the 8GiB worker
+heap during semantic) routed around via `--artifact-format directory` on a
+9.2MB pruned core → 173 IPC ops / 95 literal channels / zero sender
+validations / strict-CSP V8-cachedData preload (Typora-like loader shape but
+with source shipped). The `op` version pair exercised the full compare
+pipeline at 41-43MB (every verb re-imports fresh — per-call
+`REA_GHIDRA_STARTUP_TIMEOUT_MS` required) and surfaced a NEW hazard class:
+Go toolchain bump (1.25.7→1.26.8) collapses symbol recovery 33,060→11,595
+procs (11,588 `FUN_*`) — symbol-keyed pairing is unsafe across Go versions;
+pair by ELF role/address. CLI `rea compare` still caps at `status:unknown`;
+domain `compareBundles`+`record_pairs` reaches `status:changed` only with ALL
+members paired. Round-5 audit-A (landed early) confirmed all three audited
+r4 files HOLD; five minor errata appended (1Password file-count wording,
+.jsc disassembly nondeterminism + recipe ordering, xvfb GPU flag nuance).
