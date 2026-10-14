@@ -346,3 +346,29 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   discernment improved (four refusal/feed laws documented), calibration
   improved (the recon classifies Queue B honestly: 5 ready-now, not the
   census's vaguer env-gated).
+- 2026-10-14 — round 12 (goal-mode, 2 zai expand lanes + audit + parent):
+  Queue-B ready-now ledger. r12-01: L195 closed as the SIXTH row-7-class
+  census defect (r4-13 held pwntools before the census wrote; the
+  setuptools<81 pin law proven in a /tmp venv copy — bare setuptools 84
+  drops pkg_resources, <81 restores unicorn 2.1.2); L196/L197/L199×4/L200×1
+  confirmed right-at-write holdings (byte-exact re-derivations, four-site
+  normalization law for per-run ids); three never-exercised tails discharged
+  live — trace-android-references ×3 with a positive control, the FIRST
+  Android application-graph projection on this host (13 dex / 8 native libs
+  / 104 jni-bridge candidates, digest-keyed join, same homogeneous
+  inspect_artifact feed law as the Apple projector), and the first-ever
+  inspect-apktool-client success (592 B, environment-sourced 3.0.3).
+  r12-02: L203 compare-application-versions discharged (first real JS
+  application-version diff: 218 items, 10 changes all semantic-key-paired,
+  unknowns honest under partial coverage; managed-graph class reads
+  all-unknown as a disciplined non-verdict) + the full Queue-B exercised-set
+  ledger: remaining open set = adb 22 serial verbs (one device), JEB ×4,
+  ida ×12, hopper ×13, L204's decompiler route, L203's runtime-reconciliation
+  input class. Audit: both VERIFIED; adversarial close-check found ZERO
+  false closes; three defect-nits errata'd. Cross-file defect repaired
+  (parent): PROVINCE.md:117 + LOG.md:76 cited phantom evidence id
+  ev_4898906e… (appears nowhere in the corpus) — corrected to r4u-05's
+  recorded success id ev_5cb1856a… with an inline correction note.
+  Coverage 68 → 70. Godspeed verdicts: expansion/coverage/quality/
+  discernment/calibration all improved (the Queue-B ledger is the
+  deliverable — the lane now knows exactly what remains and why).

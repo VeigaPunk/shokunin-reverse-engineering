@@ -724,3 +724,150 @@ official-proxy ops (D).
   above is left as recorded; with r11-02's line 189 the Queue-A table
   (lines 165–189) is fully drained. Detail:
   `corpus/knowledge/2026-10-14-r11-01-queue-ops.md`.
+
+## Errata (round-12 goal-mode Queue-B lane, r12-01)
+
+- **Queue-B ready-now rows — table lines 195, 196, 197, 199, 200 — closed as
+  CENSUS DEFECTS of the row-7 class (all already exercised end-to-end by the
+  r4/r4u unlock waves the day the census was written), with the rows' three
+  never-exercised verbs discharged live in the same pass (r12-01)**; L198
+  (prlimit knob) and L201–L206 untouched. Re-derivation, not trust: L195
+  `inspect-binary-layout` reproduces r4-13's `ev_294a449c…60a71bd` BYTE-EXACT
+  (full 79,955 B envelope, twice today — content-addressing extends to
+  pwntools-elf; jq digest e8156675…f806 unchanged); the venv drift r11-02
+  flagged is real but LATENT for this verb (the layout profile never imports
+  unicorn), and the "one venv fix" is corrected to a version pin — bare
+  `setuptools` resolves to 84.0.0 which no longer bundles `pkg_resources`;
+  `setuptools<81` (80.10.2, proven in a /tmp venv copy, real venv untouched)
+  restores `import unicorn` 2.1.2 — pip's own warning states the bound
+  verbatim. Under `env -i` the typed `provider_unavailable` refusal still
+  reproduces (846 B, exit 1) — but all 7 REA_* keys are ambient in fresh
+  shells (`.bashrc:58-64`), so unsets runs are NOT gate-free. L196
+  `inspect-firmware-regions`: today's gsp_tu10x run (engine sha == r4u-01's
+  `5fc19aac…40d6`) re-derives the held 56-region census byte-identically
+  after substituting 56 PER-RUN REGION UUIDs — the only variance in
+  normalized_result (run-scoped-id taxonomy extends into region objects);
+  fresh id `ev_d321fe6c…979f`. L197 `extract-firmware`: the base-devel
+  re-carve is identical to the held `ev_82507d8e…` run modulo caller output
+  dir (`files[].path`) + per-run `chunks[].provider_id` (5 files / 3 chunks
+  zstd→tar→gzip / published 16,296 / coverage `partial`==`partial`;
+  `.PKGINFO` verbatim); fresh id `ev_f29eb2a5…7f64`. L199 jadx family: the
+  four r4u-02 verbs re-derived at normalized level with fresh per-run ids
+  (1925/129/complete; search-"" 1925 complete; GodotApp 1 field + 10 methods
+  with the same names; onCreate java/available/fell_back:false + all three
+  recorded body markers; jar sha re-pinned `6e5eacf5…73ff75`) — and the
+  row's TWO NEVER-EXERCISED TAIL VERBS discharged live:
+  `trace-android-references` answers incoming STATIC references only —
+  honest `total:0` at `coverage:"complete"` for the entry-point GodotApp
+  class and its onCreate override (framework-invoked = zero by nature);
+  positive control ProcessPhoenix ← GodotActivity `total:1`
+  (`ev_4093a663…2dbe`, `ev_123d8a6b…1b22`, `ev_f09ea5a2…4581`) — and
+  `project-android-application-graph`, whose contract source-pins
+  (`androidApplication.js:19-21`; `artifactInventoryEvidence.js:16-18,:33`)
+  as the SAME homogeneous `inventory_evidence` feed over `inspect_artifact`
+  Evidence r11-02 found for the Apple projector (the feed law unifies;
+  anything else refuses with r11-02's string verbatim). Fed a fresh APK
+  inventory (`ev_5a05f956…da67`, 148,363 B), it lands this host's FIRST
+  ANDROID APPLICATION-GRAPH PROJECTION: `ev_49d954f4…80bf1` /
+  `adp_d20f12ec…fc0d64` — `root_sha256` == the APK's own sha256, components
+  manifests 1 / resources 1 / **dex 13 / native_libraries 8** / jvm_classes
+  0 / signing 0 (the 13-dex and 8-.so censuses corroborated at inventory
+  level), `runtime_families:["dalvik-art","native"]`, **104
+  `jni-library-convention` bridge candidates**, coverage
+  `complete-within-inventory` / `inventory_complete:true`, byte-identical on
+  re-run, with the ZIP-inventory signing limitation verbatim ("ZIP inventory
+  cannot see the APK Signing Block, so an empty signing array does not mean
+  the APK is unsigned") corroborating r4u-02 from the other side. L200
+  apktool pair: `decode-android-resources` reproduces
+  `ev_a78193a3…7a1265` byte-exact TWICE (4th+5th independent productions
+  incl. r4u-02's two; 232 files / 11 strings / **88 locales** — the
+  r5-audit-corrected count reconfirmed) — the rescan's most-reproduced id
+  and a good determinism canary; the row's second verb
+  `inspect-apktool-client` (refusal-only since r2, `capability_unavailable`
+  with env unset) runs now that `REA_APKTOOL_COMMAND` is exported:
+  `ev_5dfddbf3…9cde` byte-identical on re-run, 592 B,
+  `{apktool_version:"3.0.3", command:"/usr/bin/apktool",
+  command_source:"environment"}`, and takes NO args (schema `{}`) — a
+  client-identity probe in the `inspect-adb-client` mold. All five lines
+  move queued → exercised-by-r4-13 / r4u-01 / r4u-02 / r4u-03 (with L199's
+  two tail verbs and L200's second verb discharged live); the table body
+  above is left as recorded. All substrate digests byte-identical
+  before/after; scratch namespaced /tmp/r12-01-*; Detail:
+  `corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md`.
+
+## Errata (round-12 goal-mode Queue-B lane, r12-02)
+
+- **Queue B row L203 (table line 203, `compare-application-versions`
+  success path) — discharged LIVE on BOTH input classes (r12-02)**; the
+  assignment's defect-hunt check answered NEGATIVE: r4-10's real-version
+  pair ran the native `compare`/`compareBundles`/`compareFunctions`
+  pipeline and invokes this verb nowhere — only the r2 refusal datum was
+  held, so the row was genuinely open, not a row-7-class close. JS-graph
+  class: r4-09's held obsidian evidences (`ev_a29ab2a0…` 1.12.7 +
+  `ev_4c3202c9…` 1.13.7, ids re-derived byte-exact from the
+  still-on-disk /tmp files) → `ev_7a8d0ec4…`/`javc_efb02d28…` — this
+  host's first real application-version diff: 218 items,
+  `{changed:10, unknown:208}`, added/removed honestly 0 under
+  partial/partial coverage, ALL 10 changed items
+  `matched`/`semantic-key`/medium confidence (12 exact-node + 11
+  exact-digest pairs land unchanged; 171 unmatched stay unknown);
+  byte-identical re-run. Managed class: a fresh members→project chain
+  re-mints r4's `ev_f382333b…` (fourth confirmation), r10-01's
+  `ev_92faacb3…`, and r9-02's `ev_4d2b732d…`/`magp_8d35cc89…`
+  byte-exact, projects Pinta.Effects (new `ev_35d2e7aa…`/
+  `magp_32fd21a4…`), and the pair compares validly → `ev_b5fc998f…`,
+  all-unknown `{unknown:4114}`/`unmatched:4114` — a disciplined
+  non-verdict; mechanism anchor: the managed projector emits the
+  JavaScriptApplicationGraph data model
+  (`dist/domain/managed/managedApplicationGraph.js:10-13`). Negative
+  ladder: `{}` → left/right `missing_argument`; same-evidence-id →
+  superRefine "Application version Evidence must be distinct" (r2's
+  source-only claim observed live). Row moves queued → exercised.
+  Detail + the FULL Queue-B exercised-set ledger (every line 195–206
+  classified held vs truly-open with spot-check re-derivations):
+  `corpus/knowledge/2026-10-14-r12-02-queue-b-ledger.md`.
+
+- **L195 classification correction (row-7 class, instance six) + ledger
+  highlights (r12-02)**: the census's exercised-set union (lines 146–158)
+  omits `inspect-binary-layout`, which r4-13 (wave 13, three waves before
+  this census) had already held end-to-end on `/usr/bin/jq`
+  (`ev_294a449c…`) — line 195 was exercised-at-write, not
+  refusal-only; this lane re-derived that id BYTE-IDENTICALLY (subject
+  digest == the on-disk jq sha) and refines r11-02's venv note:
+  `import unicorn` still fails on missing `pkg_resources`, yet the verb
+  succeeds — unicorn is not on the pwntools-elf layout import path (the
+  caveat is latent-only for Queue B). Ledger headline: L195–L198 wholly
+  held (fresh re-derivations: L196's 56-region gsp_tu10x census
+  reproduced with the per-run-id class recorded; L197's
+  empty-extraction law reproduced; L198's e2e success reproduced on
+  r4u-05's own input with the ELF fix verified durable in the ambient
+  env), L199 4/6 + L200 1/2 held, leaving exactly three NO-GAP success
+  verbs (`trace-android-references`, `project-android-application-graph`,
+  `inspect-apktool-client`) as the cheapest Queue-B drain, adb's 22 verbs
+  device-gated, and JEB/ida/hopper/L204-decompiler operator-gated (gates
+  re-verified this lane: keys unset, :8425 closed, /opt/hopper absent).
+  CITATION DEFECT for the parent: `PROVINCE.md:117` and `LOG.md:76` cite
+  r4u-05 evidence `ev_4898906e…`, which appears NOWHERE in the corpus
+  (repo-wide grep) — the entry's actual success id is `ev_5cb1856a…` on
+  `/tmp/wakaru-e2e/input.js`; correct or re-provenance the phantom id
+  (the lane could not: PROVINCE/LOG are outside its write scope).
+
+- **Sibling-overlap addendum (r12-02, post-write)**: r12-01 landed
+  mid-lane (finished 2026-10-14T06:39Z, after this lane's pre-write git
+  check) claiming rescan lines L195–L200 and, beyond its defect closes
+  (which match this lane's independently derived classifications), it
+  DISCHARGED LIVE the very rows this ledger had marked as the cheapest
+  open drain: `trace-android-references` ×3 (`ev_4093a663…`,
+  `ev_123d8a6b…`, `ev_f09ea5a2…`) and
+  `project-android-application-graph` (`ev_49d954f4…`/`adp_d20f12ec…`,
+  first Android application-graph projection on this host) under L199,
+  and `inspect-apktool-client`'s first-ever success (`ev_5dfddbf3…`)
+  under L200. It also corrected the L195 one-fix: bare `setuptools` now
+  resolves to 84.0.0 (no `pkg_resources`); the working pin is
+  `setuptools<81`. Zero row overlap with this lane (L203 unclaimed).
+  This ledger's L199/L200 "truly-open" verdicts and the "cheapest
+  drain" headline are hereby SUPERSEDED for those verbs — Queue B's
+  remaining open set after both lanes is exactly: L202's 22 adb verbs
+  (one device), L201 JEB ×4, L205 ida ×12, L206 hopper ×13, L204's
+  decompiler route (operator-gated), and L203's runtime-reconciliation
+  input class (opened by this lane's candidate 2 note).
