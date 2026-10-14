@@ -871,3 +871,55 @@ official-proxy ops (D).
   (one device), L201 JEB ×4, L205 ida ×12, L206 hopper ×13, L204's
   decompiler route (operator-gated), and L203's runtime-reconciliation
   input class (opened by this lane's candidate 2 note).
+
+## Errata (round-14 goal-mode residual disposition, r14-01)
+
+- **Queue-B residual disposition (r14-01) — of the six open items, THREE were
+  exercisable and were exercised LIVE; the residue is exactly device/operator-
+  gated and recorded, not forced (goal stop-rule)**. (1) **L203's residual
+  sub-class DISCHARGED**: the runtime-reconciliation input class ACCEPTS a real
+  `reconcile_javascript_runtime` Evidence — r10-02's still-on-disk
+  `ev_7943e598…` (re-derived byte-exact on its own input this lane) fed as left
+  against its own static layer `ev_f867295d…` returns this host's first
+  mixed-class compare (`ev_8f0ac46c…`/`javc_b64686f7…`, 86 items,
+  `{removed:83, unknown:3}`, byte-identical re-run), with two new laws:
+  coverage is DIRECTIONAL (right-complete × left-partial asserts `removed`,
+  unlike the partial×partial zeroing r12-02 recorded) and reconcile-side exact
+  pairs never grade `unchanged` (1 exact-node + 2 exact-digest pairs all land
+  `unknown`). Cross-app variant vs obsidian `ev_a29ab2a0…`: `{changed:1,
+  unknown:200}`, semantic-key/medium (`ev_6ad13357…`). L203 is now wholly
+  discharged on all three named input classes. (2) **L204's decompiler route
+  DISCHARGED END-TO-END — gate-premise correction for table line 204**: "no
+  SDK" remains true (`dotnet --list-sdks` empty) but is no longer the gate —
+  /usr/bin/dotnet carries RUNTIMES (NETCore.App 9.0.19 + 10.0.11) and
+  api.nuget.org is reachable, so the ilspycmd 11.1.0.9782 nupkg runs
+  framework-dependently from lane scratch (`DOTNET_ROLL_FORWARD=LatestMajor
+  dotnet pkg/tools/net10.0/any/ilspycmd.dll` — the recipe is the unblock).
+  Real decompilation of /usr/lib/pinta/Pinta.dll (102 .cs files, substrate
+  byte-identical after, sha `76472751…b9e8`) →
+  `import-managed-reconstruction` imported `AddinManagerAction.Activated`
+  (`0x0600017e`, real ilspy text) under the exact-build lock against held
+  `ev_f382333b…`: **`ev_01a35651…`/`mre_11f71a2d…`,
+  `matched_static_member:true`/`exact_build_required:true`**, byte-identical
+  re-run — the corpus's first import-managed-reconstruction success, zero
+  substrate writes. The row's "operator or hand-crafted JSON" fork is
+  superseded: the recipe IS self-provisioning. (3) **Line 176
+  (`import-reference-source`) DISCHARGED via the line-186 export chain** — the
+  ownership convention resolves by execution: r11-01's surviving
+  `scripts-export` tree (manifest `f6434545…`) imports as a
+  HistoricalSourceGraph (root `94ca09ac…`, 7 entries, byte-identical re-run)
+  and carries a PARSED internal import edge (main.js → lib.js,
+  `resolution:"internal"`, `parse_state:"parsed"`) — the export chain's output
+  is a valid reference-source root end-to-end. With this, Queue A (lines
+  165–189) is fully drained with no asterisks. **Recorded residue (live
+  re-verified this lane, none forced)**: L202's 22 adb serial verbs —
+  `adb devices` zero, `REA_ADB_PATH` set, the zero-device class re-verified
+  (`ev_d4d8cc77…` BYTE-IDENTICAL for the third time); L201 JEB ×4 — key UNSET,
+  :8425 closed, refusal re-pinned verbatim ("fetch failed", :8425 default);
+  L205 ida ×12 — `REA_IDA_MCP_CONFIG` UNSET, provider `not_configured`
+  (caps envelope 134,994 B, byte-size == this census's, zero drift); L206
+  hopper ×13 — `/opt/hopper/bin/Hopper` absent, `executable_missing`. Unblock
+  actions per item in the lane entry
+  (`corpus/knowledge/2026-10-14-r14-01-queue-b-residual.md`); scratch
+  /tmp/r14-01-scratch; the adb daemon side-effect killed, :5037 verified
+  closed.

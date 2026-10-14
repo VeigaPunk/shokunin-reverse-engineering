@@ -399,3 +399,25 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   integration (the r9-02 anchor range extended to :146-169 for the quoted
   moral; the heading scoped to "rounds 5-12, distilled in round 13"). Recorded
   so the round record matches the tree.
+- 2026-10-14 — round 14 (goal-mode FINAL, 2 zai lanes + audit + parent): the
+  Queue-B residual disposition + final sweep. r14-01: three of six 'blocked'
+  items were exercisable after all — L203 fully discharged on its third
+  input class (directional coverage law: right-complete x left-partial
+  asserts removed), L204 discharged END-TO-END (the 'no SDK' premise
+  corrected: dotnet RUNTIMES + nuget reachability make ilspycmd
+  framework-dependent — first corpus success for managed reconstruction,
+  import-managed-reconstruction under the exact-build lock), line 176
+  discharged via the line-186 export chain with the main.js→lib.js edge
+  parsed — Queue A+B now fully drained, no asterisks. Residue recorded with
+  live-re-verified blockers and exact unblock actions: adb 22 (zero devices,
+  ev_d4d8cc77 4th production), JEB x4 (key unset), ida x12 (config unset),
+  hopper x13 (launcher absent). r14-02: final sweep — coverage map 56→70/70
+  (14 rows backfilled, bookkeeping lag), r5 consistency checks 1/2/5/8 PASS,
+  cross-citation health (one new phantom ev_2628de89 — fleet-attested,
+  anchored at asar-surface by parent), promotion-eligibility recorded
+  (eligibility only: 4 SHONEN gates with verifier evidence, carried debt
+  resolved, 10 verified rounds — the operator decides promotion). Audit:
+  both VERIFIED, one anchor nit fixed. Godspeed verdicts: expansion
+  improved (the 'blocked' class shrank by half under live re-verification),
+  quality/calibration improved, depth unchanged. THE LANE'S TENTH GOAL-ERA
+  ROUND — kaidoku at 10/10.

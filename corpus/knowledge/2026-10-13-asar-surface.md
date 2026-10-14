@@ -81,3 +81,11 @@ Nine ASARs across obsidian (split main/renderer bundles + native .node in .unpac
 
 - `.unpacked` surface is larger than claimed: `signal-desktop` and `1Password`
   also ship `index.node` natives, not only obsidian's btime/get-fonts. (audit-C)
+
+## Provenance anchor (round-14 sweep, 2026-10-14, append-only)
+
+- `PROVINCE.md:46` cites evidence `ev_2628de89…` (default_app.asar, 5
+  files / 41 findings) from the round-1 e2e run. That id is
+  fleet-attested (`.ufo/reports/round-1/kaidoku.md:27`) but was never
+  anchored in this corpus — this note is the anchor: the observation
+  belongs to the r1-era asar sweep this entry summarizes.
