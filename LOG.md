@@ -392,3 +392,10 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   distilled to decision level), quality improved (verify-passed, zero
   overclaims), calibration improved (each rule carries exactly its evidence
   strength), expansion unchanged (no new surface — deliberate).
+- 2026-10-14 — round-13 tail correction (parent-side, uncounted): the round
+  commit message claimed "4 nits: 3 fixed" — in fact nit 1 (the r10-02
+  anchor) had already been self-corrected by the distill lane before landing
+  (the verify lane read a pre-correction cut), so only 2 fixes applied at
+  integration (the r9-02 anchor range extended to :146-169 for the quoted
+  moral; the heading scoped to "rounds 5-12, distilled in round 13"). Recorded
+  so the round record matches the tree.

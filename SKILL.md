@@ -74,7 +74,7 @@ a catalog-listed tool is available, not held.
 | `out_of_range` | input exceeds cap (32 MiB crash, 16 MiB EVM file) | split/dump subrange |
 | `invalid_format`/`invalid_input` | syntax (e.g. `search` needs `--mode regex --pattern '.*'`; `.zst` not a core) | re-shape input |
 
-## Queue-drain craft (rounds 5-13)
+## Queue-drain craft (rounds 5-12, distilled in round 13)
 
 Decision rules distilled from the round 5–13 queue-drain corpus entries; each
 bullet is bounded by the lines it cites.
@@ -162,7 +162,7 @@ bullet is bounded by the lines it cites.
   subject-only rewrite reproduces the renamed-path envelope bit-for-bit at
   the same id — verdicts attest the analysis, callers attest the module; pin
   request bytes when module identity matters
-  (`corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:146-163`).
+  (`corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:146-169`).
 - **Tool acceptance ≠ correctness.** `trace-web-source-location`'s VLQ
   validator catches dangling continuations yet accepted a semantically wrong
   line-delta map; the defect surfaced only via an independent decoder — never
