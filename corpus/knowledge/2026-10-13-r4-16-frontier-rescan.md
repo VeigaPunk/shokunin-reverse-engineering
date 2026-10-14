@@ -278,3 +278,44 @@ official-proxy ops (D).
   NOW (ghidra)" holds. Row 1 moves from queued to exercised; the table body
   above is left as recorded. Detail:
   `corpus/knowledge/2026-10-13-r5-02-call-targets-jq.md`.
+
+- **Queue A rows 2+3 discharged (r7-01):** `inspect-native-api` and
+  `inspect-native-data-type` ran live on `/usr/lib/libjq.so.1.0.4` (350,384 B
+  shared object, sha256 `7e8bcc…8b6b`, byte-identical before/after — the
+  "libjq" these rows name). API: `jq_next` resolves by NAME and by `0x117070`
+  to the same composed-workflow dossier (ev_85486b39…, ev_7ed3e243…; re-run
+  byte-identical → ev ids reproducible); the row-4 hint address `0x117070` is
+  jq_next's entry in Ghidra space (dynsym file vaddr `0x17070` + base
+  `0x100000`); boundary is decompiler-inferred (`undefined1[16]` return, 1
+  param, confidence `low`, 85-entry jump table @ `0x143eec` typed into 47
+  case mappings, 2 residual unknowns). Data-type: bare and both-args forms
+  refuse pre-analysis in 0.7 s ("Supply exactly one of type or address" — a
+  second, distinct error family vs r5-02's `VALIDATION_ERROR`); `--type
+  /string` and `--address 0x13f000` succeed (`available` `/string`; ev_3fed2e41…,
+  ev_6445bef7…), `--type /` and `--type undefined1` are honest
+  `unavailable` non-verdicts (ev_d1fb4eb6…, ev_81d4694a…); +0x100000
+  Ghidra base re-confirmed on a second artifact kind. Both rows move from
+  queued to exercised; the table body above is left as recorded. Detail:
+  `corpus/knowledge/2026-10-13-r7-01-queue-a-ops.md`.
+
+## Errata (round-7 expand lane, r7-02)
+
+- **Queue A rows 4–5 — the 3rd and 4th still-unexercised rows (table lines 168–169) — discharged (r7-02)**; census
+  address convention fixed:** `inspect-native-instruction` on
+  `/usr/lib/libjq.so.1.0.4` decodes the queued `libjq 0x117070` as
+  **`jq_next`'s entry instruction** (`ENDBR64`, bytes `f30f1efa`,
+  ev_b73334e9…) — `0x117070` is the **Ghidra image-space** address (image
+  base `0x100000`, confirmed by ev_f0221f0a… `observations.image_base`);
+  the file-space address is `0x17070` (`nm -D`), and probing that raw form
+  returns a typed `outside-memory` at exit 0 (ev_961a7a55…) — ELF DYN/PIE
+  addresses must be pre-shifted +`0x100000` (extends r5-02's PIE pitfall to
+  shared objects). `inspect-native-load-image` on ELF degrades honestly:
+  `status "unsupported"` — "Independent load-image verification currently
+  supports DOS MZ and explicit DOS COM targets only." (ev_f0221f0a… libjq,
+  ev_bdecdf21… jq) — while still emitting the full observation payload
+  (base `0x100000`; 29 mappings / 729 applied relocations / 185 entry
+  points for libjq). Cross-run: r5-02's verify re-reproduces today
+  (`resolved-indirect 0x109110` at site `0x1020a3`; instruction decode
+  `CALL qword ptr [0x107ea8]`, ev_65a06e0c…). Rows move queued → exercised;
+  the table body above is left as recorded. Detail:
+  `corpus/knowledge/2026-10-13-r7-02-queue-a-ops-2.md`.

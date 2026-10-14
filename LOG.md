@@ -212,3 +212,27 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   re-runnable verify lines), quality improved (audit bit-exact, errata
   append-only), discernment improved (validation-refusal vs gate-refusal
   distinguished; mechanism-vs-conclusion separated), operability unchanged.
+- 2026-10-13 — round 7 (goal-mode, 3 zai lanes + parent): four more Queue-A
+  ops discharged on libjq. r7-01: inspect-native-api resolves jq_next by name
+  AND by the queue's 0x117070 address to identical composed dossiers
+  (decompiler-inferred signature at low confidence, 85-entry jump table
+  typed into 47 cases); inspect-native-data-type reveals a SECOND distinct
+  refusal family (invalid_request 'Supply exactly one of type or address',
+  vs r5-02's VALIDATION_ERROR) plus honest unavailable non-verdicts. r7-02:
+  the 0x117070 queue hint proven to be jq_next's Ghidra-space entry
+  (ENDBR64 decode + nm/objdump triangulation); raw file-vaddr probes return
+  honest outside-memory — the PIE +0x100000 rule extends to shared objects;
+  inspect-native-load-image is provider-format-gated (DOS MZ/COM only) yet
+  still emits its full payload (base 0x100000, 29 mappings, 729
+  relocations, 185 entries). Audit: both entries VERIFIED, all evidence ids
+  bit-reproduced — and the audit confirmed evidence ids are content-
+  addressed across lanes and rounds (three independent lanes, identical
+  ids). One erratum row-label corrected (rows 4–5, the 3rd/4th
+  still-unexercised). Cross-lane corroboration: r7-02's decode independently
+  confirms r7-01's name-resolution inference. Noted for future lanes:
+  `which jq` → static ~/.local/bin/jq shadows the pinned dynamic /usr/bin/jq.
+  Coverage 58 → 60. Godspeed verdicts: expansion improved (4 ops held with
+  re-runnable verify), quality improved (audit 0 defects), discernment
+  improved (two refusal families distinguished; format-gate vs env-gate
+  separated), calibration improved (the content-addressed evidence-id
+  property now documented).
