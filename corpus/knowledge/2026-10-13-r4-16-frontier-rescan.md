@@ -390,3 +390,96 @@ official-proxy ops (D).
   7ac791ca… pins) byte-identical before/after. Rows 8+9 move queued →
   exercised; the table body above is left as recorded. Detail:
   `corpus/knowledge/2026-10-13-r8-02-queue-a-ops-2.md`.
+
+## Errata (round-9 expand lane, r9-02)
+
+- **Queue A rows 13+14 — the 4th and 5th still-unexercised rows (table lines
+  177–178) — discharged (r9-02)**; sibling r9-01 had not landed when this
+  lane's runs finished (git clean at the 04:22Z check → the assignment's
+  4th+5th fallback applied); r9-01 landed mid-write (~04:24Z) claiming rows
+  10+11 (table lines 174–175) — zero row overlap; line 176 was skipped by
+  both lanes (r8-02 leaves its gates with their owner).
+  `verify-managed-native-boundaries` ran live on the queued pairing
+  (boundaries `ev_082020a6…` + a libgtk native evidence) with a gate
+  refinement: the native side accepts only `inspect_macho` or
+  `analyze_function` Evidence — one symbol per function dossier
+  (`managedNativeVerificationMatch.js:17,:32`), so "a libgtk native ev" is a
+  104.0 s `rea function` dossier (`ev_6ac0c9af…`, `gtk_button_new`
+  `0x1d8380` = `nm -D` `0xd8380` + `0x100000`), not an analysis inventory.
+  The pairing answers honestly and negatively: 39/39 `unresolved`/
+  `no-native-candidate` at coverage `complete-within-inputs`
+  (`mnv_f7ed4e2e…`) — Pinta.dll's module_refs are macOS-only (Carbon /
+  CoreFoundation / ApplicationServices / `libsystem_c.dylib`, per
+  `ev_082020a6…`), and the result's own limitation states unresolved ≠
+  absence. Module identity is enforced and basename-normalized: a glibc
+  `setenv` dossier (`ev_2262ac05…`, `0x144bd0` = dynsym `0x44bd0` +
+  `0x100000` — the PIE rule re-confirmed on glibc) is `contradicted`/
+  `module-mismatch` against the declared `/usr/lib/system/libsystem_c.dylib`
+  scope (`mnv_1a2d59ec…`), while the same bytes analyzed as
+  `/tmp/libsystem_c.so` flip that import to `verified`/`exact-function-name`/
+  `observed` (`mnv_af96af7d…`) — calibration rename, labeled as such;
+  `libc.so.6` never strips because the lib-variant only fires for names
+  ending `.dylib`/`.so`. Wrong-kind native Evidence (the members bundle) →
+  accepted 0 / unsupported 1, 39 `unresolved`/`unsupported-native-evidence`,
+  coverage `partial` (`mnv_0c8a9a8c…`); boundaries offered as their own
+  native observation refuse typed (`invalid_request`/`invalid_input` with
+  `issues[]` — a third distinct managed-domain refusal family). NEW
+  authentication datum: `analyze_function` evidence ids are f(content,
+  params) — the renamed-path dossier carries the SAME id `ev_2262ac05…` with
+  a byte-different `subject`, and a subject-only rewrite (no re-analysis)
+  yields a request byte-identical to the honest rename (both `125cb2a9…`) →
+  identical envelope `ev_d7d2efa2…`/`mnv_af96af7d…`: module attribution is
+  caller-attested, not id-authenticated (refines the r2 "path-sensitive"
+  evidence-id note for this verb family; consumers must pin request bytes).
+  `project-managed-application-graph` discharged twice: members-only as
+  queued (`ev_f382333b…` → `ev_4d2b732d…`/`magp_8d35cc89…`, 1,545 nodes/1,544
+  edges, 1 link) and the three-evidence union (`ev_471d085b…` + `ev_f382333b…`
+  + `ev_082020a6…` → `ev_75927c55…`/`magp_b0495613…`, 1,636 nodes, 3 links,
+  +1 assembly/+39 pinvoke/+51 native-impl nodes) — both project into the
+  `JavaScriptApplicationGraph` data model, both `analyst-inference`/
+  `partial`. Census cost note: "chained, cheap" holds for the workflow verbs
+  (0.68–0.84 s verify, 1.23–1.29 s project) but the native-evidence leg is
+  minutes-class (36.8 s glibc / 104.0 s libgtk dossiers). All nine input
+  digests byte-identical before/after; both re-run verifications
+  byte-identical (same ids `ev_6f495c63…`, `ev_2262ac05…`). Rows 13+14 move
+  queued → exercised; the table body above is left as recorded. Detail:
+  `corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md`.
+
+## Errata (round-9 expand lane, r9-01)
+
+- **Queue A rows 10+11 — the next still-unexercised rows after the r5–r8
+  drain (table lines 174–175) — discharged (r9-01)**:
+  `build-reconstruction-obligation-ledger` and
+  `evaluate-reconstruction-coverage` ran live on the held obsidian renderer
+  Evidence (ev_e8a2c4ba…, 47,658,312 B, sha 95eb1948… — byte-identical
+  before/after; `/usr/lib/obsidian/obsidian.asar` still a52a7daf…). Input
+  shape finding first: both verbs consume an Evidence **bundle**
+  (`records[]` + derived manifests) and refuse hand-wrapped bundles typed
+  and verbatim — "Evidence bundle manifests are not canonical" — so the
+  census's "obsidian.asar ev" target is reachable only after canonical
+  wrapping (the package's own `createEvidenceBundle` produces the accepted
+  form; a lane holding only ev_ ids must first materialize envelopes via
+  the already-exercised `evidence-export`). Ledger success: ev_e249a865… /
+  `rol_c68008b9…` (390,597 B, 8.4 s, analyst-inference) — **171
+  obligations** (169 generated from the real graph by the node-kind policy
+  map + 2 authored reviewed), **status `unknown`, 0 of 171 verified, all
+  171 `static-only`**; a manifest-bound reviewer reaches `implemented`
+  (fixture+verifier diagnostics honest), a blocked reviewer stays
+  `blocked`; 29 unresolved-node limitations propagate from the r3 graph
+  verbatim; re-run byte-identical with the same id (content-addressing
+  extends to this verb). Refusals: dangling review-evidence id refuses
+  (`unreadable_output`, non-retryable — CLI masks the cause; recovered
+  verbatim via direct module repro: "Reviewed obligation Evidence is
+  missing: ev_000…0", single-diff attributed). Coverage success: bare,
+  timestamp-free closure, no Evidence envelope — `partial` with exactly one
+  named reason (`package-proof-missing`) plus the verb's own recommended
+  probe (`verify_reconstruction_package`), flipping to `ready` when that
+  named proof lands; verifier contracts are tamper-checked (canonical-JSON
+  digest recomputed; flip → verbatim "Verifier contract digest is
+  invalid:…"), unknown boundaries refuse verbatim; re-run byte-identical.
+  Cross-verb asymmetry recorded: the ledger projects referential TypeErrors
+  as non-retryable `unreadable_output`, coverage as retryable
+  `invalid_request`. All runs exit 0/1 as designed, longest 8.4 s, no
+  operator env. Rows 10+11 move queued → exercised; the table body above is
+  left as recorded. Detail:
+  `corpus/knowledge/2026-10-14-r9-01-queue-a-ops.md`.

@@ -274,3 +274,29 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   (r7-01, r7-02, r8-01, r8-02) inserted, map verified at 62 unique knowledge
   files cited (12 rows in the recent-entries table + the knowledge/ table
   rows reconciled).
+- 2026-10-14 — round 9 (goal-mode, 2 zai expand lanes + audit + parent):
+  Queue-A rows 10+11 (r9-01) and 13+14 (r9-02) discharged; line 176 skipped
+  per the provisioning-only convention. r9-01: the Evidence-BUNDLE input
+  shape (verbs consume canonical bundles, not ev ids — hand-wrapped bundles
+  refuse verbatim); build-reconstruction-obligation-ledger mints 171
+  obligations from the real graph, all static-only, 0/171 verified;
+  evaluate-reconstruction-coverage gates on package-proof (partial → ready);
+  cross-verb asymmetry: referential TypeErrors project as non-retryable
+  unreadable_output (ledger) vs retryable invalid_request (coverage). r9-02:
+  verify-managed-native-boundaries observes all four statuses live (libgtk
+  39/39 unresolved — honest structural negative; glibc setenv dossier
+  contradicted/module-mismatch; same bytes renamed → verified — the
+  authentication boundary: module attribution is CALLER-ATTESTED);
+  project-managed-application-graph lands members-only and three-evidence
+  union projections. Audit: both VERIFIED, every id bit-reproduced across
+  THREE independent runs (content-addressing now audit-proven); meta-
+  finding: expand lanes take 19–25 min, the r8 12-min cap would have failed
+  again, a 40-min cap suffices with ~15 min headroom, and an audit must
+  re-stat after first-sighting (r9-02 stayed writable ~4 min after first
+  appearing). Incident recorded: the shared /tmp/r9-* scratch namespace
+  collided between concurrent lanes (both re-pinned lane-uniquely, live
+  re-hash clean) — future lanes namespace scratch from the first write.
+  Coverage 62 → 64. Godspeed verdicts: expansion/quality/discernment/
+  calibration improved (bundle input shape, coverage-gate semantics, and the
+  caller-attested authentication boundary documented; audit-cap calibration
+  measured).
