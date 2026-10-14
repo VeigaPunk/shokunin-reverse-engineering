@@ -162,3 +162,13 @@ functional on assemblies under roughly 205 KB. The Mono.Cecil/dotnet path
 remains a dead end (library without entry point, no SDK/compiler/script host)
 and is now unnecessary. Verdict: managed IL = REACHABLE via dnfile+dncil;
 rea managed verbs = usable-but-bounded complement, not the unlock.
+
+## Errata (round 5 audit)
+
+- **Boundary arithmetic (r5 audit-B):** "all 14 dlls ≥220160 fail" contradicts
+  its own data — Pinta.Effects at exactly 220,160 B PASSES; the fail count is
+  13 of 14. Also: raw `bytes` objects fail on `'tell'`, not `'read_uint8'`
+  (only BytesIO raises `read_uint8`).
+- **Sweep total (r5 audit-B):** the 36-dll sweep totals **23 complete / 13
+  RL-fail** (audit-A variant said 22/14 — the difference is the boundary case).
+

@@ -75,7 +75,7 @@ Axes for this sweep: **coverage** (what asar-bearing apps exist on the host), **
 - suggested: reject — counter-evidence recorded above; keep as a calibration entry so future lanes don't script it as a streamer.
 
 ## Summary
-Six ASARs across obsidian (split main/renderer bundles + native .node in .unpacked), signal-desktop, 1Password (webpack-flattened), and two electron runtime stubs; `@electron/asar list` enumerates all read-only while `file` misses one and `extract-file` writes to cwd; REA 6.4.0 resolves with a healthy Ghidra provider and owns the analysis layer (`analyze-javascript-application`, source recovery, runtime reconciliation) that raw asar enumeration cannot reach.
+Nine ASARs across obsidian (split main/renderer bundles + native .node in .unpacked), signal-desktop, 1Password (webpack-flattened), typora ×3 (r3 sweep addition — the round-5 re-audit caught this line still reading "Six"), and two electron runtime stubs; `@electron/asar list` enumerates all read-only while `file` misses one and `extract-file` writes to cwd; REA 6.4.0 resolves with a healthy Ghidra provider and owns the analysis layer (`analyze-javascript-application`, source recovery, runtime reconciliation) that raw asar enumeration cannot reach.
 
 ## Errata (round 2)
 

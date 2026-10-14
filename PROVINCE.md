@@ -17,10 +17,13 @@ REA skill version (v37 — `rea doctor` reports `skill: stale` because the
 per-client `claude_code` destination `~/.claude/skills/` is absent, not because
 the shared copy drifted); Ghidra's own `application.version`; provider env keys
 now set in `.bashrc` (`REA_BINWALK_COMMAND`, `REA_UNBLOB_COMMAND`,
-`REA_JADX_MCP_JAR`, `REA_APKTOOL_JAR`, `REA_ADB_PATH`, `REA_PWNTOOLS_PYTHON`,
+`REA_JADX_MCP_JAR`, `REA_APKTOOL_COMMAND`, `REA_ADB_PATH`, `REA_PWNTOOLS_PYTHON`,
 `REA_WAKARU_COMMAND` — this one must bind the `@wakaru/cli-linux-x64` ELF, not
 the node shim, see r4u-05) and still unset (`REA_IDA_MCP_CONFIG`,
-`HOPPER_LAUNCHER_PATH`).
+`HOPPER_LAUNCHER_PATH`). [r5-audit C8: apktool key is `REA_APKTOOL_COMMAND` —
+REA 6.4.0 reads `APKTOOL_COMMAND_ENV="REA_APKTOOL_COMMAND"`, exported at
+`.bashrc:61` → `/usr/bin/apktool`; the previously documented jar-path key
+name was exported nowhere on this host]
 
 Probe/reconciliation conventions: `rea doctor` is the environment verdict;
 `binary_session {}` is the live-server verdict (`result.tool_availability` +
@@ -43,7 +46,7 @@ Surfaces owned now — each verified on this host 2026-10-13.
 | Electron/ASAR/JavaScript | `analyze_javascript_application` on `.asar` or extracted tree; `inspect_analysis_view` paging; asar archives pinned on host: obsidian ×2, signal, 1Password, electron39/43 stubs, typora ×3 (r1 sweep missed them) | `analyze_javascript_application` `detail:"summary"` on a small asar | `default_app.asar` (electron43) → 5 files, 41 findings, evidence `ev_2628de89…`; 1Password 423-file asar + 188MB Rust N-API core (r4-06); AppImage inner asar via unblob/7z carve (r4-15) |
 | Archive/package inventory | `inspect_artifact`/`extract_artifact` (`available:true` in live session); pacman `.pkg.tar.zst` corpus 1556 signed archives; `.MTREE` per-file sha256; `pacman -Qkk` verify | `binary_session {}` capabilities | installed `jq` verified byte-identical to signed archive member |
 | Native PE via Ghidra | `rea analyze/search/decompile <pe>` — pure-Java `PeLoader`, wine-independent | `rea analyze <pe>` → segments/procedures | `cli-64.exe` (sha256 `bbb3de57…`): 8 segments, 142 procedures, `entry` decompiled; deterministic re-run (r2-05) |
-| Cross-version compare | `rea function --procedure`; `compare_functions`/`compareFunctions` (8 typed dims — domain API or MCP only, **no CLI verb**); `rea compare` membership diff; `record_pairs` verdicts are MCP-session-only (changed verdict requires ALL members paired — r3); `compare-javascript-export-shapes` CLI-held (needs inline Evidence objects — retained refs are MCP-only) | function-level diff on two versions | expac 10-12↔10-13 `entry`/`main` compared; obsidian export-shape diff across versions (r4-09); `REA_GHIDRA_STARTUP_TIMEOUT_MS` needed past ~40MB targets (r2-08) |
+| Cross-version compare | `rea function --procedure`; `compare_functions`/`compareFunctions` (8 typed dims — domain API or MCP only, **no CLI verb**); `rea compare` membership diff; `record_pairs` verdicts are MCP-session-only (changed verdict requires ALL members paired — r3); `compare-javascript-export-shapes` CLI-held (needs inline Evidence objects — retained refs are MCP-only) | function-level diff on two versions | expac 10-12↔10-13 `entry`/`main` compared; obsidian export-shape diff across versions (r4-09); real-version pair `op` 2.34.1→2.40.0 (41–43MB Go ELF): Go toolchain bump go1.25.7→go1.26.8 collapses provider symbol recovery 33,060→11,595 procs (11,588 `FUN_*`) — symbol-keyed pairing unsafe across Go versions, pair by ELF role/address (r4-10) [r5-audit C1]; `REA_GHIDRA_STARTUP_TIMEOUT_MS` needed past ~40MB targets (r2-08) |
 | Runtime observation (CDP) | self-launched targets: `chromium --headless --remote-debugging-port=9222`, `xvfb-run electron --remote-debugging-port=9223`; `list_browser_targets`, `inspect-web-page`, `list_electron_targets`, `inspect-electron-page`, `capture-browser-scenario` | `list-browser-targets http://127.0.0.1:9222` on own instance | both legs held r3 (05): CDP enumerate+inspect verified, connect-mode scenario capture ran |
 | EVM interface | `rea inspect-evm-interface <file> <raw|hex>` — encoding is POSITIONAL (no `--encoding` flag despite schema); bundled EVMole 0.9.3/WASM | synthetic hex carrier → selector extraction | hand-assembled 81-byte dispatcher recovered all 3 planted ERC-20 selectors; `dispatch:"abi"` (r3-07) |
 | Carrierless-macOS surface via synth carriers | `inspect-keyed-archive <plist> [archive]` (archive positional), `decode-interface-builder` (needs `CFBundleExecutable` in Info.plist), `trace-dylib-resolution` (8-aligned cmdsize) | synth carriers (plistlib, hand-rolled Mach-O) — recipes in r3-13 | all three WORK on Linux; `inspect-plist` alone hard-gates macOS |
@@ -63,38 +66,19 @@ each round.
 ## Frontier
 
 Claimed in MINT.md, not yet held. Each moves to Core by a `LOG.md` entry citing
-the corpus entries that earned it.
+the corpus entries that earned it. [r5-audit C1: six stale pre-round-4 bullets
+pruned from this section — managed PE/CLI, firmware, offline ELF layout,
+Android decode, runtime-obs extended, cross-version extended — each now held
+in "Round-4 additions to Core" below; reconciliation follows the r4-16
+frontier rescan]
 
 - **PE subtypes** — x86-64 AND ARM64 both held (r3-08: cli-arm64.exe, 136
   procedures via Ghidra). Reserve: 91MB Godot ARM64 template, ARM64X hybrids.
-- **Managed PE/CLI assemblies** — `inspect_managed_artifact` family reports
-  `available:true` but rejected a real AnyCPU `Microsoft.*.dll` as
-  `unsupported PE architecture`; no SDK/`ilspycmd`/Mono on host (Pinta's
-  Mono.Cecil is a reader substrate but no compiler to build a harness).
-- **Firmware images** — `inspect-firmware-regions` probed r2: requires
-  `REA_BINWALK_COMMAND` (Binwalk 3.1.x, version-gated) — NOT Binwalk-free as
-  catalog prose suggested; `extract-firmware` needs `REA_UNBLOB_COMMAND`
-  (Unblob 26.6.x). Targets ready (`ucodes_tu10x.bin` 12KB, GSP blobs are ELF64
-  RISC-V). REA's `analyze` refuses all firmware bytes — no fallback path.
 - **Recorded crashes >32 MiB** — mechanism held (Core); all 3 organic cores
   exceed the cap (waybar 434MB). Needs a cap-raising knob or partial-core
   intake — neither exists. Retention decays oldest-first.
-- **Offline ELF layout** — `inspect-binary-layout` still gated on
-  `REA_PWNTOOLS_PYTHON`; the uv-venv provisioning recipe is documented
-  (r2 lessons) but not persisted — operator-owned.
 - **Alternate providers** — IDA (`REA_IDA_MCP_CONFIG` unset), Hopper (absent),
   JEB (unprobed). Engine installs are operator-owned.
-- **Android APK decode** — archive inventory held (Core, r3-06: 120-node
-  verified content graph); dex/manifest/resources need `REA_JADX_MCP_JAR`
-  (jadx-headless-mcp 0.7.1) + `REA_APKTOOL_COMMAND` — both absent.
-- **Runtime observation (extended)** — CDP enumerate/inspect held (Core);
-  unexercised: `observe-web-session`, `observe-web-execution`,
-  `list/observe-javascript-runtime` (needs `--inspect` node), 
-  `capture-electron-scenario`, `reconcile_javascript_runtime`.
-- **Cross-version diffing (extended)** — machinery held incl. a real
-  `status:changed` pair (r3-14); `compare-application-versions` probe-refused
-  r2; unexercised: `compare_javascript_export_shapes`, multi-version pacman
-  pairs beyond expac.
 - **macOS-only surfaces** — Mach-O/plist/LLDB/asset-catalog ops report
   `unsupported_host` on Linux; recorded so the lane never claims them.
 - **EVM bytecode (extended)** — selectors held on synthetic dispatcher
@@ -131,7 +115,7 @@ absorbed.
 |---|---|---|---|
 | Firmware regions + extract | `REA_BINWALK_COMMAND=/usr/bin/binwalk` (3.1.0), `REA_UNBLOB_COMMAND=~/.local/bin/unblob` (26.6.4) | `inspect-firmware-regions`, `extract-firmware` | GSP blobs: 56/156 regions mapped (`ev_0388cb9a…`, `ev_4009f834…`); nvidia ucodes correct-empty stubs; pkg.tar.zst 100% carved (r4u-01/03) |
 | JavaScript source recovery | `REA_WAKARU_COMMAND` → `@wakaru/cli-linux-x64` ELF (**not** the node shim — REA wraps providers in `prlimit --as=1GiB` which V8 isolate init cannot survive) | `recover-javascript-sources <file> <outdir>` (file arg, not dir) | `ev_4898906e…` on lodash.min.js → deobfuscated modules + provenance map (r4u-05, fix applied .bashrc:63) |
-| Android deep analysis | `REA_JADX_MCP_JAR` (jadx-headless-mcp 0.7.1-all, sha256 `6e5eacf5…`), `REA_APKTOOL_JAR` | `inspect-android-package`, `decode-android-resources`, `inspect-android-method` | Godot APK: 1,925 classes, decoded manifest, real Java decompile `ev_ec92f4d1…` (r4u-02) |
+| Android deep analysis | `REA_JADX_MCP_JAR` (jadx-headless-mcp 0.7.1-all, sha256 `6e5eacf5…`), `REA_APKTOOL_COMMAND` [r5-audit C8: key name corrected to the one REA 6.4.0 actually reads — exported at `.bashrc:61` → `/usr/bin/apktool`] | `inspect-android-package`, `decode-android-resources`, `inspect-android-method` | Godot APK: 1,925 classes, decoded manifest, real Java decompile `ev_ec92f4d1…` (r4u-02) |
 | Managed IL (two-tool map) | `REA_DOTNET*` keys unset — REA managed verbs are provider-free; `dnfile 0.18.0`+`dncil 1.0.2` pip pkgs + RVA shim over `dnPE.get_data` | `inspect-managed-artifact`, `inspect-managed-members`; dnfile+dncil decode | Pinta.dll `ev_471d085b…`; Pinta.Core 2,594/2,594 + Pinta.dll 650/650 method bodies via dnfile/dncil incl. REA-refused `0xfd1d` class (r4-11, r4u-04) |
 | `.jsc` V8 bytecode | `ELECTRON_RUN_AS_NODE=1` + electron version matching the target's V8 (typora = V8 14.8 → electron 42.2.0); host node 24/V8 13.6 REJECTS cached data | `electron --print-bytecode <jsc>` under run-as-node | typora `atom.compiled.dist.jsc` → 530KB Ignition disassembly, 116 function blocks (r4-07) |
 | Runtime observation verbs | self-launched CDP/V8-inspector targets (r3 recipe); `node --inspect` needs a real file target (bare `file://` → `unsupported_location`) | `observe-web-session`, `observe-web-execution`, `observe-javascript-runtime`, `reconcile-javascript-runtime` | all held r4-08; `capture-electron-scenario` remains typed refusal (Playwright handshake, not app launch) |
@@ -146,10 +130,11 @@ absorbed.
   gate (outer REL + carved inner EXEC both refused). Next: direct analyzeHeadless
   on carved `.fwimage` EXEC, or `--offset/--length` extract first.
 - **>90 MB PE scale wall** — 91.6 MB Godot ARM64 PE hits REA's ~900s internal
-  session deadline (`provider_timeout`, GhidraClient.js:607), still progressing at
-  kill. Not OOM (RSS ~2.36GB vs -Xmx2G headroom exists). Next: raise
-  `REA_GHIDRA_STARTUP_TIMEOUT_MS` to ~3.6Ms + `GHIDRA_HEADLESS_MAXMEM=6-8G` on an
-  idle host, or bisect with a 2-5MB PE.
+  session deadline (`provider_timeout`, GhidraClient.js:607), still progressing
+  at kill (r4-12) [r5-audit C1: r4-12 cite added]. Not OOM (RSS ~2.36GB vs
+  -Xmx2G headroom exists). Next: raise `REA_GHIDRA_STARTUP_TIMEOUT_MS` to
+  ~3.6Ms + `GHIDRA_HEADLESS_MAXMEM=6-8G` on an idle host, or bisect with a
+  2-5MB PE.
 - **`.jsc` → source mapping** — Ignition disassembly held; a View8/jsc2js-style
   bytecode-to-source mapper is the next frontier for typora's real app.
 - **sasquatch** — unblob's squashfs recursion extractor (AUR-only); 7z fallback
@@ -157,6 +142,14 @@ absorbed.
 - **adb device surface** — 22/24 verbs need a live device/emulator;
   `collect-adb-bugreport` blocks ~10min on dead serial.
 - **Signal/1Password-scale asar analysis** — 1Password's 40.7MB asar + 188MB
-  native core are mapped (r4-06); signal's 38.5MB asar lane in flight.
+  native core are mapped (r4-06); signal's 38.5MB asar (1,866 entries) mapped
+  via a scoped `--artifact-format directory` run past three honest walls, and
+  its stripped Rust `.node` addons recovered down to the neon registration
+  surface (r4-05, r4-14) [r5-audit C1: lane landed — stale pending-status
+  wording removed].
+- **Cross-version residuals** — `compare-application-versions` still
+  probe-refused since r2; multi-version pacman pairs beyond expac unexercised
+  [r5-audit C1: merged from the pruned Frontier bullet — its
+  `compare_javascript_export_shapes` item is now held (Core, r4-09)].
 - **Operator-gated, still absent**: IDA (`REA_IDA_MCP_CONFIG`), Hopper
   (`HOPPER_LAUNCHER_PATH`), JEB.

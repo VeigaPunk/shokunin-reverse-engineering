@@ -230,3 +230,10 @@ provider never checks (`not_performed` is honest). Watch-items: jadx
 evidence ids are per-run (mkdtemp path in `raw_result`), apktool emits
 `subject:null` envelopes, every CLI call pays a fresh ~3.5 s full-APK load,
 and `.so`/signature/split-APK axes remain outside both providers.
+
+## Errata (round 5 audit)
+
+- **Locale census (r5 audit-C):** `decode-android-resources` decodes **88**
+  locales, not 92 — identical evidence id ⇒ identical data ⇒ the recorded count
+  was a miscount. All verb claims otherwise reproduce byte-identical.
+

@@ -103,3 +103,89 @@ domain `compareBundles`+`record_pairs` reaches `status:changed` only with ALL
 members paired. Round-5 audit-A (landed early) confirmed all three audited
 r4 files HOLD; five minor errata appended (1Password file-count wording,
 .jsc disassembly nondeterminism + recipe ordering, xvfb GPU flag nuance).
+
+## 2026-10-13 — Round 5: r4/r4u corpus re-audit (13/13 HOLD), consistency repairs in flight, RISC-V `target_unavailable` bypassed
+
+Round-5 wave: 5 lanes under fleet `.ufo/waves/kaidoku-r5/`. Three adversarial
+audit lanes re-verified the round-4 corpus, a consistency lane cross-checked
+the repo's indexes, and the expansion lane broke the RISC-V wall. Correction
+to the follow-up above, first: it says "five minor errata appended" but lists
+four, and exactly four bullets exist (r4-06×1, r4-07×2, r4-08×1) — four it is
+(flagged by this round's consistency audit, LOG.md:104).
+
+Audit A (`01-audit-A.md`): r4-06 (1Password asar), r4-07 (jsc bytecode), r4-08
+(observe verbs) re-run from re-synthesized inputs — every sha256 pin held, all
+three HOLDS, nothing refuted. Errata filed as `## Errata (round 5 audit)`
+blocks on r4-06:325, r4-07:212, r4-08:285: the asar lists 480 files (REA's 423
+is the relevant-file subset; "limitations ≈560" → 288 top-level entries);
+`--print-bytecode` disasm is a nondeterminism band (531,851 B / 115 blocks vs
+530,020 / 116) and the recipe is order-sensitive (flag before the flag-hash
+dummy); xvfb electron FATALs on `--disable-gpu` alone on this host. Audit B
+(`02-audit-B.md`): r4-09/-11/-12/-13 — 8/8 `compare-javascript-export-shapes`
+outputs byte-identical (`cmp -s`, incl. a 63 MB request), 2914/2914 dncil
+decode, 196/181 machine census exact; zero refuted. Fleet drift recorded:
+`REA_PWNTOOLS_PYTHON` is now persisted (`~/.bashrc:58`, `~/.profile:7`) —
+reproduce the r1–r3 refusal semantics only under `env -u`. Audit C
+(`03-audit-C.md`): 6/6 r4u entries HOLD (firmware deep, jadx, unblob, dnfile
+IL, wakaru OOM chain, adb taxonomy); determinism asymmetry verified across
+providers — managed/android/adb verbs mint content-deterministic evidence ids
+(three reproduced byte-exact), jadx/unblob per-run. The errata B/C filed sit
+UNCOMMITTED as `## Errata (round 5 audit)` blocks on
+`corpus/knowledge/2026-10-13-r4-11-managed-unlock.md:166` (boundary
+arithmetic: Pinta.Effects at exactly 220,160 B PASSES → fail count 13 of 14,
+sweep 23 complete / 13 resource-limit),
+`r4u-02-jadx-decode.md:234` (locales 88, not 92 — byte-identical evidence id
+proves a miscount), `r4u-04-dnfile-il.md:177` (Pinta.Core census 15,992 rows
+/ 31 tables, not 14,417 / 17).
+
+Consistency audit (`04-audit-consistency.md`, repo @ f507327): README
+knowledge table 56/56 complete both directions, host asar census 9/9 exact,
+all errata blocks cite real original text — but DRIFT: six stale PROVINCE.md
+Frontier bullets contradicting the Round-4 Core table (`:70-97` vs
+`:128-140`), the signal lane still marked "in flight" (`:160`),
+`REA_APKTOOL_JAR` documented where the real key is `REA_APKTOOL_COMMAND`
+(`:20`, `:134` — SKILL.md:69 spells it right), SKILL.md:48 stale `zstd -d`
+step, coverage map missing 12 r4-era entries (44/56). The repair list is
+in flight this wave by sibling lanes (PROVINCE/SKILL/README); the log-side
+count slip is repaired here by append, not by editing the entry above.
+
+Headline — `05-riscv-deep.md`: the RISC-V `target_unavailable` wall is
+bypassable. The gate is REA's parse-time e_machine allowlist
+(`dist/domain/binaryTarget.js:105`, switch `:208-222` = {3,62,8,40,183};
+EM_RISCV=243 has no case). Route A (through REA): patch e_machine 243→183
+(2 bytes at offset 18) + `REA_GHIDRA_LANGUAGE_ID=RISCV:LE:64:default` → RC=0,
+94 procedures plus the `csreg` block on the 766 KB carved EXEC in ~50 s; the
+control (patch, no override) gives 0 procedures as arm64 — clean A/B. Honesty
+tax: the envelope records the patched `architecture:"arm64"` and patched
+sha256, so declare the patch wherever that evidence is cited. Route B (around
+REA): direct `analyzeHeadless` imports the UNPATCHED 29 MB EXEC natively
+(auto-detects `RISCV:LE:64:default:gcc`) and a 900 s-capped auto-analysis
+reaches 10,766 functions / 3,141,043 instructions / 42,057 symbols with a
+coherent RV64 entry sequence. Scaling: the full patched EXEC still dies
+`provider_timeout` through REA at 330 s default and at 1800 s raised — keep
+REA-route slices ≲1 MB, send full firmware to direct Ghidra. Dead ends
+pinned: `.hop` rename skips the parse but no provider accepts `database`
+kind; `--target-format` is dos-com only (0xff00 B cap); `extract-firmware
+--offset/--length` verifies a slice's sha256 but publishes 0 files. Working
+rule: RISC-V via REA = patch + override for bounded slices; full GSP EXEC =
+direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
+- 2026-10-13 — round 5 close-out (goal-mode wave, 6 zai lanes + parent): the
+  in-flight round is now closed and the record repaired. Landed: SCORECARD.md
+  created (the missing axis record README/AXES require — three-trend primary
+  verdicts + six-axis secondary readings, all evidence-anchored, never
+  scalar); PROVINCE repaired per the r5 consistency audit (six stale Frontier
+  bullets pruned, REA_APKTOOL_JAR → REA_APKTOOL_COMMAND at both sites, signal
+  asar 'in flight' → landed, r4-10/12/14/16 citations reconciled — each edit
+  carries an [r5-audit C#] marker); SKILL.md zstd -d stale claim fixed;
+  SHONEN.md boxes annotated with their documented verifier evidence (none
+  UNDOCUMENTED) and the stale PROTOCOL.md line-cite corrected (419-428);
+  coverage map backfilled 44/56 → 56/56 (12 rows); the asar under-count minor
+  (6 → 9) fixed in both sites; this LOG entry. Verification: the consistency
+  audit's checks 1/2/5/8 re-run post-repair → PASS (the re-audit also
+  corrected a premise: six r5 errata blocks exist, three committed + three
+  now landing here). Godspeed verdicts: operability improved (record now
+  complete: SCORECARD + LOG + committed errata), calibration improved (stale
+  claims pruned with audit authority), freshness improved (coverage map
+  complete), quality improved (audit PASS), expansion unchanged. Carried
+  forward: the RISC-V bypass (05-riscv-deep) awaits its corpus entry — queued
+  as a round-6 candidate.
