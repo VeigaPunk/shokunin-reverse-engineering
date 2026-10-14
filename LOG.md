@@ -236,3 +236,27 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   improved (two refusal families distinguished; format-gate vs env-gate
   separated), calibration improved (the content-addressed evidence-id
   property now documented).
+- 2026-10-14 — round 8 (goal-mode, 2 zai expand lanes + resumed audit + parent):
+  Queue-A rows 6, 8, 9 discharged (and row 7 closed as a census defect — it
+  was already exercised by r4-09, re-derived byte-exact). r8-01:
+  annotate-native-function — annotations do NOT persist (a fresh
+  inspect-native-api re-derived r7-01's envelope byte-identically with the
+  original name); interior addresses snap to the containing function's
+  entry; unknown names refuse post-analysis (14.2 s import before the
+  error — a new cost class vs r7-01's 0.7 s pre-analysis gates). r8-02:
+  trace-javascript-semantics — the status machine refuses absence claims on
+  partial graphs (zero-match seeds return `partial`, not the schema's
+  `no-match`; consumers must test total_seed_matches); compare-source-to-
+  bundle succeeds from held artifacts alone (19/19 exact via
+  exact-source-digest) and the typora `.jsc` wall resolves as the data
+  model's, not a missing tool. Audit (resumed after its poll cap honestly
+  expired pre-landing): r8-01 VERIFIED 9/9; r8-02 VERIFIED with one
+  wrong-by-one-artifact parent-Evidence pointer — corrected by append-only
+  erratum (:ev_4c3202c9, not ev_039c8069) plus a recorded terminology
+  hazard (two "truncated" layers). Line 172 dual-discharge adjudicated
+  complementary (7 distinct ids, disjoint seeds, zero contradiction). The
+  audit lane's honest no-verdict-at-cap is itself recorded as the right
+  behavior. Coverage 60 → 62. Godspeed verdicts: expansion/quality/
+  discernment/calibration improved (non-persistence proven by re-derivation;
+  the partial-graph status semantics documented; the census defect closed
+  with byte-exact evidence).

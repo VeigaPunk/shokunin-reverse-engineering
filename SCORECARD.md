@@ -72,6 +72,7 @@ discernment verified-by-audit with 10 errata applied
 
 | 6 | expansion / quality / discernment (all improved) | r5 in-flight, record repaired (round 5) | r5-01-riscv-bypass + r5-02-call-targets-jq land with audit-bit-exact evidence (independent re-runs reproduced every evidence id); 4 stale wall claims repaired; 4 append-only errata; coverage 56→58 | `.ufo/waves/kaidoku-r6` lanes R1/R2/R3; audit verdicts VERIFIED ×2; LOG.md round-6 |
 | 7 | expansion / quality / discernment / calibration (all improved) | 4 Queue-A ops queued unexercised | r7-01 + r7-02 land 4 exercised ops on libjq (api/data-type/instruction/load-image), audit-bit-exact; evidence ids proven content-addressed across lanes; PIE +0x100000 rule extended to shared objects; second refusal family documented | `.ufo/waves` r7 lanes Q1/Q2/Q3; audit VERIFIED ×2; LOG.md round-7 |
+| 8 | expansion / quality / discernment / calibration (all improved) | Queue A rows 6-9 unexercised; row 7 a latent census defect | r8-01 + r8-02 discharge rows 6, 8, 9 and close row 7 byte-exact; non-persistence of annotations proven by re-derivation; partial-graph status semantics documented; audit VERIFIED ×2 with one erratum | `.ufo/waves` r8 lanes; resumed audit (honest no-verdict-at-cap recorded); LOG.md round-8 |
 ## Planned / retired
 
 - **planned** (next axis-move): integrate round 5 — land the r5 LOG entry and

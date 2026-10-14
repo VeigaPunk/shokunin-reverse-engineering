@@ -319,3 +319,74 @@ official-proxy ops (D).
   `CALL qword ptr [0x107ea8]`, ev_65a06e0c…). Rows move queued → exercised;
   the table body above is left as recorded. Detail:
   `corpus/knowledge/2026-10-13-r7-02-queue-a-ops-2.md`.
+
+## Errata (round-8 expand lane, r8-01)
+
+- **Queue A rows 6+8 — the 5th and 6th still-unexercised rows (table lines
+  170, 172) — discharged (r8-01)**; **row 7 (table line 171) closed as a
+  census defect, not re-run**: `annotate-native-function` on
+  `/usr/lib/libjq.so.1.0.4` wrote the queued `jq_next` rename (ev_d6b85107…)
+  and the provider states the row's own gate as output — `effects
+  {scope:"session-analysis-database", source_bytes_modified:false,
+  persists_after_close:false}`; a fresh-invocation `inspect-native-api jq_next`
+  read-back re-derived r7-01's ev_85486b39… byte-identically with the original
+  name (non-persistence proven empirically, plus cross-round id
+  reproduction); interior addresses snap to the containing function's entry
+  (ev_11449635…: `0x117080` → annotated `0x117070`), unknown names refuse
+  typed but post-analysis (405 B after a full 14.2 s import), and the
+  annotated dossier keeps r7-01's inference-grade signature. All jq/libjq
+  digests byte-identical before/after. `trace-javascript-semantics` ran on the
+  queued `obsidian.asar ev` (ev_e8a2c4ba…, 47.66 MB, 6.3 s): `found` at
+  degree-0, 13 relevant unknowns (ev_1b5805c1…); on the app.asar 1.13.7 graph
+  three statuses observed live — `found`-with-zero-caller-edges on
+  `serialize` (ev_e027acb5…), `ambiguous` returning the 4-node `error`-event
+  collision set (ev_46ef7954…), and a zero-match property seed reporting
+  status `partial`, NOT the schema-enumerated `no-match` (ev_c83a02dc…) —
+  emptiness must be tested via `total_seed_matches`. For row 7:
+  `compare-javascript-export-shapes` was already exercised end-to-end by
+  round-4 wave entry r4-09
+  (`2026-10-13-r4-09-js-export-compare.md`, 16 runs) before this census's
+  exercised-set union was written — the census listed neither that verb nor
+  its evidences; this lane re-derived r4-09's recorded
+  `ev_ec6d721d…` byte-exact from its own verify input today. Rows 6+8 move
+  queued → exercised; row 7 moves queued → exercised-by-r4-09; the table body
+  above is left as recorded. Detail:
+  `corpus/knowledge/2026-10-13-r8-01-queue-a-ops.md`.
+
+## Errata (round-8 expand lane, r8-02)
+
+- **Queue A rows 8+9 — table lines 172–173 — discharged (r8-02)**; row 8 was
+  discharged concurrently and complementarily by r8-01 (bullet above — line
+  172 carries both lanes' evidences; line 173 is solely this lane's).
+  `trace-javascript-semantics` (inputJson `{application, query}`) re-ran on
+  the r3 renderer Evidence (ev_e8a2c4ba…, 47.66 MB, reused unchanged, sha
+  95eb1948…): three seed kinds → three typed statuses — `ambiguous`
+  (event `refresh`, the 6 `cm-addons.js` sites, ev_8aa311c3…), `found`
+  (function fingerprint bc93a7e9…, 0 retained callers, coverage `partial`,
+  ev_318cc2d7…), and `partial` — NOT the schema-enumerated `no-match` — for a
+  0-match `endpoint` seed on the budget-truncated graph (ev_8904a82d…): the
+  status machine (cache `javascriptSemanticQueryAssessment.js:13-30`) refuses
+  absence claims on partial graphs, independently reproduced by r8-01's
+  zero-match property seed the same night. Result envelopes label themselves
+  `analyst-inference`/`inferred` with `evidence_links` lineage; a re-run is
+  byte-identical with the same id (ev_8aa311c3…) — content-addressed evidence
+  ids extend to the application-workflow verbs.
+  `compare-source-to-bundle` (strict `{reference, application}`) succeeds
+  from held artifacts alone: `import-reference-source /tmp/sig-core`
+  (Queue-A row 12's verb consumed as PROVISIONING ONLY — its gates stay
+  unprobed for their owner) → 31-entry `HistoricalSourceGraph` (root
+  a5949039…, caller-invented commitments rejected), then vs ev_f9b4493a… →
+  stbc_1d2e0820… (ev_524f714f…): **19/19 retained sources
+  `unchanged`/`exact` via `exact-source-digest`** (the held extraction proven
+  still byte-identical to the analyzed tree; 229 application nodes honestly
+  unmapped). The row's "typora `.jsc` vs recovered?" resolves: vs
+  ev_184ef0ac… the loader `launch.dist.js` maps `unchanged/exact`
+  (stbc_c0d3e8f7…, ev_a2680e34…) while the `.jsc` — reference-classified
+  `unknown`, node-less in the bundle graph — is structurally incomparable at
+  BOTH layers (`retained_source_files` 1/3): the wall is the data model's,
+  not a missing tool. All nine live runs exit 0, stderr 0 B, 0.7–11.3 s, no
+  operator env; all eight input digests (incl. the `/usr/lib/obsidian/
+  obsidian.asar` a52a7daf… and `/usr/share/typora/resources/app.asar`
+  7ac791ca… pins) byte-identical before/after. Rows 8+9 move queued →
+  exercised; the table body above is left as recorded. Detail:
+  `corpus/knowledge/2026-10-13-r8-02-queue-a-ops-2.md`.
