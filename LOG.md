@@ -372,3 +372,23 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   Coverage 68 → 70. Godspeed verdicts: expansion/coverage/quality/
   discernment/calibration all improved (the Queue-B ledger is the
   deliverable — the lane now knows exactly what remains and why).
+- 2026-10-14 — round 13 (goal-mode, distillation lane + verify lane, zai):
+  the queue-drain craft synthesis lands in SKILL.md as `## Queue-drain
+  craft (rounds 5-12, distilled in round 13)` (+116 L, 9 rules, every rule
+  citing its corpus entry): content-addressed evidence ids with the three
+  per-run exception classes; the +0x100000 PIE pre-shift rule (executables
+  AND shared objects, honest outside-memory on raw probes); the refusal
+  family taxonomy with cost classes (0.7 s pre-analysis validation vs 14.2 s
+  post-analysis semantic refusals); the four authority grades and what each
+  licenses; input contracts (canonical bundles only, homogeneous
+  inspect_artifact feeds shared by the Apple+Android projectors, positional
+  schemas); the caller-attested authentication boundary; tool acceptance ≠
+  correctness; the census-defect class (six instances, with the
+  bookkeeping-lag nuance); refuted provisioning hints. Distill lane
+  self-corrected four drifted anchors before landing; verify lane VERIFIED
+  all 9 rules against their evidence (no overclaims) with 4 nits — 3 fixed
+  at integration (2 anchor precisions, 1 heading scope), 1 accepted
+  (authority enum observation). Godspeed verdicts: depth improved (craft now
+  distilled to decision level), quality improved (verify-passed, zero
+  overclaims), calibration improved (each rule carries exactly its evidence
+  strength), expansion unchanged (no new surface — deliberate).
