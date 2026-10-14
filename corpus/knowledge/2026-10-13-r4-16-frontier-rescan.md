@@ -613,3 +613,114 @@ official-proxy ops (D).
   Rows 20+21 move queued → exercised; the table body above is left as
   recorded. Detail:
   `corpus/knowledge/2026-10-14-r10-02-queue-ops-2.md`.
+
+## Errata (round-11 goal-mode residue drain, r11-02)
+
+- **Queue A row 24 (table line 189, `project-apple-application-graph`) —
+  discharged LIVE, not host-blocked (r11-02)**; sibling r11-01 not landed at
+  lane start nor pre-write (git clean both checks) — no overlap, line 188
+  untouched. The row's cheap-target hypothesis is REFUTED with typed data:
+  keyed-archive (`ev_69ed077f…`) and IB-decode (`ev_715a7b02…`) evidences —
+  both minted this lane on synthesized carriers (NSKeyedArchiver binary plist;
+  Fake.app with 32-byte-stub Mach-O, see below) — pass the strict 15-field
+  evidenceSchema but the projector refuses them at the workflow layer:
+  `invalid_request`/`invalid_input`, `message:"Artifact comparison requires
+  inspect_artifact Evidence"`, byte-identically for ANY composition containing
+  non-inspect_artifact members. The operative contract is a HOMOGENEOUS
+  inspect_artifact-only `inventory_evidence` array (min 1, complete Evidence
+  objects, no id refs). Success path: `inspect-artifact Fake.app` →
+  `ev_05ebd955…` → projector → **`ev_ffbd78ad…`**, projection
+  `aap_c744e46c…` — this host's first Apple application-graph projection:
+  `platforms:["macos"]`, bundle layout `macos-deep`, role `application` at
+  `role_basis:"path-convention"`, components digest-matched to the lane pins
+  (`art_d04cbb6a…`/Info.plist, `art_bc653cbd…`/Mach-O), `root_sha256` EQUAL to
+  the inventory evidence's subject digest, `runtime_families:["native"]`,
+  `coverage:{complete-within-inventory, inventory_complete:true}`; the
+  limitations' `inspect_plist` breadcrumb stays dead on Linux (r3), so roles
+  remain path-convention-only. Carrier law: a 64-bit Mach-O stub needs all
+  **32 header bytes** (28 → `target_unavailable` "truncated Mach-O header",
+  `retryable:false`) — r3 hit the wall but never recorded the byte law.
+  Evidence ids verified by re-running ×3: `ev_69ed077f…` and `ev_ffbd78ad…`
+  byte-identical across pairs of runs, and cross-lane `ev_f382333b…`
+  (inspect-managed-members Pinta.dll) re-run byte-identical to r4's held
+  `/tmp/r4-mem-pinta.json` (substrate sha `76472751…b9e8` unchanged) — third
+  independent confirmation after r4 and r10-01. Row 189 moves queued →
+  exercised; the table body above is left as recorded. Detail:
+  `corpus/knowledge/2026-10-14-r11-02-queue-ops-2.md` (which also carries the
+  round-12 Queue-B recon seed: rescan lines 195–204 classified against the
+  CURRENT host — all 7 REA_* gate keys already exported in `~/.bashrc` AND
+  `~/.profile` with every path existing; L196/L197/L199/L200/L203
+  provisionable-now, L195 one venv fix (unicorn import fails on missing
+  `pkg_resources`), L198 one knob (`REA_JAVASCRIPT_PRLIMIT_COMMAND` absent),
+  L202 one device (adb 1.0.41 works, zero devices attached), L201/L204
+  operator-gated; jadx jar sha `6e5eacf5…73ff75` re-hashed == the r4u-02 pin).
+
+## Errata (round-11 goal-mode residue drain, r11-01)
+
+- **Queue A rows 22+24 — the next still-unexercised rows after the r5–r10
+  drain (table lines 186, 188) — discharged (r11-01)**; sibling r11-02
+  landed mid-lane claiming line 189 only (zero row overlap, both lanes'
+  git states recorded in their headers); line 176 untouched (owner
+  convention), 187 stays exercised-by-r4-08. The row-22 chain ran
+  end-to-end on a real connect-mode `capture-browser-scenario` capture
+  (ev_80e1943e…, self-launched chromium 152 :9232 + loopback http.server;
+  `capture.network.response_body:true` is the unstated half of the census's
+  "capture JSON from browser-scenario run" hint — the default `false`
+  retains no script bytes): `export-web-scripts` (ev_2a8a898d…, manifest
+  `f6434545…`) publishes ONLY retained script bytes byte-faithfully (the
+  HTML response is excluded) under an origin-hash
+  `files/origins/<digest>/` layout; the module-import leg REFUSES typed
+  without env (`capability_unavailable`/`missing_browser_executable`,
+  retryable:false — and the 18-op `capabilities` matrix does not list the
+  op, so the gate is invisible there) and succeeds with
+  `REA_BROWSER_EXECUTABLE=/usr/bin/chromium` (ev_d4b5e95f…, engine
+  `chromium-native-module-resolver` 152.0.7977.82 — the contract states the
+  caller-supplied Chromium "executes only a trusted REA resolver stub in an
+  owned context with page requests locally fulfilled/blocked"):
+  `"./lib.js"` at generated 1:22 resolves to the captured `/js/lib.js`
+  (`captured_candidates` match `exact-reported-url`, `execution:"unknown"`);
+  the source-location leg needs NO env (node-side `jridgewell-trace-mapping`
+  0.3.31): 1:75 → ev_3869d0de… mapped `main.src.js` 4:9 (zero-based UTF-16
+  columns), `content_position:"verified-in-embedded-text"` (embedded
+  `sourcesContent` utf8_sha `d596abf3…`), with `source_authenticity` and
+  `execution` literal `"unknown"`, and the probed greatest-≤ fallback maps
+  the segment-less comment line (2:0) to matched_generated_position (1,80)
+  → 6:1 (ev_f2526427…) — out-of-segment points inherit the nearest earlier
+  mapping rather than an `unmapped` verdict (consumers must compare
+  `matched_generated_position` against `requested`); a hand-mis-encoded map
+  refuses typed verbatim ("Source-map VLQ ends with an unfinished
+  continuation.") — while a second, semantically wrong delta PASSED the
+  tool and was caught only by a lane python VLQ decoder, so tool acceptance
+  ≠ map correctness. Verification ×2: TMI and TSL-75 re-runs byte-identical
+  with identical ids (content-addressing covers both trace legs on fixed
+  inputs). Row 24: `capture-process` ran three scripted pty scenarios —
+  `seq 1 5` (ev_c0a0011d…), `seq 1 3` (ev_de9a8f71…), `cat` with a timed
+  input event (the typed line echoes TWICE: pty echo + cat output)
+  settling by idle_timeout SIGKILL (ev_544284e4…) — all authority
+  `controlled-replay`/`observed`, a FOURTH corpus grade alongside
+  `shipped-artifact`/`analyst-inference`/`historical-reference`; capture
+  manifests carry wall-clock (`started_at`/`completed_at` + commitment
+  digests), so a same-scenario re-capture (ev_3f40d93b…) is never
+  byte-derivable — timing-parameterized ids by design (extends r10-02's
+  session-id lesson to a deterministic-input verb family).
+  `compare-process-captures`: A/B `changed` with first_divergence carrying
+  raw CRLF pty bytes (`1\r\n…5\r\n` vs `1\r\n…3\r\n`, ev_d08f186a…), but
+  the A/A2 re-capture pair grades `changed` on the `exit` dimension ALONE
+  (settlement `elapsed_ms` 67 vs 66, ev_a00f5580…) — the default verdict
+  conflates behavior with wall-clock, so consumers must read dimensions;
+  the optional finite-trace `traceSpec` restores timing-insensitive
+  semantics: A/B+spec verdict `different` (left pass variant
+  `five-lines`, right typed predicate-fail, ev_a2e49db4…) and A/A2+spec
+  verdict **`equivalent`** (both pass, ev_43a7ea91…) — spec events declare
+  a `source` enum plus an `exact` payload that must mirror the RAW capture
+  record (an over-specified field yields a typed predicate diagnostic, not
+  a schema refusal; `ignore_fields` covers the `at_ms`-class timing
+  fields). All runs 0.7–1.5 s (chain) / ~1 s (process), zero operator
+  secrets, loopback-only, ports verified closed and the chromium profile
+  removed at cleanup; substrates + scenario inputs byte-identical
+  before/after — the one deliberate edit is the lane-built source map
+  (two documented VLQ fixes; its final sha is pinned inside the TSL
+  evidence itself). Rows 22+24 move queued → exercised; the table body
+  above is left as recorded; with r11-02's line 189 the Queue-A table
+  (lines 165–189) is fully drained. Detail:
+  `corpus/knowledge/2026-10-14-r11-01-queue-ops.md`.

@@ -322,3 +322,27 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   Godspeed verdicts: expansion/quality/discernment/calibration improved (the
   census's exercised-set blindness is now a NAMED defect class — four
   closures; the netlog refutation and the third authority grade documented).
+- 2026-10-14 — round 11 (goal-mode, 2 zai expand lanes + audit + parent):
+  **Queue A fully drained** (lines 165–189 all accounted; only line 176
+  remains, provisioning-only by convention). r11-01 (lines 186+188): the
+  export-web-scripts chain — the census-missed response_body retention
+  gate; trace-web-module-imports needs REA_BROWSER_EXECUTABLE (absent from
+  the 18-op capabilities matrix); tool acceptance ≠ map correctness (a
+  semantically-wrong map passed the tool, caught by an independent
+  decoder); the capture-process pair records the FOURTH authority grade
+  (controlled-replay/observed) and pins the A/A2 wall-clock-id semantics
+  (traceSpec restores timing-insensitive verdicts). r11-02 (line 189,
+  row 25): the first Apple-graph projection on this host — the homogeneous
+  inspect_artifact feed law (the census hypothesis of keyed-archive/IB
+  feeds is REFUTED at the workflow layer) and the 64-bit Mach-O 32-byte
+  header law; Queue-B recon seeds round 12 (5 rows ready-now: binwalk,
+  unblob, jadx, apktool, compare-application-versions; 1 one-fix: pwntools
+  venv pkg_resources; 1 one-knob: wakaru prlimit; 1 one-device: adb).
+  Audit: both VERIFIED; five defect-nits (sha tail slip, row-alias
+  collision between the two errata, a false 'stderr empty' claim, two
+  header nits, one unreproduced datum) — all landed as append-only errata.
+  Coverage 66 → 68. Godspeed verdicts: expansion/coverage improved (Queue A
+  complete), quality improved (audit-bit-exact; nits surfaced and fixed),
+  discernment improved (four refusal/feed laws documented), calibration
+  improved (the recon classifies Queue B honestly: 5 ready-now, not the
+  census's vaguer env-gated).
