@@ -125,10 +125,10 @@ absorbed.
 
 ### Round-4 frontier (post-unlock)
 
-- **RISC-V analysis** — `rea analyze` refuses RISC-V ELF `target_unavailable` even
-  though Ghidra 12.1.4 ships a RISCV processor module; REA's ELF preflight is the
-  gate (outer REL + carved inner EXEC both refused). Next: direct analyzeHeadless
-  on carved `.fwimage` EXEC, or `--offset/--length` extract first.
+- **RISC-V analysis** — `target_unavailable` gate pinned (`binaryTarget.js:105`
+  ELF e_machine allowlist), bypassed via e_machine patch + language override
+  (r5-01: `corpus/knowledge/2026-10-13-r5-01-riscv-bypass.md`); full 29 MB EXEC
+  via direct `analyzeHeadless` (10,766 functions @900 s cap).
 - **>90 MB PE scale wall** — 91.6 MB Godot ARM64 PE hits REA's ~900s internal
   session deadline (`provider_timeout`, GhidraClient.js:607), still progressing
   at kill (r4-12) [r5-audit C1: r4-12 cite added]. Not OOM (RSS ~2.36GB vs

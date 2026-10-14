@@ -111,3 +111,10 @@ surface's readiness is invisible to `rea doctor`; it must stay tracked in PROVIN
   `catalog.tools[]`. The underlying claim (zero firmware ops in `capabilities[]`, doctor sees
   only ghidra+ida providers) stands; the verify-as-written does not isolate it. Corrected
   verify: `rea capabilities --format json | python3 -c "import json,sys; print([c for c in json.load(sys.stdin).get('capabilities',[]) if 'firmware' in str(c).lower()])"` → `[]`.
+
+## Errata (round 6, 2026-10-13, append-only)
+
+- The "RISC-V wall / frontier" framing above is **superseded**: the wall is
+  bypassable via e_machine patch + `REA_GHIDRA_LANGUAGE_ID` override —
+  see `knowledge/2026-10-13-r5-01-riscv-bypass.md`. The historical run
+  observations in this file remain true as written.

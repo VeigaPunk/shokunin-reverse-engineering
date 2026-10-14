@@ -189,3 +189,26 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   complete), quality improved (audit PASS), expansion unchanged. Carried
   forward: the RISC-V bypass (05-riscv-deep) awaits its corpus entry — queued
   as a round-6 candidate.
+- 2026-10-13 — round 6 (goal-mode, 3 zai lanes + parent): the RISC-V
+  headline lands as corpus and the Queue-A head is exercised. r5-01-riscv-bypass
+  (96 L): the target_unavailable gate pinned (dist/domain/binaryTarget.js:105,
+  elfArchitecture allowlist :208-222), bypass #1 re-run live by both the lane
+  AND the audit at independent paths with the IDENTICAL evidence id
+  (ev_e9a735a2…, 94 procedures), bypass #2 (direct analyzeHeadless, 10,766
+  functions / 3.14M instructions), the arm64 honesty tax, the three dead ends.
+  Four stale wall claims repaired (PROVINCE:128-131, SKILL:53, README:44/119 —
+  each 'bypassed via e_machine patch + language override (r5-01)'). r5-02-call-targets-jq:
+  the assigned one-arg form refuses (VALIDATION_ERROR, address required — the
+  op takes [path, address]); the two-arg form resolves 3/3 GOT-indirect sites
+  in jq's main to EXTERNAL thunks with bit-exact evidence ids; the honest
+  not-call verdict verified; Queue-A 'self-provisionable NOW' confirmed;
+  frontier-rescan gained an append-only erratum (Queue-A row 1 exercised).
+  Audit verdicts: both entries VERIFIED. Append-only errata landed: the
+  candidate-6 timeout mechanism no longer reproduces on the warm host
+  (conclusion survives; mechanism wave-scoped), and the superseded
+  'RISC-V wall' framing in r2-firmware-probe, r4u-01-firmware-deep, and
+  lessons/round-4 now each carry a pointer to r5-01. Coverage map 56 → 58.
+  Godspeed verdicts: expansion improved (two held surfaces documented with
+  re-runnable verify lines), quality improved (audit bit-exact, errata
+  append-only), discernment improved (validation-refusal vs gate-refusal
+  distinguished; mechanism-vs-conclusion separated), operability unchanged.

@@ -110,3 +110,10 @@ Subjects (`sha256sum`):
 ## Summary
 
 **Firmware surface: partially held — the provider layer is fully open and honest; the deep-analysis route remains frontier.** `inspect-firmware-regions` now executes on all four blobs (4 Evidence envelopes, RC=0): the ucodes return 0 regions because they are *stub containers* (24 real bytes + zero-padding — a positive explanation, not a miss), while the GSP blobs return 56/156 regions whose ELF hits carve-verify as real embedded RISC-V executables. `extract-firmware` completes cleanly on both ucodes (`coverage:"complete"`, 0 files — correct on stubs; GSP extraction deliberately deferred to an offset-targeted lane). The wrappers are signature carriers: `.fwimage` + `.fwversion 610.57.04` + 3/12 per-chip `.fwsignature_*` blocks, with NVIDIA's full `r610_85` LibOS-riscv64 build path in the symtab. `rea analyze`'s RISC-V refusal (`target_unavailable`) is unchanged and now proven architecture-wide (carved EXEC also refused) and REA-side (Ghidra ships a `RISCV` module — 39 processor dirs — that never gets reached); `inspect-binary-layout` is x86-64-only. Persistent blind spot: doctor/providers still cannot see firmware-provider readiness even when it's configured and working. Frontier for r5: `--offset/--length` targeted `extract-firmware` on the GSP `.fwimage` region, Ghidra `analyzeHeadless` directly on the carved EXEC, and entropy-boundary-guided carving of the 8 MiB entropy-8.00 block.
+
+## Errata (round 6, 2026-10-13, append-only)
+
+- The "RISC-V wall / frontier" framing above is **superseded**: the wall is
+  bypassable via e_machine patch + `REA_GHIDRA_LANGUAGE_ID` override —
+  see `knowledge/2026-10-13-r5-01-riscv-bypass.md`. The historical run
+  observations in this file remain true as written.

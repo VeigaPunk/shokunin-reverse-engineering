@@ -70,6 +70,7 @@ discernment verified-by-audit with 10 errata applied
 | 4f | Final two r4 lanes landed (signal-asar directory-route, real-version-pair); Go symbol-recovery hazard recorded; r5 audit-A ran early — three r4 files HOLD, errata appended | `LOG.md:85-105` |
 | 5 | In flight, not yet in LOG: three adversarial audits re-verified 13 r4-era files (all HOLD; two cosmetic numeric errata), consistency audit found 4 DRIFT areas, RISC-V lane proved `target_unavailable` bypassable (2-byte `e_machine` patch + `REA_GHIDRA_LANGUAGE_ID`, 94 procedures) — integration pending | `.ufo/waves/kaidoku-r5/01-audit-A.md:306`, `02-audit-B.md:110`, `03-audit-C.md:12-15`, `04-audit-consistency.md:195-206`, `05-riscv-deep.md:1-3` |
 
+| 6 | expansion / quality / discernment (all improved) | r5 in-flight, record repaired (round 5) | r5-01-riscv-bypass + r5-02-call-targets-jq land with audit-bit-exact evidence (independent re-runs reproduced every evidence id); 4 stale wall claims repaired; 4 append-only errata; coverage 56→58 | `.ufo/waves/kaidoku-r6` lanes R1/R2/R3; audit verdicts VERIFIED ×2; LOG.md round-6 |
 ## Planned / retired
 
 - **planned** (next axis-move): integrate round 5 — land the r5 LOG entry and

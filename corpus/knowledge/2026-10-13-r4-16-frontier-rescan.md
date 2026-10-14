@@ -264,3 +264,17 @@ representation budget (Gtk-4.0), `partial` decodes → all-`unknown` compares.
 application verbs, and the CDP/V8 self-launch family), ~45 operator-env-gated
 ops (Queue B), 8 terminal macOS-gated (C), 12 MCP-session + 7 standalone
 official-proxy ops (D).
+
+## Errata (round-6 expand lane, r5-02)
+
+- **Queue A row 1 discharged (r5-02):** `resolve-native-call-targets` ran
+  live on `/usr/bin/jq` — the one-arg form as queued refuses typed-and-fast
+  (`VALIDATION_ERROR`, required second positional `address`, exit 1, 0.7 s);
+  the two-arg form resolved 3/3 probed GOT-indirect call sites to Ghidra
+  `EXTERNAL` thunks (ev_db50c389…, ev_4e3303af…, ev_c9fcea3d…; `0x109110`
+  == `<EXTERNAL>::jq_init` by independent search evidence), returns honest
+  `not-call`/0-target non-verdicts off call sites (ev_b0238bea…), and
+  `sha256sum /usr/bin/jq` is byte-identical before/after. "Self-provisionable
+  NOW (ghidra)" holds. Row 1 moves from queued to exercised; the table body
+  above is left as recorded. Detail:
+  `corpus/knowledge/2026-10-13-r5-02-call-targets-jq.md`.

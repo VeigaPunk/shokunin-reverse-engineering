@@ -41,7 +41,7 @@ A row is written when its file exists, never before.
 | Evidence model | `2026-10-13-r2-evidence-bundle-schema` | held — snapshot envelope vs inner bundle schema, content-addressed ev_ ids |
 | Provider/capability matrix | `2026-10-13-r2-provider-capability-matrix` | held — 18 ops, 8 available; per-op `available` is declared, provider `status` gates |
 | `knowledge/2026-10-13-r4-16-frontier-rescan` | zero drift re-verified (capabilities/doctor/catalog digests identical to r2; no new host targets); managed boundary inverted vs r1 (`0x14c` IL-only accepted, x86-64 R2R refused) and proven in-lane on Pinta; unexercised-op census → r5 queue (26 self-provisionable, ~45 env-gated, 8 macOS-terminal) | `capabilities`/`doctor`/`pacman -Q` rescans + Pinta managed runs |
-| Firmware | `2026-10-13-r2-firmware-probe`, `2026-10-13-r2-frontier-prereqs`, `2026-10-13-r4u-01-firmware-deep`, `2026-10-13-r4u-03-unblob-extract` | held (partial) — binwalk regions + unblob extract exercised on GSP blobs; RISC-V `target_unavailable` is the deep-analysis wall |
+| Firmware | `2026-10-13-r2-firmware-probe`, `2026-10-13-r2-frontier-prereqs`, `2026-10-13-r4u-01-firmware-deep`, `2026-10-13-r4u-03-unblob-extract` | held (partial) — binwalk regions + unblob extract exercised on GSP blobs; RISC-V `target_unavailable` bypassed via e_machine patch + language override (r5-01) |
 
 ## Knowledge
 
@@ -95,7 +95,9 @@ A row is written when its file exists, never before.
 | `2026-10-13-r4-14-libsignal` | libsignal 188MB Rust N-API anatomy | `nm`/`file`/REA on signal-desktop `.node` | 2026-10-13 |
 | `2026-10-13-r4-15-appimage-inner` | AppImage squashfs carved via unblob/7z; inner asar analyzes — "Grok Bot" = Anysphere/Cursor `sand` (715 members, full Electron surface) | unblob + 7z + `analyze-javascript-application` | 2026-10-13 |
 | `2026-10-13-r4-16-frontier-rescan` | r5 roadmap: ~26 self-provisionable + ~45 env-gated ops; managed REA verbs proven in-lane | doctor/capabilities rescan | 2026-10-13 |
-| `2026-10-13-r4-05-signal-asar` | signal-desktop 8.26.0 (38.5MB, 1,866 entries): three honest walls (integrity-mismatch on distro-postprocessed `.node` natives; per-source timeout aborts whole run; 68-92KB webpack chunks exhaust 8GiB worker heap) routed around via `--artifact-format directory` on 9.2MB pruned core → 173 IPC ops / 95 literal channels / zero sender validations; strict-CSP + V8-cachedData preload (Typora-like loader shape) | `analyze-javascript-application` ×3 + directory-format route | 2026-10-13 |
+| `2026-10-13-r5-01-riscv-bypass` | RISC-V `target_unavailable` wall bypassed: gate pins, e_machine patch + language override (94 procedures), direct-Ghidra route (10,766 functions), honesty tax, dead ends | REA 6.4.0 dist pins, Ghidra 12.1.4, `.ufo/waves/kaidoku-r5/05-riscv-deep.md` | 2026-10-13 |
+| `2026-10-13-r5-02-call-targets-jq` | `resolve-native-call-targets` on /usr/bin/jq: schema (path+address), 3/3 GOT-indirect resolutions to EXTERNAL thunks, honest non-call verdict, Queue-A self-provisionable confirmed | REA 6.4.0 (warm cache), objdump/readelf cross-checks | 2026-10-13 |
+| | `2026-10-13-r4-05-signal-asar` | signal-desktop 8.26.0 (38.5MB, 1,866 entries): three honest walls (integrity-mismatch on distro-postprocessed `.node` natives; per-source timeout aborts whole run; 68-92KB webpack chunks exhaust 8GiB worker heap) routed around via `--artifact-format directory` on 9.2MB pruned core → 173 IPC ops / 95 literal channels / zero sender validations; strict-CSP + V8-cachedData preload (Typora-like loader shape) | `analyze-javascript-application` ×3 + directory-format route | 2026-10-13 |
 | `2026-10-13-r4-10-real-version-pair` | full compare pipeline at 41-43MB (1password `op` 2.34.1→2.40.0, ~6-7min per verb — every verb re-imports fresh); CLI `rea compare` caps at `status:unknown`/6 unresolved_branch vs domain `compareBundles`+`record_pairs` → `status:changed` (ALL members paired); NEW HAZARD: Go toolchain bump (1.25.7→1.26.8) collapses symbol recovery 33,060→11,595 procs (11,588 `FUN_*`) — symbol-keyed pairing unsafe across Go versions, pair by ELF role/address | `rea analyze`/`compare`/domain compareBundles | 2026-10-13 |
 | `2026-10-13-r4u-01-firmware-deep` | GSP blobs = ELF64 RISC-V signature wrappers (56/156 regions); ucodes are stub containers (correct-empty); RISC-V `target_unavailable` REA-side | binwalk regions + unblob extract on 4 nvidia blobs | 2026-10-13 |
 | `2026-10-13-r4u-02-jadx-decode` | Android surface fully open: package inspect, manifest decode, class search, real Java decompile; jadx mints per-run ev ids (mkdtemp) vs apktool deterministic | jadx-headless-mcp 0.7.1 + apktool 3.0.3 on Godot APKs | 2026-10-13 |
@@ -116,7 +118,7 @@ A row is written when its file exists, never before.
 ## Frontier
 
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
-- RISC-V deep analysis — `target_unavailable` REA-side on outer REL + carved EXEC; Ghidra ships the module. Next: direct analyzeHeadless on `.fwimage`.
+- RISC-V deep analysis — `target_unavailable` bypassed via e_machine patch + language override (r5-01); full EXEC already runs direct analyzeHeadless (10,766 functions @900 s cap).
 - `.jsc` → source mapping — Ignition disassembly held (r4-07); View8/jsc2js-style mapper is next for typora's real app.
 - >90MB PE scale — 91.6MB Godot ARM64 hits the ~900s internal session deadline; raise `REA_GHIDRA_STARTUP_TIMEOUT_MS`≈3.6M + `GHIDRA_HEADLESS_MAXMEM=6-8G`, or bisect 2-5MB.
 - `capture-electron-scenario` — typed refusal (Playwright handshake) despite same app launching manually.
