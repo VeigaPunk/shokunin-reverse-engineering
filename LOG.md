@@ -260,3 +260,17 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   discernment/calibration improved (non-persistence proven by re-derivation;
   the partial-graph status semantics documented; the census defect closed
   with byte-exact evidence).
+- 2026-10-14 — round-7/8 README repair (uncounted, parent-side defect): the
+  round-7 coverage-map insert silently no-op'd — a python tuple typo
+  (implicit string concatenation: rows[0] was the character "|", not the
+  first row) inserted two characters into the signal-asar row instead of
+  two rows, and the round-7 "coverage 60" claim was wrong (the map stayed at
+  58 through round 8). The round-8 insert then failed its anchor assert
+  (the r7 rows it searched for never existed) and committed without README
+  changes — its "coverage 62" claim was likewise premature. Both defects are
+  the parent's integration tooling, not the lanes': the lesson is to verify
+  map-row counts with grep AFTER writing, in the same command as the write.
+  Repaired now: the mangled row cell restored, the four missing rows
+  (r7-01, r7-02, r8-01, r8-02) inserted, map verified at 62 unique knowledge
+  files cited (12 rows in the recent-entries table + the knowledge/ table
+  rows reconciled).
