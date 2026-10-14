@@ -483,3 +483,133 @@ official-proxy ops (D).
   operator env. Rows 10+11 move queued → exercised; the table body above is
   left as recorded. Detail:
   `corpus/knowledge/2026-10-14-r9-01-queue-a-ops.md`.
+
+## Errata (round-10 expand lane, r10-01)
+
+- **Queue A rows 15+16 — the next still-unexercised rows after the r5–r9
+  drain (table lines 179–180) — discharged (r10-01)**; line 176 skipped per
+  convention (gates stay with their owner); git clean at lane start and
+  final write — no sibling overlap. `compare-managed-members` (round-2):
+  the verb takes `{leftPath, rightPath}` only and re-decodes both sides
+  internally (no evidence-id input), so the gate "decode both sides first"
+  is a selection rule — pick metadata-complete IL-only assemblies; with
+  Pinta.dll vs Pinta.Effects.dll (both `pei-i386`, decodes
+  `metadata_status:"complete"`; the Effects decode is new evidence
+  `ev_92faacb3…`, 1,671 methods/704 fields, `coverage.issues[]` empty) the
+  verb returns its first real differentiated verdict on this host:
+  `ev_cbf4acfb…`/`mmc_0d5f6e8b…` summary `{unchanged 2, changed 14,
+  added 1241, removed 1047, unknown 588}` vs round-1's all-unknown
+  `{unknown: 1382}` at right `unavailable` — the coverage ladder is keyed
+  on `metadata_status` (right `unavailable` → `partial`), NOT on the
+  members `coverage.state`, which stays `partial` with empty issues even on
+  complete decodes. Semantics pinned live: pairing is identity-keyed,
+  names alone never a basis (`matching` exact_il_signature 2 /
+  exact_signature 9 / structural_method_shape 20 / field_signature 24 /
+  ambiguous 39 / unmatched 2837); the 588 unknowns are honest non-verdicts
+  ("Multiple managed methods share the same non-name identity key; REA did
+  not guess a token remap."); reversed order swaps added/removed exactly
+  (1047/1241) with distinct direction-sensitive ids (`ev_eea2312b…`/
+  `mmc_7765bc45…`); re-run byte-identical (same `ev_cbf4acfb…`). New
+  authentication nuance (extends r9-02's f(content, params)): the compare's
+  internally-minted member evidence ids (`ev_0b4eeaa7…`,
+  `ev_701d5d1b…`) differ from CLI-minted ids for identical bytes and mvids
+  (`ev_f382333b…`, `ev_92faacb3…`), yet the left internal id is identical
+  to r4's held round-1 link — one stable id per invocation shape;
+  consumers must never substitute ids across invocation shapes.
+  `inspect-web-network-capture`: args `{capturePath, format:
+  har|mitmproxy}` + `--record`/`--sensitive-value`; the census's first
+  hint is REFUTED — a real 1,310-event chromium `--log-net-log` capture
+  refuses typed (`invalid_request`/`invalid_format`, "HAR schema validation
+  failed: required.", retryable, exit 1): the operative gate is
+  har-schema validity, and the path that works is playwright 1.64.0
+  `recordHar` over self-launched `/usr/bin/chromium` 152 against a
+  localhost fixture (9,942 B HAR, 5 real 200 entries, 1.4 s provisioning;
+  mitmproxy absent on host — that format leg stays unexercised). Success:
+  `ev_be4c0e79…` (0.86 s) decodes 5/5 records losslessly under
+  `har-schema/lossless-json`, labeled `authority:"historical-reference"`/
+  `confidence:"observed"` (a third authority grade alongside
+  `shipped-artifact` and `analyst-inference`), `runtime_attribution`
+  literal `"unknown"`, "Recorded URLs are never fetched"; record anatomy
+  preserves producer representations (the 70-byte PNG as
+  `retained`/`har-base64-content`; float literals like
+  `1.1520000000000001` survive verbatim); `--record 4` still decodes all
+  5 then filters (`ev_9282326c…`); `--sensitive-value` redacts the
+  affected record at three pointers (`/request/url`,
+  `/request/queryString/0/value`, `/response/content/text`) with zero
+  envelope leakage, the capture sha256 intact, and only
+  `sensitive_value_count` persisted (declaration strings never persisted —
+  verified live; fixture token, secrets shape-only); re-run
+  byte-identical. Cross-verb id re-verification: three byte-identical
+  re-runs this lane (`ev_f382333b…` members, `ev_cbf4acfb…` compare,
+  `ev_be4c0e79…` capture). All probes 0.85–1.1 s, zero operator env; both
+  Pinta DLLs + four r4 evidence files + all 7 provisions byte-identical
+  before/after. Rows 15+16 move queued → exercised; the table body above
+  is left as recorded. Detail:
+  `corpus/knowledge/2026-10-14-r10-01-queue-ops.md`.
+
+## Errata (round-10 expand lane, r10-02)
+
+- **Queue A rows 18+19 — the 4th and 5th still-unexercised rows at this
+  lane's take (table lines 182–183) — closed as CENSUS DEFECTS, the row-7
+  class again, and rows 20+21 (lines 184–185) discharged in their place
+  (r10-02)**; sibling r10-01 landed mid-write claiming rows 15+16 (lines
+  179–180, bullet above) — zero row overlap by construction; line 176
+  untouched (owner convention). **The defect**: r4-08 held lines 182–183
+  end-to-end on 2026-10-13 — `reconcile-javascript-runtime` (its
+  `ev_032f373f…`), `observe-web-session` (`ev_ac51acb0…`),
+  `observe-web-execution` (`ev_990bff76…`) — but the census's exercised
+  set was written concurrently with r4-08 and lists only the r3 CDP verbs.
+  **Lines 181 (`capture-electron-scenario`, r4-08's deterministic typed
+  refusal, re-verified by the r5 audit) and 187
+  (`observe-javascript-runtime` / `list-javascript-runtime-targets`, both
+  r4-08-held) carry the same defect** and move queued →
+  exercised-by-r4-08 on the r4-08 entry's strength. **Fresh re-verification
+  (not trust)**: this lane re-ran all four involved verbs on new
+  loopback-only self-launched endpoints (chromium 152 headless :9222,
+  node v24.21.0 :9229 — the same stack versions r4-08 recorded): session
+  auto-scopes `allowed_origins` while execution echoes `[]`
+  (`ev_375855d9…` vs `ev_38a61fd8…`; instrumentation block verbatim to
+  r4-08); the `file://`-must-stat rule holds both ways (`-e` control →
+  `excluded:{unsupported_location:1}`, `ev_a4d15055…`; real-file target →
+  listed, `ev_a7961441…`); `observe-javascript-runtime` reproduces the 81
+  builtin + 1 file split with the file script's `cdp_hash` EQUAL to the
+  pinned main.js sha256 (`ev_bee56f0e…`); the reconcile join lands
+  r4-08's exact buckets `matched:1/unmatched:1/unknown:81` at
+  `runtime_scripts:82` with `resident-in-loaded-asset` load states
+  (`ev_7943e598…` over a fresh static layer `ev_f867295d…`), and BOTH
+  deterministic legs re-ran byte-identical (analyze ×2 → same
+  `ev_f867295d…`; reconcile on the fixed input ×2 → same
+  `ev_7943e598…`). Honest limit recorded: r4-08's own session-scoped ids
+  are NOT byte-re-derivable (window timestamps + target ids + their app
+  tree deleted by their cleanup) — the close rests on behavioral
+  reproduction + fresh content-addressed evidence. Rows 18+19 (and 17, 23)
+  move queued → exercised-by-r4-08. **Rows 20+21 discharged live** to keep
+  the drain: `capture-web-screenshot` ×3 (`ev_469b8340…`, `ev_fb99d599…`,
+  `ev_1bf3535e…`) — artifacts are self-verifying `{sha256, bytes,
+  media_type, data_base64}` PNG blocks and a static page's captures are
+  byte-deterministic (A/A2 identical artifact sha256 `6746f742…` while the
+  envelopes' ids differ: `captured_at` is in the id, the bytes are not);
+  `compare-web-screenshots` consumes the artifact block only (envelope
+  form → typed `invalid_request` with per-path issues[]) — A vs B
+  `different` 384540/384540 px maxΔ246 (`ev_f77738ef…`), A vs A2
+  `identical` 0 (`ev_11191731…`); `compare-web-captures` wants SNAPSHOT
+  files `{inspection: <complete inspect_web_page normalized_result>,
+  webmcp: <discover_webmcp_tools normalized_result|null>}` — the CLI
+  composes `{before, after}` itself (`webCaptureDiffSchemas.js:3-13`,
+  `browserAdvancedCommands.js:69-76`; raw envelopes refuse opaque
+  `invalid_input`) — same-snapshot compare returns overall **`unknown`**
+  (incomplete dimensions stay `unknown`, never `unchanged` — absence is
+  not proof, `ev_e465f5d4…`), A vs B overall `changed` across
+  dom/scripts/resources/metadata/accessibility (`ev_fdfc038c…`);
+  `analyze-web-bundle` (`ev_0b903a99…`) chunk digest self-verifies against
+  the page's extracted inline-script text (sha256 `75e1da85…`, 146 B,
+  recomputed match); `inspect-web-event-listeners "#go"` (`ev_42b8fd4f…`)
+  pins one click listener to `index.html:7:74` via `script_id`;
+  `discover-webmcp-tools` honest `tools:{total:0}` (`ev_82dbdf0e…`). Cross
+  -verb join: script identity `scr_5469de86…` is shared by the
+  capture-diff and bundle verbs. All runs 0.7–3.2 s, zero operator env,
+  loopback-only; four fixture digests byte-identical before/after; ports
+  9222/9229/9230/8878 verified closed and the chromium profile removed.
+  Rows 20+21 move queued → exercised; the table body above is left as
+  recorded. Detail:
+  `corpus/knowledge/2026-10-14-r10-02-queue-ops-2.md`.

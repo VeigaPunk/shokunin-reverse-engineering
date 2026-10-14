@@ -300,3 +300,25 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   calibration improved (bundle input shape, coverage-gate semantics, and the
   caller-attested authentication boundary documented; audit-cap calibration
   measured).
+- 2026-10-14 — round 10 (goal-mode, 2 zai expand lanes + audit + parent):
+  Queue-A effectively drained. r10-01 (rows 15+16): compare-managed-members
+  round-2 — real verdicts {unchanged 2, changed 14, added 1241, removed
+  1047, unknown 588} where round-1 read all-unknown 1382; internally-minted
+  member ids differ from CLI ids at identical bytes/mvids (never substitute
+  across invocation shapes); inspect-web-network-capture — the census's
+  chromium --log-net-log hint REFUTED (1,310-event netlog refuses on the
+  har-schema gate), playwright recordHar route yields lossless 5/5 records
+  with a THIRD authority grade (historical-reference/observed). r10-02:
+  FOUR more census defects of the row-7 class closed (reconcile-javascript-
+  runtime and observe-web-session were held by r4-08 the same day the census
+  queued them; lines 181/187 flagged too) + rows 20–21 discharged (six web
+  verbs: artifact-block contract, scr_ identity join across two verbs,
+  honest zero WebMCP tools, screenshot determinism proven by sha identity).
+  Audit: both VERIFIED, no defects (one cosmetic nit: CDP node ids print as
+  strings); append-only proven (130/0); the post-first-sighting-append
+  protocol held again (r10-02's +193 B census note caught by re-stat); the
+  r9 scratch-namespacing lesson applied cleanly — zero collisions. Queue-A
+  remaining: line 176 (provisioning-only), 186, 188, 189. Coverage 64 → 66.
+  Godspeed verdicts: expansion/quality/discernment/calibration improved (the
+  census's exercised-set blindness is now a NAMED defect class — four
+  closures; the netlog refutation and the third authority grade documented).
