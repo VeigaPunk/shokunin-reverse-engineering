@@ -188,3 +188,54 @@ work commit and unblock actions. Preserve mission
 `m_645cfa32b5284aaab568431141665df8` / pane `%14` until authorized cutover;
 Sighting is not marked complete. Only the fleet integrator updates shared
 ledgers. Commit/report durability is complete locally; round admission is not.
+
+## Erratum — evidence-derived admission diagnostic, same round 1
+
+Correction work commit: `a3f2e1be58ceaaba1c57ba996698bd86b36123e6`.
+This appendix was written after that commit; the original report above
+retains its filed bytes.
+
+The original admission exit 2 recorded the known blockers unconditionally.
+It was not verification of the routing/receipt observation contents. This
+supersedes that interpretation of the earlier Full local verdicts section,
+not its historical output. The corrected gate cross-checks recorded aliases
+against the canonical wave preflight and persisted required routes, requires
+zero dispatch/settlement across observations and result, and validates the
+receipt-absence fields against the argv-launch metadata shape.
+
+Three new isolated fixtures reject contradictory routing status, settlement
+without dispatch and contradictory receipt absence. They re-pin only the
+isolated fixture inputs so that semantic checks, rather than the digest guard,
+must reject them. Full output and process exit codes:
+`.ufo/rounds/interactive-r1/gate-correction-results.json`.
+
+Commands: `python3 .ufo/rounds/interactive-r1/verify-recovery.py`, followed by
+the same entry with `--selftest` and `--admission`.
+
+```text
+RECOVERY_EVIDENCE: CLEAN finding=pinned_package_consistent author_review=9/9 coverage=70/72 citation_rules=9/9 admitted=false verified_round_increment=0
+PROCESS_EXIT: 0
+SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=pinned_package_consistent
+SELFTEST_CASE: CLEAN case=missing_result exit=2 expected=2 finding=missing_result
+SELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered
+SELFTEST_CASE: CLEAN case=wrong_revision exit=1 expected=1 finding=revision_mismatch
+SELFTEST_CASE: CLEAN case=omitted_obligation exit=1 expected=1 finding=obligation_set_mismatch
+SELFTEST_CASE: CLEAN case=duplicate_obligation exit=1 expected=1 finding=obligation_set_mismatch
+SELFTEST_CASE: CLEAN case=wrong_subject exit=1 expected=1 finding=subject_mismatch
+SELFTEST_CASE: CLEAN case=unearned_admission exit=1 expected=1 finding=unearned_admission
+SELFTEST_CASE: CLEAN case=routing_status_contradiction exit=1 expected=1 finding=routing_observation_mismatch
+SELFTEST_CASE: CLEAN case=settled_without_dispatch exit=1 expected=1 finding=undispatched_wave_observation_mismatch
+SELFTEST_CASE: CLEAN case=receipt_presence_contradiction exit=1 expected=1 finding=receipt_observation_mismatch
+SELFTEST_CASE: CLEAN case=blocked_admission exit=2 expected=2 finding=required_alias_bindings_missing+applicable_receipt_binding_missing
+RECOVERY_SELFTEST: CLEAN cases=12 exit=0
+PROCESS_EXIT: 0
+ROUND_ADMISSION: COULD_NOT_EVALUATE finding=required_alias_bindings_missing+applicable_receipt_binding_missing exit=2
+PROCESS_EXIT: 2
+```
+
+This is consistency verification of the pinned recorded state, not a fresh
+route-health probe, native judgment or receipt acceptance. Axes, learning
+trends, four author-only SHONEN assertions and unblock actions remain unchanged.
+No new round, wave dispatch, receipt or Sighting completion occurred.
+Verified-round increment remains **0**. Updated machine handoff:
+`.ufo/continuation/kaidoku-interactive-r1-admission-correction.json`.

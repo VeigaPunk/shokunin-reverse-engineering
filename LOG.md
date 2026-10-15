@@ -612,3 +612,12 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   receipt, push, Sighting completion or verified-round increment. Corrected
   work lands before the report erratum and updated continuation; a final
   actual-tree gate run will be observed before delivery.
+
+- Admission correction work landed at
+  `a3f2e1be58ceaaba1c57ba996698bd86b36123e6`, lane identity. After that commit,
+  appended an erratum to `.ufo/reports/round-1/kaidoku.md` and the Markdown
+  continuation; added `.ufo/continuation/kaidoku-interactive-r1-admission-correction.json`
+  as the superseding machine handoff. The original report/JSON and full old
+  outputs remain preserved. The handoff commit includes this LOG append;
+  final actual-tree gate output is delivered by the command surface, without
+  inventing an admission or a new verified round.

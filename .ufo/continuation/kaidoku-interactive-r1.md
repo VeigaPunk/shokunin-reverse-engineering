@@ -36,3 +36,16 @@ After sound closure only, follow SCORECARD's next calibration move: live
 version-pinned REA surface/name reconciliation. Retain map/authority/obsolete
 summary/scope/provider/fleet-history debt. Shared ledger closure and global
 routing/receipt authority remain operator/integrator work. No push.
+
+## Superseding admission-diagnostic correction
+
+Correction work: `a3f2e1be58ceaaba1c57ba996698bd86b36123e6`.
+The original admission exit 2 was unconditional and did not verify the
+observation contents. The corrected gate derives that diagnostic only after
+checking routing, receipt absence and undispatched-wave consistency.
+Evidence gate exit 0; **12** isolated cases pass, exit 0; recorded prerequisite
+diagnostic exit 2. Full output: `.ufo/rounds/interactive-r1/gate-correction-results.json`.
+The report carries an append-only erratum. Current machine handoff:
+`.ufo/continuation/kaidoku-interactive-r1-admission-correction.json`.
+Round remains **1**, blocked, verified increment **0**. Original route/receipt
+unblock actions still apply; no native judgment, receipt or Sighting completion.
