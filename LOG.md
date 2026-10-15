@@ -421,3 +421,64 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   improved (the 'blocked' class shrank by half under live re-verification),
   quality/calibration improved, depth unchanged. THE LANE'S TENTH GOAL-ERA
   ROUND — kaidoku at 10/10.
+
+## 2026-10-15 — operator-steered round 1: reconcile current assessment with landed REA evidence
+
+- **Trigger / baseline:** `6645585873c4e66372b15687c47000abf8d91978:SCORECARD.md`
+  still called r5 pending and planned its completed integration, while
+  `LOG.md:172-194,402-423` recorded local completion through historical r14.
+  The legacy card deliberately had no numeric axis fields. This is today's
+  operator-steered r1, not a renumbering or rewrite of historical r1–14.
+- **One axis move — calibration:** replace the expired current-state view
+  with an evidence-backed assessment; restore bounded numeric fields and
+  retain genuine residuals. `evidence/round-1-2026-10-15/rubric.json` freezes
+  nine failure-selected reconciliation obligations and their baseline sources.
+  The executed baseline jq count returned aligned=0, total=9, score=0;
+  this is a newly reconstructed completeness proxy, not an old numeric score
+  or unbiased accuracy. The closing entry records the committed after reading.
+- **Controls, not extra moves:** source-object counting found 72 knowledge
+  files / 70 mapped (9.72/10), missing exactly the two r14 notes; 9/9 existing
+  queue-drain rules have resolvable file/range citations (10/10 structural
+  proxy only). Baseline output: `evidence/round-1-2026-10-15/baseline.json`;
+  reproducible recipes A/B: `SCORECARD.md`. Neither control implies full
+  domain coverage, semantic correctness, or freshly executed holdings.
+- **Attestation correction:** `SHONEN.md` now has four `[~]`, not four `[x]`.
+  GateReviewer traced the cited r1–r4 reports and r2/r3/r5 audit waves to this
+  lane and its dispatched workers; they are not outside promotion verifiers.
+  Historical gate assertions and “kaidoku at 10/10” in `LOG.md:418-423` do not
+  establish promotion eligibility or an expertise score. The latter counts
+  ten goal-era rounds. No promotion or outside discernment review is claimed.
+- **Single batched host dispatch:** planner CalibrationPlanner; connector
+  OverlapConnector; executors CoverageExecutor, DepthExecutor, DebtExecutor;
+  scribe EvidenceScribe; scout ProviderScout; reviewer GateReviewer; critic
+  ClaimCritic. One `task` call spawned all nine role-routed workers. No model
+  aliases, routing/config changes, padding, or separate UFO missions were used.
+  Worker reviews remain same-lane evidence, not outside SHONEN verification.
+- **Live re-verification:** ProviderScout's `binary_session {}` returned REA
+  6.5.0, 207 MCP tools, 153 CLI commands, skill 42, catalog digest
+  `805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded`.
+  It is status, not an Evidence-ID-bearing holding. The dated lesson
+  `corpus/lessons/2026-10-15-round-1.md` preserves the excerpt, counting
+  method, mixed client pins and known limits. Availability did not become
+  coverage; old 6.4.0/170/v37 summaries are explicitly marked unresolved drift.
+- **Executed smoke:** opened pinned `/usr/lib/libjq.so.1.0.4` under Ghidra
+  12.1.4, decoded `0x117070` as `f30f1efa` / ENDBR64 (observed,
+  shipped-artifact), exported the complete record, then closed the provider.
+  Subject sha256 `7e8bccc6df37a55fb90703c9069b3770f5cdc502e96959c866d2f30fbf5e8b6b`;
+  evidence `ev_f5e5da50ea8ff88ca9b26a97cebe1ac440c41414e0effd9bfe1943f464780481`;
+  durable bundle `evidence/round-1-2026-10-15/rea-bundle.json`.
+  `sha256sum` + `objdump -d --start-address=0x17070 --stop-address=0x17074`
+  independently matched the carrier digest and instruction bytes. Static
+  decode is not runtime observation or a safety verdict.
+- **Residuals deliberately retained:** two unmapped r14 notes; family-specific
+  evidence-ID law versus universal old summaries; obsolete README frontier
+  and r13 fix counts; provider/client drift; device/provider/scale limits;
+  historical “benign payload” scope bleed; missing historical fleet r5 report
+  and ledger rows beyond r4. `SCORECARD.md`, Open gaps, names the exact sources.
+  R5's local zstd/count/asar repairs are landed; fleet-only count/history
+  debt remains separate. No domain source tree or sibling repo was changed.
+- **Artifacts:** current SCORECARD; bounded SHONEN assessment; this append;
+  new lesson and its index row; frozen rubric, baseline and native bundle.
+  The post-change review/commit evidence is recorded in the closing entry
+  and `evidence/round-1-2026-10-15/result.json`. The filed 2026-10-13 r1 fleet
+  report will retain its original bytes and receive only a dated reassessment.

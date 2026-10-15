@@ -143,6 +143,7 @@ A row is written when its file exists, never before.
 | `2026-10-13-round-2` | 2 | r1 survives audit (1 erratum); catalog≠provider≠held; doctor aux-blind; 32MiB crash cap; MCP-session-scoped ev_ids; shadow-binary verdict benign |
 | `2026-10-13-round-3` | 3 | r2 survives audit (2 errata + 1 mechanism fix); positional-arg pattern; rebase rule generalizes to .node; evidence ids content-addressed across sessions; partial pairing→unknown; zero-findings≠inventory exclusion |
 | `2026-10-13-round-4` | 4+4u | r3 survives audit (10+ errata appended); provider-gate diagnosis = find the spawn wrapper (prlimit); ev_ids = f(content,path,params); `grep -o|wc -l` not `grep -c` on minified; synth carriers ≠ byte-reproducible; env keys unlock 6 surfaces; 900s internal deadline vs outer timeout |
+| `2026-10-15-round-1` | 1 (new operator steer) | calibration only: reconcile current assessment with landed history; freeze nine failure-selected obligations; retain 70/72 map and citation-only 9/9 controls, provider drift and authority contradictions; no promotion |
 
 ## Frontier
 
