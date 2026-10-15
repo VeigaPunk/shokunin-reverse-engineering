@@ -225,3 +225,14 @@ Frida), source-repo reconstruction, all engine/tooling installs, and
 safety/quality verdicts on findings (Adjacent — report to orchestrator, never
 absorb; PROVINCE.md). Boundary: "what does this shipped artifact do, per
 evidence id X" — never "is it safe or trustworthy".
+
+## Local round-evidence gate registry
+
+This gate validates the sealed interactive round-1 recovery evidence package,
+not REA correctness, outside review, canonical judgment, or fleet acceptance.
+Evidence and limits: `corpus/lessons/2026-10-15-round-1-recovery.md`; `LOG.md`,
+Interactive round-1 recovery.
+
+| Name | Kind / owner | Entry / verdict map | Self-invocation | Pinned values / write scope |
+|---|---|---|---|---|
+| interactive-r1-recovery | gate / kaidoku | `python3 .ufo/rounds/interactive-r1/verify-recovery.py`; 0 clean, 1 failed, 2 could-not-evaluate; `--admission` checks this recovery's unresolved prerequisites and returns 2, never native judgment | same command with `--selftest`; asserts isolated subprocess exit codes and stable finding IDs | `.ufo/rounds/interactive-r1/expected.json` pins every snapshot input and expected outcome; normal entry read-only in this repo; selftest creates and removes only its isolated fixture directory under `.ufo/rounds/interactive-r1/` |

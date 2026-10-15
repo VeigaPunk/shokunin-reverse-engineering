@@ -153,3 +153,63 @@ accepting the count. A changed status flag without source support is not an impr
   explicit old/new-name set and no availability→holding inference.
 - **retired:** none. Neither a perfect selected proxy nor ten completed
   goal-era rounds demonstrates saturation or promotion eligibility.
+
+## Interactive round-1 recovery — current admission status, 2026-10-15
+
+This section governs completion claims above. The interrupted worker landed
+`c265db9bd3c0883fbaf4487f839559c85a736826`, but its promised `result.json`
+and local round report had not landed. The successor recovered **that same
+round 1**, not round 2. Historical r1–14 and ten goal-era rounds keep their
+original labels. No literal LIVE flags exist on this card; calibration is
+the interrupted axis selected from its frozen failure-selected baseline,
+not an inference that 10 on a structural proxy means domain saturation.
+
+`evidence/round-1-2026-10-15/result.json` now names the measured work commit,
+fresh source-control measurements and **L1-author** reviews of all nine
+obligations. It does not reconstruct unrecorded worker reviews or pretend
+to exist inside its own measured source commit. Command A was freshly
+executed for both source revisions; command B returned 0/9 → 9/9. The gate
+checks package integrity, not semantic truth of those reviewed outcomes.
+
+| Owned axis | Before → inherited work, freshly checked | Recovery verdict / limit |
+|---|---|---|
+| calibration | 0/9 → 9/9 reviewed obligations (0 → 10 finite proxy) | improved for the inherited move, author-assessed; no newly admitted round |
+| coverage | 70/72 → 70/72 map tokens (9.72 → 9.72) | unchanged; the r14 pair remains unmapped |
+| depth | 9/9 → 9/9 citation-resolution blocks (10 → 10) | unchanged; authority contradictions still prevent a semantic-depth claim |
+
+Full fresh observations: `.ufo/rounds/interactive-r1/source-measurements.json`.
+Learning trends: expansion **unchanged**, quality **improved** only for the
+assessment evidence chain, discernment **unchanged** without outside review.
+Recovery bookkeeping is not a second axis-move or extra round.
+
+- **Wave:** exactly 32 distinct scopes validated, exit 0; **0 dispatched,
+  0 settled**. Full output: `.ufo/rounds/interactive-r1/wave-validation.json`.
+  Required existing role bindings are missing: executor/scribe must select
+  `@m_composer` (observed `@m_mid`/`@m_fast`), reviewer/critic `@m_grok`
+  (observed `@m_mid`/`@m_strong`), connector `@m_antigravity` with `@m_zfl`
+  fallback (observed `@m_mid`; named antigravity chain empty). Existing cards
+  supplied no alternative. No unauthorized dispatch or config mutation occurred.
+- **Local gate:** before repair exit 2, `missing_result`; after repair
+  `RECOVERY_EVIDENCE: CLEAN`, exit 0. Nine isolated fixture cases passed,
+  `RECOVERY_SELFTEST: CLEAN cases=9 exit=0`. `--admission` returned
+  `ROUND_ADMISSION: COULD_NOT_EVALUATE finding=required_alias_bindings_missing+applicable_receipt_binding_missing exit=2`.
+  Full lines/exit codes: `.ufo/rounds/interactive-r1/gate-results.json`.
+- **Smoke:** current closed REA session → owned libjq open → `0x117070`
+  decoded as `f30f1efa` / `ENDBR64` → complete evidence export → owned close.
+  Fresh bundle: `.ufo/rounds/interactive-r1/rea-bundle.json`. SHA-256 and
+  objdump independently matched. Static observation is not target execution.
+- **Receipt:** selected launch/Sighting metadata has run/session/mission/pane
+  IDs and an argv launch, but no applicable taskKey or dispatcher
+  prompt/config/receipt binding. No receipt was fabricated, minted or
+  validated; no Sighting completion was attempted.
+- **Current status:** blocked recovery; **verified-round increment 0**.
+  No native judgment, promotion, saturation or progress toward the 100-round
+  target is inferred from this evidence pass.
+
+**Immediate unblock:** operator/integrator supplies the required existing
+role bindings and connector fallback, plus applicable receipt-bound dispatch
+metadata. Redispatch/recover round 1 in a fresh authorized L1 session, one
+complete native 32-member batch; do not increment the round before admission.
+The previously planned version reconciliation remains the next content move
+only after this recovery closes. All Open gaps above remain named debt with
+their cited sources; shared fleet history/ledgers stay integrator-owned.

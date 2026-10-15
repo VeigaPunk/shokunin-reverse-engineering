@@ -482,3 +482,86 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   The post-change review/commit evidence is recorded in the closing entry
   and `evidence/round-1-2026-10-15/result.json`. The filed 2026-10-13 r1 fleet
   report will retain its original bytes and receive only a dated reassessment.
+
+## 2026-10-15 — Interactive round-1 recovery: durable local evidence, admission blocked
+
+- **Motivation and identity:** initial `git status --short --branch` showed
+  `main` ahead by one commit, only untracked `.ufo/` native-session material.
+  Work commit `c265db9bd3c0883fbaf4487f839559c85a736826` contained the new
+  assessment, frozen rubric/baseline and old bundle, but its referenced
+  `evidence/round-1-2026-10-15/result.json` was absent and no local report
+  existed. Preserve all inherited bytes and sessions; recover the existing
+  operator-steered r1, not round 2 or a reset of historical r1–14.
+- **Correction to the promises at :480-484 and the old lesson :140-143,154-160:**
+  the result now lands locally, with fresh **L1-author** source reviews.
+  The interrupted worker's named specialist reviews are not reconstructed
+  from transcripts or claimed completed. No fleet report reassessment or
+  shared ledger update was written; those paths are outside this dispatch.
+  The inherited 9/9 assessment is not an admitted or verified round.
+- **Plan and wave:** `.ufo/rounds/interactive-r1/wwkd-plan.md` was saved before
+  recovery mutations. The canonical `ufo-swarm-wave.mjs plan --spec <saved
+  wave-spec.json> --route-families` returned exit 0, spawn=32, resume=0,
+  total=32. Complete stdout/stderr/argv are retained in `wave-validation.json`.
+  The 32 scopes were **not dispatched**: required content `@m_composer`,
+  audit `@m_grok`, connector `@m_antigravity`→`@m_zfl` bindings are not
+  realized by the existing overrides/cards. Observed executor/reviewer/
+  connector `@m_mid`, scribe `@m_fast`, critic `@m_strong`; named
+  antigravity fallback list empty. Exact shape evidence and operator unblock:
+  `routing-observation.json`. No pins, overlays, global edits or provider
+  health probes were used. Zero new L1s or L2s were spawned.
+- **Fresh measurements:** immutable Git-object counting for baseline
+  `6645585873c4e66372b15687c47000abf8d91978` and work commit `c265db9...`
+  reproduced 70/72 mapped knowledge files and 9/9 resolvable citation blocks
+  at both revisions. Recipe A: SCORECARD; full output:
+  `.ufo/rounds/interactive-r1/source-measurements.json`. Recipe B executed
+  with `/usr/bin/jq --slurpfile r evidence/round-1-2026-10-15/result.json`
+  returned baseline aligned=0,total=9,score=0 and after
+  aligned=9,total=9,score=10. Each after flag has its own reviewed source
+  argument in the result. No semantic truth, mastery or outside review is
+  inferred from counting flags or resolving citations.
+- **Actual smoke:** REA `binary_session {}` reported closed, 6.5.0, 207 tools,
+  153 CLI commands, skill 42, unchanged catalog digest. Opened only the pinned
+  `/usr/lib/libjq.so.1.0.4` at SHA-256
+  `7e8bccc6df37a55fb90703c9069b3770f5cdc502e96959c866d2f30fbf5e8b6b`;
+  Ghidra 12.1.4 decoded `0x117070` as `f30f1efa` / ENDBR64, 4 bytes,
+  observed/shipped-artifact. Evidence
+  `ev_f5e5da50ea8ff88ca9b26a97cebe1ac440c41414e0effd9bfe1943f464780481`;
+  exported `.ufo/rounds/interactive-r1/rea-bundle.json`, then owned close
+  returned `result:null`. Independently ran `sha256sum` and bounded `objdump`
+  as recorded in the recovery lesson, exit 0. No target execution, external
+  live research or safety verdict.
+- **Local acceptance evidence:** recovery gate initially returned
+  `RECOVERY_EVIDENCE: COULD_NOT_EVALUATE finding=missing_result exit=2`;
+  after result recovery, `RECOVERY_EVIDENCE: CLEAN
+  finding=pinned_package_consistent author_review=9/9 coverage=70/72
+  citation_rules=9/9 admitted=false verified_round_increment=0`, exit 0.
+  `--selftest` exercised nine isolated subprocess exit/finding pairs and
+  returned `RECOVERY_SELFTEST: CLEAN cases=9 exit=0`. `--admission` returned
+  `ROUND_ADMISSION: COULD_NOT_EVALUATE
+  finding=required_alias_bindings_missing+applicable_receipt_binding_missing
+  exit=2`. Full unabridged verdicts, stderr and process codes:
+  `.ufo/rounds/interactive-r1/gate-before.json`, `gate-results.json`.
+  Expected snapshot digests and selftest outcomes are persisted in
+  `expected.json`; registry is in SKILL. Evidence integrity is not native
+  judgment or semantic review.
+- **Per-axis verdicts:** inherited calibration move improved on its selected
+  nine-obligation rubric; coverage/depth unchanged. Recovery adds durability,
+  not another scored round. Expansion unchanged; quality improved only for
+  the assessment evidence chain; discernment unchanged. Four SHONEN `[~]`
+  remain author assertions. All named map/version/authority/scope/fleet
+  history debt stays open; no domain frontier or promotion claim was added.
+- **Receipt/continuation debt:** selected launch/pane/Sighting metadata names
+  run/session `shk-kaidoku-interactive-20261015T050057Z`, mission
+  `m_645cfa32b5284aaab568431141665df8`, pane `%14`, argv dispatch only.
+  No taskKey or dispatcher-supplied prompt/config/receipt binding exists in
+  those inspected metadata surfaces or the prompt. `receipt-binding-observation.json`
+  records the shape-only check. Do not fabricate it from arbitrary hashes;
+  mint/validate/complete were not attempted. Operator/integrator must provide
+  both applicable binding and required role routing before a fresh authorized
+  session recovers round 1. **Verified-round increment: 0.** No in-session
+  continuation loop, saturation stop or at-least-100 success is claimed.
+- **Landed-work handoff:** result, gate/fixtures expectations, full observations,
+  recovery lesson/index, SCORECARD correction and this append are owned lane
+  changes. The report/continuation land after the work commit and cite it;
+  their exact hashes are recorded there. No push, shared report/ledger edit,
+  host remediation or runtime/session transcript staging is authorized.
