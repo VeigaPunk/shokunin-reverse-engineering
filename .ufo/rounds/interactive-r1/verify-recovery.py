@@ -11,6 +11,7 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
+EXPECTED = HERE.relative_to(ROOT) / "expected.json"
 RESULT = Path("evidence/round-1-2026-10-15/result.json")
 
 
@@ -26,6 +27,41 @@ def require(condition, name, code=1):
 
 def load(path):
     return json.loads(path.read_text())
+
+
+def blocked_prerequisites(root, expected, result, plan):
+    routing = load(root / expected["routing_observation_path"])
+    required = expected["required_routes"]
+    observed = routing["observed"]
+    resolved = {role: "@" + family["alias"]
+                for family in plan["routePreflight"]["families"]
+                for role in family["roles"]}
+    roles = set(required) - {"connector_fallback"}
+    require(routing["required"] == required
+            and all(observed[role] == resolved[role] for role in roles)
+            and routing["cards_model_binding_found"] is False
+            and routing["routes_probed"] is False,
+            "routing_observation_mismatch")
+    missing_routes = any(observed[role] != required[role] for role in roles)
+    missing_routes |= required["connector_fallback"] not in observed["m_antigravity_fallbacks"]
+    require(missing_routes and routing["state"] == "blocked",
+            "routing_observation_mismatch")
+    require(routing["native_tasks_spawned"] == result["dispatch"]["spawned"] == 0
+            and routing["native_tasks_settled"] == result["dispatch"]["settled"] == 0,
+            "undispatched_wave_observation_mismatch")
+    binding = load(root / expected["receipt_binding_path"])
+    fields = set(expected["required_receipt_fields"])
+    bound = set(binding["task_receipt_binding_keys"])
+    missing = fields - bound
+    require(not bound and set(binding["missing"]) == missing == fields
+            and binding["dispatch_kind"] == "argv"
+            and set(binding["dispatch_keys"]) == {"argv", "kind"}
+            and binding["mint_attempted"] is False
+            and binding["receipt_validated"] is False
+            and binding["sighting_complete_attempted"] is False,
+            "receipt_observation_mismatch")
+    return (["required_alias_bindings_missing"] if missing_routes else []) + (
+        ["applicable_receipt_binding_missing"] if missing else [])
 
 
 def check(root, expected, admission=False):
@@ -75,10 +111,9 @@ def check(root, expected, admission=False):
             "wave_count_mismatch")
     require(len({t["name"] for t in plan["tasks"]}) == 32,
             "wave_count_mismatch")
-    if admission:
-        # This recovery has no dispatched wave or applicable task-receipt binding.
-        # A later sound round needs new evidence, never a flipped acceptance flag.
-        raise Finding(2, "required_alias_bindings_missing+applicable_receipt_binding_missing")
+    blockers = blocked_prerequisites(root, expected, result, plan)
+    if admission and blockers:
+        raise Finding(2, "+".join(blockers))
     return "RECOVERY_EVIDENCE: CLEAN finding=pinned_package_consistent author_review=9/9 coverage=70/72 citation_rules=9/9 admitted=false verified_round_increment=0"
 
 
@@ -107,6 +142,26 @@ def selftest(expected):
             elif name == "unearned_admission":
                 candidate["admitted"] = True
             target.write_text(json.dumps(candidate))
+            fixture_expected = copy.deepcopy(expected)
+            changed = None
+            if name in ("routing_status_contradiction", "settled_without_dispatch"):
+                changed = expected["routing_observation_path"]
+                observation = load(ROOT / changed)
+                if name == "routing_status_contradiction":
+                    observation["state"] = "ready"
+                else:
+                    observation["native_tasks_settled"] = 1
+            elif name == "receipt_presence_contradiction":
+                changed = expected["receipt_binding_path"]
+                observation = load(ROOT / changed)
+                observation["missing"] = []
+            if changed is not None:
+                # Re-pin only the isolated fixture: test semantic contradictions,
+                # not another copy of the already-covered digest failure.
+                data = json.dumps(observation).encode()
+                (fixture / changed).write_bytes(data)
+                fixture_expected["snapshots"][changed] = hashlib.sha256(data).hexdigest()
+            (fixture / EXPECTED).write_text(json.dumps(fixture_expected))
             snapshot = fixture / expected["bundle_path"]
             original = snapshot.read_bytes()
             if name == "snapshot_tampered":
@@ -114,10 +169,13 @@ def selftest(expected):
             if name == "missing_result":
                 target.unlink()
             command = [sys.executable, str(Path(__file__).resolve()), "--root", str(fixture)]
-            if name == "blocked_admission":
+            if name in ("blocked_admission", "routing_status_contradiction",
+                        "receipt_presence_contradiction", "settled_without_dispatch"):
                 command.append("--admission")
             run = subprocess.run(command, capture_output=True, text=True)
             snapshot.write_bytes(original)
+            if changed is not None:
+                (fixture / changed).write_bytes((ROOT / changed).read_bytes())
             passed = run.returncode == case["exit_code"] and case["finding"] in run.stdout
             print(f"SELFTEST_CASE: {'CLEAN' if passed else 'FAILED'} case={name} exit={run.returncode} expected={case['exit_code']} finding={case['finding']}")
             require(passed, "selftest_case_failed")
@@ -132,7 +190,7 @@ def main():
     args = parser.parse_args()
     label = "ROUND_ADMISSION" if args.admission else "RECOVERY_EVIDENCE"
     try:
-        expected = load(HERE / "expected.json")
+        expected = load(args.root / EXPECTED)
         print(selftest(expected) if args.selftest else check(args.root, expected, args.admission))
         return 0
     except Finding as error:

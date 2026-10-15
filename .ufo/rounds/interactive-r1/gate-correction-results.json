@@ -1,0 +1,38 @@
+{
+  "replaces_interpretation_of": ".ufo/rounds/interactive-r1/gate-results.json",
+  "reason": "Prior admission exit was unconditional; new diagnostics validate routing, receipt and no-dispatch observation contents before reporting a blocker.",
+  "checks": [
+    {
+      "name": "after",
+      "argv": [
+        "python3",
+        ".ufo/rounds/interactive-r1/verify-recovery.py"
+      ],
+      "exit_code": 0,
+      "stdout": "RECOVERY_EVIDENCE: CLEAN finding=pinned_package_consistent author_review=9/9 coverage=70/72 citation_rules=9/9 admitted=false verified_round_increment=0\n",
+      "stderr": ""
+    },
+    {
+      "name": "selftest",
+      "argv": [
+        "python3",
+        ".ufo/rounds/interactive-r1/verify-recovery.py",
+        "--selftest"
+      ],
+      "exit_code": 0,
+      "stdout": "SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=pinned_package_consistent\nSELFTEST_CASE: CLEAN case=missing_result exit=2 expected=2 finding=missing_result\nSELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered\nSELFTEST_CASE: CLEAN case=wrong_revision exit=1 expected=1 finding=revision_mismatch\nSELFTEST_CASE: CLEAN case=omitted_obligation exit=1 expected=1 finding=obligation_set_mismatch\nSELFTEST_CASE: CLEAN case=duplicate_obligation exit=1 expected=1 finding=obligation_set_mismatch\nSELFTEST_CASE: CLEAN case=wrong_subject exit=1 expected=1 finding=subject_mismatch\nSELFTEST_CASE: CLEAN case=unearned_admission exit=1 expected=1 finding=unearned_admission\nSELFTEST_CASE: CLEAN case=routing_status_contradiction exit=1 expected=1 finding=routing_observation_mismatch\nSELFTEST_CASE: CLEAN case=settled_without_dispatch exit=1 expected=1 finding=undispatched_wave_observation_mismatch\nSELFTEST_CASE: CLEAN case=receipt_presence_contradiction exit=1 expected=1 finding=receipt_observation_mismatch\nSELFTEST_CASE: CLEAN case=blocked_admission exit=2 expected=2 finding=required_alias_bindings_missing+applicable_receipt_binding_missing\nRECOVERY_SELFTEST: CLEAN cases=12 exit=0\n",
+      "stderr": ""
+    },
+    {
+      "name": "admission",
+      "argv": [
+        "python3",
+        ".ufo/rounds/interactive-r1/verify-recovery.py",
+        "--admission"
+      ],
+      "exit_code": 2,
+      "stdout": "ROUND_ADMISSION: COULD_NOT_EVALUATE finding=required_alias_bindings_missing+applicable_receipt_binding_missing exit=2\n",
+      "stderr": ""
+    }
+  ]
+}

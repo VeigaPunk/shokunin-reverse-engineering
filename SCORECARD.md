@@ -213,3 +213,22 @@ complete native 32-member batch; do not increment the round before admission.
 The previously planned version reconciliation remains the next content move
 only after this recovery closes. All Open gaps above remain named debt with
 their cited sources; shared fleet history/ledgers stay integrator-owned.
+
+### Admission-diagnostic correction — same blocked round 1
+
+The earlier `--admission` exit 2 in `gate-results.json` was unconditional;
+it recorded the known blockers but did not verify the observation contents.
+That interpretation of the prior gate is superseded, not its historical
+output. The corrected gate parses the pinned routing/receipt observations,
+cross-checks canonical wave role aliases and zero dispatch/settlement fields,
+and rejects inconsistent observation contents before reporting blockers.
+
+Current evidence: `.ufo/rounds/interactive-r1/gate-correction-results.json`.
+Evidence gate exit 0; self-invocation **12/12** expected exit/finding pairs,
+exit 0; evidence-derived prerequisite diagnostic exit 2, unchanged missing
+alias/receipt findings. The three added contradictory-observation fixtures
+are re-pinned only inside isolated trees to exercise semantic checks.
+This verifies consistency of the recorded state, not live routing health,
+native admission or receipt applicability. Axes/trends, blocked status and
+verified-round increment 0 are unchanged. Correction lesson:
+`corpus/lessons/2026-10-15-round-1-admission-correction.md`.

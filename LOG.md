@@ -581,3 +581,34 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
 - The following handoff-only commit lands this append and those three
   report/continuation files under the same lane identity. It does not imply
   receipt validation, Sighting completion, a new round or a fleet ledger write.
+
+### Admission-diagnostic correction — no new round
+
+- Review identified a real gate defect in `23c0fd5...`: the `--admission`
+  branch raised the missing-binding finding unconditionally. The historical
+  exit 2 in `gate-results.json` was a recorded blocker, not verification of
+  its observation contents. This corrects that interpretation in the earlier
+  recovery log/scorecard/lesson/report; original filed bytes remain intact.
+- `verify-recovery.py` now parses the routing and receipt observations:
+  required aliases agree with persisted expectations, observed aliases
+  agree with canonical wave preflight, spawned/settled counts agree with
+  the undispatched result, and receipt absence agrees with argv-launch
+  metadata shape. Inconsistent contents fail before a blocker is emitted.
+  `expected.json` persists the independent route/receipt contract.
+- Three added fixtures exercise semantic contradictions behind re-pinned
+  isolated snapshots: ready-versus-blocked routing, settlement without
+  dispatch, and contradictory receipt absence. All twelve self-invocation
+  subprocess cases matched their expected code/finding. The actual package
+  returned evidence exit 0 and admission exit 2 with the same two derived
+  blockers. Full commands/stdout/stderr/codes:
+  `.ufo/rounds/interactive-r1/gate-correction-results.json`.
+- Added `corpus/lessons/2026-10-15-round-1-admission-correction.md` and its
+  index row; appended the SCORECARD correction. This is author correction,
+  not outside discernment review or another axis-move. The SKILL registry
+  remains required by canonical PROTOCOL Gate standard and accurately
+  describes the local evidence gate; it is not a provider holding.
+- Routing and applicable receipt authority remain blocked on the same
+  operator/integrator actions. No wave dispatch, second L1, config change,
+  receipt, push, Sighting completion or verified-round increment. Corrected
+  work lands before the report erratum and updated continuation; a final
+  actual-tree gate run will be observed before delivery.

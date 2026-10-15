@@ -15,6 +15,23 @@
   "bundle_path": ".ufo/rounds/interactive-r1/rea-bundle.json",
   "measurements_path": ".ufo/rounds/interactive-r1/source-measurements.json",
   "wave_validation_path": ".ufo/rounds/interactive-r1/wave-validation.json",
+  "routing_observation_path": ".ufo/rounds/interactive-r1/routing-observation.json",
+  "receipt_binding_path": ".ufo/rounds/interactive-r1/receipt-binding-observation.json",
+  "required_routes": {
+    "executor": "@m_composer",
+    "scribe": "@m_composer",
+    "reviewer": "@m_grok",
+    "critic": "@m_grok",
+    "connector": "@m_antigravity",
+    "connector_fallback": "@m_zfl"
+  },
+  "required_receipt_fields": [
+    "taskKey",
+    "promptSha256",
+    "configSha256",
+    "resultPath",
+    "receiptPath"
+  ],
   "controls": {
     "baseline": {
       "revision": "6645585873c4e66372b15687c47000abf8d91978",
@@ -101,6 +118,21 @@
       "case": "unearned_admission",
       "exit_code": 1,
       "finding": "unearned_admission"
+    },
+    {
+      "case": "routing_status_contradiction",
+      "exit_code": 1,
+      "finding": "routing_observation_mismatch"
+    },
+    {
+      "case": "settled_without_dispatch",
+      "exit_code": 1,
+      "finding": "undispatched_wave_observation_mismatch"
+    },
+    {
+      "case": "receipt_presence_contradiction",
+      "exit_code": 1,
+      "finding": "receipt_observation_mismatch"
     },
     {
       "case": "blocked_admission",
