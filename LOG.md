@@ -565,3 +565,19 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   changes. The report/continuation land after the work commit and cite it;
   their exact hashes are recorded there. No push, shared report/ledger edit,
   host remediation or runtime/session transcript staging is authorized.
+
+### Interactive recovery handoff durability
+
+- Work landed at `23c0fd5f2e5838da737341ac468edabca1784da7`, lane identity;
+  17 explicitly selected owned files, no push. The local report
+  `.ufo/reports/round-1/kaidoku.md` and fresh-session continuation
+  `.ufo/continuation/kaidoku-interactive-r1.{md,json}` were written after
+  that commit and cite it. The receipt-binding/routing blockers, full gate
+  verdicts and zero verified-round increment are included for the integrator.
+- Read-only pane check `tmux display-message -p -t %14
+  '#{pane_id} #{pane_current_command} dead=#{pane_dead}'` returned
+  `%14 node dead=0`, exit 0. The interactive pane and native session
+  material remain intact; no transcript bodies were read or staged.
+- The following handoff-only commit lands this append and those three
+  report/continuation files under the same lane identity. It does not imply
+  receipt validation, Sighting completion, a new round or a fleet ledger write.
