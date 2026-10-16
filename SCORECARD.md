@@ -22,7 +22,7 @@ explicitly marked current; the added lesson-index row shifts later README lines.
 |---|---|---|---|---|
 | coverage | 9.72 → 10.0 | 72/72 knowledge files mapped; index integrity only, **not** fraction of the REA domain held | `corpus/README.md:11-60`; command A; baseline `a79945c4`, measured `2abd30f5` | luna-round-1 |
 | depth | 10 → 10 | 9/9 existing queue-drain rule blocks have resolvable file/range citations; **not** semantic correctness, generality, or fresh execution | `SKILL.md:77-191`; command A; measured revisions in `evidence/round-1-2026-10-15/result.json` | r1 measurement; no depth change |
-| calibration | 0 → 10 | 0/9 → 9/9 preselected reconciliation obligations aligned; **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; measured revisions in `evidence/round-1-2026-10-15/result.json` | operator-steered r1, 2026-10-15 |
+| calibration | 0 → 10 | 9/9 preselected reconciliation obligations aligned (2026-10-15); 2026-10-16 per-client REA surface reconciled to live receipts — **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; luna-round-2 receipts `.ufo/waves/luna-round-2/receipts/`; measured at `75af886a` | operator-steered r1 + luna-round-2 |
 
 Baseline source revision: `6645585873c4e66372b15687c47000abf8d91978`.
 `result.json` records the post-change source commit, observations and reviews;
@@ -53,13 +53,11 @@ They are assessment obligations, not nine independent domain discoveries.
 - **Coverage map:** closed at 72/72 by luna-round-1 (2026-10-16); the two
   r14 rows are labeled partial per their files' own limiting language. All
   72 files stay in the denominator. Historical 70/70 is not current 72/72.
-- **Version drift:** live `binary_session {}` reports REA **6.5.0**, **207** MCP
-  tools, **153** CLI commands, skill **42**, catalog
-  `805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded`.
-  Province/skill summaries still describe 6.4.0/170/127/v37 historical work.
-  OMP/Devin registrations pin 6.5.0; Kimi still pins 6.4.0. No configuration
-  changed and no 37-tool holdings increase is claimed. The lesson preserves
-  the observed status excerpt; this status call supplies no Evidence ID.
+- **Version drift:** closed by luna-round-2 (2026-10-16) — current-surface
+  summaries now state the per-client pins and receipted inventories (Devin/OMP
+  6.5.0 207/153, Kimi 6.4.0 170/127; both catalog digests; skill v42 installed
+  / v37 expected by 6.4.0). No configuration changed and no 37-tool holdings
+  increase is claimed; receipts at `.ufo/waves/luna-round-2/receipts/`.
 - **Authority contradiction:** `SKILL.md:207-210` and `corpus/README.md:164`
   universally describe path-sensitive IDs; the later counterexample at
   `corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:146-169` is family-specific
@@ -268,3 +266,57 @@ section. The coverage row's README range pointer was updated 11-58 → 11-60
 as this row's own evidence-field hygiene; the stale-summaries bullet's
 `:157` pointer (at `:160` in HEAD, per seat C7) is recorded as named debt,
 not silently fixed.
+
+## luna-round-2 — per-client REA surface calibration, 2026-10-16
+
+One move on the calibration axis: the SCORECARD's registered 'planned' move
+(version reconciliation), taken on a three-way proxy tie at 10.0 by the
+most-falsifiable-next-claim rule. Claim: after the round's commit, every
+current-surface version/tool-count/skill/catalog statement in the declared
+edit targets states per-surface resolved values backed by a 2026-10-16 live
+receipt, or is explicitly marked historical; historical evidence cells stay
+byte-identical; no availability→holding inference.
+
+- Wave: 64 seats total on `openai-codex/gpt-6-luna-max` — 58 in the initial
+  batch + 6 backfill (the parent's short-count error, recorded here, in the
+  round report, and the fleet ledger; repaired in-round, round count kept at
+  one). Reports `.ufo/waves/luna-round-2/`, receipts
+  `.ufo/waves/luna-round-2/receipts/`.
+- Receipted: Devin `~/.config/devin/mcp_config.json:7` and OMP
+  `~/.omp/agent/mcp.json:8` → 6.5.0 (207 MCP / 153 CLI / catalog
+  805433f17bb4… / installed skill v42, doctor aligned); Kimi
+  `~/.kimi-code/config.toml:1478` → 6.4.0 (170 / 127 / 25802f6d… / expects
+  v37, doctor stale). Both doctor receipts exit 1, `live_server: unknown`:
+  receipts prove configured pins and package inventories, not running-client
+  identity. MCP `tools/list` counts reproduced twice each way (L7/L8 and
+  L15): 207 and 170. Operator configs hash-identical before/after (S2/S5).
+- Work commit `75af886a` (lane identity): PROVINCE.md surface summary,
+  drift-prone values, Core per-client spawn clause; SKILL.md Domain sentence
+  + inventory paragraph + two checklist rewordings. Core probe cells (dated
+  2026-10-13 table) untouched; coverage-map evidence cells untouched;
+  LOG/lessons append-only untouched.
+- Counting (F2 census — a guard, not the acceptance test, per F2's own
+  residual-hole finding): PROVINCE surface {6.4.0} → {6.4.0, 6.5.0};
+  drift-prone {6.4.0, skill:v37} → {6.4.0, 6.5.0 ×2}; SKILL domain
+  {6.4.0 ×2} → {6.4.0 ×2, 6.5.0}. Acceptance carried by G2/G3/G9 receipt
+  fidelity and F1/F7 guard passes; F7 found no wrong-client pairing and no
+  holding promotion. Mid-round correction: the first drift-prone heading
+  draft broke the census anchor and was amended before the records commit;
+  the work commit was amended accordingly (never rewritten after records).
+- Command A at `75af886a` (side-harm check): mapped 72, missing [],
+  dangling [], coverage 10.0, depth 10.0 (9/9 rules) — both prior axes'
+  measured values held.
+
+| Owned axis | Before → after | Verdict |
+|---|---|---|
+| calibration | 10 → 10 (current surface reconciled to receipts; proxy saturated) | improved (fresh failure-selected alignment) |
+| coverage | 10.0 → 10.0 | unchanged |
+| depth | 10.0 → 10.0 | unchanged |
+
+Learning trends: expansion unchanged; quality improved (current surface
+matches receipts; A6's 6.5-only name set — 37 tools + 27 CLI verbs — is
+recorded inventory, not holdings); discernment exercised and unchanged
+(wrong-client-assignment and availability-to-holding attacks ran; none
+survived). Planned next: depth — reconcile the SKILL.md universal
+path-sensitive-ID summary with the r9-02 family-specific counterexample.
+Retired: none.

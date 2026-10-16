@@ -649,3 +649,32 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   M2's path metadata only); its convergence draft corroborated M2's substance
   and no row wording relies on R4-exclusive claims. Per seat R8 no SHONEN
   box advanced: all four remain `[~]`.
+
+### luna-round-2 — per-client REA surface calibration
+
+- Motivating evidence: SCORECARD open gap 'Version drift' — the 2026-10-15
+  drift observation (live 6.5.0 / 207 tools / 153 CLI / skill v42 / catalog
+  805433f1…) vs province/skill summaries still describing 6.4.0/170/127/v37
+  as the surface.
+- Work: one axis-move on calibration, dispatched as a 64-seat wave on
+  openai-codex/gpt-6-luna-max (58 + 6 backfill after the parent's short-count
+  error; the defect is recorded in the round report and fleet ledger, repaired
+  in-round). Live receipts 2026-10-16 at
+  `.ufo/waves/luna-round-2/receipts/`: doctor on both versions (exit 1,
+  live_server unknown — package inventory, not process identity), MCP
+  tools/list 207 (6.5.0, two independent runs) and 170 (6.4.0, two), CLI
+  help censuses, catalog sha256s, skill versions, Ghidra 12.1.4 / JDK
+  21.0.12.1 reverify, operator configs hash-identical before/after (seats
+  S2/S5).
+- Landed at `75af886a` (lane identity): PROVINCE surface summary now per
+  client (Devin/OMP 6.5.0, Kimi 6.4.0), drift-prone values reverified with
+  both cache/catalog identities, the Core table's present-tense per-client
+  spawn clause reconciled; SKILL Domain 6.4.0 counts marked historical plus a
+  dated per-client inventory paragraph. Historical cells (Core probe records,
+  coverage-map evidence cells, LOG, lessons) untouched; no availability→holding
+  inference (guard passes F1/F7 CLEAN).
+- Named debt: the 6.5-only tool/CLI name set (seat A6: 37 tools + 27 CLI
+  verbs) is recorded inventory, not holdings; provider env keys not re-probed
+  (marked explicitly historical in the new text); seat B2's stale L7 receipt
+  hash noted for its owning round; PROVINCE '3/7 clients registered' kept
+  (seat A5 found it still accurate).
