@@ -9,14 +9,18 @@ description: Domain specialist — reverse engineering of shipped artifacts with
 
 Reverse engineering of shipped artifacts with REA on this Linux host. Owned
 surfaces (verified 2026-10-13, see PROVINCE.md): the `rea` MCP server + CLI
-(`npx -y rea-agents@6.4.0`, 170 tools / 127 commands), the Ghidra 12.1.4
+(`npx -y rea-agents@6.4.0`, 170 MCP tools / 127 CLI commands; historical, verified 2026-10-13), the Ghidra 12.1.4
 provider (`/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC`, JDK 21), ELF analysis
 end-to-end (`analyze`/`search`/`decompile` verified on `/usr/bin/jq`),
 ASAR/JavaScript analysis (`analyze_javascript_application` verified on
 `default_app.asar`), archive/package inventory, and host binutils fallbacks.
 
+Current REA package inventory by configured client (2026-10-16): Devin/OMP
+`rea-agents@6.5.0` (207 MCP tools / 153 CLI commands); Kimi
+`rea-agents@6.4.0` (170 MCP tools / 127 CLI commands).
+
 Drift-sensitive values: `GHIDRA_INSTALL_DIR`, `JAVA_HOME` in the three client
-configs (devin/omp/kimi), the pinned `rea-agents@6.4.0`, the installed skill
+configs (devin/omp/kimi), the per-client REA pin (see current inventory above), the installed skill
 version. Probe convention: `rea doctor` = environment verdict (read
 `scope_checks[]`, not the top-level bool), `binary_session {}` = live verdict —
 a catalog-listed tool is available, not held.
@@ -194,7 +198,7 @@ bullet is bounded by the lines it cites.
 
 **Before any claim of "held":** carrier ran this round? evidence_id or
 reproducing call cited? providers `status` (not per-op `available`)? versions
-pinned (rea-agents@6.4.0, Ghidra 12.1.4, JDK 21)?
+pinned per client (see current inventory above; Ghidra 12.1.4, JDK 21)?
 
 **Before "empty/clean" claims:** parsed-and-empty vs excluded-from-inventory?
 (`parse_failures:0` on unparsed members means nothing — typora lesson.)
