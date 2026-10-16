@@ -780,3 +780,30 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   MAP-ROWS byte-identical; command A unchanged (72/72, 9/9, 10.0/10.0).
   Append-only tails verified: every knowledge edit extends the file, no
   historical bytes rewritten.
+
+### luna-round-6 — operability: pre-registered 10-leg e2e battery on REA 6.5.0
+
+- Motivating evidence: luna-round-2 proved per-client package inventory
+  (configured pins, catalog counts) but never running processes; the
+  6.5-only verb set recorded by A6 was inventory, not exercise.
+- Work: one axis-move on operability (fleet axis, unowned proxy). First
+  TWO-LANE battery: 64 luna + 64 deepseek-v4.1-flash seats = 127 distinct
+  seats (parent short-counted lane A 53/64 — fourth occurrence; the wave's
+  128th slot was lost to a double-counted EX7 across an interrupted
+  re-dispatch; recorded, counting self-check continues to fail upward).
+  Predictions frozen by the parent before dispatch (prereg audited by PS4).
+- Landed at `bc91424` (lane identity): the full receipt bundle is committed
+  TRACKED (receipts/leg-1..10.md lane A, receipts-B/leg-1..10.md lane B,
+  census-final.txt, census-laneB-final.txt) — a deliberate durability move:
+  the round-5 r12-01 erratum had to attribute a numeral because /tmp receipts
+  were gone; battery receipts now survive. Map/PROVINCE/SKILL untouched
+  (measurement-only round); zero config drift (BC3); zero
+  availability-to-holding upgrades (AC4).
+- Measured: lane A 10/10, lane B 10/10 vs frozen outcome classes (AC1/BC1
+  independent recounts); cross-lane class agreement 10/10, byte-identical
+  L1/L2/L7/L10; frozen census PASS reproduced twice byte-identical (AC3/BC4);
+  command A + token set unchanged (AC8). Defects recorded: lane-A manifest
+  lists L1 only (RV5); BB7/BB8 original receipts overwritten by compare seats
+  (custody; current bytes hash-match); L10 detoured to inspect_wasm_artifact
+  (class preserved, predicted harmony fallback never executed); ~1.2GB /tmp
+  battery litter (hygiene debt, other sessions may share /tmp — left).

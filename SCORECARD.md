@@ -463,3 +463,39 @@ round-2 receipts prove package inventory, not running processes; a
 battery of e2e re-runs on 6.5.0 would convert availability claims toward
 holdings — an operability/deep-freshness hybrid, to be framed at round
 open). Retired: none.
+
+## luna-round-6 — operability: pre-registered 6.5.0 battery, 2026-10-16
+
+One move on the **operability** axis (fleet axis, unowned proxy — same
+recording ruling as rounds 4-5). Claim shape: a 10-leg battery executes on
+the live 6.5.0 surface with hashed receipts per lane, ≥8/10 match the frozen
+outcome classes, cross-lane agreement, zero config drift, invariants intact.
+Predictions frozen parent-side before dispatch (prereg itself audited).
+
+- Wave: two-lane battery, 64 luna + 64 deepseek-v4.1-flash seats = 127
+  distinct seats (parent short-counted lane A 53/64 — fourth occurrence —
+  and an interruption cost a double-counted slot; both recorded in the
+  round report and fleet ledger).
+- Landed at `bc91424` (lane identity): the 20-leg receipt bundle committed
+  TRACKED (durability deviation disclosed — see LOG). Measurement-only
+  round: map/PROVINCE/SKILL untouched.
+- Measured: lane A 10/10, lane B 10/10 (independent recounts AC1/BC1);
+  cross-lane class agreement 10/10 (byte-identical L1/L2/L7/L10);
+  frozen census PASS twice byte-identical (AC3/BC4); command A + token set
+  unchanged (AC8); zero availability→holding upgrades (AC4); zero config
+  drift, no live MCP residue (BC3).
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| operability (fleet axis, unowned proxy) | no live-process evidence → 20 hashed, replay-verified receipts across two model lanes; 10/10 + 10/10 vs frozen classes | improved |
+| coverage | 10.0 → 10.0 (measured) | unchanged |
+| depth | 10.0 → 10.0 (measured) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion unchanged this round (the battery's six newly
+exercised 6.5.0 verbs become round-7 knowledge entries); quality improved
+(durable receipts replace /tmp ephemera; custody defects recorded); discernment
+improved (forgery attacks, copy-vs-run attacks, and class-vs-byte agreement
+distinctions all exercised and recorded). Planned next: luna-round-7 =
+coverage — knowledge entries + map rows for the six exercised 6.5.0 verbs
+(denominator 72 → 78; command A must re-measure 78/78). Retired: none.
