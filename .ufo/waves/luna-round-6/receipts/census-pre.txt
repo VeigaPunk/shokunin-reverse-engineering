@@ -1,0 +1,48 @@
+=== kaidoku-shokunin / luna-round-6 / CE1 census-pre receipt ===
+repo: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+HEAD: f0e8cdecb216d71cf7df974675c0f6b16ba4f82f
+worktree: git status --porcelain=v1 → only untracked .ufo/interactive-sessions/ and .ufo/waves/; no tracked changes
+source: SCORECARD.md:92-123 (canonical Command A); map tokens read from the same revision's corpus/README.md coverage map
+CA6 source: Glob **/CA6.md under the repository → no matches; this is the available canonical pre-state census, not a consolidation of CA6's absent final census
+
+RUN (read-only Git-object reads; run from repository root):
+```bash
+REV=$(git rev-parse HEAD) python3 -B - "$PWD" <<'PY'
+import hashlib,json,pathlib,re,subprocess,sys
+root,rev=sys.argv[1],subprocess.check_output(['git','rev-parse','HEAD'],cwd=sys.argv[1],text=True).strip()
+def get(path):return subprocess.check_output(['git','show',f'{rev}:{path}'],cwd=root,text=True)
+paths=subprocess.check_output(['git','ls-tree','-r','--name-only',rev,'--','corpus/knowledge'],cwd=root,text=True).splitlines()
+files={pathlib.PurePosixPath(p).stem for p in paths if p.endswith('.md')}
+section=get('corpus/README.md').split('## Coverage map\n',1)[1].split('\n## ',1)[0]
+tokens=sorted(set(re.findall(r'2026-10-\d{2}-[a-z0-9-]+',section)))
+craft=get('SKILL.md').split('## Queue-drain craft ',1)[1].split('\n## ',1)[0]
+rules=re.split(r'(?m)^- \*\*',craft)[1:]
+pattern=r'corpus/knowledge/([a-z0-9-]+\.md)(?::(\d+)(?:-(\d+))?)?'
+resolved=0
+for rule in rules:
+ refs=re.findall(pattern,rule);valid=bool(refs)
+ for name,first,last in refs:
+  try:
+   count=len(get('corpus/knowledge/'+name).splitlines());start,end=int(first or 1),int(last or first or 1)
+   valid=valid and 1<=start<=end<=count
+  except subprocess.CalledProcessError:valid=False
+ resolved+=valid
+command_a={'revision':rev,'mapped':len(files & set(tokens)),'knowledge_files':len(files),'missing':sorted(files-set(tokens)),'dangling':sorted(set(tokens)-files),'citation_resolved_rules':resolved,'rule_blocks':len(rules),'coverage_score':round(10*len(files & set(tokens))/len(files),2),'depth_score':round(10*resolved/len(rules),2)}
+lines=['HEAD '+rev,'COMMAND_A '+json.dumps(command_a,sort_keys=True),'MAP_TOKEN_COUNT '+str(len(tokens)),'MAP_TOKENS '+','.join(tokens),'MAP_TOKEN_SHA256 '+hashlib.sha256(('\n'.join(tokens)+'\n').encode()).hexdigest(),'EXIT_CODE 0']
+out='\n'.join(lines)+'\n'
+sys.stdout.write(out)
+sys.stderr.write('stdout_sha256 '+hashlib.sha256(out.encode()).hexdigest()+'\n')
+PY
+```
+
+FULL STDOUT:
+```text
+HEAD f0e8cdecb216d71cf7df974675c0f6b16ba4f82f
+COMMAND_A {"citation_resolved_rules": 9, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 72, "mapped": 72, "missing": [], "revision": "f0e8cdecb216d71cf7df974675c0f6b16ba4f82f", "rule_blocks": 9}
+MAP_TOKEN_COUNT 72
+MAP_TOKENS 2026-10-13-asar-surface,2026-10-13-crash-evidence,2026-10-13-doctor-taxonomy,2026-10-13-elf-observation-jq,2026-10-13-ghidra-install,2026-10-13-java-runtime,2026-10-13-managed-assemblies,2026-10-13-mcp-registrations,2026-10-13-pacman-packages,2026-10-13-pe-surface,2026-10-13-r2-asar-deep-obsidian,2026-10-13-r2-crash-inspect-probe,2026-10-13-r2-doctor-reverify-r2,2026-10-13-r2-evidence-bundle-schema,2026-10-13-r2-firmware-probe,2026-10-13-r2-frontier-prereqs,2026-10-13-r2-jq-shadow-verdict,2026-10-13-r2-libjq-engine,2026-10-13-r2-pe-e2e-proof,2026-10-13-r2-provider-capability-matrix,2026-10-13-r2-skill-references-deep,2026-10-13-r2-version-diff-compare,2026-10-13-r3-apk-inventory,2026-10-13-r3-appimage,2026-10-13-r3-evm-interface,2026-10-13-r3-jq-provenance,2026-10-13-r3-keyed-archive-carriers,2026-10-13-r3-mcp-session,2026-10-13-r3-node-addons,2026-10-13-r3-pe-arm64,2026-10-13-r3-renderer-asar,2026-10-13-r3-runtime-observation,2026-10-13-r3-typora-signal,2026-10-13-r3-verb-coverage,2026-10-13-r4-05-signal-asar,2026-10-13-r4-06-1password-asar,2026-10-13-r4-07-jsc-bytecode,2026-10-13-r4-08-observe-verbs,2026-10-13-r4-09-js-export-compare,2026-10-13-r4-10-real-version-pair,2026-10-13-r4-11-managed-unlock,2026-10-13-r4-12-godot-arm64-scale,2026-10-13-r4-13-pwntools-persist,2026-10-13-r4-14-libsignal,2026-10-13-r4-15-appimage-inner,2026-10-13-r4-16-frontier-rescan,2026-10-13-r4u-01-firmware-deep,2026-10-13-r4u-02-jadx-decode,2026-10-13-r4u-03-unblob-extract,2026-10-13-r4u-04-dnfile-il,2026-10-13-r4u-05-wakaru-oom,2026-10-13-r4u-06-adb-surface,2026-10-13-r5-01-riscv-bypass,2026-10-13-r5-02-call-targets-jq,2026-10-13-r7-01-queue-a-ops,2026-10-13-r7-02-queue-a-ops-2,2026-10-13-r8-01-queue-a-ops,2026-10-13-r8-02-queue-a-ops-2,2026-10-13-rea-cli-surface,2026-10-13-rea-live-jq-e2e,2026-10-13-rea-self-documentation,2026-10-13-rea-skill-contract,2026-10-14-r10-01-queue-ops,2026-10-14-r10-02-queue-ops-2,2026-10-14-r11-01-queue-ops,2026-10-14-r11-02-queue-ops-2,2026-10-14-r12-01-queue-b-ready,2026-10-14-r12-02-queue-b-ledger,2026-10-14-r14-01-queue-b-residual,2026-10-14-r14-02-final-sweep,2026-10-14-r9-01-queue-a-ops,2026-10-14-r9-02-queue-a-ops-2
+MAP_TOKEN_SHA256 c538284bd40fec6c039b6c2f18e7202f6390e0ca1ce92ea8a0c50e20a58651a0
+EXIT_CODE 0
+```
+FULL STDERR: `stdout_sha256 93d3a82cd9dc09d940b098b0b953b7a7ad5a84a31df20545444bab9b57e20373`
+exit code: 0

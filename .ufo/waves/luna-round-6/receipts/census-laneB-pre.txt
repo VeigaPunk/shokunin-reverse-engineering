@@ -1,0 +1,120 @@
+=== kaidoku-shokunin / luna-round-6 / Lane B seat XB1 (census runner) / receipts/census-laneB-pre.txt ===
+repo: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+HEAD (pre):  f0e8cdecb216d71cf7df974675c0f6b16ba4f82f  (git rev-parse HEAD)
+HEAD (post): f0e8cdecb216d71cf7df974675c0f6b16ba4f82f  (git rev-parse HEAD)
+captured: 2026-10-16T19:03:26-03:00 .. 2026-10-16T19:03:48-03:00
+target resolution: no `**/CB6` artifact exists at HEAD f0e8cde (Glob **/CB6* → only .ufo/waves/luna-round-5/CB6.md, a round-5 provenance seat). The census artifacts available for this round are CA6's fail-closed ten-leg inventory spec (CA6.md:9) and the canonical pre-state census (Recipe A, SCORECARD.md:92-123, plus the coverage-map token set). Both were run at HEAD f0e8cde; all reads are Git-object or receipt-file reads (read-only). No MCP servers, no config edits, no tracked-file writes.
+exposure note: lane-A receipts/census-pre.txt had been read before this run to locate the census method; its expected values for [1]-[2] were therefore known to this seat (disclosed in XB1.md THREATS).
+
+[1] CANONICAL PRE-STATE CENSUS — Recipe A verbatim (SCORECARD.md:92-123), REV=f0e8cdecb216d71cf7df974675c0f6b16ba4f82f
+CMD:
+  cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+  REV=$(git rev-parse HEAD)
+  python3 - "$REV" <<'PY'
+  import json, pathlib, re, subprocess, sys
+  rev = sys.argv[1]
+  def get(path):
+      return subprocess.check_output(['git', 'show', f'{rev}:{path}'], text=True)
+  paths = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', rev,
+                                   '--', 'corpus/knowledge'], text=True).splitlines()
+  files = {pathlib.PurePosixPath(p).stem for p in paths if p.endswith('.md')}
+  section = get('corpus/README.md').split('## Coverage map\n', 1)[1].split('\n## ', 1)[0]
+  mapped = set(re.findall(r'2026-10-\d{2}-[a-z0-9-]+', section))
+  craft = get('SKILL.md').split('## Queue-drain craft ', 1)[1].split('\n## ', 1)[0]
+  rules = re.split(r'(?m)^- \*\*', craft)[1:]
+  pattern = r'corpus/knowledge/([a-z0-9-]+\.md)(?::(\d+)(?:-(\d+))?)?'
+  resolved = 0
+  for rule in rules:
+      refs = re.findall(pattern, rule)
+      valid = bool(refs)
+      for name, first, last in refs:
+          try:
+              count = len(get('corpus/knowledge/' + name).splitlines())
+              start, end = int(first or 1), int(last or first or 1)
+              valid = valid and 1 <= start <= end <= count
+          except subprocess.CalledProcessError:
+              valid = False
+      resolved += valid
+  print(json.dumps({'revision': rev, 'mapped': len(files & mapped),
+   'knowledge_files': len(files), 'missing': sorted(files - mapped),
+   'dangling': sorted(mapped - files), 'citation_resolved_rules': resolved,
+   'rule_blocks': len(rules), 'coverage_score': round(10*len(files & mapped)/len(files), 2),
+   'depth_score': round(10*resolved/len(rules), 2)}, sort_keys=True))
+  PY
+EXIT: 0
+BEGIN-STDOUT[recipeA]
+{"citation_resolved_rules": 9, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 72, "mapped": 72, "missing": [], "revision": "f0e8cdecb216d71cf7df974675c0f6b16ba4f82f", "rule_blocks": 9}
+END-STDOUT[recipeA]
+STDOUT_SHA256: 258dc8695e0fa3809a9aceb289077b0e0c66a5c1b7d020cfb32b4db7d5567b45
+BEGIN-STDERR[recipeA]
+END-STDERR[recipeA]
+STDERR_BYTES: 0
+
+[2] TOKEN SET — coverage-map tokens at git object HEAD:corpus/README.md (definition per Recipe A lines 101-102)
+CMD:
+  cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+  REV=$(git rev-parse HEAD)
+  python3 - "$REV" <<'PY'
+  import hashlib, re, subprocess, sys
+  rev = sys.argv[1]
+  doc = subprocess.check_output(['git', 'show', f'{rev}:corpus/README.md'], text=True)
+  section = doc.split('## Coverage map\n', 1)[1].split('\n## ', 1)[0]
+  tokens = sorted(set(re.findall(r'2026-10-\d{2}-[a-z0-9-]+', section)))
+  print('HEAD', rev)
+  print('MAP_TOKEN_COUNT', len(tokens))
+  print('MAP_TOKENS', ','.join(tokens))
+  print('MAP_TOKEN_SHA256', hashlib.sha256(('\n'.join(tokens) + '\n').encode()).hexdigest())
+  PY
+EXIT: 0
+BEGIN-STDOUT[tokens]
+HEAD f0e8cdecb216d71cf7df974675c0f6b16ba4f82f
+MAP_TOKEN_COUNT 72
+MAP_TOKENS 2026-10-13-asar-surface,2026-10-13-crash-evidence,2026-10-13-doctor-taxonomy,2026-10-13-elf-observation-jq,2026-10-13-ghidra-install,2026-10-13-java-runtime,2026-10-13-managed-assemblies,2026-10-13-mcp-registrations,2026-10-13-pacman-packages,2026-10-13-pe-surface,2026-10-13-r2-asar-deep-obsidian,2026-10-13-r2-crash-inspect-probe,2026-10-13-r2-doctor-reverify-r2,2026-10-13-r2-evidence-bundle-schema,2026-10-13-r2-firmware-probe,2026-10-13-r2-frontier-prereqs,2026-10-13-r2-jq-shadow-verdict,2026-10-13-r2-libjq-engine,2026-10-13-r2-pe-e2e-proof,2026-10-13-r2-provider-capability-matrix,2026-10-13-r2-skill-references-deep,2026-10-13-r2-version-diff-compare,2026-10-13-r3-apk-inventory,2026-10-13-r3-appimage,2026-10-13-r3-evm-interface,2026-10-13-r3-jq-provenance,2026-10-13-r3-keyed-archive-carriers,2026-10-13-r3-mcp-session,2026-10-13-r3-node-addons,2026-10-13-r3-pe-arm64,2026-10-13-r3-renderer-asar,2026-10-13-r3-runtime-observation,2026-10-13-r3-typora-signal,2026-10-13-r3-verb-coverage,2026-10-13-r4-05-signal-asar,2026-10-13-r4-06-1password-asar,2026-10-13-r4-07-jsc-bytecode,2026-10-13-r4-08-observe-verbs,2026-10-13-r4-09-js-export-compare,2026-10-13-r4-10-real-version-pair,2026-10-13-r4-11-managed-unlock,2026-10-13-r4-12-godot-arm64-scale,2026-10-13-r4-13-pwntools-persist,2026-10-13-r4-14-libsignal,2026-10-13-r4-15-appimage-inner,2026-10-13-r4-16-frontier-rescan,2026-10-13-r4u-01-firmware-deep,2026-10-13-r4u-02-jadx-decode,2026-10-13-r4u-03-unblob-extract,2026-10-13-r4u-04-dnfile-il,2026-10-13-r4u-05-wakaru-oom,2026-10-13-r4u-06-adb-surface,2026-10-13-r5-01-riscv-bypass,2026-10-13-r5-02-call-targets-jq,2026-10-13-r7-01-queue-a-ops,2026-10-13-r7-02-queue-a-ops-2,2026-10-13-r8-01-queue-a-ops,2026-10-13-r8-02-queue-a-ops-2,2026-10-13-rea-cli-surface,2026-10-13-rea-live-jq-e2e,2026-10-13-rea-self-documentation,2026-10-13-rea-skill-contract,2026-10-14-r10-01-queue-ops,2026-10-14-r10-02-queue-ops-2,2026-10-14-r11-01-queue-ops,2026-10-14-r11-02-queue-ops-2,2026-10-14-r12-01-queue-b-ready,2026-10-14-r12-02-queue-b-ledger,2026-10-14-r14-01-queue-b-residual,2026-10-14-r14-02-final-sweep,2026-10-14-r9-01-queue-a-ops,2026-10-14-r9-02-queue-a-ops-2
+MAP_TOKEN_SHA256 c538284bd40fec6c039b6c2f18e7202f6390e0ca1ce92ea8a0c50e20a58651a0
+END-STDOUT[tokens]
+STDOUT_SHA256: f0d274ba9efdb97fa1ffc386ee171335c12b54fa3644603c6cb879c37d5a98f7
+BEGIN-STDERR[tokens]
+END-STDERR[tokens]
+STDERR_BYTES: 0
+
+[3] CA6'S FINAL CENSUS — exact ten-leg inventory, command verbatim from CA6.md:9 (target: receipts/)
+CMD:
+  cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 -c 'from pathlib import Path; import hashlib; d=Path(".ufo/waves/luna-round-6/receipts"); want={f"leg-{i}.md" for i in range(1,11)}; ps=list(d.glob("leg-*.md")); assert {p.name for p in ps}==want and all(p.is_file() and not p.is_symlink() and p.stat().st_size for p in ps); print("\n".join(f"{p.name} {hashlib.sha256(p.read_bytes()).hexdigest()}" for p in sorted(ps)))'
+EXIT: 0
+BEGIN-STDOUT[invA]
+leg-1.md 24bfd90fb0463c2085e455964521cc85f1cff53bec638d3893e596c2869e2e91
+leg-10.md 6272b08ed7063701c7b191cdcd51c7fcb90227bc45d1fd7d44dcba2950c24036
+leg-2.md df232a1ddd6a6ba4c5d19c145e78d10120c13a048f6f0238a52a083db782c7e4
+leg-3.md 010630045286c22b60a4cd7de0e0fa98ee1189f958ff3485781dce3963e9171f
+leg-4.md 99a1c690d7e0f5721ba9a5e1fe7bcbdfa1500f3e60958291c32e1bb551ae29ff
+leg-5.md 52741f00d850124923a62e8ec9e618687ddc868eb665598ee761cc3fedb8a575
+leg-6.md b3757be05ceec7d356fcfc181ce04a15e903bd174c646d3cf9f6031fc5183ed2
+leg-7.md 5a6c9893c08d17b0b563610fba7e1ea464498b3e51f23de829c80e014f6b8ba7
+leg-8.md b070e33d11fb8c9e9f580db8a0895f746079b5a72734a6ecc9a4c60d9414a0e2
+leg-9.md 8ab747701f7e6dd1752bca600cfaf5ab325f0f5e7bad3fae81fc22a78c895a6a
+END-STDOUT[invA]
+STDOUT_SHA256: d1f0abdf22c50e0e7b0459bf62837df3aeff34d1449561f5b00e4324535aeb0e
+BEGIN-STDERR[invA]
+END-STDERR[invA]
+STDERR_BYTES: 0
+
+[3b] VARIANT (not CA6's command; labelled addition): same predicate against lane-B dir receipts-B — lane B in flight at snapshot
+CMD:
+  cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 -c 'from pathlib import Path; import hashlib; d=Path(".ufo/waves/luna-round-6/receipts-B"); want={f"leg-{i}.md" for i in range(1,11)}; ps=list(d.glob("leg-*.md")); assert {p.name for p in ps}==want and all(p.is_file() and not p.is_symlink() and p.stat().st_size for p in ps); print("\n".join(f"{p.name} {hashlib.sha256(p.read_bytes()).hexdigest()}" for p in sorted(ps)))'
+EXIT: 1
+BEGIN-STDOUT[invB]
+END-STDOUT[invB]
+STDOUT_SHA256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 (empty stdout)
+BEGIN-STDERR[invB]
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from pathlib import Path; import hashlib; d=Path(".ufo/waves/luna-round-6/receipts-B"); want={f"leg-{i}.md" for i in range(1,11)}; ps=list(d.glob("leg-*.md")); assert {p.name for p in ps}==want and all(p.is_file() and not p.is_symlink() and p.stat().st_size for p in ps); print("\n".join(f"{p.name} {hashlib.sha256(p.read_bytes()).hexdigest()}" for p in sorted(ps)))
+                                                                                                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+END-STDERR[invB]
+receipts-B snapshot listing at 19:03:48: leg-10.md leg-1.md leg-2.md leg-4.md leg-6.md leg-7.md leg-8.md leg-9.md  (leg-3.md and leg-5.md absent; lane B still running)
+
+[4] POST-STATE
+git status --porcelain=v1 identical pre/post: "?? .ufo/interactive-sessions/" and "?? .ufo/waves/" only
+git diff --exit-code HEAD --stat: empty (exit 0)
+HEAD unchanged: f0e8cdecb216d71cf7df974675c0f6b16ba4f82f
