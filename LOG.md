@@ -747,3 +747,36 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   framing (round 5+), r4u-01 firmware size decimals (C05), README stale
   frontier summaries (:157/:160 content), PROVINCE request-byte pin (C7,
   round 3), r9-02 file's own later-summary tension (V12b).
+
+### luna-round-5 — freshness: seven debt dispositions, first two-lane wave
+
+- Motivating evidence: the carried debt queue from rounds 3-4 (r1-asar file
+  framing, r4u-01 size decimals, PROVINCE request-byte pin, README stale
+  frontier + nits rows, r9-02 status tension, r5-02 ~283 wording, r12-01
+  L197 inconsistency, revenger's open drift-governance question).
+- Work: one axis-move on freshness, dispatched as the first 128-seat
+  two-lane wave under the operator's updated contract — 64 luna seats +
+  64 deepseek-v4.1-flash seats (58 + 6 backfill after the parent's third
+  short-count; repaired, root cause named again). Reports
+  `.ufo/waves/luna-round-5/`. Cross-lane convergence adjudicated by Z/R
+  seats: item 2 (r4u-01) unanimous across 30 readings (both decimals wrong;
+  29,367,752 / 84,258,816; one lane reconstructed the transcription slip);
+  item 7 adjudicated — the L197 correction already existed as a landed
+  erratum; item 6 confirmed '~283' mislabels a call count (281 calls + 2 jmp
+  exact); revenger's open question answered with a PROVINCE scope note (map
+  is live state; never re-bases a sibling's frozen receipts).
+- Landed at `7125dd4` (lane identity, amended once pre-records: the
+  Runtime-obs bullet opener renamed to 'Runtime-obs depth' to clear the
+  wave census's stale-opener detector): five APPEND-ONLY knowledge errata
+  (asar-surface, r4u-01-firmware-deep, r9-02-queue-a-ops-2, r5-02-call-targets-jq,
+  r12-01-queue-b-ready), PROVINCE.md request-byte pin (same-physical-line at
+  the probe conventions) + revenger scope note at the registry paragraph,
+  corpus/README.md :131 (four-nit dispositions) + :163 (held-vs-frontier
+  reconciliation, genuine residuals named).
+- Measured at `7125dd4`: wave census 6/7 PASS + SIZES ADJUDICATED (the check
+  compares a raw comma-formatted token against normalized text —
+  structurally unsatisfiable; the erratum's arithmetic is established by 30
+  lane readings + the inline recheck `29367752`/`84258816`); TOKENSET 72/72;
+  MAP-ROWS byte-identical; command A unchanged (72/72, 9/9, 10.0/10.0).
+  Append-only tails verified: every knowledge edit extends the file, no
+  historical bytes rewritten.

@@ -413,3 +413,53 @@ knowledge file). Planned next: luna-round-5 begins the operator's 128-seat
 two-lane contract (64 luna + 64 deepseek-v4.1-flash) — the carried debt
 queue (r1 asar file framing, r4u-01 size decimals, PROVINCE request-byte pin,
 README stale frontier content) is the candidate worklist. Retired: none.
+
+## luna-round-5 — freshness: seven debt dispositions, 2026-10-16
+
+One move on the **freshness** axis (fleet axis, unowned proxy — same
+recording ruling as luna-round-4). First round under the operator's updated
+128-seat two-lane contract: 64 luna + 64 deepseek-v4.1-flash seats (one
+wave, two back-to-back batched dispatches per lane). Claim: after the
+round's commit, all seven recorded debt items are dispositioned with
+append-only knowledge errata or declared current-surface edits; command A,
+map rows, and the token set are unchanged.
+
+- Wave: 128 seats total (parent under-dispatched lane B 58/64 — third
+  short-count, repaired with a 6-seat backfill before integration; the
+  defect class is now recorded three times and the parent added a counting
+  self-check to subsequent dispatches). Reports `.ufo/waves/luna-round-5/`.
+- Cross-lane convergence (the point of the two-lane contract): item 2
+  unanimous across 30 independent readings; items 1/3-7 converged after
+  Z-seat diffs, with lane-B-exclusive catches (r12-01's existing erratum;
+  r5-02's exact form; revenger's open governance question).
+- Work commit `7125dd4` (lane identity; one pre-records amend: the
+  Runtime-obs bullet opener renamed to 'Runtime-obs depth' — the census's
+  stale-detector matched the retained opener, not the corrected content):
+  five append-only knowledge errata + two PROVINCE same-physical-line
+  additions + two README row repairs. No historical bytes rewritten; the
+  append-only tails were verified seat-independently (F/SB seats).
+- Measured at `7125dd4`: wave census 6/7 PASS + SIZES ADJUDICATED (raw
+  comma token vs normalized text — structurally unsatisfiable; arithmetic
+  established by 30 readings + inline recheck); TOKENSET 72/72; MAP-ROWS
+  byte-identical; command A unchanged (72/72, 9/9, 10.0/10.0).
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| freshness (fleet axis, unowned proxy) | 7 debt items → 7 dispositioned (5 errata + 2 README + 2 PROVINCE additions; 1 item adjudicated existing-erratum) | improved |
+| coverage | 10.0 → 10.0 (measured) | unchanged |
+| depth | 10.0 → 10.0 (measured) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion unchanged; quality improved (the corpus's
+records now match their own evidence on all seven items; the '~26
+self-provisionable' spent driver is retired); discernment improved
+meaningfully — the two-lane design caught one already-satisfied item, one
+exact-form correction, one cross-lane governance answer, and the parent's
+own third counting defect. Two census checks now adjudicated as instrument
+debt (comma-token normalization; opener-detector breadth) — recorded for
+the instrument's owning round. Planned next: luna-round-6 — the deepest
+remaining queue is live-probe re-verification of stale-held surfaces (the
+round-2 receipts prove package inventory, not running processes; a
+battery of e2e re-runs on 6.5.0 would convert availability claims toward
+holdings — an operability/deep-freshness hybrid, to be framed at round
+open). Retired: none.
