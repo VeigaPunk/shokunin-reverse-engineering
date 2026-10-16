@@ -678,3 +678,36 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   (marked explicitly historical in the new text); seat B2's stale L7 receipt
   hash noted for its owning round; PROVINCE '3/7 clients registered' kept
   (seat A5 found it still accurate).
+
+### luna-round-3 — family-scoped evidence-id identity
+
+- Motivating evidence: SCORECARD open gap 'Authority contradiction' —
+  SKILL.md:211-214 and corpus/README.md:169 universally claimed evidence ids
+  are `f(content, path, params)` (path-sensitive, cite `subject.digest.sha256`),
+  disproven by corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:146-169
+  (`analyze_function` ids hash analysis content + parameters, not path;
+  module attribution travels in unauthenticated `subject`).
+- Work: one axis-move on depth, dispatched as a 64-seat wave on
+  openai-codex/gpt-6-luna-max (reports `.ufo/waves/luna-round-3/`, no live
+  probes — corpus-textual round). Adjudication from primary sources: the r4
+  lineage (corpus/knowledge/2026-10-13-r2-evidence-bundle-schema.md:244-250)
+  verifies BOTH directions — the revenger-verifier family is path-sensitive
+  (same bytes, different paths → different ids; jadx per-run, apktool
+  deterministic), and r5-01:83-85 plus r9-02 verify `analyze`/`inspect`/
+  `analyze_function` ids content+params-keyed. Critic C1's guard honored:
+  anti-substitution and pinned-byte guidance retained; only the path-hash
+  formula scoped.
+- Landed at `638fb211` (lane identity): SKILL.md Known limits bullet and
+  corpus/README.md Known gaps line rewritten family-scoped with three corpus
+  citations each; corpus/QUALITY.md gained criterion 15 superseding 14 per
+  that file's never-rewrite governance (#14 retained as the superseded row).
+  PROVINCE untouched (C7's conditional request-byte pin for module-identity
+  probes recorded as named debt, not this round's move).
+- Measured at `638fb211`: command A unchanged (mapped 72, missing [],
+  dangling [], coverage 10.0, depth 10.0, 9/9 rules); census — universal
+  pattern active hits 0 (the one remaining literal hit is QUALITY row 14,
+  retained by design as the superseded row). r9-02 cited mentions: 3.
+- Dissent recorded: seat C8 argued re-scope to calibration; the parent kept
+  depth (false domain claim removed) and adopted C8's contradiction-count
+  observable as the round's primary measurement. Seat R2 wrote its report
+  under a misnamed file (R2-reviewer-readme.md) — format debt only.

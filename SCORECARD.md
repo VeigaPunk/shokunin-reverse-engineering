@@ -21,7 +21,7 @@ explicitly marked current; the added lesson-index row shifts later README lines.
 | Axis | Baseline → current score, 0–10 | Observable and limitation | Evidence / counting command | Last-change round |
 |---|---|---|---|---|
 | coverage | 9.72 → 10.0 | 72/72 knowledge files mapped; index integrity only, **not** fraction of the REA domain held | `corpus/README.md:11-60`; command A; baseline `a79945c4`, measured `2abd30f5` | luna-round-1 |
-| depth | 10 → 10 | 9/9 existing queue-drain rule blocks have resolvable file/range citations; **not** semantic correctness, generality, or fresh execution | `SKILL.md:77-191`; command A; measured revisions in `evidence/round-1-2026-10-15/result.json` | r1 measurement; no depth change |
+| depth | 10 → 10 | 9/9 queue-drain rule blocks have resolvable file/range citations at `638fb211`; **not** semantic correctness, generality, or fresh execution — the r3 semantic contradiction removal is measured by the contradiction census, not this proxy | `SKILL.md:77-191`; command A; baseline `a79945c4`, measured `638fb211` | r1 measurement + luna-round-3 |
 | calibration | 0 → 10 | 9/9 preselected reconciliation obligations aligned (2026-10-15); 2026-10-16 per-client REA surface reconciled to live receipts — **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; luna-round-2 receipts `.ufo/waves/luna-round-2/receipts/`; measured at `75af886a` | operator-steered r1 + luna-round-2 |
 
 Baseline source revision: `6645585873c4e66372b15687c47000abf8d91978`.
@@ -58,12 +58,13 @@ They are assessment obligations, not nine independent domain discoveries.
   6.5.0 207/153, Kimi 6.4.0 170/127; both catalog digests; skill v42 installed
   / v37 expected by 6.4.0). No configuration changed and no 37-tool holdings
   increase is claimed; receipts at `.ufo/waves/luna-round-2/receipts/`.
-- **Authority contradiction:** `SKILL.md:207-210` and `corpus/README.md:164`
-  universally describe path-sensitive IDs; the later counterexample at
-  `corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:146-169` is family-specific
-  and disproves that universal summary. The citation-resolution score does
-  **not** certify these summaries. Request/module identity is not authenticated
-  by an evidence ID alone. These two summaries remain unresolved, not silently fixed.
+- **Authority contradiction:** closed by luna-round-3 (2026-10-16) — both
+  summary sites now state verb-family-specific id identity with corpus
+  citations (revenger-verifier path-sensitive per r4; `analyze`/`inspect`/
+  `analyze_function` content+params-keyed per r5-01/r9-02; unauthenticated
+  `subject` warning retained). QUALITY #15 supersedes #14. The family-specific
+  counterexample at r9-02:146-169 stays the authority for `analyze_function`;
+  no family beyond the recorded ones is claimed.
 - **Other stale summaries:** `corpus/README.md:157` still lists already-held
   process/managed/call-target operations as frontier; `:128` says four r13
   nits fixed although `LOG.md:395-401` corrects integration fixes to two.
@@ -320,3 +321,50 @@ recorded inventory, not holdings); discernment exercised and unchanged
 survived). Planned next: depth — reconcile the SKILL.md universal
 path-sensitive-ID summary with the r9-02 family-specific counterexample.
 Retired: none.
+
+## luna-round-3 — family-scoped evidence-id identity, 2026-10-16
+
+One move on the depth axis: the registered planned move from luna-round-2 —
+remove the false universal. Claim: after the round's commit, no universal
+path-sensitivity claim remains in current-surface text; every id-identity
+mention is family-scoped with corpus citations; command A unchanged.
+Measurement (adopting seat C8's observable, which the parent accepted in
+substance while rejecting the re-scope to calibration — a false domain claim
+is depth work): active universal hits 3 sites → 0.
+
+- Wave: 64 seats on `openai-codex/gpt-6-luna-max` (one batch; reports
+  `.ufo/waves/luna-round-3/`). Corpus-textual round: no live probes by design.
+- Adjudicated from primary sources: r4 lineage
+  (`corpus/knowledge/2026-10-13-r2-evidence-bundle-schema.md:244-250`)
+  verifies the revenger-verifier family path-sensitive (same bytes, different
+  paths → different ids; jadx per-run; apktool deterministic); r5-01:83-85 and
+  r9-02:146-169 verify `analyze`/`inspect`/`analyze_function` content+params-
+  keyed, with r9-02's sharper result: the same id across two paths, and a
+  subject-only rewrite bit-identical to the honest renamed-path request —
+  module attribution travels in `subject`, unauthenticated.
+- Work commit `638fb211` (lane identity): SKILL.md Known limits bullet +
+  corpus/README.md Known gaps line rewritten family-scoped (anti-substitution
+  and pinned-byte guidance retained per seat C1's guard); corpus/QUALITY.md
+  criterion 15 added superseding 14 per that file's never-rewrite governance.
+  PROVINCE untouched; seat C7's conditional request-byte pin for
+  module-identity probes is named debt for a future round.
+- Measured at `638fb211`: command A unchanged (mapped 72, missing [],
+  dangling [], coverage 10.0, depth 10.0, 9/9 rules); active-surface
+  universal hits 0 (the one remaining literal `f(content, path, params)` is
+  QUALITY row 14, retained by design as the superseded row); r9-02 cited
+  mentions 3.
+
+| Owned axis | Before → after | Verdict |
+|---|---|---|
+| depth | 10 → 10 proxy; semantic contradiction removed (3 active universals → 0) | improved |
+| coverage | 10.0 → 10.0 | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion unchanged; quality improved (the corpus's own
+acceptance bar no longer admits a disproven universal); discernment improved
+locally (C1/C2/C4/C5 attacks refined the wording: two-sided scope, no
+exhaustive-family claim, attributed-not-reverified provenance). Planned
+next: freshness — repair the 12 named map-row drift findings from
+luna-round-1's V-seats (now receipted debt) + the README drift rows
+(libsignal 188MB vs 24.9MB; README:130 stale SKILL range; README:170 stale
+v37 line). Retired: none.
