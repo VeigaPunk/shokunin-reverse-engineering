@@ -89,3 +89,22 @@ Nine ASARs across obsidian (split main/renderer bundles + native .node in .unpac
   fleet-attested (`.ufo/reports/round-1/kaidoku.md:27`) but was never
   anchored in this corpus — this note is the anchor: the observation
   belongs to the r1-era asar sweep this entry summarizes.
+
+## Errata (luna-round-5, 2026-10-16, append-only)
+
+- **Role clarification — obsidian.asar is not renderer-only; app.asar is
+  its launcher.** The :14-15 observation above stands (`/usr/bin/obsidian`
+  execs electron against `app.asar`, the main-process entry; `obsidian.asar`
+  is its sibling resource). But "the renderer payload" understates
+  `obsidian.asar`: the outer `app.asar` is functionally a thin launcher —
+  statically it registers no Obsidian IPC, only `@electron/remote` internals
+  (2 literal + 13 dynamic operations;
+  `knowledge/2026-10-13-r2-asar-deep-obsidian.md:23-29`) — while the 25 MB
+  `obsidian.asar` is the real application: its `main.js` holds 45 literal
+  `ipcMain` operations (44 `on` + 1 `handle("register-cli")`) alongside the
+  renderer code (`app.js` 64 `ipcRenderer` refs, 3 HTML entrypoints;
+  `knowledge/2026-10-13-r3-renderer-asar.md:31-37`). Not separately
+  launchable: `main: index.js` is absent, so the launcher loads it by path —
+  "a payload, not a launchable package"
+  (`knowledge/2026-10-13-r3-renderer-asar.md:79-85`); its summary (`:107`):
+  `app.asar` is "only its launcher".

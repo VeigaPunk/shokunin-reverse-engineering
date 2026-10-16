@@ -29,8 +29,11 @@ Probe/reconciliation conventions: `rea doctor` is the environment verdict;
 `binary_session {}` is the live-server verdict (`result.tool_availability` +
 provider candidates); a catalog-listed tool is *available*, not *held* —
 ground moves to Core only after an end-to-end probe lands a `LOG.md` entry
-citing its `evidence_id` and subject sha256. The domain is a frontier, not a
-fence: it grows by evidence (LEARNING.md).
+citing its `evidence_id` and subject sha256. When module identity matters
+for an `analyze_function` probe, pin request bytes (or re-derive the
+dossier); the evidence ID alone does not authenticate module attribution
+carried in `subject` (`corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:146-169`).
+The domain is a frontier, not a fence: it grows by evidence (LEARNING.md).
 
 ## Core
 
@@ -61,7 +64,11 @@ Surfaces owned now — each verified on this host 2026-10-13.
 Cross-lane registry this lane maintains: the REA surface map — per-client
 registration state, provider availability, provider env keys, and the on-host
 artifact inventory — kept in `corpus/knowledge/`, refreshed by `rea doctor`
-each round.
+each round. Map entries are live state only: a version drift past 6.4.0
+is refreshed here, never re-bases a sibling lane's frozen receipt command
+or historical artifact path, and never stands for that lane's current
+runtime capability (routing:
+`../revenger-shokunin/reports/round-1/connector.md:25,33-36`).
 
 ## Frontier
 

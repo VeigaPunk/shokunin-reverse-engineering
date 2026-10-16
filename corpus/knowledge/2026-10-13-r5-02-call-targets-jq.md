@@ -192,3 +192,13 @@ entries. The Queue-A premise "self-provisionable NOW" is confirmed:
 ghidra-only, no operator env, ~5.4 s per probe on the warm npx cache, and
 `/usr/bin/jq` sha256-identical before/after (read-only). Untested residue:
 the 2 `jmp *…(%rip)` sites and any computed call lacking a reference entry.
+
+## Erratum — luna-round-5 (2026-10-16, append-only)
+
+From this file's own counts: census :18 (284 call + 2 jmp = 286 GOT-indirect
+sites) minus the three call sites probed at :63-70 (0x1020a3, 0x10207b,
+0x10206a) leaves **281 calls + 2 jmp** = 283 GOT-indirect sites. So :152-153's
+"the remaining ~283 call sites" mislabels: 283 is the remaining site total,
+not a call count. Remaining call sites are 281; the 2 jumps (:154-155) were
+not probed — unprobed, and not sweepable by the call-reference-scoped two-arg
+form. Read :152-153 as "the remaining 281 calls".

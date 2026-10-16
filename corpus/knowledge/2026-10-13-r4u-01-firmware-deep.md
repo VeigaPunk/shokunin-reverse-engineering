@@ -117,3 +117,17 @@ Subjects (`sha256sum`):
   bypassable via e_machine patch + `REA_GHIDRA_LANGUAGE_ID` override —
   see `knowledge/2026-10-13-r5-01-riscv-bypass.md`. The historical run
   observations in this file remain true as written.
+
+## Errata (round 5 freshness — luna-round-5, 2026-10-16, append-only)
+
+- **`.fwimage` size conversions (luna-round-4 C05):** The decimal
+  conversions in the `readelf` claim at :41 above are incorrect (a later
+  extent computation at :49 already lands on the right value).
+  `gsp_tu10x.bin`'s `.fwimage` size `0x1c01dc8` is **29,367,752 B**, not
+  29,358,536 B; `gsp_ga10x.bin`'s `.fwimage` size `0x505b000` is
+  **84,258,816 B**, not 84,242,432 B. The hexadecimal section sizes and
+  other observations are unchanged. Recheck:
+  `python3 -c 'print(0x1c01dc8); print(0x505b000)'` → `29367752` / `84258816`
+  (two lanes recomputed independently; one reconstructs the slip as a 'b'
+  misread as '7'). The queued debt is recorded at
+  `.ufo/reports/luna-round-4/kaidoku.md`.
