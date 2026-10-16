@@ -20,7 +20,7 @@ explicitly marked current; the added lesson-index row shifts later README lines.
 
 | Axis | Baseline → current score, 0–10 | Observable and limitation | Evidence / counting command | Last-change round |
 |---|---|---|---|---|
-| coverage | 9.72 → 10.0 | 72/72 knowledge files mapped; index integrity only, **not** fraction of the REA domain held | `corpus/README.md:11-60`; command A; baseline `a79945c4`, measured `2abd30f5` | luna-round-1 |
+| coverage | 9.72 → 10.0 | 78/78 knowledge files mapped; index integrity only, **not** fraction of the REA domain held | `corpus/README.md:11-67`; command A; baseline `a79945c4`, measured `3395b6d` | luna-round-1 + luna-round-7 |
 | depth | 10 → 10 | 9/9 queue-drain rule blocks have resolvable file/range citations at `638fb211`; **not** semantic correctness, generality, or fresh execution — the r3 semantic contradiction removal is measured by the contradiction census, not this proxy | `SKILL.md:77-191`; command A; baseline `a79945c4`, measured `638fb211` | r1 measurement + luna-round-3 |
 | calibration | 0 → 10 | 9/9 preselected reconciliation obligations aligned (2026-10-15); 2026-10-16 per-client REA surface reconciled to live receipts — **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; luna-round-2 receipts `.ufo/waves/luna-round-2/receipts/`; measured at `75af886a` | operator-steered r1 + luna-round-2 |
 
@@ -499,3 +499,34 @@ improved (forgery attacks, copy-vs-run attacks, and class-vs-byte agreement
 distinctions all exercised and recorded). Planned next: luna-round-7 =
 coverage — knowledge entries + map rows for the six exercised 6.5.0 verbs
 (denominator 72 → 78; command A must re-measure 78/78). Retired: none.
+
+## luna-round-7 — coverage: six 6.5.0-verb entries, 2026-10-16
+
+One move on the coverage axis: convert luna-round-6's exercised verbs into
+admitted knowledge. Claim: after landing, command A re-measures
+knowledge_files=78, mapped=78, missing=[], dangling=[], 9/9 rules; every
+entry passes corpus/QUALITY.md; the prior 72 entries byte-identical.
+
+- Wave: two-lane (64 luna + 59+5 deepseek backfill = 128). Cross-lane
+  drafting with convergence; FINAL-MANIFEST compiled by the integration
+  seat with all wave corrections applied (see LOG).
+- Work commit `3395b6d` (lane identity; two commits: six files, then twelve
+  README rows).
+- Measured at `3395b6d`: command A 78/78, 9/9, 10.0/10.0; prior-72 diff
+  empty. The numeric proxy stays a finite index measure — 10.0 at 78 files
+  is index completeness, not domain fraction.
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| coverage | 10.0 → 10.0 (denominator 72 → 78; index completeness held at the larger denominator) | improved (six RESULT-class verbs became admitted, quality-gated knowledge) |
+| depth | 10.0 → 10.0 (measured) | unchanged |
+| calibration | 10 → 10 | unchanged |
+| freshness/operability | n/a this round | unchanged |
+
+Learning trends: expansion improved (six new verified surfaces); quality
+improved (QUALITY-12 enforcement excluded an unreproducible result;
+metadata fields now standard for new entries); discernment unchanged.
+Planned next: luna-round-8 — operability symmetry battery on the Kimi
+6.4.0 pin (round 6 covered 6.5.0; the kimi-resolved 6.4.0 surface gets the
+same preregistered treatment, closing the per-client evidence asymmetry).
+Retired: none.

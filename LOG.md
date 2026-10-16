@@ -807,3 +807,27 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   (custody; current bytes hash-match); L10 detoured to inspect_wasm_artifact
   (class preserved, predicted harmony fallback never executed); ~1.2GB /tmp
   battery litter (hygiene debt, other sessions may share /tmp — left).
+
+### luna-round-7 — coverage: six 6.5.0-verb knowledge entries (72 → 78)
+
+- Motivating evidence: luna-round-6's battery exercised six 6.5-only verbs
+  with cross-lane receipts; the corpus held no entries for them (inventory
+  vs knowledge gap).
+- Work: one axis-move on coverage. Two-lane wave (64 luna + 59+5 deepseek);
+  cross-lane drafting with convergence seats; wave catches folded into the
+  FINAL-MANIFEST: hyphenated filenames (underscore stems break command A's
+  map-token regex — three independent simulations), metadata fields on all
+  six (source:/verified-at:/recheck:), entry 4 admits only lane-B's
+  real-carrier SQLite result (lane A's synthetic fixture fails QUALITY-12),
+  entry 2 keeps the two carriers distinct, entry 3 uses provider-exact fuse
+  names + keeps E3D's resource bounds and reproducer, entry 5's call shows
+  only the pattern argument (limit 100 is the tool default).
+- Landed at `3395b6d` (lane identity): six entry files, six 3-cell map rows
+  after r14-02, six 4-cell Knowledge rows at the table end. Prior 72
+  entries byte-identical.
+- Measured at `3395b6d`: command A — knowledge_files 78, mapped 78,
+  missing [], dangling [], citation_resolved_rules 9/9, coverage 10.0,
+  depth 10.0. Seat defects recorded: E4V/S1's 'receipts untracked' claim
+  false (26 receipt files tracked at bc91424; parent re-verified); Q1-Q6
+  graded absence not content (drafts landed after their reads); BB1 composed
+  entries 3/5 without a prior gate pass (disclosed in the manifest THREATS).
