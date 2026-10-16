@@ -711,3 +711,39 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   depth (false domain claim removed) and adopted C8's contradiction-count
   observable as the round's primary measurement. Seat R2 wrote its report
   under a misnamed file (R2-reviewer-readme.md) — format debt only.
+
+### luna-round-4 — freshness debt-drain (19-finding census)
+
+- Motivating evidence: named drift debt from luna-rounds 1-3 — 12 V-seat
+  map-row findings (round 1), README staleness post-round-2 (v37 line), the
+  README:130 SKILL-range pointer (round 3), recorded in SCORECARD open gaps.
+- Work: one axis-move on freshness (fleet axis; not a lane-owned proxy — the
+  parent's recording ruling is in SCORECARD.md and the round report). Wave:
+  64 seats on openai-codex/gpt-6-luna-max (58 + 6 backfill; the parent's
+  short-count error recorded and repaired, same pattern as luna-round-2).
+  Reports `.ufo/waves/luna-round-4/`.
+- Landed at `6a71cd5` (lane identity, amended once pre-records: eight wording
+  tweaks to satisfy the wave's own census matchers — each tweak reviewed as
+  MORE faithful to the knowledge files): 14 repair groups in corpus/README.md
+  — REA-service row (3/7 kept as the verified count + 8-client registry
+  clarification + 10/10 unchanged r2 values + r4 fourth-consecutive verdict),
+  archives row (120 deduplicated nodes / 130 occurrence hashes; AppImage
+  ELF-only graph + unindexed overlay), Firmware row split (Firmware + new
+  Frontier prerequisites row, token set held at 72), r5-01 timeout qualifier,
+  r5-02 3/3-probed-of-286 scope, r9-02 status scope (inferred not evidenced),
+  r12-01 per-leg fidelity (L200 byte-exact only), typora/libsignal/r4-15
+  Knowledge rows, lessons round-13 pointer (SKILL.md:81-195), Known-gaps skill
+  line as dated R4 record. Asar row + crash row adjudicated NO-CHANGE (V01a:
+  row supported; D01: row supported).
+- Measured at `6a71cd5`: command A unchanged (mapped 72, missing [],
+  dangling [], coverage 10.0, depth 10.0, 9/9 rules); wave census 14/19 PASS
+  + 5 ADJUDICATED-with-cause (F01 census encodes removing the verified 3/7;
+  F02 encodes the refuted round-1 asar claim; F05 targets content no seat
+  flagged — the flagged universal is the knowledge file's historical erratum,
+  file debt for a future round; F16's replacement matcher encodes one wording,
+  stale-pass verified; F18's z=1 is structurally unsatisfiable while the
+  rea-skill-contract token exists, stale-pattern absence verified).
+  Token set 72/72 PASS. Named debt carried forward: r1 asar knowledge-file
+  framing (round 5+), r4u-01 firmware size decimals (C05), README stale
+  frontier summaries (:157/:160 content), PROVINCE request-byte pin (C7,
+  round 3), r9-02 file's own later-summary tension (V12b).

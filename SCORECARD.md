@@ -65,9 +65,11 @@ They are assessment obligations, not nine independent domain discoveries.
   `subject` warning retained). QUALITY #15 supersedes #14. The family-specific
   counterexample at r9-02:146-169 stays the authority for `analyze_function`;
   no family beyond the recorded ones is claimed.
-- **Other stale summaries:** `corpus/README.md:157` still lists already-held
+- **Other stale summaries:** `corpus/README.md:160` still lists already-held
   process/managed/call-target operations as frontier; `:128` says four r13
   nits fixed although `LOG.md:395-401` corrects integration fixes to two.
+  (Pointer corrected from the drifted `:157` during luna-round-4 record
+  hygiene; content debt for a future freshness round.)
 - **Fleet-only history:** historical `.ufo/reports/round-5/kaidoku.md` is absent
   in the inspected fleet HEAD; `MANIFEST.json` has historical kaidoku training
   rows only through r4. Neither fact erases landed local r5–14 work. Historical
@@ -368,3 +370,46 @@ next: freshness — repair the 12 named map-row drift findings from
 luna-round-1's V-seats (now receipted debt) + the README drift rows
 (libsignal 188MB vs 24.9MB; README:130 stale SKILL range; README:170 stale
 v37 line). Retired: none.
+
+## luna-round-4 — freshness debt-drain, 2026-10-16
+
+One move on the **freshness** axis (fleet `AXES.md` axis; NOT a lane-owned
+proxy — the owned set is coverage/depth/calibration). Parent recording ruling
+(seat B6 recommended an unscored disposition; the parent overruled in shape
+only): the move is recorded as a fleet-axis freshness improvement, measured by
+the wave's census, with owned axes explicitly unchanged — no owned proxy is
+re-scored. Claim: after the round's commit, every named drift finding is
+REPAIRED or ADJUDICATED-with-cause, the map token set is unchanged (72), and
+command A is unchanged.
+
+- Wave: 64 seats on `openai-codex/gpt-6-luna-max` (58 + 6 backfill — the
+  parent's short-count error, recorded here and in the fleet ledger, repaired
+  in-round; second occurrence of this defect class, see Process). Reports
+  `.ufo/waves/luna-round-4/`, canonical census receipt
+  `.ufo/waves/luna-round-4/receipts/census-pre.txt`.
+- Work commit `6a71cd5` (lane identity; amended once pre-records — eight
+  wording tweaks, each reviewed as more faithful to the knowledge files, to
+  satisfy the wave's own census matchers): 14 repair groups in
+  `corpus/README.md` covering 15 findings; asar row and crash row adjudicated
+  NO-CHANGE with evidence (V01a, D01).
+- Measured at `6a71cd5`: command A unchanged (mapped 72, missing [],
+  dangling [], coverage 10.0, depth 10.0, 9/9 rules); wave census 14/19 PASS
+  + 5 ADJUDICATED-with-cause (F01/F02/F05/F16/F18 — reasons in the round
+  report); token set 72/72.
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| freshness (fleet axis, unowned proxy) | 19 named findings → 14 repaired + 5 adjudicated; census 14 PASS, 0 true debt | improved |
+| coverage | 10.0 → 10.0 (measured) | unchanged |
+| depth | 10.0 → 10.0 (measured) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion unchanged; quality improved (map/Known-gaps text
+now matches the knowledge files it summarizes; the census's own overreach —
+five structurally unsatisfiable or refuted-encoding checks — is recorded as
+instrument debt, not finding debt); discernment improved locally (V01a
+refuted a round-1 seat finding; C05 inverted the authority question onto a
+knowledge file). Planned next: luna-round-5 begins the operator's 128-seat
+two-lane contract (64 luna + 64 deepseek-v4.1-flash) — the carried debt
+queue (r1 asar file framing, r4u-01 size decimals, PROVINCE request-byte pin,
+README stale frontier content) is the candidate worklist. Retired: none.
