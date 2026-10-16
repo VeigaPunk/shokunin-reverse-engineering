@@ -621,3 +621,31 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   outputs remain preserved. The handoff commit includes this LOG append;
   final actual-tree gate output is delivered by the command surface, without
   inventing an admission or a new verified round.
+
+### luna-round-1 — coverage map 70/72 → 72/72
+
+- Motivating evidence: baseline command A at `a79945c4` returned mapped=70,
+  missing `2026-10-14-r14-01-queue-b-residual` and
+  `2026-10-14-r14-02-final-sweep`, coverage_score=9.72, dangling=[], depth
+  10.0 (9/9 rules). Both files were listed in the Knowledge table
+  (`corpus/README.md:126-127`) but absent from the coverage map.
+- Work: one axis-move on coverage, dispatched as one 64-seat wave on
+  openai-codex/gpt-6-luna-max; seat reports at `.ufo/waves/luna-round-1/`
+  (64/64 delivered). Adversarial seat C5 forced partial qualifiers on both
+  new rows: r14-01 keeps device/operator-gated residue recorded not forced;
+  r14-02 keeps checks 3/4/6/7 not re-run and a fleet-attested but
+  corpus-unanchored evidence id reported not fixed. Seat D3's four-cell
+  row-format claim was refuted by direct pipe count (every map row is 3 cells).
+- Landed at `2abd30f5` (lane identity): two map rows after r12-02. Measured
+  at `2abd30f5`: mapped=72, missing=[], dangling=[], coverage_score=10.0,
+  depth_score=10.0, 9/9 rules; full output in the round report
+  `.ufo/reports/luna-round-1/kaidoku.md`.
+- Named debt for future rounds (V-seat drift hunts, deliberately not fixed
+  under one-axis discipline): 12 coverage-map row drift findings plus README
+  summary drift, all listed in the round report; the stale-summaries bullet's
+  `:157` pointer is at `:160` in HEAD (seat C7). Four pre-existing untracked
+  `.ufo/interactive-sessions/` files predate this wave; left untouched.
+- Reviewer seat R4 self-reported a no-peeking breach (worktree grep returned
+  M2's path metadata only); its convergence draft corroborated M2's substance
+  and no row wording relies on R4-exclusive claims. Per seat R8 no SHONEN
+  box advanced: all four remain `[~]`.

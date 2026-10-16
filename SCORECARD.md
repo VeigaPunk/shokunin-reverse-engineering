@@ -20,7 +20,7 @@ explicitly marked current; the added lesson-index row shifts later README lines.
 
 | Axis | Baseline → current score, 0–10 | Observable and limitation | Evidence / counting command | Last-change round |
 |---|---|---|---|---|
-| coverage | 9.72 → 9.72 | 70/72 knowledge files mapped; index integrity only, **not** fraction of the REA domain held | `corpus/README.md:11-58`; command A; measured revisions in `evidence/round-1-2026-10-15/result.json` | r1 measurement; no coverage change |
+| coverage | 9.72 → 10.0 | 72/72 knowledge files mapped; index integrity only, **not** fraction of the REA domain held | `corpus/README.md:11-60`; command A; baseline `a79945c4`, measured `2abd30f5` | luna-round-1 |
 | depth | 10 → 10 | 9/9 existing queue-drain rule blocks have resolvable file/range citations; **not** semantic correctness, generality, or fresh execution | `SKILL.md:77-191`; command A; measured revisions in `evidence/round-1-2026-10-15/result.json` | r1 measurement; no depth change |
 | calibration | 0 → 10 | 0/9 → 9/9 preselected reconciliation obligations aligned; **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; measured revisions in `evidence/round-1-2026-10-15/result.json` | operator-steered r1, 2026-10-15 |
 
@@ -50,9 +50,9 @@ They are assessment obligations, not nine independent domain discoveries.
 
 ## Open gaps — deliberately not closed by this move
 
-- **Coverage map:** `2026-10-14-r14-01-queue-b-residual` and
-  `2026-10-14-r14-02-final-sweep` are in the Knowledge table but unmapped.
-  All 72 files stay in the denominator. Historical 70/70 is not current 72/72.
+- **Coverage map:** closed at 72/72 by luna-round-1 (2026-10-16); the two
+  r14 rows are labeled partial per their files' own limiting language. All
+  72 files stay in the denominator. Historical 70/70 is not current 72/72.
 - **Version drift:** live `binary_session {}` reports REA **6.5.0**, **207** MCP
   tools, **153** CLI commands, skill **42**, catalog
   `805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded`.
@@ -232,3 +232,39 @@ This verifies consistency of the recorded state, not live routing health,
 native admission or receipt applicability. Axes/trends, blocked status and
 verified-round increment 0 are unchanged. Correction lesson:
 `corpus/lessons/2026-10-15-round-1-admission-correction.md`.
+
+## luna-round-1 — coverage map completion, 2026-10-16
+
+One move on the coverage axis. Claim: coverage map 70/72 → 72/72, no new
+dangling rows, depth unchanged. Wave: 64 parent-dispatched verification
+seats on `openai-codex/gpt-6-luna-max`, reports at `.ufo/waves/luna-round-1/`
+(64/64 delivered); parent-integrated, no seat commits, two lane commits.
+
+- Baseline `a79945c4`: mapped 70, missing both r14 files, coverage 9.72,
+  depth 10.0 (command A; reproduced pre-integration by seats R1, C1, P2, R4).
+- Work commit `2abd30f5` (lane identity): two map rows added after r12-02,
+  both labeled **partial** — r14-01 retains device/operator-gated residue
+  (adb/JEB/IDA/Hopper), r14-02 has checks 3/4/6/7 not re-run and a
+  fleet-attested but corpus-unanchored evidence id, reported not fixed.
+  Critic C5 forced both qualifiers; D3's four-cell row-format claim was
+  refuted by direct pipe count (every map row is 3 cells).
+- Measured at `2abd30f5`: mapped 72, missing [], dangling [], coverage 10.0,
+  depth 10.0 (9/9 rules). Before → after: 9.72 → 10.0; denominator 72 both sides.
+
+| Owned axis | Before → after | Verdict |
+|---|---|---|
+| coverage | 9.72 → 10.0 (map completeness only) | improved |
+| depth | 10.0 → 10.0 (9/9 rules both sides) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion unchanged (no new knowledge surface); quality
+improved only for map/index completeness, not content truth — 12 V-seat
+map-row drift findings and further README drift are named debt in the round
+report, deliberately not fixed (one-axis move); discernment unchanged (no
+outside admit/reject spot-check of domain claims). Planned item carries
+forward; retired: none. The 2026-10-15 reconciliation table above stays
+frozen; its "current map is 70/72" row is superseded on that point by this
+section. The coverage row's README range pointer was updated 11-58 → 11-60
+as this row's own evidence-field hygiene; the stale-summaries bullet's
+`:157` pointer (at `:160` in HEAD, per seat C7) is recorded as named debt,
+not silently fixed.
