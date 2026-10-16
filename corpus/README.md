@@ -166,7 +166,7 @@ A row is written when its file exists, never before.
 
 - `record_pairs` exercised via MCP session r3 — `changed` needs ALL members paired. `compare_javascript_export_shapes` exercised r4-09 (inline-Evidence required on CLI).
 - Organic cores exceed the 32 MiB inspect cap — no deep runtime-evidence coverage yet.
-- Evidence ids are `f(content, path, params)` — path-sensitive, three-lane corroboration r4; cite `subject.digest.sha256` for cross-path identity.
+- Evidence-id identity is verb-family-specific, not universal: revenger-verifier ids are path-sensitive (same bytes, different paths → different ids, r4 lineage), while `analyze`/`inspect` and `analyze_function` ids are content+params-keyed — `analyze_function` proven to keep the same id across two paths (r9-02); `subject` carries module attribution, which the id does not authenticate — pin request bytes when module identity matters; for path-sensitive families, cross-path identity cites `subject.digest.sha256` (`corpus/knowledge/2026-10-13-r2-evidence-bundle-schema.md:244-250`; `corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:146-169`).
 - Skill `v37` flagged `stale` by doctor — per-client destination absence, not content drift; healing is operator-owned.
 - LOG.md discipline during parallel waves: a lane's dispatch scope overrides ambient append rules — encode explicitly in future wave prompts.
 - Criterion-5 (observation/inference labels) is not uniformly applied in round-1 entries — violations recorded as errata; applies to all future entries at write time.

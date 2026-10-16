@@ -209,9 +209,18 @@ Callers via objdump? GOT-indirect calls invisible — use `xrefs`.
 - `record_pairs`/`compare_functions` have no CLI verbs — domain/MCP only;
   `changed` needs ALL bundle members paired.
 - MCP session retention is epoch-scoped; `evidence_links` pin records across
-  targets; evidence ids are `f(content, path, params)` — deterministic on
-  same-path re-runs, NOT path-independent (cite `subject.digest.sha256` for
-  cross-path identity).
+  targets; evidence-id identity is verb-family-specific, not a universal
+  formula — the revenger-verifier family mints path-sensitive ids (same bytes
+  at different paths → different ids; jadx ids are per-run, apktool ids
+  deterministic on identical invocations), `analyze`/`inspect` and
+  `analyze_function` ids stayed equal across paths (`analyze_function` hashes
+  analysis content + parameters, not path), and `subject` carries module
+  attribution unauthenticated by the id — never substitute ids across
+  invocation shapes, and pin request bytes (or re-derive the dossier) when
+  module identity matters
+  (`corpus/knowledge/2026-10-13-r2-evidence-bundle-schema.md:244-250`;
+  `corpus/knowledge/2026-10-13-r5-01-riscv-bypass.md:83-85`;
+  `corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:146-169`).
 - Provider probes run under `prlimit` (e.g. wakaru `--as=1GiB`) — a standalone-
   working tool can still OOM in REA's spawn context. Bind native ELF binaries
   over node shims (`REA_WAKARU_COMMAND` → `@wakaru/cli-linux-x64/wakaru`).
