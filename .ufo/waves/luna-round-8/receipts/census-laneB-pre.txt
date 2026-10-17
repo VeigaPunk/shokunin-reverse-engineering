@@ -1,0 +1,321 @@
+=== kaidoku-shokunin / luna-round-8 / lane B seat XB1 (census runner) / receipts/census-laneB-pre.txt ===
+repo: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+HEAD (pre):  6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4  (git rev-parse HEAD)
+HEAD (post): 6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4
+captured: 2026-10-16 21:22:20 -03:00 .. 21:25 -03:00 (runs 1-3, each < 1 s wall; single read-only census command)
+
+TARGET RESOLUTION
+- assigned design source "CB5's census": lookup `.ufo/waves/luna-round-8/CB5.md` -> absent at run time (ls exit 2;
+  census [8] WAVE_REPORTS_EXIST_CB5=False; wave-report count moved 74 -> 76 -> 81 during the three runs, i.e. lane B
+  was filing concurrently and no CB5 artifact existed to read).
+- fallback design (precedent: round-6 seat XB1 "CB6's final census", round-7 seat PB2 "census-pre-B"): canonical
+  pre-state census - Recipe A verbatim from the pinned `SCORECARD.md` blob + coverage-map token census + knowledge
+  blob aggregate - plus lane-B additions: receipt inventory with MANIFEST cross-check, 6.4.0 tool-list control,
+  host-config fingerprints.
+- exposure note: lane-A `receipts/census-pre.txt`, `CA6.md`, and lane-B leg-10 analysis (VB3/VB5/VB6/ZB2) were read
+  during recon; expected values were therefore known to this seat (non-blind; every value recomputed independently).
+
+SCRIPT: /tmp/xb1-r8/census.py  sha256 a0fc12ef58bc181d82938ed5caac9fd6f790e54db35c06e1ea482e20ade04b3b
+COMMAND: cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 /tmp/xb1-r8/census.py
+BEGIN-SCRIPT
+#!/usr/bin/env python3
+"""luna-round-8 lane-B pre-state census (seat XB1, census runner).
+
+Read-only: Git objects of the pinned revision, on-disk receipts under
+.ufo/waves/luna-round-8/receipts, and three host config files. No network,
+no MCP, no tracked-file writes. Prints a deterministic report to stdout.
+"""
+import hashlib
+import pathlib
+import re
+import subprocess
+import sys
+
+REV = '6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4'
+ROOT = pathlib.Path('/home/vgpnk/Projects/shokunin/kaidoku-shokunin')
+RECEIPTS = ROOT / '.ufo/waves/luna-round-8/receipts'
+SELF = 'census-laneB-pre.txt'
+SIX = ['inspect_go_binary', 'inspect_rust_binary', 'inspect_electron_fuses',
+       'inspect_sqlite_database', 'search_bytes', 'inspect_with_objdump']
+CONFIGS = [
+    pathlib.Path.home() / '.config/devin/mcp_config.json',
+    pathlib.Path.home() / '.omp/agent/mcp.json',
+    pathlib.Path.home() / '.kimi-code/config.toml',
+]
+
+
+def run(cmd, **kw):
+    return subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT, **kw)
+
+
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=ROOT)
+
+
+def blob(rev, path):
+    return git('show', f'{rev}:{path}')
+
+
+def tag(name, body):
+    print(f'BEGIN-{name}')
+    print(body, end='' if body.endswith('\n') or body == '' else '\n')
+    print(f'END-{name}')
+
+
+def main():
+    out = []
+
+    # [1] source controls
+    head = git('rev-parse', 'HEAD').decode().strip()
+    status = git('status', '--porcelain=v1').decode().splitlines()
+    tracked_dirty = [l for l in status if not l.startswith('??')]
+    diff_head = run(['git', 'diff', '--quiet', 'HEAD'])
+    sc_worktree = hashlib.sha256((ROOT / 'SCORECARD.md').read_bytes()).hexdigest()
+    sc_rev = hashlib.sha256(blob(REV, 'SCORECARD.md')).hexdigest()
+    print(f'[1] SOURCE CONTROLS')
+    print(f'PINNED_HEAD={REV}')
+    print(f'OBSERVED_HEAD={head}')
+    print(f'HEAD_MATCH={head == REV}')
+    print(f'GIT_DIFF_QUIET_HEAD_EXIT={diff_head.returncode}')
+    print(f'TRACKED_DIRTY_STATUS_LINES={len(tracked_dirty)}')
+    print(f'UNTRACKED_STATUS_LINES={sum(l.startswith("??") for l in status)}')
+    print(f'SCORECARD_WORKTREE_SHA256={sc_worktree}')
+    print(f'SCORECARD_REV_BLOB_SHA256={sc_rev}')
+    print(f'SCORECARD_WORKTREE_EQUALS_PINNED={sc_worktree == sc_rev}')
+    print()
+
+    # [2] Recipe A verbatim from the pinned SCORECARD blob
+    sc = blob(REV, 'SCORECARD.md').decode()
+    marker = sc.index('**A — source-derived controls.**')
+    fence = re.search(r'```bash\n(.*?)\n```', sc[marker:], re.S)
+    shell_recipe = fence.group(1)
+    recipe = shell_recipe.split("<<'PY'\n", 1)[1].rsplit('\nPY', 1)[0]
+    print(f'[2] RECIPE A VERBATIM (blob {REV[:7]}:SCORECARD.md, fence sha256 '
+          f'{hashlib.sha256(shell_recipe.encode()).hexdigest()})')
+    r = run([sys.executable, '-', REV], input=recipe)
+    print(f'EXIT={r.returncode}')
+    tag('STDOUT[recipeA]', r.stdout)
+    tag('STDERR[recipeA]', r.stderr)
+    print(f'STDOUT_SHA256={hashlib.sha256(r.stdout.encode()).hexdigest()}')
+    print()
+
+    # [3] coverage-map token census
+    readme = blob(REV, 'corpus/README.md').decode()
+    section = readme.split('## Coverage map\n', 1)[1].split('\n## ', 1)[0]
+    tokens = re.findall(r'2026-10-\d{2}-[a-z0-9-]+', section)
+    uniq = sorted(set(tokens))
+    tok_sha = hashlib.sha256(('\n'.join(uniq) + '\n').encode()).hexdigest()
+    paths = git('ls-tree', '-r', '--name-only', REV, '--', 'corpus/knowledge').decode().splitlines()
+    stems = sorted(p.split('/')[-1][:-3] for p in paths if p.endswith('.md'))
+    print('[3] COVERAGE-MAP TOKEN CENSUS (definition: Recipe A lines 101-102)')
+    print(f'MAP_TOKEN_OCCURRENCES={len(tokens)}')
+    print(f'MAP_TOKEN_UNIQUE={len(uniq)}')
+    print(f'MAP_TOKEN_SHA256={tok_sha}')
+    print(f'TOKENS_EQUAL_FILE_STEMS={uniq == stems}')
+    print(f'MISSING={sorted(set(stems) - set(uniq))}')
+    print(f'DANGLING={sorted(set(uniq) - set(stems))}')
+    print()
+
+    # [4] knowledge blob aggregate
+    recs = []
+    for s in stems:
+        h = hashlib.sha256(blob(REV, f'corpus/knowledge/{s}.md')).hexdigest()
+        recs.append(f'{s} {h}\n')
+    agg = hashlib.sha256(''.join(recs).encode()).hexdigest()
+    print('[4] KNOWLEDGE BLOB AGGREGATE')
+    print(f'KNOWLEDGE_MD_COUNT={len(stems)}')
+    print(f'KNOWLEDGE_MD_AGGREGATE_SHA256={agg}')
+    print()
+
+    # [5] receipt inventory + MANIFEST cross-check
+    files = sorted(p for p in RECEIPTS.iterdir() if p.name != SELF)
+    print('[5] RECEIPT INVENTORY (snapshot; excludes this census output file)')
+    print(f'RECEIPT_FILE_COUNT={len(files)}')
+    for p in files:
+        if p.is_symlink():
+            print(f'FILE {p.name}: symlink')
+        elif p.is_file():
+            data = p.read_bytes()
+            print(f'FILE {p.name}: regular size={len(data)} sha256={hashlib.sha256(data).hexdigest()}')
+        else:
+            print(f'FILE {p.name}: non-regular')
+    manifest = (RECEIPTS / 'MANIFEST.txt').read_text().splitlines()
+    print('MANIFEST_CROSS-CHECK:')
+    for line in manifest:
+        name, claim = line.split()
+        data = (RECEIPTS / name).read_bytes()
+        actual = hashlib.sha256(data).hexdigest()
+        if actual == claim:
+            print(f'  {name}: MATCH')
+            continue
+        lines = data.splitlines(keepends=True)
+        prefix = None
+        for n in range(1, len(lines) + 1):
+            if hashlib.sha256(b''.join(lines[:n])).hexdigest() == claim:
+                prefix = n
+                break
+        if prefix is None:
+            print(f'  {name}: MISMATCH actual={actual} (claimed {claim}; no line-prefix matches)')
+        else:
+            head_bytes = len(b''.join(lines[:prefix]))
+            print(f'  {name}: APPEND-SUPERSEDED actual={actual} (claimed {claim} = head -n '
+                  f'{prefix}, {head_bytes} B of {len(data)} B)')
+    print()
+
+    # [6] tool-list control (L2/L9 inventory-level)
+    tools = [l for l in (RECEIPTS / 'leg-2-tools.txt').read_text().splitlines() if l.strip()]
+    print('[6] 6.4.0 TOOL-LIST CONTROL (receipts/leg-2-tools.txt)')
+    print(f'TOOL_LINE_COUNT={len(tools)}')
+    print(f'TOOL_UNIQUE_COUNT={len(set(tools))}')
+    print(f'TOOL_SORTED_SHA256={hashlib.sha256(("\n".join(sorted(set(tools))) + "\n").encode()).hexdigest()}')
+    for name in SIX:
+        r2 = subprocess.run(['grep', '-nFw', '--', name, 'leg-2-tools.txt'],
+                            cwd=RECEIPTS, capture_output=True, text=True)
+        print(f'ABSENCE {name}: rc={r2.returncode} stdout={r2.stdout.strip()!r}')
+    print()
+
+    # [7] config fingerprints
+    print('[7] HOST-CONFIG FINGERPRINTS')
+    for path in CONFIGS:
+        if path.is_file():
+            data = path.read_bytes()
+            print(f'CONFIG {path}: regular size={len(data)} sha256={hashlib.sha256(data).hexdigest()}')
+        else:
+            print(f'CONFIG {path}: MISSING_OR_NONREGULAR')
+    print()
+
+    # [8] post-state + evidence snapshot
+    head2 = git('rev-parse', 'HEAD').decode().strip()
+    status2 = git('status', '--porcelain=v1').decode().splitlines()
+    print('[8] POST-STATE')
+    print(f'HEAD_AFTER={head2} UNCHANGED={head2 == head}')
+    print(f'TRACKED_DIRTY_STATUS_LINES_AFTER={sum(not l.startswith("??") for l in status2)}')
+    print(f'UNTRACKED_STATUS_LINES_AFTER={sum(l.startswith("??") for l in status2)}')
+    wave = sorted(p.name for p in (ROOT / '.ufo/waves/luna-round-8').glob('*.md'))
+    print(f'WAVE_REPORT_COUNT={len(wave)}')
+    print('WAVE_REPORTS_EXIST_CB5=' + str((ROOT / '.ufo/waves/luna-round-8/CB5.md').exists()))
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
+END-SCRIPT
+
+RUN (canonical, run3): EXIT=0; stderr 0 bytes (sha256 e3b0c442...b855); STDOUT_SHA256 87e047de9c5e4e6310c91d04cafae08e01a1dad37603cd680178b834f7968c17
+BEGIN-STDOUT
+[1] SOURCE CONTROLS
+PINNED_HEAD=6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4
+OBSERVED_HEAD=6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4
+HEAD_MATCH=True
+GIT_DIFF_QUIET_HEAD_EXIT=0
+TRACKED_DIRTY_STATUS_LINES=0
+UNTRACKED_STATUS_LINES=135
+SCORECARD_WORKTREE_SHA256=190de3174eec4dd9a04501355d7cabbb2974a9a93114c1d24602cfe130c7ab7b
+SCORECARD_REV_BLOB_SHA256=190de3174eec4dd9a04501355d7cabbb2974a9a93114c1d24602cfe130c7ab7b
+SCORECARD_WORKTREE_EQUALS_PINNED=True
+
+[2] RECIPE A VERBATIM (blob 6e2ee8f:SCORECARD.md, fence sha256 2cc0f1c08363202b11a01ca19f748055c0231b60f2963398530c7e25f089be06)
+EXIT=0
+BEGIN-STDOUT[recipeA]
+{"citation_resolved_rules": 9, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 78, "mapped": 78, "missing": [], "revision": "6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4", "rule_blocks": 9}
+END-STDOUT[recipeA]
+BEGIN-STDERR[recipeA]
+END-STDERR[recipeA]
+STDOUT_SHA256=5885833a6b1429cc983d544216c80383a4f11896dbd309eea6a287a21b2c51de
+
+[3] COVERAGE-MAP TOKEN CENSUS (definition: Recipe A lines 101-102)
+MAP_TOKEN_OCCURRENCES=78
+MAP_TOKEN_UNIQUE=78
+MAP_TOKEN_SHA256=c6c025f3aee5fb93966f9da4eca22ade1ac3af9207d9ad26b8bca6807f6ae83b
+TOKENS_EQUAL_FILE_STEMS=True
+MISSING=[]
+DANGLING=[]
+
+[4] KNOWLEDGE BLOB AGGREGATE
+KNOWLEDGE_MD_COUNT=78
+KNOWLEDGE_MD_AGGREGATE_SHA256=00891de8600a2bf8eba44c5ecc4d32eba3d58bf2e7222124ea643fa447640076
+
+[5] RECEIPT INVENTORY (snapshot; excludes this census output file)
+RECEIPT_FILE_COUNT=16
+FILE MANIFEST.txt: regular size=741 sha256=7043e5a0188c055afee3d83f76c9ac7fb52a748a7297a2f8f84b3ecae8081981
+FILE census-pre.txt: regular size=6526 sha256=fab155ef18bd860c690965efbcd34b08179e87d7bd1c786730126d62cea1fd85
+FILE leg-1.md: regular size=271 sha256=af959f64e22a37fd7a5ba369009fd689b65fe51a77f3b23f986d5082ecb0bfcd
+FILE leg-10.md: regular size=40401 sha256=6cd389e99f9a5f9b7957fe1021b1007bfec7eb345ed58cf9f982e1d9595e1ec4
+FILE leg-2-tools.txt: regular size=3506 sha256=397531acb4aa6156120b728454201b91b8bdb32c0e7e9eb0ceff5257fe7bbdfe
+FILE leg-2.md: regular size=1956221 sha256=f298e8f1e94574491e975bce94f2445f9c7dce0cfbe980acf8c0e844f8a7fef1
+FILE leg-3.md: regular size=1448 sha256=1be7e4f92c9de9c76edb156addee15114ebc3cd04abce4505ffa0ac877e33e1b
+FILE leg-4.md: regular size=1200 sha256=aa4aa7a3a8bd651596dac73c5e688aaa965091414a3ada3b85bc3b59dae4721f
+FILE leg-5.md: regular size=1493 sha256=3de61417614f30a5ae37356bf450a4707dfefb8c8d7af26b13f0b4f68f5031e2
+FILE leg-6-RV3-replay.md: regular size=1707 sha256=5ce181a8b3a755a141d25334db8dc15b491ef4245bdb23daf7f7cfcbac98a8ea
+FILE leg-6.md: regular size=1945 sha256=fa6efe333c54a48ae4c0768afecffa3d4440c34b3a844df714419868a1ff1621
+FILE leg-7-RV3-replay.md: regular size=2461 sha256=e9e75e0ab7bcc78a42e047402c41d122338e13eb1016ff25809d9a514a972f44
+FILE leg-7.md: regular size=3026 sha256=c10466b7dfcfea177f43431c5b1d61395e7b322173063175fb6d9ba1ed2eaa0b
+FILE leg-8-RV3-replay.md: regular size=1646 sha256=1088b64530d8507815b0105dd0db8b19de7be0695f4e05e88c3734f327cfec00
+FILE leg-8.md: regular size=1593 sha256=a1cc891be45ca7da4d9903bc6b6823048a1bcb1310bba8edf0577f90c812cbb3
+FILE leg-9.md: regular size=2168 sha256=8377d652b298fcce80701d338797333cda86a1d7d02478481bd84e038537c2ee
+MANIFEST_CROSS-CHECK:
+  leg-1.md: MATCH
+  leg-2.md: MATCH
+  leg-3.md: MATCH
+  leg-4.md: MATCH
+  leg-5.md: MATCH
+  leg-6.md: MATCH
+  leg-7.md: MATCH
+  leg-8.md: MATCH
+  leg-9.md: MATCH
+  leg-10.md: APPEND-SUPERSEDED actual=6cd389e99f9a5f9b7957fe1021b1007bfec7eb345ed58cf9f982e1d9595e1ec4 (claimed c89eea7a368c780ffe4ab6026e883300fa9f612484b1cf79ac75871cebd32d7b = head -n 59, 27655 B of 40401 B)
+
+[6] 6.4.0 TOOL-LIST CONTROL (receipts/leg-2-tools.txt)
+TOOL_LINE_COUNT=170
+TOOL_UNIQUE_COUNT=170
+TOOL_SORTED_SHA256=5612d104f6618d619dc81b3bbf4b27fd8fb8081a06a0e5125f470a1df05e5938
+ABSENCE inspect_go_binary: rc=1 stdout=''
+ABSENCE inspect_rust_binary: rc=1 stdout=''
+ABSENCE inspect_electron_fuses: rc=1 stdout=''
+ABSENCE inspect_sqlite_database: rc=1 stdout=''
+ABSENCE search_bytes: rc=1 stdout=''
+ABSENCE inspect_with_objdump: rc=1 stdout=''
+
+[7] HOST-CONFIG FINGERPRINTS
+CONFIG /home/vgpnk/.config/devin/mcp_config.json: regular size=406 sha256=16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4
+CONFIG /home/vgpnk/.omp/agent/mcp.json: regular size=429 sha256=38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b
+CONFIG /home/vgpnk/.kimi-code/config.toml: regular size=46513 sha256=4af27747eb93244fcd343fc15552dc7b3ae689fcd7d00f2dea46faca1ca42707
+
+[8] POST-STATE
+HEAD_AFTER=6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4 UNCHANGED=True
+TRACKED_DIRTY_STATUS_LINES_AFTER=0
+UNTRACKED_STATUS_LINES_AFTER=135
+WAVE_REPORT_COUNT=81
+WAVE_REPORTS_EXIST_CB5=False
+END-STDOUT
+
+DETERMINISM
+- run1 STDOUT_SHA256 62e7926ede5950ee61fb537393f90ebc421d6d17aa853b4131708235c4eba2f0
+- run2 STDOUT_SHA256 54ff22a5ba6ca404a301308e06a6ca40cc73de52965e9797d9674cf69ea38b07
+- `diff run1 run2` = exactly one line: `WAVE_REPORT_COUNT=74` -> `76` (concurrent lane-B report landings). Every other
+  line byte-identical, including source controls, Recipe A, token census, knowledge aggregate, receipt inventory,
+  MANIFEST cross-check, tool-list control, config fingerprints, post-state controls.
+- run3 core (lines 1-82, i.e. sections [1]-[7] and the post-state controls) byte-identical to run1; run3
+  WAVE_REPORT_COUNT=81, WAVE_REPORTS_EXIST_CB5=False.
+
+CORROBORATION (direct commands, run alongside; cwd .ufo/waves/luna-round-8/receipts unless noted)
+- leg-10 append-supersession:
+    $ head -n 59 leg-10.md | sha256sum
+    c89eea7a368c780ffe4ab6026e883300fa9f612484b1cf79ac75871cebd32d7b  -
+    $ head -n 59 leg-10.md | wc -c
+    27655
+  (= MANIFEST.txt line 10 / CA6.md L10 claim; current file 40401 B, sha256 6cd389e99f9a5f9b7957fe1021b1007bfec7eb345ed58cf9f982e1d9595e1ec4)
+- leg-3 current bytes carry no display defect:
+    $ sha256sum /tmp/kaidoku-luna-round-8-leg-3-mcp.stdout
+    5c68209953fb9d1444209e286ee7de0a67661ae087f222977165d30f76d5a569  /tmp/kaidoku-luna-round-8-leg-3-mcp.stdout   (623 B)
+    python3: last ```text block of receipts/leg-3.md + LF -> sha256 5c68209953fb9d1444209e286ee7de0a67661ae087f222977165d30f76d5a569
+  (byte-equal to the /tmp artifact and to leg-3.md's claimed full-stdout hash; leg-3.md file sha256
+  1be7e4f92c9de9c76edb156addee15114ebc3cd04abce4505ffa0ac877e33e1b = MANIFEST.txt line 3)
+
+MEASURED, NOT ADJUDICATED (facts recorded for the parent; no disposition claimed here)
+- MANIFEST.txt lists leg-1..leg-10 only: the three -RV3-replay.md files, leg-2-tools.txt and census-pre.txt have no
+  MANIFEST entries. 9/10 MANIFEST entries match current bytes; leg-10 is append-superseded (above).
+- lane-A census-pre.txt (6526 B, sha256 fab155ef18bd860c690965efbcd34b08179e87d7bd1c786730126d62cea1fd85) recorded a
+  13-file inventory: leg-3.md 1430 B/d641e3d3... and leg-4.md 1233 B/8f04ac26... disagree with current bytes
+  (1448 B/1be7e4f9..., 1200 B/aa4aa7a3...), and leg-10.md is absent. Current state is the one recorded in [5] above.
+- This receipt is itself the 17th file in receipts/ and is excluded by name from its own [5] inventory.

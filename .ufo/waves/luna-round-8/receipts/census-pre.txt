@@ -1,0 +1,102 @@
+=== kaidoku-shokunin / luna-round-8 / CE1 census-pre ===
+
+PURPOSE
+CA6-derived pre-state control census at the requested immutable revision. The round-6 CB6 final scorer is not reused: it hard-pins HEAD f0e8cde and 6.5.0 predictions; this round is 6.4.0 at HEAD 6e2ee8f.
+
+CWD: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+COMMAND:
+python3 - 6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4 <<'PY'
+import hashlib, pathlib, re, subprocess, sys
+ROOT = pathlib.Path.cwd()
+REV = sys.argv[1]
+def run_git(*args):
+    return subprocess.check_output(['git', *args], cwd=ROOT)
+head = run_git('rev-parse', 'HEAD').decode().strip()
+status = run_git('status', '--porcelain=v1').decode().splitlines()
+tracked = [line for line in status if not line.startswith('??')]
+scorecard = run_git('show', f'{REV}:SCORECARD.md').decode()
+work_scorecard = (ROOT / 'SCORECARD.md').read_bytes()
+head_scorecard = run_git('show', f'{REV}:SCORECARD.md')
+fence = re.search(r'(?s)## Measurement recipes.*?```bash\n(.*?)\n```', scorecard)
+if not fence:
+    raise SystemExit('Could not find SCORECARD measurement recipe fence')
+shell_recipe = fence.group(1)
+recipe = shell_recipe.split("<<'PY'\n", 1)[1].rsplit('\nPY', 1)[0]
+command_a = subprocess.run([sys.executable, '-', REV], input=recipe, text=True, capture_output=True, cwd=ROOT)
+readme = run_git('show', f'{REV}:corpus/README.md').decode()
+section = readme.split('## Coverage map\n', 1)[1].split('\n## ', 1)[0]
+tokens = sorted(set(re.findall(r'2026-10-\d{2}-[a-z0-9-]+', section)))
+token_sha = hashlib.sha256(('\n'.join(tokens) + '\n').encode()).hexdigest()
+paths = run_git('ls-tree', '-r', '--name-only', REV, '--', 'corpus/knowledge').decode().splitlines()
+md_paths = sorted(p for p in paths if p.endswith('.md'))
+blob_records = []
+for path in md_paths:
+    stem = pathlib.PurePosixPath(path).stem
+    blob_records.append(f'{stem} {hashlib.sha256(run_git("show", f"{REV}:{path}")).hexdigest()}\n')
+blob_sha = hashlib.sha256(''.join(blob_records).encode()).hexdigest()
+receipt_dir = ROOT / '.ufo/waves/luna-round-8/receipts'
+receipt_lines = []
+for path in sorted(receipt_dir.glob('leg-*')):
+    if path.is_symlink():
+        receipt_lines.append(f'{path.name}: symlink')
+    elif path.is_file():
+        data = path.read_bytes()
+        receipt_lines.append(f'{path.name}: regular size={len(data)} sha256={hashlib.sha256(data).hexdigest()}')
+    else:
+        receipt_lines.append(f'{path.name}: non-regular')
+config_paths = [
+    pathlib.Path.home() / '.config/devin/mcp_config.json',
+    pathlib.Path.home() / '.omp/agent/mcp.json',
+    pathlib.Path.home() / '.kimi-code/config.toml',
+]
+lines = [
+    f'PINNED_HEAD={REV}',
+    f'OBSERVED_HEAD={head}',
+    f'HEAD_MATCH={head == REV}',
+    f'TRACKED_DIRTY_STATUS_LINES={len(tracked)}',
+    f'UNTRACKED_STATUS_LINES={sum(line.startswith("??") for line in status)}',
+    f'SCORECARD_WORKTREE_EQUALS_PINNED={work_scorecard == head_scorecard}',
+    f'COMMAND_A_EXIT={command_a.returncode}',
+    f'COMMAND_A_STDOUT={command_a.stdout.rstrip()}'.rstrip(),
+    f'COMMAND_A_STDERR_BYTES={len(command_a.stderr.encode())}',
+    f'MAP_TOKEN_COUNT={len(tokens)}',
+    f'MAP_TOKEN_SHA256={token_sha}',
+    f'KNOWLEDGE_MD_COUNT={len(md_paths)}',
+    f'KNOWLEDGE_MD_AGGREGATE_SHA256={blob_sha}',
+    f'RECEIPT_LEG_FILE_COUNT={len(receipt_lines)}',
+    'RECEIPT_LEG_FILES=' + (' | '.join(receipt_lines) if receipt_lines else '(none)'),
+]
+for path in config_paths:
+    if path.is_file():
+        data = path.read_bytes()
+        lines.append(f'CONFIG {path}: regular size={len(data)} sha256={hashlib.sha256(data).hexdigest()}')
+    else:
+        lines.append(f'CONFIG {path}: MISSING_OR_NONREGULAR')
+payload = '\n'.join(lines) + '\n'
+sys.stdout.write(payload)
+sys.stderr.write('STDOUT_SHA256: ' + hashlib.sha256(payload.encode()).hexdigest() + '\n')
+PY
+
+EXIT_CODE: 0
+STDOUT_SHA256: 128006b1c73096936a1c354fc75154f6c76d203a1f20c761c122769b622a4666
+FULL STDOUT:
+PINNED_HEAD=6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4
+OBSERVED_HEAD=6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4
+HEAD_MATCH=True
+TRACKED_DIRTY_STATUS_LINES=0
+UNTRACKED_STATUS_LINES=135
+SCORECARD_WORKTREE_EQUALS_PINNED=True
+COMMAND_A_EXIT=0
+COMMAND_A_STDOUT={"citation_resolved_rules": 9, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 78, "mapped": 78, "missing": [], "revision": "6e2ee8fadc4ab328ce7c8d4d82cceb9b326b94c4", "rule_blocks": 9}
+COMMAND_A_STDERR_BYTES=0
+MAP_TOKEN_COUNT=78
+MAP_TOKEN_SHA256=c6c025f3aee5fb93966f9da4eca22ade1ac3af9207d9ad26b8bca6807f6ae83b
+KNOWLEDGE_MD_COUNT=78
+KNOWLEDGE_MD_AGGREGATE_SHA256=00891de8600a2bf8eba44c5ecc4d32eba3d58bf2e7222124ea643fa447640076
+RECEIPT_LEG_FILE_COUNT=13
+RECEIPT_LEG_FILES=leg-1.md: regular size=271 sha256=af959f64e22a37fd7a5ba369009fd689b65fe51a77f3b23f986d5082ecb0bfcd | leg-2-tools.txt: regular size=3506 sha256=397531acb4aa6156120b728454201b91b8bdb32c0e7e9eb0ceff5257fe7bbdfe | leg-2.md: regular size=1956221 sha256=f298e8f1e94574491e975bce94f2445f9c7dce0cfbe980acf8c0e844f8a7fef1 | leg-3.md: regular size=1430 sha256=d641e3d3c4e7985d4289a9aec40fe8960fd8c787a6aa7d7db1ece9693ca11091 | leg-4.md: regular size=1233 sha256=8f04ac26f6c01fbdb29922e840d68bf8abc9638a3fe44d838ff9c30d331807ed | leg-5.md: regular size=1493 sha256=3de61417614f30a5ae37356bf450a4707dfefb8c8d7af26b13f0b4f68f5031e2 | leg-6-RV3-replay.md: regular size=1707 sha256=5ce181a8b3a755a141d25334db8dc15b491ef4245bdb23daf7f7cfcbac98a8ea | leg-6.md: regular size=1945 sha256=fa6efe333c54a48ae4c0768afecffa3d4440c34b3a844df714419868a1ff1621 | leg-7-RV3-replay.md: regular size=2461 sha256=e9e75e0ab7bcc78a42e047402c41d122338e13eb1016ff25809d9a514a972f44 | leg-7.md: regular size=3026 sha256=c10466b7dfcfea177f43431c5b1d61395e7b322173063175fb6d9ba1ed2eaa0b | leg-8-RV3-replay.md: regular size=1646 sha256=1088b64530d8507815b0105dd0db8b19de7be0695f4e05e88c3734f327cfec00 | leg-8.md: regular size=1593 sha256=a1cc891be45ca7da4d9903bc6b6823048a1bcb1310bba8edf0577f90c812cbb3 | leg-9.md: regular size=2168 sha256=8377d652b298fcce80701d338797333cda86a1d7d02478481bd84e038537c2ee
+CONFIG /home/vgpnk/.config/devin/mcp_config.json: regular size=406 sha256=16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4
+CONFIG /home/vgpnk/.omp/agent/mcp.json: regular size=429 sha256=38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b
+CONFIG /home/vgpnk/.kimi-code/config.toml: regular size=46513 sha256=4af27747eb93244fcd343fc15552dc7b3ae689fcd7d00f2dea46faca1ca42707
+FULL STDERR:
+STDOUT_SHA256: 128006b1c73096936a1c354fc75154f6c76d203a1f20c761c122769b622a4666

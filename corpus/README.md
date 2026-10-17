@@ -65,6 +65,7 @@ A row is written when its file exists, never before.
 | `knowledge/2026-10-16-l7-04-inspect-sqlite-database` | Path-only `inspect_sqlite_database` inventory of a hash-pinned offline copy of the pnpm v11 index: complete `package_index` schema, columns not requested, `rows:null`; lane-A synthetic fixture excluded | REA 6.5.0; `.ufo/waves/luna-round-6/receipts-B/leg-6.md` + `.ufo/waves/luna-round-6/SC4.md:8-21` |
 | `knowledge/2026-10-16-l7-05-search-bytes` | ELF magic hit at file offset 0; loaded-block scope | REA 6.5.0 / Ghidra 12.1.4 |
 | `knowledge/2026-10-16-l7-06-inspect-with-objdump` | `file_headers` returned complete headers for two pinned jq ELF inputs; other operations untested | REA 6.5.0; .ufo/waves/luna-round-6/receipts/leg-8.md + .ufo/waves/luna-round-6/receipts-B/leg-8.md |
+| `knowledge/2026-10-16-l8-01-6p4-symmetry-battery` | REA 6.4.0 MCP surface (170-name tools/list) with the six 6.5-only names absent and per-call typed-refused (`-32602`, `Tool <name> not found`: `inspect_go_binary`, `inspect_rust_binary`, `inspect_electron_fuses`, `inspect_sqlite_database`, `search_bytes`, `inspect_with_objdump`); live `inspect_binary_layout` control RESULT; per-name A6 corroboration (6/6), six-of-37 scope | REA 6.4.0 subprocess battery; round-8 `receipts/leg-1..10.md` + `leg-2-tools.txt` + `CB6.md:12` |
 
 ## Knowledge
 
@@ -149,6 +150,7 @@ A row is written when its file exists, never before.
 | `2026-10-16-l7-04-inspect-sqlite-database` | 6.5.0 SQLite path-only inventory of a pinned offline pnpm-index copy: `package_index` schema, columns not requested, no rows returned; offline and bounded, not forensic | `.ufo/waves/luna-round-6/receipts-B/leg-6.md`; `.ufo/waves/luna-round-6/SC4.md:8-21` | 2026-10-16 |
 | `2026-10-16-l7-05-search-bytes` | 6.5.0 loader-adjusted byte search; ELF magic hit at `0x100000` / file offset 0, with block-scope limits | `.ufo/waves/luna-round-6/receipts/leg-7.md` + `receipts-B/leg-7.md` | 2026-10-16 |
 | `2026-10-16-l7-06-inspect-with-objdump` | `inspect_with_objdump` — `file_headers` only; two pinned jq ELF inputs returned RESULT, broader behavior unknown | REA 6.5.0; `.ufo/waves/luna-round-6/receipts/leg-8.md` + `.ufo/waves/luna-round-6/receipts-B/leg-8.md` | 2026-10-16 |
+| `2026-10-16-l8-01-6p4-symmetry-battery` | REA 6.4.0 symmetry battery, 10/10: version exact, 170 tools, six 6.5-only verbs typed-refused, six absences, jq control RESULT; zero config drift unproven | rea-agents@6.4.0 live MCP; `.ufo/waves/luna-round-8/receipts/leg-1.md:7,10`; `leg-2.md:9`; `leg-3.md:22`; `leg-4.md:13`; `leg-5.md:9`; `leg-6.md:11`; `leg-7.md:13`; `leg-8.md:10`; `leg-9.md:9-14`; `leg-10.md:15,24`; `MANIFEST.txt:1-9` | 2026-10-16 |
 
 ## Lessons
 
