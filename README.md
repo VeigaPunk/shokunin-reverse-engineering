@@ -5,6 +5,8 @@ under the [shokunin skill](https://github.com/VeigaPunk/shokunin).
 
 **Domain:** Reverse engineering of shipped artifacts with REA on Linux — native ELF/PE via Ghidra, Electron/ASAR/JS bundles, APK, firmware, managed assemblies, runtime evidence.
 
+**Wiki:** [Devin wiki](https://app.devin.ai/org/veigapunk/wiki/VeigaPunk/shokunin-reverse-engineering?branch=main)
+
 ## What's here
 
 - `SKILL.md` — the distilled expertise: decision tables, error patterns,
