@@ -923,3 +923,14 @@ official-proxy ops (D).
   (`corpus/knowledge/2026-10-14-r14-01-queue-b-residual.md`); scratch
   /tmp/r14-01-scratch; the adb daemon side-effect killed, :5037 verified
   closed.
+
+## Errata (round 9 freshness, 2026-10-16, append-only)
+
+- **L197 normalization cross-reference:** the two-site summary above
+  (`:751-752`) is historical; see r12-01's round-12 audit and round-5
+  freshness erratum
+  (`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:99-104`,
+  `:110-120`). The corrected account is two variance classes across
+  `files[].path`, `output_directory`, `chunks[].provider_id`, and
+  `derivations[].provider_blob_id`; "7 values" is attributed, not
+  re-derived because the `/tmp` receipts are gone (`:115-118`).
