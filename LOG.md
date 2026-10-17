@@ -929,3 +929,13 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   formula (verification-patterns-fleet.md:35,73,102) — correction routed to
   Tameshi's owner; tsukuroi ADJ-06 — remains integrator debt. Both verified
   sibling-side read-only.
+
+## 2026-10-17 — root README
+
+Motivating evidence: the previous root README was the shared lane template.
+This repo does have `SKILL.md`. The replacement leads with the question the
+skill states, the 2026-10-16 client pins from `PROVINCE.md` (Devin/OMP
+`rea-agents@6.5.0`, Kimi `rea-agents@6.4.0`, Ghidra 12.1.4), the available
+vs held rule, and `SHONEN.md` `[~]` marks. No Devin wiki URL was present
+in this README; none was added. The fleet README's existing wiki link was
+not copied here.
