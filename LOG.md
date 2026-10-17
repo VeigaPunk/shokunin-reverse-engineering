@@ -929,3 +929,15 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   formula (verification-patterns-fleet.md:35,73,102) — correction routed to
   Tameshi's owner; tsukuroi ADJ-06 — remains integrator debt. Both verified
   sibling-side read-only.
+
+## 2026-10-17 — readable front door
+
+The root README was the 22-line shared template. It was rewritten from PROVINCE.md (dated pins left as dated), SHONEN.md (`[~]`), and `corpus/README.md`. No live-target command was added.
+
+Corpus index: `corpus/README.md` is the long coverage map and was not edited. `corpus/knowledge/`, `corpus/lessons/`, evidence, fixtures, and earlier LOG entries were not rewrapped.
+
+Lint fixes: none. Human-legible Markdown in this repo had no unpinned same-line defect.
+
+Lint left in place: none in the human-legible set (README, PROVINCE, SKILL, SHONEN, MINT, AGENTS, corpus/README, corpus/QUALITY, plans/*.md).
+
+Devin: a search for `devin.ai` in this repo found no URL to edit. No wiki URL was added.
