@@ -884,3 +884,19 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   (:60,:136); stale :107-109 refusal pointers at SCORECARD.md:79 (frozen
   reconciliation table — untouchable) and lessons/2026-10-15-round-1.md
   (historical).
+
+## 2026-10-16 — protocol conformance: SCORECARD contract fields
+
+- Evidence and motive: 2026-10-16 operator amendment (fleet `84bade0`,
+  `AXES.md:57-83` — §Capabilities, §The stagnation nudge, §SCORECARD.md
+  contract table) adds `capabilities` and `saturation` to the contract.
+  Already present here as real recordable fields: the axes score tables
+  (§Owned axes; every round section), `planned` and `retired` (§Verdicts,
+  planned, retired :152-156; each round section's closing lines, e.g. :610-613).
+- Added by this rollout, additive only: `## Capabilities` (empty repertoire
+  table plus its entry rule) and `## Saturation` (line and window N to be
+  declared by the lane on its next round, not asserted here). No other
+  section or file was touched in this change.
+- No axis claim was made and no score moved: no capability row, saturation
+  line, or stagnation window is asserted by this rollout; all pre-existing
+  content is byte-identical.
