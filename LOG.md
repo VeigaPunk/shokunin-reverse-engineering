@@ -929,3 +929,8 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   formula (verification-patterns-fleet.md:35,73,102) — correction routed to
   Tameshi's owner; tsukuroi ADJ-06 — remains integrator debt. Both verified
   sibling-side read-only.
+## 2026-10-17 — root README rewritten
+
+- **Trigger.** Operator request for a repository front door. The previous `README.md` was the shared lane template and stopped before the REA surface map.
+- **Action.** Rewrote `README.md` from `PROVINCE.md` (Core vs Frontier, per-client pins dated 2026-10-16, `rea doctor` as the environment verdict, catalog-available vs held) and the opening of `SKILL.md` (anti-trigger: do not run REA on available source). `SCORECARD.md` "Current assessment" limits (index integrity, failure-selected calibration) are restated. No Devin wiki URL was present in this README and none was added.
+- **Non-claims.** No axis claim, no score change, no `rea doctor` run. Not a craft round.
