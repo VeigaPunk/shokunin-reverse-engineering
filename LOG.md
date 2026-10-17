@@ -856,3 +856,31 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   eleven stale early-snapshot verdicts superseded by late evidence; zero
   config drift closed against the round-6 baseline (no round-8 pre-pair —
   carried debt); six-of-37 scope stated in the entry's limitations.
+
+### luna-round-9 — freshness: carried-spill queue
+
+- Motivating evidence: four carried items from rounds 3-8 debt lists
+  (r4-16 stale two-site erratum; census instrument debt; /tmp-dependence
+  question; jq-shadow safety-language bleed).
+- Work: one axis-move on freshness, two-lane wave. All four items
+  converged with gates (RB1-RB4 final texts certified clause-by-clause).
+- Landed at `40162fc` (lane identity, append-only): r4-16 EOF erratum
+  cross-referencing r12-01's corrected four-site account (two-site summary
+  marked historical; "7 values" attributed, not re-derived); jq-shadow
+  safety-verdict scope qualification naming all four 'benign' loci,
+  scoped to byte-identity + recorded provenance, explicit non-endorsement
+  per PROVINCE.md:114-116.
+- Measured at `40162fc`: command A 79/79, 9/9, 10.0/10.0; both appended
+  files prefix-identical to their base blobs (append-only proven);
+  PROVINCE untouched; zero deletions.
+- Item 2 (census known-limits) and item 3 (/tmp audit) land in this
+  SCORECARD section and the round report: instrument limits documented as
+  ADJUDICATED-not-PASS with a retest trigger; /tmp audit found NO current
+  lane instruction or gate dependent on /tmp persistence (historical
+  verify-recipes citing /tmp outputs are archival debt, labeled; L7-01
+  npm-cache cold-start untested); ~1.2GB litter remains operator hygiene —
+  no deletion authorized or performed.
+- Carried debt (named, not landed): r3-jq-provenance companion bleed
+  (:60,:136); stale :107-109 refusal pointers at SCORECARD.md:79 (frozen
+  reconciliation table — untouchable) and lessons/2026-10-15-round-1.md
+  (historical).

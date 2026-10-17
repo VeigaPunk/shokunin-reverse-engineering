@@ -557,3 +557,57 @@ unchanged. Planned next: luna-round-9 — the carried spill queue (r4-16
 frontier-rescan staleness at :751-752 flagged by BB1 in round 5; census
 instrument debt from rounds 4-5; the /tmp hygiene question) as a
 freshness/quality round. Retired: none.
+
+## luna-round-9 — freshness: carried-spill queue, 2026-10-16
+
+One move on the freshness axis: four carried debt items dispositioned
+(r4-16 erratum cross-reference; census instrument limits; /tmp-dependence
+audit; jq-shadow safety-verdict scope). Claim: after landing, command A
+re-measures 79/79 + 9/9 + 10.0/10.0; both knowledge appends prefix-identical
+(append-only); PROVINCE untouched.
+
+- Wave: two-lane 128 seats; four item chains each with verifier, drafter,
+  adversary, reviewer, convergence, and two independent lane-B gates.
+- Work commit `40162fc` (lane identity): the two append-only knowledge
+  errata (see LOG for texts). Item 2 and item 3 land here + the report.
+- Measured at `40162fc`: command A 79/79, 9/9, 10.0/10.0; prefix-identity
+  True for both appends.
+
+Known census-instrument limits (rounds 4–5, carried; ADJUDICATED, not PASS).
+The round-5 SIZES check passed comma-grouped needles (`29,367,752` /
+`84,258,816`) into comma-normalizing text, so no correct input could pass
+(`.ufo/waves/luna-round-5/X1.md:12,32`; `.ufo/waves/luna-round-5/CB4.md:11`;
+`.ufo/reports/luna-round-5/kaidoku.md:50-56`). Round-4 F18's predicate was
+structurally unsatisfiable — its unsatisfiable conjunct is the
+replacement-pair/refuted-encoding test — while the stale wording was absent,
+and the round-5 README-opener detector matched the retained "Runtime-obs
+extended" opener, not the corrected content
+(`.ufo/reports/luna-round-4/kaidoku.md:43-46`;
+`.ufo/reports/luna-round-5/kaidoku.md:63-67`). These are instrument limits,
+not corpus-content verdicts; documentation only — no score change and no
+waiver: new mismatches stay evidence-adjudicated until the affected matcher
+is repaired and retested.
+
+**/tmp dependence (round-9 audit):** no current kaidoku instruction,
+registered gate, or landed `recheck:` requires pre-existing `/tmp` contents;
+`/tmp` is transient scratch (`PROVINCE.md:48`). Labeled residuals:
+historical `verify:` recipes cite prior `/tmp` outputs
+(`corpus/knowledge/2026-10-13-r3-renderer-asar.md:11,19`;
+`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:40-42`) — archival
+debt, not a current dependency; L7-01's npm-cache pre-existence untested
+(`corpus/knowledge/2026-10-16-l7-01-inspect-go-binary.md:5`). The ~1.2 GB
+litter remains operator hygiene; no deletion authorized or performed.
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| freshness (fleet axis, unowned proxy) | four carried items dispositioned (2 append-only errata + 2 documented dispositions) | improved |
+| coverage | 10.0 → 10.0 (denominator 79, measured) | unchanged |
+| depth | 10.0 → 10.0 (measured) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion unchanged; quality improved (instrument limits
+documented with a retest trigger; safety-language scope enforced); discernment
+unchanged. Planned next: luna-round-10 — the arc closeout: full debt-ledger
+reconciliation across rounds 1-9, SHONEN final assessment, the arc
+measurement census (command A + receipts + verdicts), and the final report.
+Retired: none.
