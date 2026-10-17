@@ -929,3 +929,17 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   formula (verification-patterns-fleet.md:35,73,102) — correction routed to
   Tameshi's owner; tsukuroi ADJ-06 — remains integrator debt. Both verified
   sibling-side read-only.
+
+## 2026-10-17 — README: replace the shared shonen template
+
+Operator request: make the README a useful front door. Evidence:
+
+- The previous `README.md` was the shared 23-line shonen-lane template
+  (identical across the 2026-10 public remotes except for the Domain
+  line, plus this lane's extra command section when one existed).
+- Replacement text restates `PROVINCE.md`, existing command blocks, and
+  file-tree facts from `ls` of this checkout. No new craft claim.
+- Devin wiki URLs were not added or rewritten. The only verified fleet
+  wiki link remains the fleet-root line in `VeigaPunk/shokunin`.
+
+Not a craft round. No axis claim.
