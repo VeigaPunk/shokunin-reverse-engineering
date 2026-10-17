@@ -831,3 +831,28 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   false (26 receipt files tracked at bc91424; parent re-verified); Q1-Q6
   graded absence not content (drafts landed after their reads); BB1 composed
   entries 3/5 without a prior gate pass (disclosed in the manifest THREATS).
+
+### luna-round-8 — operability: REA 6.4.0 symmetry battery (78 → 79)
+
+- Motivating evidence: luna-round-6 exercised the 6.5.0 surface; the Kimi
+  6.4.0 pin had package inventory (round 2) but no live battery, and the
+  six round-7 entries' 6.5-only scope deserved live corroboration.
+- Work: one axis-move on operability. Two-lane wave (64 luna + 64
+  deepseek). Frozen pre-dispatch predictions; 10-leg battery: version exact
+  6.4.0; tools/list 170; the six 6.5-only verbs each TYPED-REFUSAL
+  (-32602) on real carriers; six names absent from the 170-list; jq
+  control RESULT (inspect_binary_layout; the literal `analyze` verb is
+  absent from 6.4.0 too — fallback recorded). Scored 10/10 (CA6 census,
+  PB0 independent re-verification).
+- Landed at `18dc397d` (lane identity): the consolidated
+  2026-10-16-l8-01-6p4-symmetry-battery.md entry + map/Knowledge rows
+  (denominator 78→79; command A re-measured 79/79, 9/9, 10.0/10.0) and
+  the round-8 receipt bundle committed TRACKED (round-6 durability
+  precedent). QB3's two wording flags applied (leg-8-RV3 stdout-only
+  identity; count computed from tools[].name).
+- Defects/adjudications (ZB2 list): leg-3's display-layer hash defect
+  self-repaired during the wave (current bytes = claim = /tmp raw); leg-10
+  append-only supersession (head-hash preserved, MANIFEST annotated);
+  eleven stale early-snapshot verdicts superseded by late evidence; zero
+  config drift closed against the round-6 baseline (no round-8 pre-pair —
+  carried debt); six-of-37 scope stated in the entry's limitations.

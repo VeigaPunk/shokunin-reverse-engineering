@@ -530,3 +530,30 @@ Planned next: luna-round-8 — operability symmetry battery on the Kimi
 6.4.0 pin (round 6 covered 6.5.0; the kimi-resolved 6.4.0 surface gets the
 same preregistered treatment, closing the per-client evidence asymmetry).
 Retired: none.
+
+## luna-round-8 — operability: 6.4.0 symmetry battery, 2026-10-16
+
+One move on the operability axis (fleet axis, unowned proxy): the mirror
+battery on the Kimi-resolved 6.4.0 pin. Claim: 10 hashed receipts, ≥9/10
+frozen predictions, cross-lane verification, invariants intact.
+
+- Wave: two-lane 128 seats. Scored 10/10 (CA6; PB0 re-verified every
+  hash; QB gates on the landed entry).
+- Landed at `18dc397d` (lane identity): one consolidated knowledge entry
+  (denominator 78→79, command A 79/79 re-measured) + tracked receipts.
+- Measured: command A 79/79, 9/9, 10.0/10.0 at `18dc397d`; config hashes
+  match the round-6 baseline (no round-8 pre-pair — recorded).
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| operability (fleet axis, unowned proxy) | 6.5.0-only live evidence → both pins live-evidenced; six per-name refusals corroborate A6 | improved |
+| coverage | 10.0 → 10.0 (denominator 78 → 79) | unchanged (the entry is the round's expansion side-effect, recorded) |
+| depth | 10.0 → 10.0 (measured) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion +1 verified entry; quality improved (tracked
+receipts now standard; stale-verdict adjudication table); discernment
+unchanged. Planned next: luna-round-9 — the carried spill queue (r4-16
+frontier-rescan staleness at :751-752 flagged by BB1 in round 5; census
+instrument debt from rounds 4-5; the /tmp hygiene question) as a
+freshness/quality round. Retired: none.
