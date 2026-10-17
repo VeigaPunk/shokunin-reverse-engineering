@@ -929,3 +929,24 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   formula (verification-patterns-fleet.md:35,73,102) — correction routed to
   Tameshi's owner; tsukuroi ADJ-06 — remains integrator debt. Both verified
   sibling-side read-only.
+
+## 2026-10-17 — root README as the public door (not a craft round)
+
+**Trigger.** GitHub landing pages for this lane were a missing or thin
+template README (`ls README.md` at repo root before this commit). A
+stranger could not name the domain question, the refusals, or the gate
+command without oral context. Operator request: make the READMEs of every
+shokunin repo in this workspace the public door, without touching Devin
+wiki links.
+
+**Action.** Wrote `README.md` from in-repo sources only: `PROVINCE.md`,
+`SKILL.md` (when present), the gate/tool headers whose `--help`/`--selftest`
+flags were executed or grepped in this session, and the fleet
+[README](https://github.com/VeigaPunk/shokunin#readme) contract. No corpus
+knowledge claim was admitted; this is a map, not a round. Any
+`app.devin.ai/org/veigapunk/wiki/...` link already present was left
+verbatim (shokunin fleet root only, as of this workspace).
+
+**Outcome.** A cold reader can find the province, the question this lane
+answers, the refusals, and at least one runnable gate. No axis score
+moved. No `SHONEN.md` box is self-checked.
