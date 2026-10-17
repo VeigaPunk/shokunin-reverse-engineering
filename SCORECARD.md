@@ -616,10 +616,17 @@ Retired: none.
 
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
-| — none yet — | | | |
+| pre-registered two-lane live battery on REA 6.5.0 | runs a 10-leg frozen-prediction battery with hashed per-lane receipts and cross-lane replay verification | `.ufo/waves/luna-round-6/receipts/` + `receipts-B/`; report `.ufo/reports/luna-round-6/kaidoku.md` | luna-round-6 |
+| version-symmetry battery on REA 6.4.0 | repeats the battery form on the second pin, proving per-name 6.5-only absence/refusal with a live control leg | `.ufo/waves/luna-round-8/receipts/`; `corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md` | luna-round-8 |
 
-Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
+Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
 ## Saturation
 
-The lane's saturation line + stagnation window N are to be declared by the lane on its next round per `AXES.md` §The stagnation nudge; not asserted by this conformance change.
+Saturation line: 10.0 on the three finite owned proxies (coverage/depth/
+calibration) — reached by luna-round-3 and held through luna-round-9, with
+every improvement after that recorded as proxy-saturated + measurement-named.
+Stagnation window N: 10 lane-rounds. Capabilities entered the table in
+rounds 6-8 (inside the window), so the nudge did not trigger during the arc.
+Declared at luna-round-10, the conformance scaffold's named 'next round';
+window resets from here.

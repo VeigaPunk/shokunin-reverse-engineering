@@ -900,3 +900,32 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
 - No axis claim was made and no score moved: no capability row, saturation
   line, or stagnation window is asserted by this rollout; all pre-existing
   content is byte-identical.
+
+### luna-round-10 — calibration: the arc closeout
+
+- Work: one axis-move on calibration — the arc's self-assessment reconciled
+  against its own evidence. Two-lane closeout wave: per-round auditors
+  (W1-W10), debt-ledger collectors/reconcilers (both lanes' D/DB chains),
+  SHONEN final assessment (S/SB seats), the arc census (C/X seats),
+  adversaries (A/CB seats), and the final report assembly.
+- Audit findings (all dispositioned in the round-10 report): four SCORECARD
+  living-row rewrites inside records commits (rounds 2/3/4/7 — deviations
+  from the append-only letter of the completion criterion; numstat-confirmed;
+  disclosed, not retro-fixed); ten prose-decorated MANIFEST verdict values
+  across nine rows (fleet rule: ledger slips are integrator-owned — the lane
+  records, does not alter); five parent dispatch short-counts (round 7 now
+  explicitly named) with round 6 at 127/128 distinct seats, structural;
+  SHONEN 4x[~] arc-wide under the fleet's named-non-author-verifier bar.
+- Declarations (per the 2026-10-16 operator amendment, fleet 84bade0):
+  Capabilities rows for the two demonstrated battery forms (rounds 6/8);
+  saturation line 10.0 on the finite proxies + stagnation window N = 10
+  lane-rounds (capabilities entered inside the window — nudge not triggered).
+- Measured at closeout: command A 79/79, 9/9, 10.0/10.0 (replayed at
+  c343939 and 40162fc); 43 tracked receipt artifacts inventoried; arc
+  statistics: 9 admitted rounds, 9 improved / 27 unchanged / 0 harmed,
+  knowledge 72 -> 79, 19 lane-identity commits (N2/Y4 verified 46/46
+  reachable commits), zero sibling writes, zero pushes (A5: ahead 24).
+- Outbound debt routed (not absorbed): Tameshi's stale universal evidence-ID
+  formula (verification-patterns-fleet.md:35,73,102) — correction routed to
+  Tameshi's owner; tsukuroi ADJ-06 — remains integrator debt. Both verified
+  sibling-side read-only.
