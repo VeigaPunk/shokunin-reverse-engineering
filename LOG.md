@@ -929,3 +929,10 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   formula (verification-patterns-fleet.md:35,73,102) — correction routed to
   Tameshi's owner; tsukuroi ADJ-06 — remains integrator debt. Both verified
   sibling-side read-only.
+
+## 2026-10-17 — repository README
+
+- **Trigger.** Root `README.md` was the shared lane stub and did not point at the pin table.
+- **Evidence.** Client pins, Ghidra path, and probe conventions (including the 2026-10-16 reverify note) are `PROVINCE.md`. Triggers and the source-repository anti-trigger are the frontmatter of `SKILL.md`. `EXAMPLE.kama.md` and `corpus/README.md` exist.
+- **Action.** Replaced `README.md`. `corpus/README.md` was not edited. No Devin wiki URL was present.
+- **Outcome.** No axis claim; no score moved. `rea doctor` was not re-run in this change; the page tells the reader to re-read `PROVINCE.md` before quoting a count.
