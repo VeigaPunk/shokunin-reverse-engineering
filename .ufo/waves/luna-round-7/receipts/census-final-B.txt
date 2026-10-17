@@ -1,0 +1,93 @@
+=== kaidoku-shokunin / luna-round-7 / lane B seat BB3 (census final, pre-landing) / receipts/census-final-B.txt ===
+repo: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+HEAD: 411175e337c0725ae9bee3fd478ae9bf05bedf3f  (git rev-parse HEAD; pre == post; tracked_dirty_lines=0)
+captured: 2026-10-16T20:34:47 .. 20:36:48 -03:00 (single session)
+scope: READ-ONLY — Git objects + in-memory Python only; no worktree writes (except this receipt), no probes, no MCP, no network.
+exposure: census-pre.txt / census-pre-B.txt / N1.md / PB1.md / CB7.md were read during recon, so expected values and CB7's selftest result were known before this run (non-blind re-execution, disclosed).
+
+## CLAIM
+Round-7 final census, lane B, at pre-landing HEAD: Command A verbatim prints the pre-state (72/72 files mapped, 9/9 rule citations, coverage/depth 10.0, no missing/dangling); all six hyphenated l7- stems are absent from Git objects and both README table sections; lane B's frozen post-landing instrument (CB7) fails closed naming the six absent entries. 78/78 is not measurable at HEAD.
+
+## METHOD
+- Command A verbatim: body extracted from `SCORECARD.md:93-123` at REV=HEAD, extraction byte-checked against the worktree, executed twice via `REV=$REV bash <body>`; stdout/stderr captured separately (SCORECARD.md:88-124).
+- Six-stem absence: per hyphenated ID — `git cat-file -e REV:corpus/knowledge/<id>.md`, occurrence counts in the `## Coverage map` and `## Knowledge` sections of `corpus/README.md` at REV — plus whole-tree sweeps `git grep 'l7-[0-9][0-9]'` and `'l7_[0-9][0-9]'`, and a worktree `ls` sweep.
+- Corroboration: CB7.md marker block (`CB7.md:19-511`) extracted; the frozen 489-line runner reproduced the claimed sha256 `cedc6e30…` (trailing-newline-stripped convention); run at default CB7_REV=HEAD and with `CB7_SELFTEST=1`.
+- Controls: HEAD pre==post; `git diff --quiet HEAD --` and `--cached` exit 0; tracked-dirty 0.
+
+## FINDINGS
+- Command A: exit 0 twice, identical stdout, stderr 0 bytes; stdout sha256 `77b10639…` matches census-pre-B.txt:28, TB1.md and PB1.md:7. Values: knowledge_files=72, mapped=72, missing=[], dangling=[], citation_resolved_rules=9, rule_blocks=9, coverage_score=depth_score=10.0, revision=411175e337c0….
+- Absence: 6/6 `knowledge_file=false`, `coverage_map_occurrences=0`, `knowledge_table_occurrences=0`; both sweeps found nothing; worktree clean.
+- CB7: exit 1, `CENSUS RESULT: FINDING — FAIL [C1, C2, C4–C12, C14]`, each per-entry FAIL naming a missing file; C0/C16–C20 PASS; stdout sha256 `66a83957…`. Selftest exit 0, `SELFTEST PASS (20 states)` — control PASS, 18 mutations caught, 1 WARN-only (CB7.md:10). Fail-closed at HEAD is the designed pre-landing behavior (CB7.md:8,17).
+- Appendix [1]–[4]: verbatim commands and outputs.
+
+## THREATS
+- Pre-landing scope: the six entries, six 3-cell map rows (after r14-02) and six 4-cell Knowledge rows exist only in lane-B scratch-store rehearsals (PB1.md:7: three stores, each 78/78) — not re-run here. The post-integration Command A/CB7 run remains the real gate.
+- Absence is a path/token-level string check, not semantic; Command A is source-derived only.
+- Non-blind: expected values were pre-known (see exposure).
+- CB7.md is untracked and mutable; its hash pin was re-verified at extraction time (`cedc6e30…` reproduces only with the trailing newline stripped; `f4362988…` including it — convention, not defect).
+
+## VERDICT
+CLEAN — pre-landing final census reproduced at 411175e: Command A 72/72, 9/9, 10.0 (stdout sha256 `77b10639…`), all six hyphenated l7- stems absent, CB7 fail-closed naming them; 78/78 remains a landing target.
+
+--- RAW EVIDENCE ---
+
+[1] COMMAND A AT HEAD (verbatim SCORECARD.md:93-123)
+extraction: git show REV:SCORECARD.md | sed -n '93,123p' > /tmp/bb3-recipe-A-body.sh
+  diff(worktree sed 93-123, git show HEAD sed 93-123) -> empty; extraction_worktree_eq_HEAD true
+  recipe body: 31 lines, sha256 e6bb76da991031b98ce51ce6e3653904ae9156db0e6cfd9f066a9d2dd48b3247
+runs: REV=411175e337c0725ae9bee3fd478ae9bf05bedf3f bash /tmp/bb3-recipe-A-body.sh
+  run1 exit 0; run2 exit 0; two_runs_identical true
+STDOUT (exact, one line):
+{"citation_resolved_rules": 9, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 72, "mapped": 72, "missing": [], "revision": "411175e337c0725ae9bee3fd478ae9bf05bedf3f", "rule_blocks": 9}
+STDOUT_SHA256 77b106394efd11dadc4f414c77fa0fbe100e9acf5ca454957320542dc5aa2b79
+STDERR_BYTES 0; STDERR_SHA256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+CROSS-CHECK: equals census-pre-B.txt:28 stdout sha256 and PB1.md:7 recorded value; matches lane-A census-pre.txt:11.
+
+[2] SIX-STEM ABSENCE ASSERTIONS (hyphenated stems, parent ruling a) at REV=411175e
+exact loop: git cat-file -e "$REV:corpus/knowledge/$id.md" + section occurrence counts in corpus/README.md at REV
+2026-10-16-l7-01-inspect-go-binary knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+2026-10-16-l7-02-inspect-rust-binary knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+2026-10-16-l7-03-inspect-electron-fuses knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+2026-10-16-l7-04-inspect-sqlite-database knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+2026-10-16-l7-05-search-bytes knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+2026-10-16-l7-06-inspect-with-objdump knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+leakage sweep at REV: git grep -c 'l7-[0-9][0-9]' REV -- .  -> no output, exit 1 (no matches)
+                    git grep -c 'l7_[0-9][0-9]' REV -- .  -> no output, exit 1 (no matches)
+worktree: ls corpus/knowledge/ | grep -i l7  -> no output, exit 1
+CROSS-CHECK: agrees with lane-A census-pre.txt:21-28 and census-pre-B.txt:122-127.
+
+[3] CB7 FROZEN INSTRUMENT — HASH VERIFY + RUN + SELFTEST
+extraction: sed -n '19,511p' .ufo/waves/luna-round-7/CB7.md -> marker block; runner = lines 21-509 = 489 lines (matches CB7.md:5 claim)
+  runner sha256 (trailing newline stripped) cedc6e3025ecf080fedf82d8baacfb8d59b5346d0c1b05a6cf357ec155e23654  == claim `cedc6e30…`
+  runner sha256 (newline included)            f436298818317f182fc8ac1ae3994a2adec97dd0efcf81142426b31bc2cd79b0
+run: bash /tmp/bb3-cb7-runner.txt   (default CB7_REV=HEAD; stderr 0 bytes; stdout sha256 66a839570b0cd3dd1204c88ae57a2ace6d3b360c791e6006d7947c635cc86e4c; exit 1)
+  CB7 FINAL CENSUS rev=411175e337c0 base=411175e337c0
+  PASS C0   Command A here-doc body identical to BASE (29 lines)
+  FAIL C1   Command A mismatch: {"knowledge_files": 72, "mapped": 72}
+  FAIL C2   files=72 new=[] gone=[] new_nonmd=0 prior72_sha=3adf3bc2f0e59646
+  FAIL C4   tokens=72 added=[] lost=[] base_sha_ok=True
+  FAIL C5   map rows ct-go-binary:0 -rust-binary:0 ectron-fuses:0 ite-database:0 search-bytes:0 with-objdump:0
+  FAIL C6   knowledge rows 72->72 ct-go-binary:0 -rust-binary:0 ectron-fuses:0 ite-database:0 search-bytes:0 with-objdump:0
+  FAIL C7   cannot identify the 12 new row lines uniquely
+  FAIL C8   <each six stem>: entry file missing   (C8,C9,C10,C11,C12,C14 per stem — 36 lines; omitted for brevity)
+  PASS C16  PROVINCE.md unchanged
+  PASS C17  SKILL.md Queue-drain craft block unchanged
+  PASS C18  corpus/QUALITY.md unchanged
+  PASS C19  tracked changes inside the coverage landing
+  PASS C20  checked paths clean in worktree
+  CENSUS RESULT: FINDING — FAIL ['C1', 'C10', 'C11', 'C12', 'C14', 'C2', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']
+  CENSUS_JSON {"base": "411175e337c0725ae9bee3fd478ae9bf05bedf3f", "counts": {"citation_resolved_rules": 9, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "files": 72, "knowledge_files": 72, "mapped": 72, "missing": [], "rule_blocks": 9, "tokens": 72}, "fail": ["C1", "C10", "C11", "C12", "C14", "C2", "C4", "C5", "C6", "C7", "C8", "C9"], "revision": "411175e337c0725ae9bee3fd478ae9bf05bedf3f", "verdict": "FINDING", "warn": []}
+selftest: CB7_SELFTEST=1 bash /tmp/bb3-cb7-runner.txt -> exit 0
+  conforming (control)  control verdict=PASS OK
+  underscore stems / recheck: / prior-entry / README-edit / map-row-drop / 79th-file / promotion / oob-citation /
+  hash-removed / sqlite-fixture / rust-2nd-carrier / kn-date / wrong-section / dangling / duplicate / empty /
+  CommandA-edit / PROVINCE-edit -> all caught (18 mutations); records-only -> WARN-only OK
+  SELFTEST PASS (20 states)
+NOTE: the full CB7 stdout (with all 36 per-stem FAIL lines) is reproducible by re-running the extracted runner; nothing here is summarized away except those repeated lines.
+
+[4] STATE CONTROLS
+HEAD_PRE = HEAD_POST = 411175e337c0725ae9bee3fd478ae9bf05bedf3f
+git diff --quiet HEAD --            exit 0
+git diff --cached --quiet HEAD --   exit 0
+tracked_dirty_lines 0; git status --porcelain total 134 (all untracked); corpus/SCORECARD/SKILL/PROVINCE paths dirty-count 0
+captured window: 2026-10-16T20:34:47 .. 20:36:48 -03:00

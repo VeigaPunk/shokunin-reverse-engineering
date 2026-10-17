@@ -1,0 +1,14 @@
+## CLAIM
+PB1 scribe, lane B (deepseek-v4.1-flash): the round report's one-paragraph lane-B summary — what the fast lane added to the round-6 REA 6.5.0 operability battery. No execution, no promotion.
+
+## METHOD
+Waited for lane-B quiescence (background poll of `.ufo/waves/luna-round-6/`; last seat write SB1 19:23:33, quiescence declared 19:33:40). Read all 57 lane-B seat reports (18:59–19:23), `receipts-B/leg-1..10.md` + `receipts-B/MANIFEST.txt`, and lane-A receipts/`XA.md` for cross-lane comparison only (protocol-level; this seat ran no probe). Read-only; only this file written.
+
+## FINDINGS
+The fast lane (deepseek-v4.1-flash; 57/58 commissioned seats filed by 19:23) gave the round a fully independent second lane: BB1–BB10 re-ran all ten legs from `/tmp` with their own hashed receipts — `receipts-B/leg-1..10.md` plus the round's only complete 10-hash `receipts-B/MANIFEST.txt` (lane A's lists leg-1) — and CC1–CC10 compared lane-by-lane: 10/10 outcome-class agreement, zero ERROR-UNEXPECTED, 20/20 receipt digests recompute, census PASS (`ZB1.md:23`; `CB6.md:372` SCORE A=10/10 B=10/10, AGREEMENT 10/10). Server stdout is byte-identical on L1 `3eb8e06c…`, L2 `38d44bf8…` (count 207), L3 `fb47bd53…`, L7 `3492d27d…`, L10 `e4cf0833…`; L8 shares its evidence_id; L9's wire frame matches on CC9's third replay; L5 is payload-identical across CLI-vs-MCP routes; L4/L6 agree at class level (carriers differ). The lane re-ran the controls — Command A + token set unchanged (`TB1.md:12` `258dc869…`; XB1 72 tokens `c538284b…`), scope freeze byte-unchanged (CB5), four config hashes zero-drift (SB2), HEAD f0e8cde clean (SB4), no stray MCP processes (SB3) — and filed audits lane A lacked: CB1 forged a valid receipt from lane-A stdout (cross-lane comparison is not fabrication-proof), CB8 found three replays read lane-A output pre-run, CB3 found no easier carriers, CB9/QA2 traced XA's miscites, QA4 caught PS3/PS4 misstating L10's branch as RESULT, CB6 flagged BB4's harness digest `84d489f7…` non-recomputing (`15564e67…` does), SB1 a ~1.2 GB `/tmp` litter. Open: L10 executed `inspect_wasm_artifact`, not the predicted `compare_wasm_interfaces` (class credit contingent); lane-A L6's canonical receipt is RV3's overwrite; CC3/CC7/CC8 displaced BB3/BB7/BB8 receipts.
+
+## THREATS
+Synthesis from seat texts (load-bearing numbers spot-checked: manifest 10 lines, roster 57, BB4 digests); lane B itself disclosed non-blindness (CB8) and forgeability (CB1), and CB6 showed a self-consistent lane forgery passes the ≥8 gate (flagged, on B9). Snapshot 19:34; untracked receipts stay mutable; one host/node/npx cache = common mode. SB1's `/tmp` litter and CB4's cache-dependency finding unresolved.
+
+## VERDICT
+CLEAN — lane-B summary paragraph delivered; 57/58 seats at quiescence, all legs hash-filed both lanes, 10/10 class agreement; no tracked file touched.

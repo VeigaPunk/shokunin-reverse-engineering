@@ -1,0 +1,23 @@
+VERIFICATION_REVISION: a79945c4fcc16ba06163e7684613965d1ce8f022
+COMMAND: python3 .ufo/rounds/interactive-r1/verify-recovery.py
+RECOVERY_EVIDENCE: CLEAN finding=pinned_package_consistent author_review=9/9 coverage=70/72 citation_rules=9/9 admitted=false verified_round_increment=0
+PROCESS_EXIT: 0
+COMMAND: python3 .ufo/rounds/interactive-r1/verify-recovery.py --selftest
+SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=pinned_package_consistent
+SELFTEST_CASE: CLEAN case=missing_result exit=2 expected=2 finding=missing_result
+SELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered
+SELFTEST_CASE: CLEAN case=wrong_revision exit=1 expected=1 finding=revision_mismatch
+SELFTEST_CASE: CLEAN case=omitted_obligation exit=1 expected=1 finding=obligation_set_mismatch
+SELFTEST_CASE: CLEAN case=duplicate_obligation exit=1 expected=1 finding=obligation_set_mismatch
+SELFTEST_CASE: CLEAN case=wrong_subject exit=1 expected=1 finding=subject_mismatch
+SELFTEST_CASE: CLEAN case=unearned_admission exit=1 expected=1 finding=unearned_admission
+SELFTEST_CASE: CLEAN case=routing_status_contradiction exit=1 expected=1 finding=routing_observation_mismatch
+SELFTEST_CASE: CLEAN case=settled_without_dispatch exit=1 expected=1 finding=undispatched_wave_observation_mismatch
+SELFTEST_CASE: CLEAN case=receipt_presence_contradiction exit=1 expected=1 finding=receipt_observation_mismatch
+SELFTEST_CASE: CLEAN case=blocked_admission exit=2 expected=2 finding=required_alias_bindings_missing+applicable_receipt_binding_missing
+RECOVERY_SELFTEST: CLEAN cases=12 exit=0
+PROCESS_EXIT: 0
+COMMAND: python3 .ufo/rounds/interactive-r1/verify-recovery.py --admission
+ROUND_ADMISSION: COULD_NOT_EVALUATE finding=required_alias_bindings_missing+applicable_receipt_binding_missing exit=2
+PROCESS_EXIT: 2
+{'text': 'Remaining items: none.\nOverall: 3/3 done, 0 open.\nActive phase 2/2 "Publish" (1/1).\n  Correct:\n    - [X] Make the recovery admission diagnostic derive from the pinned routing, receipt and wave observations.\n    - [X] Exercise the corrected gate and isolated fixtures, capturing full verdicts and exit codes.\n  Publish:\n    - [X] Append SCORECARD, LOG and filed-report corrections; commit the corrected evidence and publish an updated blocked continuation without advancing the round.', 'details': {'op': 'done', 'phases': [{'name': 'Correct', 'tasks': [{'content': 'Make the recovery admission diagnostic derive from the pinned routing, receipt and wave observations.', 'status': 'completed'}, {'content': 'Exercise the corrected gate and isolated fixtures, capturing full verdicts and exit codes.', 'status': 'completed'}]}, {'name': 'Publish', 'tasks': [{'content': 'Append SCORECARD, LOG and filed-report corrections; commit the corrected evidence and publish an updated blocked continuation without advancing the round.', 'status': 'completed'}]}], 'storage': 'session', 'completedTasks': [{'phase': 'Publish', 'content': 'Append SCORECARD, LOG and filed-report corrections; commit the corrected evidence and publish an updated blocked continuation without advancing the round.'}]}}

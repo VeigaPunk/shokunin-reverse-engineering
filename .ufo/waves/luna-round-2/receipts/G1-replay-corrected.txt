@@ -1,0 +1,78 @@
+G1 replay correction — exact baseline stdout scopes re-extracted; commands read-only.
+This receipt supersedes the invalid L2, L12, and L13 comparison flags in G1-replay-2.txt. L2's baseline is the version-probe stdout (not the preceding config Grep output); L12 compares each JSON projection only to its corresponding saved JSON projection in l12-catalog-digest.txt; L13 compares command stdout only to the receipt's STDOUT block.
+
+COMMAND: npm_config_offline=true timeout 240 npx -y rea-agents@6.5.0 --version (cwd=/tmp)
+EXIT CODE: 0
+STDOUT:
+6.5.0
+STDERR:
+(empty)
+RAW STDOUT SHA-256: 3eb8e06ca1e02f0a30b0e3eebd289494b35d4fd1466ed907b9148e03b2459b00
+BASELINE STDOUT SHA-256: 3eb8e06ca1e02f0a30b0e3eebd289494b35d4fd1466ed907b9148e03b2459b00 (L2-live-probe-devin-pin.txt, SHA-256 3da9495ab81defba8352f96698cc6618fd7b585ba623f00d8d8e8987c0009bba)
+EXACT STDOUT MATCH: True
+
+COMMAND: node --input-type=module -e 'const m=await import(process.argv[1]);console.log(JSON.stringify({counts:m.CATALOG_IDENTITY.counts,digests:m.CATALOG_IDENTITY.digests},null,2))' file:///home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/catalogIdentity.js (cwd=/tmp)
+EXIT CODE: 0
+STDOUT:
+{
+  "counts": {
+    "cli_commands": 153,
+    "mcp_tools": 207,
+    "mcp_prompts": 6
+  },
+  "digests": {
+    "tools_sha256": "805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded",
+    "prompts_sha256": "7152916ab48bd2a9677a5ad9cdbde0a51dc53c113934952ad096e93f5f18aa7e",
+    "combined_sha256": "405725e736ec8dc8483435b970acbf20f9f26b9f1fd25203b992f5ab4cd2a4f4"
+  }
+}
+STDERR:
+(empty)
+RAW STDOUT SHA-256: 41107ffbce48b8364fe186ad3662ec678e74d2e2d949e601591c2d6a8c00ef25
+BASELINE JSON PROJECTION SHA-256: 41107ffbce48b8364fe186ad3662ec678e74d2e2d949e601591c2d6a8c00ef25 (6.5.0 projection in l12-catalog-digest.txt, SHA-256 88dad6a8e805ca7f435d9fdf3e251526bd14624e19b45e67d5873ee7ce9ec6d)
+EXACT PROJECTION MATCH: True
+
+COMMAND: node --input-type=module -e 'const m=await import(process.argv[1]);console.log(JSON.stringify({counts:m.CATALOG_IDENTITY.counts,digests:m.CATALOG_IDENTITY.digests},null,2))' file:///home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/dist/catalogIdentity.js (cwd=/tmp)
+EXIT CODE: 0
+STDOUT:
+{
+  "counts": {
+    "cli_commands": 127,
+    "mcp_tools": 170,
+    "mcp_prompts": 6
+  },
+  "digests": {
+    "tools_sha256": "25802f6de8c14ba736dc61ff1cbc7c5cd738fd74426aa01338f2dd03e0911166",
+    "prompts_sha256": "5296f0301566cadaf89243e774512011f11045af36d48405f76a3ff9a8947ac2",
+    "combined_sha256": "85d80276ecacf937bf3e803b7a31748ae1a8286f556fa5cf734eef768cc7d72a"
+  }
+}
+STDERR:
+(empty)
+RAW STDOUT SHA-256: 329ec3bfb36a014765786c77a1b0c586c7f6c181234ea0034dd8539693dd299d
+BASELINE JSON PROJECTION SHA-256: 329ec3bfb36a014765786c77a1b0c586c7f6c181234ea0034dd8539693dd299d (6.4.0 projection in l12-catalog-digest.txt, SHA-256 88dad6a8e805ca7f435d9fdf3e251526bd14624e19b45e67d5873ee7ce9ec6d)
+EXACT PROJECTION MATCH: True
+
+COMMAND: python3 <read-only L13 cached package structure comparison> (cwd=/tmp; exact script recorded in L13-cached-dist-diff.txt)
+EXIT CODE: 0
+STDOUT:
+root 6.5.0: DISCLAIMER.md, LICENSE, README.md, THIRD_PARTY_NOTICES.md, bridge, dist, install.sh, licenses, native, package.json, scripts, skills, third_party
+skills 6.5.0: reverse-engineer-anything
+root 6.4.0: LICENSE, README.md, bridge, dist, install.sh, licenses, native, package.json, scripts, skills, third_party
+skills 6.4.0: reverse-engineer-anything
+dist-dir-only-6.5: ['captures', 'cli-runtime', 'cutter', 'electron', 'flutter', 'frida', 'gdb', 'go', 'mcp', 'objdump', 'pcap', 'rizin', 'rust', 'signals', 'sqlite', 'wasm']
+dist-dir-only-6.4: []
+bridge/cutter: True / False
+dist/captures/TsharkCaptureProvider.js: True / False
+dist/pcap/PcapProvider.js: True / False
+dist/flutter/FlutterBuildProvider.js: True / False
+dist/go/GoBinaryProvider.js: True / False
+dist/rust/RustBinaryProvider.js: True / False
+dist/signals/SigrokRecordingProvider.js: True / False
+dist/sqlite/SqliteDatabaseProvider.js: True / False
+dist/wasm/WabtArtifactProvider.js: True / False
+STDERR:
+(empty)
+RAW STDOUT SHA-256: 4409150c13ca3504366cefc4f75075de6a71e86eebc5e89b2f286ff836633546
+BASELINE STDOUT SHA-256: 4409150c13ca3504366cefc4f75075de6a71e86eebc5e89b2f286ff836633546 (L13-cached-dist-diff.txt, SHA-256 1c45b38f336322fe32824199470e441378704f5cc2b4a6c8ea552e0a8745382c)
+EXACT STDOUT MATCH: True

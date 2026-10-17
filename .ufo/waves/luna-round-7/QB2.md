@@ -1,0 +1,27 @@
+## CLAIM
+Frozen entry-2 text (below): lane-B's SC2-designated `/usr/bin/rg` RESULT and lane-A's separate Signal `.node` fallback stay distinct; landing is the parent's step.
+
+## METHOD
+Reads: Z2, E2D, G2, E2V, Q2, G3, N1, M1:8-20, M2:8-20, QUALITY.md:11-25, SC2, both leg-4 receipts (HEAD-tracked via `git cat-file -e`; SC2 untracked). Z2's "E2D/G2 absent" is stale. No probes/network; only this file written.
+
+## FINDINGS
+Frozen entry text:
+
+> # REA 6.5.0 `inspect_rust_binary` — typed RESULT on two distinct carriers
+>
+> source: `.ufo/waves/luna-round-6/receipts-B/leg-4.md:8-24,45-53,66-71`; `.ufo/waves/luna-round-6/receipts/leg-4.md:5-22,27-28,39,43`
+> verified-at: 2026-10-16
+> recheck: Under `npx -y rea-agents@6.5.0 --mcp`, call `inspect_rust_binary` on the two pinned paths below; record Evidence IDs, `auditable_metadata`, `rustc_commit`, limitations.
+>
+> - **Observation (lane B; SC2-designated carrier):** `/usr/bin/rg`, SHA-256 `d006acfe51619144af4709e85945fe3b5a6f05038d356c4d8f752a33b4ecae42` (SC2 candidate, `.ufo/waves/luna-round-6/SC2.md:8-12`): `{"path":"/usr/bin/rg"}` returned Evidence `ev_9ea97685bf6313d1e1816a43ba644a25d68459d9ec37f06dfc1b39934eb1bff2` from provider `rust-auditable` v1 — RESULT, exit 0; elf/amd64/64-bit/little-endian; `auditable_metadata` null; `rustc_commit` null.
+> - **Observation (lane A; separate fallback artifact):** `/usr/lib/signal-desktop/resources/app.asar.unpacked/node_modules/@signalapp/libsignal-client/prebuilds/linux-x64/@signalapp+libsignal-client.node`, SHA-256 `1b44ed531f404f5358ee0618a423560463819534a38db5176bb1064b9d14d1f7` (24,944,200 B): Evidence `ev_0618e7a50e32ff9556490beeff7e0debc5d6aecf3deedb92b0d4953c747c99d3`; same provider/class/exit; `auditable_metadata` null; `rustc_commit` `{evidence_kind:"inferred", hash da80ed0708a09dc096c184345d6eb42cbcd50a1e, file_offset 2287779}`. Lane A recorded a fallback because SC2 attribution was unavailable (`receipts/leg-4.md:15,43`) — this carrier is not SC2's. The two artifacts share only the RESULT class; no same-target corroboration is claimed.
+> - **Inference:** Each call returned a typed metadata record; the operation inspects only `.dep-v0` and read-only compiler-path strings, not functions, types, or runtime behavior. Nulls are not evidence of missing dependencies or compilers; embedded metadata authenticates no package, source, or compiler. Scope: these two calls only; no Core promotion.
+> - **Unknown / limitations (tool-reported):** "No `.dep-v0` section was found. Absence of `.dep-v0` does not mean the binary has no dependencies." `/usr/bin/rg`'s rustc commit is unknown ("No `/rustc/<40-hex>/` path was found in read-only data"); the `.node` hash is inferred from such a path. `/usr/bin/rg`'s Rust provenance rests on SC2's path identification, not tool output (`SC2.md:14-15`). Untested: non-ELF inputs, missing-metadata/rejected-input behavior, other REA versions. Guards — 256 MiB file, 1 MiB section, min(8 MiB, 64× section) inflated JSON, 8 MiB report — are tool bounds, not OS limits.
+
+Fixes: hyphen stem (ruling a); house metadata fields (ruling d); E2D's unlabeled Admission folded into labeled bullets (criterion 5; `Q2.md:16`); no-merge sentence (ruling c; `Z2.md:13`). Defect for parent: `M1.md:11-13` entry-1–3 rows use underscore stems the map regex truncates (`2026-10-16-l7-02-inspect_rust_binary` → `2026-10-16-l7-02-inspect`, verified by `re.findall`) — land hyphenated; `M2.md:10-17` already are.
+
+## THREATS
+SC2/CC4 untracked (secondary citations only); no re-execution — retained records accepted as written. Unverifiable here: landing, Command A 78/78, prior-72 byte identity (`3adf3bc2…`, `receipts/census-pre.txt:15`), README rows.
+
+## VERDICT
+CLEAN — frozen entry-2 text passes the applicable QUALITY criteria; land its rows with the hyphenated stem.

@@ -1,0 +1,24 @@
+COMMAND (run from /tmp):
+set -o pipefail
+for cache in /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6 /home/vgpnk/.npm/_npx/dea9475797100b20; do
+  package="$cache/node_modules/rea-agents/package.json"
+  printf 'cache=%s\n' "$cache"
+  printf 'version='
+  node -p "require('$package').version"
+done
+sha256sum \
+  /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/catalogIdentity.js \
+  /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/cli-runtime/catalogIdentity-DLoXgfIR.js \
+  /home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/dist/catalogIdentity.js
+
+STDOUT:
+cache=/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6
+version=6.5.0
+cache=/home/vgpnk/.npm/_npx/dea9475797100b20
+version=6.4.0
+023451dbce79652105d59d5b55da5fa3665c7d613021222d5689acc91b1a8e4e  /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/catalogIdentity.js
+03ec6cb3b3ecd019b0a315b7080c8c3b6f3e89862c49e7e72692c0802db2bbd8  /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/cli-runtime/catalogIdentity-DLoXgfIR.js
+3eff1e7974b706e4d449a740a67e8a7075fd5816e863e57c07851ce23d094f69  /home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/dist/catalogIdentity.js
+STDERR:
+(empty)
+EXIT CODE: 0

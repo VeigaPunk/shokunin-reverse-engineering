@@ -1,0 +1,41 @@
+REV=${REV:-HEAD} python3 - <<'PY'
+import json,os,pathlib,re,subprocess,sys
+B='cfc84c226bb8755c15fcdc342e27de7654c6fcb8';R=os.environ['REV']
+g=lambda r,p:subprocess.check_output(['git','show',f'{r}:{p}'],text=True)
+n=lambda s:re.sub(r'[^a-z0-9]+',' ',s.lower()).strip()
+h=lambda s,*x:all(t in n(s) for t in x)
+def add(p,*x):
+ a,z=g(B,p),g(R,p);t=z[len(a):] if z.startswith(a) else ''
+ return z.startswith(a) and h(t,*x),t
+def cov(r):return g(r,'corpus/README.md').split('## Coverage map\n')[1].split('\n## ',1)[0]
+def tok(r):return set(re.findall(r'2026-\d\d-\d\d-[a-z0-9-]+',cov(r)))
+def A(r):
+ ps=subprocess.check_output(['git','ls-tree','-r','--name-only',r,'--','corpus/knowledge'],text=True).splitlines()
+ f={pathlib.PurePosixPath(x).stem for x in ps if x.endswith('.md')};m=tok(r)
+ c=g(r,'SKILL.md').split('## Queue-drain craft ',1)[1].split('\n## ',1)[0];u=re.split(r'(?m)^- \*\*',c)[1:]
+ p=r'corpus/knowledge/([a-z0-9-]+\.md)(?::(\d+)(?:-(\d+))?)?';z=0
+ for q in u:
+  refs=re.findall(p,q);ok=bool(refs)
+  for x,a,b in refs:
+   try:k=len(g(r,'corpus/knowledge/'+x).splitlines())
+   except subprocess.CalledProcessError:ok=False;continue
+   i,j=int(a or 1),int(b or a or 1);ok &= 1<=i<=j<=k
+  z+=ok
+ return {'revision':r,'mapped':len(f&m),'knowledge_files':len(f),'missing':sorted(f-m),'dangling':sorted(m-f),'citation_resolved_rules':z,'rule_blocks':len(u),'coverage_score':round(10*len(f&m)/len(f),2),'depth_score':round(10*z/len(u),2)}
+I=[('ASAR',add('corpus/knowledge/2026-10-13-asar-surface.md','app','asar','obsidian','main','js','renderer','45','ipc')[0]),('SIZES',add('corpus/knowledge/2026-10-13-r4u-01-firmware-deep.md','0x1c01dc8','29,367,752','0x505b000','84,258,816')[0]),('PIN',h(g(R,'PROVINCE.md'),'when module identity matters','pin request bytes'))]
+d=g(R,'corpus/README.md');f=d.split('## Frontier\n')[1].split('\n## ',1)[0];l=[x for x in d.splitlines() if 'lessons/round-13-distillation' in x];q=n(l[0]) if len(l)==1 else ''
+I += [('README',not re.search(r'runtime.obs.extended|native.call.target.resolution.*26.self.provisionable',n(f)) and bool(re.search(r'(?:4|four).nits',q) and re.search(r'self.corrected',q) and re.search(r'(?:2|two).fixes.applied.at.integration',q) and re.search(r'(?:1|one).accepted',q)) and not re.search(r'(?:4|four).nits.fixed|(?:3|three).fixed.at.integration',q))]
+ok,t=add('corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md','inferred','0');u=n(t)
+I += [('R9-02',ok and bool(re.search(r'summary|four.status',u) and re.search(r'not.observed|not.recorded|not.shown|not.demonstrated|not.evidenced|does.not.establish',u)))]
+ok,t=add('corpus/knowledge/2026-10-13-r5-02-call-targets-jq.md','283');u=n(t)
+I += [('R5-02',ok and bool(re.search(r'281.calls|281.call.sites',u) and re.search(r'(?:2|two).jumps',u) and re.search(r'unprobed|untested|not.probed|not.exercised',u)))]
+ok,t=add('corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md','l197','exactly','two','values');u=n(t)
+I += [('R12-01',ok and bool(re.search(r'(?:4|four).sites',u) and re.search(r'(?:7|seven).values',u) and re.search(r'supersed|corrected',u)))]
+for x,y in I:print(x,'PASS' if y else 'DEBT')
+x,y=tok(B),tok(R);ts=x==y and len(y)==72;print('TOKENSET','PASS' if ts else 'FAIL',len(y),len(x))
+m=cov(B)==cov(R);print('MAP-ROWS','PASS' if m else 'FAIL')
+a,b=A(B),A(R);print('COMMAND_A',json.dumps(a,sort_keys=True),json.dumps(b,sort_keys=True))
+s=lambda x:{k:v for k,v in x.items() if k!='revision'}
+ok=s(a)==s(b) and b['mapped']==b['knowledge_files']==72 and not b['missing'] and not b['dangling'] and b['citation_resolved_rules']==b['rule_blocks']==9 and b['coverage_score']==b['depth_score']==10.0
+print('COMMAND_A_UNCHANGED','PASS' if ok else 'FAIL');d=sum(not y for _,y in I);print('FINDINGS',f'{d}/7 DEBT');sys.exit(bool(d or not ts or not m or not ok))
+PY

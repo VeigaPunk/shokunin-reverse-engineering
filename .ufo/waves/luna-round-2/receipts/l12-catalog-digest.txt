@@ -1,0 +1,65 @@
+COMMAND (ran from /tmp):
+set -eu
+for pkg in /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents /home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents; do
+  printf '\nPACKAGE %s\n' "$pkg"
+  printf 'version: '; node -p "require('$pkg/package.json').version"
+  printf 'catalog-related files under dist:\n'
+  find "$pkg/dist" -type f \( -iname '*catalog*' -o -iname '*tool*.json' -o -iname '*.json' \) -print | sort
+  printf 'catalog identity digest (computed by package):\n'
+  node --input-type=module -e 'const m=await import(process.argv[1]); console.log(JSON.stringify({counts:m.CATALOG_IDENTITY.counts,digests:m.CATALOG_IDENTITY.digests},null,2))' "file://$pkg/dist/catalogIdentity.js"
+  printf 'sha256 of dist catalogIdentity.js implementation file:\n'
+  sha256sum "$pkg/dist/catalogIdentity.js"
+done
+
+STDOUT:
+
+PACKAGE /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents
+version: 6.5.0
+catalog-related files under dist:
+/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/artifacts/apple/AppleAssetCatalogAnalysis.js
+/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/catalogIdentity.js
+/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/cli-runtime/catalogIdentity-DLoXgfIR.js
+/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/domain/apple/appleAssetCatalog.js
+/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/ghidra/GhidraLanguageCatalog.js
+catalog identity digest (computed by package):
+{
+  "counts": {
+    "cli_commands": 153,
+    "mcp_tools": 207,
+    "mcp_prompts": 6
+  },
+  "digests": {
+    "tools_sha256": "805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded",
+    "prompts_sha256": "7152916ab48bd2a9677a5ad9cdbde0a51dc53c113934952ad096e93f5f18aa7e",
+    "combined_sha256": "405725e736ec8dc8483435b970acbf20f9f26b9f1fd25203b992f5ab4cd2a4f4"
+  }
+}
+sha256 of dist catalogIdentity.js implementation file:
+023451dbce79652105d59d5b55da5fa3665c7d613021222d5689acc91b1a8e4e  /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/catalogIdentity.js
+
+PACKAGE /home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents
+version: 6.4.0
+catalog-related files under dist:
+/home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/dist/artifacts/apple/AppleAssetCatalogAnalysis.js
+/home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/dist/catalogIdentity.js
+/home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/dist/domain/apple/appleAssetCatalog.js
+/home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/dist/ghidra/GhidraLanguageCatalog.js
+catalog identity digest (computed by package):
+{
+  "counts": {
+    "cli_commands": 127,
+    "mcp_tools": 170,
+    "mcp_prompts": 6
+  },
+  "digests": {
+    "tools_sha256": "25802f6de8c14ba736dc61ff1cbc7c5cd738fd74426aa01338f2dd03e0911166",
+    "prompts_sha256": "5296f0301566cadaf89243e774512011f11045af36d48405f76a3ff9a8947ac2",
+    "combined_sha256": "85d80276ecacf937bf3e803b7a31748ae1a8286f556fa5cf734eef768cc7d72a"
+  }
+}
+sha256 of dist catalogIdentity.js implementation file:
+3eff1e7974b706e4d449a740a67e8a7075fd5816e863e57c07851ce23d094f69  /home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/dist/catalogIdentity.js
+
+STDERR:
+(empty)
+EXIT CODE: 0

@@ -1,0 +1,55 @@
+READ-ONLY CACHE STRUCTURE INSPECTION
+
+COMMAND:
+python3 - <<'PY'
+from pathlib import Path
+roots = {
+    "6.5.0": Path("/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents"),
+    "6.4.0": Path("/home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents"),
+}
+for version, root in roots.items():
+    print(f"root {version}: {', '.join(sorted(p.name for p in root.iterdir()))}")
+    print(f"skills {version}: {', '.join(sorted(p.name for p in (root / 'skills').iterdir()))}")
+dir_names = lambda path: {p.name for p in path.iterdir() if p.is_dir()}
+a, b = roots["6.5.0"], roots["6.4.0"]
+print("dist-dir-only-6.5:", sorted(dir_names(a / "dist") - dir_names(b / "dist")))
+print("dist-dir-only-6.4:", sorted(dir_names(b / "dist") - dir_names(a / "dist")))
+for rel in [
+    "bridge/cutter",
+    "dist/captures/TsharkCaptureProvider.js",
+    "dist/pcap/PcapProvider.js",
+    "dist/flutter/FlutterBuildProvider.js",
+    "dist/go/GoBinaryProvider.js",
+    "dist/rust/RustBinaryProvider.js",
+    "dist/signals/SigrokRecordingProvider.js",
+    "dist/sqlite/SqliteDatabaseProvider.js",
+    "dist/wasm/WabtArtifactProvider.js",
+]:
+    print(f"{rel}: {(a / rel).exists()} / {(b / rel).exists()}")
+PY
+STDOUT:
+root 6.5.0: DISCLAIMER.md, LICENSE, README.md, THIRD_PARTY_NOTICES.md, bridge, dist, install.sh, licenses, native, package.json, scripts, skills, third_party
+skills 6.5.0: reverse-engineer-anything
+root 6.4.0: LICENSE, README.md, bridge, dist, install.sh, licenses, native, package.json, scripts, skills, third_party
+skills 6.4.0: reverse-engineer-anything
+dist-dir-only-6.5: ['captures', 'cli-runtime', 'cutter', 'electron', 'flutter', 'frida', 'gdb', 'go', 'mcp', 'objdump', 'pcap', 'rizin', 'rust', 'signals', 'sqlite', 'wasm']
+dist-dir-only-6.4: []
+bridge/cutter: True / False
+dist/captures/TsharkCaptureProvider.js: True / False
+dist/pcap/PcapProvider.js: True / False
+dist/flutter/FlutterBuildProvider.js: True / False
+dist/go/GoBinaryProvider.js: True / False
+dist/rust/RustBinaryProvider.js: True / False
+dist/signals/SigrokRecordingProvider.js: True / False
+dist/sqlite/SqliteDatabaseProvider.js: True / False
+dist/wasm/WabtArtifactProvider.js: True / False
+STDERR: <empty>
+EXIT CODE: 0
+
+COMMAND:
+sha256sum /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json /home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/package.json
+STDOUT:
+a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c  /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json
+1c6244e5689db5354fffc0e92f4ee0e0237c3a6d645de564ade2d8375fa570f9  /home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/package.json
+STDERR: <empty>
+EXIT CODE: 0

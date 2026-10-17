@@ -1,0 +1,29 @@
+=== kaidoku-shokunin / luna-round-7 / N2 census-pre ===
+repo: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+HEAD: 411175e337c0725ae9bee3fd478ae9bf05bedf3f (`git rev-parse HEAD`)
+
+METHOD
+- Source-derived census: `SCORECARD.md:92-123`, canonical Command A unchanged. It reads only immutable Git objects (`git show REV:path`, `git ls-tree`) with `REV=411175e337c0725ae9bee3fd478ae9bf05bedf3f`; no live probes, MCP, or network.
+- Ran `git diff --quiet REV --` and `git diff --cached --quiet REV --`: both returned true (no tracked/staged diff). Before this receipt was created, `git status --short` showed pre-existing untracked `.ufo/interactive-sessions/` and `.ufo/waves/` artifacts.
+- Command A was executed from the repository root via `REV=$(git rev-parse HEAD); python3 - "$REV" <<'PY'` with the body at `SCORECARD.md:94-123`.
+
+COMMAND_A STDOUT (exit 0)
+{"citation_resolved_rules": 9, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 72, "mapped": 72, "missing": [], "revision": "411175e337c0725ae9bee3fd478ae9bf05bedf3f", "rule_blocks": 9}
+
+BASELINE CONTROLS
+- Coverage-map token census from `git show REV:corpus/README.md`, section `## Coverage map`, tokens matched with `2026-10-\d{2}-[a-z0-9-]+`: `MAP_TOKEN_COUNT 72`; sorted-token-set SHA-256 `c538284bd40fec6c039b6c2f18e7202f6390e0ca1ce92ea8a0c50e20a58651a0`.
+- Existing knowledge file inventory from `git ls-tree -r --name-only REV -- corpus/knowledge`; SHA-256 each blob returned by `git show REV:path`, sorted records `<stem> <blob-sha256>\n`: `KNOWLEDGE_FILE_HASH_COUNT 72`; aggregate SHA-256 `3adf3bc2f0e59646cf8d77dc9d06646d7690e24168b89f9b4607cdfdad75adbf`.
+
+RESULT
+Pre-state is 72/72 mapped, no missing/dangling IDs, citation-resolved 9/9, coverage 10.0. The token and 72-file aggregate digests are baselines for the post-run comparison; this census makes no claim about semantic quality or REA behavior.
+
+N1 DESIGN CROSS-CHECK (after N1.md appeared)
+N1.md:5,16 defines six future knowledge IDs; these are expected to be absent at pre-state. Re-read Git objects at the same HEAD and checked each expected path plus its occurrence count in the `## Coverage map` and `## Knowledge` sections of `corpus/README.md`.
+HEAD 411175e337c0725ae9bee3fd478ae9bf05bedf3f
+2026-10-16-l7-01-inspect-go-binary knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+2026-10-16-l7-02-inspect-rust-binary knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+2026-10-16-l7-03-inspect-electron-fuses knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+2026-10-16-l7-04-inspect-sqlite-database knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+2026-10-16-l7-05-search-bytes knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+2026-10-16-l7-06-inspect-with-objdump knowledge_file=false coverage_map_occurrences=0 knowledge_table_occurrences=0
+These are pre-state absence checks only; N1's post-integration 78/78 and content-quality gates remain future checks.

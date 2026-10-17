@@ -1,0 +1,20 @@
+## CLAIM
+The assigned G4 census could not be run: no round-9 G4 census artifact or command was available at this snapshot. No substitute census was run.
+
+## METHOD
+At HEAD `a280e07133f52f719b0805fc73c0b997e77b5062`, checked `test -f .ufo/waves/luna-round-9/G4.md` and listed the round directory. Exact combined check output:
+```text
+HEAD=a280e07133f52f719b0805fc73c0b997e77b5062
+G4_FILE=absent
+TRACKED_STATUS=
+```
+`ls -1 .ufo/waves/luna-round-9` listed A1–A4, B1–B2, C2–C3, D1–D3, F2, G2, K1, P1, R1–R4, S2, S4, X3, Y1, Y4, Z1; no G4. `G2.md:5-10` records canonical Command A, not a substitute for the assigned G4 census.
+
+## FINDINGS
+No G4-defined census could be identified or executed. The worktree tracked-status check was empty; HEAD remained the assigned revision. No probes, network, `/tmp` operations, or deletions were performed.
+
+## THREATS
+G4's command may arrive later or via an artifact/channel not visible in this snapshot. If supplied, run it at the pinned HEAD and replace this blocked pre-run record with its actual command and output.
+
+## VERDICT
+FINDING: G4 census artifact unavailable; run blocked, with no substitute executed.

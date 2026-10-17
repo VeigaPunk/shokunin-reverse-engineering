@@ -1,0 +1,15 @@
+## CLAIM
+Gate RB5's drafted consolidated entry (`corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md`) against `corpus/QUALITY.md` criteria 1-15. No draft existed when this gate ran (~21:20-21:25): no `RB5.md` in `.ufo/waves/luna-round-8/`, no `l8-*` file under `corpus/knowledge/`, no draft in /tmp (QB2's sim body self-declares as a stand-in, `/tmp/qb2-sim/corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md:1-3`). I gate the evidence base and the per-criterion content the entry must carry; draft-text compliance is deferred, not passed.
+
+## METHOD
+Read-only at HEAD `6e2ee8f`. Recomputed all 14 receipt hashes against `receipts/MANIFEST.txt` and `receipts/census-pre.txt`; matched every 64-hex claim in each receipt to its displayed fenced blocks; re-hashed carriers and fixtures (`/usr/bin/docker` `70f68a7702346cf4bb1a…`, `/usr/bin/rg` `d006acfe51619144af47…`, signal-desktop `f7a9b441e825b388…`, `/usr/bin/true` `8bc9a73afd7d8506…`, `/usr/bin/jq` `e815667571d07cb7…`, `/tmp/luna-round-8-leg-6.sqlite` `03c5ec9eaa7ec177…`, pnpm index `3701a7e3465525c5…`); recomputed census-pre's self-hash; recounted `leg-2-tools.txt`; diffed live `leg-3.md` against `/tmp/zb3-broken-sim.md`; hashed /tmp stdout witnesses.
+
+## FINDINGS
+Material readiness by criterion: 1 pass-with-caveat; 2, 3, 13 pass; 4 gap — `leg-3.md`/`leg-4.md` contain exactly one 64-hex each (their own stdout hashes), no carrier digests; docker/rg SHAs are recoverable from `corpus/knowledge/2026-10-16-l7-01-inspect-go-binary.md:9` and `…-l7-02-inspect-rust-binary.md:7`; 5 thin (1 of 70 wave reports uses "inference"); 6 satisfied for the control (`ev_9befd8a5929e366b…`, parent `ev_294a449cecf2d7b…`, `receipts/leg-10.md:11`); 7, 8, 9, 11 must be carried by RB5's text; 10 admissible only for the jq control; 12 partial — leg-6 paraphrases the INSERT while its SHA is live-witnessed; 14/15 bind only if ids are claimed.
+Verified defects: (a) MANIFEST/CA6 record leg-10 `c89eea7a…`; live is `6cd389e9…` (21:14:02 append); (b) census records leg-3 `1430 B/d641e3d3…` and leg-4 `1233 B/8f04ac26…`; live `1448 B/1be7e4f9…` and `1200 B/aa4aa7a3…` (MANIFEST agrees with live); (c) leg-3's pre-repair bytes survive byte-exact at `/tmp/zb3-broken-sim.md` (sha equals census's); unique delta is one line, `"prompts":{}` → `"prompts":{"listChanged":true}` (1430→1448 B); (d) leg-3's displayed block now equals its claimed and witnessed `5c682099…` (623 B, `/tmp/kaidoku-luna-round-8-leg-3-mcp.stdout`) — the round's known display defect is not reproducible; (e) leg-10's `23e94d0b…` is witnessed by `/tmp/kaidoku-luna-round-8-leg10.stdout`.
+
+## THREATS
+Draft absent ⇒ criteria 5/7/8 label compliance unenforced. /tmp witnesses are ephemeral. Census staleness for legs 3-4 may be its intended pre-state (CE1 discloses it). Wave dir grew 52→70 reports during this gate.
+
+## VERDICT
+FINDING: material supports a 1-15-clean entry only if RB5 cites current hashes (`leg-10` `6cd389e9…`), adds docker/rg SHAs, and states unexamined surface; RB5.md absent at gate time, so the draft text is unverified.

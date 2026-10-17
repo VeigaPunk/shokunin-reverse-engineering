@@ -1,0 +1,292 @@
+=== kaidoku-shokunin / luna-round-9 / lane B seat XB1 (census runner 2) / receipts/census-laneB-pre.txt ===
+repo: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+HEAD (pre):  a280e07133f52f719b0805fc73c0b997e77b5062  (git rev-parse HEAD)
+HEAD (post): a280e07133f52f719b0805fc73c0b997e77b5062
+captured: canonical run 2026-10-16 22:01:26 -03:00; extraction re-runs at times in the POST-VERIFICATION block
+
+POST-VERIFICATION HASH RECORD (filled after write; extraction rules inline, run from this receipts dir)
+- SCRIPTSHA=75bb63b4539edcb69abb9b019a859d59a91d9879d6466285e37b90348c683992  [149 lines / 5848 bytes;
+    sha256 of lines strictly between BEGIN-SCRIPT and END-SCRIPT:
+    sed -n '/^BEGIN-SCRIPT$/,/^END-SCRIPT$/p' census-laneB-pre.txt | sed '1d;$d' | sha256sum]
+- CENSUSOUTSHA=2b5ecf1fab09c01bd18ab5d5472a22fcae43228f727c9e69bcbb06e4db0d920c  [sha256 of lines strictly
+    between BEGIN-CENSUS-OUTPUT and END-CENSUS-OUTPUT:
+    sed -n '/^BEGIN-CENSUS-OUTPUT$/,/^END-CENSUS-OUTPUT$/p' census-laneB-pre.txt | sed '1d;$d' | sha256sum]
+- COREREPRO: run2=544a9f5e3b8d05752e5b1ed5fac65742b0f23ba1421ae0cb993c9e7767a73e92
+    run3=544a9f5e3b8d05752e5b1ed5fac65742b0f23ba1421ae0cb993c9e7767a73e92
+    embedded=544a9f5e3b8d05752e5b1ed5fac65742b0f23ba1421ae0cb993c9e7767a73e92  [core = extracted output minus
+    [6] to EOF: ... | sed '/^\[6\] SNAPSHOT/,$d' | sha256sum; runs 2-3 re-ran the extracted SCRIPTSHA from this receipt]
+- SELFTEST=PASS 2026-10-16 22:01:58 -03:00, run from this receipts dir: SCRIPTSHA and CENSUSOUTSHA recomputed
+    from the written file; runs 2-3 (extracted script) reproduced embedded-core exactly - all three core hashes equal.
+    This receipt and the XB1.md report are this seat's only writes (both untracked); tracked worktree untouched
+    (census [1]/[6]: tracked-dirty 0, HEAD a280e07133f52f719b0805fc73c0b997e77b5062).
+
+TARGET RESOLUTION
+- Assigned design source "G4/G5 census at HEAD a280e07": `G4.md` present at run time (sha256
+  1dbef2d7d04aef326f99abfb2ef327a8d3e460ae03c40f00795437e8c5c40fd7, mtime 21:50); `G5.md` absent at run time
+  (census [6] G5_EXISTS=False). This seat ran the G4-design half at the pinned HEAD; the "G5" half is not defined
+  by any artifact visible to this seat, so it is unrun (not substituted).
+- Lane-A `receipts/census-pre.txt` (1158 B, sha256 23f81d01e6e8a564bac715d0fd67ee63db7f9fe43bd32552a339d576f9d220ed,
+  mtime 21:47) declared the assigned G4 census unrunnable because no G4 artifact existed at that 21:47 snapshot;
+  G4.md landed at 21:50, after that read. This run supersedes that blocker for the G4 half.
+- Implemented design (G4.md:4-8): Recipe A verbatim at REV=a280e07133f52f719b0805fc73c0b997e77b5062 from the pinned
+  SCORECARD.md blob (`SCORECARD.md:88-123`), plus coverage-map token census (same regex as Recipe A), knowledge
+  aggregate, and a BASE append-guard freeze (recursive tree hash + allowlist blob hashes) so post-integration checks
+  can require blob-prefix appends on the allowlist and byte identity everywhere else.
+- Allowlist interpretation: G4.md:8 fixes "r4-16 frontier-rescan, jq-shadow verdict, and only the instrument-limit
+  home X4 selects"; X4.md:2 selects `SCORECARD.md` as that home, so the frozen allowlist here is those three paths.
+  `PROVINCE.md` is frozen as a must-not-change non-target (round invariant). This is this seat's interpretation of the
+  design, not a parent-issued list; the parent may substitute the exact allowlist and rerun [5] material.
+- Lane-B additions beyond the G4 design (precedent: `.ufo/waves/luna-round-8/receipts/census-laneB-pre.txt`): token
+  and knowledge aggregates, receipt inventory.
+- Deviation from round-8 precedent: no /tmp script. The census ran from stdin (heredoc) and is embedded below; no new
+  /tmp artifacts were created (round-9 queue-item-3 posture). Note `/tmp` writes were not prohibited, only avoided.
+- Exposure note: lane-A census-pre.txt and G2/G3/G4 reports were read during recon; expected values were therefore
+  known to this seat (non-blind). Every value below was recomputed independently from pinned Git objects.
+
+COMMAND: cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 - a280e07133f52f719b0805fc73c0b997e77b5062 <<'PY'
+  (script body = the BEGIN-SCRIPT block below; canonical run exit 0, stderr 0 bytes)
+
+BEGIN-SCRIPT
+#!/usr/bin/env python3
+"""luna-round-9 lane-B pre-state census (seat XB1, census runner 2).
+
+Implements the G4.md census design at pinned REV: Recipe A verbatim from the
+pinned SCORECARD.md blob, coverage-map token census, knowledge aggregate, and
+a BASE append-guard freeze for the round-9 allowlist targets. Read-only: Git
+objects, one untracked receipt directory, and the round-9 wave directory.
+No network, no /tmp, no tracked-file writes. Deterministic except the
+explicitly-marked [6] SNAPSHOT section (concurrent lane-B filings).
+"""
+import hashlib
+import pathlib
+import re
+import subprocess
+import sys
+
+REV = sys.argv[1]
+ROOT = pathlib.Path('/home/vgpnk/Projects/shokunin/kaidoku-shokunin')
+RECEIPTS = ROOT / '.ufo/waves/luna-round-9/receipts'
+WAVE = ROOT / '.ufo/waves/luna-round-9'
+SELF = 'census-laneB-pre.txt'
+ALLOWLIST = [
+    'corpus/knowledge/2026-10-13-r4-16-frontier-rescan.md',
+    'corpus/knowledge/2026-10-13-r2-jq-shadow-verdict.md',
+    'SCORECARD.md',
+]
+FROZEN = ['PROVINCE.md']
+
+
+def run(cmd, **kw):
+    return subprocess.run(cmd, capture_output=True, cwd=ROOT, **kw)
+
+
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=ROOT)
+
+
+def blob(path):
+    return git('show', f'{REV}:{path}')
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def main():
+    print('[1] SOURCE CONTROLS')
+    head = git('rev-parse', 'HEAD').decode().strip()
+    print(f'PINNED_REV={REV}')
+    print(f'OBSERVED_HEAD={head}')
+    print(f'HEAD_MATCH={head == REV}')
+    print(f'GIT_DIFF_QUIET_HEAD_EXIT={run(["git", "diff", "--quiet", "HEAD"]).returncode}')
+    status = git('status', '--porcelain=v1').decode().splitlines()
+    print(f'TRACKED_DIRTY_STATUS_LINES={sum(not l.startswith("??") for l in status)}')
+    for name in ('SCORECARD.md', 'PROVINCE.md'):
+        wt = sha((ROOT / name).read_bytes())
+        rev = sha(blob(name))
+        print(f'{name} WORKTREE_SHA256={wt}')
+        print(f'{name} REV_BLOB_SHA256={rev}')
+        print(f'{name} WORKTREE_EQUALS_PINNED={wt == rev}')
+    print()
+
+    sc = blob('SCORECARD.md').decode()
+    marker = sc.index('**A — source-derived controls.**')
+    fence = re.search(r'```bash\n(.*?)\n```', sc[marker:], re.S)
+    shell_recipe = fence.group(1)
+    recipe = shell_recipe.split("<<'PY'\n", 1)[1].rsplit('\nPY', 1)[0]
+    print(f'[2] RECIPE A VERBATIM (blob {REV[:7]}:SCORECARD.md fence sha256 {sha(shell_recipe.encode())})')
+    r = run([sys.executable, '-', REV], input=recipe, text=True)
+    print(f'EXIT={r.returncode}')
+    print('BEGIN-STDOUT')
+    print(r.stdout, end='')
+    print('END-STDOUT')
+    print('BEGIN-STDERR')
+    print(r.stderr, end='')
+    print('END-STDERR')
+    print(f'STDOUT_SHA256={sha(r.stdout.encode())}')
+    print()
+
+    readme = blob('corpus/README.md').decode()
+    section = readme.split('## Coverage map\n', 1)[1].split('\n## ', 1)[0]
+    tokens = re.findall(r'2026-10-\d{2}-[a-z0-9-]+', section)
+    uniq = sorted(set(tokens))
+    paths = git('ls-tree', '-r', '--name-only', REV, '--', 'corpus/knowledge').decode().splitlines()
+    stems = sorted(p.split('/')[-1][:-3] for p in paths if p.endswith('.md'))
+    print('[3] COVERAGE-MAP TOKEN CENSUS (definition: Recipe A lines 101-102)')
+    print(f'MAP_TOKEN_OCCURRENCES={len(tokens)}')
+    print(f'MAP_TOKEN_UNIQUE={len(uniq)}')
+    print(f'MAP_TOKEN_SHA256={sha(("\n".join(uniq) + "\n").encode())}')
+    print(f'TOKENS_EQUAL_FILE_STEMS={uniq == stems}')
+    print(f'MISSING={sorted(set(stems) - set(uniq))}')
+    print(f'DANGLING={sorted(set(uniq) - set(stems))}')
+    print()
+
+    recs = []
+    for s in stems:
+        h = sha(blob(f'corpus/knowledge/{s}.md'))
+        recs.append(f'{s} {h}\n')
+    agg = sha(''.join(recs).encode())
+    print('[4] KNOWLEDGE BLOB AGGREGATE (sorted stem + blob sha256 lines)')
+    print(f'KNOWLEDGE_MD_COUNT={len(stems)}')
+    print(f'KNOWLEDGE_MD_AGGREGATE_SHA256={agg}')
+    print()
+
+    lstree = git('ls-tree', '-r', 'HEAD')
+    print('[5] BASE APPEND-GUARD FREEZE (G4.md:8; REV blobs, content-addressed)')
+    print(f'TREE_OID={git("rev-parse", "HEAD^{tree}").decode().strip()}')
+    print(f'TREE_LS_TREE_SHA256={sha(lstree)}')
+    print(f'TREE_ENTRY_COUNT={lstree.decode().count(chr(10))}')
+    for p in ALLOWLIST:
+        data = blob(p)
+        lines = data.rstrip(b'\n').split(b'\n')
+        print(f'ALLOWLIST_TARGET={p}')
+        print(f'  BLOB_SHA256={sha(data)} BYTES={len(data)} LINES={len(lines)}')
+        print(f'  LAST_LINE_SHA256={sha(lines[-1])}')
+    for p in FROZEN:
+        data = blob(p)
+        print(f'FROZEN_NON_TARGET={p}')
+        print(f'  BLOB_SHA256={sha(data)} BYTES={len(data)}')
+    print()
+
+    print('[6] SNAPSHOT (volatile: concurrent lane-B filings may change these)')
+    st3 = git('status', '--porcelain=v1').decode().splitlines()
+    print(f'UNTRACKED_STATUS_LINES_NOW={sum(l.startswith("??") for l in st3)}')
+    print('RECEIPT INVENTORY (excludes this census file):')
+    for p in sorted(RECEIPTS.iterdir()):
+        if p.name == SELF:
+            continue
+        if p.is_symlink():
+            print(f'  FILE {p.name}: symlink')
+        elif p.is_file():
+            d = p.read_bytes()
+            print(f'  FILE {p.name}: regular size={len(d)} sha256={sha(d)}')
+        else:
+            print(f'  FILE {p.name}: non-regular')
+    print(f'WAVE_REPORT_MD_COUNT={len(list(WAVE.glob("*.md")))}')
+    g4 = WAVE / 'G4.md'
+    g5 = WAVE / 'G5.md'
+    print(f'G4_EXISTS={g4.exists()} SHA256={sha(g4.read_bytes()) if g4.exists() else "N/A"}')
+    print(f'G5_EXISTS={g5.exists()}')
+    head2 = git('rev-parse', 'HEAD').decode().strip()
+    st4 = git('status', '--porcelain=v1').decode().splitlines()
+    print(f'HEAD_AFTER={head2} UNCHANGED={head2 == head}')
+    print(f'TRACKED_DIRTY_STATUS_LINES_AFTER={sum(not l.startswith("??") for l in st4)}')
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
+END-SCRIPT
+
+RUN (canonical): EXIT=0; stderr 0 bytes.
+BEGIN-CENSUS-OUTPUT
+[1] SOURCE CONTROLS
+PINNED_REV=a280e07133f52f719b0805fc73c0b997e77b5062
+OBSERVED_HEAD=a280e07133f52f719b0805fc73c0b997e77b5062
+HEAD_MATCH=True
+GIT_DIFF_QUIET_HEAD_EXIT=0
+TRACKED_DIRTY_STATUS_LINES=0
+SCORECARD.md WORKTREE_SHA256=0c7229367ba4e27083eff465a2ae3cf0f917b9f4424e2306add65ddb55a05734
+SCORECARD.md REV_BLOB_SHA256=0c7229367ba4e27083eff465a2ae3cf0f917b9f4424e2306add65ddb55a05734
+SCORECARD.md WORKTREE_EQUALS_PINNED=True
+PROVINCE.md WORKTREE_SHA256=fe7f3f61c6beb6d601bf6780194ad10f8641c402c2501067d6a93f29c3b37c1c
+PROVINCE.md REV_BLOB_SHA256=fe7f3f61c6beb6d601bf6780194ad10f8641c402c2501067d6a93f29c3b37c1c
+PROVINCE.md WORKTREE_EQUALS_PINNED=True
+
+[2] RECIPE A VERBATIM (blob a280e07:SCORECARD.md fence sha256 2cc0f1c08363202b11a01ca19f748055c0231b60f2963398530c7e25f089be06)
+EXIT=0
+BEGIN-STDOUT
+{"citation_resolved_rules": 9, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 79, "mapped": 79, "missing": [], "revision": "a280e07133f52f719b0805fc73c0b997e77b5062", "rule_blocks": 9}
+END-STDOUT
+BEGIN-STDERR
+END-STDERR
+STDOUT_SHA256=6e110fde29cb5158832412ab06a648f2aedbd5e606b9ea95b8c1ff95f205b6e8
+
+[3] COVERAGE-MAP TOKEN CENSUS (definition: Recipe A lines 101-102)
+MAP_TOKEN_OCCURRENCES=79
+MAP_TOKEN_UNIQUE=79
+MAP_TOKEN_SHA256=bd70aa5f639b9d2240caa057658b702df2083344bd07bfb4e35fceebb79750c4
+TOKENS_EQUAL_FILE_STEMS=True
+MISSING=[]
+DANGLING=[]
+
+[4] KNOWLEDGE BLOB AGGREGATE (sorted stem + blob sha256 lines)
+KNOWLEDGE_MD_COUNT=79
+KNOWLEDGE_MD_AGGREGATE_SHA256=b4214a89d9bf25c75942978cc0949178601c5fd935d3f7bbc8f0062380989d38
+
+[5] BASE APPEND-GUARD FREEZE (G4.md:8; REV blobs, content-addressed)
+TREE_OID=9e509118913edc4eb6bc5fd2b2d724a7fc50ac62
+TREE_LS_TREE_SHA256=57517b6c9c07825e36fe978770f726b6b955b5b857c0012599d6122c8119c5c1
+TREE_ENTRY_COUNT=170
+ALLOWLIST_TARGET=corpus/knowledge/2026-10-13-r4-16-frontier-rescan.md
+  BLOB_SHA256=622e3661d3e7f824393554b7cb428a233cc607a890ef77b4dfebeb24cce1d22e BYTES=64080 LINES=925
+  LAST_LINE_SHA256=8730af3b44676b218c92892e03ae70bd2308ead6493140282b6d7e9c36aa55de
+ALLOWLIST_TARGET=corpus/knowledge/2026-10-13-r2-jq-shadow-verdict.md
+  BLOB_SHA256=541f3499c811b023f4a19e1aacef0129ef34222990f928de9f3d0a54fe4dbf2e BYTES=16295 LINES=242
+  LAST_LINE_SHA256=047bc5a1b98135fc99989f108753df2d0f925d98f810f410269da2fd14698c8c
+ALLOWLIST_TARGET=SCORECARD.md
+  BLOB_SHA256=0c7229367ba4e27083eff465a2ae3cf0f917b9f4424e2306add65ddb55a05734 BYTES=34819 LINES=559
+  LAST_LINE_SHA256=3bc301a57f99f96db4e77b84121360419e5fbbda48f4843d10c002b4a357e093
+FROZEN_NON_TARGET=PROVINCE.md
+  BLOB_SHA256=fe7f3f61c6beb6d601bf6780194ad10f8641c402c2501067d6a93f29c3b37c1c BYTES=18590
+
+[6] SNAPSHOT (volatile: concurrent lane-B filings may change these)
+UNTRACKED_STATUS_LINES_NOW=235
+RECEIPT INVENTORY (excludes this census file):
+  FILE census-pre.txt: regular size=1158 sha256=23f81d01e6e8a564bac715d0fd67ee63db7f9fe43bd32552a339d576f9d220ed
+WAVE_REPORT_MD_COUNT=103
+G4_EXISTS=True SHA256=1dbef2d7d04aef326f99abfb2ef327a8d3e460ae03c40f00795437e8c5c40fd7
+G5_EXISTS=False
+HEAD_AFTER=a280e07133f52f719b0805fc73c0b997e77b5062 UNCHANGED=True
+TRACKED_DIRTY_STATUS_LINES_AFTER=0
+END-CENSUS-OUTPUT
+
+DETERMINISM
+- Canonical run above (22:01:26) and an earlier full run in the 22:00 window differ only in [6] SNAPSHOT
+  (`WAVE_REPORT_MD_COUNT=91` -> `103`); sections [1]-[5] byte-identical.
+- Runs 2-3 (after write) re-ran the extracted script from this receipt; core SHA256 values are in the
+  POST-VERIFICATION block. Only [6] SNAPSHOT lines are excluded from the core comparison, by construction.
+- [5] TREE_* reflect HEAD at run time (BASE here). Re-running later, after integration, yields the AFTER tree -
+  that delta is the intended comparison material. Allowlist blob hashes come from pinned REV and are
+  revision-independent.
+
+CORROBORATION (direct commands run alongside; cwd = repo root unless noted)
+- Recipe A at REV: 79/79 mapped, 9/9 rules, 10.0/10.0, empty missing/dangling; recipe stdout sha256
+  6e110fde29cb5158832412ab06a648f2aedbd5e606b9ea95b8c1ff95f205b6e8 (census [2]; identical to G2.md:10 claim).
+- Token-set cross-check vs `.ufo/waves/luna-round-9/G3.md:24` claim `bd70aa5f...750c`:
+  census [3] MAP_TOKEN_SHA256=bd70aa5f639b9d2240caa057658b702df2083344bd07bfb4e35fceebb79750c4 - full match.
+- `git diff --quiet HEAD` -> exit 0; `wc -l` on targets: 925 / 242 / 120 lines
+  (corpus/knowledge/2026-10-13-r4-16-frontier-rescan.md, 2026-10-13-r2-jq-shadow-verdict.md,
+  2026-10-14-r12-01-queue-b-ready.md) - consistent with census [5] LINES.
+
+MEASURED, NOT ADJUDICATED
+- G5 absent at 22:01:26: if a G5 census artifact exists elsewhere or lands later, it is unrun by this seat; no
+  substitute was invented. The G4 half is complete and clean.
+- The freeze is content-addressed: any verifier can `git cat-file blob <sha>` any frozen blob. Prefix-append check
+  for allowlist targets post-integration: `git show AFTER:<path> | head -c <BYTES> | sha256sum` must equal
+  BLOB_SHA256, and AFTER's blob must be strictly larger than BYTES.
+- Non-target identity at AFTER: recompute `git ls-tree -r AFTER` and compare entries against the REV listing whose
+  content hash is TREE_LS_TREE_SHA256 (TREE_OID 9e509118913edc4eb6bc5fd2b2d724a7fc50ac62); any changed path
+  outside the allowlist is a violation (PROVINCE.md is frozen and must never appear).
+- This receipt is itself excluded by name from its own [6] inventory. `.ufo/waves/luna-round-9/receipts/` is
+  untracked; no tracked file was created, modified, or deleted by this seat.
