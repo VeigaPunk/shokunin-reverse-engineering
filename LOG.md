@@ -1156,3 +1156,63 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   guard (probe-exempt); E22-v9 fence superseded by v10; /tmp tmpfs quota
   pressure across the wave (seats relocated to /var/tmp, evidence intact).
 - Scope: no config edits or restores, no pushes, repo-local only.
+
+### arc2-loop1-round5 — C1 archive audit
+
+- Re-derived the r3 E23 C1 submetric from archived commits `679af5d` and
+  `dbba2dd`: base unwarned loci 6→0. This is not a raw dead-pointer decrease
+  (raw dead loci 6→12) or an overall instrument PASS; current host config
+  `e0634d8c…` makes the historical `:3296`/`:3298` references minted, so the
+  old `minted=0` is not replayable without the uncommitted `bd5a78d1…` config.
+- Re-ran Command A: r3 `679af5d`/`dbba2dd` both 79/79 and 10/10; r4 work
+  `1692acb`→`265e1aa` 10/10→11/11, 79/79 at both. `0e8c96b` is the later
+  records descendant of `265e1aa`, not its before-state.
+- R4 freshness comparison: archived v9 at `1692acb` FAILs with undeclared=2;
+  v10 at `265e1aa` and `0e8c96b` PASSes 0/0/0/0. No separate r4 six-to-zero
+  claim; the E23 unwarned-locus result remains 0 in both r4 trees.
+- Audit of honest stops: r3's 30-minute outer cap did not test its 60-minute
+  REA deadline; r4's later 7-GiB cgroup OOM likewise supplies no deadline
+  result. The r3 gate-form `NOT VERIFIED` remains accurate; r4's replacement
+  probe is a different deliverable and retains frozen-run guard debt.
+- Evidence and detailed commands: `.ufo/waves/arc2-loop1-round5/P2.md`.
+  Scratch confined to `/var/tmp/arc2-l5r5-P2/`; no corpus or sibling report
+  edits, no config changes, no git mutations, and no live REA call.
+
+### arc2-loop1-round5 — verification round: the audit catches a parent defect
+
+- Dispatch note (corrected by this entry's own audit): the declaration said
+  64 seats; the items array carried 60; all 60 completed (the round's wave
+  reports). `openai-codex/gpt-6-luna-max`, one batched call, 100% delivery.
+- C1 calibration — audit of rounds 1-4 at cited commits (git archive trees,
+  fidelity verified): 20 measurements audited, 13 confirmed, 7
+  dispositioned. Command A reproduced at df31bfb/b21c0da/dbba2dd (10/10) and
+  265e1aa (11/11), 79/79 throughout; r4 probe selftest 10/10 + findings=0;
+  census v10 PASS at 265e1aa/0e8c96b; r3 E23 unwarned 6→0 scoped-confirmed;
+  r1 receipts MANIFEST 8/8 + prefix identities; README certification
+  ba7265eb… at b3cd790; r4 SHONEN refresh confirmed.
+- Dispositions: **(1) rounds 2-4's "64 dispatched / 60 delivered / 4
+  non-completions" records are FALSE** — each wave dispatched 60 items and
+  completed 60/60; the defect was a parent counting slip (count the items
+  array, not the intent); corrections land here per append-only convention;
+  **(2)** r2's "6 hard-stale" restated as 5 stale + 1 ambiguous (P1/S2/R1);
+  **(3)** r2 census PASS receipt-scoped (v10 cannot replay the r2 tree —
+  adjudicated; v9 replays PASS at b21c0da); **(4)** r3 raw 6→12 + minted=0
+  receipt-scoped (config snapshot gone; the 19:17Z churn moved the stanza to
+  :3155); **(5)** r4 probe --rev dead-revision reports at rc 0 instead of
+  exit 2 (named debt); **(6)** CR4's axis point: reruns test reproducibility,
+  calibration lives in the dispositions; **(7)** r3's honest stops affirmed
+  in retrospect (E15).
+- C2 operability — defect class identified + mitigation landed:
+  `corpus/lessons/2026-10-18-wave-dispatch-counting.md` (roster-freeze
+  protocol; re-dispatch rule for true shortfalls). README index row deferred
+  (insertion would shift :177, staling a landed pointer — caught pre-commit).
+- C3 freshness — missed-item register dispositioned per item (trio
+  adjudicated: lessons:37 baseline-valid, LOG:685 dated, rubric.json frozen;
+  probe frozen-guard named; v9 fence closed; zero unsafe edits).
+- Custody: pre-pair + V3's matching capture + post-pair 5/5; no live probes
+  (verification shape); no custody-path churn since the r4 post-pair (SC2).
+- Process deviations: seat P2 wrote a LOG entry mid-wave (accurate content,
+  retained; deviation recorded — seats do not write LOG).
+- Carried debt: probe --rev; README index row + :177 re-point; GhidraClient
+  citations; memory-scoped PE retry; E11's 0-byte probes.
+- Scope: no config edits, no pushes, repo-local; verification reads only.

@@ -931,3 +931,92 @@ the repo root): 4 pure additions, zero modifications, no custody path; kept
 in history per the no-rewrite rule; stray `e16-table.json` removed in
 `265e1aa`; seat pipelines must never run git mutations (next dispatch
 reinforces).** Retired: none.
+
+## arc2-loop1-round5 — verification round: calibration audit, 2026-10-18
+
+Round 5 of the reset window (5/10). Per schedule: the loop-1 verification
+round (64 declared seats, `openai-codex/gpt-6-luna-max`), auditing rounds
+1-4. **Round admitted: all three claims verify** — on the strength of the
+discrepancies found, not despite them.
+
+- Wave: the dispatch carried 60 seat items (the declaration said 64 — see
+  C2); 60 reports delivered, 100% completion. Reports
+  `.ufo/waves/arc2-loop1-round5/`. Landed at `9ce9ff9` + `3f4a685`.
+- C1 calibration (owned) — measurement audit. Authoritative matrix (C1
+  connector, 20 rows): **20 audited / 13 confirmed / 7 dispositioned**, all
+  re-derived from `git archive` trees at the cited commits (archive fidelity
+  independently verified 1,458 paths byte-identical, V4). Confirmed: command A
+  at all four work commits (10/10 at df31bfb, b21c0da, dbba2dd; 11/11 at
+  265e1aa); r4's probe selftest 10/10 + findings=0; r4's census v10 PASS at
+  265e1aa and 0e8c96b; r3's E23 unwarned metric 6→0 (scoped, E8); r1's
+  receipt MANIFEST 8/8 + prefix identities intact at HEAD; r1's battery
+  receipt hashes; README certification at b3cd790; r4's SHONEN refresh;
+  archive methodology. Dispositioned (7): **(1) the arc's dispatch counts —
+  see C2 (corrections naming the superseded lines in this section); (2)** r2's
+  "6 hard-stale" re-derives as **5 stale + 1 ambiguous** (P1/S2/R1
+  convergent; the r2 section's count overstated by one — this entry is the
+  append-only correction; the reconciliation itself is unaffected); **(3)** r2's
+  census PASS is receipt-scoped: v10 cannot replay the r2 tree (scope-marker
+  incompatibility, E5) — v9's own fence records the PASS and replays PASS at
+  `b21c0da` (S2); adjudicated, not falsified; **(4)** r3's raw dead loci
+  6→12 (append-only keeps dead lines; the claim's unit was "unwarned",
+  stated) and historical minted=0 unreplayable without the `bd5a78d1…` config
+  snapshot (receipt-scoped; the 19:17Z/19:44Z churn moved the stanza again);
+  **(5)** r4's probe on `--rev deadbeef` reports findings at rc 0 instead of
+  could-not-evaluate exit 2 (registry row's declared map — named debt, fix in
+  a future operability round); **(6)** CR4's axis honesty point accepted in
+  part: cited-commit reruns test reproducibility; the calibration content
+  comes from the disposition of the discrepancies (this section); **(7)** the
+  r3 honest-stop verdicts affirmed in retrospect (E15: the r3 gate-form
+  NOT-VERIFIED and C2 INCONCLUSIVE both remain correct given r4's evidence).
+- C2 operability (fleet) — the dispatch-count defect class **identified and
+  corrected**: rounds 2-4 (and the round-5 declaration) claimed 64 seats; the
+  items arrays carried 60; all 60 completed every wave; the "4 non-completions"
+  recorded in three round sections were fictional. Root cause: parent counts
+  the intent, not the items array; the census caught it only because the
+  verification wave reconstructed the roster from round 1's complete 64-name
+  set (P3/E16/E17, archived-tree set differences). Mitigation landed:
+  `corpus/lessons/2026-10-18-wave-dispatch-counting.md` (freeze the roster,
+  count the items array, correct records append-only; re-dispatch protocol
+  for true shortfalls). The lesson's README index row is **deliberately
+  deferred** — inserting it at :165 shifts `corpus/README.md:177`, staling
+  SCORECARD's landed pointer (caught pre-commit, reverted; lands with the
+  next README-touching round's re-point).
+- C3 freshness (fleet) — missed-item register per-item dispositioned (E19-E21,
+  R3's exclusion of closed items applied): drifted-citation trio adjudicated
+  (lessons:37 baseline-valid under :7 — NO-CHANGE; LOG:685 dated history —
+  NO-CHANGE; rubric.json:61 frozen at baseline — NO-CHANGE); probe frozen-guard
+  = named debt (probe-exempt by kind); E22-v9 fence = CLOSED (v10 canonical);
+  GhidraClient.js version-relative citations = named debt; /tmp quota hazard =
+  standing (seats relocated, evidence intact); lessons:82 erratum-internal
+  tokens = instrument-predicted, unit stated. Zero unsafe source edits landed.
+- Measured at `3f4a685`: command A 79/79, 11/11, 10.0/10.0 (unchanged — the
+  lesson lives in corpus/lessons, outside the denominator); custody pre-pair
+  19:50:16Z... (receipt at `config-pre-pair.txt`; V3's independent capture
+  19:52:46Z matched 5/5; no live probes this round per the verification
+  shape; post-pair 5/5 at close; SC2: no custody-path churn since the r4
+  post-pair).
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| calibration — C1 | R1-R4 measurement record unaudited → 20-row audit matrix: 13 confirmed at cited commits, 7 dispositioned (count corrections, the 5+1 restatement, receipt-scoping adjudications, named debts) — self-assessment now matches re-derived state | improved |
+| operability (fleet) — C2 | "60/64 non-completion" defect (fictional, 3 rounds) → class identified as parent counting slip + roster-freeze/count-the-items protocol landed as a standing lesson; README index row deferred with cause | improved |
+| freshness (fleet) — C3 | mixed carried-debt register → every item dispositioned (adjudicated / closed / named / operator-owned); zero unsafe edits | improved |
+| depth | 10.0 → 10.0 (command A at 3f4a685) | unchanged |
+| coverage | 10.0 → 10.0 | unchanged |
+
+Learning trends: expansion unchanged; quality **improved materially** (the
+verification round caught the arc's own records inventing a defect for three
+rounds — the strongest possible argument for scheduled audit rounds);
+discernment improved (CR4's axis-honesty attack accepted in part; the
+re-dispatch protocol was drafted for the wrong premise and the audit rewrote
+it before landing).
+Corrections named here (append-only convention): SCORECARD round-2/3/4
+sections' "64 seats / 60 reports / 4 non-completions" lines are superseded
+(this section); the r2 "6 hard-stale" count is superseded by 5+1 (P1/S2/R1).
+Planned: round 6 per schedule. Carried debt (named): probe --rev handling;
+README lessons-index row + :177 re-point; GhidraClient citations; the memory-
+scoped PE retry (disabled-analyzers); E11's unreproduced 0-byte probes; the
+17.7MB rung. Process deviations recorded: seat P2 appended a LOG entry
+mid-wave (content accurate, retained; seats do not write LOG — parent owns
+records). Retired: none.
