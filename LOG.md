@@ -929,3 +929,85 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   formula (verification-patterns-fleet.md:35,73,102) — correction routed to
   Tameshi's owner; tsukuroi ADJ-06 — remains integrator debt. Both verified
   sibling-side read-only.
+
+### arc2-loop1-round1 — freshness + operability + depth: three claims
+
+- Motivating evidence: carried debt named at the luna-round-9 close
+  (`LOG.md:883-886`): the r3-jq-provenance companion bleed (`:60`,`:136`) and
+  the stale `:107-109` refusal pointers; plus the luna-round-8 custody defect
+  — zero config drift closed against the round-6 baseline with no round-8
+  pre-pair (`SCORECARD.md:544-545`, `LOG.md:856-858`). First round of the
+  reset stagnation window (`SCORECARD.md:624-632`, declared at luna-round-10).
+- Work: one round, three claims, parent-integrated (no seat commits; seat
+  reports `.ufo/waves/arc2-loop1-round1/`). C1 freshness: qualify the r3
+  safety-label loci append-only; append the lessons correction note;
+  adjudicate `SCORECARD.md:79` NO-CHANGE-with-cause (baseline-revision
+  citation convention `SCORECARD.md:16-17`; in `## Open gaps`, not the frozen
+  :39-49 table). C2 operability (capability acquisition): config custody
+  pre/post-pair around the live battery. C3 depth: SKILL.md queue-drain rule
+  #10 + custody SOP section.
+- Dispatch (operator-directed): recovery dispatch — the first attempt
+  delivered 18 seats (P1, P4, E1, E6, E7, E8, E11, E14, E17, E18, E20,
+  E24, E25, SC1, R7, V3, V4, V5); the remaining 46 seats were dispatched
+  as replacements on the devin provider per the operator directive of
+  2026-10-18 (provider substitution directed by the operator, not a lane
+  choice). 64 seat reports delivered.
+- Landed at `58116aa` (lane identity, append-only): r3-jq-provenance
+  EOF "Safety-verdict scope" note naming `:60` and `:136` (byte-identity +
+  recorded-provenance scope, explicit non-endorsement per
+  `PROVINCE.md:114-116`; form of
+  `corpus/knowledge/2026-10-13-r2-jq-shadow-verdict.md:244`); lessons
+  correction note (the `:152` `PROVINCE.md:107-109` token is
+  baseline-correct, read at HEAD as `:114-116`; drift commit `7125dd4`);
+  SKILL.md rule #10 (config custody pre/post-pair required for any
+  zero-drift claim — a claim without a pre-pair is void; bounded by the
+  already-landed luna-round-8 record only: `SCORECARD.md:544-545`,
+  `LOG.md:856-858`,
+  `corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md:15`) + custody
+  SOP; SHONEN.md pointer refresh; wave artifacts at `df31bfb`; SCORECARD.md
+  round section + capability row entered (row draft E14/P3 reconciled;
+  conditions per `AXES.md:62-64` met); receipts
+  `.ufo/waves/arc2-loop1-round1/receipts/` committed.
+- Battery (BATTERY seats; REA 6.5.0 served from the local npx cache, no
+  network): leg 1 `doctor` live probe — exit 1, `healthy:false`, 22
+  scope_checks (11 ok / 11 not-ok: 9 registration `config_drift` +
+  hopper/ida `missing_analysis_engine`), identity `cli_package_version
+  6.5.0`, 207 MCP / 153 CLI (E24); leg 2 `binary_session {}` census PASS —
+  207 tools, 153 CLI commands, `tools_sha256 805433f1…`, `close_binary {}`
+  → `null`, server exit 0, no process remains (E25); leg 3 PASS — pinned
+  `/usr/lib/libjq.so.1.0.4` (sha256 `7e8bccc6…` exact match) open → decode
+  `0x117070` → `f30f1efa` / ENDBR64 → bundle 18991 B exported → close
+  `{"result": null}`, server exit 0, closure confirmed (E26); all opened
+  sessions closed, zero residue (E28).
+- Measured at `df31bfb`: command A 79/79, rules 9 → 10,
+  citation_resolved_rules 10/10, coverage/depth 10.0; r3 unqualified
+  safety-label loci 2 → 0 (`:60`,`:136` named by the appended note,
+  historical bytes retained); lesson `PROVINCE.md:114-116` count 0 → 1;
+  config post-pair re-verify — 3/3 sha256 byte-identical, drift 0/3
+  (pre-pair `.ufo/waves/arc2-loop1-round1/receipts/config-pre-pair.txt:1-4`,
+  `2026-10-18T14:49:13Z`, 3-way corroborated E11/V4/V5; post-battery captures
+  E26 16:41–16:42Z after leg-3 close, E23 16:42:22Z, CR3 16:44:29Z, P3
+  16:45:06Z; post-pair receipt
+  `.ufo/waves/arc2-loop1-round1/receipts/config-post-pair.txt`,
+  `2026-10-18T16:52:56Z`).
+- Census scope (recorded here per the CR5 sweep): "unscoped benign loci
+  N→0" is scoped to safety-sense artifact-verdict loci in editable corpus
+  files (`corpus/knowledge/2026-10-13-r3-jq-provenance.md:60,:136`). The
+  fleet token census also matches `corpus/README.md:90,:160` (unqualified
+  safety-sense labels on the same jq verdict — deferred with cause) and
+  `LOG.md:21` (frozen historical entry — not editable; non-endorsement
+  recorded here).
+- Defects / adjudications: doctor `config_drift` scope checks are
+  environment checks, distinct from C2's three-file sha256 custody (E14
+  threat note); E24 anomalies recorded (ghidra provider checks `ok:true`
+  with `config_drift` classifications; `skill` stale at equal versions;
+  `host` `arch unknown`). SC2 refutation carried, not landed:
+  `PROVINCE.md:10,:18` claim Kimi `rea-agents@6.4.0` at `config.toml:1478`,
+  but the file's only `rea-agents` occurrence is `6.7.0` at `:2940`
+  (re-grepped this session).
+- Carried debt (named, not landed): README `:90,:160` qualification
+  (deferred with cause above); PROVINCE Kimi-pin correction; `SCORECARD.md:68`
+  drifted `:160` pointer; `.bashrc`/`~/.profile` custody-pair extension from
+  the next round's pre-pair; luna-round-9 /tmp-hygiene item unchanged.
+- Scope: no config edits, no pushes, no writes outside this repo; client
+  configs read as sha256 only; `PROVINCE.md` untouched.

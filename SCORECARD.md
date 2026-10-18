@@ -618,6 +618,7 @@ Retired: none.
 |---|---|---|---|
 | pre-registered two-lane live battery on REA 6.5.0 | runs a 10-leg frozen-prediction battery with hashed per-lane receipts and cross-lane replay verification | `.ufo/waves/luna-round-6/receipts/` + `receipts-B/`; report `.ufo/reports/luna-round-6/kaidoku.md` | luna-round-6 |
 | version-symmetry battery on REA 6.4.0 | repeats the battery form on the second pin, proving per-name 6.5-only absence/refusal with a live control leg | `.ufo/waves/luna-round-8/receipts/`; `corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md` | luna-round-8 |
+| config custody pre/post-pair for live-probe rounds | freezes the three operator-config sha256s (Devin mcp_config.json, OMP mcp.json, Kimi config.toml) before dispatch and re-verifies byte-identity after the battery closes, producing a zero-drift receipt pair | `.ufo/waves/arc2-loop1-round1/receipts/config-pre-pair.txt` + `config-post-pair.txt`; comparison in `.ufo/reports/arc2-loop1-round1/kaidoku.md` | arc2-loop1-round1 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -630,3 +631,71 @@ Stagnation window N: 10 lane-rounds. Capabilities entered the table in
 rounds 6-8 (inside the window), so the nudge did not trigger during the arc.
 Declared at luna-round-10, the conformance scaffold's named 'next round';
 window resets from here.
+
+## arc2-loop1-round1 — freshness + operability + depth: three claims, 2026-10-18
+
+One round, three claims (arc 2, loop 1) — the first round of the reset
+stagnation window (`## Saturation`, above). The three finite owned proxies
+remain saturated at 10.0; the freshness and operability moves are fleet-axis
+(unowned proxy — the standing recording ruling, :376-380) and the depth move
+is recorded proxy-saturated + measurement-named.
+
+- Wave: 64 seats, parent-integrated (no seat commits); seat reports
+  `.ufo/waves/arc2-loop1-round1/`; round report
+  `.ufo/reports/arc2-loop1-round1/kaidoku.md` landed.
+- Dispatch (operator-directed): recovery dispatch — the first attempt
+  delivered 18 seats (P1, P4, E1, E6, E7, E8, E11, E14, E17, E18, E20, E24,
+  E25, SC1, R7, V3, V4, V5); the remaining 46 seats were dispatched as
+  replacements on the devin provider per the operator directive of 2026-10-18
+  (provider substitution directed by the operator, not a lane choice).
+  Provider identity is substrate-neutral (`PROTOCOL.md:14-17`); 18+46 = 64
+  seat slots = the declared wave size.
+- Landed at `58116aa` + `df31bfb` (lane identity, append-only): r3-jq-provenance
+  EOF "Safety-verdict scope" note naming `:60` and `:136` (byte-identity +
+  recorded-provenance scope, explicit non-endorsement per
+  `PROVINCE.md:114-116`; form of
+  `corpus/knowledge/2026-10-13-r2-jq-shadow-verdict.md:244`); lessons round-1
+  EOF correction note (the `:152` `PROVINCE.md:107-109` token is
+  baseline-correct under `SCORECARD.md:16-17`, read at HEAD as `:114-116`;
+  drift commit `7125dd4`); `SKILL.md` queue-drain craft rule #10 + config
+  custody SOP section; `SHONEN.md` pointer refresh (same commit); receipts
+  `.ufo/waves/arc2-loop1-round1/receipts/` committed
+  (`config-pre-pair.txt` + `config-post-pair.txt` + battery leg artifacts +
+  `MANIFEST.txt`).
+- Measured at `df31bfb` (re-measured at that revision): command A
+  79/79 mapped, rules 9 → 10, 10/10 resolvable, coverage 10.0 / depth 10.0 /
+  calibration 10; r3 file-scoped safety-label census 2 → 0 (`:60`, `:136`
+  both named by the appended note; historical bytes retained); post-pair
+  hashes byte-equal to the pre-pair — zero drift (receipt
+  2026-10-18T16:52:56Z; corroborating captures 16:41:57Z E26, 16:42:22Z E23,
+  16:44:29Z CR3, 16:45:06Z P3).
+- Adjudicated NO-CHANGE-with-cause: `SCORECARD.md:79`'s `PROVINCE.md:107-109`
+  token — baseline-revision-correct under the card's own convention (:16-17)
+  and located in `## Open gaps` (:51-84), not in the frozen :39-49 table
+  (freeze sentence :266-267; earlier "frozen table" wording restated per the
+  round's E4); carried at `LOG.md:883-886`.
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| freshness (fleet axis, unowned proxy) — C1 | r3-jq-provenance unscoped safety-label loci 2 → 0 (`corpus/knowledge/2026-10-13-r3-jq-provenance.md:60` "benign, intentional install"; `:136` "no malicious or accidental pathway indicated"; both named by the EOF erratum; file-scoped census, scope stated per `CR5.md:341-389` — `corpus/README.md:90,:160` deferred, `LOG.md:21` frozen) + lessons stale-pointer correction note absent → present (`corpus/lessons/2026-10-15-round-1.md:152`, `:107-109` → `:114-116`); `SCORECARD.md:79` byte-identical | improved |
+| operability (fleet axis, unowned proxy; capability acquisition) — C2 | no same-round pre-pair custody (luna-round-8 defect, `SCORECARD.md:544-545`; `LOG.md:856-858`) → pre-pair `receipts/config-pre-pair.txt` (2026-10-18T14:49:13Z; 3-way corroborated E11/V4/V5) + post-pair `config-post-pair.txt` (2026-10-18T16:52:56Z); zero drift 0/3 across the battery window (captures 16:39–16:52Z); capability row entered below | improved |
+| depth — C3 | 10.0 → 10.0 (proxy saturated + measurement-named); queue-drain rules 9 → 10, resolvable 9/9 → 10/10 (`SKILL.md` rule #10 measured at `df31bfb`; citations = the already-landed luna-round-8 record only: `corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md:15` + `SCORECARD.md:544-545` + `LOG.md:856-858`) | improved (rule gain; proxy unchanged) |
+| coverage | 10.0 → 10.0 (command A at `df31bfb`: 79/79, missing [], dangling []) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion unchanged (no new knowledge surface; deliberate —
+all three claims close carried debt or record practice); quality improved
+(the r3/lesson records now match their evidence; custody receipts durable and
+tracked; SHONEN pointers refreshed); discernment improved (CR1's
+disguised-verdict attack, CR3's security-theater attack, CR5's census
+instrument defects, and SC2's live Kimi-pin refutation all adjudicated from
+recorded evidence, not vibes).
+Planned: unchanged — the luna-round-10 closeout registered no next move and
+its final debt ledger stays carried (`.ufo/reports/luna-round-10/kaidoku.md:39-44`;
+the card's last planned line, :610-613, named that closeout, now discharged).
+Carried debt (named, not landed): `corpus/README.md:90,:160` label
+qualification (deferred with cause); `PROVINCE.md:10,:18` Kimi-pin correction
+(live config now pins `rea-agents@6.7.0` at `config.toml:2940`, SC2-refuted);
+`SCORECARD.md:68`'s drifted `:160` pointer; `.bashrc`/`~/.profile` into the
+custody pair from the next round's pre-pair (E15 — retro-append void).
+Retired: none.
