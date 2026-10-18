@@ -193,6 +193,17 @@ bullet is bounded by the lines it cites.
   (`corpus/knowledge/2026-10-14-r11-01-queue-ops.md:72-74`) — and the
   pwntools "one-fix" that is really the pin `setuptools<81`
   (`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:23`).
+- **Citations into an operator-mutable file anchor by stanza key + receipt,
+  never by bare line number.** `~/.kimi-code/config.toml` moved the
+  `[mcp_servers.rea]` stanza `:1284` → `:2938` → `:3225` → `:3296` in one day
+  (four `.bak` generations plus the live file; round-3 receipt
+  `.ufo/waves/arc2-loop1-round3/receipts/config-pre-pair.txt`), and every
+  re-point minted a fresh dead number — round-3's own declared target
+  `:2938`/`:2940` was dead before the round closed
+  (`corpus/knowledge/2026-10-13-r4-16-frontier-rescan.md:938-950`). Cite the
+  key (`[mcp_servers.rea]`, `args`) and qualify it with the receipt that
+  captured the value (`PROVINCE.md:18`, `SCORECARD.md:59`); a line number may
+  appear only inside an append-only record that names its capture stamp.
 - **Config custody is a pre/post-pair — a zero-drift claim without its own
   pre-pair is void.** luna-round-8 closed zero config drift against the
   round-6 baseline with no round-8 pre-pair — recorded as carried debt
@@ -326,11 +337,12 @@ evidence id X" — never "is it safe or trustworthy".
 
 ## Local round-evidence gate registry
 
-This gate validates the sealed interactive round-1 recovery evidence package,
-not REA correctness, outside review, canonical judgment, or fleet acceptance.
-Evidence and limits: `corpus/lessons/2026-10-15-round-1-recovery.md`; `LOG.md`,
-Interactive round-1 recovery.
+The rows below are this lane's registered verdict scripts: the interactive-r1
+recovery gate and the citation-drift probe. Neither validates REA correctness,
+outside review, canonical judgment, or fleet acceptance. Evidence and limits:
+`corpus/lessons/2026-10-15-round-1-recovery.md`; `LOG.md`, Interactive round-1 recovery.
 
 | Name | Kind / owner | Entry / verdict map | Self-invocation | Pinned values / write scope |
 |---|---|---|---|---|
 | interactive-r1-recovery | gate / kaidoku | `python3 .ufo/rounds/interactive-r1/verify-recovery.py`; 0 clean, 1 failed, 2 could-not-evaluate; `--admission` checks this recovery's unresolved prerequisites and returns 2, never native judgment | same command with `--selftest`; asserts isolated subprocess exit codes and stable finding IDs | `.ufo/rounds/interactive-r1/expected.json` pins every snapshot input and expected outcome; normal entry read-only in this repo; selftest creates and removes only its isolated fixture directory under `.ufo/rounds/interactive-r1/` |
+| citation-drift | probe / kaidoku | `python3 .ufo/gates/citation-drift/citation-drift-probe.py --root . --rev <REV> --table .ufo/gates/citation-drift/pointer-table.json --expected .ufo/gates/citation-drift/expected.json`; **probe semantics: 0 reported (drift is reported, never failed) and 2 could-not-evaluate; `--strict` restores the gate map 0 clean / 1 failed / 2 could-not-evaluate** | same command with `--selftest`; 10 isolated-fixture cases asserting exit code and a stable finding id, the case table committed in `expected.json` rather than in the script | `.ufo/gates/citation-drift/pointer-table.json` pins every in-repo citation and `expected.json` pins the self-test case table; normal entry read-only over the tree it grades; selftest writes only isolated temp fixture repos; **no line number into an operator-mutable file is pinned** (rule #11) |
