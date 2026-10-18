@@ -193,6 +193,67 @@ bullet is bounded by the lines it cites.
   (`corpus/knowledge/2026-10-14-r11-01-queue-ops.md:72-74`) — and the
   pwntools "one-fix" that is really the pin `setuptools<81`
   (`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:23`).
+- **Config custody is a pre/post-pair — a zero-drift claim without its own
+  pre-pair is void.** luna-round-8 closed zero config drift against the
+  round-6 baseline with no round-8 pre-pair — recorded as carried debt
+  (`SCORECARD.md:544-545`; `LOG.md:856-858`) and stated as a limitation in
+  the battery entry itself, "No config-drift pair"
+  (`corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md:15`). Freeze
+  the sha256 of every drift-sensitive client config before dispatch and
+  re-verify after the battery; only the bracketing pair supports a
+  zero-drift claim — a post-only comparison is void, not a weaker grade.
+  A baseline-relative hash match may be reported as baseline-relative; it
+  is not a same-round zero-drift observation.
+
+## Config custody for live-probe rounds (SOP)
+
+Binding for every future live-probe round. A zero-drift claim without its own
+same-round pre-pair is void: luna-round-8 closed zero config drift against the
+older round-6 baseline with no round-8 pre-pair — carried debt
+(`SCORECARD.md:544-545`; `LOG.md:856-858`), stated in the battery entry itself
+as "No config-drift pair."
+(`corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md:15`).
+
+- **Freeze the pre-pair before the round's first probe — no probe runs on an
+  unpaired round.** Hash exactly the three drift-sensitive client configs,
+  fixed order devin/omp/kimi, under a UTC timestamp line into the round's
+  receipts directory:
+  `R=<round-wave-dir>/receipts`;
+  `{ date -u +%Y-%m-%dT%H:%M:%SZ; sha256sum /home/vgpnk/.config/devin/mcp_config.json /home/vgpnk/.omp/agent/mcp.json /home/vgpnk/.kimi-code/config.toml; } > "$R/config-pre-pair.txt"`.
+  Capture rc must be 0; rc≠0 means a path was unreadable and its line is
+  absent. Then gate the receipt's shape: `wc -l` = 4,
+  `grep -cE '^[0-9a-f]{64}  /'` = 3, one timestamp line
+  (`grep -cE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$'` = 1).
+  A missing path leaves no line, so a truncated receipt false-passes
+  `sha256sum -c` — the shape gate is mandatory, not advisory.
+- **Read-only, always — the pair never edits a config.** The three configs
+  are operator-owned; the lane documents the gap and never edits, repairs, or
+  restores them (`PROVINCE.md:108-113`). A probe that writes config is an
+  operator-owned incident, not a custody step.
+- **Take the post-pair after the last leg exits and every session is
+  closed.** Re-capture with the identical format and shape gate to
+  `"$R/config-post-pair.txt"`; then compare the live files against the frozen
+  pre-pair: `tail -n +2 "$R/config-pre-pair.txt" | sha256sum -c -` — zero
+  drift is rc 0, exactly three `OK` lines, empty stderr. Filter the timestamp
+  line (`tail -n +2`): `-c` on the unfiltered receipt emits
+  `sha256sum: WARNING: 1 line is improperly formatted` with rc still 0 — a
+  formatting warning, not a pass and not drift.
+- **Compare same-round only.** The pair brackets this round's probes; a
+  cross-round comparison falsely reports drift — `~/.kimi-code/config.toml`
+  legitimately changed between luna-round-6 (`4af27747…`,
+  `.ufo/waves/luna-round-6/SB2.md:11`) and the arc2 pre-pair (`3546e033…`,
+  `.ufo/waves/arc2-loop1-round1/receipts/config-pre-pair.txt:4`).
+- **Drift disposes the claim, not the config.** Content drift (`FAILED`,
+  rc≠0) or state drift (capture rc≠0; check-time unreadable path →
+  `FAILED open or read`, rc≠0): the zero-drift claim is VOID — record the
+  path with both hashes verbatim in the round report and LOG entry, do not
+  edit or restore the file, classify as operator-owned incident; the round's
+  other axis measurements stand. Malformed receipt: re-capture once;
+  persistent malformation is VOID.
+- **Commit both receipts tracked.** The pair is the durable evidence — the
+  zero-drift claim cites the pre-pair timestamp and the committed post-pair
+  receipt (round-6/round-8 durability precedent, `LOG.md:796`, `LOG.md:850`),
+  not a re-run of the hash.
 
 ## Checklists
 

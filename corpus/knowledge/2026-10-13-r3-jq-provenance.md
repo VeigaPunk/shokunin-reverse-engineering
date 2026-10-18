@@ -135,3 +135,7 @@ the `gh --version` proof (18:34:08 device-id), and provisioned fnm node
 v24.21.0 (18:34:17). Consistent with round 2's byte-identical-to-upstream
 finding; no malicious or accidental pathway indicated. Residual Unknown
 closed.
+
+## Errata (arc2-loop1-round1 freshness, 2026-10-18, append-only)
+
+- **Safety-verdict scope (arc2-loop1-round1):** The phrases "benign, intentional install" (`:60`) and "no malicious or accidental pathway indicated" (`:136`) are historical wording, not a present endorsement or a safety/trust verdict. Folded back to the recorded evidence, they assert only that no byte difference from the cited upstream artifact was recorded — the round-2 SHA-256 byte-identity match to the upstream jq-1.8.2 `jq-linux-amd64` release artifact (`:5-6`; `2026-10-13-r2-jq-shadow-verdict.md:10-13,204-219`) — and that the sources examined in the round surfaced one pathway, the recorded agent-2 fetch-and-install event of 2026-10-03 18:34:03 -0300 (`:11-66`; run-log source set `:116-122`); they are not an absence-of-malice finding about the artifact. The lane never answers whether an artifact is "safe, trustworthy, or licensed for reuse" (`PROVINCE.md:114-116`); nothing here asserts that the artifact or its upstream is uncompromised, safe, trustworthy, or reusable. This note qualifies, and does not rewrite, the historical text.
