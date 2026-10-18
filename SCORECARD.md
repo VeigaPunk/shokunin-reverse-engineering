@@ -618,7 +618,7 @@ Retired: none.
 |---|---|---|---|
 | pre-registered two-lane live battery on REA 6.5.0 | runs a 10-leg frozen-prediction battery with hashed per-lane receipts and cross-lane replay verification | `.ufo/waves/luna-round-6/receipts/` + `receipts-B/`; report `.ufo/reports/luna-round-6/kaidoku.md` | luna-round-6 |
 | version-symmetry battery on REA 6.4.0 | repeats the battery form on the second pin, proving per-name 6.5-only absence/refusal with a live control leg | `.ufo/waves/luna-round-8/receipts/`; `corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md` | luna-round-8 |
-| config custody pre/post-pair for live-probe rounds | freezes the three operator-config sha256s (Devin mcp_config.json, OMP mcp.json, Kimi config.toml) before dispatch and re-verifies byte-identity after the battery closes, producing a zero-drift receipt pair | `.ufo/waves/arc2-loop1-round1/receipts/config-pre-pair.txt` + `config-post-pair.txt`; comparison in `.ufo/reports/arc2-loop1-round1/kaidoku.md` | arc2-loop1-round1 |
+| config custody pre/post-pair for live-probe rounds | freezes the five operator paths' sha256s — the three client configs (Devin mcp_config.json, OMP mcp.json, Kimi config.toml) plus the two shell env carriers (~/.bashrc, ~/.profile) — before the round's first probe and re-verifies byte-identity after the battery closes, producing a zero-drift 6-line 5-hash receipt pair | `.ufo/waves/arc2-loop1-round2/receipts/config-pre-pair.txt` + `config-post-pair.txt`; comparison in `.ufo/reports/arc2-loop1-round2/kaidoku.md` | arc2-loop1-round2 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -699,3 +699,68 @@ qualification (deferred with cause); `PROVINCE.md:10,:18` Kimi-pin correction
 `SCORECARD.md:68`'s drifted `:160` pointer; `.bashrc`/`~/.profile` into the
 custody pair from the next round's pre-pair (E15 — retro-append void).
 Retired: none.
+
+## arc2-loop1-round2 — calibration + freshness + operability: three claims, 2026-10-18
+
+Round 2 of the reset stagnation window (2/10). Owned proxies stay saturated;
+calibration worked as the owned axis (most-falsifiable tie-break — the live
+Kimi pin refuted the current surface); freshness and operability ride the
+fleet-axis recording ruling (:376-380). Parent-integrated; no seat commits.
+
+- Wave: 64 seats dispatched on `devin/deepseek-v4-1-flash-max`; 60 seat reports
+  delivered (4 non-completions recorded as a dispatch defect; every claim
+  verified via convergent seats regardless). Reports `.ufo/waves/arc2-loop1-round2/`.
+- Landed at `b3cd790` + `b21c0da` (lane identity, line-neutral — every in-place
+  edit same-line-count; PROVINCE 162 / SCORECARD 701 / README 187 lines held,
+  no landed citation shifted): PROVINCE.md surface summary + drift-prone values
+  + two Core cells (spawn→registers per CR1's grade ladder); SKILL.md inventory
+  paragraph; SCORECARD Version-drift supersession bullet; SCORECARD.md:68-72
+  discharged-pointer reword (5-for-5); corpus/README.md:90,:160 in-cell
+  safety-label qualification (byte-certified to the reviewer's predicted whole-
+  file hash `ba7265eb…`); SKILL custody SOP 3-path→5-path amendment (+24 lines,
+  craft section byte-identical). Receipts: 5-path pre/post-pair (in-window zero
+  drift 0/5), 6.7.0 doctor + census legs, post-window drift record.
+- Measured at `b21c0da`: command A 79/79, rules 10/10, 10.0/10.0 (unchanged —
+  no craft or map edit); C1 census instrument (E22 v9, anchors re-derived live)
+  **VERDICT PASS — stale=0 ambiguous=0 undeclared=0 unresolved=0** at the work
+  tree; C2 instrument (E23 form) n_unqualified 2→0; config drift: 0/5 in-window
+  (receipts 16:57:35Z / 17:08:57Z, five captures aggregate-matching); post-window
+  `config.toml` rewrite at 17:32:20Z detected and recorded verbatim
+  (`receipts/drift-config-toml-20261018T173220Z.txt`; pin value unchanged,
+  relocated :2938→:3225; not repaired, per SOP — operator-owned surface).
+- Battery (REA 6.7.0, local npx cache; one registry packument revalidation
+  observed, payload cache-served): leg 1 `doctor` exit 1, 27 scope_checks,
+  identity 6.7.0, counts 153/207/6, `tools_sha256 af39310c…` (differs from
+  6.5.0's `805433f1…` — the digest is a build-recorded constant per
+  `recordedCatalogDigests.js`); leg 2 `binary_session {}` census PASS — 207
+  tools byte-identical name set to 6.5.0, clean close, server exit 0. SC2's
+  "6.7.0 unprobed" unknown resolved.
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| calibration — C1 | 6 hard-stale current-surface Kimi-pin loci (PROVINCE.md:10,:18,:44, SKILL.md:20, SCORECARD.md:58) + 1 receipt-contradicted (:24 doctor-aligned) + 1 ambiguous (:67) → 0/0/0 (census PASS at the work tree); every statement receipt-backed or historical-marked; grade ladder enforced (configured/resolvable/available — no holding claims; PROVINCE :44 "spawn"→"registers") | improved |
+| freshness (fleet axis, unowned proxy) — C2 | unqualified safety-label loci in editable corpus files 2 → 0 (README :90,:160 qualified, certified hash `ba7265eb…`; r3 file clean since round 1) + drifted README pointers inside the SCORECARD:68 bullet 2 → 0 (:160→:177, :128→:138 — both debts discharged at 7125dd4; 5-for-5 reword, net-zero) | improved |
+| operability (fleet axis; capability acquisition) — C3 | 3-path custody → 5-path custody demonstrated end-to-end (pre-pair 16:57:35Z bracketing the 6.7.0 battery; post-pair 17:08:57Z; zero drift 0/5 in-window) + SOP amended to match + capability row entered (replaces the r1 3-path row); post-window drift detected, recorded, unrepaired — the detector's first live catch | improved |
+| coverage | 10.0 → 10.0 (command A at `b21c0da`) | unchanged |
+| depth | 10.0 → 10.0 (command A at `b21c0da`) | unchanged |
+
+Learning trends: expansion unchanged (no new knowledge surface); quality
+improved (the current surface now matches the live pins byte-for-byte against
+frozen receipts; discharged debts recorded accurately, false sentences
+avoided — R2's 5-for-5 reword over the tempting bare re-point); discernment
+improved (CR1's four-grade configured/resolvable/available/held ladder plus the
+wire-log finding — 0 of 2195 Kimi tool-logs declare `mcp__rea__*`, so the 6.7.0
+server is configured-but-not-held, plausibly never loaded; CR7's +18-line shift
+attack — landed line-neutral so no landed citation moved; CR3's carrier-mode
+ambiguity bounded as a named limitation).
+Planned: none declared. Carried debt (named, not landed): SCORECARD.md:270's
+stale `:157` parenthetical (third drifted-pointer reading, V5); MINT.md:10 and
+corpus/QUALITY.md:18 + lessons/2026-10-15-round-1.md:82 +
+corpus/knowledge/2026-10-13-mcp-registrations.md:9,:80,:88 (dead `:1284/:1287`
+pointers) + r4-16-frontier-rescan.md:43 (stale-pin loci outside C1's declared
+scope); SCORECARD.md:291 (dated record, classified historical — E6's
+reconciliation note not needed given the :58 supersession); grok/codex rea
+registrations (5 total) outside the 5-path custody set — zero-drift claim
+scoped to the five named paths; Kimi client-side rea load probe (the wire-log
+finding's natural follow-up); systemd user env / ~/.bash_profile carrier
+limits. Retired: none.

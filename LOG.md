@@ -1011,3 +1011,55 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   the next round's pre-pair; luna-round-9 /tmp-hygiene item unchanged.
 - Scope: no config edits, no pushes, no writes outside this repo; client
   configs read as sha256 only; `PROVINCE.md` untouched.
+
+### arc2-loop1-round2 — calibration + freshness + operability: three claims
+
+- Motivating evidence: round-1's carried debt — SC2's live refutation of the
+  Kimi pin (only `rea-agents@6.7.0` at `config.toml:2940`; `:1478` =
+  `model = "kimi-k3"`), the README :90/:160 labels deferred with cause, the
+  SCORECARD.md:68 drifted pointer (CR5), and E15's queued 5-path custody
+  extension. Owned axis: calibration (most-falsifiable tie-break of the
+  saturated 10.0 three-way).
+- Work (parent-integrated; 64 seats on devin/deepseek-v4-1-flash-max, 60
+  reports delivered — 4 non-completions recorded). C1 calibration: reconcile
+  every current-surface pin statement to the 2026-10-18 live receipts,
+  line-neutral (CR7's +18 shift attack would have staled 7 landed citations in
+  append-only files — refused). C2 freshness: README :90,:160 in-cell
+  qualification + SCORECARD:68-72 discharged-pointer reword (R2's 5-for-5;
+  both debts discharged at 7125dd4). C3 operability: 5-path custody pair around
+  a 2-leg 6.7.0 battery + SOP amendment.
+- Landed at `b3cd790` (lane identity): PROVINCE.md (surface summary,
+  drift-prone values, Core cells — "spawn"→"registers" per CR1's grade ladder),
+  SKILL.md (inventory paragraph + SOP 5-path amendment, craft byte-identical),
+  SCORECARD.md (Version-drift supersession :56-61, :68-72 reword, capability
+  row), corpus/README.md (:90,:160 — whole file byte-matches the reviewer's
+  certified prediction `ba7265eb…`); wave artifacts `b21c0da`.
+- Measured at `b21c0da`: command A 79/79, 10/10 rules, 10.0/10.0; C1 census
+  instrument (E22 v9) **PASS 0/0/0/0** on the work tree (6 hard-stale + 1
+  contradicted + 1 ambiguous loci → 0); C2 n_unqualified 2→0, :68-bullet
+  drifted pointers 2→0; custody in-window zero drift 0/5 (five captures).
+- Battery (6.7.0, local cache): leg 1 doctor exit 1 / 27 checks / identity
+  6.7.0 / `tools_sha256 af39310c…` (build-recorded constant; counts 153/207/6
+  live-measured); leg 2 census PASS — 207 tool names byte-identical to 6.5.0,
+  clean close. One registry packument revalidation observed (payload
+  cache-served) — recorded, not hidden.
+- **Drift event (the detector's first live catch):** `~/.kimi-code/config.toml`
+  rewritten 2026-10-18T17:32:20Z — AFTER the post-pair closed the bracket at
+  17:08:57Z. Pure additions (~295 lines of provider/model tables); the rea pin
+  is byte-identical (`rea-agents@6.7.0`), relocated :2938→:3225; live hash
+  `f10b01e9…` vs receipt `3546e033…`. Recorded verbatim at
+  `receipts/drift-config-toml-20261018T173220Z.txt`; not repaired (operator-
+  owned); in-window zero-drift claim stands; next live round's pre-pair
+  re-baselines all five paths.
+- Cross-domain findings (routed, not absorbed): CR1's wire-log probe — 0 of
+  2195 Kimi client tool-logs declare `mcp__rea__*`, so the 6.7.0 server is
+  configured-but-not-held on Kimi (plausibly never loaded); doctor lists 5 rea
+  registrations (grok/codex included) outside the 5-path custody set.
+- Carried debt: SCORECARD.md:270 stale `:157` parenthetical; MINT.md:10,
+  corpus/QUALITY.md:18, lessons/2026-10-15-round-1.md:82,
+  corpus/knowledge/2026-10-13-mcp-registrations.md:9,:80,:88 (dead
+  `:1284/:1287` pointers), r4-16-frontier-rescan.md:43; SCORECARD.md:291
+  (dated, historical); systemd user env + ~/.bash_profile carrier limits;
+  Kimi-side rea load probe.
+- Scope: no config edits (the drifted config was NOT restored), no pushes, no
+  writes outside this repo; five custody paths read as sha256 digests only.
