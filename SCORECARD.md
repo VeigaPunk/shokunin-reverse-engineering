@@ -53,11 +53,11 @@ They are assessment obligations, not nine independent domain discoveries.
 - **Coverage map:** closed at 72/72 by luna-round-1 (2026-10-16); the two
   r14 rows are labeled partial per their files' own limiting language. All
   72 files stay in the denominator. Historical 70/70 is not current 72/72.
-- **Version drift:** closed by luna-round-2 (2026-10-16) — current-surface
-  summaries now state the per-client pins and receipted inventories (Devin/OMP
-  6.5.0 207/153, Kimi 6.4.0 170/127; both catalog digests; skill v42 installed
-  / v37 expected by 6.4.0). No configuration changed and no 37-tool holdings
-  increase is claimed; receipts at `.ufo/waves/luna-round-2/receipts/`.
+- **Version drift:** closed by luna-round-2 (2026-10-16) — per-client pins and
+  receipted inventories (Devin/OMP 6.5.0 207/153, Kimi historical 6.4.0 170/127; both
+  catalog digests; skill v42 installed / v37 expected by 6.4.0). Superseded 2026-10-18
+  (arc2-loop1-round2): Kimi pin is `rea-agents@6.7.0` at `config.toml:2940` per the
+  16:57:35Z custody receipt (207/153, `tools_sha256 af39310c…`; configured + package-identity, not holdings — no live Kimi 6.7.0 MCP session opened). Receipts: `.ufo/waves/luna-round-2/receipts/` + `arc2-loop1-round2/receipts/`.
 - **Authority contradiction:** closed by luna-round-3 (2026-10-16) — both
   summary sites now state verb-family-specific id identity with corpus
   citations (revenger-verifier path-sensitive per r4; `analyze`/`inspect`/
@@ -65,11 +65,11 @@ They are assessment obligations, not nine independent domain discoveries.
   `subject` warning retained). QUALITY #15 supersedes #14. The family-specific
   counterexample at r9-02:146-169 stays the authority for `analyze_function`;
   no family beyond the recorded ones is claimed.
-- **Other stale summaries:** `corpus/README.md:160` still lists already-held
-  process/managed/call-target operations as frontier; `:128` says four r13
-  nits fixed although `LOG.md:395-401` corrects integration fixes to two.
-  (Pointer corrected from the drifted `:157` during luna-round-4 record
-  hygiene; content debt for a future freshness round.)
+- **Other stale summaries:** discharged by luna-round-5 (`7125dd4`) — the
+  frontier bullet now reads "held, not frontier" (`corpus/README.md:177`;
+  the luna-round-4 "correction" to `:160` was stale at write, and the debt it
+  names is discharged) and the r13 row now reads "4 nits: 2 fixes applied at
+  integration" (`corpus/README.md:138`; recorded `:128`). Closed; kept as a record.
 - **Fleet-only history:** historical `.ufo/reports/round-5/kaidoku.md` is absent
   in the inspected fleet HEAD; `MANIFEST.json` has historical kaidoku training
   rows only through r4. Neither fact erases landed local r5–14 work. Historical

@@ -15,9 +15,9 @@ end-to-end (`analyze`/`search`/`decompile` verified on `/usr/bin/jq`),
 ASAR/JavaScript analysis (`analyze_javascript_application` verified on
 `default_app.asar`), archive/package inventory, and host binutils fallbacks.
 
-Current REA package inventory by configured client (2026-10-16): Devin/OMP
+Current REA package inventory by configured client (re-read 2026-10-18): Devin/OMP
 `rea-agents@6.5.0` (207 MCP tools / 153 CLI commands); Kimi
-`rea-agents@6.4.0` (170 MCP tools / 127 CLI commands).
+`rea-agents@6.7.0` (207 / 153; tools_sha256 `af39310c…`; 6.4.0 historical per PROVINCE.md).
 
 Drift-sensitive values: `GHIDRA_INSTALL_DIR`, `JAVA_HOME` in the three client
 configs (devin/omp/kimi), the per-client REA pin (see current inventory above), the installed skill
@@ -215,34 +215,58 @@ as "No config-drift pair."
 (`corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md:15`).
 
 - **Freeze the pre-pair before the round's first probe — no probe runs on an
-  unpaired round.** Hash exactly the three drift-sensitive client configs,
-  fixed order devin/omp/kimi, under a UTC timestamp line into the round's
-  receipts directory:
+  unpaired round.** Hash exactly five paths, fixed order devin/omp/kimi then
+  the two shell files — the three drift-sensitive client configs plus the
+  shell files that carry the same drift-prone env-key material — under a UTC
+  timestamp line into the round's receipts directory:
   `R=<round-wave-dir>/receipts`;
-  `{ date -u +%Y-%m-%dT%H:%M:%SZ; sha256sum /home/vgpnk/.config/devin/mcp_config.json /home/vgpnk/.omp/agent/mcp.json /home/vgpnk/.kimi-code/config.toml; } > "$R/config-pre-pair.txt"`.
+  `{ date -u +%Y-%m-%dT%H:%M:%SZ; sha256sum /home/vgpnk/.config/devin/mcp_config.json /home/vgpnk/.omp/agent/mcp.json /home/vgpnk/.kimi-code/config.toml /home/vgpnk/.bashrc /home/vgpnk/.profile; } > "$R/config-pre-pair.txt"`.
   Capture rc must be 0; rc≠0 means a path was unreadable and its line is
-  absent. Then gate the receipt's shape: `wc -l` = 4,
-  `grep -cE '^[0-9a-f]{64}  /'` = 3, one timestamp line
-  (`grep -cE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$'` = 1).
+  absent. Then gate the receipt's shape: `wc -l` = 6,
+  `grep -cE '^[0-9a-f]{64}  /'` = 5, one timestamp line
+  (`grep -cE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$'` = 1),
+  and five path-identity lines
+  (`grep -cE '^[0-9a-f]{64}  /home/vgpnk/\.(config/devin/mcp_config\.json|omp/agent/mcp\.json|kimi-code/config\.toml|bashrc|profile)$'` = 5).
   A missing path leaves no line, so a truncated receipt false-passes
   `sha256sum -c` — the shape gate is mandatory, not advisory.
-- **Read-only, always — the pair never edits a config.** The three configs
-  are operator-owned; the lane documents the gap and never edits, repairs, or
+- **Why the shell files are in scope.** `PROVINCE.md:15-26` tracks
+  `.bashrc:23-24` and `:61` as drift-prone (and via `:47` `.profile:4`, via
+  `:124` `.bashrc:63`). A `.bashrc` edit changes provider wiring while all
+  three client-config hashes stay byte-identical — the falsification case,
+  with the r4u-05 misbinding as precedent
+  (`corpus/knowledge/2026-10-13-r4u-05-wakaru-oom.md:104-108`). `.bashrc`
+  carries `GHIDRA_INSTALL_DIR`/`JAVA_HOME` (`:23-24`) and the seven `REA_*`
+  exports (`:58-64`); `.profile` carries `GHIDRA_INSTALL_DIR`/`JAVA_HOME`
+  (`:3-4`) and six `REA_*` exports (`:7-12`) for POSIX login shells. Excluded:
+  `~/.bash_profile` (sources `.bashrc`, exports no `REA_`/`GHIDRA`/`JAVA`
+  key of its own), the systemd user environment (not a file — it cannot be
+  receipted), and `~/.kimi-code/mcp.json` (no `rea-agents` pin).
+- **Read-only, always — the pair never edits a config.** The five paths are
+  operator-owned; the lane documents the gap and never edits, repairs, or
   restores them (`PROVINCE.md:108-113`). A probe that writes config is an
-  operator-owned incident, not a custody step.
+  operator-owned incident, not a custody step. Hashing stores digests only,
+  never contents.
 - **Take the post-pair after the last leg exits and every session is
   closed.** Re-capture with the identical format and shape gate to
   `"$R/config-post-pair.txt"`; then compare the live files against the frozen
   pre-pair: `tail -n +2 "$R/config-pre-pair.txt" | sha256sum -c -` — zero
-  drift is rc 0, exactly three `OK` lines, empty stderr. Filter the timestamp
+  drift is rc 0, exactly five `OK` lines, empty stderr. Filter the timestamp
   line (`tail -n +2`): `-c` on the unfiltered receipt emits
   `sha256sum: WARNING: 1 line is improperly formatted` with rc still 0 — a
   formatting warning, not a pass and not drift.
+- **`tail -n3` is not a config selector on a five-hash receipt.** On the
+  superseded four-line three-path receipt `tail -n3` and `tail -n +2` were
+  content-identical; on the six-line five-path receipt `tail -n3` selects
+  kimi plus the two shell files, not the three client configs. Configs-only:
+  `tail -n +2 "$R/config-pre-pair.txt" | head -n3`. Shell-file leg:
+  `tail -n +2 "$R/config-pre-pair.txt" | tail -n2`.
 - **Compare same-round only.** The pair brackets this round's probes; a
   cross-round comparison falsely reports drift — `~/.kimi-code/config.toml`
   legitimately changed between luna-round-6 (`4af27747…`,
   `.ufo/waves/luna-round-6/SB2.md:11`) and the arc2 pre-pair (`3546e033…`,
-  `.ufo/waves/arc2-loop1-round1/receipts/config-pre-pair.txt:4`).
+  `.ufo/waves/arc2-loop1-round2/receipts/config-pre-pair.txt:4`; the same
+  value sits at line 4 of the superseded three-path receipt,
+  `.ufo/waves/arc2-loop1-round1/receipts/config-pre-pair.txt`).
 - **Drift disposes the claim, not the config.** Content drift (`FAILED`,
   rc≠0) or state drift (capture rc≠0; check-time unreadable path →
   `FAILED open or read`, rc≠0): the zero-drift claim is VOID — record the
