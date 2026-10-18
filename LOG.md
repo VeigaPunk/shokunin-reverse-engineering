@@ -1278,3 +1278,14 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   (loops 2-3's R1-R4, R10s) stay on `devin/deepseek-v4-1-flash-max` unless the
   operator directs otherwise. Recorded per the goal's substitution rule; the
   round-10 dispatch and records will cite this entry.
+
+### operator directive — skip the 128-seat xai-grok rounds (between rounds 7 and 8)
+
+- Operator request 2026-10-18: skip the 128-seat xai-grok rounds. Applied:
+  **arc2-loop2-round6 and arc2-loop3-round6 are operator-skipped** — no wave,
+  no claims, no axis moves; each closes with a records-only lane-identity
+  commit (LOG entry + SCORECARD section + report stating the skip).
+  Loop 1's R6 already ran (128/128, admitted 3/3) and is unaffected. Skipped
+  rounds do not count toward the stagnation window. Recorded per the
+  substitution/skip logging rule; the skipped rounds' records will cite this
+  entry.
