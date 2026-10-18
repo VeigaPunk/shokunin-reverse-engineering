@@ -101,10 +101,10 @@ SCOPE = [
     ("SCORECARD.md", 534, 560, "DATED", 534, r"2026-10-16"),
     ("SCORECARD.md", 619, 619, "DATED", 619, r"luna-round-\d"),
     ("SCORECARD.md", 620, 620, "DATED", 620, r"luna-round-\d"),
-    ("SCORECARD.md", 635, 701, "DATED", 635, r"2026-10-18"),
+    ("SCORECARD.md", 636, 702, "DATED", 636, r"2026-10-18"),
 
-    ("SCORECARD.md", 702, 767, "DATED", 703, r"arc2-loop1-round2"),
-    ("SCORECARD.md", 768, 854, "DATED", 768, r"arc2-loop1-round3"),
+    ("SCORECARD.md", 703, 768, "DATED", 704, r"arc2-loop1-round2"),
+    ("SCORECARD.md", 769, 855, "DATED", 769, r"arc2-loop1-round3"),
 ]
 
 PIN = re.compile(r"rea-agents@(\d+\.\d+\.\d+)", re.I)

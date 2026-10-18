@@ -164,6 +164,7 @@ A row is written when its file exists, never before.
 | `2026-10-15-round-1-recovery` | 1 (interactive recovery, blocked) | restores missing result and pinned evidence gate; fresh libjq static smoke; 32 scopes validated but unauthorized role bindings prevent dispatch; no applicable receipt, no verified-round increment; supersedes old closure promises, not historical corpus |
 | `2026-10-18-wave-dispatch-counting` | arc2-loop1-round5 | count the items array, not the intent; freeze the roster before recording delivery; a fictional shortfall is worse than a real one |
 | `2026-10-18-caller-independent-services` | arc2-loop1-round7 | long Ghidra runs are caller-independent user services, never launcher-bound scopes; containment and lifetime are independent claims; envelope + journal are the record |
+| `2026-10-18-mechanism-matched-walls` | arc2-loop1-round8 | wall engagements change exactly the mechanism the prior failure names; a natural control seals the attribution; a fifth engagement without a new mechanism retires the thread |
 | `2026-10-15-round-1-admission-correction` | 1 (same blocked recovery) | replaces unconditional admission diagnostic with routing/receipt/wave consistency checks; twelve isolated exit/finding cases; no new axis score or verified-round increment |
 
 ## Frontier
