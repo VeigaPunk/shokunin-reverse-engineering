@@ -1269,3 +1269,12 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
 - Carried debt: natural control; rerun stability; E41 probe-table gap;
   r7-lesson index row.
 - Scope: no config edits, no pushes, repo-local; service observed read-only.
+
+### operator directive — provider substitution (between rounds 7 and 8)
+
+- Operator request 2026-10-18: run one deepseek round on the hyper provider
+  instead of devin. Applied to the schedule: **arc2-loop1-round10 (this loop)
+  rides `hyper/deepseek-v4.1-flash`** (64-128 seats); all other deepseek seats
+  (loops 2-3's R1-R4, R10s) stay on `devin/deepseek-v4-1-flash-max` unless the
+  operator directs otherwise. Recorded per the goal's substitution rule; the
+  round-10 dispatch and records will cite this entry.
