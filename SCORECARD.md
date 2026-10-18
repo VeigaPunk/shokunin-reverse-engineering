@@ -764,3 +764,91 @@ registrations (5 total) outside the 5-path custody set — zero-drift claim
 scoped to the five named paths; Kimi client-side rea load probe (the wire-log
 finding's natural follow-up); systemd user env / ~/.bash_profile carrier
 limits. Retired: none.
+
+## arc2-loop1-round3 — freshness verified; coverage inconclusive; operability form-refuted, 2026-10-18
+
+Round 3 of the reset window (3/10; no capability entered — the stagnation nudge
+does not fire before N=10). Owned axis worked: coverage, via the most-
+falsifiable tie-break. **Round not admitted: 1 of 3 claims verified** — the
+other two are reported as honest stops, not trades. Parent-integrated; 64
+seats dispatched, 60 reports delivered (4 non-completions, second consecutive
+round — a named dispatch defect).
+
+- Wave: 64 seats on `devin/deepseek-v4-1-flash-max`; reports
+  `.ufo/waves/arc2-loop1-round3/`. Landed at `fd30b9c` + `dbba2dd` (lane
+  identity).
+- Landed (C1): PROVINCE.md:18 and SCORECARD.md:59 re-anchored in place
+  (single-line, line-neutral — 162/766 held); append-only errata at
+  `corpus/knowledge/2026-10-13-mcp-registrations.md` (88→111 lines,
+  prefix-identical) and `2026-10-13-r4-16-frontier-rescan.md` (936→975,
+  prefix-identical) — every erratum content-anchored (`[mcp_servers.rea]`
+  stanza key + receipt sha256), never a bare line number, because the live
+  stanza walked :1284→:2938→:3225→:3296 across 2026-10-18's operator rewrites
+  and the round's own declared re-point target (:2938/:2940) was dead at write
+  time. Dated records adjudicated, not edited: SCORECARD.md:270 (:157 is
+  baseline-correct under :16-17; its bullet's live pointer was discharged by
+  round-2's :68-72 reword) and SCORECARD.md:698 (round-2's dated text).
+- Measured at `dbba2dd`: C1 pointer-census instrument (E23 form, sha256
+  `7cd2a760…`) — **unwarned dead loci 6 → 0** (all six discharged by the
+  errata), **minted dead pointers 0**, current-surface wide-dead 4 → 3
+  (SCORECARD:59 repaired; :291/:698 are dated), SCORECARD:270 region reading
+  discharged-by-adjudication; command A 79/79, 10/10, 10.0/10.0 (unchanged —
+  the C2 entry did NOT land).
+- C2 (coverage — INCONCLUSIVE, honest stop): the bisect leg HELD (2.5MB
+  decompile.exe, exit 0, 44.117s, 6,337 procedures, `ev_92dea347…`,
+  deterministic rerun byte-identical, peak RSS 1.63GiB — the recipe works).
+  The 91.6MB Godot ARM64 leg ran 30m01s under `REA_GHIDRA_STARTUP_TIMEOUT_MS=
+  3600000` + `GHIDRA_HEADLESS_MAXMEM=8G` and died at its OWN outer 1800s cap:
+  typed `cancelled` envelope (`cleanup:complete`), no evidence sealed. The
+  raised REA deadline was never reached — the outcome is neither HELD nor the
+  pre-accepted typed refusal, so the claim cannot verify. Knowledge accrued
+  and recorded (survived 2× r4-12's kill still analyzing; RSS 8.89GB >
+  -Xmx8G proves the heap knob load-bearing; decisive run needs a scoped,
+  contained >5400s window per CR2/CR3) — but per CR3 a knowledge entry here
+  would be a re-run dressed as a move; not landed, coverage stays 79/79.
+- C3 (operability — NOT VERIFIED, form refuted on evidence): both gate
+  implementations work (E14: 6 modes, selftest 15/15; E15: selftest 10/10,
+  live red→green), but the gate form fails the Gate standard on measured
+  grounds: config.toml line-numbers are unpinnable (operator-owned, churned 4+
+  states today), a committed gate would fire on the lane's own honest
+  receipt-anchored citations (CR4's false-positive census), and the frozen-run
+  clause fails as shipped (R3 F2, 8-vs-9-line block). Adjudication: land as a
+  PROBE in a future round over in-repo pinneable citations only (E16's
+  BASELINE/QUOTED/SYMBOL row classes), with R6's exit-expression and
+  anchor-fragility fixes; this round lands the durable half — the
+  content-anchor repairs (C1's errata), which no gate can enforce.
+- Custody: pre-pair 17:55:49Z verified 5/5 (re-baselined config.toml
+  `bd5a78d1…` per round-2's disposition). In-window **witnessed
+  mutate-and-revert** (18:01:40Z `9ac8023b…` +14 lines → reverted 18:02:33Z,
+  mtime+inode restored; writer resolved by CR8: interactive Kimi session
+  afa2dd53, not a wave seat): the config.toml zero-drift claim is VOID as bare
+  per the SOP; other four paths held every capture; post-pair 5/5 endpoint;
+  excursion recorded verbatim at
+  `receipts/drift-config-toml-mutate-revert-20261018T180140Z.txt`.
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| freshness (fleet axis) — C1 | undischarged dead config.toml pointer loci 6 → 0 (E23 instrument unit, measured at `dbba2dd` vs `679af5d`); current-surface wide-dead 4 → 3 (PROVINCE:18 + SCORECARD:59 re-anchored; dated records adjudicated with cause); minted 0 | improved |
+| coverage (owned) — C2 | claim unverifiable as observed: 91.6MB leg inconclusive (outer-cap kill, deadline untested); recipe held on the 2.5MB leg; NO knowledge entry landed (re-run-dressed-as-a-move refused); command A 79/79 both sides | unprovable (honest stop — not harmed) |
+| operability (fleet) — C3 | gate form refuted (unpinnable targets, false-positive surface, frozen clause defect); implementations proven but not committed; durable repair = content-anchor citations landed under C1; probe registration + conformant gate = named debt | not verified (honest stop) |
+| depth | 10.0 → 10.0 (command A at `dbba2dd`) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion unchanged; quality improved (the pointer class is
+now discharged content-anchored with receipts — the durable form the churn
+itself demanded); discernment improved (three separate refutations landed
+without injury: the declared re-point target was dead, the C2 outcome class
+didn't match the pre-accepted branches, and the C3 gate form failed its own
+standard — each caught by the wave's critics and reported rather than forced).
+Planned: the C2 decisive run (scoped, systemd-contained, >5400s, deadline-
+only) is the next frontier/capability candidate; the C3 probe registration
+follows. Carried debt (named): LOG.md:1005/:1018 + round-2's PROVINCE/SCORECARD
+receipt-anchored :2940 references (correct at record time; correction = this
+entry, append-only); lessons/2026-10-15-round-1.md:82; corpus/knowledge
+dead-token rise inside the errata themselves (instrument-predicted; the unit
+is "unwarned", stated); E11's two unreproduced 0-byte probe runs; E22 census
+scope-table drift (FAIL undeclared=2 at 766-line HEAD vs PASS at 701-line
+`b21c0da` — re-key or retire next calibration round); SC1's registry-vs-probe
+row for the citation-drift implementation; round-2 drift record's
+alibaba-token characterization correction (real diff: opencode-go-7 tables,
+CR8 §3b). Retired: none.

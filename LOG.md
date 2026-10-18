@@ -1063,3 +1063,54 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   Kimi-side rea load probe.
 - Scope: no config edits (the drifted config was NOT restored), no pushes, no
   writes outside this repo; five custody paths read as sha256 digests only.
+
+### arc2-loop1-round3 — freshness verified; coverage inconclusive; operability form-refuted
+
+- Motivating evidence: the pointer-drift class (round-2 named debt
+  SCORECARD:270 + mcp-registrations/r4-16 dead `:1284/:1287` pointers), the
+  >90MB PE scale wall (PROVINCE's recorded next step), and three rounds of
+  drifted-pointer bites motivating a citation-drift gate. Owned axis: coverage
+  (most-falsifiable tie-break).
+- Dispatch: 64 seats, `devin/deepseek-v4-1-flash-max`; 60 reports delivered
+  (4 non-completions — second consecutive; named dispatch defect). One batched
+  call.
+- C1 freshness — LANDED at `fd30b9c`: PROVINCE.md:18 + SCORECARD.md:59
+  re-anchored in place (line-neutral); append-only errata
+  `corpus/knowledge/2026-10-13-mcp-registrations.md` (88→111, prefix-identical)
+  and `2026-10-13-r4-16-frontier-rescan.md` (936→975, prefix-identical) — all
+  content-anchored to `[mcp_servers.rea]` + the 17:55:49Z receipt sha256.
+  Measured at `dbba2dd` (E23 instrument, unit = unwarned): **6 → 0**, minted 0.
+  Dated records adjudicated NO-CHANGE-with-cause (SCORECARD.md:270, :698).
+  Correction to round-2's own drift record (CR8 §3b): the 17:32Z rewrite's
+  added tables were opencode-go-7, not alibaba-token-plan.
+- C2 coverage — INCONCLUSIVE (honest stop): bisect leg held (2.5MB
+  decompile.exe, exit 0, 44.117s, 6,337 procs, `ev_92dea347…`, deterministic
+  rerun, RSS 1.63GiB). The 91.6MB leg ran 30m01s under
+  `REA_GHIDRA_STARTUP_TIMEOUT_MS=3600000` + `GHIDRA_HEADLESS_MAXMEM=8G`, died
+  at its own outer 1800s cap — typed `cancelled`, `cleanup:complete`, no
+  evidence sealed, deadline never reached (RSS peak 8.89GB > `-Xmx8G`; the heap
+  knob is load-bearing; r4-12's 900s wall is removed — the constraint moved to
+  wall-clock depth). Claim cannot verify; no knowledge entry (CR3's
+  re-run-dressed-as-a-move refusal); command A 79/79 both sides. Decisive-run
+  recipe recorded (scoped systemd containment, TMPDIR off tmpfs, deadline-only
+  >5400s).
+- C3 operability — NOT VERIFIED (form refuted): gate implementations proven
+  (E14 15/15 selftest; E15 10/10 + live red→green) but the form fails the Gate
+  standard on measured grounds (unpinnable churning targets; false-positive
+  surface on honest receipt-anchored citations; frozen clause 8-vs-9-line
+  defect). Adjudicated to a future PROBE registration over in-repo citations
+  (E16 row classes) with R6's fixes; the durable repair (content-anchor
+  citations) landed under C1.
+- Custody: pre-pair 17:55:49Z 5/5 (config re-baselined `bd5a78d1…` per round-2
+  disposition). **Witnessed in-window mutate-and-revert** 18:01:40Z
+  (`9ac8023b…`, +14 lines) → reverted 18:02:33Z via `cp -p` (mtime+inode
+  restored; ctime survives); writer = interactive Kimi session afa2dd53 (CR8,
+  from its own wire.jsonl). config.toml zero-drift claim VOID as bare; four
+  other paths held; endpoints 5/5; excursion verbatim at
+  `receipts/drift-config-toml-mutate-revert-20261018T180140Z.txt`.
+- Carried debt: LOG.md:1005/:1018 receipt-anchored :2940 references (named
+  correction = this entry); lessons/2026-10-15-round-1.md:82; errata-internal
+  dead-token rise (unit stated); E22 census scope drift; C3 probe debt; E11's
+  unreproduced 0-byte probes; the 17.7MB agent-browser PE rung (unrun).
+- Scope: no config edits or restores (the reverted transient was left exactly
+  as found), no pushes, repo-local only; five custody paths as digests only.
