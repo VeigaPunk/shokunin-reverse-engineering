@@ -1247,3 +1247,25 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   capability-row candidate.
 - Scope: no config edits, no pushes, repo-local; service runs observed
   read-only.
+
+### arc2-loop1-round7 — coverage (the wall falls) + depth + freshness
+
+- Dispatch: 24 seats (items array counted at 24), zai/glm-5.3-flash, 24/24.
+- C1 coverage — the 91.6MB wall FALLS: service `arc2-r7-pe` sealed HELD
+  (mitigated) — 1424.663s wall, 7.9G/9G peak, zero OOM, `ev_a4aa9b0d…`,
+  75,218 procedures; three validated analyzers disabled and proven honored
+  (ghidra.log:276); zero decompile workers (the round-4 memory driver).
+  Entry + token: 80 → 81 (command A at bd3b962: 81/81, 12/12 rules).
+  Unknowns recorded: natural control, rerun id-stability.
+- C2 depth — rule #12 (caller-independent services; adjudicated bounded
+  form; corrected r4 story) + SHONEN 12/12.
+- C3 freshness — caller-independent-services lesson + README row +
+  :178→:179 coupled re-point; probe findings=0 + census PASS post-landing.
+- Custody: pre-pair == service start (21:40:26Z); post-pair 5/5; no
+  custody/repo fds on the service; r6 residue reset-failed.
+- Process notes: the r5 counting lesson held (24 == 24); CR1's stop rule
+  recorded — a fifth wall engagement without a new mechanism retires the
+  thread.
+- Carried debt: natural control; rerun stability; E41 probe-table gap;
+  r7-lesson index row.
+- Scope: no config edits, no pushes, repo-local; service observed read-only.

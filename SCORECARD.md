@@ -1093,3 +1093,65 @@ Analysis` with validated names — E4's registry work); E62's capability-row
 candidate (deferred — the recipe is not yet standalone-demonstrated);
 README index row for the r6 lesson (same deferred-pair shape as r5's); the
 round-4 E22-v9... closed (r5). Retired: none.
+
+## arc2-loop1-round7 — coverage (the wall falls) + depth + freshness: three claims admitted, 2026-10-18
+
+Round 7 of the reset window (7/10). **Round admitted: all three claims
+verify.** Light round per schedule: 24 seats on `zai-coding-plan/glm-5.3-flash`,
+24/24 delivered (items array counted at 24 — the r5 lesson holds).
+
+- Wave: reports `.ufo/waves/arc2-loop1-round7/`. Landed at `8cc81a8` +
+  `bd3b962` (artifacts).
+- C1 coverage (owned) — **the 91.6MB scale wall falls**. Third engagement,
+  first with registry-validated analyzer names: user service `arc2-r7-pe`
+  (caller-independent per rule-#12's own prescription), 9G cap, raised
+  deadline, three validated names disabled. Sealed HELD (mitigated):
+  envelope 5204 B (sha256 `a77ebee8…`, committed as a receipt), exit 0, wall
+  1424.663s (deadline unused), journal 42m35.7s CPU / 7.9G peak with zero
+  OOM lines, `ev_a4aa9b0d…`, 9 segments / **75,218 procedures** / 137,345
+  strings, `analyzer_preset` recording all three disabled names. The disable
+  is proven honored (E3: ghidra.log:276 pre-script validation, re-read false
+  before `ANALYZING`), the memory driver is identified (E1: **zero decompile
+  workers** at all watch samples vs round-4's 10 workers/3.6GiB; peak past
+  round-4's 7G death point under the 9G cap). Landed as
+  `corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md` + line-neutral map token:
+  denominator **80 → 81** (command A at `bd3b962`: 81/81, missing [],
+  dangling []). Two honest unknowns recorded: natural unmitigated hold at
+  this size, rerun id-stability.
+- C2 depth (owned) — queue-drain rule #12: long Ghidra analyze runs are
+  transient caller-independent user services, not launcher-bound scopes —
+  in the adjudicated form (R2/CR2/CR3's corrections applied: bounded
+  preference, not a "never --scope" ban; the corrected round-4 story —
+  containment worked, lifetime failed; caller-kill survival a named
+  unknown). Cites the r6 mid-rung + r7 wall entries. Command A at `bd3b962`:
+  **rules 11 → 12, 12/12 resolvable**; SHONEN:6 refreshed same commit
+  (81-237, 12/12); token-free per E21 (census PASS).
+- C3 freshness — the caller-independent-services lesson (adjudicated against
+  the round-6 CR14 generic-advice attack: artifact-anchored, domain-bounded)
+  + README lessons-index row + SCORECARD `corpus/README.md:178`→`:179`
+  re-point as the Z2-measured coupled pair; probe findings=0 + census PASS
+  post-landing.
+- Measured at `bd3b962`: command A 81/81, 12/12, 10.0/10.0; probe selftest
+  11/11 + findings=0; census v10 PASS (records below are pin-free per the
+  measured constraint). Custody: pre-pair == service-start second (21:40:26Z,
+  SC1); post-pair 5/5; the service touched no custody/repo path (fd scans);
+  `reset-failed` executed on the spent r6 unit.
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| coverage — C1 | knowledge 80/80 → **81/81** (the 91.6MB wall HELD, mitigated and proof-backed: 75,218 procedures, zero decompile workers, analyzer-disable honored); wall taxonomy closed — time, memory, name-validation classes all defeated by mechanism-matched responses | improved |
+| depth — C2 | queue-drain rules 11 → 12, 12/12 resolvable (rule #12: caller-independent services, adjudicated bounded form, two corpus citations) | improved |
+| freshness — C3 | r6-deferred lesson + index row + coupled re-point landed; zero probe/census regression | improved |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion **improved** (the arc's second denominator growth,
+and the first mitigated hold); quality improved (the wall taxonomy is closed
+with per-class mechanisms and receipts; every claimed number converged across
+six independent seats); discernment improved (CR9's costume-attack class was
+pre-empted by validated names; CR1's sunk-cost attack answered with a stop
+rule — a fifth engagement without a new mechanism retires the thread).
+Capabilities: no new row. Planned: round 8 per schedule. Carried debt
+(named): the natural-preset 91.6MB control; rerun id-stability; E4's open
+`getNumAddresses()` question; the r7-lesson's own index row (same deferred
+coupled-pair shape); probe-table coverage of the new citations (gap analysis
+E41 — non-blocking, probe is advisory). Retired: none.
