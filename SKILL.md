@@ -216,6 +216,21 @@ bullet is bounded by the lines it cites.
   A baseline-relative hash match may be reported as baseline-relative; it
   is not a same-round zero-drift observation.
 
+- **Long Ghidra analyze runs are transient user services, not scoped
+  processes.** `systemd-run --user --scope` ties the run to its launcher's
+  lifetime: the round-4 91.6MB run's scope tore down when the launching shell
+  exited, and only the journal preserved the true cause (memcg OOM at its own
+  7G cap — containment worked; lifetime failed). The service form (`--user`,
+  no `--scope`) survives the launcher and keeps `MemoryMax` containment plus
+  file-captured envelopes: round 6's mid-rung HELD that way
+  (`corpus/knowledge/2026-10-18-arc2-r6-pe-midrung.md:13`) and round 7's
+  91.6MB wall-leg HELD that way with the validated analyzer-disable recipe
+  (`corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:5-13`). Add an explicit
+  unit name, a memory+swap cap, a disk-backed non-dot TMPDIR, and read the
+  verdict from the sealed envelope plus the journal — never from the unit's
+  post-collection residue. Caller-kill survival is untested — recorded
+  unknown, never asserted.
+
 ## Config custody for live-probe rounds (SOP)
 
 Binding for every future live-probe round. A zero-drift claim without its own

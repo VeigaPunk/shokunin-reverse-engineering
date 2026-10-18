@@ -66,7 +66,7 @@ They are assessment obligations, not nine independent domain discoveries.
   counterexample at r9-02:146-169 stays the authority for `analyze_function`;
   no family beyond the recorded ones is claimed.
 - **Other stale summaries:** discharged by luna-round-5 (`7125dd4`) — the
-  frontier bullet now reads "held, not frontier" (`corpus/README.md:178`;
+  frontier bullet now reads "held, not frontier" (`corpus/README.md:179`;
   the luna-round-4 "correction" to `:160` was stale at write, and the debt it
   names is discharged) and the r13 row now reads "4 nits: 2 fixes applied at
   integration" (`corpus/README.md:138`; recorded `:128`). Closed; kept as a record.
