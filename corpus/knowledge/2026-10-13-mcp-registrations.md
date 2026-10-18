@@ -86,3 +86,26 @@ REA is registered for 3 of 7 surfaces (omp via `~/.omp/agent/mcp.json`, devin vi
   holds — `grep 'rea-agents\|ghidra\|"rea"\|mcpServers\|mcp_servers'` and
   `grep -c 'mcp'` both return 0. Verify line corrected to the strict pattern. (audit-A)
 - kimi stanza header is `config.toml:1284` (startup_timeout_sec at 1287), not 1285/1288. (audit-A, consistency)
+
+## Errata (round 3)
+
+- Every numeric `config.toml` pointer in this file is dead as of 2026-10-18. The
+  live `[mcp_servers.rea]` stanza is `~/.kimi-code/config.toml:3296-3303`
+  (sha256 `bd5a78d1a829f480f12735bdfc18f6f8778e702caac7d766a776eda5597a9f3c`,
+  3322 lines): `:3296` header, `:3298` args, `:3299` startup_timeout_sec,
+  `:3301` env. Cite it by anchor, not by line number —
+  `grep -n '^\[mcp_servers\.rea\]' ~/.kimi-code/config.toml`. Superseded dead
+  pointers: `:11` (1285-1292), `:12` (1285-1293), `:18` (1288), `:88` (1284 and
+  1287). The operator rewrote this file twice on 2026-10-18 (rea stanza
+  :1284→:2938→:3225→:3296), so any line number into it drifts; the round-2
+  drift receipt's own `:3225` re-point is likewise already dead.
+- The recorded verify at `:12` — `sed -n '1285,1293p' ~/.kimi-code/config.toml`
+  — returns provider/model tables, not the rea stanza. Corrected:
+  `sed -n '3296,3303p' ~/.kimi-code/config.toml`.
+- Live pins, 2026-10-18: devin `rea-agents@6.5.0`
+  (`~/.config/devin/mcp_config.json:7`), omp `rea-agents@6.5.0`
+  (`~/.omp/agent/mcp.json:8`), kimi `rea-agents@6.7.0`
+  (`~/.kimi-code/config.toml:3298`). The `@6.4.0` pins above are the 2026-10-13
+  observation and are no longer current; devin and omp now also carry
+  `REA_JADX_MCP_JAR`, so "identical env" no longer holds across all three files.
+  (arc2-loop1-round3)

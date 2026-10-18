@@ -56,7 +56,7 @@ They are assessment obligations, not nine independent domain discoveries.
 - **Version drift:** closed by luna-round-2 (2026-10-16) — per-client pins and
   receipted inventories (Devin/OMP 6.5.0 207/153, Kimi historical 6.4.0 170/127; both
   catalog digests; skill v42 installed / v37 expected by 6.4.0). Superseded 2026-10-18
-  (arc2-loop1-round2): Kimi pin is `rea-agents@6.7.0` at `config.toml:2940` per the
+  (arc2-loop1-round2): Kimi pin is `rea-agents@6.7.0` in `config.toml`'s `[mcp_servers.rea]` per the
   16:57:35Z custody receipt (207/153, `tools_sha256 af39310c…`; configured + package-identity, not holdings — no live Kimi 6.7.0 MCP session opened). Receipts: `.ufo/waves/luna-round-2/receipts/` + `arc2-loop1-round2/receipts/`.
 - **Authority contradiction:** closed by luna-round-3 (2026-10-16) — both
   summary sites now state verb-family-specific id identity with corpus

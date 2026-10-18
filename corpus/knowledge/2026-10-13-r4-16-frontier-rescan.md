@@ -934,3 +934,42 @@ official-proxy ops (D).
   `files[].path`, `output_directory`, `chunks[].provider_id`, and
   `derivations[].provider_blob_id`; "7 values" is attributed, not
   re-derived because the `/tmp` receipts are gone (`:115-118`).
+
+## Errata (arc2-loop1 round 3 freshness, 2026-10-18, append-only)
+
+- **`:43` pointer superseded; do NOT re-point it to `:2938`/`:2940`** — those
+  round-2 correction values are themselves content-dead at HEAD. The cited
+  `~/.kimi-code/config.toml:1284-1292` held the `[mcp_servers.rea]` stanza on
+  2026-10-13; the file is operator-rewritten in place and the stanza has since
+  been observed at `:2913` -> `:2930` -> `:2938` -> `:3225` -> `:3296` (five
+  `~/.kimi-code/config.toml.20261018-*.bak` snapshots plus the live file,
+  checked 2026-10-18). The durable anchor is the section header
+  `[mcp_servers.rea]`, not a line number. Live state at the round-3 receipt
+  (`.ufo/waves/arc2-loop1-round3/receipts/config-pre-pair.txt:4`, sha256
+  `bd5a78d1…`, re-verified 5/5 rc=0 at 2026-10-18T18:08Z): stanza `:3296-3302`,
+  pin line `:3298` = `args = [ "-y", "rea-agents@6.7.0", "mcp" ]`.
+- **Pin value moved**: this entry's "npx `rea-agents@6.4.0 mcp`" is dated —
+  kimi now pins `rea-agents@6.7.0`; devin and omp each pin `rea-agents@6.5.0`
+  (`~/.config/devin/mcp_config.json:7`, `~/.omp/agent/mcp.json:8`). The 3/7
+  registration fact (devin/omp/kimi) still holds.
+- **Run-log row `:233`** records `sed -n '1283,1294p' ~/.kimi-code/config.toml`
+  as the stanza check — kept as history; re-running that range today returns
+  models-table lines, not the stanza (same class as `:43`).
+- **Node-package line pointers are cache-scoped**: `:368`, `:406`, `:598`
+  resolve in the caches they were minted on (`dea9475797100b20` = 6.4.0; all
+  three also in 6.5.0/6.7.0); `browserAdvancedCommands.js:69-76` (`:599`)
+  resolves in 6.4.0/6.5.0 but the `compare-web-captures` run block sits at
+  `:79` in 6.7.0; `artifactInventoryEvidence.js:33` (`:766`) -> `:53` (6.5.0) /
+  `:98` (6.7.0). Cite these with the cache version.
+- **`:849` citation-defect disposition**: `PROVINCE.md` now carries the
+  corrected id (`ev_5cb1856a…`) at `:124` with the audit note (`:117` is a
+  blank line); `LOG.md:76` stays frozen append-only history with the
+  correction recorded at `LOG.md:370`.
+- **`:650-656` content note**: "all 7 REA_* gate keys ... in `~/.bashrc` AND
+  `~/.profile`" — re-checked 2026-10-18: `.bashrc:58-64` carries 7/7;
+  `~/.profile:7-12` carries 6/7 (`REA_WAKARU_COMMAND` only at `.bashrc:63`).
+- **Scope-out (verified, no drift)**: all internal table-line self-references
+  resolve at HEAD — Queue-A `:165-189`, exercised-set `:146-158`, Queue-B
+  `:195-206`, the per-errata "table lines" values, and the self/sibling
+  pointers `:751-752`, `corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:99-104`,
+  `:110-120`, `:115-118`. The `/tmp` scratch (`:244-247`) is gone as expected.
