@@ -1317,3 +1317,11 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   id-stability; natural control at 7G.
 - Scope: no config edits, no pushes, repo-local; the control service was
   observed read-only, never signalled.
+
+### operator directive — round 9 model substitution (between rounds 8 and 9)
+
+- Operator request 2026-10-18: run round 9 on codex luna max instead of sol
+  max. Applied: **arc2-loop1-round9 rides `openai-codex/gpt-6-luna-max`**
+  (16-32 seats); the loops 2-3 R9s keep the scheduled model unless the
+  operator directs otherwise. Recorded per the substitution rule; round 9's
+  dispatch and records will cite this entry.
