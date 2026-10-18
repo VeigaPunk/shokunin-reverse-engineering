@@ -1114,3 +1114,45 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   unreproduced 0-byte probes; the 17.7MB agent-browser PE rung (unrun).
 - Scope: no config edits or restores (the reverted transient was left exactly
   as found), no pushes, repo-local only; five custody paths as digests only.
+
+### arc2-loop1-round4 — depth + operability + freshness: three claims admitted
+
+- Dispatch: 64 seats, devin/deepseek-v4-1-flash-max; 60 reports (4
+  non-completions, third consecutive — standing dispatch defect). One batched
+  call.
+- C1 depth — LANDED at `265e1aa`: queue-drain rule #11 (operator-mutable file
+  citations anchor by stanza key + receipt, never bare line numbers; token-
+  free text per E21; SHONEN:6 refreshed same commit). Measured: command A
+  rules 10→11, 11/11 resolvable, 79/79, 10.0/10.0.
+- C2 operability — LANDED at `265e1aa`: citation-drift probe at
+  `.ufo/gates/citation-drift/` (7989ed4e…; probe semantics: drift reported at
+  rc 0, 2 = could-not-evaluate, --strict = gate map) + SKILL.md registry row;
+  capability row entered. Selftest 10/10; findings=0 at HEAD; built from Z1's
+  convergence (R3 F1-F3 + Z1's false-clean fix); zero graded config.toml line
+  numbers.
+- C3 freshness — LANDED at `265e1aa`: census v10 (v9 213fe679… re-keyed per
+  Z1 §4d; fixed bounds — the open-ended form's laundering was measured and
+  refused by CR3/P3/R3) → PASS 0/0/0/0 at the work tree; lessons:82
+  append-only erratum (prefix-identity proven).
+- Custody: pre-pair 19:03:02Z 5/5; in-window drift 19:17:21Z (config state 7,
+  e0634d8c…, stanza :3155; writer interactive session session_2a39273f) —
+  config.toml zero-drift VOID as bare; four other paths held; post-pair
+  19:44:52Z 5/5 on the new baseline; drift record committed.
+- Round infrastructure — the decisive 91.6MB PE run (CR2 containment: 7G
+  scope, 1G swap, disk TMPDIR, 7200s deadline) OOM-killed itself at its own
+  cap in 4m42s: kernel CONSTRAINT_MEMCG, one in-scope victim, zero bystanders
+  (containment validated in the wild; REA mislabels the kill `cancelled`).
+  Wall = memory (10 decompile workers + JVM ~7GiB), not time; next attempt:
+  REA_GHIDRA_DISABLED_ANALYZERS + worker reduction. reset-failed executed.
+- **Defect recorded:** `1692acb` ("rule 11", author `v <v@x>`) — seat V5's
+  scratch chain aborted on a /tmp quota error before its `cd`, so its
+  `git add -A && git commit` ran at the repo root: 4 pure additions (E23.md,
+  E4.md, the pre-pair receipt, a stray root e16-table.json), zero
+  modifications, no custody path. Kept in history per no-rewrite; stray file
+  removed in `265e1aa`; seat pipelines never git-mutate (reinforced in
+  dispatch templates).
+- Carried debt: lessons:37 / LOG.md:685 / rubric.json:61 SKILL citations on
+  shifted lines (pre-existing class); 60/64 dispatch defect; probe frozen-
+  guard (probe-exempt); E22-v9 fence superseded by v10; /tmp tmpfs quota
+  pressure across the wave (seats relocated to /var/tmp, evidence intact).
+- Scope: no config edits or restores, no pushes, repo-local only.

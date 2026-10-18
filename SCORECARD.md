@@ -852,3 +852,82 @@ scope-table drift (FAIL undeclared=2 at 766-line HEAD vs PASS at 701-line
 row for the citation-drift implementation; round-2 drift record's
 alibaba-token characterization correction (real diff: opencode-go-7 tables,
 CR8 §3b). Retired: none.
+
+## arc2-loop1-round4 — depth + operability + freshness: three claims admitted, 2026-10-18
+
+Round 4 of the reset window (4/10). **All three claims verify — round
+admitted.** Parent-integrated; 64 seats dispatched, 60 reports delivered
+(4 non-completions, third consecutive — the dispatch defect class is now
+standing; root cause uninvestigated, named debt).
+
+- Wave: 64 seats on `devin/deepseek-v4-1-flash-max`; reports
+  `.ufo/waves/arc2-loop1-round4/`. Landed at `265e1aa` + `fc8e53c` (lane
+  identity; a mid-round artifact-only commit `1692acb` under a non-lane
+  identity `v <v@x>` pre-exists — see Defects below).
+- Landed (C1): `SKILL.md` queue-drain rule #11 — citations into
+  operator-mutable files anchor by stanza key + receipt, never bare line
+  numbers (the :1284→:2938→:3225→:3296 churn chain as evidence; text
+  token-free per E21 so the census reads no new locus). Same commit:
+  `SHONEN.md:6` refresh (`81-217`, 11/11).
+- Landed (C2): the citation-drift **probe** committed at
+  `.ufo/gates/citation-drift/` (probe `7989ed4e…`, 453 lines; table
+  `edaa4e59…`; expected `6ebada28…`) + registry row in `SKILL.md` — kind=probe
+  per PROTOCOL:363-364 (drift reported at rc 0, never failed; 2 =
+  could-not-evaluate; `--strict` restores the gate map). Built from Z1's
+  convergence seat (R3's F1/F2/F3 + the false-clean root path Z1 found and
+  fixed applied); zero graded config.toml line numbers (rule #11 form).
+  Capability row entered below.
+- Landed (C3): census v10 (`.ufo/gates/c1-census-v10.py`, v9
+  `213fe679…` re-keyed per Z1 §4d: two fixed-bound DATED rows + RECEIPT
+  widening) — **PASS 0/0/0/0 at the work tree**; the open-ended-bound
+  laundering path (CR3/P3/R3, measured) was refused. Plus the lessons:82
+  append-only erratum (18-line content-anchored block, prefix-identity
+  proven, 206-line result).
+- Measured at `265e1aa`: command A **rules 10 → 11, 11/11 resolvable**,
+  79/79, coverage 10.0 / depth 10.0; probe selftest 10/10 CLEAN + findings=0
+  exit 0 at `1692acb`; census v10 PASS. Custody: pre-pair 19:03:02Z 5/5;
+  **in-window drift 19:17:21Z** (7th config state today, `e0634d8c…`, stanza
+  :3155, 141 model-table lines deleted, pin value unchanged; writer =
+  interactive Kimi session `session_2a39273f`, V1) — config.toml zero-drift
+  VOID as bare (second consecutive in-window event); other four paths held;
+  post-pair 19:44:52Z 5/5 against the new baseline; drift record committed.
+- Round infrastructure: the decisive 91.6MB PE run (contained per CR2:
+  systemd scope 7G/1G-swap, disk TMPDIR, 7200s deadline) **OOM-killed itself
+  at its own memory cap in 4m42s** — the containment worked exactly as
+  designed (kernel `CONSTRAINT_MEMCG`, one in-scope victim, zero bystander
+  kills, REA's envelope mislabels it `cancelled`). The wall is memory (10
+  decompile workers 3.6GiB + JVM 3.2GiB), not time; next attempt carries the
+  `REA_GHIDRA_DISABLED_ANALYZERS` lead with worker reduction. `reset-failed`
+  executed (CR4's residue duty).
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| depth — C1 | queue-drain rules 10 → 11, resolvable 10/10 → 11/11 (command A at `265e1aa`); rule #11 carries the round-3 churn chain + errata citations; craft rules 1-10 byte-identical | improved |
+| operability (fleet; capability acquisition) — C2 | no citation-drift tooling → committed probe (selftest 10/10, findings=0 at HEAD, could-not-evaluate paths each exit 2 with a verdict line) + SKILL.md registry row + capability row entered; probe/report semantics per PROTOCOL:363-364 | improved |
+| freshness (fleet) — C3 | census verdict FAIL(undeclared=2, unreproducible at HEAD) → v10 PASS 0/0/0/0 at the work tree (fixed-bound re-key; laundering path refused) + lessons:82 discharged (content-anchored erratum) | improved |
+| coverage | 10.0 → 10.0 (79/79 at `265e1aa`) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion unchanged; quality improved (the pointer class now
+has a standing detector + a durable citation rule; the census instrument is
+revision-stable again); discernment improved (three-way convergence culture:
+four rule drafts measured identical, one landed; the false-clean probe path
+caught by Z1 and fixed before landing; CR1's over-breadth attack scoped the
+rule to asserting citations).
+Capabilities: `| citation-drift probe | reports (never fails) drift on the
+lane's pinned in-repo citations; --strict restores gate semantics | .ufo/gates/citation-drift/ (registry entry SKILL.md); selftest 10/10 at 265e1aa | arc2-loop1-round4 |` entered.
+Planned: the memory-scoped PE retry (disabled-analyzers + worker reduction);
+C1's blast-radius debts (below). Carried debt (named): `lessons:37` and
+`LOG.md:685`'s SKILL citations moved onto rule #11's text by the +12 shift
+(already drifted pre-round; S1/E18 verified); `evidence/round-1-2026-10-15/
+rubric.json:61` same class; the 60/64 dispatch defect class (3 rounds
+running); the probe's frozen-run guard (R6: expected.json pins no digest of
+pointer-table.json — probe-exempt by kind, gate-blocking if ever promoted);
+GhidraClient.js:607's version-relative line citations (E7); E22 v9's
+superseded fence (v10 is canonical now). Defects recorded: **`1692acb` — a
+non-lane-identity commit (`v <v@x>`) landed mid-wave by seat V5's scratch
+chain (a /tmp-quota abort skipped its `cd`; `git add -A && git commit` ran at
+the repo root): 4 pure additions, zero modifications, no custody path; kept
+in history per the no-rewrite rule; stray `e16-table.json` removed in
+`265e1aa`; seat pipelines must never run git mutations (next dispatch
+reinforces).** Retired: none.
