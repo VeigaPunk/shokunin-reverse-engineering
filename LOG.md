@@ -1289,3 +1289,31 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   rounds do not count toward the stagnation window. Recorded per the
   substitution/skip logging rule; the skipped rounds' records will cite this
   entry.
+
+### arc2-loop1-round8 — the natural control seals the attribution
+
+- Dispatch: 20 seats (items counted at 20), zai/glm-5.3-flash, 20/20.
+- C3 calibration — natural control SEALED: `arc2-r8-ctl` (91.6MB, NO
+  disabled analyzers, same caps/deadline as r7) kernel-OOM-killed at 9G in
+  4m42.945s, 10-12 decompile workers, round-4's profile reproduced → the
+  analyzer disable is PROVEN NECESSARY; r7 entry errata'd append-only
+  (attribution scoped, not corrected); named unknown "natural hold" resolves
+  (none at this cap). R1's fairness matrix: only the disable differed.
+- C1 operability — capability row entered (contained user-service analyze,
+  analyzer-disable recipe; first-working r7; r8 kill cited as necessity
+  proof); insertion coupled with census SCOPE re-key + probe sc698 re-pin
+  (wave-measured; both instruments green post-commit at 6bc4c29).
+- C2 freshness — re-scoped by the wave (declared reading already landed in
+  r7 — double-count avoided): mechanism-matched-walls lesson + README row +
+  :179→:180 coupled re-point.
+- Custody: pre-pair == service-start second; in-window config.toml drift
+  (operator-side class) recorded; post-pair re-baselines; reset-failed on
+  the spent unit.
+- Process notes: the probe grades git objects at HEAD — gate runs belong
+  post-commit (a pre-commit flag sent us looking for a phantom); roster
+  freeze file still unwired (4th wave).
+- Retired: the 91.6MB wall thread (CR1's stop rule).
+- Carried debt: roster-freeze; README:22/:174 stale wall text; rerun
+  id-stability; natural control at 7G.
+- Scope: no config edits, no pushes, repo-local; the control service was
+  observed read-only, never signalled.

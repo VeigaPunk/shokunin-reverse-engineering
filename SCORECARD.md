@@ -1156,3 +1156,63 @@ Capabilities: no new row. Planned: round 8 per schedule. Carried debt
 `getNumAddresses()` question; the r7-lesson's own index row (same deferred
 coupled-pair shape); probe-table coverage of the new citations (gap analysis
 E41 — non-blocking, probe is advisory). Retired: none.
+
+## arc2-loop1-round8 — operability + freshness + calibration: three claims admitted, 2026-10-18
+
+Round 8 of the reset window (8/10). **Round admitted: all three claims
+verify.** Light round per schedule: 20 seats on `zai-coding-plan/glm-5.3-flash`,
+20/20 delivered (items counted at dispatch; the roster-freeze file is still
+not wired — 4th wave, named debt).
+
+- Wave: reports `.ufo/waves/arc2-loop1-round8/`. Landed at `6bc4c29` +
+  `d0d2575` (artifacts).
+- C3 calibration (owned) — the natural control, sealed decisively: user
+  service `arc2-r8-ctl` ran the same 91.6MB target with NO disabled analyzers
+  (absence verified on both channels — unit env + options pre-script) under
+  the identical cap/deadline/heap as round 7, and was kernel-OOM-killed at
+  the 9G cap in 4m42.945s with 10-12 decompile workers — round-4's kill
+  profile reproduced (journal `decompile invoked oom-killer`; envelope typed
+  `cancelled`, no evidence_id — the r4 mislabel class; receipt committed).
+  Attribution per the pre-registered dichotomy: **the disable is proven
+  NECESSARY**; round 7's attribution sentence was scoped, not corrected, by
+  append-only erratum on the wall entry (the worker-elimination mechanism is
+  corroborated by the mitigated run's zero-worker profile). The r7 entry's
+  named unknown "natural unmitigated hold" resolves: none exists at this cap.
+  R1's fairness matrix: only the disable differed. In-window custody drift
+  (config.toml, operator-side churn class) recorded; post-pair re-baselines.
+- C1 operability (fleet; capability) — the contained user-service analyze
+  capability row enters (AXES.md §Capabilities): scoped per the wave's
+  constraints (R2/CR2) to the analyzer-disable recipe, first-working round 7,
+  with the r8 kill cited as the necessity proof, not containment evidence.
+  Insertion coupled with the instrument re-keys the wave measured (census
+  v10 SCOPE +1 on three DATED rows; probe sc698 re-pin) — all in the same
+  commit, both instruments green post-commit.
+- C2 freshness (fleet) — re-scoped mid-wave (the wave caught that the
+  declared reading was already landed in round 7 — double-count avoided):
+  the mechanism-matched-walls lesson + README index row + SCORECARD
+  `corpus/README.md:179`→`:180` coupled re-point; probe findings=0 post-landing.
+- Measured at `d0d2575`: command A 81/81, 12/12, 10.0/10.0 (the capability
+  row and lessons ride outside the measured surfaces); probe selftest 11/11
+  + findings=0; census v10 PASS with the re-keyed scope.
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| calibration — C3 | r7 attribution single-arm (three variables changed vs r4) → controlled confirmation: kill at 4m42.945s/9G/10-12 workers vs hold at 1424.663s/7.9G/zero workers; r7 entry errata'd append-only; the lane's self-assessment is now experiment-backed | improved |
+| operability (fleet; capability) — C1 | no contained-analyze capability → capability row entered (scoped, evidenced by the paired sealed demonstrations) | improved |
+| freshness (fleet) — C2 | no r8 lesson/index row → mechanism-matched-walls lesson + row + coupled re-point (double-count of r7's row avoided by the wave's catch) | improved |
+| coverage / depth | 10.0 / 10.0 (command A at d0d2575) | unchanged |
+
+Learning trends: expansion unchanged; quality improved (attribution by
+controlled experiment — the strongest evidence class the lane has produced);
+discernment improved (the wave re-scoped its own freshness claim when the
+records contradicted the premise; the probe-vs-worktree grading lesson is
+recorded).
+Capabilities: `| contained user-service analyze of oversized PEs
+(analyzer-disable recipe) | ... | arc2-loop1-round7 |` entered.
+Planned: round 9 per schedule. Carried debt (named): roster-freeze file (4th
+wave); natural control at the old 7G cap (does the cap alone matter? —
+lower-value, named); r8 "zero workers" claim unverified for the natural run
+(R3's note — the claim is about the mitigated run only); README:22/:174 stale
+pre-fall wall text (R2 — next README-touching round); rerun id-stability.
+Retired: the 91.6MB wall thread per CR1's stop rule (a ninth engagement needs
+a genuinely new mechanism).
