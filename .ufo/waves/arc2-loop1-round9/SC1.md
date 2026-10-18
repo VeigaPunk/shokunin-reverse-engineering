@@ -1,0 +1,25 @@
+# SC1 — custody corroboration + repository census
+
+## 1. Verdict
+HEAD is `d64ce5e0c64f919e9cf8b47e9455cdc763e587f8`. Tracked and staged trees are clean; the worktree is **not literally clean** because the pre-pair receipt was already untracked before this report. Command A reproduces 81/81 mapped, 12/12 resolvable, 10.0/10.0. C1 census v10 passes. Pre-pair custody corroborates 5/5 current path hashes.
+
+## 2. Evidence
+
+- `git rev-parse HEAD && git status --short --branch` → `d64ce5e0c64f919e9cf8b47e9455cdc763e587f8`; `## main...origin/main [ahead 29]`; `?? .ufo/waves/arc2-loop1-round9/`. More precise pre-report `git status --porcelain=v1 --untracked-files=all && git diff --stat && git diff --cached --stat` → `?? .ufo/waves/arc2-loop1-round9/receipts/config-pre-pair.txt`; no diff-stat output. `git diff --exit-code && git diff --cached --exit-code` exited 0. Thus no tracked/staged edits, but one pre-existing untracked receipt.
+- Command A, using the SCORECARD.md:92-123 recipe against immutable `REV=d64ce5e0c64f919e9cf8b47e9455cdc763e587f8`, output: `{"citation_resolved_rules": 12, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 81, "mapped": 81, "missing": [], "revision": "d64ce5e0c64f919e9cf8b47e9455cdc763e587f8", "rule_blocks": 12}`.
+- `python3 .ufo/gates/c1-census-v10.py --quiet` → anchors `devin=6.5.0, omp=6.5.0, kimi=6.7.0`; `SCOPE-ERRORS []`; `G2 ... ok`; `G7 ... []`; `G11 ... []`; `VERDICT: PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0)` (instrument verdict contract at `.ufo/gates/c1-census-v10.py:67-70,399-428`). No live probes were run.
+- `sha256sum /home/vgpnk/.config/devin/mcp_config.json /home/vgpnk/.omp/agent/mcp.json /home/vgpnk/.kimi-code/config.toml /home/vgpnk/.bashrc /home/vgpnk/.profile` returned, in order: `16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4`, `38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b`, `6ba8a0f95b8508229fe7137613819597b4da3ea92a873340f2d82b3cf36a73ac`, `7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598`, `6c6be761d3b199c964c95e724d7cdc9f4f902e0c3bdd6a532361b20a53db4f30`; all exactly match `.ufo/waves/arc2-loop1-round9/receipts/config-pre-pair.txt:1-6` (timestamp `2026-10-18T23:36:53Z`).
+- `git show HEAD:corpus/README.md` rows 22 and 117 still say respectively “admitted but dies at the ~900s internal Ghidra session deadline” and “provider_timeout at ~900s ... not OOM; control re-run byte-identical” (`corpus/README.md:22,117`). Contradicting later evidence: r7 mitigated hold and fall at `SCORECARD.md:1106-1120`; r8 natural control and necessary-disable result at `SCORECARD.md:1169-1182`; append-only erratum at `corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:23-37`. The committed control envelope itself records a cancelled/no-evidence envelope (`.ufo/waves/arc2-loop1-round8/receipts/r8-ctl-envelope.json:1-5,38-39`); OOM attribution is the round's recorded journal result, not an OOM field in that envelope.
+
+## 3. Verbatim-landable same-line draft
+
+```text
+| `knowledge/2026-10-13-r4-12-godot-arm64-scale`, `2026-10-18-arc2-r6-pe-midrung`, `2026-10-18-arc2-r7-pe-wall` | The 91.6MB Godot 4.7.2 ARM64 PE wall fell in arc2 r7: a validated-analyzer-disable run held at 9G (9 segments / 75,218 procedures); the r8 same-target natural control (no disables), under the identical cap/deadline/heap, was kernel-OOM-killed at 9G, proving the disable necessary; rerun id-stability remains unknown | r7 sealed envelope/Ghidra disable proof and r8 control receipt; see `2026-10-18-arc2-r7-pe-wall` and `SCORECARD.md:1106-1120,1169-1182` |
+| `2026-10-13-r4-12-godot-arm64-scale` | 91.6MB Godot ARM64 PE wall fell in arc2 r7: mitigated hold at 9G using registry-validated analyzer disables (75,218 procedures); arc2 r8's same-target, same-cap/deadline/heap natural run with no disables was kernel-OOM-killed, proving the disable necessary; rerun id-stability remains unknown | r7/r8 sealed evidence; see `corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:13-19,23-37` and `SCORECARD.md:1106-1120,1169-1182` | 2026-10-13 |
+```
+
+## 4. Observation / inference / unknown
+
+- **Observation:** Five current hashes equal the five captured pre-pair hashes. HEAD's README retains both pre-fall statements; the round records say r7 held with mitigation and the r8 natural control OOM-killed. Census command A and C1 v10 passed.
+- **Inference:** The drafted replacements preserve each README row's physical line; after both are applied, the stale-wall-state count should be 0. This seat did not run a dedicated stale-wall-row counter, so 2→0 is not independently measured here.
+- **Unknown / limitation:** The tracked round-8 envelope records `cancelled`, not an explicit OOM field; I did not independently inspect the ephemeral service journal or probe anything. The r8 OOM conclusion here is corroborated textually from the round's recorded result and the r7 erratum. The untracked receipt's original capture provenance is not independently authenticated by hashing.
