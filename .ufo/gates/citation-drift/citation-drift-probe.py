@@ -71,7 +71,7 @@ class Findings:
             return CLEAN
         if any(f in ("snapshot_tampered", "snapshot_missing",
                      "pointer_table_unreadable", "unpinned_legacy",
-                     "root_unreadable", "internal_error")
+                     "root_unreadable", "revision_unresolvable", "internal_error")
                for f, _, _ in self.rows):
             return CNE
         if not strict:
@@ -258,11 +258,24 @@ def root_ok(root):
     return proc.returncode == 0
 
 
+def rev_ok(root, rev):
+    """True iff --rev names one commit object. A missing or non-commit rev is
+    could-not-evaluate, not a set of absent files. Never raises."""
+    proc = subprocess.run(
+        ["git", "-C", root, "rev-parse", "--verify", "--quiet", "%s^{commit}" % rev],
+        capture_output=True)
+    return proc.returncode == 0
+
+
 def run_check(root, rev, table_path, expected_path, snapshot_dir):
     findings = Findings()
     if not root_ok(root):
         findings.add("root_unreadable", root,
                      "not a readable Git work tree (git rev-parse --git-dir failed)")
+        return findings
+    if not rev_ok(root, rev):
+        findings.add("revision_unresolvable", rev,
+                     "not a commit object (git rev-parse --verify %s^{commit} failed)" % rev)
         return findings
     try:
         table = json.load(open(table_path))
@@ -403,7 +416,8 @@ def selftest(expected_path):
                 exp_file = os.path.join(case_dir, "expected.json")
                 json.dump(expected, open(exp_file, "w"))
 
-                findings = run_check(root, "HEAD", table, exp_file,
+                rev = "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef" if case == "rev_unresolvable" else "HEAD"
+                findings = run_check(root, rev, table, exp_file,
                                      None if case == "no_snapshot_dir" else snapshot_dir)
                 got_exit = findings.verdict(strict=True)
                 got_ids = findings.ids()
