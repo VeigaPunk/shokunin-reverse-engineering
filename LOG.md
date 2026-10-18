@@ -1216,3 +1216,34 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
 - Carried debt: probe --rev; README index row + :177 re-point; GhidraClient
   citations; memory-scoped PE retry; E11's 0-byte probes.
 - Scope: no config edits, no pushes, repo-local; verification reads only.
+
+### arc2-loop1-round6 — coverage (mid-rung HELD) + operability + freshness
+
+- Dispatch: 128 seats, `xai-oauth/grok-4.7-fast`, 128/128 delivered (r5
+  lesson applied: roster frozen, items counted, method reviewed).
+- C1 coverage — mid-rung HELD: 17.7MB agent-browser PE, 2479s at 6G heap,
+  exit 0, `ev_8b688ce7…`, 11 segments / 19,012 procedures; NATURAL hold
+  (envelope preset `ghidra-default` — no mitigation in force). Landed as
+  knowledge entry + line-neutral map token: 79 → 80 (command A at b910a33:
+  80/80, missing [], dangling []). Big leg honest-negative: 91.6MB service
+  sealed `execution_failure` in 7.554s — the guessed analyzer name
+  `Decompiler Parallel Convention Analysis` is not a Ghidra registry name
+  (registered: `Call Convention ID`), REA aborts before disabling anything;
+  refusal envelope committed as a receipt; the costume-retry attack was
+  verified from the envelope before any claim.
+- C2 operability — probe `--rev` preflight: dead/absent revision → exit 2
+  `revision_unresolvable` (matches the registry row's declared map);
+  selftest 11/11; all other behaviors byte-stable.
+- C3 freshness — README lessons-index row + SCORECARD :177→:178 re-point as
+  a coupled landing (the insert alone stales the probe — Z2 measured);
+  probe findings=0 + census v10 PASS post-landing.
+- Custody: pre/post pairs 5/5 on their own baselines; the two user-service
+  runs touched no custody path; zero host OOM (containment corroborated).
+- Process notes: the round-4 `--scope` lifetime trap was the fix pattern for
+  both runs (`systemd-run --user` services, caller-independent). One parent
+  no-op caught pre-commit by the grep gate (token append's sed pattern
+  didn't match the row; re-applied by exact anchor).
+- Carried debt: renamed-analyzer retry; r6-lesson index row (deferred pair);
+  capability-row candidate.
+- Scope: no config edits, no pushes, repo-local; service runs observed
+  read-only.

@@ -1020,3 +1020,76 @@ scoped PE retry (disabled-analyzers); E11's unreproduced 0-byte probes; the
 17.7MB rung. Process deviations recorded: seat P2 appended a LOG entry
 mid-wave (content accurate, retained; seats do not write LOG — parent owns
 records). Retired: none.
+
+## arc2-loop1-round6 — coverage + operability + freshness: three claims admitted, 2026-10-18
+
+Round 6 of the reset window (6/10). **Round admitted: all three claims
+verify.** First wave of the arc at full declared strength: the items array
+carried 128 seats, 128/128 reports delivered (the r5 counting lesson applied
+— E26 froze the roster, E51 counted the dispatch, R6 reviewed the method).
+
+- Wave: 128 seats on `xai-oauth/grok-4.7-fast`; reports
+  `.ufo/waves/arc2-loop1-round6/`. Landed at `045c1b8` (C2) + `596df1c`
+  (C1+C3) + `b910a33` (artifacts).
+- C1 coverage (owned) — the scale-wall ladder advanced on two legs:
+  **mid-rung HELD**: the 17.7MB agent-browser PE (17,694,720 B, sha256
+  `a6a9a365…`) analyzed end-to-end in 2479 s at 6G heap — exit 0, evidence
+  `ev_8b688ce7…`, 11 segments / 19,012 procedures / 4,382 strings, NATURAL
+  (the envelope's `analyzer_preset` reads plain `ghidra-default` — the
+  disabled-analyzers env was not in force; the hold is unmitigated).
+  Landed as `corpus/knowledge/2026-10-18-arc2-r6-pe-midrung.md` + the
+  line-neutral map-token append (E8's r4 form — same physical line, no row
+  insert): denominator **79 → 80**, command A at `b910a33` reads 80/80,
+  missing [], dangling [], 11/11, 10.0/10.0. **Big leg honest-negative**:
+  the 91.6MB retry (caller-independent user service `arc2-r6-pe`, 9G cap)
+  sealed a typed refusal in 7.554 s — `execution_failure`, no evidence_id;
+  my guessed analyzer name `Decompiler Parallel Convention Analysis` does
+  not exist in Ghidra's registry (the registered name for that class is
+  `Call Convention ID`, E3/E4), and REA aborts before disabling ANY name.
+  Wall taxonomy now: round-4 memory-kill at 7G (10 decompile workers), this
+  round's name-validation refusal — and the ladder brackets the wall with
+  two live points (2.5MB/44s, 17.7MB/2479s natural). No token for the big
+  leg; the refusal envelope is committed as a receipt.
+- C2 operability — the citation-drift probe's `--rev` handling now matches
+  its registry row: a dead/absent revision is a preflight could-not-evaluate
+  (exit 2, finding `revision_unresolvable`) instead of seven bogus
+  `citation_file_absent` rows at rc 0. Selftest 11/11 (P3's scratch-verified
+  fix landed verbatim: preflight `git rev-parse --verify REV^{commit}` +
+  one expected.json case + the SKILL.md self-invocation cell 10→11); frozen
+  run and all other behaviors byte-stable (V4 re-ran the wave's bytes).
+- C3 freshness — the r5-deferred pair landed together (Z2 measured the
+  coupling: the insert alone stales the probe): README lessons-index row for
+  the counting lesson (after :165, 187→188) + SCORECARD's
+  `corpus/README.md:177`→`:178` re-point in the same commit; probe
+  findings=0 and census v10 PASS verified post-landing.
+- Measured at `b910a33`: command A 80/80, 11/11, 10.0/10.0; probe selftest
+  11/11 + `--rev deadbeef` → exit 2 + `--rev HEAD` findings=0; census v10
+  PASS (the section below is deliberately pin-free per Z1's measurement —
+  a version literal in an undeclared append was measured `undeclared=1`).
+  Custody: pre/post pairs 5/5 against their own baselines; the two
+  user-service runs touched no custody path (C6/E28 fd scans); zero host OOM
+  events (containment corroboration, SC1/E44).
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| coverage — C1 | knowledge 79/79 → **80/80** (mid-rung HELD, natural, ev-sealed; ladder: 2.5MB/44s → 17.7MB/2479s → 91.6MB wall with two named wall classes); big leg typed refusal recorded with envelope receipt | improved |
+| operability (fleet) — C2 | probe dead-rev → 7 bogus findings at rc 0 → exit 2 `revision_unresolvable` matching the declared map; selftest 10 → 11 cases | improved |
+| freshness (fleet) — C3 | r5-deferred index row + re-point landed as a coupled pair; zero probe/census regression | improved |
+| depth | 10.0 → 10.0 (command A at b910a33) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion **improved** (a new verified surface — the first
+denominator growth of the arc); quality improved (the wall taxonomy is now
+three-class with live evidence; the honest-negative branches pre-written by
+the wave meant neither refusal nor costume cost a round); discernment
+improved (CR9's "costume retry" attack was verified in the envelope before
+any claim; my own sed-pattern no-op on the token append was caught by the
+grep gate, not by review).
+Capabilities: no new row (the contained-run recipe remains round
+infrastructure, not yet a demonstrated standalone capability).
+Planned: round 7 per schedule. Carried debt (named): the renamed-analyzer
+retry (`Call Convention ID` + `Decompiler Parameter ID`/`Decompiler Switch
+Analysis` with validated names — E4's registry work); E62's capability-row
+candidate (deferred — the recipe is not yet standalone-demonstrated);
+README index row for the r6 lesson (same deferred-pair shape as r5's); the
+round-4 E22-v9... closed (r5). Retired: none.
