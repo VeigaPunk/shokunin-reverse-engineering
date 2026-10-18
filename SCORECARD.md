@@ -1216,3 +1216,53 @@ lower-value, named); r8 "zero workers" claim unverified for the natural run
 pre-fall wall text (R2 — next README-touching round); rerun id-stability.
 Retired: the 91.6MB wall thread per CR1's stop rule (a ninth engagement needs
 a genuinely new mechanism).
+
+## arc2-loop1-round9 — freshness + depth + operability: three claims admitted, 2026-10-18
+
+Round 9 of the reset window (9/10). **Round admitted: all three claims
+verify.** Light round per schedule: 24 seats on `openai-codex/gpt-6-luna-max`
+(operator substitution, recorded), 24/24 delivered (items counted; the roster
+was frozen retrospectively this round — the pre-dispatch wiring lands via C3's
+lesson amendment).
+
+- Wave: reports `.ufo/waves/arc2-loop1-round9/`. Landed at `ba06c4d` +
+  `3fb6803` (artifacts).
+- C1 freshness — the stale pre-fall wall text, with CR1's correction applied:
+  the current-state rows (`corpus/README.md:22` map row, `:175` frontier
+  bullet) now state the fall (r7 mitigated hold + r8 natural control, with
+  the r8 attribution carried via the erratum/journal — the receipt's
+  `cancelled` wrapper is not itself the OOM diagnosis, R1's limit observed);
+  the dated r4 synopsis at `:117` stays historical. Same-line rewords, zero
+  shift; stale-wall-state rows 2 → 0.
+- C2 depth (owned) — queue-drain rule #13: a mitigation claim carries its
+  natural control (same target, caps, deadline; only the treatment absent;
+  compare paired outcomes before attributing necessity) — bounded to the
+  tested envelope, two corpus citations, token-free per E21. Command A at
+  `3fb6803`: rules 12 → 13, 13/13 resolvable; SHONEN:6 refreshed same commit
+  (81-243, 13/13).
+- C3 operability — the roster-freeze debt closes honestly: the round-9 roster
+  is frozen as `receipts/roster-frozen.txt` (retrospective — stated in its
+  header), and the counting lesson gains the wire-it amendment: pre-dispatch
+  roster + a `len(items) == roster rows` assertion in the dispatch command;
+  rounds 10+ freeze pre-dispatch.
+- Measured at `3fb6803`: command A 81/81, 13/13, 10.0/10.0; probe selftest
+  11/11 + findings=0; census v10 PASS; custody pre/post pairs 5/5 on their own
+  baselines (no live probes this round).
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| freshness — C1 | stale pre-fall wall-state rows 2 → 0 (current-state cells reworded same-line; dated synopsis preserved) | improved |
+| depth — C2 | queue-drain rules 12 → 13, 13/13 resolvable (rule #13: mitigation carries its natural control) | improved |
+| operability — C3 | roster-freeze unwired (4 rounds of debt) → frozen roster artifact + the wire-it amendment (pre-dispatch gate for rounds 10+) | improved |
+| coverage / calibration | 10.0 / 10 (command A at 3fb6803) | unchanged |
+
+Learning trends: expansion unchanged; quality improved (the README now
+matches the sealed record; the dated/current boundary is explicit); discernment
+improved (CR1 caught the wrong-second-row in the round's own claim and the
+parent folded it pre-landing; R1's receipt-vs-journal attribution limit is
+preserved in the reworded text).
+Planned: round 10 per schedule (hyper/deepseek-v4.1-flash, 64-128 seats).
+Carried debt (named): roster pre-dispatch wiring (lands operationally at
+round 10); rerun id-stability; README:117 stays dated (correct); the r4-row
+capability backfill (r8's E3 observation — r4's citation-drift row never
+entered the capabilities table; low value, named). Retired: none.

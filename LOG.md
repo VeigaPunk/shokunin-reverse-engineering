@@ -1325,3 +1325,23 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   (16-32 seats); the loops 2-3 R9s keep the scheduled model unless the
   operator directs otherwise. Recorded per the substitution rule; round 9's
   dispatch and records will cite this entry.
+
+### arc2-loop1-round9 — freshness (wall text) + depth (rule #13) + operability (roster)
+
+- Dispatch: 24 seats (items counted), openai-codex/gpt-6-luna-max (operator
+  substitution recorded), 24/24; roster frozen retrospectively (C3's
+  amendment wires pre-dispatch freeze for rounds 10+).
+- C1 freshness — stale pre-fall wall rows reworded same-line (:22 map, :175
+  frontier; CR1's correction: :117 is the dated r4 synopsis, left historical;
+  R1's limit: the r8 `cancelled` wrapper is not the OOM diagnosis — the
+  rewords carry attribution via the erratum/journal). Stale-wall-state 2 → 0.
+- C2 depth — queue-drain rule #13 (a mitigation claim carries its natural
+  control; bounded, two corpus citations, token-free) + SHONEN 13/13;
+  command A at 3fb6803: 81/81, 13/13, 10.0/10.0.
+- C3 operability — roster frozen (`receipts/roster-frozen.txt`) + the
+  counting lesson's wire-it amendment (pre-dispatch roster + items==roster
+  assertion).
+- Custody: pre/post pairs 5/5; no live probes (textual round).
+- Carried debt: roster pre-dispatch wiring (operational at round 10); rerun
+  id-stability; r4-row capability backfill (low value).
+- Scope: no config edits, no pushes, repo-local.
