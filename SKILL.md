@@ -230,6 +230,14 @@ bullet is bounded by the lines it cites.
   verdict from the sealed envelope plus the journal — never from the unit's
   post-collection residue. Caller-kill survival is untested — recorded
   unknown, never asserted.
+- **A mitigation claim carries its natural control: same target, caps, and
+  deadline; only the treatment is absent.** Compare paired outcomes before
+  attributing necessity; cite both runs. The 91.6MB PE held with three
+  registry-validated analyzers disabled
+  (`corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:13-19`); the matched natural
+  control omitted the disables under the same caps/deadline and was
+  kernel-OOM-killed (`corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:23-37`).
+
 
 ## Config custody for live-probe rounds (SOP)
 

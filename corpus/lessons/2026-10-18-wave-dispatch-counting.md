@@ -57,3 +57,13 @@ adjudication, and the root-cause line (confirmed evidence or `unknown`).
 - Unique valid reports / dispatched; set-difference seats (if any):
 - Corrections to prior records (append-only pointers):
 - Per-claim adjudication, separate from delivery count:
+
+## Amendment (arc2-loop1-round9, append-only): wire the freeze
+
+Rules 1-4 stand; the missing step was mechanical. Before any dispatch: write
+the roster file under the round's receipts/ (seat IDs + scope one-liners +
+the freeze timestamp), then assert `len(items) == roster rows` in the same
+command that dispatches. The round-9 roster was frozen retrospectively (this
+amendment's existence is the admission); rounds 10+ freeze pre-dispatch. A
+roster that cannot be produced before dispatch is a dispatch that should not
+run.
