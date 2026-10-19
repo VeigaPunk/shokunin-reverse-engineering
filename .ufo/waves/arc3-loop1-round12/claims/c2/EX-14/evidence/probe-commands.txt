@@ -1,0 +1,19 @@
+REA=/home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents
+ROOT=/var/tmp/kaidoku-ex14-r12
+TMPDIR=$ROOT
+node --version -> v26.12.0
+node "$REA/scripts/rea.mjs" --version -> 6.7.0
+
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-evm-interface "$ROOT/evm/base/selector.hex" hex --format json --full-output > evm-base1.json
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-evm-interface "$ROOT/evm/base/selector.hex" hex --format json --full-output > evm-base2.json
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-evm-interface "$ROOT/evm/copy/selector.hex" hex --format json --full-output > evm-copy.json
+
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-rust-binary "$ROOT/rust/base/rustc" --format json --full-output > rust-base1.json
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-rust-binary "$ROOT/rust/base/rustc" --format json --full-output > rust-base2.json
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-rust-binary "$ROOT/rust/copy/rustc" --format json --full-output > rust-copy.json
+
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-artifact "$ROOT/artifact/base/jq" --format json --full-output > artifact-base1.json
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-artifact "$ROOT/artifact/base/jq" --format json --full-output > artifact-base2.json
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-artifact "$ROOT/artifact/copy/jq" --format json --full-output > artifact-copy.json
+
+Each stdout was captured in this directory as `<name>.json`; stderr files are empty. All input copies and TMPDIR were under /var/tmp; none of the calls executed a target program.

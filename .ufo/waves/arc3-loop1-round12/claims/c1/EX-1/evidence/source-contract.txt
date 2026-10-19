@@ -1,0 +1,9 @@
+Pinned source root: `/home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents`; source file SHA-256 values are recorded in `source-hashes.txt` and package version in `rea-version.txt`.
+
+`dist/cli/coreBinaryCommands.js:218-245` registers `rea function <path> [address]`; the call invokes `runDirectAnalysis(args.path, "analyze_function", { procedure: ... })`. The artifact path selects the target, while the operation parameters passed to `analyze_function` contain the procedure selector.
+
+`dist/application/FunctionAnalysisEvidence.js:8-33` validates those parameters, calls `analysis.execute("analyze_function", arguments_, options)`, and builds Evidence with `operation: "analyze_function"`, `parameters: arguments_`, the dossier, raw result, provider, locations, limitations, and profile/relationship coverage when present.
+
+`dist/domain/evidence.js:159-183` defines the ID projection and digest call. It hashes the semantic fields `subject`, `provider`, `analysis_profile`, `predicate_type`, `operation`, `parameters`, `raw_result`, `normalized_result`, `confidence`, `authority`, `environment`, `limitations`, `relationship_coverage`, `locations`, and `evidence_links`; the nested subject is reduced to `digest`, `format`, and `architecture` (not `name` or `local_path`). `computeEvidenceId` returns `ev_` plus the digest.
+
+`dist/domain/canonicalDigest.js:8-25,27-83` hashes canonical JSON with SHA-256; object keys are sorted and values are emitted as compact JSON. The exact measured `analyze_function` projections and the independent recomputation are retained in the three full envelopes and `recompute-output.txt`.

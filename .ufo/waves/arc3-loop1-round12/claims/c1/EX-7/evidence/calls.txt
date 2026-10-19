@@ -1,0 +1,20 @@
+# Fresh REA CLI observations (stdout envelopes retained beside this file)
+# Package: /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents (rea-agents 6.7.0)
+# TMPDIR and copied input are under /var/tmp; no target execution.
+
+1) TMPDIR=/var/tmp/kaidoku-ex7-r12 node /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/scripts/rea.mjs function /usr/lib/libjq.so.1.0.4 jq_next --format json --full-output
+   exit=0; stdout=6212425 bytes; stderr=0 bytes
+   output: function-base-1.json
+
+2) TMPDIR=/var/tmp/kaidoku-ex7-r12 node /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/scripts/rea.mjs function /usr/lib/libjq.so.1.0.4 jq_next --format json --full-output
+   exit=0; stdout=6212425 bytes; stderr=0 bytes
+   output: function-base-2.json
+
+3) TMPDIR=/var/tmp/kaidoku-ex7-r12 node /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/scripts/rea.mjs function /var/tmp/kaidoku-ex7-r12/copy/libjq.so.1.0.4 jq_next --format json --full-output
+   exit=0; stdout=6212446 bytes; stderr=0 bytes
+   output: function-copy.json
+
+4) node .ufo/waves/arc3-loop1-round12/claims/c1/EX-7/evidence/recompute-ids.mjs .ufo/waves/arc3-loop1-round12/claims/c1/EX-7/evidence/function-base-1.json .ufo/waves/arc3-loop1-round12/claims/c1/EX-7/evidence/function-base-2.json .ufo/waves/arc3-loop1-round12/claims/c1/EX-7/evidence/function-copy.json
+   exit=0; output: recompute-output.json
+
+The CLI returns {ok:true,data:<Evidence>,meta}; the data.evidence_id was recomputed from the full data object, not from the stdout preview. Each call was a successful static Ghidra analysis of analyze_function on procedure jq_next. The three envelopes record the exact Evidence IDs, subjects, profile, normalized result, and limitations.
