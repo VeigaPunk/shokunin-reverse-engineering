@@ -55,9 +55,48 @@ measuring seats and the patch texts this revision applies:
      path is refused through the inode arm. Scope statement: this remains a
      self-harm guard, not a security boundary (an actor able to create the
      alias can already write the file; TOCTOU is inherent and out of scope).
+     Item 7 below (round 4) extends the same guard to the derived sidecar path
+     and to sidecar-shaped neighbours of the measured paths.
   6. SCRATCH GUARD (round-2 debt D6). `selftest --scratch <dir>` on a
      missing or unusable directory is a declared USAGE exit 2 (with a message),
      not a raw `FileNotFoundError` traceback at exit 1.
+
+ROUND-4 HARDENING (seat EX-21, wave arc3-loop1-round4). Three residuals named by
+the round-3 verdict; each was re-measured on the round-3 landed revision before
+this revision was written:
+
+  7. SIDECAR / NEIGHBOUR WRITE-GUARD SCOPE (residual (a); RV-8's `capture --out
+     X --paths X.sha256` probe). The guard now examines the receipt path AND its
+     derived sidecar path (`out.name + ".sha256"`), each against the measured
+     paths and the five custody paths by resolved path and by inode, and refuses
+     a receipt/sidecar landing on the sidecar-shaped neighbour (`<measured> +
+     ".sha256"`) of a measured path. Before this revision that probe exited 0
+     and the sidecar write destroyed X.sha256 — the very file the same run had
+     just measured. The sidecar name is derived inside the guarded region: an
+     `--out` with no usable name (`''`, `'.'`) is a declared USAGE exit 2, not a
+     `ValueError` traceback (CR-4 item 6's trap).
+  8. RECEIPT-DIRECTORY FAILURES (residual (b); CR-3/CR-4's `capture --out
+     <regular-file>/sub/r.txt` probe). `out.parent.mkdir(...)` now runs inside a
+     guarded block: a non-directory component (NotADirectoryError), a symlink
+     loop (ELOOP), or any other OSError is a declared USAGE exit 2 with a
+     message, not a raw traceback at exit 1.
+  9. COVERAGE-GATE BASIS (residual (c); EX-24's duplicate-stanza vector).
+     `--require-paths N` counts DISTINCT RESOLVED PATHS, the same basis as its
+     own `unaccounted:` list. Five duplicate stanzas for one path used to
+     satisfy `--require-paths 5` silently (exit 0, no coverage line printed);
+     they now read `REFERENCE-COVERAGE: 1/5 ...` and exit 2.
+
+BOTH-SIDES-ABSENT RULING (residual (d), adjudicated in round 4). Two stanzas
+that both record `EXISTS: no` and carry NO error line compare as MATCH: the
+instrument's contract is agreement between the two sides on every comparable
+field, and "absent" is a comparable state. This is the declared design — only
+error-carrying stanzas (`STAT-ERROR`/`READ-ERROR`) are UNEVALUABLE, and those
+are classified before this branch. Such a verdict is an agreement on absence,
+not a verified presence: the row carries the note `both sides record the path
+absent`, and the run still prints `SHA256-CONTRACT: 0/0` — a reader must not
+read it as a satisfied content contract. Closing this with a flag was considered
+and rejected: the round-3 evidence is that the fail-open lived in the
+error-carrying form, which the UNEVALUABLE class already closes.
 
 atime is deliberately NOT captured: reading a file (including this instrument's
 own sha256 pass on a relatime mount) can move atime, so an atime field would make
@@ -104,8 +143,12 @@ EXIT CODES (declared; verify -> worst finding wins):
                           open, or a stat error other than ENOENT); the receipt
                           is still written, carrying STAT-ERROR/READ-ERROR
     2   USAGE             bad arguments, unreadable/unparsable receipt, refused
-                          or failed write, insufficient reference coverage under
-                          --require-paths, unusable selftest scratch dir
+                          or failed write (including a receipt or sidecar aimed
+                          at a measured path, a custody path, or the
+                          sidecar-shaped neighbour of a measured path, and a
+                          receipt directory that cannot be created),
+                          insufficient reference coverage under --require-paths,
+                          unusable selftest scratch dir
     3   SELFTEST-FAIL     a selftest case failed
 
     capture exits 0 when every requested path is present (5/5 for the default
@@ -492,7 +535,10 @@ def compare_section(ref: dict, cand: dict) -> dict:
                 "label_findings": label_findings}
     if not ref_exists and not cand_exists:
         return {"finding": "MATCH", "moved": [], "compared": 0, "comparable": 0,
-                "notes": notes, "label_findings": label_findings}
+                "notes": notes + ["both sides record the path absent — the MATCH is an agreement"
+                                  " on absence, not a verified presence (declared ruling: only"
+                                  " error-carrying stanzas are UNEVALUABLE)"],
+                "label_findings": label_findings}
     if ref_exists and not cand_exists:
         return {"finding": "ABSENT", "moved": ["exists"], "compared": 0, "comparable": comparable,
                 "notes": notes, "label_findings": label_findings}
@@ -588,15 +634,21 @@ def verify_sets(ref_sections, cand_sections, a_name, b_name):
     return exit_code
 
 
+def distinct_paths(sections) -> set:
+    """The coverage basis: distinct RESOLVED paths. A duplicate stanza adds none
+    (round-3 residual (c) — the count and `unaccounted:` share this basis)."""
+    return {Path(s["path"]).expanduser().resolve() for s in sections}
+
+
 def reference_coverage(ref_sections, required: int) -> tuple[bool, str]:
-    """--require-paths gate (round-2 debt D3): does the reference account for
-    `required` paths? Returns (ok, line); `unaccounted` lists the canonical
-    custody paths absent from the reference (resolved-path comparison)."""
-    have = {Path(s["path"]).expanduser().resolve() for s in ref_sections}
+    """--require-paths gate (round-2 debt D3; basis fixed in round 4): does the
+    reference account for `required` DISTINCT resolved paths? Returns (ok, line);
+    `unaccounted` lists the canonical custody paths absent from the reference."""
+    have = distinct_paths(ref_sections)
     unaccounted = [p for p in CUSTODY_PATHS if Path(p).expanduser().resolve() not in have]
     line = ("REFERENCE-COVERAGE: %d/%d paths present in reference; unaccounted: %s"
-            % (len(ref_sections), required, " ".join(unaccounted) if unaccounted else "(none)"))
-    return len(ref_sections) >= required, line
+            % (len(have), required, " ".join(unaccounted) if unaccounted else "(none)"))
+    return len(have) >= required, line
 
 
 # --------------------------------------------------------------------------- #
@@ -645,16 +697,37 @@ def cmd_capture(args) -> int:
     else:
         out = Path(args.out).expanduser()
         warn_if_tmp(out)
-        guarded = [Path(p).expanduser() for p in CUSTODY_PATHS] + paths
-        if out.resolve() in {g.resolve() for g in guarded} or any(_same_file(out, g) for g in guarded):
-            print("USAGE: refusing to write a receipt over a path it measures or a custody path"
-                  " (path or inode): %s" % out, file=sys.stderr)
+        try:
+            sidecar = out.with_name(out.name + ".sha256")
+        except ValueError:
+            print("USAGE: --out carries no usable name, so no sidecar path can be derived: %r"
+                  % args.out, file=sys.stderr)
             return EXIT_USAGE
-        out.parent.mkdir(parents=True, exist_ok=True)
+        guarded = [Path(p).expanduser() for p in CUSTODY_PATHS] + paths
+        try:
+            guarded_names = {g.resolve() for g in guarded}
+            neighbours = {Path(str(g) + ".sha256").resolve() for g in guarded}
+            candidates = ((out, out.resolve()), (sidecar, sidecar.resolve()))
+        except OSError as exc:  # unresolvable --out or measured path: fail closed, USAGE
+            print("USAGE: cannot resolve the receipt or a guarded path (%s): %s" % (exc, out),
+                  file=sys.stderr)
+            return EXIT_USAGE
+        for cand, cand_res in candidates:
+            if (cand_res in guarded_names or cand_res in neighbours
+                    or any(_same_file(cand, g) for g in guarded)):
+                print("USAGE: refusing to write a receipt or its derived sidecar over a path it"
+                      " measures, a custody path, or the sidecar-shaped neighbour of one"
+                      " (resolved path or inode): %s" % cand, file=sys.stderr)
+                return EXIT_USAGE
+        try:
+            out.parent.mkdir(parents=True, exist_ok=True)
+        except OSError as exc:  # e.g. a path component is a regular file, or ELOOP
+            print("USAGE: cannot create the receipt directory (%s): %s" % (exc, out.parent),
+                  file=sys.stderr)
+            return EXIT_USAGE
         try:
             out.write_text(text, encoding="utf-8")
             digest = sha256_file(out)
-            sidecar = out.with_name(out.name + ".sha256")
             sidecar.write_text("%s  %s\n" % (digest, out.name), encoding="utf-8")
         except OSError as exc:
             print("USAGE: write failed (%s): %s" % (exc, out), file=sys.stderr)
@@ -679,8 +752,8 @@ def cmd_verify(args) -> int:
         ok, line = reference_coverage(a_sections, require)
         if not ok:
             print(line)
-            print("USAGE: reference covers %d of the required %d paths" % (len(a_sections), require),
-                  file=sys.stderr)
+            print("USAGE: reference covers %d of the required %d distinct paths"
+                  % (len(distinct_paths(a_sections)), require), file=sys.stderr)
             return EXIT_USAGE
 
     if args.live:
@@ -1080,6 +1153,121 @@ def cmd_selftest(args) -> int:
         assert rc == EXIT_USAGE, "expected USAGE for a hardlink alias, got %d" % rc
         assert before == after, "hardlinked alias was written through the guard"
     run_case(cases, "refuses-write-through-hardlink-alias", case_guard_hardlink)
+
+    # 20. coverage gate basis: DISTINCT RESOLVED PATHS, not stanzas (round-3
+    #     residual (c); EX-24's measured vector). A duplicate-padded reference
+    #     must not satisfy --require-paths 5.
+    def case_coverage_duplicates():
+        dup = root / "dupe-src.conf"
+        dup.write_bytes(payload)
+        os.utime(dup, (1000000000, 1000000000))
+        rec, rc0 = capture_to("dupe-src.txt", [dup])
+        assert rc0 == EXIT_MATCH, "reference capture exit %d" % rc0
+        header, sep, stanza = rec.read_text().partition("PATH: ")
+        assert sep and stanza, "no stanza rendered into the reference receipt"
+        dup5 = root / "dupe-5x.txt"
+        dup5.write_text(header + (sep + stanza) * 5, encoding="utf-8")
+        assert dup5.read_text().count("PATH: ") == 5, "fixture is not 5 stanzas"
+        out = root / "dupe-5x.out"
+        rc = _run_verify([str(dup5), "--live", "--require-paths", "5"], out)
+        text = out.read_text()
+        assert rc == EXIT_USAGE, "expected USAGE exit %d on 5 duplicate stanzas, got %d" % (EXIT_USAGE, rc)
+        assert "REFERENCE-COVERAGE: 1/5" in text, "coverage line does not count distinct paths: %r" % text
+        assert "VERDICT: MATCH" not in text, "duplicate-padded reference read as MATCH (the residual)"
+    run_case(cases, "coverage-gate-rejects-duplicate-stanzas", case_coverage_duplicates)
+
+    # 21. the same gate's control: five DISTINCT paths still satisfy it
+    def case_coverage_distinct():
+        five = []
+        for i in range(5):
+            p = root / ("cov-%d.conf" % i)
+            p.write_bytes(payload + bytes([48 + i]))
+            os.utime(p, (1000000000, 1000000000))
+            five.append(p)
+        rec, rc0 = capture_to("cov-5.txt", five)
+        assert rc0 == EXIT_MATCH, "reference capture exit %d" % rc0
+        out = root / "cov-5.out"
+        rc = _run_verify([str(rec), "--live", "--require-paths", "5"], out)
+        assert rc == EXIT_MATCH, "five distinct paths must satisfy --require-paths 5, got %d" % rc
+        assert "VERDICT: MATCH" in out.read_text(), "no MATCH verdict for the five-distinct control"
+    run_case(cases, "coverage-gate-passes-distinct-five", case_coverage_distinct)
+
+    # 22. write guard covers the DERIVED SIDECAR (round-3 residual (a), variant A:
+    #     --paths X.sha256 --out X). Before: exit 0 and X.sha256 destroyed.
+    def case_sidecar_scope():
+        vic = root / "sidecar-vic.sha256"
+        vic.write_bytes(b"measured file whose name ends in .sha256\n")
+        before = capture_path(vic)
+        rc = cmd_capture(argparse.Namespace(out=str(root / "sidecar-vic"),
+                                            paths=[str(vic)], label="sidecar-scope"))
+        after = capture_path(vic)
+        assert rc == EXIT_USAGE, "expected USAGE refusing a sidecar over the measured file, got %d" % rc
+        assert before == after, "the measured .sha256 file was clobbered by the receipt's sidecar"
+        assert not (root / "sidecar-vic").exists(), "a refused run left the receipt behind"
+    run_case(cases, "refuses-sidecar-over-measured-file", case_sidecar_scope)
+
+    # 23. write guard covers the SIDECAR-SHAPED NEIGHBOUR (residual (a), variant B2:
+    #     --paths X --out X.sha256, the neighbour already existing as a bystander)
+    def case_neighbour_scope():
+        meas = root / "neighbour-vic.conf"
+        meas.write_bytes(b"measured file\n")
+        neighbour = root / "neighbour-vic.conf.sha256"
+        neighbour.write_bytes(b"bystander neighbour bytes\n")
+        before_m = capture_path(meas)
+        before_n = capture_path(neighbour)
+        rc = cmd_capture(argparse.Namespace(out=str(neighbour), paths=[str(meas)],
+                                            label="neighbour-scope"))
+        assert rc == EXIT_USAGE, "expected USAGE for a receipt on a measured path's sidecar" \
+            " neighbour, got %d" % rc
+        assert capture_path(meas) == before_m, "the measured file changed"
+        assert capture_path(neighbour) == before_n, "the sidecar-shaped neighbour was clobbered"
+    run_case(cases, "refuses-receipt-over-sidecar-neighbour", case_neighbour_scope)
+
+    # 24. a receipt directory that cannot be created is the declared USAGE class,
+    #     not a raw traceback (round-3 residual (b); CR-3 §3 / CR-4 item 5).
+    def case_out_parent_usage():
+        blocker = root / "not-a-dir.txt"
+        blocker.write_bytes(b"a regular file, not a directory\n")
+        out = root / "not-a-dir.txt" / "sub" / "receipt.txt"
+        tool = str(Path(__file__).resolve())  # the running script (rule-#14 identity arm)
+        p = subprocess.run([sys.executable, tool, "capture", "--out", str(out),
+                            "--paths", str(blocker), "--label", "out-parent"],
+                           capture_output=True, text=True)
+        assert p.returncode == EXIT_USAGE, "expected USAGE exit %d, got %d" % (EXIT_USAGE, p.returncode)
+        assert "Traceback" not in p.stderr, "raw traceback for an uncreatable receipt dir: %s" % p.stderr
+        assert not out.exists(), "a partial receipt was left behind"
+        loop = root / "symlink-loop"
+        if not loop.is_symlink():
+            os.symlink(str(loop), str(loop))
+        p2 = subprocess.run([sys.executable, tool, "capture", "--out", str(loop / "r.txt"),
+                             "--paths", str(blocker), "--label", "out-parent-loop"],
+                            capture_output=True, text=True)
+        assert p2.returncode == EXIT_USAGE, "expected USAGE exit %d for ELOOP, got %d" % (
+            EXIT_USAGE, p2.returncode)
+        assert "Traceback" not in p2.stderr, "raw traceback for ELOOP: %s" % p2.stderr
+    run_case(cases, "out-parent-not-a-directory-usage-exit", case_out_parent_usage)
+
+    # 25. the both-sides-absent ruling (round-3 residual (d)): agreement on
+    #     absence is MATCH by declared design, and the row says so; the
+    #     error-carrying form is UNEVALUABLE (cases 13-15).
+    def case_both_absent():
+        ghost = root / "ghost.conf"
+        ghost.write_bytes(b"ghost fixture\n")
+        rec_a, rc_a = capture_to("ghost-a.txt", [ghost])
+        assert rc_a == EXIT_MATCH, "reference capture exit %d" % rc_a
+        ghost.unlink()
+        rec_b, rc_b = capture_to("ghost-b.txt", [ghost])
+        assert rc_b == EXIT_ABSENT, "expected ABSENT capture exit %d, got %d" % (EXIT_ABSENT, rc_b)
+        out = root / "ghost-pair.out"
+        rc = _run_verify([str(rec_a), str(rec_b)], out)
+        assert rc == EXIT_ABSENT, "reference-present/candidate-absent must be ABSENT, got %d" % rc
+        out2 = root / "ghost-both.out"
+        rc2 = _run_verify([str(rec_b), str(rec_b)], out2)
+        text2 = out2.read_text()
+        assert rc2 == EXIT_MATCH, "both-absent must read MATCH by declared design, got %d" % rc2
+        assert "agreement" in text2, "the both-absent MATCH is not annotated: %r" % text2
+        assert "SHA256-CONTRACT: 0/0" in text2, "the vacuous contract line is not printed"
+    run_case(cases, "both-sides-absent-is-agreement-match", case_both_absent)
 
     passed = sum(1 for _, ok, _ in cases if ok)
     for name, ok, why in cases:
