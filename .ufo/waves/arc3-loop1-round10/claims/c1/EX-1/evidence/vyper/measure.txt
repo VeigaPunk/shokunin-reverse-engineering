@@ -1,0 +1,15 @@
+Scope: synthetic K8.vy, Vyper 0.4.3+commit.bff19ea2, -O gas, explicit EVM targets cancun and paris; static only.
+Source SHA-256: 62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d
+Compiler executable SHA-256: 615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10
+Repeat builds: both full-runtime compile pairs compared byte-identically; rederive-vyper.sh exit 0.
+Verification: 13/13 checks true for each target in verification.json.
+
+Cancun: carrier hex SHA-256 b1f7fc882e44168156da34de403fa1573bcdfb0ebe8f9e501e94926c9b7c6b96; decoded runtime 418 bytes, SHA-256 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814; opcode-walked code 400 bytes; jump table at 0x190 (400), 18 bytes / 9 uint16 entries: 0188018800fe012c00a200180188015a0074; all nine big-endian targets are JUMPDEST PCs.
+Paris: carrier hex SHA-256 0f0bcb57b2aa7e2e06e2c47864564af4b4d57af76b005f9901c3df9088145629; decoded runtime 423 bytes, SHA-256 d1af44a952ac9775dd45eae83e2f4d167d311f9f7f3db8bf762592eb979060d2; opcode-walked code 405 bytes; jump table at 0x195 (405), 18 bytes / 9 uint16 entries: 018a018a0100012e00a4001a018a015c0076; all nine big-endian targets are JUMPDEST PCs.
+
+Both prologues compute selector modulo 9, scale the slot index by 2, and use CODECOPY to load one two-byte target. The 18-byte runtime suffix is therefore treated as raw table data and excluded from the opcode walk; it is not called Solidity CBOR metadata. Vyper -f opcodes_runtime transcripts are retained in compile/{cancun,paris}.opcodes.txt.
+
+Each target has 8 compiler ABI functions (f0(uint256) through f7(uint256)), all ABI stateMutability=view. Compiler method IDs, opcode-boundary PUSH4 selectors, and REA selectors match exactly: 2ae1431c, 364605a1, 9adbf691, bf3724af, d7531d91, d7b7913b, cf35f823, 9b7c2962. Each site is PUSH4; DUP2; XOR; PUSH2; JUMPI. All 8 REA bytecode offsets match an independent opcode walk's fallthrough after JUMPI:
+2ae1431c 36->38; 364605a1 82->84; 9adbf691 128->130; bf3724af 174->176; d7531d91 220->222; d7b7913b 266->268; cf35f823 312->314; 9b7c2962 358->360.
+
+Paris minus Cancun: runtime +5 bytes (code +5; table remains 18 bytes); each of the 8 REA offsets and all 9 table targets move by +2. The Cancun prologue uses PUSH0; Paris uses PUSH1 0 for zero. No execution was performed. REA provider evmole-interface / evmole@0.9.3, evidence IDs ev_a0de67e1037b7dcdf9d32e9a49a38e225830f0c4d8c384c7503de224870ea83a (Cancun) and ev_bc35619673cc8e22dd065ad7f21cb5d1317e51626e63d8966c57526cd0c8fff5 (Paris); discovery_completeness=unknown, runtime_execution=not-performed. REA's inferred payable mutability disagrees with the compiler ABI's view and is not used as a fact.

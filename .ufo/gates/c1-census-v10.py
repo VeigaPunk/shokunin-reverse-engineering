@@ -307,6 +307,11 @@ FRONTIER = [
     ("PROVINCE.md", 161, 162, [r"Operator-gated", r"\bIDA\b"], []),
 ]
 
+FRONTIER_SECTIONS = (
+    ("PROVINCE.md", "## Frontier", 2),
+    ("PROVINCE.md", "### Round-4 frontier (post-unlock)", 3),
+)
+
 PIN = re.compile(r"rea-agents@(\d+\.\d+\.\d+)", re.I)
 VER = re.compile(r"(?<![\d.])6\.\d+\.\d+")
 PTR = re.compile(r"((?:~|/)[\w./+-]+\.(?:json|toml|ya?ml)):(\d+)")
@@ -315,7 +320,7 @@ REA_GATE = re.compile(r"rea-agents|\brea\b|config\.toml|mcp_config\.json|mcp\.js
 INLINE_MARKER = re.compile(r"historical|verified 2026-10-13|not re-probed|superseded|baseline|retain their original", re.I)
 RECEIPT = re.compile(r"2026-10-18|receipt|SHA-256|sha256|re-grepped", re.I)
 SECTION = re.compile(r"^#{1,4} ")
-BULLET = re.compile(r"^\s*[-*] ")
+BULLET = re.compile(r"^\s*[-*+] ")
 CLAUSE_SPLIT = re.compile(r"[;()\u2014\u2013]|\.\s")
 HOLDING = re.compile(r"\bheld\b|live[- ]verified", re.I)
 HOLDING_OK = re.compile(r"configured|available|not held|availability|never stands", re.I)
@@ -441,6 +446,27 @@ def frontier_check(filelines):
             if m:
                 errs.append("%s:%d-%d FORBIDDEN %r matched %r (FRONTIER-STALE)"
                             % (f, s, e, pat, m.group(0)))
+    registered_starts = {(f, s) for f, s, e, req, forb in FRONTIER}
+    for f, heading, level in FRONTIER_SECTIONS:
+        lines = filelines.get(f)
+        if not lines:
+            continue
+        starts = [i for i, line in enumerate(lines) if line.strip() == heading]
+        if len(starts) != 1:
+            errs.append("%s: heading %r occurs %d times (FRONTIER-UNEVALUABLE)"
+                        % (f, heading, len(starts)))
+            continue
+        start = starts[0]
+        end = len(lines)
+        for i in range(start + 1, len(lines)):
+            match = SECTION.match(lines[i])
+            if match and len(match.group(0).split()[0]) <= level:
+                end = i
+                break
+        for i in range(start + 1, end):
+            if BULLET.match(lines[i]) and (f, i + 1) not in registered_starts:
+                errs.append("%s:%d unregistered bullet in %r (FRONTIER-UNEVALUABLE)"
+                            % (f, i + 1, heading))
     return errs
 
 

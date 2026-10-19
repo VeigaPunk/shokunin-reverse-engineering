@@ -276,6 +276,20 @@ bullet is bounded by the lines it cites.
   dispatch" (`corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:29`). Word
   zero-findings at their class (parsed-and-empty vs excluded-from-inventory,
   `corpus/QUALITY.md:21`) and only then claim or deny byte presence.
+- **Co-land every truth dependency.** Before repairing a statement whose
+  truth depends on another deliverable, name the dependency in the patch or
+  claim (for example, a corpus entry ↔ its map token, or a receipt/pointer ↔
+  an instrument extension). Until every side can land together, keep the
+  dependent statement conditional or defer it; a scratch projection is not a
+  landed result. Land the dependency set in one commit, then rerun the named
+  acceptance check against that commit and record the measured revision. In
+  r4, the EVM bullet's Vyper wording depended on C1's corpus entry
+  (`.ufo/waves/arc3-loop1-round4/claims/c2/verdict.md:332-335`); in r8, the
+  pointer and receipt were required with C1's `ptr_check` extension
+  (`.ufo/waves/arc3-loop1-round8/claims-frozen.md:39-50`). Corpus precedents:
+  `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:51-57`,
+  `corpus/knowledge/2026-10-19-arc3-r8-vyper-optimizer-dispatch-shapes.md:5-6`,
+  and `corpus/knowledge/2026-10-19-arc3-r8-vyper-optimizer-dispatch-shapes.md:17`.
 
 
 

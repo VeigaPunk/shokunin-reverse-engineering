@@ -1,0 +1,30 @@
+--- a/.ufo/gates/c1-census-v10.py
++++ b/.ufo/gates/c1-census-v10.py
+@@ -441,6 +441,27 @@
+             if m:
+                 errs.append("%s:%d-%d FORBIDDEN %r matched %r (FRONTIER-STALE)"
+                             % (f, s, e, pat, m.group(0)))
++    lines = filelines.get("PROVINCE.md")
++    if lines is not None:
++        registered = [(s, e) for f, s, e, _, _ in FRONTIER if f == "PROVINCE.md"]
++        for heading, level in (
++            ("## Frontier", 2),
++            ("### Round-4 frontier (post-unlock)", 3),
++        ):
++            starts = [i for i, line in enumerate(lines) if line.strip() == heading]
++            if len(starts) != 1:
++                errs.append("PROVINCE.md heading %r occurs %d times (G21 frontier register)"
++                            % (heading, len(starts)))
++                continue
++            start = starts[0]
++            for i in range(start + 1, len(lines)):
++                h = re.match(r"^(#{1,6})\s+", lines[i])
++                if h and len(h.group(1)) <= level:
++                    break
++                if BULLET.match(lines[i]) and not any(s <= i + 1 <= e
++                                                       for s, e in registered):
++                    errs.append("PROVINCE.md:%d unregistered Frontier bullet "
++                                "(FRONTIER-UNEVALUABLE)" % (i + 1))
+     return errs
+
+

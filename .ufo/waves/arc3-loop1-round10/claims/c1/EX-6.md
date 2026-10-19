@@ -1,0 +1,34 @@
+# EX-6 — C1 corpus draft: Vyper hardfork dispatcher forms
+
+**Delivery:** copy-ready knowledge-entry draft only; no `corpus/` or map edit was made.
+
+- Proposed destination: `corpus/knowledge/2026-10-19-arc3-r10-vyper-hardfork-dispatch-shapes.md`
+- Proposed EVM map token: `2026-10-19-arc3-r10-vyper-hardfork-dispatch-shapes`
+- Evidence directory: `.ufo/waves/arc3-loop1-round10/claims/c1/EX-6/evidence/`
+
+## Corpus-entry draft
+
+<!-- DRAFT for parent integration. Copy this section to the proposed destination above and add the proposed token to the EVM row of corpus/README.md. -->
+
+# Vyper 0.4.3 K8 hardfork variants — selector recovery stays 8/8; PUSH0 boundary changes the runtime bytes
+
+source: `.ufo/waves/arc3-loop1-round10/claims/c1/EX-6/evidence/` (`K8.vy`; `identity.txt`; `rederive.sh`; `measure.py`; `measure.json`; `reproduction.txt`; `commandA-before.json`; each hardfork's `{runtime.hex,abi.json,methodids.json,settings.json,opcodes.txt,probe.json,probe.stderr}`).
+
+verified-at: 2026-10-19
+
+recheck: from the kaidoku repository root, run `bash .ufo/waves/arc3-loop1-round10/claims/c1/EX-6/evidence/rederive.sh`. It uses the existing Vyper 0.4.3 venv, compiles each runtime twice for `london`, `paris`, `shanghai`, `cancun`, and `prague`, checks each pair with `cmp`, emits ABI/method-id/settings/opcode outputs, runs `inspect-evm-interface` at `rea-agents@6.7.0`, then runs the dependency-free `measure.py`. Scratch and `TMPDIR` are under `/var/tmp`.
+
+- **Inputs and toolchain.** The copied synthetic source is SHA-256 `62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d`; it declares eight external `view` functions (`f0`–`f7`), each taking and returning `uint256`. Vyper reports `0.4.3+commit.bff19ea2`; the executable SHA-256 is `615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10`. All five settings outputs say `optimize: gas` and `experimental_codegen: false` (`identity.txt`; `*.settings.json`). Two fresh runtime compilations per hardfork compared byte-identically (`reproduction.txt:1-10`).
+- **Observation — bytes change at the measured hardfork boundary.** London and Paris each compile to 423 decoded bytes, SHA-256 `d1af44a952ac9775dd45eae83e2f4d167d311f9f7f3db8bf762592eb979060d2`; Shanghai, Cancun, and Prague each compile to 418 decoded bytes, SHA-256 `72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814`. The exact compiled byte strings are equal within each group. The first five bytes are `60003560e0` (London/Paris) and `5f3560e01c` (Shanghai/Cancun/Prague); the first opcode-boundary selector `PUSH4` is at PC 27 and PC 25 respectively. In both groups the modulo-indexed table is 18 bytes at the runtime tail: offset 405 / 400 respectively (`measure.json`; raw compiler opcode renderings in `london.opcodes.txt:1` and `shanghai.opcodes.txt:1`).
+- **Observation — selector set independently reconciled.** A local Keccak-256 implementation (empty-string vector `c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470`) derives the eight selectors from the ABI signatures. They equal Vyper's `method_identifiers`, all eight opcode-boundary `PUSH4` immediates, and both REA raw and normalized selector sets for all five runtimes. The set is `2ae1431c`, `364605a1`, `9adbf691`, `9b7c2962`, `bf3724af`, `cf35f823`, `d7531d91`, `d7b7913b`. Each REA row has `dispatch:"abi"`; its decoded-bytecode SHA-256 and byte count equal the freshly compiled runtime. Results are inferred static analyses, not executions. Exact calls: London `ev_43e6b9b2a4feabbd86e80ce9e501f84b343cd5ea8202d5e9bb6746e9cb685456`; Paris `ev_6267dc1a70735e39a0a4964146c56ea3c5146ccd9ce178ff48b27264ef796ed3`; Shanghai `ev_8da708f2438fd045d97b27449c48acaaeeeb26d18a6e76cdf24e5f4b904f43db`; Cancun `ev_412caf9b13206597f9a7cadb28c2a864310a2b7be49df88b51187cb3973a1b30`; Prague `ev_ee9c0dc4a1c3bae06983e03b704af7876490323f8207700ea7809d8e53306ebd` (`measure.json`; full envelopes in `*.probe.json`).
+- **Observation — dispatch and offset shape.** The opcode-boundary walk excludes the embedded table beginning at the `PUSH2 <offset>; ADD; PUSH1 0x1e; CODECOPY` source offset, rather than decoding table bytes as instructions. It finds eight `PUSH4; DUP2; XOR; PUSH2; JUMPI` compare sites in each compiler output. For every one of the five hardforks, all 8/8 REA offsets equal that selector's `PUSH4` PC + 11, and 0/8 point at a `JUMPDEST` byte (`measure.py`, `measure.json`). This byte-level characterization closes only the K8 hardfork-form residual named in `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:28`; it is not a general Vyper offset rule.
+- **Observation — inference delta.** The compiled ABI marks all eight functions `view`; REA infers `payable` for all eight in every variant (0/8 mutability agreement). This is an upstream inference delta, not a verified ABI or behavioral claim (`*.abi.json`, `*.probe.json`, `measure.json`).
+- **Limits and narrowed unknowns.** K8 is a synthetic, source-built fixture. Only these exact source bytes, Vyper `0.4.3+commit.bff19ea2`, five listed EVM-version settings, gas optimization, and the stated REA pin were measured. The envelopes report `discovery_completeness:"unknown"`, `runtime_execution:"not-performed"`, bytecode hardfork unknown, and deployment authenticity unknown. This does not establish contract execution, deployment/chain identity, other Vyper versions, other source shapes, optimizer forms, or behavior beyond these bytes.
+
+## EX-6 measurement and verdict ledger
+
+- **VERIFIED — named Unknown:** `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:28` expressly leaves Vyper hardfork dispatcher forms uncharacterized. This draft closes only the K8/0.4.3/five-setting slice described above.
+- **REPRODUCED — compile and REA matrix:** all five two-pass comparisons and all five REA probes completed. `reproduction.txt:1-12` records each pass, runtime carrier-text SHA, and Evidence ID; decoded-code identities, set equalities, compare patterns, offset rules, and compiler setting assertions are checked by `measure.py` and recorded in `measure.json`.
+- **REPRODUCED — selector and byte walk:** independent Keccak, ABI, compiler method-id, opcode PUSH4, and REA raw/normalized selector sets agree 8/8 for each setting; runtime hashes and byte lengths agree. The table bytes are bounded separately from executable instruction decoding.
+- **VERIFIED — current Command A baseline:** freshly rerun at HEAD `5694506a862c32d2f7aac44935778bce4b6184f2`, output in `commandA-before.json:1`: `knowledge_files=88`, `mapped=88`, `missing=[]`, `dangling=[]`, `citation_resolved_rules=15`, `rule_blocks=15`. This draft and its token are not yet in the corpus or coverage map.
+- **UNVERIFIABLE — post-landing count:** no source entry or map token was added, as required by the seat's write scope. The expected after-count must be measured by the integrator after landing both; this seat does not claim a post-landing 89/89 result.

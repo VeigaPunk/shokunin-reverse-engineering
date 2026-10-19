@@ -1,0 +1,25 @@
+Commands re-derived from the current worktree; all scratch and TMPDIR paths are under /var/tmp.
+
+HEAD: 5694506a862c32d2f7aac44935778bce4b6184f2
+Command A work revision: eb5a2c4af9d910bb7a3d4fced780f4641e341a24
+Source: .ufo/waves/arc3-loop1-round4/claims/c1/CR-1/vy/K8.vy
+Source copy: /var/tmp/kaidoku-ex5-r10.IQ52sM/K8.vy
+Scratch/TMPDIR: /var/tmp/kaidoku-ex5-r10.IQ52sM and /var/tmp/kaidoku-ex5-r10.IQ52sM/tmp
+
+Compiler identity command:
+PYTHONPATH="$PWD/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/lib/python3.14/site-packages" PYTHONNOUSERSITE=1 python3.14 -m vyper --version
+
+For each target in prague london, runtime pass 1 and pass 2:
+PYTHONPATH="$PWD/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/lib/python3.14/site-packages" PYTHONNOUSERSITE=1 TMPDIR=/var/tmp/kaidoku-ex5-r10.IQ52sM/tmp python3.14 -m vyper --evm-version TARGET -O gas -f bytecode_runtime /var/tmp/kaidoku-ex5-r10.IQ52sM/K8.vy
+Then cmp the two outputs. ABI, method_identifiers, settings, opcodes_runtime were each emitted with the same command and target, replacing -f with abi, method_identifiers, settings, opcodes_runtime.
+
+REA:
+node /home/vgpnk/.npm/_npx/9b9809298fe40d2c/node_modules/rea-agents/scripts/rea.mjs --version
+node /home/vgpnk/.npm/_npx/9b9809298fe40d2c/node_modules/rea-agents/scripts/rea.mjs inspect-evm-interface .ufo/waves/arc3-loop1-round10/claims/c1/EX-5/evidence/compile/TARGET.runtime.hex hex --format json
+The version output and full Prague/London JSON envelopes are retained in probe/.
+
+Independent checks:
+PYTHONPATH="$PWD/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/lib/python3.14/site-packages" PYTHONNOUSERSITE=1 python3.14 .ufo/waves/arc3-loop1-round10/claims/c1/EX-5/evidence/measure.py
+See measurement.txt and compile-recheck.txt for results.
+
+Command A was executed against immutable Git objects at HEAD and at the named work revision, with the recipe from SCORECARD.md:88-124. Captured stdout: command-A-baseline.json and command-A-work.json. The unlanded draft's post-landing count is not represented as an observed Command A result.

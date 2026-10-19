@@ -1,0 +1,17 @@
+# REA probe reproduction (all scratch and TMPDIR under /var/tmp)
+ROOT=/var/tmp/kaidoku-ex4-r10
+REA=/home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents
+node "$REA/scripts/rea.mjs" --version
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-rust-binary /usr/bin/rustc --format json --full-output
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-rust-binary /usr/bin/rustc --format json --full-output
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-rust-binary "$ROOT/copyA/rustc" --format json --full-output
+TMPDIR="$ROOT" node "$REA/scripts/rea.mjs" inspect-rust-binary "$ROOT/copyB/rustc" --format json --full-output
+sha256sum /usr/bin/rustc "$ROOT/copyA/rustc" "$ROOT/copyB/rustc"
+node .ufo/waves/arc3-loop1-round10/claims/c1/EX-4/evidence/recompute-ids.mjs
+
+Before the calls, the scratch copies were created with:
+`mkdir -p "$ROOT/copyA" "$ROOT/copyB"`
+`cp /usr/bin/rustc "$ROOT/copyA/rustc"`
+`cp /usr/bin/rustc "$ROOT/copyB/rustc"`
+
+Command A was run from SCORECARD.md:88-124 with REV=5694506a862c32d2f7aac44935778bce4b6184f2; its exact output is command-A-before.json. No corpus or map file was modified, so the post-landing 89/89 result is pending integration.
