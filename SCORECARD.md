@@ -1600,7 +1600,10 @@ chains VERIFIED. Claims measured at work commit `40de383`.
   "35 features" is a corpus miscount of its own 34-name list; C3's asar row
   names 9 where the host holds 12). Landed: EX-15's 8-hunk same-line set + EX-12's
   Core-asar-row patch + PL-2's coupled corpus erratum (the PROVINCE↔corpus
-  coupling) — all nine stale literals cleared, 162→162 lines held, no line
+  coupling) — eight stale literals cleared + one adjudicated NO-CHANGE
+  (`JEB (unprobed)` survives at :88 as shorthand for "no JEB surface held",
+  the verb having been probed at r2 — corrected from "all nine cleared" by
+  the round-5 sweep), 162→162 lines held, no line
   shifts above :116 (the SHONEN:12 clause at :114-116 preserved), B2 cites
   r12-02 AND r14-01 (the third input sub-class). `JEB (unprobed)` adjudicated
   NO-CHANGE-with-cause (the verb was probed; no JEB install exists).

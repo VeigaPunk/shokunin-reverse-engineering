@@ -35,3 +35,23 @@ Carriers — all compiled on this host with the reused solc `0.8.37+commit.f4017
 - **Scope:** RESULT-class exercise only — no Core promotion, no availability→holding claim. Family-scoped to solc-0.8.37-compiled runtime carriers compiled on this host this round (optimizer off and `--optimize --optimize-runs 200` on), under the two REA pins named; the r1 entry's scope statement is unchanged for the carrier classes it covers.
 
 Sources: `.ufo/waves/arc3-loop1-round3/claims/c1/EX-10/probe/probe-B-{opt200,nopt}-hex-{6.4.0,6.7.0}.json` + `EX-10/planted-K.json` + `EX-10/VaultB.sol` + `EX-10/out/VaultB.{opt200,nopt}.{runtime,creation}.{bin,hex}` + `EX-10/out/VaultB.{opt200,nopt}.abi.json` + `EX-10/out/VaultB.{opt200,nopt}.runtime.opcodes.txt`; `.ufo/waves/arc3-loop1-round3/claims/c1/EX-04/evidence/probe/probe-{opt200,noopt}-{hex,raw,rawbin}-6.4.0.json` + `EX-04/planted-B.txt` + `EX-04/evidence/carrierB.runtime-{opt200,noopt}.{bin,hex}` + `EX-04/evidence/probe/offset-check-{opt200,noopt}.json` + `EX-04/evidence/compile-receipt.txt`; `.ufo/waves/arc3-loop1-round3/claims/c1/EX-05/probe/probe-runtime-{hex-6.4.0,hex-6.7.0,raw-6.4.0}.json` + `EX-05/attack/probe-runtime-hex-6.4.0.json` + `EX-05/expected-selectors.txt` + `EX-05/out/CarrierB.{runtime,creation}.hex` + `EX-05/out/CarrierB.abi.json` + `EX-05/out/CarrierB.report.json` + `EX-05/src/{CarrierB.sol,attack/CarrierBErr.sol}` + `EX-05/attack/out/CarrierBErr.runtime.hex`; `.ufo/waves/arc3-loop1-round3/claims/c1/EX-07/optB-{hex,raw}-{6.4.0,6.5.0,6.7.0}.json`, `optB-hex-6.7.0-rerun.json` + `EX-07/Rv2TokenOpt.planted-K.json` + `EX-07/Rv2TokenOpt.{runtime.bin,runtime.hex,abi.json}` + `EX-07/legA-compare.txt`; `.ufo/waves/arc3-loop1-round3/claims/c1/EX-06/evidence/recheck-rv2token-hex-6.4.0.json` + `EX-06/evidence/battery-log.txt` + `EX-06/evidence/probe-carrierA-hex-{6.4.0-altpath,6.4.0-rerun,6.7.0}.json`; `.ufo/waves/arc3-loop1-round3/claims/c1/SC-2/recheck-opt200.json` + `SC-2/recheck-rv2token.json`; `.ufo/waves/arc3-loop1-round1/claims/c1/EX-02/install-receipt.txt` + `.ufo/waves/arc3-loop1-round1/tools/solc-prefix/`.
+
+## Erratum (arc3-loop1-round5 correctness sweep, append-only)
+
+- **`:24` "Creation blobs carry no runtime dispatch table" — corrected.** The
+  creation-code probe results are **parsed-and-empty** (exit 0, 0 functions) —
+  a parser-scope result, not proof of byte absence (the same class the r1
+  entry's `:31` erratum corrected, per `corpus/QUALITY.md:21`). Re-derived by
+  the round-5 c2 audit (EX-5, EX-12): the runtimes are byte-exactly embedded
+  in their initcode blobs — `VaultB` opt200 1,621 B at offset +34 in 1,655 B;
+  `VaultB` nopt 3,163 B at +80 in 3,243 B; `carrierB` opt200 1,850 B at +387
+  in 2,237 B; `carrierB` noopt 3,872 B at +1,404 in 5,276 B; `CarrierB` 1,469 B
+  at +91 in 1,560 B; `CarrierBErr` 1,253 B at +91 in 1,344 B. Embedded bytes
+  do not mean the initcode executes that dispatcher. The selector counts,
+  dispatch shapes and byte identities are unaffected.
+- **Matrix-only roster rows — recorded as UNVERIFIABLE.** The convergence
+  matrix's CarrierA-opt K=9, vaultB-opt K=11, OptVault K=5, MutMix K=6 and
+  MutMixOpt K=6 rows (`:25`) cite probe envelopes not retained in this round's
+  evidence set; the round-5 audit marks them UNVERIFIABLE (recorded, not
+  disproved) rather than adopting the summary counts. The primary-carrier
+  rows above re-derived VERIFIED.

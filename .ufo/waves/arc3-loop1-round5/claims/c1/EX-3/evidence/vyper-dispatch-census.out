@@ -1,0 +1,97 @@
+runtime bytes: 1562
+assumed jump table at 0x600 (13 buckets x 2 B) -> tail 26 B
+
+=== bucket table ===
+  [ 0] -> 0x029c  rt[668]=0x5b 
+  [ 1] -> 0x05e7  rt[1511]=0x5b empty (revert path)
+  [ 2] -> 0x050b  rt[1291]=0x5b 
+  [ 3] -> 0x0400  rt[1024]=0x5b 
+  [ 4] -> 0x05ac  rt[1452]=0x5b 
+  [ 5] -> 0x043f  rt[1087]=0x5b 
+  [ 6] -> 0x053d  rt[1341]=0x5b 
+  [ 7] -> 0x05e7  rt[1511]=0x5b empty (revert path)
+  [ 8] -> 0x0590  rt[1424]=0x5b 
+  [ 9] -> 0x0574  rt[1396]=0x5b 
+  [10] -> 0x0382  rt[898]=0x5b 
+  [11] -> 0x05e7  rt[1511]=0x5b empty (revert path)
+  [12] -> 0x0018  rt[24]=0x5b 
+
+=== leg chains (17 legs) ===
+  bucket  0 leg@0x029c sel=2e1a7d4d body=0x02a8 next=0x05e8 shape_ok=True
+  bucket  0 leg@0x05e8 sel=default-body body=0x05e9 next=- shape_ok=False
+  bucket  1 leg@0x05e7 sel=default-body body=0x05e8 next=- shape_ok=True
+  bucket  2 leg@0x050b sel=0776076f body=0x0517 next=0x05e8 shape_ok=True
+  bucket  3 leg@0x0400 sel=0c751377 body=0x040c next=0x05e8 shape_ok=True
+  bucket  4 leg@0x05ac sel=27e235e3 body=0x05b8 next=0x05e8 shape_ok=True
+  bucket  5 leg@0x043f sel=8456cb59 body=0x044b next=0x04d0 shape_ok=True
+  bucket  5 leg@0x04d0 sel=b144adfb body=0x04dc next=0x05e8 shape_ok=True
+  bucket  6 leg@0x053d sel=8da5cb5b body=0x0549 next=0x0558 shape_ok=True
+  bucket  6 leg@0x0558 sel=4643c56b body=0x0564 next=0x05e8 shape_ok=True
+  bucket  8 leg@0x0590 sel=5c975abb body=0x059c next=0x05e8 shape_ok=True
+  bucket  9 leg@0x0574 sel=48a3ef5c body=0x0580 next=0x05e8 shape_ok=True
+  bucket 10 leg@0x0382 sel=e0749a6a body=0x038e next=0x03c1 shape_ok=True
+  bucket 10 leg@0x03c1 sel=6e8efde2 body=0x03cd next=0x05e8 shape_ok=True
+  bucket 12 leg@0x0018 sel=d0e30db0 body=0x0024 next=0x00f8 shape_ok=True
+  bucket 12 leg@0x00f8 sel=1aa02d59 body=0x0104 next=0x020c shape_ok=True
+  bucket 12 leg@0x020c sel=3f4ba83a body=0x0218 next=0x05e8 shape_ok=True
+
+=== derived (selector -> body) ===
+  0776076f bucket= 2 body=0x0517 JUMPDEST@body=False
+  0c751377 bucket= 3 body=0x040c JUMPDEST@body=False
+  1aa02d59 bucket=12 body=0x0104 JUMPDEST@body=False
+  27e235e3 bucket= 4 body=0x05b8 JUMPDEST@body=False
+  2e1a7d4d bucket= 0 body=0x02a8 JUMPDEST@body=False
+  3f4ba83a bucket=12 body=0x0218 JUMPDEST@body=False
+  4643c56b bucket= 6 body=0x0564 JUMPDEST@body=False
+  48a3ef5c bucket= 9 body=0x0580 JUMPDEST@body=False
+  5c975abb bucket= 8 body=0x059c JUMPDEST@body=False
+  6e8efde2 bucket=10 body=0x03cd JUMPDEST@body=False
+  8456cb59 bucket= 5 body=0x044b JUMPDEST@body=False
+  8da5cb5b bucket= 6 body=0x0549 JUMPDEST@body=False
+  b144adfb bucket= 5 body=0x04dc JUMPDEST@body=False
+  d0e30db0 bucket=12 body=0x0024 JUMPDEST@body=False
+  e0749a6a bucket=10 body=0x038e JUMPDEST@body=False
+
+=== executed dispatcher (mini-EVM) ===
+  0776076f is_owner(address)          cd_words=1 stop=body-return      pc=0x053c leg-body=0x517 reached-body=True
+  0c751377 fee_of(uint256,uint256)    cd_words=2 stop=body-opcode-0x02 pc=0x041e leg-body=0x40c reached-body=True
+  1aa02d59 set_fee(uint256)           cd_words=1 stop=body-opcode-0x55 pc=0x020a leg-body=0x104 reached-body=True
+  27e235e3 balances(address)          cd_words=1 stop=body-opcode-0x20 pc=0x05dd leg-body=0x5b8 reached-body=True
+  2e1a7d4d withdraw(uint256)          cd_words=1 stop=body-opcode-0x20 pc=0x02bd leg-body=0x2a8 reached-body=True
+  3f4ba83a unpause()                  cd_words=0 stop=body-opcode-0x55 pc=0x029a leg-body=0x218 reached-body=True
+  4643c56b total_deposits()           cd_words=0 stop=body-return      pc=0x0573 leg-body=0x564 reached-body=True
+  48a3ef5c fee_bps()                  cd_words=0 stop=body-return      pc=0x058f leg-body=0x580 reached-body=True
+  5c975abb paused()                   cd_words=0 stop=body-return      pc=0x05ab leg-body=0x59c reached-body=True
+  6e8efde2 fee_quote(uint256)         cd_words=1 stop=body-opcode-0x02 pc=0x03df leg-body=0x3cd reached-body=True
+  8456cb59 pause()                    cd_words=0 stop=body-opcode-0x55 pc=0x04ce leg-body=0x44b reached-body=True
+  8da5cb5b owner()                    cd_words=0 stop=body-return      pc=0x0557 leg-body=0x549 reached-body=True
+  b144adfb balance_of(address)        cd_words=1 stop=body-opcode-0x20 pc=0x0501 leg-body=0x4dc reached-body=True
+  d0e30db0 deposit()                  cd_words=0 stop=body-opcode-0x20 pc=0x00a8 leg-body=0x24 reached-body=True
+  e0749a6a fee_on(uint256)            cd_words=1 stop=body-opcode-0x02 pc=0x03a0 leg-body=0x38e reached-body=True
+  execution reached the leg-derived body: 15/15
+
+  non-planted PUSH4 immediates (2):
+    08c379a0 stop=body-opcode-0x55 pc=0x05fa derived=None
+    69656e74 stop=body-opcode-0x55 pc=0x05fa derived=None
+
+=== probe bytecode_offset vs leg-derived body ===
+  0776076f probe=0x0517 derived=0x0517 match=True JUMPDEST@probe=False
+  0c751377 probe=0x040c derived=0x040c match=True JUMPDEST@probe=False
+  1aa02d59 probe=0x0104 derived=0x0104 match=True JUMPDEST@probe=False
+  27e235e3 probe=0x05b8 derived=0x05b8 match=True JUMPDEST@probe=False
+  2e1a7d4d probe=0x02a8 derived=0x02a8 match=True JUMPDEST@probe=False
+  3f4ba83a probe=0x0218 derived=0x0218 match=True JUMPDEST@probe=False
+  4643c56b probe=0x0564 derived=0x0564 match=True JUMPDEST@probe=False
+  48a3ef5c probe=0x0580 derived=0x0580 match=True JUMPDEST@probe=False
+  5c975abb probe=0x059c derived=0x059c match=True JUMPDEST@probe=False
+  6e8efde2 probe=0x03cd derived=0x03cd match=True JUMPDEST@probe=False
+  8456cb59 probe=0x044b derived=0x044b match=True JUMPDEST@probe=False
+  8da5cb5b probe=0x0549 derived=0x0549 match=True JUMPDEST@probe=False
+  b144adfb probe=0x04dc derived=0x04dc match=True JUMPDEST@probe=False
+  d0e30db0 probe=0x0024 derived=0x0024 match=True JUMPDEST@probe=False
+  e0749a6a probe=0x038e derived=0x038e match=True JUMPDEST@probe=False
+  agreement: 15/15
+  probe recovered 15 selectors; leg chains carry 15
+  probe set == leg-chain set: True
+  probe extras: []
+  leg-chain only: []

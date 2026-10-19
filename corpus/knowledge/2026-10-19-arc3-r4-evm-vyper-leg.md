@@ -30,3 +30,34 @@ Compiler and carriers — compiled on this host with the round's ONE authorized 
 - **Scope:** RESULT-class exercise only — no Core promotion, no availability→holding claim. Family-scoped to Vyper-0.4.3-compiled runtime carriers compiled on this host this round, under the two REA pins named. The r1 and r3 entries' scope statements are unchanged for the carrier classes they cover; this entry closes their shared named Unknown "Vyper and solc versions other than 0.8.37" for the Vyper half only (solc versions other than 0.8.37 remain Unknown).
 
 Sources: `.ufo/waves/arc3-loop1-round4/claims/c1/EX-02/install-receipt.txt` + `EX-02/install.log` + `EX-02/venv-manifest.sha256` + `EX-02/attest-output.txt` + `EX-02/smoke/{Smoke.vy,compile-receipt.txt,Smoke.runtime.hex,method-identifiers.txt}`; `.ufo/waves/arc3-loop1-round4/claims/c1/EX-04/src/CarrierV.vy` + `EX-04/evidence/planted-K.json` + `EX-04/evidence/probe/probe-{6.4.0-hex,6.4.0-raw,6.4.0-rawonhex,6.7.0-hex}.json` + `EX-04/out/{runtime.bin,runtime.hex,creation.bin,creation.hex,abi.json,method-identifiers.json,metadata.json,opcodes.txt,verify-report.json,compile-receipt.txt}` + `EX-04/evidence/dispatch-census.py`; `.ufo/waves/arc3-loop1-round4/claims/c1/EX-05/{planted-full.json,planted.txt,planted-vs-ex04-planted.txt,planted-vs-ex08.txt,planted-vs-method-identifiers.txt,crosscheck.txt,crosscheck-source-derived.txt,digest-agreement.txt,erc20-absence.txt,attacks.txt,ex09-peer-oracle-recheck.txt}`; `.ufo/waves/arc3-loop1-round4/claims/c1/EX-09/vyper/Ex09Vault.{vy,runtime.hex,creation.hex,abi.json}` + `EX-09/planted/planted-K.json` + `EX-09/probe/vy-*.json` + `EX-09/probe/trap-*.json` + `EX-09/probe/nb-*.json` + `EX-09/analysis/{dispatch-structure.txt,offset-rule-proof.txt,mutability-census.txt,verify-ex09.txt}`; `.ufo/waves/arc3-loop1-round4/claims/c1/EX-03/{token.vy,runtime.hex,creation.hex,abi.json,method-identifiers.json}`; `.ufo/waves/arc3-loop1-round4/claims/c1/EX-08/{recon.py,sigs-CarrierV.selectors.txt}`; `.ufo/waves/arc3-loop1-round4/claims/c1/EX-10/rerun.md` + `EX-10/evidence/var-*.json`; `.ufo/waves/arc3-loop1-round4/claims/c1/EX-07/pre-registration.md` + `EX-07/legs/A-hex-6.4.0{,-rerun}.json` + `EX-07/legs/AC-creation-*.json`; `.ufo/waves/arc3-loop1-round4/claims/c1/RV-2/evidence/{push4-census.txt,vyper-dispatch-shape.txt,my-probe-carrierV-hex-6.4.0.json,my-probe-carrierV-raw-6.4.0.json,my-probe-carrierV-hex-6.7.0.json,commandA-before.txt}`; `.ufo/waves/arc3-loop1-round4/claims/c1/PL-1/evidence/{src/CarrierW.vy,probe/CarrierV-6.4.0-hex.json,probe/CarrierV-6.4.0-raw.json,probe/CarrierV-6.7.0-hex.json,probe/CarrierW-6.4.0-hex.json,probe/CarrierW-6.7.0-hex.json,probe/EX03-6.4.0-hex.json,probe/Smoke-6.4.0-hex.json,probe/EX04creation-6.4.0-hex.json,verify.txt}`; `.ufo/waves/arc3-loop1-round4/claims/c1/VZ-1/evidence/{vyper-kk-rederive.txt,baseline-commandA.json,baseline-probe-default.txt,baseline-probe-strict.txt,baseline-probe-selftest.txt,baseline-pointer-table.sha256,baseline-head.txt}`; `.ufo/waves/arc3-loop1-round4/claims/c1/SC-1/evidence/{probe-carrierv-hex-6.4.0.json,probe-carrierv-raw-6.4.0.json,probe-carrierv-hex-6.7.0.json,probe-smoke-hex-6.4.0.json,probe-carrierv-creation-6.4.0.json,command-A-before.json}` + `SC-1/c1-inventory.txt` (seat root, not under `evidence/`; RV-2 F1); solc cross-reference: `.ufo/waves/arc3-loop1-round3/claims/c1/{EX-10,EX-04,EX-05,EX-07,SC-2}/` + `.ufo/waves/arc3-loop1-round1/claims/c1/{EX-02,EX-07,RV-2}/` (the solc-convention offset reading this entry scopes).
+
+## Erratum (arc3-loop1-round5 correctness sweep, append-only)
+
+Three corrections, each re-derived first-hand by the round-5 c2 audit seats
+(EX-5, CR-2, EX-12) — measured at `40de383`/`71668cc`:
+
+- **`:17` "initcode carries no runtime dispatch table" — corrected.** The
+  creation-code (initcode) probe results are **parsed-and-empty** (exit 0, 0
+  functions) — a parser-scope result, not proof of byte absence (per
+  `corpus/QUALITY.md:21`). The runtimes are byte-exactly embedded in their
+  initcode blobs: `CarrierV` runtime at offset +20 in its 1,637 B creation;
+  `Ex09Vault` at +24 in 659 B; `Smoke` at +27 in 248 B. Embedded bytes do not
+  mean the initcode executes that dispatcher — the corrected statement is
+  "creation probes parse empty while the runtime bytes are present verbatim".
+- **`:21` dispatch memory-copy wording — corrected.** `CODECOPY` copies the
+  *selected* two-byte table entry (`src = 0x600 + 2·(selector % 13)`,
+  `dst = 0x1e`, `size = 2`), not the whole 26-byte table to memory. The
+  13-entry uint16 table's presence at `0x600` and the 15/15 result stand.
+- **`:30` "no Core promotion" — superseded at the same commit.** The scope
+  clause's flat no-promotion sentence is contradicted by this entry's own
+  landing commit `40de383`, which writes `Core, arc3-r1/r3` and `Core,
+  arc3-r4` into `PROVINCE.md:91-93` (the r4 promotion). The RESULT-class and
+  no-availability→holding qualifications remain valid for each individual
+  probe leg; the promotion was the round's own act, and this erratum aligns
+  the entry's scope sentence with it.
+- **`Ex09Vault` input-text identity (`:13`) — recorded, not a mismatch.** The
+  checked-in `vyper/Ex09Vault.runtime.hex` is 1,165 B sha256 `05a29536…`; the
+  probe envelope's input was 1,163 B sha256 `aee38762…`. Both decode to the
+  same 581 B runtime `54b14e30…` — two input serializations of one runtime;
+  the original temp input is unavailable, so the 2-byte serialization
+  difference is recorded as UNVERIFIABLE, not a runtime-digest defect.

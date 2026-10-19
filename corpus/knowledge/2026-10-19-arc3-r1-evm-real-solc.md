@@ -33,3 +33,14 @@ Carriers — all compiled on this host with solc `0.8.37+commit.f401782d` (wave-
 - **Scope:** RESULT-class exercise only — no Core promotion, no availability→holding claim. Family-scoped to solc-0.8.37-compiled runtime carriers compiled on this host this round, under the two REA pins named.
 
 Sources: `.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/probe-runtime-hex-6.4.0.json` + `probe-runtime-raw-6.4.0.json` + `probe-runtime-hex-6.7.0.json` + `probe-rerun-a.json` + `probe-rerun-b.json` + `probe-cwd-root-6.4.0.json` + `probe-creation-hex-6.4.0.json` + `probe-EX02-smoke-bin-6.4.0.json` + `.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/attack/probe-many.json` + `.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/attack/expected-many.txt` + `expected-selectors.txt`; `.ufo/waves/arc3-loop1-round1/claims/c1/EX-06/evidence/run-hex-6.7.0.json` + `run-raw-6.7.0.json` + `planted-K.json` + `transcript.txt`; `.ufo/waves/arc3-loop1-round1/claims/c1/EX-07/reconciliation-run.txt` + `m1-rv2token-runtime.json` + `m1-kdxtoken-runtime.json` + `m2-kdxtoken-keccak.json`; `.ufo/waves/arc3-loop1-round1/claims/c1/RV-1/validation-sha3-and-vectors.txt`; `.ufo/waves/arc3-loop1-round1/claims/c1/EX-02/install-receipt.txt` + `.ufo/waves/arc3-loop1-round1/claims/c1/EX-02/smoke/out/Smoke_sol_Smoke.bin`.
+
+## Erratum (arc3-loop1-round5 correctness sweep, append-only)
+
+- **`:15` Smoke digest domain — clarified.** "solcjs `--bin` output 685 B
+  `530efc7b…`" pairs the *decoded-bytecode* size with the *ASCII-hex file's*
+  digest — two byte domains. Re-derived by the round-5 c2 audit (VZ-1, CR-2,
+  EX-5): the retained `Smoke_sol_Smoke.bin` is 1,370 ASCII-hex bytes, sha256
+  `530efc7b…`; decoding yields 685 bytecode bytes, sha256
+  `08299f31203e05e5dcdcd2453f9dd5a105a97fd94f2b48194ba18e963c368ebd`. Both
+  domains now stated; the probe result (0 functions, parsed-and-empty) is
+  unchanged.

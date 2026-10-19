@@ -1,0 +1,56 @@
+bytecode bytes=1562 sha256=57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0
+expected dispatcher prologue exact=True bytes=5f3560e01c6002600d820660011b61060001601e395f5156
+decoded prologue:
+  00: PUSH0
+  01: CALLDATALOAD
+  02: PUSH1 0xe0
+  04: SHR
+  05: PUSH1 0x02
+  07: PUSH1 0x0d
+  09: DUP3
+  0a: MOD
+  0b: PUSH1 0x01
+  0d: SHL
+  0e: PUSH2 0x0600
+  11: ADD
+  12: PUSH1 0x1e
+  14: CODECOPY
+  15: PUSH0
+  16: MLOAD
+  17: JUMP
+stack result: source_offset = 0x600 + 2*(selector % 13); CODECOPY dest=0x1e, length=2
+memory consequence: the selected 2-byte uint16 target occupies bytes [30:32]; MLOAD at 0 reads that entry for JUMP
+table: offset=0x600 (1536) entries=13 entry_width=2 total_bytes=26
+bucket table:
+  bucket= 0 table_offset=0x600 target=0x029c target_opcode=0x5b
+  bucket= 1 table_offset=0x602 target=0x05e7 target_opcode=0x5b
+  bucket= 2 table_offset=0x604 target=0x050b target_opcode=0x5b
+  bucket= 3 table_offset=0x606 target=0x0400 target_opcode=0x5b
+  bucket= 4 table_offset=0x608 target=0x05ac target_opcode=0x5b
+  bucket= 5 table_offset=0x60a target=0x043f target_opcode=0x5b
+  bucket= 6 table_offset=0x60c target=0x053d target_opcode=0x5b
+  bucket= 7 table_offset=0x60e target=0x05e7 target_opcode=0x5b
+  bucket= 8 table_offset=0x610 target=0x0590 target_opcode=0x5b
+  bucket= 9 table_offset=0x612 target=0x0574 target_opcode=0x5b
+  bucket=10 table_offset=0x614 target=0x0382 target_opcode=0x5b
+  bucket=11 table_offset=0x616 target=0x05e7 target_opcode=0x5b
+  bucket=12 table_offset=0x618 target=0x0018 target_opcode=0x5b
+all 13 table targets are JUMPDEST: True
+8da5cb5b owner() bucket=6 leg_body=1353 REA_offset=1353 match=True
+4643c56b total_deposits() bucket=6 leg_body=1380 REA_offset=1380 match=True
+48a3ef5c fee_bps() bucket=9 leg_body=1408 REA_offset=1408 match=True
+5c975abb paused() bucket=8 leg_body=1436 REA_offset=1436 match=True
+27e235e3 balances(address) bucket=4 leg_body=1464 REA_offset=1464 match=True
+d0e30db0 deposit() bucket=12 leg_body=36 REA_offset=36 match=True
+2e1a7d4d withdraw(uint256) bucket=0 leg_body=680 REA_offset=680 match=True
+1aa02d59 set_fee(uint256) bucket=12 leg_body=260 REA_offset=260 match=True
+e0749a6a fee_on(uint256) bucket=10 leg_body=910 REA_offset=910 match=True
+0c751377 fee_of(uint256,uint256) bucket=3 leg_body=1036 REA_offset=1036 match=True
+8456cb59 pause() bucket=5 leg_body=1099 REA_offset=1099 match=True
+3f4ba83a unpause() bucket=12 leg_body=536 REA_offset=536 match=True
+b144adfb balance_of(address) bucket=5 leg_body=1244 REA_offset=1244 match=True
+0776076f is_owner(address) bucket=2 leg_body=1303 REA_offset=1303 match=True
+6e8efde2 fee_quote(uint256) bucket=10 leg_body=973 REA_offset=973 match=True
+compare sites=15; distinct planted selectors=15; REA offsets matched=15/15
+occupied buckets=10/13; collision buckets=[5, 6, 10, 12] (4); chained extra legs=5; empty buckets=[1, 7, 11]
+FINAL: PASS
