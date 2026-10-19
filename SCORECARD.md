@@ -2158,3 +2158,18 @@ Planned: arc3-loop1-round14 — after the orchestrator's fresh non-author source
 sample, admit one source-backed knowledge entry only if a matching uncovered
 coverage-map question remains. ARM64X stays a frontier candidate requiring a
 real carrier and explicit steer; no unavailable sample is assumed.
+
+## Post-review correction — arc3-loop1-round13 (append-only, 2026-10-19)
+
+The pre-review trend line above is superseded: **expansion is unchanged** for
+r13. No uncovered-ground knowledge entry was admitted; source rows and the
+separately recorded curation capability are not knowledge expansion. Quality
+remains unchanged. **Discernment is improved**: the non-author
+`KaidokuR13Review` re-opened representative admits S003/S008 and rejection
+S022, and agreed with those source dispositions. The two quote-fidelity
+defects found in that review are corrected by the round-13 lesson addendum.
+
+The earlier calibration axis note and round-14 plan described the pre-review
+state. The outside sample is now complete; calibration's numeric axis score
+remains unchanged. Round 14 may mine one source-backed knowledge entry only
+if the matching uncovered coverage-map question remains.

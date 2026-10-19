@@ -57,3 +57,21 @@ Every row below was opened by the author on **2026-10-19**. Each excerpt is ≤2
 - No ARM64X sample was sought or required; no target binary or artifact was executed, and no live REA provider/session was probed.
 
 - S015 limitation: the opened OSV JSON's `details` prose names a 36.8.1 fix, while `affected[].ranges[].database_specific.extracted_events` includes 36.8.0. The row teaches comparing fields and cited fixes; this lesson does not adjudicate a release version from that inconsistent record.
+
+### Post-review citation-fidelity errata (2026-10-19)
+
+These append-only corrections supersede the S017 quote and S018 location printed in the original Gate table. The `SOURCES.md` rows themselves remain unchanged: their topic anchors are valid, and neither registry row needs a superseder.
+
+- **S017 — quote splice corrected.** Reopened pinned View8 README `ef39099b4f5076042173f9113382ebeb0630a56d`; the contiguous CLI-table sentence is “Replace address-derived function identifiers with deterministic names based on parse order.” Exact location: `Usage` → `Command-Line Arguments` → `--normalize` row. The earlier Gate text combined this row with wording from `Deterministic Function Names and Mapping CSV`; it was not a verbatim sentence.
+- **S018 — quote location corrected.** The exact quote remains “The goal is not perfect source recovery — V8 compilation is lossy, and the output of decompilation remains pseudocode.” Exact location: Check Point Research article `Introduction`, line 87 (heading at line 77), not `Decompiled output`. A correction-time fetch hit the site's AWS WAF page; the quote was already opened this round and the non-author re-open located it at line 87.
+- **Non-author taste check completed.** `KaidokuR13Review` re-opened and agreed with the scoped admit decisions for S003/S008 and the S022 rejection; it also caught the two quote defects above. The earlier Gate sentence saying the outside check was pending records its pre-review state and is superseded by this append-only note. This check verifies source curation only, not a lane-held operation.
+
+## Mistakes — post-review append-only addendum
+
+| # | class | evidence pointer | captured-by | fix |
+|---|---|---|---|---|
+| 3 | attribution | S017's Gate excerpt combined the CLI table's “identifiers” sentence with wording from the normalization section; no source sentence matches the published quotation. | `CORPUS.md` rule “A quote names its location” and SOURCES Contract v1 rule 1. | Quote one contiguous source substring; keep explanatory paraphrase in `teaches`, not quotation marks. |
+| 4 | reference-drift | S018's exact quote is at the article's `Introduction` line 87, while the original Gate pointed to `Decompiled output`. | `CORPUS.md` rule “A quote names its location” and SOURCES Contract v1 rule 1. | Re-open each quote's exact heading/line and point the Gate to the location that contains it. |
+
+The existing CORPUS/SOURCES quote rule caught both defects; no extra QUALITY criterion was added.
+

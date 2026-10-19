@@ -1745,3 +1745,18 @@ analysis run, new knowledge entry, or numeric score change.
   probed; no ARM64X capability was attempted. The orchestrator owns registry
   admission and a fresh non-author source sample. Round report:
   `.ufo/reports/round-13/kaidoku.md`.
+
+## 2026-10-19 — arc3-loop1-round13 post-review correction (append-only)
+
+The parent completed a fresh non-author source review after the lane commit.
+It agreed with representative source admissions (S003/S008) and the S022
+rejection, while finding citation-fidelity defects in the S017/S018 Gate
+quotes. The lesson now appends the exact View8 CLI sentence and the Check
+Point `Introduction` location; `SOURCES.md` anchors themselves remain valid.
+
+Trend correction: expansion is **unchanged**, not improved — no uncovered-
+ground `knowledge/` entry was admitted; source rows and the source-curation
+capability are tracked separately. Quality is unchanged; discernment is
+**improved** because the outside sample agrees with the source dispositions.
+No numeric axis score changed. Follow-on: round 14 may admit a source-backed
+knowledge entry only if the same coverage-map question remains uncovered.
