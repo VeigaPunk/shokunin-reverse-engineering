@@ -2120,3 +2120,41 @@ own `recheck:` line is not yet graded by a pointer row (kept out of C3 for
 separability); QUALITY #15's recorded-family list predates r7/r10/r11/r12;
 mid-leg retest (operator-gated); Kimi session `config_drift`;
 `.ufo/waves/arc2-loop1-round10/C3.md` dirty; `/tmp` quota standing.
+
+## arc3-loop1-round13 — source-curation capability only, 2026-10-19
+
+The r12 claims stay frozen. This round follows the stagnation nudge with one
+capability claim: keep where-to-learn evidence for the existing REA frontier.
+It does not add a domain-analysis result, a knowledge entry, or an ARM64X
+capability. The prior planned ARM64X run is not pursued under this steer.
+
+### Capability addition (append-only)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| curated source registry for existing REA frontier | Keeps opened, scoped study sources, ordered paths, recheck cadences, an auditable bounded search, and a source rejection with evidence and flip; source text is not held-capability evidence | `corpus/SOURCES.md`; `corpus/lessons/round-13.md`; `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --today 2026-10-19 --root /home/vgpnk/Projects/shokunin/.tower/worktrees/kaika/kaidoku-shokunin /home/vgpnk/Projects/shokunin/.tower/worktrees/kaika/kaidoku-shokunin` | arc3-loop1-round13 |
+
+This is an append-only capability record; the earlier line-addressed summary
+table is unchanged.
+
+### Per-axis and learning-trend verdicts
+
+| axis | evidence | verdict |
+|---|---|---|
+| coverage (owned) | No knowledge-map or province-frontier change; no owned score was changed | unchanged |
+| depth (owned) | No domain finding or durable analysis rule was admitted; no owned score was changed | unchanged |
+| calibration (owned) | No outside admit/reject spot-check yet; no owned score was changed | unchanged |
+| operability (not owned) | No REA operation or target route added | unchanged |
+| freshness (not owned) | Source revision and access anchors are recorded; no live provider drift probe | unchanged |
+| adjacency (not owned) | All new paths stay within the shipped-artifact RE boundary | unchanged |
+
+Learning trends: expansion **improved** by entry of the separately recorded
+capability, not by source-row count; the uncovered-ground knowledge-entry
+submeasure is unchanged. Quality **unchanged** (no knowledge entry was
+re-verified or superseded). Discernment **unchanged** pending the
+orchestrator-owned fresh non-author re-open of an admit and the rejection.
+
+Planned: arc3-loop1-round14 — after the orchestrator's fresh non-author source
+sample, admit one source-backed knowledge entry only if a matching uncovered
+coverage-map question remains. ARM64X stays a frontier candidate requiring a
+real carrier and explicit steer; no unavailable sample is assumed.

@@ -34,3 +34,5 @@ naming the row it supersedes, never rewritten.
 | 4 | "REA supports/refuses X" asserted from docs or memory without consulting `binary_session result.tool_availability` or `rea doctor` on this host | r1: catalog-listed ≠ held — `inspect-binary-layout` and `inspect_managed_artifact` both fail typed on this host |
 | 5 | Dynamic claims ("when the user logs in the app sends…") sourced from static call graphs, or a recorded capture presented as live observation | SKILL.md static-vs-execution boundary; captures forbid live attribution |
 | 6 | "Tool X is broken/missing" without checking REA's spawn wrapper — providers run under `prlimit` (wakaru: `--as=1GiB` kills node's V8 isolate; bind the real ELF, not the npm shim) | r4u-05: dist-source trace found `runWakaruCommand` → `prlimit --as=1073741824`; node shim OOMs, native ELF works down to 256MiB |
+
+For tier definitions, scope, and recheck policy, use `corpus/SOURCES.md`; claim admission still follows this QUALITY bar.

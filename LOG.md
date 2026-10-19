@@ -1712,3 +1712,36 @@ R12Mutation (C3 needles: PL-4 17/24 kill → order-free token lookaheads).
   `~/.bashrc` change at 21:46:35Z after the last live leg.
 - Instruments at `6a35398`: command A 91/91 + 17/17, census PASS, probe strict
   clean, selftests 13/13 and 28/28, PROVINCE 162.
+
+## 2026-10-19 — arc3-loop1-round13 — source-curation capability (records this entry)
+
+Godspeed directive: name coverage/depth/calibration; iterate in parallel; keep
+only source curation that improves future learning without upgrading source
+documentation into held REA capability. The r12 claims remain frozen and
+closed. This steer is one source-registry capability only; no ARM64X carrier,
+analysis run, new knowledge entry, or numeric score change.
+
+- Created `corpus/SOURCES.md` under the integrated Contract v1: 11 columns,
+  scope-specific tiers, opened anchors and quotes in the lesson Gate, ordered
+  study paths, one bounded search log, unopened leads, and S022 retained as a
+  scoped rejection with a concrete flip condition.
+- Census — `0 → 22` rows, measured by
+  `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin/.tower/worktrees/kaika/kaidoku-shokunin /home/vgpnk/Projects/shokunin/.tower/worktrees/kaika/kaidoku-shokunin`
+  on 2026-10-19. Before: registry missing, FLEET.rows=0, exit 1. After:
+  FLEET.rows=22, tier.A/B/C=20/1/1, status.mined/rejected=21/1,
+  invalid=0/0, missing=0, exit 0. No existing row was corrected in place.
+- Lesson `corpus/lessons/round-13.md` records 22 round-local source openings,
+  the selection search, the author mistake, and the orchestrator-owned
+  non-author fresh re-open/admission limit. `QUALITY.md` receives only its
+  required tier/source pointer; `SKILL.md` receives one durable registry
+  pointer. No README index or PROVINCE frontier anchors moved.
+- L2: one batched call, eight leaf seats — planner, connector, scout, scribe,
+  reviewer, critic, and two disjoint executors. Their reads identified
+  frontier paths, reopened installed Go/BSim sources and primary papers/docs,
+  checked contract traps and source-scope risks, and found the SoK full text
+  unavailable. No L2 made file edits; their dispatched outputs are not the
+  outside admission check.
+- No target binary or artifact was executed; no live REA provider/session was
+  probed; no ARM64X capability was attempted. The orchestrator owns registry
+  admission and a fresh non-author source sample. Round report:
+  `.ufo/reports/round-13/kaidoku.md`.
