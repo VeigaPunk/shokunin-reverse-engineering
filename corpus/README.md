@@ -172,7 +172,7 @@ A row is written when its file exists, never before.
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
 - RISC-V deep analysis — `target_unavailable` bypassed via e_machine patch + language override (r5-01); full EXEC already runs direct analyzeHeadless (10,766 functions @900 s cap).
 - `.jsc` → source mapping — Ignition disassembly held (r4-07); View8/jsc2js-style mapper is next for typora's real app.
-- >90MB PE scale — CLOSED, not frontier: r7's validated analyzer-disable recipe produced a mitigated hold; r8's no-disable control OOM-killed at 9G in 4m42.945s. No natural hold at this cap; rerun id-stability remains unknown (`SCORECARD.md:1217`; r7: `corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:13-37`; r8: `.ufo/waves/arc2-loop1-round8/E2.md:23-45`).
+- >90MB PE scale — CLOSED, not frontier: r7's validated analyzer-disable recipe produced a mitigated hold; r8's no-disable control OOM-killed at 9G in 4m42.945s. No natural hold at this cap; rerun id-stability remains unknown (`SCORECARD.md:1216`; r7: `corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:13-37`; r8: `.ufo/waves/arc2-loop1-round8/E2.md:23-45`).
 - `capture-electron-scenario` — typed refusal (Playwright handshake) despite same app launching manually.
 - sasquatch (AUR) — unblob squashfs recursion; 7z fallback covers today.
 - adb device surface — 22/24 verbs need a live device/emulator.

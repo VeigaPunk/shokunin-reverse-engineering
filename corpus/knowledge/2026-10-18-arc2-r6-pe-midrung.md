@@ -19,3 +19,27 @@ Entry-point decompile: NOT IN THE ENVELOPE. `locations` is `[]`, `raw_result` is
 Scale-ladder placement: 2.5MB held in 44s (round-3 bisect leg, `ev_92dea347…`); 17.7MB held in 2479s at 6G heap (this entry, natural, unmitigated); 91.6MB remains the wall — round-4 memory-kill at 7G (10 decompile workers) and round-6 name-validation refusal (unknown analyzer aborts before any disable; `Call Convention ID` is the registered name for the guessed class). The 41.3MB gap between held and wall is now bracketed by two live points.
 
 Not examined: procedure-name census, import thunks, deep strings, second-run evidence-id stability, runtime behavior.
+
+## Erratum — rerun id-stability NOT resolved (arc2-loop1-round10, 2026-10-18, append-only)
+
+- The `recheck:` line's "id stability across a rerun is unknown" is NOT closed.
+  User service `arc2-r10-mid` re-ran this target with this entry's request
+  parameters (natural preset, no analyzer disables, 6G heap, 3600s deadline) but
+  under a `MemoryMax=9663676416` + `MemorySwapMax=1073741824` cgroup cap that
+  this entry's own run never had, and was kernel-OOM-killed inside that cgroup at
+  2026-10-18T20:57:18-03: `Result=oom-kill`, 53.602s wall, 4min 14.200s CPU,
+  cgroup anon 8.96 GB at the cap, `constraint=CONSTRAINT_MEMCG`, trigger
+  `decompile invoked oom-killer`. Zero `evidence_id` was minted; the tool envelope
+  types the kill as `cancelled` (the r4 mislabel class), so the journal, not the
+  envelope, is the diagnosis. Id stability across a rerun stays UNKNOWN — now
+  named debt with a known containment requirement, not an untested question.
+  (arc2-loop1-round10)
+- The cap was mis-sourced rather than mis-chosen. `MemoryMax=9663676416` is round
+  6's 91.6MB BIG-leg cap (`arc2-r6-pe`,
+  `.ufo/waves/arc2-loop1-round6/E1.md:72`), while this mid-rung leg ran uncapped:
+  `run-leg.sh` is a bare `timeout -k 60 5400 node …/rea.mjs analyze` with no
+  `systemd-run` and no `MemoryMax`, and its own `meta.txt` records
+  `peak_tree_rss_kb=19149984` = 18.26 GiB tree RSS. The kill is predicted by this
+  entry's own measured curve, not evidence against the hold: at 43s the r6 tree
+  RSS was 8.97 GB and at 54s it was 10.28 GB, bracketing the 53.6s OOM. A faithful
+  retest must run uncapped, or with a cap above 18.3 GB. (arc2-loop1-round10)
