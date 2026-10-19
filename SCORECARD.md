@@ -1334,3 +1334,84 @@ samples stand). **Operator directive this round: PUSH to remote authorized by
 the operator ("finish this round and push to remote") — executed after the
 records commit; the standing no-push scope rule yields to the explicit
 instruction and is restated here for the ledger.** Retired: none this round.
+
+## arc3-loop1-round1 — coverage + operability + freshness: three claims admitted, 2026-10-19
+
+Round 1 of a new stagnation window (1/10; the arc2 window closed 10/10). First
+wave of the arc on the opencode-go lane (key 1 of 7, round robin). All three
+owned proxies stay saturated at 10.0; coverage is the owned axis (three-way tie,
+most-falsifiable-next-claim tie-break per luna-round-2 precedent); operability
+and freshness ride the standing fleet-axis recording ruling. The wave was
+interrupted by the harness at its tail; the delivered fraction is recorded, not
+backfilled (the r10 precedent — interruption is operator-side, not lane-side).
+
+- Wave: 64 seats, roster + items-array assertion held pre-dispatch (the r9
+  amendment's first arc3 run). 54/64 seat reports delivered. Undelivered:
+  EX-03 (source only), EX-14 (artifacts, no report), EX-25, EX-27, EX-28 (edit
+  landed; report missing), EX-31 (artifact, no report), RV-9, SC-5, VZ-2, VZ-3,
+  VZ-4 (verdict packets landed; reports missing). Seat artifacts covered most
+  gaps; the wave integrator's first-hand re-verification covered both
+  authorized real-target edits.
+- C1 coverage (owned) — EVM real-bytecode leg, the r3-07 frontier. Landed at the
+  work commit: solc installed on-host under an isolated wave prefix (receipt:
+  tarball sha256 `0e1a1ab6…`; an ambient global copy pre-existed — the receipted
+  prefix carries the provenance); four ERC-20-shaped carriers compiled on-host;
+  probe recovered planted selectors K/K, zero extras, on every runtime leg
+  (5/5, 6/6, 9/9, and an 11-selector attack carrier), creation-code legs
+  honestly parsed-and-empty; raw/hex legs agree; rerun ids re-derive; an
+  independent keccak + linear-sweep disassembler recon reproduced every set and
+  offset (ALL SOURCES AGREE). The new knowledge entry landed with the critic's
+  recheck fix (disk-backed TMPDIR — the host's `/tmp` quota fails this probe),
+  the refuted-hypothesis note (r3-07's candidate-2, measured dead), and its
+  fresh identity recorded (10,225 B, sha256 `dd986f56…` — the wave's own
+  claimed hash was stale after a mid-wave revision; fresh hash recorded per the
+  critic's F2). The map row gained the token + a state-cell refresh, one
+  physical line (190 → 190).
+- C2 operability (fleet) — citation-drift frozen-run guard (arc2 r4/r5 named
+  debt). Landed at the work commit: `expected.json` pins the pointer table's
+  sha256; tampered / absent / unpinned baselines each hit the declared
+  preflight exit-2 class; selftest 11 → 13; probe findings = 0 at HEAD in both
+  modes; the registry row states the guard semantics (one merged row, the
+  planner's v3 text with the code-true finding ids — two rival patch texts
+  deliberately not landed). Named: custom-table experiment recipes must now
+  carry a custom pinned expected (behavior change, recorded in the row).
+- C3 freshness (fleet) — census E22 disposition, honestly framed PASS→PASS: the
+  debt's FAIL class reproduces only on historical trees (v9 recovered
+  byte-exact from the round-2 evidence; FAIL at the 766-line tree, PASS at the
+  701-line tree); at HEAD the census already reads PASS (the r4/r8 re-keys
+  closed the debt — manufactured FAIL→PASS correctly not staged). The wave
+  found one latent marker-line defect (a committed PROVINCE row's marker sat
+  outside its own range), re-keyed it, and added a G18 assertion that fired on
+  its own intermediate state (live non-vacuity, parent-verified). Disposition
+  stated in the instrument header; creep audit clean (0 flags).
+- Custody: 5-path pre-pair before any install/probe; post-pair at close; 5/5
+  byte-identical across the wave (parent capture + five seats).
+- Measured at the work commit: command A **82/82, missing [], dangling [], 13/13
+  rules, 10.0/10.0**, prior-81 byte-identical (one file added, one README line
+  reworded); probe selftest 13/13 + findings=0; census PASS 0/0/0/0. Instruments
+  re-run green at the records commit (this section is pin-free per the
+  connector's injection test — no bare version pin, no absolute `path:line`).
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| coverage — C1 | 81/81 → 82/82 (real-solc EVM leg admitted, quality-gated; proxy held at the larger denominator) | improved |
+| operability — C2 | no frozen-run guard → guard committed and independently re-verified (13/13; declared exit-2 classes) + registry row states semantics | improved |
+| freshness — C3 | E22 open since r4 → disposition measured (historical-tree reproduction), latent marker defect re-keyed, header record landed, PASS 0/0/0/0 | improved |
+| depth | 10.0 → 10.0 (measured) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion **improved** (first denominator growth since arc2
+r7); quality improved (fresh-hash discipline on a churned artifact; one merged
+registry row out of three candidates; the recheck line carries its host
+requirement); discernment improved (a manufactured verdict flip refused; the
+planner's text chosen by code-truth over rival patches; the wave caught its own
+stale self-verification and the parent landed the fix).
+Planned: round 2 per schedule (opencode-go key 2 of 7). Carried debt (named):
+the ten-seat report deficit under interruption (no backfill per the counting
+lesson); EX-03's seat-level delivery gap (its work covered by other seats);
+creation-code legs parsed-and-empty (scope stated in the entry); census latent
+holes (absent-file fail-open; inline-marker excusal; blind-instrument pass;
+self-certification — each with patch text in the wave); the pre-existing dirty
+path `.ufo/waves/arc2-loop1-round10/C3.md` (not this round's, left
+uncommitted); host `/tmp` quota exhaustion (environmental; recipes must carry
+disk-backed scratch). Retired: none.

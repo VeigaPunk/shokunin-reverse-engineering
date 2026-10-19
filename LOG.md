@@ -1392,3 +1392,39 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   Resumption, if the operator wants it, starts at arc2-loop1-round11 with the
   recorded carried debt (mid-leg faithful retest, the r10 5-seat deficit,
   roster pre-dispatch wiring now operational).
+
+### arc3-loop1-round1 — EVM real-solc leg + probe frozen-run guard + census E22 disposition (2026-10-19)
+
+- New arc per the operator's 2026-10-19 directive (goal-scheduled, 14 rounds per
+  loop). Claims frozen pre-dispatch at
+  `.ufo/waves/arc3-loop1-round1/claims-frozen.md`; roster + items-array
+  assertion held (64 = 64; a parent-side roster enumeration caught and recorded
+  a draft miscount before dispatch — the r5 lesson applied to our own freeze).
+- C1 coverage: solc installed under an isolated wave prefix (receipt: tarball
+  sha256 `0e1a1ab6…575a51`; ambient global copy pre-existed, receipted prefix
+  carries provenance); four on-host compiles; probe recovered planted selectors
+  K/K on every runtime leg (`ev_45849c8b…` 5/5, `ev_56d89cb4…`/`ev_9259f412…`
+  6/6, `ev_92b7e2fc…` 9/9 by the convergence seat, `ev_d0d0b054…` 11/11 attack
+  carrier); creation legs parsed-and-empty (`ev_c80379e1…`, `ev_f875e21e…`);
+  raw ≡ hex; rerun ids re-derive; independent keccak + disassembler recon
+  agreed on every set/offset. Landed
+  `corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md` (10,225 B, sha256
+  `dd986f56…`) + the line-neutral map row.
+- C2 operability: citation-drift probe gained the frozen-run guard (probe
+  `e2665074…`, expected `ff47bfd6…`, table byte-stable `738b3a56…`); selftest
+  13/13; tampered/absent/unpinned baselines → declared exit-2 classes; findings
+  = 0 at HEAD; the registry row states the semantics (one merged row).
+- C3 freshness: census E22 disposition — v9 recovered byte-exact
+  (`213fe679…`), FAIL at the 766-line tree reproduced, PASS at HEAD confirmed;
+  one latent marker-line defect re-keyed (marker moved into its own row range)
+  + G18 assertion added; disposition recorded in the instrument header
+  (`6f1d19ff…`); creep audit 0 flags.
+- Parent integration: applied the entry (with the critic's recheck fix — the
+  host's `/tmp` quota fails this probe; disk-backed TMPDIR is required), the
+  map row, the merged registry row; measured command A 82/82, 13/13 at the work
+  commit; custody 5/5 zero drift across the wave (post-pair captured at
+  integration). Wave interrupted by the harness: 54/64 seat reports, deficit
+  recorded, not backfilled.
+- Scope: kaidoku repo only; no pushes (the standing no-push rule holds; the
+  round-14 git-audit round verifies commit correctness per the arc schedule);
+  installs limited to npm solc under the wave prefix.
