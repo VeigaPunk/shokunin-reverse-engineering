@@ -1428,3 +1428,28 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
 - Scope: kaidoku repo only; no pushes (the standing no-push rule holds; the
   round-14 git-audit round verifies commit correctness per the arc schedule);
   installs limited to npm solc under the wave prefix.
+
+### arc3-loop1-round2 — rule #14 + census fail-closures + custody v2 (2026-10-19)
+
+- Wave: 64 seats, opencode-go key 2; 64/64 delivered (first full wave of the
+  arc). Claims frozen pre-dispatch; the freeze itself needed one discarded
+  draft (roster arithmetic caught parent-side before dispatch — recorded in the
+  round-2 freeze header).
+- C1 depth: rule #14 (self-identity re-derivation) landed **form-fixed** —
+  the raw seat payload cited a bare SCORECARD range (rule-#11 violation caught
+  by RV-2/VZ-1); the verifier-applied fix (section-key anchor) is what landed.
+  Command A at work commit `28aa7a9`: 14 rules, 14/14; prior 13 pure-insertion
+  rstrip-identical. SHONEN:6 → `81-255`, 14/14 same commit. Fresh identities:
+  SKILL.md 390 L `c134afcb…`; SHONEN.md `3edb044c…`.
+- C2 freshness: census H1+H3 landed at `d0772ce8…` (610 L). Absent scoped file
+  → FAIL `UNREADABLE`; neutered needles → FAIL `BLIND-INSTRUMENT`; ordinary
+  PASS; scope byte-stable (creep audits 0 flags); the injection matrix and
+  mutation tests are in the round-2 wave tree. Mid-wave block-unit floor
+  revision false-FAILed HEAD; caught in-wave, re-keyed to detections.
+- C3 operability: custody-pair v2 committed (`112d01dc…`, 889 L; selftest
+  15/15). Same-content rewrite 0/13 → 13/13 detected; v1 label defect gone and
+  reproduced-as-declared on old receipts (exit 12, sha256 contract 5/5); one
+  merged registry row. First live catch: the Kimi client config drifted between
+  integration captures (CONTENT-DRIFT, exit 10) — operator-side churn class,
+  recorded not repaired; other 4/5 held.
+- Scope: kaidoku repo only; no pushes; no installs; custody read-only.

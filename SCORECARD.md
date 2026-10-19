@@ -1415,3 +1415,82 @@ self-certification — each with patch text in the wave); the pre-existing dirty
 path `.ufo/waves/arc2-loop1-round10/C3.md` (not this round's, left
 uncommitted); host `/tmp` quota exhaustion (environmental; recipes must carry
 disk-backed scratch). Retired: none.
+
+## arc3-loop1-round2 — depth + freshness + operability: three claims admitted, 2026-10-19
+
+Round 2 of the reset stagnation window (2/10). Wave: 64 seats, opencode-go key 2
+of 7; **64/64 seat reports delivered** (first full-delivery wave of the arc).
+Owned axis worked: depth (three-way tie at 10.0, most-falsifiable tie-break).
+
+- C1 depth (owned) — queue-drain rule #14: self-identity re-derivation
+  discipline, from the measured arc3-r1 incident (a revised entry patch whose
+  self-verification hash went stale; caught by the wave's critics). Landed as a
+  **form-fixed** payload (the planner/reviewer citation-form fix: the SCORECARD
+  reference anchors by section key, not a bare range — landing the seat's raw
+  text verbatim would have failed the claim's own rule-#11 clause, measured).
+  Before → after: rules 13 → 14, 14/14 citation-resolved at the work commit
+  (command A); prior 13 rules: pure insertion, 0 modified bytes,
+  rstrip-normalized byte-identical (the raw block-split reads 12/13 on
+  separator attribution — the precise phrasing, per the chain verdict).
+  SHONEN.md:6 refreshed in the same commit (range 81-255, 14/14). Landed
+  SKILL.md identity re-derived at landing (390 lines, `c134afcb…`) per the rule
+  the round lands. Not instrument-enforced: the census and probe are blind to a
+  stale self-identity (measured) — compliance is reviewer-enforced plus the
+  chain's mechanized replay; the record says so.
+- C2 freshness (fleet) — census fail-closures H1+H3 (arc3-r1 named debt, patch
+  texts from that wave). Landed at fresh identity `d0772ce8…` (610 lines): an
+  absent scoped file now FAILs `UNREADABLE` (named, every shape: absent,
+  zero-byte, truncated, directory, EACCES); neutered needles now FAIL
+  `BLIND-INSTRUMENT` (per-readable-file floor over current-ok detections).
+  Every round-1 silent-PASS injection in the two classes reproduces as a
+  declared FAIL; the ordinary run stays PASS 0/0/0/0; scope bounds byte-stable
+  (two independent creep audits, 0 flags); guard cost measured neutral. A
+  mid-wave revision (block-unit floor) false-FAILed the ordinary run and was
+  caught in-wave by four seats — recorded as a caught defect, not shipped.
+  Residuals stay named: H2 (inline-marker excusal), H4 (self-certification —
+  the external diff audit remains the certificate), H5/H6.
+- C3 operability (fleet) — custody receipt v2: `.ufo/gates/custody-pair/`
+  committed (tool `112d01dc…`, 889 lines; README `fa484d57…`); selftest 15/15;
+  receipts carry sha256 + mtime epoch with a TZ-independent UTC render (the v1
+  local-under-UTC label defect is gone — and the tool *detects* the defect when
+  re-reading v1 receipts, exit 12 with the sha256 contract intact) + inode +
+  ctime_ns. Same-content rewrite visibility: 0/13 attack forms under v1-style
+  sha256-only custody → 13/13 detected under v2 (rename and in-place classes;
+  for restore-tool replays that preserve the inode, ctime_ns is the
+  load-bearing pin — measured). v1 receipts remain verifiable on the sha256
+  fields: a sums-form v1 reads MATCH-V1-PARTIAL exit 0; a label-defective v1
+  stanza reads exit 12 with SHA256-CONTRACT 5/5 — both numbers quoted by
+  design. One merged registry row landed (planner/executor texts merged; the
+  real exit map stated). Threat-model boundary, recorded in the row's round:
+  the tool is a tripwire for attribution, not an integrity control against an
+  actor sharing its trust domain. Named debt D1-D7 (capture TOCTOU measured
+  2/300; EACCES fail-open; partial-reference verify; receipt self-authentication
+  out of band; write-guard scope).
+- Custody outcome: 4/5 paths byte-identical across the wave and integration;
+  the Kimi client config (custody path 3 of 5) drifted between the parent's
+  integration captures — the v2 tool's first **live** catch, on exactly the
+  operator-side interactive-session churn class documented since arc2;
+  recorded verbatim, not repaired (operator-owned surface).
+- Measured at the work commit `28aa7a9`: command A 82/82, missing [], dangling
+  [], **rules 14, 14/14**, 10.0/10.0; census PASS 0/0/0/0; probe findings=0
+  (both modes) + selftest 13/13; custody selftest 15/15.
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| depth — C1 | rules 13 → 14, 13/13 → 14/14 citation-resolved at the work commit (pure insertion; prior rules rstrip-byte-identical) | improved |
+| freshness — C2 | absent-file + blind-instrument classes silent-PASS → declared FAILs (`UNREADABLE`, `BLIND-INSTRUMENT`); ordinary run PASS; scope byte-stable | improved |
+| operability — C3 | no committed custody tool → v2 tool committed (15/15; rewrite visibility 0/13 → 13/13; label defect gone and detected; v1 sha256-compatible) + registry row | improved |
+| coverage | 10.0 → 10.0 (measured, 82/82) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion unchanged; quality improved (form-fixed landing
+over verbatim seat text — the freeze's own clause caught a defect the metrics
+would have passed; fresh identities re-derived at landing across all four
+shipped objects; the caught-in-wave floor revision recorded, not smoothed);
+discernment improved (the v2 tool's first live catch recorded as operator-side
+with the writer class named, not absorbed as lane debt).
+Planned: round 3 per schedule on the amended rotation — operator directive: the deepseek-v4.1-flash swarm waves ride the token-plan lanes (round 3 = token-plan key 1 of 3). Carried debt (named):
+census residuals H2/H4/H5/H6 + partial-needle narrowing; custody D1-D7; the
+pre-existing dirty `.ufo/waves/arc2-loop1-round10/C3.md` (not this round's);
+host `/tmp` quota exhaustion (standing); the config.toml custody drift
+(operator-owned, recorded). Retired: none.
