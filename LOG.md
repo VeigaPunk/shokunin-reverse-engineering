@@ -1681,3 +1681,34 @@ delivered.
   `unknown`/`config_drift`. Recorded on the pacman entry.
 - Instruments at `5ee13b3`: command A 90/90 + 16/16, census PASS + G21 +
   guard + ptr `current-ok`, probe 0/0 both modes, custody 28/28, PROVINCE 162.
+
+## 2026-10-19 — arc3-loop1-round12 (work `4072ebb`, fix `6a35398`; records this entry)
+
+Steered round 12, finished as frozen. 48 seats frozen on
+`openai-codex/gpt-6-luna-max` (antigravity down, operator substitution);
+47/48 delivered, `CN-1` named non-completion; halted at `de77d75`. Integrated
+in session kaika W2a with a 10-member batched L2 swarm. Motivating evidence:
+`.ufo/waves/arc3-loop1-round12/claims/verdicts/VZ-1.md` (one candidate per
+claim), R12Critic (no claim falsified; C3 scope narrowed), R12Reviewer and
+R12Mutation (C3 needles: PL-4 17/24 kill → order-free token lookaheads).
+
+- C1 coverage: fourth `ev_` family CLOSED —
+  `corpus/knowledge/2026-10-19-arc3-r12-go-evidence-id-domain.md`
+  (`inspect_go_binary` path-sensitive via three semantic path fields; live
+  rerun reproduced `ev_87621921…`; 27/27 stored ids reconciled by a retained
+  script). Command A 90 → 91.
+- C2 depth: rule #17 (projection-local field sensitivity) at
+  `SKILL.md:293-314`; command A 16 → 17; SHONEN count correction at EOF.
+- C3 operability: three `recheck:`-grading rows (0 → 3; entries 57 → 60;
+  `expected.json` pin `7994eec7…`); seeds 3/3 caught, selftest 13/13.
+- Harm caught and fixed: `4072ebb` shifted pinned README/SHONEN lines
+  (strict probe findings=5); `6a35398` restored them (findings=0).
+- Lesson `corpus/lessons/round-12.md` (ten mistake classes, `## Gate`);
+  QUALITY criteria added: none (claim cap held by the frozen claims).
+  Class #10: the census's default `--root` is the lane main checkout; the
+  round's census figures come from `git archive <rev>` trees with `--root`.
+- Custody: unpaired live legs disclosed; post-only receipts under
+  `.ufo/waves/arc3-loop1-round12/receipts/` bracket an operator-side
+  `~/.bashrc` change at 21:46:35Z after the last live leg.
+- Instruments at `6a35398`: command A 91/91 + 17/17, census PASS, probe strict
+  clean, selftests 13/13 and 28/28, PROVINCE 162.

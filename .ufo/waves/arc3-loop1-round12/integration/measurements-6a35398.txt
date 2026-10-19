@@ -1,0 +1,28 @@
+# measured at 6a35398 (work 4072ebb + fix 6a35398), baseline de77d75
+$ command A REV=de77d75
+{"citation_resolved_rules": 16, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 90, "mapped": 90, "missing": [], "revision": "de77d75", "rule_blocks": 16}
+$ command A REV=6a35398
+{"citation_resolved_rules": 17, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 91, "mapped": 91, "missing": [], "revision": "6a35398", "rule_blocks": 17}
+$ python3 .ufo/gates/c1-census-v10.py --quiet
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+$ citation-drift --rev de77d75 --strict
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+$ citation-drift --rev 6a35398 --strict
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+$ pointer-table entries/quoted/exempt/sha256 at de77d75 and 6a35398
+57 5 8 1b3ab955478b5d40f428d733bc482e4037f83bceaa1a39e9046ef82ca6d42d4b
+60 5 8 7994eec7e764e8c3195dd79efb850b63d437aa610e6a9d96ed24484bb53789d1
+$ citation-drift --selftest
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+$ custody-pair selftest
+CUSTODY_PAIR_SELFTEST: CLEAN cases=28 passed=28 failed=0 exit=0
+$ wc -l PROVINCE.md
+162
+de77d75 0
+6a35398 3
+
+# CORRECTION (records commit): the bare census line above ran with the default --root (the lane MAIN checkout, c1-census-v10.py:629), not this tree. Correct measurement:
+$ git archive de77d75 | tar -x -C $D; python3 $D/.ufo/gates/c1-census-v10.py --root $D --quiet → VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+$ git archive 6a35398 | tar -x -C $D; python3 $D/.ufo/gates/c1-census-v10.py --root $D --quiet → VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)

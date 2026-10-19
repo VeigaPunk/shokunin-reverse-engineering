@@ -2025,3 +2025,98 @@ the mid-leg retest (operator-gated); the ASAR host-wide count stays bounded
 by the unreadable `/opt/containerd` subtree; the Kimi-session availability
 stays unverified (config_drift);
 `.ufo/waves/arc2-loop1-round10/C3.md` still dirty; `/tmp` quota standing.
+
+## arc3-loop1-round12 — coverage + depth + operability: three claims land (pending non-author verification), 2026-10-19
+
+Steered round 12 (kaika steer table: "finish exactly as frozen"). Wave: 48 seats
+frozen pre-dispatch on `openai-codex/gpt-6-luna-max` (scheduled
+`antigravity/gemini-3.8-flash` slot; antigravity lane down, operator
+substitution — `.ufo/waves/arc3-loop1-round12/claims-frozen.md:3-9`); 47/48
+reports delivered, `CN-1` the named non-completion. The wave halted at `de77d75`
+with no integration; this session (kaika W2a) integrated it with a 10-member L2
+swarm in one batched call (planner, connector, 3 executors, scribe, scout,
+reviewer, critic, mutation-tester). Work commit `4072ebb`; fix commit `6a35398`
+(see C3 harm check); all after-numbers measured at `6a35398`
+(`.ufo/waves/arc3-loop1-round12/integration/measurements-6a35398.txt`).
+
+- C1 coverage (owned) — fourth verb family's `ev_` formula **closed**:
+  `corpus/knowledge/2026-10-19-arc3-r12-go-evidence-id-domain.md` —
+  `inspect_go_binary` (REA 6.7.0 pinned cache, package-source SHA-256 receipt
+  `CR-4/evidence/package-source-hashes.txt`) is path-sensitive through `parameters.path`,
+  `normalized_result.artifact.path`, `locations[0].path`; display subject
+  fields excluded. Fresh live rerun reproduced the stored same-path id
+  `ev_87621921…055dcd`; retained reconciliation `records=27 matched=27`
+  across seven seat bundles (`integration/c1/reconcile-all-go-ids.txt`).
+  Token on the Evidence-model row. Command A knowledge_files/mapped 90 → 91,
+  missing [], dangling [].
+- C2 depth (owned) — queue-drain rule #17 (`SKILL.md:293-314`): evidence-id
+  field sensitivity is projection-local; isolate the field set and diff the
+  residual projection when a mutation does not reproduce the alternate id
+  (r11's nested `local_path` + `inspection_id` confounder). Cites r7/r10/r11
+  corpus ranges only (not the r12 entry). Command A rule_blocks /
+  citation_resolved_rules 16 → 17. SHONEN box-1 count co-landed at EOF.
+- C3 operability (fleet) — citation-drift pointer table grades the r7/r10/r11
+  `recheck:` lines: rows grading a recheck line 0 → 3, entries 57 → 60, sha256
+  `1b3ab955…` → `7994eec7…` (re-pinned in `expected.json`). Deviation from the
+  verdict seat's pick (PL-4's exact rows, `7470c3f6…`), on measurement: PL-4's
+  substring needles killed 17/24 breaking mutants; full-line pins killed 24/24
+  but false-alarmed on harmless rewording; the landed order-free
+  delimited-token lookaheads keep the three seeds caught (control exit 0, each
+  seed one `citation_dead`, strict exit 1 — `integration/c3/seeded-run-lookahead.txt`)
+  and kill 20/20 breaking text mutants (+6 positional) with 0/12 harmless false
+  alarms (`integration/mutation/lookahead-regex-check.{py,txt}`; per-version
+  history in `integration/mutation/table1-rerun.md`). Scope: fixed-line
+  text-token drift only; the rows never execute a recipe.
+
+Harm check (caught before records): the work commit `4072ebb` inserted a
+lessons-index row into `corpus/README.md` and an inline line into `SHONEN.md`;
+the strict probe at `4072ebb` read `failed findings=5`
+(`integration/probe-at-4072ebb.txt`). Fix `6a35398` removed the README row and
+moved the SHONEN correction to EOF → strict probe `clean findings=0`. The
+round-12 lesson stays unindexed in `corpus/README.md` (the index cannot grow
+above `## Frontier` while `SCORECARD.md:69` pins `corpus/README.md:180`).
+
+Instruments at `6a35398`: command A 91/91 + 17/17, 10.0/10.0; census PASS
+(stale/ambiguous/undeclared/unresolved 0/0/0/0) run as
+`python3 <tree>/.ufo/gates/c1-census-v10.py --root <tree>` on a `git archive
+6a35398` tree — the census's default `--root` is the lane main checkout, so a
+bare run from a worktree measures the wrong tree (lesson round-12 #10);
+citation-drift strict clean findings=0, selftest 13/13; custody selftest 28/28;
+PROVINCE 162 held.
+Custody: no pre-pair (live CLI legs in r11 and r12 ran unpaired — lesson
+`corpus/lessons/round-12.md` #3); two post-only receipts bracket a `~/.bashrc`
+content change at 21:46:35Z, after the last live leg (operator-owned; no
+zero-drift claim made).
+
+| axis | evidence | verdict |
+|---|---|---|
+| coverage — C1 | corpus 90 → 91, mapped 91/91; fourth `ev_` family | improved (pending non-author verification) |
+| depth — C2 | rule blocks 16 → 17, citations 17/17 | improved (pending non-author verification) |
+| operability — C3 | recheck-grading rows 0 → 3; probe clean at `6a35398` | improved (pending non-author verification) |
+| calibration | no claim; 10.0 | unchanged |
+| freshness | live recheck re-derived the stored Go id; no claim | unchanged |
+| adjacency | PROVINCE boundary untouched | unchanged |
+
+Saturation note (appended; `## Saturation` above is not rewritten): the arc3
+window opened at r1 (1/10, `:1340`); sections r4–r11 stopped stating the count;
+r12 is 12/10. All owned proxies sit at 10.0 and no capability row has entered
+since arc2-r8, so the `AXES.md` §stagnation nudge applies (a "should": the round
+should be a frontier/capability move). The frozen r12 claim set predates this
+record and was finished as frozen; the next round honours the nudge.
+
+Planned: arc3-loop1-round13 — capability/frontier move. Primary: ARM64X hybrid
+PE analysis via Ghidra on one real host carrier (`PROVINCE.md` PE reserve;
+capability rows 4 → 5 only if it runs and its output verifies). Also: create
+`corpus/SOURCES.md` per sources contract v1 (opened rows only; first leads:
+Ghidra GP-6528 / `GoRttiMapper.java`, RARE, Decompile-Diverge, V8-snapshot
+surface — connector scan, kaika W1 ART dossier); QUALITY rows for lesson
+round-12 #3 (custody pre-pair before any probing L2) and #5 (stale status in
+cited ranges). Freeze the custody pre-pair before the first probe.
+
+Carried debt: `CN-1` non-completion; D7 draft headers on three landed entries
+plus the r11 entry's stale "remains pending" clause (`:23`); the path-free
+`search_bytes` candidate stays an open Unknown (VZ-1:32-34); the r12 entry's
+own `recheck:` line is not yet graded by a pointer row (kept out of C3 for
+separability); QUALITY #15's recorded-family list predates r7/r10/r11/r12;
+mid-leg retest (operator-gated); Kimi session `config_drift`;
+`.ufo/waves/arc2-loop1-round10/C3.md` dirty; `/tmp` quota standing.
