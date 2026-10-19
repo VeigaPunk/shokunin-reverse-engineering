@@ -1,0 +1,30 @@
+First-hand EX-7 rebuild and REA probe receipt — 2026-10-19
+
+Scratch root: /var/tmp/kaidoku-arc3-r8-ex7-vyper/
+TMPDIR: /var/tmp/kaidoku-arc3-r8-ex7-vyper/tmp
+Source copied from .ufo/waves/arc3-loop1-round4/claims/c1/CR-1/vy/K8.vy to K8.vy.
+Source SHA-256: 62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d
+Compiler: .ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper
+Compiler version: 0.4.3+commit.bff19ea2
+Compiler executable SHA-256: 615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10
+Compiler environment: PyCryptodome 3.24.1 Keccak-256 used for ABI signature selector cross-check.
+
+For each mode, the exact compiler invocation pattern was:
+  "$V" <mode-option> -f bytecode_runtime "$SRC" > "$BASE/out/<mode>.bytecode_runtime"
+  "$V" <mode-option> -f abi "$SRC" > "$BASE/out/<mode>.abi"
+  "$V" <mode-option> -f method_identifiers "$SRC" > "$BASE/out/<mode>.method_identifiers"
+  "$V" <mode-option> -f settings "$SRC" > "$BASE/out/<mode>.settings"
+  "$V" <mode-option> -f opcodes_runtime "$SRC" > "$BASE/out/<mode>.opcodes_runtime"
+where mode-option was respectively `-O gas`, `--no-optimize`, and `-O codesize`; V and SRC are the paths above and BASE is the scratch root. Each runtime was compiled a second time with the identical command and `cmp` returned 0 for all three pairs (`compile-determinism.txt`).
+
+First-hand runtime results, also re-derived by `characterize.py`:
+  gas: 418 decoded bytes; SHA-256 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814
+  noopt: 617 decoded bytes; SHA-256 1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc
+  codesize: 360 decoded bytes; SHA-256 bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5
+
+REA CLI version: `npx -y rea-agents@6.7.0 --version` -> 6.7.0.
+For each of gas, noopt, codesize, the exact probe invocation was:
+  TMPDIR="$BASE/tmp" npx -y rea-agents@6.7.0 inspect-evm-interface "$BASE/out/<mode>.bytecode_runtime" hex --format json
+Full stdout envelopes are in `probe/<mode>-6.7.0.json`; provider identity in each is evmole-interface / REA EVM interface adapter / evmole@0.9.3. Full compile outputs are in `compiler/`.
+
+The original R4 source and toolchain, this round's outputs, and the archived probe envelopes were read-only except for copying evidence into this EX-7 artifact directory. All compiler/probe scratch and TMPDIR paths were under /var/tmp, not /tmp.

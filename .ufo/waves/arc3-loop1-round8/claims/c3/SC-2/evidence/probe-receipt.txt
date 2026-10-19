@@ -1,0 +1,20 @@
+# SC-2 R8 REA probe receipt
+
+The three targets are the exact committed hex-text inputs in this directory. Each command ran from the lane root with the listed scratch TMPDIR; the full stdout JSON is retained alongside the target. Provider in every result: `evmole-interface` / `evmole@0.9.3`; all commands exited 0.
+
+```bash
+E=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round8/claims/c3/SC-2/evidence
+TMPDIR=/var/tmp/kaidoku-arc3-r8-sc2-vyper/tmp npx -y rea-agents@6.7.0 inspect-evm-interface "$E/gas.runtime.hex" hex --format json
+TMPDIR=/var/tmp/kaidoku-arc3-r8-sc2-vyper/tmp npx -y rea-agents@6.7.0 inspect-evm-interface "$E/noopt.runtime.hex" hex --format json
+TMPDIR=/var/tmp/kaidoku-arc3-r8-sc2-vyper/tmp npx -y rea-agents@6.7.0 inspect-evm-interface "$E/codesize.runtime.hex" hex --format json
+```
+
+First-hand outputs, matching `.normalized_result.bytecode.sha256` to independently decoded bytes:
+
+```text
+gas      ev_fda90d5edf37c63add499f46475be10083d02a11bf1039d770f3b0e2b58cdab4  8 functions  72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814
+noopt    ev_93e469a3888286e97751b6d0edce23f6aea6a3e40941cb52c01011d1e5ef0915  8 functions  1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc
+codesize ev_41eca23defd5329b8212a96be7529a7fbe0641bc8b6dd46c245f24d7fbecbc47  8 functions  bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5
+```
+
+The noopt and codesize output selector sets each equal the eight independently Keccak-derived ABI selectors; the saved JSON gives all eight rows, `dispatch:"abi"`, and `discovery_completeness:"unknown"`. No target was executed; this is static analysis of locally compiled bytes, not chain or deployment evidence.

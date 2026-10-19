@@ -15,7 +15,7 @@ host binutils as non-REA fallback readers.
 Drift-prone values: reverified 2026-10-18 — configured REA MCP pins are Devin
 `rea-agents@6.5.0` (`/home/vgpnk/.config/devin/mcp_config.json:7`), OMP
 `rea-agents@6.5.0` (`/home/vgpnk/.omp/agent/mcp.json:8`), and Kimi
-`rea-agents@6.7.0` (`~/.kimi-code/config.toml:3546` at the 2026-10-19 re-read; the 17:55:49Z receipt's pointer :3298, and earlier :2940 [16:57:35Z] and :3227 [17:32Z], are historical). Cache/catalog
+`rea-agents@6.7.0` (`~/.kimi-code/config.toml:4126` at the 2026-10-19 re-read; the receipt's earlier pointers :3546, :3298 [17:55:49Z], :2940 [16:57:35Z] and :3227 [17:32Z] are historical). Cache/catalog
 identities (re-read 2026-10-18): 6.7.0 at `/home/vgpnk/.npm/_npx/a1722018f28f9df2` — 153 CLI
 commands, 207 MCP tools, `tools_sha256=af39310c9591bb981893ec0d2188b1bcf6e9cc8ba3ac513d5bbefc8ddcb85639`; 6.5.0 at
 `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6` — 153 CLI commands, 207 MCP tools, `tools_sha256=805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded`; 6.4.0 at

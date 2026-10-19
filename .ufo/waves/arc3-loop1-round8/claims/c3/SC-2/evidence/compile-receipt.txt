@@ -1,0 +1,39 @@
+# SC-2 R8 Vyper compile receipt
+
+Source was read from the frozen lane HEAD and copied only to `/var/tmp` for compilation:
+
+```text
+$ git rev-parse HEAD
+904b724258fc9396a016bd9952b5cd40225fb7d8
+$ git show HEAD:.ufo/waves/arc3-loop1-round4/claims/c1/CR-1/vy/K8.vy > /var/tmp/kaidoku-arc3-r8-sc2-vyper/K8.vy
+$ sha256sum /var/tmp/kaidoku-arc3-r8-sc2-vyper/K8.vy /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper
+62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d  /var/tmp/kaidoku-arc3-r8-sc2-vyper/K8.vy
+615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper
+$ /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper --version
+0.4.3+commit.bff19ea2
+```
+
+Commands (all with `TMPDIR=/var/tmp/kaidoku-arc3-r8-sc2-vyper/tmp`; compiler outputs redirected to same-named `.runtime.hex` files):
+
+```bash
+R=/var/tmp/kaidoku-arc3-r8-sc2-vyper
+V=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper
+SRC="$R/K8.vy"
+mkdir -p "$R/tmp" "$R/repeat"
+TMPDIR="$R/tmp" "$V" -f bytecode_runtime "$SRC" > "$R/gas.runtime.hex"
+TMPDIR="$R/tmp" "$V" --no-optimize -f bytecode_runtime "$SRC" > "$R/noopt.runtime.hex"
+TMPDIR="$R/tmp" "$V" -O codesize -f bytecode_runtime "$SRC" > "$R/codesize.runtime.hex"
+TMPDIR="$R/tmp" "$V" -O gas -f bytecode_runtime "$SRC" > "$R/gas-explicit.runtime.hex"
+TMPDIR="$R/tmp" "$V" -f abi "$SRC" > "$R/abi.json"
+TMPDIR="$R/tmp" "$V" -f method_identifiers "$SRC" > "$R/method-identifiers.json"
+```
+
+Each of gas, noopt, and codesize was compiled a second time from the same source; all three `cmp` checks returned 0. The default `-f bytecode_runtime` output and explicit `-O gas` output also compared equal (`cmp` exit 0). Exact committed copies of the source and first compile outputs are in this evidence directory.
+
+Decoded runtime results, independently recomputed by `rederive.py` (SHA-256 covers decoded bytecode; carrier SHA-256 covers the exact hex-text file including its final newline):
+
+```text
+gas     418 bytes  decoded 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814  carrier b1f7fc882e44168156da34de403fa1573bcdfb0ebe8f9e501e94926c9b7c6b96
+noopt   617 bytes  decoded 1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc  carrier 1dfe2699e61e8d82570dc3272d9679880e5a2fa765a0e4ce9169331ecedd939c
+codesize 360 bytes decoded bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5  carrier c4af8ebcb724788f56c341c3dd0bfdb0d97aae74e1100e1c881d625f6c7ad68e
+```

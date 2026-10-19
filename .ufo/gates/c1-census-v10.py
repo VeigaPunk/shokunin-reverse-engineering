@@ -273,6 +273,7 @@ SCOPE = [
 
     ("SCORECARD.md", 703, 768, "DATED", 704, r"arc2-loop1-round2"),
     ("SCORECARD.md", 769, 855, "DATED", 769, r"arc2-loop1-round3"),
+    ("SCORECARD.md", 1759, 1813, "DATED", 1759, r"arc3-loop1-round7"),
 ]
 
 # ---- L1b: frontier-claim register (r10, G21). Frontier bullets carry no
@@ -508,9 +509,8 @@ def classify(fname, lines, live, out):
             if any(s <= m.start() < e for s, e in spans):
                 continue
             occ.append(("bare", m.start(), m.group(0)))
-        if not occ:
-            for m in PTR.finditer(text):
-                occ.append(("ptr", m.start(), m.group(0)))
+        for m in PTR.finditer(text):
+            occ.append(("ptr", m.start(), m.group(0)))
         if not occ:
             continue
         det = []
@@ -538,7 +538,10 @@ def classify(fname, lines, live, out):
                 elif c == "__ptr__":
                     pm = PTR.search(text, off)
                     state, why = ptr_check(pm.group(1), int(pm.group(2)), live)
-                    disp = {"ok": "current-ok", "stale": "STALE", "unresolved": "UNRESOLVED"}[state]
+                    if state == "stale" and cls == "DATED":
+                        disp, why = "historical", "dated scope"
+                    else:
+                        disp = {"ok": "current-ok", "stale": "STALE", "unresolved": "UNRESOLVED"}[state]
                 elif c is None:
                     if cls == "DATED":
                         disp, why = "historical", "dated scope"
