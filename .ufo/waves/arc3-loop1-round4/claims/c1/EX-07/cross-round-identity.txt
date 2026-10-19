@@ -1,0 +1,34 @@
+EX-07 (arc3-loop1-round4) — cross-round / cross-seat identity re-derivation
+Every row re-derived first-hand this round by sha256 of the two files.
+
+A. SAME-PATH legs (my r4 capture vs the r3 stored capture at the same absolute path)
+my leg                   r3 capture                                   byte_eq  id_eq  sha256(mine)       id
+  A-hex-6.4.0            probe-B-opt200-hex-6.4.0.json              True     True   05f76b33db9b42b0 ev_d409bd50b370c55
+  A-hex-6.7.0            probe-B-opt200-hex-6.7.0.json              True     True   8336351fe65ad486 ev_ae5aaee0b8ad1b9
+  B-hex-6.4.0            probe-B-nopt-hex-6.4.0.json                True     True   aad4d0e170e5c511 ev_294431e4b4230ce
+  B-hex-6.7.0            probe-B-nopt-hex-6.7.0.json                True     True   aa1f928d1c601985 ev_fa843512e618a57
+  C-hex-6.4.0            probe-rv2tokenopt-6.4.0.json               True     True   9e0962a1d2179de7 ev_4b470139057bce5
+  C-hex-6.5.0            optB-hex-6.5.0.json                        False    False  2cc667d790947e99 ev_1f4320406f5806a
+      path differs (mine=/EX-07/Rv2TokenOpt.runtime.hex / r3=p/ex07/Rv2TokenOpt.runtime.hex) -> id split expected
+  C-hex-6.7.0            optB-hex-6.7.0.json                        False    False  d38dad2eacbecb0a ev_ecd13040b1d8624
+      path differs (mine=/EX-07/Rv2TokenOpt.runtime.hex / r3=p/ex07/Rv2TokenOpt.runtime.hex) -> id split expected
+  C-raw-6.4.0            optB-raw-6.4.0.json                        False    False  4c6beab11a1201a8 ev_08e65990e245dbd
+      path differs (mine=/EX-07/Rv2TokenOpt.runtime.bin / r3=p/ex07/Rv2TokenOpt.runtime.bin) -> id split expected
+  C-raw-6.5.0            optB-raw-6.5.0.json                        False    False  7d49751e100f29e6 ev_b94969d3648d458
+      path differs (mine=/EX-07/Rv2TokenOpt.runtime.bin / r3=p/ex07/Rv2TokenOpt.runtime.bin) -> id split expected
+  C-raw-6.7.0            optB-raw-6.7.0.json                        False    False  95078112c18f406f ev_4d781c0d16ea893
+      path differs (mine=/EX-07/Rv2TokenOpt.runtime.bin / r3=p/ex07/Rv2TokenOpt.runtime.bin) -> id split expected
+
+B. The r3 entry's cited id for the Rv2TokenOpt repo-path leg
+   corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md cites `ev_4b470139…`
+   my re-derived id: ev_4b470139057bce5ea7c57ba524818878e8a3cd8867772332cf0fe3adc2bf12c5
+   equals the cited id: True
+   decoded bytecode sha256: ed6c8a76d05b230e7187325bd5165f19c118285bbd7c4a6d3d88f13018bfc2d3
+
+C. Decoded bytecode sha256 is invariant across every leg of a carrier; the ev_ id is not.
+  VaultB.opt200    legs= 8 distinct decoded_sha=1 distinct ids=6
+  VaultB.nopt      legs= 6 distinct decoded_sha=1 distinct ids=6
+  Rv2TokenOpt      legs= 8 distinct decoded_sha=1 distinct ids=6
+  CarrierV(vyper)  legs= 8 distinct decoded_sha=1 distinct ids=8
+  Steward(vyper)   legs= 6 distinct decoded_sha=1 distinct ids=6
+  CarrierW(vyper)  legs= 6 distinct decoded_sha=1 distinct ids=6

@@ -1,0 +1,50 @@
+RV-4 — EX-14 revised complete candidate: malformed hunk 4 (X1)
+patch sha256 (revised): 8a0e12ffc8c48a809d60b06e7c13a4e93f3e1af131f08e9b7914fef86b06b1b2
+patch sha256 (the revision RV-4 first reviewed): 16b878d3d4af61040b036772c9b31d721070a4143b5e0a92d147e222c112db5e
+date: 2026-10-19T11:14:30-03:00
+
+=== THE DEFECT ===
+Hunk 4's leading line is a CONTEXT line (space prefix) that does not exist in the base:
+
+  patch says : ' - **Cross-version residuals** — `compare-application-versions` is no longer'
+  base has   : ' - **Cross-version residuals** — `compare-application-versions` still'
+
+Under --fuzz=0 the hunk is rejected; GNU patch's default fuzz=2 papers over it:
+
+--- patch --fuzz=0 --dry-run ---
+    checking file PROVINCE.md
+    Hunk #1 FAILED at 82.
+    Hunk #2 FAILED at 91.
+    Hunk #3 FAILED at 139.
+    Hunk #4 FAILED at 157.
+    4 out of 4 hunks FAILED
+
+--- patch --dry-run (default fuzz=2) ---
+    checking file PROVINCE.md
+    Hunk #1 succeeded at 82 with fuzz 1.
+    Hunk #2 succeeded at 91 with fuzz 1.
+    Hunk #3 succeeded at 139 with fuzz 1.
+    Hunk #4 succeeded at 157 with fuzz 1.
+
+=== THE CONSEQUENCE (measured on the applied tree) ===
+Because the context line is matched fuzzily, the REPLACEMENT text is applied
+against the BASE line, which still reads 'still' — the patch's own '+' line
+begins with 'refused since r2:'. Result, verbatim from the applied file:
+
+    157: - **Cross-version residuals** — `compare-application-versions` still
+    158:   refused since r2: r12-02 drained the row with two success legs; multi-version
+
+Read as prose:
+    - **Cross-version residuals** — `compare-application-versions` still refused since r2: r12-02 drained the row with two success legs; multi-version 
+  -> 'still refused since r2: r12-02 drained the row with two success legs'
+  -> SELF-CONTRADICTORY: the row now asserts BOTH the r2-era refusal AND its
+     own falsification in one sentence. The X1 repair, whose whole purpose is
+     to remove the stale 'probe-refused since r2' wording, leaves 'still
+     refused since r2' in place while appending the evidence against it.
+
+=== verdict ===
+REJECT hunk 4. The correct context line is '- **Cross-version residuals** —
+`compare-application-versions` still' (base :157). Note the earlier revision
+(16b878d3...) had the CORRECT context line and applied cleanly; this revision
+introduced the defect. Census is unaffected either way (PASS, 0 new loci) —
+this is a content defect the census cannot see.

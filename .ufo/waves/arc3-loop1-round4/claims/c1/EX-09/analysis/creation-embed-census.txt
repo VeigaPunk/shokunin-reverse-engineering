@@ -1,0 +1,19 @@
+=== creation/initcode structure census (does initcode embed the runtime?) ===
+-- Ex09Vault (vyper 0.4.3)
+   creation 659 B, runtime 581 B, runtime embedded at offset 24
+   probe(creation): functions=0 decoded_bytes=659 sha=f46a4e61e079
+   dispatcher prologue 5f3560e01c present in creation: True
+
+-- Smoke (vyper 0.4.3)
+   creation 248 B, runtime 168 B, runtime embedded at offset 27
+   probe(creation): functions=0 decoded_bytes=248 sha=97ac5331339e
+   dispatcher prologue 5f3560e01c present in creation: True
+
+-- VaultB.opt200 (solc 0.8.37)
+   creation 1655 B, runtime 1621 B, runtime embedded at offset 34
+   probe(creation): functions=0 decoded_bytes=1655 sha=ac614a6e3a83
+   dispatcher prologue 5f3560e01c present in creation: True
+
+=> initcode is a superset of runtime: the tool scans the whole carrier and still
+   returns zero functions, so it does not dispatch-scan inside an embedded runtime;
+   the creation envelope is typed parsed-empty (functions [], completeness unknown).

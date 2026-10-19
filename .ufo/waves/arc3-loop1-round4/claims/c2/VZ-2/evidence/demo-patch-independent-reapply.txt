@@ -1,0 +1,26 @@
+== VZ-2 r4: EX-14 demo patch — independent re-apply + residual measurement ==
+date: 2026-10-19T14:10:32Z
+before: PROVINCE.md sha256 d075a3c67e17ae428eb5a69e594171c6dcba88ec93c97bd3cf162a2f2b4dbdad  162 lines
+after : 1bfb5dd7fff37c6fac387b23f6732d9667e04aa45726c6d5b88677870f9a19d2  PROVINCE.md
+lines : 162
+EX-14 claimed after-sha: 1bfb5dd7fff37c6fac387b23f6732d9667e04aa45726c6d5b88677870f9a19d2
+
+-- census gate on the patched tree --
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+
+-- RESIDUAL: the three stale rows, re-checked against the PATCHED text --
+F5b: 'vyper-compiled' still asserted -> 1 occurrence(s);
+     92:  (Core, r3-07) and real solc-0.8.37 carriers (Core, arc3-r1); vyper-compiled
+     C1 r4 landed the Vyper leg: 15/15 K/K on vyper-0.4.3-compiled runtime
+     (claims/c1/EX-04/evidence/probe/probe-6.4.0-hex.json, ev_405e2a2a..., decoded sha 57d6fd0a...)
+     => the demo patch leaves this clause STALE (the dependency EX-14 named in its §5.2).
+X1: 'probe-refused' still asserted -> 1 occurrence(s)
+     158:  probe-refused since r2; multi-version pacman pairs beyond expac unexercised
+F1b: 'Reserve: 91MB' still asserted -> 1 occurrence(s)
+     83:  procedures via Ghidra). Reserve: 91MB Godot ARM64 template, ARM64X hybrids.
+
+VERDICT OF THIS MEASUREMENT: the demo patch is line-neutral and gate-clean but does NOT
+drive the staleness count to 0; it repairs the solc half of F5b only, and F5b's Vyper half,
+X1 and F1b remain stale.

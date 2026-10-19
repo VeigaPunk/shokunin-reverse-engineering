@@ -1,0 +1,35 @@
+== VZ-2 r4 — CR-2's defect in EX-14 v2 hunk 6: independently verified ==
+date: 2026-10-19T14:29:26Z
+patch under test: candidate-complete-frontier-repair.v2.patch.md (0b8ad045...)
+
+-- the defect, re-derived byte-level --
+  hunk 6's CONTEXT line reads:  '- **Cross-version residuals** — ... is no longer'
+  the BASE line actually reads: '- **Cross-version residuals** — ... still'
+  my own per-hunk context scan against the base:
+    hunk 1: context=0 not-in-base=0
+    hunk 2: context=1 not-in-base=0
+    hunk 3: context=1 not-in-base=0
+    hunk 4: context=1 not-in-base=0
+    hunk 5: context=1 not-in-base=0
+    hunk 6: context=1 NOT-IN-BASE=1   <-- the defect
+
+-- consequence (my apply, default fuzz) --
+  resulting X1 sentence:
+  => self-contradictory: asserts BOTH 'still refused since r2' AND its own
+     falsification ('r12-02 drained the row with two success legs').
+  => under --fuzz=0, 5 of 6 hunks FAIL (the patch is not strictly clean).
+
+-- CR-2's correction, independently applied --
+  I composed v2 hunks 1-5 + CR-2's context-free hunk 6 and applied it:
+    after: 8bb35a2cf15811f7eb6eb46489aadf57475e9d9af790689e273d889d663712c3  162 lines
+    census: PASS 0/0/0/0
+    X1 reads: '- ... compare-application-versions is no longer / probe-refused since
+      r2 (r12-02 drained the row with two success legs); ...'  <- correct
+    all six v2 rows repaired
+
+  (CR-2's own tree after-sha was db692fcf...; the difference is apply order/fuzz
+   on its scratch tree, not content - both carry the corrected sentence.)
+
+MY OWN AUDIT BLIND SPOT, recorded: my clause audit checked that the literal
+'probe-refused' was GONE, and it was. I did not read the resulting SENTENCE.
+CR-2 read it. The lesson: a literal-gone check is not a semantics check.

@@ -1,0 +1,40 @@
+== VZ-2 r4 — EX-13 per-row set: independent apply + F2 verification ==
+date: 2026-10-19T14:20:39Z
+applier: /var/tmp/vz2r4/apply13.py (content-match; EX-13's format has no ---/+++/@@ markers)
+patches: 7/7 applied to a fresh scratch tree
+before: d075a3c67e17ae428eb5a69e594171c6dcba88ec93c97bd3cf162a2f2b4dbdad  162 lines
+after : dcfdb6a2fea6374caba5daf229b97c59ae4a69efa6ae14943909436e19eb81ca  162 lines
+census: PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0), G2 17/14/3
+
+NOTE ON RV-3's SHA: RV-3 measured f951f161... ; I measure dcfdb6a2... . The delta is
+EX-13's EVM patch, revised at 11:17:33 (after RV-3's apply) to fix the Core-promotion
+defect RV-3 sustained. Diff of the two trees:
+  92c92
+  <   (Core, r3-07) and real solc-0.8.37 carriers (Core, arc3-r1); vyper-compiled
+  ---
+  >   (Core, r3-07) and real solc-0.8.37 carriers (RESULT-class, arc3-r1); vyper
+
+-- residual audit on the EX-13-applied tree --
+  F1b: repaired
+  F3: repaired
+  F5b: repaired
+  X1: repaired
+  C1: repaired
+  R2: repaired
+  X1b: 'pacman pairs beyond expac unexercised' -> 1 occurrence (RV-3 sustained: left stale)
+
+-- F2: this seat's INDEPENDENT verification of EX-13's new claim --
+  the bullet said 'all 3 organic cores exceed the cap (waybar 434MB)'
+  coredumpctl list | grep crashpad -> pid 1857 present, 48.5K compressed
+  coredumpctl dump 1857 --output=/var/tmp/vz2r4/core.crashpad.raw
+  -> decompressed 17608704 B  (cap 33554432, UNDER CAP)
+  rea-agents@6.4.0 inspect-recorded-crash <that core> --format json:
+     exit 0, format elf-core, arch x86_64-little-endian, 53 segments, 3 threads
+     my evidence_id ev_3bdc54d2... (EX-13's own run: ev_1c1cd827...)
+  => 'all 3 organic cores exceed the cap' is FALSIFIED; EX-13's F2 repair is grounded.
+  waybar cores: 2 rows, all 'missing' -> the bullet's own exemplar has decayed.
+
+VERDICT OF THIS MEASUREMENT: EX-13's per-row set repairs all six of this seat's stale rows
+at a held line count with PASS, and its extra F2 repair is independently confirmed as a
+genuine seventh staleness. Two RV-3 accuracy defects remain open against this candidate:
+X1's 'all three input classes' warrant, and X1b's pacman half left stale.

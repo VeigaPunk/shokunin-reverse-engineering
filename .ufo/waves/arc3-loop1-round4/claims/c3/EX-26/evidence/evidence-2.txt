@@ -1,0 +1,91 @@
+### 5. A3: ONE path repeated 5x satisfies --require-paths 5 (coverage gate counts stanzas)
+$ capture --paths g g g g g ; verify --live --require-paths 5
+stanzas in receipt: 5
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx6/dup5.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /var/tmp/ex26/behavior/fx6/gone: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+verify rc=0
+
+### 6. A5/A6: precedence with mixed classes
+-- A5: one absent + one error-carrying (receipt from fx7/ref.txt) --
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx7/ref.txt  stanzas=2
+B (candidate): live filesystem  stanzas=2
+PATH /var/tmp/ex26/behavior/fx7/present: CONTENT-DRIFT  compared=11/11 moved=sha256
+PATH /var/tmp/ex26/behavior/fx7/locked: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=2  CONTENT-DRIFT=1 UNEVALUABLE=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/2 drift=2 exit=10
+rc=10
+-- A6: one content-drift + one cleanly-absent (spliced) --
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx7/spliced.txt  stanzas=2
+B (candidate): live filesystem  stanzas=2
+PATH /var/tmp/ex26/behavior/fx7/present: CONTENT-DRIFT  compared=11/11 moved=sha256
+PATH /var/tmp/ex26/behavior/fx7/nothing: MATCH  compared=0/11
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=2  CONTENT-DRIFT=1 MATCH=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=1/2 drift=1 exit=10
+rc=10
+
+### 7. B1-B3: ENOENT vs STAT-ERROR boundary on the 'cleanly-absent' qualifier
+-- B1: ref cleanly-absent (ENOENT) vs live STAT-ERROR (mode-000 dir) --
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx8/ref-enoent.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex26/behavior/fx8/opaque/x: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+rc=0
+-- B2: ref STAT-ERROR vs live cleanly-absent --
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx8/ref-staterr.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex26/behavior/fx8/opaque/x: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+rc=14
+-- B3: ref STAT-ERROR vs ref STAT-ERROR --
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx8/ref-staterr.txt  stanzas=1
+B (candidate): /var/tmp/ex26/behavior/fx8/ref-staterr.txt  stanzas=1
+PATH /var/tmp/ex26/behavior/fx8/opaque/x: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+rc=14
+
+### 8. stanza shapes (verbatim)
+-- cleanly-absent stanza tail --
+PATH: /var/tmp/ex26/behavior/fx/live/gone.txt
+EXISTS: no
+-- error-carrying stanza tail --
+SIZE: 7
+READ-ERROR: [Errno 13] Permission denied: '/var/tmp/ex26/behavior/fx/live/locked.txt'
+MTIME_EPOCH: 1792418713
+MTIME_NS: 1792418713376616680
+MTIME_UTC_RENDER: 2026-10-19T14:05:13Z
+MTIME_LOCAL_RENDER: 2026-10-19T11:05:13-03:00
+CTIME_EPOCH: 1792418713
+CTIME_NS: 1792418713377523316
+CTIME_UTC_RENDER: 2026-10-19T14:05:13Z
+CTIME_LOCAL_RENDER: 2026-10-19T11:05:13-03:00
+INODE: 11487191
+MODE: 0
+UID: 1000
+GID: 1000

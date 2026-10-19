@@ -1,0 +1,35 @@
+runtime bytes: 1562 sha256: 57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0
+
+[1] prologue bytes 0..23: 5f3560e01c6002600d820660011b61060001601e395f5156
+    shape: PUSH0 CALLDATALOAD PUSH1 e0 SHR | bucket = sel % 13 | PUSH1 02 (len) CODECOPY to mem[30] | MLOAD(0) | JUMP
+
+[2] table @0x600 (13 entries): ['029c', '05e7', '050b', '0400', '05ac', '043f', '053d', '05e7', '0590', '0574', '0382', '05e7', '0018']
+    all entries land on JUMPDEST: True
+
+[3] chain heads and bucket mapping:
+    d0e30db0  bucket=12 table->0x0018 chain_head=0x0018 match=True body@36 next_test=248
+    1aa02d59  bucket=12 table->0x0018 chain_head=0x00f8 match=False body@260 next_test=524
+    3f4ba83a  bucket=12 table->0x0018 chain_head=0x020c match=False body@536 next_test=1512
+    2e1a7d4d  bucket= 0 table->0x029c chain_head=0x029c match=True body@680 next_test=1512
+    e0749a6a  bucket=10 table->0x0382 chain_head=0x0382 match=True body@910 next_test=961
+    6e8efde2  bucket=10 table->0x0382 chain_head=0x03c1 match=False body@973 next_test=1512
+    0c751377  bucket= 3 table->0x0400 chain_head=0x0400 match=True body@1036 next_test=1512
+    8456cb59  bucket= 5 table->0x043f chain_head=0x043f match=True body@1099 next_test=1232
+    b144adfb  bucket= 5 table->0x043f chain_head=0x04d0 match=False body@1244 next_test=1512
+    0776076f  bucket= 2 table->0x050b chain_head=0x050b match=True body@1303 next_test=1512
+    8da5cb5b  bucket= 6 table->0x053d chain_head=0x053d match=True body@1353 next_test=1368
+    4643c56b  bucket= 6 table->0x053d chain_head=0x0558 match=False body@1380 next_test=1512
+    48a3ef5c  bucket= 9 table->0x0574 chain_head=0x0574 match=True body@1408 next_test=1512
+    5c975abb  bucket= 8 table->0x0590 chain_head=0x0590 match=True body@1436 next_test=1512
+    27e235e3  bucket= 4 table->0x05ac chain_head=0x05ac match=True body@1464 next_test=1512
+    every chain head == its bucket table entry: False
+
+[4] vyper method_identifiers entries: 16; __default__() = 0x89402a72
+    byte occurrences of 0x89402a72 in runtime: []  -> not a dispatchable selector (fallback body @1512)
+    leading-zero-stripped display entries: {'fee_of(uint256,uint256)': '0xc751377', 'is_owner(address)': '0x776076f'}
+
+[5] last chain next_test = 1512 (0x5e8) -> byte 5b (fallback head); body@1512 = __default__ handler
+
+[6] non-dispatch PUSH4 constants: ['08c379a0@141', '08c379a0@376', '08c379a0@501', '08c379a0@647', '08c379a0@809', '08c379a0@1210'] (08c379a0 = Error(string) revert prefix)
+
+VERDICT: vyper perfect-hash dispatcher fully mapped; 15/15 planted selectors are XOR-chain PUSH4 immediates in the runtime

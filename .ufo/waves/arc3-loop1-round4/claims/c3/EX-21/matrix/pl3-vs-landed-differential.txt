@@ -1,0 +1,42 @@
+# PL-3-plan vs landed EX-21 revision — differential on the claim's own (a) vector
+# The frozen C3 claim names the (a) debt as: 'sidecar path not scope-checked'
+#   (--out X.sha256 --paths X can aim a derived sidecar at a measured file's neighbour)
+# (RV-8's verbatim probe: capture --paths X.sha256 --out X)
+# Both drivers below run on scratch copies. Measured: 2026-10-19T14:12:55Z
+
+==================================================================
+MINE-29bb45ae  tool sha256 29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf  lines 1343
+==================================================================
+VECTOR 1 (the claim's own (a) wording): --out X.sha256 --paths X  [neighbour = X.sha256]
+  before: X=9b8372213af42e0d  X.sha256=c174ebe74c5cbad4
+  exit=2
+  after : X=9b8372213af42e0d  X.sha256=c174ebe74c5cbad4
+  VERDICT: bystander INTACT
+  stderr: USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /var/tmp/ex21/difev-VRkS/X.sha256
+
+VECTOR 2 (RV-8 verbatim): --paths X.sha256 --out X  [receipt = X, sidecar = the measured X.sha256]
+  before: Y=4794cfb2d256d90c  Y.sha256=cbbf2cdd00a089c2
+  exit=2
+  after : Y=4794cfb2d256d90c  Y.sha256=cbbf2cdd00a089c2
+  stderr: USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /var/tmp/ex21/difev-VRkS/Y.sha256
+
+SELFTEST: CUSTODY_PAIR_SELFTEST: CLEAN cases=28 passed=28 failed=0 exit=0
+
+==================================================================
+PL3-35d0c2f0  tool sha256 35d0c2f09af19b109ad4e31a0cc8c97c5d96c59fa9d5c2fc14c98d99d6a281f1  lines 1285
+==================================================================
+VECTOR 1 (the claim's own (a) wording): --out X.sha256 --paths X  [neighbour = X.sha256]
+  before: X=9b8372213af42e0d  X.sha256=c174ebe74c5cbad4
+  exit=0
+  after : X=9b8372213af42e0d  X.sha256=8ef6fc6ec493188b
+  VERDICT: *** bystander DESTROYED ***
+  stderr: 
+
+VECTOR 2 (RV-8 verbatim): --paths X.sha256 --out X  [receipt = X, sidecar = the measured X.sha256]
+  before: Y=4794cfb2d256d90c  Y.sha256=cbbf2cdd00a089c2
+  exit=2
+  after : Y=4794cfb2d256d90c  Y.sha256=cbbf2cdd00a089c2
+  stderr: USAGE: refusing to write a receipt or its sidecar over a path it measures or a custody path (path or inode): /var/tmp/ex21/difev-SxbJ/Y.sha256
+
+SELFTEST: CUSTODY_PAIR_SELFTEST: CLEAN cases=26 passed=26 failed=0 exit=0
+

@@ -1,0 +1,417 @@
+# EX-25 coverage-gate matrix — phase=before  tool=/var/tmp/ex25-r4/tools/before/custody-pair.py  sha256=7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+# date-utc: 2026-10-19T14:05:49Z
+
+==============================================================================
+LEG V1-dupe5-onepath-req5  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe5-one-path-pre.txt --live --require-paths 5
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/dupe5-one-path-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+
+==============================================================================
+LEG V2-custody5-distinct-req5  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/custody5-distinct-pre.txt --live --require-paths 5
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/custody5-distinct-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+==============================================================================
+LEG V3-dupe4plus1-req5  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe4plus1-pre.txt --live --require-paths 5
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/dupe4plus1-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+SHA256-CONTRACT: 4/4 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=4  MATCH=4  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=4/4 drift=0 exit=0
+
+==============================================================================
+LEG V4-symlink-alias-5stanzas-req5  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/symlink-alias-5stanzas-pre.txt --live --require-paths 5
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/symlink-alias-5stanzas-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /var/tmp/ex25-r4/fixtures/scratch/alias-1.conf: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/alias-2.conf: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-1.conf: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-2.conf: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-3.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+==============================================================================
+LEG V5-v1-dupe5-onepath-req5  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/v1-dupe5-one-path-pre.txt --live --require-paths 5
+A format: sums-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/v1-dupe5-one-path-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-1.conf: MATCH-V1-PARTIAL  compared=1/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+
+==============================================================================
+LEG V6-one-path-req5  exit=2
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/one-pre.txt --live --require-paths 5
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+
+[stderr]
+USAGE: reference covers 1 of the required 5 paths
+
+==============================================================================
+LEG V7-one-path-req1  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/one-pre.txt --live --require-paths 1
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/one-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+
+==============================================================================
+LEG V8-dupe5-onepath-req1  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe5-one-path-pre.txt --live --require-paths 1
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/dupe5-one-path-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+
+==============================================================================
+LEG V9-scratch5-distinct-req5  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/scratch5-distinct-pre.txt --live --require-paths 5
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/scratch5-distinct-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-1.conf: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-2.conf: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-3.conf: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-4.conf: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-5.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+==============================================================================
+LEG V10-v1-distinct5-req5  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/v1-distinct5-pre.txt --live --require-paths 5
+A format: sums-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/v1-distinct5-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-1.conf: MATCH-V1-PARTIAL  compared=1/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-2.conf: MATCH-V1-PARTIAL  compared=1/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-3.conf: MATCH-V1-PARTIAL  compared=1/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-4.conf: MATCH-V1-PARTIAL  compared=1/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-5.conf: MATCH-V1-PARTIAL  compared=1/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=5  MATCH-V1-PARTIAL=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=5/5 drift=0 exit=0
+
+==============================================================================
+LEG V11-custody5-distinct-req6  exit=2
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/custody5-distinct-pre.txt --live --require-paths 6
+REFERENCE-COVERAGE: 5/6 paths present in reference; unaccounted: (none)
+
+[stderr]
+USAGE: reference covers 5 of the required 6 paths
+
+==============================================================================
+LEG V12-dupe5-onepath-noflag  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe5-one-path-pre.txt --live
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/dupe5-one-path-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+
+==============================================================================
+LEG V13-custody5-distinct-noflag  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /var/tmp/ex25-r4/fixtures/custody5-distinct-pre.txt --live
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/custody5-distinct-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+==============================================================================
+LEG V14-r3-pair-req5  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c2/receipts/config-pre-pair-v2r3-revised.txt /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c2/receipts/config-post-pair-v2r3.txt --require-paths 5
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c2/receipts/config-pre-pair-v2r3-revised.txt  stanzas=5
+B (candidate): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c2/receipts/config-post-pair-v2r3.txt  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+==============================================================================
+LEG V15-r3-pair-noflag  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py verify /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c2/receipts/config-pre-pair-v2r3-revised.txt /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c2/receipts/config-post-pair-v2r3.txt
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c2/receipts/config-pre-pair-v2r3-revised.txt  stanzas=5
+B (candidate): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c2/receipts/config-post-pair-v2r3.txt  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+==============================================================================
+LEG V16-selftest  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py selftest --scratch /var/tmp/ex25-r4/out/before/selftest-scratch
+RECEIPT: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/pre.txt  sha256=dedd0c1f18e527e6d4fc1c243df570e4b9d507fe8db2c5e4a269304706e7710f
+SIDECAR: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/fixture.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/fixture.conf: REWRITE-DRIFT  compared=11/11 moved=ctime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/fixture.conf: REWRITE-DRIFT  compared=11/11 moved=inode
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/fixture.conf: CONTENT-DRIFT  compared=11/11 moved=sha256
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=1  CONTENT-DRIFT=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+RECEIPT: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/gone-pre.txt  sha256=4f37559ac4b3fda243b523c8b20fc421ef626e3cf4621f17c6f3bfc84deceffd
+SIDECAR: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/gone-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/gone-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/fixture-gone.conf: ABSENT  compared=0/11 moved=exists
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: ABSENT  paths=1  ABSENT=1  exit=13
+CUSTODY_PAIR_VERIFY: ABSENT paths=0/1 drift=1 exit=13
+RECEIPT: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/mode-pre.txt  sha256=b1a9464bf2e698285b1b9786eb0e1f05b8ad274ce92e8d0fe799026e68f0fe34
+SIDECAR: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/mode-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/mode-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/fixture-mode.conf: METADATA-DRIFT  compared=11/11 moved=mode,ctime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=1  METADATA-DRIFT=1  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/1 drift=1 exit=12
+A format: v1-stanza   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/v1-stanza.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/fixture-label.conf: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=1  METADATA-DRIFT=1  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/1 drift=1 exit=12
+A format: v1-stanza   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/v1-stanza-mutated.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/fixture-label.conf: CONTENT-DRIFT  compared=5/11 moved=sha256
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=1  CONTENT-DRIFT=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+A format: sums-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/v1-sums.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/fixture-label.conf: MATCH-V1-PARTIAL  compared=1/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+A format: pipe-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/v1-pipe.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/fixture-label.conf: METADATA-DRIFT  compared=3/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+    LABEL-DEFECT: CTIME_UTC says '2026-10-19 11:05:49' = localtime(epoch 1792418749); gmtime(epoch) is '2026-10-19 14:05:49'
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=1  METADATA-DRIFT=1  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/1 drift=1 exit=12
+RECEIPT: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/unreadable.txt  sha256=6fda0d48fe3597482ee560111b6450ffd4ad2dfd0a02b1dff128f6d68ad5887a
+SIDECAR: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/unreadable.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=1/1 label=selftest exit=14
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/unreadable.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/unreadable.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+RECEIPT: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked-receipt.txt  sha256=3ecb83c959c3a9ed575a8efb71ab24c395b44b162e91ab1ebb94ff65ecd3464b
+SIDECAR: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked-receipt.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=selftest exit=14
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked-receipt.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked/inner.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+RECEIPT: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/parsed-hidden.txt  sha256=0ad7ea93a2bbd322cf7c9c756b901828e56a70049d9c914c6d43be3f23c74baa
+SIDECAR: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/parsed-hidden.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=1/1 label=selftest exit=14
+RECEIPT: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/parsed-open.txt  sha256=90819e7e585cca47b641a2d3d9168d27579edade41bd3cdf17df1e0eff45dde7
+SIDECAR: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/parsed-open.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/parsed-hidden.txt  stanzas=1
+B (candidate): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/parsed-open.txt  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/parsed-uneval.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+RECEIPT: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked-pair-a.txt  sha256=be004b4cb00383347d56c319c0a8a8c9ebb1c83ea7db17a6750c2e3f4bbb9670
+SIDECAR: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked-pair-a.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=selftest exit=14
+RECEIPT: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked-pair-b.txt  sha256=be004b4cb00383347d56c319c0a8a8c9ebb1c83ea7db17a6750c2e3f4bbb9670
+SIDECAR: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked-pair-b.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=selftest exit=14
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked-pair-a.txt  stanzas=1
+B (candidate): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked-pair-b.txt  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/blocked-pair/inner.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+RECEIPT: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/single-pre.txt  sha256=486e908bfcd6fef8c3516e72e28e8bcc08a1f7ce02bb2e3d5218eae7320aa0e9
+SIDECAR: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/single-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/single-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/single.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/single-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/single.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+case capture-ok-exit-0                          PASS
+case receipt-shape-v2-fields                    PASS
+case sidecar-self-hash                          PASS
+case verify-receipt-vs-live-clean               PASS
+case same-content-rewrite-inplace-ctime-pin     PASS
+case same-content-rewrite-rename-inode-pin      PASS
+case content-drift-detected                     PASS
+case absent-path-detected                       PASS
+case metadata-drift-detected                    PASS
+case label-utc-render-tz-independent            PASS
+case v1-stanza-compat-and-mutation              PASS
+case sums-v1-compat                             PASS
+case pipe-v1-compat                             PASS
+case unparsable-receipt-usage-exit              PASS
+case refuses-to-write-over-custody-path         PASS
+case unreadable-path-is-unevaluable             PASS
+case unevaluable-never-matches                  PASS
+case parsed-unevaluable-reference-never-matches PASS
+case partial-reference-require-paths-gate       PASS
+case refuses-to-write-over-scoped-path          PASS
+case selftest-missing-scratch-usage-exit        PASS
+case refuses-write-through-hardlink-alias       PASS
+scratch: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+
+[stderr]
+USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/junk.txt
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /home/vgpnk/.bashrc
+USAGE: reference covers 1 of the required 5 paths
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/scoped.conf
+USAGE: scratch base is not a directory: /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/does-not-exist
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/ex25-r4/out/before/selftest-scratch/custody-pair-selftest-cth2ekd7/guard-hardlink-alias.txt
+
+==============================================================================
+LEG V17-paths  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/before/custody-pair.py paths
+~/.config/devin/mcp_config.json
+~/.omp/agent/mcp.json
+~/.kimi-code/config.toml
+~/.bashrc
+~/.profile

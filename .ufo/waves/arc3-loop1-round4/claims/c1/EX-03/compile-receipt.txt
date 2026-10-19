@@ -1,0 +1,178 @@
+# EX-03 compile receipt — Vyper steward/vault carrier (arc3-loop1-round4, chain c1)
+
+Seat: EX-03, chain c1, role executor.
+Task: author a Vyper contract (>=4 external functions incl. one payable and one view;
+e.g. a steward/vault shape); record source sha256. Artifact `claims/c1/EX-03/token.vy`.
+
+## 1. Source pin
+
+```
+acc71444c0d544efbc8f03892c3becea8f12a718453e3be04f4a99c9af789932  token.vy
+```
+
+4666 bytes. The only source of every byte below — no imports, no interfaces, no
+`implements:` conformance claim.
+
+## 2. Toolchain
+
+Authorized install (C1, EX-02's receipt), used read-only by this seat — this seat
+installed nothing:
+
+```
+vyper --version            ->  0.4.3+commit.bff19ea2
+vyper_git_commithash.txt   ->  bff19ea2
+venv                       ->  .ufo/waves/arc3-loop1-round4/tools/vyper-venv/
+pyvenv.cfg                 ->  python 3.14.7 (/usr/bin/python3.14), include-system-site-packages = false
+```
+
+Commands (cwd = repo root, `V=.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper`,
+`D=.ufo/waves/arc3-loop1-round4/claims/c1/EX-03`):
+
+```
+$V -f abi                $D/token.vy > $D/abi.json
+$V -f method_identifiers $D/token.vy > $D/method-identifiers.json
+$V -f bytecode           $D/token.vy > $D/creation.hex
+$V -f bytecode_runtime   $D/token.vy > $D/runtime.hex
+```
+
+All four exit 0; `evidence/{abi,creation,runtime}.err` are 0 bytes each. No warnings.
+
+## 3. Output hashes
+
+| artifact | bytes | sha256 |
+|---|---|---|
+| `token.vy` (source) | 4666 | `acc71444c0d544efbc8f03892c3becea8f12a718453e3be04f4a99c9af789932` |
+| `runtime.hex` (hex text, `0x`-prefixed) | 6677 | `cf13c82fb5b0bc73c7c27f1b2217997edda028c6f13b5ee577b9de09ae10b1eb` |
+| `creation.hex` (hex text, `0x`-prefixed) | 7083 | `b6d68ffd6801ab4b2bcf7887b5a7eeb49d34038cfa016f531c2a59eea2b15f51` |
+| `abi.json` | 4553 | `a935feb15bed491268e30a9a206b6c511b82737c64325a50bfb774f637948591` |
+| `method-identifiers.json` | 776 | `c6a5f987093858de03d9532fc65eb9f7ea0a1684825e0d334af9d2b4de0a6e11` |
+
+Runtime **3337 bytes** (`sha256 1846469bd2abc625ecf69567af16153f791fd6856e3c7acf32c2bf6f80967c51`
+of the decoded bytes); creation **3540 bytes**
+(`f80f900380082855db2d01a4e99ac03483f5fc39cf7ceec76908df08673b4401` decoded). The
+`.hex` files carry a `0x` prefix and a trailing newline, hence the larger file sizes.
+
+## 4. External surface
+
+`abi.json`: 22 function entries — 1 payable (`deposit`), 9 nonpayable, 11 view, 1 pure —
+plus 1 payable fallback and 1 constructor. Seat-line requirement: >=4 external
+functions (22), >=1 payable (`deposit`, plus the payable fallback), >=1 view (11). Met.
+
+## 5. Selector derivation — K/K 22/22
+
+Derived from `abi.json` alone (canonical signatures -> keccak-256 -> first 4 bytes) and
+recovered from `runtime.hex` alone (dispatcher decode). Full transcript:
+`evidence/dispatch-decode.txt`.
+
+```
+# ABI-derived K = 22
+# runtime-recovered selectors = 22
+# K/K: matched 22/22   missing=[]   extra=[]
+# slot == int(selector) % 22: 22/22 selectors land in their hash slot
+#   of which direct (slot target IS the site): 13/22; chain-resolved: 9/22
+# VERDICT: K/K CLEAN — 22/22
+```
+
+`runtime.hex` sha256 `1846469bd2abc625ecf69567af16153f791fd6856e3c7acf32c2bf6f80967c51`
+(decoded bytes), distinct from the hex-text file hash above.
+
+## 6. The Vyper 0.4.3 dispatcher (decoded from bytes)
+
+Prologue, measured identical in shape on two independently authored carriers
+(this one and EX-04's `CarrierV.vy`):
+
+```
+PUSH0 CALLDATALOAD PUSH1 0x01 SHR PUSH1 0x02 PUSH1 <N> DUP3 MOD
+PUSH1 0x01 SHL PUSH2 <table_off> ADD PUSH1 <len> CODECOPY PUSH0 MLOAD JUMP
+<N x 2-byte big-endian jump targets>            <- table; ends exactly at runtime end
+```
+
+- Slot for selector `s` is `int(s) % N`. Verified **22/22** here (N=22) and **15/15** on
+  `CarrierV.vy` (N=13) — a different modulus, same rule.
+- Each dispatch site is `JUMPDEST PUSH4 <sel4> ...`; all 22 selector `PUSH4` sites are
+  preceded by `0x5b` (histogram `{'5b': 22}`).
+- Of the 22 slots, **13 are occupied** (`[1, 5, 7, 9, 10, 12, 13, 15, 17, 18, 19, 20,
+  21]`) and **9 are empty** (`[0, 2, 3, 4, 6, 8, 11, 14, 16]`); every occupied slot's
+  target is a chain head (`5b 63`), every empty slot's target is the shared body at
+  `0x0a33`. Re-verified rigorously: each of the 22 selectors is reachable by walking
+  the chain from its own `sel % 22` slot — **22/22, no failures**.
+- Selector-level split: 13 selectors sit at their chain's head (the slot target *is*
+  their site) and 9 are reached one or more links deeper through
+  `... DUP2 XOR PUSH2 <next> JUMPI`.
+- Prologue bytes here: `5f3560e01c60026016820660011b610cdd01601e395f51565b63d0e30db081`.
+  **It opens with the same `5f3560e01c` sequence the r3 entry recorded as the solc-0.8.37
+  dispatcher anchor class** — so that anchor alone does not separate Vyper from solc.
+
+## 7. Two traps in Vyper's `method_identifiers` (both reproduce)
+
+**Trap 1 — leading-zero stripping.** `method_identifiers` prints selectors with the
+leading zero nibbles removed. 3 of 23 entries here:
+
+```
+printed 0x6fdde03  -> real 0x06fdde03  name()
+printed 0x95ea7b3  -> real 0x095ea7b3  approve(address,uint256)
+printed 0xc751377  -> real 0x0c751377  fee_of(uint256,uint256)
+```
+
+Reproduces on `CarrierV.vy` (2/16 entries). A string compare against a zero-padded
+4-byte set silently misses these.
+
+**Trap 2 — a phantom `__default__()` entry.** `method_identifiers` emits
+`"__default__()": "0x89402a72"`, a correct keccak of that literal (two independent
+implementations agree), but the constant occurs **0 times in the runtime** and **0 times
+in the creation blob**. The ABI instead carries `{"stateMutability": "payable",
+"type": "fallback"}` with no selector. So `len(method_identifiers) = 23` while
+`len(ABI functions) = 22`; the delta is exactly this entry. Reproduces on `CarrierV.vy`.
+
+Consequence for a K/K probe: the correct ABI-derived K for a Vyper contract is the
+**function** entries only. Taking `method_identifiers` as K injects one guaranteed false
+positive per contract.
+
+## 8. Attacks / refutations attempted
+
+| # | attack | verdict |
+|---|---|---|
+| 1 | compile is nondeterministic | **refuted** — 3 independent runs, `runtime.hex` and `abi.json` byte-identical each time and equal to the landed artifacts |
+| 2 | the local keccak is wrong | **refuted** — 3 independent implementations (pure-Python in the decoder, js-sha3@0.8.0 from the receipted r1 prefix, node:crypto/OpenSSL `keccak-256`) agree on all 22 signatures; self-test vectors `keccak256("")` and `keccak256("transfer(address,uint256)")` match Ethereum's own |
+| 3 | the dispatch model is overfitted to one carrier | **refuted** — decoder generalizes to `CarrierV.vy` unchanged: N=13, 15/15, `sel % 13` holds 15/15 |
+| 4 | every `PUSH4` constant is a selector | **refuted** — with a disassembly-aware sweep (PUSH immediates skipped) 24 distinct constants appear at instruction boundaries, of which only 22 are selectors. `0x08c379a0` is the real `Error(string)` selector (a plausible decoy); `0xc4a11628` is *not* an instruction-boundary constant at all — it is the middle of the `Transfer` topic `ddf252ad…f5a4df523b3ef` carried in a PUSH32. A boundary-blind scan sees 27 distinct constants and 5 false positives |
+| 5 | Vyper carries a solc-style CBOR trailer in the runtime | **refuted** — `--no-bytecode-metadata` leaves the runtime byte-identical (3337 B both ways) and shortens only the creation blob by 55 B; the 55-byte trailer is `…a1657679706572830004030037` ("vyper" marker). No `a1657679706572` in the runtime at all |
+| 6 | the seat-line requirement is met by one lucky function | **measured** — ABI reports 22 functions across 4 mutability classes, so payable/view/pure separation is exercised, not incidental |
+
+## 9. Peer verification of these bytes (landed while this seat worked)
+
+Two sibling seats independently verified this carrier — neither read this receipt first:
+
+- **EX-06** (`claims/c1/EX-06/analysis.txt`, §3) probed `StewardToken` with
+  `inspect-evm-interface` under both `rea-agents@6.4.0` (`ev_6b8a15c4…`) and `6.7.0`
+  (`ev_b07b8971…`): n=22 on both pins, decoded `1846469bd2abc625…` / 3,337 B,
+  **K/K MATCH, zero missing, zero extra**. EX-06 also independently discovered both
+  traps in §7 and reached the same ruling: correct K is "`method_identifiers` minus
+  `__default__`", and left-padding to 8 chars makes the set comparison match 22/22.
+- **EX-08** (`claims/c1/EX-08/evidence-recon-StewardToken.txt`) reconstructed this
+  runtime three independent ways — Vyper XOR-chain parse, planted-value `PUSH4`
+  immediate scan, and pure-Python keccak over the source-declared signatures — and
+  reconciled against both probe legs: **M1 n=22 MATCH, M3 n=22 MATCH, both probes
+  n=22 MATCH**, missing `[]`, extra `[]` on every source. EX-08's independently
+  measured chain sites and body offsets agree with §6 above.
+
+## 10. Scope and limits
+
+- Claims here are scoped to **vyper 0.4.3+commit.bff19ea2**, default codegen
+  (`-O gas`, no `--experimental-codegen`), default EVM version, compiled on this host
+  this round. Other Vyper versions, `-O codesize/none`, `--experimental-codegen`, and
+  non-default `--evm-version` are **untested** — the prologue/trap results are not
+  claimed to generalize to them.
+- The dispatcher decode is a **static** model validated against the compiler's own ABI
+  and against two sibling seats' independent reconstructions — not against execution:
+  no EVM was run, no transaction was sent, no chain was queried. The `sel % N` rule is
+  consistent with every selector on two carriers (N=22 and N=13) but is not proven for
+  all inputs.
+- No `inspect-evm-interface` run from this seat (out of scope by seat line); the K/K
+  comparison here is between the compiler's ABI and this seat's own decoder. EX-06 and
+  EX-08 supplied the probe legs; the probe evidence is theirs, not this seat's.
+- The `5f3560e01c` prologue observation is about the *opening bytes only*; it does not
+  claim Vyper and solc dispatchers are otherwise the same (they are not — §6).
+- This seat wrote only its report and `claims/c1/EX-03/`; scratch under `/var/tmp/ex03-r4`.
+  No git mutations; no custody-path access; no corpus/SKILL/PROVINCE/README/LOG/
+  SCORECARD/SHONEN writes.

@@ -1,0 +1,199 @@
+$ python3 /var/tmp/ex22-baseline/tool/custody-pair.py selftest --scratch /var/tmp
+USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /var/tmp/custody-pair-selftest-3xjeiltf/junk.txt
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /home/vgpnk/.bashrc
+USAGE: reference covers 1 of the required 5 paths
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/custody-pair-selftest-3xjeiltf/scoped.conf
+USAGE: scratch base is not a directory: /var/tmp/custody-pair-selftest-3xjeiltf/does-not-exist
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/custody-pair-selftest-3xjeiltf/guard-hardlink-alias.txt
+RECEIPT: /var/tmp/custody-pair-selftest-3xjeiltf/pre.txt  sha256=79d755445cdb8cd0164373eb34a042db48f1f120b6398a64d4058a0999f05f9a
+SIDECAR: /var/tmp/custody-pair-selftest-3xjeiltf/pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/fixture.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/fixture.conf: REWRITE-DRIFT  compared=11/11 moved=ctime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/fixture.conf: REWRITE-DRIFT  compared=11/11 moved=inode
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/fixture.conf: CONTENT-DRIFT  compared=11/11 moved=sha256
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=1  CONTENT-DRIFT=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+RECEIPT: /var/tmp/custody-pair-selftest-3xjeiltf/gone-pre.txt  sha256=5dbba585645b4ad734e22cd537fdd85a4413faff713dcc5e6be78b85cb115f71
+SIDECAR: /var/tmp/custody-pair-selftest-3xjeiltf/gone-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/gone-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/fixture-gone.conf: ABSENT  compared=0/11 moved=exists
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: ABSENT  paths=1  ABSENT=1  exit=13
+CUSTODY_PAIR_VERIFY: ABSENT paths=0/1 drift=1 exit=13
+RECEIPT: /var/tmp/custody-pair-selftest-3xjeiltf/mode-pre.txt  sha256=7e0e686d8b8a47bd09c2b62641f077cfa71c009174dfdeb2f0bafc86305feec8
+SIDECAR: /var/tmp/custody-pair-selftest-3xjeiltf/mode-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/mode-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/fixture-mode.conf: METADATA-DRIFT  compared=11/11 moved=mode,ctime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=1  METADATA-DRIFT=1  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/1 drift=1 exit=12
+A format: v1-stanza   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/v1-stanza.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/fixture-label.conf: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=1  METADATA-DRIFT=1  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/1 drift=1 exit=12
+A format: v1-stanza   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/v1-stanza-mutated.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/fixture-label.conf: CONTENT-DRIFT  compared=5/11 moved=sha256
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=1  CONTENT-DRIFT=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+A format: sums-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/v1-sums.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/fixture-label.conf: MATCH-V1-PARTIAL  compared=1/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+A format: pipe-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/v1-pipe.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/fixture-label.conf: METADATA-DRIFT  compared=3/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+    LABEL-DEFECT: CTIME_UTC says '2026-10-19 11:08:24' = localtime(epoch 1792418904); gmtime(epoch) is '2026-10-19 14:08:24'
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=1  METADATA-DRIFT=1  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/1 drift=1 exit=12
+RECEIPT: /var/tmp/custody-pair-selftest-3xjeiltf/unreadable.txt  sha256=70f37778fe85313f954efb9ea168c6d3a2121f646fef213afa72e0fa13d47d87
+SIDECAR: /var/tmp/custody-pair-selftest-3xjeiltf/unreadable.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=1/1 label=selftest exit=14
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/unreadable.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/unreadable.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+RECEIPT: /var/tmp/custody-pair-selftest-3xjeiltf/blocked-receipt.txt  sha256=da2759ef602dce33dc46cf69cfa5a58dd43e32dcb4f18f4e3c2888084d0a831e
+SIDECAR: /var/tmp/custody-pair-selftest-3xjeiltf/blocked-receipt.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=selftest exit=14
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/blocked-receipt.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/blocked/inner.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+RECEIPT: /var/tmp/custody-pair-selftest-3xjeiltf/parsed-hidden.txt  sha256=ef4e50a5b5d99d189dc3e4897f55af9e96a6afdb41882580d3be9494fd56ae08
+SIDECAR: /var/tmp/custody-pair-selftest-3xjeiltf/parsed-hidden.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=1/1 label=selftest exit=14
+RECEIPT: /var/tmp/custody-pair-selftest-3xjeiltf/parsed-open.txt  sha256=247d370351250cbef28a7d65df9f4bf9da999331e545843c0a72e7e12ebfcdf2
+SIDECAR: /var/tmp/custody-pair-selftest-3xjeiltf/parsed-open.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/parsed-hidden.txt  stanzas=1
+B (candidate): /var/tmp/custody-pair-selftest-3xjeiltf/parsed-open.txt  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/parsed-uneval.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+RECEIPT: /var/tmp/custody-pair-selftest-3xjeiltf/blocked-pair-a.txt  sha256=8d71cda57aa6ce2c978011783e0ad3751f69d11e778621f8166255b25df298eb
+SIDECAR: /var/tmp/custody-pair-selftest-3xjeiltf/blocked-pair-a.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=selftest exit=14
+RECEIPT: /var/tmp/custody-pair-selftest-3xjeiltf/blocked-pair-b.txt  sha256=8d71cda57aa6ce2c978011783e0ad3751f69d11e778621f8166255b25df298eb
+SIDECAR: /var/tmp/custody-pair-selftest-3xjeiltf/blocked-pair-b.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=selftest exit=14
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/blocked-pair-a.txt  stanzas=1
+B (candidate): /var/tmp/custody-pair-selftest-3xjeiltf/blocked-pair-b.txt  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/blocked-pair/inner.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+RECEIPT: /var/tmp/custody-pair-selftest-3xjeiltf/single-pre.txt  sha256=9804efef0097ca3bb5bdb3bad20ac7388f0636db031369fdeae08e88467d20db
+SIDECAR: /var/tmp/custody-pair-selftest-3xjeiltf/single-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/single-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/single.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/custody-pair-selftest-3xjeiltf/single-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/custody-pair-selftest-3xjeiltf/single.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+case capture-ok-exit-0                          PASS
+case receipt-shape-v2-fields                    PASS
+case sidecar-self-hash                          PASS
+case verify-receipt-vs-live-clean               PASS
+case same-content-rewrite-inplace-ctime-pin     PASS
+case same-content-rewrite-rename-inode-pin      PASS
+case content-drift-detected                     PASS
+case absent-path-detected                       PASS
+case metadata-drift-detected                    PASS
+case label-utc-render-tz-independent            PASS
+case v1-stanza-compat-and-mutation              PASS
+case sums-v1-compat                             PASS
+case pipe-v1-compat                             PASS
+case unparsable-receipt-usage-exit              PASS
+case refuses-to-write-over-custody-path         PASS
+case unreadable-path-is-unevaluable             PASS
+case unevaluable-never-matches                  PASS
+case parsed-unevaluable-reference-never-matches PASS
+case partial-reference-require-paths-gate       PASS
+case refuses-to-write-over-scoped-path          PASS
+case selftest-missing-scratch-usage-exit        PASS
+case refuses-write-through-hardlink-alias       PASS
+scratch: /var/tmp/custody-pair-selftest-3xjeiltf
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+[exit-status] 0

@@ -1,0 +1,19 @@
+=== VZ-4 independent verification: C3 M5 — the --out-name guard (RV-6's coverage finding) @ 2026-10-19T14:17:34Z ===
+
+RV-6's finding: the '--out with no usable name' guard is load-bearing but has no
+case in the shipped 28-case selftest; EX-27's separate harness catches it.
+
+VZ-4 checks on the landed tool 29bb45ae… (1343 L):
+  1. guard present?  'carries no usable name' in source -> True
+  2. reachable?      capture --out ''  -> exit=2  'USAGE: --out carries no usable name, so no sidecar path can be derived: '''
+                     capture --out '.' -> exit=2  same message
+     (both are the declared USAGE class, no traceback — the CR-4 item-6 trap is closed)
+  3. covered by a selftest CASE?  NO.
+     The 28 case names were enumerated; the only name-containment match is
+     'same-content-rewrite-rename-inode-pin', which is a rename/inode case, not this guard.
+
+=> RV-6's M5 SUSTAINED by this seat's independent run: the guard is correct and
+   reachable, but the shipped suite does not exercise it. It is a COVERAGE gap,
+   not a defect — the 28-case count is honest, and the guard is proven by RV-6's
+   and EX-27's separate harnesses. Parent note: adding one case would close it, but
+   the tool bytes are frozen at 29bb45ae… and the wave's selftest bar (>=24) is met.

@@ -1,0 +1,13 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py	2026-10-19 10:13:20.383996987 -0300
++++ /var/tmp/ex24-r4/variants/flag-only/custody-pair.py	2026-10-19 11:05:34.383650537 -0300
+@@ -650,6 +650,10 @@
+             print("USAGE: refusing to write a receipt over a path it measures or a custody path"
+                   " (path or inode): %s" % out, file=sys.stderr)
+             return EXIT_USAGE
++        if out.parent != out and not out.parent.is_dir():
++            print("USAGE: refusing to write a receipt: parent is not a directory: %s" % out.parent,
++                  file=sys.stderr)
++            return EXIT_USAGE
+         out.parent.mkdir(parents=True, exist_ok=True)
+         try:
+             out.write_text(text, encoding="utf-8")

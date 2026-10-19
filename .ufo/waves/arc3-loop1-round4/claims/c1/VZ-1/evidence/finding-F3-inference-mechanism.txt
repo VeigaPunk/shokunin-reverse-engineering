@@ -1,0 +1,62 @@
+=== VZ-1 finding F3: the entry's Inference mechanism for the payable-read delta (round 4) ===
+run: 2026-10-19T14:15Z
+repo HEAD: 015e1bab914713568f339fd53999bc180459cc40
+
+entry literal Inference sentence (verbatim):
+  "The argument/mutability strings are upstream inferences; the Vyper family's
+   divergence pattern (payable-reads for non-payable functions) is consistent
+   with an inference that reads the dispatcher's compare/fall-through structure
+   rather than per-function prologue guards — the XOR-chain dispatcher has no
+   per-function `CALLVALUE` guard at the compare site, unlike the solc `EQ`-chain
+   carriers."
+
+This seat's own measurement (CarrierV, 15 functions, first-hand):
+  selector   name(nargs)          declared    inferred    body-head bytes
+  d0e30db0   deposit(0)           payable     payable     6003541561009c57
+  1aa02d59   set_fee(1)           nonpayable  payable     6024361034176105
+  3f4ba83a   unpause(0)           nonpayable  nonpayable  346105fc575f5433
+  2e1a7d4d   withdraw(1)          nonpayable  payable     6024361034176105
+  e0749a6a   fee_on(1)            view        payable     6024361034176105
+  6e8efde2   fee_quote(1)         view        payable     6024361034176105
+  0c751377   fee_of(2)            pure        payable     6044361034176105
+  8456cb59   pause(0)             nonpayable  nonpayable  346105fc575f5433
+  b144adfb   balance_of(1)        view        payable     6024361034176105
+  0776076f   is_owner(1)          view        payable     6024361034176105
+  8da5cb5b   owner(0)             view        view        346105fc575f5460
+  4643c56b   total_deposits(0)    view        view        346105fc57600154
+  48a3ef5c   fee_bps(0)           view        view        346105fc57600254
+  5c975abb   paused(0)            view        view        346105fc57600354
+  27e235e3   balances(1)          view        payable     6024361034176105
+
+  correlation (divergence vs ARGUMENT COUNT):
+    arg-taking functions: 8/8 diverge (all read payable)
+    zero-arg functions:   7/7 agree
+  the byte-level correlate: every arg-taking body opens with the FUSED guard
+    60 24 36 10 34 17 = PUSH1 0x24 CALLDATASIZE LT CALLVALUE OR  (1-arg)
+    60 44 36 10 34 17 = PUSH1 0x44 ... (2-arg, fee_of)
+  measured sites of 602436103417: [260, 680, 910, 973, 1244, 1303, 1464] = 7 of the 8.
+
+EX-04's A4 re-measurement (its own evidence/attacks.txt, reproduced by this seat
+against the r3 solc carriers with the same recipe):
+  VaultB.opt200 (r3 solc): agree 13/13
+  CarrierB (r3 solc):      agree 7/8   divergence: e7ee6ad6 pure -> view
+  carrierB@EX-04 (r3):     agree 10/11  divergence: 07bf89ab pure -> view
+The same class already existed on solc carriers, whose dispatch DOES carry
+per-function prologue guards.
+
+VERDICT: the Inference's stated mechanism is FALSIFIED. The divergence is
+predicted by argument count (a property of the function signature), not by the
+dispatcher shape: it reproduces on solc carriers that have per-function
+CALLVALUE guards, and it is absent on the Vyper zero-arg functions. The
+Observation sentence itself is accurate and stays ("the same divergence class
+noted on solc carriers" is what this seat measured too); only the Inference's
+mechanism sentence must be repaired.
+
+Repair: replace the mechanism clause with the measured correlate, e.g.
+"The divergence tracks the function's argument count (8/8 arg-taking functions
+read payable; 7/7 zero-arg functions agree), and the byte-level correlate is the
+fused argument-count guard each arg-taking body opens with
+(`PUSH1 <4+32*nargs> CALLDATASIZE LT CALLVALUE OR PUSH2 <revert> JUMPI`); the
+same class reproduces on the r3 solc carriers (VaultB.opt200 13/13, CarrierB
+7/8, carrierB@EX-04 10/11), so it is an upstream-inference limitation on that
+guard shape, not a Vyper-family property."

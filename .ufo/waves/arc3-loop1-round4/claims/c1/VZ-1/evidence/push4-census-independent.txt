@@ -1,0 +1,16 @@
+=== VZ-1 independent opcode-boundary PUSH4 census (round 4) ===
+run: 2026-10-19T14:12:30Z  runtime: EX-04/out/runtime.hex sha256 e0b1021c… (decoded 57d6fd0a…, 1562 B)
+
+opcode-boundary PUSH4 immediates: 21 distinct 16
+  selectors among them: 15 sites covering 15 distinct selectors
+  NON-selector PUSH4 immediates: ['08c379a0']
+
+69656e74 among PUSH4 immediates: False
+  -> 69656e74 @ offset 732 is INSIDE PUSH32 at pc=723
+     payload: 696e73756666696369656e740000000000000000000000000000000000000000
+     ASCII: b'insufficient\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+
+89402a72 (__default__ phantom) occurrences in runtime: -1
+
+VERDICT: RV-1's correction is SUSTAINED — 69656e74 is not an opcode-boundary PUSH4 immediate.
+         The entry draft's zero-false-positive observation names the wrong mechanism (conclusion unchanged).

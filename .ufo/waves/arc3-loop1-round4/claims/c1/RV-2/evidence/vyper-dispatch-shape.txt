@@ -1,0 +1,97 @@
+=== RV-2: Vyper dispatch-shape + offset-semantics census (CarrierV, 1562 B) ===
+runtime sha256 57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0
+
+PROLOGUE 0..24 (hex): 5f3560e01c6002600d820660011b61060001601e395f5156
+  decoded: PUSH0 CALLDATALOAD; PUSH1 0xe0 SHR; PUSH1 2 PUSH1 13 DUP3 MOD;
+           PUSH1 1 SHL; PUSH2 0x600 ADD; PUSH1 0x1e CODECOPY; PUSH0 MLOAD JUMP
+  => COMPUTED JUMP TABLE: bucket = selector % 13, entry = uint16 at 0x600 + 2*bucket
+
+table @0x600 (13 uint16 LE entries): [668, 1511, 1291, 1024, 1452, 1087, 1341, 1511, 1424, 1396, 898, 1511, 24]
+  (0x5e7 = 1511 appears 3x -> empty-bucket sentinel; K=15 > 13 buckets)
+
+XOR compare sites (81 18 = DUP2 XOR): 15
+  Vyper compares via XOR==0 (81 18 15 ...) not solc's EQ (14) or GT (11)
+
+REPORTED bytecode_offset values: [36, 260, 536, 680, 910, 973, 1036, 1099, 1244, 1303, 1353, 1380, 1408, 1436, 1464]
+
+offset-semantics check (the r1/r3 'offsets are JUMPDESTs' reading):
+  offsets landing on 0x5b JUMPDEST: 0 / 15
+  offsets NOT on JUMPDEST: [36, 260, 536, 680, 910, 973, 1036, 1099, 1244, 1303, 1353, 1380, 1408, 1436, 1464]
+  every reported offset's PRECEDING byte is 0x57 (JUMPI): True
+
+  => On this Vyper carrier the reported bytecode_offset is the handler-body
+     FALL-THROUGH after each `... JUMPI` (the address reached when the
+     compare does NOT jump), NOT a JUMPDEST and NOT a PUSH2 jump target.
+     The r1/r3 'every offset lands on 0x5b' reading is FALSE for Vyper.
+
+first three, verbatim:
+  off=36: JUMPI@35, body 6003541561009c5760208060
+  off=260: JUMPI@259, body 6024361034176105fc575f54
+  off=536: JUMPI@535, body 346105fc575f543318156102
+
+=== REFINEMENT (same sitting): the jump TABLE entries are JUMPDESTs ===
+table @0x600: [668, 1511, 1291, 1024, 1452, 1087, 1341, 1511, 1424, 1396, 898, 1511, 24]
+every one of the 13 table addresses has byte 0x5b (JUMPDEST) — including the
+3x sentinel 1511 (0x5e7) that catches empty buckets (bucket 1, 7, 11).
+bucket assignment (selector % 13) vs K:
+  bucket 0 <- withdraw ; bucket 2 <- is_owner ; bucket 3 <- fee_of ;
+  bucket 4 <- balances ; bucket 5 <- pause, balance_of (2) ;
+  bucket 6 <- owner, total_deposits (2) ; bucket 8 <- paused ;
+  bucket 9 <- fee_bps ; bucket 10 <- fee_on, fee_quote (2) ;
+  bucket 12 <- deposit, set_fee, unpause (3) ; buckets 1/7/11 empty -> sentinel.
+15 selectors over 13 buckets => 4 collisions, resolved by the XOR chain.
+
+So there are TWO address classes in this carrier:
+  (i)  table targets   = JUMPDESTs (bucket entries), reached by the prologue's JUMP;
+  (ii) reported bytecode_offset = the fall-through after each bucket's compare
+       JUMPI — the handler body entry — NOT a JUMPDEST.
+The probe reports class (ii). The r1/r3 "every offset lands on 0x5b" reading is
+true for solc carriers' dispatchers but FALSE for this Vyper carrier.
+
+=== zero false positives (my own leg + my own byte census) ===
+non-selector PUSH4 immediates in the runtime:
+  08c379a0 (Error(string) revert selector) at 141, 376, 501, 647, 809, 1210
+  69656e74 (ASCII "ient", fragment of the "insufficient" revert string) at 731
+Neither was reported as a function by my probe leg (15 functions = exactly the
+15 planted selectors). Zero extras confirmed at byte level.
+
+=== SECOND CARRIER CONFIRMATION: EX-09 Ex09Vault (581 B, sha 54b14e30…) ===
+prologue: 5f3560e01c60026006820660011b61023901601e395f5156
+  decode: PUSH0 CALLDATALOAD; PUSH1 0xe0 SHR; PUSH1 2 PUSH1 6 DUP3 MOD;
+          PUSH1 1 SHL; PUSH2 0x239 ADD; PUSH1 0x1e CODECOPY; PUSH0 MLOAD JUMP
+  => same computed-jump-table shape, 6 buckets
+table @0x239: [24, 516, 544, 489, 247, 440] all JUMPDEST: True
+reported offsets: [259, 424, 452, 231, 528, 501, 36]
+offsets on JUMPDEST: 0 / 7
+offsets preceded by JUMPI: True
+
+=> SECOND INDEPENDENT VYPER CARRIER CONFIRMS: bytecode_offset = post-JUMPI
+   fall-through body entry; the r1/r3 JUMPDEST reading does not hold.
+
+=== EXACT OFFSET SEMANTICS (resolved by disassembly, CarrierV) ===
+Compare-site template (verified verbatim at byte 25):
+  25: 63 d0e30db0   PUSH4 <selector>
+  30: 81            DUP2
+  31: 18            XOR            ; selector == calldata-selector ? 0 : nonzero
+  32: 61 00f8       PUSH2 <next-compare-site>
+  35: 57            JUMPI          ; jumps on NON-match
+  36: <handler body>               ; MATCH fall-through
+
+=> the reported bytecode_offset is the MATCH FALL-THROUGH = handler body entry.
+   It is NOT a JUMPDEST; the JUMPI's *target* (the next compare site) is one.
+   Measured per selector (offset -> JUMPI target, all targets byte 0x5b):
+     d0e30db0 36 -> 248 | 1aa02d59 260 -> 524 | 3f4ba83a 536 -> 1512
+     2e1a7d4d 680 -> 1512 | e0749a6a 910 -> 961 | 6e8efde2 973 -> 1512
+     0c751377 1036 -> 1512 | 8456cb59 1099 -> 1232 | b144adfb 1244 -> 1512
+     0776076f 1303 -> 1512 | 8da5cb5b 1353 -> 1368 | 4643c56b 1380 -> 1512
+     48a3ef5c 1408 -> 1512 | 5c975abb 1436 -> 1512 | 27e235e3 1464 -> 1512
+   (1512 = 0x5e8 = the sentinel's second JUMPDEST: the "no bucket match" path.)
+
+=> Cross-entry reading: r1/r3 said "every reported offset lands on 0x5b (JUMPDEST)".
+   TRUE for the solc carriers (offset = match jump TARGET). FALSE for Vyper
+   carriers (offset = match FALL-THROUGH). Both are the handler start; the byte
+   class differs. Verified on TWO independent Vyper carriers (EX-04 CarrierV,
+   EX-09 Ex09Vault) and visible in EX-02's Smoke runtime (same idiom).
+
+Any round-4 draft line asserting the r1/r3 JUMPDEST reading for the Vyper leg
+without this scoping is a required fix (QUALITY #5/#15: label + scope).

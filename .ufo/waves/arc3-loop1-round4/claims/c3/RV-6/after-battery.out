@@ -1,0 +1,99 @@
+tool  : /var/tmp/rv6/w4/tool-r4-landed-29bb45ae.py
+sha256: 29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+root  : /var/tmp/rv6/w4/scratch/rv6-battery-tnhqpiz6
+
+### class-0-MATCH                                  want=0 got=0 HOLD
+capture + verify clean
+
+### class-0-verify-MATCH                           want=0 got=0 HOLD
+
+### class-10-CONTENT-DRIFT                         want=10 got=10 HOLD
+
+### class-11-REWRITE-DRIFT                         want=11 got=11 HOLD
+
+### class-12-METADATA-DRIFT                        want=12 got=12 HOLD
+
+### class-13-ABSENT                                want=13 got=13 HOLD
+
+### class-14-capture-UNEVALUABLE                   want=14 got=14 HOLD
+READ-ERROR in receipt: True
+
+### class-14-verify-UNEVALUABLE                    want=14 got=14 HOLD
+
+### class-2-USAGE-unparsable                       want=2 got=2 HOLD
+a non-receipt file as the reference
+
+### class-2-USAGE-missing-receipt                  want=2 got=2 HOLD
+
+### class-2-USAGE-missing-scratch                  want=2 got=2 HOLD
+
+### class-2-USAGE-tmp-scratch                      want=2 got=2 HOLD
+
+### class-2-USAGE-custody-overwrite                want=2 got=2 HOLD
+refuse to write a receipt over a custody path
+
+### class-3-SELFTEST-FAIL (sabotaged scratch copy) want=3 got=3 HOLD
+['CUSTODY_PAIR_SELFTEST: DIRTY cases=28 passed=27 failed=1 exit=3']
+
+### closure-a-sidecar-scope-refused                want=2 got=2 HOLD
+victim sha 140aba3932dd24cd -> 140aba3932dd24cd (unchanged=True)
+stderr: USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /var/tmp/rv6/w4/scratch/rv6-battery-tnhqpiz6/a/vic.sha256
+
+### closure-a2-sidecar-target-is-scoped-path       want=2 got=2 HOLD
+victim2 unchanged=True  stderr: USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /var/tmp/rv6/w4/scratch/rv6-battery-tnhqpiz6/a2/vic2.sha256
+
+### closure-a3-ordinary-sidecar-still-written      want=0 got=0 HOLD
+sidecar exists=True
+
+### closure-b-mkdir-not-a-directory                want=2 got=2 HOLD
+traceback=False
+stderr: USAGE: cannot create the receipt directory ([Errno 20] Not a directory: '/var/tmp/rv6/w4/scratch/rv6-battery-tnhqpiz6/b/pfile.txt/sub'): /var/tmp/rv6/w4/scratch/rv6-battery-tnhqpiz6/b/pfile.txt/sub
+
+### closure-b2-empty-out                           want=2 got=2 HOLD
+traceback=False stderr: USAGE: --out carries no usable name, so no sidecar path can be derived: ''
+
+### closure-b3-readonly-parent                     want=2 got=2 HOLD
+traceback=False stderr: USAGE: cannot create the receipt directory ([Errno 13] Permission denied: '/var/tmp/rv6/w4/scratch/rv6-battery-tnhqpiz6/b3/sub'): /var/tmp/rv6/w4/scratch/rv6-battery-tnhqpiz6/b3/sub
+
+### closure-b4-legal-nested-out-still-works        want=0 got=0 HOLD
+receipt exists=True
+
+### closure-c1-dupe-stanzas-gated                  want=2 got=2 HOLD
+stanzas in reference=5
+coverage line: ['REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile']
+stderr: USAGE: reference covers 1 of the required 5 distinct paths
+
+### closure-c2-five-distinct-noncanonical          exit=0  (no coverage line)
+
+### closure-c3-canonical-five-passes-gate          want=0 got=0 HOLD
+capture exit=0
+coverage line: []
+
+### closure-c4-one-of-five-still-gates             want=2 got=2 HOLD
+coverage line: ['REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile']
+
+### closure-c5-no-flag-default-unchanged           want=0 got=0 HOLD
+
+### regress-guard-scoped-path-refused              want=2 got=2 HOLD
+scoped bytes intact=True
+
+### regress-guard-hardlink-refused                 want=2 got=2 HOLD
+scoped bytes intact=True
+
+### regress-guard-canonical-refused                want=2 got=2 HOLD
+
+### live-pair-MATCH-5of5                           want=0 got=0 HOLD
+capture exits 0/0
+['CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0']
+
+### live-pair-sidecars  pre='live-pre.txt: OK' post='live-post.txt: OK'
+
+### receipt-self-pin  # tool: tool-r4-landed-29bb45ae.py  sha256 29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+    tool sha256       29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+
+### selftest  CUSTODY_PAIR_SELFTEST: CLEAN cases=28 passed=28 failed=0 exit=0
+    failing: (none)
+    cases (28): capture-ok-exit-0, receipt-shape-v2-fields, sidecar-self-hash, verify-receipt-vs-live-clean, same-content-rewrite-inplace-ctime-pin, same-content-rewrite-rename-inode-pin, content-drift-detected, absent-path-detected, metadata-drift-detected, label-utc-render-tz-independent, v1-stanza-compat-and-mutation, sums-v1-compat, pipe-v1-compat, unparsable-receipt-usage-exit, refuses-to-write-over-custody-path, unreadable-path-is-unevaluable, unevaluable-never-matches, parsed-unevaluable-reference-never-matches, partial-reference-require-paths-gate, refuses-to-write-over-scoped-path, selftest-missing-scratch-usage-exit, refuses-write-through-hardlink-alias, coverage-gate-rejects-duplicate-stanzas, coverage-gate-passes-distinct-five, refuses-sidecar-over-measured-file, refuses-receipt-over-sidecar-neighbour, out-parent-not-a-directory-usage-exit, both-sides-absent-is-agreement-match
+
+=== BATTERY: arms=33 hold=32 fail=0 (n/a=1) ===
+wrote /var/tmp/rv6/w4/after-battery/battery.json

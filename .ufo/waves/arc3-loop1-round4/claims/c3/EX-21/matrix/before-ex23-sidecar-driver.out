@@ -1,0 +1,94 @@
+EX-23 sidecar-scope after-state probe
+tool=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/claims/c3/EX-21/tools/tool-r3-landed-7cd19c3c.py
+scratch-root=/var/tmp/ex21/ex23-before label=before
+utc=2026-10-19T14:10:44Z
+==============================================================================
+PROBE A-sidecar-lands-on-measured-file  label=before
+  tool-sha256=7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+  argv: capture --out vic --paths vic.sha256
+  exit=0
+  stdout| RECEIPT: vic  sha256=f28cf4a80dba01ef36153f2061f3fb79fcbf89e911da137032664ab1f2e6d4bc
+  stdout| SIDECAR: vic.sha256
+  stdout| CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=ex23-A-sidecar-lands-on-measured-file exit=0
+  fixture watch (before -> after):
+    vic                          TOUCHED        sha=73f6c87fcbd01bc6 ino=12042216 mtime_ns=1792419044726071610
+                                   after        sha=f28cf4a80dba01ef ino=12042216 mtime_ns=1792419044756096188
+    vic.sha256                   TOUCHED        sha=f7dd7ec8c6d1a066 ino=12042215 mtime_ns=1792419044726048290
+                                   after        sha=29030a8de9834cc6 ino=12042215 mtime_ns=1792419044756166038
+    vic.sha256.sha256            untouched      ABSENT
+  receipt-landed=True sidecar-landed=True expected-receipt=False
+  TOUCHED-FILES: vic, vic.sha256
+==============================================================================
+PROBE B-sidecar-lands-on-neighbour-of-measured  label=before
+  tool-sha256=7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+  argv: capture --out vic.sha256 --paths vic
+  exit=0
+  stdout| RECEIPT: vic.sha256  sha256=702b38b003629d190ba85dfb3e535c8314a877533f3ce7408239f4cfb4079af6
+  stdout| SIDECAR: vic.sha256.sha256
+  stdout| CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=ex23-B-sidecar-lands-on-neighbour-of-measured exit=0
+  fixture watch (before -> after):
+    vic                          untouched      sha=ee7234bd2d93c760 ino=12042218 mtime_ns=1792419044760345165
+    vic.sha256                   TOUCHED        ABSENT
+                                   after        sha=702b38b003629d19 ino=12042219 mtime_ns=1792419044790225784
+    vic.sha256.sha256            TOUCHED        ABSENT
+                                   after        sha=e21d424fc2889658 ino=12042220 mtime_ns=1792419044790286814
+  receipt-landed=True sidecar-landed=True expected-receipt=False
+  TOUCHED-FILES: vic.sha256, vic.sha256.sha256
+==============================================================================
+PROBE B2-sidecar-overwrites-existing-neighbour  label=before
+  tool-sha256=7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+  argv: capture --out vic.sha256 --paths vic
+  exit=0
+  stdout| RECEIPT: vic.sha256  sha256=0fd78accea43ab2355bf52b8ad0285e1ba057157c667b637c59c74486b93b323
+  stdout| SIDECAR: vic.sha256.sha256
+  stdout| CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=ex23-B2-sidecar-overwrites-existing-neighbour exit=0
+  fixture watch (before -> after):
+    vic                          untouched      sha=ee7234bd2d93c760 ino=12042222 mtime_ns=1792419044795808860
+    vic.sha256                   TOUCHED        sha=993645627b6f5f25 ino=12042223 mtime_ns=1792419044795833380
+                                   after        sha=0fd78accea43ab23 ino=12042223 mtime_ns=1792419044827565937
+    vic.sha256.sha256            TOUCHED        ABSENT
+                                   after        sha=2b062aa093edc138 ino=12042224 mtime_ns=1792419044827647527
+  receipt-landed=True sidecar-landed=True expected-receipt=False
+  TOUCHED-FILES: vic.sha256, vic.sha256.sha256
+==============================================================================
+CONTROL C-legitimate-write-still-works (legitimate fresh --out beside a measured .sha256 file)
+  tool-sha256=7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+  exit=0
+  stdout| RECEIPT: fresh.txt  sha256=f8ba6597c37956ea76a1fb5b9070b2948980c2676afa6c73bb07a9fa1ffa7a1c
+  stdout| SIDECAR: fresh.txt.sha256
+  stdout| CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=ex23-control exit=0
+  receipt-landed=True sidecar-landed=True sidecar-pins-receipt=True
+  verify --live --require-paths 1: exit=0 CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+==============================================================================
+CONSEQUENCE D-injection-observed-by-tool-verify (injection observed through the tool's own verify)
+  tool-sha256=7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+  step1 capture pre-receipt of vic.sha256: exit=0
+  step2 injection capture --out vic --paths vic.sha256: exit=0
+  step2| RECEIPT: vic  sha256=99a5813a6394a80876cbe13c0f7e8b3166a14bfc97c63dd37ddedc17055269fc
+  step2| SIDECAR: vic.sha256
+  step2| CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=ex23-consequence exit=0
+  step3 verify pre.txt --live --require-paths 1: exit=10
+  step3| PATH vic.sha256: CONTENT-DRIFT  compared=11/11 moved=sha256
+  step3| SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+  step3| CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+  measured-file digest: before=3969bb255daea488 after=2b9b43e827e44fcd
+  VERDICT-CLASS: CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+==============================================================================
+PROBE E-sidecar-hardlink-of-measured-inode  label=before
+  tool-sha256=7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+  argv: capture --out out.txt --paths measured.sha256   (out.txt.sha256 is a hardlink of measured.sha256)
+  exit=0
+  stdout| RECEIPT: out.txt  sha256=b424f201c3873909634f26ad8750e78ab7e5cd2306e8d35d50c43b8f5cca253d
+  stdout| SIDECAR: out.txt.sha256
+  stdout| CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=ex23-hardlink exit=0
+  measured inode: before=sha=9f6163d7cdb9f22f ino=12042235 mtime_ns=1792419045003937021
+  measured inode: after =sha=58a5f16c2e4fcd2c ino=12042235 mtime_ns=1792419045033139810  CLOBBERED
+  CLOSED=False (rc==2 and not clobbered)
+==============================================================================
+SUMMARY label=before tool-sha256=7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+  A: exit=0 touched=['vic', 'vic.sha256']
+  B: exit=0 touched=['vic.sha256', 'vic.sha256.sha256']
+  B2: exit=0 touched=['vic.sha256', 'vic.sha256.sha256']
+  C: exit=0 receipt=True sidecar=True pins=True
+  D: injection-exit=0 verify-exit=10 digest-held=False class=CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+  E: exit=0 clobbered=True closed=False

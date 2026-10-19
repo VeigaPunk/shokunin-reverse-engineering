@@ -1,0 +1,141 @@
+# EX-25 attack battery — phase=candidate  tool=/var/tmp/ex25-r4/tools/candidate/custody-pair.py
+# tool sha256: 63e67631f6dd5be2730823040181c409011f93347a9fc3047a16a9706df581bb
+
+==============================================================================
+ATTACK A1-hardlink-5-names-1-inode-req5  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/hardlink5-pre.txt --live --require-paths 5
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/hardlink5-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /var/tmp/ex25-r4/fixtures/scratch/hl/hl-0: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/hl/hl-1: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/hl/hl-2: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/hl/hl-3: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/hl/hl-4: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+==============================================================================
+ATTACK A2-hardlink-5-names-1-inode-noflag  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/hardlink5-pre.txt --live
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/hardlink5-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /var/tmp/ex25-r4/fixtures/scratch/hl/hl-0: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/hl/hl-1: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/hl/hl-2: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/hl/hl-3: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/hl/hl-4: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+==============================================================================
+ATTACK A3-spelling-5x-one-path-req5  exit=2
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/spelling5-one-path-pre.txt --live --require-paths 5
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.profile
+
+[stderr]
+USAGE: reference covers 1 of the required 5 paths
+
+==============================================================================
+ATTACK A4-dupe-with-unevaluable-copy-req5  exit=2
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe5-unevaluable-pre.txt --live --require-paths 5
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+
+[stderr]
+USAGE: reference covers 1 of the required 5 paths
+
+==============================================================================
+ATTACK A5-four-custody-plus-extra-req5  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/four-custody-plus-extra-pre.txt --live --require-paths 5
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/four-custody-plus-extra-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /var/tmp/ex25-r4/fixtures/scratch/distinct-1.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+==============================================================================
+ATTACK A6-drifted-padded-req5-fail-closed  exit=2
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe5-onepath-drifted-pre.txt --live --require-paths 5
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+
+[stderr]
+USAGE: reference covers 1 of the required 5 paths
+
+==============================================================================
+ATTACK A7-drifted-padded-noflag  exit=10
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe5-onepath-drifted-pre.txt --live
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/dupe5-onepath-drifted-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: CONTENT-DRIFT  compared=11/11 moved=sha256
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=1  CONTENT-DRIFT=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+
+==============================================================================
+ATTACK A8-req0-boundary  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe5-one-path-pre.txt --live --require-paths 0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/dupe5-one-path-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+
+==============================================================================
+ATTACK A9-req-negative-boundary  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe5-one-path-pre.txt --live --require-paths -1
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/dupe5-one-path-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+
+==============================================================================
+ATTACK A10-dupe4plus1-req4-passes  exit=0
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe4plus1-pre.txt --live --require-paths 4
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex25-r4/fixtures/dupe4plus1-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+SHA256-CONTRACT: 4/4 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=4  MATCH=4  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=4/4 drift=0 exit=0
+
+==============================================================================
+ATTACK A11-dupe4plus1-req5-caught  exit=2
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/dupe4plus1-pre.txt --live --require-paths 5
+REFERENCE-COVERAGE: 4/5 paths present in reference; unaccounted: ~/.profile
+
+[stderr]
+USAGE: reference covers 4 of the required 5 paths
+
+==============================================================================
+ATTACK A12-aliased-symlink-pair-req5  exit=2
+CMD python3 /var/tmp/ex25-r4/tools/candidate/custody-pair.py verify /var/tmp/ex25-r4/fixtures/symlink-alias-5stanzas-pre.txt --live --require-paths 5
+REFERENCE-COVERAGE: 4/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+
+[stderr]
+USAGE: reference covers 4 of the required 5 paths

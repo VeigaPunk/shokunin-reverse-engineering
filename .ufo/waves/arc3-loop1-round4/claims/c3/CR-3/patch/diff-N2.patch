@@ -1,0 +1,42 @@
+--- tool-new-29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf.py	2026-10-19 11:10:17.548780788 -0300
++++ tool-N2.py	2026-10-19 11:12:48.074343272 -0300
+@@ -706,7 +706,8 @@
+         guarded = [Path(p).expanduser() for p in CUSTODY_PATHS] + paths
+         try:
+             guarded_names = {g.resolve() for g in guarded}
+-            neighbours = {Path(str(g) + ".sha256").resolve() for g in guarded}
++            neighbour_paths = [Path(str(g) + ".sha256") for g in guarded]
++            neighbours = {n.resolve() for n in neighbour_paths}
+             candidates = ((out, out.resolve()), (sidecar, sidecar.resolve()))
+         except OSError as exc:  # unresolvable --out or measured path: fail closed, USAGE
+             print("USAGE: cannot resolve the receipt or a guarded path (%s): %s" % (exc, out),
+@@ -714,7 +715,8 @@
+             return EXIT_USAGE
+         for cand, cand_res in candidates:
+             if (cand_res in guarded_names or cand_res in neighbours
+-                    or any(_same_file(cand, g) for g in guarded)):
++                    or any(_same_file(cand, g) for g in guarded)
++                    or any(_same_file(cand, n) for n in neighbour_paths)):
+                 print("USAGE: refusing to write a receipt or its derived sidecar over a path it"
+                       " measures, a custody path, or the sidecar-shaped neighbour of one"
+                       " (resolved path or inode): %s" % cand, file=sys.stderr)
+@@ -725,6 +727,19 @@
+             print("USAGE: cannot create the receipt directory (%s): %s" % (exc, out.parent),
+                   file=sys.stderr)
+             return EXIT_USAGE
++        try:  # a non-regular target (FIFO, device, directory, symlink loop) is refused:
++            # open() on a FIFO with no reader blocks forever, so this must precede the write
++            if out.exists() and not out.is_file():
++                print("USAGE: refusing to write a receipt over a non-regular file: %s" % out,
++                      file=sys.stderr)
++                return EXIT_USAGE
++            if sidecar.exists() and not sidecar.is_file():
++                print("USAGE: refusing to write a sidecar over a non-regular file: %s" % sidecar,
++                      file=sys.stderr)
++                return EXIT_USAGE
++        except OSError as exc:  # e.g. ELOOP while resolving the target
++            print("USAGE: cannot resolve the receipt target (%s): %s" % (exc, out), file=sys.stderr)
++            return EXIT_USAGE
+         try:
+             out.write_text(text, encoding="utf-8")
+             digest = sha256_file(out)

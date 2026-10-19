@@ -1,0 +1,106 @@
+{
+  "phase": "candidate",
+  "tool": "/var/tmp/ex25-r4/tools/candidate/custody-pair.py",
+  "tool_sha256": "63e67631f6dd5be2730823040181c409011f93347a9fc3047a16a9706df581bb",
+  "legs": {
+    "V1-dupe5-onepath-req5": 2,
+    "V2-custody5-distinct-req5": 0,
+    "V3-dupe4plus1-req5": 2,
+    "V4-symlink-alias-5stanzas-req5": 2,
+    "V5-v1-dupe5-onepath-req5": 2,
+    "V6-one-path-req5": 2,
+    "V7-one-path-req1": 0,
+    "V8-dupe5-onepath-req1": 0,
+    "V9-scratch5-distinct-req5": 0,
+    "V10-v1-distinct5-req5": 0,
+    "V11-custody5-distinct-req6": 2,
+    "V12-dupe5-onepath-noflag": 0,
+    "V13-custody5-distinct-noflag": 0,
+    "V14-r3-pair-req5": 0,
+    "V15-r3-pair-noflag": 0,
+    "V16-selftest": 0,
+    "V17-paths": 0
+  },
+  "checks": [
+    {
+      "id": "C1",
+      "desc": "duplicate-stanza 5-path reference is caught by --require-paths 5 (exit 2)",
+      "pass": true,
+      "evidence": "exit=2 out=['REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile', 'USAGE: reference covers 1 of the required 5 paths']"
+    },
+    {
+      "id": "C2",
+      "desc": "single-stanza-per-path 5-path control still passes (exit 0, MATCH 5/5)",
+      "pass": true,
+      "evidence": "exit=0 out='CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0'"
+    },
+    {
+      "id": "C3",
+      "desc": "4-distinct-plus-padding is caught (exit 2)",
+      "pass": true,
+      "evidence": "exit=2"
+    },
+    {
+      "id": "C4",
+      "desc": "symlink-alias boundary: 5 stanzas/4 resolved paths is caught (exit 2)",
+      "pass": true,
+      "evidence": "exit=2"
+    },
+    {
+      "id": "C5",
+      "desc": "v1 sums shape: 5 rows/1 distinct path is caught (exit 2)",
+      "pass": true,
+      "evidence": "exit=2"
+    },
+    {
+      "id": "C6",
+      "desc": "1-of-5 reference under the gate is still USAGE exit 2 (r3 behaviour held)",
+      "pass": true,
+      "evidence": "exit=2"
+    },
+    {
+      "id": "C7",
+      "desc": "threshold semantics: --require-paths 1 on a 1-path reference exits 0",
+      "pass": true,
+      "evidence": "exit=0"
+    },
+    {
+      "id": "C8",
+      "desc": "declared opt-in unchanged: padded reference without the flag exits 0",
+      "pass": true,
+      "evidence": "exit=0"
+    },
+    {
+      "id": "C9",
+      "desc": "declared opt-in unchanged: canonical 5-path reference without the flag exits 0",
+      "pass": true,
+      "evidence": "exit=0"
+    },
+    {
+      "id": "C10",
+      "desc": "v1 distinct-5 control passes the gate (exit 0)",
+      "pass": true,
+      "evidence": "exit=0"
+    },
+    {
+      "id": "C11",
+      "desc": "r3 real receipt pair under the gate is unchanged (MATCH 5/5 exit 0)",
+      "pass": true,
+      "evidence": "exit=0"
+    },
+    {
+      "id": "C12",
+      "desc": "selftest runs (exit 0, CLEAN)",
+      "pass": true,
+      "evidence": "exit=0 last='CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0'"
+    },
+    {
+      "id": "C13",
+      "desc": "declared count-vs-identity residual R3 (5 unrelated paths pass) \u2014 recorded, not failed",
+      "pass": true,
+      "evidence": "exit=0 (a 0 here is the declared R3 shape, not a regression)"
+    }
+  ],
+  "passed": 13,
+  "failed": 0
+}

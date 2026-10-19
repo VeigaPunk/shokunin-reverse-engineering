@@ -1,0 +1,29 @@
+== VZ-2 r4 — complete-repair patch: independent re-apply, gate, and residual measurement ==
+date: 2026-10-19T14:13:01Z
+patch: claims/c2/EX-14/evidence/candidate-complete-frontier-repair.patch.md
+  sha256 928cfbc53bffdaf733f409c3f8b8127bc3aea3ac2adacf5b2974add94eb2d4ee
+before PROVINCE.md: d075a3c67e17ae428eb5a69e594171c6dcba88ec93c97bd3cf162a2f2b4dbdad  162 lines
+after  PROVINCE.md: f9b0888c2b60b0b3cabed299b5b83271d7b91c33cc33968bdbe502a40718eb4b  162 lines
+hunks applied: 4/4 (patch --batch --forward, all 'succeeded' with fuzz 1)
+census gate on patched tree: PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0), G2 17/14/3
+
+-- clause-level residual audit on the PATCHED text --
+  F1b: repaired (old literal gone)
+  F5b: repaired (old literal gone)
+  X1: repaired (old literal gone)
+  R2: repaired (old literal gone)
+  F3: literal still present -> 88:  JEB (unprobed). Engine installs are operator-owned.
+  C1: literal still present -> 62:| Host fallback readers | `file`, `readelf`, `objdump`, `llvm-readobj`, `nm`, `strings`, `unzip`, `tar`, `gdb`, `eu-stack`, `coredumpctl`, `pacman`, `zstd`, `gpg`, `python3`, node/npx | `command -v <tool>` | absent: `7z`, `cabextract`, `xxd`, radare2/rizin, strace/ltrace, upx, pacman-contrib |
+
+-- CONTENT DEFECT (RV-4 P-1 sustained, propagates to the complete patch) --
+  patch adds: 'real solc-0.8.37 carriers (Core, arc3-r1/r3) and Vyper 0.4.3 (r4) held'
+  corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:1,33  -> 'RESULT-class, no Core promotion'
+  corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md:1,35 -> 'RESULT-class, no Core promotion'
+  PROVINCE.md:54 (Core EVM row) cites only (r3-07); 'arc3-r1' appears nowhere in PROVINCE pre-patch
+  PROVINCE.md:75-76: promotion requires a LOG.md entry citing the earning corpus entries
+  => the added '(Core, arc3-r1/r3)' / 'held' wording asserts a promotion the corpus disclaims.
+
+-- CROSS-CHAIN COUPLING --
+  patch's Vyper clause cites a leg measured in the WAVE TREE (EX-04 probe, 15/15 K/K)
+  but corpus/ is still 83 files; C1's entry is patch text (claims/c1/records-drafts/).
+  EX-14 names this; RV-4 confirms. Landing order decides the correct final wording.

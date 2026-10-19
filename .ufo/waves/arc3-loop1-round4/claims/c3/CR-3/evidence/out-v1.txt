@@ -1,0 +1,55 @@
+### tool ORIGINAL 7cd19c3cfd835c78  PATCHED-P 4208ef6ecefd8c83
+
+== v1 sums  5 stanzas / 1 distinct path   [PAD ATTACK]  (--require-paths 5)
+  ORIGINAL: exit=0
+      orig| VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+  PATCHED : exit=2
+      pat | USAGE: reference covers 5 of the required 5 paths
+      pat | REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+== v1 sums  5 stanzas / 2 distinct paths  [PAD ATTACK]  (--require-paths 5)
+  ORIGINAL: exit=0
+      orig| VERDICT: MATCH-V1-PARTIAL  paths=2  MATCH-V1-PARTIAL=2  exit=0
+  PATCHED : exit=2
+      pat | USAGE: reference covers 5 of the required 5 paths
+      pat | REFERENCE-COVERAGE: 2/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+== v1 sums  3 stanzas / 2 distinct (same file twice, two spellings)  (--require-paths 3)
+  ORIGINAL: exit=0
+      orig| VERDICT: MATCH-V1-PARTIAL  paths=3  MATCH-V1-PARTIAL=3  exit=0
+  PATCHED : exit=2
+      pat | USAGE: reference covers 3 of the required 3 paths
+      pat | REFERENCE-COVERAGE: 2/3 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+== v1 stanza 5 duplicate stanzas          [PAD ATTACK]  (--require-paths 5)
+  ORIGINAL: exit=0
+      orig| VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+  PATCHED : exit=2
+      pat | USAGE: reference covers 5 of the required 5 paths
+      pat | REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+== v1 pipe   5 duplicate rows             [PAD ATTACK]  (--require-paths 5)
+  ORIGINAL: exit=0
+      orig| VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+  PATCHED : exit=2
+      pat | USAGE: reference covers 5 of the required 5 paths
+      pat | REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+== v1 sums  legit 2 distinct              [control pass]  (--require-paths 2)
+  ORIGINAL: exit=0
+      orig| VERDICT: MATCH-V1-PARTIAL  paths=2  MATCH-V1-PARTIAL=2  exit=0
+  PATCHED : exit=0
+      pat | VERDICT: MATCH-V1-PARTIAL  paths=2  MATCH-V1-PARTIAL=2  exit=0
+== v1 sums  legit 1 path, N=1             [control pass]  (--require-paths 1)
+  ORIGINAL: exit=0
+      orig| VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+  PATCHED : exit=0
+      pat | VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+== v1 sums  symlink+target = 1 resolved   [TIGHTENING SIDE-EFFECT]  (--require-paths 2)
+  ORIGINAL: exit=10
+      orig| VERDICT: CONTENT-DRIFT  paths=2  CONTENT-DRIFT=1 MATCH-V1-PARTIAL=1  exit=10
+  PATCHED : exit=2
+      pat | USAGE: reference covers 2 of the required 2 paths
+      pat | REFERENCE-COVERAGE: 1/2 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+
+### bare verify (no gate) — does the patch change any verdict? (must not)
+  sums-dupe5         orig_exit=0   patched_exit=0   same_stdout=yes
+  sums-alias3        orig_exit=0   patched_exit=0   same_stdout=yes
+  stanza-dupe5       orig_exit=0   patched_exit=0   same_stdout=yes
+  pipe-dupe5         orig_exit=0   patched_exit=0   same_stdout=yes
+  sums-symlink-pair  orig_exit=10  patched_exit=10  same_stdout=yes

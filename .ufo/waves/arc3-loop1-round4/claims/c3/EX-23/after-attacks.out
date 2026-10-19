@@ -1,0 +1,45 @@
+==============================================================================
+ATTACK F-symlink-sidecar-to-measured  label=attacks tool=29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+  exit=2
+  | USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): out.txt.sha256
+  measured before:                   bddc3100ca2f76eb
+  measured after:                    bddc3100ca2f76eb
+  receipt written:                   False
+  VERDICT: REFUSED-AS-DECLARED
+==============================================================================
+ATTACK G-relative-spelling  label=attacks tool=29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+  exit=2
+  | USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): vic.sha256
+  measured before:                   beaa55388eb1034d
+  measured after:                    beaa55388eb1034d
+  VERDICT: REFUSED-AS-DECLARED
+==============================================================================
+ATTACK H-overrefusal-control  label=attacks tool=29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+  exit=0
+  | RECEIPT: q.sha256  sha256=e675319f830e61cac989892a19f7ddc9d3e1bf557e9235666475e91c422c159d
+  | SIDECAR: q.sha256.sha256
+  | CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+  q.sha256 is a receipt:             True
+  q.sha256.sha256 sidecar:           True
+  VERDICT: PASS (no over-refusal)
+==============================================================================
+ATTACK I-out=''  label=attacks tool=29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+  exit=2
+  | USAGE: --out carries no usable name, so no sidecar path can be derived: ''
+  traceback:                         False
+  VERDICT: DECLARED-USAGE
+==============================================================================
+ATTACK I-out='.'  label=attacks tool=29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+  exit=2
+  | USAGE: --out carries no usable name, so no sidecar path can be derived: '.'
+  traceback:                         False
+  VERDICT: DECLARED-USAGE
+==============================================================================
+SABOTAGE J  removed the `cand_res in neighbours` term
+  sabotaged-copy sha256=5ebafb79435906e33c4714bbbb293913f2b4b90605c73f85736b635c20c72bbc
+  arm A: exit=2 measured-before=e8a052d87e6d7c9f measured-after=e8a052d87e6d7c9f closed
+  arm B: exit=0 measured-before=b5175de1e10a0cf9 measured-after=b5175de1e10a0cf9 exit=0
+    | RECEIPT: vic.sha256  sha256=eff386747726bb324d0878a3e2a8fdf37ff35e4516b4cb2056ab70a88d1dda1c
+    | SIDECAR: vic.sha256.sha256
+  VERDICT: sabotage arm B must be RED and arm A must stay closed for the
+           neighbour term to be load-bearing (non-vacuity of the after-state).

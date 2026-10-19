@@ -1,0 +1,199 @@
+=== VZ-4: the C2 repair set IS now complete (measured 14:17Z) ===
+
+CONTEXT: C2's verdict (VZ-2, written 14:14Z) measured the then-current patch
+(EX-14 'candidate-complete-frontier-repair.patch.md', sha256 8a0e12ff…) as repairing
+4 of 6 stale rows and leaving F3 + C1, and sustained a content defect (false
+'(Core, arc3-r1/r3)' promotion). Both findings were correct at that revision.
+
+WHAT CHANGED AFTER THE VERDICT — two artifacts landed:
+  1. EX-14 published a NEW revision:
+     candidate-complete-frontier-repair.v2.patch.md  sha256 0b8ad045e19cee5a3120706853f9950bb90522b2ebaebb418db25f586c21d9a8
+     whose own header says 'Content defect fixed (verdict R4, sustained)' and which
+     replaces '(Core, arc3-r1/r3) ... held' with '... legs held K/K (RESULT-class)'.
+     VZ-4 verified on the applied text: 0 occurrences of 'Core, arc3-r1'.
+  2. EX-13 published per-row patches for BOTH survivors:
+     province-frontier-alternate-providers-jeb.patch.md   (F3)
+     province-core-fallback-readers-inventory.patch.md    (C1)
+
+VZ-4 TEST (scratch /var/tmp/vz4/c2full/apply, real tree untouched):
+  applied EX-14 v2 + EX-13's F3 patch + EX-13's C1 patch with 'patch --batch --forward'
+  -> 6 hunks applied (fuzz 1), PROVINCE.md held at 162 lines
+  needle sweep on the patched text:
+    'Reserve: 91MB'                              repaired/absent
+    'JEB (unprobed)'                             repaired/absent
+    'real solc/vyper-compiled bytecode untested' repaired/absent
+    'still probe-refused since r2'               repaired/absent
+    'absent: `7z`'                              repaired/absent
+    'Next: raise'                                repaired/absent
+  => ALL SIX stale needles are repaired, line-neutral (162 -> 162),
+     and the false Core promotion is gone.
+
+CAVEAT (measured, important): the census instrument CANNOT grade repairs.
+  province-staleness-census.py computes each row's verdict from LIVE evidence
+(corpus greps + command re-runs), not from PROVINCE's text, so it prints the
+  same 'stale=6' against the original AND the fully-patched file. That is the
+  instrument's design (it measures the world), and VZ-2 said so: the claim's
+  acceptance test must be the CLAUSE-LEVEL audit (grep -F per row), not the
+  census tally. VZ-4 therefore re-ran the clause-level audit above.
+
+REVISED C2 DISPOSITION: the NOT-VERIFIED verdict was correct at 14:14Z and is
+  now SUPERSEDED by the repair set — the parent can reach stale 0 by landing
+  THREE patch texts (EX-14 v2 + EX-13 F3 + EX-13 C1). Verify by clause-level
+  audit after landing; do NOT use the census tally as the repair test.
+
+--- VZ-4 ADJUDICATION: RV-3's X1b finding vs VZ-2's census rating (14:20Z) ---
+CROSS-SEAT DISAGREEMENT, resolved on evidence:
+
+  VZ-2's census rates the clause "multi-version pacman pairs beyond expac
+  unexercised" as CURRENT, note: "no corpus entry claims a further pacman
+  version pair".
+
+  RV-3 (reviewer) rates it STALE: r4-10's own section header reads
+  "Targets — cached pacman pairs (uniq -d walk: 354 duplicated pkgbases)" and
+  it lists the 1password-cli 2.34.1-1 -> 2.40.0-2 pair plus the qpdf control
+  pair, extracted via `tar -xOf <pkg>` from the pacman cache — i.e. pacman
+  package pairs, beyond the r2 expac/bwrap work.
+
+VZ-4 VERDICT: RV-3 is right; VZ-2's rating is not supported.
+  Evidence read first-hand by VZ-4:
+    corpus/knowledge/2026-10-13-r4-10-real-version-pair.md:15
+      "## Targets — cached pacman pairs (`uniq -d` walk: 354 duplicated pkgbases)"
+    :19-20 the 1password-cli pair (41,210,040 -> 43,475,106 B) and the qpdf
+      control pair, both named as pacman package members with `tar -xOf` extraction.
+  The clause's own words are "pacman pairs ... beyond expac unexercised"; r4-10
+  exercises exactly pacman pairs beyond expac. The clause is STALE.
+
+  VZ-4 confirmed the needle survives in the fully-patched tree:
+    /var/tmp/vz4/c2full/apply/PROVINCE.md:159
+      "  pacman pairs beyond expac unexercised [r5-audit C1: merged from the pruned"
+
+CONSEQUENCE: the "all six repaired" result above is really SIX of SEVEN. EX-14 v2
+  + EX-13's F3 + C1 close F1b, F3, F5b, X1a, C1, R2 — but X1's SECOND half
+  (the pacman-pairs clause, same bullet) is left stale, and RV-3 additionally
+  sustains an accuracy defect in the X1a repair text itself ("all three input
+  classes" cited to r12, whose own text says "both classes"; the third class was
+  closed later at r14-01). Both need re-wording/re-citing before landing.
+
+REVISED C2 DISPOSITION: still satisfiable, but the parent must add
+  (i) a repair for the pacman-pairs clause (RV-3's suggested form: "multi-version
+      pacman pairs exercised since r4-10 (1password-cli, qpdf controls)"), and
+  (ii) a re-worded/re-cited X1a clause (cite r14-01, or state "two classes; the
+      reconcile-input sub-class closed at r14-01").
+  Landing EX-14 v2 + EX-13 F3 + EX-13 C1 as-is would leave one stale clause and
+  one overreaching clause in a scoped file.
+
+--- VZ-4: PL-2's candidate is the most complete, but its X1a wording is ALSO wrong ---
+PL-2 landed candidate-repairs.patch.md and candidate-with-s5.patch.md at 14:20Z.
+VZ-4 applied candidate-with-s5 to a scratch root:
+  22/22 hunks applied, PROVINCE.md held at 162 lines, sha256 163a546e52070fbff94890dcc30e382eadafa8d96d1e7f06bb8284fcac177832
+  census: VERDICT: PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+  stale needle sweep: ALL SEVEN repaired —
+    Reserve: 91MB / JEB (unprobed) / real solc/vyper-compiled bytecode untested /
+    still probe-refused since r2 / pacman pairs beyond expac unexercised /
+    absent: `7z` / Next: raise
+  => PL-2 closes the pacman gap I flagged AND adds S5/C50/C62 repairs beyond the others.
+
+BUT its X1a clause reads (line 164 of the patch):
+  "compare-application-versions is exercised now (r12-02; the
+   runtime-reconciliation input class stays untested)"
+RV-3 sustained an accuracy defect against EX-13's rival wording ("all three input
+classes" cited to r12). PL-2's wording errs in the OPPOSITE direction, and is ALSO
+not supported:
+
+  corpus/knowledge/2026-10-14-r12-02-queue-b-ledger.md:213-218 — "WAS TRULY-OPEN,
+  NOW EXERCISED (this lane, both classes; candidates 1-3). ... Residual open
+  sub-class: the runtime-reconciliation input class ... untested"
+  corpus/knowledge/2026-10-14-r14-01-queue-b-residual.md:3 (HEADLINE) — "L203's
+  last input class EXERCISED"
+  :19 — "Candidate 1: L203's residual sub-class — the runtime-reconciliation input
+  class is ACCEPTED ... succeeds (exit 0, 0.75 s, 325,009 B): ev_8f0ac46c..."
+
+  So the class r12-02 left open was CLOSED at r14-01. Saying it "stays untested"
+  is stale as of r14-01; saying "all three classes" cited to r12 is an overreach
+  against r12's own text.
+
+CORRECT FORM (VZ-4's reading of the two entries):
+  "compare-application-versions is exercised across all three input classes since
+   r14-01 (two at r12-02; the runtime-reconciliation sub-class closed at r14-01
+   — ev_8f0ac46c…), and multi-version pacman pairs are exercised (op 2.34.1->2.40.0,
+   r4-10)"
+  with the caveat the corpus itself records: "exercised" is not "correct" — r14-01
+  also records a directional coverage law and a paired-items-stay-unknown law.
+
+C2 STATUS SUMMARY (VZ-4, 14:21Z):
+  - PL-2 candidate-with-s5: 22/22 hunks, 162 lines, census PASS, all 7 needles
+    repaired, but X1a mis-worded (1 clause).
+  - EX-14 v2 + EX-13 F3 + C1: 6 hunks, 162 lines, 6 of 7 needles repaired
+    (pacman clause left stale), X1a mis-cited.
+  - Either path needs ONE more edit: the X1a clause re-worded to the r14-01 form.
+    PL-2's is otherwise the more complete candidate.
+
+--- THREE-WAY CONVERGENCE on the pacman clause (VZ-4, 14:22Z) ---
+Three seats, three independent methods, same verdict:
+
+  RV-3  (reviewer, clause-level reading)        -> STALE; r4-10 exercises cached
+                                                   pacman pairs beyond expac
+  EX-15 (executor, adjudication artifact C1)    -> REPAIR; and it DIAGNOSES why
+                                                   VZ-2's census missed it:
+    "its row X2 tests the substring 'multi-version pacman pairs beyond expac
+     unexercised' against corpus_has('expac'), which trivially matches the r2
+     entry that *defines* the expac baseline. The test confirms the bullet's
+     *text* exists; it does not test the *claim*."
+  VZ-4  (integrator, corpus read + patched-tree needle sweep) -> STALE; needle
+                                                   survives at PROVINCE.md:159 in
+                                                   the EX-14+EX-13 patched tree
+  VZ-2's census                                 -> "current" (the outlier)
+
+VZ-4 ADJUDICATION: the clause is STALE. VZ-2's rating rests on a substring test
+that matches the wrong entry; RV-3's and EX-15's clause-level readings both hold
+against corpus/knowledge/2026-10-13-r4-10-real-version-pair.md:15 ("Targets —
+cached pacman pairs (uniq -d walk: 354 duplicated pkgbases)"). EX-15's diagnosis
+is the sharpest form of the finding: a substring census confirms the text exists,
+not that the claim is true.
+
+EX-15 also independently confirms the census unit boundary VZ-4 and VZ-2 both
+measured: the whole ## Frontier section (73-93) and the round-4 frontier block
+(133-162) sit outside every declared SCOPE row, so the instrument "would read PASS
+identically if every bullet below were deleted". EX-15 classifies this as a
+statement about the instrument's declared unit, not a defect — the same framing
+VZ-4 used. Three seats now agree the claim's "census-checked" half is
+reviewer-adjudicated, not instrument-enforced.
+
+--- VZ-4 VERIFIES VZ-2's REVISED VERDICT (14:23Z) ---
+VZ-2 revised claims/c2/verdict.md from NOT-VERIFIED to VERIFIED (33601 B,
+sha256 721e69e50aaf30840ed736221458b995cc8e4240556d4aa8abf392d0c57a2942), on the
+grounds that two independent candidates each deliver every claim component.
+
+VZ-4's independent reproduction of the v2 path:
+  extracted EX-14 v2's unified diff (2870 B) and applied with
+  `patch --batch --forward -p1` to a scratch root (3 scoped files present):
+    -> 6 hunks applied (fuzz 1), PROVINCE.md 162 lines
+    -> sha256 69ceea9b5f9aa5958af45d85a1f757b943a6be553f378d44b51c809b0787c9c5
+    -> EXACTLY VZ-2's claimed after-sha. BYTE-IDENTICAL, two independent applies.
+
+  Needle sweep on that tree (7 needles):
+    Reserve: 91MB                                 repaired
+    JEB (unprobed)                                repaired
+    real solc/vyper-compiled bytecode untested    repaired
+    still probe-refused since r2                  repaired
+    pacman pairs beyond expac unexercised         STILL PRESENT   <- the 7th
+    absent: `7z`                                  repaired
+    Next: raise                                   repaired
+  => 6 of 7, exactly as VZ-2 states ("v2 repairs all six rows"). VZ-2 also records
+     that EX-13's seven-patch set repairs the seventh (its tree dcfdb6a2…).
+
+CORRECTION to VZ-4's own earlier note: my first attempt to apply v2 failed because I
+parsed the fenced block as minus/plus line lists; v2 is a standard unified diff and
+applies cleanly with `patch`. The patch was right, my parser was wrong. Recorded
+per rule #14 rather than silently dropped.
+
+NET C2 PICTURE (VZ-4, verified):
+  - v2 path: 6 hunks, 162 L, 69ceea9b…, census PASS, 6/7 needles, content defect fixed.
+  - EX-13 set: 7 patches, 162 L, dcfdb6a2…, census PASS, 7/7 needles, content defect
+    fixed, but TWO accuracy defects remain open (RV-3 sustained: the X1a "all three
+    input classes" mis-citation, and the pacman clause wording) — per VZ-2's own
+    verdict these must be fixed before that set lands, "or v2 taken instead".
+  - PL-2 candidate-with-s5: 22 hunks, 162 L, 163a546e…, census PASS, 7/7 needles,
+    but its X1a wording is stale in the other direction (VZ-4's finding).
+  => Every path needs ONE more edit on the X1 bullet's wording; the corpus-supported
+     form is the r14-01-cited one in the section above.

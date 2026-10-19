@@ -1,0 +1,53 @@
+# attack battery — seat EX-05 round4; all scratch under /var/tmp/ex05-r4
+# planted-full.json sha256 at run: 554bf3fda82f76a8fecd14c98efd17b22844e30ac212f71ad92db3d849ffc7e4
+
+== ATTACK 1: signature-mutation collision hunt (0 collisions expected) ==
+  owner() -> 8da5cb5b | owner(address) -> 666e1b39 | collide=False
+  owner() -> 8da5cb5b | owner(uint256) -> a123c33e | collide=False
+  balances(address) -> 27e235e3 | balances(uint256) -> 4903b0d1 | collide=False
+  deposit() -> d0e30db0 | Deposit() -> ed21248c | collide=False
+  deposit() -> d0e30db0 | deposit(uint256) -> b6b55f25 | collide=False
+  withdraw(uint256) -> 2e1a7d4d | withdraw(uint) -> 8ba14562 | collide=False
+  withdraw(uint256) -> 2e1a7d4d | withdraw(int256) -> 7e62eab8 | collide=False
+  fee_of(uint256,uint256) -> 0c751377 | fee_of(uint256,uint256,) -> f0fa6376 | collide=False
+  fee_of(uint256,uint256) -> 0c751377 | fee_of(uint256,uint256,uint256) -> ce937d89 | collide=False
+  set_fee(uint256) -> 1aa02d59 | setFee(uint256) -> 69fe0e2d | collide=False
+  set_fee(uint256) -> 1aa02d59 | set_fee(int128) -> 1eac8338 | collide=False
+  is_owner(address) -> 0776076f | is_owner(address payable) -> 2f588b0c | collide=False
+  balance_of(address) -> b144adfb | balance_of(address,address) -> c94cfc98 | collide=False
+  pause() -> 8456cb59 | Pause() -> 6985a022 | collide=False
+  unpause() -> 3f4ba83a | un_pause() -> bfc2b229 | collide=False
+  total_deposits() -> 4643c56b | totalDeposits() -> 7d882097 | collide=False
+  fee_bps() -> 48a3ef5c | feeBps() -> 24a9d853 | collide=False
+  fee_on(uint256) -> e0749a6a | fee_on(uint8) -> 3a535dd9 | collide=False
+  fee_quote(uint256) -> 6e8efde2 | fee_quote(int128) -> 59e91d89 | collide=False
+  paused() -> 5c975abb | isPaused() -> b187bd26 | collide=False
+collisions found: 0 (expected 0)
+
+== ATTACK 2: tuple canonicalization (f((uint256,address))) ==
+rc: 0
+expected sel(f((uint256,address))): 31e3e7da
+# planted selectors — seat EX-05 (chain c1, arc3-loop1-round4)
+# source ABI: /var/tmp/ex05-r4/tmpop9s24b7.json
+# abi sha256: 8cce7066cc949a1601106e17cc701e06d8a2376dc926475cd205c95abacaeff5
+# impl A: js-sha3@0.8.0 (round-1 receipted prefix) keccak256
+# impl B: node:crypto keccak-256 (OpenSSL-backed)
+# two-implementation agreement: ALL AGREE
+# typed result: SELECTORS — one line per ABI function
+
+0x31e3e7da f((uint256,address)) [nonpayable]
+
+K=1
+
+== ATTACK 3: empty / non-function-only ABI -> typed EMPTY, rc=3 ==
+empty: rc=3 | stdout: abi entries(function): 0 | typed result: EMPTY (zero function entries) | two-implementation agreement: true | planted.txt written: /var/tmp/ex05-r4/atk3-empty/planted.txt
+  header: # typed result: EMPTY — the ABI carries zero function entries; no selectors exist to plant
+events-only: rc=3 | stdout: abi entries(function): 0 | typed result: EMPTY (zero function entries) | two-implementation agreement: true | planted.txt written: /var/tmp/ex05-r4/atk3-events-only/planted.txt
+  header: # typed result: EMPTY — the ABI carries zero function entries; no selectors exist to plant
+
+== ATTACK 4: same ABI, different order -> same set ==
+rc: 0 | sorted sets identical: True
+
+== ATTACK 5: duplicate-ABI-entry ABI (same function twice) ==
+rc: 0 | stdout: abi entries(function): 16 | typed result: SELECTORS | two-implementation agreement: true | DUPLICATE selectors: 0xd0e30db0 | planted.txt written: /var/tmp/ex05-r4/atk-dup/planted.txt
+  duplicate_selectors line in planted-full.json: ['0xd0e30db0']

@@ -1,0 +1,53 @@
+tool: /dev/shm/cr3-r4/tool-new-29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf.py sha256=29bb45ae0fd795e5
+sandbox HOME: /dev/shm/cr3-r4/atk-A/home
+
+==============================================================================
+## A1  --paths X.sha256 --out X   (sidecar lands ON a measured path)
+==============================================================================
+-- A1
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cr3-r4/atk-A/victim.conf.sha256
+   victim.conf.sha256 before=7fb326b312842fe7 after=7fb326b312842fe7  CLOBBERED=False
+   measured path bytes: 'ORIGINAL SIDECAR CONTENT — must survive\n'
+   receipt at victim.conf: False (sha before=5f334d2910cbff64 after=5f334d2910cbff64)
+
+==============================================================================
+## A2  --out X.sha256 --paths X   (frozen-claim phrasing: sidecar at measured file's neighbour)
+==============================================================================
+-- A2
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cr3-r4/atk-A/neigh.conf.sha256
+   neigh.conf.sha256 before=4c24185d73e41bcd after=4c24185d73e41bcd CLOBBERED=False
+
+==============================================================================
+## A3  sidecar is a SYMLINK to a custody path (sandbox ~/.bashrc)
+==============================================================================
+-- A3
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cr3-r4/atk-A/d/link.txt.sha256
+   sandbox ~/.bashrc before=ceb17e68bf37b3ac after=ceb17e68bf37b3ac CLOBBERED=False
+
+==============================================================================
+## A4  sidecar is a HARDLINK alias of a custody path (sandbox ~/.profile)
+==============================================================================
+-- A4
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cr3-r4/atk-A/d2/out.txt.sha256
+   sandbox ~/.profile before=6d541cc8b9a7e1e5 after=6d541cc8b9a7e1e5 CLOBBERED=False
+   inode of out.txt.sha256 == ~/.profile inode: True
+
+==============================================================================
+## A5  relative spelling: --paths ./r.sha256 --out r  (cwd=scratch)
+==============================================================================
+-- A5
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): r.conf.sha256
+   r.conf.sha256 before=3e251f5018a52f79 after=3e251f5018a52f79 CLOBBERED=False
+
+==============================================================================
+## A6  control: sidecar aimed at a custody path while out is also guarded (both refused?)
+==============================================================================
+-- A6
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cr3-r4/atk-A/home/.bashrc
+   sandbox ~/.bashrc sha=ceb17e68bf37b3ac (expect unchanged 16-hex)

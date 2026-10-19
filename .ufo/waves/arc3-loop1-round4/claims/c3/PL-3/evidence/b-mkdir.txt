@@ -1,0 +1,54 @@
+### (b) BEFORE 7cd19c3c: --out parent is a regular file, then nested
+Traceback (most recent call last):
+  File "/var/tmp/pl3/before/custody-pair.py", line 1155, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/pl3/before/custody-pair.py", line 1151, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/pl3/before/custody-pair.py", line 653, in cmd_capture
+    out.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 1011, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileExistsError: [Errno 17] File exists: 'B1/pfile.txt'
+EXIT=1
+Traceback (most recent call last):
+  File "/var/tmp/pl3/before/custody-pair.py", line 1155, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/pl3/before/custody-pair.py", line 1151, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/pl3/before/custody-pair.py", line 653, in cmd_capture
+    out.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 1011, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+NotADirectoryError: [Errno 20] Not a directory: 'B1/d/f.txt/sub'
+EXIT=1
+
+### (b) AFTER 29bb45ae: same two injections
+USAGE: cannot create the receipt directory ([Errno 17] File exists: 'B2/pfile.txt'): B2/pfile.txt
+EXIT=2
+USAGE: cannot create the receipt directory ([Errno 20] Not a directory: 'B2/d/f.txt/sub'): B2/d/f.txt/sub
+EXIT=2
+
+### (b) control: ordinary nested new parent must stay exit 0 (no over-refusal)
+RECEIPT: B2/new/deep/rec.txt  sha256=aa67d9ab9d95930ede2128e5bb8a64d7f2210a24499839cd0dcd7aebd04b4441
+SIDECAR: B2/new/deep/rec.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+EXIT=0
+
+### (b2) AFTER: --out with no usable name (CR-4 item 6 trap)
+-- out=[]
+USAGE: --out carries no usable name, so no sidecar path can be derived: ''
+EXIT=2
+-- out=[.]
+USAGE: --out carries no usable name, so no sidecar path can be derived: '.'
+EXIT=2
+-- out=[/]
+USAGE: --out carries no usable name, so no sidecar path can be derived: '/'
+EXIT=2

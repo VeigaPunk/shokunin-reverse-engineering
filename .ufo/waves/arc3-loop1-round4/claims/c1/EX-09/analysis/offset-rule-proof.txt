@@ -1,0 +1,29 @@
+=== OFFSET RULE PROOF (byte-level, two independent Vyper carriers) ===
+
+Vyper 0.4.3 compare node layout, measured:
+  63 <sel:4>  81       18       61 <next:2>   57
+  PUSH4       DUP2     XOR      PUSH2        JUMPI
+  pc          pc+5     pc+6     pc+7         pc+10
+  => fall-through body entry = pc + 11
+
+-- Ex09Vault (581 B) --
+   0ff5ce72  push4_pc= 248  layout=630ff5ce72811861019c57  reported= 259  p+11=259  RULE_HOLDS=True
+   191a62d4  push4_pc= 413  layout=63191a62d4811861022157  reported= 424  p+11=424  RULE_HOLDS=True
+   2bec1547  push4_pc= 441  layout=632bec1547811861022157  reported= 452  p+11=452  RULE_HOLDS=True
+   2ddbd13a  push4_pc= 220  layout=632ddbd13a811861022157  reported= 231  p+11=231  RULE_HOLDS=True
+   5c975abb  push4_pc= 517  layout=635c975abb811861022157  reported= 528  p+11=528  RULE_HOLDS=True
+   8da5cb5b  push4_pc= 490  layout=638da5cb5b811861022157  reported= 501  p+11=501  RULE_HOLDS=True
+   d0e30db0  push4_pc=  25  layout=63d0e30db081186100db57  reported=  36  p+11=36  RULE_HOLDS=True
+   -> all offsets == push4_pc + 11 : True
+   -> any reported offset is a JUMPDEST (0x5b)? False
+
+-- Smoke     (168 B) --
+   61bc221a  push4_pc= 127  layout=6361bc221a811861009a57  reported= 138  p+11=138  RULE_HOLDS=True
+   6d4ce63c  push4_pc=  72  layout=636d4ce63c811861009a57  reported=  83  p+11=83  RULE_HOLDS=True
+   8da5cb5b  push4_pc= 100  layout=638da5cb5b811861007e57  reported= 111  p+11=111  RULE_HOLDS=True
+   d09de08a  push4_pc=  25  layout=63d09de08a811861004757  reported=  36  p+11=36  RULE_HOLDS=True
+   -> all offsets == push4_pc + 11 : True
+   -> any reported offset is a JUMPDEST (0x5b)? False
+
+CONTRAST — solc 0.8.37 carriers (r1/r3 class): offsets ARE JUMPDESTs
+   VaultB.opt200 (1621 B): 13 offsets, all JUMPDEST = True

@@ -1,0 +1,33 @@
+=== EX-02 smoke compile — TARGET venv, not a rehearsal copy ===
+date: 2026-10-19T11:06:06-03:00
+compiler path: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper
+compiler version: 0.4.3+commit.bff19ea2
+source: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/claims/c1/EX-02/smoke/Smoke.vy  sha256 34bf2c0c00aad4cf537c38dd87db720779eed25a241e091ed84f277988849644
+
+--- $ vyper -f abi Smoke.vy ---
+[{"stateMutability": "nonpayable", "type": "function", "name": "increment", "inputs": [], "outputs": [{"name": "", "type": "uint256"}]}, {"stateMutability": "view", "type": "function", "name": "get", "inputs": [], "outputs": [{"name": "", "type": "uint256"}]}, {"stateMutability": "view", "type": "function", "name": "owner", "inputs": [], "outputs": [{"name": "", "type": "address"}]}, {"stateMutability": "view", "type": "function", "name": "counter", "inputs": [], "outputs": [{"name": "", "type": "uint256"}]}, {"stateMutability": "nonpayable", "type": "constructor", "inputs": [], "outputs": []}]
+abi sha256: cd5350406ed5d396b0e0187cf3eecedc78913b5f0b98cbe814d6dd326feac3b6
+
+--- $ vyper -f bytecode Smoke.vy ---
+0x3461001757335f556100a861001b6000396100a86000f35b5f80fd5f3560e01c60026003820660011b6100a201601e395f51565b63d09de08a8118610047573461009e576001546001810181811061009e57905060015560015460405260206040f35b636d4ce63c811861009a573461009e5760015460405260206040f35b638da5cb5b811861007e573461009e575f5460405260206040f35b6361bc221a811861009a573461009e5760015460405260206040f35b5f5ffd5b5f80fd00630018009a8558201a218bc843020f6b51aab3767a7cede10f7cfb9c2bb858ec89bdeef36d8efe2b18a8810600a1657679706572830004030035
+bytecode hex chars: 498
+bytecode bytes: 249
+bytecode sha256 (of hex text): c6f5b7f268aaee593c6ba219bae8c91d3bd40e3fb8c28b34e7c3d9fd39d81a1f
+bytecode head: 0x3461001757335f556100a861001b6000396100a86000f35b5f80fd5f3560e01c60026003820660...
+
+--- $ vyper -f method_identifiers Smoke.vy   (vyper's OWN ABI-derived selector set) ---
+{"increment()": "0xd09de08a", "get()": "0x6d4ce63c", "owner()": "0x8da5cb5b", "counter()": "0x61bc221a"}
+
+--- independent keccak cross-check (pycryptodome in the SAME venv) ---
+ABI-derived signatures: ['increment()', 'get()', 'owner()', 'counter()']
+  d09de08a  increment()
+  6d4ce63c  get()
+  8da5cb5b  owner()
+  61bc221a  counter()
+
+--- selector presence in runtime bytes (compile with runtime format) ---
+0x5f3560e01c60026003820660011b6100a201601e395f51565b63d09de08a8118610047573461009e576001546001810181811061009e57905060015560015460405260206040f35b636d4ce63c811861009a573461009e5760015460405260206040f35b638da5cb5b811861007e573461009e575f5460405260206040f35b6361bc221a811861009a573461009e5760015460405260206040f35b5f5ffd5b5f80fd00630018009a
+runtime hex chars: 338
+runtime bytes: 169
+runtime sha256 (of hex text): 40650adfa7c94b4f7fd11a0b0558fd8f19f278ed9414c54397cd1112892bcc23
+runtime head (32B): 0x5f3560e01c60026003820660011b6100a201601e395f51565b63d09de08a81

@@ -1,0 +1,18 @@
+# dispatch-shape.txt — seat EX-05 (chain c1, arc3-loop1-round4)
+# measured against the venv vyper source (read-only) + the compiled runtimes
+# vyper version: 0.4.3
+# jumptable_utils.py sha256: c84a9ed8293971ba34f8e1f87065970ea5c30eaa9cdf70769af1e394c3e7ec98
+# module.py sha256: fee7d61f6c8046015037cc9a0e7182cd18da8f68eeabbf44c4bb030475705f7d
+
+CarrierV (K=15)
+  vyper generate_sparse_jumptable_buckets -> n_buckets=13 bucket_sizes=[1, 1, 1, 1, 1, 1, 2, 2, 2, 3]
+  method_id % n_buckets distribution: [1, 1, 1, 1, 1, 1, 2, 2, 2, 3]
+  observed MOD immediate in runtime bytes: 13 (0x0d) | match=True
+
+Smoke (K=4)
+  vyper generate_sparse_jumptable_buckets -> n_buckets=3 bucket_sizes=[2, 2]
+  method_id % n_buckets distribution: [2, 2]
+  observed MOD immediate in runtime bytes: 3 (0x03) | match=True
+
+# path selection (codegen/module.py): _opt_none -> linear; _opt_codesize and (len>4 or debug) -> dense; else -> sparse.
+# Both carriers above take the SPARSE path (default profile, 15 and 4 externals).

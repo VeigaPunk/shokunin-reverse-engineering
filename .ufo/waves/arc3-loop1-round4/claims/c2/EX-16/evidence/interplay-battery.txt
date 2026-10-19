@@ -1,0 +1,40 @@
+== EX-16 interplay battery ==
+repo: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+HEAD: 015e1bab914713568f339fd53999bc180459cc40
+scratch: /var/tmp/ex16/interplay-battery (never /tmp)
+
+CASE base                           PROVINCE_lines=163 probe=('clean', 0, 0, [])
+                                    census=(0, 'VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): []')
+CASE prov-plus2-below-frontier      PROVINCE_lines=165 probe=('clean', 0, 0, [])
+                                    census=(1, 'VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): ["PROVINCE.md:119 marker \'verified 2026-10-13\' absent from \'\'"]')
+CASE prov-plus3-below-frontier      PROVINCE_lines=166 probe=('failed', 1, 1, [('citation_dead', 'shonen-province-range')])
+                                    census=(1, 'VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): [\'PROVINCE.md:119 marker \\\'verified 2026-10-13\\\' absent from \\\'  licensed for reuse" `(unowned)`.\\\'\']')
+CASE prov-insert-above-line18       PROVINCE_lines=164 probe=('failed', 2, 1, [('citation_dead', 'prov18-pin-value'), ('citation_dead', 'prov18-stamp-named')])
+                                    census=(1, 'VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): ["PROVINCE.md:40 marker \'verified on this host 2026-10-13\' absent from \'\'", "PROVINCE.md:119 marker \'verified 2026-10-13\' absent from \'\'"]')
+CASE prov-insert-above-line119      PROVINCE_lines=164 probe=('clean', 0, 0, [])
+                                    census=(1, 'VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): ["PROVINCE.md:119 marker \'verified 2026-10-13\' absent from \'\'"]')
+CASE prov-insert-at-eof             PROVINCE_lines=164 probe=('clean', 0, 0, [])
+                                    census=(0, 'VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): []')
+CASE prov-surface-sameline          PROVINCE_lines=163 probe=('clean', 0, 0, [])
+                                    census=(0, 'VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): []')
+CASE prov-surface-plus1             PROVINCE_lines=164 probe=('failed', 2, 1, [('citation_dead', 'prov18-pin-value'), ('citation_dead', 'prov18-stamp-named')])
+                                    census=(1, 'VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): ["PROVINCE.md:40 marker \'verified on this host 2026-10-13\' absent from \'\'", "PROVINCE.md:119 marker \'verified 2026-10-13\' absent from \'\'"]')
+CASE prov-frontier-sameline         PROVINCE_lines=163 probe=('clean', 0, 0, [])
+                                    census=(0, 'VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): []')
+CASE readme-drop-never-tmp          PROVINCE_lines=163 probe=('failed', 1, 1, [('citation_dead', 'custody-readme-scratch-never-tmp')])
+                                    census=(0, 'VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): []')
+CASE readme-drop-precedence         PROVINCE_lines=163 probe=('failed', 1, 1, [('citation_dead', 'custody-readme-precedence')])
+                                    census=(0, 'VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): []')
+CASE readme-drop-fieldset           PROVINCE_lines=163 probe=('failed', 1, 1, [('citation_dead', 'custody-readme-v2-fieldset')])
+                                    census=(0, 'VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): []')
+CASE readme-drop-rewrite-id         PROVINCE_lines=163 probe=('failed', 1, 1, [('citation_dead', 'custody-readme-rewrite-identity')])
+                                    census=(0, 'VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): []')
+
+== applied patch texts ==
+EX-14 demo patch (RV-4 prose applier): rc=0 patch   : /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/claims/c2/EX-14/evidence/demo-frontier-repair.patch.md | tree    : /var/tmp/ex16/interplay-battery/ex14-demo |   hunk 1 [PROVINCE.md]: applied (2 - / 2 +) | hunks: applied=1 failed=0
+  PROVINCE lines=163 sha=1bfb5dd7fff37c6fac387b23f6732d9667e04aa45726c6d5b88677870f9a19d2
+  probe=('clean', 0, 0, [])
+  census=(0, 'VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)', 'SCOPE-ERRORS (marker assertions): []')
+C3 EX-26 ruling block inserted before `## Exit codes (declared)`:
+  README lines=215 sha=f54d9467030bb250f85f11f18d8575e7eec9082ab76610de9681bf0fef847e10
+  probe=('clean', 0, 0, [])

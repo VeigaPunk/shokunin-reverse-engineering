@@ -1,0 +1,192 @@
+EX-10 — id-stability rerun (arc3-loop1-round4, 2026-10-19)
+==============================================================================
+
+A. Sealed baselines (read-only)
+  r1 canonical capture  sha256=f2aec424c1edade81d7bbe58f0d99be7f5d2253749ffb09e9a2a4226425f42f8
+                        id    =ev_45849c8b11794ea0b007bd01ea3241aa9b385ca7543e514a16e82c795a106eaf
+  EX-06 r3 recheck      sha256=f2aec424c1edade81d7bbe58f0d99be7f5d2253749ffb09e9a2a4226425f42f8
+                        id    =ev_45849c8b11794ea0b007bd01ea3241aa9b385ca7543e514a16e82c795a106eaf
+  r1 == EX-06 envelope byte-identity: True
+
+B. Leg table (all envelopes; symlink leg is a typed refusal)
+  leg                  exit bytes  env sha256       id (or -)                            decoded bytecode
+  b2-altpath-copy      0      9139 6fa430c38b5ba731 ev_4899d14739b24dab5db850b38e07d1e23 c1081a565869b503
+  b2-bytes-a           0      9147 cd3959dee081f67c ev_7e288a951cd57628613b11bf27946b154 c1081a565869b503
+  b2-bytes-b           0      8910 bc843bf40735046b ev_8bff5c7d6f47ef9b263b0b33f825a6aa6 14ae76521659850a
+  b2-cwd-var           0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+  b2-rel-dot           0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+  b2-symlink           1       418 eba33379f7fbdab4 -                                                    
+  exact-r1             0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+  exact-r2             0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+  exact-verbatim-r1    0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+  exact-verbatim-r2    0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+  ino-a                0      9064 283fb415aab1ee39 ev_ed1452cc6dc6df3555ee607ac86957246 c1081a565869b503
+  ino-b                0      9064 e24fb2edd2bb7957 ev_4364a3bf28370f094abdc2115b53af241 c1081a565869b503
+  mtime-a              0      9064 283fb415aab1ee39 ev_ed1452cc6dc6df3555ee607ac86957246 c1081a565869b503
+  mutate-a             0      8827 19cf4f8542ea0a62 ev_445a03edd926d2d01dc3ff6e2cf428560 14ae76521659850a
+  pin-6.7.0-r1         0     10307 12e5d17139635406 ev_19d7d3cb291835233fece9c457935680e c1081a565869b503
+  pin-6.7.0-r2         0     10307 12e5d17139635406 ev_19d7d3cb291835233fece9c457935680e c1081a565869b503
+  recreate-a           0      9064 283fb415aab1ee39 ev_ed1452cc6dc6df3555ee607ac86957246 c1081a565869b503
+  var-abs-cwdroot      0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+  var-abspath          0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+  var-cwd-abs-from-tmp 0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+  var-ex06tmpdir       0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+  var-tmpdir2          0      9399 f2aec424c1edade8 ev_45849c8b11794ea0b007bd01ea3241aa9 c1081a565869b503
+
+C. Byte-identity vs the sealed envelopes
+  b2-altpath-copy      6fa430c38b5ba731 
+  b2-bytes-a           cd3959dee081f67c 
+  b2-bytes-b           bc843bf40735046b 
+  b2-cwd-var           f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+  b2-rel-dot           f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+  b2-symlink           eba33379f7fbdab4 
+  exact-r1             f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+  exact-r2             f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+  exact-verbatim-r1    f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+  exact-verbatim-r2    f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+  ino-a                283fb415aab1ee39 
+  ino-b                e24fb2edd2bb7957 
+  mtime-a              283fb415aab1ee39 
+  mutate-a             19cf4f8542ea0a62 
+  pin-6.7.0-r1         12e5d17139635406 
+  pin-6.7.0-r2         12e5d17139635406 
+  recreate-a           283fb415aab1ee39 
+  var-abs-cwdroot      f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+  var-abspath          f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+  var-cwd-abs-from-tmp f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+  var-ex06tmpdir       f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+  var-tmpdir2          f2aec424c1edade8 == r1 canonical  == EX-06 r3 recheck
+
+D. id groups (identical request -> identical id)
+  ev_45849c8b11794ea0b…  n=11: b2-cwd-var, b2-rel-dot, exact-r1, exact-r2, exact-verbatim-r1, exact-verbatim-r2, var-abs-cwdroot, var-abspath, var-cwd-abs-from-tmp, var-ex06tmpdir, var-tmpdir2
+  ev_ed1452cc6dc6df355…  n=3: ino-a, mtime-a, recreate-a
+  ev_19d7d3cb291835233…  n=2: pin-6.7.0-r1, pin-6.7.0-r2
+  ev_4899d14739b24dab5…  n=1: b2-altpath-copy
+  ev_7e288a951cd576286…  n=1: b2-bytes-a
+  ev_8bff5c7d6f47ef9b2…  n=1: b2-bytes-b
+  ev_4364a3bf28370f094…  n=1: ino-b
+  ev_445a03edd926d2d01…  n=1: mutate-a
+
+E. Normalized payload diff vs exact-r1 (evidence_id/locations stripped)
+  b2-altpath-copy      3 field diffs
+      ~ /normalized_result/artifact/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/alt/Rv2Token.runtime.hex"
+      ~ /parameters/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/alt/Rv2Token.runtime.hex"
+      ~ /subject/local_path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/alt/Rv2Token.runtime.hex"
+  b2-bytes-a           3 field diffs
+      ~ /normalized_result/artifact/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/bytes/Rv2Token.runtime.hex"
+      ~ /parameters/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/bytes/Rv2Token.runtime.hex"
+      ~ /subject/local_path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/bytes/Rv2Token.runtime.hex"
+  b2-bytes-b           10 field diffs
+      ~ /normalized_result/artifact/bytes: 3886 -> 3888
+      ~ /normalized_result/artifact/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/bytes/Rv2Token.runtime.hex"
+      ~ /normalized_result/artifact/sha256: "d7f73058e2d9fb2563bf96b2f26902f233530de027a7943185e15bfdc4e -> "93d6d335bec5e39587efd4eb0bef599cf7bd0c5a254a7ee3ce51a939293
+      ~ /normalized_result/bytecode/bytes: 1943 -> 1944
+      ~ /normalized_result/bytecode/hex: "608060405234801561000f575f5ffd5b5060043610610055575f3560e01 -> "608060405234801561000f575f5ffd5b5060043610610055575f3560e01
+      ~ /normalized_result/bytecode/sha256: "c1081a565869b50387211b25afaf3768294aa774c35845bc3a8c0b12cfe -> "14ae76521659850ad73cca4f2bef2c6c2c34fccb0e88731a60422901e8b
+      ~ /parameters/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/bytes/Rv2Token.runtime.hex"
+      - /raw_result/metadata
+      … 2 more
+  b2-cwd-var           0 field diffs
+  b2-rel-dot           0 field diffs
+  b2-symlink           no envelope (typed refusal: invalid_request) — diff n/a
+  exact-r2             0 field diffs
+  exact-verbatim-r1    0 field diffs
+  exact-verbatim-r2    0 field diffs
+  ino-a                4 field diffs
+      ~ /normalized_result/artifact/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      ~ /parameters/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      ~ /subject/local_path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      ~ /subject/name: "Rv2Token.runtime.hex" -> "a.hex"
+  ino-b                4 field diffs
+      ~ /normalized_result/artifact/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/b.hex"
+      ~ /parameters/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/b.hex"
+      ~ /subject/local_path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/b.hex"
+      ~ /subject/name: "Rv2Token.runtime.hex" -> "b.hex"
+  mtime-a              4 field diffs
+      ~ /normalized_result/artifact/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      ~ /parameters/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      ~ /subject/local_path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      ~ /subject/name: "Rv2Token.runtime.hex" -> "a.hex"
+  mutate-a             11 field diffs
+      ~ /normalized_result/artifact/bytes: 3886 -> 3888
+      ~ /normalized_result/artifact/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      ~ /normalized_result/artifact/sha256: "d7f73058e2d9fb2563bf96b2f26902f233530de027a7943185e15bfdc4e -> "93d6d335bec5e39587efd4eb0bef599cf7bd0c5a254a7ee3ce51a939293
+      ~ /normalized_result/bytecode/bytes: 1943 -> 1944
+      ~ /normalized_result/bytecode/hex: "608060405234801561000f575f5ffd5b5060043610610055575f3560e01 -> "608060405234801561000f575f5ffd5b5060043610610055575f3560e01
+      ~ /normalized_result/bytecode/sha256: "c1081a565869b50387211b25afaf3768294aa774c35845bc3a8c0b12cfe -> "14ae76521659850ad73cca4f2bef2c6c2c34fccb0e88731a60422901e8b
+      ~ /parameters/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      - /raw_result/metadata
+      … 3 more
+  pin-6.7.0-r1         6 field diffs
+      ~ /limitations: len 6 -> 7
+      ~ /limitations[5]: "The owned worker has a 256 MiB JavaScript heap, 3 GiB virtu -> "Terminal CBOR metadata is an independently decoded candidat
+      + /normalized_result/bytecode/metadata
+      ~ /normalized_result/limitations: len 6 -> 7
+      ~ /normalized_result/limitations[5]: "The owned worker has a 256 MiB JavaScript heap, 3 GiB virtu -> "Terminal CBOR metadata is an independently decoded candidat
+      + /relationship_coverage
+  pin-6.7.0-r2         6 field diffs
+      ~ /limitations: len 6 -> 7
+      ~ /limitations[5]: "The owned worker has a 256 MiB JavaScript heap, 3 GiB virtu -> "Terminal CBOR metadata is an independently decoded candidat
+      + /normalized_result/bytecode/metadata
+      ~ /normalized_result/limitations: len 6 -> 7
+      ~ /normalized_result/limitations[5]: "The owned worker has a 256 MiB JavaScript heap, 3 GiB virtu -> "Terminal CBOR metadata is an independently decoded candidat
+      + /relationship_coverage
+  recreate-a           4 field diffs
+      ~ /normalized_result/artifact/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      ~ /parameters/path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      ~ /subject/local_path: "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/a -> "/var/tmp/ex10-r4/work/ino/a.hex"
+      ~ /subject/name: "Rv2Token.runtime.hex" -> "a.hex"
+  var-abs-cwdroot      0 field diffs
+  var-abspath          0 field diffs
+  var-cwd-abs-from-tmp 0 field diffs
+  var-ex06tmpdir       0 field diffs
+  var-tmpdir2          0 field diffs
+
+F. Sensitivity axes — measured verdicts this round
+  id STABLE across: repeat runs (x6: exact-r1/r2, verbatim-r1/r2, pin-r1/r2),
+    TMPDIR value (3 distinct dirs incl. EX-06's own), cwd (2 values),
+    argv spelling (relative / ./-prefixed / absolute),
+    inode identity + link count (recreate same path -> same id; hard link same
+    inode at another path -> different id), mtime (2020 vs 2026 -> same id),
+    pin-internal rerun (6.7.0 x2 byte-identical).
+  id CHANGES with: resolved path (byte-identical copy elsewhere), carrier bytes
+    (mutated hex text at a fixed path), encoding form (r3), pin (6.4.0 vs 6.7.0),
+    verb family request (r3).
+  id INPUT is the RESOLVED PATH as recorded in parameters.path/subject.local_path,
+    not the raw argv spelling and not the inode — proven by the hard-link pair.
+
+G. Content-identity anchor (decoded bytecode sha256) per leg
+  b2-altpath-copy      subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  b2-bytes-a           subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  b2-bytes-b           subject(file)=93d6d335bec5e395 bytecode=14ae76521659850a
+  b2-cwd-var           subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  b2-rel-dot           subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  b2-symlink           subject(file)=                 bytecode=                
+  exact-r1             subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  exact-r2             subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  exact-verbatim-r1    subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  exact-verbatim-r2    subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  ino-a                subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  ino-b                subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  mtime-a              subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  mutate-a             subject(file)=93d6d335bec5e395 bytecode=14ae76521659850a
+  pin-6.7.0-r1         subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  pin-6.7.0-r2         subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  recreate-a           subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  var-abs-cwdroot      subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  var-abspath          subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  var-cwd-abs-from-tmp subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  var-ex06tmpdir       subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+  var-tmpdir2          subject(file)=d7f73058e2d9fb25 bytecode=c1081a565869b503
+
+H. Typed refusal — symlink input (new this round)
+  code=invalid_request category=invalid_input retryable=True
+  issue: path=['path'] reason=invalid_format
+         message=Expected a regular file without a symlink: /var/tmp/ex10-r4/work/link/Rv2Token.runtime.hex
+  -> symlinked carriers are refused fail-closed; no id is minted.
+
+I. Bounded formula falsification (idformula.py): 1,680 candidate hash forms
+  over {path, rel, file bytes, decoded bytecode, size, encoding, operation,
+  verb, pin, provider, subject name} x 7 algorithms x 7 separators — 0 hits.
+  Verdict: no formula among tested forms; id derivation unproven (consistent
+  with r3's honest-stop form). Sensitivities are measured, not derived.

@@ -1,0 +1,50 @@
+Pin-free census simulation — SC-2, chain c2, arc3-loop1-round4
+(revision 5 of both drafts: final — chain-census-aligned, C3 after-values folded in)
+
+instrument: .ufo/gates/c1-census-v10.py sha256
+  d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5  (610 lines)
+  (identical before and after every run — bracketed)
+HEAD: 015e1bab914713568f339fd53999bc180459cc40
+date: 2026-10-19T14:1xZ (UTC)
+
+Method: three scratch roots under /var/tmp/sc2-r4/sim5 holding HEAD copies of the
+three gate-scoped files. "records" carries the LOG entry draft's literal block
+appended to LOG.md and the SCORECARD section draft's literal block appended to
+SCORECARD.md; "control" carries the same plus one planted pin line
+("rea-agents@6.3.0"). The real tree was read-only throughout.
+
+tree                                    SCORECARD lines  loci  verdict  exit  output sha256
+sim-base (HEAD files)                   1580              9     PASS     0     7cb9b513412f47b0…
+sim-records (+165-line section)         1744              9     PASS     0     990598ba5bb3bfe4…
+sim-control (+1 planted pin)            1745              10    FAIL     1     4b8e7970c2113fd0…
+
+PROVINCE.md 162 lines / 6 loci unchanged in all three trees.
+SKILL.md 390 lines / 2 loci unchanged in all three trees.
+Added loci: 0 (9 -> 9). G2 positive floor 17/14/3 unchanged between base and records.
+Control: UNDECLARED=1 -> FAIL exit 1 (the detector is live on the appended region).
+
+Literal block sizes at this revision: section 165 lines, entry 149 lines.
+The rev-5 rerun reproduces the rev-4 census outputs byte-identically (the SCORECARD
+side is unchanged between rev 4 and rev 5; only the LOG entry grew).
+
+Revision trail (each revision re-measured; outputs superseded, kept as the record):
+  rev 1 (7-item stale count; row misclassified as CURRENT): section 111 lines ->
+    base 7cb9b513412f47b0… / records ef14c7d627b2e1a5… (1690 lines, 9 loci, PASS) /
+    control e0440bbd76f80597… (1691 lines, 10 loci, FAIL exit 1).
+  rev 2 (count 5; row moved to advisory; >90MB "Not OOM" refinement): section 127
+    lines -> base 7cb9b513412f47b0… (unchanged) / records 859b38c21aac535f… (1706
+    lines, 9 loci, PASS) / control 73b45def89c2b132… (1707 lines, 10 loci, FAIL).
+  rev 3 (aligned to the chain verifier census: 26 rows / 6 stale / 2 adjudicated;
+    C1 Vyper 15/15 folded in; count boundary stated 6 broad / 5 narrow): section
+    146 lines -> base 7cb9b513412f47b0… (unchanged) / records 8525043308d9a62a…
+    (1725 lines, 9 loci, PASS) / control 506a19258939983e… (1726 lines, 10 loci,
+    FAIL exit 1).
+  rev 4 (C3 after-values folded in from this seat's own re-derivation: tool
+    29bb45ae…/1343 L, README 9d9400da…/272 L, selftest re-run CLEAN 28/28;
+    learning sentence for C3 written): section 165 lines -> base
+    7cb9b513412f47b0… (unchanged) / records 990598ba5bb3bfe4… (1744 lines, 9
+    loci, PASS) / control 4b8e7970c2113fd0… (1745 lines, 10 loci, FAIL exit 1).
+  rev 5 (final: C1 slot sharpened to the chain's five-carrier scope and the
+    84/84 rehearsal; C3 residuals enumerated): the values in the table above
+    (census outputs byte-identical to rev 4 — the SCORECARD-side text is
+    unchanged; the LOG entry block grew to 149 lines).

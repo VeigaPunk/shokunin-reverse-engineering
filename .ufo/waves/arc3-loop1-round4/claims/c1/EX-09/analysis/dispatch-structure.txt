@@ -1,0 +1,82 @@
+=== Vyper 0.4.3 dispatch: selector %% 6 -> 2-byte jump table at 0x239 ===
+table entries: ['24(0x18)', '516(0x204)', '544(0x220)', '489(0x1e9)', '247(0xf7)', '440(0x1b8)']
+
+=== bucket chains (walk JUMPDEST; PUSH4 sel; DUP2; XOR; PUSH2 next; JUMPI) ===
+  bucket 0 head=  24: d0e30db0->6241
+  bucket 1 head= 516: 5c975abb->6241
+  bucket 2 head= 544: <stop@ 545: 0x5b>
+  bucket 3 head= 489: 8da5cb5b->6241
+  bucket 4 head= 247: 0ff5ce72->6241
+  bucket 5 head= 440: 2bec1547->6241
+
+=== selector -> bucket ===
+  0ff5ce72  %6=4  head= 247  position_in_chain=0  found=True
+  191a62d4  %6=4  head= 247  position_in_chain=None  found=False
+  2bec1547  %6=5  head= 440  position_in_chain=0  found=True
+  2ddbd13a  %6=0  head=  24  position_in_chain=None  found=False
+  5c975abb  %6=1  head= 516  position_in_chain=0  found=True
+  8da5cb5b  %6=3  head= 489  position_in_chain=0  found=True
+  d0e30db0  %6=0  head=  24  position_in_chain=0  found=True
+
+ALL selectors found in their own %6 bucket: False
+
+=== creation (initcode) has NO dispatch prologue — head disasm ===
+     0  CALLER    
+     1  PUSH0     
+     2  SSTORE    
+     3  PUSH0     
+     4  PUSH1     01
+     6  SSTORE    
+     7  PUSH2     0245
+    10  PUSH2     0018
+    13  PUSH2     0000
+    16  0x39      
+    17  PUSH2     0245
+    20  PUSH2     0000
+    23  RETURN    
+    24  PUSH0     
+    25  CALLDATALOAD 
+    26  PUSH1     e0
+    28  0x1c      
+    29  PUSH1     02
+    31  PUSH1     06
+    33  DUP3      
+    34  0x06      
+    35  PUSH1     01
+    37  0x1b      
+    38  PUSH2     0239
+
+initcode head bytes: 335f555f60015561024561001861000039610245610000f3
+contains 0x5f3560e01c (dispatch prologue)? True
+runtime head bytes  : 5f3560e01c60026006820660011b61023901601e395f5156
+
+=== FULL bucket chains (consecutive JUMPDESTs skipped) ===
+  bucket 0 head=  24: d0e30db0->6241   (1 selector(s))
+  bucket 1 head= 516: 5c975abb->6241   (1 selector(s))
+  bucket 2 head= 544:    (0 selector(s))
+  bucket 3 head= 489: 8da5cb5b->6241   (1 selector(s))
+  bucket 4 head= 247: 0ff5ce72->6241   (1 selector(s))
+  bucket 5 head= 440: 2bec1547->6241   (1 selector(s))
+
+=== selector -> bucket (full walk) ===
+  0ff5ce72  %6=4  bucket_len=1  position=[0]  FOUND=True
+  191a62d4  %6=4  bucket_len=1  position=[]  FOUND=False
+  2bec1547  %6=5  bucket_len=1  position=[0]  FOUND=True
+  2ddbd13a  %6=0  bucket_len=1  position=[]  FOUND=False
+  5c975abb  %6=1  bucket_len=1  position=[0]  FOUND=True
+  8da5cb5b  %6=3  bucket_len=1  position=[0]  FOUND=True
+  d0e30db0  %6=0  bucket_len=1  position=[0]  FOUND=True
+
+=== offset rule: reported offset == PUSH4_opcode_pc + 11 ? ===
+  0ff5ce72  push4_pc=248  p+11=259
+  191a62d4  push4_pc=413  p+11=424
+  2bec1547  push4_pc=441  p+11=452
+  2ddbd13a  push4_pc=220  p+11=231
+  5c975abb  push4_pc=517  p+11=528
+  8da5cb5b  push4_pc=490  p+11=501
+  d0e30db0  push4_pc=25  p+11=36
+
+=== initcode structure (Vyper) ===
+  initcode 659 B = prologue[0:24] + runtime[24:605] + trailer[605:659]
+  prologue 24 B, runtime 581 B, trailer 54 B
+  dispatcher present at initcode offset 24 (the embedded runtime head)

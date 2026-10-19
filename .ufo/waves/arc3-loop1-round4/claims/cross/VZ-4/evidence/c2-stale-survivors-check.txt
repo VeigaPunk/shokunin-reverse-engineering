@@ -1,0 +1,52 @@
+=== VZ-4 independent verification of C2's two surviving stale rows + the content defect @ 2026-10-19T14:14:41Z ===
+
+--- STALE ROW C1 (PROVINCE.md:62) ---
+PROVINCE claims absent: `7z`, `cabextract`, `xxd`, radare2/rizin, strace/ltrace, upx, pacman-contrib |
+
+VZ-4 'command -v' check on this host:
+  7z           PRESENT  /usr/bin/7z
+  xxd          PRESENT  /usr/bin/xxd
+  radare2      PRESENT  /usr/bin/radare2
+  strace       PRESENT  /usr/bin/strace
+  upx          PRESENT  /usr/bin/upx
+  cabextract   absent
+  rizin        absent
+  ltrace       absent
+
+=> 5 of the 7 claimed-absent tools are PRESENT (7z, xxd, radare2, strace, upx).
+   Genuinely absent: cabextract, rizin, ltrace (+ pacman-contrib, not tested here).
+   The row is STALE as written. (VZ-2 measured the same; versions 7zip 26.03-1,
+   tinyxxd 1.3.16-1, radare2 6.2.0-1, strace 7.0-1, upx 5.2.0-1, installed 2026-10-13.)
+
+--- STALE ROW F3 (PROVINCE.md:87-88) ---
+- **Alternate providers** — IDA (`REA_IDA_MCP_CONFIG` unset), Hopper (absent),
+  JEB (unprobed). Engine installs are operator-owned.
+  VZ-2 ran: npx rea-agents@6.7.0 inspect-jeb-client -> declared capability_unavailable
+  => 'JEB (unprobed)' overstates the gap: the probe is recorded at r2 matrix :99 and
+     r12-02 :203. STALE as written.
+
+--- CONTENT DEFECT: the false Core promotion in the repair text ---
+  EX-14 candidates write: 'real solc-0.8.37 carriers (Core, arc3-r1)'
+  Measured counter-evidence:
+    corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:1 -> 'RESULT-class, no Core promotion'
+    corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md:1 -> same
+    PROVINCE.md:54 (the Core EVM row) cites only (r3-07):
+      | EVM interface | `rea inspect-evm-interface <file> <raw|hex>` — encoding is POSITIONAL (no `--encoding` flag despite schema); bundled EVMole 0.9.3/WASM | synth...
+    PROVINCE.md:75-76 requires a LOG.md entry citing the earning corpus entries; none exists.
+  => Landing the patch as written writes a FALSE PROMOTION into a scoped file.
+     Correct form: drop '(Core, ...)' and 'held' -> 'real solc-0.8.37 carriers
+     (arc3-r1/r3) and Vyper 0.4.3 (r4) — RESULT-class'.
+
+--- VZ-4 independent re-run of VZ-2's census instrument (14:16Z) ---
+Instrument: claims/c2/VZ-2/evidence/province-staleness-census.py
+            sha256 e6eef57476bb6acac10f77285c90b035304286e91b19ccc6dbfe928509b174cc
+            (identical to the identity VZ-2's verdict cites — re-derived by VZ-4)
+Command:    python3 <instrument>   (real tree, read-only)
+Output:     SUMMARY: total=26 stale=6 adjudicated=2 current=18
+            STALE: F1b, F3, F5b, X1, C1, R2
+=> EXACTLY VZ-2's numbers, reproduced first-hand by this seat. The census half of
+   C2's claim is real, re-runnable and independently confirmed.
+
+Of the six stale rows, the wave's best patch repairs four (F1b, F5b, X1, R2) and
+leaves two (F3, C1) — both independently confirmed stale by VZ-4 above. Hence
+C2's claim as frozen (stale N -> 0) is NOT met at the wave's best patch: 6 -> 2.

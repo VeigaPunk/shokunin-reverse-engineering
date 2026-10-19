@@ -1,0 +1,23 @@
+### (a) BEFORE 7cd19c3c: capture --out vic --paths vic.sha256
+e5e88ebaff224c033629bc5d380a827462da74bbc199af2b719da2bab64da8f2  A1/vic.sha256
+RECEIPT: A1/vic  sha256=6a66545ba41153f60ef37d97445055c9917bcf02d1374bc4716c3860ecf84d63
+SIDECAR: A1/vic.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+EXIT=0
+3cc33fc7ee11a9a271a1937eb0e5ad1ea909940eac2f5e54de03dd3e177765e6  A1/vic.sha256
+
+### (a) AFTER 29bb45ae: same injection
+e5e88ebaff224c033629bc5d380a827462da74bbc199af2b719da2bab64da8f2  A2/vic.sha256
+USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): A2/vic.sha256
+EXIT=2
+e5e88ebaff224c033629bc5d380a827462da74bbc199af2b719da2bab64da8f2  A2/vic.sha256
+
+### (a2) AFTER: symlinked sidecar aimed at the measured file
+USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): A3/alias.sha256
+EXIT=2
+measured-vic
+
+### (a3) AFTER: mirror direction --out X.sha256 --paths X (was exit 0 at r3)
+USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): A4/X.sha256
+EXIT=2
+X

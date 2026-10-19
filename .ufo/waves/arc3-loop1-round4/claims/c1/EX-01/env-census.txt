@@ -1,0 +1,274 @@
+# EX-01 environment census — arc3-loop1-round4 (C1, Vyper leg)
+# captured: 2026-10-19T14:05:21Z  host: Linux 7.2.3-arch1-3 x86_64  user: vgpnk
+# transcript of literal command output; every block is a real run, not a summary
+
+## 1. python3 --version
+Python 3.14.7
+
+## 2. ls /usr/bin/python3.*
+-rwxr-xr-x 1 root root 14424 Aug 10 04:46 /usr/bin/python3.14
+-rwxr-xr-x 1 root root  3446 Aug 10 04:46 /usr/bin/python3.14-config
+
+## 3. interpreter resolution
+/usr/bin/python3.14
+/usr/bin/python3.14
+sys.executable: /usr/bin/python3
+cache_tag: cpython-314
+purelib: /usr/lib/python3.14/site-packages
+platform: linux-x86_64
+
+## 4. pip availability (system)
+$ python3 -m pip --version
+/usr/bin/python3: No module named pip
+$ which -a python3 python pip pip3
+which: no pip in (/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin:/home/vgpnk/.local/share/mise/installs/node/latest/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2762_1792408312993/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.local/share/omarchy/bin:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/run/user/1000/fnm_multishells/1614_1792408307340/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/run/user/1000/fnm_multishells/3677_1792408323863/bin)
+which: no pip3 in (/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin:/home/vgpnk/.local/share/mise/installs/node/latest/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2762_1792408312993/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.local/share/omarchy/bin:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/run/user/1000/fnm_multishells/1614_1792408307340/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/run/user/1000/fnm_multishells/3677_1792408323863/bin)
+/usr/bin/python3
+/usr/bin/python
+which exit=2
+$ python3 -m ensurepip --version
+pip 26.2.1
+$ ls /usr/lib/python3.14/ensurepip/_bundled/
+pip-26.2.1-py3-none-any.whl
+$ python3 -m venv --help (exit code only)
+venv module available, exit=0
+PEP-668 marker: /usr/lib/python3.14/EXTERNALLY-MANAGED
+$ head -4 /usr/lib/python3.14/EXTERNALLY-MANAGED
+[externally-managed]
+Error=To install Python packages system-wide, try 'pacman -S
+ python-xyz', where xyz is the package you are trying to
+ install.
+
+## 5. venv bootstrap probe (scratch, /var/tmp)
+$ python3 -m venv /var/tmp/ex01-probe-pip
+exit=0
+$ /var/tmp/ex01-probe-pip/bin/python -m pip --version
+pip 26.2.1 from /var/tmp/ex01-probe-pip/lib/python3.14/site-packages/pip (python 3.14)
+=> venv on py3.14 BOOTSTRAPS pip (ensurepip bundled wheel pip-26.2.1-py3-none-any.whl)
+
+## 6. pip index versions vyper (asked for; run inside the scratch venv)
+vyper (0.4.3)
+Available versions: 0.4.3, 0.4.2, 0.4.1, 0.4.0, 0.3.10, 0.3.9, 0.3.8, 0.2.16, 0.2.15, 0.2.12, 0.2.11, 0.2.8, 0.2.7, 0.2.5, 0.2.4, 0.2.3, 0.2.2, 0.2.1
+
+## 7. vyper release metadata (PyPI JSON, live)
+latest: 0.4.3
+requires_python: <4,>=3.10
+runtime deps: ['cbor2<6,>=5.4.6', 'asttokens<4,>=2.0.5', 'pycryptodome<4,>=3.5.1', 'packaging>=23.1', 'lark<2,>=1.0.0', 'wheel', 'immutables']
+release count: 31 newest 8: ['0.3.7', '0.3.8', '0.3.9', '0.3.10', '0.4.0', '0.4.1', '0.4.2', '0.4.3']
+$ curl vyper-0.4.3 wheel + sha256 (scratch /var/tmp/ex01-wheelpin)
+3b9671727c888363740dc678e60336759871487d0e4e9fdd973048fa9635c4fd  /var/tmp/ex01-wheelpin/vyper-0.4.3-py3-none-any.whl
+PyPI-declared digest: 3b9671727c888363740dc678e60336759871487d0e4e9fdd973048fa9635c4fd
+=> byte-identical to PyPI digest; wheel is py3-none-any (pure python, no cp-ABI tag)
+
+## 8. resolution on py3.14 (pip --dry-run, installs nothing)
+  Using cached asttokens-3.0.2-py3-none-any.whl.metadata (5.7 kB)
+Collecting pycryptodome<4,>=3.5.1 (from vyper)
+  Using cached pycryptodome-3.24.1-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.4 kB)
+Collecting packaging>=23.1 (from vyper)
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting lark<2,>=1.0.0 (from vyper)
+  Using cached lark-1.3.1-py3-none-any.whl.metadata (1.8 kB)
+Collecting wheel (from vyper)
+  Using cached wheel-0.48.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting immutables (from vyper)
+  Using cached immutables-0.21.tar.gz (89 kB)
+Would install asttokens-3.0.2 cbor2-5.9.0 immutables-0.21 lark-1.3.1 packaging-26.3 pycryptodome-3.24.1 vyper-0.4.3 wheel-0.48.0
+
+## 9. the single source-only dep: immutables (no cp314 wheel)
+  cp311 linux-x86_64 wheels: 3
+  cp312 linux-x86_64 wheels: 3
+  cp313 linux-x86_64 wheels: 3
+  cp314 linux-x86_64 wheels: 0
+  sdist: ['immutables-0.21.tar.gz']
+=> cp314 wheel ABSENT for immutables 0.21; source build required on py3.14
+
+## 10. BUILD-ONLY probe: immutables sdist -> wheel on py3.14 (no env modified)
+$ pip wheel immutables -w /var/tmp/ex01-wheels --no-deps
+total 96
+drwxr-xr-x 1 vgpnk vgpnk     88 Oct 19 11:04 .
+drwxrwxrwt 1 root  root  298066 Oct 19 11:05 ..
+-rw-r--r-- 1 vgpnk vgpnk  97364 Oct 19 11:04 immutables-0.21-cp314-cp314-linux_x86_64.whl
+built wheel sha256: de9ab13c284b24c8766f54ffcc463c042b470512849676fcf1bfb20cf64d7229
+=> builds SUCCESSFULLY with the toolchain present; py3.14 path is viable, just not pure-wheel
+
+## 11. toolchain available for C extension builds
+gcc: /usr/bin/gcc
+cc: /usr/bin/cc
+clang: /usr/bin/clang
+rustc: /usr/bin/rustc
+cargo: /usr/bin/cargo
+make: /usr/bin/make
+headers: /usr/include/python3.14/Python.h
+setuptools in system python: 84.0.0
+glibc: ldd (GNU libc) 2.44
+
+## 12. uv-managed interpreters already on disk (the decisive finding)
+$ uv --version
+uv 0.13.0 (x86_64-unknown-linux-gnu)
+$ uv python list (installed rows only)
+cpython-3.14.7-linux-x86_64-gnu                  /usr/bin/python3.14
+cpython-3.14.7-linux-x86_64-gnu                  /usr/bin/python3 -> python3.14
+cpython-3.14.7-linux-x86_64-gnu                  /usr/bin/python -> python3
+cpython-3.13.16-linux-x86_64-gnu                 /home/vgpnk/.local/share/uv/python/cpython-3.13-linux-x86_64-gnu/bin/python3.13
+cpython-3.12.15-linux-x86_64-gnu                 /home/vgpnk/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/bin/python3.12
+cpython-3.11.17-linux-x86_64-gnu                 /home/vgpnk/.local/bin/python3.11 -> /home/vgpnk/.local/share/uv/python/cpython-3.11-linux-x86_64-gnu/bin/python3.11
+cpython-3.11.17-linux-x86_64-gnu                 /home/vgpnk/.local/share/uv/python/cpython-3.11-linux-x86_64-gnu/bin/python3.11
+=> CPython 3.11.17 / 3.12.15 / 3.13.16 present on disk; all inside vyper's >=3.10,<4
+
+## 13. recipe demo: uv venv from an on-disk interpreter, then dry-run
+$ uv venv --python 3.12 /var/tmp/ex01-venv-demo
+home = /home/vgpnk/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/bin
+implementation = CPython
+uv = 0.13.0
+version_info = 3.12
+include-system-site-packages = false
+$ uv pip install --python /var/tmp/ex01-venv-demo/bin/python --dry-run vyper
+Using Python 3.12.15 environment at: /var/tmp/ex01-venv-demo
+Resolved 8 packages in 1ms
+Would download 8 packages
+Would install 8 packages
+ + asttokens==3.0.2
+ + cbor2==5.9.0
+ + immutables==0.21
+ + lark==1.3.1
+ + packaging==26.3
+ + pycryptodome==3.24.1
+ + vyper==0.4.3
+ + wheel==0.48.0
+=> resolves in <1 s, all wheels, ZERO downloads of interpreters
+
+## 14. interpreter identity hashes
+d78f9cf7178ecff09963551399855543c297f37ac207e626228bfe43cb26a70c  /usr/bin/python3.14
+08ad3f0a96b536082d6020a29830712c55346dca555f81a337c628f00369f57a  /home/vgpnk/.local/share/uv/python/cpython-3.11-linux-x86_64-gnu/bin/python3
+708fefcd7df61b1327cb7b9740fafd42cb2f6cd1d387378892d4a28b7479fb78  /home/vgpnk/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/bin/python3
+47bf2894b1cfb09b4adf27f6edf8c507dccb3b9052793f5d80177b5a1bc6c81b  /home/vgpnk/.local/share/uv/python/cpython-3.13-linux-x86_64-gnu/bin/python3
+
+## 15. scratch + network preconditions
+Filesystem        Size  Used Avail Use% Mounted on
+/dev/mapper/root  930G  227G  697G  25% /
+tmpfs              16G  2.9G   13G  20% /dev/shm
+pypi.org/simple/vyper/ HTTP: 200 in 0.016051s
+
+## 16. host context: no pre-existing vyper/solc
+$ ls ~/.local/bin | grep -iE 'vyper|solc'   -> no match
+$ command -v vyper solc                    -> not in PATH
+=> the wave venv will be the host's first and only vyper; no shadowing risk
+
+## 17. seed probe: uv venv --seed gives pip inside the venv (py3.12)
+$ uv venv --seed --python 3.12 /var/tmp/ex01-venv-seed
+Using CPython 3.12.15
+Creating virtual environment with seed packages at: /var/tmp/ex01-venv-seed
+ + pip==26.2.1
+$ /var/tmp/ex01-venv-seed/bin/python -m pip --version
+pip 26.2.1 from /var/tmp/ex01-venv-seed/lib/python3.12/site-packages/pip (python 3.12)
+$ /var/tmp/ex01-venv-seed/bin/python --version
+Python 3.12.15
+
+## 18. VERDICT — which python (if any) can host vyper-venv
+
+FEASIBLE. This is NOT the pre-accepted honest stop. Two independent working
+paths exist; both were demonstrated with dry-runs (no wave-dir install made
+by this seat).
+
+Path A (RECOMMENDED — fewest moving parts, zero interpreter download):
+  host interpreter: /home/vgpnk/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/bin/python3
+    (3.12.15; sha256 of bin/python3 = 708fefcd7df61b1327cb7b9740fafd42cb2f6cd1d387378892d4a28b7479fb78)
+  venv creation: uv venv --python 3.12 <target>   (or python3 -m venv on any of 3.11/3.12/3.13)
+  evidence: pyvenv.cfg home=/home/vgpnk/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/bin;
+            uv pip install --dry-run vyper resolved 8/8 packages in 1 ms, all wheels, no builds
+  why: 3.12.15 is inside vyper 0.4.3's requires_python (<4,>=3.10); immutables 0.21 has a
+       cp312 manylinux x86_64 wheel (no source build); pycryptodome ships cp37-abi3 manylinux
+       x86_64 (ABI-stable, installs on 3.12 unchanged); cbor2 6.1.5 has a cp312 wheel.
+
+Path B (also viable, more work): system /usr/bin/python3.14 (3.14.7)
+  venv creation: python3 -m venv <target>   -> bootstraps pip 26.2.1 from ensurepip's bundled wheel
+  evidence: pip install --dry-run vyper on 3.14 resolves the full set; the one dep with no
+            cp314 wheel (immutables 0.21) BUILDS successfully from sdist on 3.14
+            (built wheel sha256 de9ab13c284b24c8766f54ffcc463c042b470512849676fcf1bfb20cf64d7229)
+            using the host toolchain (gcc/clang/rustc present, /usr/include/python3.14/Python.h present).
+  caveat: one source build, and the resulting immutables wheel is ABI-tagged cp314 (not portable
+          to the other pythons), so Path A remains the cleaner record.
+
+Constraint notes:
+  - The system interpreter is PEP-668 EXTERNALLY-MANAGED (/usr/lib/python3.14/EXTERNALLY-MANAGED):
+    never install into it; the venv is the sanctioned route (the marker text says exactly this).
+  - uv-managed interpreters refuse direct install ("externally managed ... managed by uv")
+    -> a venv MUST be created; the venv itself is then writable. Demonstrated in section 13.
+  - Scratch root for all probes: /var/tmp (never /tmp per standing rule). /tmp proved writable
+    at census time but the rule stands and was honored.
+
+## 19. Install guidance for EX-02 (executor of the authorized install; NOT run by this seat)
+
+  target venv (wave dir, the one authorized install):
+    .ufo/waves/arc3-loop1-round4/tools/vyper-venv/
+  recommended command sequence (Path A):
+    UV_PYTHON_DOWNLOADS=never uv venv --python 3.12 \
+      .ufo/waves/arc3-loop1-round4/tools/vyper-venv
+    UV_PYTHON_DOWNLOADS=never uv pip install --python \
+      .ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/python vyper
+  expected exact resolution (verified by dry-run, section 13):
+    vyper==0.4.3 asttokens==3.0.2 cbor2==5.9.0 immutables==0.21
+    lark==1.3.1 packaging==26.3 pycryptodome==3.24.1 wheel==0.48.0
+  expected wheel identity: vyper-0.4.3-py3-none-any.whl
+    sha256 3b9671727c888363740dc678e60336759871487d0e4e9fdd973048fa9635c4fd
+    (re-derived by this seat from the downloaded wheel; matches PyPI's declared digest)
+  post-install receipt to capture: `venv/bin/python -m vyper --version` (or `vyper --version`),
+    plus sha256 of the installed vyper package dir and the resolved pip freeze.
+  fallback if Path A is blocked: Path B (python3 -m venv on 3.14) with the immutables source build.
+
+## 20. POST-INSTALL VERIFICATION (appended after EX-02's receipt landed; census closes here)
+
+EX-02's receipt: `.ufo/waves/arc3-loop1-round4/claims/c1/EX-02/install.log` +
+`claims/c1/EX-02/smoke/compile-receipt.txt` (landed 2026-10-19T14:05:48Z).
+EX-02 chose Path B (system 3.14 venv), NOT the recommended Path A. Prediction vs actual:
+
+  package          predicted (section 13)  actual (EX-02 install.log)  match
+  vyper            0.4.3                   0.4.3                       YES
+  asttokens        3.0.2                   3.0.2                       YES
+  cbor2            5.9.0                   5.9.0                       YES
+  immutables       0.21                    0.21                        YES
+  lark             1.3.1                   1.3.1                       YES
+  packaging        26.3                    26.3                        YES
+  pycryptodome     3.24.1                  3.24.1                      YES
+  wheel            0.48.0                  0.48.0                      YES
+
+  -> the 8-package resolution was predicted exactly; the venv's `pip list` (read by this
+     seat) matches to the character.
+  -> the ONE risk flagged in section 9-10 (immutables has no cp314 wheel) materialized as
+     expected and was absorbed: EX-02's log shows `Using cached
+     immutables-0.21-cp314-cp314-linux_x86_64.whl` — the wheel built by THIS seat's
+     build-only probe in section 10. The predicted failure mode did not fire; the
+     pre-computed mitigation was consumed directly.
+
+Post-install, verified by THIS seat (read-only commands against EX-02's venv):
+  $ tools/vyper-venv/bin/vyper --version          -> 0.4.3+commit.bff19ea2
+  $ tools/vyper-venv/bin/python -m vyper --version -> 0.4.3+commit.bff19ea2
+  $ tools/vyper-venv/bin/python --version          -> Python 3.14.7
+  $ cat tools/vyper-venv/vyper_git_commithash.txt  -> bff19ea2
+  $ tools/vyper-venv/bin/python -m pip freeze      -> 8 packages, identical to EX-02's log
+  installed immutables C ext: site-packages/immutables/_map.cpython-314-x86_64-linux-gnu.so
+    (Root-Is-Purelib: false -> confirms a compiled, source-built-for-cp314 artifact)
+
+End-to-end smoke by THIS seat (scratch /var/tmp/ex01-vyper-smoke/Counter.vy; the venv was
+only executed, never written):
+  $ <venv>/bin/vyper -f method_identifiers Counter.vy
+  {"increment()": "0xd09de08a", "get()": "0x6d4ce63c", "counter()": "0x61bc221a"}
+  $ <venv>/bin/vyper -f bytecode Counter.vy   -> 417 hex chars (non-empty, dispatch-shaped)
+  -> the two shared selectors (increment/get/counter) are byte-identical to EX-02's
+     independently compiled Smoke.vy, and both agree with keccak256 of the ABI signature.
+  => C1's precondition is SATISFIED: the toolchain that produces Vyper dispatch shapes
+     (and the ABI-derived selector ground truth) is live on this host.
+
+FINAL VERDICT: FEASIBLE — vyper-venv hosted successfully on py3.14 (Path B), with Path A
+(3.12) fully demonstrated and available as the cheaper alternative. The pre-accepted
+honest stop ("no compatible python exists") did NOT trigger and is NOT invoked.
+
+Side-effect ledger for this seat (honesty, per AGENTS.md):
+  - wrote only: claims/c1/EX-01/env-census.txt and the EX-01 seat report (this file + report).
+  - scratch only: /var/tmp/ex01-probe-pip, /var/tmp/ex01-probe-nopip, /var/tmp/ex01-venv-demo,
+    /var/tmp/ex01-venv-seed, /var/tmp/ex01-wheels, /var/tmp/ex01-wheelpin, /var/tmp/ex01-uv-cache,
+    /var/tmp/ex01-tmp, /var/tmp/ex01-vyper-smoke, /var/tmp/ex01-write-test.
+  - no environment outside /var/tmp was modified; nothing installed into the wave venv by
+    this seat (EX-02 owns that install); the system interpreter was never written to.
+  - one cache write: ~/.cache/pip/wheels/... (immutables build from section 10) — removed
+    afterwards; the wheel itself was consumed by EX-02's install (see above).

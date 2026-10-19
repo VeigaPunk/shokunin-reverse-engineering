@@ -1,0 +1,22 @@
+=== VZ-4 independent verification: CN-2's merged records fold @ 2026-10-19T14:18:40Z ===
+
+Artifacts (CN-2, cross chain):
+fa1e2c1abcfccdf075388138357240945c70b992c29d962af1fe7646e93e2e37  .ufo/waves/arc3-loop1-round4/claims/cross/CN-2/merged-SCORECARD-section.md
+815980b9ef809c494781d799a72166afdfed275b3d3dbcce050d8d4e0c8338c5  .ufo/waves/arc3-loop1-round4/claims/cross/CN-2/merged-LOG-entry.md
+
+1. CN-2's own pin-free checker, re-run by VZ-4:
+   merged-SCORECARD-section.md  -> PIN-FREE: CLEAN (0 pin/version/pointer tokens)
+   merged-LOG-entry.md          -> PIN-FREE: CLEAN (0 pin/version/pointer tokens)
+
+2. VZ-4 census test: appended the merged SCORECARD section to a scratch root
+   carrying all three scoped files -> SCORECARD.md 1580 -> 1760 lines,
+   census VERDICT: PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0), DECLARED FAIL CLASSES: []
+
+3. CN-2's coupled-landing projection (its own receipt, cross-checked):
+   PROVINCE.md dfa70b42… (162 L) + SKILL.md 8e56f3d9… (390 L) + records section
+   -> census PASS 0/0/0/0; citation probe --strict clean findings=0;
+   probe control at HEAD in the same clone also clean.
+
+=> The records side is independently confirmed: the fold is pin-free, appending it
+   cannot regress the census, and the coupled (C2 PROVINCE + C3 SKILL row + records)
+   projection holds both instruments green.

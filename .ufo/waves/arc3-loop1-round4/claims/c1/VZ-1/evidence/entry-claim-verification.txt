@@ -1,0 +1,26 @@
+=== VZ-1 entry-claim verification (first-hand, round 4) ===
+run: 2026-10-19T14:12:02Z
+
+-- recheck line (entry's literal command, EX-04 path, hex 6.4.0):
+  id: ev_d1792f577ae3611615fd8dbcb1ce2e71dae4e0346b66d72b41321f4644df963f
+  functions: 15
+  decoded: 57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0
+  dispatch: ['abi']
+  envelope sha256: 68415a3de767d58ee176bf6bfdd1ffb1719173041997a5d3fa49ce6f614a99ec
+  (RV-2 copy sha256: 68415a3de767d58ee176bf6bfdd1ffb1719173041997a5d3fa49ce6f614a99ec)
+
+-- offset rule: offset == push4_pc + 11 (push4_pc = PUSH4 opcode position)
+   15/15; byte[offset-12]==0x5b: 15/15
+-- jump table @0x600: 13 entries all JUMPDEST; 0x5e7 sentinel x3
+-- prologue: 5f3560e01c6002600d820660011b61060001601e395f5156
+-- non-selector PUSH4: 08c379a0 at 6 sites; 69656e74 at 1 site (never reported)
+-- mutability: agree 7/15, divergences 8/15 (all 'payable' reads, direction matches entry)
+
+-- carrier K/K re-derivation (my own, js-sha3 vs ABI):
+   CarrierV 15/15 (7 legs), Ex09Vault 7/7 (5 legs), StewardToken 22/22 (2 legs), CarrierW 9/9 (2 legs), Smoke 4/4 (2 legs)
+
+-- projection (clone @015e1ba + entry literal + additive token):
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 84, "mapped": 84, "missing": [], "revision": "36680c2a86a151499cb6928796bf070d57aa526b", "rule_blocks": 14}
+
+   prior-83 byte-identical: 83/83, diffs=0, missing=0; added: 1 (the new entry)
+   README 190 -> 190, after sha256 1cd052605e9d27f38e8c9b9b164fa64d0482b61d4acf0a2b80223cb4cec29d1e

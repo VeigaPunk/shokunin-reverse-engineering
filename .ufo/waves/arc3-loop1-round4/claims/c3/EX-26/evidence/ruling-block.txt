@@ -1,0 +1,29 @@
+## The both-absent `MATCH` (ruling, arc3-loop1-round4)
+
+The round-2 D2 debt named the `MATCH exit 0` on a both-sides-absent path as part of
+the fail-open class. This instrument adjudicates that reading, and the adjudication
+is the declared design: **only error-carrying stanzas are `UNEVALUABLE`; a cleanly
+absent stanza on both sides is `MATCH`.**
+
+- *Cleanly absent* means the stanza records no `SHA256` and carries no
+  `READ-ERROR`/`STAT-ERROR` on either side. The `MATCH` rests on the two stanzas'
+  own recorded existence state (`EXISTS: no` on both) — that is the fact the
+  both-absent branch tests, and it is the only branch that can produce this row.
+  The row prints `compared=0/11` because there is nothing further to compare, not
+  because the comparison is empty. Absence on one side only is `ABSENT` (13): a
+  reference path that appears later is still caught.
+- *Error-carrying* is the fail-open class the debt named: a stanza carrying
+  `READ-ERROR` or `STAT-ERROR` on either side is `UNEVALUABLE` (14), classified
+  **before** the both-absent branch, so an unreadable path can never read as a
+  `MATCH`. This holds receipt-vs-live and receipt-vs-receipt (the parser reads both
+  error keys).
+- Severity is unchanged: a cleanly-absent stanza never outranks `UNEVALUABLE` or
+  `CONTENT-DRIFT` in the verdict — a mixed pair reports the worst class it found.
+
+A receipt pair over cleanly-absent paths is therefore a positive record ("absent on
+both sides"), not a vacuous pass — but it is a weak witness by construction: no
+content is compared. That is also why the coverage gate is a *stanza* gate —
+`--require-paths N` counts stanzas, not distinct paths (measured: one path repeated
+N times satisfies it). Pair an all-absent reference with a present-path reference
+when the witness is meant to carry content.
+

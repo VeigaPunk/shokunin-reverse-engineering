@@ -1,0 +1,22 @@
+=== inferred_arguments vs the compiled ABI parameter types ===
+-- Ex09Vault
+   2bec1547 scale(uint256)             abi_args=uint256            inferred=uint256            same
+-- Smoke
+-- Atk3
+   33eced4d b_nonpay(address,bool)     abi_args=address,bool       inferred=uint256,uint256    DIFFERENT
+   65f1b776 a_pure(uint256)            abi_args=uint256            inferred=uint256            same
+   74e21676 a_pay(uint256)             abi_args=uint256            inferred=uint256            same
+   79a30fc4 b_view(address,uint256)    abi_args=address,uint256    inferred=uint256,uint256    DIFFERENT
+   92e77914 a_view(uint256)            abi_args=uint256            inferred=uint256            same
+   fac6398b a_nonpay(uint256)          abi_args=uint256            inferred=uint256            same
+
+arg-taking functions compared: 7, inferred string != ABI string: 2
+
+=== the recovered string is the ARITY, not the types ===
+   Ex09Vault  2bec1547 scale(uint256)             abi_arity=1 inferred_arity=1 all_uint256=True
+   Atk3       33eced4d b_nonpay(address,bool)     abi_arity=2 inferred_arity=2 all_uint256=True
+   Atk3       65f1b776 a_pure(uint256)            abi_arity=1 inferred_arity=1 all_uint256=True
+   Atk3       74e21676 a_pay(uint256)             abi_arity=1 inferred_arity=1 all_uint256=True
+   Atk3       79a30fc4 b_view(address,uint256)    abi_arity=2 inferred_arity=2 all_uint256=True
+   Atk3       92e77914 a_view(uint256)            abi_arity=1 inferred_arity=1 all_uint256=True
+   Atk3       fac6398b a_nonpay(uint256)          abi_arity=1 inferred_arity=1 all_uint256=True

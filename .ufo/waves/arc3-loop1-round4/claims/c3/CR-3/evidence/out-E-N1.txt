@@ -1,0 +1,43 @@
+tool: /dev/shm/cr3-r4/tool-N1.py sha256=dd9954dc4dea192a
+sandbox HOME: /dev/shm/cr3-r4/atk-E/home
+
+-- E1 --out HARDLINK-ALIAS-OF-NEIGHBOUR  (--paths X, out ~ X.sha256 by inode)
+   exit=2  traceback=False  CHANGED=none
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved pa
+   alias inode == X.sha256 inode: True
+
+-- E2 --out OTHER-NAME hardlink -> measured path's .sha256 neighbour
+   exit=2  traceback=False  CHANGED=none
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved pa
+
+-- E3 derived sidecar (out.txt.sha256) is a hardlink to the measured path's neighbour
+   exit=2  traceback=False  CHANGED=none
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved pa
+
+-- E4 CONTROL --out X.sha256 directly (expect exit 2, refused)
+   exit=2  traceback=False  CHANGED=none
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved pa
+
+-- E5 --out FIFO (no reader)
+   exit=HANG  traceback=False  CHANGED=none
+   HANG = open() blocks forever, no timeout inside the tool
+
+-- E6 --out SYMLINK-LOOP
+   exit=2  traceback=False  CHANGED=none
+   stderr| USAGE: write failed ([Errno 40] Too many levels of symbolic links: '/dev/shm/cr3-r4/atk-E/loop'): /dev/shm/cr3-r4/atk-E/loop
+
+-- E7 --out parent-is-SYMLINK-LOOP/child.txt
+   exit=2  traceback=False  CHANGED=none
+   stderr| USAGE: cannot create the receipt directory ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-E/e7/ploop'): /dev/shm/cr3-r4/atk-E/e7/ploop
+
+-- E8 CONTROL --out SYMLINK->measured path (expect exit 2)
+   exit=2  traceback=False  CHANGED=none
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved pa
+
+-- E9 --out symlinked-parent -> custody DIR /planted.txt
+   exit=0  traceback=False  CHANGED=['/dev/shm/cr3-r4/atk-E/home/.config/devin/planted.txt']
+   planted exists: False
+
+-- E10 derived sidecar hardlinked to ~/.bashrc.sha256 (a custody neighbour)
+   exit=2  traceback=False  CHANGED=none
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved pa

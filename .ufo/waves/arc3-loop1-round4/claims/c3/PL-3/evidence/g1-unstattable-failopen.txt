@@ -1,0 +1,19 @@
+### G1 — CR-4 item 8, the inode arm fails open when the measured path is unstattable
+shape: measured = blocked/watch.conf (parent chmod 000), out = outside/alias.conf (hardlink of it)
+-- before: alias sha
+317372092eb54dfa264a13f1aba452ba5d621ddee467fbaa79f82f5589b5cd24  F2/outside/alias.conf
+-- capture --out outside/alias.conf --paths blocked/watch.conf
+RECEIPT: F2/outside/alias.conf  sha256=c6bcd18d8b9d9342dbd0a9fa2967af615da653ae63de7830fc1e0e33a539588a
+SIDECAR: F2/outside/alias.conf.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=(none) exit=14
+EXIT=14
+-- after: alias sha + first line
+c6bcd18d8b9d9342dbd0a9fa2967af615da653ae63de7830fc1e0e33a539588a  F2/outside/alias.conf
+# custody-pair receipt v2 — READ-ONLY capture (sha256 + stat); no bytes written
+-- same inode?
+12115284 F2/blocked/watch.conf
+12115284 F2/outside/alias.conf
+
+### control: the same hardlink alias IS refused when the measured path stats
+USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): F3/alias.conf
+EXIT=2

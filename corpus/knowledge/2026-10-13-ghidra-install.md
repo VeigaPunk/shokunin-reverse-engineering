@@ -67,3 +67,10 @@ Ghidra 12.1.4 PUBLIC (build 2026-09-21, rev 8b6bbb85) is fully installed at ~/.l
 
 - Feature module count is **34, not 35** (audit-B re-ran `ls Ghidra/Features | wc -l`;
   the enumerated list in the claim is complete — the count digit was off by one).
+
+## Erratum (arc3-loop1-round4, append-only)
+
+- PROVINCE.md's Ghidra row carried the same "35 features" miscount this entry's
+  Candidate line made; it was repaired to 34 in the same commit as this erratum
+  (the count itself was already corrected by the round-2 errata above — this
+  records the coupled PROVINCE repair, per wave `arc3-loop1-round4` PL-2).

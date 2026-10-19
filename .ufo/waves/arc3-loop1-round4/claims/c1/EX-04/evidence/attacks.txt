@@ -1,0 +1,45 @@
+=== EX-04 independent attack log ===
+
+-- A1: is the 'Vyper dispatch shape' really modulo-indexed, or a misread? --
+   prologue bytes 0x0000-0x0016: 5f3560e01c6002600d820660011b61060001601e395f5156
+   decoded: PUSH0 CALLDATALOAD PUSH1 0xe0 SHR PUSH1 0x02 PUSH1 0x0d DUP3 MOD PUSH1 0x01 SHL PUSH2 0x0600 ADD PUSH1 0x1e CODECOPY PUSH0 MLOAD JUMP
+   => dest = 0x600 + ((selector mod 13) << 1), 2-byte table entry at 0x600, 13 buckets.
+   VERDICT: CONFIRMED by execution (mini-EVM reaches each leg) and by leg-chain disassembly.
+
+-- A2: does the naive (unaligned) PUSH4 regex over-report? --
+   unaligned sweep finds 69656e74 ('inte' from the ASCII error string 'insufficient')
+   aligned sweep (instruction-boundary aware) does NOT: it is string data, not an immediate.
+   VERDICT: CONFIRMED (my own regex was the artifact; probe was right).
+
+-- A3: does the probe report the decoy constants as functions? --
+   08c379a0 (Error(string)) at 6 sites, 69656e74 at 1 site: probe reports NEITHER.
+   probe recovered set == planted K == leg-chain set, 15/15, zero extras.
+   VERDICT: CONFIRMED zero false positives on this Vyper carrier.
+
+-- A4: are the 8 'payable' mutability reads a Vyper-specific defect? --
+   r3 solc baseline re-measured with the same recipe: carrierB 10/11 correct, CarrierB 7/8, VaultB 13/13.
+   The same 'payable' over-read class already existed on solc carriers with 4-byte-arg bodies.
+   VERDICT: REFUTED as Vyper-specific; it is the same upstream inference class, reproduced.
+
+-- A5: is my mini-EVM agreement real, or an artifact of my own bug? --
+   Three harness bugs found and fixed before agreement was claimed:
+     (i) selector encoded at word END instead of first 4 bytes -> SHR 224 always 0
+     (ii) EVM operand order inverted for SHR/MOD/GT/LT/SUB
+     (iii) 4-byte calldata not zero-padded to 32 B -> CALLDATALOAD truncated
+   After fixes: 15/15 reach the leg-derived body. Each bug is recorded, not hidden.
+   VERDICT: CONFIRMED (post-fix), with the bug history disclosed.
+
+-- A6: raw-on-hex-text trap on this carrier --
+   raw leg over runtime.hex -> 0 functions, decoded sha256 == the hex FILE's sha256 (e0b1021c...).
+   VERDICT: CONFIRMED (same trap class as r1/r3), independent of my run (VZ-1 re-ran it).
+
+-- A7: do the empty jump-table buckets point at a revert stub? --
+   MY FIRST READING SAID revert stub. Executing unmatched selectors says otherwise:
+     00000000 (bucket 0) -> JUMP 0x29c -> JUMPI 0x5e8 taken -> lands 0x5e9
+     ffffffff (bucket 8) -> JUMP 0x590 -> JUMPI 0x5e8 taken -> lands 0x5e9
+     deadbeef (bucket 12) -> chain x3 -> JUMPI 0x5e8 taken -> lands 0x5e9
+     12345678 (bucket 2) -> JUMP 0x50b -> JUMPI 0x5e8 taken -> lands 0x5e9
+   0x5e9 decodes: PUSH1 0x01 SLOAD CALLVALUE DUP2 ADD DUP2 DUP2 LT PUSH2 0x05fc JUMPI ... SSTORE STOP
+     = self.total_deposits += msg.value  => the __default__ (payable) body.
+   0x5fc = JUMPDEST PUSH0 DUP1 REVERT is only the arithmetic-overflow branch.
+   VERDICT: REFUTED (my own reading was wrong); the shared tail is the default body.

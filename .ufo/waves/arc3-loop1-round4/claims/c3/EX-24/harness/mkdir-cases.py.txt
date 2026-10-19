@@ -1,0 +1,28 @@
+    # 20. the write path's declared map covers a non-directory parent: the mkdir
+    #     of the receipt's parent belongs inside the guarded region (r3 residual
+    #     R4 / CR-3 U3 / CR-4 T16) — a raw NotADirectoryError traceback at exit 1
+    #     is outside the declared map.
+    def case_mkdir_guard():
+        parent_file = root / "not-a-dir"
+        payload_pf = b"regular file used as a path component\n"
+        parent_file.write_bytes(payload_pf)
+        out = parent_file / "sub" / "receipt.txt"
+        rc = cmd_capture(argparse.Namespace(out=str(out), paths=[str(fixture)], label="selftest"))
+        assert rc == EXIT_USAGE, "expected USAGE for a non-directory parent, got %d" % rc
+        assert parent_file.read_bytes() == payload_pf, "the parent file was modified"
+        assert not (parent_file / "sub").exists(), "a directory was created through a regular file"
+    run_case(cases, "mkdir-guard-nondir-parent-usage-exit", case_mkdir_guard)
+
+    # 21. the same shape at the process level: the class is declared, so no
+    #     traceback and never exit 1
+    def case_mkdir_guard_subprocess():
+        tool = str(Path(__file__).resolve())
+        parent_file = root / "not-a-dir-sp"
+        parent_file.write_bytes(b"x\n")
+        out = parent_file / "sub" / "receipt.txt"
+        p = subprocess.run([sys.executable, tool, "capture", "--out", str(out),
+                            "--paths", str(fixture)], capture_output=True, text=True)
+        assert p.returncode == EXIT_USAGE, "expected USAGE exit %d, got %d" % (EXIT_USAGE, p.returncode)
+        assert "Traceback" not in p.stderr, "raw traceback for a non-directory parent: %s" % p.stderr
+    run_case(cases, "mkdir-guard-subprocess-no-traceback", case_mkdir_guard_subprocess)
+

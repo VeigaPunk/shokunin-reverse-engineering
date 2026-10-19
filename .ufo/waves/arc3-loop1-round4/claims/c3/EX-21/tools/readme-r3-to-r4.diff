@@ -1,0 +1,188 @@
+--- /var/tmp/ex21/readme-head.md	2026-10-19 11:10:37.769227152 -0300
++++ .ufo/gates/custody-pair/README.md	2026-10-19 11:10:12.227113113 -0300
+@@ -1,8 +1,9 @@
+ # custody-pair (v2 custody receipt instrument)
+ 
+ Seat EX-31 (chain c3, wave `arc3-loop1-round2`), revised by seat EX-21 (chain c2,
+-wave `arc3-loop1-round3`). Operator-owned custody for the five paths the
+-province freezes:
++wave `arc3-loop1-round3`) and again by seat EX-21 (chain c3, wave
++`arc3-loop1-round4`). Operator-owned custody for the five paths the province
++freezes:
+ 
+ ```
+ ~/.config/devin/mcp_config.json
+@@ -29,7 +30,8 @@
+ # verify a receipt against the live filesystem
+ python3 custody-pair.py verify receipt-A.txt --live
+ 
+-# verify with a coverage gate: exit 2 when the reference carries fewer than N paths
++# verify with a coverage gate: exit 2 when the reference carries fewer than N
++# distinct resolved paths
+ python3 custody-pair.py verify receipt-A.txt --live --require-paths 5
+ 
+ # fixture-based selftest (never touches a custody path)
+@@ -44,10 +46,12 @@
+ `$CUSTODY_PAIR_SCRATCH`, then `/dev/shm`, then `/var/tmp` — **never `/tmp`**
+ (quota-exhausted on this host, EDQUOT).
+ 
+-`capture` refuses to write its receipt over any path it is measuring or any of
+-the five custody paths — by resolved path *or* by inode (a hardlink alias is
+-refused too). `selftest --scratch` requires an existing, non-`/tmp` directory;
+-anything else is a declared USAGE exit 2.
++`capture` refuses to write its receipt **or its derived `<receipt>.sha256`
++sidecar** over any path it is measuring or any of the five custody paths — by
++resolved path *or* by inode (a hardlink alias is refused too) — and refuses a
++receipt or sidecar aimed at the sidecar-shaped neighbour (`<measured> +
++".sha256"`) of a measured path. `selftest --scratch` requires an existing,
++non-`/tmp` directory; anything else is a declared USAGE exit 2.
+ 
+ ## Receipt fields (v2)
+ 
+@@ -56,6 +60,8 @@
+ `CTIME_UTC_RENDER`, `CTIME_LOCAL_RENDER`, `INODE`, `MODE`, `UID`, `GID`.
+ An unevaluable stanza replaces `SHA256` with `READ-ERROR` (exists but
+ unreadable) or `STAT-ERROR` (lstat failed) and is exit class 14, never a pass.
++A cleanly-absent stanza (`EXISTS: no`, no error key) is the declared `MATCH`
++case on both sides — see "The both-absent `MATCH`" below.
+ 
+ Two contracts hold here:
+ 
+@@ -96,13 +102,16 @@
+   round-2 tool read an EACCES path as `MATCH exit 0` and crashed on a mode-000
+   file.
+ - **D3 → `--require-paths N` (USAGE 2).** A reference carrying fewer than N
+-  stanzas is a USAGE exit with a `REFERENCE-COVERAGE: n/N … unaccounted: …`
+-  line. Opt-in: without the flag the comparison is exactly the reference's
+-  paths, unchanged.
++  **distinct resolved paths** is a USAGE exit with a `REFERENCE-COVERAGE: n/N …
++  unaccounted: …` line. Opt-in: without the flag the comparison is exactly the
++  reference's paths, unchanged. (The distinct-path basis is round 4's fix for
++  residual (c); the round-3 revision counted stanzas.)
+ - **Write-guard scope (VZ-4 A11 + RV-11 D7) → USAGE 2.** `--out` is refused when
+   it resolves to, or shares an inode with, any measured path or any custody
+   path: `--paths X --out X` no longer clobbers X, and a hardlink alias is
+   refused. Self-harm guard, not a security boundary (TOCTOU residual named).
++  Round 4 extends the same guard to the derived sidecar path and to
++  sidecar-shaped neighbours of the measured paths (residual (a) above).
+ - **D6 → USAGE 2.** `selftest --scratch` on a missing / non-directory / `/tmp`
+   base is a declared USAGE exit with a message, not a raw traceback.
+ 
+@@ -110,6 +119,66 @@
+ 5/5 exit 0`) and the full before→after matrix live in
+ `.ufo/waves/arc3-loop1-round3/claims/c2/EX-21/`.
+ 
++## Round-4 hardening (arc3-loop1-round4, seat EX-21)
++
++Three residuals the round-3 verdict named, each re-measured on the round-3
++landed revision before this revision was written, each closed with a declared
++exit class:
++
++- **(a) sidecar / neighbour scope → USAGE 2.** The guard examines the receipt
++  path **and** its derived sidecar path, each against the measured paths and the
++  five custody paths by resolved path and by inode, and refuses a receipt or
++  sidecar landing on the sidecar-shaped neighbour (`<measured> + ".sha256"`) of
++  a measured path. Before: `capture --out X --paths X.sha256` exited **0** and
++  the sidecar write destroyed `X.sha256` — the file the same run had just
++  measured. The sidecar name is derived inside the guarded region, so an `--out`
++  with no usable name (`''`, `'.'`) is a USAGE exit 2, not a `ValueError`
++  traceback.
++- **(b) receipt-directory failures → USAGE 2.** `out.parent.mkdir(...)` runs
++  inside a guarded block: a non-directory component, a symlink loop (ELOOP), or
++  any other `OSError` is a declared USAGE exit 2 with a message. Before:
++  `capture --out <regular-file>/sub/r.txt` died with a raw `NotADirectoryError`
++  traceback at exit 1, outside the declared map.
++- **(c) coverage-gate basis → USAGE 2.** `--require-paths N` counts **distinct
++  resolved paths**, the same basis as its own `unaccounted:` list. Before: five
++  duplicate stanzas for one path satisfied `--require-paths 5` silently (exit 0,
++  no coverage line printed, the other four custody paths unexamined).
++
++The before→after injections, the 28-case selftest transcript, the live receipt
++pair captured by the revised tool, and the round-3 regression battery re-run
++live in `.ufo/waves/arc3-loop1-round4/claims/c3/EX-21/`.
++
++## The both-absent `MATCH` (ruling, arc3-loop1-round4)
++
++The round-2 D2 debt named the `MATCH exit 0` on a both-sides-absent path as part of
++the fail-open class. This instrument adjudicates that reading, and the adjudication
++is the declared design: **only error-carrying stanzas are `UNEVALUABLE`; a cleanly
++absent stanza on both sides is `MATCH`.**
++
++- *Cleanly absent* means the stanza records no `SHA256` and carries no
++  `READ-ERROR`/`STAT-ERROR` on either side. The `MATCH` rests on the two stanzas'
++  own recorded existence state (`EXISTS: no` on both) — that is the fact the
++  both-absent branch tests, and it is the only branch that can produce this row.
++  The row prints `compared=0/11` because there is nothing further to compare, not
++  because the comparison is empty. Absence on one side only is `ABSENT` (13): a
++  reference path that appears later is still caught.
++- *Error-carrying* is the fail-open class the debt named: a stanza carrying
++  `READ-ERROR` or `STAT-ERROR` on either side is `UNEVALUABLE` (14), classified
++  **before** the both-absent branch, so an unreadable path can never read as a
++  `MATCH`. This holds receipt-vs-live and receipt-vs-receipt (the parser reads both
++  error keys).
++- Severity is unchanged: a cleanly-absent stanza never outranks `UNEVALUABLE` or
++  `CONTENT-DRIFT` in the verdict — a mixed pair reports the worst class it found.
++
++A receipt pair over cleanly-absent paths is therefore a positive record ("absent on
++both sides"), not a vacuous pass — but it is a weak witness by construction: no
++content is compared. Pair an all-absent reference with a present-path reference
++when the witness is meant to carry content. Closing this with a flag was
++considered and rejected: the round-3 evidence is that the fail-open lived in the
++error-carrying form, which the `UNEVALUABLE` class already closes. The coverage
++gate is a distinct-path gate since round 4 (residual (c) above), so padding a
++reference with duplicate stanzas no longer satisfies `--require-paths N`.
++
+ ## Exit codes (declared)
+ 
+ | code | class | meaning |
+@@ -120,7 +189,7 @@
+ | 12 | `METADATA-DRIFT` | digest + identification times equal but `mode`/`uid`/`gid`/`size`/`type` differ, or an `EXTRA-PATH` appears on the candidate side, or a receipt's own epoch/render pair is inconsistent (`LABEL-INCONSISTENT`), or a v1 label defect is reproduced (`LABEL-DEFECT`) |
+ | 13 | `ABSENT` | ≥1 reference path is missing on the candidate side |
+ | 14 | `UNEVALUABLE` | a path exists but could not be evaluated (`EACCES` on open, or a stat error other than `ENOENT`): the receipt records `READ-ERROR`/`STAT-ERROR` and is still written; `verify` never reads such a path as `MATCH` |
+-| 2 | `USAGE` | bad arguments, unreadable/unparsable receipt, a refused/failed write, fewer reference paths than `--require-paths N` demands, or an unusable `selftest --scratch` base |
++| 2 | `USAGE` | bad arguments, unreadable/unparsable receipt, a refused/failed write (including a receipt or sidecar aimed at a measured path, a custody path, or the sidecar-shaped neighbour of a measured path, and a receipt directory that cannot be created), fewer distinct reference paths than `--require-paths N` demands, or an unusable `selftest --scratch` base |
+ | 3 | `SELFTEST-FAIL` | a selftest case failed |
+ 
+ `capture` exits `0` with every requested path present (5/5 for the default set),
+@@ -153,19 +222,24 @@
+ ## Selftest
+ 
+ `selftest` builds all fixtures in a scratch dir (never a custody path) and runs
+-22 cases: the round-2 fifteen (capture shape + sidecar identity, receipt-vs-live
++28 cases: the round-2 fifteen (capture shape + sidecar identity, receipt-vs-live
+ clean, same-content rewrite in place (ctime pin) and via rename (inode pin),
+ content drift, absent path, mode drift, TZ-independence of the UTC render,
+ v1-stanza/v1-sums/v1-pipe compatibility with mutation detection,
+-unparsable-receipt usage exit, refusal to write a receipt over a custody path)
+-plus the round-3 seven: `unreadable-path-is-unevaluable`,
++unparsable-receipt usage exit, refusal to write a receipt over a custody path),
++the round-3 seven: `unreadable-path-is-unevaluable`,
+ `unevaluable-never-matches`, `parsed-unevaluable-reference-never-matches`,
+ `partial-reference-require-paths-gate`, `refuses-to-write-over-scoped-path`,
+-`selftest-missing-scratch-usage-exit`, `refuses-write-through-hardlink-alias`.
++`selftest-missing-scratch-usage-exit`, `refuses-write-through-hardlink-alias`,
++and the round-4 six: `coverage-gate-rejects-duplicate-stanzas`,
++`coverage-gate-passes-distinct-five`, `refuses-sidecar-over-measured-file`,
++`refuses-receipt-over-sidecar-neighbour`,
++`out-parent-not-a-directory-usage-exit`,
++`both-sides-absent-is-agreement-match`.
+ It ends with
+ 
+ ```
+-CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
++CUSTODY_PAIR_SELFTEST: CLEAN cases=28 passed=28 failed=0 exit=0
+ ```
+ 
+ ## Round evidence
+@@ -183,3 +257,11 @@
+ cross-revision check (round-start receipt captured by the previous revision vs
+ the revised-tool post receipt → `MATCH 5/5`), the v1-shape control runs, and the
+ round-2 six-attack harness re-run (identical classes).
++
++`../waves/arc3-loop1-round4/claims/c3/EX-21/` holds the round-4 revision's
++evidence: the before probes (all three residuals reproduced on the round-3
++bytes), the anchored patch generator, the 28-case selftest transcript, the
++three-injection before→after matrix, the round-3 regression battery re-run
++(41/41 rows hold, including the live pair `MATCH 5/5` and the receipt
++self-pin), the cross-seat drivers' after-runs (EX-23's sidecar probe, RV-7's
++probe, SC-3's injection harness), and the fresh sha256 of the landed tool.

@@ -1,0 +1,31 @@
+# EX-14 — v2 clause audit (the six stale phrases, before -> after)
+#
+# before = PROVINCE.md at HEAD d075a3c6… (162 lines)
+# after  = the v2 patched tree 69ceea9b… (162 lines), census PASS exit 0
+#
+# Each row: the verbatim stale phrase must be ABSENT from the patched tree and
+# its replacement PRESENT.  `grep -F` on the patched file.
+
+row  stale phrase (must be GONE)                          replacement (must be PRESENT)
+---  ---------------------------------------------------  --------------------------------------------------
+F1b  Reserve: 91MB Godot ARM64 template                    the 91MB scale wall is closed (arc2-r7)
+F3   JEB (unprobed)                                        JEB (probed; operator-gated)
+F5b  real solc/vyper-compiled bytecode untested            real solc-0.8.37 (arc3-r1/r3) and Vyper 0.4.3 (r4) legs held
+C1   absent: `7z`, `cabextract`, `xxd`, radare2/rizin,     absent: `cabextract`, rizin, ltrace, pacman-contrib
+     strace/ltrace, upx, pacman-contrib                     (and the five present tools moved into the readers column)
+X1   still probe-refused since r2                          is no longer refused since r2: r12-02 drained the row
+R2   Next: raise `REA_GHIDRA_STARTUP_TIMEOUT_MS`           closed, not frontier — no natural hold at this cap
+
+# Result (this seat's own grep, transcript in the run log):
+#   all six stale phrases ABSENT;  all six replacements PRESENT;  6/6 hunks applied;
+#   PROVINCE 162 -> 162 lines;  census VERDICT: PASS (0/0/0/0) exit 0.
+#
+# CONTENT DEFECT FIXED (chain verdict R4, re-derived by this seat):
+#   the previous revision's F5b replacement read "real solc-0.8.37 carriers
+#   (Core, arc3-r1/r3) ... held" — asserting a Core promotion the corpus
+#   disclaims.  Both entries open "RESULT-class, no Core promotion"
+#   (2026-10-19-arc3-r1-evm-real-solc.md:1, ...-r3-evm-optimizer-shapes.md:1);
+#   `grep -n arc3-r1 PROVINCE.md` finds nothing outside the patched bullet; and
+#   PROVINCE.md:75-76 requires a LOG.md entry for promotion, which does not
+#   exist.  v2 drops `Core`/`held` and states RESULT-class.
+#   Verified on the v2 tree: `grep -n "Core, arc3-r1" ` -> no match.

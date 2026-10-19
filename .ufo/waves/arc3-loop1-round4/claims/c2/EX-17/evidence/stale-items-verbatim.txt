@@ -1,0 +1,35 @@
+### F1b-pe-subtypes PROVINCE.md:82-83 sha256 54d0a7c6043bb2aab88b8a56f601026be349321c23a90058cd8b42d110315182
+- **PE subtypes** — x86-64 AND ARM64 both held (r3-08: cli-arm64.exe, 136
+  procedures via Ghidra). Reserve: 91MB Godot ARM64 template, ARM64X hybrids.
+====
+### F2-recorded-crashes PROVINCE.md:84-86 sha256 871bce3288c8c31800ecbf2b321eb3bd10ce0316e755405d660ee7ad09578d6e
+- **Recorded crashes >32 MiB** — mechanism held (Core); all 3 organic cores
+  exceed the cap (waybar 434MB). Needs a cap-raising knob or partial-core
+  intake — neither exists. Retention decays oldest-first.
+====
+### F3-alt-providers PROVINCE.md:87-88 sha256 b5007d085a8d99a23f26bcb9331b5fc49e362423df4323c408e1733f5c294312
+- **Alternate providers** — IDA (`REA_IDA_MCP_CONFIG` unset), Hopper (absent),
+  JEB (unprobed). Engine installs are operator-owned.
+====
+### F5b-evm-bytecode PROVINCE.md:91-93 sha256 643ab1c40ef9ff5b4d16466d3de80082effffa0e0022dd9b924165e2b92c03ed
+- **EVM bytecode (extended)** — selectors held on synthetic dispatcher
+  (Core, r3-07); real solc/vyper-compiled bytecode untested; selectors stay
+  bare hashes (no signature DB → no name resolution).
+====
+### R2-pe-scale-wall PROVINCE.md:139-144 sha256 1fd6b1a3498c3b0d114864c3322f7abf75a44435ddfedcb8986e0a1a965060b3
+- **>90 MB PE scale wall** — 91.6 MB Godot ARM64 PE hits REA's ~900s internal
+  session deadline (`provider_timeout`, GhidraClient.js:607), still progressing
+  at kill (r4-12) [r5-audit C1: r4-12 cite added]. Not OOM (RSS ~2.36GB vs
+  -Xmx2G headroom exists). Next: raise `REA_GHIDRA_STARTUP_TIMEOUT_MS` to
+  ~3.6Ms + `GHIDRA_HEADLESS_MAXMEM=6-8G` on an idle host, or bisect with a
+  2-5MB PE.
+====
+### X1-cross-version PROVINCE.md:157-160 sha256 2b683cd35ab0ae3f41cfe3954bc6b4a42004013f0fe08926e180904ca6ce70aa
+- **Cross-version residuals** — `compare-application-versions` still
+  probe-refused since r2; multi-version pacman pairs beyond expac unexercised
+  [r5-audit C1: merged from the pruned Frontier bullet — its
+  `compare_javascript_export_shapes` item is now held (Core, r4-09)].
+====
+### C1-core-host-fallback PROVINCE.md:62-62 sha256 8b51268f490be75b767fdcd7658e65b80802c488001429178d7f4db63d8fe92b
+| Host fallback readers | `file`, `readelf`, `objdump`, `llvm-readobj`, `nm`, `strings`, `unzip`, `tar`, `gdb`, `eu-stack`, `coredumpctl`, `pacman`, `zstd`, `gpg`, `python3`, node/npx | `command -v <tool>` | absent: `7z`, `cabextract`, `xxd`, radare2/rizin, strace/ltrace, upx, pacman-contrib |
+====

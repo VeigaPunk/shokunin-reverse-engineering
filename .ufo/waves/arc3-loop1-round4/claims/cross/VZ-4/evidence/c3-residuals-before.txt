@@ -1,0 +1,106 @@
+=== VZ-4 first-hand C3 residual measurements @ 2026-10-19T14:06:07Z ===
+tool under test: sha256 7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09 (1155 L) scratch copy
+
+--- base selftest ---
+scratch: /var/tmp/vz4/c3base/custody-pair-selftest-yz53gfhj
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+
+--- (a) sidecar scope escape: capture --out X --paths X.sha256 ---
+measured-file sha before fbeec2bea3d6feffcfc4c3d26c9b68ae21ee47e2126a7d5dcf105438ac90775e
+measured-file sha after  cfcc6947d42d3faa88258bc2ac0d0e296a1c4880c902ad87a64e297320c61eb9  exit 0  => CLOBBERED
+
+--- (b) mkdir outside guarded try ---
+capture --out <regular-file>/sub/receipt.txt -> raw NotADirectoryError traceback, exit 1
+
+--- (c) coverage gate counts stanzas, not distinct paths ---
+5x duplicate stanza for ONE path + --require-paths 5 -> exit 0, VERDICT: MATCH paths=1
+
+--- (d) both-sides-absent verify ---
+receipt-vs-receipt exit 0 VERDICT: MATCH paths=1 ; vs --live exit 0 VERDICT: MATCH paths=1 (declared design: only error-carrying stanzas are UNEVALUABLE)
+
+=== VZ-4 addendum: residual (a) has TWO spellings — both measured first-hand at base 7cd19c3c ===
+Guard site: cmd_capture() — the guard tests `out` only:
+    guarded = CUSTODY_PATHS + paths
+    if out.resolve() in {...} or any(_same_file(out, g) ...): return USAGE
+    out.parent.mkdir(...); out.write_text(...); sidecar = out.with_name(out.name + ".sha256")
+The DERIVED sidecar candidate is never tested.
+
+Spelling A — `capture --out X --paths X.sha256`   (sidecar lands ON the measured file)
+  VZ-4 run: exit 0; RECEIPT written to X; SIDECAR: X.sha256 -> the MEASURED file replaced.
+  measured-file sha fbeec2be… -> cfcc6947…   => CLOBBERED.
+
+Spelling B — `capture --out X.sha256 --paths X`   (receipt lands on the measured file's neighbour)
+  VZ-4 run (neighbour.txt): exit 0; measured file UNTOUCHED (0825ba7b… before == after);
+  X.sha256 written = True; X.sha256.sha256 written = True (a second-order sidecar).
+  => no clobber of the measured file, but the receipt and a stray second-order sidecar
+     are written over a measured file's neighbour.
+
+Scratch variant measured by EX-23 (sha256 b61cee689fbf24eb4201035b596556872910059d70d8ed8e34f07005f256148f,
+claims/c3/EX-23/scratch-variant-probe.out SUMMARY):
+  A: exit=2 touched=[]            <- A CLOSED
+  B: exit=0 touched=['vic.sha256','vic.sha256.sha256']   <- B STILL OPEN
+  B2: exit=0 touched=[...same...]
+  C (legitimate fresh --out beside a measured .sha256): exit=0, receipt+sidecar+pins OK  <- no false positive
+  D (verify observes the injection): exit 2 at the injection; digest-held True
+
+=> The landed fix closes (a) only if it guards the SIDECAR CANDIDATE
+   (out.with_name(out.name + ".sha256")) as well as `out`. Guarding only `out`
+   leaves spelling A open; the EX-23 variant's B-leg additionally needs the
+   neighbour relation covered (or B adjudicated as out-of-scope with a declared
+   cause) for the frozen claim's wording to be satisfied.
+   C3's verdict must state WHICH spelling(s) the landed revision closes.
+
+=== VZ-4 addendum 2: the wave's OWN after-variants do not close (a) ===
+Read first-hand at 14:09Z from claims/c3/EX-24/:
+  after/matrix.txt   L13-sidecar-path-residual  exit=0  sidecar-clobbered=yes
+                     (tool sha256 30451e3a2ca9b93ad29f70f6f3202227fd17ca6f8d202afbce469811dac72a6d, 1155 L)
+  after/fixture-rev-matrix.txt  L13-sidecar-path-residual exit=0 sidecar-clobbered=yes
+                     (tool sha256 ac2cd74efe02c61c4e57cfd3dbbc48184f44db8d067d9c8431fab826c2bdcdcc, 1183 L,
+                      selftest CLEAN cases=24 passed=24 failed=0)
+  evidence/after.diff = ONLY the mkdir move (out.parent.mkdir into the try) — the guard line is untouched.
+
+So: EX-24's variants close (b) [L1/L3 exit=2 traceback=0, L4 fresh parent still created, selftest 22 -> 24]
+and leave (a) OPEN at BOTH spellings (their L13 exercises the clobber spelling and still reads clobbered=yes).
+EX-23's variant closes A but not B. As of 14:09Z no landed or scratch revision in this wave closes BOTH spellings.
+
+Admission input: C3's claim requires (a) closed. The parent must either
+  (i) land an EX-21 revision that guards the sidecar candidate (and states the B-spelling disposition), or
+  (ii) admit C3 with (a) honestly named as partial (A closed / B adjudicated), per the freeze's honest-stop rule.
+This is the single most load-bearing C3 admission risk measured this wave.
+
+=== VZ-4 addendum 3: DRESS2 closes A but NOT the freeze's literal spelling (with concrete harm) ===
+RV-7's fix shape (DRESS2, claims/c3/RV-7/evidence/DRESS2-revision.py,
+sha256 6e920b224ce22031eb2b31f7affcff9cafc5f3360a777c3459d26795116b8120, 1162 L) — VZ-4 re-ran it:
+
+  selftest                                   CLEAN cases=22 passed=22 failed=0 exit=0
+  (a) A  --out victimA --paths victimA.sha256      exit=2  measured file intact=TRUE   <- A CLOSED
+  (a) B  --out neighbourB.txt.sha256 --paths neighbourB.txt
+                                                   exit=0  wrote neighbourB.txt.sha256 AND
+                                                           neighbourB.txt.sha256.sha256  <- B OPEN
+  (b) --out <regular-file>/sub/r.txt          exit=2  traceback=False  "USAGE: write failed ([Errno 20]...)"   <- CLOSED
+  (b2) --out ""                               exit=2  traceback=False                                          <- no regression
+  (c) 5x dupe stanza + --require-paths 5      exit=2  "REFERENCE-COVERAGE: 1/5 paths present in reference"    <- CLOSED
+  (c-ctrl) 5 distinct paths + --require-paths 5  capture exit 0, verify exit 0                                  <- no false positive
+
+Why B is not a theoretical residue — measured harm on BOTH revisions:
+  Fixture: a GENUINE sidecar X.sha256 produced by the tool's own `capture`, sitting
+  beside its measured file X. Then run the freeze's literal spelling
+  `capture --out X.sha256 --paths X`:
+    BASE   7cd19c3c : exit=0, genuine sidecar sha 63fa9d49… -> 85deabbc…  CLOBBERED=True
+    DRESS2 6e920b22 : exit=0, genuine sidecar sha b22ced5b… -> a2f10ec2…  CLOBBERED=True
+  i.e. the sidecar that pins a PREVIOUS receipt's identity is silently replaced by
+  a new receipt, and a stray second-order `X.sha256.sha256` is created. The measured
+  file itself survives — so this is a receipt-integrity harm, not a measured-file harm.
+
+Reconciliation of the two spellings against the freeze:
+  Freeze text (claims-frozen.md, C3): "sidecar path not scope-checked
+  (`--out X.sha256 --paths X` can aim a derived sidecar at a measured file's neighbour)".
+  The freeze's own literal example IS spelling B. DRESS2 guards the sidecar CANDIDATE
+  (out.with_name(...)) which is what closes A; the neighbour relation in B is the
+  sidecar-file-to-measured-file relation and is not guarded by that shape.
+
+=> The landed revision must either
+   (i) guard the derived sidecar against BOTH the measured set and (for B) refuse when
+       the --out target is itself the derived sidecar name of a measured path, or
+   (ii) adjudicate B explicitly in the C3 verdict/README as a declared residual with cause,
+   for C3's "(a) closed" to be claim-true as written.

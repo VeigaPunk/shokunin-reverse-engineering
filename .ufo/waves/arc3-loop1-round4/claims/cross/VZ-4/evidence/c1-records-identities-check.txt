@@ -1,0 +1,39 @@
+=== VZ-4 independent verification: C1 records-drafts identities @ 2026-10-19T14:13:43Z ===
+
+SC-1's README-identities.txt claims (re-derived by SC-1 after its final writes):
+  records-drafts/knowledge-entry-draft.md  21,166 B  df9582ac8b253e611eba194ef9b466325d23ebb9a5b5270d64a577dbc37ef094
+  records-drafts/map-token-patch.md          7,049 B  8e3f91e3e96b17fa787d3e6cc36bf3786beeb4e072c4afabd73a876bb5405e1d
+  entry literal block (BEGIN/END LITERAL ENTRY TEXT)  32 lines  18,166 B  da42d9a23eaea87104ad71c7beacf0465a04f27482dd063d625b8e54a7161ebc
+
+VZ-4 re-derivation (sha256sum / byte extraction):
+df9582ac8b253e611eba194ef9b466325d23ebb9a5b5270d64a577dbc37ef094  .ufo/waves/arc3-loop1-round4/claims/c1/records-drafts/knowledge-entry-draft.md
+8e3f91e3e96b17fa787d3e6cc36bf3786beeb4e072c4afabd73a876bb5405e1d  .ufo/waves/arc3-loop1-round4/claims/c1/records-drafts/map-token-patch.md
+  literal block: 32 lines, 18166 B, sha256 da42d9a23eaea87104ad71c7beacf0465a04f27482dd063d625b8e54a7161ebc
+
+=> ALL THREE REPRODUCE EXACTLY. The parent's landing source is the literal block
+   (not the whole draft file, which also carries the staging comment and notes).
+
+Cross-check of the map-token projection (separate run, 14:12Z):
+  applying the token to corpus/README.md yields sha256 1cd052605e9d27f38e8c9b9b164fa64d0482b61d4acf0a2b80223cb4cec29d1e
+  with the line count held at 190 and exactly one changed line (:38) — matching
+  SC-1's independently predicted after-state.
+  With the entry literal landed as 2026-10-19-arc3-r4-evm-vyper-leg.md, VZ-4's
+  command-A projection reads 84/84, missing [], dangling [], 14/14, 10.0/10.0.
+
+--- VZ-4 full C1 landing rehearsal (14:14Z) — literal block, not the whole draft ---
+Projection root: /var/tmp/vz4/proj2/root (scratch; real tree untouched)
+  1. corpus/README.md + SKILL.md + the 83 knowledge .md copied from HEAD
+  2. map token applied (additive-only, line-neutral)
+  3. the entry LITERAL BLOCK (BEGIN/END LITERAL ENTRY TEXT) written as
+     corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md
+
+Measured results:
+  entry literal      32 lines  18,166 B  sha256 da42d9a23eaea87104ad71c7beacf0465a04f27482dd063d625b8e54a7161ebc
+  README after      190 lines (held)     sha256 1cd052605e9d27f38e8c9b9b164fa64d0482b61d4acf0a2b80223cb4cec29d1e
+  command A         {"knowledge_files": 84, "mapped": 84, "missing": [], "dangling": [],
+                     "citation_resolved_rules": 14, "rule_blocks": 14,
+                     "coverage_score": 10.0, "depth_score": 10.0}
+  prior-83 check    git-HEAD blob vs projection, byte compare: 83/83 byte-identical, 0 mismatches
+
+=> C1's declared after-state (83 -> 84, mapped 84, missing [], dangling [], 14/14,
+   10.0/10.0, prior 83 byte-identical) is reproduced on the landing source by this seat.

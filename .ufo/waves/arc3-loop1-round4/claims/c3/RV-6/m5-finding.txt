@@ -1,0 +1,28 @@
+RV-6 M5 finding — the empty---out guard has no selftest case (transcript)
+date: 2026-10-19T14:16:13Z
+landed tool: 29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+sabotage copy: sha256 a3d09ae9526ba0a95a53870bb8345147a25fb34d5214df52c221e8f015ed65f8
+
+== landed revision, --out '' ==
+USAGE: --out carries no usable name, so no sidecar path can be derived: ''
+exit=2
+
+== M5 sabotage copy (guard reverted), --out '' ==
+    sidecar = out.with_name(out.name + ".sha256")
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 413, in with_name
+    raise ValueError(f"{self!r} has an empty name")
+ValueError: PosixPath('.') has an empty name
+exit=1
+
+== base r3 revision, --out '' (the class the guard preserves) ==
+USAGE: write failed ([Errno 21] Is a directory: '.'): .
+exit=2
+
+== in-tool selftest on the M5 sabotage copy ==
+CUSTODY_PAIR_SELFTEST: CLEAN cases=28 passed=28 failed=0 exit=0
+(=> CLEAN: no shipped case covers the guard)
+
+== EX-27 regress-r4.py --phase r4 on the M5 sabotage copy ==
+tally rows=75 hold=74 fail=1 observed-only=0
+[FAIL] G/b2-out-empty-arg exit=1 traceback=True expect=USAGE exit 2
+(=> the wave's own independent harness DOES catch it)

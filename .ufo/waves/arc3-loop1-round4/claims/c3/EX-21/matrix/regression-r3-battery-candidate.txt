@@ -1,0 +1,45 @@
+EX-27 regression battery — phase=revised tool=29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf (realpath 7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09)
+host 7.2.3-arch1-3 tz -0300 at 2026-10-19T14:08:46Z; took 3.7s
+tally rows=41 hold=41 fail=0 observed-only=0
+
+[HOLD] A/A1_cp_a rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=True ctime_ns_same=False mtime_ns_same=True sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=ctime_ns expect=REWRITE-DRIFT
+[HOLD] A/A2_cp_a_remove_dest rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=False ctime_ns_same=False mtime_ns_same=True sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=inode expect=REWRITE-DRIFT
+[HOLD] A/A3_cp_p rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=True ctime_ns_same=False mtime_ns_same=True sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=ctime_ns expect=REWRITE-DRIFT
+[HOLD] A/A4_rsync_a_default rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=False ctime_ns_same=False mtime_ns_same=True sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=inode expect=REWRITE-DRIFT
+[HOLD] A/A5_rsync_a_inplace rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=True ctime_ns_same=False mtime_ns_same=True sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=ctime_ns expect=REWRITE-DRIFT
+[HOLD] A/A6_tar_restore rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=True ctime_ns_same=False mtime_ns_same=True sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=ctime_ns expect=REWRITE-DRIFT
+[HOLD] A/A7_copy_new_then_mv rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=False ctime_ns_same=False mtime_ns_same=True sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=inode expect=REWRITE-DRIFT
+[HOLD] A/A8_inplace_modify_no_restore rc_pre=0 rc_post=0 rc_attack=0 sha_same=False inode_same=True ctime_ns_same=False mtime_ns_same=False sha_only_view=caught verdict=CONTENT-DRIFT exit=10 moved=sha256 expect=CONTENT-DRIFT
+[HOLD] A/A9_inplace_modify_then_restore rc_pre=0 rc_post=0 rc_attack=0 sha_same=False inode_same=True ctime_ns_same=False mtime_ns_same=False sha_only_view=caught verdict=CONTENT-DRIFT exit=10 moved=sha256 expect=CONTENT-DRIFT
+[HOLD] A/A10_restore_bytes_plus_touch_r rc_pre=0 rc_post=0 rc_attack=0 sha_same=False inode_same=True ctime_ns_same=False mtime_ns_same=True sha_only_view=caught verdict=CONTENT-DRIFT exit=10 moved=sha256 expect=CONTENT-DRIFT
+[HOLD] A/A11_hardlink_alias_restore rc_pre=0 rc_post=0 rc_attack=0 sha_same=False inode_same=True ctime_ns_same=False mtime_ns_same=True sha_only_view=caught verdict=CONTENT-DRIFT exit=10 moved=sha256 expect=CONTENT-DRIFT
+[HOLD] A/A12_reflink_replace rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=True ctime_ns_same=False mtime_ns_same=False sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=mtime_ns,mtime_epoch expect=REWRITE-DRIFT
+[HOLD] A/A13_rename_swap_pristine_hardlink rc_pre=0 rc_post=0 rc_attack=0 sha_same=False inode_same=True ctime_ns_same=False mtime_ns_same=True sha_only_view=caught verdict=CONTENT-DRIFT exit=10 moved=sha256 expect=CONTENT-DRIFT
+[HOLD] A/A9s_truncate_restore rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=True ctime_ns_same=False mtime_ns_same=False sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=mtime_ns,mtime_epoch expect=REWRITE-DRIFT
+[HOLD] A/A10s_truncate_restore_touch rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=True ctime_ns_same=False mtime_ns_same=True sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=ctime_ns expect=REWRITE-DRIFT
+[HOLD] A/A11s_hardlink_truncate_restore rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=True ctime_ns_same=False mtime_ns_same=True sha_only_view=BLIND verdict=REWRITE-DRIFT exit=11 moved=ctime_ns expect=REWRITE-DRIFT
+[HOLD] A/A14_chmod_only rc_pre=0 rc_post=0 rc_attack=0 sha_same=True inode_same=True ctime_ns_same=False mtime_ns_same=True sha_only_view=BLIND verdict=METADATA-DRIFT exit=12 moved=mode,ctime_ns expect=METADATA-DRIFT
+[HOLD] A/A15_delete_after_capture rc_pre=0 rc_post=13 rc_attack=0 sha_same=False inode_same=False ctime_ns_same=False mtime_ns_same=False sha_only_view=caught verdict=ABSENT exit=13 moved=exists expect=ABSENT
+[HOLD] B/r1-canonical-vs-live ref=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt exit=10 sha_agree=4 label_defect=4 expect_exit=10 expect_sha_agree=4 expect_labels=4 content_drift=['config.toml']
+[HOLD] B/r1-canonical-vs-fresh-v2 exit=10 sha_agree=4 label_defect=4 expect_exit=10 expect_sha_agree=4
+[HOLD] B/r1-metadata-pipe-vs-live exit=10 sha_agree=4 label_defect=8 expect_exit=10 expect_sha_agree=4
+[HOLD] B/r1-sums-vs-live exit=10 sha_agree=4 expect_exit=10
+[HOLD] B/ex35-partial-1of5-default exit=0 require5_exit=2 require5_supported=True
+[HOLD] B/ex35-corrupt-sha-vs-live exit=10 sha_agree=3 expect_exit=10 expect_sha_agree=3
+[HOLD] B/ex35-swap-sha-vs-live exit=10 sha_agree=2 expect_exit=10 expect_sha_agree=2
+[HOLD] B/ex35-absent-path-vs-live exit=10 sha_agree=3 expect_exit=10
+[HOLD] B/junk-receipt exit=2 expect_exit=2
+[HOLD] B/synth-v1-stanza-vs-live exit=12 label_defect=1 expect_exit=12 expect_labels=1 expect_sha_agree=1 expect_uttc=2026-10-14 20:53:20
+[HOLD] B/synth-v1-sums-vs-live exit=0 expect_exit=0 expect_sha_agree=1
+[HOLD] B/synth-v1-pipe-vs-live exit=12 label_defect=1 expect_exit=12
+[HOLD] C/v2-utc-render-correct exit=0 utc_render=2026-10-14T20:53:20Z local_render=2026-10-14T17:53:20-03:00 expected=2026-10-14T20:53:20Z
+[HOLD] C/v2-utc-render-tz-invariant renders={'UTC': '2026-10-14T20:53:20Z', 'Asia/Tokyo': '2026-10-14T20:53:20Z', 'America/St_Johns': '2026-10-14T20:53:20Z'}
+[HOLD] C/v1-label-defect-declared exit=10 label_defect=4 expect_labels=4 sample=LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+[HOLD] D/selftest-existing-scratch exit=0 cases=28 summary=CUSTODY_PAIR_SELFTEST: CLEAN cases=28 passed=28 failed=0 exit=0 expect_cases=>=17
+[HOLD] D/selftest-missing-scratch exit=2 traceback=False expect=usage2
+[HOLD] E/d2-eacces-capture exit=14 receipt_exists=True exists_no=False read_error=True stat_error=False verify_live_exit=14 verify_verdict=UNEVALUABLE
+[HOLD] E/d2-failopen-both-absent exit=14 verdict=UNEVALUABLE
+[HOLD] E/d2-live-unreadable exit=14 traceback=False
+[HOLD] E/writeguard-paths-eq-out exit=2 clobbered=False
+[HOLD] F/live-pair-capture-vs-capture capture_exits=[0, 0] exit=0 verdict=MATCH paths=5 expect=MATCH 5/5 exit 0
+[HOLD] F/receipt-self-pin receipt_pin=29bb45ae0fd7 tool_sha=29bb45ae0fd7

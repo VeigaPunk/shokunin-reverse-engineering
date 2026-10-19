@@ -1,0 +1,20 @@
+=== INDEPENDENT CORROBORATION of the offset-semantics finding (round 4, same wave) ===
+
+1) RV-2 (this seat), first-hand disassembly + 3 probe legs:
+   template PUSH4 <sel> / DUP2 / XOR / PUSH2 <next> / JUMPI / <body>
+   reported bytecode_offset = match FALL-THROUGH (body entry), NOT a JUMPDEST
+   CarrierV 15 selectors: 0/15 on 0x5b; all 15 preceded by JUMPI(0x57)
+   Ex09Vault 7 selectors: 0/7 on 0x5b; all 7 preceded by JUMPI
+   source: vyper-dispatch-shape.txt (this dir)
+
+2) EX-09 (independent seat), claims/c1/EX-09/analysis/offset-rule-proof.txt:
+   rule: reported offset == push4_pc + 11  (verified 7/7 Ex09Vault, 4/4 Smoke)
+   'any reported offset is a JUMPDEST (0x5b)? False'
+   CONTRAST recorded there: solc VaultB.opt200 13 offsets all JUMPDEST = True
+
+3) PL-1 (independent seat), claims/c1/PL-1/evidence/verify.txt:
+   CarrierV 0/15, CarrierW 0/9, EX03 StewardToken 0/22 on JUMPDEST;
+   all preceded by JUMPI(0x57) in each case
+
+=> three seats, four Vyper carriers (CarrierV, Ex09Vault, Smoke, CarrierW, StewardToken),
+   one rule. The r1/r3 'offsets land on JUMPDEST' reading is scoped to solc carriers.

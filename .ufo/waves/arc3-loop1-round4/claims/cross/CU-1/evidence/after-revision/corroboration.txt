@@ -1,0 +1,35 @@
+=== CU-1 corroboration of the LANDED r4 revision (29bb45ae…) 2026-10-19T11:09:56-03:00 ===
+--- identity ---
+29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf  .ufo/gates/custody-pair/custody-pair.py
+125e7e0225133738b9b780d6edbb37ded54b4a19de3263cf1c29911d97188186  .ufo/gates/custody-pair/README.md
+--- scratch copy hash ---
+29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf  /dev/shm/cu1/tool2/custody-pair.py
+--- selftest ---
+CUSTODY_PAIR_SELFTEST: CLEAN cases=28 passed=28 failed=0 exit=0
+--- live pair (new tool) ---
+pre vs post2:
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+post2 vs live:
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+--- receipt self-pin ---
+# tool: custody-pair.py  sha256 29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+
+--- RESIDUALS vs new revision ---
+(a) spelling B --out X.conf.sha256 --paths X.conf:
+USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cu1/attacks2/fx3/M.conf.sha256
+(a) spelling A --paths X.sha256 --out X:
+USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cu1/attacks2/fx3/M2.conf.sha256
+(b) mkdir:
+USAGE: cannot create the receipt directory ([Errno 20] Not a directory: '/dev/shm/cu1/attacks2/fx/Y.conf/sub'): /dev/shm/cu1/attacks2/fx/Y.conf/sub
+(c) padded + --require-paths 5:
+USAGE: reference covers 1 of the required 5 distinct paths
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+(c)+(d) compound (5 absent, gate 5):
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+--- 5 custody paths after the target write ---
+16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4  /home/vgpnk/.config/devin/mcp_config.json
+38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b  /home/vgpnk/.omp/agent/mcp.json
+bc66d543018eddb1b74c6057f6873e014f25d0a4fc1bc13c0ff6d3a63c86ddc3  /home/vgpnk/.kimi-code/config.toml
+7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598  /home/vgpnk/.bashrc
+6c6be761d3b199c964c95e724d7cdc9f4f902e0c3bdd6a532361b20a53db4f30  /home/vgpnk/.profile

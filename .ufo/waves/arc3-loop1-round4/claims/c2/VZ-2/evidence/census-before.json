@@ -1,0 +1,411 @@
+{
+ "province_lines": 162,
+ "province_sha256": "d075a3c67e17ae428eb5a69e594171c6dcba88ec93c97bd3cf162a2f2b4dbdad",
+ "rows": [
+  {
+   "bullet": "PE subtypes",
+   "claim": "x86-64 AND ARM64 both held (r3-08: cli-arm64.exe, 136 procedures)",
+   "claim_anchor": "x86-64 AND ARM64 both held",
+   "claim_present": true,
+   "evidence": [
+    "corpus/knowledge/2026-10-13-r3-pe-arm64.md",
+    "corpus/knowledge/2026-10-13-r4-12-godot-arm64-scale.md"
+   ],
+   "id": "F1a",
+   "note": "r3-08 corpus entry present with the 136-procedure count",
+   "verdict": "current"
+  },
+  {
+   "bullet": "PE subtypes",
+   "claim": "Reserve: 91MB Godot ARM64 template",
+   "claim_anchor": "Reserve: 91MB Godot ARM64 template",
+   "claim_present": true,
+   "evidence": [
+    "corpus/README.md",
+    "corpus/knowledge/2026-10-18-arc2-r6-pe-midrung.md",
+    "corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md",
+    "corpus/lessons/2026-10-13-round-4.md",
+    "corpus/lessons/2026-10-18-caller-independent-services.md",
+    "corpus/lessons/2026-10-18-mechanism-matched-walls.md",
+    "corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md"
+   ],
+   "id": "F1b",
+   "note": "arc2-r7 held the 91.6MB target (mitigated) and r8's control OOM-killed; README:175 already reads 'CLOSED, not frontier'. PROVINCE still lists it as a reserve.",
+   "verdict": "stale"
+  },
+  {
+   "bullet": "Recorded crashes >32 MiB",
+   "claim": "all 3 organic cores exceed the cap (waybar 434MB)",
+   "claim_anchor": "all 3 organic cores",
+   "claim_present": true,
+   "evidence": {
+    "localsearch_rows": "0",
+    "organic_non_godot_rows": "73",
+    "organic_present": "4",
+    "subcap_organic_core": "core.crashpad 1857 -> 17,608,704 B, inspects exit 0",
+    "waybar_present": "0",
+    "waybar_rows": "2"
+   },
+   "id": "F2",
+   "note": "REVISED from 'adjudicated' (rule #14 against this seat's own earlier reading; EX-15/EX-13/PL-2 all counted it stale and they are right). An ORGANIC crashpad core decompresses to 17,608,704 B -- under the 33,554,432 cap -- and inspect-recorded-crash returns exit 0 with elf-core / 53 segments / 3 threads (this seat's own run, ev_3bdc54d2...). So 'all 3 organic cores exceed the cap' is FALSE, and the population is 73 non-godot organic rows of which only 4 are still present. The >32 MiB refusal class itself and the no-knob clause both still hold.",
+   "verdict": "stale"
+  },
+  {
+   "bullet": "Recorded crashes >32 MiB",
+   "claim": "Needs a cap-raising knob or partial-core intake \u2014 neither exists",
+   "claim_anchor": "Needs a cap-raising knob or partial-core intake",
+   "claim_present": true,
+   "evidence": [
+    "corpus/knowledge/2026-10-13-r2-crash-inspect-probe.md"
+   ],
+   "id": "F2b",
+   "note": "r2-crash-inspect-probe measured `--schema` shows only path + debuggerContext",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Alternate providers",
+   "claim": "IDA (REA_IDA_MCP_CONFIG unset), Hopper (absent), JEB (unprobed)",
+   "claim_anchor": "IDA (REA_IDA_MCP_CONFIG unset), Hopper (absent),",
+   "claim_present": true,
+   "evidence": {
+    "env_unset_hopper": true,
+    "env_unset_ida": true,
+    "jeb_probe": "{\"code\":\"capability_unavailable\",\"category\":\"unsupported_provider\",\"message\":\"Start a JEB client serving MCP (default ht"
+   },
+   "id": "F3",
+   "note": "IDA/Hopper halves re-measured current (env unset; no Hopper binary). JEB half: the verb WAS probed and returns a declared `capability_unavailable` refusal, so \"unprobed\" overstates the gap \u2014 the r2 provider matrix and r12-02 both record the probe. STALE as wording (operator-gated-and-probed, not unprobed).",
+   "verdict": "stale"
+  },
+  {
+   "bullet": "macOS-only surfaces",
+   "claim": "Mach-O/plist/LLDB/asset-catalog ops report unsupported_host on Linux",
+   "claim_anchor": "report unsupported_host on Linux",
+   "claim_present": true,
+   "evidence": [
+    "corpus/knowledge/2026-10-13-doctor-taxonomy.md",
+    "corpus/knowledge/2026-10-13-r2-frontier-prereqs.md",
+    "corpus/knowledge/2026-10-13-r2-provider-capability-matrix.md",
+    "corpus/knowledge/2026-10-13-r3-keyed-archive-carriers.md"
+   ],
+   "id": "F4",
+   "note": "r3-keyed-archive-carriers records the inspect_plist refusal class",
+   "verdict": "current"
+  },
+  {
+   "bullet": "EVM bytecode (extended)",
+   "claim": "selectors held on synthetic dispatcher (Core, r3-07)",
+   "claim_anchor": "selectors held on synthetic dispatcher",
+   "claim_present": true,
+   "evidence": [
+    "corpus/README.md"
+   ],
+   "id": "F5a",
+   "note": "r3-07 entry is the synthetic-dispatcher origin",
+   "verdict": "current"
+  },
+  {
+   "bullet": "EVM bytecode (extended)",
+   "claim": "real solc/vyper-compiled bytecode untested",
+   "claim_anchor": "real solc/vyper-compiled bytecode untested",
+   "claim_present": true,
+   "evidence": [
+    "corpus/README.md",
+    "corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md",
+    "corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md"
+   ],
+   "id": "F5b",
+   "note": "arc3-r1 (`2026-10-19-arc3-r1-evm-real-solc.md`) recovered K/K on real solc-0.8.37 compiles; arc3-r3 extended to optimizer/optimizer-off. The bullet is doubly stale (r3 SC-2 seat named it in round 3).",
+   "verdict": "stale"
+  },
+  {
+   "bullet": "EVM bytecode (extended)",
+   "claim": "selectors stay bare hashes (no signature DB -> no name resolution)",
+   "claim_anchor": "selectors stay bare hashes",
+   "claim_present": true,
+   "evidence": [
+    "corpus/knowledge/2026-10-13-r3-evm-interface.md"
+   ],
+   "id": "F5c",
+   "note": "no corpus entry claims a signature DB or name resolution",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Cross-version residuals",
+   "claim": "compare-application-versions still probe-refused since r2",
+   "claim_anchor": "still probe-refused since r2",
+   "claim_present": true,
+   "evidence": [
+    "corpus/knowledge/2026-10-14-r12-02-queue-b-ledger.md",
+    "corpus/README.md",
+    "corpus/knowledge/2026-10-13-r4-16-frontier-rescan.md",
+    "corpus/knowledge/2026-10-14-r11-02-queue-ops-2.md"
+   ],
+   "id": "X1",
+   "note": "r12-02 drained Queue-B row L203: two success legs (`ev_7a8d0ec4\u2026` JS, `ev_b5fc998f\u2026` managed, both byte-identical re-run). PROVINCE still carries the r2-era refusal wording.",
+   "verdict": "stale"
+  },
+  {
+   "bullet": "Cross-version residuals",
+   "claim": "multi-version pacman pairs beyond expac unexercised",
+   "claim_anchor": "multi-version pacman pairs beyond expac unexercised",
+   "claim_present": true,
+   "evidence": [
+    "corpus/README.md",
+    "corpus/knowledge/2026-10-13-pacman-packages.md",
+    "corpus/knowledge/2026-10-13-r2-version-diff-compare.md"
+   ],
+   "id": "X2",
+   "note": "no corpus entry claims a further pacman version pair",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Operator-gated, still absent",
+   "claim": "IDA, Hopper, JEB",
+   "claim_anchor": "Operator-gated, still absent",
+   "claim_present": true,
+   "evidence": {
+    "env_unset_hopper": true,
+    "env_unset_ida": true
+   },
+   "id": "G1",
+   "note": "env keys unset; JEB has no install (r12-02 re-verified)",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Surface summary",
+   "claim": "Devin and OMP use rea-agents@6.5.0; Kimi uses rea-agents@6.7.0",
+   "claim_anchor": "Devin and OMP use rea-agents@6.5.0",
+   "claim_present": true,
+   "evidence": {
+    "devin": "rea-agents@6.5.0",
+    "kimi": "rea-agents@6.7.0",
+    "omp": "rea-agents@6.5.0"
+   },
+   "id": "S1",
+   "note": "live config re-read in this run",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Surface summary",
+   "claim": "6.7.0: 207 MCP tools + 153 CLI commands, tools_sha256 af39310c\u2026",
+   "claim_anchor": "Kimi uses rea-agents@6.7.0",
+   "claim_present": true,
+   "evidence": "207 153 af39310c",
+   "id": "S2",
+   "note": "live doctor re-derivation this run",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Surface summary",
+   "claim": "6.5.0: 207 MCP tools + 153 CLI commands, tools_sha256 805433f1\u2026",
+   "claim_anchor": "both versions have separate npx cache installs",
+   "claim_present": true,
+   "evidence": "207 153 805433f1",
+   "id": "S3",
+   "note": "live doctor re-derivation this run",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Surface summary",
+   "claim": "6.4.0 historical: 170 MCP tools + 127 CLI commands, tools_sha256 25802f6d\u2026",
+   "claim_anchor": "Historical: Kimi resolved the historical pin",
+   "claim_present": true,
+   "evidence": "170 127 25802f6d",
+   "id": "S4",
+   "note": "live doctor re-derivation this run",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Drift-prone values",
+   "claim": "Kimi rea-agents@6.7.0 (`~/.kimi-code/config.toml:3298` at the 17:55:49Z receipt)",
+   "claim_anchor": "at the 17:55:49Z receipt",
+   "claim_present": true,
+   "evidence": {
+    "line_3298_now": "max_context_size = 1048576",
+    "pin_now_at_line": "3546"
+   },
+   "id": "S5",
+   "note": "The cited line no longer holds a pin (`max_context_size = 1048576`); the live pin sits at :3546. The citation is explicitly receipt-stamped and round-3 re-anchored it to the named 17:55:49Z receipt (.ufo/waves/arc2-loop1-round3/receipts/config-pre-pair.txt:1), so the value claim is current and the pointer is historical-by-declaration. ADJUDICATED: the bullet's own text names the receipt, not a live line-truth; no repair needed, but the census gate cannot see it (ptr_check never fires once a clause carries a pin).",
+   "verdict": "adjudicated"
+  },
+  {
+   "bullet": "Drift-prone values",
+   "claim": "installed shared REA skill v42/207 (installed sha256 c8639823\u2026)",
+   "claim_anchor": "Installed shared REA skill is v42/207 tools",
+   "claim_present": true,
+   "evidence": "c8639823 bytes=22513",
+   "id": "S6",
+   "note": "re-derived this run",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Drift-prone values",
+   "claim": "Ghidra 12.1.4 (build 2026-Sep-21 1613 UTC), JAVA_HOME JDK 21.0.12.1",
+   "claim_anchor": "Reverified Ghidra/JDK",
+   "claim_present": true,
+   "evidence": "application.version=12.1.4 | openjdk version \"21.0.12.1\" 2026-08-18 | JAVA_HOME=/usr/lib/jvm/java-21-openjdk",
+   "id": "S7",
+   "note": "re-derived this run",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Core host fallback readers",
+   "claim": "absent: `7z`, `cabextract`, `xxd`, radare2/rizin, strace/ltrace, upx, pacman-contrib",
+   "claim_anchor": "Host fallback readers",
+   "claim_present": true,
+   "evidence": {
+    "present_but_claimed_absent": [
+     "7z",
+     "r2",
+     "radare2",
+     "strace",
+     "upx",
+     "xxd"
+    ],
+    "still_absent": [
+     "cabextract",
+     "rizin",
+     "ltrace"
+    ]
+   },
+   "id": "C1",
+   "note": "five of the claimed-absent tools are PRESENT: 7z (7zip 26.03-1), xxd (tinyxxd 1.3.16-1), radare2/r2 (6.2.0-1), strace (7.0-1), upx (5.2.0-1) \u2014 all installed 2026-10-13 13:52 -03. Genuinely absent: cabextract, rizin, ltrace, pacman-contrib. This row sits in CURRENT scope and carries no version needle, so the census instrument cannot see it by construction.",
+   "verdict": "stale"
+  },
+  {
+   "bullet": "Core Ghidra provider row",
+   "claim": "39 processor modules; 35 features incl. PyGhidra/BSim",
+   "claim_anchor": "39 processor modules",
+   "claim_present": true,
+   "evidence": {
+    "bsim_present": true,
+    "corpus_entry_claims": "35 modules",
+    "corpus_entry_lists": "34 names",
+    "features": "34",
+    "processors": "39",
+    "pyghidra_present": true
+   },
+   "id": "C2",
+   "note": "the install carries **34** feature directories, not 35 (39 processors is correct, and PyGhidra + BSim are both present). Found by EX-15 (its A2 hunk); re-derived here by listing the directory. **The staleness traces to the corpus entry itself**: `corpus/knowledge/2026-10-13-ghidra-install.md:50` claims '35 modules' but its own enumerated list at the same line contains exactly **34** names, which match disk. So the row inherits the entry's miscount of its own evidence. Same CURRENT-scope, needle-free blind spot as C1.",
+   "verdict": "stale"
+  },
+  {
+   "bullet": "Core Electron/ASAR row",
+   "claim": "asar archives pinned on host: obsidian x2, signal, 1Password, electron39/43 stubs, typora x3",
+   "claim_anchor": "asar archives pinned on host",
+   "claim_present": true,
+   "evidence": {
+    "corpus_erratum": "r4-06 entry:423-329 says 423 conflates relevant_files with membership; the asar lists 480 files",
+    "live_asar_count": "12",
+    "named_in_row": 9
+   },
+   "id": "C3",
+   "note": "the row names 9 archives; a live sweep of the same recipe returns **12** (the row misses chatgpt 578 MB, the zcode extracted copy 327 MB, and a ~/.config obsidian copy 27 MB). The row's evidence cell also carries the superseded '423-file' count that the cited r4-06 entry itself corrects to 480 in its own erratum. Found by EX-12; both halves re-derived here (the sweep, and reading the erratum).",
+   "verdict": "stale"
+  },
+  {
+   "bullet": "RISC-V analysis",
+   "claim": "full 29 MB EXEC via direct analyzeHeadless (10,766 functions @900 s cap)",
+   "claim_anchor": "full 29 MB EXEC",
+   "claim_present": true,
+   "evidence": [
+    "corpus/README.md",
+    "corpus/knowledge/2026-10-13-r5-01-riscv-bypass.md"
+   ],
+   "id": "R1",
+   "note": "r5-01 records the 10,766-function count (its own re-verified counts)",
+   "verdict": "current"
+  },
+  {
+   "bullet": ">90 MB PE scale wall",
+   "claim": "Next: raise REA_GHIDRA_STARTUP_TIMEOUT_MS to ~3.6Ms + GHIDRA_HEADLESS_MAXMEM=6-8G on an idle host, or bisect with a 2-5MB PE",
+   "claim_anchor": "Next: raise",
+   "claim_present": true,
+   "evidence": [
+    "corpus/README.md"
+   ],
+   "id": "R2",
+   "note": "arc2-r7 held the target with the validated analyzer-disable recipe and r8's no-disable control OOM-killed at 9G; `corpus/README.md:175` already reads 'CLOSED, not frontier'. PROVINCE:140-144 still carries the pre-r7 'Next: raise ...' remediation as if the wall were open.",
+   "verdict": "stale"
+  },
+  {
+   "bullet": ".jsc -> source mapping",
+   "claim": "Ignition disassembly held; a View8/jsc2js-style bytecode-to-source mapper is the next frontier",
+   "claim_anchor": "bytecode-to-source mapper is the next frontier",
+   "claim_present": true,
+   "evidence": [
+    "corpus/README.md",
+    "corpus/knowledge/2026-10-13-r4-07-jsc-bytecode.md",
+    "corpus/README.md",
+    "corpus/knowledge/2026-10-13-r4-07-jsc-bytecode.md",
+    "corpus/lessons/2026-10-13-round-4.md"
+   ],
+   "id": "R3",
+   "note": "r4-07 records the Ignition disassembly; no corpus entry holds a mapper",
+   "verdict": "current"
+  },
+  {
+   "bullet": "sasquatch",
+   "claim": "unblob's squashfs recursion extractor (AUR-only); 7z fallback covers today",
+   "claim_anchor": "unblob's squashfs recursion extractor",
+   "claim_present": true,
+   "evidence": [
+    "corpus/README.md",
+    "corpus/knowledge/2026-10-13-r4u-03-unblob-extract.md"
+   ],
+   "id": "R4",
+   "note": "r4u-03 records the AUR-only gate and the 7z fallback",
+   "verdict": "current"
+  },
+  {
+   "bullet": "adb device surface",
+   "claim": "22/24 verbs need a live device/emulator",
+   "claim_anchor": "22/24 verbs need a live device/emulator",
+   "claim_present": true,
+   "evidence": [
+    "corpus/README.md",
+    "corpus/README.md",
+    "corpus/knowledge/2026-10-13-r4u-06-adb-surface.md"
+   ],
+   "id": "R5",
+   "note": "r4u-06 records 2/24 live device-free",
+   "verdict": "current"
+  },
+  {
+   "bullet": "Signal/1Password-scale asar analysis",
+   "claim": "signal's 38.5MB asar mapped, Rust .node addons recovered to the neon surface",
+   "claim_anchor": "Signal/1Password-scale asar analysis",
+   "claim_present": true,
+   "evidence": [
+    "corpus/README.md",
+    "corpus/README.md",
+    "corpus/knowledge/2026-10-13-r3-node-addons.md",
+    "corpus/knowledge/2026-10-13-r4-14-libsignal.md"
+   ],
+   "id": "R6",
+   "note": "r4-05/r4-14 record both halves",
+   "verdict": "current"
+  }
+ ],
+ "summary": {
+  "adjudicated": 1,
+  "adjudicated_ids": [
+   "S5"
+  ],
+  "claim_not_found": [],
+  "current": 18,
+  "stale": 9,
+  "stale_ids": [
+   "F1b",
+   "F2",
+   "F3",
+   "F5b",
+   "X1",
+   "C1",
+   "C2",
+   "C3",
+   "R2"
+  ],
+  "total": 28
+ }
+}

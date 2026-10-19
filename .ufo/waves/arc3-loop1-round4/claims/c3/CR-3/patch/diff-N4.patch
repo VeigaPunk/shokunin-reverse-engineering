@@ -1,0 +1,88 @@
+--- tool-new-29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf.py	2026-10-19 11:10:17.548780788 -0300
++++ tool-N4.py	2026-10-19 11:13:42.794517925 -0300
+@@ -179,6 +179,7 @@
+ import platform
+ import re
+ import socket
++import stat
+ import subprocess
+ import sys
+ import time
+@@ -706,7 +707,13 @@
+         guarded = [Path(p).expanduser() for p in CUSTODY_PATHS] + paths
+         try:
+             guarded_names = {g.resolve() for g in guarded}
+-            neighbours = {Path(str(g) + ".sha256").resolve() for g in guarded}
++            neighbour_paths = []
++            for g in guarded:  # derive the neighbour from the RESOLVED name so that a
++                # directory-spelled measured path ('.', '..') still yields its real neighbour
++                gr = g.resolve()
++                if gr.name:
++                    neighbour_paths.append(gr.with_name(gr.name + ".sha256"))
++            neighbours = {n.resolve() for n in neighbour_paths}
+             candidates = ((out, out.resolve()), (sidecar, sidecar.resolve()))
+         except OSError as exc:  # unresolvable --out or measured path: fail closed, USAGE
+             print("USAGE: cannot resolve the receipt or a guarded path (%s): %s" % (exc, out),
+@@ -714,7 +721,8 @@
+             return EXIT_USAGE
+         for cand, cand_res in candidates:
+             if (cand_res in guarded_names or cand_res in neighbours
+-                    or any(_same_file(cand, g) for g in guarded)):
++                    or any(_same_file(cand, g) for g in guarded)
++                    or any(_same_file(cand, n) for n in neighbour_paths)):
+                 print("USAGE: refusing to write a receipt or its derived sidecar over a path it"
+                       " measures, a custody path, or the sidecar-shaped neighbour of one"
+                       " (resolved path or inode): %s" % cand, file=sys.stderr)
+@@ -725,10 +733,50 @@
+             print("USAGE: cannot create the receipt directory (%s): %s" % (exc, out.parent),
+                   file=sys.stderr)
+             return EXIT_USAGE
++        try:  # a non-regular target (FIFO, device, directory, symlink loop) is refused:
++            # open() on a FIFO with no reader blocks forever, so this must precede the write
++            if out.exists() and not out.is_file():
++                print("USAGE: refusing to write a receipt over a non-regular file: %s" % out,
++                      file=sys.stderr)
++                return EXIT_USAGE
++            if sidecar.exists() and not sidecar.is_file():
++                print("USAGE: refusing to write a sidecar over a non-regular file: %s" % sidecar,
++                      file=sys.stderr)
++                return EXIT_USAGE
++        except OSError as exc:  # e.g. ELOOP while resolving the target
++            print("USAGE: cannot resolve the receipt target (%s): %s" % (exc, out), file=sys.stderr)
++            return EXIT_USAGE
++        guarded_inodes = set()
++        for g in list(guarded) + neighbour_paths:
++            try:
++                st_g = os.stat(g)
++                guarded_inodes.add((st_g.st_dev, st_g.st_ino))
++            except OSError:
++                pass
++
++        def safe_write(target, payload):
++            flags = os.O_WRONLY | os.O_CREAT | os.O_NONBLOCK
++            if hasattr(os, "O_NOFOLLOW"):
++                flags |= os.O_NOFOLLOW
++            fd = os.open(str(target), flags, 0o644)
++            try:
++                st_t = os.fstat(fd)  # identity of the object the fd ACTUALLY opened:
++                # there is no check-vs-use window left after this point
++                if not stat.S_ISREG(st_t.st_mode):
++                    raise OSError("target is not a regular file: %s" % target)
++                if (st_t.st_dev, st_t.st_ino) in guarded_inodes:
++                    raise OSError("target is a guarded path (post-open identity check): %s" % target)
++                os.ftruncate(fd, 0)
++                with os.fdopen(fd, "w", encoding="utf-8", closefd=False) as fh:
++                    fh.write(payload)
++                    fh.flush()
++            finally:
++                os.close(fd)
++
+         try:
+-            out.write_text(text, encoding="utf-8")
++            safe_write(out, text)
+             digest = sha256_file(out)
+-            sidecar.write_text("%s  %s\n" % (digest, out.name), encoding="utf-8")
++            safe_write(sidecar, "%s  %s\n" % (digest, out.name))
+         except OSError as exc:
+             print("USAGE: write failed (%s): %s" % (exc, out), file=sys.stderr)
+             return EXIT_USAGE

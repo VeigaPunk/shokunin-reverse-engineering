@@ -1,0 +1,71 @@
+tool: /dev/shm/cr3-r4/tool-new-29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf.py sha256=29bb45ae0fd795e5
+sandbox HOME: /dev/shm/cr3-r4/atk-B/home
+
+==============================================================================
+## B1 parent is a regular file  --out FILE/child.txt
+==============================================================================
+-- B1 parent is a regular file  --out FILE/child.txt
+   exit=2
+   stderr| USAGE: cannot create the receipt directory ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B1'): /dev/shm/cr3-r4/atk-B/parent-B1
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: cannot create the receipt directory ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B1'): /dev/shm/cr3-r4/atk-B/parent-B1"
+
+==============================================================================
+## B2 parent is a dangling symlink --out LINK/child.txt
+==============================================================================
+-- B2 parent is a dangling symlink --out LINK/child.txt
+   exit=2
+   stderr| USAGE: cannot create the receipt directory ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B2'): /dev/shm/cr3-r4/atk-B/parent-B2
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: cannot create the receipt directory ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B2'): /dev/shm/cr3-r4/atk-B/parent-B2"
+
+==============================================================================
+## B3 parent is a FIFO --out FIFO/child.txt
+==============================================================================
+-- B3 parent is a FIFO --out FIFO/child.txt
+   exit=2
+   stderr| USAGE: cannot create the receipt directory ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B3'): /dev/shm/cr3-r4/atk-B/parent-B3
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: cannot create the receipt directory ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B3'): /dev/shm/cr3-r4/atk-B/parent-B3"
+
+==============================================================================
+## B4 parent mode 0500 (unwritable) --out DIR/child.txt
+==============================================================================
+-- B4 parent mode 0500 (unwritable) --out DIR/child.txt
+   exit=2
+   stderr| USAGE: write failed ([Errno 13] Permission denied: '/dev/shm/cr3-r4/atk-B/parent-B4/child.txt'): /dev/shm/cr3-r4/atk-B/parent-B4/child.txt
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: write failed ([Errno 13] Permission denied: '/dev/shm/cr3-r4/atk-B/parent-B4/child.txt'): /dev/shm/cr3-r4/atk-B/parent-B4/child.txt"
+
+==============================================================================
+## B5 parent is a symlink to a file --out LINK/child.txt
+==============================================================================
+-- B5 parent is a symlink to a file --out LINK/child.txt
+   exit=2
+   stderr| USAGE: cannot create the receipt directory ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B5'): /dev/shm/cr3-r4/atk-B/parent-B5
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: cannot create the receipt directory ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B5'): /dev/shm/cr3-r4/atk-B/parent-B5"
+
+==============================================================================
+## B6 grandparent is a file --out FILE/sub/child.txt
+==============================================================================
+-- B6 grandparent is a file --out FILE/sub/child.txt
+   exit=2
+   stderr| USAGE: cannot create the receipt directory ([Errno 20] Not a directory: '/dev/shm/cr3-r4/atk-B/parent-B6/sub'): /dev/shm/cr3-r4/atk-B/parent-B6/sub
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: cannot create the receipt directory ([Errno 20] Not a directory: '/dev/shm/cr3-r4/atk-B/parent-B6/sub'): /dev/shm/cr3-r4/atk-B/parent-B6/sub"
+
+==============================================================================
+## B7 control: writable parent -> clean receipt (no traceback)
+==============================================================================
+-- B7
+   exit=13
+   stdout| RECEIPT: /dev/shm/cr3-r4/atk-B/ok-parent/child.txt  sha256=8e2ee1f2b3efe5bb5265e32b69b90652b71fcf30c11dbdd4e9a178ca5d2ca8ad
+   stdout| SIDECAR: /dev/shm/cr3-r4/atk-B/ok-parent/child.txt.sha256
+   stdout| CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=B7 exit=13
+   RAW-TRACEBACK=False
+
+==============================================================================
+## B8 FIFO as --out itself (not a parent)
+==============================================================================
+-- B8  exit=HANG(>6s)  open(FIFO,'w') blocked with no reader — capture never returns

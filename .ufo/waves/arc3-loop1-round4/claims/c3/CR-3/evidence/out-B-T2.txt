@@ -1,0 +1,71 @@
+tool: /dev/shm/cr3-r4/tool-T2.py sha256=d92c663f6cd46e70
+sandbox HOME: /dev/shm/cr3-r4/atk-B/home
+
+==============================================================================
+## B1 parent is a regular file  --out FILE/child.txt
+==============================================================================
+-- B1 parent is a regular file  --out FILE/child.txt
+   exit=2
+   stderr| USAGE: write failed ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B1'): /dev/shm/cr3-r4/atk-B/parent-B1/child.txt
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: write failed ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B1'): /dev/shm/cr3-r4/atk-B/parent-B1/child.txt"
+
+==============================================================================
+## B2 parent is a dangling symlink --out LINK/child.txt
+==============================================================================
+-- B2 parent is a dangling symlink --out LINK/child.txt
+   exit=2
+   stderr| USAGE: write failed ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B2'): /dev/shm/cr3-r4/atk-B/parent-B2/child.txt
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: write failed ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B2'): /dev/shm/cr3-r4/atk-B/parent-B2/child.txt"
+
+==============================================================================
+## B3 parent is a FIFO --out FIFO/child.txt
+==============================================================================
+-- B3 parent is a FIFO --out FIFO/child.txt
+   exit=2
+   stderr| USAGE: write failed ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B3'): /dev/shm/cr3-r4/atk-B/parent-B3/child.txt
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: write failed ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B3'): /dev/shm/cr3-r4/atk-B/parent-B3/child.txt"
+
+==============================================================================
+## B4 parent mode 0500 (unwritable) --out DIR/child.txt
+==============================================================================
+-- B4 parent mode 0500 (unwritable) --out DIR/child.txt
+   exit=2
+   stderr| USAGE: write failed ([Errno 13] Permission denied: '/dev/shm/cr3-r4/atk-B/parent-B4/child.txt'): /dev/shm/cr3-r4/atk-B/parent-B4/child.txt
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: write failed ([Errno 13] Permission denied: '/dev/shm/cr3-r4/atk-B/parent-B4/child.txt'): /dev/shm/cr3-r4/atk-B/parent-B4/child.txt"
+
+==============================================================================
+## B5 parent is a symlink to a file --out LINK/child.txt
+==============================================================================
+-- B5 parent is a symlink to a file --out LINK/child.txt
+   exit=2
+   stderr| USAGE: write failed ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B5'): /dev/shm/cr3-r4/atk-B/parent-B5/child.txt
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: write failed ([Errno 17] File exists: '/dev/shm/cr3-r4/atk-B/parent-B5'): /dev/shm/cr3-r4/atk-B/parent-B5/child.txt"
+
+==============================================================================
+## B6 grandparent is a file --out FILE/sub/child.txt
+==============================================================================
+-- B6 grandparent is a file --out FILE/sub/child.txt
+   exit=2
+   stderr| USAGE: write failed ([Errno 20] Not a directory: '/dev/shm/cr3-r4/atk-B/parent-B6/sub'): /dev/shm/cr3-r4/atk-B/parent-B6/sub/child.txt
+   RAW-TRACEBACK=False
+   last stderr line: "USAGE: write failed ([Errno 20] Not a directory: '/dev/shm/cr3-r4/atk-B/parent-B6/sub'): /dev/shm/cr3-r4/atk-B/parent-B6/sub/child.txt"
+
+==============================================================================
+## B7 control: writable parent -> clean receipt (no traceback)
+==============================================================================
+-- B7
+   exit=13
+   stdout| RECEIPT: /dev/shm/cr3-r4/atk-B/ok-parent/child.txt  sha256=5e82826fd46139d446d6a9bb630aec43c99334956045bae082abb3be51bf9080
+   stdout| SIDECAR: /dev/shm/cr3-r4/atk-B/ok-parent/child.txt.sha256
+   stdout| CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=B7 exit=13
+   RAW-TRACEBACK=False
+
+==============================================================================
+## B8 FIFO as --out itself (not a parent)
+==============================================================================
+-- B8  exit=HANG(>6s)  open(FIFO,'w') blocked with no reader — capture never returns

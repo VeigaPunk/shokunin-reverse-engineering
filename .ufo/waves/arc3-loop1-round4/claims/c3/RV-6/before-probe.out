@@ -1,0 +1,61 @@
+tool  : /var/tmp/rv6/w4/tool-r3-7cd19c3c.py
+sha256: 7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+root  : /var/tmp/rv6/w4/scratch/rv6-probe-vgwbmgps
+
+### A-sidecar-scope -> CLOBBERED
+exit=0
+victim sha256 before=140aba3932dd24cd9b29048150fed852db1e209860e207c34df1bf1cbe9de0e2 after=5dbcef1616b57dfc5dce68ad8bbf7cfb1c247a1d9ce083a000909089b403b5a5
+victim bytes changed=True
+stdout:
+RECEIPT: /var/tmp/rv6/w4/scratch/rv6-probe-vgwbmgps/a/vic  sha256=292c87fda7ca5743dd6e63c10292d67a12af5b657ef69009abfc968b9157cf72
+SIDECAR: /var/tmp/rv6/w4/scratch/rv6-probe-vgwbmgps/a/vic.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=rv6-a exit=0
+stderr:
+
+
+### B-mkdir-traceback -> TRACEBACK exit=1
+exit=1  traceback=True
+stderr:
+Traceback (most recent call last):
+  File "/var/tmp/rv6/w4/tool-r3-7cd19c3c.py", line 1155, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/rv6/w4/tool-r3-7cd19c3c.py", line 1151, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/rv6/w4/tool-r3-7cd19c3c.py", line 653, in cmd_capture
+    out.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 1011, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+NotADirectoryError: [Errno 20] Not a directory: '/var/tmp/rv6/w4/scratch/rv6-probe-vgwbmgps/b/pfile.txt/sub'
+stdout:
+
+
+### C1-dupe-stanza-gate -> PASS exit=0
+capture exit=0 stanzas=5
+verify --require-paths 5 exit=0
+REFERENCE-COVERAGE lines: (none)
+verdict line: ['VERDICT: MATCH  paths=1  MATCH=1  exit=0']
+stderr: 
+
+### C2-noncanonical-five-gate -> PASS exit=0
+verify --require-paths 5 exit=0
+REFERENCE-COVERAGE lines: (none)
+verdict: ['VERDICT: MATCH  paths=5  MATCH=5  exit=0']
+stderr: 
+
+### D-selftest -> CLEAN
+['CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0']
+failing cases: (none)
+exit=0
+
+### E-live-pair -> MATCH exit=0
+capture pre exit=0 post exit=0
+verify exit=0
+verdict: ['VERDICT: MATCH  paths=5  MATCH=5  exit=0']
+['CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0']
+
+wrote /var/tmp/rv6/w4/before/probe.json
+scratch root: /var/tmp/rv6/w4/scratch/rv6-probe-vgwbmgps

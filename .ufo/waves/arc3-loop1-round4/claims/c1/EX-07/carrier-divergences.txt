@@ -1,0 +1,85 @@
+EX-07 (arc3-loop1-round4, c1) — per-row ABI-vs-probe divergence table
+carriers: EX-02 Smoke K=4, EX-04 CarrierV K=15, EX-03 Steward K=22, PL-1 CarrierW K=9
+solc control: r3 VaultB.opt200 K=13
+
+=== Smoke (K=4, probe n=4) ===
+  61bc221a counter()                                  abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  6d4ce63c get()                                      abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  8da5cb5b owner()                                    abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  d09de08a increment()                                abi_mut=nonpayable  probe_mut=nonpayable   abi_args='' probe_args='' bodybyte=0x34
+  -> mutability rows differing: 0/4   argument rows differing: 0/4
+
+=== CarrierV (K=15, probe n=15) ===
+  0776076f is_owner(address)                          abi_mut=view        probe_mut=payable    * abi_args='address' probe_args='uint256'* bodybyte=0x60
+  0c751377 fee_of(uint256,uint256)                    abi_mut=pure        probe_mut=payable    * abi_args='uint256,uint256' probe_args='uint256,uint256' bodybyte=0x60
+  1aa02d59 set_fee(uint256)                           abi_mut=nonpayable  probe_mut=payable    * abi_args='uint256' probe_args='uint256' bodybyte=0x60
+  27e235e3 balances(address)                          abi_mut=view        probe_mut=payable    * abi_args='address' probe_args='uint256'* bodybyte=0x60
+  2e1a7d4d withdraw(uint256)                          abi_mut=nonpayable  probe_mut=payable    * abi_args='uint256' probe_args='uint256' bodybyte=0x60
+  3f4ba83a unpause()                                  abi_mut=nonpayable  probe_mut=nonpayable   abi_args='' probe_args='' bodybyte=0x34
+  4643c56b total_deposits()                           abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  48a3ef5c fee_bps()                                  abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  5c975abb paused()                                   abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  6e8efde2 fee_quote(uint256)                         abi_mut=view        probe_mut=payable    * abi_args='uint256' probe_args='uint256' bodybyte=0x60
+  8456cb59 pause()                                    abi_mut=nonpayable  probe_mut=nonpayable   abi_args='' probe_args='' bodybyte=0x34
+  8da5cb5b owner()                                    abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  b144adfb balance_of(address)                        abi_mut=view        probe_mut=payable    * abi_args='address' probe_args='uint256'* bodybyte=0x60
+  d0e30db0 deposit()                                  abi_mut=payable     probe_mut=payable      abi_args='' probe_args='' bodybyte=0x60
+  e0749a6a fee_on(uint256)                            abi_mut=view        probe_mut=payable    * abi_args='uint256' probe_args='uint256' bodybyte=0x60
+  -> mutability rows differing: 8/15   argument rows differing: 3/15
+
+=== Steward (K=22, probe n=22) ===
+  06fdde03 name()                                     abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  095ea7b3 approve(address,uint256)                   abi_mut=nonpayable  probe_mut=payable    * abi_args='address,uint256' probe_args='uint256,uint256'* bodybyte=0x60
+  0c751377 fee_of(uint256,uint256)                    abi_mut=pure        probe_mut=payable    * abi_args='uint256,uint256' probe_args='uint256,uint256' bodybyte=0x60
+  18160ddd totalSupply()                              abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  1aa02d59 set_fee(uint256)                           abi_mut=nonpayable  probe_mut=payable    * abi_args='uint256' probe_args='uint256' bodybyte=0x60
+  23b872dd transferFrom(address,address,uint256)      abi_mut=nonpayable  probe_mut=payable    * abi_args='address,address,uint256' probe_args='uint256,uint256,uint256'* bodybyte=0x60
+  24a9d853 feeBps()                                   abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  313ce567 decimals()                                 abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  3f4ba83a unpause()                                  abi_mut=nonpayable  probe_mut=nonpayable   abi_args='' probe_args='' bodybyte=0x34
+  40c10f19 mint(address,uint256)                      abi_mut=nonpayable  probe_mut=payable    * abi_args='address,uint256' probe_args='uint256,uint256'* bodybyte=0x60
+  5c975abb paused()                                   abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  637eea19 steward()                                  abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  70a08231 balanceOf(address)                         abi_mut=view        probe_mut=payable    * abi_args='address' probe_args='uint256'* bodybyte=0x60
+  8456cb59 pause()                                    abi_mut=nonpayable  probe_mut=nonpayable   abi_args='' probe_args='' bodybyte=0x34
+  875194ac is_steward(address)                        abi_mut=view        probe_mut=payable    * abi_args='address' probe_args='uint256'* bodybyte=0x60
+  95d89b41 symbol()                                   abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  a9059cbb transfer(address,uint256)                  abi_mut=nonpayable  probe_mut=payable    * abi_args='address,uint256' probe_args='uint256,uint256'* bodybyte=0x60
+  cee38a15 set_steward(address)                       abi_mut=nonpayable  probe_mut=payable    * abi_args='address' probe_args='uint256'* bodybyte=0x60
+  d0e30db0 deposit()                                  abi_mut=payable     probe_mut=payable      abi_args='' probe_args='' bodybyte=0x5f
+  d869f754 preview_fee(uint256)                       abi_mut=view        probe_mut=payable    * abi_args='uint256' probe_args='uint256' bodybyte=0x60
+  db006a75 redeem(uint256)                            abi_mut=nonpayable  probe_mut=payable    * abi_args='uint256' probe_args='uint256' bodybyte=0x60
+  dd62ed3e allowance(address,address)                 abi_mut=view        probe_mut=payable    * abi_args='address,address' probe_args='uint256,uint256'* bodybyte=0x60
+  -> mutability rows differing: 12/22   argument rows differing: 8/22
+
+=== CarrierW (K=9, probe n=9) ===
+  3a4b66f1 stake()                                    abi_mut=payable     probe_mut=payable      abi_args='' probe_args='' bodybyte=0x60
+  42cde4e8 threshold()                                abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  6e69f38c scale(uint256,uint256)                     abi_mut=pure        probe_mut=payable    * abi_args='uint256,uint256' probe_args='uint256,uint256' bodybyte=0x60
+  72b91e61 seen(address)                              abi_mut=view        probe_mut=payable    * abi_args='address' probe_args='uint256'* bodybyte=0x60
+  7425570b tag(string,bytes,uint256[2],bool)          abi_mut=nonpayable  probe_mut=payable    * abi_args='string,bytes,uint256[2],bool' probe_args='bytes,bytes,uint256,uint256,uint256'* bodybyte=0x60
+  8da5cb5b owner()                                    abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  b20eb4c4 bump(uint256)                              abi_mut=nonpayable  probe_mut=payable    * abi_args='uint256' probe_args='uint256' bodybyte=0x60
+  cc1b674c last_tag()                                 abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x34
+  ed1bd76c quote(uint256)                             abi_mut=view        probe_mut=payable    * abi_args='uint256' probe_args='uint256' bodybyte=0x60
+  -> mutability rows differing: 5/9   argument rows differing: 2/9
+
+=== VaultB.opt200(solc control) (K=13, probe n=13) ===
+  24a9d853 feeBps()                                   abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x5b
+  27e235e3 balances(address)                          abi_mut=view        probe_mut=view         abi_args='address' probe_args='address' bodybyte=0x5b
+  2e1a7d4d withdraw(uint256)                          abi_mut=nonpayable  probe_mut=nonpayable   abi_args='uint256' probe_args='uint256' bodybyte=0x5b
+  3d96e276 lockFor(address,uint256)                   abi_mut=nonpayable  probe_mut=nonpayable   abi_args='address,uint256' probe_args='address,uint256' bodybyte=0x5b
+  3f4ba83a unpause()                                  abi_mut=nonpayable  probe_mut=nonpayable   abi_args='' probe_args='' bodybyte=0x5b
+  5c975abb paused()                                   abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x5b
+  69fe0e2d setFee(uint256)                            abi_mut=nonpayable  probe_mut=nonpayable   abi_args='uint256' probe_args='uint256' bodybyte=0x5b
+  7d882097 totalDeposits()                            abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x5b
+  8456cb59 pause()                                    abi_mut=nonpayable  probe_mut=nonpayable   abi_args='' probe_args='' bodybyte=0x5b
+  8da5cb5b owner()                                    abi_mut=view        probe_mut=view         abi_args='' probe_args='' bodybyte=0x5b
+  9c421eb5 feeOn(uint256)                             abi_mut=view        probe_mut=view         abi_args='uint256' probe_args='uint256' bodybyte=0x5b
+  cbf9fe5f locked(address)                            abi_mut=view        probe_mut=view         abi_args='address' probe_args='address' bodybyte=0x5b
+  d0e30db0 deposit()                                  abi_mut=payable     probe_mut=payable      abi_args='' probe_args='' bodybyte=0x5b
+  -> mutability rows differing: 0/13   argument rows differing: 0/13
+
+TOTALS across all five carriers: rows=63 mutability_diff=25 argument_diff=13
+(* marks a row whose probe value differs from the compiled ABI; the pure->view
+ collapse recorded in r3 for solc is treated as non-differing, per that entry.)

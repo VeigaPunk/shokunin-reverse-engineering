@@ -1,0 +1,29 @@
+== VZ-2 r4 — final state after both peer corrections ==
+date: 2026-10-19T14:23:50Z
+
+-- my census instrument, final --
+  [current] R5   22/24 verbs need a live device/emulator
+  [current] R6   signal's 38.5MB asar mapped, Rust .node addons recovered to the neon surface
+SUMMARY: total=27 stale=8 adjudicated=1 current=18
+STALE: F1b, F2, F3, F5b, X1, C1, C2, R2
+
+-- the eight stale items, with the seat that first found each --
+  F1b  PE 'Reserve: 91MB Godot ARM64 template'      VZ-2 (baseline)
+  F2   crashes 'all 3 organic cores exceed the cap' EX-13 (I re-verified: 17,608,704 B core inspects)
+  F3   'JEB (unprobed)'                             VZ-2 (baseline)
+  F5b  EVM 'real solc/vyper-compiled ... untested'  VZ-2 (the frozen claim's named debt)
+  X1   'compare-application-versions still refused' VZ-2 (baseline)
+  C1   Core host-readers absent list                VZ-2 (baseline)
+  C2   Core Ghidra row '35 features'                EX-15 (I re-counted: 34)
+  R2   '>90 MB PE ... Next: raise ...'              VZ-2 (baseline)
+
+-- both peer corrections, both sustained by my own re-measurement --
+  EX-13's F2: organic crashpad core 17,608,704 B < 33,554,432 cap; inspect exit 0,
+              elf-core, 53 segments, 3 threads (my ev_3bdc54d2...)
+  EX-15's C2: Ghidra/Features/*/ = 34 dirs (not 35); Ghidra/Processors/*/ = 39 (correct);
+              PyGhidra + BSim both present
+
+-- voices covering all eight --
+  EX-15 landing set (8 hunks incl. A2 and A5) -> dce736cd... (A6b) / feec841b... (A6a)
+  EX-14 v2 covers 6 of 8 (F2, C2 untouched)
+  EX-13 set covers 7 of 8 (C2 untouched), 2 open accuracy defects

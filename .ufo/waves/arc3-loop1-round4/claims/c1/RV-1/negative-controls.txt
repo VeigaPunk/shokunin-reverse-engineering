@@ -1,0 +1,16 @@
+=== RV-1 negative controls on this seat's own verification pipeline ===
+date: 2026-10-19T14:11:37Z
+All mutations applied IN MEMORY to scratch copies of the planted table;
+no claim artifact was modified.
+
+CONTROL (intact planted table)  -> set-equal: True   [expected True]
+NEGCTL-1 (one hex digit flipped) -> detected: True
+NEGCTL-2 (one entry deleted)     -> detected: True  missing=['0776076f']
+NEGCTL-3 (bogus entry added)     -> detected: True  extra=['deadbeef']
+
+NEGCTL-4 — the leading-zero comparison trap, demonstrated:
+  planted-K.json stores all 15 values as exactly 8 hex chars (verified: True)
+  method-identifiers.json prints 2 of them leading-zero-STRIPPED:
+    fee_of(uint256,uint256)      printed=0xc751377    real=0c751377  -> a naive string diff reports a MISMATCH
+    is_owner(address)            printed=0x776076f    real=0776076f  -> a naive string diff reports a MISMATCH
+  a value-wise comparison (int(x,16)) reports agreement for both.

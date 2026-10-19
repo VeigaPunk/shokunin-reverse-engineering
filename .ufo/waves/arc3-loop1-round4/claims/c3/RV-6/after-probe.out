@@ -1,0 +1,46 @@
+tool  : /var/tmp/rv6/w4/tool-r4-landed-29bb45ae.py
+sha256: 29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+root  : /var/tmp/rv6/w4/scratch/rv6-probe-avvq2b3x
+
+### A-sidecar-scope -> REFUSED/INTACT
+exit=2
+victim sha256 before=140aba3932dd24cd9b29048150fed852db1e209860e207c34df1bf1cbe9de0e2 after=140aba3932dd24cd9b29048150fed852db1e209860e207c34df1bf1cbe9de0e2
+victim bytes changed=False
+stdout:
+
+stderr:
+USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /var/tmp/rv6/w4/scratch/rv6-probe-avvq2b3x/a/vic.sha256
+
+### B-mkdir-traceback -> DECLARED exit=2
+exit=2  traceback=False
+stderr:
+USAGE: cannot create the receipt directory ([Errno 20] Not a directory: '/var/tmp/rv6/w4/scratch/rv6-probe-avvq2b3x/b/pfile.txt/sub'): /var/tmp/rv6/w4/scratch/rv6-probe-avvq2b3x/b/pfile.txt/sub
+stdout:
+
+
+### C1-dupe-stanza-gate -> GATED exit=2
+capture exit=0 stanzas=5
+verify --require-paths 5 exit=2
+REFERENCE-COVERAGE lines: ['REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile']
+verdict line: []
+stderr: USAGE: reference covers 1 of the required 5 distinct paths
+
+### C2-noncanonical-five-gate -> PASS exit=0
+verify --require-paths 5 exit=0
+REFERENCE-COVERAGE lines: (none)
+verdict: ['VERDICT: MATCH  paths=5  MATCH=5  exit=0']
+stderr: 
+
+### D-selftest -> CLEAN
+['CUSTODY_PAIR_SELFTEST: CLEAN cases=28 passed=28 failed=0 exit=0']
+failing cases: (none)
+exit=0
+
+### E-live-pair -> MATCH exit=0
+capture pre exit=0 post exit=0
+verify exit=0
+verdict: ['VERDICT: MATCH  paths=5  MATCH=5  exit=0']
+['CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0']
+
+wrote /var/tmp/rv6/w4/after/probe.json
+scratch root: /var/tmp/rv6/w4/scratch/rv6-probe-avvq2b3x

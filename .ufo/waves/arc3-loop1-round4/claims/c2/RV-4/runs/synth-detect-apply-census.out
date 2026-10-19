@@ -1,0 +1,68 @@
+== RV-4 apply-and-census ==
+patch  : /var/tmp/rv4-scratch/synth/detect-repair.diff
+label  : synth-detect
+scratch: /var/tmp/rv4-scratch/apply-synth-detect
+repo   : /home/vgpnk/Projects/shokunin/kaidoku-shokunin (read-only)
+date   : 2026-10-19T11:07:08-03:00
+
+== pre-apply identities (scratch copies) ==
+d075a3c67e17ae428eb5a69e594171c6dcba88ec93c97bd3cf162a2f2b4dbdad  PROVINCE.md
+5eec51c089e57f5d5806b4728261fb8c959637580a73aed7be4cddc1866b8f3f  SKILL.md
+21042196b51dae57182c2d25b014f8928a4360139bbecd72127dac1031c18ef7  SCORECARD.md
+   162 PROVINCE.md
+   390 SKILL.md
+  1580 SCORECARD.md
+  2132 total
+
+== apply ==
+applied as unified diff (-p1): OK
+
+== post-apply identities ==
+9dbf5f0bbc3efe8912485a8133ae4b9df1249aea8e1246e70fb85243d6b64f34  PROVINCE.md
+5eec51c089e57f5d5806b4728261fb8c959637580a73aed7be4cddc1866b8f3f  SKILL.md
+21042196b51dae57182c2d25b014f8928a4360139bbecd72127dac1031c18ef7  SCORECARD.md
+   162 PROVINCE.md
+   390 SKILL.md
+  1580 SCORECARD.md
+  2132 total
+
+== census on the patched scratch tree ==
+census --json exit=1  -> /var/tmp/rv4-scratch/apply-synth-detect/census-after.json
+
+SCOPE-ERRORS (marker assertions): []
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci per file: PROVINCE.md=17, SCORECARD.md=14, SKILL.md=3; total loci=18; floor=1/file)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=1 unresolved=0)
+
+== differ vs baseline (/var/tmp/rv4-scratch/census-base.json) ==
+== assertion inventory ==
+baseline assertions=16  candidate assertions=17
+
+== NEW gated loci (candidate-only assertions) — 1 ==
+  PROVINCE.md:92 [pin] None=6.7.0 -> AMBIGUOUS (no client token in clause)  block 91-93 scope None
+
+== REMOVED assertions (baseline-only) — 0 ==
+  (none)
+
+== DISPOSITION MOVES (same assertion, different class) — 0 ==
+  (none)
+
+== verdict rows ==
+  verdict                baseline='PASS'   <-- CHANGED
+                         candidate='FAIL'
+  scope_errors           baseline=[]
+  unreadable             baseline=[]
+  g2_ok                  baseline=True
+  declared_fail_classes  baseline=[]
+  g11                    baseline=[]
+  g7                     baseline=[]
+  current_ok_per_file    baseline={'PROVINCE.md': 17, 'SCORECARD.md': 14, 'SKILL.md': 3}
+  counts                 baseline={'PROVINCE.md': {'lines': 162, 'loci': 6}, 'SCORECARD.md': {'lines': 1580, 'loci': 9}, 'SKILL.md': {'lines': 390, 'loci': 2}}   <-- CHANGED
+                         candidate={'PROVINCE.md': {'lines': 162, 'loci': 7}, 'SCORECARD.md': {'lines': 1580, 'loci': 9}, 'SKILL.md': {'lines': 390, 'loci': 2}}
+
+RESULT: DEFECT — new gated locus or regression present
+
+RESULT: DEFECT — census exit=1, differ exit=1 (see above).

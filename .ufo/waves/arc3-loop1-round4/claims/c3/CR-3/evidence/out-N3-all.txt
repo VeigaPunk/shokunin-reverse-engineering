@@ -1,0 +1,134 @@
+########## N3 vs battery A ##########
+## A1  --paths X.sha256 --out X   (sidecar lands ON a measured path)
+   exit=2
+   victim.conf.sha256 before=7fb326b312842fe7 after=7fb326b312842fe7  CLOBBERED=False
+## A2  --out X.sha256 --paths X   (frozen-claim phrasing: sidecar at measured file's neighbour)
+   exit=2
+   neigh.conf.sha256 before=4c24185d73e41bcd after=4c24185d73e41bcd CLOBBERED=False
+## A3  sidecar is a SYMLINK to a custody path (sandbox ~/.bashrc)
+   exit=2
+   sandbox ~/.bashrc before=ceb17e68bf37b3ac after=ceb17e68bf37b3ac CLOBBERED=False
+## A4  sidecar is a HARDLINK alias of a custody path (sandbox ~/.profile)
+   exit=2
+   sandbox ~/.profile before=6d541cc8b9a7e1e5 after=6d541cc8b9a7e1e5 CLOBBERED=False
+## A5  relative spelling: --paths ./r.sha256 --out r  (cwd=scratch)
+   exit=2
+   r.conf.sha256 before=3e251f5018a52f79 after=3e251f5018a52f79 CLOBBERED=False
+## A6  control: sidecar aimed at a custody path while out is also guarded (both refused?)
+   exit=2
+
+########## N3 vs battery B ##########
+## B1 parent is a regular file  --out FILE/child.txt
+   exit=2
+   RAW-TRACEBACK=False
+## B2 parent is a dangling symlink --out LINK/child.txt
+   exit=2
+   RAW-TRACEBACK=False
+## B3 parent is a FIFO --out FIFO/child.txt
+   exit=2
+   RAW-TRACEBACK=False
+## B4 parent mode 0500 (unwritable) --out DIR/child.txt
+   exit=2
+   RAW-TRACEBACK=False
+## B5 parent is a symlink to a file --out LINK/child.txt
+   exit=2
+   RAW-TRACEBACK=False
+## B6 grandparent is a file --out FILE/sub/child.txt
+   exit=2
+   RAW-TRACEBACK=False
+## B7 control: writable parent -> clean receipt (no traceback)
+   exit=13
+   stdout| CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=B7 exit=13
+   RAW-TRACEBACK=False
+## B8 FIFO as --out itself (not a parent)
+   exit=2
+   RAW-TRACEBACK=False
+
+########## N3 vs battery C ##########
+## C1 symlinked parent -> custody DIRECTORY: --out LINK/x.txt (LINK -> ~/.config/devin)
+   exit=0
+   stdout| CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=C1 exit=0
+   file created INSIDE custody dir: /dev/shm/cr3-r4/atk-C/home/.config/devin/planted.txt exists=True
+## C2 symlinked parent -> custody dir, leaf = a custody file name (guard must hold)
+   exit=0
+   stdout| CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=C2 exit=0
+   ~/.bashrc before=ceb17e68bf37b3ac after=ceb17e68bf37b3ac changed=False
+## C3 relative escape via .. : cwd=sub, --out ../home/.bashrc
+   exit=2
+   ~/.bashrc changed=False
+## C4 hardlink alias of a custody path as --out
+   exit=2
+   ~/.bashrc changed=False
+## C5 symlink to a custody path as --out (absolute target)
+   exit=2
+   ~/.bashrc changed=False
+## C6 symlink to a custody path as --out (RELATIVE target)
+   exit=2
+   ~/.bashrc changed=False
+## C7 symlinked GRANDparent -> home, --out LINK/.kimi-code/config.toml
+   exit=2
+   config.toml changed=False
+## C8 --out '.' (a directory) and --out '' 
+   exit=2
+   exit=2
+## C9 unguarded out whose sidecar is a custody path via symlinked parent
+   exit=2
+   ~/.profile changed=False
+
+########## N3 vs battery D ##########
+-- D1 --out LINK/../.kimi-code/config.toml  (symlinked parent + .. to custody leaf)
+   exit=2  changed=none  traceback=False
+-- D2 --out LINK2/.kimi-code/config.toml  (symlinked parent straight to HOME)
+   exit=2  changed=none  traceback=False
+-- D3 --out HOP-A (2-hop symlink chain to ~/.profile)
+   exit=2  changed=none  traceback=False
+-- D4 --out ~/.bashrc while --paths SYMLINK->~/.bashrc (inode arm)
+   exit=2  changed=none  traceback=False
+-- D5 --out LINK3/mcp_config.json (leaf is a custody file)
+   exit=2  changed=none  traceback=False
+-- D6 --out LINK2/../home/.bashrc (.. through a symlink to HOME)
+   exit=2  changed=none  traceback=False
+-- D7 cwd=ROOT/a/b/c --out ../../../home/.bashrc
+   exit=2  changed=none  traceback=False
+-- D8 control --out FRESH/ok.txt
+   exit=0  changed=none  traceback=False
+   receipt exists: True
+   sidecar exists: True
+
+########## N3 vs battery E ##########
+-- E1 --out HARDLINK-ALIAS-OF-NEIGHBOUR  (--paths X, out ~ X.sha256 by inode)
+   exit=2  traceback=False  CHANGED=none
+-- E2 --out OTHER-NAME hardlink -> measured path's .sha256 neighbour
+   exit=2  traceback=False  CHANGED=none
+-- E3 derived sidecar (out.txt.sha256) is a hardlink to the measured path's neighbour
+   exit=2  traceback=False  CHANGED=none
+-- E4 CONTROL --out X.sha256 directly (expect exit 2, refused)
+   exit=2  traceback=False  CHANGED=none
+-- E5 --out FIFO (no reader)
+   exit=2  traceback=False  CHANGED=none
+-- E6 --out SYMLINK-LOOP
+   exit=2  traceback=False  CHANGED=none
+-- E7 --out parent-is-SYMLINK-LOOP/child.txt
+   exit=2  traceback=False  CHANGED=none
+-- E8 CONTROL --out SYMLINK->measured path (expect exit 2)
+   exit=2  traceback=False  CHANGED=none
+-- E9 --out symlinked-parent -> custody DIR /planted.txt
+   exit=0  traceback=False  CHANGED=['/dev/shm/cr3-r4/atk-E/home/.config/devin/planted.txt']
+-- E10 derived sidecar hardlinked to ~/.bashrc.sha256 (a custody neighbour)
+   exit=2  traceback=False  CHANGED=none
+
+########## N3 vs battery F ##########
+-- F1 measured path spelled X/.
+   exit=2  NEIGHBOUR-CLOBBERED=False
+-- F2 measured path spelled X/ (trailing slash)
+   exit=2  NEIGHBOUR-CLOBBERED=False
+-- F3 measured path spelled ./X
+   exit=2  NEIGHBOUR-CLOBBERED=False
+-- F4 measured path spelled X/../X
+   exit=2  NEIGHBOUR-CLOBBERED=False
+-- F5 CONTROL measured path spelled X (expect refusal)
+   exit=2  NEIGHBOUR-CLOBBERED=False
+-- F6 measured path spelled X/. and --out X.sha256.sha256
+   exit=0  NEIGHBOUR-CLOBBERED=False
+-- F7 measured path spelled . (cwd=d, X measured via absolute)
+   exit=0  NEIGHBOUR-CLOBBERED=True

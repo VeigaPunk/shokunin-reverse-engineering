@@ -1,0 +1,94 @@
+== tool sha256 ==
+29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf  /var/tmp/ex26/tool-after-29bb45ae.py
+
+== F1: cleanly-absent, receipt-vs-live (expect MATCH exit 0) ==
+RECEIPT: /var/tmp/ex26/behavior/fx/rec/absent.txt  sha256=5b2cbde6a6941de1641d5cf224903b091187d04d184eb4ab488fb48b4a9fc39d
+SIDECAR: /var/tmp/ex26/behavior/fx/rec/absent.txt.sha256
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=ex26-absent exit=13
+capture rc=13
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx/rec/absent.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex26/behavior/fx/live/gone.txt: MATCH  compared=0/11
+    note: both sides record the path absent — the MATCH is an agreement on absence, not a verified presence (declared ruling: only error-carrying stanzas are UNEVALUABLE)
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+verify rc=0
+
+== F2: control — file now exists, ref absent (expect ABSENT exit 13) ==
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx/rec/absent.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex26/behavior/fx/live/gone.txt: ABSENT  compared=0/11 moved=exists
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: ABSENT  paths=1  ABSENT=1  exit=13
+CUSTODY_PAIR_VERIFY: ABSENT paths=0/1 drift=1 exit=13
+verify rc=13
+
+== F3: cleanly-absent, receipt-vs-receipt (expect MATCH exit 0) ==
+capture rc=13
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx/rec/absent.txt  stanzas=1
+B (candidate): /var/tmp/ex26/behavior/fx/rec/absent-b.txt  stanzas=1
+PATH /var/tmp/ex26/behavior/fx/live/gone.txt: MATCH  compared=0/11
+    note: both sides record the path absent — the MATCH is an agreement on absence, not a verified presence (declared ruling: only error-carrying stanzas are UNEVALUABLE)
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+verify rc=0
+
+== F4: error-carrying (READ-ERROR), receipt-vs-live (expect UNEVALUABLE exit 14) ==
+RECEIPT: /var/tmp/ex26/behavior/fx/rec/uneval.txt  sha256=fef9b983921df71c104954c102b08f627fed7dee625206d55b332f778c17c389
+SIDECAR: /var/tmp/ex26/behavior/fx/rec/uneval.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=1/1 label=ex26-uneval exit=14
+capture rc=14
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx/rec/uneval.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex26/behavior/fx/live/locked.txt: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+verify rc=14
+
+== F5: error-carrying one side only (ref=READ-ERROR, cand=readable) (expect UNEVALUABLE 14) ==
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx/rec/uneval.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex26/behavior/fx/live/locked.txt: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+verify rc=14
+
+== F6: error-carrying one side only (ref=readable, cand=READ-ERROR) (expect UNEVALUABLE 14) ==
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx/rec/readable.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex26/behavior/fx/live/locked.txt: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+verify rc=14
+
+== F7: receipt-vs-receipt, one side error-carrying (expect UNEVALUABLE 14) ==
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex26/behavior/fx/rec/readable.txt  stanzas=1
+B (candidate): /var/tmp/ex26/behavior/fx/rec/uneval.txt  stanzas=1
+PATH /var/tmp/ex26/behavior/fx/live/locked.txt: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+verify rc=14

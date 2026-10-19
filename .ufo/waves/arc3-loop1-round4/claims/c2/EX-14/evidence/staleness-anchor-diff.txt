@@ -1,0 +1,42 @@
+# EX-14 — staleness anchor before -> after (VZ-2's census instrument)
+
+instrument: .ufo/waves/arc3-loop1-round4/claims/c2/VZ-2/evidence/province-staleness-census.py
+NOTE: that instrument hardcodes each row's verdict; the signal a repair moves is
+      claim_present (does the row's anchor phrase still occur in PROVINCE).
+
+id    verdict     before  after   cleared?
+----------------------------------------------
+C1    stale       True    True    
+F1a   current     True    True    
+F1b   stale       True    False   YES
+F2    adjudicated True    True    
+F2b   current     True    True    
+F3    stale       True    True    
+F4    current     True    True    
+F5a   current     True    True    
+F5b   stale       True    False   YES
+F5c   current     True    True    
+G1    current     True    True    
+R1    current     True    True    
+R2    stale       True    False   YES
+R3    current     True    True    
+R4    current     True    True    
+R5    current     True    True    
+R6    current     True    True    
+S1    current     True    True    
+S2    current     True    True    
+S3    current     True    True    
+S4    current     True    True    
+S5    adjudicated True    True    
+S6    current     True    True    
+S7    current     True    True    
+X1    stale       True    False   YES
+X2    current     True    True    
+
+claim_not_found AFTER: ['F1b', 'F5b', 'X1', 'R2']
+
+the four anchors the C2 claim named are cleared: F1b, F5b, X1, R2
+rows still flagged stale in the AFTER run: F3, C1 (added by a mid-run revision of the
+instrument; both are wording defects about IDA/Hopper/JEB and the host fallback-reader
+list, not the four rows the frozen claim named), plus the four above whose VERDICT is
+hardcoded and therefore unchanged by construction.

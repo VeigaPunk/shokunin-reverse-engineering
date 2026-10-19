@@ -1,0 +1,20 @@
+vyper method_identifiers: {"a_view(uint256)": "0x92e77914", "a_pure(uint256)": "0x65f1b776", "a_nonpay(uint256)": "0xfac6398b", "a_pay(uint256)": "0x74e21676", "b_view(address,uint256)": "0x79a30fc4", "b_nonpay(address,bool)": "0x33eced4d", "owner()": "0x8da5cb5b", "n()": "0x2e52d606"}
+
+=== ATTACK: does the extractor default to payable for every arg-taking function? ===
+selector   name         args     abi         inferred    verdict
+2e52d606   n                     view        view        MATCH
+33eced4d   b_nonpay     uint256,uint256 nonpayable  payable     DIVERGES
+65f1b776   a_pure       uint256  pure        payable     DIVERGES
+74e21676   a_pay        uint256  payable     payable     MATCH
+79a30fc4   b_view       uint256,uint256 view        payable     DIVERGES
+8da5cb5b   owner                 view        view        MATCH
+92e77914   a_view       uint256  view        payable     DIVERGES
+fac6398b   a_nonpay     uint256  nonpayable  payable     DIVERGES
+
+K planted: 8  n recovered: 8
+
+functions with arguments: 6
+  inferred==payable among them: 6
+  ABI==payable among them    : 1
+
+HYPOTHESIS "arg-taking => payable": SUPPORTED

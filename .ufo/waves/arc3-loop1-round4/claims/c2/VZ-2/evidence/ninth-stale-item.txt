@@ -1,0 +1,31 @@
+== VZ-2 r4 — the ninth stale item (found by EX-12, re-derived here) ==
+date: 2026-10-19T14:26:05Z
+PROVINCE.md:49 Core Electron/ASAR row
+
+-- claim 1: the pinned-asar inventory undercounts --
+  the row names 9 archives: obsidian x2, signal, 1Password, electron39/43 stubs, typora x3
+  my own live sweep (same recipe):
+       578643106  /usr/lib/chatgpt/resources/app.asar
+       326913098  /home/vgpnk/.local/opt/zcode/squashfs-root/resources/app.asar
+        40708328  /opt/1Password/resources/app.asar
+        38465187  /usr/lib/signal-desktop/resources/app.asar
+        27477966  /home/vgpnk/.config/obsidian/obsidian-1.14.4.asar
+        25787463  /usr/lib/obsidian/obsidian.asar
+        15077447  /usr/share/typora/resources/node_modules.asar
+         8339267  /usr/share/typora/resources/lib.asar
+          480052  /usr/lib/obsidian/app.asar
+          390514  /usr/share/typora/resources/app.asar
+          111073  /usr/lib/electron43/resources/default_app.asar
+          109371  /usr/lib/electron39/resources/default_app.asar
+  => 12 archives, not 9. Missing from the row: chatgpt, zcode extracted copy, config-dir obsidian.
+
+-- claim 2: the '423-file asar' count is superseded by the cited entry's own erratum --
+  - **File-count wording (r5 audit-A):** "423 inventory files" conflates REA's
+    `relevant_files:423` with archive membership — the asar actually lists **480**
+    files (the entry's own census sums to 480). "limitations ≈560" reproduces as
+    **288** top-level entries (413 nested "Resource constraint" occurrences);
+    graph nodes 3,058 vs the stated 3,059. All substantive claims (80 `rpc.handle`
+  the 188MB core is confirmed: 187997016 B
+
+=> both halves verified. The baseline stale count is NINE, not eight.
+   Instrument: total=28 stale=9 adjudicated=1 current=18

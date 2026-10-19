@@ -1,0 +1,139 @@
+code: .ufo/waves/arc3-loop1-round4/claims/c1/EX-04/out/runtime.hex (hex)  bytes=1562  sha256=57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0
+M1 anchors: {'5f3560e01c': 0, '60003560e01c': -1, '60043610': -1, '60043560e01c': -1} (min=0)
+M1 strict chain (linear `DUP1 PUSH4 <sel> EQ PUSH1|PUSH2 <dest> JUMPI`):
+   (no strict linear chain — dispatcher uses another compare shape)
+M1 Vyper XOR chain (`PUSH4 <sel> DUP2 XOR PUSH2 <next_test> JUMPI`; body falls through):
+   d0e30db0  push4@25  next_test=248 (land_byte=5b,jumpdest=True)  body@36 (land_byte=60,jumpdest=False)
+   1aa02d59  push4@249  next_test=524 (land_byte=5b,jumpdest=True)  body@260 (land_byte=60,jumpdest=False)
+   3f4ba83a  push4@525  next_test=1512 (land_byte=5b,jumpdest=True)  body@536 (land_byte=34,jumpdest=False)
+   2e1a7d4d  push4@669  next_test=1512 (land_byte=5b,jumpdest=True)  body@680 (land_byte=60,jumpdest=False)
+   e0749a6a  push4@899  next_test=961 (land_byte=5b,jumpdest=True)  body@910 (land_byte=60,jumpdest=False)
+   6e8efde2  push4@962  next_test=1512 (land_byte=5b,jumpdest=True)  body@973 (land_byte=60,jumpdest=False)
+   0c751377  push4@1025  next_test=1512 (land_byte=5b,jumpdest=True)  body@1036 (land_byte=60,jumpdest=False)
+   8456cb59  push4@1088  next_test=1232 (land_byte=5b,jumpdest=True)  body@1099 (land_byte=34,jumpdest=False)
+   b144adfb  push4@1233  next_test=1512 (land_byte=5b,jumpdest=True)  body@1244 (land_byte=60,jumpdest=False)
+   0776076f  push4@1292  next_test=1512 (land_byte=5b,jumpdest=True)  body@1303 (land_byte=60,jumpdest=False)
+   8da5cb5b  push4@1342  next_test=1368 (land_byte=5b,jumpdest=True)  body@1353 (land_byte=34,jumpdest=False)
+   4643c56b  push4@1369  next_test=1512 (land_byte=5b,jumpdest=True)  body@1380 (land_byte=34,jumpdest=False)
+   48a3ef5c  push4@1397  next_test=1512 (land_byte=5b,jumpdest=True)  body@1408 (land_byte=34,jumpdest=False)
+   5c975abb  push4@1425  next_test=1512 (land_byte=5b,jumpdest=True)  body@1436 (land_byte=34,jumpdest=False)
+   27e235e3  push4@1453  next_test=1512 (land_byte=5b,jumpdest=True)  body@1464 (land_byte=60,jumpdest=False)
+M1 EQ compare sites (all shapes):
+M1 GT/LT pivot sites: []
+M1 non-dispatch PUSH4 constants: ['08c379a0@141', '08c379a0@376', '08c379a0@501', '08c379a0@647', '08c379a0@809', '08c379a0@1210']
+M1 JUMPDEST positions: [24, 156, 248, 391, 516, 524, 662, 668, 824, 898, 961, 1024, 1087, 1225, 1232, 1291, 1341, 1346, 1368, 1396, 1424, 1452, 1511, 1512, 1532]
+
+M3 keccak(sig) -> selector -> PUSH4 sites in runtime:
+   owner()                                      8da5cb5b  @[1342]
+   total_deposits()                             4643c56b  @[1369]
+   fee_bps()                                    48a3ef5c  @[1397]
+   paused()                                     5c975abb  @[1425]
+   balances(address)                            27e235e3  @[1453]
+   deposit()                                    d0e30db0  @[25]
+   withdraw(uint256)                            2e1a7d4d  @[669]
+   set_fee(uint256)                             1aa02d59  @[249]
+   fee_on(uint256)                              e0749a6a  @[899]
+   fee_of(uint256,uint256)                      0c751377  @[1025]
+   pause()                                      8456cb59  @[1088]
+   unpause()                                    3f4ba83a  @[525]
+   balance_of(address)                          b144adfb  @[1233]
+   is_owner(address)                            0776076f  @[1292]
+   fee_quote(uint256)                           6e8efde2  @[962]
+
+M2 planted-value PUSH4 scan (each value's immediate sites + cmp context):
+   0776076f  push4_sites=[1292]  cmp_context=[]
+   0c751377  push4_sites=[1025]  cmp_context=[]
+   1aa02d59  push4_sites=[249]  cmp_context=[]
+   27e235e3  push4_sites=[1453]  cmp_context=[]
+   2e1a7d4d  push4_sites=[669]  cmp_context=[]
+   3f4ba83a  push4_sites=[525]  cmp_context=[]
+   4643c56b  push4_sites=[1369]  cmp_context=[]
+   48a3ef5c  push4_sites=[1397]  cmp_context=[]
+   5c975abb  push4_sites=[1425]  cmp_context=[]
+   6e8efde2  push4_sites=[962]  cmp_context=[]
+   8456cb59  push4_sites=[1088]  cmp_context=[]
+   8da5cb5b  push4_sites=[1342]  cmp_context=[]
+   b144adfb  push4_sites=[1233]  cmp_context=[]
+   d0e30db0  push4_sites=[25]  cmp_context=[]
+   e0749a6a  push4_sites=[899]  cmp_context=[]
+
+source set reconciliation (reference = M1 sites, all shapes):
+  M1_vyper_chain                                       n=15  MATCH  missing=[] extra=[]
+  M3_keccak_sigs                                       n=15  MATCH  missing=[] extra=[]
+  M2_planted_scan                                      n=15  MATCH  missing=[] extra=[]
+  PLANTED                                              n=15  MATCH  missing=[] extra=[]
+  PROBE:V-hex-6.4.0.json                               n=15  MATCH  missing=[] extra=[]
+  PROBE:V-hex-6.5.0.json                               n=15  MATCH  missing=[] extra=[]
+  PROBE:V-hex-6.7.0.json                               n=15  MATCH  missing=[] extra=[]
+  PROBE:V-raw-6.4.0.json                               n=15  MATCH  missing=[] extra=[]
+  PROBE:V-raw-6.5.0.json                               n=15  MATCH  missing=[] extra=[]
+  PROBE:V-raw-6.7.0.json                               n=15  MATCH  missing=[] extra=[]
+  PROBE:V-hex-6.4.0-scratch.json                       n=15  MATCH  missing=[] extra=[]
+  PROBE:V-raw-6.4.0-scratch.json                       n=15  MATCH  missing=[] extra=[]
+  PROBE:my-probe-carrierV-hex-6.4.0.json               n=15  MATCH  missing=[] extra=[]
+  PROBE:my-probe-carrierV-hex-6.7.0.json               n=15  MATCH  missing=[] extra=[]
+  PROBE:my-probe-carrierV-raw-6.4.0.json               n=15  MATCH  missing=[] extra=[]
+  PROBE:CarrierV-hex-6.4.0.json                        n=15  MATCH  missing=[] extra=[]
+  PROBE:CarrierV-hex-6.7.0.json                        n=15  MATCH  missing=[] extra=[]
+  PROBE:CarrierV-raw-6.4.0.json                        n=15  MATCH  missing=[] extra=[]
+  PROBE:CarrierV-hex-6.4.0-rerun.json                  n=15  MATCH  missing=[] extra=[]
+  PROBE:CarrierV-0xpref-6.4.0.json                     n=15  MATCH  missing=[] extra=[]
+  PROBE:CarrierV-altpath-6.4.0.json                    n=15  MATCH  missing=[] extra=[]
+
+probe legs — set, offsets vs my parse, landing, digest pins, form:
+  (Vyper-shape carrier: probe bytecodeOffset is expected to equal the
+   chain body offset — the fall-through target after the XOR/JUMPI —
+   which is NOT a JUMPDEST; the landing column is a shape reading.)
+  V-hex-6.4.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  V-hex-6.5.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  V-hex-6.7.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  V-raw-6.4.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  V-raw-6.5.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  V-raw-6.7.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  V-hex-6.4.0-scratch.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  V-raw-6.4.0-scratch.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  my-probe-carrierV-hex-6.4.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  my-probe-carrierV-hex-6.7.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  my-probe-carrierV-raw-6.4.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  CarrierV-hex-6.4.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  CarrierV-hex-6.7.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  CarrierV-raw-6.4.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  CarrierV-hex-6.4.0-rerun.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  CarrierV-0xpref-6.4.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+  CarrierV-altpath-6.4.0.json
+      set MATCH n=15  offsets equal  digest SAME  form OK
+      offsets landing: 0776076f@1303:byte=60,jumpdest=False; 0c751377@1036:byte=60,jumpdest=False; 1aa02d59@260:byte=60,jumpdest=False; 27e235e3@1464:byte=60,jumpdest=False; 2e1a7d4d@680:byte=60,jumpdest=False; 3f4ba83a@536:byte=34,jumpdest=False; 4643c56b@1380:byte=34,jumpdest=False; 48a3ef5c@1408:byte=34,jumpdest=False; 5c975abb@1436:byte=34,jumpdest=False; 6e8efde2@973:byte=60,jumpdest=False; 8456cb59@1099:byte=34,jumpdest=False; 8da5cb5b@1353:byte=34,jumpdest=False; b144adfb@1244:byte=60,jumpdest=False; d0e30db0@36:byte=60,jumpdest=False; e0749a6a@910:byte=60,jumpdest=False
+
+VERDICT: ALL SOURCES AGREE (sets+offsets+pins); Vyper-shape offsets land on chain body starts (fall-through), not JUMPDESTs — measured shape, not a defect

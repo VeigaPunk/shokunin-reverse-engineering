@@ -1,0 +1,56 @@
+== Vyper runtime legs (K=7 planted) ==
+  vy-runtime-hex-6.4.0.json      n=7 set_equal=True missing=[] extra=[]
+      decoded sha256=54b14e306bbaf761… file sha256=54b14e306bbaf761… equal=True
+  vy-runtime-raw-6.4.0.json      n=7 set_equal=True missing=[] extra=[]
+      decoded sha256=54b14e306bbaf761… file sha256=54b14e306bbaf761… equal=True
+  vy-runtime-hex-6.7.0.json      n=7 set_equal=True missing=[] extra=[]
+      decoded sha256=54b14e306bbaf761… file sha256=54b14e306bbaf761… equal=True
+  vy-runtime-raw-6.7.0.json      n=7 set_equal=True missing=[] extra=[]
+      decoded sha256=54b14e306bbaf761… file sha256=54b14e306bbaf761… equal=True
+  vy-runtime-0xhex-6.4.0.json    n=7 set_equal=True missing=[] extra=[]
+      decoded sha256=54b14e306bbaf761… file sha256=54b14e306bbaf761… equal=True
+
+== Vyper creation/initcode legs ==
+  vy-creation-hex-6.4.0.json     n=0 decoded_bytes=659 sha=f46a4e61e079d23d… completeness=unknown
+  vy-creation-raw-6.4.0.json     n=0 decoded_bytes=659 sha=f46a4e61e079d23d… completeness=unknown
+  vy-creation-hex-6.7.0.json     n=0 decoded_bytes=659 sha=f46a4e61e079d23d… completeness=unknown
+  vy-creation-raw-6.7.0.json     n=0 decoded_bytes=659 sha=f46a4e61e079d23d… completeness=unknown
+  vy-creation-0xhex-6.4.0.json   n=0 decoded_bytes=659 sha=f46a4e61e079d23d… completeness=unknown
+
+== solc 0.8.37 creation control (prior-round carrier) ==
+  solc-creation-hex-6.4.0.json   n=0 bytes=1655 sha=ac614a6e3a838aa2…
+  solc-creation-raw-6.4.0.json   n=0 bytes=1655 sha=ac614a6e3a838aa2…
+
+== reported bytecode_offset semantics (Vyper runtime) ==
+  0ff5ce72 off= 259 byte_at_off=0x60 is_jumpdest=False push4_pc=248 off-(pc+9)=2
+  191a62d4 off= 424 byte_at_off=0x34 is_jumpdest=False push4_pc=413 off-(pc+9)=2
+  2bec1547 off= 452 byte_at_off=0x60 is_jumpdest=False push4_pc=441 off-(pc+9)=2
+  2ddbd13a off= 231 byte_at_off=0x34 is_jumpdest=False push4_pc=220 off-(pc+9)=2
+  5c975abb off= 528 byte_at_off=0x34 is_jumpdest=False push4_pc=517 off-(pc+9)=2
+  8da5cb5b off= 501 byte_at_off=0x34 is_jumpdest=False push4_pc=490 off-(pc+9)=2
+  d0e30db0 off=  36 byte_at_off=0x60 is_jumpdest=False push4_pc=25 off-(pc+9)=2
+
+== inferred_state_mutability vs compiled ABI ==
+  0ff5ce72 set_paused(bool)         abi=nonpayable  inferred=payable   DIVERGES
+  191a62d4 get_total()              abi=view        inferred=view      MATCH
+  2bec1547 scale(uint256)           abi=pure        inferred=payable   DIVERGES
+  2ddbd13a total()                  abi=view        inferred=view      MATCH
+  5c975abb paused()                 abi=view        inferred=view      MATCH
+  8da5cb5b owner()                  abi=view        inferred=view      MATCH
+  d0e30db0 deposit()                abi=payable     inferred=payable   MATCH
+
+== typed error envelopes ==
+  nb-badencoding-6.4.0.json          code=VALIDATION_ERROR reason=               
+  nb-devnull-raw-6.4.0.json          code=invalid_request  reason=invalid_format Expected a regular file without a symlink: /dev/null
+  nb-directory-raw.json              code=invalid_request  reason=invalid_format Expected a regular file without a symlink: /var/tmp/ex09-r4/
+  nb-json-hex-6.4.0.json             code=invalid_request  reason=invalid_format Hex carrier requires complete hexadecimal byte pairs, an opt
+  nb-noencoding-6.4.0.json           code=VALIDATION_ERROR reason=               
+  nb-nonexistent-raw.json            code=invalid_request  reason=invalid_value  Selected bytecode carrier could not be read (ENOENT): /var/t
+  nb-symlink-raw-6.4.0.json          code=invalid_request  reason=invalid_format Expected a regular file without a symlink: /var/tmp/ex09-r4/
+  trap-hex-interior-space.json       code=invalid_request  reason=invalid_format Hex carrier requires complete hexadecimal byte pairs, an opt
+  trap-hex-odd-digits.json           code=invalid_request  reason=invalid_format Hex carrier requires complete hexadecimal byte pairs, an opt
+  trap-hex-over-rawbin-6.4.0.json    code=invalid_request  reason=invalid_format Hex carrier must be valid UTF-8.
+  trap-hex-over-rawbin-6.7.0.json    code=invalid_request  reason=invalid_format Hex carrier must be valid UTF-8.
+  trap-hex-over-vyrawbin-6.4.0.json  code=invalid_request  reason=invalid_format Hex carrier must be valid UTF-8.
+
+wrote /var/tmp/ex09-r4/verify-sealed.json

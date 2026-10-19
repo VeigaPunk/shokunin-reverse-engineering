@@ -1,0 +1,43 @@
+tool: /dev/shm/cr3-r4/tool-T2.py sha256=d92c663f6cd46e70
+sandbox HOME: /dev/shm/cr3-r4/atk-D/home
+
+-- D1 --out LINK/../.kimi-code/config.toml  (symlinked parent + .. to custody leaf)
+   cmd: capture capture --out /dev/shm/cr3-r4/atk-D/ld/../.kimi-code/config.toml --paths /dev/shm/cr3-r4/atk-D/victim.conf --label D1
+   exit=2  changed=none  traceback=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a measured path's sidecar name, or a custody path (path or inode): /dev/shm/c
+
+-- D2 --out LINK2/.kimi-code/config.toml  (symlinked parent straight to HOME)
+   cmd: capture capture --out /dev/shm/cr3-r4/atk-D/ld2/.kimi-code/config.toml --paths /dev/shm/cr3-r4/atk-D/victim.conf --label D2
+   exit=2  changed=none  traceback=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a measured path's sidecar name, or a custody path (path or inode): /dev/shm/c
+
+-- D3 --out HOP-A (2-hop symlink chain to ~/.profile)
+   cmd: capture capture --out /dev/shm/cr3-r4/atk-D/hop-a --paths /dev/shm/cr3-r4/atk-D/victim.conf --label D3
+   exit=2  changed=none  traceback=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a measured path's sidecar name, or a custody path (path or inode): /dev/shm/c
+
+-- D4 --out ~/.bashrc while --paths SYMLINK->~/.bashrc (inode arm)
+   cmd: capture capture --out /dev/shm/cr3-r4/atk-D/home/.bashrc --paths /dev/shm/cr3-r4/atk-D/sym-measured --label D4
+   exit=2  changed=none  traceback=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a measured path's sidecar name, or a custody path (path or inode): /dev/shm/c
+
+-- D5 --out LINK3/mcp_config.json (leaf is a custody file)
+   cmd: capture capture --out /dev/shm/cr3-r4/atk-D/ld3/mcp_config.json --paths /dev/shm/cr3-r4/atk-D/victim.conf --label D5
+   exit=2  changed=none  traceback=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a measured path's sidecar name, or a custody path (path or inode): /dev/shm/c
+
+-- D6 --out LINK2/../home/.bashrc (.. through a symlink to HOME)
+   cmd: capture capture --out /dev/shm/cr3-r4/atk-D/ld2/../home/.bashrc --paths /dev/shm/cr3-r4/atk-D/victim.conf --label D6
+   exit=2  changed=none  traceback=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a measured path's sidecar name, or a custody path (path or inode): /dev/shm/c
+
+-- D7 cwd=ROOT/a/b/c --out ../../../home/.bashrc
+   cmd: capture capture --out ../../../home/.bashrc --paths /dev/shm/cr3-r4/atk-D/victim.conf --label D7
+   exit=2  changed=none  traceback=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a measured path's sidecar name, or a custody path (path or inode): ../../../h
+
+-- D8 control --out FRESH/ok.txt
+   cmd: capture capture --out /dev/shm/cr3-r4/atk-D/fresh/ok.txt --paths /dev/shm/cr3-r4/atk-D/victim.conf --label D8
+   exit=0  changed=none  traceback=False
+   receipt exists: True
+   sidecar exists: True

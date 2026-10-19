@@ -1,0 +1,92 @@
+=== VZ-4 cross-cutting finding: Vyper K/K comparison traps (first-hand) @ 2026-10-19T14:08:05Z ===
+
+Carrier: claims/c1/EX-04/src/CarrierV.vy  sha256 f4f94727653508fdae2cbc12cb9fcc4de5c8c8bdb29b6bb90feabcab9bdb4b63
+Runtime: claims/c1/EX-04/out/runtime.hex  1562 bytes  (file sha256 e0b1021c68f8de8c3f049f4242769548b6f8271a00986f2ab20f049f8748a192)
+Compiler: wave venv vyper 0.4.3+commit.bff19ea2
+
+TRAP 1 — vyper -f method_identifiers emits the fallback as a pseudo-entry.
+  vyper prints 16 entries including '__default__()': '0x89402a72'.
+  The compiled ABI declares that as {type:fallback, payable} — NOT a function. ABI function count = 15.
+  Byte check: 89402a72 does NOT occur as any PUSH4 immediate in the 1562-byte runtime.
+  PUSH4 immediates present (17 distinct): 0776076f 08c379a0(x6) 0c751377 1aa02d59 27e235e3 2e1a7d4d 3f4ba83a 4643c56b 48a3ef5c 5c975abb 69656e74 6e8efde2 8456cb59 8da5cb5b b144adfb d0e30db0 e0749a6a
+  08c379a0 = Error(string) revert selector (not a dispatch entry); 69656e74 = ASCII 'ient' fragment of a revert string.
+  => the correct K set is the 15 ABI functions; __default__ must be EXCLUDED from both sides.
+
+TRAP 2 — vyper strips leading zeros in its hex rendering.
+  vyper prints 'fee_of(uint256,uint256)': '0xc751377'   (7 hex digits) = canonical 0x0c751377
+  vyper prints 'is_owner(address)':       '0x776076f'   (7 hex digits) = canonical 0x0776076f
+  An independent keccak (EX-04/evidence/keccak256.py, run by VZ-4) yields 0c751377 / 0776076f.
+  => a naive string/set comparison of the probe's selectors against raw vyper output reports 2 spurious 'missing'.
+     Compare on zero-padded 8-hex-digit (or int) forms.
+
+VZ-4 independent probe result (rea-agents@6.4.0, hex leg, disk-backed TMPDIR):
+  evidence_id ev_d1792f577ae3611615fd8dbcb1ce2e71dae4e0346b66d72b41321f4644df963f
+  functions 15, all dispatch=abi; recovered == planted K (15) == ABI-derived set (15); zero missing / zero extra.
+  decoded bytecode.sha256 57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0
+
+--- REFINEMENT (VZ-4, after reading the C1 seats' scripts) ---
+Both traps are ALREADY handled by the C1 seats' own tooling, so they are
+confirmation of the chain's discipline rather than defects:
+
+  * EX-04/evidence/record-planted-K.py:23
+      "# `__init__` and `__default__` are excluded: neither is a dispatch selector."
+    and its verify-report.json records abi_function_count 15, planted 15,
+    planted_missing [], abi_set_equals_planted true — with
+    `method_identifiers_match_abi: false` recorded EXPLICITLY plus the key-diff
+    {"only_in_method_identifiers": ["__default__()"]} — i.e. the seat saw the
+    pseudo-entry and adjudicated it in the open rather than silently dropping it.
+  * EX-05/derive-siglist.py:11,95 excludes `__init__`/`__default__`;
+    EX-05/verify-planted.py:75 normalizes with `{k: v[2:].zfill(8)}`.
+
+Cross-cutting value for the wave summary: any K/K claim on a Vyper carrier that
+declares a fallback (`__default__`) must state the comparison basis (ABI
+functions only, zero-padded 8-hex), or it will read as 2 spurious mismatches.
+VZ-4's independent probe reproduces 15/15 K/K on the correct basis.
+
+=== TRAP 3 (new this round, first-hand) — Vyper offsets land AFTER JUMPI, not on JUMPDEST ===
+VZ-4 probe of three independent on-host Vyper 0.4.3 runtimes, all hex legs, rea-agents@6.4.0:
+
+  CarrierV (EX-04) 15/15   on JUMPDEST=0   immediately after JUMPI(0x57)=15   other=0
+  CarrierW (PL-1)   9/9    on JUMPDEST=0   immediately after JUMPI(0x57)=9    other=0
+  Smoke    (EX-02)  4/4    on JUMPDEST=0   immediately after JUMPI(0x57)=4    other=0
+
+Sample: CarrierV 0xd0e30db0 off=36 op=0x60 prev=0x57 ; 0x3f4ba83a off=536 op=0x34 prev=0x57.
+
+This DIFFERS from the solc carriers of r1/r3, where every probe offset was measured to
+land ON a JUMPDEST (0x5b). The Vyper dispatcher jumps to the instruction AFTER the
+JUMPI — the callee body itself, not a JUMPDEST landing pad. So the r3 entry's
+"offsets land on JUMPDEST" reading does NOT generalize to Vyper, and a checker that
+asserts JUMPDEST-ness would report 0/15 on a perfectly recovered Vyper carrier.
+
+The correct Vyper-side structural reading is "the offset's preceding byte is JUMPI (0x57)"
+— which holds 15/15, 9/9, 4/4 above. PL-1 independently measured the same shape
+(claims/c1/PL-1/evidence/verify.txt: "offsets on JUMPDEST: 0/15 ... preceded by JUMPI(0x57): 15/15").
+=> Landing note for the C1 entry: state the Vyper offset convention explicitly, or the
+   entry's structural claim will read as a 0/15 failure on its own carriers.
+
+=== CORRECTION (VZ-4, rule #14 — my own earlier claim was wrong) ===
+My TRAP 3 note above listed the PUSH4 immediates of CarrierV's runtime as including
+`69656e74` and described it as "ASCII 'ient' fragment of a revert string". The ASCII
+identification was right; its PLACEMENT was wrong. An opcode-boundary walk (VZ-4,
+independent, 14:15Z) gives:
+
+  PUSH4 immediates: 16 distinct —
+    0776076f 08c379a0 0c751377 1aa02d59 27e235e3 2e1a7d4d 3f4ba83a 4643c56b
+    48a3ef5c 5c975abb 6e8efde2 8456cb59 8da5cb5b b144adfb d0e30db0 e0749a6a
+  69656e74 as a PUSH4 immediate?  FALSE
+  08c379a0 as a PUSH4 immediate?  TRUE, count 6
+  69656e74 inside a PUSH32 payload? TRUE — PUSH32 at 0x2d3, payload
+    696e73756666696369656e740000…, decoded ASCII "insufficient"
+
+So `69656e74` is a substring of the revert string `insufficient` carried in a
+PUSH32 payload, NOT a PUSH4 immediate. The CONCLUSION I drew (zero false positives;
+the probe reported no non-selector constant as a function) is unchanged and still
+true — only my stated mechanism was wrong. RV-1 and VZ-1 sustained the same defect
+in the C1 entry draft (verdict debt F1) and RV-1 has a patch text
+(`RV-1/proposed-entry-correction.patch.md`). My earlier evidence file has been left
+as written and corrected here rather than silently edited.
+
+Cross-check: my probe id for EX-04's runtime at the repo path is `ev_d1792f57…` —
+BYTE-IDENTICAL to VZ-1's independent run at the same path with the same request
+(`VZ-1/evidence/`), confirming the same-path/same-request id determinism the r3
+entry recorded.

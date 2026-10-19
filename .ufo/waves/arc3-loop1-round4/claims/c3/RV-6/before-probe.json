@@ -1,0 +1,32 @@
+[
+  {
+    "probe": "A-sidecar-scope",
+    "verdict": "CLOBBERED",
+    "detail": "exit=0\nvictim sha256 before=140aba3932dd24cd9b29048150fed852db1e209860e207c34df1bf1cbe9de0e2 after=5dbcef1616b57dfc5dce68ad8bbf7cfb1c247a1d9ce083a000909089b403b5a5\nvictim bytes changed=True\nstdout:\nRECEIPT: /var/tmp/rv6/w4/scratch/rv6-probe-vgwbmgps/a/vic  sha256=292c87fda7ca5743dd6e63c10292d67a12af5b657ef69009abfc968b9157cf72\nSIDECAR: /var/tmp/rv6/w4/scratch/rv6-probe-vgwbmgps/a/vic.sha256\nCUSTODY_PAIR_CAPTURE: OK paths=1/1 label=rv6-a exit=0\nstderr:\n"
+  },
+  {
+    "probe": "B-mkdir-traceback",
+    "verdict": "TRACEBACK exit=1",
+    "detail": "exit=1  traceback=True\nstderr:\nTraceback (most recent call last):\n  File \"/var/tmp/rv6/w4/tool-r3-7cd19c3c.py\", line 1155, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File \"/var/tmp/rv6/w4/tool-r3-7cd19c3c.py\", line 1151, in main\n    return args.func(args)\n           ~~~~~~~~~^^^^^^\n  File \"/var/tmp/rv6/w4/tool-r3-7cd19c3c.py\", line 653, in cmd_capture\n    out.parent.mkdir(parents=True, exist_ok=True)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.14/pathlib/__init__.py\", line 1011, in mkdir\n    os.mkdir(self, mode)\n    ~~~~~~~~^^^^^^^^^^^^\nNotADirectoryError: [Errno 20] Not a directory: '/var/tmp/rv6/w4/scratch/rv6-probe-vgwbmgps/b/pfile.txt/sub'\nstdout:\n"
+  },
+  {
+    "probe": "C1-dupe-stanza-gate",
+    "verdict": "PASS exit=0",
+    "detail": "capture exit=0 stanzas=5\nverify --require-paths 5 exit=0\nREFERENCE-COVERAGE lines: (none)\nverdict line: ['VERDICT: MATCH  paths=1  MATCH=1  exit=0']\nstderr: "
+  },
+  {
+    "probe": "C2-noncanonical-five-gate",
+    "verdict": "PASS exit=0",
+    "detail": "verify --require-paths 5 exit=0\nREFERENCE-COVERAGE lines: (none)\nverdict: ['VERDICT: MATCH  paths=5  MATCH=5  exit=0']\nstderr: "
+  },
+  {
+    "probe": "D-selftest",
+    "verdict": "CLEAN",
+    "detail": "['CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0']\nfailing cases: (none)\nexit=0"
+  },
+  {
+    "probe": "E-live-pair",
+    "verdict": "MATCH exit=0",
+    "detail": "capture pre exit=0 post exit=0\nverify exit=0\nverdict: ['VERDICT: MATCH  paths=5  MATCH=5  exit=0']\n['CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0']"
+  }
+]

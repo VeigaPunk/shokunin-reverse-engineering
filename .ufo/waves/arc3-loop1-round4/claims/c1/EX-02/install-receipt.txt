@@ -1,0 +1,251 @@
+================================================================================
+INSTALL RECEIPT — python package `vyper` (isolated venv)
+Wave:  arc3-loop1-round4   Seat: EX-02 (chain c1, executor)
+Date:  2026-10-19 (UTC-03)  Repo HEAD at install: 015e1bab914713568f339fd53999bc180459cc40
+Host:  Linux 7.2.3-arch1-3 x86_64 | python3 -> /usr/bin/python3.14 | Python 3.14.7
+Status: SUCCESS. The round's one authorized install; nothing else was installed.
+================================================================================
+
+1. PACKAGE IDENTITY
+--------------------------------------------------------------------------------
+  package name:        vyper
+  exact version:       0.4.3
+  compiler string:     0.4.3+commit.bff19ea2   (`vyper --version`, exit 0)
+  distribution file:   vyper-0.4.3-py3-none-any.whl   (403,104 bytes)
+  wheel sha256:        3b9671727c888363740dc678e60336759871487d0e4e9fdd973048fa9635c4fd
+  sdist (not used):    vyper-0.4.3.tar.gz sha256 22a7573657401d8a3bc690d65d6b7741680007180978c3a05f9892db31d5dcf5
+  requires_python:     <4,>=3.10
+  PyPI upload:         2025-06-18T20:09:52.400542Z, yanked=false
+
+  Source of sha256: a fresh `pip download --no-cache-dir` in this seat, hashed on
+  disk, and it equals the digest PyPI itself publishes for that file
+  (https://pypi.org/pypi/vyper/0.4.3/json -> urls[].digests.sha256). Three further
+  derivations agree byte-for-byte: this seat's first (cached) download, the copy
+  staged in this artifact directory, and EX-01's independent census pin
+  (`claims/c1/EX-01/env-census.txt` §7). Four derivations, two seats, one value.
+  The staged copy is re-hashed by `attest.py` on every run.
+
+  Installed-distribution check: the wheel payload expands to 157 files that are
+  byte-identical to the installed tree, plus the wheel's `RECORD` (pip rewrites it
+  at install time — expected) and one `.data/` entry that pip relocates to the venv
+  prefix (present, byte-identical). See §6.
+
+2. INTERPRETER
+--------------------------------------------------------------------------------
+  selected:   /usr/bin/python3.14  (sha256 d78f9cf7178ecff09963551399855543c297f37ac207e626228bfe43cb26a70c)
+  version:    Python 3.14.7
+  venv cfg:   home = /usr/bin | include-system-site-packages = false | version = 3.14.7
+              executable = /usr/bin/python3.14
+              command = /usr/bin/python3 -m venv .../arc3-loop1-round4/tools/vyper-venv
+
+  Chosen over the on-disk CPython 3.11.17 / 3.12.15 / 3.13.16 because the frozen
+  seat line's literal command is `python3 -m venv`, and on this host `python3` is
+  3.14.7 (EX-01's census §1-§3 records the same resolution). No interpreter was
+  downloaded; no interpreter other than /usr/bin/python3.14 was used.
+
+3. THE ONE CAVEAT, AND HOW IT RESOLVED
+--------------------------------------------------------------------------------
+  vyper 0.4.3 depends on `immutables`, which publishes NO cp314 wheel
+  (EX-01 census §9; independently re-confirmed by this seat's `pip download
+  --only-binary=:all:` probe). On py3.14 the requirement is therefore satisfiable
+  only by building `immutables` from its sdist.
+
+  Pre-install verdict (EX-01's census, §10-§11): viable — the toolchain is present
+  (gcc, clang, rustc, make, /usr/include/python3.14/Python.h) and EX-01 built the
+  wheel successfully in isolation. This seat's independent rehearsal agreed and the
+  authorized install then succeeded first try. The honest-stop branch (venv
+  infeasible -> record, not verified) was NOT taken.
+
+  Note on the frozen claim's "one bounded attempt": this seat rehearsed the exact
+  plain command in scratch venvs under /var/tmp (twice, plus one `--dry-run`) before
+  touching the target path. Rehearsals are pip resolution/compile probes in throwaway
+  directories; they are not additional installs into any real or receipted location.
+  Disclosed here because the difference matters to the record, not hidden.
+
+4. INSTALL COMMAND AND RESULT
+--------------------------------------------------------------------------------
+  cwd:     /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+  step 1:  python3 -m venv .ufo/waves/arc3-loop1-round4/tools/vyper-venv
+           -> exit 0, 1.111s
+  step 2:  .ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/pip install vyper
+           -> exit 0, 0.711s
+  output:  "Successfully installed asttokens-3.0.2 cbor2-5.9.0 immutables-0.21
+            lark-1.3.1 packaging-26.3 pycryptodome-3.24.1 vyper-0.4.3 wheel-0.48.0"
+
+  Full transcript: install.log (this directory). Install path:
+  .ufo/waves/arc3-loop1-round4/tools/vyper-venv/  (31 MB, 1,993 files)
+  Console scripts installed: bin/vyper, bin/vyper-json, bin/venom, bin/fang
+
+  Resolution provenance (honest detail): pip consumed `immutables-0.21-cp314-
+  cp314-linux_x86_64.whl` from its local build cache. That cache entry is mtime
+  11:05:28-03, i.e. built by THIS SEAT's scratch rehearsal at 11:04-11:05, and it is
+  staged here (sha256 63cc2954d6009065c543fa213f3f9541aa13e15b282ae59263a411c47e2c3c5d).
+  It is NOT the wheel EX-01 built: EX-01's is 97364 B / sha256 de9ab13c…, this one is
+  97352 B / sha256 63cc2954…. Locally-built wheels are not bit-reproducible
+  (build metadata differs); both are functional. The sdist they were both built from
+  is PyPI-attested at sha256 b55ffaf0449790242feb4c56ab799ea7af92801a0a43f9e2f4f8af2ab24dfc4a
+  (re-downloaded and re-hashed by this seat, matching). No claim of a reproducible
+  build hash is made for immutables.
+
+5. DEPENDENCY TREE (pip freeze) — every wheel hash PyPI-attested AND locally re-derived
+--------------------------------------------------------------------------------
+  asttokens==3.0.2      9da13157f5b28becde0bd374fc677dcd3c290614264eff096f167c469cd9f933
+  cbor2==5.9.0          422817286c1d0ce947fb2f7eca9212b39bddd7231e8b452e2d2cc52f15332dba
+  immutables==0.21      63cc2954d6009065c543fa213f3f9541aa13e15b282ae59263a411c47e2c3c5d  (locally built, §4)
+  lark==1.3.1           c629b661023a014c37da873b4ff58a817398d12635d3bbb2c5a03be7fe5d1e12
+  packaging==26.3       d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
+  pycryptodome==3.24.1  93619c3117a8f14ea1267b427e465d152a66c89c3d3c643262070c05b2855aae
+  vyper==0.4.3          3b9671727c888363740dc678e60336759871487d0e4e9fdd973048fa9635c4fd
+  wheel==0.48.0         3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab
+
+  All eight wheels are staged in this artifact directory so the attestation can be
+  re-run offline. Interpreter-level identity of the venv:
+    venv manifest 1,154 files, sha256 63cb21852eaff06f54c4c54680e22228f24f99482aab082be10ee18a91135219
+    (venv-manifest.sha256; re-derived a second time after the install — identical, no drift)
+
+6. INSTALLED-TREE ATTESTATION (run, not assumed)
+--------------------------------------------------------------------------------
+  `python3 attest.py` — exit 0, "ALL CHECKS PASS" (attest-output.txt):
+    interpreter identity (3 checks) ............................ PASS
+    all 8 recorded wheels vs attested digests .................. PASS
+    vyper payload vs pinned wheel (157 files) .................. PASS  (differ=0 missing=0)
+    relocated .data/ payload at venv prefix .................... PASS
+    dependency payloads vs their wheels:
+      immutables 1/1, cbor2 10/10, asttokens 8/8, pycryptodome 346/346,
+      packaging 23/23, lark 40/40, wheel 15/15 ................. PASS  (differ=0 missing=0)
+    operability: --version, smoke selector derivation .......... PASS
+
+  The only two wheel-vs-installed deltas are accounted for exactly:
+    - `vyper-0.4.3.dist-info/RECORD` — pip rewrites it (records `__pycache__`,
+      `INSTALLER`, `REQUESTED` and 5 prefix-relative paths for the console scripts).
+      Set reconciliation: wheel has 159 entries; installed has 165 non-pycache
+      entries = 159 − 1 (`.data` path) + 4 (bin scripts) + 1 (relocated
+      vyper_git_commithash.txt) + 2 (INSTALLER, REQUESTED). Exact.
+    - `vyper-0.4.3.data/data/vyper_git_commithash.txt` — installed by pip to the venv
+      prefix (and to site-packages/vyper/), both byte-identical to the wheel copy
+      (sha256 5064033b27edd58fcc174dc763d54b6501cc4e1f09f6336601ab75b0c5d1cbd1).
+
+7. OPERABILITY VERIFICATION (run, not assumed)
+--------------------------------------------------------------------------------
+  a) `.../vyper-venv/bin/vyper --version` -> `0.4.3+commit.bff19ea2` (exit 0).
+     The git-commithash trailer agrees with the wheel's own
+     `vyper_git_commithash.txt` content (`bff19ea2`) — internal consistency.
+
+  b) Real compilation of two carriers, run against the TARGET venv. Sizes are
+     decoded byte counts (the `0x` text prefix is not part of the byte stream):
+     - `smoke/Smoke.vy` (4 selectors): ABI + bytecode + runtime emitted, exit 0.
+       creation 248 B / runtime 168 B.
+     - `smoke/T5-multifeature.vy` (struct + bool + event + payable + public getter):
+       exit 0; 3 selectors; creation 261 B / runtime 181 B. The compiler emits a live
+       Deprecation for positional event args — evidence it is the real 0.4.3
+       semantics module, not a stub.
+
+  c) Ground-truth selectors, derived TWICE inside the same venv and agreeing 4/4:
+     - `vyper -f method_identifiers Smoke.vy` (vyper's own ABI-derived set):
+         increment() 0xd09de08a | get() 0x6d4ce63c | owner() 0x8da5cb5b | counter() 0x61bc221a
+     - independent keccak256 over the ABI-derived signatures via pycryptodome
+       (the venv's own dependency): same four values.
+     All four constants occur verbatim in the runtime bytes, and every dispatch
+     target is a real JUMPDEST — byte-level check, not a reading of the tool's
+     self-report. The earlier draft of this receipt stated offsets 21/45/69/95;
+     those numbers were wrong (guessed, then caught by running the check) and are
+     superseded by the measured table in (d). Recorded rather than quietly fixed.
+
+  d) Dispatch-shape observation for the c1 chain (measured, not inferred): both
+     carriers' runtime prologues are the `5f3560e01c` class — the SAME class the
+     round-3 solc carriers used — so the Vyper leg can be probed by the r3 recipe
+     unchanged. Measured dispatch geometry (`smoke/dispatch-analysis.txt`, and the
+     JUMPDEST census in the same run):
+
+       Smoke.runtime.hex (168 B; prologue `5f3560e01c 60026003820660011b 6100a201601e39 5f5156`)
+         EQ-chain PUSH4 sites and their PUSH2 jump targets, all landing on 0x5b:
+           d09de08a increment()  PUSH4@25  -> 71
+           6d4ce63c get()        PUSH4@72  -> 154
+           8da5cb5b owner()      PUSH4@100 -> 126
+           61bc221a counter()    PUSH4@127 -> 154
+         plus a compact jump table: PUSH2 base = 162 (0x00a2) with three 2-byte
+         entries at 162/164/166 -> 99, 24, 154 (all 0x5b). 0x5b bytes at
+         [24, 71, 99, 104, 126, 154, 158].
+       T5.runtime.hex (181 B; prologue `…6100af01601e39…`)
+           16c38b3c setPaused(bool) PUSH4@25  -> 167
+           d0e30db0 deposit()       PUSH4@120 -> 167
+           5c975abb paused()        PUSH4@141 -> 167
+         jump-table base 175 (0x00af) -> 119, 140, 24 (all 0x5b); 0x5b bytes at
+         [24, 119, 140, 167, 171].
+
+     Two notes for whoever probes these carriers. (i) Vyper 0.4.x emits BOTH an
+     EQ comparison chain and a 2-byte jump table — a shape the r3 solc carriers did
+     not have — so "offset lands on JUMPDEST" holds here but the offsets are a
+     mixture of EQ-chain targets and table entries; the `dispatch:"abi"` reading on
+     such a shape is exactly what the c1 probe seats should test. (ii) Unlike the
+     r3 solc carriers, `6d4ce63c` and `61bc221a` in Smoke (and all three in T5)
+     share one jump target — Vyper merges identical function bodies, so per-selector
+     offsets are not distinct here. Both are dispatch-class datapoints, not probe
+     results; the probe itself belongs to the c1 probe seats.
+
+8. SCOPE DISCIPLINE
+--------------------------------------------------------------------------------
+  - Installed: exactly one package (`vyper`) plus its declared dependencies, into
+    `.ufo/waves/arc3-loop1-round4/tools/vyper-venv/`. Nothing else was installed.
+  - Host `python3` still cannot import vyper (checked after the install); the venv
+    is `include-system-site-packages = false` and does not leak either way.
+  - Before-state confirmed by measurement, not assumption: `command -v vyper`,
+    `vyper-json`, `venom`, `fang` all absent; `import vyper` fails on both
+    /usr/bin/python3.14 and python3.11; no vyper in system site-packages. The install
+    is a genuine before→after change (absent -> 0.4.3).
+  - Custody paths READ-ONLY: only `ls`/`stat`/`sha256sum` were run against
+    `.ufo/gates/custody-pair/`; no file there was modified by this seat (checked with
+    `find -newermt` over this seat's window: empty), and no custody demo was run.
+    Capture: custody-stat-readonly.txt. That capture is a **dated snapshot**
+    (11:06:07 local): `custody-pair.py` sha256
+    `7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09` (54,279 B,
+    mtime 10:13:20) and `README.md` sha256
+    `f30df42e0a547a0aefd21590c0f975acf06d91161fcb6db77c8934960efeb193` (9,603 B).
+    **Subsequent change, observed and NOT this seat's**: at 11:09:25 `custody-pair.py`
+    was rewritten (65,902 B, now sha256
+    `29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf`; README.md
+    also touched, 9,684 B at 11:09:33). This is C3's authorized implementer (EX-21),
+    the one seat the frozen rules permit to write that path, landing its chain's
+    residual closures — expected, not drift and not tampering. It happened after this
+    seat's snapshot and after this seat's last write to the target, so it does not
+    affect anything this receipt attests. Flagged explicitly so no one compares the
+    receipt's custody hash against the live file and concludes the receipt is wrong:
+    the receipt is a point-in-time capture and says so.
+  - No git mutation. `git status --porcelain` (read-only) shows only
+    `?? .ufo/waves/arc3-loop1-round4/` (this wave's dir) plus a pre-existing
+    `M .ufo/waves/arc2-loop1-round10/C3.md` whose mtime is 2026-10-18 23:01 —
+    before this seat opened; not this seat's work.
+  - Scratch: /var/tmp/ex02 only. Never /tmp. (Observation for the round record:
+    /tmp is currently WRITABLE — a 2 MiB `dd` write succeeded — so the round-1
+    EDQUOT condition has lapsed. This seat kept /tmp off-limits regardless and
+    removed its own probe file.)
+
+9. FILES PRODUCED BY THIS SEAT (all under claims/c1/EX-02/)
+--------------------------------------------------------------------------------
+  install-receipt.txt                     (this file)
+  install.log                             (verbatim install transcript, §4)
+  attest.py                               (re-runnable attestation; exit 0 = clean)
+  attest-output.txt                       (its "ALL CHECKS PASS" run)
+  venv-manifest.sha256                    (1,154-file hash manifest of the venv)
+  custody-stat-readonly.txt               (read-only custody capture + drift check)
+  vyper-0.4.3-py3-none-any.whl            (staged, hash-pinned)
+  immutables-0.21-cp314-cp314-linux_x86_64.whl  (staged, locally built, §4)
+  asttokens-3.0.2-py3-none-any.whl        cbor2-5.9.0-cp314-…whl
+  pycryptodome-3.24.1-cp37-abi3-…whl      packaging-26.3-py3-none-any.whl
+  lark-1.3.1-py3-none-any.whl             wheel-0.48.0-py3-none-any.whl
+  smoke/Smoke.vy  smoke/Smoke.abi.json  smoke/Smoke.bytecode.hex  smoke/Smoke.runtime.hex
+  smoke/method-identifiers.txt  smoke/compile-receipt.txt
+  smoke/T5-multifeature.vy  smoke/T5.abi.json  smoke/T5.bytecode.hex  smoke/T5.runtime.hex
+  smoke/T5.method-identifiers.txt
+  Seat report: .ufo/waves/arc3-loop1-round4/seats/EX-02.md
+
+10. HANDOFF TO THE c1 PROBE SEATS
+--------------------------------------------------------------------------------
+  compiler: .ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper
+  version:  0.4.3+commit.bff19ea2
+  invocation for carriers: `.../vyper-venv/bin/vyper -f bytecode_runtime,abi <file.vy>`
+  Reminder from this seat's own mistakes while building carriers (they cost three
+  failed compiles and are worth knowing before writing Vyper sources): in 0.4.x
+  `flag` is a reserved keyword (use another name), `bool` is fine as a type, state
+  variables must precede events, and positional event args are deprecated.
+================================================================================

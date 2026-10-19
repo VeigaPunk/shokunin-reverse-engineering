@@ -1,0 +1,38 @@
+=== RV-1 corrected PUSH4 census — EX-04 CarrierV runtime (1562 B) ===
+sha256: 57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0
+Method: linear disassembly from pc=0, skipping every PUSH payload.
+        An immediate counts ONLY if it begins at an opcode boundary.
+
+distinct PUSH4 immediates at opcode boundaries: 16
+  0776076f  sites=1 SELECTOR  [1292]
+  08c379a0  sites=6 NON-SELECTOR  [141, 376, 501, 647, 809, 1210]
+  0c751377  sites=1 SELECTOR  [1025]
+  1aa02d59  sites=1 SELECTOR  [249]
+  27e235e3  sites=1 SELECTOR  [1453]
+  2e1a7d4d  sites=1 SELECTOR  [669]
+  3f4ba83a  sites=1 SELECTOR  [525]
+  4643c56b  sites=1 SELECTOR  [1369]
+  48a3ef5c  sites=1 SELECTOR  [1397]
+  5c975abb  sites=1 SELECTOR  [1425]
+  6e8efde2  sites=1 SELECTOR  [962]
+  8456cb59  sites=1 SELECTOR  [1088]
+  8da5cb5b  sites=1 SELECTOR  [1342]
+  b144adfb  sites=1 SELECTOR  [1233]
+  d0e30db0  sites=1 SELECTOR  [25]
+  e0749a6a  sites=1 SELECTOR  [899]
+
+non-selector immediates: ['08c379a0']
+selectors present as PUSH4: 15 / 15
+
+=== the disputed bytes 69656e74 ===
+raw occurrences: [732]
+  offset 732 is INSIDE a PUSH32 payload at pc=723
+  payload hex: 696e73756666696369656e740000000000000000000000000000000000000000
+  payload ASCII: b'insufficient\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+  -> NOT an opcode-boundary immediate; it is a substring of the
+     revert string 'insufficient' padded into a PUSH32 word.
+
+VERDICT: the claim that 69656e74 is a 'non-selector PUSH4 immediate' is
+REFUTED. The correct non-selector PUSH4 census is ['08c379a0'] only.
+The zero-false-positive conclusion is UNCHANGED (the probe reported
+exactly the 15 planted selectors and nothing else).

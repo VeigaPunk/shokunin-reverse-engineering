@@ -1,0 +1,47 @@
+== VZ-2 r4 — EX-14 v2 patch (0b8ad045...): independent re-apply + full constraint set ==
+date: 2026-10-19T14:16:25Z
+patch sha256: 0b8ad045e19cee5a3120706853f9950bb90522b2ebaebb418db25f586c21d9a8
+tree under audit: /var/tmp/vz2r4/v2/tree/PROVINCE.md
+before: d075a3c67e17ae428eb5a69e594171c6dcba88ec93c97bd3cf162a2f2b4dbdad  162 lines
+after : 69ceea9b5f9aa5958af45d85a1f757b943a6be553f378d44b51c809b0787c9c5  162 lines
+hunks : 6/6 applied (patch --batch --forward, fuzz 1 each)
+census: PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0), G2 17/14/3
+
+-- clause audit: all six stale rows --
+  F1b: repaired (old literal gone)
+  F3: repaired (old literal gone)
+  F5b: repaired (old literal gone)
+  X1: repaired (old literal gone)
+  C1: repaired (old literal gone)
+  R2: repaired (old literal gone)
+
+-- repaired rows in full --
+  :62  | Host fallback readers | `file`, `readelf`, `objdump`, `llvm-readobj`, `nm`, `strings`, `unzip`, `tar`, `gdb`, `eu-stack`, `coredumpctl`, `pacman`, `zstd`, `gpg`, `python3`, node/npx, `7z`, `xxd`, `radare2`, `strace`, `upx` | `command -v <tool>` | absent: `cabextract`, rizin, ltrace, pacman-contrib |
+  :83    procedures via Ghidra). ARM64X hybrids untested; the 91MB scale wall is closed (arc2-r7).
+  :88    JEB (probed; operator-gated). Engine installs are operator-owned.
+  :92    (Core, r3-07); real solc-0.8.37 (arc3-r1/r3) and Vyper 0.4.3 (r4) legs held
+  :93    K/K (RESULT-class); selectors stay bare hashes (no signature DB → no name).
+  :158   refused since r2: r12-02 drained the row with two success legs; multi-version
+
+-- content defect (R4) fixed? --
+  92:  (Core, r3-07); real solc-0.8.37 (arc3-r1/r3) and Vyper 0.4.3 (r4) legs held
+  corpus r1/r3 entries both read 'RESULT-class, no Core promotion'
+  => v2 drops Core/held for those legs and marks them RESULT-class;
+     it keeps '(Core, r3-07)' for the synthetic dispatcher, which is the Core row's own cite
+
+-- probe anchors intact --
+  :18 '17:55:49Z receipt' -> 17:55:49Z receipt
+  :18 'rea-agents@6.7.0'  -> rea-agents@6.7.0
+  SHONEN:12 range 88-116 holds safety clause -> True
+  DATED :40 marker -> 2026-10-13
+  DATED :45 marker -> 2026-10-13
+  DATED :119 marker -> 2026-10-13
+  F5c 'bare hashes' still present -> 1
+
+-- needle-freedom, measured with the census's own regexes --
+  no PIN / VER / PTR token on any added line (:62, :83, :88, :92, :93, :141-143, :158-159).
+  :62 matches REA_GATE (it names tool names) but carries no pin/version/pointer, so it
+  produces no locus; the census reads the same PASS as the baseline.
+
+VERDICT OF THIS MEASUREMENT: v2 repairs all six stale rows at a held line count (162),
+clears every landing constraint, and fixes the content defect. stale count 6 -> 0.

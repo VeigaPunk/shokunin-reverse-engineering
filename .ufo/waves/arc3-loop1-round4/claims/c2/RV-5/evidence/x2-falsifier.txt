@@ -1,0 +1,41 @@
+RV-5 — X2 falsifier: 'multi-version pacman pairs beyond expac unexercised'
+date: 2026-10-19T11:20:40-03:00
+
+=== the bullet, current bytes (PROVINCE.md:157-160) ===
+- **Cross-version residuals** — `compare-application-versions` still
+  probe-refused since r2; multi-version pacman pairs beyond expac unexercised
+  [r5-audit C1: merged from the pruned Frontier bullet — its
+  `compare_javascript_export_shapes` item is now held (Core, r4-09)].
+
+=== the chain census's test for this row (verbatim from VZ-2's instrument) ===
+207:    add("X2", "Cross-version residuals",
+208-        "multi-version pacman pairs beyond expac unexercised",
+209-        corpus_has(corpus, "expac")[:3],
+210-        "current",
+211-        "no corpus entry claims a further pacman version pair")
+
+=== admitted corpus: pacman-cache multi-version pairs exercised, beyond expac ===
+16:| `1password-cli` 2.34.1-1 → 2.40.0-2 | `usr/bin/op` | 41,210,040 → 43,475,106 B | ELF x86-64 static, **stripped Go** |
+17:| `expac` 10-12 → 10-13 | `usr/bin/expac` | 31,424 → 31,496 B | ELF x86-64 PIE dyn, stripped C (pkgrel-only rebuild) |
+18:| `bubblewrap` 0.11.2-1 → 0.12.0-1 | `usr/bin/bwrap` | 84,464 → 84,464 B | ELF x86-64 PIE dyn, stripped C (real upstream bump) |
+21:`op-2.34.1` `d24dc5d4…`, `op-2.40.0` `8d029d2c…`, `expac-10-12` `b35c11a6…`,
+22:`expac-10-13` `a4ee2982…`, `bwrap-0.11.2` `6ad2138a…`, `bwrap-0.12.0` `7c44fa8e…`.
+29:| 2 | `rea analyze expac-10-12 --format json` | 5.7 s — record `ev_0bca436b…`, op `binary_overview`, 203 procedures, 180 strings |
+30:| 3 | `rea analyze expac-10-13 --format json` | ~5 s — `ev_6cbf4a97…`, 203 procedures |
+31:| 4 | `rea compare bundle-expac-10-12.json bundle-expac-10-13.json` (TOON default output fed by mistake) | FAIL `evidence_integrity_mismatch`, `reason=invalid-json` — compare wants JSON |
+34:| 7 | `rea search expac-* ".*" --kind procedures --mode regex --format json` | ~5 s each — 112 local + ~90 `<EXTERNAL>` names per side |
+35:| 8 | `rea function expac-10-12/13 --procedure entry --format json` | ~15 s each — `analyze_function` dossiers 31,560 B each, `ev_da1101dd…` / `ev_253b07f9…` |
+36:| 9 | `rea function expac-10-12/13 --procedure FUN_00102080` (main, LEA target in `entry`) | ~20 s each — dossiers 5.29 MB / 5.23 MB, `ev_4ed015d8…` / `ev_ca538e8f…` |
+38:| 11 | `rea analyze expac --snapshot s.json` + `search` + `function entry` + `function FUN_00102080` (all four, one snapshot) | **25 s total per side** — snapshot 10.7 MB mode 0600; `records:4, entries:2, workflow_entries:1`; inner `evidence_bundle` extracted to canonical bundle |
+--- r4-10 (admitted at corpus/README.md:35,140) ---
+
+| Pair | Member | Sizes (B) | sha256 | Type |
+| ---- | ------ | --------- | ------ | ---- |
+| `1password-cli` 2.34.1-1 → 2.40.0-2 | `usr/bin/op` | 41,210,040 → 43,475,106 | `d24dc5d4…` → `8d029d2c…` | ELF x86-64 static, stripped Go (**go1.25.7 → go1.26.8**) |
+| `qpdf` 12.3.2-2 → 12.4.1-1 | `usr/bin/qpdf` | 14,528 → 14,600 | `2899dbfd…` → `dd26ac2d…` | ELF x86-64 PIE dyn, stripped C++ (control pair for `matched`/`symbol`) |
+
+Extraction: `tar -xOf <pkg> usr/bin/<name>` — hashes reproduce round 2's `op` values.
+
+=== admitted map rows naming the pairs ===
+| `2026-10-13-r2-version-diff-compare` | compare_functions 8 dims; record_pairs MCP-only; 330s timeout bound | live compares on expac/bwrap pairs | 2026-10-13 |
+| `knowledge/2026-10-13-r4-10-real-version-pair` | full compare pipeline at 41-43MB (`op` 2.34.1→2.40.0, ~6-7min per verb — every verb re-imports fresh); CLI `rea compare` caps at `status:unknown` vs 

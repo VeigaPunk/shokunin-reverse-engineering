@@ -1,0 +1,79 @@
+==============================================================================
+### CarrierV  (1562 bytes, sha256 57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0)
+
+TEST A — reported offset vs the selector's compare leg
+   0xd0e30db0 rep_off=   36 compare@   25 jumpi@   35  rep==jumpi+1=True  next_block_tgt=248 tgt_byte=5b is_jumpdest=True
+   0x1aa02d59 rep_off=  260 compare@  249 jumpi@  259  rep==jumpi+1=True  next_block_tgt=524 tgt_byte=5b is_jumpdest=True
+   0x3f4ba83a rep_off=  536 compare@  525 jumpi@  535  rep==jumpi+1=True  next_block_tgt=1512 tgt_byte=5b is_jumpdest=True
+   0x2e1a7d4d rep_off=  680 compare@  669 jumpi@  679  rep==jumpi+1=True  next_block_tgt=1512 tgt_byte=5b is_jumpdest=True
+   0xe0749a6a rep_off=  910 compare@  899 jumpi@  909  rep==jumpi+1=True  next_block_tgt=961 tgt_byte=5b is_jumpdest=True
+   0x6e8efde2 rep_off=  973 compare@  962 jumpi@  972  rep==jumpi+1=True  next_block_tgt=1512 tgt_byte=5b is_jumpdest=True
+   0x0c751377 rep_off= 1036 compare@ 1025 jumpi@ 1035  rep==jumpi+1=True  next_block_tgt=1512 tgt_byte=5b is_jumpdest=True
+   0x8456cb59 rep_off= 1099 compare@ 1088 jumpi@ 1098  rep==jumpi+1=True  next_block_tgt=1232 tgt_byte=5b is_jumpdest=True
+   0xb144adfb rep_off= 1244 compare@ 1233 jumpi@ 1243  rep==jumpi+1=True  next_block_tgt=1512 tgt_byte=5b is_jumpdest=True
+   0x0776076f rep_off= 1303 compare@ 1292 jumpi@ 1302  rep==jumpi+1=True  next_block_tgt=1512 tgt_byte=5b is_jumpdest=True
+   0x8da5cb5b rep_off= 1353 compare@ 1342 jumpi@ 1352  rep==jumpi+1=True  next_block_tgt=1368 tgt_byte=5b is_jumpdest=True
+   0x4643c56b rep_off= 1380 compare@ 1369 jumpi@ 1379  rep==jumpi+1=True  next_block_tgt=1512 tgt_byte=5b is_jumpdest=True
+   0x48a3ef5c rep_off= 1408 compare@ 1397 jumpi@ 1407  rep==jumpi+1=True  next_block_tgt=1512 tgt_byte=5b is_jumpdest=True
+   0x5c975abb rep_off= 1436 compare@ 1425 jumpi@ 1435  rep==jumpi+1=True  next_block_tgt=1512 tgt_byte=5b is_jumpdest=True
+   0x27e235e3 rep_off= 1464 compare@ 1453 jumpi@ 1463  rep==jumpi+1=True  next_block_tgt=1512 tgt_byte=5b is_jumpdest=True
+   --> 15/15 reported offsets are exactly (JUMPI+1)
+
+TEST C — block bodies (offset .. next reported offset), first 14 ops
+   0xd0e30db0 off=   36 end=  260 probe_mut=payable     body=PUSH10x3 SLOAD ISZERO PUSH20x9c JUMPI PUSH10x20 DUP1 PUSH10xa0 MSTORE PUSH10x6 PUSH10x40 MSTORE PUSH320x7061757365640000000000000000000000000000000000000000000000000000
+   0x1aa02d59 off=  260 end=  536 probe_mut=payable     body=PUSH10x24 36 LT CALLVALUE OR PUSH20x5fc JUMPI PUSH0 SLOAD CALLER XOR ISZERO PUSH20x187 JUMPI PUSH10x20 DUP1 PUSH10xa0 MSTORE PUSH10x9 PUSH10x40 MSTORE PUSH320x6e6f74206f776e65720000000000000000000000000000000000000000000000
+   0x3f4ba83a off=  536 end=  680 probe_mut=nonpayable  body=CALLVALUE PUSH20x5fc JUMPI PUSH0 SLOAD CALLER XOR ISZERO PUSH20x296 JUMPI PUSH10x20 DUP1 PUSH10xa0 MSTORE PUSH10x9 PUSH10x40 MSTORE PUSH320x6e6f74206f776e65720000000000000000000000000000000000000000000000
+   0x2e1a7d4d off=  680 end=  910 probe_mut=payable     body=PUSH10x24 36 LT CALLVALUE OR PUSH20x5fc JUMPI PUSH10x4 CALLER PUSH10x20 MSTORE PUSH0 MSTORE PUSH10x40 PUSH0 20 SLOAD PUSH10x4 CALLDATALOAD GT ISZERO PUSH20x338 JUMPI PUSH10x20 DUP1 PUSH10xa0 MSTORE PUSH10xc
+   0xe0749a6a off=  910 end=  973 probe_mut=payable     body=PUSH10x24 36 LT CALLVALUE OR PUSH20x5fc JUMPI PUSH10x4 CALLDATALOAD PUSH10x2 SLOAD DUP1 82 MUL DUP2 ISZERO 83 83 83 DIV EQ OR ISZERO PUSH20x5fc JUMPI SWAP1 POP SWAP1 POP PUSH20x2710 DUP2
+   0x6e8efde2 off=  973 end= 1036 probe_mut=payable     body=PUSH10x24 36 LT CALLVALUE OR PUSH20x5fc JUMPI PUSH10x4 CALLDATALOAD PUSH10x2 SLOAD DUP1 82 MUL DUP2 ISZERO 83 83 83 DIV EQ OR ISZERO PUSH20x5fc JUMPI SWAP1 POP SWAP1 POP PUSH20x2710 DUP2
+   0x0c751377 off= 1036 end= 1099 probe_mut=payable     body=PUSH10x44 36 LT CALLVALUE OR PUSH20x5fc JUMPI PUSH10x4 CALLDATALOAD PUSH10x24 CALLDATALOAD DUP1 82 MUL DUP2 ISZERO 83 83 83 DIV EQ OR ISZERO PUSH20x5fc JUMPI SWAP1 POP SWAP1 POP PUSH20x2710 DUP2
+   0x8456cb59 off= 1099 end= 1244 probe_mut=nonpayable  body=CALLVALUE PUSH20x5fc JUMPI PUSH0 SLOAD CALLER XOR ISZERO PUSH20x4c9 JUMPI PUSH10x20 DUP1 PUSH10xa0 MSTORE PUSH10x9 PUSH10x40 MSTORE PUSH320x6e6f74206f776e65720000000000000000000000000000000000000000000000
+   0xb144adfb off= 1244 end= 1303 probe_mut=payable     body=PUSH10x24 36 LT CALLVALUE OR PUSH20x5fc JUMPI PUSH10x4 CALLDATALOAD DUP1 PUSH10xa0 SHR PUSH20x5fc JUMPI PUSH10x40 MSTORE PUSH10x4 PUSH10x40 MLOAD PUSH10x20 MSTORE PUSH0 MSTORE PUSH10x40 PUSH0 20 SLOAD PUSH10x60
+   0x0776076f off= 1303 end= 1353 probe_mut=payable     body=PUSH10x24 36 LT CALLVALUE OR PUSH20x5fc JUMPI PUSH10x4 CALLDATALOAD DUP1 PUSH10xa0 SHR PUSH20x5fc JUMPI PUSH10x40 MSTORE PUSH0 SLOAD PUSH10x40 MLOAD EQ PUSH10x60 MSTORE PUSH10x20 PUSH10x60 RETURN JUMPDEST PUSH40x8da5cb5b
+   0x8da5cb5b off= 1353 end= 1380 probe_mut=view        body=CALLVALUE PUSH20x5fc JUMPI PUSH0 SLOAD PUSH10x40 MSTORE PUSH10x20 PUSH10x40 RETURN JUMPDEST PUSH40x4643c56b DUP2 XOR PUSH20x5e8 JUMPI
+   0x4643c56b off= 1380 end= 1408 probe_mut=view        body=CALLVALUE PUSH20x5fc JUMPI PUSH10x1 SLOAD PUSH10x40 MSTORE PUSH10x20 PUSH10x40 RETURN JUMPDEST PUSH40x48a3ef5c DUP2 XOR PUSH20x5e8 JUMPI
+   0x48a3ef5c off= 1408 end= 1436 probe_mut=view        body=CALLVALUE PUSH20x5fc JUMPI PUSH10x2 SLOAD PUSH10x40 MSTORE PUSH10x20 PUSH10x40 RETURN JUMPDEST PUSH40x5c975abb DUP2 XOR PUSH20x5e8 JUMPI
+   0x5c975abb off= 1436 end= 1464 probe_mut=view        body=CALLVALUE PUSH20x5fc JUMPI PUSH10x3 SLOAD PUSH10x40 MSTORE PUSH10x20 PUSH10x40 RETURN JUMPDEST PUSH40x27e235e3 DUP2 XOR PUSH20x5e8 JUMPI
+   0x27e235e3 off= 1464 end= 1562 probe_mut=payable     body=PUSH10x24 36 LT CALLVALUE OR PUSH20x5fc JUMPI PUSH10x4 CALLDATALOAD DUP1 PUSH10xa0 SHR PUSH20x5fc JUMPI PUSH10x40 MSTORE PUSH10x4 PUSH10x40 MLOAD PUSH10x20 MSTORE PUSH0 MSTORE PUSH10x40 PUSH0 20 SLOAD PUSH10x60
+
+TEST B — probe mutability vs compiled-ABI stateMutability
+    OK  deposit()                      abi=payable      probe=payable      args=''
+    *** set_fee(uint256)               abi=nonpayable   probe=payable      args='uint256'
+    OK  unpause()                      abi=nonpayable   probe=nonpayable   args=''
+    *** withdraw(uint256)              abi=nonpayable   probe=payable      args='uint256'
+    *** fee_on(uint256)                abi=view         probe=payable      args='uint256'
+    *** fee_quote(uint256)             abi=view         probe=payable      args='uint256'
+    *** fee_of(uint256,uint256)        abi=pure         probe=payable      args='uint256,uint256'
+    OK  pause()                        abi=nonpayable   probe=nonpayable   args=''
+    *** balance_of(address)            abi=view         probe=payable      args='uint256'
+    *** is_owner(address)              abi=view         probe=payable      args='uint256'
+    OK  owner()                        abi=view         probe=view         args=''
+    OK  total_deposits()               abi=view         probe=view         args=''
+    OK  fee_bps()                      abi=view         probe=view         args=''
+    OK  paused()                       abi=view         probe=view         args=''
+    *** balances(address)              abi=view         probe=payable      args='uint256'
+    agreement 7/15
+
+==============================================================================
+### Smoke  (168 bytes, sha256 415e6b1b172a21c51a0379642acbadefcb6238c61a29d8187a1d4a8c22eecbfb)
+
+TEST A — reported offset vs the selector's compare leg
+   0xd09de08a rep_off=   36 compare@   25 jumpi@   35  rep==jumpi+1=True  next_block_tgt=71 tgt_byte=5b is_jumpdest=True
+   0x6d4ce63c rep_off=   83 compare@   72 jumpi@   82  rep==jumpi+1=True  next_block_tgt=154 tgt_byte=5b is_jumpdest=True
+   0x8da5cb5b rep_off=  111 compare@  100 jumpi@  110  rep==jumpi+1=True  next_block_tgt=126 tgt_byte=5b is_jumpdest=True
+   0x61bc221a rep_off=  138 compare@  127 jumpi@  137  rep==jumpi+1=True  next_block_tgt=154 tgt_byte=5b is_jumpdest=True
+   --> 4/4 reported offsets are exactly (JUMPI+1)
+
+TEST C — block bodies (offset .. next reported offset), first 14 ops
+   0xd09de08a off=   36 end=   83 probe_mut=nonpayable  body=CALLVALUE PUSH20x9e JUMPI PUSH10x1 SLOAD PUSH10x1 DUP2 ADD DUP2 DUP2 LT PUSH20x9e JUMPI SWAP1 POP PUSH10x1 SSTORE PUSH10x1 SLOAD PUSH10x40 MSTORE PUSH10x20 PUSH10x40 RETURN JUMPDEST PUSH40x6d4ce63c
+   0x6d4ce63c off=   83 end=  111 probe_mut=view        body=CALLVALUE PUSH20x9e JUMPI PUSH10x1 SLOAD PUSH10x40 MSTORE PUSH10x20 PUSH10x40 RETURN JUMPDEST PUSH40x8da5cb5b DUP2 XOR PUSH20x7e JUMPI
+   0x8da5cb5b off=  111 end=  138 probe_mut=view        body=CALLVALUE PUSH20x9e JUMPI PUSH0 SLOAD PUSH10x40 MSTORE PUSH10x20 PUSH10x40 RETURN JUMPDEST PUSH40x61bc221a DUP2 XOR PUSH20x9a JUMPI
+   0x61bc221a off=  138 end=  168 probe_mut=view        body=CALLVALUE PUSH20x9e JUMPI PUSH10x1 SLOAD PUSH10x40 MSTORE PUSH10x20 PUSH10x40 RETURN JUMPDEST PUSH0 PUSH0 REVERT JUMPDEST PUSH0 DUP1 REVERT 00 PUSH40x18009a
+
+TEST B — probe mutability vs compiled-ABI stateMutability
+    OK  increment()                    abi=nonpayable   probe=nonpayable   args=''
+    OK  get()                          abi=view         probe=view         args=''
+    OK  owner()                        abi=view         probe=view         args=''
+    OK  counter()                      abi=view         probe=view         args=''
+    agreement 4/4
+

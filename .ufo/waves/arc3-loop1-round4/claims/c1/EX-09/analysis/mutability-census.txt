@@ -1,0 +1,18 @@
+=== mutability: ABI vs inferred, with body byte census ===
+selector   signature              abi         inferred    CALLVALUE  SSTORE  body@ 
+0ff5ce72   set_paused(bool)       nonpayable  payable     1          0       259   
+191a62d4   get_total()            view        view        2          0       424   
+2bec1547   scale(uint256)         pure        payable     2          0       452   
+2ddbd13a   total()                view        view        2          0       231   
+5c975abb   paused()               view        view        2          1       528   
+8da5cb5b   owner()                view        view        3          1       501   
+d0e30db0   deposit()              payable     payable     0          0       36    
+
+=== verdict ===
+  0ff5ce72 set_paused(bool)       DIVERGES  abi=nonpayable inferred=payable
+  191a62d4 get_total()            MATCH  abi=view inferred=view
+  2bec1547 scale(uint256)         DIVERGES  abi=pure inferred=payable
+  2ddbd13a total()                MATCH  abi=view inferred=view
+  5c975abb paused()               MATCH  abi=view inferred=view
+  8da5cb5b owner()                MATCH  abi=view inferred=view
+  d0e30db0 deposit()              MATCH  abi=payable inferred=payable

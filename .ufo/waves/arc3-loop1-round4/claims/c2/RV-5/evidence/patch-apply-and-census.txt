@@ -1,0 +1,39 @@
+RV-5 — apply my two repair patches on a scratch tree
+date: 2026-10-19T11:22:31-03:00
+applier: claims/c2/RV-4/prose-apply.py (usage: <PATCH.md> <TREE-DIR>)
+
+=== before ===
+d075a3c67e17ae428eb5a69e594171c6dcba88ec93c97bd3cf162a2f2b4dbdad  /var/tmp/rv5-r4/mine/PROVINCE.md
+162 /var/tmp/rv5-r4/mine/PROVINCE.md
+
+=== apply proposed-f2b-cap-knob-repair ===
+patch   : .ufo/waves/arc3-loop1-round4/claims/c2/RV-5/proposed-f2b-cap-knob-repair.patch.md
+tree    : /var/tmp/rv5-r4/mine
+  hunk 1 [PROVINCE.md]: applied (3 - / 3 +)
+hunks: applied=1 failed=0
+rc=0
+=== apply proposed-x2-pacman-pairs-repair ===
+patch   : .ufo/waves/arc3-loop1-round4/claims/c2/RV-5/proposed-x2-pacman-pairs-repair.patch.md
+tree    : /var/tmp/rv5-r4/mine
+  hunk 1 [PROVINCE.md]: applied (4 - / 4 +)
+hunks: applied=1 failed=0
+rc=0
+
+=== after ===
+1391927dd93d3c8336f942f5619b4b4c795f0fa53fbf8d744537ed387336066d  /var/tmp/rv5-r4/mine/PROVINCE.md
+162 /var/tmp/rv5-r4/mine/PROVINCE.md
+
+=== census on patched scratch ===
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+
+=== the repaired lines (84-86, 157-160) ===
+- **Recorded crashes >32 MiB** — mechanism held (Core); the oversize class
+  refuses by default (`out_of_range`), and an organic 17.6MB core inspects
+  (arc3-r4). `REA_PWNTOOLS_MAX_INPUT_BYTES` raises the cap. Retention decays oldest-first.
+---
+- **Cross-version residuals** — `compare-application-versions` exercised since
+  r12 (all three input classes; the r2 refusal is historical); cached pacman
+  pairs exercised on expac, bwrap, op and qpdf [r5-audit C1: merged from the
+  pruned Frontier bullet — its `compare_javascript_export_shapes` item is now held].

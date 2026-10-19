@@ -1,0 +1,35 @@
+tool: /dev/shm/cr3-r4/tool-new-29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf.py sha256=29bb45ae0fd795e5
+
+-- F1 measured path spelled X/.
+   --paths 'X/.'  --out 'X.sha256'  (cwd=/dev/shm/cr3-r4/atk-F/F1)
+   exit=2  NEIGHBOUR-CLOBBERED=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (r
+
+-- F2 measured path spelled X/ (trailing slash)
+   --paths 'X/'  --out 'X.sha256'  (cwd=/dev/shm/cr3-r4/atk-F/F2)
+   exit=2  NEIGHBOUR-CLOBBERED=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (r
+
+-- F3 measured path spelled ./X
+   --paths './X'  --out 'X.sha256'  (cwd=/dev/shm/cr3-r4/atk-F/F3)
+   exit=2  NEIGHBOUR-CLOBBERED=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (r
+
+-- F4 measured path spelled X/../X
+   --paths 'X/../X'  --out 'X.sha256'  (cwd=/dev/shm/cr3-r4/atk-F/F4)
+   exit=2  NEIGHBOUR-CLOBBERED=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (r
+
+-- F5 CONTROL measured path spelled X (expect refusal)
+   --paths 'X'  --out 'X.sha256'  (cwd=/dev/shm/cr3-r4/atk-F/F5)
+   exit=2  NEIGHBOUR-CLOBBERED=False
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (r
+
+-- F6 measured path spelled X/. and --out X.sha256.sha256
+   --paths 'X/.'  --out 'X.sha256.sha256'  (cwd=/dev/shm/cr3-r4/atk-F/F6)
+   exit=0  NEIGHBOUR-CLOBBERED=False
+
+-- F7 measured path spelled . (cwd=d, X measured via absolute)
+   --paths '.'  --out 'X.sha256'  (cwd=/dev/shm/cr3-r4/atk-F/F7)
+   exit=0  NEIGHBOUR-CLOBBERED=True
+   X.sha256 now: '# custody-pair receipt v2 — READ-ONLY capture (sha256 + stat); no byte'

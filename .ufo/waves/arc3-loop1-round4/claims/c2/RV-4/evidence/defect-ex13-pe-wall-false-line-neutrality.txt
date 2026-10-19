@@ -1,0 +1,42 @@
+RV-4 — EX-13 pe-wall-closed: FALSE line-neutrality claim + census-invisible
+patch sha256: 32f6052d92de6816bd647ec89197e604be4f659f67ae42729e3bbe945f3aaea5
+date: 2026-10-19T11:16:08-03:00
+
+=== THE DEFECT ===
+The patch's own 'Census conformance' section claims:
+  "Line-neutral: 6 -> 6 lines; PROVINCE.md stays at 162 lines."
+
+MEASURED: the fenced hunk carries 6 minus lines and 5 plus lines -- net -1.
+   minus=6  plus=5  net=-1  =>  162 -1 = 161 lines
+
+APPLIED (my harness, scratch copy): PROVINCE.md = 161 lines
+  census --root <scratch>  ->  VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+  differ vs baseline       ->  RESULT: CLEAN  (0 new loci, 0 removed, 0 moved)
+  BUT counts row changed:   PROVINCE.md lines 162 -> 161
+
+=== WHY THE CENSUS DOES NOT CATCH IT ===
+The only declared PROVINCE row that carries a line-number assertion is
+  ('PROVINCE.md', 119, 131, 'DATED', 119, r'verified 2026-10-13')
+Its marker is asserted AT LINE 119. The edited bullet sits at 139-144,
+i.e. BELOW 119, so deleting a line there does not move the marker.
+Every declared PROVINCE row ends at or before 131; the whole region
+132-162 (where the edit happens) is UNDECLARED. Nothing is asserted
+about it, so a shrink there is invisible to the verdict.
+
+=== CONSEQUENCE ===
+The claim's own falsifiable form is 'PROVINCE line count unchanged'.
+This patch breaks it (162 -> 161) while the census reads PASS -- so the
+gate cannot enforce the very invariant the claim states. Compare the
+measured counterpart: an INSERTION above 119 trips the marker assertion
+(my plant D: SCOPE-ERRORS ["PROVINCE.md:119 marker 'verified 2026-10-13'
+absent from ''"], FAIL). Deletion below 119 trips nothing.
+
+Second, independent point: the census 'counts' row DID record the change
+(lines 162 -> 161) but it is not part of the PASS/FAIL predicate.
+A consumer reading only 'VERDICT: PASS' would not see it.
+
+=== VERDICT ===
+REJECT as line-neutral. Either drop one plus line to restore 6->6, or
+state the true net (-1) and re-key the affected scope rows in the same
+commit. The patch text's own conformance section is falsified by its
+own bytes.

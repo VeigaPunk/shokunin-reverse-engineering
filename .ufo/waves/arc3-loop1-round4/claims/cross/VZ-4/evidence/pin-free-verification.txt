@@ -1,0 +1,24 @@
+=== VZ-4 independent verification: records-draft pin-free discipline @ 2026-10-19T14:12:25Z ===
+
+Both the C2 (SC-2) and C3 (SC-3) SCORECARD round-section drafts claim their literal
+section text carries no version literal, no @-pin, no path:line pointer and no client
+config filename, so appending it cannot add a census locus.
+
+VZ-4 test (C3's draft, the longer one):
+  1. copied PROVINCE.md + SKILL.md + SCORECARD.md to a scratch root
+  2. extracted the C3 literal section text (8208 chars) and appended it to SCORECARD.md
+     -> SCORECARD 1580 -> 1683 lines
+  3. scanned the appended block for pin-shaped patterns:
+       at-pin (pkg@ver):       0
+       bare version literal:   0
+       path:line pointer:      0
+       client config filename: 0
+  4. census on that scratch root:
+       VERDICT: PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0), DECLARED FAIL CLASSES: []
+
+=> The pin-free claim holds on VZ-4's own run. A census locus is added only where a
+   REA_GATE line also carries a pin/literal/pointer; these drafts add none, so the
+   records commit can append them without a census regression.
+
+Cross-reference: RV-4's independent census JSONs (census-baseline, -after-ex21-landing,
+  -after-ex14-demo, -after-ex24-skillrow) all read PASS 0/0/0/0 as well.

@@ -1,0 +1,136 @@
+# EX-06 (c1) — analysis of the vyper runtime probe battery
+
+All commands carry a disk-backed `TMPDIR=/var/tmp/ex06-r4/tmpdir` (standing rule;
+`/tmp` EDQUOT class). First pin `rea-agents@6.4.0`, second `rea-agents@6.7.0`.
+Provider in every envelope: `evmole-interface` / "REA EVM interface adapter",
+`evmole@0.9.3`.
+
+## 1. Harness validation before any vyper byte
+
+`TMPDIR=… npx -y rea-agents@6.4.0 inspect-evm-interface
+.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.runtime.hex hex --format json`
+→ exit 0, 9,399 B, envelope sha256 `f2aec424c1edade81d7bbe58f0d99be7f5d2253749ffb09e9a2a4226425f42f8`,
+id `ev_45849c8b11794ea0b007bd01ea3241aa9b385ca7543e514a16e82c795a106eaf`. Byte-identical to
+the r1 canonical recheck cited in the r3 entry (`evidence/harness-validate-r1canonical-6.4.0.json`).
+The probe path was therefore proven working before the vyper carrier existed.
+
+## 2. Carriers probed (all compiled this round by sibling seats, read-only)
+
+| carrier | seat | compiler | runtime bytes | decoded sha256 (first 16) | K |
+|---|---|---|---|---|---|
+| `CarrierV` | EX-04 | vyper 0.4.3+commit.bff19ea2 | 1562 | `57d6fd0ae0da0019…` | 15 |
+| `StewardToken` (token.vy) | EX-03 | vyper 0.4.3 | 3337 | `1846469bd2abc625…` | 22 |
+| `Smoke` | EX-02 | vyper 0.4.3 | 168 | `415e6b1b172a21c5…` | 4 |
+| `T5` | EX-02 | vyper 0.4.3 | 181 | `e54549b2ea11e0a0…` | 3 |
+
+## 3. K/K result — zero missing, zero extra, every leg
+
+- `CarrierV` @6.4.0 hex `ev_d1792f57…`, raw `ev_eac08124…`, @6.7.0 hex `ev_62e1b9e6…`;
+  rerun re-derives `ev_d1792f57…`; alt-path `ev_7492bd99…`; uppercase `ev_016cae90…`;
+  `0x`-prefix `ev_3be0282d…`; `0x`-uppercase `ev_8ce58ff9…`. All n=15, all
+  `dispatch:"abi"`, all decoded `57d6fd0ae0da0019…` / 1,562 B. K/K MATCH on every leg.
+- `StewardToken` @6.4.0 hex `ev_6b8a15c4…` and @6.7.0 `ev_b07b8971…`: n=22 both,
+  decoded `1846469bd2abc625…` / 3,337 B, MATCH against vyper's own ABI-derived set
+  (22 selector-bearing signatures after `__default__` exclusion).
+- `Smoke` @6.4.0 `ev_073f845c…` and @6.7.0 `ev_5655197e…`: n=4, MATCH.
+- `T5` @6.4.0 `ev_1f792534…`: n=3, MATCH.
+
+### Two normalizer traps found in the sibling artifacts (measured, not asserted)
+
+1. **`__default__` is not a selector-bearing function.** Both EX-02's and EX-03's
+   `method_identifiers` outputs list `__default__(): 0x89402a72`; the recovered set
+   excludes it. Checked at byte level: `89402a72` does not occur in either runtime's
+   bytes at all (not as an immediate, not as data). Vyper dispatches its fallback by
+   fallthrough, so the correct K is "method_identifiers minus `__default__`".
+2. **Vyper's `method_identifiers` drops leading zeros in the hex string.** EX-03's
+   file carries `0x95ea7b3`, `0xc751377`, `0x6fdde03` (7 chars) for
+   `approve`, `fee_of`, `name`. A raw set comparison against the probe's `0x095ea7b3`
+   style reports three spurious "missing" selectors. Left-padding to 8 chars makes the
+   set comparison MATCH exactly (22/22).
+
+## 4. Vyper dispatch shape — reconstructed at byte level (the round's new class)
+
+Prologue is `5f3560e01c` (PUSH0 CALLDATALOAD PUSH1 0xe0 SHR) — the same class the r3
+entry measured for solc, **not** the `366000…` class. The dispatcher differs:
+
+```
+5f 35 60 e0 1c        PUSH0 CALLDATALOAD PUSH1 0xe0 SHR
+60 02 60 0d 82 06     PUSH1 0x02 PUSH1 0x0d DUP3 MOD      ; slot = selector % 13
+60 01 1b              PUSH1 0x01 SHL
+61 06 00 01           PUSH2 0x0600 ADD                   ; table base
+60 1e 39              PUSH1 0x1e CODECOPY                 ; 13 x uint16
+5f 51 56              PUSH0 MLOAD JUMP
+```
+
+Then per selector:
+
+```
+5b 63<sel> 81 18 61<next> 57   JUMPDEST PUSH4<sel> DUP2 XOR PUSH2<next> JUMPI
+<12-byte body>
+```
+
+- Table at offset `0x600`: `0x29c 0x5e7 0x50b 0x400 0x5ac 0x43f 0x53d 0x5e7 0x590 0x574 0x382 0x5e7 0x18`
+  — every entry is a JUMPDEST.
+- 15 entries reachable by walking the chains from the 11 distinct heads; exactly the
+  15 planted selectors.
+- **Probe `bytecode_offset` semantics on this class:** every reported offset equals
+  `entry_jumpdest + 12` — the first byte *after* the match test, i.e. the fall-through
+  body entry. Verified for all 15: `probe_offset - push4_immediate_offset = +11`
+  uniformly, and `code[offset-1] == 0x57` (JUMPI) for all 15. **No probe offset lands
+  on a JUMPDEST** (0/15), unlike the solc carriers in r1/r3 where every offset was a
+  JUMPDEST. This is a distinct offset-semantics class and a candidate erratum for the
+  "offsets land on JUMPDEST" reading, which is therefore scoped to solc-convention
+  carriers.
+
+## 5. Inference quality — a measured degradation on this carrier
+
+`inferred_state_mutability` agrees with the compiled ABI on only 7/15 `CarrierV`
+functions; the 8 disagreements are all "probe says `payable`, ABI says view/pure/nonpayable":
+
+- `is_owner`, `balances`, `balance_of` → ABI `view`, probe `payable`, and probe
+  `inferred_arguments` reads `uint256` where the ABI declares `address`.
+- `fee_of` → ABI `pure`, probe `payable`.
+- `set_fee`, `withdraw`, `fee_quote`, `fee_on` → ABI `view`/`nonpayable`, probe `payable`.
+
+Root cause is visible in the bytes: the vyper dispatcher's match test does not
+pre-check `CALLVALUE`, and each *non-payable* body starts with `CALLVALUE PUSH2 0x5fc
+JUMPI` (the revert guard) — so the value check lives in the body, not the dispatch
+test. Where solc's linear/binary dispatchers put the mutability signal in the dispatch
+tree, vyper's does not, and the upstream inference falls back to `payable`. Selector
+recovery is unaffected (15/15); only the mutability/argument inference degrades.
+This is an honest measurement of the tool's limits on a new dispatch class, not a
+recovery failure.
+
+## 6. Envelope deltas and input traps (measured)
+
+- **6.4.0 vs 6.7.0:** 6.7.0 adds a top-level `relationship_coverage` key (value
+  `null` here); all other keys and all payload content identical. `raw_result.metadata`
+  is `null` on this carrier under both pins (r1/r3 solc carriers reported CBOR trailer
+  metadata) — the terminal CBOR trailer is present in the bytes but not decoded here.
+- `--full-output` wraps the envelope as `{ok, data, meta}`; `data` is byte-equal to
+  the bare `--format json` envelope (`meta` = `{"command": …, "duration": "134ms"}`).
+- Default (no `--format json`) emits the same content in TOON form.
+- **Trap — `hex` declared on a `.bin` carrier:** exit 1, typed
+  `{"code":"invalid_request","category":"invalid_input", …}` with
+  `issues[0].reason == "invalid_format"` ("Hex carrier must be valid UTF-8").
+  Fail-closed, no silent success.
+- **Trap — `raw` declared on a `.hex` carrier:** exit 0, 0 functions, and the decoded
+  `bytecode.sha256` equals the hex *file's* own sha256 (`e0b1021c…`) — i.e. the ASCII
+  text is decoded as code. Same class as r1's `ev_60062ad0…` and r3's `ev_704ce585…`.
+  Parsed-and-empty, not an error.
+- **Creation blob** (`CarrierV` creation.hex, 1,637 B): n=0, decoded `3c667396…` —
+  parsed-and-empty, consistent with the r1 erratum that creation blobs *do* embed the
+  runtime dispatch table but the tool's scope is the runtime entry point.
+- **Id domain, re-measured:** same bytes + same request at the same path re-derive the
+  id (rerun ≡ first run). Same bytes at a different absolute path mint a different id
+  (`ev_d1792f57…` at my scratch path vs EX-04's `ev_405e2a2a…` at theirs). Format-shape
+  variants (uppercase / `0x` prefix) also mint fresh ids while decoding to the same
+  bytecode sha256. Compare by decoded `bytecode.sha256` + function payload, never by id.
+
+## 7. Cross-seat agreement
+
+Normalized deep-diff of my `CarrierV` envelopes against EX-04's independently captured
+`evidence/probe/probe-6.4.0-hex.json`, `probe-6.4.0-raw.json`, `probe-6.7.0-hex.json`:
+**0 content diffs** after stripping `evidence_id`, `subject.local_path`, `subject.name`,
+`parameters`, `locations` and `normalized_result.diagnostics`. Same subject sha256, same
+decoded sha256, same 15-function payload, same offsets.

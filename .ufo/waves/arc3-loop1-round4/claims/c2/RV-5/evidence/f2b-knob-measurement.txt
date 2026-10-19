@@ -1,0 +1,32 @@
+RV-5 — F2b falsifier: the cap-raising knob EXISTS on the current pins
+date: 2026-10-19T11:21:53-03:00
+
+=== subject: a real 36,360,192-byte core (git SIGBUS, 2026-10-19 09:05 -03) ===
+coredumpctl dump 1214442 -> /var/tmp/rv5-r4/cores/git.raw
+36360192 bytes  (old cap 33554432)
+
+=== A. no env knob, 6.7.0 ===
+{"code":"invalid_request","category":"invalid_input","message":"Analysis input is invalid. Check the arguments and try again.","retryable":true,"remediation":{"action":"Correct the listed arguments and retry."},"details":{"operation":"inspect_recorded_crash","issues":[{"path":["path"],"reason":"out_
+
+=== B. REA_PWNTOOLS_MAX_INPUT_BYTES=40000000, 6.7.0 -> SUCCESS ===
+evidence_id: ev_367c6cb419b75675348d7fb16f8673f743133e15d547fadf86a78f5eae56057e
+subject.sha256: 3228d8399ddfb0e8f980e5e9d3615d3fd41b6339f1984dc5460adc39eb9784e1
+format: elf-core | architecture: x86_64-little-endian
+segments: 49 | threads: 1
+
+=== C. 6.5.0 without knob (control) ===
+{"code":"invalid_request","category":"invalid_input","message":"Analysis input is invalid. Check the arguments and try again.","retryable":true,"remediation":{"action":"Correct the listed arguments and retry."},"details":{"operation":"inspect_recorded_crash","
+
+=== D. 6.5.0 WITH knob ===
+evidence_id: ev_0ed48c73e94bf032f9214b6b5183f5df7438b6d8d77585726f66c4059bebfe9d | format: elf-core | segments: 49
+
+=== E. 6.4.0 WITH knob (key absent in that version) ===
+{"code":"invalid_request","category":"invalid_input","message":"Analysis input is invalid. Check the arguments and try again.","retryable":true,"remediation":{"action":"Correct the listed arguments and retry."},"details":{"operation":"inspect_recorded_crash","issues":[{"path":["path"],"reason":"out_
+
+=== F. key presence by version (dist grep) ===
+  6.7.0  files carrying the key: 4
+  6.5.0  files carrying the key: 4
+  6.4.0  files carrying the key: 0
+
+=== G. schema still carries no cap flag (the r2 sentence, scoped) ===
+  (no size/limit option in the verb schema — r2's schema sentence holds)

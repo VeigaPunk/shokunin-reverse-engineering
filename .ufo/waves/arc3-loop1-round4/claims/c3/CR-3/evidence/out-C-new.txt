@@ -1,0 +1,82 @@
+tool: /dev/shm/cr3-r4/tool-new-29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf.py sha256=29bb45ae0fd795e5
+sandbox HOME: /dev/shm/cr3-r4/atk-C/home
+
+==============================================================================
+## C1 symlinked parent -> custody DIRECTORY: --out LINK/x.txt (LINK -> ~/.config/devin)
+==============================================================================
+-- C1
+   exit=0
+   stdout| RECEIPT: /dev/shm/cr3-r4/atk-C/linkdir/planted.txt  sha256=10cd0debb12ade994676292432b84d9c7c0a7e6f9fd1cf1665f2b7a4f58b60bc
+   stdout| SIDECAR: /dev/shm/cr3-r4/atk-C/linkdir/planted.txt.sha256
+   stdout| CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=C1 exit=0
+   file created INSIDE custody dir: /dev/shm/cr3-r4/atk-C/home/.config/devin/planted.txt exists=True
+
+==============================================================================
+## C2 symlinked parent -> custody dir, leaf = a custody file name (guard must hold)
+==============================================================================
+-- C2
+   exit=0
+   stdout| RECEIPT: /dev/shm/cr3-r4/atk-C/linkdir/../.bashrc  sha256=c21c729e2da51c77e6a340a7f277d6dcf6b1e269d6738aeacc4e09f9297f5527
+   stdout| SIDECAR: /dev/shm/cr3-r4/atk-C/linkdir/../.bashrc.sha256
+   stdout| CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=C2 exit=0
+   ~/.bashrc before=ceb17e68bf37b3ac after=ceb17e68bf37b3ac changed=False
+
+==============================================================================
+## C3 relative escape via .. : cwd=sub, --out ../home/.bashrc
+==============================================================================
+-- C3
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): ../home/.bashrc
+   ~/.bashrc changed=False
+
+==============================================================================
+## C4 hardlink alias of a custody path as --out
+==============================================================================
+-- C4
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cr3-r4/atk-C/hl-alias
+   ~/.bashrc changed=False
+
+==============================================================================
+## C5 symlink to a custody path as --out (absolute target)
+==============================================================================
+-- C5
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cr3-r4/atk-C/sym-abs
+   ~/.bashrc changed=False
+
+==============================================================================
+## C6 symlink to a custody path as --out (RELATIVE target)
+==============================================================================
+-- C6
+   exit=2
+   stderr| USAGE: write failed ([Errno 2] No such file or directory: '/dev/shm/cr3-r4/atk-C/sym-rel'): /dev/shm/cr3-r4/atk-C/sym-rel
+   ~/.bashrc changed=False
+
+==============================================================================
+## C7 symlinked GRANDparent -> home, --out LINK/.kimi-code/config.toml
+==============================================================================
+-- C7
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cr3-r4/atk-C/gp/.kimi-code/config.toml
+   config.toml changed=False
+
+==============================================================================
+## C8 --out '.' (a directory) and --out '' 
+==============================================================================
+-- C8 --out '.'
+   exit=2
+   stderr| USAGE: --out carries no usable name, so no sidecar path can be derived: '.'
+   RAW-TRACEBACK=False
+-- C8 --out ''
+   exit=2
+   stderr| USAGE: --out carries no usable name, so no sidecar path can be derived: ''
+   RAW-TRACEBACK=False
+
+==============================================================================
+## C9 unguarded out whose sidecar is a custody path via symlinked parent
+==============================================================================
+-- C9
+   exit=2
+   stderr| USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /dev/shm/cr3-r4/atk-C/d9/o.txt.sha256
+   ~/.profile changed=False

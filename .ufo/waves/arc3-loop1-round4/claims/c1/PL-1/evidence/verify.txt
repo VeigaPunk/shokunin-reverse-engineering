@@ -1,0 +1,30 @@
+=== K/K VERIFICATION: probe set vs ABI-derived set (planner re-derivation) ===
+
+-- CarrierV (EX-04 vault, ERC-20-absent)
+   carrier bytes=1562 sha256=57d6fd0ae0da0019
+   ABI function entries: 15   probe functions: 15
+   SET EQUAL (K/K)  missing=[] extra=[]
+   probe decoded sha256 == carrier sha256: True
+   offsets on JUMPDEST: 0/15   preceded by JUMPI(0x57): 15/15
+
+-- CarrierW (PL-1 prototype, 4 mutabilities)
+   carrier bytes=829 sha256=67d1d88fc65824ac
+   ABI function entries: 9   probe functions: 9
+   SET EQUAL (K/K)  missing=[] extra=[]
+   probe decoded sha256 == carrier sha256: True
+   offsets on JUMPDEST: 0/9   preceded by JUMPI(0x57): 9/9
+
+-- EX03 StewardToken (ERC-20-bearing)
+   carrier bytes=3337 sha256=1846469bd2abc625
+   ABI function entries: 22   probe functions: 22
+   SET EQUAL (K/K)  missing=[] extra=[]
+   probe decoded sha256 == carrier sha256: True
+   offsets on JUMPDEST: 0/22   preceded by JUMPI(0x57): 22/22
+
+=== PHANTOM-SELECTOR TRAP (method_identifiers vs ABI function entries) ===
+  EX-04 CarrierV: method_identifiers n=16  ABI function entries n=15  non-function keys=['__default__()']
+     __default__() -> 89402a72   present as bytes in runtime: False
+  EX-03 StewardToken: method_identifiers n=23  ABI function entries n=22  non-function keys=['__default__()']
+     __default__() -> 89402a72   present as bytes in runtime: False
+
+ALL K/K VERIFICATIONS PASS

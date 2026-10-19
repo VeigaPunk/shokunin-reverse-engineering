@@ -1,0 +1,44 @@
+tool=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py sha=29bb45ae0fd795e54e85d8749a163159aead181b42e9d3af399326b968b30acf
+scratch=/var/tmp/ex21/probe-AGJrdm
+=== (a) sidecar path not scope-checked ===
+exit=2 before=d21aca55da2445bde29db9fc8857ea4a09fb821800fba4c3abd2588efe488d33 after=d21aca55da2445bde29db9fc8857ea4a09fb821800fba4c3abd2588efe488d33
+A-VERDICT: intact
+--- stdout
+--- stderr
+USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /var/tmp/ex21/probe-AGJrdm/vic.sha256
+
+=== (b) out.parent.mkdir outside the guarded try ===
+exit=2
+--- stderr
+USAGE: cannot create the receipt directory ([Errno 20] Not a directory: '/var/tmp/ex21/probe-AGJrdm/pfile.txt/sub'): /var/tmp/ex21/probe-AGJrdm/pfile.txt/sub
+B-VERDICT: no traceback
+
+=== (b2) out parent that is a nonexistent dir chain under a file ===
+exit=2
+USAGE: cannot create the receipt directory ([Errno 20] Not a directory: '/var/tmp/ex21/probe-AGJrdm/pfile.txt/deep/er'): /var/tmp/ex21/probe-AGJrdm/pfile.txt/deep/er
+
+=== (c) coverage gate counts stanzas, not distinct paths ===
+5x-duplicate --require-paths 5 exit=2
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+--- stderr
+USAGE: reference covers 1 of the required 5 distinct paths
+coverage-line-count: /var/tmp/ex21/after-final/c5x.stdout:1
+coverage-line-count: /var/tmp/ex21/after-final/c5x.stderr:0
+C-VERDICT: exit 2
+
+=== (d) both-sides-absent MATCH semantics ===
+both-absent receipt-vs-receipt exit=13
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex21/probe-AGJrdm/gone-a.txt  stanzas=1
+B (candidate): /var/tmp/ex21/probe-AGJrdm/gone-b.txt  stanzas=1
+PATH /var/tmp/ex21/probe-AGJrdm/gone.conf: ABSENT  compared=0/11 moved=exists
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: ABSENT  paths=1  ABSENT=1  exit=13
+CUSTODY_PAIR_VERIFY: ABSENT paths=0/1 drift=1 exit=13
+
+=== (e) unsupported: does the guard see the sidecar's inode alias? ===
+hardlink-alias exit=2 (expect 2 refused)
+USAGE: refusing to write a receipt or its derived sidecar over a path it measures, a custody path, or the sidecar-shaped neighbour of one (resolved path or inode): /var/tmp/ex21/probe-AGJrdm/alias.out
+
+DONE scratch=/var/tmp/ex21/probe-AGJrdm

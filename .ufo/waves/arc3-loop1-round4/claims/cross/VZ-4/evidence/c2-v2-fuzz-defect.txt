@@ -1,0 +1,52 @@
+=== VZ-4 CONFIRMS CR-2's finding: EX-14 v2's hunks are fuzz-dependent and produce a self-contradictory sentence ===
+
+CR-2 (critic) reports: v2 hunk 6 carries a CONTEXT line that does not exist in the
+base, so the hunk only applies under default fuzz, and the result asserts BOTH the
+r2-era refusal AND its own falsification.
+
+VZ-4 independent reproduction (14:27Z):
+
+1. `patch -p1 --fuzz=0 --batch --forward --dry-run < v2.patch`:
+     5 out of 6 hunks FAILED (hunks 4, 5, 6 at lines 91, 139, 157)
+   => v2 is NOT a clean patch under strict fuzz. It applies only because patch's
+      default fuzz=2 tolerates the context mismatch.
+
+2. Default-fuzz apply (the run VZ-2 and VZ-4 both did) -> 162 lines, 69ceea9b…
+   But the X1 bullet in that tree reads (PROVINCE.md:157-158):
+
+     - **Cross-version residuals** — `compare-application-versions` still
+       refused since r2: r12-02 drained the row with two success legs; multi-version
+
+   => SELF-CONTRADICTORY: the sentence asserts the r2-era refusal ("still refused
+      since r2") and its own falsification ("r12-02 drained the row with two
+      success legs") in the same clause.
+
+CONSEQUENCE: the v2 after-sha 69ceea9b… (which VZ-2 and VZ-4 both reproduced) is the
+digest of a tree containing a defective X1 sentence. Reproducibility of the digest
+is NOT correctness of the text — a distinction this wave has now measured twice
+(the other being the census PASS that cannot grade repairs).
+
+The parent must land CR-2's corrected X1 hunk IN PLACE OF v2's hunk 6
+(claims/c2/CR-2/proposed-x1-context-fix.patch.md). CR-2 also reports its own
+whole-corpus sweep: 1 defect across all 16 c2 patch texts
+(evidence/scan-all-patches.out), and RV-4 recorded the same class earlier in
+defect-ex14-v2-malformed-hunk4.txt.
+
+This also refines the earlier "v2 = 6 of 7 needles repaired" reading: the count is
+right, but the sixth repair is malformed — CR-2's replacement is the correct form.
+
+--- VZ-4 VERIFIES CR-2's CORRECTION (14:27Z) ---
+Applied CR-2's single hunk to a fresh scratch root with `patch -p1 --fuzz=0 --batch --forward`:
+  -> applied cleanly under STRICT fuzz (no tolerance needed)
+  -> the X1 bullet now reads (coherent, no self-contradiction):
+       - **Cross-version residuals** — `compare-application-versions` is no longer
+         probe-refused since r2 (r12-02 drained the row with two success legs); multi-version
+         pacman pairs beyond expac unexercised [r5-audit C1: merged from the pruned
+         Frontier bullet — its `compare_javascript_export_shapes` item is held now].
+  => CR-2's replacement is the correct form and is strictly-clean where v2's was not.
+
+REMAINING (VZ-4's own finding, unchanged by CR-2's fix): the sentence's SECOND half
+  ("pacman pairs beyond expac unexercised") is still the stale clause VZ-4, RV-3 and
+  EX-15 all measured. CR-2 repairs the hunk's context/coherence, not that staleness.
+  The parent still needs the pacman clause re-worded (PL-2's candidate has it; the
+  EX-14/EX-13/EX-11 paths do not).
