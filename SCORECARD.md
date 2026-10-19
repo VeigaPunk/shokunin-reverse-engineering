@@ -1755,3 +1755,59 @@ text — a new bullet beyond the last declared line sits outside the register
 until re-keyed); the census's `ptr_check` blind spot (R2) stands; the mid-leg
 retest stays operator-gated; `.ufo/waves/arc2-loop1-round10/C3.md` still
 dirty; `/tmp` quota standing.
+
+## arc3-loop1-round7 — coverage + calibration + operability: two claims verified, one adjudicated-partial, 2026-10-19
+
+Wave: 24 seats on `openai-codex/gpt-6-luna-max` (the scheduled zai slot — the
+lane is usage-exhausted, operator directive substitutes luna-max for all
+remaining zai slots). All 24 reports delivered. Claims measured at work
+commit `7deeb36`.
+
+- C1 operability (fleet) — the `ptr_check` blind spot (R2 residual): the wave
+  confirmed the mechanism is buildable (candidate patches catch seeded dead
+  pointers on scratch, G21 + the 19-key JSON contract intact) **but the
+  landing is genuinely blocked** — the frozen claim named `config.toml:3298`
+  while the live `PROVINCE.md:18` pointer is `:3546` (the 2026-10-19 re-read),
+  and `ptr_check` on the live target reads `stale`. No patch satisfies
+  "clean PASS" without either a fake receipt anchor or failing the live tree.
+  Adjudicated **partial**: mechanism proven, landing withheld; the pointer
+  itself needs a re-anchored receipt before the instrument can grade it.
+  Recorded in `claims/c1/C1-ADJUDICATION.md`.
+- C2 coverage (owned) — the `ev_` Evidence-ID formula Unknown **closed**:
+  `corpus/knowledge/2026-10-19-arc3-r7-evm-evidence-id-domain.md` (EX-3's
+  entry — the verdicts converged it directly derives the named formula:
+  `ev_` + lowercase sha256 of UTF-8 canonical JSON over the semantic
+  projection, per `rea-agents@6.4.0`/`6.7.0` package source; path-bearing
+  fields affect the id, display-only `subject.name`/`local_path` do not;
+  8/8 envelopes recomputed to their claimed ids). Map token landed; command
+  A 85 → 86.
+- C3 calibration (owned) — pacman archive inventory re-derived: **1350** live
+  `.pkg.tar.zst` (delta −206 from the dated 1556 receipt — cache eviction,
+  retention-varying inventory, not a capability change). Adjudicated no-edit
+  on the dated corpus value; append-only erratum landed on the pacman entry
+  recording the delta + the `PROVINCE.md:50` unqualified-count residual.
+
+Instruments at `7deeb36`: command A 85→**86/86** mapped, 15/15 rules,
+10.0/10.0; census PASS + G21 register; probe findings=0 both modes; custody
+28/28; PROVINCE 162 held.
+
+| axis | evidence | verdict |
+|---|---|---|
+| coverage — C2 | corpus 85→86; the `ev_` formula Unknown closed | improved |
+| calibration — C3 | live delta measured first-hand; dated receipt preserved by adjudication | improved |
+| operability — C1 | mechanism proven; landing withheld on a measured discrepancy (honest, not forced) | unchanged |
+| depth | 15 → 15 | unchanged |
+| freshness | r5/r6 errata hold; the pacman drift recorded | unchanged |
+| adjacency | PROVINCE boundary untouched | unchanged |
+
+Learning trends: the round's most instructive outcome is the honest partial —
+the instrument extension is provably buildable but the acceptance criterion
+was written against a receipt that had already drifted, so the correct move
+was to withhold the patch and name the blocker rather than land a fake anchor
+or a failing gate. That is the honesty discipline the arc trains. Discernment
+improved (the verdicts caught that the frozen claim's own pointer was stale —
+the claim was written before the pointer's own drift). Carried debt: the
+C1 `ptr_check` extension (mechanism proven; needs a re-anchored receipt
+first); `PROVINCE.md:50`'s unqualified count; the mid-leg retest
+(operator-gated); the register append-past-:162 residual;
+`.ufo/waves/arc2-loop1-round10/C3.md` still dirty; `/tmp` quota standing.

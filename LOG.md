@@ -1567,3 +1567,27 @@ dispatch; the 45 remaining seats completed on `opencode-go-7/deepseek-v4.1-flash
   `rule_blocks` 14→15, all 15 resolved.
 - Instruments at `2fba56f`: command A 85/85 + 15/15, census PASS + G21
   register, probe 0/0 both modes, custody 28/28, PROVINCE 162.
+
+## 2026-10-19 — arc3-loop1-round7 (work commit `7deeb36`; records this entry)
+
+Round 7 of arc3 loop 1: 24 seats on `openai-codex/gpt-6-luna-max` (zai slot —
+the lane is usage-exhausted; operator directive substitutes luna-max for all
+remaining zai slots this session). All 24 reports delivered.
+
+- C1 operability: `ptr_check` blind spot — mechanism proven (candidate patches
+  catch seeded dead pointers, G21 + 19-key JSON intact) but landing withheld:
+  the live `PROVINCE.md:18` pointer is `:3546` (not the `:3298` receipt the
+  claim named) and reads `stale`, so no patch satisfies "clean PASS" without a
+  fake anchor or a live FAIL. Adjudicated PARTIAL — recorded in
+  `claims/c1/C1-ADJUDICATION.md`; the pointer needs a re-anchored receipt
+  before the instrument can grade it.
+- C2 coverage: `ev_` Evidence-ID formula Unknown CLOSED —
+  `corpus/knowledge/2026-10-19-arc3-r7-evm-evidence-id-domain.md` (EX-3's
+  entry; `ev_` + sha256 of canonical JSON over the semantic projection;
+  path-bearing fields affect the id, display fields don't; 8/8 envelopes
+  recomputed). Map token landed; command A 85→86.
+- C3 calibration: pacman inventory re-derived — 1350 live vs dated 1556
+  (−206, cache eviction, retention-varying). No-edit adjudication on the dated
+  value; append-only erratum landed on the pacman entry.
+- Instruments at `7deeb36`: command A 86/86, census PASS + G21, probe 0/0 both
+  modes, custody 28/28, PROVINCE 162.
