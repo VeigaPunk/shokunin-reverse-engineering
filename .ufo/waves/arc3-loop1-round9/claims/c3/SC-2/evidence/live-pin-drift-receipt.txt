@@ -1,0 +1,60 @@
+# SC-2 live Kimi pin-line drift receipt
+
+Measured 2026-10-19. The original `~/.kimi-code/config.toml` was read-only. The edit experiment used a temporary byte-copy in `/var/tmp` and removed it at process exit. No config was changed.
+
+## Live pin re-derivation
+
+Command:
+
+```bash
+grep -n 'rea-agents@' "$HOME/.kimi-code/config.toml"; printf 'match-count='; grep -c 'rea-agents@' "$HOME/.kimi-code/config.toml"
+```
+
+Exact output:
+
+```text
+4126:args = [ "-y", "rea-agents@6.7.0", "mcp" ]
+match-count=1
+```
+
+`python3 .ufo/waves/arc3-loop1-round9/claims/c3/SC-2/evidence/rederive_drift.py` independently re-read and counted matching lines, then hashed the matched line:
+
+```text
+source_occurrences=1 source_pin_line=4126 source_pin=args = [ "-y", "rea-agents@6.7.0", "mcp" ]
+source_pin_sha256_no_eol=eb23737749a7dbd615db449daee491d821580fdb86df2660a92334df733b6cb1
+source_pin_sha256_with_eol=eb1c7da74fc5f870d7c6537e87beeaf043491b5cdd00ee7a2f65e426d9f2b675
+```
+
+The full gate script identity and repository revision at measurement:
+
+```text
+e4fb740cb8153f15c623f3b9f7ca781e270053b0557be5393010359b2213b7b4  .ufo/gates/c1-census-v10.py
+947091d6b6f52684faf9ca53adf94ff8a0f6b006
+```
+
+## Instrument disposition and edit-response test
+
+Command: `python3 .ufo/gates/c1-census-v10.py` (exit 1). It re-derived live anchors as `{'devin': '6.5.0', 'omp': '6.5.0', 'kimi': '6.7.0'}`. Its emitted PROVINCE block was `15-26 [scope CURRENT]`; the assertion was:
+
+```text
+:18 [ptr] __ptr__=~/.kimi-code/config.toml:4126 -> current-ok (pins 6.7.0)
+```
+
+The block disposition is `INFO` because it contains a mix of current and historical assertions; the pointer assertion itself is `current-ok`. A focused re-invocation of the gate's `classify()` on `PROVINCE.md` printed:
+
+```text
+block=15-26 block_disp=info line=18 pointer=~/.kimi-code/config.toml:4126 assertion_disp=current-ok why=pins 6.7.0
+```
+
+The gate's full HEAD verdict is nevertheless `FAIL`: JSON summary was `verdict=FAIL stale=0 ambiguous=0 undeclared=1 unresolved=0`. The undeclared block is `SCORECARD.md:1833-1839`, whose new record includes a `rea-agents@6.7.0` pin beyond the gate's last declared SCORECARD range (`.ufo/gates/c1-census-v10.py:276`, ending at 1813). This does not negate the PROVINCE pointer's assertion-level `current-ok`; it means the instrument as a whole is not PASS at this HEAD. No out-of-scope gate or SCORECARD edit was made.
+
+`rederive_drift.py` copied the live config to a temporary baseline, then inserted one comment line immediately before the pin in a second temporary copy. Exact output:
+
+```text
+baseline live_kimi=6.7.0 ptr_check@4126=('ok', 'pins 6.7.0')
+one-line-insertion occurrences=1 new_pin_line=4127 new_live_kimi=6.7.0
+old_pointer@4126=('stale', "line holds no rea-agents pin: '# SC-2 hypothetical one-line config edit'")
+reanchored_pointer@4127=('ok', 'pins 6.7.0')
+```
+
+This is a synthetic, non-mutating config edit: one preceding line moves the positional pin reference by +1 while leaving the live package version unchanged. The gate's `live_pins()` uses the first `rea-agents@` regex match (`.ufo/gates/c1-census-v10.py:324-334`); `ptr_check()` resolves the stated file/line and checks that its pin agrees with that anchor (`:466-482`). A post-pin edit or arbitrary TOML rewrite was not tested.

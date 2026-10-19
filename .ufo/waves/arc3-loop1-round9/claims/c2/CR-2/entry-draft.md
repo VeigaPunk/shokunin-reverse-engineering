@@ -1,0 +1,14 @@
+<!-- DRAFT for parent integration only. Proposed destination: corpus/knowledge/2026-10-19-arc3-r9-vyper-noopt-alias-boundary.md. Proposed EVM coverage-map token: 2026-10-19-arc3-r9-vyper-noopt-alias-boundary. Do not count as landed until both are integrated and Command A is rerun. -->
+
+# Vyper 0.4.3 `--no-optimize` and `-O none` produce identical K8 outputs
+
+source: `.ufo/waves/arc3-loop1-round9/claims/c2/CR-2/evidence/` (`K8.vy`; `noopt.*`; `none.*`; `rea-noopt.json`; `rea-none.json`; `rederive.txt`)
+verified-at: 2026-10-19
+
+This measures the residual byte-level boundary between Vyper's `--no-optimize` and `-O none` forms for one synthetic source only. Source SHA-256 `62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d`; compiler executable SHA-256 `615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10`, version `0.4.3+commit.bff19ea2`.
+
+- **Compiler output comparison.** Freshly compiled `-f bytecode`, `-f bytecode_runtime`, `-f abi`, `-f method_identifiers`, and `-f settings` outputs each passed byte-for-byte `cmp` between the two options. The 687-byte decoded creation bytecode hashes to `b09398d8eb89f1ec1a73de9cbec27a54ce79d185094a4253a384cfffe62e2598`; the 617-byte decoded runtime hashes to `1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc`. Settings in both outputs are `optimize: none`, `experimental_codegen: false`; each ABI has eight functions and each method-identifier object has eight entries. Exact command output and text-file digests are in `rederive.txt`.
+- **REA static cross-check.** `rea-agents@6.7.0`, provider `evmole-interface` / `evmole@0.9.3`, returned 8 normalized and 8 raw rows for each freshly compiled runtime, all with `dispatch:"abi"`. Both returned the same selector set (`2ae1431c`, `364605a1`, `9adbf691`, `9b7c2962`, `bf3724af`, `cf35f823`, `d7531d91`, `d7b7913b`) and decoded-bytecode SHA-256 above. Evidence IDs: no-optimize `ev_88d9ad56687ecb1c44453ac67a8dac41dc34ef144e3dfcd31aa5828c1282f9c6`; `-O none` `ev_aa8482f83ba4cac1c49ba7f4427fb7dd86a603b39ba53fc0973e990e954bee1c`.
+- **Conclusion (bounded).** No residual difference was measured among these compiler output forms for this exact K8 source and Vyper executable. The REA rows are inferred static analysis, not verified names/signatures or execution results; discovery completeness is `unknown`, runtime execution was `not-performed`, and deployment identity is unknown. This does not establish alias equivalence for other source shapes, compiler versions, or settings.
+
+Recheck from the lane root by compiling the retained `K8.vy` with each option and each listed `-f` output into a new `/var/tmp` directory, comparing each pair with `cmp`, then probing each `bytecode_runtime` file using `TMPDIR` under that scratch directory and `rea-agents@6.7.0 inspect-evm-interface <file> hex --format json`. Full first-hand command results and the returned envelopes are retained with the evidence above.

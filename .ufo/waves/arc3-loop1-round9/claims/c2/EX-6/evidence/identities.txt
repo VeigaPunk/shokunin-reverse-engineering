@@ -1,0 +1,21 @@
+EX-6 source/compiler identity capture
+
+Repository HEAD at measurement: 947091d6b6f52684faf9ca53adf94ff8a0f6b006
+Node: v26.12.0
+solc-js: 0.8.37+commit.f401782d.Emscripten.clang
+REA package: 6.7.0
+
+Fresh input identities:
+615edcdecab9a6b3b4d9b6965c416406f133d43b1144eb2e13985bf17580f11a  ViaIRFallback.sol
+8772b109061007fbb94c2ec4f1e8f7008a5f0eb45641759041d9bcafc22087d0  compile.js
+221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c  existing solc-prefix/node_modules/solc/soljson.js
+b3a90035cab4e8aa43068f33f01497dccfb77b294e1ea30c5fb32a9631e33491  existing solc-prefix/node_modules/solc/package.json
+
+Compilation settings in out-a/input.json and out-b/input.json: Solidity standard JSON; viaIR=true; optimizer.enabled=true; optimizer.runs=200; no explicit evmVersion override.
+
+Two compile invocations:
+- Runtime: 366 B, SHA-256 2948d578ae460119f777eb379febc2738dbec14d03c76d5f100777c9552ce6fc (both runs identical).
+- Creation: 392 B, SHA-256 a24cb1651e78dd159425d5b27c9ba513b50b0401f5bcf3589f259b0a70d0ba9e (both runs identical).
+- out-a/runtime.hex: 733 B serialized input, SHA-256 4736cecce7f1977a80f9401bcce111bf2b78b65e9f1f31397b2327dff0d3488f.
+
+REA call: local cached package under `/home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/`, operation `inspect-evm-interface`, carrier `out-a/runtime.hex`, encoding `hex`, TMPDIR `/var/tmp/kaidoku-r9-ex6`; exit code 0. Evidence ID `ev_5272b1d8547672b56597c8aaccc6cf675675d128ace33cb3e590545feae1bddd`; provider `evmole-interface` / `evmole@0.9.3`. Full envelope `probe.json`, stderr `probe.stderr`.

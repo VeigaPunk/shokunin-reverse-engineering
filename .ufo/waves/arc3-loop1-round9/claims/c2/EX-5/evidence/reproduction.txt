@@ -1,0 +1,25 @@
+All scratch and TMPDIR paths were under /var/tmp; /tmp was not used. The source copy was compiled twice using the script preserved as compile.js. No custody path was written.
+
+Source: evidence/source/ViaIrVault.sol (SHA-256 f53911672f2e33eaabaeff85e75c2565bb2899638d194fb3ffe6747abe80cbbe).
+Compiler: solc 0.8.28+commit.7893614a.Emscripten.clang; cached npm tarball identity and soljson.js digest are in compiler-identity.txt. Settings: optimizer enabled, runs=200; primary with viaIR=true; control with viaIR omitted. The compile output records 0 warnings, 15 ABI function entries, 15 compiler method identifiers, and 15 independently Keccak-derived selectors for both legs.
+
+Compile commands used (ROOT is the lane repository, S=/var/tmp/kaidoku-ex5-c2.MQ6KAo, TMPDIR=$S/tmp):
+  NODE_PATH="$ROOT/.ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules" node "$ROOT/.ufo/waves/arc3-loop1-round9/claims/c2/EX-5/evidence/compile.js" "$S/package/package" "$S/src/ViaIrVault.sol" "$S/out"
+  NODE_PATH="$ROOT/.ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules" node "$ROOT/.ufo/waves/arc3-loop1-round9/claims/c2/EX-5/evidence/compile.js" "$ROOT/.ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules/solc" "$S/src/ViaIrVault.sol" "$S/out-0837"
+
+The solc 0.8.28 package was made available offline from npm's existing cache with `TMPDIR="$S/tmp" npm pack solc@0.8.28 --offline --cache "$HOME/.npm" --pack-destination "$S"`, then unpacked under `$S/package`. Final delivery verification recompiled the checked-in evidence source and compared runtime/creation bytes to the recorded outputs (`delivery-verification.txt`).
+
+Fresh 0.8.28 output:
+  viaIR runtime: 1,517 bytes, SHA-256 3f28f35ea804ce431cca75f3c2b6602aaeaf17938f4d4a773654e19a95f07967; creation: 1,560 bytes, SHA-256 e25a51428510bf212744962909d658d37e447ac245498294e0f08cc0269c38f3.
+  standard-pipeline runtime: 1,921 bytes, SHA-256 dad50dc7a942f728203e0b5a6dffa228907ae1cb3cc60e2e4676dc5fc95eac5f; creation: 1,966 bytes, SHA-256 ecac771d22777e244cfbe1b908ff451320deadf4ba00a5621fe82fe5217d3adb.
+
+A fresh 0.8.37+commit.f401782d compile of the same source/settings is retained as the version control. The 0.8.28 and 0.8.37 viaIR runtimes are both 1,517 bytes; byte comparison shows bytes [0,1464) identical (SHA-256 34a46554c003760ddc41c3e7c2ec94cdc08b0d162a75a763d6f06c49ed03ed15). Their 51-byte CBOR metadata regions differ; no code-prefix byte differs.
+
+REA commands (all `--format json`, input encoding `hex`, TMPDIR=/var/tmp/kaidoku-ex5-c2.MQ6KAo/tmp):
+  node /home/vgpnk/.npm/_npx/9b9809298fe40d2c/node_modules/rea-agents/scripts/rea.mjs inspect-evm-interface /var/tmp/kaidoku-ex5-c2.MQ6KAo/out/viair-opt200/runtime.hex hex --format json
+  node /home/vgpnk/.npm/_npx/9b9809298fe40d2c/node_modules/rea-agents/scripts/rea.mjs inspect-evm-interface /var/tmp/kaidoku-ex5-c2.MQ6KAo/out/std-opt200/runtime.hex hex --format json
+  node /home/vgpnk/.npm/_npx/9b9809298fe40d2c/node_modules/rea-agents/scripts/rea.mjs inspect-evm-interface /var/tmp/kaidoku-ex5-c2.MQ6KAo/out-0837/viair-opt200/runtime.hex hex --format json
+
+`compare.py` parses raw EVM bytes, compares ABI-derived selectors with REA rows, hashes the pre-metadata region, and records guard/comparator classes. Its result is byte-characterization.json. Compiler stdout is under compile/solc-0.8.28/compile-output.jsonl and compile/solc-0.8.37/compile-output.jsonl; full REA envelopes are under probe/.
+
+Command A was copied exactly from SCORECARD.md:88-124 and run against immutable HEAD 947091d6b6f52684faf9ca53adf94ff8a0f6b006. Exact output: {"citation_resolved_rules":15,"coverage_score":10.0,"dangling":[],"depth_score":10.0,"knowledge_files":87,"mapped":87,"missing":[],"revision":"947091d6b6f52684faf9ca53adf94ff8a0f6b006","rule_blocks":15}. The proposed new entry and EVM map token are drafts only; the post-landing 88/88 result is intentionally not claimed here.

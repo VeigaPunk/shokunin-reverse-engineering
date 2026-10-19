@@ -1,0 +1,25 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "ViaIrVault.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\n/// ViaIrVault — EX-7 seat (arc3-loop1-round6): viaIR dispatcher carrier.\n/// 14 explicit external functions + receive() = 15 dispatched entries.\n/// Mixed mutability, no ERC-20 surface. Compiled with via_ir:true.\ncontract ViaIrVault {\n    address private owner_;\n    uint256 private total_;\n    uint256 private fee_;\n    bool private paused_;\n    mapping(address => uint256) private balances_;\n    mapping(bytes32 => bool) private marks_;\n\n    constructor() {\n        owner_ = msg.sender;\n    }\n\n    receive() external payable {\n        require(!paused_, \"paused\");\n        balances_[msg.sender] += msg.value;\n        total_ += msg.value;\n    }\n\n    function deposit() external payable {\n        require(!paused_, \"paused\");\n        balances_[msg.sender] += msg.value;\n        total_ += msg.value;\n    }\n\n    function withdraw(uint256 amount) external {\n        require(!paused_, \"paused\");\n        require(balances_[msg.sender] >= amount, \"short\");\n        balances_[msg.sender] -= amount;\n        total_ -= amount;\n        (bool ok, ) = msg.sender.call{value: amount}(\"\");\n        require(ok, \"xfer\");\n    }\n\n    function sweep(address to) external {\n        require(msg.sender == owner_, \"auth\");\n        (bool ok, ) = to.call{value: address(this).balance}(\"\");\n        require(ok, \"xfer\");\n    }\n\n    function pause() external {\n        require(msg.sender == owner_, \"auth\");\n        paused_ = true;\n    }\n\n    function unpause() external {\n        require(msg.sender == owner_, \"auth\");\n        paused_ = false;\n    }\n\n    function setFee(uint256 bps) external {\n        require(msg.sender == owner_, \"auth\");\n        require(bps <= 10000, \"range\");\n        fee_ = bps;\n    }\n\n    function mark(bytes32 k) external {\n        marks_[k] = true;\n    }\n\n    function readTotal() external view returns (uint256) {\n        return total_;\n    }\n\n    function readFee() external view returns (uint256) {\n        return fee_;\n    }\n\n    function readPaused() external view returns (bool) {\n        return paused_;\n    }\n\n    function readOwner() external view returns (address) {\n        return owner_;\n    }\n\n    function readBalance(address who) external view returns (uint256) {\n        return balances_[who];\n    }\n\n    function marked(bytes32 k) external view returns (bool) {\n        return marks_[k];\n    }\n\n    function digestOf(bytes32 k) external view returns (bytes32) {\n        return keccak256(abi.encode(k, block.chainid));\n    }\n\n    function scale(uint256 x, uint256 n) external pure returns (uint256) {\n        require(n < 256, \"range\");\n        return (x << n) | (x >> (256 - n));\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "viaIR": true,
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.methodIdentifiers",
+          "evm.bytecode.object",
+          "evm.deployedBytecode.object"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "ViaIRFallback.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.37;\n\ncontract ViaIRFallback {\n    uint256 private saved;\n\n    receive() external payable {\n        saved += msg.value;\n    }\n\n    fallback() external payable {\n        saved = uint256(keccak256(msg.data)) + msg.value;\n    }\n\n    function alpha() external pure returns (uint256) {\n        return 17;\n    }\n\n    function store(uint256 value) external payable returns (uint256) {\n        saved = value + msg.value;\n        return saved;\n    }\n\n    function load() external view returns (uint256) {\n        return saved;\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "viaIR": true,
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.methodIdentifiers",
+          "evm.bytecode.object",
+          "evm.deployedBytecode.object",
+          "evm.deployedBytecode.opcodes"
+        ]
+      }
+    }
+  }
+}

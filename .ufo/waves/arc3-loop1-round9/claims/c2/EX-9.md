@@ -1,0 +1,32 @@
+# EX-9 — C2 coverage: Vyper no-optimize flag and offset boundary
+
+## Seat verdict
+
+**C2: REPRODUCED.** I recompiled the original `K8.vy` source bytes from the round-4 corpus fixture with Vyper 0.4.3, once using `--no-optimize` and once using `-O none`; then I re-ran REA on both freshly compiled runtime carriers and walked the bytecode independently. For this pinned source and compiler, these two option spellings produce byte-identical runtime, ABI, method-identifier, and settings outputs, and the same eight-selector dispatcher. The non-default form's REA offsets are `PUSH4 pc + 12`, landing on `CALLVALUE`, not `JUMPDEST`; this is a distinct, fixture-scoped offset convention. The corpus entry below is a draft only; I did not modify `corpus/knowledge/` or `corpus/README.md`.
+
+- **Option-output equivalence — VERIFIED.** Both compiler settings report `optimize:none`; `cmp` passes for runtime, ABI, method identifiers, and settings (`evidence/rederive.txt:11-15`). Runtime hex file SHA-256 is `1dfe2699e61e8d82570dc3272d9679880e5a2fa765a0e4ce9169331ecedd939c`; decoded runtime is 617 bytes, SHA-256 `1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc` (`evidence/measure.txt:3-6,10-13`).
+- **Selector recovery and dispatcher — REPRODUCED.** Independently derived compiler selector set: `2ae1431c, 364605a1, 9adbf691, 9b7c2962, bf3724af, cf35f823, d7531d91, d7b7913b`. REA 6.7.0 / EVMole 0.9.3 returned 8/8 matching selectors with `dispatch:"abi"` for both inputs and the same decoded-bytecode SHA-256 (`evidence/measure.txt:7-19`; full envelopes: `evidence/{noopt,none}.probe.json`). A byte-boundary walk independently found eight `PUSH4; DUP2; EQ; ISZERO; PUSH2; JUMPI` legs at PCs `0x13, 0x5c, 0xa5, 0xee, 0x137, 0x180, 0x1c9, 0x212`; all eight targets are JUMPDESTs (`evidence/dispatch-census.txt:1-5`).
+- **Non-default offset convention — REPRODUCED for this fixture.** All eight REA offsets are `PUSH4 pc + 12` and point to opcode `CALLVALUE`, not `JUMPDEST` (`evidence/offset-census.txt:1-4`). This is a bounded measurement, not a general offset rule for other Vyper builds or sources.
+- **Mutability inference — DISCREPANCY, scoped to REA inference.** The compiler ABI says `view` for all eight functions, while both REA probes infer `payable` for all eight (`evidence/noopt.abi.json`, `evidence/none.abi.json`, and the probe envelopes). Selector recovery does not verify argument or mutability inference. No runtime execution was performed.
+- **Coverage count — VERIFIED at the frozen baseline only.** Command A re-run on HEAD `947091d6b6f52684faf9ca53adf94ff8a0f6b006` reports `knowledge_files:87`, `mapped:87`, `missing:[]`, `dangling:[]` (`evidence/command-a-before.json:1`). The post-landing 88-file/88-mapped measurement is **not yet established** because this entry and map token remain drafts; the integrator must land both and rerun Command A.
+
+## Proposed corpus entry (draft only)
+
+<!-- DRAFT: proposed destination corpus/knowledge/2026-10-19-arc3-r9-vyper-noopt-alias-boundary.md; add token 2026-10-19-arc3-r9-vyper-noopt-alias-boundary to the EVM coverage-map row. No corpus or map edit was made. -->
+
+# Vyper 0.4.3 K8 no-optimize aliases — identical runtime bytes and a distinct offset convention
+
+source: `.ufo/waves/arc3-loop1-round9/claims/c2/EX-9/evidence/` (`K8.vy`; `noopt.{runtime.hex,abi.json,methodids.json,settings.json,probe.json}`; `none.{runtime.hex,abi.json,methodids.json,settings.json,probe.json}`; `rederive.txt`; `measure.txt`; `dispatch-census.txt`; `offset-census.txt`); reproduction code: `.ufo/waves/arc3-loop1-round9/claims/c2/EX-9/{rederive.sh,measure.py,dispatch_census.py,offset_census.py}`.
+
+verified-at: 2026-10-19
+
+recheck: from the lane root run `bash .ufo/waves/arc3-loop1-round9/claims/c2/EX-9/rederive.sh`, then `python3 .ufo/waves/arc3-loop1-round9/claims/c2/EX-9/measure.py`, `python3 .ufo/waves/arc3-loop1-round9/claims/c2/EX-9/dispatch_census.py`, and `python3 .ufo/waves/arc3-loop1-round9/claims/c2/EX-9/offset_census.py`. The first script copies the read-only round-4 `K8.vy` source into this seat's evidence directory, compiles into a unique `/var/tmp` scratch directory, and probes the two seat-local runtime files with REA 6.7.0. It does not write to the source, corpus, coverage map, or prior-round custody paths.
+
+This closes the named non-default-optimizer dispatcher/offset Unknown at `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:28` only for the copied `K8.vy` source bytes (SHA-256 `62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d`) and Vyper `0.4.3+commit.bff19ea2` (compiler executable SHA-256 `615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10`). It does not generalize to other Vyper source shapes, compiler versions, or optimization modes.
+
+- `--no-optimize` and `-O none` both report `{"optimize":"none","experimental_codegen":false}`. Two independent runtime compiles per spelling agree byte-for-byte; the two spellings also agree byte-for-byte for the runtime, ABI, method identifiers, and settings outputs. Runtime: 617 decoded bytes, SHA-256 `1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc`.
+- The ABI has eight function entries and the compiler method-identifier map has eight entries. REA 6.7.0 (`evmole-interface`, EVMole 0.9.3) returned the same eight selectors on each runtime, all `dispatch:"abi"`; each decoded-bytecode SHA-256 matches the compiler output. The two Evidence IDs are `ev_106c6ef09a24aa306c4e741cf7d8fd0b75f2088683c1991289eb2a0ff81ec674` and `ev_b1eeb4f6d238b2d077cd3beee03fb0e57258ae173c9bed93f0f3a5981c88c107`. Compare decoded-bytecode identity and function payload, not IDs.
+- Byte-level walk: the 617-byte runtime has eight opcode-boundary `PUSH4` sites; each is the start of `PUSH4 selector; DUP2; EQ; ISZERO; PUSH2 target; JUMPI`. The eight selector values equal the compiler method-identifier set; all targets point to `JUMPDEST` bytes. No `MOD`, `SHL`, or `CODECOPY` occurs in this runtime.
+- The eight REA offsets equal the corresponding `PUSH4` program counter plus 12; each points to the following `CALLVALUE` instruction, not a `JUMPDEST` (`offset-census.txt`). This result is specific to this non-default form and source.
+- **Inference limits:** the ABI declares `view` for all eight functions, while REA infers `payable` for all eight. Selector/argument/mutability results remain static inferences; `runtime_execution` is `not-performed`, discovery completeness is unknown, and no deployed identity, chain, or behavior is established.
+

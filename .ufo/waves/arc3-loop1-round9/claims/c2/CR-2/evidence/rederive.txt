@@ -1,0 +1,93 @@
+CR-2 first-hand re-derivation — arc3-loop1-round9
+
+Scratch: /var/tmp/kaidoku-cr2-r9.h4dc2U (not /tmp)
+Input copied from .ufo/waves/arc3-loop1-round8/claims/c3/EX-8/evidence/K8.vy to scratch/K8.vy before the runs.
+Source SHA-256: 62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d
+Compiler: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper
+Compiler SHA-256: 615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10
+Compiler --version output: 0.4.3+commit.bff19ea2
+
+For each of these output forms, one fresh compiler invocation was made with each option; TMPDIR was the scratch tmp directory:
+  vyper --no-optimize -f bytecode K8.vy
+  vyper -O none -f bytecode K8.vy
+  vyper --no-optimize -f bytecode_runtime K8.vy
+  vyper -O none -f bytecode_runtime K8.vy
+  vyper --no-optimize -f abi K8.vy
+  vyper -O none -f abi K8.vy
+  vyper --no-optimize -f method_identifiers K8.vy
+  vyper -O none -f method_identifiers K8.vy
+  vyper --no-optimize -f settings K8.vy
+  vyper -O none -f settings K8.vy
+
+Observed comparison output (each pair passed cmp -s):
+bytecode=IDENTICAL
+e9e624957eecca5907bb429a7d99a639dfd3c94a04a473357172cdd3ff122dac  noopt.bytecode
+e9e624957eecca5907bb429a7d99a639dfd3c94a04a473357172cdd3ff122dac  none.bytecode
+1377 noopt.bytecode
+1377 none.bytecode
+2754 total
+bytecode_runtime=IDENTICAL
+1dfe2699e61e8d82570dc3272d9679880e5a2fa765a0e4ce9169331ecedd939c  noopt.bytecode_runtime
+1dfe2699e61e8d82570dc3272d9679880e5a2fa765a0e4ce9169331ecedd939c  none.bytecode_runtime
+1237 noopt.bytecode_runtime
+1237 none.bytecode_runtime
+2474 total
+abi=IDENTICAL
+026745a7e293ff3aa32a3c4f6fd33973c5a143b637782776e6b497e96952e0d3  noopt.abi
+026745a7e293ff3aa32a3c4f6fd33973c5a143b637782776e6b497e96952e0d3  none.abi
+1241 noopt.abi
+1241 none.abi
+2482 total
+method_identifiers=IDENTICAL
+3b50906530daa351f192ed05c321c2e239d45fbd2b86a2765ac33568b9fda8ea  noopt.method_identifiers
+3b50906530daa351f192ed05c321c2e239d45fbd2b86a2765ac33568b9fda8ea  none.method_identifiers
+233 noopt.method_identifiers
+233 none.method_identifiers
+466 total
+settings=IDENTICAL
+547d3edca5c61dde1f0cea725eee658497c916c908c9b7e66c178e56bee54332  noopt.settings
+547d3edca5c61dde1f0cea725eee658497c916c908c9b7e66c178e56bee54332  none.settings
+52 noopt.settings
+52 none.settings
+104 total
+
+Independent decoding of the freshly generated hex outputs:
+noopt.bytecode: decoded_bytes=687 decoded_sha256=b09398d8eb89f1ec1a73de9cbec27a54ce79d185094a4253a384cfffe62e2598
+noopt.bytecode_runtime: decoded_bytes=617 decoded_sha256=1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc
+none.bytecode: decoded_bytes=687 decoded_sha256=b09398d8eb89f1ec1a73de9cbec27a54ce79d185094a4253a384cfffe62e2598
+none.bytecode_runtime: decoded_bytes=617 decoded_sha256=1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc
+noopt: settings={'optimize': 'none', 'experimental_codegen': False} abi_functions=8 method_identifiers=8
+none: settings={'optimize': 'none', 'experimental_codegen': False} abi_functions=8 method_identifiers=8
+
+REA: /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/.bin/rea
+REA --version output: 6.7.0
+Exact inspect invocations, with TMPDIR=/var/tmp/kaidoku-cr2-r9.h4dc2U/tmp:
+  rea inspect-evm-interface /var/tmp/kaidoku-cr2-r9.h4dc2U/noopt.bytecode_runtime hex --format json
+  rea inspect-evm-interface /var/tmp/kaidoku-cr2-r9.h4dc2U/none.bytecode_runtime hex --format json
+
+Parsed output summary (full unmodified JSON is in rea-noopt.json and rea-none.json):
+NOOPT_REA_ID=ev_88d9ad56687ecb1c44453ac67a8dac41dc34ef144e3dfcd31aa5828c1282f9c6
+NOOPT_PROVIDER=evmole-interface VERSION=evmole@0.9.3
+NOOPT_FUNCTIONS_NORMALIZED=8 RAW=8
+NOOPT_SELECTORS=2ae1431c,364605a1,9adbf691,9b7c2962,bf3724af,cf35f823,d7531d91,d7b7913b
+NOOPT_DISPATCH_COUNTS={'abi': 8}
+NOOPT_DECODED_SHA256=1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc
+NOOPT_AUTHORITY=shipped-artifact CONFIDENCE=inferred RUNTIME_EXECUTION=not-performed DISCOVERY_COMPLETENESS=unknown
+NONE_REA_ID=ev_aa8482f83ba4cac1c49ba7f4427fb7dd86a603b39ba53fc0973e990e954bee1c
+NONE_PROVIDER=evmole-interface VERSION=evmole@0.9.3
+NONE_FUNCTIONS_NORMALIZED=8 RAW=8
+NONE_SELECTORS=2ae1431c,364605a1,9adbf691,9b7c2962,bf3724af,cf35f823,d7531d91,d7b7913b
+NONE_DISPATCH_COUNTS={'abi': 8}
+NONE_DECODED_SHA256=1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc
+NONE_AUTHORITY=shipped-artifact CONFIDENCE=inferred RUNTIME_EXECUTION=not-performed DISCOVERY_COMPLETENESS=unknown
+
+Copied evidence SHA-256:
+K8.vy 62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d
+noopt.creation.hex e9e624957eecca5907bb429a7d99a639dfd3c94a04a473357172cdd3ff122dac
+none.creation.hex e9e624957eecca5907bb429a7d99a639dfd3c94a04a473357172cdd3ff122dac
+noopt.runtime.hex 1dfe2699e61e8d82570dc3272d9679880e5a2fa765a0e4ce9169331ecedd939c
+none.runtime.hex 1dfe2699e61e8d82570dc3272d9679880e5a2fa765a0e4ce9169331ecedd939c
+rea-noopt.json c89eac951cab8364da8df9a812bb358dc928fff83adc96543f9870296e651710
+rea-none.json 2e8625ea96b53460781fb7ac068ad02f75d9685a1495ab5067d64a33af384dce
+
+Limit: exact equivalence established only for this K8.vy byte source and this Vyper executable. REA output is static/inferred; no runtime execution, deployed bytecode identity, or general equivalence for other sources/compiler versions is claimed.

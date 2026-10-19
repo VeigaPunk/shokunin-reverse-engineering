@@ -8,3 +8,28 @@ line-sha256-including-LF: eb1c7da74fc5f870d7c6537e87beeaf043491b5cdd00ee7a2f65e4
 context: [mcp_servers.rea] at :4124; the pin is the single `rea-agents@` match in the file
 supersedes: :3546 (now holds a Copilot model block — drifted), :3298 (17:55:49Z receipt), :2940 (16:57:35Z), :3227 (17:32Z)
 note: this pointer class is perishable (the config drifts on operator edits); re-derive the line before relying on it — the census gate now evaluates it live via the r8 ptr_check extension.
+
+## Drift-class characterization (arc3-loop1-round9, append-only)
+
+Measured end-to-end by the r9 c3 seats (EX-13, SC-1 and peers):
+
+- The pin is the **sole** `rea-agents@` match in the file — exactly one match
+  at `:4126` (`args = [ "-y", "rea-agents@6.7.0", "mcp" ]`), under
+  `[mcp_servers.rea]` at `:4124`. The gate's live-anchor read independently
+  returns `{'devin':'6.5.0','omp':'6.5.0','kimi':'6.7.0'}`.
+- The ptr extension evaluates the live `:4126` pointer `current-ok` (the
+  `ptr` assertion at PROVINCE block 15-26 line 18 disp `current-ok`,
+  `pins 6.7.0`). Confirmed by gate output this round.
+- **Drift mechanics (measured on synthetic fixtures, not the live config):**
+  a one-line insertion *above* the pin moves it down — the cited line then
+  holds filler and reads `stale`; a one-line insertion that duplicates the
+  pin line leaves both copies `current-ok` (the class tolerates duplication,
+  not position loss). So the pointer class is **position-sensitive, not
+  content-sensitive**: the receipt's content hash binds the *line's* bytes,
+  but the *line number* is what drifts. The clean detection is the
+  instrument's live `ptr_check` — which is exactly why the r8 extension was
+  the right fix.
+- **Historical chain (measured this arc):** `:2940` (16:57:35Z) → `:3227`
+  (17:32Z) → `:3298` (17:55:49Z) → `:3546` (2026-10-19 re-read) → `:4126`
+  (2026-10-19 re-read). Four operator-side drifts; each prior pointer survives
+  only as a receipt, never as a live line.
