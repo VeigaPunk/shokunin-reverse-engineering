@@ -1632,3 +1632,65 @@ Carried debt (named): the census blind spot (Frontier region UNDECLARED — the
 repairs are clause-audited, not instrument-graded); `ptr_check` unreachable on
 pinned clauses (R2); the pre-existing dirty `.ufo/waves/arc2-loop1-round10/C3.md`;
 `/tmp` quota standing. Retired: none.
+
+## arc3-loop1-round5 — calibration + coverage + freshness: the scheduled correctness sweep, 2026-10-19
+
+Wave: 64 seats on `openai-codex/gpt-6-luna-max` — the scheduled R5 sweep, all
+64 reports delivered (16 c1 + 16 c2 + 16 c3 + 12 verdicts + 4 unrostered TB
+mapped to c1). Claims measured at work commit `58c3db7`. The sweep's job was
+to re-derive arc3 rounds 1–4 and disposition the arc2 carried debt — it did
+both, and it earned its keep by catching real defects the landings carried.
+
+- C1 calibration (sweep) — every scoped number re-derived first-hand:
+  command A reproduces at all seven revisions (82→84 mapped, missing/dangling
+  []); census PASS; citation-drift 0/0 both modes; custody selftest 28/28;
+  PROVINCE 162 held; Vyper 15/15 K/K + runtime sha `57d6fd0a…` + modulo
+  table at `0x600` all reproduce. **Five discrepancies named and corrected** —
+  a reporting overstatement ("all nine literals cleared" → 8/9 + adjudicated
+  NO-CHANGE), an invocation syntax (`--selftest` flag → positional
+  `selftest`), a revision-grouping mislabel (`5be4a26` is r3-hygiene, not r2;
+  `520341d` is r4-C3 work, parent of `40de383`), a Vyper CODECOPY wording
+  (2-byte entry copied, not the 26-byte table), and a roster-table gap
+  (TB-1..4 omitted from the printed table, mapped to c1 in the text).
+- C2 coverage (corpus audit) — the three dated arc3 entries audited per
+  claim: selector sets, byte identities, dispatch shapes all VERIFIED; two
+  real defects + two domain/wording corrections landed append-only — the
+  r4 initcode-absence sentence (runtime IS byte-embedded in initcode at +20 —
+  parsed-and-empty is the probe result, not byte absence), the r4 "no Core
+  promotion" sentence (superseded by the same commit `40de383`'s PROVINCE
+  `Core, arc3-r4` wording), the r4 CODECOPY wording, and the r1 Smoke
+  digest domain (685 B decoded ↔ `08299f31…`; `530efc7b…` is the 1,370 B
+  hex file). The r3 initcode line corrected the same way; the r3
+  matrix-only rows recorded UNVERIFIABLE (evidence not retained).
+- C3 freshness (debt disposition) — three rulings, none dropped: mid-leg
+  retest **STOPPED-with-reason** (MemAvailable ~20.5 GiB passes the RAM
+  reading but the operator host-cost gate is not evidenced — honest stop);
+  r10 5-seat deficit **DISCHARGED-BY-PRECEDENT** (corrected missing set
+  E1,E17,E28,R7,CR1 — the older receipt wrongly named P1; caveat recorded
+  that the counting lesson carries no interruption exception — the basis is
+  the frozen R5 option); the full hyper-vs-devin census **CARRIED-forward**
+  (report files r1:64/r2:60/r3:60/r4:60/r10:59 measured, but dispatch
+  denominators aren't reconstructible in-repo).
+
+Instruments at `58c3db7`: command A 84/84, 14/14, 10.0/10.0; census PASS;
+probe findings=0 both modes; custody 28/28; PROVINCE 162 held.
+
+| axis | evidence | verdict |
+|---|---|---|
+| calibration — C1 | every scoped number re-derived; 5 discrepancies caught + corrected | improved |
+| coverage — C2 | corpus audited per-claim; 2 real defects + 2 domain fixes landed | improved |
+| freshness — C3 | 3 debt rulings recorded, none dropped | improved |
+| depth | 10.0 → 10.0 | unchanged |
+| operability | custody 28/28, probe 0/0 | unchanged |
+| adjacency | PROVINCE boundary untouched | unchanged |
+
+Learning trends: the sweep is the arc's strongest evidence for the fleet's
+honesty discipline — a 64-seat wave dispatched specifically to *find* errors
+found five, including two the landings genuinely carried (the initcode and
+Core-promotion defects). Recorded as discernment + calibration improved; no
+sweep defect was smoothed into an unverifiable. Carried debt: the mid-leg
+retest stays open as operator-gated (the one substantive debt); the census
+Frontier blind spot (R1) and ptr_check blind spot (R2) stand; the r3
+matrix-only rows and r3-07 Carrier-3 offsets remain UNVERIFIABLE (evidence
+not retained); `.ufo/waves/arc2-loop1-round10/C3.md` still dirty; `/tmp`
+quota standing.

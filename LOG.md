@@ -1512,3 +1512,29 @@ token-plan quota died mid-R3). All 48 reports delivered; three chains VERIFIED.
 - Named debt: the census cannot grade Frontier-region repairs (UNDECLARED
   scope, R1 residual); `ptr_check` unreachable on pinned clauses (R2); the
   pre-existing dirty `.ufo/waves/arc2-loop1-round10/C3.md`; `/tmp` quota.
+
+## 2026-10-19 — arc3-loop1-round5 (work commit `58c3db7`; records this entry)
+
+Round 5 of arc3 loop 1: 64-seat correctness sweep on `openai-codex/gpt-6-luna-max`
+(the scheduled R5 provider), all 64 reports delivered. The sweep re-derived
+arc3 rounds 1–4 first-hand and dispositioned the arc2 carried debt.
+
+- C1 calibration (sweep): all scoped numbers reproduce — command A at 7
+  revisions (82→84), census PASS, citation-drift 0/0 both modes, custody 28/28,
+  PROVINCE 162, Vyper 15/15 + sha `57d6fd0a…`. Five discrepancies caught and
+  corrected: "all nine literals cleared" → 8/9 + adjudicated NO-CHANGE; custody
+  invocation `--selftest` → positional `selftest`; revision grouping
+  (`5be4a26` r3-hygiene, `520341d` r4-C3 parent of `40de383`); Vyper CODECOPY
+  (2-byte entry, not 26-byte table); roster-table TB omission.
+- C2 coverage (corpus audit): three dated entries audited per-claim; selectors
+  / identities / dispatch shapes VERIFIED. Append-only errata landed — r4
+  initcode (parsed-and-empty ≠ byte absence; runtime embedded at +20), r4
+  "no Core promotion" (superseded by `40de383`'s own PROVINCE `Core, arc3-r4`),
+  r4 CODECOPY wording, r1 Smoke digest domain, r3 initcode + matrix-only rows
+  recorded UNVERIFIABLE.
+- C3 freshness (debt): mid-leg retest STOPPED (operator host-cost gate not
+  evidenced — honest stop); r10 deficit DISCHARGED-BY-PRECEDENT (corrected set
+  E1,E17,E28,R7,CR1); hyper-vs-devin census CARRIED-forward (denominators not
+  reconstructible in-repo).
+- Instruments at `58c3db7`: command A 84/84, census PASS, probe 0/0, custody
+  28/28, PROVINCE 162.
