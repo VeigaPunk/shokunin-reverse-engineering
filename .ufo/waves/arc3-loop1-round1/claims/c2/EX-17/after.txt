@@ -1,0 +1,86 @@
+# phase=after date=2026-10-19T10:17:48Z
+# repo HEAD: e845c2b524ad2e59871e004c51a1386e192a74ab
+# base sha256 (probe / expected / table):
+e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  /dev/shm/ex17-c2-tamper/fixed/citation-drift-probe.py
+ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7  /dev/shm/ex17-c2-tamper/fixed/expected.json
+738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  /dev/shm/ex17-c2-tamper/fixed/pointer-table.json
+
+## I0-clean
+CMD: python3 citation-drift-probe.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev HEAD --table /dev/shm/ex17-c2-tamper/fixed/pointer-table.json --expected /dev/shm/ex17-c2-tamper/fixed/expected.json 
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex17-c2-tamper/fixed/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+EXIT=0
+
+## I0-clean-strict
+CMD: python3 citation-drift-probe.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev HEAD --table /dev/shm/ex17-c2-tamper/fixed/pointer-table.json --expected /dev/shm/ex17-c2-tamper/fixed/expected.json --strict
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex17-c2-tamper/fixed/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+EXIT=0
+
+I1: offset=917 byte 0x22 -> 0x21
+sha256(t1-invalid-json.json) = 3423f1d1e42ec89ce6759fdaff325e32b896d261d2e4e8a13525dfa3c6e4774f
+## I1-invalid-json
+CMD: python3 citation-drift-probe.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev HEAD --table /dev/shm/ex17-c2-tamper/t1-invalid-json.json --expected /dev/shm/ex17-c2-tamper/fixed/expected.json 
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex17-c2-tamper/t1-invalid-json.json
+CITATION_DRIFT: pointer_table_tampered entry=t1-invalid-json.json sha256 3423f1d1e42ec89ce6759fdaff325e32b896d261d2e4e8a13525dfa3c6e4774f != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+
+I2: offset=1041 byte 0x35 -> 0x36 (line 59 -> 69 in sc59-stanza-key-anchor)
+sha256(t2-lineflip.json) = c0b0792ec61baa90b24b803502afce40e312b286b603aff43ccd65ae44bbcb19
+I2: tampered file still parses as JSON
+## I2-lineflip
+CMD: python3 citation-drift-probe.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev HEAD --table /dev/shm/ex17-c2-tamper/t2-lineflip.json --expected /dev/shm/ex17-c2-tamper/fixed/expected.json 
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex17-c2-tamper/t2-lineflip.json
+CITATION_DRIFT: pointer_table_tampered entry=t2-lineflip.json sha256 c0b0792ec61baa90b24b803502afce40e312b286b603aff43ccd65ae44bbcb19 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+
+## I2-lineflip-strict
+CMD: python3 citation-drift-probe.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev HEAD --table /dev/shm/ex17-c2-tamper/t2-lineflip.json --expected /dev/shm/ex17-c2-tamper/fixed/expected.json --strict
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex17-c2-tamper/t2-lineflip.json
+CITATION_DRIFT: pointer_table_tampered entry=t2-lineflip.json sha256 c0b0792ec61baa90b24b803502afce40e312b286b603aff43ccd65ae44bbcb19 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+
+## I3-absent
+CMD: python3 citation-drift-probe.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev HEAD --table /dev/shm/ex17-c2-tamper/t3-absent/pointer-table.json --expected /dev/shm/ex17-c2-tamper/fixed/expected.json 
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex17-c2-tamper/t3-absent/pointer-table.json
+CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json [Errno 2] No such file or directory: '/dev/shm/ex17-c2-tamper/t3-absent/pointer-table.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+
+I4: offset=924 byte 0x73 -> 0x58 ("entries" -> "entrieX")
+sha256(t4-keyrename.json) = 613a78738020c219392f222928ab65912a2f288f267d966a165cc1176704d7b5
+I4: parses OK; entries now = 0 quoted = 4
+## I4-keyrename
+CMD: python3 citation-drift-probe.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev HEAD --table /dev/shm/ex17-c2-tamper/t4-keyrename.json --expected /dev/shm/ex17-c2-tamper/fixed/expected.json 
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex17-c2-tamper/t4-keyrename.json
+CITATION_DRIFT: pointer_table_tampered entry=t4-keyrename.json sha256 613a78738020c219392f222928ab65912a2f288f267d966a165cc1176704d7b5 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+
+## I4-keyrename-strict
+CMD: python3 citation-drift-probe.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev HEAD --table /dev/shm/ex17-c2-tamper/t4-keyrename.json --expected /dev/shm/ex17-c2-tamper/fixed/expected.json --strict
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex17-c2-tamper/t4-keyrename.json
+CITATION_DRIFT: pointer_table_tampered entry=t4-keyrename.json sha256 613a78738020c219392f222928ab65912a2f288f267d966a165cc1176704d7b5 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+
+# done phase=after 2026-10-19T10:17:48Z

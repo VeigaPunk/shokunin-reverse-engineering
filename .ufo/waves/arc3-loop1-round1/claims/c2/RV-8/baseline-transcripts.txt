@@ -1,0 +1,84 @@
+RV-8 baseline transcripts — committed probe (pre-landing), HEAD e845c2b524ad2e59871e004c51a1386e192a74ab
+Gate files at HEAD (sha256):
+  3067621ac44d6a153f45076c947926b56e3f34fbd4a907458273d97d1a47803f  .ufo/gates/citation-drift/citation-drift-probe.py
+  738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  .ufo/gates/citation-drift/pointer-table.json
+  4e28ba908bcd8e71586d0f8e376b1343bd7e305144f48c484f8ef788d36a2e33  .ufo/gates/citation-drift/expected.json
+Scratch: gate dir copied to /var/tmp/rv8/base/citation-drift (read-only use of the repo;
+repo itself never written). /tmp first used and hit the user quota — see T3/T5 notes.
+
+T1  registry recipe shape (probe semantics), /var/tmp copy of script+table+expected, root=repo:
+    $ python3 /var/tmp/rv8/base/citation-drift/citation-drift-probe.py --root . --rev HEAD \
+        --table /var/tmp/rv8/base/citation-drift/pointer-table.json \
+        --expected /var/tmp/rv8/base/citation-drift/expected.json
+    CITATION_DRIFT_VERDICT: reported findings=0 exit=0        rc=0
+
+T2  same + --strict:
+    CITATION_DRIFT_VERDICT: clean findings=0 exit=0           rc=0
+
+T3  selftest — FIRST ATTEMPT under /tmp: FAILED, not a probe defect:
+    error: copy-fd: write returned: Disk quota exceeded
+    fatal: cannot copy '.../hooks/pre-rebase.sample' ... Disk quota exceeded
+    subprocess.CalledProcessError: git init ... exit status 128      rc=1
+    T3redo with TMPDIR=/var/tmp/rv8/tmp:
+    SELFTEST_CASE: CLEAN case=rev_unresolvable exit=2 expected=2 finding=revision_unresolvable
+    CITATION_DRIFT_SELFTEST: CLEAN cases=11 passed=11 failed=0 exit=0   rc=0
+
+T4  tail -1 parse of T1:
+    CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+    (verdict line is the last stdout line — parse contract holds)
+
+T5  tampered table = valid JSON, emptied entries, + committed expected.json:
+    table-empty.json = {"entries":[],"quoted":[]}  (29 bytes)
+    $ python3 … --root . --rev HEAD --table /var/tmp/rv8/base/table-empty.json --expected <committed copy>
+    CITATION_DRIFT_VERDICT: reported findings=0 exit=0        rc=0
+T5b same + --strict:
+    CITATION_DRIFT_VERDICT: clean findings=0 exit=0           rc=0
+    (the silent-green class the C2 guard must close: a tampered table yields a
+     green verdict today, even under --strict)
+
+T6  absent table path:
+    CITATION_DRIFT: pointer_table_unreadable entry=nope.json [Errno 2] No such file or directory
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2   rc=2
+    (already the declared CNE class today)
+
+T7  flag surface: --root --rev --table --expected --snapshot-dir --selftest --strict
+    (citation-drift-probe.py:443-453; --help output captured in seat report)
+
+T8  default-path shape (no --table/--expected; script's sibling files):
+    CITATION_DRIFT_TABLE: /var/tmp/rv8/base/citation-drift/pointer-table.json
+    CITATION_DRIFT_VERDICT: reported findings=0 exit=0        rc=0
+
+T9  frozen rev 679af5d749f2fd48b9d543e3c99d348d5458f90f, committed table:
+    CITATION_DRIFT: record_word_missing entry=log1005-quoted-claim LOG.md:1012 no longer carries 'claim Kimi `rea-agents@6\.4\.0` at `config\.toml:1478`' (append-only records are never rewritten)
+    CITATION_DRIFT_VERDICT: reported findings=16 exit=0       rc=0
+    (verdict line still last with findings>0)
+
+T10 byte-identical table copy + committed expected (archived-copy / scratch-copy shape):
+    $ cp committed pointer-table.json /var/tmp/rv8/base/table-identical.json
+    $ python3 … --root . --rev HEAD --table /var/tmp/rv8/base/table-identical.json --expected <committed copy>
+    CITATION_DRIFT_VERDICT: reported findings=0 exit=0        rc=0
+    (a byte-identical copy matches any digest pin; this shape must stay 0/1 post-guard)
+
+T11 foreign-CWD default-path invocation (SC-4 section-10 shape):
+    $ ( cd /var/tmp/rv8/base && python3 …/citation-drift-probe.py --root <repo> --rev HEAD )
+    CITATION_DRIFT_TABLE: /var/tmp/rv8/base/citation-drift/pointer-table.json
+    CITATION_DRIFT_VERDICT: reported findings=0 exit=0        rc=0
+    (DEFAULT_TABLE is HERE-relative, so an isolated tree's own copy is the "committed"
+     table for that run — the fixture shape the guard's tampered-table case needs)
+
+Cross-reference (independent baseline, RV-6 harness-pre.out, same HEAD, custom tables + committed expected):
+    A-absent          rc=2  could-not-evaluate findings=1
+    B-emptied         rc=0  reported findings=0        B-emptied-strict rc=0 clean findings=0
+    C-brace {}        rc=0  reported findings=0        C-brace-strict   rc=0 clean findings=0
+    D-list []         rc=2  could-not-evaluate findings=1
+    E-trunc           rc=2  could-not-evaluate findings=1
+    F-weakened .*     rc=0  reported findings=0        F-weakened-strict rc=0 clean findings=0
+    G-noentries       rc=0  reported findings=0
+    H-absent-expected rc=2  could-not-evaluate findings=1
+    I2-frozen-rev real table rc=0 reported findings=0 (RV-6's table copy differs from T9's committed table)
+
+/tmp quota note: /tmp is a 16G tmpfs at 80% with a per-user write quota hit this wave
+(errno 122 on writes even with 3.1G "available"); prior seats redirected TMPDIR to
+/var/tmp. RV-8 used /var/tmp/rv8 throughout; only the failed first T3 attempt and a
+0-byte partial table write (T5 first attempt, read as invalid JSON → exit 2, discarded)
+touched /tmp; leftovers removed.

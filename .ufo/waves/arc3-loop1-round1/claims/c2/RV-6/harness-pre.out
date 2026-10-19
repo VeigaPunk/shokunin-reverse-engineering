@@ -1,0 +1,40 @@
+### A: absent table path
+[A-absent] rc=2 | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+[A-absent] finding_lines=1
+### B: tampered table = emptied entries (valid JSON)
+[B-emptied] rc=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+[B-emptied] finding_lines=0
+[B-emptied-strict] rc=0 | CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+[B-emptied-strict] finding_lines=0
+### C: tampered table = {} (no entries key at all)
+[C-brace] rc=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+[C-brace] finding_lines=0
+[C-brace-strict] rc=0 | CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+[C-brace-strict] finding_lines=0
+### D: table = valid JSON but a list (type confusion)
+[D-list] rc=2 | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+[D-list] finding_lines=1
+### E: table truncated (invalid JSON)
+[E-trunc] rc=2 | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+[E-trunc] finding_lines=1
+### F: table entry must_match weakened to .* (suppression of real drift)
+[F-weakened] rc=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+[F-weakened] finding_lines=0
+[F-weakened-strict] rc=0 | CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+[F-weakened-strict] finding_lines=0
+### G: table with all entries removed but quoted kept
+[G-noentries] rc=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+[G-noentries] finding_lines=0
+### H: expected.json absent
+[H-absent-expected] rc=2 | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+### I: frozen-run rev existence check
+commit
+### I2: real-table run at frozen rev (if it exists)
+[I2-frozen-rev-real-table] rc=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+[I2-frozen-rev-real-table] finding_lines=0
+[I2-frozen-rev-real-table-strict] rc=0 | CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+[I2-frozen-rev-real-table-strict] finding_lines=0
+[I2-frozen-rev-emptied-table] rc=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+[I2-frozen-rev-emptied-table] finding_lines=0
+### J: selftest still green under redirected TMPDIR
+[J-selftest] rc=0 | CITATION_DRIFT_SELFTEST: CLEAN cases=11 passed=11 failed=0 exit=0

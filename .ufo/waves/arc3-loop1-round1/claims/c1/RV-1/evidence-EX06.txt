@@ -1,0 +1,35 @@
+### EX-06 KdxToken ###
+== RV-1 independent verification ==
+sol:  EX-06/evidence/KdxToken.sol
+list: RV-1/EX06-planted-bare.txt
+bin:  RV-1/EX06-KdxToken.runtime.hex
+
+-- [1] recompute selectors from source text --
+095ea7b3 approve(address,uint256)
+70a08231 balanceOf(address)
+40c10f19 mint(address,uint256)
+18160ddd totalSupply()
+a9059cbb transfer(address,uint256)
+23b872dd transferFrom(address,address,uint256)
+K=6
+
+-- [2] set comparison (planted vs RV-1) --
+ref RV-1/EX06-planted-bare.txt: 6 selectors
+cmp /var/tmp/rv1-verify.EZOpLJ/rv1.txt: 6 selectors
+missing_vs_ref=[]
+extra_vs_ref=[]
+VERDICT: MATCH
+
+-- [3] dispatch-site structure check in compiled carrier --
+  carrier 1789 bytes  sha256 9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e
+  DUP1-PUSH4-EQ-PUSH2-JUMPI dispatch sites: 6
+  OK   095ea7b3 dispatch site {'push4_opcode_pc': 31, 'imm_pc': 32, 'jumpi_pc': 40}
+  OK   18160ddd dispatch site {'push4_opcode_pc': 42, 'imm_pc': 43, 'jumpi_pc': 51}
+  OK   23b872dd dispatch site {'push4_opcode_pc': 53, 'imm_pc': 54, 'jumpi_pc': 62}
+  OK   40c10f19 dispatch site {'push4_opcode_pc': 64, 'imm_pc': 65, 'jumpi_pc': 73}
+  OK   70a08231 dispatch site {'push4_opcode_pc': 75, 'imm_pc': 76, 'jumpi_pc': 84}
+  OK   a9059cbb dispatch site {'push4_opcode_pc': 86, 'imm_pc': 87, 'jumpi_pc': 95}
+  dispatch sites absent from planted list (false negatives): []
+
+== VERDICT ==
+MATCH — RV-1 independently reproduces the planted selector set

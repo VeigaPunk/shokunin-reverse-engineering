@@ -1,0 +1,74 @@
+### SC-4 verify-changeset label=before at 2026-10-19T07:02:46-03:00
+### HEAD: e845c2b524ad2e59871e004c51a1386e192a74ab
+### sha256 (worktree):
+3067621ac44d6a153f45076c947926b56e3f34fbd4a907458273d97d1a47803f  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/citation-drift-probe.py
+4e28ba908bcd8e71586d0f8e376b1343bd7e305144f48c484f8ef788d36a2e33  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/expected.json
+738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+
+### 1. selftest (full case list)
+SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=citations_clean
+SELFTEST_CASE: CLEAN case=dead exit=1 expected=1 finding=citation_dead
+SELFTEST_CASE: CLEAN case=out_of_range exit=1 expected=1 finding=citation_out_of_range
+SELFTEST_CASE: CLEAN case=file_absent exit=1 expected=1 finding=citation_file_absent
+SELFTEST_CASE: CLEAN case=moved exit=1 expected=1 finding=citation_moved
+SELFTEST_CASE: CLEAN case=stamped exit=0 expected=0 finding=citation_historical_ok
+SELFTEST_CASE: CLEAN case=no_snapshot_dir exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=snapshot_missing exit=2 expected=2 finding=snapshot_missing
+SELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered
+SELFTEST_CASE: CLEAN case=table_unreadable exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=rev_unresolvable exit=2 expected=2 finding=revision_unresolvable
+CITATION_DRIFT_SELFTEST: CLEAN cases=11 passed=11 failed=0 exit=0
+selftest rc=0
+
+### 1b. committed selftest case table (expected.json)
+CASE clean              exit=0 finding=citations_clean
+CASE dead               exit=1 finding=citation_dead
+CASE out_of_range       exit=1 finding=citation_out_of_range
+CASE file_absent        exit=1 finding=citation_file_absent
+CASE moved              exit=1 finding=citation_moved
+CASE stamped            exit=0 finding=citation_historical_ok
+CASE no_snapshot_dir    exit=2 finding=pointer_table_unreadable
+CASE snapshot_missing   exit=2 finding=snapshot_missing
+CASE snapshot_tampered  exit=2 finding=snapshot_tampered
+CASE table_unreadable   exit=2 finding=pointer_table_unreadable
+CASE rev_unresolvable   exit=2 finding=revision_unresolvable
+case_count=11
+
+### 2. probe at HEAD (probe semantics)
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+
+### 3. probe at HEAD (--strict)
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+
+### 4. guard attack: valid-JSON semantic tamper passed via --table
+rc=0
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+
+### 5. guard attack: weakened must_match table passed via --table
+rc=0
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+
+### 6. absent table path
+rc=2
+CITATION_DRIFT: pointer_table_unreadable entry=does-not-exist.json [Errno 2] No such file or directory: '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/SC-4/scratch/does-not-exist.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+
+### 7. pinned-digest consistency (if expected.json pins the table)
+PINNED snapshots.config-toml-landmarks = 387e1f082dda6e77f5ea63677b15f67aef7d49d8820dc8d140a62c0d1096f154
+ACTUAL sha256(pointer-table.json) = 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+
+### 8. guard attack: unpinned expected.json (pin field deleted) with the REAL table
+keys after deletion: ['_doc', 'frozen_run', 'selftest', 'snapshots']
+rc=0
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+
+### 9. tampered-table run must carry exactly one finding (no entry evaluation)
+finding_lines=0
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+
+### 10. default-path invocation (no --table/--expected) from a foreign CWD
+rc=0
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0

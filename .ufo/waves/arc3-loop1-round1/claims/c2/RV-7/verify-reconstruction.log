@@ -1,0 +1,109 @@
+=== RV-7 verify phase=post-reconstruction repo_HEAD=e845c2b
+gate file digests:
+  e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  citation-drift-probe.py
+  ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7  expected.json
+  738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  pointer-table.json
+expected.json top-level keys: ['_doc', 'frozen_run', 'pointer_table', 'selftest', 'snapshots']
+selftest cases: ['clean', 'dead', 'out_of_range', 'file_absent', 'moved', 'stamped', 'no_snapshot_dir', 'snapshot_missing', 'snapshot_tampered', 'table_unreadable', 'rev_unresolvable', 'table_tampered', 'table_absent']
+pin-for-table-digest in expected.json: ['pointer_table.sha256', 'pointer_table.sha256 (prefix-hit)']
+snapshots keys: ['config-toml-landmarks']
+
+--- C0 named checks ---
+[C0-probe-HEAD-default] rc=0 findings=0 ids=[]
+      CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+      silent_clean=YES
+      expect_rc=0 -> MATCH
+[C0-probe-HEAD-strict] rc=0 findings=0 ids=[]
+      CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+      silent_clean=YES
+      expect_rc=0 -> MATCH
+[C0-rev-deadbeef] rc=2 findings=1 ids=['revision_unresolvable']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+      expect_rc=2 -> MATCH
+[C0-rev-deadbeef-strict] rc=2 findings=1 ids=['revision_unresolvable']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+      expect_rc=2 -> MATCH
+
+--- C1-C5 table mutations vs the real expected.json ---
+[C1-table-absent] rc=2 findings=1 ids=['pointer_table_unreadable']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+[C1-table-absent-strict] rc=2 findings=1 ids=['pointer_table_unreadable']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+[C2-table-emptied] rc=2 findings=1 ids=['pointer_table_tampered']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+[C2-table-emptied-strict] rc=2 findings=1 ids=['pointer_table_tampered']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+[C3-table-weakened] rc=2 findings=1 ids=['pointer_table_tampered']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+[C3-table-weakened-strict] rc=2 findings=1 ids=['pointer_table_tampered']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+[C4-table-identical-copy] rc=0 findings=0 ids=[]
+      CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+      silent_clean=YES
+[C4-table-identical-copy-strict] rc=0 findings=0 ids=[]
+      CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+      silent_clean=YES
+[C5-table-onebyte] rc=2 findings=1 ids=['pointer_table_tampered']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+[C5-table-onebyte-strict] rc=2 findings=1 ids=['pointer_table_tampered']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+
+--- C6 whole-dir copy, tampered table at the copied default path ---
+[C6-copied-dir-tampered] rc=2 findings=1 ids=['pointer_table_tampered']
+      CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+      silent_clean=no
+
+--- C8 drift preservation at an old rev ---
+[C8-6645585873c4] rc=0 findings=26 ids=['citation_dead', 'citation_file_absent', 'citation_out_of_range']
+      CITATION_DRIFT_VERDICT: reported findings=26 exit=0
+[C8-HEAD~10] rc=0 findings=2 ids=['citation_dead', 'record_word_missing']
+      CITATION_DRIFT_VERDICT: reported findings=2 exit=0
+
+--- C9 pin self-consistency ---
+worktree table sha256 : 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+HEAD-object table     : 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+worktree==HEAD-object : True
+pinned digest match   : ['pointer_table.sha256', 'pointer_table.sha256 (prefix-hit)']
+
+--- C10 selftest ---
+[C10-selftest] rc=0 | CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+
+--- C11/C12 selftest case-table sensitivity sweep ---
+  [sweep-exit_code case=clean] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=dead] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=out_of_range] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=file_absent] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=moved] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=stamped] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=no_snapshot_dir] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=snapshot_missing] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=snapshot_tampered] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=table_unreadable] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=rev_unresolvable] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=table_tampered] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-exit_code case=table_absent] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=clean] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=dead] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=out_of_range] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=file_absent] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=moved] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=stamped] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=no_snapshot_dir] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=snapshot_missing] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=snapshot_tampered] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=table_unreadable] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=rev_unresolvable] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=table_tampered] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+  [sweep-finding case=table_absent] mutated->rc=1 CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=12 failed=1 exit=1
+
+=== RV-7 verify phase=post-reconstruction done

@@ -1,0 +1,33 @@
+### EX-02 smoke ###
+== RV-1 independent verification ==
+sol:  EX-02/smoke/Smoke.sol
+list: EX-02/smoke/selectors.txt
+bin:  EX-02/smoke/out/Smoke_sol_Smoke.bin
+
+-- [1] recompute selectors from source text --
+70a08231 balanceOf(address)
+d0e30db0 deposit()
+6d4ce63c get()
+60fe47b1 set(uint256)
+2e1a7d4d withdraw(uint256)
+K=5
+
+-- [2] set comparison (planted vs RV-1) --
+ref EX-02/smoke/selectors.txt: 5 selectors
+cmp /var/tmp/rv1-verify.jJQWOH/rv1.txt: 5 selectors
+missing_vs_ref=[]
+extra_vs_ref=[]
+VERDICT: MATCH
+
+-- [3] dispatch-site structure check in compiled carrier --
+  carrier 685 bytes  sha256 08299f31203e05e5dcdcd2453f9dd5a105a97fd94f2b48194ba18e963c368ebd
+  DUP1-PUSH4-EQ-PUSH2-JUMPI dispatch sites: 5
+  OK   2e1a7d4d dispatch site {'push4_opcode_pc': 47, 'imm_pc': 48, 'jumpi_pc': 56}
+  OK   60fe47b1 dispatch site {'push4_opcode_pc': 58, 'imm_pc': 59, 'jumpi_pc': 67}
+  OK   6d4ce63c dispatch site {'push4_opcode_pc': 69, 'imm_pc': 70, 'jumpi_pc': 78}
+  OK   70a08231 dispatch site {'push4_opcode_pc': 80, 'imm_pc': 81, 'jumpi_pc': 89}
+  OK   d0e30db0 dispatch site {'push4_opcode_pc': 91, 'imm_pc': 92, 'jumpi_pc': 100}
+  dispatch sites absent from planted list (false negatives): []
+
+== VERDICT ==
+MATCH — RV-1 independently reproduces the planted selector set

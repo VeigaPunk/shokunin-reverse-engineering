@@ -1,0 +1,225 @@
+# CR-3 (seat, c2 critic) — raw evidence: guard preflight vs the frozen-run clause
+# Wave arc3-loop1-round1, 2026-10-19. Read-only over the repo; scratch /var/tmp/cr3.
+# Environment note: /tmp is a 16G tmpfs at 80% with a quota that now rejects every
+# write ("Disk quota exceeded" on `echo hi > /tmp/cr3/t1.txt`, `dd` 0 bytes copied,
+# `git show HEAD:SCORECARD.md > /tmp/...` rc=255 "unable to stream ... to stdout").
+# Scratch therefore lives in /var/tmp/cr3 (precedent: r10 seat E21 used /var/tmp).
+
+## 1. The clause and the guard, as committed
+
+expected.json (committed, single line) frozen_run block:
+  {"revision": "679af5d749f2fd48b9d543e3c99d348d5458f90f",
+   "note": "the revision the committed verdict was measured against; a run over a
+            different revision is a different measurement",
+   "verdict": "failed", "expected_findings": ["citation_dead"]}
+  (byte-identical at 265e1aa, 045c1b8, HEAD: `git diff 045c1b8 HEAD -- .../expected.json` empty)
+
+r10 restatement of the leg (the authority the seat task points at):
+  .ufo/waves/arc2-loop1-round10/CR2.md:13  "... My manual rerun at the pinned
+    revision emits 6 findings in 3 classes against the pinned expected_findings:
+    ["citation_dead"], and no table digest is pinned -- so the leg is not
+    reproducible from committed artifacts. Restate it as a manual rerun."
+  .ufo/waves/arc2-loop1-round10/CR2.md:74  "Nothing pins the table's digest, so
+    the leg cannot be reproduced from committed artifacts alone."
+  SCORECARD.md:1297-1299 "... (E8's draft, CR2-constrained: the 'frozen-run' leg
+    restated as a manual rerun at the pinned revision; the advisory classification
+    preserved)."
+  LOG.md:1369-1370 "... 'frozen-run' restated as a manual rerun; first live catch in-round"
+
+The probe never reads the block: `grep -c frozen .ufo/gates/citation-drift/citation-drift-probe.py` -> 0.
+
+Chain's planned guard (PL-2, patch text; EX-16 is the only writer of the real target):
+  claims/c2/PL-2/frozen-run-guard.patch.md:26-31, 39-43, 58-72
+    pin key `pointer_table.sha256`; table read ON DISK (`open(table_path,"rb").read()`);
+    missing pin -> `pointer_table_unpinned` (exit 2, fail-closed);
+    both new ids added to the verdict-map CNE tuple; selftest fixtures pin their own
+    fixture-table digest; new cases `table_tampered`, `table_absent`.
+  claims/c2/PL-2/plan.md:49 "Fail-closed: a baseline that pins no digest is not a
+    frozen run"
+  Pin value proposed = sha256(HEAD table) = 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+
+## 2. Structural facts (commands + outputs)
+
+$ git ls-tree 679af5d -- .ufo/gates/          -> (empty: no gate at the pinned revision)
+$ git cat-file -e 679af5d:.ufo/gates/citation-drift/pointer-table.json
+  fatal: path '.../pointer-table.json' exists on disk, but not in '679af5d'
+$ git rev-list --count 679af5d..265e1aa       -> 5   (gate first lands 5 commits after the pin)
+$ git log --oneline -- .ufo/gates/citation-drift/pointer-table.json
+  110cc08, 085ca3c, 02c45d5, dbae324, 6bc4c29, 265e1aa
+
+Table digest by commit (sha256 of `git show <rev>:.../pointer-table.json`, first 16 hex):
+  265e1aa edaa4e59c804bc0f   (13 entries)   <- the table the frozen verdict was measured with
+  045c1b8 edaa4e59c804bc0f   (13 entries)
+  6bc4c29 bb564f1301554023
+  dbae324 b34a1199d3cb8ef8   (31 entries, r10 extension)
+  02c45d5 36876734fe421856
+  085ca3c 38dc714edfc517bd
+  110cc08 738b3a569fb7dc96   <- the digest the guard would pin
+  HEAD    738b3a569fb7dc96   (worktree clean: git hash-object == rev-parse HEAD:path = 1f83c091...)
+=> six distinct table digests since the gate landed; the pinned revision predates all of them.
+
+$ sha256sum /var/tmp/arc2-l4r4-S1/art/config-toml-landmarks
+  387e1f082dda6e77f5ea63677b15f67aef7d49d8820dc8d140a62c0d1096f154  (matches expected.json snapshots pin)
+$ current table `@`-target entries: 0  (both the 13-entry and the 31-entry table)
+=> the frozen replay needs no --snapshot-dir; the snapshot pin is currently unreferenced.
+
+## 3. The finding set is table-version dependent (one entry flips it)
+
+$ python3 -c "...sc698-sc2-refuted-record in both tables..."
+  r4-era table : line=698
+  HEAD table   : line=699
+$ git show 679af5d:SCORECARD.md | sed -n '698,699p'
+  698: (live config now pins `rea-agents@6.7.0` at `config.toml:2940`, SC2-refuted);
+  699: `SCORECARD.md:68`'s drifted `:160` pointer; `.bashrc`/`~/.profile` into the
+=> at rev 679af5d the r4-era pin (:698) PASSES; the HEAD pin (:699) FAILS. The r10
+   replay's 6th finding and today's 5-finding r4-era replay differ by exactly this.
+
+## 4. The matrix (variant sources and outputs)
+
+Scratch: /var/tmp/cr3/{probe-orig.py, probe-A.py, probe-B.py, probe-C.py, probe-D.py,
+old-table-265e1aa.json, expected-pin.json, expected-stale-pin.json, matrix.py, matrix2.py}
+
+Variants (each a copy of the committed probe with one preflight inserted before
+`tree = Tree(root, rev, snapshot_dir, expected, findings)` in run_check):
+  A = on-disk table bytes pinned; MISSING pin => exit 2 (PL-2's fail-closed semantics)
+  B = on-disk table bytes pinned; MISSING pin => check skipped (inert-when-absent)
+  C = table bytes resolved as a Git object at --rev
+  D = B's preflight but WITHOUT the verdict-map CNE-tuple patch
+(A/B/C also add "pointer_table_tampered"/"pointer_table_unpinned" to the CNE tuple,
+as PL-2's patch does.)
+
+$ python3 /var/tmp/cr3/matrix.py
+=== BASELINE (committed probe, unmodified) ===
+baseline HEAD strict                                 rc=0  CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+baseline rev-679af5d strict, current table           rc=1  CITATION_DRIFT_VERDICT: failed findings=16 exit=1
+baseline rev-679af5d strict, r4-era table            rc=1  CITATION_DRIFT_VERDICT: failed findings=5 exit=1
+   findings: ['sc59-stanza-key-anchor', 'prov18-stamp-named',
+              '.ufo/waves/arc2-loop1-round3/receipts/config-pre-pair.txt',
+              'mcpreg-errata-anchor-form', 'r416-errata-durable-anchor']
+baseline selftest                                    rc=0  CITATION_DRIFT_SELFTEST: CLEAN cases=11 passed=11 failed=0 exit=0
+
+=== VARIANT A (fail-closed; PL-2's semantics) ===
+A HEAD strict, pinned expected                       rc=0  clean findings=0 exit=0
+A rev-679af5d strict, current table                  rc=1  failed findings=16 exit=1      <- admitted reading reproduces
+A rev-679af5d strict, r4-era table                   rc=2  could-not-evaluate findings=1  <- THE BRICK (tampered)
+A HEAD strict, unpinned expected                     rc=2  could-not-evaluate findings=1  <- unpinned
+A selftest                                           rc=1  SELFTEST: FAILED cases=11 passed=2 failed=9
+                                                        (unless the selftest pins its fixtures, as PL-2's patch does)
+
+=== VARIANT B (inert when unpinned) ===
+B HEAD strict, pinned expected                       rc=0  clean findings=0 exit=0
+B rev-679af5d strict, current table                  rc=1  failed findings=16 exit=1
+B rev-679af5d strict, r4-era table                   rc=2  could-not-evaluate findings=1  <- THE BRICK (tampered)
+B HEAD strict, unpinned expected                     rc=0  clean findings=0 exit=0
+B selftest                                           rc=0  SELFTEST: CLEAN cases=11 passed=11 failed=0 exit=0
+
+=== VARIANT C (table resolved at --rev) ===
+C HEAD strict, pinned expected                       rc=0  clean findings=0 exit=0
+C rev-679af5d strict, current table                  rc=2  could-not-evaluate findings=1  <- PERMANENT brick at the pinned rev
+C rev-679af5d strict, r4-era table                   rc=2  could-not-evaluate findings=1
+C selftest                                           rc=1  SELFTEST: FAILED cases=11 passed=3 failed=8
+
+$ python3 /var/tmp/cr3/matrix2.py
+=== D: preflight without the verdict-map patch ===
+D tampered table, DEFAULT probe mode (no --strict)   rc=0  reported findings=1 exit=0   <- silent findings
+D tampered table, --strict                           rc=1  failed findings=1 exit=1     <- never the declared exit 2
+=== B with a STALE pin (table edited, pin not re-committed) ===
+B HEAD, stale pin + current table                    rc=2  could-not-evaluate findings=1 exit=2
+B rev-679af5d, stale pin + current table             rc=2  could-not-evaluate findings=1 exit=2
+=== faithful frozen replay: the table the frozen verdict was measured with ===
+baseline (no guard) rev-679af5d, r4-era table        rc=1  failed findings=5 exit=1
+B (guard) rev-679af5d, r4-era table                  rc=2  could-not-evaluate findings=1 exit=2
+      CITATION_DRIFT: pointer_table_tampered entry=old-table-265e1aa.json
+        sha256 edaa4e59c804bc0fd424c68daafa38a1bdef5fb395b3c10b3d61e614f5bef641 != pinned 738b3a56...
+frozen_run block as committed: {"revision": "679af5d...", "note": "the revision the committed
+  verdict was measured against; a run over a different revision is a different measurement",
+  "verdict": "failed", "expected_findings": ["citation_dead"]}
+
+## 5. One-off runs on the committed instrument (read-only)
+
+$ python3 .ufo/gates/citation-drift/citation-drift-probe.py --root . --rev HEAD --table .../pointer-table.json --expected .../expected.json --strict | tail -1
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+$ ... --selftest --expected .../expected.json | tail -1
+CITATION_DRIFT_SELFTEST: CLEAN cases=11 passed=11 failed=0 exit=0
+$ ... --root . --rev 679af5d749f2fd48b9d543e3c99d348d5458f90f --table .../pointer-table.json --expected .../expected.json --strict | tail -1
+CITATION_DRIFT_VERDICT: failed findings=16 exit=1
+$ ... --root . --rev HEAD --table /var/tmp/cr3/does-not-exist.json --expected .../expected.json --strict | tail -2
+CITATION_DRIFT: pointer_table_unreadable entry=does-not-exist.json [Errno 2] No such file or directory
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+   => the claim's "absent table -> exit 2" already holds at HEAD (the absent-path case
+      needs no new mechanism; only the tampered case is new).
+
+## 6. Reproduction
+
+  mkdir -p /var/tmp/cr3 && cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+  git show 265e1aa:.ufo/gates/citation-drift/pointer-table.json > /var/tmp/cr3/old-table-265e1aa.json
+  cp .ufo/gates/citation-drift/citation-drift-probe.py /var/tmp/cr3/probe-orig.py
+  cp .ufo/gates/citation-drift/expected.json        /var/tmp/cr3/expected-orig.json
+  # matrix.py / matrix2.py (in the same scratch dir) rebuild the variants and rerun every row
+  python3 /var/tmp/cr3/matrix.py ; python3 /var/tmp/cr3/matrix2.py
+
+## 7. Variant sources (inserted verbatim before the `tree = Tree(...)` line in run_check)
+
+Each variant is `probe-orig.py` with one of these blocks inserted and — for A/B/C —
+the verdict-map CNE tuple extended with `"pointer_table_tampered"` and
+`"pointer_table_unpinned"` (the same hunk PL-2's patch carries).
+
+Variant A (fail-closed; PL-2's semantics):
+```python
+    try:
+        _tb = open(table_path, "rb").read()
+    except OSError as exc:
+        findings.add("pointer_table_unreadable", os.path.basename(table_path),
+                     "table bytes unreadable: %s" % exc)
+        return findings
+    _pin = (expected.get("pointer_table") or {}).get("sha256")
+    _got = sha256_bytes(_tb)
+    if _pin is None:
+        findings.add("pointer_table_unpinned", os.path.basename(table_path),
+                     "no table digest pinned in expected.json")
+        return findings
+    if _got != _pin:
+        findings.add("pointer_table_tampered", os.path.basename(table_path),
+                     "sha256 %s != pinned %s" % (_got, _pin))
+        return findings
+```
+
+Variant B (inert when unpinned):
+```python
+    try:
+        _tb = open(table_path, "rb").read()
+    except OSError as exc:
+        findings.add("pointer_table_unreadable", os.path.basename(table_path),
+                     "table bytes unreadable: %s" % exc)
+        return findings
+    _pin = (expected.get("pointer_table") or {}).get("sha256")
+    if _pin is not None and sha256_bytes(_tb) != _pin:
+        findings.add("pointer_table_tampered", os.path.basename(table_path),
+                     "sha256 %s != pinned %s" % (sha256_bytes(_tb), _pin))
+        return findings
+```
+
+Variant C (table resolved as a Git object at --rev):
+```python
+    _rel = os.path.relpath(table_path, root)
+    if _rel.startswith(".."):
+        findings.add("pointer_table_unreadable", os.path.basename(table_path),
+                     "table path outside --root; cannot resolve at %s" % rev)
+        return findings
+    _ttext, _terr = git_show(root, rev, _rel)
+    if _terr:
+        findings.add("pointer_table_unreadable", _rel,
+                     "table absent at %s (%s)" % (rev, _terr))
+        return findings
+    _pin = (expected.get("pointer_table") or {}).get("sha256")
+    if _pin is not None and sha256_bytes(_ttext.encode()) != _pin:
+        findings.add("pointer_table_tampered", _rel,
+                     "sha256 %s != pinned %s" % (sha256_bytes(_ttext.encode()), _pin))
+        return findings
+```
+
+Variant D = B's block, verdict-map CNE tuple left unpatched.
+
+Expected files used: `expected-pin.json` = committed expected.json plus
+`"pointer_table": {"sha256": "738b3a56…"}`; `expected-stale-pin.json` = same but
+pinning `edaa4e59…` (the r4-era table) against the current table on disk.

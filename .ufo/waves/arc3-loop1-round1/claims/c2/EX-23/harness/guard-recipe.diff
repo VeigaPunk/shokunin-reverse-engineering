@@ -1,0 +1,65 @@
+--- head-citation-drift-probe.py	2026-10-19 07:06:43.466417148 -0300
++++ guardC.py	2026-10-19 07:07:19.443165787 -0300
+@@ -70,7 +70,8 @@
+         if not self.rows:
+             return CLEAN
+         if any(f in ("snapshot_tampered", "snapshot_missing",
+-                     "pointer_table_unreadable", "unpinned_legacy",
++                     "pointer_table_unreadable", "pointer_table_tampered",
++                     "unpinned_legacy",
+                      "root_unreadable", "revision_unresolvable", "internal_error")
+                for f, _, _ in self.rows):
+             return CNE
+@@ -287,6 +288,25 @@
+     except (OSError, ValueError) as exc:
+         expected = {}
+         findings.add("pointer_table_unreadable", os.path.basename(expected_path), str(exc))
++    # Frozen-run guard: the table is the contract, so its bytes are pinned in
++    # expected.json. The run cannot tell an honest in-flight re-key from a
++    # tamper, so a digest mismatch is could-not-evaluate, never a finding set.
++    try:
++        table_bytes = open(table_path, "rb").read()
++    except OSError as exc:
++        findings.add("pointer_table_unreadable", os.path.basename(table_path),
++                     str(exc))
++        return findings
++    pinned_table = (expected.get("frozen_run") or {}).get("table_sha256")
++    if pinned_table is None:
++        findings.add("unpinned_legacy", os.path.basename(table_path),
++                     "no table digest pinned in expected.json")
++        return findings
++    if sha256_bytes(table_bytes) != pinned_table:
++        findings.add("pointer_table_tampered", os.path.basename(table_path),
++                     "sha256 %s != pinned %s" % (sha256_bytes(table_bytes),
++                                                 pinned_table))
++        return findings
+     tree = Tree(root, rev, snapshot_dir, expected, findings)
+     for entry in table.get("entries", []):
+         check_entry(entry, tree, findings)
+@@ -399,7 +419,8 @@
+                 else:
+                     root = build_fixture(case)
+                     table = os.path.join(case_dir, "table.json")
+-                    json.dump(fixture_table(case), open(table, "w"))
++                    if case != "table_absent":
++                        json.dump(fixture_table(case), open(table, "w"))
+ 
+                 snapshot_dir = os.path.join(case_dir, "snap")
+                 os.makedirs(snapshot_dir)
+@@ -413,6 +434,16 @@
+                 else:
+                     digests = {}
+                 expected = {"snapshots": digests}
++                # frozen-run guard: the fixture run pins the digest of the
++                # table it was built with, so the guard stays universal
++                if case == "table_tampered":
++                    expected["frozen_run"] = {"table_sha256": "0" * 64}
++                elif case == "table_absent":
++                    expected["frozen_run"] = {
++                        "table_sha256": sha256_bytes(b"absent on purpose")}
++                else:
++                    expected["frozen_run"] = {
++                        "table_sha256": sha256_bytes(open(table, "rb").read())}
+                 exp_file = os.path.join(case_dir, "expected.json")
+                 json.dump(expected, open(exp_file, "w"))
+ 

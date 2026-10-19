@@ -1,0 +1,21 @@
+# adjacent-hashes-pre — CU-1 sibling-config baselines around the 5 custody paths
+# captured-utc: 2026-10-19T10:02:51Z
+# purpose: sidecars/siblings in the custody dirs are outside the 5-path set but show
+#          which writers are live during the wave; hashing them makes a mid-wave write
+#          attributable even when the 5 custody paths stay clean.
+# format: sha256  size  mtime  path
+00cc9c1a34cc4b920ca453cfda3beae42f8bd75f5d0c5a6b47dec6678f85bf3c  550  2026-10-19 06:51:07  /home/vgpnk/.config/devin/config.json
+b4cab7ff1901487fcf25f536854e2a05450b770497ae1c9a7b2185c2e0455ea0  302  2026-10-14 17:53:20  /home/vgpnk/.config/devin/mcp_config.json.rea.backup
+115e5281e0e953507939bb5956700c52790ad214caff6fa581bf0d471c3f0ae8  5236  2026-10-18 15:47:57  /home/vgpnk/.omp/agent/config.yml
+38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b  429  2026-10-14 17:53:20  /home/vgpnk/.omp/agent/mcp.json
+a2c4a6c3ea39bb7954652613ab93fcfd60e76825a33da3b5f4af7cc97b86221d  172  2026-10-12 09:51:27  /home/vgpnk/.omp/agent/mcp.json.rea.backup
+b67fc145663a864feee5c321d79d2642b6e99eb09d96483b25d7e5fefad7b342  249  2026-10-15 06:47:10  /home/vgpnk/.kimi-code/mcp.json
+e0634d8c5335aaf013bac5d4e45e4cfb513021f5fa027f36b5ad227324aa1c20  102426  2026-10-18 20:16:56  /home/vgpnk/.kimi-code/config.toml.20261018-201656.bak
+
+## live-writer evidence (mtime inside the wave window 2026-10-19 06:49.. )
+# ~/.config/devin/config.json      mtime 2026-10-19 06:51  (wave window!) + .r34-backup 06:50
+# ~/.omp/agent/agent.db            mtime 2026-10-19 07:00  (wave window)
+# ~/.omp/agent/agent.db-shm/-wal   mtime 2026-10-19 07:02  (wave window, WAL active)
+# ~/.kimi-code/config.toml         mtime 2026-10-18 23:20  (pre-wave; 7 .bak sidecars 08-18 Oct)
+# => kimi CLI's config writer emits timestamped .bak sidecars; a mid-wave config.toml
+#    rewrite would very likely add one, giving a dated attribution signal.

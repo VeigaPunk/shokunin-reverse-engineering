@@ -1,0 +1,52 @@
+### proto fingerprint + shipped expected state
+  776cef6af5b7404f6a0d0667727ecf99a6bb32a6db357b443e6fa5c1585ca283  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/RV-6/proto-test/probe.py
+  4e28ba908bcd8e71586d0f8e376b1343bd7e305144f48c484f8ef788d36a2e33  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/RV-6/proto-test/expected-as-shipped.json
+  keys: ['_doc', 'frozen_run', 'snapshots', 'selftest'] table_sha256: None
+  selftest cases: 11
+
+### A. proto selftest with its OWN (as-shipped) expected.json
+SELFTEST_CASE: CLEAN case=rev_unresolvable exit=2 expected=2 finding=revision_unresolvable
+CITATION_DRIFT_SELFTEST: CLEAN cases=11 passed=11 failed=0 exit=0
+  rc=0  <- green while the pin is absent
+
+### build a properly pinned expected.json (13-case table)
+  pin: 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+  cases: 13
+SELFTEST_CASE: CLEAN case=table_tampered exit=2 expected=2 finding=pointer_table_tampered
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+  rc=0
+
+### fixture tables
+
+### B-G. pinned expected (guard in force)
+[B-pinned-real-table] rc=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+[C-pinned-emptied-table] rc=2 | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT: pointer_table_tampered entry=table-empty.json sha256 c6d6f8738351a482226849d9e285d4b9b3f7afa9dc5fed949a55f51d5d3ceda2 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+[C2-pinned-emptied-strict] rc=2 | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT: pointer_table_tampered entry=table-empty.json sha256 c6d6f8738351a482226849d9e285d4b9b3f7afa9dc5fed949a55f51d5d3ceda2 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+[D-pinned-absent-table] rc=2 | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT: pointer_table_unreadable entry=absent-table.json [Errno 2] No such file or directory: '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/RV-6/proto-test/absent-table.json'
+[E-pinned-space-tamper] rc=2 | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT: pointer_table_tampered entry=table-space.json sha256 a07994f262f280251120500b45716a0add7cbee959e874c87060c180075f66b4 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+[F-pinned-nondefault-path-real] rc=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+
+### H. THE HOLE: unpinned expected (pin key deleted) + emptied table
+[H-unpinned-emptied] rc=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+[H2-unpinned-emptied-strict] rc=0 | CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+[H3-unpinned-real-table] rc=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+
+### I. expected.json absent entirely
+[I-absent-expected] rc=2 | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT: pointer_table_unreadable entry=no-such-expected.json [Errno 2] No such file or directory: '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/RV-6/proto-test/no-such-expected.json'
+
+### J. row-token string comparison (code vs EX-20 patch text)
+-- ids the proto code can emit on guard paths --
+          2 pointer_table_tampered
+          5 pointer_table_unreadable
+          2 table_tampered
+-- ids the row patch declares --
+          1 `pointer_table_unreadable`
+          1 `revision_unresolvable`
+          1 `table_tampered`
+          1 unpinned

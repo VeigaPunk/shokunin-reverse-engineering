@@ -1,0 +1,33 @@
+### RV-2 Rv2Token ###
+== RV-1 independent verification ==
+sol:  RV-2/Rv2Token.sol
+list: RV-2/expected-selectors.txt
+bin:  RV-2/Rv2Token.runtime.hex
+
+-- [1] recompute selectors from source text --
+095ea7b3 approve(address,uint256)
+70a08231 balanceOf(address)
+18160ddd totalSupply()
+a9059cbb transfer(address,uint256)
+23b872dd transferFrom(address,address,uint256)
+K=5
+
+-- [2] set comparison (planted vs RV-1) --
+ref RV-2/expected-selectors.txt: 5 selectors
+cmp /var/tmp/rv1-verify.bR8TTr/rv1.txt: 5 selectors
+missing_vs_ref=[]
+extra_vs_ref=[]
+VERDICT: MATCH
+
+-- [3] dispatch-site structure check in compiled carrier --
+  carrier 1943 bytes  sha256 c1081a565869b50387211b25afaf3768294aa774c35845bc3a8c0b12cfe15e74
+  DUP1-PUSH4-EQ-PUSH2-JUMPI dispatch sites: 5
+  OK   095ea7b3 dispatch site {'push4_opcode_pc': 31, 'imm_pc': 32, 'jumpi_pc': 40}
+  OK   18160ddd dispatch site {'push4_opcode_pc': 42, 'imm_pc': 43, 'jumpi_pc': 51}
+  OK   23b872dd dispatch site {'push4_opcode_pc': 53, 'imm_pc': 54, 'jumpi_pc': 62}
+  OK   70a08231 dispatch site {'push4_opcode_pc': 64, 'imm_pc': 65, 'jumpi_pc': 73}
+  OK   a9059cbb dispatch site {'push4_opcode_pc': 75, 'imm_pc': 76, 'jumpi_pc': 84}
+  dispatch sites absent from planted list (false negatives): []
+
+== VERDICT ==
+MATCH — RV-1 independently reproduces the planted selector set

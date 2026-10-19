@@ -1,0 +1,97 @@
+=== variants vs bases (unified diff) ===
+--- open-r4.py vs v10-r4.py ---
+--- v10-r4.py	2026-10-19 07:03:04.376428524 -0300
++++ open-r4.py	2026-10-19 07:05:54.591779508 -0300
+@@ -104,7 +104,7 @@
+     ("SCORECARD.md", 635, 701, "DATED", 635, r"2026-10-18"),
+ 
+     ("SCORECARD.md", 702, 767, "DATED", 703, r"arc2-loop1-round2"),
+-    ("SCORECARD.md", 768, 854, "DATED", 768, r"arc2-loop1-round3"),
++    ("SCORECARD.md", 768, 10**9, "DATED", 768, r"arc2-loop1-round3"),
+ ]
+ 
+ PIN = re.compile(r"rea-agents@(\d+\.\d+\.\d+)", re.I)
+--- over-r4.py vs v10-r4.py ---
+--- v10-r4.py	2026-10-19 07:03:04.376428524 -0300
++++ over-r4.py	2026-10-19 07:05:54.592256347 -0300
+@@ -104,7 +104,7 @@
+     ("SCORECARD.md", 635, 701, "DATED", 635, r"2026-10-18"),
+ 
+     ("SCORECARD.md", 702, 767, "DATED", 703, r"arc2-loop1-round2"),
+-    ("SCORECARD.md", 768, 854, "DATED", 768, r"arc2-loop1-round3"),
++    ("SCORECARD.md", 768, 900, "DATED", 768, r"arc2-loop1-round3"),
+ ]
+ 
+ PIN = re.compile(r"rea-agents@(\d+\.\d+\.\d+)", re.I)
+--- open-HEAD.py vs v10-HEAD.py ---
+--- v10-HEAD.py	2026-10-19 07:03:04.379462417 -0300
++++ open-HEAD.py	2026-10-19 07:05:54.592827696 -0300
+@@ -104,7 +104,7 @@
+     ("SCORECARD.md", 636, 702, "DATED", 636, r"2026-10-18"),
+ 
+     ("SCORECARD.md", 703, 768, "DATED", 704, r"arc2-loop1-round2"),
+-    ("SCORECARD.md", 769, 855, "DATED", 769, r"arc2-loop1-round3"),
++    ("SCORECARD.md", 769, 10**9, "DATED", 769, r"arc2-loop1-round3"),
+ ]
+ 
+ PIN = re.compile(r"rea-agents@(\d+\.\d+\.\d+)", re.I)
+--- v10-guard.py vs v10-HEAD.py ---
+--- v10-HEAD.py	2026-10-19 07:03:04.379462417 -0300
++++ v10-guard.py	2026-10-19 07:11:32.792099203 -0300
+@@ -203,6 +203,11 @@
+     """G15: every declared DATED range must carry its marker text."""
+     errs = []
+     for (f, s, e, cls, ml, mr) in SCOPE:
++        lines = filelines.get(f)
++        if lines and e > len(lines):
++            errs.append("%s: declared end %d beyond EOF (%d lines) -- open/overshooting bound"
++                        % (f, e, len(lines)))
++    for (f, s, e, cls, ml, mr) in SCOPE:
+         if cls != "DATED" or ml is None:
+             continue
+         lines = filelines.get(f)
+--- v10-guard-r4.py vs v10-r4.py ---
+--- v10-r4.py	2026-10-19 07:03:04.376428524 -0300
++++ v10-guard-r4.py	2026-10-19 07:11:32.792267713 -0300
+@@ -203,6 +203,11 @@
+     """G15: every declared DATED range must carry its marker text."""
+     errs = []
+     for (f, s, e, cls, ml, mr) in SCOPE:
++        lines = filelines.get(f)
++        if lines and e > len(lines):
++            errs.append("%s: declared end %d beyond EOF (%d lines) -- open/overshooting bound"
++                        % (f, e, len(lines)))
++    for (f, s, e, cls, ml, mr) in SCOPE:
+         if cls != "DATED" or ml is None:
+             continue
+         lines = filelines.get(f)
+--- guard-open-HEAD.py vs open-HEAD.py ---
+--- open-HEAD.py	2026-10-19 07:05:54.592827696 -0300
++++ guard-open-HEAD.py	2026-10-19 07:11:32.792403643 -0300
+@@ -203,6 +203,11 @@
+     """G15: every declared DATED range must carry its marker text."""
+     errs = []
+     for (f, s, e, cls, ml, mr) in SCOPE:
++        lines = filelines.get(f)
++        if lines and e > len(lines):
++            errs.append("%s: declared end %d beyond EOF (%d lines) -- open/overshooting bound"
++                        % (f, e, len(lines)))
++    for (f, s, e, cls, ml, mr) in SCOPE:
+         if cls != "DATED" or ml is None:
+             continue
+         lines = filelines.get(f)
+--- guard-over-r4.py vs over-r4.py ---
+--- over-r4.py	2026-10-19 07:05:54.592256347 -0300
++++ guard-over-r4.py	2026-10-19 07:11:32.792638572 -0300
+@@ -203,6 +203,11 @@
+     """G15: every declared DATED range must carry its marker text."""
+     errs = []
+     for (f, s, e, cls, ml, mr) in SCOPE:
++        lines = filelines.get(f)
++        if lines and e > len(lines):
++            errs.append("%s: declared end %d beyond EOF (%d lines) -- open/overshooting bound"
++                        % (f, e, len(lines)))
++    for (f, s, e, cls, ml, mr) in SCOPE:
+         if cls != "DATED" or ml is None:
+             continue
+         lines = filelines.get(f)

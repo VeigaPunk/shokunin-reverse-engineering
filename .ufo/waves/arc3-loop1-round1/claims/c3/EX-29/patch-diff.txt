@@ -1,0 +1,42 @@
+--- .ufo/gates/c1-census-v10.py	2026-10-18 20:31:48.836774008 -0300
++++ .ufo/waves/arc3-loop1-round1/claims/c3/EX-29/.sim-work/census-patched.py	2026-10-19 07:12:45.675114191 -0300
+@@ -86,7 +86,7 @@
+ SCOPE = [
+     ("PROVINCE.md", 8, 13, "CURRENT", None, None),
+     ("PROVINCE.md", 15, 26, "CURRENT", None, None),
+-    ("PROVINCE.md", 40, 43, "DATED", 40, r"verified on this host 2026-10-13"),
++    # RETIRED (EX-29, 2026-10-19): PROVINCE.md 40-43 — zero loci/literals; cause in the v10 disposition block at EOF.
+     ("PROVINCE.md", 44, 44, "CURRENT", None, None),
+     ("PROVINCE.md", 45, 62, "DATED", 40, r"verified on this host 2026-10-13"),
+     ("PROVINCE.md", 64, 71, "CURRENT", None, None),
+@@ -104,7 +104,7 @@
+     ("SCORECARD.md", 636, 702, "DATED", 636, r"2026-10-18"),
+ 
+     ("SCORECARD.md", 703, 768, "DATED", 704, r"arc2-loop1-round2"),
+-    ("SCORECARD.md", 769, 855, "DATED", 769, r"arc2-loop1-round3"),
++    # RETIRED (EX-29, 2026-10-19): SCORECARD.md 769-855 — zero loci/literals; cause in the v10 disposition block at EOF.
+ ]
+ 
+ PIN = re.compile(r"rea-agents@(\d+\.\d+\.\d+)", re.I)
+@@ -431,3 +431,21 @@
+ 
+ if __name__ == "__main__":
+     sys.exit(main())
++
++# ---- v10 disposition (arc3-loop1-round1 EX-29, 2026-10-19; HEAD e845c2b) ----
++# Every SCOPE row's bound was re-audited against content at HEAD: all rows were
++# content-tight, so no re-key was required; the E22 drift finding is discharged
++# by measurement (PASS 0/0/0/0 at HEAD; receipts in the wave seat dir
++# .ufo/waves/arc3-loop1-round1/claims/c3/EX-29/). Two rows were RETIRED with
++# cause (zero loci, zero version literals, no marker duty) and replaced in place
++# by the comments above, so no landed line citation moves:
++#   PROVINCE.md 40-43 and SCORECARD.md 769-855 -> now UNDECLARED, fail-closed.
++# Two zero-locus rows were RETAINED because they are the only classification
++# path for dated-record literals the gate cannot see (SCORECARD.md 417-466
++# :463; 467-502 :467,:471,:496,:500).
++# Widening a DATED bound to cover a new append, or declaring the pin-free
++# regions (SCORECARD.md 856-1336, PROVINCE.md 132-162, SKILL.md 21-371), stays
++# REFUSED: measured to launder a stale append as historical (R3 section 5,
++# CR3 section 2.5; EX-29 sims B2/B3). The pin-free append discipline (E15
++# section 3.4) is what keeps the short bound safe. Bound-drift detection (slide
++# absorption, EX-29 sim C2) is a named next-round candidate, not landed here.

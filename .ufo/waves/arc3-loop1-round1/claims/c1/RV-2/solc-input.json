@@ -1,0 +1,22 @@
+{
+ "language": "Solidity",
+ "sources": {
+  "Rv2Token.sol": {
+   "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\ncontract Rv2Token {\n    mapping(address => uint256) private _bal;\n    mapping(address => mapping(address => uint256)) private _allow;\n    uint256 private _supply;\n\n    event Transfer(address indexed from, address indexed to, uint256 value);\n    event Approval(address indexed owner, address indexed spender, uint256 value);\n\n    function totalSupply() external view returns (uint256) {\n        return _supply;\n    }\n\n    function balanceOf(address a) external view returns (uint256) {\n        return _bal[a];\n    }\n\n    function transfer(address to, uint256 value) external returns (bool) {\n        _bal[msg.sender] -= value;\n        _bal[to] += value;\n        emit Transfer(msg.sender, to, value);\n        return true;\n    }\n\n    function approve(address spender, uint256 value) external returns (bool) {\n        _allow[msg.sender][spender] = value;\n        emit Approval(msg.sender, spender, value);\n        return true;\n    }\n\n    function transferFrom(address from, address to, uint256 value) external returns (bool) {\n        _allow[from][msg.sender] -= value;\n        _bal[from] -= value;\n        _bal[to] += value;\n        emit Transfer(from, to, value);\n        return true;\n    }\n}\n"
+  }
+ },
+ "settings": {
+  "optimizer": {
+   "enabled": false
+  },
+  "outputSelection": {
+   "*": {
+    "*": [
+     "abi",
+     "evm.bytecode.object",
+     "evm.deployedBytecode.object"
+    ]
+   }
+  }
+ }
+}

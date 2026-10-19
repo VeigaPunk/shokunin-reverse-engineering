@@ -1,0 +1,54 @@
+### RV-8 consumer shapes vs EX-21 prototype (PROXY, not landed) 2026-10-19T07:07:30-03:00
+### proto sha256:
+776cef6af5b7404f6a0d0667727ecf99a6bb32a6db357b443e6fa5c1585ca283  /var/tmp/rv8/proto/proto/probe.py
+738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  /var/tmp/rv8/proto/proto/pointer-table.json
+376f9fc54fd5af22e77f0eda1b317905760ffe14b48f176feb1feb130160170f  /var/tmp/rv8/proto/proto/expected.json
+
+### X1 clean default
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0
+### X2 strict
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+rc=0
+### X3 selftest
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+rc=0
+### X4 byte-identical copy + pinned expected
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0
+### X5 modified table + pinned expected
+CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 36a00fc6a462a3860c820253a9aa79711ef8a9660a1008b935e7941fb2c191dc != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+rc=2
+### X6 absent table
+CITATION_DRIFT: pointer_table_unreadable entry=absent.json [Errno 2] No such file or directory: '/var/tmp/rv8/proto/scratch/absent.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+rc=2
+### X7 foreign-CWD default
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0
+### X8 flags
+usage: probe.py [-h] [--root ROOT] [--rev REV] [--table TABLE]
+                [--expected EXPECTED] [--snapshot-dir SNAPSHOT_DIR]
+                [--selftest] [--strict]
+
+options:
+  -h, --help            show this help message and exit
+  --root ROOT
+  --rev REV
+  --table TABLE
+  --expected EXPECTED
+### X9 frozen rev findings>0, verdict last
+CITATION_DRIFT_VERDICT: reported findings=16 exit=0
+rc=0
+### X10 isolated-tree tampered table at default path
+CITATION_DRIFT: pointer_table_tampered entry=pointer-table.json sha256 36a00fc6a462a3860c820253a9aa79711ef8a9660a1008b935e7941fb2c191dc != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+rc=2
+### X11 unpinned expected (pin key deleted) + real table [variant A check]
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0
+### X12 SKILL.md relative spelling from repo CWD
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0

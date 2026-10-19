@@ -1,0 +1,61 @@
+### RV-8 post-landing harness 2026-10-19T07:18:12-03:00
+### HEAD: e845c2b524ad2e59871e004c51a1386e192a74ab
+### landed gate sha256:
+e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/citation-drift-probe.py
+738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/expected.json
+
+### P1 default recipe, repo CWD, SKILL.md relative spellings
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+P1 rc=0
+
+### P2 + --strict
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+P2 rc=0
+
+### P3 selftest (expect 13 cases if claim holds)
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+P3 rc=0
+
+### P4 byte-identical table copy + committed expected (archived-copy consumer shape)
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+P4 rc=0
+
+### P5 modified table (emptied) + committed expected (r10 experiment shape; guard should fire)
+CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 36a00fc6a462a3860c820253a9aa79711ef8a9660a1008b935e7941fb2c191dc != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+P5 rc=2
+
+### P6 absent table
+CITATION_DRIFT: pointer_table_unreadable entry=absent.json [Errno 2] No such file or directory: '/var/tmp/rv8/post/scratch/absent.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+P6 rc=2
+
+### P7 foreign-CWD default-path invocation (no --table/--expected)
+CITATION_DRIFT_TABLE: /var/tmp/rv8/post/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+P7 rc=0
+
+### P8 flag surface
+usage: citation-drift-probe.py [-h] [--root ROOT] [--rev REV] [--table TABLE]
+                               [--expected EXPECTED]
+                               [--snapshot-dir SNAPSHOT_DIR] [--selftest]
+                               [--strict]
+
+options:
+  -h, --help            show this help message and exit
+  --root ROOT
+  --rev REV
+  --table TABLE
+  --expected EXPECTED
+  --snapshot-dir SNAPSHOT_DIR
+
+### P9 verdict-line-last with findings>0 (frozen rev, landed table)
+CITATION_DRIFT_VERDICT: reported findings=16 exit=0
+P9 rc=0
+
+### P10 tampered table at the default path in an isolated tree (fixture shape)
+CITATION_DRIFT: pointer_table_tampered entry=pointer-table.json sha256 36a00fc6a462a3860c820253a9aa79711ef8a9660a1008b935e7941fb2c191dc != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+P10 rc=2

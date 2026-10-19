@@ -1,0 +1,26 @@
+=== RV-7 PL-2 reconstruction (NOT the landed artifact)
+base probe sha256   : 3067621ac44d6a153f45076c947926b56e3f34fbd4a907458273d97d1a47803f
+base expected sha256: 4e28ba908bcd8e71586d0f8e376b1343bd7e305144f48c484f8ef788d36a2e33
+extracted patch1: 82 lines
+patch --dry-run rc=0 checking file .ufo/gates/citation-drift/citation-drift-probe.py
+patch apply   rc=0 patching file .ufo/gates/citation-drift/citation-drift-probe.py
+patched probe sha256: e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a
+PL-2 claimed proto  : e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a -> MATCH
+patched expected sha256: ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7
+cases=13 pin=738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+
+--- four named checks on the reconstruction ---
+[N1-selftest] rc=0 | CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+[N2-rev-HEAD] rc=0 findings=0 | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+[N3-rev-deadbeef] rc=2 findings=1 | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+
+--- guard behaviour (reconstruction) ---
+[G1-real-table] rc=0 findings=0 ids=[] | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+[G2-emptied-table] rc=2 findings=1 ids=['pointer_table_tampered'] | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+[G3-emptied-strict] rc=2 findings=1 ids=['pointer_table_tampered'] | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+[G4-absent-table] rc=2 findings=1 ids=['pointer_table_unreadable'] | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+[G5-unpinned-expected-real-table] rc=2 findings=1 ids=['pointer_table_unpinned'] | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+[G6-unpinned-expected-emptied-table] rc=2 findings=1 ids=['pointer_table_unpinned'] | CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+[G7-byte-identical-copy] rc=0 findings=0 ids=[] | CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+
+=== reconstruction done (scratch at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/RV-7/tmp/pl2)

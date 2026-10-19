@@ -1,0 +1,55 @@
+# config-pre-pair corroboration — arc3-loop1-round1 (chain c1)
+# seat: EX-01 (chain c1, role executor)
+# branch: corroboration — CU-1 cross pre-pair already existed at first check
+# CU-1 pre-pair source: .ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt
+#   sha256(cross receipt file):   b8ed19365c103a4ab355678f0fffe0db4e0011a18b441e79f38d9e80de3d0776
+#   sha256(cross metadata file):  85fa1860000bda4de57ffb17219e59fa0e553d505eb76815c4bcf542f6426a90
+#   CU-1 capture-utc: 2026-10-19T09:57:18Z | repo-HEAD: e845c2b524ad2e59871e004c51a1386e192a74ab
+# recompute-utc: 2026-10-19T09:59:53Z
+# repo-HEAD at recompute: e845c2b524ad2e59871e004c51a1386e192a74ab
+# method: sha256-capture-only, read-only; three independent implementations per path
+#   sha256sum | openssl dgst -sha256 -r | python3 hashlib.sha256  → impl_agree=YES 5/5
+# line format: <sha256>  <abspath>  <recompute_utc>
+16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4  /home/vgpnk/.config/devin/mcp_config.json  2026-10-19T09:59:53Z
+38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b  /home/vgpnk/.omp/agent/mcp.json  2026-10-19T09:59:53Z
+8cbacd48ab85ea86e122bae102d8ee63e2fd3181aa551603b3923b912573c38d  /home/vgpnk/.kimi-code/config.toml  2026-10-19T09:59:53Z
+7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598  /home/vgpnk/.bashrc  2026-10-19T09:59:53Z
+6c6be761d3b199c964c95e724d7cdc9f4f902e0c3bdd6a532361b20a53db4f30  /home/vgpnk/.profile  2026-10-19T09:59:53Z
+#
+# corroboration verdict: 5/5 byte-identical to CU-1 captured digests.
+# side-by-side (path | CU-1 sha256 | EX-01 recompute | verdict):
+# /home/vgpnk/.config/devin/mcp_config.json | 16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4 | 16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4 | identical
+# /home/vgpnk/.omp/agent/mcp.json | 38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b | 38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b | identical
+# /home/vgpnk/.kimi-code/config.toml | 8cbacd48ab85ea86e122bae102d8ee63e2fd3181aa551603b3923b912573c38d | 8cbacd48ab85ea86e122bae102d8ee63e2fd3181aa551603b3923b912573c38d | identical
+# /home/vgpnk/.bashrc | 7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598 | 7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598 | identical
+# /home/vgpnk/.profile | 6c6be761d3b199c964c95e724d7cdc9f4f902e0c3bdd6a532361b20a53db4f30 | 6c6be761d3b199c964c95e724d7cdc9f4f902e0c3bdd6a532361b20a53db4f30 | identical
+#
+# metadata cross-check (live stat vs CU-1 metadata table): size, mode, mtime, inode all match 5/5
+# path | size | mode | mtime_epoch | inode
+# /home/vgpnk/.config/devin/mcp_config.json | 406 | 600 | 1792011200 | 11341318
+# /home/vgpnk/.omp/agent/mcp.json | 429 | 600 | 1792011200 | 11341316
+# /home/vgpnk/.kimi-code/config.toml | 114434 | 600 | 1792376443 | 34530637
+# /home/vgpnk/.bashrc | 3601 | 644 | 1792168396 | 25991953
+# /home/vgpnk/.profile | 736 | 644 | 1792044727 | 40274
+#
+# install-state at recompute (observed, not probed): the npm solc install had already landed —
+# .ufo/waves/arc3-loop1-round1/tools/solc-prefix (node_modules/solc), EX-02 install artifacts
+# mtime ~2026-10-19T09:58Z, i.e. AFTER the CU-1 pre-pair (09:57:18Z) and BEFORE this recompute.
+# Therefore this recompute also serves as a post-install drift check against the pre-pair:
+# zero drift observed across the install window.
+#
+# attack self-test (comparator detects drift): a one-hex-digit mutation of any CU-1 digest
+# makes the side-by-side comparator report MISMATCH (demonstrated in seat report EX-01.md,
+# section 4, with commands; no files written — process substitution only).
+#
+# note on CU-1 time labels (found by EX-01 epoch cross-check; digests unaffected):
+# CU-1's per-path "MTIME_UTC"/ctime values are LOCAL (-03) renderings mislabeled as UTC.
+# Ground truth: mtime_epoch 1792011200 = 2026-10-14T20:53:20Z = 2026-10-14 17:53:20 -03;
+# CU-1 prints "2026-10-14 17:53:20" under an MTIME_UTC label (label off by 3h; the epoch
+# values themselves are correct). The mtime_epoch column above is TZ-unambiguous and is
+# the authoritative comparison field; string comparison was done local-vs-local (matched).
+#
+# post-write verification (mechanical, same session): the 5 data lines above (sha+path
+# fields) were diffed against a fresh sha256sum pass → 5/5 match; drift self-test on the
+# same comparator: clean=MATCH, one-hex-digit mutation=DETECTED. Exact command + output
+# timestamps are in the seat report .ufo/waves/arc3-loop1-round1/seats/EX-01.md.

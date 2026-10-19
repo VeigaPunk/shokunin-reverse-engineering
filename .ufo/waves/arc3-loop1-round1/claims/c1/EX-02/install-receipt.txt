@@ -1,0 +1,132 @@
+================================================================================
+INSTALL RECEIPT — npm package `solc` (isolated prefix)
+Wave:  arc3-loop1-round1   Seat: EX-02 (chain c1, executor)
+Date:  2026-10-19 (UTC)    Repo HEAD at install: e845c2b524ad2e59871e004c51a1386e192a74ab
+Host:  node v26.12.0 (mise) | npm 11.20.0 | Linux 7.2.3-arch1-3
+================================================================================
+
+1. PACKAGE IDENTITY
+--------------------------------------------------------------------------------
+  package name:        solc
+  exact version:       0.8.37
+  compiler string:     0.8.37+commit.f401782d.Emscripten.clang
+  tarball URL:         https://registry.npmjs.org/solc/-/solc-0.8.37.tgz
+  tarball sha256:      0e1a1ab6d12c37f5503271b2c4679cd433459c884851920d148d6fb154575a51
+  tarball size:        6476046 bytes
+  tarball sha512:      sha512-ieUYdPDRGNKMsZpCfi9tY64Q+ASoL8tyhLuvf9cFiqDs+6ijlx8Wn2CRi0N71AlCvRx0V092rlUYu3b3PuxWlA==
+  registry shasum:     1aacd7601aec858b2f4ba78d0427c9e582e92b6c   (sha1, dist.shasum)
+  registry modified:   2026-09-10T10:02:55.025Z  (time.modified)
+  license:             MIT (package-lock.json)
+
+  Source of sha256: the npm cache content file (see §4). Its sha512 was recomputed
+  and matches the registry's published dist.integrity exactly, so the sha256 above
+  is over the exact bytes the registry attests to. npm itself verifies this
+  integrity during extraction (install would fail on mismatch); package-lock.json
+  in the prefix pins the same integrity.
+
+2. INSTALL COMMAND AND RESULT
+--------------------------------------------------------------------------------
+  command:  npm install --prefix .ufo/waves/arc3-loop1-round1/tools/solc-prefix solc@0.8.37
+  cwd:      /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+  output:   "added 8 packages in 402ms" (exit 0)
+
+  install path:  .ufo/waves/arc3-loop1-round1/tools/solc-prefix/
+                 (= /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/
+                    arc3-loop1-round1/tools/solc-prefix/)
+  bin path:      .ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules/.bin/solcjs
+                 (symlink -> ../solc/solc.js)
+  created files: package.json, package-lock.json, node_modules/  (all inside prefix)
+
+3. DEPENDENCY TREE  (npm ls --all)
+--------------------------------------------------------------------------------
+  solc-prefix@ /home/vgpnk/.../tools/solc-prefix
+  └─┬ solc@0.8.37
+    ├── command-exists@1.2.9
+    ├── commander@8.3.0
+    ├── follow-redirects@1.16.1
+    ├── js-sha3@0.8.0
+    ├── memorystream@0.3.1
+    ├── semver@5.7.2
+    └── tmp@0.2.6
+
+4. NPM CACHE
+--------------------------------------------------------------------------------
+  npm cache path:     /home/vgpnk/.npm            (npm config get cache)
+  cacache content:    /home/vgpnk/.npm/_cacache/content-v2/sha512/89/e5/
+                      1874f0d118d28cb19a427e2f6d63ae10f804a82fcb7284bbaf7fd7058aa0ecfba8a3971f169f60918b437bd40942bd1c74574f76ae5518bb76f73eec5694
+                      (6476046 bytes; sha256 = 0e1a1ab6…575a51; sha512 recomputed = registry integrity)
+  cache index entry:  /home/vgpnk/.npm/_cacache/index-v5/83/d6/
+                      551073c673831c2405f12184ab4a154657fa67da9fc869d2c0720b4a03b7
+                      key: make-fetch-happen:request-cache:https://registry.npmjs.org/solc/-/solc-0.8.37.tgz
+                      integrity: sha512-ieUYdPDRGNKMsZpCfi9tY64Q+ASoL8tyhLuvf9cFiqDs+6ijlx8Wn2CRi0N71AlCvRx0V092rlUYu3b3PuxWlA==
+                      size: 6476046 | time: 1792403822461 (2026-10-19T09:57:02Z)
+                      response date: Mon, 19 Oct 2026 09:57:02 GMT, etag "0693b0e1c08225fb1469d5ea982b2f10"
+
+5. OPERABILITY VERIFICATION (run, not assumed)
+--------------------------------------------------------------------------------
+  a) $ .../tools/solc-prefix/node_modules/.bin/solcjs --version
+     -> 0.8.37+commit.f401782d.Emscripten.clang        (exit 0)
+
+  b) Smoke compile (evidence of real bytecode generation; artifacts under
+     claims/c1/EX-02/smoke/):
+     $ TMPDIR=<claim>/smoke/tmp .../node_modules/.bin/solcjs --bin --abi --optimize \
+         --output-dir out Smoke.sol
+     -> exit 0; warning only: transfer() deprecated (expected, source uses it)
+     -> out/Smoke_sol_Smoke.bin  1370 hex chars (=685 bytes)
+        sha256 530efc7bb166fd47e42fe9623ee347234b99a65691b0a0ad42d2682702986a5f
+     -> out/Smoke_sol_Smoke.abi  852 bytes
+        sha256 73441f84aa6c8feb0f4e284d2f1638b106d6b9fb234cea8b047dfc38b0f9081a
+     -> bytecode head: 6080604052348015600e575f5ffd5b506102918061001c5f395ff3fe608060405260043610610049575f3560e01c80632e1a7d4d1461004d57806360…
+        (real dispatcher: PUSH4 selector-compare pattern present)
+
+  c) Ground-truth selectors from the ABI (keccak256(sig)[0:4], computed with the
+     installed tree's js-sha3@0.8.0) — K = 5:
+       0x70a08231 balanceOf(address)
+       0xd0e30db0 deposit()
+       0x6d4ce63c get()
+       0x60fe47b1 set(uint256)
+       0x2e1a7d4d withdraw(uint256)
+     All 5 selector constants are present verbatim in out/Smoke_sol_Smoke.bin
+     (see smoke/selector-presence.txt) — so the c1 chain's "K >= 3 distinct
+     selectors on real bytecode" prediction is satisfiable with this carrier.
+
+6. CROSS-CHECK AGAINST PRE-EXISTING AMBIENT INSTALL
+--------------------------------------------------------------------------------
+  NOTE (before-state correction): the host ALREADY had solc 0.8.37 installed
+  globally under fnm node v24.21.0:
+    /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/lib/node_modules/solc/
+    ambient shim on PATH: /run/user/1000/fnm_multishells/1158820_1792402567560/bin/solcjs
+    ambient `solcjs --version` -> 0.8.37+commit.f401782d.Emscripten.clang (exit 0)
+  The isolated receipted install is byte-identical to it:
+    soljson.js sha256 221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c (both trees)
+    solc.js    sha256 188c3fdca72bbb8ec1c70373427ad4536e117341c48944dae9185f9cf035146f (both trees)
+  Independent confirmation that the prefix install is genuine and untampered.
+
+7. CUSTODY (read-only sha256 captures; installer-seat copy)
+--------------------------------------------------------------------------------
+  Pre-install  -> claims/c1/EX-02/custody-pre-pair.txt
+  Post-install -> claims/c1/EX-02/custody-post-pair.txt
+  diff of the 5 hashes: EMPTY — no drift (5/5 identical).
+  Paths: ~/.config/devin/mcp_config.json, ~/.omp/agent/mcp.json,
+         ~/.kimi-code/config.toml, ~/.bashrc, ~/.profile
+  (Canonical wave file receipts/config-pre-pair.txt is CU-1's deliverable.)
+
+8. HOST CAVEAT (found during this seat; affects all seats using /tmp scratch)
+--------------------------------------------------------------------------------
+  /tmp is tmpfs mounted with usrquota and the user quota is EXHAUSTED:
+    $ mount | grep ' /tmp ' -> tmpfs ... usrquota
+    $ dd if=/dev/zero of=/tmp/ex02-writetest bs=1M count=2
+      -> "dd: error writing ...: Disk quota exceeded" (errno -122 EDQUOT)
+  Consequence: `npm pack` to /tmp failed at the write step (errno -122) — the
+  tarball download itself succeeded into the cache. All scratch for this seat was
+  therefore kept under the wave dir; /tmp residue cleaned (nothing left).
+
+9. FILES PRODUCED BY THIS SEAT (all under claims/c1/EX-02/)
+--------------------------------------------------------------------------------
+  install-receipt.txt                       (this file)
+  custody-pre-pair.txt                      custody-post-pair.txt
+  smoke/Smoke.sol  smoke/selectors.txt  smoke/selector-presence.txt
+  smoke/out/Smoke_sol_Smoke.{bin,abi}
+  proposed-receipts-solc-install.patch.md   (proposed receipts/solc-install.txt for parent)
+  Seat report: .ufo/waves/arc3-loop1-round1/seats/EX-02.md
+================================================================================

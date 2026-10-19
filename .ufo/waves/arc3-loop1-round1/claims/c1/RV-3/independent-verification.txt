@@ -1,0 +1,79 @@
+# RV-3 independent verification — arc3-loop1-round1 (captured 2026-10-19T10:05:17Z)
+# seat: RV-3 (chain c1, reviewer). Purpose: ground-truth checks on the evidence
+# the c1 knowledge entry will rest on, performed before grading the entry patch.
+
+## 0. repo HEAD + command A (recipe A) at HEAD
+$ git rev-parse HEAD
+e845c2b524ad2e59871e004c51a1386e192a74ab
+$ command A (python3, recipe A from SCORECARD.md:88-124)
+{"citation_resolved_rules": 13, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 81, "mapped": 81, "missing": [], "revision": "e845c2b", "rule_blocks": 13}
+
+## 1. EX-02 Smoke carrier (K=5) — independent keccak recompute + presence
+$ node -e '<keccak256 via wave-prefix js-sha3 over the 5 signatures>'
+0x70a08231 balanceOf(address)
+0xd0e30db0 deposit()
+0x6d4ce63c get()
+0x60fe47b1 set(uint256)
+0x2e1a7d4d withdraw(uint256)
+$ grep -o '<sel>' out/Smoke_sol_Smoke.bin | wc -l  (per planted selector)
+70a08231 count=1
+d0e30db0 count=1
+6d4ce63c count=1
+60fe47b1 count=1
+2e1a7d4d count=1
+$ sha256sum EX-02 artifacts
+647992dd62953b4b09f003589c79beecd7a80141b9e408a84a35ac7e655d6824  .ufo/waves/arc3-loop1-round1/claims/c1/EX-02/smoke/Smoke.sol
+530efc7bb166fd47e42fe9623ee347234b99a65691b0a0ad42d2682702986a5f  .ufo/waves/arc3-loop1-round1/claims/c1/EX-02/smoke/out/Smoke_sol_Smoke.bin
+73441f84aa6c8feb0f4e284d2f1638b106d6b9fb234cea8b047dfc38b0f9081a  .ufo/waves/arc3-loop1-round1/claims/c1/EX-02/smoke/out/Smoke_sol_Smoke.abi
+
+## 2. EX-06 KdxToken carrier (K=6) — recomputed hashes vs transcript
+$ sha256sum /dev/shm/ex06/{KdxToken.sol,KdxToken.runtime.hex,KdxToken.runtime.bin,KdxToken.creation.hex,KdxToken.creation.bin}
+c29803852501641cbb1b6c6e42ecdaef0497e9addf9950069138fa43cd3dccba  /dev/shm/ex06/KdxToken.sol
+69a15782678dccdd4d43b2f0af566c2f030fe9dee4de4ef8365bc4b6d1b29ad6  /dev/shm/ex06/KdxToken.runtime.hex
+9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e  /dev/shm/ex06/KdxToken.runtime.bin
+31fb45ad9b78e2b453d9c990c0c195581667d43e28311b8d98438bf67a99eb47  /dev/shm/ex06/KdxToken.creation.hex
+6aeba8d7fe1c4a871fb0fdabde1f47de91408c1006bd29050d937b3b74c8e84c  /dev/shm/ex06/KdxToken.creation.bin
+transcript.txt:26-30 claims: sol c2980385…, runtime.hex 69a15782…, runtime.bin 9c40940e…, creation.hex 31fb45ad…, creation.bin 6aeba8d7…
+
+## 3. byte-level checks on runtime.bin (1789 bytes)
+$ python3 - byte at each claimed bytecodeOffset
+offset 100 -> 5b
+offset 148 -> 5b
+offset 178 -> 5b
+offset 226 -> 5b
+offset 254 -> 5b
+offset 302 -> 5b
+$ selectors present in runtime.hex (grep -o | wc -l)
+095ea7b3 count=1
+18160ddd count=1
+23b872dd count=1
+40c10f19 count=1
+70a08231 count=1
+a9059cbb count=1
+$ metadata trailer (last 51 bytes): solc 000825 marker + ipfs multihash prefix 1220
+contains 000825: True
+contains 1220 multihash: True
+head: 6970667358221220
+
+## 4. solc install identity (wave prefix) vs EX-02 receipt claim
+$ sha256sum tools/solc-prefix/node_modules/solc/soljson.js
+221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c  .ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules/solc/soljson.js
+EX-02 receipt claims soljson.js sha256 221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c
+
+## 5. probe evidence envelopes (EX-06, 6.7.0) — evidence ids + decoded bytecode sha
+run-raw-6.7.0.json -> ev_9259f412064538fc7c78f051d2bda4273da72566e40ae8cdc8a4f65211f7ea7d
+run-hex-6.7.0.json -> ev_56d89cb49a214f152b6499312eefe9714f4bd45bfe6cab2ca0666d2571ce36b9
+
+## 6. harness self-test (worktree-variant command A, applied to /home/vgpnk/.cache/rv3-arc3/selftest-tree)
+positive (map token + matching entry file stem): knowledge_files 82, mapped 82, missing [], dangling [], rules 13/13
+negative A (token only, no file): dangling ["2026-10-19-arc3-r1-evm-real-solc"]
+negative B (file only, no token): missing ["2026-10-19-arc3-r1-evm-real-solc"], coverage 9.88
+=> the harness discriminates the three states; a grade built on it is evidence-bearing.
+
+## 7. rev2 grade measurements (2026-10-19 ~07:16-07:18 -03)
+graded artifact: claims/c1/EX-12/knowledge-entry.patch.md sha256 d662c195d75cdbdb07e3534170ce9cb2ac3f830b93d5380e7b8310bca7d8ba59 (18701 B, mtime 07:14:01 -03)
+apply -> corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md 9513 B / 32 lines / sha256 a5119120ee6a6142b8be6e297e39c85e0464fb27761c6ee0e7cc7cf8a1d5e56b (matches artifact §4)
+command A (worktree recipe A): {"citation_resolved_rules": 13, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "rule_blocks": 13}
+README line-neutral: 190 -> 190 lines; prior-81 per-file sha256 identical; tree diff = +1 knowledge file, README changed.
+recheck verbatim (cd /tmp, no TMPDIR): exit 1 execution_failure (EDQUOT) -> evidence/recheck-verbatim.out
+recheck fixed (TMPDIR=/var/tmp/rv3-tmp): exit 0, ev_45849c8b11794ea0b007bd01ea3241aa9b385ca7543e514a16e82c795a106eaf, 5 fns abi, decoded c1081a565869b50387211b25afaf3768294aa774c35845bc3a8c0b12cfe15e74, offsets [89,137,167,215,263] -> evidence/recheck-fixed.out

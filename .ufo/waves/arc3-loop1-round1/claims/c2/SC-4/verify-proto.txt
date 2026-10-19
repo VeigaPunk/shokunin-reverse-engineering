@@ -1,0 +1,54 @@
+### SC-4 verify-proto at 2026-10-19T07:06:59-03:00
+### proto source: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-21/tmp/proto/probe.py
+776cef6af5b7404f6a0d0667727ecf99a6bb32a6db357b443e6fa5c1585ca283  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-21/tmp/proto/probe.py
+376f9fc54fd5af22e77f0eda1b317905760ffe14b48f176feb1feb130160170f  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-21/tmp/proto/expected.json
+
+### P1 proto + real table + pinned expected (want rc=0, got rc=0)
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+
+### P2 proto + weakened table + pinned expected (want rc=2, got rc=2)
+CITATION_DRIFT: pointer_table_tampered entry=table-weakened.json sha256 0d331b7155256b9d8f4d89975a049cbe3694f2aef8832b6e357e39b264f54d4b != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+
+### P3 proto + emptied table + pinned expected --strict (want rc=2, got rc=2)
+CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 36a00fc6a462a3860c820253a9aa79711ef8a9660a1008b935e7941fb2c191dc != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+
+### P4 ATTACK: weakened table + UNPINNED expected (pin field deleted) (want rc=0, got rc=0)
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+
+^ rc=0 here means the one-field deletion defeats the guard (skip-on-unpinned)
+
+### P5 proto + absent table + pinned expected (want rc=2, got rc=2)
+CITATION_DRIFT: pointer_table_unreadable entry=does-not-exist.json [Errno 2] No such file or directory: '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/SC-4/scratch/does-not-exist.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+
+### P6 proto selftest (want 13/13 exit 0)
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+rc=0
+
+### P7 does EX-21's published proto-probe.diff reproduce EX-21's probe.py?
+dry-run rc=0
+apply rc=0
+applied sha256: ea364f2d4b7dac133651be3e49412b61b1473cf44508d80b003775341e5f122f
+EX-21 probe.py: 776cef6af5b7404f6a0d0667727ecf99a6bb32a6db357b443e6fa5c1585ca283
+delta (applied vs EX-21 probe.py):
+--- citation-drift-probe.py	2026-10-19 07:07:00.183257034 -0300
++++ /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-21/tmp/proto/probe.py	2026-10-19 07:03:11.347009650 -0300
+@@ -399,7 +399,10 @@
+         with tempfile.TemporaryDirectory(prefix="citation-drift-case-") as case_dir:
+             root = None
+             try:
+-                root = build_fixture("clean")
++                if case in ("table_absent", "table_tampered", "table_unreadable"):
++                    root = build_fixture("clean")
++                else:
++                    root = build_fixture(case)
+                 table = os.path.join(case_dir, "table.json")
+                 if case == "table_absent":
+                     # pin the digest of the table that is never written
+
+### P7b selftest of the diff-applied probe (want 13/13)
+FAILED_cases=4
+CITATION_DRIFT_SELFTEST: FAILED cases=13 passed=9 failed=4 exit=1
+rc=1

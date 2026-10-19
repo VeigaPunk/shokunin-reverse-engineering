@@ -1,0 +1,60 @@
+# writer-candidates — CU-1 attribution material for the 5-path custody set
+# captured-utc: 2026-10-19T10:01Z   host: plazir27   repo-HEAD: e845c2b524ad2e59871e004c51a1386e192a74ab
+# purpose: if post-pair drift is found, name the plausible writers and their schedules
+# so the excursion can be attributed rather than merely recorded.
+
+## 1. Live processes holding CLI state (top writer candidates for config.toml)
+# command: ps -eo user,pid,etimes,cmd | grep -Ei 'kimi|omp|devin|opencode|codex|cursor-agent|node'
+vgpnk 4592    kimi        (etimes 23046s)   — long-lived kimi CLI instance
+vgpnk 5439    kimi        (etimes 22988s)
+vgpnk 1160193 kimi        (etimes 1428s)    — likely THIS wave's dispatch parent
+vgpnk 1589    devin-shim  python3 /home/vgpnk/.local/share/devin-shim/shim.py (etimes 23118s)
+# kimi CLI is the only observed writer-capable process for ~/.kimi-code/config.toml:
+# it rewrites that file on settings/model changes. Model switching by the wave parent
+# is therefore the single most plausible cause of a mid-wave config.toml excursion.
+
+## 2. systemd user services that read/write CLI config surfaces
+# command: systemctl --user list-units --type=service --all | grep -Ei 'kimi|omp|devin|cursor|health'
+cursor-shim.service            active running   (cursor-shim v2)
+devin-shim.service             active running
+ds-flash-shim.service          active running   (3-leg cascade shim)
+glm-flash-shim.service         active running
+antigravity-shim.service       active running   (kimi-code translation shim)
+cursor-shim-healthcheck.service inactive dead
+
+## 3. Periodic writers (schedules that could interleave with a wave)
+# command: systemctl --user list-timers --all
+ai-usage.timer   -> ai-usage.service   every 5 min (:00:35, :05:35, ... local)
+   ExecStart=%h/.local/bin/ai-usage refresh   "Probe AI CLI usage limits into cache"
+   It invokes CLI binaries to probe limits; any probe that persists state would be the
+   most likely automated writer inside a wave window. Observed running 2026-10-19 07:00:35 local.
+cursor-shim-healthcheck.timer  last 2026-10-19 00:33:15 local — not periodic within the wave.
+
+## 4. Repo-side instruments referencing the custody paths (read-only consumers)
+# command: grep -rIn -E '\.kimi-code/config\.toml|\.omp/agent/mcp\.json|devin/mcp_config\.json|\.bashrc|\.profile' . | grep -v .git
+corpus/knowledge/2026-10-13-mcp-registrations.md:10,17,18,19,31,32,33  (claims + verify commands, read-only)
+corpus/knowledge/2026-10-13-doctor-taxonomy.md:70,72                  (verify command, read-only)
+corpus/knowledge/2026-10-13-java-runtime.md:39,43,45                  (verify command, read-only)
+corpus/knowledge/2026-10-13-r2-*.md:28,29,46                          (verify commands, read-only)
+# no repo instrument was found that WRITES any of the 5 paths.
+
+## 5. Pre-wave excursion already explained (not this wave's doing)
+# ~/.kimi-code/config.toml changed since the arc2-loop1-round1 pre-pair:
+#   arc2 pre-pair 3546e033aeaf68093faf4099ea8289de5dea7ec224e7c557f08bfa9d51cf9a2a
+#   this wave     8cbacd48ab85ea86e122bae102d8ee63e2fd3181aa551603b3923b912573c38d
+# mtime 2026-10-18 23:20:43 local (07:20:43Z 2026-10-19) — ~7.5 h BEFORE wave start
+# (wave dir created 06:56 local / 09:56Z). The excursion is pre-wave and predates every
+# arc3-loop1-round1 seat; the writer is not determinable from this wave's evidence and is
+# NOT this wave's responsibility. Independently observed by seat EX-15
+# (claims/c1/EX-15/custody-crosswave-diff.txt).
+
+## 6. Environment caveat affecting all seats (fleet finding, not custody drift)
+# /tmp is tmpfs with usrquota; the user quota is exhausted:
+#   mount | grep ' /tmp ' -> tmpfs on /tmp type tmpfs (rw,nosuid,nodev,nr_inodes=1048576,
+#                            inode64,huge=advise,usrquota)
+#   df -h /tmp -> 16G size, 13G used, 3.1G avail (80%);  df -i -> 86% inodes used
+#   dd if=/dev/zero of=/tmp/cu1-writetest bs=1M count=2 -> "0 bytes copied" (0-byte file)
+#   dd if=/dev/zero of=/tmp/cu1-writetest2 bs=4k count=1 -> "0 bytes copied" (0-byte file)
+# Every write fails with EDQUOT regardless of size; independently reported by seat EX-02
+# (claims/c1/EX-02/install-receipt.txt §8, errno -122). Scratch for this seat was therefore
+# kept inside the wave artifact dir; nothing of this seat's was left under /tmp.

@@ -1,0 +1,159 @@
+--- a/.ufo/gates/citation-drift/citation-drift-probe.py
++++ b/.ufo/gates/citation-drift/citation-drift-probe.py
+@@ -31,6 +31,15 @@
+                            against expected.json `snapshots` (a mismatched
+                            snapshot is `snapshot_tampered`, exit 2).
+ 
++PINNING  expected.json `frozen_run.table_sha256` pins the exact on-disk bytes
++         of the table (`sha256sum` of the file: no newline translation, no
++         re-encode). The table is read once, in binary; that same bytes object
++         is both hashed and parsed. A mismatch is `pointer_table_tampered`
++         (exit 2) before any entry is evaluated; a missing pin is
++         `unpinned_legacy`; an absent, undecodable or non-regular table is
++         `pointer_table_unreadable`; a symlinked table is `pointer_table_unsafe`
++         -- all exit 2, never silent findings.
++
+ VERDICT  exit 0 clean, 1 failed, 2 could-not-evaluate. Every finding carries a
+ stable id so the self-test can assert on it.
+ 
+@@ -40,11 +49,13 @@
+   citation-drift-gate.py --selftest [--expected PATH]
+ """
+ import argparse
++import errno
+ import hashlib
+ import json
+ import os
+ import re
+ import shutil
++import stat
+ import subprocess
+ import sys
+ import tempfile
+@@ -70,7 +81,8 @@
+         if not self.rows:
+             return CLEAN
+         if any(f in ("snapshot_tampered", "snapshot_missing",
+-                     "pointer_table_unreadable", "unpinned_legacy",
++                     "pointer_table_unreadable", "pointer_table_tampered",
++                     "pointer_table_unsafe", "unpinned_legacy",
+                      "root_unreadable", "revision_unresolvable", "internal_error")
+                for f, _, _ in self.rows):
+             return CNE
+@@ -88,6 +100,40 @@
+     return hashlib.sha256(data).hexdigest()
+ 
+ 
++class TableUnsafe(Exception):
++    """The table path is a symlink: refused (identity, not content)."""
++
++
++def read_table_bytes(path):
++    """Read the pointer table EXACTLY ONCE. The bytes returned are the bytes
++    hashed and the bytes parsed, so no window exists in which the file can
++    change between the pin check and its use (hash one read, parse another is
++    measurably racy). The open refuses to follow a symlink (O_NOFOLLOW) and
++    refuses non-regular files (FIFO/device/directory); O_NONBLOCK keeps a FIFO
++    from blocking the open before that check can run. Never raises; returns
++    (bytes, error), the error being a TableUnsafe for a symlink refusal (the
++    non-regular refusal stays in the unreadable class the census measured)."""
++    try:
++        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
++    except OSError as exc:
++        if exc.errno == errno.ELOOP:
++            return None, TableUnsafe("refused: %s is a symlink (O_NOFOLLOW)" % path)
++        return None, exc
++    try:
++        st = os.fstat(fd)
++        if not stat.S_ISREG(st.st_mode):
++            return None, "refused: %s is not a regular file (mode %o)" % (path, st.st_mode)
++        fh = os.fdopen(fd, "rb")
++        fd = -1
++        with fh:
++            return fh.read(), None
++    except OSError as exc:
++        return None, exc
++    finally:
++        if fd >= 0:
++            os.close(fd)
++
++
+ def git_show(root, rev, path):
+     """Return (text, error). Never raises."""
+     proc = subprocess.run(["git", "-C", root, "show", f"{rev}:{path}"],
+@@ -277,16 +323,39 @@
+         findings.add("revision_unresolvable", rev,
+                      "not a commit object (git rev-parse --verify %s^{commit} failed)" % rev)
+         return findings
++    # expected.json first: it carries the frozen-run pin, and the table bytes
++    # are read ONCE (hash == parse) so no window exists between the check and
++    # its use
+     try:
+-        table = json.load(open(table_path))
+-    except (OSError, ValueError) as exc:
+-        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
+-        return findings
+-    try:
+-        expected = json.load(open(expected_path))
+-    except (OSError, ValueError) as exc:
++        with open(expected_path, "rb") as fh:
++            expected = json.loads(fh.read().decode("utf-8"))
++    except (OSError, ValueError, UnicodeDecodeError) as exc:
+         expected = {}
+         findings.add("pointer_table_unreadable", os.path.basename(expected_path), str(exc))
++    data, err = read_table_bytes(table_path)
++    if err:
++        findings.add("pointer_table_unsafe" if isinstance(err, TableUnsafe)
++                     else "pointer_table_unreadable",
++                     os.path.basename(table_path), str(err))
++        return findings
++    # frozen-run guard: the table is the contract, so its bytes are pinned in
++    # expected.json. The run cannot tell an honest in-flight re-key from a
++    # tamper, so a digest mismatch is could-not-evaluate, never a finding set.
++    pinned = (expected.get("frozen_run") or {}).get("table_sha256")
++    if pinned is None:
++        findings.add("unpinned_legacy", os.path.basename(table_path),
++                     "no table digest pinned in expected.json")
++        return findings
++    if sha256_bytes(data) != pinned:
++        findings.add("pointer_table_tampered", os.path.basename(table_path),
++                     "sha256 %s != pinned %s (a table edit and its re-pin land "
++                     "in the same commit)" % (sha256_bytes(data), pinned))
++        return findings
++    try:
++        table = json.loads(data.decode("utf-8"))
++    except (ValueError, UnicodeDecodeError) as exc:
++        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
++        return findings
+     tree = Tree(root, rev, snapshot_dir, expected, findings)
+     for entry in table.get("entries", []):
+         check_entry(entry, tree, findings)
+@@ -396,6 +465,9 @@
+                     table = os.path.join(case_dir, "table.json")
+                     open(table, "w").write("{ not json")
+                     root = build_fixture("clean")
++                elif case == "table_absent":
++                    table = os.path.join(case_dir, "no-such-table.json")
++                    root = build_fixture("clean")
+                 else:
+                     root = build_fixture(case)
+                     table = os.path.join(case_dir, "table.json")
+@@ -412,7 +484,17 @@
+                     digests = {"external.cfg": "0" * 64}
+                 else:
+                     digests = {}
+-                expected = {"snapshots": digests}
++                # every fixture run pins the digest of the table it was built
++                # with, so the guard stays universal; an unpinned run is the
++                # declared unpinned_legacy class (exit 2)
++                if case == "table_tampered":
++                    table_pin = "0" * 64
++                elif case == "table_absent":
++                    table_pin = sha256_bytes(b"absent on purpose")
++                else:
++                    table_pin = sha256_bytes(open(table, "rb").read())
++                expected = {"snapshots": digests,
++                            "frozen_run": {"table_sha256": table_pin}}
+                 exp_file = os.path.join(case_dir, "expected.json")
+                 json.dump(expected, open(exp_file, "w"))
+ 

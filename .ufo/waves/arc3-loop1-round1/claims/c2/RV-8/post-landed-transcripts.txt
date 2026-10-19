@@ -1,0 +1,66 @@
+RV-8 post-landing transcripts — landed instrument (final state), 2026-10-19 ~07:17-07:18 -03
+HEAD e845c2b524ad2e59871e004c51a1386e192a74ab (worktree carries EX-16's uncommitted landing)
+
+Landed gate sha256 (final, verified in post.sh run + cross-checked against EX-16's after-sha256.txt):
+  e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  .ufo/gates/citation-drift/citation-drift-probe.py
+  738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  .ufo/gates/citation-drift/pointer-table.json
+  ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7  .ufo/gates/citation-drift/expected.json
+
+All runs on a /var/tmp copy of the landed gate dir (repo read-only); TMPDIR redirected.
+
+P1 default recipe, repo CWD, SKILL.md relative spellings
+    CITATION_DRIFT_VERDICT: reported findings=0 exit=0        rc=0
+P2 + --strict
+    CITATION_DRIFT_VERDICT: clean findings=0 exit=0           rc=0
+P3 selftest
+    SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+    CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0   rc=0
+P4 byte-identical table copy + committed expected
+    CITATION_DRIFT_VERDICT: reported findings=0 exit=0        rc=0
+P5 modified (emptied) table + committed expected
+    CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 36a00fc6… != pinned 738b3a56…
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2       rc=2
+P6 absent table
+    CITATION_DRIFT: pointer_table_unreadable entry=absent.json [Errno 2] No such file or directory
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2       rc=2
+P7 foreign-CWD default-path invocation (no --table/--expected)
+    CITATION_DRIFT_VERDICT: reported findings=0 exit=0        rc=0
+P8 flag surface (unchanged, same 7 flags)
+    usage: citation-drift-probe.py [-h] [--root ROOT] [--rev REV] [--table TABLE]
+                                   [--expected EXPECTED] [--snapshot-dir SNAPSHOT_DIR]
+                                   [--selftest] [--strict]
+P9 verdict-line-last with findings>0 (frozen rev 679af5d…, landed table)
+    CITATION_DRIFT_VERDICT: reported findings=16 exit=0       rc=0
+P10 isolated tree, tampered table at the default path
+    CITATION_DRIFT: pointer_table_tampered entry=pointer-table.json sha256 36a00fc6… != pinned 738b3a56…
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2       rc=2
+P11 unpinned expected (pointer_table key deleted) + real table — fail-closed check
+    CITATION_DRIFT: pointer_table_unpinned entry=expected-unpinned.json no pointer-table digest pinned in expected.json
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2       rc=2
+P12 re-pin escape hatch: custom expected pinning a custom (emptied) table's digest
+    CITATION_DRIFT_VERDICT: reported findings=0 exit=0        rc=0
+    (the pin is read from the effective --expected, not hardcoded — experiment runs stay possible)
+
+Cross-checks against EX-16's own receipts (all match):
+  claims/c2/EX-16/after-sha256.txt      → e2665074… / ff47bfd6… / 738b3a56…
+  claims/c2/EX-16/after-selftest-13.txt → CLEAN cases=13 passed=13 failed=0 exit=0
+  claims/c2/EX-16/after-injections.txt  → clean 0/0 both modes; tampered/absent injections
+
+TRANSIENT INTERMEDIATE LANDING STATE (incident evidence, for the integrator)
+  - My harness copied the gate dir at 07:15:51; that copy's probe sha256 was 53a94df2…,
+    NOT the final e2665074…. Real probe mtime: 2026-10-19 07:15:55 -0300 (after my copy);
+    expected.json mtime 07:15:47.
+  - The intermediate probe's selftest was RED: SELFTEST FAILED cases=13 passed=1 failed=12 exit=1
+    (every fixture run hit `pointer_table_unpinned` because the intermediate selftest built its
+    fixture expected without the pin; diff vs final shows the missing harness-pin lines:
+      < expected = {"snapshots": digests}
+      > table_bytes = open(table, "rb").read()
+      > expected = {"snapshots": digests, "pointer_table": {"sha256": sha256_bytes(table_bytes)}}
+      > (+ table_tampered/table_absent fixture mutations)
+  - The final state (mtime 07:15:55) is CLEAN 13/13 (P3) — the intermediate was replaced within
+    seconds. Any integration commit must capture the final worktree state (e2665074…), not the
+    07:15:47-55 window's intermediate.
+
+Hygiene: my import-based diagnostic created `.ufo/gates/citation-drift/__pycache__/`
+(citation-drift-probe.cpython-314.pyc, mtime 07:16) — removed at 07:18. `.ufo/gates/__pycache__/`
+(c1-census-v10 pyc, another seat's byproduct) remains untracked; `.gitignore` does not cover it.

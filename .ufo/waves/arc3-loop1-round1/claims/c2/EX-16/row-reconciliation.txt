@@ -1,0 +1,32 @@
+# EX-16 row reconciliation — EX-20 v3 registry-row patch vs landed code (clean re-run)
+
+$ python3 - (extract diff block 1 from claims/c2/EX-20/registry-row.patch.md)
+row-v3.diff sha256: 4631e11c8b018bff17af590163ed303bfe6a004548baab61cd66a2056f259186 | EX-20 claims 4631e11c8b018bff17af590163ed303bfe6a004548baab61cd66a2056f259186
+
+$ patch -p1 --dry-run < ../row-v3.diff
+checking file SKILL.md
+dry-run rc=0
+
+$ patch -p1 < ../row-v3.diff
+patching file SKILL.md
+apply rc=0
+
+line counts: orig 371 new 371 | line-neutral: True
+old row sha256 (no trailing NL): 6413e8dc6384b9e0e34fca9903b55a4b8bba96066c26ca28789dc1939361d57f | EX-20 claims 6413e8dc6384b9e0e34fca9903b55a4b8bba96066c26ca28789dc1939361d57f
+new row sha256 (no trailing NL): 8946c15618c6b52d4e7ad063f6a715d5274c64a369813b4c82dc572a14d1bb01 | EX-20 claims 8946c15618c6b52d4e7ad063f6a715d5274c64a369813b4c82dc572a14d1bb01
+new whole-file sha256: 2e50597c10e8b93c9f41a5fa238eb1a8b0dc2a28d237a4ec2cdc9cd200497a0c
+cells (split on |): 7
+row token pointer_table_tampered                 count=2
+row token pointer_table_unreadable               count=2
+row token pointer_table_unpinned                 count=1
+row token 13 isolated-fixture                    count=1
+row token in both probe and `--strict` modes     count=1
+
+# landed code guard-path emitted ids (grep of citation-drift-probe.py):
+144:            self.findings.add("pointer_table_unreadable", key,
+261:    findings.add("pointer_table_unreadable", eid, "unknown kind %r" % kind)
+292:        findings.add("pointer_table_unreadable", os.path.basename(expected_path), str(exc))
+297:        findings.add("pointer_table_unpinned", os.path.basename(expected_path),
+303:        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
+306:        findings.add("pointer_table_tampered", os.path.basename(table_path),
+312:        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))

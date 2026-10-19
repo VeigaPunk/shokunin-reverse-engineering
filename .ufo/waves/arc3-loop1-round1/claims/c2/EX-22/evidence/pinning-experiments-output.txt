@@ -1,0 +1,32 @@
+==================== e1
+E1 sha256sum crlf   : 1494ca7405e9d62e8ea63c52253a7b7866bb16e2c21f22540a04977766d38c46
+E1 binary hash lf   : eb9689f4e89f0b8b88f6fde235f1d5d9329c3056a21e6f451e36f23604ff8394
+E1 binary hash crlf : 1494ca7405e9d62e8ea63c52253a7b7866bb16e2c21f22540a04977766d38c46
+E1 text-mode hash crlf: eb9689f4e89f0b8b88f6fde235f1d5d9329c3056a21e6f451e36f23604ff8394
+E1 NORMALIZATION TRAP: text_hash(crlf) == bin_hash(lf): True
+E1 text-mode hash lf==bin hash lf: True
+E1 json parses CRLF file (json.load): True
+E1 BOM json.load raises: JSONDecodeError
+E1 BOM json.loads raises: JSONDecodeError
+==================== e2
+E2 hook naive  : pin_ok=True parsed={'entries': [{'id': 'EVIL'}]}
+E2 hook single : pin_ok=True parsed={'entries': []}  (swap fired mid-run; parsed bytes are the hashed bytes)
+E2 RACE iters=50000  naive: pin_ok+evil_parsed=3179   single-read: 0
+==================== e3
+E3 lstat S_ISLNK=True realpath=/var/tmp/ex22/exp/t-lf.json
+E3 plain open follows symlink: True
+E3 O_NOFOLLOW refused: errno=40 (ELOOP)
+E3 retarget-mid-run single-read: pin_ok=True parsed={'entries': []} (link now -> evil)
+==================== e4
+E4 same inode=True nlink=2
+E4 after tamper through the OTHER name: sha(a)=ffada425efd9dea94a0d3f5a81f5e0ce4a1e7ce798753a7ba2272baf4233c85c matches pin=False
+E4 git status after tamper through hardlink alias: 'M tbl.json\n?? alias.json'
+==================== e5
+E5 lstat S_ISREG=False S_ISFIFO=True
+E5 blocking open on FIFO: exit=124 (124 = killed while blocked)
+E5 O_NONBLOCK open + fstat S_ISREG=False (refusable without blocking)
+E5 O_NONBLOCK on a regular file is a no-op, read ok: True
+==================== e6
+E6 torn bytes: json parse raises JSONDecodeError (Unterminated string starting at: line 1 column 2 (char 1))
+E6 torn digest != pin: True
+DONE

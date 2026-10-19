@@ -1,0 +1,72 @@
+--- /dev/shm/ex18-absent/gate/citation-drift-probe.py	2026-10-18 18:36:28.192347055 -0300
++++ /dev/shm/ex18-absent/cand/citation-drift-probe.py	2026-10-19 07:10:17.793312002 -0300
+@@ -278,15 +278,29 @@
+                      "not a commit object (git rev-parse --verify %s^{commit} failed)" % rev)
+         return findings
+     try:
+-        table = json.load(open(table_path))
+-    except (OSError, ValueError) as exc:
+-        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
+-        return findings
+-    try:
+         expected = json.load(open(expected_path))
+     except (OSError, ValueError) as exc:
+         expected = {}
+         findings.add("pointer_table_unreadable", os.path.basename(expected_path), str(exc))
++    try:
++        raw = open(table_path, "rb").read()
++    except OSError as exc:
++        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
++        return findings
++    pinned = (expected.get("pointer_table") or {}).get("sha256") if isinstance(expected, dict) else None
++    if pinned is None:
++        findings.add("pointer_table_unreadable", os.path.basename(table_path),
++                     "no table digest pinned in expected.json (unpinned table)")
++        return findings
++    if sha256_bytes(raw) != pinned:
++        findings.add("pointer_table_unreadable", os.path.basename(table_path),
++                     "table sha256 %s != pinned %s" % (sha256_bytes(raw), pinned))
++        return findings
++    try:
++        table = json.loads(raw)
++    except ValueError as exc:
++        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
++        return findings
+     tree = Tree(root, rev, snapshot_dir, expected, findings)
+     for entry in table.get("entries", []):
+         check_entry(entry, tree, findings)
+@@ -392,10 +406,22 @@
+         with tempfile.TemporaryDirectory(prefix="citation-drift-case-") as case_dir:
+             root = None
+             try:
++                pin_override = None
+                 if case == "table_unreadable":
+                     table = os.path.join(case_dir, "table.json")
+                     open(table, "w").write("{ not json")
+                     root = build_fixture("clean")
++                elif case == "absent_table":
++                    table = os.path.join(case_dir, "table-absent.json")
++                    root = build_fixture("clean")
++                elif case == "tampered_table":
++                    root = build_fixture("clean")
++                    table = os.path.join(case_dir, "table.json")
++                    json.dump(fixture_table("clean"), open(table, "w"))
++                    pin_override = sha256_bytes(open(table, "rb").read())
++                    tampered = open(table).read().replace(
++                        "pinned claim lives here", "PWNED")
++                    open(table, "w").write(tampered)
+                 else:
+                     root = build_fixture(case)
+                     table = os.path.join(case_dir, "table.json")
+@@ -413,6 +439,11 @@
+                 else:
+                     digests = {}
+                 expected = {"snapshots": digests}
++                if pin_override:
++                    expected["pointer_table"] = {"sha256": pin_override}
++                elif os.path.isfile(table):
++                    expected["pointer_table"] = {
++                        "sha256": sha256_bytes(open(table, "rb").read())}
+                 exp_file = os.path.join(case_dir, "expected.json")
+                 json.dump(expected, open(exp_file, "w"))
+ 

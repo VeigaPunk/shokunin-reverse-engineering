@@ -1,0 +1,52 @@
+### v2 D1 proto + emptied table (valid JSON, different bytes)
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: table-empty.json
+CITATION_DRIFT: table_tampered entry=table-empty.json sha256 c6d6f8738351a482226849d9e285d4b9b3f7afa9dc5fed949a55f51d5d3ceda2 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+rc=2
+### v2 D2 proto + absent table path
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: does-not-exist.json
+CITATION_DRIFT: pointer_table_unreadable entry=does-not-exist.json [Errno 2] No such file or directory: 'does-not-exist.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+rc=2
+### v2 D3 proto + byte-level tamper (appended space)
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: table-space.json
+CITATION_DRIFT: table_tampered entry=table-space.json sha256 a07994f262f280251120500b45716a0add7cbee959e874c87060c180075f66b4 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+rc=2
+### v2 D4 proto + real table at HEAD (clean path unchanged)
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0
+### v2 D5 proto + real table + --strict
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+rc=0
+### v2 D6 proto + real table + REAL HEAD expected (no pin) = fail-closed
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT: table_pin_absent entry=expected.json no table_sha256 pinned; fail-closed preflight
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+rc=2
+### B1 BEFORE real probe + emptied table (silent)
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: table-empty.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0
+### B2 BEFORE real probe + appended-space table (silent)
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: table-space.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0

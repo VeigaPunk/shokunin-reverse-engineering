@@ -1,0 +1,158 @@
+================================================================================
+COMPILE RECEIPT — chain c1 canonical carrier (arc3-loop1-round1)
+Seat: EX-04 (chain c1, executor)   Date: 2026-10-19 (UTC)
+Repo HEAD at work: e845c2b524ad2e59871e004c51a1386e192a74ab
+================================================================================
+
+0. SEAT-LINE CONTEXT (recorded, not silently resolved)
+--------------------------------------------------------------------------------
+Seat line: "compile token.sol with EX-02's installed solc; record version, flags,
+output artifact sha256s; save bin + abi under claims/c1/EX-04/."
+
+- EX-03's seat artifact `claims/c1/EX-03/token.sol` never landed within this
+  seat's poll window (25-check + manual checks through 10:09Z; the EX-03 dir
+  existed but was empty at 10:09:37Z).
+- The chain's canonical real-solc contract — actually compiled and probed by
+  EX-05/EX-06/EX-07/RV-1 — is `KdxToken.sol` (K=6), sha256
+  c29803852501641cbb1b6c6e42ecdaef0497e9addf9950069138fa43cd3dccba.
+  EX-05 documented the divergence (claims/c1/EX-05/README.md: seat-line names
+  EX-04 as bytecode source; "EX-04 never landed anything" at their 25-check
+  poll through 10:06Z).
+- This receipt closes that gap: the canonical source is compiled HERE, with
+  EX-02's installed solc, and the outputs are byte-identical to the carriers
+  EX-05/EX-06 probed and EX-07 reconciled (all four sha256 pins match, §6).
+
+1. COMPILER IDENTITY (EX-02's isolated install, re-hashed by this seat)
+--------------------------------------------------------------------------------
+  solcjs path:      .ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules/.bin/solcjs
+                    (symlink -> ../solc/solc.js)
+  version string:   0.8.37+commit.f401782d.Emscripten.clang   (`solcjs --version`, exit 0)
+  soljson.js        sha256 221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c
+  package.json      sha256 b3a90035cab4e8aa43068f33f01497dccfb77b294e1ea30c5fb32a9631e33491
+  (install receipt: claims/c1/EX-02/install-receipt.txt; npm solc@0.8.37,
+   tarball sha256 0e1a1ab6d12c37f5503271b2c4679cd433459c884851920d148d6fb154575a51)
+
+2. SOURCE IDENTITY (three-way byte-identity, verified before compiling)
+--------------------------------------------------------------------------------
+  KdxToken.sol sha256 c29803852501641cbb1b6c6e42ecdaef0497e9addf9950069138fa43cd3dccba
+  identical at:
+    - claims/c1/EX-06/evidence/KdxToken.sol   (chain evidence copy; used here)
+    - /dev/shm/ex06/KdxToken.sol              (EX-06 scratch original)
+    - claims/c1/EX-04/KdxToken.sol            (this receipt's self-contained copy)
+  size 1156 bytes. (sha256sum over all three returned the same digest.)
+
+3. COMPILE COMMAND AND FLAGS
+--------------------------------------------------------------------------------
+  CANONICAL LEG (standard JSON; this produced the probe carriers):
+
+    node .ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules/.bin/solcjs \
+        --standard-json < solc-input.json > solc-out.raw.json        # exit 0
+
+  input  (claims/c1/EX-04/solc-input.json, sha256
+          d0ec46d5c8f385dc21550868ea92116089c288ad778124bb2221ea47212167b5):
+    settings = {"outputSelection":{"*":{"*":["abi","metadata",
+                "evm.bytecode.object","evm.deployedBytecode.object"]}}}
+    -> optimizer NOT set (OFF), evmVersion NOT set (compiler default).
+    Settings are identical to EX-06's compile.js (claims/c1/EX-06/evidence/compile.js)
+    so the carriers are comparable across seats.
+
+  stdout note (PL-1 F3): the raw stdout begins with exactly one line
+    ">>> Cannot retry compilation with SMT because there are no SMT solvers available."
+  before the JSON; filtered to solc-out.cleaned.json
+    (sha256 a8e98be022707995bc6476fa7bdaf8e313dec2030ab3f98f20a9e92eec686d73,
+     11173 bytes; `errors: []`). Naive JSON.parse on raw stdout would throw.
+
+  CLI LEG (flag-form twin, for the "flags" record):
+
+    node .../solcjs --bin --abi -o out-cli KdxToken.sol             # exit 0
+    -> creation bytecode byte-identical to the standard-JSON creation hex
+       (`cmp` of the two hex strings passed; CLI file sha256
+       2312a7e43a21ef994d91f6ca4bc3af82fb5e07e1db2064919c6f2d1e87cf4a9,
+       which includes solcjs's own formatting — the bytecode payload is equal).
+
+  METHODIDENTIFIERS LEG (third invocation, outputSelection + evm.methodIdentifiers):
+
+    -> runtime sha256 unchanged at 9c40940e… (outputSelection does not affect
+       codegen); produced the K=6 method table used in keccak-receipt.txt.
+
+  Note: EX-02's smoke leg used `--optimize` (claims/c1/EX-02/smoke/) — a smoke
+  artifact only; the chain-canonical carrier is optimizer-OFF (EX-05/EX-06
+  probed the optimizer-OFF bytes; this receipt reproduces those).
+
+4. OUTPUT ARTIFACTS (all under claims/c1/EX-04/)
+--------------------------------------------------------------------------------
+  file                bytes  sha256
+  token.runtime.hex    3579  69a15782678dccdd4d43b2f0af566c2f030fe9dee4de4ef8365bc4b6d1b29ad6
+                             (1789-byte runtime + trailing newline; hex carrier)
+  token.runtime.bin    1789  9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e
+                             (raw bytes; the probe carrier)
+  token.creation.hex   3635  31fb45ad9b78e2b453d9c990c0c195581667d43e28311b8d98438bf67a99eb47
+                             (1817-byte creation + trailing newline)
+  token.creation.bin   1817  6aeba8d7fe1c4a871fb0fdabde1f47de91408c1006bd29050d937b3b74c8e84c
+  token.abi            2313  40ad881eff2a8cbd267fba51a21c1057f82653f51e823698c84daa12e40c2019
+                             (JSON.stringify(abi, null, 2); 6 functions, 1 event)
+  KdxToken.sol         1156  c29803852501641cbb1b6c6e42ecdaef0497e9addf9950069138fa43cd3dccba
+  solc-input.json      1451  d0ec46d5c8f385dc21550868ea92116089c288ad778124bb2221ea47212167b5
+  solc-out.cleaned.json 11173 a8e98be022707995bc6476fa7bdaf8e313dec2030ab3f98f20a9e92eec686d73
+
+  Byte-forms are identical to EX-06's compile.js write forms (hex + "\n",
+  raw Buffer.from(hex,"hex"), ABI pretty-printed, no trailing newline).
+
+5. SELF-CHECK PROBE (this seat, on its own carrier — scratch TMPDIR)
+--------------------------------------------------------------------------------
+  export TMPDIR=/var/tmp/arc3-l1r1-EX-04-scratch/reatmp
+  node ~/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/scripts/rea.mjs \
+       inspect-evm-interface .../claims/c1/EX-04/token.runtime.bin raw --format json
+  -> exit 0; evidence_id ev_7a343fa7a3acdb41f47296ee78e1a04899ccf0e42febb3cfba66fccb0b7f6422
+     subject.digest.sha256 = 9c40940e… (= token.runtime.bin)
+     normalized_result: 6/6 functions, dispatch "abi" for all six
+       [0x095ea7b3, 0x18160ddd, 0x23b872dd, 0x40c10f19, 0x70a08231, 0xa9059cbb]
+  envelope saved: claims/c1/EX-04/ex04-selfcheck-probe-raw.json
+    (sha256 3be407f31af7a56ad41d34c41b819979d4400b8f16a48d7098835747c67ed4d6)
+  This is a self-check, not the chain's primary probe legs (EX-05/EX-06 own
+  those; their ids on the same bytes: ev_4dd5ea20… raw / ev_2a79dd25… hex).
+
+6. CHAIN-PIN COMPARISON (all four match byte-for-byte)
+--------------------------------------------------------------------------------
+  artifact            this compile        chain pin (source)                    verdict
+  token.runtime.hex   69a15782…ad6   ==   69a15782…ad6  (EX-07 reconciliation.md; MATCH
+                                                 EX-05/EX-06 carriers)
+  token.runtime.bin   9c40940e…80e   ==   9c40940e…80e  (EX-05 evidence-ids.txt,       MATCH
+                                                 EX-06 planted-K.json, EX-07)
+  token.creation.hex  31fb45ad…b47   ==   31fb45ad…b47  (EX-06 /dev/shm creation.hex)  MATCH
+  token.creation.bin  6aeba8d7…84c   ==   6aeba8d7fe1c4a87…  (EX-05 kdx-creation.raw.json MATCH
+                                                 subject_sha256)
+  token.abi           40ad881e…019   ==   40ad881e…019  (EX-07 target-KdxToken.abi.json) MATCH
+
+  Consequence: the chain's probe/reconciliation evidence (10 legs, K=6/6,
+  dispatch "abi") is evidence about THESE bytes — the compile seat's artifacts
+  are not a lookalike.
+
+7. ENVIRONMENT NOTES
+--------------------------------------------------------------------------------
+  - /tmp is quota-exhausted on this host (tmpfs usrquota, EDQUOT errno 122 —
+    see EX-02 install-receipt §8, EX-11 seat report §5). All scratch for this
+    seat lived under /var/tmp/arc3-l1r1-EX-04-scratch/ and was removed at
+    seat close; nothing was left in /tmp.
+  - No probe-side TMPDIR issue: the one self-check probe used a disk-backed
+    TMPDIR (/var/tmp/.../reatmp) per PL-1 F5.
+
+8. HONEST-STOP BRANCH
+--------------------------------------------------------------------------------
+  Not exercised — the compile succeeded (exit 0, errors []). The dispatch's
+  "capture the error verbatim" branch has no content.
+
+9. ADDENDUM (10:11Z) — EX-03's seat-line-literal token.sol landed; compiled as
+   a SECONDARY leg
+--------------------------------------------------------------------------------
+  - claims/c1/EX-03/token.sol appeared at 10:11Z (2417 B, sha256
+    497d70f2ed055b56a0b2e2bf826f704f11ee8a1ba4ec664dae0ddb6a0ac76a6f,
+    contract KdkToken) — after the chain's canonical KdxToken leg was complete.
+  - Compiled with the same solc/flags; outputs + K=9 selector table + a 9/9
+    self-check probe (ev_5709705c…dcf3ee) are in
+    claims/c1/EX-04/ex03-token/ with its own compile-receipt.txt.
+  - CANONICAL PINS DO NOT CHANGE: the round's probe/reconciliation evidence is
+    about KdxToken (runtime 9c40940e…). KdkToken (runtime 46ccaae1…) is a second,
+    independent real-solc contract; carriers are not interchangeable. Integrator:
+    cite §1-§6 pins for the claim; use the ex03 leg only as supplementary.
+================================================================================

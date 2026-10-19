@@ -1,0 +1,58 @@
+================================================================================
+KECCAK RECEIPT — planted selector table, chain c1 (arc3-loop1-round1)
+Seat: EX-04 (chain c1, executor)   Date: 2026-10-19 (UTC)
+(PL-1 plan S5, claims/c1/PL-1/plan.md:204-214; dispatch assigns the planted-set
+computation to EX-03 and reconciliation to EX-07 — this is EX-04's independent
+re-derivation, kept as a third table for the record.)
+================================================================================
+
+METHOD
+--------------------------------------------------------------------------------
+keccak256(signature)[0:4] computed with js-sha3@0.8.0 from solc's own dep tree:
+
+  node -e 'const {keccak256}=require(".../tools/solc-prefix/node_modules/js-sha3");
+           keccak256(sig).slice(0,8) ...'
+
+Compared against two independent sources:
+  (a) solc 0.8.37 `evm.methodIdentifiers` for KdxToken.sol
+      (outputSelection leg; runtime sha unchanged at 9c40940e…)
+  (b) the chain's planted table claims/c1/EX-06/evidence/planted-K.json
+      (sha256 063eb723c90a1edf6b0cd273425b198db1ddf431ee5ea4b2aa490e628b333b52)
+
+TABLE (K = 6) — 3-way agreement 6/6, zero disagreements
+--------------------------------------------------------------------------------
+  signature                                solc        js-sha3 keccak  planted-K   verdict
+  approve(address,uint256)                 0x095ea7b3  095ea7b3        0x095ea7b3  MATCH
+  balanceOf(address)                       0x70a08231  70a08231        0x70a08231  MATCH
+  mint(address,uint256)                    0x40c10f19  40c10f19        0x40c10f19  MATCH
+  totalSupply()                            0x18160ddd  18160ddd        0x18160ddd  MATCH
+  transfer(address,uint256)                0xa9059cbb  a9059cbb        0xa9059cbb  MATCH
+  transferFrom(address,address,uint256)    0x23b872dd  23b872dd        0x23b872dd  MATCH
+
+  agreement: 6/6   disagree: 0
+
+INPUTS (sha256-pinned)
+--------------------------------------------------------------------------------
+  KdxToken.sol                    c29803852501641cbb1b6c6e42ecdaef0497e9addf9950069138fa43cd3dccba
+  token.abi (claims/c1/EX-04)     40ad881eff2a8cbd267fba51a21c1057f82653f51e823698c84daa12e40c2019
+  js-sha3 package                 tools/solc-prefix/node_modules/js-sha3/package.json (0.8.0)
+  method-identifiers (scratch)    produced in-run; table above is verbatim
+
+COMMANDS (verbatim, run from /var/tmp/arc3-l1r1-EX-04-scratch)
+--------------------------------------------------------------------------------
+  node "$SOLC" --standard-json < solc-input-mi.json 2>/dev/null | grep -v '^>>>' > solc-out-mi.json
+    -> runtime sha256 9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e (unchanged)
+    -> evm.methodIdentifiers: 6 entries (table above)
+  node -e '...js-sha3 keccak vs methodIdentifiers vs planted-K...'
+    -> rows printed above; "agreement: 6/6 disagree: 0"
+
+NOTES
+--------------------------------------------------------------------------------
+- This table is a re-derivation, not a new claim about the chain: EX-07's
+  reconciliation (claims/c1/EX-07/reconciliation.md) already established
+  planted == solc ABI == probe legs (10 legs) == dispatch-table parse.
+- The one subtlety worth recording: solc 0.8.37 emits the PUSH0 dispatcher
+  prologue (5f3560e01c), so the r3-07 `60003560e01c` anchor is absent on this
+  bytecode (EX-07 M1); the selector constants themselves are unchanged by the
+  prologue shift.
+================================================================================

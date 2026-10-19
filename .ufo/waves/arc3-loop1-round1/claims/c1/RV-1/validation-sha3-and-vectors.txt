@@ -1,0 +1,36 @@
+=== A. permutation+sponge vs two independent SHA3-256 oracles ===
+  len=   0  mine=a7ffc6f8bf1ed766  node=a7ffc6f8bf1ed766  stdlib=a7ffc6f8bf1ed766  OK
+  len=   1  mine=80084bf2fba02475  node=80084bf2fba02475  stdlib=80084bf2fba02475  OK
+  len=   3  mine=3a985da74fe225b2  node=3a985da74fe225b2  stdlib=3a985da74fe225b2  OK
+  len=   7  mine=7f5979fb78f082e8  node=7f5979fb78f082e8  stdlib=7f5979fb78f082e8  OK
+  len=  25  mine=4b40e901eada9ab2  node=4b40e901eada9ab2  stdlib=4b40e901eada9ab2  OK
+  len=  18  mine=1d7976f397684156  node=1d7976f397684156  stdlib=1d7976f397684156  OK
+  len=  24  mine=a613914d04c3c5f7  node=a613914d04c3c5f7  stdlib=a613914d04c3c5f7  OK
+  len= 135  mine=c150125edc74b56f  node=c150125edc74b56f  stdlib=c150125edc74b56f  OK
+  len= 136  mine=2d93d1f07f6df340  node=2d93d1f07f6df340  stdlib=2d93d1f07f6df340  OK
+  len= 137  mine=5ac4a3a647f7be4a  node=5ac4a3a647f7be4a  stdlib=5ac4a3a647f7be4a  OK
+  len= 271  mine=5c1c5ccc755d8cdf  node=5c1c5ccc755d8cdf  stdlib=5c1c5ccc755d8cdf  OK
+  len= 272  mine=cea8195b025afe70  node=cea8195b025afe70  stdlib=cea8195b025afe70  OK
+  len= 273  mine=3b7d8df7943e3856  node=3b7d8df7943e3856  stdlib=3b7d8df7943e3856  OK
+  len= 256  mine=9b04c091da96b997  node=9b04c091da96b997  stdlib=9b04c091da96b997  OK
+  len=   1  mine=5d53469f20fef4f8  node=5d53469f20fef4f8  stdlib=5d53469f20fef4f8  OK
+  len= 200  mine=1c59e7546431cd31  node=1c59e7546431cd31  stdlib=1c59e7546431cd31  OK
+A. ALL_SHA3_MATCH: True
+
+=== B. Keccak-256 public vectors ===
+  keccak256('') = c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470  want c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470  OK
+  keccak256('abc') = 4e03657aea45a94fc7d47ba826c8d667c0d1e6e33a64a036ec44f58fa12d6c45  want 4e03657aea45a94fc7d47ba826c8d667c0d1e6e33a64a036ec44f58fa12d6c45  OK
+B. ALL_KECCAK_VECTORS_MATCH: True
+
+=== C. ERC-20 selector table cross-check ===
+  transfer(address,uint256)                -> a9059cbb  want a9059cbb  OK
+  balanceOf(address)                       -> 70a08231  want 70a08231  OK
+  approve(address,uint256)                 -> 095ea7b3  want 095ea7b3  OK
+  totalSupply()                            -> 18160ddd  want 18160ddd  OK
+  transferFrom(address,address,uint256)    -> 23b872dd  want 23b872dd  OK
+C. ALL_SELECTORS_MATCH: True
+
+=== D. negative control: keccak-256 != sha3-256 for same input ===
+  keccak256('')= c5d2460186f7233c  sha3_256('')= a7ffc6f8bf1ed766  distinct: True
+
+SUMMARY: {'A_sha3': True, 'B_vectors': True, 'C_selectors': True, 'D_padding_distinct': True}

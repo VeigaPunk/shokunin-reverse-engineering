@@ -1,0 +1,60 @@
+# kimi-pin-check — EX-10 | chain c1 | arc3-loop1-round1 | 2026-10-19
+# Read-only custody capture of the [mcp_servers.rea] stanza in ~/.kimi-code/config.toml.
+# Anchoring: stanza key + this receipt — NO line numbers (SKILL.md rule #11: the operator
+# file churns and bare line numbers go dead). The operator file was never edited by this seat.
+
+capture-utc:      2026-10-19T09:58:25Z
+recapture-utc:    2026-10-19T10:00:16Z   (stability re-check; byte-identical)
+file:             /home/vgpnk/.kimi-code/config.toml
+file-size:        114434 bytes
+file-mtime-utc:   2026-10-19T02:20:43Z   (local 2026-10-18 23:20:43 -03)
+file-sha256:      8cbacd48ab85ea86e122bae102d8ee63e2fd3181aa551603b3923b912573c38d
+
+round pre-pair anchor:
+  claims/cross/receipts/config-pre-pair.txt (CU-1, capture-utc 2026-10-19T09:57:18Z)
+  kimi line: SIZE 114434, SHA256 8cbacd48...
+  => identical to this capture's file bytes; this stanza capture rides the official
+     same-round baseline, it is not a free-standing hash.
+
+stanza-key:  [mcp_servers.rea]      (pin carrier: key `args`)
+pin:         rea-agents@6.7.0       (only rea-agents pin in the file; 1 occurrence)
+
+stanza-sha256, top-table scope (header through last line before the next table header,
+trailing blank separator line included; 103 bytes):
+  3751281c2a379b04d303df21a32a2936b0e2dd782bd710cead4c59a2e1643528
+
+stanza-sha256, full-region scope (top table + [mcp_servers.rea.env] sub-table, through
+last line before the next non-rea table header [services.moonshot_search], trailing blank
+included; 236 bytes):
+  dd5c7bf4035883a1338091b34226b7629b3619b6713b6d231531a32dd7309821
+
+region semantic fields (independent tomllib parse):
+  command             = "npx"
+  args                = [ "-y", "rea-agents@6.7.0", "mcp" ]
+  startup_timeout_sec = 30
+  env.GHIDRA_INSTALL_DIR = "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC"
+  env.JAVA_HOME          = "/usr/lib/jvm/java-21-openjdk"
+
+reproduce (pipe-only, no scratch writes):
+  awk '/^\[mcp_servers\.rea\]/{f=1} f&&/^\[/&&!/^\[mcp_servers\.rea\]/{f=0} f' \
+    /home/vgpnk/.kimi-code/config.toml | sha256sum
+  awk '/^\[mcp_servers\.rea(\..+)?\]$/{f=1} f&&/^\[/&&!/^\[mcp_servers\.rea(\..+)?\]$/{f=0} f' \
+    /home/vgpnk/.kimi-code/config.toml | sha256sum
+  sha256sum /home/vgpnk/.kimi-code/config.toml
+  python3 -c "import tomllib; d=tomllib.load(open('/home/vgpnk/.kimi-code/config.toml','rb')); print(d['mcp_servers']['rea']['args'])"
+
+checks run:
+  - stanza header [mcp_servers.rea] occurs exactly 1x (no duplicate-table ambiguity);
+    only rea-scoped sub-table present is [mcp_servers.rea.env].
+  - awk pipe and independent Python in-memory extraction reproduce BOTH stanza hashes
+    byte-identically (two methods, same digests).
+  - tomllib semantic parse independently confirms pin rea-agents@6.7.0 from args.
+  - full-file sha256 == CU-1 pre-pair kimi line (8cbacd48...).
+  - SKILL.md current inventory (re-read 2026-10-18) states Kimi pin rea-agents@6.7.0 — matches.
+  - stability: file + region hashes identical at 09:58:25Z and 10:00:16Z.
+
+historical context (cross-round; NOT an in-round drift signal — SOP: compare same-round only):
+  - r10 pair closed 2026-10-19T01:49:42Z with kimi 6ba8a0f9...; current file 8cbacd48...
+    with mtime 2026-10-19T02:20:43Z (after r10 close) => between-rounds operator churn.
+  - CU-1 pre-pair metadata prints "MTIME_UTC: 2026-10-18 23:20:43", which is the local
+    (-03) stamp; true UTC is 2026-10-19T02:20:43Z. Labeling nit only; hashes/size unaffected.

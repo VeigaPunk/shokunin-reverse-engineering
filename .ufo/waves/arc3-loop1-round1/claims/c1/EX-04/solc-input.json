@@ -1,0 +1,20 @@
+{
+ "language": "Solidity",
+ "sources": {
+  "KdxToken.sol": {
+   "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.37;\n\ncontract KdxToken {\n    mapping(address => uint256) private _balances;\n    mapping(address => mapping(address => uint256)) private _allowances;\n    uint256 private _totalSupply;\n\n    function totalSupply() external view returns (uint256) {\n        return _totalSupply;\n    }\n\n    function balanceOf(address account) external view returns (uint256) {\n        return _balances[account];\n    }\n\n    function transfer(address to, uint256 amount) external returns (bool) {\n        _balances[msg.sender] -= amount;\n        _balances[to] += amount;\n        return true;\n    }\n\n    function approve(address spender, uint256 amount) external returns (bool) {\n        _allowances[msg.sender][spender] = amount;\n        return true;\n    }\n\n    function transferFrom(address from, address to, uint256 amount) external returns (bool) {\n        _allowances[from][msg.sender] -= amount;\n        _balances[from] -= amount;\n        _balances[to] += amount;\n        return true;\n    }\n\n    function mint(address to, uint256 amount) external {\n        _balances[to] += amount;\n        _totalSupply += amount;\n    }\n}\n"
+  }
+ },
+ "settings": {
+  "outputSelection": {
+   "*": {
+    "*": [
+     "abi",
+     "metadata",
+     "evm.bytecode.object",
+     "evm.deployedBytecode.object"
+    ]
+   }
+  }
+ }
+}

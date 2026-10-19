@@ -1,0 +1,54 @@
+=== SC-5 independent check of EX-21 prototype (guard applied to scratch copy) ===
+--- proto file digests ---
+776cef6af5b7404f6a0d0667727ecf99a6bb32a6db357b443e6fa5c1585ca283  probe.py
+376f9fc54fd5af22e77f0eda1b317905760ffe14b48f176feb1feb130160170f  expected.json
+738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  pointer-table.json
+--- selftest (proto) ---
+SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=citations_clean
+SELFTEST_CASE: CLEAN case=dead exit=1 expected=1 finding=citation_dead
+SELFTEST_CASE: CLEAN case=out_of_range exit=1 expected=1 finding=citation_out_of_range
+SELFTEST_CASE: CLEAN case=file_absent exit=1 expected=1 finding=citation_file_absent
+SELFTEST_CASE: CLEAN case=moved exit=1 expected=1 finding=citation_moved
+SELFTEST_CASE: CLEAN case=stamped exit=0 expected=0 finding=citation_historical_ok
+SELFTEST_CASE: CLEAN case=no_snapshot_dir exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=snapshot_missing exit=2 expected=2 finding=snapshot_missing
+SELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered
+SELFTEST_CASE: CLEAN case=table_unreadable exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=rev_unresolvable exit=2 expected=2 finding=revision_unresolvable
+SELFTEST_CASE: CLEAN case=table_tampered exit=2 expected=2 finding=pointer_table_tampered
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+EXIT=0
+--- probe real table (proto) ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+EXIT=0
+--- probe tampered (emptied) table (proto) ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: table-emptied.json
+CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 bd74df11ac206d3ac026231edd4cab6f16eb7c48b5a462215694a77908a8ccf8 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+--- probe tampered --strict (proto) ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: table-emptied.json
+CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 bd74df11ac206d3ac026231edd4cab6f16eb7c48b5a462215694a77908a8ccf8 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+--- probe absent table (proto) ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: no-such-table.json
+CITATION_DRIFT: pointer_table_unreadable entry=no-such-table.json [Errno 2] No such file or directory: 'no-such-table.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+--- probe UNPINNED expected + tampered table (proto) ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: table-emptied.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+EXIT=0

@@ -1,0 +1,86 @@
+--- reconcile.py	2026-10-19 07:11:37.641447387 -0300
++++ reconcile-patched.py	2026-10-19 07:15:45.342706791 -0300
+@@ -46,11 +46,19 @@
+ 
+ def load_probe(path):
+     d = json.load(open(path))
++    if isinstance(d.get("data"), dict):
++        d = d["data"]  # unwrap {ok,data,meta} CLI envelopes (EX-05-style legs)
+     fns = d.get("raw_result", {}).get("functions", [])
+     sels = norm([f["selector"] for f in fns])
+     offsets = {f["selector"].lower().removeprefix("0x"): f["bytecodeOffset"] for f in fns}
+-    sha = d.get("normalized_result", {}).get("bytecode", {}).get("sha256")
+-    return sels, offsets, sha, d
++    nres = d.get("normalized_result", {})
++    sha = nres.get("bytecode", {}).get("sha256")
++    art = nres.get("artifact", {})
++    bc = nres.get("bytecode", {})
++    form = {"encoding": art.get("encoding"), "artifact_bytes": art.get("bytes"),
++            "artifact_sha": art.get("sha256"), "decoded_bytes": bc.get("bytes"),
++            "decoded_sha": bc.get("sha256"), "readable": bool(nres)}
++    return sels, offsets, sha, form
+ 
+ 
+ def main():
+@@ -82,10 +90,12 @@
+     sources["PLANTED"] = planted
+ 
+     probe_offsets = {}
++    probe_forms = {}
+     for p in args.probe:
+-        sels, offsets, sha, _ = load_probe(p)
++        sels, offsets, sha, form = load_probe(p)
+         sources["PROBE:" + os.path.basename(p)] = sels
+         probe_offsets[os.path.basename(p)] = offsets
++        probe_forms[os.path.basename(p)] = form
+ 
+     # M2 keccak scan over ABI signatures: verify each selector's bytes are present
+     m2_found = {}
+@@ -116,6 +126,10 @@
+     print("probe offsets vs my parsed JUMPDEST dests:")
+     my_dest = {c["selector"]: c["dest"] for c in m1["dispatch_chain"]}
+     for pname, offsets in probe_offsets.items():
++        if not offsets:
++            print(f"  {pname}: NO OFFSETS PARSED (leg unreadable or empty) -- not a pass")
++            verdict_all = False
++            continue
+         mism = {sel: (my_dest.get(sel), off) for sel, off in offsets.items()
+                 if my_dest.get(sel) != off}
+         print(f"  {pname}: {'all offsets equal' if not mism else mism}")
+@@ -123,11 +137,35 @@
+     print()
+     print("probe code-digest pins vs my sha256:")
+     for p in args.probe:
+-        _, _, sha, _ = load_probe(p)
++        _, _, sha, form = load_probe(p)
+         if sha:
+             same = sha == code_sha
+             verdict_all &= same
+             print(f"  {os.path.basename(p)}: pinned={sha} mine={code_sha} {'SAME' if same else 'DIFFER'}")
++        else:
++            print(f"  {os.path.basename(p)}: NO DIGEST PIN (leg unreadable) -- not a pass")
++            verdict_all = False
++    print()
++    print("probe form invariants (carrier form vs decoded bytecode):")
++    for pname, f in probe_forms.items():
++        if not f["readable"]:
++            print(f"  {pname}: UNREADABLE (no normalized_result) -- form not checkable")
++            verdict_all = False
++            continue
++        enc, ab, db = f["encoding"], f["artifact_bytes"], f["decoded_bytes"]
++        asha, dsha = f["artifact_sha"], f["decoded_sha"]
++        ok = True
++        if enc == "hex" and None not in (ab, db):
++            # hex text is 2 chars/byte; trailing newline (LF/CRLF) is tolerated by the tool
++            ok &= (0 <= ab - 2 * db <= 2)
++        if enc == "raw" and None not in (ab, db):
++            ok &= (ab == db) and (asha == dsha)
++        if enc == "hex" and asha and dsha:
++            ok &= (asha != dsha)  # hex file bytes are not the decoded bytes
++        verdict_all &= ok
++        print(f"  {pname}: encoding={enc} artifact_bytes={ab} decoded_bytes={db} "
++              f"artifact_sha={str(asha)[:8]} decoded_sha={str(dsha)[:8]} "
++              f"{'FORM-OK' if ok else 'FORM-MISMATCH'}")
+     print()
+     print("VERDICT:", "ALL SOURCES AGREE" if verdict_all else "MISMATCH PRESENT")
+     return 0 if verdict_all else 1

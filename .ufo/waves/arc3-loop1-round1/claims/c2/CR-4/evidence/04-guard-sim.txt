@@ -1,0 +1,18 @@
+pin = sha256(pointer-table.json) = 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+== case 1: real table + real pin, rev = sim-census (after the honest re-key) ==
+CITATION_DRIFT_ROOT: /dev/shm/cr4/scratch
+CITATION_DRIFT_REVISION: sim-census
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+exit=0
+== case 2: ONE honest appended table entry under the same (stale) pin ==
+CITATION_DRIFT: pointer_table_tampered entry=/dev/shm/cr4/table-edited.json sha256 5fbb894619e2d65468dd937657f161263233cb8153fbe1b94ff5749f8cafacc2 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+== case 3: absent table ==
+CITATION_DRIFT: pointer_table_unreadable entry=/dev/shm/cr4/absent.json [Errno 2] No such file or directory: '/dev/shm/cr4/absent.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+== pre-guard baseline: real probe + edited table (the debt, both modes silent) ==
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0

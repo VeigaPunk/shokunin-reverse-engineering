@@ -1,0 +1,164 @@
+== environment ==
+host: Linux 7.2.3-arch1-3 x86_64  user: vgpnk  date: 2026-10-19T10:09:17Z
+node: v26.12.0
+rea 6.7.0: 6.7.0  (/home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/scripts/rea.mjs)
+rea 6.4.0: 6.4.0  (/home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/scripts/rea.mjs)
+solc: 0.8.37+commit.f401782d.Emscripten.clang
+soljson sha256: 221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c
+df /tmp: tmpfs            16G   13G  3.1G  80% /tmp
+df /dev/shm: tmpfs            16G  8.5G  6.7G  56% /dev/shm
+
+== step 1: compile the real contract (solc 0.8.37) ==
+{
+ "solc": "0.8.37+commit.f401782d.Emscripten.clang",
+ "runtime_bytes": 1789,
+ "creation_bytes": 1817,
+ "abi_functions": [
+  "approve(address,uint256)",
+  "balanceOf(address)",
+  "mint(address,uint256)",
+  "totalSupply()",
+  "transfer(address,uint256)",
+  "transferFrom(address,address,uint256)"
+ ]
+}
+carrier hashes:
+c29803852501641cbb1b6c6e42ecdaef0497e9addf9950069138fa43cd3dccba  /dev/shm/ex06/KdxToken.sol
+69a15782678dccdd4d43b2f0af566c2f030fe9dee4de4ef8365bc4b6d1b29ad6  /dev/shm/ex06/KdxToken.runtime.hex
+9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e  /dev/shm/ex06/KdxToken.runtime.bin
+31fb45ad9b78e2b453d9c990c0c195581667d43e28311b8d98438bf67a99eb47  /dev/shm/ex06/KdxToken.creation.hex
+6aeba8d7fe1c4a871fb0fdabde1f47de91408c1006bd29050d937b3b74c8e84c  /dev/shm/ex06/KdxToken.creation.bin
+
+== step 2: planted selector count K (pre-probe, independent keccak) ==
+PASS  keccak256("") -> c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470
+PASS  transfer(address,uint256) -> a9059cbb
+PASS  balanceOf(address) -> 70a08231
+PASS  approve(address,uint256) -> 095ea7b3
+ANCHORS: all match
+{
+ "K": 6,
+ "functions": [
+  {
+   "sig": "approve(address,uint256)",
+   "selector": "0x095ea7b3",
+   "mutability": "nonpayable",
+   "push4_site_pc": 31
+  },
+  {
+   "sig": "totalSupply()",
+   "selector": "0x18160ddd",
+   "mutability": "view",
+   "push4_site_pc": 42
+  },
+  {
+   "sig": "transferFrom(address,address,uint256)",
+   "selector": "0x23b872dd",
+   "mutability": "nonpayable",
+   "push4_site_pc": 53
+  },
+  {
+   "sig": "mint(address,uint256)",
+   "selector": "0x40c10f19",
+   "mutability": "nonpayable",
+   "push4_site_pc": 64
+  },
+  {
+   "sig": "balanceOf(address)",
+   "selector": "0x70a08231",
+   "mutability": "view",
+   "push4_site_pc": 75
+  },
+  {
+   "sig": "transfer(address,uint256)",
+   "selector": "0xa9059cbb",
+   "mutability": "nonpayable",
+   "push4_site_pc": 86
+  }
+ ],
+ "push4_sites_total": 6,
+ "push4_immediates": [
+  "0x095ea7b3@31",
+  "0x18160ddd@42",
+  "0x23b872dd@53",
+  "0x40c10f19@64",
+  "0x70a08231@75",
+  "0xa9059cbb@86"
+ ]
+}
+
+== step 3: probe runs, 6.7.0 (hex forms + raw twin) ==
+[raw] exit=0 stdout_bytes=9961 stderr_bytes=0
+[hex] exit=0 stdout_bytes=9961 stderr_bytes=0
+[hex-nonl] exit=0 stdout_bytes=9986 stderr_bytes=0
+[hex-0x] exit=0 stdout_bytes=9976 stderr_bytes=0
+[hex-upper] exit=0 stdout_bytes=9991 stderr_bytes=0
+[hex-repeat] exit=0 stdout_bytes=9961 stderr_bytes=0
+[creation-hex] exit=0 stdout_bytes=8470 stderr_bytes=0
+[creation-raw] exit=0 stdout_bytes=8470 stderr_bytes=0
+[hex-6.4.0] exit=0
+[raw-6.4.0] exit=0
+
+== step 4: raw vs hex deep comparison (normalized) ==
+REFERENCE: run-raw.json
+functional payload (functions):
+   {"selector":"095ea7b3","bytecodeOffset":100,"dispatch":"abi","arguments":"address,uint256","stateMutability":"nonpayable"}
+   {"selector":"18160ddd","bytecodeOffset":148,"dispatch":"abi","arguments":"","stateMutability":"view"}
+   {"selector":"23b872dd","bytecodeOffset":178,"dispatch":"abi","arguments":"address,address,uint256","stateMutability":"nonpayable"}
+   {"selector":"40c10f19","bytecodeOffset":226,"dispatch":"abi","arguments":"address,uint256","stateMutability":"nonpayable"}
+   {"selector":"70a08231","bytecodeOffset":254,"dispatch":"abi","arguments":"address","stateMutability":"view"}
+   {"selector":"a9059cbb","bytecodeOffset":302,"dispatch":"abi","arguments":"address,uint256","stateMutability":"nonpayable"}
+  bytecode sha256: 9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e bytes: 1789
+  dispatch values: ["abi"]
+  metadata: {"bytecodeOffset":1736,"cborLength":51,"entries":[{"key":"ipfs","value":{"type":"bytes","value":"122002c77fc1412b672dc777d172eae5a260a387164e27c83e6cc41208ce3f7d3ecc"}},{"key":"solc","value":{"type":"bytes","value":"000825"}}]}
+
+=== run-hex.json: 1 diffs
+    .locations.0.path: "/dev/shm/ex06/KdxToken.runtime.bin" != "/dev/shm/ex06/KdxToken.runtime.hex"
+    raw artifact digest: 69a15782678dccdd4d43b2f0af566c2f030fe9dee4de4ef8365bc4b6d1b29ad6 (encoding=hex, bytes=3579)
+    decoded bytecode sha256: 9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e
+
+=== run-hex-nonl.json: 1 diffs
+    .locations.0.path: "/dev/shm/ex06/KdxToken.runtime.bin" != "/dev/shm/ex06/KdxToken.runtime.nonl.hex"
+    raw artifact digest: 64572cc68ddec396d9acde3fe15f19c2ad4684c491396d37fde393903cb1dfc6 (encoding=hex, bytes=3578)
+    decoded bytecode sha256: 9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e
+
+=== run-hex-0x.json: 1 diffs
+    .locations.0.path: "/dev/shm/ex06/KdxToken.runtime.bin" != "/dev/shm/ex06/KdxToken.runtime.0x.hex"
+    raw artifact digest: 2cca62df54858f91a5205bbf2572a1e7ad72cf3f5be75f46879d638f0acf0afd (encoding=hex, bytes=3580)
+    decoded bytecode sha256: 9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e
+
+=== run-hex-upper.json: 1 diffs
+    .locations.0.path: "/dev/shm/ex06/KdxToken.runtime.bin" != "/dev/shm/ex06/KdxToken.runtime.upper.hex"
+    raw artifact digest: 370447c17e2f3af8bf7db07a17921ab2e49cab31f89ab3bf256fcc00dd03ab81 (encoding=hex, bytes=3579)
+    decoded bytecode sha256: 9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e
+
+=== run-hex-repeat.json: 1 diffs
+    .locations.0.path: "/dev/shm/ex06/KdxToken.runtime.bin" != "/dev/shm/ex06/KdxToken.runtime.hex"
+    raw artifact digest: 69a15782678dccdd4d43b2f0af566c2f030fe9dee4de4ef8365bc4b6d1b29ad6 (encoding=hex, bytes=3579)
+    decoded bytecode sha256: 9c40940ef88c0e82349af0b0bebb31fabf0b71bf68f5117478ac07d7e44e580e
+
+== step 5: input-shape traps (fail-closed surface) ==
+[raw-of-hex] (/dev/shm/ex06/raw-of-hex.bin as raw) exit=0 -> {"evidence_id":"ev_60062ad0223b1d82fbd75e0ee5baa422c17c2872b69f9fc8ea93572d440acb20","subject":{"name":"raw-of-hex.bin","digest":{"sha256":"69a15782678dccdd4d43b2f0af566c2f030fe9dee4de4ef8365bc4b6d1b29ad6"},"local_path":"/dev/shm/ex06/raw-of-hex.bin","format":"file","architecture":null},"provider":{
+[interior-ws] (/dev/shm/ex06/interior-ws.hex as hex) exit=1 -> {"code":"invalid_request","category":"invalid_input","message":"Analysis input is invalid. Check the arguments and try again.","retryable":true,"remediation":{"action":"Correct the listed arguments and retry."},"details":{"operation":"inspect_evm_interface","issues":[{"path":["path"],"reason":"inval
+[oddlen] (/dev/shm/ex06/oddlen.hex as hex) exit=1 -> {"code":"invalid_request","category":"invalid_input","message":"Analysis input is invalid. Check the arguments and try again.","retryable":true,"remediation":{"action":"Correct the listed arguments and retry."},"details":{"operation":"inspect_evm_interface","issues":[{"path":["path"],"reason":"inval
+[wrapped] (/dev/shm/ex06/wrapped.hex as hex) exit=1 -> {"code":"invalid_request","category":"invalid_input","message":"Analysis input is invalid. Check the arguments and try again.","retryable":true,"remediation":{"action":"Correct the listed arguments and retry."},"details":{"operation":"inspect_evm_interface","issues":[{"path":["path"],"reason":"inval
+[crlf] (/dev/shm/ex06/crlf.hex as hex) exit=1 -> {"code":"invalid_request","category":"invalid_input","message":"Analysis input is invalid. Check the arguments and try again.","retryable":true,"remediation":{"action":"Correct the listed arguments and retry."},"details":{"operation":"inspect_evm_interface","issues":[{"path":["path"],"reason":"inval
+
+== step 6: TMPDIR control (EDQUOT reproduction with system temp) ==
+[raw, TMPDIR unset] exit=1 -> {"code":"execution_failure","category":"execution_failure","message":"Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.","retryable":false,"remediation":{"action":"Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."},"detai
+[hex, TMPDIR unset] control:
+exit=1 -> {"code":"execution_failure","category":"execution_failure","message":"Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.","retryable":false,"remediation":{"action":"Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."},"detai
+
+== step 7: offset semantics check (r4 erratum: bytecodeOffset = JUMPDEST target) ==
+095ea7b3 offset 100 byte 5b
+18160ddd offset 148 byte 5b
+23b872dd offset 178 byte 5b
+40c10f19 offset 226 byte 5b
+70a08231 offset 254 byte 5b
+a9059cbb offset 302 byte 5b
+
+== step 8: metadata trailer cross-check (independent CBOR decode) ==
+cborLength 51 metadataStart 1736
+solc bytes 000825 -> 8.37.undefined
+ipfs digest 02c77fc1412b672dc777d172eae5a260a387164e27c83e6cc41208ce3f7d3ecc
+sha256(metadata) 44e987b899ad5780e44454dbb8d7a34ab8e1772a2f78d5d558c61ea08a4d46c6
+DONE

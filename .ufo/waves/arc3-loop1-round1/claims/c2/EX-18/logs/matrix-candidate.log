@@ -1,0 +1,95 @@
+### CASE R0-baseline  [label=candidate]
+-- probe: /dev/shm/ex18-absent/candgate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/candgate/expected.json
+-- table object: regular file 14694 bytes
+-- table sha256: 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+-- readlink: /dev/shm/ex18-absent/candgate/pointer-table.json
+-- probe-mode exit=0 | gate-mode exit=0
+-- probe verdict: CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+-- gate  verdict: CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+-- probe findings:
+
+### CASE R1-absent  [label=candidate]
+-- probe: /dev/shm/ex18-absent/candgate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/candgate/expected.json
+-- table object: stat: cannot statx '/dev/shm/ex18-absent/candgate/pointer-table.json': No such file or directory
+-- table sha256: sha256sum: /dev/shm/ex18-absent/candgate/pointer-table.json: No 
+-- readlink: /dev/shm/ex18-absent/candgate/pointer-table.json
+-- probe-mode exit=2 | gate-mode exit=2
+-- probe verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- gate  verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- probe findings:
+     CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json [Errno 2] No such file or directory: '/dev/shm/ex18-absent/candgate/pointer-table.json'
+
+### CASE R2-directory  [label=candidate]
+-- probe: /dev/shm/ex18-absent/candgate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/candgate/expected.json
+-- table object: directory 40 bytes
+-- table sha256: sha256sum: /dev/shm/ex18-absent/candgate/pointer-table.json: Is 
+-- readlink: /dev/shm/ex18-absent/candgate/pointer-table.json
+-- probe-mode exit=2 | gate-mode exit=2
+-- probe verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- gate  verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- probe findings:
+     CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json [Errno 21] Is a directory: '/dev/shm/ex18-absent/candgate/pointer-table.json'
+
+### CASE R3-symlink-stale  [label=candidate]
+-- probe: /dev/shm/ex18-absent/candgate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/candgate/expected.json
+-- table object: symbolic link 52 bytes
+-- table sha256: edaa4e59c804bc0fd424c68daafa38a1bdef5fb395b3c10b3d61e614f5bef641
+-- readlink: /dev/shm/ex18-absent/stale/pointer-table-round4.json
+-- probe-mode exit=2 | gate-mode exit=2
+-- probe verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- gate  verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- probe findings:
+     CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json table sha256 edaa4e59c804bc0fd424c68daafa38a1bdef5fb395b3c10b3d61e614f5bef641 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+
+### CASE R4-symlink-dangling  [label=candidate]
+-- probe: /dev/shm/ex18-absent/candgate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/candgate/expected.json
+-- table object: symbolic link 46 bytes
+-- table sha256: sha256sum: /dev/shm/ex18-absent/candgate/pointer-table.json: No 
+-- readlink: /dev/shm/ex18-absent/stale/does-not-exist.json
+-- probe-mode exit=2 | gate-mode exit=2
+-- probe verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- gate  verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- probe findings:
+     CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json [Errno 2] No such file or directory: '/dev/shm/ex18-absent/candgate/pointer-table.json'
+
+### CASE R5-symlink-live  [label=candidate]
+-- probe: /dev/shm/ex18-absent/candgate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/candgate/expected.json
+-- table object: symbolic link 91 bytes
+-- table sha256: 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+-- readlink: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+-- probe-mode exit=0 | gate-mode exit=0
+-- probe verdict: CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+-- gate  verdict: CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+-- probe findings:
+
+### CASE R6-tampered-current-needle  [label=candidate]
+-- probe: /dev/shm/ex18-absent/candgate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/candgate/expected.json
+-- table object: regular file 12825 bytes
+-- table sha256: 3944e76887222f0aa937ceea87e0df3d4745d2fe72721e46d5a844391dfdb874
+-- readlink: /dev/shm/ex18-absent/candgate/pointer-table.json
+-- probe-mode exit=2 | gate-mode exit=2
+-- probe verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- gate  verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- probe findings:
+     CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json table sha256 3944e76887222f0aa937ceea87e0df3d4745d2fe72721e46d5a844391dfdb874 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+
+### CASE R7-shrunk-table-5-dropped  [label=candidate]
+-- probe: /dev/shm/ex18-absent/candgate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/candgate/expected.json
+-- table object: regular file 10998 bytes
+-- table sha256: c0b569bb20120a6a98453a66797b69bab5b877855e375e0a79e04c8bbfdc786e
+-- readlink: /dev/shm/ex18-absent/candgate/pointer-table.json
+-- probe-mode exit=2 | gate-mode exit=2
+-- probe verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- gate  verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- probe findings:
+     CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json table sha256 c0b569bb20120a6a98453a66797b69bab5b877855e375e0a79e04c8bbfdc786e != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+
+DONE label=candidate

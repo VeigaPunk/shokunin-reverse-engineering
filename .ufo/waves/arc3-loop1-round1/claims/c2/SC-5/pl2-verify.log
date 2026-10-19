@@ -1,0 +1,101 @@
+=== SC-5 independent verification of PL-2 prototype (guard on scratch copy) ===
+--- 1. selftest ---
+SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=citations_clean
+SELFTEST_CASE: CLEAN case=dead exit=1 expected=1 finding=citation_dead
+SELFTEST_CASE: CLEAN case=out_of_range exit=1 expected=1 finding=citation_out_of_range
+SELFTEST_CASE: CLEAN case=file_absent exit=1 expected=1 finding=citation_file_absent
+SELFTEST_CASE: CLEAN case=moved exit=1 expected=1 finding=citation_moved
+SELFTEST_CASE: CLEAN case=stamped exit=0 expected=0 finding=citation_historical_ok
+SELFTEST_CASE: CLEAN case=no_snapshot_dir exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=snapshot_missing exit=2 expected=2 finding=snapshot_missing
+SELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered
+SELFTEST_CASE: CLEAN case=table_unreadable exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=rev_unresolvable exit=2 expected=2 finding=revision_unresolvable
+SELFTEST_CASE: CLEAN case=table_tampered exit=2 expected=2 finding=pointer_table_tampered
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+EXIT=0
+--- 2. probe real pinned table ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+EXIT=0
+--- 3. tampered table (emptied) ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: table-emptied.json
+CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 36a00fc6a462a3860c820253a9aa79711ef8a9660a1008b935e7941fb2c191dc != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+--- 4. tampered table --strict ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: table-emptied.json
+CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 36a00fc6a462a3860c820253a9aa79711ef8a9660a1008b935e7941fb2c191dc != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+--- 5. absent table ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: no-such.json
+CITATION_DRIFT: pointer_table_unreadable entry=no-such.json [Errno 2] No such file or directory: 'no-such.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+--- 6. unpinned baseline (real table) ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: pointer-table.json
+CITATION_DRIFT: pointer_table_unpinned entry=expected-unpinned.json no pointer-table digest pinned in expected.json
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+EXIT=2
+--- 7. frozen rev 679af5d pinned table (drift preserved?) ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: 679af5d749f2fd48b9d543e3c99d348d5458f90f
+CITATION_DRIFT_TABLE: pointer-table.json
+CITATION_DRIFT: citation_dead entry=sc59-stanza-key-anchor SCORECARD.md:59 lacks '\\[mcp_servers\\.rea\\]'
+CITATION_DRIFT: citation_dead entry=prov18-stamp-named PROVINCE.md:18 lacks '17:55:49Z receipt'
+CITATION_DRIFT: citation_file_absent entry=.ufo/waves/arc2-loop1-round3/receipts/config-pre-pair.txt absent at 679af5d749f2fd48b9d543e3c99d348d5458f90f
+CITATION_DRIFT: citation_dead entry=sc698-sc2-refuted-record SCORECARD.md:699 lacks 'SC2-refuted'
+CITATION_DRIFT: citation_out_of_range entry=mcpreg-errata-anchor-form corpus/knowledge/2026-10-13-mcp-registrations.md:96 beyond EOF (88 lines)
+CITATION_DRIFT: citation_out_of_range entry=r416-errata-durable-anchor corpus/knowledge/2026-10-13-r4-16-frontier-rescan.md:946 beyond EOF (936 lines)
+CITATION_DRIFT: citation_file_absent entry=corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md absent at 679af5d749f2fd48b9d543e3c99d348d5458f90f
+CITATION_DRIFT: citation_dead entry=readme22-r7range corpus/README.md:22 states no resolvable pointer (pattern 'r7: `corpus/knowledge/2026-10-18-arc2-r7-pe-wall\\.md:(\\d+)-(' absent)
+CITATION_DRIFT: citation_dead entry=readme22-r8range corpus/README.md:22 states no resolvable pointer (pattern 'r8: `corpus/knowledge/2026-10-18-arc2-r7-pe-wall\\.md:(\\d+)-(' absent)
+CITATION_DRIFT: citation_file_absent entry=.ufo/waves/arc2-loop1-round8/receipts/r8-ctl-envelope.json absent at 679af5d749f2fd48b9d543e3c99d348d5458f90f
+CITATION_DRIFT: citation_dead entry=readme175-sc1217 corpus/README.md:175 states no resolvable pointer (pattern 'SCORECARD\\.md:(\\d+)' absent)
+CITATION_DRIFT: citation_dead entry=readme175-r7range corpus/README.md:175 states no resolvable pointer (pattern 'r7-pe-wall\\.md:(\\d+)-(\\d+)' absent)
+CITATION_DRIFT: citation_dead entry=readme175-r8e2 corpus/README.md:175 states no resolvable pointer (pattern 'round8/E2\\.md:(\\d+)-(\\d+)' absent)
+CITATION_DRIFT: citation_dead entry=sc622-capability-r8 SCORECARD.md:622 lacks 'r8 natural control \\(oom-kill; disable proven necessary\\)'
+CITATION_DRIFT: citation_dead entry=shonen-skill-range SHONEN.md:6 cites SKILL.md:81-206, which lacks 'A mitigation claim carries its natural control' (holds '## Queue-drain craft (rounds 5-12, distilled in round 13)')
+CITATION_DRIFT: record_word_missing entry=log1005-quoted-claim LOG.md:1012 no longer carries 'claim Kimi `rea-agents@6\\.4\\.0` at `config\\.toml:1478`' (append-only records are never rewritten)
+CITATION_DRIFT_VERDICT: reported findings=16 exit=0
+EXIT=0
+--- 8. frozen rev --strict ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: 679af5d749f2fd48b9d543e3c99d348d5458f90f
+CITATION_DRIFT_TABLE: pointer-table.json
+CITATION_DRIFT: citation_dead entry=sc59-stanza-key-anchor SCORECARD.md:59 lacks '\\[mcp_servers\\.rea\\]'
+CITATION_DRIFT: citation_dead entry=prov18-stamp-named PROVINCE.md:18 lacks '17:55:49Z receipt'
+CITATION_DRIFT: citation_file_absent entry=.ufo/waves/arc2-loop1-round3/receipts/config-pre-pair.txt absent at 679af5d749f2fd48b9d543e3c99d348d5458f90f
+CITATION_DRIFT: citation_dead entry=sc698-sc2-refuted-record SCORECARD.md:699 lacks 'SC2-refuted'
+CITATION_DRIFT: citation_out_of_range entry=mcpreg-errata-anchor-form corpus/knowledge/2026-10-13-mcp-registrations.md:96 beyond EOF (88 lines)
+CITATION_DRIFT: citation_out_of_range entry=r416-errata-durable-anchor corpus/knowledge/2026-10-13-r4-16-frontier-rescan.md:946 beyond EOF (936 lines)
+CITATION_DRIFT: citation_file_absent entry=corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md absent at 679af5d749f2fd48b9d543e3c99d348d5458f90f
+CITATION_DRIFT: citation_dead entry=readme22-r7range corpus/README.md:22 states no resolvable pointer (pattern 'r7: `corpus/knowledge/2026-10-18-arc2-r7-pe-wall\\.md:(\\d+)-(' absent)
+CITATION_DRIFT: citation_dead entry=readme22-r8range corpus/README.md:22 states no resolvable pointer (pattern 'r8: `corpus/knowledge/2026-10-18-arc2-r7-pe-wall\\.md:(\\d+)-(' absent)
+CITATION_DRIFT: citation_file_absent entry=.ufo/waves/arc2-loop1-round8/receipts/r8-ctl-envelope.json absent at 679af5d749f2fd48b9d543e3c99d348d5458f90f
+CITATION_DRIFT: citation_dead entry=readme175-sc1217 corpus/README.md:175 states no resolvable pointer (pattern 'SCORECARD\\.md:(\\d+)' absent)
+CITATION_DRIFT: citation_dead entry=readme175-r7range corpus/README.md:175 states no resolvable pointer (pattern 'r7-pe-wall\\.md:(\\d+)-(\\d+)' absent)
+CITATION_DRIFT: citation_dead entry=readme175-r8e2 corpus/README.md:175 states no resolvable pointer (pattern 'round8/E2\\.md:(\\d+)-(\\d+)' absent)
+CITATION_DRIFT: citation_dead entry=sc622-capability-r8 SCORECARD.md:622 lacks 'r8 natural control \\(oom-kill; disable proven necessary\\)'
+CITATION_DRIFT: citation_dead entry=shonen-skill-range SHONEN.md:6 cites SKILL.md:81-206, which lacks 'A mitigation claim carries its natural control' (holds '## Queue-drain craft (rounds 5-12, distilled in round 13)')
+CITATION_DRIFT: record_word_missing entry=log1005-quoted-claim LOG.md:1012 no longer carries 'claim Kimi `rea-agents@6\\.4\\.0` at `config\\.toml:1478`' (append-only records are never rewritten)
+CITATION_DRIFT_VERDICT: failed findings=16 exit=1
+EXIT=1
+--- 9. byte-identical table copy ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: table-identical-copy.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+EXIT=0

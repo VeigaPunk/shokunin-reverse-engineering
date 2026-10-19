@@ -1,0 +1,165 @@
+### EX-25 scratch replay (PL-2 plan applied) at 2026-10-19T07:13:23-03:00
+### real HEAD: e845c2b524ad2e59871e004c51a1386e192a74ab
+### scratch gate sha256:
+e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/tree/.ufo/gates/citation-drift/citation-drift-probe.py
+ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/tree/.ufo/gates/citation-drift/expected.json
+738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/tree/.ufo/gates/citation-drift/pointer-table.json
+### real gate sha256 (must be unchanged):
+3067621ac44d6a153f45076c947926b56e3f34fbd4a907458273d97d1a47803f  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/citation-drift-probe.py
+4e28ba908bcd8e71586d0f8e376b1343bd7e305144f48c484f8ef788d36a2e33  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/expected.json
+738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+
+### C0. landed guard identifiers (grep of the patched probe) ###
+35:`pointer_table` key). A table whose bytes differ from the pinned digest is
+36:`pointer_table_tampered`; an absent table is `pointer_table_unreadable`; a
+37:baseline that pins no digest is `pointer_table_unpinned`. All three are
+81:                     "pointer_table_unreadable", "pointer_table_tampered",
+82:                     "pointer_table_unpinned", "unpinned_legacy",
+294:    pin = expected.get("pointer_table")
+295:    pin = pin.get("sha256") if isinstance(pin, dict) else None
+297:        findings.add("pointer_table_unpinned", os.path.basename(expected_path),
+301:        table_bytes = open(table_path, "rb").read()
+305:    if sha256_bytes(table_bytes) != pin:
+306:        findings.add("pointer_table_tampered", os.path.basename(table_path),
+307:                     "sha256 %s != pinned %s" % (sha256_bytes(table_bytes), pin))
+310:        table = json.loads(table_bytes.decode("utf-8"))
+439:                table_bytes = open(table, "rb").read()
+441:                            "pointer_table": {"sha256": sha256_bytes(table_bytes)}}
+
+### C1. pinned digest in expected.json vs on-disk table ###
+on-disk (scratch) pointer-table.json sha256: 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+pinned: 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+MATCH
+selftest case_count: 13
+selftest cases: ['clean', 'dead', 'out_of_range', 'file_absent', 'moved', 'stamped', 'no_snapshot_dir', 'snapshot_missing', 'snapshot_tampered', 'table_unreadable', 'rev_unresolvable', 'table_tampered', 'table_absent']
+
+### R1. REQUIRED: probe at HEAD (probe semantics) ###
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/tree/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+exit=0
+
+### R2. REQUIRED: probe --rev deadbeef ###
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: deadbeef
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/tree/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT: revision_unresolvable entry=deadbeef not a commit object (git rev-parse --verify deadbeef^{commit} failed)
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### R3. REQUIRED: probe --strict at HEAD (gate map) ###
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/tree/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+exit=0
+
+### R4. REQUIRED: selftest ###
+SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=citations_clean
+SELFTEST_CASE: CLEAN case=dead exit=1 expected=1 finding=citation_dead
+SELFTEST_CASE: CLEAN case=out_of_range exit=1 expected=1 finding=citation_out_of_range
+SELFTEST_CASE: CLEAN case=file_absent exit=1 expected=1 finding=citation_file_absent
+SELFTEST_CASE: CLEAN case=moved exit=1 expected=1 finding=citation_moved
+SELFTEST_CASE: CLEAN case=stamped exit=0 expected=0 finding=citation_historical_ok
+SELFTEST_CASE: CLEAN case=no_snapshot_dir exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=snapshot_missing exit=2 expected=2 finding=snapshot_missing
+SELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered
+SELFTEST_CASE: CLEAN case=table_unreadable exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=rev_unresolvable exit=2 expected=2 finding=revision_unresolvable
+SELFTEST_CASE: CLEAN case=table_tampered exit=2 expected=2 finding=pointer_table_tampered
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+exit=0
+
+### A1. semantic tamper via --table (never-matching must_match) ###
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/table-tampered.json
+CITATION_DRIFT: pointer_table_tampered entry=table-tampered.json sha256 e00e8b280404f8ea76d1665f1bc6409dca8e38fee4d278f645cc40cc1ce58d6b != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+--- same, --strict ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/table-tampered.json
+CITATION_DRIFT: pointer_table_tampered entry=table-tampered.json sha256 e00e8b280404f8ea76d1665f1bc6409dca8e38fee4d278f645cc40cc1ce58d6b != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### A2. emptied table (fully silent at HEAD) ###
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/table-emptied.json
+CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 36a00fc6a462a3860c820253a9aa79711ef8a9660a1008b935e7941fb2c191dc != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+--- same, --strict ---
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/table-emptied.json
+CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 36a00fc6a462a3860c820253a9aa79711ef8a9660a1008b935e7941fb2c191dc != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### A3. absent table ###
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/no-such-table.json
+CITATION_DRIFT: pointer_table_unreadable entry=no-such-table.json [Errno 2] No such file or directory: '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/no-such-table.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### A4. unpinned expected.json (real pre-EX-16 expected) ###
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/tree/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT: pointer_table_unpinned entry=expected.json no pointer-table digest pinned in expected.json
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### A5. guard vs rev-check ordering (deadbeef + tampered table) ###
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: deadbeef
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/table-tampered.json
+CITATION_DRIFT: revision_unresolvable entry=deadbeef not a commit object (git rev-parse --verify deadbeef^{commit} failed)
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### A6. old rev with pinned table (frozen_run.revision) ###
+CITATION_DRIFT: citation_dead entry=shonen-skill-range SHONEN.md:6 cites SKILL.md:81-206, which lacks 'A mitigation claim carries its natural control' (holds '## Queue-drain craft (rounds 5-12, distilled in round 13)')
+CITATION_DRIFT: record_word_missing entry=log1005-quoted-claim LOG.md:1012 no longer carries 'claim Kimi `rea-agents@6\\.4\\.0` at `config\\.toml:1478`' (append-only records are never rewritten)
+CITATION_DRIFT_VERDICT: reported findings=16 exit=0
+exit=0
+
+### A7. formatting-only reindent (byte-level pin) ###
+CITATION_DRIFT: pointer_table_tampered entry=table-reindented.json sha256 6796ef89c523ce4a03fb9aafeef93ed71b3822a1f2f57455b0d0ecd47a0ddca7 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### A8. table path is a directory ###
+CITATION_DRIFT: pointer_table_unreadable entry=scratch [Errno 21] Is a directory: '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### A9. expected.json absent ###
+CITATION_DRIFT: pointer_table_unreadable entry=no-such-expected.json [Errno 2] No such file or directory: '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/no-such-expected.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### A10. alternate table + pinned expected (path-scoped bypass?) ###
+CITATION_DRIFT: pointer_table_tampered entry=table-tampered.json sha256 e00e8b280404f8ea76d1665f1bc6409dca8e38fee4d278f645cc40cc1ce58d6b != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### A11. table that is not valid JSON but matches no pin ###
+CITATION_DRIFT: pointer_table_tampered entry=table-notjson.json sha256 0228f717792ffbc02f7fa058c934c10d7e91d0de743e365ebd78bfebf019254e != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2
+
+### A12. byte-identical copy of the table at another path (guard path-scoped?) ###
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c2/EX-25/scratch/table-copy-same-bytes.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+exit=0
+
+### EX-25 scratch replay complete ###

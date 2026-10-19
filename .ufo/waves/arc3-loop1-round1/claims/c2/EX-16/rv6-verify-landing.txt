@@ -1,0 +1,312 @@
+# EX-16 runs RV-6's post-landing harness (relocated to scratch so it does not write into claims/c2/RV-6/)
+# script copies sha256:
+4525973b687ca0c2c27ac33e778a927ef656a96a6e9ab43417504bc1fe9ec497  /dev/shm/ex16/rv6/verify-landing.sh
+07fca0a326160b970a1d78b20e219f694dd4cd84c3a42234e756cab2431e2488  /dev/shm/ex16/rv6/after-harness.sh
+# patched-row copy supplied at $S/patchtest/SKILL.md (EX-20 v3 row, sha256: 2e50597c10e8b93c9f41a5fa238eb1a8b0dc2a28d237a4ec2cdc9cd200497a0c)
+
+### A. landed diff (gates dir)
+ .ufo/gates/citation-drift/citation-drift-probe.py | 48 +++++++++++++++++++----
+ .ufo/gates/citation-drift/expected.json           |  2 +-
+ 2 files changed, 41 insertions(+), 9 deletions(-)
+diff --git i/.ufo/gates/citation-drift/citation-drift-probe.py w/.ufo/gates/citation-drift/citation-drift-probe.py
+index ab3146c..f88dc28 100644
+--- i/.ufo/gates/citation-drift/citation-drift-probe.py
++++ w/.ufo/gates/citation-drift/citation-drift-probe.py
+@@ -31,6 +31,14 @@ TARGETS
+                            against expected.json `snapshots` (a mismatched
+                            snapshot is `snapshot_tampered`, exit 2).
+ 
++FROZEN-RUN GUARD  expected.json pins the sha256 of the pointer table (the
++`pointer_table` key). A table whose bytes differ from the pinned digest is
++`pointer_table_tampered`; an absent table is `pointer_table_unreadable`; a
++baseline that pins no digest is `pointer_table_unpinned`. All three are
++preflight could-not-evaluate (exit 2) and run before any entry is graded, so a
++tampered table can never produce silent findings. Any edit to the table must
++re-pin the digest in the same commit.
++
+ VERDICT  exit 0 clean, 1 failed, 2 could-not-evaluate. Every finding carries a
+ stable id so the self-test can assert on it.
+ 
+@@ -70,7 +78,8 @@ class Findings:
+         if not self.rows:
+             return CLEAN
+         if any(f in ("snapshot_tampered", "snapshot_missing",
+-                     "pointer_table_unreadable", "unpinned_legacy",
++                     "pointer_table_unreadable", "pointer_table_tampered",
++                     "pointer_table_unpinned", "unpinned_legacy",
+                      "root_unreadable", "revision_unresolvable", "internal_error")
+                for f, _, _ in self.rows):
+             return CNE
+@@ -277,16 +286,31 @@ def run_check(root, rev, table_path, expected_path, snapshot_dir):
+         findings.add("revision_unresolvable", rev,
+                      "not a commit object (git rev-parse --verify %s^{commit} failed)" % rev)
+         return findings
+-    try:
+-        table = json.load(open(table_path))
+-    except (OSError, ValueError) as exc:
+-        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
+-        return findings
+     try:
+         expected = json.load(open(expected_path))
+     except (OSError, ValueError) as exc:
+-        expected = {}
+         findings.add("pointer_table_unreadable", os.path.basename(expected_path), str(exc))
++        return findings
++    pin = expected.get("pointer_table")
++    pin = pin.get("sha256") if isinstance(pin, dict) else None
++    if pin is None:
++        findings.add("pointer_table_unpinned", os.path.basename(expected_path),
++                     "no pointer-table digest pinned in expected.json")
++        return findings
++    try:
++        table_bytes = open(table_path, "rb").read()
++    except OSError as exc:
++        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
++        return findings
++    if sha256_bytes(table_bytes) != pin:
++        findings.add("pointer_table_tampered", os.path.basename(table_path),
++                     "sha256 %s != pinned %s" % (sha256_bytes(table_bytes), pin))
++        return findings
++    try:
++        table = json.loads(table_bytes.decode("utf-8"))
++    except (ValueError, UnicodeDecodeError) as exc:
++        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
++        return findings
+     tree = Tree(root, rev, snapshot_dir, expected, findings)
+     for entry in table.get("entries", []):
+         check_entry(entry, tree, findings)
+@@ -412,9 +436,17 @@ def selftest(expected_path):
+                     digests = {"external.cfg": "0" * 64}
+                 else:
+                     digests = {}
+-                expected = {"snapshots": digests}
++                table_bytes = open(table, "rb").read()
++                expected = {"snapshots": digests,
++                            "pointer_table": {"sha256": sha256_bytes(table_bytes)}}
+                 exp_file = os.path.join(case_dir, "expected.json")
+                 json.dump(expected, open(exp_file, "w"))
++                if case == "table_tampered":
++                    # the silent-clean shape: a valid table with no entries
++                    # grades findings=0 at rc 0 without the frozen-run guard
++                    open(table, "w").write(json.dumps({"entries": []}))
++                elif case == "table_absent":
++                    os.remove(table)
+ 
+                 rev = "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef" if case == "rev_unresolvable" else "HEAD"
+                 findings = run_check(root, rev, table, exp_file,
+diff --git i/.ufo/gates/citation-drift/expected.json w/.ufo/gates/citation-drift/expected.json
+index b089564..1bd661d 100644
+--- i/.ufo/gates/citation-drift/expected.json
++++ w/.ufo/gates/citation-drift/expected.json
+@@ -1 +1 @@
+-{"_doc": "Committed expected values for the citation-drift gate. Per the PROTOCOL Gate standard: the frozen-run baseline pins the digest of every snapshot input file, and the self-test's expected exit codes and finding ids live here rather than in the script, so the expected values are independent of the recomputation.", "frozen_run": {"revision": "679af5d749f2fd48b9d543e3c99d348d5458f90f", "note": "the revision the committed verdict was measured against; a run over a different revision is a different measurement", "verdict": "failed", "expected_findings": ["citation_dead"]}, "snapshots": {"config-toml-landmarks": "387e1f082dda6e77f5ea63677b15f67aef7d49d8820dc8d140a62c0d1096f154"}, "selftest": [{"case": "clean", "exit_code": 0, "finding": "citations_clean"}, {"case": "dead", "exit_code": 1, "finding": "citation_dead"}, {"case": "out_of_range", "exit_code": 1, "finding": "citation_out_of_range"}, {"case": "file_absent", "exit_code": 1, "finding": "citation_file_absent"}, {"case": "moved", "exit_code": 1, "finding": "citation_moved"}, {"case": "stamped", "exit_code": 0, "finding": "citation_historical_ok"}, {"case": "no_snapshot_dir", "exit_code": 2, "finding": "pointer_table_unreadable"}, {"case": "snapshot_missing", "exit_code": 2, "finding": "snapshot_missing"}, {"case": "snapshot_tampered", "exit_code": 2, "finding": "snapshot_tampered"}, {"case": "table_unreadable", "exit_code": 2, "finding": "pointer_table_unreadable"}, {"case": "rev_unresolvable", "exit_code": 2, "finding": "revision_unresolvable"}]}
+\ No newline at end of file
++{"_doc": "Committed expected values for the citation-drift gate. Per the PROTOCOL Gate standard: the frozen-run baseline pins the digest of every snapshot input file AND of the pointer table itself (a tampered or absent table is could-not-evaluate, never silent findings), and the self-test's expected exit codes and finding ids live here rather than in the script, so the expected values are independent of the recomputation.", "frozen_run": {"revision": "679af5d749f2fd48b9d543e3c99d348d5458f90f", "note": "the revision the committed verdict was measured against; a run over a different revision is a different measurement", "verdict": "failed", "expected_findings": ["citation_dead"]}, "pointer_table": {"sha256": "738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f", "note": "frozen-run guard (R6 debt, arc3-loop1-round1): sha256 of pointer-table.json at the frozen run; any byte difference is pointer_table_tampered, an absent table is pointer_table_unreadable, an unpinned baseline is pointer_table_unpinned -- all exit 2"}, "snapshots": {"config-toml-landmarks": "387e1f082dda6e77f5ea63677b15f67aef7d49d8820dc8d140a62c0d1096f154"}, "selftest": [{"case": "clean", "exit_code": 0, "finding": "citations_clean"}, {"case": "dead", "exit_code": 1, "finding": "citation_dead"}, {"case": "out_of_range", "exit_code": 1, "finding": "citation_out_of_range"}, {"case": "file_absent", "exit_code": 1, "finding": "citation_file_absent"}, {"case": "moved", "exit_code": 1, "finding": "citation_moved"}, {"case": "stamped", "exit_code": 0, "finding": "citation_historical_ok"}, {"case": "no_snapshot_dir", "exit_code": 2, "finding": "pointer_table_unreadable"}, {"case": "snapshot_missing", "exit_code": 2, "finding": "snapshot_missing"}, {"case": "snapshot_tampered", "exit_code": 2, "finding": "snapshot_tampered"}, {"case": "table_unreadable", "exit_code": 2, "finding": "pointer_table_unreadable"}, {"case": "rev_unresolvable", "exit_code": 2, "finding": "revision_unresolvable"}, {"case": "table_tampered", "exit_code": 2, "finding": "pointer_table_tampered"}, {"case": "table_absent", "exit_code": 2, "finding": "pointer_table_unreadable"}]}
+\ No newline at end of file
+
+### B. post-state fingerprints
+e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/citation-drift-probe.py
+ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/expected.json
+738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+
+### C. pin value vs actual table digest
+expected.json keys: ['_doc', 'frozen_run', 'pointer_table', 'snapshots', 'selftest']
+64-hex strings in expected.json:
+   /pointer_table/sha256                    738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f <-- MATCHES table
+   /snapshots/config-toml-landmarks         387e1f082dda6e77f5ea63677b15f67aef7d49d8820dc8d140a62c0d1096f154 
+actual sha256(pointer-table.json) = 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+
+### D. finding ids present in the landed probe
+12:states a line number, and the stated number is wrong. A static regex pin on the
+22:  exact      the citing line itself must match `must_match` at the pinned line.
+24:             other than `pin_line` is `citation_moved` (the citation's line
+32:                           snapshot is `snapshot_tampered`, exit 2).
+34:FROZEN-RUN GUARD  expected.json pins the sha256 of the pointer table (the
+35:`pointer_table` key). A table whose bytes differ from the pinned digest is
+36:`pointer_table_tampered`; an absent table is `pointer_table_unreadable`; a
+37:baseline that pins no digest is `pointer_table_unpinned`. All three are
+40:re-pin the digest in the same commit.
+80:        if any(f in ("snapshot_tampered", "snapshot_missing",
+81:                     "pointer_table_unreadable", "pointer_table_tampered",
+82:                     "pointer_table_unpinned", "unpinned_legacy",
+144:            self.findings.add("pointer_table_unreadable", key,
+154:        pinned = (self.expected.get("snapshots") or {}).get(slug)
+155:        if pinned is None:
+156:            self.findings.add("unpinned_legacy", key,
+157:                              "no digest pinned in expected.json")
+159:            return None, "unpinned (legacy): %s" % slug
+160:        if sha256_bytes(data) != pinned:
+161:            self.findings.add("snapshot_tampered", key,
+162:                              "sha256 %s != pinned %s" % (sha256_bytes(data), pinned))
+164:            return None, "snapshot_tampered"
+185:        elif entry.get("pin_line") is not None and entry["pin_line"] not in hits:
+187:                         "%s: content at %s, citation pins %s"
+188:                         % (target, hits, entry["pin_line"]))
+261:    findings.add("pointer_table_unreadable", eid, "unknown kind %r" % kind)
+292:        findings.add("pointer_table_unreadable", os.path.basename(expected_path), str(exc))
+294:    pin = expected.get("pointer_table")
+295:    pin = pin.get("sha256") if isinstance(pin, dict) else None
+296:    if pin is None:
+297:        findings.add("pointer_table_unpinned", os.path.basename(expected_path),
+298:                     "no pointer-table digest pinned in expected.json")
+303:        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
+305:    if sha256_bytes(table_bytes) != pin:
+306:        findings.add("pointer_table_tampered", os.path.basename(table_path),
+307:                     "sha256 %s != pinned %s" % (sha256_bytes(table_bytes), pin))
+312:        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
+342:    "TARGET.md": "alpha\nbeta\nthe pinned claim lives here\ngamma\n",
+380:         "must_match": r"pinned claim lives here"},
+381:        {"id": "f-moved", "kind": "anchor", "file": "MOVED.md", "pin_line": 1,
+
+### E. CNE id list in the landed verdict()
+    def verdict(self, strict=False):
+        if not self.rows:
+            return CLEAN
+        if any(f in ("snapshot_tampered", "snapshot_missing",
+                     "pointer_table_unreadable", "pointer_table_tampered",
+                     "pointer_table_unpinned", "unpinned_legacy",
+                     "root_unreadable", "revision_unresolvable", "internal_error")
+               for f, _, _ in self.rows):
+            return CNE
+        if not strict:
+            return CLEAN
+        # A stamp-qualified pointer that no longer resolves is recorded, not
+        # counted as failure: the entry's own text names the revision it was
+        # accurate at, so it is history rather than a broken citation.
+        if all(f == "citation_historical_ok" for f, _, _ in self.rows):
+            return CLEAN
+        return FAILED
+
+### F. selftest + case table
+SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=citations_clean
+SELFTEST_CASE: CLEAN case=dead exit=1 expected=1 finding=citation_dead
+SELFTEST_CASE: CLEAN case=out_of_range exit=1 expected=1 finding=citation_out_of_range
+SELFTEST_CASE: CLEAN case=file_absent exit=1 expected=1 finding=citation_file_absent
+SELFTEST_CASE: CLEAN case=moved exit=1 expected=1 finding=citation_moved
+SELFTEST_CASE: CLEAN case=stamped exit=0 expected=0 finding=citation_historical_ok
+SELFTEST_CASE: CLEAN case=no_snapshot_dir exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=snapshot_missing exit=2 expected=2 finding=snapshot_missing
+SELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered
+SELFTEST_CASE: CLEAN case=table_unreadable exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=rev_unresolvable exit=2 expected=2 finding=revision_unresolvable
+SELFTEST_CASE: CLEAN case=table_tampered exit=2 expected=2 finding=pointer_table_tampered
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+selftest rc=0
+case_count=13
+  clean                  exit=0 finding=citations_clean
+  dead                   exit=1 finding=citation_dead
+  out_of_range           exit=1 finding=citation_out_of_range
+  file_absent            exit=1 finding=citation_file_absent
+  moved                  exit=1 finding=citation_moved
+  stamped                exit=0 finding=citation_historical_ok
+  no_snapshot_dir        exit=2 finding=pointer_table_unreadable
+  snapshot_missing       exit=2 finding=snapshot_missing
+  snapshot_tampered      exit=2 finding=snapshot_tampered
+  table_unreadable       exit=2 finding=pointer_table_unreadable
+  rev_unresolvable       exit=2 finding=revision_unresolvable
+  table_tampered         exit=2 finding=pointer_table_tampered
+  table_absent           exit=2 finding=pointer_table_unreadable
+
+### G. string-set comparison: row-declared ids vs code-emitted ids
+-- ids named in the patched row --
+`pointer_table_tampered` `pointer_table_unpinned` `pointer_table_unreadable` `revision_unresolvable` 
+-- ids emitted by the landed code (guard paths) --
+  EMITTED: table_tampered
+  EMITTED: pointer_table_tampered
+  EMITTED: pointer_table_unreadable
+  EMITTED: unpinned_legacy
+
+### H. clean run at HEAD with the landed guard
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+
+### I. full after-matrix
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+### 9. absent table at DEFAULT path
+[9-absent-default] rc=2 findings=1
+    CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+    CITATION_DRIFT_REVISION: HEAD
+    CITATION_DRIFT_TABLE: /dev/shm/ex16/rv6/after/pointer-table.json
+    CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json [Errno 2] No such file or directory: '/dev/shm/ex16/rv6/after/pointer-table.json'
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+### 10. expected.json digest key removed (legacy/unpinned expected)
+[10-expected-unpinned] rc=2 findings=1
+    CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+    CITATION_DRIFT_REVISION: HEAD
+    CITATION_DRIFT_TABLE: /dev/shm/ex16/rv6/after/pointer-table.json
+    CITATION_DRIFT: pointer_table_unpinned entry=expected-unpinned.json no pointer-table digest pinned in expected.json
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+### 11. expected.json absent
+[11-expected-absent] rc=2 findings=1
+    CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+    CITATION_DRIFT_REVISION: HEAD
+    CITATION_DRIFT_TABLE: /dev/shm/ex16/rv6/after/pointer-table.json
+    CITATION_DRIFT: pointer_table_unreadable entry=absent-expected.json [Errno 2] No such file or directory: '/dev/shm/ex16/rv6/after/absent-expected.json'
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+### 12. table = valid JSON list at DEFAULT path
+[12-default-list] rc=2 findings=1
+    CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+    CITATION_DRIFT_REVISION: HEAD
+    CITATION_DRIFT_TABLE: /dev/shm/ex16/rv6/after/pointer-table.json
+    CITATION_DRIFT: pointer_table_tampered entry=pointer-table.json sha256 4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+### 13. frozen-run reproduction attempt at recorded rev with current table
+[13-frozen-rev-current-table] rc=0 findings=16
+    CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+    CITATION_DRIFT_REVISION: 679af5d749f2fd48b9d543e3c99d348d5458f90f
+    CITATION_DRIFT_TABLE: /dev/shm/ex16/rv6/after/pointer-table.json
+    CITATION_DRIFT: citation_dead entry=sc59-stanza-key-anchor SCORECARD.md:59 lacks '\\[mcp_servers\\.rea\\]'
+    CITATION_DRIFT: citation_dead entry=prov18-stamp-named PROVINCE.md:18 lacks '17:55:49Z receipt'
+    CITATION_DRIFT: citation_file_absent entry=.ufo/waves/arc2-loop1-round3/receipts/config-pre-pair.txt absent at 679af5d749f2fd48b9d543e3c99d348d5458f90f
+    CITATION_DRIFT: citation_dead entry=sc698-sc2-refuted-record SCORECARD.md:699 lacks 'SC2-refuted'
+    CITATION_DRIFT: citation_out_of_range entry=mcpreg-errata-anchor-form corpus/knowledge/2026-10-13-mcp-registrations.md:96 beyond EOF (88 lines)
+    CITATION_DRIFT: citation_out_of_range entry=r416-errata-durable-anchor corpus/knowledge/2026-10-13-r4-16-frontier-rescan.md:946 beyond EOF (936 lines)
+    CITATION_DRIFT: citation_file_absent entry=corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md absent at 679af5d749f2fd48b9d543e3c99d348d5458f90f
+    CITATION_DRIFT: citation_dead entry=readme22-r7range corpus/README.md:22 states no resolvable pointer (pattern 'r7: `corpus/knowledge/2026-10-18-arc2-r7-pe-wall\\.md:(\\d+)-(' absent)
+    CITATION_DRIFT: citation_dead entry=readme22-r8range corpus/README.md:22 states no resolvable pointer (pattern 'r8: `corpus/knowledge/2026-10-18-arc2-r7-pe-wall\\.md:(\\d+)-(' absent)
+    CITATION_DRIFT: citation_file_absent entry=.ufo/waves/arc2-loop1-round8/receipts/r8-ctl-envelope.json absent at 679af5d749f2fd48b9d543e3c99d348d5458f90f
+    CITATION_DRIFT: citation_dead entry=readme175-sc1217 corpus/README.md:175 states no resolvable pointer (pattern 'SCORECARD\\.md:(\\d+)' absent)
+    CITATION_DRIFT: citation_dead entry=readme175-r7range corpus/README.md:175 states no resolvable pointer (pattern 'r7-pe-wall\\.md:(\\d+)-(\\d+)' absent)
+    CITATION_DRIFT: citation_dead entry=readme175-r8e2 corpus/README.md:175 states no resolvable pointer (pattern 'round8/E2\\.md:(\\d+)-(\\d+)' absent)
+    CITATION_DRIFT: citation_dead entry=sc622-capability-r8 SCORECARD.md:622 lacks 'r8 natural control \\(oom-kill; disable proven necessary\\)'
+    CITATION_DRIFT: citation_dead entry=shonen-skill-range SHONEN.md:6 cites SKILL.md:81-206, which lacks 'A mitigation claim carries its natural control' (holds '## Queue-drain craft (rounds 5-12, distilled in round 13)')
+    CITATION_DRIFT: record_word_missing entry=log1005-quoted-claim LOG.md:1012 no longer carries 'claim Kimi `rea-agents@6\\.4\\.0` at `config\\.toml:1478`' (append-only records are never rewritten)
+    CITATION_DRIFT_VERDICT: reported findings=16 exit=0
+    CITATION_DRIFT_VERDICT: reported findings=16 exit=0
+### 14. the suppression pair, re-run against the guarded probe (bypass check)
+[14a-dead-table-nondefault] rc=2 findings=1
+    CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+    CITATION_DRIFT_REVISION: HEAD
+    CITATION_DRIFT_TABLE: /dev/shm/ex16/rv6/table-with-dead.json
+    CITATION_DRIFT: pointer_table_tampered entry=table-with-dead.json sha256 28fbf49c7d13084e2ec2a57230a77a5b7428316043f0e84355a265792a56f492 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+[14b-dead-emptied-nondefault] rc=2 findings=1
+    CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+    CITATION_DRIFT_REVISION: HEAD
+    CITATION_DRIFT_TABLE: /dev/shm/ex16/rv6/table-with-dead-emptied.json
+    CITATION_DRIFT: pointer_table_tampered entry=table-with-dead-emptied.json sha256 bd74df11ac206d3ac026231edd4cab6f16eb7c48b5a462215694a77908a8ccf8 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+### 14c: same, at DEFAULT path (guarded run must not be silent)
+[14c-dead-emptied-default] rc=2 findings=1
+    CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+    CITATION_DRIFT_REVISION: HEAD
+    CITATION_DRIFT_TABLE: /dev/shm/ex16/rv6/after/pointer-table.json
+    CITATION_DRIFT: pointer_table_tampered entry=pointer-table.json sha256 bd74df11ac206d3ac026231edd4cab6f16eb7c48b5a462215694a77908a8ccf8 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+    CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+
+### J. residual: fabricated (table, expected) pair pins itself
+fabricated pin: b9e70ca36e18eb17e2b34f444df59be813206f2c3a734147f62ff911ccbb0c54
+CITATION_DRIFT_TABLE: /dev/shm/ex16/rv6/j-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+J rc=0 (rc=0 = residual confirmed: a fabricated pair reads clean)
+VERIFY_LANDING_RC=0

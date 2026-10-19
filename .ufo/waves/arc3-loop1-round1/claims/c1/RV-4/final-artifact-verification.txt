@@ -1,0 +1,35 @@
+# RV-4 final-artifact verification — map-token.patch.md (as-delivered, 07:16Z)
+# doc: claims/c1/EX-13/map-token.patch.md sha256 27d59a118589db52edc7ce0b8422ebcc222b7ca3cc090953310865215eab44b3
+# block1 (primary) sha256 ddfe01165fdbb2fefa9a802b99f454bb574dddb926e5b807018571f78fc29cad  == map-token.primary.patch (ddfe0116…)
+# block2 (alt-prose) sha256 87108a29c8fb9433781b0cc1eb38fad76383f9cd5ec6411f5ad828ac21f2bd70 == map-token.alt-prose.patch (87108a29…)
+# harness results:
+## block1 (primary):
+apply_method: git apply
+lines_before: 190
+lines_after:  190
+line_neutral: True
+token_count_81_to_82: True
+prior_tokens_byte_identical: True
+prior_token_occurrence_sequence_identical: True
+sha256_after:  b74b8d34abe47525c92b81f57829f8bd838a62fcc879ea4641277b4986944467
+coverage_map_occurrence_delta: 1
+VERDICT: PASS
+## block2/alt-prose:
+apply_method: git apply
+lines_before: 190
+lines_after:  190
+line_neutral: True
+token_count_81_to_82: True
+prior_tokens_byte_identical: True
+prior_token_occurrence_sequence_identical: True
+additive_only_check: False
+sha256_after:  508688f73d9c0f92b1125df55f0daf0322abdc7ee7ee6008bd1e6daee0f3e79a
+coverage_map_occurrence_delta: 1
+VERDICT: FAIL
+# earlier doc revision (b9a8b3b0…) embedded blocks did NOT apply: context line README:37 col197 ';' vs repo ',';
+# replaced at 07:13 by primary/alt-prose machine patches (context matches repo byte-for-byte).
+# NOTE on block2 composite verdict: the three required checks pass (line-neutral,
+# tokens 81->82, prior 81 byte-identical); the composite VERDICT: FAIL fires only on
+# the token-append-only strengthening, which block2 intentionally violates by also
+# updating the row's state prose (documented alternate; EX-13 v2). Primary block1
+# (recommended) passes the composite verdict in full.

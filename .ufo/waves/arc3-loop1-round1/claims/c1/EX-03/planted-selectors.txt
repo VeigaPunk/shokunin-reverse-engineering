@@ -1,0 +1,104 @@
+# planted-selectors.txt — arc3-loop1-round1, seat EX-03 (chain c1)
+#
+# Carrier:  claims/c1/EX-03/token.sol  (contract KdkToken, ERC-20-shaped)
+#           sha256 497d70f2ed055b56a0b2e2bf826f704f11ee8a1ba4ec664dae0ddb6a0ac76a6f (2417 B)
+# Support:  claims/c1/EX-03/keccak256.py  (from-spec pure-Python Keccak-256)
+#           sha256 7a58534b5cdd7798b11bb2931f7ce6afdb8ba073ead1d76e5b0443b5da6f9427 (3812 B)
+#
+# Planted set = keccak256(canonical signature)[0:4].
+# K = 9 distinct external function selectors = 6 declared ERC-20 functions
+#     + 3 public state-variable getters (name/symbol/decimals are `public`,
+#     so solc generates external getters — they dispatch like any function).
+# The 2 event topic0 hashes below are SUPPLEMENTARY (events are log topics,
+# not dispatch selectors) and are NOT counted in K.
+#
+# --- machine-readable: selector  canonical-signature  kind ---
+18160ddd totalSupply() declared
+70a08231 balanceOf(address) declared
+a9059cbb transfer(address,uint256) declared
+dd62ed3e allowance(address,address) declared
+095ea7b3 approve(address,uint256) declared
+23b872dd transferFrom(address,address,uint256) declared
+06fdde03 name() getter
+95d89b41 symbol() getter
+313ce567 decimals() getter
+#
+# --- supplementary event topic0 (full 32-byte keccak), NOT selectors ---
+# topic0 ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef Transfer(address,address,uint256)
+# topic0 8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925 Approval(address,address,uint256)
+# (both lines are comment-prefixed on purpose: set-comparison parsers take
+#  split()[0] of every non-comment line as a selector; bare 32-byte hashes
+#  here tripped RV-1's cmp mode with ref=11 before this fix)
+#
+# --- derivation: three independent implementations, all agree on 9/9 + 2/2 ---
+# (A) node OpenSSL keccak-256:
+#     node -e 'const c=require("crypto");for(const s of ["totalSupply()","balanceOf(address)","transfer(address,uint256)","allowance(address,address)","approve(address,uint256)","transferFrom(address,address,uint256)","name()","symbol()","decimals()"])console.log(c.createHash("keccak-256").update(s,"utf8").digest("hex").slice(0,8),s)'
+#     full hashes:
+#     18160ddd7f15c72528c2f94fd8dfe3c8d5aa26e2c50c7d81f4bc7bee8d4b7932  totalSupply()
+#     70a08231b98ef4ca268c9cc3f6b4590e4bfec28280db06bb5d45e689f2a360be  balanceOf(address)
+#     a9059cbb2ab09eb219583f4a59a5d0623ade346d962bcd4e46b11da047c9049b  transfer(address,uint256)
+#     dd62ed3e90e97b3d417db9c0c7522647811bafca5afc6694f143588d255fdfb4  allowance(address,address)
+#     095ea7b334ae44009aa867bfb386f5c3b4b443ac6f0ee573fa91c4608fbadfba  approve(address,uint256)
+#     23b872dd7302113369cda2901243429419bec145408fa8b352b3dd92b66c680b  transferFrom(address,address,uint256)
+#     06fdde0383f15d582d1a74511486c9ddf862a882fb7904b3d9fe9b8b8e58a796  name()
+#     95d89b41e2f5f391a79ec54e9d87c79d6e777c63e32c28da95b4e9e4a79250ec  symbol()
+#     313ce567add4d438edf58b94ff345d7d38c45b17dfc0f947988d7819dca364f9  decimals()
+# (B) js-sha3 (solc dependency, tools/solc-prefix/node_modules/js-sha3):
+#     node -e 'const {keccak256}=require(".../tools/solc-prefix/node_modules/js-sha3");...'
+#     → identical 9/9 first-4-bytes (run 2026-10-19 ~07:0xZ).
+# (C) pure Python from-spec (claims/c1/EX-03/keccak256.py):
+#     python3 keccak256.py --selftest   → selftest OK x3 (empty, "abc", transfer sig), exit 0
+#     python3 keccak256.py              → identical 9/9 first-4-bytes, exit 0
+#
+# --- canonicalization guardrails (non-canonical forms do NOT match) ---
+#   "transfer(address,uint256)"  → a9059cbb   (canonical — planted)
+#   "transfer(address, uint256)" → 9d61d234   (space breaks it)
+#   "transfer(address,uint)"     → 6cb927d8   (uint is not canonical)
+#   "TRANSFER(address,uint256)"  → d51e217e   (case matters)
+#   NIST sha3-256 differs from Keccak-256: sha3-256("transfer(address,uint256)")[:4]
+#   = 4b40e901 ≠ a9059cbb. Do not use hashlib.sha3_256 / openssl sha3-256.
+#
+# --- compiled artifact (this seat's scratch compile, NOT the chain's records artifact) ---
+# solc: 0.8.37+commit.f401782d.Emscripten.clang (npm solc at
+#       tools/solc-prefix/node_modules/solc, installed by seat EX-02; used read-only here)
+# Recipe: node -e 'const solc=require("<prefix>/node_modules/solc"),fs=require("fs");
+#   const i={language:"Solidity",sources:{"token.sol":{content:fs.readFileSync("token.sol","utf8")}},
+#   settings:{outputSelection:{"*":{"*":["abi","evm.bytecode.object","evm.deployedBytecode.object"]}}}};
+#   const o=JSON.parse(solc.compile(JSON.stringify(i)));const c=o.contracts["token.sol"].KdkToken;
+#   fs.writeFileSync("runtime.hex",c.evm.deployedBytecode.object);fs.writeFileSync("creation.hex",c.evm.bytecode.object)'
+# Results (default settings, no optimizer):
+#   runtime bytecode: 3457 bytes, sha256 46ccaae1554a9b887e6c715622a9b8f9c17faee9f23d905b41fd7b344f1d395e
+#                     keccak256 (Ethereum code hash) 42e54374d8c183a19af27c29d498c0cea90e75f7d358e87ef98f86f540dcfd89
+#   creation bytecode: 4680 bytes, sha256 b0e657a26d89f1821d3d69f4f36634114c34c1f71883dac25238fd919ca8a3fc
+#   runtime.hex (ASCII file as probed): sha256 eca34f8bda2ef521e036a41c8818327f4dd60fb067bd80f3e9cc37773af6c784
+# PUSH4 constants in the runtime (two independent extractions, identical sets):
+#   byte-level linear scan (PUSH-aware): exactly the 9 selectors above, ZERO extras
+#   solc --opcodes "PUSH4 0x…" lines: same 9 (CAVEAT: solc prints minimal digits —
+#   06fdde03 appears as 0x6FDDE03, 095ea7b3 as 0x95EA7B3; pad to 8 before comparing)
+#
+# --- probe PRE-CHECK (this seat's own run — NOT the chain's sealed receipt) ---
+# tool: rea-agents 6.4.0 + evmole 0.9.3, run DIRECTLY from npm cache
+#       (~/.npm/_npx/dea9475797100b20/node_modules/.bin/rea; nothing installed)
+# command (hex leg): TMPDIR=/var/tmp/ex03-work/tmp node ~/.npm/_npx/dea9475797100b20/node_modules/.bin/rea \
+#                    inspect-evm-interface out/runtime.hex hex --format json
+#   → 9/9 recovered, set equality with the planted set TRUE,
+#     evidence_id ev_d3f5b354c1827bf5b92a8935336ce0f707db119be05fbee8062f4fbed5a56003
+# command (raw leg): same on out/runtime.bin (the same bytes as raw)
+#   → 9/9 recovered, identical set,
+#     evidence_id ev_fa4559f262b9fb667487b59fde9536657c3b6089c05fec3c3e958193c9c74917
+#     subject.digest.sha256 = 46ccaae1… (== runtime byte sha256; raw leg hashes bytes, hex leg hashes the ASCII file)
+# per-function (hex leg; all dispatch:"abi"):
+#   06fdde03 @149  view        args ""
+#   095ea7b3 @179  nonpayable  args "address,uint256"
+#   18160ddd @227  view        args ""
+#   23b872dd @257  nonpayable  args "address,address,uint256"
+#   313ce567 @305  view        args ""
+#   70a08231 @335  view        args "address"
+#   95d89b41 @383  view        args ""
+#    a9059cbb @413 nonpayable  args "address,uint256"
+#   dd62ed3e @461  view        args "address,address"
+#   (real inference signal, unlike the r3-07 synthetic stub: view/nonpayable split
+#    and argument tuples both populated)
+# HOST NOTE: without TMPDIR override the worker dies with
+#   "Unknown system error -122 … write" (EDQUOT) — /tmp is quota-full on this host;
+#   the EVMole worker writes temp files under os.tmpdir(). Set TMPDIR to a roomy path.

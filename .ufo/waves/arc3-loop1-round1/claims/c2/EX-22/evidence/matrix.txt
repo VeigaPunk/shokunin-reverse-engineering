@@ -1,0 +1,53 @@
+########## PATCHED (after) ##########
+--- P-clean-tree
+exit=0
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+--- P-clean-copy
+exit=0
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+--- P-legacy-unpinned
+exit=2
+CITATION_DRIFT: unpinned_legacy entry=pointer-table.json no table digest pinned in expected.json
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+--- P-tampered-table
+exit=2
+CITATION_DRIFT: pointer_table_tampered entry=evil-table.json sha256 eb9689f4e89f0b8b88f6fde235f1d5d9329c3056a21e6f451e36f23604ff8394 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f (a table edit and its re-pin land in the same commit)
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+--- P-absent-table
+exit=2
+CITATION_DRIFT: pointer_table_unreadable entry=no-such-table.json [Errno 2] No such file or directory: '/var/tmp/ex22/exp/no-such-table.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+--- P-crlf-table
+exit=2
+CITATION_DRIFT: pointer_table_tampered entry=crlf-table.json sha256 e50217bfdb70bb4bb3dfe8a5199f7e04c778f4b75945ee1df1c2a26dd1bd4381 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f (a table edit and its re-pin land in the same commit)
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+--- P-symlink-table
+exit=2
+CITATION_DRIFT: pointer_table_unsafe entry=link-table.json refused: /var/tmp/ex22/exp/link-table.json is a symlink (O_NOFOLLOW)
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+--- P-fifo-table
+exit=2
+CITATION_DRIFT: pointer_table_unreadable entry=fifo-table.json refused: /var/tmp/ex22/exp/fifo-table.json is not a regular file (mode 10644)
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+--- P-absent-expected
+exit=2
+CITATION_DRIFT: pointer_table_unreadable entry=no-such-expected.json [Errno 2] No such file or directory: '/var/tmp/ex22/exp/no-such-expected.json'
+CITATION_DRIFT: unpinned_legacy entry=pointer-table.json no table digest pinned in expected.json
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=2 exit=2
+########## PRISTINE (before) ##########
+--- B-tampered-table
+exit=0
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+--- B-absent-table
+exit=2
+CITATION_DRIFT: pointer_table_unreadable entry=no-such-table.json [Errno 2] No such file or directory: '/var/tmp/ex22/exp/no-such-table.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+--- B-crlf-table
+exit=0
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+--- B-symlink-table
+exit=0
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+--- B-fifo-table
+exit=124
+########## DONE ##########

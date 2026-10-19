@@ -1,0 +1,87 @@
+--- a/citation-drift-probe.py
++++ b/citation-drift-probe.py
+@@ -70,7 +70,8 @@
+         if not self.rows:
+             return CLEAN
+         if any(f in ("snapshot_tampered", "snapshot_missing",
+-                     "pointer_table_unreadable", "unpinned_legacy",
++                     "pointer_table_unreadable", "table_tampered",
++                     "table_pin_absent", "unpinned_legacy",
+                      "root_unreadable", "revision_unresolvable", "internal_error")
+                for f, _, _ in self.rows):
+             return CNE
+@@ -278,15 +279,25 @@
+                      "not a commit object (git rev-parse --verify %s^{commit} failed)" % rev)
+         return findings
+     try:
+-        table = json.load(open(table_path))
+-    except (OSError, ValueError) as exc:
+-        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
+-        return findings
+-    try:
+         expected = json.load(open(expected_path))
+     except (OSError, ValueError) as exc:
+         expected = {}
+         findings.add("pointer_table_unreadable", os.path.basename(expected_path), str(exc))
++    try:
++        table_bytes = open(table_path, "rb").read()
++        table = json.loads(table_bytes)
++    except (OSError, ValueError) as exc:
++        findings.add("pointer_table_unreadable", os.path.basename(table_path), str(exc))
++        return findings
++    pinned_table = expected.get("table_sha256")
++    if pinned_table is None:
++        findings.add("table_pin_absent", os.path.basename(expected_path),
++                     "no table_sha256 pinned; fail-closed preflight")
++        return findings
++    if sha256_bytes(table_bytes) != pinned_table:
++        findings.add("table_tampered", os.path.basename(table_path),
++                     "sha256 %s != pinned %s" % (sha256_bytes(table_bytes), pinned_table))
++        return findings
+     tree = Tree(root, rev, snapshot_dir, expected, findings)
+     for entry in table.get("entries", []):
+         check_entry(entry, tree, findings)
+@@ -392,14 +403,29 @@
+         with tempfile.TemporaryDirectory(prefix="citation-drift-case-") as case_dir:
+             root = None
+             try:
+-                if case == "table_unreadable":
+-                    table = os.path.join(case_dir, "table.json")
+-                    open(table, "w").write("{ not json")
++                if case in ("table_absent", "table_tampered", "table_unreadable"):
+                     root = build_fixture("clean")
+                 else:
+                     root = build_fixture(case)
+-                    table = os.path.join(case_dir, "table.json")
+-                    json.dump(fixture_table(case), open(table, "w"))
++                table = os.path.join(case_dir, "table.json")
++                if case == "table_absent":
++                    # pin the digest of the table that is never written
++                    table_bytes = None
++                    pinned_digest = sha256_bytes(
++                        json.dumps(fixture_table("clean")).encode())
++                elif case == "table_tampered":
++                    # pin the honest digest, then write different bytes
++                    good = json.dumps(fixture_table("clean")).encode()
++                    pinned_digest = sha256_bytes(good)
++                    table_bytes = good + b" "
++                elif case == "table_unreadable":
++                    table_bytes = b"{ not json"
++                    pinned_digest = sha256_bytes(table_bytes)
++                else:
++                    table_bytes = json.dumps(fixture_table(case)).encode()
++                    pinned_digest = sha256_bytes(table_bytes)
++                if table_bytes is not None:
++                    open(table, "wb").write(table_bytes)
+ 
+                 snapshot_dir = os.path.join(case_dir, "snap")
+                 os.makedirs(snapshot_dir)
+@@ -412,7 +438,7 @@
+                     digests = {"external.cfg": "0" * 64}
+                 else:
+                     digests = {}
+-                expected = {"snapshots": digests}
++                expected = {"snapshots": digests, "table_sha256": pinned_digest}
+                 exp_file = os.path.join(case_dir, "expected.json")
+                 json.dump(expected, open(exp_file, "w"))
+ 

@@ -1,0 +1,37 @@
+# VZ-4 independent C2 after-state verification — 2026-10-19T10:19:16Z
+# probe sha256: e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a
+# expected sha256: ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7
+## 1. selftest (TMPDIR redirected)
+SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=citations_clean
+SELFTEST_CASE: CLEAN case=dead exit=1 expected=1 finding=citation_dead
+SELFTEST_CASE: CLEAN case=out_of_range exit=1 expected=1 finding=citation_out_of_range
+SELFTEST_CASE: CLEAN case=file_absent exit=1 expected=1 finding=citation_file_absent
+SELFTEST_CASE: CLEAN case=moved exit=1 expected=1 finding=citation_moved
+SELFTEST_CASE: CLEAN case=stamped exit=0 expected=0 finding=citation_historical_ok
+SELFTEST_CASE: CLEAN case=no_snapshot_dir exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=snapshot_missing exit=2 expected=2 finding=snapshot_missing
+SELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered
+SELFTEST_CASE: CLEAN case=table_unreadable exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=rev_unresolvable exit=2 expected=2 finding=revision_unresolvable
+SELFTEST_CASE: CLEAN case=table_tampered exit=2 expected=2 finding=pointer_table_tampered
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+selftest_rc=0
+## 2. clean HEAD run
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+clean_rc=0
+## 3. tampered table (my fixture, valid JSON emptied)
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: .ufo/waves/arc3-loop1-round1/claims/cross/VZ-4/tmp/table-emptied.json
+CITATION_DRIFT: pointer_table_tampered entry=table-emptied.json sha256 94f9a65cffdb8ad870a944a558fd4941017c0a45f45ba8f5063bfe36b6a7e012 != pinned 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+tampered_rc=2
+## 4. absent table
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: .ufo/waves/arc3-loop1-round1/claims/cross/VZ-4/tmp/table-absent.json
+CITATION_DRIFT: pointer_table_unreadable entry=table-absent.json [Errno 2] No such file or directory: '.ufo/waves/arc3-loop1-round1/claims/cross/VZ-4/tmp/table-absent.json'
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+absent_rc=2

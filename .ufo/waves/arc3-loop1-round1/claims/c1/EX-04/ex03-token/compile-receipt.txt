@@ -1,0 +1,81 @@
+================================================================================
+COMPILE RECEIPT (SECONDARY LEG) — EX-03's token.sol (KdkToken)
+Seat: EX-04 (chain c1, executor)   Date: 2026-10-19 (UTC)
+Repo HEAD: e845c2b524ad2e59871e004c51a1386e192a74ab
+================================================================================
+
+WHY THIS LEG EXISTS
+--------------------------------------------------------------------------------
+The seat line names "token.sol". EX-03's dispatch-literal artifact
+`claims/c1/EX-03/token.sol` landed at 10:11Z (after the chain had converged on
+KdxToken for its probe/reconciliation legs). This receipt compiles the
+seat-line-literal source too, so the deliverable is closed literally as well as
+canonically. CANONICAL CHAIN CARRIER REMAINS KdxToken (see
+claims/c1/EX-04/compile-receipt.txt); this is supplementary, clearly labeled,
+and must not replace the canonical pins in the round records.
+
+SOURCE
+--------------------------------------------------------------------------------
+  claims/c1/EX-03/token.sol  sha256 497d70f2ed055b56a0b2e2bf826f704f11ee8a1ba4ec664dae0ddb6a0ac76a6f
+  (2417 bytes; contract KdkToken; copy at claims/c1/EX-04/ex03-token/token.sol,
+  byte-identical). EX-03's dispatched companion `planted-selectors.txt` had not
+  landed at 10:12Z; the selector table below is EX-04's independent derivation.
+
+COMPILER + FLAGS (identical to the canonical leg)
+--------------------------------------------------------------------------------
+  solcjs 0.8.37+commit.f401782d.Emscripten.clang (tools/solc-prefix, soljson.js
+  sha256 221d7a66…bad4c); `--standard-json`, optimizer OFF, no evmVersion;
+  outputSelection abi+metadata+evm.bytecode.object+evm.deployedBytecode.object.
+  Command: node .../solcjs --standard-json < solc-input.json > out  (exit 0;
+  one ">>>" SMT stdout line filtered; errors: []).
+  solc-input.json sha256 8a50905b63585b5860a862a3739c4fc8d3fce401a90bf4bdf95f3ef00a435b4f
+  solc-out.cleaned.json sha256 74e9f4aaa334da2465a84e5f365c2bcd915d666f8a3fcd26a07235bd5cc5c3de
+
+OUTPUTS (claims/c1/EX-04/ex03-token/)
+--------------------------------------------------------------------------------
+  file                bytes  sha256
+  token.runtime.hex    6915  b637a99cf489824e172428748e13bc4f809407a4efe7555bde08e452d1168197
+                             (3457-byte runtime + "\n")
+  token.runtime.bin    3457  46ccaae1554a9b887e6c715622a9b8f9c17faee9f23d905b41fd7b344f1d395e
+  token.creation.hex   9361  3d96164287c883b0d9034c1ce640c0f8c6a182b81ac5e904bf9734680b86a4ae
+                             (4680-byte creation + "\n")
+  token.creation.bin   4680  b0e657a26d89f1821d3d69f4f36634114c34c1f71883dac25238fd919ca8a3fc
+  token.abi            2317  0cc1df9faed3896c9a2be5ea72937e6318dae2362e41c1e9492e212c9d7bcd52
+  token.sol            2417  497d70f2ed055b56a0b2e2bf826f704f11ee8a1ba4ec664dae0ddb6a0ac76a6f
+  solc-input.json      1447  8a50905b63585b5860a862a3739c4fc8d3fce401a90bf4bdf95f3ef00a435b4f
+  solc-out.cleaned.json 14073 74e9f4aaa334da2465a84e5f365c2bcd915d666f8a3fcd26a07235bd5cc5c3de
+
+SELECTOR TABLE (K = 9) — solc methodIdentifiers == js-sha3 keccak, 9/9
+--------------------------------------------------------------------------------
+  (methodIdentifiers leg left the runtime sha unchanged at 46ccaae1…)
+  0x06fdde03  name()
+  0x095ea7b3  approve(address,uint256)
+  0x18160ddd  totalSupply()
+  0x23b872dd  transferFrom(address,address,uint256)
+  0x313ce567  decimals()
+  0x70a08231  balanceOf(address)
+  0x95d89b41  symbol()
+  0xa9059cbb  transfer(address,uint256)
+  0xdd62ed3e  allowance(address,address)
+
+SELF-CHECK PROBE (raw leg, disk-backed TMPDIR; self-check, not a chain leg)
+--------------------------------------------------------------------------------
+  exit 0; evidence_id ev_5709705cb62e1d32445a07bafb0f9a179f724ea6aeaced02fe25bc54d28cf3ee
+  subject.digest.sha256 = 46ccaae1… (= token.runtime.bin)
+  9/9 recovered, dispatch "abi" all; offsets 149/179/227/257/305/335/383/413/461
+  inferred_arguments populated (address / address,uint256 / address,address,uint256
+  / address,address; "" on the five zero-arg getters)
+  CBOR trailer: solc 000825 (0.8.37) + ipfs digest
+  envelope: ex03-token/selfcheck-probe-raw.json
+    sha256 e8a6bdff4702e81f819f5ca8576533056609ba28032aa505865a25487b0aacb3
+
+DIVERGENCE NOTE FOR THE INTEGRATOR
+--------------------------------------------------------------------------------
+  KdxToken (canonical, probed by EX-05/EX-06, reconciled by EX-07) and KdkToken
+  (this leg) are two different real-solc contracts. Their carriers are NOT
+  interchangeable: runtime sha256 9c40940e… (KdxToken, K=6) vs 46ccaae1…
+  (KdkToken, K=9). The round's claim evidence should cite the KdxToken pins; this
+  leg documents that the seat-line-literal source also compiles, recovers K/K,
+  and carries the same honest signal (dispatch "abi", argument/mutability
+  inference, solc 0.8.37 CBOR).
+================================================================================

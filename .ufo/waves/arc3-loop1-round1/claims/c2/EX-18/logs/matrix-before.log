@@ -1,0 +1,95 @@
+### CASE R0-baseline  [label=before]
+-- probe: /dev/shm/ex18-absent/gate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/gate/expected.json
+-- table object: regular file 14694 bytes
+-- table sha256: 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+-- readlink: /dev/shm/ex18-absent/gate/pointer-table.json
+-- probe-mode exit=0 | gate-mode exit=0
+-- probe verdict: CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+-- gate  verdict: CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+-- probe findings:
+
+### CASE R1-absent  [label=before]
+-- probe: /dev/shm/ex18-absent/gate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/gate/expected.json
+-- table object: stat: cannot statx '/dev/shm/ex18-absent/gate/pointer-table.json': No such file or directory
+-- table sha256: sha256sum: /dev/shm/ex18-absent/gate/pointer-table.json: No such
+-- readlink: /dev/shm/ex18-absent/gate/pointer-table.json
+-- probe-mode exit=2 | gate-mode exit=2
+-- probe verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- gate  verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- probe findings:
+     CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json [Errno 2] No such file or directory: '/dev/shm/ex18-absent/gate/pointer-table.json'
+
+### CASE R2-directory  [label=before]
+-- probe: /dev/shm/ex18-absent/gate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/gate/expected.json
+-- table object: directory 40 bytes
+-- table sha256: sha256sum: /dev/shm/ex18-absent/gate/pointer-table.json: Is a di
+-- readlink: /dev/shm/ex18-absent/gate/pointer-table.json
+-- probe-mode exit=2 | gate-mode exit=2
+-- probe verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- gate  verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- probe findings:
+     CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json [Errno 21] Is a directory: '/dev/shm/ex18-absent/gate/pointer-table.json'
+
+### CASE R3-symlink-stale  [label=before]
+-- probe: /dev/shm/ex18-absent/gate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/gate/expected.json
+-- table object: symbolic link 52 bytes
+-- table sha256: edaa4e59c804bc0fd424c68daafa38a1bdef5fb395b3c10b3d61e614f5bef641
+-- readlink: /dev/shm/ex18-absent/stale/pointer-table-round4.json
+-- probe-mode exit=0 | gate-mode exit=1
+-- probe verdict: CITATION_DRIFT_VERDICT: reported findings=2 exit=0
+-- gate  verdict: CITATION_DRIFT_VERDICT: failed findings=2 exit=1
+-- probe findings:
+     CITATION_DRIFT: citation_dead entry=sc698-sc2-refuted-record SCORECARD.md:698 lacks 'SC2-refuted'
+     CITATION_DRIFT: record_word_missing entry=log1005-quoted-claim LOG.md:1005 no longer carries 'claim Kimi `rea-agents@6\\.4\\.0` at `config\\.toml:1478`' (append-only records are never rewritten)
+
+### CASE R4-symlink-dangling  [label=before]
+-- probe: /dev/shm/ex18-absent/gate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/gate/expected.json
+-- table object: symbolic link 46 bytes
+-- table sha256: sha256sum: /dev/shm/ex18-absent/gate/pointer-table.json: No such
+-- readlink: /dev/shm/ex18-absent/stale/does-not-exist.json
+-- probe-mode exit=2 | gate-mode exit=2
+-- probe verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- gate  verdict: CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+-- probe findings:
+     CITATION_DRIFT: pointer_table_unreadable entry=pointer-table.json [Errno 2] No such file or directory: '/dev/shm/ex18-absent/gate/pointer-table.json'
+
+### CASE R5-symlink-live  [label=before]
+-- probe: /dev/shm/ex18-absent/gate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/gate/expected.json
+-- table object: symbolic link 91 bytes
+-- table sha256: 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+-- readlink: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+-- probe-mode exit=0 | gate-mode exit=0
+-- probe verdict: CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+-- gate  verdict: CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+-- probe findings:
+
+### CASE R6-tampered-current-needle  [label=before]
+-- probe: /dev/shm/ex18-absent/gate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/gate/expected.json
+-- table object: regular file 12825 bytes
+-- table sha256: 3944e76887222f0aa937ceea87e0df3d4745d2fe72721e46d5a844391dfdb874
+-- readlink: /dev/shm/ex18-absent/gate/pointer-table.json
+-- probe-mode exit=0 | gate-mode exit=1
+-- probe verdict: CITATION_DRIFT_VERDICT: reported findings=1 exit=0
+-- gate  verdict: CITATION_DRIFT_VERDICT: failed findings=1 exit=1
+-- probe findings:
+     CITATION_DRIFT: citation_dead entry=sc59-stanza-key-anchor SCORECARD.md:59 lacks 'NEEDLE-THAT-CANNOT-MATCH-ANYTHING'
+
+### CASE R7-shrunk-table-5-dropped  [label=before]
+-- probe: /dev/shm/ex18-absent/gate/citation-drift-probe.py
+-- expected: /dev/shm/ex18-absent/gate/expected.json
+-- table object: regular file 10998 bytes
+-- table sha256: c0b569bb20120a6a98453a66797b69bab5b877855e375e0a79e04c8bbfdc786e
+-- readlink: /dev/shm/ex18-absent/gate/pointer-table.json
+-- probe-mode exit=0 | gate-mode exit=0
+-- probe verdict: CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+-- gate  verdict: CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+-- probe findings:
+
+DONE label=before
