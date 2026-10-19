@@ -930,6 +930,13 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   Tameshi's owner; tsukuroi ADJ-06 — remains integrator debt. Both verified
   sibling-side read-only.
 
+- 2026-10-17 — README: Devin wiki link. Operator directive (2026-10-17):
+  insert the Devin wiki link into the README header of every repository
+  with a generated wiki. a `**Wiki:**` link added to the `README.md` header to
+  https://app.devin.ai/org/veigapunk/wiki/VeigaPunk/shokunin-reverse-engineering?branch=main.
+  Evidence: the org's Devin wiki index lists this repo's generated wiki;
+  sibling lane READMEs carry the same `**Wiki:**` header.
+  Documentation-only change; no round run, no axis moved.
 ### arc2-loop1-round1 — freshness + operability + depth: three claims
 
 - Motivating evidence: carried debt named at the luna-round-9 close
