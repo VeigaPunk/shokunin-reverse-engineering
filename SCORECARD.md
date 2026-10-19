@@ -1922,3 +1922,54 @@ gates exist to enforce. Carried debt: the register append-past-:162
 residual; the mid-leg retest (operator-gated); the `available:true` class
 stays dated, not re-probed (no live REA session this round);
 `.ufo/waves/arc2-loop1-round10/C3.md` still dirty; `/tmp` quota standing.
+
+## arc3-loop1-round10 — coverage + depth + operability: three claims admitted, 2026-10-19
+
+Wave: 48 seats on `openai-codex/gpt-6-luna-max` (the scheduled devin-deepseek
+slot — the devin lane is exhausted, operator substitution). All 48 reports
+delivered. Claims measured at work commit `9c1d1fe`.
+
+- C1 coverage (owned) — a second verb family's `ev_` Evidence-ID formula
+  **closed**: `corpus/knowledge/2026-10-19-arc3-r10-rust-evidence-id-domain.md`
+  (EX-4's entry — the verdicts converged on it over the Vyper multi-target
+  drafts): `inspect_rust_binary` is path-sensitive because its semantic
+  projection carries `parameters.path`, `normalized_result.artifact.path`,
+  and an `artifact-path` location (`dist/application/rust/
+  RustBinaryService.js:55-80`); all four envelope IDs recomputed; display
+  fields (`subject.name`/`local_path`) excluded. Map token landed on the
+  Rust row; command A 88 → 89.
+- C2 depth (owned) — **rule #16** landed (SC-2's "Co-land every truth
+  dependency" — the verdicts' majority pick): before repairing a statement
+  whose truth depends on another deliverable, name the dependency and land
+  the complete set in one commit; a scratch projection is not a landed
+  result. Cites the r4 Vyper-wording↔C1 and r8 receipt↔extension couplings.
+  `rule_blocks` 15 → 16, all 16 resolved.
+- C3 operability (fleet) — the G21 register's named residual **closed**:
+  PL-3's unregistered-bullet guard applied to `c1-census-v10.py` (sha
+  `e4fb740c…` → `d6b4deaa…`). `FRONTIER_SECTIONS` + a bullet-start check
+  flags any `[-*+]` bullet inside a Frontier section that no G21 row keys —
+  measured: a seeded bullet appended at :163 now FAILs
+  `FRONTIER-UNEVALUABLE`; clean tree PASS, 14 rows asserted, errors [].
+
+Instruments at `9c1d1fe`: command A 88→**89/89** mapped, 15→**16/16** rules,
+10.0/10.0; census PASS + G21 register + unregistered-bullet guard + live
+`:4126` `current-ok`; probe findings=0 both modes; custody 28/28; PROVINCE
+162 held.
+
+| axis | evidence | verdict |
+|---|---|---|
+| coverage — C1 | corpus 88→89; second verb family's ev_ formula closed | improved |
+| depth — C2 | rule_blocks 15→16; the coupled-landing discipline codified | improved |
+| operability — C3 | register append-past-:162 residual closed; seeded bullet caught | improved |
+| freshness | corpus errata hold; no staleness reintroduced | unchanged |
+| calibration | 10 → 10 | unchanged |
+| adjacency | PROVINCE boundary untouched | unchanged |
+
+Learning trends: the arc's three recurring disciplines are now codified —
+coupled landing (rule #16, the lesson the r4 and r8 couplings earned),
+parsed-and-empty ≠ byte-absence (rule #15), and instrument-graded vs
+clause-audited (the G21 register + its new append guard). The wave kept the
+honesty standard: every claim's before-state measured, every landing
+re-derived at the commit. Carried debt: the mid-leg retest (operator-gated);
+the `available:true` class stays dated; `.ufo/waves/arc2-loop1-round10/C3.md`
+still dirty; `/tmp` quota standing.

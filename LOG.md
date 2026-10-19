@@ -1639,3 +1639,24 @@ its fix folded into the landing.
   recorded on the r8 receipt.
 - Instruments at `eb5a2c4`: command A 88/88, census PASS + G21 + ptr
   `current-ok`, probe 0/0 both modes, custody 28/28, PROVINCE 162.
+
+## 2026-10-19 — arc3-loop1-round10 (work commit `9c1d1fe`; records this entry)
+
+Round 10 of arc3 loop 1: 48 seats on `openai-codex/gpt-6-luna-max` (scheduled
+devin-deepseek slot — the devin lane is exhausted, operator substitution).
+All 48 reports delivered.
+
+- C1 coverage: second verb family's `ev_` formula CLOSED —
+  `corpus/knowledge/2026-10-19-arc3-r10-rust-evidence-id-domain.md` (EX-4's
+  entry): `inspect_rust_binary` is path-sensitive (its semantic projection
+  carries path fields); all four envelope IDs recomputed. Map token landed;
+  command A 88→89.
+- C2 depth: rule #16 landed (SC-2's "Co-land every truth dependency"): name
+  the dependency, land the complete set in one commit, a scratch projection
+  is not a landed result. `rule_blocks` 15→16, all 16 resolved.
+- C3 operability: G21 register's append-past-:162 residual CLOSED — PL-3's
+  unregistered-bullet guard applied (sha `e4fb740c…`→`d6b4deaa…`); a seeded
+  bullet at :163 now FAILs `FRONTIER-UNEVALUABLE`.
+- Instruments at `9c1d1fe`: command A 89/89 + 16/16, census PASS + G21 +
+  unregistered-bullet guard + ptr `current-ok`, probe 0/0 both modes, custody
+  28/28, PROVINCE 162.

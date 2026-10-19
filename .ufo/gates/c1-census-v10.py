@@ -273,7 +273,7 @@ SCOPE = [
 
     ("SCORECARD.md", 703, 768, "DATED", 704, r"arc2-loop1-round2"),
     ("SCORECARD.md", 769, 855, "DATED", 769, r"arc2-loop1-round3"),
-    ("SCORECARD.md", 1759, 1924, "DATED", 1759, r"arc3-loop1-round7"),
+    ("SCORECARD.md", 1759, 1975, "DATED", 1759, r"arc3-loop1-round7"),
 ]
 
 # ---- L1b: frontier-claim register (r10, G21). Frontier bullets carry no
