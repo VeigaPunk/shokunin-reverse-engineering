@@ -1494,3 +1494,87 @@ census residuals H2/H4/H5/H6 + partial-needle narrowing; custody D1-D7; the
 pre-existing dirty `.ufo/waves/arc2-loop1-round10/C3.md` (not this round's);
 host `/tmp` quota exhaustion (standing); the config.toml custody drift
 (operator-owned, recorded). Retired: none.
+
+## arc3-loop1-round3 — coverage + operability + freshness: three claims admitted, 2026-10-19
+
+Round 3 of the reset stagnation window (3/10). Wave: 64 seats frozen pre-dispatch
+on token-plan key 1; the lane hit its **monthly quota mid-run** (43 reports
+landed); per the operator directive the remaining seats re-dispatched on the devin
+lane (18 of 21 backfilled; final census 62/64 — EX-14 and SC-3 reports pending
+with complete artifact trees). Substitution recorded with cause, not a lane
+signal. Owned axis worked: coverage.
+
+- C1 coverage (owned) — EVM optimizer-enabled + non-ERC-20-shaped carriers, the
+  r1 entry's named Unknown. Landed at work commit `c418be0`: the new entry
+  (18,596 B / 37 lines, fresh identity `bf39c584…`) with **seven reviewer fix
+  sets applied pre-landing** — a false JUMPDEST-offsets line (the hand-assembled
+  control's declared immediates sit 2 bytes before its JUMPDESTs), an internal
+  contradiction, a citation overclaim (five nonexistent files), dead paths, two
+  size labels, and the id-comparator advice (compare by decoded bytecode sha,
+  not the costume-carrying subject digest); the additive map token kept the row
+  line-neutral (README `a451ad16…`, exactly the four-seat-projected hash). The
+  r1 entry received an **append-only erratum** (creation blobs do embed their
+  runtime dispatch tables; the `16ee4b79` constant is a CBOR-trailer metadata
+  artifact) — fresh identity `5761003f…`, historical records untouched. Measured:
+  optimizer-on/off same-source controls recover identical selector sets across
+  two pins; binary-search dispatch layouts at K=8/11/13; zero false positives on
+  decoy constants; K/K on 8 carrier families.
+- C2 operability (fleet) — custody-pair hardening (the round-2 verdict's own D
+  series). Landed: tool `7cd19c3c…` (1155 lines) + README `f30df42e…` (185
+  lines) + one registry-row voice in the same commit. The four holes closed with
+  declared classes: exists-but-unreadable → `UNEVALUABLE` (exit 14, never a
+  fail-open MATCH); reference coverage gated (`--require-paths`, USAGE exit 2
+  naming the unaccounted canonical paths); the write guard now covers
+  `set(paths) ∪ CUSTODY_PATHS` by resolved path and inode (hardlink and symlink
+  aliases refused); selftest scratch-base → USAGE. Selftest 15 → 22, every new
+  case proven load-bearing by sabotage arms; the full round-2 regression matrix
+  re-run (41/41 hold). The round's live pair (both receipts self-pinning the
+  revised tool) verifies MATCH 5/5.
+- C3 freshness (fleet) — citation-drift table arc3 coverage. Landed: 31 → 57
+  entries (+26, 0 removed/modified/duplicated) + the quoted class 4 → 5. The
+  acceptance census (every pinnable arc3 citation covered or adjudicated) reads
+  12/12 on the durable surfaces; the one uncovered row (`LOG.md`'s record of the
+  r2 SHONEN re-point) closed by the proposed quoted entry in the same commit.
+  The C2↔C3 collision (the table anchored the custody row's precedence clause
+  that C2's row revision rewrites — measured by four seats as a guaranteed
+  `citation_dead` at the coupled landing) is resolved by the re-anchored
+  optional-group needle + digest re-pin + same-commit landing; probe re-run
+  clean. Residuals named: the exempt ledger's first clause is falsified by the
+  table's own anchor rows (review-enforced, not instrument-enforced); anchor
+  substring semantics; fragility ratings advisory.
+- Custody: 4/5 byte-identical across the wave; the Kimi client config drifted
+  pre-wave (12:57:45Z — the same operator-side interactive-session class the
+  tool first caught in round 2; v1 re-reads therefore show their contract as
+  4/5, recorded verbatim). The revised-tool pair is unaffected (drift
+  predates its pre receipt; zero in-window drift).
+- Measured at the work commit `c418be0`: command A **83/83, missing [],
+  dangling [], rules 14, 14/14, 10.0/10.0** (prior 82 byte-identical: one file
+  added, one README line reworded, one r1 append); census PASS 0/0/0/0; probe
+  findings=0 in both modes + selftest 13/13; custody selftest 22/22; the
+  five-path pair MATCH.
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| coverage — C1 | 82/82 → 83/83 (optimizer-enabled + non-ERC-20 EVM carriers admitted, quality-gated; r1 errata appended) | improved |
+| operability — C2 | four named fail-open/clobber/traceback holes → declared exit classes; selftest 15 → 22; guard extended; one row voice | improved |
+| freshness — C3 | probe table 31 → 57 (+R1 quoted closure); arc3 citation census 12/12; collision re-anchored same-commit; findings=0 both modes | improved |
+| depth | 10.0 → 10.0 (14/14 measured) | unchanged |
+| calibration | 10 → 10 | unchanged |
+
+Learning trends: expansion **improved** (second denominator growth of the arc);
+quality improved materially (seven fix sets applied pre-landing — two of them
+claim-blocking false statements the metrics could not see; the r1 erratum
+landed append-only with fresh identities per rule #14); discernment improved
+(the C2↔C3 collision was predicted pre-landing by four seats, measured
+end-to-end, and resolved by a coupled landing — the strongest cross-chain
+coordination of the arc; the provider substitution was recorded with cause and
+per-lane delivery counts, not smoothed).
+Planned: round 4 per schedule (hyper lane, 32–64 seats; with token-plan
+exhausted, any further deepseek-flash substitution rides the devin lane per the
+operator directive). Carried debt (named): custody residuals (sidecar scope,
+mkdir guard, coverage counting by stanza, both-sides-absent MATCH adjudicated
+as declared design); census H2/H4/H5/H6 + partial-needle narrowing; the EX-12
+control-expectation delta (pre-registered refusal vs measured parsed-and-empty);
+EX-14/SC-3 reports pending (artifacts complete); the pre-existing dirty
+`.ufo/waves/arc2-loop1-round10/C3.md`; host `/tmp` quota (standing). Retired:
+none.

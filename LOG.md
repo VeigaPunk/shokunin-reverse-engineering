@@ -1453,3 +1453,35 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   integration captures (CONTENT-DRIFT, exit 10) — operator-side churn class,
   recorded not repaired; other 4/5 held.
 - Scope: kaidoku repo only; no pushes; no installs; custody read-only.
+
+### arc3-loop1-round3 — EVM optimizer leg + custody hardening + probe-table extension (2026-10-19)
+
+- Wave: 64 seats frozen pre-dispatch on token-plan key 1. The lane exhausted its
+  monthly quota mid-run (43 reports landed, freeze measured by the integrator's
+  poller). Operator-directed devin backfill: 18 of 21 remaining seats re-dispatched
+  and landed; final census 62/64 (EX-14, SC-3 reports pending, artifact trees
+  complete). Substitution recorded with cause and per-lane counts.
+- C1 coverage: optimizer-enabled + non-ERC-20 carriers recovered K/K across two
+  pins with same-source optimizer-off controls (identical sets; binary-search
+  layouts at K=8/11/13; zero decoy false positives). Landed the r3 entry with
+  seven reviewer fix sets applied (fresh identity `bf39c584…`, 18,596 B) + the
+  additive map token (README `a451ad16…`). The r1 entry gained an append-only
+  erratum (creation blobs embed their runtime dispatch tables; `16ee4b79` is a
+  CBOR-trailer artifact) — fresh identity `5761003f…`. Command A at `c418be0`:
+  83/83, 14/14.
+- C2 operability: custody-pair hardening landed at `7cd19c3c…` (1155 L; README
+  `f30df42e…`): EACCES → UNEVALUABLE exit 14 (no fail-open MATCH), verify
+  coverage gate, write-guard extended to set(paths) ∪ CUSTODY_PATHS (alias
+  refusal measured), selftest scratch guard; selftest 15 → 22 with sabotage
+  arms; round-2 regression 41/41. Registry row revised in the same commit.
+  Live pair MATCH 5/5.
+- C3 freshness: probe table 31 → 57 (+26) + quoted 4 → 5 (the r2 SHONEN-repoint
+  record closed). C2↔C3 collision (precedence-clause anchor vs the revised row,
+  four-seat-measured) resolved by the re-anchored optional-group needle + digest
+  re-pin + same-commit landing. Census acceptance 12/12; findings=0 both modes.
+- Custody: 4/5 held; the Kimi client config's pre-wave drift (12:57:45Z,
+  operator-side class) recorded; v1 re-read contract reads 4/5 by cause.
+- Hygiene: one committed `.pyc` caught by the pre-commit name check and removed
+  in `5be4a26` + a root `__pycache__/` ignore. A mid-wave third-party clobber of
+  the r1 historical receipt was observed, exonerated, and restored byte-identical
+  within the same minute (two seats' reports).
