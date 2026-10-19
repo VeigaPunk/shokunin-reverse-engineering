@@ -1538,3 +1538,32 @@ arc3 rounds 1–4 first-hand and dispositioned the arc2 carried debt.
   reconstructible in-repo).
 - Instruments at `58c3db7`: command A 84/84, census PASS, probe 0/0, custody
   28/28, PROVINCE 162.
+
+## 2026-10-19 — arc3-loop1-round6 (work commit `2fba56f`; records this entry)
+
+Round 6 of arc3 loop 1: 48 seats, delivered as 3 zai + 45 opencode-go-7 after
+two provider substitutions and two dispatch interruptions. The scheduled
+`xai-oauth/grok-4.7-fast` returned 403 on all seats; the zai wave was
+interrupted after 3 seats delivered verified artifacts (kept); `antigravity/
+gemini-3.8-flash` and `cursor/grok-4.7-xhigh-fast` were each interrupted at
+dispatch; the 45 remaining seats completed on `opencode-go-7/deepseek-v4.1-flash`.
+
+- C1 operability: census Frontier blind spot (R1 residual since r4) CLOSED —
+  PL-4's G21 frontier-register patch applied to `c1-census-v10.py` (sha
+  `d0772ce8…` → `80027570…`, 713 lines). The register pins each Frontier
+  bullet's span and asserts REQUIRED anchors + FORBIDDEN retracted literals;
+  the reintroduced stale literal now FAILs `FRONTIER-STALE` where v10 read
+  PASS. Clean tree PASS, 14 rows asserted, errors []; 17 shared counters
+  unchanged.
+- C2 coverage: the r3/r4 `viaIR` Unknown CLOSED —
+  `corpus/knowledge/2026-10-19-arc3-r6-viair-dispatch-shape.md` (EX-7's entry
+  with VZ-3's three corrections: CBOR `73`→`64`, the 15-functions census, the
+  SUB-leg scoping). viaIR compiles a fourth dispatcher class (inverted guard
+  + linear EQ chain + `SUB`-terminated leg); probe K/K 15/15 both pins. Map
+  token landed; command A 84→85.
+- C3 depth: rule #15 landed (corrected `a1bceb40…` text — the `:34`→`:29` and
+  `r1:24`→`:31` citation fixes applied): parsed-and-empty ≠ byte-absence —
+  settle byte questions with a census, not the probe's function count.
+  `rule_blocks` 14→15, all 15 resolved.
+- Instruments at `2fba56f`: command A 85/85 + 15/15, census PASS + G21
+  register, probe 0/0 both modes, custody 28/28, PROVINCE 162.

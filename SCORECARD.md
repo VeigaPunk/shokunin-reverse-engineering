@@ -1694,3 +1694,64 @@ Frontier blind spot (R1) and ptr_check blind spot (R2) stand; the r3
 matrix-only rows and r3-07 Carrier-3 offsets remain UNVERIFIABLE (evidence
 not retained); `.ufo/waves/arc2-loop1-round10/C3.md` still dirty; `/tmp`
 quota standing.
+
+## arc3-loop1-round6 — operability + coverage + depth: three claims admitted, 2026-10-19
+
+Wave: 48 seats, delivered as 3 zai + 45 opencode-go-7 after two provider
+substitutions and two interruptions — the scheduled `xai-oauth/grok-4.7-fast`
+returned 403 on all 48 seats (~30s), the zai `glm-5.3-flash-low` wave was
+interrupted after 3 seats delivered verified artifacts (kept), then
+`antigravity/gemini-3.8-flash` and `cursor/grok-4.7-xhigh-fast` were each
+interrupted at dispatch (0 delivered); the 45 remaining seats completed on
+`opencode-go-7/deepseek-v4.1-flash`. Claims measured at work commit `2fba56f`.
+
+- C1 operability (fleet) — the census Frontier blind spot (R1 residual carried
+  since r4) **closed**: PL-4's G21 frontier-register patch applied to
+  `c1-census-v10.py` (sha `d0772ce8…` → `80027570…`, 713 lines). The register
+  pins each Frontier bullet's span and asserts REQUIRED earning anchors +
+  FORBIDDEN retracted literals — measured on a scratch tree: the reintroduced
+  stale literal ("real solc/vyper-compiled bytecode untested" back in :91-93)
+  now FAILs `FRONTIER-STALE` where v10 read PASS; clean tree still PASS,
+  14 rows asserted, errors []. All 17 shared JSON counters unchanged.
+- C2 coverage (owned) — the r3/r4 named `viaIR` Unknown **closed**:
+  `corpus/knowledge/2026-10-19-arc3-r6-viair-dispatch-shape.md` (EX-7's entry,
+  VZ-3's three text corrections applied — CBOR `73`→`64` verified against the
+  runtime bytes, the 15-functions census, the SUB-leg scoping). viaIR
+  compiles a **fourth dispatcher class** (inverted calldatasize guard +
+  linear ascending EQ chain + `SUB`-terminated final leg, distinct from the
+  r1 linear, r3 binary-search, r4 modulo classes); probe K/K 15/15 at both
+  pins; the `5f3560e01c` prologue does NOT identify the pipeline — the
+  compare-tree class does. Map token landed; command A 84 → 85.
+- C3 depth (owned) — **rule #15** landed (the corrected `a1bceb40…` text,
+  not the verbatim `763c44b5…` draft — the `:34`→`:29` citation fix and the
+  `r1:24`→`:31` containment fix both applied): "a parsed-and-empty result is
+  a statement about the parser's scope, never proof of byte absence — settle
+  byte questions with a census, not with the probe's function count." Eight
+  citations, all in-bounds. `rule_blocks` 14 → 15, all 15 resolved.
+
+Instruments at `2fba56f`: command A 84→**85/85** mapped, 14→**15/15** rules,
+10.0/10.0; census PASS with G21 register (14 rows asserted, errors []);
+probe findings=0 both modes; custody 28/28; PROVINCE 162 held.
+
+| axis | evidence | verdict |
+|---|---|---|
+| operability — C1 | census Frontier blind spot closed; seeded stale literal caught (FRONTIER-STALE); clean PASS held | improved |
+| coverage — C2 | corpus 84→85; viaIR Unknown closed with a fourth dispatcher class measured | improved |
+| depth — C3 | rule_blocks 14→15; the arc's biggest recurring lesson codified | improved |
+| freshness | corpus errata from r5 still hold; no staleness reintroduced | unchanged |
+| calibration | 10 → 10 | unchanged |
+| adjacency | PROVINCE boundary untouched; gate edit in-lane | unchanged |
+
+Learning trends: the round's real yield is the instrument fix — the blind
+spot that made r4's PROVINCE repairs clause-audited-by-hand is now graded by
+the instrument itself (G21 register). Discernment improved (the convergence
+seats caught that only PL-4's design, of five candidates, closes the whole
+fault set; the verbatim rule draft had two citation defects the corrected
+text fixes). Provider resilience recorded honestly: the round survived two
+full provider outages (xai 403, two dispatch interruptions) and landed on
+its third effective lane — substitution with cause recorded each time.
+Carried debt: the append-past-:162 register residual (named in PL-4's patch
+text — a new bullet beyond the last declared line sits outside the register
+until re-keyed); the census's `ptr_check` blind spot (R2) stands; the mid-leg
+retest stays operator-gated; `.ufo/waves/arc2-loop1-round10/C3.md` still
+dirty; `/tmp` quota standing.
