@@ -166,7 +166,6 @@ A row is written when its file exists, never before.
 | `2026-10-18-caller-independent-services` | arc2-loop1-round7 | long Ghidra runs are caller-independent user services, never launcher-bound scopes; containment and lifetime are independent claims; envelope + journal are the record |
 | `2026-10-18-mechanism-matched-walls` | arc2-loop1-round8 | wall engagements change exactly the mechanism the prior failure names; a natural control seals the attribution; a fifth engagement without a new mechanism retires the thread |
 | `2026-10-15-round-1-admission-correction` | 1 (same blocked recovery) | replaces unconditional admission diagnostic with routing/receipt/wave consistency checks; twelve isolated exit/finding cases; no new axis score or verified-round increment |
-| `round-12` | arc3-loop1-round12 | eight mistake classes from finishing a frozen round: a 3-seed measurement overstated substring needles (17/24 mutants killed) and full-line pins over-corrected (1/9 false alarm) — order-free token lookaheads; live CLI legs ran without a custody pre-pair; seat computations need retained scripts |
 
 ## Frontier
 
