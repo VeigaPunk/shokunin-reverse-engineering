@@ -1811,3 +1811,60 @@ C1 `ptr_check` extension (mechanism proven; needs a re-anchored receipt
 first); `PROVINCE.md:50`'s unqualified count; the mid-leg retest
 (operator-gated); the register append-past-:162 residual;
 `.ufo/waves/arc2-loop1-round10/C3.md` still dirty; `/tmp` quota standing.
+
+## arc3-loop1-round8 — operability + freshness + coverage: three claims admitted, 2026-10-19
+
+Wave: 24 seats on `openai-codex/gpt-6-luna-max` (the second zai slot — lane
+usage-exhausted, operator substitution). All 24 reports delivered; the wave
+caught a pre-existing gate FAIL (the r7 SCORECARD section at :1776-1783 sat
+outside declared scope) and folded its fix into the coupled landing. Claims
+measured at work commit `53fcf0c` + probe fix `227443e`.
+
+- C1 operability (fleet) — the `ptr_check` blind spot (R2 residual, the r7
+  adjudicated-partial) **closed, done right**: EX-1's candidate applied to
+  `c1-census-v10.py` (sha `80027570…` → `e4fb740c…`). The `if not occ`
+  suppression removed so `path:line` pointers are collected even in
+  pin-carrying clauses; a new DATED-scope SCORECARD row (1759-1813) fixes the
+  undeclared FAIL the wave caught; DATED-scope stale pointers class
+  `historical` (preserving the receipt-stamped adjudication). Measured: the
+  live `:4126` pointer evaluates `current-ok` on the clean tree; a re-keyed
+  dead pointer (`:3546`) FAILs `stale=1` on a scratch tree; G21 + the 19-key
+  JSON contract + all prior counters intact.
+- C2 freshness (fleet) — PROVINCE pin pointer re-anchored **in the same
+  commit**: `:3546` → `:4126` (the live `rea-agents@6.7.0` line — re-derived;
+  `:3546` had already drifted to a Copilot block). Receipt landed at
+  `.ufo/receipts/arc3-loop1-round8-kimi-rea-line.txt` carrying the live
+  line's content sha (`eb237377…` ex-LF / `eb1c7da7…` incl-LF). The probe's
+  `prov18-stamp-named` needle (`17:55:49Z receipt`) restored contiguous in
+  `227443e` after the first rewrite dropped it.
+- C3 coverage (owned) — the Vyper non-default-optimizer Unknown **closed**:
+  `corpus/knowledge/2026-10-19-arc3-r8-vyper-optimizer-dispatch-shapes.md`
+  (EX-8's entry — the most complete re-derived evidence): `--no-optimize`
+  compiles an EQ/ISZERO chain (8 PUSH4 legs, offsets `PUSH4 pc + 12` →
+  CALLVALUE); `-O codesize` compiles a packed selector/target table (no
+  opcode-boundary PUSH4, 61-byte tail, all offsets shared `DUP1`); explicit
+  `-O none` ≡ `--no-optimize` resolved (the r7 discrepancy). Map token
+  landed; command A 86 → 87.
+
+Instruments at `227443e`: command A 86→**87/87** mapped, 15/15 rules,
+10.0/10.0; census PASS + G21 register + the live `:4126` pointer evaluated
+`current-ok`; probe findings=0 both modes; custody 28/28; PROVINCE 162 held.
+
+| axis | evidence | verdict |
+|---|---|---|
+| operability — C1 | `ptr_check` blind spot closed on a real anchor; seeded dead-pointer caught; undeclared FAIL fixed | improved |
+| freshness — C2 | PROVINCE pointer re-anchored to live line; receipt landed; probe needle restored | improved |
+| coverage — C3 | corpus 86→87; Vyper optimizer-forms Unknown closed | improved |
+| depth | 15 → 15 | unchanged |
+| calibration | 10 → 10 | unchanged |
+| adjacency | PROVINCE boundary untouched | unchanged |
+
+Learning trends: the arc's first adjudicated-partial resolved correctly —
+the r7 claim's mechanism was buildable but its anchor was stale, and r8's
+coupled landing (re-receipt + extension + re-anchor in one commit) is exactly
+the fix the adjudication named. Discernment improved (the wave caught the
+pre-existing undeclared FAIL before it could ship as a "clean PASS").
+Carried debt: the register append-past-:162 residual; the mid-leg retest
+(operator-gated); the perishable pin-line class will drift again (the receipt
+now carries the live line's content hash so the next drift is detectable);
+`.ufo/waves/arc2-loop1-round10/C3.md` still dirty; `/tmp` quota standing.

@@ -1591,3 +1591,29 @@ remaining zai slots this session). All 24 reports delivered.
   value; append-only erratum landed on the pacman entry.
 - Instruments at `7deeb36`: command A 86/86, census PASS + G21, probe 0/0 both
   modes, custody 28/28, PROVINCE 162.
+
+## 2026-10-19 — arc3-loop1-round8 (work commit `53fcf0c` + probe fix `227443e`; records this entry)
+
+Round 8 of arc3 loop 1: 24 seats on `openai-codex/gpt-6-luna-max` (the second
+zai slot — lane usage-exhausted, operator substitution). All 24 reports
+delivered; the wave caught a pre-existing gate FAIL (the r7 SCORECARD section
+outside declared scope) and folded its fix into the coupled landing.
+
+- C1 operability: `ptr_check` blind spot CLOSED — EX-1's candidate applied
+  (gate sha `80027570…`→`e4fb740c…`). The `if not occ` suppression removed so
+  `path:line` pointers are collected in pin-carrying clauses; a new
+  SCORECARD DATED row (1759-1813) fixes the undeclared FAIL; DATED stale
+  pointers class `historical`. Live `:4126` evaluates `current-ok`; a dead
+  re-key FAILs `stale=1`. G21 + 19-key JSON + prior counters intact.
+- C2 freshness: PROVINCE pin pointer re-anchored `:3546`→`:4126` in the same
+  commit (the live `rea-agents@6.7.0` line; `:3546` had drifted to a Copilot
+  block). Receipt at `.ufo/receipts/arc3-loop1-round8-kimi-rea-line.txt`
+  (content sha `eb237377…`/`eb1c7da7…`). The `17:55:49Z receipt` needle
+  restored contiguous in `227443e`.
+- C3 coverage: Vyper non-default-optimizer Unknown CLOSED —
+  `corpus/knowledge/2026-10-19-arc3-r8-vyper-optimizer-dispatch-shapes.md`
+  (EX-8's entry): `--no-optimize` an EQ/ISZERO chain, `-O codesize` a packed
+  selector/target table, `-O none` ≡ `--no-optimize` resolved. Map token
+  landed; command A 86→87.
+- Instruments at `227443e`: command A 87/87, census PASS + G21 + live
+  pointer `current-ok`, probe 0/0 both modes, custody 28/28, PROVINCE 162.
