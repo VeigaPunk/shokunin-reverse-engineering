@@ -1485,3 +1485,30 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
   in `5be4a26` + a root `__pycache__/` ignore. A mid-wave third-party clobber of
   the r1 historical receipt was observed, exonerated, and restored byte-identical
   within the same minute (two seats' reports).
+
+## 2026-10-19 — arc3-loop1-round4 (work commit `40de383`; records this entry)
+
+Round 4 of arc3 loop 1: 48-seat wave on the declared R4 fallback lane
+`devin/deepseek-v4-1-flash-max` (hyper provider exhausted — 402 on all seats;
+token-plan quota died mid-R3). All 48 reports delivered; three chains VERIFIED.
+
+- C1 coverage: Vyper leg landed — `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md`
+  (vyper 0.4.3, runtime 1,562 B, `inspect-evm-interface` 15/15 K/K at both pins,
+  `ev_405e2a2a…`, third dispatch shape). Four review fix sets applied to the
+  draft before landing (PUSH32-substring, same-path, argument-count mechanism,
+  QUALITY cite); EX-07's 6.5.0-boundary correction applied to the r3 sibling.
+  Map token added to `corpus/README.md` (83→84 mapped).
+- C2 freshness: PROVINCE staleness census (6→9 rows under peer re-measurement:
+  F2's sub-cap crashpad core inspects exit 0; C2 "35 features" a corpus
+  miscount of its own 34-name list; C3 asar row names 9 where host holds 12)
+  repaired same-line — EX-15's 8-hunk set + EX-12's asar-row patch + PL-2's
+  coupled ghidra erratum, 162→162 lines, nothing above :116 shifted, B2 cites
+  r12-02+r14-01. `JEB (unprobed)` adjudicated NO-CHANGE.
+- C3 operability: custody-pair residuals closed at `520341d` (sidecar scope,
+  mkdir guard, distinct-path gate, both-absent ruling; selftest 22→28; pair
+  MATCH 5/5).
+- Instruments at `40de383`: command A 84/84, 14/14, 10.0/10.0; census PASS;
+  probe findings=0 both modes.
+- Named debt: the census cannot grade Frontier-region repairs (UNDECLARED
+  scope, R1 residual); `ptr_check` unreachable on pinned clauses (R2); the
+  pre-existing dirty `.ufo/waves/arc2-loop1-round10/C3.md`; `/tmp` quota.

@@ -1578,3 +1578,54 @@ control-expectation delta (pre-registered refusal vs measured parsed-and-empty);
 EX-14/SC-3 reports pending (artifacts complete); the pre-existing dirty
 `.ufo/waves/arc2-loop1-round10/C3.md`; host `/tmp` quota (standing). Retired:
 none.
+
+## arc3-loop1-round4 — coverage + freshness + operability: three claims admitted, 2026-10-19
+
+Wave: 48 seats on `devin/deepseek-v4-1-flash-max` (the declared R4 fallback —
+hyper exhausted at the provider, 402 on all seats within ~30s of dispatch;
+token-plan monthly quota died mid-R3). All 48 seat reports delivered; three
+chains VERIFIED. Claims measured at work commit `40de383`.
+
+- C1 coverage — the r3-named Unknown (Vyper-compiled EVM bytecode) closed:
+  `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md` records
+  vyper-0.4.3+commit.bff19ea2 (the round's one authorized install), runtime
+  1,562 B, `inspect-evm-interface` 15/15 K/K at both pins (`ev_405e2a2a…`),
+  `dispatch:"abi"`, a third dispatch shape (modulo-indexed jump table). The
+  entry carries four review fix sets (the `69656e74` PUSH32-substring fix, the
+  same-path sentence, the argument-count inference mechanism, the QUALITY.md
+  citation) + EX-07's line-neutral 6.5.0-boundary correction applied to the r3
+  sibling entry; `corpus/README.md` map token landed (84 files mapped).
+- C2 freshness — PROVINCE staleness census + repairs. The wave's census grew
+  6→9 under peer correction (F2's sub-cap organic core inspects exit 0; C2's
+  "35 features" is a corpus miscount of its own 34-name list; C3's asar row
+  names 9 where the host holds 12). Landed: EX-15's 8-hunk same-line set + EX-12's
+  Core-asar-row patch + PL-2's coupled corpus erratum (the PROVINCE↔corpus
+  coupling) — all nine stale literals cleared, 162→162 lines held, no line
+  shifts above :116 (the SHONEN:12 clause at :114-116 preserved), B2 cites
+  r12-02 AND r14-01 (the third input sub-class). `JEB (unprobed)` adjudicated
+  NO-CHANGE-with-cause (the verb was probed; no JEB install exists).
+- C3 operability — custody-pair residuals closed at commit `520341d`: sidecar
+  scope, mkdir guard, distinct-path gate, both-absent ruling; selftest 22→28;
+  registry row now carries the 28-case form. Probe findings=0 both modes.
+
+Instruments at `40de383`: command A 83→**84/84** mapped, 14/14 rules,
+10.0/10.0; census PASS 0/0/0/0; probe findings=0 both modes; pair MATCH 5/5.
+
+| axis | evidence | verdict |
+|---|---|---|
+| coverage — C1 | corpus 83→84; the r3-named Unknown closed; 15/15 K/K both pins | improved |
+| freshness — C2 | 9 stale rows → 0 (clause audit; the census gate cannot grade the Frontier region — named residual R1); PROVINCE 162 held | improved |
+| operability — C3 | custody residuals closed; selftest 22→28; pair MATCH 5/5 | improved |
+| depth | 10.0 → 10.0 | unchanged |
+| calibration | 10 → 10 | unchanged |
+| adjacency | no bleed (PROVINCE boundary untouched) | unchanged |
+
+Learning trends: expansion improved; discernment improved (the wave caught and
+corrected its own census three times by first-hand re-measurement — the exact
+honesty discipline rule #14 exists for); quality improved (five independent
+repair voices produced, the convergence verdict picked the complete composition
+and named the malformed/defective candidates rather than averaging).
+Carried debt (named): the census blind spot (Frontier region UNDECLARED — the
+repairs are clause-audited, not instrument-graded); `ptr_check` unreachable on
+pinned clauses (R2); the pre-existing dirty `.ufo/waves/arc2-loop1-round10/C3.md`;
+`/tmp` quota standing. Retired: none.
