@@ -1,0 +1,22 @@
+Seat CR-1, arc3-loop1-round6 — peer-instrument cross-check (EX-08 recon.py, read-only)
+
+Command per carrier (from /var/tmp/cr1-r6):
+  python3 <r4>/EX-08/recon.py extract <carrier>.runtime.hex hex
+
+carrier         len push4_all chain_sel eq_sel vyper_sel 
+K8              418         8         0      0         8 
+K8.nooptimize   617         8         0      8         0 
+K8.Ocodesize    360         0         0      0         0 
+
+Reading:
+- Form A: recovered by the Vyper XOR-chain path (8), strict chain 0 — as expected (XOR, not EQ).
+- Form B: recovered by the loose EQ-window path (8), strict chain 0 and Vyper XOR chain 0.
+  => a strict Form-A chain parser is blind to B, but this script is NOT: it returns 8.
+- Form C: every counter 0; push4_all empty. Only a table-aware census recovers the 8
+  selectors (mine does: header at 299, 8 entries at 304..360).
+
+Discrepancy to record: the r4 corpus source line for EX-08 says the script 'returns 0 on the
+--no-optimize and -O codesize forms'. Against the file at the same wave path, the Form-B half
+is NOT reproduced: extract returns 8 via dispatch_eq_selectors. The Form-C half is reproduced
+exactly. The claim may describe the strict-chain counter alone; as written it is stale/incorrect
+for Form B. Flagged for the parent/VZ; no corpus file was modified by this seat.

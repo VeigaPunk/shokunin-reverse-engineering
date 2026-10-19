@@ -1,0 +1,50 @@
+# EX-2 verification commands (all first-hand, 2026-10-19; scratch /var/tmp/ex2-arc3r6)
+cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+git rev-parse HEAD                                  # c625d5de57e045188b5ce8cd450a57b349f90785
+git log --oneline -4                                # c625d5d records, 58c3db7 work, 71668cc, 40de383
+sha256sum .ufo/gates/c1-census-v10.py              # d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5
+wc -l .ufo/gates/c1-census-v10.py PROVINCE.md      # 610, 162
+sed -n '216,222p' .ufo/gates/c1-census-v10.py      # the seven PROVINCE SCOPE rows
+python3 .ufo/gates/c1-census-v10.py --quiet        # PASS, PROVINCE loci=6, G2 17/14/3
+
+# programmatic SCOPE coverage + frontier loci
+python3 - <<'PY'
+import importlib.util
+spec=importlib.util.spec_from_file_location("g","/var/tmp/ex2-arc3r6/pristine/c1-census-v10.py")
+g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+prov=[s for s in g.SCOPE if s[0]=="PROVINCE.md"]
+print([s[:5] for s in prov])
+print("covering 73-93:", [s[:5] for s in prov if not (s[2]<73 or s[1]>93)])
+print("covering 133-162:", [s[:5] for s in prov if not (s[2]<133 or s[1]>162)])
+PY
+
+# patch round-trip (PL-4)
+cd /var/tmp/ex2-arc3r6
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show HEAD:.ufo/gates/c1-census-v10.py > pristine/c1-census-v10.py
+cp pristine/c1-census-v10.py pl4-gate.py
+patch -p0 pl4-gate.py < /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/PL-4/patch-v10-to-r10.diff
+sha256sum pl4-gate.py                               # 8002757078a685f515804fc6128ebf76b9925d2033be99a293621e18d14aecca
+wc -l pl4-gate.py                                   # 713
+
+# peer instruments (measured on the same trees)
+# PL-2: copied from claims/c1/PL-2/prior-attempt/c1-census-v10-r10-proposed.py (peer moved the dir mid-run)
+sha256sum pl2-gate.py                               # 2d7ee95ba2743bde0b658c91d867a46e04e3e9e14de41d2cb60f2ff46238ce7b
+# RV-3: diff extracted from claims/c1/RV-3.md fenced block; patch -p0 onto pristine
+sha256sum rv3-gate.py                               # 8e4206796fec2e16fb6f2c1959f33b63bbcb9643471d42472ac6bc2cba195ebf
+
+# fault trees: build_trees.py + build_trees2.py (exact strings, count-asserted replacements);
+# historical before-states extracted from `git show 40de383^:PROVINCE.md` bullet blocks.
+python3 build_trees.py && python3 build_trees2.py
+python3 run_all.py                                  # matrix-all.txt / matrix-all.json
+
+# requirement (c): JSON invariance on the clean tree
+python3 pristine/c1-census-v10.py --root trees/clean --json > cells/clean__v10.json
+python3 pl4-gate.py --root trees/clean --json > cells/clean__PL4.json
+# shared keys 17, differing values [], r10-only frontier_errors/frontier_rows
+
+# requirement (a): real tree with the patched instrument
+python3 /var/tmp/ex2-arc3r6/pl4-gate.py --quiet     # PASS exit 0, FRONTIER 14 rows errors []
+
+# custody
+git diff --stat                                     # pre-existing .ufo/waves/arc2-loop1-round10/C3.md only (mtime 2026-10-18 23:01, not this wave)
+sha256sum .ufo/gates/c1-census-v10.py              # unchanged d0772ce8...

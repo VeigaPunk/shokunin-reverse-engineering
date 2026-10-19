@@ -1,0 +1,79 @@
+--- r10-from-patch/c1-census-v10-r10.py	2026-10-19 13:55:24.413498382 -0300
++++ r10-coverage.py	2026-10-19 13:59:36.485094039 -0300
+@@ -306,6 +306,16 @@
+     ("PROVINCE.md", 161, 162, [r"Operator-gated", r"\bIDA\b"], []),
+ ]
+ 
++REGIONS = [
++    ("PROVINCE.md", 73, 94, {73: r"^## Frontier$"}),
++    ("PROVINCE.md", 133, 162, {133: r"^### Round-4 frontier \(post-unlock\)$"}),
++]
++# rows whose span is a single bullet: the first line must open a bullet and no
++# later line in the span may open another one (a compensated insertion puts a
++# second bullet inside a shifted window).
++FRONTIER_SHAPE = {("PROVINCE.md", s): "bullet" for s in
++                  (82, 84, 87, 89, 91, 135, 139, 145, 147, 149, 151, 157, 161)}
++
+ PIN = re.compile(r"rea-agents@(\d+\.\d+\.\d+)", re.I)
+ VER = re.compile(r"(?<![\d.])6\.\d+\.\d+")
+ PTR = re.compile(r"((?:~|/)[\w./+-]+\.(?:json|toml|ya?ml)):(\d+)")
+@@ -418,6 +428,50 @@
+     return errs
+ 
+ 
++def region_check(filelines):
++    """EX-1 delta (G22): every non-blank line inside a declared frontier region
++    must sit in a FRONTIER row span (or be a declared header anchor), and no
++    non-blank content may sit past the declared tail.  Without this, a new
++    bullet inserted at :132-:135 is absorbed by the shifted REQUIRED windows
++    (measured: the frozen stale literal at :134 read PASS exit 0)."""
++    errs = []
++    for (f, s, e, anchors) in REGIONS:
++        lines = filelines.get(f)
++        if not lines:
++            continue  # frontier_check already reports the unreadable row
++        covered = set()
++        for (rf, rs, re_, req, forb) in FRONTIER:
++            if rf == f:
++                covered.update(range(rs, re_ + 1))
++                if FRONTIER_SHAPE.get((rf, rs)) == "bullet":
++                    span = lines[rs - 1:min(re_, len(lines))]
++                    if span and not span[0].strip().startswith("- **"):
++                        errs.append("%s:%d registered bullet no longer opens its span (FRONTIER-UNREGISTERED)"
++                                    % (f, rs))
++                    for off, seg in enumerate(span[1:], start=1):
++                        if seg.strip().startswith("- **"):
++                            errs.append("%s:%d second bullet inside registered span %d-%d (FRONTIER-UNREGISTERED)"
++                                        % (f, rs + off, rs, re_))
++        for ln in range(s, min(e, len(lines)) + 1):
++            seg = lines[ln - 1]
++            if ln in anchors:
++                if not re.search(anchors[ln], seg):
++                    errs.append("%s:%d REGION anchor mismatch %r (FRONTIER-UNREGISTERED)"
++                                % (f, ln, seg.strip()[:60]))
++                continue
++            if not seg.strip():
++                continue
++            if ln not in covered:
++                errs.append("%s:%d non-registered content %r (FRONTIER-UNREGISTERED)"
++                            % (f, ln, seg.strip()[:80]))
++        if e == max(r[2] for r in FRONTIER if r[0] == f):
++            for ln in range(e + 1, len(lines) + 1):
++                if lines[ln - 1].strip():
++                    errs.append("%s:%d content past declared tail %d: %r (FRONTIER-UNREGISTERED)"
++                                % (f, ln, e, lines[ln - 1].strip()[:80]))
++    return errs
++
++
+ def frontier_check(filelines):
+     """G21 (r10): assert the frontier-claim register directly on bullet text.
+     Locus-free bullets never reach classify(), so this is the only grading
+@@ -627,7 +681,7 @@
+         filelines[f] = lines
+         counts[f] = {"lines": len(lines), "loci": len(classify(f, lines, live, out))}
+     scope_errors = assert_markers(filelines)
+-    frontier_errors = frontier_check(filelines)
++    frontier_errors = frontier_check(filelines) + region_check(filelines)
+     stale, unatt = out.get("STALE", []), out.get("AMBIGUOUS", [])
+     undecl = out.get("UNDECLARED", [])
+     unres = out.get("UNRESOLVED", [])

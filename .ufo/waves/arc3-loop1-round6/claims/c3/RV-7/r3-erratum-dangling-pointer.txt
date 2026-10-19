@@ -1,0 +1,20 @@
+RV-7 finding: the r3 entry's round-5 erratum quotes a premise sentence that never
+existed in the r3 entry at any revision.
+
+Erratum (58c3db7, corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md:41):
+  "`:24` "Creation blobs carry no runtime dispatch table" — corrected."
+
+Greps across all revisions of the r3 entry:
+  c418be0 (round-3 landing): grep "Creation blobs" → no match; line 24 = the
+    Rv2TokenOpt RESULT observation (verified by sed -n 22,26p).
+  40de383 (round-4 correction): grep -i "creation blobs|dispatch table" → only
+    :20 (nopt control) and :32 (inference); no creation-blob claim.
+  58c3db7 (current): "creation" occurrences are path contexts (:5,:12-14,:37)
+    and the erratum itself (:41-50).
+The quoted sentence exists ONLY in the r1 entry (r1:24) and was already
+corrected there by r1:31(a) in round 3.
+The erratum's byte facts are nonetheless true — RV-7 re-derived +34/+80/+91
+first-hand (byte-embed-derivation.txt). Disposition: the erratum's byte content
+stands; its `:24` attribution/quote is dangling and should be treated as a
+pointer defect in the next append-only pass (quote r1:24 as the origin, or drop
+the `:24` pointer).

@@ -1,0 +1,107 @@
+# PL-2 arm transcripts — scratch /var/tmp/pl2-arc3r6-c1, 2026-10-19, HEAD c625d5d
+# v10 gate sha256 d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5
+# r10 proposed sha256 2d7ee95ba2743bde0b658c91d867a46e04e3e9e14de41d2cb60f2ff46238ce7b
+
+## v10 baseline, real tree
+live anchors (re-derived): {'devin': '6.5.0', 'omp': '6.5.0', 'kimi': '6.7.0'}
+PROVINCE.md    lines=162  loci=6
+SCORECARD.md   lines=1696 loci=9
+SKILL.md       lines=390  loci=2
+
+SCOPE-ERRORS (marker assertions): []
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci per file: PROVINCE.md=17, SCORECARD.md=14, SKILL.md=3; total loci=17; floor=1/file)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+exit=0
+
+## Arm B — r10, clean scratch tree
+live anchors (re-derived): {'devin': '6.5.0', 'omp': '6.5.0', 'kimi': '6.7.0'}
+PROVINCE.md    lines=162  loci=6
+SCORECARD.md   lines=1696 loci=9
+SKILL.md       lines=390  loci=2
+
+SCOPE-ERRORS (marker assertions): []
+FRONTIER-STALE (claim register, 3 entries): []
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci per file: PROVINCE.md=17, SCORECARD.md=14, SKILL.md=3; total loci=17; floor=1/file)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+exit=0
+
+## Arm D — r10, real repo tree
+live anchors (re-derived): {'devin': '6.5.0', 'omp': '6.5.0', 'kimi': '6.7.0'}
+PROVINCE.md    lines=162  loci=6
+SCORECARD.md   lines=1696 loci=9
+SKILL.md       lines=390  loci=2
+
+SCOPE-ERRORS (marker assertions): []
+FRONTIER-STALE (claim register, 3 entries): []
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci per file: PROVINCE.md=17, SCORECARD.md=14, SKILL.md=3; total loci=17; floor=1/file)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+exit=0
+
+## Arm A — v10, seeded-literal tree (blind spot reproduced)
+live anchors (re-derived): {'devin': '6.5.0', 'omp': '6.5.0', 'kimi': '6.7.0'}
+PROVINCE.md    lines=162  loci=6
+SCORECARD.md   lines=1696 loci=9
+SKILL.md       lines=390  loci=2
+
+SCOPE-ERRORS (marker assertions): []
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci per file: PROVINCE.md=17, SCORECARD.md=14, SKILL.md=3; total loci=17; floor=1/file)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+exit=0
+
+## Arm C — r10, seeded-literal tree (FRONTIER-STALE catch)
+live anchors (re-derived): {'devin': '6.5.0', 'omp': '6.5.0', 'kimi': '6.7.0'}
+PROVINCE.md    lines=162  loci=6
+SCORECARD.md   lines=1696 loci=9
+SKILL.md       lines=390  loci=2
+
+SCOPE-ERRORS (marker assertions): []
+FRONTIER-STALE (claim register, 3 entries): ["PROVINCE.md:92 'solc/vyper-compiled bytecode untested' (r4 before-state, repaired in 40de383)"]
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci per file: PROVINCE.md=17, SCORECARD.md=14, SKILL.md=3; total loci=17; floor=1/file)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: ['FRONTIER-STALE']
+VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=1)
+exit=1
+
+## Arm E — r10, reflow tree (structural marker catch)
+live anchors (re-derived): {'devin': '6.5.0', 'omp': '6.5.0', 'kimi': '6.7.0'}
+PROVINCE.md    lines=163  loci=6
+SCORECARD.md   lines=1696 loci=9
+SKILL.md       lines=390  loci=2
+
+SCOPE-ERRORS (marker assertions): ["PROVINCE.md:133 marker '^### Round-4 frontier \\\\(post-unlock\\\\)$' absent from ''"]
+FRONTIER-STALE (claim register, 3 entries): []
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci per file: PROVINCE.md=17, SCORECARD.md=14, SKILL.md=3; total loci=17; floor=1/file)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+exit=1
+
+## Arm F0 — v10, seeded-pin tree
+VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=1 unresolved=0)
+
+## Arm F1 — r10, seeded-pin tree (STALE grading at FRONTIER scope)
+-- STALE (1) --
+  PROVINCE.md block 82-83 [scope FRONTIER]
+      :83 [pin] kimi=6.4.0 -> STALE (live kimi=6.7.0)
+
+VERDICT: FAIL  (stale=1 ambiguous=0 undeclared=0 unresolved=0 frontier=0)

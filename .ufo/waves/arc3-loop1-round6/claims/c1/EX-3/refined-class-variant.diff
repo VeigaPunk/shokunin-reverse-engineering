@@ -1,0 +1,15 @@
+--- gate/patched.py	2026-10-19 13:55:09.868951475 -0300
++++ gate/refined.py	2026-10-19 13:57:04.892650064 -0300
+@@ -661,8 +661,10 @@
+                     floor[rec["file"]] += 1
+     h3_ok = all(floor[f] > 0 for f in files if filelines[f] is not None)
+     g2_ok = h3_ok
+-    frontier_class = (["FRONTIER-STALE"] if any("FORBIDDEN" in e for e in frontier_errors)
+-                      else ["FRONTIER-UNEVALUABLE"] if frontier_errors else [])
++    _fstale = ["FRONTIER-STALE"] if any("FORBIDDEN" in e for e in frontier_errors) else []
++    _fun = ["FRONTIER-UNEVALUABLE"] if any(("REQUIRED" in e) or ("uncheckable" in e)
++                                          for e in frontier_errors) else []
++    frontier_class = _fstale + _fun
+     declared = (["UNREADABLE"] if unreadable else []) + ([] if g2_ok else ["BLIND-INSTRUMENT"]) \
+                + frontier_class
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \

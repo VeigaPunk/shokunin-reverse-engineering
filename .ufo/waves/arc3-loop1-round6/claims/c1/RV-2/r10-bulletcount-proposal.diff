@@ -1,0 +1,30 @@
+--- a/c1-census-v10-r10.py
++++ b/c1-census-r10-bulletcount.py
+@@ -306,6 +306,11 @@
+     ("PROVINCE.md", 161, 162, [r"Operator-gated", r"\bIDA\b"], []),
+ ]
+ 
++REGION_BULLETS = [
++    ("PROVINCE.md", 73, 93, 5),
++    ("PROVINCE.md", 133, 162, 8),
++]
++
+ PIN = re.compile(r"rea-agents@(\d+\.\d+\.\d+)", re.I)
+ VER = re.compile(r"(?<![\d.])6\.\d+\.\d+")
+ PTR = re.compile(r"((?:~|/)[\w./+-]+\.(?:json|toml|ya?ml)):(\d+)")
+@@ -440,6 +445,15 @@
+             if m:
+                 errs.append("%s:%d-%d FORBIDDEN %r matched %r (FRONTIER-STALE)"
+                             % (f, s, e, pat, m.group(0)))
++    for (f, s, e, want) in REGION_BULLETS:
++        lines = filelines.get(f)
++        if not lines:
++            continue
++        got = sum(1 for ln in lines[s - 1:e] if re.match(r"^- ", ln))
++        if got != want:
++            errs.append("%s:%d-%d bullet census %d != declared %d "
++                        "(FRONTIER-UNREGISTERED-BULLET)"
++                        % (f, s, e, got, want))
+     return errs
+ 
+ 

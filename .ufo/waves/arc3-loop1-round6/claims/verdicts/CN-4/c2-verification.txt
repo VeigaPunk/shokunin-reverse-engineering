@@ -1,0 +1,59 @@
+# CN-4 c2 re-derivation 2026-10-19T14:01:08-03:00
+
+## scanner: independent EVM opcode walk of EX-7 retained runtimes
+(script: /var/tmp/cn4-arc3r6/scan2.py — PUSH1..32 immediates handled; PUSH4 sites counted at opcode boundaries)
+== viair-opt200 1517 2ec3f557f6f2fb22 ops 990 jds 51
+   head: 60806040526004361015610022575b3615610018575f80fd5b61
+   push4 sites 19 distinct 18
+   eq legs 14 strides [6] all_jd True asc True
+   sub {'sel': 'ee02438e', 'sub_pc': 199, 'dst': 14, 'dst_jd': True, 'stride': 6}
+   GT count 6 EQ count 18
+   tail 5bdd54fe0a2104945d64736f6c63430008250033
+== viair-noopt 4144 0cc6938cd7681991 ops 2503 jds 450
+   head: 6080604052600436101561001d575b366105dc5761001b610f98
+   push4 sites 17 distinct 16
+   eq legs 14 strides [6] all_jd True asc True
+   sub {'sel': 'ee02438e', 'sub_pc': 199, 'dst': 14, 'dst_jd': True, 'stride': 6}
+   GT count 5 EQ count 19
+   tail a19161ea0e307c366164736f6c63430008250033
+== std-opt200 1921 c2ceabb163ad9c1e ops 1299 jds 90
+   head: 6080604052600436106100e7575f3560e01c80636e69f38c1161
+   push4 sites 22 distinct 19
+   eq legs 15 strides [6] all_jd True asc False
+   sub None
+   GT count 7 EQ count 21
+   tail 67512f0df37df4dbeb64736f6c63430008250033
+
+viair-opt200 eq legs: [('01681a62', 46, 982, True, 6), ('1c8e5adb', 57, 935, True, 6), ('2e1a7d4d', 68, 771, True, 6), ('3f4ba83a', 79, 723, True, 6), ('5ff1f6ee', 90, 694, True, 6), ('6901eb1e', 101, 631, True, 6), ('69fe0e2d', 112, 572, True, 6), ('6e69f38c', 123, 485, True, 6), ('78d20574', 134, 425, True, 6), ('8456cb59', 145, 374, True, 6), ('8e943bce', 156, 340, True, 6), ('90ab171e', 167, 311, True, 6), ('9389acb5', 178, 272, True, 6), ('d0e30db0', 189, 253, True, 6)]
+
+viair-noopt eq legs: [('01681a62', 46, 273, True, 6), ('1c8e5adb', 57, 268, True, 6), ('2e1a7d4d', 68, 263, True, 6), ('3f4ba83a', 79, 258, True, 6), ('5ff1f6ee', 90, 253, True, 6), ('6901eb1e', 101, 248, True, 6), ('69fe0e2d', 112, 243, True, 6), ('6e69f38c', 123, 238, True, 6), ('78d20574', 134, 233, True, 6), ('8456cb59', 145, 228, True, 6), ('8e943bce', 156, 223, True, 6), ('90ab171e', 167, 218, True, 6), ('9389acb5', 178, 213, True, 6), ('d0e30db0', 189, 208, True, 6)]
+
+## selector set vs methodIdentifiers
+dispatch selectors: 15 methodIdentifiers: 15 equal: True
+sorted dispatch: ['01681a62', '1c8e5adb', '2e1a7d4d', '3f4ba83a', '5ff1f6ee', '6901eb1e', '69fe0e2d', '6e69f38c', '78d20574', '8456cb59', '8e943bce', '90ab171e', '9389acb5', 'd0e30db0', 'ee02438e']
+
+## creation embedding + probe envelopes
+runtime 1517 2ec3f557f6f2fb22 creation 1560 d85fdde93b1fcb62 embed_at 43 trailing 0
+probe-std-opt200-hex-6.4.0.json                  n_fn=15 bc_sha=c2ceabb163ad9c1e bytes=1921 subject=5d723cac3a4d
+probe-viair-noopt-hex-6.4.0.json                 n_fn=15 bc_sha=0cc6938cd7681991 bytes=4144 subject=e78c89b90036
+probe-viair-opt200-creation-6.4.0.json           n_fn= 0 bc_sha=d85fdde93b1fcb62 bytes=1560 subject=225ff6d693a1
+probe-viair-opt200-hex-6.4.0.json                n_fn=15 bc_sha=2ec3f557f6f2fb22 bytes=1517 subject=19838d6680f1
+probe-viair-opt200-hex-6.7.0.json                n_fn=15 bc_sha=2ec3f557f6f2fb22 bytes=1517 subject=19838d6680f1
+probe-viair-opt200-hexasraw-TRAP-6.4.0.json      n_fn= 0 bc_sha=19838d6680f155ac bytes=3035 subject=19838d6680f1
+probe-viair-opt200-raw-6.4.0.json                n_fn=15 bc_sha=2ec3f557f6f2fb22 bytes=1517 subject=2ec3f557f6f2
+
+## projected command A with entry + map token (overlay, no write)
+{"coverage_score": 10.0, "dangling": [], "knowledge_files": 85, "mapped": 85, "missing": []}
+
+## entry-draft citation anchors re-checked
+corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md:44:  entry's `:31` erratum corrected, per `corpus/QUALITY.md:21`). Re-derived by
+corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:42:  `corpus/QUALITY.md:21`). The runtimes are byte-exactly embedded in their
+.ufo/waves/arc3-loop1-round6/claims/c2/EX-7/entry-draft/2026-10-19-arc3-r6-viair-dispatch-shape.md:10:source: `.ufo/waves/arc3-loop1-round6/claims/c2/EX-7/` (`s
+.ufo/waves/arc3-loop1-round6/claims/c2/EX-7/entry-draft/2026-10-19-arc3-r6-viair-dispatch-shape.md:26:- **Observation (traps — both classes reproduce on viaIR c
+.ufo/waves/arc3-loop1-round6/claims/c2/EX-7/entry-draft/2026-10-19-arc3-r6-viair-dispatch-shape.md:34:Sources: `.ufo/waves/arc3-loop1-round6/claims/c2/EX-7/src/
+
+## std control GT legs (dispatch pattern DUP1 PUSH4 sel GT PUSH2 dst JUMPI)
+GT legs: 3
+   ('6e69f38c', 'push4_pc', 19, 'gt_pc', 24)
+   ('90ab171e', 'push4_pc', 30, 'gt_pc', 35)
+   ('3f4ba83a', 'push4_pc', 137, 'gt_pc', 142)

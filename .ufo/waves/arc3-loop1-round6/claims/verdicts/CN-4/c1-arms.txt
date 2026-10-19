@@ -1,0 +1,113 @@
+# CN-4 c1 arm transcript 2026-10-19T14:00:59-03:00
+
+## patch identities (apply to pristine gate)
+PL-4 sha=8002757078a685f515804fc6128ebf76b9925d2033be99a293621e18d14aecca lines=713
+RV-3 sha=8e4206796fec2e16fb6f2c1959f33b63bbcb9643471d42472ac6bc2cba195ebf lines=712
+PL-2 sha=2d7ee95ba2743bde0b658c91d867a46e04e3e9e14de41d2cb60f2ff46238ce7b lines=705
+
+## arm matrix
+pl4/trees/clean | pl4 | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: [] | FRONTIER register (G21): 14 rows asserted, errors: []
+pl4/trees/clean | rv3 | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: [] | FRONTIER register (r10): 13 rows, 0 error(s)
+pl4/trees/clean | pl2 | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: [] | FRONTIER-STALE (claim register, 3 entries): []
+pl4/trees/seeded-forbidden | pl4 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-STALE'] | FRONTIER register (G21): 14 rows asserted, errors: ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)", "PROVINCE.md:91
+pl4/trees/seeded-forbidden | rv3 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-STALE', 'FRONTIER-UNATTESTED'] | FRONTIER register (r10): 13 rows, 3 error(s): FRONTIER-UNATTESTED PROVINCE.md:91-93 required claim 'real solc-0\\.8\\.37' not found (cite corpus/knowl
+pl4/trees/seeded-forbidden | pl2 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-STALE'] | FRONTIER-STALE (claim register, 3 entries): ["PROVINCE.md:92 'solc/vyper-compiled bytecode untested' (r4 before-state, repaired in 40de383)"]
+pl4/trees/seeded-req-evm | pl4 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 14 rows asserted, errors: ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)", "PROVINCE.md:91
+pl4/trees/seeded-req-evm | rv3 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNATTESTED'] | FRONTIER register (r10): 13 rows, 2 error(s): FRONTIER-UNATTESTED PROVINCE.md:91-93 required claim 'real solc-0\\.8\\.37' not found (cite corpus/knowl
+pl4/trees/seeded-req-evm | pl2 | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: [] | FRONTIER-STALE (claim register, 3 entries): []
+pl4/trees/truncated | pl4 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['UNREADABLE', 'FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 14 rows asserted, errors: ['PROVINCE.md:75-80 frontier uncheckable (file unreadable)', 'PROVINCE.md:82-83 frontier uncheckabl
+pl4/trees/truncated | rv3 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNATTESTED'] | FRONTIER register (r10): 13 rows, 1 error(s): FRONTIER-UNATTESTED PROVINCE.md:161-162 required claim 'HOPPER_LAUNCHER_PATH' not found (cite PROVINCE.m
+pl4/trees/truncated | pl2 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['UNREADABLE'] | FRONTIER-STALE (claim register, 3 entries): []
+strip | pl4 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 14 rows asserted, errors: ["PROVINCE.md:135-138 REQUIRED 'r5-01' absent (G21 frontier register)"]
+strip | rv3 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNATTESTED'] | FRONTIER register (r10): 13 rows, 1 error(s): FRONTIER-UNATTESTED PROVINCE.md:135-138 required claim 'r5-01' not found (cite corpus/knowledge/2026-10-
+strip | pl2 | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: [] | FRONTIER-STALE (claim register, 3 entries): []
+extra-stale2 | pl4 | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: [] | FRONTIER register (G21): 14 rows asserted, errors: []
+extra-stale2 | rv3 | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: [] | FRONTIER register (r10): 13 rows, 0 error(s)
+extra-stale2 | pl2 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-STALE'] | FRONTIER-STALE (claim register, 3 entries): ['PROVINCE.md:144 "hits REA\'s ~900s internal session deadline" (r4-12 wall form, measured false at arc2-r
+
+## clean-tree JSON invariance
+base keys: 17 verdict: PASS
+pl4 shared: 17 differing: [] new: ['frontier_errors', 'frontier_rows'] counts_equal: True floor: {'PROVINCE.md': 17, 'SCORECARD.md': 14, 'SKILL.md': 3}
+rv3 shared: 17 differing: [] new: ['frontier_errors', 'frontier_rows'] counts_equal: True floor: {'PROVINCE.md': 17, 'SCORECARD.md': 14, 'SKILL.md': 3}
+pl2 shared: 17 differing: [] new: ['frontier_register', 'frontier_stale'] counts_equal: True floor: {'PROVINCE.md': 17, 'SCORECARD.md': 14, 'SKILL.md': 3}
+
+## amendment to PL-4 register (2 FORBIDDEN additions, from PL-2's earned literals)
+--- /var/tmp/cn4-arc3r6/pl4/pristine.py	2026-10-19 13:55:29.543504833 -0300
++++ /var/tmp/cn4-arc3r6/pl4/amended.py	2026-10-19 14:00:18.082392962 -0300
+@@ -297,12 +297,12 @@
+     ("PROVINCE.md", 91, 93, [r"EVM bytecode", r"solc-0\.8\.37", r"vyper-0\.4\.3"],
+      [r"untested"]),
+     ("PROVINCE.md", 135, 138, [r"RISC-V", r"r5-01"], []),
+-    ("PROVINCE.md", 139, 144, [r"90 MB PE", r"arc2-r7"], []),
++    ("PROVINCE.md", 139, 144, [r"90 MB PE", r"arc2-r7"], [r"~900s internal session deadline"]),
+     ("PROVINCE.md", 145, 146, [r"\.jsc", r"Ignition"], []),
+     ("PROVINCE.md", 147, 148, [r"sasquatch", r"unblob"], []),
+     ("PROVINCE.md", 149, 150, [r"adb device surface", r"22/24"], []),
+     ("PROVINCE.md", 151, 156, [r"1Password", r"asar"], []),
+-    ("PROVINCE.md", 157, 160, [r"Cross-version", r"r12-02|r14-01"], []),
++    ("PROVINCE.md", 157, 160, [r"Cross-version", r"r12-02|r14-01"], [r"probe-refused since r2"]),
+     ("PROVINCE.md", 161, 162, [r"Operator-gated", r"\bIDA\b"], []),
+ ]
+ 
+
+## amended arm matrix
+pl4/trees/clean | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: [] | FRONTIER register (G21): 14 rows asserted, errors: []
+pl4/trees/seeded-forbidden | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-STALE'] | FRONTIER register (G21): 14 rows asserted, errors: ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)", "PROVINCE.md:91-93 REQUIR
+pl4/trees/seeded-req-evm | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 14 rows asserted, errors: ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)", "PROVINCE.md:91-93 REQUIR
+pl4/trees/truncated | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['UNREADABLE', 'FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 14 rows asserted, errors: ['PROVINCE.md:75-80 frontier uncheckable (file unreadable)', 'PROVINCE.md:82-83 frontier uncheckable (file un
+strip | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 14 rows asserted, errors: ["PROVINCE.md:135-138 REQUIRED 'r5-01' absent (G21 frontier register)"]
+extra-stale2 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-STALE'] | FRONTIER register (G21): 14 rows asserted, errors: ["PROVINCE.md:139-144 FORBIDDEN '~900s internal session deadline' matched '~900s internal session deadline' (
+
+## reflow arm (one-line insert before :82)
+pl4 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 14 rows asserted, errors: ["PROVINCE.md:84-86 REQUIRED 'oldest-first' absent (G21 frontier register)", "PROVINCE.md:89-90 REQUIRED 'unsupported_host' absen
+rv3 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-ANCHOR'] | FRONTIER register (r10): 13 rows, 13 error(s): FRONTIER-ANCHOR PROVINCE.md:82 anchor 'PE subtypes' absent (register row 82-83 needs re-key); FRONTIER-ANCHOR PROVINCE.md:84 anchor '
+
+## extended amendment (amended2.py): +2 header rows +2 FORBIDDEN rows
+--- /var/tmp/cn4-arc3r6/pl4/pristine.py	2026-10-19 13:55:29.543504833 -0300
++++ /var/tmp/cn4-arc3r6/pl4/amended2.py	2026-10-19 14:03:53.999786495 -0300
+@@ -289,7 +289,9 @@
+ # Keyed to the r5-audit tree (HEAD c625d5d); any frontier edit re-keys the
+ # register in the same commit.
+ FRONTIER = [
++    ("PROVINCE.md", 73, 73, [r"^## Frontier$"], []),
+     ("PROVINCE.md", 75, 80, [r"Claimed in MINT\.md, not yet held"], []),
++    ("PROVINCE.md", 133, 133, [r"^### Round-4 frontier \(post-unlock\)$"], []),
+     ("PROVINCE.md", 82, 83, [r"PE subtypes", r"x86-64 AND ARM64"], []),
+     ("PROVINCE.md", 84, 86, [r"32 MiB", r"oldest-first"], []),
+     ("PROVINCE.md", 87, 88, [r"Alternate providers", r"\bIDA\b"], []),
+@@ -297,12 +299,12 @@
+     ("PROVINCE.md", 91, 93, [r"EVM bytecode", r"solc-0\.8\.37", r"vyper-0\.4\.3"],
+      [r"untested"]),
+     ("PROVINCE.md", 135, 138, [r"RISC-V", r"r5-01"], []),
+-    ("PROVINCE.md", 139, 144, [r"90 MB PE", r"arc2-r7"], []),
++    ("PROVINCE.md", 139, 144, [r"90 MB PE", r"arc2-r7"], [r"~900s internal session deadline"]),
+     ("PROVINCE.md", 145, 146, [r"\.jsc", r"Ignition"], []),
+     ("PROVINCE.md", 147, 148, [r"sasquatch", r"unblob"], []),
+     ("PROVINCE.md", 149, 150, [r"adb device surface", r"22/24"], []),
+     ("PROVINCE.md", 151, 156, [r"1Password", r"asar"], []),
+-    ("PROVINCE.md", 157, 160, [r"Cross-version", r"r12-02|r14-01"], []),
++    ("PROVINCE.md", 157, 160, [r"Cross-version", r"r12-02|r14-01"], [r"probe-refused since r2"]),
+     ("PROVINCE.md", 161, 162, [r"Operator-gated", r"\bIDA\b"], []),
+ ]
+ 
+
+## amended2 arm matrix (incl. header edges)
+clean | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: [] | FRONTIER register (G21): 16 rows asserted, errors: []
+seeded-forbidden | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-STALE'] | FRONTIER register (G21): 16 rows asserted, errors: ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)", "PROVINCE.md:91-93 REQUIRED 'vyper-
+seeded-req-evm | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 16 rows asserted, errors: ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)", "PROVINCE.md:91-93 REQUIRED 'vyper-
+truncated | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['UNREADABLE', 'FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 16 rows asserted, errors: ['PROVINCE.md:73-73 frontier uncheckable (file unreadable)', 'PROVINCE.md:75-80 frontier uncheckable (file unreadable)'
+strip | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 16 rows asserted, errors: ["PROVINCE.md:135-138 REQUIRED 'r5-01' absent (G21 frontier register)"]
+extra-stale2 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-STALE'] | FRONTIER register (G21): 16 rows asserted, errors: ["PROVINCE.md:139-144 FORBIDDEN '~900s internal session deadline' matched '~900s internal session deadline' (FRONTIER-S
+edge-header | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 16 rows asserted, errors: ["PROVINCE.md:73-73 REQUIRED '^## Frontier$' absent (G21 frontier register)"]
+edge-insert133 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE'] | FRONTIER register (G21): 16 rows asserted, errors: ["PROVINCE.md:133-133 REQUIRED '^### Round-4 frontier \\\\(post-unlock\\\\)$' absent (G21 frontier register)"]
+
+## header/reflow edges across all three patches
+edge-header | pl4 | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: []
+edge-header | rv3 | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: []
+edge-header | pl2 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: []
+edge-insert133 | pl4 | VERDICT: PASS | exit=0 | DECLARED FAIL CLASSES: []
+edge-insert133 | rv3 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-ANCHOR']
+edge-insert133 | pl2 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: []
+reflow | pl4 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE']
+reflow | rv3 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: ['FRONTIER-ANCHOR']
+reflow | pl2 | VERDICT: FAIL | exit=1 | DECLARED FAIL CLASSES: []

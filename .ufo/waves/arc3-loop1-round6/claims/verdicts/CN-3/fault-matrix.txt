@@ -1,0 +1,30 @@
+# fault matrix — CN-3, arc3-loop1-round6, measured 2026-10-19 (scratch /var/tmp/cn3-r6)
+# command: python3 <gate> --root /var/tmp/cn3-r6/<tree> --json (exit code recorded; declared classes from JSON)
+# gates: v10 = .ufo/gates/c1-census-v10.py (sha d0772ce8…); pl4 = PL-4 patch applied (80027570…);
+#        pl2 = PL-2 prior-attempt patch applied (2d7ee95b…); rv3 = RV-3 inline diff applied (8e420679…)
+# tree seeds: frozen literal at :91-93 (and wrapped variant); forbidden-only keeps solc/vyper + 'untested';
+# req-* strip earned citations; trunc=161 lines; reflow=blank line before :133; reflow82=blank before :82;
+# pin=rea-agents@6.3.0 at :88; wall(~900s)/cross(probe-refused since r2) stale forms; append=stale bullet past :162.
+
+tree              | v10                            | pl4                                          | pl2                                          | rv3                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+clean             | 0/PASS/-                                   | 0/PASS/-                                   | 0/PASS/-                                   | 0/PASS/-                                  
+f-frozen          | 0/PASS/-                                   | 1/FAIL/FRONTIER-STALE | PROVINCE.md:91-93 REQUIRED 'solc-0\\.8\\.37' absent (G21 fro… | 1/FAIL/FRONTIER-STALE | PROVINCE.md:92 'solc/vyper-compiled bytecode untested' (r4 b… | 1/FAIL/FRONTIER-STALE,FRONTIER-UNATTESTED | FRONTIER-UNATTESTED PROVINCE.md:91-93 required claim 'real s…
+g-frozen-wrap     | 0/PASS/-                                   | 1/FAIL/FRONTIER-STALE | PROVINCE.md:91-93 REQUIRED 'solc-0\\.8\\.37' absent (G21 fro… | 0/PASS/-                                   | 1/FAIL/FRONTIER-STALE,FRONTIER-UNATTESTED | FRONTIER-UNATTESTED PROVINCE.md:91-93 required claim 'real s…
+g-forbidden-only  | 0/PASS/-                                   | 1/FAIL/FRONTIER-STALE | PROVINCE.md:91-93 FORBIDDEN 'untested' matched 'untested' (F… | 0/PASS/-                                   | 1/FAIL/FRONTIER-STALE | FRONTIER-STALE PROVINCE.md:93 stale literal 'untested' reint…
+f-req-evm         | 0/PASS/-                                   | 1/FAIL/FRONTIER-UNEVALUABLE | PROVINCE.md:91-93 REQUIRED 'solc-0\\.8\\.37' absent (G21 fro… | 0/PASS/-                                   | 1/FAIL/FRONTIER-UNATTESTED | FRONTIER-UNATTESTED PROVINCE.md:91-93 required claim 'real s…
+f-req-riscv       | 0/PASS/-                                   | 1/FAIL/FRONTIER-UNEVALUABLE | PROVINCE.md:135-138 REQUIRED 'r5-01' absent (G21 frontier re… | 0/PASS/-                                   | 1/FAIL/FRONTIER-UNATTESTED | FRONTIER-UNATTESTED PROVINCE.md:135-138 required claim 'r5-0…
+f-trunc           | 0/PASS/-                                   | 1/FAIL/UNREADABLE,FRONTIER-UNEVALUABLE | PROVINCE.md:75-80 frontier uncheckable (file unreadable) | 1/FAIL/UNREADABLE                          | 1/FAIL/FRONTIER-UNATTESTED | FRONTIER-UNATTESTED PROVINCE.md:161-162 required claim 'HOPP…
+f-reflow          | 0/PASS/-                                   | 0/PASS/-                                   | 1/FAIL/-                                   | 1/FAIL/FRONTIER-ANCHOR | FRONTIER-ANCHOR PROVINCE.md:135 anchor 'RISC-V analysis' abs…
+g-reflow82        | 1/FAIL/-                                   | 1/FAIL/FRONTIER-UNEVALUABLE | PROVINCE.md:84-86 REQUIRED 'oldest-first' absent (G21 fronti… | 1/FAIL/-                                   | 1/FAIL/FRONTIER-ANCHOR | FRONTIER-ANCHOR PROVINCE.md:82 anchor 'PE subtypes' absent (…
+f-pin             | 1/FAIL/-                                   | 1/FAIL/-                                   | 1/FAIL/-                                   | 1/FAIL/-                                  
+f-wall            | 0/PASS/-                                   | 1/FAIL/FRONTIER-UNEVALUABLE | PROVINCE.md:139-144 REQUIRED 'arc2-r7' absent (G21 frontier … | 1/FAIL/FRONTIER-STALE | PROVINCE.md:139 "hits REA's ~900s internal session deadline"… | 1/FAIL/FRONTIER-UNATTESTED | FRONTIER-UNATTESTED PROVINCE.md:139-144 required claim 'arc2…
+g-wall-literal    | 0/PASS/-                                   | 0/PASS/-                                   | 0/PASS/-                                   | 0/PASS/-                                  
+g-wall-oneline    | 0/PASS/-                                   | 0/PASS/-                                   | 1/FAIL/FRONTIER-STALE | PROVINCE.md:139 "hits REA's ~900s internal session deadline"… | 0/PASS/-                                  
+g-cross-full      | 0/PASS/-                                   | 1/FAIL/FRONTIER-UNEVALUABLE | PROVINCE.md:157-160 REQUIRED 'r12-02|r14-01' absent (G21 fro… | 1/FAIL/FRONTIER-STALE | PROVINCE.md:158 'probe-refused since r2' (cross-version form… | 0/PASS/-                                  
+g-append          | 0/PASS/-                                   | 0/PASS/-                                   | 0/PASS/-                                   | 0/PASS/-                                  
+
+# reading: exit/verdict/declared-classes | first frontier error (truncated).
+# v10 PASSes 13/15 trees. It FAILs only f-pin (locus pin, undeclared=1) and g-reflow82
+# (insertion above :119 shifts the DATED marker at :119 — existing G15 machinery, not Frontier grading).
+# All three r10 designs PASS the append-past-:162 arm (the declared common residual).

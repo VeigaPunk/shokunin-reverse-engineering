@@ -1,0 +1,41 @@
+Citation audit — SC-3 rule-15 draft, at 58c3db7; command A bounds rule: 1 <= start <= end <= line_count
+
+2026-10-19-arc3-r1-evm-real-solc.md:24  file_lines=46  bounds_ok=True
+  end-line excerpt: - **Observation (creation code — parsed-and-empty, not excluded):** `Rv2Token.creation.hex` @6.4.0 `ev_c80379e1…` → 0 functions, `bytecode.kind:"unknown"`; `Smoke_sol_Smoke.bin` @6.4.0 `ev_f875e21e…` → 0 functions. Creat
+
+2026-10-19-arc3-r1-evm-real-solc.md:31  file_lines=46  bounds_ok=True
+  end-line excerpt: - **Observation (r1 errata — appended by arc3-loop1-round3's byte-level census, append-only):** two r1 statements are corrected: (a) the creation-code observation's 'Creation blobs carry no runtime dispatch table' is mea
+
+2026-10-19-arc3-r3-evm-optimizer-shapes.md:41-51  file_lines=57  bounds_ok=True
+  end-line excerpt: - **`:24` "Creation blobs carry no runtime dispatch table" — corrected.** The ... dispatch shapes and byte identities are unaffected.
+
+2026-10-19-arc3-r4-evm-vyper-leg.md:39-46  file_lines=63  bounds_ok=True
+  end-line excerpt: - **`:17` "initcode carries no runtime dispatch table" — corrected.** The ... "creation probes parse empty while the runtime bytes are present verbatim".
+
+2026-10-19-arc3-r4-evm-vyper-leg.md:17  file_lines=63  bounds_ok=True
+  end-line excerpt: - Creation-code (initcode) legs — EX-04 (hex @6.4.0, this seat's own run and EX-04's) and EX-09 (hex and raw at both pins; `0x`-prefixed hex at 6.4.0 only — RV-2 F2), plus EX-07's `AC-`/`S-`/`VC-`/`X3C-creation-*` legs —
+
+2026-10-19-arc3-r3-evm-optimizer-shapes.md:27  file_lines=57  bounds_ok=True
+  end-line excerpt: - **Observation (raw-on-hex-text trap, reproduced):** feeding the hex *text* file with `raw` decodes ASCII as code — exit 0, 0 functions, decoded bytecode sha256 == the hex file's own sha256 (EX-04: `ev_704ce585…` and `e
+
+2026-10-19-arc3-r4-evm-vyper-leg.md:25  file_lines=63  bounds_ok=True
+  end-line excerpt: - **Observation (input-shape traps reproduce on Vyper carriers):** raw-over-hextext exits 0 with 0 functions and a decoded sha equal to the hex *text* file's own sha (`e0b1021c…`) — parsed-and-empty, the r1/r3 trap class
+
+2026-10-19-arc3-r4-evm-vyper-leg.md:34  file_lines=63  bounds_ok=True
+  end-line excerpt: ## Erratum (arc3-loop1-round5 correctness sweep, append-only)
+
+Content-anchor checks performed by hand (RV-5):
+  citation        verdict  content
+  r1:24           PASS     0 functions + parsed-and-empty, not inventory exclusions
+  r1:31           PASS     erratum: 1,971 B creation embeds runtime; tool scope, "not byte-level absence"
+  r3:41-51        PASS     r5 erratum: parsed-and-empty; runtime embeddings listed
+  r4:39-46        PASS     r5 erratum: "creation probes parse empty while the runtime bytes are present verbatim"
+  r3:27           PASS     raw-on-hex-text trap, "not a carrier defect"
+  r4:17           PASS     original claim: initcode uniformly parsed-and-empty
+  r4:25           PASS     same trap on Vyper carriers
+  r4:34           FAIL     cited for "empty results do not prove absence of dispatch"; that text is at r4:29, r4:34 is the "## Erratum" heading
+  r4:29           PASS     same quote after the RV-5 correction
+  QUALITY.md:21   PASS     row 11: empty/zero findings must state parsed-and-empty vs excluded-from-inventory (outside command A pattern)
+
+Bounds-only note: r4:34 resolves under command A (34 <= 63), so the as-delivered draft scores
+15/15 citations resolved despite the content mis-point. The correction is content-level, not score-level.

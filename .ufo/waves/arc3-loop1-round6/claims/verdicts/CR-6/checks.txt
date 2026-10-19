@@ -1,0 +1,110 @@
+CR-6 verification checks — exact one-line outputs (commands run from repo root unless noted)
+=============================================================================================
+
+C1 — PL-4 patch
+  pristine gate sha256:
+    d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5  c1-census-v10.py (610 lines)
+  after `patch c1-census-v10.py < patch-v10-to-r10.diff`:
+    8002757078a685f515804fc6128ebf76b9925d2033be99a293621e18d14aecca  c1-census-v10.py (713 lines)
+  clean repo-root r10: exit 0
+    FRONTIER register (G21): 14 rows asserted, errors: []
+    DECLARED FAIL CLASSES: []
+    VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+  JSON v10 vs r10 on the same tree:
+    shared keys: 17  mismatched: []
+    r10-only keys: ['frontier_errors', 'frontier_rows']
+    counts equal: True
+    current_ok_per_file: {'PROVINCE.md': 17, 'SCORECARD.md': 14, 'SKILL.md': 3}
+  source identity:
+    SCOPE block identical: True (22 lines pre/post)
+    def classify( identical: True
+    def scope_of( identical: True
+    def assert_markers( identical: True
+  six seeded arms (v10 exit/verdict -> r10 exit/verdict/classes):
+    clean                 0 PASS -> 0 PASS []
+    seeded-forbidden      0 PASS -> 1 FAIL ['FRONTIER-STALE']   (plus 2 REQUIRED-absent)
+    seeded-forbidden-only 0 PASS -> 1 FAIL ['FRONTIER-STALE']   (exactly one error)
+    seeded-required-evm   0 PASS -> 1 FAIL ['FRONTIER-UNEVALUABLE']
+    seeded-required-riscv 0 PASS -> 1 FAIL ['FRONTIER-UNEVALUABLE']
+    clean-truncated       0 PASS -> 1 FAIL ['UNREADABLE','FRONTIER-UNEVALUABLE']
+  structural edges:
+    edge-header (## Frontier -> ## Frontier (renamed) at :73): v10 0 PASS -> r10 0 PASS
+    edge-insert-133 (one blank line before ### Round-4 frontier): v10 0 PASS -> r10 0 PASS
+
+C2 — EX-7 entry
+  command A before:
+    c625d5d: {"citation_resolved_rules":14,"coverage_score":10.0,"dangling":[],
+              "depth_score":10.0,"knowledge_files":84,"mapped":84,"missing":[],"rule_blocks":14}
+    58c3db7: identical numbers
+  command A projection (entry draft + README token overlaid):
+    {"knowledge_files":85,"mapped":85,"missing":[],"dangling":[],
+     "citation_resolved_rules":14,"rule_blocks":14,"coverage_score":10.0,"depth_score":10.0}
+  Unknown provenance: grep -rn -i viair corpus/knowledge/*.md -> exactly 2 hits:
+    corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md:33
+    corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:28
+  recompile (recorded input.json verbatim; solc prefix read-only):
+    solc 0.8.37+commit.f401782d.Emscripten.clang
+    viair-opt200 runtime 1517 B 2ec3f557f6f2fb229dc49094981723c6efcce3df10f20363ec1732845c99581a
+                 creation 1560 B d85fdde93b1fcb620a8a0dcf16885b7b55113b9ef7860ae5ebdbf5ad5fbd83d5
+                 runtime_byte_equal=true creation_byte_equal=true
+    viair-noopt  runtime 4144 B 0cc6938cd768199159cbed74a7e9f5bd4273c583afbf6babca643b0ffdbd29b4
+                 creation 4318 B f1125049532f0dd9a71ab0f9963590d7a40913e521c43709400c92b96cc54063
+                 runtime_byte_equal=true creation_byte_equal=true
+    std-opt200   runtime 1921 B c2ceabb163ad9c1e6d88244c29c5187602eaf4c810029d0018e76eb9643f7e27
+                 creation 1966 B 4541fd490eb46198e788c148328dfb74e0ae1fd29c961a47c6f3056b823c5d9e
+                 runtime_byte_equal=true creation_byte_equal=true
+  solc prefix digests:
+    soljson.js  221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c
+    package.json b3a90035cab4e8aa43068f33f01497dccfb77b294e1ea30c5fb32a9631e33491
+  ABI/method files:
+    abi.json (all 3 legs) 63fcf52ffba814a64c69b6b98ef383ad08b1c9ccc56b0be4882e3e0d0e405119
+      types: {'function':15,'constructor':1,'receive':1}
+    method-identifiers.json (all 3) c32e2ef2d0ece479f20ffd2d1a847a4a9f042d2a3fe9ddee4ddd0f273e4c975c (15 keys)
+  selector identity: planted K=15 == solc methodIdentifiers values; preact set equal;
+    ERC-20 collisions: set()
+  mutability: agree 14, diverge 1 (scale(uint256,uint256) ABI pure -> probe view);
+    probe payable rows: 1 (deposit(), ABI payable) -> zero spurious payable reads
+  byte walk (read byte-walk.json for full rows):
+    viair-opt200: guard 600436101561002257; EQ 14; GT 0; stride [11]; sorted true;
+                  dsts 253..982 all JUMPDEST; SUB leg push4_pc 194 sel ee02438e dst 14;
+                  mark probe offset 204 = push4_pc+10, not JUMPDEST, byte 0x34;
+                  PUSH4 19 sites / 18 distinct; CBOR 51 B (ipfs + solc 000825);
+                  runtime embedded in creation at +43
+    viair-noopt:  guard 600436101561001d57; EQ 14; stride [11]; sorted; dsts 208..273 all JD;
+                  SUB leg at 194; mark offset 204 byte 0x61; PUSH4 17/16
+    std-opt200:   guard 600436106100e757 (no ISZERO); EQ 15; GT 3 at push4 pcs 19/30/137;
+                  strides [11,15,26]; offsets 15/15 = dsts all JD; PUSH4 22/19
+  REA reruns at EX-7's original absolute paths (same ids):
+    opt200 hex @6.4.0   ev_409e0442…  15 fns  dispatch abi
+    opt200 raw @6.4.0   ev_c55a152c…  15 fns
+    opt200 hex @6.7.0   ev_285d13d0…  15 fns
+    noopt hex @6.4.0    ev_8ddef761…  15 fns
+    std hex @6.4.0      ev_3b390132…  15 fns
+    raw-on-hex TRAP     ev_2e7e40ba…  0 fns, decoded sha 19838d66… (= hex file sha)
+    creation hex        ev_ff7ee757…  0 fns, decoded sha d85fdde9… (= creation sha)
+  different-path rerun: ev_71da9d37… (same bytes) -> path-sensitive id confirmed
+  EX-6 fallback-bearing corroboration:
+    viair-opt200 1127 B: EQ 11 + SUB 1 (f43cc773 dst 14), stride [11], sorted; first 5f3560e01c at 176
+    viair-nopt  3039 B: EQ 11 + SUB 1 at push4 pc 161, stride [11], sorted; no 5f3560e01c
+    source ViaIRVault.sol:31 receive(), :37 fallback()
+
+C3 — SC-3 rule
+  command A baseline: c625d5d and 58c3db7 -> rule_blocks 14, citation_resolved_rules 14, 84/84
+  SC-3 draft extracted verbatim: 1605 B, 23 lines,
+    sha256 763c44b504f9964d970a741ef56a8331d85e7a362a191d09025e38d14a6fd0d1
+  simulation at both revs: rule_blocks 15, citation_resolved_rules 15; last block 8 refs all valid
+  mis-citation: SC-3 cites r4:34; the quoted limitation text is at r4:29; r4:34 is "## Erratum…"
+  corrected draft (:34 -> :29): 1605 B, 23 lines,
+    sha256 6967b1e3e7fbdb43492e191426399c0311ab3bf85ee307f1a181a3edd235511e
+    simulation: rule_blocks 15, resolved 15, 8 refs valid
+  CarrierV core instance:
+    creation 1637 B sha 3c6673966d821d9d3366283ab2501c4e32167798ae89d92a21143f560994a226
+    runtime  1562 B sha 57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0
+    runtime embedded at +20, 55 trailing bytes
+    live probe creation.hex @6.4.0 -> exit 0, 0 functions, kind "unknown",
+      decoded sha 3c667396…, id ev_53732d0f8c6…
+  RV-7 F1: r3:41 cites `:24`; r3:24 is the Rv2TokenOpt observation; the quoted sentence
+    exists at r1:24 and inside r3 only in the erratum at :41
+  RV-7 alternative draft: 1565 B, 23 lines,
+    sha256 ccbc5cdbbefc86081393cd4d60ef9c85606c3dd1c98ed76d63520da1da0b67e7
+    simulation: rule_blocks 15, resolved 15, 6 refs in last block, all valid

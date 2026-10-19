@@ -1,0 +1,48 @@
+# C2 — EX-7 viaIR entry verification, first-hand — CN-3, 2026-10-19
+
+## live probe (rea-agents@6.4.0, TMPDIR=/var/tmp/cn3-r6/tmp)
+command: npx -y rea-agents@6.4.0 inspect-evm-interface <EX-7>/out/viair-opt200/runtime.hex hex --format json
+exit 0; evidence_id ev_71da9d37a97c939cc6595db2c051ec0ab7ad4ac1daf7a846665cf31f8ada43cd
+functions 15; dispatch values ['abi']
+normalized bytecode.sha256 2ec3f557f6f2fb229dc49094981723c6efcce3df10f20363ec1732845c99581a bytes 1517
+payloads identical to EX-7 sealed envelope: True
+CBOR metadata identical to sealed envelope: True
+selectors: ['01681a62', '1c8e5adb', '2e1a7d4d', '3f4ba83a', '5ff1f6ee', '6901eb1e', '69fe0e2d', '6e69f38c', '78d20574', '8456cb59', '8e943bce', '90ab171e', '9389acb5', 'd0e30db0', 'ee02438e']
+
+## selector-set equality
+planted K=15 (pre-compile/pre-probe); probe==methodIdentifiers: True; probe==planted: True; ERC-20 collisions: []
+
+## byte walk — viair-opt200 (CN-3 walker)
+len 1517 sha 2ec3f557f6f2fb229dc49094981723c6efcce3df10f20363ec1732845c99581a
+eq_legs 14; pc gaps [11]; ascending True; all dst JUMPDEST True
+eq dst range 253-982; SUB leg [[194, 'ee02438e', 14]]; guard [[5, None, True, 'ISZERO', '0022']]
+prologue 60806040526004361015610022575b3615610018575f80fd; PUSH4 sites 19, distinct 18
+
+## byte walk — viair-noopt (CN-3 walker)
+len 4144 sha 0cc6938cd768199159cbed74a7e9f5bd4273c583afbf6babca643b0ffdbd29b4
+eq_legs 14; pc gaps [11]; ascending True; all dst JUMPDEST True
+eq dst range 208-273; SUB leg [[194, 'ee02438e', 14]]; guard [[5, None, True, 'ISZERO', '001d']]
+prologue 6080604052600436101561001d575b366105dc5761001b61; PUSH4 sites 17, distinct 16
+
+## byte walk — std-opt200 control
+len 1921 sha c2ceabb163ad9c1e6d88244c29c5187602eaf4c810029d0018e76eb9643f7e27
+eq_legs 15; pc gaps [11, 15, 26]; ascending False; all dst JUMPDEST True
+SUB legs []; guard [[5, None, False, 'PUSH2', None]]; prologue 6080604052600436106100e7575f3560e01c80636e69f38c
+PUSH4 sites 22, distinct 19 (15 EQ + 3 GT selector occurrences)
+
+## creation embedding
+creation 1560 B d85fdde93b1fcb62…; runtime 1517 B; runtime.find in creation = 43; trailing 0; occurrences 1
+runtime.hex decodes byte-identical to runtime.bin: True
+
+## CBOR trailer (actual bytes vs entry line 28)
+actual tail hex: a264697066735822122022958d9b2c8d598780ac3ddde2db45b5597520a14031175bdd54fe0a2104945d64736f6c63430008250033
+actual: a2 64 69706673 58 22 <34B ipfs> 64 736f6c63 43 000825 00 33
+entry line 28 quotes: a2 64 69706673 58 22 <ipfs…> 73 736f6c63 43 000825 00 33
+=> transcription defect: the text-string header before 'solc' is 0x64 (text(4)), not 0x73 (text(19)); bytes on disk are correct. CORRECTED (fix before landing).
+
+## entry's claimed digests, re-derived
+abi.json sha 63fcf52ffba814a64c69b6b98ef383ad08b1c9ccc56b0be4882e3e0d0e405119
+method-identifiers.json sha c32e2ef2d0ece479f20ffd2d1a847a4a9f042d2a3fe9ddee4ddd0f273e4c975c
+runtime.bin sha 2ec3f557f6f2fb229dc49094981723c6efcce3df10f20363ec1732845c99581a
+creation.bin sha d85fdde93b1fcb620a8a0dcf16885b7b55113b9ef7860ae5ebdbf5ad5fbd83d5
+std runtime 1921 B / noopt runtime 4144 B

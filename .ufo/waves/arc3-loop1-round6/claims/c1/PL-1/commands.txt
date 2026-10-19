@@ -1,0 +1,33 @@
+# PL-1 reproduction recipe (scratch /var/tmp/pl1-arc3r6; gate never modified)
+cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+git show HEAD:.ufo/gates/c1-census-v10.py > /var/tmp/pl1-arc3r6/pristine.py
+sha256sum /var/tmp/pl1-arc3r6/pristine.py            # d0772ce8...
+patch -o pl4-r10.py pristine.py < .ufo/waves/arc3-loop1-round6/claims/c1/PL-4/patch-v10-to-r10.diff
+patch -o pl2-r10.py pristine.py < .ufo/waves/arc3-loop1-round6/claims/c1/PL-2/c1-census-v10-r10.patch
+awk '/^```diff$/{n++} n==1 && !/^```/{print}' .ufo/waves/arc3-loop1-round6/claims/c1/RV-3.md > rv3.diff
+patch -o rv3-r10.py pristine.py < rv3.diff
+python3 build_pl1.py                                  # builds pl1-r10.py from pl4-r10.py
+python3 build_trees.py                                # 9 trees, including the 3 faithful git before-states
+for gate in pristine pl4-r10 pl2-r10 rv3-r10 pl1-r10; do
+  for tree in clean seed-evm seed-evm-only seed-wall seed-cross trunc161 trunc160 reflow133 seed-pin append; do
+    python3 $gate.py --root trees/$tree --quiet; echo "$gate $tree $?"
+  done
+done
+# JSON invariance:
+python3 pristine.py --root trees/clean --json > json-v10.json
+python3 pl4-r10.py  --root trees/clean --json > json-pl4.json
+python3 pl1-r10.py  --root trees/clean --json > json-pl1.json
+
+# Full 90-run matrix (5 gates x 18 trees) after the final builder:
+cd /var/tmp/pl1-arc3r6
+python3 build_trees_full.py          # 20 trees, deterministic, asserts pre-state text
+TREES="clean seed-evm seed-evm-only seed-wall seed-wall-oneline seed-wall-tokens \
+seed-cross seed-cross-tokens trunc161 trunc160 reflow133 insert-92 insert-134 \
+insert-140 insert-150 insert-157 seed-pin append"
+{ echo -e "gate\ttree\texit\tdeclared\tverdict"
+  for g in pristine pl4-r10 pl2-r10 rv3-r10 pl1-r10; do
+    for t in $TREES; do
+      python3 $g.py --root trees/$t --quiet > arms/${g}__${t}.txt 2>&1; ec=$?
+      echo -e "$g\t$t\t$ec\t$(grep -h 'DECLARED FAIL CLASSES' arms/${g}__${t}.txt | sed 's/DECLARED FAIL CLASSES: //')\t$(grep -h 'VERDICT:' arms/${g}__${t}.txt | sed 's/VERDICT: //;s/  *(.*//')"
+    done
+  done; } > battery-full.tsv

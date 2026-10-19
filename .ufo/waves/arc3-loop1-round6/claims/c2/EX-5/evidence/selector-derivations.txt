@@ -1,0 +1,51 @@
+# EX-5 arc3-loop1-round6 selector derivations (first-hand)
+
+keccak: scratch/keccak.py, pure-Python keccak-f[1600], selftest 3/3 public vectors:
+  "" -> c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 OK
+  "abc" -> 4e03657aea45a94fc7d47ba826c8d667c0d1e6e33a64a036ec44f58fa12d6c45 OK
+  "transfer(address,uint256)" -> a9059cbb2ab09eb219583f4a59a5d0623ade346d962bcd4e46b11da047c9049b OK
+
+## K8
+f0(uint256)              2ae1431c  vyper_method_identifiers 0x2ae1431c  agree=True
+f1(uint256)              9adbf691  vyper_method_identifiers 0x9adbf691  agree=True
+f2(uint256)              bf3724af  vyper_method_identifiers 0xbf3724af  agree=True
+f3(uint256)              d7b7913b  vyper_method_identifiers 0xd7b7913b  agree=True
+f4(uint256)              d7531d91  vyper_method_identifiers 0xd7531d91  agree=True
+f5(uint256)              cf35f823  vyper_method_identifiers 0xcf35f823  agree=True
+f6(uint256)              9b7c2962  vyper_method_identifiers 0x9b7c2962  agree=True
+f7(uint256)              364605a1  vyper_method_identifiers 0x364605a1  agree=True
+
+## Ex05Vault
+alpha(uint256)           a7043bd9  vyper_method_identifiers 0xa7043bd9  agree=True
+beta(uint256)            fd5b14a9  vyper_method_identifiers 0xfd5b14a9  agree=True
+gamma(uint256)           9ccfe8d0  vyper_method_identifiers 0x9ccfe8d0  agree=True
+delta(uint256)           ae5759ac  vyper_method_identifiers 0xae5759ac  agree=True
+epsilon()                a7ba9fb1  vyper_method_identifiers 0xa7ba9fb1  agree=True
+zeta()                   e8f9cb3a  vyper_method_identifiers 0xe8f9cb3a  agree=True
+eta()                    f7992d85  vyper_method_identifiers 0xf7992d85  agree=True
+
+## ERC-20 absence
+known ERC-20 selectors: 06fdde03, 095ea7b3, 18160ddd, 23b872dd, 313ce567, 70a08231, 95d89b41, a9059cbb, dd62ed3e
+collisions with either carrier selector set: []
+
+## cross-check against the probe envelopes
+Every real leg's probe selector set equals the keccak-derived set (evidence/assertions.txt, 52 PASS lines (48 real-leg + 4 trap)).
+
+## additional carriers (method_identifiers cross-check)
+CarrierV deposit(): my_keccak d0e30db0 vyper 0xd0e30db0 agree=True
+CarrierV withdraw(uint256): my_keccak 2e1a7d4d vyper 0x2e1a7d4d agree=True
+CarrierV set_fee(uint256): my_keccak 1aa02d59 vyper 0x1aa02d59 agree=True
+CarrierV fee_on(uint256): my_keccak e0749a6a vyper 0xe0749a6a agree=True
+CarrierV fee_of(uint256,uint256): my_keccak 0c751377 vyper 0x0c751377 agree=True
+CarrierV pause(): my_keccak 8456cb59 vyper 0x8456cb59 agree=True
+CarrierV unpause(): my_keccak 3f4ba83a vyper 0x3f4ba83a agree=True
+CarrierV balance_of(address): my_keccak b144adfb vyper 0xb144adfb agree=True
+CarrierV is_owner(address): my_keccak 0776076f vyper 0x0776076f agree=True
+CarrierV fee_quote(uint256): my_keccak 6e8efde2 vyper 0x6e8efde2 agree=True
+CarrierV owner(): my_keccak 8da5cb5b vyper 0x8da5cb5b agree=True
+CarrierV total_deposits(): my_keccak 4643c56b vyper 0x4643c56b agree=True
+CarrierV fee_bps(): my_keccak 48a3ef5c vyper 0x48a3ef5c agree=True
+CarrierV paused(): my_keccak 5c975abb vyper 0x5c975abb agree=True
+CarrierV balances(address): my_keccak 27e235e3 vyper 0x27e235e3 agree=True
+K2 pay(uint256): my_keccak c290d691 vyper 0xc290d691 agree=True
+K2 look(uint256): my_keccak 0b407b19 vyper 0x0b407b19 agree=True

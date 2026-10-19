@@ -1,0 +1,105 @@
+# EX-4 scratch hardening (NOT landed, NOT part of PL-4's patch)
+# hardened.py = PL-4 r10 + register-global FORBIDDEN list checked across the union of frontier spans:
+312:FORBIDDEN_GLOBAL = [r"untested", r"probe-refused since r2",
+454:        for pat in FORBIDDEN_GLOBAL:
+
+## real repo root
+FRONTIER register (G21): 14 rows asserted, errors: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+exit=0
+
+### clean (exit 0)
+verdict=PASS classes=[]
+### forbid-84 (exit 1)
+verdict=FAIL classes=['FRONTIER-STALE']
+   PROVINCE.md:84-86 FORBIDDEN-GLOBAL 'untested' matched 'untested' (FRONTIER-STALE)
+### forbid-91 (exit 1)
+verdict=FAIL classes=['FRONTIER-STALE']
+   PROVINCE.md:91-93 FORBIDDEN 'untested' matched 'untested' (FRONTIER-STALE)
+   PROVINCE.md:91-93 FORBIDDEN-GLOBAL 'untested' matched 'untested' (FRONTIER-STALE)
+### stale-159 (exit 1)
+verdict=FAIL classes=['FRONTIER-STALE']
+   PROVINCE.md:157-160 FORBIDDEN-GLOBAL 'probe-refused since r2' matched 'probe-refused since r2' (FRONTIER-STALE)
+### stale-ins-162 (exit 1)
+verdict=FAIL classes=['FRONTIER-STALE']
+   PROVINCE.md:161-162 FORBIDDEN-GLOBAL 'untested' matched 'untested' (FRONTIER-STALE)
+### req-evm (exit 1)
+verdict=FAIL classes=['FRONTIER-UNEVALUABLE']
+   PROVINCE.md:91-93 REQUIRED 'solc-0\\.8\\.37' absent (G21 frontier register)
+   PROVINCE.md:91-93 REQUIRED 'vyper-0\\.4\\.3' absent (G21 frontier register)
+### req-riscv (exit 1)
+verdict=FAIL classes=['FRONTIER-UNEVALUABLE']
+   PROVINCE.md:135-138 REQUIRED 'r5-01' absent (G21 frontier register)
+### trunc-161 (exit 1)
+verdict=FAIL classes=['UNREADABLE', 'FRONTIER-UNEVALUABLE']
+   PROVINCE.md:75-80 frontier uncheckable (file unreadable)
+   PROVINCE.md:82-83 frontier uncheckable (file unreadable)
+   PROVINCE.md:84-86 frontier uncheckable (file unreadable)
+   PROVINCE.md:87-88 frontier uncheckable (file unreadable)
+   PROVINCE.md:89-90 frontier uncheckable (file unreadable)
+   PROVINCE.md:91-93 frontier uncheckable (file unreadable)
+   PROVINCE.md:135-138 frontier uncheckable (file unreadable)
+   PROVINCE.md:139-144 frontier uncheckable (file unreadable)
+   PROVINCE.md:145-146 frontier uncheckable (file unreadable)
+   PROVINCE.md:147-148 frontier uncheckable (file unreadable)
+   PROVINCE.md:149-150 frontier uncheckable (file unreadable)
+   PROVINCE.md:151-156 frontier uncheckable (file unreadable)
+   PROVINCE.md:157-160 frontier uncheckable (file unreadable)
+   PROVINCE.md:161-162 frontier uncheckable (file unreadable)
+### append-163 (exit 0)
+verdict=PASS classes=[]
+### sem-riscv (exit 0)
+verdict=PASS classes=[]
+# EX-4 combined hardening (scratch only): global FORBIDDEN + header rows
+### clean (exit 0)
+verdict=PASS frontier_rows=16 classes=[]
+### header-rename (exit 1)
+verdict=FAIL frontier_rows=16 classes=['FRONTIER-UNEVALUABLE']
+   PROVINCE.md:73-73 REQUIRED '^## Frontier$' absent (G21 frontier register)
+### ins-133 (exit 1)
+verdict=FAIL frontier_rows=16 classes=['FRONTIER-UNEVALUABLE']
+   PROVINCE.md:133-133 REQUIRED '^### Round-4 frontier \\(post-unlock\\)$' absent (G21 frontier register)
+### forbid-84 (exit 1)
+verdict=FAIL frontier_rows=16 classes=['FRONTIER-STALE']
+   PROVINCE.md:84-86 FORBIDDEN-GLOBAL 'untested' matched 'untested' (FRONTIER-STALE)
+### forbid-91 (exit 1)
+verdict=FAIL frontier_rows=16 classes=['FRONTIER-STALE']
+   PROVINCE.md:91-93 FORBIDDEN 'untested' matched 'untested' (FRONTIER-STALE)
+   PROVINCE.md:91-93 FORBIDDEN-GLOBAL 'untested' matched 'untested' (FRONTIER-STALE)
+### stale-159 (exit 1)
+verdict=FAIL frontier_rows=16 classes=['FRONTIER-STALE']
+   PROVINCE.md:157-160 FORBIDDEN-GLOBAL 'probe-refused since r2' matched 'probe-refused since r2' (FRONTIER-STALE)
+### stale-ins-162 (exit 1)
+verdict=FAIL frontier_rows=16 classes=['FRONTIER-STALE']
+   PROVINCE.md:161-162 FORBIDDEN-GLOBAL 'untested' matched 'untested' (FRONTIER-STALE)
+### req-evm (exit 1)
+verdict=FAIL frontier_rows=16 classes=['FRONTIER-UNEVALUABLE']
+   PROVINCE.md:91-93 REQUIRED 'solc-0\\.8\\.37' absent (G21 frontier register)
+   PROVINCE.md:91-93 REQUIRED 'vyper-0\\.4\\.3' absent (G21 frontier register)
+### trunc-161 (exit 1)
+verdict=FAIL frontier_rows=16 classes=['UNREADABLE', 'FRONTIER-UNEVALUABLE']
+   PROVINCE.md:75-80 frontier uncheckable (file unreadable)
+   PROVINCE.md:82-83 frontier uncheckable (file unreadable)
+   PROVINCE.md:84-86 frontier uncheckable (file unreadable)
+   PROVINCE.md:87-88 frontier uncheckable (file unreadable)
+   PROVINCE.md:89-90 frontier uncheckable (file unreadable)
+   PROVINCE.md:91-93 frontier uncheckable (file unreadable)
+   PROVINCE.md:135-138 frontier uncheckable (file unreadable)
+   PROVINCE.md:139-144 frontier uncheckable (file unreadable)
+   PROVINCE.md:145-146 frontier uncheckable (file unreadable)
+   PROVINCE.md:147-148 frontier uncheckable (file unreadable)
+   PROVINCE.md:149-150 frontier uncheckable (file unreadable)
+   PROVINCE.md:151-156 frontier uncheckable (file unreadable)
+   PROVINCE.md:157-160 frontier uncheckable (file unreadable)
+   PROVINCE.md:161-162 frontier uncheckable (file unreadable)
+   PROVINCE.md:73-73 frontier uncheckable (file unreadable)
+   PROVINCE.md:133-133 frontier uncheckable (file unreadable)
+### append-163 (exit 0)
+verdict=PASS frontier_rows=16 classes=[]
+### sem-riscv (exit 0)
+verdict=PASS frontier_rows=16 classes=[]
+### real repo root
+FRONTIER register (G21): 16 rows asserted, errors: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)

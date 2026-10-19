@@ -1,0 +1,23 @@
+- **Parsed-and-empty is not byte-absence: a 0-function probe result is a
+  parser-scope statement, and "absent" may be written only after a byte search
+  of the same input locates nothing.** The class earned its keep across the
+  EVM rounds: r1 recorded creation-code probes as 0 functions and wrote
+  "creation blobs carry no runtime dispatch table", corrected append-only once
+  a byte census found the runtime and its five compare sites embedded in the
+  initcode (`corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:24`,
+  corrected at :31); round 5 re-derived the same facts for the r3/r4 carriers
+  — each runtime sits byte-exactly inside its initcode blob (VaultB opt200
+  1,621 B at +34 in 1,655 B; CarrierV 1,562 B at +20 in 1,637 B) while every
+  creation-code probe still reads exit 0 / 0 functions
+  (`corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md:41-51`;
+  `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:39-46`, original claim
+  :17). The corrected form is "creation probes parse empty while the runtime
+  bytes are present verbatim"
+  (`corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:39-46`); the same
+  discipline separates a probe-input trap (raw-over-hextext: exit 0, decoded
+  sha = the hex *text* file's own sha — a costume, not a carrier) from a
+  carrier defect
+  (`corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md:27`,
+  `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:25`), per the entry
+  gate that an empty/zero finding must state which of the two it is
+  (`corpus/QUALITY.md:21`, row 11).

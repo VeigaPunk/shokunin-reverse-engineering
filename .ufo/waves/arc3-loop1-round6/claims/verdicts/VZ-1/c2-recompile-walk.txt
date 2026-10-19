@@ -1,0 +1,100 @@
+# VZ-1 c2 evidence — arc3-loop1-round6, 2026-10-19 (all runs first-hand; scratch /var/tmp/vz1-r6)
+
+## toolchain (read-only reuse of the wave-1 solc prefix)
+0.8.37+commit.f401782d.Emscripten.clang
+221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c  .ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules/solc/soljson.js
+b3a90035cab4e8aa43068f33f01497dccfb77b294e1ea30c5fb32a9631e33491  .ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules/solc/package.json
+f53911672f2e33eaabaeff85e75c2565bb2899638d194fb3ffe6747abe80cbbe  .ufo/waves/arc3-loop1-round6/claims/c2/EX-7/src/ViaIrVault.sol
+
+## independent recompile (VZ-1 driver, node compile-vz1.js; source read from EX-7/src)
+viair-opt200 runtime 1517 creation 1560
+viair-noopt runtime 4144 creation 4318
+std-opt200 runtime 1921 creation 1966
+$ sha256sum c2/*/runtime.bin c2/*/creation.bin
+c2ceabb163ad9c1e6d88244c29c5187602eaf4c810029d0018e76eb9643f7e27  c2/std-opt200/runtime.bin
+0cc6938cd768199159cbed74a7e9f5bd4273c583afbf6babca643b0ffdbd29b4  c2/viair-noopt/runtime.bin
+2ec3f557f6f2fb229dc49094981723c6efcce3df10f20363ec1732845c99581a  c2/viair-opt200/runtime.bin
+4541fd490eb46198e788c148328dfb74e0ae1fd29c961a47c6f3056b823c5d9e  c2/std-opt200/creation.bin
+f1125049532f0dd9a71ab0f9963590d7a40913e521c43709400c92b96cc54063  c2/viair-noopt/creation.bin
+d85fdde93b1fcb620a8a0dcf16885b7b55113b9ef7860ae5ebdbf5ad5fbd83d5  c2/viair-opt200/creation.bin
+$ wc -c c2/*/runtime.bin c2/*/creation.bin
+ 1921 c2/std-opt200/runtime.bin
+ 4144 c2/viair-noopt/runtime.bin
+ 1517 c2/viair-opt200/runtime.bin
+ 1966 c2/std-opt200/creation.bin
+ 4318 c2/viair-noopt/creation.bin
+ 1560 c2/viair-opt200/creation.bin
+15426 total
+
+## independent dispatch walk (VZ-1 walk-vz1.py; no EX-7 code reused)
+## viair-opt200: 1517 B, 990 ops, 19 PUSH4 sites
+  head: 0x60 0x80 0x60 0x40 0x52 0x60 0x04 CALLDATASIZE LT ISZERO 0x61 0x0022 JUMPI JUMPDEST CALLDATASIZE ISZERO
+  EQ legs: 14; SUB legs: 1
+  EQ pcs: [41, 52, 63, 74, 85, 96, 107, 118, 129, 140, 151, 162, 173, 184]
+  EQ dsts: [982, 935, 771, 723, 694, 631, 572, 485, 425, 374, 340, 311, 272, 253]
+  EQ stride gaps: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11]
+  EQ sels ascending: True
+  SUB leg: push4_pc=194 sel=ee02438e dst=0x000e
+  all EQ/SUB dsts JUMPDEST: True
+  guard PUSH2 0x0022 at pc=10; prefix bytes=0436101561002257
+  post-SUB-JUMPI bytes: 346100f95760203660031901 | dst 0xe in JUMPDESTs: True
+  selectors: got=15 want=15 missing=[] extra=[]
+  non-selector PUSH4: ['4e487b71', '0c2eae8d', '4e487b71', '3c3332b9']
+## viair-noopt: 4144 B, 2503 ops, 17 PUSH4 sites
+  head: 0x60 0x80 0x60 0x40 0x52 0x60 0x04 CALLDATASIZE LT ISZERO 0x61 0x001d JUMPI JUMPDEST CALLDATASIZE 0x61 0x05dc
+  EQ legs: 14; SUB legs: 1
+  EQ pcs: [41, 52, 63, 74, 85, 96, 107, 118, 129, 140, 151, 162, 173, 184]
+  EQ dsts: [273, 268, 263, 258, 253, 248, 243, 238, 233, 228, 223, 218, 213, 208]
+  EQ stride gaps: [11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11]
+  EQ sels ascending: True
+  SUB leg: push4_pc=194 sel=ee02438e dst=0x000e
+  all EQ/SUB dsts JUMPDEST: True
+  guard PUSH2 0x001d at pc=10; prefix bytes=0436101561001d57
+  post-SUB-JUMPI bytes: 6105a9565b610580565b6105 | dst 0xe in JUMPDESTs: True
+  selectors: got=15 want=15 missing=[] extra=[]
+  non-selector PUSH4: ['4e487b71', '4e487b71']
+## std-opt200: 1921 B, 1299 ops, 22 PUSH4 sites
+  head: 0x60 0x80 0x60 0x40 0x52 0x60 0x04 CALLDATASIZE LT 0x61 0x00e7 JUMPI PUSH0 CALLDATALOAD 0x60 0xe0 0x1c
+  EQ legs: 15; SUB legs: 0
+  EQ pcs: [41, 52, 63, 74, 89, 100, 111, 122, 148, 159, 170, 181, 196, 207, 218]
+  EQ dsts: [715, 735, 773, 781, 589, 620, 672, 692, 477, 497, 527, 558, 346, 379, 446]
+  EQ stride gaps: [11, 11, 11, 15, 11, 11, 11, 26, 11, 11, 11, 15, 11, 11]
+  EQ sels ascending: False
+  all EQ/SUB dsts JUMPDEST: True
+  guard PUSH2 0x00e7 at pc=9; prefix bytes=600436106100e757
+  selectors: got=15 want=15 missing=[] extra=[]
+  non-selector PUSH4: ['3c3332b9', '4e487b71', '0c2eae8d', '43000825']
+
+## probe legs (cached rea-agents 6.4.0; disk-backed TMPDIR)
+viair-opt200 raw       exit=0 nfn=15 dispatch=['abi'] decoded_sha=2ec3f557f6f2fb22 bytes=1517 id=ev_fbd2ea2db442eea
+viair-opt200 hex       exit=0 nfn=15 dispatch=['abi'] decoded_sha=2ec3f557f6f2fb22 bytes=1517 id=ev_c69d3d996efed43
+TRAP raw-on-hextext    exit=0 nfn=0 dispatch=- decoded_sha=19838d6680f155ac bytes=3035 id=ev_2cb8f33d73d1f3c
+viair-noopt raw        exit=0 nfn=15 dispatch=['abi'] decoded_sha=0cc6938cd7681991 bytes=4144 id=ev_50b249eea458ebc
+std-opt200 raw         exit=0 nfn=15 dispatch=['abi'] decoded_sha=c2ceabb163ad9c1e bytes=1921 id=ev_f677489462292aa
+creation raw           exit=0 nfn=0 dispatch=- decoded_sha=d85fdde93b1fcb62 bytes=1560 id=ev_6aecd1cbdaa4573
+creation hex           exit=0 nfn=0 dispatch=- decoded_sha=d85fdde93b1fcb62 bytes=1560 id=ev_daa8e328ba9ad39
+
+## runtime embedding in creation blob
+runtime 1517 creation 1560 offset +43 trailing 0 occurrences 1
+
+## mutability delta vs compiled ABI (14/15; scale pure->view)
+MISMATCH scale(uint256,uint256) abi= pure inferred= view
+agreement 14/15
+
+## command A — baseline at parent c625d5d and overlay (entry + map token) at d5ad52d
+d5ad52d VZ-1 scratch overlay: EX-7 entry + map token
+ corpus/README.md                                   |  2 +-
+ .../2026-10-19-arc3-r6-viair-dispatch-shape.md     | 34 ++++++++++++++++++++++
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 85, "mapped": 85, "missing": [], "rev": "d5ad52d", "rule_blocks": 14}
+{"knowledge_files": 84, "mapped": 84, "rev": "c625d5d", "rule_blocks": 14}
+
+## EX-6's distinct pre-existing carrier (fallback-bearing, 12 selectors) — VZ-1 walk
+len 1127 head 608060405260043610156100af575b361561005957604051
+EQ 11 gaps [11, 11, 11, 11, 11, 11, 11, 11, 11, 11] ascending True
+SUB [(302, 'f43cc773', '0xe')] post-SUB bytes 34610154575f366003190112
+
+## std-control GT legs (re-run; complements walk-vz1.py)
+GT legs 3 [(19, '6e69f38c', '0x87'), (30, '90ab171e', '0x57'), (137, '3f4ba83a', '0xc2')]
+EQ legs 15 | selector sites 18
+selectors appearing twice: {'90ab171e': 2, '6e69f38c': 2, '3f4ba83a': 2} | distinct 15

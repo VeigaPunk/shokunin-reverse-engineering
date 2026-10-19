@@ -1,0 +1,87 @@
+# CR-7 peer reconciliation — wave state at ~14:05 local, 2026-10-19
+
+All statements below were measured by this seat. "Peer" values are cited as
+claims under audit, never as evidence (rule #14).
+
+## c1 — one landing candidate remains after peer revisions
+
+- Delivered artifact: `claims/c1/PL-4.md` (sha256 d0762a8d…), patch
+  `PL-4/patch-v10-to-r10.diff` (3f94355c…). I applied it to a pristine
+  `git show HEAD:.ufo/gates/c1-census-v10.py` copy → 80027570…, 713 lines,
+  ast OK; shipped built file has the same sha.
+- `PL-2.md` (current sha 38f7c38d…) is an **independent verification of
+  PL-4**, not a competing patch. Its earlier competing design is preserved at
+  `PL-2/prior-attempt/` (patch sha 2d7ee95b…). I audited that prior design:
+  clean PASS, frozen seed caught as FRONTIER-STALE, 17 shared JSON keys with
+  zero mismatches — but its register is 3 retracted literals with no
+  per-bullet positive floor, so a claim-stripped bullet outside those literals
+  is ungraded. Current PL-2 does not propose landing it.
+- `RV-3.md` (current sha 105a7c3a…) is an **independent verification of
+  PL-4**; its current artifact contains no patch (diff_blocks=0). An earlier
+  RV-3 competing design (applied gate 8e420679…, 13 rows, 3 classes) was
+  audited by me before the revision: clean PASS, seeded arms FAIL with named
+  classes, truncation FAIL FRONTIER-UNATTESTED. It is history, not a landing
+  candidate.
+- Peer correction CONFIRMED: PL-4 §6.1 says insertions inside :132-162 are
+  caught, but four one-line edits I built in scratch all read PASS exit 0
+  (`VERDICT: PASS`, 14 rows, errors []): blank line before :133, blank line at
+  :134, blank line at :150, header rename of :133. Register spans absorb ±1
+  line shifts. Frozen (a)(b)(c) are unaffected; the residual prose is wrong.
+- Optional (not landed, not part of PL-4's patch): PL-2 §7's two header rows
+  (`PROVINCE.md:73`, `PROVINCE.md:133`) tested on PL-2's scratch. I did not
+  re-test the hardening itself.
+
+## c2 — one entry, one independent verifier
+
+- `EX-7/entry-draft/2026-10-19-arc3-r6-viair-dispatch-shape.md` (sha 6e331882…)
+  is the only complete corpus entry. `EX-6.md` landed at 14:02 as an
+  independent verification of EX-7 (not a competing entry); its four prose
+  corrections were re-measured by me and are confirmed: 15 source/ABI
+  externals (entry says 14), `0c2eae8d` has no corpus hit, EX-7's tree has 46
+  files (seat says 42), and byte 14 is the receive/mismatch router. EX-6's own
+  row-12 CBOR prose repeats the `73"solc"` error; the raw byte is `64`.
+- EX-6's independent carrier (different source, sha 5684069e…, 12 functions)
+  compiles the same fourth class under viaIR: 11 EQ legs + 1 SUB leg
+  (f43cc773, dst 14), 0 GT; viair-nopt 3,039 B same chain. My raw-byte walk,
+  not EX-6's script.
+- CORRECTION confirmed independently: EX-7 entry line 28 writes the CBOR
+  trailer token as `73 736f6c63`; the actual byte is `64 736f6c63` (text(4)
+  "solc"). I verified `64 736f6c63` is present and `73 736f6c63` is absent in
+  the runtime bytes. CR-5, CR-8 and CN-4 independently caught the same byte.
+- Precision (not a defect): the probe reports `payable` only for `deposit()`,
+  which the ABI also declares payable — zero *spurious* payable reads. The
+  entry's phrase "zero payable-reads" is loose; CR-6's precision note is fair.
+
+## c3 — one rule, several verified wordings
+
+- SC-3 §4 as delivered: 1,605 B, 23 lines, sha 763c44b5…. Lands 14→15 with
+  15/15 at both source commits, but `r4…:34` is the erratum header; the quoted
+  limitation is at :29.
+- Minimal correction (:34→:29): sha 6967b1e3…, same 1,605 B/23 lines, 15/15 at
+  both revs. (CR-8's `rule15-SC-3-F1-corrected.txt` is byte-identical.)
+- CR-8's reflowed variant (`rule15-SC-4-recommended.txt`, sha a1bceb40…)
+  additionally moves the `r1:24` citation off the containment clause; I
+  simulated it: 15/15 at both revs.
+- RV-7's independent draft (`rule15-bullet.md`, sha ccbc5cdb…, 1,565 B):
+  15/15 at both revs. RV-7's F1 is CONFIRMED: the r3 entry contains
+  "Creation blobs carry no runtime dispatch table" 0 times at round-3 landing
+  c418be0 and 1 time only after the round-5 erratum 58c3db7 — the sentence is
+  r1:24's, not r3's. Land exactly one of SC-3-corrected / RV-7; not both.
+
+## Verdict-seat peers — convergence snapshot
+
+- Present and aligned on the same three rulings at my snapshot: CR-5 (448
+  lines), CR-6, CR-8, CN-2, CN-4. CR-5 independently reports the same CBOR
+  `73`→`64` correction and the one-line-reflow gap. CR-6/CR-8/CN-2/CN-4 all
+  recommend landing PL-4, landing EX-7 with text fixes, and SC-3 with
+  :34→:29 (or RV-7). My own re-derivations agree; where I relied on peer
+  statements above, I name the peer.
+- VZ-4 is a point-in-time verdict (final poll 13:14): its C1/C2/C3 PENDING
+  items are now resolved by PL-4/EX-7/SC-3. Its :34→:29 correction is
+  CONFIRMED. Two cosmetic corrections: its header HEAD sha is 39 hex chars
+  (`c625d5de57e045188b5ce8cd450a57b34f90785`; actual ends `…b349f90785`), and
+  its EX-6 viaIR characterization ("no selector decode in the prologue at
+  all") is imprecise — EX-6's viair-opt200 carries `5f3560e01c` and its first
+  EQ leg is at pc 182, after the error-string block.
+- CR-5.md was absent at my first poll and present at the final snapshot; I
+  read its headline rulings only, not its 448 lines.

@@ -1,0 +1,27 @@
+RV-7 first-hand re-derivation of the round-5 sweep's byte-embedding claims.
+Method: unhexlify retained .hex artifacts as needed; python bytes.find/count.
+Run: 2026-10-19, repo HEAD c625d5d (work 58c3db7), working tree clean for corpus/.
+
+CarrierV @EX-04 (r4): creation 1637 B sha 3c667396; runtime 1562 B sha 57d6fd0a;
+  first embed offset 20 (EXACT-EMBED), occurrences 1   [r4:39-46 claimed +20/1,637 B — VERIFIED]
+VaultB opt200 @EX-10 (r3): creation 1655 B sha ac614a6e; runtime 1621 B sha b24a0115;
+  offset 34, occurrences 1                              [r3:41-51 claimed +34/1,655 B — VERIFIED]
+VaultB nopt @EX-10 (r3): creation 3243 B sha e8022fe0; runtime 3163 B sha bcdf64ab;
+  offset 80, occurrences 1                              [r3:41-51 claimed +80/3,243 B — VERIFIED]
+CarrierB @EX-05 (r3): creation 1560 B sha 6794c3a2; runtime 1469 B sha b9c70178;
+  offset 91, occurrences 1                              [r3:41-51 claimed +91/1,560 B — VERIFIED]
+Smoke @EX-02 (r4): creation 248 B sha 97ac5331; runtime 168 B sha 415e6b1b;
+  offset 27, occurrences 1                              [r4:39-46 claimed +27/248 B — VERIFIED]
+Rv2Token @RV-2 (r1): creation 1971 B sha 04e07f54; runtime 1943 B sha c1081a56;
+  offset 28, occurrences 1; EQ..PUSH2..JUMPI site patterns: 5
+                                                        [r1:31(a) claimed 1,971 B + five sites — VERIFIED]
+
+Live probe (parsed-and-empty re-derivation, first-hand this seat):
+TMPDIR=/var/tmp/rv7-c3 npx -y rea-agents@6.4.0 inspect-evm-interface \
+  /var/tmp/rv7-c3/CarrierV.creation.hex hex --format json
+→ exit 0; functions: 0; bytecode.kind "unknown"; decoded bytecode.sha256 3c6673966d821d9d…
+  (= the decoded 1,637 B creation's own sha, re-derived above);
+  input file sha256 34f52280d3cdc740… (= r4:12's recorded creation hex carrier);
+  evidence_id ev_7a8403967a6e1e1a… Envelope: probe-CarrierV-creation-6.4.0.json.
+Same measurement pair proves the distinction: probe says 0 functions while a byte
+search locates the 1,562 B runtime at offset +20 of the very bytes probed.

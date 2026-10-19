@@ -1,0 +1,33 @@
+# EX-5 arc3-loop1-round6 two-level codesize check (first-hand)
+
+carrier: CarrierV (round-4 r4 custody source, sha256 of the copy compared below), compiled -O codesize with vyper 0.4.3
+runtime: 1450 B sha256 03a27565242a1c9ca84fc8051afe832ad4105f0fd0c81ab2bf7c4b05a517363b
+level-1 prologue: PUSH1 5; PUSH1 5; PUSH1 1; DUP4; AND; MUL; PUSH2 0x0537; ADD; PUSH1 0x1b; CODECOPY; PUSH0; MLOAD
+  -> header_index = selector & 1; header_addr = 0x537 + 5*index
+
+header 0 @ 0x537 raw 000a054105 mult=10 base=0x541 count=5
+  entry  0 @ 0x541 sel 6e8efde2 name 0x6e8efde2 dst 1184 jd True tag 0x25 hash_idx 0 perfect True
+  entry  1 @ 0x548 sel 48a3ef5c name 0x48a3ef5c dst 1249 jd True tag 0x5 hash_idx 1 perfect True
+  entry  2 @ 0x54f sel 3f4ba83a name 0x3f4ba83a dst 989 jd True tag 0x5 hash_idx 2 perfect True
+  entry  3 @ 0x556 sel d0e30db0 name 0xd0e30db0 dst 99 jd True tag 0x4 hash_idx 3 perfect True
+  entry  4 @ 0x55d sel e0749a6a name 0xe0749a6a dst 776 jd True tag 0x25 hash_idx 4 perfect True
+
+header 1 @ 0x53c raw 0a1f05640a mult=2591 base=0x564 count=10
+  entry  0 @ 0x564 sel 8456cb59 name 0x8456cb59 dst 860 jd True tag 0x5 hash_idx 0 perfect True
+  entry  1 @ 0x56b sel 0776076f name 0x776076f dst 1155 jd True tag 0x25 hash_idx 1 perfect True
+  entry  2 @ 0x572 sel b144adfb name 0xb144adfb dst 1117 jd True tag 0x25 hash_idx 2 perfect True
+  entry  3 @ 0x579 sel 5c975abb name 0x5c975abb dst 1261 jd True tag 0x5 hash_idx 3 perfect True
+  entry  4 @ 0x580 sel 2e1a7d4d name 0x2e1a7d4d dst 312 jd True tag 0x25 hash_idx 4 perfect True
+  entry  5 @ 0x587 sel 4643c56b name 0x4643c56b dst 1237 jd True tag 0x5 hash_idx 5 perfect True
+  entry  6 @ 0x58e sel 0c751377 name 0xc751377 dst 818 jd True tag 0x45 hash_idx 6 perfect True
+  entry  7 @ 0x595 sel 1aa02d59 name 0x1aa02d59 dst 521 jd True tag 0x25 hash_idx 7 perfect True
+  entry  8 @ 0x59c sel 27e235e3 name 0x27e235e3 dst 1273 jd True tag 0x25 hash_idx 8 perfect True
+  entry  9 @ 0x5a3 sel 8da5cb5b name 0x8da5cb5b dst 1226 jd True tag 0x5 hash_idx 9 perfect True
+
+Probe rea 6.4.0: 15/15, dispatch abi, decoded sha 03a27565…, every bytecode_offset 73 (shared guard, not handler).
+
+K=2 fallback check (carrier src/K2.vy, pay(uint256) payable + look(uint256) view):
+- -O gas runtime 103 B sha256 726f00f37edbef8b6c178d01c57673a1bdbe2df00846c909d1642b8881cc0b3d
+- -O codesize runtime 103 B sha256 726f00f37edbef8b6c178d01c57673a1bdbe2df00846c909d1642b8881cc0b3d (byte-identical)
+- probe both forms: 2/2, decoded sha equal, offsets [16, 61] (per-function XOR-chain bodies, not a shared constant).
+So the packed perfect-hash form is not universal: it is measured at K=7/8/15 here and does NOT appear at K=2. The K threshold is an Unknown.

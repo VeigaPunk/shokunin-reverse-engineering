@@ -1,0 +1,195 @@
+--- .ufo/gates/c1-census-v10.py   (HEAD c625d5d, sha256 d0772ce8…)
++++ .ufo/gates/c1-census-v10.py   (proposed r10, seat PL-2)
+@@ -1,4 +1,30 @@
+-"""C1 census v10 — v9 (sha256 213fe679…) re-keyed per arc2-loop1-round4 Z1 section 4d.
++"""C1 census v10 — r10 (arc3-loop1-round6, seat PL-2): Frontier blind-spot
++closure (rounds 4-5 R1 residual, claims-frozen C1). Additive in-place
++extension, measured at HEAD c625d5d (instrument sha256 before this edit
++d0772ce8…): the SCOPE table covered PROVINCE.md only at 8-13/15-26/40-43/44/
++45-62/64-71/119-131; the `## Frontier` section (73-93) and the post-unlock
++frontier (133-162) were UNDECLARED, and neither region held any REA_GATE
++unit or PIN/VER/PTR occurrence at HEAD — so L3 never saw a locus there and
++v10 read PASS identically whether or not the locus-free frontier bullets
++were stale (reproduced: seeded before-state "real solc/vyper-compiled
++bytecode untested" back into :92-93 reads v10 PASS exit 0). Closure, three
++additive pieces:
++  1. Two SCOPE rows classed FRONTIER (73-93, 133-162). The class rides the
++     CURRENT grading path in classify() (a drift reads STALE, never
++     DATED-sheltered — the t5 shelter lesson) and each row declares a
++     structural header marker asserted like a DATED marker (G15/G18
++     machinery), so a reflow that moves the section fails declared, not
++     silently mis-graded. At HEAD both markers match, scope_errors stays [].
++  2. FRONTIER_STALE, a declared claim register for locus-free bullets: each
++     entry is a literal whose staleness a past round MEASURED, cited to the
++     repairing commit (rule #14). A hit inside its declared range is the
++     declared FRONTIER-STALE class (text + --json, exit 1).
++  3. G19 max-end for PROVINCE.md rises 131 -> 162 with the declared row —
++     the same could-not-evaluate strictness every scoped file already has.
++Every pre-existing SCOPE row, counter and classify() branch is untouched;
++clean-tree invariance (PASS 0/0/0/0, counters and floor map identical) is
++the r10 acceptance arm, the seeded register hit and a seeded reflow are the
++falsification arms.
+ 
+ E22 DISPOSITION — arc3-loop1-round1, EX-28 (measured 2026-10-19 at HEAD
+ e845c2b; instrument sha256 before this edit 36e96cd5…). The arc2-loop1-round3
+@@ -92,9 +118,10 @@
+   so a hash written into the file it hashes would be stale by construction
+   (the queue-drain rule-#14 discipline)."""
+ #!/usr/bin/env python3
+-"""C1 census instrument v10-r9 (arc3-loop1-round2: H1+H3 fail-closures; the
+-v9-era structure and claim text below are retained as the instrument's history,
+-not as a current self-description — see the r9 provenance block at the top).
++"""C1 census instrument v10-r10 (arc3-loop1-round6: Frontier blind-spot
++closure — see the r10 provenance block at the top; the r9 fail-closures and
++the v9-era structure and claim text below are retained as the instrument's
++history, not as a current self-description).
+ 
+ Claim under test (C1): after the round's commit, every current-surface
+ version/pin statement in PROVINCE.md / SKILL.md / SCORECARD.md states a
+@@ -190,11 +217,28 @@
+                                            table).  Do not re-key the unit
+                                            without re-running the HEAD
+                                            invariance check.)
++  G21 frontier-claim register (r10, C1    blind spot): the Frontier region's
++                                           locus-free bullets carry no
++                                           pin/version/path occurrence, so L3
++                                           never saw them and a stale claim
++                                           read PASS (v10 reproduced this on
++                                           the seeded before-state); now a
++                                           declared register of measured-stale
++                                           literals, each cited to the
++                                           repairing commit; a hit is the
++                                           declared FRONTIER-STALE class
++  G22 frontier region declared (r10):     SCOPE rows 73-93 / 133-162 classed
++                                           FRONTIER — graded on the CURRENT
++                                           path (a drift reads STALE, never
++                                           DATED-sheltered) with structural
++                                           header markers asserted by the
++                                           G15/G18 machinery, so a section
++                                           reflow fails declared too
+ 
+ Verdict: PASS iff stale == 0 AND ambiguous == 0 AND undeclared == 0
+ AND unresolved == 0 AND scope_errors == 0 AND g11 == [] AND G2 holds
+ (>= 1 current-ok DETECTION per readable scoped file, r9 floor) AND no
+-unevaluable scoped file.
++unevaluable scoped file AND frontier register clean (r10).
+ Exit 0 PASS, 1 FAIL, 2 anchor failure.
+ Usage: python3 c1-census-v10.py [--root DIR] [--json] [--quiet]
+ """
+@@ -234,6 +278,36 @@
+ 
+     ("SCORECARD.md", 703, 768, "DATED", 704, r"arc2-loop1-round2"),
+     ("SCORECARD.md", 769, 855, "DATED", 769, r"arc2-loop1-round3"),
++
++    # r10: the Frontier region, declared at last (rounds 4-5 R1 residual).
++    # FRONTIER rides the CURRENT grading path (a locus here that misses a
++    # live anchor is STALE, never DATED-sheltered) and carries its section
++    # header as a structural marker (asserted by the G15/G18 machinery).
++    ("PROVINCE.md", 73, 93, "FRONTIER", 73, r"^## Frontier$"),
++    ("PROVINCE.md", 133, 162, "FRONTIER", 133, r"^### Round-4 frontier \(post-unlock\)$"),
++]
++
++# ---- L1c: frontier-claim register (r10) -----------------------------------
++# The Frontier bullets are locus-free: no pin/version/path occurrence, so L3
++# cannot grade them and a stale claim reads PASS (the R1 residual). Each
++# entry declares a literal whose staleness a past round MEASURED, cited to
++# the repairing commit. A hit inside its range is the declared
++# FRONTIER-STALE fail class. Append-only: add entries with a citation, never
++# widen an existing pattern without a measured clean-tree run.
++FRONTIER_STALE = [
++    # r4 before-state at :92-93, replaced by held solc-0.8.37/vyper-0.4.3
++    # carriers in 40de383 (arc3-loop1-round4); re-claiming "untested"
++    # contradicts that held round unless a new round re-opens it.
++    ("PROVINCE.md", 73, 93, r"solc/vyper-compiled bytecode untested",
++     "r4 before-state, repaired in 40de383"),
++    # r4-12 wall form at :139-141, measured false at arc2-r7 (the same
++    # 91.6 MB PE held with analyzers disabled); repaired in 40de383.
++    ("PROVINCE.md", 133, 162, r"hits REA's ~900s internal session deadline",
++     "r4-12 wall form, measured false at arc2-r7, repaired in 40de383"),
++    # cross-version residual form at :157-159, exercised r12-02 (JS+managed)
++    # and r14-01 (runtime-reconcile, ev_8f0ac46c…); repaired in 40de383.
++    ("PROVINCE.md", 133, 162, r"probe-refused since r2",
++     "cross-version form, exercised r12-02/r14-01, repaired in 40de383"),
+ ]
+ 
+ PIN = re.compile(r"rea-agents@(\d+\.\d+\.\d+)", re.I)
+@@ -333,7 +407,7 @@
+     G18: the marker line must lie inside the range it dates."""
+     errs = []
+     for (f, s, e, cls, ml, mr) in SCOPE:
+-        if cls != "DATED" or ml is None:
++        if cls not in ("DATED", "FRONTIER") or ml is None:
+             continue
+         lines = filelines.get(f)
+         if not lines:
+@@ -348,6 +422,21 @@
+     return errs
+ 
+ 
++def frontier_scan(filelines):
++    """r10: declared-stale literals inside the declared Frontier ranges.
++    Unreadable files are skipped -- they are the H1 class and already force
++    FAIL via `unreadable`."""
++    hits = []
++    for (f, s, e, pat, why) in FRONTIER_STALE:
++        lines = filelines.get(f)
++        if not lines:
++            continue
++        for i in range(s - 1, min(e, len(lines))):
++            if re.search(pat, lines[i]):
++                hits.append("%s:%d %r (%s)" % (f, i + 1, pat, why))
++    return hits
++
++
+ def cache_versions():
+     """G17: every version present in an npx rea-agents cache."""
+     vers = set()
+@@ -531,6 +620,7 @@
+         filelines[f] = lines
+         counts[f] = {"lines": len(lines), "loci": len(classify(f, lines, live, out))}
+     scope_errors = assert_markers(filelines)
++    frontier_hits = frontier_scan(filelines)
+     stale, unatt = out.get("STALE", []), out.get("AMBIGUOUS", [])
+     undecl = out.get("UNDECLARED", [])
+     unres = out.get("UNRESOLVED", [])
+@@ -564,15 +654,18 @@
+                     floor[rec["file"]] += 1
+     h3_ok = all(floor[f] > 0 for f in files if filelines[f] is not None)
+     g2_ok = h3_ok
+-    declared = (["UNREADABLE"] if unreadable else []) + ([] if g2_ok else ["BLIND-INSTRUMENT"])
++    declared = (["UNREADABLE"] if unreadable else []) + ([] if g2_ok else ["BLIND-INSTRUMENT"]) \
++               + (["FRONTIER-STALE"] if frontier_hits else [])
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \
+-         and (not g11) and g2_ok and (not unreadable)
++         and (not g11) and g2_ok and (not unreadable) and (not frontier_hits)
+     verdict = "PASS" if ok else "FAIL"
+     if args.json:
+         print(json.dumps({"live": live, "counts": counts, "verdict": verdict,
+                           "stale": stale, "ambiguous": unatt, "undeclared": undecl,
+                           "unresolved": unres, "scope_errors": scope_errors,
+                           "unreadable": unreadable, "declared_fail_classes": declared,
++                          "frontier_stale": frontier_hits,
++                          "frontier_register": len(FRONTIER_STALE),
+                           "g2_ok": g2_ok, "g2_floor": "1/readable-file", "current_ok_per_file": floor,
+                           "g11": g11, "g7": g7,
+                           "historical": out.get("historical", []),
+@@ -594,6 +687,8 @@
+                     print("      :%d [%s] %s=%s -> %s (%s)" %
+                           (d["line"], d["kind"], d["client"], d["value"], d["disp"], d["why"]))
+     print("\nSCOPE-ERRORS (marker assertions): %r" % scope_errors)
++    print("FRONTIER-STALE (claim register, %d entries): %r"
++          % (len(FRONTIER_STALE), frontier_hits))
+     print("UNREADABLE (could-not-evaluate): %r" % unreadable)
+     print("G2 positive-assertion guard: %s (current-ok loci per file: %s; total loci=%d; floor=1/file)"
+           % ("ok" if g2_ok else "SUSPECT",
+@@ -601,8 +696,8 @@
+     print("G7 configured!=held warnings: %r" % g7)
+     print("G11 current-ok without receipt language: %r" % g11)
+     print("DECLARED FAIL CLASSES: %r" % declared)
+-    print("VERDICT: %s  (stale=%d ambiguous=%d undeclared=%d unresolved=%d)"
+-          % (verdict, len(stale), len(unatt), len(undecl), len(unres)))
++    print("VERDICT: %s  (stale=%d ambiguous=%d undeclared=%d unresolved=%d frontier=%d)"
++          % (verdict, len(stale), len(unatt), len(undecl), len(unres), len(frontier_hits)))
+     return 0 if verdict == "PASS" else 1
+ 
+ 

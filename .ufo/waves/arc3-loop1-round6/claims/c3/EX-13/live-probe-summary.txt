@@ -1,0 +1,21 @@
+EX-13 live probes, 2026-10-19, TMPDIR=/var/tmp/ex13-recheck (disk-backed; /tmp EDQUOT)
+
+1) parsed-and-empty leg (re-run of SC-3 §3):
+   npx -y rea-agents@6.4.0 inspect-evm-interface .ufo/waves/arc3-loop1-round4/claims/c1/EX-04/out/creation.hex hex --format json
+   exit 0; evidence_id: ev_53732d0f8c67d15c18110610cf228e550fb290537c87605706fc92a0856bee13
+   functions: 0 | bytecode: 3c6673966d821d9d3366283ab2501c4e32167798ae89d92a21143f560994a226 1637 B, kind unknown
+   subject digest: 34f52280d3cdc74008e1a2265f367f1d0817d93df6bbbb5cdce243903c3ccd92
+   locations: ['artifact-path']
+
+2) sealed r4 envelope (.ufo/waves/arc3-loop1-round4/claims/c1/EX-06/probe/CarrierV-creation-6.4.0.json):
+   evidence_id: ev_53732d0f8c67d15c18110610cf228e550fb290537c87605706fc92a0856bee13 | functions: 0 | bytecode bytes: 1637
+   id equal to this seat's live run: True
+
+3) r1 sealed envelope (.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/probe-creation-hex-6.4.0.json):
+   evidence_id: ev_c80379e1d3f74688e197bb09a968e22c6301bb193a58f000f9c4953a6559be73 | functions: 0 | bytecode bytes: 1971 | kind: unknown
+
+4) raw-over-hex-text trap leg:
+   npx -y rea-agents@6.4.0 inspect-evm-interface .ufo/waves/arc3-loop1-round4/claims/c1/EX-04/out/runtime.hex raw --format json
+   exit 0; evidence_id: ev_64a69c2807dbfc9f1555339ee5566fce006c24816cc83dc288c279aad188f2d0 | functions: 0
+   decoded sha: e0b1021c68f8de8c3f049f4242769548b6f8271a00986f2ab20f049f8748a192 bytes: 3124
+   hex-text file sha256: e0b1021c68f8de8c3f049f4242769548b6f8271a00986f2ab20f049f8748a192 size: 3124 -> decoded sha == hex-text sha: True

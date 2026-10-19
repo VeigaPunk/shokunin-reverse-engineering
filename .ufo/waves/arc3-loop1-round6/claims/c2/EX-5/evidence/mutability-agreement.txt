@@ -1,0 +1,19 @@
+# EX-5 arc3-loop1-round6 mutability-inference agreement (first-hand)
+
+## K8 (ABI: f0(uint256)=view, f1(uint256)=view, f2(uint256)=view, f3(uint256)=view, f4(uint256)=view, f5(uint256)=view, f6(uint256)=view, f7(uint256)=view)
+gas: agree 0/8 — f0:ABI=view,probe=payable MISMATCH; f1:ABI=view,probe=payable MISMATCH; f2:ABI=view,probe=payable MISMATCH; f3:ABI=view,probe=payable MISMATCH; f4:ABI=view,probe=payable MISMATCH; f5:ABI=view,probe=payable MISMATCH; f6:ABI=view,probe=payable MISMATCH; f7:ABI=view,probe=payable MISMATCH
+noopt: agree 0/8 — f0:ABI=view,probe=payable MISMATCH; f1:ABI=view,probe=payable MISMATCH; f2:ABI=view,probe=payable MISMATCH; f3:ABI=view,probe=payable MISMATCH; f4:ABI=view,probe=payable MISMATCH; f5:ABI=view,probe=payable MISMATCH; f6:ABI=view,probe=payable MISMATCH; f7:ABI=view,probe=payable MISMATCH
+codesize: agree 0/8 — f0:ABI=view,probe=payable MISMATCH; f1:ABI=view,probe=payable MISMATCH; f2:ABI=view,probe=payable MISMATCH; f3:ABI=view,probe=payable MISMATCH; f4:ABI=view,probe=payable MISMATCH; f5:ABI=view,probe=payable MISMATCH; f6:ABI=view,probe=payable MISMATCH; f7:ABI=view,probe=payable MISMATCH
+
+## Ex05Vault (ABI: alpha(uint256)=view, beta(uint256)=pure, gamma(uint256)=nonpayable, delta(uint256)=payable, epsilon()=view, zeta()=nonpayable, eta()=payable)
+gas: agree 3/7 — alpha:ABI=view,probe=payable MISMATCH; beta:ABI=pure,probe=payable MISMATCH; gamma:ABI=nonpayable,probe=payable MISMATCH; delta:ABI=payable,probe=payable; epsilon:ABI=view,probe=view; zeta:ABI=nonpayable,probe=view MISMATCH; eta:ABI=payable,probe=payable
+noopt: agree 2/7 — alpha:ABI=view,probe=payable MISMATCH; beta:ABI=pure,probe=payable MISMATCH; gamma:ABI=nonpayable,probe=payable MISMATCH; delta:ABI=payable,probe=payable; epsilon:ABI=view,probe=payable MISMATCH; zeta:ABI=nonpayable,probe=payable MISMATCH; eta:ABI=payable,probe=payable
+codesize: agree 2/7 — alpha:ABI=view,probe=payable MISMATCH; beta:ABI=pure,probe=payable MISMATCH; gamma:ABI=nonpayable,probe=payable MISMATCH; delta:ABI=payable,probe=payable; epsilon:ABI=view,probe=payable MISMATCH; zeta:ABI=nonpayable,probe=payable MISMATCH; eta:ABI=payable,probe=payable
+
+Reading: selector identity is exact on every leg; mutability is an upstream inference and is
+optimizer-form-scoped here. On K8 (all eight ABI functions view) every form reads payable (0/8).
+On Ex05Vault the default form agrees 3/7 (delta payable, epsilon view, eta payable);
+--no-optimize and -O codesize agree 2/7 (delta, eta) because every function reads payable.
+The r4 arg-taking-payable class reproduces on the default form (4/4 arg-taking read payable,
+including the pure `beta`), but the r4 zero-arg-agreement half does not generalize intact:
+zeta() (ABI nonpayable, zero-arg) reads view on the default form and payable on the non-default forms.

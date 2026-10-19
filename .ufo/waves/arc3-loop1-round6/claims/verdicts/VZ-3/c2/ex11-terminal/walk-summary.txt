@@ -1,0 +1,14 @@
+# EX-11 carrier recompile (VZ-3 first-hand, receipted solc 0.8.37, sources from claims/c2/EX-11/src/)
+viaIR Ex11Linear5 373B sha256 31b746442cbfd4f58cd7a365e63eaa7c5f93509d25d3337f5a584a93dcbb4b7a (matches EX-11 walk-carriers.json)
+viaIR Ex11Fallback6 592B sha256 6fe9958bc094c2cb314190294d2673746d0c15e594eb4264f0a687cf4c4bac06
+std   Ex11Linear5 391B sha256 9a73d61c91465d48290f802f33606d7bbbbf96e166856a3a923a480003055412
+std   Ex11Fallback6 728B sha256 f3a3dbebb88dd3853fe0feacd9f6920b0fc18d170bb1c2c86a17f2b2cc50fee4
+
+viaIR Ex11Linear5: guard 6004361015 present; 5 EQ legs (4 full + EQ terminal at 67 -> dst 80); 0 SUB; 0 GT
+viaIR Ex11Fallback6: guard 6004361015 present; 5 EQ legs + SUB terminal at 111 -> dst 14; 0 GT
+std   Ex11Linear5: guard 6004361015 absent; 5 EQ legs; 0 GT; 0 SUB
+std   Ex11Fallback6: guard 6004361015 absent; 6 EQ legs; 0 GT; 0 SUB
+
+Conclusion: terminal orientation (SUB->default vs EQ->handler) is carrier-layout-scoped;
+the invariant pipeline marker is the inverted (ISZERO) calldatasize guard + sorted linear scan.
+At K=5/6 the legacy pipeline also emits a linear EQ chain, so 'legacy = binary search' is K-scoped (K=15/20).

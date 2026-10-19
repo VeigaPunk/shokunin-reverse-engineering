@@ -1,0 +1,51 @@
+Seat CR-1, arc3-loop1-round6 — hardfork-twin byte diff: default (prague) vs paris
+
+default: 418 B 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814
+paris  : 423 B d1af44a952ac9775dd45eae83e2f4d167d311f9f7f3db8bf762592eb979060d2
+(london == paris byte-identically; cancun/shanghai/prague == default byte-identically)
+
+replace  default[0:1]=5f  paris[0:2]=6000
+replace  default[16:17]=90  paris[17:18]=95
+replace  default[21:22]=5f  paris[22:24]=6000
+replace  default[34:35]=46  paris[36:37]=48
+replace  default[44:45]=8c  paris[46:47]=90
+replace  default[58:59]=8c  paris[60:61]=90
+replace  default[80:81]=88  paris[82:83]=8a
+replace  default[90:91]=8c  paris[92:93]=90
+replace  default[104:105]=8c  paris[106:107]=90
+replace  default[126:127]=88  paris[128:129]=8a
+replace  default[136:137]=8c  paris[138:139]=90
+replace  default[150:151]=8c  paris[152:153]=90
+replace  default[172:173]=d0  paris[174:175]=d2
+replace  default[182:183]=8c  paris[184:185]=90
+replace  default[196:197]=8c  paris[198:199]=90
+replace  default[218:219]=88  paris[220:221]=8a
+replace  default[228:229]=8c  paris[230:231]=90
+replace  default[242:243]=8c  paris[244:245]=90
+replace  default[264:265]=88  paris[266:267]=8a
+replace  default[274:275]=8c  paris[276:277]=90
+replace  default[288:289]=8c  paris[290:291]=90
+replace  default[310:311]=88  paris[312:313]=8a
+replace  default[320:321]=8c  paris[322:323]=90
+replace  default[334:335]=8c  paris[336:337]=90
+replace  default[356:357]=88  paris[358:359]=8a
+replace  default[366:367]=8c  paris[368:369]=90
+replace  default[380:381]=8c  paris[382:383]=90
+replace  default[393:395]=5f5f  paris[395:399]=60006000
+replace  default[397:398]=5f  paris[401:403]=6000
+replace  default[401:402]=88  paris[406:407]=8a
+replace  default[403:404]=88  paris[408:410]=8a01
+delete   default[405:406]=fe  paris[411:411]=
+replace  default[407:408]=2c  paris[412:413]=2e
+replace  default[409:410]=a2  paris[414:415]=a4
+replace  default[411:412]=18  paris[416:417]=1a
+replace  default[413:414]=88  paris[418:419]=8a
+replace  default[415:416]=5a  paris[420:421]=5c
+replace  default[417:418]=74  paris[422:423]=76
+
+default PUSH0 count: 5; paris PUSH1 00 pairs: 0
+Displacement: table base 0x190 -> 0x195 (+5); first-body targets +2 (two PUSH0->PUSH1 00
+expansions precede the first handler: prologue and the table MLOAD); the remaining three
+expansions sit in the tail revert stubs. Dispatch topology is unchanged (9 buckets, same bucket map).
+Consequence: the paris/london Form-A prologue is `60003560e01c` — the same 5-byte head as
+r1's solc linear class (corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:29).

@@ -1,0 +1,38 @@
+Seat CR-1, arc3-loop1-round6 — compile reproduction receipt (first-hand, 2026-10-19)
+
+Compiler: vyper 0.4.3+commit.bff19ea2
+  binary: .ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper
+  binary sha256: 615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10
+  (the r4 authorized install, reused read-only; no install this round)
+Source: .ufo/waves/arc3-loop1-round4/claims/c1/CR-1/vy/K8.vy
+  sha256: 62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d
+  8 @external @view fN(uint256); ABI 8 function entries, all stateMutability=view
+
+Commands: `vyper -f bytecode_runtime <flags> K8.vy` (run in /var/tmp/cr1-r6/rec).
+
+flags                    bytes compiled runtime sha256                                          r4 artifact runtime sha256                                       equal
+(none; default -O gas)     418 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814 True
+-O none                    617 1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc 1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc True
+--no-optimize              617 1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc 1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc True
+-O codesize                360 bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5 bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5 True
+--evm-version paris        423 d1af44a952ac9775dd45eae83e2f4d167d311f9f7f3db8bf762592eb979060d2 d1af44a952ac9775dd45eae83e2f4d167d311f9f7f3db8bf762592eb979060d2 True
+--evm-version london       423 d1af44a952ac9775dd45eae83e2f4d167d311f9f7f3db8bf762592eb979060d2 d1af44a952ac9775dd45eae83e2f4d167d311f9f7f3db8bf762592eb979060d2 True
+--evm-version cancun       418 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814 True
+--evm-version shanghai     418 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814 True
+--evm-version prague       418 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814 True
+
+Text-hash equality (the probe's subject.digest.sha256 is the hex-text file digest):
+  (none; default -O gas)   compiled-text=b1f7fc882e441681… artifact-text=b1f7fc882e441681… equal=True
+  -O none                  compiled-text=1dfe2699e61e8d82… artifact-text=1dfe2699e61e8d82… equal=True
+  --no-optimize            compiled-text=1dfe2699e61e8d82… artifact-text=1dfe2699e61e8d82… equal=True
+  -O codesize              compiled-text=c4af8ebcb724788f… artifact-text=c4af8ebcb724788f… equal=True
+  --evm-version paris      compiled-text=0f0bcb57b2aa7e2e… artifact-text=0f0bcb57b2aa7e2e… equal=True
+  --evm-version london     compiled-text=0f0bcb57b2aa7e2e… artifact-text=0f0bcb57b2aa7e2e… equal=True
+  --evm-version cancun     compiled-text=b1f7fc882e441681… artifact-text=b1f7fc882e441681… equal=True
+  --evm-version shanghai   compiled-text=b1f7fc882e441681… artifact-text=b1f7fc882e441681… equal=True
+  --evm-version prague     compiled-text=b1f7fc882e441681… artifact-text=b1f7fc882e441681… equal=True
+
+Measured equalities:
+  --no-optimize == -O none  (byte-identical runtime, 617 B, sha 1a7bf2cdc83e171f…)
+  london == paris           (byte-identical runtime, 423 B, sha d1af44a952ac9775…)
+  cancun == shanghai == prague == default (418 B, sha 72e5d886da7ccaf6…)

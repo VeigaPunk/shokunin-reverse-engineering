@@ -1,0 +1,18 @@
+# All commands run on this host, 2026-10-19, scratch /var/tmp/pl2-arc3r6-verify
+# (never /tmp). Custody paths read-only; the live gate was never edited.
+cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+git rev-parse HEAD
+sha256sum .ufo/gates/c1-census-v10.py
+python3 .ufo/gates/c1-census-v10.py --json            # v10 baseline
+python3 /var/tmp/pl2-arc3r6-verify/gate/pristine-for-patch.py --json   # r10
+# patch application on a pristine copy:
+cp .ufo/gates/c1-census-v10.py /var/tmp/pl2-arc3r6-verify/gate/pristine-for-patch.py
+cd /var/tmp/pl2-arc3r6-verify/gate
+patch --dry-run -p0 pristine-for-patch.py < <wave>/claims/c1/PL-4/patch-v10-to-r10.diff
+patch -p0 pristine-for-patch.py < <wave>/claims/c1/PL-4/patch-v10-to-r10.diff
+sha256sum pristine-for-patch.py && wc -l pristine-for-patch.py
+cmp -s pristine-for-patch.py <wave>/claims/c1/PL-4/c1-census-v10-r10.py
+# tree matrix (each tree holds byte-identical PROVINCE.md/SKILL.md/SCORECARD.md
+# copies at HEAD unless seeded; seeds are content-asserted in verify/seed2.py):
+python3 gate/pristine.py --root <tree> --quiet
+python3 gate/pristine-for-patch.py --root <tree> --quiet

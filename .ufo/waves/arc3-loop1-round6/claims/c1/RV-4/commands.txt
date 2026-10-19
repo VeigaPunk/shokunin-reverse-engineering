@@ -1,0 +1,13 @@
+# RV-4 reproduction recipe (scratch /var/tmp/rv4-arc3r6; gate never modified)
+cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+git rev-parse HEAD                        # c625d5de57e0... ; work 58c3db7 (git log --oneline -5)
+sha256sum .ufo/gates/c1-census-v10.py     # d0772ce8... ; 610 lines
+cp .ufo/gates/c1-census-v10.py /var/tmp/rv4-arc3r6/c1-census-v10.py
+(cd /var/tmp/rv4-arc3r6 && patch c1-census-v10.py < .../claims/c1/PL-4/patch-v10-to-r10.diff)  # sha 80027570..., 713 lines
+python3 /var/tmp/rv4-arc3r6/c1-census-v10-r10.py --root /var/tmp/rv4-arc3r6/clean --quiet   # PASS exit 0
+python3 make_trees.py                     # builds all fault trees from byte-copies of PROVINCE/SKILL/SCORECARD
+# arms:
+for t in clean tree-seeded-forbidden tree-seeded-forbidden-only tree-stripped-required tree-truncated-161 tree-reflow-insert tree-reflow-bullet tree-extend-evm tree-postunlock-stale tree-postunlock-stale2 tree-append-163; do
+  python3 .ufo/gates/c1-census-v10.py --root /var/tmp/rv4-arc3r6/$t --quiet; echo "v10 $t $?"
+  python3 /var/tmp/rv4-arc3r6/c1-census-v10-r10.py --root /var/tmp/rv4-arc3r6/$t --quiet; echo "r10 $t $?"
+done

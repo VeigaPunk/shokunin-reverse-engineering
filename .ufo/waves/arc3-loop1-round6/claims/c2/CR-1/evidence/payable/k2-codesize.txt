@@ -1,0 +1,14 @@
+Seat CR-1, arc3-loop1-round6 — K=2 `-O codesize` shape probe (scope limit for Form C)
+
+Carrier PayableK8.vy (sha256 6b05aa9755514ecefa1455cb65df280b9d2ef23921a567eaf5c33ce484bcc449):
+  two functions, pay(uint256) @payable and look(uint256) @view.
+Compiled with the pinned vyper 0.4.3:
+  -O gas       103 B sha256 726f00f37edbef8b6c178d01c57673a1bdbe2df00846c909d1642b8881cc0b3d
+  -O codesize  103 B sha256 726f00f37edbef8b6c178d01c57673a1bdbe2df00846c909d1642b8881cc0b3d  (IDENTICAL to -O gas)
+  -O none      172 B sha256 fccaa51f90941521...
+
+The 103-byte codesize runtime is a linear XOR chain with no bucket table:
+  5f35 60e0 1c | 63 c290d691 81 18 61 0031 57 | PUSH1 23 CALLDATASIZE GT ISZERO ... | body
+  5b | 63 0b407b19 81 18 61 005f 57 | ... | body
+So the packed-hash Form C is NOT selected at K=2; the Form C claim in the entry is K=8-scoped.
+The K threshold and its dependence on bucket/hash quality are recorded as Unknown.

@@ -1,0 +1,82 @@
+## prior in-tree PL-2 attempt — re-tested first-hand
+$ patch -p0 prior-pl2.py < claims/c1/PL-2/prior-attempt/c1-census-v10-r10.patch
+applies clean; sha256 2d7ee95ba2743bde0b658c91d867a46e04e3e9e14de41d2cb60f2ff46238ce7b; 705 lines;
+cmp vs prior-attempt/c1-census-v10-r10-proposed.py -> BYTE-IDENTICAL
+
+### clean (exit=0)
+  SCOPE-ERRORS (marker assertions): []
+  FRONTIER-STALE (claim register, 3 entries): []
+  DECLARED FAIL CLASSES: []
+  VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+### seed-forbidden (exit=1)
+  SCOPE-ERRORS (marker assertions): []
+  FRONTIER-STALE (claim register, 3 entries): ["PROVINCE.md:92 'solc/vyper-compiled bytecode untested' (r4 before-state, repaired in 40de383)"]
+  DECLARED FAIL CLASSES: ['FRONTIER-STALE']
+  VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=1)
+### seed-forbidden-only (exit=0)
+  SCOPE-ERRORS (marker assertions): []
+  FRONTIER-STALE (claim register, 3 entries): []
+  DECLARED FAIL CLASSES: []
+  VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+### seed-required-evm (exit=0)
+  SCOPE-ERRORS (marker assertions): []
+  FRONTIER-STALE (claim register, 3 entries): []
+  DECLARED FAIL CLASSES: []
+  VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+### seed-required-riscv (exit=0)
+  SCOPE-ERRORS (marker assertions): []
+  FRONTIER-STALE (claim register, 3 entries): []
+  DECLARED FAIL CLASSES: []
+  VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+### trunc-161 (exit=1)
+  SCOPE-ERRORS (marker assertions): ['PROVINCE.md:40 marker uncheckable (file unreadable)', 'PROVINCE.md:45 marker uncheckable (file unreadable)', 'PROVINCE.md:119 marker uncheckable (file unreadable)', 'PROVINCE.md:73 marker uncheckable (file unreadable)', 'PROVINCE.md:133 marker uncheckable (file un
+  FRONTIER-STALE (claim register, 3 entries): []
+  DECLARED FAIL CLASSES: ['UNREADABLE']
+  VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+### edge-header-rename (exit=1)
+  SCOPE-ERRORS (marker assertions): ["PROVINCE.md:73 marker '^## Frontier$' absent from '## Frontier (renamed)'"]
+  FRONTIER-STALE (claim register, 3 entries): []
+  DECLARED FAIL CLASSES: []
+  VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+### edge-insert-133 (exit=1)
+  SCOPE-ERRORS (marker assertions): ["PROVINCE.md:133 marker '^### Round-4 frontier \\\\(post-unlock\\\\)$' absent from '### injected separator'"]
+  FRONTIER-STALE (claim register, 3 entries): []
+  DECLARED FAIL CLASSES: []
+  VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+### edge-insert-150 (exit=0)
+  SCOPE-ERRORS (marker assertions): []
+  FRONTIER-STALE (claim register, 3 entries): []
+  DECLARED FAIL CLASSES: []
+  VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+
+## prior JSON vs v10 JSON on clean tree
+shared: 17 mismatched: []
+prior-only: ['frontier_register', 'frontier_stale']
+counts equal: True
+
+## hardening addendum — two header rows added to PL-4 r10 on scratch (NOT landed)
+FRONTIER rows 14 -> 16; clean PASS; rename/insert-133 caught:
+### clean (exit=0)
+  FRONTIER register (G21): 16 rows asserted, errors: []
+  DECLARED FAIL CLASSES: []
+  VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+### edge-header-rename (exit=1)
+  FRONTIER register (G21): 16 rows asserted, errors: ["PROVINCE.md:73-73 REQUIRED '^## Frontier$' absent (G21 frontier register)"]
+  DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE']
+  VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+### edge-insert-133 (exit=1)
+  FRONTIER register (G21): 16 rows asserted, errors: ["PROVINCE.md:133-133 REQUIRED '^### Round-4 frontier \\\\(post-unlock\\\\)$' absent (G21 frontier register)"]
+  DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE']
+  VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+### edge-insert-134 (exit=0)
+  FRONTIER register (G21): 16 rows asserted, errors: []
+  DECLARED FAIL CLASSES: []
+  VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+### seed-forbidden (exit=1)
+  FRONTIER register (G21): 16 rows asserted, errors: ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)", "PROVINCE.md:91-93 REQUIRED 'vyper-0\\\\.4\\\\.3' absent (G21 frontier register)", "PROVINCE.md:91-93 FORBIDDEN 'untested' ma
+  DECLARED FAIL CLASSES: ['FRONTIER-STALE']
+  VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+### trunc-161 (exit=1)
+  FRONTIER register (G21): 16 rows asserted, errors: ['PROVINCE.md:73-73 frontier uncheckable (file unreadable)', 'PROVINCE.md:133-133 frontier uncheckable (file unreadable)', 'PROVINCE.md:75-80 frontier uncheckable (file unreadable)', 'PROVINCE.md:82-83 frontie
+  DECLARED FAIL CLASSES: ['UNREADABLE', 'FRONTIER-UNEVALUABLE']
+  VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)

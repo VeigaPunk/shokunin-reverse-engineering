@@ -1,0 +1,27 @@
+Seat CR-1, arc3-loop1-round6 — keccak + selector selftest (first-hand)
+
+keccak.py selftest vectors (original Keccak padding 0x01):
+  b''                              c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 OK
+  b'abc'                           4e03657aea45a94fc7d47ba826c8d667c0d1e6e33a64a036ec44f58fa12d6c45 OK
+  b'transfer(address,uint256)'     a9059cbb2ab09eb219583f4a59a5d0623ade346d962bcd4e46b11da047c9049b OK
+
+Selectors: my keccak vs the pinned compiler's `vyper -f method_identifiers K8.vy`:
+  f0(uint256)  mine=0x2ae1431c compiler=0x2ae1431c equal=True
+  f1(uint256)  mine=0x9adbf691 compiler=0x9adbf691 equal=True
+  f2(uint256)  mine=0xbf3724af compiler=0xbf3724af equal=True
+  f3(uint256)  mine=0xd7b7913b compiler=0xd7b7913b equal=True
+  f4(uint256)  mine=0xd7531d91 compiler=0xd7531d91 equal=True
+  f5(uint256)  mine=0xcf35f823 compiler=0xcf35f823 equal=True
+  f6(uint256)  mine=0x9b7c2962 compiler=0x9b7c2962 equal=True
+  f7(uint256)  mine=0x364605a1 compiler=0x364605a1 equal=True
+
+Decoded runtime sha equality (probe normalized_result.bytecode.sha256 vs my sha256 of the carrier bytes):
+  K8              418 B 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814
+  K8.nooptimize   617 B 1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc
+  K8.Onone        617 B 1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc
+  K8.Ocodesize    360 B bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5
+  K8.evmparis     423 B d1af44a952ac9775dd45eae83e2f4d167d311f9f7f3db8bf762592eb979060d2
+  K8.evmlondon    423 B d1af44a952ac9775dd45eae83e2f4d167d311f9f7f3db8bf762592eb979060d2
+
+Note: the probe reports subject.digest.sha256 = the hex-text file digest; the decoded
+bytecode.sha256 is the runtime-byte digest above (compare by decoded digest per QUALITY row 15).

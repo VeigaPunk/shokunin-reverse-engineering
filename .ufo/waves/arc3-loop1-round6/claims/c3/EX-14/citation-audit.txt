@@ -1,0 +1,30 @@
+# Citation bounds + content audit of SC-3 draft (8 command-A-pattern refs)
+# Measured at HEAD c625d5d (worktree corpus == HEAD; 'git status --porcelain corpus/' empty)
+2026-10-19-arc3-r1-evm-real-solc.md:24  file_lines=46  bounds_ok=True
+  line 24: - **Observation (creation code — parsed-and-empty, not excluded):** `Rv2Token.creation.hex` @6.4.0 `ev_c80379e1…` → 0 functions, `bytecode.kind:"unknown"`; `Smoke_sol_Smoke.bin` @6.4.0 `ev_f875e21e…` → 0 functions. Creat
+2026-10-19-arc3-r1-evm-real-solc.md:31  file_lines=46  bounds_ok=True
+  line 31: - **Observation (r1 errata — appended by arc3-loop1-round3's byte-level census, append-only):** two r1 statements are corrected: (a) the creation-code observation's 'Creation blobs carry no runtime dispatch table' is mea
+2026-10-19-arc3-r3-evm-optimizer-shapes.md:41-51  file_lines=57  bounds_ok=True
+  line 41: - **`:24` "Creation blobs carry no runtime dispatch table" — corrected.** The
+  line 51: dispatch shapes and byte identities are unaffected.
+2026-10-19-arc3-r4-evm-vyper-leg.md:39-46  file_lines=63  bounds_ok=True
+  line 39: - **`:17` "initcode carries no runtime dispatch table" — corrected.** The
+  line 46: "creation probes parse empty while the runtime bytes are present verbatim".
+2026-10-19-arc3-r4-evm-vyper-leg.md:17  file_lines=63  bounds_ok=True
+  line 17: - Creation-code (initcode) legs — EX-04 (hex @6.4.0, this seat's own run and EX-04's) and EX-09 (hex and raw at both pins; `0x`-prefixed hex at 6.4.0 only — RV-2 F2), plus EX-07's `AC-`/`S-`/`VC-`/`X3C-creation-*` legs —
+2026-10-19-arc3-r3-evm-optimizer-shapes.md:27  file_lines=57  bounds_ok=True
+  line 27: - **Observation (raw-on-hex-text trap, reproduced):** feeding the hex *text* file with `raw` decodes ASCII as code — exit 0, 0 functions, decoded bytecode sha256 == the hex file's own sha256 (EX-04: `ev_704ce585…` and `e
+2026-10-19-arc3-r4-evm-vyper-leg.md:25  file_lines=63  bounds_ok=True
+  line 25: - **Observation (input-shape traps reproduce on Vyper carriers):** raw-over-hextext exits 0 with 0 functions and a decoded sha equal to the hex *text* file's own sha (`e0b1021c…`) — parsed-and-empty, the r1/r3 trap class
+2026-10-19-arc3-r4-evm-vyper-leg.md:34  file_lines=63  bounds_ok=True
+  line 34: ## Erratum (arc3-loop1-round5 correctness sweep, append-only)
+
+# The one mismatch, verified directly:
+r4:29 ->
+- **Limitations (tool-reported, every leg):** worker limits 256 MiB JS heap / 3 GiB address space / 30 s deadline / 16 MiB file cap (inherited tighter limits; effective limits not independently probed); upstream-inference caveat (selectors/args/mutability are 
+r4:34 ->
+## Erratum (arc3-loop1-round5 correctness sweep, append-only)
+grep -n 'empty results do not prove absence':
+29:- **Limitations (tool-reported, every leg):** worker limits 256 MiB JS heap /
+same at pre-erratum 40de383:
+29:- **Limitations (tool-reported, every leg):** worker limits 256 MiB JS heap /

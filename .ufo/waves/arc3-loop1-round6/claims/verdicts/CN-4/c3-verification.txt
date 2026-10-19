@@ -1,0 +1,39 @@
+# CN-4 c3 re-derivation 2026-10-19T14:01:27-03:00
+
+## draft identities
+SC-3 bytes 1605 lines 23 sha256 763c44b504f9964d970a741ef56a8331d85e7a362a191d09025e38d14a6fd0d1
+  refs: [('2026-10-19-arc3-r1-evm-real-solc.md', '24', ''), ('2026-10-19-arc3-r1-evm-real-solc.md', '31', ''), ('2026-10-19-arc3-r3-evm-optimizer-shapes.md', '27', ''), ('2026-10-19-arc3-r3-evm-optimizer-shapes.md', '41', '51'), ('2026-10-19-arc3-r4-evm-vyper-leg.md', '17', ''), ('2026-10-19-arc3-r4-evm-vyper-leg.md', '25', ''), ('2026-10-19-arc3-r4-evm-vyper-leg.md', '34', ''), ('2026-10-19-arc3-r4-evm-vyper-leg.md', '39', '46')]
+RV-7 bytes 1565 lines 23 sha256 ccbc5cdbbefc86081393cd4d60ef9c85606c3dd1c98ed76d63520da1da0b67e7
+  refs: [('2026-10-19-arc3-r1-evm-real-solc.md', '24', ''), ('2026-10-19-arc3-r3-evm-optimizer-shapes.md', '27', ''), ('2026-10-19-arc3-r3-evm-optimizer-shapes.md', '41', '51'), ('2026-10-19-arc3-r4-evm-vyper-leg.md', '25', ''), ('2026-10-19-arc3-r4-evm-vyper-leg.md', '39', '46')]
+SC-3 FIXED (34->29) bytes 1605 lines 23 sha256 6967b1e3e7fbdb43492e191426399c0311ab3bf85ee307f1a181a3edd235511e
+
+## citation content anchors (first-hand)
+$ nl r4 | sed -n 29p;34p
+    29	- **Limitations (tool-reported, every leg):** worker limits 256 MiB JS heap / 3 GiB address space / 30 s deadline / 16 MiB file cap (inherited tighter limits; effective limi
+    34	## Erratum (arc3-loop1-round5 correctness sweep, append-only)
+$ nl r1 | sed -n 24p;31p
+    24	- **Observation (creation code — parsed-and-empty, not excluded):** `Rv2Token.creation.hex` @6.4.0 `ev_c80379e1…` → 0 functions, `bytecode.kind:"unknown"`; `Smoke_sol_Smoke.
+    31	- **Observation (r1 errata — appended by arc3-loop1-round3's byte-level census, append-only):** two r1 statements are corrected: (a) the creation-code observation's 'Creatio
+
+## RV-7 F1: r3 erratum :24 pointer dangling at every rev
+--- c418be0 r3:24
+- **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zero missing / zero extra (`dispatch:"abi"`
+--- grep Creation blobs:
+--- 40de383 r3:24
+- **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zero missing / zero extra (`dispatch:"abi"`
+--- grep Creation blobs:
+--- 58c3db7 r3:24
+- **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zero missing / zero extra (`dispatch:"abi"`
+--- grep Creation blobs:
+41:- **`:24` "Creation blobs carry no runtime dispatch table" — corrected.** The
+
+## landing simulation (command A rule-split + citation resolution)
+58c3db7 SC-3 rule_blocks 15 resolved 15 depth 10.0 bad []
+58c3db7 RV-7 rule_blocks 15 resolved 15 depth 10.0 bad []
+58c3db7 SC-3-fixed rule_blocks 15 resolved 15 depth 10.0 bad []
+c625d5d SC-3 rule_blocks 15 resolved 15 depth 10.0 bad []
+c625d5d RV-7 rule_blocks 15 resolved 15 depth 10.0 bad []
+c625d5d SC-3-fixed rule_blocks 15 resolved 15 depth 10.0 bad []
+
+## combined landing projection (EX-7 entry + SC-3-fixed rule)
+{"citation_resolved_rules": 15, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 85, "mapped": 85, "missing": [], "rule_blocks": 15}

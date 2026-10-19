@@ -1,0 +1,124 @@
+# VZ-1 c1 evidence — arc3-loop1-round6, 2026-10-19 (all runs first-hand; scratch /var/tmp/vz1-r6)
+
+## custody: gate + scoped sizes
+$ sha256sum .ufo/gates/c1-census-v10.py; wc -l .ufo/gates/c1-census-v10.py PROVINCE.md SKILL.md SCORECARD.md
+d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5  .ufo/gates/c1-census-v10.py
+   610 .ufo/gates/c1-census-v10.py
+   162 PROVINCE.md
+   390 SKILL.md
+  1696 SCORECARD.md
+  2858 total
+
+## SCOPE PROVINCE rows (gate :216-222)
+$ grep -n "\"PROVINCE.md\"," .ufo/gates/c1-census-v10.py | head -7
+16:  One stale row at HEAD, re-keyed here. ("PROVINCE.md", 45, 62, DATED) named
+216:    ("PROVINCE.md", 8, 13, "CURRENT", None, None),
+217:    ("PROVINCE.md", 15, 26, "CURRENT", None, None),
+218:    ("PROVINCE.md", 40, 43, "DATED", 40, r"verified on this host 2026-10-13"),
+219:    ("PROVINCE.md", 44, 44, "CURRENT", None, None),
+220:    ("PROVINCE.md", 45, 62, "DATED", 45, r"2026-10-13"),
+221:    ("PROVINCE.md", 64, 71, "CURRENT", None, None),
+
+## PL-4 patch round-trip (pristine = git show HEAD:gate)
+$ cp gate/pristine.py gate/pl4-r10.py; patch gate/pl4-r10.py < PL-4/patch-v10-to-r10.diff
+patching file pl4-r10.py
+8002757078a685f515804fc6128ebf76b9925d2033be99a293621e18d14aecca  pl4-r10.py
+713 pl4-r10.py
+$ diff <(SCOPE table pristine) <(SCOPE table r10)
+SCOPE TABLE BYTE-IDENTICAL
+
+## arm matrix (trees built by VZ-1 mktrees.py; v10 vs PL-4 r10)
+clean            :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+seeded-stale     :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-STALE'] | VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+seeded-required  :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-UNEVALUABLE'] | VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+truncated        :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=1 DECLARED FAIL CLASSES: ['UNREADABLE', 'FRONTIER-UNEVALUABLE'] | VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+seeded-mention   :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-STALE'] | VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+reflow94         :: pristine.py exit=1 DECLARED FAIL CLASSES: [] | VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=1 DECLARED FAIL CLASSES: [] | VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+reflow125        :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+reflow132        :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+reflow133        :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+reflow135        :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+append163        :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+stale159         :: pristine.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0) || pl4-r10.py exit=0 DECLARED FAIL CLASSES: [] | VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+
+## PL-4 r10 on the REAL repo root (frozen requirement a)
+live anchors (re-derived): {'devin': '6.5.0', 'omp': '6.5.0', 'kimi': '6.7.0'}
+PROVINCE.md    lines=162  loci=6
+SCORECARD.md   lines=1696 loci=9
+SKILL.md       lines=390  loci=2
+
+SCOPE-ERRORS (marker assertions): []
+FRONTIER register (G21): 14 rows asserted, errors: []
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci per file: PROVINCE.md=17, SCORECARD.md=14, SKILL.md=3; total loci=17; floor=1/file)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+EXIT=0
+
+## requirement (c): --json invariance, v10 vs PL-4 r10 (clean scratch)
+shared keys: 17 mismatched: []
+r10-only keys: ['frontier_errors', 'frontier_rows']
+counts equal: True | current_ok_per_file: {'PROVINCE.md': 17, 'SCORECARD.md': 14, 'SKILL.md': 3}
+verdict: PASS | frontier_rows: 14 | frontier_errors: []
+
+## seeded stale literal detail (frozen requirement b)
+-- UNDECLARED (0) --
+FRONTIER register (G21): 14 rows asserted, errors: ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)", "PROVINCE.md:91-93 REQUIRED 'vyper-0\\\\.4\\\\.3' absent (G21 frontier register)", "PROVINCE.md:91-93 FORBIDDEN 'untested' matched 'untested' (FRONTIER-STALE)"]
+DECLARED FAIL CLASSES: ['FRONTIER-STALE']
+VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+
+## reflow / insertion probes — PL-4 r10 full verdict lines
+--- reflow94 ---
+SCOPE-ERRORS (marker assertions): ["PROVINCE.md:119 marker 'verified 2026-10-13' absent from ''"]
+FRONTIER register (G21): 14 rows asserted, errors: []
+DECLARED FAIL CLASSES: []
+VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+--- reflow125 ---
+SCOPE-ERRORS (marker assertions): []
+FRONTIER register (G21): 14 rows asserted, errors: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+--- reflow132 ---
+SCOPE-ERRORS (marker assertions): []
+FRONTIER register (G21): 14 rows asserted, errors: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+--- reflow133 ---
+SCOPE-ERRORS (marker assertions): []
+FRONTIER register (G21): 14 rows asserted, errors: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+--- reflow135 ---
+SCOPE-ERRORS (marker assertions): []
+FRONTIER register (G21): 14 rows asserted, errors: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+--- append163 ---
+SCOPE-ERRORS (marker assertions): []
+FRONTIER register (G21): 14 rows asserted, errors: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+
+## post-unlock FORBIDDEN gap (stale clause reintroduced with earning tokens intact)
+$ line 160 + " compare-application-versions still probe-refused since r2."
+FRONTIER register (G21): 14 rows asserted, errors: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+
+## competing prior-attempt patches (round-trip identity)
+PL-2 prior: 2d7ee95ba2743bde0b658c91d867a46e04e3e9e14de41d2cb60f2ff46238ce7b
+2d7ee95ba2743bde0b658c91d867a46e04e3e9e14de41d2cb60f2ff46238ce7b  pl2-r10.py
+RV-3 prior: 8e4206796fec2e16fb6f2c1959f33b63bbcb9643471d42472ac6bc2cba195ebf
+8e4206796fec2e16fb6f2c1959f33b63bbcb9643471d42472ac6bc2cba195ebf  rv3-r10.py
+
+## competing prior-attempt gates on the VZ-1 trees (PL-2 and RV-3 prior patches)
+clean            :: pl2-r10.py exit=0 DECLARED FAIL CLASSES: [] || rv3-r10.py exit=0 DECLARED FAIL CLASSES: []
+seeded-stale     :: pl2-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-STALE'] || rv3-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-STALE', 'FRONTIER-UNATTESTED']
+seeded-required  :: pl2-r10.py exit=0 DECLARED FAIL CLASSES: [] || rv3-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-UNATTESTED']
+truncated        :: pl2-r10.py exit=1 DECLARED FAIL CLASSES: ['UNREADABLE'] || rv3-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-ANCHOR']
+reflow125        :: pl2-r10.py exit=1 DECLARED FAIL CLASSES: [] || rv3-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-ANCHOR']
+reflow132        :: pl2-r10.py exit=1 DECLARED FAIL CLASSES: [] || rv3-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-ANCHOR']
+reflow135        :: pl2-r10.py exit=0 DECLARED FAIL CLASSES: [] || rv3-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-ANCHOR']
+stale159         :: pl2-r10.py exit=1 DECLARED FAIL CLASSES: ['FRONTIER-STALE'] || rv3-r10.py exit=0 DECLARED FAIL CLASSES: []

@@ -1,0 +1,25 @@
+# citation content audit — bounds (command A) vs the line the text actually needs
+
+SC-3 2026-10-19-arc3-r1-evm-real-solc.md:24 needle='0 functions' present=True (file 46 lines)
+SC-3 2026-10-19-arc3-r1-evm-real-solc.md:31 needle='1,971 B' present=True (file 46 lines)
+SC-3 2026-10-19-arc3-r3-evm-optimizer-shapes.md:41-51 needle='parsed-and-empty' present=True (file 57 lines)
+SC-3 2026-10-19-arc3-r4-evm-vyper-leg.md:39-46 needle='present verbatim' present=True (file 63 lines)
+SC-3 2026-10-19-arc3-r4-evm-vyper-leg.md:17 needle='parsed-and-empty' present=True (file 63 lines)
+SC-3 2026-10-19-arc3-r3-evm-optimizer-shapes.md:27 needle='probe-input trap' present=True (file 57 lines)
+SC-3 2026-10-19-arc3-r4-evm-vyper-leg.md:25 needle='trap class' present=True (file 63 lines)
+SC-3 2026-10-19-arc3-r4-evm-vyper-leg.md:34 needle='empty results do not prove absence' present=False (file 63 lines)
+
+r4:34 actual text: ## Erratum (arc3-loop1-round5 correctness sweep, append-only)
+r4:29 contains limitation: True
+
+r1:24 excerpt: - **Observation (creation code — parsed-and-empty, not excluded):** `Rv2Token.creation.hex` @6.4.0 `ev_c80379e1…` → 0 functions, `bytecode.kind:"unknown"`; `Smoke_sol_Smoke.bin` @6.4.0 `ev_f875e21e…` → 0 functions. Creation blobs carry no r
+r1:31 excerpt: - **Observation (r1 errata — appended by arc3-loop1-round3's byte-level census, append-only):** two r1 statements are corrected: (a) the creation-code observation's 'Creation blobs carry no runtime dispatch table' is measured false — `Rv2Token.creation.hex` (1
+
+r3:24 at 58c3db7 / 40de383 / c418be0 = Rv2TokenOpt RESULT row (phrase absent at all three):
+c418be0 | :24 starts: - **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zer | phrase hits in file: 0
+40de383 | :24 starts: - **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zer | phrase hits in file: 0
+58c3db7 | :24 starts: - **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zer | phrase hits in file: 1
+
+QUALITY.md:21: | 11 | Empty/zero findings must state whether the surface was parsed-and-empty or excluded-from-inventory (`parse_failures:0` on an unparsed member is an exclusion, not a result) |
+
+SCORECARD quote: [(1658, 'r4 initcode-absence sentence (runtime IS byte-embedded in initcode at +20 —')]

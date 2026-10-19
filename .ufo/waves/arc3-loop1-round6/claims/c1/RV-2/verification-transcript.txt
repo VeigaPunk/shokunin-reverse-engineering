@@ -1,0 +1,141 @@
+
+### 0. custody
+2026-10-19T17:03:56Z
+c625d5de57e045188b5ce8cd450a57b349f90785
+c625d5d arc3-loop1-round5: records — SCORECARD round section, LOG entry, round report (measured at work commit 58c3db7)
+58c3db7 arc3-loop1-round5: work — correctness sweep aggregates (c1/c2/c3) + append-only corpus corrections (r4 initcode+CODECOPY+Core-scope, r3 initcode+UNVERIFIABLE, r1 Smoke digest domain) + SCORECARD wording fix
+71668cc arc3-loop1-round4: records — SCORECARD round section, LOG entry, round report (measured at work commits 520341d + 40de383)
+d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5  .ufo/gates/c1-census-v10.py
+  610 .ufo/gates/c1-census-v10.py
+  162 PROVINCE.md
+  772 total
+ M .ufo/waves/arc2-loop1-round10/C3.md
+?? .ufo/waves/arc3-loop1-round6/
+
+### 1. SCOPE rows + blind-spot grep
+16:  One stale row at HEAD, re-keyed here. ("PROVINCE.md", 45, 62, DATED) named
+216:    ("PROVINCE.md", 8, 13, "CURRENT", None, None),
+217:    ("PROVINCE.md", 15, 26, "CURRENT", None, None),
+218:    ("PROVINCE.md", 40, 43, "DATED", 40, r"verified on this host 2026-10-13"),
+219:    ("PROVINCE.md", 44, 44, "CURRENT", None, None),
+220:    ("PROVINCE.md", 45, 62, "DATED", 45, r"2026-10-13"),
+221:    ("PROVINCE.md", 64, 71, "CURRENT", None, None),
+222:    ("PROVINCE.md", 119, 131, "DATED", 119, r"verified 2026-10-13"),
+1:# kaidoku-shokunin — Province
+38:## Core
+73:## Frontier
+95:## Adjacent
+119:### Round-4 additions to Core (verified 2026-10-13)
+133:### Round-4 frontier (post-unlock)
+
+### 2. patch application to pristine gate
+patching file rebuilt-rv2.py
+patch-exit=0
+d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5  c1-census-v10-pristine.py
+3f94355cfe747c10c968c2382004ab1e95792518eba2f03ae99df2f7f16a6513  patch.diff
+8002757078a685f515804fc6128ebf76b9925d2033be99a293621e18d14aecca  rebuilt-rv2.py
+8002757078a685f515804fc6128ebf76b9925d2033be99a293621e18d14aecca  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/PL-4/c1-census-v10-r10.py
+3f94355cfe747c10c968c2382004ab1e95792518eba2f03ae99df2f7f16a6513  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/PL-4/patch-v10-to-r10.diff
+BUILT-INSTRUMENT IDENTICAL
+713 rebuilt-rv2.py
+
+### 3. clean-tree PASS + counter integrity (repo root, --json)
+v10-exit=0
+r10-exit=0
+verdicts: PASS PASS
+counts equal: True {'PROVINCE.md': {'lines': 162, 'loci': 6}, 'SCORECARD.md': {'lines': 1696, 'loci': 9}, 'SKILL.md': {'lines': 390, 'loci': 2}}
+current_ok_per_file equal: True {'PROVINCE.md': 17, 'SCORECARD.md': 14, 'SKILL.md': 3}
+shared keys: 17 | r10-only: ['frontier_errors', 'frontier_rows'] | v10-only: []
+shared mismatches: []
+frontier_rows: 14 | frontier_errors: [] | declared: []
+6a7
+> FRONTIER register (G21): 14 rows asserted, errors: []
+v10-repo.txt:12:VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+r10-repo.txt:13:VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+
+### 3b. classify() enumeration: no locus line in the frontier ranges
+PROVINCE loci=6 assertion entries=24
+lines: [9, 10, 12, 16, 17, 18, 19, 20, 21, 24, 25, 26, 44, 45, 67, 125]
+frontier-range assertion lines: []
+
+### 4. rebuild seeded trees (independent seeder)
+clean                    lines=162  PROVINCE sha=11a5c60450cc736a
+clean-truncated          lines=161  PROVINCE sha=325c5480b10fcdaf
+seeded-forbidden         lines=162  PROVINCE sha=7a0a1f645b0a019e
+seeded-forbidden-case    lines=162  PROVINCE sha=6e664aa57b65a7e9
+seeded-forbidden-only    lines=162  PROVINCE sha=a351cf9ea2b470f2
+seeded-insert-one        lines=163  PROVINCE sha=6bc1e0278a100c57
+seeded-required-evm      lines=162  PROVINCE sha=4d714bc90e86bb99
+seeded-required-riscv    lines=162  PROVINCE sha=61e366a2781d5417
+TREES-BUILT 8
+extra trees built
+
+### 4b. build the bullet-census proposal (scratch, on top of PL-4 r10)
+bullet-census proposal built
+30 r10-bulletcount-proposal.diff
+
+### 5. arm matrix: v10 (blind) vs r10 (PL-4) vs r10+bullet-census proposal
+tree                       v10    r10    r10+bc r10 declared classes
+benign-edit                    0/PASS 0/PASS 0/PASS [] | []
+clean                          0/PASS 0/PASS 0/PASS [] | []
+clean-truncated                0/PASS 1/FAIL 1/FAIL ['UNREADABLE', 'FRONTIER-UNEVALUABLE'] | ['PROVINCE.md:75-80 frontier uncheckable (file unreadable)']
+                                 bc: ['PROVINCE.md:75-80 frontier uncheckable (file unreadable)']
+seeded-append-163              0/PASS 0/PASS 0/PASS [] | []
+seeded-forbidden               0/PASS 1/FAIL 1/FAIL ['FRONTIER-STALE'] | ["PROVINCE.md:91-93 FORBIDDEN 'untested' matched 'untested' (FRONTIER-STALE)"]
+                                 bc: ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)"]
+seeded-forbidden-case          0/PASS 1/FAIL 1/FAIL ['FRONTIER-STALE'] | ["PROVINCE.md:91-93 FORBIDDEN 'untested' matched 'UnTeStEd' (FRONTIER-STALE)"]
+                                 bc: ["PROVINCE.md:91-93 FORBIDDEN 'untested' matched 'UnTeStEd' (FRONTIER-STALE)"]
+seeded-forbidden-only          0/PASS 1/FAIL 1/FAIL ['FRONTIER-STALE'] | ["PROVINCE.md:91-93 FORBIDDEN 'untested' matched 'untested' (FRONTIER-STALE)"]
+                                 bc: ["PROVINCE.md:91-93 FORBIDDEN 'untested' matched 'untested' (FRONTIER-STALE)"]
+seeded-insert-one              0/PASS 0/PASS 1/FAIL [] | []
+                                 bc: ['PROVINCE.md:133-162 bullet census 9 != declared 8 (FRONTIER-UNREGISTERED-BULLET)']
+seeded-insert-one-evm          1/FAIL 1/FAIL 1/FAIL ['FRONTIER-UNEVALUABLE'] | ["PROVINCE.md:89-90 REQUIRED 'unsupported_host' absent (G21 frontier register)"]
+                                 bc: ["PROVINCE.md:89-90 REQUIRED 'unsupported_host' absent (G21 frontier register)"]
+seeded-insert-two              0/PASS 1/FAIL 1/FAIL ['FRONTIER-UNEVALUABLE'] | ["PROVINCE.md:135-138 REQUIRED 'r5-01' absent (G21 frontier register)"]
+                                 bc: ["PROVINCE.md:135-138 REQUIRED 'r5-01' absent (G21 frontier register)"]
+seeded-replace-crossversion-old 0/PASS 1/FAIL 1/FAIL ['FRONTIER-UNEVALUABLE'] | ["PROVINCE.md:157-160 REQUIRED 'r12-02|r14-01' absent (G21 frontier register)"]
+                                 bc: ["PROVINCE.md:157-160 REQUIRED 'r12-02|r14-01' absent (G21 frontier register)"]
+seeded-required-evm            0/PASS 1/FAIL 1/FAIL ['FRONTIER-UNEVALUABLE'] | ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)"]
+                                 bc: ["PROVINCE.md:91-93 REQUIRED 'solc-0\\\\.8\\\\.37' absent (G21 frontier register)"]
+seeded-required-riscv          0/PASS 1/FAIL 1/FAIL ['FRONTIER-UNEVALUABLE'] | ["PROVINCE.md:135-138 REQUIRED 'r5-01' absent (G21 frontier register)"]
+                                 bc: ["PROVINCE.md:135-138 REQUIRED 'r5-01' absent (G21 frontier register)"]
+seeded-stale-clause-crossversion 0/PASS 0/PASS 0/PASS [] | []
+seeded-stale-new-bullet        0/PASS 0/PASS 1/FAIL [] | []
+                                 bc: ['PROVINCE.md:133-162 bullet census 9 != declared 8 (FRONTIER-UNREGISTERED-BULLET)']
+
+### 6. bullet census of the two frontier regions (clean tree)
+region 73-93 bullet starts [82, 84, 87, 89, 91] count=5
+region 133-162 bullet starts [135, 139, 145, 147, 149, 151, 157, 161] count=8
+
+### 7. provenance of the FORBIDDEN literal (git, read-only)
+40de383 arc3-loop1-round4: work — Vyper knowledge entry (arc3-r4), PROVINCE 9-row same-line repair (162 held), ghidra erratum, r3 entry correction
+40de383 is ancestor of HEAD
+    91	- **EVM bytecode (extended)** — selectors held on synthetic dispatcher
+    92	  (Core, r3-07); real solc/vyper-compiled bytecode untested; selectors stay
+    93	  bare hashes (no signature DB → no name resolution).
+92:  (Core, r3-07); real solc/vyper-compiled bytecode untested; selectors stay
+
+### 8. peer design cross-check: RV-3 prior anchored register (from claims/c1/RV-3/prior-attempt.md)
+patching file rv3-test.py
+8e4206796fec2e16fb6f2c1959f33b63bbcb9643471d42472ac6bc2cba195ebf  rv3-test.py
+clean exit=0
+seeded-insert-one exit=1
+seeded-stale-new-bullet exit=1
+seeded-forbidden-only exit=1
+clean-truncated exit=1
+clean                      PASS  rows=13 errors=[]
+seeded-insert-one          FAIL  rows=13 errors=["FRONTIER-ANCHOR PROVINCE.md:135 anchor 'RISC-V analysis' absent (register row 135-138 needs re-key)", "FRONTIER-ANCHOR PROVINCE.md:139 anchor 'PE scale wall' absent (register row 139-144 needs re-key)"]
+seeded-stale-new-bullet    FAIL  rows=13 errors=["FRONTIER-ANCHOR PROVINCE.md:135 anchor 'RISC-V analysis' absent (register row 135-138 needs re-key)", "FRONTIER-ANCHOR PROVINCE.md:139 anchor 'PE scale wall' absent (register row 139-144 needs re-key)"]
+seeded-forbidden-only      FAIL  rows=13 errors=["FRONTIER-STALE PROVINCE.md:93 stale literal 'untested' reintroduced (cite corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md + 2026-10-19-arc3-r3-evm-optimizer-shapes.md + 2026-10-19-arc3-r4-evm-vyper-leg.md)"]
+clean-truncated            FAIL  rows=13 errors=["FRONTIER-UNATTESTED PROVINCE.md:161-162 required claim 'HOPPER_LAUNCHER_PATH' not found (cite PROVINCE.md:26 provider-key inventory (historical receipt; operator-gated absence, no corpus entry))"]
+
+### 9. evidence files
+14178f7ee1f81c270dd8e193362ba1bbfc400fb05fe2c5e6e794b00d8d4c1390  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/RV-2/bc-repo.json
+96471c76b7b97c8076177c1dd34b9be222e2e7d6425e88df49b05f750841e42d  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/RV-2/MANIFEST.sha256
+471f13c2126d852214fe5c683d85cf3768d6aa88b51c07e8d9f18461c0f916dd  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/RV-2/r10-bulletcount-proposal.diff
+14178f7ee1f81c270dd8e193362ba1bbfc400fb05fe2c5e6e794b00d8d4c1390  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/RV-2/r10-repo.json
+c9ab162e5f18f6655a03ebadf3c6bcb94395e372c08b237d60e248dc083ea3e0  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/RV-2/rv3-patch.diff
+960c5cdf3337fb1b8119b1a1a1d5d6399328ddb030cd554ca5337e51dcaa5ae2  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/RV-2/seed_rv2.py
+10ad3788fb7911e0ec0d70d67e411471828293dfad9630760ad37425add759b2  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/RV-2/v10-repo.json
+26d5fde5a5c7c18f05fa54851402771b19cff8007b80b7b2292f6a3415ea69ff  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/RV-2/verification-transcript.txt
+d77ca06a1ba2a03c30c27e2b8b1badee053ac6f18450a8348e734d5158552ee5  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c1/RV-2/verify.sh

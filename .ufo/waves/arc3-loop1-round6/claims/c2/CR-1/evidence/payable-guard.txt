@@ -1,0 +1,23 @@
+Seat CR-1, arc3-loop1-round6 — payable guard-byte probe (K8pay)
+
+K8pay.vy sha256 6b05aa9755514ecefa1455cb65df280b9d2ef23921a567eaf5c33ce484bcc449 — K8.vy with f0 changed @view -> @payable; selectors unchanged.
+Compiled with the same pinned vyper 0.4.3:
+  -O gas       417 B 61b240e01185afc255aee83686938c749e5b52a619202c649358b9058f07e12a
+  -O none      610 B 4b16783e057417ea378bc6ba5255b62b0a621493a56594be0d2f0a798dcdc458
+  -O codesize  360 B aa71d9d66f39fd774477f41d542ba9d088071cf280f0f48bb0eef66afd552d2f
+
+Form C (codesize) entries — the guard byte's low bit is the payable flag:
+  d7b7913b dst 166 hash 0 guard 0x25 min_calldata=36 payable_bit=1
+  9adbf691 dst 116 hash 1 guard 0x25 min_calldata=36 payable_bit=1
+  2ae1431c dst 91 hash 2 guard 0x24 min_calldata=36 payable_bit=0
+  9b7c2962 dst 241 hash 3 guard 0x25 min_calldata=36 payable_bit=1
+  cf35f823 dst 216 hash 4 guard 0x25 min_calldata=36 payable_bit=1
+  364605a1 dst 266 hash 5 guard 0x25 min_calldata=36 payable_bit=1
+  bf3724af dst 141 hash 6 guard 0x25 min_calldata=36 payable_bit=1
+  d7531d91 dst 191 hash 7 guard 0x25 min_calldata=36 payable_bit=1
+
+Measured: f0 (payable) carries 0x24 (payable_bit 0); the seven @view functions carry 0x25
+(payable_bit 1). The high 7 bits (&0xfe = 36) are the calldata floor for one uint256 argument;
+the dispatcher reverts when (entry&1)*CALLVALUE is nonzero or calldatasize < 36.
+Form A payable effect: 417 B vs 418 B default — the payable function's fused guard omits the
+CALLVALUE OR (table targets shift down by 1).

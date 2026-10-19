@@ -1,0 +1,30 @@
+$ patch --dry-run -p0 pristine-for-patch.py < patch-v10-to-r10.diff
+Hmm...  Looks like a unified diff to me...
+The text leading up to this was:
+--------------------------
+|--- c1-census-v10.py	2026-10-19 12:46:41.184570194 -0300
+|+++ c1-census-v10-r10.py	2026-10-19 13:30:25.449839276 -0300
+--------------------------
+checking file /var/tmp/pl2-arc3r6-verify/gate/pristine-for-patch.py
+Reversed (or previously applied) patch detected!  Assume -R? [n] 
+Apply anyway? [n] 
+Skipping patch.
+Hunk #1 ignored at 90.
+Hunk #2 ignored at 190.
+Hunk #3 ignored at 236.
+Hunk #4 ignored at 348.
+Hunk #5 ignored at 513.
+Hunk #6 ignored at 531.
+Hunk #7 ignored at 564.
+Hunk #8 ignored at 594.
+8 out of 8 hunks ignored
+done
+$ cp pristine gate -> apply-check.py
+$ patch -p0 apply-check.py < patch-v10-to-r10.diff
+patching file apply-check.py
+$ sha256sum apply-check.py
+8002757078a685f515804fc6128ebf76b9925d2033be99a293621e18d14aecca  apply-check.py
+$ wc -l apply-check.py
+713 apply-check.py
+$ cmp -s apply-check.py <PL-4>/c1-census-v10-r10.py && echo BYTE-IDENTICAL
+BYTE-IDENTICAL

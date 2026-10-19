@@ -1,0 +1,52 @@
+# VZ-1 c3 evidence — arc3-loop1-round6, 2026-10-19 (all runs first-hand; scratch /var/tmp/vz1-r6)
+
+## SC-3 draft identity (extracted from SC-3.md fenced block)
+bytes 1605 lines 23 trailing_newline True
+sha256 763c44b504f9964d970a741ef56a8331d85e7a362a191d09025e38d14a6fd0d1
+claimed 763c44b504f9964d970a741ef56a8331d85e7a362a191d09025e38d14a6fd0d1 / 1605 B / 23 lines
+
+## corrected draft supplied by peer EX-14 (re-hashed first-hand)
+1605 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c3/EX-14/rule15-corrected.md
+6967b1e3e7fbdb43492e191426399c0311ab3bf85ee307f1a181a3edd235511e  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round6/claims/c3/EX-14/rule15-corrected.md
+$ diff SC-3 draft vs corrected (expect one token: :34 -> :29)
+21c21
+<   dispatch" (`corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:34`). Word
+---
+>   dispatch" (`corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:29`). Word
+
+## craft section baseline (c625d5d:SKILL.md)
+rule_blocks 14 | first: Evidence ids are content-addressed per verb family — never s | last: An artifact that records its own byte-identity must re-deriv
+last line:   never a carried-over number.
+
+## citation audit: the one content mis-point
+$ grep -n "empty results do not prove absence" r4 entry
+29:- **Limitations (tool-reported, every leg):** worker limits 256 MiB JS heap / 3 GiB address space / 30 s deadline / 16 MiB file cap (inherited tighter limits; effective limits not independently probed); upstream-inference caveat (selectors/args/mutability are inferences; empty results do not prove absence of dispatch); JS-binding integer-precision caveat on raw metadata; bytecode `kind`/hardfork/deployment-authenticity `unknown`; SHA-256 is not the Ethereum Keccak code hash; no runtime execution, chain/RPC lookup, or network request. Only the carriers and pins named above were probed. The `vyper` install is a Python-package install into a wave-local venv — it is not a system-wide install and is not claimed to be one.
+$ sed -n "29p;34p" r4 entry (truncated to 110 chars)
+- **Limitations (tool-reported, every leg):** worker limits 256 MiB JS heap / 3 GiB address space / 30 s deadl
+## Erratum (arc3-loop1-round5 correctness sweep, append-only)
+
+## r3 erratum :24 attribution check (RV-7 F1, re-derived)
+$ grep -n "Creation blobs" r3 entry
+41:- **`:24` "Creation blobs carry no runtime dispatch table" — corrected.** The
+$ sed -n "24p" r3 entry
+- **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zero missing / zero extra (`dispatch:"abi"`): hex `ev
+$ git show c418be0:<r3 entry> | grep -n "Creation blobs"
+NO MATCH AT ROUND-3 LANDING
+
+## CarrierV byte census (rule content, re-derived)
+runtime 1562 57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0
+creation 1637 3c6673966d821d9d3366283ab2501c4e32167798ae89d92a21143f560994a226
+runtime.hex==runtime.bin True | offset +20 trailing 55 occurrences 1
+
+## command A: before rule, as-drafted rule, corrected rule
+--- rev d5ad52d (VZ-1 scratch overlay: EX-7 entry + map token) ---
+{"citation_resolved_rules": 14, "depth_score": 10.0, "knowledge_files": 85, "mapped": 85, "rev": "d5ad52d", "rule_blocks": 14}
+--- rev 0a8ec41 (VZ-1 scratch overlay: SC-3 rule15 as drafted) ---
+{"citation_resolved_rules": 15, "depth_score": 10.0, "knowledge_files": 85, "mapped": 85, "rev": "0a8ec41", "rule_blocks": 15}
+--- rev 82dd299 (VZ-1 scratch: corrected r4:29) ---
+{"citation_resolved_rules": 15, "depth_score": 10.0, "knowledge_files": 85, "mapped": 85, "rev": "82dd299", "rule_blocks": 15}
+
+## RV-7 alternative rule (peer) — identity + landing simulation
+RV-7 draft bytes 1565 sha256 ccbc5cdbbefc86081393cd4d60ef9c85606c3dd1c98ed76d63520da1da0b67e7
+clone2 HEAD 764742c (VZ-1 scratch overlay: RV-7 rule15)
+{"rule_blocks": 15}

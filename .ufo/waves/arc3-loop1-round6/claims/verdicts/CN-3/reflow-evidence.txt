@@ -1,0 +1,39 @@
+# PL-4 reflow fail-open — first-hand evidence (CN-3, 2026-10-19)
+
+## seed
+tree: /var/tmp/cn3-r6/f-reflow ; edit: insert one blank line at line 133 (immediately before the
+'### Round-4 frontier (post-unlock)' header). File grows 162 -> 163 lines; no content changed.
+
+## resulting lines 133-140
+133: ''
+134: '### Round-4 frontier (post-unlock)'
+135: ''
+136: '- **RISC-V analysis** — `target_unavailable` gate pinned (`binaryTarget.js:105`'
+137: '  ELF e_machine allowlist), bypassed via e_machine patch + language override'
+138: '  (r5-01: `corpus/knowledge/2026-10-13-r5-01-riscv-bypass.md`); full 29 MB EXEC'
+139: '  via direct `analyzeHeadless` (10,766 functions @900 s cap).'
+140: '- **>90 MB PE scale wall** — CLOSED (arc2-r7: the same 91.6 MB Godot ARM64 PE'
+
+## PL-4's own FRONTIER rows are fixed line spans; row 135-138 now covers:
+  135: '' (blank)
+  136: RISC-V bullet line 1  -> REQUIRED 'RISC-V' matches here (not at the bullet head)
+  137: RISC-V bullet line 2
+  138: RISC-V bullet line 3  -> REQUIRED 'r5-01' matches here (bullet's last line moved to 139)
+
+## frontier_check on the reflowed tree:
+  frontier_check(...) -> []
+
+## gate runs on this tree:
+  v10  -> exit 0, PASS
+  pl4  -> exit 0, PASS   <-- fail-open
+  pl2  -> exit 1 (scope_errors: marker at :133 absent)  [structural markers catch it]
+  rv3  -> exit 1, FRONTIER-ANCHOR                      [anchor lines catch it]
+
+## consequence
+PL-4.md §6 residual 1 states: 'Insertions anywhere inside :73-162 are caught ... inside :132-162
+they shift register spans (REQUIRED-absent — measured via the seeded arms).'
+Measured: a +1-line insertion at :133 shifts every post-unlock row by one line and still reads PASS,
+because each row's REQUIRED tokens remain inside the shifted equal-width span. The sentence is
+too strong; the seeded arms it cites (citation removal, truncation) are different faults. Record the
+corrected residual at landing: reflow inside the post-unlock region is NOT detected by PL-4's register.
+Independent peer corroboration: EX-2 item 16, EX-3 item 18, PL-1 §2.5, RV-1 §3 (all landed this wave).

@@ -1,0 +1,54 @@
+Seat CR-1, arc3-loop1-round6 — the three measured dispatch forms (byte-level)
+
+## Form A default -O gas: 418 B sha256 72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814
+   prologue 5f3560e01c600260
+   opcodes(boundary sweep, whole file incl. table data): {'PUSH0': 5, 'PUSH1': 53, 'PUSH2': 25, 'PUSH4': 8, 'XOR': 9, 'EQ': 0, 'GT': 0, 'ISZERO': 0, 'MOD': 1, 'SHL': 1, 'SHR': 1, 'CODECOPY': 1, 'MLOAD': 1, 'JUMP': 1, 'JUMPI': 24, 'JUMPDEST': 10}
+   bucket table: count=9 base=400 entries=[392, 392, 254, 300, 162, 24, 392, 346, 116]
+   all table targets JUMPDEST: True; sentinel [392]
+   chain: PUSH4 <sel> DUP2 XOR PUSH2 <next_test> JUMPI; body is the fall-through at push4_pc+11
+   selector mod 9: f0=5 f7=5 (collision); f1=8; f2=4 f4=4 (collision); f3=2; f5=3; f6=7;
+   buckets 0/1/6 empty -> 0x188 (JUMPDEST PUSH0 PUSH0 REVERT); chain order 5,5,8,4,4,2,3,7
+   NOTE: one table-data byte (0x18 at pc 411) renders as XOR in a whole-file sweep;
+   the 8 chain compares are the XORs at 31,77,123,169,215,261,307,353.
+
+## Form B --no-optimize / -O none: 617 B sha256 1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc
+   prologue 600436101561000d
+   opcodes(boundary sweep, whole file incl. table data): {'PUSH0': 20, 'PUSH1': 50, 'PUSH2': 51, 'PUSH4': 8, 'XOR': 0, 'EQ': 8, 'GT': 0, 'ISZERO': 57, 'MOD': 0, 'SHL': 0, 'SHR': 1, 'CODECOPY': 0, 'MLOAD': 0, 'JUMP': 18, 'JUMPI': 33, 'JUMPDEST': 27}
+   8 PUSH4 sites at [19, 92, 165, 238, 311, 384, 457, 530] (stride [73, 73, 73, 73, 73, 73, 73])
+   prologue guard: PUSH1 4 CALLDATASIZE LT ISZERO PUSH2 0x000d JUMPI PUSH2 0x0260 JUMP
+   chain: PUSH4 <sel> DUP2 EQ ISZERO PUSH2 <next_test> JUMPI; body is the fall-through at push4_pc+12
+   body opening: CALLVALUE ISZERO ISZERO PUSH2 0x0265 JUMPI; PUSH1 0x24 CALLDATASIZE LT
+                 ISZERO ISZERO PUSH2 0x0265 JUMPI; PUSH2 <arith> JUMP
+   chain order is source order f0..f7; EQ=8, XOR=0, no MOD, no CODECOPY
+
+## Form C -O codesize: 360 B sha256 bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5
+   prologue 5f3560e01c600561
+   opcodes(boundary sweep, whole file incl. table data): {'PUSH0': 6, 'PUSH1': 55, 'PUSH2': 13, 'PUSH4': 0, 'XOR': 0, 'EQ': 1, 'GT': 1, 'ISZERO': 1, 'MOD': 1, 'SHL': 0, 'SHR': 6, 'CODECOPY': 2, 'MLOAD': 2, 'JUMP': 1, 'JUMPI': 10, 'JUMPDEST': 10}
+   header at 299: mult=451 base=304 count=8; stride 7; table_end=360 == code_len
+   entry = sel(4) | dst(2 BE) | guard byte; hash = ((451*sel)>>24) mod 8 (perfect)
+     idx 0 d7b7913b -> dst 166 (JD True) guard 0x25
+     idx 1 9adbf691 -> dst 116 (JD True) guard 0x25
+     idx 2 2ae1431c -> dst 91 (JD True) guard 0x25
+     idx 3 9b7c2962 -> dst 241 (JD True) guard 0x25
+     idx 4 cf35f823 -> dst 216 (JD True) guard 0x25
+     idx 5 364605a1 -> dst 266 (JD True) guard 0x25
+     idx 6 bf3724af -> dst 141 (JD True) guard 0x25
+     idx 7 d7531d91 -> dst 191 (JD True) guard 0x25
+   dispatcher: CODECOPY 5-byte header -> MLOAD; CODECOPY 7-byte entry -> MLOAD;
+   compare (entry>>24)==selector; guard (entry&0xfe) < calldatasize or (entry&1)*value;
+   jump target (entry>>8)&0xffff. Zero PUSH4 immediates in the runtime.
+
+## Offset conventions (probe-reported bytecode_offset; first-hand legs in probe-summary.txt)
+   Form A: offset = push4_pc + 11; byte at offset 0x60 (PUSH1 0x24 guard); all 8/8; none JUMPDEST
+   Form A paris/london: same +11 (e.g. push4@27 -> 38)
+   Form B: offset = push4_pc + 12; byte at offset 0x34 (CALLVALUE); all 8/8; none JUMPDEST
+   Form C: offset = 65 for all 8 (constant); byte 0x80 (DUP1); none JUMPDEST;
+           per-function handler = table dst (91,116,141,166,191,216,241,266)
+   Unified reading: the offset is the match-path fall-through after the compare's conditional
+   jump. It is per-function only where the fall-through is per-function (A, B); in C the
+   fall-through is the shared guard block at 65 and the per-function destination is table data.
+   The r4 '+11' rule is Form-A-scoped; the r4 phrase 'byte at that offset is 0x60' is A-scoped.
+
+## Mutability delta (probe inferred_state_mutability vs compiled ABI)
+   All three forms: 8/8 functions read `payable`; ABI says view for all 8 (K8.abi.json).
+   This reproduces the r4 Vyper payable-read class on the two non-default forms.

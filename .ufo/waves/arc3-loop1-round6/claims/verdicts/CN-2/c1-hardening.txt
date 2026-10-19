@@ -1,0 +1,84 @@
+# CN-2 c1 hardening + peer-correction evidence (first-hand, 2026-10-19)
+HEAD c625d5de57e045188b5ce8cd450a57b349f90785
+gate sha d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5
+scratch /var/tmp/cn2-r6/c1
+
+## extra-stale2 tree: two other 40de383 literals, anchors kept
+edit: :142 -> "  UNKNOWN; hits REA's ~900s internal session deadline. The pre-r7 \"Next:\""
+      :158 -> "  multi-version pairs probe-refused since r2 (r4-10: op 2.34.1→2.40.0, qpdf control)"
+file stays 162 lines.
+  pl4        exit=0 | PASS  (blind)
+  rv3        exit=0 | PASS  (blind)
+  pl2        exit=1 | FAIL  DECLARED ['FRONTIER-STALE'] frontier=2
+               PROVINCE.md:143 "hits REA's ~900s internal session deadline"
+               PROVINCE.md:159 'probe-refused since r2'
+  v10        exit=0 | PASS  (blind)
+provenance: git show 40de383 -- PROVINCE.md shows both before-states.
+
+## edge-insert: one blank line inserted before :133 (163 lines)
+  pl4        exit=0 | PASS  (blind: span-based register)
+  rv3        exit=1 | FAIL  (anchor rows)
+  pl2        exit=1 | FAIL  SCOPE-ERROR "PROVINCE.md:133 marker ... absent from ''"
+  v10        exit=0 | PASS
+
+## edge-header: :73 "## Frontier" -> "## Frontier (renamed)"
+  pl4        exit=0 | PASS  (blind: :73 is in no FRONTIER row)
+  rv3        exit=1 | FAIL
+  pl2        exit=1 | FAIL  SCOPE-ERROR at :73
+  v10        exit=0 | PASS
+
+## amended PL-4 (CN-4 two-literal FORBIDDEN rows)
+sha256 2f01f8498351bd3a799f5ad94ebf0076072460f7d858bd4f3d2c7978116e00df, 713 lines, 14 rows
+  clean        exit=0 PASS
+  seeded       exit=1 FAIL ['FRONTIER-STALE']
+  stripped     exit=1 FAIL ['FRONTIER-UNEVALUABLE']
+  extra-stale2 exit=1 FAIL ['FRONTIER-STALE'] (both literals named)
+  trunc161     exit=1 FAIL ['UNREADABLE','FRONTIER-UNEVALUABLE']
+  JSON: 17 shared keys, mismatched [], extras ['frontier_errors','frontier_rows']
+
+## combined 4-row hardening (CN-4 literals + PL-2 two header rows)
+rows added: (73,73,^## Frontier$), (133,133,^### Round-4 frontier \(post-unlock\)$)
+sha256 6f8f3fe87fb8a4cb1f4f7446fc95c90fc2697521229de17401dd157a173498c0, 715 lines, 16 rows
+  clean        exit=0 PASS
+  seeded       exit=1 FAIL ['FRONTIER-STALE']
+  stripped     exit=1 FAIL ['FRONTIER-UNEVALUABLE']
+  extra-stale2 exit=1 FAIL ['FRONTIER-STALE']
+  trunc161     exit=1 FAIL ['UNREADABLE','FRONTIER-UNEVALUABLE']
+  edge-insert  exit=1 FAIL ['FRONTIER-UNEVALUABLE']
+  edge-header  exit=1 FAIL ['FRONTIER-UNEVALUABLE']
+  JSON: 17 shared keys, mismatched [], extras ['frontier_errors','frontier_rows'], frontier_rows 16
+
+## PL-1 delta round-trip (applied to freshly rebuilt PL-4)
+patch -p0 pl4base.py < claims/c1/PL-1/patch-pl4-to-pl1.diff -> exit 0
+sha256 7724adccdf6391cffc622b8fa3144ede421eb24aedc1431893c2482f892c12a1, 748 lines
+(matches CR-8's reported identity)
+
+## SC-3 corrected identities (my edits)
+r4 :34->:29 only:              1605 B sha 6967b1e3e7fbdb43492e191426399c0311ab3bf85ee307f1a181a3edd235511e
+r4 :34->:29 + r1 :24->:31:     1605 B sha 1a66dd55e79e0c2c56167764d786d89a69b1e2a3120c2b36e53f6effcd6a9b07
+(CR-8's a1bceb40… is a different exact edit; not reproduced)
+
+## EX-7 CBOR trailer bytes
+runtime.bin[-64:]:
+54610571565b60015556fea264697066735822122022958d9b2c8d598780ac3ddde2db45b5597520a14031175bdd54fe0a2104945d64736f6c63430008250033
+contains 64 736f6c63 = True; contains 73 736f6c63 = False
+entry text writes "73 736f6c63" -> text fix 73->64.
+
+## Peer convergence statements re-read
+PL-2.md §10 landing recipe: endorses PL-4 patch (sha 80027570…, 713 lines).
+PL-2.md §7: optional two header rows (73,73 / 133,133), 16 rows; header rename + insert-133 FAIL.
+RV-3.md:215-225: "Landing recommendation: land PL-4's patch as-is"; optional anchor rows + two FORBIDDEN literals.
+CN-4.md §1.5: two FORBIDDEN literals (matches my amended PL-4).
+CR-6.md §1.5: edge-header and edge-insert-133 PASS under PL-4 (matches).
+CR-8.md §2.3: same two corrections; §2.4 PL-1 delta sha 7724adcc… (matches my round-trip).
+
+## PL-1 delta contents (verified from the patched file)
+FRONTIER rows: 16; anchor-style rows (7+ fields): 16
+FORBIDDEN literals present: untested, ~900s internal session deadline, probe-refused since r2
+whitespace-collapsed matching: present
+sha256 7724adccdf6391cffc622b8fa3144ede421eb24aedc1431893c2482f892c12a1, 748 lines
+
+## Composite landing with RV-7 (instead of SC-3)
+{"bad": [], "citation_resolved_rules": 15, "coverage_score": 10.0, "dangling": [],
+ "depth_score": 10.0, "knowledge_files": 85, "mapped": 85, "missing": [], "rule_blocks": 15}
+(scratch repo /var/tmp/cn2-r6/composite-rv7, commit 6d9a50e; same as the SC-3 composite)

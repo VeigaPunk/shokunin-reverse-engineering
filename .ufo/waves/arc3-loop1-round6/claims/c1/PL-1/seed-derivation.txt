@@ -1,0 +1,19 @@
+# Seed fidelity: every stale seed is the byte-exact pre-40de383 text, derived
+# first-hand with `git show 40de383~1:PROVINCE.md` (162 lines, same offsets).
+pre[92-93]   :   (Core, r3-07); real solc/vyper-compiled bytecode untested; selectors stay
+                 bare hashes (no signature DB -> no name resolution).
+pre[139-144] : - **>90 MB PE scale wall** — 91.6 MB Godot ARM64 PE hits REA's ~900s internal
+                 session deadline (`provider_timeout`, GhidraClient.js:607), still progressing
+                 at kill (r4-12) [r5-audit C1: r4-12 cite added]. Not OOM (RSS ~2.36GB vs
+                 -Xmx2G headroom exists). Next: raise `REA_GHIDRA_STARTUP_TIMEOUT_MS` to
+                 ~3.6Ms + `GHIDRA_HEADLESS_MAXMEM=6-8G` on an idle host, or bisect with a
+                 2-5MB PE.
+pre[157-160] : - **Cross-version residuals** — `compare-application-versions` still
+                 probe-refused since r2; multi-version pacman pairs beyond expac unexercised
+                 [r5-audit C1: merged from the pruned Frontier bullet — its
+                 `compare_javascript_export_shapes` item is now held (Core, r4-09)].
+# (the last line above is the actual :160; reproduced verbatim in the tree build)
+# Whitespace-collapsed match check (pl1-r10 forbidden patterns against the pre-state):
+#   'untested' match=True
+#   "hits REA's ~900s internal session deadline" match=True   <-- spans a line wrap
+#   'probe-refused since r2' match=True

@@ -1,0 +1,50 @@
+# C3 — rule-15 drafts: identities, landing sims, citation audit — CN-3, 2026-10-19
+
+## draft identities
+SC-3 draft: 1605 B, 23 newline-terminated lines, sha256 763c44b504f9964d970a741ef56a8331d85e7a362a191d09025e38d14a6fd0d1
+RV-7 draft: 1565 B, 23 newline-terminated lines, sha256 ccbc5cdbbefc86081393cd4d60ef9c85606c3dd1c98ed76d63520da1da0b67e7
+(SC-3's artifact claims 1,605 B / 23 lines / 763c44b5… — matches the fenced §4 block byte-for-byte; RV-7's artifact claims 1,565 B / 23 lines.)
+
+## landing simulation (command A splitting + resolution, exact recipe logic)
+rev        variant              blocks resolved depth
+58c3db7   before               blocks=14 resolved=14 depth=10.0
+58c3db7   SC-3 verbatim        blocks=15 resolved=15 depth=10.0
+58c3db7   RV-7 verbatim        blocks=15 resolved=15 depth=10.0
+58c3db7   BOTH (duplicate)     blocks=16 resolved=16 depth=10.0
+c625d5d   before               blocks=14 resolved=14 depth=10.0
+c625d5d   SC-3 verbatim        blocks=15 resolved=15 depth=10.0
+c625d5d   RV-7 verbatim        blocks=15 resolved=15 depth=10.0
+c625d5d   BOTH (duplicate)     blocks=16 resolved=16 depth=10.0
+
+=> land exactly one: both drafts produce 16 rule blocks with all resolving (depth flat at 10.0),
+   i.e. a duplicate craft rule the metric cannot see.
+
+## citation audit — line content at c625d5d (working tree = HEAD for corpus/SKILL)
+
+r1:24: - **Observation (creation code — parsed-and-empty, not excluded):** `Rv2Token.creation.hex` @6.4.0 `ev_c80379e1…` → 0 functions, `bytecode.kind:"unkno
+r1:31: - **Observation (r1 errata — appended by arc3-loop1-round3's byte-level census, append-only):** two r1 statements are corrected: (a) the creation-code
+r3:24: - **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zero missing / zero extra (`dispatch:"abi"`): hex `ev_6ed8aa4e…` (@6.4.0), `ev_6d98
+r3:27: - **Observation (raw-on-hex-text trap, reproduced):** feeding the hex *text* file with `raw` decodes ASCII as code — exit 0, 0 functions, decoded byte
+r3:41: - **`:24` "Creation blobs carry no runtime dispatch table" — corrected.** The
+r4:17: - Creation-code (initcode) legs — EX-04 (hex @6.4.0, this seat's own run and EX-04's) and EX-09 (hex and raw at both pins; `0x`-prefixed hex at 6.4.0 
+r4:25: - **Observation (input-shape traps reproduce on Vyper carriers):** raw-over-hextext exits 0 with 0 functions and a decoded sha equal to the hex *text*
+r4:29: - **Limitations (tool-reported, every leg):** worker limits 256 MiB JS heap / 3 GiB address space / 30 s deadline / 16 MiB file cap (inherited tighter
+r4:34: ## Erratum (arc3-loop1-round5 correctness sweep, append-only)
+r4:39: - **`:17` "initcode carries no runtime dispatch table" — corrected.** The
+
+r3:24 is a RESULT row (Rv2TokenOpt) at every revision checked; the quoted sentence 'Creation blobs
+carry no runtime dispatch table' is r1:24's (already corrected at r1:31). The r3 erratum at :41 repeats
+a dangling ':24' attribution — verified with:
+  git show c418be0|40de383|58c3db7:corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md | grep 'Creation blobs'
+  -> c418be0: no line; 40de383: no line; 58c3db7: line 41 (erratum quoting it).
+
+## the one blocking citation defect in SC-3's draft
+SC-3 §4: "... 'empty results do not prove absence of dispatch' (r4:34)" and §6 repeats it.
+r4:34 is '## Erratum (arc3-loop1-round5 correctness sweep, append-only)'; the quoted limitation is at r4:29.
+Fix: :34 -> :29 (same resolution: 29 <= 63).
+Second, precision-level: SC-3's first sentence cites r1:24 for 'blobs that byte-contain the full runtime';
+r1:24 records the 0-function probe and says 'Creation blobs carry no runtime dispatch table' — the embedding
+half is r1:31's erratum (cited later in the same sentence). Re-point the two halves (:24 probe, :31 embedding).
+RV-7's draft has neither defect: it attributes the probe result to r1:24 and the correction/embedding to :31.
+
+## RV-7's F1 (r3 erratum ':24' pointer) — confirmed, not inherited by RV-7's text

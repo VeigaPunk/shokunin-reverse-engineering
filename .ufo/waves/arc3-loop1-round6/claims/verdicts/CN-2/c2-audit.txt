@@ -1,0 +1,32 @@
+# CN-2 c2 audit (EX-7 viaIR entry), first-hand
+HEAD c625d5de57e045188b5ce8cd450a57b349f90785
+## entry draft
+   34 13659 .ufo/waves/arc3-loop1-round6/claims/c2/EX-7/entry-draft/2026-10-19-arc3-r6-viair-dispatch-shape.md
+## compiled legs (retained bytes, my sha/size)
+viair-opt200 runtime 1517 2ec3f557f6f2fb229dc49094981723c6efcce3df10f20363ec1732845c99581a creation 1560 d85fdde93b1fcb620a8a0dcf16885b7b55113b9ef7860ae5ebdbf5ad5fbd83d5
+viair-noopt runtime 4144 0cc6938cd768199159cbed74a7e9f5bd4273c583afbf6babca643b0ffdbd29b4 creation 4318 f1125049532f0dd9a71ab0f9963590d7a40913e521c43709400c92b96cc54063
+std-opt200 runtime 1921 c2ceabb163ad9c1e6d88244c29c5187602eaf4c810029d0018e76eb9643f7e27 creation 1966 4541fd490eb46198e788c148328dfb74e0ae1fd29c961a47c6f3056b823c5d9e
+embedding offset 43 trailing 0
+## live 6.4.0 re-probe on runtime.hex (my run, TMPDIR=/var/tmp/cn2-r6/c2/tmp)
+evidence_id ev_71da9d37a97c939cc6595db2c051ec0ab7ad4ac1daf7a846665cf31f8ada43cd
+functions 15 dispatch ['abi'] distinct 15
+decoded sha 2ec3f557f6f2fb229dc49094981723c6efcce3df10f20363ec1732845c99581a bytes 1517
+offsets [('01681a62', 982), ('1c8e5adb', 935), ('2e1a7d4d', 771), ('3f4ba83a', 723), ('5ff1f6ee', 694), ('6901eb1e', 631), ('69fe0e2d', 572), ('6e69f38c', 485), ('78d20574', 425), ('8456cb59', 374), ('8e943bce', 340), ('90ab171e', 311), ('9389acb5', 272), ('d0e30db0', 253), ('ee02438e', 204)]
+mutability [('01681a62', 'nonpayable'), ('1c8e5adb', 'view'), ('2e1a7d4d', 'nonpayable'), ('3f4ba83a', 'nonpayable'), ('5ff1f6ee', 'view'), ('6901eb1e', 'view'), ('69fe0e2d', 'nonpayable'), ('6e69f38c', 'view'), ('78d20574', 'view'), ('8456cb59', 'nonpayable'), ('8e943bce', 'view'), ('90ab171e', 'view'), ('9389acb5', 'view'), ('d0e30db0', 'payable'), ('ee02438e', 'nonpayable')]
+## my opcode walk (viair-opt200)
+19 opcode-boundary PUSH4 sites; 14 EQ legs at stride 11; selectors ascending
+[01681a62..d0e30db0]; EQ dsts [982,935,771,723,694,631,572,485,425,374,340,311,272,253];
+SUB leg PUSH4 ee02438e SUB PUSH2 0x000e JUMPI at pc 194 -> dst 14;
+prologue 608060405260043610156100 (PUSH1 4 CALLDATASIZE LT ISZERO PUSH2 ... JUMPI).
+## EX-6 independent carrier corroboration (retained bytes, my walk)
+viair-opt200 runtime 1127 EQ legs 11 stride [11] ascending True SUB [(302, 'f43cc773', 14)]
+viair-nopt runtime 3039 EQ legs 11 stride [11] ascending True SUB [(161, 'f43cc773', 14)]
+## command-A overlay (minimal scratch git repo, exact recipe)
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 84, "mapped": 84, "missing": [], "revision": "65b3151", "rule_blocks": 14}
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 85, "mapped": 85, "missing": [], "revision": "30acf38", "rule_blocks": 14}
+## Unknown provenance + token absence at HEAD
+corpus/knowledge/2026-10-19-arc3-r3-evm-optimizer-shapes.md:33:- **Unknowns:** Vyper and solc versions other than 0.8.37; optimizer runs values other than 200, the `viaIR` pipeline, and cross-minor optimizer differences; dispatcher prologue classes other than `5f3560e01c` (this round) and `60003560e01c` (r1); the full `ev_` id domain for this verb family (path-sensitivity measured, formula not derived); behavior above the probed runtime-size class (0.98–3.87 KB this round); whether pure/`view` inference separation generalizes; whether the 6.5.0+ envelope deltas (e.g. `relationship_coverage`, present at 6.5.0 and 6.7.0 but absent at 6.4.0 — re-measured r4 on six carrier families, `.ufo/waves/arc3-loop1-round4/claims/c1/EX-07/compare-legs.out`) generalize; deployment/chain identity (never claimed by the tool).
+corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:28:- **Unknowns:** Vyper versions other than 0.4.3; Vyper dispatcher shapes for other bucket counts / bucket-collision patterns (this round measured 15 selectors over 13 buckets and 7 over 6 — both XOR chains); whether the offset = `push4_pc + 11` rule holds for other Vyper versions or for non-default optimizer forms (this round's Form-A rule is measured on the default `-O 2` output; CR-1's `--no-optimize` / `-O codesize` / `-O none` and hardfork variants were probed K/K by the probe but their dispatcher forms were not byte-characterized here, and a shape-blind extractor returns empty on them — the false-honest-stop hazard); solc versions other than 0.8.37 and optimizer runs other than 200 (r3's Unknowns stand); the `viaIR` pipeline; dispatcher prologue classes beyond the three now recorded (`5f3560e01c` + GT/EQ compare tree = solc; `60003560e01c` linear = r1 control; `5f3560e01c` + `MOD`-indexed jump table + XOR chain = Vyper 0.4.3); the full `ev_` id domain for this verb family (path-sensitivity measured, formula not derived); whether the payable-read inference delta generalizes to other Vyper versions; behavior above the probed runtime-size class (168 B – 3,337 B this round); deployment/chain identity (never claimed by the tool).
+0
+README EVM row token count before landing:
+4

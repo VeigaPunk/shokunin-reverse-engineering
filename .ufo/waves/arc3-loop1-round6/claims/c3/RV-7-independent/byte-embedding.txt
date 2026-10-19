@@ -1,0 +1,26 @@
+byte-embedding re-derivation (first-hand; retained artifacts, custody read-only)
+
+CarrierV @r4 EX-04/out:
+  creation.hex decoded 1637 B sha256 3c6673966d821d9d3366283ab2501c4e32167798ae89d92a21143f560994a226
+  creation.bin        1637 B sha256 3c6673966d821d9d3366283ab2501c4e32167798ae89d92a21143f560994a226 (== decoded hex: True)
+  runtime.bin         1562 B sha256 57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0
+  runtime.hex decoded 1562 B sha256 57d6fd0ae0da001975a3f58ae72804757aa36267f6e373bf9f134ecc9791dae0 (== runtime.bin: True)
+  runtime in creation: offset +20, occurrences 1, trailing 55 B
+
+Rv2Token @r1 RV-2:
+  creation 1971 B sha256 04e07f54512cca4ac5350d5f3f2701ec8d9b125e69a5d28c79c8526352c7786b; runtime 1943 B sha256 c1081a565869b50387211b25afaf3768294aa774c35845bc3a8c0b12cfe15e74
+  runtime in creation: offset +28, occurrences 1, trailing 0 B
+  dispatcher compares (80 63 <sel4> 14 61 <dest2> 57): 5 at EQ offsets [30, 41, 52, 63, 74]
+    selectors ['095ea7b3', '18160ddd', '23b872dd', '70a08231', 'a9059cbb']
+    dests ['0x59', '0x89', '0xa7', '0xd7', '0x107']
+  loose EQ;PUSH2;JUMPI (14 61 xx xx 57): 7 at [36, 47, 58, 69, 80, 1384, 1435] (the 2 beyond the five dispatcher compares are body-level guards)
+
+Smoke @r1 EX-02/out/Smoke_sol_Smoke.bin:
+  file 1370 B ASCII-hex, sha256 530efc7bb166fd47e42fe9623ee347234b99a65691b0a0ad42d2682702986a5f
+  decoded 685 B sha256 08299f31203e05e5dcdcd2453f9dd5a105a97fd94f2b48194ba18e963c368ebd
+  initcode pc16: PUSH2 0x0291 (657); DUP1; PUSH2 0x001c (28); PUSH0; CODECOPY; PUSH0; RETURN
+  => copies code[28:28+657] to memory; 28+657 = 685 = file length 685; embedded runtime 657 B at +28
+  tail prologue at +28: 60 80 60 40 52 60 04 36 10 61 00 49 57 5f
+
+EX-06 sealed: id ev_53732d0f8c67d15c18110610cf228e550fb290537c87605706fc92a0856bee13; functions 0; kind unknown; decoded 3c6673966d821d9d3366283ab2501c4e32167798ae89d92a21143f560994a226; subject 34f52280d3cdc74008e1a2265f367f1d0817d93df6bbbb5cdce243903c3ccd92
+r1 RV-2 sealed: id ev_c80379e1d3f74688e197bb09a968e22c6301bb193a58f000f9c4953a6559be73; functions 0; kind unknown; decoded 04e07f54512cca4ac5350d5f3f2701ec8d9b125e69a5d28c79c8526352c7786b; subject e6517fb7db569cadfd8a586cdb5f2f838c6bb4a1b5b941640bf72f30df07400d

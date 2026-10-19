@@ -1,0 +1,47 @@
+# C1 identities and invariance — CN-3, measured 2026-10-19
+# pristine gate: .ufo/gates/c1-census-v10.py sha256 d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5, 610 lines
+# gate file sha is UNCHANGED before/after this seat; scratch copies only.
+
+patch file bytes:
+3f94355cfe747c10c968c2382004ab1e95792518eba2f03ae99df2f7f16a6513  .ufo/waves/arc3-loop1-round6/claims/c1/PL-4/patch-v10-to-r10.diff
+976188cc538c566673bf26df23c876c5257159ae466f02765b64d50c3d9261dc  .ufo/waves/arc3-loop1-round6/claims/c1/PL-2/prior-attempt/c1-census-v10-r10.patch
+c9ab162e5f18f6655a03ebadf3c6bcb94395e372c08b237d60e248dc083ea3e0  /var/tmp/cn3-r6/patches/rv3.diff
+
+applied instrument sha (patch -p0 onto pristine copy):
+8002757078a685f515804fc6128ebf76b9925d2033be99a293621e18d14aecca  /var/tmp/cn3-r6/patches/pl4b/c1-census-v10.py
+2d7ee95ba2743bde0b658c91d867a46e04e3e9e14de41d2cb60f2ff46238ce7b  /var/tmp/cn3-r6/patches/pl2b/.ufo/gates/c1-census-v10.py
+8e4206796fec2e16fb6f2c1959f33b63bbcb9643471d42472ac6bc2cba195ebf  /var/tmp/cn3-r6/patches/rv3/pristine.py
+
+applied instrument lines:
+   713 /var/tmp/cn3-r6/patches/pl4b/c1-census-v10.py
+   705 /var/tmp/cn3-r6/patches/pl2b/.ufo/gates/c1-census-v10.py
+   712 /var/tmp/cn3-r6/patches/rv3/pristine.py
+  2130 total
+
+JSON shared-key invariance on the clean tree (v10 vs each patch; PL-4/RV-3 fail-closed rows):
+  pl4: shared=17 differing=[] additive_only=['frontier_errors', 'frontier_rows'] missing=[]
+      verdict=PASS counts={'PROVINCE.md': {'lines': 162, 'loci': 6}, 'SCORECARD.md': {'lines': 1696, 'loci': 9}, 'SKILL.md': {'lines': 390, 'loci': 2}} declared=[]
+  pl2: shared=17 differing=[] additive_only=['frontier_register', 'frontier_stale'] missing=[]
+      verdict=PASS counts={'PROVINCE.md': {'lines': 162, 'loci': 6}, 'SCORECARD.md': {'lines': 1696, 'loci': 9}, 'SKILL.md': {'lines': 390, 'loci': 2}} declared=[]
+  rv3: shared=17 differing=[] additive_only=['frontier_errors', 'frontier_rows'] missing=[]
+      verdict=PASS counts={'PROVINCE.md': {'lines': 162, 'loci': 6}, 'SCORECARD.md': {'lines': 1696, 'loci': 9}, 'SKILL.md': {'lines': 390, 'loci': 2}} declared=[]
+
+SCOPE base-row integrity (import each gate module; base list = pristine):
+  pl4: base_rows_intact=True base=20 now=20 added=none
+  pl2: base_rows_intact=True base=20 now=22 added=[('PROVINCE.md', 73, 93, 'FRONTIER', 73, '^## Frontier$'), ('PROVINCE.md', 133, 162, 'FRONTIER', 133, '^### Round-4 frontier \\(post-unlock\\)$')]
+  rv3: base_rows_intact=True base=20 now=20 added=none
+
+text contract on the clean tree — diff v10 output vs each patch:
+  --- pl4
+    87a88
+    > FRONTIER register (G21): 14 rows asserted, errors: []
+  --- pl2
+    87a88
+    > FRONTIER-STALE (claim register, 3 entries): []
+    93c94
+    < VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+    ---
+    > VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0 frontier=0)
+  --- rv3
+    87a88
+    > FRONTIER register (r10): 13 rows, 0 error(s)

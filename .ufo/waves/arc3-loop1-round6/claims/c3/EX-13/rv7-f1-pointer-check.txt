@@ -1,0 +1,17 @@
+EX-13 independent check of RV-7 finding F1 (r3 erratum pointer)
+Measured 2026-10-19, git objects read-only.
+== revision c418be0
+  line 24: - **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zero missing / zero extra (`dispatch:"abi"`): hex `ev
+  'Creation blobs' matches: 0
+  line 41: == revision 40de383
+  line 24: - **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zero missing / zero extra (`dispatch:"abi"`): hex `ev
+  'Creation blobs' matches: 0
+  line 41: == revision 58c3db7
+  line 24: - **Observation (RESULT — Rv2TokenOpt @EX-07):** six legs, all 5/5 zero missing / zero extra (`dispatch:"abi"`): hex `ev
+  'Creation blobs' matches: 1
+  line 41: - **`:24` "Creation blobs carry no runtime dispatch table" — corrected.** The
+== git log -S "Creation blobs carry no runtime dispatch table" -- r3 entry
+58c3db7 arc3-loop1-round5: work — correctness sweep aggregates (c1/c2/c3) + append-only corpus corrections (r4 initcode+CODECOPY+Core-scope, r3 initcode+UNVERIFIABLE, r1 Smoke digest domain) + SCORECARD wording fix
+-- the sentence's origin (r1 entry):
+24:- **Observation (creation code — parsed-and-empty, not excluded):** `Rv2Token.creation.hex` @6.4.0 `ev_c80379e1…` → 0 functions, `bytecode.kind:"unknown"`; `Smoke_sol_Smoke.bin` @6.4.0 `ev_f875e21e…` → 0 functions. Creation blobs carry no runtime dispatch table; these are parsed-and-empty results (`corpus/QUALITY.md:21`), not inventory exclusions.
+31:- **Observation (r1 errata — appended by arc3-loop1-round3's byte-level census, append-only):** two r1 statements are corrected: (a) the creation-code observation's 'Creation blobs carry no runtime dispatch table' is measured false — `Rv2Token.creation.hex` (1,971 B) embeds the runtime and its five `EQ;PUSH2;JUMPI` sites, and arc3-r3's creation legs embed 7/9/10/11/13 EQ sites; the probe's 0-function result on creation blobs is tool scope (parsed-and-empty), not byte-level absence. (b) the 'sole non-dispatch PUSH4 constant (`16ee4b79` @1900)' claim is a metadata artifact: `Rv2Token.runtime.hex` ends its code region at byte 1890 and the code region contains zero non-dispatch PUSH4 immediates; the cited constant sits at byte 1901 inside the CBOR trailer (r1's extractor swept the whole file — same class as `43000825` in the r3 entry). Source: `.ufo/waves/arc3-loop1-round3/claims/c1/CR-1/proposed-entry-corrections.patch.md` Edit 3 + that round's census artifacts.

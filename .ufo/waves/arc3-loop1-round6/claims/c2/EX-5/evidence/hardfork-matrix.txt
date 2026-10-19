@@ -1,0 +1,24 @@
+# EX-5 arc3-loop1-round6 hardfork + optimizer-form matrix (first-hand)
+
+paris: runtime 423 B sha256 d1af44a952ac9775..., PUSH0 ops=0, PUSH4 sites=8, prologue=60003560e01c60026009820660011b61019501601e39
+london: runtime 423 B sha256 d1af44a952ac9775..., PUSH0 ops=0, PUSH4 sites=8, prologue=60003560e01c60026009820660011b61019501601e39
+cancun: runtime 418 B sha256 72e5d886da7ccaf6..., PUSH0 ops=5, PUSH4 sites=8, prologue=5f3560e01c60026009820660011b61019001601e395f
+shanghai: runtime 418 B sha256 72e5d886da7ccaf6..., PUSH0 ops=5, PUSH4 sites=8, prologue=5f3560e01c60026009820660011b61019001601e395f
+prague: runtime 418 B sha256 72e5d886da7ccaf6..., PUSH0 ops=5, PUSH4 sites=8, prologue=5f3560e01c60026009820660011b61019001601e395f
+
+paris==london and cancun==shanghai==prague byte-identically (compile receipt);
+the MOD-table dispatcher class is unchanged across hardforks; without PUSH0 the prologue
+grows 2 bytes per PUSH0 replaced, shifting reported offsets by +2 (probe: paris/london 38..360,
+cancun 36..358 for the same 8 selectors). All hardfork legs probed K/K 8/8.
+
+## optimizer forms (both carriers)
+## K8
+gas: 418 B sha256 72e5d886da7ccaf6... ; selector % 9; CODECOPY one uint16 bucket entry to mem[30:32]; MLOAD; JUMP; per-bucket XOR chain
+noopt: 617 B sha256 1a7bf2cdc83e171f... ; linear source-order EQ+ISZERO chain; per-leg calldata/value guards inline; PUSH2 handler jump
+codesize: 360 B sha256 bf5afe485f0aa298... ; minimal-perfect-hash direct table: CODECOPY 5-byte header; index=((sel*K)>>24)%count; CODECOPY 7-byte entry; verify selector; tag guard; JUMP handler (K=8, count=8)
+
+## Ex05Vault
+gas: 304 B sha256 89962a90ac5b9578... ; selector % 5; CODECOPY one uint16 bucket entry to mem[30:32]; MLOAD; JUMP; per-bucket XOR chain
+noopt: 473 B sha256 a2f3b5c99b797fcf... ; linear source-order EQ+ISZERO chain; per-leg calldata/value guards inline; PUSH2 handler jump
+codesize: 289 B sha256 08eec8be71ab71e6... ; minimal-perfect-hash direct table: CODECOPY 5-byte header; index=((sel*K)>>24)%count; CODECOPY 7-byte entry; verify selector; tag guard; JUMP handler (K=7, count=7)
+
