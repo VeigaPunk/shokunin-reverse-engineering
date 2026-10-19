@@ -1266,3 +1266,71 @@ Carried debt (named): roster pre-dispatch wiring (lands operationally at
 round 10); rerun id-stability; README:117 stays dated (correct); the r4-row
 capability backfill (r8's E3 observation — r4's citation-drift row never
 entered the capabilities table; low value, named). Retired: none.
+
+## arc2-loop1-round10 — calibration + freshness + adjacency: three claims admitted, 2026-10-18
+
+Round 10 of the reset window (10/10 — window complete; capabilities entered
+at rounds 4/8, so the stagnation nudge does not fire). **Round admitted: all
+three claims verify** (C1 as a split verdict: one scale point closed, one
+named debt — pre-accepted in the round declaration).
+
+- Wave: 64 seats frozen PRE-DISPATCH (the r9 gate's first operational run —
+  roster + items assertion held); ~59/64 reports delivered — the operator
+  interrupted the wave (44 completed at interruption + late writes); the
+  deficit is recorded per the counting lesson, not backfilled. First wave on
+  `hyper/deepseek-v4.1-flash` (operator substitution, recorded).
+- C1 calibration (owned) — rerun id-stability, split per the pre-accepted
+  shape: **BIG leg CLOSES the question** — `arc2-r10-big` re-ran the exact r7
+  request (identical target bytes, analyzer set, caps, heap; only the scratch
+  TMPDIR differed) and sealed a 5204-byte envelope **byte-identical to the r7
+  receipt** (`cmp` exit 0, parent-verified), same `ev_a4aa9b0d…`: id stability
+  is STABLE at the 91.6MB scale point, the id is scratch-path-independent and
+  carries no timing term (wall 1424.663s → 1438.082s, envelope unchanged).
+  The r7 entry is errata'd + its recheck line corrected (same commit as the
+  C2 table — Z1's measured coupling). **MID leg = named debt** — `arc2-r10-mid`
+  was kernel-OOM-killed at 9G in 53.602s: the rerun added a 9G cgroup cap that
+  the r6 run never had (r6 ran uncapped at a measured 18.26 GiB tree peak), so
+  the kill is a recipe-provenance error, not a reproducibility result; the r6
+  entry's erratum names the containment requirement (a faithful retest runs
+  uncapped or above 18.3G). Z1's discipline note: do NOT claim "two scale
+  points" — one was answered.
+- C2 freshness — the citation-drift probe table extends 13 → 31 entries (E8's
+  draft, CR2-constrained: the "frozen-run" leg restated as a manual rerun at
+  the pinned revision; the advisory classification preserved). The extension's
+  first live catch fired in-round: `readme175-sc1217`'s needle expected the
+  retirement line at SCORECARD:1216 where the id-stability debt line lives —
+  corrected and re-verified (findings=0, selftest 11/11). Coupled re-point:
+  README:175's SCORECARD citation :1217 → :1216 (P3's catch, same commit).
+- C3 adjacency — the hyper-lane substitution census, recorded operator-facing
+  (not absorbed): delivery ~59/64 under interruption (vs devin-lane 100%
+  completion — the interruption is operator-side, not lane-side; no
+  provider-quality conclusion is drawn from an interrupted wave); report
+  quality/convergence spot-checks comparable to devin-lane patterns (E10/E11
+  samples); the full census rides in the round report. The kimi config's
+  drifted state (hyper-era) is harness config, recorded not attributed.
+- Measured at the records commit: command A 81/81, 13/13, 10.0/10.0; probe
+  selftest 11/11 + findings=0 (post-fix); census v10 PASS. Custody: pre/post
+  pairs 5/5 on their own baselines; both services touched no custody path;
+  containment corroborated (both kills in-scope, zero bystanders).
+
+| Axis | Before → after | Verdict |
+|---|---|---|
+| calibration — C1 | r7/r6 "rerun id-stability UNKNOWN" → r7's unknown CLOSED (byte-identical re-derivation; id domain measured — RFC 8785 canonical JSON, excludes subject.name/local_path); r6's unknown = named debt with the containment requirement measured (uncapped 18.26 GiB peak) | improved (split per the pre-accepted shape) |
+| freshness — C2 | probe table 13 → 31 entries (r7/r8 citations + SHONEN pointers; advisory semantics preserved); the extension's first live catch fixed in-round | improved |
+| adjacency — C3 | no hyper-lane evidence → operator-facing census recorded (delivery under interruption, quality samples, no absorption) | improved |
+| coverage / depth | 10.0 / 10.0 (command A at the records commit) | unchanged |
+
+Learning trends: expansion unchanged; quality **improved materially** (id
+stability by byte-identical re-derivation — the strongest reproducibility
+evidence the lane holds; the id domain itself measured from source);
+discernment improved (Z1's "reject two scale points" discipline; the mid-leg
+kill read as provenance, not reproducibility; the wave's interrupted state
+prevented any provider-quality conclusion — recorded as operator-side).
+Planned: round 11 per schedule. Carried debt (named): the mid-leg faithful
+retest (uncapped or >18.3G — operator-host-cost gated); the 5-seat r10
+deficit (interruption, not re-dispatched per the counting lesson's
+operator-decision rule); the C3 census's full table (wave-interrupted, the
+samples stand). **Operator directive this round: PUSH to remote authorized by
+the operator ("finish this round and push to remote") — executed after the
+records commit; the standing no-push scope rule yields to the explicit
+instruction and is restated here for the ledger.** Retired: none this round.

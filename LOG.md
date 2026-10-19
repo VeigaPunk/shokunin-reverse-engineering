@@ -1345,3 +1345,32 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
 - Carried debt: roster pre-dispatch wiring (operational at round 10); rerun
   id-stability; r4-row capability backfill (low value).
 - Scope: no config edits, no pushes, repo-local.
+
+### arc2-loop1-round10 — rerun id-stability (split) + probe extension + hyper census
+
+- Dispatch: 64 seats frozen PRE-DISPATCH (the r9 gate's first run); ~59/64
+  delivered — operator interrupted the wave; deficit recorded, not
+  backfilled. hyper/deepseek-v4.1-flash (operator substitution).
+- C1 calibration — BIG leg CLOSES: `arc2-r10-big` re-derived `ev_a4aa9b0d…`
+  with a 5204-byte envelope byte-identical to the r7 receipt (cmp rc 0,
+  parent-verified); id STABLE at 91.6MB; id domain measured (RFC 8785
+  canonical JSON; excludes subject.name/local_path). MID leg = named debt:
+  `arc2-r10-mid` oom-kill at 9G in 53.602s — a recipe-provenance error (the
+  r6 run was uncapped at an 18.26 GiB measured peak); the r6 erratum names
+  the containment requirement. Z1's discipline: one scale point answered,
+  not two.
+- C2 freshness — probe table 13 → 31 entries (E8's draft, CR2-constrained;
+  "frozen-run" restated as a manual rerun); first live catch in-round
+  (readme175-sc1217 needle) fixed; README:175 :1217→:1216 coupled re-point;
+  findings=0 + selftest 11/11 post-fix.
+- C3 adjacency — hyper-lane census recorded operator-facing: ~59/64 under
+  interruption (operator-side, no lane conclusion); quality samples
+  comparable; full table wave-limited.
+- Custody: pre/post 5/5; services clean; containment corroborated (both
+  kills in-scope).
+- **Operator directive: PUSH authorized ("finish this round and push to
+  remote") — executed post-records; the no-push scope rule yields to the
+  explicit instruction.**
+- Carried debt: mid-leg faithful retest (>18.3G or uncapped); the r10
+  5-seat deficit; the full C3 census.
+- Scope: no config edits; repo-local + the authorized push only.
