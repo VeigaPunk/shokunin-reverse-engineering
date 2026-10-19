@@ -1381,3 +1381,14 @@ direct `analyzeHeadless`, budget >30 min for complete auto-analysis.
 - Carried debt: mid-leg faithful retest (>18.3G or uncapped); the r10
   5-seat deficit; the full C3 census.
 - Scope: no config edits; repo-local + the authorized push only.
+
+### operator halt — regimen stopped at arc2-loop1-round10 (2026-10-18)
+
+- Operator directive: "stop, this push is enough." The 3-loop x 12-round
+  regimen halts with loop 1 at 10/12 rounds complete (all ten admitted per
+  their per-axis verdicts; rounds 11-12 and loops 2-3 unrun). Published state:
+  main == origin/main at 110cc08 (the round-10 records + the post-merge
+  corrections). This entry is local-only — no further pushes per the operator.
+  Resumption, if the operator wants it, starts at arc2-loop1-round11 with the
+  recorded carried debt (mid-leg faithful retest, the r10 5-seat deficit,
+  roster pre-dispatch wiring now operational).
