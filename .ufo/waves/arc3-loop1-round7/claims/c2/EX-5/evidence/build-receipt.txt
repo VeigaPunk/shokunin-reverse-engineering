@@ -1,0 +1,36 @@
+EX-5 first-hand compile receipt
+
+Input
+  original: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/claims/c1/CR-1/vy/K8.vy
+  evidence copy: .ufo/waves/arc3-loop1-round7/claims/c2/EX-5/evidence/src/K8.vy
+  sha256 (original and evidence copy): 62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d
+
+Compiler
+  entrypoint: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper
+  version output: 0.4.3+commit.bff19ea2
+  entrypoint sha256: 615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10
+  help advertises --no-optimize and -O {gas,codesize,none}; default EVM version is prague (evidence/vyper-help.txt)
+  effective settings output: --no-optimize => {"experimental_codegen": false, "optimize": "none"}; -O codesize => {"experimental_codegen": false, "optimize": "codesize"} (evidence/out/{noopt,codesize}.settings.json)
+
+Commands, both run with TMPDIR=/var/tmp/arc3-loop1-round7-ex5/tmp:
+  vyper --no-optimize -f bytecode_runtime /var/tmp/arc3-loop1-round7-ex5/src/K8.vy
+  vyper --no-optimize -f method_identifiers /var/tmp/arc3-loop1-round7-ex5/src/K8.vy
+  vyper --no-optimize -f abi /var/tmp/arc3-loop1-round7-ex5/src/K8.vy
+  vyper --no-optimize -f opcodes_runtime /var/tmp/arc3-loop1-round7-ex5/src/K8.vy
+  vyper -O codesize -f bytecode_runtime /var/tmp/arc3-loop1-round7-ex5/src/K8.vy
+  vyper -O codesize -f method_identifiers /var/tmp/arc3-loop1-round7-ex5/src/K8.vy
+  vyper -O codesize -f abi /var/tmp/arc3-loop1-round7-ex5/src/K8.vy
+  vyper -O codesize -f opcodes_runtime /var/tmp/arc3-loop1-round7-ex5/src/K8.vy
+
+Fresh measurements (decoded runtime bytes; carrier file is the ASCII 0x-prefixed hex):
+  noopt: 617 bytes; decoded sha256 1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc; hex-carrier sha256 1dfe2699e61e8d82570dc3272d9679880e5a2fa765a0e4ce9169331ecedd939c; ABI functions 8; compiler method identifiers 8.
+  codesize: 360 bytes; decoded sha256 bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5; hex-carrier sha256 c4af8ebcb724788f56c341c3dd0bfdb0d97aae74e1100e1c881d625f6c7ad68e; ABI functions 8; compiler method identifiers 8.
+
+A second compile of each mode from the same copied source compared byte-for-byte equal to the first output (evidence/recompile-check.txt). The scratch tree and TMPDIR were under /var/tmp, not /tmp.
+
+Probe
+  CLI: npx -y rea-agents@6.7.0 (version output in evidence/rea-version.txt)
+  exact invocations: see the draft entry and evidence/probe/{noopt,codesize}-6.7.0.json
+  provider in both envelopes: evmole-interface / REA EVM interface adapter / evmole@0.9.3
+  noopt Evidence ID: ev_1ba1d8a060d3b88dd26c1bc3ec6d0e14b325610b3df19214cdf09dc30a424fe4
+  codesize Evidence ID: ev_43877b15e79dc71fe98ca8e05ea7c4ea4af6b0dff4eab52fb99c4df03188b66f

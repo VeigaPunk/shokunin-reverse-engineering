@@ -1,0 +1,23 @@
+CN-1 first-hand C1 rerun — 2026-10-19
+
+Revision and unmodified gate
+  HEAD: ebdcc8eb1cf01134e9ed01f2402fe97736a8b804
+  Gate: .ufo/gates/c1-census-v10.py, 713 lines, SHA-256 8002757078a685f515804fc6128ebf76b9925d2033be99a293621e18d14aecca
+  Command: python3 .ufo/gates/c1-census-v10.py --json
+  Result: exit 0, PASS; JSON keys=19; G21=14 rows, errors=[]; G2=true; counts={PROVINCE.md:162 lines/6 loci, SCORECARD.md:1757/9, SKILL.md:413/2}; current_ok_per_file={PROVINCE.md:17,SCORECARD.md:14,SKILL.md:3}.
+
+Locator and live check
+  PROVINCE.md:18 full PTR token: ~/.kimi-code/config.toml:3546. The text's `:3298` is a bare receipt suffix, not a PTR regex match. The gate's PTR regex is at .ufo/gates/c1-census-v10.py:311; its collector short-circuit is at :511-514.
+  Direct ptr_check on both 3546 and 3298 returned stale. classify() did not report a pointer assertion at the line-18 unit. Thus the baseline PASS does not grade the current path pointer.
+
+Receipt evidence
+  EX-1's proposed patch text is claims/c1/EX-1.md:30-127. I reran the EX-1 scratch candidate, SHA-256 cf5595e86f6deda81410d3e2eac82f205e97546ac3c114af561ace9b6e183e62; `python3 -m py_compile` passed. The patch verifies receipt-file SHA, capture stamp and captured config digest. The cited config-pre-pair receipt is explicitly `sha256-capture-only; no file contents read` and contains no line snapshot, so it anchors a deliberate by-design exception but does not prove what line 3546 held at capture time.
+
+Commands and observed outcomes (candidate and source copies only under /var/tmp)
+  Clean: python3 /var/tmp/kaidoku-c1-ex1.RB0rD3/.ufo/gates/c1-census-v10.py --root /var/tmp/kaidoku-c1-ex1.RB0rD3 --json
+    exit=0 PASS; keys=19; counts equal baseline; G21=14/errors=[]; G2=true; current_ok_per_file={20,16,3}.
+  Seed: python3 /var/tmp/kaidoku-c1-ex1-fault.2v4AfI/.ufo/gates/c1-census-v10.py --root /var/tmp/kaidoku-c1-ex1-fault.2v4AfI --json
+    exit=1 FAIL; one UNRESOLVED pointer at PROVINCE.md:18, ~/.kimi-code/config.toml:999999 (line 999999 beyond EOF, 4150 lines); keys=19; counts unchanged; G21=14/errors=[]; G2=true; current_ok_per_file={19,16,3}.
+  Baseline and clean JSON key sets and counts match; the added detections necessarily change current_ok_per_file. If “every existing counter intact” means identical numeric current_ok values, that strict reading is not met; if it means preserve schema, counts/loci, G21 and unrelated behavior, it is.
+
+Scratch roots above are temporary. The durable patch text and reproduced output summary are retained in this file and the cited EX-1 seat artifact. No gate or source file was edited by CN-1.

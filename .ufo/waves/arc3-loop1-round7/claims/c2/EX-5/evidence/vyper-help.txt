@@ -1,0 +1,74 @@
+usage: vyper [-h] [--version] [--show-gas-estimates] [-f FORMAT]
+             [--storage-layout-file STORAGE_LAYOUT [STORAGE_LAYOUT ...]]
+             [--evm-version {london,paris,shanghai,cancun,prague}]
+             [--no-optimize] [--base64] [-O {gas,codesize,none}] [--debug]
+             [--no-bytecode-metadata] [--traceback-limit TRACEBACK_LIMIT] [-v]
+             [--standard-json] [--hex-ir] [--path PATHS] [--disable-sys-path]
+             [-o OUTPUT_PATH] [--experimental-codegen] [--enable-decimals]
+             [-W {error,none}]
+             input_files [input_files ...]
+
+Pythonic Smart Contract Language for the EVM
+
+positional arguments:
+  input_files           Vyper sourcecode to compile
+
+options:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+  --show-gas-estimates  Show gas estimates in abi and ir output mode.
+  -f FORMAT             Format to print, one or more of (comma-separated):
+                        bytecode (default) - Deployable bytecode
+                        bytecode_runtime   - Bytecode at runtime
+                        blueprint_bytecode - Deployment bytecode for an ERC-5202 compatible blueprint
+                        abi                - ABI in JSON format
+                        abi_python         - ABI in python format
+                        source_map         - Vyper source map of deployable bytecode
+                        source_map_runtime - Vyper source map of runtime bytecode
+                        method_identifiers - Dictionary of method signature to method identifier
+                        userdoc            - Natspec user documentation
+                        devdoc             - Natspec developer documentation
+                        metadata           - Contract metadata (intended for use by tooling developers)
+                        combined_json      - All of the above format options combined as single JSON output
+                        layout             - Storage layout of a Vyper contract
+                        ast                - AST (not yet annotated) in JSON format
+                        annotated_ast      - Annotated AST in JSON format
+                        cfg                - Control flow graph of deployable bytecode
+                        cfg_runtime        - Control flow graph of runtime bytecode
+                        interface          - Vyper interface of a contract
+                        external_interface - External interface of a contract, used for outside contract calls
+                        opcodes            - List of opcodes as a string
+                        opcodes_runtime    - List of runtime opcodes as a string
+                        ir                 - Intermediate representation in list format
+                        ir_json            - Intermediate representation in JSON format
+                        ir_runtime         - Intermediate representation of runtime bytecode in list format
+                        bb                 - Basic blocks of Venom IR for deployable bytecode
+                        bb_runtime         - Basic blocks of Venom IR for runtime bytecode
+                        asm                - Output the EVM assembly of the deployable bytecode
+                        integrity          - Output the integrity hash of the source code
+                        archive            - Output the build as an archive file
+                        solc_json          - Output the build in solc json format
+                        settings           - Output the settings for a given build in json format
+  --storage-layout-file STORAGE_LAYOUT [STORAGE_LAYOUT ...]
+                        Override storage slots provided by compiler
+  --evm-version {london,paris,shanghai,cancun,prague}
+                        Select desired EVM version (default prague)
+  --no-optimize         Do not optimize
+  --base64              Base64 encode the output (only valid in conjunction with `-f archive`
+  -O, --optimize {gas,codesize,none}
+                        Optimization flag (defaults to 'gas')
+  --debug               Compile in debug mode
+  --no-bytecode-metadata
+                        Do not add metadata to bytecode
+  --traceback-limit TRACEBACK_LIMIT
+                        Set the traceback limit for error messages reported by the compiler
+  -v, --verbose         Turn on compiler verbose output. Currently an alias for --traceback-limit but may add more information in the future
+  --standard-json       Switch to standard JSON mode. Use `--standard-json -h` for available options.
+  --hex-ir              Represent integers as hex values in the IR
+  --path, -p PATHS      Add a path to the compiler's search path
+  --disable-sys-path    Disable the use of sys.path
+  -o OUTPUT_PATH        Set the output path
+  --experimental-codegen, --venom-experimental
+                        The compiler uses the new IR codegen. This is an experimental feature.
+  --enable-decimals     Enable decimals
+  -W {error,none}       Control warnings

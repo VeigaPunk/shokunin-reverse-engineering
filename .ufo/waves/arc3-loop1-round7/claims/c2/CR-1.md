@@ -1,0 +1,15 @@
+# CR-1 — C2 corpus Unknown: Vyper optimizer variants
+
+**Disposition: REPRODUCED, bounded.** I selected the named Unknown at `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:28`: the `--no-optimize` / `-O codesize` Vyper dispatcher forms had not been byte-characterized. This seat independently recompiled the K8 source, walked both runtimes, and re-ran REA. The draft corpus entry is `claims/c2/CR-1/entry-draft.md`; raw outputs and re-derivation are under `claims/c2/CR-1/evidence/`.
+
+## Per-item verdicts
+
+- **Unknown anchor — VERIFIED:** r4 names these optimizer forms as uncharacterized at `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:28`.
+- **Compiler/source — VERIFIED:** scratch copy SHA-256 `62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d`; compiler output `0.4.3+commit.bff19ea2`. Exact commands and output file identities: `claims/c2/CR-1/evidence/compile-receipt.txt`.
+- **`--no-optimize` dispatcher — REPRODUCED:** freshly compiled runtime 617 B, SHA-256 `1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc`; `PUSH4:8`, `EQ:8`, `XOR:0`, `MOD:0`, `CODECOPY:0`. All eight byte windows: `evidence/characterize-output.txt`; summary/assertions: `evidence/verify-output.txt:3-7`.
+- **`-O codesize` dispatcher — REPRODUCED:** runtime 360 B, SHA-256 `bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5`; no `PUSH4`, two `CODECOPY`s, one `MOD`, eight packed selector/target records in bytes `0x12b..0x167`; every target is a `JUMPDEST`. Exact mapping: `evidence/verify-output.txt:8-12`.
+- **REA selector coverage — REPRODUCED:** both variants' raw and normalized result sets equal the eight freshly compiled method identifiers (zero missing/extra), and each decoded SHA-256 matches its runtime. Evidence IDs and exact assert output: `evidence/verify-output.txt:5,10`; complete JSON: `evidence/K8.noopt.json`, `evidence/K8.codesize.json`.
+- **Offsets — UNVERIFIABLE semantically:** the observed REA offsets resolve to `CALLVALUE` for noopt and the shared `DUP1` at 65 for codesize, not eight distinct table targets (`evidence/verify-output.txt:7,13`). They are deliberately not used to claim handler identity; this remains an Unknown.
+- **Command A coverage delta — baseline VERIFIED; post-integration UNVERIFIABLE:** at work commit `2fba56fe7d54cfb94ca9332c11cea81667b3b289`, the source-derived result was 85 knowledge files / 85 mapped, missing `[]`, dangling `[]` (`evidence/command-A-baseline.txt:1-8`; recipe `SCORECARD.md:88-124`). The required 85→86 was not run because this seat's scope forbids editing `corpus/knowledge/`, `corpus/README.md`, or Git. The draft's exact map token is `2026-10-19-arc3-r7-vyper-optimizer-variants`; parent integration must land the draft and rerun Command A at that landing/work commit.
+
+The corpus draft closes only the byte-characterization Unknown for this K8 fixture, Vyper 0.4.3 and the two named flags. It does not generalize to other source shapes or compiler versions. No corpus/index/source/custody file was changed; all scratch was under `/var/tmp`, never `/tmp`.

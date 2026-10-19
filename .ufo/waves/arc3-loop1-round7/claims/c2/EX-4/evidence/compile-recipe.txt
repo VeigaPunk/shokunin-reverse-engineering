@@ -1,0 +1,20 @@
+Pinned compiler: `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper` (0.4.3+commit.bff19ea2; SHA-256 in `sha256.txt`).
+Source: `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/claims/c1/CR-1/vy/K8.vy` (SHA-256 in `sha256.txt`).
+The compiler help says the default optimization is `gas`; the no-flag runtime was byte-identical to an explicit `-O gas` compile.
+
+Commands used (stdout captured as the named runtime or JSON file):
+
+```sh
+VYPER=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper
+SRC=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round4/claims/c1/CR-1/vy/K8.vy
+"$VYPER" --version
+"$VYPER" -f bytecode_runtime "$SRC" > gas.runtime.hex
+"$VYPER" --no-optimize -f bytecode_runtime "$SRC" > noopt.runtime.hex
+"$VYPER" -O codesize -f bytecode_runtime "$SRC" > codesize.runtime.hex
+"$VYPER" -f method_identifiers "$SRC" > method-identifiers.json
+"$VYPER" -f abi "$SRC" > abi.json
+"$VYPER" -O gas -f bytecode_runtime "$SRC" > gas-explicit.runtime.hex
+cmp gas.runtime.hex gas-explicit.runtime.hex
+```
+
+The first compile outputs were written to `/var/tmp/kaidoku-ex4-r7/`, then copied byte-for-byte into this seat's evidence directory. Tool analysis was run on the durable copies using `probe-durable-commands.txt`; scratch `TMPDIR` was `/var/tmp/kaidoku-ex4-r7/tmp` (never `/tmp`).

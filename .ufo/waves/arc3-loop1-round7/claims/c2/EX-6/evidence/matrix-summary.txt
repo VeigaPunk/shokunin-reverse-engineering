@@ -1,0 +1,19 @@
+C2 / EX-6 — first-hand bounded `inspect_evm_interface` id characterization
+
+Carrier source (read-only): .ufo/waves/arc3-loop1-round6/claims/c2/EX-7/out/viair-opt200/runtime.bin
+Command output: source and both scratch copies each SHA-256 2ec3f557f6f2fb229dc49094981723c6efcce3df10f20363ec1732845c99581a; source and copies each 1517 bytes.
+Scratch root: /var/tmp/kaidoku-ex6-arc3-r7 (no /tmp scratch).
+CLI pin: `npx -y rea-agents@6.7.0 inspect-evm-interface <path> raw --format json`; provider envelopes say `evmole-interface`, EVMole `evmole@0.9.3`.
+
+Every response: 1517-byte input; `subject.digest.sha256` and `normalized_result.bytecode.sha256` both 2ec3f557f6f2fb229dc49094981723c6efcce3df10f20363ec1732845c99581a; 15 `normalized_result.functions`; canonical JSON SHA-256 of that functions array (sort_keys=True, separators=(',',':')) = 3394626e1e49bdb2714faf1fbc942f20dfcbd2a35547a2de18e3c2005adbe1ce.
+
+| evidence JSON | path passed / normalized `parameters.path` | evidence_id | response envelope SHA-256 |
+|---|---|---|---|
+| same-path-1.json | `/var/tmp/kaidoku-ex6-arc3-r7/A/carrier.bin` | `ev_a84a565969defaa739ab2567e8da826a284b4a8c4ee1564ec472ab1703b6a09c` | `9b333d1595188f96328dd0a0effaeeb3e17ea90419cce18dc13c1210c33dbc50` |
+| same-path-2.json | same | `ev_a84a565969defaa739ab2567e8da826a284b4a8c4ee1564ec472ab1703b6a09c` | `9b333d1595188f96328dd0a0effaeeb3e17ea90419cce18dc13c1210c33dbc50` |
+| same-path-alt-tmpdir.json | same; TMPDIR changed from A/tmp to B/tmp | `ev_a84a565969defaa739ab2567e8da826a284b4a8c4ee1564ec472ab1703b6a09c` | `9b333d1595188f96328dd0a0effaeeb3e17ea90419cce18dc13c1210c33dbc50` |
+| relative-path-same-file.json | invoked as `A/carrier.bin` from scratch-root cwd; normalized to same absolute path | `ev_a84a565969defaa739ab2567e8da826a284b4a8c4ee1564ec472ab1703b6a09c` | `9b333d1595188f96328dd0a0effaeeb3e17ea90419cce18dc13c1210c33dbc50` |
+| same-directory-renamed.json | `/var/tmp/kaidoku-ex6-arc3-r7/A/renamed.bin` | `ev_a19a232f0589027e2b528a7fc5ad68ad95034faee95e3ff7ec98281d130f4912` | `73960ec3754e2a6d635f38ae09125eb53cd33b2eb3ac61411b34970abd6c6ab3` |
+| alternate-path.json | `/var/tmp/kaidoku-ex6-arc3-r7/B/carrier.bin` | `ev_4634efd77db0fc4d9df111ea38e333651a992c004ccb6a5b5f0361de43843b79` | `3d823d51ed608b45e07f7201e2a651a6bea94b67e0b3e19229f60feaa07af8d0` |
+
+Direct comparisons: the first four complete JSON envelopes are byte-identical; changing only basename (A/renamed.bin) or only parent directory (B/carrier.bin) changes the `ev_` ID and the response path fields. Relative/absolute spelling that resolves to A/carrier.bin does not change the envelope. Changing TMPDIR while holding the normalized path and request constant does not change the envelope. This is bounded behavior, not a derivation of the Evidence-ID formula.

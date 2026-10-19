@@ -69,3 +69,15 @@ Host: Arch-flavored Linux (pacman 7.x era, `omarchy` overlay repo). All commands
 
 ## Summary
 Archives/packages are a rich shipped-artifact surface: every installed file attributes to a signed, mtree-verified archive readable with stock tar/file/zstd/gpg, and the survey already surfaced one concrete REA target — the unowned static `~/.local/bin/jq` shadowing the packaged binary.
+
+## Erratum (arc3-loop1-round7 calibration re-derivation, append-only)
+
+- The `1556` archive count is a dated 2026-10-13 snapshot, not a live value.
+  Re-derived this round (EX-7, EX-8, EX-9, SC-1, SC-2, RV-3, VZ/CN verdicts):
+  `ls /var/cache/pacman/pkg/*.pkg.tar.zst | wc -l` → **1,350** (`.sig` files
+  also 1,350), a delta of **−206** — pacman cache eviction, i.e. a
+  retention-varying inventory, not a capability claim. Adjudication: no
+  corpus edit to the dated value (it is correct at its receipt date); the
+  capability claim (signed, integrity-checkable, `.MTREE` per-file sha256,
+  `pacman -Qkk`) is unchanged. Residual recorded: `PROVINCE.md:50` repeats
+  `1556` without an as-of qualifier — discrepant if read as a current count.

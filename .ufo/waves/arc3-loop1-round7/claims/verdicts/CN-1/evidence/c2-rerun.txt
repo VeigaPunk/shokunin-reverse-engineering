@@ -1,0 +1,22 @@
+CN-1 first-hand C2 checks — 2026-10-19
+
+Chosen candidate for one landing: EX-3, `2026-10-19-arc3-r7-evm-evidence-id-domain`.
+
+Evidence-ID formula reproduction
+  Command: python3 .ufo/waves/arc3-loop1-round7/claims/c2/EX-3/evidence/recompute_evidence_ids.py
+  Output: all eight 6.4.0/6.7.0 envelope IDs matched recomputation; changing only subject.name/local_path preserved each ID. Same-path repeats matched. Same bytes at different paths changed the ID while decoded bytecode and function payloads remained equal.
+  Independently re-hashed the six package source files named in EX-3/evidence/source-hashes.txt; each SHA-256 matched. The bounded formula is `ev_` + SHA-256 of compact canonical UTF-8 JSON for the package-specific semantic Evidence projection. The tested projection differs between 6.4.0 and 6.7.0 by the `relationship_coverage` field.
+
+CN-1's six real REA 6.7.0 path probes
+  Evidence envelopes: evidence/evidence-id-domain/{same-path-1,same-path-2,same-path-alt-tmpdir,relative-path-same-file,same-directory-renamed,alternate-path}.json.
+  Same resolved path/repeat, changed TMPDIR and relative-vs-absolute spelling of that path all returned `ev_69e89a90aec881be1e3b7f70e9bb38a987133ce27834c928dc33b986e546f0cc`.
+  Renamed basename returned `ev_7a976fd7913e9c680af1401d826d10aa68385c5fd33d0d53a32c4b030f07fbef`; changed parent returned `ev_bd7b6157e761cd722c4b9eb1a90f866a8c1d817d85a446e2017f4e9c186369b7`.
+  All six held the same 1,517-byte carrier SHA-256 `2ec3f557f6f2fb229dc49094981723c6efcce3df10f20363ec1732845c99581a`, 15 normalized functions and function-payload SHA-256 `3394626e1e49bdb2714faf1fbc942f20dfcbd2a35547a2de18e3c2005adbe1ce`.
+
+Command A (projection only)
+  Re-derived at frozen work commit 2fba56fe7d54cfb94ca9332c11cea81667b3b289 from SCORECARD.md:88-124: 85 files, 85 mapped, missing=[], dangling=[], 15/15 citation-resolved rules.
+  In-memory overlay of EX-3's one proposed knowledge stem + map token: 86 files, 86 mapped, missing=[], dangling=[], still 15/15. No corpus or map file was changed; this is not a post-landing measurement.
+
+Competing Vyper candidate independently reproduced from a fresh scratch copy of EX-5's K8.vy (source SHA-256 62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d) with Vyper 0.4.3+commit.bff19ea2 (entrypoint SHA-256 615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10): gas 418 B / 72e5d886…6814; --no-optimize 617 B / 1a7bf2cd…4ffc; -O codesize 360 B / bf5afe48…2ba5. Fresh REA probes recovered 8 unique selectors with missing=[]/extra=[] for each. A fresh opcode walk found eight noopt PUSH4/EQ/ISZERO legs; codesize had no opcode-boundary PUSH4 and an eight-record 61-byte tail at 0x12b; its REA offsets all equal 65, not handler targets.
+
+Ruling boundary: EX-3 directly derives the named formula Unknown and its draft has source/verified-at/recheck fields. EX-6 reproduces finite path behavior but does not derive the formula and its draft lacks the corpus-required opening `recheck:` field. The Vyper work is valid and independently reproduced, but C2 permits one Unknown/entry/token only. CN-1 recommends EX-3 as the single candidate; CN-2's Vyper choice is a legitimate alternative for the integrator to resolve, not an additional landing. No candidate has been landed and no after-landing Command A run exists.

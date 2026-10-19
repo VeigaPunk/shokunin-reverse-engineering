@@ -1,0 +1,29 @@
+REA identity derivation contract observed in the cached published packages
+
+Package roots (verified from package.json):
+- rea-agents 6.4.0: /home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents
+  package.json SHA-256 1c6244e5689db5354fffc0e92f4ee0e0237c3a6d645de564ade2d8375fa570f9
+- rea-agents 6.7.0: /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents
+  package.json SHA-256 3f6c47fb12c8388f291a21e7f99a876495d03aee671b3b6a0708dd12d6ebb570
+
+rea-agents 6.4.0:
+- dist/application/evm/EvmInterfaceService.js SHA-256 23c5297efd17b002de67970d93e56a2319578848c5c3c04155529147b1e2b277
+- dist/domain/evidence.js SHA-256 690dc0355ce8dd64417b8ebb1ebd4a06c6b5ece648eeb7caf6978638b880de39
+- dist/domain/canonicalDigest.js SHA-256 f46d6bd4dd94835504d71b396cd9e1b995e5eff7da17a618d374c48765be81d9
+- EvmInterfaceService.js:55-64 calls createEvidence with operation inspect_evm_interface, parameters input.data, rawResult when present, and normalized result report.data.
+- evidence.js:129-152 defines the semantic projection and computeEvidenceId; its projection omits subject.name/local_path and hashes subject digest/format/architecture plus the Evidence semantic fields.
+
+rea-agents 6.7.0:
+- dist/application/evm/EvmInterfaceEvidence.js SHA-256 0822b952444c30c25adfb6aefb9034fe718f0800eab4131778ff09702835f019
+- dist/domain/evidence.js SHA-256 a3fb9f028e04e3a14f4c2269048e194ad2a8acb884b0e403212bb977d329c0fb
+- dist/domain/canonicalDigest.js SHA-256 f46d6bd4dd94835504d71b396cd9e1b995e5eff7da17a618d374c48765be81d9
+- EvmInterfaceEvidence.js:3-10 calls createEvidence with operation inspect_evm_interface, parameters input, rawResult when present, and normalized result.
+- evidence.js:159-183 defines the semantic projection and computeEvidenceId.
+- canonicalDigest.js:1-26 hashes the emitted canonical JSON with SHA-256; :63-73 sort object keys and emit JSON key/value separators.
+
+Essential 6.7.0 projection shape (evidence.js:159-183):
+subject = null OR {digest: subject.digest, format: subject.format, architecture: subject.architecture}
+projection = {subject, provider, analysis_profile, predicate_type, operation, parameters, raw_result, normalized_result, confidence, authority, environment, limitations, relationship_coverage, locations, evidence_links}
+evidence_id = "ev_" + SHA256(canonicalJSON(projection))
+
+The 6.4.0 projection has the same field set except relationship_coverage, which is absent from that package's Evidence schema. The independent recomputation script handles the two observed schemas separately. Neither form includes evidence_id itself, subject.name, or subject.local_path.

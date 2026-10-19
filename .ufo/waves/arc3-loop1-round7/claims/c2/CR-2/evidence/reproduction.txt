@@ -1,0 +1,41 @@
+CR-2 c2 reproduction record — arc3-loop1-round7
+
+Worktree / source revisions
+---------------------------
+`git rev-parse --short HEAD` -> `ebdcc8e`.
+The frozen work revision for Command A and C2 is `2fba56f`.
+
+Command A, executed using the recipe in SCORECARD.md:88-124 at `2fba56f`:
+`{"citation_resolved_rules": 15, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 85, "mapped": 85, "missing": [], "revision": "2fba56f", "rule_blocks": 15}`
+This is the before measurement. The entry and README token remain a draft in this seat artifact, so no after-integration Command A measurement is claimed.
+
+Compiler and source
+-------------------
+Compiler: `.ufo/waves/arc3-loop1-round4/tools/vyper-venv/bin/vyper`
+`--version` -> `0.4.3+commit.bff19ea2`
+Compiler executable SHA-256: `615f792c6bc1bdf87cbc4612420a331ec108246d9debadbb3f3b9efa8209dd10`
+Scratch source: `/var/tmp/kaidoku-cr2-r7-c2/src/K8.vy`
+Source SHA-256: `62549f79b9efb6677e5b24769296e812ec321914816cb5e78699091fdfe6ea7d`
+
+Fresh compiler invocations (all with `TMPDIR=/var/tmp/kaidoku-cr2-r7-c2/tmp`):
+- `vyper -f bytecode_runtime /var/tmp/kaidoku-cr2-r7-c2/src/K8.vy`
+  plus `vyper -f abi ...` and `vyper -f method_identifiers ...` -> runtime 418 bytes, decoded SHA-256 `72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814`, method identifiers 8.
+- `vyper --no-optimize -f bytecode_runtime /var/tmp/kaidoku-cr2-r7-c2/src/K8.vy`
+  plus matching `--no-optimize -f abi` and `--no-optimize -f method_identifiers` -> runtime 617 bytes, decoded SHA-256 `1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc`, method identifiers 8.
+- `vyper -O codesize -f bytecode_runtime /var/tmp/kaidoku-cr2-r7-c2/src/K8.vy`
+  plus matching `-O codesize -f abi` and `-O codesize -f method_identifiers` -> runtime 360 bytes, decoded SHA-256 `bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5`, method identifiers 8.
+
+Source and compiler outputs retained under this seat's `evidence/` directory: `K8.vy`, `{gas,noopt,codesize}.{runtime.hex,abi.json,methodids.json}`. SHA-256 of K8 source was independently printed after copying from scratch; source digest is unchanged.
+
+REA calls, run against the retained evidence files with `TMPDIR=/var/tmp/kaidoku-cr2-r7-c2/tmp`:
+`npx -y rea-agents@6.4.0 inspect-evm-interface .ufo/waves/arc3-loop1-round7/claims/c2/CR-2/evidence/{gas,noopt,codesize}.runtime.hex hex --format json`
+(The command was run once per filename; each full JSON is retained as `probe-{gas,noopt,codesize}-6.4.0.json`.)
+- gas -> `ev_ca1d2036b4769234f575edf7cfc50536b8f969d7551450e53ea273b84f985438`; rows=8, unique=8, compiler selectors=8, missing=[], extra=[], decoded SHA-256 `72e5d886da7ccaf633b957738456323e22043275092e001fbc06847b57b06814`.
+- noopt -> `ev_0607e4c9f2d704c7ad8387ce74589c3d4edfffe10656298b0956ae758c1e0abe`; rows=8, unique=8, compiler selectors=8, missing=[], extra=[], decoded SHA-256 `1a7bf2cdc83e171f0a8485c894286ea59289de9bd45f1c124e1ed6888ef14ffc`.
+- codesize -> `ev_ccb94d350cbc60d2621c4d48c876a238ddcbb8ecc81802c9aacc620d6cf41bdd`; rows=8, unique=8, compiler selectors=8, missing=[], extra=[], decoded SHA-256 `bf5afe485f0aa298c488ba7101dfe99f8ab372174cee605ffec4a4d796ca2ba5`.
+All three retained JSON envelopes report `provider.id=evmole-interface`, `provider.version=evmole@0.9.3`, and `parameters.encoding=hex`.
+
+Independent byte walk
+---------------------
+`python3 .ufo/waves/arc3-loop1-round7/claims/c2/CR-2/bytecode-characterize.py .ufo/waves/arc3-loop1-round7/claims/c2/CR-2/evidence`
+Output is retained in `../bytecode-characterization.jsonl` (three JSON lines); it independently decodes the compiled runtime, compares opcode-boundary selectors and raw selector locations with compiler method identifiers, and compares each probe's selector set, hashes and reported offsets. The script's successful output: zero missing/extra for all three variants; gas deltas +11; noopt deltas +12; codesize offsets all 65 at `DUP1`, no `PUSH4`.
