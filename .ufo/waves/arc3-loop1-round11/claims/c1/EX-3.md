@@ -1,0 +1,28 @@
+<!-- DRAFT for parent integration only. Proposed destination: `corpus/knowledge/2026-10-19-arc3-r11-go-evidence-id-domain.md`. Proposed coverage-map token: `2026-10-19-arc3-r11-go-evidence-id-domain`, appended to the Go binary row at `corpus/README.md:62`. No corpus or map edit was made by this seat. -->
+
+# Draft — `inspect_go_binary` Evidence-ID formula in REA 6.7.0
+
+source: `.ufo/waves/arc3-loop1-round11/claims/c1/EX-3/evidence/{docker-base-1.json,docker-base-2.json,docker-copy.json,recompute-ids.mjs,recompute-results.json,identity.txt,command-A-before.json,rederive-commands.txt}`. The cached package source identity and SHA-256s are recorded in `evidence/identity.txt`.
+
+verified-at: 2026-10-19
+
+recheck: from the lane root, run the three commands recorded in `evidence/rederive-commands.txt`, then `node .ufo/waves/arc3-loop1-round11/claims/c1/EX-3/evidence/recompute-ids.mjs`. The full CLI JSON stdout envelopes and independent recomputation are retained at the paths listed above. This is a static read of the explicitly selected ELF; `/usr/bin/docker` was not executed.
+
+## Result
+
+The C1 Unknown named for a third `ev_` ID verb family in the frozen claims (`.ufo/waves/arc3-loop1-round11/claims-frozen.md:19-20`) is closed narrowly for `inspect_go_binary` in the cached `rea-agents@6.7.0` package. The observed ID equals `ev_` plus the lowercase SHA-256 of the compact canonical JSON semantic projection. The inspected implementation defines that projection in `dist/domain/evidence.js:159-183` and the digest in `dist/domain/canonicalDigest.js:8-25,60-76`; package version is `package.json:1-5`. It includes subject digest/format/architecture and the provider, profile, predicate, operation, parameters, raw and normalized results, confidence, authority, environment, limitations, relationship coverage, locations and Evidence links. It excludes the Evidence ID itself and subject display fields `name` and `local_path`.
+
+`GoBinaryService.js:9,54-77` passes `inspect_go_binary`, its input path, the provider result and an `artifact-path` location into shared `createEvidence`. `GoBinaryProvider.js:157-165` returns the artifact path and hash in normalized metadata. Thus, for this tested Go-operation envelope, path sensitivity arises from semantic path fields (`parameters.path`, `normalized_result.artifact.path`, `locations[0].path`), not the display-only subject path.
+
+## First-hand measurements
+
+- `VERIFIED` — the selected `/usr/bin/docker` is a 29,327,600-byte ELF; `sha256sum` returned `70f68a7702346cf4bb1a2568091cfee92216cc8498a627a488c4b212bc5f45c9` (`evidence/identity.txt`). The two `inspect-go-binary /usr/bin/docker --format json --full-output` envelopes both report subject SHA-256 `70f68a…f45c9` and ID `ev_87621921fc54a38ee60f85c9f81a47508dcdebd1c6f70569ec78da3a3a055dcd` (`docker-base-1.json`, `docker-base-2.json`).
+- `REPRODUCED` — a byte-identical 29,327,600-byte copy at `/var/tmp/kaidoku-ex3-arc3-r11/docker-copy` has the same SHA-256. Its envelope reports ID `ev_d794c245a02c30802a4e8925e173f3ca6b9e642ef015f9856999f1a717b1f1e8` (`docker-copy.json`); the content digest and non-path result content match the base run.
+- `REPRODUCED` — `recompute-ids.mjs` independently hashes the source-defined projection and matches all three emitted IDs. Base1 and base2 re-derive identically; the copy differs. Projection diff is exactly `locations.0.path`, `normalized_result.artifact.path`, and `parameters.path`. Substituting only those three copied-path fields back to `/usr/bin/docker` re-derives the base ID. Changing only `subject.name` and `subject.local_path` also leaves the recomputed base ID unchanged. Exact booleans and IDs are in `evidence/recompute-results.json`.
+- `VERIFIED` — the envelope reports observed embedded build metadata `go1.26.5-X:nodwarf5` and module path `github.com/docker/cli/cmd/docker`; it also reports `module.main:null`. Per its limitations, these are file-content observations, not proof of compiler identity or dependency authenticity; an empty dependency list with `main:null` does not establish no dependencies (`docker-base-1.json`). No program execution, Go installation, network access or target mutation was part of this measurement.
+- `VERIFIED` — Command A at work commit `9c1d1fef5595b55d65764626249f164e6816473a` returned `knowledge_files:89`, `mapped:89`, `missing:[]`, `dangling:[]` (`SCORECARD.md:88-124`; exact JSON in `evidence/command-A-before.json`). The current HEAD was `e746ca79e2dbb3cb41436d612f448e81d2c6e585`; the work commit identity is recorded in `evidence/rederive-commands.txt`.
+- `UNVERIFIABLE` — post-integration Command A at the new landing commit. This seat was scoped to a draft in its own wave artifact; the proposed corpus file and Go-row token remain unlanded. On integration, co-land the entry and map token, then rerun Command A at that commit and verify `knowledge_files:90`, `mapped:90`, `missing:[]`, `dangling:[]`.
+
+## Scope and limitations
+
+This is a bounded characterization of `inspect_go_binary` on the cached `rea-agents@6.7.0` implementation, for one ELF byte identity, one same-path repeat and one same-byte copy at a distinct path. It re-derives this operation's Evidence-ID formula and the measured path sensitivity; it does not establish behavior for every REA verb, package version, error envelope or possible Evidence field combination. The package files' local identity hashes are captured in `evidence/identity.txt`; they are not a signed upstream provenance claim. No target execution or runtime behavior is claimed. The corpus entry and coverage-map token are draft-only pending parent integration.

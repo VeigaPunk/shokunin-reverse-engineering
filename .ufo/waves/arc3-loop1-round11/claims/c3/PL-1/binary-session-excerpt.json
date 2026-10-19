@@ -1,0 +1,80 @@
+{
+  "server": {
+    "name": "rea",
+    "version": "6.7.0"
+  },
+  "binary_session": {
+    "arguments": {},
+    "result": {
+      "open": false,
+      "cleanup_pending": false,
+      "capabilities": [
+        {
+          "provider": {
+            "id": "rea-artifact-graph",
+            "name": "REA safe artifact graph provider",
+            "version": "1"
+          },
+          "groups": [
+            {
+              "operations": [
+                "extract_artifact",
+                "inspect_artifact"
+              ],
+              "effects": [
+                "launches_process",
+                "may_write_filesystem"
+              ],
+              "limitations": [],
+              "available": true,
+              "reason": null,
+              "availability_code": null
+            }
+          ]
+        }
+      ],
+      "tool_availability": {
+        "groups": [
+          {
+            "names": [
+              "extract_artifact"
+            ],
+            "surface": "artifact-provider",
+            "effects": [
+              "mutatesSession",
+              "writesFilesystem",
+              "launchesProcess"
+            ],
+            "annotations": [
+              "open_world"
+            ],
+            "available": false,
+            "reason": "target_required",
+            "remediation": "Call open_binary with a supported local target."
+          },
+          {
+            "names": [
+              "inspect_artifact"
+            ],
+            "surface": "artifact-provider",
+            "effects": [
+              "mutatesSession",
+              "writesFilesystem",
+              "launchesProcess",
+              "idempotent"
+            ],
+            "annotations": [
+              "idempotent",
+              "open_world"
+            ],
+            "available": false,
+            "reason": "target_required",
+            "remediation": "Call open_binary with a supported local target."
+          }
+        ]
+      }
+    }
+  },
+  "source_capture_sha256": "852a0257eb5e1265a5d831d76f592246da57d2582c400919ed53c648af174b0a",
+  "source_capture_lines": "raw Node MCP output, original lines 79-114 (provider group), 1678-1694 (extract_artifact), and 1947-1965 (inspect_artifact; see report for output log path)"
+}

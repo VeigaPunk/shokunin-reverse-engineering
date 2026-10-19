@@ -81,3 +81,16 @@ Archives/packages are a rich shipped-artifact surface: every installed file attr
   capability claim (signed, integrity-checkable, `.MTREE` per-file sha256,
   `pacman -Qkk`) is unchanged. Residual recorded: `PROVINCE.md:50` repeats
   `1556` without an as-of qualifier — discrepant if read as a current count.
+
+## Availability scope note (arc3-loop1-round11, append-only)
+
+The `available:true` claim in `PROVINCE.md:50` is session-scoped. Re-measured
+this round (PL-1, PL-2, RV-1..RV-6, VZ/CN verdicts): a fresh `rea-agents@6.7.0`
+`binary_session {}` reports the provider group `rea-artifact-graph`
+`available:true` (covering `inspect_artifact`/`extract_artifact`), while the
+targetless per-tool readiness entries read `available:false` /
+`reason:"target_required"` — the provider group is available, the per-tool
+readiness needs a target. The attached Kimi MCP session's state is
+`unknown`/`config_drift` (doctor exit 1), so the *agent's* live availability is
+not established — the dated `available:true` reading stands as a capability
+claim about the provider group, not a per-tool or per-client readiness claim.

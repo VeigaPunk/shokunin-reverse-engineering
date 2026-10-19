@@ -1,0 +1,19 @@
+Live REA calls (exact stdout envelopes retained in sibling JSON files)
+
+1) TMPDIR=/var/tmp/kaidoku-arc3-r11-cr2-probe node /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/scripts/rea.mjs inspect-artifact /usr/bin/jq --format json --full-output
+   exit=0; stdout=5613 bytes; stderr=0 bytes
+   output: inspect-artifact-base-1.json
+
+2) TMPDIR=/var/tmp/kaidoku-arc3-r11-cr2-probe node /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/scripts/rea.mjs inspect-artifact /usr/bin/jq --format json --full-output
+   exit=0; stdout=5613 bytes; stderr=0 bytes
+   output: inspect-artifact-base-2.json
+
+3) TMPDIR=/var/tmp/kaidoku-arc3-r11-cr2-probe node /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/scripts/rea.mjs inspect-artifact /var/tmp/kaidoku-arc3-r11-cr2-probe/copies/jq-copy --format json --full-output
+   exit=0; stdout=5701 bytes; stderr=0 bytes
+   output: inspect-artifact-copy.json
+
+4) TMPDIR=/var/tmp/kaidoku-arc3-r11-cr2-probe node /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/scripts/rea.mjs inspect-artifact /var/tmp/kaidoku-arc3-r11-cr2-probe/other-path/jq --format json --full-output
+   exit=0; stdout=5689 bytes; stderr=0 bytes
+   output: inspect-artifact-same-name-other-path.json
+
+All four CLI envelopes identify operation inspect_artifact, provider rea-artifact-graph version 1, confidence observed, authority shipped-artifact. The commands statically inspected the ELF; they did not execute it. Scratch and TMPDIR were on /var/tmp, not /tmp.
