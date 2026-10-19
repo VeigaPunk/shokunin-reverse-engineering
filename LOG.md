@@ -1660,3 +1660,24 @@ All 48 reports delivered.
 - Instruments at `9c1d1fe`: command A 89/89 + 16/16, census PASS + G21 +
   unregistered-bullet guard + ptr `current-ok`, probe 0/0 both modes, custody
   28/28, PROVINCE 162.
+
+## 2026-10-19 — arc3-loop1-round11 (work commit `5ee13b3`; records this entry)
+
+Round 11 of arc3 loop 1: 32 seats on `openai-codex/gpt-6-luna-max` (scheduled
+zai-max slot — lane usage-exhausted, operator substitution). All 32 reports
+delivered.
+
+- C1 coverage: third verb family's `ev_` formula CLOSED —
+  `corpus/knowledge/2026-10-19-arc3-r11-inspect-artifact-evidence-id-domain.md`
+  (CR-2's entry): `inspect_artifact`'s outer id is path-sensitive (nested
+  inventory Evidence inside `normalized_result`); the nested id is
+  path-stable. Map token landed; command A 89→90.
+- C2 freshness: three receipts re-derived — Ghidra 34/39 (delta 0/0), pacman
+  1350 + 1350 sig (delta 0 vs r9 live), ASAR 12 (bounded by unreadable
+  `/opt/containerd`). No errata needed.
+- C3 calibration: `available:true` scope re-derived — provider group
+  `rea-artifact-graph` `available:true`, targetless per-tool entries
+  `available:false`/`target_required`; attached Kimi session
+  `unknown`/`config_drift`. Recorded on the pacman entry.
+- Instruments at `5ee13b3`: command A 90/90 + 16/16, census PASS + G21 +
+  guard + ptr `current-ok`, probe 0/0 both modes, custody 28/28, PROVINCE 162.

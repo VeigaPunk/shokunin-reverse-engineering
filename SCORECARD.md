@@ -1973,3 +1973,55 @@ honesty standard: every claim's before-state measured, every landing
 re-derived at the commit. Carried debt: the mid-leg retest (operator-gated);
 the `available:true` class stays dated; `.ufo/waves/arc2-loop1-round10/C3.md`
 still dirty; `/tmp` quota standing.
+
+## arc3-loop1-round11 — coverage + freshness + calibration: three claims admitted, 2026-10-19
+
+Wave: 32 seats on `openai-codex/gpt-6-luna-max` (the scheduled zai-max slot —
+lane usage-exhausted, operator substitution). All 32 reports delivered.
+Claims measured at work commit `5ee13b3`.
+
+- C1 coverage (owned) — a third verb family's `ev_` Evidence-ID formula
+  **closed**: `corpus/knowledge/2026-10-19-arc3-r11-inspect-artifact-evidence-id-domain.md`
+  (CR-2's entry — the verdicts' plurality + CN-1/VZ-2 corroboration):
+  `inspect_artifact` is path-sensitive on the *outer* id because the
+  semantic projection nests the inventory Evidence inside `normalized_result`
+  (`dist/domain/artifactInspection.js:111-155`); the nested
+  `inventory_artifact` id is path-stable while the outer id changes on a
+  same-basename alternate path. All four envelope IDs recomputed. Map token
+  landed on the Evidence-model row; command A 89 → 90.
+- C2 freshness (fleet) — three receipts re-derived first-hand, all honest:
+  Ghidra **34 features / 39 processors** (delta 0/0 — the r4 "35" miscount
+  stays corrected); pacman **1,350 archives + 1,350 sig sidecars** (delta 0
+  vs the r9 live count, −206 vs the dated 1556); ASAR **12** within the
+  searched roots (host-wide completeness bounded by the unreadable
+  `/opt/containerd` subtree). No errata needed — the dated values hold.
+- C3 calibration (owned) — the `available:true` class re-derived: a fresh
+  `binary_session {}` reports the provider group `rea-artifact-graph`
+  `available:true` (covering `inspect_artifact`/`extract_artifact`), while
+  the targetless per-tool entries read `available:false` /
+  `reason:"target_required"` — the provider group is available, per-tool
+  readiness needs a target. The attached Kimi session is
+  `unknown`/`config_drift`. Recorded append-only on the pacman entry.
+
+Instruments at `5ee13b3`: command A 89→**90/90** mapped, 16/16 rules,
+10.0/10.0; census PASS + G21 + guard + live `:4126` `current-ok`; probe
+findings=0 both modes; custody 28/28; PROVINCE 162 held.
+
+| axis | evidence | verdict |
+|---|---|---|
+| coverage — C1 | corpus 89→90; third verb family's ev_ formula closed | improved |
+| freshness — C2 | three receipts re-derived; dated values hold | improved |
+| calibration — C3 | `available:true` scope re-derived; provider-vs-per-tool distinction measured | improved |
+| depth | 16 → 16 | unchanged |
+| operability | census PASS + G21 + guard + ptr `current-ok`; probe 0/0 | unchanged |
+| adjacency | PROVINCE boundary untouched | unchanged |
+
+Learning trends: the arc's evidence discipline is now deep enough that a
+wave can derive a third Evidence-ID formula from package source + measured
+envelopes — the `ev_` domain is now closed for three verb families
+(inspect-evm-interface, inspect_rust_binary, inspect_artifact), each
+path-sensitive by its own projection, not by a universal rule. Carried debt:
+the mid-leg retest (operator-gated); the ASAR host-wide count stays bounded
+by the unreadable `/opt/containerd` subtree; the Kimi-session availability
+stays unverified (config_drift);
+`.ufo/waves/arc2-loop1-round10/C3.md` still dirty; `/tmp` quota standing.
