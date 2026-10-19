@@ -1,0 +1,62 @@
+tool_sha256=112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+utc=2026-10-19T12:05:30Z
+
+=== A. same-content rewrite (in-place) on a scratch copy ===
+capture-A exit=0
+capture-B exit=0
+sha_content_before=7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598
+sha_content_after =7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598
+sha_only_would_say: IDENTICAL (blind)
+A (reference): /var/tmp/vz4/c3/vz4atk/a.txt  stanzas=1
+B (candidate): /var/tmp/vz4/c3/vz4atk/b.txt  stanzas=1
+PATH /var/tmp/vz4/c3/vz4atk/target.conf: REWRITE-DRIFT  compared=11/11 moved=mtime_ns,mtime_epoch
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+
+=== B. rename-swap (new inode, same content + restored mtime) ===
+sha_content_after_rename=7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598 (same as before: yes)
+PATH /var/tmp/vz4/c3/vz4atk/target.conf: REWRITE-DRIFT  compared=11/11 moved=inode,mtime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+
+=== C. round-1 v1 canonical receipt vs live (v1 compat) ===
+-rw-r--r-- 1 vgpnk vgpnk 2045 Oct 19 06:57 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+PATH /home/vgpnk/.omp/agent/mcp.json: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+PATH /home/vgpnk/.kimi-code/config.toml: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-18 23:20:43' = localtime(epoch 1792376443); gmtime(epoch) is '2026-10-19 02:20:43'
+PATH /home/vgpnk/.bashrc: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-16 13:33:16' = localtime(epoch 1792168396); gmtime(epoch) is '2026-10-16 16:33:16'
+PATH /home/vgpnk/.profile: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-15 03:12:07' = localtime(epoch 1792044727); gmtime(epoch) is '2026-10-15 06:12:07'
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=5  METADATA-DRIFT=5  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/5 drift=5 exit=12
+
+=== D. independent label re-derivation (gmtime vs receipt renders) ===
+mcp_config.json                                mtime_epoch=1792011200 utc_render=2026-10-14T20:53:20Z gmtime=2026-10-14T20:53:20Z OK | local=2026-10-14T17:53:20 inode=11341318 ctime=1792011200
+mcp.json                                       mtime_epoch=1792011200 utc_render=2026-10-14T20:53:20Z gmtime=2026-10-14T20:53:20Z OK | local=2026-10-14T17:53:20 inode=11341316 ctime=1792011200
+config.toml                                    mtime_epoch=1792376443 utc_render=2026-10-19T02:20:43Z gmtime=2026-10-19T02:20:43Z OK | local=2026-10-18T23:20:43 inode=34530637 ctime=1792376443
+.bashrc                                        mtime_epoch=1792168396 utc_render=2026-10-16T16:33:16Z gmtime=2026-10-16T16:33:16Z OK | local=2026-10-16T13:33:16 inode=25991953 ctime=1792168396
+.profile                                       mtime_epoch=1792044727 utc_render=2026-10-15T06:12:07Z gmtime=2026-10-15T06:12:07Z OK | local=2026-10-15T03:12:07 inode=40274 ctime=1792044727
+label_mismatches=0 stanzas=5
+
+=== E. independent stat cross-check vs my own capture (sha+inode+ctime) ===
+16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4  /home/vgpnk/.config/devin/mcp_config.json | stat mtime=1792011200 inode=11341318 ctime=1792011200 size=406
+38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b  /home/vgpnk/.omp/agent/mcp.json | stat mtime=1792011200 inode=11341316 ctime=1792011200 size=429
+8cbacd48ab85ea86e122bae102d8ee63e2fd3181aa551603b3923b912573c38d  /home/vgpnk/.kimi-code/config.toml | stat mtime=1792376443 inode=34530637 ctime=1792376443 size=114434
+7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598  /home/vgpnk/.bashrc | stat mtime=1792168396 inode=25991953 ctime=1792168396 size=3601
+6c6be761d3b199c964c95e724d7cdc9f4f902e0c3bdd6a532361b20a53db4f30  /home/vgpnk/.profile | stat mtime=1792044727 inode=40274 ctime=1792044727 size=736
+
+=== F. refusal: capture --out onto a scoped path (scratch copy, must not truncate) ===
+RECEIPT: /var/tmp/vz4/c3/vz4atk/refusal-target.conf  sha256=a0b99fd57210873d2ea32d37a9e6756f7ae808e7daf52eb71be0c02036165b49
+SIDECAR: /var/tmp/vz4/c3/vz4atk/refusal-target.conf.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=refusal-probe exit=0
+refusal_exit=0
+scratch_sha_before=7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598
+scratch_sha_after =a0b99fd57210873d2ea32d37a9e6756f7ae808e7daf52eb71be0c02036165b49
+verdict: MODIFIED — FAIL
+(scratch copy only; no real custody path was ever named as --out)

@@ -1,0 +1,58 @@
+--- /var/tmp/ex23/v10.py	2026-10-19 09:02:09.666731979 -0300
++++ /var/tmp/ex23/draft/draft_impl_only.py	2026-10-19 09:04:18.147999766 -0300
+@@ -435,11 +435,12 @@
+     if not all(live.values()):
+         print("ANCHOR-FAIL: %r" % live)
+         return 2
+-    out, counts, filelines = {}, {}, {}
++    out, counts, filelines, unreadable = {}, {}, {}, []
+     for f in files:
+         try:
+             lines = open(os.path.join(args.root, f), encoding="utf-8", errors="replace").read().splitlines()
+-        except OSError:
++        except OSError as ex:
++            unreadable.append("%s: %s" % (f, type(ex).__name__))
+             counts[f] = {"lines": 0, "loci": 0}
+             filelines[f] = None
+             continue
+@@ -450,15 +451,20 @@
+     undecl = out.get("UNDECLARED", [])
+     unres = out.get("UNRESOLVED", [])
+     g11, g7 = out.get("g11", []), out.get("g7", [])
+-    g2_ok = len(out.get("current-ok", [])) > 0 or (not stale and not unatt and not undecl and not unres)
++    total_loci = sum(c["loci"] for c in counts.values())
++    scoped_lines = sum(c["lines"] for c in counts.values())
++    blind = (total_loci == 0) and (scoped_lines > 0)
++    g2_ok = len(out.get("current-ok", [])) > 0
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \
+-         and (not g11) and g2_ok
++         and (not g11) and (not unreadable) and (not blind) and g2_ok
+     verdict = "PASS" if ok else "FAIL"
+     if args.json:
+         print(json.dumps({"live": live, "counts": counts, "verdict": verdict,
+                           "stale": stale, "ambiguous": unatt, "undeclared": undecl,
+                           "unresolved": unres, "scope_errors": scope_errors,
+                           "g11": g11, "g7": g7, "g2_ok": g2_ok,
++                          "unreadable": unreadable, "blind": blind,
++                          "total_loci": total_loci,
+                           "historical": out.get("historical", []),
+                           "current_ok": out.get("current-ok", [])}, indent=1))
+         return 0 if verdict == "PASS" else 1
+@@ -478,11 +484,14 @@
+                     print("      :%d [%s] %s=%s -> %s (%s)" %
+                           (d["line"], d["kind"], d["client"], d["value"], d["disp"], d["why"]))
+     print("\nSCOPE-ERRORS (marker assertions): %r" % scope_errors)
+-    print("G2 positive-assertion guard: %s" % ("ok" if g2_ok else "SUSPECT"))
++    print("UNREADABLE (could-not-evaluate): %r" % unreadable)
++    print("G2 positive-assertion guard: %s (current-ok=%d, total loci=%d)"
++          % ("ok" if g2_ok else "SUSPECT", len(out.get("current-ok", [])), total_loci))
++    print("BLIND (zero loci on non-empty scope): %s" % ("FAIL" if blind else "no"))
+     print("G7 configured!=held warnings: %r" % g7)
+     print("G11 current-ok without receipt language: %r" % g11)
+-    print("VERDICT: %s  (stale=%d ambiguous=%d undeclared=%d unresolved=%d)"
+-          % (verdict, len(stale), len(unatt), len(undecl), len(unres)))
++    print("VERDICT: %s  (stale=%d ambiguous=%d undeclared=%d unresolved=%d unreadable=%d blind=%d)"
++          % (verdict, len(stale), len(unatt), len(undecl), len(unres), len(unreadable), int(blind)))
+     return 0 if verdict == "PASS" else 1
+ 
+ 

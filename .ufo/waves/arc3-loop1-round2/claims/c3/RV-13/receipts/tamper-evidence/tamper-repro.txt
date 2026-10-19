@@ -1,0 +1,15 @@
+# RV-13 receipt-tamper reproduction (EX-33 §4.1) on the landed tool, 2026-10-19T12:08Z
+
+== after in-place same-content rewrite + mtime restore: verify --live ==
+PATH .../v.conf: REWRITE-DRIFT  compared=11/11 moved=ctime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256
+VERDICT: REWRITE-DRIFT ... exit=11
+
+== receipt's CTIME_EPOCH/CTIME_NS forged to the live values, then verify --live ==
+PATH .../v.conf: MATCH  compared=11/11
+VERDICT: MATCH ... exit=0
+
+== sidecar check from the receipt's own directory ==
+$ cd /var/tmp/rv13/tamper && sha256sum -c pre.txt.sha256
+pre.txt: FAILED
+sha256sum: WARNING: 1 computed checksum did NOT match

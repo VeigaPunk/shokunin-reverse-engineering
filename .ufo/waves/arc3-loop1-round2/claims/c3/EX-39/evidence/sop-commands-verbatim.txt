@@ -1,0 +1,38 @@
+== SOP landing check: the amendment's exact commands, run verbatim (tool sha 112d01dc034c2d54…) ==
+
+$ python3 .ufo/gates/custody-pair/custody-pair.py selftest
+scratch: /dev/shm/custody-pair-selftest-ucdivob6
+CUSTODY_PAIR_SELFTEST: CLEAN cases=15 passed=15 failed=0 exit=0
+rc=0
+
+$ python3 .ufo/gates/custody-pair/custody-pair.py capture --out ... --label "<wave> pre-pair"
+RECEIPT: /dev/shm/ex39/evidence/landing-pre.txt  sha256=bf4f11035d64f5bc3b7bc610303c8deecea499d6b8f9fe0f9f51cfe8988a5cb6
+SIDECAR: /dev/shm/ex39/evidence/landing-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=5/5 label=ex39-landing pre-pair exit=0
+rc=0
+
+$ python3 .ufo/gates/custody-pair/custody-pair.py capture --out ... --label "<wave> post-pair"
+RECEIPT: /dev/shm/ex39/evidence/landing-post.txt  sha256=6c383d0f4d7a452f06232b29409ef969129425d8608f263fbe21b21cba417084
+SIDECAR: /dev/shm/ex39/evidence/landing-post.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=5/5 label=ex39-landing post-pair exit=0
+rc=0
+
+$ verify --live <pre>
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+rc=0
+
+$ verify <pre> <post>   (reference first)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+rc=0
+
+$ verify <post> <pre>   (reversed, for the record)
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+
+== exclusion check: capture refuses to write over a custody path (selftest case) ==
+$ python3 ... capture --out ~/.bashrc
+USAGE: refusing to write a receipt over a custody path: /home/vgpnk/.bashrc
+rc=0
+live .bashrc sha256 after refusal:
+7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598  /home/vgpnk/.bashrc

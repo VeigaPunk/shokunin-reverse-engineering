@@ -1,0 +1,57 @@
+census=/var/tmp/vz4/census-snap1-82fb807e.py
+census_sha256=82fb807e79963f6dc6b9d055ab7378464b3636adfb498e5b615393f5f47c57aa
+label=after-snap1  utc=2026-10-19T12:08:56Z
+
+--- A. real instrument, HEAD root (expect PASS 0/0/0/0, exit 0) ---
+head-parity            exit=0   VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+    SCOPE-ERRORS (marker assertions): []
+    UNREADABLE (could-not-evaluate): []
+    G2 positive-assertion guard: ok (current-ok loci=5, total loci=17, floor=1)
+
+--- B. round-1 silent-PASS / fail-closed fixtures (expect all FAIL after fix) ---
+atk-missing            exit=1   VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+    SCOPE-ERRORS (marker assertions): []
+    UNREADABLE (could-not-evaluate): ['SKILL.md: FileNotFoundError']
+    G2 positive-assertion guard: ok (current-ok loci=5, total loci=15, floor=1)
+atk-undecl             exit=1   VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=1 unresolved=0)
+    SCOPE-ERRORS (marker assertions): []
+    UNREADABLE (could-not-evaluate): []
+    G2 positive-assertion guard: ok (current-ok loci=5, total loci=18, floor=1)
+atk-silent             exit=0   VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+    SCOPE-ERRORS (marker assertions): []
+    UNREADABLE (could-not-evaluate): []
+    G2 positive-assertion guard: ok (current-ok loci=5, total loci=17, floor=1)
+atk-no-province        exit=1   VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+    SCOPE-ERRORS (marker assertions): ['PROVINCE.md:40 marker uncheckable (file unreadable)', 'PROVINCE.md:45 marker uncheckable (file unreadable)', 'PROVINCE.md:119 marker uncheckable (file unreadable)']
+    UNREADABLE (could-not-evaluate): ['PROVINCE.md: FileNotFoundError']
+    G2 positive-assertion guard: ok (current-ok loci=4, total loci=11, floor=1)
+atk-no-scorecard       exit=1   VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+    SCOPE-ERRORS (marker assertions): ['SCORECARD.md:273 marker uncheckable (file unreadable)', 'SCORECARD.md:417 marker uncheckable (file unreadable)', 'SCORECARD.md:467 marker uncheckable (file unreadable)', 'SCORECARD.md:503 marker uncheckable (file unreadable)', 'SCORECARD.md:534 marker uncheckable (file unreadable)', 'SCORECARD.md:619 marker uncheckable (file unreadable)', 'SCORECARD.md:620 marker uncheckable (file unreadable)', 'SCORECARD.md:636 marker uncheckable (file unreadable)', 'SCORECARD.md:704 marker uncheckable (file unreadable)', 'SCORECARD.md:769 marker uncheckable (file unreadable)']
+    UNREADABLE (could-not-evaluate): ['SCORECARD.md: FileNotFoundError']
+    G2 positive-assertion guard: ok (current-ok loci=1, total loci=8, floor=1)
+atk-empty              exit=1   VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+    SCOPE-ERRORS (marker assertions): ['PROVINCE.md:40 marker uncheckable (file unreadable)', 'PROVINCE.md:45 marker uncheckable (file unreadable)', 'PROVINCE.md:119 marker uncheckable (file unreadable)', 'SCORECARD.md:273 marker uncheckable (file unreadable)', 'SCORECARD.md:417 marker uncheckable (file unreadable)', 'SCORECARD.md:467 marker uncheckable (file unreadable)', 'SCORECARD.md:503 marker uncheckable (file unreadable)', 'SCORECARD.md:534 marker uncheckable (file unreadable)', 'SCORECARD.md:619 marker uncheckable (file unreadable)', 'SCORECARD.md:620 marker uncheckable (file unreadable)', 'SCORECARD.md:636 marker uncheckable (file unreadable)', 'SCORECARD.md:704 marker uncheckable (file unreadable)', 'SCORECARD.md:769 marker uncheckable (file unreadable)']
+    UNREADABLE (could-not-evaluate): ['PROVINCE.md: FileNotFoundError', 'SCORECARD.md: FileNotFoundError', 'SKILL.md: FileNotFoundError']
+    G2 positive-assertion guard: SUSPECT (current-ok loci=0, total loci=0, floor=1)
+
+--- C. blind-instrument variant (needles neutered) over HEAD root (expect FAIL after fix) ---
+needles_neutered=3/3
+blind-variant          exit=1   VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+    SCOPE-ERRORS (marker assertions): []
+    UNREADABLE (could-not-evaluate): []
+    G2 positive-assertion guard: SUSPECT (current-ok loci=0, total loci=0, floor=1)
+
+--- D. scope-diff vs pinned round-1 baselines (creep audit) ---
+[D1] before = round-1-committed census (HEAD 14b1682, sha 6f1d19ff...)
+rows before=20 after=20
+ADDED (0):
+REMOVED (0):
+CHANGED (0):
+CREEP FLAGS: []
+[D2] before = v10 pre-E22-disposition (round-1 CR-5 census-before.py, sha 36e96cd5...)
+rows before=20 after=20
+ADDED (0):
+REMOVED (0):
+CHANGED (1):
+  ~ PROVINCE.md 45-62 DATED -> 45-62 DATED (marker 40->45)
+CREEP FLAGS: []

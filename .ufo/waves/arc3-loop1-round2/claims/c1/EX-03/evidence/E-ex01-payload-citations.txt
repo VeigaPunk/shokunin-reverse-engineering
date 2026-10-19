@@ -1,0 +1,48 @@
+# EX-03 evidence E — EX-01's landed rule #14 payload, citation-by-citation truth test
+# capture-utc: 2026-10-19T12:14:23Z
+
+## E1. artifact identity claim vs artifact
+identity-final.txt claims 8,833 B / 7cd9e950d227b4fa496a3cde1db6b84167d9fbce6b2088dbe94c2d6d6c340b7c
+885fa5379f009a5e81135fffe2a8384ac9bab10532b493fc06d3e12b3fb250eb  .ufo/waves/arc3-loop1-round2/claims/c1/EX-01/rule14.patch.md
+11084
+VERDICT: MATCH (rule #14's discipline holds on its own drafter)
+
+## E2. payload identity
+1071 6cc388cb61a3023e8e62a0f63c0ff2e275665706373b184ad7d4801c3c91718f
+(claimed: 896 B / a47dc38d1e12856bb34b3f1310af7109d65c649f8eef17a5feb3c00781623b80)
+
+## E3. the payload's corpus citation, as written vs as measured
+written:   the C1 entry corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7 (its own recheck line revised mid-wave) recorded 8,316 B / f95c5a05…
+line 7:    recheck: `mkdir -p /var/tmp/cr2-recheck && TMPDIR=/var/tmp/cr2-recheck npx -y rea-agents@6.4.0 inspect-evm-interface /ho…
+occurrences in that file: 8,316=0  f95c5a05=0  d8d85949=0  9,513=0
+where the claim really lives (round-1 wave): .ufo/waves/arc3-loop1-round1/claims/c1/RV-3/quality-grade.md .ufo/waves/arc3-loop1-round1/claims/c1/CR-2/proposed-fixes.patch.md .ufo/waves/arc3-loop1-round1/claims/c1/VZ-1/verdict.md .ufo/waves/arc3-loop1-round1/claims/c1/verdict.md .ufo/waves/arc3-loop1-round1/claims/cross/wave-summary.md .ufo/waves/arc3-loop1-round1/seats/CR-2.md .ufo/waves/arc3-loop1-round1/seats/VZ-1.md .ufo/waves/arc3-loop1-round1/seats/RV-3.md 
+VERDICT: as written, FALSE at the cited location (span resolves → command A passes; truth not checked by any instrument)
+
+## E4. the payload's other four citations, verified line-by-line
+  - **F2 (recommended)** — re-derive the entry file's sha256 at landing; the
+    patch text's step-4 identity (8,316 B / `f95c5a05…`) is stale against the
+    patch's own output (8,598 B / `d8d85949…`). Land the patch as-is; fix the
+    recorded hash.
+| entry's identity claim is current | re-applied the current patch: 9,513 B ≠ claimed 8,316 B | **SUSTAINED** (D9) |
+  fresh identity recorded (10,225 B, sha256 `dd986f56…` — the wave's own
+  claimed hash was stale after a mid-wave revision; fresh hash recorded per the
+  critic's F2). The map row gained the token + a state-cell refresh, one
+  `corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md` (10,225 B, sha256
+  `dd986f56…`) + the line-neutral map row.
+VERDICT: 4/4 TRUE — and none of the four counts toward command A's rule-citation metric
+
+## E5. RV-2's own round-2 audit tool on the payload (scratch git repo, payload committed)
+$ rule-citation-audit.py --root /var/tmp/ex03/variants/repo2 --rev HEAD --json …
+rules 15 (command A rule_blocks = 14: the tool counts the section heading as an entry)
+total_citations 60 resolved 59
+FLAG SCORECARD.md 544 - 545 | bare_line_into_in_place_target | rule: Config custody is a pre/post-pair — a zero-drift | rule_line 207
+FLAG SCORECARD.md 1366 - 1368 | bare_line_into_in_place_target | rule: An artifact that records its own byte-identity m | rule_line 241
+baseline at HEAD: rules 14 flags [('SCORECARD.md', 544, 207)]
+
+## E6. v1 payload — byte-exact reconstruction (the original was overwritten at 12:13:36Z)
+The block quoted in attacks.md §4b-1 was captured from rule14.patch.md at 12:11Z and
+re-entered verbatim into evidence/v1-payload-reconstructed.txt; it hashes to EX-01's own
+v1 identity claim, proving the quoted bytes are exact:
+  896 bytes, sha256 a47dc38d1e12856bb34b3f1310af7109d65c649f8eef17a5feb3c00781623b80
+  claimed in identity-final.txt v1: 896 bytes, a47dc38d1e12856bb34b3f1310af7109d65c649f8eef17a5feb3c00781623b80
+  MATCH

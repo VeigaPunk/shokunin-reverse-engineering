@@ -1,0 +1,37 @@
+# EX-03 evidence D — the rule's origin artifact is stale at HEAD, and the candidate citations
+# capture-utc: 2026-10-19T12:10:46Z
+# HEAD: 14b1682b1128d2e41085ebc79c9addeb8786d420
+
+## D1. EX-12's patch text step 4 (as landed in round 1)
+4. **Entry file identity.** `corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md`:
+   9,513 bytes, 32 lines, sha256
+   `a5119120ee6a6142b8be6e297e39c85e0464fb27761c6ee0e7cc7cf8a1d5e56b`.
+
+## D2. the landed entry's actual identity
+dd986f562a6c7b2e759ebb90c9855adff38e9226b1d9e27af36b6e3a2aefc3d4  corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md
+   33 10225 corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md
+
+## D3. why they differ: landed line 7 carries CR-2's F1 recheck form (absent from every EX-12 revision)
+recheck: `mkdir -p /var/tmp/cr2-recheck && TMPDIR=/var/tmp/cr2-recheck npx -y rea-agents@6.4.0 inspect-evm-interface /home/vgpnk/Projects/shokunin/kai
+
+## D4. CR-1's round-2 checker on both declarations
+$ self-identity-check.py <landed entry> a5119120… 9513 32
+declared: sha256=a5119120ee6a6142… bytes=9513 lines=32
+derived : sha256=dd986f562a6c7b2e… bytes=10225 lines=33
+VERDICT: STALE — declared identity does not describe the artifact
+exit=1
+$ self-identity-check.py <landed entry> dd986f56… 10225 33
+declared: sha256=dd986f562a6c7b2e… bytes=10225 lines=33
+derived : sha256=dd986f562a6c7b2e… bytes=10225 lines=33
+VERDICT: FRESH
+exit=0
+
+## D5. EX-05 candidate's subject-adjacent citation: does the cited file record the incident?
+cite: corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:1-12  (file has 33 lines; span resolves)
+occurrences of stale|churn|revis|8,316|9,513 in that entry: 0
+
+## D6. third-party pin workflow (round-1 CR-1)
+- Base pin: EX-12's `knowledge-entry.patch.md` at
+  sha256 `d662c195d75cdbdb07e3534170ce9cb2ac3f830b93d5380e7b8310bca7d8ba59`
+  (mtime 07:14:01, 18,701 B) — the revision RV-3 graded. Applying its hunk A
+  produces exactly the identity EX-12 claims: 9,513 bytes / 32 lines /

@@ -1,0 +1,75 @@
+diff --git i/.ufo/gates/c1-census-v10.py w/.ufo/gates/c1-census-v10.py
+index 8fee942..8907947 100644
+--- i/.ufo/gates/c1-census-v10.py
++++ w/.ufo/gates/c1-census-v10.py
+@@ -42,7 +42,44 @@ PASS at 701-line b21c0da — re-key or retire next calibration round)"
+   past the declared bound must be locus-free in this instrument's unit — no
+   `rea-agents@x.y.z`, no bare `6.x.y`, no `~`- or `/`-absolute `path:line` —
+   or the bound must be re-keyed in the same commit as a DATED row whose marker
+-  line carries that section's own date/round token."""
++  line carries that section's own date/round token.
++
++ARC3-LOOP1-ROUND2 r9 — H1+H3 FAIL-CLOSURES (2026-10-19, EX-16, C2's real-path
++write; instrument sha256 before this edit 6f1d19ff…). Two round-1 latent holes
++close as declared FAIL classes, merged from the round-1 patch texts RV-11/H1
++(proposed-missing-file-guard) and CR-5/H3 (proposed-g2-positive-floor). Scope
++bounds are UNCHANGED (creep audit: scope-diff.py 0 flags).
++
++   - UNREADABLE (H1 class). A scoped file that cannot be read was absorbed as
++     `lines=0 loci=0`; with all its declared rows CURRENT no marker assertion
++     fired and the run read PASS exit 0. Re-measured before (claims/c2/EX-16/
++     receipts/before/): SKILL.md absent -> PASS exit 0; and the same silent
++     class for zero-byte, truncated (rows beyond EOF), is-a-directory and
++     EACCES roots. Now: any scoped file that is unreadable (OSError) OR holds
++     fewer lines than its declared max end is a declared could-not-evaluate
++     class -- reported (`UNREADABLE (could-not-evaluate): [...]`, counts read
++     `lines=None`), carried in --json, and fails the verdict (exit 1) whatever
++     the row classes are. DATED-bearing files keep their existing
++     "marker uncheckable" SCOPE-ERRORs as well.
++   - BLIND-INSTRUMENT (H3 class). `g2_ok`'s old second disjunct was true
++     exactly when the run found nothing, so needles neutered -> loci=0 read
++     PASS exit 0 (re-measured: h3-blind-all / h3-blind-gate). G2 is now a
++     positive floor: >= 1 current-ok locus. A zero-locus run (non-empty scope)
++     is declared (`DECLARED FAIL CLASSES`) in text and --json, exit 1. The
++     floor is a tree-level floor (current-ok loci); per-needle partial
++     blindness (e.g. PIN alone neutered) keeps loci>0 and still reads PASS --
++     that residual is H4/self-certification: only the external locus-count +
++     scope-diff audit sees it, and that audit remains the certificate for any
++     instrument touch.
++   - Still named, NOT closed here (no silent widening): H2 same-line inline-
++     marker excusal; t5 DATED-shelter for historical-looking non-live values;
++     H4 self-certification (covered externally, see above).
++
++  Post-edit identity is recorded in the landing receipt (claims/c2/EX-16/
++  receipts/after/after-sha256.txt + landing-diff.md), NOT inline: an artifact
++  that records its own byte-identity must re-derive it after every revision,
++  so a hash written into the file it hashes would be stale by construction
++  (the queue-drain rule-#14 discipline)."""
+ #!/usr/bin/env python3
+ """C1 stale-statement census instrument v9 (E22, arc2-loop1-round2) — FINAL.
+ 
+@@ -116,9 +153,23 @@ DEFECT CLASSES REPAIRED
+                                            range -- the stale-row class EX-28
+                                            found at HEAD, PROVINCE.md 45-62
+                                            naming :40; now a SCOPE-ERROR)
++  G19 unreadable/undeclarable scoped file (r9, H1): an absent/zero-byte/
++                                           truncated/EACCES/directory scoped
++                                           file was absorbed as lines=0 loci=0
++                                           and, when its rows were all
++                                           CURRENT, read PASS exit 0; now a
++                                           declared UNREADABLE fail class
++                                           (rows beyond the declared max end
++                                           count as truncated too)
++  G20 positive floor, not vacuous         (r9, H3): G2's second disjunct was
++                                           true exactly when the run found
++                                           nothing, so a blind instrument read
++                                           PASS; the guard is now current-ok
++                                           loci >= 1 (BLIND-INSTRUMENT)
+ 
+ Verdict: PASS iff stale == 0 AND ambiguous == 0 AND undeclared == 0
+-AND unresolved == 0 AND scope_errors == 0 AND g11 == [] AND G2 holds.
++AND unresolved == 0 AND scope_errors == 0 AND g11 == [] AND G2 holds
++(current-ok loci >= 1, r9 floor) AND no unevaluable scoped file.
+ Exit 0 PASS, 1 FAIL, 2 anchor failure.
+ Usage: python3 c1-census-v9.py [--root DIR] [--json] [--quiet]
+ """

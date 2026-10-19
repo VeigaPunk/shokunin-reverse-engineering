@@ -1,0 +1,36 @@
+# v2-custody-receipt (EX-40 scratch oracle) — declared edge-case grading
+# capture-utc: 2026-10-19T12:03:55Z
+
+PATH: good.txt
+STATUS: ok
+SHA256: eb01d1691708de49c553200c84d8b98eed75260e4d3ee503e09856ce5dc6c5d7
+SIZE: 16
+INODE: 10951527
+CTIME_EPOCH_NS: 1792411373788378160
+MTIME_EPOCH_NS: 1792411373788378160
+MTIME_UTC: 2026-10-19T12:02:53Z
+CTIME_UTC: 2026-10-19T12:02:53Z
+
+PATH: link_ok.txt
+STATUS: ok
+LINK: yes  target=good.txt  lstat_inode=10951535  lstat_mode=0o120777
+SHA256: eb01d1691708de49c553200c84d8b98eed75260e4d3ee503e09856ce5dc6c5d7
+SIZE: 16
+INODE: 10951527
+CTIME_EPOCH_NS: 1792411373788378160
+MTIME_EPOCH_NS: 1792411373788378160
+MTIME_UTC: 2026-10-19T12:02:53Z
+CTIME_UTC: 2026-10-19T12:02:53Z
+
+PATH: link_dangling.txt
+STATUS: SYMLINK_DANGLING
+LINK: yes  target=no_such_target.txt  lstat_inode=10951536  lstat_mode=0o120777
+
+PATH: link_loop_a
+STATUS: SYMLINK_DANGLING
+LINK: yes  target=loop_b  lstat_inode=10951537  lstat_mode=0o120777
+
+PATH: pipe.fifo
+STATUS: NOT_REGULAR
+
+RECEIPT: paths=5 ok=2 blocked=3 exit=2

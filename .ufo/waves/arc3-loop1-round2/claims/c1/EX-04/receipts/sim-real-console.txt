@@ -1,0 +1,81 @@
+
+##### R0 fresh scratch tree at lane HEAD #####
+bf000ae082e41fe0ecef112bef8a3626c0c3d24f
+483b0eba27458c138fdbe760d83a33f0da54b251ec028f033d83a5ae3d0175eb  /dev/shm/ex04/sim-real/SKILL.md
+4e3ba4d2f414ded89d74ccd9849cb0b5857f61e504179691250637a3f6a618c8  /dev/shm/ex04/sim-real/SHONEN.md
+
+##### R1 extract EX-01 payload between markers; re-derive its identity #####
+payload bytes=896 lines=13 sha256=a47dc38d1e12856bb34b3f1310af7109d65c649f8eef17a5feb3c00781623b80
+EX-01 claimed: 896 bytes / a47dc38d1e12856bb34b3f1310af7109d65c649f8eef17a5feb3c00781623b80
+
+##### R2 apply via EX-01's own apply-rule14.py #####
+anchor_line=239 payload_lines=13 old_total=371 new_total=385
+19057c131038352ba1bee1aec007401de774cc88a9ef42cde2cc09dcbe6f4e90  /dev/shm/ex04/sim-real/SKILL.md
+385 /dev/shm/ex04/sim-real/SKILL.md
+EX-01 claimed post identity: 19057c131038352ba1bee1aec007401de774cc88a9ef42cde2cc09dcbe6f4e90 / 385 lines
+
+##### R3 geometry + prior-rule byte-identity #####
+start 81 next_heading 256 last_rule_line 252 blocks 14 rule14_span 240 252
+cmp lines 1-239: IDENTICAL
+
+##### R4 stale SHONEN: checker / command A / probes (end-anchored needle = rule #14 tail) #####
+POINTER_TRUTH A1-start             PASS stated=81 true=81
+POINTER_TRUTH A2-end               FAIL stated=243 last_rule=252 next_heading=256
+POINTER_TRUTH A3-count             FAIL stated=13/13 counted=14
+POINTER_TRUTH A4-newest-in-range   PASS newest_rule_line=240 phrase='- **An artifact that records its own byt'
+POINTER_TRUTH_VERDICT: FAIL (failed=A2-end,A3-count)
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "HEAD", "rule_blocks": 14}
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex04/sim-real/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex04/table-enda-real.json
+CITATION_DRIFT: citation_dead entry=shonen-skill-range SHONEN.md:6 cites SKILL.md:81-243, which lacks 'An artifact that records its own byte-identity[\\' (holds '## Queue-drain craft (rounds 5-12, distilled in round 13)')
+CITATION_DRIFT_VERDICT: failed findings=1 exit=1
+
+##### R5 apply the pointer-refresh patch text (81-252, 14/14; EX-01 §4.3 wording) #####
+OLD:   asserted: `SKILL.md:81-243` (craft section; rules #11-13 added arc2 rounds 4/7/9); 13/13 rule blocks have resolvable citations, not a full semantic audit — `SCORECARD.md`, command A; no identified outside verifier.
+NEW:   asserted: `SKILL.md:81-252` (craft section; rules #11-14 added arc2 rounds 4/7/9 + arc3 round 2); 14/14 rule blocks have resolvable citations, not a full semantic audit — `SCORECARD.md`, command A; no identified outside verifier.
+shonen sha256 after: 1d4358f2e8f96494650d1186f7176c2b4c3f1ac9fc63798c0d67ebfb965e1637
+diff --git a/SHONEN.md b/SHONEN.md
+index e3a5d37..79a2243 100644
+--- a/SHONEN.md
++++ b/SHONEN.md
+@@ -3,7 +3,7 @@
+ Promotion to shokunin requires all of:
+ 
+ - [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources
+-  asserted: `SKILL.md:81-243` (craft section; rules #11-13 added arc2 rounds 4/7/9); 13/13 rule blocks have resolvable citations, not a full semantic audit — `SCORECARD.md`, command A; no identified outside verifier.
++  asserted: `SKILL.md:81-252` (craft section; rules #11-14 added arc2 rounds 4/7/9 + arc3 round 2); 14/14 rule blocks have resolvable citations, not a full semantic audit — `SCORECARD.md`, command A; no identified outside verifier.
+ - [~] At least one end-to-end domain task executed and logged in LOG.md
+   asserted: 2026-10-15 libjq open → instruction decode → export → close, `corpus/lessons/2026-10-15-round-1.md`, Executed native smoke; complete record at `evidence/round-1-2026-10-15/rea-bundle.json`; no identified outside verifier.
+ - [~] Instructions executable by an agent without oral context
+
+##### R6 post-refresh verification #####
+POINTER_TRUTH A1-start             PASS stated=81 true=81
+POINTER_TRUTH A2-end               PASS stated=252 last_rule=252 next_heading=256
+POINTER_TRUTH A3-count             PASS stated=14/14 counted=14
+POINTER_TRUTH A4-newest-in-range   PASS newest_rule_line=240 phrase='- **An artifact that records its own byt'
+POINTER_TRUTH_VERDICT: PASS (failed=none)
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "HEAD", "rule_blocks": 14}
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex04/sim-real/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex04/table-enda-real.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+
+##### R7 the refresh diff applies at the unrefreshed post-append tree (git apply --check) #####
+APPLY-CHECK: OK at lane-HEAD+rule14 (SHONEN unrefreshed)
+
+##### R8 artifact inventory #####
+1df6f51001079ba3f4ec4dac96f18e63030d04e96f866aec1de827140b534333  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/craft-pointer-truth.py
+226b8e3493f79de5388ea453a3958a765f979a15ee7d2909ad7ff1cfde5d6a9d  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/shonen-refresh-rule14.patch
+7cd9e950d227b4fa496a3cde1db6b84167d9fbce6b2088dbe94c2d6d6c340b7c  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-01/rule14.patch.md
+a47dc38d1e12856bb34b3f1310af7109d65c649f8eef17a5feb3c00781623b80  /dev/shm/ex04/rule14-payload.txt
+
+##### DONE #####

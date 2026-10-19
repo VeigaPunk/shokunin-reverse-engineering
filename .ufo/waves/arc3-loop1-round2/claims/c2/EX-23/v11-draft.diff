@@ -1,0 +1,154 @@
+--- /var/tmp/ex23/v10.py	2026-10-19 09:02:09.666731979 -0300
++++ /var/tmp/ex23/draft/draft_v11.py	2026-10-19 09:04:18.148025176 -0300
+@@ -1,4 +1,54 @@
+-"""C1 census v10 — v9 (sha256 213fe679…) re-keyed per arc2-loop1-round4 Z1 section 4d.
++"""C1 census v11 — v10 (sha256 6f1d19ff…) + H1 absent-file guard + H3 positive
++floor per arc3-loop1-round2.
++
++V11 REVISION (arc3-loop1-round2; 2026-10-19). BEFORE-state: v10, 490 lines,
++sha256 6f1d19ff4b0878adfcdf0e38523aa79db461e74942eaafc018036a504163cc8b, HEAD
++14b1682. The file path stays .ufo/gates/c1-census-v10.py (the frozen round-2
++write target); v11 is this header's revision id, not a new file. Two round-1
++named holes are CLOSED, each injected against the BEFORE bytes (v10) and the
++AFTER bytes (this revision) at HEAD 14b1682, scratch copies only:
++  H1 absent scoped file. v10 at a root deleting SKILL.md reads lines=0 loci=0
++     and PASS exit 0 (both SKILL rows are CURRENT, so no marker assertion
++     fires); v11 reads UNREADABLE ['SKILL.md: FileNotFoundError'] -> FAIL
++     exit 1.  [EX-23/EX-16 receipt]
++  H3 blind instrument. v10 with PIN/VER/PTR neutered reads loci=0 on all three
++     files and still PASS exit 0 -- G2's second disjunct ("nothing found") is
++     vacuously true; v11 reads G2 SUSPECT (current-ok=0) and BLIND (zero loci
++     on a non-empty scope) -> FAIL exit 1.  [EX-23/EX-16 receipt]
++Declared classes added by v11 (binding tokens; the report and the verdict
++line must carry exactly these names):
++  UNREADABLE (could-not-evaluate)  a scoped file the run could not read
++                                   (absent / OSError) -> FAIL, never silent.
++  BLIND                            zero loci classified on a non-empty scope,
++                                   or zero current-ok loci (G2 SUSPECT) ->
++                                   FAIL; a blind instrument and a clean one
++                                   no longer print the same verdict.
++Ordinary run at HEAD 14b1682 stays PASS 0/0/0/0 exit 0 with locus counts
++unchanged (PROVINCE.md 6 / SCORECARD.md 9 / SKILL.md 2); the SCOPE table is
++byte-identical to v10 (no row added, removed, re-keyed or retired).
++RESIDUAL LEDGER (named, not closed by v11):
++  H2  inline-marker token excuses an arbitrary value (latent at HEAD; the
++      inline-marker branch does no cache-existence check).
++  H4  SELF-CERTIFICATION -- OPEN AND NAMED: this instrument cannot detect its
++      own SCOPE widening or its own detection narrowing. No edit to this file
++      may cite its own PASS as evidence for the edit. The certificate for any
++      future re-key is the external diff audit (CR-5 scope-diff.py form) plus
++      locus-count invariance; the v11 diff is certified that way (rows
++      before=20 after=20, 0 added / 0 removed / 0 changed, CREEP FLAGS []),
++      not by this instrument's verdict.  [EX-23 receipt]
++  H5  unit boundary: a version statement carrying no rea/kimi/devin/omp token
++      is not a locus in this unit (stated, not fixed).
++  H6  fixed-bound rationale comment at the SCOPE rows (optional mechanical
++      guard) stays unlanded.
++  H7  found this round: a scoped file truncated to 0 lines still reads silent
++      PASS under v11's minimal H1 form (measured, EX-23 receipt); the one-line
++      extension (0-line -> UNREADABLE) is measured in the same receipt and is
++      NOT landed unless EX-16 lands it -- the class above covers absent and
++      unreadable only.
++Landing record: the fresh v11 digest and the locus-count invariance are
++re-derived by the integrator at the records commit (self-identity discipline,
++queue-drain rule #14). This stanza names the BEFORE state only -- it is not
++its own verification.
+ 
+ E22 DISPOSITION — arc3-loop1-round1, EX-28 (measured 2026-10-19 at HEAD
+ e845c2b; instrument sha256 before this edit 36e96cd5…). The arc2-loop1-round3
+@@ -44,7 +94,9 @@
+   or the bound must be re-keyed in the same commit as a DATED row whose marker
+   line carries that section's own date/round token."""
+ #!/usr/bin/env python3
+-"""C1 stale-statement census instrument v9 (E22, arc2-loop1-round2) — FINAL.
++"""C1 stale-statement census instrument v11 (arc3-loop1-round2) — v10 + H1/H3
++fail-closures (G19/G20; declared classes UNREADABLE, BLIND); residual ledger
++H2/H4/H5/H6/H7 named in the stanza above.
+ 
+ Claim under test (C1): after the round's commit, every current-surface
+ version/pin statement in PROVINCE.md / SKILL.md / SCORECARD.md states a
+@@ -116,11 +168,25 @@
+                                            range -- the stale-row class EX-28
+                                            found at HEAD, PROVINCE.md 45-62
+                                            naming :40; now a SCOPE-ERROR)
++  G19 absent-scoped-file fail-closure (H1)(a scoped file that cannot be read
++                                           is the declared UNREADABLE
++                                           (could-not-evaluate) class -> FAIL;
++                                           v10 absorbed it as lines=0 loci=0
++                                           silent PASS)
++  G20 positive floor               (H3)   (G2's second disjunct -- "nothing
++                                           found" -- is vacuous, so a blind
++                                           instrument printed PASS; v11
++                                           requires current-ok >= 1 AND total
++                                           loci > 0 on a non-empty scope,
++                                           else the declared BLIND class ->
++                                           FAIL)
+ 
+ Verdict: PASS iff stale == 0 AND ambiguous == 0 AND undeclared == 0
+-AND unresolved == 0 AND scope_errors == 0 AND g11 == [] AND G2 holds.
+-Exit 0 PASS, 1 FAIL, 2 anchor failure.
+-Usage: python3 c1-census-v9.py [--root DIR] [--json] [--quiet]
++AND unresolved == 0 AND scope_errors == 0 AND g11 == [] AND unreadable == []
++AND blind == 0 AND G2 holds (current-ok >= 1).
++Exit 0 PASS, 1 FAIL, 2 anchor failure (a live anchor config unreadable).
++Usage: python3 .ufo/gates/c1-census-v10.py [--root DIR] [--json] [--quiet]
++       (path frozen for arc3-loop1-round2; revision id v11 as above)
+ """
+ import argparse, json, os, re, sys
+ 
+@@ -435,11 +501,12 @@
+     if not all(live.values()):
+         print("ANCHOR-FAIL: %r" % live)
+         return 2
+-    out, counts, filelines = {}, {}, {}
++    out, counts, filelines, unreadable = {}, {}, {}, []
+     for f in files:
+         try:
+             lines = open(os.path.join(args.root, f), encoding="utf-8", errors="replace").read().splitlines()
+-        except OSError:
++        except OSError as ex:
++            unreadable.append("%s: %s" % (f, type(ex).__name__))
+             counts[f] = {"lines": 0, "loci": 0}
+             filelines[f] = None
+             continue
+@@ -450,15 +517,20 @@
+     undecl = out.get("UNDECLARED", [])
+     unres = out.get("UNRESOLVED", [])
+     g11, g7 = out.get("g11", []), out.get("g7", [])
+-    g2_ok = len(out.get("current-ok", [])) > 0 or (not stale and not unatt and not undecl and not unres)
++    total_loci = sum(c["loci"] for c in counts.values())
++    scoped_lines = sum(c["lines"] for c in counts.values())
++    blind = (total_loci == 0) and (scoped_lines > 0)
++    g2_ok = len(out.get("current-ok", [])) > 0
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \
+-         and (not g11) and g2_ok
++         and (not g11) and (not unreadable) and (not blind) and g2_ok
+     verdict = "PASS" if ok else "FAIL"
+     if args.json:
+         print(json.dumps({"live": live, "counts": counts, "verdict": verdict,
+                           "stale": stale, "ambiguous": unatt, "undeclared": undecl,
+                           "unresolved": unres, "scope_errors": scope_errors,
+                           "g11": g11, "g7": g7, "g2_ok": g2_ok,
++                          "unreadable": unreadable, "blind": blind,
++                          "total_loci": total_loci,
+                           "historical": out.get("historical", []),
+                           "current_ok": out.get("current-ok", [])}, indent=1))
+         return 0 if verdict == "PASS" else 1
+@@ -478,11 +550,14 @@
+                     print("      :%d [%s] %s=%s -> %s (%s)" %
+                           (d["line"], d["kind"], d["client"], d["value"], d["disp"], d["why"]))
+     print("\nSCOPE-ERRORS (marker assertions): %r" % scope_errors)
+-    print("G2 positive-assertion guard: %s" % ("ok" if g2_ok else "SUSPECT"))
++    print("UNREADABLE (could-not-evaluate): %r" % unreadable)
++    print("G2 positive-assertion guard: %s (current-ok=%d, total loci=%d)"
++          % ("ok" if g2_ok else "SUSPECT", len(out.get("current-ok", [])), total_loci))
++    print("BLIND (zero loci on non-empty scope): %s" % ("FAIL" if blind else "no"))
+     print("G7 configured!=held warnings: %r" % g7)
+     print("G11 current-ok without receipt language: %r" % g11)
+-    print("VERDICT: %s  (stale=%d ambiguous=%d undeclared=%d unresolved=%d)"
+-          % (verdict, len(stale), len(unatt), len(undecl), len(unres)))
++    print("VERDICT: %s  (stale=%d ambiguous=%d undeclared=%d unresolved=%d unreadable=%d blind=%d)"
++          % (verdict, len(stale), len(unatt), len(undecl), len(unres), len(unreadable), int(blind)))
+     return 0 if verdict == "PASS" else 1
+ 
+ 

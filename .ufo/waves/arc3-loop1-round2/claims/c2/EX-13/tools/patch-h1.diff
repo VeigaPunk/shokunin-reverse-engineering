@@ -1,0 +1,34 @@
+--- census-h0.py	2026-10-19 09:11:15.635273537 -0300
++++ census-h1.py	2026-10-19 09:11:15.635329576 -0300
+@@ -435,11 +435,12 @@
+     if not all(live.values()):
+         print("ANCHOR-FAIL: %r" % live)
+         return 2
+-    out, counts, filelines = {}, {}, {}
++    out, counts, filelines, unreadable = {}, {}, {}, []
+     for f in files:
+         try:
+             lines = open(os.path.join(args.root, f), encoding="utf-8", errors="replace").read().splitlines()
+-        except OSError:
++        except OSError as ex:
++            unreadable.append("%s: %s" % (f, type(ex).__name__))
+             counts[f] = {"lines": 0, "loci": 0}
+             filelines[f] = None
+             continue
+@@ -452,7 +453,7 @@
+     g11, g7 = out.get("g11", []), out.get("g7", [])
+     g2_ok = len(out.get("current-ok", [])) > 0 or (not stale and not unatt and not undecl and not unres)
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \
+-         and (not g11) and g2_ok
++         and (not g11) and g2_ok and (not unreadable)
+     verdict = "PASS" if ok else "FAIL"
+     if args.json:
+         print(json.dumps({"live": live, "counts": counts, "verdict": verdict,
+@@ -477,6 +478,7 @@
+                 for d in r["asserts"]:
+                     print("      :%d [%s] %s=%s -> %s (%s)" %
+                           (d["line"], d["kind"], d["client"], d["value"], d["disp"], d["why"]))
++    print("UNREADABLE (could-not-evaluate): %r" % unreadable)
+     print("\nSCOPE-ERRORS (marker assertions): %r" % scope_errors)
+     print("G2 positive-assertion guard: %s" % ("ok" if g2_ok else "SUSPECT"))
+     print("G7 configured!=held warnings: %r" % g7)

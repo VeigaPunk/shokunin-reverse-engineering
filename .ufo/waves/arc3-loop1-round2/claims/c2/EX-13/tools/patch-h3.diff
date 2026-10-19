@@ -1,0 +1,22 @@
+--- census-h0.py	2026-10-19 09:11:15.635273537 -0300
++++ census-h3.py	2026-10-19 09:11:15.635309246 -0300
+@@ -450,7 +450,7 @@
+     undecl = out.get("UNDECLARED", [])
+     unres = out.get("UNRESOLVED", [])
+     g11, g7 = out.get("g11", []), out.get("g7", [])
+-    g2_ok = len(out.get("current-ok", [])) > 0 or (not stale and not unatt and not undecl and not unres)
++    g2_ok = len(out.get("current-ok", [])) > 0
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \
+          and (not g11) and g2_ok
+     verdict = "PASS" if ok else "FAIL"
+@@ -478,7 +478,9 @@
+                     print("      :%d [%s] %s=%s -> %s (%s)" %
+                           (d["line"], d["kind"], d["client"], d["value"], d["disp"], d["why"]))
+     print("\nSCOPE-ERRORS (marker assertions): %r" % scope_errors)
+-    print("G2 positive-assertion guard: %s" % ("ok" if g2_ok else "SUSPECT"))
++    print("G2 positive-assertion guard: %s (current-ok loci=%d, total loci=%d)" %
++          ("ok" if g2_ok else "SUSPECT", len(out.get("current-ok", [])),
++           sum(c["loci"] for c in counts.values())))
+     print("G7 configured!=held warnings: %r" % g7)
+     print("G11 current-ok without receipt language: %r" % g11)
+     print("VERDICT: %s  (stale=%d ambiguous=%d undeclared=%d unresolved=%d)"

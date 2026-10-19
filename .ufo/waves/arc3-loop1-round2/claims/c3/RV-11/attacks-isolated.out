@@ -1,0 +1,12 @@
+D1 setup: same content, same inode, mtime restored, ctime moved -> v2 must catch ctime
+D1 in-place same-content rewrite (expect REWRITE-DRIFT/11): exit=11
+    REWRITE-DRIFT  compared=11/11 moved=ctime_ns
+D2 setup: temp+rename, same content, mtime restored -> inode moved
+D2 rename same-content rewrite (expect REWRITE-DRIFT/11): exit=11
+    REWRITE-DRIFT  compared=11/11 moved=inode
+D3 mtime moved +5s (expect REWRITE-DRIFT/11): exit=11
+    REWRITE-DRIFT  compared=11/11 moved=mtime_ns,mtime_epoch
+D4 chmod (mode class wins over ctime side-effect) (expect METADATA-DRIFT/12): exit=12
+    METADATA-DRIFT  compared=11/11 moved=mode,ctime_ns
+D5 path deleted (expect ABSENT/13): exit=13
+    ABSENT  compared=0/11 moved=exists

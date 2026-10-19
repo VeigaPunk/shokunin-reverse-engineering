@@ -1,0 +1,95 @@
+=== EX-06 probe-interplay evidence log — 2026-10-19T12:12:02Z ===
+--- copy provenance
+e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  gate/citation-drift-probe.py
+738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  gate/pointer-table.json
+ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7  gate/expected.json
+
+--- S0 selftest (copy)
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+
+--- S1 frozen probe vs repo HEAD 14b1682b
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: 14b1682b
+CITATION_DRIFT_TABLE: /var/tmp/arc3-l1r2-EX-06/gate/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0
+
+--- S2 frozen probe vs chain scratch tree (vz1r2, ed405a3)
+CITATION_DRIFT_ROOT: /dev/shm/vz1r2/tree
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /var/tmp/arc3-l1r2-EX-06/gate/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0
+
+--- S3 frozen probe vs treated STAND-IN proj HEAD=2488036a2165649d7b790a8676e6e333f7f78b67
+CITATION_DRIFT_ROOT: proj
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /var/tmp/arc3-l1r2-EX-06/gate/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0
+
+--- S4 same, strict
+CITATION_DRIFT_ROOT: proj
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /var/tmp/arc3-l1r2-EX-06/gate/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+rc=0
+
+--- S5 command A (EX-02 scratch recipe) on treated proj
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "treated-standin", "rule_blocks": 14}
+
+--- S6 custom rule-14 table (pinned a17e09a2) vs proj, strict
+CITATION_DRIFT_ROOT: proj
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: custom/table-rule14.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+rc=0
+
+--- C1 control: wrong pointers (proj-ctl HEAD=ff9f7ff02f383686ccc04610e092d97e3fbf19f9)
+CITATION_DRIFT_ROOT: proj-ctl
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: custom/table-rule14.json
+CITATION_DRIFT: citation_dead entry=r14-cr2-pointer SKILL.md:247 cites .ufo/waves/arc3-loop1-round1/seats/CR-2.md:203-203, which lacks 'patch text claims 8,316 B' (holds "  `f95c5a05…`; EX-12's own scratch file hashes `f95c5a05…`. The ")
+CITATION_DRIFT: citation_dead entry=r14-entry-range SKILL.md:250 cites corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:4-6, which lacks 'selectors recovered K/K' (holds '')
+CITATION_DRIFT_VERDICT: failed findings=2 exit=1
+rc=1
+
+--- C2 control: SHONEN range cut (proj-neg HEAD=d38870c5f376034c75da2014fcbbaea53530e424)
+CITATION_DRIFT_ROOT: proj-neg
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /var/tmp/arc3-l1r2-EX-06/gate/pointer-table.json
+CITATION_DRIFT: citation_dead entry=shonen-skill-range SHONEN.md:6 cites SKILL.md:81-231, which lacks 'A mitigation claim carries its natural control' (holds '## Queue-drain craft (rounds 5-12, distilled in round 13)')
+CITATION_DRIFT_VERDICT: failed findings=1 exit=1
+rc=1
+
+=== SECTION 2 — v2 payload + controls — 2026-10-19T12:19:23Z ===
+--- container shas
+885fa5379f009a5e81135fffe2a8384ac9bab10532b493fc06d3e12b3fb250eb  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-01/rule14.patch.md
+debe4d4e50aab5c2a1866589fa88dc474c200a9a6a7aa4abdadeeda55abac318  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-05/fallback-rule14-candidate.txt
+--- v2 reproduction (payload+skill identity)
+payload_bytes=1071 payload_sha256=6cc388cb61a3023e8e62a0f63c0ff2e275665706373b184ad7d4801c3c91718f identity_claim=MATCH
+ALREADY-APPLIED
+(already applied -> ALREADY-APPLIED rc3 expected)
+--- proj3 HEAD b35ac223e2f28e5fef5fc4a45ae763400633f396 | proj3-s HEAD 89b8957d84c561f4ef532ed105b60bc3cb64a45e | proj3-ctl HEAD f1117eb846d19dd7d37dcaa46d46f76ce42cf418 | proj2b HEAD 1dac4c640711e66188a2174e008e9965823b3df0
+--- V1..V6
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "treated-real-v2", "rule_blocks": 14}
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "treated-real-v2-shonen", "rule_blocks": 14}
+--- fallback variant (proj2b)
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "fallback-ex05", "rule_blocks": 14}
+--- controls
+CITATION_DRIFT: citation_dead entry=r14v2-scorecard SKILL.md:253 cites SCORECARD.md:1360-1362, which lacks 'fresh identity recorded \\(10,225 B, sha256' (holds '  (5/5, 6/6, 9/9, and an 11-selector attack carrier), creation-c')
+CITATION_DRIFT_VERDICT: failed findings=2 exit=1
+CITATION_DRIFT: citation_dead entry=shonen-skill-range SHONEN.md:6 cites SKILL.md:81-231, which lacks 'A mitigation claim carries its natural control' (holds '## Queue-drain craft (rounds 5-12, distilled in round 13)')
+CITATION_DRIFT_VERDICT: failed findings=1 exit=1
+
+=== SECTION 3 — final identity re-derivation (rule #14 applied to this seat's artifacts) — 2026-10-19T12:23:44Z ===
+artifact claims/c1/EX-06/probe-interplay.md:
+8a5fe0f69316e432c440e73afd610293abf4ca70bf5998dd9e31a519c6892860  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-06/probe-interplay.md
+7561 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-06/probe-interplay.md
+note: seat report prev cited sha e60e38c2... (pre-edit); fresh sha above recorded in the report; superseded generation kept as history, not deleted.

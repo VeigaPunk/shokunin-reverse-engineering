@@ -1,0 +1,26 @@
+# SCORECARD.md write-cadence measurement (does anything above a cited line ever get inserted?)
+# rev: 14b1682b1128d2e41085ebc79c9addeb8786d420
+
+== 1. every hunk between the calibration baseline and HEAD ==
+$ git diff a280e07 14b1682 -- SCORECARD.md | grep '^@@'
+@@ -53,11 +53,11 @@ They are assessment obligations, not nine independent domain discoveries.
+@@ -65,11 +65,11 @@ They are assessment obligations, not nine independent domain discoveries.
+@@ -557,3 +557,861 @@ unchanged. Planned next: luna-round-9 — the carried spill queue (r4-16
+
+== 2. landmark '- Measured: command A 79/79, 9/9' position across the last 8 commits touching SCORECARD.md ==
+$ for c in $(git log --format=%h --reverse -- SCORECARD.md | tail -8): grep -n landmark
+995e6a0 landmark=544 totlines=1095
+8cc81a8 landmark=544 totlines=1095
+e87e507 landmark=544 totlines=1157
+6bc4c29 landmark=544 totlines=1158
+276db3f landmark=544 totlines=1218
+c561f00 landmark=544 totlines=1268
+9e9d6b1 landmark=544 totlines=1336
+14b1682 landmark=544 totlines=1417
+
+== 3. head-heading stability ==
+a280e07: 86:## Measurement recipes 
+9e9d6b1: 86:## Measurement recipes 1270:## arc2-loop1-round10 — calibration + freshness + adjacency: three claims admitted, 2026-10-18 
+14b1682: 86:## Measurement recipes 1270:## arc2-loop1-round10 — calibration + freshness + adjacency: three claims admitted, 2026-10-18 1338:## arc3-loop1-round1 — coverage + operability + freshness: three claims admitted, 2026-10-19 
+
+# reading: head rewrites are line-neutral (11->11 hunks at :53 and :65); all growth is tail appends.

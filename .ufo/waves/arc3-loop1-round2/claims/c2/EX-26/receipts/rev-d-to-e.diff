@@ -1,0 +1,41 @@
+--- landed-v11d.py	2026-10-19 09:11:17.267573823 -0300
++++ landed-v11e.py	2026-10-19 09:13:58.935125079 -0300
+@@ -528,18 +528,31 @@
+     g11, g7 = out.get("g11", []), out.get("g7", [])
+     # G20 (r9, H3): the old second disjunct was true exactly when the run found
+     # nothing, so a blind instrument read PASS.  The floor is PER READABLE FILE
+-    # (EX-14's variant B, measured to dominate the global variant A on
+-    # head/blind/nullskill): every scoped file the run could read must
+-    # contribute >= 1 current-ok locus, so a per-file collapse (needles
+-    # stripped, content blanked) is declared even when other files are loud.
++    # over current-ok DETECTIONS (EX-14's variant B, measured to dominate the
++    # global variant A on head/blind/nullskill): every scoped file the run
++    # could read must contribute >= 1 current-ok assertion, so a per-file
++    # collapse (needles stripped, content blanked) is declared even when other
++    # files stay loud.  Dets are counted, not blocks: SKILL.md's only
++    # locus-bearing block is mixed (current-ok + historical) and carries block
++    # disposition "info", so a block-count floor false-FAILs the ordinary run
++    # (measured; EX-14's §6 snippet as written reproduces that false FAIL).
+     # Unreadable files are exempt here -- they are the H1 class and already
+     # force FAIL via `unreadable`.  Per-ROW floors are refuted by EX-14's map
+     # (4 DATED rows are zero-locus by design at HEAD).
+     n_loci = sum((c["loci"] or 0) for c in counts.values())
+-    n_current_ok = len(out.get("current-ok", []))
++    n_current_ok = sum(1 for recs in out.values() if isinstance(recs, list)
++                       for rec in recs if isinstance(rec, dict)
++                       for d in rec["asserts"] if d["disp"] == "current-ok")
+     floor = {f: 0 for f in files}
+-    for rec in out.get("current-ok", []):
+-        floor[rec["file"]] += 1
++    for recs in out.values():
++        if not isinstance(recs, list):
++            continue
++        for rec in recs:
++            if not isinstance(rec, dict):
++                continue
++            for d in rec["asserts"]:
++                if d["disp"] == "current-ok":
++                    floor[rec["file"]] += 1
+     h3_ok = all(floor[f] > 0 for f in files if filelines[f] is not None)
+     g2_ok = h3_ok
+     declared = (["UNREADABLE"] if unreadable else []) + ([] if g2_ok else ["BLIND-INSTRUMENT"])

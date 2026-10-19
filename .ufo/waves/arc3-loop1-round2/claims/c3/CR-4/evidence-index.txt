@@ -1,0 +1,80 @@
+# CR-4 evidence index — chain c3 critic seat (arc3-loop1-round2)
+
+Generated: 2026-10-19T12:12:53Z  host plazir27  kernel 7.2.3-arch1-3  scratch fs btrfs
+Tool under attack (revision pin, re-verified after every battery run):
+```
+112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py
+```
+
+## Artifact digests
+```
+f0551097f3341fd81e104c4df4b9fcf993fe8c8bf509dd012b02f1f619a165a0  ./attack-matrix.json
+fc0395a81df0eb5282c17ba64880bad056b7aa3240eae5f650ae50cd15cd92d7  ./attack-matrix.txt
+85589892569a7dc0b62ddf2625de537a24aeb1ffea124454795df41192878510  ./block-level/blk-blocks.txt
+b168fba2a093863a120d1b552f4e22ebe382e01952510953db656cbe79810014  ./block-level/blk-ctime-forged.txt
+29f470218f61f2da321a338cfb54eb49e0a1287d09e159ec3272c6716fadf055  ./block-level/blk-receipt-mid.txt
+29f470218f61f2da321a338cfb54eb49e0a1287d09e159ec3272c6716fadf055  ./block-level/blk-receipt-post.txt
+29f470218f61f2da321a338cfb54eb49e0a1287d09e159ec3272c6716fadf055  ./block-level/blk-receipt-pre.txt
+5fe4d0a8e1638bfc2a0bd2129fc966f196b232c85c9d11273522c7fabd2a95ce  ./block-level/blk-sha-mid.txt
+a7858017970ce3078a06a999b8a0c648a51c0954a3b962ded68dc0e86d6a0add  ./block-level/blk-sha-post.txt
+a7858017970ce3078a06a999b8a0c648a51c0954a3b962ded68dc0e86d6a0add  ./block-level/blk-sha-pre.txt
+af020d8cf256283eb6764eec888a00a75bc2f417cdae5d2f087d49b0d2c5c19a  ./evidence-index.txt
+9af5f09fca0de6979f6f87da9c57e06b1c82e972ccf185f7b757159813b2f435  ./proposed-capture-atomicity.patch.md
+d1c73a62a7e312569580b47cb1bc12cc41858a85ed5ef834628bc8514bf04814  ./real-tool-battery.txt
+5135d55e90a6342e4e4398141e7d0122d9fdd9f229cb1ce835957729860c3d4a  ./receipts/cp_a.A.txt
+3a94fc87be708efac571caa56efc50c153256147fc86e71ec997bf5b8606b4b6  ./receipts/cp_a.B.txt
+f9dc8a4bcdf52df4ffd033923b7004f763400a55e5c9d313ebdf768f4f41b78a  ./receipts/custody-live-1.txt
+2ba8d7c96e10f4274b6471542cbc69b772b56d8cf2fa120433da726e29385387  ./receipts/custody-live-2.txt
+45916f6ad308ae227e859aec6b8c30e6cda24e092baaa3bf102fed9a92f1cbda  ./receipts/erasure_samesec.A.txt
+74905aacd9b1d67d6f2d0718cde9352575a0558eb8245af733d5932dea36caec  ./receipts/erasure_samesec.B.txt
+593056ce912b26d715e9f272320e21f181d9d99b6007061fecdfce24c73a0033  ./receipts/forged-post-receipt.txt
+6acfaf173e157fc4b2e88b8e5e0b3401f6277cc3b1e10b3ec66906af25ed5c99  ./receipts/forge-forged.out
+faf95d6e48800ea875f42a94558192bca393bde3d3f923c3eff855401aa987aa  ./receipts/forge-honest.out
+8c6df8e3809806ce942ffcb6378c7c79189bbb6e97ab3adbc4b9bb650fce5054  ./receipts/guard.out
+ca2c8d1f202c45b1a60bdf1b4dcff790c432f35734c2bf0a70e19c71945762de  ./receipts/selftest-scratchcopy-canonical.out
+6d61436e9b522aa19be6e16034be19046c35b0a403a6d6b8e503bb3f31f0bad7  ./receipts/tar2.verify.txt
+eba67d94e133253e2fb586b87d79228cbed04d18e93686769db3dc2dce23a617  ./receipts/v1real-config-pre-pair-metadata.txt.out
+ca3a7c8ac396e4e093e672d113a7485350301dc8235f9872c78373c9be80038c  ./receipts/v1real-config-pre-pair.txt.out
+cd3f44bc53ed2c3f0fb9a0441b03eebccf2df1239a189d304c0587629e70537d  ./receipts/v1ref.A.txt
+7e24cf9be9015d1a8be8d80d92b1b747bc464288b554ad9e903b22e87cb21333  ./receipts/v1ref.shaonly.txt
+02ab25eb8c0fc73c90474d718e98c5d2e8328d03cfdc686f8a31968dd65bbf90  ./residual-threat-model.md
+dece56b49bfdba10bfa34c11c082448877ecdee5e2113107ca641617439aafee  ./second-precision-window.txt
+66215fb1c890b845c1a5afd47dbb04f1c25877d70faeda7bdd688b77dc416b99  ./toctou-measurement.py
+85efc5eeee9ef9c3652c469d856d76a890f89d67e5e4ba942ab061e32b34c745  ./tool-revision-pin.txt
+```
+
+## Reproduction (all commands re-runnable; scratch under /var/tmp or /dev/shm)
+```bash
+# 1. replica battery (v1 / v2-seconds / v2-nanoseconds verdicts per attack form)
+python3 /var/tmp/cr4-arc3r2/bench/battery.py            # -> attack-matrix.txt/.json
+# 2. real-tool battery (cp -a, cp -p, cp -a --remove-destination, rsync default/--inplace,
+#    tar, reflink, in-place erasure, hardlink swap, v1-reference erosion, live 5-path pair)
+bash /var/tmp/cr4-arc3r2/bench/live-attacks.sh          # -> real-tool-battery.txt + receipts/
+# 3. capture-atomicity incidence (300 captures vs a live writer)
+python3 /var/tmp/cr4-arc3r2/bench/toctou.py             # -> {"captures":300,"replica_internal_inconsistency":2,...}
+# 4. out-of-band block-level erasure + ctime forgery (ext4 image, unprivileged)
+#    see block-level/ (blk-sha-pre|mid|post.txt, blk-receipt-pre|mid|post.txt, blk-ctime-forged.txt)
+#    image recipe: truncate -s 48M fs.img; mkfs.ext4 -q -F -b 4096 fs.img
+#                  debugfs -w -R "write orig.txt /custody.json" fs.img
+#                  BLK=$(debugfs -R "blocks /custody.json" fs.img | head -1)   # data block
+#                  dd if=mal.txt of=fs.img bs=1 seek=$((BLK*4096)) conv=notrunc  # attacker bytes
+#                  dd if=orig.txt of=fs.img bs=1 seek=$((BLK*4096)) conv=notrunc # erasure
+#                  debugfs -w -R "set_inode_field /custody.json ctime 20261014175320" fs.img
+# 5. round-1 canonical v1 receipts vs live 5 paths (read-only)
+python3 .ufo/gates/custody-pair/custody-pair.py verify \
+  .ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt --live
+# 6. guard + selftest on a scratch-patched copy (real custody paths never handed to the guard)
+```
+
+## Live read-only custody facts captured by this seat
+```
+sha256 of the 5 custody paths at CR-4 capture time (compare round-1 canonical:
+config-pre-pair.txt — measured 5/5 identical, inodes identical to CU-1 round-1 metadata):
+16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4  /home/vgpnk/.config/devin/mcp_config.json
+38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b  /home/vgpnk/.omp/agent/mcp.json
+8cbacd48ab85ea86e122bae102d8ee63e2fd3181aa551603b3923b912573c38d  /home/vgpnk/.kimi-code/config.toml
+7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598  /home/vgpnk/.bashrc
+6c6be761d3b199c964c95e724d7cdc9f4f902e0c3bdd6a532361b20a53db4f30  /home/vgpnk/.profile
+
+tool live capture #1 vs #2 on the 5 real paths (read-only): exit 0, MATCH 5/5, compared=11/11
+paths in receipt #1: 5

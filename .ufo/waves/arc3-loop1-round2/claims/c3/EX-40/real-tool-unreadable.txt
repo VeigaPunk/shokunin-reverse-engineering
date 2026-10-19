@@ -1,0 +1,33 @@
+# EX-40 evidence — unreadable-path crash (capture), re-captured on the final revision
+# captured-utc: 2026-10-19T12:12:19Z
+# tool: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py
+# tool-sha256-at-capture: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+# tool-lines/size/mtime: 889 / 39157 / 2026-10-19 09:05:19.448417434 -0300
+
+## capture, single unreadable path:
+$ python3 custody-pair.py capture --out - --paths unreadable.txt
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 553, in cmd_capture
+    sections = [capture_path(p) for p in paths]
+                ~~~~~~~~~~~~^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'unreadable.txt'
+capture-exit=1
+
+## capture, mixed good+unreadable (receipt target never created):
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'unreadable.txt'
+capture-exit=1
+ls: cannot access '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-40/should-not-exist.txt': No such file or directory

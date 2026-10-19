@@ -1,0 +1,16 @@
+- **An artifact that records its own byte-identity must re-derive that
+  identity after every revision; a stale self-identity voids the verification
+  block, not the work.** Size/hash/line-count claims bind the bytes they
+  describe, not an earlier revision of the same patch: after the C1 entry
+  patch was revised, its step-4 claim still read 8,316 B / `f95c5a05…` while
+  the applied bytes hashed 8,598 B / `d8d85949…`
+  (`.ufo/waves/arc3-loop1-round1/seats/CR-2.md:86-89`), and the chain measured
+  three applied identities inside ~20 minutes, the fix being the fresh landing
+  hash (`.ufo/waves/arc3-loop1-round1/claims/c1/verdict.md:149-153`). The
+  voided block is re-established by re-running its checks against the current
+  bytes; the integrator records the fresh identity of the landed revision —
+  10,225 B / `dd986f56…` for the landed entry
+  `corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7`, whose recheck line
+  records the mid-wave revision (`SCORECARD.md`'s `arc3-loop1-round1` section,
+  the "fresh identity recorded" line; `LOG.md:1411-1412`) — never a revert,
+  never a carried-over number.

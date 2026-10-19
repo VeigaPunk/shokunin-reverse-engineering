@@ -1,0 +1,24 @@
+# RV-1 candidate-form measurements (scratch trees: HEAD archive + rule inserted after rule #13)
+
+T1 incident-only:
+{"citation_resolved_rules": 13, "coverage_score": 10.0, "dangling": [], "depth_score": 9.29, "knowledge_files": 82, "mapped": 82, "missing": [], "rule_blocks": 14}
+rule14 {'bad': [], 'refs': 0, 'rule': 14, 'valid': False}
+
+T2 T1 + adjacent corpus/knowledge citation:
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "rule_blocks": 14}
+rule14 {'bad': [], 'refs': 1, 'rule': 14, 'valid': True}
+
+prior-13 byte-identity (base bda64dfca64f7964…): T1 True, T2 True
+
+T4 T2 + the incident's recheck command verbatim (npx -y rea-agents@6.4.0 …):
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "rule_blocks": 14}
+
+census(full) exit=0 -> VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+census(t2g) exit=0 -> VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+census(t4g) exit=1 -> VERDICT: FAIL  (stale=0 ambiguous=0 undeclared=1 unresolved=0)
+
+needle scan T2 diff: added_lines=2 needle_hits=0
+needle scan T4 diff:
+ADDED-LINE 1 [bare] '6.4.0' : '- **An artifact that records its own byte-identity must re-derive that identity after every revision; a stale self-ident'
+ADDED-LINE 1 [gate+needle] '- **An artifact that records its own byte-identity must re-derive that identity after every revision; a stale self-ident'
+added_lines=2 needle_hits=2

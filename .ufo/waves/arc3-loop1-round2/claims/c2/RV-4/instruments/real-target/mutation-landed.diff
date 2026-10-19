@@ -1,0 +1,11 @@
+--- instruments/real-target/landed82fb807e.py	2026-10-19 09:07:37.398123096 -0300
++++ instruments/real-target/landed82fb807e-nog2.py	2026-10-19 09:07:37.398123096 -0300
+@@ -515,7 +515,7 @@
+     # at least one current-ok locus in a non-empty scope.
+     n_loci = sum((c["loci"] or 0) for c in counts.values())
+     n_current_ok = len(out.get("current-ok", []))
+-    g2_ok = n_current_ok > 0
++    g2_ok = n_current_ok > 0 or (not stale and not unatt and not undecl and not unres)
+     declared = (["UNREADABLE"] if unreadable else []) + ([] if g2_ok else ["BLIND-INSTRUMENT"])
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \
+          and (not g11) and g2_ok and (not unreadable)

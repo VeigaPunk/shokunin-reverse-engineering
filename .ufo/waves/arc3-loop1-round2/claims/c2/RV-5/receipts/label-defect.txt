@@ -1,0 +1,16 @@
+# label-defect evidence (landed instrument sha256 a4c167631269e5110fbdcf323b6be2a779eaa1e0ca79c98201419261ba9c6bfb)
+
+== printed label says 'loci' but counts detections (dets) per file ==
+545:    n_current_ok = sum(1 for recs in out.values() if isinstance(recs, list)
+547:                       for d in rec["asserts"] if d["disp"] == "current-ok")
+556:                if d["disp"] == "current-ok":
+591:    print("G2 positive-assertion guard: %s (current-ok loci per file: %s; total loci=%d; floor=1/file)"
+
+== measured (in-memory classify; receipts/unit-probe.out) at HEAD ==
+PROVINCE.md loci=6 dets=24 current-ok_loci=1 current-ok_dets=17
+SCORECARD.md loci=9 dets=21 current-ok_loci=4 current-ok_dets=14
+SKILL.md     loci=2 dets=5  current-ok_loci=0 current-ok_dets=3  <-- printed as 'SKILL.md=3'
+
+== block-level (record) reading of the same tree -- the interim 076bd621/c95a5cf3 shape -- false-FAILs SKILL.md ==
+receipts/T0-ordinary-v11b-FAIL.out  (076bd621)
+receipts/T0-ordinary-v11c-FAIL.out  (c95a5cf3)

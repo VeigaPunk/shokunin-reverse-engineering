@@ -1,0 +1,26 @@
+--- census-head-6f1d19ff.py
+--- census-head-6f1d19ff.py
++++ h-full.py
+@@ -452,19 +454,20 @@
+     g11, g7 = out.get("g11", []), out.get("g7", [])
+     g2_ok = len(out.get("current-ok", [])) > 0 or (not stale and not unatt and not undecl and not unres)
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \
+-         and (not g11) and g2_ok
++         and (not g11) and g2_ok and (not unreadable)
+     verdict = "PASS" if ok else "FAIL"
+     if args.json:
+         print(json.dumps({"live": live, "counts": counts, "verdict": verdict,
+                           "stale": stale, "ambiguous": unatt, "undeclared": undecl,
+                           "unresolved": unres, "scope_errors": scope_errors,
++                          "unreadable": unreadable,
+                           "g11": g11, "g7": g7, "g2_ok": g2_ok,
+                           "historical": out.get("historical", []),
+                           "current_ok": out.get("current-ok", [])}, indent=1))
+         return 0 if verdict == "PASS" else 1
+     print("live anchors (re-derived): %r" % live)
+     for f, c in counts.items():
+-        print("%-14s lines=%-4d loci=%s" % (f, c["lines"], c["loci"]))
++        print("%-14s lines=%-4s loci=%s" % (f, c["lines"], c["loci"]))
+     if not args.quiet:
+         for k in ("STALE", "AMBIGUOUS", "UNDECLARED", "UNRESOLVED",
+                   "historical", "current-ok", "info"):

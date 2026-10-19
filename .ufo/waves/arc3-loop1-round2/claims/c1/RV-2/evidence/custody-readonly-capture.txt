@@ -1,0 +1,18 @@
+# custody-path read-only capture (hash/stat + one content read; NO byte written)
+2026-10-19T12:15:34Z
+
+path: ~/.kimi-code/config.toml
+8cbacd48ab85ea86e122bae102d8ee63e2fd3181aa551603b3923b912573c38d  /home/vgpnk/.kimi-code/config.toml
+size=114434 mtime=2026-10-18 23:20:43.576981482 -0300 ctime=2026-10-18 23:20:43.576981482 -0300 inode=34530637
+
+$ grep -n '^\[mcp_servers\.rea\]$' ~/.kimi-code/config.toml  (read-only)
+3544:[mcp_servers.rea]
+
+$ sed -n '3544,3546p' ~/.kimi-code/config.toml  (read-only)
+[mcp_servers.rea]
+command = "npx"
+args = [ "-y", "rea-agents@6.7.0", "mcp" ]
+
+# context: PROVINCE.md:18 cites the same stanza as ':3298 at the 17:55:49Z receipt'
+#   (stamped-historical form); today's live position is 3544. Value pin unchanged: rea-agents@6.7.0
+# Discipline: no write, no chmod, no touch performed on any custody path by this seat.

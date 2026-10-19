@@ -1,0 +1,59 @@
+# RV-1 review of EX-01's rule #14 text — independent measurement
+# repo HEAD 14b1682b1128d2e41085ebc79c9addeb8786d420; artifact sha256 885fa5379f009a5e81135fffe2a8384ac9bab10532b493fc06d3e12b3fb250eb
+
+## payload extraction from rule14.patch.md (between payload markers)
+896 bytes  sha256 a47dc38d1e12856bb34b3f1310af7109d65c649f8eef17a5feb3c00781623b80 (EX-01 claimed: identical)
+
+## EX-01's own unified diff applied verbatim to SKILL.md (patch -p1, fuzz 0)
+exit 0 -> SKILL.md 385 lines  sha256 19057c131038352ba1bee1aec007401de774cc88a9ef42cde2cc09dcbe6f4e90 (= EX-01's claim)
+
+## recipe A on the literal post-image
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "rule_blocks": 14}
+rule14 {'bad': [], 'refs': 1, 'rule': 14, 'valid': True}
+
+## census v10 (committed bytes 6f1d19ff…) on the post-image
+SKILL.md       lines=385  loci=2
+G2 positive-assertion guard: ok
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+(exit 0; full output identical to baseline apart from line counts)
+
+## census v10 post-image stdout diff vs baseline (line counts masked)
+(no differences)
+
+## EX-05 needle scan on EX-01's diff
+added_lines=14 needle_hits=0
+
+## RV-2 rule-citation audit (draft mode) on EX-01's payload
+revision 14b1682b1128d2e41085ebc79c9addeb8786d420 | rules 2 | citations 5 | resolved 5 | dead 0 | form_flags 1
+  target .ufo/waves/arc3-loop1-round1/seats/CR-2.md                             class=append-only-record   cites=1 dead=0
+  target .ufo/waves/arc3-loop1-round1/seats/VZ-1.md                             class=append-only-record   cites=1 dead=0
+  target LOG.md                                                                 class=append-only-record   cites=1 dead=0
+  target SCORECARD.md                                                           class=in-place-rewritten   cites=1 dead=0
+  target corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md                   class=append-only-record   cites=1 dead=0
+  FORM  SCORECARD.md:1366-1368 (bare_line_into_in_place_target) rule_line=3 stamp=False anchor=False
+
+## baseline for the form flag (same audit at HEAD, no draft block)
+revision 14b1682b1128d2e41085ebc79c9addeb8786d420 | rules 14 | citations 55 | resolved 54 | dead 0 | form_flags 1
+  FORM  SCORECARD.md:544-545 (bare_line_into_in_place_target) rule_line=207 stamp=False anchor=False
+
+## FIDELITY CHECK A — does the landed entry contain the numbers EX-01 attributes to it?
+NO MATCH (the entry never recorded 8,316 B / f95c5a05…)
+git -S scan for that hash across all committed trees under corpus/knowledge:
+(empty = no commit ever carried it)
+
+entry line 7 (the payload's corpus citation anchor):
+recheck: `mkdir -p /var/tmp/cr2-recheck && TMPDIR=/var/tmp/cr2-recheck npx -y rea-agents@6.4.0 inspect-evm-interface /ho
+…(the recheck line; records no byte-identity)
+
+## FIDELITY CHECK B — does EX-12's patch artifact record its own bytes?
+0
+0 (no self-identity anywhere in the patch artifact)
+its step 4 declares:
+4. **Entry file identity.** `corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md`:
+   9,513 bytes, 32 lines, sha256
+   `a5119120ee6a6142b8be6e297e39c85e0464fb27761c6ee0e7cc7cf8a1d5e56b`.
+landed entry: 10,225 B / 33 lines / dd986f56… -> the stale block persists at HEAD
+
+## FIDELITY CHECK C — what caused the 8,316 -> 8,598 churn?
+43:hashes `f95c5a05…` — the patch text was revised after hashing (path-style edits
+(the recheck line is context in that diff — unchanged; the fix came at landing per F1)

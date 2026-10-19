@@ -1,0 +1,14 @@
+# RV-13 mid-edit crash reconstruction — 2026-10-19T12:12Z
+# observed 12:05:10Z during replay-attack.sh against the live file (revision unhashed, live-edited by EX-31):
+#   Traceback ... line 604, in cmd_verify / File ".../custody-pair.py", line 512, in verify_sets
+#   sha_pairs = [r for r in rows if r["sha_agree"] is not None]
+#   KeyError: 'sha_agree'   (exit 1, not the declared class)
+# reconstruction on a scratch copy with the setter line removed:
+  File "/var/tmp/rv13/no-shaagree.py", line 605, in cmd_verify
+    return verify_sets(a_sections, b_sections, str(args.receipt_a), b_name)
+  File "/var/tmp/rv13/no-shaagree.py", line 513, in verify_sets
+    sha_pairs = [r for r in rows if r["sha_agree"] is not None]
+                                    ~^^^^^^^^^^^^^
+KeyError: 'sha_agree'
+reconstruction exit=0
+# live file settled at 12:05:19Z: sha256 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa

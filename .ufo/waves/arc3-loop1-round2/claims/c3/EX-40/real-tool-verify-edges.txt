@@ -1,0 +1,46 @@
+=== verify-side edge measurements (2026-10-19T12:05:37Z) ===
+
+--- capture baseline (healthy) ---
+RECEIPT: pre.txt  sha256=c32c3b0cf2fd2a15268251808c39c578258796bb638dc046063ec31c27fa7b75
+SIDECAR: pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+exit=0
+
+--- V1: path removed -> verify --live (missing path) ---
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH target.conf: ABSENT  compared=0/11 moved=exists
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: ABSENT  paths=1  ABSENT=1  exit=13
+CUSTODY_PAIR_VERIFY: ABSENT paths=0/1 drift=1 exit=13
+exit=13
+
+--- V2: path restored, then replaced by dangling symlink -> verify --live ---
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH target.conf: CONTENT-DRIFT  compared=11/11 moved=sha256
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=1  CONTENT-DRIFT=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+exit=10
+
+--- V3: path restored as regular, rewritten same content in place -> verify --live ---
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH target.conf: REWRITE-DRIFT  compared=11/11 moved=inode,mtime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+exit=11  (expect 11 REWRITE-DRIFT: same bytes, new inode)
+
+--- V4: chmod 000 then verify --live (unreadable shape, verify side) ---
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'target.conf'
+exit=1

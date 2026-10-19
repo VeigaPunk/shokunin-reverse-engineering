@@ -1,0 +1,24 @@
+438c438
+<     out, counts, filelines = {}, {}, {}
+---
+>     out, counts, filelines, unreadable = {}, {}, {}, []
+442c442,443
+<         except OSError:
+---
+>         except OSError as ex:
+>             unreadable.append("%s: %s" % (f, type(ex).__name__))
+453c454
+<     g2_ok = len(out.get("current-ok", [])) > 0 or (not stale and not unatt and not undecl and not unres)
+---
+>     g2_ok = len(out.get("current-ok", [])) > 0
+455c456
+<          and (not g11) and g2_ok
+---
+>          and (not g11) and g2_ok and (not unreadable)
+479a481
+>     print("UNREADABLE (could-not-evaluate): %r" % unreadable)
+481c483,484
+<     print("G2 positive-assertion guard: %s" % ("ok" if g2_ok else "SUSPECT"))
+---
+>     print("G2 positive-assertion guard: %s (current-ok loci=%d, total loci=%d)" %
+>           ("ok" if g2_ok else "SUSPECT", len(out.get("current-ok", [])), sum(c["loci"] for c in counts.values())))

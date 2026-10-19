@@ -1,0 +1,28 @@
+# EX-03 evidence B (v2, corrected labels) — instrument blindness to a stale self-identity
+# capture-utc: 2026-10-19T12:09:38Z
+# HEAD: 14b1682b1128d2e41085ebc79c9addeb8786d420
+# census instrument at capture: 82fb807e79963f6d… 560 lines
+
+## CONTROL: clean scratch copy (git archive HEAD, no edits)
+$ python3 .ufo/gates/c1-census-v10.py --root /var/tmp/ex03/repo-clean
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci=5, total loci=17, floor=1)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+exit=0
+
+## TREATMENT: same copy + one appended STALE self-identity claim (declares 9,513 B/32 lines/a5119120…; actual 10,375 B/e24697a6…)
+$ python3 .ufo/gates/c1-census-v10.py --root /var/tmp/ex03/repo-stale
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci=5, total loci=17, floor=1)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+exit=0
+
+## the purpose-built probe detects the same artifact
+{"blocks_lines_mismatch": 1, "blocks_size_mismatch": 1, "files_scanned": 83, "files_with_identity_block": 1, "files_with_self_bound_sha": 0, "identity_blocks_total": 1}
+  /var/tmp/ex03/repo-stale/corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md size=10375 lines=35 own=e24697a64591 self_bound=[] blocks=1 FIRST_BLOCK@35 size_ok=False lines_ok=False

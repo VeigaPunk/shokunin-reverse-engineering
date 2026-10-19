@@ -1,0 +1,11 @@
+--- /var/tmp/rv3-mutation/landed/landed.py	2026-10-19 09:20:05.072612649 -0300
++++ /var/tmp/rv3-mutation/landed/mut/mutant-m-h3.py	2026-10-19 09:20:05.085976640 -0300
+@@ -563,7 +563,7 @@
+                 if d["disp"] == "current-ok":
+                     floor[rec["file"]] += 1
+     h3_ok = all(floor[f] > 0 for f in files if filelines[f] is not None)
+-    g2_ok = h3_ok
++    g2_ok = n_current_ok > 0 or (not stale and not unatt and not undecl and not unres)
+     declared = (["UNREADABLE"] if unreadable else []) + ([] if g2_ok else ["BLIND-INSTRUMENT"])
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \
+          and (not g11) and g2_ok and (not unreadable)

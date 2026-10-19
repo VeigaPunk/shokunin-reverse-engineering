@@ -1,0 +1,9 @@
+=== second-precision window raw ===
+(EXP1: 5 reps, in-place tamper+restore+touch -r inside one clock second)
+see attack-matrix.txt row A10_restore_bytes_plus_touch_r and this raw transcript:
+
+EXP1 (5 reps): sha_equal=true inode_equal=true mtime_equal=true in all 5;
+  v1-sha256+mtime surface: BLIND 5/5 ; v2 at whole-second precision: BLIND 5/5 ;
+  v2 at nanosecond precision: caught 5/5 (this is what custody-pair.py compares: CTIME_NS)
+  pre_ctime_sec == post_ctime_sec in all 5 (d_ns 337739..858154 inside the same second)
+EXP2 (attack delayed 1.2 s past the capture): v2sec=caught, v2ns=caught.

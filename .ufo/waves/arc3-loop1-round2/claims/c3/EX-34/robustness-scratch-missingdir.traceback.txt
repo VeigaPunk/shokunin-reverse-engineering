@@ -1,0 +1,14 @@
+# EX-34 robustness probe — `selftest --scratch <non-existent dir>` (measured 2026-10-19 ~12:05Z)
+# command: python3 .ufo/gates/custody-pair/custody-pair.py selftest --scratch /var/tmp/ex34/scratch-missing
+# observed: raw traceback, exit code 1 (NOT the declared USAGE exit 2); scratch dir was not created.
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 887, in <module>
+    sys.exit(main())
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 883, in main
+    return args.func(args)
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 628, in cmd_selftest
+    root = Path(tempfile.mkdtemp(prefix="custody-pair-selftest-", dir=str(base)))
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [Errno 2] No such file or directory: '/var/tmp/ex34/scratch-missing/custody-pair-selftest-v8zmoqtp'
+# control: same command with an EXISTING scratch dir -> CUSTODY_PAIR_SELFTEST: CLEAN cases=15 passed=15 failed=0 exit=0

@@ -1,0 +1,124 @@
+"""C1 census v10 — v9 (sha256 213fe679…) re-keyed per arc2-loop1-round4 Z1 section 4d.
+
+E22 DISPOSITION — arc3-loop1-round1, EX-28 (measured 2026-10-19 at HEAD
+e845c2b; instrument sha256 before this edit 36e96cd5…). The arc2-loop1-round3
+carried debt "census scope-table drift (FAIL undeclared=2 at 766-line HEAD vs
+PASS at 701-line b21c0da — re-key or retire next calibration round)"
+(SCORECARD.md:850-852) is DISCHARGED AT HEAD BY RE-KEY. Nothing retired.
+
+  Finding does not reproduce. v10 reads PASS 0/0/0/0 (scope-errors [], g11 [])
+  at 1336-line HEAD; four independent captures (EX-26 / EX-30 / SC-6 / RV-11)
+  share one digest 3b677b8e…; the two blocks UNDECLARED under v9 (:731-737,
+  :747-766) now sit inside the round-2 row and read current-ok. v9 stays red
+  at HEAD by construction (RV-11: v9@HEAD FAIL undeclared=2, marker absent
+  at :635).
+
+  One stale row at HEAD, re-keyed here. ("PROVINCE.md", 45, 62, DATED) named
+  marker line 40 — the table intro, which lies OUTSIDE its own range. G15
+  checked only that the named line carried the marker, so a DATED row could
+  date itself by another row's line and the drift stayed invisible. Re-keyed
+  to line 45, which carries the row's own dated receipt text ("2026-10-13
+  receipt"); G18 now asserts marker_line in [start, end] for every DATED row,
+  so the class cannot recur silently. The re-key is range-neutral: CR-5's
+  creep differ (scope-diff.py) flags no signature — no row added, no DATED
+  bound widened, no CURRENT->DATED flip, no open-ended bound.
+
+  Refused, each with cause measured rather than asserted:
+   - Tail expansion. Declaring SCORECARD.md:856-1336 (rounds 4-10 records) as
+     DATED is fail-OPEN: a planted `rea-agents@6.3.0` inside a DATED range
+     reads "historical (dated scope)" and the run returns PASS exit 0 (CR-5
+     t5-dated-shelter / widen-swallow; replicated by EX-28). The fixed bound
+     is kept instead: a locus past :855 reads UNDECLARED -> FAIL exit 1
+     (CR-5 t2/t6; EX-28 fixture). Round 4 refused the same laundering path
+     (Z1 §4d; SCORECARD.md:908).
+   - Retiring the capability-table rows :619/:620. Measured: retired -> the
+     :620 locus reads UNDECLARED (FAIL); re-keyed CURRENT -> AMBIGUOUS (FAIL).
+     Each row records a capability demonstrated in a named past round, so
+     DATED is its correct class; G16 keeps a live value inside them current-ok.
+   - Re-classing any CURRENT row to DATED: refused as creep, no measurement
+     needed (a CURRENT surface must stay reconciled).
+
+  Standing rule for records commits (round-3/round-4 precedent): text appended
+  past the declared bound must be locus-free in this instrument's unit — no
+  `rea-agents@x.y.z`, no bare `6.x.y`, no `~`- or `/`-absolute `path:line` —
+  or the bound must be re-keyed in the same commit as a DATED row whose marker
+  line carries that section's own date/round token."""
+#!/usr/bin/env python3
+"""C1 stale-statement census instrument v9 (E22, arc2-loop1-round2) — FINAL.
+
+Claim under test (C1): after the round's commit, every current-surface
+version/pin statement in PROVINCE.md / SKILL.md / SCORECARD.md states a
+per-surface resolved value backed by a 2026-10-18 receipt (config grep,
+package.json census) or is explicitly marked historical; stale Kimi-pin
+statements N -> 0; no availability->holding inference (configured != held).
+
+STRUCTURE (three layers, each independently falsifiable)
+  L1 SCOPE     an explicit declared table of file:line ranges, each classed
+               CURRENT (live state, must be reconciled) or DATED (record of a
+               past verification, historical by construction). Every DATED
+               range declares the marker that makes it historical, and the
+               instrument ASSERTS that marker is present (marker assertion)
+               AND that its line lies inside the range it dates (G18) -- a row
+               that names a line in another row's range dates nothing.
+               A locus inside no declared range is UNDECLARED and fails the
+               run -- so file growth can never silently shrink the census
+               (CR5's "silent skip" lesson).
+  L2 ANCHORS   live anchors re-derived on every run: configured pins by grep
+               of the three client configs; cache identities by package.json;
+               config pointers by resolving path:line in the live file. No
+               constant is baked in, so a drift re-anchors the instrument.
+  L3 ASSERT    four assertion families (pin / bare version / cache identity /
+               pointer) with per-occurrence clause attribution.
+
+DEFECT CLASSES REPAIRED
+  G1  case-insensitive needles            (CR5 variant A false PASS)
+  G2  positive-assertion guard            (CR5 variants B/H silent clean)
+  G3  no partition, no post-marker exon   (CR5 variant H escape hatch)
+  G4  wide statement vocabulary           (CR5 variant I vocabulary hole)
+  G5  live anchors re-derived             (nothing constant baked in)
+  G6  every locus declared or UNDECLARED  (no silent skip)
+  G7  configured != held guard
+  G8  prose folding                       (value and client name on different
+                                           physical lines of one paragraph)
+  G9  nearest-PRECEDING attribution       (a trailing client name is a lead-in
+                                           for the next statement, never the
+                                           owner of the preceding value)
+  G10 per-assertion physical line         (no block-level collapse)
+  G11 receipt-backing requirement         (a current-ok locus must sit in a
+                                           block carrying receipt language)
+  G12 line-scoped inline markers          (a marker elsewhere in a folded
+                                           block must not excuse the line)
+  G13 bare-version needle made safe       (`(?<![\\d.])`; bare versions are
+                                           collected even when the block also
+                                           holds an @-pin)
+  G14 clause-local attribution, else AMBIGUOUS (a CURRENT locus whose clause
+                                           names no client is not guessed at)
+  G15 marker assertions                   (every DATED range must actually
+                                           carry its declared marker; a
+                                           stripped marker is SCOPE-ERROR)
+  G16 live-match outranks scope           (a value equal to the live anchor is
+                                           current-ok even inside a DATED
+                                           section, so a dated section can
+                                           neither shelter a false live claim
+                                           nor hide a true one; v8 reported a
+                                           current-ok locus as 'historical')
+  G17 version-intrinsic clause class      (a bare version whose clause names no
+                                           client but describes version-
+                                           intrinsic behaviour -- doctor /
+                                           skill / expects -- is verified
+                                           against the package.json census of
+                                           a cache for that version instead of
+                                           being dumped in AMBIGUOUS)
+  G18 marker line inside its own range    (the marker assertion checked only
+                                           that the NAMED line carried the
+                                           marker, so a DATED row could date
+                                           itself by a line in another row's
+                                           range -- the stale-row class EX-28
+                                           found at HEAD, PROVINCE.md 45-62
+                                           naming :40; now a SCOPE-ERROR)
+
+Verdict: PASS iff stale == 0 AND ambiguous == 0 AND undeclared == 0
+AND unresolved == 0 AND scope_errors == 0 AND g11 == [] AND G2 holds.
+Exit 0 PASS, 1 FAIL, 2 anchor failure.
+Usage: python3 c1-census-v9.py [--root DIR] [--json] [--quiet]
+"""

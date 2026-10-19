@@ -1,0 +1,52 @@
+== C1 EX-26 sums-v1 (round-1) vs live ==
+A format: sums-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv11-review/v1-receipts/custody-sha256.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH-V1-PARTIAL  compared=1/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH-V1-PARTIAL  compared=1/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH-V1-PARTIAL  compared=1/11
+PATH /home/vgpnk/.bashrc: MATCH-V1-PARTIAL  compared=1/11
+PATH /home/vgpnk/.profile: MATCH-V1-PARTIAL  compared=1/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=5  MATCH-V1-PARTIAL=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=5/5 drift=0 exit=0
+exit=0
+
+== C2 CU-1 stanza-v1 (round-1 canonical) vs live, host TZ ==
+    LABEL-DEFECT: MTIME_UTC says '2026-10-18 23:20:43' = localtime(epoch 1792376443); gmtime(epoch) is '2026-10-19 02:20:43'
+PATH /home/vgpnk/.bashrc: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-16 13:33:16' = localtime(epoch 1792168396); gmtime(epoch) is '2026-10-16 16:33:16'
+PATH /home/vgpnk/.profile: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-15 03:12:07' = localtime(epoch 1792044727); gmtime(epoch) is '2026-10-15 06:12:07'
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=5  METADATA-DRIFT=5  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/5 drift=5 exit=12
+exit=12
+
+== C2b same receipt, TZ=UTC (verifier-TZ dependence) ==
+PATH /home/vgpnk/.profile: MATCH-V1-PARTIAL  compared=5/11
+    note: MTIME_UTC '2026-10-15 03:12:07' matches neither gmtime nor localtime(epoch 1792044727)
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=5  MATCH-V1-PARTIAL=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=5/5 drift=0 exit=0
+exit=0
+
+== C2c same receipt, TZ=Asia/Tokyo ==
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=5  MATCH-V1-PARTIAL=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=5/5 drift=0 exit=0
+exit=0
+
+== A8 round-1 cross pipe metadata vs live ==
+    LABEL-DEFECT: CTIME_UTC says '2026-10-15 03:12:07' = localtime(epoch 1792044727); gmtime(epoch) is '2026-10-15 06:12:07'
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=5  METADATA-DRIFT=5  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/5 drift=5 exit=12
+exit=12
+
+== pair T0 vs T1 (live pre/post) ==
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+exit=0

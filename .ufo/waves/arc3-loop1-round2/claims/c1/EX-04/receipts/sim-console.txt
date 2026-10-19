@@ -1,0 +1,147 @@
+
+##### T0 fresh sim tree from lane HEAD #####
+
+##### T0 baseline: tree identity #####
+483b0eba27458c138fdbe760d83a33f0da54b251ec028f033d83a5ae3d0175eb  /dev/shm/ex04/sim/SKILL.md
+4e3ba4d2f414ded89d74ccd9849cb0b5857f61e504179691250637a3f6a618c8  /dev/shm/ex04/sim/SHONEN.md
+  371 /dev/shm/ex04/sim/SKILL.md
+   12 /dev/shm/ex04/sim/SHONEN.md
+  383 total
+e4cfb391adff5496348e24b3d9e6268c43cbba16
+
+##### T0 checker (expect FAIL: stated end 243 vs last rule 239) #####
+POINTER_TRUTH A1-start             PASS stated=81 true=81
+POINTER_TRUTH A2-end               FAIL stated=243 last_rule=239 next_heading=242
+POINTER_TRUTH A3-count             PASS stated=13/13 counted=13
+POINTER_TRUTH A4-newest-in-range   PASS newest_rule_line=233 phrase='- **A mitigation claim carries its natur'
+POINTER_TRUTH_VERDICT: FAIL (failed=A2-end)
+
+##### T0 command A (expect 13/13, 82/82, 10.0/10.0) #####
+{"citation_resolved_rules": 13, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "HEAD", "rule_blocks": 13}
+
+##### T0 committed probe run (expect clean findings=0) #####
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex04/sim/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+
+##### T1 insert block A (representative rule #14 shape) via EX-05 harness #####
+8 /dev/shm/ex04/blockA.md
+before_sha256=483b0eba27458c138fdbe760d83a33f0da54b251ec028f033d83a5ae3d0175eb after_sha256=cd39bfb5debca0f5d58991bce94d5304132072a4c6e78a6fe48f97a2f7259e82 added_lines=9
+f11a62ecb2cdcc3aea4a33a610160956451abfb1
+380 /dev/shm/ex04/sim/SKILL.md
+
+##### T1 geometry after insert #####
+start 81 next_heading 251 last_rule_line 249 blocks 14
+rule14_span 242 249
+
+##### T1 checker (expect FAIL: end + count) #####
+POINTER_TRUTH A1-start             PASS stated=81 true=81
+POINTER_TRUTH A2-end               FAIL stated=243 last_rule=249 next_heading=251
+POINTER_TRUTH A3-count             FAIL stated=13/13 counted=14
+POINTER_TRUTH A4-newest-in-range   PASS newest_rule_line=242 phrase='- **An artifact that records its own byt'
+POINTER_TRUTH_VERDICT: FAIL (failed=A2-end,A3-count)
+
+##### T1 command A (expect 14/14) #####
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "HEAD", "rule_blocks": 14}
+
+##### T1 probe, committed (content-anywhere) table: expect CLEAN = silent pass #####
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex04/sim/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+
+##### T1 probe, E16-style end-anchored scratch table (needle re-anchored to rule #14 tail) #####
+wrote /dev/shm/ex04/table-enda.json 1ba3798ac93cef256863a91960728023ee30ea97a2bd28744e530ef14c6e4dda
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex04/table-enda.json
+CITATION_DRIFT: citation_dead entry=shonen-skill-range SHONEN.md:6 cites SKILL.md:81-243, which lacks 'An artifact that records its own byte-identity[\\' (holds '## Queue-drain craft (rounds 5-12, distilled in round 13)')
+CITATION_DRIFT_VERDICT: failed findings=1 exit=1
+
+##### T2 apply the pointer-refresh patch text to SHONEN.md (end = last rule line, 14/14) #####
+OLD:   asserted: `SKILL.md:81-243` (craft section; rules #11-13 added arc2 rounds 4/7/9); 13/13 rule blocks have resolvable citations, not a full semantic audit — `SCORECARD.md`, command A; no identified outside verifier.
+NEW:   asserted: `SKILL.md:81-249` (craft section; rules #11-14 added arc2 rounds 4/7/9 + arc3-loop1-round2); 14/14 rule blocks have resolvable citations, not a full semantic audit — `SCORECARD.md`, command A; no identified outside verifier.
+shonen_md_sha256_after d13494d408955bf568b165e31b1f388ed219e011c4a648df95b61319cbb4f737
+shonen_lines_after 12
+4130867854b8ccecd55fdbc4c1dcd7af1d489fda
+commit 4130867854b8ccecd55fdbc4c1dcd7af1d489fda
+Author: EX-04 <ex04@shokunin.local>
+
+    sim T2: SHONEN pointer refresh
+
+ SHONEN.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+##### T2 checker (expect PASS) #####
+POINTER_TRUTH A1-start             PASS stated=81 true=81
+POINTER_TRUTH A2-end               PASS stated=249 last_rule=249 next_heading=251
+POINTER_TRUTH A3-count             PASS stated=14/14 counted=14
+POINTER_TRUTH A4-newest-in-range   PASS newest_rule_line=242 phrase='- **An artifact that records its own byt'
+POINTER_TRUTH_VERDICT: PASS (failed=none)
+
+##### T2 command A (expect 14/14 unchanged) #####
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "HEAD", "rule_blocks": 14}
+
+##### T2 probe committed table (expect clean) #####
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex04/sim/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+
+##### T2 probe end-anchored table (expect clean now) #####
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /dev/shm/ex04/table-enda.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+
+##### T3 sensitivity: short block (3 lines) in a fresh scratch repo #####
+before_sha256=483b0eba27458c138fdbe760d83a33f0da54b251ec028f033d83a5ae3d0175eb after_sha256=ed4884fa565ea319fb330f0a4c9815ba28761cae8ce19b01a27cdcc2ee6fe693 added_lines=3
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "HEAD", "rule_blocks": 14}
+A-8line: heading=81 next_heading=251 last_rule_line=249 -> SHONEN end must be 249
+B-3line: heading=81 next_heading=245 last_rule_line=243 -> SHONEN end must be 243
+
+##### T4 the instantiated refresh diff, and its applicability at an unrefreshed post-append tree #####
+diff --git a/SHONEN.md b/SHONEN.md
+index e3a5d37..9341bde 100644
+--- a/SHONEN.md
++++ b/SHONEN.md
+@@ -3,7 +3,7 @@
+ Promotion to shokunin requires all of:
+ 
+ - [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources
+-  asserted: `SKILL.md:81-243` (craft section; rules #11-13 added arc2 rounds 4/7/9); 13/13 rule blocks have resolvable citations, not a full semantic audit — `SCORECARD.md`, command A; no identified outside verifier.
++  asserted: `SKILL.md:81-249` (craft section; rules #11-14 added arc2 rounds 4/7/9 + arc3-loop1-round2); 14/14 rule blocks have resolvable citations, not a full semantic audit — `SCORECARD.md`, command A; no identified outside verifier.
+ - [~] At least one end-to-end domain task executed and logged in LOG.md
+   asserted: 2026-10-15 libjq open → instruction decode → export → close, `corpus/lessons/2026-10-15-round-1.md`, Executed native smoke; complete record at `evidence/round-1-2026-10-15/rea-bundle.json`; no identified outside verifier.
+ - [~] Instructions executable by an agent without oral context
+APPLY-CHECK: OK at sim2 (rule appended, SHONEN unrefreshed)
+
+##### T5 receipt inventory #####
+1df6f51001079ba3f4ec4dac96f18e63030d04e96f866aec1de827140b534333  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/craft-pointer-truth.py
+0a5e77df318ad21f731bc19f7f6fb25b8c6aade6f8a3d9ffa7a2381303ed3c7e  /dev/shm/ex04/blockA.md
+baf6c7cf60cc3177709218a47c972a77ab897d56f6edf1832f3872caf96d3604  /dev/shm/ex04/blockB.md
+c47eb099b9bb0aea65bf2edad43613aee5e848c3a9ff8eb344c9a42f84a29a69  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/shonen-refresh-example.patch
+a0c2d468cb26976d560b7c3103633fbc8db737ff961a46573928a8607c3ba319  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/attackF-probe-r10literal-on-correct-range.txt
+487bfa600e734a635f7e9f256da2e03e174d49d1a6a4ea9dcc8270a6b6619301  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/enumeration-nonwave.txt
+b3967d25b5ed0a7ab987ba2f9d0ea3c598feac40f55c8b30afbb1dacff8b6927  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t0-checker.txt
+96b19ffcf7aeaac1a1e29840a299f21c2614b50ef2a668381f52e227b2b74815  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t0-probe.txt
+01f83e84dabe2a3c1ede2f424aa681639819e262754cc14b1f71d8d10dfac6fb  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t0-tree-sha.txt
+76626565b16deaaf07b107c64b8a62946906c073ad6b24329e4a23976458ae64  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t1-blockA.txt
+33c3ade551495101cf592abf2f367e18a78884f830e7d1acb80aa43ce26bcbeb  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t1-checker-stale.txt
+c26697a3673eb9ccacabdfec04ca404dcacc9b7a97e14773901181e95d8ba5d9  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t1-geometry.txt
+96b19ffcf7aeaac1a1e29840a299f21c2614b50ef2a668381f52e227b2b74815  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t1-probe-committed.txt
+6fa993f984eed03aab0f4a635220b9d55a59fa068719a5198516265a554bc91c  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t1-probe-enda.txt
+3d43479d6609cc31fef8cb6003ed4cadc33f2960e562d3879662cf6412ea20a1  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t2-checker.txt
+96b19ffcf7aeaac1a1e29840a299f21c2614b50ef2a668381f52e227b2b74815  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t2-probe-committed.txt
+f8b317b32b66165190cb97018ca3f297c274432bdc78bb63d14ed159f83874ee  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t2-probe-enda.txt
+3b34265eee6e709141cfdf82faade8ff700d8dd3727878211459e55ba037ddff  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t2-refresh.txt
+5e42b2fa47e6dea976b331c29cf1a461ae3084ff01d7fbeff490afc48c076032  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t3-blockB.txt
+30b993e3cf5a005b8188184b0bb038fab251ee7214494796dd271238983f6b03  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t3-geometry.txt
+b54d7d8bb7ae2e3a970314ebb5be7eb2dca8b267ebc6c1d3558bf2cafad27e7f  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t4-apply-check.txt
+c47eb099b9bb0aea65bf2edad43613aee5e848c3a9ff8eb344c9a42f84a29a69  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t4-diff.txt
+2119164cdea15de7a992f43c80d8bd58ee63584d9aa47c347cb790ed7714235d  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t0-commandA.json
+be6eaf77a66d2267dc4d007bebb7931564d1557b368d4a25310a02be6ed6ec36  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t1-commandA.json
+be6eaf77a66d2267dc4d007bebb7931564d1557b368d4a25310a02be6ed6ec36  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c1/EX-04/receipts/t2-commandA.json
+
+##### DONE #####

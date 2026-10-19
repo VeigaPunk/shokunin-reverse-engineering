@@ -1,0 +1,41 @@
+# RV-4 artifact digests (sha256), 2026-10-19
+
+tested instruments:
+  HEAD pre-patch  .ufo/gates/c1-census-v10.py = 6f1d19ff4b0878adfcdf0e38523aa79db461e74942eaafc018036a504163cc8b
+  EX-16 landed    .ufo/gates/c1-census-v10.py = 82fb807e79963f6dc6b9d055ab7378464b3636adfb498e5b615393f5f47c57aa (560 lines, mtime 09:06:50 -0300)
+
+## instruments/ (H3 patch applied to HEAD 6f1d19ff; *-nog2 = floor reverted)
+6f1d19ff4b0878adfcdf0e38523aa79db461e74942eaafc018036a504163cc8b  instruments/instr-head.py
+715a4659b6f9a75c0e89c154cecf24851668686f12ec34c99752abeeeeafa611  instruments/instr-h3.py
+88ff795b7366184e7c734efd95dc7ca369d03bfd454d8f08d9d64352100b75d8  instruments/instr-h3-nog2.py
+444be11f4beb63ed58e58c6a479521223fda7bd7973bdcc1bc4af3cb18458b12  instruments/instr-h3-neut.py
+4307364575756e980b56467861726c9d4b3d0987a70fedc75078024ec6360d91  instruments/instr-h3-nog2-neut.py
+60ba02a506f4f1704ac080c133420fd5ccfb43670fd5a979426aaf033a18e210  instruments/instr-h3-gate.py
+4ace7e6f6f50fc52a060793b8d27f2dbc157cbe73b3ec4310fe5613980553b2d  instruments/instr-h3-nog2-gate.py
+c0b077cf061f35b745bff81e31610bedefb4cd0db242fa0fe07c1fd5085b18a8  instruments/h3-patch.diff
+027fe8574ff58292d3c23e3628cf722180f361fde5d447623808eab8a1c37e10  instruments/mutation.diff
+
+## instruments/real-target/ (EX-16 landed 82fb807e; *-nog2 = floor reverted)
+82fb807e79963f6dc6b9d055ab7378464b3636adfb498e5b615393f5f47c57aa  instruments/real-target/landed82fb807e.py
+829acc0906a2913e35bfc7a026a28726a6a6d21ae57300e067c19d8fb1e22739  instruments/real-target/landed82fb807e-nog2.py
+2f5b0a8b31cff289f4c70717ea98b13cc344d8821ba0a871d745c79d76d0d120  instruments/real-target/landed82fb807e-neut.py
+650c76f34f22fbeb216dbd5d51a014d917faac418192df47c846f3f61318f070  instruments/real-target/landed82fb807e-nog2-neut.py
+91c624e8b64f85bb95bfdb2914ab35cc346f3550fa2bd68db32beebcdeb27280  instruments/real-target/landed82fb807e-gate.py
+6c3e4527f68f6007ed8aeaed3fc1a07c16001a8123f9edd30fec73efb25275d5  instruments/real-target/landed82fb807e-nog2-gate.py
+5c4cfeb0934ba420e460eb3eb2f711779df84af90114c6c8ed657566da189660  instruments/real-target/mutation-landed.diff
+
+## receipts/real-target/ (live-root runs)
+89435bb16d8839c9eaef0e9a6f7478f3b7bd8f15c3b34a835feb2f95ba166cc8  receipts/real-target/landed82fb807e-gate.out
+da66863c9f4e8c06b6599a0409cf0fefb1e435d29d2a81cbdcd758fb2dc8ece9  receipts/real-target/landed82fb807e-json.out
+96db060b5290ef8fce9eebced4da10a321b3a4a737bce284e606185db5f0c2a8  receipts/real-target/landed82fb807e-neut-json.out
+89435bb16d8839c9eaef0e9a6f7478f3b7bd8f15c3b34a835feb2f95ba166cc8  receipts/real-target/landed82fb807e-neut.out
+89435bb16d8839c9eaef0e9a6f7478f3b7bd8f15c3b34a835feb2f95ba166cc8  receipts/real-target/landed82fb807e-neut.rerun.out
+19207e51cd2cfdbecaae4e9c029a0375307029307d93c8d0ec6a1ec189cc2d98  receipts/real-target/landed82fb807e-nog2-gate.out
+3cc1cd22799080f5153d1a3aabb1b9583ea34dcd53ec951a5a93a90d6d1e6e3c  receipts/real-target/landed82fb807e-nog2-neut-json.out
+19207e51cd2cfdbecaae4e9c029a0375307029307d93c8d0ec6a1ec189cc2d98  receipts/real-target/landed82fb807e-nog2-neut.out
+19207e51cd2cfdbecaae4e9c029a0375307029307d93c8d0ec6a1ec189cc2d98  receipts/real-target/landed82fb807e-nog2-neut.rerun.out
+a9cd688690fd6b668fa7633a609193d39efb14d331034a0bdb90ccd32421c6e7  receipts/real-target/landed82fb807e-nog2.out
+a9cd688690fd6b668fa7633a609193d39efb14d331034a0bdb90ccd32421c6e7  receipts/real-target/landed82fb807e-nog2.rerun.out
+a9cd688690fd6b668fa7633a609193d39efb14d331034a0bdb90ccd32421c6e7  receipts/real-target/landed82fb807e.out
+a9cd688690fd6b668fa7633a609193d39efb14d331034a0bdb90ccd32421c6e7  receipts/real-target/landed82fb807e.rerun.out
+70572d2acc35d3318cf2a7413e13a6de76b229925902e82cd97c86f5e9de8110  receipts/real-target/REAL-TARGET-MATRIX.txt

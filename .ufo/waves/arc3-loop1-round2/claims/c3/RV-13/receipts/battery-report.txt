@@ -1,0 +1,134 @@
+# RV-13 field-isolation battery  2026-10-19T12:03:01Z
+# subject stand-in sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568
+# verifier: /var/tmp/rv13/custody_v2_proto.py
+
+=== F0a-untouched ===
+-- post state: size=4117 inode=10964494 mtime=1792411381 mtime_ns=2026-10-19 09:03:01.845094139 -0300 ctime=1792411381 ctime_ns=2026-10-19 09:03:01.847700919 -0300 mode=644
+-- sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568
+-- verify-shasum-only exit=0
+     OK /var/tmp/rv13/scratch/F0a-untouched/subject.conf [v1 sha256-only]
+     VERDICT: PASS
+-- verify-seconds     exit=0
+     OK /var/tmp/rv13/scratch/F0a-untouched/subject.conf [v2-seconds-granularity]
+     VERDICT: PASS
+-- verify             exit=0
+     OK /var/tmp/rv13/scratch/F0a-untouched/subject.conf [v2+ns]
+     VERDICT: PASS
+
+=== F0b-atime-only ===
+-- post state: size=4117 inode=10964497 mtime=1792411381 mtime_ns=2026-10-19 09:03:01.845094139 -0300 ctime=1792411381 ctime_ns=2026-10-19 09:03:01.885495445 -0300 mode=644
+-- sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568
+-- verify-shasum-only exit=0
+     OK /var/tmp/rv13/scratch/F0b-atime-only/subject.conf [v1 sha256-only]
+     VERDICT: PASS
+-- verify-seconds     exit=0
+     OK /var/tmp/rv13/scratch/F0b-atime-only/subject.conf [v2-seconds-granularity]
+     VERDICT: PASS
+-- verify             exit=0
+     OK /var/tmp/rv13/scratch/F0b-atime-only/subject.conf [v2+ns]
+     VERDICT: PASS
+
+-- pre_mtime=1792411381 (unchanged by design in F1)
+=== F1-inplace-same-content ===
+-- post state: size=4117 inode=10964500 mtime=1792411381 mtime_ns=2026-10-19 09:03:01.931657781 -0300 ctime=1792411381 ctime_ns=2026-10-19 09:03:01.931657781 -0300 mode=644
+-- sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568
+-- verify-shasum-only exit=0
+     OK /var/tmp/rv13/scratch/F1-inplace-same-content/subject.conf [v1 sha256-only]
+     VERDICT: PASS
+-- verify-seconds     exit=0
+     OK /var/tmp/rv13/scratch/F1-inplace-same-content/subject.conf [v2-seconds-granularity]
+     VERDICT: PASS
+-- verify             exit=1
+     MISMATCH /var/tmp/rv13/scratch/F1-inplace-same-content/subject.conf [v2+ns]
+         moved mtime_ns: 1792411381845094139 -> 1792411381931657781
+         moved ctime_ns: 1792411381923690749 -> 1792411381931657781
+     VERDICT: FAIL
+
+-- restored mtime epoch 1792411381; pre-receipt mtime_epoch = MTIME_EPOCH: 1792411381
+=== F2-inplace-mtime-restored ===
+-- post state: size=4117 inode=10964503 mtime=1792411381 mtime_ns=2026-10-19 09:03:01.000000000 -0300 ctime=1792411381 ctime_ns=2026-10-19 09:03:01.969657724 -0300 mode=644
+-- sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568
+-- verify-shasum-only exit=0
+     OK /var/tmp/rv13/scratch/F2-inplace-mtime-restored/subject.conf [v1 sha256-only]
+     VERDICT: PASS
+-- verify-seconds     exit=0
+     OK /var/tmp/rv13/scratch/F2-inplace-mtime-restored/subject.conf [v2-seconds-granularity]
+     VERDICT: PASS
+-- verify             exit=1
+     MISMATCH /var/tmp/rv13/scratch/F2-inplace-mtime-restored/subject.conf [v2+ns]
+         moved mtime_ns: 1792411381845094139 -> 1792411381000000000
+         moved ctime_ns: 1792411381960961797 -> 1792411381969657724
+     VERDICT: FAIL
+
+-- pre inode=10964506 mtime=1792411381
+=== F3-replace-new-inode ===
+-- post state: size=4117 inode=10964508 mtime=1792411381 mtime_ns=2026-10-19 09:03:01.845094139 -0300 ctime=1792411382 ctime_ns=2026-10-19 09:03:02.009555879 -0300 mode=644
+-- sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568
+-- verify-shasum-only exit=0
+     OK /var/tmp/rv13/scratch/F3-replace-new-inode/subject.conf [v1 sha256-only]
+     VERDICT: PASS
+-- verify-seconds     exit=1
+     MISMATCH /var/tmp/rv13/scratch/F3-replace-new-inode/subject.conf [v2-seconds-granularity]
+         moved ctime_epoch: 1792411381 -> 1792411382
+         moved inode: 10964506 -> 10964508
+     VERDICT: FAIL
+-- verify             exit=1
+     MISMATCH /var/tmp/rv13/scratch/F3-replace-new-inode/subject.conf [v2+ns]
+         moved ctime_epoch: 1792411381 -> 1792411382
+         moved inode: 10964506 -> 10964508
+         moved ctime_ns: 1792411381999714159 -> 1792411382009555879
+     VERDICT: FAIL
+
+-- content appended 1 byte, mtime restored to 1792411381
+=== F4-content-change ===
+-- post state: size=4118 inode=10964510 mtime=1792411381 mtime_ns=2026-10-19 09:03:01.000000000 -0300 ctime=1792411382 ctime_ns=2026-10-19 09:03:02.046657607 -0300 mode=644
+-- sha256: 2022c5491cc238f3de4d91bd16d53a32434506e476c53e787c103bd7355d7f42
+-- verify-shasum-only exit=1
+     MISMATCH /var/tmp/rv13/scratch/F4-content-change/subject.conf [v1 sha256-only]
+         moved sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568 -> 2022c5491cc238f3de4d91bd16d53a32434506e476c53e787c103bd7355d7f42
+     VERDICT: FAIL
+-- verify-seconds     exit=1
+     MISMATCH /var/tmp/rv13/scratch/F4-content-change/subject.conf [v2-seconds-granularity]
+         moved size: 4117 -> 4118
+         moved sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568 -> 2022c5491cc238f3de4d91bd16d53a32434506e476c53e787c103bd7355d7f42
+     VERDICT: FAIL
+-- verify             exit=1
+     MISMATCH /var/tmp/rv13/scratch/F4-content-change/subject.conf [v2+ns]
+         moved size: 4117 -> 4118
+         moved sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568 -> 2022c5491cc238f3de4d91bd16d53a32434506e476c53e787c103bd7355d7f42
+         moved mtime_ns: 1792411381845094139 -> 1792411381000000000
+         moved ctime_ns: 1792411382038519331 -> 1792411382046657607
+     VERDICT: FAIL
+
+-- chmod 644 on an already-0o644 file
+=== F5-noop-chmod ===
+-- post state: size=4117 inode=10964513 mtime=1792411381 mtime_ns=2026-10-19 09:03:01.845094139 -0300 ctime=1792411382 ctime_ns=2026-10-19 09:03:02.085657548 -0300 mode=644
+-- sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568
+-- verify-shasum-only exit=0
+     OK /var/tmp/rv13/scratch/F5-noop-chmod/subject.conf [v1 sha256-only]
+     VERDICT: PASS
+-- verify-seconds     exit=0
+     OK /var/tmp/rv13/scratch/F5-noop-chmod/subject.conf [v2-seconds-granularity]
+     VERDICT: PASS
+-- verify             exit=1
+     MISMATCH /var/tmp/rv13/scratch/F5-noop-chmod/subject.conf [v2+ns]
+         moved ctime_ns: 1792411382077971710 -> 1792411382085657548
+     VERDICT: FAIL
+
+=== F6-hardlink-swap ===
+-- post state: size=4117 inode=10964518 mtime=1792411381 mtime_ns=2026-10-19 09:03:01.000000000 -0300 ctime=1792411382 ctime_ns=2026-10-19 09:03:02.122657491 -0300 mode=644
+-- sha256: 18bb92ae0353caa5dd99e94314793df67ce471069ca7a5356e2b11e6a517a568
+-- verify-shasum-only exit=0
+     OK /var/tmp/rv13/scratch/F6-hardlink-swap/subject.conf [v1 sha256-only]
+     VERDICT: PASS
+-- verify-seconds     exit=1
+     MISMATCH /var/tmp/rv13/scratch/F6-hardlink-swap/subject.conf [v2-seconds-granularity]
+         moved inode: 10964516 -> 10964518
+     VERDICT: FAIL
+-- verify             exit=1
+     MISMATCH /var/tmp/rv13/scratch/F6-hardlink-swap/subject.conf [v2+ns]
+         moved inode: 10964516 -> 10964518
+         moved mtime_ns: 1792411381845094139 -> 1792411381000000000
+         moved ctime_ns: 1792411382113515655 -> 1792411382122657491
+     VERDICT: FAIL
+

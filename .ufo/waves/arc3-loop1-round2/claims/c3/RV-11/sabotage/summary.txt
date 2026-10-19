@@ -1,0 +1,11 @@
+sabotage s1-neuter-rewrite exit=3
+case same-content-rewrite-inplace-ctime-pin     FAIL  (expected REWRITE-DRIFT exit 11, got 0)
+case same-content-rewrite-rename-inode-pin      FAIL  (expected REWRITE-DRIFT exit 11, got 0)
+CUSTODY_PAIR_SELFTEST: DIRTY cases=15 passed=13 failed=2 exit=3
+sabotage s2-utc->localtime exit=3
+case label-utc-render-tz-independent            FAIL  (MTIME_UTC_RENDER is TZ-dependent: {'UTC': '2026-10-14T20:53:20Z', 'UTC-3': '2026-10-14T23:53:20Z', 'UTC+5': '2026-10-14T15:53:20Z'})
+CUSTODY_PAIR_SELFTEST: DIRTY cases=15 passed=14 failed=1 exit=3
+sabotage s3-neuter-sha-compare exit=3
+case content-drift-detected                     FAIL  (expected CONTENT-DRIFT exit 10, got 11)
+case v1-stanza-compat-and-mutation              FAIL  (expected CONTENT-DRIFT exit 10, got 12)
+CUSTODY_PAIR_SELFTEST: DIRTY cases=15 passed=13 failed=2 exit=3

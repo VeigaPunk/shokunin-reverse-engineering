@@ -1,0 +1,18 @@
+== write-guard evasion via hardlink (scratch-only proof) — CLEAN RUN ==
+
+$ printf 'scratch custody bytes\n' > guarded.conf && ln guarded.conf alias.out
+$ sha256sum guarded.conf
+8af5b1d57c249f3980162cb8bb0e27559062b06d20a49ef6e0801c9611764de3  guarded.conf
+
+$ python3 custody-pair.py capture --out alias.out --paths guarded.conf --label hardlink-probe
+RECEIPT: alias.out  sha256=67e161eb60b9b02e891d2c3084445d400960b055e9b53567bcd406e7388eb977
+SIDECAR: alias.out.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=hardlink-probe exit=0
+exit=0
+
+$ sha256sum guarded.conf
+67e161eb60b9b02e891d2c3084445d400960b055e9b53567bcd406e7388eb977  guarded.conf
+$ head -1 guarded.conf
+# custody-pair receipt v2 — READ-ONLY capture (sha256 + stat); no bytes written
+
+guard code being tested (custody-pair.py:565): refuses only when out.resolve() is one of the 5 custody paths — a hardlink resolves to a different path, so the write lands on the shared inode.

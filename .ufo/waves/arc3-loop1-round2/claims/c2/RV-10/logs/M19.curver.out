@@ -1,0 +1,54 @@
+$ /usr/bin/python3 /var/tmp/rv10/tool/census-df9ffdf9-blindver.py --root /var/tmp/rv10/cases/M19
+EXIT=1
+--stderr--
+--stdout--
+live anchors (re-derived): {'devin': '6.5.0', 'omp': '6.5.0', 'kimi': '6.7.0'}
+PROVINCE.md    lines=162  loci=3
+SCORECARD.md   lines=1417 loci=3
+SKILL.md       lines=371  loci=2
+
+-- STALE (1) --
+  SCORECARD.md block 288-295 [scope DATED]
+      :288 [ptr] __ptr__=~/.config/devin/mcp_config.json:7 -> current-ok (pins 6.5.0)
+      :289 [ptr] __ptr__=~/.omp/agent/mcp.json:8 -> current-ok (pins 6.5.0)
+      :291 [ptr] __ptr__=~/.kimi-code/config.toml:1478 -> STALE (line holds no rea-agents pin: 'capabilities = [ "image_in", "always_thinking", "tool_use" ]')
+
+-- AMBIGUOUS (0) --
+
+-- UNDECLARED (0) --
+
+-- UNRESOLVED (0) --
+
+-- HISTORICAL (2) --
+  PROVINCE.md block 45-45 [scope DATED]
+      :45 [pin] None=6.4.0 -> historical (dated scope)
+  SKILL.md block 10-16 [scope CURRENT]
+      :12 [pin] None=6.4.0 -> historical (inline marker)
+
+-- CURRENT-OK (4) --
+  PROVINCE.md block 15-26 [scope CURRENT]
+      :16 [pin] devin=6.5.0 -> current-ok (matches live devin)
+      :17 [pin] omp=6.5.0 -> current-ok (matches live omp)
+      :18 [pin] kimi=6.7.0 -> current-ok (matches live kimi)
+  SCORECARD.md block 56-60 [scope CURRENT]
+      :59 [pin] kimi=6.7.0 -> current-ok (matches live kimi)
+  SCORECARD.md block 687-702 [scope DATED]
+      :699 [pin] None=6.7.0 -> current-ok (value equals a live anchor)
+  SKILL.md block 18-20 [scope CURRENT]
+      :19 [pin] devin=6.5.0 -> current-ok (matches live devin)
+      :19 [pin] omp=6.5.0 -> current-ok (matches live omp)
+      :20 [pin] kimi=6.7.0 -> current-ok (matches live kimi)
+
+-- INFO (1) --
+  PROVINCE.md block 8-13 [scope CURRENT]
+      :9 [pin] omp=6.5.0 -> current-ok (matches live omp)
+      :10 [pin] kimi=6.7.0 -> current-ok (matches live kimi)
+      :12 [pin] kimi=6.4.0 -> historical (inline marker)
+
+SCOPE-ERRORS (marker assertions): []
+UNREADABLE (could-not-evaluate): []
+G2 positive-assertion guard: ok (current-ok loci per file: PROVINCE.md=5, SCORECARD.md=4, SKILL.md=3; total loci=8; floor=1/file)
+G7 configured!=held warnings: []
+G11 current-ok without receipt language: []
+DECLARED FAIL CLASSES: []
+VERDICT: FAIL  (stale=1 ambiguous=0 undeclared=0 unresolved=0)

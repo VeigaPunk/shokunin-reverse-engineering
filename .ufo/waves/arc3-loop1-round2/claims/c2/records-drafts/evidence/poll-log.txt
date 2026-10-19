@@ -1,0 +1,70 @@
+# SC-3 poll log — arc3-loop1-round2 seats/claims observations
+
+Captures are cheap `find`/`ls` listings of the wave tree; times UTC. Purpose:
+know which C2 artifacts had landed when each draft revision was written, and
+fold in only receipted after-values.
+
+- 12:00Z wave tree at first look: `claims/c3/EX-34/` only (empty).
+- 12:02Z `claims/` now carries c1/c2/c3/cross subdirs; C2 artifacts present:
+  `c2/EX-11/tools/run-before-injections.py`; `c2/EX-17/{before-head.txt,
+  before-absent-skill.txt, before-empty-skill.txt, before-unreadable-skill.txt,
+  before-present-all.txt, poll-ex16.sh, run-fixture.sh}`;
+  `c2/EX-21/scope-audit.py`; `c2/RV-6/{before/c1-census-v10.py,
+  tools/scope-creep-audit.py, tools/creep-fixture-suite.py}`;
+  `c2/RV-8/{before/census-at-HEAD.out, before/census-sha256.txt,
+  before/census-header-stanza.txt, before/audit-control.out,
+  before/audit-negcontrol.out, header-class-audit.py}`.
+  Cross: `cross/CN-1/baseline/commandA-t0.txt`, `census-t0.json`;
+  `cross/VZ-4/{commandA-before.txt, custody-pre.txt, roster-census.py}`.
+  C1: `c1/EX-05/needle-scan.py`, `c1/SC-1/head-sha.txt`.
+- Seats dir empty at 12:02Z (no seat reports yet).
+
+Agreement at 12:01–12:02Z (three-plus independent captures): census sha
+`6f1d19ff…`, HEAD `14b1682`, verdict PASS 0/0/0/0, counts 162/6 + 1417/9 +
+371/2; command A 82/82 13/13 10.0/10.0; custody 5/5 with sha256s devin
+`16f496e6…`, omp `38d2a1d0…`, kimi `8cbacd48…`, bashrc `7d2ca28a…`, profile
+`6c6be761…`.
+
+- [[FILL: later polls — EX-16 landing (census sha change + after-matrix), other
+  C2 seat artifacts, seat reports]]
+
+- 12:03–12:06Z census landing in flight: `9373964c` seen mid-write; EX-16
+  `receipts/{before,after}` appear; RV-8 seat report first to land.
+- 12:07Z settled at `82fb807e…` (560 lines) — SC-3's first after-matrix
+  (t0 PASS; absent/EACCES → `UNREADABLE`; all-neutered → `BLIND-INSTRUMENT`;
+  creep audit clean).
+- 12:09–12:11Z further revisions `c95a5cf3` → `df9ffdf9` (601 lines). The
+  intermediate block-level floor revision broke the ordinary HEAD run
+  (SKILL.md carries 0 current-ok blocks; EX-23 seat report §6) and was
+  replaced by the det-level floor. SC-3 re-ran the full matrix on `df9ffdf9`
+  (`evidence/after-*`).
+- 12:14Z seats landing: 33+ reports. C2 reports in: CR-2, EX-11, EX-12, EX-14,
+  EX-18, EX-19, EX-20, EX-23, EX-25, RV-4, RV-6, RV-7, RV-8.
+  `.ufo/gates/custody-pair/` present (C3): `custody-pair.py` + `README.md`.
+- EX-19's 11-spec neuter matrix: full → FAIL `BLIND-INSTRUMENT`; partial pairs
+  still PASS (residual, measured); pointer shadowing (a version-carrying block
+  never evaluates its pointer) named debt; G2 label over-claim noted.
+- RV-6's audit at the final revision: rows 20 → 20, canonical row digest
+  identical, 0 flags.
+- EX-25: probe findings=0 both modes + selftest 13/13 at the final revision;
+  the parent must re-run the probe post-commit (it grades git objects).
+- SC-3's close: census sha `df9ffdf9…`; drafts re-stamped; pin-free check
+  CLEAN; no git mutations, no custody writes, scratch under `/dev/shm` and
+  `/var/tmp`.
+
+- 12:15–12:18Z further revisions `a4c16763` → `d0772ce8` (610 lines; docstring
+  name/usage line fixed to the census's own path; G20 unit text re-keyed to
+  "per readable file over current-ok detections", with per-row and per-block
+  floors documented as refuted — CR-2's false-FAIL episode, CR-3's unit table,
+  EX-14's occupancy map). SC-3 re-ran the full matrix + creep audit on
+  `d0772ce8` (evidence/after-*, evidence/rv6-creep-audit-sc3.out): ordinary
+  PASS 0/0/0/0 exit 0; absent/EACCES FAIL `UNREADABLE`; all-neutered and
+  needle-stripped SKILL.md FAIL `BLIND-INSTRUMENT`; creep 0 flags.
+- The file was still moving at SC-3's close (`d0772ce8` measured, 12:18Z):
+  the drafts pin the measured revision and instruct the parent to re-check
+  `sha256sum .ufo/gates/c1-census-v10.py` at records time and re-run the
+  matrix if it differs.
+- SC-3 seat reports now on disk at close: C2 chain — CR-2, CR-3, EX-11, EX-12,
+  EX-13, EX-14, EX-18, EX-19, EX-20, EX-23, EX-24, EX-25, PL-2, RV-3, RV-4,
+  RV-5, RV-6, RV-7, RV-8, SC-2 (SC-3 this file). EX-16's own seat report not
+  seen at close; its receipts stand.

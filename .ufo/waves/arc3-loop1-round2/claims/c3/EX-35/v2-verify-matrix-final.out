@@ -1,0 +1,69 @@
+# v2 verify matrix — tool revision: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py
+# run-utc: 2026-10-19T12:06:38Z
+
+### verify --live /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt
+A format: v1-stanza   B format: live
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=5  METADATA-DRIFT=5  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/5 drift=5 exit=12
+   exit=12
+
+### verify --live /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair-metadata.txt
+A format: pipe-v1   B format: live
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=5  METADATA-DRIFT=5  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/5 drift=5 exit=12
+   exit=12
+
+### verify --live fixtures/v1-sums.txt
+A format: sums-v1   B format: live
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=5  MATCH-V1-PARTIAL=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=5/5 drift=0 exit=0
+   exit=0
+
+### verify --live fixtures/v1-no-time.txt
+A format: v1-stanza   B format: live
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=5  MATCH-V1-PARTIAL=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=5/5 drift=0 exit=0
+   exit=0
+
+### verify --live fixtures/v1-swap-sha.txt
+A format: v1-stanza   B format: live
+PATH /home/vgpnk/.config/devin/mcp_config.json: CONTENT-DRIFT  compared=5/11 moved=sha256
+PATH /home/vgpnk/.omp/agent/mcp.json: CONTENT-DRIFT  compared=5/11 moved=sha256
+SHA256-CONTRACT: 3/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=5  CONTENT-DRIFT=2 METADATA-DRIFT=3  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/5 drift=5 exit=10
+   exit=10
+
+### verify --live fixtures/v1-corrupt-sha.txt
+A format: v1-stanza   B format: live
+PATH /home/vgpnk/.config/devin/mcp_config.json: CONTENT-DRIFT  compared=5/11 moved=sha256
+SHA256-CONTRACT: 4/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=5  CONTENT-DRIFT=1 METADATA-DRIFT=4  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/5 drift=5 exit=10
+   exit=10
+
+### verify --live fixtures/v1-absent-path.txt
+A format: v1-stanza   B format: live
+PATH /var/tmp/ex35/fixtures/does-not-exist.profile: ABSENT  compared=0/11 moved=exists
+SHA256-CONTRACT: 4/4 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: ABSENT  paths=5  ABSENT=1 METADATA-DRIFT=4  exit=13
+CUSTODY_PAIR_VERIFY: ABSENT paths=0/5 drift=5 exit=13
+   exit=13
+
+### verify --live fixtures/v1-synth.txt
+A format: v1-stanza   B format: live
+SHA256-CONTRACT: 2/2 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=2  METADATA-DRIFT=2  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/2 drift=2 exit=12
+   exit=12
+
+### verify --live fixtures/v1-compact-only.txt
+A format: sums-v1   B format: live
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=5  MATCH-V1-PARTIAL=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=5/5 drift=0 exit=0
+   exit=0

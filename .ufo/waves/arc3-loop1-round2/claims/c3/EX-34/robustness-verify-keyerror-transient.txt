@@ -1,0 +1,20 @@
+# EX-34 robustness probe — `verify <v2 receipt> --live` KeyError (measured 2026-10-19, tool revision unpinned mid-rewrite)
+# The tool was being rewritten by EX-31 during this window (observed shas that morning:
+# 4862f642… 12:04:06Z per receipts/config-pre-pair-v2.txt, b10ad1c8… 12:04:46Z per my capture,
+# 112d01dc… from ~12:05Z onward). The receipt consumed below was captured by b10ad1c8.
+# Observed: all 5 paths printed MATCH 11/11, then the summary aggregation raised KeyError; unhandled.
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 887, in <module>
+    sys.exit(main())
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 883, in main
+    return args.func(args)
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 604, in cmd_verify
+    return verify_sets(a_sections, b_sections, str(args.receipt_a), b_name)
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 512, in verify_sets
+    sha_pairs = [r for r in rows if r["sha_agree"] is not None]
+KeyError: 'sha_agree'
+# Re-test at pinned revision 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa:
+#   verify /var/tmp/ex34/v2-real-hosttz.txt --live   -> VERDICT: MATCH paths=5 MATCH=5 exit=0  (no crash)
+#   verify /var/tmp/ex34/v2-fresh.txt --live         -> VERDICT: MATCH paths=5 MATCH=5 exit=0  (no crash)
+# Verdict: NOT REPRODUCIBLE at the pinned revision — a transient of the moving target, recorded not hidden.

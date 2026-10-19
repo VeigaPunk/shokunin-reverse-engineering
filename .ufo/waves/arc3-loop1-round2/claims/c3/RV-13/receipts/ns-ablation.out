@@ -1,0 +1,26 @@
+# RV-13 ns-ablation — the real tool with ns compare fields removed (scratch copy)
+# date: 2026-10-19T12:11:34Z
+# landed tool: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+# ablated copy: 7426ee7f59eda09fed64799010a8d4b1d10cea278ec2576529acc82b04efb2fb  (mtime_ns dropped from the inode branch; ctime_epoch only)
+# diff of the two compare lines:
+  1,2c1,2
+  <     for key in ("inode", "mtime_ns", "mtime_epoch"):
+  <         ctime = [k for k in ("ctime_ns", "ctime_epoch")
+  ---
+  >     for key in ("inode", "mtime_epoch"):
+  >         ctime = [k for k in ("ctime_epoch",)
+
+== ablated copy, own selftest x5 ==
+CUSTODY_PAIR_SELFTEST: DIRTY cases=15 passed=13 failed=2 exit=3
+CUSTODY_PAIR_SELFTEST: DIRTY cases=15 passed=13 failed=2 exit=3
+CUSTODY_PAIR_SELFTEST: DIRTY cases=15 passed=13 failed=2 exit=3
+CUSTODY_PAIR_SELFTEST: DIRTY cases=15 passed=13 failed=2 exit=3
+CUSTODY_PAIR_SELFTEST: DIRTY cases=15 passed=13 failed=2 exit=3
+
+== same-second attack: ablated vs landed ==
+ablated-epoch-only: pre_ctime_epoch=1792411894 post_ctime_epoch=1792411894 same_second=False
+   PATH /var/tmp/rv13/epochattack2/subject.conf: MATCH  compared=11/11
+   exit=0
+landed-112d01dc: pre_ctime_epoch=1792411894 post_ctime_epoch=1792411894 same_second=False
+   PATH /var/tmp/rv13/epochattack2/subject.conf: REWRITE-DRIFT  compared=11/11 moved=ctime_ns
+   exit=11

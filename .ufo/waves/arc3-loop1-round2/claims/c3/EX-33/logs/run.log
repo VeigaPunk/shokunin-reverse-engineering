@@ -1,0 +1,66 @@
+
+### A. control: create + capture + verify, no rewrite
+sha-before=aa180855543c52853e0f9a5df1b2d09b616807e50746407296bf1cfe336dc37e
+inode=10968945 size=24 mtime=1792000000(2026-10-14 14:46:40.000000000 -0300) ctime=1792411443(2026-10-19 09:04:03.461616550 -0300)
+/var/tmp/arc3-l1r2-EX-33/attack/A/a.bin: sha256-alone=silent v2-fields-changed=[]
+VERDICT: MATCH
+exit=0
+
+### B. in-place identical rewrite (truncate+write, same inode)
+sha-before=aa180855543c52853e0f9a5df1b2d09b616807e50746407296bf1cfe336dc37e
+sha-after=aa180855543c52853e0f9a5df1b2d09b616807e50746407296bf1cfe336dc37e  sha256-alone=silent
+--- /var/tmp/arc3-l1r2-EX-33/attack/B/b.stat-before	2026-10-19 09:04:03.491280573 -0300
++++ /var/tmp/arc3-l1r2-EX-33/attack/B/b.stat-after	2026-10-19 09:04:03.498691981 -0300
+@@ -1 +1 @@
+-inode=10968948 size=24 mtime=1792000000(2026-10-14 14:46:40.000000000 -0300) ctime=1792411443(2026-10-19 09:04:03.480557705 -0300)
++inode=10968948 size=24 mtime=1792411443(2026-10-19 09:04:03.496208012 -0300) ctime=1792411443(2026-10-19 09:04:03.496208012 -0300)
+/var/tmp/arc3-l1r2-EX-33/attack/B/b.bin: sha256-alone=silent v2-fields-changed=['MTIME_EPOCH', 'MTIME_UTC', 'CTIME_UTC']
+VERDICT: DRIFT
+exit=1
+
+### B2. in-place identical rewrite + forged mtime (touch -d @old) — ctime is the residue
+inode=10968953 size=24 mtime=1792000000(2026-10-14 14:46:40.000000000 -0300) ctime=1792411443(2026-10-19 09:04:03.521557634 -0300)
+/var/tmp/arc3-l1r2-EX-33/attack/B2/b2.bin: sha256-alone=silent v2-fields-changed=['CTIME_UTC']
+VERDICT: DRIFT
+exit=1
+
+### C. rename-over identical bytes, mtime forged to recorded value (new inode)
+inode=10968958 size=24 mtime=1792000000(2026-10-14 14:46:40.000000000 -0300) ctime=1792411443(2026-10-19 09:04:03.539557603 -0300)
+/var/tmp/arc3-l1r2-EX-33/attack/C/c.bin: sha256-alone=silent v2-fields-changed=['INODE', 'CTIME_UTC']
+VERDICT: DRIFT
+exit=1
+
+### C2. ln -f of an identical-content file over the path
+c2 now shares inode with other.bin: 10968962 / 10968962  links=2
+/var/tmp/arc3-l1r2-EX-33/attack/C2/c2.bin: sha256-alone=silent v2-fields-changed=['INODE', 'CTIME_UTC']
+VERDICT: DRIFT
+exit=1
+
+### E. delete+recreate identical bytes+mtime; inode-reuse probe (200 spawns)
+inode-before=10968964
+inode-after=10968966 reused=no
+reuse-scan hits for 10968964: 0 / 200 spawned inodes
+/var/tmp/arc3-l1r2-EX-33/attack/E/e.bin: sha256-alone=silent v2-fields-changed=['INODE', 'CTIME_UTC']
+VERDICT: DRIFT
+exit=1
+
+### D. same-second in-place rewrite, mtime forged: --sec receipt vs ns receipt
+attempt=1 SAME-SECOND confirmed: ctime 1792411443(.660339018) -> 1792411443(.676761687)
+inode 10969169 -> 10969169 (unchanged: True); sha256 identical on both writes
+--- --sec receipt verify (whole-second fields) ---
+/var/tmp/arc3-l1r2-EX-33/attack/D/d.bin: sha256-alone=silent v2-fields-changed=[]
+VERDICT: MATCH
+exit=0
+--- ns receipt verify (nanosecond fields) ---
+/var/tmp/arc3-l1r2-EX-33/attack/D/d.bin: sha256-alone=silent v2-fields-changed=['CTIME_UTC']
+VERDICT: DRIFT
+exit=1
+sha256-alone on this rewrite: silent (identical bytes); inode unchanged (10969169)
+exit=0
+
+### G. different-bytes rewrite (sha256 must fire too)
+/var/tmp/arc3-l1r2-EX-33/attack/G/g.bin: sha256-alone=DRIFT v2-fields-changed=['SIZE', 'CTIME_UTC', 'SHA256']
+VERDICT: DRIFT
+exit=1
+
+### ladder complete 2026-10-19T12:04:03Z

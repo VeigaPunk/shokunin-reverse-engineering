@@ -1,0 +1,31 @@
+== declared exit codes (constants in the committed tool) ==
+119:EXIT_MATCH = 0
+120:EXIT_CONTENT_DRIFT = 10
+121:EXIT_REWRITE_DRIFT = 11
+122:EXIT_METADATA_DRIFT = 12
+123:EXIT_ABSENT = 13
+124:EXIT_USAGE = 2
+125:EXIT_SELFTEST_FAIL = 3
+135:EXIT_FOR = {
+
+== declared table (tool docstring) ==
+EXIT CODES (declared; verify -> worst finding wins):
+
+    0   MATCH             every compared path agrees on every comparable field
+    10  CONTENT-DRIFT     sha256 differs on >=1 path
+    11  REWRITE-DRIFT     sha256 equal but inode/ctime/mtime moved on >=1 path
+                          (the same-content-rewrite class, round-1 attack 3)
+    12  METADATA-DRIFT    sha256 + identification times equal but mode/uid/gid/
+                          size/type differ, or the candidate side carries a path
+                          the reference does not (EXTRA-PATH), or a receipt's own
+                          epoch/render pair is inconsistent, or a v1 label defect
+                          is reproduced (LABEL-DEFECT)
+    13  ABSENT            >=1 reference path missing on the candidate side
+    2   USAGE             bad arguments, unreadable/unparsable receipt, refused
+                          or failed write
+    3   SELFTEST-FAIL     a selftest case failed
+
+    capture exits 0 when every requested path is present (5/5 for the default
+    set) and 13 when >=1 requested path is absent; the receipt is still written.
+
+SEVERITY PRECEDENCE (verify): CONTENT-DRIFT > ABSENT > REWRITE-DRIFT >

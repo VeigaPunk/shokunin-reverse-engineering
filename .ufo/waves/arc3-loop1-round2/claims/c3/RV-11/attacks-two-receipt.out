@@ -1,0 +1,16 @@
+E0 B=identical copy (expect MATCH/0): exit=0
+    SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+E1 B drops last stanza (expect ABSENT/13): exit=13
+    PATH /home/vgpnk/.profile: ABSENT  compared=0/11 moved=missing
+    SHA256-CONTRACT: 4/4 paths agree on sha256 (v1/v2 receipts compare on this field)
+E2 B adds an extra stanza (expect METADATA-DRIFT EXTRA-PATH/12): exit=12
+    PATH /var/tmp/rv11-review/attacks2/extra.conf: METADATA-DRIFT  compared=0/11 moved=EXTRA-PATH
+    SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+E3 B tampered sha256 (expect CONTENT-DRIFT/10): exit=10
+    PATH /home/vgpnk/.kimi-code/config.toml: CONTENT-DRIFT  compared=11/11 moved=sha256
+    SHA256-CONTRACT: 4/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+E4 A=v2 B=v1-sums (expect MATCH-V1-PARTIAL/0): exit=0
+    SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+E5 unparsable B (expect USAGE/2): exit=2
+E6 B stanza with SHA256 field deleted (note: degrades to MATCH-V1-PARTIAL, exit 0): exit=0
+    SHA256-CONTRACT: 4/4 paths agree on sha256 (v1/v2 receipts compare on this field)

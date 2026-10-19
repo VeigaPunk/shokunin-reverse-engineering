@@ -1,0 +1,22 @@
+# v2 verify crash — attempt 1 (transient, intermediate tool revision)
+# SEAT EX-35 · captured 2026-10-19 ~12:06Z local 09:06
+# Tool was being live-edited at the time (file moved 883 -> 889 lines between
+# EX-35's reads); the crashing revision's hash was NOT captured. Recorded here
+# verbatim from the run's combined output. Same fixtures pass at revision
+# 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa.
+#
+# Command: python3 .ufo/gates/custody-pair/custody-pair.py verify --live fixtures/v1-no-time.txt
+#   (and: fixtures/v1-swap-sha.txt — identical traceback)
+#
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 604, in cmd_verify
+    return verify_sets(a_sections, b_sections, str(args.receipt_a), b_name)
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 512, in verify_sets
+    sha_pairs = [r for r in rows if r["sha_agree"] is not None]
+                                    ~^^^^^^^^^^^^^
+KeyError: 'sha_agree'
+   exit=1
+# exit=1 (traceback) — i.e. a crash reads as CONTENT-DRIFT numeric class in a
+# script context; the tool's own contract reserves exit 2/3 for usage/selftest
+# failures. At the pinned revision this path emits clean class output instead.

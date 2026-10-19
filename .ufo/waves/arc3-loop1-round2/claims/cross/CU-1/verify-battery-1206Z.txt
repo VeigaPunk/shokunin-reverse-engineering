@@ -1,0 +1,76 @@
+# CU-1 round-2 custody-pair verification battery
+# run-utc: 2026-10-19T12:06:53Z
+# tool (live path): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py
+# tool sha256 at run: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+# tool stat: size=39157 mtime=2026-10-19 09:05:19.448417434 -0300 ctime=2026-10-19 09:05:19.448417434 -0300
+# v1 reference: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt
+#   sha256 b8ed19365c103a4ab355678f0fffe0db4e0011a18b441e79f38d9e80de3d0776
+# v1 sidecar:   /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair-metadata.txt
+#   sha256 85fa1860000bda4de57ffb17219e59fa0e553d505eb76815c4bcf542f6426a90
+
+## [B1] selftest
+scratch: /dev/shm/custody-pair-selftest-z1l4qk8g
+CUSTODY_PAIR_SELFTEST: CLEAN cases=15 passed=15 failed=0 exit=0
+
+## [B2] capture (live, read-only) -> tool-capture-T1.txt ; then verify --live
+RECEIPT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/cross/CU-1/tool-capture-T1.txt  sha256=37749a8654c667302a8bf2edcc3cdc7db55de821147241b45bfa8a22027813ef
+SIDECAR: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/cross/CU-1/tool-capture-T1.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=5/5 label=cu1-corrob-T1 exit=0
+capture exit=0
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+verify --live exit=0
+
+## [B3] verify: round-1 v1 receipt vs CU-1 v2 capture (the C3 back-compat path)
+A format: v1-stanza   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt  stanzas=5
+B (candidate): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/cross/CU-1/tool-capture-T1.txt  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+PATH /home/vgpnk/.omp/agent/mcp.json: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+PATH /home/vgpnk/.kimi-code/config.toml: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-18 23:20:43' = localtime(epoch 1792376443); gmtime(epoch) is '2026-10-19 02:20:43'
+PATH /home/vgpnk/.bashrc: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-16 13:33:16' = localtime(epoch 1792168396); gmtime(epoch) is '2026-10-16 16:33:16'
+PATH /home/vgpnk/.profile: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-15 03:12:07' = localtime(epoch 1792044727); gmtime(epoch) is '2026-10-15 06:12:07'
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=5  METADATA-DRIFT=5  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/5 drift=5 exit=12
+exit=12
+
+## [B4] verify: round-1 v1 sidecar vs live (pipe form)
+PATH /home/vgpnk/.config/devin/mcp_config.json: METADATA-DRIFT  compared=3/11
+PATH /home/vgpnk/.omp/agent/mcp.json: METADATA-DRIFT  compared=3/11
+PATH /home/vgpnk/.kimi-code/config.toml: METADATA-DRIFT  compared=3/11
+PATH /home/vgpnk/.bashrc: METADATA-DRIFT  compared=3/11
+PATH /home/vgpnk/.profile: METADATA-DRIFT  compared=3/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=5  METADATA-DRIFT=5  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/5 drift=5 exit=12
+exit(pipe)=12
+
+## [B5] TZ-independence of the UTC render (UTC vs Asia/Tokyo vs America/New_York)
+/var/tmp/cu1-r2/battery.sh: line 52: /var/tmp/cu1-r2/utc-Asia/Tokyo.txt: No such file or directory
+Exception ignored while flushing sys.stdout:
+BrokenPipeError: [Errno 32] Broken pipe
+/var/tmp/cu1-r2/battery.sh: line 52: /var/tmp/cu1-r2/utc-America/New_York.txt: No such file or directory
+Exception ignored while flushing sys.stdout:
+BrokenPipeError: [Errno 32] Broken pipe
+UTC field set identical (UTC == Asia/Tokyo): NO
+UTC field set identical (UTC == America/New_York): NO
+(local renders SHOULD differ across TZ; that is the point of the split)
+TZ=UTC                first MTIME_LOCAL_RENDER: MTIME_LOCAL_RENDER: 2026-10-14T20:53:20+00:00
+TZ=Asia/Tokyo         first MTIME_LOCAL_RENDER: MTIME_LOCAL_RENDER: 2026-10-15T05:53:20+09:00
+TZ=America/New_York   first MTIME_LOCAL_RENDER: MTIME_LOCAL_RENDER: 2026-10-14T16:53:20-04:00
+
+# tool sha256 re-check at battery end: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+# battery end-utc: 2026-10-19T12:06:53Z

@@ -1,0 +1,102 @@
+--- /var/tmp/ex19/instrument/landed.py	2026-10-19 09:06:50.958227283 -0300
++++ /var/tmp/ex19/instrument/landed2.py	2026-10-19 09:10:56.189629889 -0300
+@@ -64,13 +64,24 @@
+    - BLIND-INSTRUMENT (H3 class). `g2_ok`'s old second disjunct was true
+      exactly when the run found nothing, so needles neutered -> loci=0 read
+      PASS exit 0 (re-measured: h3-blind-all / h3-blind-gate). G2 is now a
+-     positive floor: >= 1 current-ok locus. A zero-locus run (non-empty scope)
+-     is declared (`DECLARED FAIL CLASSES`) in text and --json, exit 1. The
+-     floor is a tree-level floor (current-ok loci); per-needle partial
+-     blindness (e.g. PIN alone neutered) keeps loci>0 and still reads PASS --
+-     that residual is H4/self-certification: only the external locus-count +
+-     scope-diff audit sees it, and that audit remains the certificate for any
+-     instrument touch.
++     PER-READABLE-FILE positive floor: >= 1 current-ok locus per scoped file
++     the run could read (EX-14's variant B, measured to dominate the global
++     variant A on head/blind/nullskill -- the global floor still swallows a
++     per-file collapse such as a needle-stripped or blanked SKILL.md while
++     the other two files stay loud). Per-ROW floors are refuted by EX-14's
++     occupancy map: 4 DATED rows are zero-locus by design at HEAD. A
++     violating run is declared (`DECLARED FAIL CLASSES:
++     ['BLIND-INSTRUMENT']`) in text and --json, exit 1; the G2 report line
++     carries the per-file substrate so the number is auditable. Unreadable
++     files are exempt from the floor (they are the H1 class and already force
++     FAIL). Residual, named: per-needle PARTIAL blindness (e.g. PIN alone
++     neutered) keeps each file's current-ok count above zero and still reads
++     PASS -- a token floor is not a coverage floor (EX-14 §5); only the
++     external locus/assertion-count + scope-diff audit sees it, and that
++     audit remains the certificate for any instrument touch.
++   - Still named, NOT closed here (no silent widening): H2 same-line inline-
++     marker excusal; t5 DATED-shelter for historical-looking non-live values;
++     H4 self-certification (covered externally, see above).
+    - Still named, NOT closed here (no silent widening): H2 same-line inline-
+      marker excusal; t5 DATED-shelter for historical-looking non-live values;
+      H4 self-certification (covered externally, see above).
+@@ -164,12 +175,17 @@
+   G20 positive floor, not vacuous         (r9, H3): G2's second disjunct was
+                                            true exactly when the run found
+                                            nothing, so a blind instrument read
+-                                           PASS; the guard is now current-ok
+-                                           loci >= 1 (BLIND-INSTRUMENT)
++                                           PASS; the guard is now >= 1
++                                           current-ok locus per READABLE
++                                           scoped file (BLIND-INSTRUMENT;
++                                           per-row floors refuted by EX-14's
++                                           map -- 4 DATED rows are zero-locus
++                                           by design)
+ 
+ Verdict: PASS iff stale == 0 AND ambiguous == 0 AND undeclared == 0
+ AND unresolved == 0 AND scope_errors == 0 AND g11 == [] AND G2 holds
+-(current-ok loci >= 1, r9 floor) AND no unevaluable scoped file.
++(>= 1 current-ok locus per readable scoped file, r9 floor) AND no
++unevaluable scoped file.
+ Exit 0 PASS, 1 FAIL, 2 anchor failure.
+ Usage: python3 c1-census-v9.py [--root DIR] [--json] [--quiet]
+ """
+@@ -511,11 +527,21 @@
+     unres = out.get("UNRESOLVED", [])
+     g11, g7 = out.get("g11", []), out.get("g7", [])
+     # G20 (r9, H3): the old second disjunct was true exactly when the run found
+-    # nothing, so a blind instrument read PASS.  G2 is now a positive floor:
+-    # at least one current-ok locus in a non-empty scope.
++    # nothing, so a blind instrument read PASS.  The floor is PER READABLE FILE
++    # (EX-14's variant B, measured to dominate the global variant A on
++    # head/blind/nullskill): every scoped file the run could read must
++    # contribute >= 1 current-ok locus, so a per-file collapse (needles
++    # stripped, content blanked) is declared even when other files are loud.
++    # Unreadable files are exempt here -- they are the H1 class and already
++    # force FAIL via `unreadable`.  Per-ROW floors are refuted by EX-14's map
++    # (4 DATED rows are zero-locus by design at HEAD).
+     n_loci = sum((c["loci"] or 0) for c in counts.values())
+     n_current_ok = len(out.get("current-ok", []))
+-    g2_ok = n_current_ok > 0
++    floor = {f: 0 for f in files}
++    for rec in out.get("current-ok", []):
++        floor[rec["file"]] += 1
++    h3_ok = all(floor[f] > 0 for f in files if filelines[f] is not None)
++    g2_ok = h3_ok
+     declared = (["UNREADABLE"] if unreadable else []) + ([] if g2_ok else ["BLIND-INSTRUMENT"])
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \
+          and (not g11) and g2_ok and (not unreadable)
+@@ -525,7 +551,8 @@
+                           "stale": stale, "ambiguous": unatt, "undeclared": undecl,
+                           "unresolved": unres, "scope_errors": scope_errors,
+                           "unreadable": unreadable, "declared_fail_classes": declared,
+-                          "g2_ok": g2_ok, "g2_floor": 1, "g11": g11, "g7": g7,
++                          "g2_ok": g2_ok, "g2_floor": "1/readable-file", "current_ok_per_file": floor,
++                          "g11": g11, "g7": g7,
+                           "historical": out.get("historical", []),
+                           "current_ok": out.get("current-ok", [])}, indent=1))
+         return 0 if verdict == "PASS" else 1
+@@ -546,8 +573,9 @@
+                           (d["line"], d["kind"], d["client"], d["value"], d["disp"], d["why"]))
+     print("\nSCOPE-ERRORS (marker assertions): %r" % scope_errors)
+     print("UNREADABLE (could-not-evaluate): %r" % unreadable)
+-    print("G2 positive-assertion guard: %s (current-ok loci=%d, total loci=%d, floor=1)"
+-          % ("ok" if g2_ok else "SUSPECT", n_current_ok, n_loci))
++    print("G2 positive-assertion guard: %s (current-ok loci per file: %s; total loci=%d; floor=1/file)"
++          % ("ok" if g2_ok else "SUSPECT",
++             ", ".join("%s=%d" % (f, floor[f]) for f in files), n_loci))
+     print("G7 configured!=held warnings: %r" % g7)
+     print("G11 current-ok without receipt language: %r" % g11)
+     print("DECLARED FAIL CLASSES: %r" % declared)

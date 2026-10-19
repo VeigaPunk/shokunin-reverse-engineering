@@ -1,0 +1,15 @@
+# RV-13 replay of the attack demo vs EX-31 instrument
+# tool: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py
+# tool sha256 (this run): 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+# date: 2026-10-19T12:06:55Z
+# columns: case | class | exit | moved-fields | sha256-equal
+c1-untouched                               | MATCH           | 0    | none                         | same
+c2-inplace-same-ct-restored                | REWRITE-DRIFT   | 11   | moved=ctime_ns               | same
+c3-atime-only                              | MATCH           | 0    | none                         | same
+c4-noop-chmod                              | REWRITE-DRIFT   | 11   | moved=ctime_ns               | same
+c5-replace-new-inode                       | REWRITE-DRIFT   | 11   | moved=inode                  | same
+c6-content-change                          | CONTENT-DRIFT   | 10   | moved=sha                    | DIFFERENT
+pre_ctime_epoch=1792411615 post_ctime_epoch=1792411615 same_second=True
+c7-same-second                             | REWRITE-DRIFT   | 11   | moved=ctime_ns               | same
+
+# tool sha256 (post-run): 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa

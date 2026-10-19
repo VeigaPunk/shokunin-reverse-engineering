@@ -1,0 +1,67 @@
+### verify --live /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair-metadata.txt
+    LABEL-DEFECT: CTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+PATH /home/vgpnk/.kimi-code/config.toml: METADATA-DRIFT  compared=3/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-18 23:20:43' = localtime(epoch 1792376443); gmtime(epoch) is '2026-10-19 02:20:43'
+    LABEL-DEFECT: CTIME_UTC says '2026-10-18 23:20:43' = localtime(epoch 1792376443); gmtime(epoch) is '2026-10-19 02:20:43'
+PATH /home/vgpnk/.bashrc: METADATA-DRIFT  compared=3/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-16 13:33:16' = localtime(epoch 1792168396); gmtime(epoch) is '2026-10-16 16:33:16'
+    LABEL-DEFECT: CTIME_UTC says '2026-10-16 13:33:16' = localtime(epoch 1792168396); gmtime(epoch) is '2026-10-16 16:33:16'
+PATH /home/vgpnk/.profile: METADATA-DRIFT  compared=3/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-15 03:12:07' = localtime(epoch 1792044727); gmtime(epoch) is '2026-10-15 06:12:07'
+    LABEL-DEFECT: CTIME_UTC says '2026-10-15 03:12:07' = localtime(epoch 1792044727); gmtime(epoch) is '2026-10-15 06:12:07'
+VERDICT: METADATA-DRIFT  paths=5  METADATA-DRIFT=5  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/5 drift=5 exit=12
+   exit=12
+### verify --live fixtures/v1-sums.txt
+A format: sums-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): fixtures/v1-sums.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH-V1-PARTIAL  compared=1/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH-V1-PARTIAL  compared=1/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH-V1-PARTIAL  compared=1/11
+PATH /home/vgpnk/.bashrc: MATCH-V1-PARTIAL  compared=1/11
+PATH /home/vgpnk/.profile: MATCH-V1-PARTIAL  compared=1/11
+VERDICT: MATCH-V1-PARTIAL  paths=5  MATCH-V1-PARTIAL=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=5/5 drift=0 exit=0
+   exit=0
+### verify --live fixtures/v1-corrupt-sha.txt
+PATH /home/vgpnk/.config/devin/mcp_config.json: CONTENT-DRIFT  compared=5/11 moved=sha256
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+PATH /home/vgpnk/.omp/agent/mcp.json: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+PATH /home/vgpnk/.kimi-code/config.toml: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-18 23:20:43' = localtime(epoch 1792376443); gmtime(epoch) is '2026-10-19 02:20:43'
+PATH /home/vgpnk/.bashrc: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-16 13:33:16' = localtime(epoch 1792168396); gmtime(epoch) is '2026-10-16 16:33:16'
+PATH /home/vgpnk/.profile: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-15 03:12:07' = localtime(epoch 1792044727); gmtime(epoch) is '2026-10-15 06:12:07'
+VERDICT: CONTENT-DRIFT  paths=5  CONTENT-DRIFT=1 METADATA-DRIFT=4  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/5 drift=5 exit=10
+   exit=10
+### verify --live fixtures/v1-absent-path.txt
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+PATH /home/vgpnk/.omp/agent/mcp.json: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+PATH /home/vgpnk/.kimi-code/config.toml: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-18 23:20:43' = localtime(epoch 1792376443); gmtime(epoch) is '2026-10-19 02:20:43'
+PATH /home/vgpnk/.bashrc: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-16 13:33:16' = localtime(epoch 1792168396); gmtime(epoch) is '2026-10-16 16:33:16'
+PATH /var/tmp/ex35/fixtures/does-not-exist.profile: ABSENT  compared=0/11 moved=exists
+VERDICT: ABSENT  paths=5  ABSENT=1 METADATA-DRIFT=4  exit=13
+CUSTODY_PAIR_VERIFY: ABSENT paths=0/5 drift=5 exit=13
+   exit=13
+### verify --live fixtures/v1-synth.txt
+A format: v1-stanza   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): fixtures/v1-synth.txt  stanzas=2
+B (candidate): live filesystem  stanzas=2
+PATH /var/tmp/ex35/fixtures/synth/a.json: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-19 09:03:08' = localtime(epoch 1792411388); gmtime(epoch) is '2026-10-19 12:03:08'
+PATH /var/tmp/ex35/fixtures/synth/b.toml: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-19 09:03:08' = localtime(epoch 1792411388); gmtime(epoch) is '2026-10-19 12:03:08'
+VERDICT: METADATA-DRIFT  paths=2  METADATA-DRIFT=2  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/2 drift=2 exit=12
+   exit=12

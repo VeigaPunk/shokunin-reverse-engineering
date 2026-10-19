@@ -1,0 +1,23 @@
+- **An artifact that records its own byte-identity must re-derive that identity
+  after every revision — a stale self-identity voids the verification block,
+  not the work; the integrator records the fresh identity at landing.**
+  Measured, arc3-round-1: one knowledge-entry patch text carried three different
+  self-identities inside ~20 minutes — its "Verification performed" step 4
+  claimed 8,316 B / sha256 `f95c5a05…` while the patch as written applied to
+  8,598 B / `d8d85949…`; an intermediate revision applied to 9,513 B /
+  32 lines / `a5119120…`, and the landed bytes are 10,225 B / 33 lines /
+  `dd986f56…` (`corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5-7`;
+  diagnosis and receipts, round-1 wave tree:
+  `.ufo/waves/arc3-loop1-round1/claims/c1/CR-2/proposed-fixes.patch.md` §F2 +
+  `.ufo/waves/arc3-loop1-round1/claims/c1/CR-2/entry-file-identity.txt`; the
+  same tree's `claims/c1/verdict.md` §E7/D9 re-applied both revisions
+  independently). None of the three was a lie when written — that is the
+  failure mode: a self-identity expires silently on the next edit. Re-derive
+  size, line count, and sha256 from the bytes you are handing over, never from
+  an earlier revision, and re-derive again after the last byte changes; the
+  cost is one `wc -c -l` + `sha256sum`. On a mismatch, void the self-identity
+  claim only — the artifact's evidence and findings stand — and record the
+  fresh identity at landing (`LOG.md`'s arc3-round-1 entry; `SCORECARD.md`'s
+  `arc3-loop1-round1` section, by section key, never a bare line number — rule
+  #11 form). Deleting the claim does not discharge the rule; an artifact's
+  numbers for another file (carrier, patch output) re-derive the same way.

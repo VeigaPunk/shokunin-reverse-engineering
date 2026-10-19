@@ -1,0 +1,23 @@
+== same-content in-place rewrite of a SCRATCH copy (presence check for the SOP's REWRITE-DRIFT clause) ==
+tool: 112d01dc034c2d54…  (--paths are this seat's scratch files; no custody path involved)
+
+$ capture --paths scratch/a.json scratch/b.json
+RECEIPT: /dev/shm/ex39/atk/pre.txt  sha256=354e406e26280a0d7dd090e970a2b8f25879b805caf91defcef4389e15b84cfb
+SIDECAR: /dev/shm/ex39/atk/pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=2/2 label=ex39 scratch rewrite attack exit=0
+
+$ python3 - (rewrite a.json in place with identical bytes)
+  before sha256: e7b6c501ae7b8818d09588fa8bb28e94c47593c9d323e3fa8859b56034d78104
+  after  sha256: e7b6c501ae7b8818d09588fa8bb28e94c47593c9d323e3fa8859b56034d78104
+
+$ verify --live pre.txt
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /dev/shm/ex39/atk/pre.txt  stanzas=2
+B (candidate): live filesystem  stanzas=2
+PATH /dev/shm/ex39/atk/a.json: REWRITE-DRIFT  compared=11/11 moved=mtime_ns
+PATH /dev/shm/ex39/atk/b.json: MATCH  compared=11/11
+SHA256-CONTRACT: 2/2 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=2  MATCH=1 REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=1/2 drift=1 exit=11
+rc=11 (11 = REWRITE-DRIFT, expected)

@@ -1,0 +1,11 @@
+--- instruments/instr-h3.py	2026-10-19 09:03:57.415568134 -0300
++++ instruments/instr-h3-nog2.py	2026-10-19 09:03:57.415568134 -0300
+@@ -450,7 +450,7 @@
+     undecl = out.get("UNDECLARED", [])
+     unres = out.get("UNRESOLVED", [])
+     g11, g7 = out.get("g11", []), out.get("g7", [])
+-    g2_ok = len(out.get("current-ok", [])) > 0
++    g2_ok = len(out.get("current-ok", [])) > 0 or (not stale and not unatt and not undecl and not unres)
+     ok = (not stale) and (not unatt) and (not undecl) and (not unres) and (not scope_errors) \
+          and (not g11) and g2_ok
+     verdict = "PASS" if ok else "FAIL"

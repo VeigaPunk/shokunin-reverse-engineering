@@ -1,0 +1,58 @@
+## [B5-fixed] TZ-independence of the UTC render vs TZ-dependence of the local render
+# tool sha at run: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+UTC field set UTC==Asia/Tokyo: YES (identical)
+UTC field set UTC==America/New_York: YES (identical)
+TZ=UTC                first MTIME_LOCAL_RENDER: 2026-10-14T20:53:20+00:00
+TZ=Asia/Tokyo         first MTIME_LOCAL_RENDER: 2026-10-15T05:53:20+09:00
+TZ=America/New_York   first MTIME_LOCAL_RENDER: 2026-10-14T16:53:20-04:00
+
+## [B6] receipt self-integrity + embedded tool identity
+sidecar says:  37749a8654c667302a8bf2edcc3cdc7db55de821147241b45bfa8a22027813ef
+recomputed:    37749a8654c667302a8bf2edcc3cdc7db55de821147241b45bfa8a22027813ef
+receipt header tool line: # tool: rev-run.py  sha256 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+live tool sha: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+
+## [B7] read-only over custody paths: canary stat before/after a capture
+before: mtime=2026-10-19 09:07:13.879176458 -0300 ctime=2026-10-19 09:07:13.879176458 -0300 atime=2026-10-19 09:07:13.879176458 -0300
+capture exit=0
+after:  mtime=2026-10-19 09:07:13.879176458 -0300 ctime=2026-10-19 09:07:13.879176458 -0300 atime=2026-10-19 09:07:13.906176398 -0300
+(mtime/ctime must be unchanged; atime may move — the tool's stated reason for not capturing atime)
+
+## [B8] write-guard on scratch: --out equal to a path in --paths must be refused
+RECEIPT: /var/tmp/cu1-r2/guard-target.txt  sha256=8e941388d32a60c19f0713f26618bd1217f271f28a4771d2283220695bbef96a
+SIDECAR: /var/tmp/cu1-r2/guard-target.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+guard exit=0
+guard-target still intact: # custody-pair receipt v2 — READ-ONLY capture (sha256 + stat); no bytes written
+# receipt-version: 2
+# tool: rev-run.py  sha256 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+# captured-utc: 2026-10-19T12:07:13Z
+# captured-local: 2026-10-19T09:07:13-03:00
+# capture-label: (none)
+# host: plazir27  user: vgpnk  kernel: 7.2.3-arch1-3
+# cwd: /var/tmp/cu1-r2
+# repo-HEAD: (none)
+# paths: 1  present: 1
+# label-contract: MTIME_UTC_RENDER/CTIME_UTC_RENDER = gmtime(epoch) renders ('Z');
+#                 local renders are recorded separately under *_LOCAL_RENDER.
+#                 (v1 printed local time under an MTIME_UTC label — round-1 defect.)
+# compare-contract: sha256 = content identity; inode+ctime(+ns) = rewrite identity;
+#                   atime deliberately not captured (self-mutating on read).
+
+PATH: /var/tmp/cu1-r2/guard-target.txt
+EXISTS: yes
+TYPE: file
+SIZE: 15
+SHA256: 96424f1ce4c0d35acb8c7341691e43b5e4b0acc1978a7a1a53bf50cb2008e6f7
+MTIME_EPOCH: 1792411633
+MTIME_NS: 1792411633912176384
+MTIME_UTC_RENDER: 2026-10-19T12:07:13Z
+MTIME_LOCAL_RENDER: 2026-10-19T09:07:13-03:00
+CTIME_EPOCH: 1792411633
+CTIME_NS: 1792411633912176384
+CTIME_UTC_RENDER: 2026-10-19T12:07:13Z
+CTIME_LOCAL_RENDER: 2026-10-19T09:07:13-03:00
+INODE: 10998971
+MODE: 644
+UID: 1000
+GID: 1000

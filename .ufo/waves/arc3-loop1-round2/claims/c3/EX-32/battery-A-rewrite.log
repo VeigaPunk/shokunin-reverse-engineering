@@ -1,0 +1,44 @@
+## EX-32 scratch attack battery — same-content rewrite visibility (EX-33's full attack is separate; this is the pre-pair-seat's field check on own scratch file)
+## stages: A=initial, B=in-place same-content rewrite, C=mv same-content rewrite (new inode)
+RECEIPT: /var/tmp/ex32/sc-a.txt  sha256=78804125f07892c10d34c3f5108c16e50e3bb806afb2fe85b2972e003603172e
+SIDECAR: /var/tmp/ex32/sc-a.txt.sha256
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex32/sc-a.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex32/scratch/f1: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+A_control_live_exit=0
+RECEIPT: /var/tmp/ex32/sc-b.txt  sha256=74a19097a8af574fce075b9e8eae7d17079b2bd09b1d28742eba9ddbad01857f
+SIDECAR: /var/tmp/ex32/sc-b.txt.sha256
+--- verify A vs B (expect REWRITE-DRIFT: sha equal, inode same, ctime moved) ---
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex32/sc-a.txt  stanzas=1
+B (candidate): /var/tmp/ex32/sc-b.txt  stanzas=1
+PATH /var/tmp/ex32/scratch/f1: REWRITE-DRIFT  compared=11/11 moved=mtime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+AB_exit=11
+RECEIPT: /var/tmp/ex32/sc-c.txt  sha256=ea6039f8979ea25e053aee3896876fd2931f1f3dcfc65dd498c6b85904ddc1c2
+SIDECAR: /var/tmp/ex32/sc-c.txt.sha256
+--- verify A vs C (expect REWRITE-DRIFT: sha equal, inode moved) ---
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex32/sc-a.txt  stanzas=1
+B (candidate): /var/tmp/ex32/sc-c.txt  stanzas=1
+PATH /var/tmp/ex32/scratch/f1: REWRITE-DRIFT  compared=11/11 moved=inode,mtime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+AC_exit=11
+--- field evidence (sha/inode/ctime across A,B,C) ---
+[sc-a]
+PATH: /var/tmp/ex32/scratch/f1|SHA256: e49c81e2d2f84e259d40e2fb8192f3bcd198b355184845d76d8f58807d0d78ee|MTIME_EPOCH: 1792411623|CTIME_EPOCH: 1792411623|INODE: 10992341|
+[sc-b]
+PATH: /var/tmp/ex32/scratch/f1|SHA256: e49c81e2d2f84e259d40e2fb8192f3bcd198b355184845d76d8f58807d0d78ee|MTIME_EPOCH: 1792411623|CTIME_EPOCH: 1792411623|INODE: 10992341|
+[sc-c]
+PATH: /var/tmp/ex32/scratch/f1|SHA256: e49c81e2d2f84e259d40e2fb8192f3bcd198b355184845d76d8f58807d0d78ee|MTIME_EPOCH: 1792411623|CTIME_EPOCH: 1792411623|INODE: 10992346|

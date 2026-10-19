@@ -1,0 +1,13 @@
+# RV-13 audit of EX-33 rewrite forms — tool sha256=112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+# date: 2026-10-19T12:10:13Z
+# 'complete' = full field diff from the independent capturer (ALL moved fields)
+# 'tool'     = what custody-pair verify printed as moved= (first-matching branch)
+
+F-b-inplace                | tool: REWRITE-DRIFT  exit=11  moved=mtime_ns,mtime_epoch     | complete: mtime_epoch,mtime_ns,mtime_utc,ctime_ns
+F-b2-inplace-forged        | tool: REWRITE-DRIFT  exit=11  moved=ctime_ns                 | complete: ctime_ns
+F-c-rename-forged          | tool: REWRITE-DRIFT  exit=11  moved=inode                    | complete: ctime_ns,inode
+F-c2-hardlink-swap         | tool: REWRITE-DRIFT  exit=11  moved=inode                    | complete: ctime_ns,inode
+F-e-delete-recreate        | tool: REWRITE-DRIFT  exit=11  moved=inode                    | complete: ctime_ns,inode
+F-g-content-change         | tool: CONTENT-DRIFT  exit=10  moved=sha256                   | complete: size,sha256,mtime_epoch,mtime_ns,mtime_utc,ctime_ns
+F-k-chmod-only             | tool: METADATA-DRIFT exit=12  moved=mode,ctime_ns            | complete: mode,ctime_ns
+F-d-same-second            | tool: REWRITE-DRIFT  exit=11  moved=ctime_ns,ctime_epoch     | complete: (see verify.out; see pre.proto.json)

@@ -1,0 +1,12 @@
+=== ATTACK 3 staging: same-content rewrite, v1-blindness leg ===
+-- variant A: new-inode rewrite (mv over) on mcp_config.json --
+16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4  tree/mcp_config.json
+BEFORE INODE=10950841 MTIME_EPOCH=1792411317 CTIME_EPOCH=1792411317
+-- variant B: same-inode truncate+writerewrite on bashrc.txt --
+7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598  tree/bashrc.txt
+BEFORE INODE=10950842 MTIME_EPOCH=1792411317 CTIME_EPOCH=1792411317
+=== AFTER ===
+16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4  tree/mcp_config.json
+7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598  tree/bashrc.txt
+tree/mcp_config.json AFTER INODE=10964595 MTIME_EPOCH=1792411317 CTIME_EPOCH=1792411383
+tree/bashrc.txt AFTER INODE=10950842 MTIME_EPOCH=1792411383 CTIME_EPOCH=1792411383

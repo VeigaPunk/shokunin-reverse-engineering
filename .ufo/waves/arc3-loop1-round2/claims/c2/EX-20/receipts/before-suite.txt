@@ -1,0 +1,69 @@
+# launder-suite label=before tool=/dev/shm/ex20r2/tool-before.py sha256=6f1d19ff4b0878adfcdf0e38523aa79db461e74942eaafc018036a504163cc8b
+## phase 1 — instrument behaviour
+ctl          clean    exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=d3da75092dfeba0b
+                               unreadable=UNREADABLE line: absent
+ctl          noSKILL  exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=5256fe24c48d7cff
+                               unreadable=UNREADABLE line: absent
+ctl          P6       exit=1 FAIL (stale=0 ambiguous=0 undeclared=1 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (1) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=5ce9fe2dfc906877
+                               unreadable=UNREADABLE line: absent
+ctl          P7       exit=1 FAIL (stale=0 ambiguous=0 undeclared=1 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (1) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=8590e548702cefc1
+                               unreadable=UNREADABLE line: absent
+ctl          P6M      exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=6563f14b823a2b8b
+                               unreadable=UNREADABLE line: absent
+ctl          P6S      exit=1 FAIL (stale=0 ambiguous=0 undeclared=1 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (1) | SCOPE-ERRORS non-empty
+                               out-sha256=47df1ab662a53285
+                               unreadable=UNREADABLE line: absent
+W-blind      clean    exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=c831970f41de6935
+                               unreadable=UNREADABLE line: absent
+W-blind      P6       exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=1705ab9afd992531
+                               unreadable=UNREADABLE line: absent
+W-gate       P6       exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=1705ab9afd992531
+                               unreadable=UNREADABLE line: absent
+W-pin        P6       exit=1 FAIL (stale=0 ambiguous=0 undeclared=1 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (1) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=08e460f64ddc6616
+                               unreadable=UNREADABLE line: absent
+W-pin7       P7       exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=71244150e70c22e0
+                               unreadable=UNREADABLE line: absent
+W-pinv       P6       exit=1 FAIL (stale=2 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: SUSPECT | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=5775e11c638836ea
+                               unreadable=UNREADABLE line: absent
+W-marker     P6S      exit=1 FAIL (stale=0 ambiguous=0 undeclared=1 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (1) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=5ce9fe2dfc906877
+                               unreadable=UNREADABLE line: absent
+O-open       P6       exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=ae5c4ba29de0f898
+                               unreadable=UNREADABLE line: absent
+O-overshoot  P6       exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=ae5c4ba29de0f898
+                               unreadable=UNREADABLE line: absent
+O-addrow     P6       exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=ae5c4ba29de0f898
+                               unreadable=UNREADABLE line: absent
+O-ineof      P6       exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=ae5c4ba29de0f898
+                               unreadable=UNREADABLE line: absent
+O-tailrow    P6       exit=0 PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0) | G2 positive-assertion guard: ok | UNDECLARED (0) | SCOPE-ERRORS (marker assertions): []
+                               out-sha256=ae5c4ba29de0f898
+                               unreadable=UNREADABLE line: absent
+## phase 2 — external certificate (CR-5 scope-diff creep audit)
+ctl          scope-diff exit=0 flags=[]
+W-blind      scope-diff exit=0 flags=[]
+W-gate       scope-diff exit=0 flags=[]
+W-pin        scope-diff exit=0 flags=[]
+W-pin7       scope-diff exit=0 flags=[]
+W-pinv       scope-diff exit=0 flags=[]
+W-marker     scope-diff exit=1 flags=[]
+O-open       scope-diff exit=1 flags=['CREEP open-ended bound: SCORECARD.md 769-1000000000 DATED', 'CREEP wide added DATED row: SCORECARD.md 769-1000000000 (999999232 lines)', 'CREEP widen-by-add/remove: SCORECARD.md 769-1000000000 DATED replaced 769-855 DATED']
+O-overshoot  scope-diff exit=1 flags=['CREEP open-ended bound: SCORECARD.md 769-9999 DATED', 'CREEP wide added DATED row: SCORECARD.md 769-9999 (9231 lines)', 'CREEP widen-by-add/remove: SCORECARD.md 769-9999 DATED replaced 769-855 DATED']
+O-ineof      scope-diff exit=1 flags=['CREEP wide added DATED row: SCORECARD.md 769-1422 (654 lines)', 'CREEP widen-by-add/remove: SCORECARD.md 769-1422 DATED replaced 769-855 DATED']
+O-addrow     scope-diff exit=1 flags=['CREEP open-ended bound: SCORECARD.md 856-1000000000 DATED', 'CREEP wide added DATED row: SCORECARD.md 856-1000000000 (999999145 lines)']
+O-tailrow    scope-diff exit=1 flags=['CREEP wide added DATED row: SCORECARD.md 856-1422 (567 lines)']

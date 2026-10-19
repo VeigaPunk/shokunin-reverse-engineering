@@ -1,0 +1,18 @@
+probe gate copy (from .ufo/gates/citation-drift/):
+e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  gate/citation-drift-probe.py
+738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f  gate/pointer-table.json
+ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7  gate/expected.json
+
+selftest:
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+
+key commands (cwd /var/tmp/arc3-l1r2-EX-06):
+  python3 gate/citation-drift-probe.py --root proj3 --rev HEAD [--strict]
+  python3 gate/citation-drift-probe.py --root proj3-s --rev HEAD --strict
+  python3 gate/citation-drift-probe.py --root proj3 --rev HEAD --table custom/table-rule14-v2.json --expected custom/expected-rule14-v2.json --strict
+  python3 gate/citation-drift-probe.py --root proj3-ctl --rev HEAD --table custom/table-rule14-v2.json --expected custom/expected-rule14-v2.json --strict   # control: expect exit 1
+  python3 gate/citation-drift-probe.py --root proj2-neg --rev HEAD --strict                       # control: expect exit 1
+  python3 commandA-scratch.py proj3 treated-real-v2
+  python3 apply-ex01-rule14-v2.py <EX-01 rule14.patch.md> proj3
+  python3 <RV-2>/rule-citation-audit.py --root proj3 --rev HEAD --json logs/rv2-audit-proj3.json
+  python3 <EX-04>/craft-pointer-truth.py proj3  /  proj3-s

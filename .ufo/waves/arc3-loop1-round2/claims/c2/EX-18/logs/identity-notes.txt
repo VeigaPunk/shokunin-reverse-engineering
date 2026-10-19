@@ -1,0 +1,22 @@
+Identity + byte-equality notes — EX-18 (arc3-loop1-round2), capture 2026-10-19T12:03Z
+
+Repo HEAD: 14b1682b1128d2e41085ebc79c9addeb8786d420
+Instrument: .ufo/gates/c1-census-v10.py sha256 6f1d19ff4b0878adfcdf0e38523aa79db461e74942eaafc018036a504163cc8b (23939 B)
+PROVINCE.md  d075a3c67e17ae428eb5a69e594171c6dcba88ec93c97bd3cf162a2f2b4dbdad (162 lines)
+SKILL.md     483b0eba27458c138fdbe760d83a33f0da54b251ec028f033d83a5ae3d0175eb (371 lines)
+SCORECARD.md a7c72950094ecae0e67204668dac21138c1d5d613bb9e36f1bec241b834f4a93 (1417 lines)
+
+Scratch candidates (built in /dev/shm/ex18-r2/, copies in scripts/):
+  census-h1-candidate.py            8b1a2079ec378dee1424d300cbcb4130d491da0c084e76693513ba6210d1ee00  (v10 + H1, 3 hunks)
+  census-h1h3-candidate.py          a81893fc770a05424f2427749427367a7dd9cfd307afdd200e8c2fbe6c887c18  (v10 + H1 + H3, 5 hunks)
+  census-province-all-current.py    f32725bf6e797d9ef0af69497ddd48b83bf3ca6705c664d6de48d456b1871fd4  (v10 + PROVINCE DATED rows re-classed CURRENT, 3 rows)
+  stale-province-7125dd4.md         fe7f3f61c6beb6d601bf6780194ad10f8641c402c2501067d6a93f29c3b37c1c  (git show 7125dd4:PROVINCE.md)
+
+Byte-equality results (cmp; commands run in /dev/shm/ex18-r2/logs):
+  cmp B0.out S0.out      -> identical  (repo-root run == intact-scratch run, PASS both)
+  cmp S1.out S2.out      -> identical  (absent == 0-byte)
+  cmp S1.out S4.out      -> identical  (absent == directory)
+  cmp S1.out S5.out      -> identical  (absent == dangling symlink)
+  cmp S1.out S9.out      -> identical  (absent == chmod 000)
+
+Key exits: B0 0 | S0 0 | S1..S5,S7..S11b 1 | S6 0 | P0 0 | P1..P3 1 | Q0 0 | Q1..Q5 1 | T0 1 | T1 0 | T2 1

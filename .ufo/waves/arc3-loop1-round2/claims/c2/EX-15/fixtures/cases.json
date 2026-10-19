@@ -1,0 +1,245 @@
+{
+  "manifest_version": 2,
+  "chain": "c2",
+  "wave": "arc3-loop1-round2",
+  "seat": "EX-15",
+  "purpose": "Reusable fixture contract for the two fail-closure classes of the C2 claim (H1 absent/unreadable scoped file, H3 blind-instrument floor). Calibrated against the frozen pre-edit v10 (sha 6f1d19ff...) and the landed r9 v11 (sha c95a5cf3..., per-readable-file floor).",
+  "floor_semantics": "The landed r9 floor is PER READABLE FILE: every scoped file the run could read must contribute >= 1 current-ok locus (unit). Per-file loud controls were placed in all three crafted files so legitimate fixture trees satisfy it; floor probes are built by collapsing exactly one file.",
+  "phase_pins": {
+    "before": "6f1d19ff4b0878adfcdf0e38523aa79db461e74942eaafc018036a504163cc8b",
+    "after": "d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5",
+    "after_history": {
+      "82fb807e": "r9-v1, global floor current-ok > 0 (measured with fixture layout v1 — superseded)",
+      "c95a5cf3": "r9-v2, per-file floor counted in blocks (claim-breaking on HEAD per PL-2 §0; not re-measured by this seat)",
+      "df9ffdf9": "r9-v3, per-file floor counted in detections (measured, snapshot kept)",
+      "a4c16763": "r9-v4, header/Usage self-description fix (measured, snapshot kept)",
+      "d0772ce8": "r9-v5, docstring/naming text only, behaviour identical to r9-v3/r9-v4 (measured, snapshot kept)"
+    }
+  },
+  "classes": {
+    "H1": {
+      "tokens_any": ["UNREADABLE (could-not-evaluate)", "UNREADABLE"],
+      "json_key": "unreadable",
+      "json_must_be_nonempty": true,
+      "declared_label": "UNREADABLE"
+    },
+    "H3": {
+      "tokens_any": ["BLIND-INSTRUMENT", "SUSPECT"],
+      "json_key": "declared_fail_classes",
+      "json_must_contain": "BLIND-INSTRUMENT",
+      "declared_label": "BLIND-INSTRUMENT"
+    }
+  },
+  "cases": [
+    {
+      "id": "ctl-head",
+      "severity": "hard",
+      "class": "control",
+      "home": "real",
+      "source": "@repo",
+      "note": "Ordinary run on the repo's own three scoped files: the claim's invariance clause (PASS 0/0/0/0 before and after).",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS", "SCOPE-ERRORS (marker assertions): []"]},
+        "after": {"exit": 0, "must": ["VERDICT: PASS", "SCOPE-ERRORS (marker assertions): []", "G2 positive-assertion guard: ok"]}
+      }
+    },
+    {
+      "id": "current-ok-ctl",
+      "severity": "hard",
+      "class": "control",
+      "home": "fakehome",
+      "source": "roots/current-ok-ctl",
+      "note": "Hermetic positive control: exactly one current-ok locus per file (PROVINCE.md:20, SCORECARD.md:58, SKILL.md:19; omp=9.9.9 + receipt language). The per-file floor must not fire: PASS both phases.",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS"]},
+        "after": {"exit": 0, "must": ["VERDICT: PASS", "G2 positive-assertion guard: ok"],
+                  "soft": ["PROVINCE.md=1", "SCORECARD.md=1", "SKILL.md=1"]}
+      }
+    },
+    {
+      "id": "blind-nonempty",
+      "severity": "hard",
+      "class": "H3",
+      "home": "fakehome",
+      "source": "roots/blind-nonempty",
+      "note": "H3 data-side reproduction: all scoped files present and >= their declared max end, every DATED marker in place, zero gate-token matches anywhere -> zero loci everywhere. Round-1 CR-5 produced this class by neutering the instrument's needles; this fixture produces it with legitimate input.",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS", "loci=0"]},
+        "after": {"exit": 1, "classes": ["H3"], "must": ["VERDICT: FAIL", "BLIND-INSTRUMENT"],
+                  "soft": ["PROVINCE.md=0", "SCORECARD.md=0", "SKILL.md=0",
+                            "DECLARED FAIL CLASSES: ['BLIND-INSTRUMENT']"]}
+      }
+    },
+    {
+      "id": "partial-blind-skill",
+      "severity": "hard",
+      "class": "H3",
+      "home": "fakehome",
+      "source": "roots/partial-blind-skill",
+      "note": "The exact per-file-collapse case the landed header names: SKILL.md readable but needle-free (zero loci) while PROVINCE.md and SCORECARD.md stay loud. A GLOBAL floor would PASS this tree; the landed per-readable-file floor FAILs it. Also the cleanest discriminator between the r9 revisions.",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS"]},
+        "after": {"exit": 1, "classes": ["H3"], "must": ["VERDICT: FAIL", "BLIND-INSTRUMENT"],
+                  "soft": ["SKILL.md=0", "PROVINCE.md=1", "SCORECARD.md=1"]}
+      }
+    },
+    {
+      "id": "hist-only",
+      "severity": "reading",
+      "class": "reading-probe",
+      "home": "fakehome",
+      "source": "roots/hist-only",
+      "note": "Reading probe: SCORECARD.md carries one historical locus (rea-agents@6.4.0 inside a DATED band) and no current-ok; PROVINCE.md and SKILL.md carry their loud controls. PER-FILE floor FAILs (SCORECARD.md=0); a GLOBAL floor PASSes (2 current-ok loci exist). Pins which reading is in force and whether one historical-only file may carry a file's floor contribution.",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS"]},
+        "readings": {
+          "PER-FILE": {"exit": 1, "must": ["BLIND-INSTRUMENT", "SCORECARD.md=0"]},
+          "GLOBAL": {"exit": 0, "must": ["VERDICT: PASS"]}
+        }
+      }
+    },
+    {
+      "id": "miss-skill",
+      "severity": "hard",
+      "class": "H1",
+      "home": "fakehome",
+      "source": "roots/miss-skill",
+      "note": "H1 core: the only omission is SKILL.md, whose declared rows are all CURRENT, so pre-fix nothing fires and the run reads PASS (the silent-PASS injection). Survivors stay loud, so the post-fix failure is the H1 class alone (declared list exactly ['UNREADABLE']).",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS", "SKILL.md"]},
+        "after": {"exit": 1, "classes": ["H1"], "must": ["VERDICT: FAIL", "SKILL.md"],
+                  "soft": ["FileNotFoundError", "DECLARED FAIL CLASSES: ['UNREADABLE']"]}
+      }
+    },
+    {
+      "id": "miss-skill-dir",
+      "severity": "hard",
+      "class": "H1",
+      "home": "fakehome",
+      "source": "roots/miss-skill",
+      "ops": [{"op": "mkdir", "path": "SKILL.md"}],
+      "note": "Shape variant: a directory where SKILL.md is declared (OSError on open).",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS"]},
+        "after": {"exit": 1, "classes": ["H1"], "must": ["VERDICT: FAIL", "SKILL.md"],
+                  "soft": ["IsADirectoryError"]}
+      }
+    },
+    {
+      "id": "miss-skill-dangling",
+      "severity": "hard",
+      "class": "H1",
+      "home": "fakehome",
+      "source": "roots/miss-skill",
+      "ops": [{"op": "symlink", "path": "SKILL.md", "target": "no-such-target.md"}],
+      "note": "Shape variant: dangling symlink at the declared path.",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS"]},
+        "after": {"exit": 1, "classes": ["H1"], "must": ["VERDICT: FAIL", "SKILL.md"],
+                  "soft": ["FileNotFoundError"]}
+      }
+    },
+    {
+      "id": "miss-skill-mode000",
+      "severity": "hard",
+      "class": "H1",
+      "home": "fakehome",
+      "source": "roots/current-ok-ctl",
+      "ops": [{"op": "chmod", "path": "SKILL.md", "mode": "000"}],
+      "note": "Shape variant: file present, content intact, unreadable (EACCES). Requires a non-root uid (measured uid=1000).",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS"]},
+        "after": {"exit": 1, "classes": ["H1"], "must": ["VERDICT: FAIL", "SKILL.md"],
+                  "soft": ["PermissionError"]}
+      }
+    },
+    {
+      "id": "miss-province",
+      "severity": "hard",
+      "class": "H1",
+      "home": "fakehome",
+      "source": "roots/miss-province",
+      "note": "H1 on a DATED-bearing file: pre-fix already FAILs via marker-uncheckable SCOPE-ERRORs; post-fix the failure is the declared UNREADABLE class (both indicators present).",
+      "expect": {
+        "before": {"exit": 1, "must": ["VERDICT: FAIL", "marker uncheckable"]},
+        "after": {"exit": 1, "classes": ["H1"], "must": ["VERDICT: FAIL", "PROVINCE.md", "UNREADABLE"]}
+      }
+    },
+    {
+      "id": "miss-scorecard",
+      "severity": "hard",
+      "class": "H1",
+      "home": "fakehome",
+      "source": "roots/miss-scorecard",
+      "note": "Same as miss-province for the third scoped file.",
+      "expect": {
+        "before": {"exit": 1, "must": ["VERDICT: FAIL", "marker uncheckable"]},
+        "after": {"exit": 1, "classes": ["H1"], "must": ["VERDICT: FAIL", "SCORECARD.md", "UNREADABLE"]}
+      }
+    },
+    {
+      "id": "miss-all",
+      "severity": "hard",
+      "class": "H1",
+      "home": "fakehome",
+      "source": null,
+      "note": "Empty root: every scoped file unevaluable. Pre-fix FAIL (markers), post-fix FAIL with all three files named in the declared class; the per-file floor is vacuous (no readable file).",
+      "expect": {
+        "before": {"exit": 1, "must": ["VERDICT: FAIL"]},
+        "after": {"exit": 1, "classes": ["H1"], "must": ["VERDICT: FAIL", "PROVINCE.md", "SKILL.md", "SCORECARD.md"]}
+      }
+    },
+    {
+      "id": "empty-skill",
+      "severity": "advisory",
+      "class": "H1b-residual",
+      "home": "fakehome",
+      "source": "roots/empty-skill",
+      "note": "Round-1 residual H1b: a present-but-zero-byte CURRENT-only file. Pre-fix PASS (silent). The landed G19 truncation rule (len(lines) < declared max end) is expected to close it: FAIL + UNREADABLE. Advisory so a differently-worded implementation is reported, not failed.",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS"]},
+        "after": {"exit": 1, "classes": ["H1"], "must": ["VERDICT: FAIL", "SKILL.md"]}
+      }
+    },
+    {
+      "id": "h2-inline-excuse",
+      "severity": "advisory",
+      "class": "H2-probe",
+      "home": "fakehome",
+      "source": "roots/h2-inline-excuse",
+      "note": "H2 probe (named as NOT closed in the landed header): a fabricated non-live pin rea-agents@9.9.8 excused by the same-line token 'superseded' reads historical; the file keeps its separate genuine current-ok locus (SCORECARD.md:58), so the floor stays satisfied. Expectation is PASS both phases; a FAIL/current-ok reading for the 9.9.8 pin would mean H2 got closed.",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS"]},
+        "after": {"exit": 0, "must": ["VERDICT: PASS"]}
+      }
+    },
+    {
+      "id": "fold-mixed-block",
+      "severity": "reading",
+      "class": "floor-granularity",
+      "home": "fakehome",
+      "source": "roots/fold-mixed-block",
+      "note": "Floor-granularity probe: two adjacent content lines fold into ONE block whose asserts mix current-ok + historical -> block disposition info. Measured history: r9-v1 (82fb807e, block-level global) FAIL BLIND-INSTRUMENT with current-ok loci=0/total=1; r9-v2 (c95a5cf3, per-file but block-counted) FAIL with SCORECARD.md=0; r9-v3 (df9ffdf9, per-file per-DETECTION) PASS with SCORECARD.md=1 -- the same class the landed header records at HEAD (SKILL.md's only locus-bearing block is mixed). Modes: ASSERT-COUNT = det-counted floor (PASS), UNIT-COUNT = block-counted floor (FAIL), VACUOUS-PASS = pre-r9 instrument (PASS via g2's old second disjunct).",
+      "expect": {
+        "readings": {
+          "ASSERT-COUNT": {"exit": 0, "must": ["VERDICT: PASS", "SCORECARD.md=1"]},
+          "UNIT-COUNT": {"exit": 1, "must": ["BLIND-INSTRUMENT", "SCORECARD.md=0"]},
+          "VACUOUS-PASS": {"exit": 0, "must": ["VERDICT: PASS", "G2 positive-assertion guard: ok"],
+                            "must_not": ["current-ok loci per file"]}
+        }
+      }
+    },
+    {
+      "id": "h5-gate-free",
+      "severity": "advisory",
+      "class": "H5-probe",
+      "home": "fakehome",
+      "source": "roots/h5-gate-free",
+      "note": "H5 probe (unit boundary, not closed by design): 'The build shipped 6.7.0 last week.' carries no REA_GATE token, so it is not a locus in this unit. PASS both phases; also a non-vacuity check that the floor does not fire when each file's genuine current-ok locus exists.",
+      "expect": {
+        "before": {"exit": 0, "must": ["VERDICT: PASS"]},
+        "after": {"exit": 0, "must": ["VERDICT: PASS"]}
+      }
+    }
+  ]
+}

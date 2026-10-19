@@ -1,0 +1,16 @@
+--- /var/tmp/rv3-mutation/landed/landed.py	2026-10-19 09:20:05.072612649 -0300
++++ /var/tmp/rv3-mutation/landed/mut/mutant-m-eof.py	2026-10-19 09:20:05.085693425 -0300
+@@ -521,13 +521,6 @@
+             counts[f] = {"lines": None, "loci": None}
+             filelines[f] = None
+             continue
+-        if len(lines) < max_end:
+-            # G19: declared rows past EOF are unevaluable, never a silent zero.
+-            unreadable.append("%s: %d lines < declared max %d (rows beyond EOF)"
+-                              % (f, len(lines), max_end))
+-            counts[f] = {"lines": None, "loci": None}
+-            filelines[f] = None
+-            continue
+         filelines[f] = lines
+         counts[f] = {"lines": len(lines), "loci": len(classify(f, lines, live, out))}
+     scope_errors = assert_markers(filelines)
