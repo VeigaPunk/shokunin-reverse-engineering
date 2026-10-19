@@ -1868,3 +1868,57 @@ Carried debt: the register append-past-:162 residual; the mid-leg retest
 (operator-gated); the perishable pin-line class will drift again (the receipt
 now carries the live line's content hash so the next drift is detectable);
 `.ufo/waves/arc2-loop1-round10/C3.md` still dirty; `/tmp` quota standing.
+
+## arc3-loop1-round9 — freshness + coverage + calibration: three claims admitted, 2026-10-19
+
+Wave: 48 seats on `openai-codex/gpt-6-luna-max` — the scheduled R9 provider,
+no substitution. All 48 reports delivered; the wave caught a second
+pre-existing gate FAIL (`SCORECARD.md:1834`, the r8 section's `6.7.0` pin
+outside the 1759-1813 scope row) and its fix folded into the landing. Claims
+measured at work commit `eb5a2c4`.
+
+- C1 freshness (fleet) — the `PROVINCE.md:50` perishable-value residual
+  repaired same-line: "pacman `.pkg.tar.zst` corpus 1556 signed archives"
+  now carries the dated qualifier + the live delta ("cache: 1,556 signed
+  archives (2026-10-13 snapshot); current cache: 1,350 archive files, each
+  with a matching `.sig` sidecar (arc3-loop1-round9 recount; −206 vs
+  snapshot)") + the `available:true` clause dated to the survey, not read as
+  a fresh check. The SCORECARD scope re-key (1759-1813 → 1759-1870) fixes
+  the r8-section undeclared FAIL the wave caught; the instrument now reads
+  PASS with the row's loci evaluated.
+- C2 coverage (owned) — the viaIR final-selector-miss residual **closed**:
+  `corpus/knowledge/2026-10-19-arc3-r9-viair-fallback-miss.md` (EX-8's entry
+  — byte-level evidence): the `SUB`-leg mismatch branch at PC `0xc2`/`0xcf`
+  distinguishes the no-fallback revert path (`PUSH0; DUP1; REVERT`) from the
+  payable-fallback storage-write path (`CALLVALUE` → `SSTORE` slot 2 →
+  `STOP`); 15/15 selectors at both variants, both pins. Map token landed;
+  command A 87 → 88.
+- C3 calibration (owned) — the pin-line drift class characterized
+  end-to-end: the pin is the **sole** `rea-agents@` match at `:4126` (the
+  ptr extension evaluates it `current-ok`); the class is **position-
+  sensitive, not content-sensitive** (a one-line insertion above the pin
+  reads `stale`; a duplicate pin line stays `current-ok`). Recorded
+  append-only on the r8 receipt — the next drift is now not just detected
+  but understood.
+
+Instruments at `eb5a2c4`: command A 87→**88/88** mapped, 15/15 rules,
+10.0/10.0; census PASS + G21 + live `:4126` `current-ok`; probe findings=0
+both modes; custody 28/28; PROVINCE 162 held.
+
+| axis | evidence | verdict |
+|---|---|---|
+| freshness — C1 | `PROVINCE.md:50` dated + live-delta repaired; scope re-key fixes undeclared FAIL | improved |
+| coverage — C2 | corpus 87→88; viaIR fallback-miss residual closed | improved |
+| calibration — C3 | drift class measured end-to-end; position-sensitivity characterized | improved |
+| depth | 15 → 15 | unchanged |
+| operability | census PASS + G21 + ptr `current-ok`; probe 0/0 | unchanged |
+| adjacency | PROVINCE boundary untouched | unchanged |
+
+Learning trends: the arc's instrument-driven correction loop is now the
+steady state — each round's wave catches the prior round's own scope drift
+(the r7 and r8 SCORECARD sections each undeclared) and the fix folds into
+the same commit that lands the claim. That is exactly the discipline the
+gates exist to enforce. Carried debt: the register append-past-:162
+residual; the mid-leg retest (operator-gated); the `available:true` class
+stays dated, not re-probed (no live REA session this round);
+`.ufo/waves/arc2-loop1-round10/C3.md` still dirty; `/tmp` quota standing.

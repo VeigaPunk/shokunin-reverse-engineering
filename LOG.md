@@ -1617,3 +1617,25 @@ outside declared scope) and folded its fix into the coupled landing.
   landed; command A 86→87.
 - Instruments at `227443e`: command A 87/87, census PASS + G21 + live
   pointer `current-ok`, probe 0/0 both modes, custody 28/28, PROVINCE 162.
+
+## 2026-10-19 — arc3-loop1-round9 (work commit `eb5a2c4`; records this entry)
+
+Round 9 of arc3 loop 1: 48 seats on `openai-codex/gpt-6-luna-max` (scheduled
+provider). All 48 reports delivered; the wave caught a second pre-existing
+gate FAIL (the r8 SCORECARD section's pin outside the declared scope row) and
+its fix folded into the landing.
+
+- C1 freshness: `PROVINCE.md:50` perishable-value residual repaired same-line —
+  the 1556 count now carries the dated qualifier + the live 1350/−206 delta +
+  the `available:true` clause dated. SCORECARD scope re-keyed 1759-1813 →
+  1759-1870 to fix the r8-section undeclared FAIL; instrument reads PASS.
+- C2 coverage: viaIR final-selector-miss residual CLOSED —
+  `corpus/knowledge/2026-10-19-arc3-r9-viair-fallback-miss.md` (EX-8's entry):
+  the `SUB`-leg mismatch branch distinguishes the no-fallback revert path from
+  the payable-fallback storage-write path; 15/15 both variants. Map token
+  landed; command A 87→88.
+- C3 calibration: pin-line drift class characterized — sole `rea-agents@`
+  match at `:4126`, `current-ok`; position-sensitive not content-sensitive;
+  recorded on the r8 receipt.
+- Instruments at `eb5a2c4`: command A 88/88, census PASS + G21 + ptr
+  `current-ok`, probe 0/0 both modes, custody 28/28, PROVINCE 162.
