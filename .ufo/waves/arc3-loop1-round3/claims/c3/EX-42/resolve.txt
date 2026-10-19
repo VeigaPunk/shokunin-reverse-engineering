@@ -1,0 +1,279 @@
+### A rows — stated line/range resolution at HEAD
+OK	corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:17 citing corpus/knowledge/2026-10-13-r3-evm-interface.md:149-155 (155 lines)	corpus/knowledge/2026-10-13-r3-evm-interface.md:149-155
+      149| ## Errata (round 4)
+      150| 
+      151| - **`bytecodeOffset` semantics corrected (r4 audit-A, verified 2026-10-13):** the selector
+      152|   findings' `bytecodeOffset` records the **JUMPDEST dispatch-target position**, not the
+      153|   PUSH4 comparison site. Carrier 3's recorded offsets (62/68/74) sit at jump destinations.
+      154|   The selector→push-site mapping is still derivable from the disassembly but is not what
+      155|   the field emits.
+OK	corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:18 citing corpus/knowledge/2026-10-13-r3-evm-interface.md:59-70 (155 lines)	corpus/knowledge/2026-10-13-r3-evm-interface.md:59-70
+      59|     success. `raw_result.functions` recovered all 3 selectors:
+      60|     `a9059cbb` @ offset 62, `70a08231` @ 68, `095ea7b3` @ 74 — every
+      61|     dispatched selector found, zero false positives, offsets point at the
+      62|     PUSH4 sites. `dispatch: "abi"` for all three.
+      63|   - `inferred_arguments: ""` — expected: stub bodies never decode calldata,
+      64|     so EVMole honestly reports no argument tuple rather than guessing
+      65|     `(address,uint256)`.
+      66|   - `inferred_state_mutability: "pure"` for all three — inference artifact:
+      67|     stubs contain no SLOAD/SSTORE/CALL, consistent with the shipped
+      68|     limitation "recovered selectors … are upstream inferences, not verified
+      69|     ABI signatures or names".
+      70|   - `raw`-encoding twin: `/tmp/evm-carrier-3.bin` (same 81 bytes, written via
+OK	corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:21 citing corpus/QUALITY.md:24-25 (36 lines)	corpus/QUALITY.md:24-25
+      24| | 14 | Evidence-id identity claims state the id's full domain: `f(content, path, params)` — "content-addressed" alone is inadmissible; cross-run/cross-path identity cites
+      25| | 15 | Evidence-id identity claims state the id's domain per verb family with its corpus citation — never a universal formula; recorded: revenger-verifier ids are path-se
+OK	corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:24 citing corpus/QUALITY.md:21 (36 lines)	corpus/QUALITY.md:21
+      21| | 11 | Empty/zero findings must state whether the surface was parsed-and-empty or excluded-from-inventory (`parse_failures:0` on an unparsed member is an exclusion, not a
+OK	corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:25 citing corpus/knowledge/2026-10-13-r3-evm-interface.md:44-45 (155 lines)	corpus/knowledge/2026-10-13-r3-evm-interface.md:44-45
+      44| - **suggested:** treat `kind: "unknown"` as the default floor; classification
+      45|   appears to need richer bytecode (real solc output) to engage.
+OK	corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:26 citing corpus/knowledge/2026-10-13-r3-evm-interface.md:93-96 (155 lines)	corpus/knowledge/2026-10-13-r3-evm-interface.md:93-96
+      93|   - CLI shape: encoding is a POSITIONAL arg (`rea inspect-evm-interface
+      94|     <path> <raw|hex>`), NOT a flag — `--encoding hex` returns
+      95|     `Unknown flag: --encoding` (exit 1). `--schema` advertises it as a
+      96|     property; the dispatch protocol differs from flag-shaped commands.
+OK	SHONEN.md:6 citing SKILL.md:81-255 (390 lines)	SKILL.md:81-255
+      81| ## Queue-drain craft (rounds 5-12, distilled in round 13)
+      82| 
+      83| Decision rules distilled from the round 5–13 queue-drain corpus entries; each
+      84| bullet is bounded by the lines it cites.
+      85| 
+      86| - **Evidence ids are content-addressed per verb family — never substitute ids
+      87|   across invocation shapes.** Many families re-derive byte-identical ids and
+      88|   envelopes across re-runs, lanes, and rounds (native verbs
+      89|   `corpus/knowledge/2026-10-13-r7-01-queue-a-ops.md:84-91`; JS workflows
+      90|   `corpus/knowledge/2026-10-13-r8-02-queue-a-ops-2.md:99-123`; ledger verb
+      91|   `corpus/knowledge/2026-10-14-r9-01-queue-a-ops.md:221-249`; an id held
+      92|   across a day and re-derives byte-exact
+      93|   `corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:11`). Per-run id
+      94|   classes are recorded too: raw_result embeds a mkdtemp staging path (jadx,
+      95|   firmware-regions —
+      96|   `corpus/knowledge/2026-10-14-r12-02-queue-b-ledger.md:131-133`) and per-run
+      97|   UUIDs/provider_ids ride inside normalized_result (binwalk regions, unblob
+      98|   chunks — `corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:67`); CDP and
+      99|   process-capture envelopes are wall-clock-parameterized by design
+      100|   (`corpus/knowledge/2026-10-14-r10-02-queue-ops-2.md:44-48`,
+      101|   `corpus/knowledge/2026-10-14-r11-01-queue-ops.md:212-217`); and
+      102|   `compare-managed-members` mints internal member ids that differ from CLI
+      103|   ids at identical bytes
+      104|   (`corpus/knowledge/2026-10-14-r10-01-queue-ops.md:89-96`). Establish the
+      105|   family first, then verify byte-exact (content-addressed) or run-normalized
+      106|   (per-run) accordingly
+      107|   (`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:5`).
+      108| - **Raw file vaddrs must be pre-shifted +0x100000 into Ghidra space for every
+      109|   native verb on ELF PIE/DYN.** Proven on an executable (`/usr/bin/jq`,
+      110|   `corpus/knowledge/2026-10-13-r5-02-call-targets-jq.md:144-146`) and on
+      111|   shared objects (libjq
+      112|   `corpus/knowledge/2026-10-13-r7-01-queue-a-ops.md:174-177`; glibc `setenv`
+      113|   and libgtk `gtk_button_new`
+      114|   `corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:268-272`). An unshifted
+      115|   address is answered honestly, never decoded as garbage: typed
+      116|   `outside-memory`, exit 0, null bytes
+      117|   (`corpus/knowledge/2026-10-13-r7-02-queue-a-ops-2.md:47-60`).
+      118| - **Refusal families and cost classes.** `VALIDATION_ERROR` = zod
+      119|   fieldErrors, pre-analysis ~0.7 s
+      120|   (`corpus/knowledge/2026-10-13-r5-02-call-targets-jq.md:25-51`);
+      121|   `invalid_request` = semantic, in BOTH cost classes — pre-analysis 0.7 s on
+      122|   argument exclusivity
+      123|   (`corpus/knowledge/2026-10-13-r7-01-queue-a-ops.md:93-119`) but
+      124|   post-analysis ~14.2 s after a full import when a name must resolve against
+      125|   the analyzed program
+      126|   (`corpus/knowledge/2026-10-13-r8-01-queue-a-ops.md:118-134`);
+      127|   `capability_unavailable` = env gates such as `REA_BROWSER_EXECUTABLE`,
+      128|   invisible in the capabilities matrix
+      129|   (`corpus/knowledge/2026-10-14-r11-01-queue-ops.md:63-74`);
+      130|   `provider_unavailable` = missing engines / clean environment
+      131|   (`corpus/knowledge/2026-10-13-r5-01-riscv-bypass.md:78`,
+      132|   `corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:24`). `retryable`
+      133|   marks transport retryability, not arg-fixability
+      134|   (`corpus/knowledge/2026-10-13-r7-01-queue-a-ops.md:117-119`), and refusal
+      135|   latency is not a validity signal
+      136|   (`corpus/knowledge/2026-10-13-r8-01-queue-a-ops.md:130-132`).
+      137| - **Four authority grades — cite a conclusion at the grade its envelope
+      138|   declares.** `observed`+`shipped-artifact`: provider observation of the
+      139|   pinned artifact bytes
+      140|   (`corpus/knowledge/2026-10-13-r5-02-call-targets-jq.md:55-57`);
+      141|   `inferred`+`analyst-inference`: derived analytics over an authenticated
+      142|   input, citable as inference never as artifact observation
+      143|   (`corpus/knowledge/2026-10-13-r8-02-queue-a-ops-2.md:78-90`) and never
+      144|   promoted to exact identity
+      145|   (`corpus/knowledge/2026-10-14-r12-02-queue-b-ledger.md:53-54`);
+      146|   `observed`+`historical-reference`: retained producer evidence without
+      147|   execution attribution — "Recorded URLs are never fetched"
+      148|   (`corpus/knowledge/2026-10-14-r10-01-queue-ops.md:166-173`);
+      149|   `observed`+`controlled-replay`: scripted pty replay with residual unknowns
+      150|   stated (`corpus/knowledge/2026-10-14-r11-01-queue-ops.md:197-207`).
+      151| - **Input contracts are shape-gated.** Ledger/coverage verbs consume a
+      152|   canonically wrapped Evidence bundle — hand-wrapped manifests refuse "not
+      153|   canonical"; wrap with the package's own `createEvidenceBundle`
+      154|   (`corpus/knowledge/2026-10-14-r9-01-queue-a-ops.md:41-48`). The
+      155|   application-graph projectors take a homogeneous `inspect_artifact`-only
+      156|   inventory — keyed-archive/IB evidences are schema-valid yet
+      157|   workflow-refused, and the same refusal string and law hold for Android
+      158|   (`corpus/knowledge/2026-10-14-r11-02-queue-ops-2.md:51-65`,
+      159|   `corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:50`). Native CLI verbs
+      160|   are positional `{path, address}` — schema properties are not flags
+      161|   (`corpus/knowledge/2026-10-13-r5-02-call-targets-jq.md:36-41`).
+      162| - **Module attribution is caller-attested, not proven.** `analyze_function`
+      163|   ids hash content+parameters, not the path: the same glibc bytes under a
+      164|   renamed path flip one P/Invoke verdict `contradicted`→`verified`
+      165|   (`corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:106-141`), and a
+      166|   subject-only rewrite reproduces the renamed-path envelope bit-for-bit at
+      167|   the same id — verdicts attest the analysis, callers attest the module; pin
+      168|   request bytes when module identity matters
+      169|   (`corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:146-169`).
+      170| - **Tool acceptance ≠ correctness.** `trace-web-source-location`'s VLQ
+      171|   validator catches dangling continuations yet accepted a semantically wrong
+      172|   line-delta map; the defect surfaced only via an independent decoder — never
+      173|   treat a pass as input correctness; cross-check independently
+      174|   (`corpus/knowledge/2026-10-14-r11-01-queue-ops.md:123-129`, run log :311).
+      175| - **Census rows can be defects — check holdings before exercising.** Six
+      176|   recorded instances of rows queued while already held: row 7 / table line
+      177|   171 (`corpus/knowledge/2026-10-13-r8-01-queue-a-ops.md:247-275`), lines
+      178|   181–183 and 187 (`corpus/knowledge/2026-10-14-r10-02-queue-ops-2.md:25-60`),
+      179|   L195 (`corpus/knowledge/2026-10-14-r12-02-queue-b-ledger.md:161-166`,
+      180|   "sixth instance"). Same-round wave entries count as exercised
+      181|   (`corpus/knowledge/2026-10-13-r8-01-queue-a-ops.md:262-265`); the drain
+      182|   move is a holdings pre-check with re-derivation, "do not re-exercise"
+      183|   (`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:1`); later-held
+      184|   Queue-B rows that postdated the census were bookkeeping lag, not
+      185|   wrong-at-write defects
+      186|   (`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:105-108`).
+      187| - **Provisioning hints can be wrong — verify the gate, not the hint.** The
+      188|   census's `chromium --log-net-log` hint refuses typed against a real netlog;
+      189|   the operative gate is a har-schema-valid capture (playwright `recordHar`
+      190|   satisfies it) (`corpus/knowledge/2026-10-14-r10-01-queue-ops.md:138-142`).
+      191|   Same class: an env gate invisible in the capability matrix — census gates
+      192|   can be incomplete in BOTH directions
+      193|   (`corpus/knowledge/2026-10-14-r11-01-queue-ops.md:72-74`) — and the
+      194|   pwntools "one-fix" that is really the pin `setuptools<81`
+      195|   (`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:23`).
+      196| - **Citations into an operator-mutable file anchor by stanza key + receipt,
+      197|   never by bare line number.** `~/.kimi-code/config.toml` moved the
+      198|   `[mcp_servers.rea]` stanza `:1284` → `:2938` → `:3225` → `:3296` in one day
+      199|   (four `.bak` generations plus the live file; round-3 receipt
+      200|   `.ufo/waves/arc2-loop1-round3/receipts/config-pre-pair.txt`), and every
+      201|   re-point minted a fresh dead number — round-3's own declared target
+      202|   `:2938`/`:2940` was dead before the round closed
+      203|   (`corpus/knowledge/2026-10-13-r4-16-frontier-rescan.md:938-950`). Cite the
+      204|   key (`[mcp_servers.rea]`, `args`) and qualify it with the receipt that
+      205|   captured the value (`PROVINCE.md:18`, `SCORECARD.md:59`); a line number may
+      206|   appear only inside an append-only record that names its capture stamp.
+      207| - **Config custody is a pre/post-pair — a zero-drift claim without its own
+      208|   pre-pair is void.** luna-round-8 closed zero config drift against the
+      209|   round-6 baseline with no round-8 pre-pair — recorded as carried debt
+      210|   (`SCORECARD.md:544-545`; `LOG.md:856-858`) and stated as a limitation in
+      211|   the battery entry itself, "No config-drift pair"
+      212|   (`corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md:15`). Freeze
+      213|   the sha256 of every drift-sensitive client config before dispatch and
+      214|   re-verify after the battery; only the bracketing pair supports a
+      215|   zero-drift claim — a post-only comparison is void, not a weaker grade.
+      216|   A baseline-relative hash match may be reported as baseline-relative; it
+      217|   is not a same-round zero-drift observation.
+      218| 
+      219| - **Long Ghidra analyze runs are transient user services, not scoped
+      220|   processes.** `systemd-run --user --scope` ties the run to its launcher's
+      221|   lifetime: the round-4 91.6MB run's scope tore down when the launching shell
+      222|   exited, and only the journal preserved the true cause (memcg OOM at its own
+      223|   7G cap — containment worked; lifetime failed). The service form (`--user`,
+      224|   no `--scope`) survives the launcher and keeps `MemoryMax` containment plus
+      225|   file-captured envelopes: round 6's mid-rung HELD that way
+      226|   (`corpus/knowledge/2026-10-18-arc2-r6-pe-midrung.md:13`) and round 7's
+      227|   91.6MB wall-leg HELD that way with the validated analyzer-disable recipe
+      228|   (`corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:5-13`). Add an explicit
+      229|   unit name, a memory+swap cap, a disk-backed non-dot TMPDIR, and read the
+      230|   verdict from the sealed envelope plus the journal — never from the unit's
+      231|   post-collection residue. Caller-kill survival is untested — recorded
+      232|   unknown, never asserted.
+      233| - **A mitigation claim carries its natural control: same target, caps, and
+      234|   deadline; only the treatment is absent.** Compare paired outcomes before
+      235|   attributing necessity; cite both runs. The 91.6MB PE held with three
+      236|   registry-validated analyzers disabled
+      237|   (`corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:13-19`); the matched natural
+      238|   control omitted the disables under the same caps/deadline and was
+      239|   kernel-OOM-killed (`corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:23-37`).
+      240| - **An artifact that records its own byte-identity must re-derive that
+      241|   identity after every revision; a stale self-identity voids the verification
+      242|   block, not the work.** Size/hash/line-count claims bind the bytes they
+      243|   describe, not an earlier revision of the same patch: after the C1 entry
+      244|   patch was revised, its step-4 claim still read 8,316 B / `f95c5a05…` while
+      245|   the applied bytes hashed 8,598 B / `d8d85949…`
+      246|   (`.ufo/waves/arc3-loop1-round1/seats/CR-2.md:86-89`), and the chain measured
+      247|   three applied identities inside ~20 minutes, the fix being the fresh landing
+      248|   hash (`.ufo/waves/arc3-loop1-round1/claims/c1/verdict.md:149-153`). The
+      249|   voided block is re-established by re-running its checks against the current
+      250|   bytes; the integrator records the fresh identity of the landed revision —
+      251|   10,225 B / `dd986f56…` for the landed entry
+      252|   `corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7`, whose recheck line
+      253|   records the mid-wave revision (`SCORECARD.md`'s `arc3-loop1-round1` section,
+      254|   the "fresh identity recorded" line; `LOG.md:1411-1412`) — never a revert,
+      255|   never a carried-over number.
+OK	SKILL.md:246 citing .ufo/waves/arc3-loop1-round1/seats/CR-2.md:86-89 (247 lines)	.ufo/waves/arc3-loop1-round1/seats/CR-2.md:86-89
+      86|   - **F2 (recommended)** — re-derive the entry file's sha256 at landing; the
+      87|     patch text's step-4 identity (8,316 B / `f95c5a05…`) is stale against the
+      88|     patch's own output (8,598 B / `d8d85949…`). Land the patch as-is; fix the
+      89|     recorded hash.
+OK	SKILL.md:248 citing .ufo/waves/arc3-loop1-round1/claims/c1/verdict.md:149-153 (207 lines)	.ufo/waves/arc3-loop1-round1/claims/c1/verdict.md:149-153
+      149| - **D9 — the entry patch was revised mid-wave and its self-verification block is
+      150|   stale (REQUIRED FIX before landing).** Three different applied identities were
+      151|   observed within ~20 minutes: 8,598 B (CR-2, `claims/c1/CR-2/entry-file-identity.txt`),
+      152|   8,316 B (`f95c5a05…`, my rev-A apply, = EX-12's own claimed hash), and
+      153|   9,513 B / 32 lines (`a5119120…`, the current rev-B patch sha256 `d662c195…`).
+OK	SKILL.md:252 citing corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7 (33 lines)	corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7
+      7| recheck: `mkdir -p /var/tmp/cr2-recheck && TMPDIR=/var/tmp/cr2-recheck npx -y rea-agents@6.4.0 inspect-evm-interface /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/w
+OK	SKILL.md:254 citing LOG.md:1411-1412 (1455 lines)	LOG.md:1411-1412
+      1411|   `corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md` (10,225 B, sha256
+      1412|   `dd986f56…`) + the line-neutral map row.
+OK	SCORECARD.md:1435 citing SHONEN.md:6 (12 lines)	SHONEN.md:6
+      6|   asserted: `SKILL.md:81-255` (craft section; rules #11-14 added arc2 rounds 4/7/9 + arc3 round 2); 14/14 rule blocks have resolvable citations, not a full semantic audit
+
+### B rows — target location in tree at HEAD
+ABSENT .sha256  <- SKILL.md:390
+EXISTS .ufo/gates/citation-drift/citation-drift-probe.py  <- SKILL.md:389
+EXISTS .ufo/gates/citation-drift/expected.json  <- SKILL.md:389
+EXISTS .ufo/gates/citation-drift/pointer-table.json  <- SKILL.md:389
+EXISTS .ufo/gates/custody-pair/custody-pair.py  <- SKILL.md:390
+EXISTS .ufo/waves/arc2-loop1-round10/C3.md  <- SCORECARD.md:1415,SCORECARD.md:1494
+EXISTS .ufo/waves/arc3-loop1-round1/claims-frozen.md  <- LOG.md:1400
+EXISTS .ufo/waves/arc3-loop1-round1/claims/c1/EX-02/install-receipt.txt  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+EXISTS .ufo/waves/arc3-loop1-round1/claims/c1/EX-06/evidence/run-hex-6.7.0.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+EXISTS .ufo/waves/arc3-loop1-round1/claims/c1/EX-07/reconciliation-run.txt  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+EXISTS .ufo/waves/arc3-loop1-round1/claims/c1/RV-1/validation-sha3-and-vectors.txt  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+EXISTS .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/attack/expected-many.txt  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:13,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+EXISTS .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/attack/probe-many.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+EXISTS .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/probe-runtime-hex-6.4.0.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+ABSENT /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.runtime.hex  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7
+FOUND(0) 2026-10-13-r3-evm-interface  ->   <- corpus/README.md:38
+FOUND(0) 2026-10-19-arc3-r1-evm-real-solc  ->   <- corpus/README.md:38
+FOUND(1) LOG.md  -> LOG.md  <- SKILL.md:384
+FOUND(1) Rv2Token.abi.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.abi.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:17
+FOUND(1) Rv2Token.creation.hex  -> .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.creation.hex  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:24
+FOUND(22) SCORECARD.md  -> .ufo/waves/arc3-loop1-round1/claims/c3/RV-11/scratch/atk-missing/SCORECARD.md;.ufo/waves/arc3-loop1-round1/claims/c3/RV-11/scratch/atk-no-province/SCORECARD.md;.ufo/waves/arc3-loop1-round1/claims/c3/RV-11/scratch/atk-silent/SCORECARD.md  <- SHONEN.md:6,SKILL.md:253
+FOUND(1) SHONEN.md  -> SHONEN.md  <- LOG.md:1443
+FOUND(25) SKILL.md  -> .ufo/waves/arc3-loop1-round1/claims/c2/RV-6/patchtest/SKILL.md;.ufo/waves/arc3-loop1-round1/claims/c2/SC-4/scratch/patchtest/SKILL.md;.ufo/waves/arc3-loop1-round1/claims/c2/SC-4/scratch/pl2-skill-apply/SKILL.md  <- SCORECARD.md:1436,LOG.md:1443
+FOUND(0) bytecode.sha256  ->   <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:17
+FOUND(1) compile.js  -> .ufo/waves/arc3-loop1-round1/claims/c1/EX-06/evidence/compile.js  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:11
+FOUND(2) config.toml  -> .ufo/waves/arc3-loop1-round1/claims/c3/RV-11/scratch/fakehome/.kimi-code/config.toml;.ufo/waves/arc3-loop1-round2/claims/c2/EX-15/fixtures/fakehome/.kimi-code/config.toml  <- SCORECARD.md:1495
+EXISTS corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md  <- LOG.md:1411
+EXISTS corpus/lessons/2026-10-15-round-1-recovery.md  <- SKILL.md:384
+FOUND(1) expected-selectors.txt  -> .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/expected-selectors.txt  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:12,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(7) expected.json  -> .ufo/gates/citation-drift/expected.json;.ufo/rounds/interactive-r1/expected.json;.ufo/waves/arc3-loop1-round1/claims/c2/EX-19/tools/orig/expected.json  <- SKILL.md:389,SCORECARD.md:1371
+FOUND(1) m1-kdxtoken-runtime.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/EX-07/m1-kdxtoken-runtime.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(1) m1-rv2token-runtime.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/EX-07/m1-rv2token-runtime.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:17,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(1) m2-kdxtoken-keccak.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/EX-07/m2-kdxtoken-keccak.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(1) planted-K.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/EX-06/evidence/planted-K.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:14,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(7) pointer-table.json  -> .ufo/gates/citation-drift/pointer-table.json;.ufo/waves/arc3-loop1-round1/claims/c2/EX-19/tools/orig/pointer-table.json;.ufo/waves/arc3-loop1-round1/claims/c2/EX-21/tmp/proto/pointer-table.json  <- SKILL.md:389
+FOUND(1) probe-EX02-smoke-bin-6.4.0.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/probe-EX02-smoke-bin-6.4.0.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(1) probe-creation-hex-6.4.0.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/probe-creation-hex-6.4.0.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(1) probe-cwd-root-6.4.0.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/probe-cwd-root-6.4.0.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(1) probe-rerun-a.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/probe-rerun-a.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(1) probe-rerun-b.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/probe-rerun-b.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(1) probe-runtime-hex-6.7.0.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/probe-runtime-hex-6.7.0.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(1) probe-runtime-raw-6.4.0.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/probe-runtime-raw-6.4.0.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(1) reconciliation-run.txt  -> .ufo/waves/arc3-loop1-round1/claims/c1/EX-07/reconciliation-run.txt  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:27
+FOUND(1) run-hex-6.7.0.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/EX-06/evidence/run-hex-6.7.0.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:25
+FOUND(1) run-raw-6.7.0.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/EX-06/evidence/run-raw-6.7.0.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33
+FOUND(3) solc-input.json  -> .ufo/waves/arc3-loop1-round1/claims/c1/EX-04/ex03-token/solc-input.json;.ufo/waves/arc3-loop1-round1/claims/c1/EX-04/solc-input.json;.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/solc-input.json  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:11
+FOUND(0) subject.digest.sha256  ->   <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7
+FOUND(1) transcript.txt  -> .ufo/waves/arc3-loop1-round1/claims/c1/EX-06/evidence/transcript.txt  <- corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:5,corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:33

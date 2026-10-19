@@ -1,0 +1,16 @@
+--- before/custody-pair.py	2026-10-19 10:07:38.948865083 -0300
++++ after/custody-pair.py	2026-10-19 10:07:38.948865083 -0300
+@@ -561,8 +561,11 @@
+     else:
+         out = Path(args.out).expanduser()
+         warn_if_tmp(out)
+-        if out.resolve() in {Path(p).expanduser().resolve() for p in CUSTODY_PATHS}:
+-            print("USAGE: refusing to write a receipt over a custody path: %s" % out, file=sys.stderr)
++        guarded = {Path(p).expanduser().resolve() for p in CUSTODY_PATHS}
++        guarded |= {p.resolve() for p in paths}
++        if out.resolve() in guarded:
++            print("USAGE: refusing to write a receipt over a path it measures"
++                  " or a custody path: %s" % out, file=sys.stderr)
+             return EXIT_USAGE
+         out.parent.mkdir(parents=True, exist_ok=True)
+         try:

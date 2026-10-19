@@ -1,0 +1,42 @@
+# EX-09 late-join verification log — reproduction of the landed artifacts
+# commands run from the repo root; scratch under /var/tmp/ex09v (never /tmp)
+
+## keccak self-test reproduced byte-identically
+keccak-self-test.txt: BYTE-IDENTICAL
+
+## reconciler outputs reproduced byte-identically
+recon-carrierA-r3.txt: BYTE-IDENTICAL (exit=0)
+recon-OptVault.txt: BYTE-IDENTICAL (exit=0)
+recon-control.txt: BYTE-IDENTICAL (exit=1)
+
+## controls.sh reproduced byte-identically
+controls.txt: BYTE-IDENTICAL (exit=0)
+
+## independent verifier
+verify-independent.py exit=0
+keccak self-test: PASS
+keccak cross-impl: {'js-sha3': 'PASS', 'EX-04 keccak.js': 'PASS'}
+
+--- A/2  carrierA-r3 (EX-02/EX-03 authored, optimizer runs=200)
+    decoded 9f7392acccea72cd42bdd8095a8578cab0727766f218b5399da22bc21d23741a (1426 B)
+    C1 upstream pin OK   .ufo/waves/arc3-loop1-round3/claims/c1/EX-03/carrier-A-EX02/carrierA.runtime.bin
+    C2/C3 planted K=9 derived K=9 MATCH
+    own EQ-table K=9
+    legs frozen=19  failures=0  C5=True
+
+--- A/3  OptVault (PL-1 plan carrier, optimizer runs=200)
+    decoded 544469b7bebfda4e5c9dedc7a11af69fc77d917f1d4258a53d1aa5ed95dfde7f (776 B)
+    C1 upstream pin OK   .ufo/waves/arc3-loop1-round3/claims/c1/EX-03/carrier-A-plan-prototype-OptVault/OptVault.runtime.bin
+    C2/C3 planted K=5 derived K=5 MATCH
+    own EQ-table K=5
+    legs frozen=8  failures=0  C5=True
+
+--- A/1  legacy control carrier-A.hex (r1 CR-1 hand-assembled)
+    decoded a92ba15225aaddccff5c0c67fff18c6c13b86be3bc91c07527681fbf500f6f7b (84 B)
+    C1 upstream pin OK   .ufo/waves/arc3-loop1-round1/claims/c1/CR-1/evidence/carrier-A.hex
+    C2/C3 planted K=3 derived K=3 MATCH
+    own EQ-table K=3
+    legs frozen=42  failures=0  C5=True
+    legs with non-JUMPDEST offsets: 42 (all ['095ea7b3', '70a08231', 'a9059cbb'])
+
+VERDICT: ALL INDEPENDENT CHECKS PASS

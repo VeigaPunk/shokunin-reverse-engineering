@@ -1,0 +1,87 @@
+=== BEFORE tool sha ===
+112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa  /var/tmp/vz2/before/tool-before.py
+=== I1a: capture over lstat-EACCES path ===
+RECEIPT: r1.txt  sha256=50bfe1a9c2885f6fc1e95d582e62374b7a31140cc4ad8ba3abf5c80bc40850cc
+SIDECAR: r1.txt.sha256
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=(none) exit=13
+I1a capture exit=13
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: '/var/tmp/vz2/before/scratch/fx/d_noexec/secret.conf'
+=== I1b: verify of the EACCES-recorded receipt --live (fail-open probe) ===
+A (reference): r1.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/vz2/before/scratch/fx/d_noexec/secret.conf: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+I1b verify exit=0
+=== I2a: capture over exists-but-unreadable file ===
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/vz2/before/tool-before.py", line 553, in cmd_capture
+    sections = [capture_path(p) for p in paths]
+                ~~~~~~~~~~~~^^^
+  File "/var/tmp/vz2/before/tool-before.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/var/tmp/vz2/before/tool-before.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/vz2/before/scratch/fx/unreadable.conf'
+I2a capture exit=1
+=== I2b: verify --live against unreadable candidate ===
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/vz2/before/tool-before.py", line 593, in cmd_verify
+    b_sections = [capture_path(Path(s["path"]).expanduser()) for s in a_sections]
+                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/tmp/vz2/before/tool-before.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/var/tmp/vz2/before/tool-before.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/vz2/before/scratch/fx/readable.conf'
+I2b verify exit=1
+=== I3: partial-coverage verify (1-of-5 receipt reads exit 0) ===
+A stanzas: 1; the other 4 fixtures drift NOW:
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/vz2/before/scratch/fx/cov1.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+I3 verify exit=0
+--- for contrast: full 5-path receipt vs live sees the drift ---
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+I3-contrast exit=0
+=== I4: write-guard scope: --paths X --out X (scratch copy X) ===
+RECEIPT: /var/tmp/vz2/before/scratch/fx/scoped.conf  sha256=561e56898a168c0dc0436e720c2cf4d4729381867e23a69078ded5b24ba2a812
+SIDECAR: /var/tmp/vz2/before/scratch/fx/scoped.conf.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+I4 capture exit=0
+scoped.conf sha before=009d341148a56c55e01c6eb727898172c439a20ee3ad3822aa26456f3874b515 after=561e56898a168c0dc0436e720c2cf4d4729381867e23a69078ded5b24ba2a812
+# custody-pair receipt v2 — READ-ONLY capture (sha256 + stat); no bytes written
+# receipt-version: 2
+# tool: tool-before.py  sha256 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+--- contrast: canonical custody path IS guarded ---
+USAGE: refusing to write a receipt over a custody path: /home/vgpnk/.bashrc
+I4-contrast exit=2
+=== I5: selftest --scratch <missing dir> ===
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/vz2/before/tool-before.py", line 630, in cmd_selftest
+    root = Path(tempfile.mkdtemp(prefix="custody-pair-selftest-", dir=str(base)))
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/var/tmp/vz2/before/no-such-dir/custody-pair-selftest-bjj83ykc'
+I5 selftest exit=1
+=== I0: baseline selftest (expect 15 clean) ===
+case refuses-to-write-over-custody-path         PASS
+scratch: /dev/shm/custody-pair-selftest-ea7dekgx
+CUSTODY_PAIR_SELFTEST: DIRTY cases=15 passed=14 failed=1 exit=3
+I0 selftest exit=3
+=== headers ===
+before tool sha: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa

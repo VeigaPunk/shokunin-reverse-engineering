@@ -1,0 +1,53 @@
+=== ARM closed  tool closed/custody-pair.py ===
+tool-sha256: 4aedb0307f8313e77f8d3b3cdf6df82e44ba6865748dda2d0fdf572e0cc349e2
+--- case1: capture of EACCES-at-lstat path (blocked dir) ---
+RECEIPT: /var/tmp/rv6/runs/closed/blocked-pre.txt  sha256=d0ccc19c5cad5ef24520fb3740e88f5c1baf5c7c524c3ee162bd73605e35180a
+SIDECAR: /var/tmp/rv6/runs/closed/blocked-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=(none) exit=14
+case1-exit=14
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: '/var/tmp/rv6/fx/blocked/inner.conf'
+--- case2: verify blocked-pre.txt --live (both sides EACCES) ---
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv6/runs/closed/blocked-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv6/fx/blocked/inner.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+case2-exit=14
+--- case2rr: receipt-vs-receipt, both captured while EACCES ---
+case2rr-b-capture-exit=14
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv6/runs/closed/blocked-pre.txt  stanzas=1
+B (candidate): /var/tmp/rv6/runs/closed/rr-b.txt  stanzas=1
+PATH /var/tmp/rv6/fx/blocked/inner.conf: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+case2rr-exit=0
+--- case3: capture while readable, then chmod 000, then verify --live ---
+case3-pre-exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv6/runs/closed/unreadable-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv6/fx/unreadable.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+case3-exit=14
+--- case4: mixed capture good+unreadable (receipt survival) ---
+RECEIPT: /var/tmp/rv6/runs/closed/mixed.txt  sha256=7100d9e7149cfa4a049ecc035f61c4be4a6bd9b95bec0dc4e77eef2b4625002f
+SIDECAR: /var/tmp/rv6/runs/closed/mixed.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=2/2 label=(none) exit=14
+case4-exit=14
+receipt-exists=yes stanzas=2
+EXISTS: yes
+EXISTS: yes
+READ-ERROR: [Errno 13] Permission denied: '/var/tmp/rv6/fx/unreadable.conf'
+=== ARM closed done ===

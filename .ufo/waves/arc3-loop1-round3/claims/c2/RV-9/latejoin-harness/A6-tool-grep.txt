@@ -1,0 +1,19 @@
+     `TYPE: file` + `READ-ERROR: ...` for an unreadable regular file, and
+     `EXISTS: no` + `STAT-ERROR: ...` when even lstat fails (EACCES on a parent
+     — fail-closed, because the round-2 tool read an EACCES path as `MATCH
+     missing or unusable directory is a declared USAGE exit 2 (with a message),
+unreadable) or `STAT-ERROR: <errno message>` (lstat failed) and omits SHA256.
+EXIT CODES (declared; verify -> worst finding wins):
+    14  UNEVALUABLE       a path exists but could not be evaluated (EACCES on
+    2   USAGE             bad arguments, unreadable/unparsable receipt, refused
+        except OSError as exc:  # exists but not evaluable (e.g. EACCES)
+    if require:  # falsy (None/0) = no gate — the declared default; opt-in by design
+    # 13. exists-but-unreadable file: declared UNEVALUABLE, receipt kept, no crash
+    def case_unreadable():
+        bad = root / "unreadable.conf"
+            out = root / "unreadable.txt"
+            outv = root / "unreadable-verify.out"
+    run_case(cases, "unreadable-path-is-unevaluable", case_unreadable)
+    # 15. a PARSED receipt carrying an unreadable stanza must never verify MATCH:
+    # 16. partial reference: declared gate --require-paths N (D3)
+        assert rc_plain == EXIT_MATCH, "declared default (no gate without the flag) broke: exit %d" % rc_plain

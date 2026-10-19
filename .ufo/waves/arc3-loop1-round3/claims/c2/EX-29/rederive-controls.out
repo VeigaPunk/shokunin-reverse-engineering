@@ -1,0 +1,106 @@
+# EX-29 independent non-vacuity control + rewrite-identity check — utc 2026-10-19T13:23:06Z
+## 1. positive control: scratch-mutated copy of the post receipt vs live (expect CONTENT-DRIFT exit 10)
+mutated one sha256 nibble in the scratch copy
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /dev/shm/ex29-rederive/post-mutated.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: CONTENT-DRIFT  compared=11/11 moved=sha256
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 4/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=5  CONTENT-DRIFT=1 MATCH=4  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=4/5 drift=1 exit=10
+positive-control-exit=10
+
+## 2. rewrite-identity: scratch re-write of a fixture with identical bytes must be caught as REWRITE-DRIFT
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /dev/shm/ex29-rederive/rewrite-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /dev/shm/ex29-rederive/rewrite.conf: REWRITE-DRIFT  compared=11/11 moved=mtime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+mtime-only-exit=11
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /dev/shm/ex29-rederive/rewrite-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /dev/shm/ex29-rederive/rewrite.conf: REWRITE-DRIFT  compared=11/11 moved=inode,mtime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+rename-replace-exit=11
+
+## 3. EX-21 pair cross-check (independent seat's revised-tool pair)
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): .ufo/waves/arc3-loop1-round3/claims/c2/EX-21/receipts/config-pre-pair-ex21.txt  stanzas=5
+B (candidate): .ufo/waves/arc3-loop1-round3/claims/c2/EX-21/receipts/config-post-pair-ex21.txt  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+ex21-pair-exit=0
+
+## 4. EX-21 pair vs my post receipt (cross-seat consistency)
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): .ufo/waves/arc3-loop1-round3/claims/c2/receipts/config-post-pair-v2r3.txt  stanzas=5
+B (candidate): .ufo/waves/arc3-loop1-round3/claims/c2/EX-21/receipts/config-post-pair-ex21.txt  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+ex21post-vs-my-post-exit=0
+mtime-only-exit=11
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /dev/shm/ex29-rederive/rewrite-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /dev/shm/ex29-rederive/rewrite.conf: REWRITE-DRIFT  compared=11/11 moved=inode,mtime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+rename-replace-exit=11
+
+## 3. EX-21 pair cross-check (independent seat's revised-tool pair)
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): .ufo/waves/arc3-loop1-round3/claims/c2/EX-21/receipts/config-pre-pair-ex21.txt  stanzas=5
+B (candidate): .ufo/waves/arc3-loop1-round3/claims/c2/EX-21/receipts/config-post-pair-ex21.txt  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+ex21-pair-exit=0
+
+## 4. EX-21 pair vs my post receipt (cross-seat consistency)
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): .ufo/waves/arc3-loop1-round3/claims/c2/receipts/config-post-pair-v2r3.txt  stanzas=5
+B (candidate): .ufo/waves/arc3-loop1-round3/claims/c2/EX-21/receipts/config-post-pair-ex21.txt  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+ex21post-vs-my-post-exit=0

@@ -1,0 +1,17 @@
+--- a/.ufo/gates/custody-pair/custody-pair.py
++++ b/.ufo/gates/custody-pair/custody-pair.py
+@@ -425,6 +437,14 @@
+     ref_exists = ref.get("exists", "no") == "yes" or "sha256" in ref
+     cand_exists = cand.get("exists", "no") == "yes" or "sha256" in cand
+     comparable = sum(1 for k in COMPARE_KEYS if k in ref and k in cand)
++    ref_uneval = bool(ref.get("stat_error") or ref.get("read_error"))
++    cand_uneval = bool(cand.get("stat_error") or cand.get("read_error"))
++    if ref_uneval or cand_uneval:
++        sides = "+".join(n for n, u in (("reference", ref_uneval), ("candidate", cand_uneval)) if u)
++        return {"finding": "UNEVALUABLE", "moved": ["unevaluable"], "compared": 0,
++                "comparable": comparable,
++                "notes": notes + ["exists but not evaluable on %s side" % sides],
++                "label_findings": label_findings}
+     if not ref_exists and not cand_exists:
+         return {"finding": "MATCH", "moved": [], "compared": 0, "comparable": 0,
+                 "notes": notes, "label_findings": label_findings}

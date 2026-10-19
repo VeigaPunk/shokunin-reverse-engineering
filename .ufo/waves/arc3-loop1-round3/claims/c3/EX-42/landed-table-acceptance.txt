@@ -1,0 +1,25 @@
+== EX-42 independent acceptance check of the landed table (rev HEAD c07af80, worktree table) ==
+date -u: 2026-10-19T13:16:50Z
+
+-- identities (re-derived at capture time)
+bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7  .ufo/gates/citation-drift/pointer-table.json
+d97dd60a942eaf53771c8224e84a9e8cdaf976dc66c3a543a450b1f1fa3827e2  .ufo/gates/citation-drift/expected.json
+e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  .ufo/gates/citation-drift/citation-drift-probe.py
+dd986f562a6c7b2e759ebb90c9855adff38e9226b1d9e27af36b6e3a2aefc3d4  corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md
+30348 .ufo/gates/citation-drift/pointer-table.json
+
+-- probe default
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+-- probe strict
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+-- selftest
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+-- frozen run at 679af5d (membership re-derivation)
+CITATION_DRIFT_VERDICT: failed findings=32 exit=1
+-- tamper guard on a scratch copy (one byte appended)
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /var/tmp/ex42-census/tampered-table.json
+CITATION_DRIFT: pointer_table_tampered entry=tampered-table.json sha256 d9d81e9c6279554a53ebf23d0c5d4fadd8e5cef293ea29fc04acad7b27c7ba9e != pinned bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+exit=2

@@ -1,0 +1,23 @@
+{
+ "language": "Solidity",
+ "sources": {
+  "VaultA.sol": {
+   "content": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.37;\n\ncontract VaultA {\n    address public owner;\n    uint256 public fee;\n    mapping(address => uint256) public balances;\n\n    event Deposited(address indexed who, uint256 amount);\n\n    constructor() {\n        owner = msg.sender;\n        fee = 3;\n    }\n\n    function deposit() external payable {\n        require(msg.value > fee, \"fee\");\n        balances[msg.sender] += msg.value - fee;\n        emit Deposited(msg.sender, msg.value);\n    }\n\n    function setFee(uint256 fee_) external {\n        require(msg.sender == owner, \"owner\");\n        fee = fee_;\n    }\n\n    function quote(uint256 amount) external view returns (uint256 net) {\n        net = amount > fee ? amount - fee : 0;\n    }\n\n    function sweep(address payable to) external {\n        require(msg.sender == owner, \"owner\");\n        (bool ok, ) = to.call{value: address(this).balance}(\"\");\n        require(ok, \"sweep\");\n    }\n\n    receive() external payable {}\n\n    fallback() external payable {}\n}\n"
+  }
+ },
+ "settings": {
+  "optimizer": {
+   "enabled": true,
+   "runs": 200
+  },
+  "outputSelection": {
+   "*": {
+    "*": [
+     "evm.bytecode.object",
+     "evm.deployedBytecode.object",
+     "abi"
+    ]
+   }
+  }
+ }
+}

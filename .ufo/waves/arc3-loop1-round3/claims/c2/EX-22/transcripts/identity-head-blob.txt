@@ -1,0 +1,24 @@
+# identity: BEFORE-state rev vs git HEAD blob vs live worktree   (seat EX-22)
+# generated-utc: 2026-10-19T13:10:16Z
+# cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+
+$ git rev-parse HEAD
+c07af80fcf3a60f9c6a0ca09b6e23fb5794d3311
+
+$ git rev-parse HEAD:.ufo/gates/custody-pair/custody-pair.py
+f3abeb23aec9d3b904500937ada86733956cf2d5
+
+$ git cat-file -p HEAD:.ufo/gates/custody-pair/custody-pair.py | sha256sum
+112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa  -
+
+$ sha256sum /var/tmp/ex22-baseline/tool/custody-pair.py   # the BEFORE copy this seat measured
+112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa  /var/tmp/ex22-baseline/tool/custody-pair.py
+
+$ sha256sum .ufo/gates/custody-pair/custody-pair.py   # live worktree (EX-21 in flight)
+08fb6833c87d10a07e90ea84186993e95a6b81b853e9ae74045b2b3c2a3618e2  .ufo/gates/custody-pair/custody-pair.py
+
+$ git status --short .ufo/gates/custody-pair/custody-pair.py
+ M .ufo/gates/custody-pair/custody-pair.py
+
+# reading: BEFORE rev == HEAD blob; the worktree diverged from HEAD at 2026-10-19T13:09:24Z
+# (EX-21 landing). Round-2 seats EX-31:9,19 / EX-35:29 / CU-1:37 pinned the same BEFORE digest.

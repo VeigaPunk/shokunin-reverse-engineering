@@ -1,0 +1,83 @@
+# CN-2 independent before/after reproduction of the four named holes (2026-10-19T13:12:09Z)
+# HEAD=c07af80; worktree tool at run time: 03bd6242470ac8d27ea832af6bcb71049ccfad92f2ba8c878b30f51b5211bd83
+
+== HEAD-112d01dc tool sha256=112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa ==
+-- D2a capture over EACCES-dir file:
+SIDECAR: /dev/shm/cn2r3/c2chk2/out/HEAD-112d01dc.r.txt.sha256
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=(none) exit=13
+  exit=13
+-- D2b verify receipt vs itself:
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+  exit=0
+-- D2c verify receipt --live:
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+  exit=0
+-- D3 1-of-5 reference verify (scratch 1-path receipt vs itself):
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+  exit=0
+-- WG --paths X --out X:
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+  exit=0
+  plain.txt still: # custody-pair receipt v2 — READ-ONLY capture (sha256 + stat); no bytes written
+-- D6 selftest --scratch <missing>:
+    ~~~~~~~~~^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/shm/cn2r3/c2chk2/nope/fx/custody-pair-selftest-_2j26v38'
+  exit=1
+
+== WORKTREE tool sha256=03bd6242470ac8d27ea832af6bcb71049ccfad92f2ba8c878b30f51b5211bd83 ==
+-- D2a capture over EACCES-dir file:
+SIDECAR: /dev/shm/cn2r3/c2chk2/out/WORKTREE.r.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=(none) exit=14
+  exit=14
+-- D2b verify receipt vs itself:
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+  exit=14
+-- D2c verify receipt --live:
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+  exit=14
+-- D3 1-of-5 reference verify (scratch 1-path receipt vs itself):
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+  exit=14
+-- WG --paths X --out X:
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /dev/shm/cn2r3/c2chk2/plain.txt
+  exit=2
+  plain.txt still: content-of-x
+-- D6 selftest --scratch <missing>:
+USAGE: scratch base is not a directory: /dev/shm/cn2r3/c2chk2/nope/fx
+  exit=2
+== clean D3: readable 1-path scratch receipt, verify vs itself ==
+-- HEAD-112d01dc:
+  capture exit=0
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+  verify exit=0
+-- WORKTREE 03bd6242470ac8d2...:
+  capture exit=0
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+  verify exit=0
+-- WORKTREE with --require-paths if supported:
+                              receipt_a [receipt_b]
+custody-pair.py verify: error: argument --require-paths: expected one argument
+  verify exit=2
+-- WORKTREE verify --help (flag semantics):
+usage: custody-pair.py verify [-h] [--live] [--require-paths N]
+                              receipt_a [receipt_b]
+
+positional arguments:
+  receipt_a          reference receipt
+  receipt_b          candidate receipt
+
+options:
+  -h, --help         show this help message and exit
+  --live             compare receipt_a against the live filesystem
+  --require-paths N  exit 2 (USAGE) when the reference carries fewer than N
+                     paths (D3 coverage gate)
+-- WORKTREE --require-paths 5 on the clean 1-path receipt:
+USAGE: reference covers 1 of the required 5 paths
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+  verify exit=2

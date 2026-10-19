@@ -1,0 +1,73 @@
+================================================================================
+DISPATCH-SHAPE CENSUS + BOUNDARY — seat EX-05 (chain c1, arc3-loop1-round3)
+2026-10-19. Method: dispatch-shape.py (regex over the runtime hex for the
+`DUP1 PUSH4 <sel> <cmp> <PUSH1|PUSH2 dest> JUMPI` dispatch probes) and
+push4-scan.py (linear-sweep PUSH4 immediate census; sweep-alignment caveat
+stated in its docstring), plus shape-boundary-scan.sh (synthetic N-selector
+family, both optimizer modes, receipted solc).
+================================================================================
+
+1. CROSS-ROUND CARRIER CENSUS (prologue + dispatch topology)
+--------------------------------------------------------------------------------
+  carrier                     size   optimizer   prologue(head)          eq   gt  shape
+  r1 Rv2Token (5 selectors)   1943   off         608060405234801561000f… 5    0   linear-eq
+  r1 Rv2Many  (11 selectors)  1288   off         608060405234801561000f… 11   1   GT-root binary
+  r3 CarrierB (8, EX-05)      1469   on r200     60806040526004361061007e… 8   1   GT-root binary
+  r3 CarrierBErr(8, EX-05)    1253   on r200     60806040526004361061007a… 8   1   GT-root binary
+  r3 VaultB  (11, EX-04)      1850   on r200     60806040526004361061009d… 11  1   GT-root binary
+  r3 VaultB  (11, EX-04)      3872   off         60806040526004361061009f… 11  1   GT-root binary
+
+  Findings:
+  (a) The selector-shift idiom `5f3560e01c` occurs in EVERY carrier above
+      (count 1); the legacy `60003560e01c` idiom occurs in NONE. The
+      calldatasize guard `60043610` (PUSH1 4; CALLDATASIZE; LT) likewise occurs
+      in every one, r1 included. So the prologue *class* is not what the
+      optimizer changes here — the freeze's honest-stop branch on "prologue
+      class differs from the r1 recorded classes" does not fire; the measured
+      delta is the dispatch topology (see (c)).
+  (b) The GT-root binary search is present in r1's 11-selector attack carrier,
+      which was compiled with the optimizer DISABLED — so the topology is not
+      an optimizer effect.
+  (c) It is selector-COUNT driven. Synthetic family (trivial `view` bodies,
+      N = 4..12, both modes; shape-boundary.txt is the raw table):
+
+      N:      4     5     6     7     8     9    10    11    12
+      nopt: linear linear linear  bin   bin   bin   bin   bin   bin
+      opt200: linear linear linear bin   bin   bin   bin   bin   bin
+
+      Boundary measured at N = 7 in both modes (6 linear, 7 binary). All real
+      carriers above are consistent with it (5 -> linear; 8 and 11 -> binary).
+      Caveat: boundary measured on the synthetic family; bodies/argument shapes
+      differ in the real carriers, which corroborate but do not re-measure it.
+  (d) What the optimizer DOES change, measured on the synthetic family:
+      code size (N=8: 242 B on vs 544 B off) and the jump-destination width in
+      the dispatch probes (PUSH1 `60xx` on, PUSH2 `61xxxx` off) — a
+      destination-width effect, not a topology effect. The r1 record's
+      prologue-class lexicon is therefore insufficient to describe the r3
+      observations; the count boundary is the better descriptor.
+
+2. PUSH4 IMMEDIATE CENSUS (what a naive "selector = PUSH4 constant" extractor sees)
+--------------------------------------------------------------------------------
+  CarrierB (primary): linear sweep finds 9 PUSH4 immediates, 8 distinct =
+    exactly the 8 planted selectors, one non-dispatch-site repeat of `8da5cb5b`
+    (owner()) at the binary-search root (offsets 19 and 30). No other 4-byte
+    constant in the swept reading.
+  CarrierBErr (attack): 11 distinct, of which
+    - the 8 planted selectors,
+    - `245aecd3` = keccak("NotOwner(address)")[0:4], emitted directly as
+      `PUSH4 245aecd3; PUSH1 0xe0; SHL; DUP2; MSTORE` (custom-error revert
+      encoding; 1-arg error),
+    - `1182d3d5` = `2305a7aa` >> 1, where `2305a7aa` =
+      keccak("Underfunded(uint256,uint256)")[0:4] — the compiler emits a HALVED
+      selector with `PUSH1 0xe1; SHL` for the 2-arg error, and (0x1182d3d5 <<
+      225) == (0x2305a7aa << 224) reproduces the ABI selector word exactly. The
+      unoptimized build of the same source contains the plain `2305a7aa`
+      instead (measured); so the optimized build obfuscates the selector
+      immediate while keeping the revert data identical.
+    - `fa41aa00` at byte 1233, inside the CBOR metadata tail (data region; the
+      linear sweep's reading there is a sweep artifact, not code).
+  The probe reported ZERO extras on this carrier anyway (8 reported, 8 planted
+  — attack/probe-runtime-hex-6.4.0.json), i.e. the extractor is not a naive
+  constant sweep. Consistent with r1's EX-07 finding (its non-dispatch PUSH4
+  constant was not reported either).
+================================================================================

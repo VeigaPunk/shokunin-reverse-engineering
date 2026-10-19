@@ -1,0 +1,236 @@
+{
+  "tag": "snap-7cd19c3c-M2-coverage-revert",
+  "note": "revert spec M2-coverage-revert",
+  "tool_src": "/dev/shm/rv7/tools/snap-7cd19c3c.py",
+  "tool_src_sha256": "7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09",
+  "utc": "2026-10-19T13:16:39Z",
+  "mutation": {
+    "mutant": "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/tool/custody-pair.py",
+    "note": "revert spec M2-coverage-revert",
+    "applied": [
+      {
+        "old": "    require = getattr(args, \"require_paths\", None)\n    if require:",
+        "new": "    require = None  # MUTATION: round-2 state restored (no coverage gate)\n    if require:",
+        "count": 1
+      }
+    ],
+    "diff": "--- hardened\n+++ mutant\n@@ -674,7 +674,7 @@\n         print(\"USAGE: %s\" % exc, file=sys.stderr)\n         return EXIT_USAGE\n \n-    require = getattr(args, \"require_paths\", None)\n+    require = None  # MUTATION: round-2 state restored (no coverage gate)\n     if require:  # falsy (None/0) = no gate \u2014 the declared default; opt-in by design\n         ok, line = reference_coverage(a_sections, require)\n         if not ok:\n",
+    "mutant_sha256": "a0c0e2edaf4fac0da41e59756d53f8375b1c3dbc179def3818c8b1e1aa58832c",
+    "src_sha256": "7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09"
+  },
+  "selftest": {
+    "exit": 3,
+    "summary": "CUSTODY_PAIR_SELFTEST: DIRTY cases=22 passed=21 failed=1 exit=3",
+    "cases": 22,
+    "failed_cases": [
+      "case partial-reference-require-paths-gate       FAIL  (expected USAGE exit 2 under --require-paths 5, got 0)"
+    ],
+    "traceback": false,
+    "err_tail": "USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/selftest-scratch/custody-pair-selftest-yucq_9yw/junk.txt"
+  },
+  "clobber": {
+    "scenario": "CL",
+    "tool": "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/tool/custody-pair.py",
+    "tool_sha256": "a0c0e2edaf4fac0da41e59756d53f8375b1c3dbc179def3818c8b1e1aa58832c",
+    "runs": {
+      "same_path": {
+        "target_pre_sha256": "3a7eb912c9b724950cfe280ebe14a6cd9a6649b6fe68a225a5503596d2ccaa91",
+        "target_post_sha256": "3a7eb912c9b724950cfe280ebe14a6cd9a6649b6fe68a225a5503596d2ccaa91",
+        "clobbered": false,
+        "content_is_receipt": false,
+        "exit": 2,
+        "out_tail": "",
+        "err_tail": "USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/clobber/same_path/scoped.conf",
+        "guard_class_seen": true,
+        "verdict": "BLOCKED"
+      },
+      "symlink_out": {
+        "target_pre_sha256": "3a7eb912c9b724950cfe280ebe14a6cd9a6649b6fe68a225a5503596d2ccaa91",
+        "target_post_sha256": "3a7eb912c9b724950cfe280ebe14a6cd9a6649b6fe68a225a5503596d2ccaa91",
+        "clobbered": false,
+        "content_is_receipt": false,
+        "exit": 2,
+        "out_tail": "",
+        "err_tail": "USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/clobber/symlink_out/via-link.txt",
+        "guard_class_seen": true,
+        "verdict": "BLOCKED",
+        "out_was_symlink": true
+      },
+      "relpath_abs": {
+        "target_pre_sha256": "3a7eb912c9b724950cfe280ebe14a6cd9a6649b6fe68a225a5503596d2ccaa91",
+        "target_post_sha256": "3a7eb912c9b724950cfe280ebe14a6cd9a6649b6fe68a225a5503596d2ccaa91",
+        "clobbered": false,
+        "content_is_receipt": false,
+        "exit": 2,
+        "out_tail": "",
+        "err_tail": "USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/clobber/relpath_abs/scoped.conf",
+        "guard_class_seen": true,
+        "verdict": "BLOCKED",
+        "paths_form": "./scoped.conf"
+      },
+      "sidecar_scope": {
+        "target_pre_sha256": "aed1662d2b64270c5a802daee319bf1aefbc995bfc7b819bb5ccbe6a581c50cb",
+        "target_post_sha256": "677a361e3e6175fbc653deb1df13ab99933f04c47ac9abac736df41455644eab",
+        "clobbered": true,
+        "content_is_receipt": false,
+        "exit": 0,
+        "out_tail": "RECEIPT: /dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/clobber/sidecar_scope/target  sha256=5472340d055dc1009346926abd381400dc4a631251c71753e5394f7a2cede178",
+        "err_tail": "",
+        "guard_class_seen": false,
+        "verdict": "MOVED-NOT-RECEIPT",
+        "receipt_written": true,
+        "sidecar_path": "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/clobber/sidecar_scope/target.sha256",
+        "sidecar_written_by_tool": true
+      },
+      "negative_control": {
+        "exit": 0,
+        "receipt_written": true,
+        "target_unmoved": true,
+        "ok": true
+      }
+    },
+    "verdict": "BLOCKED",
+    "adjacent": {
+      "symlink_out": "BLOCKED",
+      "relpath_abs": "BLOCKED",
+      "sidecar_scope": "MOVED-NOT-RECEIPT"
+    }
+  },
+  "partial": {
+    "scenario": "D3",
+    "tool": "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/tool/custody-pair.py",
+    "tool_sha256": "a0c0e2edaf4fac0da41e59756d53f8375b1c3dbc179def3818c8b1e1aa58832c",
+    "runs": {
+      "v2live_r1": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r1.txt",
+          "--live"
+        ],
+        "exit": 0,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: MATCH  paths=1  MATCH=1  exit=0",
+        "tail": "CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0"
+      },
+      "v2live_r1_flag5": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r1.txt",
+          "--live",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 0,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: MATCH  paths=1  MATCH=1  exit=0",
+        "tail": "CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0"
+      },
+      "v2live_r5_flag5": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r5.txt",
+          "--live",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 0,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: MATCH  paths=5  MATCH=5  exit=0",
+        "tail": "CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0"
+      },
+      "default": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r1.txt",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r5.txt"
+        ],
+        "exit": 12,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: METADATA-DRIFT  paths=5  MATCH=1 METADATA-DRIFT=4  exit=12",
+        "tail": "CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=1/5 drift=4 exit=12"
+      },
+      "flag5": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r1.txt",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r5.txt",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 12,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: METADATA-DRIFT  paths=5  MATCH=1 METADATA-DRIFT=4  exit=12",
+        "tail": "CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=1/5 drift=4 exit=12"
+      },
+      "flag1": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r1.txt",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r5.txt",
+          "--require-paths",
+          "1"
+        ],
+        "exit": 12,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: METADATA-DRIFT  paths=5  MATCH=1 METADATA-DRIFT=4  exit=12",
+        "tail": "CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=1/5 drift=4 exit=12"
+      },
+      "control_full": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r5.txt",
+          "/dev/shm/rv7/runs/snap-7cd19c3c-M2-coverage-revert/partial/r5.txt",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 0,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: MATCH  paths=5  MATCH=5  exit=0",
+        "tail": "CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0"
+      },
+      "v1fixture_default": {
+        "argv": [
+          "verify",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-35/fixtures/v1-partial-1of5.txt",
+          "--live"
+        ],
+        "exit": 0,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0",
+        "tail": "CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0"
+      },
+      "v1fixture_flag5": {
+        "argv": [
+          "verify",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-35/fixtures/v1-partial-1of5.txt",
+          "--live",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 0,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0",
+        "tail": "CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0"
+      }
+    },
+    "verdict": "REFUSED-DEFAULT"
+  }
+}

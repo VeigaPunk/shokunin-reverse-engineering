@@ -1,0 +1,37 @@
+# RV-3 push4 census (opcode-aware linear sweep, first-hand 2026-10-19T13:16Z)
+
+VaultB-opt200: 1621 B, PUSH4 sites=24, unique=18
+   {"30cd7471": 4, "69fe0e2d": 2, "8da5cb5b": 2, "4e487b71": 2, "9c421eb5": 1, "cbf9fe5f": 1, "d0e30db0": 1, "7d882097": 1, "8456cb59": 1, "24a9d853": 1, "27e235e3": 1, "2e1a7d4d": 1, "3d96e276": 1, "3f4ba83a": 1, "5c975abb": 1, "1309a563": 1, "1dc930eb": 1, "3c3332b9": 1}
+VaultB-nopt: 3163 B, PUSH4 sites=16, unique=14
+   {"69fe0e2d": 2, "8da5cb5b": 2, "9c421eb5": 1, "cbf9fe5f": 1, "d0e30db0": 1, "7d882097": 1, "8456cb59": 1, "24a9d853": 1, "27e235e3": 1, "2e1a7d4d": 1, "3d96e276": 1, "3f4ba83a": 1, "5c975abb": 1, "43000825": 1}
+EX04-carrierB-opt200: 1850 B, PUSH4 sites=13, unique=12
+   {"59bf77df": 2, "797af627": 1, "960bfe04": 1, "a8c162fb": 1, "d0e30db0": 1, "d9caa3d2": 1, "07bf89ab": 1, "0bf6cc08": 1, "0db02622": 1, "2f54bf6e": 1, "42cde4e8": 1, "4e487b71": 1}
+EX04-carrierB-noopt: 3872 B, PUSH4 sites=12, unique=11
+   {"59bf77df": 2, "797af627": 1, "960bfe04": 1, "a8c162fb": 1, "d0e30db0": 1, "d9caa3d2": 1, "07bf89ab": 1, "0bf6cc08": 1, "0db02622": 1, "2f54bf6e": 1, "42cde4e8": 1}
+CarrierB: 1469 B, PUSH4 sites=9, unique=8
+   {"8da5cb5b": 2, "ca1d209d": 1, "d5d44d80": 1, "e7ee6ad6": 1, "3efdef66": 1, "410673e5": 1, "51f91066": 1, "6ea056a9": 1}
+CarrierBErr: 1253 B, PUSH4 sites=12, unique=11
+   {"8da5cb5b": 2, "ca1d209d": 1, "d5d44d80": 1, "e7ee6ad6": 1, "3efdef66": 1, "410673e5": 1, "51f91066": 1, "6ea056a9": 1, "245aecd3": 1, "1182d3d5": 1, "fa41aa00": 1}
+Rv2TokenOpt: 978 B, PUSH4 sites=7, unique=7
+   {"095ea7b3": 1, "18160ddd": 1, "23b872dd": 1, "70a08231": 1, "a9059cbb": 1, "4e487b71": 1, "43000825": 1}
+
+## nopt byte contexts of the opt200 non-dispatch constant set
+4e487b71 at byte 2271 context 565b7f4e487b71000000 PUSH32-prefixed
+1309a563 at byte 786 context 40517f1309a563000000 PUSH32-prefixed
+1dc930eb at byte 1121 context 40517f1dc930eb000000 PUSH32-prefixed
+30cd7471 at byte 1533 context 40517f30cd7471000000 PUSH32-prefixed
+3c3332b9 ABSENT from nopt bytes (0 occurrences)
+EX-10 recon-B-nopt.json non_dispatch_push4_constants: ["43000825"] (read first-hand)
+EX-10 recon-B-opt200.json non_dispatch_push4_constants: ["1309a563","1dc930eb","30cd7471","3c3332b9","4e487b71"]
+3c3332b9 opt200 site: PUSH4 3c3332b9; PUSH1 0xe1; SHL (revert-data write pattern) at pc 1037
+
+## error-selector oracle (js-sha3 from the receipted prefix)
+NotOwner()       0x30cd7471
+IsPaused()       0x1309a563
+Insufficient()   0x1dc930eb
+FeesAmount()     0xba9a4beb
+Fees()           0x3aaa36e6
+InvalidFee()     0x58d620b3
+Paused()         0x9e87fac8
+NotOwner(address) 0x245aecd3
+Underfunded(uint256,uint256) 0x2305a7aa

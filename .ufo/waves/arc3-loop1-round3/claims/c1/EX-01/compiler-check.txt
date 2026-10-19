@@ -1,0 +1,235 @@
+================================================================================
+COMPILER-REUSE CHECK — wave solc prefix (the reused, already-receipted compiler)
+Wave: arc3-loop1-round3   Seat: EX-01 (chain c1, executor)   Date: 2026-10-19
+Host: node v26.12.0 (mise) | npm 11.20.0 | local TZ America/Sao_Paulo (UTC-03)
+Seat window: ~13:03Z .. 13:12Z (= 10:03 .. 10:12 local -03)
+================================================================================
+
+0. VERDICT
+--------------------------------------------------------------------------------
+REUSE VERIFIED — no install this round; the round-1 prefix is byte-intact and
+operable. Every hash pinned for this compiler reproduces on the on-disk tree;
+the compiler answers `--version` and re-emits the receipted smoke bytes exactly,
+deterministically. Two scope notes recorded as findings:
+  F1  the pin for the prefix's top-level `package.json` is NOT in the install
+      receipt — it lives in the r1 chain ledger (and EX-04's receipt, for solc's
+      own package.json). The C1 clause "receipt re-verified" should cite the
+      ledger for those three files.
+  F2  the compiler CORE (the 22,012,583-byte wasm module embedded in soljson.js)
+      had no pin anywhere before this seat. New pin recorded in §3.3; it is
+      deterministic across reruns and identical in the ambient tree.
+
+1. OBJECT UNDER TEST
+--------------------------------------------------------------------------------
+path (as recorded in the r1 receipt):  .ufo/waves/arc3-loop1-round1/tools/solc-prefix/
+realpath:  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/tools/solc-prefix
+contents:  99 files, 9.6M total; package.json (50 B), package-lock.json (3298 B),
+           node_modules/ with 8 packages; 2 symlinks:
+             node_modules/.bin/solcjs -> ../solc/solc.js
+             node_modules/.bin/semver -> ../semver/bin/semver
+newest mtime in the whole prefix: 2026-10-19 06:57:25.612545166 -0300
+files modified after the install minute (find -newermt '2026-10-19 06:58'): 0
+           -> no on-disk drift since the install.
+
+git status of the prefix (read-only queries):
+  $ git ls-files .ufo/waves/arc3-loop1-round1/tools/
+    .ufo/waves/arc3-loop1-round1/tools/solc-prefix/package-lock.json
+    .ufo/waves/arc3-loop1-round1/tools/solc-prefix/package.json          (2 files)
+  $ git rev-parse HEAD:...package.json HEAD:...package-lock.json
+    ab95d62872d5dade91c5b58bf6c0e94a9a32881a
+    9d9a7f289314b642c85dc2df50f2ed33d95d458b
+  $ git hash-object .ufo/waves/arc3-loop1-round1/tools/solc-prefix/{package.json,package-lock.json}
+    ab95d62872d5dade91c5b58bf6c0e94a9a32881a   (identical -> tracked content unmodified)
+    9d9a7f289314b642c85dc2df50f2ed33d95d458b
+
+2. HASH RECOMPUTATION vs PINS
+--------------------------------------------------------------------------------
+sha256sum over the on-disk files, each compared against the pin it was recorded
+with (prefix = .ufo/waves/arc3-loop1-round1/tools/solc-prefix):
+
+  file                                recomputed sha256                                                  pin source                                  verdict
+  node_modules/solc/soljson.js        221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c  EX-02/install-receipt.txt:101 (§6)          MATCH
+  node_modules/solc/solc.js           188c3fdca72bbb8ec1c70373427ad4536e117341c48944dae9185f9cf035146f  EX-02/install-receipt.txt:102 (§6)          MATCH
+  package.json                        b4205b088e5cfa42851bd673ac3d6656599bb32eaf3de112132f8d0bf3b61225  claims/c1/receipts/chain-ledger.draft.md:35 MATCH  (NOT in the receipt — F1)
+  package-lock.json                   9f6dcab2bbb454040be487fced0c87efa6f3cc7e90cf7275c37305a47e3d470c  chain-ledger.draft.md:35                   MATCH  (NOT in the receipt — F1)
+  node_modules/solc/package.json      b3a90035cab4e8aa43068f33f01497dccfb77b294e1ea30c5fb32a9631e33491  chain-ledger.draft.md:35 + EX-04/compile-receipt.txt:31  MATCH
+
+  ledger self-consistency (the ledger's own hash prefixes, re-derived):
+  EX-02/install-receipt.txt                    3541560197b651886f0a7eac98438484c47c0436080641b58444420745e3fcb3  ledger `35415601…`  MATCH
+  EX-02/proposed-receipts-solc-install.patch.md 1ffde4b221b2a66d27bee5fc564bf0dcb29490c464639e12038c2f9095321ac9  ledger `1ffde4b2…` MATCH
+
+  negative control (F1 evidence): grep over EX-02/install-receipt.txt for
+  `b4205b08` and for a `package.json` sha256 -> no hits; the receipt's only
+  package.json mentions are the "created files" list (:38) and `license: MIT
+  (package-lock.json)` (:19). The receipt pins exactly two files by hash.
+
+3. INDEPENDENT RE-DERIVATION (does the tree equal the attested bytes?)
+--------------------------------------------------------------------------------
+3.1 The install tarball, from the host npm cache (no network used)
+    cache content file: /home/vgpnk/.npm/_cacache/content-v2/sha512/89/e5/1874f0d1…
+      (the path the receipt §4 records)
+    $ sha256sum <cache content> -> 0e1a1ab6d12c37f5503271b2c4679cd433459c884851920d148d6fb154575a51
+      receipt :14 -> tarball sha256 0e1a1ab6d12c37f5503271b2c4679cd433459c884851920d148d6fb154575a51   MATCH
+    $ stat -c %s <cache content> -> 6476046          receipt :15 -> 6476046 bytes                        MATCH
+    $ sha512sum <cache content> | xxd -r -p | base64 -w0
+      -> ieUYdPDRGNKMsZpCfi9tY64Q+ASoL8tyhLuvf9cFiqDs+6ijlx8Wn2CRi0N71AlCvRx0V092rlUYu3b3PuxWlA==
+      receipt :16 -> sha512-ieUYdP…uxWlA==                                                          MATCH
+      (base64 recomputation shows the cache file is exactly the registry's
+       dist.integrity bytes; cacache path == the file's own sha512, as expected)
+
+3.2 Whole installed tree vs the cache tarballs — artifact script:
+    claims/c1/EX-01/attest-prefix-vs-cache.py (re-runnable, exit 0 = clean)
+    $ python3 attest-prefix-vs-cache.py <prefix> /home/vgpnk/.npm/_cacache/content-v2/sha512 /var/tmp/ex01-attest
+      IDENTICAL node_modules/command-exists   integrity=sha512 cache-sha512=2d343f48673eb345…
+      IDENTICAL node_modules/commander        integrity=sha512 cache-sha512=3a44cbf6e99ff877…
+      IDENTICAL node_modules/follow-redirects integrity=sha512 cache-sha512=14dbc51b3a0c2d69…
+      IDENTICAL node_modules/js-sha3          integrity=sha512 cache-sha512=805d5c46b1e12333…
+      IDENTICAL node_modules/memorystream     integrity=sha512 cache-sha512=4b7530337ca3e66b…
+      IDENTICAL node_modules/semver           integrity=sha512 cache-sha512=701ce79d0f4a8c9a…
+      IDENTICAL node_modules/solc             integrity=sha512 cache-sha512=89e51874f0d118d2…
+      IDENTICAL node_modules/tmp              integrity=sha512 cache-sha512=e6c24f74f8df2392…
+      SUMMARY: identical=8 differ/missing=0 skipped(no integrity)=0
+    -> every installed byte, including solc's deps, is a faithful extraction of a
+       tarball whose integrity is pinned in the prefix's own lockfile; the solc
+       tarball in turn is the one the receipt hashes. (The two symlinks in
+       .bin/ are npm-created shims, not package content.)
+
+3.3 NEW PIN — the compiler core embedded in soljson.js (F2)
+    0.8.37 is a single-file wasm build: there is NO soljson.wasm on disk, and
+    the literal "0.8.37"/"f401782d" occurs 0 times as text in soljson.js, solc.js
+    and solc's package.json. The wasm module is LZ4-compressed + base64-encoded
+    and assigned to Module["wasmBinary"] by the shipped decoder at load time
+    (offset 27 of the file: `Module["wasmBinary"] = (function (source,
+    uncompressedSize) { … })("utcWAPAMAGFzbQ…", 22012583);`).
+    Captured with the shipped decoder itself (artifact script
+    claims/c1/EX-01/capture-embedded-wasm.js; loads the file in a vm context with
+    a Proxy standing in for Module and keeps the first large wasmBinary value):
+      soljson.js: 9237611 bytes  sha256 221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c
+      wasmBinary assignments (lengths): [22012583,22012583,null]
+      captured bytes: 22012583
+      magic: "\u0000asm\u0001\u0000\u0000\u0000"
+      embedded wasm sha256: df14c4e5ee58b27f06b6ce9966d6de6d6382dbe6b43e41a387c9812648afca1e
+        "0.8.37": 1   "f401782d": 2   "Emscripten.clang": 1
+        version region: "…ite_chaing\0commit.f401782d.Emscripten.clang\0fpa2bv_to_fp_real_sig…"
+      solidity_version() from this module: 0.8.37+commit.f401782d.Emscripten.clang
+    Determinism: the capture was run 3x (twice the seat's own script, once the
+    artifact script) -> same size, same sha256 every time.
+    Ambient cross-check: the same capture run against
+    /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/lib/node_modules/solc
+    -> 22012583 bytes, sha256 df14c4e5…afca1e, same version region, same
+    solidity_version() output. The r1 receipt's §6 "byte-identical to the
+    ambient install" therefore extends from soljson.js/solc.js down to the
+    compiler core itself.
+    Consequence for provenance: `solcjs --version` is evidence about the wasm
+    payload, not about package.json text — the version string is generated by
+    the compiler module. The pin chain is: tarball sha256 (receipt §1, re-derived
+    §3.1) -> soljson.js sha256 (receipt §6, re-derived §2) -> embedded wasm
+    sha256 df14c4e5… (this seat).
+
+4. OPERABILITY (run, not assumed)
+--------------------------------------------------------------------------------
+4.1 Version, both invocation forms, disk-backed TMPDIR:
+    $ TMPDIR=/var/tmp/ex01-scratch <prefix>/node_modules/.bin/solcjs --version
+      0.8.37+commit.f401782d.Emscripten.clang                    exit 0
+    $ TMPDIR=/var/tmp/ex01-scratch node <prefix>/node_modules/solc/solc.js --version
+      0.8.37+commit.f401782d.Emscripten.clang                    exit 0
+    $ readlink -f <prefix>/node_modules/.bin/solcjs
+      …/tools/solc-prefix/node_modules/solc/solc.js             (bin resolves inside the prefix)
+    $ node -e "console.log(require('<prefix>/node_modules/solc').version())"
+      0.8.37+commit.f401782d.Emscripten.clang
+
+4.2 Dependency tree unchanged from the receipt §3:
+    $ npm ls --all --prefix <prefix> --offline
+      solc-prefix@ /home/vgpnk/.../tools/solc-prefix
+      └─┬ solc@0.8.37
+        ├── command-exists@1.2.9   ├── commander@8.3.0      ├── follow-redirects@1.16.1
+        ├── js-sha3@0.8.0          ├── memorystream@0.3.1   ├── semver@5.7.2
+        └── tmp@0.2.6
+    (identical to receipt :42-50; --offline: no registry access)
+
+4.3 The receipted smoke artifact still compiles to exactly the receipted bytes.
+    Input = EX-02's own source (unchanged):
+      claims/c1/EX-02/smoke/Smoke.sol sha256 647992dd62953b4b09f003589c79beecd7a80141b9e408a84a35ac7e655d6824
+    Recompiles (scratch /var/tmp/ex01-scratch, TMPDIR disk-backed):
+      $ solcjs --bin --abi --optimize --output-dir out Smoke.sol
+        530efc7bb166fd47e42fe9623ee347234b99a65691b0a0ad42d2682702986a5f  out/Smoke_sol_Smoke.bin   (1370 hex chars)
+        73441f84aa6c8feb0f4e284d2f1638b106d6b9fb234cea8b047dfc38b0f9081a  out/Smoke_sol_Smoke.abi
+        (warning only: transfer() deprecated — expected, source uses it; exit 0)
+      -> receipt :75-78 bin 530efc7b… / abi 73441f84…                        MATCH
+      $ solcjs --bin --abi --optimize --optimize-runs 200 --output-dir out200 Smoke.sol
+        same two digests (the C1 claim's flag form compiles on the reused prefix; exit 0)
+      two consecutive reruns byte-identical (cmp r1/*.bin r2/*.bin -> IDENTICAL)
+    The on-disk r1 smoke artifacts also still hash to the receipted values
+    (§2-style check) -> they were not stale in the tree.
+
+5. FINDINGS
+--------------------------------------------------------------------------------
+F1  Receipt scope gap (already-substituted pin). EX-02/install-receipt.txt pins
+    exactly two files (soljson.js, solc.js). The prefix package.json /
+    package-lock.json / solc's own package.json hashes exist only in
+    claims/c1/receipts/chain-ledger.draft.md:35 (+ EX-04/compile-receipt.txt:31).
+    All three MATCH (§2). Any round-3 statement of the form "receipt re-verified"
+    must cite the ledger for those, or the receipt is over-stated. Patch text
+    proposed: claims/c1/EX-01/proposed-receipt-addendum.patch.md.
+F2  Compiler core was unpinned. Before this seat no artifact carried a hash of
+    the wasm module that actually compiles. New pin: 22012583 B, sha256
+    df14c4e5ee58b27f06b6ce9966d6de6d6382dbe6b43e41a387c9812648afca1e (§3.3).
+    Re-derive this first if any round's compile must be re-established.
+F3  The compiler bytes are not in version control. .ufo/waves/arc3-loop1-round1/
+    .gitignore:1 = `tools/solc-prefix/node_modules/`; git ls-files shows only
+    package.json + package-lock.json under tools/. So soljson.js (and the embedded
+    wasm) exist ON DISK ONLY. Reuse across waves is sound today (§3.2) but a
+    fresh clone or an aggressive clean leaves C1 with no compiler, and installs
+    are barred this round. Zero-cost mitigation for the parent: the hash records
+    (§2, §3.3) plus the cache-content path (§3.1) make the compiler
+    reconstructible from the npm cache without a network install; nothing else is
+    required this round.
+F4  The standing "/tmp quota exhausted" note is stale at measurement time. The
+    knowledge entry's recheck line and the r1 receipt §8 both hang a warning on
+    it. Measured 2026-10-19 13:07Z (= 10:07 local -03):
+      $ mount | grep ' /tmp ' -> tmpfs (rw,nosuid,nodev,size=15860892k,nr_inodes=1048576,inode64,huge=advise,usrquota)
+      $ df -h /tmp -> 16G size, 102M used, 1% ;  $ df -i /tmp -> 1% inodes
+      $ dd if=/dev/zero of=/tmp/ex01-probe bs=1M count=1 -> 1048576 bytes copied, no error (probe removed)
+    A `solcjs` compile also succeeds with the DEFAULT /tmp TMPDIR (measured:
+    --bin --abi --optimize --optimize-runs 200, exit 0, same two digests), so for
+    solcjs the disk-backed TMPDIR is precautionary; it remains required for the
+    rea-agents/EVMole probe per the knowledge entry's own recheck note.
+    This seat therefore did NOT re-test large /tmp writes (deliberately capped at
+    1 MiB so as not to re-exhaust the shared tmpfs while other seats run) and
+    kept ALL scratch under /var/tmp/ex01-scratch. The staleness is recorded as a
+    measurement, not as a licence to use /tmp.
+F5  Shape correction for future receipts: solc 0.8.37 ships a single-file wasm
+    build; there is no soljson.wasm on disk. Any artifact that names a
+    `soljson.wasm` (or that reads the version out of package.json) would be
+    describing a different layout than this package has.
+
+6. REPRODUCE (all commands are read-only; scratch only)
+--------------------------------------------------------------------------------
+  P=<repo>/.ufo/waves/arc3-loop1-round1/tools/solc-prefix
+  sha256sum $P/package.json $P/package-lock.json $P/node_modules/solc/{package.json,solc.js,soljson.js}
+  python3 <wave>/claims/c1/EX-01/attest-prefix-vs-cache.py $P /home/vgpnk/.npm/_cacache/content-v2/sha512 /var/tmp/ex01-attest
+  TMPDIR=/var/tmp/ex01-scratch node --max-old-space-size=3072 \
+      <wave>/claims/c1/EX-01/capture-embedded-wasm.js $P/node_modules/solc/soljson.js /var/tmp/embedded.wasm
+  TMPDIR=/var/tmp/ex01-scratch $P/node_modules/.bin/solcjs --version
+  (scratch dir /var/tmp/ex01-scratch holds this seat's compile outputs, the
+   decoded wasm, and the cache-attestation trees; nothing was written into the
+   prefix.)
+
+7. SCOPE / COMPLIANCE
+--------------------------------------------------------------------------------
+  - No installs, no npm fetch: the only npm command run was `npm ls --all
+    --offline`; all hashing is local (cache file, tree files).
+  - No git mutation: only rev-parse / ls-files / hash-object / check-ignore reads.
+  - Custody paths (~/.config/devin/mcp_config.json, ~/.omp/agent/mcp.json,
+    ~/.kimi-code/config.toml, ~/.bashrc, ~/.profile) were NOT accessed by this
+    seat — no need, this seat produces no custody pair.
+  - Writes by this seat: this file + attest-prefix-vs-cache.py +
+    capture-embedded-wasm.js + proposed-receipt-addendum.patch.md (all under
+    .ufo/waves/arc3-loop1-round3/claims/c1/EX-01/) and the seat report
+    .ufo/waves/arc3-loop1-round3/seats/EX-01.md; scratch under /var/tmp only.
+    The prefix itself was never written to (0 files modified after install, §1).
+  - NOT verified here (out of this seat's scope, stated so the parent does not
+    over-read this artifact): the registry's dist.shasum/sha1 field (no network),
+    the four r1 carrier legs (only the smoke compile was re-run), the rea-agents
+    probe behaviour, and any round-3 carrier work.
+================================================================================

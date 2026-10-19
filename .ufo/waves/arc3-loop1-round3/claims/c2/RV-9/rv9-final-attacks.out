@@ -1,0 +1,38 @@
+########## FINAL ATTACK BATCH (RV-9 reviewer)
+--- F1: unreadable receipt file (EACCES on the receipt itself)
+USAGE: [Errno 13] Permission denied: '/var/tmp/rv9-scratch/final/r.txt'
+rc=2 (declared: USAGE 2)
+--- F2: directory given via --paths
+SIDECAR: /var/tmp/rv9-scratch/final/dir-rcpt.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+rc=0
+--- F3: --out into a directory (write failure)
+USAGE: write failed ([Errno 21] Is a directory: '/var/tmp/rv9-scratch/final/adir'): /var/tmp/rv9-scratch/final/adir
+rc=2 (declared: USAGE 2)
+--- F4: symlink alias of a scoped path as --out
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv9-scratch/final/link.txt
+rc=2
+real.txt content: [keepme]
+--- F5: symlink as a --paths target (does it follow?)
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+rc=0
+PATH: /var/tmp/rv9-scratch/final/link2.txt
+EXISTS: yes
+TYPE: symlink
+SIZE: 35
+SHA256: 8f9e69a0c7e4281773d3cb25be73c0e24d35631fed0fc68e0ef56d0066fd8f96
+--- F6: both sides absent but genuine ENOENT (legit MATCH?)
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=(none) exit=13
+capture rc=13 (declared 13 ABSENT)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+rc=0
+--- F7: receipt with duplicated PATH stanza (parser robustness)
+USAGE: [Errno 2] No such file or directory: '/var/tmp/rv9-scratch/final/dup.txt'
+rc=2 (no file: expect 2)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+rc=0
+--- F8: --require-paths non-integer
+custody-pair.py verify: error: argument --require-paths: invalid int value: 'abc'
+rc=2 (declared: USAGE 2)

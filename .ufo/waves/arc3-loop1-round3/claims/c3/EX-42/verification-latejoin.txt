@@ -1,0 +1,100 @@
+== EX-42 late-join independent verification receipts (rule #14: every identity re-derived) ==
+2026-10-19, seat EX-42 (chain c3, executor), wave arc3-loop1-round3
+HEAD c07af80fcf3a60f9c6a0ca09b6e23fb5794d3311; scratch /var/tmp/ex42-verify + /var/tmp/ex42-census (never /tmp)
+No git mutations in the repo; every mutation ran in scratch fixtures under /var/tmp.
+
+-- LATE-JOIN INVENTORY
+claims/c3/EX-42/ contains census.md + 8 evidence files (all present, census.md ends complete at §9).
+seats/EX-42.md was ABSENT at join; written by this seat (the missing piece).
+
+-- LANDED GATE IDENTITIES (re-derived at capture)
+bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7  .ufo/gates/citation-drift/pointer-table.json   (30,348 B)
+d97dd60a942eaf53771c8224e84a9e8cdaf976dc66c3a543a450b1f1fa3827e2  .ufo/gates/citation-drift/expected.json        (2,154 B)
+e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  .ufo/gates/citation-drift/citation-drift-probe.py
+dd986f562a6c7b2e759ebb90c9855adff38e9226b1d9e27af36b6e3a2aefc3d4  corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md (10,225 B)
+c134afcb2e648aa3f8ff96f11d03aee2be6715811cb7edb3b7be6ac40aa0aa90  SKILL.md
+c26f16bcf6267d7a114620a9abf9ee1af93661761ce9e980b4b5afe8a9cbb224  SCORECARD.md
+3edb044cf1e7742ab47cbdeb88c2aee29daf4f93a2240e615a9226dcff69e99b  SHONEN.md
+d0772ce892223690d571448eeed81778d4a631b58a297d2633c31d241c8d97b5  .ufo/gates/c1-census-v10.py
+7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09  .ufo/gates/custody-pair/custody-pair.py
+f30df42e0a547a0aefd21590c0f975acf06d91161fcb6db77c8934960efeb193  .ufo/gates/custody-pair/README.md  (CROSS-CHAIN NOTE: EX-41's 10-cross-seat-check.txt records 039993ed… — stale; C2's implementer revised the README again after that check. The table's four custody-README needles all still match the current bytes.)
+
+-- COUPLED PIN CHECK (before and after)
+git show c07af80:...pointer-table.json | sha256sum  -> 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f (= pin value in c07af80 expected.json; c07af80 expected.json file sha ff47bfd60b383c22c0897e8c89081dd738f67d7f28904292c47f5d09e4173ba7)
+landed: table sha bfc42f1b… == expected.json pointer_table.sha256 bfc42f1b…  VERDICT MATCH (coupled, same revision)
+counts: before entries 31 / quoted 4 / exempt 3  ->  landed 57 / 4 / 8  (counted mechanically, both revisions)
+
+-- GATE RE-RUNS AT HEAD (real tree, read-only)
+probe default : CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+probe --strict: CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+selftest      : CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+frozen run @679af5d (default): findings=32 exit=0 (reported mode)
+frozen run @679af5d (--strict): failed findings=32 exit=1; classes: 17 citation_dead, 9 citation_file_absent, 5 citation_out_of_range, 1 record_word_missing; citation_dead present -> membership requirement met
+tamper guard: one byte appended to a scratch copy -> pointer_table_tampered (derived ad41ec11cbb27c3f805e8503fb2162dbefffeda100556560bd4c72fd79626cee != pinned bfc42f1b…), could-not-evaluate findings=1 exit=2
+baseline table (c07af80 bytes) re-run at HEAD: default 0 exit 0; --strict clean 0 exit 0 (before-state is green, i.e. blind to everything the round added)
+
+-- CENSUS FIGURES RECOUNTED
+enumeration.tsv: 88 raw rows; 61 distinct raw tokens; 4 non-path tokens ('.sha256','bytecode.sha256','subject.digest.sha256',"SCORECARD.md's arc3-loop1-round1") -> 57 distinct path tokens. Kinds: 75 B / 12 A / 1 D.
+12/12 A rows resolve at HEAD (line counts + ranges verified against git objects; every claimed range holds its sentence's content).
+entries-proposal.json: 43 entries + 2 quoted = 45 rows; tiers 18 required / 20 recommended / 7 discretionary (mechanical count).
+scope-boundary figure: regex '[A-Za-z0-9_./@-]+\.(md|py|json|txt|sol|hex|js|toml|cfg|sha256):N[-N]?' over .ufo/waves/arc3-loop1-round{1,2} + .ufo/reports/arc3-loop1-round{1,2} = 8,187 occurrences across 1,075 files (waves alone: 8,184 / 1,073) — the census's 8,187/1,075 reproduces exactly.
+crosswalk: 18/18 required rows have a landed disposition — 14 direct (by id or file:line) + 4 transitive (skill14-scores-section, readme38-evm-target, readme38-r3-target, log1411-arc3-identity).
+
+-- BATTERY RE-RUNS (scratch fixtures, /var/tmp)
+battery-EX42 (9 controls, proposal table): re-run -> diff vs landed artifact EMPTY (byte-identical).
+battery-landed (landed table on 26-file cited surface): re-run reproduces every control line; L5b separately re-run: QUALITY.md:24 'content-addressed'->'content-addresed' -> citation_dead arc3r1-entry-quality-ids exit 1; restore -> clean.
+attacker reruns (fixture-landed):
+  T1 delete corpus/knowledge/2026-10-13-r3-evm-interface.md -> 5 citation_file_absent (auto target row + 4 arc3r1-entry-* rows) exit 1
+  T2 delete corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md -> 2 citation_file_absent (auto target row + skill-rule14-entry-recheck) exit 1
+  V1 LOG.md:1411 'dd986f56' -> 'dd986f57' -> citation_dead skill-rule14-log-fresh-identity exit 1 (transitive LOG coverage works)
+  V2 SCORECARD.md:1435 'SHONEN.md:6' -> 'SHONEN.md:7' -> citation_dead sc-arc3r2-cites-shonen exit 1
+  N1 delete README r3 token (`2026-10-13-r3-evm-interface` from the EVM row; mutation diff verified) -> clean, no fire (the proposal anchored the r3 target FILE, not the README token; residual named in the seat report)
+  N2 LOG.md:1442 mutation ('81-255'->'82-256'; mutation verified) against the BASELINE table -> clean (before-state blind to the record; the gap §5.4 is real)
+  fixture-proposal: log1442-shonen-repoint needle at LOG.md:1442 satisfied at current bytes; mutation -> record_word_missing exit 1; restore -> clean (the §5.4 fix is non-vacuous)
+  every fixture restored to clean between tests; final clean 0 exit 0
+
+-- BROAD-SWEEP ATTACK (net-too-narrow) REDONE
+wider regex over the same commits/scoped files: 52 distinct tokens, 0 not in enumeration.tsv. (This seat's first sweep printed 16 'missing' — that was this seat's own normalization bug, stripping the leading dot before comparison; corrected, the census's attack-1 verdict stands.)
+
+-- OTHER MEASUREMENTS
+command A at HEAD and at c07af80: {"knowledge_files":82,"mapped":82,"missing":[],"dangling":[],"citation_resolved_rules":14,"rule_blocks":14,"coverage_score":10.0,"depth_score":10.0} — unchanged by the round (C3's contract; the 82->83 bump belongs to C1).
+git status at close (excluding pycache): only the 4 landed files + the pre-existing .ufo/waves/arc2-loop1-round10/C3.md dirty path (named in the arc3 records as pre-existing).
+section-key form: SHONEN.md:6 names SKILL.md:81-255; rule #13 natural-control text at SKILL.md:233 sits inside the range -> the r2 re-point did not break shonen-skill-range.
+
+-- ADDITIONAL FINDINGS (this seat, late-join re-derivation)
+F1. census.md §4.4 row 5 cause is falsified by the repo itself (measured):
+    `git cat-file -e HEAD:.ufo/waves/arc3-loop1-round1/tools/solc-prefix/` exits 0 (tree object);
+    `git ls-tree -r HEAD` shows package.json + package-lock.json tracked inside the prefix.
+    The claim "no committed git object to grade" is therefore inaccurate as written; the operative
+    ground (installed compiler bytes live under the wave-.gitignore'd node_modules/, so there is no
+    gradeable *content* object; the install receipt is the provenance anchor) stands.
+    Also measured: this token is NOT in the mechanical enumeration (0 hits in enumeration.tsv) —
+    the enumerator net requires a file extension or knowledge slug, so the trailing-slash directory
+    token was added to the ledger by hand. Row count unaffected; cause text needs correction.
+F2. census.md §0 point 2 and the §4.4 heading say "five named cause classes"; the §4.4 table
+    carries 7 distinct bolded cause labels (field/key name; dirty-worktree-state record;
+    operator-mutable class; gitignored install prefix; line reworded, no arc3-introduced citation;
+    record-class path mentions, no stated number; suffix token in prose). The 12-row count itself
+    re-derives exactly (rows 1-2, 3, 4, 5, 6-7, 8-10, 11, 12 = 12) and every row carries a named
+    cause. Label-count bookkeeping only; no acceptance effect.
+F3. Cross-chain note: EX-41's 10-cross-seat-check.txt records the custody-pair README as
+    sha256 039993ed83345a3416ec59dd611f520409178b653137ffe21a137b3675ea4435 (10:14 local);
+    at this seat's capture the README is f30df42e0a547a0aefd21590c0f975acf06d91161fcb6db77c8934960efeb193
+    (C2's implementer revised it again after that check). The landed table's four custody-README
+    needles all still match the current bytes (probe 0 findings at HEAD); the cross-seat record's
+    identity line is stale, not wrong at its capture time.
+
+-- RESIDUALS NAMED (not blocking; parent's judgment)
+R1. LOG.md:1442 record gap stands (census §5.4). Measured again here: mutation of `81-255`->`82-256`
+    is invisible to the baseline table (clean 0) and to the landed table (clean 0 — no entry grades
+    LOG:1442); the census's proposed quoted entry is non-vacuous (record_word_missing fires on
+    mutation, clean on restore). Fix is one entry; not landed by this seat (EX-41 owns the table).
+R2. README r3 token: deleting `2026-10-13-r3-evm-interface` from the corpus/README.md EVM row fires
+    nothing (mutation diff verified; clean 0 exit 0 against the landed table). The census's row-14
+    coverage claim is about the r3 *entry file* (graded; deletion -> 5 citation_file_absent), not
+    the README token text; the token itself is ungraded. Same class of residual as R1, one anchor
+    needle away from closed.
+R3. census §1 scope boundary: reproduced exactly (8,187 stated-line occurrences / 1,075 files over
+    arc3 r1+r2 waves + reports with the extension-requiring net; waves alone 8,184 / 1,073). The
+    declaration is honest; the boundary itself is the residual (wave/report-internal citations are
+    graded only as targets).

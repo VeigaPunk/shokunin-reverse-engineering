@@ -1,0 +1,45 @@
+########## D2c: --live against an unreadable candidate (true shape: readable at capture, unreadable at verify)
+--- readable file, capture with OLD tool
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+rc=0
+--- OLD tool verify <receipt> --live on unreadable live candidate
+  File "/var/tmp/rv9-scratch/before/old-tool.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/rv9-scratch/d2c/cand.txt'
+rc=1
+--- NEW tool verify <receipt> --live on same unreadable live candidate
+    note: exists but not evaluable on candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+rc=14
+--- NEW tool capture on unreadable file
+SIDECAR: /var/tmp/rv9-scratch/d2c/new-rcpt.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=1/1 label=(none) exit=14
+rc=14
+
+########## D2 fail-open: parent dir EACCES (lstat fails) — both-sides-absent MATCH?
+--- OLD tool capture on path whose parent is EACCES
+RECEIPT: /var/tmp/rv9-scratch/d2f/old-rcpt.txt  sha256=b1f5acb681afaf7225291733fbd1e55b6419c09b5d95a48ded233eccef18ae4a
+SIDECAR: /var/tmp/rv9-scratch/d2f/old-rcpt.txt.sha256
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=(none) exit=13
+rc=13
+--- OLD receipt stanza (if any):
+PATH: /var/tmp/rv9-scratch/d2f/inner/f.txt
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: '/var/tmp/rv9-scratch/d2f/inner/f.txt'
+--- OLD tool verify that receipt vs live (fail-open check)
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+rc=0
+--- NEW tool capture on same EACCES-parent path
+RECEIPT: /var/tmp/rv9-scratch/d2f/new-rcpt.txt  sha256=c7e91d517e53eb267187ccfa381b303a8e4983a5f9d98d007df3411d8f205776
+SIDECAR: /var/tmp/rv9-scratch/d2f/new-rcpt.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=(none) exit=14
+rc=14
+--- NEW receipt stanza:
+PATH: /var/tmp/rv9-scratch/d2f/inner/f.txt
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: '/var/tmp/rv9-scratch/d2f/inner/f.txt'

@@ -1,0 +1,96 @@
+================================================================================
+TRANSCRIPT — seat EX-05 (chain c1, arc3-loop1-round3), 2026-10-19
+All commands run from /home/vgpnk/Projects/shokunin/kaidoku-shokunin.
+Abbreviated: D=.ufo/waves/arc3-loop1-round3/claims/c1/EX-05,
+PREFIX=.ufo/waves/arc3-loop1-round1/tools/solc-prefix, TMPDIR=/var/tmp/ex05-*.
+Scratch: /var/tmp/ex05-c1, /var/tmp/ex05-probe, /var/tmp/ex05-shape (never /tmp).
+================================================================================
+
+(T1) Prefix receipt re-verification — receipt-reuse.txt carries the full log.
+  $ node -e "console.log(require('<PREFIX>/node_modules/solc').version())"
+  0.8.37+commit.f401782d.Emscripten.clang
+  $ sha256sum <PREFIX>/node_modules/solc/solc.js
+  188c3fdca72bbb8ec1c70373427ad4536e117341c48944dae9185f9cf035146f
+  $ sha256sum ~/.npm/_cacache/.../1874f0d1…ec5694   (README: full path in receipt)
+  0e1a1ab6d12c37f5503271b2c4679cd433459c884851920d148d6fb154575a51  (6476046 B)
+  -> both equal the r1 EX-02 install receipt's pins.
+
+(T2) keccak oracle self-check (own implementation, no third-party import)
+  $ python3 $D/keccak_ref.py
+  selfcheck OK (empty-string + Transfer topic vectors)
+    keccak256("") = c5d24601…85a470 ; keccak256("Transfer(address,address,uint256)")
+    = ddf252ad…523b3ef
+
+(T3) Route A — standard-JSON, optimizer {enabled:true, runs:200}, unit name CarrierB.sol
+  $ node $D/compile.js --solc=$PREFIX/node_modules/solc --src=$D/src/CarrierB.sol \
+      --out=$D/out --contract=CarrierB --optimize-runs=200
+  { "version":"0.8.37+commit.f401782d.Emscripten.clang", "contract":"CarrierB",
+    "creationBytes":1560, "creationSha256":"6794c3a2…3de6fdc0",
+    "runtimeBytes":1469, "runtimeSha256":"b9c70178…4ebd7940",
+    "abiFunctions":8, "warnings":0 }
+
+(T4) Route B — solcjs CLI with the literal flags (parity leg)
+  $ TMPDIR=/var/tmp/ex05-c1 <PREFIX>/node_modules/.bin/solcjs --bin --abi \
+      --optimize --optimize-runs 200 --output-dir $D/out-cli $D/src/CarrierB.sol
+  -> exit 0; creation hex 3120 chars; sha256 ebb9121d…2a72ab (see route-parity.txt)
+
+(T5) Planted K, recorded PRE-PROBE (derived from the compiler-emitted ABI)
+  $ node $D/planted-K.js --abi=$D/out/CarrierB.abi.json \
+      --runtime=$D/out/CarrierB.runtime.hex --out=$D --name=CarrierB --prefix=$PREFIX
+  plantedK 8, allPresent true:
+    3efdef66 note(bytes32,uint256) nonpayable | 410673e5 tally() view
+    51f91066 tag() view                   | 6ea056a9 sweep(address,uint256) nonpayable
+    8da5cb5b owner() view                 | ca1d209d fund(uint256) payable
+    d5d44d80 credit(address) view         | e7ee6ad6 rate(uint256) pure
+  Independent oracle cross-check (keccak_ref.py --sel) agreed on all 8.
+  Ordering evidence: planted-K.json/expected-selectors.txt mtime
+  2026-10-19 10:08:11.189 (-03) vs first probe envelope 10:08:21.125 (-03):
+  9.9 s before the first probe.
+
+(T6) Probes (disk-backed TMPDIR; npx package cached)
+  $ TMPDIR=/var/tmp/ex05-probe npx -y rea-agents@6.4.0 inspect-evm-interface \
+      $D/out/CarrierB.runtime.hex hex --format json      -> exit 0, stderr 0 B
+      ev_6da00ac5…2ced6e42c9f3 ; 8 functions, all dispatch:"abi";
+      set == planted K, 0 missing / 0 extra;
+      decoded bytecode.sha256 b9c70178…4ebd7940 (== route A runtime), 1469 B
+  $ TMPDIR=/var/tmp/ex05-probe npx -y rea-agents@6.4.0 inspect-evm-interface \
+      $D/out/CarrierB.runtime.bin raw --format json      -> exit 0
+      ev_6b223fbe…65baa457403 ; 8 functions; decoded bytecode.sha256 b9c70178… (raw ≡ hex)
+  $ TMPDIR=/var/tmp/ex05-probe npx -y rea-agents@6.7.0 inspect-evm-interface \
+      $D/out/CarrierB.runtime.hex hex --format json      -> exit 0
+      ev_861873b0…51850e63 ; 8 functions; bytecode.kind:"unknown"
+  $ TMPDIR=/var/tmp/ex05-probe npx -y rea-agents@6.4.0 inspect-evm-interface \
+      $D/attack/out/CarrierBErr.runtime.hex hex --format json -> exit 0
+      ev_bdc1db67…69c16ed6 ; 8 functions; EXTRAS vs planted K = [] (attack carrier)
+
+(T7) PUSH4 census + dispatch topology (push4-scan.py / dispatch-shape.py)
+  CarrierB: 9 PUSH4 immediates, 8 distinct = the planted set (owner() repeated at
+  the binary-search root, offsets 19/30). Shape: GT root + EQ leaves (eq=8, gt=1).
+  CarrierBErr: 12 immediates, 11 distinct (2 planted-external constants + 1
+  data-region artifact). VaultB opt200/noopt: eq=11, gt=1. r1 Rv2Token: eq=5, gt=0
+  (linear). r1 Rv2Many (11 selectors, optimizer OFF): eq=11, gt=1 → the topology
+  is not optimizer-driven.
+
+(T8) Boundary scan (shape-boundary-scan.sh, receipted solc, both modes)
+  N = 4,5,6 → linear-eq in BOTH modes; N = 7..12 → GT-root binary in BOTH modes.
+  Optimizer's measured effect: code size (N=8: 242 B vs 544 B) and destination
+  width (PUSH1 dests vs PUSH2 dests). Raw table: shape-boundary.txt.
+
+(T9) Independent re-compile of EX-04's carrier B (VaultB, unit name carrierB.sol)
+  $ node $D/compile.js --solc=$PREFIX/node_modules/solc \
+      --src=.ufo/waves/arc3-loop1-round3/claims/c1/EX-04/carrierB.sol \
+      --source-name=carrierB.sol --out=$D/recompiled/opt200 --contract=VaultB \
+      --optimize-runs=200
+  creation 2237 B sha256 8466da5f…f22ee975 ; runtime 1850 B sha256 aaf85cea…cf239412
+  $ node -e "… optimum {enabled:false} …"
+  runtime 3872 B sha256 679678e9…7d83d005 ; creation 5276 B sha256 45a6d3d7…4d4904f9
+  -> ALL FOUR reproduce EX-04's receipt pins exactly (opt200 creation/runtime;
+  noopt runtime; the noopt creation hash is a new pin this seat records).
+  Source re-hashed: EX-04/carrierB.sol sha256 14566042…60719648, 3251 B
+  (matches their receipt §2).
+
+(T10) Evidence manifest + re-derivation
+  $ bash -c 'cd $D && find . -type f | sort | xargs sha256sum > manifest.sha256.txt'
+  -> manifest.sha256.txt (covers every file under claims/c1/EX-05 except itself);
+     re-derivation run recorded in manifest-verify.txt.
+================================================================================

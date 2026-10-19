@@ -1,0 +1,30 @@
+tool=/var/tmp/sc3/tool-final/custody-pair.py sha256=7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09 date=2026-10-19T10:16:09-03:00
+### G1-scoped-as-out
+$ HOME=/var/tmp/sc3/guard-final/work/home python3 /var/tmp/sc3/tool-final/custody-pair.py capture --out /var/tmp/sc3/guard-final/work/scope/guarded.conf --paths /var/tmp/sc3/guard-final/work/scope/guarded.conf
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/sc3/guard-final/work/scope/guarded.conf
+exit=2 victim=/var/tmp/sc3/guard-final/work/scope/guarded.conf
+victim-sha before=e11f31a04b51e7e8fa4dcf1392db077374a3435cb44e050f941c322c2f5fee83 after=e11f31a04b51e7e8fa4dcf1392db077374a3435cb44e050f941c322c2f5fee83
+verdict=UNCHANGED
+---
+### G2-canonical-bashrc-as-out
+$ HOME=/var/tmp/sc3/guard-final/work/home python3 /var/tmp/sc3/tool-final/custody-pair.py capture --out /var/tmp/sc3/guard-final/work/home/.bashrc --paths /var/tmp/sc3/guard-final/work/scope/guarded.conf
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/sc3/guard-final/work/home/.bashrc
+exit=2 victim=/var/tmp/sc3/guard-final/work/home/.bashrc
+victim-sha before=f43e66721d6a3f40f0f6000e62e577f91a25cba7dea98de8487ec0c4122c3558 after=f43e66721d6a3f40f0f6000e62e577f91a25cba7dea98de8487ec0c4122c3558
+verdict=UNCHANGED
+---
+### G3-scope-includes-canonical
+$ HOME=/var/tmp/sc3/guard-final/work/home python3 /var/tmp/sc3/tool-final/custody-pair.py capture --out /var/tmp/sc3/guard-final/work/home/.profile --paths /var/tmp/sc3/guard-final/work/scope/g3.conf /var/tmp/sc3/guard-final/work/home/.profile
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/sc3/guard-final/work/home/.profile
+exit=2 victim=/var/tmp/sc3/guard-final/work/home/.profile
+victim-sha before=8d7bbe67372f3d4c411a1294c49bafbb122ae102287960a0a9c2d77c5731589b after=8d7bbe67372f3d4c411a1294c49bafbb122ae102287960a0a9c2d77c5731589b
+verdict=UNCHANGED
+---
+### G4-hardlink-alias-as-out
+$ HOME=/var/tmp/sc3/guard-final/work/home python3 /var/tmp/sc3/tool-final/custody-pair.py capture --out /var/tmp/sc3/guard-final/work/scope/alias4.conf --paths /var/tmp/sc3/guard-final/work/scope/guarded4.conf
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/sc3/guard-final/work/scope/alias4.conf
+exit=2 victim=/var/tmp/sc3/guard-final/work/scope/guarded4.conf
+victim-sha before=c26a427dc00ce7c13a5fceaf2203599482e8dc2bf17e95e1f80c7f9ca6f0e1b4 after=c26a427dc00ce7c13a5fceaf2203599482e8dc2bf17e95e1f80c7f9ca6f0e1b4
+verdict=UNCHANGED
+---
+done

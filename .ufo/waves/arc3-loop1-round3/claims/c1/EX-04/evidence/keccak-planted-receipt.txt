@@ -1,0 +1,51 @@
+==============================================================================
+KECCAK / PLANTED RECEIPT — carrier B (arc3-loop1-round3, chain c1)
+Seat: EX-04 (chain c1, executor)   Date: 2026-10-19
+==============================================================================
+
+METHOD — three independent derivations of keccak256(sig)[0:4]
+------------------------------------------------------------------------------
+  (a) pure-JS keccak.js (own Keccak-f[1600] implementation, reused verbatim from
+      round-1 EX-06 evidence; source sha256 e9644a6f7e18d388b08040c97ebfb3bbbed13aded7a3eab56b5dbfabdfc2ee72)
+  (b) js-sha3@0.8.0 from the solc prefix dep tree
+  (c) solc 0.8.37 evm.methodIdentifiers (the compiler's own table)
+
+ANCHORS (keccak.js self-test, re-run this seat)
+------------------------------------------------------------------------------
+PASS  keccak256("") -> c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470
+PASS  transfer(address,uint256) -> a9059cbb
+PASS  balanceOf(address) -> 70a08231
+PASS  approve(address,uint256) -> 095ea7b3
+
+TABLE — planted set, leg opt200 (K=11), 3-way agreement 11/11
+------------------------------------------------------------------------------
+  selector    signature                                      mutability   js-sha3     solc        agree
+  0x07bf89ab  computeTxHash(address,uint256,bytes32,uint256) pure        0x07bf89ab  0x07bf89ab  true
+  0x0bf6cc08  vaultBalance()                                view        0x0bf6cc08  0x0bf6cc08  true
+  0x0db02622  ownerCount()                                  view        0x0db02622  0x0db02622  true
+  0x2f54bf6e  isOwner(address)                              view        0x2f54bf6e  0x2f54bf6e  true
+  0x42cde4e8  threshold()                                   view        0x42cde4e8  0x42cde4e8  true
+  0x59bf77df  confirmationCount(bytes32)                    view        0x59bf77df  0x59bf77df  true
+  0x797af627  confirm(bytes32)                              nonpayable  0x797af627  0x797af627  true
+  0x960bfe04  setThreshold(uint256)                         nonpayable  0x960bfe04  0x960bfe04  true
+  0xa8c162fb  execute(address,uint256,bytes32,uint256)      nonpayable  0xa8c162fb  0xa8c162fb  true
+  0xd0e30db0  deposit()                                     payable     0xd0e30db0  0xd0e30db0  true
+  0xd9caa3d2  submit(bytes32)                               nonpayable  0xd9caa3d2  0xd9caa3d2  true
+
+  ERC-20 selectors present: []  (non-ERC-20 shape holds by construction)
+  planted-B-opt200.json sha256 66c970763a1a3006336dfbbea0516a7542e4f99d4a8ee0338978f5408d15afd9
+  planted-B-noopt.json  sha256 0f02da0c6697a66721d4da40069ed470e8110b1e37464e9caecbf812fc4998b6
+  planted-B.txt (identical table both legs) sha256 f32393c0269cf8fa297a219ffe4b60aa71998038c1e73a383da3b0b3af8c59aa
+
+PRE-PROBE RECORDING (rule: planted set recorded before probing)
+------------------------------------------------------------------------------
+  scratch planted-B-opt200.txt mtime 2026-10-19 10:07:18.366781950 -0300
+  first probe envelope mtime          2026-10-19 10:07:27.704819928 -0300  (9.3 s later)
+  artifact copy in this tree: planted-B.txt 2026-10-19T13:08:25.412Z (467 B); probe envelopes 2026-10-19T13:08:25.414Z (10418 B)
+  (scratch /dev/shm/ex04-r3 mtimes are the primary ordering evidence; the copies
+   preserve bytes — sha256 above — not scratch mtimes.)
+
+DISPATCH-TABLE CROSS-CHECK (PUSH4 immediates vs planted)
+------------------------------------------------------------------------------
+  opt200: 13 PUSH4 sites; all 11 planted selectors present; extras ["4e487b71"]
+  noopt : 12 PUSH4 sites; all 11 planted selectors present; extras []

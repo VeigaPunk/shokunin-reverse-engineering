@@ -1,0 +1,112 @@
+================================================================================
+CARRIER RECEIPT — carrierA (optimizer-enabled dispatch-shape carrier, c1)
+Wave:  arc3-loop1-round3   Seat: EX-02 (chain c1, executor)
+Date:  2026-10-19 (UTC)    Repo HEAD at work: c07af80fcf3a60f9c6a0ca09b6e23fb5794d3311
+Host:  node v26.12.0 (mise) | Linux (arch) | scratch: /var/tmp/ex02-r3 (disk-backed;
+       /tmp avoided — standing EDQUOT caveat)
+================================================================================
+
+1. COMPILER REUSE — NO INSTALL (r1 prefix reused; its receipt re-verified first)
+--------------------------------------------------------------------------------
+  prefix: .ufo/waves/arc3-loop1-round1/tools/solc-prefix/
+  $ node_modules/.bin/solcjs --version
+    -> 0.8.37+commit.f401782d.Emscripten.clang              (exit 0)
+  $ sha256sum node_modules/solc/soljson.js node_modules/solc/solc.js
+    -> soljson.js 221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c
+       solc.js   188c3fdca72bbb8ec1c70373427ad4536e117341c48944dae9185f9cf035146f
+    Both match the values the r1 install-receipt (§6, ambient cross-check) pins.
+  Not re-verified this round: the tarball-level sha256 (no re-download; no install).
+
+2. COMMANDS AND OUTPUTS
+--------------------------------------------------------------------------------
+  a) standard-JSON compile, optimizer {enabled:true, runs:200}:
+     $ TMPDIR=/var/tmp/ex02-r3/tmp NODE_PATH=<prefix>/node_modules node compileA.js
+     -> "compile ok; runtime 1426 B; creation 1460 B; diagnostics 0"   (exit 0)
+  b) CLI form of the claim's flags:
+     $ <prefix>/node_modules/.bin/solcjs --bin --abi --optimize --optimize-runs 200 \
+         --output-dir cli-out src/carrierA.sol
+     -> exit 0. Creation/init code byte-identical to (a) over [0,1407); the sole
+        difference is the metadata trailer's ipfs multihash, expected because the
+        source key differs (cli: src/carrierA.sol vs stdjson: carrierA.sol).
+        Recorded so the two forms are not mistaken for byte divergence.
+  c) planted selectors (js-sha3@0.8.0 from the prefix; keccak256(sig)[:4]):
+     $ NODE_PATH=<prefix>/node_modules node plantedA.js
+     -> K=9; cross-check vs solc's own evm.methodIdentifiers: SET-EQUAL
+        (missing [], extra [])  [evidence/keccak-crosscheck-A.txt]
+  d) probes (pinned REA; disk-backed TMPDIR per the r1 recheck line — mandatory):
+     $ npx -y rea-agents@6.4.0 inspect-evm-interface out/carrierA.runtime.hex hex --format json
+     $ npx -y rea-agents@6.4.0 inspect-evm-interface out/carrierA.runtime.bin raw --format json
+     $ npx -y rea-agents@6.4.0 inspect-evm-interface out/carrierA.runtime.hex raw --format json   (trap leg)
+     $ npx -y rea-agents@6.7.0 inspect-evm-interface out/carrierA.runtime.hex hex --format json
+     -> hex/bin raw @6.4.0 + hex @6.7.0: functions=9, set-equal to planted, extra=[],
+        dispatch="abi" on all nine, kind="unknown"; stderr empty on all four legs.
+     -> trap leg (raw encoding over a hex-TEXT file): functions=0, decoded digest ==
+        file digest (the file's text bytes read as code) — the r1 input-shape trap
+        reproduces; parsed-and-empty, no silent success.
+     -> probe raw_result.metadata.bytecodeOffset=1373 independently agrees with the
+        metadata CBOR start measured by scanA.js (1373).
+  e) scans and comparisons:
+     $ node scanA.js            -> evidence/dispatch-scan-A.txt
+     $ python3 compareProbes.py -> evidence/probe-vs-planted-A.txt
+     $ NODE_PATH=<prefix>/node_modules node reverifyA.js -> evidence/reverify-A.txt
+        ("REVERIFY: ALL CHECKS PASS": landed source == solc-input source;
+         planted re-derived from landed ABI set-equal; runtime digest re-derived)
+  f) variants A/B (constant identification): evidence/variants-report.txt
+
+3. PRE-PROBE PLANT ORDER
+--------------------------------------------------------------------------------
+  planted-A.txt (scratch copy) mtime 2026-10-19 10:07:41 -0300 = 13:07:41Z.
+  First probe envelope file mtime              10:08:09 -0300 = 13:08:09Z.
+  -> planted set was recorded 28 s BEFORE the first probe envelope. (Probe
+     envelopes carry no wall-clock field — grep for created/timestamp: 0 hits;
+     the file mtimes are the ordering evidence, as in r1.)
+  The landed copies under this directory carry later copy mtimes; ordering
+  evidence is the scratch mtimes recorded here.
+
+4. LANDED ARTIFACTS (sha256, all re-derived after the last revision of each file;
+   paths relative to .ufo/waves/arc3-loop1-round3/claims/c1/EX-02/)
+--------------------------------------------------------------------------------
+  05b2cbb0c6fd97ae6463b0a4f1be56f217ea64cf4cbdbd2c36da94c0fe6eee41  carrierA.sol
+  88fa4393f64963ab9cb25dbda8f7b3db5933014dda29cdff94f091e8ef6197c4  planted-A.txt
+  0cd46e657095ada57ce54658c607795f5a08b151756a4647e80c04dead4697c2  evidence/carrierA.abi.json
+  688c5e0f71d6e8f9c5e87d09367e4ca895b4360976a9e84c56ffb701ec4fa69b  evidence/carrierA.creation.hex
+  093c1952b397a9e7778b0415b9ec4a049c9306833e049c56dc8304fc69fde5ed  evidence/carrierA.metadata.json
+  5e9f1f410e9713b26f4e51172869ee386b09407800e698d6caaccbc09455f554  evidence/carrierA.methodIdentifiers.json
+  87d1bb033d06db04f0de9b4afc399676188a26302cab08e38ae165e63501ddff  evidence/carrierA.runtime.hex
+  8d72739b1b7f1448f90ede7313e9c41ff449d82b103dbb3ff3a0ade4bdae0295  evidence/carrierA.solc-input.json
+  2e30f7f16eee4ae9df69cc2e1a97b2b3135eab9508d99e0736b10bf256367d89  evidence/compile-stdout.txt
+  5259cc77ad1ed619292cd82f5a9c69134c2a593bc14beb1b59b13f2c325692c3  evidence/dispatch-scan-A.txt
+  659d9537cb7e22c91d8be717718ba89042ffab2b43dfd0d1dc8b408505741012  evidence/keccak-crosscheck-A.txt
+  25c186d7bb6491c9544fe58d8c8056f5efad45ef550615fa79a651439f182f74  evidence/probe-carrierA-bin-raw-6.4.0.json
+  0cae20106250b3ea73a86a8424bf5870f86482c06bf6dae1a0011fc66b7b07a8  evidence/probe-carrierA-hex-6.4.0.json
+  b8e53a4bacbf87b49c5ebc4678000a4bbe05eaf65f8fac8fc5b7b249a9678b8d  evidence/probe-carrierA-hex-6.7.0.json
+  4b03e79aa6c43547c0533b43388eb30c20a2efbf8432de36359aafe03f0c95d9  evidence/probe-carrierA-rawonhexfile-6.4.0.json
+  0fb1baefbfe62abbba4788948beb1b6c51a96b861af050bbb45723dc6743c235  evidence/probe-vs-planted-A.txt
+  dd60b1ed6bda9c02945559c2801bf2078303308bd35ed62d03c9391ca65a808f  evidence/reverify-A.txt
+  f357b2792f7dc5277f2c35d07ab48a0a214ce8dfa9ecb5f6b734fcd39cc51e59  evidence/solc-version.txt
+  ef1609a7bc8f83078511378f70ff570e22c720998ff55a094f56a70cc7962574  evidence/tools/compareProbes.py
+  a5df143539764f697571d2a8e3a0f7508a4f2c6be2b6ad471cd301ec4054544d  evidence/tools/compileA.js
+  ad4aacbb3a0b4fe3080284dd3634a30f8b3d5591e90ebcc4e7d82cb47624103b  evidence/tools/compileVariant.js
+  16118d8c25b2936674c5f6cc9ee5882e3398b744a6509f20b8e61d44988228a9  evidence/tools/plantedA.js
+  c6267e31d03aa70190c42ea6b3c4457c55ac43c599c85c012ce62b08abc05be5  evidence/tools/reverifyA.js
+  f153dd1379d87eab773f57f5b95d95aa6c82d3335afeb09c49d5397b87e89f25  evidence/tools/scanA.js
+  acad56f5d573d66db4b3d4f9161cebb7379cb67d2b60d99e8a6ad33622542977  evidence/variants-report.txt
+  581eee0a05479cfc9b4904b0c2b1249a94eaf42d9552c82470ebc97f1152bf48  evidence/variants/variant-noinsuf.sol
+  25088674bf3df4d3533adea9d0cbf03ddd46e7184df50a8d78f8e76d92838baf  evidence/variants/variant-stamp.sol
+  b6bd32da957b8cd14c617c0b0ff08d964b112ba4e88edc22c8d08409f529c9a4  evidence/variants/variant-strings.sol
+  NOTE: this receipt file itself is the only file in this tree not listed (self-
+  reference); the parent derives its digest at landing. The seat report
+  (.ufo/waves/arc3-loop1-round3/seats/EX-02.md) lives outside this artifact tree.
+
+5. CLAIMED BYTE-EXACTNESS / SCOPE
+--------------------------------------------------------------------------------
+  - Byte-exactness is claimed only for the pinned artifacts above, at the listed
+    digests. Variants are evidence-only A/B probes (scratch full tree retained
+    under /var/tmp/ex02-r3 for the round).
+  - Runtime identity: decoded bytecode sha256 9f7392acccea72cd42bdd8095a8578cab0
+    727766f218b5399da22bc21d23741a (1426 B); the file-level digest is
+    87d1bb03…01ddff (hex text, 2853 B). Content-addressed claims name which digest
+    is which.
+  - Creation-code leg not probed this round (runtime focus; r1 covered creation as
+    parsed-and-empty). No chain/RPC/deployment claims.
+================================================================================

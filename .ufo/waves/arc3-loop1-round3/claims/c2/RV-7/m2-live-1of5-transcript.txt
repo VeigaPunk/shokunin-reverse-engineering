@@ -1,0 +1,22 @@
+### M2 load-bearing proof: 1-of-5 reference, verify --live --require-paths 5
+### captured 2026-10-19T13:25:24Z on /var/tmp copies
+
+=== POST (landed 7cd19c3c, gate present) ===
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+exit=2
+
+=== M2 (gate reverted -> round-2 state) ===
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): ref-1.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv7v/m2canon/a.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+exit=0
+
+=== M2 note: --require-paths accepted (parsed, then ignored) vs PRE 112d01dc where the flag does not exist ===
+usage: custody-pair.py [-h] {capture,verify,selftest,paths} ...
+custody-pair.py: error: unrecognized arguments: --require-paths
+exit(pre,argparse)=2

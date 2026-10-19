@@ -1,0 +1,65 @@
+# SC-3 injection harness
+# date: 2026-10-19T10:07:26-03:00
+# tool: /var/tmp/sc3/tool-before/custody-pair.py
+# tool-sha256: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+# tool-lines: 889
+# python: Python 3.14.7
+  scratch: /var/tmp/sc3/inj-before/work/scratch-ok/custody-pair-selftest-6r613d3a
+  CUSTODY_PAIR_SELFTEST: CLEAN cases=15 passed=15 failed=0 exit=0
+  exit=0
+  SIDECAR: /var/tmp/sc3/inj-before/work/d2a/blocked-pre.txt.sha256
+  CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=(none) exit=13
+  exit=13
+  VERDICT: MATCH  paths=1  MATCH=1  exit=0
+  CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+  exit=0
+  SIDECAR: /var/tmp/sc3/inj-before/work/d2b/ghost-pre.txt.sha256
+  CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=(none) exit=13
+  exit=13
+  VERDICT: MATCH  paths=1  MATCH=1  exit=0
+  CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+  exit=0
+           ~~~~^^^^^^^^^^^^
+  PermissionError: [Errno 13] Permission denied: '/var/tmp/sc3/inj-before/work/d2c/unreadable.txt'
+  exit=1
+  SIDECAR: /var/tmp/sc3/inj-before/work/d2c/ok-pre.txt.sha256
+  CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+  exit=0
+           ~~~~^^^^^^^^^^^^
+  PermissionError: [Errno 13] Permission denied: '/var/tmp/sc3/inj-before/work/d2c/unreadable.txt'
+  exit=1
+  SIDECAR: /var/tmp/sc3/inj-before/work/d3/pre-1of5.txt.sha256
+  CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+  exit=0
+  VERDICT: MATCH  paths=1  MATCH=1  exit=0
+  CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+  exit=0
+  usage: custody-pair.py [-h] {capture,verify,selftest,paths} ...
+  custody-pair.py: error: unrecognized arguments: --require-paths
+  exit=2
+  usage: custody-pair.py [-h] {capture,verify,selftest,paths} ...
+  custody-pair.py: error: unrecognized arguments: --cover-default-paths
+  exit=2
+  SIDECAR: /var/tmp/sc3/inj-before/work/wg/victim.txt.sha256
+  CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+  exit=0
+  before-sha=b348776561d0d2e2b016b642c29e21c483d994b8abdb6ff972aa1b4c11e64d2c
+  after-sha=080e01834212e3e28f0a87672f3afe579dc0a3561256d4674e4def4c53d7470a
+  victim-first-line-after: # custody-pair receipt v2 — READ-ONLY capture (sha256 + stat); no bytes written
+  verdict=CLOBBERED
+      ~~~~~~~~~^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: '/var/tmp/sc3/inj-before/work/d6/does-not-exist/custody-pair-selftest-01ovnk8k'
+  exit=1
+  scratch: /var/tmp/sc3/inj-before/work/scratch-ok/custody-pair-selftest-590uby5x
+  CUSTODY_PAIR_SELFTEST: CLEAN cases=15 passed=15 failed=0 exit=0
+  exit=0
+    --label LABEL        capture label recorded in the header
+    --paths [PATHS ...]  override paths (default: the 5 custody paths)
+  exit=0
+    -h, --help  show this help message and exit
+    --live      compare receipt_a against the live filesystem
+  exit=0
+    --scratch SCRATCH  fixture root (default: $CUSTODY_PAIR_SCRATCH, /dev/shm,
+                       /var/tmp)
+  exit=0
+done: /var/tmp/sc3/inj-before

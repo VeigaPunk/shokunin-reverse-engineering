@@ -1,0 +1,33 @@
+# CN-2 EX-32 re-anchor independent verification (2026-10-19T13:27Z; corrected 2a)
+# 1) diff application over the landed table reproduces EX-32's claimed digests:
+   table    re-derived a810bd17ea416fe0f3ed9e053e1e470ae833718f457b6d39399478c93de91a7b == claimed
+   expected re-derived e33f0e2d6014bbf88a4cb2ccc8b156d0f1cc473512ffa2eb8861baaf822b0cf3 == claimed
+
+# 2) real probe over the full work-commit projection (scratch clone /dev/shm/cn2r3-full/root):
+#    (a) LANDED pair (bfc42f1b/d97dd60a) at rev da8ed548 (projection incl. patched SKILL.md):
+CITATION_DRIFT_ROOT: /dev/shm/cn2r3-full/root
+CITATION_DRIFT_REVISION: da8ed548355edc112d9d519a2405e5e5c0c09567
+CITATION_DRIFT_TABLE: .ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT: citation_dead entry=skill-registry-custody-pair-row SKILL.md: no line matches 'precedence CONTENT-DRIFT > ABSENT > REWRITE-DRIFT > METADATA'
+CITATION_DRIFT_VERDICT: failed findings=1 exit=1
+   rc=0
+
+#    (b) EX-32 RE-ANCHORED pair at rev 32e6aa18 (same projection + re-anchor commit):
+CITATION_DRIFT_ROOT: /dev/shm/cn2r3-full/root
+CITATION_DRIFT_REVISION: 32e6aa182f8def83097b7ca6ec195f5854633576
+CITATION_DRIFT_TABLE: /dev/shm/cn2r3-full/root/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+   rc=0
+
+# 3) teeth: reordered-precedence mutant (rev a1b0efab) reddens under the alternation:
+CITATION_DRIFT_ROOT: /dev/shm/cn2r3-collide/root
+CITATION_DRIFT_REVISION: a1b0efaba2a62d334871329aafb098ceb6b1e15f
+CITATION_DRIFT_TABLE: /dev/shm/cn2r3-collide/fixed-table.json
+CITATION_DRIFT: citation_dead entry=skill-registry-custody-pair-row SKILL.md: no line matches 'precedence CONTENT-DRIFT > (?:UNEVALUABLE > )?ABSENT > REWRI'
+CITATION_DRIFT_VERDICT: failed findings=1 exit=1
+
+# 4) tightened variant §3 regex discrimination (CN-2 re-run):
+  round-2 (real)           §2=True  §3-tightened=True
+  revised (real)           §2=True  §3-tightened=True
+  wrong: UNEVALUABLE last  §2=True  §3-tightened=False
+  wrong: UNEVALUABLE mid   §2=False  §3-tightened=False

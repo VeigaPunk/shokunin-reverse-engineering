@@ -1,0 +1,71 @@
+=== ARM mut-landed-full  tool mut-landed-full/custody-pair.py ===
+tool-sha256: d9dc097abb09b6b10d9a9cf7a16152c043749d6c7e44c0c405de774dbe80e589
+--- case1: capture of EACCES-at-lstat path (blocked dir) ---
+RECEIPT: /var/tmp/rv6/runs/mut-landed-full/blocked-pre.txt  sha256=f24925c3ee80c23501133d481a65ec8c12781e3229124c3d1dd40153a31f33e0
+SIDECAR: /var/tmp/rv6/runs/mut-landed-full/blocked-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=(none) exit=13
+case1-exit=13
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: '/var/tmp/rv6/fx/blocked/inner.conf'
+--- case2: verify blocked-pre.txt --live (both sides EACCES) ---
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv6/runs/mut-landed-full/blocked-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv6/fx/blocked/inner.conf: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+case2-exit=0
+--- case2rr: receipt-vs-receipt, both captured while EACCES ---
+case2rr-b-capture-exit=13
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv6/runs/mut-landed-full/blocked-pre.txt  stanzas=1
+B (candidate): /var/tmp/rv6/runs/mut-landed-full/rr-b.txt  stanzas=1
+PATH /var/tmp/rv6/fx/blocked/inner.conf: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+case2rr-exit=0
+--- case3: capture while readable, then chmod 000, then verify --live ---
+case3-pre-exit=0
+Traceback (most recent call last):
+  File "/var/tmp/rv6/mut-landed-full/custody-pair.py", line 1129, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/rv6/mut-landed-full/custody-pair.py", line 1125, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/rv6/mut-landed-full/custody-pair.py", line 662, in cmd_verify
+    b_sections = [capture_path(Path(s["path"]).expanduser()) for s in a_sections]
+                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/tmp/rv6/mut-landed-full/custody-pair.py", line 268, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/var/tmp/rv6/mut-landed-full/custody-pair.py", line 208, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/rv6/fx/unreadable.conf'
+case3-exit=1
+--- case4: mixed capture good+unreadable (receipt survival) ---
+Traceback (most recent call last):
+  File "/var/tmp/rv6/mut-landed-full/custody-pair.py", line 1129, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/rv6/mut-landed-full/custody-pair.py", line 1125, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/rv6/mut-landed-full/custody-pair.py", line 613, in cmd_capture
+    sections = [capture_path(p) for p in paths]
+                ~~~~~~~~~~~~^^^
+  File "/var/tmp/rv6/mut-landed-full/custody-pair.py", line 268, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/var/tmp/rv6/mut-landed-full/custody-pair.py", line 208, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/rv6/fx/unreadable.conf'
+case4-exit=1
+receipt-exists=no
+=== ARM mut-landed-full done ===

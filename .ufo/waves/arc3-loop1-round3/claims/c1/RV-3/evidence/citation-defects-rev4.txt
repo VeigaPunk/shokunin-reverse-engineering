@@ -1,0 +1,15 @@
+# RV-3 citation defects in the rev-4 literal (first-hand brace-expansion, 2026-10-19T13:25:47Z)
+
+literal under test: 3b5f371e85bdb8054e3a6b04c4b2097179b6a5435476a8f470e0d6c0a45c2215 (17,708 B / 37 lines)
+
+## residual unresolved citations (relative to stated base, or repo root)
+- line 5 (source block): EX-04 probe names listed under `evidence/` -> actual dir is `EX-04/evidence/probe/`
+    probe/probe-{opt200,noopt}-{hex,raw,rawbin}-6.4.0.json -> resolves as EX-04/evidence/probe/probe-opt200-hex-6.4.0.json etc. (OK); the `probe-receipt.txt` listed after them resolves (EX-04/evidence/probe-receipt.txt)
+- line 5: `optB-{hex,raw}-{6.4.0,6.5.0,6.7.0}{,-rerun}.json` expands to 12 names; only 7 exist (5 missing): optB-hex-6.4.0-rerun.json, optB-hex-6.5.0-rerun.json, optB-raw-6.4.0-rerun.json, optB-raw-6.5.0-rerun.json, optB-raw-6.7.0-rerun.json (CR-2 F2, still present at rev 4)
+- line 21: `evidence/offset-check-*.json` under EX-04 context -> actual `EX-04/evidence/probe/offset-check-{opt200,noopt}.json` (CR-2 F4, still present at rev 4)
+- line 16: bare `Rv2Token.sol` mention -> the r1 source path is `.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.sol` (also SC-1/src, EX-13/src copies this round)
+
+## defects FIXED at rev 4 (re-derived)
+- line 13: `EX-04/planted-B.txt` now resolves (467 B, sha256 f32393c0269cf8fa297a219ffe4b60aa71998038c1e73a383da3b0b3af8c59aa)
+- line 17: carrier-A r1 copy path now repo-root-absolute `.ufo/waves/arc3-loop1-round1/claims/c1/CR-1/evidence/carrier-A.hex` (exists)
+- line 37 Sources: `EX-04/planted-B.txt` and `EX-05/attack/out/CarrierBErr.runtime.hex` added (exist)

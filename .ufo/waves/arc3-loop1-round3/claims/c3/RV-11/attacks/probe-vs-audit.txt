@@ -1,0 +1,22 @@
+RV-11 instrument-blindness measurement, 2026-10-19T13:15Z
+structure: 31 baseline + A1..A7 planted + L1 (a laundered exact row on SCORECARD.md:291 asserting config.toml:1478)
+
+--- probe --strict on the planted table ---
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: .ufo/waves/arc3-loop1-round3/claims/c3/RV-11/attacks/table-attacks.json
+CITATION_DRIFT: citation_dead entry=A1-laundered-config-line .ufo/waves/arc3-loop1-round1/claims/c1/EX-01/config-pre-pair.txt:1 lacks '^:3225$'
+CITATION_DRIFT: citation_file_absent entry=~/.kimi-code/config.toml absent at HEAD
+CITATION_DRIFT: citation_dead entry=A6-snapshot-unpinned SCORECARD.md: no line matches 'config-toml-landmarks'
+CITATION_DRIFT: citation_dead entry=A7-snapshot-pinned SCORECARD.md: no line matches 'config-toml-landmarks'
+CITATION_DRIFT_VERDICT: failed findings=4 exit=1
+probe exit=1
+
+--- rule11 audit on the same table ---
+entries=46 conform=37 violations=9
+>> A1-laundered-config-line     exact     VIOLATION:LAUNDERED_PIN,NO_CONTENT_KEY
+>> A2-anchor-launder            anchor    VIOLATION:NO_CONTENT_KEY
+>> A3-om-graded                 exact     VIOLATION:OM_GRADED_BY_LINE
+>> A4-no-stamp                  exact     VIOLATION:OM_LINE_TOKEN,NO_CONTENT_KEY  tokens=['config.toml:1287']
+>> A6-snapshot-unpinned         anchor    VIOLATION:SNAPSHOT_UNPINNED
+>> L1-laundered-exact           exact     VIOLATION:OM_LINE_TOKEN,LAUNDERED_PIN,NO_CONTENT_KEY  tokens=['config.toml:1478']

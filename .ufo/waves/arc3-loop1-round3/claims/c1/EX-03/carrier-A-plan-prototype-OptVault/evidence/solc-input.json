@@ -1,0 +1,27 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "OptVault.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\ncontract OptVault {\n    address private _owner;\n    bool private _paused;\n    mapping(address => uint256) private _credit;\n\n    constructor() { _owner = msg.sender; }\n\n    receive() external payable {}\n    fallback() external payable {}\n\n    function deposit() external payable returns (uint256) {\n        _credit[msg.sender] += msg.value;\n        return _credit[msg.sender];\n    }\n\n    function withdraw(uint256 amount) external {\n        require(!_paused, \"paused\");\n        _credit[msg.sender] -= amount;\n        payable(msg.sender).transfer(amount);\n    }\n\n    function creditOf(address a) external view returns (uint256) {\n        return _credit[a];\n    }\n\n    function paused() external view returns (bool) {\n        return _paused;\n    }\n\n    function setPaused(bool p) external {\n        require(msg.sender == _owner, \"owner\");\n        _paused = p;\n    }\n}"
+    }
+  },
+  "settings": {
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "metadata",
+          "evm.bytecode.object",
+          "evm.bytecode.sourceMap",
+          "evm.deployedBytecode.object",
+          "evm.deployedBytecode.sourceMap",
+          "evm.methodIdentifiers"
+        ]
+      }
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    }
+  }
+}

@@ -1,0 +1,61 @@
+# RV-3 rev-4 K/K + id re-derivation (first-hand, 2026-10-19T13:22-13:26Z)
+
+## 1. My own run of the entry's recheck line (verbatim, disk-backed TMPDIR)
+
+`mkdir -p /var/tmp/cr3-recheck && TMPDIR=/var/tmp/cr3-recheck npx -y rea-agents@6.4.0 inspect-evm-interface .ufo/waves/arc3-loop1-round3/claims/c1/EX-10/out/VaultB.opt200.runtime.hex hex --format json`
+-> exit 0; envelope copied to `RV-3/evidence/recheck-opt200-rev4-verbatim.json`,
+sha256 `05f76b33db9b42b0d71bd899125e7ec2ef1c3538f7ea8616f12f13548ebbd1bf`
+== EX-10's capture == SC-2's capture == the draft's declared value.
+- `evidence_id ev_d409bd50b370c55c…` (re-derived)
+- 13 functions, every `dispatch:"abi"`; selectors == EX-10/planted-K.json's 13
+  entries, zero missing / zero extra
+- decoded `normalized_result.bytecode.sha256 b24a0115…` == sha256 of
+  `EX-10/out/VaultB.opt200.runtime.bin` (1,621 B)
+- `subject.digest.sha256 9a1fbfab…` == sha256 of the **.hex file** (costume),
+  NOT the decoded bytes — CR-1 Edit 1 sustained first-hand
+- offsets 239/279/322/353/384/404/445/476/497/517/571/602/645 all land on
+  0x5b (JUMPDEST) in the runtime bytes (byte-index check)
+
+## 2. Keccak re-derivation from the compiled ABIs (js-sha3, receipted prefix)
+
+node derive-selectors.js (RV-3 scratch tool) over the landed ABIs:
+- VaultB.opt200.abi.json -> 13 selectors; VaultB.nopt.abi.json -> same 13
+- Rv2TokenOpt.abi.json -> 5; CarrierB.abi.json -> 8
+All set-equal to the planted files and to the envelopes below.
+
+## 3. Envelope-vs-planted set equality (read first-hand, 6 further legs)
+
+| leg | envelope | planted | missing | extra |
+|---|---|---|---|---|
+| VaultB nopt hex 6.4.0 | EX-10/probe/probe-B-nopt-hex-6.4.0.json (13) | EX-10/planted-K.json | [] | [] |
+| Rv2TokenOpt hex 6.4.0 | EX-07/optB-hex-6.4.0.json (5) | EX-07/Rv2TokenOpt.planted-K.json | [] | [] |
+| Rv2TokenOpt raw 6.7.0 | EX-07/optB-raw-6.7.0.json (5) | same | [] | [] |
+| CarrierB hex 6.4.0 | EX-05/probe/probe-runtime-hex-6.4.0.json (8) | EX-05/planted-K.json | [] | [] |
+| carrierB opt200 hex | EX-04/evidence/probe/probe-opt200-hex-6.4.0.json (11) | EX-04/evidence/planted-B-opt200.json | [] | [] |
+| carrierB noopt hex | EX-04/evidence/probe/probe-noopt-hex-6.4.0.json (11) | EX-04/evidence/planted-B-noopt.json | [] | [] |
+
+## 4. ev-id resolution sweep
+
+All 37 `ev_…` ids quoted in the rev-4 literal resolve to landed artifacts under
+`claims/c1/` (0 unresolved; script + corpus in this seat's session log).
+
+## 5. VZ-1 matrix id spot-check
+
+`VZ-1/evidence/kk-matrix.json` contains e065512e / 5fad3371 / c1501d99 /
+70d0665b / 751ccc8f / 4b470139 / 9bbe3d03 / f6e354b9 — every id the literal
+attributes to the matrix; `ev_d409bd50…`/`ev_6da00ac5…` (EX-10/EX-05 envelopes)
+are absent from the matrix, consistent with the literal's attribution.
+
+## 6. PUSH4 census (RV-3, opcode-aware, rev-4 carriers)
+
+- VaultB.opt200 1,621 B: 24 sites / 18 unique; non-planted = 1309a563,
+  1dc930eb, 30cd7471, 3c3332b9, 4e487b71 (all opt200-only)
+- VaultB.nopt 3,163 B: 16 sites / 14 unique; non-planted = 43000825 only
+  (CBOR trailer, byte 3,156); 3c3332b9 ABSENT (0 hits)
+- Rv2TokenOpt 978 B: 7 sites / 7 unique; non-planted = 4e487b71 (byte 867)
+  + 43000825 (trailer, byte 971); every planted selector occurs exactly once
+  (consistent with the linear EQ chain; VaultB's duplicate 69fe0e2d/8da5cb5b
+  occurrences are the binary-search GT-pivot + EQ-leaf pair)
+- EX-10/recon-B-{opt200,nopt}.json agree on the non-dispatch sets (read
+  first-hand) — the rev-4 "(both variants)" clause contradicts the seat's own
+  artifact

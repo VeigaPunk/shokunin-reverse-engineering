@@ -1,0 +1,20 @@
+# cwd=/var/tmp/ex22-baseline
+$ python3 /var/tmp/ex22-baseline/tool/custody-pair.py verify /var/tmp/ex22-baseline/work/a/perm-rec.txt --live
+Traceback (most recent call last):
+  File "/var/tmp/ex22-baseline/tool/custody-pair.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/ex22-baseline/tool/custody-pair.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/ex22-baseline/tool/custody-pair.py", line 593, in cmd_verify
+    b_sections = [capture_path(Path(s["path"]).expanduser()) for s in a_sections]
+                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/tmp/ex22-baseline/tool/custody-pair.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/var/tmp/ex22-baseline/tool/custody-pair.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/ex22-baseline/work/a/perm/f.conf'
+[exit-status] 1

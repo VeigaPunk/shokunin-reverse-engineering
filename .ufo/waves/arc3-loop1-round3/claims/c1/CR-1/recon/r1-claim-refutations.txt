@@ -1,0 +1,40 @@
+# CR-1 refutation evidence against inherited r1 claims (arc3-loop1-round3, 2026-10-19)
+
+## R1. r1 entry claim: 'the bytecode\'s sole non-dispatch PUSH4 constant (16ee4b79 @1900)'
+cmd: node meta-check.js .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.runtime.hex
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.runtime.hex: bytes=1943 cborLen=51 codeEnd=1890 cborPrefix=a264697066735822
+   16ee4b79 @ [1901] -> METADATA
+   4e487b71 @ [1744] -> CODE
+-> 16ee4b79 sits at byte offset 1901 (PUSH4 *site* 1900), inside the CBOR metadata region
+   (codeEnd=1890; metadata starts 'a264697066735822'). It is NOT a PUSH4 constant of the code.
+cmd: node census2.js .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.runtime.hex
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.runtime.hex
+  bytes=1943 codeEnd=1890 push4(code)=5 uniq=5 kinds={"EQ":5} jd=84
+  uniq: 095ea7b3 18160ddd 23b872dd 70a08231 a9059cbb
+  non-dispatch-shaped: (none) | dupes: (none)
+-> code-region sweep: push4(code)=5, all EQ, uniq=5 == planted 5; ZERO non-dispatch PUSH4 constants
+   in the code region. The corrected statement is stronger than the r1 one, and the cited
+   constant is an artifact: EX-07's r1 extractor swept the whole file (recorded in the r1 tree:
+   claims/c1/RV-2/ex07-extract-runtime.json push4_all includes [1900,"16ee4b79"]; its code_len=1943).
+
+## R2. r1 entry claim: 'Creation blobs carry no runtime dispatch table'
+cmd: node census2.js .ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.creation.hex
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.creation.hex
+  bytes=1971 codeEnd=1918 push4(code)=5 uniq=5 kinds={"EQ":5} jd=85
+  uniq: 095ea7b3 18160ddd 23b872dd 70a08231 a9059cbb
+  non-dispatch-shaped: (none) | dupes: (none)
+-> the creation blob (1971 B, sha file above) EMBEDS the runtime bytes and hence the full
+   dispatch table: 5 EQ;PUSH2;JUMPI sites == the same 5 selectors. Probe returns 0 functions
+   on it (parsed-and-empty), but that is TOOL SCOPE, not byte-level absence.
+
+## R3. metadata phantoms in the ROUND-3 carriers (same sweep-includes-metadata class)
+cmd: node meta-count.js <round-3 carrier runtimes>
+Rv2TokenOpt.runtime.hex: bytes=978 codeEnd=925 push4(full=7, code=6) metadata-region PUSH4: 43000825@971
+carrierA.runtime.hex: bytes=1426 codeEnd=1373 push4(full=15, code=14) metadata-region PUSH4: 43000825@1419
+VaultB.opt200.runtime.hex: bytes=1621 codeEnd=1568 push4(full=24, code=24) metadata-region PUSH4: (none)
+VaultB.nopt.runtime.hex: bytes=3163 codeEnd=3110 push4(full=16, code=15) metadata-region PUSH4: 43000825@3156
+CarrierB.runtime.hex: bytes=1469 codeEnd=1416 push4(full=9, code=9) metadata-region PUSH4: (none)
+-> 43000825@(codeEnd+46) = the 'solc'+version CBOR tail bytes ('...736f6c63 43000825 0033')
+   read as PUSH4 by a whole-file sweep; present in 3 of 5 round-3 carriers.
+   grep -n -iE 'metadata|cbor|0xa2' on EX-07 round-3 code (compare-carrierA.py, analyze.py): no hits;
+   the round-3 reconciliation code has no metadata exclusion.

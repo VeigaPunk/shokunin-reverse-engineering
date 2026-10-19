@@ -1,0 +1,50 @@
+# cwd=/var/tmp/ex22-baseline
+$ grep -n EXIT_\|exit_code = \|SEVERITY /var/tmp/ex22-baseline/tool/custody-pair.py
+78:SEVERITY PRECEDENCE (verify): CONTENT-DRIFT > ABSENT > REWRITE-DRIFT >
+119:EXIT_MATCH = 0
+120:EXIT_CONTENT_DRIFT = 10
+121:EXIT_REWRITE_DRIFT = 11
+122:EXIT_METADATA_DRIFT = 12
+123:EXIT_ABSENT = 13
+124:EXIT_USAGE = 2
+125:EXIT_SELFTEST_FAIL = 3
+127:SEVERITY = {
+135:EXIT_FOR = {
+136:    "MATCH": EXIT_MATCH,
+137:    "MATCH-V1-PARTIAL": EXIT_MATCH,
+138:    "METADATA-DRIFT": EXIT_METADATA_DRIFT,
+139:    "REWRITE-DRIFT": EXIT_REWRITE_DRIFT,
+140:    "ABSENT": EXIT_ABSENT,
+141:    "CONTENT-DRIFT": EXIT_CONTENT_DRIFT,
+498:    worst = max(rows, key=lambda r: SEVERITY[r["finding"]])["finding"] if rows else "MATCH"
+499:    exit_code = EXIT_FOR[worst]
+521:          % (worst, sum(1 for r in rows if SEVERITY[r["finding"]] == 0), len(rows),
+522:             sum(1 for r in rows if SEVERITY[r["finding"]] > 0), exit_code))
+548:    return EXIT_MATCH
+557:    exit_code = EXIT_MATCH if present == len(sections) else EXIT_ABSENT
+566:            return EXIT_USAGE
+575:            return EXIT_USAGE
+579:          % ("OK" if exit_code == EXIT_MATCH else "PARTIAL", present, len(sections),
+589:        return EXIT_USAGE
+597:            return EXIT_USAGE
+603:            return EXIT_USAGE
+629:        return EXIT_USAGE
+647:        None if rc_pre == EXIT_MATCH else (_ for _ in ()).throw(AssertionError("capture exit %d" % rc_pre))))
+661:        assert rc == EXIT_MATCH, "expected MATCH exit 0, got %d" % rc
+677:        assert rc == EXIT_REWRITE_DRIFT, "expected REWRITE-DRIFT exit %d, got %d" % (EXIT_REWRITE_DRIFT, rc)
+690:        assert rc == EXIT_REWRITE_DRIFT, "expected REWRITE-DRIFT exit %d, got %d" % (EXIT_REWRITE_DRIFT, rc)
+698:        assert rc == EXIT_CONTENT_DRIFT, "expected CONTENT-DRIFT exit %d, got %d" % (EXIT_CONTENT_DRIFT, rc)
+706:        assert rc == EXIT_MATCH, "reference capture exit %d" % rc
+710:        assert rc == EXIT_ABSENT, "expected ABSENT exit %d, got %d" % (EXIT_ABSENT, rc)
+719:        assert rc == EXIT_MATCH, "reference capture exit %d" % rc
+723:        assert rc == EXIT_METADATA_DRIFT, "expected METADATA-DRIFT exit %d, got %d" % (EXIT_METADATA_DRIFT, rc)
+768:        assert rc == EXIT_METADATA_DRIFT, "expected METADATA-DRIFT (LABEL-DEFECT) exit %d, got %d" % (
+769:            EXIT_METADATA_DRIFT, rc)
+778:        assert rc2 == EXIT_CONTENT_DRIFT, "expected CONTENT-DRIFT exit %d, got %d" % (EXIT_CONTENT_DRIFT, rc2)
+788:        assert rc == EXIT_MATCH, "expected MATCH exit 0 on sums-v1, got %d" % rc
+803:        assert rc in (EXIT_MATCH, EXIT_METADATA_DRIFT), "unexpected exit %d" % rc
+813:        assert rc == EXIT_USAGE, "expected USAGE exit 2 for unparsable receipt, got %d" % rc
+822:        assert rc == EXIT_USAGE, "expected USAGE exit 2, got %d" % rc
+833:             EXIT_MATCH if failed == 0 else EXIT_SELFTEST_FAIL))
+834:    return EXIT_MATCH if failed == 0 else EXIT_SELFTEST_FAIL
+[exit-status] 0

@@ -1,0 +1,30 @@
+########## BACKWARD-COMPAT fail-open attack: legacy v2 receipt with EXISTS:no + STAT-ERROR stanza, verified by the NEW tool
+--- legacy receipt written by OLD tool (rc=13 PARTIAL at capture):
+PATH: /var/tmp/rv9-scratch/d2f/inner/f.txt
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: '/var/tmp/rv9-scratch/d2f/inner/f.txt'
+
+--- NEW tool: verify <legacy-receipt> --live (must NOT report MATCH)
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+rc=14
+
+--- NEW tool: verify <legacy-receipt> <legacy-receipt> (self, both sides absent)
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+rc=14
+
+--- NEW tool: verify --require-paths 1 <legacy-receipt> --live
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+rc=14
+
+########## D3 core: 1-of-3 receipt vs live, NEW tool
+-rw-r--r-- 1 vgpnk vgpnk 108 Oct 19 09:08 .ufo/waves/arc3-loop1-round2/claims/c3/EX-35/fixtures/v1-partial-1of5.txt
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+rc=0

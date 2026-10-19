@@ -1,0 +1,65 @@
+==============================================================================
+COMPILE RECEIPT — carrier B (arc3-loop1-round3, chain c1)
+Seat: EX-04 (chain c1, executor)   Date: 2026-10-19 (UTC-3 host clock)
+==============================================================================
+
+1. COMPILER IDENTITY — round-1 solc prefix REUSED (no install this wave)
+------------------------------------------------------------------------------
+solcjs path: .ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules/.bin/solcjs
+solcjs --version: 0.8.37+commit.f401782d.Emscripten.clang
+221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules/solc/soljson.js
+b4205b088e5cfa42851bd673ac3d6656599bb32eaf3de112132f8d0bf3b61225  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/tools/solc-prefix/package.json
+ba89a2a2189db98b8b9a4134ec744737f2ed3e26ee59357279a170faf93709dd  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/tools/solc-prefix/node_modules/js-sha3/package.json
+1c6244e5689db5354fffc0e92f4ee0e0237c3a6d645de564ade2d8375fa570f9  /home/vgpnk/.npm/_npx/dea9475797100b20/node_modules/rea-agents/package.json
+rea-agents version: 6.4.0
+probe command form: TMPDIR=/var/tmp/ex04-r3-tmp npx -y rea-agents@6.4.0 inspect-evm-interface <file> <hex|raw> --format json
+soljson.js sha256 matches round-1 EX-04 compile-receipt (221d7a66…) — prefix receipt re-verified.
+
+2. SOURCE IDENTITY
+------------------------------------------------------------------------------
+  carrierB.sol  sha256 14566042e4528cdcb35df2602385f51c1fa89f38c5f88fb0288cdf7260719648  size 3251 B
+  planted-B.txt sha256 f32393c0269cf8fa297a219ffe4b60aa71998038c1e73a383da3b0b3af8c59aa  (pre-probe table; see probe receipt §4)
+
+3. LEG "opt200"
+------------------------------------------------------------------------------
+  settings.optimizer = {"enabled":true,"runs":200}   metadata.settings.evmVersion = osaka
+  solc 0.8.37+commit.f401782d.Emscripten.clang
+  runtime 1850 B  sha256 aaf85ceaf124bac2d3a32428927194158c9211e4472a0cf06f88a721cf239412
+  creation 2237 B  sha256 8466da5f6259b9c36bc24d45e85acbcbcf6aaa28ce95484b62ed9633f22ee975
+  abi sha256 2be500d771cf5be3ff695a7576450234e4a3cfbf2e6db663680f57b339de3629   methodIdentifiers: 11 entries
+  compiler warnings: 1
+    warning: Warning: Function state mutability can be restricted to pure
+      --> carrierB.sol:28:5:
+       |
+    28 |     function ownerCount() external view returns (uint256) {
+       |     ^ (Relevant source part starts here and spans across multiple lines).
+  dispatcher prologue (first 12 runtime bytes): 60806040526004361061009d
+  PUSH4 sites total 13; dispatch constants match planted true; extra non-dispatch PUSH4 immediates: ["4e487b71"]
+
+3. LEG "noopt"
+------------------------------------------------------------------------------
+  settings.optimizer = {"enabled":false}   metadata.settings.evmVersion = osaka
+  solc 0.8.37+commit.f401782d.Emscripten.clang
+  runtime 3872 B  sha256 679678e9a67aee701094a4bfeafd2a02311460658aa4b400202340b47d83d005
+  creation 5276 B  sha256 45a6d3d7541cfc1276b44d26f597833e7dbbb4e05f141864379d37164d4904f9
+  abi sha256 2be500d771cf5be3ff695a7576450234e4a3cfbf2e6db663680f57b339de3629   methodIdentifiers: 11 entries
+  compiler warnings: 1
+    warning: Warning: Function state mutability can be restricted to pure
+      --> carrierB.sol:28:5:
+       |
+    28 |     function ownerCount() external view returns (uint256) {
+       |     ^ (Relevant source part starts here and spans across multiple lines).
+  dispatcher prologue (first 12 runtime bytes): 60806040526004361061009f
+  PUSH4 sites total 12; dispatch constants match planted true; extra non-dispatch PUSH4 immediates: []
+
+4. OPTIMIZER DELTA (the C1 named-Unknown leg)
+------------------------------------------------------------------------------
+  runtime bytes: opt200 1850 vs noopt 3872 (delta -2022)
+  opt200-only non-dispatch PUSH4 constant: ["4e487b71"] (Panic(uint256) selector 0x4e487b71 @pc 0x4e487b71@1777)
+  same 11/11 planted selectors and same binary-search dispatcher shape (EQ+GT legs, 12 legs) on BOTH legs.
+
+5. REPRODUCE
+------------------------------------------------------------------------------
+  node evidence/compile-b.js carrierB.sol <outdir> opt200     # then noopt
+  node evidence/plant-b.js <outdir> opt200                    # then noopt
+  node evidence/offset-check.js evidence/planted-B-opt200.json probe/probe-opt200-hex-6.4.0.json evidence/carrierB.runtime-opt200.hex /dev/stdout

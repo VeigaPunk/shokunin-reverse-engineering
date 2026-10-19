@@ -1,0 +1,139 @@
+== VZ-3 late-join reconciliation of chain c3 (arc3-loop1-round3) ==
+date -u: 2026-10-19T13:24:11Z
+HEAD: c07af80fcf3a60f9c6a0ca09b6e23fb5794d3311  (committed revision; no seat git mutation)
+
+-- 1. identities re-derived by this seat (rule #14) --
+bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7  .ufo/gates/citation-drift/pointer-table.json
+d97dd60a942eaf53771c8224e84a9e8cdaf976dc66c3a543a450b1f1fa3827e2  .ufo/gates/citation-drift/expected.json
+e2665074a685ca65966f291f98b5e264b15c67827982811a24dc73b16497a36a  .ufo/gates/citation-drift/citation-drift-probe.py
+30348 bytes  .ufo/gates/citation-drift/pointer-table.json
+2154 bytes  .ufo/gates/citation-drift/expected.json
+
+-- 2. digest re-pin (F3 coupling) --
+table sha256        = bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7
+expected.json pin   = bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7
+PIN == TABLE        : True
+entries=57 quoted=4 exempt=8
+
+-- 3. object-level diff vs HEAD (additivity) --
+entries added/removed/modified: 26 0 0
+duplicate ids: 0
+quoted unchanged: True | exempt prefix equal: True | exempt grew by 5
+
+-- 4. probe at HEAD, both modes --
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+
+-- 5. selftest --
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+
+-- 6. frozen-run record re-derivation at 679af5d (strict) --
+exit=1
+citation_dead rows: 17
+CITATION_DRIFT_VERDICT: failed findings=32 exit=1
+
+-- 7. tamper guard (scratch copy, one byte appended) --
+exit=2
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+CITATION_DRIFT: pointer_table_tampered entry=pointer-table.json sha256 d9d81e9c6279554a53ebf23d0c5d4fadd8e5cef293ea29fc04acad7b27c7ba9e != pinned bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7
+
+-- 8. command A at HEAD (SCORECARD.md:88-124 recipe, unmodified) --
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "c07af80", "rule_blocks": 14}
+
+-- 9. c1 census instrument at HEAD --
+VERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)
+
+-- 10. VZ-3 independent rule-#11 / needle-resolution audit (26 new entries)
+== VZ-3 corrected independent audit: 26 new entries, probe semantics re-implemented ==
+CONFORM  arc3r1-entry-r3-offsets                extracted hits=1 om_token=False 
+CONFORM  arc3r1-entry-r3-stub-mutability        extracted hits=1 om_token=False 
+CONFORM  arc3r1-entry-quality-ids               extracted hits=1 om_token=False 
+CONFORM  arc3r1-entry-quality-11                extracted hits=1 om_token=False 
+CONFORM  arc3r1-entry-r3-hypothesis             extracted hits=1 om_token=False 
+CONFORM  arc3r1-entry-r3-cli-quirk              extracted hits=1 om_token=False 
+CONFORM  skill-rule14-entry-recheck             extracted hits=1 om_token=False 
+CONFORM  skill-rule14-cr2-identity              extracted hits=1 om_token=False 
+CONFORM  skill-rule14-verdict-identities        extracted hits=1 om_token=False 
+CONFORM  skill-rule14-log-fresh-identity        extracted hits=1 om_token=False 
+CONFORM  readme38-arc3r1-token                  anchor    hits=1 om_token=False 
+CONFORM  sc-arc3r1-section-key                  exact     hits=1 om_token=False 
+CONFORM  sc-arc3r2-section-key                  exact     hits=1 om_token=False 
+CONFORM  sc-arc3r2-cites-shonen                 extracted hits=1 om_token=False 
+CONFORM  skill-registry-citation-drift-row      anchor    hits=1 om_token=False 
+CONFORM  skill-registry-custody-pair-row        anchor    hits=1 om_token=False 
+CONFORM  custody-readme-v2-fieldset             anchor    hits=2 om_token=False 
+CONFORM  custody-readme-rewrite-identity        anchor    hits=1 om_token=False 
+CONFORM  custody-readme-precedence              anchor    hits=1 om_token=False 
+CONFORM  custody-readme-scratch-never-tmp       anchor    hits=1 om_token=False 
+CONFORM  custody-readme-v1-stanza-example       anchor    hits=1 om_token=False 
+CONFORM  custody-readme-v1-sums-example         anchor    hits=1 om_token=False 
+CONFORM  custody-readme-v1-pipe-example         anchor    hits=1 om_token=False 
+CONFORM  census-cites-sc-e22-debt               extracted hits=1 om_token=False 
+CONFORM  census-cites-sc-laundering-refusal     extracted hits=1 om_token=False 
+CONFORM  census-cites-sc-round4-range           extracted hits=1 om_token=False 
+
+FLAGS: 0
+
+-- 11. VZ-3 independent arc3 citation census (own net, hunk line numbers) --
+rows (stated-line citations on ADDED lines of the 4 arc3 commits, durable surfaces): 12
+COVERED      SCORECARD.md:1435 -> SHONEN.md:6 [r2rec] ['sc-arc3r2-cites-shonen'] 
+COVERED      SHONEN.md:6 -> SKILL.md:81-255 [r2work] ['shonen-skill-range'] 
+COVERED      SKILL.md:246 -> .ufo/waves/arc3-loop1-round1/seats/CR-2.md:86-89 [r2work] ['skill-rule14-cr2-identity'] 
+COVERED      SKILL.md:248 -> .ufo/waves/arc3-loop1-round1/claims/c1/verdict.md:149-153 [r2work] ['skill-rule14-verdict-identities'] 
+COVERED      SKILL.md:252 -> corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7 [r2work] ['skill-rule14-entry-recheck'] 
+COVERED      SKILL.md:254 -> LOG.md:1411-1412 [r2work] ['skill-rule14-log-fresh-identity'] 
+COVERED      corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:17 -> corpus/knowledge/2026-10-13-r3-evm-interface.md:149-155 [r1work] ['arc3r1-entry-r3-offsets'] 
+COVERED      corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:18 -> corpus/knowledge/2026-10-13-r3-evm-interface.md:59-70 [r1work] ['arc3r1-entry-r3-stub-mutability'] 
+COVERED      corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:21 -> corpus/QUALITY.md:24-25 [r1work] ['arc3r1-entry-quality-ids'] 
+COVERED      corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:24 -> corpus/QUALITY.md:21 [r1work] ['arc3r1-entry-quality-11'] 
+COVERED      corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:25 -> corpus/knowledge/2026-10-13-r3-evm-interface.md:44-45 [r1work] ['arc3r1-entry-r3-hypothesis'] 
+COVERED      corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:26 -> corpus/knowledge/2026-10-13-r3-evm-interface.md:93-96 [r1work] ['arc3r1-entry-r3-cli-quirk'] 
+
+UNCOVERED and not exempt: 0
+
+-- 12. non-vacuity teeth (3 new entries neutered on a SCRATCH table; real file untouched) --
+scratch table sha256: 98454204f37744e278b6335a38eea8d89e1fe840bdb4e6809ae11d763c7eeec3
+CITATION_DRIFT: citation_dead entry=arc3r1-entry-quality-11 corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:24 cites corpus/QUALITY.md:21-21, which lacks 'ZZZ-NEUTERED-arc3r1-entry-quality-11' (holds '| 11 | Empty/zero findings must state whether the surface was pa')
+CITATION_DRIFT: citation_dead entry=custody-readme-precedence .ufo/gates/custody-pair/README.md: no line matches 'ZZZ-NEUTERED-custody-readme-precedence'
+CITATION_DRIFT: citation_dead entry=census-cites-sc-e22-debt .ufo/gates/c1-census-v10.py:7 cites SCORECARD.md:850-852, which lacks 'ZZZ-NEUTERED-census-cites-sc-e22-debt' (holds 'is "unwarned", stated); E11\'s two unreproduced 0-byte probe runs')
+CITATION_DRIFT_VERDICT: failed findings=3 exit=1
+exit=1 (gate semantics)
+
+-- 13. LOG.md:1442 gap (EX-42 s5.4) — VZ-3 own re-derivation --
+LOG.md:1442 =   rstrip-identical. SHONEN:6 → `81-255`, 14/14 same commit. Fresh identities:
+entries with file==LOG.md: []
+entries targeting LOG.md: [('skill-rule14-log-fresh-identity', 254)]
+exempt rows whose wording could reach a stated number about another file: none (checked all 8)
+
+-- 14. EX-42 kind-A+D row set vs VZ-3 net (set equality check) --
+EX-42 A+D rows: 13 | VZ-3 net (kind A of the same tsv, own regex confirmed): 12
+A+D minus A (the kind-D row): [('SKILL.md', 253)]
+set difference (should be only the D row): [('SKILL.md', 253)] []
+
+-- 15. LIVE INCIDENT: transient clobber of a graded receipt file (detected, measured, resolved) --
+VZ-3 detected at 13:25:5xZ: .ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt
+  mtime 2026-10-19 10:25:02 -0300 (13:25:02Z), 305 lines, content = another seat's after-state suite output
+  diff vs HEAD: 304 insertions, 51 deletions; needle 'custody receipt \(CU-1\)' occurrences: 0 (was 1)
+  graded by landed entry: custody-readme-v1-stanza-example
+
+  exposure measured on a SCRATCH clone with the clobbered bytes committed (never in the real repo):
+    CITATION_DRIFT: citation_dead entry=custody-readme-v1-stanza-example
+    CITATION_DRIFT_VERDICT: failed findings=1 exit=1
+  control: same clone with the receipt at the committed bytes -> clean findings=0 exit=0 (see note)
+
+  resolved before this seat's final write: worktree file restored, byte-identical to HEAD:
+b8ed19365c103a4ab355678f0fffe0db4e0011a18b441e79f38d9e80de3d0776  .ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt
+b8ed19365c103a4ab355678f0fffe0db4e0011a18b441e79f38d9e80de3d0776  -
+  git status for that path: (empty = clean)
+  probe at HEAD after the restore:
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+
+  NOTE on the control: my first control run was contaminated by my own 'git add' of the worktree state
+  (it showed findings=1 on a reverted file). Re-run against a clone whose receipt is restored to the
+  committed bytes and the pair untouched: clean 0. Recorded because a mis-run check has not passed.
+
+-- 16. graded-path dirtiness sweep at 13:25Z --
+  .ufo/gates/custody-pair/README.md            M  (4 anchors graded; all 4 needles LIVE in the worktree bytes)
+  .ufo/waves/.../receipts/config-pre-pair.txt  M at 13:25:02Z -> restored clean by 13:25:55Z (above)
+  all other graded paths (entries[].file/target, quoted[].file): clean
+  worktree needles re-checked by VZ-3: custody-readme-* 4/4 LIVE, skill-registry-* 3/3 LIVE, readme38-arc3r1-token LIVE

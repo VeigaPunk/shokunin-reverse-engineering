@@ -1,0 +1,32 @@
+== selftest:
+SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=citations_clean
+SELFTEST_CASE: CLEAN case=dead exit=1 expected=1 finding=citation_dead
+SELFTEST_CASE: CLEAN case=out_of_range exit=1 expected=1 finding=citation_out_of_range
+SELFTEST_CASE: CLEAN case=file_absent exit=1 expected=1 finding=citation_file_absent
+SELFTEST_CASE: CLEAN case=moved exit=1 expected=1 finding=citation_moved
+SELFTEST_CASE: CLEAN case=stamped exit=0 expected=0 finding=citation_historical_ok
+SELFTEST_CASE: CLEAN case=no_snapshot_dir exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=snapshot_missing exit=2 expected=2 finding=snapshot_missing
+SELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered
+SELFTEST_CASE: CLEAN case=table_unreadable exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=rev_unresolvable exit=2 expected=2 finding=revision_unresolvable
+SELFTEST_CASE: CLEAN case=table_tampered exit=2 expected=2 finding=pointer_table_tampered
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+rc=0
+== array counts:
+entries 31 quoted 4 exempt 3
+exempt: [
+{
+"token": "SCORECARD.md:291 `config.toml:1478`",
+"cause": "dated luna-round-2 record, classified historical at round 2."
+},
+{
+"token": "LOG.md:1018 `:2940`/`:1478`",
+"cause": "LOG.md is append-only history; its line numbers describe past states by rule."
+},
+{
+"token": "any bare `config.toml:N` as a LIVE pointer",
+"cause": "the class this probe exists to report: a bare line number into an operator-mutable file is a defect at write time. The probe reports it where a current-scope sentence states one; it does not redden on append-only records."
+}
+]

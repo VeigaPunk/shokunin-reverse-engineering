@@ -1,0 +1,144 @@
+================================================================================
+COMPILE RECEIPT — carrier A (optimizer-enabled legs) — arc3-loop1-round3 c1/EX-03
+Seat: EX-03 (chain c1, executor)   Date: 2026-10-19 (UTC)
+Repo: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+================================================================================
+
+WHAT THIS LEG IS FOR / DISAMBIGUATION
+Seat-line duty: "compile carrier A with the prefix solcjs:
+`--bin --abi --optimize --optimize-runs 200`; record flags + output hashes; save
+runtime bin/hex + ABI." Three artifacts in the round carry the name "carrier A", so
+BOTH solc candidates were compiled with the identical literal flag form and are pinned
+here; whichever the chain adopts is covered:
+
+  CARRIER A (dispatch reading — EX-02 authored "carrier A"; EX-06 probed it as A/2 and
+  EX-07 names it legC) = EX-02's `CarrierA`
+     source `source/carrierA.sol` sha256 05b2cbb0c6fd97ae6463b0a4f1be56f217ea64cf4cbdbd2c36da94c0fe6eee41
+     (2315 B; EX-02 /var/tmp/ex02-r3/src/carrierA.sol, re-hashed 13:16Z: unchanged)
+     tree: carrier-A-EX02/ ; K=9 ; runtime 1426 B ; primary section §A below
+
+  CARRIER A (PL-1 plan §1.A prototype) = `OptVault`
+     source `source/OptVault.sol` sha256 40af90c9f66288b33804f5e08397601db6518b9b293022e847641af8391a764d
+     (921 B; byte-identical to PL-1's staged evidence copy)
+     tree: carrier-A-plan-prototype-OptVault/ ; K=5 ; runtime 776 B ; section §B below
+
+  (Third reading, NOT this seat: r1 CR-1's hand-assembled `carrier-A.hex`
+   sha256 36dc8246…, a hand-built control — no solc compile involved.)
+
+Both were compiled on-host with the receipted round-1 solc prefix (no installs), on both
+legs, with reruns and cross-checks; the r1 entry's Unknown ("optimizer-enabled dispatch
+shapes beyond the smoke compile") is addressed by both.
+
+COMPILER + RECEIPT RE-VERIFICATION (round-1 prefix reused)
+  .ufo/waves/arc3-loop1-round1/tools/solc-prefix/
+  solcjs --version -> 0.8.37+commit.f401782d.Emscripten.clang   (exit 0)
+  require('solc').version() -> 0.8.37+commit.f401782d.Emscripten.clang
+  receipt re-check by this seat (sha256):
+    npm-cache tarball content 0e1a1ab6d12c37f5503271b2c4679cd433459c884851920d148d6fb154575a51
+      (= EX-02 r1 receipt §1/§4, 6,476,046 B)
+    node_modules/solc/soljson.js 221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c
+      (= EX-02 r1 receipt §6 cross-check)
+    node_modules/solc/solc.js    188c3fdca72bbb8ec1c70373427ad4536e117341c48944dae9185f9cf035146f
+      (= EX-02 r1 receipt §6 cross-check)
+
+LEG DISCIPLINE (both carriers)
+  - leg 1 PRIMARY, the literal flags form, run from the directory containing the source
+    with the basename as source unit name (embedded in metadata):
+      node <prefix>/node_modules/.bin/solcjs --bin --abi --optimize --optimize-runs 200 \
+           -o <outdir> <Name>.sol        (TMPDIR=/var/tmp/ex03-r3/tmp, disk-backed; never /tmp)
+    -> `--bin` emits CREATION code; solcjs 0.8.37 has NO `--bin-runtime`
+       (measured: "error: unknown option '--bin-runtime'", exit 1).
+  - leg 2 SUPPLEMENTARY standard JSON, same compiler, same settings the flags denote
+    (`settings.optimizer = {enabled: true, runs: 200}`, evmVersion unset, source key ==
+    the CLI-given path), outputSelection incl. `evm.deployedBytecode.object`.
+    Equivalence anchor: leg-2 `evm.bytecode.object` == leg-1 creation `.bin`
+    byte-identical (cmp of newline-stripped hex text) — this is what attributes leg-2's
+    deployed bytes to the flags run (plan §2.3 rule, re-derived here).
+  - every leg rerun in a separate outdir: byte-identical outputs.
+
+§A — CARRIER A (EX-02 `CarrierA`, optimizer ON runs=200)   [tree carrier-A-EX02/]
+  leg 1: exit 0; stdout 0 B, stderr 0 B (sha256 e3b0c442…); rerun byte-identical
+    creation .bin (hex text) 2920 B        sha256 17d14b5ef1f424ad7a3c0d2cf6c061530e330379b4c349ce18af0916dcaa0e13
+    ABI (compact JSON)       2157 B        sha256 e8959c42e1c3de4ea96f0ca176f062d3a61119511899d2e2aa385637e9512eff
+  leg 2: diagnostics 0
+    creation.bin  1460 B raw  sha256 76ec07f9db98d56176627f90d04b519b3960efbe5c2dc78dbf8b29f52c5e64e4
+    creation.hex  2921 B      sha256 688c5e0f71d6e8f9c5e87d09367e4ca895b4360976a9e84c56ffb701ec4fa69b
+    runtime.bin   1426 B raw  sha256 9f7392acccea72cd42bdd8095a8578cab0727766f218b5399da22bc21d23741a
+    runtime.hex   2853 B      sha256 87d1bb033d06db04f0de9b4afc399676188a26302cab08e38ae165e63501ddff
+    abi.json      3460 B      sha256 0cd46e657095ada57ce54658c607795f5a08b151756a4647e80c04dead4697c2
+    methodIdentifiers.json 277 B sha256 5e9f1f410e9713b26f4e51172869ee386b09407800e698d6caaccbc09455f554
+    rerun byte-identical on runtime/creation/abi/methodIdentifiers/metadata
+  CLI ABI vs JSON ABI: entry-level set-equal (16/16 entries; files differ only in
+  pretty-printing).
+  K table (9/9): js-sha3 keccak256(sig)[:4] vs solc evm.methodIdentifiers SET-EQUAL,
+  0 extras — `01681a62 sweep(address)`, `067b23c3 totalCredited()`, `2e1a7d4d
+  withdraw(uint256)`, `3f0d861a rotate(address)`, `5ce23950 isSolvent()`, `75807250
+  creditOf(address)`, `8da5cb5b owner()`, `c85e07b9 stamp()`, `d0e30db0 deposit()`
+  (mutability table in carrier-A-EX02/planted-selectors.txt); receive/fallback payable
+  carry no selector; ERC-20 ambient selector constants: NONE.
+  runtime shape: head `6080604052 6004361015 610089 5f3560e01c …`; anchor `5f3560e01c`
+  @13, `60003560e01c` ABSENT; 10 `8063` dispatch sites (18…122), one GT split
+  (`1161`), 14 EQ jumps; all 9 selector constants present; metadata region 1373..1425.
+  CROSS-LEG agreement with EX-02's canonical standard-JSON leg: 5/5 artifacts
+  byte-identical by sha256 (runtime.hex, creation.hex, metadata, abi.json,
+  methodIdentifiers) — evidence/cross-leg-EX02-comparison.txt.
+  OPTIMIZER-ON/OFF DELTA (same source, same compiler, only settings.optimizer differs;
+  legs in carrier-A-EX02/paired/, table in optimizer-delta.txt):
+    creation 2933 -> 1460 B ; runtime 2853 -> 1426 B (-50.0%)
+    runtime common prefix 38 B ; dispatch class unchanged (anchor @13, one GT split,
+    no 60003560e01c) ; ABI + methodIdentifiers byte-identical on/off ; all 9 selector
+    constants at identical offsets in both legs ; off-leg CLI creation == off-leg JSON
+    creation byte-identical ; off-leg rerun byte-identical (6/6 files).
+
+§B — CARRIER A (PL-1 plan §1.A `OptVault`, optimizer ON runs=200)
+      [tree carrier-A-plan-prototype-OptVault/]
+  leg 1: exit 0; stdout = the single expected warning — "Warning: 'transfer' is
+  deprecated and scheduled for removal. Use 'call{value: <amount>}("")' instead.
+  --> OptVault.sol:22:9" (227 B, sha256 431467f2…); stderr 0 B (e3b0c442…);
+  rerun byte-identical
+    creation .bin (hex text) 1642 B (821-byte creation code)  sha256 2eefda8c2723b320937ede30de04d85e020f33159b6aa07d6af503867f47e571
+    ABI (compact JSON)        929 B                          sha256 a05e0b6ba06db830f58ee8c2591995667f43c74f19b7a38b88c340b724522ef3
+  leg 2: diagnostics 1 (same warning, verbatim in evidence/diagnostics.txt)
+    creation.bin   821 B raw  sha256 919fdef4672b40af385bf7b7bf240771558467733d8760aa783c321035f924da
+    creation.hex  1643 B      sha256 7a2a90f7ba1d175dfa70d4367361fca6cbfd400e82b9926d3f19e043a02bdcb9
+    runtime.bin    776 B raw  sha256 544469b7bebfda4e5c9dedc7a11af69fc77d917f1d4258a53d1aa5ed95dfde7f
+    runtime.hex   1553 B      sha256 421401f330bf409ca7cd881cf0a26aeb06b99feabe6e6ba3503f2cac30226fcd
+    abi.json      1465 B      sha256 9aa564e1e6528f5ee31097a9f4d8c1981fc2b2a983ece7d2385efe7a50e94dd3
+    methodIdentifiers.json 159 B sha256 7dcfc250db4eb616616cbf1242c95cf08c24d0d0df1a1f8a79a35dd9685af02a
+    rerun byte-identical (runtime/creation/abi/methodIdentifiers/metadata)
+  Re-derivation vs the plan's pre-measurement (own bytes/commands, not copied):
+    runtime 776 B sha256 544469b7… MATCH (plan §1.A) ; creation 821 B sha256 919fdef4…
+    MATCH (plan §2.3) ; runtime.hex file byte-identical to PL-1's staged copy (cmp) ;
+    anchor @13 MATCH, 60003560e01c ABSENT MATCH ; Panic `4e487b71` PUSH4 pc 659 MATCH ;
+    K=5 js-sha3 vs solc SET-EQUAL MATCH ; expected transfer-warning class MATCH
+    (carrier-A-plan-prototype-OptVault/evidence/pl1-premeasurement-re-derivation.txt).
+  K table (5/5): `16c38b3c setPaused(bool)`@20, `2e1a7d4d withdraw(uint256)`@31,
+  `5c975abb paused()`@42, `75807250 creditOf(address)`@53, `d0e30db0 deposit()`@64
+  (dispatch-site byte offsets); receive/fallback payable no selector; code region
+  0..722, metadata 723..775; PUSH4 constants in code = the 5 selectors + `4e487b71`
+  Panic @660; ERC-20 ambient: NONE; EQ-jumps 8 / GT 0 (linear chain at K=5).
+
+SHARED EVIDENCE
+  evidence/sweep-both-carriers.txt — per-carrier K tables, anchors, PUSH4 inventory,
+    ambient check (produced by evidence/tools/sweep.js on the pinned runtime hex).
+  evidence/push4-attribution-notes.txt — solc strips trailing zero BITS from constants
+    and raises the SHL shift: the constant first seen as `0x6508d58f` is the encoded
+    `stamp()` literal `0xca11ab1e` (`0x6508d58f << 1 == 0xca11ab1e`; compiler legacy
+    assembly shows `PUSH 6508D58F; PUSH E1; SHL` — evidence/carrierA-legacy-assembly.json),
+    and `0x43000825` hits are metadata-region sweep artifacts (boundaries stated).
+  evidence/cross-leg-EX02-comparison.txt — the §A cross-leg agreement.
+  evidence/tools/ — every driver used (run-main.sh, run-optvault.sh, run-paired.sh,
+    compile-stdjson.js, run-paired-opt.js, sweep.js, verify.js, paired-delta.py,
+    assemble2.sh).
+
+SCOPE / LIMITS / HONEST NOTES
+  - Byte-exactness is claimed only for the pinned source bytes + pinned compiler + the
+    recorded flags/keys above. Both source pins re-hashed at 13:16Z: unchanged.
+  - No probe was run by this seat (probe legs belong to EX-02/EX-06); no claim about
+    recovered selectors, the `ev_` id domain, `kind` classification or chain identity.
+  - No custody path read or written; no git mutation; scratch /var/tmp/ex03-r3 only.
+  - The linear sweep used for the PUSH4 inventory may desync in data bytes; the metadata
+    boundary is stated in-band so artifact hits can be excluded.
+  - Path stability: files other seats read at ~13:09–13:12Z moved under carrier-A-EX02/
+    and carrier-A-plan-prototype-OptVault/ with IDENTICAL content (see INDEX.md map).
+================================================================================

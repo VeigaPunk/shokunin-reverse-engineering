@@ -1,0 +1,24 @@
+########## RV-9 BEFORE (pre-revision tool 112d01dc) injection reproduction
+----- D2a: capture on EACCES regular file
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/rv9-scratch/before/eacces/blocked.txt'
+rc=1
+----- D2b: verify --live against unreadable candidate (round-2 traceback shape)
+USAGE: [Errno 2] No such file or directory: '/var/tmp/rv9-scratch/before/eacces/rcpt.txt'
+rc=2
+----- D6: selftest --scratch <missing dir>
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/var/tmp/rv9-scratch/before/nope/custody-pair-selftest-51uj7n5l'
+rc=1
+----- write-guard scope: --paths X --out X
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+rc=0
+content-after-clobber: [# custody-pair receipt v2 — READ-ONLY capture (sha256 + st]
+----- D3: verify on 1-of-5 receipt (no coverage gate)
+VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+rc=0
+----- old tool --require-paths support:
+0
+0 (flag absent)

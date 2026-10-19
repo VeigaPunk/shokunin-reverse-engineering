@@ -1,0 +1,25 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "CarrierB.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity =0.8.37;\n\n// CarrierB — arc3-loop1-round3 C1 non-ERC-20-shaped carrier (seat EX-05).\n// Shape planted deliberately:\n//   * payable receive() + payable fallback() — neither carries a selector,\n//     and both change the runtime prologue (CALLDATASIZE branch);\n//   * mixed mutability: view getters, a pure function, a payable function,\n//     nonpayable mutators;\n//   * internal-library-bound arithmetic (Ledger) — inlined under the optimizer.\n// External surface (planted K = 8 selectors, all account-level ABI functions):\n//   owner(), tally(), credit(address), tag(), rate(uint256),\n//   fund(uint256), sweep(address,uint256), note(bytes32,uint256)\n\nlibrary Ledger {\n    function plus(uint256 a, uint256 b) internal pure returns (uint256) {\n        unchecked {\n            return a + b;\n        }\n    }\n\n    function minus(uint256 a, uint256 b) internal pure returns (uint256) {\n        require(a >= b, \"Ledger: underflow\");\n        unchecked {\n            return a - b;\n        }\n    }\n\n    function scaled(uint256 units, uint256 rate_) internal pure returns (uint256) {\n        unchecked {\n            return units * rate_;\n        }\n    }\n}\n\ncontract CarrierB {\n    using Ledger for uint256;\n\n    address public owner;\n    uint256 public tally;\n    mapping(address => uint256) public credit;\n\n    bytes32 private _tag;\n    uint256 private constant RATE = 3;\n\n    event Funded(address indexed who, uint256 amount);\n    event Swept(address indexed to, uint256 amount);\n    event Noted(bytes32 indexed key, uint256 value);\n    event FellBack(address indexed who, uint256 value, bytes data);\n\n    constructor(bytes32 tag_) payable {\n        owner = msg.sender;\n        _tag = tag_;\n    }\n\n    receive() external payable {\n        credit[msg.sender] = credit[msg.sender].plus(msg.value);\n        tally = tally.plus(msg.value);\n        emit Funded(msg.sender, msg.value);\n    }\n\n    fallback() external payable {\n        emit FellBack(msg.sender, msg.value, msg.data);\n    }\n\n    function tag() external view returns (bytes32) {\n        return _tag;\n    }\n\n    function rate(uint256 units) external pure returns (uint256) {\n        return units.scaled(RATE);\n    }\n\n    function fund(uint256 amount) external payable {\n        require(msg.value == amount, \"CarrierB: value mismatch\");\n        credit[msg.sender] = credit[msg.sender].plus(amount);\n        tally = tally.plus(amount);\n        emit Funded(msg.sender, amount);\n    }\n\n    function sweep(address to, uint256 amount) external {\n        require(msg.sender == owner, \"CarrierB: not owner\");\n        credit[msg.sender] = credit[msg.sender].minus(amount);\n        (bool ok, ) = payable(to).call{value: amount}(\"\");\n        require(ok, \"CarrierB: send failed\");\n        tally = tally.minus(amount);\n        emit Swept(to, amount);\n    }\n\n    function note(bytes32 key, uint256 value) external {\n        emit Noted(key, value);\n    }\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "metadata",
+          "evm.bytecode.object",
+          "evm.deployedBytecode.object",
+          "evm.deployedBytecode.immutableReferences"
+        ]
+      }
+    }
+  }
+}

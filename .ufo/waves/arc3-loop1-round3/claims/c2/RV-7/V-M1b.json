@@ -1,0 +1,180 @@
+{
+  "tag": "V-M1b",
+  "note": "revert specs-v/M1b-inode-arm-revert.json",
+  "tool_src": "/var/tmp/rv7v/tools/landed-7cd19c3c.py",
+  "tool_src_sha256": "7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09",
+  "tool_materialized_sha256": "e8fbb263ed478d0528de06029cb05fe41ab9759d28d37c370b14bd7837f67513",
+  "utc": "2026-10-19T13:24:03Z",
+  "mutation": {
+    "applied": [
+      {
+        "count": 1,
+        "old": "        if out.resolve() in {g.resolve() for g in guarded} or any(_same_file(out, g) for g in guarde",
+        "new": "        if out.resolve() in {g.resolve() for g in guarded}:  # MUTATION M1b: inode arm dropped"
+      }
+    ],
+    "mutant_sha256": "e8fbb263ed478d0528de06029cb05fe41ab9759d28d37c370b14bd7837f67513",
+    "src_sha256": "7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09",
+    "diff": "--- landed\n+++ mutant\n@@ -646,7 +646,7 @@\n         out = Path(args.out).expanduser()\n         warn_if_tmp(out)\n         guarded = [Path(p).expanduser() for p in CUSTODY_PATHS] + paths\n-        if out.resolve() in {g.resolve() for g in guarded} or any(_same_file(out, g) for g in guarded):\n+        if out.resolve() in {g.resolve() for g in guarded}:  # MUTATION M1b: inode arm dropped\n             print(\"USAGE: refusing to write a receipt over a path it measures or a custody path\"\n                   \" (path or inode): %s\" % out, file=sys.stderr)\n             return EXIT_USAGE\n",
+    "net_lines": 0
+  },
+  "selftest": {
+    "exit": 3,
+    "summary": "CUSTODY_PAIR_SELFTEST: DIRTY cases=22 passed=21 failed=1 exit=3",
+    "cases": 22,
+    "failed": [
+      "case refuses-write-through-hardlink-alias       FAIL  (expected USAGE for a hardlink alias, got 0)"
+    ],
+    "traceback": false
+  },
+  "guard": {
+    "A1_same_path": {
+      "note": "register shape: --paths X --out X",
+      "target": "/var/tmp/rv7v/runs/V-M1b/guard/A1_same_path/scoped.conf",
+      "receipt_arg": "/var/tmp/rv7v/runs/V-M1b/guard/A1_same_path/scoped.conf",
+      "exit": 2,
+      "target_sha_before": "6082b7d65283031790b3e2bac3a77a02865e1bed713680423449960ea82a9224",
+      "target_sha_after": "6082b7d65283031790b3e2bac3a77a02865e1bed713680423449960ea82a9224",
+      "byte_stable": true,
+      "content_now_receipt": false,
+      "class_line": "USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv7v/runs/V-M1b/guard/A1_same_path/scoped.conf",
+      "clobbered": false,
+      "out_tail": ""
+    },
+    "A2_hardlink": {
+      "note": "inode arm: --out is a hardlink alias",
+      "target": "/var/tmp/rv7v/runs/V-M1b/guard/A2_hardlink/scoped.conf",
+      "receipt_arg": "/var/tmp/rv7v/runs/V-M1b/guard/A2_hardlink/alias-receipt.txt",
+      "exit": 0,
+      "target_sha_before": "6082b7d65283031790b3e2bac3a77a02865e1bed713680423449960ea82a9224",
+      "target_sha_after": "e18a1e066a02f46ebda89b4c0b3248982dc3298e28a11c46340c3067bf0115a1",
+      "byte_stable": false,
+      "content_now_receipt": true,
+      "class_line": "",
+      "clobbered": true,
+      "out_tail": "RECEIPT: /var/tmp/rv7v/runs/V-M1b/guard/A2_hardlink/alias-receipt.txt  sha256=e18a1e066a02f46ebda89b4c0b3248982dc3298e28a11c46340c3067bf0115a1"
+    },
+    "A3_symlink": {
+      "note": "resolution arm: --out symlinks onto X",
+      "target": "/var/tmp/rv7v/runs/V-M1b/guard/A3_symlink/scoped.conf",
+      "receipt_arg": "/var/tmp/rv7v/runs/V-M1b/guard/A3_symlink/via-symlink.txt",
+      "exit": 2,
+      "target_sha_before": "6082b7d65283031790b3e2bac3a77a02865e1bed713680423449960ea82a9224",
+      "target_sha_after": "6082b7d65283031790b3e2bac3a77a02865e1bed713680423449960ea82a9224",
+      "byte_stable": true,
+      "content_now_receipt": false,
+      "class_line": "USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv7v/runs/V-M1b/guard/A3_symlink/via-symlink.txt",
+      "clobbered": false,
+      "out_tail": ""
+    },
+    "A5_sidecar_escape": {
+      "note": "--paths X.sha256 --out X: receipt at X, sidecar write lands on X.sha256",
+      "target": "/var/tmp/rv7v/runs/V-M1b/guard/A5_sidecar_escape/target.sha256",
+      "receipt_arg": "/var/tmp/rv7v/runs/V-M1b/guard/A5_sidecar_escape/target",
+      "exit": 0,
+      "target_sha_before": "dba2df7b22d37544efd3075a29b70d958b9dca726990eaa357814cfd9a0ed89a",
+      "target_sha_after": "0578a8cbf855ab63e1aa355c6f027a172ad5b1d2514f373e88ef4d9e6c603365",
+      "byte_stable": false,
+      "content_now_receipt": false,
+      "class_line": "",
+      "clobbered": false,
+      "out_tail": "RECEIPT: /var/tmp/rv7v/runs/V-M1b/guard/A5_sidecar_escape/target  sha256=dccf17c96c738ab36f40922d5cce9120321e7f29f15bae44e0370c4f47d65b92"
+    },
+    "A4_control": {
+      "exit": 0,
+      "receipt_written": true,
+      "target_untouched": true,
+      "ok": true
+    }
+  },
+  "coverage": {
+    "B1_default_pair": {
+      "argv": [
+        "verify",
+        "/var/tmp/rv7v/runs/V-M1b/coverage/ref-1.txt",
+        "/var/tmp/rv7v/runs/V-M1b/coverage/ref-5.txt"
+      ],
+      "note": "default: no gate by design",
+      "exit": 12,
+      "coverage_class": "",
+      "class_present": false,
+      "usage_line": "",
+      "verdict_line": "VERDICT: METADATA-DRIFT  paths=5  MATCH=1 METADATA-DRIFT=4  exit=12"
+    },
+    "B2_flag5_pair": {
+      "argv": [
+        "verify",
+        "/var/tmp/rv7v/runs/V-M1b/coverage/ref-1.txt",
+        "/var/tmp/rv7v/runs/V-M1b/coverage/ref-5.txt",
+        "--require-paths",
+        "5"
+      ],
+      "note": "the D3 gate",
+      "exit": 2,
+      "coverage_class": "REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile",
+      "class_present": true,
+      "usage_line": "USAGE: reference covers 1 of the required 5 paths",
+      "verdict_line": ""
+    },
+    "B3_flag5_live": {
+      "argv": [
+        "verify",
+        "/var/tmp/rv7v/runs/V-M1b/coverage/ref-1.txt",
+        "--live",
+        "--require-paths",
+        "5"
+      ],
+      "note": "live + gate",
+      "exit": 2,
+      "coverage_class": "REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile",
+      "class_present": true,
+      "usage_line": "USAGE: reference covers 1 of the required 5 paths",
+      "verdict_line": ""
+    },
+    "B4_control_full": {
+      "argv": [
+        "verify",
+        "/var/tmp/rv7v/runs/V-M1b/coverage/ref-5.txt",
+        "/var/tmp/rv7v/runs/V-M1b/coverage/ref-5.txt",
+        "--require-paths",
+        "5"
+      ],
+      "note": "control: 5-path ref passes",
+      "exit": 0,
+      "coverage_class": "",
+      "class_present": false,
+      "usage_line": "",
+      "verdict_line": "VERDICT: MATCH  paths=5  MATCH=5  exit=0"
+    },
+    "B5_v1_1of5_fixture": {
+      "argv": [
+        "verify",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-35/fixtures/v1-partial-1of5.txt",
+        "--live",
+        "--require-paths",
+        "5"
+      ],
+      "exit": 2,
+      "coverage_class": "REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile",
+      "class_present": true,
+      "usage_line": "USAGE: reference covers 1 of the required 5 paths"
+    },
+    "B6_dup_stanzas": {
+      "argv": [
+        "verify",
+        "/var/tmp/rv7v/runs/V-M1b/coverage/dup5.txt",
+        "--live",
+        "--require-paths",
+        "5"
+      ],
+      "note": "subversion: 5 stanzas, 1 distinct path",
+      "exit": 0,
+      "coverage_class": "",
+      "class_present": false,
+      "usage_line": "",
+      "verdict_line": "VERDICT: MATCH  paths=1  MATCH=1  exit=0"
+    },
+    "B6_dup_stanza_count": 5,
+    "B6_dup_capture_exit": 0
+  }
+}

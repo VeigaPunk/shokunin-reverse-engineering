@@ -1,0 +1,8 @@
+# cwd=/var/tmp/ex22-baseline
+$ python3 -c import os,sys;p='/var/tmp/ex22-baseline/work/a/noaccess/secret.conf'
+try:
+    os.lstat(p); print('lstat OK (unexpected)')
+except OSError as e:
+    print('lstat raised: %s: [errno %d] %s' % (type(e).__name__, e.errno, e.strerror)); sys.exit(1)
+lstat raised: PermissionError: [errno 13] Permission denied
+[exit-status] 1

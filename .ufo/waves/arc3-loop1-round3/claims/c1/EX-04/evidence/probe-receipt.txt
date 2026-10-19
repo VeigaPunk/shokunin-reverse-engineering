@@ -1,0 +1,49 @@
+==============================================================================
+PROBE RECEIPT — carrier B vs inspect-evm-interface (chain c1)
+Seat: EX-04 (chain c1, executor)   Date: 2026-10-19
+==============================================================================
+
+COMMAND FORM (r1 recheck line; disk-backed TMPDIR required on this host)
+------------------------------------------------------------------------------
+  TMPDIR=/var/tmp/ex04-r3-tmp npx -y rea-agents@6.4.0 inspect-evm-interface \
+      evidence/carrierB.runtime-<leg>.<hex|bin> <hex|raw> --format json
+  rea-agents 6.4.0 from npx cache (package.json sha256 1c6244e5689db5354fffc0e92f4ee0e0237c3a6d645de564ade2d8375fa570f9)
+  all runs exit 0; stderr empty (0 B, captured in probe/*.err)
+
+RESULTS — planted K=11 vs probe set
+------------------------------------------------------------------------------
+  file                         enc                  probes  missing extra  set-eq  sha-match  ev_id
+  carrierB.runtime-opt200  hex                   11      0       0      true    true       ev_e0ee9bea73ab935…
+  carrierB.runtime-opt200  raw-bin               11      0       0      true    true       ev_c7db1e1cab07bf3…
+  carrierB.runtime-opt200  raw(hex file — TRAP)  0       11      0      false   false      ev_704ce585e86f446…
+  carrierB.runtime-noopt   hex                   11      0       0      true    true       ev_ca4595f0db3f89d…
+  carrierB.runtime-noopt   raw-bin               11      0       0      true    true       ev_13895b038bd7dd2…
+  carrierB.runtime-noopt   raw(hex file — TRAP)  0       11      0      false   false      ev_dc0458155e4a83c…
+
+OFFSET SEMANTICS (probe bytecode_offset vs dispatcher compare legs)
+------------------------------------------------------------------------------
+  opt200: probe offsets are dispatch-leg PUSH2 targets for all 11 selectors: true; all land on JUMPDEST (5b): true
+         dispatcher shape: binary search, ops EQ+GT, 12 compare legs for 11 selectors
+         duplicated node: 0x59bf77df confirmationCount(bytes32) — legs [{"compare_op":"GT","push4_pc":19,"push2_jump_target":98,"jumpdest_at_target":true},{"compare_op":"EQ","push4_pc":30,"push2_jump_target":375,"jumpdest_at_target":true}]; probe offset 375 = the EQ leg (function entry); the GT leg target (98) is the binary-search split, not the entry.
+  noopt: probe offsets are dispatch-leg PUSH2 targets for all 11 selectors: true; all land on JUMPDEST (5b): true
+         dispatcher shape: binary search, ops EQ+GT, 12 compare legs for 11 selectors
+         duplicated node: 0x59bf77df confirmationCount(bytes32) — legs [{"compare_op":"GT","push4_pc":19,"push2_jump_target":99,"jumpdest_at_target":true},{"compare_op":"EQ","push4_pc":30,"push2_jump_target":494,"jumpdest_at_target":true}]; probe offset 494 = the EQ leg (function entry); the GT leg target (99) is the binary-search split, not the entry.
+
+MUTABILITY INFERENCE vs COMPILED ABI
+------------------------------------------------------------------------------
+  opt200: mismatches [{"selector":"0x07bf89ab","sig":"computeTxHash(address,uint256,bytes32,uint256)","abi_mutability":"pure","probe_inferred":"view"}]
+  noopt: mismatches [{"selector":"0x07bf89ab","sig":"computeTxHash(address,uint256,bytes32,uint256)","abi_mutability":"pure","probe_inferred":"view"}]
+  -> upstream inference reports pure fn computeTxHash(…) as "view" — it separates
+     state-mutating from non-mutating, not pure from view. (First pure function in
+     this carrier family; r1 carriers had no pure leg.)
+
+TRAP LEG (re-run of the r1 raw-of-hex trap on a new carrier)
+------------------------------------------------------------------------------
+  Feeding the *hex text file* to the raw encoding decodes the ASCII file bytes as
+  code: exit 0, 0 functions, probe bytecode sha256 == the hex FILE sha256
+  (7dc26d4d…/54b8c906…), discovery_completeness "unknown" — parsed-and-empty, not an error.
+
+NOT EXAMINED (scope)
+------------------------------------------------------------------------------
+  creation-blob legs for carrier B (r1 covered parsed-and-empty on two other carriers);
+  rea-agents@6.7.0 on carrier B (chain may add); evmVersion/target chain identity (never claimed).

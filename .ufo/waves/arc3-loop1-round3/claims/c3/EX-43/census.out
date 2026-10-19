@@ -1,0 +1,51 @@
+== EX-43 before-state census ==
+repo HEAD: c07af80fcf3a60f9c6a0ca09b6e23fb5794d3311
+probe: .ufo/gates/citation-drift/citation-drift-probe.py
+pointer-table.json: 14694 bytes, sha256 738b3a569fb7dc96e1097de0121a19d86856fb8de43030a8cba0394428dd6e3f
+counts: entries=31 quoted=4 exempt=3
+table entries/quoted mentioning 'arc3': 0 []
+existing table targets 15 files; candidate targets 12 files; overlap: ['SKILL.md', 'corpus/QUALITY.md', 'corpus/README.md']
+
+-- candidate resolution sim (git objects at HEAD) --
+  r1evm-cites-r307-erratum-offset            states corpus/knowledge/2026-10-13-r3-evm-interface.md:149-155; needle OK; hit='JUMPDEST dispatch-target position'
+  r1evm-cites-r307-stub-inference            states corpus/knowledge/2026-10-13-r3-evm-interface.md:59-70; needle OK; hit='inferred_state_mutability'
+  r1evm-cites-quality-id-domain              states corpus/QUALITY.md:24-25; needle OK; hit='full domain'
+  r1evm-cites-quality-parsed-empty           states corpus/QUALITY.md:21-21; needle OK; hit='parsed-and-empty'
+  r1evm-cites-r307-kind-hypothesis           states corpus/knowledge/2026-10-13-r3-evm-interface.md:44-45; needle OK; hit='richer bytecode'
+  r1evm-cites-r307-positional-encoding       states corpus/knowledge/2026-10-13-r3-evm-interface.md:93-96; needle OK; hit='POSITIONAL arg'
+  readme38-arc3-r1-map-token                 hit at [38]
+  sc1435-shonen-refresh-record               states SHONEN.md:6-6; needle OK; hit='14/14'
+  skill-rule14-cr2-stale-identity            states .ufo/waves/arc3-loop1-round1/seats/CR-2.md:86-89; needle OK; hit='stale against the'
+  skill-rule14-verdict-d9                    states .ufo/waves/arc3-loop1-round1/claims/c1/verdict.md:149-153; needle OK; hit='Three different applied identities'
+  skill-rule14-r1evm-recheck-line            states corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7-7; needle OK; hit='recheck:'
+  skill-registry-row-citation-drift          hit at [389]
+  skill-registry-row-custody-pair            hit at [390]
+  custody-readme-v1-stanza-example           hit at [3]
+  custody-readme-v1-sums-example             hit at [3]
+  custody-readme-v1-pipe-example             hit at [4]
+  custody-receipt-v2-tool-self-pin           hit at [3]
+  log1412-landing-identity-quoted            quoted-word OK at :1412
+sim FAIL count: 0
+
+-- scratch extension --
+table-ext.json sha256 0b01f52142924ce96e2cdddb84c15102f005dac17f07852ff0e6eb2f3d3a388f (48 entries, 5 quoted)
+probe --strict on extension: rc=0
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /var/tmp/ex43-scratch/table-ext.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+
+-- teeth control (sc1435 needle 14/14 -> 15/15) --
+probe --strict rc=1
+CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /var/tmp/ex43-scratch/table-ext-teeth.json
+CITATION_DRIFT: citation_dead entry=sc1435-shonen-refresh-record SCORECARD.md:1435 cites SHONEN.md:6-6, which lacks '15/15' (holds '  asserted: `SKILL.md:81-255` (craft section; rules #11-14 added')
+CITATION_DRIFT_VERDICT: failed findings=1 exit=1
+
+-- adjudication candidates (NO-ENTRY + cause) --
+  * SCORECARD arc3-r1 section :1338-1400 | pin-free by design | the section's own connector-injection record states it carries no bare version pin and no absolute path:line; measured zero path:line citations in the range -> NO-ENTRY (nothing to pin).
+  * SCORECARD:1415, :1494 `.ufo/waves/arc2-loop1-round10/C3.md` | file-level mention of a pre-existing dirty path | no line number, not a pointer to content; the path is named as a defect record -> NO-ENTRY.
+  * .ufo/waves/arc3-loop1-round2/claims/c3/EX-31/ (README:129 directory ref) | directory reference | a directory cannot carry a line pin; the load-bearing file inside it is covered by `custody-receipt-v2-tool-self-pin` -> NO-ENTRY.
+  * identity records (8,316 B/`f95c5a05…`, 8,598 B/`d8d85949…`, 10,225 B/`dd986f56…`, SKILL.md 390 lines/`c134afcb…`) | self-identity records bind a revision, not a live line | rule #14 requires re-derivation after every revision; a static pin would manufacture a false-failure class -> NO-ENTRY (optional exact pins if the chain wants the words frozen instead).
+  * LOG.md internal arc3 citations (e.g. LOG.md:1449 custody receipt) | append-only history | the table's standing exempt clause: LOG line numbers describe past states by rule -> NO-ENTRY.

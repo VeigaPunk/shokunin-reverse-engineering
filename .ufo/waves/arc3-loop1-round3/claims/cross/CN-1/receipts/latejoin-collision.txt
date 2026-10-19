@@ -1,0 +1,28 @@
+# CN-1 late-join collision re-derivation, 2026-10-19T13:24:44Z
+drafts re-hashed at run time:
+0383272358727e6f0707f7dd853a6d49bd3df9b49f831afcf39463cdf1340ba9  /var/tmp/ex30/SKILL.v1.md
+42b07ee57bace8f53673e567276c29c07c906311875d1cd55bb81ad86dffc599  /var/tmp/ex30/README.v1.md
+landed targets:
+bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7  .ufo/gates/citation-drift/pointer-table.json
+d97dd60a942eaf53771c8224e84a9e8cdaf976dc66c3a543a450b1f1fa3827e2  .ufo/gates/citation-drift/expected.json
+f30df42e0a547a0aefd21590c0f975acf06d91161fcb6db77c8934960efeb193  .ufo/gates/custody-pair/README.md
+7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09  .ufo/gates/custody-pair/custody-pair.py
+c134afcb2e648aa3f8ff96f11d03aee2be6715811cb7edb3b7be6ac40aa0aa90  SKILL.md
+
+## run 1: C2 patches only
+patched file: /var/tmp/ex30/SKILL.v1.md sha256=0383272358727e6f0707f7dd853a6d49bd3df9b49f831afcf39463cdf1340ba9
+patched file: /var/tmp/ex30/README.v1.md sha256=42b07ee57bace8f53673e567276c29c07c906311875d1cd55bb81ad86dffc599
+entries: 57  quoted: 4
+--- eval over [C2-patched SKILL.md + C2-patched README] + HEAD elsewhere ---
+  FINDING skill-registry-custody-pair-row: citation_dead — no line matches 'precedence CONTENT-DRIFT > ABSENT > REWRITE-DRIFT > METADATA-DRIFT > M'
+total findings: 1
+--- control: same evaluator over unmodified HEAD for the two files ---
+control findings: 0
+
+## run 2: C2 patches + C1 landing (my rehearsal README)
+entries: 57  quoted: 4
+--- eval over [C2-patched SKILL.md + C2-patched README] + HEAD elsewhere ---
+  FINDING skill-registry-custody-pair-row: citation_dead — no line matches 'precedence CONTENT-DRIFT > ABSENT > REWRITE-DRIFT > METADATA-DRIFT > M'
+total findings: 1
+--- control: same evaluator over unmodified HEAD for the two files ---
+control findings: 0

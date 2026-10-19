@@ -1,0 +1,32 @@
+PUSH4-CONSTANT ATTRIBUTION NOTES — arc3-loop1-round3 c1/EX-03
+(compiler-side evidence only; independent of any probe envelope)
+
+Solc 0.8.37 compresses constants in codegen: trailing zero BITS are stripped from the
+constant and the emitted SHL shift is increased by the same bit count. Measured:
+
+  source constant              reduced PUSH value   shift   identity check (this seat)
+  0xca11ab1e (stamp() bytes4)  0x6508d58f           0xE1    0x6508d58f <<  1 == 0xca11ab1e  ✓
+  0xe8620800 (Insufficient)    0x1d0c41             0xEB    0x1d0c41   << 11 == 0xe8620800  ✓
+  0x08c379a0 (Error(string))   0x0461bcd            0xE5    0x0461bcd  <<  5 == 0x08c379a0  ✓
+
+  Assembly evidence: compiling carrierA.sol with outputSelection evm.legacyAssembly emits
+  PUSH "6508D58F" ; PUSH "E1" ; SHL at the revert-data construction site (this seat's
+  a-legacy-assembly.json; runtime sha256 unchanged 9f7392ac…, i.e. the added output
+  selection did not alter bytecode). Peer confirmation of the same site from an
+  independent scanner: EX-02, /var/tmp/ex02-r3/out/dispatch-scan-A.txt —
+  "stamp() bytes4 literal: value=0xca11ab1e k=1 enc=0x6508d58f codeSites=[454]".
+
+METADATA BOUNDARY (why two linear-sweep hits are artifacts, not code constants):
+  OptVault  runtime 776 B : last-2-byte CBOR length field = 51 -> metadata bytes
+    723..775, code region 0..722. Sweep hit 0x43000825 @770 lies INSIDE metadata
+    (artifact); 0x4e487b71 (Panic) @660 lies inside the code region (real).
+  CarrierA  runtime 1426 B: metadata bytes 1373..1425, code region 0..1372.
+    @1420 (0x43000825) metadata artifact; @1310 (Panic), @635/@1163 (NotOwner),
+    @454 (encoded stamp literal) are code.
+
+CONSEQUENCE FOR THE CHAIN:
+  (a) PUSH4/PUSHn inventories must recover reduced constants by unsigned-shift
+      arithmetic before matching against selectors or error selectors;
+  (b) a linear sweep must exclude (or explicitly bound) the trailing metadata region;
+  (c) the dispatch compare sites themselves push the PLAIN selector — measured: all 9
+      dispatch sites in CarrierA and all 5 in OptVault carry the unreduced selector.

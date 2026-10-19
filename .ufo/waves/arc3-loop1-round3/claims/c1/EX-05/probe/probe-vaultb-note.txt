@@ -1,0 +1,33 @@
+================================================================================
+SECOND-PARTY PROBE — EX-04's carrier B (VaultB), opt200 runtime, seat EX-05
+================================================================================
+
+Why: the chain's claim reads "K/K with zero extras per carrier"; EX-04 authored and
+probed their own carrier B. This seat re-compiled their source (byte-identical, see
+recompiled/) and now probes THEIR pinned runtime file directly, so the K/K result on
+that carrier no longer rests on its author's envelope alone.
+
+Input (read-only): .ufo/waves/arc3-loop1-round3/claims/c1/EX-04/evidence/carrierB.runtime-opt200.hex
+  (runtime 1850 B sha256 aaf85ceaf124bac2d3a32428927194158c9211e4472a0cf06f88a721cf239412)
+Command: TMPDIR=/var/tmp/ex05-probe npx -y rea-agents@6.4.0 inspect-evm-interface \
+         <that file> hex --format json
+Envelope: probe/probe-vaultb-opt200-hex-6.4.0.json (stderr 0 B, exit 0)
+
+Measured
+  evidence_id            ev_fc573e7dc9135f59eb63f701b0ba1dd33041be3d5019ba4ef43f71d9569257ef
+  functions reported     11
+  planted set (EX-04)    11  (claims/c1/EX-04/planted-B.txt, 11 lines)
+  extras                 []
+  missing                []
+  dispatch values        ["abi"]
+  decoded bytecode       sha256 aaf85cea…cf239412, 1850 bytes
+  -> the probed bytes are the bytes this seat re-derived, and the planted set is
+     recovered K/K with zero extras.
+
+Caveat carried: the planted table used here is EX-04's own pre-probe table (their
+receipt records it written before their first envelope); this seat did not re-derive
+their signatures independently in this run — it verified set-equality of the reported
+selectors against that table and the byte identity of the probed runtime. The r1
+convention applies: compare by subject.digest.sha256 + function payload, not by the
+`ev_` id, whose domain is unmeasured.
+================================================================================

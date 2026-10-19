@@ -1,0 +1,75 @@
+VZ-1 (chain c1, convergence) — independent verification log, arc3-loop1-round3
+Seat work: polls 60s->25 + first-hand re-derivation of every C1 claim component
+that was measurable while the wave ran. All scratch under /var/tmp/arc3r3-vz1/
+(never /tmp). Repo writes: this seat dir + claims/c1/verdict.md + seats/VZ-1.md only.
+
+BASELINE (13:06Z)
+- HEAD c07af80fcf3a60f9c6a0ca09b6e23fb5794d3311.
+- command A (SCORECARD recipe, git-objects form): 82 files / 82 mapped,
+  missing [], dangling [], rules 14/14, 10.0/10.0  [evidence/commandA-before-HEAD.json]
+- worktree variant (same logic over the tree): identical 82/82  [eval at 13:06Z]
+- solc prefix receipt re-verified: solc.js 188c3fdca72bbb8ec1c70373427ad4536e117341c48944dae9185f9cf035146f,
+  soljson.js 221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c  (both = EX-02 r1 receipt pins);
+  solcjs --version = 0.8.37+commit.f401782d.Emscripten.clang. No install performed by this seat.
+
+PROBE TOOLCHAIN VALIDATED
+- Fresh run on r1 carrier (RV-2/Rv2Token.runtime.hex, abs path, TMPDIR=/var/tmp/...):
+  evidence_id ev_45849c8b11794ea0b007bd01ea3241aa9b385ca7543e514a16e82c795a106eaf
+  (byte-equal to r1's recorded id), 5/5, bytecode.sha256 c1081a56…  [evidence/probe-toolcheck-rv2token-6.4.0.json, sha256 f2aec424…]
+
+K/K MATRIX — all first-hand (my recompile -> my sweep (sweep.js, js-sha3 oracle) -> my probe run)
+  carrier                          runtime sha (16)   ABI K  probe K/K  sweep set-eq  non-selector PUSH4 not reported
+  CarrierB (EX-05 opt200)          b9c70178069601ba   8      8/8        yes           (9 PUSH4 sites, 1 dup)
+  VaultB (EX-10 opt200)            b24a01153af943ff   13     13/13      yes           1309a563,1dc930eb,30cd7471,3c3332b9,4e487b71
+  Rv2TokenOpt (EX-07 opt200)       ed6c8a76d05b230e   5      5/5        yes           43000825,4e487b71
+  CarrierA (EX-02/03 opt200)       9f7392acccea72cd   9      9/9        yes           30cd7471,43000825,4e487b71,6508d58f
+  carrierB (EX-04 opt200)          aaf85ceaf124bac2   11     11/11      yes           4e487b71
+  OptVault (PL-1 opt200)           544469b7bebfda4e   5      5/5        yes           4e487b71
+  MutMix (PL-1 noopt)              6267ef53adf978e5   6      6/6        yes           (none)
+  MutMixOpt (PL-1 opt200)          200bc9db76cc8592   6      6/6        yes           4e487b71
+  [evidence/kk-matrix.json sha256 628d08e1…]
+- 6.7.0 spot-checks (my runs): CarrierB 8/8 bc b9c70178… (CBOR metadata key present);
+  VaultB opt200 13/13 bc b24a0115…
+- All recompiles byte-exact vs each seat's own output files (vz1-recompile.js / their drivers):
+  CarrierB runtime/creation, VaultB opt200+nopt, Rv2TokenOpt, CarrierA, carrierB@EX-04,
+  OptVault, MutMix, MutMixOpt, VaultCourt, VaultA (hex == mine modulo trailing newline).
+- Cross-seat: SC-1's recompiles reproduce r1's Rv2Token runtime c1081a56… (opt0) and
+  EX-07's Rv2TokenOpt ed6c8a76… (opt200) byte-exactly.
+
+PROLOGUE CLASSES (my measurement)
+- All compiled carriers this round: 5f3560e01c class (PUSH0 era; offsets 13/26 carrier-dependent).
+- r1 Rv2Token (noopt) also 5f3560e01c; synthetic carrier-A (r1 CR-1 artifact) 60003560e01c.
+- No unrecorded prologue class observed -> HS-3 honest-stop branch did not trigger.
+
+ENTRY (draft rev landed 13:12:51Z, mtime-authoritative)
+- Applied literal entry text + PL-1 §6.2 additive map line to a HEAD overlay:
+  command A = 83/83, missing [], dangling [], 14/14, 10.0/10.0; README 190 lines;
+  all 82 prior knowledge files byte-identical to git show HEAD:…
+- Entry recheck line executed VERBATIM by me (repo cwd, disk-backed TMPDIR):
+  VaultB opt200 -> ev_d409bd50b370c55…, envelope sha256 05f76b33…, 13 fns —
+  byte-identical to EX-10's capture and to SC-2/recheck-opt200.json.
+- Entry numbers spot-verified: all quoted envelope ids/counts (EX-10 opt/nopt 6.4.0+6.7.0,
+  EX-04 four legs, EX-05 6.7.0+raw, CarrierBErr ev_bdc1db67…), VaultB offset lists all
+  JUMPDEST (opt200 max 645/1621 B; nopt max 751/3163 B), duplicated-selector claims
+  (VaultB 69fe0e2d+8da5cb5b ×2; EX-04 59bf77df ×2; CarrierB 8da5cb5b ×2),
+  CarrierBErr 1253 B 9715b824… with its 3 error constants unreported (1182d3d5,245aecd3,fa41aa00),
+  ABI hashes (VaultB.opt200.abi 6dae6710…, CarrierB ABI 8a11dd93…), pre-probe mtime ordering
+  (EX-10 planted-K 13:07:24Z < first envelope 13:08:10Z; EX-05 planted files 13:08:11Z < envelope 13:08:21Z).
+
+CITATION-DRIFT CROSS-EFFECT (C1-side check only; C3 owns the instrument)
+- Only corpus/README.md line 38 changes; the table's README needles are at :22/:175 and the
+  anchor readme38-arc3r1-token (substring '2026-10-19-arc3-r1-evm-real-solc', preserved by both
+  patch variants); readme22/175 lines untouched. RV-4 rehearsed the probe on scratch clones:
+  findings=0 exit=0 default+strict before/after both patch variants.
+
+DEFECTS / DEBT FOUND BY THIS SEAT (verbatim fixes)
+1. Entry cites `EX-04/evidence/planted-B.txt` (sha f32393c0… correct) but the file lives at
+   `EX-04/planted-B.txt`; `EX-04/evidence/planted-B.txt` does not exist. Fix: repoint the citation.
+2. Map-token variants differ: SC-2's rewords prose ("and from" dropped); PL-1 §6.2 is
+   additive-only. RV-4's strict additive-only criterion FAILs SC-2's phrasing (seat criteria PASS
+   both). Parent must pick ONE; additive variant is the r1-form-safe choice.
+3. EX-07/optB-compare.txt prints "VERDICT: MISMATCH" from the pre-fix planted file
+   (mtime 13:08:18 vs planted-K fix 13:08:53); underlying data K/K (my independent run: 5/5).
+   Artifact must be regenerated or annotated; the entry text itself does not repeat the stale verdict.
+4. SC-2's revision-log timestamps (~13:30Z/~13:35Z) postdate the files' mtimes
+   (13:12:51Z / 13:13:07Z); labels are unusable as ordering evidence — use mtimes.

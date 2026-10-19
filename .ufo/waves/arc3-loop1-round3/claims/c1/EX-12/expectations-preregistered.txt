@@ -1,0 +1,28 @@
+PRE-REGISTERED EXPECTATIONS — EX-12 controls (written before any probe)
+written-at: 2026-10-19T13:08:47Z
+
+carrier A: VaultA (optimizer enabled runs=200, solc 0.8.37+commit.f401782d)
+75d126043d19061dd0e01722242a33e26ded51c447e06e9fb2b6216805af0196  VaultA.sol
+43f7b81b359eb5aa20530279c2bc4ecf0a00074798c712d824d2fed0e5fb6ad1  VaultA.creation.hex
+f4ac24b771601077b9de0f2f7eb1b9bca942d0b47448f78be2bfbfdd3cc25943  VaultA.runtime.hex
+14cab71cc2f285df88c802f05e22163fe0e70cd75db7975c7e731c28e41d464a  VaultA.abi.json
+
+planted K=7:
+0x01681a62 sweep(address) [nonpayable]
+0x27e235e3 balances(address) [view]
+0x69fe0e2d setFee(uint256) [nonpayable]
+0x8da5cb5b owner() [view]
+0xd0e30db0 deposit() [payable]
+0xddca3f43 fee() [view]
+0xed1bd76c quote(uint256) [view]
+K=7
+receive() payable: true | fallback() payable: true
+
+control (a): non-bytecode file == VaultA.sol (Solidity source; not hex) probed with positional encoding hex
+  EXPECT: typed refusal in the declared map (r1: invalid_request, exit 1), NO traceback, exit != 0
+control (b): VaultA.creation.hex (hex of the 1062-byte creation blob, sha256 6885bd63...) probed with encoding hex
+  EXPECT (r1 precedent ev_c80379e1...): exit 0; 0 functions; bytecode.kind "unknown"; decoded bytecode.sha256 == 6885bd63... (creation bytes)
+contrast baseline: VaultA.runtime.hex probed hex
+  EXPECT: 7/7 planted selectors, 0 missing/extra
+
+pins: npx -y rea-agents@6.4.0 and @6.7.0; TMPDIR=/var/tmp/ex12-tmp (disk-backed)

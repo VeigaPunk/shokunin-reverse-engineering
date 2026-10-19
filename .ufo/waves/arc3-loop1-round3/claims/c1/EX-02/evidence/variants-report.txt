@@ -1,0 +1,54 @@
+variants-report — arc3-loop1-round3 c1/EX-02: A/B identification of the non-dispatch constants
+
+method: same standard-JSON settings as carrierA (optimizer enabled, runs=200); each variant is
+carrierA.sol with one targeted change; compiled with the same prefix; runtime PUSH4 constants listed.
+
+$ node compileVariant.js src/variant-stamp.sol vstamp   (stamp() returns 0x11223344 instead of 0xca11ab1e)
+vstamp runtime bytes 1426
+  pc=19 5ce23950
+  pc=41 75807250
+  pc=52 8da5cb5b
+  pc=63 c85e07b9
+  pc=74 d0e30db0
+  pc=90 01681a62
+  pc=101 067b23c3
+  pc=112 2e1a7d4d
+  pc=123 3f0d861a
+  pc=453 04488cd1
+  pc=634 30cd7471
+  pc=1309 4e487b71
+
+$ node compileVariant.js src/variant-noinsuf.sol vnoinsuf  (revert Insufficient(..) -> require(amount <= held, "over"))
+vnoinsuf runtime bytes 1449
+  pc=19 5ce23950
+  pc=41 75807250
+  pc=52 8da5cb5b
+  pc=63 c85e07b9
+  pc=74 d0e30db0
+  pc=90 01681a62
+  pc=101 067b23c3
+  pc=112 2e1a7d4d
+  pc=123 3f0d861a
+  pc=453 6508d58f
+  pc=634 30cd7471
+  pc=949 37bb32b9
+  pc=1332 4e487b71
+
+$ node compileVariant.js src/variant-strings.sol vstrings  ("CarrierA: send failed" -> "ZZZ")
+vstrings runtime bytes 1390
+  pc=19 5ce23950
+  pc=41 75807250
+  pc=52 8da5cb5b
+  pc=63 c85e07b9
+  pc=74 d0e30db0
+  pc=90 01681a62
+  pc=101 067b23c3
+  pc=112 2e1a7d4d
+  pc=123 3f0d861a
+  pc=453 6508d58f
+  pc=634 30cd7471
+  pc=1273 4e487b71
+
+reading: pc=453 constant tracks stamp()'s literal (6508d58f = 0xca11ab1e>>1 -> 04488cd1 = 0x11223344>>2);
+the Insufficient path replacement introduces PUSH4 37bb32b9 (= 'over'>>1, left-aligned message word) and removes
+its predecessor encoding; the string replacement flips the PUSH21 payload (10d85c.. = string>>2) to 2d2d2d (= 'ZZZ'>>1), 36 B smaller.

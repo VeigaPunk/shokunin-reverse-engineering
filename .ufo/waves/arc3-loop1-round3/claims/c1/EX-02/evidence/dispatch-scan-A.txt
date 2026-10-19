@@ -1,0 +1,65 @@
+runtime bytes: 1426; code region: [0, 1373); metadata CBOR prefix (a264697066735822) at byte 1373
+first 48 bytes: 608060405260043610610089575f3560e01c80635ce23950116100585780635ce2395014610129578063758072501461
+prologue: 60806040526004361061008957 = PUSH1 80 PUSH1 40 MSTORE PUSH1 04 CALLDATASIZE LT PUSH2 0089 JUMPI
+selector-recovery idiom 5f3560e01c at byte 13 (PUSH0 CALLDATALOAD PUSH1 e0 SHR); marker 60003560e01c: -1
+fallback guard at 0x89: 5b3661009a57610098333461 = CALLDATASIZE PUSH2 009a JUMPI (size!=0 -> fallback; size==0 -> receive)
+
+dispatcher tree (pc<0x100: PUSH4/<sel>/ GT|EQ / PUSH2 <target> / JUMPI):
+  pc=19 sel=5ce23950 GT -> JUMPI target=88 (0x58) isSolvent() [view]
+  pc=30 sel=5ce23950 EQ -> JUMPI target=297 (0x129) isSolvent() [view]
+  pc=41 sel=75807250 EQ -> JUMPI target=331 (0x14b) creditOf(address) [view]
+  pc=52 sel=8da5cb5b EQ -> JUMPI target=383 (0x17f) owner() [view]
+  pc=63 sel=c85e07b9 EQ -> JUMPI target=437 (0x1b5) stamp() [pure]
+  pc=74 sel=d0e30db0 EQ -> JUMPI target=470 (0x1d6) deposit() [payable]
+  pc=90 sel=01681a62 EQ -> JUMPI target=164 (0xa4) sweep(address) [nonpayable]
+  pc=101 sel=067b23c3 EQ -> JUMPI target=214 (0xd6) totalCredited() [view]
+  pc=112 sel=2e1a7d4d EQ -> JUMPI target=235 (0xeb) withdraw(uint256) [nonpayable]
+  pc=123 sel=3f0d861a EQ -> JUMPI target=266 (0x10a) rotate(address) [nonpayable]
+
+PUSH4 constants in code region (14):
+  pc=19 5ce23950 planted selector
+  pc=30 5ce23950 planted selector
+  pc=41 75807250 planted selector
+  pc=52 8da5cb5b planted selector
+  pc=63 c85e07b9 planted selector
+  pc=74 d0e30db0 planted selector
+  pc=90 01681a62 planted selector
+  pc=101 067b23c3 planted selector
+  pc=112 2e1a7d4d planted selector
+  pc=123 3f0d861a planted selector
+  pc=453 6508d58f non-dispatch: shl(e1,0xca11ab1e) encoding of stamp() bytes4 literal 0xca11ab1e (0xca11ab1e>>1, even value)
+  pc=634 30cd7471 non-dispatch: NotOwner() error selector (plain, low bit 1)
+  pc=1162 30cd7471 non-dispatch: NotOwner() error selector (plain, low bit 1)
+  pc=1309 4e487b71 non-dispatch: Panic(uint256) selector (plain, low bit 1)
+
+shift-encoded constant inventory (value>>k pushed as PUSHn, k = trailing zero bits used):
+  sweep(address) [nonpayable] (dispatch selector): value=0x01681a62 k=0 enc=0x01681a62 codeSites=[91] (plain) PUSHn@90 bytes@91 followed by: EQ ; PUSH2 0x00a4 ; JUMPI
+  totalCredited() [view] (dispatch selector): value=0x067b23c3 k=0 enc=0x067b23c3 codeSites=[102] (plain) PUSHn@101 bytes@102 followed by: EQ ; PUSH2 0x00d6 ; JUMPI
+  withdraw(uint256) [nonpayable] (dispatch selector): value=0x2e1a7d4d k=0 enc=0x2e1a7d4d codeSites=[113] (plain) PUSHn@112 bytes@113 followed by: EQ ; PUSH2 0x00eb ; JUMPI
+  rotate(address) [nonpayable] (dispatch selector): value=0x3f0d861a k=0 enc=0x3f0d861a codeSites=[124] (plain) PUSHn@123 bytes@124 followed by: EQ ; PUSH2 0x010a ; JUMPI
+  isSolvent() [view] (dispatch selector): value=0x5ce23950 k=0 enc=0x5ce23950 codeSites=[20,31] (plain) PUSHn@19 bytes@20 followed by: GT ; PUSH2 0x0058 ; JUMPI | PUSHn@30 bytes@31 followed by: EQ ; PUSH2 0x0129 ; JUMPI
+  creditOf(address) [view] (dispatch selector): value=0x75807250 k=0 enc=0x75807250 codeSites=[42] (plain) PUSHn@41 bytes@42 followed by: EQ ; PUSH2 0x014b ; JUMPI
+  owner() [view] (dispatch selector): value=0x8da5cb5b k=0 enc=0x8da5cb5b codeSites=[53] (plain) PUSHn@52 bytes@53 followed by: EQ ; PUSH2 0x017f ; JUMPI
+  stamp() [pure] (dispatch selector): value=0xc85e07b9 k=0 enc=0xc85e07b9 codeSites=[64] (plain) PUSHn@63 bytes@64 followed by: EQ ; PUSH2 0x01b5 ; JUMPI
+  deposit() [payable] (dispatch selector): value=0xd0e30db0 k=0 enc=0xd0e30db0 codeSites=[75] (plain) PUSHn@74 bytes@75 followed by: EQ ; PUSH2 0x01d6 ; JUMPI
+  NotOwner() error selector: value=0x30cd7471 k=0 enc=0x30cd7471 codeSites=[635,1163] (plain) PUSHn@634 bytes@635 followed by: PUSH1 0xe0 ; SHL ; op0x81 | PUSHn@1162 bytes@1163 followed by: PUSH1 0xe0 ; SHL ; op0x81
+  Panic(uint256) selector: value=0x4e487b71 k=0 enc=0x4e487b71 codeSites=[1310] (plain) PUSHn@1309 bytes@1310 followed by: PUSH1 0xe0 ; SHL ; PUSH0
+  Insufficient(uint256,uint256) error selector: value=0xe8620800 k=11 enc=0x1d0c41 codeSites=[915] PUSHn@914 bytes@915 followed by: PUSH1 0xeb ; SHL ; op0x81
+  Error(string) revert selector: value=0x08c379a0 k=5 enc=0x461bcd codeSites=[750,1077] PUSHn@749 bytes@750 followed by: PUSH1 0xe5 ; SHL ; op0x81 | PUSHn@1076 bytes@1077 followed by: PUSH1 0xe5 ; SHL ; op0x81
+  stamp() bytes4 literal: value=0xca11ab1e k=1 enc=0x6508d58f codeSites=[454] PUSHn@453 bytes@454 followed by: PUSH1 0xe1 ; SHL ; op0x81
+  "CarrierA: send failed" bytes: value=0x43617272696572413a2073656e64206661696c6564 k=2 enc=0x10d85c9c9a595c904e881cd95b990819985a5b1959 codeSites=[773,1100] PUSHn@772 bytes@773 followed by: PUSH1 0x5a ; SHL ; PUSH1 0x44 | PUSHn@1099 bytes@1100 followed by: PUSH1 0x5a ; SHL ; PUSH1 0x44
+  Credited(address,uint256) topic0: value=0x9c9e0cdb1670e88302408e5b941dc636f63a3293204694bb68910fcf3d9305f3 k=0 enc=0x9c9e0cdb1670e88302408e5b941dc636f63a3293204694bb68910fcf3d9305f3 codeSites=[565] (plain) PUSHn@564 bytes@565 followed by: SWAP1 ; PUSH1 0x20 ; ADD
+  Swept(address,uint256) topic0: value=0xc36b5179cb9c303b200074996eab2b3473eac370fdd7eba3bec636fe35109696 k=0 enc=0xc36b5179cb9c303b200074996eab2b3473eac370fdd7eba3bec636fe35109696 codeSites=[826] (plain) PUSHn@825 bytes@826 followed by: op0x83 ; PUSH1 0x40 ; MLOAD
+
+planted selector occurrence offsets (raw scan):
+  01681a62 sweep(address) [nonpayable] occurrences=1 offsets=[91]
+  067b23c3 totalCredited() [view] occurrences=1 offsets=[102]
+  2e1a7d4d withdraw(uint256) [nonpayable] occurrences=1 offsets=[113]
+  3f0d861a rotate(address) [nonpayable] occurrences=1 offsets=[124]
+  5ce23950 isSolvent() [view] occurrences=2 offsets=[20,31]
+  75807250 creditOf(address) [view] occurrences=1 offsets=[42]
+  8da5cb5b owner() [view] occurrences=1 offsets=[53]
+  c85e07b9 stamp() [pure] occurrences=1 offsets=[64]
+  d0e30db0 deposit() [payable] occurrences=1 offsets=[75]
+
+ERC-20 ambient selector constants present in runtime: none

@@ -1,0 +1,34 @@
+== paired optimizer legs, re-run at 2026-10-19T13:10:14Z ==
+source: /var/tmp/ex03-r3/a/carrierA.sol sha256 05b2cbb0c6fd97ae6463b0a4f1be56f217ea64cf4cbdbd2c36da94c0fe6eee41
+compiler: 0.8.37+commit.f401782d.Emscripten.clang
+
+-- CLI off leg: solcjs --bin --abi (no optimizer flags) --
+exit=0
+e8959c42e1c3de4ea96f0ca176f062d3a61119511899d2e2aa385637e9512eff  /var/tmp/ex03-r3/a-cli-off-out2/carrierA_sol_CarrierA.abi
+2e8f203ce423a6c2434d1faa26c4d062c2acd30e5b29497ae47fce386b8f6e0c  /var/tmp/ex03-r3/a-cli-off-out2/carrierA_sol_CarrierA.bin
+
+-- stdjson off leg --
+optimizer=OFF
+solc.version() = 0.8.37+commit.f401782d.Emscripten.clang
+diagnostics = 0
+runtime bytes = 2853
+creation bytes = 2933
+runtime head (first 32 B) = 608060405260043610610089575f3560e01c80635ce23950116100585780635c
+
+exit=0
+
+-- stdjson on leg (spoken for the primary flags run) --
+optimizer=ON runs=200
+solc.version() = 0.8.37+commit.f401782d.Emscripten.clang
+diagnostics = 0
+runtime bytes = 1426
+creation bytes = 1460
+runtime head (first 32 B) = 608060405260043610610089575f3560e01c80635ce23950116100585780635c
+
+exit=0
+
+-- identity vs first capture --
+carrierA_sol_CarrierA.bin first=2e8f203ce423a6c2434d1faa26c4d062c2acd30e5b29497ae47fce386b8f6e0c
+carrierA.runtime.hex first=91cec9c4108e68fe75696670884d157682198038d190623eab78992cdf0ea536
+carrierA.runtime.hex first=87d1bb033d06db04f0de9b4afc399676188a26302cab08e38ae165e63501ddff
+cli-off creation: re-run byte-identical

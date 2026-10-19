@@ -1,0 +1,27 @@
+# CN-2 independent before-state reproduction, committed tool at 2026-10-19T13:12:01Z
+tool sha256=03bd6242470ac8d27ea832af6bcb71049ccfad92f2ba8c878b30f51b5211bd83  HEAD=c07af80  (worktree==HEAD? NO)
+== D2a: capture over a file inside an EACCES directory ==
+RECEIPT: /dev/shm/cn2r3/c2chk/out/r1.txt  sha256=aabd1a756df632046505030efbb7e857a5ac79d93eee99c7fcd3aa3ce40f6f8d
+SIDECAR: /dev/shm/cn2r3/c2chk/out/r1.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=(none) exit=14
+exit=14
+== D2 fail-open: verify that receipt against itself ==
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+exit=14
+== D2 fail-open: verify that receipt --live ==
+    note: exists but not evaluable on reference+candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+exit=14
+== WG: --paths X --out X clobber on scratch ==
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /dev/shm/cn2r3/c2chk/plain.txt
+exit=2
+--- plain.txt after (first 3 lines):
+content-of-x
+== D6: selftest --scratch <missing parent> ==
+USAGE: scratch base is not a directory: /dev/shm/cn2r3/c2chk/does-not-exist/fixtures
+exit=2

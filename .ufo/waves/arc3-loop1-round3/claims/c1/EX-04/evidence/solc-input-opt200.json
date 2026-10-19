@@ -1,0 +1,25 @@
+{
+ "language": "Solidity",
+ "sources": {
+  "carrierB.sol": {
+   "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.37;\n\n/// VaultB — carrier B for the arc3 c1 EVM leg: a non-ERC-20 shaped 2-of-3\n/// multisig vault. Mixed mutability surface: view / pure / nonpayable /\n/// payable (deposit + receive). No ERC-20 selector is present by construction.\ncontract VaultB {\n    address[3] private _owners;\n    uint256 private _threshold;\n    mapping(bytes32 => uint256) private _confirmations;\n\n    event Deposited(address indexed from, uint256 amount);\n    event Submitted(bytes32 indexed txHash, address indexed by);\n    event Confirmed(bytes32 indexed txHash, address indexed by);\n    event Executed(bytes32 indexed txHash, address indexed to, uint256 value);\n    event ThresholdChanged(uint256 threshold);\n\n    constructor(address[3] memory owners_, uint256 threshold_) {\n        _owners = owners_;\n        require(threshold_ > 0 && threshold_ <= 3, \"bad threshold\");\n        _threshold = threshold_;\n    }\n\n    function isOwner(address who) public view returns (bool) {\n        return who == _owners[0] || who == _owners[1] || who == _owners[2];\n    }\n\n    function ownerCount() external view returns (uint256) {\n        return 3;\n    }\n\n    function threshold() external view returns (uint256) {\n        return _threshold;\n    }\n\n    function vaultBalance() external view returns (uint256) {\n        return address(this).balance;\n    }\n\n    function confirmationCount(bytes32 txHash) external view returns (uint256) {\n        return _confirmations[txHash];\n    }\n\n    function computeTxHash(address to, uint256 value, bytes32 payloadHash, uint256 nonce)\n        external\n        pure\n        returns (bytes32)\n    {\n        return _hashTx(to, value, payloadHash, nonce);\n    }\n\n    function submit(bytes32 txHash) external {\n        require(isOwner(msg.sender), \"not owner\");\n        emit Submitted(txHash, msg.sender);\n    }\n\n    function confirm(bytes32 txHash) external {\n        require(isOwner(msg.sender), \"not owner\");\n        _confirmations[txHash] += 1;\n        emit Confirmed(txHash, msg.sender);\n    }\n\n    function execute(address to, uint256 value, bytes32 payloadHash, uint256 nonce) external {\n        require(isOwner(msg.sender), \"not owner\");\n        bytes32 txHash = _hashTx(to, value, payloadHash, nonce);\n        require(_confirmations[txHash] >= _threshold, \"not confirmed\");\n        require(value <= address(this).balance, \"insufficient\");\n        _confirmations[txHash] = 0;\n        (bool ok, ) = to.call{value: value}(\"\");\n        require(ok, \"call failed\");\n        emit Executed(txHash, to, value);\n    }\n\n    function setThreshold(uint256 newThreshold) external {\n        require(isOwner(msg.sender), \"not owner\");\n        require(newThreshold > 0 && newThreshold <= 3, \"bad threshold\");\n        _threshold = newThreshold;\n        emit ThresholdChanged(newThreshold);\n    }\n\n    function deposit() external payable {\n        emit Deposited(msg.sender, msg.value);\n    }\n\n    receive() external payable {\n        emit Deposited(msg.sender, msg.value);\n    }\n\n    function _hashTx(address to, uint256 value, bytes32 payloadHash, uint256 nonce)\n        internal\n        pure\n        returns (bytes32)\n    {\n        return keccak256(abi.encodePacked(to, value, payloadHash, nonce));\n    }\n}"
+  }
+ },
+ "settings": {
+  "outputSelection": {
+   "*": {
+    "*": [
+     "abi",
+     "metadata",
+     "evm.bytecode.object",
+     "evm.deployedBytecode.object",
+     "evm.methodIdentifiers"
+    ]
+   }
+  },
+  "optimizer": {
+   "enabled": true,
+   "runs": 200
+  }
+ }
+}

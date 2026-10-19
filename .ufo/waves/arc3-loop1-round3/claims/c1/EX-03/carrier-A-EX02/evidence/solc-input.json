@@ -1,0 +1,27 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "carrierA.sol": {
+      "content": "// SPDX-License-Identifier: MIT\n// CarrierA — arc3-loop1-round3 c1/EX-02 (kaidoku-shokunin).\n// Role: optimizer-enabled (`--optimize --optimize-runs 200`) dispatch-shape\n// carrier for the inspect-evm-interface leg. Non-ERC-20 shape: payable receive\n// + payable fallback, mixed mutability (payable/nonpayable/view/pure),\n// custom-error revert paths (non-dispatch PUSH4 constants in code).\npragma solidity 0.8.37;\n\ncontract CarrierA {\n    address public owner;\n    uint256 public totalCredited;\n    mapping(address => uint256) private _creditOf;\n\n    event Credited(address indexed who, uint256 amount);\n    event Swept(address indexed to, uint256 amount);\n\n    error NotOwner();\n    error Insufficient(uint256 available, uint256 wanted);\n\n    constructor() payable {\n        owner = msg.sender;\n    }\n\n    receive() external payable {\n        _credit(msg.sender, msg.value);\n    }\n\n    fallback() external payable {\n        _credit(msg.sender, msg.value);\n    }\n\n    function deposit() external payable {\n        _credit(msg.sender, msg.value);\n    }\n\n    function withdraw(uint256 amount) external {\n        uint256 held = _creditOf[msg.sender];\n        if (amount > held) revert Insufficient(held, amount);\n        _creditOf[msg.sender] = held - amount;\n        totalCredited -= amount;\n        (bool ok, ) = msg.sender.call{value: amount}(\"\");\n        require(ok, \"CarrierA: send failed\");\n    }\n\n    function creditOf(address who) external view returns (uint256) {\n        return _creditOf[who];\n    }\n\n    function isSolvent() external view returns (bool) {\n        return address(this).balance >= totalCredited;\n    }\n\n    function sweep(address payable to) external returns (uint256 amount) {\n        if (msg.sender != owner) revert NotOwner();\n        amount = address(this).balance;\n        (bool ok, ) = to.call{value: amount}(\"\");\n        require(ok, \"CarrierA: send failed\");\n        emit Swept(to, amount);\n    }\n\n    function rotate(address next) external {\n        if (msg.sender != owner) revert NotOwner();\n        owner = next;\n    }\n\n    function stamp() external pure returns (bytes4) {\n        return 0xca11ab1e;\n    }\n\n    function _credit(address who, uint256 amount) private {\n        _creditOf[who] += amount;\n        totalCredited += amount;\n        emit Credited(who, amount);\n    }\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "metadata",
+          "evm.bytecode.object",
+          "evm.bytecode.sourceMap",
+          "evm.deployedBytecode.object",
+          "evm.deployedBytecode.sourceMap",
+          "evm.methodIdentifiers"
+        ]
+      }
+    }
+  }
+}

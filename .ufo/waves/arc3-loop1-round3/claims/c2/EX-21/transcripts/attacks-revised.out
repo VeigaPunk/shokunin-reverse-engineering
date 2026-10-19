@@ -1,0 +1,76 @@
+
+===== A1 same-content rewrite IN PLACE, mtime restored (round-1 attack 3, ctime pin) =====
+rewrote 20 bytes in place: inode 11342372->11342372 (same=True) mtime_ns 1700000000000000000->1700000000000000000 (restored=True) ctime_ns 1792415638061894512->1792415638103134527 (moved=True)
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex21r3/attacks/a1-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex21r3/attacks/victim.conf: REWRITE-DRIFT  compared=11/11 moved=ctime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+A1 exit=11
+
+===== A2 same-content rewrite via TEMP+RENAME (inode pin) =====
+inode after rename: 11342423
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex21r3/attacks/a2-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex21r3/attacks/victim.conf: REWRITE-DRIFT  compared=11/11 moved=inode
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+A2 exit=11
+
+===== A3 content drift (one byte appended) =====
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex21r3/attacks/a2-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex21r3/attacks/victim.conf: CONTENT-DRIFT  compared=11/11 moved=sha256
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=1  CONTENT-DRIFT=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+A3 exit=10
+
+===== A4 absent path =====
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex21r3/attacks/a2-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/ex21r3/attacks/victim.conf: ABSENT  compared=0/11 moved=exists
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: ABSENT  paths=1  ABSENT=1  exit=13
+CUSTODY_PAIR_VERIFY: ABSENT paths=0/1 drift=1 exit=13
+A4 exit=13
+
+===== A5 receipt mutation on a copy of the ROUND receipt (vacuous-comparator check) =====
+mutated first SHA256 16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4 -> 16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex21r3/attacks/a5-mutated.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: CONTENT-DRIFT  compared=11/11 moved=sha256
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 4/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=5  CONTENT-DRIFT=1 MATCH=4  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=4/5 drift=1 exit=10
+A5 exit=10
+
+===== A6 v1 sums receipt with one mutated digest (v1-compat vacuity check) =====
+v1 sums entry: a0e1fc68381048383d1b6148c85f0ec2c4f4f0560a254154c216f714bbcb4cc1 (mutated from a0e1fc68381048383d1b6148c85f0ec2c4f4f0560a254154c216f714bbcb4cc0)
+A format: sums-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/ex21r3/attacks/a6-sums.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /dev/shm/.a6-fixture: CONTENT-DRIFT  compared=1/11 moved=sha256
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=1  CONTENT-DRIFT=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+A6 exit=10
+
+ATTACK-HARNESS: done (fixtures: /var/tmp/ex21r3/attacks)

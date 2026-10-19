@@ -1,0 +1,28 @@
+PL-1 PLAN PRE-MEASUREMENT RE-DERIVATION — arc3-loop1-round3 c1/EX-03
+captured 2026-10-19T13:11:44Z–13:11:46Z (re-run), 13:12:xxZ verification
+
+source: .ufo/waves/arc3-loop1-round3/claims/c1/PL-1/evidence/OptVault.sol (staged by PL-1)
+  sha256 40af90c9f66288b33804f5e08397601db6518b9b293022e847641af8391a764d
+  byte-identical to PL-1 scratch /var/tmp/pl1-r3/src/OptVault.sol (cmp)
+
+Re-derivation (my own bytes, my own commands; plan numbers are targets, not copied):
+
+  plan §1.A  runtime 776 B sha256 544469b7…
+    mine: raw runtime 776 B sha256 544469b7bebfda4e5c9dedc7a11af69fc77d917f1d4258a53d1aa5ed95dfde7f  MATCH
+  plan §2.3  source key OptVault.sol -> creation 919fdef4…
+    mine: raw creation 821 B sha256 919fdef4672b40af385bf7b7bf240771558467733d8760aa783c321035f924da  MATCH
+  plan §3    runtime hex carrier "<name>.runtime.hex (hex text + trailing newline)"
+    mine: OptVault.runtime.hex 1553 B sha256 421401f330bf409ca7cd881cf0a26aeb06b99feabe6e6ba3503f2cac30226fcd,
+    byte-identical (cmp) to claims/c1/PL-1/evidence/OptVault.runtime.hex  MATCH
+  plan §4    anchor 5f3560e01c at offset 13; 60003560e01c absent
+    mine: 5f3560e01c @13 ✓, 60003560e01c ABSENT ✓
+  plan §5    Panic constant 4e487b71 at pc 659
+    mine: linear-sweep PUSH4 site pc 659, constant byte offset 660, in code region
+    (metadata starts at 723)  MATCH
+  plan §1.A  K=5 with the listed selectors; warning class "transfer deprecated"
+    mine: js-sha3 selectors vs solc evm.methodIdentifiers SET-EQUAL 5/5; the 16c38b3c /
+    2e1a7d4d / 5c975abb / 75807250 / d0e30db0 constants all present at dispatch sites
+    20/31/42/53/64; both compile legs emit exactly the one expected transfer warning.
+
+Identity discipline: every number above was produced by EX-03's own commands on EX-03's
+own pinned bytes (transcript-optvault.txt); none was copied from the plan text.

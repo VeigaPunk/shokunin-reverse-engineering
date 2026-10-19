@@ -1,0 +1,54 @@
+================================================================================
+ROUTE PARITY — standard-JSON (JS API) vs solcjs CLI, same optimizer settings
+Seat EX-05 (chain c1, arc3-loop1-round3), 2026-10-19
+================================================================================
+
+QUESTION
+  The freeze names the setting as the CLI spelling `--optimize --optimize-runs
+  200`. Two invocation routes were available: (A) the solc JS API with a
+  standard-JSON input whose `settings.optimizer = {enabled:true, runs:200}`
+  (the route that produced the r1 pinned carriers), and (B) the `solcjs` CLI
+  with the literal flags. Route A is the artifact of record; this file records
+  the parity measurement between A and B so the round's pins are unambiguous.
+
+COMMANDS
+  A: node claims/c1/EX-05/compile.js --solc=<prefix>/node_modules/solc \
+       --src=claims/c1/EX-05/src/CarrierB.sol --out=claims/c1/EX-05/out \
+       --contract=CarrierB --optimize-runs=200
+  B: TMPDIR=/var/tmp/ex05-c1 <prefix>/node_modules/.bin/solcjs --bin --abi \
+       --optimize --optimize-runs 200 --output-dir claims/c1/EX-05/out-cli \
+       claims/c1/EX-05/src/CarrierB.sol
+
+MEASURED
+  A creation hex : 3120 chars = 1560 bytes, sha256 6794c3a2…e6fdc0
+  B creation hex : 3120 chars = 1560 bytes, sha256 ebb9121d…a72ab
+  A runtime      : 1469 bytes, sha256 b9c70178…bd7940   (out/CarrierB.runtime.hex)
+  A creation embeds the runtime verbatim at byte 91 (char offset 182).
+
+  Byte-level reconciliation of the two creation blobs:
+    - first differing hex char at offset 3036 (0-based) = byte 1518;
+    - 30 differing bytes, all within [1427, 1457] — i.e. inside the last 51
+      bytes, which are the CBOR metadata tail (0xa2 0x64 "ipfs" 0x58 0x22 …
+      + "solc" + 0x000825 0x0033);
+    - code region [0, 1418) is byte-identical between A and B.
+
+  Cause of the tail delta (diagnosed, not guessed): the CBOR carries the IPFS
+  CID = multihash over the metadata JSON, and the metadata JSON's `sources`
+  key is the source *unit name*. Route B was invoked with the path
+  `claims/c1/EX-05/src/CarrierB.sol` (unit name = path as passed; solcjs's
+  output filenames show the mangled path), route A with unit name
+  `CarrierB.sol`. Feed the JS API the CLI's unit name and the CLI's exact
+  bytes are reproduced:
+
+    node compile.js --source-name='<the same relative path>' … 
+    -> creation 1560 B sha256 ebb9121d32f74f01ceacbea68f7212c0001015eebe6d80a37e95d748422a72ab
+       == route B byte-for-byte (evidence: claims/c1/EX-05/parity-probe/)
+
+VERDICT
+  ROUTE PARITY HOLDS FOR CODE: identical optimizer settings produce identical
+  runtime bytes for the same source unit name; the only A/B difference is the
+  metadata CID, fully explained by the source-unit-name spelling and reproduced
+  by controlled experiment. The pins of record are route A's, with the unit
+  name `CarrierB.sol` stated in out/CarrierB.report.json and out/solc-input.json
+  (both carry the exact input JSON this seat compiled).
+================================================================================

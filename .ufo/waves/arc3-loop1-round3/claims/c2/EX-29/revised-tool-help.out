@@ -1,0 +1,35 @@
+usage: custody-pair.py [-h] {capture,verify,selftest,paths} ...
+
+v2 custody receipt instrument (capture/verify/selftest) for the 5 frozen
+paths.
+
+positional arguments:
+  {capture,verify,selftest,paths}
+    capture             write a v2 receipt (read-only over the paths)
+    verify              compare two receipts, or a receipt against the live
+                        filesystem
+    selftest            fixture-based selftest (never touches a custody path)
+    paths               print the 5 canonical custody paths
+
+options:
+  -h, --help            show this help message and exit
+usage: custody-pair.py verify [-h] [--live] [--require-paths N]
+                              receipt_a [receipt_b]
+
+positional arguments:
+  receipt_a          reference receipt
+  receipt_b          candidate receipt
+
+options:
+  -h, --help         show this help message and exit
+  --live             compare receipt_a against the live filesystem
+  --require-paths N  exit 2 (USAGE) when the reference carries fewer than N
+                     paths (D3 coverage gate)
+usage: custody-pair.py capture [-h] --out OUT [--label LABEL]
+                               [--paths [PATHS ...]]
+
+options:
+  -h, --help           show this help message and exit
+  --out OUT            receipt path, or '-' for stdout
+  --label LABEL        capture label recorded in the header
+  --paths [PATHS ...]  override paths (default: the 5 custody paths)

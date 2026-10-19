@@ -1,0 +1,219 @@
+=== POST tool sha (copied): 7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09 ===
+sha256sum: rev-7cd19c3c.py: No such file or directory
+=== source tool sha:  ===
+=== J0: selftest (cases expected >=17, CLEAN, exit 0) ===
+A (reference): /var/tmp/vz2/after/st/custody-pair-selftest-6txqgjxr/single-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/vz2/after/st/custody-pair-selftest-6txqgjxr/single.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+case capture-ok-exit-0                          PASS
+case receipt-shape-v2-fields                    PASS
+case sidecar-self-hash                          PASS
+case verify-receipt-vs-live-clean               PASS
+case same-content-rewrite-inplace-ctime-pin     PASS
+case same-content-rewrite-rename-inode-pin      PASS
+case content-drift-detected                     PASS
+case absent-path-detected                       PASS
+case metadata-drift-detected                    PASS
+case label-utc-render-tz-independent            PASS
+case v1-stanza-compat-and-mutation              PASS
+case sums-v1-compat                             PASS
+case pipe-v1-compat                             PASS
+case unparsable-receipt-usage-exit              PASS
+case refuses-to-write-over-custody-path         PASS
+case unreadable-path-is-unevaluable             PASS
+case unevaluable-never-matches                  PASS
+case parsed-unevaluable-reference-never-matches PASS
+case partial-reference-require-paths-gate       PASS
+case refuses-to-write-over-scoped-path          PASS
+case selftest-missing-scratch-usage-exit        PASS
+case refuses-write-through-hardlink-alias       PASS
+scratch: /var/tmp/vz2/after/st/custody-pair-selftest-6txqgjxr
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+J0 exit=0
+=== J1a: capture over lstat-EACCES path (declared class? receipt kept?) ===
+RECEIPT: r1.txt  sha256=0f8d04897b4e3045666f6d175fae724da0d7079ede520679f476862c877d25e6
+SIDECAR: r1.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=(none) exit=14
+J1a capture exit=14
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: '/var/tmp/vz2/after/fx/d_noexec/secret.conf'
+=== J1b: verify that receipt --live (must NOT be MATCH) ===
+A format: v2   B format: live
+PATH /var/tmp/vz2/after/fx/d_noexec/secret.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+J1b verify exit=14
+--- J1c: receipt-vs-receipt on two EACCES captures (fail-closed pair mode) ---
+A format: v2   B format: v2
+PATH /var/tmp/vz2/after/fx/d_noexec/secret.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+J1c pair exit=14
+=== J2a: capture over exists-but-unreadable file (no traceback) ===
+RECEIPT: r2.txt  sha256=ced1a39addf4ef935920c887e35b116f1cc53a7fda5ef25ce1bfb1d47d26f98d
+SIDECAR: r2.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=1/1 label=(none) exit=14
+J2a capture exit=14
+EXISTS: yes
+READ-ERROR: [Errno 13] Permission denied: '/var/tmp/vz2/after/fx/unreadable.conf'
+=== J2b: verify --live against unreadable candidate (no traceback) ===
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): r3.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/vz2/after/fx/readable.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+J2b verify exit=14
+=== J3: partial-coverage verify (1-of-5) with/without --require-paths 5 ===
+PATH /var/tmp/vz2/after/fx/cov1.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+J3-plain exit=0
+USAGE: reference covers 1 of the required 5 paths
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+J3-req5 exit=2
+PATH /var/tmp/vz2/after/fx/cov1.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+J3-req1 exit=0
+=== J4: write-guard scope ===
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/vz2/after/fx/scoped.conf
+J4a exit=2
+scoped.conf sha before=009d341148a56c55e01c6eb727898172c439a20ee3ad3822aa26456f3874b515 after=009d341148a56c55e01c6eb727898172c439a20ee3ad3822aa26456f3874b515 (equal => refused)
+--- J4b: --out is a non-first element of --paths ---
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/vz2/after/fx/second.conf
+J4b exit=2
+second.conf sha before=83321491aec4bbf08e06e7bb792209f57747825be952d0cf5518d695d0aadd2c after=83321491aec4bbf08e06e7bb792209f57747825be952d0cf5518d695d0aadd2c (equal => refused)
+--- J4c: canonical path still guarded ---
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /home/vgpnk/.bashrc
+J4c exit=2
+--- J4d: symlink alias to a scoped path as --out ---
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/vz2/after/fx/alias.conf
+J4d exit=2
+scoped.conf via alias sha before=009d341148a56c55e01c6eb727898172c439a20ee3ad3822aa26456f3874b515 after=009d341148a56c55e01c6eb727898172c439a20ee3ad3822aa26456f3874b515 (equal => refused)
+--- J4e: hardlink alias to a scoped path as --out ---
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/vz2/after/fx/hardlink.conf
+J4e exit=2
+scoped.conf via hardlink sha before=009d341148a56c55e01c6eb727898172c439a20ee3ad3822aa26456f3874b515 after=009d341148a56c55e01c6eb727898172c439a20ee3ad3822aa26456f3874b515 (equal => refused)
+=== J5: selftest --scratch <missing dir> (declared USAGE, no traceback) ===
+USAGE: scratch base is not a directory: /var/tmp/vz2/after/no-such-dir
+J5 exit=2
+=== J4f (debt probe): sidecar-derived path clobber ===
+SIDECAR: /var/tmp/vz2/after/fx/vic.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+J4f exit=0
+vic.sha256 sha before=864e6fffb10f9aba6d6c73a547dd5781d2c0d66323e50eb28bb47ab1f71901f0 after=a13fdc2856e9b505f0bfe65b548a5c9ec8132e23bfe2c36afd7ec72ee509597c (equal => protected)
+=== J4g (debt probe): --out whose parent is a regular file ===
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 1011, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+NotADirectoryError: [Errno 20] Not a directory: '/var/tmp/vz2/after/fx/plainfile/sub'
+J4g exit=1
+=== J2c (debt probe): blocked-side alias (inode arm vs UNEVALUABLE) ===
+RECEIPT: /var/tmp/vz2/after/fx/bside-hardlink.conf  sha256=6d6d9557225cb940b3aec3065e0f890a2f95e88ca96d0eb4148cab9902d475b0
+SIDECAR: /var/tmp/vz2/after/fx/bside-hardlink.conf.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=(none) exit=14
+J2c exit=14
+alias sha before=ac376d471654bb28b2c7c699531b4c2133baae9441ce95efe2806dd8135b820d after=6d6d9557225cb940b3aec3065e0f890a2f95e88ca96d0eb4148cab9902d475b0 (equal => protected)
+=== J6: live pair (read-only capture of the 5 custody paths) ===
+SIDECAR: /var/tmp/vz2/after/live-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=5/5 label=VZ-2 post-harness pre exit=0
+J6-pre exit=0
+SIDECAR: /var/tmp/vz2/after/live-post.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=5/5 label=VZ-2 post-harness post exit=0
+J6-post exit=0
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+J6-verify exit=0
+--- receipts self-pin the revised tool sha? ---
+# tool: custody-pair.py  sha256 7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+# tool: custody-pair.py  sha256 7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+=== J7: v1 receipts remain sha256-verifiable ===
+    LABEL-DEFECT: MTIME_UTC says '2026-10-15 03:12:07' = localtime(epoch 1792044727); gmtime(epoch) is '2026-10-15 06:12:07'
+SHA256-CONTRACT: 4/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=5  CONTENT-DRIFT=1 METADATA-DRIFT=4  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/5 drift=5 exit=10
+J7-stanza exit=10
+PATH /home/vgpnk/.profile: MATCH-V1-PARTIAL  compared=1/11
+SHA256-CONTRACT: 4/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=5  CONTENT-DRIFT=1 MATCH-V1-PARTIAL=4  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=4/5 drift=1 exit=10
+J7-sums exit=10
+=== J8: declared map in docstring of the revised tool ===
+     path is refused through the inode arm. Scope statement: this remains a
+     self-harm guard, not a security boundary (an actor able to create the
+     alias can already write the file; TOCTOU is inherent and out of scope).
+  6. SCRATCH GUARD (round-2 debt D6). `selftest --scratch <dir>` on a
+     missing or unusable directory is a declared USAGE exit 2 (with a message),
+     not a raw `FileNotFoundError` traceback at exit 1.
+
+atime is deliberately NOT captured: reading a file (including this instrument's
+own sha256 pass on a relatime mount) can move atime, so an atime field would make
+the instrument non-idempotent over its own use.
+
+RECEIPT FORMAT (v2), one stanza per path:
+
+    # receipt-version: 2
+    ...
+    PATH: /home/vgpnk/.bashrc
+    EXISTS: yes
+    TYPE: file
+    SIZE: 3601
+    SHA256: <64 hex>
+    MTIME_EPOCH: 1792168396
+    MTIME_NS: 1792168396272618342
+    MTIME_UTC_RENDER: 2026-10-16T16:33:16Z
+    MTIME_LOCAL_RENDER: 2026-10-16T13:33:16-03:00
+    CTIME_EPOCH: 1792168396
+    CTIME_NS: 1792168396272618342
+    CTIME_UTC_RENDER: 2026-10-16T16:33:16Z
+    CTIME_LOCAL_RENDER: 2026-10-16T13:33:16-03:00
+    INODE: 25991953
+    MODE: 644
+    UID: 1000
+    GID: 1000
+
+An unevaluable stanza carries `READ-ERROR: <errno message>` (exists but
+unreadable) or `STAT-ERROR: <errno message>` (lstat failed) and omits SHA256.
+
+EXIT CODES (declared; verify -> worst finding wins):
+
+    0   MATCH             every compared path agrees on every comparable field
+    10  CONTENT-DRIFT     sha256 differs on >=1 path
+    11  REWRITE-DRIFT     sha256 equal but inode/ctime/mtime moved on >=1 path
+                          (the same-content-rewrite class, round-1 attack 3)
+    12  METADATA-DRIFT    sha256 + identification times equal but mode/uid/gid/
+                          size/type differ, or the candidate side carries a path
+                          the reference does not (EXTRA-PATH), or a receipt's own
+                          epoch/render pair is inconsistent, or a v1 label defect
+                          is reproduced (LABEL-DEFECT)
+    13  ABSENT            >=1 reference path missing on the candidate side
+    14  UNEVALUABLE       a path exists but could not be evaluated (EACCES on
+                          open, or a stat error other than ENOENT); the receipt
+                          is still written, carrying STAT-ERROR/READ-ERROR
+    2   USAGE             bad arguments, unreadable/unparsable receipt, refused
+                          or failed write, insufficient reference coverage under
+                          --require-paths, unusable selftest scratch dir
+    3   SELFTEST-FAIL     a selftest case failed
+
+    capture exits 0 when every requested path is present (5/5 for the default
+    set), 14 when >=1 path is present-but-unevaluable, else 13 when >=1
+    requested path is absent; the receipt is still written.
+
+SEVERITY PRECEDENCE (verify): CONTENT-DRIFT > UNEVALUABLE > ABSENT >
+REWRITE-DRIFT > METADATA-DRIFT > MATCH.
+
+v1 COMPATIBILITY. Three v1 receipt shapes are parsed and compared on the fields
+they actually carry (sha256 is the contract):
+    stanza-v1  `PATH:/EXISTS:/SIZE:/MTIME_UTC:/MODE: .. UID: .. GID:/SHA256:`

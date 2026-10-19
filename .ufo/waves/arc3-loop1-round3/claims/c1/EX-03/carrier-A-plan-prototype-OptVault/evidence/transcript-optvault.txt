@@ -1,0 +1,79 @@
+== host ==
+captured-at 2026-10-19T13:11:44Z
+Linux 7.2.3-arch1-3 x86_64
+v26.12.0
+== source (carrier A := PL-1 plan §1.A OptVault) ==
+40af90c9f66288b33804f5e08397601db6518b9b293022e847641af8391a764d  /var/tmp/ex03-r3/ov-a/OptVault.sol
+921
+== compiler ==
+0.8.37+commit.f401782d.Emscripten.clang
+== leg 1 (PRIMARY): literal flags form ==
+cmd: node <prefix>/node_modules/.bin/solcjs --bin --abi --optimize --optimize-runs 200 -o /var/tmp/ex03-r3/ov-cli-out OptVault.sol   (cwd=/var/tmp/ex03-r3/ov-a, TMPDIR=/var/tmp/ex03-r3/tmp)
+leg1 exit=0
+--- leg1 stdout (verbatim) ---
+Warning: 'transfer' is deprecated and scheduled for removal. Use 'call{value: <amount>}("")' instead.
+  --> OptVault.sol:22:9:
+   |
+22 |         payable(msg.sender).transfer(amount);
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+--- leg1 stderr (verbatim) ---
+total 12
+drwxr-xr-x 1 vgpnk vgpnk  140 Oct 19 10:11 .
+drwxr-xr-x 1 vgpnk vgpnk  836 Oct 19 10:11 ..
+-rw-r--r-- 1 vgpnk vgpnk  929 Oct 19 10:11 OptVault_sol_OptVault.abi
+-rw-r--r-- 1 vgpnk vgpnk 1642 Oct 19 10:11 OptVault_sol_OptVault.bin
+-rw-r--r-- 1 vgpnk vgpnk    0 Oct 19 10:11 stderr.txt
+-rw-r--r-- 1 vgpnk vgpnk  227 Oct 19 10:11 stdout.txt
+a05e0b6ba06db830f58ee8c2591995667f43c74f19b7a38b88c340b724522ef3  /var/tmp/ex03-r3/ov-cli-out/OptVault_sol_OptVault.abi
+2eefda8c2723b320937ede30de04d85e020f33159b6aa07d6af503867f47e571  /var/tmp/ex03-r3/ov-cli-out/OptVault_sol_OptVault.bin
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  /var/tmp/ex03-r3/ov-cli-out/stderr.txt
+431467f287b7cea2344df128a747349c1c2f9db1640a718ce5a3a1274f77537b  /var/tmp/ex03-r3/ov-cli-out/stdout.txt
+== leg 1 rerun (determinism) ==
+RERUN: creation bin byte-identical
+RERUN: abi byte-identical
+== leg 2 (SUPPLEMENTARY): standard JSON, source key OptVault.sol, optimizer on runs=200 ==
+SOLC-WARNING: Warning: 'transfer' is deprecated and scheduled for removal. Use 'call{value: <amount>}("")' instead.
+  --> OptVault.sol:22:9:
+   |
+22 |         payable(msg.sender).transfer(amount);
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+contract OptVault
+source key OptVault.sol
+optimizer ON runs=200
+solc 0.8.37+commit.f401782d.Emscripten.clang
+diagnostics 1
+runtime bytes 776
+creation bytes 821
+runtime head 32B 608060405260043610610049575f3560e01c806316c38b3c1461004b5780632e
+
+leg2 exit=0
+total 32
+drwxr-xr-x 1 vgpnk vgpnk  304 Oct 19 10:11 .
+drwxr-xr-x 1 vgpnk vgpnk  864 Oct 19 10:11 ..
+-rw-r--r-- 1 vgpnk vgpnk  241 Oct 19 10:11 diagnostics.txt
+-rw-r--r-- 1 vgpnk vgpnk 1465 Oct 19 10:11 OptVault.abi.json
+-rw-r--r-- 1 vgpnk vgpnk 1643 Oct 19 10:11 OptVault.creation.hex
+-rw-r--r-- 1 vgpnk vgpnk 1591 Oct 19 10:11 OptVault.metadata.json
+-rw-r--r-- 1 vgpnk vgpnk  159 Oct 19 10:11 OptVault.methodIdentifiers.json
+-rw-r--r-- 1 vgpnk vgpnk 1553 Oct 19 10:11 OptVault.runtime.hex
+-rw-r--r-- 1 vgpnk vgpnk 1450 Oct 19 10:11 solc-input.json
+-rw-r--r-- 1 vgpnk vgpnk  242 Oct 19 10:11 summary.txt
+== leg 2 rerun (determinism) ==
+leg2 rerun OptVault.runtime.hex byte-identical
+leg2 rerun OptVault.creation.hex byte-identical
+leg2 rerun OptVault.abi.json byte-identical
+leg2 rerun OptVault.methodIdentifiers.json byte-identical
+leg2 rerun OptVault.metadata.json byte-identical
+== equivalence anchor: CLI creation == stdjson creation ==
+ON: CLI creation == stdjson creation (hex text)
+== re-derivation vs PL-1 pre-measurement (plan §1.A / §2) ==
+runtime.hex IDENTICAL to PL-1 pre-measured
+421401f330bf409ca7cd881cf0a26aeb06b99feabe6e6ba3503f2cac30226fcd  /var/tmp/ex03-r3/ov-stdjson-out/OptVault.runtime.hex
+421401f330bf409ca7cd881cf0a26aeb06b99feabe6e6ba3503f2cac30226fcd  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c1/PL-1/evidence/OptVault.runtime.hex
+creation hex len (chars) = 1642
+== done ==
+finished-at 2026-10-19T13:11:46Z

@@ -1,0 +1,26 @@
+# RV-5 independent mutation matrix — tool sha256 under test:
+# 7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py
+M1-unevaluable-branch            DIRTY  exit=3 failed_cases=['unreadable-path-is-unevaluable', 'unevaluable-never-matches', 'parsed-unevaluable-reference-never-matches']
+      expected-failing=['unreadable-path-is-unevaluable', 'unevaluable-never-matches', 'parsed-unevaluable-reference-never-matches']  not-fired=[]
+M1b-parser-error-keys            DIRTY  exit=3 failed_cases=['parsed-unevaluable-reference-never-matches']
+      expected-failing=['parsed-unevaluable-reference-never-matches']  not-fired=[]
+M2-guard-scope-both-arms         DIRTY  exit=3 failed_cases=['refuses-to-write-over-scoped-path', 'refuses-write-through-hardlink-alias']
+      expected-failing=['refuses-to-write-over-scoped-path', 'refuses-write-through-hardlink-alias']  not-fired=[]
+M2b-guard-inode-arm-only         DIRTY  exit=3 failed_cases=['refuses-write-through-hardlink-alias']
+      expected-failing=['refuses-write-through-hardlink-alias']  not-fired=[]
+M3-scratch-isdir-line-only       CLEAN  exit=0 failed_cases=[]
+      expected-failing=['selftest-missing-scratch-usage-exit']  not-fired=['selftest-missing-scratch-usage-exit']
+M3b-scratch-both-layers          DIRTY  exit=3 failed_cases=['selftest-missing-scratch-usage-exit']
+      expected-failing=['selftest-missing-scratch-usage-exit']  not-fired=[]
+M4-require-paths                 DIRTY  exit=3 failed_cases=['partial-reference-require-paths-gate']
+      expected-failing=['partial-reference-require-paths-gate']  not-fired=[]
+
+== S3 diagnosis: single-line is_dir revert, per-arm stderr ==
+  arm=missing  rc=2 traceback=False stderr1=USAGE: cannot create a fixture root under /var/tmp/rv5-late/mut-scratch/diag/does-not-exist ([Errno 2] No such file or directory: '/var/tmp/rv5-late/mut-scratch/diag/does-not-exist/custody-pair-selftest-27fg49ws')
+  arm=file     rc=2 traceback=False stderr1=USAGE: cannot create a fixture root under /var/tmp/rv5-late/mut-scratch/diag/a-file ([Errno 20] Not a directory: '/var/tmp/rv5-late/mut-scratch/diag/a-file/custody-pair-selftest-16j41sqq')
+  arm=tmp      rc=2 traceback=False stderr1=USAGE: /tmp is excluded scratch (EDQUOT hazard)
+
+== landed tool, same three arms (for the message contrast) ==
+  arm=missing  rc=2 traceback=False stderr1=USAGE: scratch base is not a directory: /var/tmp/rv5-late/mut-scratch/diag/does-not-exist
+  arm=file     rc=2 traceback=False stderr1=USAGE: scratch base is not a directory: /var/tmp/rv5-late/mut-scratch/diag/a-file
+  arm=tmp      rc=2 traceback=False stderr1=USAGE: /tmp is excluded scratch (EDQUOT hazard)

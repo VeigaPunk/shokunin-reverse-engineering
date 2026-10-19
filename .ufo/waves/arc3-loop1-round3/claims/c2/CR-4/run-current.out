@@ -1,0 +1,155 @@
+== CR-4 write-guard attack battery ==
+variant: CURRENT (112d01dc committed)
+tool tested: /dev/shm/cr4-arc3-r3/committed-112d01dc.py
+tool sha256: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+sandbox: /dev/shm/cr4-battery-oYN23d (HOME=/dev/shm/cr4-battery-oYN23d/home)
+python: Python 3.14.7
+
+--- T0-scoped-as-out ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/scope/guarded.conf --paths /dev/shm/cr4-battery-oYN23d/scope/guarded.conf
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/scope/guarded.conf
+victim sha256 before=8042e32ddb58243a696f37920068e7fa84987807edce055063560037010d5c5a after=0b4456855685897ac817b427ea1ff307ea9bd96295f776be188ac4dfc8031b0e
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/scope/guarded.conf  sha256=0b4456855685897ac817b427ea1ff307ea9bd96295f776be188ac4dfc8031b0e|SIDECAR: /dev/shm/cr4-battery-oYN23d/scope/guarded.conf.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T1-hardlink-alias-scoped ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/scope/hl-alias.out --paths /dev/shm/cr4-battery-oYN23d/scope/hl.conf
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/scope/hl.conf
+victim sha256 before=b32f658e473a2258373fcbe04bf4aac4651d233f62d1af876f364c936971f290 after=2c9bf4ecbbe50f9d33da0e27afe4e0a5eac40dca2b6dc7a9f9233815f2532c7e
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/scope/hl-alias.out  sha256=2c9bf4ecbbe50f9d33da0e27afe4e0a5eac40dca2b6dc7a9f9233815f2532c7e|SIDECAR: /dev/shm/cr4-battery-oYN23d/scope/hl-alias.out.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T2-symlink-alias-scoped ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/scope/sl-alias.out --paths /dev/shm/cr4-battery-oYN23d/scope/sl.conf
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/scope/sl.conf
+victim sha256 before=674c79e2615366c642ebc1f9932cbc563d795a7c9038049581d6b5ad3a399afe after=4628e6702417281e29064d4a23e98768440c7f7181d88032ba801983f2639b78
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/scope/sl-alias.out  sha256=4628e6702417281e29064d4a23e98768440c7f7181d88032ba801983f2639b78|SIDECAR: /dev/shm/cr4-battery-oYN23d/scope/sl-alias.out.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T3-relative-args-both-sides ---
+cmd: (cd scope) capture --out ./rel.conf --paths rel.conf
+exit=0  victim sha256 after=4b2261a8c9daf17611d15e0d10df3f3c346c85d9d1076cd0e83365d601bba4c8 (pre-computed before=see script order)
+tool stderr: 
+verdict: ALLOWED(exit 0)
+ / victim-CLOBBERED
+
+--- T4-proc-self-fd-alias ---
+cmd: capture --out /proc/self/fd/9 --paths /dev/shm/cr4-battery-oYN23d/scope/fd.conf
+exit=2  victim=/dev/shm/cr4-battery-oYN23d/scope/fd.conf
+victim sha256 before=ac9ef2fcd0b37c77a7cfdb7b80cc0fbde7ea990bfd2e4dc55bde079a319693cc after=8bfaa026f16386122600a65516a9b15da8b081c4c58ac2233a48ac7e63d287ff
+tool stdout: 
+tool stderr: USAGE: write failed ([Errno 2] No such file or directory: '/proc/self/fd/9.sha256'): /proc/self/fd/9|
+verdict: REFUSED / victim-CLOBBERED
+
+--- T5-proc-self-root-alias ---
+cmd: capture --out /proc/self/root/dev/shm/cr4-battery-oYN23d/scope/root.conf --paths /dev/shm/cr4-battery-oYN23d/scope/root.conf
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/scope/root.conf
+victim sha256 before=f575e3ceb38cd2b97554cfb50ccd562202c673e31838c11ef0f173e6547b94e4 after=ac8ecc2c93d1cad3749057908f82093646bc2f1c15cd422b9aa869677fddb171
+tool stdout: RECEIPT: /proc/self/root/dev/shm/cr4-battery-oYN23d/scope/root.conf  sha256=ac8ecc2c93d1cad3749057908f82093646bc2f1c15cd422b9aa869677fddb171|SIDECAR: /proc/self/root/dev/shm/cr4-battery-oYN23d/scope/root.conf.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T6-out-symlink-loop ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/scope/loop-a --paths /dev/shm/cr4-battery-oYN23d/scope/loop.conf
+exit=2  victim=/dev/shm/cr4-battery-oYN23d/scope/loop.conf
+victim sha256 before=8e9f2c06e743f44050674ca4bc5ab7a9cc48f6b7cbad14d33c2659613db0150f after=8e9f2c06e743f44050674ca4bc5ab7a9cc48f6b7cbad14d33c2659613db0150f
+tool stdout: 
+tool stderr: USAGE: write failed ([Errno 40] Too many levels of symbolic links: '/dev/shm/cr4-battery-oYN23d/scope/loop-a'): /dev/shm/cr4-battery-oYN23d/scope/loop-a|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T7-sidecar-clobber ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/scope/vic --paths /dev/shm/cr4-battery-oYN23d/scope/vic.sha256
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/scope/vic.sha256
+victim sha256 before=8fd5e9e17fdc1e8c533753a0838d3a0d710e574d17b4922ca370b203c3ca7a3c after=e271d38375d23f220bce7b1d935e9e756cfc3bf269ff99ddfba81610b0b6dc77
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/scope/vic  sha256=a104ac5138bdd18e96546b48274e3c020627140de6eea12d5e280d8c1186ec09|SIDECAR: /dev/shm/cr4-battery-oYN23d/scope/vic.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T8-dangling-symlink-to-nowhere? (target exists) ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/scope/dang-link --paths /dev/shm/cr4-battery-oYN23d/scope/dang.conf
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/scope/dang.conf
+victim sha256 before=18e9b3f8cc9e23a9c8dc79677cb2a5c12a4343a03a9ac2aaef3efccd87a95727 after=afd26731fc9042252eae7f4bffdb22d7e0f0e4540bf2b1386e800abaa20344d2
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/scope/dang-link  sha256=afd26731fc9042252eae7f4bffdb22d7e0f0e4540bf2b1386e800abaa20344d2|SIDECAR: /dev/shm/cr4-battery-oYN23d/scope/dang-link.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T9-canonical5-hardlink ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/bashrc-alias.out --paths /dev/shm/cr4-battery-oYN23d/home/.bashrc /dev/shm/cr4-battery-oYN23d/home/.profile
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/home/.bashrc
+victim sha256 before=f43e66721d6a3f40f0f6000e62e577f91a25cba7dea98de8487ec0c4122c3558 after=3fea449b1dfdf560d645aa28842a3bb63b1e6b62be8fc10146f29697bf93d66f
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/bashrc-alias.out  sha256=3fea449b1dfdf560d645aa28842a3bb63b1e6b62be8fc10146f29697bf93d66f|SIDECAR: /dev/shm/cr4-battery-oYN23d/bashrc-alias.out.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T10-canonical5-symlink ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/profile-alias.out --paths /dev/shm/cr4-battery-oYN23d/home/.bashrc /dev/shm/cr4-battery-oYN23d/home/.profile
+exit=2  victim=/dev/shm/cr4-battery-oYN23d/home/.profile
+victim sha256 before=8d7bbe67372f3d4c411a1294c49bafbb122ae102287960a0a9c2d77c5731589b after=8d7bbe67372f3d4c411a1294c49bafbb122ae102287960a0a9c2d77c5731589b
+tool stdout: 
+tool stderr: USAGE: refusing to write a receipt over a custody path: /dev/shm/cr4-battery-oYN23d/profile-alias.out|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T11-symlinked-parent-dir ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/scope/../scopedir-link/dir.conf --paths /dev/shm/cr4-battery-oYN23d/scope/dir.conf
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/scope/dir.conf
+victim sha256 before=46141195aa10a395055d4f9cd17d0fe4087af7240bfceed12cec858cec1d6aa2 after=4d2c4a4cdbcb0709a0c96c731fa5f2707968b0aa44bf289cec3bc906aee39ae8
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/scope/../scopedir-link/dir.conf  sha256=4d2c4a4cdbcb0709a0c96c731fa5f2707968b0aa44bf289cec3bc906aee39ae8|SIDECAR: /dev/shm/cr4-battery-oYN23d/scope/../scopedir-link/dir.conf.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T12-tilde-spelling ---
+cmd: capture --out ~/twelve.conf --paths ~/twelve.conf
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/home/twelve.conf
+victim sha256 before=a5dee087dee8e024280eae44a37a65f1cb835cfe0e443699af356ad024013251 after=2c31b9a4094148fdc584a174c426ad512df783ecc8c5d63400302ffb52ad7baf
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/home/twelve.conf  sha256=2c31b9a4094148fdc584a174c426ad512df783ecc8c5d63400302ffb52ad7baf|SIDECAR: /dev/shm/cr4-battery-oYN23d/home/twelve.conf.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T13-must-allow-fresh-out ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/scope/new-receipt.txt --paths /dev/shm/cr4-battery-oYN23d/scope/normal.conf
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/scope/normal.conf
+victim sha256 before=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5 after=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/scope/new-receipt.txt  sha256=b1f0727f665a137797b65189d4daa136644dda0d3a5e4e48f4478591a7f9ccef|SIDECAR: /dev/shm/cr4-battery-oYN23d/scope/new-receipt.txt.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-UNCHANGED
+receipt written: yes
+
+--- T14-must-allow-missing-scoped ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/scope/new-receipt2.txt --paths /dev/shm/cr4-battery-oYN23d/scope/does-not-exist.conf
+exit=13  victim=/dev/shm/cr4-battery-oYN23d/scope/normal.conf
+victim sha256 before=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5 after=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/scope/new-receipt2.txt  sha256=70a322c7032ed619da81820c97a65c6a90d77294e776929c49983658549b4cbb|SIDECAR: /dev/shm/cr4-battery-oYN23d/scope/new-receipt2.txt.sha256|
+tool stderr: 
+verdict: OTHER-EXIT / victim-UNCHANGED
+receipt written: yes
+
+--- T15-must-allow-plain ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/plain-receipt.txt --paths /dev/shm/cr4-battery-oYN23d/scope/normal.conf
+exit=0  victim=/dev/shm/cr4-battery-oYN23d/scope/normal.conf
+victim sha256 before=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5 after=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oYN23d/plain-receipt.txt  sha256=5dd0e37a93594f4e29f9597c3b0ad1eef0ea8e995be85026fcdba95aae5c3289|SIDECAR: /dev/shm/cr4-battery-oYN23d/plain-receipt.txt.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-UNCHANGED
+receipt written: yes
+
+--- T16-out-parent-is-file ---
+cmd: capture --out /dev/shm/cr4-battery-oYN23d/scope/normal.conf/sub/receipt.txt --paths /dev/shm/cr4-battery-oYN23d/scope/normal.conf
+exit=1  victim=/dev/shm/cr4-battery-oYN23d/scope/normal.conf
+victim sha256 before=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5 after=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5
+tool stdout: 
+tool stderr: Traceback (most recent call last):|  File "/dev/shm/cr4-arc3-r3/committed-112d01dc.py", line 889, in <module>|    sys.exit(main())|
+verdict: OTHER-EXIT / victim-UNCHANGED
+
+--- T17-empty-out ---
+cmd: capture --out  --paths /dev/shm/cr4-battery-oYN23d/scope/normal.conf
+exit=2  victim=/dev/shm/cr4-battery-oYN23d/scope/normal.conf
+victim sha256 before=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5 after=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5
+tool stdout: 
+tool stderr: USAGE: write failed ([Errno 21] Is a directory: '.'): .|
+verdict: REFUSED / victim-UNCHANGED
+
+== battery done (variant CURRENT (112d01dc committed)) ==
+sandbox kept for inspection: /dev/shm/cr4-battery-oYN23d

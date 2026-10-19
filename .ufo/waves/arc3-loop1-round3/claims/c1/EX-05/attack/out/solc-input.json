@@ -1,0 +1,25 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "CarrierBErr.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity =0.8.37;\n\n// CarrierBErr — ATTACK variant of CarrierB (seat EX-05, chain c1).\n// Not carrier B; a falsification carrier for the same probe.\n// Delta vs CarrierB.sol, exactly two things:\n//   1. two custom errors are declared and used -> their 4-byte selectors are\n//      emitted as code constants in the optimized runtime, so a naive\n//      \"PUSH4 sweep\" extractor should report them as functions (false\n//      positives). The planted function set stays K = 8;\n//   2. no `receive()` — only a payable `fallback()` -> the CALLDATASIZE==0\n//      branch shape differs from CarrierB's (prologue delta leg).\n\nerror NotOwner(address caller);\nerror Underfunded(uint256 want, uint256 have);\n\nlibrary LedgerErr {\n    function minus(uint256 a, uint256 b) internal pure returns (uint256) {\n        if (a < b) revert Underfunded(a, b);\n        unchecked {\n            return a - b;\n        }\n    }\n\n    function plus(uint256 a, uint256 b) internal pure returns (uint256) {\n        unchecked {\n            return a + b;\n        }\n    }\n}\n\ncontract CarrierBErr {\n    using LedgerErr for uint256;\n\n    address public owner;\n    uint256 public tally;\n    mapping(address => uint256) public credit;\n    bytes32 private _tag;\n\n    event Funded(address indexed who, uint256 amount);\n    event Swept(address indexed to, uint256 amount);\n    event Noted(bytes32 indexed key, uint256 value);\n    event FellBack(address indexed who, uint256 value, bytes data);\n\n    constructor(bytes32 tag_) payable {\n        owner = msg.sender;\n        _tag = tag_;\n    }\n\n    fallback() external payable {\n        emit FellBack(msg.sender, msg.value, msg.data);\n    }\n\n    function tag() external view returns (bytes32) {\n        return _tag;\n    }\n\n    function rate(uint256 units) external pure returns (uint256) {\n        unchecked {\n            return units * 3;\n        }\n    }\n\n    function fund(uint256 amount) external payable {\n        credit[msg.sender] = credit[msg.sender].plus(amount);\n        tally = tally.plus(amount);\n        emit Funded(msg.sender, amount);\n    }\n\n    function sweep(address to, uint256 amount) external {\n        if (msg.sender != owner) revert NotOwner(msg.sender);\n        credit[msg.sender] = credit[msg.sender].minus(amount);\n        (bool ok, ) = payable(to).call{value: amount}(\"\");\n        require(ok, \"CarrierBErr: send failed\");\n        tally = tally.minus(amount);\n        emit Swept(to, amount);\n    }\n\n    function note(bytes32 key, uint256 value) external {\n        emit Noted(key, value);\n    }\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "metadata",
+          "evm.bytecode.object",
+          "evm.deployedBytecode.object",
+          "evm.deployedBytecode.immutableReferences"
+        ]
+      }
+    }
+  }
+}

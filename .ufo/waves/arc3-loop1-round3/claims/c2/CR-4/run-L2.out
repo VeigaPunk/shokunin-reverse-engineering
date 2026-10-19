@@ -1,0 +1,155 @@
+== CR-4 write-guard attack battery ==
+variant: L2 (half-fix trap)
+tool tested: /dev/shm/cr4-arc3-r3/variants/tool-L2.py
+tool sha256: e03ff55625988c74e6a69b5aaa8ce2d94bf319ffb3a6d8dcae25a19dd1df804e
+sandbox: /dev/shm/cr4-battery-oa5PE5 (HOME=/dev/shm/cr4-battery-oa5PE5/home)
+python: Python 3.14.7
+
+--- T0-scoped-as-out ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/scope/guarded.conf --paths /dev/shm/cr4-battery-oa5PE5/scope/guarded.conf
+exit=2  victim=/dev/shm/cr4-battery-oa5PE5/scope/guarded.conf
+victim sha256 before=8042e32ddb58243a696f37920068e7fa84987807edce055063560037010d5c5a after=8042e32ddb58243a696f37920068e7fa84987807edce055063560037010d5c5a
+tool stdout: 
+tool stderr: USAGE: refusing to write a receipt over a custody path: /dev/shm/cr4-battery-oa5PE5/scope/guarded.conf|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T1-hardlink-alias-scoped ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/scope/hl-alias.out --paths /dev/shm/cr4-battery-oa5PE5/scope/hl.conf
+exit=0  victim=/dev/shm/cr4-battery-oa5PE5/scope/hl.conf
+victim sha256 before=b32f658e473a2258373fcbe04bf4aac4651d233f62d1af876f364c936971f290 after=24eeaaa28146d6f0534c5c0dc2d9dd72261b61180808f2e83a1c2824145ce121
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oa5PE5/scope/hl-alias.out  sha256=24eeaaa28146d6f0534c5c0dc2d9dd72261b61180808f2e83a1c2824145ce121|SIDECAR: /dev/shm/cr4-battery-oa5PE5/scope/hl-alias.out.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T2-symlink-alias-scoped ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/scope/sl-alias.out --paths /dev/shm/cr4-battery-oa5PE5/scope/sl.conf
+exit=2  victim=/dev/shm/cr4-battery-oa5PE5/scope/sl.conf
+victim sha256 before=674c79e2615366c642ebc1f9932cbc563d795a7c9038049581d6b5ad3a399afe after=674c79e2615366c642ebc1f9932cbc563d795a7c9038049581d6b5ad3a399afe
+tool stdout: 
+tool stderr: USAGE: refusing to write a receipt over a custody path: /dev/shm/cr4-battery-oa5PE5/scope/sl-alias.out|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T3-relative-args-both-sides ---
+cmd: (cd scope) capture --out ./rel.conf --paths rel.conf
+exit=0  victim sha256 after=ded22011bf671e7f9c6ab8066a76937bcddbdb1679d2316a4d88fb2645605767 (pre-computed before=see script order)
+tool stderr: 
+verdict: ALLOWED(exit 0)
+ / victim-CLOBBERED
+
+--- T4-proc-self-fd-alias ---
+cmd: capture --out /proc/self/fd/9 --paths /dev/shm/cr4-battery-oa5PE5/scope/fd.conf
+exit=2  victim=/dev/shm/cr4-battery-oa5PE5/scope/fd.conf
+victim sha256 before=ac9ef2fcd0b37c77a7cfdb7b80cc0fbde7ea990bfd2e4dc55bde079a319693cc after=ac9ef2fcd0b37c77a7cfdb7b80cc0fbde7ea990bfd2e4dc55bde079a319693cc
+tool stdout: 
+tool stderr: USAGE: refusing to write a receipt over a custody path: /proc/self/fd/9|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T5-proc-self-root-alias ---
+cmd: capture --out /proc/self/root/dev/shm/cr4-battery-oa5PE5/scope/root.conf --paths /dev/shm/cr4-battery-oa5PE5/scope/root.conf
+exit=2  victim=/dev/shm/cr4-battery-oa5PE5/scope/root.conf
+victim sha256 before=f575e3ceb38cd2b97554cfb50ccd562202c673e31838c11ef0f173e6547b94e4 after=f575e3ceb38cd2b97554cfb50ccd562202c673e31838c11ef0f173e6547b94e4
+tool stdout: 
+tool stderr: USAGE: refusing to write a receipt over a custody path: /proc/self/root/dev/shm/cr4-battery-oa5PE5/scope/root.conf|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T6-out-symlink-loop ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/scope/loop-a --paths /dev/shm/cr4-battery-oa5PE5/scope/loop.conf
+exit=2  victim=/dev/shm/cr4-battery-oa5PE5/scope/loop.conf
+victim sha256 before=8e9f2c06e743f44050674ca4bc5ab7a9cc48f6b7cbad14d33c2659613db0150f after=8e9f2c06e743f44050674ca4bc5ab7a9cc48f6b7cbad14d33c2659613db0150f
+tool stdout: 
+tool stderr: USAGE: write failed ([Errno 40] Too many levels of symbolic links: '/dev/shm/cr4-battery-oa5PE5/scope/loop-a'): /dev/shm/cr4-battery-oa5PE5/scope/loop-a|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T7-sidecar-clobber ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/scope/vic --paths /dev/shm/cr4-battery-oa5PE5/scope/vic.sha256
+exit=0  victim=/dev/shm/cr4-battery-oa5PE5/scope/vic.sha256
+victim sha256 before=8fd5e9e17fdc1e8c533753a0838d3a0d710e574d17b4922ca370b203c3ca7a3c after=09b56774fe837f7bc956f461ce1390a56c0aba554c8ed7c9abbecee7c9c6c701
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oa5PE5/scope/vic  sha256=2a42912442fd2da93227a8b370058e48af0cc9e668ae39564f5cbba3d596bde6|SIDECAR: /dev/shm/cr4-battery-oa5PE5/scope/vic.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T8-dangling-symlink-to-nowhere? (target exists) ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/scope/dang-link --paths /dev/shm/cr4-battery-oa5PE5/scope/dang.conf
+exit=2  victim=/dev/shm/cr4-battery-oa5PE5/scope/dang.conf
+victim sha256 before=18e9b3f8cc9e23a9c8dc79677cb2a5c12a4343a03a9ac2aaef3efccd87a95727 after=18e9b3f8cc9e23a9c8dc79677cb2a5c12a4343a03a9ac2aaef3efccd87a95727
+tool stdout: 
+tool stderr: USAGE: refusing to write a receipt over a custody path: /dev/shm/cr4-battery-oa5PE5/scope/dang-link|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T9-canonical5-hardlink ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/bashrc-alias.out --paths /dev/shm/cr4-battery-oa5PE5/home/.bashrc /dev/shm/cr4-battery-oa5PE5/home/.profile
+exit=0  victim=/dev/shm/cr4-battery-oa5PE5/home/.bashrc
+victim sha256 before=f43e66721d6a3f40f0f6000e62e577f91a25cba7dea98de8487ec0c4122c3558 after=d6380ba21cf4351611fbf3f36397c38801c71755c8b3ee6d5ab096a097f01dde
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oa5PE5/bashrc-alias.out  sha256=d6380ba21cf4351611fbf3f36397c38801c71755c8b3ee6d5ab096a097f01dde|SIDECAR: /dev/shm/cr4-battery-oa5PE5/bashrc-alias.out.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-CLOBBERED
+
+--- T10-canonical5-symlink ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/profile-alias.out --paths /dev/shm/cr4-battery-oa5PE5/home/.bashrc /dev/shm/cr4-battery-oa5PE5/home/.profile
+exit=2  victim=/dev/shm/cr4-battery-oa5PE5/home/.profile
+victim sha256 before=8d7bbe67372f3d4c411a1294c49bafbb122ae102287960a0a9c2d77c5731589b after=8d7bbe67372f3d4c411a1294c49bafbb122ae102287960a0a9c2d77c5731589b
+tool stdout: 
+tool stderr: USAGE: refusing to write a receipt over a custody path: /dev/shm/cr4-battery-oa5PE5/profile-alias.out|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T11-symlinked-parent-dir ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/scope/../scopedir-link/dir.conf --paths /dev/shm/cr4-battery-oa5PE5/scope/dir.conf
+exit=2  victim=/dev/shm/cr4-battery-oa5PE5/scope/dir.conf
+victim sha256 before=46141195aa10a395055d4f9cd17d0fe4087af7240bfceed12cec858cec1d6aa2 after=46141195aa10a395055d4f9cd17d0fe4087af7240bfceed12cec858cec1d6aa2
+tool stdout: 
+tool stderr: USAGE: refusing to write a receipt over a custody path: /dev/shm/cr4-battery-oa5PE5/scope/../scopedir-link/dir.conf|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T12-tilde-spelling ---
+cmd: capture --out ~/twelve.conf --paths ~/twelve.conf
+exit=2  victim=/dev/shm/cr4-battery-oa5PE5/home/twelve.conf
+victim sha256 before=a5dee087dee8e024280eae44a37a65f1cb835cfe0e443699af356ad024013251 after=a5dee087dee8e024280eae44a37a65f1cb835cfe0e443699af356ad024013251
+tool stdout: 
+tool stderr: USAGE: refusing to write a receipt over a custody path: /dev/shm/cr4-battery-oa5PE5/home/twelve.conf|
+verdict: REFUSED / victim-UNCHANGED
+
+--- T13-must-allow-fresh-out ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/scope/new-receipt.txt --paths /dev/shm/cr4-battery-oa5PE5/scope/normal.conf
+exit=0  victim=/dev/shm/cr4-battery-oa5PE5/scope/normal.conf
+victim sha256 before=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5 after=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oa5PE5/scope/new-receipt.txt  sha256=edb10a7d24e2546a674a21863353cbe7346367a8c110a9abadbc9ee10a1e9f35|SIDECAR: /dev/shm/cr4-battery-oa5PE5/scope/new-receipt.txt.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-UNCHANGED
+receipt written: yes
+
+--- T14-must-allow-missing-scoped ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/scope/new-receipt2.txt --paths /dev/shm/cr4-battery-oa5PE5/scope/does-not-exist.conf
+exit=13  victim=/dev/shm/cr4-battery-oa5PE5/scope/normal.conf
+victim sha256 before=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5 after=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oa5PE5/scope/new-receipt2.txt  sha256=fef8574adf6258e24a4a76f582c87fc4f1bc5bf2b4eb1fcb3b560f58b1355d67|SIDECAR: /dev/shm/cr4-battery-oa5PE5/scope/new-receipt2.txt.sha256|
+tool stderr: 
+verdict: OTHER-EXIT / victim-UNCHANGED
+receipt written: yes
+
+--- T15-must-allow-plain ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/plain-receipt.txt --paths /dev/shm/cr4-battery-oa5PE5/scope/normal.conf
+exit=0  victim=/dev/shm/cr4-battery-oa5PE5/scope/normal.conf
+victim sha256 before=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5 after=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5
+tool stdout: RECEIPT: /dev/shm/cr4-battery-oa5PE5/plain-receipt.txt  sha256=73aadab216ed299d721588ebeda699c084b1fb166ea1ce9eb8f8af24220b12de|SIDECAR: /dev/shm/cr4-battery-oa5PE5/plain-receipt.txt.sha256|
+tool stderr: 
+verdict: ALLOWED / victim-UNCHANGED
+receipt written: yes
+
+--- T16-out-parent-is-file ---
+cmd: capture --out /dev/shm/cr4-battery-oa5PE5/scope/normal.conf/sub/receipt.txt --paths /dev/shm/cr4-battery-oa5PE5/scope/normal.conf
+exit=1  victim=/dev/shm/cr4-battery-oa5PE5/scope/normal.conf
+victim sha256 before=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5 after=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5
+tool stdout: 
+tool stderr: Traceback (most recent call last):|  File "/dev/shm/cr4-arc3-r3/variants/tool-L2.py", line 889, in <module>|    sys.exit(main())|
+verdict: OTHER-EXIT / victim-UNCHANGED
+
+--- T17-empty-out ---
+cmd: capture --out  --paths /dev/shm/cr4-battery-oa5PE5/scope/normal.conf
+exit=2  victim=/dev/shm/cr4-battery-oa5PE5/scope/normal.conf
+victim sha256 before=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5 after=3f671ecfcf97666d4cbf2116214ca13e1d9e5d30643a59ed8c60966f63c900f5
+tool stdout: 
+tool stderr: USAGE: write failed ([Errno 21] Is a directory: '.'): .|
+verdict: REFUSED / victim-UNCHANGED
+
+== battery done (variant L2 (half-fix trap)) ==
+sandbox kept for inspection: /dev/shm/cr4-battery-oa5PE5

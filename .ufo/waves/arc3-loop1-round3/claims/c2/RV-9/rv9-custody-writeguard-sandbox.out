@@ -1,0 +1,25 @@
+########## ATTACK: custody-path write-guard under a sandboxed HOME (HOME=/var/tmp/rv9-scratch/homesb)
+--- capture --out <sandbox .bashrc> (a CUSTODY path by name, resolved under sandbox HOME)
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv9-scratch/homesb/.bashrc
+rc=2
+--- sandbox .bashrc after attempt: [custody-like content]
+--- capture --out <sandbox .profile> (other custody path)
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv9-scratch/homesb/.profile
+rc=2
+--- sandbox .profile after attempt: [x]
+
+--- control: capture --out <non-custody scratch file> must succeed
+SIDECAR: /var/tmp/rv9-scratch/homesb/free.txt.sha256
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=2/5 label=(none) exit=13
+rc=13
+--- free.txt head: # custody-pair receipt v2 — READ-ONLY capture (sha256 + stat); no bytes written
+
+########## ATTACK: is the guard name-based or inode-based? (scoped-path arm)
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv9-scratch/homesb/b.txt
+rc=2 (hardlink alias of a scoped path)
+a.txt content: [alpha]
+
+########## ATTACK: receipt written into the 5 custody paths' own directory via --out ~/.bashrc literal
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /home/vgpnk/.bashrc
+rc=2 (LIVE custody path; expect refusal)
+--- live ~/.bashrc untouched? sha256: 7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598 (expect 7d2ca28a…)

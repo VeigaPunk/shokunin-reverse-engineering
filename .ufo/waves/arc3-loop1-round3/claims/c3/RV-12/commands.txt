@@ -1,0 +1,15 @@
+# RV-12 harness — all scratch under /var/tmp (never /tmp), real target never written.
+# 1. battery on one table: history replay + churn + honest-edit scenarios + renames
+python3 /var/tmp/rv12/rv12-fragility.py --table <TABLE> --out /var/tmp/rv12/<P>-fragility.json
+python3 /var/tmp/rv12/rv12-churn.py     --table <TABLE> --out /var/tmp/rv12/<P>-churn.json
+python3 /var/tmp/rv12/rv12-simrepo.py   <TABLE>      # S0/S1/S2/S3/S6 -> scenarios.json
+python3 /var/tmp/rv12/rv12-rename.py    <TABLE>      # S4/S5 -> rename-scenarios.json
+python3 /var/tmp/rv12/rv12-rate.py      <P> <OUT.md> # rating table
+# or: bash /var/tmp/rv12/rv12-run-all.sh <TABLE> <P>
+# 2. tables measured
+#    before : git show HEAD:.ufo/gates/citation-drift/pointer-table.json  (31 entries)
+#    after  : .ufo/gates/citation-drift/pointer-table.json               (57 entries)
+# 3. verification of the landed instrument
+TMPDIR=/var/tmp/rv12/tmp python3 .ufo/gates/citation-drift/citation-drift-probe.py --root . --rev HEAD --strict
+TMPDIR=/var/tmp/rv12/tmp python3 .ufo/gates/citation-drift/citation-drift-probe.py --root . --rev HEAD
+TMPDIR=/var/tmp/rv12/tmp python3 .ufo/gates/citation-drift/citation-drift-probe.py --selftest

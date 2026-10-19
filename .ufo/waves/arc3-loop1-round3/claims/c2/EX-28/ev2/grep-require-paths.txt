@@ -1,0 +1,16 @@
+== declared-but-unwired probe: grep require.paths ==
+46:  4. REFERENCE COVERAGE (round-2 debt D3). `verify --require-paths N` exits 2
+108:                          --require-paths, unusable selftest scratch dir
+592:    """--require-paths gate (round-2 debt D3): does the reference account for
+677:    require = getattr(args, "require_paths", None)
+680:            print("USAGE: --require-paths must be >= 0 (got %d)" % require, file=sys.stderr)
+1006:    # 17. reference coverage: a 1-path reference cannot pass --require-paths 5 (D3)
+1007:    def case_require_paths():
+1016:        rc_gate = _run_verify([str(rec), "--live"], out_gate, require_paths=5)
+1017:        assert rc_gate == EXIT_USAGE, "expected USAGE exit 2 under --require-paths 5, got %d" % rc_gate
+1022:        rc_pass = _run_verify([str(rec), "--live"], out_pass, require_paths=1)
+1023:        assert rc_pass == EXIT_MATCH, "expected MATCH under --require-paths 1, got %d" % rc_pass
+1024:    run_case(cases, "require-paths-blocks-partial-reference", case_require_paths)
+1052:def _run_verify(argv, out_path: Path, require_paths=None) -> int:
+1057:                            require_paths=require_paths)
+1091:    p_ver.add_argument("--require-paths", type=int, default=None, metavar="N",

@@ -1,0 +1,25 @@
+EXIT CODES (declared; verify -> worst finding wins):
+
+    0   MATCH             every compared path agrees on every comparable field
+    10  CONTENT-DRIFT     sha256 differs on >=1 path
+    11  REWRITE-DRIFT     sha256 equal but inode/ctime/mtime moved on >=1 path
+                          (the same-content-rewrite class, round-1 attack 3)
+    12  METADATA-DRIFT    sha256 + identification times equal but mode/uid/gid/
+                          size/type differ, or the candidate side carries a path
+                          the reference does not (EXTRA-PATH), or a receipt's own
+                          epoch/render pair is inconsistent, or a v1 label defect
+                          is reproduced (LABEL-DEFECT)
+    13  ABSENT            >=1 reference path missing on the candidate side
+    14  UNEVALUABLE       a path exists but could not be evaluated (EACCES on
+                          open, or a stat error other than ENOENT); the receipt
+                          is still written, carrying STAT-ERROR/READ-ERROR
+    2   USAGE             bad arguments, unreadable/unparsable receipt, refused
+                          or failed write, insufficient reference coverage under
+                          --require-paths, unusable selftest scratch dir
+    3   SELFTEST-FAIL     a selftest case failed
+
+    capture exits 0 when every requested path is present (5/5 for the default
+    set), 14 when >=1 path is present-but-unevaluable, else 13 when >=1
+    requested path is absent; the receipt is still written.
+
+SEVERITY PRECEDENCE (verify): CONTENT-DRIFT > UNEVALUABLE > ABSENT >

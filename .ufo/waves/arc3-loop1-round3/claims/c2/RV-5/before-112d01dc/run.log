@@ -1,0 +1,260 @@
+tool=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py
+112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py
+tag=before-112d01dc date=2026-10-19T10:07:30-03:00
+### D2a-capture
+$ capture --out /var/tmp/rv5/scratch/before-112d01dc/d2a-cap.txt --paths /var/tmp/rv5/scratch/before-112d01dc/eacces-dir/inner.conf --label d2a
+RECEIPT: /var/tmp/rv5/scratch/before-112d01dc/d2a-cap.txt  sha256=808795dd9f85f9440e8d2887c06e7d8cad3f12f393ff372d31471b1947027929
+SIDECAR: /var/tmp/rv5/scratch/before-112d01dc/d2a-cap.txt.sha256
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=d2a exit=13
+exit=13
+---
+### D2a-verify-live
+$ verify /var/tmp/rv5/scratch/before-112d01dc/d2a-cap.txt --live
+A format: v1-stanza   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/d2a-cap.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/eacces-dir/inner.conf: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+exit=0
+---
+### D2a-verify-two-receipts
+$ verify /var/tmp/rv5/scratch/before-112d01dc/d2a-cap.txt /var/tmp/rv5/scratch/before-112d01dc/d2a-cap.txt
+A format: v1-stanza   B format: v1-stanza
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/d2a-cap.txt  stanzas=1
+B (candidate): /var/tmp/rv5/scratch/before-112d01dc/d2a-cap.txt  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/eacces-dir/inner.conf: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+exit=0
+---
+### D2b-capture
+$ capture --out /var/tmp/rv5/scratch/before-112d01dc/d2b-cap.txt --paths /var/tmp/rv5/scratch/before-112d01dc/unreadable.conf --label d2b
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 553, in cmd_capture
+    sections = [capture_path(p) for p in paths]
+                ~~~~~~~~~~~~^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/rv5/scratch/before-112d01dc/unreadable.conf'
+exit=1
+---
+### D2b-verify-live
+$ verify /var/tmp/rv5/scratch/before-112d01dc/d2b-cap.txt --live
+USAGE: [Errno 2] No such file or directory: '/var/tmp/rv5/scratch/before-112d01dc/d2b-cap.txt'
+exit=2
+---
+### D2c-capture
+$ capture --out /var/tmp/rv5/scratch/before-112d01dc/d2c-cap.txt --paths /var/tmp/rv5/scratch/before-112d01dc/toggle.conf --label d2c
+RECEIPT: /var/tmp/rv5/scratch/before-112d01dc/d2c-cap.txt  sha256=6650aa0e522e71dc41aef7f42d8e9eb59079f9f6ccedc9b00baff621243b1b3f
+SIDECAR: /var/tmp/rv5/scratch/before-112d01dc/d2c-cap.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=d2c exit=0
+exit=0
+---
+### D2c-verify-live
+$ verify /var/tmp/rv5/scratch/before-112d01dc/d2c-cap.txt --live
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 593, in cmd_verify
+    b_sections = [capture_path(Path(s["path"]).expanduser()) for s in a_sections]
+                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/rv5/scratch/before-112d01dc/toggle.conf'
+exit=1
+---
+### D3-capture-1of5
+$ capture --out /var/tmp/rv5/scratch/before-112d01dc/d3-one.txt --paths /var/tmp/rv5/scratch/before-112d01dc/control.conf --label d3
+RECEIPT: /var/tmp/rv5/scratch/before-112d01dc/d3-one.txt  sha256=724ebd78128bc9e98cfab343edf1363f6af57aee25876f29d61bfb4e2981792c
+SIDECAR: /var/tmp/rv5/scratch/before-112d01dc/d3-one.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=d3 exit=0
+exit=0
+---
+### D3-verify-live
+$ verify /var/tmp/rv5/scratch/before-112d01dc/d3-one.txt --live
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/d3-one.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/control.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+exit=0
+---
+### D3-verify-require5
+$ verify /var/tmp/rv5/scratch/before-112d01dc/d3-one.txt --live --require-paths 5
+usage: custody-pair.py [-h] {capture,verify,selftest,paths} ...
+custody-pair.py: error: unrecognized arguments: --require-paths
+exit=2
+---
+dc2c2470ba52e855fcaffe9f46d6c8b5e8ecd86558ed8119ece1459dbf714fda  /var/tmp/rv5/scratch/before-112d01dc/self.conf
+### guard-scope
+$ capture --out /var/tmp/rv5/scratch/before-112d01dc/self.conf --paths /var/tmp/rv5/scratch/before-112d01dc/self.conf --label guard
+RECEIPT: /var/tmp/rv5/scratch/before-112d01dc/self.conf  sha256=d3b00ae3de40016a0028358bea9a7c214c91f5a751dfd81af870c1009a53aa94
+SIDECAR: /var/tmp/rv5/scratch/before-112d01dc/self.conf.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=guard exit=0
+exit=0
+---
+d3b00ae3de40016a0028358bea9a7c214c91f5a751dfd81af870c1009a53aa94  /var/tmp/rv5/scratch/before-112d01dc/self.conf
+# custody-pair receipt v2 — READ-ONLY capture (sha256 + stat); no bytes written
+# receipt-version: 2
+# tool: custody-pair.py  sha256 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+=== run.log ends ===
+### D6-selftest-missing-scratch
+$ selftest --scratch /var/tmp/rv5/scratch/before-112d01dc/does-not-exist
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py", line 630, in cmd_selftest
+    root = Path(tempfile.mkdtemp(prefix="custody-pair-selftest-", dir=str(base)))
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/var/tmp/rv5/scratch/before-112d01dc/does-not-exist/custody-pair-selftest-0anxdzqs'
+exit=1
+---
+### D6-selftest-existing-scratch
+$ selftest --scratch /var/tmp/rv5/scratch/before-112d01dc
+USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/junk.txt
+USAGE: refusing to write a receipt over a custody path: /home/vgpnk/.bashrc
+RECEIPT: /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/pre.txt  sha256=965085960c25c87bdc28dc6883d3c85c8f77821d2877420569ccfba93e20a550
+SIDECAR: /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/fixture.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/fixture.conf: REWRITE-DRIFT  compared=11/11 moved=ctime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/fixture.conf: REWRITE-DRIFT  compared=11/11 moved=inode
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/fixture.conf: CONTENT-DRIFT  compared=11/11 moved=sha256
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=1  CONTENT-DRIFT=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+RECEIPT: /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/gone-pre.txt  sha256=b2adec3af6030df358372beae7b875f8fd2b9bc3e4218cb4a6937dd9d2d6aaf2
+SIDECAR: /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/gone-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/gone-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/fixture-gone.conf: ABSENT  compared=0/11 moved=exists
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: ABSENT  paths=1  ABSENT=1  exit=13
+CUSTODY_PAIR_VERIFY: ABSENT paths=0/1 drift=1 exit=13
+RECEIPT: /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/mode-pre.txt  sha256=0f6e91c11bfc887a5cd71af6ae8b10f8143c7f91b5c1b84db00904ad36be3898
+SIDECAR: /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/mode-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=selftest exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/mode-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/fixture-mode.conf: METADATA-DRIFT  compared=11/11 moved=mode,ctime_ns
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=1  METADATA-DRIFT=1  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/1 drift=1 exit=12
+A format: v1-stanza   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/v1-stanza.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/fixture-label.conf: METADATA-DRIFT  compared=5/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=1  METADATA-DRIFT=1  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/1 drift=1 exit=12
+A format: v1-stanza   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/v1-stanza-mutated.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/fixture-label.conf: CONTENT-DRIFT  compared=5/11 moved=sha256
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+SHA256-CONTRACT: 0/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=1  CONTENT-DRIFT=1  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/1 drift=1 exit=10
+A format: sums-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/v1-sums.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/fixture-label.conf: MATCH-V1-PARTIAL  compared=1/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+A format: pipe-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/v1-pipe.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm/fixture-label.conf: METADATA-DRIFT  compared=3/11
+    LABEL-DEFECT: MTIME_UTC says '2026-10-14 17:53:20' = localtime(epoch 1792011200); gmtime(epoch) is '2026-10-14 20:53:20'
+    LABEL-DEFECT: CTIME_UTC says '2026-10-19 10:07:31' = localtime(epoch 1792415251); gmtime(epoch) is '2026-10-19 13:07:31'
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: METADATA-DRIFT  paths=1  METADATA-DRIFT=1  exit=12
+CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/1 drift=1 exit=12
+case capture-ok-exit-0                          PASS
+case receipt-shape-v2-fields                    PASS
+case sidecar-self-hash                          PASS
+case verify-receipt-vs-live-clean               PASS
+case same-content-rewrite-inplace-ctime-pin     PASS
+case same-content-rewrite-rename-inode-pin      PASS
+case content-drift-detected                     PASS
+case absent-path-detected                       PASS
+case metadata-drift-detected                    PASS
+case label-utc-render-tz-independent            PASS
+case v1-stanza-compat-and-mutation              PASS
+case sums-v1-compat                             PASS
+case pipe-v1-compat                             PASS
+case unparsable-receipt-usage-exit              PASS
+case refuses-to-write-over-custody-path         PASS
+scratch: /var/tmp/rv5/scratch/before-112d01dc/custody-pair-selftest-wf5vyqqm
+CUSTODY_PAIR_SELFTEST: CLEAN cases=15 passed=15 failed=0 exit=0
+exit=0
+---

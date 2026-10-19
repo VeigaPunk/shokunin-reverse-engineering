@@ -1,0 +1,37 @@
+# RV-1 LATE-JOIN — pre-probe ordering, re-derived from SURVIVING scratch
+# (the landed planted files carry copy mtimes and cannot prove ordering;
+#  these are the original write mtimes on disk, all UTC)
+#
+# EX-02 (carrierA) — /var/tmp/ex02-r3
+13:07:33.595Z  /var/tmp/ex02-r3/src/carrierA.sol
+13:07:37.649Z  /var/tmp/ex02-r3/out/carrierA.runtime.hex
+13:07:37.649Z  /var/tmp/ex02-r3/out/carrierA.abi.json
+13:07:41.918Z  /var/tmp/ex02-r3/out/planted-A.txt      <-- planted recorded
+13:08:09.377Z  /var/tmp/ex02-r3/out/probe-carrierA-hex-6.4.0.json  <-- first probe
+# planted precedes first probe by 27.459 s  (receipt §3 claims 28 s)
+#
+# EX-04 (carrierB/VaultB) — /dev/shm/ex04-r3
+13:07:13.082Z  /dev/shm/ex04-r3/out/carrierB.runtime-noopt.bin
+13:07:13.489Z  /dev/shm/ex04-r3/out/carrierB.abi-opt200.json
+13:07:18.366Z  /dev/shm/ex04-r3/out/planted-B-opt200.txt  <-- planted recorded
+13:07:18.402Z  /dev/shm/ex04-r3/out/planted-B-noopt.txt
+13:07:27.704Z  /dev/shm/ex04-r3/probe/probe-opt200-hex-6.4.0.json  <-- first probe
+# planted precedes first probe by 9.338 s   (seat report §1 claims 9.3 s)
+#
+# EX-10 (own K=13 carrier) — /var/tmp/ex10-r3
+13:07:04.887Z  /var/tmp/ex10-r3/planted-raw.txt
+13:07:24.642Z  /var/tmp/ex10-r3/planted-K.out        <-- planted recorded
+10:08:09.203Z  (local) = 13:08:09.203Z  EX-10/probe/probe-B-nopt-hex-6.4.0.err
+10:08:10.421Z  (local) = 13:08:10.421Z  EX-10/probe/probe-B-nopt-hex-6.4.0.json  <-- first probe
+# planted precedes first probe by 45.779 s   (recon-B.md §8 claims 13:07:04 -> 13:08:10)
+#
+# BYTE IDENTITY of scratch vs landed copies (re-derived, rule #14):
+88fa4393f64963ab9cb25dbda8f7b3db5933014dda29cdff94f091e8ef6197c4  /var/tmp/ex02-r3/out/planted-A.txt
+88fa4393f64963ab9cb25dbda8f7b3db5933014dda29cdff94f091e8ef6197c4  claims/c1/EX-02/planted-A.txt
+f32393c0269cf8fa297a219ffe4b60aa71998038c1e73a383da3b0b3af8c59aa  /dev/shm/ex04-r3/out/planted-B-opt200.txt
+f32393c0269cf8fa297a219ffe4b60aa71998038c1e73a383da3b0b3af8c59aa  /dev/shm/ex04-r3/out/planted-B-noopt.txt
+f32393c0269cf8fa297a219ffe4b60aa71998038c1e73a383da3b0b3af8c59aa  claims/c1/EX-04/planted-B.txt
+05b2cbb0c6fd97ae6463b0a4f1be56f217ea64cf4cbdbd2c36da94c0fe6eee41  /var/tmp/ex02-r3/src/carrierA.sol
+05b2cbb0c6fd97ae6463b0a4f1be56f217ea64cf4cbdbd2c36da94c0fe6eee41  claims/c1/EX-02/carrierA.sol
+14566042e4528cdcb35df2602385f51c1fa89f38c5f88fb0288cdf7260719648  /dev/shm/ex04-r3/carrierB.sol
+14566042e4528cdcb35df2602385f51c1fa89f38c5f88fb0288cdf7260719648  claims/c1/EX-04/carrierB.sol

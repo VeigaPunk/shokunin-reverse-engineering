@@ -1,0 +1,272 @@
+{
+  "tag": "snap2-7cd19c3c-M1-guard-revert",
+  "note": "revert spec M1-guard-revert",
+  "tool_src": "/dev/shm/rv7/tools/snap-7cd19c3c.py",
+  "tool_src_sha256": "7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09",
+  "utc": "2026-10-19T13:17:22Z",
+  "mutation": {
+    "mutant": "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/tool/custody-pair.py",
+    "note": "revert spec M1-guard-revert",
+    "applied": [
+      {
+        "old": "        guarded = [Path(p).expanduser() for p in CUSTODY_PATHS] + paths\n        if out.resolve() in {g.resolve() for g in guarded} or any(_same_file(out, g) for g in guarded):",
+        "new": "        if out.resolve() in {Path(p).expanduser().resolve() for p in CUSTODY_PATHS}:  # MUTATION: round-2 predicate restored",
+        "count": 1
+      }
+    ],
+    "diff": "--- hardened\n+++ mutant\n@@ -645,8 +645,7 @@\n     else:\n         out = Path(args.out).expanduser()\n         warn_if_tmp(out)\n-        guarded = [Path(p).expanduser() for p in CUSTODY_PATHS] + paths\n-        if out.resolve() in {g.resolve() for g in guarded} or any(_same_file(out, g) for g in guarded):\n+        if out.resolve() in {Path(p).expanduser().resolve() for p in CUSTODY_PATHS}:  # MUTATION: round-2 predicate restored\n             print(\"USAGE: refusing to write a receipt over a path it measures or a custody path\"\n                   \" (path or inode): %s\" % out, file=sys.stderr)\n             return EXIT_USAGE\n",
+    "mutant_sha256": "344c35b579dd85b5b8250aea785e7833811915ae02fada0d1c2590922c79a941",
+    "src_sha256": "7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09"
+  },
+  "selftest": {
+    "exit": 3,
+    "summary": "CUSTODY_PAIR_SELFTEST: DIRTY cases=22 passed=20 failed=2 exit=3",
+    "cases": 22,
+    "failed_cases": [
+      "case refuses-to-write-over-scoped-path          FAIL  (expected USAGE refusing --out over a measured path, got 0)",
+      "case refuses-write-through-hardlink-alias       FAIL  (expected USAGE for a hardlink alias, got 0)"
+    ],
+    "traceback": false,
+    "err_tail": "USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/selftest-scratch/custody-pair-selftest-jfk41kag/junk.txt"
+  },
+  "clobber": {
+    "scenario": "CL",
+    "tool": "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/tool/custody-pair.py",
+    "tool_sha256": "344c35b579dd85b5b8250aea785e7833811915ae02fada0d1c2590922c79a941",
+    "runs": {
+      "same_path": {
+        "target_pre_sha256": "3a7eb912c9b724950cfe280ebe14a6cd9a6649b6fe68a225a5503596d2ccaa91",
+        "target_post_sha256": "8100ca265f5fc8baf08b1fac5975a5775584561b126bc1fc8e8200ffeb608bc8",
+        "clobbered": true,
+        "content_is_receipt": true,
+        "exit": 0,
+        "out_tail": "RECEIPT: /dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/clobber/same_path/scoped.conf  sha256=8100ca265f5fc8baf08b1fac5975a5775584561b126bc1fc8e8200ffeb608bc8",
+        "err_tail": "",
+        "guard_class_seen": false,
+        "verdict": "CLOBBER"
+      },
+      "symlink_out": {
+        "target_pre_sha256": "3a7eb912c9b724950cfe280ebe14a6cd9a6649b6fe68a225a5503596d2ccaa91",
+        "target_post_sha256": "c22f0e577b1c9fca0f25ca6bd144ad41271dd135477a02cc556a6d6aa8bf0f42",
+        "clobbered": true,
+        "content_is_receipt": true,
+        "exit": 0,
+        "out_tail": "RECEIPT: /dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/clobber/symlink_out/via-link.txt  sha256=c22f0e577b1c9fca0f25ca6bd144ad41271dd135477a02cc556a6d6aa8bf0f42",
+        "err_tail": "",
+        "guard_class_seen": false,
+        "verdict": "CLOBBER",
+        "out_was_symlink": true
+      },
+      "relpath_abs": {
+        "target_pre_sha256": "3a7eb912c9b724950cfe280ebe14a6cd9a6649b6fe68a225a5503596d2ccaa91",
+        "target_post_sha256": "8626476d3742e2d24c86f78bf243a98ad527d3f662fc5c1ebba4b21d2dd654ad",
+        "clobbered": true,
+        "content_is_receipt": true,
+        "exit": 0,
+        "out_tail": "RECEIPT: /dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/clobber/relpath_abs/scoped.conf  sha256=8626476d3742e2d24c86f78bf243a98ad527d3f662fc5c1ebba4b21d2dd654ad",
+        "err_tail": "",
+        "guard_class_seen": false,
+        "verdict": "CLOBBER",
+        "paths_form": "./scoped.conf"
+      },
+      "sidecar_scope": {
+        "target_pre_sha256": "aed1662d2b64270c5a802daee319bf1aefbc995bfc7b819bb5ccbe6a581c50cb",
+        "target_post_sha256": "cc7e2a0a380e02277124de985a29ca21b040c49d586f08d4a6f7dfceb2f4298c",
+        "clobbered": true,
+        "content_is_receipt": false,
+        "exit": 0,
+        "out_tail": "RECEIPT: /dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/clobber/sidecar_scope/target  sha256=a7b3c4b1def7e873a97bf36ba450e8c1cc555646293cc77334f694aef6d0f3c2",
+        "err_tail": "",
+        "guard_class_seen": false,
+        "verdict": "MOVED-NOT-RECEIPT",
+        "receipt_written": true,
+        "sidecar_path": "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/clobber/sidecar_scope/target.sha256",
+        "sidecar_written_by_tool": true
+      },
+      "negative_control": {
+        "exit": 0,
+        "receipt_written": true,
+        "target_unmoved": true,
+        "ok": true
+      }
+    },
+    "verdict": "CLOBBER",
+    "adjacent": {
+      "symlink_out": "CLOBBER",
+      "relpath_abs": "CLOBBER",
+      "sidecar_scope": "MOVED-NOT-RECEIPT"
+    }
+  },
+  "partial": {
+    "scenario": "D3",
+    "tool": "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/tool/custody-pair.py",
+    "tool_sha256": "344c35b579dd85b5b8250aea785e7833811915ae02fada0d1c2590922c79a941",
+    "runs": {
+      "v2live_r1": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r1.txt",
+          "--live"
+        ],
+        "exit": 0,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: MATCH  paths=1  MATCH=1  exit=0",
+        "tail": "CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0"
+      },
+      "v2live_r1_flag5": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r1.txt",
+          "--live",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 2,
+        "coverage_class": "REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile",
+        "coverage_class_present": true,
+        "usage_line": "USAGE: reference covers 1 of the required 5 paths",
+        "verdict_line": "",
+        "tail": ""
+      },
+      "v2live_r5_flag5": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r5.txt",
+          "--live",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 0,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: MATCH  paths=5  MATCH=5  exit=0",
+        "tail": "CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0"
+      },
+      "default": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r1.txt",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r5.txt"
+        ],
+        "exit": 12,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: METADATA-DRIFT  paths=5  MATCH=1 METADATA-DRIFT=4  exit=12",
+        "tail": "CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=1/5 drift=4 exit=12"
+      },
+      "flag5": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r1.txt",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r5.txt",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 2,
+        "coverage_class": "REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile",
+        "coverage_class_present": true,
+        "usage_line": "USAGE: reference covers 1 of the required 5 paths",
+        "verdict_line": "",
+        "tail": ""
+      },
+      "flag1": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r1.txt",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r5.txt",
+          "--require-paths",
+          "1"
+        ],
+        "exit": 12,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: METADATA-DRIFT  paths=5  MATCH=1 METADATA-DRIFT=4  exit=12",
+        "tail": "CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=1/5 drift=4 exit=12"
+      },
+      "control_full": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r5.txt",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/partial/r5.txt",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 0,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: MATCH  paths=5  MATCH=5  exit=0",
+        "tail": "CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0"
+      },
+      "v1fixture_default": {
+        "argv": [
+          "verify",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-35/fixtures/v1-partial-1of5.txt",
+          "--live"
+        ],
+        "exit": 0,
+        "coverage_class": "",
+        "coverage_class_present": false,
+        "usage_line": "",
+        "verdict_line": "VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0",
+        "tail": "CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0"
+      },
+      "v1fixture_flag5": {
+        "argv": [
+          "verify",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-35/fixtures/v1-partial-1of5.txt",
+          "--live",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 2,
+        "coverage_class": "REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile",
+        "coverage_class_present": true,
+        "usage_line": "USAGE: reference covers 1 of the required 5 paths",
+        "verdict_line": "",
+        "tail": ""
+      }
+    },
+    "verdict": "REFUSED-DEFAULT"
+  },
+  "coverage_subversion": {
+    "scenario": "D3sub",
+    "tool_sha256": "344c35b579dd85b5b8250aea785e7833811915ae02fada0d1c2590922c79a941",
+    "dup_capture_exit": 0,
+    "dup_stanzas": 5,
+    "runs": {
+      "dup5_default": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/coverage-subversion/dup5.txt",
+          "--live"
+        ],
+        "exit": 0,
+        "coverage_line": "",
+        "coverage_class_present": false,
+        "verdict_line": "VERDICT: MATCH  paths=1  MATCH=1  exit=0",
+        "usage_line": ""
+      },
+      "dup5_flag5": {
+        "argv": [
+          "verify",
+          "/dev/shm/rv7/runs/snap2-7cd19c3c-M1-guard-revert/coverage-subversion/dup5.txt",
+          "--live",
+          "--require-paths",
+          "5"
+        ],
+        "exit": 0,
+        "coverage_line": "",
+        "coverage_class_present": false,
+        "verdict_line": "VERDICT: MATCH  paths=1  MATCH=1  exit=0",
+        "usage_line": ""
+      }
+    },
+    "verdict": "PASSED-GATE"
+  }
+}

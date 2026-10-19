@@ -1,0 +1,60 @@
+=== ARM landed  tool landed/custody-pair.py ===
+tool-sha256: 7b848eafdd1e11a2fa9a78d0fe3ab49af5b7535c17a3ab22ea2109290cd83c1f
+--- case1: capture of EACCES-at-lstat path (blocked dir) ---
+RECEIPT: /var/tmp/rv6/runs/landed/blocked-pre.txt  sha256=e8938374f6d854cb5d5db1b70ebcbba47194c8335f3f111b2ebb2cc18e7d4f0e
+SIDECAR: /var/tmp/rv6/runs/landed/blocked-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=(none) exit=13
+case1-exit=13
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: '/var/tmp/rv6/fx/blocked/inner.conf'
+--- case2: verify blocked-pre.txt --live (both sides EACCES) ---
+A format: v1-stanza   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv6/runs/landed/blocked-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv6/fx/blocked/inner.conf: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+case2-exit=0
+--- case3: capture while readable, then chmod 000, then verify --live ---
+case3-pre-exit=0
+Traceback (most recent call last):
+  File "/var/tmp/rv6/landed/custody-pair.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/rv6/landed/custody-pair.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/rv6/landed/custody-pair.py", line 593, in cmd_verify
+    b_sections = [capture_path(Path(s["path"]).expanduser()) for s in a_sections]
+                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/tmp/rv6/landed/custody-pair.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/var/tmp/rv6/landed/custody-pair.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/rv6/fx/unreadable.conf'
+case3-exit=1
+--- case4: mixed capture good+unreadable (receipt survival) ---
+Traceback (most recent call last):
+  File "/var/tmp/rv6/landed/custody-pair.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/rv6/landed/custody-pair.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/rv6/landed/custody-pair.py", line 553, in cmd_capture
+    sections = [capture_path(p) for p in paths]
+                ~~~~~~~~~~~~^^^
+  File "/var/tmp/rv6/landed/custody-pair.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/var/tmp/rv6/landed/custody-pair.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/rv6/fx/unreadable.conf'
+case4-exit=1
+receipt-exists=no
+=== ARM landed done ===

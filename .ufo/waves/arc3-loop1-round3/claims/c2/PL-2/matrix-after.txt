@@ -1,0 +1,77 @@
+### tool: /var/tmp/pl2/after/custody-pair.py
+### sha256=6b37796457279e2465ce7f44edabf0f859d4ec5d3dea5d3050cfe8c4d83c3730
+### scratch: /var/tmp/pl2-matrix-avaWc8   utc=2026-10-19T13:10:39Z
+
+### L0 selftest (scratch base exists)
+exit=0
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+
+### L1 D6 — selftest --scratch <missing dir> (declared class: USAGE 2)
+exit=2
+stderr: USAGE: scratch base is not a directory: /var/tmp/pl2-matrix-avaWc8/nope
+traceback_lines=0
+
+### L2 D2a — blocked parent dir (declared class: UNEVALUABLE 14, never MATCH)
+capture exit=14
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: 'blocked_dir/inner.txt'
+verify exit=14
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+
+### L3 D2b — chmod-000 regular file (declared class: UNEVALUABLE 14, receipt written)
+capture exit=14
+EXISTS: yes
+READ-ERROR: [Errno 13] Permission denied: 'victim.txt'
+control capture exit=0
+
+### L4 D2-parsed — reference RECEIPT carries the unreadable stanza (parser arm)
+exit=14
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+
+### L5 D3 — 1-of-5 canonical receipt: plain (declared default) and --require-paths 5 (gate)
+plain exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+gated exit=2
+USAGE: reference covers 1 of 5 required paths
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.omp/agent/mcp.json, ~/.kimi-code/config.toml, ~/.bashrc, ~/.profile
+
+### L6 write guard — scoped clobber and hardlink alias (declared class: USAGE 2, bytes unchanged)
+scoped exit=2
+USAGE: refusing to write a receipt over a path it measures (path or inode): scoped.conf
+scoped unchanged=YES
+hardlink exit=2
+USAGE: refusing to write a receipt over a path it measures (path or inode): hl-b.txt
+hardlink target unchanged=YES
+
+### L7 live pair over the 5 custody paths (read-only) + coverage gate
+pre exit=0
+CUSTODY_PAIR_CAPTURE: OK paths=5/5 label=pl2-live-pre exit=0
+post exit=0
+CUSTODY_PAIR_CAPTURE: OK paths=5/5 label=pl2-live-post exit=0
+pair exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+pair+gate exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+# tool: custody-pair.py  sha256 6b37796457279e2465ce7f44edabf0f859d4ec5d3dea5d3050cfe8c4d83c3730
+
+### L8 v1 controls (EX-35 fixtures) — sha256 contract preserved
+comment-only.txt exit=2 :: USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /home/vgpnk/Projects/sh
+empty.txt exit=2 :: USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /home/vgpnk/Projects/sh
+v1-absent-path.txt exit=10 :: CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/5 drift=5 exit=10
+v1-compact-only.txt exit=10 :: CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=4/5 drift=1 exit=10
+v1-corrupt-sha.txt exit=10 :: CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/5 drift=5 exit=10
+v1-no-time.txt exit=10 :: CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=4/5 drift=1 exit=10
+v1-partial-1of5.txt exit=0 :: CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+v1-sums.txt exit=10 :: CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=4/5 drift=1 exit=10
+v1-swap-sha.txt exit=10 :: CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=0/5 drift=5 exit=10
+v1-synth-metadata.txt exit=12 :: CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/2 drift=2 exit=12
+v1-synth.txt exit=12 :: CUSTODY_PAIR_VERIFY: METADATA-DRIFT paths=0/2 drift=2 exit=12
+
+### L9 custody digests after the whole matrix (round-1 pins: 16f496e6.., 38d2a1d0.., 8cbacd48.., 7d2ca28a.., 6c6be761..; path 3 carries the recorded operator drift)
+16f496e663d0c91252d17dcb8094d141a8feb713466e2fb4f14267bf744263a4  ~/.config/devin/mcp_config.json
+38d2a1d0e5e67da09266c4611b34ab32b394371063f307c5104b6cb0de1b926b  ~/.omp/agent/mcp.json
+bc66d543018eddb1b74c6057f6873e014f25d0a4fc1bc13c0ff6d3a63c86ddc3  ~/.kimi-code/config.toml
+7d2ca28a245c44a1f5458921f0dff54823aa1e74ffa02eac2013b486e6a26598  ~/.bashrc
+6c6be761d3b199c964c95e724d7cdc9f4f902e0c3bdd6a532361b20a53db4f30  ~/.profile

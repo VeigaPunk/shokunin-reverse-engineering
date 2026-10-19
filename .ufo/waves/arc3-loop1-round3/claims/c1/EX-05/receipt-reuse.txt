@@ -1,0 +1,51 @@
+================================================================================
+SOLC-PREFIX RECEIPT RE-VERIFICATION — seat EX-05 (chain c1, arc3-loop1-round3)
+Date: 2026-10-19 (UTC-3 host clock)   Repo: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+No install performed this wave (freeze rule: C1 reuses the round-1 prefix).
+================================================================================
+
+1. PREFIX UNDER TEST
+--------------------------------------------------------------------------------
+  .ufo/waves/arc3-loop1-round1/tools/solc-prefix/   (installed by r1 seat EX-02;
+  install receipt: .ufo/waves/arc3-loop1-round1/claims/c1/EX-02/install-receipt.txt)
+
+2. OWN COMMANDS AND OUTPUTS (re-derived by this seat, not copied)
+--------------------------------------------------------------------------------
+  $ sha256sum <prefix>/node_modules/solc/soljson.js
+  221d7a667378b5068d913e75fe092507e061363cd1d23b64c49ae82febabad4c
+   -> equals the r1 install receipt §6 pin (ambient tree byte-identity leg).
+
+  $ sha256sum <prefix>/node_modules/solc/solc.js
+  188c3fdca72bbb8ec1c70373427ad4536e117341c48944dae9185f9cf035146f
+   -> equals the r1 install receipt §6 pin (both trees, both listed).
+
+  $ sha256sum <prefix>/package.json
+  b4205b088e5cfa42851bd673ac3d6656599bb32eaf3de112132f8d0bf3b61225
+  $ sha256sum <prefix>/node_modules/js-sha3/package.json
+  ba89a2a2189db98b8b9a4134ec744737f2ed3e26ee59357279a170faf93709dd
+
+  $ node -e "console.log(require('<prefix>/node_modules/solc').version())"
+  0.8.37+commit.f401782d.Emscripten.clang
+  $ <prefix>/node_modules/.bin/solcjs --version
+  0.8.37+commit.f401782d.Emscripten.clang
+   -> both invocation routes report the r1 receipt's compiler string.
+
+  $ sha256sum ~/.npm/_cacache/content-v2/sha512/89/e5/1874f0d118d28cb19a427e2f6d63ae10f804a82fcb7284bbaf7fd7058aa0ecfba8a3971f169f60918b437bd40942bd1c74574f76ae5518bb76f73eec5694
+  0e1a1ab6d12c37f5503271b2c4679cd433459c884851920d148d6fb154575a51   (6476046 bytes)
+   -> equals the r1 install receipt's tarball sha256 pin `0e1a1ab6…575a51`.
+
+3. VERDICT
+--------------------------------------------------------------------------------
+  Prefix reuse is receipt-backed and byte-pinned on this host:
+  tarball sha256 0e1a1ab6…575a51 (npm cache content file, size 6,476,046 B) =
+  r1 receipt §1; installed trees match r1 receipt §6 on all four files re-hashed
+  here; both version strings read 0.8.37+commit.f401782d.Emscripten.clang.
+  VERDICT: REUSE OK — no install, no prefix mutation (this seat wrote nothing
+  inside the prefix; all outputs went to this seat's claim dir and /var/tmp).
+
+4. STANDING HOST CONSTRAINT (applied to every invocation)
+--------------------------------------------------------------------------------
+  Disk-backed TMPDIR used for all solcjs/npx runs in this seat
+  (TMPDIR=/var/tmp/ex05-c1 | /var/tmp/ex05-probe | /var/tmp/ex05-shape);
+  host /tmp is quota-exhausted (EDQUOT) per the r1 EX-02 §8 record.
+================================================================================

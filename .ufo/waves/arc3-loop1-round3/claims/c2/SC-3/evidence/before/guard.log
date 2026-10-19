@@ -1,0 +1,34 @@
+tool=/var/tmp/sc3/tool-before/custody-pair.py sha256=112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa date=2026-10-19T10:10:04-03:00
+### G1-scoped-as-out
+$ HOME=/var/tmp/sc3/guard-before/work/home python3 /var/tmp/sc3/tool-before/custody-pair.py capture --out /var/tmp/sc3/guard-before/work/scope/guarded.conf --paths /var/tmp/sc3/guard-before/work/scope/guarded.conf
+RECEIPT: /var/tmp/sc3/guard-before/work/scope/guarded.conf  sha256=2386309038f1b97c63bfd33c0f35b857ce0b9223342bb87174162c0921eb4e7e
+SIDECAR: /var/tmp/sc3/guard-before/work/scope/guarded.conf.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=G1-scoped-as-out exit=0
+exit=0 victim=/var/tmp/sc3/guard-before/work/scope/guarded.conf
+victim-sha before=e11f31a04b51e7e8fa4dcf1392db077374a3435cb44e050f941c322c2f5fee83 after=2386309038f1b97c63bfd33c0f35b857ce0b9223342bb87174162c0921eb4e7e
+verdict=CLOBBERED
+---
+### G2-canonical-bashrc-as-out
+$ HOME=/var/tmp/sc3/guard-before/work/home python3 /var/tmp/sc3/tool-before/custody-pair.py capture --out /var/tmp/sc3/guard-before/work/home/.bashrc --paths /var/tmp/sc3/guard-before/work/scope/guarded.conf
+USAGE: refusing to write a receipt over a custody path: /var/tmp/sc3/guard-before/work/home/.bashrc
+exit=2 victim=/var/tmp/sc3/guard-before/work/home/.bashrc
+victim-sha before=f43e66721d6a3f40f0f6000e62e577f91a25cba7dea98de8487ec0c4122c3558 after=f43e66721d6a3f40f0f6000e62e577f91a25cba7dea98de8487ec0c4122c3558
+verdict=UNCHANGED
+---
+### G3-scope-includes-canonical
+$ HOME=/var/tmp/sc3/guard-before/work/home python3 /var/tmp/sc3/tool-before/custody-pair.py capture --out /var/tmp/sc3/guard-before/work/home/.profile --paths /var/tmp/sc3/guard-before/work/scope/g3.conf /var/tmp/sc3/guard-before/work/home/.profile
+USAGE: refusing to write a receipt over a custody path: /var/tmp/sc3/guard-before/work/home/.profile
+exit=2 victim=/var/tmp/sc3/guard-before/work/home/.profile
+victim-sha before=8d7bbe67372f3d4c411a1294c49bafbb122ae102287960a0a9c2d77c5731589b after=8d7bbe67372f3d4c411a1294c49bafbb122ae102287960a0a9c2d77c5731589b
+verdict=UNCHANGED
+---
+### G4-hardlink-alias-as-out
+$ HOME=/var/tmp/sc3/guard-before/work/home python3 /var/tmp/sc3/tool-before/custody-pair.py capture --out /var/tmp/sc3/guard-before/work/scope/alias4.conf --paths /var/tmp/sc3/guard-before/work/scope/guarded4.conf
+RECEIPT: /var/tmp/sc3/guard-before/work/scope/alias4.conf  sha256=bf34acf5e641674b519c5633b3665f7083f3572d332a040cc6ef40d52556f095
+SIDECAR: /var/tmp/sc3/guard-before/work/scope/alias4.conf.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=G4-hardlink-alias-as-out exit=0
+exit=0 victim=/var/tmp/sc3/guard-before/work/scope/guarded4.conf
+victim-sha before=c26a427dc00ce7c13a5fceaf2203599482e8dc2bf17e95e1f80c7f9ca6f0e1b4 after=bf34acf5e641674b519c5633b3665f7083f3572d332a040cc6ef40d52556f095
+verdict=CLOBBERED
+---
+done

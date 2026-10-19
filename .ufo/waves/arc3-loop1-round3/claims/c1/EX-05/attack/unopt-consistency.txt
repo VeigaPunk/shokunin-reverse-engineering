@@ -1,0 +1,41 @@
+================================================================================
+ATTACK CARRIER — optimized vs unoptimized selector-constant consistency
+Seat EX-05 (chain c1, arc3-loop1-round3). Backs shape-census.txt §2.
+================================================================================
+
+Source: claims/c1/EX-05/src/attack/CarrierBErr.sol (sha256 e7ee843a…246cdce)
+Declared custom errors: NotOwner(address), Underfunded(uint256,uint256).
+
+Selectors (both oracles agree; keccak_ref.py self-checked on the empty-string
+and Transfer-topic vectors, js-sha3@0.8.0 from the receipted tree):
+  NotOwner(address)                  -> 245aecd3
+  Underfunded(uint256,uint256)       -> 2305a7aa
+
+Optimized leg (optimizer {enabled:true,runs:200}), runtime 1253 B
+sha256 9715b824…382eb8, raw-substring probe of the runtime hex:
+  245aecd3 PRESENT  (at byte 548: `604051 63 245aecd3 60e01b 8152 3360…`
+                     = PUSH4 sel; PUSH1 0xe0; SHL; DUP2; MSTORE → direct
+                     selector, 1-arg error encoding)
+  2305a7aa absent
+  1182d3d5 PRESENT  (at byte 955: `604051 63 1182d3d5 60e11b 8152 6004…`
+                     = PUSH4 (sel>>1); PUSH1 0xe1; SHL; DUP2; MSTORE)
+  fa41aa00 PRESENT  (byte 1233 — inside the CBOR metadata tail; data region)
+
+Unoptimized leg (optimizer {enabled:false}), runtime 2566 B:
+  245aecd3 PRESENT
+  2305a7aa PRESENT
+  1182d3d5 absent
+
+Arithmetic reconciliation (run, not asserted):
+  0x2305a7aa >> 1 = 0x1182d3d5
+  (0x1182d3d5 << 225) mod 2**256 = 0x2305a7aa0000…00
+  (0x2305a7aa << 224) mod 2**256 = 0x2305a7aa0000…00   → equal
+  emitted word's top 4 bytes = 0x2305a7aa = the ABI selector word.
+
+Reading: the optimized build emits the 2-arg custom error's selector in a
+halved+shifted form, so the recovered revert data is the ABI-correct
+`0x2305a7aa…` word while the code immediate is `0x1182d3d5` — a constant-level
+extractor sees neither the true selector here nor a second function; and
+`inspect-evm-interface` reported 8 functions / zero extras on these bytes
+(attack/probe-runtime-hex-6.4.0.json, ev_bdc1db67…).
+================================================================================

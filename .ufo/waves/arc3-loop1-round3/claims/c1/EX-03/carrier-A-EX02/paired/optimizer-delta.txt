@@ -1,0 +1,36 @@
+OPTIMIZER-ON vs OPTIMIZER-OFF, carrier A (carrierA.sol sha256 05b2cbb0c6fd97ae6463b0a4f1be56f217ea64cf4cbdbd2c36da94c0fe6eee41)
+compiler solcjs 0.8.37+commit.f401782d; only settings.optimizer differs;
+  off leg: outputSelection abi/evm.bytecode.object/evm.deployedBytecode.object/evm.methodIdentifiers
+  on leg : same + optimizer {enabled:true, runs:200}
+
+metric                              off        on        delta
+creation bytes .................... 2933       1460      -1473
+runtime  bytes .................... 2853       1426      -1427
+runtime common prefix ............. 38 bytes; first divergence at hex offset 76 (byte 38)
+creation common prefix ............ 5 bytes; first divergence at hex offset 10 (byte 5)
+
+off runtime: len 2853 B
+  head 48 B: 608060405260043610610089575f3560e01c80635ce23950116100585780635ce239501461015c578063758072501461
+  dispatch sites "8063<push4 sel>": 10 | EQ-jump 1461: 16 | GT-jump 1161: 1
+  prologue markers: 5f3560e01c at byte 13 | 60003560e01c at byte ABSENT
+  planted selector constants present verbatim: 9/9
+  selector byte offsets: 01681a62@91, 067b23c3@102, 2e1a7d4d@113, 3f0d861a@124, 5ce23950@20, 75807250@42, 8da5cb5b@53, c85e07b9@64, d0e30db0@75
+on runtime: len 1426 B
+  head 48 B: 608060405260043610610089575f3560e01c80635ce23950116100585780635ce2395014610129578063758072501461
+  dispatch sites "8063<push4 sel>": 10 | EQ-jump 1461: 14 | GT-jump 1161: 1
+  prologue markers: 5f3560e01c at byte 13 | 60003560e01c at byte ABSENT
+  planted selector constants present verbatim: 9/9
+  selector byte offsets: 01681a62@91, 067b23c3@102, 2e1a7d4d@113, 3f0d861a@124, 5ce23950@20, 75807250@42, 8da5cb5b@53, c85e07b9@64, d0e30db0@75
+
+ABI byte-identity across modes: IDENTICAL
+methodIdentifiers byte-identity across modes: IDENTICAL
+CLI creation-leg == stdjson creation-leg (hex text minus newline):
+  off: IDENTICAL
+  on : IDENTICAL
+
+READING (measurement, not inference): the dispatch structure is the same class in
+both modes — 6004361015610089 guard, 5f3560e01c selector extraction at byte 13, one
+GT split, then per-selector 8063...1461 EQ compares. Only jump targets and the
+bodies differ; the optimizer shrinks creation 2933->1460 B and runtime 2853->1426 B
+(50.2%) with the sorted binary-search dispatch preserved. No 60003560e01c prologue
+form occurs in either leg.

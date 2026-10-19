@@ -1,0 +1,152 @@
+== after-state measurement by EX-44 ==
+== date: 2026-10-19T13:15:00Z
+== HEAD: c07af80fcf3a60f9c6a0ca09b6e23fb5794d3311
+== table sha256 (full): bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7  .ufo/gates/citation-drift/pointer-table.json
+== expected sha256 (full): d97dd60a942eaf53771c8224e84a9e8cdaf976dc66c3a543a450b1f1fa3827e2  .ufo/gates/citation-drift/expected.json
+== expected.json pointer_table pin: bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7
+== counts: entries 57 quoted 4 exempt 8
+
+== probe default (probe semantics):
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: reported findings=0 exit=0
+rc=0
+
+== probe strict (gate semantics):
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT_VERDICT: clean findings=0 exit=0
+rc=0
+
+== selftest:
+SELFTEST_CASE: CLEAN case=clean exit=0 expected=0 finding=citations_clean
+SELFTEST_CASE: CLEAN case=dead exit=1 expected=1 finding=citation_dead
+SELFTEST_CASE: CLEAN case=out_of_range exit=1 expected=1 finding=citation_out_of_range
+SELFTEST_CASE: CLEAN case=file_absent exit=1 expected=1 finding=citation_file_absent
+SELFTEST_CASE: CLEAN case=moved exit=1 expected=1 finding=citation_moved
+SELFTEST_CASE: CLEAN case=stamped exit=0 expected=0 finding=citation_historical_ok
+SELFTEST_CASE: CLEAN case=no_snapshot_dir exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=snapshot_missing exit=2 expected=2 finding=snapshot_missing
+SELFTEST_CASE: CLEAN case=snapshot_tampered exit=2 expected=2 finding=snapshot_tampered
+SELFTEST_CASE: CLEAN case=table_unreadable exit=2 expected=2 finding=pointer_table_unreadable
+SELFTEST_CASE: CLEAN case=rev_unresolvable exit=2 expected=2 finding=revision_unresolvable
+SELFTEST_CASE: CLEAN case=table_tampered exit=2 expected=2 finding=pointer_table_tampered
+SELFTEST_CASE: CLEAN case=table_absent exit=2 expected=2 finding=pointer_table_unreadable
+CITATION_DRIFT_SELFTEST: CLEAN cases=13 passed=13 failed=0 exit=0
+rc=0
+
+== live non-vacuity check A: dead rev must be could-not-evaluate:
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+CITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json
+CITATION_DRIFT: revision_unresolvable entry=deadbeefdeadbeefdeadbeefdeadbeefdeadbeef not a commit object (git rev-parse --verify deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^{commit} failed)
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+rc=2
+
+== frozen-run guard live check B: one-byte-tampered table copy vs the real expected pin:
+CITATION_DRIFT_ROOT: .
+CITATION_DRIFT_REVISION: HEAD
+CITATION_DRIFT_TABLE: /var/tmp/arc3r3-EX-44/table-tamper.json
+CITATION_DRIFT: pointer_table_tampered entry=table-tamper.json sha256 d9d81e9c6279554a53ebf23d0c5d4fadd8e5cef293ea29fc04acad7b27c7ba9e != pinned bfc42f1bb131cbe3a972a16647d24b1f16d936083dd61496589540e791d58bb7
+CITATION_DRIFT_VERDICT: could-not-evaluate findings=1 exit=2
+rc=2
+
+== workspace diff at gates dir (read-only):
+ .ufo/gates/citation-drift/expected.json      |   2 +-
+ .ufo/gates/citation-drift/pointer-table.json | 272 ++++++++++++++++++++++-
+ .ufo/gates/custody-pair/README.md            |  68 ++++--
+ .ufo/gates/custody-pair/custody-pair.py      | 314 +++++++++++++++++++++++++--
+ 4 files changed, 617 insertions(+), 39 deletions(-)
+ M .ufo/gates/citation-drift/expected.json
+ M .ufo/gates/citation-drift/pointer-table.json
+ M .ufo/gates/custody-pair/README.md
+ M .ufo/gates/custody-pair/custody-pair.py
+?? .ufo/gates/__pycache__/
+?? .ufo/gates/citation-drift/__pycache__/
+?? .ufo/gates/custody-pair/__pycache__/
+
+== new entries vs the before-31 id set (by id) + retained-entry drift:
+entries: 31 -> 57 (+26); quoted: 4 -> 4
+removed entries: []
+removed quoted: []
+exempt: 3 -> 8 (+5)
+  NEW exempt: {"cause": "append-only round records: they state where a row sat at that round's revision. Measured at HEAD (arc3 r3): `SKILL.md:371` now holds `## Refuses` (ro
+  NEW exempt: {"cause": "evidence-internal provenance inside a wave, not the lane citations the probe's contract names (its header). The r10 extension precedent scoped the ta
+  NEW exempt: {"cause": "measurement tokens, not pointers: a pin would have to be refreshed by the owning round in its own commit (the r10 CR2 constraint) and buys zero drift
+  NEW exempt: {"cause": "no stated number means no drift class for this probe to grade; file existence is graded where a durable surface cites the path with a needle. LOG.md 
+  NEW exempt: {"cause": "operator-mutable files outside the repo, unresolvable as Git objects; rule #11 forbids pinning them at all. The instrument pins the five identities a
+NEW entries (26):
+  arc3r1-entry-r3-offsets                  kind=extracted file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md target=corpus/knowledge/2026-10-13-r3-evm-interface.md
+  arc3r1-entry-r3-stub-mutability          kind=extracted file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md target=corpus/knowledge/2026-10-13-r3-evm-interface.md
+  arc3r1-entry-quality-ids                 kind=extracted file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md target=corpus/QUALITY.md
+  arc3r1-entry-quality-11                  kind=extracted file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md target=corpus/QUALITY.md
+  arc3r1-entry-r3-hypothesis               kind=extracted file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md target=corpus/knowledge/2026-10-13-r3-evm-interface.md
+  arc3r1-entry-r3-cli-quirk                kind=extracted file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md target=corpus/knowledge/2026-10-13-r3-evm-interface.md
+  skill-rule14-entry-recheck               kind=extracted file=SKILL.md target=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md
+  skill-rule14-cr2-identity                kind=extracted file=SKILL.md target=.ufo/waves/arc3-loop1-round1/seats/CR-2.md
+  skill-rule14-verdict-identities          kind=extracted file=SKILL.md target=.ufo/waves/arc3-loop1-round1/claims/c1/verdict.md
+  skill-rule14-log-fresh-identity          kind=extracted file=SKILL.md target=LOG.md
+  readme38-arc3r1-token                    kind=anchor    file=corpus/README.md
+  sc-arc3r1-section-key                    kind=exact     file=SCORECARD.md
+  sc-arc3r2-section-key                    kind=exact     file=SCORECARD.md
+  sc-arc3r2-cites-shonen                   kind=extracted file=SCORECARD.md target=SHONEN.md
+  skill-registry-citation-drift-row        kind=anchor    file=SKILL.md
+  skill-registry-custody-pair-row          kind=anchor    file=SKILL.md
+  custody-readme-v2-fieldset               kind=anchor    file=.ufo/gates/custody-pair/README.md
+  custody-readme-rewrite-identity          kind=anchor    file=.ufo/gates/custody-pair/README.md
+  custody-readme-precedence                kind=anchor    file=.ufo/gates/custody-pair/README.md
+  custody-readme-scratch-never-tmp         kind=anchor    file=.ufo/gates/custody-pair/README.md
+  custody-readme-v1-stanza-example         kind=anchor    file=.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt
+  custody-readme-v1-sums-example           kind=anchor    file=.ufo/waves/arc3-loop1-round1/claims/c3/EX-26/custody-sha256.txt
+  custody-readme-v1-pipe-example           kind=anchor    file=.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair-metadata.txt
+  census-cites-sc-e22-debt                 kind=extracted file=.ufo/gates/c1-census-v10.py target=SCORECARD.md
+  census-cites-sc-laundering-refusal       kind=extracted file=.ufo/gates/c1-census-v10.py target=SCORECARD.md
+  census-cites-sc-round4-range             kind=extracted file=.ufo/gates/c1-census-v10.py target=SCORECARD.md
+NEW quoted (0):
+
+RETAINED-entry field drift (id in both sets, field changed):
+  (none)
+
+target resolution at HEAD for NEW entries:
+  arc3r1-entry-r3-offsets: file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md -> resolves at HEAD
+  arc3r1-entry-r3-offsets: target=corpus/knowledge/2026-10-13-r3-evm-interface.md -> resolves at HEAD
+  arc3r1-entry-r3-stub-mutability: file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md -> resolves at HEAD
+  arc3r1-entry-r3-stub-mutability: target=corpus/knowledge/2026-10-13-r3-evm-interface.md -> resolves at HEAD
+  arc3r1-entry-quality-ids: file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md -> resolves at HEAD
+  arc3r1-entry-quality-ids: target=corpus/QUALITY.md -> resolves at HEAD
+  arc3r1-entry-quality-11: file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md -> resolves at HEAD
+  arc3r1-entry-quality-11: target=corpus/QUALITY.md -> resolves at HEAD
+  arc3r1-entry-r3-hypothesis: file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md -> resolves at HEAD
+  arc3r1-entry-r3-hypothesis: target=corpus/knowledge/2026-10-13-r3-evm-interface.md -> resolves at HEAD
+  arc3r1-entry-r3-cli-quirk: file=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md -> resolves at HEAD
+  arc3r1-entry-r3-cli-quirk: target=corpus/knowledge/2026-10-13-r3-evm-interface.md -> resolves at HEAD
+  skill-rule14-entry-recheck: file=SKILL.md -> resolves at HEAD
+  skill-rule14-entry-recheck: target=corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md -> resolves at HEAD
+  skill-rule14-cr2-identity: file=SKILL.md -> resolves at HEAD
+  skill-rule14-cr2-identity: target=.ufo/waves/arc3-loop1-round1/seats/CR-2.md -> resolves at HEAD
+  skill-rule14-verdict-identities: file=SKILL.md -> resolves at HEAD
+  skill-rule14-verdict-identities: target=.ufo/waves/arc3-loop1-round1/claims/c1/verdict.md -> resolves at HEAD
+  skill-rule14-log-fresh-identity: file=SKILL.md -> resolves at HEAD
+  skill-rule14-log-fresh-identity: target=LOG.md -> resolves at HEAD
+  readme38-arc3r1-token: file=corpus/README.md -> resolves at HEAD
+  sc-arc3r1-section-key: file=SCORECARD.md -> resolves at HEAD
+  sc-arc3r2-section-key: file=SCORECARD.md -> resolves at HEAD
+  sc-arc3r2-cites-shonen: file=SCORECARD.md -> resolves at HEAD
+  sc-arc3r2-cites-shonen: target=SHONEN.md -> resolves at HEAD
+  skill-registry-citation-drift-row: file=SKILL.md -> resolves at HEAD
+  skill-registry-custody-pair-row: file=SKILL.md -> resolves at HEAD
+  custody-readme-v2-fieldset: file=.ufo/gates/custody-pair/README.md -> resolves at HEAD
+  custody-readme-rewrite-identity: file=.ufo/gates/custody-pair/README.md -> resolves at HEAD
+  custody-readme-precedence: file=.ufo/gates/custody-pair/README.md -> resolves at HEAD
+  custody-readme-scratch-never-tmp: file=.ufo/gates/custody-pair/README.md -> resolves at HEAD
+  custody-readme-v1-stanza-example: file=.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair.txt -> resolves at HEAD
+  custody-readme-v1-sums-example: file=.ufo/waves/arc3-loop1-round1/claims/c3/EX-26/custody-sha256.txt -> resolves at HEAD
+  custody-readme-v1-pipe-example: file=.ufo/waves/arc3-loop1-round1/claims/cross/receipts/config-pre-pair-metadata.txt -> resolves at HEAD
+  census-cites-sc-e22-debt: file=.ufo/gates/c1-census-v10.py -> resolves at HEAD
+  census-cites-sc-e22-debt: target=SCORECARD.md -> resolves at HEAD
+  census-cites-sc-laundering-refusal: file=.ufo/gates/c1-census-v10.py -> resolves at HEAD
+  census-cites-sc-laundering-refusal: target=SCORECARD.md -> resolves at HEAD
+  census-cites-sc-round4-range: file=.ufo/gates/c1-census-v10.py -> resolves at HEAD
+  census-cites-sc-round4-range: target=SCORECARD.md -> resolves at HEAD

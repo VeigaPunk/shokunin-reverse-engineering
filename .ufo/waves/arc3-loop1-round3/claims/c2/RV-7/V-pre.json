@@ -1,0 +1,166 @@
+{
+  "tag": "V-pre",
+  "note": "round-2 landed revision (git HEAD blob), the BEFORE state",
+  "tool_src": "/var/tmp/rv7v/tools/pre-112d01dc.py",
+  "tool_src_sha256": "112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa",
+  "tool_materialized_sha256": "112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa",
+  "utc": "2026-10-19T13:24:21Z",
+  "mutation": null,
+  "selftest": {
+    "exit": 0,
+    "summary": "CUSTODY_PAIR_SELFTEST: CLEAN cases=15 passed=15 failed=0 exit=0",
+    "cases": 15,
+    "failed": [],
+    "traceback": false
+  },
+  "guard": {
+    "A1_same_path": {
+      "note": "register shape: --paths X --out X",
+      "target": "/var/tmp/rv7v/runs/V-pre/guard/A1_same_path/scoped.conf",
+      "receipt_arg": "/var/tmp/rv7v/runs/V-pre/guard/A1_same_path/scoped.conf",
+      "exit": 0,
+      "target_sha_before": "6082b7d65283031790b3e2bac3a77a02865e1bed713680423449960ea82a9224",
+      "target_sha_after": "b3ec07ffe782913635354ce6261a2f6ea711952791fe56aebca3f1bfd24a3d12",
+      "byte_stable": false,
+      "content_now_receipt": true,
+      "class_line": "",
+      "clobbered": true,
+      "out_tail": "RECEIPT: /var/tmp/rv7v/runs/V-pre/guard/A1_same_path/scoped.conf  sha256=b3ec07ffe782913635354ce6261a2f6ea711952791fe56aebca3f1bfd24a3d12"
+    },
+    "A2_hardlink": {
+      "note": "inode arm: --out is a hardlink alias",
+      "target": "/var/tmp/rv7v/runs/V-pre/guard/A2_hardlink/scoped.conf",
+      "receipt_arg": "/var/tmp/rv7v/runs/V-pre/guard/A2_hardlink/alias-receipt.txt",
+      "exit": 0,
+      "target_sha_before": "6082b7d65283031790b3e2bac3a77a02865e1bed713680423449960ea82a9224",
+      "target_sha_after": "79389025420a7a295c1167b5be89155e6322f51a63b0ece3ce3d9160c3fbbabc",
+      "byte_stable": false,
+      "content_now_receipt": true,
+      "class_line": "",
+      "clobbered": true,
+      "out_tail": "RECEIPT: /var/tmp/rv7v/runs/V-pre/guard/A2_hardlink/alias-receipt.txt  sha256=79389025420a7a295c1167b5be89155e6322f51a63b0ece3ce3d9160c3fbbabc"
+    },
+    "A3_symlink": {
+      "note": "resolution arm: --out symlinks onto X",
+      "target": "/var/tmp/rv7v/runs/V-pre/guard/A3_symlink/scoped.conf",
+      "receipt_arg": "/var/tmp/rv7v/runs/V-pre/guard/A3_symlink/via-symlink.txt",
+      "exit": 0,
+      "target_sha_before": "6082b7d65283031790b3e2bac3a77a02865e1bed713680423449960ea82a9224",
+      "target_sha_after": "0237d8e13e187bb411d51b8482b29d25f86835430703e8242ed4a3e030b4b504",
+      "byte_stable": false,
+      "content_now_receipt": true,
+      "class_line": "",
+      "clobbered": true,
+      "out_tail": "RECEIPT: /var/tmp/rv7v/runs/V-pre/guard/A3_symlink/via-symlink.txt  sha256=0237d8e13e187bb411d51b8482b29d25f86835430703e8242ed4a3e030b4b504"
+    },
+    "A5_sidecar_escape": {
+      "note": "--paths X.sha256 --out X: receipt at X, sidecar write lands on X.sha256",
+      "target": "/var/tmp/rv7v/runs/V-pre/guard/A5_sidecar_escape/target.sha256",
+      "receipt_arg": "/var/tmp/rv7v/runs/V-pre/guard/A5_sidecar_escape/target",
+      "exit": 0,
+      "target_sha_before": "dba2df7b22d37544efd3075a29b70d958b9dca726990eaa357814cfd9a0ed89a",
+      "target_sha_after": "ca694a2524d7392f111eb6643db0734f5cb2895b4d87d4ef043e87a57cca4285",
+      "byte_stable": false,
+      "content_now_receipt": false,
+      "class_line": "",
+      "clobbered": false,
+      "out_tail": "RECEIPT: /var/tmp/rv7v/runs/V-pre/guard/A5_sidecar_escape/target  sha256=5b27083a9d83be2779ee643128e2226819b85cb1b5047b35413b94a83b83b193"
+    },
+    "A4_control": {
+      "exit": 0,
+      "receipt_written": true,
+      "target_untouched": true,
+      "ok": true
+    }
+  },
+  "coverage": {
+    "B1_default_pair": {
+      "argv": [
+        "verify",
+        "/var/tmp/rv7v/runs/V-pre/coverage/ref-1.txt",
+        "/var/tmp/rv7v/runs/V-pre/coverage/ref-5.txt"
+      ],
+      "note": "default: no gate by design",
+      "exit": 12,
+      "coverage_class": "",
+      "class_present": false,
+      "usage_line": "",
+      "verdict_line": "VERDICT: METADATA-DRIFT  paths=5  MATCH=1 METADATA-DRIFT=4  exit=12"
+    },
+    "B2_flag5_pair": {
+      "argv": [
+        "verify",
+        "/var/tmp/rv7v/runs/V-pre/coverage/ref-1.txt",
+        "/var/tmp/rv7v/runs/V-pre/coverage/ref-5.txt",
+        "--require-paths",
+        "5"
+      ],
+      "note": "the D3 gate",
+      "exit": 2,
+      "coverage_class": "",
+      "class_present": false,
+      "usage_line": "",
+      "verdict_line": ""
+    },
+    "B3_flag5_live": {
+      "argv": [
+        "verify",
+        "/var/tmp/rv7v/runs/V-pre/coverage/ref-1.txt",
+        "--live",
+        "--require-paths",
+        "5"
+      ],
+      "note": "live + gate",
+      "exit": 2,
+      "coverage_class": "",
+      "class_present": false,
+      "usage_line": "",
+      "verdict_line": ""
+    },
+    "B4_control_full": {
+      "argv": [
+        "verify",
+        "/var/tmp/rv7v/runs/V-pre/coverage/ref-5.txt",
+        "/var/tmp/rv7v/runs/V-pre/coverage/ref-5.txt",
+        "--require-paths",
+        "5"
+      ],
+      "note": "control: 5-path ref passes",
+      "exit": 2,
+      "coverage_class": "",
+      "class_present": false,
+      "usage_line": "",
+      "verdict_line": ""
+    },
+    "B5_v1_1of5_fixture": {
+      "argv": [
+        "verify",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-35/fixtures/v1-partial-1of5.txt",
+        "--live",
+        "--require-paths",
+        "5"
+      ],
+      "exit": 2,
+      "coverage_class": "",
+      "class_present": false,
+      "usage_line": ""
+    },
+    "B6_dup_stanzas": {
+      "argv": [
+        "verify",
+        "/var/tmp/rv7v/runs/V-pre/coverage/dup5.txt",
+        "--live",
+        "--require-paths",
+        "5"
+      ],
+      "note": "subversion: 5 stanzas, 1 distinct path",
+      "exit": 2,
+      "coverage_class": "",
+      "class_present": false,
+      "usage_line": "",
+      "verdict_line": ""
+    },
+    "B6_dup_stanza_count": 5,
+    "B6_dup_capture_exit": 0
+  }
+}

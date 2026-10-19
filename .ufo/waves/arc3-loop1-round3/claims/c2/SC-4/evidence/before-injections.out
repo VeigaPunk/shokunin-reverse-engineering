@@ -1,0 +1,187 @@
+tool-head.py sha256: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+tool-head.py lines:  889
+
+### D2a: capture over an exists-but-EACCES path ###
+--- $ custody-pair.py capture --out /var/tmp/sc4-r3/before/d2a-receipt.txt --paths /var/tmp/sc4-r3/before/home/noread.txt --label SC-4 before D2a
+Traceback (most recent call last):
+  File "/var/tmp/sc4-r3/tool-head.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 553, in cmd_capture
+    sections = [capture_path(p) for p in paths]
+                ~~~~~~~~~~~~^^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/sc4-r3/before/home/noread.txt'
+--- exit=1
+== receipt body ==
+cat: /var/tmp/sc4-r3/before/d2a-receipt.txt: No such file or directory
+
+### D2b: verify a receipt whose reference side recorded EXISTS: no (both sides absent) ###
+--- $ custody-pair.py capture --out /var/tmp/sc4-r3/before/d2b-receipt.txt --paths /var/tmp/sc4-r3/before/home/never-existed.txt --label SC-4 before D2b
+RECEIPT: /var/tmp/sc4-r3/before/d2b-receipt.txt  sha256=64a7cf5164c8cf75375f1da1c87ad678dccdd0e807d3c50d6855d24488c14e07
+SIDECAR: /var/tmp/sc4-r3/before/d2b-receipt.txt.sha256
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=SC-4 before D2b exit=13
+--- exit=13
+--- $ custody-pair.py verify /var/tmp/sc4-r3/before/d2b-receipt.txt /var/tmp/sc4-r3/before/d2b-receipt.txt
+A format: v1-stanza   B format: v1-stanza
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/sc4-r3/before/d2b-receipt.txt  stanzas=1
+B (candidate): /var/tmp/sc4-r3/before/d2b-receipt.txt  stanzas=1
+PATH /var/tmp/sc4-r3/before/home/never-existed.txt: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+--- exit=0
+
+### D2c: --live against a readable-now / unreadable-at-verify candidate ###
+--- $ custody-pair.py capture --out /var/tmp/sc4-r3/before/d2c-receipt.txt --paths /var/tmp/sc4-r3/before/home/noread.txt --label SC-4 before D2c (EACCES already)
+Traceback (most recent call last):
+  File "/var/tmp/sc4-r3/tool-head.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 553, in cmd_capture
+    sections = [capture_path(p) for p in paths]
+                ~~~~~~~~~~~~^^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/sc4-r3/before/home/noread.txt'
+--- exit=1
+--- $ custody-pair.py capture --out /var/tmp/sc4-r3/before/d2c-receipt.txt --paths /var/tmp/sc4-r3/before/home/noread.txt --label SC-4 before D2c readable
+RECEIPT: /var/tmp/sc4-r3/before/d2c-receipt.txt  sha256=6f83788d933e778edd0644659116c702bccff15ee57c9aed5ab2995ac54bc829
+SIDECAR: /var/tmp/sc4-r3/before/d2c-receipt.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=SC-4 before D2c readable exit=0
+--- exit=0
+--- $ custody-pair.py verify /var/tmp/sc4-r3/before/d2c-receipt.txt --live
+Traceback (most recent call last):
+  File "/var/tmp/sc4-r3/tool-head.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 593, in cmd_verify
+    b_sections = [capture_path(Path(s["path"]).expanduser()) for s in a_sections]
+                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/var/tmp/sc4-r3/before/home/noread.txt'
+--- exit=1
+
+### D3: 1-of-5 reference coverage ###
+--- $ custody-pair.py capture --out /var/tmp/sc4-r3/before/d3-receipt.txt --paths /var/tmp/sc4-r3/before/home/plain.txt --label SC-4 before D3
+RECEIPT: /var/tmp/sc4-r3/before/d3-receipt.txt  sha256=4a1f30c7c7445e73e3be91c9fba53608a9041c76cecd232ec7cc7119a2539dbd
+SIDECAR: /var/tmp/sc4-r3/before/d3-receipt.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=SC-4 before D3 exit=0
+--- exit=0
+--- $ custody-pair.py verify /var/tmp/sc4-r3/before/d3-receipt.txt /var/tmp/sc4-r3/before/d3-receipt.txt
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/sc4-r3/before/d3-receipt.txt  stanzas=1
+B (candidate): /var/tmp/sc4-r3/before/d3-receipt.txt  stanzas=1
+PATH /var/tmp/sc4-r3/before/home/plain.txt: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+--- exit=0
+--- $ custody-pair.py verify /var/tmp/sc4-r3/before/d3-receipt.txt --live
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/sc4-r3/before/d3-receipt.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/sc4-r3/before/home/plain.txt: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+--- exit=0
+
+### write-guard: canonical 5 (guarded) vs override path (unguarded) ###
+--- $ custody-pair.py capture --out /home/vgpnk/.bashrc --paths /var/tmp/sc4-r3/before/home/plain.txt --label SC-4 before write-guard canonical
+USAGE: refusing to write a receipt over a custody path: /home/vgpnk/.bashrc
+--- exit=2
+--- $ custody-pair.py capture --out /var/tmp/sc4-r3/before/home/plain.txt --paths /var/tmp/sc4-r3/before/home/plain.txt --label SC-4 before write-guard override
+RECEIPT: /var/tmp/sc4-r3/before/home/plain.txt  sha256=2541895f3721bf63b8831c61b1b41c65d4f6a0d70ed702f93c38b17bcbe37d47
+SIDECAR: /var/tmp/sc4-r3/before/home/plain.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=SC-4 before write-guard override exit=0
+--- exit=0
+== plain.txt after --paths X --out X ==
+# custody-pair receipt v2 — READ-ONLY capture (sha256 + stat); no bytes written
+# receipt-version: 2
+# tool: tool-head.py  sha256 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa
+# captured-utc: 2026-10-19T13:07:16Z
+# captured-local: 2026-10-19T10:07:16-03:00
+# capture-label: SC-4 before write-guard override
+# host: plazir27  user: vgpnk  kernel: 7.2.3-arch1-3
+# cwd: /var/tmp/sc4-r3
+# repo-HEAD: (none)
+# paths: 1  present: 1
+# label-contract: MTIME_UTC_RENDER/CTIME_UTC_RENDER = gmtime(epoch) renders ('Z');
+#                 local renders are recorded separately under *_LOCAL_RENDER.
+#                 (v1 printed local time under an MTIME_UTC label — round-1 defect.)
+# compare-contract: sha256 = content identity; inode+ctime(+ns) = rewrite identity;
+#                   atime deliberately not captured (self-mutating on read).
+
+PATH: /var/tmp/sc4-r3/before/home/plain.txt
+EXISTS: yes
+TYPE: file
+SIZE: 6
+SHA256: b6a98d9ce9a2d9149288fa3df42d377c3e42737afdcdaf714e33c0a100b51060
+MTIME_EPOCH: 1792415235
+MTIME_NS: 1792415235962772102
+MTIME_UTC_RENDER: 2026-10-19T13:07:15Z
+MTIME_LOCAL_RENDER: 2026-10-19T10:07:15-03:00
+CTIME_EPOCH: 1792415235
+CTIME_NS: 1792415235962772102
+CTIME_UTC_RENDER: 2026-10-19T13:07:15Z
+CTIME_LOCAL_RENDER: 2026-10-19T10:07:15-03:00
+INODE: 11187140
+MODE: 644
+UID: 1000
+GID: 1000
+(end)
+
+### D6: selftest with a missing scratch parent ###
+--- $ custody-pair.py selftest --scratch /var/tmp/sc4-r3/before/no/such/dir
+Traceback (most recent call last):
+  File "/var/tmp/sc4-r3/tool-head.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/var/tmp/sc4-r3/tool-head.py", line 630, in cmd_selftest
+    root = Path(tempfile.mkdtemp(prefix="custody-pair-selftest-", dir=str(base)))
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/var/tmp/sc4-r3/before/no/such/dir/custody-pair-selftest-7cj_mpzd'
+--- exit=1
+
+### state ###
+  total 24
+  -rw-r--r-- 1 vgpnk vgpnk  903 Oct 19 10:07 d2b-receipt.txt
+  -rw-r--r-- 1 vgpnk vgpnk   82 Oct 19 10:07 d2b-receipt.txt.sha256
+  -rw-r--r-- 1 vgpnk vgpnk 1322 Oct 19 10:07 d2c-receipt.txt
+  -rw-r--r-- 1 vgpnk vgpnk   82 Oct 19 10:07 d2c-receipt.txt.sha256
+  -rw-r--r-- 1 vgpnk vgpnk 1311 Oct 19 10:07 d3-receipt.txt
+  -rw-r--r-- 1 vgpnk vgpnk   81 Oct 19 10:07 d3-receipt.txt.sha256
+  drwxr-xr-x 1 vgpnk vgpnk   70 Oct 19 10:07 home

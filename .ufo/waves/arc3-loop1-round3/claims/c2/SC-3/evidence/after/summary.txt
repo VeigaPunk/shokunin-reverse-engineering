@@ -1,0 +1,65 @@
+# SC-3 injection harness
+# date: 2026-10-19T10:16:07-03:00
+# tool: /var/tmp/sc3/tool-final/custody-pair.py
+# tool-sha256: 7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09
+# tool-lines: 1155
+# python: Python 3.14.7
+  scratch: /var/tmp/sc3/inj-final/work/scratch-ok/custody-pair-selftest-l_fzy4vj
+  CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+  exit=0
+  SIDECAR: /var/tmp/sc3/inj-final/work/d2a/blocked-pre.txt.sha256
+  CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=0/1 label=(none) exit=14
+  exit=14
+  VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+  CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+  exit=14
+  SIDECAR: /var/tmp/sc3/inj-final/work/d2b/ghost-pre.txt.sha256
+  CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=(none) exit=13
+  exit=13
+  VERDICT: MATCH  paths=1  MATCH=1  exit=0
+  CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+  exit=0
+  GID: 1000
+  CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=1/1 label=(none) exit=14
+  exit=14
+  SIDECAR: /var/tmp/sc3/inj-final/work/d2c/ok-pre.txt.sha256
+  CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+  exit=0
+  VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+  CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+  exit=14
+  SIDECAR: /var/tmp/sc3/inj-final/work/d3/pre-1of5.txt.sha256
+  CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+  exit=0
+  VERDICT: MATCH  paths=1  MATCH=1  exit=0
+  CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+  exit=0
+  USAGE: reference covers 1 of the required 5 paths
+  REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+  exit=2
+  usage: custody-pair.py [-h] {capture,verify,selftest,paths} ...
+  custody-pair.py: error: unrecognized arguments: --cover-default-paths
+  exit=2
+  $ python3 /var/tmp/sc3/tool-final/custody-pair.py capture --paths /var/tmp/sc3/inj-final/work/wg/victim.txt --out /var/tmp/sc3/inj-final/work/wg/victim.txt
+  USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/sc3/inj-final/work/wg/victim.txt
+  exit=2
+  before-sha=b348776561d0d2e2b016b642c29e21c483d994b8abdb6ff972aa1b4c11e64d2c
+  after-sha=b348776561d0d2e2b016b642c29e21c483d994b8abdb6ff972aa1b4c11e64d2c
+  victim-first-line-after: victim payload: the file the receipt measures
+  verdict=UNCHANGED
+  $ python3 /var/tmp/sc3/tool-final/custody-pair.py selftest --scratch /var/tmp/sc3/inj-final/work/d6/does-not-exist
+  USAGE: scratch base is not a directory: /var/tmp/sc3/inj-final/work/d6/does-not-exist
+  exit=2
+  scratch: /var/tmp/sc3/inj-final/work/scratch-ok/custody-pair-selftest-aolg_0g3
+  CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+  exit=0
+    --label LABEL        capture label recorded in the header
+    --paths [PATHS ...]  override paths (default: the 5 custody paths)
+  exit=0
+    --require-paths N  exit 2 (USAGE) when the reference carries fewer than N
+                       paths (D3 coverage gate)
+  exit=0
+                       /var/tmp); a missing / non-directory / `/tmp` base is a
+                       USAGE exit 2
+  exit=0
+done: /var/tmp/sc3/inj-final

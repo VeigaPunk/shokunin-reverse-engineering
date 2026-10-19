@@ -1,0 +1,98 @@
+--- a/custody-pair.py
++++ b/custody-pair.py
+@@ -216,7 +265,10 @@
+         fields["sha256"] = hashlib.sha256(target.encode()).hexdigest()
+     elif os.path.isfile(path):
+         fields["type"] = "file"
+-        fields["sha256"] = sha256_file(path)
++        try:
++            fields["sha256"] = sha256_file(path)
++        except OSError as exc:  # exists but not evaluable (e.g. EACCES)
++            fields["read_error"] = "%s" % exc
+     else:
+         fields["type"] = "other"
+     return fields
+@@ -269,6 +321,8 @@
+             continue
+         lines.append("TYPE: %s" % sec.get("type", "other"))
+         lines.append("SIZE: %s" % sec.get("size", ""))
++        if sec.get("read_error"):
++            lines.append("READ-ERROR: %s" % sec["read_error"])
+         if "sha256" in sec:
+             lines.append("SHA256: %s" % sec["sha256"])
+         if "symlink_target" in sec:
+@@ -305,6 +359,8 @@
+     "ctime_ns": re.compile(r"^CTIME_NS:\s*(\d+)\s*$", re.M),
+     "ctime_utc_v1": re.compile(r"^CTIME_UTC:\s*(.+?)\s*$", re.M),
+     "inode": re.compile(r"^INODE:\s*(\d+)\s*$", re.M),
++    "stat_error": re.compile(r"^STAT-ERROR:\s*(.+?)\s*$", re.M),
++    "read_error": re.compile(r"^READ-ERROR:\s*(.+?)\s*$", re.M),
+     "mode": re.compile(r"^MODE:\s*(\d+)\s+UID:\s*(\d+)\s+GID:\s*(\d+)\s*$", re.M),
+     "mode_only": re.compile(r"^MODE:\s*(\d+)\s*$", re.M),
+     "uid_only": re.compile(r"^UID:\s*(\d+)\s*$", re.M),
+@@ -315,7 +371,8 @@
+ def _parse_section(text: str) -> dict:
+     sec: dict = {}
+     for key in ("type", "size", "sha256", "mtime_epoch", "mtime_ns", "mtime_utc_render",
+-                "mtime_utc_v1", "ctime_epoch", "ctime_ns", "ctime_utc_v1", "inode"):
++                "mtime_utc_v1", "ctime_epoch", "ctime_ns", "ctime_utc_v1", "inode",
++                "stat_error", "read_error"):
+         m = _KEY_PATTERNS[key].search(text)
+         if m:
+             val = m.group(1)
+@@ -425,6 +482,14 @@
+     ref_exists = ref.get("exists", "no") == "yes" or "sha256" in ref
+     cand_exists = cand.get("exists", "no") == "yes" or "sha256" in cand
+     comparable = sum(1 for k in COMPARE_KEYS if k in ref and k in cand)
++    ref_uneval = bool(ref.get("stat_error") or ref.get("read_error"))
++    cand_uneval = bool(cand.get("stat_error") or cand.get("read_error"))
++    if ref_uneval or cand_uneval:
++        sides = "+".join(n for n, u in (("reference", ref_uneval), ("candidate", cand_uneval)) if u)
++        return {"finding": "UNEVALUABLE", "moved": ["unevaluable"], "compared": 0,
++                "comparable": comparable,
++                "notes": notes + ["exists but not evaluable on %s side" % sides],
++                "label_findings": label_findings}
+     if not ref_exists and not cand_exists:
+         return {"finding": "MATCH", "moved": [], "compared": 0, "comparable": 0,
+                 "notes": notes, "label_findings": label_findings}
+@@ -554,15 +630,25 @@
+     now = time.time()
+     text = render_receipt(sections, args.label, now)
+     present = sum(1 for s in sections if s.get("exists") == "yes")
+-    exit_code = EXIT_MATCH if present == len(sections) else EXIT_ABSENT
++    unevaluable = sum(1 for s in sections
++                      if s.get("stat_error") or s.get("read_error")
++                      or (s.get("exists") == "yes" and s.get("type") == "file" and "sha256" not in s))
++    if unevaluable:
++        exit_code = EXIT_UNEVALUABLE
++    elif present == len(sections):
++        exit_code = EXIT_MATCH
++    else:
++        exit_code = EXIT_ABSENT
+ 
+     if args.out == "-":
+         sys.stdout.write(text)
+     else:
+         out = Path(args.out).expanduser()
+         warn_if_tmp(out)
+-        if out.resolve() in {Path(p).expanduser().resolve() for p in CUSTODY_PATHS}:
+-            print("USAGE: refusing to write a receipt over a custody path: %s" % out, file=sys.stderr)
++        guarded = [Path(p).expanduser() for p in CUSTODY_PATHS] + paths
++        if out.resolve() in {g.resolve() for g in guarded} or any(_same_file(out, g) for g in guarded):
++            print("USAGE: refusing to write a receipt over a path it measures or a custody path"
++                  " (path or inode): %s" % out, file=sys.stderr)
+             return EXIT_USAGE
+         out.parent.mkdir(parents=True, exist_ok=True)
+         try:
+@@ -575,9 +661,9 @@
+             return EXIT_USAGE
+         print("RECEIPT: %s  sha256=%s" % (out, digest))
+         print("SIDECAR: %s" % sidecar)
++    state = {EXIT_MATCH: "OK", EXIT_UNEVALUABLE: "UNEVALUABLE"}.get(exit_code, "PARTIAL")
+     print("CUSTODY_PAIR_CAPTURE: %s paths=%d/%d label=%s exit=%d"
+-          % ("OK" if exit_code == EXIT_MATCH else "PARTIAL", present, len(sections),
+-             args.label or "(none)", exit_code))
++          % (state, present, len(sections), args.label or "(none)", exit_code))
+     return exit_code
+ 
+ 

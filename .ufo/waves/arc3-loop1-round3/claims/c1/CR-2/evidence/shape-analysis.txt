@@ -1,0 +1,35 @@
+# CR-2 shape analysis — opt-off vs opt-on dispatcher invariance (arc3-loop1-round3)
+# generated 2026-10-19T13:11:16Z; sources under /var/tmp/cr2r3/work; compiler = r1 receipted solc-prefix 0.8.37+commit.f401782d
+
+## carrier pairs (first byte difference between opt-off and opt-on200 runtimes)
+Rv2Token(ERC-20 shape, round-1 source a4bc2d78…)
+  rv2-off.Rv2Token: 1943 B  vs  rv2-on200.Rv2Token: 978 B   first-diff offset = 50 (0x32)
+  common dispatcher prefix: 608060405234801561000f575f5ffd5b5060043610610055575f3560e01c8063095ea7b31461005957806318160ddd146100
+CrVault(CR-2 attack: payable receive/fallback+mixed mutability)
+  crv-off.CrVault: 1777 B  vs  crv-on200.CrVault: 861 B   first-diff offset = 38 (0x26)
+  common dispatcher prefix: 608060405260043610610073575f3560e01c806342cde4e81161004d57806342cde4e8146101
+CrWide(CR-2 attack: 22 selectors, binary-search dispatch)
+  crw-off.CrWide: 2940 B  vs  crw-on200.CrWide: 1542 B   first-diff offset = 11 (0xb)
+  common dispatcher prefix: 6080604052600436106101
+OptVault(PL-1 carrier, source 40af90c9…)
+  ov-off.OptVault: 1769 B  vs  ov-on200.OptVault: 776 B   first-diff offset = 11 (0xb)
+  common dispatcher prefix: 6080604052600436106100
+MutMix(PL-1 library-bound carrier, source 8dcc1870…)
+  mm-off.MutMix: 1061 B  vs  mm-on200.MutMix: 497 B   first-diff offset = 38 (0x26)
+  common dispatcher prefix: 608060405260043610610054575f3560e01c80630f991d721461005857806318178358146100
+
+## prologue class census (all compiled binaries, both optimizer settings)
+  crv-off.CrVault.runtime.bin         1777 B  sha 8fe0b21ad6b8…  5f3560e01c@[26]  60003560e01c@[]  guard60043610@[10]
+  crv-on200.CrVault.runtime.bin        861 B  sha 2e636c0f6b5f…  5f3560e01c@[26]  60003560e01c@[]  guard60043610@[10]
+  crv-ondflt.CrVault.runtime.bin       861 B  sha 2e636c0f6b5f…  5f3560e01c@[26]  60003560e01c@[]  guard60043610@[10]
+  crw-off.CrWide.runtime.bin          2940 B  sha 83040705e4d1…  5f3560e01c@[26]  60003560e01c@[]  guard60043610@[10]
+  crw-on200.CrWide.runtime.bin        1542 B  sha 617c91cc3b17…  5f3560e01c@[26]  60003560e01c@[]  guard60043610@[10]
+  mm-off.MmMath.runtime.bin             85 B  sha cefec5437ee2…  5f3560e01c@[]  60003560e01c@[]  guard60043610@[]
+  mm-off.MutMix.runtime.bin           1061 B  sha 6267ef53adf9…  5f3560e01c@[26]  60003560e01c@[]  guard60043610@[10]
+  mm-on200.MmMath.runtime.bin           85 B  sha 1bf824e84a11…  5f3560e01c@[]  60003560e01c@[]  guard60043610@[]
+  mm-on200.MutMix.runtime.bin          497 B  sha 200bc9db76cc…  5f3560e01c@[26]  60003560e01c@[]  guard60043610@[10]
+  ov-off.OptVault.runtime.bin         1769 B  sha d62c1a4fb72e…  5f3560e01c@[26]  60003560e01c@[]  guard60043610@[10]
+  ov-on200.OptVault.runtime.bin        776 B  sha 544469b7bebf…  5f3560e01c@[26]  60003560e01c@[]  guard60043610@[10]
+  rv2-off.Rv2Token.runtime.bin        1943 B  sha c1081a565869…  5f3560e01c@[50]  60003560e01c@[]  guard60043610@[34]
+  rv2-on200.Rv2Token.runtime.bin       978 B  sha ed6c8a76d05b…  5f3560e01c@[50]  60003560e01c@[]  guard60043610@[34]
+  rv2-ondflt.Rv2Token.runtime.bin      978 B  sha ed6c8a76d05b…  5f3560e01c@[50]  60003560e01c@[]  guard60043610@[34]

@@ -1,0 +1,54 @@
+# EX-29 residual adjudication: 3-column corroboration shape (non-canonical) — utc 2026-10-19T13:23:45Z
+## the file under test (NOT a canonical receipt; declared line format in its own header)
+# method: sha256-capture-only, read-only; three independent implementations per path
+#   sha256sum | openssl dgst -sha256 -r | python3 hashlib.sha256  → impl_agree=YES 5/5
+# line format: <sha256>  <abspath>  <recompute_utc>
+## its sidecar?
+chain-ledger.draft.md config-pre-pair.txt manifest-crosscheck.md MANIFEST.draft.txt 
+
+## cause: the sums-v1 regex takes the whole tail of the line as the path, so the trailing recompute-utc token becomes part of the path key
+A format: sums-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /dev/shm/ex29-3col/threecol.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /home/vgpnk/.config/devin/mcp_config.json  2026-10-19T09:59:53Z: ABSENT  compared=0/11 moved=exists
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: ABSENT  paths=1  ABSENT=1  exit=13
+CUSTODY_PAIR_VERIFY: ABSENT paths=0/1 drift=1 exit=13
+threecol-vs-live-exit=13
+
+## control: the same digest with only the path (2-column sums-v1) compares fine
+A format: sums-v1   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /dev/shm/ex29-3col/twocol.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH-V1-PARTIAL  compared=1/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+twocol-vs-live-exit=0
+
+## all sidecarred receipts repo-wide still sha256-verifiable
+config-pre-pair-v2.txt: OK
+config-post-pair-v2.txt: OK
+config-post-pair-ex21.txt: OK
+config-pre-pair-ex21.txt: OK
+config-post-pair-v2r3.txt: OK
+config-pre-pair-v2r3-revised.txt: OK
+config-pre-pair-v2r3.txt: OK
+
+## artifact identity manifest (rule #14, re-derived now)
+# EX-29 new artifacts at handoff — re-derived 2026-10-19T13:23:45Z
+deef845c7d05d587dbb4369e95cbbb93db4997bf416cae794eeb61d6768d99b9  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/identity-rederivation-v2.out
+eb876db38821069e09cd41b34d28aef69143541bc62cc37ff8aa632595e9440a  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/verify-pre-vs-post-rederived.out
+eb876db38821069e09cd41b34d28aef69143541bc62cc37ff8aa632595e9440a  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/verify-pre-vs-post-rederived-require5.out
+e0c521b6b6e8e1a1acd421fbb1067a410221803c70d94f2b45712fcacc17473c  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/verify-post-vs-live-rederived.out
+ecca9e10acbfe33b99b1701607a52351ff8e35eaa1e542194d7a8d42bce4de5d  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/verify-reverse-rederived.out
+406eb9fdd0cb7f194393d9d1ef7d96d7204c0347056ee40fe1ea0a0420ae7d1a  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/verify-rederived-exits.txt
+c47ea76750bb62cddc26e5ef0a1998cc6cb560b6f3b0b67c201c313a7475fef5  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/r2-vs-roundstart-fielddiff.txt
+9345917581ef9581e3bc0d8d31c60d37fd9b06ca54c4b6cc7e638e8457e13440  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/rederive-injections.out
+de31347bb003c1bcedc156eb46f4047920c400f424eb084beec28a79124be058  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/rederive-controls.out
+67be4106f1b2bd32065686839356efd2157941cf062667d94901b4c16687d05f  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/rederive-v1compat.out
+a984178722e3df7e7d79b79102d14c35c1335f1337b56b54d97e97ad71fafa84  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/rederive-final.out
+b2b9c10a21c02f450149fb669ffeb9b9f57f30f73d2c804bc4c21abcce5300e8  .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/rederive-3col-cause.out
+grep: .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/rederive-3col-cause.out: input file is also the output

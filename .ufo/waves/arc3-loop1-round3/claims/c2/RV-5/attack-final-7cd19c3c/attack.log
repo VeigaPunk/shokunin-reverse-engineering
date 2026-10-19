@@ -1,0 +1,292 @@
+7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py
+### C1-hardlink
+$ printf 'hl\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/hl-target.conf && ln /var/tmp/rv5/scratch/attack-final-7cd19c3c/hl-target.conf /var/tmp/rv5/scratch/attack-final-7cd19c3c/hl-alias.txt && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out /var/tmp/rv5/scratch/attack-final-7cd19c3c/hl-alias.txt --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c/hl-target.conf --label hl; ls -l /var/tmp/rv5/scratch/attack-final-7cd19c3c/hl-target.conf; head -c 20 /var/tmp/rv5/scratch/attack-final-7cd19c3c/hl-target.conf | od -c | head -2
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv5/scratch/attack-final-7cd19c3c/hl-alias.txt
+-rw-r--r-- 2 vgpnk vgpnk 3 Oct 19 10:16 /var/tmp/rv5/scratch/attack-final-7cd19c3c/hl-target.conf
+0000000   h   l  \n
+0000003
+exit=0
+---
+### C2-symlink-to-custody
+$ ln -s /home/vgpnk/.bashrc /var/tmp/rv5/scratch/attack-final-7cd19c3c/link-to-bashrc && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out /var/tmp/rv5/scratch/attack-final-7cd19c3c/link-to-bashrc --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c/f.conf --label symcust
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv5/scratch/attack-final-7cd19c3c/link-to-bashrc
+exit=2
+---
+### C3-symlink-to-scoped
+$ printf 'scoped\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/scoped.conf && ln -s /var/tmp/rv5/scratch/attack-final-7cd19c3c/scoped.conf /var/tmp/rv5/scratch/attack-final-7cd19c3c/link-to-scoped && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out /var/tmp/rv5/scratch/attack-final-7cd19c3c/link-to-scoped --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c/scoped.conf --label symscoped; sha256sum /var/tmp/rv5/scratch/attack-final-7cd19c3c/scoped.conf
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv5/scratch/attack-final-7cd19c3c/link-to-scoped
+9211e913e6b4fa1f10ae2b4866aee198e98707013ad8cec6919dd92f1e04bc01  /var/tmp/rv5/scratch/attack-final-7cd19c3c/scoped.conf
+exit=0
+---
+### C4-relative-vs-absolute
+$ cd /var/tmp/rv5/scratch/attack-final-7cd19c3c && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out ./f.conf --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c/f.conf --label relabs; head -c 20 /var/tmp/rv5/scratch/attack-final-7cd19c3c/f.conf
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): f.conf
+fixture
+exit=0
+---
+### C5-false-positive
+$ python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out /var/tmp/rv5/scratch/attack-final-7cd19c3c/new-out.txt --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c/f.conf --label fp && echo OK-WROTE
+RECEIPT: /var/tmp/rv5/scratch/attack-final-7cd19c3c/new-out.txt  sha256=c715f09abf0f361e2f1842fa098080edb59d995a2c94ce48b430df4060d261d0
+SIDECAR: /var/tmp/rv5/scratch/attack-final-7cd19c3c/new-out.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=fp exit=0
+OK-WROTE
+exit=0
+---
+### C6-out-is-sidecar
+$ printf 'x\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/rec.txt && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out /var/tmp/rv5/scratch/attack-final-7cd19c3c/rec.txt.sha256 --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c/rec.txt --label sidecar || true; head -c 60 /var/tmp/rv5/scratch/attack-final-7cd19c3c/rec.txt
+RECEIPT: /var/tmp/rv5/scratch/attack-final-7cd19c3c/rec.txt.sha256  sha256=debd57651d2563abd433938c192a1e36ad7bcde155f36eb87e6e5ff089ed8729
+SIDECAR: /var/tmp/rv5/scratch/attack-final-7cd19c3c/rec.txt.sha256.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=sidecar exit=0
+x
+exit=0
+---
+### A2-verify-stat-blocked-cand
+$ mkdir -p /var/tmp/rv5/scratch/attack-final-7cd19c3c/blk && printf 'p\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/blk/inner.conf && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out /var/tmp/rv5/scratch/attack-final-7cd19c3c/blk-pre.txt --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c/blk/inner.conf --label blk && chmod 000 /var/tmp/rv5/scratch/attack-final-7cd19c3c/blk && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py verify /var/tmp/rv5/scratch/attack-final-7cd19c3c/blk-pre.txt --live; chmod 755 /var/tmp/rv5/scratch/attack-final-7cd19c3c/blk
+RECEIPT: /var/tmp/rv5/scratch/attack-final-7cd19c3c/blk-pre.txt  sha256=01e7550839e998240074df586e2908473a95ce2551578201542e7ce45f337bde
+SIDECAR: /var/tmp/rv5/scratch/attack-final-7cd19c3c/blk-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=blk exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/attack-final-7cd19c3c/blk-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/attack-final-7cd19c3c/blk/inner.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on candidate side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+exit=0
+---
+### A3-ref-read-error-vs-fine
+$ printf 'q\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/q.conf && chmod 000 /var/tmp/rv5/scratch/attack-final-7cd19c3c/q.conf && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out /var/tmp/rv5/scratch/attack-final-7cd19c3c/q-pre.txt --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c/q.conf --label q; chmod 644 /var/tmp/rv5/scratch/attack-final-7cd19c3c/q.conf && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py verify /var/tmp/rv5/scratch/attack-final-7cd19c3c/q-pre.txt --live
+RECEIPT: /var/tmp/rv5/scratch/attack-final-7cd19c3c/q-pre.txt  sha256=25a4d556e46603ca6c682eab31a2aa03884a5ac43b9a4a389ea4e029d20ad2b2
+SIDECAR: /var/tmp/rv5/scratch/attack-final-7cd19c3c/q-pre.txt.sha256
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=1/1 label=q exit=14
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/attack-final-7cd19c3c/q-pre.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/attack-final-7cd19c3c/q.conf: UNEVALUABLE  compared=0/11 moved=unevaluable
+    note: exists but not evaluable on reference side
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+exit=14
+---
+### A4-symlink-to-unreadable
+$ printf 'u\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/u-target && chmod 000 /var/tmp/rv5/scratch/attack-final-7cd19c3c/u-target && ln -s /var/tmp/rv5/scratch/attack-final-7cd19c3c/u-target /var/tmp/rv5/scratch/attack-final-7cd19c3c/u-link && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out /var/tmp/rv5/scratch/attack-final-7cd19c3c/u-link.txt --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c/u-link --label ulink; chmod 644 /var/tmp/rv5/scratch/attack-final-7cd19c3c/u-target
+RECEIPT: /var/tmp/rv5/scratch/attack-final-7cd19c3c/u-link.txt  sha256=d7894a20ce7b2ad959ad16bf8c19b7a800b76cef723048bdb81d2c262375c511
+SIDECAR: /var/tmp/rv5/scratch/attack-final-7cd19c3c/u-link.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=ulink exit=0
+exit=0
+---
+### A5-directory-path
+$ python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out /var/tmp/rv5/scratch/attack-final-7cd19c3c/dir-rec.txt --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c --label dirpath; python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py verify /var/tmp/rv5/scratch/attack-final-7cd19c3c/dir-rec.txt --live
+RECEIPT: /var/tmp/rv5/scratch/attack-final-7cd19c3c/dir-rec.txt  sha256=b2b8eab72d7ff21dab05aee3f879774e775155ee918b6e8d4f77f4124fd56159
+SIDECAR: /var/tmp/rv5/scratch/attack-final-7cd19c3c/dir-rec.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=dirpath exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/attack-final-7cd19c3c/dir-rec.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/rv5/scratch/attack-final-7cd19c3c: REWRITE-DRIFT  compared=10/11 moved=mtime_ns
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: REWRITE-DRIFT  paths=1  REWRITE-DRIFT=1  exit=11
+CUSTODY_PAIR_VERIFY: REWRITE-DRIFT paths=0/1 drift=1 exit=11
+exit=11
+---
+### B1-canonical5-require5
+$ verify /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-31/capture-pre.txt --live --require-paths 5
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-31/capture-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: CONTENT-DRIFT  compared=11/11 moved=sha256
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 4/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=5  CONTENT-DRIFT=1 MATCH=4  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=4/5 drift=1 exit=10
+exit=10
+---
+### B2-five-noncanonical
+$ printf 'n1\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/n1; printf 'n2\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/n2; printf 'n3\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/n3; printf 'n4\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/n4; printf 'n5\n' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/n5; python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py capture --out /var/tmp/rv5/scratch/attack-final-7cd19c3c/five.txt --paths /var/tmp/rv5/scratch/attack-final-7cd19c3c/n1 /var/tmp/rv5/scratch/attack-final-7cd19c3c/n2 /var/tmp/rv5/scratch/attack-final-7cd19c3c/n3 /var/tmp/rv5/scratch/attack-final-7cd19c3c/n4 /var/tmp/rv5/scratch/attack-final-7cd19c3c/n5 --label five && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py verify /var/tmp/rv5/scratch/attack-final-7cd19c3c/five.txt --live --require-paths 5
+RECEIPT: /var/tmp/rv5/scratch/attack-final-7cd19c3c/five.txt  sha256=d17e83efb058ff0f1a335dd46333e3a3bd6f813c97b9be40909c7bd4507c16ea
+SIDECAR: /var/tmp/rv5/scratch/attack-final-7cd19c3c/five.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=5/5 label=five exit=0
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/attack-final-7cd19c3c/five.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /var/tmp/rv5/scratch/attack-final-7cd19c3c/n1: MATCH  compared=11/11
+PATH /var/tmp/rv5/scratch/attack-final-7cd19c3c/n2: MATCH  compared=11/11
+PATH /var/tmp/rv5/scratch/attack-final-7cd19c3c/n3: MATCH  compared=11/11
+PATH /var/tmp/rv5/scratch/attack-final-7cd19c3c/n4: MATCH  compared=11/11
+PATH /var/tmp/rv5/scratch/attack-final-7cd19c3c/n5: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+exit=0
+---
+### B3-absent-inside-covered
+$ verify /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-31/capture-pre.txt --live --require-paths 5
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-31/capture-pre.txt  stanzas=5
+B (candidate): live filesystem  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: CONTENT-DRIFT  compared=11/11 moved=sha256
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 4/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: CONTENT-DRIFT  paths=5  CONTENT-DRIFT=1 MATCH=4  exit=10
+CUSTODY_PAIR_VERIFY: CONTENT-DRIFT paths=4/5 drift=1 exit=10
+exit=10
+---
+### B4-require-zero
+$ verify /var/tmp/rv5/scratch/attack-final-7cd19c3c/f.conf --live --require-paths 0
+USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /var/tmp/rv5/scratch/attack-final-7cd19c3c/f.conf
+exit=2
+---
+### B5-require-negative
+$ verify /var/tmp/rv5/scratch/attack-final-7cd19c3c/f.conf --live --require-paths -1
+USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /var/tmp/rv5/scratch/attack-final-7cd19c3c/f.conf
+exit=2
+---
+### D1-symlink-missing-scratch
+$ ln -s /var/tmp/rv5/scratch/attack-final-7cd19c3c/nope /var/tmp/rv5/scratch/attack-final-7cd19c3c/scr-link && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py selftest --scratch /var/tmp/rv5/scratch/attack-final-7cd19c3c/scr-link
+USAGE: scratch base is not a directory: /var/tmp/rv5/scratch/attack-final-7cd19c3c/scr-link
+exit=2
+---
+### D2-symlink-valid-scratch
+$ mkdir -p /var/tmp/rv5/scratch/attack-final-7cd19c3c/real-scr && ln -s /var/tmp/rv5/scratch/attack-final-7cd19c3c/real-scr /var/tmp/rv5/scratch/attack-final-7cd19c3c/scr-good && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py selftest --scratch /var/tmp/rv5/scratch/attack-final-7cd19c3c/scr-good | tail -2
+USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /var/tmp/rv5/scratch/attack-final-7cd19c3c/scr-good/custody-pair-selftest-46ni4j12/junk.txt
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /home/vgpnk/.bashrc
+USAGE: reference covers 1 of the required 5 paths
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv5/scratch/attack-final-7cd19c3c/scr-good/custody-pair-selftest-46ni4j12/scoped.conf
+USAGE: scratch base is not a directory: /var/tmp/rv5/scratch/attack-final-7cd19c3c/scr-good/custody-pair-selftest-46ni4j12/does-not-exist
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv5/scratch/attack-final-7cd19c3c/scr-good/custody-pair-selftest-46ni4j12/guard-hardlink-alias.txt
+scratch: /var/tmp/rv5/scratch/attack-final-7cd19c3c/scr-good/custody-pair-selftest-46ni4j12
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+exit=0
+---
+### D3-env-tmp-scratch
+$ CUSTODY_PAIR_SCRATCH=/tmp/rv5-must-not python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py selftest | tail -2
+USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /dev/shm/custody-pair-selftest-5evnempa/junk.txt
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /home/vgpnk/.bashrc
+USAGE: reference covers 1 of the required 5 paths
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /dev/shm/custody-pair-selftest-5evnempa/scoped.conf
+USAGE: scratch base is not a directory: /dev/shm/custody-pair-selftest-5evnempa/does-not-exist
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /dev/shm/custody-pair-selftest-5evnempa/guard-hardlink-alias.txt
+scratch: /dev/shm/custody-pair-selftest-5evnempa
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+exit=0
+---
+### D4-explicit-tmp
+$ selftest --scratch /tmp/rv5-must-not
+USAGE: /tmp is excluded scratch (EDQUOT hazard)
+exit=2
+---
+### D5-default-scratch
+$ python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py selftest | tail -2
+USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /dev/shm/custody-pair-selftest-56pia_ch/junk.txt
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /home/vgpnk/.bashrc
+USAGE: reference covers 1 of the required 5 paths
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /dev/shm/custody-pair-selftest-56pia_ch/scoped.conf
+USAGE: scratch base is not a directory: /dev/shm/custody-pair-selftest-56pia_ch/does-not-exist
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /dev/shm/custody-pair-selftest-56pia_ch/guard-hardlink-alias.txt
+scratch: /dev/shm/custody-pair-selftest-56pia_ch
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+exit=0
+---
+### E1-cross-version
+$ verify /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-31/capture-pre.txt /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-31/capture-post.txt
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-31/capture-pre.txt  stanzas=5
+B (candidate): /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-31/capture-post.txt  stanzas=5
+PATH /home/vgpnk/.config/devin/mcp_config.json: MATCH  compared=11/11
+PATH /home/vgpnk/.omp/agent/mcp.json: MATCH  compared=11/11
+PATH /home/vgpnk/.kimi-code/config.toml: MATCH  compared=11/11
+PATH /home/vgpnk/.bashrc: MATCH  compared=11/11
+PATH /home/vgpnk/.profile: MATCH  compared=11/11
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+exit=0
+---
+### E2-v1-vs-r2v2
+$ verify /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round2/claims/c3/EX-31/capture-pre.txt /var/tmp/rv5/scratch/after-03bd6242/live-pre.txt
+USAGE: [Errno 2] No such file or directory: '/var/tmp/rv5/scratch/after-03bd6242/live-pre.txt'
+exit=2
+---
+### E3-empty-receipt
+$ printf '' >/var/tmp/rv5/scratch/attack-final-7cd19c3c/empty.txt && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py verify /var/tmp/rv5/scratch/attack-final-7cd19c3c/empty.txt --live
+USAGE: unparsable receipt (no PATH stanzas, sums, or pipe rows): /var/tmp/rv5/scratch/attack-final-7cd19c3c/empty.txt
+exit=2
+---
+### E4-mixed-sums-v2
+$ printf '%s  %s\n' e80b71cd14d3cbd65f4173abcbfcf01a545dbca32a72d575108b553a648cc96f /var/tmp/rv5/scratch/attack-final-7cd19c3c/f.conf >/var/tmp/rv5/scratch/attack-final-7cd19c3c/sums.txt && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py verify /var/tmp/rv5/scratch/attack-final-7cd19c3c/sums.txt /var/tmp/rv5/scratch/attack-final-7cd19c3c/new-out.txt 2>/dev/null || true; python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/custody-pair/custody-pair.py verify /var/tmp/rv5/scratch/attack-final-7cd19c3c/sums.txt --live | tail -3
+A format: sums-v1   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/rv5/scratch/attack-final-7cd19c3c/sums.txt  stanzas=1
+B (candidate): /var/tmp/rv5/scratch/attack-final-7cd19c3c/new-out.txt  stanzas=1
+PATH /var/tmp/rv5/scratch/attack-final-7cd19c3c/f.conf: MATCH-V1-PARTIAL  compared=1/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+exit=0
+---
+### F1-commandA
+$ cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 - HEAD <<'PY'
+import json, pathlib, re, subprocess, sys
+rev = sys.argv[1]
+def get(path): return subprocess.check_output(['git','show',f'{rev}:{path}'],text=True)
+paths = subprocess.check_output(['git','ls-tree','-r','--name-only',rev,'--','corpus/knowledge'],text=True).splitlines()
+files = {pathlib.PurePosixPath(p).stem for p in paths if p.endswith('.md')}
+section = get('corpus/README.md').split('## Coverage map\n',1)[1].split('\n## ',1)[0]
+mapped = set(re.findall(r'2026-10-\d{2}-[a-z0-9-]+', section))
+craft = get('SKILL.md').split('## Queue-drain craft ',1)[1].split('\n## ',1)[0]
+rules = re.split(r'(?m)^- \*\*', craft)[1:]
+pattern = r'corpus/knowledge/([a-z0-9-]+\.md)(?::(\d+)(?:-(\d+))?)?'
+resolved = 0
+for rule in rules:
+    refs = re.findall(pattern, rule); valid = bool(refs)
+    for name, first, last in refs:
+        try:
+            count = len(get('corpus/knowledge/'+name).splitlines()); start, end = int(first or 1), int(last or first or 1)
+            valid = valid and 1 <= start <= end <= count
+        except subprocess.CalledProcessError: valid = False
+    resolved += valid
+print(json.dumps({'revision': rev, 'mapped': len(files & mapped), 'knowledge_files': len(files),
+ 'missing': sorted(files - mapped), 'dangling': sorted(mapped - files),
+ 'citation_resolved_rules': resolved, 'rule_blocks': len(rules),
+ 'coverage_score': round(10*len(files & mapped)/len(files),2),
+ 'depth_score': round(10*resolved/len(rules),2)}, sort_keys=True))
+PY
+{"citation_resolved_rules": 14, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 82, "mapped": 82, "missing": [], "revision": "HEAD", "rule_blocks": 14}
+exit=0
+---
+### F2-diff-scope
+$ cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && git status --porcelain && echo '---' && git diff --stat -- .ufo/gates/custody-pair/
+ M .ufo/gates/citation-drift/expected.json
+ M .ufo/gates/citation-drift/pointer-table.json
+ M .ufo/gates/custody-pair/README.md
+ M .ufo/gates/custody-pair/custody-pair.py
+ M .ufo/waves/arc2-loop1-round10/C3.md
+?? .ufo/gates/__pycache__/
+?? .ufo/gates/citation-drift/__pycache__/
+?? .ufo/gates/custody-pair/__pycache__/
+?? .ufo/waves/arc3-loop1-round3/
+---
+ .ufo/gates/custody-pair/README.md       |  79 ++++++--
+ .ufo/gates/custody-pair/custody-pair.py | 314 +++++++++++++++++++++++++++++---
+ 2 files changed, 356 insertions(+), 37 deletions(-)
+exit=0
+---
+ATTACK-END

@@ -1,0 +1,135 @@
+# EX-29 independent re-derivation of the BEFORE column (base tool from HEAD blob) — utc 2026-10-19T13:24:00Z
+base tool sha: 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa  lines: 889
+expect 112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa / 889
+
+### selftest (base)
+case refuses-to-write-over-custody-path         PASS
+scratch: /dev/shm/custody-pair-selftest-ueryep6i
+CUSTODY_PAIR_SELFTEST: DIRTY cases=15 passed=14 failed=1 exit=3
+base-selftest-exit=3
+
+### D2a dir-EACCES (base)
+RECEIPT: /dev/shm/ex29-beforecol/rec-dir.txt  sha256=bd6aa2932b9b93bea4dc068cc3c389f816e448df5d44376427f51ca8f8038917
+SIDECAR: /dev/shm/ex29-beforecol/rec-dir.txt.sha256
+CUSTODY_PAIR_CAPTURE: PARTIAL paths=0/1 label=(none) exit=13
+base-dir-eacces-capture-exit=13
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: '/dev/shm/ex29-beforecol/forbidden-dir/f.conf'
+A format: v1-stanza   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /dev/shm/ex29-beforecol/rec-dir.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /dev/shm/ex29-beforecol/forbidden-dir/f.conf: MATCH  compared=0/11
+SHA256-CONTRACT: 0/0 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+base-dir-eacces-verify-exit=0
+
+### D2b file-EACCES (base)
+Traceback (most recent call last):
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 553, in cmd_capture
+    sections = [capture_path(p) for p in paths]
+                ~~~~~~~~~~~~^^^
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/dev/shm/ex29-beforecol/unreadable.conf'
+base-file-eacces-capture-exit=1
+
+### D2c live unreadable (base)
+Traceback (most recent call last):
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 593, in cmd_verify
+    b_sections = [capture_path(Path(s["path"]).expanduser()) for s in a_sections]
+                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 219, in capture_path
+    fields["sha256"] = sha256_file(path)
+                       ~~~~~~~~~~~^^^^^^
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 168, in sha256_file
+    with open(path, "rb") as fh:
+         ~~~~^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/dev/shm/ex29-beforecol/switch.conf'
+base-live-unreadable-exit=1
+
+### D3 1-of-3 (base)
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /dev/shm/ex29-beforecol/rec-1of3.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /dev/shm/ex29-beforecol/one.conf: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+base-plain-1of3-exit=0
+usage: custody-pair.py [-h] {capture,verify,selftest,paths} ...
+custody-pair.py: error: unrecognized arguments: --require-paths
+base-require3-1of3-exit=2
+
+### D6 missing scratch (base)
+Traceback (most recent call last):
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 889, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 885, in main
+    return args.func(args)
+           ~~~~~~~~~^^^^^^
+  File "/dev/shm/ex29-beforecol/base-tool.py", line 630, in cmd_selftest
+    root = Path(tempfile.mkdtemp(prefix="custody-pair-selftest-", dir=str(base)))
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/shm/ex29-beforecol/does-not-exist/custody-pair-selftest-vp197018'
+base-D6-exit=1
+
+### clobber --paths X --out X (base)
+RECEIPT: /dev/shm/ex29-beforecol/guard.conf  sha256=daabd97c1057d5b661352f4c930df99ca8fd73d85c347caa8efb1386cdf5fd30
+SIDECAR: /dev/shm/ex29-beforecol/guard.conf.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+base-clobber-exit=0
+base guard.conf sha before=d4e4877bac978b7952f0d544fc52ebff5411d351d129f1f056fa43f11da9af2b after=daabd97c1057d5b661352f4c930df99ca8fd73d85c347caa8efb1386cdf5fd30 clobbered=YES
+
+### positive control: base tool verify live pair (should MATCH at this instant)
+SHA256-CONTRACT: 5/5 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=5  MATCH=5  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=5/5 drift=0 exit=0
+--- key lines ---
+grep: .ufo/waves/arc3-loop1-round3/claims/c2/EX-29/rederive-before-column.out: input file is also the output
+
+### CORRECTION (appended at handoff, 2026-10-19T13:24:16Z)
+The base-selftest DIRTY 14/15 above was SELF-INFLICTED: I ran the HEAD blob renamed
+as base-tool.py, but selftest case label-utc-render-tz-independent re-spawns the tool
+by its canonical name from its own directory (base tool line 733: Path(__file__).resolve().parent / 'custody-pair.py').
+Re-run with the canonical filename in the scratch copy dir:
+  $ mkdir -p /dev/shm/ex29-beforecol/canon && cp base-tool.py /dev/shm/ex29-beforecol/canon/custody-pair.py
+  $ python3 /dev/shm/ex29-beforecol/canon/custody-pair.py selftest --scratch /dev/shm
+  CUSTODY_PAIR_SELFTEST: CLEAN cases=15 passed=15 failed=0 exit=0   (base-selftest-exit=0)
+So the BEFORE row is 15/15 CLEAN exit 0, as the draft claimed. The landed
+before-selftest-base.out (10:18) shows the same self-inflicted DIRTY for the same
+reason (its scratch copy at /dev/shm/ex29-base/custody-pair.py was already gone).
+Neither is a defect of the base tool.
+
+### key BEFORE-column lines, measured by this seat from the HEAD blob
+base tool sha=112d01dc034c2d54324e7703e2d03d1d83b0c3930ed5d4f688546968b73ecefa lines=889
+selftest: CLEAN 15/15 exit 0
+D2a dir-EACCES: capture exit 13, EXISTS: no + STAT-ERROR; verify --live -> MATCH exit 0 (FAIL-OPEN)
+D2b file-EACCES capture: PermissionError traceback exit 1
+D2c live unreadable: traceback exit 1
+D3 plain 1-of-3: MATCH paths=1/1 exit 0; --require-paths: unrecognized arguments exit 2 (flag absent)
+D6 missing scratch: FileNotFoundError traceback exit 1
+clobber --paths X --out X: exit 0, X sha changed (CLOBBERED)
+base tool verify roundstart receipt --live: MATCH 5/5 exit 0 (the receipt was always fine; the holes are the tool's)

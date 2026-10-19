@@ -1,0 +1,44 @@
+TOOL-SHA-BEFORE 08fb6833c87d10a07e90ea84186993e95a6b81b853e9ae74045b2b3c2a3618e2
+=== A: --out over a canonical custody path (fake HOME) ===
+--- A: capture --out $FH/.bashrc
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/cu1-r3/fakehome/.bashrc
+exit=2
+A-UNCHANGED: yes (sha 54b3478abf84fde9a70599100c4118dcbe99106b9606ab1f446b645d51f0b72c)
+=== B: VZ-4 replay — --paths X --out X (both scratch) ===
+--- B: capture --paths $FX/scope.json --out $FX/scope.json
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/cu1-r3/fx/scope.json
+exit=2
+B-UNCHANGED: yes
+=== C: --paths over a fake-custody path, --out same path ===
+--- C: capture --paths $FH/.profile --out $FH/.profile
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/cu1-r3/fakehome/.profile
+exit=2
+C-UNCHANGED: yes
+=== D: control — ordinary capture (scoped file + separate out) ===
+--- D: capture --paths $FX/scope2.json --out $FX/out.txt
+RECEIPT: /var/tmp/cu1-r3/fx/out.txt  sha256=61ff69299174bab2804f5db5b8f07459071789a43497fc69131255a1e6eae847
+SIDECAR: /var/tmp/cu1-r3/fx/out.txt.sha256
+CUSTODY_PAIR_CAPTURE: OK paths=1/1 label=(none) exit=0
+exit=0
+D-SOURCE-UNCHANGED: yes
+# captured-local: 2026-10-19T10:10:31-03:00
+# capture-label: (none)
+# host: plazir27  user: vgpnk  kernel: 7.2.3-arch1-3
+# cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+=== E: 1-of-5 receipt under verify --live (D3) ===
+capture-1of5 exit=0
+--- E1: verify one-of-five --live
+A format: v2   B format: live
+CUSTODY-PAIR VERIFY (v2 instrument)
+A (reference): /var/tmp/cu1-r3/fx/one-of-five.txt  stanzas=1
+B (candidate): live filesystem  stanzas=1
+PATH /var/tmp/cu1-r3/fakehome/.bashrc: MATCH  compared=11/11
+SHA256-CONTRACT: 1/1 paths agree on sha256 (v1/v2 receipts compare on this field)
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH paths=1/1 drift=0 exit=0
+exit=0
+--- E2: verify one-of-five --live --require-paths 5
+usage: custody-pair.py [-h] {capture,verify,selftest,paths} ...
+custody-pair.py: error: unrecognized arguments: --require-paths
+exit=2
+TOOL-SHA-AFTER  08fb6833c87d10a07e90ea84186993e95a6b81b853e9ae74045b2b3c2a3618e2

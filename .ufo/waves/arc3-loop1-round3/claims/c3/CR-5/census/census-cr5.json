@@ -1,0 +1,213 @@
+{
+ "corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md": [
+  {
+   "head_line": 17,
+   "text": "- **Observation (RESULT \u2014 Rv2Token hex @ 6.4.0):** Evidence `ev_45849c8b\u2026`; `normalized_result.functions` (count = array length) = 5, set-equal to the planted K=5 (`095ea7b3`, `18160ddd`, `23b872dd`, `70a08231`, `a9059cbb`), zero missing / zero extra, `dispatch:\"abi\"` on all five. `inferred_arguments`/`inferred_state_mutability` are populated and consistent with the compiled ABI (`Rv2Token.abi.json`); offsets 89/137/167/215/263 are dispatch-target JUMPDESTs (the r3-07 entry's round-4 erratum, `corpus/knowledge/2026-10-13-r3-evm-interface.md:149-155`); decoded `bytecode.sha256 c1081a56\u2026` = the runtime bytes; the bytecode's sole non-dispatch PUSH4 constant (`16ee4b79` @1900) was not reported \u2014 zero false positives (EX-07 `m1-rv2token-runtime.json`). r3-07's \"no real signal for argument/mutability inference\" frontier closes for this carrier.",
+   "tokens": [
+    {
+     "target": "corpus/knowledge/2026-10-13-r3-evm-interface.md",
+     "lo": 149,
+     "hi": 155,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  },
+  {
+   "head_line": 18,
+   "text": "- **Observation (delta vs r3-07 \u2014 this entry's core):** where the r3 synthetic stub bodies returned `inferred_state_mutability:\"pure\"` for every selector and `inferred_arguments:\"\"` (`corpus/knowledge/2026-10-13-r3-evm-interface.md:59-70`), this real carrier returns per-function mutability (`view` \u00d72, `nonpayable` \u00d73) and argument tuples \u2014 signal that exists only because the bytes are compiler output, not a hand-assembled stub. This is a fresh real-bytecode leg, not a re-run of r3.",
+   "tokens": [
+    {
+     "target": "corpus/knowledge/2026-10-13-r3-evm-interface.md",
+     "lo": 59,
+     "hi": 70,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  },
+  {
+   "head_line": 21,
+   "text": "- **Observation (id re-derivation):** same-request reruns a/b and a repo-root-CWD run re-derive `ev_45849c8b\u2026`; the 6.7.0 rerun re-derives `ev_19d7d3cb\u2026`; different carrier bytes yield different ids. The `ev_` id's full domain for `inspect_evm_interface` was not measured \u2014 no content-addressed identity claim is made (`corpus/QUALITY.md:24-25`).",
+   "tokens": [
+    {
+     "target": "corpus/QUALITY.md",
+     "lo": 24,
+     "hi": 25,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  },
+  {
+   "head_line": 24,
+   "text": "- **Observation (creation code \u2014 parsed-and-empty, not excluded):** `Rv2Token.creation.hex` @6.4.0 `ev_c80379e1\u2026` \u2192 0 functions, `bytecode.kind:\"unknown\"`; `Smoke_sol_Smoke.bin` @6.4.0 `ev_f875e21e\u2026` \u2192 0 functions. Creation blobs carry no runtime dispatch table; these are parsed-and-empty results (`corpus/QUALITY.md:21`), not inventory exclusions.",
+   "tokens": [
+    {
+     "target": "corpus/QUALITY.md",
+     "lo": 21,
+     "hi": null,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  },
+  {
+   "head_line": 25,
+   "text": "- **Observation (r3-07 hypothesis, refuted):** r3-07's candidate-2 note (\"classification appears to need richer bytecode (real solc output) to engage\", `corpus/knowledge/2026-10-13-r3-evm-interface.md:44-45`) is refuted by measurement: on real solc 0.8.37 runtime and creation output alike, `bytecode.kind` stays `\"unknown\"` (same envelopes as the line above; KdxToken `run-hex-6.7.0.json`). `kind` classification remains open, not engaged.",
+   "tokens": [
+    {
+     "target": "corpus/knowledge/2026-10-13-r3-evm-interface.md",
+     "lo": 44,
+     "hi": 45,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  },
+  {
+   "head_line": 26,
+   "text": "- **Observation (input-shape traps, KdxToken):** encoding is a positional argument (`<path> <raw|hex>` \u2014 the r3 quirk, `corpus/knowledge/2026-10-13-r3-evm-interface.md:93-96`; the `--encoding` flag-form rejection was not re-tested this round); interior whitespace / odd length / wrapped lines / CRLF \u2192 typed `invalid_request` exit 1; a raw-encoded copy of hex text decodes the file's bytes as code (exit 0, `ev_60062ad0\u2026`, different bytecode digest); a temp-dir EDQUOT failure \u2192 typed `execution_failure` exit 1 \u2014 fail-closed, no silent success.",
+   "tokens": [
+    {
+     "target": "corpus/knowledge/2026-10-13-r3-evm-interface.md",
+     "lo": 93,
+     "hi": 96,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  }
+ ],
+ "corpus/README.md": [],
+ "SCORECARD.md": [
+  {
+   "head_line": 1435,
+   "text": "  SHONEN.md:6 refreshed in the same commit (range 81-255, 14/14). Landed",
+   "tokens": [
+    {
+     "target": "SHONEN.md",
+     "lo": 6,
+     "hi": null,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  }
+ ],
+ "LOG.md": [],
+ "SKILL.md": [
+  {
+   "head_line": 246,
+   "text": "  (`.ufo/waves/arc3-loop1-round1/seats/CR-2.md:86-89`), and the chain measured",
+   "tokens": [
+    {
+     "target": "ufo/waves/arc3-loop1-round1/seats/CR-2.md",
+     "lo": 86,
+     "hi": 89,
+     "class": "other",
+     "head": "absent"
+    }
+   ]
+  },
+  {
+   "head_line": 248,
+   "text": "  hash (`.ufo/waves/arc3-loop1-round1/claims/c1/verdict.md:149-153`). The",
+   "tokens": [
+    {
+     "target": "ufo/waves/arc3-loop1-round1/claims/c1/verdict.md",
+     "lo": 149,
+     "hi": 153,
+     "class": "other",
+     "head": "absent"
+    }
+   ]
+  },
+  {
+   "head_line": 252,
+   "text": "  `corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md:7`, whose recheck line",
+   "tokens": [
+    {
+     "target": "corpus/knowledge/2026-10-19-arc3-r1-evm-real-solc.md",
+     "lo": 7,
+     "hi": null,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  },
+  {
+   "head_line": 254,
+   "text": "  the \"fresh identity recorded\" line; `LOG.md:1411-1412`) \u2014 never a revert,",
+   "tokens": [
+    {
+     "target": "LOG.md",
+     "lo": 1411,
+     "hi": 1412,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  }
+ ],
+ "SHONEN.md": [
+  {
+   "head_line": 6,
+   "text": "  asserted: `SKILL.md:81-255` (craft section; rules #11-14 added arc2 rounds 4/7/9 + arc3 round 2); 14/14 rule blocks have resolvable citations, not a full semantic audit \u2014 `SCORECARD.md`, command A; no identified outside verifier.",
+   "tokens": [
+    {
+     "target": "SKILL.md",
+     "lo": 81,
+     "hi": 255,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  }
+ ],
+ ".ufo/gates/citation-drift/expected.json": [],
+ ".ufo/gates/custody-pair/README.md": [],
+ ".ufo/reports/arc3-loop1-round1/kaidoku.md": [
+  {
+   "head_line": 38,
+   "text": "- `corpus/README.md:38` \u2014 map token + state-cell refresh, one physical line",
+   "tokens": [
+    {
+     "target": "corpus/README.md",
+     "lo": 38,
+     "hi": null,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  },
+  {
+   "head_line": 40,
+   "text": "- `SKILL.md:371` \u2014 citation-drift registry row, guard semantics + 13-case",
+   "tokens": [
+    {
+     "target": "SKILL.md",
+     "lo": 371,
+     "hi": null,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  }
+ ],
+ ".ufo/reports/arc3-loop1-round2/kaidoku.md": [
+  {
+   "head_line": 33,
+   "text": "- `SHONEN.md:6`: range `81-243` \u2192 `81-255`, `13/13` \u2192 `14/14` (same commit).",
+   "tokens": [
+    {
+     "target": "SHONEN.md",
+     "lo": 6,
+     "hi": null,
+     "class": "in-repo-doc",
+     "head": "present"
+    }
+   ]
+  }
+ ]
+}

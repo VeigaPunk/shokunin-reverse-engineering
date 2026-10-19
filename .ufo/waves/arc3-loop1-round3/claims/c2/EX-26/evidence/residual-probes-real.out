@@ -1,0 +1,10 @@
+== R1: default_scratch() failure arm (os.access stubbed; process exit measured) ==
+exit=1  traceback=False
+stderr='USAGE: no writable scratch dir (/dev/shm, /var/tmp); /tmp is excluded (EDQUOT hazard)'
+declared map says USAGE=2; measured=1
+
+== R2: /tmp guard predicate (evaluated; no /tmp write performed) ==
+no --scratch; default resolves /dev/shm    base=/dev/shm   guard_fires=False
+no --scratch; CUSTODY_PAIR_SCRATCH=/tmp/x  base=/tmp/x     guard_fires=True
+explicit --scratch /tmp/x                  base=/tmp/x     guard_fires=False
+=> an explicit /tmp base is accepted (the guard requires `not args.scratch`); the env-var route CUSTODY_PAIR_SCRATCH=/tmp/... *is* refused. End-to-end /tmp run: not executed (host policy: never write to /tmp).

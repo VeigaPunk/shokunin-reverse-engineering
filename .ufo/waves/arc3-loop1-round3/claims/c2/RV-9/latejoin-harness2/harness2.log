@@ -1,0 +1,58 @@
+----- B0 pin
+7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09  .ufo/gates/custody-pair/custody-pair.py
+----- B1 hardlink alias write-guard (D7-shape)
+rc=2 (expect 2)
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv9-scratch/h2/hl-alias.txt
+----- B2 require-paths gate on EX-35 1-of-5 fixture
+rc=2 (expect 2)
+USAGE: reference covers 1 of the required 5 paths
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+rc=0 (no flag: record)
+VERDICT: MATCH-V1-PARTIAL  paths=1  MATCH-V1-PARTIAL=1  exit=0
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+rc=0 (expect 0)
+CUSTODY_PAIR_VERIFY: MATCH-V1-PARTIAL paths=1/1 drift=0 exit=0
+----- B3 UNEVALUABLE receipt: format tag + unusable-as-anchor
+rc=14 (expect 14)
+CUSTODY_PAIR_CAPTURE: UNEVALUABLE paths=1/1 label=(none) exit=14
+rc=14 (expect 14)
+A format: v2   B format: v2
+CUSTODY-PAIR VERIFY (v2 instrument)
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+rc=14 (after chmod back: record)
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+CUSTODY_PAIR_VERIFY: UNEVALUABLE paths=0/1 drift=1 exit=14
+----- B4 declared exit map + classes list
+37:  3. UNEVALUABLE (exit 14, round-2 debt D2). A path that exists but cannot be
+39:     `TYPE: file` + `READ-ERROR: ...` for an unreadable regular file, and
+40:     `EXISTS: no` + `STAT-ERROR: ...` when even lstat fails (EACCES on a parent
+42:     classifies such a stanza UNEVALUABLE *before* the both-absent MATCH branch
+44:     exit 0` (the fail-open defect). `STAT-ERROR:`/`READ-ERROR:` are parsed
+88:An unevaluable stanza carries `READ-ERROR: <errno message>` (exists but
+89:unreadable) or `STAT-ERROR: <errno message>` (lstat failed) and omits SHA256.
+103:    14  UNEVALUABLE       a path exists but could not be evaluated (EACCES on
+----- B5 selftest case inventory
+case capture-ok-exit-0                          PASS
+case receipt-shape-v2-fields                    PASS
+case sidecar-self-hash                          PASS
+case verify-receipt-vs-live-clean               PASS
+case same-content-rewrite-inplace-ctime-pin     PASS
+case same-content-rewrite-rename-inode-pin      PASS
+case content-drift-detected                     PASS
+case absent-path-detected                       PASS
+case metadata-drift-detected                    PASS
+case label-utc-render-tz-independent            PASS
+case v1-stanza-compat-and-mutation              PASS
+case sums-v1-compat                             PASS
+case pipe-v1-compat                             PASS
+case unparsable-receipt-usage-exit              PASS
+case refuses-to-write-over-custody-path         PASS
+case unreadable-path-is-unevaluable             PASS
+case unevaluable-never-matches                  PASS
+case parsed-unevaluable-reference-never-matches PASS
+case partial-reference-require-paths-gate       PASS
+case refuses-to-write-over-scoped-path          PASS
+case selftest-missing-scratch-usage-exit        PASS
+case refuses-write-through-hardlink-alias       PASS
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+HARNESS2 DONE

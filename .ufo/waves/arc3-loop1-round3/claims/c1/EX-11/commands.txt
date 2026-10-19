@@ -1,0 +1,57 @@
+# EX-11 — verbatim commands (arc3-loop1-round3, 2026-10-19)
+
+Host: node v26.12.0 (mise) | repo HEAD c07af80fcf3a60f9c6a0ca09b6e23fb5794d3311
+No installs. Pins reused from the npm npx cache (read-only):
+  ~/.npm/_npx/dea9475797100b20/node_modules/rea-agents  version 6.4.0
+  ~/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents  version 6.5.0
+  ~/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents  version 6.7.0
+Executable pinned: ~/.npm/_npx/dea9475797100b20/node_modules/rea-agents/scripts/rea.mjs
+  sha256 3554288a08c455fa419dad662d73710fb17debe94b9e71dd1282761117c5981e
+
+# Carrier A reconstruction (CR-1's scratch path was gone; rebuilt byte-identically)
+mkdir -p /dev/shm/cr1
+cp .ufo/waves/arc3-loop1-round1/claims/c1/CR-1/evidence/carrier-A.hex /dev/shm/cr1/carrier-A.hex
+sha256sum /dev/shm/cr1/carrier-A.hex
+# -> 36dc82468c5846a93273970483253e63f5b0bef673f0bd355d3c41db01b9b3d2
+
+# CR-1's exact invocation (recovered from the round-1 wire log, agent session wd_shokunin_8c4a99c6228c
+# session_f33b1f06-8ec4-4bf9-9726-28a5a61545d1; form: node $REA ... --format json --full-output)
+REA=~/.npm/_npx/dea9475797100b20/node_modules/rea-agents/scripts/rea.mjs
+cd /dev/shm/cr1
+TMPDIR=/dev/shm/cr1 node $REA inspect-evm-interface /dev/shm/cr1/carrier-A.hex hex --format json --full-output > /var/tmp/ex11r3/exact-1.json 2> /var/tmp/ex11r3/exact-1.err   # exit 0, 4579 B
+TMPDIR=/dev/shm/cr1 node $REA inspect-evm-interface /dev/shm/cr1/carrier-A.hex hex --format json --full-output > /var/tmp/ex11r3/exact-2.json 2> /var/tmp/ex11r3/exact-2.err   # exit 0, 4579 B
+
+# Version sweep (npx form), two runs each — identifies CR-1's pin by byte-match
+cd /var/tmp/ex11r3
+for v in 6.4.0 6.5.0 6.7.0; do for i in 1 2; do
+  TMPDIR=/var/tmp/ex11r3/tmpdir npx -y rea-agents@$v inspect-evm-interface \
+      /dev/shm/cr1/carrier-A.hex hex --format json --full-output > a-$v-$i.json 2> a-$v-$i.err
+done; done   # all exit 0; 6.4.0 -> 4579 B, 6.5.0/6.7.0 -> 5320 B
+
+# Controls (carrier A content at a different path; then content change at that path)
+mkdir -p /var/tmp/ex11r3/pathctl
+cp /dev/shm/cr1/carrier-A.hex /var/tmp/ex11r3/pathctl/carrier-A.hex
+TMPDIR=/var/tmp/ex11r3/tmpdir node $REA inspect-evm-interface /var/tmp/ex11r3/pathctl/carrier-A.hex hex --format json --full-output > pathctl-path.json 2> pathctl-path.err
+printf '\n' >> /var/tmp/ex11r3/pathctl/carrier-A.hex     # sha256 95eca04dc5aebc164b34b578442e58925a3cecaaa47360b25cf9263dca86ef0e
+TMPDIR=/var/tmp/ex11r3/tmpdir node $REA inspect-evm-interface /var/tmp/ex11r3/pathctl/carrier-A.hex hex --format json --full-output > pathctl-content.json 2> pathctl-content.err
+
+# Alternative-reading carrier (the r1 entry's Rv2Token hex leg, ev_45849c8b…), two fresh runs
+P=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round1/claims/c1/RV-2/Rv2Token.runtime.hex
+sha256sum $P   # d7f73058e2d9fb2563bf96b2f26902f233530de027a7943185e15bfdc4e1048f
+TMPDIR=/var/tmp/ex11r3/tmpdir node $REA inspect-evm-interface $P hex --format json --full-output > rv2-1.json 2> rv2-1.err
+TMPDIR=/var/tmp/ex11r3/tmpdir node $REA inspect-evm-interface $P hex --format json --full-output > rv2-2.json 2> rv2-2.err
+
+# Envelope extraction + comparison
+python3 extract2.py <files...> > compare-carrierA.txt
+# Envelope = exact '"data":…,"meta":' substring bytes of the --full-output stdout (no re-serialization);
+# bare-envelope inputs accepted verbatim.
+
+# Independent id re-derivation (union of the per-pin projections)
+python3 reid-ext11.py <envelope> rc|norc > reid-results.txt
+
+# Chain before-state, recipe A at REV=HEAD (SCORECARD.md:86-124, body copied unmodified;
+# REV set as a shell variable first — the inline REV=HEAD python3 - "$REV" form expands empty)
+REV=HEAD
+python3 - "$REV" <<'PY' > command-A-before.txt
+…recipe A body verbatim from SCORECARD.md:94-122…
+PY

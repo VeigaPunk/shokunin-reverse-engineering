@@ -1,0 +1,72 @@
+tool: /var/tmp/rv8/rev/frozen-review.py
+7cd19c3cfd835c7807d5e60dece1c2592c9df6c319a78deb14469dd6ebe8ab09  /var/tmp/rv8/rev/frozen-review.py
+1155
+date: 2026-10-19T13:14:49Z
+
+### C-1 exit constant + maps (claim: 14 UNEVALUABLE, precedence, capture 0/14/13)
+161:EXIT_UNEVALUABLE = 14
+171:    "UNEVALUABLE": 4,
+180:    "UNEVALUABLE": EXIT_UNEVALUABLE,
+489:        return {"finding": "UNEVALUABLE", "moved": ["unevaluable"], "compared": 0,
+637:        exit_code = EXIT_UNEVALUABLE
+664:    state = {EXIT_MATCH: "OK", EXIT_UNEVALUABLE: "UNEVALUABLE"}.get(exit_code, "PARTIAL")
+943:        assert rc == EXIT_UNEVALUABLE, "expected UNEVALUABLE exit %d, got %d" % (EXIT_UNEVALUABLE, rc)
+947:        assert rc_ver == EXIT_UNEVALUABLE, "expected verify UNEVALUABLE (fail-closed), got %d" % rc_ver
+968:        assert rc_cap == EXIT_UNEVALUABLE, "expected capture UNEVALUABLE, got %d" % rc_cap
+971:        assert rc_ver == EXIT_UNEVALUABLE, "expected verify UNEVALUABLE (fail-closed), got %d" % rc_ver
+
+### C-2 CLI flag exists (claim: verify --require-paths N)
+usage: custody-pair.py verify [-h] [--live] [--require-paths N]
+                              receipt_a [receipt_b]
+
+--
+  --require-paths N  exit 2 (USAGE) when the reference carries fewer than N
+                     paths (D3 coverage gate)
+
+### C-3 1-of-5 reference WITHOUT the flag (README claims coverage reported)
+exit=0
+REFERENCE-COVERAGE lines: 0
+VERDICT: MATCH  paths=1  MATCH=1  exit=0
+
+### C-4 same reference WITH --require-paths 5 (claim: exit 2 + REFERENCE-COVERAGE line)
+exit=2
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+
+### C-5 v1 sums reference under the flag (claim: applies to v1 alike)
+exit=2
+REFERENCE-COVERAGE: 1/5 paths present in reference; unaccounted: ~/.config/devin/mcp_config.json ~/.omp/agent/mcp.json ~/.kimi-code/config.toml ~/.bashrc ~/.profile
+
+### C-6 write guard: --paths X --out X (claim: refused, exit 2)
+exit=2
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv8/claimsrun/scoped.conf
+content after: orig
+
+### C-7 write guard: hardlink alias (claim: refused, exit 2)
+exit=2
+USAGE: refusing to write a receipt over a path it measures or a custody path (path or inode): /var/tmp/rv8/claimsrun/hl-alias.txt
+
+### C-8 write guard: SIDECAR over a measured path (README claims sidecar covered)
+exit=0
+measured file after:
+463cb2ef6de4a9b022862d89d1f346687dd047dea349b009186afae0ca0f727e  q.txt
+
+### C-9 selftest CLEAN count (claim: N>=17, CLEAN exit 0)
+exit=0
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
+
+### C-10 scratch guard (claim: missing/unusable dir -> USAGE exit 2, no traceback)
+exit=2
+USAGE: scratch base is not a directory: /var/tmp/rv8/claimsrun/does-not-exist
+
+### C-11 EACCES injections (claim: class 14, no fail-open MATCH)
+blocked-dir capture exit=14
+verify exit=14
+VERDICT: UNEVALUABLE  paths=1  UNEVALUABLE=1  exit=14
+chmod000 capture exit=14
+0
+
+### C-12 receipt text for the blocked-dir case (EXISTS field)
+EXISTS: no
+STAT-ERROR: [Errno 13] Permission denied: '/var/tmp/rv8/claimsrun/blocked/inner.conf'
+
+evidence copied to /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c2/RV-8/evidence

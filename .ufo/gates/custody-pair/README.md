@@ -1,7 +1,8 @@
 # custody-pair (v2 custody receipt instrument)
 
-Seat EX-31, chain c3, wave `arc3-loop1-round2`. Operator-owned custody for the
-five paths the province freezes:
+Seat EX-31 (chain c3, wave `arc3-loop1-round2`), revised by seat EX-21 (chain c2,
+wave `arc3-loop1-round3`). Operator-owned custody for the five paths the
+province freezes:
 
 ```
 ~/.config/devin/mcp_config.json
@@ -28,6 +29,9 @@ python3 custody-pair.py verify receipt-A.txt receipt-B.txt
 # verify a receipt against the live filesystem
 python3 custody-pair.py verify receipt-A.txt --live
 
+# verify with a coverage gate: exit 2 when the reference carries fewer than N paths
+python3 custody-pair.py verify receipt-A.txt --live --require-paths 5
+
 # fixture-based selftest (never touches a custody path)
 python3 custody-pair.py selftest [--scratch /dev/shm]
 
@@ -40,11 +44,18 @@ every receipt carries a re-derivable identity). Scratch defaults come from
 `$CUSTODY_PAIR_SCRATCH`, then `/dev/shm`, then `/var/tmp` — **never `/tmp`**
 (quota-exhausted on this host, EDQUOT).
 
+`capture` refuses to write its receipt over any path it is measuring or any of
+the five custody paths — by resolved path *or* by inode (a hardlink alias is
+refused too). `selftest --scratch` requires an existing, non-`/tmp` directory;
+anything else is a declared USAGE exit 2.
+
 ## Receipt fields (v2)
 
 Per path: `EXISTS`, `TYPE`, `SIZE`, `SHA256`, `MTIME_EPOCH`, `MTIME_NS`,
 `MTIME_UTC_RENDER`, `MTIME_LOCAL_RENDER`, `CTIME_EPOCH`, `CTIME_NS`,
 `CTIME_UTC_RENDER`, `CTIME_LOCAL_RENDER`, `INODE`, `MODE`, `UID`, `GID`.
+An unevaluable stanza replaces `SHA256` with `READ-ERROR` (exists but
+unreadable) or `STAT-ERROR` (lstat failed) and is exit class 14, never a pass.
 
 Two contracts hold here:
 
@@ -73,6 +84,32 @@ the instrument non-idempotent over its own use.
    `MTIME_NS` even when the digest and the mtime are unchanged (selftest cases
    `same-content-rewrite-inplace-ctime-pin`, `same-content-rewrite-rename-inode-pin`).
 
+## Round-3 hardening (arc3-loop1-round3, seat EX-21)
+
+Four round-2 named debts closed, each with a declared exit class (patch sources
+in `.ufo/waves/arc3-loop1-round3/claims/c2/PL-2/`):
+
+- **D2 → `UNEVALUABLE` (14).** An exists-but-unreadable path (`READ-ERROR`) or a
+  stat-blocked path (`STAT-ERROR`) is recorded, the receipt is still written,
+  and `verify` classifies it `UNEVALUABLE` **before** the both-absent `MATCH`
+  branch — live, and receipt-vs-receipt (the parser reads both error keys). The
+  round-2 tool read an EACCES path as `MATCH exit 0` and crashed on a mode-000
+  file.
+- **D3 → `--require-paths N` (USAGE 2).** A reference carrying fewer than N
+  stanzas is a USAGE exit with a `REFERENCE-COVERAGE: n/N … unaccounted: …`
+  line. Opt-in: without the flag the comparison is exactly the reference's
+  paths, unchanged.
+- **Write-guard scope (VZ-4 A11 + RV-11 D7) → USAGE 2.** `--out` is refused when
+  it resolves to, or shares an inode with, any measured path or any custody
+  path: `--paths X --out X` no longer clobbers X, and a hardlink alias is
+  refused. Self-harm guard, not a security boundary (TOCTOU residual named).
+- **D6 → USAGE 2.** `selftest --scratch` on a missing / non-directory / `/tmp`
+  base is a declared USAGE exit with a message, not a raw traceback.
+
+The round-3 live receipt pair (`verify pre post --require-paths 5` → `MATCH
+5/5 exit 0`) and the full before→after matrix live in
+`.ufo/waves/arc3-loop1-round3/claims/c2/EX-21/`.
+
 ## Exit codes (declared)
 
 | code | class | meaning |
@@ -82,15 +119,17 @@ the instrument non-idempotent over its own use.
 | 11 | `REWRITE-DRIFT` | digest equal but `inode`/`ctime`/`mtime` moved on ≥1 path (same-content rewrite) |
 | 12 | `METADATA-DRIFT` | digest + identification times equal but `mode`/`uid`/`gid`/`size`/`type` differ, or an `EXTRA-PATH` appears on the candidate side, or a receipt's own epoch/render pair is inconsistent (`LABEL-INCONSISTENT`), or a v1 label defect is reproduced (`LABEL-DEFECT`) |
 | 13 | `ABSENT` | ≥1 reference path is missing on the candidate side |
-| 2 | `USAGE` | bad arguments, unreadable/unparsable receipt, or a refused/failed write |
+| 14 | `UNEVALUABLE` | a path exists but could not be evaluated (`EACCES` on open, or a stat error other than `ENOENT`): the receipt records `READ-ERROR`/`STAT-ERROR` and is still written; `verify` never reads such a path as `MATCH` |
+| 2 | `USAGE` | bad arguments, unreadable/unparsable receipt, a refused/failed write, fewer reference paths than `--require-paths N` demands, or an unusable `selftest --scratch` base |
 | 3 | `SELFTEST-FAIL` | a selftest case failed |
 
-`capture` exits `0` with every requested path present (5/5 for the default set)
-and `13` when at least one requested path is absent — the receipt is written
-either way, recording `EXISTS: no`.
+`capture` exits `0` with every requested path present (5/5 for the default set),
+`14` when at least one requested path is present-but-unevaluable, else `13` when
+at least one requested path is absent — the receipt is written either way.
 
 Severity precedence for the verdict of a `verify` run: `CONTENT-DRIFT` >
-`ABSENT` > `REWRITE-DRIFT` > `METADATA-DRIFT` > `MATCH`. The report always prints
+`UNEVALUABLE` > `ABSENT` > `REWRITE-DRIFT` > `METADATA-DRIFT` > `MATCH`. The
+report always prints
 per-path classes, a `SHA256-CONTRACT: n/m paths agree on sha256` line, and a
 final `CUSTODY_PAIR_VERIFY: <class> paths=… drift=… exit=…` line.
 
@@ -114,14 +153,19 @@ render and not the UTC render.
 ## Selftest
 
 `selftest` builds all fixtures in a scratch dir (never a custody path) and runs
-15 cases: capture shape + sidecar identity, receipt-vs-live clean, same-content
-rewrite in place (ctime pin) and via rename (inode pin), content drift, absent
-path, mode drift, TZ-independence of the UTC render, v1-stanza/v1-sums/v1-pipe
-compatibility with mutation detection, unparsable-receipt usage exit, and the
-refusal to write a receipt over a custody path. It ends with
+22 cases: the round-2 fifteen (capture shape + sidecar identity, receipt-vs-live
+clean, same-content rewrite in place (ctime pin) and via rename (inode pin),
+content drift, absent path, mode drift, TZ-independence of the UTC render,
+v1-stanza/v1-sums/v1-pipe compatibility with mutation detection,
+unparsable-receipt usage exit, refusal to write a receipt over a custody path)
+plus the round-3 seven: `unreadable-path-is-unevaluable`,
+`unevaluable-never-matches`, `parsed-unevaluable-reference-never-matches`,
+`partial-reference-require-paths-gate`, `refuses-to-write-over-scoped-path`,
+`selftest-missing-scratch-usage-exit`, `refuses-write-through-hardlink-alias`.
+It ends with
 
 ```
-CUSTODY_PAIR_SELFTEST: CLEAN cases=15 passed=15 failed=0 exit=0
+CUSTODY_PAIR_SELFTEST: CLEAN cases=22 passed=22 failed=0 exit=0
 ```
 
 ## Round evidence
@@ -130,3 +174,12 @@ CUSTODY_PAIR_SELFTEST: CLEAN cases=15 passed=15 failed=0 exit=0
 (`capture-pre.txt`, `capture-post.txt` + sidecars, both 5/5 exit 0), the
 matching `verify` runs, the v1-compat runs, the six-attack harness
 (`attacks.sh` → `attacks.out`), and the selftest transcript.
+
+`../waves/arc3-loop1-round3/claims/c2/EX-21/` holds the round-3 revision's
+evidence: the before→after injection matrix (PL-2's harness run on the base blob
+and on the landed revision), the 22-case selftest transcript, the live
+pre/post pair captured **by the revised tool** (both receipts self-pin its
+sha256) verified `MATCH 5/5` with and without `--require-paths 5`, the
+cross-revision check (round-start receipt captured by the previous revision vs
+the revised-tool post receipt → `MATCH 5/5`), the v1-shape control runs, and the
+round-2 six-attack harness re-run (identical classes).
