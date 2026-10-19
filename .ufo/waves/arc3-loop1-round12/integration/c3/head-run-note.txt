@@ -1,0 +1,24 @@
+What `--rev HEAD` now reports and why
+=====================================
+Observed (live-head-run.txt): CITATION_DRIFT_VERDICT: clean findings=0 exit=0.
+
+Why: the probe reads the pointer table and expected.json from the filesystem
+(--table/--expected paths), and only resolves CITED files through
+`git show <rev>:<path>`. Both worktree files were patched together, so the
+table preflight passes: sha256(pointer-table.json on disk)
+= 7470c3f6e956ce37e024ea34ae1f37002ebb515dc5a90d53eb9ad7a915d734f2
+= expected.json pointer_table.sha256.
+
+All 60 entries then resolve against HEAD's tree; the three new pl4-* rows hit
+their `recheck:` lines because the corpus files themselves are unchanged at
+HEAD. Hence findings=0.
+
+The "old expected pin" semantics only bite across the table/expected pair, not
+against the Git object: HEAD's committed table bytes still hash to
+1b3ab955478b5d40f428d733bc482e4037f83bceaa1a39e9046ef82ca6d42d4b, so any run
+that pairs HEAD's table with HEAD's expected.json (as a committed run after
+the parent lands this patch would, at the new commit) is what the gate
+actually grades. If anyone paired the OLD table bytes with the NEW
+expected.json (or vice versa) the preflight would report
+pointer_table_tampered, exit 2. Table-hash refresh and table edit landed
+together here, so the pair stays consistent at every step.

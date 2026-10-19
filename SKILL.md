@@ -290,6 +290,28 @@ bullet is bounded by the lines it cites.
   `corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md:51-57`,
   `corpus/knowledge/2026-10-19-arc3-r8-vyper-optimizer-dispatch-shapes.md:5-6`,
   and `corpus/knowledge/2026-10-19-arc3-r8-vyper-optimizer-dispatch-shapes.md:17`.
+- **Evidence-id field sensitivity is projection-local — measure it per
+  operation, never infer it from the `ev_` prefix.** Pin verb, version,
+  call shape, and bytes; recompute IDs from complete envelopes; compare
+  a same-path repeat with a byte-identical alternate-path call; name the
+  exact differing projected fields, with outer display fields as the
+  negative control; mutate only the candidate field set — when it fails
+  to reproduce the alternate-call ID, diff the remaining projection and
+  never attribute the whole delta — and bound the result to operation,
+  version, input, and call shape. EVM and Rust carry path in
+  `parameters.path`, `normalized_result.artifact.path`, `locations[0].path`;
+  `inspect_artifact` needs nested `substeps[0].evidence.subject.local_path`
+  plus `normalized_result.inspection_id` to reproduce the copy ID
+  (`corpus/knowledge/2026-10-19-arc3-r7-evm-evidence-id-domain.md:11`,
+  `corpus/knowledge/2026-10-19-arc3-r7-evm-evidence-id-domain.md:17-22`,
+  `corpus/knowledge/2026-10-19-arc3-r10-rust-evidence-id-domain.md:13-15`,
+  `corpus/knowledge/2026-10-19-arc3-r10-rust-evidence-id-domain.md:19-22`,
+  `corpus/knowledge/2026-10-19-arc3-r11-inspect-artifact-evidence-id-domain.md:11-15`,
+  `corpus/knowledge/2026-10-19-arc3-r11-inspect-artifact-evidence-id-domain.md:19`;
+  the non-isolation of the nested path alone is the round-12 verdict's
+  in-memory mutation control,
+  `.ufo/waves/arc3-loop1-round12/claims/verdicts/VZ-1.md:42`; rule draft
+  `.ufo/waves/arc3-loop1-round12/claims/c2/EX-16.md`).
 
 
 

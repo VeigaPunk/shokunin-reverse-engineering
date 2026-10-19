@@ -1,0 +1,27 @@
+C3 baseline at HEAD (pre-patch)
+================================
+Worktree: /home/vgpnk/Projects/shokunin/.tower/worktrees/kaika/kaidoku-shokunin
+HEAD: de77d754523afb673b4421d363fe89311644af4f
+
+pointer-table.json at HEAD:
+  sha256sum: 1b3ab955478b5d40f428d733bc482e4037f83bceaa1a39e9046ef82ca6d42d4b
+  entries: 57
+  quoted: 5
+  exempt: 8
+  non-ASCII bytes: 0
+  file == canonical json.dumps(table, indent=2) + "\n" (default ensure_ascii): True
+
+expected.json pointer_table.sha256 at HEAD:
+  1b3ab955478b5d40f428d733bc482e4037f83bceaa1a39e9046ef82ca6d42d4b (matches table)
+
+Existing rows referencing the three ev_ corpus entries: 0
+  (python json scan of every entry object for
+   'r7-evm' / 'r10-rust' / 'r11-inspect-artifact' in any field, file or target)
+
+recheck: lines targeted by the three new rows (current worktree):
+  corpus/knowledge/2026-10-19-arc3-r7-evm-evidence-id-domain.md:5
+    recheck: `mkdir -p /var/tmp/kaidoku-ex3-r7-recheck && TMPDIR=/var/tmp/kaidoku-ex3-r7-recheck node .../rea.mjs inspect-evm-interface ...` expect ev_ffd8f0b96a921dc2d42dbdc76546838494eebb0cdc02354d4d7570ef46acc052
+  corpus/knowledge/2026-10-19-arc3-r10-rust-evidence-id-domain.md:7
+    recheck: ... `evidence/rederive-commands.txt`; then run `node .../recompute-ids.mjs` ...
+  corpus/knowledge/2026-10-19-arc3-r11-inspect-artifact-evidence-id-domain.md:7
+    recheck: ... `identity.txt` ... `TMPDIR` ... `calls.txt` ... `recompute-ids.py`. Do not use `/tmp` for scratch.

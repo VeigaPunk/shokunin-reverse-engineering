@@ -4,6 +4,7 @@ Promotion to shokunin requires all of:
 
 - [~] SKILL.md contains real decision tables, error patterns, checklists, cited sources
   asserted: `SKILL.md:81-255` (craft section; rules #11-14 added arc2 rounds 4/7/9 + arc3 round 2); 14/14 rule blocks have resolvable citations, not a full semantic audit — `SCORECARD.md`, command A; no identified outside verifier.
+  correction 2026-10-19 (arc3-loop1-round12, appended; line above kept): craft section now SKILL.md:81-314; 17/17 rule blocks with resolvable citations (rules #15-#17 added arc3 r6/r10/r12) per command A at the round-12 work commit; still no identified outside verifier.
 - [~] At least one end-to-end domain task executed and logged in LOG.md
   asserted: 2026-10-15 libjq open → instruction decode → export → close, `corpus/lessons/2026-10-15-round-1.md`, Executed native smoke; complete record at `evidence/round-1-2026-10-15/rea-bundle.json`; no identified outside verifier.
 - [~] Instructions executable by an agent without oral context
