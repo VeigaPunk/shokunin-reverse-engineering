@@ -122,3 +122,13 @@ controls. The full-list forecast is falsified, not called an exact success.
 Routed counter's first integrated run also caught its own install-heading
 parser taking a prose `## Installs` mention rather than the heading; anchored
 to the real heading before final verification.
+
+## Wave-2 source re-open clarification
+
+W2 `ReopenS038` re-opened the official JSON: fetched document SHA-256
+`6b83804b8dd2d6052bb93cc03e4aba2ddee834f82c15f7bf8faacf5f91825950`
+(2256879 bytes); go1.25.0 entry starts line 14514, archive filename line 14644,
+sha256 line 14648. This pins the rendering used for Gate quotations, not the
+time-varying endpoint indefinitely. S037 version-document SHA-256
+`ae3429d52774e39bda4f8c9ba9aa141b26901ec65f82a394e540ed9cc479c236`.
+No existing SOURCES evidence cell was rewritten to add these clarifications.

@@ -45,6 +45,13 @@ The frozen emulator's `per_type[144]` names `*types.valueMap`, descriptor addres
 
 Eight retained receipt validations exit 0 under `--require-mid-maps` (`evidence/receipt-validation/`). They were performed after all runs using the corrected validator extracted to `/tmp`, with the producer's original receipt-validate.py bytes restored at its recorded path during validation. Applying the forward list-step fix changes that pinned producer file; validation against today's working-tree file then correctly reports a SHA-256/size mismatch. Retained validations prove consistency against the producer snapshot, not that historical pins equal future tool bytes, and not authenticity against someone rewriting and rehashing the whole chain.
 
+Vet's REA `analyze.json` is `binary_overview` Evidence
+`ev_3dc824c4fb84650b4b9c53f911a1b59688ee481262251c140080d5b42fd96f64`,
+subject SHA-256 `9b9d776e7569c910de714790a1b9bab1287b49fdc210973158f3076cee683bf7`,
+absolute path `/home/vgpnk/.local/opt/go-1.25.0/pkg/tool/linux_amd64/vet`.
+That Evidence binds the inventory subject; the failure above is provider-log
+evidence, not a field asserted by the overview Evidence.
+
 ## Decision table and limits
 
 | Evidence | Admissible conclusion |

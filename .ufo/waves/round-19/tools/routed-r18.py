@@ -35,7 +35,9 @@ A18 = "a245bb00c581ae3423a10a055c77d4bc873918df"
 LESSON = "corpus/lessons/round-19.md"
 GO_SHA = {"go1.24.6": "bbca37cc395c974ffa4893ee35819ad23ebb27426df87af92e93a9ec66ef8712",
           "go1.25.0": "2852af0cb20a13139b3448992e69b868e50ed0f8a1e5940ee1de9e19a123b613"}
-ALIASES = ["@", "HEAD~0", "HEAD^{commit}", "HEAD@{0}", "@~0", "HEAD^0"]
+ALIASES = ["@", "HEAD~0", "HEAD^{commit}", "HEAD@{0}", "@~0", "HEAD^0",
+           "ORIG_HEAD", "FETCH_HEAD", "MERGE_HEAD", "CHERRY_PICK_HEAD",
+           "REVERT_HEAD", "REBASE_HEAD", "BISECT_HEAD", "AUTO_MERGE"]
 EV = ".ufo/waves/round-19/evidence"
 
 
@@ -186,6 +188,16 @@ def s_strict_baseline(g, rev, tmp):
         return False, "retained stdout is not the tool's JSON"
     if not doc.get("open_count"):
         return False, "retained strict stdout reports open_count %r (red baseline needs >0)" % doc.get("open_count")
+    # Recompute the historical command, not just a self-consistent receipt.
+    # This verifies its result, not the historical process's time/authenticity.
+    replay_path = os.path.join(tmp, "strict-baseline-tool.py")
+    with open(replay_path, "wb") as f:
+        f.write(tool)
+    replay = subprocess.run(
+        [sys.executable, "-I", "-B", replay_path, "--root", g.root,
+         "--rev", B18, "--strict"], capture_output=True)
+    if replay.returncode != 1 or replay.stdout != out or replay.stderr != err:
+        return False, "strict-baseline replay disagrees with retained exit/stdout/stderr"
     return True, "strict run at %s exit 1 (open %s), bytes and tool bound" % (B18[:7], doc.get("open_count"))
 
 
@@ -196,6 +208,14 @@ def s_head_aliases(g, rev, tmp):
     probe = os.path.join(d, "citation-drift-probe.py")
     base = [sys.executable, "-I", probe, "--root", g.root, "--table", os.path.join(d, "pointer-table.json"),
             "--expected", os.path.join(d, "expected.json"), "--strict"]
+    classifier = getattr(load_module(probe, "citation_alias_rev"), "moving_rev_cause", None)
+    if classifier is None:
+        return False, "no lexical moving-revision classifier at REV"
+    unclassified = [a for a in ALIASES if not classifier(a)]
+    if unclassified:
+        return False, "mutable aliases not lexically refused: %s" % unclassified
+    if classifier("refs/heads/main") or classifier(B18):
+        return False, "immutable/full-branch control lexically refused"
     accepted = []
     for a in ALIASES:
         p = subprocess.run(base + ["--rev", a], capture_output=True, cwd=tmp)

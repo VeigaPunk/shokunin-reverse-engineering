@@ -142,11 +142,23 @@ def _is_analyze_step(step):
     """
     if not isinstance(step, dict):
         return False
-    for field in ("step", "name"):
-        if step.get(field) == "analyze":
-            return True
+    declared = [step[k] for k in ("step", "name") if k in step]
+    if declared and any(value != "analyze" for value in declared):
+        return False
     argv = step.get("argv")
-    return isinstance(argv, list) and "analyze" in argv
+    command = None
+    if isinstance(argv, list) and argv:
+        # Only a subcommand position identifies a CLI step; a filename or
+        # search-pattern argument named "analyze" is not an analyze call.
+        for i, token in enumerate(argv):
+            if isinstance(token, str) and re.fullmatch(r"rea-agents@\d+\.\d+\.\d+", token):
+                command = argv[i + 1] if i + 1 < len(argv) else None
+                break
+        if command is None and os.path.basename(str(argv[0])) in ("rea", "rea-agents"):
+            command = argv[1] if len(argv) > 1 else None
+    if command is not None:
+        return command == "analyze"
+    return bool(declared)
 
 
 def check_binding(receipt, findings):
@@ -606,7 +618,7 @@ def verify_mid_maps(receipt, pins, findings, require_mid_maps=False):
             # not count (R18-MIDMAP-LISTSTEP).
             named = [(i, s) for i, s in enumerate(steps)
                      if _is_analyze_step(s)]
-            ok = any(s.get("pin_checks") for _i, s in named)
+            ok = len(named) == 1 and bool(named[0][1].get("pin_checks"))
             if named:
                 where = f"$.steps[{named[0][0]}].pin_checks"
         else:
@@ -1089,6 +1101,22 @@ def selftest(pins):
         record("carrier_flag_list_declared_name_green", code, 0,
                json.dumps(_out4p["receipts"][0].get("findings", [])
                           if _out4p["receipts"] else []))
+
+        # Wave-2 identity attacks: neither argument text nor conflicting
+        # labels may impersonate the analyze step.
+        for bad in (
+                {"argv": ["npx", "-y", "rea-agents@6.5.0", "inspect-go-binary", "analyze"]},
+                {"argv": ["rea", "search", "carrier", "analyze"]},
+                {"step": "inspect-go-binary", "name": "analyze"},
+                {"name": "analyze", "argv": ["rea", "search", "carrier"]}):
+            record("list_identity_argument_red", int(_is_analyze_step(bad)), 0)
+        duplicate = {"steps": [
+            {"name": "analyze", "pin_checks": [dict(map_check3)]},
+            {"step": "analyze", "pin_checks": [dict(map_check3)]}]}
+        dup_findings = []
+        verify_mid_maps(duplicate, pins, dup_findings, require_mid_maps=True)
+        record("list_identity_duplicate_red",
+               int(any(f.get("code") == "mid_checks_absent" for f in dup_findings)), 1)
 
         # Case 5: unreadable receipt path -> exit 2.
         _out5, code = validate_paths(
