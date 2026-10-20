@@ -1,0 +1,410 @@
+[
+  {
+    "id": "pnv-corrupt-diff-shadows-valid-lower",
+    "request": "1.21.5",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.4.json.diff": "<<not json, not a patch, just bytes>>",
+      "patchverdiffs/go1.21.2.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.5",
+      "status": "fallback_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.4.json.diff"},
+      "selected_patch": 4,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Filename-only selection shadows a usable lower diff. getPatchVerDiffFile (GoApiSnapshot.java:148-166) returns the first present file at patch 4 and never reaches the valid patch-2 diff; JsonPatch.read (:136) would throw only inside the derived-provider path the preview never runs. Source-faithful: corrupt bytes still select; recorded limitation, not a rejection."
+  },
+  {
+    "id": "pnv-empty-diff-selected-exact",
+    "request": "1.21.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.2.json.diff": ""
+    },
+    "expected": {
+      "requested": "1.21.2",
+      "status": "exact_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.2.json.diff", "size": 0},
+      "selected_patch": 2,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Zero-byte diff file is selected exact on name alone. Runtime JsonPatch.read of an empty file fails; the preview reports byte identity (size 0) without asserting content validity. sha256 deliberately not asserted (no invented hashes)."
+  },
+  {
+    "id": "pnv-valid-json-wrong-schema-diff",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.3.json.diff": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "exact_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.3.json.diff"},
+      "selected_patch": 3,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Diff bytes are parseable JSON but the wrong document kind (a snapshot-shaped object, not a JsonPatch sections document). Selection is filename+presence only; JsonPatch.read semantic failure happens only on the never-executed apply path. No semantic validity is invented by the preview."
+  },
+  {
+    "id": "pnv-binary-diff-selected",
+    "request": "1.21.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.4.json.diff": {"raw_b64": "/v4A"},
+      "patchverdiffs/go1.21.1.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.4",
+      "status": "exact_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.4.json.diff", "size": 3},
+      "selected_patch": 4,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Non-UTF-8 binary bytes at the exact-requested name select and shadow the valid patch-1 diff. raw_b64 exercises the binary fixture form; size is asserted, sha256 is not (no invented hashes)."
+  },
+  {
+    "id": "pnv-diff-at-root-not-probed",
+    "request": "1.21.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "go1.21.2.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.2",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "getPatchVerDiffFile only probes 'patchverdiffs/' (subdir argument at GoApiSnapshot.java:154). A perfectly named diff file at the root is invisible to selection; location is part of the filename law."
+  },
+  {
+    "id": "pnv-noncanonical-diff-names-ignored",
+    "request": "1.21.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.02.json.diff": {"Sections": []},
+      "patchverdiffs/go1.21.2.json.diff.bak": {"Sections": []},
+      "patchverdiffs/GO1.21.2.JSON.DIFF": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.2",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Java probes only canonical GoVer.toString() names (go%d.%d.%d.json.diff); leading-zero patch '02', '.bak' suffix, and uppercase names are never probed. The model's fullmatch regex pins the same canon — all three decoys ignored, base_only."
+  },
+  {
+    "id": "pnv-patchverdiffs-is-file",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs": "a regular file, not a directory"
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "patchverdiffs as a plain file: iterdir() raises NotADirectoryError -> treated as the valid 'no diffs' case (selection.py:233-235), matching Java where getApiSnapshotFile under a non-directory subdir path never resolves a file."
+  },
+  {
+    "id": "pnv-diff-name-directory-skipped",
+    "request": "1.21.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.2.json.diff/inside.txt": "x",
+      "patchverdiffs/go1.21.1.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.2",
+      "status": "fallback_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.1.json.diff"},
+      "selected_patch": 1,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "A directory carrying the exact diff name: _describe_file's is_file() skips it and the lower patch-1 file wins. Java agrees: Application.getDataFileInModule throws FileNotFoundException for directories ('is a directory (expecting file)', Application.java:~368-371), so the countdown would also continue past patch 2. Nested-path fixture entry materializes the directory."
+  },
+  {
+    "id": "pnv-null-bucket-omitted",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"linux-amd64": null, "linux": {"Funcs": {}}, "all": {"Funcs": {}, "Types": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Contract refinement: Java read() deserializes 'linux-amd64': null to a null GoArch, then drops it in the results rebuild ('arch != null' guard, GoApiSnapshot.java:233-235). Model must filter top-level null values: bucket list is ['linux','all'], NOT ['linux-amd64','linux','all']."
+  },
+  {
+    "id": "pnv-null-and-array-buckets-discriminating",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"amd64": null, "unix": ["not", "an", "object"], "all": {"Funcs": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["unix", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Discriminating case for the null filter: 'amd64':null must be OMITTED while 'unix':[array] stays names-only (runtime Gson would fail GoArch deserialization on the array, but the names-only preview limitation explicitly allows it). Expected ['unix','all'] separates the null filter from blanket non-object filtering."
+  },
+  {
+    "id": "pnv-buckets-unpatched-despite-removing-diff",
+    "request": "1.21.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"linux-amd64": {"Funcs": {}}, "all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.2.json.diff": {"Sections": [{"Op": "remove", "Path": "/linux-amd64"}]}
+    },
+    "expected": {
+      "requested": "1.21.2",
+      "status": "exact_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.2.json.diff"},
+      "selected_patch": 2,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux-amd64", "all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Pins the labelled-preview contract: even a diff whose content would remove the linux-amd64 bucket leaves base_matching_buckets naming it, because buckets are computed on raw base bytes and must be labelled unpatched (base_matching_buckets_source). The derived patched document is never constructed."
+  },
+  {
+    "id": "pnv-goos-equals-goarch-dedup",
+    "request": "1.21.0",
+    "goos": "amd64",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"amd64-amd64": {"Funcs": {}}, "amd64": {"Funcs": {}}, "all": {"Funcs": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["amd64-amd64", "amd64", "amd64", "all"],
+      "base_matching_buckets": ["amd64-amd64", "amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Degenerate-but-accepted selectors: 'amd64' is not in IS_GOOS_UNIX so the unix slot is '' and dropped, while goos==goarch duplicates 'amd64' in the List.of order — the emitted arch_search_order keeps the duplicate exactly like the Java list, but base_matching_buckets dedups it like read()'s LinkedHashMap rebuild (GoApiSnapshot.java:228-237)."
+  },
+  {
+    "id": "pnv-goos-unix-literal",
+    "request": "1.21.0",
+    "goos": "unix",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"unix-amd64": {"Funcs": {}}, "unix": {"Funcs": {}}, "amd64": {"Funcs": {}}, "all": {"Funcs": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["unix-amd64", "unix", "amd64", "all"],
+      "base_matching_buckets": ["unix-amd64", "unix", "amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "goos literally 'unix': the string is absent from IS_GOOS_UNIX (GoApiSnapshot.java:180-181) so the artificial-unix slot is '' and dropped; the only 'unix' in the order is the goos slot itself. No doubled entry — pins set-membership edge for a real arch name used as GOOS."
+  },
+  {
+    "id": "pnv-empty-string-bucket-name",
+    "request": "1.18.0",
+    "goos": "windows",
+    "goarch": "amd64",
+    "files": {
+      "go1.18.0.json": {"": {"Funcs": {}}, "all": {"Funcs": {}}}
+    },
+    "expected": {
+      "requested": "1.18.0",
+      "status": "base_only",
+      "base": {"path": "go1.18.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["windows-amd64", "windows", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "An empty-string top-level key is never in the search order ('' slots are dropped before the order is emitted), so it is silently skipped — matching archNamesToKeep's miss + skipValue path in read() (GoApiSnapshot.java:216-224)."
+  },
+  {
+    "id": "pnv-request-major-zero-minor-nonzero",
+    "request": "0.5.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {},
+    "expected": {
+      "requested": "0.5.0",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "0.5.0 is a valid request: GoVer.isInvalid only rejects major==0 AND minor==0 (GoVer.java:105-107). Empty root -> missing_base, not a parse error. Pins the boundary next to the rejected 0.0.x sentinel."
+  },
+  {
+    "id": "pnv-request-invalid-sentinel",
+    "request": "0.0.7",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {},
+    "expect_error": {"type": "RequestError", "contains": "INVALID"},
+    "note": "0.0.x is the INVALID sentinel (GoVer.isInvalid). Exercises the dict-form expect_error with both type-name and message-substring fields."
+  },
+  {
+    "id": "pnv-request-empty-goos",
+    "request": "1.21.0",
+    "goos": "",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expect_error": {"type": "RequestError", "contains": "goos"},
+    "note": "Empty goos rejected by contract: selectors must be non-empty strings. Java itself would proceed (raw strings build '-amd64'-style names and read() would just keep fewer buckets) — deliberate strict divergence for CLI inputs, pinned here."
+  },
+  {
+    "id": "pnv-request-patch-int-max",
+    "request": "1.21.2147483647",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {},
+    "expected": {
+      "requested": "1.21.2147483647",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "2147483647 is the largest Java int: accepted, normalized, and reaches missing_base. Pins the inclusive upper bound of parse_request."
+  },
+  {
+    "id": "pnv-request-patch-int-overflow",
+    "request": "1.21.2147483648",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {},
+    "expect_error": {"type": "RequestError", "contains": "Java int"},
+    "note": "2147483648 overflows Java int (Integer.parseInt would also throw NumberFormatException -> INVALID in GoVer.parse). The strict model raises RequestError before any file work; expect_error dict asserts the 'Java int range' message."
+  },
+  {
+    "id": "pnv-base-name-directory-is-missing",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json/inner.txt": "x"
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "A directory wearing the base filename: is_file() -> absent -> missing_base. Java agrees: getDataFileInModule raises FileNotFoundException for directories (Application.java:~368-371) so getApiSnapshotFile returns null and get() yields EMPTY."
+  },
+  {
+    "id": "pnv-base-trailing-junk",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"raw": "{\"all\": {}} trailing-junk"}
+    },
+    "expect_error": {"type": "UnreadableError"},
+    "note": "Strict-model divergence pinned deliberately: Python json.load rejects trailing data after the top-level object -> UnreadableError/exit2. Java read() iterates a manual beginObject/endObject loop (GoApiSnapshot.java:214-227) with no full-consumption check, so trailing bytes are TOLERATED at runtime. Model is stricter than source here; recorded as a divergence, not claimed as source behavior."
+  }
+]

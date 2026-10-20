@@ -1,0 +1,215 @@
+[
+  {
+    "id": "bounded-exact-request-beats-higher-installed",
+    "request": "1.24.5",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.24.0.json": {"all": {"Funcs": {}, "Types": {}}, "linux-amd64": {}},
+      "patchverdiffs/go1.24.5.json.diff": "{\"raw diff 5 bytes, never parsed\"",
+      "patchverdiffs/go1.24.6.json.diff": {"raw": "{\"raw diff 6 bytes\"}"}
+    },
+    "expected": {
+      "requested": "1.24.5",
+      "status": "exact_diff",
+      "base": "go1.24.0.json",
+      "selected_diff": "patchverdiffs/go1.24.5.json.diff",
+      "selected_patch": 5,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux-amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "C1 attack: highest installed patch must NOT override an exact request. getPatchVerDiffFile (GoApiSnapshot.java:150-166) only decrements; go1.24.6.json.diff is never a candidate for request 1.24.5. An implementation that selects max(installed) picks 6 -> fallback_diff and fails. Diff payloads are verbatim strings (runner schema) proving bytes are hashed, never parsed."
+  },
+  {
+    "id": "bounded-fallback-nearest-lower-not-far-lower",
+    "request": "1.19.20",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.19.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.19.2.json.diff": "{\"raw diff 2 bytes\"",
+      "patchverdiffs/go1.19.13.json.diff": "{\"raw diff 13 bytes\""
+    },
+    "expected": {
+      "requested": "1.19.20",
+      "status": "fallback_diff",
+      "base": "go1.19.0.json",
+      "selected_diff": "patchverdiffs/go1.19.13.json.diff",
+      "selected_patch": 13,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "C1 attack: nearest-lower fallback. The downward scan at GoApiSnapshot.java:153-157 must land on patch 13, not 2; also discriminates numeric ordering vs naive first/min selection."
+  },
+  {
+    "id": "bounded-numeric-not-lexicographic-fallback",
+    "request": "1.22.20",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.22.0.json": {"all": {}},
+      "patchverdiffs/go1.22.9.json.diff": "{\"raw diff 9\"",
+      "patchverdiffs/go1.22.10.json.diff": "{\"raw diff 10\""
+    },
+    "expected": {
+      "requested": "1.22.20",
+      "status": "fallback_diff",
+      "base": "go1.22.0.json",
+      "selected_diff": "patchverdiffs/go1.22.10.json.diff",
+      "selected_patch": 10,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Bounded-numeric discriminator: lexicographic filename max picks 'go1.22.9...' ('9' > '1'); the Java countdown picks numerically-largest patch <= 20, i.e. 10. Any string-sorted or abacus-style selector fails here."
+  },
+  {
+    "id": "bounded-patch0-diff-filename-not-selected",
+    "request": "1.23.1",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.23.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.23.0.json.diff": "{\"raw patch-0 diff\""
+    },
+    "expected": {
+      "requested": "1.23.1",
+      "status": "base_only",
+      "base": "go1.23.0.json",
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Lower bound: the Java while condition patchVer.getPatch() > 0 (GoApiSnapshot.java:153-154) means a patch-0 diff name can never be selected; request 1.23.1 falls through to the patch-0 base itself. An implementation scanning to 0 inclusive would wrongly select it."
+  },
+  {
+    "id": "bounded-unbounded-patch-filename-ignored",
+    "request": "1.22.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.22.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.22.2147483648.json.diff": "{\"raw huge diff\""
+    },
+    "expected": {
+      "requested": "1.22.3",
+      "status": "base_only",
+      "base": "go1.22.0.json",
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Upper bound: patch component 2147483648 = Java int max + 1. Java can never construct this filename (requests are GoVer ints; GoVer.java:62-81) and the downward scan never reaches above the request anyway; a candidate exceeding the request must be ignored -> base_only."
+  },
+  {
+    "id": "bounded-noncanonical-diff-names-ignored",
+    "request": "1.22.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.22.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.22.03.json.diff": "{\"raw leading-zero diff\"",
+      "patchverdiffs/go1.22.4.json.diffs": "{\"raw plural-suffix\"",
+      "patchverdiffs/GO1.22.4.JSON.DIFF": "{\"raw uppercase\"",
+      "patchverdiffs/go1.22.4.json.diff.bak": "{\"raw backup suffix\""
+    },
+    "expected": {
+      "requested": "1.22.4",
+      "status": "base_only",
+      "base": "go1.22.0.json",
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Filename grammar bound: Java constructs names via 'patchverdiffs/' + goVer.toString() + '.json.diff' (GoApiSnapshot.java:168-172; GoVer.toString is canonical decimal, no leading zeros). A directory lister must not accept 'go1.22.03.json.diff' as patch 3, nor trailing-suffix/case-mutated names as patch 4. All ignored -> base_only."
+  },
+  {
+    "id": "bounded-request-at-java-int-max",
+    "request": "1.22.2147483647",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.22.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.22.2147483647.json.diff": "{\"raw int-max diff\""
+    },
+    "expected": {
+      "requested": "1.22.2147483647",
+      "status": "exact_diff",
+      "base": "go1.22.0.json",
+      "selected_diff": "patchverdiffs/go1.22.2147483647.json.diff",
+      "selected_patch": 2147483647,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Boundary inclusive: 2147483647 is the largest Java int, so both request and matching diff filename are representable; exact_diff must hold at the ceiling. Pairs with bounded-unbounded-patch-filename-ignored (max+1 unreachable from request side)."
+  },
+  {
+    "id": "bounded-request-patch-over-java-int",
+    "request": "1.22.2147483648",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.22.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "expect_error type-mapping case: 2147483648 > Integer.MAX_VALUE; Java Integer.parseInt (GoVer.java:74) would yield INVALID, strict contract raises RequestError -> CLI exit 2."
+  },
+  {
+    "id": "bounded-request-digit-run-too-long",
+    "request": "1.22.12345678901",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.22.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "11-digit canonical component can never fit a Java int; rejected by the length pre-check before int() (selection.py:87-90) -> RequestError, CLI exit 2."
+  },
+  {
+    "id": "bounded-request-invalid-sentinel",
+    "request": "0.0.7",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {},
+    "expect_error": {"type": "RequestError"},
+    "note": "GoVer.INVALID is the (0,0,*) sentinel (GoVer.java:36); contract rejects any 0.0.x request -> RequestError, CLI exit 2. No files needed: parse fails before any filesystem access."
+  },
+  {
+    "id": "bounded-raw-base-verbatim-json",
+    "request": "1.20.2",
+    "goos": "plan9",
+    "goarch": "arm",
+    "files": {
+      "go1.20.0.json": "{\"all\": {\"Funcs\": {}, \"Types\": {}}, \"plan9-arm\": {\"Funcs\": {}}}",
+      "patchverdiffs/go1.20.1.json.diff": "{\"raw diff 1\""
+    },
+    "expected": {
+      "requested": "1.20.2",
+      "status": "fallback_diff",
+      "base": "go1.20.0.json",
+      "selected_diff": "patchverdiffs/go1.20.1.json.diff",
+      "selected_patch": 1,
+      "arch_search_order": ["plan9-arm", "plan9", "arm", "all"],
+      "base_matching_buckets": ["plan9-arm", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Bare-string files mapping: base written verbatim (not via json.dumps), still parsed for bucket keys. plan9 is absent from IS_GOOS_UNIX (GoApiSnapshot.java:180-181) so the 'unix' slot is '' and dropped (read loop isEmpty skip, :230) — 4-element arch order, matching windows_omission precedent."
+  }
+]

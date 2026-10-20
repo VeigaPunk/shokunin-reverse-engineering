@@ -1,0 +1,228 @@
+[
+  {
+    "id": "missing_base_despite_diff",
+    "request": "1.21.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "patchverdiffs/go1.21.4.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.4",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    }
+  },
+  {
+    "id": "exact_diff",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {
+        "all": {},
+        "amd64": {},
+        "linux": {},
+        "linux-amd64": {},
+        "unix": {},
+        "windows": {}
+      },
+      "patchverdiffs/go1.21.3.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "exact_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.3.json.diff"},
+      "selected_patch": 3,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    }
+  },
+  {
+    "id": "lower_fallback",
+    "request": "1.21.5",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {
+        "all": {},
+        "linux-amd64": {}
+      },
+      "patchverdiffs/go1.21.2.json.diff": {},
+      "patchverdiffs/go1.21.4.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.5",
+      "status": "fallback_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.4.json.diff"},
+      "selected_patch": 4,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux-amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    }
+  },
+  {
+    "id": "no_diff",
+    "request": "1.21.1",
+    "goos": "freebsd",
+    "goarch": "386",
+    "files": {
+      "go1.21.0.json": {
+        "all": {},
+        "unix": {}
+      }
+    },
+    "expected": {
+      "requested": "1.21.1",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["freebsd-386", "freebsd", "unix", "386", "all"],
+      "base_matching_buckets": ["unix", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    }
+  },
+  {
+    "id": "patch0",
+    "request": "1.23.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.23.0.json": {
+        "all": {}
+      },
+      "patchverdiffs/go1.23.0.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.23.0",
+      "status": "base_only",
+      "base": {"path": "go1.23.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    }
+  },
+  {
+    "id": "future_diff_ignored",
+    "request": "1.22.1",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.22.0.json": {
+        "all": {},
+        "linux-amd64": {}
+      },
+      "patchverdiffs/go1.22.3.json.diff": {},
+      "patchverdiffs/go1.22.9.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.22.1",
+      "status": "base_only",
+      "base": {"path": "go1.22.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux-amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    }
+  },
+  {
+    "id": "minor_isolation",
+    "request": "1.21.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {
+        "all": {},
+        "amd64": {}
+      },
+      "go1.22.0.json": {
+        "all": {}
+      },
+      "patchverdiffs/go1.20.9.json.diff": {},
+      "patchverdiffs/go1.22.1.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.2",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    }
+  },
+  {
+    "id": "unix_order",
+    "request": "1.25.0",
+    "goos": "darwin",
+    "goarch": "arm64",
+    "files": {
+      "go1.25.0.json": {
+        "all": {},
+        "arm64": {},
+        "darwin": {},
+        "darwin-amd64": {},
+        "unix": {},
+        "windows": {}
+      }
+    },
+    "expected": {
+      "requested": "1.25.0",
+      "status": "base_only",
+      "base": {"path": "go1.25.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["darwin-arm64", "darwin", "unix", "arm64", "all"],
+      "base_matching_buckets": ["darwin", "unix", "arm64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    }
+  },
+  {
+    "id": "windows_omission",
+    "request": "1.18.2",
+    "goos": "windows",
+    "goarch": "amd64",
+    "files": {
+      "go1.18.0.json": {
+        "all": {},
+        "amd64": {},
+        "unix": {},
+        "windows": {},
+        "windows-amd64": {}
+      },
+      "patchverdiffs/go1.18.2.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.18.2",
+      "status": "exact_diff",
+      "base": {"path": "go1.18.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.18.2.json.diff"},
+      "selected_patch": 2,
+      "arch_search_order": ["windows-amd64", "windows", "amd64", "all"],
+      "base_matching_buckets": ["windows-amd64", "windows", "amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    }
+  }
+]

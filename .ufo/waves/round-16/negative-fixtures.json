@@ -1,0 +1,263 @@
+[
+  {
+    "id": "invalid-request-two-part",
+    "request": "1.21",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "Strict stable M.m.p parsing (contract); base file present so rejection is parse-only. NB source GoVer.parse (GoVer.java:62-75) would accept '1.21' with missingPatchValue=0 — deliberate contract-strict divergence, exit2 path."
+  },
+  {
+    "id": "invalid-request-leading-zero",
+    "request": "1.021.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "Non-canonical '021' component rejected by strict M.m.p; GoVer.java:70-71 Integer.parseInt would silently accept it — contract is stricter than source parse."
+  },
+  {
+    "id": "invalid-request-v-prefix",
+    "request": "v1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "Leading 'v' is outside the strict M.m.p grammar. GoVer.parse would ALSO reject this input: replaceAll(\"[^.0-9].*$\",\"\") at GoVer.java:65 truncates at the initial 'v', leaving an empty string -> parts.length<2 -> INVALID (:66-67). Contract rejection agrees with source here; kept as a malformed-version negative."
+  },
+  {
+    "id": "invalid-request-four-part",
+    "request": "1.21.0.1",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "GoVer.parse ignores the fourth component (parts[2] only, GoVer.java:72-74); strict model must reject extra components instead of truncating."
+  },
+  {
+    "id": "invalid-request-suffix",
+    "request": "1.21.0+bad",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "Source regex (GoVer.java:65) strips '+bad' so '1.21.0+bad' parses to 1.21.0; strict contract rejects embedded junk."
+  },
+  {
+    "id": "invalid-request-negative-patch",
+    "request": "1.21.-1",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "Negative patch component outside strict M.m.p. GoVer.java:65 strips '-1' (parse -> 1.21.0); a literal negative patch would also collide with the ANY wildcard sentinel (GoVer.java:36, patch=-1). Contract: reject."
+  },
+  {
+    "id": "unreadable-base-not-json",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"raw": "<<this is not json>>"}
+    },
+    "expect_error": {"type": "UnreadableError"},
+    "note": "Non-JSON bytes cannot be read as a JSON object by the snapshot reader (reader.beginObject step at GoApiSnapshot.java:215; get() declares throws IOException). Source-model API-level rejection only — no specific Java exception class asserted. This is a file-read failure, NOT missing_base: the base exists, it cannot be parsed."
+  },
+  {
+    "id": "unreadable-base-json-array",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"raw": "[1,2,3]"}
+    },
+    "expect_error": {"type": "UnreadableError"},
+    "note": "Valid JSON but wrong top-level shape: a '[' payload fails the reader's beginObject step (GoApiSnapshot.java:215). Source-model API-level rejection only — no specific Java exception class asserted. Keep distinct from invalid_request (input error vs source data error)."
+  },
+  {
+    "id": "wrong-root-layout-files-nested",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "golang/go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "typeinfo/golang/go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Root itself is the golang data dir (per --root contract); correctly-named files under nested subdirs do not satisfy the flat top-level lookup (getApiSnapshotFile GoApiSnapshot.java:168-172 builds 'go%s.json' directly under the module data dir). Readable wrong root -> missing_base, still exit0."
+  },
+  {
+    "id": "missing-base-empty-root",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {},
+    "expected": {
+      "requested": "1.21.0",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Empty readable root: getApiSnapshotFile returns null at GoApiSnapshot.java:171, getApiSnapshotJsonFile returns null at :123-126. A nonexistent root is NOT expressible via fixtures (runner builds a real temp dir) — intentionally omitted rather than faked."
+  },
+  {
+    "id": "missing-base-two-part-name-no-fallback",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Contract forbids the getApiFile two-part filename fallback (GoApiSnapshot.java:183-190 'go%d.%d.json' retry is legacy external-API only; data-dir path uses goVer.toString() = '1.21.0' per GoVer.java:155-158). Presence of 'go1.21.json' must NOT rescue the base."
+  },
+  {
+    "id": "missing-base-diff-present-unreachable",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "patchverdiffs/go1.21.3.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Exact diff exists but base absent: getApiSnapshotJsonFile (GoApiSnapshot.java:122-126) checks base BEFORE getPatchVerDiffFile and returns null; the diff is never reached. Source outcome, not an error."
+  },
+  {
+    "id": "missing-base-case-sensitive-name",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "GO1.21.0.JSON": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Filename is built exactly as 'go%s.json' (GoApiSnapshot.java:170); on case-sensitive POSIX filesystems 'GO1.21.0.JSON' does not match."
+  },
+  {
+    "id": "missing-base-nonunix-arch-order",
+    "request": "1.21.0",
+    "goos": "windows",
+    "goarch": "amd64",
+    "files": {},
+    "expected": {
+      "requested": "1.21.0",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["windows-amd64", "windows", "amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "windows is not in IS_GOOS_UNIX (GoApiSnapshot.java:180-181) so the 'unix' slot is '' at :109 and dropped by the read loop's isEmpty() skip at :230; effective emitted order omits the empty slot."
+  },
+  {
+    "id": "unsupported-shape-bucket-nonobject-preview",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": ["not", "an", "object"]}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "LIMITATION CASE: source GoArch deserialization would fail on a non-object bucket (Gson read at GoApiSnapshot.java:222 via archNamesToKeep filter :212-218), but the source-model previews top-level bucket keys only, no schema validation — preview outcome is base_only with 'all' retained. Do not expect UnreadableError here."
+  },
+  {
+    "id": "corrupt-diff-still-selected",
+    "request": "1.21.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.2.json.diff": {"raw": "<<corrupt diff>>"}
+    },
+    "expected": {
+      "requested": "1.21.2",
+      "status": "exact_diff",
+      "selected_diff": {"path": "patchverdiffs/go1.21.2.json.diff"},
+      "selected_patch": 2,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Source-model selects and hashes diff bytes; it does NOT parse or apply them (JsonPatch.read at GoApiSnapshot.java:136 is inside the derived-provider patch path, which patch_applied:false never runs). Corrupt bytes therefore still select exact — recorded as a no-semantic-validation limitation, not a rejection."
+  },
+  {
+    "id": "unretained-bucket-not-in-search-order",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"bogus-os": {"Funcs": {}, "Types": {}}, "all": {"Funcs": {}, "Types": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Bucket outside arch search order is skipped by archNamesToKeep (GoApiSnapshot.java:212-218) and never surfaced; only 'all' matches. Unsupported-bucket-name is a silent drop, not an error."
+  }
+]

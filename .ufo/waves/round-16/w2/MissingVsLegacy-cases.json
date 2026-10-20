@@ -1,0 +1,371 @@
+[
+  {
+    "id": "missing-base-lower-diff-only",
+    "request": "1.21.5",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "patchverdiffs/go1.21.3.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.5",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "A strictly-lower same-minor diff without the patch-0 base does not rescue: getApiSnapshotJsonFile returns null at the base check (GoApiSnapshot.java:122-126) before getPatchVerDiffFile (:127) is reached. Distinct from missing_base_despite_diff/missing-base-diff-present-unreachable which pin only the exact-patch diff."
+  },
+  {
+    "id": "missing-base-diff-and-legacy-files",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.3.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Combined adversary: legacy two-part go1.21.json plus an exact diff. Neither is a base candidate for get(): the filename is 'go%s.json' via GoVer.toString() = '1.21.0' (GoApiSnapshot.java:170, GoVer.java:155-158); getApiFile's 'go%d.%d.json' retry (:183-190) is legacy external API, not the get path."
+  },
+  {
+    "id": "missing-base-misnamed-diff-files",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "patchverdiffs/go1.21.3.json": {},
+      "patchverdiffs/go1.21.3.json.diff.bak": {},
+      "go1.21.3.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Name-shape attacks on the diff slot: missing '.diff' suffix, trailing '.diff.bak', and a correctly-named diff placed at root instead of under patchverdiffs/. Java only probes 'patchverdiffs/go<M.m.p>.json.diff' (:151) and the model only scans that subdir; all three decoys must be ignored. Base still absent -> missing_base regardless."
+  },
+  {
+    "id": "missing-base-foreign-minor-and-noncanonical-diffs",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "patchverdiffs/go1.22.3.json.diff": {"Sections": []},
+      "patchverdiffs/go1.21.03.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Foreign-minor diff (1.22.x) and a noncanonical leading-zero patch name ('03', which GoVer.toString can never produce, GoVer.java:155-158) sit in patchverdiffs/. Base check runs first and fails, so both are unreachable anyway -> missing_base with selected_diff null."
+  },
+  {
+    "id": "missing-base-legacy-for-later-patch-request",
+    "request": "1.21.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expected": {
+      "requested": "1.21.4",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Request patch > 0 pins the base to withPatch(0) -> 'go1.21.0.json' (GoApiSnapshot.java:122). The legacy 'go1.21.json' must not serve as the base even though it would be getApiFile's patch-0 fallback (:186-190); that fallback is outside the get() path by contract."
+  },
+  {
+    "id": "missing-base-single-part-legacy",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Degenerate single-component 'go1.json': no filename form in either getApiSnapshotFile (:170) or getApiFile (:185-190) produces it; the shortest possible base name is the two-part getApiFile fallback 'go1.21.json'. Pure noise -> missing_base."
+  },
+  {
+    "id": "missing-base-binary-diff-bytes",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "patchverdiffs/go1.21.3.json.diff": {"raw_b64": "/wBiaW5hcnktZGlmZg=="}
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "raw_b64 materialization support exercised on the diff slot (b'\\xff\\x00binary-diff'): opaque non-UTF8 bytes are still just an unreachable diff while the base is absent. Asserts diff bytes are never inspected on the missing_base path."
+  },
+  {
+    "id": "missing-base-diff-nonunix-order",
+    "request": "1.21.3",
+    "goos": "windows",
+    "goarch": "amd64",
+    "files": {
+      "patchverdiffs/go1.21.2.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["windows-amd64", "windows", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Missing-base under a non-unix GOOS: 'windows' is outside IS_GOOS_UNIX (:180-181) so the 'unix' slot is '' and dropped; emitted order has four entries. A lower diff is present but unreachable; the reported search order is purely informational on this path."
+  },
+  {
+    "id": "legacy-file-ignored-when-base-present",
+    "request": "1.21.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "go1.21.json": {"windows": {"Funcs": {}, "Types": {}}, "bogus-os": {}},
+      "patchverdiffs/go1.21.2.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.2",
+      "status": "exact_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.2.json.diff"},
+      "selected_patch": 2,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Legacy go1.21.json carries buckets ('windows', 'bogus-os') that the true base lacks; if the legacy file leaked into bucket matching they would appear (windows matches the search slot pattern only under goos=windows; bogus-os never). Buckets must come solely from go1.21.0.json -> ['all']."
+  },
+  {
+    "id": "malformed-legacy-file-ignored",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "go1.21.json": {"raw": "<<not json>>"}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "A corrupt legacy file must not poison the run: the get() path never opens go1.21.json, so unparseable bytes there are irrelevant. If the implementation probed the two-part name, _top_level_keys would raise UnreadableError. Expect clean base_only."
+  },
+  {
+    "id": "patchverdiffs-is-a-file",
+    "request": "1.21.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs": {"raw": "not a directory"}
+    },
+    "expected": {
+      "requested": "1.21.2",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Adversarial inode type: 'patchverdiffs' exists but is a regular file. iterdir raises NotADirectoryError (OSError) -> treated as empty -> base_only. Java-equivalent: getApiSnapshotFile('patchverdiffs/go1.21.2.json.diff') finds nothing under a file -> null -> unpatched base (:128-131). Consistent."
+  },
+  {
+    "id": "nested-diff-not-scanned",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/nested/go1.21.3.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Correctly-named diff one level deeper: Java probes exactly 'patchverdiffs/go1.21.3.json.diff' (:151) so a nested copy is invisible; the model's flat iterdir sees only the 'nested' entry whose name fails _DIFF_NAME_RE. base_only, selected_diff null."
+  },
+  {
+    "id": "patch0-request-later-diff-ignored",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.7.json.diff": {"Sections": []}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Requested patch 0: Java's while loop condition patchVer.getPatch() > 0 (:151-152) never iterates -> no diff probe at all, regardless of later diffs on disk. selected_diff must be null and selected_patch 0 (base bytes), not 7."
+  },
+  {
+    "id": "unreadable-base-with-exact-diff",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"raw": "<<not json>>"},
+      "patchverdiffs/go1.21.3.json.diff": {"Sections": []}
+    },
+    "expect_error": {"type": "UnreadableError"},
+    "note": "Diffs rescue neither absence nor unparseability of the base: with base present-but-corrupt the Java path fails when read() parses the derived stream (:205-240 -> IOException); the model raises UnreadableError from _top_level_keys even though an exact diff was selected. Error, not missing_base and not exact_diff."
+  },
+  {
+    "id": "unreadable-empty-base",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"raw": ""}
+    },
+    "expect_error": {"type": "UnreadableError"},
+    "note": "Zero-byte base file: exists, so not missing_base; json.load raises JSONDecodeError -> UnreadableError. Distinct decode-failure shape from 'unreadable-base-not-json' (garbage vs empty); Java's JsonReader.peek on EOF likewise fails beginObject (:215)."
+  },
+  {
+    "id": "base-only-raw-string-valid-json",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"raw": "{\"linux\": {\"Funcs\": {}, \"Types\": {}}, \"all\": {\"Funcs\": {}, \"Types\": {}}}\n"}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Support-case: {'raw': str} materialization also carries VALID JSON; bucket order pins search-order position (linux before all), exercising raw-string support on the base slot rather than only the corrupt-diff slot."
+  },
+  {
+    "id": "duplicate-selector-goos-eq-goarch",
+    "request": "1.21.0",
+    "goos": "mips",
+    "goarch": "mips",
+    "files": {
+      "go1.21.0.json": {"mips": {"Funcs": {}, "Types": {}}, "all": {"Funcs": {}, "Types": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["mips-mips", "mips", "mips", "all"],
+      "base_matching_buckets": ["mips", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Degenerate goos==goarch: Java List.of PERMITS duplicate elements (verified on JDK 21; only Set.of/Map.of reject dupes) so the source order keeps both 'mips' entries (:108-109); only the non-unix '' slot is filtered (read() isEmpty skip :230). Model order must retain duplicates verbatim while bucket matching dedups like LinkedHashMap (:228-237)."
+  },
+  {
+    "id": "duplicate-selector-goarch-all",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "all",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-all", "linux", "unix", "all", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "goarch='all' collides with the trailing 'all' slot: List.of keeps both ('all','all'), so the emitted order repeats 'all' while base_matching_buckets dedups to ['all']. Pins that arch_search_order is the raw List.of order, not a Set."
+  }
+]

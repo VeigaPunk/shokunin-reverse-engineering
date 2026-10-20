@@ -1,0 +1,34 @@
+# ReviewMeasure — round-16 w1 measure counts
+
+Scope: source contract and proposed failures only. No candidate `measure.py` exists yet: `.ufo/waves/round-16/` holds only `claims.json`, `wave1-{spec,dispatch,result}.json`, and `w1/swarm-registry.json`, and `git status` shows no round-16 measure file. I did not run `measure.py` or any check. Reads were `git show` / `git ls-tree` / `git for-each-ref` / `git config` at baseline `6235498b4112350eebce0812a74af1781fc0ee88`, plus one read-only UTF-8 decode of six tracked files. Precedent reviewed: `.ufo/waves/round-15/measure.py` (109 lines, pinned in `round-15/measurement-pins.json`).
+
+## Findings (severity order)
+
+**1. High — SHONEN check cannot discriminate (calibration).** `SHONEN.md:10` at baseline already contains both `2026-10-15` and `this round` (box 3 evidence line; box at `SHONEN.md:9`). A substring check for `2026-10-15` returns 1 before any correction. Proposed failure: the historical relabel is never written and the check stays green. Required: a line-scoped check on `SHONEN.md:10` that requires the phrase `this round` to be absent and the historical label to name 2026-10-15 and `corpus/lessons/2026-10-15-round-1.md`. Expected baseline: 0.
+
+**2. High — `-I` check is non-discriminating, and the correction has no anchor (calibration).** `SKILL.md:450` already contains `python3 -I .ufo/waves/round-14/tools/quote-fidelity.py`, so a whole-file `-I` substring check returns 1 at baseline. The routed defect is `corpus/knowledge/2026-10-20-r15-go-snapshot-inventory.md:3`: `recheck: python3 .ufo/waves/round-15/snapshot-inventory.py ...` has no `-I` and uses a relative path. The spec names no file or marker for the "named r15 correction", so the measure has no anchor to test. Required: name the correction file and marker; scope the check to that record; require `python3 -I /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-15/snapshot-inventory.py`. State in output that this is presence of a recorded invocation string, not evidence that it was run. Note that the round-15 lesson's `python3 -I` is the exercised argv per `round-15-verifier-spotcheck.md:185`.
+
+**3. High — presence counts cannot detect rewritten committed cells (immutability).** `QUALITY.md:4-5` says a criterion is "replaced by a new row naming the row it supersedes, never rewritten." Round-15's `C2_quality_row17_manual_only_wording` (`measure.py:87-94`) tests only that row 17 contains `must not be submitted`. A rewrite of row 17 that keeps that phrase still returns 1. The round-16 spec adds no baseline-vs-candidate comparison. Required: byte-compare QUALITY rows 1–17 (`QUALITY.md:11-27`), the r15 knowledge entry and round-14/15 lessons, and SOURCES existing rows, using baseline and candidate git objects. The `-I` correction should be a byte-prefix check (old content is an exact prefix of new), not a substring check. This is the "presence vs proof" distinction the wave is asked to test.
+
+**4. Medium — criterion 18 check is row-presence only.** `QUALITY.md` has no row 18 at baseline (`grep -c '^| ?18 '` = 0). A `^\|\s*18\s*\|` check passes for any row 18, including one whose supersedes cell does not name a row, or whose "why (lesson)" cell cites no lesson. Required: parse the 4 cells. Supersedes is `—` or names an existing row number. The why cell must cite `corpus/lessons/round-15-verifier-spotcheck.md` or the round-16 lesson. Report as `criterion18_presence`, not as a lesson-grounded pass.
+
+**5. Medium — quote-fidelity supplement baseline check must be row-scoped and digest-pinned.** At baseline, `.ufo/waves/round-15/boundary-fixtures/expected.json` appears in none of SKILL, SHONEN, QUALITY, SOURCES, README, LOG, or SCORECARD (`git grep`), so a row-scoped check discriminates (expected 0 → 1). It must be scoped to the `| quote-fidelity |` row at `SKILL.md:450` (pinned-values cell, third cell), not any line in SKILL. Prose at `SKILL.md:441` must not count. The file is tracked and pinned in `round-15/measurement-pins.json` as `c779a7f5574829cfbb9d1a979e850078ba9859d1bf579e61600009f57a2ab3f5`. Path presence should be paired with a digest equality check against that pin.
+
+**6. Medium — revision and anchor sequencing.** `git show <rev>:path` reads only committed bytes. Candidate content is invisible until L1 commits, so before-state counts (baseline `6235498`) are all 0 for round-16 items and after-state counts need a committed revision. The round-15 precedent records `revision` plus absolute `argv` in `final-recheck.json`; round-16 should record both before and after. The measure's own identity is outside its output: pin `round-16/measure.py` by digest only after it is committed, as round-15 did. Anchor names (entry, probe, correction marker, criterion row, SHONEN line) are chosen by parallel drafters (`EntryDraft`, `CorrectionDraft`, `CriterionDraft`, `RegistryDraft`). Fix them in the spec before implementing the measure, or the measure will hard-code names the drafts do not use and report false 0s.
+
+**7. Low — inherited robustness gaps in `round-15/measure.py`** (carry-forward, not blocking):
+- `measure.py:58` (`git ls-tree`) is outside the `try`, so failure gives a traceback with exit 1, not the documented exit 2 (docstring lines 9-11).
+- `measure.py:46-56` decode with `encoding="utf-8"`; non-UTF-8 blobs raise `UnicodeDecodeError`, not handled. The current read set decodes cleanly (SHONEN, SKILL, QUALITY, lesson-14, README, SOURCES checked).
+- `git show` honours replace refs. None exist here (`git for-each-ref refs/replace` empty; no `info/grafts`), but strict immutability would set `GIT_NO_REPLACE_OBJECTS=1` or use `--no-replace-objects`.
+- `ls-tree -r` lists symlinks and submodules as presence, not only blobs. Use `-t`/mode filtering if strict.
+- `row17` uses the first matching line only, so a duplicate `| 17 |` row would be silently ignored.
+
+**8. Low — output key naming.** Round-15 keys (`C1_round15_knowledge_entry`, `C2_quality_row17_manual_only_wording`) read as pass flags. Round-16 keys should end in `_presence` (or `_pattern_count`) and the output should carry no verdict field, matching the docstring at `round-15/measure.py:9-11`.
+
+## Residual risk and verification gaps
+- No candidate `measure.py`, drafts, or committed round-16 revision exists; findings 1–6 are source-contract and proposed-failure findings, not observed failures.
+- I did not run the measure, so all expected baseline values above are from reading `git show` output, not executed counts.
+- Findings 1 and 2 depend on the exact anchor strings in the final drafts; re-check them against the candidate revision.
+- Tool installs or updates: none.
+
+L1 should verify once after integration: run the round-16 measure at the baseline and candidate revisions, and check that findings 1, 2, 3, and 5 each return the expected baseline value.

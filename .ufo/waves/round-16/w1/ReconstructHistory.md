@@ -1,0 +1,24 @@
+# ReconstructHistory — source and route trace
+
+**Axes:** depth (recover the selector’s source contract); calibration (keep historical observations, source inference, and route closure distinct).
+
+## S003 source contract
+
+I directly read the assigned member `ghidra/app/util/bin/format/golang/rtti/GoApiSnapshot.java` in installed Ghidra 12.1.4 `Base-src.zip`. Its pinned archive identity is recorded in the prior lesson as SHA-256 `f00d29c20119562eca7efd2740e8c67257ebd63ea24a3dfbc4dbbb9187a8d804` (`corpus/lessons/round-15.md:31`). The `lsp` device was not mounted (`xd://lsp` returned the available-device list); this is direct source-text evidence, not an LSP reference/implementation trace.
+
+- `get()` makes `archSearchOrder` as GOOS-GOARCH, GOOS, `unix` for listed Unix GOOS (otherwise an empty candidate), GOARCH, `all`; if no provider is returned it yields `EMPTY` (`GoApiSnapshot.java:108-116`). `read()` keeps only matching keys and constructs results in that priority order (`:205-239`); `isInvalid()` tests whether the retained map is empty (`:503-505`). Thus a missing platform-specific bucket alone does not establish invalidity when `all` matches.
+- `getApiSnapshotJsonFile()` first resolves `goVer.withPatch(0)` and returns null when that same-major/minor base is absent (`:122-126`). This happens before patch-diff lookup, so a diff cannot rescue a missing base; `get()` then returns `EMPTY` (`:115`). The filename template is `typeinfo/golang/%sgo%s.json%s` (`:171`).
+- With a base present, `getPatchVerDiffFile()` checks requested patch downward within that version, taking the first present diff (`:148-166`). No diff means the base provider is returned; one selected diff is applied to that base to build a derived provider (`:128-145`). The original requested `goVer` is passed to `read()` even when the provider uses base-only or a lower-patch diff (`:111,239`), so a version label is not a byte identity.
+- The round-16 preview is intentionally narrower than Ghidra’s loading path: `patch_applied:false` means it can report selected file identities and *unpatched base* bucket matches, not post-patch bucket content. It must not imply patched applicability or patched-result identity. The source-law distinction is grounded in the `getApiSnapshotJsonFile` branch above; no patch engine or provider was run here.
+
+The installed data directory was read directly; bounded filename searches found no `go1.26*` base and no `patchverdiffs/go1.25*` files. Round-15’s retained inventory further records 11 bases, 123 diffs, no 1.25/1.26 diff, and no 1.26 base (`corpus/knowledge/2026-10-20-r15-go-snapshot-inventory.md:61-68`). These are installed-data facts, not evidence of a historical target’s executed path.
+
+## R14/R15 correction chain and four routes
+
+Round-14’s outside review routed two status-neutral issues: an advisory incorrectly said snapshot absence only changed wording, and QUALITY #16’s “does not grade” description failed to prohibit submitting rendered/markup-spanning text to the raw substring instrument (`corpus/lessons/round-14-verifier-spotcheck.md:169-172`). The R14 lesson later appended a named R15 correction: `registerStructures` reaches the overridden `getType`, then snapshot-backed `GoTypeManager` lookup; it qualifies the bad advisory without rewriting its bytes, and explicitly does not prove the historical target cause (`corpus/lessons/round-14.md:144-166`). R15 records the manual-only clarification as QUALITY #17, not a new representation classifier (`corpus/lessons/round-15.md:64-65,96-100`).
+
+The subsequent R15 outside review routed these four obligations to the next round (`corpus/lessons/round-15-verifier-spotcheck.md:181-188`): (1) reconcile the knowledge entry’s `recheck:` omission of `-I` with the retained isolated invocation, or label the distinction; (2) link the supplemental round-15 boundary fixture in the existing quote-fidelity registry row; (3) retain producing commands/snippets for supplemental no-harm booleans and structural tallies; (4) replace SHONEN box 3’s ambiguous “this round” with the historical round. R16 claims C2 requires all four resolved with reproducible command evidence (`.ufo/waves/round-16/claims.json:10-14`). This source-only report does not establish their current repair or closure; it does not rewrite historic text.
+
+## Divergence, limits, confidence
+
+The source contract is high-confidence for the inspected shipped Java text and named installed data files. It does not authenticate those source methods against executed compiled classes. In particular, the old Go/op recovery collapse remains a historical observation whose exact cause is not established by this source/data trace; R14 and R15 lessons explicitly preserve that limit (`corpus/lessons/round-14.md:19-20`; `corpus/lessons/round-15.md:10,23`). No target, provider, build, test, or runtime was invoked.

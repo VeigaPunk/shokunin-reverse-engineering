@@ -1,0 +1,248 @@
+[
+  {
+    "id": "noncanonical-leading-zero-diff-ignored",
+    "request": "1.21.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}, "linux-amd64": {}},
+      "patchverdiffs/go1.21.04.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.4",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux-amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Source never probes 'go1.21.04': getPatchVerDiffFile builds names via GoVer.toString() = '%d.%d.%d' (GoVer.java:155-158) — canonical digits only. A numerically-coercing or glob-matching selection would find the decoy; the canonical-name law must yield base_only."
+  },
+  {
+    "id": "noncanonical-decoys-lower-canonical-fallback",
+    "request": "1.21.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}, "linux-amd64": {}},
+      "patchverdiffs/go1.21.04.json.diff": {},
+      "patchverdiffs/go01.21.4.json.diff": {},
+      "patchverdiffs/go1.021.4.json.diff": {},
+      "patchverdiffs/go1.21.2.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.4",
+      "status": "fallback_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": "patchverdiffs/go1.21.2.json.diff",
+      "selected_patch": 2,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux-amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "All three leading-zero components of the exact patch name are noncanonical and must be skipped by the countdown (GoApiSnapshot.java:150-155 probes only GoVer.toString() names); the walk reaches canonical patch 2. Expected path uses the '/' form to pin the patchverdiffs/ subdir (selfcheck.py:48-51)."
+  },
+  {
+    "id": "root-level-diff-decoy-never-selected",
+    "request": "1.21.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}},
+      "go1.21.4.json.diff": {},
+      "patchverdiffs/go1.21.2.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.4",
+      "status": "fallback_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": "patchverdiffs/go1.21.2.json.diff",
+      "selected_patch": 2,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "A correctly-named diff at the data-dir ROOT is unreachable: getPatchVerDiffFile only ever probes subdir='patchverdiffs/' (GoApiSnapshot.java:153, 170-172). Selection must fall through to the canonical diff inside patchverdiffs/, not pick the root-level decoy."
+  },
+  {
+    "id": "diff-outside-patchverdiffs-all-ignored",
+    "request": "1.21.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}},
+      "go1.21.4.json.diff": {},
+      "otherdir/go1.21.4.json.diff": {},
+      "patchverdiffs/nested/go1.21.4.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.4",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Exact-name diffs at root, in a sibling dir, and nested one level under patchverdiffs/ are all unreachable: the probe name is 'patchverdiffs/go%s.json.diff' as a single fixed relative path (GoApiSnapshot.java:170-172); no descent or alternate subdir exists."
+  },
+  {
+    "id": "patch0-diff-and-leading-zero-lower-decoy",
+    "request": "1.21.5",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}, "amd64": {}},
+      "patchverdiffs/go1.21.0.json.diff": {},
+      "patchverdiffs/go1.21.03.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.5",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Two guards fire together: the countdown's 'patchVer.getPatch() > 0' guard (GoApiSnapshot.java:151) never probes patch 0, so a canonical patch-0 diff name is dead data; and 'go1.21.03' is noncanonical. Any selection here would be a contract violation — outcome must stay base_only."
+  },
+  {
+    "id": "numeric-boundary-exact-patch10",
+    "request": "1.15.10",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.15.0.json": {"all": {}},
+      "patchverdiffs/go1.15.9.json.diff": {},
+      "patchverdiffs/go1.15.10.json.diff": {},
+      "patchverdiffs/go1.15.11.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.15.10",
+      "status": "exact_diff",
+      "base": {"path": "go1.15.0.json"},
+      "selected_diff": "patchverdiffs/go1.15.10.json.diff",
+      "selected_patch": 10,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Real installed names (data/typeinfo/golang/patchverdiffs ships go1.15.9..go1.15.15). A lexical '9' > '10' max or a substring/sort bug selects 9 or 11; the numeric countdown must land exactly on 10."
+  },
+  {
+    "id": "numeric-boundary-fallback-patch10",
+    "request": "1.15.12",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.15.0.json": {"all": {}},
+      "patchverdiffs/go1.15.9.json.diff": {},
+      "patchverdiffs/go1.15.10.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.15.12",
+      "status": "fallback_diff",
+      "base": {"path": "go1.15.0.json"},
+      "selected_diff": "patchverdiffs/go1.15.10.json.diff",
+      "selected_patch": 10,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Nearest-lower-discriminator: candidates {9,10}; descending lexical order visits 'go1.15.9' first, so a lexically-ordered scan picks 9 while the numeric countdown (GoApiSnapshot.java:150-155) picks 10. fallback_diff to patch 10 is the only correct outcome."
+  },
+  {
+    "id": "patchverdiffs-is-regular-file",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}},
+      "patchverdiffs": "not a directory"
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "When 'patchverdiffs' exists but is a regular file, every probed diff path fails existence (getApiSnapshotFile returns null on IOException, GoApiSnapshot.java:172-176) so the countdown exhausts to null -> base only. Raw-string content exercises the verbatim-bytes file form."
+  },
+  {
+    "id": "directory-named-like-diff-skipped",
+    "request": "1.21.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}},
+      "patchverdiffs/go1.21.4.json.diff/placeholder": {},
+      "patchverdiffs/go1.21.2.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.4",
+      "status": "fallback_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": "patchverdiffs/go1.21.2.json.diff",
+      "selected_patch": 2,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "A DIRECTORY named 'go1.21.4.json.diff' must not win the exact-patch slot: the preview reports raw stored bytes and a directory has none, so the model's is_file gate (selection.py:130) must fall through to patch 2. Source note: ResourceFile.getFile(true) type behavior at GoApiSnapshot.java:172-176 is not asserted here — this pins the model law only."
+  },
+  {
+    "id": "noncanonical-diff-name-decoys",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}},
+      "patchverdiffs/go1.21.3.JSON.diff": {},
+      "patchverdiffs/go1.21.3.json": {},
+      "patchverdiffs/go1.21.json.diff": {},
+      "patchverdiffs/README": "not a diff file"
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Wrong-case suffix, missing '.diff' suffix, two-part legacy name and a non-diff file inside patchverdiffs/ are all unreachable: the only probed name is exactly 'patchverdiffs/go1.21.3.json.diff' (GoApiSnapshot.java:153 with toString '%d.%d.%d'). The getApiFile two-part fallback (:183-192) is excluded by contract."
+  },
+  {
+    "id": "noncanonical-request-leading-zero-patch",
+    "request": "1.21.04",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+      "patchverdiffs/go1.21.4.json.diff": {}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "Request-side leading zero: strict M.m.p rejects '1.21.04' even though the canonical-named diff exists. GoVer.parse would coerce via Integer.parseInt (GoVer.java:70-74) and reach the diff; contract divergence is deliberate — the canonical diff must not rescue a noncanonical request."
+  }
+]

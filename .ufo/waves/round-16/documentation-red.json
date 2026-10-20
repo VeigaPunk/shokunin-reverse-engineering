@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-I",
+    "-c",
+    "import json,subprocess,sys\nL,rev=sys.argv[1:]\ndef get(p):\n r=subprocess.run(['git','-C',L,'show',rev+':'+p],capture_output=True,text=True); return r.stdout if r.returncode==0 else ''\nsk=get('SKILL.md');kn=get('corpus/knowledge/2026-10-20-r15-go-snapshot-inventory.md');sh=get('SHONEN.md');co=get('.ufo/waves/round-16/controls.py')\nrow=next((x for x in sk.splitlines() if x.startswith('| quote-fidelity |')),'')\nchecks={'invocation_correction': 'Round-16 correction' in kn and 'python3 -I /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-15/snapshot-inventory.py' in kn,'supplement_discoverable': '.ufo/waves/round-15/boundary-fixtures/expected.json' in row,'producing_command_retained': bool(co) and 'argv' in co,'historical_shonen': 'historical 2026-10-15' in sh and 'asserted: this round executed' not in sh}\nprint(json.dumps({'revision':rev,'checks':checks,'resolved':sum(checks.values()),'total':len(checks)},sort_keys=True));sys.exit(0 if all(checks.values()) else 1)\n",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+    "6235498b4112350eebce0812a74af1781fc0ee88"
+  ],
+  "exit": 1,
+  "stdout": "{\"checks\": {\"historical_shonen\": false, \"invocation_correction\": false, \"producing_command_retained\": false, \"supplement_discoverable\": false}, \"resolved\": 0, \"revision\": \"6235498b4112350eebce0812a74af1781fc0ee88\", \"total\": 4}\n",
+  "stderr": ""
+}

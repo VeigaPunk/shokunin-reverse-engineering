@@ -1,0 +1,24 @@
+# QUALITY #18 — candidate draft (kaidoku round 16, w1)
+
+Status: DRAFT for L1 integration. Not admitted, not merged into `corpus/QUALITY.md`. `#17` is unchanged and not superseded. No gate, classifier, pass, score or held capability is claimed.
+
+Target insertion: `corpus/QUALITY.md`, admission-criteria table, after row 17. Row `supersedes` is `—`; this row extends #6 and #13 and supersedes neither.
+
+| # | criterion | why (lesson) | supersedes |
+|---|---|---|---|
+| 18 | Recorded argv is the citation. A `recheck:`/`verify:` line, gate registry row, or lesson command must either be the exact argv that produced the cited output (interpreter, isolation flags such as `-I`, script path form, arguments), or name the intended variant and state how it differs from the recorded argv; prose ("compare using git show") is not an argv. Each machine-recorded value a lesson, knowledge entry, or `*.json` control cites (boolean, digest, count, tally) carries its producing command or snippet in the same round record; a value with none is recorded as reproduced by reading, never as a command result. An isolation flag belongs to each recorded invocation, not to a script family: no lesson generalizes `-I` from some recorded runs to others. A registry row's pinned-values cell names every frozen baseline the gate is run against, including supplemental baselines added by later rounds, with the location of each pin; naming only the original baseline is incomplete. Applies to records written from round 16. Existing entries are corrected by a named append-only correction, never rewritten. Extends #6 and #13. | `corpus/lessons/round-15-verifier-spotcheck.md:185-187` (routed defects 1–3, closure of round 15); argv in `.ufo/waves/round-15/verification.json` (labels `snapshot-inventory`, `inventory-determinism`, `quote-selftest`, `quote-frozen-original`, `boundary-rendered-red`, `boundary-raw-fixed`, `boundary-frozen` use `python3 -I <abs path>`; `measure-before`, `measure-after`, `citation-strict` do not); recheck at `corpus/knowledge/2026-10-20-r15-go-snapshot-inventory.md:3` omits `-I` and uses a relative path; registry row `SKILL.md:450` names only `.ufo/waves/round-14/fixtures/expected.json`; `.ufo/waves/round-15/no-harm-controls.json` carries booleans and tallies with no command field; round-16 `.ufo/waves/round-16/claims.json` C2 (planned round-16 lesson `corpus/lessons/round-16.md` is not present at drafting) | — |
+
+## Grounding notes (for L1, not part of the row)
+
+- Where #18 sits: #6 requires the reproducing call for a claim drawn from REA; #13 requires the recorded verify command to reproduce itself for counts on minified files. #18 generalizes that to every kaidoku-recorded argv and to registry pin completeness, which neither #6 nor #13 covers.
+- Overgeneralization found while drafting: the round-15 closure's "retained actual execution uses `python3 -I`" (routed defect 1) holds for 7 of the 10 `python3` argv entries in `verification.json`. The three without `-I` are `measure-before`, `measure-after` and `citation-strict`; `final-recheck.json` also runs `measure.py` and the citation probe without `-I`. The row therefore requires per-invocation argv, not a family rule.
+- Relative vs absolute: the registry row (`SKILL.md:450`) is `python3 -I .ufo/waves/round-14/tools/quote-fidelity.py ...`, while every retained quote-fidelity argv is `python3 -I /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/tools/quote-fidelity.py ...`. The row's relative form is a distinct invocation and must be labelled as such if it is kept.
+- Producing-command gap: `no-harm-controls.json` fields `row16_unchanged`, `append_only` and `pins_match` have no producing command in any committed file; the closure lesson describes them as "independently reproduced from Git objects" (`round-15-verifier-spotcheck.md:139-142`) without a snippet. The craft counts (`rules`, `resolved`, `craft_sha256`) have a snippet only in the closure lesson (`round-15-verifier-spotcheck.md:143`). Round-14's `command-a-control.json:2` carried a prose `command` field, which the row now rules out as an argv.
+- Supplemental baseline pin location: the boundary baseline `.ufo/waves/round-15/boundary-fixtures/expected.json` is pinned in `.ufo/waves/round-15/measurement-pins.json:4` (digest recorded there; not recomputed here). The registry row can name this path and pin file without changing the gate.
+
+## Not claimed by this draft
+
+- No new gate, classifier, or selftest. Registry text changes are documentation of existing pins.
+- No historical rewrite of the round-15 knowledge entry or lesson; correction is a named append-only entry (round-16 lane work, not this file).
+- SHONEN wording (routed defect 4) is outside QUALITY and not included here.
+- `-I` is treated as part of the recorded argv. Whether its presence changes any output was not tested; nothing was executed.

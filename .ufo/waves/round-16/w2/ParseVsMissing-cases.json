@@ -1,0 +1,236 @@
+{
+  "cases": [
+    {
+      "id": "w2-parse-unreadable-base-empty-file",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw": ""}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "A PRESENT 0-byte base is a parse failure, not an absence: JsonReader.beginObject hits EOF at GoApiSnapshot.java:215 (EOFException under IOException). Attacks any empty-file -> missing_base or -> parsed-empty conflation."
+    },
+    {
+      "id": "w2-parse-unreadable-base-whitespace-only",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw": "   \n\t  \n"}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "Whitespace-only bytes still reach beginObject and fail at EOF (GoApiSnapshot.java:215). Byte count is nonzero so this cannot masquerade as an empty file."
+    },
+    {
+      "id": "w2-parse-unreadable-base-truncated-object",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw": "{\"all\": {"}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "Truncated mid-object: beginObject and the NAME peek succeed, then the bucket value ends at EOF (Gson MalformedJsonException, an IOException, inside the loop at :216-222). Syntax corrupt INSIDE the object, not merely an absent shape."
+    },
+    {
+      "id": "w2-parse-unreadable-base-missing-colon",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw": "{\"all\" {\"x\":1}}"}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "Missing ':' after a name: strict Gson (bundled gson-2.13.2) throws MalformedJsonException expecting a colon; the document never yields a usable top-level object."
+    },
+    {
+      "id": "w2-parse-unreadable-base-top-level-empty-array",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw": "[]"}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "Empty top-level array still fails beginObject (:215, Expected BEGIN_OBJECT but was BEGIN_ARRAY); emptiness does not make it skippable. Model note: the Java exception is IllegalStateException (RuntimeException), not IOException — the model's UnreadableError is the API-level rejection, not an exception-class claim."
+    },
+    {
+      "id": "w2-parse-unreadable-base-top-level-scalar-string",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw": "\"all\""}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "Valid JSON scalar bearing a real bucket name: 'all' as a STRING is still not an object; beginObject fails at :215. Guards against any name-sniffing shortcut that reads bytes instead of structure."
+    },
+    {
+      "id": "w2-parse-unreadable-base-top-level-number",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw": "42"}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "Bare NUMBER token at top level: beginObject fails at :215 (Expected BEGIN_OBJECT but was NUMBER). Same API-level rejection class as the array case."
+    },
+    {
+      "id": "w2-parse-unreadable-base-top-level-null",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw": "null"}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "JSON null is a PRESENT document, not a missing file and not an empty object: beginObject fails at :215 on the NULL token. Sharpest parse-vs-missing boundary: null bytes decode fine, they are simply the wrong shape."
+    },
+    {
+      "id": "w2-parse-unreadable-base-invalid-byte",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw_b64": "/w=="}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "Single 0xFF byte (raw_b64 of b'\\xff'): even under the Java InputStreamReader's REPLACE decoding this is U+FFFD, not BEGIN_OBJECT — beginObject fails at :215. Model rejects at strict UTF-8 decode; same failure class via a different step."
+    },
+    {
+      "id": "w2-parse-unreadable-base-control-char-in-name",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw_b64": "eyJhAWxsIjoge319"}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "raw_b64 of b'{\"a\\x01ll\": {}}': raw control char U+0001 inside a quoted member name. Strict Gson 2.13.2 rejects unescaped control characters in strings; Python strict mode agrees. A lenient reader would have surfaced bucket 'a\\x01ll' — it must not."
+    },
+    {
+      "id": "w2-parse-unreadable-base-not-rescued-by-diff",
+      "request": "1.21.3",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"raw": "{\"all\": {"},
+        "patchverdiffs/go1.21.3.json.diff": {"op": "replace"}
+      },
+      "expect_error": {"type": "UnreadableError"},
+      "note": "A selectable exact diff must NOT redeem a corrupt base: the runtime path would feed the same unreadable bytes through JsonPatchApplier(jsonFile) (getDerivedByteProviderPush callback, :133-144), so the failure propagates. Selection must error, never emit exact_diff over a base it could not read."
+    },
+    {
+      "id": "w2-parse-empty-object-base-with-exact-diff",
+      "request": "1.21.3",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {},
+        "patchverdiffs/go1.21.3.json.diff": {"op": "replace"}
+      },
+      "expected": {
+        "requested": "1.21.3",
+        "status": "exact_diff",
+        "base": {"path": "go1.21.0.json", "size": 3},
+        "selected_diff": {"path": "patchverdiffs/go1.21.3.json.diff"},
+        "selected_patch": 3,
+        "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+        "base_matching_buckets": [],
+        "base_matching_buckets_source": "unpatched_base_file",
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "The parsed-zero counterpart to missing_base: a present, VALID '{}' base (3 materialized bytes) yields zero matching buckets with source 'unpatched_base_file' — never null base, never missing_base — and the exact diff still selects. Size pins a real file distinct from the 0-byte unreadable case."
+    },
+    {
+      "id": "w2-parse-missing-base-empty-root",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {},
+      "expected": {
+        "requested": "1.21.0",
+        "status": "missing_base",
+        "base": null,
+        "selected_diff": null,
+        "selected_patch": null,
+        "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+        "base_matching_buckets": [],
+        "base_matching_buckets_source": null,
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "Empty readable root: getApiSnapshotFile returns null (:168-177) so get() yields GoApiSnapshot.EMPTY (:115, :242). The discriminating key is base_matching_buckets_source==null — a wrongly-synthesized parsed-empty base would emit 'unpatched_base_file' and status base_only. selected_patch must stay null (absent), not 0 (patch-0 byte source)."
+    },
+    {
+      "id": "w2-parse-missing-base-empty-patchverdiffs",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "patchverdiffs/keepme.txt": "x"
+      },
+      "expected": {
+        "requested": "1.21.0",
+        "status": "missing_base",
+        "base": null,
+        "selected_diff": null,
+        "selected_patch": null,
+        "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+        "base_matching_buckets": [],
+        "base_matching_buckets_source": null,
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "A populated patchverdiffs/ (non-diff member) without any base is still missing_base: base lookup precedes the diff scan (:122-126) and 'keepme.txt' never matches the diff name grammar anyway."
+    },
+    {
+      "id": "w2-parse-missing-base-directory-named-base",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json/inside.txt": "not the base, its child"
+      },
+      "expected": {
+        "requested": "1.21.0",
+        "status": "missing_base",
+        "base": null,
+        "selected_diff": null,
+        "selected_patch": null,
+        "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+        "base_matching_buckets": [],
+        "base_matching_buckets_source": null,
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "A DIRECTORY named go1.21.0.json is not a base file: Application.getDataFileInModule throws FileNotFoundException when the found resource isDirectory (Application.java, Generic-src.zip ~:368-371), caught by getApiSnapshotFile -> null -> missing_base. Model's Path.is_file() gate is the equivalent check."
+    },
+    {
+      "id": "w2-parse-base-only-patchverdiffs-is-file",
+      "request": "1.21.2",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"all": {}},
+        "patchverdiffs": "a regular file, not a directory"
+      },
+      "expected": {
+        "requested": "1.21.2",
+        "status": "base_only",
+        "base": {"path": "go1.21.0.json"},
+        "selected_diff": null,
+        "selected_patch": 0,
+        "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+        "base_matching_buckets": ["all"],
+        "base_matching_buckets_source": "unpatched_base_file",
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "patchverdiffs present as a regular FILE: the source's per-patch probe builds 'patchverdiffs/go1.21.x.json.diff' under a non-directory and finds nothing -> null -> base only (:128-131). Model enumerates diff_dir and must treat NotADirectoryError like absence, not crash."
+    }
+  ]
+}

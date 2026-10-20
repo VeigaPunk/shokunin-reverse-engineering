@@ -1,0 +1,281 @@
+{
+  "cases": [
+    {
+      "id": "strict-newline-trailing",
+      "request": "1.21.0\n",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+      },
+      "expect_error": {"type": "RequestError", "contains": "expected stable M.m.p"},
+      "note": "C1 attack: trailing '\\n' must be rejected by _VERSION_RE.fullmatch (selection.py:50,77). An implementation built on re.match+$ would silently accept '1.21.0\\n'; the \\n would then also be dropped by Java-side parsing, so only fullmatch preserves the strict contract. Base file is present so a buggy accept path would return base_only, not error."
+    },
+    {
+      "id": "strict-newline-crlf",
+      "request": "1.21.0\r\n",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+      },
+      "expect_error": {"type": "RequestError", "contains": "expected stable M.m.p"},
+      "note": "CRLF line ending on the request string: same fullmatch gate; '$'-style matching tolerates a single trailing newline only, so \\r\\n is caught even by weaker implementations, but must be pinned anyway."
+    },
+    {
+      "id": "strict-newline-embedded",
+      "request": "1.21.0\n1.22.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+        "go1.22.0.json": {"all": {"Funcs": {}, "Types": {}}}
+      },
+      "expect_error": {"type": "RequestError", "contains": "expected stable M.m.p"},
+      "note": "Two well-formed versions separated by a newline. Rejects any impl that strips whitespace or takes the first/last line; neither 1.21.0 nor 1.22.0 may be selected."
+    },
+    {
+      "id": "strict-trailing-space",
+      "request": "1.21.0 ",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+      },
+      "expect_error": {"type": "RequestError", "contains": "expected stable M.m.p"},
+      "note": "ASCII space is outside the component grammar; also covers any impl that calls str.strip() before matching (contract forbids silent normalization — request_raw must equal the CLI string)."
+    },
+    {
+      "id": "strict-nonascii-fullwidth",
+      "request": "1.21.５",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+        "patchverdiffs/go1.21.5.json.diff": {"Sections": []}
+      },
+      "expect_error": {"type": "RequestError", "contains": "expected stable M.m.p"},
+      "note": "C1 attack: U+FF15 FULLWIDTH DIGIT FIVE is Unicode category Nd. [0-9] (selection.py:50) rejects it; a \\d-based regex would match AND Python int('５')==5 would normalize the request to 1.21.5 — the planted exact diff makes that buggy path produce exact_diff, a silent wrong-success rather than a rejection. Canonical-decimal contract requires ASCII digits only."
+    },
+    {
+      "id": "strict-nonascii-arabic-indic",
+      "request": "١.٢١.٠",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+      },
+      "expect_error": {"type": "RequestError", "contains": "expected stable M.m.p"},
+      "note": "Whole-version substitution with Arabic-Indic digits (U+0661 U+0662 U+0661 . U+0660): Nd-category digits that int() would accept ('١٢١'->121). Java Integer.parseInt also accepts them, so the strict contract is deliberately tighter than source here; rejection pins the model's ASCII-only grammar."
+    },
+    {
+      "id": "strict-nonascii-mixed-math-digit",
+      "request": "1.2𝟙.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}}
+      },
+      "expect_error": {"type": "RequestError", "contains": "expected stable M.m.p"},
+      "note": "Mixed ASCII + U+1D7D9 MATHEMATICAL DOUBLE-STRUCK DIGIT ONE inside the minor component. Plane-1 Nd digit: catches implementations that assume non-ASCII means BMP-only or that accept any Unicode decimal."
+    },
+    {
+      "id": "strict-overflow-major",
+      "request": "2147483648.0.1",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {},
+      "expect_error": {"type": "RequestError", "contains": "Java int range"},
+      "note": "C1 attack: major = Integer.MAX_VALUE+1. 10 digits so it passes the length guard (selection.py:83-88) and must be caught by the range check (:90-94). Java Integer.parseInt would throw NumberFormatException; strict model maps to RequestError/exit2."
+    },
+    {
+      "id": "strict-overflow-minor",
+      "request": "1.2147483648.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {},
+      "expect_error": {"type": "RequestError", "contains": "Java int range"},
+      "note": "Minor component at int max+1: same range check must fire per-component, not only on major."
+    },
+    {
+      "id": "strict-overflow-patch",
+      "request": "1.0.2147483648",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {},
+      "expect_error": {"type": "RequestError", "contains": "Java int range"},
+      "note": "Patch component at int max+1: also guards against an impl that bounds patch by the diff directory scan and skips range validation entirely."
+    },
+    {
+      "id": "strict-overflow-eleven-digit",
+      "request": "99999999999.0.1",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {},
+      "expect_error": {"type": "RequestError", "contains": "Java int range"},
+      "note": "11-digit component: exercises the pre-int() length guard (selection.py:83-88) rather than the numeric compare — without it, int() on huge digit strings raises plain ValueError past Python's ~4300-digit limit, which is NOT RequestError and would escape the CLI's exit-2 typed-error path as an unhandled traceback."
+    },
+    {
+      "id": "strict-invalid-sentinel-zero-zero",
+      "request": "0.0.5",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go0.0.0.json": {"all": {"Funcs": {}, "Types": {}}}
+      },
+      "expect_error": {"type": "RequestError", "contains": "INVALID sentinel"},
+      "note": "0.0.* matches the M.m.p regex and each component is in range, so rejection must come from the (0,0,*) INVALID-sentinel check (selection.py:95-99, GoVer.isInvalid). Planted go0.0.0.json means a buggy accept returns base_only — a wrong-success, not a wrong-error."
+    },
+    {
+      "id": "strict-empty-goos",
+      "request": "1.21.0",
+      "goos": "",
+      "goarch": "amd64",
+      "files": {},
+      "expect_error": {"type": "RequestError", "contains": "non-empty string"},
+      "note": "Empty GOOS: arch_search_order (selection.py:104-105) must reject before any filesystem lookup. An impl that skipped validation would emit order ['-amd64','','amd64','all'] and quietly return missing_base."
+    },
+    {
+      "id": "strict-empty-goarch",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "",
+      "files": {},
+      "expect_error": {"type": "RequestError", "contains": "non-empty string"},
+      "note": "Empty GOARCH: same selector-validation path, symmetric coverage."
+    },
+    {
+      "id": "strict-intmax-patch-bounded-by-installed",
+      "request": "1.24.2147483647",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.24.0.json": {
+          "all": {"Funcs": {}, "Types": {}},
+          "linux": {"Funcs": {}, "Types": {}},
+          "linux-amd64": {"Funcs": {}, "Types": {}}
+        },
+        "patchverdiffs/go1.24.1.json.diff": {"Sections": []},
+        "patchverdiffs/go1.24.5.json.diff": {"Sections": []},
+        "patchverdiffs/go1.24.6.json.diff": {"Sections": []}
+      },
+      "expected": {
+        "requested": "1.24.2147483647",
+        "status": "fallback_diff",
+        "base": "go1.24.0.json",
+        "selected_diff": "patchverdiffs/go1.24.6.json.diff",
+        "selected_patch": 6,
+        "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+        "base_matching_buckets": ["linux-amd64", "linux", "all"],
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "Valid int-max patch on an installed minor: Java's getPatchVerDiffFile counts DOWN from patch (GoApiSnapshot.java:150-157) so 2^31-1 is a legal request that lands on the highest present diff. Installed 12.1.4 listing tops out at go1.24.6.json.diff — this fixture's tree mirrors that bound and expects fallback_diff/selected_patch=6, exactly what the installed root would produce."
+    },
+    {
+      "id": "strict-intmax-all-components",
+      "request": "2147483647.2147483647.2147483647",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {},
+      "expected": {
+        "requested": "2147483647.2147483647.2147483647",
+        "status": "missing_base",
+        "base": null,
+        "selected_diff": null,
+        "selected_patch": null,
+        "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+        "base_matching_buckets": [],
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "Every component exactly at Integer.MAX_VALUE: must parse (boundary is inclusive — off-by-one '<' vs '<=' in the range check would wrongly reject), then yield missing_base. Bounded by the installed listing: Ghidra 12.1.4 ships go1.15.0..go1.25.0 only, so no int-max base exists on the real root either."
+    },
+    {
+      "id": "strict-zero-major-valid",
+      "request": "0.1.0",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {},
+      "expected": {
+        "requested": "0.1.0",
+        "status": "missing_base",
+        "base": null,
+        "selected_diff": null,
+        "selected_patch": null,
+        "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+        "base_matching_buckets": [],
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "Calibration: major==0 with nonzero minor is NOT the INVALID sentinel (GoVer.isInvalid checks major==0 && minor==0, selection.py:95). An over-broad 'reject major 0' impl would wrongly RequestError this legal request."
+    },
+    {
+      "id": "strict-nonascii-diff-name-ignored",
+      "request": "1.21.5",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+        "patchverdiffs/go1.21.５.json.diff": {"Sections": []}
+      },
+      "expected": {
+        "requested": "1.21.5",
+        "status": "base_only",
+        "selected_diff": null,
+        "selected_patch": 0,
+        "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+        "base_matching_buckets": ["all"],
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "Non-ASCII digit in a diff FILENAME (go1.21.５.json.diff, fullwidth 5): _DIFF_NAME_RE.fullmatch (selection.py:55-56,216) must not match, so the entry is skipped and the result is base_only/selected_patch=0 — Java builds the candidate name from canonical GoVer.toString() and would never spell it this way either."
+    },
+    {
+      "id": "strict-leading-zero-diff-name-ignored",
+      "request": "1.21.5",
+      "goos": "linux",
+      "goarch": "amd64",
+      "files": {
+        "go1.21.0.json": {"all": {"Funcs": {}, "Types": {}}},
+        "patchverdiffs/go1.21.05.json.diff": {"Sections": []}
+      },
+      "expected": {
+        "requested": "1.21.5",
+        "status": "base_only",
+        "selected_diff": null,
+        "selected_patch": 0,
+        "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+        "base_matching_buckets": ["all"],
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "Leading-zero patch in a diff filename must not alias patch 5: canonical GoVer.toString() never emits leading zeros, so the scan skips it. A naive r'go(\\d+)\\.(\\d+)\\.(\\d+)' scan + int() would treat '05' as 5 and wrongly select exact_diff."
+    },
+    {
+      "id": "strict-duplicate-order-dedup",
+      "request": "1.21.0",
+      "goos": "linux",
+      "goarch": "linux",
+      "files": {
+        "go1.21.0.json": {
+          "all": {"Funcs": {}, "Types": {}},
+          "linux": {"Funcs": {}, "Types": {}},
+          "linux-linux": {"Funcs": {}, "Types": {}},
+          "unix": {"Funcs": {}, "Types": {}}
+        }
+      },
+      "expected": {
+        "requested": "1.21.0",
+        "status": "base_only",
+        "selected_diff": null,
+        "selected_patch": 0,
+        "arch_search_order": ["linux-linux", "linux", "unix", "linux", "all"],
+        "base_matching_buckets": ["linux-linux", "linux", "unix", "all"],
+        "patch_applied": false,
+        "evidence_class": "source_model"
+      },
+      "note": "goos==goarch produces 'linux' twice in the emitted order (selection.py:109-115 emits duplicates; :243-249 dedups only for bucket membership). Source-faithful: Java List.of at GoApiSnapshot.java:109-110 retains duplicate elements (only Set.of/Map.of reject them; JDK21 ImmutableCollections.listFromTrustedArray null-checks only) and read() iterates the list with a Set membership test (GoApiSnapshot.java:228-237), so the emitted list itself carries the dup and matching dedups — exactly what this case pins."
+    }
+  ]
+}

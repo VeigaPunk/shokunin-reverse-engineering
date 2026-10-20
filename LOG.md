@@ -1920,3 +1920,57 @@ Source work first landed at `856d193b8c21d3f7aeff3cb8a27b55a715ab897e`.
 
 No new L0 question, no installation/update, no target/provider execution.
 Report lands after these records and the lane push, not before.
+
+## 2026-10-20 — round-16 — computable Go selection and outside-route provenance
+
+Declared separable claims: **C1 depth**, explicitly compute the existing
+source-law request-bounded Go base/diff choice and ordered unpatched-base
+applicability; **C2 calibration**, discharge all four round-15 outside routes.
+Baseline: `6235498b4112350eebce0812a74af1781fc0ee88`, initially clean.
+
+- C1: new `corpus/knowledge/2026-10-20-r16-go-selection-preview.md`,
+  `.ufo/waves/round-16/selection.py`, independent `selection-fixtures.json`,
+  `negative-fixtures.json` and developer `selfcheck.py`. The prior selector
+  law/inferred 1.24.7→1.24.6 fallback was already held; the new substance is
+  explicit bounded selection (including 1.24.5 despite installed patch 6),
+  per-file identities and ordered platform projection. This is source-model
+  evidence, no patch application, compiled Ghidra parity, target replay or
+  historical-cause proof. New map row and SKILL decision/probe registry
+  retain those limits; no capability table row or expansion credit.
+- C2 route 1: named append-only `Round-16 correction` in r15 knowledge
+  distinguishes header guidance from actual recorded `python3 -I` absolute
+  argv, and aligns the existing inventory registry command including selects.
+  Route 2: existing quote-fidelity registry now discovers the supplemental
+  r15 boundary frozen baseline; original tool and pinned inputs unchanged.
+  Route 3: new `controls.py BEFORE AFTER` reports bounded byte/prefix/craft
+  and source-cell observations with producing argv and immutable revisions;
+  the historic undocumented checks are not retroactively called retained.
+  Route 4: SHONEN box 3 explicitly names historical 2026-10-15 round 1;
+  four marks remain `[~]`. Grounded QUALITY #18 and round-16 Mistakes capture
+  all four genuine outside duties; #17 remains intact.
+- Author-side `w1/ReviewCanonical.md` found the old r14 final-sweep entry's
+  “four gates are closed” overclaim. A named append-only round-16 correction
+  qualifies it against current `[~]` and prior non-author closure, not a
+  promotion decision. No outside verifier file or prior byte is rewritten.
+- `measure.py` reads immutable source revisions. The one-off documented
+  red-before command at baseline exits 1, resolved 0/4 markers; actual
+  argv/snippet/stdout/stderr in `documentation-red.json`. This is omission/
+  presence evidence only, not proof of semantic repair or executed producer.
+  `w1/AttackRedBefore.md` and `AttackHonesty.md` explicitly constrain it.
+- Sources S003/S023 reopened; only permitted used-by appends, exactly logged
+  old→new in the lesson. No source row added, no rejected row removed, no
+  frontier promotion; source/data origin is shared, not independent support.
+- Swarm specs, unchanged dispatches, registries and role outcomes under
+  `.ufo/waves/round-16/`. L1 holds canonical planner seat. First 64-seat
+  wave's 14 scouts/8 connectors failed immediate credit errors; six critics
+  failed capacity. Dead seats stay dead, no identity replacements or lane
+  routing edits. Operator repaired routes for newly spawned falsifiers.
+  L0 incident question landed as fleet `e5b87e1b3ff8f13ed6e0f629502a5a7a1747e9f3`.
+- No inherited lane debt, no new target choice, no client/auth/db/config or
+  host-service access/change, no tool installs/updates by L1. Seats are
+  author-side advice; no new outside review or SHONEN `[x]` authority.
+
+Motivation, Gate admits/rejects, exact source quotes, Mistakes and curation:
+`corpus/lessons/round-16.md`. Actual L1 checks, after-counts and final
+falsification outcomes are recorded separately after source work is committed;
+no unrun check is called passed here.

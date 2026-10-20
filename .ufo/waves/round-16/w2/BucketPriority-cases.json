@@ -1,0 +1,385 @@
+[
+  {
+    "id": "linux_priority_reverse_key_order",
+    "request": "1.24.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.24.0.json": {"raw": "{\"amd64\": {}, \"all\": {}, \"unix\": {}, \"linux\": {}, \"linux-amd64\": {}}"}
+    },
+    "expected": {
+      "requested": "1.24.0",
+      "status": "base_only",
+      "base": {"path": "go1.24.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "File key order is exact reverse of search priority. Java read() emits the results map in archNames order, not file order (GoApiSnapshot.java:228-237 iterates archNames, not the parsed key set). A runner that echoes file key order fails."
+  },
+  {
+    "id": "linux_priority_skips_absent_slots",
+    "request": "1.19.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.19.0.json": {"amd64": {}, "linux": {}}
+    },
+    "expected": {
+      "requested": "1.19.0",
+      "status": "base_only",
+      "base": {"path": "go1.19.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux", "amd64"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Absent linux-amd64/unix/all slots are skipped, not reported; linux outranks amd64 even though amd64 is listed first in the file. Also pins that a base lacking 'all' is still base_only (snapshot is non-EMPTY even with no 'all' key)."
+  },
+  {
+    "id": "linux_exact_diff_unpatched_buckets",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}, "unix": {}, "amd64": {}},
+      "patchverdiffs/go1.21.3.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "exact_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.3.json.diff"},
+      "selected_patch": 3,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["unix", "amd64", "all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Contract seal: when a diff is selected, bucket matching is still the UNPATCHED base preview and must be labelled so. The patched document that JsonPatchApplier would build (GoApiSnapshot.java:133-144) never exists; a diff could add/remove top-level buckets. unix outranks amd64/all despite being listed last in the file."
+  },
+  {
+    "id": "linux_fallback_diff_unpatched_buckets",
+    "request": "1.22.5",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.22.0.json": {"all": {}, "linux": {}},
+      "patchverdiffs/go1.22.2.json.diff": {},
+      "patchverdiffs/go1.22.4.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.22.5",
+      "status": "fallback_diff",
+      "base": {"path": "go1.22.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.22.4.json.diff"},
+      "selected_patch": 4,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux", "all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Nearest-lower diff (1.22.4 < 1.22.5, getPatchVerDiffFile 148-166) while 'all' is first in the file: linux still reported before all. Labelling requirement applies equally to fallback_diff."
+  },
+  {
+    "id": "dedup_all_when_goos_is_all",
+    "request": "1.21.0",
+    "goos": "all",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}, "amd64": {}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["all-amd64", "all", "amd64", "all"],
+      "base_matching_buckets": ["all", "amd64"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "goos='all' puts the generic 'all' into the search list TWICE (positions goos and literal 'all'; 'all' not in IS_GOOS_UNIX so slot 3 is ''). Java List.of retains the duplicate (108-109); read()'s LinkedHashMap keeps the FIRST occurrence (228-237), so 'all' resolves at generic-goos priority, BEFORE amd64 — a dedup-to-first-position runner and a dedup-to-last runner disagree: this expects first."
+  },
+  {
+    "id": "dedup_all_when_goos_and_goarch_all",
+    "request": "1.21.0",
+    "goos": "all",
+    "goarch": "all",
+    "files": {
+      "go1.21.0.json": {"all": {}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["all-all", "all", "all", "all"],
+      "base_matching_buckets": ["all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Triple 'all' in the literal list (goos, goarch and literal positions) collapses to one retained bucket. Asserts the emitted arch_search_order keeps the literal duplicates (faithful to List.of) while base_matching_buckets dedups to first occurrence (faithful to read()'s LinkedHashMap)."
+  },
+  {
+    "id": "windows_never_matches_unix",
+    "request": "1.20.0",
+    "goos": "windows",
+    "goarch": "amd64",
+    "files": {
+      "go1.20.0.json": {"unix": {}, "all": {}, "windows": {}, "windows-amd64": {}}
+    },
+    "expected": {
+      "requested": "1.20.0",
+      "status": "base_only",
+      "base": {"path": "go1.20.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["windows-amd64", "windows", "amd64", "all"],
+      "base_matching_buckets": ["windows-amd64", "windows", "all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "windows is absent from IS_GOOS_UNIX (180-181) so the unix slot is '' and is dropped; the 'unix' key present in the file must NOT appear. Existing windows_omission only exercises exact_diff with all buckets present; this pins the exclusion on a smaller set and no diff."
+  },
+  {
+    "id": "windows_unix_only_content_shadowed",
+    "request": "1.20.0",
+    "goos": "windows",
+    "goarch": "amd64",
+    "files": {
+      "go1.20.0.json": {"unix": {}, "amd64": {}, "all": {}}
+    },
+    "expected": {
+      "requested": "1.20.0",
+      "status": "base_only",
+      "base": {"path": "go1.20.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["windows-amd64", "windows", "amd64", "all"],
+      "base_matching_buckets": ["amd64", "all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "A base holding ONLY unix-generic + arch + all content: a windows request sees no windows bucket at all, and a runner that wrongly treats 'unix' as matching windows (or appends it) emits ['unix','amd64','all'] and fails. Mirrors w1 ReviewBucketOrder D3 counterexample (archive/tar.statUnix is unix-only in shipped bases)."
+  },
+  {
+    "id": "windows_fallback_diff_no_unix_unpatched",
+    "request": "1.18.5",
+    "goos": "windows",
+    "goarch": "amd64",
+    "files": {
+      "go1.18.0.json": {"unix": {}, "windows": {}, "all": {}},
+      "patchverdiffs/go1.18.2.json.diff": {},
+      "patchverdiffs/go1.18.4.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.18.5",
+      "status": "fallback_diff",
+      "base": {"path": "go1.18.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.18.4.json.diff"},
+      "selected_patch": 4,
+      "arch_search_order": ["windows-amd64", "windows", "amd64", "all"],
+      "base_matching_buckets": ["windows", "all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "unix exclusion holds under a selected diff; bucket list is still the unpatched base's keys and labelled as such. Complements windows_omission (exact_diff) with fallback_diff + a unix-keyed base."
+  },
+  {
+    "id": "null_valued_bucket_not_applicable",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"linux": null, "amd64": {}, "all": {}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["amd64", "all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "FALSIFICATION: read() drops a present-but-null bucket — gson.fromJson yields null, arches.get('linux') is null, the null check at 233-236 skips it. The preview reports key PRESENCE only (selection.py:242-248 uses _top_level_keys), so it would emit ['linux','amd64','all']. Expectation is source-truth; if the contract instead means key presence, this case records the divergence explicitly. No shipped base has a null bucket (w1 ReviewBucketOrder data scan), so severity is latent."
+  },
+  {
+    "id": "goos_unix_literal_not_in_unix_set",
+    "request": "1.21.0",
+    "goos": "unix",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"unix": {}, "amd64": {}, "all": {}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["unix-amd64", "unix", "amd64", "all"],
+      "base_matching_buckets": ["unix", "amd64", "all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "The literal GOOS string 'unix' is NOT a member of IS_GOOS_UNIX (180-181 lists concrete OSes only), so the artificial-unix slot is ''. 'unix' still matches via the goos slot itself. A runner that emits 'unix' twice in arch_search_order, or shifts amd64 before the second unix, fails the order assertion."
+  },
+  {
+    "id": "goos_case_sensitive_no_unix",
+    "request": "1.21.0",
+    "goos": "Linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"linux": {}, "unix": {}, "amd64": {}, "all": {}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["Linux-amd64", "Linux", "amd64", "all"],
+      "base_matching_buckets": ["amd64", "all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "IS_GOOS_UNIX.contains is an exact string match; 'Linux' is not in the set, so no unix slot and the 'linux'/'unix' buckets do not apply. Java parity (no case normalization at 108-109); also documents that goos is unvalidated (w1 D4) — an unknown/typo GOOS silently degrades to arch+all."
+  },
+  {
+    "id": "zero_matching_buckets_still_base_only",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"solaris": {}, "mips64": {}}
+    },
+    "expected": {
+      "requested": "1.21.0",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Base parses and exists but retains zero applicable buckets: Java read() yields a NON-EMPTY snapshot whose isInvalid() is true (arches.isEmpty(), 503-505) — distinct from GoApiSnapshot.EMPTY. The status enum has no zero-match state (w1 D5 unresolved); this pins the current model's mapping to base_only with empty buckets, NOT missing_base and NOT an error. Unreachable with shipped data (every base has 'all')."
+  },
+  {
+    "id": "directory_at_base_path_is_missing_base",
+    "request": "1.21.1",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json/inner.txt": "occupies the base filename as a directory",
+      "patchverdiffs/go1.21.1.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.1",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "base_matching_buckets_source": null,
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Java getDataFileInModule rejects directories (Application.java:369-372 'is a directory (expecting file)') so getApiSnapshotFile returns null -> get() yields EMPTY even though a same-name diff exists (early return 124-126 precedes diff search). Model's is_file() check at _describe_file is the faithful equivalent; a runner using exists() would claim a base."
+  },
+  {
+    "id": "directory_at_diff_path_falls_to_lower",
+    "request": "1.21.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}},
+      "patchverdiffs/go1.21.4.json.diff/inner.txt": "occupies the exact diff filename as a directory",
+      "patchverdiffs/go1.21.2.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.21.4",
+      "status": "fallback_diff",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": {"path": "patchverdiffs/go1.21.2.json.diff"},
+      "selected_patch": 2,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "The exact-name entry exists but is a directory: Java's getApiSnapshotFile returns null for it (Application.java:369-372) so the patchVer loop decrements to 1.21.2. A name-only directory scan that doesn't verify regular-file status would select patch 4."
+  },
+  {
+    "id": "patchverdiffs_as_plain_file",
+    "request": "1.21.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}},
+      "patchverdiffs": "not a directory"
+    },
+    "expected": {
+      "requested": "1.21.3",
+      "status": "base_only",
+      "base": {"path": "go1.21.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "base_matching_buckets_source": "unpatched_base_file",
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "patchverdiffs exists but is not a directory: iterdir raises NotADirectoryError -> treated as no diffs (base_only). Java equivalent: findModuleFile('patchverdiffs/go1.21.3.json.diff') yields nothing -> FileNotFoundException -> null diff -> base provider (128-131). Pins the OSError-to-empty handling, not an error exit."
+  },
+  {
+    "id": "empty_goos_request_error",
+    "request": "1.21.0",
+    "goos": "",
+    "goarch": "amd64",
+    "files": {
+      "go1.21.0.json": {"all": {}}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "Contract requires non-empty goos. Java itself would not reject ('' goos yields order [''+'-amd64','','unix?'...] and degrades to arch+all) — strict-nonempty is a deliberate contract extension over Java, consistent with unvalidated-selector labelling in w1 D4."
+  },
+  {
+    "id": "empty_goarch_request_error",
+    "request": "1.21.0",
+    "goos": "linux",
+    "goarch": "",
+    "files": {
+      "go1.21.0.json": {"all": {}}
+    },
+    "expect_error": {"type": "RequestError"},
+    "note": "Symmetric: non-empty goarch required by contract. With goarch='' Java would emit 'linux-' as the first name and still proceed; the model rejects at the boundary instead."
+  }
+]

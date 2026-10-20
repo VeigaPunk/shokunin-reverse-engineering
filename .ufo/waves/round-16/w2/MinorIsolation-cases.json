@@ -1,0 +1,291 @@
+[
+  {
+    "id": "w2-mi-lower-minor-diff-not-rescued",
+    "request": "1.25.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.25.0.json": {
+        "all": {},
+        "linux-amd64": {},
+        "unix": {}
+      },
+      "patchverdiffs/go1.24.6.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.25.3",
+      "status": "base_only",
+      "base": {"path": "go1.25.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux-amd64", "unix", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Assigned C1 attack: present go1.25.0 base plus highest installed lower-minor diff (go1.24.6) must stay base_only with selected_patch 0. Java getPatchVerDiffFile counts down prevPatch() only within 1.25.* (GoApiSnapshot.java:153-156); a cross-minor fallback would pick patch 6. Mirrors installed data shape: go1.25.0.json exists, no go1.25.* diffs shipped."
+  },
+  {
+    "id": "w2-mi-neighbor-base-not-rescued",
+    "request": "2.0.0",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.25.0.json": {"all": {}},
+      "patchverdiffs/go1.25.9.json.diff": {}
+    },
+    "expected": {
+      "requested": "2.0.0",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Assigned C1 attack: missing go2.0.0.json base is not rescued by the neighboring go1.25.0.json base nor by any 1.25 diff. Base lookup is goVer.withPatch(0) on the SAME major.minor only (GoApiSnapshot.java:122-126 -> null -> EMPTY)."
+  },
+  {
+    "id": "w2-mi-forward-base-not-rescued",
+    "request": "1.24.9",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.25.0.json": {"all": {}},
+      "patchverdiffs/go1.24.6.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.24.9",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Backward direction of the missing-base attack: a same-minor diff (go1.24.6) exists and is selected-eligible, but there is no go1.24.0.json base. Base lookup precedes and gates diff selection (GoApiSnapshot.java:122-126), so the presence of a matching diff must not prevent missing_base. A next-minor base (go1.25.0) is never substituted."
+  },
+  {
+    "id": "w2-mi-exact-diff-no-base",
+    "request": "1.25.7",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "patchverdiffs/go1.25.7.json.diff": {},
+      "patchverdiffs/go1.24.6.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.25.7",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Even an exact same-minor diff cannot rescue an absent base: getApiSnapshotJsonFile returns null at :124-126 before getPatchVerDiffFile is called at :128. Diff-first implementations report exact_diff here."
+  },
+  {
+    "id": "w2-mi-same-patch-other-minor",
+    "request": "1.25.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.25.0.json": {
+        "all": {},
+        "linux": {}
+      },
+      "patchverdiffs/go1.24.3.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.25.3",
+      "status": "base_only",
+      "base": {"path": "go1.25.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["linux", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Patch-number equality across a different minor must not match: go1.24.3.json.diff shares the requested patch 3 but belongs to minor 24. Filename matching is on the full M.m.p (template %sgo%s.json%s at :171 with GoVer.toString M.m.p)."
+  },
+  {
+    "id": "w2-mi-cross-major-high-patch-diff",
+    "request": "2.0.7",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go2.0.0.json": {
+        "all": {},
+        "amd64": {}
+      },
+      "patchverdiffs/go1.25.9.json.diff": {},
+      "patchverdiffs/go1.25.3.json.diff": {}
+    },
+    "expected": {
+      "requested": "2.0.7",
+      "status": "base_only",
+      "base": {"path": "go2.0.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["amd64", "all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "A patch-only matcher would select go1.25.9 (9 <= 7? no -- 9 > 7) then go1.25.3 (3 <= 7 -> match): this pins that even a numerically-lower patch in a different MAJOR.minor is never a candidate. GoVer countdown starts at requested 2.0.7 and only rewrites the patch component (prevPatch, GoVer.java:134-136)."
+  },
+  {
+    "id": "w2-mi-cross-minor-both-directions",
+    "request": "1.25.9",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.25.0.json": {"all": {}},
+      "patchverdiffs/go1.24.6.json.diff": {},
+      "patchverdiffs/go2.0.1.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.25.9",
+      "status": "base_only",
+      "base": {"path": "go1.25.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Both adjacency directions at once: a lower minor's highest diff (1.24.6) and a higher major's lowest diff (2.0.1) bracket the request; neither may be selected. Any M.m-equality bug in either direction fails."
+  },
+  {
+    "id": "w2-mi-patch-zero-diff-name-ignored",
+    "request": "1.25.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.25.0.json": {"all": {}},
+      "patchverdiffs/go1.25.0.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.25.4",
+      "status": "base_only",
+      "base": {"path": "go1.25.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "A go*.0.json.diff name is never a candidate: the Java countdown guards patch > 0 (:154), so patch 0 is always the base file, never a diff. A directory-scanning selector that admits patch 0 as a diff returns exact_diff/fallback_diff here. Distinct from w1 'patch0' which requested patch 0 itself."
+  },
+  {
+    "id": "w2-mi-leading-zero-diff-name-ignored",
+    "request": "1.25.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.25.0.json": {"all": {}},
+      "patchverdiffs/go1.25.03.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.25.3",
+      "status": "base_only",
+      "base": {"path": "go1.25.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Java never probes a non-canonical name: it constructs filenames from GoVer.toString (canonical M.m.p, no leading zeros) at :171-172, so 'go1.25.03.json.diff' is invisible. A tolerant filename parser would select patch 3 here (exact_diff)."
+  },
+  {
+    "id": "w2-mi-diff-at-root-not-scanned",
+    "request": "1.25.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.25.0.json": {"all": {}},
+      "go1.25.2.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.25.2",
+      "status": "base_only",
+      "base": {"path": "go1.25.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "Diff placement is part of the name: Java probes 'patchverdiffs/' + name (:154,:171). A .diff sitting in the typeinfo root is not a candidate; a selector that globs the root or all files returns exact_diff here."
+  },
+  {
+    "id": "w2-mi-nested-diff-not-scanned",
+    "request": "1.25.3",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.25.0.json": {"all": {}},
+      "patchverdiffs/nested/go1.25.3.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.25.3",
+      "status": "base_only",
+      "base": {"path": "go1.25.0.json"},
+      "selected_diff": null,
+      "selected_patch": 0,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": ["all"],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "A diff one directory deeper under patchverdiffs/ is still not at the probed path 'patchverdiffs/go<M.m.p>.json.diff'. A recursive scan (rglob) would find it and report exact_diff; Java's exact-path probe cannot."
+  },
+  {
+    "id": "w2-mi-base-inside-patchverdiffs",
+    "request": "1.25.2",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "patchverdiffs/go1.25.0.json": {"all": {}},
+      "patchverdiffs/go1.25.2.json.diff": {}
+    },
+    "expected": {
+      "requested": "1.25.2",
+      "status": "missing_base",
+      "base": null,
+      "selected_diff": null,
+      "selected_patch": null,
+      "arch_search_order": ["linux-amd64", "linux", "unix", "amd64", "all"],
+      "base_matching_buckets": [],
+      "patch_applied": false,
+      "evidence_class": "source_model"
+    },
+    "note": "The base is looked up at exactly 'typeinfo/golang/go<M.m.0>.json' (:171 with empty subdir); the same filename inside patchverdiffs/ is not the base. Combined with an exact same-minor diff present, a recursive or name-only base search wrongly yields exact_diff instead of missing_base."
+  },
+  {
+    "id": "w2-mi-unreadable-base-not-diff-rescued",
+    "request": "1.25.4",
+    "goos": "linux",
+    "goarch": "amd64",
+    "files": {
+      "go1.25.0.json": "{ this is not valid json, no closing brace",
+      "patchverdiffs/go1.25.4.json.diff": {},
+      "patchverdiffs/go1.24.6.json.diff": {}
+    },
+    "expect_error": {"type": "UnreadableError"},
+    "note": "Raw-string file form: present-but-malformed base. Java parses the full base JSON via Gson in read() (:205-239); a corrupt base is an IOException, not EMPTY and not a diff result. The preview must error (exit 2 class), never degrade to missing_base or skip to a diff — so exact same-minor and lower-minor diffs are planted to catch both wrong paths."
+  }
+]

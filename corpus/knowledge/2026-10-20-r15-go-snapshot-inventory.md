@@ -72,3 +72,23 @@ output, not replaced by these selected counts. Counts describe parsed
 installed resources, not recovered target functions. A structural regression
 check over this emitted JSON confirmed numeric `patch` and object
 `patch_structure` on every diff. No patch was applied.
+
+## Round-16 correction — r15 recheck invocation
+
+The original `recheck:` at line 3 is intended guidance, not the exact retained
+argv. “The `recheck:` command above ran twice” at lines 52–53 is therefore
+qualified: the actual recorded spelling includes `-I` and the absolute path:
+
+```sh
+python3 -I /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-15/snapshot-inventory.py --ghidra /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC --select 1.24.7 1.25.7 1.26.8
+```
+
+Use this exact argv for future rechecks. Source: `.ufo/waves/round-15/verification.json`,
+commands `snapshot-inventory` and `inventory-determinism`, measured revision
+`7ad23fe1735cd868ec203d93deb13bb2c42889ad`. This is a correction of command
+provenance, not a new execution or a claim of equivalence with the non-isolated
+relative spelling. Prior bytes remain historical. Routed duty:
+`corpus/lessons/round-15-verifier-spotcheck.md:185`; lesson: `corpus/lessons/round-16.md`.
+
+The original relative, non-isolated spelling remains an **unexercised variant**.
+Round 16 neither runs that variant nor claims its output is equivalent.
