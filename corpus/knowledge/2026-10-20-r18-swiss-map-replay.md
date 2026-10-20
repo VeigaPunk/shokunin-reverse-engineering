@@ -60,7 +60,8 @@ prediction was not calibrated on?
   predicts diagnostic failures on 7 of them — unrun candidates, not evidence).
 - **Prediction.** `.ufo/waves/round-18/tools/swiss-misread.py` emulates the
   reads from carrier bytes and the installed snapshot under H1 and H0
-  (calibrated only on aether's logged pair). `.ufo/waves/round-18/gen-predictions.py`
+  (calibrated on aether's logged pair and, for keeping the walk channel out of the
+  failure prediction, notesmd-cli's round-17 no-failure log; w2 `DecisionRuleApply.md`). `.ufo/waves/round-18/gen-predictions.py`
   froze, per label, the route (round-17 `predict.py`) and the H1 outcome as
   `compare.py` extra expectations (`eof_reads`, `invalid_index_reads`,
   `analyzer_errors_empty` or `analyzer_errors_contain`), plus
