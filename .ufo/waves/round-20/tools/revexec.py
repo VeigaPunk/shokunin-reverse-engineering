@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """Execute revision-pinned lane Python in a systemd OS sandbox.
 
-Usage: revexec.py run --root LANE --rev REV --entry PATH [--extra PATH ...] -- ARGS
+Usage: revexec.py run --root LANE --rev REV --entry PATH [--extra PATH ...] [--host-home] -- ARGS
 
-The selected blobs are read from Git at REV, copied to a fresh /tmp work
- directory, and executed by python3 -I -B inside a transient user systemd unit.
-The unit has a private network namespace, a read-only filesystem except for
-that work directory, and no writable home/runtime directories. The residual
-trust is explicit: executed code runs as the same uid; kernel bugs may bypass
-the restrictions; this is not a security boundary against root.
+The selected blobs are read from Git at REV, copied to a fresh work directory
+under REVEXEC_WORK_BASE (default /fast/scratch; never /tmp, which the unit
+replaces), and executed by python3 -I -B inside a transient user systemd unit.
+The unit has a private network namespace, private /tmp and /var/tmp, and a
+read-only filesystem except for that work directory and the private temp
+dirs. HOME is the work directory unless --host-home passes the caller's real
+home (still read-only) for live host checks. The residual trust is explicit:
+executed code runs as the same uid; AF_UNIX sockets outside /run/user remain
+reachable; kernel bugs may bypass the restrictions; this is not a security
+boundary against root.
 """
 
 import argparse
@@ -18,6 +22,15 @@ import socket
 import subprocess
 import sys
 import tempfile
+
+def _work_base():
+    base = os.path.realpath(os.environ.get("REVEXEC_WORK_BASE") or "/fast/scratch")
+    if not os.path.isdir(base):
+        raise RevExecError(f"work base is not a directory: {base}")
+    for hidden in ("/tmp", "/var/tmp"):
+        if base == hidden or base.startswith(hidden + "/"):
+            raise RevExecError(f"work base {base} is under {hidden}, which the unit privatizes")
+    return base
 
 
 class RevExecError(Exception):
@@ -112,7 +125,7 @@ def _extract_blob(root, commit, lane_path, destination):
     return output_path
 
 
-def _sandbox_command(workdir, entry_path, script_args):
+def _sandbox_command(workdir, entry_path, script_args, host_home=False):
     runner = shutil.which("systemd-run")
     if runner is None:
         raise RevExecError("systemd-run is required; refusing unsandboxed execution")
@@ -126,6 +139,7 @@ def _sandbox_command(workdir, entry_path, script_args):
         "--property=ProtectSystem=strict",
         "--property=ProtectHome=read-only",
         "--property=ReadWritePaths=" + workdir,
+        "--property=PrivateTmp=yes",
         "--property=WorkingDirectory=" + workdir,
         "--property=NoNewPrivileges=yes",
         "--property=RestrictNamespaces=yes",
@@ -140,7 +154,7 @@ def _sandbox_command(workdir, entry_path, script_args):
         "--property=TemporaryFileSystem=/dev/shm:ro",
         "--",
         env, "-i",
-        "HOME=" + workdir,
+        "HOME=" + (os.path.expanduser("~") if host_home else workdir),
         "PATH=/usr/bin:/bin",
         "TMPDIR=" + workdir,
         "TMP=" + workdir,
@@ -151,7 +165,7 @@ def _sandbox_command(workdir, entry_path, script_args):
     return command
 
 
-def _run_revision(root, revision, entry, extra, script_args, capture=False):
+def _run_revision(root, revision, entry, extra, script_args, capture=False, host_home=False):
     root = os.path.realpath(root)
     if not os.path.isdir(root):
         raise RevExecError(f"repository root is not a directory: {root}")
@@ -163,12 +177,12 @@ def _run_revision(root, revision, entry, extra, script_args, capture=False):
 
     # Keep extracted blobs and all intentional child writes in one allowlisted
     # directory; the systemd unit makes every other filesystem location RO.
-    workdir = tempfile.mkdtemp(prefix="revexec-work-", dir="/tmp")
+    workdir = tempfile.mkdtemp(prefix="revexec-work-", dir=_work_base())
     try:
         extracted = {}
         for lane_path in paths:
             extracted[lane_path] = _extract_blob(root, commit, lane_path, workdir)
-        command = _sandbox_command(workdir, extracted[entry], script_args)
+        command = _sandbox_command(workdir, extracted[entry], script_args, host_home=host_home)
         try:
             return subprocess.run(
                 command,
@@ -194,7 +208,7 @@ def _check_output(proc, marker):
 
 
 def _selftest():
-    base = tempfile.mkdtemp(prefix="revexec-selftest-", dir="/tmp")
+    base = tempfile.mkdtemp(prefix="revexec-selftest-", dir=_work_base())
     repo = os.path.join(base, "repo")
     os.mkdir(repo)
     outside = os.path.join(base, "outside.txt")
@@ -213,6 +227,13 @@ def _selftest():
                 "    print('WRITE_SUCCEEDED')\n"
             )),
             ("net_refused.py", ""),
+            ("private_tmp.py", (
+                "import os\n"
+                "from pathlib import Path\n"
+                f"probe = Path('/tmp') / {('revexec-private-probe-%d' % os.getpid())!r}\n"
+                "probe.write_text('private', encoding='utf-8')\n"
+                "print('TMP_WRITABLE', os.environ.get('HOME') == os.getcwd())\n"
+            )),
             ("runs_ok.py", (
                 "import sys\n"
                 "from pathlib import Path\n"
@@ -289,6 +310,17 @@ def _selftest():
             run_ok = False
             run_detail = "script arguments were not preserved"
         cases.append(("runs_ok", run_ok, run_detail))
+
+        probe_host = os.path.join("/tmp", "revexec-private-probe-%d" % os.getpid())
+        tmp_proc = _run_revision(repo, "HEAD", "private_tmp.py", [], [], capture=True)
+        tmp_ok, tmp_detail = _check_output(tmp_proc, "TMP_WRITABLE True")
+        if tmp_ok and os.path.exists(probe_host):
+            tmp_ok, tmp_detail = False, "sandbox /tmp write reached the host /tmp"
+        cases.append(("private_tmp", tmp_ok, tmp_detail))
+        home_proc = _run_revision(repo, "HEAD", "private_tmp.py", [], [], capture=True,
+                                  host_home=True)
+        home_ok, home_detail = _check_output(home_proc, "TMP_WRITABLE False")
+        cases.append(("host_home_passthrough", home_ok, home_detail))
     except Exception as exc:
         cases.append(("fixture_setup", False, str(exc)))
     finally:
@@ -321,6 +353,8 @@ def main(argv=None):
     run_parser.add_argument("--rev", required=True)
     run_parser.add_argument("--entry", required=True)
     run_parser.add_argument("--extra", action="append", default=[])
+    run_parser.add_argument("--host-home", action="store_true",
+                            help="set HOME to the caller's real (read-only) home for live host checks")
     run_parser.add_argument("script_args", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
 
@@ -333,7 +367,8 @@ def main(argv=None):
         script_args = script_args[1:]
     try:
         proc = _run_revision(
-            args.root, args.rev, args.entry, args.extra, script_args, capture=False
+            args.root, args.rev, args.entry, args.extra, script_args, capture=False,
+            host_home=args.host_home,
         )
     except RevExecError as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)

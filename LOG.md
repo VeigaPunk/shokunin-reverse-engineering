@@ -2285,3 +2285,28 @@ registry-path regression: round-18 `routed-defects.py --rev b26a6c4 --strict`
 exit0, open/named/substance0/0/0. Exact argv, tool SHA, stdout/stderr hashes
 and completion time: `.ufo/waves/round-19/evidence/r17-continuity.receipt.json`.
 This supplements (does not replace or inflate) the 62-command verification.
+
+## 2026-10-20 — round-20: routed r19 defects, first-held static tool verbs, first-failure Go forecasts
+
+Baseline `14f0260ad319ecc26994381b2415d5a999003375`. Motivating evidence:
+`corpus/lessons/round-19-verifier-spotcheck.md:178-190` (D1-D6, eleven items),
+round-19 SCORECARD planned line (first-failure forecast, variadic mask), and the
+L1 pre-dispatch verb sweep (25 of 153 rea-agents@6.5.0 CLI commands unnamed in
+admitted knowledge). Claims: `.ufo/waves/round-20/claims.json`.
+
+- C1 calibration: eleven routed items get `- R19-<ITEM>:` names in SCORECARD and
+  lesson round-20 plus revision-scoped substance checks in `tools/routed-r19.py`;
+  baseline strict red 11/11/11. Census declares the two round-17 blocks DATED.
+- C2 coverage: five first-held verbs (`inspect-wasm-artifact`,
+  `compare-wasm-interfaces`, `execute-rizin-command`, `list-objdump-architectures`,
+  `project-harmony-application-graph`) with retained run evidence under
+  `.ufo/waves/round-20/evidence/c2/`; sources S040-S046 opened this round.
+- C3 depth: masked-variadic emulator v2 forecasts the first Go-analysis failure;
+  19 held-out go1.24.6 toolchain ELFs frozen at `808cbb3` before any analyze;
+  19/19 first-failure match with bound receipts. Entry
+  `corpus/knowledge/2026-10-20-r20-go1246-first-failure-forecast.md`.
+- Attempt 1 ended at 18:45 -03 without a report (provider 429/quota errors in its
+  last turns); attempt 2 (recovery coordinator) re-verified the landed commits,
+  applied the retained `RoutedR19Fix` counter patch, fixed the revexec sandbox
+  integration (work base off /tmp, private /tmp, read-only host HOME for the live
+  census) and the D5 record-shape check, then ran the falsification wave.

@@ -2565,3 +2565,34 @@ python3 -I -B "$LANE/.ufo/waves/round-19/measure.py" "$REV"
 The census comparison uses the retained baseline output and the current
 `python3 -I -B "$LANE/.ufo/gates/c1-census-v10.py" --root "$LANE"` output,
 not an unsupported census `--rev` option. C2 is live-host time-indexed.
+
+## Round 20 — routed r19 defects, first-held static tool verbs, first-failure Go forecasts, 2026-10-20
+
+Baseline `14f0260ad319ecc26994381b2415d5a999003375`; declaration
+`d1d981d2cc041dda4656c5b01d2c8445d8d17124`; C3 predictions frozen and pushed
+`808cbb31a1e24656da5ba4967497e602fbca7415` before the first analyze. Claims:
+`.ufo/waves/round-20/claims.json`. Motivation: LOG round-20, lesson round-20,
+`corpus/lessons/round-19-verifier-spotcheck.md:178-190`. Attempt 1 ended without a
+report (watchdog `lane-dead-no-report kaidoku round=20`); the recovery coordinator
+(attempt 2) re-verified and reused the attempt-1 commits listed in the lesson.
+Final measured revision and verification records are appended after integration.
+
+### Routed r19 corrections (append-only)
+
+- R19-D1: custody-pair selftest refuses in-worktree scratch (exit 2 `scratch_inside_worktree`) and cleans up; nested residue recorded and removed.
+- R19-D2: `tools/evidence-timestamps.py` flags zoned timestamps later than their line's introducing commit; baseline red on round-18/19 claims.
+- R19-D3: `tools/carrier-guard.py` arm/check/disarm on all toolchain carriers; per-label clean checks retained before each run.
+- R19-D4: `c1-census-v10.py` declares the two round-17 blocks as DATED by stable text anchors; no check deleted or widened.
+- R19-D5: `tools/final-census.py` writes `verify/final-census.json` + stdout at the delivered tip; the record commit adds only those two files.
+- R19-D6a: `head-rev-lint.py` reports nested compare-only HEAD reads (round-17 `verify.py`, round-18 `revpin.py`) in a `nested` class.
+- R19-D6b: `tools/revexec.py` runs revision-extracted Python in a `systemd-run --user` unit (private network, private /tmp, read-only except its work dir).
+- R19-D6c: `citation-drift-probe.py` refuses unsafe snapshot slugs (`slug_unsafe`, realpath containment).
+- R19-D6d: `receipt-validate.py` authenticates analyze only directly after the `rea-agents@<v>` token (`argv_decoy_refused`).
+- R19-D6e: `wave-outcomes.py` keeps a seat named `causes` distinct from the wrapper key (`seat_named_causes`).
+- R19-D6f: `jj-red-before.py` selftest gains `jj_relative_traversal_refused` and `jj_tmpdir_scrubbed`.
+
+| Claim / axis | Numeric proxy | Before → after; counting command | Verdict and limits |
+|---|---|---|---|
+| C1 calibration (owned, tied-lowest) | 10.0→10.0 (delta 0) | routed r19 items open 11→0 target: `python3 -I -B .ufo/waves/round-20/tools/routed-r19.py --root <LANE> --rev <REV> --strict --live`; census FAIL/1→PASS/0; QUALITY 22→25, rows 1-22 identical | Final measured verdict appended after verification |
+| C2 coverage (owned; sourced S040-S046) | 10.0→10.0 (delta 0) | CLI verbs named in admitted knowledge 128/153→133/153; targets exercised 0/5→5/5: `python3 -I -B .ufo/waves/round-20/tools/verb-coverage.py --root <LANE> --rev <REV>` | Mention-level catalog coverage; `exercised` binds the ev id into retained evidence bytes |
+| C3 depth (owned; sourced S047 + S003/S023/S035) | 10.0→10.0 (delta 0) | frozen first-failure labels bound + compared 0→19, matched 19/19: `python3 -I -B .ufo/waves/round-20/measure.py <REV> --freeze 808cbb31a1e24656da5ba4967497e602fbca7415` field `c3.first_failure_bound` | 8 exact `Invalid index` values, 11 predicted-silent; retro 8/8 on r19 logs is a consistency check only |
