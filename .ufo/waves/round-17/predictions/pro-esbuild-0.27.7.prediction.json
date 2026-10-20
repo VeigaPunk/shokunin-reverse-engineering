@@ -1,0 +1,27 @@
+{
+  "author": "L1 KaidokuR17, hand-derived from installed source before the run; predict.py exits 2 on an empty version by contract",
+  "input": "",
+  "normalized": null,
+  "in_declared_range": null,
+  "selection": null,
+  "expected": {
+    "untested_version": null,
+    "snapshot_label": null,
+    "missing_bootstrap": false,
+    "snapshot_route": "none",
+    "fallback_to": null
+  },
+  "extra_expectations": {
+    "language_compiler": "x86:LE:64:default:golang",
+    "invalid_version_strings": [],
+    "bootstrap_attempts_at_least": 1,
+    "analyzer_errors_contain": "unable to get GoRttiMapper"
+  },
+  "basis": [
+    "predictions/pro-esbuild-0.27.7.inspect-go.json: build_info null (no Go build-info record found)",
+    "readelf -S: .gopclntab present, no .go.buildinfo -> ElfLoader detectCompilerName selects golang cspec (ElfLoader.java:188-200; GoRttiMapper.hasGolangSections :201-210)",
+    "GoRttiMapper.getSharedGoBinary :106 logs 'Reading Go binary info' unconditionally; getGoBinary: buildInfo null -> fromFallbackInfo -> null (assumes no 'Go version fallback' option set) -> return null with no exception (:150-163), so no Untested/Invalid/Missing-bootstrap/snapshot lines",
+    "GolangSymbolAnalyzer.java:135 / GolangStringAnalyzer.java:105 log 'unable to get GoRttiMapper' when the mapper is null; null is not cached (TransientProgramProperties.java:107-110) so attempts repeat per analyzer"
+  ],
+  "uncertainty": "fromFallbackInfo default not opened; if REA or Ghidra sets a fallback Go version the run would instead show a version route — that outcome falsifies this prediction"
+}
