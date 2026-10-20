@@ -178,6 +178,8 @@ def elf_data_reader(elf, data):
     p_offset + (addr - vaddr), readable through filesz."""
 
     def read(addr, size):
+        if size == 0:
+            return b""
         for p in elf["progs"]:
             if p["filesz"] and p["vaddr"] <= addr <= p["vaddr"] + p["filesz"] - 1:
                 remaining = p["vaddr"] + p["filesz"] - addr
@@ -550,10 +552,11 @@ def selftest():
         check("no-magic", p, found=False, go_version=None,
               magic_file_offsets=[])
 
-        # 6. misaligned magic is skipped; the aligned one wins
+        # 6. misaligned magic (file offset 4099, unaligned) is skipped; the
+        # aligned header at 4160 wins
         real = _inline_blob(b"go1.23.12", b"")
         p = os.path.join(tmp, "misaligned")
-        elf = bytearray(make_elf64le([(4096, b"\x00" * 16 + MAGIC + b"junk"),
+        elf = bytearray(make_elf64le([(4096, b"\x00" * 3 + MAGIC + b"junk"),
                                       (4160, real)], with_section=False))
         open(p, "wb").write(bytes(elf))
         check("misaligned-then-aligned", p, found=True, go_version="go1.23.12",

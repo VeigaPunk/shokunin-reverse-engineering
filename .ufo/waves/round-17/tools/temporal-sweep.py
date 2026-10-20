@@ -30,6 +30,10 @@ import subprocess
 import sys
 import tempfile
 
+# Round-17 L1 integration (w1 ScoutTemporalWording, CriticC1Vacuity, ReviewContract F5,
+# DraftLogEntry): the contract's site list missed the r16 knowledge entry and its regex
+# missed "unchanged across execution" (LOG.md:2012); a path-only marker line could mark
+# every site corrected; sites read at the measured revision could be deleted to vanish.
 SITE_SOURCES = [
     "LOG.md",
     "SCORECARD.md",
@@ -37,6 +41,7 @@ SITE_SOURCES = [
     "SKILL.md",
     ".ufo/waves/round-16/verification.json",
 ]
+SITE_DIRS = ["corpus/knowledge/"]
 
 CORRECTION_SOURCES = [
     "LOG.md",
@@ -44,13 +49,17 @@ CORRECTION_SOURCES = [
     "corpus/lessons/round-17.md",
 ]
 
+# Temporal claims about a run/execution only: "unchanged across the fix" (a two-state
+# before/after comparison, corpus/knowledge/2026-10-19-arc3-r6-viair-dispatch-shape.md:16)
+# is not a during-run claim and is excluded by requiring run|execution.
 SITE_PATTERN = re.compile(
-    r"unchanged during|remained unchanged during|stable throughout"
+    r"unchanged (during|across|throughout) (the )?(run|execution)|stable throughout"
     r"|pins_unchanged_during_run",
     re.IGNORECASE,
 )
 
 MARKER = "R16-PROVENANCE"
+REQUIRED_PHRASE = "temporal stability not evidenced"
 
 
 def git_show(root, rev, path):
@@ -80,19 +89,7 @@ def lines_of(data):
     return text.split("\n")
 
 
-def correction_hits(lines):
-    """Set of repo-relative paths named alongside R16-PROVENANCE in these lines."""
-    paths = set()
-    for line in lines:
-        if MARKER not in line:
-            continue
-        for path in SITE_SOURCES:
-            if path in line:
-                paths.add(path)
-    return paths
-
-
-def sweep(root, rev, extra_files):
+def resolve(root, rev):
     resolved = subprocess.run(
         ["git", "-C", root, "rev-parse", "--verify", f"{rev}^{{commit}}"],
         capture_output=True,
@@ -100,60 +97,111 @@ def sweep(root, rev, extra_files):
     )
     if resolved.returncode != 0:
         fail(f"cannot resolve commit {rev!r}: {resolved.stderr.strip()}")
-    canonical_rev = resolved.stdout.strip()
+    return resolved.stdout.strip()
 
-    corrected_paths = set()
+
+def site_files(root, rev):
+    files = list(SITE_SOURCES)
+    listing = subprocess.run(
+        ["git", "-C", root, "ls-tree", "-r", "--name-only", rev, "--"] + SITE_DIRS,
+        capture_output=True,
+        text=True,
+    )
+    if listing.returncode != 0:
+        fail(f"git ls-tree failed: {listing.stderr.strip()}")
+    files += sorted(p for p in listing.stdout.splitlines() if p.endswith(".md"))
+    return files
+
+
+def find_sites(root, rev):
+    """A site is attributed to the line where the match starts; the next line is
+    joined so hard-wrapped prose ("unchanged during\\nthe run",
+    corpus/knowledge/2026-10-20-r16-go-selection-preview.md:95-96) is still found."""
+    sites = []
+    for path in site_files(root, rev):
+        data = git_show(root, rev, path)
+        if data is None:
+            continue
+        lines = lines_of(data)
+        for lineno, line in enumerate(lines, start=1):
+            if MARKER in line:
+                continue
+            nxt = lines[lineno].strip() if lineno < len(lines) else ""
+            joined = line.rstrip() + " " + nxt
+            m = SITE_PATTERN.search(joined)
+            if m and m.start() < len(line.rstrip()):
+                sites.append({"file": path, "line": lineno,
+                              "file:line": f"{path}:{lineno}", "text": line.strip()})
+    return sites
+
+
+def correction_lines(root, rev, extra_files):
+    out = []
     for path in CORRECTION_SOURCES:
         data = git_show(root, rev, path)
         if data is not None:
-            corrected_paths |= correction_hits(lines_of(data))
-    extra_names = []
+            out += [(path, i, l) for i, l in enumerate(lines_of(data), start=1)
+                    if MARKER in l]
     for extra in extra_files:
         try:
             with open(extra, "rb") as handle:
                 data = handle.read()
         except OSError as error:
             fail(f"cannot read --extra file {extra!r}: {error}")
-        extra_names.append(extra)
-        corrected_paths |= correction_hits(lines_of(data))
+        out += [(extra, i, l) for i, l in enumerate(lines_of(data), start=1)
+                if MARKER in l]
+    return out
 
-    sites = []
-    for path in SITE_SOURCES:
-        data = git_show(root, rev, path)
-        if data is None:
-            continue
-        for lineno, line in enumerate(lines_of(data), start=1):
-            if SITE_PATTERN.search(line):
-                sites.append(
-                    {
-                        "file": path,
-                        "line": lineno,
-                        "file:line": f"{path}:{lineno}",
-                        "text": line.strip(),
-                        "corrected": path in corrected_paths,
-                    }
-                )
 
+def sweep(root, rev, extra_files, sites_rev=None):
+    """Sites are read at sites_rev (default rev) so deleting a site cannot hide it;
+    a site is corrected only by one line at rev carrying the marker, the site's exact
+    `file:line`, and the required phrase."""
+    canonical_rev = resolve(root, rev)
+    canonical_sites_rev = resolve(root, sites_rev or rev)
+    corr = correction_lines(root, canonical_rev, extra_files)
+    sites = find_sites(root, canonical_sites_rev)
+    for site in sites:
+        hit = None
+        for path, i, line in corr:
+            token = site["file:line"]
+            if (re.search(re.escape(token) + r"(?!\d)", line)
+                    and REQUIRED_PHRASE in line.lower()):
+                hit = f"{path}:{i}"
+                break
+        site["corrected"] = hit is not None
+        site["corrected_by"] = hit
+    new_sites = []
+    if canonical_sites_rev != canonical_rev:
+        known = {(s["file"], s["text"]) for s in sites}
+        new_sites = [s for s in find_sites(root, canonical_rev)
+                     if (s["file"], s["text"]) not in known]
     corrected_count = sum(1 for site in sites if site["corrected"])
     return {
         "rev": canonical_rev,
+        "sites_rev": canonical_sites_rev,
         "requested_rev": rev,
         "root": root,
         "site_sources": SITE_SOURCES,
+        "site_dirs": SITE_DIRS,
+        "site_pattern": SITE_PATTERN.pattern,
         "correction_sources": CORRECTION_SOURCES,
-        "extra_files": extra_names,
-        "corrected_paths": sorted(corrected_paths),
+        "correction_rule": f"one line: {MARKER} + exact file:line + '{REQUIRED_PHRASE}'",
+        "extra_files": list(extra_files),
+        "extra_used": bool(extra_files),
         "sites": sites,
+        "new_sites_at_rev": new_sites,
         "counts": {
             "sites": len(sites),
             "corrected": corrected_count,
             "unqualified": len(sites) - corrected_count,
+            "new_unqualified_at_rev": len(new_sites),
         },
     }
 
 
-def run_cli(root, rev, extra_files):
-    result = sweep(root, rev, extra_files)
+def run_cli(root, rev, extra_files, sites_rev=None):
+    result = sweep(root, rev, extra_files, sites_rev)
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 
@@ -211,22 +259,22 @@ def selftest():
 
         out = sweep(repo, rev1, [])
         cases += 1
-        assert out["counts"] == {
-            "sites": 3,
-            "corrected": 0,
-            "unqualified": 3,
-        }, out["counts"]
+        c = dict(out["counts"]); c.pop("new_unqualified_at_rev")
+        assert c == {"sites": 3, "corrected": 0, "unqualified": 3}, out["counts"]
         assert [s["file:line"] for s in out["sites"]] == [
             "LOG.md:2",
             "SKILL.md:1",
             ".ufo/waves/round-16/verification.json:2",
         ], out["sites"]
 
-        # Case 2: a named correction for one file corrects all of its sites.
+        # Case 2 (red): a marker line naming only the path, or the file:line without
+        # the required phrase, corrects nothing; a full line corrects exactly its site.
         with open(os.path.join(repo, "SCORECARD.md"), "w", encoding="utf-8") as f:
             f.write(
-                "R16-PROVENANCE correction: the LOG.md pin claims asserted\n"
-                "only endpoint-byte equality, not stability during the run.\n"
+                "R16-PROVENANCE correction: LOG.md and SKILL.md pin claims\n"
+                "R16-PROVENANCE: SKILL.md:1 was overstated\n"
+                "R16-PROVENANCE: LOG.md:2 map matches committed blobs; "
+                "temporal stability not evidenced.\n"
             )
         git_in(repo, "add", "-A")
         git_in(repo, "commit", "--quiet", "-m", "rev2")
@@ -239,25 +287,28 @@ def selftest():
 
         out = sweep(repo, rev2, [])
         cases += 1
-        assert out["counts"] == {
-            "sites": 3,
-            "corrected": 1,
-            "unqualified": 2,
-        }, out["counts"]
+        assert out["counts"]["corrected"] == 1, out["counts"]
         assert out["sites"][0]["corrected"] is True
         assert out["sites"][1]["corrected"] is False
         assert out["sites"][2]["corrected"] is False
 
-        # Case 3: --extra text participates in correction detection.
-        with open(extra, "w", encoding="utf-8") as f:
-            f.write("R16-PROVENANCE note covering SKILL.md wording\n")
-        out = sweep(repo, rev2, [extra])
+        # Case 3 (red): deleting a site at rev cannot hide it when sites_rev=rev1.
+        with open(os.path.join(repo, "SKILL.md"), "w", encoding="utf-8") as f:
+            f.write("registry row\n")
+        git_in(repo, "add", "-A")
+        git_in(repo, "commit", "--quiet", "-m", "rev3")
+        rev3 = subprocess.run(
+            ["git", "-C", repo, "rev-parse", "HEAD"],
+            capture_output=True, text=True, check=True,
+        ).stdout.strip()
+        out = sweep(repo, rev3, [], sites_rev=rev1)
         cases += 1
-        assert out["counts"] == {
-            "sites": 3,
-            "corrected": 2,
-            "unqualified": 1,
-        }, out["counts"]
+        assert out["counts"]["sites"] == 3 and out["counts"]["unqualified"] == 2, out["counts"]
+        # --extra text participates (and is flagged as used).
+        with open(extra, "w", encoding="utf-8") as f:
+            f.write("R16-PROVENANCE SKILL.md:1 temporal stability not evidenced\n")
+        out = sweep(repo, rev3, [extra], sites_rev=rev1)
+        assert out["counts"]["unqualified"] == 1 and out["extra_used"] is True, out
 
         # Case 4: a revision where a site source is absent yields no error.
         rev0 = subprocess.run(
@@ -335,6 +386,11 @@ def main():
         help="extra local file scanned for R16-PROVENANCE correction lines",
     )
     parser.add_argument(
+        "--sites-rev",
+        help="revision whose site lines are audited (default: --rev); use the "
+        "baseline so deleted sites stay counted",
+    )
+    parser.add_argument(
         "--selftest", action="store_true", help="run built-in self-check"
     )
     args = parser.parse_args()
@@ -345,7 +401,7 @@ def main():
         fail("--root and --rev are required unless --selftest is given")
     if not os.path.isdir(args.root):
         fail(f"--root {args.root!r} is not a directory")
-    return run_cli(args.root, args.rev, args.extra)
+    return run_cli(args.root, args.rev, args.extra, args.sites_rev)
 
 
 if __name__ == "__main__":

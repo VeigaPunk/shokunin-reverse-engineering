@@ -80,7 +80,7 @@ requires `pins.py --help` to say this; the prose rule must carry the same limit.
 
 The implementation confirms the design, and does not accidentally compensate for it:
 `.ufo/waves/round-17/tools/temporal-sweep.py:19-21` calls itself "a wording census, not a semantic
-check"; `:83-95` reduces corrections to a set of file paths; `:105,109,118,133` applies `corrected` by
+check"; `:83-93` reduces corrections to a set of file paths; `:105,109,118,133` applies `corrected` by
 path membership; and selftest Case 2 (`:225`) asserts that "a named correction for one file corrects all
 of its sites". So the path-coarseness is a *chosen criterion behavior*, not an implementation slip. The
 selftest has no paraphrase case ("unchanged across"), no `corpus/knowledge/**` case, and no out-of-root
@@ -99,7 +99,7 @@ therefore *under the implementation*, with the contract-text deltas noted:
 | 447 `interactive-r1-recovery` | `exercised_match` | exact argv in `.ufo/rounds/interactive-r1/gate-results.json` |
 | 448 `citation-drift` | `unlabelled_variant` | see below |
 | 449 `custody-pair` | `unlabelled_variant` | no matching array-argv receipt; the optional-bracket form is handled, so the bracket is not the blocker |
-| 450 `quote-fidelity` | `exercised_match` | relative row paths normalize to the round-14 absolute argv (`invocation-audit.py:187-202`); the contract text alone would call it unlabelled |
+| 450 `quote-fidelity` | `exercised_match` | relative row paths normalize to the round-14 absolute argv (`invocation-audit.py:179-195`); the contract text alone would call it unlabelled |
 | 487 `go-snapshot-inventory` | `exercised_match` | round-15 `verification.json`, `--select 1.24.7 1.25.7 1.26.8` |
 | 506 `go-selection-preview` | `exercised_match` | round-16 `verification.json`, `--request 1.24.7 --goos linux --goarch amd64` |
 | 507 `round16-structural-controls` | `exercised_match` | `<BEFORE> <AFTER>` wildcards match the two revision hashes |
@@ -119,9 +119,11 @@ Row 450 shows the implementation **outrunning its contract**, not a false positi
 `python3 -I .ufo/waves/round-14/tools/quote-fidelity.py --manifest .ufo/waves/round-14/fixtures/manifest-corrected.json`
 (`SKILL.md:450`); round-14 `verification.json` retains the same script, same `-I`, same
 `--manifest …/manifest-corrected.json` with absolute paths. `_relpath` makes the two spellings equal
-(`invocation-audit.py:179-195,280-283,302-308`), so the row is `exercised_match`. A reader re-deriving the
-count from `C:81-88` alone would get `unlabelled_variant` (or `equivalence_unproven`, if cwd-aware), i.e.
-M=3, not M=2. The counter's number is therefore **not reproducible from its written rule**: L1 should
+(`invocation-audit.py:179-195,280-283,302-308`), so the row is `exercised_match`. The normalization assumes
+the row's relative paths are read from the lane root — the lane's documented convention, but not stated in
+`C:81-88`. A reader re-deriving the
+count from `C:81-88` alone would get `unlabelled_variant` for it — M=3, not M=2. The counter's number is
+therefore **not reproducible from its written rule**: L1 should
 state the path normalization in `C:81-88`, or have the tool print the normalization it applied. This is a
 calibration defect in the rule text, not in the audit.
 
@@ -157,12 +159,13 @@ verification enumerates the population, not the remembered instances.
    "temporal stability not evidenced"). A token-plus-path line does not count. This removes path-coarse
    inflation and makes each correction auditable; it still proves only "a named replacement exists", so
    the semantic truth remains an outside-review act — state that limit in the output, not in a score.
-3. **Invocation.** Keep exact match as `exercised_match`. Add `exercised_modulo_cwd` only when the
-   receipt records cwd and the tokens match after resolving relative paths; if cwd is absent, classify
-   `equivalence_unproven`. Add `exercised_variant` for "tool exercised, this argv not retained" (and
-   accept string-form argv as evidence of exercise, not of match). M counts `unlabelled` only; publish
-   the whole histogram. Receipt discovery scans every `.ufo/**/*.json` at `REV` for `argv`/`orig_argv`,
-   with the four names as a fast path, not a filter.
+3. **Invocation.** Keep two explicit classes: `exercised_match` (token equality after interpreter
+   stripping) and `exercised_path_normalized` (equality only after relpath-normalizing absolute tokens
+   under `--root`); record which normalization produced the match and in which receipt. Keep
+   `exercised_variant` for "tool exercised, this argv not retained" (and accept string-form argv as
+   evidence of exercise, not of match). M counts `unlabelled` only; publish the whole histogram. Receipt
+   discovery scans every `.ufo/**/*.json` at `REV` for `argv`/`orig_argv`, with the four names as a fast
+   path, not a filter.
 4. **Mode binding.** Each row's first semantic clause names an exit map; require the argv mode
    (`--strict` vs default) to agree with it. Row 448 is the red fixture.
 5. **Self-application.** Run the sweep at the post revision with `corpus/lessons/round-17.md` in the site
@@ -173,10 +176,10 @@ Selftest red cases, sibling-shaped rather than same-instance:
 - temporal: paraphrase "hashes remain unchanged across execution" in `corpus/knowledge/**`; an omnibus
   correction line naming only the file while two sites exist (must leave one unqualified); an out-of-root
   report path; a pre/post pair with a mutated file (`pins.compare` must return `equal:false`).
-- invocation: a relative-path row against an absolute-path receipt under `--root` → `exercised_match`
-  (already shipped, `:179-195`); the same pair where the receipt's cwd is absent or different →
-  `equivalence_unproven`, never a silent match; row 448 shape (no `-I`, no `--strict`) → `unlabelled`;
-  row 449 shape (string argv, different flags) → `exercised_variant`, not match.
+- invocation: a relative-path row against an absolute-path receipt under `--root` →
+  `exercised_path_normalized`, not plain `exercised_match`; a pair that matches only after prefix-dropping
+  against a *different* root → no match; row 448 shape (no `-I`, no `--strict`) → `unlabelled`; row 449
+  shape (string argv, different flags) → `exercised_variant`, not match.
 
 **What it would have caught in r16:** an audit of all seven rows at S/A would have classified 448
 unlabelled before the four routes were declared closed (`R16:54`, `RD:184`), and the temporal search would
@@ -192,18 +195,19 @@ row classes are my reading of the shipped matcher against retained argv, not too
    (`RD:183`, which quotes "unchanged during") and any correction line quoting the field name. Mitigation:
    digest-keyed exclusion entries printed in the output, so an exclusion is visible and reviewable; never
    exclude a whole file by omission.
-2. *False matches from path resolution.* A suffix-based relative/absolute comparison could match a
-   different file with the same suffix. Mitigation: require the receipt's recorded cwd and full token
-   equality after resolution; otherwise `equivalence_unproven`. Never suffix-match.
+2. *False matches from path resolution.* Relpath-normalizing absolute tokens under `--root` could equate
+   two different files if the root assumption is wrong. Mitigation: require full token equality after
+   normalization, print the normalized pair for each match, and never suffix-match; a pair that matches
+   only after prefix-dropping against a different root is not a match.
 3. *The correction record proves existence, not truth.* A per-site record proves a named replacement
    exists; it does not prove the replacement is accurate. Keep that limit in the tool's output (as
    `pins.py` already does for endpoint equality); do not let `unqualified:0` become a semantic verdict.
 4. *A rising M reads as regression.* Under the shipped matcher M is 2 (448, 449), not 1. Row 449 is a
    genuine pre-existing gap (the tool was run in arc3 with a string argv and different flags), so M→0
    requires labelling or exercising it — legitimate population closure, but scope beyond the routed
-   defect and it must be declared. The histogram must also keep `equivalence_unproven` (an evidence gap)
-   and `exercised_variant` (a different retained argv) separate from `unlabelled`, and the report must not
-   claim improvement from a lower number.
+   defect and it must be declared. The histogram must also keep `exercised_path_normalized` (a match
+   resting on the root-relative assumption) and `exercised_variant` (a different retained argv) separate
+   from `unlabelled`, and the report must not claim improvement from a lower number.
 5. *Out-of-lane site.* The fleet report cannot be corrected under the lane write bound. Record it as
    `out_of_lane_unverifiable` and let the integrator own the fix, or state C1(a) lane-only; do not claim
    coverage the lane cannot execute.

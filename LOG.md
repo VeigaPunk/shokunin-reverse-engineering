@@ -2029,3 +2029,39 @@ Checks name source revision above; later bookkeeping does not pretend that
 the delivered metadata HEAD itself was a newly executed gate revision.
 The fleet report is written only after evidence/bookkeeping are committed
 and pushed. No following round is started.
+
+## 2026-10-20 — round-17 — retained Go carrier diagnostics and routed r16 defects
+
+Hyaku phase-2 steered round 17 (attempt 1), baseline
+`b563c799d97774aae4351276fe43cb897311e349`; claims in
+`.ufo/waves/round-17/claims.json`. L1 holds the canonical planner seat.
+
+- C1 calibration (tied-lowest at 10.0): discharge R16-PROVENANCE and
+  R16-INVOCATION from `corpus/lessons/round-16-verifier-spotcheck.md:183-184`.
+  Baseline `temporal-sweep.py --sites-rev b563c79`: 4 lane sites, 0 corrected;
+  `invocation-audit.py` at b563c79: 7 rows, 5 exercised_match, 2
+  unlabelled_variant (citation-drift, custody-pair).
+- C2 depth + capability: eight pinned Go carriers through REA 6.5.0 analyze
+  with private-TMPDIR, log-bound Ghidra session capture; routes predicted from
+  installed source and committed at `271167473d87ef710f07ecdd98caf0ce12091686`
+  before the first run. 8/8 compare exit 0 (two calibration, six prospective:
+  1.25.8/1.25.14 fallback WARN, 1.20.12 exact, 1.27.2/1.26.8 missing base,
+  esbuild 0.27.7 no build-info). Unpredicted: aether symbol-markup EOF after a
+  successful fallback bootstrap (cause UNKNOWN).
+- Wave 1: 78 seats (executor14/scout20/reviewer12/scribe10/connector8/
+  critic6/revenger4/sentinel2/simplifier2), all completed; dispatch refused
+  twice at the host job cap, spawned on the third identical attempt.
+- L1 integration from w1 findings: route fields in log-extract/predict/compare,
+  session binding + private TMPDIR + group stop in carrier-run, widened and
+  line-exact temporal-sweep, `-B` everywhere after a seat's pycache landed in
+  the frozen round-16 dir (removed). R16-PROVENANCE line-exact corrections
+  are in `corpus/lessons/round-17.md`, one per site:
+- R16-PROVENANCE: `LOG.md:2012` map matches committed source-revision blobs; temporal stability not evidenced.
+- R16-PROVENANCE: `corpus/lessons/round-16.md:154` map matches committed source-revision blobs; temporal stability not evidenced.
+- R16-PROVENANCE: `.ufo/waves/round-16/verification.json:419` map matches committed source-revision blobs; temporal stability not evidenced.
+- R16-PROVENANCE: `corpus/knowledge/2026-10-20-r16-go-selection-preview.md:95` map matches committed source-revision blobs; temporal stability not evidenced.
+- Landed: knowledge `2026-10-20-r17-go-carrier-diagnostics`; QUALITY #19/#20;
+  SOURCES S024–S030 (S028 rejected); README Go row token (in place, line 35);
+  PROVINCE line 52 qualified in place; SKILL rows citation-drift/custody-pair
+  aligned in place and a round-17 section appended. Measured values follow in
+  the next entry after the single post-integration execution pass.
