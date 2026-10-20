@@ -26,6 +26,8 @@ import re
 import shutil
 import subprocess
 import sys
+
+sys.dont_write_bytecode = True
 import tempfile
 import time
 from datetime import datetime, timezone
@@ -252,17 +254,39 @@ def parse_evidence_id(stdout_path):
         return None
 
 
+ENV_ALLOW = ("PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "USER", "LOGNAME", "SHELL",
+             "GHIDRA_INSTALL_DIR", "JAVA_HOME", "GHIDRA_MAXMEM", "GHIDRA_HEADLESS_MAXMEM",
+             "REA_LOG_LEVEL", "NPM_CONFIG_CACHE", "npm_config_cache")
+
+
+def child_environment(private_root):
+    """Round-17 L1 integration (w2 SentinelEnvLeak F1/F3, SentinelSessionResidue F1):
+    allowlisted environment instead of a full copy, so tokens and agent sockets do
+    not reach npx/REA/Ghidra; Node's compile cache is disabled so the private
+    session parent can be removed."""
+    env = {k: v for k, v in os.environ.items()
+           if k in ENV_ALLOW or k.startswith("REA_GHIDRA_")}
+    env["TMPDIR"] = private_root
+    env["NODE_DISABLE_COMPILE_CACHE"] = "1"
+    return env
+
+
 def run(carrier, label, out_dir, rea_version="6.5.0", timeout=1800.0,
         poll=0.5, searches=(), runner=None, session_glob=SESSION_GLOB,
         pins_path=PINS_PATH, pin_paths=None, extra_pins=()):
     """Run the carrier pipeline; returns (receipt_dict, exit_code)."""
+    carrier = os.path.realpath(carrier)  # pins.py keys by realpath (w2 CriticCapabilityRow F3)
     private_root = None
+    child_env_keys = None
     if runner is None:
+        if not os.path.isfile(carrier):
+            return {"label": label, "carrier": {"path": carrier},
+                    "error": "carrier unreadable: %s" % carrier}, 2
         # Private session parent: no dot-prefixed element (GhidraSessionRoot.js:28-38
         # falls back to /tmp otherwise), so REA places rea-ghidra-* roots under it.
         private_root = tempfile.mkdtemp(prefix="kr17-rea-", dir="/tmp")
-        child_env = dict(os.environ)
-        child_env["TMPDIR"] = private_root
+        child_env = child_environment(private_root)
+        child_env_keys = sorted(child_env)
         runner = _private_runner(child_env)
         session_glob = os.path.join(private_root, "rea-ghidra-*")
     runner = runner or _popen
@@ -284,6 +308,7 @@ def run(carrier, label, out_dir, rea_version="6.5.0", timeout=1800.0,
         pin_paths = [carrier, R16_SELECTION]
     pin_paths = list(pin_paths) + [p for p in extra_pins if p not in pin_paths]
     receipt["session_parent"] = private_root or os.path.dirname(session_glob)
+    receipt["child_env_keys"] = child_env_keys
     receipt["rea_ghidra_env"] = {k: v for k, v in os.environ.items()
                                  if k.startswith("REA_GHIDRA_")}
     if not os.path.isfile(carrier):
@@ -365,6 +390,10 @@ def run(carrier, label, out_dir, rea_version="6.5.0", timeout=1800.0,
         receipt["session_parent_leftovers"] = leftovers
         if leftovers == []:
             os.rmdir(private_root)
+    mid_drift = [n for n, s in steps.items()
+                 if s.get("pins_changed_during_run")
+                 or any(not c.get("equal") for c in s.get("pin_checks") or [])]
+    receipt["mid_run_drift_steps"] = mid_drift
     try:
         receipt_path = os.path.join(out_dir, "receipt.json")
         with open(receipt_path, "w", encoding="utf-8") as f:
@@ -373,12 +402,15 @@ def run(carrier, label, out_dir, rea_version="6.5.0", timeout=1800.0,
     except OSError as e:
         receipt["error"] = "receipt write failed: %s" % e
         return receipt, 2
-    if not pins_cmp["equal"]:
+    if not pins_cmp["equal"] or mid_drift:
         return receipt, 1
     if steps["analyze"].get("exit") not in (0,):
         return receipt, 2
-    # Exactly one bound session per polled REA step (analyze + each search).
-    if private_root is not None and len(bound) != 1 + len(list(searches)):
+    # Exactly one bound session per polled REA step (analyze + each search), and a
+    # leaked session parent (e.g. a surviving rea-ghidra-* root with session.json)
+    # is never a clean run (w2 SentinelSessionResidue F2).
+    if private_root is not None and (len(bound) != 1 + len(list(searches))
+                                     or receipt.get("session_parent_leftovers")):
         return receipt, 2
     return receipt, 0
 
@@ -421,11 +453,19 @@ def _run_polled(name, argv, out_dir, cwd, timeout, poll, runner, poller, pins,
                 break
             # Throttled mid-run pin check: rehashing the carrier every poll
             # would dominate I/O on large binaries; every PIN_CHECK_S seconds.
+            # Every check is retained with its instant (QUALITY #19), not only drift.
             now = time.monotonic()
             if now - last_pin_check >= PIN_CHECK_S:
                 last_pin_check = now
                 mid = pins.snapshot(pin_paths)
                 cmp_mid = pins.compare(pins_pre, mid)
+                rec.setdefault("pin_checks", []).append({
+                    "taken_at_utc": mid["taken_at_utc"],
+                    "equal": cmp_mid["equal"],
+                    "entries": len(mid["entries"]),
+                    "changed": cmp_mid["changed"],
+                    "missing": cmp_mid["missing"],
+                })
                 if not cmp_mid["equal"]:
                     rec["pins_changed_during_run"] = {
                         "changed": cmp_mid["changed"],

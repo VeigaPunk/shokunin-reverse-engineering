@@ -1,0 +1,59 @@
+=== frozen census: /home/vgpnk/Projects/shokunin/CORPUS.md:131-148 ===
+=== run at: 2026-10-20T14:09:23Z; lane root: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+
+--- rows (spacing-tolerant) ---
+$ grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+30
+
+--- malformed rows (NF!=13; must print 0) ---
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13 {n++} END{print n+0}' corpus/SOURCES.md
+0
+
+--- tier histogram ---
+A=26 B=2 C=2 
+
+--- status histogram ---
+mined=28 rejected=2 
+
+--- duplicate ids (must print nothing) ---
+<<< end duplicate ids >>>
+
+--- enum violations / tier inflation (must print nothing) ---
+<<< end enum violations >>>
+
+--- mined rows whose used-by paths do not exist (must print nothing) ---
+<<< end missing used-by >>>
+
+=== maintained validator ===
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+kaidoku	ok	/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+validate exit code: 0
+
+=== deep check: every mined used-by path greps back its S### id ===
+(silent above = every mined used-by file cites its row id; 53 pairs checked)
+
+=== reverse: corpus files citing S### not listed in that row used-by ===
+CITES-NOT-IN-USEDBY corpus/lessons/round-13-verifier-spotcheck.md S003
+CITES-NOT-IN-USEDBY corpus/lessons/round-13-verifier-spotcheck.md S008
+CITES-NOT-IN-USEDBY corpus/lessons/round-13-verifier-spotcheck.md S017
+CITES-NOT-IN-USEDBY corpus/lessons/round-13-verifier-spotcheck.md S018
+CITES-NOT-IN-USEDBY corpus/lessons/round-13-verifier-spotcheck.md S022
+CITES-NOT-IN-USEDBY corpus/lessons/round-14-verifier-spotcheck.md S001
+CITES-NOT-IN-USEDBY corpus/lessons/round-14-verifier-spotcheck.md S003
+CITES-NOT-IN-USEDBY corpus/lessons/round-14-verifier-spotcheck.md S004
+CITES-NOT-IN-USEDBY corpus/lessons/round-14-verifier-spotcheck.md S007
+CITES-NOT-IN-USEDBY corpus/lessons/round-14-verifier-spotcheck.md S017
+CITES-NOT-IN-USEDBY corpus/lessons/round-14-verifier-spotcheck.md S018
+CITES-NOT-IN-USEDBY corpus/lessons/round-14.md S005
+CITES-NOT-IN-USEDBY corpus/lessons/round-14.md S006
+CITES-NOT-IN-USEDBY corpus/lessons/round-15-verifier-spotcheck.md S003
+CITES-NOT-IN-USEDBY corpus/lessons/round-15-verifier-spotcheck.md S007
+CITES-NOT-IN-USEDBY corpus/lessons/round-15-verifier-spotcheck.md S023
+CITES-NOT-IN-USEDBY corpus/lessons/round-16-verifier-spotcheck.md S003
+CITES-NOT-IN-USEDBY corpus/lessons/round-16-verifier-spotcheck.md S023
+CITES-NOT-IN-USEDBY corpus/lessons/round-17.md S023
+
+=== non-row pipe lines and id contiguity ===
+5:| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
+6:|---|---|---|---|---|---|---|---|---|---|---|
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 

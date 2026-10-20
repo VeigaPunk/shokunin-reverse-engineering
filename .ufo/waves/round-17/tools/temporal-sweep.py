@@ -41,7 +41,10 @@ SITE_SOURCES = [
     "SKILL.md",
     ".ufo/waves/round-16/verification.json",
 ]
-SITE_DIRS = ["corpus/knowledge/"]
+SITE_DIRS = ["corpus/knowledge/", "corpus/lessons/"]
+# Non-author outside-verifier files quote the defect they route; they are not lane
+# assertions (w2 CriticC1Admission F5 asked for lessons coverage).
+SITE_EXCLUDE_SUFFIX = ("-verifier-spotcheck.md",)
 
 CORRECTION_SOURCES = [
     "LOG.md",
@@ -109,7 +112,10 @@ def site_files(root, rev):
     )
     if listing.returncode != 0:
         fail(f"git ls-tree failed: {listing.stderr.strip()}")
-    files += sorted(p for p in listing.stdout.splitlines() if p.endswith(".md"))
+    seen = set(files)
+    files += sorted(p for p in listing.stdout.splitlines()
+                    if p.endswith(".md") and p not in seen
+                    and not p.endswith(SITE_EXCLUDE_SUFFIX))
     return files
 
 
@@ -124,7 +130,8 @@ def find_sites(root, rev):
             continue
         lines = lines_of(data)
         for lineno, line in enumerate(lines, start=1):
-            if MARKER in line:
+            # A marker line is exempt only when it is itself a qualified correction.
+            if MARKER in line and REQUIRED_PHRASE in line.lower():
                 continue
             nxt = lines[lineno].strip() if lineno < len(lines) else ""
             joined = line.rstrip() + " " + nxt
@@ -309,6 +316,27 @@ def selftest():
             f.write("R16-PROVENANCE SKILL.md:1 temporal stability not evidenced\n")
         out = sweep(repo, rev3, [extra], sites_rev=rev1)
         assert out["counts"]["unqualified"] == 1 and out["extra_used"] is True, out
+
+        # Case 3b (w2 MutateTemporalSweep survivors): a hard-wrapped
+        # "unchanged across\nexecution" site in a lesson is found; a correction
+        # naming LOG.md:20 must not correct site LOG.md:2 (prefix collision);
+        # a marker line without the phrase stays a site.
+        os.makedirs(os.path.join(repo, "corpus/lessons"), exist_ok=True)
+        with open(os.path.join(repo, "corpus/lessons/round-9.md"), "w", encoding="utf-8") as f:
+            f.write("intro\nhashes remain unchanged across\nexecution.\n"
+                    "R16-PROVENANCE pins unchanged during the run\n")
+        with open(os.path.join(repo, "SCORECARD.md"), "w", encoding="utf-8") as f:
+            f.write("R16-PROVENANCE: LOG.md:20 temporal stability not evidenced\n")
+        git_in(repo, "add", "-A")
+        git_in(repo, "commit", "--quiet", "-m", "rev4")
+        rev4 = subprocess.run(["git", "-C", repo, "rev-parse", "HEAD"],
+                              capture_output=True, text=True, check=True).stdout.strip()
+        out = sweep(repo, rev4, [])
+        cases += 1
+        lines = [s["file:line"] for s in out["sites"]]
+        assert "corpus/lessons/round-9.md:2" in lines, lines
+        assert "corpus/lessons/round-9.md:4" in lines, lines
+        assert not [s for s in out["sites"] if s["file:line"] == "LOG.md:2" and s["corrected"]], out
 
         # Case 4: a revision where a site source is absent yields no error.
         rev0 = subprocess.run(

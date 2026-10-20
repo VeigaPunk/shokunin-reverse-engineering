@@ -63,6 +63,8 @@ import re
 import shutil
 import subprocess
 import sys
+
+sys.dont_write_bytecode = True  # never write __pycache__ next to r16 selection.py (w2 CriticNoHarm2 F2)
 import tempfile
 from pathlib import Path
 
@@ -287,7 +289,7 @@ def _selftest():
 
         def invoke(*argv):
             proc = subprocess.run(
-                [sys.executable, "-I", str(script), *argv],
+                [sys.executable, "-I", "-B", str(script), *argv],
                 capture_output=True, text=True)
             out = None
             if proc.stdout.strip():
@@ -306,24 +308,28 @@ def _selftest():
              {"normalized": "1.99.2", "in_declared_range": False,
               "status": "exact_diff", "selected_patch": 2,
               "untested_version": "1.99.2", "snapshot_label": "1.99.2",
-              "missing_bootstrap": False}),
+              "missing_bootstrap": False, "snapshot_route": "info",
+              "fallback_to": None}),
             ("in_range_rc",
              ["--go-version", "go1.21rc2"] + base_argv, 0,
              {"normalized": "1.21.0", "in_declared_range": True,
               "status": "base_only", "selected_patch": 0,
               "untested_version": None, "snapshot_label": "1.21.0",
-              "missing_bootstrap": False}),
+              "missing_bootstrap": False, "snapshot_route": "info",
+              "fallback_to": None}),
             ("missing_base",
              ["--go-version", "go1.97.1"] + base_argv, 0,
              {"normalized": "1.97.1", "in_declared_range": False,
               "status": "missing_base",
               "untested_version": "1.97.1", "snapshot_label": None,
-              "missing_bootstrap": True}),
+              "missing_bootstrap": True, "snapshot_route": "none",
+              "fallback_to": None}),
             ("fallback_diff",
              ["--go-version", "go1.99.5"] + base_argv, 0,
              {"normalized": "1.99.5", "status": "fallback_diff",
               "selected_patch": 2, "snapshot_label": "1.99.5",
-              "missing_bootstrap": False}),
+              "missing_bootstrap": False, "snapshot_route": "fallback",
+              "fallback_to": "1.99.2"}),
             ("devel_string_invalid",
              ["--go-version", "devel go1.24-abcdef"] + base_argv, 2, None),
             ("empty_string_invalid",
@@ -353,6 +359,10 @@ def _selftest():
                     (out.get("expected") or {}).get("snapshot_label"),
                 "missing_bootstrap":
                     (out.get("expected") or {}).get("missing_bootstrap"),
+                "snapshot_route":
+                    (out.get("expected") or {}).get("snapshot_route"),
+                "fallback_to":
+                    (out.get("expected") or {}).get("fallback_to"),
             }
             for key, val in want.items():
                 if got.get(key) != val:

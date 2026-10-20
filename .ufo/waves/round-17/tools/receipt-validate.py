@@ -93,15 +93,67 @@ def load_pins():
 
 
 def classify(receipt):
+    # Round-17 L1 integration (w2: all eight producer receipts failed
+    # `unrecognized_shape`): carrier-run.py writes `steps` as an object keyed by
+    # step name; the original selftest fixture used a list. Accept both.
     if not isinstance(receipt, dict):
         return "unknown"
-    if isinstance(receipt.get("steps"), list) and isinstance(
+    if isinstance(receipt.get("steps"), (list, dict)) and isinstance(
         receipt.get("carrier"), dict
     ):
         return "carrier"
     if "argv" in receipt and "pins_compare" in receipt:
         return "retain"
     return "unknown"
+
+
+def _iter_steps(steps):
+    if isinstance(steps, dict):
+        return [(f"$.steps.{name}", step) for name, step in steps.items()]
+    return [(f"$.steps[{i}]", step) for i, step in enumerate(steps or [])]
+
+
+def check_binding(receipt, findings):
+    """Re-derive the log-to-run binding from the retained log bytes (w2
+    ReceiptForge/RunProcontainerdshim F4): every bound session's ghidra.log must
+    name its own path and the imported target-<carrier sha256[:12]>.bin; no step
+    may carry a mid-run pin drift record; recorded mid-run checks must be equal."""
+    checks = 0
+    if "bound_sessions" not in receipt:
+        return checks
+    carrier = receipt.get("carrier") or {}
+    _k, sha = newest_sha(carrier) if isinstance(carrier, dict) else (None, None)
+    bound = receipt.get("bound_sessions") or []
+    checks += 1
+    if len(bound) < 1:
+        findings.append({"code": "no_bound_session", "where": "$.bound_sessions"})
+    by_dir = {e.get("session_dir"): e for e in receipt.get("retained_logs") or []
+              if isinstance(e, dict)}
+    for d in bound:
+        checks += 1
+        ent = by_dir.get(d) or {}
+        path = ((ent.get("files") or {}).get("ghidra.log") or {}).get("path")
+        try:
+            text = open(path, "rb").read().decode("utf-8", "replace") if path else ""
+        except OSError:
+            text = ""
+        ok = (bool(sha) and f"Using log file: {d}/ghidra.log" in text
+              and f"IMPORTING: file://{d}/target-{sha[:12]}.bin" in text)
+        if not ok:
+            findings.append({"code": "binding_mismatch", "where": "$.bound_sessions",
+                             "path": path or d})
+    for where, step in _iter_steps(receipt.get("steps")):
+        if not isinstance(step, dict):
+            continue
+        checks += 1
+        if step.get("pins_changed_during_run"):
+            findings.append({"code": "mid_run_pin_drift", "where": where})
+        for i, chk in enumerate(step.get("pin_checks") or []):
+            checks += 1
+            if not (isinstance(chk, dict) and chk.get("equal") is True):
+                findings.append({"code": "mid_run_pin_drift",
+                                 "where": f"{where}.pin_checks[{i}]"})
+    return checks
 
 
 def newest_sha(dct):
@@ -281,8 +333,7 @@ def check_required(receipt, kind, findings):
                 findings.append({
                     "code": "missing_field", "where": "$.carrier",
                     "detail": "no sha256/sha256_pre/sha256_post digest"})
-        for index, step in enumerate(receipt.get("steps") or []):
-            where = f"$.steps[{index}]"
+        for where, step in _iter_steps(receipt.get("steps")):
             if not isinstance(step, dict):
                 findings.append({
                     "code": "field_type", "where": where,
@@ -357,6 +408,8 @@ def validate_receipt(receipt, pins):
     checks = 0
     kind = classify(receipt)
     checks += check_required(receipt, kind, findings)
+    if kind == "carrier":
+        checks += check_binding(receipt, findings)
     if pins is not None:
         checks += rerun_pins_compare(receipt, pins, findings)
     pre = receipt.get("pins_pre") if isinstance(receipt, dict) else None
@@ -467,7 +520,7 @@ def _carrier_receipt(tmpdir, pins, carrier_file, log_file):
             "sha256_pre": sha256_file(carrier_file),
             "sha256_post": sha256_file(carrier_file),
         },
-        "steps": [{
+        "steps": {"inspect-go-binary": {
             "argv": ["npx", "-y", "rea-agents@6.5.0",
                      "inspect-go-binary", str(carrier_file),
                      "--format", "json"],
@@ -479,7 +532,8 @@ def _carrier_receipt(tmpdir, pins, carrier_file, log_file):
             "stdout_sha256": log_sha,
             "stderr_path": str(log_file),
             "stderr_sha256": log_sha,
-        }],
+        }},
+        "bound_sessions": ["/tmp/rea-ghidra-selftest"],
         "retained_logs": [{
             "session_dir": "/tmp/rea-ghidra-selftest",
             "files": {"ghidra.log": {
@@ -552,13 +606,48 @@ def selftest(pins):
         _out3, code = validate_paths([str(receipt3)], pins)
         record("pins_compare_forged_red", code, 1)
 
-        # Case 4: intact carrier-shaped receipt -> exit 0.
+        # Case 4: intact producer-shaped (steps object) carrier receipt whose
+        # bound log names its own session path and target prefix -> exit 0.
+        sess = "/tmp/rea-ghidra-selftest"
+        sha12 = sha256_file(pin_file)[:12]
+        log_file.write_text(
+            f"INFO  Using log file: {sess}/ghidra.log\n"
+            f"INFO  (HeadlessAnalyzer) IMPORTING: file://{sess}/target-{sha12}.bin\n",
+            encoding="utf-8")
         receipt4 = tmpdir / "r4.json"
         receipt4.write_text(json.dumps(
             _carrier_receipt(tmpdir, pins, pin_file, log_file)),
             encoding="utf-8")
         _out4, code = validate_paths([str(receipt4)], pins)
-        record("carrier_green", code, 0)
+        record("carrier_green", code, 0,
+               json.dumps(_out4["receipts"][0].get("findings", [])
+                          if _out4["receipts"] else []))
+
+        # Case 4b: foreign log (other target prefix) with consistent digests -> 1.
+        log_file.write_text(
+            f"INFO  Using log file: {sess}/ghidra.log\n"
+            f"INFO  (HeadlessAnalyzer) IMPORTING: file://{sess}/target-000000000000.bin\n",
+            encoding="utf-8")
+        receipt4b = tmpdir / "r4b.json"
+        receipt4b.write_text(json.dumps(
+            _carrier_receipt(tmpdir, pins, pin_file, log_file)),
+            encoding="utf-8")
+        _out4b, code = validate_paths([str(receipt4b)], pins)
+        record("carrier_foreign_log_red", code, 1)
+
+        # Case 4c: recorded mid-run pin drift -> 1.
+        data = json.loads(receipt4.read_text(encoding="utf-8"))
+        log_file.write_text(
+            f"INFO  Using log file: {sess}/ghidra.log\n"
+            f"INFO  (HeadlessAnalyzer) IMPORTING: file://{sess}/target-{sha12}.bin\n",
+            encoding="utf-8")
+        data = _carrier_receipt(tmpdir, pins, pin_file, log_file)
+        data["steps"]["inspect-go-binary"]["pin_checks"] = [
+            {"taken_at_utc": utcnow(), "equal": False}]
+        receipt4c = tmpdir / "r4c.json"
+        receipt4c.write_text(json.dumps(data), encoding="utf-8")
+        _out4c, code = validate_paths([str(receipt4c)], pins)
+        record("carrier_mid_run_drift_red", code, 1)
 
         # Case 5: unreadable receipt path -> exit 2.
         _out5, code = validate_paths(

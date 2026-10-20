@@ -154,6 +154,29 @@ def compare(prediction, observation):
                 "match": match,
             }
         )
+    # Round-17 L1 integration (w2 CriticC2Depth F1, RunProesbuild0277 F2): a hand
+    # prediction's `extra_expectations` are evaluated mechanically, not by reading.
+    extra = prediction.get("extra_expectations") or {}
+    if "language_compiler" in extra:
+        fields.append({"field": "extra.language_compiler",
+                       "predicted": extra["language_compiler"],
+                       "observed": observation.get("language_compiler"),
+                       "match": extra["language_compiler"] == observation.get("language_compiler")})
+    if "invalid_version_strings" in extra:
+        obs_iv = observation.get("invalid_version_strings")
+        fields.append({"field": "extra.invalid_version_strings",
+                       "predicted": extra["invalid_version_strings"], "observed": obs_iv,
+                       "match": obs_iv == extra["invalid_version_strings"]})
+    if "bootstrap_attempts_at_least" in extra:
+        att = observation.get("bootstrap_attempts")
+        fields.append({"field": "extra.bootstrap_attempts_at_least",
+                       "predicted": extra["bootstrap_attempts_at_least"], "observed": att,
+                       "match": isinstance(att, int) and att >= extra["bootstrap_attempts_at_least"]})
+    if "analyzer_errors_contain" in extra:
+        errs = observation.get("analyzer_errors") or []
+        fields.append({"field": "extra.analyzer_errors_contain",
+                       "predicted": extra["analyzer_errors_contain"], "observed": errs,
+                       "match": any(extra["analyzer_errors_contain"] in e for e in errs)})
     return {
         "fields": fields,
         "all_match": all(item["match"] for item in fields),
@@ -319,6 +342,34 @@ def _selftest():
             None,
         ),
         ("observation_not_object", _PRED_MATCH, [1, 2, 3], 2, None),
+        # Route-active cases (w2 MutateCompareRoute: no case reached ROUTE_FIELDS).
+        ("route_fallback_match",
+         _mutate(_mutate(_PRED_EMPTY, "expected.snapshot_route", "fallback"),
+                 "expected.fallback_to", "1.25.0"),
+         _mutate(_mutate(_OBS_EMPTY, "snapshot_route", "fallback"),
+                 "snapshot_fallbacks", [{"from": "1.23.12", "to": "1.25.0"}]),
+         0, True),
+        ("route_mismatch_red",
+         _mutate(_mutate(_PRED_EMPTY, "expected.snapshot_route", "info"),
+                 "expected.fallback_to", None),
+         _mutate(_mutate(_OBS_EMPTY, "snapshot_route", "fallback"),
+                 "snapshot_fallbacks", [{"from": "1.23.12", "to": "1.25.0"}]),
+         1, False),
+        ("fallback_to_mismatch_red",
+         _mutate(_mutate(_PRED_EMPTY, "expected.snapshot_route", "fallback"),
+                 "expected.fallback_to", "1.25.6"),
+         _mutate(_mutate(_OBS_EMPTY, "snapshot_route", "fallback"),
+                 "snapshot_fallbacks", [{"from": "1.23.12", "to": "1.25.0"}]),
+         1, False),
+        ("route_predicted_observation_lacks_route_red",
+         _mutate(_mutate(_PRED_EMPTY, "expected.snapshot_route", "info"),
+                 "expected.fallback_to", None),
+         _OBS_EMPTY, 1, False),
+        ("extra_expectation_red",
+         _mutate(_PRED_EMPTY, "extra_expectations",
+                 {"bootstrap_attempts_at_least": 1,
+                  "analyzer_errors_contain": "unable to get GoRttiMapper"}),
+         _mutate(_OBS_EMPTY, "bootstrap_attempts", 0), 1, False),
     ]
 
     tmp = tempfile.mkdtemp(prefix="compare-selftest-")
