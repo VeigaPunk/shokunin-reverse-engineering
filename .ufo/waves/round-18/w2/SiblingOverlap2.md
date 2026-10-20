@@ -1,4 +1,4 @@
-PARTIAL — No sibling lane holds Go map, Swiss-table or Ghidra-Go knowledge (20 of 20 lanes, at branch tips and in working trees). No sibling claims or references kaidoku's new jj tools (20 of 20). But the jj HEAD fact and the branch-tip tool class it registers are already held in three non-owner sibling lanes. The same jj document is registered three times with three different anchors. Nothing at REV cross-references or routes this.
+PARTIAL — No sibling lane holds Go map, Swiss-table or Ghidra-Go knowledge (20 of 20 lanes, at branch tips and in working trees). No sibling claims or references kaidoku's new jj tools (20 of 20). But three non-owner sibling lanes hold the jj HEAD fact and the branch-tip tool class that REV registers: tameshi before REV landed, tsukuroi and tabi after. The same jj document is registered three times with three different anchors. Nothing at REV cross-references or routes this.
 
 # SiblingOverlap2 — round-18 wave 2 (falsify): sibling overlap at REV
 
@@ -50,7 +50,7 @@ P_GO='SwissMapType|OldMapType|noswissmap|swiss.?map|swiss.?table|GoMapType|GoRtt
 | # | Command (cwd `/home/vgpnk/Projects/shokunin`) | Exit | Result |
 |---|---|---|---|
 | G1 | `for d in *-shokunin` (excluding kaidoku): `git -C $d grep -I -i -l -E "$P_GO" refs/heads/$br -- . ':!*three.core.js' ':!*three.module.js' ':!*omp-live-18.12.2-strings.txt'` | **1** ×20 | `[O]` No match in any sibling's tracked bytes |
-| G1b | G1 without the 3 excludes | 0 game-dev-3d, 0 kotoba, 1 ×18 | `[O]` False positives only: three.js `normalMapType` in 68 vendored copies, and omp binary strings (`golangci`, `proxy.golang.org`, `…sourcemaptype…`) |
+| G1b | G1 without the 3 excludes | 0 game-dev-3d, 0 kotoba, 1 ×18 | `[O]` False positives only: three.js `normalMapType` in 66 vendored copies (`three.core.js`/`three.module.js`; the non-three count is 0), and kotoba's omp binary strings file (`golangci`, `proxy.golang.org`, `…sourcemaptype…`) |
 | G2 | G1 with `git grep --untracked --no-exclude-standard` over working trees (also excluding `.jj`, `node_modules`) | **1** ×20 | `[O]` Nothing uncommitted, untracked or ignored either |
 | G3 | `git -C kaidoku-shokunin grep -I -i -l -E "$P_GO" b2aad08 -- corpus SKILL.md PROVINCE.md` | 0 | `[O]` 20 kaidoku files. Positive control: the pattern is not vacuous |
 | G4 | `test -x ~/.local/opt/ghidra_12.1.4_PUBLIC/support/analyzeHeadless`; `command -v ghidra`; `grep -n GHIDRA_INSTALL_DIR ~/.bashrc ~/.profile` | 0; 1; 0 | `[O]` Ghidra 12.1.4 is installed but not on PATH. It is exported at `.bashrc:28` and `.profile:3` |
@@ -125,7 +125,7 @@ J10 finds no ruling. `[I]` C3 survives either ruling because it is a statement a
 | tameshi | `tools/pin-disposition.py` (`SKILL.md:1853`) | the `detect_branch` ladder (`pin-disposition.py:42-51`) | `head_differs_from_branch` (reported, not refused) | — |
 | tsukuroi | revision contract plus `revision-binding` probe (`SKILL.md:1902,1904-1914`; `corpus/QUALITY.md:37`, criterion 27) | `--branch`, default master | `E-REVISION-INVALID`, `-NOT-LANDED`, `-NOT-PUSHED` | REV ⊆ origin |
 | tabi | `scripts/check-adjacency.mjs:188-189` (ladder master→main; lane is master-only) | ladder | `lane_tip_unresolved` (`:103`) | — |
-| fleet helper (operator) | `scripts/hyaku/jj-lane.sh:155-180` `cmd_state` | `lane.branch` → `detect_branch` → the single master/main (`:162-166`) | `ahead=`/`behind=`/`head=` | counts |
+| fleet helper (operator) | `scripts/hyaku/jj-lane.sh:155-180` `cmd_state` | `lane.branch` → `detect_branch` → the single master/main (`:162-167`) | `ahead=`/`behind=`/`head=` | counts |
 
 - `[O]` `tameshi…/.ufo/waves/round-17/w1/C01SiblingOverlap.md:118-120`: "Branch-tip semantics belong to the fleet helper, not to a lane tool … not define a second convention."
 - `[O]` The law itself is at `scripts/hyaku/lane-addendum.md@839d8df:149-156`: "record measured/pinned revisions as the branch tip, never bare `HEAD`", and a git-writing gate "must run on a sandbox clone".
@@ -173,7 +173,7 @@ J10 finds no ruling. `[I]` C3 survives either ruling because it is a statement a
 **Evidence.**
 - §3.1: the same jj row is held in three non-owner lanes, and REV rejects the sibling's anchor without routing it.
 - §3.3 and §3.4: two REV statements contradict facts or semantics that siblings have already admitted.
-- `JjConnectorProvinces.md:167-170`: tameshi's two-lane bar for R3 "is not yet met". `[I]` Kaidoku's real-jj sandbox receipt (`evidence/jj-red-before.json`, 14/14) plus tameshi's git-emulated `head-vs-branch.sh` (`QUALITY.md:160-163` for its scrub) are now two independent lanes.
+- `JjConnectorProvinces.md:167-170` judged tameshi's two-lane bar unmet, but only for the `--ignore-working-copy` rule. `[I]` The sandbox-clone arm of R3 (`:183`) now has two independent lane artifacts: kaidoku's real-jj sandbox receipt (`evidence/jj-red-before.json`, 14/14) and tameshi's git-emulated `head-vs-branch.sh` (its `GIT_*` scrub is at `QUALITY.md:159-163`).
 
 **Move (kaidoku side only; no tool behaviour change).**
 1. **Append a crosswalk.** In the round-19 lesson's Registry changes, or as a SOURCES search-log line, record that S036 is the same document as tameshi S061 (`latest`@0.46.0, tameshi `2a22ade`) and tabi S049 (v0.45.1, queued, tabi `6c97851`). Record that the installed jj is `0.45.1-7c41cdeb…`, so S036's raw-tag digest `0fb71f99…` is the installed-version anchor. State that S036 is citation support for lane tools only, and that kumitate owns the jj fact (R1/R9).
@@ -220,3 +220,42 @@ J10 finds no ruling. `[I]` C3 survives either ruling because it is a statement a
 - No sibling tool or selftest was executed. The sibling semantics in §3.2 come from their docstrings, SKILL rows and QUALITY text.
 - jj was not run (contract). The version comes from bytes in the binary (J8), matching tabi S049's tag commit.
 - Wave-1 anchors cited above were read from REV bytes. The fleet files were read at `839d8df`, and `JjConnectorProvinces.md` was last changed at `7d0c760`.
+
+## Appendix: commands as run (exits in §1; `BR` expands to the subshell in the first comment; only the `echo` labels are shortened)
+
+```
+# cwd /home/vgpnk/Projects/shokunin; P = P_GO (§1); BR = $(git -C "$d" symbolic-ref -q --short HEAD 2>/dev/null || git -C "$d" for-each-ref --format='%(refname:short)' refs/heads/main refs/heads/master | head -n1)
+# G1
+for d in *-shokunin; do [ "$d" = kaidoku-shokunin ] && continue; br=BR; git -C "$d" grep -I -i -l -E "$P" "refs/heads/$br" -- . ':!*three.core.js' ':!*three.module.js' ':!*omp-live-18.12.2-strings.txt'; printf '%s=%s ' "${d%-shokunin}" "$?"; done; echo
+# G1b (no excludes; file count)
+for d in *-shokunin; do [ "$d" = kaidoku-shokunin ] && continue; br=BR; timeout 60 git -C "$d" grep -I -i -l -E "$P" "refs/heads/$br" -- . ; echo "[$d br=$br exit=$?]"; done
+git -C game-dev-3d-shokunin grep -I -i -l -E "$P" refs/heads/main -- . | grep -v -c -E 'three\.(core|module)\.js$'      # 0 (66 total)
+# G2
+for d in *-shokunin; do [ "$d" = kaidoku-shokunin ] && continue; timeout 120 git -C "$d" grep --untracked --no-exclude-standard -I -i -l -E "$P" -- . ':!*three.core.js' ':!*three.module.js' ':!*omp-live-18.12.2-strings.txt' ':!.jj' ':!**/node_modules/**' 2>/dev/null; printf '%s=%s ' "${d%-shokunin}" "$?"; done; echo
+# G3
+git -C kaidoku-shokunin grep -I -i -l -E "$P" b2aad08ceeee8dd125ce0d316056d8bd766c7f94 -- corpus SKILL.md PROVINCE.md; echo "exit=${PIPESTATUS[0]}"
+# G4
+command -v ghidra; echo $?; test -x /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/support/analyzeHeadless; echo $?; grep -m1 -n 'application.version' /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties   # 17:application.version=12.1.4
+grep -n -E 'GHIDRA_INSTALL_DIR' /home/vgpnk/.bashrc /home/vgpnk/.profile
+# J1
+P="git-compatibility|working-copy (commit.s )?parent|jj-era reading|detached at the working-copy|Under jj, git .?HEAD"; for d in *-shokunin; do [ "$d" = kaidoku-shokunin ] && continue; br=BR; n=$(git -C "$d" grep -I -i -l -E "$P" "refs/heads/$br" -- SKILL.md PROVINCE.md AGENTS.md corpus tools 2>/dev/null | wc -l); git -C "$d" grep -q -I -i -E "$P" "refs/heads/$br" -- SKILL.md PROVINCE.md AGENTS.md corpus tools 2>/dev/null; printf '%s=%s(files %s) ' "${d%-shokunin}" "$?" "$n"; done; echo
+# J2
+git -C tameshi-shokunin show refs/heads/master:corpus/SOURCES.md | sed -n '70p'; git -C tabi-shokunin show refs/heads/master:corpus/SOURCES.md | sed -n '63p'; git -C kaidoku-shokunin show b2aad08ceeee8dd125ce0d316056d8bd766c7f94:corpus/SOURCES.md | sed -n '42p'
+# J3
+git -C tameshi-shokunin reflog show --date=iso refs/heads/master | head -n 8; git -C tsukuroi-shokunin reflog show --date=iso refs/heads/master | head -n 8; git -C tabi-shokunin reflog show --date=iso refs/heads/master | head -n 2; git -C kaidoku-shokunin reflog show --date=iso refs/heads/main | head -n 4
+# J4
+git -C kaidoku-shokunin grep -n -E 'S061|pin-disposition|tameshi|tsukuroi|detect_branch|lane-addendum|jj-lane\.sh|kumitate|JjConnectorProvinces' b2aad08ceeee8dd125ce0d316056d8bd766c7f94 -- SKILL.md corpus/SOURCES.md corpus/lessons/round-18.md .ufo/waves/round-18/tools .ufo/waves/round-18/contract.md; echo "exit=$?"
+# J5
+for d in *-shokunin; do [ "$d" = kaidoku-shokunin ] && continue; git -C "$d" grep --untracked -q -I -E 'revpin|head-rev-lint|jj-red-before|swiss-misread|routed-defects\.py' -- . 2>/dev/null; printf '%s=%s ' "${d%-shokunin}" "$?"; done; echo
+# J6
+git grep -n -I -E 'revpin|head-rev-lint|jj-red-before|pin-disposition|revision-binding|swiss-misread' HEAD -- MANIFEST.json SCORECARD.md CORPUS.md PROTOCOL.md PROTOCOL-APPENDIX.md AXES.md ROADMAP.md scripts; echo "exit=${PIPESTATUS[0]}"
+# J7
+grep -n '^detect_branch()' scripts/hyaku/jj-lane.sh; git show 67a3123:scripts/hyaku/jj-lane.sh | grep -n '^detect_branch()'
+# J8
+grep -a -o -E 'jj-cli-0\.4[0-9]\.[0-9]+|jj-lib-0\.4[0-9]\.[0-9]+|0\.45\.1-7c41cdeb[0-9a-f]*' /home/vgpnk/.local/bin/jj | sort | uniq -c
+# J9
+set -u; T=$(mktemp -d /tmp/so2-revpin-XXXXXX); E="env -i PATH=/usr/bin:/bin HOME=$T GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null"; R="$T/r"; $E git init -q -b main "$R" && $E git -C "$R" -c user.name=t -c user.email=t@t commit -q --allow-empty -m c1 && c1=$($E git -C "$R" rev-parse HEAD) && $E git -C "$R" -c user.name=t -c user.email=t@t commit -q --allow-empty -m c2 && c2=$($E git -C "$R" rev-parse HEAD) && $E git -C "$R" update-ref refs/remotes/origin/main "$c2" && $E git -C "$R" checkout -q --detach "$c1" && $E git -C "$R" update-ref refs/heads/main "$c1" && echo "remotes=[$($E git -C "$R" remote)] …"; git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show b2aad08ceeee8dd125ce0d316056d8bd766c7f94:.ufo/waves/round-18/tools/revpin.py > "$T/revpin.py"; $E python3 -I -B "$T/revpin.py" --root "$R"; echo "revpin_exit=$?"; rm -rf "$T"; test ! -e "$T"; echo "cleanup_exit=$?"
+#   -> remotes=[] main=96ed1004… origin_main=07b04594… head=96ed1004…; {"head_equals_source": true, "pushed": true, "remote": "07b04594…", "source": "96ed1004…"}; revpin_exit=0; cleanup_exit=0
+# J10
+git grep -n -I -i -E '(kaidoku.{0,40}revenger|revenger.{0,40}kaidoku).{0,80}(rul(ed|ing)|arbitrat|resolved|owner)' HEAD -- PROTOCOL.md PROTOCOL-APPENDIX.md CORPUS.md MISSION.md ROADMAP.md .ufo/waves/hyaku; echo "fleet_exit=${PIPESTATUS[0]}"
+```

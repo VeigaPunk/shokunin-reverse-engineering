@@ -2165,3 +2165,53 @@ defects, one partial outside disagreement) and the jj-migration audit
   citation-drift/go-route-compare/receipt-validate/pins/go-buildinfo-probe
   aligned and the r17 aether row qualified in place; two round-18 SKILL
   sections appended. Measured values follow in the next entry.
+
+## 2026-10-20 — round-18 measured records and final integration
+
+Verification source `db4bdb16b842a93f8ec07523c1275c6dfe0f5229` (pushed before the
+pass); verification evidence `454dee6923750698cc36041236db13b52c6fcade`; final
+rechecks retained in `.ufo/waves/round-18/final-recheck/*.receipt.json`, run at
+`454dee6`.
+
+- Wave 2 (falsify) at `b2aad08`: 98 seats in one validated call (reviewer53/
+  executor9/scout9/critic8/mutation-tester4/revenger4/connector4/scribe3/
+  sentinel2/simplifier2); 93 reports at integration. Dead: GateSUMSRUNLOG
+  (provider refusal, "cyber" usage policy, exit 1). Still running at
+  integration and not used: GatePRODUCERREV, TruthREGISTRY, DecisionRuleApply,
+  ShonenLines.
+- What wave 2 broke: the C1 counter's own selftest (exit 1 at `b2aad08`, fixture
+  not updated after a post-freeze amendment); every Gate* seat closed or
+  re-opened a defect by fabrication (one honest receipt whitewashed 14;
+  deleted stdout and an all-zero validator digest passed; `18/8` matched
+  `8/8`; deleted `Pinned values:` passed; a fake 40-hex head passed); the C2
+  lint misses two compare-only HEAD reads behind nested wrappers; citation-drift
+  refuses only the literal `HEAD`; custody-pair took `.git/index.lock`; the
+  round-17 `verify.py` "throwaway clone" advice was false (hardcoded LANE); the
+  round-18 `verify.py` validated without `--require-mid-maps`. The C3 replay
+  held on every seat (15/15 independent re-derivations, 3 independent byte
+  decodes of the held-out indices, frozen bytes unchanged, freeze before every
+  `analyze`).
+- Fixed before the pass: selftest fixture; every r18 receipt now checked for
+  verified mid maps; VALIDATE16 stdout hash-binding and a digit-bounded
+  fraction; REGISTRY requires `Pinned values:` and `--strict`; custody-pair
+  `--no-optional-locks`; round-17 `verify.py` derives LANE from its path;
+  round-18 `verify.py` gains `--require-mid-maps`, revpin, runner selftest,
+  three emulator reruns and census counts. Not fixed (routed in the lesson):
+  validator digest format-only, S033 head and producer attribution not
+  resolvable offline, HEAD aliases in citation-drift, lint nested-wrapper
+  blind spot, jj-red-before selftest env scrub, PROVINCE pin drift.
+- Verification pass at `db4bdb1`: 69 commands, all expected exits, pins equal
+  pre/post (`verification.json`). Final rechecks at `454dee6`: routed-defects
+  `--strict` open 0 (baseline 6); head-rev-lint live 0 / fixture 15 /
+  annotated 6 (baseline 3 / 8 / 0); measure C3 `compare_jsons_with_extra` 15
+  (baseline 0); invocation-audit 26 rows, 25 exercised_match, 1 labelled
+  unexercised, 0 unlabelled; temporal-sweep 4/4 corrected, 0 new; controls:
+  LOG/SCORECARD prefixes preserved, prior knowledge/lessons byte-identical
+  except the appendable r17 entry; census `validate` exit 0 (W04 noted).
+- In-round revisions and the wave-2 mistakes are listed in
+  `corpus/lessons/round-18.md` (In-round revisions; Mistakes rows 6, 9, 10).
+  No capability row entered (w2 `CapabilityCandidate.md`).
+- Author-side verdicts: C1 calibration improved, C2 operability improved, C3
+  depth improved (frozen rule: confirmed). Expansion unchanged, quality
+  improved, discernment improved. SHONEN stays `[~]`. Outside sampling and
+  admission belong to the closure.

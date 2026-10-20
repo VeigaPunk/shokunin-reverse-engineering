@@ -109,19 +109,24 @@ while the round-17 first pass (29118) did not (w2 `ReplicateAetherId.md`).
 
 | Signal | Decision | Limit |
 |---|---|---|
-| Go 1.24/1.25 Swiss carrier (no `X:noswissmap` in the build version), bootstrap OK, then `Go analysis failure` with `Invalid index: N` or `Unable to read past EOF: A, B` | Check named map types first: run `swiss-misread.py`; if H1 reproduces the exact read, attribute the abort to Ghidra's `OldMapType` binding (the exact read pins the 88-byte offset, w2 `EmulatorSourceCheck.md`), not the snapshot route | 3 carriers observed (1 calibrated, 2 held out, both Go 1.24.x), one Ghidra release, x86-64 ELF; no stack frame names `GoMapType` (the bad name is also reachable through struct/interface markup) |
+| Go 1.24/1.25 Swiss carrier (no `X:noswissmap` in the build version), bootstrap OK, then `Go analysis failure` with `Invalid index: N` or `Unable to read past EOF: A, B` | Check named map types first: run `swiss-misread.py`; if H1 reproduces the exact read, attribute the abort to Ghidra's `OldMapType` binding (the exact read pins the 88-byte offset, w2 `EmulatorSourceCheck.md`), not the snapshot route | 3 carriers observed (1 calibrated, 2 held out, both Go 1.24.x), one Ghidra release, x86-64 ELF; the stack ends in `GoType.getUncommonType` → `GoUncommonType.getPkgPath` reached through container markup, and no frame names `GoMapType` |
 | Same failure on a `noswissmap` carrier | Not this mechanism | 0 of 6 noswiss carriers failed |
 | Swiss carrier, no failure | Not evidence of correct map layout: on amd64 the `PkgPath` misread aborts only when the bytes at `types+SlotSize` lead to an out-of-range read; `Mcount` reads 0, so map methods are dropped silently | Silent case is INFERENCE (no log line); program-database inspection was not run |
 | The same source fails under one toolchain and not another (s1246 vs s1250 nethttp: go1.24.6 vs go1.25.0) | Expected: the outcome depends on name-table bytes at a small offset (one extra 3-byte name record shifts `types+40` from flags `0x6d` to `0x62`, w2 `S1250NethttpSilent.md`), not on the Go minor as such | One pair; do not generalize "1.25.0 is safe" |
 
 ## Inference (labelled)
 
-- INFERENCE: the bad read is reachable from more than the map path. In aether
-  the retained stack runs through struct/interface markup
-  (`GoStructType.additionalMarkup:94` → `GoInterfaceType.additionalMarkup:77`,
-  w1 `RevGhidraMapTypeRead.md`), while the same GoName at `0x954048` is the
-  misread `PkgPath` of three 40-slot maps (w1 `RevAetherReplay.md`). The
-  emulator reports both channels; the frozen prediction used the map path.
+- OBSERVATION + INFERENCE (revised after w2 `AetherDualPath.md`): the aether
+  retained stack (`runs/calib-aether/logs/rea-ghidra-HtDopV/ghidra.log:97-198`)
+  has 12 markup levels; the outer struct/interface frames
+  (`GoStructType.additionalMarkup:94` → `GoInterfaceType.additionalMarkup:77`)
+  are the container route of Ghidra's address-ordered type markup
+  (`GoTypeManager.java:151-153`), and the innermost frames are
+  `GoType.getUncommonType` → `GoUncommonType.getPkgPath` → GoName `0x954048`,
+  the misread `PkgPath` of a 40-slot map (`http.Header`, by byte decode; the
+  frames carry no addresses, so the identity is INFERENCE). One route, ending
+  in the map read — not a second, map-independent path. No frame names
+  `GoMapType` itself.
 - INFERENCE: PR #9348 (S033, tier B, open) adds `SwissMapType` to
   `GoMapType`'s candidates; that it fixes these carriers is not tested here.
 

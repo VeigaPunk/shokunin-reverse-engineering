@@ -2438,3 +2438,34 @@ pushed: `eb6c2668e5cb7054fd1e16d2f615cb65586d0fe0`. Claims and amendments:
 - R17-PINMAP: `SCORECARD.md:2374` ("pre/mid/post pin maps with instants") is wrong for mid-run instants: they retain the comparator verdict against the retained pre map, not the map; round-18 receipts retain each mid map with `map_sha256`.
 - R17-VALIDATE16: `SCORECARD.md:2364` ("all 16 receipts `receipt-validate.py` exit 0") had 8 retained validations; the 8 `da64646` receipts now validate 8/8 exit 0 via remapped copies (`.ufo/waves/round-18/evidence/validate16/summary.json`).
 - R17-PRODUCER-REV: `SCORECARD.md:2352-2356` names the verification revision; the receipts were produced by 271167473d87ef710f07ecdd98caf0ce12091686 (pass 1) and 95e34db62f2693c455d7ee4dfef24b8f3ebc007d (pass 2).
+
+### Measured records (round 18)
+
+Verification source `db4bdb16b842a93f8ec07523c1275c6dfe0f5229`; evidence
+`454dee6923750698cc36041236db13b52c6fcade` (`.ufo/waves/round-18/verification.json`,
+69 commands, all expected exits); final rechecks at `454dee6`
+(`.ufo/waves/round-18/final-recheck/*.receipt.json`). Baseline `9011581`.
+
+| Claim / axis | Existing numeric proxy | Falsifiable before→after, command and measured revision | Author-side verdict / limits |
+|---|---|---|---|
+| C1 calibration | 10.0→10.0, delta 0 | Open routed R17 defects 6→0 (named 6→0, substance 6→0): `python3 -I -B .ufo/waves/round-18/tools/routed-defects.py --root <LANE> --rev <REV> --strict` (exit 1 at `9011581`, exit 0 at `454dee6`). QUALITY admission rows 20→21, rows 1–20 byte-identical (`controls.py 9011581 454dee6`) | **improved**: all six outside-routed defects discharged with named corrections and substance fixes; the r17 partial disagreement became QUALITY #21 with red-before. Limits: wave 2 closed defects by fabrication against the first substance checks; hardened, but the validator digest stays format-only and S033's head / producer-pass attribution are not resolvable offline, so 6→0 is reported with the w2 Truth* re-derivations (`corpus/lessons/round-18.md` Mistakes 6) |
+| C2 operability (fleet axis; no owned numeric proxy) | none | Live HEAD-as-revision pins 3→0 (fixture 8→15, annotated 0→6): `python3 -I -B .ufo/waves/round-18/tools/head-rev-lint.py --root <LANE> --rev <REV> --strict` (exit 1 at `9011581`, exit 0 at `454dee6`); jj sandbox red-before 14/14 held (`tools/jj-red-before.py`, verification pass); each fixed file restored alone to its baseline bytes reports exactly 1 live site (w2 `LintMutation.md`) | **improved**: the three routed jj risks (round-17 `verify.py` source, citation-drift default `--rev`, custody-pair repo-HEAD) read the branch tip and refuse or flag an off-branch HEAD. Limits: two compare-only HEAD reads behind nested wrappers are invisible to the lint; citation-drift refuses only the literal `HEAD` |
+| C3 depth (sourced: S034/S035, with S023/S003/S033) | 10.0→10.0, delta 0 | Labels with a bound retained log and a compare carrying `extra.eof_reads`: 0→15 (`python3 -I -B .ufo/waves/round-18/measure.py <REV>`, field `c3.compare_jsons_with_extra`); 15/15 compare exit 0 against predictions frozen at `eb6c266` before any `analyze`; mechanism status unreplayed INFERENCE → confirmed under the frozen rule (`predictions/decision-rule.json`) | **improved**: both held-out diagnostic carriers (synthetic go1.24.6, real go1.24.13) failed with the exact predicted `Invalid index`; noswiss sibling and 11 non-diagnostic synthetics silent. Limits: held-out confirmation is Go 1.24.x only; one pass; one Ghidra release |
+| coverage | 10.0→10.0 | map 95/95→96/96 (`measure.py`, w2 `CoverageMapRow.md`) | unchanged ground: the Go row is held; the entry deepens it |
+| freshness | no owned numeric proxy | PR #9348 state re-read (open, head `a214355`); PROVINCE pin drift found (client configs now 6.7.0), not fixed | unchanged; drift routed to the lesson's Open list |
+| adjacency | no owned numeric proxy | sibling scan: no lane holds Go map/Ghidra-Go knowledge; jj fact triple-registered (S036/tameshi S061/tabi S049), routed to kumitate | unchanged; nothing absorbed |
+
+No capability row entered (w2 `CapabilityCandidate.md`: `swiss-misread.py` is C3's instrument, not a new repertoire item). Saturation line 10.0 and stagnation window 10 unchanged; last capability entry round 17.
+
+### Waves
+
+W1: 89 seats (executor19/scout23/reviewer15/scribe10/connector8/critic6/revenger4/sentinel2/simplifier2), 89/89 reports; one seat (SwissMisreadTool) ended aborted after writing its report. W2: 98 seats (reviewer53/executor9/scout9/critic8/mutation-tester4/revenger4/connector4/scribe3/sentinel2/simplifier2); 1 dead (GateSUMSRUNLOG, provider usage-policy refusal), 4 not returned at integration (GatePRODUCERREV, TruthREGISTRY, DecisionRuleApply, ShonenLines). Round total 187 seats. The L1 holds the planner seat. Records: `wave1-*.json`, `wave2-*.json`, `w1/`, `w2/`.
+
+Learning trends:
+- **Expansion unchanged.** The Swiss-map entry deepens held Go ground (README row 35, PROVINCE Core); no new coverage-map row (w2 `TrendVerdicts.md`).
+- **Quality improved.** The r17 aether INFERENCE is replaced by a frozen-before-run replay; six r17 overstatements corrected append-only; S032 superseded by S033.
+- **Discernment improved (author-side).** The r17 partial disagreement became QUALITY #21 with red-before; wave 2's falsifications became Mistakes rows 6, 9, 10 and fixes. Outside sampling remains the closure's duty.
+
+All SHONEN marks stay `[~]`.
+
+Planned: after the next non-author sample, (a) depth: a held-out Go 1.25.x Swiss carrier that the emulator predicts to fail (candidates: toolchain binaries under `~/.local/opt/go-1.25.0`), or (b) freshness: PROVINCE pin/cache drift and the census, or (c) calibration on any routed disagreement from this round's closure.
