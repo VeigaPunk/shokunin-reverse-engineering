@@ -51,18 +51,30 @@ Shell scanning: each non-comment line's ``git ...`` runs (split at
 ``&|;<>()#``) are tokenized like a Python argv; ``${X:-HEAD}`` parameter
 expansions count as a HEAD literal.
 
+Nested Python class: a HEAD operand passed through one or more intra-file
+helper calls to a git wrapper is reported in ``nested`` with
+``class: "nested"``, its target helper and call chain. Nested records stay
+separate from ``sites`` and never affect ``live_count``, ``fixture_count``,
+``annotated_count``, or ``--strict``; ``nested_count`` and
+``nested_live_count`` report their separate totals. For a nested call only,
+an immediately preceding comment can carry the compare-only/red-before
+annotation.
+
 Output (sort_keys, indent=2):
     {rev, files_scanned, sites: [{path, line, kind, context, code,
       reason?}], live_count, fixture_count, annotated_count,
-      routed_sites: [3 audited paths], excluded: [{path, reason, sites}],
-      limits: [...]}
+      nested: [{path, line, kind, class, context, code, target, via,
+      reason?}], nested_count, nested_live_count,
+      routed_sites: [3 audited paths],
+      excluded: [{path, reason, sites, nested}], limits: [...]}
 Exit 0 emitted, 1 under --strict iff live_count > 0, 2 could-not-evaluate.
 Read-only git only: rev-parse --verify / ls-tree / show.
 
 --selftest builds a fixture repo under tempfile.mkdtemp(), commits
 revisions exercising every kind, fixture contexts (name, nested, called-
-only-from-selftest, /fixtures/ path), both annotations, and a seat-dir
-exclusion, then prints SELFTEST: CLEAN cases=N or SELFTEST: FAILED ....
+only-from-selftest, /fixtures/ path), both annotations, nested helper chains
+with annotated compare-only HEAD arguments, and a seat-dir exclusion, then
+prints SELFTEST: CLEAN cases=N or SELFTEST: FAILED ....
 """
 
 import argparse
@@ -133,6 +145,11 @@ LIMITS = [
     "invisible",
     "wrapper detection is intra-file: a helper that builds git argv in "
     "another module is not resolved",
+    "nested helper resolution is intra-file, name-based, and bounded by "
+    "NESTED_DEPTH and NESTED_TEMPLATES; same-named definitions, aliases, "
+    "runtime-built arguments, and longer/branchier chains may be missed",
+    "nested records are separate from sites/live_count; the lint does not "
+    "prove that a nested HEAD value is used only for comparison",
     "the called-only-from-selftest rule is intra-file and name-based; "
     "methods, aliases, and cross-module callers are not followed",
     "shell lines are tokenized on whitespace inside git runs split at "
@@ -309,6 +326,19 @@ def _operand_indices(tokens):
     return out
 
 
+def _head_kind(text, has_rev_parse, has_other_rev, head_re=HEAD_LIT_RE):
+    """The HEAD site kind one operand token selects, or None."""
+    if text.startswith("HEAD:"):
+        return "HEAD-colon"
+    if not head_re.match(text):
+        return None
+    if has_rev_parse:
+        return "rev-parse-HEAD"
+    if has_other_rev:
+        return "other-HEAD"
+    return None
+
+
 def classify_argv(tokens, head_re=HEAD_LIT_RE):
     """Return {kind: lineno} for one git argv's tokens ((text, line) pairs)."""
     kinds = {}
@@ -332,13 +362,9 @@ def classify_argv(tokens, head_re=HEAD_LIT_RE):
             text, line = tokens[i]
             if text is None:
                 continue
-            if text.startswith("HEAD:"):
-                put("HEAD-colon", line)
-            elif head_re.match(text):
-                if has_rev_parse:
-                    put("rev-parse-HEAD", line)
-                elif has_other_rev:
-                    put("other-HEAD", line)
+            kind = _head_kind(text, has_rev_parse, has_other_rev, head_re)
+            if kind:
+                put(kind, line)
     return kinds
 
 
@@ -443,10 +469,11 @@ class SiteScanner(ast.NodeVisitor):
                 return
 
 
-def scan_python(source):
+def scan_python(source, tree=None):
     """(sites, fixture_funcs). sites = [(line, kind, context_key)] where
     context_key is decided by the caller via fixture_funcs + annotations."""
-    tree = ast.parse(source)
+    if tree is None:
+        tree = ast.parse(source)
     scanner = SiteScanner(source.splitlines())
 
     # pass 1: git-wrapper function names (contain a literal git argv)
@@ -537,6 +564,328 @@ def python_context(path, line, enclosing, fixture_funcs, lines):
     return "live", None
 
 
+# --------------------------------------------------- nested wrapper class
+#
+# The ordinary scanner recognizes a git wrapper in one hop. This resolver
+# carries literal and parameter slots through bounded intra-file helper
+# chains, then reports only HEAD operands supplied at the call site.
+
+NESTED_DEPTH = 6
+NESTED_TEMPLATES = 8
+
+
+class _NestedBody(ast.NodeVisitor):
+    """Calls and local assignments of one function, excluding nested scopes."""
+
+    def __init__(self):
+        self.calls = []
+        self.assigns = {}
+
+    def visit_FunctionDef(self, node):
+        pass
+
+    visit_AsyncFunctionDef = visit_FunctionDef
+
+    def visit_Lambda(self, node):
+        pass
+
+    def visit_Call(self, node):
+        self.calls.append(node)
+        self.generic_visit(node)
+
+    def visit_Assign(self, node):
+        if isinstance(node.value, (ast.List, ast.Tuple, ast.BinOp, ast.Name)):
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    self.assigns[target.id] = node.value
+        self.generic_visit(node)
+
+    def visit_AnnAssign(self, node):
+        if isinstance(node.target, ast.Name) and isinstance(
+                node.value, (ast.List, ast.Tuple, ast.BinOp, ast.Name)):
+            self.assigns[node.target.id] = node.value
+        self.generic_visit(node)
+
+
+def _nested_params(node):
+    args = node.args
+    positional = [a.arg for a in list(args.posonlyargs) + list(args.args)]
+    names = set(positional) | {a.arg for a in args.kwonlyargs}
+    if args.vararg:
+        names.add(args.vararg.arg)
+    if args.kwarg:
+        names.add(args.kwarg.arg)
+    return {
+        "positional": positional,
+        "vararg": args.vararg.arg if args.vararg else None,
+        "names": names,
+    }
+
+
+def _nested_body(node):
+    walker = _NestedBody()
+    for stmt in node.body:
+        walker.visit(stmt)
+    return walker
+
+
+def _nested_slot(node, params, assigns, tag, depth=0):
+    """One argv element as (kind, value, tag), resolving local aliases."""
+    text = _const_str(node)
+    if text is not None:
+        return ("lit", text, tag)
+    joined = _joined_str_text(node)
+    if joined is not None:
+        return ("lit", joined, tag)
+    leading = _joined_leading_text(node)
+    if leading and leading.startswith("HEAD:"):
+        return ("lit", "HEAD:", tag)
+    if isinstance(node, ast.Starred):
+        inner = node.value
+        if isinstance(inner, ast.Name) and inner.id in params["names"]:
+            return ("vararg", inner.id, None)
+        return ("unknown", None, None)
+    if isinstance(node, ast.Name):
+        if node.id in params["names"]:
+            return ("param", node.id, None)
+        if depth < NESTED_DEPTH and node.id in assigns:
+            return _nested_slot(assigns[node.id], params, assigns, tag,
+                                depth + 1)
+        return ("unknown", None, None)
+    if isinstance(node, (ast.List, ast.Tuple)):
+        sub = _nested_argv(node, params, assigns, tag, depth + 1)
+        if sub is not None:
+            return ("argv", tuple(sub), None)
+    return ("unknown", None, None)
+
+
+def _nested_argv(node, params, assigns, tag, depth=0):
+    """Slot list for a ``["git", ...]`` argv expression, or None."""
+    if depth > NESTED_DEPTH:
+        return None
+    if isinstance(node, ast.Name):
+        target = assigns.get(node.id)
+        if target is None:
+            return None
+        return _nested_argv(target, params, assigns, tag, depth + 1)
+    if isinstance(node, (ast.List, ast.Tuple)):
+        if not node.elts or _const_str(node.elts[0]) != "git":
+            return None
+        return [_nested_slot(e, params, assigns, tag, depth)
+                for e in node.elts[1:]]
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        left = _nested_argv(node.left, params, assigns, tag, depth + 1)
+        right = _nested_argv(node.right, params, assigns, tag, depth + 1)
+        if left is None and right is None:
+            return None
+        return (left if left is not None else [("unknown", None, None)]) \
+            + (right or [])
+    return None
+
+
+def _nested_body_exprs(walker):
+    """Expressions that may contain an argv: call args and local assignments."""
+    exprs = []
+    for call in walker.calls:
+        exprs.extend(call.args)
+        exprs.extend(kw.value for kw in call.keywords if kw.arg == "args")
+    exprs.extend(walker.assigns.values())
+    return exprs
+
+
+def _nested_is_direct(node):
+    walker = _nested_body(node)
+    params = _nested_params(node)
+    return any(_nested_argv(expr, params, walker.assigns, "body")
+               is not None for expr in _nested_body_exprs(walker))
+
+
+def _nested_call_name(call):
+    if isinstance(call.func, ast.Name):
+        return call.func.id
+    if isinstance(call.func, ast.Attribute):
+        return call.func.attr
+    return None
+
+
+def _nested_bind(call, callee_node, caller_params, caller_assigns, tag):
+    """Map callee parameters to the literal/parameter slots supplied here."""
+    sig = _nested_params(callee_node)
+    mapping = {}
+    index = 0
+    for arg in call.args:
+        if isinstance(arg, ast.Starred):
+            inner = arg.value
+            if isinstance(inner, ast.Name) and inner.id in caller_params["names"]:
+                slot = ("vararg", inner.id, None)
+            else:
+                slot = ("unknown", None, None)
+            if sig["vararg"]:
+                mapping[sig["vararg"]] = [slot]
+            return mapping
+        slot = _nested_slot(arg, caller_params, caller_assigns, tag)
+        if index < len(sig["positional"]):
+            mapping[sig["positional"][index]] = [slot]
+            index += 1
+        elif sig["vararg"]:
+            mapping.setdefault(sig["vararg"], []).append(slot)
+    for kw in call.keywords:
+        if kw.arg is not None and kw.arg in sig["names"]:
+            mapping[kw.arg] = [
+                _nested_slot(kw.value, caller_params, caller_assigns, tag)]
+    return mapping
+
+
+def _nested_substitute(slots, mapping):
+    """Replace parameter slots with their bound values and splice argv slots."""
+    out = []
+    for slot in slots:
+        if slot[0] in ("param", "vararg"):
+            out.extend(mapping.get(slot[1]) or
+                       ([("unknown", None, None)] if slot[0] == "param"
+                        else []))
+        else:
+            out.append(slot)
+    flat = []
+    for slot in out:
+        if slot[0] == "argv":
+            flat.extend(slot[1])
+        else:
+            flat.append(slot)
+    return flat
+
+
+def _nested_templates(name, defs, depth=0, seen=()):
+    """Return bounded (argv slots, helper chain) templates for one function."""
+    if depth > NESTED_DEPTH or name in seen or name not in defs:
+        return []
+    node = defs[name]
+    params = _nested_params(node)
+    walker = _nested_body(node)
+    out = []
+    for expr in _nested_body_exprs(walker):
+        slots = _nested_argv(expr, params, walker.assigns, "body")
+        if slots is not None:
+            out.append((tuple(slots), (name,)))
+    for call in walker.calls:
+        callee = _nested_call_name(call)
+        if not callee or callee == name or callee not in defs:
+            continue
+        for slots, chain in _nested_templates(
+                callee, defs, depth + 1, seen + (name,)):
+            bound = _nested_bind(call, defs[callee], params,
+                                 walker.assigns, "body")
+            out.append((tuple(_nested_substitute(slots, bound)),
+                        (name,) + chain))
+    dedup = []
+    seen_templates = set()
+    for item in out:
+        if item in seen_templates:
+            continue
+        seen_templates.add(item)
+        dedup.append(item)
+        if len(dedup) >= NESTED_TEMPLATES:
+            break
+    return dedup
+
+
+def _nested_head_tags(tokens, tags):
+    """Return {kind: source-tag} for HEAD operands under the primary rules."""
+    literal = {text for text, _ in tokens if text}
+    if not literal & REV_COMMANDS:
+        return {}
+    has_rev_parse = "rev-parse" in literal
+    has_other_rev = bool((literal & REV_COMMANDS) - {"rev-parse"})
+    kinds = {}
+    for index in _operand_indices(tokens):
+        text, _ = tokens[index]
+        if text is not None:
+            kind = _head_kind(text, has_rev_parse, has_other_rev)
+            if kind:
+                kinds.setdefault(kind, tags[index])
+    return kinds
+
+
+def _nested_primary_argv(call):
+    argv = call.args[0] if call.args else None
+    if argv is None:
+        argv = next((kw.value for kw in call.keywords if kw.arg == "args"),
+                    None)
+    return _tokens_from_argv_expr(argv) if argv is not None else None
+
+
+def scan_nested(source, tree=None):
+    """Return (line, kind, enclosing, target, helper_chain) nested sites."""
+    if tree is None:
+        tree = ast.parse(source)
+    collected = {}
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            collected.setdefault(node.name, []).append(node)
+    defs = {
+        name: sorted(nodes, key=lambda n: (n.lineno, n.col_offset))[0]
+        for name, nodes in collected.items()
+    }
+    direct = {name for name, node in defs.items() if _nested_is_direct(node)}
+    sites = []
+    stack = []
+
+    def walk(node):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            stack.append((node.name, _nested_params(node),
+                          _nested_body(node).assigns))
+            for stmt in node.body:
+                walk(stmt)
+            stack.pop()
+            return
+        if isinstance(node, ast.Call):
+            callee = _nested_call_name(node)
+            if (callee in defs and callee not in direct
+                    and _nested_primary_argv(node) is None):
+                caller_params, caller_assigns = (
+                    stack[-1][1:] if stack else ({"names": set()}, {}))
+                enclosing = tuple(frame[0] for frame in stack)
+                for slots, chain in _nested_templates(callee, defs):
+                    bound = _nested_bind(node, defs[callee], caller_params,
+                                         caller_assigns, "arg")
+                    tokens, tags = [], []
+                    for slot in _nested_substitute(slots, bound):
+                        if slot[0] == "lit":
+                            tokens.append((slot[1], node.lineno))
+                            tags.append(slot[2])
+                        else:
+                            tokens.append((None, node.lineno))
+                            tags.append(None)
+                    for kind, tag in _nested_head_tags(tokens, tags).items():
+                        if tag == "arg":
+                            sites.append((node.lineno, kind, enclosing,
+                                          callee, chain))
+        for child in ast.iter_child_nodes(node):
+            walk(child)
+
+    walk(tree)
+    dedup = []
+    seen_sites = set()
+    for item in sorted(sites):
+        key = (item[0], item[1], item[3])
+        if key in seen_sites:
+            continue
+        seen_sites.add(key)
+        dedup.append(item)
+    return dedup
+
+
+def nested_python_context(path, line, enclosing, fixture_funcs, lines):
+    """Like python_context, accepting an annotation directly above a call."""
+    note = annotation_for_line(lines[line - 1]) if 1 <= line <= len(lines) \
+        else None
+    if note is None and 1 < line and lines[line - 2].lstrip().startswith("#"):
+        note = annotation_for_line(lines[line - 2])
+    if note:
+        return "annotated", ANNOTATION_REASONS[note]
+    return python_context(path, line, enclosing, fixture_funcs, lines)
+
+
 # ------------------------------------------------------------ sh scanner
 
 GIT_RUN_RE = re.compile(r"\bgit\b\s+([^&|;<>()\n]*)")
@@ -605,10 +954,23 @@ def _site_record(path, line, kind, context, code, reason=None):
     return rec
 
 
+def _nested_record(path, line, kind, context, code, target, chain,
+                   reason=None):
+    rec = {
+        "path": path, "line": line, "kind": kind, "class": "nested",
+        "context": context, "code": code, "target": target,
+        "via": list(chain),
+    }
+    if reason:
+        rec["reason"] = reason
+    return rec
+
+
 def lint(root, rev):
     resolved = resolve_rev(root, rev)
     paths = list_site_files(root, resolved)
     sites = []
+    nested = []
     excluded = []
     scanned = 0
     for path in paths:
@@ -619,6 +981,7 @@ def lint(root, rev):
             raise LintError(f"{path}: not UTF-8: {exc}")
         seat_path = is_seat_path(path)
         lines = source.splitlines()
+        nested_found = []
 
         if path.endswith(".sh"):
             found = []
@@ -638,7 +1001,9 @@ def lint(root, rev):
                                               code, reason))
         else:
             try:
-                py_sites, fixture_funcs = scan_python(source)
+                tree = ast.parse(source)
+                py_sites, fixture_funcs = scan_python(source, tree)
+                py_nested = scan_nested(source, tree)
             except SyntaxError as exc:
                 raise LintError(f"{path}: unparseable Python: {exc}")
             found = []
@@ -649,18 +1014,28 @@ def lint(root, rev):
                     path, line, kind, context,
                     lines[line - 1].strip() if line <= len(lines) else "",
                     reason))
+            for line, kind, enclosing, target, chain in py_nested:
+                context, reason = nested_python_context(
+                    path, line, enclosing, fixture_funcs, lines)
+                nested_found.append(_nested_record(
+                    path, line, kind, context,
+                    lines[line - 1].strip() if line <= len(lines) else "",
+                    target, chain, reason))
 
         if seat_path:
             excluded.append({
                 "path": path,
                 "reason": EXCLUDED_REASON,
                 "sites": found,
+                "nested": nested_found,
             })
             continue
         scanned += 1
         sites.extend(found)
+        nested.extend(nested_found)
 
     sites.sort(key=lambda s: (s["path"], s["line"], s["kind"]))
+    nested.sort(key=lambda s: (s["path"], s["line"], s["kind"]))
     live = sum(1 for s in sites if s["context"] == "live")
     annotated = sum(1 for s in sites if s["context"] == "annotated")
     return {
@@ -670,6 +1045,10 @@ def lint(root, rev):
         "live_count": live,
         "fixture_count": len(sites) - live - annotated,
         "annotated_count": annotated,
+        "nested": nested,
+        "nested_count": len(nested),
+        "nested_live_count": sum(1 for s in nested
+                                 if s["context"] == "live"),
         "routed_sites": ROUTED_SITES,
         "excluded": excluded,
         "limits": LIMITS,
@@ -776,6 +1155,29 @@ git show HEAD:LOG.md
 """
 
 
+FIXTURE_NESTED_PY = '''import subprocess
+
+
+def git(*args):
+    return subprocess.check_output(["git", *args], text=True)
+
+
+def resolve(rev):
+    return git("rev-parse", rev)
+
+
+def compare_only():
+    source = resolve("main")
+    # head-rev-lint: compare-only
+    head = resolve("HEAD^{commit}")
+    return head == source
+
+
+def live_nested():
+    return resolve("HEAD")
+'''
+
+
 def _fixture_git(repo, *args):
     return subprocess.run(
         ["git", "-C", repo, "-c", "user.email=selftest@invalid",
@@ -816,6 +1218,7 @@ def selftest():
         _write(repo, ".ufo/waves/round-17/clean.py", FIXTURE_CLEAN_PY)
         _write(repo, ".ufo/waves/round-17/w2/seat.py", FIXTURE_SEAT_PY)
         _write(repo, ".ufo/gates/run.sh", FIXTURE_RUN_SH)
+        _write(repo, ".ufo/waves/round-17/nested.py", FIXTURE_NESTED_PY)
         rev1 = _commit(repo, "rev1")
 
         result, code = evaluate(repo, rev1, strict=True)
@@ -835,7 +1238,7 @@ def selftest():
         assert result["fixture_count"] == 4, result["fixture_count"]
         assert result["annotated_count"] == 1, result["annotated_count"]
         assert kinds_live == want_kinds, kinds_live
-        assert result["files_scanned"] == 6, result["files_scanned"]
+        assert result["files_scanned"] == 7, result["files_scanned"]
         assert len(result["excluded"]) == 1
         assert result["excluded"][0]["path"].endswith("/w2/seat.py")
         assert result["excluded"][0]["sites"], result["excluded"]
@@ -852,6 +1255,25 @@ def selftest():
         # ctx.py._commit (uncalled) is live above.
         ctx2 = [s for s in result["sites"] if s["path"].endswith("ctx2.py")]
         assert [s["context"] for s in ctx2] == ["fixture", "live"], ctx2
+
+        nested_py = [s for s in result["nested"]
+                     if s["path"].endswith("nested.py")]
+        cases += 1
+        assert [(s["line"], s["kind"], s["class"], s["context"])
+                for s in nested_py] == [
+            (15, "rev-parse-HEAD", "nested", "annotated"),
+            (20, "rev-parse-HEAD", "nested", "live"),
+        ], ("nested_compare_only_records", nested_py)
+        assert nested_py[0]["reason"] == "head-rev-lint: compare-only"
+        assert nested_py[0]["target"] == "resolve"
+        assert nested_py[0]["via"] == ["resolve", "git"]
+        cases += 1
+        assert (result["nested_count"] == 2
+                and result["nested_live_count"] == 1
+                and result["live_count"] == 15
+                and not any(s["path"].endswith("nested.py")
+                            for s in result["sites"])), (
+            "nested_compare_only_separate", result)
 
         # commit 2: only fixture-context sites remain -> strict clean.
         _write(repo, ".ufo/waves/round-17/fixtures/rebuild.sh",

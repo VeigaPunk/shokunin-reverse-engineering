@@ -1,0 +1,455 @@
+#!/usr/bin/env python3
+"""Find explicitly zoned timestamps later than the commit that introduced a line.
+
+Usage: evidence-timestamps.py --root LANE --rev REV --path LANE_RELATIVE_DIR
+       [--strict] [--allow FILE:LINE ...]
+       evidence-timestamps.py --selftest
+
+Revision-scoped reads use Git objects and ``git blame --porcelain``; the working
+ tree is never read. Binary blobs and blobs larger than 4 MiB are reported as
+ skipped. Every timestamp occurrence is reported, including quoted text.
+"""
+
+import argparse
+import datetime as dt
+import json
+import os
+from pathlib import Path, PurePosixPath
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+MAX_BLOB_BYTES = 4 * 1024 * 1024
+HEADER_RE = re.compile(rb"^(\^?[0-9a-f]{40,64}) ([0-9]+) ([0-9]+)(?: ([0-9]+))?$")
+TIMESTAMP_RE = re.compile(
+    rb"(?<![0-9])"
+    rb"(?:"
+    rb"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}"
+    rb"(?::[0-9]{2}(?:\.[0-9]+)?)?(?:Z|[+-][0-9]{2}:[0-9]{2})"
+    rb"(?![A-Za-z0-9])"
+    rb"|"
+    rb"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}"
+    rb"(?::[0-9]{2})? [+-][0-9]{2}(?:[0-9]{2})?"
+    rb"(?![A-Za-z0-9:])"
+    rb")"
+)
+
+
+class ToolError(Exception):
+    def __init__(self, code, message):
+        super().__init__(message)
+        self.code = code
+
+
+def _display_bytes(value):
+    return os.fsdecode(value)
+
+
+def _git(root, *args):
+    try:
+        result = subprocess.run(
+            ["git", "--no-optional-locks", "-C", os.fspath(root), *args],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+    except OSError as exc:
+        raise ToolError("git_unavailable", f"could not run git: {exc}") from exc
+    if result.returncode:
+        detail = result.stderr.decode("utf-8", "replace").strip()
+        raise ToolError("git_command_failed", detail or f"git exited {result.returncode}")
+    return result.stdout
+
+
+def _scope_path(raw):
+    if not raw:
+        raise ToolError("path_missing", "--path must name a repository-relative path")
+    if raw.startswith("/"):
+        raise ToolError("path_absolute", "--path must be repository-relative")
+    path = PurePosixPath(raw)
+    if ".." in path.parts:
+        raise ToolError("path_traversal", "--path may not contain '..'")
+    return str(path) or "."
+
+
+def _resolve_revision(root, revision):
+    if not revision or revision.startswith("-"):
+        raise ToolError("revision_invalid", "--rev must name a commit revision")
+    output = _git(root, "rev-parse", "--verify", "--quiet", "--end-of-options",
+                  revision + "^{commit}")
+    resolved = output.decode("ascii", "replace").strip()
+    if not re.fullmatch(r"[0-9a-f]{40,64}", resolved):
+        raise ToolError("revision_invalid", "Git did not resolve --rev to a commit")
+    return resolved
+
+
+def _tree_entries(root, revision, scope):
+    if scope != ".":
+        check = _git(root, "ls-tree", "-z", "--full-tree", revision, "--",
+                     ":(top,literal)" + scope)
+        if not check:
+            raise ToolError("path_not_found_at_revision",
+                            f"--path {scope!r} has no tracked entry at --rev")
+    args = ["ls-tree", "-r", "-z", "--full-tree", revision]
+    if scope != ".":
+        args.extend(["--", ":(top,literal)" + scope])
+    output = _git(root, *args)
+    entries = []
+    for item in output.split(b"\0"):
+        if not item:
+            continue
+        metadata, separator, path = item.partition(b"\t")
+        fields = metadata.split(b" ")
+        if not separator or len(fields) != 3:
+            raise ToolError("tree_output_invalid", "Git returned an invalid ls-tree record")
+        _, object_type, object_id = fields
+        if object_type != b"blob":
+            continue
+        if scope == ".":
+            display = _display_bytes(path)
+        else:
+            scope_bytes = os.fsencode(scope)
+            if path == scope_bytes:
+                display = PurePosixPath(scope).name or scope
+            elif path.startswith(scope_bytes + b"/"):
+                display = _display_bytes(path[len(scope_bytes) + 1:])
+            else:
+                raise ToolError("tree_path_mismatch", "Git returned a path outside --path")
+        entries.append((path, object_id.decode("ascii"), display))
+    return entries
+
+
+def _parse_timestamp(value):
+    text = value.decode("ascii")
+    if "T" in text:
+        normalized = text[:-1] + "+00:00" if text.endswith("Z") else text
+        parsed = dt.datetime.fromisoformat(normalized)
+    else:
+        date, rest = text.split(" ", 1)
+        clock, zone = rest.rsplit(" ", 1)
+        if len(zone) == 3:
+            zone += ":00"
+        elif len(zone) == 5:
+            zone = zone[:3] + ":" + zone[3:]
+        parsed = dt.datetime.fromisoformat(date + "T" + clock + zone)
+    if parsed.tzinfo is None:
+        raise ValueError("timestamp has no timezone")
+    return parsed
+
+
+def _parse_blame(output):
+    """Return final-line-number -> (committer epoch, source line bytes)."""
+    lines = output.split(b"\n")
+    records = {}
+    commit_times = {}
+    index = 0
+    while index < len(lines):
+        header = HEADER_RE.fullmatch(lines[index])
+        if header is None:
+            if lines[index] == b"":
+                break
+            raise ToolError("blame_output_invalid", "Git returned an invalid blame header")
+        commit = header.group(1).lstrip(b"^").decode("ascii")
+        final_line = int(header.group(3))
+        index += 1
+        committer_epoch = None
+        while index < len(lines) and not lines[index].startswith(b"\t"):
+            if lines[index].startswith(b"committer-time "):
+                try:
+                    committer_epoch = int(lines[index].split(b" ", 1)[1])
+                except ValueError as exc:
+                    raise ToolError("blame_time_invalid",
+                                    "Git returned an invalid committer-time") from exc
+            index += 1
+        if committer_epoch is None:
+            committer_epoch = commit_times.get(commit)
+        if committer_epoch is None:
+            raise ToolError("blame_time_missing",
+                            "Git blame omitted committer-time for an uncached commit")
+        commit_times[commit] = committer_epoch
+        if index >= len(lines) or not lines[index].startswith(b"\t"):
+            raise ToolError("blame_output_invalid", "Git returned an incomplete blame line")
+        records[final_line] = (committer_epoch, lines[index][1:])
+        index += 1
+    return records
+
+
+def _parse_allow(values):
+    allowed = set()
+    output = []
+    for value in values:
+        file_name, separator, line_text = value.rpartition(":")
+        if not separator or not file_name:
+            raise ToolError("allow_invalid", f"invalid --allow {value!r}; expected FILE:LINE")
+        path = PurePosixPath(file_name)
+        if path.is_absolute() or ".." in path.parts or str(path) in ("", "."):
+            raise ToolError("allow_invalid", f"invalid repository-relative file in --allow {value!r}")
+        try:
+            line_number = int(line_text)
+        except ValueError as exc:
+            raise ToolError("allow_invalid", f"invalid line number in --allow {value!r}") from exc
+        if line_number < 1:
+            raise ToolError("allow_invalid", f"line number in --allow {value!r} must be positive")
+        key = (str(path), line_number)
+        allowed.add(key)
+        output.append({"file": key[0], "line": line_number})
+    return allowed, output
+
+
+def collect(root, revision, raw_scope, allow_values=()):
+    root = os.path.realpath(os.fspath(root))
+    if not os.path.isdir(root):
+        raise ToolError("root_unavailable", f"--root is not a directory: {root}")
+    scope = _scope_path(raw_scope)
+    resolved_revision = _resolve_revision(root, revision)
+    allowed, allow_output = _parse_allow(allow_values)
+    entries = _tree_entries(root, resolved_revision, scope)
+    skipped = []
+    scanned_count = 0
+    findings = []
+    applied = set()
+
+    for raw_path, object_id, display in entries:
+        size_output = _git(root, "cat-file", "-s", object_id)
+        try:
+            size = int(size_output.strip())
+        except ValueError as exc:
+            raise ToolError("blob_size_invalid", f"Git returned an invalid size for {display}") from exc
+        if size > MAX_BLOB_BYTES:
+            skipped.append({"path": display, "reason": "over_4_mib", "size_bytes": size})
+            continue
+        blob = _git(root, "cat-file", "blob", object_id)
+        if b"\0" in blob:
+            skipped.append({"path": display, "reason": "binary", "size_bytes": size})
+            continue
+
+        blame = _git(root, "blame", "--porcelain", resolved_revision, "--",
+                      os.fsdecode(raw_path))
+        line_records = _parse_blame(blame)
+        scanned_count += 1
+        for line_number, (epoch, source_line) in sorted(line_records.items()):
+            try:
+                committer_time = dt.datetime.fromtimestamp(epoch, dt.timezone.utc)
+            except (OverflowError, OSError, ValueError) as exc:
+                raise ToolError("blame_time_invalid", f"unrepresentable committer-time in {display}:{line_number}") from exc
+            for match in TIMESTAMP_RE.finditer(source_line):
+                raw_timestamp = match.group(0)
+                try:
+                    timestamp = _parse_timestamp(raw_timestamp)
+                except (ValueError, OverflowError):
+                    continue
+                if timestamp > committer_time:
+                    key = (display, line_number)
+                    exempted = key in allowed
+                    if exempted:
+                        applied.add(key)
+                    findings.append({
+                        "finding": f"future_dated {display}:{line_number}",
+                        "path": display,
+                        "line": line_number,
+                        "timestamp": raw_timestamp.decode("ascii"),
+                        "committer_time": committer_time.isoformat().replace("+00:00", "Z"),
+                        "exempted": exempted,
+                    })
+
+    for entry in allow_output:
+        entry["applied"] = (entry["file"], entry["line"]) in applied
+    unexempted = sum(1 for finding in findings if not finding["exempted"])
+    return {
+        "schema": "evidence-timestamps-v1",
+        "root": root,
+        "revision": resolved_revision,
+        "scope": scope,
+        "summary": {
+            "files_scanned": scanned_count,
+            "files_scanned_rule": "tracked text blobs under --path at --rev, at most 4 MiB each",
+            "files_skipped": len(skipped),
+            "files_skipped_rule": "tracked blobs excluded because they contain NUL or exceed 4 MiB",
+            "finding_count": len(findings),
+            "finding_count_rule": "explicitly zoned timestamp occurrences strictly later than their line's introducing committer-time",
+            "unexempted_finding_count": unexempted,
+            "unexempted_finding_count_rule": "future_dated occurrences not matched by --allow FILE:LINE",
+        },
+        "skipped": skipped,
+        "allow": allow_output,
+        "findings": findings,
+    }
+
+
+def _write_json(value):
+    sys.stdout.write(json.dumps(value, ensure_ascii=True, sort_keys=True, separators=(",", ":")) + "\n")
+
+
+def _fixture_git(repo, *args, env=None):
+    result = subprocess.run(["git", "-C", repo, *args], stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE, env=env, check=False)
+    if result.returncode:
+        raise RuntimeError(result.stderr.decode("utf-8", "replace").strip() or
+                           f"git exited {result.returncode}")
+    return result.stdout
+
+
+def _fixture_commit(repo, when, message):
+    env = os.environ.copy()
+    env.update({
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": os.devnull,
+        "GIT_AUTHOR_NAME": "Evidence Timestamp Selftest",
+        "GIT_AUTHOR_EMAIL": "evidence-timestamp-selftest@example.invalid",
+        "GIT_COMMITTER_NAME": "Evidence Timestamp Selftest",
+        "GIT_COMMITTER_EMAIL": "evidence-timestamp-selftest@example.invalid",
+        "GIT_AUTHOR_DATE": when,
+        "GIT_COMMITTER_DATE": when,
+    })
+    _fixture_git(repo, "add", "-A", env=env)
+    _fixture_git(repo, "commit", "--quiet", "-m", message, env=env)
+    return _fixture_git(repo, "rev-parse", "HEAD").decode("ascii").strip()
+
+
+def _fixture_repo(parent, name, content, when):
+    repo = os.path.join(parent, name)
+    os.mkdir(repo)
+    _fixture_git(os.path.dirname(repo), "init", "--quiet", repo,
+                 env={**os.environ, "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull})
+    file_path = os.path.join(repo, "claims.json")
+    Path(file_path).write_bytes(content)
+    revision = _fixture_commit(repo, when, "fixture")
+    return repo, revision, file_path
+
+
+def _run_tool(script, root, revision, path=".", extra=()):
+    result = subprocess.run(
+        [sys.executable, "-I", "-B", script, "--root", root, "--rev", revision,
+         "--path", path, *extra],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        encoding="utf-8", errors="replace", check=False,
+    )
+    try:
+        payload = json.loads(result.stdout)
+    except ValueError:
+        payload = None
+    return result, payload
+
+
+def _selftest():
+    script = os.path.realpath(__file__)
+    scratch = tempfile.mkdtemp(prefix="evidence-timestamps-selftest-")
+    cases = []
+
+    def check(case_id, function):
+        try:
+            function()
+            cases.append((case_id, None))
+        except Exception as exc:
+            cases.append((case_id, f"{type(exc).__name__}: {exc}"))
+
+    def future_line_flagged():
+        repo, revision, _ = _fixture_repo(
+            scratch, "future", b'quoted: "claims.json: 2021-01-01T00:00:00Z"\n',
+            "2020-01-01T00:00:00+00:00")
+        result, payload = _run_tool(script, repo, revision, extra=("--strict",))
+        assert result.returncode == 1, f"strict exit={result.returncode}; stderr={result.stderr!r}"
+        assert payload and [item["finding"] for item in payload["findings"]] == [
+            "future_dated claims.json:1"], f"findings={payload!r}"
+        assert payload["findings"][0]["exempted"] is False
+        allowed, allowed_payload = _run_tool(
+            script, repo, revision, extra=("--strict", "--allow", "claims.json:1"))
+        assert allowed.returncode == 0, f"allowed strict exit={allowed.returncode}"
+        assert allowed_payload and allowed_payload["findings"][0]["exempted"] is True
+        assert allowed_payload["allow"] == [{"file": "claims.json", "line": 1, "applied": True}]
+        assert allowed_payload["summary"]["unexempted_finding_count"] == 0
+
+    def past_line_clean():
+        repo, revision, _ = _fixture_repo(
+            scratch, "past", b"2019-12-31T23:59:59Z\n", "2020-01-01T00:00:00+00:00")
+        result, payload = _run_tool(script, repo, revision, extra=("--strict",))
+        assert result.returncode == 0, f"strict exit={result.returncode}; stderr={result.stderr!r}"
+        assert payload and payload["findings"] == [], f"findings={payload!r}"
+
+    def zulu_and_offset_parsed():
+        content = (b"2021-01-01T00:00Z | 2021-01-02T00:00:00.250+05:30 | "
+                   b"2021-01-03 12:00:00 -0300 | 2021-01-04 12:00 -03\n")
+        repo, revision, _ = _fixture_repo(
+            scratch, "zones", content, "2020-01-01T00:00:00+00:00")
+        result, payload = _run_tool(script, repo, revision, extra=("--strict",))
+        expected = [
+            "2021-01-01T00:00Z",
+            "2021-01-02T00:00:00.250+05:30",
+            "2021-01-03 12:00:00 -0300",
+            "2021-01-04 12:00 -03",
+        ]
+        assert result.returncode == 1, f"strict exit={result.returncode}; stderr={result.stderr!r}"
+        assert payload and [item["timestamp"] for item in payload["findings"]] == expected, \
+            f"timestamps={(payload or {}).get('findings')!r}"
+
+    def later_commit_line_uses_own_time():
+        repo, revision, file_path = _fixture_repo(
+            scratch, "line-times", b"one 2020-01-02T00:00Z\n",
+            "2020-01-01T00:00:00+00:00")
+        with open(file_path, "ab") as stream:
+            stream.write(b"two 2020-02-02T00:00Z\n")
+        revision = _fixture_commit(repo, "2020-02-01T00:00:00+00:00", "second line")
+        result, payload = _run_tool(script, repo, revision, extra=("--strict",))
+        assert result.returncode == 1, f"strict exit={result.returncode}; stderr={result.stderr!r}"
+        assert payload and [(item["line"], item["committer_time"]) for item in payload["findings"]] == [
+            (1, "2020-01-01T00:00:00Z"), (2, "2020-02-01T00:00:00Z")], \
+            f"findings={(payload or {}).get('findings')!r}"
+
+    for case_id, function in (
+        ("future_line_flagged", future_line_flagged),
+        ("past_line_clean", past_line_clean),
+        ("zulu_and_offset_parsed", zulu_and_offset_parsed),
+        ("later_commit_line_uses_own_time", later_commit_line_uses_own_time),
+    ):
+        check(case_id, function)
+
+    shutil.rmtree(scratch, ignore_errors=True)
+    failures = [(case_id, message) for case_id, message in cases if message]
+    for case_id, message in cases:
+        if message:
+            print(f"FAIL {case_id}: {message}")
+        else:
+            print(f"PASS {case_id}")
+    if failures:
+        print(f"SELFTEST: FAILED cases={len(cases)} fails={len(failures)}")
+        return 1
+    print(f"SELFTEST: CLEAN cases={len(cases)}")
+    return 0
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--root", help="lane repository root")
+    parser.add_argument("--rev", help="commit revision to inspect")
+    parser.add_argument("--path", help="repository-relative tracked directory")
+    parser.add_argument("--strict", action="store_true", help="exit 1 for any unexempted finding")
+    parser.add_argument("--allow", action="append", default=[], metavar="FILE:LINE",
+                        help="exempt future timestamps on a scoped file line (repeatable)")
+    parser.add_argument("--selftest", action="store_true", help="run isolated fixture selftests")
+    args = parser.parse_args(argv)
+    if args.selftest:
+        return _selftest()
+    missing = [flag for flag, value in (("--root", args.root), ("--rev", args.rev),
+                                        ("--path", args.path)) if not value]
+    if missing:
+        _write_json({"error": {"code": "arguments_missing",
+                                "message": f"required arguments: {', '.join(missing)}"}})
+        return 2
+    try:
+        result = collect(args.root, args.rev, args.path, args.allow)
+    except ToolError as exc:
+        _write_json({"error": {"code": exc.code, "message": str(exc)}})
+        return 2
+    except OSError as exc:
+        _write_json({"error": {"code": "filesystem_error", "message": str(exc)}})
+        return 2
+    _write_json(result)
+    if args.strict and result["summary"]["unexempted_finding_count"]:
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

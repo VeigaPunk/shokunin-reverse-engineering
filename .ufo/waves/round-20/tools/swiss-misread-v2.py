@@ -1,0 +1,1899 @@
+#!/usr/bin/env python3
+"""Emulate Ghidra 12.1.4's Go RTTI map-type read against a carrier's bytes.
+
+The tool answers one question from bytes plus the installed snapshot JSON: when
+Ghidra 12.1.4 lays out a Go 1.24/1.25 ``runtime.maptype`` descriptor through the
+snapshot alias ``internal/abi.OldMapType`` (88 bytes on amd64), where does it read
+the UncommonType, and does the resulting GoName/pkgPath chain raise the same
+``Unable to read past EOF`` that the retained aether log records?
+
+Two hypotheses are evaluated for every carrier:
+
+* ``h1`` -- Ghidra binds ``internal/abi.OldMapType`` for every map type, so a
+  true Swiss descriptor (112 bytes) gets its UncommonType read 24 bytes early.
+* ``h0`` -- Ghidra reads the true layout (Swiss for a Swiss build, old for a
+  ``GOEXPERIMENT=noswissmap`` build).
+
+For each hypothesis the emulator runs the reader Ghidra 12.1.4 actually runs:
+module/typelink discovery, the discovery index, the unindexed-closure gap scan,
+and the VA-sorted markup walk (struct fields, interface imethods, func params,
+map key/elem/bucket, uncommon pkgPath chains).  The first read failure aborts the
+walk exactly as ``GolangSymbolAnalyzer`` aborts at the first IOException.
+
+The v2 ``first_failure`` projection records that earliest markup-walk failure
+with its provider index, enclosing type VA, and phase; discovery and gap-scan
+probes that Ghidra catches internally are not promoted to analysis failures.
+
+Source anchors (Base-src.zip members):
+  rtti/types/GoMapType.java:32-34,39-62      binding names + fields
+  rtti/types/GoType.java:137-149             getEndOfTypeInfo/getUncommonType
+  rtti/types/GoUncommonType.java:41-104      field reads, method slice, end
+  rtti/GoName.java:79-100,123-126            eager reads + recursive pkgPath
+  rtti/GoVarlenString.java:65-74             LEB128 length then bytes
+  rtti/GoRttiMapper.java:1053-1075           resolveNameOff/getGoName
+  rtti/GoTypeManager.java:96-209,263-269     discovery, gap scan, allTypes
+  structmapping/MemoryByteProvider.java:289-313 EOF/invalid-index semantics
+  structmapping/StructureContext.java:171-204 field locations/structure end
+  structmapping/MarkupSession.java:105,324-356  recursive markup / arrays
+  rtti/types/GoStructType.java:90-95,176-184 struct field markup/discovery
+  rtti/types/GoInterfaceType.java:70-78,173-184 interface method markup
+  rtti/types/GoFuncType.java:89-119          param pointer array
+  rtti/GoApiSnapshot.java:102-168            snapshot selection/filename law
+
+Python 3 stdlib only.  JSON on stdout (sort_keys=True, indent=2).  Exit 0 when a
+result was emitted, 1 on selftest failure, 2 when the carrier cannot be evaluated.
+"""
+
+import argparse
+import hashlib
+import json
+import os
+import shutil
+import struct
+import sys
+import tempfile
+from pathlib import Path
+
+BUILDINFO_MAGIC = b"\xff Go buildinf:"
+MAX_NAME_DEPTH = 8
+MAX_MARKUP_STEPS = 600000
+MAX_LEB_BYTES = 10
+DEFAULT_SNAPSHOT_DIR = (
+    "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/"
+    "data/typeinfo/golang")
+
+
+def _mask_func_out_count(out_count):
+    """Remove Go's variadic flag from the 15-bit result count."""
+    return out_count & 0x7FFF
+
+
+class EvalError(Exception):
+    """The carrier cannot be evaluated (CLI exit 2)."""
+
+
+class ReadError(Exception):
+    """An emulated provider read failed.
+
+    kind is one of: past_eof, invalid_index, unmapped, invalid_length.
+    Only past_eof reproduces Ghidra's ``Unable to read past EOF: A, B``.
+    """
+
+    def __init__(self, kind, index, length, detail=""):
+        super().__init__("%s: %s, %s%s" % (kind, index, length,
+                                           (" " + detail) if detail else ""))
+        self.kind = kind
+        self.index = index
+        self.length = length
+        self.detail = detail
+
+
+# ---------------------------------------------------------------------------
+# ELF
+# ---------------------------------------------------------------------------
+
+class Elf:
+    """Minimal ELF reader: PT_LOAD ranges and named sections."""
+
+    def __init__(self, data):
+        if len(data) < 64 or data[:4] != b"\x7fELF":
+            raise EvalError("not an ELF file")
+        self.data = data
+        self.elfclass = data[4]
+        self.endian = data[5]
+        if self.endian != 1:
+            raise EvalError("unsupported ELF endianness %d (only little-endian)"
+                            % self.endian)
+        if self.elfclass == 2:
+            self.ptr_size = 8
+            self._parse64()
+        elif self.elfclass == 1:
+            self.ptr_size = 4
+            self._parse32()
+        else:
+            raise EvalError("unsupported ELF class %d" % self.elfclass)
+        if not self.loads:
+            raise EvalError("ELF has no PT_LOAD segment")
+
+    def _parse64(self):
+        d = self.data
+        e_phoff = struct.unpack_from("<Q", d, 0x20)[0]
+        e_shoff = struct.unpack_from("<Q", d, 0x28)[0]
+        e_phentsize, e_phnum = struct.unpack_from("<HH", d, 0x36)
+        e_shentsize, e_shnum, e_shstrndx = struct.unpack_from("<HHH", d, 0x3A)
+        self.loads = []
+        for n in range(e_phnum):
+            off = e_phoff + n * e_phentsize
+            if off + 56 > len(d):
+                raise EvalError("truncated program header table")
+            p_type, p_flags, p_off, p_va, p_pa, p_filesz, p_memsz, p_align = \
+                struct.unpack_from("<IIQQQQQQ", d, off)
+            if p_type == 1 and p_memsz:
+                self.loads.append((p_va, p_off, p_filesz, p_memsz, p_flags))
+        self.sections = {}
+        if e_shoff and e_shnum and e_shstrndx < e_shnum:
+            base = e_shoff + e_shstrndx * e_shentsize
+            shstr_off = struct.unpack_from("<Q", d, base + 0x18)[0]
+            for n in range(e_shnum):
+                off = e_shoff + n * e_shentsize
+                nm, st, fl, addr, soff, size, link, info, align, ent = \
+                    struct.unpack_from("<IIQQQQIIQQ", d, off)
+                z = d.find(b"\0", shstr_off + nm)
+                name = d[shstr_off + nm:z].decode("utf-8", "replace")
+                self.sections[name] = (addr, soff, size, fl)
+
+    def _parse32(self):
+        d = self.data
+        e_phoff = struct.unpack_from("<I", d, 0x1C)[0]
+        e_shoff = struct.unpack_from("<I", d, 0x20)[0]
+        e_phentsize, e_phnum = struct.unpack_from("<HH", d, 0x2A)
+        e_shentsize, e_shnum, e_shstrndx = struct.unpack_from("<HHH", d, 0x2E)
+        self.loads = []
+        for n in range(e_phnum):
+            off = e_phoff + n * e_phentsize
+            if off + 32 > len(d):
+                raise EvalError("truncated program header table")
+            p_type, p_off, p_va, p_pa, p_filesz, p_memsz, p_flags, p_align = \
+                struct.unpack_from("<IIIIIIII", d, off)
+            if p_type == 1 and p_memsz:
+                self.loads.append((p_va, p_off, p_filesz, p_memsz, p_flags))
+        self.sections = {}
+        if e_shoff and e_shnum and e_shstrndx < e_shnum:
+            base = e_shoff + e_shstrndx * e_shentsize
+            shstr_off = struct.unpack_from("<I", d, base + 0x10)[0]
+            for n in range(e_shnum):
+                off = e_shoff + n * e_shentsize
+                nm, st, fl, addr, soff, size, link, info, align, ent = \
+                    struct.unpack_from("<IIIIIIIIII", d, off)
+                z = d.find(b"\0", shstr_off + nm)
+                name = d[shstr_off + nm:z].decode("utf-8", "replace")
+                self.sections[name] = (addr, soff, size, fl)
+
+    def file_offset(self, vaddr):
+        for va, off, filesz, memsz, _flags in self.loads:
+            if va <= vaddr < va + filesz:
+                return off + (vaddr - va)
+        return None
+
+    def mapped(self, vaddr):
+        return any(va <= vaddr < va + memsz for va, _o, _f, memsz, _fl in self.loads)
+
+    def max_index(self):
+        return max(va + memsz for va, _o, _f, memsz, _fl in self.loads) - 1
+
+
+# ---------------------------------------------------------------------------
+# Build info and snapshot selection
+# ---------------------------------------------------------------------------
+
+def _leb_at(buf, pos):
+    value = 0
+    shift = 0
+    n = 0
+    while True:
+        if pos + n >= len(buf) or n >= MAX_LEB_BYTES:
+            return None
+        c = buf[pos + n]
+        value |= (c & 0x7F) << shift
+        shift += 7
+        n += 1
+        if not (c & 0x80):
+            return value, n
+        if n >= MAX_LEB_BYTES:
+            return None
+
+
+def parse_buildinfo(elf):
+    """Return (version, modinfo, source) or (None, None, None)."""
+    d = elf.data
+    magic = d.find(BUILDINFO_MAGIC)
+    if magic < 0:
+        return None, None, None
+    if magic + 32 > len(d):
+        return None, None, None
+    ptrsz = d[magic + 14]
+    flags = d[magic + 15]
+    if flags & 2:
+        # inline strings: two varint-length-prefixed strings at +32
+        blob = d[magic + 32:]
+        got = _leb_at(blob, 0)
+        if got is None:
+            return None, None, None
+        vlen, vn = got
+        version = blob[vn:vn + vlen].decode("utf-8", "replace")
+        pos = vn + vlen
+        got = _leb_at(blob, pos)
+        modinfo = ""
+        if got is not None:
+            mlen, mn = got
+            modinfo = blob[pos + mn:pos + mn + mlen].decode("utf-8", "replace")
+        return version, modinfo, "inline"
+    endian = "<" if (flags & 1) else ">"
+    if ptrsz == 8:
+        vp, vl = struct.unpack_from(endian + "QQ", d, magic + 16)
+        mp, ml = struct.unpack_from(endian + "QQ", d, magic + 32)
+    elif ptrsz == 4:
+        vp, vl, mp, ml = struct.unpack_from(endian + "IIII", d, magic + 16)
+    else:
+        return None, None, None
+    vo = elf.file_offset(vp)
+    mo = elf.file_offset(mp)
+    if vo is None or mo is None:
+        return None, None, None
+    version = d[vo:vo + vl].decode("utf-8", "replace")
+    modinfo = d[mo:mo + ml].decode("utf-8", "replace")
+    return version, modinfo, "pointers"
+
+
+def _split_version(text):
+    """Split ``go1.24.6 X:noswissmap`` the way GoVer does (strip extras)."""
+    import re
+    m = re.search(r"(\d+)\.(\d+)\.(\d+)", text or "")
+    if not m:
+        return None
+    return int(m.group(1)), int(m.group(2)), int(m.group(3))
+
+
+def select_snapshot(root, version, goos, goarch):
+    """Ghidra's GoApiSnapshot selection law, without applying diffs."""
+    parts = _split_version(version)
+    if parts is None:
+        raise EvalError("cannot parse Go version %r" % (version,))
+    major, minor, patch = parts
+    root = Path(root)
+    base_name = "go%d.%d.%d.json" % (major, minor, 0)
+    base = root / base_name
+    if not base.is_file():
+        return {
+            "requested": "%d.%d.%d" % (major, minor, patch),
+            "base": None,
+            "base_name": base_name,
+            "status": "missing_base",
+            "diff": None,
+            "diff_patch": 0,
+            "path": None,
+        }
+    diff = None
+    diff_patch = None
+    if patch > 0:
+        diff_dir = root / "patchverdiffs"
+        if diff_dir.is_dir():
+            wanted_major, wanted_minor = major, minor
+            candidates = []
+            for entry in diff_dir.iterdir():
+                import re
+                m = re.fullmatch(r"go(\d+)\.(\d+)\.(\d+)\.json\.diff", entry.name)
+                if not m:
+                    continue
+                if int(m.group(1)) != wanted_major or int(m.group(2)) != wanted_minor:
+                    continue
+                p = int(m.group(3))
+                if 0 < p <= patch and entry.is_file():
+                    candidates.append((p, entry))
+            if candidates:
+                diff_patch, diff = max(candidates, key=lambda item: item[0])
+    status = "base_only"
+    if diff is not None:
+        status = "exact_diff" if diff_patch == patch else "fallback_diff"
+    return {
+        "requested": "%d.%d.%d" % (major, minor, patch),
+        "base": str(base),
+        "base_name": base_name,
+        "status": status,
+        "diff": str(diff) if diff is not None else None,
+        "diff_patch": diff_patch or 0,
+        "path": str(base),
+    }
+
+
+def load_snapshot_types(path, goos, goarch):
+    """Load the merged type map with Ghidra's bucket search order."""
+    try:
+        doc = json.loads(Path(path).read_text())
+    except (OSError, ValueError) as exc:
+        raise EvalError("cannot read snapshot %s: %s" % (path, exc))
+    if "all" not in doc:
+        raise EvalError("snapshot %s has no 'all' bucket" % (path,))
+    order = ["%s-%s" % (goos, goarch), goos, "unix" if goos in {
+        "aix", "android", "darwin", "dragonfly", "freebsd", "hurd", "illumos",
+        "ios", "linux", "netbsd", "openbsd", "solaris"} else "", goarch, "all"]
+    merged = {}
+    # Ghidra keeps the per-arch maps in search order and returns the first
+    # bucket containing the name (GoApiSnapshot.getTypeDef).  Later buckets
+    # therefore cannot override earlier ones.
+    for bucket in order:
+        if not bucket:
+            continue
+        arch = doc.get(bucket)
+        if not isinstance(arch, dict):
+            continue
+        types = arch.get("Types")
+        if not isinstance(types, dict):
+            continue
+        for name, definition in types.items():
+            if name not in merged:
+                merged[name] = definition
+    if not merged:
+        raise EvalError("snapshot %s has no type definitions" % (path,))
+    return merged
+
+
+# ---------------------------------------------------------------------------
+# Go ABI sizing, mirroring GoTypeManager.getDataTypeLength
+# ---------------------------------------------------------------------------
+
+_PRIMITIVES = {
+    "bool": (1, 1), "int8": (1, 1), "uint8": (1, 1), "byte": (1, 1),
+    "int16": (2, 2), "uint16": (2, 2),
+    "int32": (4, 4), "uint32": (4, 4), "rune": (4, 4),
+    "int64": (8, 8), "uint64": (8, 8), "float32": (4, 4),
+    "float64": (8, 8), "complex64": (8, 8), "complex128": (16, 16),
+    "string": None,  # ptr-size dependent
+    "uintptr": None, "int": None, "uint": None,
+    "func": None, "unsafe.Pointer": None,
+}
+
+
+class Layout:
+    """Compute Go/Ghidra structure sizes and offsets from the snapshot JSON."""
+
+    def __init__(self, types, ptr_size):
+        self.types = types
+        self.ptr = ptr_size
+        self._size = {}
+        self._offsets = {}
+
+    def _resolve_alias(self, name):
+        seen = set()
+        while name in self.types and self.types[name].get("Kind") == "alias":
+            if name in seen:
+                raise EvalError("alias cycle at %s" % name)
+            seen.add(name)
+            name = self.types[name].get("Target")
+        return name
+
+    def size(self, name):
+        if name in self._size:
+            return self._size[name]
+        self._size[name] = 0  # recursion guard
+        real = self._resolve_alias(name)
+        if real != name:
+            value = self.size(real)
+            self._size[name] = value
+            return value
+        if name in ("string", "uintptr", "int", "uint", "func", "unsafe.Pointer",
+                    "error"):
+            self._size[name] = self.ptr
+            return self.ptr
+        prim = _PRIMITIVES.get(name)
+        if prim is not None:
+            self._size[name] = prim[0]
+            return prim[0]
+        if name.startswith("*"):
+            value = self.ptr
+            self._size[name] = value
+            return value
+        if name.startswith("[]"):
+            value = 3 * self.ptr
+            self._size[name] = value
+            return value
+        if name.startswith("func("):
+            value = self.ptr
+            self._size[name] = value
+            return value
+        if name.startswith("map[") or name.startswith("chan "):
+            value = self.ptr
+            self._size[name] = value
+            return value
+        if name.startswith("["):
+            # [N]T -- N is decimal
+            close = name.index("]")
+            count = int(name[1:close])
+            elem = name[close + 1:]
+            size = (count * self.size(elem) + self.align(elem) - 1) // self.align(elem) * self.align(elem)
+            self._size[name] = size
+            return size
+        definition = self.types.get(name)
+        if definition is None:
+            raise EvalError("unknown snapshot type %r" % (name,))
+        kind = definition.get("Kind")
+        if kind != "struct":
+            raise EvalError("unsupported snapshot kind %r for %s" % (kind, name))
+        offsets, size, align = self.struct_layout(name)
+        self._size[name] = size
+        return size
+
+    def align(self, name):
+        real = self._resolve_alias(name)
+        if real.startswith("*") or real.startswith("[]") or real.startswith("func("):
+            return self.ptr
+        if real.startswith("map[") or real.startswith("chan "):
+            return self.ptr
+        if real.startswith("["):
+            close = real.index("]")
+            return self.align(real[close + 1:])
+        if real in ("string", "uintptr", "int", "uint", "unsafe.Pointer", "func"):
+            return self.ptr
+        prim = _PRIMITIVES.get(real)
+        if prim is not None:
+            return prim[1]
+        definition = self.types.get(real)
+        if definition is None:
+            raise EvalError("unknown snapshot type %r" % (real,))
+        if definition.get("Kind") == "struct":
+            return self.struct_layout(real)[2]
+        raise EvalError("unsupported snapshot kind for alignment of %s" % real)
+
+    def struct_layout(self, name):
+        if name in self._offsets:
+            return self._offsets[name]
+        self._offsets[name] = ({}, 0, 1)  # recursion guard
+        definition = self.types.get(name)
+        if definition is None or definition.get("Kind") != "struct":
+            raise EvalError("not a struct: %s" % (name,))
+        offsets = {}
+        cursor = 0
+        max_align = 1
+        for field in definition.get("Fields") or []:
+            fname = field.get("Name")
+            ftype = field.get("DataType")
+            falign = self.align(ftype)
+            if falign > max_align:
+                max_align = falign
+            cursor = (cursor + falign - 1) // falign * falign
+            offsets[fname] = cursor
+            cursor += self.size(ftype)
+        size = (cursor + max_align - 1) // max_align * max_align
+        self._offsets[name] = (offsets, size, max_align)
+        return self._offsets[name]
+
+    def offsets(self, name):
+        self.size(name)  # ensure layout computed
+        return self.struct_layout(self._resolve_alias(name))[0]
+
+
+KIND_NAMES = {
+    1: "bool", 2: "int", 3: "int8", 4: "int16", 5: "int32", 6: "int64",
+    7: "uint", 8: "uint8", 9: "uint16", 10: "uint32", 11: "uint64",
+    12: "uintptr", 13: "float32", 14: "float64", 15: "complex64",
+    16: "complex128", 17: "array", 18: "chan", 19: "func", 20: "interface",
+    21: "map", 22: "pointer", 23: "slice", 24: "string", 25: "struct",
+    26: "unsafe.Pointer",
+}
+
+CLASS_FOR_KIND = {
+    17: "internal/abi.ArrayType",
+    18: "internal/abi.ChanType",
+    19: "internal/abi.FuncType",
+    20: "internal/abi.InterfaceType",
+    21: "internal/abi.OldMapType",  # replaced per hypothesis for map kinds
+    22: "internal/abi.PtrType",
+    23: "internal/abi.SliceType",
+    25: "internal/abi.StructType",
+}
+
+
+# ---------------------------------------------------------------------------
+# Module discovery
+# ---------------------------------------------------------------------------
+
+def _read_section_u32(elf, section):
+    addr, off, size, _fl = section
+    return elf.data[off:off + size]
+
+
+def score_type_base(elf, typelink_va, nent, types_va, etypes_va):
+    """Count typelink entries that parse as a plausible rtype with a name."""
+    ent_off = elf.file_offset(typelink_va)
+    if ent_off is None:
+        return 0, 0
+    ok = 0
+    bad = 0
+    span = etypes_va - types_va
+    for k in range(nent):
+        pos = ent_off + 4 * k
+        if pos + 4 > len(elf.data):
+            bad += 1
+            continue
+        off = struct.unpack_from("<i", elf.data, pos)[0]
+        target = types_va + off
+        if not (types_va <= target < etypes_va):
+            bad += 1
+            continue
+        header = elf.data[elf.file_offset(target):elf.file_offset(target) + 0x30] \
+            if elf.file_offset(target) is not None else None
+        if header is None or len(header) < 0x30:
+            bad += 1
+            continue
+        kind = header[0x17] & 0x1F
+        if kind not in KIND_NAMES:
+            bad += 1
+            continue
+        str_off = struct.unpack_from("<i", header, 0x28)[0]
+        if not (0 < str_off < span):
+            bad += 1
+            continue
+        name_addr = types_va + str_off
+        fo = elf.file_offset(name_addr)
+        if fo is None:
+            bad += 1
+            continue
+        flags = elf.data[fo]
+        if flags & 0xF0:
+            bad += 1
+            continue
+        got = _leb_at(elf.data, fo + 1)
+        if got is None or not (0 < got[0] < 4096):
+            bad += 1
+            continue
+        name = elf.data[fo + 1 + got[1]:fo + 1 + got[1] + got[0]]
+        try:
+            name.decode("utf-8")
+        except UnicodeDecodeError:
+            bad += 1
+            continue
+        ok += 1
+    return ok, bad
+
+
+def discover_modules(elf):
+    """Find (typelink_va, nent, types_va, etypes_va) from moduledata bytes."""
+    section = elf.sections.get(".typelink")
+    if section is None:
+        return []
+    typelink_va, _off, section_size, _fl = section
+    nent = section_size // 4
+    if nent == 0:
+        return []
+    needle = struct.pack("<Q", typelink_va)
+    data = elf.data
+    modules = []
+    pos = 0
+    while True:
+        hit = data.find(needle, pos)
+        if hit < 0:
+            break
+        pos = hit + 1
+        va = None
+        writable = False
+        for p_va, p_off, filesz, _memsz, flags in elf.loads:
+            if p_off <= hit < p_off + filesz:
+                va = p_va + (hit - p_off)
+                writable = bool(flags & 2)
+                break
+        if va is None or not writable:
+            continue
+        if hit + 24 > len(data):
+            continue
+        length, capacity = struct.unpack_from("<QQ", data, hit + 8)
+        if length != nent or capacity < length:
+            continue
+        best = None
+        # moduledata places types/etypes before the typelinks slice; the exact
+        # distance depends on the Go version (1.24 vs 1.25), so score every
+        # adjacent qword pair in a bounded window.
+        for back in range(8, 0x400, 8):
+            if hit - back < 0:
+                break
+            types_va = struct.unpack_from("<Q", data, hit - back)[0]
+            etypes_va = struct.unpack_from("<Q", data, hit - back + 8)[0]
+            if not (types_va < etypes_va):
+                continue
+            if not elf.mapped(types_va) or not elf.mapped(etypes_va - 1):
+                continue
+            span = etypes_va - types_va
+            if not (0x100 < span < 0x4000000):
+                continue
+            ok, bad = score_type_base(elf, typelink_va, nent, types_va, etypes_va)
+            if ok == 0:
+                continue
+            candidate = (ok, -bad, span, types_va, etypes_va)
+            if best is None or candidate > best:
+                best = candidate
+        if best is not None:
+            modules.append({
+                "typelink_va": typelink_va,
+                "entries": nent,
+                "types": best[3],
+                "etypes": best[4],
+                "score": best[0],
+                "rejected": -best[1],
+            })
+        break  # first writable typelinks slice is the module
+    return modules
+
+
+# ---------------------------------------------------------------------------
+# Emulated reader / machine
+# ---------------------------------------------------------------------------
+
+class Machine:
+    """One hypothesis over one module."""
+
+    def __init__(self, elf, module, layout, hypothesis, true_kind):
+        self.elf = elf
+        self.module = module
+        self.layout = layout
+        self.hypothesis = hypothesis
+        self.true_kind = true_kind
+        self.max_index = elf.max_index()
+        self.types = module["types"]
+        self.etypes = module["etypes"]
+        self.header_offsets = layout.offsets("internal/abi.Type")
+        self.uncommon_offsets = layout.offsets("internal/abi.UncommonType")
+        self.method_size = layout.size("internal/abi.Method")
+        self.ptr = layout.ptr
+        self.steps = 0
+        self.truncated = False
+        self.trail = []
+
+    # -- provider reads ----------------------------------------------------
+
+    def _mapped_bytes(self, vaddr, length):
+        out = bytearray()
+        cursor = vaddr
+        remaining = length
+        while remaining:
+            found = None
+            for p_va, p_off, filesz, memsz, _flags in self.elf.loads:
+                if p_va <= cursor < p_va + memsz:
+                    found = (p_va, p_off, filesz, memsz)
+                    break
+            if found is None:
+                raise ReadError("unmapped", vaddr, length,
+                                "unmapped at 0x%x" % cursor)
+            p_va, p_off, filesz, memsz = found
+            take = min(remaining, p_va + memsz - cursor)
+            within = min(take, max(0, p_va + filesz - cursor))
+            if within:
+                start = p_off + (cursor - p_va)
+                out += self.elf.data[start:start + within]
+            if within < take:
+                raise ReadError("unmapped", vaddr, length,
+                                "file-backed bytes end at 0x%x" % (p_va + filesz))
+            cursor += take
+            remaining -= take
+        return bytes(out)
+
+    def read(self, vaddr, length):
+        if length < 0 or length > 0x7FFFFFFF:
+            raise ReadError("invalid_length", vaddr, length)
+        if vaddr < 0:
+            raise ReadError("invalid_index", vaddr, length)
+        if vaddr > self.max_index:
+            raise ReadError("invalid_index", vaddr, length)
+        if vaddr == 0 and length == 0:
+            return b""
+        if length != 0 and length - 1 > self.max_index - vaddr:
+            raise ReadError("past_eof", vaddr, length)
+        if length == 0:
+            return b""
+        return self._mapped_bytes(vaddr, length)
+
+    def u8(self, vaddr):
+        return self.read(vaddr, 1)[0]
+
+    def u16(self, vaddr):
+        return struct.unpack("<H", self.read(vaddr, 2))[0]
+
+    def u32(self, vaddr):
+        return struct.unpack("<I", self.read(vaddr, 4))[0]
+
+    def i32(self, vaddr):
+        return struct.unpack("<i", self.read(vaddr, 4))[0]
+
+    def uptr(self, vaddr):
+        return int.from_bytes(self.read(vaddr, self.ptr),
+                              "little" if self.elf.endian == 1 else "big")
+
+    def leb(self, vaddr):
+        """Read a LEB128 length the way BinaryReader.readNextUnsignedVarIntExact does."""
+        value = 0
+        shift = 0
+        pos = vaddr
+        for n in range(MAX_LEB_BYTES):
+            c = self.u8(pos + n)
+            value |= (c & 0x7F) << shift
+            shift += 7
+            if not (c & 0x80):
+                return value, n + 1
+        raise ReadError("invalid_length", vaddr, 0, "LEB128 longer than 10 bytes")
+
+    def varlen_string(self, vaddr):
+        value, n = self.leb(vaddr)
+        if value > 0x7FFFFFFF:
+            raise ReadError("invalid_length", vaddr, value,
+                            "LEB128 exceeds Integer.MAX_VALUE")
+        data_addr = vaddr + n
+        return self.read(data_addr, value), n + value
+
+    # -- layout helpers ----------------------------------------------------
+
+    def bound_class(self, kind):
+        if kind == 21:
+            if self.hypothesis == "h1":
+                return "internal/abi.OldMapType"
+            return ("internal/abi.SwissMapType" if self.true_kind == "swiss"
+                    else "internal/abi.OldMapType")
+        return CLASS_FOR_KIND.get(kind, "internal/abi.Type")
+
+    def bound_size(self, kind):
+        return self.layout.size(self.bound_class(kind))
+
+    def uncommon_addr(self, kind, type_addr):
+        return type_addr + self.bound_size(kind)
+
+    def header(self, type_addr):
+        return self.read(type_addr, self.layout.size("internal/abi.Type"))
+
+    def type_valid(self, addr, header=None):
+        """Mirror GoBaseType/GoMapType/... isValid (StructureMappingInfo:170-175)."""
+        try:
+            if header is None:
+                header = self.header(addr)
+            size = int.from_bytes(header[0:self.ptr], "little")
+            ptrdata = int.from_bytes(header[self.ptr:2 * self.ptr], "little")
+            tflag = header[self.header_offsets["TFlag"]]
+            kind = header[self.header_offsets["Kind_"]] & 0x1F
+        except (ReadError, IndexError):
+            return False
+        if kind not in KIND_NAMES or ptrdata > size or tflag > 0x0F:
+            return False
+        str_off = struct.unpack_from("<i", header, self.header_offsets["Str"])[0]
+        if not (0 <= str_off < self.etypes - self.types):
+            return False
+        if kind in (18, 19, 21, 22) and size != self.ptr:
+            return False
+        if kind == 20 and size != 2 * self.ptr:
+            return False
+        if kind == 23 and size != 3 * self.ptr:
+            return False
+        if kind == 25:
+            try:
+                offsets = self.layout.offsets("internal/abi.StructType")
+                _data, length, capacity = struct.unpack(
+                    "<QQQ", self.read(addr + offsets["Fields"], 24))
+            except (ReadError, KeyError):
+                return False
+            if length != capacity:
+                return False
+        expected = {
+            1: 1, 2: self.ptr, 3: 1, 4: 2, 5: 4, 6: 8, 7: self.ptr, 8: 1,
+            9: 2, 10: 4, 11: 8, 12: self.ptr, 13: 4, 14: 8, 24: 2 * self.ptr,
+            26: self.ptr,
+        }
+        if kind in expected and size != expected[kind]:
+            return False
+        return True
+
+    # -- name resolution ---------------------------------------------------
+
+    def module_contains(self, vaddr):
+        return self.types <= vaddr < self.etypes
+
+    def read_go_name(self, vaddr, depth=0, seen=None):
+        """Eager GoName.readStructure; pkgPath is read but not resolved."""
+        if seen is None:
+            seen = set()
+        if depth > MAX_NAME_DEPTH:
+            raise ReadError("invalid_index", vaddr, 0, "name chain deeper than %d"
+                            % MAX_NAME_DEPTH)
+        if vaddr in seen:
+            raise ReadError("invalid_index", vaddr, 0, "name chain cycle")
+        seen = seen | {vaddr}
+        flags = self.u8(vaddr)
+        pos = vaddr + 1
+        name, used = self.varlen_string(pos)
+        pos += used
+        tag = b""
+        if flags & 0x02:
+            tag, used = self.varlen_string(pos)
+            pos += used
+        pkg_path = 0
+        if flags & 0x04:
+            pkg_path = self.u32(pos)
+            pos += 4
+        return {
+            "addr": vaddr,
+            "flags": flags,
+            "name": name.decode("utf-8", "replace"),
+            "pkg_path": pkg_path,
+            "size": pos - vaddr,
+            "seen": seen,
+        }
+
+    def resolve_name_off(self, ptr_in_module, off, depth=0, seen=None):
+        if off == 0:
+            return None
+        if not self.module_contains(ptr_in_module):
+            raise ReadError("invalid_index", ptr_in_module, 0,
+                            "no containing module for 0x%x" % ptr_in_module)
+        name_addr = self.types + off
+        record = self.read_go_name(name_addr, depth, seen)
+        self.markup_name_pkg(record, depth + 1)
+        return record
+
+    def get_go_name_abs(self, vaddr, depth=0, seen=None):
+        if vaddr == 0:
+            return None
+        record = self.read_go_name(vaddr, depth, seen)
+        self.markup_name_pkg(record, depth + 1)
+        return record
+
+    def markup_name_pkg(self, record, depth):
+        if not (record["flags"] & 0x04):
+            return
+        if record["pkg_path"] == 0:
+            return
+        self.resolve_name_off(record["addr"], record["pkg_path"], depth,
+                              record["seen"])
+
+    # -- markup ------------------------------------------------------------
+
+    def markup_type(self, type_addr, marked, path=""):
+        if type_addr in marked:
+            return
+        marked.add(type_addr)
+        self.trail.append(path or ("type@0x%x" % type_addr))
+        self.steps += 1
+        if self.steps > MAX_MARKUP_STEPS:
+            self.truncated = True
+            return
+        header = self.header(type_addr)
+        if not self.type_valid(type_addr, header):
+            raise ReadError("invalid_data", type_addr, 0, "invalid Go type")
+        tflag = header[self.header_offsets["TFlag"]]
+        kind = header[self.header_offsets["Kind_"]] & 0x1F
+        str_off = struct.unpack_from("<i", header, self.header_offsets["Str"])[0]
+        ptr_to_this = struct.unpack_from("<i", header,
+                                        self.header_offsets["PtrToThis"])[0]
+        label = "%s@0x%x" % (KIND_NAMES.get(kind, "invalid"), type_addr)
+        self.resolve_name_off(type_addr, str_off)
+        if ptr_to_this != 0:
+            self.markup_type(self.types + ptr_to_this, marked, "ptrToThis")
+        if kind == 25:
+            self._markup_struct(type_addr, header, marked)
+        elif kind == 20:
+            self._markup_interface(type_addr, marked)
+        elif kind == 21:
+            self._markup_map(type_addr, marked)
+        elif kind == 19:
+            self._markup_func(type_addr, marked, tflag)
+        elif kind in (17, 18, 22, 23):
+            self._markup_elem(type_addr, kind, marked)
+        self._markup_uncommon(type_addr, kind, tflag, marked)
+        self.trail.pop()
+
+    def _markup_struct(self, type_addr, header, marked):
+        offsets = self.layout.offsets("internal/abi.StructType")
+        pkg_ptr = self.uptr(type_addr + offsets["PkgPath"])
+        if pkg_ptr:
+            self.get_go_name_abs(pkg_ptr)
+        slice_addr = type_addr + offsets["Fields"]
+        data, length, _cap = struct.unpack("<QQQ", self.read(slice_addr, 24))
+        field_size = self.layout.size("internal/abi.StructField")
+        foffs = self.layout.offsets("internal/abi.StructField")
+        if length > 1 << 20:
+            return
+        for i in range(length):
+            base = data + i * field_size
+            name_ptr = self.uptr(base + foffs["Name"])
+            if name_ptr:
+                self.get_go_name_abs(name_ptr)
+            typ_ptr = self.uptr(base + foffs["Typ"])
+            if typ_ptr:
+                self.markup_type(typ_ptr, marked, "struct.field[%d].typ" % i)
+            self.steps += 1
+            if self.steps > MAX_MARKUP_STEPS:
+                self.truncated = True
+                return
+
+    def _markup_interface(self, type_addr, marked):
+        offsets = self.layout.offsets("internal/abi.InterfaceType")
+        pkg_ptr = self.uptr(type_addr + offsets["PkgPath"])
+        if pkg_ptr:
+            self.get_go_name_abs(pkg_ptr)
+        slice_addr = type_addr + offsets["Methods"]
+        data, length, _cap = struct.unpack("<QQQ", self.read(slice_addr, 24))
+        imethod_size = self.layout.size("internal/abi.Imethod")
+        ioffs = self.layout.offsets("internal/abi.Imethod")
+        if length > 1 << 20:
+            return
+        for i in range(length):
+            base = data + i * imethod_size
+            name_off = self.u32(base + ioffs["Name"])
+            self.resolve_name_off(base, name_off)
+            typ_off = self.u32(base + ioffs["Typ"])
+            if typ_off:
+                self.markup_type(self.types + typ_off, marked,
+                                 "interface.imethod[%d].typ" % i)
+            self.steps += 1
+            if self.steps > MAX_MARKUP_STEPS:
+                self.truncated = True
+                return
+
+    def _markup_map(self, type_addr, marked):
+        cls = self.bound_class(21)
+        offsets = self.layout.offsets(cls)
+        for field in ("Key", "Elem", "Bucket"):
+            if field not in offsets:
+                continue
+            ptr = self.uptr(type_addr + offsets[field])
+            if ptr:
+                self.markup_type(ptr, marked, "map.%s" % field)
+
+    def _markup_func(self, type_addr, marked, tflag):
+        cls = "internal/abi.FuncType"
+        offsets = self.layout.offsets(cls)
+        size = self.layout.size(cls)
+        in_count = self.u16(type_addr + offsets["InCount"])
+        out_count = _mask_func_out_count(
+            self.u16(type_addr + offsets["OutCount"]))
+        count = in_count + out_count
+        if count > 100000:
+            return
+        base = type_addr + size
+        if tflag & 0x01:
+            base += self.layout.size("internal/abi.UncommonType")
+        for i in range(count):
+            ptr = self.uptr(base + i * self.ptr)
+            if ptr:
+                self.markup_type(ptr, marked, "func.param[%d]" % i)
+            self.steps += 1
+            if self.steps > MAX_MARKUP_STEPS:
+                self.truncated = True
+                return
+
+    def _markup_elem(self, type_addr, kind, marked):
+        cls = self.bound_class(kind)
+        offsets = self.layout.offsets(cls)
+        if "Elem" in offsets:
+            ptr = self.uptr(type_addr + offsets["Elem"])
+            if ptr:
+                self.markup_type(ptr, marked, "elem")
+
+    def _markup_uncommon(self, type_addr, kind, tflag, marked):
+        if not (tflag & 0x01):
+            return
+        uaddr = self.uncommon_addr(kind, type_addr)
+        size = self.layout.size("internal/abi.UncommonType")
+        raw = self.read(uaddr, size)
+        uoffs = self.uncommon_offsets
+        pkg_off = struct.unpack_from("<i", raw, uoffs["PkgPath"])[0]
+        mcount = struct.unpack_from("<H", raw, uoffs["Mcount"])[0]
+        xcount = struct.unpack_from("<H", raw, uoffs["Xcount"])[0]
+        moff = struct.unpack_from("<I", raw, uoffs["Moff"])[0]
+        if pkg_off:
+            self.resolve_name_off(uaddr, pkg_off)
+        if mcount == 0:
+            return
+        methods_addr = uaddr + moff
+        total = mcount * self.method_size
+        # GoSlice.isValid: both ends must be contained in memory.
+        if not (self.elf.mapped(methods_addr)
+                and self.elf.mapped(methods_addr + total - 1)):
+            return
+        self.read(methods_addr, total)
+        moffs = self.layout.offsets("internal/abi.Method")
+        for i in range(mcount):
+            base = methods_addr + i * self.method_size
+            name_off = self.u32(base + moffs["Name"])
+            self.resolve_name_off(base, name_off)
+            mtyp = self.u32(base + moffs["Mtyp"])
+            if mtyp not in (0, 0xFFFFFFFF):
+                self.markup_type(self.types + mtyp, marked, "method.mtyp")
+            self.steps += 1
+            if self.steps > MAX_MARKUP_STEPS:
+                self.truncated = True
+                return
+
+
+# ---------------------------------------------------------------------------
+# Discovery + gap scan (mirrors GoTypeManager.init)
+# ---------------------------------------------------------------------------
+
+def _safe(call):
+    try:
+        return call()
+    except ReadError:
+        return None
+
+
+def _type_refs(machine, addr):
+    """Type references followed by the per-kind discoverGoTypes overrides."""
+    header = _safe(lambda: machine.header(addr))
+    if header is None:
+        return []
+    kind = header[machine.header_offsets["Kind_"]] & 0x1F
+    tflag = header[machine.header_offsets["TFlag"]]
+    refs = []
+    if kind == 25:
+        try:
+            offsets = machine.layout.offsets("internal/abi.StructType")
+            data, length, _cap = struct.unpack(
+                "<QQQ", machine.read(addr + offsets["Fields"], 24))
+            fsize = machine.layout.size("internal/abi.StructField")
+            foffs = machine.layout.offsets("internal/abi.StructField")
+            for i in range(min(length, 4096)):
+                refs.append(machine.uptr(data + i * fsize + foffs["Typ"]))
+        except ReadError:
+            pass
+    elif kind == 20:
+        try:
+            offsets = machine.layout.offsets("internal/abi.InterfaceType")
+            data, length, _cap = struct.unpack(
+                "<QQQ", machine.read(addr + offsets["Methods"], 24))
+            isize = machine.layout.size("internal/abi.Imethod")
+            ioffs = machine.layout.offsets("internal/abi.Imethod")
+            for i in range(min(length, 4096)):
+                typ_off = machine.u32(data + i * isize + ioffs["Typ"])
+                if typ_off:
+                    refs.append(machine.types + typ_off)
+        except ReadError:
+            pass
+    elif kind == 19:
+        try:
+            offsets = machine.layout.offsets("internal/abi.FuncType")
+            size = machine.layout.size("internal/abi.FuncType")
+            if tflag & 0x01:
+                size += machine.layout.size("internal/abi.UncommonType")
+            in_count = machine.u16(addr + offsets["InCount"])
+            out_count = _mask_func_out_count(
+                machine.u16(addr + offsets["OutCount"]))
+            count = in_count + out_count
+            for i in range(min(count, 4096)):
+                refs.append(machine.uptr(addr + size + i * machine.ptr))
+        except ReadError:
+            pass
+    elif kind in (17, 18, 22, 23):
+        try:
+            offsets = machine.layout.offsets(machine.bound_class(kind))
+            refs.append(machine.uptr(addr + offsets["Elem"]))
+        except (ReadError, KeyError):
+            pass
+    elif kind == 21:
+        try:
+            offsets = machine.layout.offsets(machine.bound_class(21))
+            for field in ("Key", "Elem", "Bucket"):
+                if field in offsets:
+                    refs.append(machine.uptr(addr + offsets[field]))
+        except (ReadError, KeyError):
+            pass
+    if tflag & 0x01:
+        try:
+            uaddr = machine.uncommon_addr(kind, addr)
+            size = machine.layout.size("internal/abi.UncommonType")
+            raw = machine.read(uaddr, size)
+            mcount = struct.unpack_from("<H", raw, machine.uncommon_offsets["Mcount"])[0]
+            moff = struct.unpack_from("<I", raw, machine.uncommon_offsets["Moff"])[0]
+            msize = machine.layout.size("internal/abi.Method")
+            moffs = machine.layout.offsets("internal/abi.Method")
+            for i in range(min(mcount, 4096)):
+                base = uaddr + moff + i * msize
+                mtyp = machine.u32(base + moffs["Mtyp"])
+                if mtyp and mtyp != 0xFFFFFFFF:
+                    refs.append(machine.types + mtyp)
+        except (ReadError, KeyError):
+            pass
+    return refs
+
+
+def discover_index(machine):
+    """Mirror GoTypeManager.init: typelinks + itabs + recursive discoverGoTypes."""
+    index = {}
+    order = []
+    module = machine.module
+    ent_off = machine.elf.file_offset(module["typelink_va"])
+    for k in range(module["entries"]):
+        off = struct.unpack_from("<i", machine.elf.data, ent_off + 4 * k)[0]
+        addr = module["types"] + off
+        header = _safe(lambda a=addr: machine.header(a))
+        if header is None or not machine.type_valid(addr, header):
+            continue
+        str_off = struct.unpack_from("<i", header, machine.header_offsets["Str"])[0]
+        record = _safe(lambda a=addr, s=str_off: machine.read_go_name(
+            module["types"] + s))
+        index[addr] = {
+            "kind": header[machine.header_offsets["Kind_"]] & 0x1F,
+            "name": record["name"] if record else None,
+        }
+        order.append(addr)
+    itab_section = machine.elf.sections.get(".itablink")
+    if itab_section is not None:
+        _addr, off, size, _fl = itab_section
+        itab_offsets = machine.layout.offsets("internal/abi.ITab")
+        for i in range(size // machine.ptr):
+            start = off + i * machine.ptr
+            ptr = int.from_bytes(machine.elf.data[start:start + machine.ptr], "little")
+            itab_off = machine.elf.file_offset(ptr)
+            if itab_off is None:
+                continue
+            for field in ("Inter", "Type"):
+                if field not in itab_offsets:
+                    continue
+                pos = itab_off + itab_offsets[field]
+                ref = int.from_bytes(machine.elf.data[pos:pos + machine.ptr], "little")
+                if not ref or ref in index or not machine.elf.mapped(ref):
+                    continue
+                header = _safe(lambda r=ref: machine.header(r))
+                if header is None or not machine.type_valid(ref, header):
+                    continue
+                index[ref] = {
+                    "kind": header[machine.header_offsets["Kind_"]] & 0x1F,
+                    "name": None,
+                }
+                order.append(ref)
+    visited = set()
+    for start_addr in list(order):
+        stack = [start_addr]
+        while stack:
+            addr = stack.pop()
+            if addr in visited:
+                continue
+            visited.add(addr)
+            if len(index) > 60000:
+                machine.truncated = True
+                break
+            refs = _type_refs(machine, addr)
+            for ref in refs:
+                if not ref or ref in index or not machine.elf.mapped(ref):
+                    continue
+                header = _safe(lambda r=ref: machine.header(r))
+                if header is None or not machine.type_valid(ref, header):
+                    continue
+                index[ref] = {
+                    "kind": header[machine.header_offsets["Kind_"]] & 0x1F,
+                    "name": None,
+                }
+                order.append(ref)
+            for ref in refs:
+                if ref in index and ref not in visited:
+                    stack.append(ref)
+    return index, order
+
+
+def end_of_type_info(machine, addr, kind, cached):
+    if addr in cached:
+        return cached[addr]
+    header = _safe(lambda: machine.header(addr))
+    if header is None:
+        cached[addr] = addr
+        return addr
+    tflag = header[machine.header_offsets["TFlag"]]
+    end = None
+    if kind == 25:
+        try:
+            offsets = machine.layout.offsets("internal/abi.StructType")
+            data, length, _cap = struct.unpack(
+                "<QQQ", machine.read(addr + offsets["Fields"], 24))
+            end = data + length * machine.layout.size("internal/abi.StructField")
+        except (ReadError, KeyError):
+            end = addr
+    elif tflag & 0x01:
+        try:
+            uaddr = machine.uncommon_addr(kind, addr)
+            size = machine.layout.size("internal/abi.UncommonType")
+            raw = machine.read(uaddr, size)
+            mcount = struct.unpack_from("<H", raw, machine.uncommon_offsets["Mcount"])[0]
+            moff = struct.unpack_from("<I", raw, machine.uncommon_offsets["Moff"])[0]
+            if mcount:
+                end = uaddr + moff + mcount * machine.layout.size("internal/abi.Method")
+            else:
+                end = uaddr + size
+        except (ReadError, KeyError):
+            end = addr
+    else:
+        try:
+            end = addr + machine.bound_size(kind)
+        except KeyError:
+            end = addr
+    end = (end + machine.ptr - 1) // machine.ptr * machine.ptr
+    if end <= addr:
+        # Ghidra's getAlignedEndOfTypeInfo falls back to the type offset when
+        # getEndOfTypeInfo throws; a value that does not advance would spin the
+        # scan, so clamp to one pointer past the type and record the clamp.
+        end = addr + machine.ptr
+    cached[addr] = end
+    return end
+
+
+def gap_scan(machine, index):
+    """Mirror GoTypeManager.findUnindexedClosureStructTypes; return added addrs."""
+    ranges = []
+    cached = {}
+    for addr, info in index.items():
+        end = end_of_type_info(machine, addr, info["kind"], cached)
+        ranges.append((addr, end))
+    ranges.sort()
+    added = []
+    struct_min = machine.layout.size("internal/abi.StructType")
+    guard = 0
+    for i in range(1, len(ranges) - 1):
+        gap_start = ranges[i][1]
+        next_start = ranges[i + 1][0]
+        while next_start - gap_start > struct_min:
+            guard += 1
+            if guard > 2000000:
+                machine.truncated = True
+                return added
+            candidate = _safe(lambda a=gap_start: machine.header(a))
+            if candidate is None or not machine.type_valid(gap_start, candidate):
+                gap_start += machine.ptr
+                continue
+            kind = candidate[machine.header_offsets["Kind_"]] & 0x1F
+            name = None
+            if kind == 25:
+                str_off = struct.unpack_from("<i", candidate,
+                                             machine.header_offsets["Str"])[0]
+                record = _safe(lambda a=gap_start, s=str_off: machine.read_go_name(
+                    machine.types + s))
+                if record is not None:
+                    name = record["name"]
+            if kind != 25 or name is None or not name.startswith("struct { "):
+                gap_start += machine.ptr
+                continue
+            if gap_start not in index:
+                index[gap_start] = {"kind": kind, "name": name, "unindexed": True}
+                added.append(gap_start)
+            gap_start = end_of_type_info(machine, gap_start, kind, cached)
+    return added
+
+
+# ---------------------------------------------------------------------------
+# Per-carrier analysis
+# ---------------------------------------------------------------------------
+
+def analyse(carrier_path, golang_root, go_version_override=None, debug=False):
+    path = Path(carrier_path)
+    try:
+        data = path.read_bytes()
+    except OSError as exc:
+        raise EvalError("cannot read carrier %s: %s" % (path, exc))
+    sha = hashlib.sha256(data).hexdigest()
+    elf = Elf(data)
+    version, modinfo, source = parse_buildinfo(elf)
+    effective = go_version_override or version
+    if effective is None:
+        raise EvalError("no Go build info in %s" % path)
+    parts = _split_version(effective)
+    if parts is None:
+        raise EvalError("cannot parse Go version %r" % (effective,))
+    goos, goarch = "linux", "amd64"
+    for line in (modinfo or "").replace("\x00", "\n").splitlines():
+        if line.startswith("build\tGOOS="):
+            goos = line.split("=", 1)[1]
+        elif line.startswith("build\tGOARCH="):
+            goarch = line.split("=", 1)[1]
+    settings = {}
+    for line in (modinfo or "").replace("\x00", "\n").splitlines():
+        if line.startswith("build\t") and "=" in line:
+            key, value = line[len("build\t"):].split("=", 1)
+            settings[key] = value
+        elif line.startswith("build\t"):
+            settings[line[len("build\t"):]] = ""
+    experiment = settings.get("GOEXPERIMENT", "")
+    noswiss = "noswissmap" in experiment or "X:noswissmap" in (version or "")
+    swiss_default = parts[0] > 1 or (parts[0] == 1 and parts[1] >= 24)
+    true_kind = "old" if noswiss or not swiss_default else "swiss"
+
+    snapshot = select_snapshot(golang_root, effective, goos, goarch)
+    if snapshot.get("base") is None:
+        raise EvalError("no snapshot base %s under %s"
+                        % (snapshot["base_name"], golang_root))
+    types = load_snapshot_types(snapshot["path"], goos, goarch)
+    layout = Layout(types, elf.ptr_size)
+
+    modules = discover_modules(elf)
+    if not modules:
+        raise EvalError("no Go moduledata/typelinks found")
+    module = modules[0]
+    if debug:
+        print("DEBUG module %s" % json.dumps(module), file=sys.stderr)
+
+    true_size = layout.size("internal/abi.SwissMapType") if true_kind == "swiss" \
+        else layout.size("internal/abi.OldMapType")
+    ghidra_size = layout.size("internal/abi.OldMapType")  # H1 binding
+    uncommon_size = layout.size("internal/abi.UncommonType")
+    method_size = layout.size("internal/abi.Method")
+
+    witness = {
+        "map_group_strings": data.count(b"map.group["),
+        "map_bucket_strings": data.count(b"map.bucket["),
+    }
+
+    results = {}
+    for hypothesis in ("h1", "h0"):
+        machine = Machine(elf, module, layout, hypothesis, true_kind)
+        index, order = discover_index(machine)
+        added = gap_scan(machine, index)
+        marked = set()
+        first_failure = None
+        for addr in sorted(index):
+            try:
+                machine.markup_type(addr, marked)
+            except ReadError as exc:
+                if exc.kind == "invalid_data":
+                    continue
+
+                first_failure = {
+                    "kind": exc.kind,
+                    "index": exc.index,
+                    "length": exc.length,
+                    "detail": exc.detail,
+                    "type": addr,
+                    "path": list(machine.trail),
+                    "eof": [exc.index, exc.length] if exc.kind == "past_eof" else None,
+                }
+                break
+        results[hypothesis] = {
+            "machine": machine,
+            "index": index,
+            "order": order,
+            "unindexed": added,
+            "first_failure": first_failure,
+            "marked": marked,
+        }
+
+    map_types = []
+    h1_eofs = []
+    h0_eofs = []
+    h1_fail = False
+    h0_fail = False
+    h1_invalid = []
+    h0_invalid = []
+    diagnostic_detail = []
+    machine_h1 = results["h1"]["machine"]
+    # Named map types are reached through pointer/slice element references and
+    # are not always typelink entries, so enumerate the discovery index.
+    for addr in sorted(results["h1"]["index"]):
+        header = _safe(lambda a=addr: machine_h1.header(a))
+        if header is None:
+            continue
+        kind = header[machine_h1.header_offsets["Kind_"]] & 0x1F
+        if kind != 21:
+            continue
+        tflag = header[machine_h1.header_offsets["TFlag"]]
+        str_off = struct.unpack_from("<i", header, machine_h1.header_offsets["Str"])[0]
+        name_record = _safe(lambda a=addr, s=str_off: machine_h1.read_go_name(
+            module["types"] + s))
+        name = name_record["name"] if name_record else None
+        slot = None
+        if true_kind == "swiss":
+            slot = _safe(lambda a=addr: machine_h1.uptr(a + 0x58))
+        entry = {
+            "name": name,
+            "addr": addr,
+            "slot_size": slot,
+            "uncommon": bool(tflag & 0x01),
+            "h1": {"outcome": "silent", "eof": None, "detail": None},
+            "h0": {"outcome": "silent", "eof": None, "detail": None},
+        }
+        for hypothesis in ("h1", "h0"):
+            machine = results[hypothesis]["machine"]
+            outcome = {"outcome": "silent", "eof": None, "detail": None}
+            if tflag & 0x01:
+                uaddr = machine.uncommon_addr(kind, addr)
+                try:
+                    raw = machine.read(uaddr, uncommon_size)
+                    pkg_off = struct.unpack_from(
+                        "<i", raw, machine.uncommon_offsets["PkgPath"])[0]
+                    mcount = struct.unpack_from(
+                        "<H", raw, machine.uncommon_offsets["Mcount"])[0]
+                    moff = struct.unpack_from(
+                        "<I", raw, machine.uncommon_offsets["Moff"])[0]
+                    outcome["ghidra_uncommon"] = {
+                        "addr": uaddr,
+                        "pkg_path": pkg_off,
+                        "mcount": mcount,
+                        "moff": moff,
+                    }
+                    if pkg_off:
+                        machine.resolve_name_off(uaddr, pkg_off)
+                except ReadError as exc:
+                    common = outcome.get("ghidra_uncommon")
+                    if exc.kind == "past_eof":
+                        outcome = {"outcome": "fail", "eof": [exc.index, exc.length],
+                                   "detail": exc.detail}
+                    elif exc.kind == "unmapped":
+                        outcome = {"outcome": "unknown", "eof": None,
+                                   "detail": exc.detail}
+                    elif exc.kind == "invalid_index":
+                        outcome = {"outcome": "invalid_index", "eof": None,
+                                   "index": exc.index,
+                                   "detail": "Invalid index: %d" % exc.index}
+                    else:
+                        outcome = {"outcome": "other", "eof": None,
+                                   "detail": exc.detail or exc.kind}
+                    if common is not None:
+                        outcome["ghidra_uncommon"] = common
+            entry[hypothesis] = outcome
+        map_types.append(entry)
+        h1 = entry["h1"]
+        h0 = entry["h0"]
+        if h1["outcome"] == "fail":
+            h1_fail = True
+            if h1["eof"]:
+                h1_eofs.append(h1["eof"])
+        elif h1["outcome"] == "invalid_index":
+            h1_fail = True
+            h1_invalid.append(h1["index"])
+        elif h1["outcome"] in ("unknown", "other"):
+            h1_fail = True
+        if h0["outcome"] == "fail":
+            h0_fail = True
+            if h0["eof"]:
+                h0_eofs.append(h0["eof"])
+        elif h0["outcome"] == "invalid_index":
+            h0_fail = True
+            h0_invalid.append(h0["index"])
+        elif h0["outcome"] in ("unknown", "other"):
+            h0_fail = True
+        if h1["outcome"] != h0["outcome"] or h1["eof"] != h0["eof"]:
+            diagnostic_detail.append({
+                "type": name,
+                "addr": addr,
+                "h1": h1["outcome"],
+                "h0": h0["outcome"],
+            })
+
+    # Merge the full markup walk with the map path.  The walk is the observed
+    # Ghidra path; the map path is the H1/H0 mechanism under test.
+    walk_h1 = results["h1"]["first_failure"]
+    walk_h0 = results["h0"]["first_failure"]
+    def first_failure_record(walk):
+        if walk is None:
+            return None
+        return {
+            "kind": "eof" if walk["kind"] == "past_eof" else walk["kind"],
+            "index": walk["index"],
+            "va": walk["type"],
+            "phase": "markup_walk",
+        }
+
+    first_failures = {
+        "h1": first_failure_record(walk_h1),
+        "h0": first_failure_record(walk_h0),
+    }
+    for label, walk, eofs in (("h1", walk_h1, h1_eofs), ("h0", walk_h0, h0_eofs)):
+        if walk and walk.get("eof"):
+            eofs.append(walk["eof"])
+    def _uniq(seq):
+        out = []
+        for item in seq:
+            if item not in out:
+                out.append(item)
+        return out
+    for walk, invalids in ((walk_h1, h1_invalid), (walk_h0, h0_invalid)):
+        if walk and walk.get("kind") == "invalid_index":
+            invalids.append(walk["index"])
+    h1_eofs = _uniq(h1_eofs)
+    h0_eofs = _uniq(h0_eofs)
+    h1_invalid = sorted(set(h1_invalid))
+    h0_invalid = sorted(set(h0_invalid))
+    # The contract's predicted_failure is the map-path prediction (the read this
+    # tool emulates).  The full markup walk is reported separately in "walk":
+    # it reaches non-map references whose alignment/validity Ghidra filters in
+    # ways this emulator approximates, so it is not folded into the boolean.
+    predicted_failure_h1 = h1_fail
+    predicted_failure_h0 = h0_fail
+
+    def failure_kind(eofs, invalids, walk, failed):
+        if eofs:
+            return "past_eof"
+        if invalids:
+            return "invalid_index"
+        if walk and walk.get("kind") == "unmapped":
+            return "unknown"
+        if failed:
+            return "unknown"
+        return "none"
+
+    predicted_kind_h1 = failure_kind(h1_eofs, h1_invalid, None,
+                                     predicted_failure_h1)
+    predicted_kind_h0 = failure_kind(h0_eofs, h0_invalid, None,
+                                     predicted_failure_h0)
+    uncommon_maps = [m for m in map_types if m["uncommon"]]
+    misread = [m for m in uncommon_maps if true_kind == "swiss"]
+
+    limits = []
+    if machine_h1.truncated or results["h0"]["machine"].truncated:
+        limits.append("markup step cap %d reached; later types were not walked"
+                      % MAX_MARKUP_STEPS)
+    limits.append("method/tfn/ifn targets are resolved as types only; their "
+                  "call targets are not executed")
+    limits.append("the snapshot diff is selected but not applied; no 1.24/1.25 "
+                  "diff edits an internal/abi map/uncommon definition")
+    limits.append("32-bit carriers use the same JSON layout law with ptr_size=4, "
+                  "but only 64-bit ELF little-endian carriers were exercised")
+
+    result = {
+        "carrier": {"path": str(path), "sha256": sha, "size": len(data)},
+        "go_version": effective,
+        "go_version_source": "override" if go_version_override else (source or "none"),
+        "go_version_buildinfo": version,
+        "goos": goos,
+        "goarch": goarch,
+        "true_kind_witness": witness,
+        "snapshot_file": snapshot["path"],
+        "snapshot_status": snapshot["status"],
+        "snapshot_diff": snapshot["diff"],
+        "layout": {
+            "ghidra_maptype": "internal/abi.OldMapType",
+            "ghidra_size": ghidra_size,
+            "true_kind": true_kind,
+            "true_size": true_size,
+            "uncommon_size": uncommon_size,
+            "method_size": method_size,
+        },
+        "map_types": len(map_types),
+        "uncommon_map_types": len(uncommon_maps),
+        "misread_map_types": len(misread),
+        "predicted_eof_reads": h1_eofs,
+        "predicted_failure": predicted_failure_h1,
+        "predicted_failure_kind": predicted_kind_h1,
+        "predicted_invalid_index_reads": h1_invalid,
+        "predicted_eof_reads_h1": h1_eofs,
+        "predicted_failure_h1": predicted_failure_h1,
+        "predicted_failure_kind_h1": predicted_kind_h1,
+        "predicted_invalid_index_reads_h1": h1_invalid,
+        "predicted_eof_reads_h0": h0_eofs,
+        "predicted_failure_h0": predicted_failure_h0,
+        "predicted_failure_kind_h0": predicted_kind_h0,
+        "predicted_invalid_index_reads_h0": h0_invalid,
+        "diagnostic": predicted_kind_h1 != predicted_kind_h0,
+        "diagnostic_detail": diagnostic_detail,
+        "first_failure": first_failures,
+        "walk": {
+            "h1": walk_h1,
+            "h0": walk_h0,
+            "indexed_types": {
+                "h1": len(results["h1"]["index"]),
+                "h0": len(results["h0"]["index"]),
+            },
+            "unindexed_types": {
+                "h1": len(results["h1"]["unindexed"]),
+                "h0": len(results["h0"]["unindexed"]),
+            },
+            "failed": {"h1": bool(walk_h1), "h0": bool(walk_h0)},
+        },
+        "module": {
+            "typelink_va": module["typelink_va"],
+            "entries": module["entries"],
+            "types": module["types"],
+            "etypes": module["etypes"],
+            "score": module["score"],
+            "rejected": module["rejected"],
+        },
+        "per_type": map_types,
+        "basis": [
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/types/GoMapType.java:32-34 (binding names; no Swiss name)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/types/GoMapType.java:39-62 (eight unconditional field reads)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/types/GoType.java:137-149 (uncommon read at structureEnd)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/types/GoUncommonType.java:41-104 (pkgpath/mcount/moff, method slice, end)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/GoName.java:79-100,123-126 (eager fields, recursive pkgPath)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/GoVarlenString.java:65-74 (LEB128 then bytes)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/GoRttiMapper.java:1053-1075 (resolveNameOff/getGoName, no range check)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/GoTypeManager.java:96-209 (discovery, gap scan)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/GoTypeManager.java:263-269 (allTypes sorted by address)",
+            "Base-src.zip:ghidra/app/util/bin/MemoryByteProvider.java:289-313 (past-EOF/invalid-index formatting)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/structmapping/StructureContext.java:171-204 (field location, structure end)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/structmapping/MarkupSession.java:105,324-356 (recursive markup)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/types/GoStructType.java:90-95 (field array markup)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/types/GoInterfaceType.java:70-78 (method array markup)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/types/GoFuncType.java:89-119 (param pointer array)",
+            "Base-src.zip:ghidra/app/util/bin/format/golang/rtti/GoApiSnapshot.java:102-168 (snapshot selection)",
+            "typeinfo/golang/go1.24.0.json,go1.25.0.json (runtime.maptype -> internal/abi.OldMapType; SwissMapType 112 B)",
+        ],
+        "limits": limits,
+    }
+    if debug:
+        print("DEBUG h1 first failure: %s" % json.dumps(walk_h1), file=sys.stderr)
+        print("DEBUG h0 first failure: %s" % json.dumps(walk_h0), file=sys.stderr)
+        print("DEBUG h1 index %d / unindexed %d"
+              % (len(results["h1"]["index"]), len(results["h1"]["unindexed"])),
+              file=sys.stderr)
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Selftest fixtures
+# ---------------------------------------------------------------------------
+
+def _leb(value):
+    out = bytearray()
+    while True:
+        c = value & 0x7F
+        value >>= 7
+        if value:
+            out.append(c | 0x80)
+        else:
+            out.append(c)
+            return bytes(out)
+
+
+def _build_elf64(payloads, sections, entry_va=0x400000, writable_data=None):
+    """Build a minimal ELF64-LE with one PT_LOAD and named PROGBITS sections.
+
+    payloads: list of (name, bytes, align, writable)
+    Returns bytes.
+    """
+    ident = b"\x7fELF" + bytes([2, 1, 1, 0]) + b"\0" * 8
+    body = bytearray()
+    layout = []
+    cursor = 0x1000  # leave room for the ELF header + program header
+    for name, blob, align, _flags in payloads:
+        cursor = (cursor + align - 1) // align * align
+        layout.append((name, cursor, len(blob)))
+        body += b"\0" * (cursor - 0x1000 - len(body))
+        body += blob
+        cursor += len(blob)
+    if writable_data is not None:
+        cursor = (cursor + 7) // 8 * 8
+        layout.append(("__wdata", cursor, len(writable_data)))
+        body += b"\0" * (cursor - 0x1000 - len(body))
+        body += writable_data
+        cursor += len(writable_data)
+    total = 0x1000 + len(body)
+    # section header table
+    shstr = b"\0"
+    shstr_names = {}
+    for name, _off, _size in layout:
+        shstr_names[name] = len(shstr)
+        shstr += name.encode() + b"\0"
+    shstr_name = ".shstrtab"
+    shstr_names[shstr_name] = len(shstr)
+    shstr += shstr_name.encode() + b"\0"
+    shoff = (total + 7) // 8 * 8
+    shnum = len(layout) + 1
+    shentsize = 64
+    shstr_off = shoff + shnum * shentsize
+    image = bytearray(total)
+    image[0:0x1000] = b"\0" * 0x1000
+    image[0x1000:0x1000 + len(body)] = body
+    image += b"\0" * (shoff - len(image))
+    image += b"\0" * (shnum * shentsize)
+    image += shstr
+
+    # ELF header
+    struct.pack_into("<16sHHIQQQIHHHHHH", image, 0, ident, 2, 0x3E, 1,
+                     entry_va, 64, shoff, 0, 64, 56, 1, shentsize, shnum,
+                     shnum - 1)
+    # program header
+    struct.pack_into("<IIQQQQQQ", image, 64, 1, 7, 0, entry_va, entry_va,
+                     len(image), len(image), 0x1000)
+    # section headers
+    for i, (name, off, size) in enumerate(layout):
+        struct.pack_into("<IIQQQQIIQQ", image, shoff + (i + 1) * shentsize,
+                         shstr_names[name], 1, 2,
+                         entry_va + off, off, size, 0, 0, 8, 0)
+    struct.pack_into("<IIQQQQIIQQ", image, shoff + shnum * shentsize - shentsize,
+                     shstr_names[shstr_name], 3, 0, 0, shstr_off, len(shstr),
+                     0, 0, 1, 0)
+    return bytes(image)
+
+
+def _name(flags, text, tag=None, pkg=None):
+    out = bytearray([flags])
+    out += _leb(len(text)) + text
+    if flags & 0x02:
+        tag = tag if tag is not None else b""
+        out += _leb(len(tag)) + tag
+    if flags & 0x04:
+        out += struct.pack("<I", pkg or 0)
+    return bytes(out)
+
+
+def _fixture(slot_size, true_kind, noswiss, huge_length=0x200000):
+    """Build a synthetic carrier with one map type and a N1->N2 name chain."""
+    types_va = 0x402000
+    blob = bytearray(0x3000)
+    # Benign map name at +0x300: "main"
+    blob[0x300:0x300 + len(_name(0x01, b"main"))] = _name(0x01, b"main")
+    # N1 at +0x28: flags HAS_TAG|HAS_PKGPATH (+ junk bits like aether's 0x6e),
+    # zero-length name, tag "a", pkgPath -> N2 at +0x180.
+    n1 = _name(0x6E, b"", tag=b"a", pkg=0x180)
+    blob[0x28:0x28 + len(n1)] = n1
+    # N2 at +0x180: HAS_TAG|HAS_PKGPATH plus junk bits, huge LEB128 name.
+    n2 = bytearray([0xF6]) + _leb(huge_length)
+    blob[0x180:0x180 + len(n2)] = n2
+    # Map type at +0x100.
+    t = 0x100
+    struct.pack_into("<Q", blob, t + 0x00, 8)       # Size_
+    struct.pack_into("<Q", blob, t + 0x08, 8)       # PtrBytes
+    struct.pack_into("<I", blob, t + 0x10, 0)       # Hash
+    blob[t + 0x14] = 0x01                           # TFlag uncommon
+    blob[t + 0x15] = 8
+    blob[t + 0x16] = 8
+    blob[t + 0x17] = 21                             # Kind map
+    struct.pack_into("<Q", blob, t + 0x18, 0)       # Equal
+    struct.pack_into("<Q", blob, t + 0x20, 0)       # GCData
+    struct.pack_into("<i", blob, t + 0x28, 0x300)   # Str -> "main"
+    struct.pack_into("<i", blob, t + 0x2C, 0)       # PtrToThis
+    # map fields Key/Elem/Bucket pointers point at the type itself.
+    struct.pack_into("<Q", blob, t + 0x30, types_va + t)
+    struct.pack_into("<Q", blob, t + 0x38, types_va + t)
+    struct.pack_into("<Q", blob, t + 0x40, types_va + t)
+    if true_kind == "swiss":
+        struct.pack_into("<Q", blob, t + 0x50, 0)   # GroupSize
+        struct.pack_into("<Q", blob, t + 0x58, slot_size)  # SlotSize
+        struct.pack_into("<Q", blob, t + 0x60, 0x18)       # ElemOff
+        struct.pack_into("<I", blob, t + 0x68, 0)          # Flags
+        # True uncommon at +0x70: benign pkgpath, no methods.
+        struct.pack_into("<i", blob, t + 0x70, 0x300)
+        struct.pack_into("<H", blob, t + 0x74, 0)
+        struct.pack_into("<H", blob, t + 0x76, 0)
+        struct.pack_into("<I", blob, t + 0x78, 0)
+    else:
+        # Old layout: uncommon at +0x58.
+        struct.pack_into("<i", blob, t + 0x58, 0x300)
+        struct.pack_into("<H", blob, t + 0x5C, 0)
+        struct.pack_into("<H", blob, t + 0x5E, 0)
+        struct.pack_into("<I", blob, t + 0x60, 0)
+    etypes_va = types_va + len(blob)
+    # typelinks: one int32 offset.
+    typelinks = struct.pack("<i", t)
+    # moduledata-like writable region: types, etypes, then typelinks slice.
+    # .typelink is the first payload, so its vaddr is entry_va + 0x1000.
+    tl_va = 0x401000
+    wdata = bytearray(0x400)
+    struct.pack_into("<Q", wdata, 0x00, types_va)
+    struct.pack_into("<Q", wdata, 0x08, etypes_va)
+    struct.pack_into("<Q", wdata, 0x18, tl_va)
+    struct.pack_into("<Q", wdata, 0x20, 1)
+    struct.pack_into("<Q", wdata, 0x28, 1)
+    version = b"go1.25.0" + (b" X:noswissmap" if noswiss else b"")
+    modinfo = b"path\tfixture\nmod\tfixture\t(devel)\nbuild\tGOARCH=amd64\nbuild\tGOOS=linux\n"
+    if noswiss:
+        modinfo += b"build\tGOEXPERIMENT=noswissmap\n"
+    bi = (BUILDINFO_MAGIC + bytes([8, 2]) + b"\0" * 16
+          + _leb(len(version)) + version + _leb(len(modinfo)) + modinfo)
+    payloads = [
+        (".typelink", typelinks, 8, 0),
+        (".go.buildinfo", bi, 8, 0),
+        (".data", bytes(blob), 0x1000, 0),
+        ("__w", bytes(wdata), 8, 1),
+    ]
+    return _build_elf64(payloads, sections=None, writable_data=None), typelinks, tl_va
+
+
+def selftest(golang_root):
+    cases = 0
+    tmp = tempfile.mkdtemp(prefix="swiss-misread-selftest-")
+    try:
+        def check(name, condition, detail=""):
+            nonlocal cases
+            cases += 1
+            if not condition:
+                raise AssertionError("%s: %s" % (name, detail))
+        raw_out_count = 0x8003
+        param_count = 2 + _mask_func_out_count(raw_out_count)
+        check("variadic_masked", param_count == 5, str(param_count))
+
+
+        # 1. Swiss, slot 40, huge name: H1 EOF, H0 silent, diagnostic true.
+        blob, _tl, _tlva = _fixture(40, "swiss", False)
+        path = Path(tmp) / "swiss-slot40"
+        path.write_bytes(blob)
+        res = analyse(path, golang_root)
+        check("slot40-true-kind", res["layout"]["true_kind"] == "swiss",
+              res["layout"]["true_kind"])
+        check("slot40-h1-fail", res["predicted_failure_h1"] is True)
+        expected = [0x402000 + 0x185, 0x200000]
+        check("slot40-h1-eof", res["predicted_eof_reads_h1"] == [expected],
+              "%s != %s" % (res["predicted_eof_reads_h1"], [expected]))
+        check("slot40-h0-silent", res["predicted_failure_h0"] is False,
+              json.dumps(res["walk"]["h0"]))
+        check("slot40-diagnostic", res["diagnostic"] is True)
+        check("slot40-misread", res["misread_map_types"] == 1)
+        first_h1 = res["first_failure"]["h1"]
+        check(
+            "first_failure_shape",
+            isinstance(first_h1, dict)
+            and set(first_h1) == {"kind", "index", "va", "phase"}
+            and first_h1["kind"] in {"eof", "invalid_index", "unmapped",
+                                    "invalid_length", "invalid_data"}
+            and isinstance(first_h1["index"], int)
+            and isinstance(first_h1["va"], int)
+            and first_h1["phase"] == "markup_walk"
+            and res["first_failure"]["h0"] is None,
+            json.dumps(res["first_failure"]))
+
+
+        # 2. Swiss, slot 24 (no chain): silent under both hypotheses.
+        blob, _tl, _tlva = _fixture(24, "swiss", False)
+        path = Path(tmp) / "swiss-slot24"
+        path.write_bytes(blob)
+        res = analyse(path, golang_root)
+        check("slot24-h1-silent", res["predicted_failure_h1"] is False,
+              json.dumps(res["walk"]["h1"]))
+        check("slot24-h0-silent", res["predicted_failure_h0"] is False)
+        check("slot24-diagnostic", res["diagnostic"] is False)
+
+        # 3. Old layout: H1 == H0, no failure.
+        blob, _tl, _tlva = _fixture(0, "old", True)
+        path = Path(tmp) / "old-layout"
+        path.write_bytes(blob)
+        res = analyse(path, golang_root)
+        check("old-kind", res["layout"]["true_kind"] == "old")
+        check("old-no-failure", res["predicted_failure_h1"] is False)
+        check("old-h1-eq-h0", res["predicted_eof_reads_h1"] == res["predicted_eof_reads_h0"])
+
+        # 4. GOEXPERIMENT=noswissmap on a 1.25 build: true kind old.
+        blob, _tl, _tlva = _fixture(40, "old", True)
+        path = Path(tmp) / "noswiss"
+        path.write_bytes(blob)
+        res = analyse(path, golang_root)
+        check("noswiss-kind", res["layout"]["true_kind"] == "old")
+        check("noswiss-no-failure", res["predicted_failure_h1"] is False)
+
+        # 5. Red case: garbage input must be rejected with exit 2 semantics.
+        path = Path(tmp) / "garbage"
+        path.write_bytes(b"not an elf at all")
+        try:
+            analyse(path, golang_root)
+        except EvalError:
+            cases += 1
+        else:
+            raise AssertionError("garbage: expected EvalError")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    print("SELFTEST: CLEAN cases=%d" % cases)
+    return 0
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        description="Emulate Ghidra 12.1.4 Go map-type uncommon reads.")
+    parser.add_argument("--carrier")
+    parser.add_argument("--label")
+    parser.add_argument("--snapshot-dir")
+    parser.add_argument("--go-version")
+    parser.add_argument("--selftest", action="store_true")
+    parser.add_argument("--debug", action="store_true")
+    args = parser.parse_args(argv)
+    snapshot_dir = args.snapshot_dir or DEFAULT_SNAPSHOT_DIR
+    if args.selftest:
+        try:
+            return selftest(snapshot_dir)
+        except AssertionError as exc:
+            print("SELFTEST: FAILED %s" % exc)
+            return 1
+    if not args.carrier:
+        parser.error("--carrier is required unless --selftest")
+    try:
+        result = analyse(args.carrier, snapshot_dir,
+                         go_version_override=args.go_version,
+                         debug=args.debug)
+    except EvalError as exc:
+        print(json.dumps({"status": "unparseable", "error": str(exc)},
+                         sort_keys=True, indent=2))
+        return 2
+    if args.label is not None:
+        result["label"] = args.label
+    json.dump(result, sys.stdout, sort_keys=True, indent=2)
+    sys.stdout.write("\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

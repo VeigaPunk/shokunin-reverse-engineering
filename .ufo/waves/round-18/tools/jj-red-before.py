@@ -71,11 +71,13 @@ step not held, 2 setup failure or every step blocked. Stdlib only.
 one all-green case, a regressed fixed citation-drift probe that resolves
 HEAD like the baseline (must fail), a regressed fixed capture that omits the
 is-branch-tip flag (must fail), an absent-fixed-tools case (must report
-not_runnable, never held), and three red safety cases: a sentinel GIT_*/JJ_*
-parent env observed through a shimmed git (no child may see it, the fixture
-builder included), and pointer-table entries naming an absolute path, a `..`
-walk and a symlink out of the clone (each must refuse exit 2 with a named
-cause and leave the outside file byte-identical).
+not_runnable, never held), and red safety cases: sentinel GIT_*/JJ_* parent
+environment observed through a shimmed git, and pointer-table entries naming
+absolute, `..`, and symlink paths out of the clone. The named gap cases
+`jj_relative_traversal_refused` and `jj_tmpdir_scrubbed` respectively exercise
+an existing outside victim reached through `..` and independently detect a
+leaked TMPDIR in Git children; refusals must name their cause and preserve the
+victim bytes.
 """
 
 from __future__ import annotations
@@ -1034,7 +1036,10 @@ def _shim_observations(log_path):
         if line.startswith("=== "):
             calls += 1
             continue
-        if _dirty_key(line.split("=", 1)[0]):
+        key = line.split("=", 1)[0]
+        # Keep the observer independent of _dirty_key(): otherwise a regression
+        # that drops TMPDIR from that predicate also masks the observation.
+        if key.startswith(("GIT_", "JJ_")) or key == "TMPDIR":
             dirty.append(line[:120])
     return calls, dirty
 
@@ -1182,6 +1187,45 @@ def selftest(jj):
         cases += 1
         escape_case("link", lambda victim: "linked.md",
                     links_for=lambda victim: {"linked.md": victim})
+
+        # case 10 (jj_relative_traversal_refused): the pointer resolves to
+        # this existing victim outside the independent evaluate() clone.
+        cases += 1
+        escape_case(
+            "jj_relative_traversal_refused",
+            lambda victim: os.path.join("..", "..",
+                                        os.path.relpath(victim, "/tmp")))
+
+        # case 11 (jj_tmpdir_scrubbed): TMPDIR must not reach any Git child,
+        # and the observer must identify it without consulting _dirty_key().
+        cases += 1
+        shim_dir_tmp, shim_log_tmp = _install_git_shim(
+            os.path.join(tmp, "tmpdir-case"))
+        saved_path_tmp = os.environ.get("PATH", "")
+        saved_tmpdir = os.environ.get("TMPDIR")
+        tmpdir_obs = {}
+        ok_tmpdir = False
+        try:
+            os.environ["TMPDIR"] = os.path.join(tmp, "sentinel-tmpdir")
+            os.environ["PATH"] = shim_dir_tmp + os.pathsep + saved_path_tmp
+            lane_tmp, b_tmp = build_fixture_lane(tmp, "fixture-lane-tmpdir")
+            receipt, code = go(paths["cd_fixed"], paths["cp_fixed"],
+                               lane_tmp, b_tmp)
+            calls, dirty = _shim_observations(shim_log_tmp)
+            tmpdir_obs = {"calls": calls, "dirty": dirty[:3], "exit": code,
+                          "all_held": receipt.get("all_held")}
+            ok_tmpdir = (code == 0 and receipt.get("all_held") is True
+                         and calls > 0 and not dirty)
+        except Exception as exc:
+            tmpdir_obs = {"raised": "%s: %s" % (type(exc).__name__, exc)}
+        finally:
+            os.environ["PATH"] = saved_path_tmp
+            if saved_tmpdir is None:
+                os.environ.pop("TMPDIR", None)
+            else:
+                os.environ["TMPDIR"] = saved_tmpdir
+        if not ok_tmpdir:
+            failures.append("jj_tmpdir_scrubbed: %r" % (tmpdir_obs,))
     except Exception as exc:
         return 2, "SELFTEST: FAILED setup %s: %s" % (type(exc).__name__, exc)
     finally:

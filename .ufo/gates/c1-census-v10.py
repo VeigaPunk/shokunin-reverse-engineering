@@ -128,14 +128,15 @@ statements N -> 0; no availability->holding inference (configured != held).
 STRUCTURE (three layers, each independently falsifiable)
   L1 SCOPE     an explicit declared table of file:line ranges, each classed
                CURRENT (live state, must be reconciled) or DATED (record of a
-               past verification, historical by construction). Every DATED
-               range declares the marker that makes it historical, and the
-               instrument ASSERTS that marker is present (marker assertion)
-               AND that its line lies inside the range it dates (G18) -- a row
-               that names a line in another row's range dates nothing.
-               A locus inside no declared range is UNDECLARED and fails the
-               run -- so file growth can never silently shrink the census
-               (CR5's "silent skip" lesson).
+               past verification, historical by construction). Stable text
+               anchors may resolve volatile ranges; each anchor must be
+               unique. Every DATED range declares the marker that makes it
+               historical, and the instrument ASSERTS that marker is present
+               (marker assertion) AND that its line lies inside the range it
+               dates (G18) -- a row that names a line in another row's range
+               dates nothing. A locus inside no declared range is UNDECLARED
+               and fails the run -- so file growth can never silently shrink
+               the census (CR5's "silent skip" lesson).
   L2 ANCHORS   live anchors re-derived on every run: configured pins by grep
                of the three client configs; cache identities by package.json;
                config pointers by resolving path:line in the live file. No
@@ -235,9 +236,9 @@ unevaluable scoped file AND frontier_errors == 0 (G21 frontier register, r10:
 every declared frontier bullet carries its REQUIRED anchors and none carries a
 FORBIDDEN retracted literal).
 Exit 0 PASS, 1 FAIL, 2 anchor failure.
-Usage: python3 c1-census-v10.py [--root DIR] [--json] [--quiet]
+Usage: python3 c1-census-v10.py [--root DIR] [--json] [--quiet] [--selftest]
 """
-import argparse, json, os, re, sys
+import argparse, json, os, re, shutil, sys, tempfile
 
 HOME = os.path.expanduser("~")
 CLIENTS = {"devin": HOME + "/.config/devin/mcp_config.json",
@@ -274,7 +275,19 @@ SCOPE = [
     ("SCORECARD.md", 703, 768, "DATED", 704, r"arc2-loop1-round2"),
     ("SCORECARD.md", 769, 855, "DATED", 769, r"arc2-loop1-round3"),
     ("SCORECARD.md", 1759, 2122, "DATED", 1759, r"arc3-loop1-round7"),
+    ("SCORECARD.md", 2374, 2382, "DATED", 2374, r"round-17"),
+    ("SKILL.md", 511, 519, "DATED", 511, r"r17-go-carrier-diagnostics"),
 ]
+
+# Stable text anchors for scope rows whose source-file line numbers can drift.
+# Offsets are zero-based from the unique anchor line; SCOPE retains each row's
+# classification and marker requirement.
+SCOPE_ANCHORS = {
+    ("SCORECARD.md", 2374, 2382):
+        ("| retained REA Ghidra-session log capture |", 0, 8, 0),
+    ("SKILL.md", 511, 519):
+        ("r17-go-carrier-diagnostics.md", 0, 8, 0),
+}
 
 # ---- L1b: frontier-claim register (r10, G21). Frontier bullets carry no
 # pin/version/path loci, so the L1/L2/L3 machinery is silent on them by
@@ -397,30 +410,54 @@ def nearest_client(text, off, limit_lo=0):
     return clients
 
 
-def scope_of(fname, line):
-    for (f, s, e, cls, ml, mr) in SCOPE:
+def resolve_scopes(fname, lines):
+    rows, errs = [], []
+    for (f, start, end, cls, marker_line, marker_re) in SCOPE:
+        if f != fname:
+            continue
+        anchor = SCOPE_ANCHORS.get((f, start, end))
+        if anchor:
+            text, start_offset, end_offset, marker_offset = anchor
+            matches = [i for i, line in enumerate(lines) if text in line]
+            if len(matches) != 1:
+                errs.append("%s:%d-%d anchor %r occurs %d times" %
+                            (f, start, end, text, len(matches)))
+            else:
+                anchor_line = matches[0] + 1
+                start = anchor_line + start_offset
+                end = anchor_line + end_offset
+                marker_line = anchor_line + marker_offset
+        rows.append((f, start, end, cls, marker_line, marker_re))
+    return rows, errs
+
+
+def scope_of(fname, line, scopes):
+    for (f, s, e, cls, ml, mr) in scopes:
         if f == fname and s <= line <= e:
             return (cls, ml, mr)
     return (None, None, None)
 
 
-def assert_markers(filelines):
-    """G15: every declared DATED range must carry its marker text.
-    G18: the marker line must lie inside the range it dates."""
+def assert_markers(filelines, scopes_by_file):
+    """G15: every declared DATED range carries its marker; G18: marker lines
+    lie inside the range they date."""
     errs = []
-    for (f, s, e, cls, ml, mr) in SCOPE:
-        if cls != "DATED" or ml is None:
-            continue
-        lines = filelines.get(f)
-        if not lines:
-            errs.append("%s:%d marker uncheckable (file unreadable)" % (f, ml))
-            continue
-        if not (s <= ml <= e):
-            errs.append("%s:%d marker line outside its own declared range %d-%d (G18)"
-                        % (f, ml, s, e))
-        if not (1 <= ml <= len(lines)) or not re.search(mr, lines[ml - 1]):
-            errs.append("%s:%d marker %r absent from %r" %
-                        (f, ml, mr, (lines[ml - 1][:70] if 1 <= ml <= len(lines) else "<beyond EOF>")))
+    for f, file_lines in filelines.items():
+        rows = scopes_by_file.get(f, [r for r in SCOPE if r[0] == f])
+        for (row_file, s, e, cls, ml, mr) in rows:
+            if cls != "DATED" or ml is None:
+                continue
+            if not file_lines:
+                errs.append("%s:%d marker uncheckable (file unreadable)" % (row_file, ml))
+                continue
+            if not (s <= ml <= e):
+                errs.append("%s:%d marker line outside its own declared range %d-%d (G18)"
+                            % (row_file, ml, s, e))
+            if not (1 <= ml <= len(file_lines)) or not re.search(mr, file_lines[ml - 1]):
+                errs.append("%s:%d marker %r absent from %r" %
+                            (row_file, ml, mr,
+                             (file_lines[ml - 1][:70] if 1 <= ml <= len(file_lines)
+                              else "<beyond EOF>")))
     return errs
 
 
@@ -522,7 +559,7 @@ def cache_check(h, stated):
     return "ok", "cache holds %s" % m.group(1)
 
 
-def classify(fname, lines, live, out):
+def classify(fname, lines, live, out, scopes):
     loci = []
     for (a, b, text) in units(lines):
         if not REA_GATE.search(text):
@@ -542,7 +579,7 @@ def classify(fname, lines, live, out):
         det = []
         for kind, off, val in occ:
             phys = line_of(lines, a, b, off)
-            cls, ml, mr = scope_of(fname, phys)
+            cls, ml, mr = scope_of(fname, phys, scopes)
             inline = bool(INLINE_MARKER.search(lines[phys - 1]))
             marker = "inline:%d" % phys if inline else ("scope-marker:%d" % ml if ml else None)
             lo, hi = clause_bounds(text, off)
@@ -624,28 +661,95 @@ def classify(fname, lines, live, out):
     return loci
 
 
-def main():
+def selftest():
+    cases = []
+    scratch = tempfile.mkdtemp(prefix="c1-census-selftest-")
+    try:
+        lines = ["# fixture prefix %d" % i for i in range(30)]
+        lines.extend([
+            "## Retained Go carrier diagnostics — round 17",
+            "",
+            "inserted prose before the stable evidence-path anchor.",
+            "`corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md`",
+            "REA 6.5.0 was used in this historical round.",
+            "detail", "detail", "detail", "detail", "detail", "detail", "detail",
+            "",
+            "devin configured rea-agents@99.99.99",
+        ])
+        fixture = os.path.join(scratch, "SKILL.md")
+        with open(fixture, "w", encoding="utf-8") as stream:
+            stream.write("\n".join(lines) + "\n")
+        with open(fixture, encoding="utf-8") as stream:
+            lines = stream.read().splitlines()
+
+        scopes, anchor_errors = resolve_scopes("SKILL.md", lines)
+        row = next((r for r in scopes
+                    if r[3] == "DATED" and (r[0], 511, 519) in SCOPE_ANCHORS), None)
+        anchor_line = next((i + 1 for i, line in enumerate(lines)
+                            if "r17-go-carrier-diagnostics.md" in line), None)
+        anchor_ok = (not anchor_errors and row is not None and anchor_line is not None
+                     and row[1:3] == (anchor_line, anchor_line + 8)
+                     and row[4] == anchor_line)
+        marker_errors = assert_markers({"SKILL.md": lines}, {"SKILL.md": scopes})
+        cases.append(("shifted_scope_anchor", anchor_ok and not marker_errors))
+
+        live = {"devin": "6.5.0", "omp": "6.5.0", "kimi": "6.5.0"}
+        out = {}
+        classify("SKILL.md", lines, live, out, scopes)
+        live_dated = any(
+            d["scope"] == "DATED" and d["value"] == "6.5.0"
+            and d["disp"] == "current-ok"
+            for rec in out.get("current-ok", []) for d in rec["asserts"])
+        cases.append(("live_value_not_sheltered", live_dated))
+        undeclared_fails = any(
+            rec["disp"] == "UNDECLARED" and "99.99.99" in rec["text"]
+            for rec in out.get("UNDECLARED", []))
+        cases.append(("new_undeclared_block_fails", undeclared_fails))
+    finally:
+        shutil.rmtree(scratch)
+
+    fails = 0
+    for case_id, passed in cases:
+        print("CASE: %s %s" % ("PASS" if passed else "FAIL", case_id))
+        if not passed:
+            fails += 1
+    if fails:
+        print("SELFTEST: FAILED cases=%d fails=%d" % (len(cases), fails))
+        return 1
+    print("SELFTEST: CLEAN cases=%d" % len(cases))
+    return 0
+
+
+def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default="/home/vgpnk/Projects/shokunin/kaidoku-shokunin")
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--quiet", action="store_true")
-    args = ap.parse_args()
+    ap.add_argument("--selftest", action="store_true")
+    args = ap.parse_args(argv)
+    if args.selftest:
+        return selftest()
     files = sorted({s[0] for s in SCOPE})
     live = live_pins()
     if not all(live.values()):
         print("ANCHOR-FAIL: %r" % live)
         return 2
     out, counts, filelines, unreadable = {}, {}, {}, []
+    scope_errors, scopes_by_file = [], {}
     for f in files:
-        max_end = max([s[2] for s in SCOPE if s[0] == f]
-                      + [r[2] for r in FRONTIER if r[0] == f], default=0)
         try:
             lines = open(os.path.join(args.root, f), encoding="utf-8", errors="replace").read().splitlines()
         except OSError as ex:
             unreadable.append("%s: %s" % (f, type(ex).__name__))
             counts[f] = {"lines": None, "loci": None}
             filelines[f] = None
+            scopes_by_file[f] = [s for s in SCOPE if s[0] == f]
             continue
+        scopes, anchor_errors = resolve_scopes(f, lines)
+        scopes_by_file[f] = scopes
+        scope_errors.extend(anchor_errors)
+        max_end = max([s[2] for s in scopes]
+                      + [r[2] for r in FRONTIER if r[0] == f], default=0)
         if len(lines) < max_end:
             # G19: declared rows past EOF are unevaluable, never a silent zero.
             unreadable.append("%s: %d lines < declared max %d (rows beyond EOF)"
@@ -654,8 +758,8 @@ def main():
             filelines[f] = None
             continue
         filelines[f] = lines
-        counts[f] = {"lines": len(lines), "loci": len(classify(f, lines, live, out))}
-    scope_errors = assert_markers(filelines)
+        counts[f] = {"lines": len(lines), "loci": len(classify(f, lines, live, out, scopes))}
+    scope_errors.extend(assert_markers(filelines, scopes_by_file))
     frontier_errors = frontier_check(filelines)
     stale, unatt = out.get("STALE", []), out.get("AMBIGUOUS", [])
     undecl = out.get("UNDECLARED", [])

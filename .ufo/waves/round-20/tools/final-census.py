@@ -1,0 +1,328 @@
+#!/usr/bin/env python3
+"""Run both delivered census checks and retain one final, hashed transcript."""
+
+import argparse
+import hashlib
+import io
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from datetime import datetime, timezone
+from pathlib import Path
+
+SOURCE_CENSUS = Path("/home/vgpnk/Projects/shokunin/scripts/sources-census.sh")
+SOURCE_ROOT = Path("/home/vgpnk/Projects/shokunin")
+LANE_ID = "kaidoku"
+OUTPUT_NAMES = ("final-census.stdout", "final-census.json")
+
+
+class InputRefused(Exception):
+    """The requested root or its Git state cannot be safely measured."""
+
+
+def git(root, *args):
+    result = subprocess.run(
+        ["git", "-C", str(root), *args],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode:
+        detail = result.stderr.decode("utf-8", "replace").strip()
+        raise InputRefused(
+            "git %s failed (exit %d)%s"
+            % (" ".join(args), result.returncode, ": " + detail if detail else "")
+        )
+    return result.stdout
+
+
+def status_entries(root):
+    raw = git(root, "status", "--porcelain=v1", "-z", "--untracked-files=all")
+    items = raw.split(b"\0")
+    entries = []
+    index = 0
+    while index < len(items):
+        item = items[index]
+        index += 1
+        if not item:
+            continue
+        if len(item) < 4 or item[2:3] != b" ":
+            raise InputRefused("unparseable git status --porcelain entry")
+        code = item[:2].decode("ascii", "replace")
+        paths = [os.fsdecode(item[3:])]
+        if "R" in code or "C" in code:
+            if index >= len(items) or not items[index]:
+                raise InputRefused("incomplete rename entry in git status --porcelain")
+            paths.append(os.fsdecode(items[index]))
+            index += 1
+        entries.append((code, paths))
+    return entries
+
+
+def resolve_paths(root_arg, out_dir_arg):
+    root = Path(root_arg).expanduser().resolve()
+    if not root.is_dir():
+        raise InputRefused("root is not a directory: %s" % root)
+    top = Path(os.fsdecode(git(root, "rev-parse", "--show-toplevel").strip())).resolve()
+    if top != root:
+        raise InputRefused("root must be the Git worktree root: %s" % root)
+    raw_out = Path(out_dir_arg).expanduser()
+    out_dir = (raw_out if raw_out.is_absolute() else root / raw_out).resolve()
+    try:
+        out_dir.relative_to(root)
+    except ValueError:
+        raise InputRefused("out-dir must resolve inside root: %s" % out_dir)
+    return root, out_dir
+
+
+def relative_name(root, path):
+    return path.relative_to(root).as_posix()
+
+
+def changed_tracked_paths(entries):
+    dirty = set()
+    for code, paths in entries:
+        if code != "??":
+            dirty.update(paths)
+    return sorted(dirty)
+
+
+def clean_except_outputs(entries, expected_outputs):
+    return all(all(path in expected_outputs for path in paths) for _, paths in entries)
+
+
+def atomic_write(path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix="." + path.name + ".", dir=str(path.parent))
+    try:
+        with os.fdopen(fd, "wb") as stream:
+            stream.write(payload)
+        os.replace(temporary, path)
+    finally:
+        try:
+            os.unlink(temporary)
+        except FileNotFoundError:
+            pass
+
+
+def run_command(argv, root, stderr):
+    try:
+        result = subprocess.run(
+            argv,
+            cwd=str(root),
+            stdout=subprocess.PIPE,
+            stderr=None,
+            check=False,
+        )
+    except OSError as exc:
+        print("ERROR: cannot run %s: %s" % (argv[0], exc), file=stderr)
+        return b"", 2
+    if result.returncode not in (0, 1, 2):
+        print("ERROR: command exited outside the census status range: %s (%d)"
+              % (argv[0], result.returncode), file=stderr)
+        return result.stdout, 2
+    return result.stdout, result.returncode
+
+
+def run_census(root_arg, out_dir_arg, *, source_script=SOURCE_CENSUS,
+               source_root=SOURCE_ROOT, lane_id=LANE_ID, emit_stdout=True,
+               stderr=None):
+    stderr = stderr or sys.stderr
+    try:
+        root, out_dir = resolve_paths(root_arg, out_dir_arg)
+        stdout_path = out_dir / OUTPUT_NAMES[0]
+        record_path = out_dir / OUTPUT_NAMES[1]
+        expected_outputs = {
+            relative_name(root, stdout_path),
+            relative_name(root, record_path),
+        }
+        entries = status_entries(root)
+        dirty = changed_tracked_paths(entries)
+        if dirty:
+            print("ERROR: tracked modifications refuse final census: %s"
+                  % ", ".join(dirty), file=stderr)
+            return 2
+        rev = os.fsdecode(git(root, "rev-parse", "refs/heads/main").strip())
+    except (InputRefused, OSError, ValueError) as exc:
+        print("ERROR: %s" % exc, file=stderr)
+        return 2
+
+    c1_argv = [
+        "python3", "-I", "-B", ".ufo/gates/c1-census-v10.py",
+        "--root", str(root),
+    ]
+    sources_argv = [
+        os.fspath(source_script), "validate", "--root", os.fspath(source_root), lane_id,
+    ]
+    argv = [c1_argv, sources_argv]
+    outputs = []
+    exits = []
+    for command in argv:
+        output, code = run_command(command, root, stderr)
+        outputs.append(output)
+        exits.append(code)
+    stdout_bytes = b"".join(outputs)
+    try:
+        atomic_write(stdout_path, stdout_bytes)
+    except OSError as exc:
+        print("ERROR: cannot write census stdout: %s" % exc, file=stderr)
+        return 2
+
+    if emit_stdout:
+        sys.stdout.buffer.write(stdout_bytes)
+        sys.stdout.buffer.flush()
+
+    try:
+        worktree_clean = clean_except_outputs(status_entries(root), expected_outputs)
+    except InputRefused as exc:
+        print("ERROR: cannot determine final worktree status: %s" % exc, file=stderr)
+        worktree_clean = False
+
+    record = {
+        "rev": rev,
+        "worktree_clean": worktree_clean,
+        "argv": argv,
+        "exit": max(exits, default=0),
+        "stdout_path": relative_name(root, stdout_path),
+        "stdout_sha256": hashlib.sha256(stdout_bytes).hexdigest(),
+        "taken_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
+    }
+    try:
+        payload = (json.dumps(record, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+        atomic_write(record_path, payload)
+    except (OSError, TypeError, ValueError) as exc:
+        print("ERROR: cannot write final census record: %s" % exc, file=stderr)
+        return 2
+    return record["exit"]
+
+
+def fixture_git(root):
+    commands = [
+        ["git", "init", "-q", str(root)],
+        ["git", "-C", str(root), "checkout", "-q", "-b", "main"],
+        ["git", "-C", str(root), "config", "user.name", "Final Census Selftest"],
+        ["git", "-C", str(root), "config", "user.email", "final-census-selftest@example.invalid"],
+        ["git", "-C", str(root), "add", "-A"],
+        ["git", "-C", str(root), "commit", "-q", "-m", "fixture baseline"],
+    ]
+    for command in commands:
+        subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+def selftest():
+    cases = []
+    temp_root = Path(tempfile.mkdtemp(prefix="final-census-selftest-"))
+    try:
+        root = temp_root / "lane"
+        gate = root / ".ufo" / "gates" / "c1-census-v10.py"
+        gate.parent.mkdir(parents=True)
+        gate.write_text('print("C1 fixture")\n', encoding="utf-8")
+        tracked = root / "tracked.txt"
+        tracked.write_text("baseline\n", encoding="utf-8")
+        source_script = root / "sources-census-fixture.sh"
+        source_script.write_text(
+            "#!/bin/sh\nprintf 'SOURCES fixture:'\nfor arg do printf ' <%s>' \"$arg\"; done\nprintf '\\n'\n",
+            encoding="utf-8",
+        )
+        source_script.chmod(0o755)
+        fleet_root = temp_root / "fleet"
+        fleet_root.mkdir()
+        fixture_git(root)
+        out_dir = root / ".ufo" / "waves" / "round-20" / "verify"
+        error_output = io.StringIO()
+
+        clean_exit = run_census(
+            root, out_dir,
+            source_script=source_script,
+            source_root=fleet_root,
+            emit_stdout=False,
+            stderr=error_output,
+        )
+        clean_record = json.loads((out_dir / OUTPUT_NAMES[1]).read_text(encoding="utf-8"))
+        stdout_file = out_dir / OUTPUT_NAMES[0]
+        clean_bytes = stdout_file.read_bytes()
+        timestamp = clean_record.get("taken_at_utc", "")
+        timestamp_ok = False
+        if timestamp.endswith("Z"):
+            parsed = datetime.fromisoformat(timestamp[:-1] + "+00:00")
+            timestamp_ok = parsed.tzinfo == timezone.utc
+        clean_ok = (
+            clean_exit == 0
+            and clean_record["rev"] == os.fsdecode(git(root, "rev-parse", "refs/heads/main").strip())
+            and clean_record["worktree_clean"] is True
+            and clean_record["argv"][0][0:3] == ["python3", "-I", "-B"]
+            and clean_record["argv"][1][1:3] == ["validate", "--root"]
+            and clean_record["exit"] == 0
+            and clean_record["stdout_path"] == relative_name(root, stdout_file)
+            and clean_record["stdout_sha256"] == hashlib.sha256(clean_bytes).hexdigest()
+            and b"C1 fixture\n" in clean_bytes
+            and b"SOURCES fixture:" in clean_bytes
+            and timestamp_ok
+        )
+        cases.append(("clean_fixture_record", clean_ok))
+
+        (root / "untracked.txt").write_text("untracked\n", encoding="utf-8")
+        untracked_exit = run_census(
+            root, out_dir,
+            source_script=source_script,
+            source_root=fleet_root,
+            emit_stdout=False,
+            stderr=error_output,
+        )
+        untracked_record = json.loads((out_dir / OUTPUT_NAMES[1]).read_text(encoding="utf-8"))
+        cases.append((
+            "untracked_worktree_reported",
+            untracked_exit == 0 and untracked_record["worktree_clean"] is False,
+        ))
+
+        before_refusal = (out_dir / OUTPUT_NAMES[1]).read_bytes()
+        tracked.write_text("modified\n", encoding="utf-8")
+        refusal_exit = run_census(
+            root, out_dir,
+            source_script=source_script,
+            source_root=fleet_root,
+            emit_stdout=False,
+            stderr=error_output,
+        )
+        cases.append((
+            "tracked_modifications_refused",
+            refusal_exit == 2 and (out_dir / OUTPUT_NAMES[1]).read_bytes() == before_refusal,
+        ))
+    except Exception as exc:
+        print("SELFTEST setup/error: %s: %s" % (type(exc).__name__, exc), file=sys.stderr)
+        cases.append(("fixture_execution", False))
+    finally:
+        shutil.rmtree(temp_root, ignore_errors=True)
+
+    failures = 0
+    for case_id, passed in cases:
+        print("%s %s" % ("PASS" if passed else "FAIL", case_id))
+        if not passed:
+            failures += 1
+    if failures:
+        print("SELFTEST: FAILED cases=%d fails=%d" % (len(cases), failures))
+        return 1
+    print("SELFTEST: CLEAN cases=%d" % len(cases))
+    return 0
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(allow_abbrev=False)
+    parser.add_argument("--root")
+    parser.add_argument("--out-dir")
+    parser.add_argument("--selftest", action="store_true")
+    args = parser.parse_args(argv)
+    if args.selftest:
+        if args.root is not None or args.out_dir is not None:
+            parser.error("--selftest cannot be combined with --root or --out-dir")
+        return selftest()
+    if args.root is None or args.out_dir is None:
+        parser.error("--root and --out-dir are required")
+    return run_census(args.root, args.out_dir)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

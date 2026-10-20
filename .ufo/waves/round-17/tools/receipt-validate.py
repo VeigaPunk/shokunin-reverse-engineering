@@ -33,11 +33,11 @@ For every receipt argument the tool:
      a recorded map_error is a finding. With --require-mid-maps (r18
      receipts) every pin_checks entry must carry map_path+map_sha256
      (mid_map_missing) and the analyze step must retain at least one
-     check (mid_checks_absent): `steps.analyze` for an object-shaped
-     receipt, or — for a list-shaped `steps` — the entry that declares
-     `step`/`name` "analyze" or whose argv carries the `analyze`
-     subcommand. Checks on any other step never satisfy the flag.
-
+     check (mid_checks_absent): `steps.analyze` for an object-shaped receipt,
+     or for a list-shaped `steps`, the unique entry whose argv has `analyze`
+     immediately after a `rea-agents@<version>` package token. Declared
+     step/name fields or an `analyze` token elsewhere in argv do not
+     authenticate the step. Checks on any other step never satisfy the flag.
 pins.py is imported by absolute path via importlib from the resolved
 sibling `tools/pins.py`, mirroring retain.py's loader. When pins.py is
 absent the tool cannot evaluate and exits 2.
@@ -132,13 +132,11 @@ def _iter_steps(steps):
 
 
 def _is_analyze_step(step):
-    """True when a name-less (list-shaped) step is the analyze step.
+    """True only when a step's argv records the packaged analyze invocation.
 
-    A dict-shaped receipt names its steps in the mapping keys. List entries
-    carry no key, so identity comes from the entry's own record: a declared
-    `step`/`name` field equal to "analyze", or the literal `analyze`
-    subcommand token in `argv` (carrier-run.py always records argv). Without
-    one of these a list entry cannot be shown to be the analyze step.
+    The argv must contain the exact `rea-agents@<version>` package token
+    immediately followed by `analyze`; a decoy token elsewhere cannot
+    identify the step.
     """
     if not isinstance(step, dict):
         return False
@@ -146,19 +144,25 @@ def _is_analyze_step(step):
     if declared and any(value != "analyze" for value in declared):
         return False
     argv = step.get("argv")
-    command = None
-    if isinstance(argv, list) and argv:
-        # Only a subcommand position identifies a CLI step; a filename or
-        # search-pattern argument named "analyze" is not an analyze call.
-        for i, token in enumerate(argv):
-            if isinstance(token, str) and re.fullmatch(r"rea-agents@\d+\.\d+\.\d+", token):
-                command = argv[i + 1] if i + 1 < len(argv) else None
-                break
-        if command is None and os.path.basename(str(argv[0])) in ("rea", "rea-agents"):
-            command = argv[1] if len(argv) > 1 else None
-    if command is not None:
-        return command == "analyze"
-    return bool(declared)
+    if not isinstance(argv, list):
+        return False
+    return any(
+        isinstance(token, str)
+        and re.fullmatch(r"rea-agents@\d+\.\d+\.\d+", token)
+        and i + 1 < len(argv)
+        and argv[i + 1] == "analyze"
+        for i, token in enumerate(argv)
+    )
+
+
+def _claims_analyze_step(step):
+    """Return whether labels or argv claim that this is the analyze step."""
+    if not isinstance(step, dict):
+        return False
+    if any(step.get(key) == "analyze" for key in ("step", "name")):
+        return True
+    argv = step.get("argv")
+    return isinstance(argv, list) and "analyze" in argv
 
 
 def check_binding(receipt, findings):
@@ -492,15 +496,17 @@ def verify_mid_maps(receipt, pins, findings, require_mid_maps=False):
     pins.compare(pins_pre, mid_map). entries/taken_at_utc are rechecked
     against the map's own record; recorded entries is also compared with
     len(pins_pre.entries) (mid_entries_mismatch, both modes — a forged
-    verdict-only entry cannot shrink the pin set). A recorded map_error (an
-    unretained map) is a finding; an entry with neither map field is the
-    round-17 shape and, without the flag, is left to the verdict-only checks
-    in check_binding. With require_mid_maps every pin_checks entry must
-    carry map_path+map_sha256 (mid_map_missing) and the analyze step must
-    carry at least one check (mid_checks_absent): the `analyze` key of an
-    object-shaped `steps`, or for a list-shaped `steps` the one entry that
-    identifies itself as analyze (`step`/`name` field or the `analyze`
-    argv token). A pin_checks list on any other step does not count.
+    verdict-only entry cannot shrink the pin set). A recorded map_error
+    (an unretained map) is a finding; an entry with neither map field is the
+    round-17 shape and is left to verdict-only checks when the flag is off.
+    With require_mid_maps, every pin_checks entry must carry map_path+
+    map_sha256, and the analyze step must retain at least one check
+    (mid_checks_absent): the `analyze` key of an object-shaped `steps`, or
+    for a list-shaped `steps` the unique entry whose argv has `analyze`
+    immediately after a `rea-agents@<version>` package token. The object
+    key/list identity must also pass argv authentication; claimed but
+    unauthenticated steps report `analyze_step_unauthenticated`. Checks on
+    any other step never satisfy the flag.
     The generic walk_pairs
     <stem>_path/<stem>_sha256 convention also recomputes the digest; the
     mid-specific codes here name which commitment failed."""
@@ -610,12 +616,28 @@ def verify_mid_maps(receipt, pins, findings, require_mid_maps=False):
         where = "$.steps.analyze.pin_checks"
         if isinstance(steps, dict):
             astep = steps.get("analyze")
-            ok = isinstance(astep, dict) and bool(astep.get("pin_checks"))
+            ok = (isinstance(astep, dict) and _is_analyze_step(astep)
+                  and bool(astep.get("pin_checks")))
+            for name, step in steps.items():
+                claimed = name == "analyze" or _claims_analyze_step(step)
+                if claimed and not _is_analyze_step(step):
+                    findings.append({
+                        "code": "analyze_step_unauthenticated",
+                        "where": f"$.steps.{name}.argv",
+                        "detail": "analyze must immediately follow a "
+                                  "rea-agents@<version> package token"})
         elif isinstance(steps, list):
-            # List-shaped steps carry no key: only a step that identifies
-            # itself as analyze may satisfy the flag, exactly as the object
-            # branch requires steps["analyze"]. Checks on any other step do
-            # not count (R18-MIDMAP-LISTSTEP).
+            # List-shaped steps carry no key: exactly one claimed entry must
+            # authenticate through argv, and only its checks can satisfy the
+            # flag. Checks on any other step do not count.
+            for i, step in enumerate(steps):
+                if (_claims_analyze_step(step)
+                        and not _is_analyze_step(step)):
+                    findings.append({
+                        "code": "analyze_step_unauthenticated",
+                        "where": f"$.steps[{i}].argv",
+                        "detail": "analyze must immediately follow a "
+                                  "rea-agents@<version> package token"})
             named = [(i, s) for i, s in enumerate(steps)
                      if _is_analyze_step(s)]
             ok = len(named) == 1 and bool(named[0][1].get("pin_checks"))
@@ -962,7 +984,8 @@ def selftest(pins):
         verdict_only = {"taken_at_utc": utcnow(), "equal": True,
                         "changed": [], "missing": [], "entries": n_pre}
         data["steps"]["analyze"] = dict(
-            data["steps"]["inspect-go-binary"], argv=["npx", "analyze"],
+            data["steps"]["inspect-go-binary"],
+            argv=["npx", "-y", "rea-agents@6.5.0", "analyze"],
             pin_checks=[dict(verdict_only)])
         r17ish = tmpdir / "r4i.json"
         r17ish.write_text(json.dumps(data), encoding="utf-8")
@@ -987,7 +1010,8 @@ def selftest(pins):
         map_file2.write_text(json.dumps(mid_map2, sort_keys=True, indent=2),
                              encoding="utf-8")
         data["steps"]["analyze"] = dict(
-            data["steps"]["inspect-go-binary"], argv=["npx", "analyze"],
+            data["steps"]["inspect-go-binary"],
+            argv=["npx", "-y", "rea-agents@6.5.0", "analyze"],
             pin_checks=[{
                 "taken_at_utc": mid_map2["taken_at_utc"],
                 "equal": True, "changed": [], "missing": [],
@@ -1005,7 +1029,8 @@ def selftest(pins):
         # Case 4i: flag on, analyze has an empty pin_checks -> exit 1 with
         # `mid_checks_absent` (a silently unpinned analyze step).
         data["steps"]["analyze"] = dict(
-            data["steps"]["inspect-go-binary"], argv=["npx", "analyze"],
+            data["steps"]["inspect-go-binary"],
+            argv=["npx", "-y", "rea-agents@6.5.0", "analyze"],
             pin_checks=[])
         unpinned = tmpdir / "r4l.json"
         unpinned.write_text(json.dumps(data), encoding="utf-8")
@@ -1027,7 +1052,8 @@ def selftest(pins):
             forged_v = {"taken_at_utc": utcnow(), "equal": True,
                         "changed": [], "missing": [], "entries": 99}
             data["steps"]["analyze"] = dict(
-                data["steps"]["inspect-go-binary"], argv=["npx", "analyze"],
+                data["steps"]["inspect-go-binary"],
+                argv=["npx", "-y", "rea-agents@6.5.0", "analyze"],
                 pin_checks=[dict(forged_v)])
             receipt_ev = tmpdir / ("r4m-%s.json" % label)
             receipt_ev.write_text(json.dumps(data), encoding="utf-8")
@@ -1090,17 +1116,18 @@ def selftest(pins):
                json.dumps(_out4o["receipts"][0].get("findings", [])
                           if _out4o["receipts"] else []))
 
-        # Case 4m: declared identity route — no analyze token in argv; the
-        # entry names itself via `name` (= `step` is accepted too).
+        # Case 4m: a declared name is not execution authentication; the
+        # list entry has no npx package/analyze argv and must not satisfy the flag.
         data["steps"][1] = dict(data["steps"][1], name="analyze",
                                 argv=["true"])
         list_declared = tmpdir / "r4p.json"
         list_declared.write_text(json.dumps(data), encoding="utf-8")
         _out4p, code = validate_paths([str(list_declared)], pins,
                                       require_mid_maps=True)
-        record("carrier_flag_list_declared_name_green", code, 0,
-               json.dumps(_out4p["receipts"][0].get("findings", [])
-                          if _out4p["receipts"] else []))
+        findings4p = (_out4p["receipts"][0].get("findings", [])
+                      if _out4p["receipts"] else [])
+        record("carrier_flag_list_declared_name_off_analyze_red", code, 1,
+               json.dumps(findings4p))
 
         # Wave-2 identity attacks: neither argument text nor conflicting
         # labels may impersonate the analyze step.
@@ -1110,6 +1137,37 @@ def selftest(pins):
                 {"step": "inspect-go-binary", "name": "analyze"},
                 {"name": "analyze", "argv": ["rea", "search", "carrier"]}):
             record("list_identity_argument_red", int(_is_analyze_step(bad)), 0)
+
+        # D6d: unrelated commands carrying an analyze decoy are rejected with
+        # an explicit finding and cannot lend their checks to the real step.
+        decoy_data = _carrier_receipt(tmpdir, pins, pin_file, log_file)
+        decoy_base = decoy_data["steps"]["inspect-go-binary"]
+        decoy_data["steps"] = [
+            dict(decoy_base, argv=[
+                "npx", "-y", "rea-agents@6.5.0", "inspect-go-binary",
+                "analyze"], pin_checks=[dict(map_check3)]),
+            dict(decoy_base, argv=[
+                "npx", "-y", "rea-agents@6.5.0", "analyze",
+                str(pin_file), "--format", "json"], pin_checks=[])]
+        decoy_receipt = tmpdir / "r4q.json"
+        decoy_receipt.write_text(json.dumps(decoy_data), encoding="utf-8")
+        _out4q, code = validate_paths([str(decoy_receipt)], pins,
+                                      require_mid_maps=True)
+        findings4q = (_out4q["receipts"][0].get("findings", [])
+                      if _out4q["receipts"] else [])
+        decoy_ok = (code == 1
+                    and any(f.get("code") == "analyze_step_unauthenticated"
+                            and f.get("where") == "$.steps[0].argv"
+                            for f in findings4q)
+                    and any(f.get("code") == "mid_checks_absent"
+                            for f in findings4q))
+        cases.append({"case": "argv_decoy_refused", "exit": code,
+                      "expected_exit": 1, "ok": decoy_ok,
+                      "detail": json.dumps(findings4q)})
+        positive = {"argv": [
+            "npx", "-y", "rea-agents@6.5.0", "analyze", "--format", "json"]}
+        record("argv_analyze_after_package_accepted",
+               int(_is_analyze_step(positive)), 1)
         duplicate = {"steps": [
             {"name": "analyze", "pin_checks": [dict(map_check3)]},
             {"step": "analyze", "pin_checks": [dict(map_check3)]}]}

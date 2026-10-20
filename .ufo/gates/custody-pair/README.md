@@ -52,6 +52,7 @@ resolved path *or* by inode (a hardlink alias is refused too) — and refuses a
 receipt or sidecar aimed at the sidecar-shaped neighbour (`<measured> +
 ".sha256"`) of a measured path. `selftest --scratch` requires an existing,
 non-`/tmp` directory; anything else is a declared USAGE exit 2.
+`selftest --scratch` refuses any Git worktree (`scratch_inside_worktree`) and always removes its fixture directory, including on failure.
 
 ## Receipt fields (v2)
 
