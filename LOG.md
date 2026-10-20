@@ -2065,3 +2065,59 @@ Hyaku phase-2 steered round 17 (attempt 1), baseline
   PROVINCE line 52 qualified in place; SKILL rows citation-drift/custody-pair
   aligned in place and a round-17 section appended. Measured values follow in
   the next entry after the single post-integration execution pass.
+
+## 2026-10-20 — round-17 measured records and final integration
+
+Source revision `d0ab2992149a38794e5ef2474ba5d4ef5ee1e905` (committed and
+pushed before the pass); verification evidence `b31975de62de5413a6f2d244f2690eaeb3d18c25`.
+
+- Wave 2 (falsify): 69 seats, 67 completed, 2 dead (m_swe `resource_exhausted`:
+  PinsAttack, TemporalSweepAttack). 17 seats independently found that
+  `receipt-validate.py` rejected every producer receipt (`unrecognized_shape`,
+  list-vs-object `steps`) while its selftest stayed green. Other findings:
+  the knowledge entry's mid-run pin sentence had no retained record (an
+  R16-PROVENANCE recurrence inside this round); the frozen-commit token
+  `2716747` did not resolve; the recheck deleted its own evidence; and new
+  bytecode had landed in frozen dirs.
+- Fixes, all before the pass:
+  - validator: accepts the producer shape and checks binding by whole log
+    records plus the full MD5; mid-run drift, missing `bound_sessions` and
+    an unpinned carrier fail;
+  - carrier-run: allowlisted environment, compile cache disabled, every
+    mid-run pin check retained, exit 1 on drift;
+  - compare: route fields typed and hand-prediction extras compared;
+  - predict: parse matches Java on 366 strings (27→0 disagreements);
+  - log-extract: `\n`-only record split, exact components, anchored
+    binding lines;
+  - temporal-sweep: covers lessons, marker lines need the phrase;
+  - invocation-audit: ignores `orig_argv` and exits outside 0/1;
+  - run-carriers: `RUNS_DIR`, nonzero exit on failure;
+  - `contract.md`: as-built amendments appended.
+- Second carrier pass, 14:27–14:40 UTC, all 8 exit 0 / compare 0. Replicate
+  expectations were frozen at `95e34db` before it. Every route and bootstrap
+  count replicated, as did 7/8 Evidence IDs and the aether EOF pair
+  `17645861, 111938854`. The aether Evidence ID did not (string_count
+  29118→29117). Mid-run pin checks retained: 2–8 per run, all equal. No
+  session parent was left over.
+- Verification pass at `d0ab299`, `verify.py`: 79 commands, all expected
+  exits; tool/prediction pins equal pre/post; no `__pycache__` under `.ufo`.
+  It covered:
+  - 13 selftests clean, including the new red cases;
+  - 8/8 `receipt-validate` exit 0, 8/8 fresh extract+compare exit 0, 8/8
+    predictions reproduced;
+  - `go version -m` and buildinfo-probe agree (0.27.7: not a Go executable);
+  - the compare route red demo exited 1 and the three-field control 0;
+  - citation-drift strict clean 0, quote-fidelity frozen 7+2 matched,
+    custody-pair capture exit 0, sources census ok;
+  - controls: 20/20 lesson and 94/94 knowledge prefixes, 14943/14943 frozen
+    blobs, QUALITY rows 1–18 identical, SOURCES immutable cells unchanged;
+  - replicate `calib-shfmt` run exit 0 with the identical Evidence ID.
+- Final rechecks at `b31975d`, retained via `retain.py` in
+  `final-recheck/*.receipt.json`: invocation-audit 17/17 `exercised_match`,
+  0 unlabelled (baseline 5/7, 2 unlabelled); temporal-sweep 4/4 corrected,
+  0 new unqualified sites. SOURCES 23→32 rows (A21/B1/C1→A28/B3/C1;
+  mined22/rejected1→mined30/rejected2).
+- Author-side verdicts: C1 calibration improved, C2 depth improved, with a
+  capability row entered. Proxies stay at 10.0 with delta 0. Expansion
+  unchanged, quality improved, discernment improved. SHONEN stays `[~]`.
+  Outside sampling and admission belong to the closure.

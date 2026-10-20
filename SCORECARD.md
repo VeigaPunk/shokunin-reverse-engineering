@@ -2346,3 +2346,81 @@ Planned: after the next non-author sample, depth/capability on a caller-selected
 real Go carrier with retained analyzer diagnostics; calibration on any routed
 source/evidence disagreement. No carrier is silently chosen, no recovery
 success promised, and no following round is started here.
+
+## Round 17 — retained Go carrier diagnostics and routed r16 defects, 2026-10-20
+
+Baseline: `b563c799d97774aae4351276fe43cb897311e349`. Predictions frozen:
+`271167473d87ef710f07ecdd98caf0ce12091686`. Measured source revision (committed
+and pushed before the single verification pass):
+`d0ab2992149a38794e5ef2474ba5d4ef5ee1e905`; verification evidence revision
+`b31975de62de5413a6f2d244f2690eaeb3d18c25`. Producer argv/cwd/exit/stdout/stderr
+and pre/post pins: `.ufo/waves/round-17/verification.json` (79 commands, all
+expected exits) and `.ufo/waves/round-17/final-recheck/*.receipt.json`.
+Motivation and decisions: LOG round-17 and `corpus/lessons/round-17.md`.
+
+| Claim / axis | Existing numeric proxy | Falsifiable before→after, command and measured revision | Author-side verdict / limits |
+|---|---|---|---|
+| C1 calibration | 10.0→10.0, delta 0 | R16-PROVENANCE: unqualified in-lane temporal sites 4→0, `temporal-sweep.py --root <LANE> --rev <REV> --sites-rev b563c79` (baseline exit 0 at `b563c79`; 4/4 corrected at `d0ab299` and `b31975d`). R16-INVOCATION: registry rows `unlabelled_variant` 2/7→0/17, `invocation-audit.py --root <LANE> --rev <REV>` at `b563c79` and `b31975d` (17/17 `exercised_match`). QUALITY rows 18→20 (rows 1–18 byte-identical, `controls.py`). Red-before: `pins.py --selftest` mutated-file case exit 1; `receipt-validate.py --selftest` mid-run-drift case exit 1 | **improved**: both routed outside defects discharged in-lane, with tools shown able to fail; the fleet-report site is carried by the round-17 report. The round's own mid-run overclaim (caught by w2) was corrected before close. No outside review is implied |
+| C2 depth + capability | 10.0→10.0, delta 0 | Retained run-bound carrier runs 0→16 (8 carriers × 2 passes), 8/8 compare exit 0 per pass against predictions frozen at `2711674`; all 16 receipts `receipt-validate.py` exit 0 (MD5-anchored binding); replicate run `calib-shfmt` exit 0 with the identical Evidence ID; capability rows 6→7 (`measure.py <REV>` `C2_scorecard_capability_row` 0→1) | **improved**: runtime-retained discrimination of the none/info/fallback/no-build-info routes, with three of six prospective carriers on routes unseen at freeze. Frozen replicate expectation falsified for aether's Evidence ID (string_count 29118→29117); aether's post-bootstrap EOF is a labelled INFERENCE, not replayed |
+| coverage | 10.0→10.0 | map 94/94→95/95, missing/dangling empty (`measure.py`) | unchanged ground: Go is held; the entry deepens it |
+| operability | no owned numeric proxy | 11 tool selftests clean; replicate carrier run exit 0; citation-drift strict clean 0; quote-fidelity frozen 7+2 matched; custody-pair capture exit 0 | improved through the capability below, otherwise no harm in these controls |
+| freshness | no owned numeric proxy | installed Ghidra source/data reopened; current `op` 2.41.0-1 observed; upstream Ghidra/GoReSym release status re-read (S029/S030) | unchanged as an axis; no broad runtime-freshness claim |
+| adjacency | no owned numeric proxy | sibling scan: no lane retains REA analyzer logs (w1 `ConnSiblingOverlap`, w2 `ConnSiblingRows`); revenger/kaidoku shipped-artifact contest unchanged | unchanged; nothing absorbed |
+
+### Capability addition (demonstrated before this row)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| retained REA Ghidra-session log capture | Runs REA `analyze` on a pinned carrier in a private-TMPDIR, allowlisted-environment session and keeps that session's `ghidra.log`/`script.log`. The log is retained before REA's close deletes it, is bound to the run by its own records (log path, imported target, full MD5), and carries pre/mid/post pin maps with instants. The receipt validates offline | `bash .ufo/waves/round-17/run-carriers.sh <LABEL>`; receipts `.ufo/waves/round-17/runs/*/receipt.json` (16 across two passes, 8 retained at HEAD, 8 at `da64646`); `receipt-validate.py` exit 0 ×8 in `verification.json`; replicate `verify/replicate/calib-shfmt` | round-17 |
+
+Limits:
+- The capture is a polling prefix. REA kills the post-script analysis pass,
+  so absence claims hold only up to the last retained line. All 16 logs reach
+  `REPORT: Analysis succeeded`.
+- The capture reads REA 6.5.0's private, undocumented session directory.
+  REA 6.7.0 adds no keep-log knob (w2 `ScoutReaLogKnob`). Re-check on every
+  REA/Ghidra release.
+- The log is outside REA's Evidence model. The receipt asserts the Evidence-ID
+  link.
+- `receipt-validate` proves consistency now, not authenticity against a
+  forger who rewrites and rehashes.
+- Process-group stop does not reach a grandchild in its own session (w2
+  `StopGroupTest`); no run timed out.
+- Only `ghidra.log`/`script.log` are copied, never `session.json`.
+
+Saturation line remains 10.0 and the stagnation window remains 10. This
+capability resets the capability stagnation interval (last entry round 14).
+The three owned proxies tie at 10.0, and calibration (C1) works that
+tied-lowest axis.
+
+### Waves
+
+W1 had 78 seats (executor14/scout20/reviewer12/scribe10/connector8/critic6/
+revenger4/sentinel2/simplifier2), all completed. Dispatch was refused twice at
+the host job cap and spawned on the third identical payload. W2 had 69 seats
+(reviewer18/executor16/scout9/critic8/scribe5/mutation-tester4/connector3/
+revenger3/sentinel2/simplifier1): 67 completed and 2 died on an m_swe rate
+limit (`PinsAttack`, `TemporalSweepAttack`). The round total is 147 seats.
+The L1 holds the planner seat. Records: `wave-outcomes.json`,
+`wave*-registration.json`.
+
+Learning trends:
+- **Expansion unchanged.** The new entry deepens held Go ground. The new
+  capability row and new source kinds (official Go source/docs, upstream
+  release status) are repertoire, not uncovered ground.
+- **Quality improved.** Source-model predictions were superseded by
+  runtime-retained observations. One r16 knowledge site was corrected
+  line-exactly. The mid-run overclaim was caught and fixed before close.
+- **Discernment improved.** Both prior outside routes became grounded
+  criteria and fixes (QUALITY #19). This round's gate rejected its own
+  overreach, and the pre-registered aether Evidence-ID expectation was
+  reported as falsified rather than dropped.
+
+All SHONEN marks stay `[~]`. Current-round non-author admit/reject sampling
+remains the closure's duty.
+
+Planned: after the next non-author sample, either (a) depth on Go 1.24/1.25
+Swiss-map markup, a replay that confirms or refutes the aether inference with
+a second Swiss-map carrier that has method-carrying map types, or (b)
+calibration on any routed disagreement from this round's closure. No carrier
+is chosen here.

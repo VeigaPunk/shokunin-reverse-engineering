@@ -139,3 +139,24 @@ Go 1.27.3 linux/amd64 from the official go.dev tarball into
 `go version -m`, which reads files only. Seat `ScoutReaLogKnob` (w2)
 materialized `rea-agents@6.7.0` for read-only inspection. No pacman
 transaction was run.
+
+## Executed L1 evidence and verdicts
+
+- Source revision `d0ab2992149a38794e5ef2474ba5d4ef5ee1e905`. The single
+  verification pass `python3 -I -B .ufo/waves/round-17/verify.py b563c79…`
+  retained 79 commands with argv, cwd, exit, stdout/stderr digests and
+  pre/post tool pins in `.ufo/waves/round-17/verification.json`. Every exit
+  was as expected and no `__pycache__` remained under `.ufo`.
+- Final rechecks at the evidence revision
+  `b31975de62de5413a6f2d244f2690eaeb3d18c25`, retained by `retain.py` in
+  `.ufo/waves/round-17/final-recheck/`:
+  - invocation-audit: 17 rows, 17 `exercised_match`, 0 unlabelled;
+  - temporal-sweep: 4 sites, 4 corrected, 0 new unqualified.
+- Required census at round start and end:
+  `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku`
+  returned `kaidoku ok`, exit 0, both times (the end run is also in
+  `verification.json`, label `sources-census`).
+- Author-side verdicts: C1 calibration improved; C2 depth improved, with the
+  capability row `retained REA Ghidra-session log capture` entered in
+  SCORECARD. Expansion unchanged, quality improved, discernment improved. No
+  SHONEN mark upgrade.
