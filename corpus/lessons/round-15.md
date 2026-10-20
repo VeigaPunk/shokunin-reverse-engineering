@@ -67,6 +67,7 @@ The previous genuine outside check admitted round 14 and routed two status-neutr
 | landing / premature used-by reference | registry used-by was extended before new targets were created in the same round | CORPUS row/path existence discipline | All referenced files are created before final census/commit; no intermediate registry is claimed conformant. Future ordering must create targets first. |
 | number-drift / survivor | connector reports' 98/114 patch counts and their named corrections; full installed-directory opening | CORPUS count-command rule and adversarial cross-check, not agreement among seats | Reject incomplete previews; retain final inventory output and per-minor histogram. No population accuracy or independent-origin count is inferred from repeated readers. |
 | provider / unexecuted static review | First L1 inventory execution at `856d193b8c21d3f7aeff3cb8a27b55a715ab897e`, `verification-initial.json`: exit 1 TypeError sorting dicts | Not caught by source-only reviews; no prior execution was claimed | Diff numeric `patch` was overwritten by a structural dictionary before sorting. Preserve the numeric key and name the structural field separately; rerun only after repair. The retained actual red-before traceback, not a model-only selfcheck, grounds this repair. |
+| reference-drift | `verification.json`, strict citation exit 1 `sc-arc3r2-cites-shonen` | Registered citation-drift strict check | Preserve the truthful pinned craft-section phrase in SHONEN's canonical evidence line; do not change the pointer table. Final recheck names the repaired revision. |
 
 A source-law correction is not a controlled target repair. The raw-input limitation has an executable red exemplar; its opposite accepted form changes only quote bytes. Semantic source corrections rely on the retained, inspectable dispatch chain rather than a fabricated runtime experiment.
 
@@ -124,3 +125,41 @@ not yet run when the orchestration cell stopped parsing empty stdout.
 The assigned tool owner repairs the field collision, without executing tests.
 No initial inventory success is claimed. Final measurements and checks name
 the repaired source revision, with the original red-before evidence preserved.
+
+## Executed controls and source evidence
+
+After the tool owner finished the collision repair, L1 ran the remaining
+checks once against source revision `7ad23fe1735cd868ec203d93deb13bb2c42889ad`.
+Full outputs/exits: `.ufo/waves/round-15/verification.json`.
+
+- Inventory: both runs exit 0, byte-identical; 11 bases / 123 diffs,
+  `all` present in every base, errors/skipped empty. Diff numeric `patch`
+  and object `patch_structure` are preserved. Exact per-file pins and
+  patch histogram are in `inventory.json`; SHA-256
+  `ad06fadc0166e172d65325e3366375e2d4a9730d714d154bbcd98137539bb2fe`.
+- Existing quote selftest: 28/28, exit 0. Original frozen run: seven
+  expected verdicts matched, exit 0. Existing instrument/expectation bytes
+  remain equal to baseline, and all recorded measurement pins match.
+- New rendered red manifest: exit 1, `quote_not_contiguous@raw-literal`.
+  Same-source raw-fixed manifest: exit 0, no findings. Only quote text differs
+  in this final pair. New digest-pinned frozen boundary run: two expected
+  verdicts matched, exit 0. This proves the disclosed limitation, not a
+  new representation-classification capability or an upstream fidelity claim.
+- Craft control: identical SHA-256 on both source revisions,
+  `e12b60ce0c71316e457680c65ae8273487deac9c68db3f80a084814a8ad765e6`;
+  17/17 citation blocks resolve. Prior lesson/entry and LOG edits are
+  append-only; old advisory and outside verifier bytes are unchanged.
+- Required final source validator: `kaidoku	ok	/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md`,
+  exit 0. Detailed immutable counts: 22→23 source rows,
+  A20/B1/C1→A21/B1/C1, mined21/rejected1→mined22/rejected1;
+  added A1/B0/C0, existing statuses/recheck values unchanged.
+- Strict citation check caught the SHONEN evidence-line rewording:
+  exit 1, `citation_dead@sc-arc3r2-cites-shonen`, because it removed the
+  pinned `(craft section` phrase. The evidence line is repaired to preserve
+  that truthful phrase and the 17/17 qualification without changing marks.
+  Its final revision-bound recheck is recorded separately; the red output
+  is preserved, not suppressed or blessed by weakening the pointer table.
+
+This current-round mistake is captured by the registered citation check.
+Only the evidence-line wording changes in its repair; no baseline pin or
+historical scorecard entry is rewritten.

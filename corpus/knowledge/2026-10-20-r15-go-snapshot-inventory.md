@@ -46,3 +46,29 @@ S003's `DataTypeMapper.java:176,310-313` dispatches to `GoRttiMapper.getType` (`
 - Generic-bucket presence is not type completeness, semantic validity, or a guarantee that required struct mapping succeeds. Source catch branches returning null do not make their lookup prerequisites snapshot-independent.
 - S007's 12.0 Improvements entry records the switch to JSON bootstrap files. It does not establish later-version support in this installation.
 - Selected inventory fields, exact commands, exit codes, and the source revision measured are appended after L1 execution; a provisional file-existence count alone is not the semantic evidence for C1.
+
+## Executed inventory — 2026-10-20
+
+The `recheck:` command above ran twice using the repaired probe at
+`7ad23fe1735cd868ec203d93deb13bb2c42889ad`; both executions exited 0 and
+emitted byte-identical stdout. Retained output:
+`.ufo/waves/round-15/inventory.json`, SHA-256
+`ad06fadc0166e172d65325e3366375e2d4a9730d714d154bbcd98137539bb2fe`.
+Full argv, stdout/stderr and exits: `.ufo/waves/round-15/verification.json`.
+The initial sorting failure and its only code repair are retained separately
+in `verification-initial.json` and source history; no first-run success claimed.
+
+| Measured observable | Result from the same inventory command |
+|---|---|
+| Base JSON / patch-diff files | 11 / 123; every base has `all`; errors and skipped matching entries empty |
+| Patch histogram by minor | 1.15:15, 1.16:15, 1.17:13, 1.18:10, 1.19:13, 1.20:14, 1.21:13, 1.22:12, 1.23:12, 1.24:6; none for 1.25/1.26 |
+| Requested 1.24.7 | Base SHA-256 `aab28c8f7fcf36224f01b883b1f3f13208412d22e4eb0d87d090a258e124c571`; 6 installed diffs, through 1.24.6; exact requested diff absent |
+| Requested 1.25.7 | Base is S023, 27 buckets, no installed minor diff; generic `all` has 29,041 function and 3,741 type records |
+| Selected bootstrap definitions in 1.25 base | `runtime.moduledata` and `runtime.pcHeader` only under `all`, 45 and 13 fields respectively |
+| Requested 1.26.8 | Same-minor base absent, no installed minor diffs; null base digest/structure, not invented zero-record parsing |
+
+The per-file digests, sizes and complete key summaries are retained in the
+output, not replaced by these selected counts. Counts describe parsed
+installed resources, not recovered target functions. A structural regression
+check over this emitted JSON confirmed numeric `patch` and object
+`patch_structure` on every diff. No patch was applied.
