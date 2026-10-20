@@ -1,0 +1,42 @@
+# Round-13 S017/S018 quote-failure history
+
+**Axes:** calibration (faithful quote and locator); coverage (regression controls for both known failure modes). **Scope:** source-history reconstruction only. No edits outside this report, tool installations, gate execution, selftest, build, or target/REA operation. LSP was unavailable: no `lsp` device was mounted and `command -v lsp`, `omp-lsp`, and `gopls` returned no path. Literal search was used only to locate files/phrases; conclusions below are from direct file reads, not grep as semantic proof.
+
+## Reconstructed evidence chain
+
+1. **Original Gate state.** `corpus/lessons/round-13.md:44-45` records S017 as “Use --normalize to replace address-derived function names with deterministic names based on parse order.” at `Deterministic Function Names and Mapping CSV`; it records the exact S018 sentence at `Decompiled output`. These were the two defective quote/location pairs, not a defect in the registry topic anchors.
+2. **Reviewer finding.** The non-author r13 report, `.ufo/waves/kaika-w3/kaidoku-r13-review.md:90-105`, says the S017 string does not occur verbatim: the CLI row reads “Replace address-derived function identifiers with deterministic names based on parse order.” while the named normalization section reads “Use `--normalize` to replace address-derived function names with deterministic identifiers.” The published Gate wording splices the beginning of the latter with the ending of the former. For S018, the reviewer says the exact sentence is under `Introduction`, not `Decompiled output`; that latter heading is topically adjacent but does not contain the quote. Reviewer summary: 20/22 exact, with S017 as the splice and S018 as the mislocation (report lines 92-104).
+3. **Append-only repair.** `corpus/lessons/round-13.md:61-67` explicitly leaves the original table intact and appends an erratum superseding those two fields. S017 is corrected to the contiguous CLI-table sentence and `Usage` → `Command-Line Arguments` → `--normalize`; S018 keeps the exact sentence and changes its location to `Introduction`. It states the `SOURCES.md` rows remain unchanged because their topic anchors remain valid. Mistakes addendum rows 3-4 (`:69-76`) classify S017 as attribution and S018 as reference-drift, prescribe one contiguous substring / exact heading, and state that no additional QUALITY criterion was added.
+4. **Verifier record.** `corpus/lessons/round-13-verifier-spotcheck.md:13-17` summarizes the two reviewer findings, says the lesson appended corrections rather than rewriting, and records the verified S018 location plus the correction-time WAF disclosure. It limits the verdict to source-curation; it does not turn documentation into a held REA operation.
+
+## Exact criterion that caught the defects
+
+The applicable rule was the existing corpus citation rule, not a newly added QUALITY admission criterion: `/home/vgpnk/Projects/shokunin/CORPUS.md:42-45` says **“A quote names its location.”** The frozen registry contract, `/home/vgpnk/Projects/shokunin/.ufo/waves/kaika/SOURCES-CONTRACT-v1.md:45-48`, requires the Gate to record a ≤25-word quote **“with its location grounding teaches.”** Together these require both (a) the quoted words to be a real source passage and (b) the named location to contain that passage. S017 failed (a); S018 failed (b). The lesson’s explicit “no extra QUALITY criterion” sentence at `corpus/lessons/round-13.md:76` prevents misattributing the finding to a new QUALITY row.
+
+## Why local executable fixtures would demonstrate failability
+
+The two original defects are complementary negative controls, and corrected cases provide positive controls:
+
+- **S017 splice:** use the pinned README excerpt, preserving `Usage` / `Command-Line Arguments` and `Deterministic Function Names and Mapping CSV`. The original Gate phrase is absent as one contiguous substring in its cited section, while the corrected CLI-table sentence is present at the stated `--normalize` row. A section-scoped matcher should therefore reject the old phrase as `quote_not_contiguous` and accept the corrected one.
+- **S018 mislocation:** use the captured article excerpt with its headings. The exact quoted sentence exists under `Introduction`, but not under `Decompiled output`. A global “quote exists somewhere” check would miss this defect; a section-scoped check should reject the old locator as `quote_location_mismatch` and accept the corrected `Introduction` locator.
+
+With manifest-pinned SHA-256 digests, source paths relative to the manifest, and isolated selftest assertions for exit status plus stable finding IDs, those fixtures would make the known failures repeatable offline and distinguish quote absence from wrong-section placement. The digest check makes changed fixture bytes a `source_tampered` / cannot-evaluate result rather than silently changing the test basis. This only demonstrates quote/locator fidelity for the captured excerpts; it does **not** validate source meaning, all registry rows, or REA/target behavior. The interface and expected verdicts are not themselves evidence that the gate works: I did not run it.
+
+At the time of this report, the local round-14 source artifacts I read were `.ufo/waves/round-14/w1/ReviewS017-source/View8-README-ef39099b4f5076042173f9113382ebeb0630a56d.md` and `w1/s018-raw.html`; they are HTML captures, whereas the round-14 gate contract specifies UTF-8 Markdown excerpts. They support the source distinction but are not, as-is, proof of the gate’s manifest behavior. No `.ufo/waves/round-14/tools/` or `fixtures/` directory was present in the observed tree, so no executable fixture verdict is reported here. S018’s reviewer notes that current raw-HTML line numbers differ from the r13 reader rendering; section headings plus the captured-byte digest are the reproducible locator, not the old line number.
+
+## Source access ledger (read 2026-10-20)
+
+Quotes below are contiguous excerpts of at most 25 whitespace-separated words. Access date is this session’s read of the local file; for the upstream pages, this report relies on the cited reviewer’s recorded reopen, not a new external fetch by this seat.
+
+| Source and location | Excerpt | Limit |
+|---|---|---|
+| `/home/vgpnk/Projects/shokunin/CORPUS.md:42` | “A quote names its location.” | General citation rule; not a machine algorithm. |
+| `/home/vgpnk/Projects/shokunin/.ufo/waves/kaika/SOURCES-CONTRACT-v1.md:45-48` | “a ≤25-word quote with its location grounding teaches.” | Registry contract; not an assertion that an automated verifier existed in r13. |
+| `.ufo/waves/kaika-w3/kaidoku-r13-review.md:96-104` | “S017 quote is a splice, not a verbatim sentence.” | Archived non-author reviewer finding; not a round-14 gate result. |
+| `corpus/lessons/round-13.md:61-76` | “These append-only corrections supersede the S017 quote and S018 location printed in the original Gate table.” | Author’s durable correction record; its S018 line number reflects a different rendering. |
+| `corpus/lessons/round-13-verifier-spotcheck.md:13-17` | “Review found S017's spliced quotation and S018's mislocated exact quote.” | Spot-check summary; source curation only. |
+| `corpus/lessons/round-13.md:44` | “Use --normalize to replace address-derived function names with deterministic names based on parse order.” | This is the recorded bad S017 quote, not a valid source quotation. |
+| `.ufo/waves/round-14/w1/ReviewS017-source/View8-README-ef39099b4f5076042173f9113382ebeb0630a56d.md:40` | “Replace address-derived function identifiers with deterministic names based on parse order.” | Local peer-captured README excerpt; no digest independently checked by this seat. The r13 reviewer records the pinned commit/source comparison. |
+| `.ufo/waves/round-14/w1/s018-raw.html:469,489,625` | “The goal is not perfect source recovery — V8 compilation is lossy, and the output of decompilation remains pseudocode.” | Local peer-captured article HTML; reviewer records SHA-256 `31b8231560a20de10456e2911eaef007651d9029ba8e9754e1acb4434a74dd5e`. Article provenance/location only, not target behavior; HTML is not the gate’s Markdown fixture format. |
+
+No source documentation or local quote fixture establishes held REA or target behavior. No checks were run by this seat; L1 owns integration and verification.

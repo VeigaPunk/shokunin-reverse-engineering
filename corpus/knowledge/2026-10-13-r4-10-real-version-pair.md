@@ -192,3 +192,20 @@ pair by ELF role/address (or explicit dossier ids) instead. Cost model is now pr
 `REA_GHIDRA_STARTUP_TIMEOUT_MS` on all of them. Replay is deterministic
 (`ev_0b3c8101…` reproduced from round 2). All artifacts in `/tmp/rea-r4`; one report
 file written, nothing committed.
+
+## Round-14 source-backed causal correction — 2026-10-20
+
+The causal sentence at lines 70–73 (“cannot parse the Go 1.26
+moduledata/pclntab layout”) is superseded by
+`corpus/knowledge/2026-10-20-r14-go-version-diagnosis.md`. The retained run
+record establishes different recovered inventories across these builds,
+not the precise reason for the difference. Its diagnostic log was not
+retained, so that original cause remains **UNKNOWN**, not freshly reproduced.
+
+Installed source distinguishes an advisory range warning (which continues)
+from failed struct registration with an invalid snapshot. Missing snapshot
+data and OS/architecture exclusion can select the same bootstrap message;
+the upstream support change also alters downstream layouts. None of this
+proves that the old run reached a layout parser, or that a range-only change
+repairs it. Historical numeric outputs and the caution against symbol-only
+pairing are preserved. Round-14 source reading executed no target or provider.

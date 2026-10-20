@@ -1760,3 +1760,46 @@ capability are tracked separately. Quality is unchanged; discernment is
 **improved** because the outside sample agrees with the source dispositions.
 No numeric axis score changed. Follow-on: round 14 may admit a source-backed
 knowledge entry only if the same coverage-map question remains uncovered.
+
+## 2026-10-20 — round-14 — source diagnosis and quote-regression instrument
+
+Claims: C1 **depth**, source-backed Go RTTI bootstrap differential diagnosis;
+C2 **calibration/capability**, a local captured-quote regression gate. The
+initial coverage label was rejected before integration because the
+cross-version Go surface was already held; `claims-review.json` preserves
+the attribution refinement without reducing the technical deliverable.
+
+- Motivation: the prior non-author spotcheck caught a spliced S017 quote and
+  S018's wrong section (`corpus/lessons/round-13-verifier-spotcheck.md`).
+  `corpus/lessons/round-14.md` mines both and grounds QUALITY #16.
+- C1 lands `corpus/knowledge/2026-10-20-r14-go-version-diagnosis.md`, citing
+  reopened S001/S003/S004/S007. It distinguishes a range warning that
+  continues from the conditional invalid-snapshot bootstrap failure; the
+  historical op run's exact cause stays unknown. An append-only correction
+  marks the older causal inference superseded; same-line README/PROVINCE
+  edits remove current causal overstatement without shifting frozen anchors.
+- SKILL receives a source-only diagnostic table and a quote-fidelity
+  registry row at the end, leaving existing craft anchors intact.
+- C2 lands `.ufo/waves/round-14/tools/quote-fidelity.py`, isolated selftest
+  cases, frozen source/manifest pins, paired wrong/corrected quotations,
+  and documented raw-excerpt limits. At this work-entry stage no unrun
+  check is called passed; measured outcomes follow in the records entry.
+- Frontier: no new source rows; permitted used-by appends on
+  S001/S003/S004/S007/S017/S018 are logged old→new in the lesson.
+  Source snapshots are short disclosed excerpts, not redistributed full pages.
+- One validated batched wave: `.ufo/waves/round-14/spec.json`,
+  `dispatch.json`, and `w1/swarm-registry.json`; L1 holds the canonical
+  planner seat, with bounded planning walks in CoverageGap/ClaimSeparation
+  and adversarial axis attribution in AttackNovelty/AttackTrends.
+  Advisory seats do not supply a non-author promotion or admission check.
+- Initial lane status was clean; no inherited round work was swept.
+  The prior verifier lesson is untouched. No target/provider execution,
+  client configuration change, tool installation/update, or new L0 question.
+
+Round-14 correction to historical LOG line 99: “Go toolchain bump …
+collapses symbol recovery” describes a difference recorded across two builds,
+not a controlled causal result. The same qualification supersedes the old
+layout-cause sentence in r4-10. Original log bytes remain append-only.
+The bounded sweep is retained in `.ufo/waves/round-14/correction-sweep.json`;
+current README and PROVINCE summaries now state historical inventories,
+with the old run's precise cause unknown.
