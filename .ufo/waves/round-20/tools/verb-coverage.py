@@ -117,19 +117,34 @@ def existing_evidence_path(text, paths):
 
 REFUSAL_TOKENS = ("invalid_request", "capability_unavailable", "provider_timeout",
                   "unsupported_target", "VALIDATION_ERROR")
+# Verbs whose Evidence names a different operation (source: wave-1 ScoutObjdumpArch.md —
+# `list-objdump-architectures` emits operation `inspect_with_objdump` with the hidden
+# `architectures` operation parameter). Every token must occur in the bound file.
+OP_TOKENS = {"list-objdump-architectures": ("inspect_with_objdump", '"architectures"')}
+CITED = re.compile(re.escape(EVIDENCE_PREFIX) + r"[A-Za-z0-9._/-]*", re.ASCII)
+
+
+def cited_prefixes(text):
+    """Evidence files or directories (trailing '/') an entry cites by full lane path."""
+    return {m.group(0).rstrip(".") for m in CITED.finditer(text)}
+
+
+def is_cited(path, cited):
+    return any(path == c or (c.endswith("/") and path.startswith(c)) for c in cited)
 
 
 def bound_evidence(root, revision, verb, texts, evidence_paths):
     """Round-20 hardening (wave-1 CriticC2/ReviewClaimsC2): a target counts as
     exercised only if an entry naming it cites an ``ev_`` id that occurs, at the
-    measured revision, inside a retained file under the C2 evidence prefix whose
-    bytes also carry the verb's operation token (underscore form) and no REA
-    refusal/error code. A fabricated id or an unrelated retained file no longer
-    counts. Returns [(ev_id, path)] pairs."""
-    op = verb.replace("-", "_")
+    measured revision, inside a retained file under the C2 evidence prefix that the
+    same entry cites (as a file or a directory), whose bytes also carry the verb's
+    operation token(s) and no REA refusal/error code. A fabricated id or an
+    unrelated retained file no longer counts. Returns [(ev_id, path)] pairs."""
+    tokens = OP_TOKENS.get(verb, (verb.replace("-", "_"),))
     found = []
     for text in texts:
-        if not existing_evidence_path(text, evidence_paths):
+        cited = cited_prefixes(text)
+        if not cited:
             continue
         for ev in sorted(set(m.group(0) for m in HEX64.finditer(text))):
             proc = subprocess.run(["git", "--no-optional-locks", "grep", "-l", "-F", ev, revision, "--",
@@ -142,8 +157,10 @@ def bound_evidence(root, revision, verb, texts, evidence_paths):
                 if not hit:
                     continue
                 path = hit.split(":", 1)[1] if hit.startswith(revision + ":") else hit
+                if path not in evidence_paths or not is_cited(path, cited):
+                    continue
                 blob = git_show(root, revision, path)
-                if op in blob and ev in blob and not any(t in blob for t in REFUSAL_TOKENS):
+                if all(t in blob for t in tokens) and not any(t in blob for t in REFUSAL_TOKENS):
                     found.append((ev, path))
                     break
     return found
