@@ -1974,3 +1974,58 @@ Motivation, Gate admits/rejects, exact source quotes, Mistakes and curation:
 `corpus/lessons/round-16.md`. Actual L1 checks, after-counts and final
 falsification outcomes are recorded separately after source work is committed;
 no unrun check is called passed here.
+
+## 2026-10-20 — round-16 measured records and final integration
+
+Source work landed and pushed at
+`27b8fc13156230981312c44380cddab1f2bd318d`, against clean baseline
+`6235498b4112350eebce0812a74af1781fc0ee88`.
+
+- Integration correction to the preceding entry's “New map row”: the new
+  token/command extends the existing Go row at README line35, not a separate
+  row. `w2/FAttackAdmissionFinal.md` caught the potential five-pointer line
+  shift before execution. No pointer baseline was weakened or rewritten.
+- One final L1 verification pass after both swarms: exact argv/cwd/output/
+  stderr/exits plus producer/input hashes retained in
+  `.ufo/waves/round-16/verification.json`. All invoked final commands exit0;
+  only the separately retained deliberate baseline documentation control
+  exits1 (0/4 markers). The identical after snippet exits0 (4/4 markers),
+  explicitly presence evidence, not standalone semantic proof.
+- Developer runner with all ten explicit fixture inputs:154/154 pass,
+  zero fail. Actual installed source-model 1.24.5→exact patch5 despite
+  installed6; 1.24.7→fallback6, 1.24.10→6, 1.19.20→13;
+  1.25.7→base0, 1.26.8→missing. Windows/linux-riscv64/darwin-arm64
+  bucket contrasts run; raw selected-file digests in `selections.json`.
+  Every output remains source_model, patch_applied:false.
+- Existing quote selftest28/28, original frozen7 and supplemental frozen2
+  expected verdicts match; strict citation clean0, exit0 at source revision.
+  Supplemental clean means the rendered/raw boundary's expected ordinary
+  raw verdicts matched, never representation classification.
+- Structural producer actually ran and retains sys.orig_argv/quoted command
+  and immutable revisions: old LOG prefix, old lessons18/18, old knowledge
+  93/93 prefixes retained; four prior verifier files and126/126 pre-existing
+  frozen/evidence blobs byte-identical. Craft bytes unchanged and17/17
+  bounded knowledge-file/range citations resolve on both revisions.
+- Metadata command in verification confirms old QUALITY rows1–17 unchanged,
+  canonical SHONEN seed and four `[~]` assertions, both raw S003 quote
+  anchors,64+32=96 dispatches with every identity registered and no model
+  parameter. Producer/fixture hashes remain unchanged across execution.
+- Immutable source census: knowledge map93/93→94/94, missing/dangling empty;
+  sources23→23, A21/B1/C1 and mined22/rejected1 unchanged. Required shared
+  source validator starts/ends exit0. Only S003/S023 used-by appends.
+- Waves: first64 seats completed36/failed28 (22 credits,6 capacity);
+  second32 completed32/failed0, total96 original seats. Every failure
+  remains dead. Operator repaired new-seat routes and paused all pacman
+  transactions; no lane routing/auth/db or host action, no installations.
+- SCORECARD records author-side C1 depth improved and C2 calibration improved,
+  all three owned finite proxies10.0 with delta0, no new capability or
+  stagnation reset. Other axes unchanged in the stated scope. Expansion
+  unchanged, quality/discernment improved through source-model deepening
+  and learned prior outside routes. Current independent admit/reject sample,
+  admission and any promotion remain non-author closure/operator duties.
+
+All new/changed round files are tied to this and the preceding LOG entry.
+Checks name source revision above; later bookkeeping does not pretend that
+the delivered metadata HEAD itself was a newly executed gate revision.
+The fleet report is written only after evidence/bookkeeping are committed
+and pushed. No following round is started.

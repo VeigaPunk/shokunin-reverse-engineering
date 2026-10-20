@@ -52,3 +52,46 @@ Per-file `path`, `size`, and `sha256` describe the raw selected base and diff. P
 - C1 deepens already-held Go ground. It does not add broad domain coverage, a held REA operation, a target capability or independent outside verification. Current-round admission remains non-author closure work.
 
 Motivating evidence and candidate rejects: `corpus/lessons/round-16.md`, Gate; prior outside boundaries: `corpus/lessons/round-15-verifier-spotcheck.md`; author-side novelty/causality attacks: `.ufo/waves/round-16/w1/AttackNovelty.md` and `AttackCausality.md`.
+
+## Executed source-model preview — 2026-10-20
+
+Measured source revision: `27b8fc13156230981312c44380cddab1f2bd318d`.
+L1 ran the exact `recheck:` argv above and the contrasts below after both
+swarms returned. Full argv/cwd/stdout/stderr/exits and producer/input hashes:
+`.ufo/waves/round-16/verification.json`; emitted selection objects:
+`.ufo/waves/round-16/selections.json`. All listed invocations exited 0;
+this is actual Python execution over installed data, not Java/Ghidra execution.
+
+| Requested / supplied platform | Observed status / selected patch | Observed unpatched base buckets |
+|---|---|---|
+| 1.24.5 linux/amd64 | exact_diff / 5, despite installed patch 6 | linux-amd64, linux, unix, amd64, all |
+| 1.24.7 linux/amd64 | fallback_diff / 6 | linux-amd64, linux, unix, amd64, all |
+| 1.24.10 linux/amd64 | fallback_diff / 6 | linux-amd64, linux, unix, amd64, all |
+| 1.19.20 linux/amd64 | fallback_diff / 13 | linux-amd64, linux, unix, amd64, all |
+| 1.25.7 linux/amd64 | base_only / 0 | linux-amd64, linux, unix, amd64, all |
+| 1.26.8 linux/amd64 | missing_base / null | empty; no parsed-base result |
+| 1.25.0 linux/amd64 | base_only / 0 | linux-amd64, linux, unix, amd64, all |
+| 1.24.7 windows/amd64 | fallback_diff / 6 | windows-amd64, windows, amd64, all |
+| 1.24.7 linux/riscv64 | fallback_diff / 6 | linux, unix, all |
+| 1.15.0 darwin/arm64 | base_only / 0 | darwin, unix, arm64, all |
+
+The flagship 1.24.5 command differs from `recheck:` only by
+`--request 1.24.5`. It selected raw
+`patchverdiffs/go1.24.5.json.diff`, 106091 bytes, SHA-256
+`5743f4335615fdc5aa8d7e3c2516a8223a3eb769ffd306b3344b79bef4ea7053`.
+The 1.24.7 command selected raw `patchverdiffs/go1.24.6.json.diff`,
+118810 bytes, SHA-256
+`e169e8dd0a1922b292159c56d85688cb84b0e47b44211aa4a3dd3fb1dd9cded6`.
+Both use `go1.24.0.json`, SHA-256
+`aab28c8f7fcf36224f01b883b1f3f13208412d22e4eb0d87d090a258e124c571`.
+Counting/pinning commands: verification labels
+`selection-1.24.5-linux-amd64` and `selection-1.24.7-linux-amd64`;
+these identify selected input bytes, not a patched result.
+
+The developer runner was invoked once with ten explicit `--fixtures` paths
+(the two base files and all eight w2 case files): `selfcheck: 154 case(s),
+154 pass, 0 fail`, exit 0, verification label `all-developer-fixtures`.
+It exercises source-model boundaries and deliberate parser/shape limitations,
+not observed Java parity. Producer and fixture pins were unchanged during
+the run. No target capability, patch application, historical cause or
+current-round outside verification is acquired.

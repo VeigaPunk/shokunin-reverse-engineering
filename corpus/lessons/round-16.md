@@ -100,3 +100,85 @@ Some w1 reviews examined source/contract snapshots before candidates existed; th
 - Runner repairs from `FFixtureComparator.md`: missing path keys no longer satisfy expected null, conflicting authored evidence-class/patch-applied expectations are compared, a positive case must assert a non-forced field, and malformed-case schema/number-type handling is aligned with the documented developer-runner contract.
 - `FProducerBytes.md`/`FSourceCells.md`: controls compare pre-existing blob bytes, not newly added files or executable modes; source-cell deltas describe used-by edits rather than enforcing their semantic correctness. The shared source census separately checks duplicate IDs/path existence. These narrow controls are not a universal no-harm policy or semantic source validator.
 - Some advisory reports inferred duplicate rejection for Java `List.of` or directory-diff selection from incomplete source. Other seats reopened the relevant factory/directory behavior and those claims are not adopted; author reports retain their own corrections. No undocumented patch-section counts are promoted from advisory prose into the corpus.
+
+## Executed L1 evidence and verdicts
+
+Source revision `27b8fc13156230981312c44380cddab1f2bd318d` was committed
+and pushed before this single post-integration execution pass.
+`.ufo/waves/round-16/verification.json` retains every producing argv, cwd,
+stdout/stderr, exit and producer/input SHA-256; outputs are also retained
+as `before.json`, `after.json`, `controls.json`, `metadata.json`,
+`documentation-after.json` and `selections.json`. Python reports 3.14.7.
+
+- Immutable census: `python3 -I .ufo/waves/round-16/measure.py <REV>` on
+  baseline `6235498b4112350eebce0812a74af1781fc0ee88` and source revision
+  above, both exit 0. C1 entry/probe/fixtures/runner presence 0→1 each;
+  C2 row18/supplement/named correction/historical wording/producer presence
+  0→1 each. Old SHONEN “this round” marker 1→0. These are structural controls,
+  not expertise scores or semantic proof.
+- Same one-off documentation snippet: actual baseline exit 1, 0/4 markers;
+  source revision exit 0, 4/4 markers. Full original snippet in
+  `documentation-red.json`; after argv in `verification.json`. The source/
+  content reviews and actual `structural-controls` invocation, not this
+  weak marker check alone, establish the bounded route repairs.
+- Developer fixtures: one invocation, all ten explicit files, **154/154**,
+  zero failed, exit 0. Source-model tests include bounded requests despite
+  higher installed patches, two-digit numeric ordering, null-valued buckets,
+  missing-vs-parsed-empty, the manual parser/shape limitations and unpatched
+  labels. They are not Java/provider/target or outside-review results.
+- Installed preview: all ten recorded requests exit 0. Crucial contrast
+  1.24.5→exact patch 5 versus 1.24.7→fallback patch 6; 1.24.10→6,
+  1.19.20→13; 1.25.7→base patch 0; 1.26.8→missing base. Windows,
+  linux/riscv64 and darwin/arm64 results preserve their distinct ordered
+  unpatched-base projections. Exact byte identities and complete output are
+  in `selections.json`; this supersedes the earlier prospective “planned”
+  status, not the source-model/unknown boundaries.
+- Existing own quote gate: selftest **28/28**, original frozen **7** expected
+  verdicts matched, supplemental boundary frozen **2** matched, all exit 0.
+  The last result includes the rendered control's ordinary raw-substring
+  exit 1; it is not a rendered-representation classifier.
+- Existing own strict citation probe: clean, **0 findings**, exit 0, measured
+  source revision above. README's line-neutral integration avoided the
+  critic-reported line-shift hazard; pointer table/expected pins unchanged.
+- `controls.py BASELINE SOURCE`: old LOG prefix retained; **18/18** old
+  lesson prefixes and **93/93** old knowledge prefixes retained; **126/126**
+  pre-existing frozen/evidence blobs byte-identical; all four prior outside
+  verifier files unchanged. Craft section digest unchanged,
+  `e12b60ce0c71316e457680c65ae8273487deac9c68db3f80a084814a8ad765e6`,
+  **17/17** bounded knowledge-file/range citation blocks resolve on both
+  revisions. No semantic/all-pointer audit is inferred.
+- Metadata command retained verbatim in `verification.json`: old QUALITY
+  rows **1–17** unchanged; canonical SHONEN seed matches with four `[~]`
+  assertions; both source-code quotes occur at their stated raw lines,
+  **4** and **7** whitespace-delimited words; S003 archive digest matches.
+  All producer/fixture pins remained unchanged during execution.
+- Swarm counts from committed specs/dispatches/registries: **64 + 32 = 96**
+  original seats; every identity registered, no per-seat model parameter.
+  W1 mix: executor6/scribe6/scout14/connector8/reviewer12/critic12/revenger3/
+  sentinel3. W2: executor8/scout6/connector2/reviewer8/critic4/scribe4.
+  W1 completed36/failed28 (22 credit, 6 capacity); W2 completed32/failed0.
+  Dead-seat evidence and outcome provenance are in both `wave*-outcomes.json`.
+
+Final required census, same command as round start:
+
+```text
+/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+kaidoku	ok	/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+exit=0
+```
+
+Detailed source counts from both immutable measurements: **23→23** rows,
+**A21/B1/C1→A21/B1/C1**, **mined22/rejected1→mined22/rejected1**;
+no new row or frontier promotion. Knowledge map **93/93→94/94**,
+missing/dangling empty. Every number above carries its producing command in
+`verification.json`; the dead-seat counts are observed session outcomes,
+not a lane-script inference from missing reports.
+
+Author-side final verdicts: **C1 depth improved**, **C2 calibration improved**;
+owned numeric proxies stay 10.0 with delta 0. Coverage/operability/freshness/
+adjacency unchanged in the stated scope, no residual harm in the named
+controls. **Expansion unchanged**, **quality improved**, **discernment
+improved** by learning the prior genuine outside routes into fixes and
+criterion 18. Current-round non-author admit/reject sampling and admission
+remain the separate closure duty; no author seat or fixture green fills it.
+No SHONEN mark upgrade, target capability, installation/update or host action.

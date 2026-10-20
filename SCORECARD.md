@@ -2290,3 +2290,59 @@ Planned: only with an explicitly selected real Go carrier, retain new analyzer
 diagnostics and distinguish requested-version labels from fallback data in
 that run. No next-round execution, target choice, recovery success, or
 operator-authorization blocker is inferred from this source-only round.
+
+## Round 16 — computable Go selection and outside-route provenance, 2026-10-20
+
+Baseline: `6235498b4112350eebce0812a74af1781fc0ee88`.
+Measured source revision, committed and pushed before checks:
+`27b8fc13156230981312c44380cddab1f2bd318d`.
+Full producer argv/cwd/stdout/stderr/exits/input hashes:
+`.ufo/waves/round-16/verification.json`; motivating evidence and
+admit/reject decisions: LOG round-16 and `corpus/lessons/round-16.md`.
+
+| Claim / axis | Existing numeric proxy | Falsifiable supplemental before→after, command and measured revision | Author-side verdict / limits |
+|---|---|---|---|
+| C1 depth | 10.0→10.0, delta 0; craft range proxy still 17/17 | Entry/probe/fixtures/runner presence 0→1 each; `python3 -I .ufo/waves/round-16/measure.py <REV>` on baseline and measured source above; actual source-model commands in `verification.json`, labels `selection-*`; developer runner `all-developer-fixtures` 154/154 exit0 | **improved** by materializing the already-held source law into request-bounded selected-file identities and ordered unpatched-base projection: 1.24.5 selects5 despite installed6; 1.24.7 selects6, numeric multi-digit and platform contrasts run. No new selector law, patch application, compiled-provider parity, target recovery or historical-cause proof |
+| C2 calibration | 10.0→10.0, delta 0; legacy selected rubric not relabeled | Four route markers 0/4→4/4; identical `python3 -I -c <snippet> <lane> <REV>` exits1→0, complete snippet in `documentation-red.json` and after argv in `verification.json`; row18/supplement/named correction/historical line/producer 0→1 each via same immutable measure command | **improved** by learning all four prior genuine outside routes into actual corrections, grounded #18 and an executed structural producer. Marker green alone is explicitly insufficient; content review and retained `controls.py` invocation provide the provenance. No new outside review or promotion |
+| coverage | 10.0→10.0 | 93/93→94/94 mapped, missing/dangling empty; immutable measure command above | unchanged domain ground; the new entry deepens held Go, not expansion |
+| operability | no owned numeric proxy | one fixture invocation154/154; quote selftest28/28, frozen7+2; strict citation clean0; full exits/output retained | unchanged domain capability; no residual harm in these controls, no held REA operation added |
+| freshness | no owned numeric proxy | installed source/data reopened and per-file identities emitted; no provider replay | unchanged; no broad current runtime-freshness claim |
+| adjacency | no owned numeric proxy | local source-model/data and documentation evidence only | unchanged; no sibling research method, domain target, upstream/provider configuration or engine ownership absorbed |
+
+The supplemental booleans and developer-case count are **not** expertise
+scores or unbiased calibration measures. The three-way lowest-axis tie is
+worked through calibration; no proxy is retired or relabeled.
+Saturation line remains 10.0 and stagnation window remains 10; round 14's
+demonstrated local quote instrument remains the last capability entry.
+This round adds **no capability-table row or stagnation reset**.
+
+### Executed controls and frontier
+
+- `controls.py BASELINE SOURCE`: all18 prior lesson prefixes and all93 prior
+  knowledge prefixes retained, LOG old prefix retained, four outside verifier
+  files unchanged, 126/126 pre-existing frozen/evidence blobs byte-identical.
+  Craft digest `e12b60ce0c71316e457680c65ae8273487deac9c68db3f80a084814a8ad765e6`
+  and bounded 17/17 knowledge-file/range blocks unchanged. These controls do
+  not inspect new frozen-root files/modes or establish semantic correctness.
+- Metadata counting command retained as `source-contract-wave-counts`:
+  QUALITY rows1–17 unchanged; canonical SHONEN seed with four `[~]` assertions;
+  exact raw S003 quotes resolve; spec/dispatch/registered counts64+32=96.
+- Sources23→23, tiersA21/B1/C1 unchanged, mined22/rejected1 unchanged.
+  Required census starts/ends exit0. S003/S023 only permitted used-by
+  extensions, exact old→new logged in lesson; zero new rows or frontier
+  promotion. New entry explicitly cites reopened S003/S023.
+- W1 64 seats, completed36/failed28; W2 32, completed32/failed0.
+  Credit/capacity failures are retained, not replaced or called passes.
+  L1 holds canonical planner seat; author seats do not become outside
+  reviewers. Complete role mix and receipts under `.ufo/waves/round-16/`.
+
+Learning trends: **expansion unchanged**, **quality improved** through the
+new computable source-model detail and qualified prior overclaims,
+**discernment improved** by converting prior genuine outside routes into
+lesson-backed criterion18 and fixes. Current-round independent admit/reject
+sampling and admission remain non-author closure work. SHONEN stays `[~]`.
+
+Planned: after the next non-author sample, depth/capability on a caller-selected
+real Go carrier with retained analyzer diagnostics; calibration on any routed
+source/evidence disagreement. No carrier is silently chosen, no recovery
+success promised, and no following round is started here.
