@@ -28,3 +28,44 @@ recheck: use the pinned `rea-agents@6.7.0` CLI `/home/vgpnk/.npm/_npx/a1722018f2
 ## Scope and limitations
 
 Only REA 6.7.0, `inspect_go_binary`, one ELF byte identity, two same-path calls, and two copied paths were measured, and repeated once live during integration. The tests establish same-path repeat stability and path sensitivity for the three semantic path fields in this result. They do not establish behavior for other formats, operations, REA releases, missing metadata, failures, a path-free projection, or all Evidence field variations. The analyzer reads the selected file; the target was not executed and no network was used. Go build metadata is an observed artifact record, not compiler authenticity, dependency authenticity, or runtime evidence.
+
+## Addendum (2026-10-20, round 19) — append-only; the entry above is unchanged
+
+Answers `corpus/lessons/round-18.md:88` (no `S###` row; no custody-leg disclosure) and `corpus/lessons/round-12-verifier-spotcheck.md:17` (debt: "give the C1 entry an `S###` source row; disclose the unpaired custody legs in the entry"). Checks use on-disk artifacts only; no REA call was re-run.
+
+### Source rows
+
+Grounded by existing rows (`corpus/SOURCES.md`):
+
+- **S024** (`corpus/SOURCES.md:30`): Go's buildinfo reader returns the version raw, including any `X:` token; absence of the magic means no record. Grounds the reported Go version `go1.26.5-X:nodwarf5` (entry line 24) as reader output, and the "observed artifact record" limit (entry line 30).
+- **S026** (`corpus/SOURCES.md:32`): the linker writes `X:<exp>` after a dash when the version has no `-`. Grounds the form `-X:nodwarf5`. Scope: S026 is anchored to the go1.27.3 tree; the go1.26.5 linker was not opened, so that it matches is INFERENCE.
+- **S031** (`corpus/SOURCES.md:37`): `GOEXPERIMENT=nodwarf5` disables DWARF 5 generation at build time. Grounds the meaning of the token.
+
+Not grounded by any row:
+
+- Go 1.26.5 as a released toolchain: S025 (`corpus/SOURCES.md:31`) anchors `#go1.27.0`, `#go1.27.3` and `#go1.26.0` only.
+- The REA package-source claims (entry lines 11, 13, 15, 19–25) and the identity of rea-agents@6.7.0. No row names rea-agents or npm (`grep -n -i -E 'rea-agents|npm' corpus/SOURCES.md` → no match). Package identities are the hashes in `claims/c1/CR-4/evidence/package-source-hashes.txt:2-6`.
+- Ghidra rows S003 and S023 and REA-skill rows S001–S002 do not bear on `inspect_go_binary` and are not cited for this entry.
+
+### Custody legs
+
+1. **No pre-pair for the live CLI legs.** No pre-pair receipt exists under `.ufo/waves/arc3-loop1-round12/` (`find … -ipath '*pre*pair*'` returns nothing). The only receipts are two post-only captures, each labelled unpaired (`.ufo/waves/arc3-loop1-round12/receipts/config-post-only.txt:6`; `receipts/config-post-only-2.txt:6`). The SOP says a zero-drift claim without its own same-round pre-pair is void (`SKILL.md:207-208`; section at `SKILL.md:319`). This matches the gap recorded at `corpus/lessons/round-12.md:14`.
+2. **CR-4 envelopes precede the first post-only capture.** `claims/c1/CR-4/evidence/base-1.json`, `copy-a.json` and `copy-b.json` have mtimes 2026-10-19 16:45:36–16:45:37 −0300 (`stat`). The first post-only capture is `captured-utc: 2026-10-19T21:38:54Z` (`receipts/config-post-only.txt:4`). mtimes record last write, not call time; that the envelopes were written during the live call is INFERENCE.
+3. **One-sided ctime bound, not a pair.** The latest ctime in the first post-only capture is kimi's, `CTIME_UTC_RENDER: 2026-10-19T19:09:51Z` (`receipts/config-post-only.txt:64`). The other four paths' ctimes are older (`:28`, `:46`, `:82`, `:100`). No earlier capture brackets the CR-4 leg.
+4. **Operator-side edit between captures.** `.bashrc` sha changed from `7d2ca28a…` (`receipts/config-post-only.txt:75`) to `0cd3d560…` (`receipts/config-post-only-2.txt:75`). Its mtime and ctime are `2026-10-19T21:46:35Z` (`config-post-only-2.txt:78,82`). `corpus/lessons/round-12.md:35` records `CONTENT-DRIFT paths=4/5 drift=1` (`.bashrc` only). The cause, an operator edit, is INFERENCE; the lane does not write `.bashrc`.
+5. **Capture location.** Both receipts were captured with `cwd: /home/vgpnk/Projects/shokunin/.tower/worktrees/kaika/kaidoku-shokunin` and `repo-HEAD: de77d754523afb673b4421d363fe89311644af4f` (`receipts/config-post-only.txt:8-9`; `config-post-only-2.txt:8-9`). They were not taken from the lane path.
+6. **Current configs are outside the last receipt.** The devin and omp config hashes now differ from both receipts (`sha256sum`: `9159ca91…` and `266078…`; receipts `config-post-only-2.txt:21` `16f496e6…` and `:39` `38d2a1d0…`). Their mtimes are `2026-10-20 13:35:56 −0300` (`stat`). `corpus/lessons/round-18.md:89` records this rewrite as outside the lane. The kimi, profile and `.bashrc` hashes still match the last receipt. No custody statement in this entry extends to the current configs.
+
+### Subject identity drift
+
+7. **`/usr/bin/docker` no longer matches the recorded identity.** The entry records SHA-256 `70f68a77…` and 29,327,600 bytes (`claims/c1/CR-4/evidence/identity.txt:1-6`). On 2026-10-20, `sha256sum /usr/bin/docker` gives `566a4e83c1f148720e9628fbee98afcbe00867f0bfec819786f900c40f90d41a`, and `stat` gives 30,487,344 bytes. `/var/log/pacman.log` records `[2026-10-20T09:16:36-0300] [ALPM] upgraded docker (1:29.7.2-1 -> 1:29.9.1-1)`. `pacman -Qo /usr/bin/docker` names `docker 1:29.9.1-1` as owner. The recheck precondition at entry line 7 ("while `/usr/bin/docker` keeps SHA-256 `70f68a77…`") therefore does not hold on this host. The 29.7.2 package file remains in `/var/cache/pacman/pkg/docker-1:29.7.2-1-x86_64.pkg.tar.zst`; its extracted binary has not been verified.
+8. **Retained copies are absent.** `identity.txt:2-3` names `/var/tmp/kaidoku-cr4-r12/copy-a/docker` and `copy-b/docker-copy`. Entry line 22 names `/var/tmp/kaidoku-r12-c1/`. Neither path exists (`ls` → no such file). Re-running the recheck needs fresh copies of a binary whose hash has changed (item 7).
+9. **Package custody intact on this host.** The rea-agents 6.7.0 npx cache `/home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents` is present. `package.json` and the four dist files hash to the values in `package-source-hashes.txt:2-6` (`sha256sum`, 2026-10-20).
+
+### Checked and unchanged
+
+- The copy IDs at entry lines 21–22 match the on-disk files `integration/c1/live-recompute.txt` and `claims/c1/CR-4/evidence/recompute-results.txt`.
+- `integration/c1/reconcile-all-go-ids.txt` reports `records=27 matched=27`, `exit=0` (entry line 25).
+- The Go string `go1.26.5-X:nodwarf5` and module `github.com/docker/cli/cmd/docker` appear in `claims/c1/CR-4/evidence/base-1.json`.
+
+Integrated by the L1 from round-19 w1 `R12Disclosure.md` (author-side; the seat's report is the evidence trail). Package identity of rea-agents 6.7.0 is now also registered as S037 (`corpus/SOURCES.md`).

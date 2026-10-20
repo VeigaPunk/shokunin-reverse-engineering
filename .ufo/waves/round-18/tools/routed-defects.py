@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """routed-defects.py — count the six routed round-17 defects still open at a rev.
 
-Reads Git objects at REV only (`git show REV:path`); the working tree is never
-consulted, so the result is reproducible for any commit. The six defects are
+Reads Git objects only (`git show REV:path`, plus the explicitly pinned
+historical revs named below); the working tree is never consulted, so the
+result is reproducible for any commit. The six defects are
 defined in corpus/lessons/round-17-verifier-spotcheck.md:137-147; closure
 criteria live in .ufo/waves/round-18/contract.md section C1 as amended by the
 L1 (2026-10-20): each defect carries a `named` check set (the token checks —
@@ -54,6 +55,10 @@ SUMS = ".ufo/waves/round-17/predictions/SHA256SUMS"
 CARRIERS_TSV = ".ufo/waves/round-17/predictions/carriers.tsv"
 CARRIER_RUN = ".ufo/waves/round-17/tools/carrier-run.py"
 RECEIPT_VALIDATE = ".ufo/waves/round-17/tools/receipt-validate.py"
+# The validator the round-18 summary names (`validator_rev`) and whose blob
+# `validator_sha256` must reproduce. The selftest rebinds this (in-process)
+# to its own history commit; the CLI always uses this pin.
+VALIDATOR_REV = "9011581d84527ba34c675f9cf912e54d2e72d470"
 VALIDATE16_REV = "da64646adcb19c1ede7537b799b8c7d283fe43da"
 RUNLOG_REV = "da64646"          # abbrev: resolvable in the real lane and fixtures
 HIST_SUMS_REV = "2711674"       # rev whose SHA256SUMS must be restored
@@ -394,6 +399,35 @@ def _summary_labels(doc: dict) -> list[str] | None:
     return None
 
 
+def _validator_pin(root: str, doc: dict) -> tuple[bool, str]:
+    """`validator_sha256` must reproduce the validator blob at VALIDATOR_REV.
+
+    Round 18 accepted any 64-hex string (format only), so a well-formed but
+    wrong digest passed. The summary names the validator in `validator_rev`;
+    that name is pinned to VALIDATOR_REV and the digest must equal the sha256
+    of `git show VALIDATOR_REV:RECEIPT_VALIDATE`.
+    """
+    vs, vr = doc.get("validator_sha256"), doc.get("validator_rev")
+    problems = []
+    if not (isinstance(vs, str) and _HEX64.fullmatch(vs)):
+        problems.append(f"validator_sha256={vs!r} is not 64 hex")
+    if vr != VALIDATOR_REV:
+        problems.append(f"validator_rev={vr!r}, pinned {VALIDATOR_REV}")
+    blob = _show(root, VALIDATOR_REV, RECEIPT_VALIDATE)
+    if blob is None:
+        problems.append(f"cannot read {VALIDATOR_REV}:{RECEIPT_VALIDATE}")
+    elif isinstance(vs, str):
+        actual = hashlib.sha256(blob).hexdigest()
+        if actual != vs.lower():
+            problems.append(
+                f"validator_sha256={vs} != sha256({RECEIPT_VALIDATE} at "
+                f"{VALIDATOR_REV})={actual}")
+    if problems:
+        return False, "; ".join(problems)
+    return True, (f"validator_sha256={vs} == sha256({RECEIPT_VALIDATE} at "
+                  f"{VALIDATOR_REV})")
+
+
 def _d_validate16(root: str, rev: str) -> dict:
     checks = []
     blob = _show(root, rev, SUMMARY16)
@@ -460,11 +494,9 @@ def _d_validate16(root: str, rev: str) -> dict:
                 "substance", "summary-labels-are-run-dirs",
                 sorted(labels) == with_receipt,
                 f"labels {sorted(labels)!r} vs run dirs {with_receipt!r}"))
-        vs = doc.get("validator_sha256")
-        ok = isinstance(vs, str) and len(vs) == 64 and all(
-            c in "0123456789abcdefABCDEF" for c in vs)
-        checks.append(_check("substance", "validator-sha256-pinned", ok,
-                             f"validator_sha256={vs!r} (format only; see limits)"))
+        vs_ok, vs_detail = _validator_pin(root, doc)
+        checks.append(_check("substance", "validator-sha256-pinned",
+                             vs_ok, vs_detail))
         # Wave-2 hardening (w2 GateVALIDATE16, ValidateRemapAttack): every
         # summary entry's retained stdout exists at REV and hashes to its
         # recorded stdout_sha256.
@@ -845,6 +877,14 @@ _LABELS = ["calib-shfmt", "calib-esbuild-0.25.12", "pro-notesmd-cli",
            "pro-esbuild-0.27.7", "pro-op"]
 _CARRIERS_TSV = ("label\tpath\tkind\n" +
                  "".join(f"{l}\t/usr/bin/{l}\ttest\n" for l in _LABELS))
+# Stand-in for the pinned validator blob: carries both mid-map finding ids in
+# non-comment code (the R17-PINMAP substance check) and is the blob the
+# fixture's `validator_sha256` must reproduce.
+_VALIDATOR_BODY = ("FINDINGS = (\"mid_map_sha256_mismatch\",\n"
+                   "            \"mid_map_compare_mismatch\")\n"
+                   "def validate():\n"
+                   "    return FINDINGS\n")
+_VALIDATOR_SHA = hashlib.sha256(_VALIDATOR_BODY.encode()).hexdigest()
 _RUNLOG_7 = "".join(f"== {l} start 2026-10-20T10:00:00Z\n"
                     f"== {l} end carrier-run=0 compare=0\n"
                     for l in _LABELS[1:])  # 7 starts, calib-shfmt missing
@@ -860,7 +900,8 @@ _PRODUCER_LINE = ("- R17-PRODUCER-REV: pass produced by "
 def _hist_files() -> dict[str, str]:
     """Files living at the 2711674/da64646-tagged history commit."""
     files = {CARRIERS_TSV: _CARRIERS_TSV,
-             f"{RUNS17}/run-log.txt": _RUNLOG_7}
+             f"{RUNS17}/run-log.txt": _RUNLOG_7,
+             RECEIPT_VALIDATE: _VALIDATOR_BODY}
     carriers_sha = hashlib.sha256(_CARRIERS_TSV.encode()).hexdigest()
     files[SUMS] = ("aa" * 32 + "  predictions/replicate-expectations.json\n"
                    + carriers_sha + "  predictions/carriers.tsv\n")
@@ -900,12 +941,17 @@ def _open_files() -> dict[str, str]:
     }
 
 
-def _closed_files(fixture_revs: tuple[str, str] | None = None) -> dict[str, str]:
-    """Every named and substance check satisfied. fixture_revs are two real
-    ancestor commits used so an in-process evaluate with a patched
-    PRODUCER_REVS can fully close R17-PRODUCER-REV; the file text also names
-    the literal contract hashes so only the ancestor check is unclosable
-    from the CLI."""
+def _closed_files(fixture_revs: tuple[str, str] | None = None,
+                  validator_rev: str | None = None) -> dict[str, str]:
+    """Every named and substance check satisfied, given the checker's pins.
+
+    fixture_revs are two real ancestor commits used so an in-process evaluate
+    with a patched PRODUCER_REVS can fully close R17-PRODUCER-REV; the file
+    text also names the literal contract hashes so only the ancestor check is
+    unclosable from the CLI. validator_rev names a fixture commit holding
+    _VALIDATOR_BODY, so an in-process evaluate with a patched VALIDATOR_REV
+    closes validator-sha256-pinned too.
+    """
     extra1, extra2 = fixture_revs or (H1, H2)
     producer = _PRODUCER_LINE.format(extra1=extra1, extra2=extra2)
     map_body = b'{"a":1}\n'
@@ -946,10 +992,7 @@ def _closed_files(fixture_revs: tuple[str, str] | None = None) -> dict[str, str]
                       "    entry = {}\n"
                       "    entry[\"map_sha256\"] = digest\n"
                       "    return entry\n"),
-        RECEIPT_VALIDATE: ("FINDINGS = (\"mid_map_sha256_mismatch\",\n"
-                           "            \"mid_map_compare_mismatch\")\n"
-                           "def validate():\n"
-                           "    return FINDINGS\n"),
+        RECEIPT_VALIDATE: _VALIDATOR_BODY,
         "SKILL.md": (
             "# skill\n\n| name | kind | cmd | selftest | scope | note |\n"
             "|---|---|---|---|---|---|\n"
@@ -978,7 +1021,8 @@ def _closed_files(fixture_revs: tuple[str, str] | None = None) -> dict[str, str]
         SUMMARY16: json.dumps(
             {"rev": VALIDATE16_REV,
              "labels": list(_LABELS),
-             "validator_sha256": "f" * 64,
+             "validator_rev": validator_rev or VALIDATOR_REV,
+             "validator_sha256": _VALIDATOR_SHA,
              "receipts": [{"label": l, "exit": 0,
                            "stdout_sha256": hashlib.sha256(b"ok\n").hexdigest()}
                           for l in _LABELS]}),
@@ -1072,22 +1116,31 @@ def _selftest() -> int:
         check(r.returncode == 1, "open-fixture-strict",
               f"rc={r.returncode} (expected 1: open defects under --strict)")
 
-        # case 3: closed fixture via CLI. The two literal 40-hex producer
-        # hashes can never be objects in a fixture (git ignores 40-hex
-        # refnames), so only producer-revs-are-ancestors stays open.
+        # case 3: closed fixture via CLI. Two checks cannot close inside a
+        # fixture: producer-revs-are-ancestors (the literal 40-hex producer
+        # hashes are never objects; git ignores 40-hex refnames) and
+        # validator-sha256-pinned (its pinned rev and blob exist only in the
+        # lane). Cases 4-6 patch both constants in-process and close them.
         cases += 1
         r = run_tool("--root", root, "--rev", closed_rev)
         doc = json.loads(r.stdout) if r.stdout.strip() else {}
         opened = [d["id"] for d in doc.get("defects", []) if d["open"]]
         broken = [c["name"] for d in doc.get("defects", [])
                   for c in d["checks"] if not c["ok"]]
-        check(r.returncode == 0 and opened == ["R17-PRODUCER-REV"]
-              and broken == ["producer-revs-are-ancestors"],
+        check(r.returncode == 0
+              and opened == ["R17-VALIDATE16", "R17-PRODUCER-REV"]
+              and broken == ["validator-sha256-pinned",
+                             "producer-revs-are-ancestors"],
               "closed-fixture-cli",
               f"rc={r.returncode} opened={opened} broken={broken}")
 
-        # case 4: closed fixture in-process with fixture producer revs —
-        # every check of every defect passes, open_count 0.
+        # case 4: closed fixture in-process with the fixture-local producer
+        # and validator revs — every check of every defect passes, open 0.
+        # `validator_rev` names the fixture history commit whose
+        # RECEIPT_VALIDATE blob the pinned check hashes.
+        closed_local_rev = commit(
+            _closed_files(fixture_producers, validator_rev=hist_rev),
+            "closed with fixture-local producer and validator revs")
         cases += 1
         import importlib.util
         spec = importlib.util.spec_from_file_location(
@@ -1095,13 +1148,49 @@ def _selftest() -> int:
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         mod.PRODUCER_REVS = fixture_producers
-        doc2 = mod.evaluate(root, closed_rev)
+        mod.VALIDATOR_REV = hist_rev
+        doc2 = mod.evaluate(root, closed_local_rev)
         check(doc2["open_count"] == 0
               and doc2["named_open_count"] == 0
               and doc2["substance_open_count"] == 0,
               "closed-fixture-inprocess",
               f"open_count={doc2['open_count']} "
               f"broken={[c['name'] for d in doc2['defects'] for c in d['checks'] if not c['ok']]}")
+
+        # case 5 (required red): a well-formed but wrong validator digest —
+        # 64 hex, not the validator's — leaves R17-VALIDATE16 open on
+        # validator-sha256-pinned alone. Round 18's format-only check
+        # accepted exactly this.
+        cases += 1
+        wrong = _closed_files(fixture_producers, validator_rev=hist_rev)
+        wrong_summary = json.loads(wrong[SUMMARY16])
+        wrong_summary["validator_sha256"] = "0" * 64
+        wrong[SUMMARY16] = json.dumps(wrong_summary)
+        wrong_rev = commit(wrong, "validator digest well-formed but wrong")
+        doc_wrong = mod.evaluate(root, wrong_rev)
+        target = next(d for d in doc_wrong["defects"]
+                      if d["id"] == "R17-VALIDATE16")
+        broken = [c["name"] for c in target["checks"] if not c["ok"]]
+        check(target["open"] and target["substance_open"]
+              and not target["named_open"]
+              and broken == ["validator-sha256-pinned"],
+              "validator-digest-wrong",
+              f"open={target['open']} broken={broken}")
+
+        # case 6 (red): the digest matches, but `validator_rev` is moved off
+        # the pin — the checker pins the name as well as the bytes.
+        cases += 1
+        drift = _closed_files(fixture_producers, validator_rev=producer2)
+        drift_rev = commit(drift, "summary names a different validator rev")
+        doc_drift = mod.evaluate(root, drift_rev)
+        target = next(d for d in doc_drift["defects"]
+                      if d["id"] == "R17-VALIDATE16")
+        broken = [c["name"] for c in target["checks"] if not c["ok"]]
+        check(target["open"] and target["substance_open"]
+              and not target["named_open"]
+              and broken == ["validator-sha256-pinned"],
+              "validator-rev-drift",
+              f"open={target['open']} broken={broken}")
 
         # one case per defect: exactly one named check broken -> defect open
         named_variants = [
@@ -1264,22 +1353,23 @@ def _selftest() -> int:
         ]
         for defect_id, overrides in token_only:
             cases += 1
-            files = _closed_files(fixture_producers)
+            files = _closed_files(fixture_producers, validator_rev=hist_rev)
             for path, content in overrides.items():
                 files[path] = content   # None = delete that path at this commit
             variant_rev = commit(files, f"tokens only: {defect_id}")
-            r = run_tool("--root", root, "--rev", variant_rev)
-            doc = json.loads(r.stdout) if r.stdout.strip() else {}
-            target = next(d for d in doc.get("defects", [])
+            # In-process: both pins are rebound to fixture-local revs, so the
+            # only open defect must be the target (the CLI cannot resolve
+            # either pin inside a fixture — see case 3).
+            doc = mod.evaluate(root, variant_rev)
+            target = next(d for d in doc["defects"]
                           if d["id"] == defect_id)
-            extra = [d["id"] for d in doc.get("defects", [])
-                     if d["open"] and d["id"] not in
-                     (defect_id, "R17-PRODUCER-REV")]
-            check(r.returncode == 0 and target["open"]
+            extra = [d["id"] for d in doc["defects"]
+                     if d["open"] and d["id"] != defect_id]
+            check(target["open"]
                   and not target["named_open"] and target["substance_open"]
                   and not extra,
                   f"token-only-{defect_id}",
-                  f"rc={r.returncode} target={target['open'], target['named_open'], target['substance_open']} extra_open={extra}")
+                  f"target={target['open'], target['named_open'], target['substance_open']} extra_open={extra}")
 
         # case: could-not-evaluate (bad rev) -> exit 2
         cases += 1

@@ -2469,3 +2469,35 @@ Learning trends:
 All SHONEN marks stay `[~]`.
 
 Planned: after the next non-author sample, (a) depth: a held-out Go 1.25.x Swiss carrier that the emulator predicts to fail (candidates: toolchain binaries under `~/.local/opt/go-1.25.0`), or (b) freshness: PROVINCE pin/cache drift and the census, or (c) calibration on any routed disagreement from this round's closure.
+
+## Round 19 — routed r18 defects, province freshness, toolchain replay, 2026-10-20
+
+Baseline `8a8da7e19375aadc66c6bcbff0bbcbb596048fb0`; declaration
+`85589ac757f9ca3cb25efcd702d0963e25c9c4df`; predictions frozen and pushed
+`a1140e76fffdc1be032d9d813dbb686157803bbc`. Claims and in-round amendment:
+`.ufo/waves/round-19/claims.json`. Motivation: LOG round-19, lesson round-19.
+Final measured revision and verification records are appended after integration.
+
+### Routed r18 corrections (append-only)
+
+- R18-MIDMAP-LISTSTEP: only analyze-step pin checks satisfy the list branch under `--require-mid-maps`; red/green list fixtures in `routed-r18.py`.
+- R18-VALIDATOR-DIGEST: round-18 gate recomputes the pinned validator blob digest; eight remapped copies retained and re-hashed under round-19 `evidence/validate16-remap/`.
+- R18-STRICT-BASELINE: strict baseline at `9011581` retained (exit 1, open 6), paired with `454dee6` strict exit 0 (`evidence/strict-baseline/`).
+- R18-HEAD-ALIASES: citation-drift refuses HEAD-derived/mutable aliases with exit 2; nested compare-only lint limits registered in SKILL.
+- R18-DEADSEAT-RECORD: supersedes line 2462's integration snapshot. At `a245bb0`, W2 had 98 registered / 94 reports: GateSUMSRUNLOG (Devin quota after cyber refusals), GatePRODUCERREV and TruthREGISTRY (zai rate limit), ShonenLines (aborted) lacked reports; DecisionRuleApply returned late. Causes retained in round-19 `evidence/r18-dead-seats.json`.
+- R18-REGISTRY-PINNED: pins explicitly has no persisted baseline; buildinfo-probe names its source file containing the constants.
+- R18-INSTALL-RECORD: Go install versions, full archive hashes, channel, date and reason recorded in round-19 lesson `## Installs`.
+
+| Claim / axis | Numeric proxy | Before → after; counting command | Verdict and limits |
+|---|---|---|---|
+| C1 calibration | 10.0→10.0 (delta 0, tied-lowest) | Open routed R18 defects 7→0 target: `python3 -I -B .ufo/waves/round-19/tools/routed-r18.py --root <LANE> --rev <REV> --strict`; B red 7/7/7 named/substance retained | Final measured verdict appended after verification; QUALITY #22 grounds retained per-seat cause records |
+| C2 freshness (fleet axis, no owned proxy; sourced S037) | none | `province-pins.py --root <LANE> --rev <REV> --strict` mismatched clients 2→0; c1-census stale 4→0, undeclared unchanged 2 | Freshness of client statements, installed-skill/cache identity and host anchors; not a clean census PASS |
+| C3 depth (sourced S038/S035/S023/S003) | 10.0→10.0 (delta 0) | Held-out artifacts with bound logs and compare.json 0→8; `find .ufo/waves/round-19/runs -name compare.json \| wc -l`; revisions B and freeze/run | Mechanism confirmed under frozen index-membership rule: vet index 13902080 is H1-only, seven controls silent. Full read-list prediction falsified for vet: compares 7/8, aggregate exit 1 |
+
+No capability row enters: this deepens held Go ground. Coverage unchanged; no
+new coverage-map ground is claimed. Saturation 10.0 / window 10 unchanged.
+All SHONEN marks remain `[~]`; outside sampling belongs to closure.
+
+Planned: calibration on outside-routed disagreements, the census's two
+undeclared round-17 blocks, and the r12 operability add/withdraw decision;
+depth on the emulator's whole-walk versus first-failure read-list discrepancy.

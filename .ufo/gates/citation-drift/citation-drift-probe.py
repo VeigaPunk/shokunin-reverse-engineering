@@ -39,14 +39,22 @@ preflight could-not-evaluate (exit 2) and run before any entry is graded, so a
 tampered table can never produce silent findings. Any edit to the table must
 re-pin the digest in the same commit.
 
-REVISION PINNING (round 18, jj risk R2). An omitted --rev no longer means the
-moving HEAD: it resolves to the tip of --branch (default `main`, i.e.
-refs/heads/main). A literal `--rev HEAD` is accepted only when HEAD equals the
-branch tip; otherwise the run is could-not-evaluate with finding
-head_not_branch_tip (exit 2) — under jj colocation HEAD can be an unbookmarked
-commit, and attesting its tree would certify a revision that never landed. An
-explicit revision of any other form behaves exactly as before. The report
-records rev_requested, rev_resolved, and branch.
+REVISION PINNING (round 18, jj risk R2; round 19, R18-HEAD-ALIASES). An
+omitted --rev no longer means the moving HEAD: it resolves to the tip of
+--branch (default `main`, i.e. refs/heads/main). A literal `--rev HEAD` is
+accepted only when HEAD equals the branch tip; otherwise the run is
+could-not-evaluate with finding head_not_branch_tip (exit 2) — under jj
+colocation HEAD can be an unbookmarked commit, and attesting its tree would
+certify a revision that never landed. Every OTHER expression that resolves
+through HEAD or mutable local state is refused before resolution with finding
+rev_moving_state (exit 2): the `@` spelling and its suffixes (`@~N`, `@^`,
+`@^{commit}`, `@{...}`), any HEAD-suffixed form (`HEAD~N`, `HEAD^`,
+`HEAD@{...}`, `HEAD^{commit}`), reflog selectors on any ref (`main@{1}`,
+`main@{upstream}`), and the pseudo-refs Git rewrites (ORIG_HEAD, FETCH_HEAD,
+MERGE_HEAD, CHERRY_PICK_HEAD, REVERT_HEAD, REBASE_HEAD, BISECT_HEAD,
+AUTO_MERGE). Full commit ids, branch refs (`main`, `refs/heads/main`), tags,
+and their `~`/`^` ancestors still pass through and are resolved as before. The
+report records rev_requested, rev_resolved, and branch.
 
 VERDICT  exit 0 clean, 1 failed, 2 could-not-evaluate. Every finding carries a
 stable id so the self-test can assert on it.
@@ -91,7 +99,8 @@ class Findings:
                      "pointer_table_unreadable", "pointer_table_tampered",
                      "pointer_table_unpinned", "unpinned_legacy",
                      "root_unreadable", "revision_unresolvable", "internal_error",
-                     "branch_missing", "head_not_branch_tip")
+                     "branch_missing", "head_not_branch_tip",
+                     "rev_moving_state")
                for f, _, _ in self.rows):
             return CNE
         if not strict:
@@ -308,12 +317,48 @@ def head_commit(root):
     return proc.stdout.decode("ascii", "replace").strip() or None
 
 
+# Rev expressions that read mutable local repository state. Git rewrites these
+# on checkout/fetch/merge, so one argv string can attest different trees on
+# different runs; a pinned measurement must name a commit identity instead.
+# The literal `HEAD` keeps its own tip comparison in resolve_rev; everything
+# derived from it is refused before resolution (R18-HEAD-ALIASES), so no run
+# can certify an unbookmarked or off-branch tree through an alias.
+_PSEUDO_REFS = ("ORIG_HEAD", "FETCH_HEAD", "MERGE_HEAD", "CHERRY_PICK_HEAD",
+                "REVERT_HEAD", "REBASE_HEAD", "BISECT_HEAD", "AUTO_MERGE")
+_REV_SUFFIX = ("~", "^", "@", ":", "{")
+
+
+def moving_rev_cause(rev):
+    """Named cause when `rev` resolves through HEAD or mutable local state,
+    else None. Purely lexical: the expression is never resolved, so an alias
+    cannot pass merely because it happens to name the branch tip today."""
+    if rev == "@":
+        return "'@' is Git's shorthand for HEAD (a moving revision)"
+    if rev.startswith("@") and rev[1:2] in _REV_SUFFIX:
+        return "'%s' is HEAD-derived (the '@' spelling of HEAD)" % rev
+    if rev.startswith("HEAD") and rev[4:5] in _REV_SUFFIX:
+        return "'%s' is HEAD-derived; a pinned revision must not read HEAD" % rev
+    for name in _PSEUDO_REFS:
+        if rev == name:
+            return "'%s' is a mutable pseudo-ref rewritten by Git" % name
+        if rev.startswith(name) and rev[len(name):len(name) + 1] in _REV_SUFFIX:
+            return "'%s' is derived from the mutable pseudo-ref %s" % (rev, name)
+    if "@{" in rev:
+        return "'%s' is a reflog selector (local, mutable history)" % rev
+    return None
+
+
 def resolve_rev(root, rev, branch, findings):
     """Pin the revision to evaluate (round 18, jj risk R2).
 
     Omitted --rev resolves to refs/heads/<branch>; a literal `--rev HEAD` is
     accepted only when HEAD equals that tip, else could-not-evaluate with
-    head_not_branch_tip. Any other explicit rev passes through unchanged.
+    head_not_branch_tip. Every other expression that resolves through HEAD or
+    mutable local state — the `@` spelling, HEAD-suffixed forms, reflog
+    selectors, and pseudo-refs such as ORIG_HEAD/FETCH_HEAD — is refused
+    before resolution with rev_moving_state (round 19). Stable revs (full
+    commit ids, refs/heads/<branch>, <branch>, tags) and their `~`/`^`
+    ancestors pass through unchanged.
     Returns (rev_to_evaluate, blocking_findings_or_None).
     """
     findings.rev_requested = rev if rev is not None else "(default)"
@@ -336,8 +381,14 @@ def resolve_rev(root, rev, branch, findings):
             return None, findings
         findings.rev_resolved = tip
         return tip, None
-    # explicit rev: evaluate exactly what was asked, as before; record the
-    # normalized commit id when it resolves
+    cause = moving_rev_cause(rev)
+    if cause is not None:
+        findings.add("rev_moving_state", rev,
+                     "%s; pass a full commit id, refs/heads/%s, or an ancestor"
+                     % (cause, branch))
+        return None, findings
+    # explicit stable rev: evaluate exactly what was asked, as before; record
+    # the normalized commit id when it resolves
     findings.rev_resolved = git_commit(root, "%s^{commit}" % rev) or rev
     return rev, None
 
@@ -426,6 +477,27 @@ def _fixture_commit(d, message):
                     "commit", "-qm", message], check=True)
 
 
+def _fixture_tip(root):
+    proc = subprocess.run(["git", "-C", root, "rev-parse", "refs/heads/main"],
+                          capture_output=True, check=True)
+    return proc.stdout.decode("ascii", "replace").strip()
+
+
+def _fixture_extra_commit(root):
+    """A second on-branch commit, so `main~1` and `*@{1}` name real objects."""
+    open(os.path.join(root, "EXTRA.md"), "w").write("extra\n")
+    _fixture_commit(root, "extra")
+
+
+def _plant_pseudoref(root, name):
+    """Give a pseudo-ref a resolvable object, so a red case observes the
+    refusal rather than an unresolved name."""
+    sha = _fixture_tip(root)
+    line = ("%s\t\tbranch 'main' of fixture\n" % sha if name == "FETCH_HEAD"
+            else "%s\n" % sha)
+    open(os.path.join(root, ".git", name), "w").write(line)
+
+
 def build_fixture(case):
     """Create an isolated git repo carrying one mutation; return its path."""
     d = tempfile.mkdtemp(prefix="citation-drift-selftest-")
@@ -459,6 +531,32 @@ def build_fixture(case):
 # The self-test case table (case, expected exit code, expected finding id) is
 # NOT defined here: it is committed in expected.json so the expected values are
 # independent of the recomputation, per the protocol's Gate standard.
+#
+# Round-19 additions (R18-HEAD-ALIASES): `<HEX>` is replaced at run time with
+# the fixture's refs/heads/main tip. Red cases plant a resolvable ORIG_HEAD /
+# FETCH_HEAD / MERGE_HEAD, so the refusal — not an unresolved name — is what
+# exit 2 reports; `_detached` cases put HEAD one commit off the branch tip.
+ALIAS_CASES = [
+    ("alias_accept_hex", "<HEX>", 0, "citations_clean"),
+    ("alias_accept_refs_heads", "refs/heads/main", 0, "citations_clean"),
+    ("alias_accept_refs_heads_peel", "refs/heads/main^{commit}", 0,
+     "citations_clean"),
+    ("alias_accept_branch", "main", 0, "citations_clean"),
+    ("alias_accept_ancestor", "main~1", 0, "citations_clean"),
+    ("alias_refuse_at", "@", 2, "rev_moving_state"),
+    ("alias_refuse_at_ancestor", "@~1", 2, "rev_moving_state"),
+    ("alias_refuse_head_tilde", "HEAD~0", 2, "rev_moving_state"),
+    ("alias_refuse_head_caret", "HEAD^", 2, "rev_moving_state"),
+    ("alias_refuse_head_peel", "HEAD^{commit}", 2, "rev_moving_state"),
+    ("alias_refuse_head_reflog", "HEAD@{1}", 2, "rev_moving_state"),
+    ("alias_refuse_orig_head", "ORIG_HEAD", 2, "rev_moving_state"),
+    ("alias_refuse_orig_head_ancestor", "ORIG_HEAD~1", 2, "rev_moving_state"),
+    ("alias_refuse_fetch_head", "FETCH_HEAD", 2, "rev_moving_state"),
+    ("alias_refuse_merge_head", "MERGE_HEAD", 2, "rev_moving_state"),
+    ("alias_refuse_branch_reflog", "main@{1}", 2, "rev_moving_state"),
+    ("alias_refuse_at_detached", "@", 2, "rev_moving_state"),
+    ("alias_refuse_head_tilde_detached", "HEAD~0", 2, "rev_moving_state"),
+]
 
 
 def fixture_table(case):
@@ -501,6 +599,10 @@ def selftest(expected_path):
         # the tip (exit 2, head_not_branch_tip).
         cases.append(("detached_head_default", 0, "citations_clean"))
         cases.append(("detached_head_rev_head", 2, "head_not_branch_tip"))
+        # round-19 additions (R18-HEAD-ALIASES): stable forms stay green;
+        # every HEAD/working-copy expression is refused before resolution.
+        cases.extend((case, exit_code, finding)
+                     for case, _rev, exit_code, finding in ALIAS_CASES)
     except (OSError, ValueError, KeyError) as exc:
         print("CITATION_DRIFT_SELFTEST: FAILED cases=0 passed=0 failed=0 exit=1 "
               "finding=selftest_table_unreadable (%s)" % exc)
@@ -515,7 +617,17 @@ def selftest(expected_path):
                     open(table, "w").write("{ not json")
                     root = build_fixture("clean")
                 else:
-                    root = build_fixture("detached_head" if case.startswith("detached_head") else case)
+                    if case.startswith("alias_"):
+                        fixture_case = ("detached_head"
+                                        if case.endswith("_detached") else "clean")
+                    else:
+                        fixture_case = ("detached_head"
+                                        if case.startswith("detached_head") else case)
+                    root = build_fixture(fixture_case)
+                    if case.startswith("alias_"):
+                        _fixture_extra_commit(root)
+                        for name in ("ORIG_HEAD", "FETCH_HEAD", "MERGE_HEAD"):
+                            _plant_pseudoref(root, name)
                     table = os.path.join(case_dir, "table.json")
                     json.dump(fixture_table(case), open(table, "w"))
 
@@ -542,7 +654,7 @@ def selftest(expected_path):
                 elif case == "table_absent":
                     os.remove(table)
 
-                if case.startswith("detached_head"):
+                if case.startswith("detached_head") or case.startswith("alias_"):
                     # CLI-level path: drive the real argv surface (argparse ->
                     # resolve_rev -> run_check), not run_check directly.
                     argv = [sys.executable, os.path.abspath(__file__),
@@ -551,6 +663,10 @@ def selftest(expected_path):
                     if case == "detached_head_rev_head":
                         # head-rev-lint: compare-only
                         argv += ["--rev", "HEAD"]
+                    elif case.startswith("alias_"):
+                        rev = next(r for c, r, _, _ in ALIAS_CASES if c == case)
+                        argv += ["--rev", _fixture_tip(root) if rev == "<HEX>"
+                                 else rev]
                     proc = subprocess.run(argv, capture_output=True, text=True)
                     got_exit = proc.returncode
                     got_ids = {ln.split(":", 1)[1].strip().split(" ", 1)[0]
@@ -590,7 +706,9 @@ def main():
     ap.add_argument("--rev", default=None,
                     help="commit to evaluate; omitted resolves the tip of "
                          "--branch; literal HEAD is accepted only when HEAD "
-                         "equals the branch tip")
+                         "equals the branch tip; HEAD aliases, reflog "
+                         "selectors, and pseudo-refs are refused as moving "
+                         "revisions (exit 2)")
     ap.add_argument("--branch", default="main",
                     help="branch whose tip pins an omitted --rev")
     ap.add_argument("--table", default=DEFAULT_TABLE)

@@ -1,0 +1,165 @@
+diff --git c/.ufo/waves/round-17/tools/receipt-validate.py i/.ufo/waves/round-17/tools/receipt-validate.py
+index bf04388..c24c3dc 100755
+--- c/.ufo/waves/round-17/tools/receipt-validate.py
++++ i/.ufo/waves/round-17/tools/receipt-validate.py
+@@ -33,7 +33,10 @@ For every receipt argument the tool:
+      a recorded map_error is a finding. With --require-mid-maps (r18
+      receipts) every pin_checks entry must carry map_path+map_sha256
+      (mid_map_missing) and the analyze step must retain at least one
+-     check (mid_checks_absent).
++     check (mid_checks_absent): `steps.analyze` for an object-shaped
++     receipt, or — for a list-shaped `steps` — the entry that declares
++     `step`/`name` "analyze" or whose argv carries the `analyze`
++     subcommand. Checks on any other step never satisfy the flag.
+ 
+ pins.py is imported by absolute path via importlib from the resolved
+ sibling `tools/pins.py`, mirroring retain.py's loader. When pins.py is
+@@ -128,6 +131,24 @@ def _iter_steps(steps):
+     return [(f"$.steps[{i}]", step) for i, step in enumerate(steps or [])]
+ 
+ 
++def _is_analyze_step(step):
++    """True when a name-less (list-shaped) step is the analyze step.
++
++    A dict-shaped receipt names its steps in the mapping keys. List entries
++    carry no key, so identity comes from the entry's own record: a declared
++    `step`/`name` field equal to "analyze", or the literal `analyze`
++    subcommand token in `argv` (carrier-run.py always records argv). Without
++    one of these a list entry cannot be shown to be the analyze step.
++    """
++    if not isinstance(step, dict):
++        return False
++    for field in ("step", "name"):
++        if step.get(field) == "analyze":
++            return True
++    argv = step.get("argv")
++    return isinstance(argv, list) and "analyze" in argv
++
++
+ def check_binding(receipt, findings):
+     """Re-derive the log-to-run binding from the retained log bytes (w2
+     ReceiptForge/RunProcontainerdshim F4): every bound session's ghidra.log must
+@@ -464,7 +485,11 @@ def verify_mid_maps(receipt, pins, findings, require_mid_maps=False):
+     round-17 shape and, without the flag, is left to the verdict-only checks
+     in check_binding. With require_mid_maps every pin_checks entry must
+     carry map_path+map_sha256 (mid_map_missing) and the analyze step must
+-    carry at least one check (mid_checks_absent). The generic walk_pairs
++    carry at least one check (mid_checks_absent): the `analyze` key of an
++    object-shaped `steps`, or for a list-shaped `steps` the one entry that
++    identifies itself as analyze (`step`/`name` field or the `analyze`
++    argv token). A pin_checks list on any other step does not count.
++    The generic walk_pairs
+     <stem>_path/<stem>_sha256 convention also recomputes the digest; the
+     mid-specific codes here name which commitment failed."""
+     checks = 0
+@@ -570,19 +595,27 @@ def verify_mid_maps(receipt, pins, findings, require_mid_maps=False):
+     if require_mid_maps:
+         checks += 1
+         steps = receipt.get("steps")
++        where = "$.steps.analyze.pin_checks"
+         if isinstance(steps, dict):
+             astep = steps.get("analyze")
+             ok = isinstance(astep, dict) and bool(astep.get("pin_checks"))
+         elif isinstance(steps, list):
+-            ok = any(isinstance(s, dict) and s.get("pin_checks")
+-                     for s in steps)
++            # List-shaped steps carry no key: only a step that identifies
++            # itself as analyze may satisfy the flag, exactly as the object
++            # branch requires steps["analyze"]. Checks on any other step do
++            # not count (R18-MIDMAP-LISTSTEP).
++            named = [(i, s) for i, s in enumerate(steps)
++                     if _is_analyze_step(s)]
++            ok = any(s.get("pin_checks") for _i, s in named)
++            if named:
++                where = f"$.steps[{named[0][0]}].pin_checks"
+         else:
+             ok = False
+         if not ok:
+             findings.append({"code": "mid_checks_absent",
+-                             "where": "$.steps.analyze.pin_checks",
++                             "where": where,
+                              "detail": "analyze step has no mid-run pin "
+-                                      "checks"})
++                                       "checks"})
+     return checks
+ 
+ 
+@@ -744,8 +777,9 @@ def _carrier_receipt(tmpdir, pins, carrier_file, log_file):
+ def selftest(pins):
+     """Green retain receipt, green carrier receipt, tampered-file red,
+     tampered pins_compare red, mid-map green/tampered/forged reds,
+-    --require-mid-maps r17-shape/absent-checks reds and green, forged
+-    verdict-only entries red, unreadable receipt. Exits 0/1."""
++    --require-mid-maps r17-shape/absent-checks reds and green, list-shaped
++    analyze-off red + analyze-on green, forged verdict-only entries red,
++    unreadable receipt. Exits 0/1."""
+     cases = []
+ 
+     def record(name, code, want, detail=""):
+@@ -996,6 +1030,66 @@ def selftest(pins):
+                           "exit": code, "expected_exit": 1, "ok": ok4m,
+                           "detail": json.dumps(findings4m)})
+ 
++        # Case 4k (R18-MIDMAP-LISTSTEP): a list-shaped `steps` whose only
++        # pin_checks sit on a non-analyze step must fail the flag exactly as
++        # the object shape does. Before the fix, `any(step.pin_checks)`
++        # accepted this fixture (green), so this is the red-before case.
++        data = _carrier_receipt(tmpdir, pins, pin_file, log_file)
++        mid_map3 = pins.snapshot(list(data["pins_pre"]["entries"]))
++        map_file3 = tmpdir / "mid-list.json"
++        map_file3.write_text(json.dumps(mid_map3, sort_keys=True, indent=2),
++                             encoding="utf-8")
++        map_check3 = {
++            "taken_at_utc": mid_map3["taken_at_utc"],
++            "equal": True, "changed": [], "missing": [],
++            "entries": len(mid_map3["entries"]),
++            "map_path": str(map_file3),
++            "map_sha256": sha256_file(map_file3)}
++        data["steps"] = [
++            dict(data["steps"]["inspect-go-binary"],
++                 pin_checks=[dict(map_check3)]),
++            dict(data["steps"]["inspect-go-binary"],
++                 argv=["npx", "-y", "rea-agents@6.5.0", "analyze",
++                       str(pin_file), "--format", "json"])]
++        list_only = tmpdir / "r4n.json"
++        list_only.write_text(json.dumps(data), encoding="utf-8")
++        _out4n, code = validate_paths([str(list_only)], pins,
++                                      require_mid_maps=True)
++        findings4n = (_out4n["receipts"][0].get("findings", [])
++                      if _out4n["receipts"] else [])
++        ok4n = code == 1 and any(
++            f.get("code") == "mid_checks_absent"
++            and f.get("where") == "$.steps[1].pin_checks"
++            for f in findings4n)
++        cases.append({"case": "carrier_flag_list_checks_off_analyze_red",
++                      "exit": code, "expected_exit": 1, "ok": ok4n,
++                      "detail": json.dumps(findings4n)})
++
++        # Case 4l: the same list stays green once the analyze entry (here
++        # identified by its argv subcommand) carries the map-bearing check.
++        data["steps"][0] = dict(data["steps"][0], pin_checks=[])
++        data["steps"][1] = dict(data["steps"][1],
++                                pin_checks=[dict(map_check3)])
++        list_green = tmpdir / "r4o.json"
++        list_green.write_text(json.dumps(data), encoding="utf-8")
++        _out4o, code = validate_paths([str(list_green)], pins,
++                                      require_mid_maps=True)
++        record("carrier_flag_list_analyze_green", code, 0,
++               json.dumps(_out4o["receipts"][0].get("findings", [])
++                          if _out4o["receipts"] else []))
++
++        # Case 4m: declared identity route — no analyze token in argv; the
++        # entry names itself via `name` (= `step` is accepted too).
++        data["steps"][1] = dict(data["steps"][1], name="analyze",
++                                argv=["true"])
++        list_declared = tmpdir / "r4p.json"
++        list_declared.write_text(json.dumps(data), encoding="utf-8")
++        _out4p, code = validate_paths([str(list_declared)], pins,
++                                      require_mid_maps=True)
++        record("carrier_flag_list_declared_name_green", code, 0,
++               json.dumps(_out4p["receipts"][0].get("findings", [])
++                          if _out4p["receipts"] else []))
++
+         # Case 5: unreadable receipt path -> exit 2.
+         _out5, code = validate_paths(
+             [str(tmpdir / "does-not-exist.json")], pins)

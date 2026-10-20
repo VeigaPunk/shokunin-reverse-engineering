@@ -227,7 +227,7 @@ render and not the UTC render.
 ## Selftest
 
 `selftest` builds all fixtures in a scratch dir (never a custody path) and runs
-28 cases: the round-2 fifteen (capture shape + sidecar identity, receipt-vs-live
+31 cases: the round-2 fifteen (capture shape + sidecar identity, receipt-vs-live
 clean, same-content rewrite in place (ctime pin) and via rename (inode pin),
 content drift, absent path, mode drift, TZ-independence of the UTC render,
 v1-stanza/v1-sums/v1-pipe compatibility with mutation detection,
@@ -240,11 +240,16 @@ and the round-4 six: `coverage-gate-rejects-duplicate-stanzas`,
 `coverage-gate-passes-distinct-five`, `refuses-sidecar-over-measured-file`,
 `refuses-receipt-over-sidecar-neighbour`,
 `out-parent-not-a-directory-usage-exit`,
-`both-sides-absent-is-agreement-match`.
+`both-sides-absent-is-agreement-match`,
+the round-18 two: `repo-header-off-branch-tip-no`,
+`repo-arg-and-lane-root-default`,
+and the round-19 red case `repo-root-is-toplevel-not-subdir-arg` (a `--repo`
+subdirectory argument must print the repository top level as `repo-root` and
+keep the argument as `repo-arg`).
 It ends with
 
 ```
-CUSTODY_PAIR_SELFTEST: CLEAN cases=28 passed=28 failed=0 exit=0
+CUSTODY_PAIR_SELFTEST: CLEAN cases=31 passed=31 failed=0 exit=0
 ```
 
 ## Round evidence

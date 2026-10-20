@@ -1,0 +1,624 @@
+diff --git c/.ufo/waves/round-18/tools/head-rev-lint.py i/.ufo/waves/round-18/tools/head-rev-lint.py
+index e7ef3f1..9b81bfc 100755
+--- c/.ufo/waves/round-18/tools/head-rev-lint.py
++++ i/.ufo/waves/round-18/tools/head-rev-lint.py
+@@ -47,6 +47,20 @@ Context (rules 2+4), in priority order:
+ - ``live``: everything else. Shell files default to live but the
+   ``/fixtures/`` path rule and line annotations still apply.
+ 
++Nested class (R18-HEAD-ALIASES part 2): the rule above sees one wrapper
++hop. A HEAD read that rides through a chain -- a helper forwarding its
++arguments to a wrapper, e.g. ``_git_or_none("rev-parse","--verify",
++"HEAD^{commit}")`` where ``_git_or_none`` calls ``git(*args)`` -- is
++invisible to it. ``scan_nested`` resolves intra-file chains (at most
++NESTED_DEPTH links and NESTED_TEMPLATES argv shapes per function) and
++reports each call line that supplies the HEAD argument to such a chain in
++``nested`` with ``class: "nested"``. Only HEAD text supplied by the call
++site is reported: a literal built inside a wrapper body stays attributed
++to the inner call where it is written, never re-attributed to that
++wrapper's callers. ``nested`` is a separate class -- it never enters
++``sites``, ``live_count``, ``fixture_count`` or ``annotated_count``, and
++``--strict`` still keys on ``live_count`` alone.
++
+ Shell scanning: each non-comment line's ``git ...`` runs (split at
+ ``&|;<>()#``) are tokenized like a Python argv; ``${X:-HEAD}`` parameter
+ expansions count as a HEAD literal.
+@@ -54,15 +68,21 @@ expansions count as a HEAD literal.
+ Output (sort_keys, indent=2):
+     {rev, files_scanned, sites: [{path, line, kind, context, code,
+       reason?}], live_count, fixture_count, annotated_count,
+-      routed_sites: [3 audited paths], excluded: [{path, reason, sites}],
+-      limits: [...]}
++      nested: [{path, line, kind, class, context, code, target, via,
++      reason?}], nested_count, nested_live_count,
++      routed_sites: [3 audited paths],
++      excluded: [{path, reason, sites, nested}], limits: [...]}
++``nested_count`` is every nested-class site (all contexts), and
++``nested_live_count`` is the subset whose context is ``live``.
+ Exit 0 emitted, 1 under --strict iff live_count > 0, 2 could-not-evaluate.
+ Read-only git only: rev-parse --verify / ls-tree / show.
+ 
+ --selftest builds a fixture repo under tempfile.mkdtemp(), commits
+ revisions exercising every kind, fixture contexts (name, nested, called-
+-only-from-selftest, /fixtures/ path), both annotations, and a seat-dir
+-exclusion, then prints SELFTEST: CLEAN cases=N or SELFTEST: FAILED ....
++only-from-selftest, /fixtures/ path), both annotations, a nested-wrapper
++chain whose HEAD argument is supplied live, from a selftest function and
++directly to a wrapper, and a seat-dir exclusion, then prints
++SELFTEST: CLEAN cases=N or SELFTEST: FAILED ....
+ """
+ 
+ import argparse
+@@ -141,6 +161,16 @@ LIMITS = [
+     "even when a seat file is an instrument another wave re-runs",
+     "annotated contexts are trusted comments: the lint cannot verify a "
+     "compare-only/red-before claim",
++    "nested resolution is intra-file and follows at most NESTED_DEPTH "
++    "wrapper links and NESTED_TEMPLATES argv shapes per function; a chain "
++    "through another module, a same-named def collapsed to the earliest "
++    "one, or a HEAD value assembled at run time is not resolved",
++    "nested sites carry the call line that supplies the HEAD argument; a "
++    "HEAD literal built inside a wrapper body is reported at the inner "
++    "call where it is written, never for that wrapper's callers",
++    "nested is a separate class: it never enters sites[]/live_count and "
++    "never affects --strict; nested_live_count repeats the live rule for "
++    "the nested array alone",
+ ]
+ 
+ 
+@@ -309,6 +339,19 @@ def _operand_indices(tokens):
+     return out
+ 
+ 
++def _head_kind(text, has_rev_parse, has_other_rev, head_re=HEAD_LIT_RE):
++    """The HEAD site kind one operand token selects, or None."""
++    if text.startswith("HEAD:"):
++        return "HEAD-colon"
++    if not head_re.match(text):
++        return None
++    if has_rev_parse:
++        return "rev-parse-HEAD"
++    if has_other_rev:
++        return "other-HEAD"
++    return None
++
++
+ def classify_argv(tokens, head_re=HEAD_LIT_RE):
+     """Return {kind: lineno} for one git argv's tokens ((text, line) pairs)."""
+     kinds = {}
+@@ -332,13 +375,9 @@ def classify_argv(tokens, head_re=HEAD_LIT_RE):
+             text, line = tokens[i]
+             if text is None:
+                 continue
+-            if text.startswith("HEAD:"):
+-                put("HEAD-colon", line)
+-            elif head_re.match(text):
+-                if has_rev_parse:
+-                    put("rev-parse-HEAD", line)
+-                elif has_other_rev:
+-                    put("other-HEAD", line)
++            kind = _head_kind(text, has_rev_parse, has_other_rev, head_re)
++            if kind:
++                put(kind, line)
+     return kinds
+ 
+ 
+@@ -537,6 +576,348 @@ def python_context(path, line, enclosing, fixture_funcs, lines):
+     return "live", None
+ 
+ 
++# --------------------------------------------------- nested wrapper class
++#
++# The primary rule sees one hop: a call whose first argument is a literal
++# ["git", ...] argv, or a call to a function whose own body builds one. A
++# HEAD read behind a chain -- a helper forwarding to a wrapper, e.g.
++# `_git_or_none("rev-parse","--verify","HEAD^{commit}")` where
++# `_git_or_none` calls `git(*args)` -- is invisible to it. The nested class
++# resolves those intra-file chains and reports the call line that supplies
++# the HEAD argument. It is kept out of sites[]/live_count on purpose.
++
++NESTED_DEPTH = 6
++NESTED_TEMPLATES = 8
++NESTED_HEAD_KINDS = ("rev-parse-HEAD", "other-HEAD", "HEAD-colon")
++
++
++class _NestedBody(ast.NodeVisitor):
++    """Calls and local assignments of one function body. Nested defs and
++    lambdas are separate scopes and are not descended into."""
++
++    def __init__(self):
++        self.calls = []
++        self.assigns = {}
++
++    def visit_FunctionDef(self, node):
++        pass
++
++    visit_AsyncFunctionDef = visit_FunctionDef
++
++    def visit_Lambda(self, node):
++        pass
++
++    def visit_Call(self, node):
++        self.calls.append(node)
++        self.generic_visit(node)
++
++    def visit_Assign(self, node):
++        if isinstance(node.value, (ast.List, ast.Tuple, ast.BinOp, ast.Name)):
++            for target in node.targets:
++                if isinstance(target, ast.Name):
++                    self.assigns[target.id] = node.value
++        self.generic_visit(node)
++
++
++def _nested_params(node):
++    args = node.args
++    positional = [a.arg for a in list(args.posonlyargs) + list(args.args)]
++    names = set(positional) | {a.arg for a in args.kwonlyargs}
++    if args.vararg:
++        names.add(args.vararg.arg)
++    if args.kwarg:
++        names.add(args.kwarg.arg)
++    return {
++        "positional": positional,
++        "vararg": args.vararg.arg if args.vararg else None,
++        "names": names,
++    }
++
++
++def _nested_slot(node, params, assigns, tag, depth=0):
++    """One argv element as (kind, value, tag).
++
++    kind is "lit" (text known here), "param" (the enclosing function's
++    parameter of that name), "vararg" (a ``*args`` passthrough), "unknown",
++    or "argv" (a whole ``["git", ...]`` argv passed as one argument). tag
++    records where a literal came from: "arg" (this call's arguments) or
++    "body" (a wrapper body), so only call-site HEAD text is reported."""
++    text = _const_str(node)
++    if text is not None:
++        return ("lit", text, tag)
++    joined = _joined_str_text(node)
++    if joined is not None:
++        return ("lit", joined, tag)
++    leading = _joined_leading_text(node)
++    if leading and leading.startswith("HEAD:"):
++        return ("lit", "HEAD:", tag)
++    if isinstance(node, ast.Starred):
++        inner = node.value
++        if isinstance(inner, ast.Name) and inner.id in params["names"]:
++            return ("vararg", inner.id, None)
++        return ("unknown", None, None)
++    if isinstance(node, ast.Name):
++        if node.id in params["names"]:
++            return ("param", node.id, None)
++        if depth < NESTED_DEPTH and node.id in assigns:
++            return _nested_slot(assigns[node.id], params, assigns, tag,
++                                depth + 1)
++        return ("unknown", None, None)
++    if isinstance(node, (ast.List, ast.Tuple)):
++        sub = _nested_argv(node, params, assigns, tag, depth + 1)
++        if sub is not None:
++            return ("argv", tuple(sub), None)
++    return ("unknown", None, None)
++
++
++def _nested_argv(node, params, assigns, tag, depth=0):
++    """Slot list for a ``["git", ...]`` argv expression, or None."""
++    if depth > NESTED_DEPTH:
++        return None
++    if isinstance(node, ast.Name):
++        target = assigns.get(node.id)
++        if target is None:
++            return None
++        return _nested_argv(target, params, assigns, tag, depth + 1)
++    if isinstance(node, (ast.List, ast.Tuple)):
++        if not node.elts or _const_str(node.elts[0]) != "git":
++            return None
++        return [_nested_slot(e, params, assigns, tag, depth)
++                for e in node.elts[1:]]
++    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
++        left = _nested_argv(node.left, params, assigns, tag, depth + 1)
++        right = _nested_argv(node.right, params, assigns, tag, depth + 1)
++        if left is None and right is None:
++            return None
++        return (left if left is not None else [("unknown", None, None)]) \
++            + (right or [])
++    return None
++
++
++def _nested_body(node):
++    walker = _NestedBody()
++    for stmt in node.body:
++        walker.visit(stmt)
++    return walker
++
++
++def _nested_body_exprs(walker):
++    """Every expression in the body that could be a git argv: call args,
++    ``args=`` keywords, and local assignment values."""
++    exprs = []
++    for call in walker.calls:
++        exprs.extend(call.args)
++        for kw in call.keywords:
++            if kw.arg == "args":
++                exprs.append(kw.value)
++    exprs.extend(walker.assigns.values())
++    return exprs
++
++
++def _nested_is_direct(node):
++    walker = _nested_body(node)
++    params = _nested_params(node)
++    return any(_nested_argv(expr, params, walker.assigns, "body")
++               is not None for expr in _nested_body_exprs(walker))
++
++
++def _nested_call_name(call):
++    if isinstance(call.func, ast.Name):
++        return call.func.id
++    if isinstance(call.func, ast.Attribute):
++        return call.func.attr
++    return None
++
++
++def _nested_bind(call, callee_node, caller_params, caller_assigns, tag):
++    """Parameter name -> [slot] for one call. A leading fixed parameter is
++    a repo/root slot like the primary wrapper rule; positional and keyword
++    actuals both bind, a ``*name`` passthrough binds the vararg."""
++    sig = _nested_params(callee_node)
++    mapping = {}
++    index = 0
++    for arg in call.args:
++        if isinstance(arg, ast.Starred):
++            inner = arg.value
++            if (isinstance(inner, ast.Name)
++                    and inner.id in caller_params["names"]):
++                slot = ("vararg", inner.id, None)
++            else:
++                slot = ("unknown", None, None)
++            if sig["vararg"]:
++                mapping[sig["vararg"]] = [slot]
++            return mapping
++        slot = _nested_slot(arg, caller_params, caller_assigns, tag)
++        if index < len(sig["positional"]):
++            mapping[sig["positional"][index]] = [slot]
++            index += 1
++        elif sig["vararg"]:
++            mapping.setdefault(sig["vararg"], []).append(slot)
++    for kw in call.keywords:
++        if kw.arg is None or kw.arg not in sig["names"]:
++            continue
++        mapping[kw.arg] = [
++            _nested_slot(kw.value, caller_params, caller_assigns, tag)]
++    return mapping
++
++
++def _nested_substitute(slots, mapping):
++    """Replace param/vararg slots with their bound actual slots and splice
++    whole-argv arguments."""
++    out = []
++    for slot in slots:
++        if slot[0] == "param":
++            out.extend(mapping.get(slot[1]) or [("unknown", None, None)])
++        elif slot[0] == "vararg":
++            out.extend(mapping.get(slot[1]) or [])
++        else:
++            out.append(slot)
++    flat = []
++    for slot in out:
++        if slot[0] == "argv":
++            flat.extend(list(slot[1]))
++        else:
++            flat.append(slot)
++    return flat
++
++
++def _nested_templates(name, defs, depth=0, seen=()):
++    """[(slots, chain)] for every intra-file git argv `name` can reach;
++    `chain` runs from `name` down to the function whose body builds it."""
++    if depth > NESTED_DEPTH or name in seen or name not in defs:
++        return []
++    node = defs[name]
++    params = _nested_params(node)
++    walker = _nested_body(node)
++    out = []
++    for expr in _nested_body_exprs(walker):
++        slots = _nested_argv(expr, params, walker.assigns, "body")
++        if slots is not None:
++            out.append((tuple(slots), (name,)))
++    for call in walker.calls:
++        callee = _nested_call_name(call)
++        if not callee or callee == name or callee not in defs:
++            continue
++        for slots, chain in _nested_templates(callee, defs, depth + 1,
++                                              seen + (name,)):
++            sub = _nested_substitute(
++                slots,
++                _nested_bind(call, defs[callee], params, walker.assigns,
++                             "body"))
++            out.append((tuple(sub), (name,) + chain))
++    dedup = []
++    seen_templates = set()
++    for item in out:
++        if item in seen_templates:
++            continue
++        seen_templates.add(item)
++        dedup.append(item)
++        if len(dedup) >= NESTED_TEMPLATES:
++            break
++    return dedup
++
++
++def _nested_head_tags(tokens, tags):
++    """{kind: tag} for the HEAD operand tokens, same rule as classify_argv."""
++    literal = {t for t, _ in tokens if t}
++    if not (literal & REV_COMMANDS):
++        return {}
++    has_rev_parse = "rev-parse" in literal
++    has_other_rev = bool((literal & REV_COMMANDS) - {"rev-parse"})
++    kinds = {}
++    for i in _operand_indices(tokens):
++        text, _ = tokens[i]
++        if text is None:
++            continue
++        kind = _head_kind(text, has_rev_parse, has_other_rev)
++        if kind:
++            kinds.setdefault(kind, tags[i])
++    return kinds
++
++
++def _nested_primary_argv(call):
++    """The argv expression primary case (a) already classifies, if any."""
++    argv_node = call.args[0] if call.args else None
++    if argv_node is None:
++        for kw in call.keywords:
++            if kw.arg == "args":
++                argv_node = kw.value
++                break
++    if argv_node is None:
++        return None
++    return _tokens_from_argv_expr(argv_node)
++
++
++def scan_nested(source):
++    """[(line, kind, enclosing, target, chain)] nested-class sites.
++
++    Every call to an intra-file function that is not itself a direct git
++    wrapper is expanded through that function's argv templates. A HEAD kind
++    is reported only when the matching token came from this call's own
++    arguments ("arg" tag); body-built literals stay with the inner call.
++    Calls primary case (a) already classifies are skipped to avoid double
++    reporting."""
++    tree = ast.parse(source)
++    collected = {}
++    for node in ast.walk(tree):
++        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
++            collected.setdefault(node.name, []).append(node)
++    defs = {
++        name: sorted(nodes, key=lambda n: (n.lineno, n.col_offset))[0]
++        for name, nodes in collected.items()
++    }
++    direct = {name for name, node in defs.items()
++              if _nested_is_direct(node)}
++    sites = []
++    stack = []
++
++    def walk(node):
++        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
++            stack.append((node.name, _nested_params(node),
++                          _nested_body(node).assigns))
++            for stmt in node.body:
++                walk(stmt)
++            stack.pop()
++            return
++        if isinstance(node, ast.Call):
++            callee = _nested_call_name(node)
++            if (callee in defs and callee not in direct
++                    and _nested_primary_argv(node) is None):
++                caller_params, caller_assigns = (
++                    stack[-1][1:] if stack else ({"names": set()}, {}))
++                enclosing = tuple(frame[0] for frame in stack)
++                for slots, chain in _nested_templates(callee, defs):
++                    sub = _nested_substitute(
++                        slots,
++                        _nested_bind(node, defs[callee], caller_params,
++                                     caller_assigns, "arg"))
++                    tokens, tags = [], []
++                    for slot in sub:
++                        if slot[0] == "lit":
++                            tokens.append((slot[1], node.lineno))
++                            tags.append(slot[2])
++                        else:
++                            tokens.append((None, node.lineno))
++                            tags.append(None)
++                    for kind, tag in _nested_head_tags(tokens, tags).items():
++                        if tag == "arg" and kind in NESTED_HEAD_KINDS:
++                            sites.append((node.lineno, kind, enclosing,
++                                          callee, chain))
++        for child in ast.iter_child_nodes(node):
++            walk(child)
++
++    walk(tree)
++    dedup = []
++    seen_sites = set()
++    for item in sorted(sites):
++        key = (item[0], item[1], item[3])
++        if key in seen_sites:
++            continue
++        seen_sites.add(key)
++        dedup.append(item)
++    return dedup
++
++
+ # ------------------------------------------------------------ sh scanner
+ 
+ GIT_RUN_RE = re.compile(r"\bgit\b\s+([^&|;<>()\n]*)")
+@@ -605,10 +986,23 @@ def _site_record(path, line, kind, context, code, reason=None):
+     return rec
+ 
+ 
++def _nested_record(path, line, kind, context, code, target, chain,
++                   reason=None):
++    rec = {
++        "path": path, "line": line, "kind": kind, "class": "nested",
++        "context": context, "code": code, "target": target,
++        "via": list(chain),
++    }
++    if reason:
++        rec["reason"] = reason
++    return rec
++
++
+ def lint(root, rev):
+     resolved = resolve_rev(root, rev)
+     paths = list_site_files(root, resolved)
+     sites = []
++    nested = []
+     excluded = []
+     scanned = 0
+     for path in paths:
+@@ -619,6 +1013,7 @@ def lint(root, rev):
+             raise LintError(f"{path}: not UTF-8: {exc}")
+         seat_path = is_seat_path(path)
+         lines = source.splitlines()
++        nested_found = []
+ 
+         if path.endswith(".sh"):
+             found = []
+@@ -639,6 +1034,7 @@ def lint(root, rev):
+         else:
+             try:
+                 py_sites, fixture_funcs = scan_python(source)
++                py_nested = scan_nested(source)
+             except SyntaxError as exc:
+                 raise LintError(f"{path}: unparseable Python: {exc}")
+             found = []
+@@ -649,18 +1045,28 @@ def lint(root, rev):
+                     path, line, kind, context,
+                     lines[line - 1].strip() if line <= len(lines) else "",
+                     reason))
++            for line, kind, enclosing, target, chain in py_nested:
++                context, reason = python_context(
++                    path, line, enclosing, fixture_funcs, lines)
++                nested_found.append(_nested_record(
++                    path, line, kind, context,
++                    lines[line - 1].strip() if line <= len(lines) else "",
++                    target, chain, reason))
+ 
+         if seat_path:
+             excluded.append({
+                 "path": path,
+                 "reason": EXCLUDED_REASON,
+                 "sites": found,
++                "nested": nested_found,
+             })
+             continue
+         scanned += 1
+         sites.extend(found)
++        nested.extend(nested_found)
+ 
+     sites.sort(key=lambda s: (s["path"], s["line"], s["kind"]))
++    nested.sort(key=lambda s: (s["path"], s["line"], s["kind"]))
+     live = sum(1 for s in sites if s["context"] == "live")
+     annotated = sum(1 for s in sites if s["context"] == "annotated")
+     return {
+@@ -670,6 +1076,10 @@ def lint(root, rev):
+         "live_count": live,
+         "fixture_count": len(sites) - live - annotated,
+         "annotated_count": annotated,
++        "nested": nested,
++        "nested_count": len(nested),
++        "nested_live_count": sum(1 for s in nested
++                                 if s["context"] == "live"),
+         "routed_sites": ROUTED_SITES,
+         "excluded": excluded,
+         "limits": LIMITS,
+@@ -775,6 +1185,40 @@ V=${REV:-HEAD}; git rev-parse "$V"
+ git show HEAD:LOG.md
+ """
+ 
++FIXTURE_NESTED_PY = '''import subprocess
++
++LANE = "/tmp/lane"
++
++
++def git(*args):
++    return subprocess.check_output(
++        ["git", "-C", LANE, *args], text=True).strip()
++
++
++def _git_or_none(*args):
++    try:
++        return git(*args)
++    except subprocess.CalledProcessError:
++        return None
++
++
++def _resolve(root, rev):
++    return git(root, "rev-parse", "--verify", rev).strip()
++
++
++def resolve_source(root, branch="main"):
++    source = _resolve(root, "refs/heads/" + branch)
++    head = _git_or_none("rev-parse", "--verify", "HEAD^{commit}")
++    remote = _resolve(root, "main")
++    return source, head, remote
++
++
++def selftest():
++    direct = git("rev-parse", "HEAD")
++    nested = _git_or_none("rev-parse", "HEAD")
++    return direct, nested
++'''
++
+ 
+ def _fixture_git(repo, *args):
+     return subprocess.run(
+@@ -814,6 +1258,7 @@ def selftest():
+         _write(repo, ".ufo/waves/round-17/ctx.py", FIXTURE_CTX_PY)
+         _write(repo, ".ufo/waves/round-17/ctx2.py", FIXTURE_CTX2_PY)
+         _write(repo, ".ufo/waves/round-17/clean.py", FIXTURE_CLEAN_PY)
++        _write(repo, ".ufo/waves/round-17/nested.py", FIXTURE_NESTED_PY)
+         _write(repo, ".ufo/waves/round-17/w2/seat.py", FIXTURE_SEAT_PY)
+         _write(repo, ".ufo/gates/run.sh", FIXTURE_RUN_SH)
+         rev1 = _commit(repo, "rev1")
+@@ -832,15 +1277,38 @@ def selftest():
+         assert code == 1, (result, code)
+         assert result["live_count"] == 15, (
+             result["live_count"], result["sites"])
+-        assert result["fixture_count"] == 4, result["fixture_count"]
++        assert result["fixture_count"] == 5, result["fixture_count"]
+         assert result["annotated_count"] == 1, result["annotated_count"]
+         assert kinds_live == want_kinds, kinds_live
+-        assert result["files_scanned"] == 6, result["files_scanned"]
++        assert result["files_scanned"] == 7, result["files_scanned"]
+         assert len(result["excluded"]) == 1
+         assert result["excluded"][0]["path"].endswith("/w2/seat.py")
+         assert result["excluded"][0]["sites"], result["excluded"]
+         assert result["routed_sites"], result["routed_sites"]
+ 
++        # nested class: a HEAD argument forwarded through a wrapper chain
++        # (_git_or_none -> git) is reported at the call line that supplies
++        # it, and never merged into sites[]/live_count. nested.py:24 is
++        # live; nested.py:31 sits in selftest() and inherits the fixture
++        # context; nested.py:30 calls the direct wrapper, so primary owns
++        # it and the nested class must not repeat it.
++        assert result["nested_count"] == 2, result["nested"]
++        assert result["nested_live_count"] == 1, result["nested"]
++        nested_py = [s for s in result["nested"]
++                     if s["path"].endswith("nested.py")]
++        assert [(s["line"], s["kind"], s["context"]) for s in nested_py] == [
++            (24, "rev-parse-HEAD", "live"),
++            (31, "rev-parse-HEAD", "fixture"),
++        ], nested_py
++        assert all(s["class"] == "nested" for s in nested_py), nested_py
++        assert all(s["target"] == "_git_or_none" for s in nested_py), nested_py
++        assert nested_py[0]["via"] == ["_git_or_none", "git"], nested_py
++        direct_py = [s for s in result["sites"]
++                     if s["path"].endswith("nested.py")]
++        assert [(s["line"], s["kind"], s["context"]) for s in direct_py] == [
++            (30, "rev-parse-HEAD", "fixture")], direct_py
++        assert not any("class" in s for s in result["sites"]), direct_py
++
+         # revision-literal edge forms (HEAD:{p}, HEAD^{commit}, HEAD~3, @)
+         edge = [s for s in result["sites"] if s["path"].endswith("edge.py")]
+         assert [(s["line"], s["kind"]) for s in edge] == [

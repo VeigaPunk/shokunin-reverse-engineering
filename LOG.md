@@ -2215,3 +2215,38 @@ rechecks retained in `.ufo/waves/round-18/final-recheck/*.receipt.json`, run at
   depth improved (frozen rule: confirmed). Expansion unchanged, quality
   improved, discernment improved. SHONEN stays `[~]`. Outside sampling and
   admission belong to the closure.
+
+## 2026-10-20 — round-19: routed r18 defects, province freshness, toolchain replay
+
+Baseline `8a8da7e19375aadc66c6bcbff0bbcbb596048fb0`. Motivating evidence:
+`corpus/lessons/round-18-verifier-spotcheck.md:191-206` and round-18 lesson Open.
+Claims/amendment: `.ufo/waves/round-19/claims.json`.
+
+- C1 calibration: all seven routed defects receive named corrections in
+  SCORECARD and lesson round-19, plus revision-scoped substance checks in
+  `tools/routed-r18.py`. B strict red: open/named/substance 7/7/7; selftest 13.
+  QUALITY #22 mines the dead-seat-record defect; `wave-outcomes.py` red exits 1
+  on four uncaused r18 seats, green exits 0 with retained causes.
+- C2 freshness: current configured pins, installed shared skill identity,
+  cache presence, Ghidra/JDK anchors re-read and PROVINCE/SKILL corrected
+  without shifting PROVINCE line count. S037 supports publication identity
+  only. Census stale 4→0; two pre-existing undeclared blocks remain, not hidden
+  by broadening DATED scope. Doctor outputs retained under round-19 evidence.
+- C3 depth: predictions/rule frozen and pushed `a1140e76fffdc1be032d9d813dbb686157803bbc`
+  before first analyze. Eight held-out official go1.25.0 toolchain artifacts,
+  S038 archive/member provenance, unchanged round-18 emulator. All runs exit 0;
+  compares 7/8 match; vet logs Invalid index 13902080 (frozen H1-only).
+  Frozen mechanism rule confirmed; full-list forecast falsified. Eight
+  source-bound receipt validations retained; live recheck after validator
+  edit correctly flags producer-file drift. Entry:
+  `corpus/knowledge/2026-10-20-r19-go125-toolchain-replay.md`.
+- Carried fixes: custody repo-root, jj sandbox env/path guard, revpin wording;
+  r12 entry gets append-only source/custody disclosure and marks its Docker
+  recheck precondition stale after a host package update. R12 operability
+  decision remains open. JJ source registration stays tool-local; kumitate
+  owns general jj facts.
+- W1: 90 seats, 48 reports, 42 without reports (9 provider 429 errors,
+  33 aborted with the parent session); three additional seats wrote reports
+  before final-message 429s. Dead seats never replaced. Verified partial
+  patches reused; nested-lint patch rejected on selftest. Per-seat retained
+  causes in wave1-outcomes.json; lesson round-19 records mistakes.

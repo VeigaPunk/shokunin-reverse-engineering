@@ -6,9 +6,13 @@ Contract: .ufo/waves/round-18/contract.md, section "W18/tools/jj-red-before.py"
 findings): origin remote is removed right after clone and replaced by a fake
 `refs/remotes/origin/main` ref, so nothing in sb can push to the lane; all
 sandbox trees are mkdtemp(dir="/tmp") and are refused under the lane or the
-fleet root; GIT_*/JJ_*/TMPDIR are stripped from every child and jj gets
-sandboxed HOME/XDG_CONFIG_HOME with `-R sb` on every call after init; the
-off-branch commit rewrites a pointer-table-cited line so the baseline red is
+fleet root; every git/jj child gets an explicit scrubbed env (`run()` takes a
+mandatory env, `os.environ` is scrubbed before the in-process revpin import,
+and `main()` scrubs the process env at entry), so no GIT_*/JJ_*/TMPDIR value
+reaches a child; jj gets sandboxed HOME/XDG_CONFIG_HOME with `-R sb` on every
+call after init; a pointer-table entry path or marker that resolves outside
+the mkdtemp clone is refused with exit 2 and a named cause before any write;
+the off-branch commit rewrites a pointer-table-cited line so the baseline red is
 a real `citation_dead` finding, not just the printed rev; and a state-D0
 pass (jj steady state, detached at the tip — the lane's current shape)
 checks the fixed forms do not falsely refuse.
@@ -66,17 +70,23 @@ step not held, 2 setup failure or every step blocked. Stdlib only.
 `--selftest` builds a fixture lane and stub tools under mkdtemp(dir="/tmp"):
 one all-green case, a regressed fixed citation-drift probe that resolves
 HEAD like the baseline (must fail), a regressed fixed capture that omits the
-is-branch-tip flag (must fail), and an absent-fixed-tools case (must report
-not_runnable, never held).
+is-branch-tip flag (must fail), an absent-fixed-tools case (must report
+not_runnable, never held), and three red safety cases: a sentinel GIT_*/JJ_*
+parent env observed through a shimmed git (no child may see it, the fixture
+builder included), and pointer-table entries naming an absolute path, a `..`
+walk and a symlink out of the clone (each must refuse exit 2 with a named
+cause and leave the outside file byte-identical).
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
 import importlib.util
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -110,11 +120,14 @@ def _refuse_inside(path):
             raise RuntimeError("refusing path inside %s: %s" % (forbidden, path))
 
 
+def _dirty_key(key):
+    """Environment keys that would redirect a git/jj child off the sandbox."""
+    return key.startswith("GIT_") or key.startswith("JJ_") or key == "TMPDIR"
+
+
 def _child_env(tmp, for_jj=False):
     """Scrubbed environment: no GIT_*/JJ_*/TMPDIR leakage into children."""
-    env = {k: v for k, v in os.environ.items()
-           if not (k.startswith("GIT_") or k.startswith("JJ_")
-                   or k == "TMPDIR")}
+    env = {k: v for k, v in os.environ.items() if not _dirty_key(k)}
     if for_jj:
         home = os.path.join(tmp, "jj-home")
         xdg = os.path.join(tmp, "jj-xdg")
@@ -125,8 +138,59 @@ def _child_env(tmp, for_jj=False):
     return env
 
 
-def run(argv, cwd, env=None, timeout=300):
-    """Run argv with an explicit cwd; never raises. Retained step dict."""
+@contextlib.contextmanager
+def _scrubbed_process_env():
+    """Strip GIT_*/JJ_*/TMPDIR from os.environ for the duration of an
+    in-process import whose own git children would otherwise inherit them."""
+    saved = {k: os.environ.pop(k) for k in list(os.environ) if _dirty_key(k)}
+    try:
+        yield
+    finally:
+        os.environ.update(saved)
+
+
+class SandboxRefusal(RuntimeError):
+    """Named refusal: the probe would have to write outside its clone."""
+
+    def __init__(self, cause, **detail):
+        self.cause = cause
+        self.detail = detail
+        super().__init__("%s: %s" % (cause, json.dumps(detail, sort_keys=True)))
+
+
+def _inside(sb, rel):
+    """True iff rel names a path strictly inside sb (absolute and `..`
+    escapes and symlinks that resolve outside are all rejected)."""
+    if not isinstance(rel, str) or not rel or os.path.isabs(rel):
+        return False
+    base = os.path.realpath(sb)
+    target = os.path.realpath(os.path.join(sb, rel))
+    return target.startswith(base + os.sep)
+
+
+def _guard_table_paths(sb, table):
+    """Refuse any pointer-table entry that names a path outside the clone.
+
+    Entries are lane-committed data; a `file` value is the only table field
+    that steers a write, so it is checked before the entry can be selected,
+    including entries the selection loop would never reach."""
+    if not isinstance(table, dict):
+        return
+    for entry in table.get("entries", []):
+        if not isinstance(entry, dict):
+            continue
+        rel = entry.get("file")
+        if isinstance(rel, str) and rel and not rel.startswith("@") \
+                and not _inside(sb, rel):
+            raise SandboxRefusal("pointer_table_path_outside_sandbox",
+                                 file=rel, sandbox=sb, entry=entry.get("id"))
+
+
+def run(argv, cwd, env, timeout=300):
+    """Run argv with an explicit cwd and a mandatory explicit child env;
+    never raises. Retained step dict."""
+    if env is None:
+        raise TypeError("run() requires an explicit scrubbed env")
     rec = {"argv": list(argv), "cwd": cwd}
     try:
         p = subprocess.run(list(argv), cwd=cwd, env=env, capture_output=True,
@@ -142,11 +206,14 @@ def run(argv, cwd, env=None, timeout=300):
 
 
 def run_expr(name, fn):
-    """Retained record for an in-process expression (no subprocess)."""
+    """Retained record for an in-process expression (no subprocess). The
+    expression runs under a scrubbed os.environ so any git child it spawns
+    itself inherits no GIT_*/JJ_* value from the caller."""
     rec = {"argv": [name], "cwd": None, "exit": None,
            "stdout": "", "stderr": ""}
     try:
-        rec["result"] = fn()
+        with _scrubbed_process_env():
+            rec["result"] = fn()
         rec["raised"] = None
     except Exception as exc:
         rec["result"] = None
@@ -208,7 +275,12 @@ def pick_cited_line(sb):
         table = json.loads(Path(sb, TABLE_REL).read_text())
     except (OSError, ValueError):
         table = {}
+    if not isinstance(table, dict):
+        table = {}
+    _guard_table_paths(sb, table)
     for e in table.get("entries", []):
+        if not isinstance(e, dict):
+            continue
         if e.get("kind") in ("exact", "quoted") \
                 and isinstance(e.get("line"), int) \
                 and e.get("must_match") and e.get("file") \
@@ -292,6 +364,18 @@ def commit_off_branch(sb, main_sha, jj, tmp, setup):
     off` lands it as the working-copy parent (off-branch HEAD). Returns
     (head_sha, mutation) where mutation records the cited file/line."""
     cited_file, cited_line, entry_id = pick_cited_line(sb)
+    # Re-check at the write site: the fallback target and any symlink that
+    # resolves out of the clone must refuse before a byte is written.
+    if not _inside(sb, cited_file):
+        raise SandboxRefusal("pointer_table_path_outside_sandbox",
+                             file=cited_file, sandbox=sb)
+    if os.path.islink(os.path.join(sb, cited_file)):
+        raise SandboxRefusal("pointer_table_path_symlink",
+                             file=cited_file, sandbox=sb)
+    marker = Path(sb, MARKER_NAME)
+    if not _inside(sb, MARKER_NAME) or os.path.islink(str(marker)):
+        raise SandboxRefusal("marker_path_outside_sandbox",
+                             file=MARKER_NAME, sandbox=sb)
     target = Path(sb, cited_file)
     lines = target.read_text().splitlines(keepends=True)
     if 1 <= cited_line <= len(lines):
@@ -304,7 +388,7 @@ def commit_off_branch(sb, main_sha, jj, tmp, setup):
     else:
         mutation = {"file": None, "line": None, "entry_id": entry_id,
                     "note": "cited line out of range; marker only"}
-    Path(sb, MARKER_NAME).write_text(
+    marker.write_text(
         "off-branch working-copy content; never committed to %s\n" % main_sha)
 
     cfg = ["--config", "user.name=JJ Red Before",
@@ -459,6 +543,15 @@ def evaluate(lane, baseline_rev, branch, jj, cd_fixed, cp_fixed, revpin_path):
         try:
             head_sha, mutation = commit_off_branch(sb, main_sha, jj, tmp,
                                                  setup)
+        except SandboxRefusal as exc:
+            receipt = {"tool": "jj-red-before", "lane": lane,
+                       "branch": branch, "baseline_rev": baseline_rev,
+                       "setup": setup_ok, "refusal": exc.cause,
+                       "refusal_detail": exc.detail,
+                       "setup_error": "%s: %s" % (type(exc).__name__, exc),
+                       "steps": steps, "expectations": expectations,
+                       "not_runnable": skipped, "all_held": False}
+            return receipt, CNE
         except Exception as exc:
             receipt = {"tool": "jj-red-before", "lane": lane,
                        "branch": branch, "baseline_rev": baseline_rev,
@@ -867,13 +960,17 @@ def resolve_source(lane, branch="main", require_pushed=True,
 """
 
 
-def build_fixture_lane(root, name="fixture-lane", cd_text=None):
+def build_fixture_lane(root, name="fixture-lane", cd_text=None,
+                       table_entries=None, symlinks=None):
     """A mini 'lane' git repo whose B commit carries the baseline stubs and a
     pointer-table entry citing SCORECARD.md:1 (needle 'fixture').
 
     `cd_text` overrides the committed citation-drift tool so a selftest case
     can make the *baseline* already resolve the tip (the red-before premise
-    must then be reported as not held)."""
+    must then be reported as not held). `table_entries` replaces the default
+    entry list and `symlinks` maps a lane-relative path to a link target;
+    both exist for the pointer-table path-guard cases. Every git child here
+    gets the same explicit scrubbed env as the probe's own children."""
     lane = os.path.join(root, name)
     os.makedirs(os.path.join(lane, os.path.dirname(CD_REL)))
     os.makedirs(os.path.join(lane, os.path.dirname(CP_REL)))
@@ -881,23 +978,65 @@ def build_fixture_lane(root, name="fixture-lane", cd_text=None):
     Path(lane, CP_REL).write_text(FIXTURE_CP_BASELINE)
     Path(lane, "LOG.md").write_text("# fixture log\n")
     Path(lane, "SCORECARD.md").write_text("# fixture scorecard\nrow\n")
-    Path(lane, TABLE_REL).write_text(json.dumps({
-        "entries": [{"id": "fx-sc1", "kind": "exact",
-                     "file": "SCORECARD.md", "line": 1,
-                     "must_match": "fixture"}]}))
+    entries = table_entries if table_entries is not None else [
+        {"id": "fx-sc1", "kind": "exact", "file": "SCORECARD.md",
+         "line": 1, "must_match": "fixture"}]
+    Path(lane, TABLE_REL).write_text(json.dumps({"entries": entries}))
     Path(lane, EXPECTED_REL).write_text("{}")
+    for rel, target in (symlinks or {}).items():
+        dest = os.path.join(lane, rel)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        if os.path.lexists(dest):
+            os.unlink(dest)
+        os.symlink(target, dest)
+    env = _child_env(root)
     for argv in (["git", "init", "--quiet", "-b", "main", lane],
                  ["git", "-C", lane, "-c", "user.name=fx",
                   "-c", "user.email=fx@x", "add", "-A"],
                  ["git", "-C", lane, "-c", "user.name=fx",
                   "-c", "user.email=fx@x", "commit", "--quiet", "-m", "B"]):
-        r = subprocess.run(list(argv), capture_output=True, text=True)
+        r = subprocess.run(list(argv), capture_output=True, text=True,
+                           env=env)
         if r.returncode != 0:
             raise RuntimeError("fixture lane setup failed: %s %s"
                                % (argv, r.stderr))
-    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
     b = sha_of(lane, "refs/heads/main", root, env)
     return lane, b
+
+
+def _install_git_shim(root):
+    """A PATH-first `git` that logs its own child env, then execs real git.
+    Only the selftest uses it: it turns 'the env was scrubbed' into an
+    observation instead of a claim."""
+    shim_dir = os.path.join(root, "git-shim")
+    os.makedirs(shim_dir, exist_ok=True)
+    log_path = os.path.join(root, "git-shim-env.log")
+    real_git = shutil.which("git")
+    script = ("#!/bin/sh\n"
+              "{ printf '=== argv'; printf ' %%s' \"$@\"; printf '\\n'; "
+              "env; } >> %s\n"
+              "exec %s \"$@\"\n"
+              % (shlex.quote(log_path), shlex.quote(real_git)))
+    shim = os.path.join(shim_dir, "git")
+    Path(shim).write_text(script)
+    os.chmod(shim, 0o755)
+    return shim_dir, log_path
+
+
+def _shim_observations(log_path):
+    """(git invocations logged, lines carrying a GIT_*/JJ_*/TMPDIR key)."""
+    try:
+        text = Path(log_path).read_text()
+    except OSError:
+        return 0, ["no shim log at %s" % log_path]
+    calls, dirty = 0, []
+    for line in text.splitlines():
+        if line.startswith("=== "):
+            calls += 1
+            continue
+        if _dirty_key(line.split("=", 1)[0]):
+            dirty.append(line[:120])
+    return calls, dirty
 
 
 def selftest(jj):
@@ -978,6 +1117,71 @@ def selftest(jj):
                 and nr == want):
             failures.append("absent-tools case: exit=%r not_runnable=%r"
                             % (code, nr))
+
+        # case 6 (red env): a sentinel GIT_*/JJ_* parent env must reach no
+        # git child — the fixture builder, every evaluate child, and the
+        # in-process revpin import (which spawns its own git) included. The
+        # shimmed git turns "the env was scrubbed" into a logged observation.
+        cases += 1
+        shim_dir, shim_log = _install_git_shim(tmp)
+        saved_path = os.environ.get("PATH", "")
+        sentinels = {"GIT_DIR": os.path.join(tmp, "sentinel-git-dir"),
+                     "GIT_WORK_TREE": os.path.join(tmp, "sentinel-wt"),
+                     "GIT_INDEX_FILE": os.path.join(tmp, "sentinel-index"),
+                     "JJ_OPERATION_ID": "sentinel-op"}
+        os.environ.update(sentinels)
+        os.environ["PATH"] = shim_dir + os.pathsep + saved_path
+        env_obs = {}
+        try:
+            lane_env, b_env = build_fixture_lane(tmp, "fixture-lane-env")
+            receipt, code = go(paths["cd_fixed"], paths["cp_fixed"],
+                               lane_env, b_env)
+            calls, dirty = _shim_observations(shim_log)
+            env_obs = {"calls": calls, "dirty": dirty[:3], "exit": code,
+                       "all_held": receipt.get("all_held")}
+            ok_env = (code == 0 and receipt.get("all_held") is True
+                      and calls > 0 and not dirty)
+        except Exception as exc:
+            ok_env = False
+            env_obs = {"raised": "%s: %s" % (type(exc).__name__, exc)}
+        finally:
+            for key in sentinels:
+                os.environ.pop(key, None)
+            os.environ["PATH"] = saved_path
+        if not ok_env:
+            failures.append("env scrub case: %r" % (env_obs,))
+
+        # cases 7-9 (red path): a pointer-table entry naming a path out of the
+        # mkdtemp clone must refuse exit 2 with its named cause and leave the
+        # outside victim byte-identical — absolute, `..` and symlink forms.
+        def escape_case(label, entry_for, links_for=None):
+            victim = os.path.join(tmp, "victim-" + label + ".md")
+            Path(victim).write_text("# victim original\n")
+            lane_g, b_g = build_fixture_lane(
+                tmp, "fixture-lane-" + label,
+                table_entries=[{"id": "fx-escape-" + label, "kind": "exact",
+                                "file": entry_for(victim), "line": 1,
+                                "must_match": "victim"}],
+                symlinks=links_for(victim) if links_for else None)
+            receipt, code = go(paths["cd_fixed"], paths["cp_fixed"],
+                               lane_g, b_g)
+            unchanged = Path(victim).read_text() == "# victim original\n"
+            refused = (code == 2
+                       and receipt.get("refusal")
+                       == "pointer_table_path_outside_sandbox")
+            if not (refused and unchanged):
+                failures.append(
+                    "%s case: exit=%r refusal=%r detail=%r unchanged=%r"
+                    % (label, code, receipt.get("refusal"),
+                       receipt.get("refusal_detail"), unchanged))
+
+        cases += 1
+        escape_case("abs", lambda victim: victim)
+        cases += 1
+        escape_case("rel", lambda victim: "../" + os.path.basename(victim))
+        cases += 1
+        escape_case("link", lambda victim: "linked.md",
+                    links_for=lambda victim: {"linked.md": victim})
     except Exception as exc:
         return 2, "SELFTEST: FAILED setup %s: %s" % (type(exc).__name__, exc)
     finally:
@@ -1003,6 +1207,10 @@ def emit(obj, out_path):
 
 
 def main(argv=None):
+    # Defence in depth: a GIT_*/JJ_* value in the invoking env must never
+    # reach git/jj, including through a call site that forgets an env.
+    for key in [k for k in os.environ if _dirty_key(k)]:
+        del os.environ[key]
     ap = argparse.ArgumentParser(
         description="Red/green HEAD-vs-branch-tip probe inside a throwaway "
                     "jj-colocated clone (round-18 C2).")

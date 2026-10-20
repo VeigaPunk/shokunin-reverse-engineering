@@ -5,25 +5,25 @@ host — native ELF through the Ghidra 12.1.4 provider, Electron/ASAR/JavaScript
 bundles, archives and packages; evidence-first static analysis that keeps
 observation, inference and unknowns separate.
 
-Surface summary: the `rea` MCP/CLI surfaces resolve per client: Devin and OMP
-use `rea-agents@6.5.0` (207 MCP tools + 153 CLI commands; catalog tools_sha256
-`805433f1…`); Kimi uses `rea-agents@6.7.0` (207 MCP tools + 153 CLI
-commands; catalog tools_sha256 `af39310c…` — the package's compiled, recorded
-identity). Historical: Kimi resolved the historical pin `rea-agents@6.4.0` (historical 170 MCP tools + 127 CLI commands; historical catalog tools_sha256 `25802f6d…`) before 2026-10-18; both versions have separate npx cache installs. The Ghidra provider is at `/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC`;
+Surface summary: the `rea` MCP/CLI surfaces resolve per client: Devin, OMP
+and Kimi all register `rea-agents@6.7.0` (207 MCP tools + 153 CLI commands;
+catalog tools_sha256 `af39310c…`, the package's compiled, recorded identity;
+re-read 2026-10-20, round 19, `.ufo/waves/round-19/evidence/rea-catalog.json`).
+Round carrier runs pin the CLI explicitly to the superseded client pin `rea-agents@6.5.0` (same 207/153 counts; tools_sha256 `805433f1…`). Historical: Kimi resolved `rea-agents@6.4.0` (historical 170 MCP tools + 127 CLI commands; historical catalog tools_sha256 `25802f6d…`) before 2026-10-18; its npx cache is gone (historical, absent 2026-10-20). The Ghidra provider is at `/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC`;
 host binutils as non-REA fallback readers.
 
-Drift-prone values: reverified 2026-10-18 — configured REA MCP pins are Devin
-`rea-agents@6.5.0` (`/home/vgpnk/.config/devin/mcp_config.json:7`), OMP
-`rea-agents@6.5.0` (`/home/vgpnk/.omp/agent/mcp.json:8`), and Kimi
-`rea-agents@6.7.0` (`~/.kimi-code/config.toml:4126` at the 2026-10-19 re-read; the 17:55:49Z receipt's pointers :3546, :3298, :2940 [16:57:35Z] and :3227 [17:32Z] are historical). Cache/catalog
-identities (re-read 2026-10-18): 6.7.0 at `/home/vgpnk/.npm/_npx/a1722018f28f9df2` — 153 CLI
+Drift-prone values: reverified 2026-10-20 (round 19) — configured REA MCP pins are Devin
+`rea-agents@6.7.0` (`/home/vgpnk/.config/devin/mcp_config.json:7`), OMP
+`rea-agents@6.7.0` (`/home/vgpnk/.omp/agent/mcp.json:8`), and Kimi
+`rea-agents@6.7.0` (`~/.kimi-code/config.toml:4126`); Devin/OMP were rewritten 2026-10-20 13:35:56 -03 outside the lane (they carried the superseded 6.5.0 pin before). The operator disabled the OMP rea entry for the hyaku phase (10:12 -03); that rewrite dropped the `enabled: false` key, so the live OMP file no longer records the disable (round-19 w1 `LiveConfigPins.md`). Cache/catalog
+identities (re-derived 2026-10-20, round 19): 6.7.0 at `/home/vgpnk/.npm/_npx/a1722018f28f9df2` — 153 CLI
 commands, 207 MCP tools, `tools_sha256=af39310c9591bb981893ec0d2188b1bcf6e9cc8ba3ac513d5bbefc8ddcb85639`; 6.5.0 at
-`/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6` — 153 CLI commands, 207 MCP tools, `tools_sha256=805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded`; 6.4.0 at
-`/home/vgpnk/.npm/_npx/dea9475797100b20` — 127 CLI commands, 170 MCP tools,
+`/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6` — 153 CLI commands, 207 MCP tools, `tools_sha256=805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded`; historical 6.4.0 in npx cache directory
+`dea9475797100b20` (historical: directory absent 2026-10-20) — 127 CLI commands, 170 MCP tools,
 `tools_sha256=25802f6de8c14ba736dc61ff1cbc7c5cd738fd74426aa01338f2dd03e0911166` (historical pin)
-(L12 receipt, SHA-256 above). Installed shared REA skill is v42/207 tools (installed sha256 `c8639823…`; not byte-identical to either bundled v42/207 skill). Devin/OMP 6.5.0 doctor reported aligned at luna-round-2 (historical);
-the 2026-10-18 6.7.0 doctor reports those registrations stale; 6.4.0 expects v37 and reports stale (L10 receipts, SHA-256s above). Reverified Ghidra/JDK: `GHIDRA_INSTALL_DIR=/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC`, `application.version=12.1.4` (build `2026-Sep-21 1613 UTC`); `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`, Java `21.0.12.1` (`/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties:17`, `/home/vgpnk/.bashrc:23-24`; `java -version 2>&1 | head -n 1` returned `openjdk version "21.0.12.1" 2026-08-18`).
-Provider-key inventory remains historical, not re-probed 2026-10-16 (`HEAD:PROVINCE.md:19-26`): `.bashrc` previously recorded `REA_BINWALK_COMMAND`, `REA_UNBLOB_COMMAND`, `REA_JADX_MCP_JAR`, `REA_APKTOOL_COMMAND`, `REA_ADB_PATH`, `REA_PWNTOOLS_PYTHON`, and `REA_WAKARU_COMMAND` (bind the `@wakaru/cli-linux-x64` ELF, not node shim); `REA_IDA_MCP_CONFIG` and `HOPPER_LAUNCHER_PATH` were recorded unset. The r5-audit C8 correction was for REA 6.4.0: `APKTOOL_COMMAND_ENV=REA_APKTOOL_COMMAND`, `.bashrc:61` → `/usr/bin/apktool`; the old jar-path key was not exported.
+(L12 receipt, SHA-256 above). Installed shared REA skill is v42/207 tools; since 2026-10-20 13:35:56 -03 it is byte-identical to the 6.7.0 bundled skill (installed sha256 `fbcd39d6…`; the prior `c8639823…` variant survives only as a `.rea.backup` recovery file; round-19 w1 `SourcesRowAudit.md`). Doctor: the 6.7.0 doctor reports no Devin/OMP registration finding, the 6.5.0 doctor reports those registrations request 6.7.0 (`.ufo/waves/round-19/evidence/doctor/`); 6.4.0 expected v37 (historical L10 receipts).
+Reverified Ghidra/JDK 2026-10-20: `GHIDRA_INSTALL_DIR=/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC`, `application.version=12.1.4` (build `2026-Sep-21 1613 UTC`); `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`, Java `21.0.12.1` (`/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties:17`, `/home/vgpnk/.bashrc:28-29` (were `:23-24` before the 2026-10-19 `.bashrc` edit); `java -version 2>&1 | head -n 1` returned `openjdk version "21.0.12.1" 2026-08-18`).
+Provider-key inventory re-probed 2026-10-20 (round 19, names only, w1 `ProviderKeysRecheck.md`): `.bashrc:63-69` exports `REA_PWNTOOLS_PYTHON`, `REA_BINWALK_COMMAND`, `REA_UNBLOB_COMMAND`, `REA_APKTOOL_COMMAND`, `REA_ADB_PATH`, `REA_WAKARU_COMMAND` (bind the `@wakaru/cli-linux-x64` ELF, not node shim) and `REA_JADX_MCP_JAR`, all resolving to existing paths; these exports sit below the interactive guard (`.bashrc:34`), so a non-interactive shell does not see them; `REA_IDA_MCP_CONFIG` and `HOPPER_LAUNCHER_PATH` are unset. The r5-audit C8 correction was for REA 6.4.0 (historical): `APKTOOL_COMMAND_ENV=REA_APKTOOL_COMMAND`, now `.bashrc:66` (was `:61`) → `/usr/bin/apktool`.
 
 Probe/reconciliation conventions: `rea doctor` is the environment verdict;
 `binary_session {}` is the live-server verdict (`result.tool_availability` +
@@ -41,7 +41,7 @@ Surfaces owned now — each verified on this host 2026-10-13.
 
 | Surface | Ports / paths / config keys | Liveness / readiness probe | Verified evidence |
 |---|---|---|---|
-| REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml` — registers per-client pinned `rea-agents` (Devin/OMP 6.5.0, Kimi 6.7.0; pins per the 2026-10-18 custody receipt, see surface summary) with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` in an attached client → `analysis_provider_candidates` + `capabilities[]`; CLI: `rea doctor` (devin `aligned`, omp `aligned`) | doctor run 2026-10-13; wave 04 file-level verification |
+| REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml` — registers per-client pinned `rea-agents` (Devin/OMP/Kimi 6.7.0 since 2026-10-20 13:35:56 -03; see surface summary) with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` in an attached client → `analysis_provider_candidates` + `capabilities[]`; CLI: `rea doctor` (6.7.0 doctor: no devin/omp registration finding, round-19 evidence) | doctor run 2026-10-13; wave 04 file-level verification |
 | `rea` CLI | npx cache `~/.npm/_npx/*/node_modules/rea-agents` — no `rea` on PATH; 153 commands on the 6.5.0/6.7.0 pins, 127 on 6.4.0 (historical) | `npx -y rea-agents@6.4.0 --version` → `6.4.0` (2026-10-13 receipt) | wave 01/02/03 catalogs |
 | Ghidra provider | `GHIDRA_INSTALL_DIR` (876 MB install); headless `support/analyzeHeadless`; native decompiler `Ghidra/Features/Decompiler/os/linux_x86_64/decompile`; 39 processor modules; 34 features incl. PyGhidra/BSim | `rea doctor` → providerInspections `ghidra: configured+available`, 8/8 checks | `application.version=12.1.4`, build 2026-09-21, rev 8b6bbb85 |
 | JDK 21 substrate | `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`, exported in `.bashrc:24` + `.profile:4`; sole Java on host | `java -version` → 21.0.12.1 full JDK | meets Ghidra `java.min=21` exactly; single-Java fragility noted |

@@ -120,6 +120,24 @@ set`, and any capture started outside the lane recorded a different repo or
       `repo-header-off-branch-tip-no` is the red case: a detached HEAD behind
       the branch tip must record `repo-HEAD-is-branch-tip: no`.
 
+ROUND-19 HARDENING (seat CustodyRepoRoot, wave round-19; r18 lesson :90,
+CustodyReview F4). `# repo-root:` recorded the `--repo` argument verbatim, so
+`--repo <repo>/sub/deep` printed the subdirectory while `repo-HEAD`,
+`repo-branch-tip` and `repo-dirty` came from the enclosing repository:
+
+  11. REPO ROOT IS THE TOP LEVEL. `repo_context` now records
+      `git rev-parse --show-toplevel` as `# repo-root:` and keeps the argument
+      as the new `# repo-arg:` line. The two differ exactly when `--repo`
+      names a subdirectory of a work tree; they are equal at a repository root
+      and for an argument outside any work tree (no top level exists, so the
+      argument is the only root the receipt can name). `receipt-version`
+      stays 2: `parse_receipt` splits on `^PATH:` and never reads the header,
+      so every `#` line is metadata by construction and no consumer parses
+      these fields. Selftest case `repo-root-is-toplevel-not-subdir-arg` is the
+      red case: a `--repo` under `sub/deep` must print the repo top level as
+      `repo-root` and the argument as `repo-arg`; on the pre-fix tool it
+      printed the subdirectory (30/30 CLEAN control stayed green).
+
 atime is deliberately NOT captured: reading a file (including this instrument's
 own sha256 pass on a relatime mount) can move atime, so an atime field would make
 the instrument non-idempotent over its own use.
@@ -367,9 +385,18 @@ def repo_context(repo: Path) -> dict:
     working-copy parent, but now flagged by `head_is_tip` instead of standing
     alone. `dirty` counts tracked modifications only (untracked excluded).
     A non-repo leaves every value unknown; `head_is_tip` then reads `no`
-    (a custody pin that cannot prove it is the branch tip must not read yes)."""
+    (a custody pin that cannot prove it is the branch tip must not read yes).
+
+    Round-19 (r18 lesson :90, CustodyReview F4): `root` is the repository top
+    level from `rev-parse --show-toplevel`, never the `--repo` argument — a
+    subdirectory argument walks up to the repo that actually supplied HEAD and
+    the branch tip, and the argument is kept separately as `arg` (`# repo-arg:`).
+    An argument that is not inside a work tree has no top level, so `root`
+    falls back to that argument; the two fields are equal only there and at a
+    repository root."""
     ctx = {
         "root": str(repo),
+        "arg": str(repo),
         "head": "(none)",
         "branch": REPO_BRANCH,
         "branch_tip": "(none)",
@@ -378,6 +405,9 @@ def repo_context(repo: Path) -> dict:
     }
     if _git_at(repo, "rev-parse", "--git-dir") is None:
         return ctx
+    toplevel = _git_at(repo, "rev-parse", "--show-toplevel")
+    if toplevel:
+        ctx["root"] = toplevel
     head = _git_at(repo, "rev-parse", "HEAD")  # head-rev-lint: compare-only
     tip = _git_at(repo, "rev-parse", "--verify", "refs/heads/%s^{commit}" % REPO_BRANCH)
     status = _git_at(repo, "status", "--porcelain", "--untracked-files=no")
@@ -406,6 +436,7 @@ def render_receipt(sections, label: str, now: float, repo: Path) -> str:
         "# cwd: %s" % os.getcwd(),
         "# repo-HEAD: %s" % ctx["head"],  # head-rev-lint: compare-only (retained @- pin, flagged below)
         "# repo-root: %s" % ctx["root"],
+        "# repo-arg: %s" % ctx["arg"],
         "# repo-branch: %s" % ctx["branch"],
         "# repo-branch-tip: %s" % ctx["branch_tip"],
         "# repo-HEAD-is-branch-tip: %s" % ctx["head_is_tip"],
@@ -1386,6 +1417,37 @@ def cmd_selftest(args) -> int:
                 "%s --repo did not pin %s: %r" % (tag, want, p.stdout[:400])
     run_case(cases, "repo-arg-and-lane-root-default", case_repo_cwd)
 
+    # 28. ROUND-19 RED CASE (r18 lesson :90; CustodyReview F4): `--repo` may name
+    #     a SUBDIRECTORY of a work tree. `repo-root` must record the repository
+    #     top level (`rev-parse --show-toplevel`) while HEAD/tip/dirty come from
+    #     that same enclosing repo, and the argument is kept as `repo-arg`.
+    #     Pre-fix the tool printed the subdirectory as `repo-root` (exit 0).
+    def case_repo_subdir():
+        repo = root / "repo-sub-fixture"
+        sub = repo / "sub" / "deep"
+        sub.mkdir(parents=True)
+        def git_s(*a):
+            p = subprocess.run(["git", "-C", str(repo), *a],
+                               capture_output=True, text=True)
+            assert p.returncode == 0, "fixture git %s failed: %s" % (a, p.stderr)
+            return p.stdout.strip()
+        git_s("init", "-q", "-b", "main")
+        git_s("-c", "user.email=e@x", "-c", "user.name=e", "commit", "-qm", "c1", "--allow-empty")
+        rec = root / "repo-subdir.txt"
+        rc = cmd_capture(argparse.Namespace(out=str(rec), paths=[str(fixture)],
+                                            label="selftest", repo=str(sub)))
+        assert rc == EXIT_MATCH, "subdirectory capture exit %d" % rc
+        hdr = rec.read_text()
+        assert "# repo-root: %s" % repo.resolve() in hdr, \
+            "repo-root is not the enclosing repository top level: %r" % hdr[:600]
+        assert "# repo-root: %s" % sub.resolve() not in hdr, \
+            "repo-root still records the --repo argument"
+        assert "# repo-arg: %s" % sub.resolve() in hdr, \
+            "the --repo argument is not kept as repo-arg: %r" % hdr[:600]
+        assert "# repo-HEAD-is-branch-tip: yes" in hdr, \
+            "the subdirectory argument lost the enclosing repo's HEAD/tip facts"
+    run_case(cases, "repo-root-is-toplevel-not-subdir-arg", case_repo_subdir)
+
     passed = sum(1 for _, ok, _ in cases if ok)
     for name, ok, why in cases:
         print("case %-42s %s%s" % (name, "PASS" if ok else "FAIL", ("  (%s)" % why) if why else ""))
@@ -1435,7 +1497,9 @@ def main(argv=None) -> int:
     p_cap.add_argument("--paths", nargs="*", default=None, help="override paths (default: the 5 custody paths)")
     p_cap.add_argument("--repo", default=str(LANE_ROOT),
                        help="repository the receipt pins (default: the lane root that owns .ufo/, "
-                            "never the caller's cwd); the header records repo-root, repo-branch-tip, "
+                            "never the caller's cwd); a subdirectory argument is walked up, so the "
+                            "header's repo-root is `rev-parse --show-toplevel` and repo-arg keeps the "
+                            "argument; the header also records repo-branch-tip, "
                             "repo-HEAD-is-branch-tip and repo-dirty")
     p_cap.set_defaults(func=cmd_capture)
 

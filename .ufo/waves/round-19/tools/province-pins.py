@@ -1,0 +1,674 @@
+#!/usr/bin/env python3
+"""province-pins.py — stated-vs-live per-client REA pin drift (R19 C2).
+
+PROVINCE.md is read at REV from Git objects (`git --no-optional-locks show`),
+never from the working tree. Three regions are parsed for per-client pins
+(Devin, OMP, Kimi):
+
+  * the `Surface summary:` paragraph,
+  * the `Drift-prone values:` paragraph,
+  * the Core table row whose first cell is `REA MCP server`.
+
+Statement forms
+  prefixed:  <clients> ... `rea-agents@X.Y.Z`  (gap of at most 160 chars
+             without a sentence-ending `. ` or a `;`; dots inside paths are
+             allowed and Markdown line wrapping is ignored)
+  bare:      <clients> X.Y.Z  — ONLY in the Core `REA MCP server` row
+Clients are grouped by `and`, `/` or `,` ("Devin and OMP", "Devin/OMP").
+A statement is historical — and is omitted — when its clause, bounded by
+`.`, `;`, `!` or `?` separators (with an optional closing bracket/quote),
+contains "historical" case-insensitively. Historical mentions are not
+current claims and can never be drift.
+
+Live pins
+  Read from ~/.config/devin/mcp_config.json (Devin),
+  ~/.omp/agent/mcp.json (OMP) and ~/.kimi-code/config.toml (Kimi). Only the
+  distinct `rea-agents@X.Y.Z` tokens, the file sha256 and the file mtime are
+  emitted; no other config content is parsed into output. A config with no
+  token, several distinct tokens, or no readable file is a named live error.
+
+Output
+  {rev, stated: [{client, version, line}], live: [{client, path, exists,
+   file_sha256, mtime_utc, pins, version, error}], mismatches: [{client,
+   stated_version, live_version, live_pin, lines, cause}],
+   mismatch_count, unstated_clients, regions, province_sha256, rules}
+
+  mismatch_count counts distinct (client, stated version) pairs whose version
+  differs from the live pin: a client stated at two versions yields one
+  entry per stale version; repeated mentions of one version are one
+  statement. Every count carries its rule in `rules`.
+
+Exit codes
+  0  clean (mismatches are reported but not fatal without --strict)
+  1  --strict and mismatch_count > 0 or unstated_clients is non-empty
+  2  unusable input: bad rev / absent PROVINCE.md / absent region
+
+Env overrides (fixture configs for --selftest):
+  PROVINCE_PINS_DEVIN_CONFIG, PROVINCE_PINS_OMP_CONFIG,
+  PROVINCE_PINS_KIMI_CONFIG.
+
+Python 3 stdlib only; run as `python3 -I -B province-pins.py ...`.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+
+CLIENTS = ("Devin", "OMP", "Kimi")
+DEFAULT_CONFIGS = {
+    "Devin": "~/.config/devin/mcp_config.json",
+    "OMP": "~/.omp/agent/mcp.json",
+    "Kimi": "~/.kimi-code/config.toml",
+}
+ENV_CONFIGS = {
+    "Devin": "PROVINCE_PINS_DEVIN_CONFIG",
+    "OMP": "PROVINCE_PINS_OMP_CONFIG",
+    "Kimi": "PROVINCE_PINS_KIMI_CONFIG",
+}
+
+_VER = r"\d+\.\d+\.\d+"
+_CLIENT = r"(?:Devin|OMP|Kimi)"
+_GROUP = rf"(?P<clients>\b{_CLIENT}\b(?:\s*(?:and|/|,)\s*\b{_CLIENT}\b)*)"
+# Client group -> short gap -> backticked/plain pin token. A gap may contain
+# dots that are not sentence ends (paths, dotted versions), but never a
+# sentence-ending ". " or a ";".
+_PREFIX_STMT = re.compile(_GROUP + r"(?:[^.;]|\.(?=\S)){0,160}?" +
+                          rf"`?rea-agents@(?P<ver>{_VER})`?")
+# Client group -> bare version, Core row only (e.g. "Devin/OMP 6.5.0").
+_BARE_STMT = re.compile(_GROUP + rf"[ \t]+(?P<ver>{_VER})(?![\w.])")
+_LIVE_PIN = re.compile(rf"rea-agents@({_VER})")
+# Clause boundary: sentence punctuation, optional closer, then whitespace.
+_SEP = re.compile(r"[.;!?][)\]*'\"\u2019\u201d]?\s+")
+
+RULES = {
+    "stated": "each <clients> ... rea-agents@X.Y.Z occurrence in the three "
+              "regions; the bare <clients> X.Y.Z form is accepted only in "
+              "the Core REA MCP server row",
+    "historical": "a statement whose clause (between . ; ! ? separators) "
+                  "contains 'historical' is omitted as a non-current claim",
+    "mismatch": "one entry per distinct (client, stated version) that "
+                "differs from the live pin; a client stated at two versions "
+                "yields one entry per stale version",
+    "strict": "exit 1 when mismatch_count > 0 or unstated_clients is "
+              "non-empty",
+    "live": "version = the single distinct rea-agents@X.Y.Z token; "
+            "sha256 and mtime describe the whole config file",
+}
+
+
+class Unusable(Exception):
+    """Input/document shape refusal (exit 2) with a named cause."""
+
+    def __init__(self, cause: str, detail: str, extra: dict | None = None):
+        super().__init__(cause)
+        self.cause = cause
+        self.detail = detail
+        self.extra = extra or {}
+
+
+def _git(root: str, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["git", "--no-optional-locks", "-C", root, *args],
+        capture_output=True, text=True, timeout=60, check=False,
+    )
+
+
+def _resolve_rev(root: str, rev: str) -> str:
+    proc = _git(root, "rev-parse", "--verify", "--quiet", f"{rev}^{{commit}}")
+    if proc.returncode != 0 or not proc.stdout.strip():
+        raise Unusable("cannot_resolve_rev",
+                       f"rev {rev!r} does not resolve to a commit: "
+                       f"{proc.stderr.strip()[:300]}")
+    return proc.stdout.strip().splitlines()[0]
+
+
+def _show(root: str, rev: str, path: str) -> bytes | None:
+    """Blob bytes at REV:path, or None when absent (decode stays exact)."""
+    proc = subprocess.run(
+        ["git", "--no-optional-locks", "-C", root, "show", f"{rev}:{path}"],
+        capture_output=True, timeout=60, check=False,
+    )
+    if proc.returncode != 0:
+        return None
+    return proc.stdout
+
+
+def _clause(text: str, start: int, end: int) -> str:
+    """Text between the nearest . ; ! ? separators around [start, end)."""
+    left = 0
+    for m in _SEP.finditer(text, 0, start):
+        left = m.end()
+    m = _SEP.search(text, end)
+    right = m.start() if m else len(text)
+    return text[left:right]
+
+
+def _paragraph(lines: list[str], predicate):
+    """(line_number, text) pairs of the first matching paragraph, or None."""
+    for i, line in enumerate(lines):
+        if predicate(line):
+            out = []
+            j = i
+            while j < len(lines) and lines[j].strip():
+                out.append((j + 1, lines[j]))
+                j += 1
+            return out
+    return None
+
+
+def _cells(line: str) -> list[str]:
+    return [c.strip() for c in line.strip().strip("|").split("|")]
+
+
+def _core_row(lines: list[str]):
+    for i, line in enumerate(lines):
+        cells = _cells(line)
+        if cells and cells[0] == "REA MCP server":
+            return [(i + 1, line)]
+    return None
+
+
+def _parse_region(entries, forms) -> list[dict]:
+    """Extract stated pins from one region; historical clauses are omitted."""
+    text = "\n".join(line for _, line in entries)
+    first_line = entries[0][0]
+    found = {}
+    for pattern in forms:
+        for m in pattern.finditer(text):
+            if "historical" in _clause(text, m.start(), m.end()).lower():
+                continue
+            line = first_line + text.count("\n", 0, m.start("ver"))
+            for client in re.findall(_CLIENT, m.group("clients")):
+                found[(client, m.group("ver"), line)] = {
+                    "client": client,
+                    "version": m.group("ver"),
+                    "line": line,
+                }
+    return [found[k] for k in sorted(found, key=lambda k: (k[2], k[0], k[1]))]
+
+
+def _vkey(version: str):
+    return tuple(int(part) for part in version.split("."))
+
+
+def _read_live(client: str, path: str) -> dict:
+    """Read one client config; emit only the pin token, sha256 and mtime."""
+    expanded = os.path.expanduser(path)
+    entry = {"client": client, "path": expanded,
+             "exists": os.path.isfile(expanded), "file_sha256": None,
+             "mtime_utc": None, "pins": [], "version": None, "error": None}
+    if not entry["exists"]:
+        entry["error"] = "file_missing"
+        return entry
+    try:
+        with open(expanded, "rb") as fh:
+            data = fh.read()
+        st = os.stat(expanded)
+    except OSError:
+        entry["exists"] = False
+        entry["error"] = "file_unreadable"
+        return entry
+    entry["file_sha256"] = hashlib.sha256(data).hexdigest()
+    entry["mtime_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ",
+                                       time.gmtime(st.st_mtime))
+    versions = sorted(set(_LIVE_PIN.findall(
+        data.decode("utf-8", "replace"))), key=_vkey)
+    entry["pins"] = [f"rea-agents@{v}" for v in versions]
+    if len(versions) == 1:
+        entry["version"] = versions[0]
+    elif not versions:
+        entry["error"] = "no_rea_agents_pin"
+    else:
+        entry["error"] = "multiple_pins"
+    return entry
+
+
+def _region_span(entries) -> dict:
+    if entries is None:
+        return {"present": False}
+    if len(entries) == 1:
+        return {"present": True, "line": entries[0][0]}
+    return {"present": True, "line_start": entries[0][0],
+            "line_end": entries[-1][0]}
+
+
+def collect(root: str, rev_arg: str) -> dict:
+    root = os.path.abspath(root)
+    rev = _resolve_rev(root, rev_arg)
+    blob = _show(root, rev, "PROVINCE.md")
+    if blob is None:
+        raise Unusable("province_missing",
+                       f"PROVINCE.md is absent or not a blob at {rev}")
+    text = blob.decode("utf-8", "replace")
+    lines = text.splitlines()
+
+    surface = _paragraph(lines, lambda l: l.lstrip().startswith(
+        "Surface summary:"))
+    drift = _paragraph(lines, lambda l: l.lstrip().startswith(
+        "Drift-prone values:"))
+    core = _core_row(lines)
+    regions = {"surface_summary": _region_span(surface),
+               "drift_prone": _region_span(drift),
+               "core_rea_row": _region_span(core)}
+    missing = [name for name, span in regions.items() if not span["present"]]
+    if missing:
+        raise Unusable("region_missing",
+                       "PROVINCE.md lacks required region(s): " +
+                       ", ".join(missing), {"regions": regions})
+
+    stated = []
+    stated += _parse_region(surface, [_PREFIX_STMT])
+    stated += _parse_region(drift, [_PREFIX_STMT])
+    stated += _parse_region(core, [_PREFIX_STMT, _BARE_STMT])
+    stated.sort(key=lambda s: (s["line"], s["client"], s["version"]))
+
+    live = []
+    for client in CLIENTS:
+        path = os.environ.get(ENV_CONFIGS[client]) or DEFAULT_CONFIGS[client]
+        live.append(_read_live(client, path))
+    live_by_client = {entry["client"]: entry for entry in live}
+
+    by_client = {client: {} for client in CLIENTS}
+    for statement in stated:
+        by_client[statement["client"]].setdefault(
+            statement["version"], set()).add(statement["line"])
+
+    mismatches = []
+    unstated = []
+    for client in CLIENTS:
+        versions = sorted(by_client[client], key=_vkey)
+        if not versions:
+            unstated.append(client)
+            continue
+        live_version = live_by_client[client]["version"]
+        for version in versions:
+            if version == live_version:
+                continue
+            entry = {
+                "client": client,
+                "stated_version": version,
+                "live_version": live_version,
+                "live_pin": (f"rea-agents@{live_version}"
+                             if live_version else None),
+                "lines": sorted(by_client[client][version]),
+            }
+            entry["cause"] = ("version_drift" if live_version else
+                              "live_" + (live_by_client[client]["error"]
+                                         or "unreadable"))
+            mismatches.append(entry)
+    mismatches.sort(key=lambda m: (m["client"], _vkey(m["stated_version"])))
+
+    return {
+        "rev": rev,
+        "province_sha256": hashlib.sha256(blob).hexdigest(),
+        "stated": stated,
+        "live": live,
+        "mismatches": mismatches,
+        "mismatch_count": len(mismatches),
+        "unstated_clients": unstated,
+        "regions": regions,
+        "rules": RULES,
+    }
+
+
+def _emit(obj) -> None:
+    json.dump(obj, sys.stdout, sort_keys=True, indent=2, ensure_ascii=False)
+    sys.stdout.write("\n")
+
+
+# --------------------------------------------------------------------------
+# Selftest
+
+CLEAN_DOC = """# kaidoku-shokunin — Province
+
+Surface summary: the `rea` MCP/CLI surfaces resolve per client: Devin and OMP
+use `rea-agents@6.7.0`; Kimi uses `rea-agents@6.7.0`. Historical: Kimi resolved
+`rea-agents@6.4.0` before 2026-10-18.
+
+Drift-prone values: configured REA MCP pins are Devin
+`rea-agents@6.7.0`, OMP
+`rea-agents@6.7.0`, and Kimi
+`rea-agents@6.7.0`.
+
+## Core
+
+| Surface | Ports / paths / config keys | Liveness / readiness probe | Verified evidence |
+|---|---|---|---|
+| REA MCP server | registers per-client pinned `rea-agents` (Devin/OMP 6.7.0, Kimi 6.7.0; pins per receipt) | probe | evidence |
+"""
+
+STALE_DOC = CLEAN_DOC.replace(
+    "Devin and OMP\nuse `rea-agents@6.7.0`", "Devin and OMP\nuse `rea-agents@6.5.0`").replace(
+    "are Devin\n`rea-agents@6.7.0`, OMP", "are Devin\n`rea-agents@6.5.0`, OMP").replace(
+    "`rea-agents@6.7.0`, and Kimi", "`rea-agents@6.5.0`, and Kimi").replace(
+    "Devin/OMP 6.7.0, Kimi 6.7.0", "Devin/OMP 6.5.0, Kimi 6.7.0")
+
+TWO_VERSION_DOC = CLEAN_DOC.replace(
+    "Devin and OMP\nuse `rea-agents@6.7.0`; Kimi uses `rea-agents@6.7.0`.",
+    "Devin uses `rea-agents@6.4.0`; OMP and Kimi use `rea-agents@6.7.0`."
+).replace(
+    "are Devin\n`rea-agents@6.7.0`, OMP", "are Devin\n`rea-agents@6.5.0`, OMP")
+
+PATH_DOC = CLEAN_DOC.replace(
+    "are Devin\n`rea-agents@6.7.0`",
+    "are Devin (`~/.config/devin/mcp_config.json:7`) at `rea-agents@6.7.0`")
+
+CROSS_DOC = CLEAN_DOC.replace(
+    "are Devin\n`rea-agents@6.7.0`, OMP\n`rea-agents@6.7.0`, and Kimi\n"
+    "`rea-agents@6.7.0`.",
+    "are Devin\n`rea-agents@6.7.0`. Kimi uses `rea-agents@6.5.0`.")
+
+UNSTATED_DOC = """# kaidoku-shokunin — Province
+
+Surface summary: the `rea` MCP/CLI surfaces resolve per client: Devin and OMP
+use `rea-agents@6.7.0`.
+
+Drift-prone values: configured REA MCP pins are Devin
+`rea-agents@6.7.0`, and OMP
+`rea-agents@6.7.0`.
+
+## Core
+
+| Surface | Ports / paths / config keys | Liveness / readiness probe | Verified evidence |
+|---|---|---|---|
+| REA MCP server | registers per-client pinned `rea-agents` (Devin/OMP 6.7.0; pins per receipt) | probe | evidence |
+"""
+
+NO_CORE_DOC = """# kaidoku-shokunin — Province
+
+Surface summary: the `rea` MCP/CLI surfaces resolve per client: Devin and OMP
+use `rea-agents@6.7.0`; Kimi uses `rea-agents@6.7.0`.
+
+Drift-prone values: configured REA MCP pins are Devin
+`rea-agents@6.7.0`, OMP
+`rea-agents@6.7.0`, and Kimi
+`rea-agents@6.7.0`.
+
+## Core
+
+| Surface | Ports / paths / config keys | Liveness / readiness probe | Verified evidence |
+|---|---|---|---|
+"""
+
+SECRET = "TOP-SECRET-SENTINEL"
+
+
+def _selftest() -> int:
+    here = os.path.abspath(__file__)
+    cases = 0
+    fails: list[str] = []
+
+    def check(ok: bool, label: str, detail: str = "") -> None:
+        nonlocal cases
+        cases += 1
+        if not ok:
+            fails.append(f"{label}: {detail}" if detail else label)
+
+    def note_output(res) -> None:
+        check(SECRET not in res.stdout and SECRET not in res.stderr,
+              "no-config-content-leak", f"rc={res.returncode}")
+
+    def git(cwd: str, *args: str, want: int = 0) -> subprocess.CompletedProcess:
+        res = subprocess.run(["git", "-C", cwd, *args],
+                             capture_output=True, text=True, check=False)
+        if res.returncode != want:
+            raise RuntimeError(f"git {' '.join(args)} -> {res.returncode}: "
+                               f"{res.stderr.strip()}")
+        return res
+
+    root = os.path.realpath(tempfile.mkdtemp(prefix="province-pins-selftest-"))
+    repo = os.path.join(root, "repo")
+    live_dir = os.path.join(root, "live")
+    env_repo = os.path.join(root, "empty-repo")
+    try:
+        os.makedirs(repo)
+        os.makedirs(live_dir)
+        os.makedirs(env_repo)
+        git(repo, "-c", "init.defaultBranch=main", "init", "-q")
+        git(env_repo, "-c", "init.defaultBranch=main", "init", "-q")
+        git(env_repo, "-c", "user.email=selftest@province-pins",
+            "-c", "user.name=province-pins-selftest", "commit", "-q",
+            "--allow-empty", "-m", "empty baseline")
+
+        devin = os.path.join(live_dir, "devin.json")
+        omp = os.path.join(live_dir, "omp.json")
+        kimi = os.path.join(live_dir, "kimi.toml")
+
+        def write_live(devin_pins=("6.7.0",), omp_pins=("6.7.0",),
+                       kimi_pins=("6.7.0",)) -> None:
+            with open(devin, "w", encoding="utf-8") as fh:
+                fh.write(json.dumps({"mcpServers": {"rea": {
+                    "command": "npx", "args": ["-y", *[
+                        f"rea-agents@{v}" for v in devin_pins]],
+                    "secret": SECRET}}}))
+            with open(omp, "w", encoding="utf-8") as fh:
+                fh.write(json.dumps({"mcpServers": {"rea": {
+                    "command": "npx", "args": ["-y", *[
+                        f"rea-agents@{v}" for v in omp_pins]],
+                    "secret": SECRET}}}))
+            with open(kimi, "w", encoding="utf-8") as fh:
+                fh.write("[mcp_servers.rea]\ncommand = \"npx\"\nargs = [" +
+                         ", ".join(f"\"rea-agents@{v}\"" for v in kimi_pins) +
+                         f"]\nsecret = \"{SECRET}\"\n")
+
+        write_live()
+        env = dict(os.environ)
+        env.update({"PROVINCE_PINS_DEVIN_CONFIG": devin,
+                    "PROVINCE_PINS_OMP_CONFIG": omp,
+                    "PROVINCE_PINS_KIMI_CONFIG": kimi})
+
+        def run(*args: str, run_env=None) -> subprocess.CompletedProcess:
+            res = subprocess.run([sys.executable, "-I", "-B", here, *args],
+                                 capture_output=True, text=True,
+                                 env=run_env if run_env is not None else env,
+                                 timeout=60, check=False)
+            note_output(res)
+            return res
+
+        def doc_json(res):
+            try:
+                return json.loads(res.stdout)
+            except (ValueError, TypeError):
+                return {}
+
+        def commit(text: str, message: str) -> str:
+            with open(os.path.join(repo, "PROVINCE.md"), "w",
+                      encoding="utf-8") as fh:
+                fh.write(text)
+            git(repo, "add", "PROVINCE.md")
+            git(repo, "-c", "user.email=selftest@province-pins",
+                "-c", "user.name=province-pins-selftest", "commit", "-q",
+                "-m", message)
+            return git(repo, "rev-parse", "HEAD").stdout.strip()
+
+        rev_clean = commit(CLEAN_DOC, "clean")
+        res = run("--root", repo, "--rev", rev_clean)
+        doc = doc_json(res)
+        check(res.returncode == 0 and doc.get("mismatch_count") == 0,
+              "clean-rc", f"rc={res.returncode} out={res.stdout[:300]}")
+        expected = {("Devin", "6.7.0", 4), ("OMP", "6.7.0", 4),
+                    ("Kimi", "6.7.0", 4), ("Devin", "6.7.0", 8),
+                    ("OMP", "6.7.0", 9), ("Kimi", "6.7.0", 10),
+                    ("Devin", "6.7.0", 16), ("OMP", "6.7.0", 16),
+                    ("Kimi", "6.7.0", 16)}
+        got = {(s["client"], s["version"], s["line"])
+               for s in doc.get("stated", [])}
+        check(got == expected, "clean-stated-lines",
+              f"got={sorted(got)} expected={sorted(expected)}")
+        check(not any(s["version"] == "6.4.0" for s in doc.get("stated", [])),
+              "historical-omitted", f"stated={doc.get('stated')}")
+        live = {e["client"]: e for e in doc.get("live", [])}
+        check(live.get("Devin", {}).get("pins") == ["rea-agents@6.7.0"] and
+              re.fullmatch(r"[0-9a-f]{64}", live["Devin"]["file_sha256"] or "")
+              and re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ",
+                               live["Devin"]["mtime_utc"] or ""),
+              "live-metadata", f"live={live.get('Devin')}")
+        with open(devin, "rb") as fh:
+            check(live.get("Devin", {}).get("file_sha256") ==
+                  hashlib.sha256(fh.read()).hexdigest(), "live-sha256")
+        check(doc.get("regions", {}).get("surface_summary", {}).get(
+                  "line_start") == 3 and
+              doc.get("regions", {}).get("drift_prone", {}).get(
+                  "line_start") == 7, "region-spans", f"{doc.get('regions')}")
+
+        res = run("--root", repo, "--rev", rev_clean, "--strict")
+        check(res.returncode == 0 and doc_json(res).get("mismatch_count") == 0,
+              "clean-strict", f"rc={res.returncode}")
+
+        # Revision-scoped: an uncommitted working-tree edit must not leak in.
+        old = open(os.path.join(repo, "PROVINCE.md"), encoding="utf-8").read()
+        stale_worktree = old.replace("Devin and OMP\nuse `rea-agents@6.7.0`",
+                                     "Devin and OMP\nuse `rea-agents@6.5.0`")
+        with open(os.path.join(repo, "PROVINCE.md"), "w",
+                  encoding="utf-8") as fh:
+            fh.write(stale_worktree)
+        res = run("--root", repo, "--rev", rev_clean)
+        check(doc_json(res).get("mismatch_count") == 0,
+              "worktree-not-read", f"out={res.stdout[:300]}")
+        with open(os.path.join(repo, "PROVINCE.md"), "w",
+                  encoding="utf-8") as fh:
+            fh.write(old)
+
+        rev_stale = commit(STALE_DOC, "stale")
+        res = run("--root", repo, "--rev", rev_stale)
+        doc = doc_json(res)
+        check(res.returncode == 0 and doc.get("mismatch_count") == 2,
+              "stale-count", f"rc={res.returncode} n={doc.get('mismatch_count')}")
+        clients = {m["client"] for m in doc.get("mismatches", [])}
+        check(clients == {"Devin", "OMP"} and
+              all(m["live_version"] == "6.7.0" for m in doc["mismatches"]),
+              "stale-clients", f"{doc.get('mismatches')}")
+        check(any(m["lines"] == [4, 8, 16] for m in doc["mismatches"]),
+              "stale-lines", f"{doc.get('mismatches')}")
+        res = run("--root", repo, "--rev", rev_stale, "--strict")
+        check(res.returncode == 1, "stale-strict-rc", f"rc={res.returncode}")
+
+        rev_two = commit(TWO_VERSION_DOC, "two versions")
+        doc = doc_json(run("--root", repo, "--rev", rev_two))
+        devin_stale = sorted(m["stated_version"] for m in doc["mismatches"]
+                             if m["client"] == "Devin")
+        check(doc.get("mismatch_count") == 2 and devin_stale == ["6.4.0", "6.5.0"],
+              "two-versions-counted",
+              f"n={doc.get('mismatch_count')} {doc.get('mismatches')}")
+
+        hist_doc = CLEAN_DOC.replace(
+            "Historical: Kimi resolved\n`rea-agents@6.4.0` before 2026-10-18.",
+            "Historical: Kimi resolved the historical pin `rea-agents@6.4.0` "
+            "before 2026-10-18.")
+        rev_hist = commit(hist_doc, "historical")
+        doc = doc_json(run("--root", repo, "--rev", rev_hist))
+        check(doc.get("mismatch_count") == 0, "historical-excluded",
+              f"{doc.get('mismatches')}")
+
+        rev_uns = commit(UNSTATED_DOC, "unstated")
+        res = run("--root", repo, "--rev", rev_uns, "--strict")
+        doc = doc_json(res)
+        check(res.returncode == 1 and doc.get("unstated_clients") == ["Kimi"] and
+              doc.get("mismatch_count") == 0, "unstated-strict",
+              f"rc={res.returncode} {doc.get('unstated_clients')}")
+
+        rev_nocore = commit(NO_CORE_DOC, "no core row")
+        res = run("--root", repo, "--rev", rev_nocore)
+        check(res.returncode == 2 and
+              doc_json(res).get("error") == "region_missing",
+              "region-missing-rc", f"rc={res.returncode} {res.stdout[:200]}")
+
+        missing_env = dict(env)
+        missing_env["PROVINCE_PINS_DEVIN_CONFIG"] = os.path.join(
+            root, "absent.json")
+        res = run("--root", repo, "--rev", rev_clean, "--strict",
+                  run_env=missing_env)
+        doc = doc_json(res)
+        devin_live = {e["client"]: e for e in doc.get("live", [])}["Devin"]
+        check(res.returncode == 1 and devin_live["error"] == "file_missing" and
+              devin_live["file_sha256"] is None and
+              any(m["client"] == "Devin" and
+                  m["cause"] == "live_file_missing"
+                  for m in doc.get("mismatches", [])),
+              "missing-file", f"rc={res.returncode} live={devin_live}")
+
+        write_live(devin_pins=())
+        res = run("--root", repo, "--rev", rev_clean)
+        devin_live = {e["client"]: e
+                      for e in doc_json(res).get("live", [])}["Devin"]
+        check(devin_live["error"] == "no_rea_agents_pin" and
+              devin_live["pins"] == [], "no-pin", f"live={devin_live}")
+
+        write_live(devin_pins=("6.7.0", "6.5.0"))
+        res = run("--root", repo, "--rev", rev_clean)
+        devin_live = {e["client"]: e
+                      for e in doc_json(res).get("live", [])}["Devin"]
+        check(devin_live["error"] == "multiple_pins" and
+              devin_live["version"] is None and
+              devin_live["pins"] == ["rea-agents@6.5.0",
+                                     "rea-agents@6.7.0"],
+              "multiple-pins", f"live={devin_live}")
+
+        write_live()
+        res = run("--root", env_repo, "--rev", "main")
+        check(res.returncode == 2 and
+              doc_json(res).get("error") == "province_missing",
+              "province-missing", f"rc={res.returncode} {res.stdout[:200]}")
+        res = run("--root", repo, "--rev", "0" * 40)
+        check(res.returncode == 2 and
+              doc_json(res).get("error") == "cannot_resolve_rev",
+              "bad-rev", f"rc={res.returncode} {res.stdout[:200]}")
+
+    except Exception as exc:  # fixture setup failure — still clean up
+        fails.append(f"setup: {exc}")
+    finally:
+        shutil.rmtree(root, ignore_errors=True)
+
+    if fails:
+        print(f"SELFTEST: FAILED {'; '.join(fails)} cases={cases} "
+              f"fails={len(fails)}")
+        return 1
+    print(f"SELFTEST: CLEAN cases={cases}")
+    return 0
+
+
+def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    ap = argparse.ArgumentParser(
+        description="Compare PROVINCE.md's stated per-client REA pins at REV "
+                    "with the live client configs (read-only git).")
+    ap.add_argument("--root", help="lane repository root")
+    ap.add_argument("--rev", help="Git revision whose PROVINCE.md is parsed")
+    ap.add_argument("--strict", action="store_true",
+                    help="exit 1 on mismatch_count > 0 or unstated clients")
+    ap.add_argument("--selftest", action="store_true",
+                    help="run fixture-based selftest outside the lane")
+    args = ap.parse_args(argv)
+
+    if args.selftest:
+        return _selftest()
+    if not args.root:
+        ap.error("--root is required (or use --selftest)")
+    if not args.rev:
+        ap.error("--rev is required (or use --selftest)")
+
+    try:
+        result = collect(args.root, args.rev)
+    except Unusable as exc:
+        out = {"error": exc.cause, "detail": exc.detail, "rev": args.rev}
+        out.update(exc.extra)
+        _emit(out)
+        return 2
+    _emit(result)
+    if args.strict and (result["mismatch_count"] > 0 or
+                        result["unstated_clients"]):
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

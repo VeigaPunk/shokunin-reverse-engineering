@@ -1,0 +1,50 @@
+# LogEntryDraft — round-19 LOG.md skeleton (advisory, author-side)
+
+Seat: KaidokuR19.LogEntryDraft. Read-only in LANE except this report. Leaf; no subagents. No installs or updates performed (no tool added or upgraded this run).
+
+## Observations
+
+- Baseline: `git rev-parse --verify refs/heads/main` = `8a8da7e19375aadc66c6bcbff0bbcbb596048fb0`; `git cat-file -t` = `commit` (exit 0). Matches `.ufo/waves/round-19/contract.md:4`.
+- No round-19 entry exists in `LOG.md` at baseline: `git show 8a8da7e:LOG.md | grep -n round-19` returned nothing; baseline `LOG.md` is 2217 lines. Round-18 is two entries: `LOG.md:2125` ("round-18: routed r17 defects, jj-safe pins, Swiss-map replay", motivation and wave 1) and `LOG.md:2169` ("round-18 measured records and final integration", wave 2 and verdicts). The skeleton mirrors that split.
+- Round-18 entry shape: baseline line, motivation pointers, wave counts, tool changes, predictions freeze, verdicts (`LOG.md:2125-2167`, `:2169-2216`).
+- Source of the C1 defect list: `corpus/lessons/round-18-verifier-spotcheck.md:191-199` (seven items, "status-neutral"); carried items `:201-206`. Round-18 open list: `corpus/lessons/round-18.md:86-92`.
+- C1 anchor, baseline code: `git show 8a8da7e:.ufo/waves/round-17/tools/receipt-validate.py | sed -n 570,580p` shows the list branch at cat-n lines 7–9, i.e. file lines 576–578 (`elif isinstance(steps, list):` / `ok = any(...` / `s.get("pin_checks")`). Matches R18-MIDMAP-LISTSTEP `corpus/lessons/round-18-verifier-spotcheck.md:193`.
+- C2 anchors, PROVINCE: `PROVINCE.md:8-10` ("Devin and OMP use `rea-agents@6.5.0`"), `:15-17` (reverified 2026-10-18 pins 6.5.0), `:19-23` (6.4.0 cache `dea9475797100b20` still listed), `:24-25` (Ghidra/JDK reverified 2026-10-18; not re-checked here).
+- C2 anchors, live (`grep -n "rea-agents@" <file>`, exit 0 each): `/home/vgpnk/.config/devin/mcp_config.json:7` = `"rea-agents@6.7.0"`; `/home/vgpnk/.omp/agent/mcp.json:8` = `"rea-agents@6.7.0"`. Both differ from `PROVINCE.md:8-10,15-17`. Mismatch count for Devin+OMP = 2, matching `claims.json` C2 expectation.
+- C2 cache: `ls ~/.npm/_npx` lists `52027bd8fc0022aa`, `a1722018f28f9df2`, `ad9a3fdbcad992c6`. `package.json` versions: `a1722018f28f9df2` = 6.7.0, `ad9a3fdbcad992c6` = 6.5.0. `~/.npm/_npx/dea9475797100b20` does not exist (`ls` error: No such file or directory). Consistent with `corpus/lessons/round-18.md:89` ("the 6.4.0 npx cache is gone") and with `PROVINCE.md:19-23` being stale.
+- C2 registry: `npm view rea-agents dist-tags` = `{ latest: '6.7.0' }`; `npm view rea-agents time --json` gives `6.4.0` 2026-10-11T04:02:45.490Z, `6.5.0` 2026-10-14T12:56:14.513Z, `6.7.0` 2026-10-18T08:12:05.640Z (read-only registry query, exit 0).
+- C2 census: `.ufo/waves/round-19/evidence/c1-census-v10-before.txt` (tail) ends `VERDICT: FAIL  (stale=4 ambiguous=0 undeclared=2 unresolved=0)` then `exit=1`. Matches `claims.json` C2 "stale=4 undeclared=2, exit 1".
+- C2 rewrite time: `corpus/lessons/round-18.md:89` ("Devin/OMP files rewritten 2026-10-20 13:35:56 -03, outside the lane").
+- C3 round-18 replay: predictions freeze `eb6c2668e5cb7054fd1e16d2f615cb65586d0fe0` and carrier results at `LOG.md:2150-2158`; held-out `s1246-swiss-nethttp` `Invalid index: 22386945` and `kimi-webbridge` (go1.24.13) `Invalid index: 15606016`; verdict "confirmed" at `LOG.md:2157`.
+- C3 stated limit: `corpus/knowledge/2026-10-20-r18-swiss-map-replay.md:102-104` ("Both held-out confirmations are Go 1.24.x; for Go 1.25.x the only failing carrier is aether, on which the emulator was calibrated, so the 1.25 half of the mechanism rests on calibration plus source, not on a held-out run").
+- C3 carriers: `.ufo/waves/round-19/contract.md:41-42` (go1.25.0 `go`, `gofmt`, and `pkg/tool/linux_amd64/{asm,cgo,compile,cover,link,preprofile,vet}`).
+- C3 prescan (L1, before dispatch): `.ufo/waves/round-19/evidence/prescan/kr19-sm-vet.json` has `"h1": "invalid_index"` (line 31, also :37, :43) and the file's `outcome` line at 2427; `kr19-sm-link.json` = `{"error": "no Go build info in .../link", "status": "unparseable"}`; the other seven `kr19-sm-*.json` files carry `"outcome": "silent"` (grep, 2026-10-20). `.ufo/waves/round-19/contract.md:43-44` records the same prescan.
+- C3 sources: `corpus/SOURCES.md:29` (S023), `:39` (S033, `census-before.txt` flags "duplicate url ... across scopes"), `:40` (S034), `:41` (S035), `:42` (S036). `SOURCES.md` is at `corpus/SOURCES.md`, 78 lines (`grep -c ""`). Census baseline: `.ufo/waves/round-19/evidence/census-before.txt` ends `kaidoku ok ...SOURCES.md` and `exit=0`.
+- Claims text check: `.ufo/waves/round-19/claims.json` C3 quotes the limit as "held-out confirmation is Go 1.24.x only"; that wording does not appear verbatim in the knowledge entry (closest is `:102-104`, a paraphrase). `claims.json` "36 rows" for SOURCES census was not re-counted here.
+- Not checked by this seat: Ghidra/JDK re-verify (C2 scope), go.dev/dl go1.25.0 sha256 (new SOURCES row), any frozen-prediction commit for round 19 (none observed in the lane's evidence directory).
+
+Commands run (read-only): `git rev-parse --verify refs/heads/main`; `git cat-file -t 8a8da7e…`; `git show 8a8da7e…:LOG.md | grep -n round-19`; `git show 8a8da7e…:.ufo/waves/round-17/tools/receipt-validate.py | sed -n 570,580p`; `git ls-tree --name-only 8a8da7e… .ufo/waves/round-18/tools/` and `.ufo/gates/`; `grep -n "rea-agents@" /home/vgpnk/.config/devin/mcp_config.json /home/vgpnk/.omp/agent/mcp.json`; `ls ~/.npm/_npx`; `npm view rea-agents@6.7.0 version time.6.7.0`, `npm view rea-agents dist-tags`, `npm view rea-agents time --json`; `grep -c "" corpus/SOURCES.md`; `grep -rn "1\.24\.x"`. Exit 0 on each unless the output was "No matches" (`grep -n round-19|R19 SCORECARD.md`: no match).
+
+## Draft
+
+## 2026-10-20 — round-19: routed r18 defects, PROVINCE pin drift, Go 1.25.0 Swiss replay
+
+Baseline `8a8da7e19375aadc66c6bcbff0bbcbb596048fb0` (`refs/heads/main`; `.ufo/waves/round-19/contract.md:4`). Motivation: `corpus/lessons/round-18-verifier-spotcheck.md:191-199` (seven routed defects, status-neutral) and the carried items `corpus/lessons/round-18.md:86-92`. Claims and amendments: `.ufo/waves/round-19/claims.json`.
+
+- Motivation, C1 (calibration): the seven routed defects are R18-MIDMAP-LISTSTEP (`corpus/lessons/round-18-verifier-spotcheck.md:193`; at `8a8da7e` the list-shaped `steps` branch is `.ufo/waves/round-17/tools/receipt-validate.py:576-578`), R18-VALIDATOR-DIGEST (`:194`), R18-STRICT-BASELINE (`:195`), R18-HEAD-ALIASES (`:196`), R18-DEADSEAT-RECORD (`:197`), R18-REGISTRY-PINNED (`:198`), R18-INSTALL-RECORD (`:199`). Each stays open in round 18 (`LOG.md:2199-2202`; `corpus/lessons/round-18.md:86-92`).
+- Motivation, C2 (freshness): `PROVINCE.md:8-10,15-17` state Devin and OMP pin `rea-agents@6.5.0`. The live configs read `rea-agents@6.7.0` at `/home/vgpnk/.config/devin/mcp_config.json:7` and `/home/vgpnk/.omp/agent/mcp.json:8` (`grep -n "rea-agents@"`, 2026-10-20). The rewrite is recorded at `corpus/lessons/round-18.md:89`. The 6.4.0 cache listed at `PROVINCE.md:19-23` is absent (`ls ~/.npm/_npx`; `~/.npm/_npx/dea9475797100b20` not found), and `npm view rea-agents dist-tags` gives `latest: 6.7.0`, published 2026-10-18T08:12:05.640Z (`npm view rea-agents time --json`). The census gate `.ufo/waves/round-19/evidence/c1-census-v10-before.txt` ends `VERDICT: FAIL (stale=4 ambiguous=0 undeclared=2 unresolved=0)`, `exit=1`.
+- Motivation, C3 (depth): the round-18 replay (`predictions` frozen at `eb6c2668e5cb7054fd1e16d2f615cb65586d0fe0`) confirmed the Go 1.24 held-out carriers, `s1246-swiss-nethttp` `Invalid index: 22386945` and `kimi-webbridge` `Invalid index: 15606016` (`LOG.md:2150-2158`, verdict `:2157`). Its stated limit: "both held-out confirmations are Go 1.24.x", so the 1.25 half rests on calibration plus source (`corpus/knowledge/2026-10-20-r18-swiss-map-replay.md:102-104`). Round-19 carriers are the go1.25.0 toolchain binaries (`.ufo/waves/round-19/contract.md:41-42`). The L1 prescan predicts `vet` `invalid_index` (`.ufo/waves/round-19/evidence/prescan/kr19-sm-vet.json:31`), `link` unparseable (`kr19-sm-link.json`), and seven silent (`kr19-sm-*.json` `"outcome": "silent"`). Sources: S023 `corpus/SOURCES.md:29`, S033 `:39`, S034 `:40`, S035 `:41`, S036 `:42`.
+- Wave 1: [L1 fills: seat count and report count from `.ufo/waves/round-19/wave1-result.txt`].
+- Frontier: SOURCES census before this round exits 0 with the W04 note on S033 (`.ufo/waves/round-19/evidence/census-before.txt`). Rows opened this round: [L1 fills]. Mistake candidate: R18-DEADSEAT-RECORD (`corpus/lessons/round-18-verifier-spotcheck.md:197`).
+- Carried open (unchanged, `corpus/lessons/round-18.md:88-92`): round-12 C1 `S###` row and custody-leg disclosure; r12 operability add/withdraw; citation-drift `HEAD` aliases; custody-pair `repo-root`; jj-red-before env scrub and path guard; `revpin.py:6` `@-` wording; jj 0.45.1 triple registration.
+- Non-goals: no REA or Ghidra repair, no upstream push, no Go 1.26/1.27 claim, no recovery-quality claim, no edit of round-17/18 retained receipts or logs, no SHONEN `[x]`, no client-config edit (`claims.json` non_goals).
+
+Measured records and verdicts follow in the next round-19 entry: [L1 fills after wave 2, verification pass, and C3 freeze/run receipts].
+
+## Flags for L1 (integration)
+
+1. `claims.json` C3 quotes the limit as "held-out confirmation is Go 1.24.x only"; the source wording is `corpus/knowledge/2026-10-20-r18-swiss-map-replay.md:102-104`. Cite the source, not the quote.
+2. The prescan JSONs (`evidence/prescan/`) are pre-freeze. The freeze commit hash for round-19 predictions was not observed in the lane; the draft leaves it for L1.
+3. Draft placeholders in square brackets are deliberate; the L1 fills them from receipts, not from this seat.
+4. Not verified here: Ghidra/JDK (`PROVINCE.md:24-25`), the go.dev/dl go1.25.0 sha256, and the "36 rows" SOURCES count in `claims.json`.
+5. No install, upgrade, or pacman action was taken by this seat.

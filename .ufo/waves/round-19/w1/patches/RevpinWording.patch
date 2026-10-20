@@ -1,0 +1,36 @@
+diff --git a/.ufo/waves/round-18/tools/revpin.py b/.ufo/waves/round-18/tools/revpin.py
+index 0580bcd..2e54043 100755
+--- a/.ufo/waves/round-18/tools/revpin.py
++++ b/.ufo/waves/round-18/tools/revpin.py
+@@ -2,12 +2,17 @@
+ """revpin.py — jj-safe revision-pin resolution for colocated lanes (R18 C2).
+ 
+ Contract: .ufo/waves/round-18/contract.md, section "W18/tools/revpin.py".
++Source: S036 (corpus/SOURCES.md); jj 0.45.1 docs/git-compatibility.md
++lines 114-116 (usually a detached HEAD with no current branch) and 208
++(the colocation recipe points .git/HEAD at the working-copy commit's
++parent).
+ 
+-A jj-colocated lane leaves git HEAD detached on the working-copy commit, so
+-a lane tool that pins "the revision under test" must never read bare HEAD:
+-it pins the branch tip (refs/heads/<branch>) and only *validates* HEAD and
+-the remote-tracking ref against it. This module is the single place that
+-performs those three resolutions plus the requirement checks.
++A jj-colocated lane leaves git HEAD detached on the working-copy parent
++(`@-`, the commit before the working-copy commit `@`), so a lane tool that
++pins "the revision under test" must never read bare HEAD: it pins the branch
++tip (refs/heads/<branch>) and only *validates* HEAD and the remote-tracking
++ref against it. This module is the single place that performs those three
++resolutions plus the requirement checks.
+ 
+ resolve_source(lane, branch="main", require_pushed=True, require_head=True)
+ returns:
+@@ -208,7 +213,7 @@ def _selftest() -> int:
+               json.loads(r.stdout).get("pushed") is False,
+               "unpushed-waived-cli", f"rc={r.returncode} out={r.stdout!r}")
+ 
+-        # C3 — detached off-branch HEAD (the jj working-copy shape): red
++        # C3 — detached off-branch HEAD (the jj working-copy-parent shape): red
+         # for head_not_branch_tip. Restore tip == origin first so the
+         # head finding, not pushed, is what fires.
+         cases += 1

@@ -1,0 +1,363 @@
+healthy: false
+environment_healthy: false
+scope:
+  mode: audit-wide
+  clients: []
+  providers: []
+  skill: false
+  target: null
+scope_checks[21]:
+  - name: node
+    ok: true
+    classification: healthy
+    detail: 24.21.0
+    details:
+      runtime: node
+      version: 24.21.0
+  - name: host
+    ok: true
+    classification: healthy
+    detail: arch unknown
+  - name: hopper
+    ok: false
+    classification: missing_analysis_engine
+    remediation: "Run rea setup to install Hopper, or set HOPPER_LAUNCHER_PATH."
+  - name: ghidra
+    ok: true
+    classification: healthy
+    detail: /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC
+  - name: ghidra-platform
+    ok: true
+    classification: healthy
+    detail: linux
+  - name: ghidra-architecture
+    ok: true
+    classification: healthy
+    detail: x64
+  - name: ghidra-installation
+    ok: true
+    classification: healthy
+    detail: /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties
+  - name: ghidra-version
+    ok: true
+    classification: healthy
+    detail: 12.1.4
+  - name: ghidra-headless
+    ok: true
+    classification: healthy
+    detail: /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/support/analyzeHeadless
+  - name: ghidra-native_decompiler
+    ok: true
+    classification: healthy
+    detail: "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/Features/Decompiler/os/linux_x86_64/decompile reports elf x86_64, which matches linux/x64"
+  - name: ghidra-java
+    ok: true
+    classification: healthy
+    detail: 21.0.12.1; 64-bit; JDK; /usr/lib/jvm/java-21-openjdk; accepted a 64-bit full JDK 21 or newer
+  - name: ida-registration
+    ok: false
+    classification: missing_analysis_engine
+    detail: IDA MCP registration is not configured.
+    remediation: Set REA_IDA_MCP_CONFIG to your upstream IDA MCP registration JSON; see docs/ida-provider.md.
+  - name: jadx
+    ok: true
+    classification: healthy
+    detail: "JADX MCP bridge JAR validated at /home/vgpnk/.local/opt/jadx-headless-mcp/jadx-headless-mcp-0.7.1-all.jar; its path is recorded for agent registrations. This checks configuration, not whether a selected APK fits in the worker's memory."
+    details:
+      operation_timeout_ms: 120000
+  - name: kuna-installation
+    ok: false
+    classification: missing_analysis_engine
+    detail: "Set REA_KUNA_COMMAND to the absolute path of a caller-supplied kuna executable (verified with 1.833). REA does not download, install or update Kuna."
+    remediation: "Set REA_KUNA_COMMAND to the absolute path of a caller-supplied kuna executable (verified with 1.833). REA does not download, install or update Kuna."
+    details:
+      configured: false
+  - name: "registration:claude_code"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.claude.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:copilot_cli"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.copilot/mcp-config.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:cursor"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.cursor/mcp.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:hermes"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.hermes/config.yaml
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:kimi"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.kimi-code/mcp.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:opencode"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.config/opencode/opencode.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:pi"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.pi/agent/mcp.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+informational_checks: []
+providerInspections[4]:
+  - id: ghidra
+    configured: true
+    available: true
+    providerVersion: 12.1.4
+    registrationEnvironment:
+      GHIDRA_INSTALL_DIR: /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC
+      JAVA_HOME: /usr/lib/jvm/java-21-openjdk
+    checks[8]{name,ok,code,detail,remediation,classification}:
+      configuration,true,null,/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC,null,config_drift
+      platform,true,null,linux,null,unsupported_host
+      architecture,true,null,x64,null,unsupported_host
+      installation,true,null,/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties,null,config_drift
+      version,true,null,12.1.4,null,config_drift
+      headless,true,null,/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/support/analyzeHeadless,null,config_drift
+      native_decompiler,true,null,"/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/Features/Decompiler/os/linux_x86_64/decompile reports elf x86_64, which matches linux/x64",null,config_drift
+      java,true,null,21.0.12.1; 64-bit; JDK; /usr/lib/jvm/java-21-openjdk; accepted a 64-bit full JDK 21 or newer,null,config_drift
+  - id: ida
+    configured: false
+    available: false
+    providerVersion: null
+    registrationEnvironment:
+    checks[1]{name,ok,code,detail,remediation,classification}:
+      registration,false,not_configured,IDA MCP registration is not configured.,Set REA_IDA_MCP_CONFIG to your upstream IDA MCP registration JSON; see docs/ida-provider.md.,missing_analysis_engine
+  - id: jadx
+    configured: true
+    available: true
+    providerVersion: null
+    registrationEnvironment:
+      REA_JADX_MCP_JAR: /home/vgpnk/.local/opt/jadx-headless-mcp/jadx-headless-mcp-0.7.1-all.jar
+      JAVA_HOME: /usr/lib/jvm/java-21-openjdk
+    checks[1]:
+      - name: configuration
+        ok: true
+        code: null
+        detail: "JADX MCP bridge JAR validated at /home/vgpnk/.local/opt/jadx-headless-mcp/jadx-headless-mcp-0.7.1-all.jar; its path is recorded for agent registrations. This checks configuration, not whether a selected APK fits in the worker's memory."
+        remediation: null
+        classification: config_drift
+        details:
+          operation_timeout_ms: 120000
+  - id: kuna
+    configured: false
+    available: false
+    providerVersion: null
+    registrationEnvironment:
+    checks[1]:
+      - name: installation
+        ok: false
+        code: not_configured
+        detail: "Set REA_KUNA_COMMAND to the absolute path of a caller-supplied kuna executable (verified with 1.833). REA does not download, install or update Kuna."
+        remediation: "Set REA_KUNA_COMMAND to the absolute path of a caller-supplied kuna executable (verified with 1.833). REA does not download, install or update Kuna."
+        classification: missing_analysis_engine
+        details:
+          configured: false
+checks[21]:
+  - name: node
+    ok: true
+    classification: healthy
+    detail: 24.21.0
+    details:
+      runtime: node
+      version: 24.21.0
+  - name: host
+    ok: true
+    classification: healthy
+    detail: arch unknown
+  - name: hopper
+    ok: false
+    classification: missing_analysis_engine
+    remediation: "Run rea setup to install Hopper, or set HOPPER_LAUNCHER_PATH."
+  - name: ghidra
+    ok: true
+    classification: healthy
+    detail: /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC
+  - name: ghidra-platform
+    ok: true
+    classification: healthy
+    detail: linux
+  - name: ghidra-architecture
+    ok: true
+    classification: healthy
+    detail: x64
+  - name: ghidra-installation
+    ok: true
+    classification: healthy
+    detail: /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties
+  - name: ghidra-version
+    ok: true
+    classification: healthy
+    detail: 12.1.4
+  - name: ghidra-headless
+    ok: true
+    classification: healthy
+    detail: /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/support/analyzeHeadless
+  - name: ghidra-native_decompiler
+    ok: true
+    classification: healthy
+    detail: "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/Features/Decompiler/os/linux_x86_64/decompile reports elf x86_64, which matches linux/x64"
+  - name: ghidra-java
+    ok: true
+    classification: healthy
+    detail: 21.0.12.1; 64-bit; JDK; /usr/lib/jvm/java-21-openjdk; accepted a 64-bit full JDK 21 or newer
+  - name: ida-registration
+    ok: false
+    classification: missing_analysis_engine
+    detail: IDA MCP registration is not configured.
+    remediation: Set REA_IDA_MCP_CONFIG to your upstream IDA MCP registration JSON; see docs/ida-provider.md.
+  - name: jadx
+    ok: true
+    classification: healthy
+    detail: "JADX MCP bridge JAR validated at /home/vgpnk/.local/opt/jadx-headless-mcp/jadx-headless-mcp-0.7.1-all.jar; its path is recorded for agent registrations. This checks configuration, not whether a selected APK fits in the worker's memory."
+    details:
+      operation_timeout_ms: 120000
+  - name: kuna-installation
+    ok: false
+    classification: missing_analysis_engine
+    detail: "Set REA_KUNA_COMMAND to the absolute path of a caller-supplied kuna executable (verified with 1.833). REA does not download, install or update Kuna."
+    remediation: "Set REA_KUNA_COMMAND to the absolute path of a caller-supplied kuna executable (verified with 1.833). REA does not download, install or update Kuna."
+    details:
+      configured: false
+  - name: "registration:claude_code"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.claude.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:copilot_cli"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.copilot/mcp-config.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:cursor"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.cursor/mcp.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:hermes"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.hermes/config.yaml
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:kimi"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.kimi-code/mcp.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:opencode"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.config/opencode/opencode.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+  - name: "registration:pi"
+    ok: false
+    classification: config_drift
+    detail: /home/vgpnk/.pi/agent/mcp.json
+    remediation: "Run rea setup to refresh this registration, then restart the client."
+identity:
+  cli_package_version: 6.7.0
+  expected_skill_version: "42"
+  sdk:
+    server: 2.3.1
+    client_test: 2.3.1
+    core: 2.3.1
+  catalog:
+    counts:
+      cli_commands: 153
+      mcp_tools: 207
+      mcp_prompts: 6
+    digests:
+      tools_sha256: af39310c9591bb981893ec0d2188b1bcf6e9cc8ba3ac513d5bbefc8ddcb85639
+      prompts_sha256: 7152916ab48bd2a9677a5ad9cdbde0a51dc53c113934952ad096e93f5f18aa7e
+      combined_sha256: 96d8f6e6ea1b1ba13557216624a3461c738729d53c79b4b0100d1f3a3a32441c
+  live_server:
+    state: unknown
+    remediation: Call binary_session in the active client to inspect the running server identity.
+  installations:
+    paths[1]: /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/.bin/rea
+    state: single
+  skill:
+    installed_version: "42"
+    installed_tool_count: 207
+    state: aligned
+    remediation: null
+  registrations[13]:
+    - client: claude_code
+      config_path: /home/vgpnk/.claude.json
+      command: []
+      state: missing
+      remediation: "Run rea setup to refresh this registration, then restart the client."
+    - client: codex
+      config_path: /home/vgpnk/.codex/config.toml
+      command[4]: npx,"-y",rea-agents@6.7.0,mcp
+      package_reference: rea-agents@6.7.0
+      state: aligned
+      remediation: null
+    - client: copilot_cli
+      config_path: /home/vgpnk/.copilot/mcp-config.json
+      command: []
+      state: missing
+      remediation: "Run rea setup to refresh this registration, then restart the client."
+    - client: cursor
+      config_path: /home/vgpnk/.cursor/mcp.json
+      command: []
+      state: missing
+      remediation: "Run rea setup to refresh this registration, then restart the client."
+    - client: devin
+      config_path: /home/vgpnk/.config/devin/mcp_config.json
+      command[4]: npx,"-y",rea-agents@6.7.0,mcp
+      package_reference: rea-agents@6.7.0
+      state: aligned
+      remediation: null
+    - client: grok_bot
+      config_path: /home/vgpnk/.grokbot
+      command: []
+      state: manual
+      remediation: "Grok Bot keeps connectors in the signed-in account and runs them on its hosted computer. Setup does not write that account store, and a data-directory mcp.json is not a registration. In the Grok Bot chat, add a custom MCP server named rea that runs on the Bot's computer with `npx -y rea-agents@<version> mcp`. Do not put credentials in the command or arguments. A stdio server on this machine is not attached."
+    - client: grok_build
+      config_path: /home/vgpnk/.grok/config.toml
+      command[4]: npx,"-y",rea-agents@6.7.0,mcp
+      package_reference: rea-agents@6.7.0
+      state: aligned
+      remediation: null
+    - client: hermes
+      config_path: /home/vgpnk/.hermes/config.yaml
+      command: []
+      state: missing
+      remediation: "Run rea setup to refresh this registration, then restart the client."
+    - client: kimi
+      config_path: /home/vgpnk/.kimi-code/mcp.json
+      command: []
+      state: missing
+      remediation: "Run rea setup to refresh this registration, then restart the client."
+    - client: omp
+      config_path: /home/vgpnk/.omp/agent/mcp.json
+      command[4]: npx,"-y",rea-agents@6.7.0,mcp
+      package_reference: rea-agents@6.7.0
+      state: aligned
+      remediation: null
+    - client: opencode
+      config_path: /home/vgpnk/.config/opencode/opencode.json
+      command: []
+      state: missing
+      remediation: "Run rea setup to refresh this registration, then restart the client."
+    - client: pi
+      config_path: /home/vgpnk/.pi/agent/mcp.json
+      command: []
+      state: missing
+      remediation: "Run rea setup to refresh this registration, then restart the client."
+    - client: zcode
+      config_path: /home/vgpnk/.zcode/cli/config.json
+      command[4]: npx,"-y",rea-agents@6.7.0,mcp
+      package_reference: rea-agents@6.7.0
+      state: aligned
+      remediation: null
