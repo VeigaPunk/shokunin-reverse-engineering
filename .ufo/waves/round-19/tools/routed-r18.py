@@ -266,10 +266,10 @@ def s_install(g, rev, tmp):
     t = g.text(rev, LESSON)
     if t is None:
         return False, "round-19 lesson absent"
-    sec = t.split("## Installs", 1)
-    if len(sec) != 2:
+    sec = re.search(r"^## Installs[ \t]*\n(.*?)(?=^## |\Z)", t, re.M | re.S)
+    if sec is None:
         return False, "lesson has no `## Installs` section"
-    body = sec[1].split("\n## ", 1)[0]
+    body = sec.group(1)
     miss = [v for v, h in GO_SHA.items() if v not in body or h not in body]
     if miss or "go.dev" not in body:
         return False, "install record lacks version/full sha256/channel for %s" % (miss or "go.dev channel")
