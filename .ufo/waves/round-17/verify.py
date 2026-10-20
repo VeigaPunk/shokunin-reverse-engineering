@@ -7,6 +7,15 @@ retains argv, cwd, env overrides, UTC start/end, exit, and stdout/stderr
 with tools/pins.py before and after the pass: equal maps show identical bytes
 at those two instants, not continuity between them (QUALITY #19).
 
+Round-18 change (jj colocation fix, JjAuditKaidoku.md R1): `source` is now
+refs/heads/main (the branch tip), never HEAD, and the pass refuses with
+exit 2 before running any command unless HEAD equals the branch tip, the
+tip equals refs/remotes/origin/main, and no tracked file is modified.
+The retained d0ab299 run (verification.json) used the pre-change bytes,
+where `source` was `git rev-parse HEAD`. Rerunning this script overwrites
+that retained round-17 evidence (verification.json + verify/); run it only
+in a throwaway clone.
+
 Usage: python3 -I -B verify.py BASELINE_REV   (writes verification.json + verify/)
 """
 import hashlib
@@ -51,12 +60,57 @@ def git(*args):
     return subprocess.check_output(["git", "-C", LANE, *args], text=True).strip()
 
 
+def _git_or_none(*args):
+    try:
+        return git(*args)
+    except subprocess.CalledProcessError:
+        return None
+
+
+def resolve_source(branch="main"):
+    """jj-safe source revision + pre-run refusals (stdlib only; round-18 R1).
+
+    Pins `source` to refs/heads/<branch>, not HEAD: under jj colocation HEAD
+    is the working-copy parent (@-), which can be an unbookmarked, unpushed
+    commit. Returns {branch, source, head, remote, findings}; `findings` is
+    a list of named refusals and each git probe failure maps to one named
+    finding (branch tip -> branch_missing, HEAD -> head_not_branch_tip,
+    remote -> branch_not_pushed, status -> status_failure).
+    """
+    source = _git_or_none("rev-parse", "--verify", f"refs/heads/{branch}^{{commit}}")
+    # head-rev-lint: compare-only
+    head = _git_or_none("rev-parse", "--verify", "HEAD^{commit}")
+    remote = _git_or_none("rev-parse", "--verify", f"refs/remotes/origin/{branch}^{{commit}}")
+    try:
+        status_out = git("status", "--porcelain", "--untracked-files=no")
+        status_failed = False
+    except subprocess.CalledProcessError:
+        status_out, status_failed = "", True
+    findings = []
+    if source is None:
+        findings.append("branch_missing")
+    if head != source:
+        findings.append("head_not_branch_tip")
+    if remote != source:
+        findings.append("branch_not_pushed")
+    if status_failed:
+        findings.append("status_failure")
+    elif status_out.splitlines():
+        findings.append("worktree_dirty")
+    return {"branch": branch, "source": source, "head": head,
+            "remote": remote, "findings": findings}
+
+
 def main():
     if len(sys.argv) != 2:
         print(__doc__, file=sys.stderr)
         return 2
+    res = resolve_source()
+    if res["findings"]:
+        print(json.dumps({"refused": True, **res}, sort_keys=True, indent=2))
+        return 2
     base = git("rev-parse", "--verify", sys.argv[1] + "^{commit}")
-    source = git("rev-parse", "HEAD")
+    source = res["source"]
     dirty = git("status", "--porcelain")
     os.makedirs(OUT, exist_ok=True)
     pins = load_pins()
@@ -168,6 +222,7 @@ def main():
     record = {
         "producer": __file__, "python": sys.version, "orig_argv": sys.orig_argv,
         "baseline_revision": base, "source_revision": source,
+        "source_branch": res["branch"], "head_equals_source": res["head"] == res["source"],
         "worktree_dirty_at_start": dirty.splitlines(),
         "pycache_dirs_after_pass": pycache,
         "commands": cmds,
@@ -180,7 +235,7 @@ def main():
         json.dump(record, f, sort_keys=True, indent=2)
     print(json.dumps({"commands": len(cmds), "unexpected_exits": record["unexpected_exits"],
                       "pins_equal": record["pins_compare"]["equal"],
-                      "source_revision": source}, indent=2))
+                      "source_revision": source, "source_branch": res["branch"]}, indent=2))
     return 0 if (not record["unexpected_exits"] and record["pins_compare"]["equal"]
                  and not pycache) else 1
 

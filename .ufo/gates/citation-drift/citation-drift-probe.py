@@ -39,13 +39,23 @@ preflight could-not-evaluate (exit 2) and run before any entry is graded, so a
 tampered table can never produce silent findings. Any edit to the table must
 re-pin the digest in the same commit.
 
+REVISION PINNING (round 18, jj risk R2). An omitted --rev no longer means the
+moving HEAD: it resolves to the tip of --branch (default `main`, i.e.
+refs/heads/main). A literal `--rev HEAD` is accepted only when HEAD equals the
+branch tip; otherwise the run is could-not-evaluate with finding
+head_not_branch_tip (exit 2) — under jj colocation HEAD can be an unbookmarked
+commit, and attesting its tree would certify a revision that never landed. An
+explicit revision of any other form behaves exactly as before. The report
+records rev_requested, rev_resolved, and branch.
+
 VERDICT  exit 0 clean, 1 failed, 2 could-not-evaluate. Every finding carries a
 stable id so the self-test can assert on it.
 
 Usage:
-  citation-drift-gate.py [--root DIR] [--rev REV] [--table PATH]
-                         [--expected PATH] [--snapshot-dir DIR]
-  citation-drift-gate.py --selftest [--expected PATH]
+  citation-drift-probe.py [--root DIR] [--rev REV] [--branch BRANCH]
+                          [--table PATH] [--expected PATH]
+                          [--snapshot-dir DIR]
+  citation-drift-probe.py --selftest [--expected PATH]
 """
 import argparse
 import hashlib
@@ -80,7 +90,8 @@ class Findings:
         if any(f in ("snapshot_tampered", "snapshot_missing",
                      "pointer_table_unreadable", "pointer_table_tampered",
                      "pointer_table_unpinned", "unpinned_legacy",
-                     "root_unreadable", "revision_unresolvable", "internal_error")
+                     "root_unreadable", "revision_unresolvable", "internal_error",
+                     "branch_missing", "head_not_branch_tip")
                for f, _, _ in self.rows):
             return CNE
         if not strict:
@@ -275,13 +286,74 @@ def rev_ok(root, rev):
         capture_output=True)
     return proc.returncode == 0
 
+def git_commit(root, revspec):
+    """Resolve revspec to a commit id, or None. Never raises."""
+    proc = subprocess.run(
+        ["git", "-C", root, "rev-parse", "--verify", "--quiet", revspec],
+        capture_output=True)
+    if proc.returncode != 0:
+        return None
+    return proc.stdout.decode("ascii", "replace").strip() or None
 
-def run_check(root, rev, table_path, expected_path, snapshot_dir):
+
+def head_commit(root):
+    """The commit HEAD currently points at, or None, read only to compare it
+    with the branch tip. rev-list keeps the literal HEAD out of any rev-parse
+    argv (head-rev-lint site kind rev-parse-HEAD)."""
+    proc = subprocess.run(
+        ["git", "-C", root, "rev-list", "--max-count=1", "HEAD"],  # head-rev-lint: compare-only
+        capture_output=True)
+    if proc.returncode != 0:
+        return None
+    return proc.stdout.decode("ascii", "replace").strip() or None
+
+
+def resolve_rev(root, rev, branch, findings):
+    """Pin the revision to evaluate (round 18, jj risk R2).
+
+    Omitted --rev resolves to refs/heads/<branch>; a literal `--rev HEAD` is
+    accepted only when HEAD equals that tip, else could-not-evaluate with
+    head_not_branch_tip. Any other explicit rev passes through unchanged.
+    Returns (rev_to_evaluate, blocking_findings_or_None).
+    """
+    findings.rev_requested = rev if rev is not None else "(default)"
+    findings.branch = branch
+    if rev is None:
+        tip = git_commit(root, "refs/heads/%s^{commit}" % branch)
+        if tip is None:
+            findings.add("branch_missing", branch,
+                         "refs/heads/%s does not resolve to a commit" % branch)
+            return None, findings
+        findings.rev_resolved = tip
+        return tip, None
+    if rev == "HEAD":
+        tip = git_commit(root, "refs/heads/%s^{commit}" % branch)
+        head = head_commit(root)
+        if tip is None or head != tip:
+            detail = ("HEAD %s != refs/heads/%s %s"
+                      % (head or "(unresolvable)", branch, tip or "(missing)"))
+            findings.add("head_not_branch_tip", branch, detail)
+            return None, findings
+        findings.rev_resolved = tip
+        return tip, None
+    # explicit rev: evaluate exactly what was asked, as before; record the
+    # normalized commit id when it resolves
+    findings.rev_resolved = git_commit(root, "%s^{commit}" % rev) or rev
+    return rev, None
+
+
+def run_check(root, rev, table_path, expected_path, snapshot_dir, branch="main"):
     findings = Findings()
+    findings.rev_requested = rev if rev is not None else "(default)"
+    findings.rev_resolved = rev
+    findings.branch = branch
     if not root_ok(root):
         findings.add("root_unreadable", root,
                      "not a readable Git work tree (git rev-parse --git-dir failed)")
         return findings
+    rev, blocked = resolve_rev(root, rev, branch, findings)
+    if blocked is not None:
+        return blocked
     if not rev_ok(root, rev):
         findings.add("revision_unresolvable", rev,
                      "not a commit object (git rev-parse --verify %s^{commit} failed)" % rev)
@@ -320,9 +392,13 @@ def run_check(root, rev, table_path, expected_path, snapshot_dir):
     return findings
 
 
-def report(root, rev, table_path, findings, strict=False):
+def report(root, table_path, findings, strict=False):
     print("CITATION_DRIFT_ROOT: %s" % root)
-    print("CITATION_DRIFT_REVISION: %s" % rev)
+    print("CITATION_DRIFT_REV_REQUESTED: %s"
+          % getattr(findings, "rev_requested", "(default)"))
+    print("CITATION_DRIFT_REV_RESOLVED: %s"
+          % getattr(findings, "rev_resolved", "(unresolved)"))
+    print("CITATION_DRIFT_BRANCH: %s" % getattr(findings, "branch", "main"))
     print("CITATION_DRIFT_TABLE: %s" % table_path)
     for finding, entry, detail in findings.rows:
         print("CITATION_DRIFT: %s entry=%s %s" % (finding, entry, detail))
@@ -344,13 +420,19 @@ FIXTURE_FILES = {
 }
 
 
+def _fixture_commit(d, message):
+    subprocess.run(["git", "-C", d, "add", "-A"], check=True)
+    subprocess.run(["git", "-C", d, "-c", "user.email=e@x", "-c", "user.name=e",
+                    "commit", "-qm", message], check=True)
+
+
 def build_fixture(case):
     """Create an isolated git repo carrying one mutation; return its path."""
     d = tempfile.mkdtemp(prefix="citation-drift-selftest-")
-    subprocess.run(["git", "init", "-q", d], check=True)
+    subprocess.run(["git", "init", "-q", "-b", "main", d], check=True)
     for name, text in FIXTURE_FILES.items():
         open(os.path.join(d, name), "w").write(text)
-    if case == "clean":
+    if case == "clean" or case == "detached_head":
         pass
     elif case == "dead":
         open(os.path.join(d, "TARGET.md"), "w").write(
@@ -362,9 +444,15 @@ def build_fixture(case):
     elif case == "moved":
         open(os.path.join(d, "MOVED.md"), "w").write(
             "a new opening line\nthe anchored sentence is here\n")
-    subprocess.run(["git", "-C", d, "add", "-A"], check=True)
-    subprocess.run(["git", "-C", d, "-c", "user.email=e@x", "-c", "user.name=e",
-                    "commit", "-qm", case], check=True)
+    _fixture_commit(d, case)
+    if case == "detached_head":
+        # jj-colocation shape: HEAD is an unbookmarked commit ahead of the
+        # branch tip, so "clean" lives on main while HEAD carries a broken
+        # tree (TARGET.md deleted).
+        subprocess.run(["git", "-C", d, "checkout", "-q", "--detach", "HEAD"],
+                       check=True)
+        os.remove(os.path.join(d, "TARGET.md"))
+        _fixture_commit(d, "off-branch")
     return d
 
 
@@ -407,6 +495,12 @@ def selftest(expected_path):
         expected_root = json.load(open(expected_path))
         cases = [(c["case"], c["exit_code"], c["finding"])
                  for c in expected_root["selftest"]]
+        # round-18 additions (jj risk R2): fixtures with a detached off-branch
+        # HEAD made by plain git. Green: an omitted --rev resolves the branch
+        # tip, not HEAD. Red: a literal --rev HEAD is refused when HEAD is not
+        # the tip (exit 2, head_not_branch_tip).
+        cases.append(("detached_head_default", 0, "citations_clean"))
+        cases.append(("detached_head_rev_head", 2, "head_not_branch_tip"))
     except (OSError, ValueError, KeyError) as exc:
         print("CITATION_DRIFT_SELFTEST: FAILED cases=0 passed=0 failed=0 exit=1 "
               "finding=selftest_table_unreadable (%s)" % exc)
@@ -421,7 +515,7 @@ def selftest(expected_path):
                     open(table, "w").write("{ not json")
                     root = build_fixture("clean")
                 else:
-                    root = build_fixture(case)
+                    root = build_fixture("detached_head" if case.startswith("detached_head") else case)
                     table = os.path.join(case_dir, "table.json")
                     json.dump(fixture_table(case), open(table, "w"))
 
@@ -448,12 +542,31 @@ def selftest(expected_path):
                 elif case == "table_absent":
                     os.remove(table)
 
-                rev = "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef" if case == "rev_unresolvable" else "HEAD"
-                findings = run_check(root, rev, table, exp_file,
-                                     None if case == "no_snapshot_dir" else snapshot_dir)
-                got_exit = findings.verdict(strict=True)
-                got_ids = findings.ids()
-                if case == "clean" and not findings.rows:
+                if case.startswith("detached_head"):
+                    # CLI-level path: drive the real argv surface (argparse ->
+                    # resolve_rev -> run_check), not run_check directly.
+                    argv = [sys.executable, os.path.abspath(__file__),
+                            "--root", root, "--table", table,
+                            "--expected", exp_file, "--strict"]
+                    if case == "detached_head_rev_head":
+                        # head-rev-lint: compare-only
+                        argv += ["--rev", "HEAD"]
+                    proc = subprocess.run(argv, capture_output=True, text=True)
+                    got_exit = proc.returncode
+                    got_ids = {ln.split(":", 1)[1].strip().split(" ", 1)[0]
+                               for ln in proc.stdout.splitlines()
+                               if ln.startswith("CITATION_DRIFT:")}
+                else:
+                    if case == "rev_unresolvable":
+                        rev = "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+                    else:
+                        rev = "HEAD"
+                    findings = run_check(
+                        root, rev, table, exp_file,
+                        None if case == "no_snapshot_dir" else snapshot_dir)
+                    got_exit = findings.verdict(strict=True)
+                    got_ids = findings.ids()
+                if want_finding == "citations_clean" and not got_ids:
                     got_ids = {"citations_clean"}
                 ok = (got_exit == want_exit) and (want_finding in got_ids)
                 print("SELFTEST_CASE: %s case=%s exit=%d expected=%d finding=%s"
@@ -474,7 +587,12 @@ def selftest(expected_path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=os.path.dirname(HERE))
-    ap.add_argument("--rev", default="HEAD")
+    ap.add_argument("--rev", default=None,
+                    help="commit to evaluate; omitted resolves the tip of "
+                         "--branch; literal HEAD is accepted only when HEAD "
+                         "equals the branch tip")
+    ap.add_argument("--branch", default="main",
+                    help="branch whose tip pins an omitted --rev")
     ap.add_argument("--table", default=DEFAULT_TABLE)
     ap.add_argument("--expected", default=DEFAULT_EXPECTED)
     ap.add_argument("--snapshot-dir")
@@ -487,11 +605,11 @@ def main():
         return selftest(args.expected)
     try:
         findings = run_check(args.root, args.rev, args.table, args.expected,
-                             args.snapshot_dir)
+                             args.snapshot_dir, branch=args.branch)
     except Exception as exc:
         findings = Findings()
         findings.add("internal_error", "gate", "%s: %s" % (type(exc).__name__, exc))
-    return report(args.root, args.rev, args.table, findings,
+    return report(args.root, args.table, findings,
                   strict=args.strict)
 
 

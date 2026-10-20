@@ -194,6 +194,26 @@ def compare(prediction, observation):
         fields.append({"field": "extra.analyzer_errors_contain",
                        "predicted": extra["analyzer_errors_contain"], "observed": errs,
                        "match": any(extra["analyzer_errors_contain"] in e for e in errs)})
+    # Round-18 (contract C3): analyzer_errors_empty is a bool expectation on the
+    # whole observed list (absent list counts as empty, as for
+    # analyzer_errors_contain); eof_reads is exact list equality, so a stale
+    # observation lacking the field mismatches a predicted [].
+    if "analyzer_errors_empty" in extra:
+        errs = observation.get("analyzer_errors") or []
+        fields.append({"field": "extra.analyzer_errors_empty",
+                       "predicted": extra["analyzer_errors_empty"], "observed": errs,
+                       "match": isinstance(extra["analyzer_errors_empty"], bool)
+                       and (len(errs) == 0) is extra["analyzer_errors_empty"]})
+    if "eof_reads" in extra:
+        obs_eof = observation.get("eof_reads")
+        fields.append({"field": "extra.eof_reads",
+                       "predicted": extra["eof_reads"], "observed": obs_eof,
+                       "match": obs_eof == extra["eof_reads"]})
+    if "invalid_index_reads" in extra:
+        obs_idx = observation.get("invalid_index_reads")
+        fields.append({"field": "extra.invalid_index_reads",
+                       "predicted": extra["invalid_index_reads"], "observed": obs_idx,
+                       "match": obs_idx == extra["invalid_index_reads"]})
     return {
         "fields": fields,
         "all_match": all(item["match"] for item in fields),
@@ -387,6 +407,45 @@ def _selftest():
                  {"bootstrap_attempts_at_least": 1,
                   "analyzer_errors_contain": "unable to get GoRttiMapper"}),
          _mutate(_OBS_EMPTY, "bootstrap_attempts", 0), 1, False),
+        # Round-18 (contract C3): new extra_expectations keys.
+        ("extra_analyzer_errors_empty_green",
+         _mutate(_PRED_EMPTY, "extra_expectations",
+                 {"analyzer_errors_empty": True}),
+         _OBS_EMPTY, 0, True),
+        ("extra_analyzer_errors_empty_red",
+         _mutate(_PRED_EMPTY, "extra_expectations",
+                 {"analyzer_errors_empty": True}),
+         _mutate(_OBS_EMPTY, "analyzer_errors",
+                 ["Go analysis failure: Unable to read past EOF"]),
+         1, False),
+        ("extra_analyzer_errors_false_nonempty_green",
+         _mutate(_PRED_EMPTY, "extra_expectations",
+                 {"analyzer_errors_empty": False}),
+         _mutate(_OBS_EMPTY, "analyzer_errors",
+                 ["Go analysis failure: Unable to read past EOF"]),
+         0, True),
+        ("extra_eof_reads_green",
+         _mutate(_PRED_EMPTY, "extra_expectations",
+                 {"eof_reads": [[17645861, 111938854]]}),
+         _mutate(_OBS_EMPTY, "eof_reads", [[17645861, 111938854]]),
+         0, True),
+        ("extra_eof_reads_order_red",
+         _mutate(_PRED_EMPTY, "extra_expectations",
+                 {"eof_reads": [[1, 2], [3, 4]]}),
+         _mutate(_OBS_EMPTY, "eof_reads", [[3, 4], [1, 2]]),
+         1, False),
+        ("extra_eof_reads_observation_missing_red",
+         _mutate(_PRED_EMPTY, "extra_expectations", {"eof_reads": []}),
+         _OBS_EMPTY, 1, False),
+        ("extra_invalid_index_reads_green",
+         _mutate(_PRED_EMPTY, "extra_expectations",
+                 {"invalid_index_reads": [3, 7]}),
+         _mutate(_OBS_EMPTY, "invalid_index_reads", [3, 7]),
+         0, True),
+        ("extra_invalid_index_reads_observation_missing_red",
+         _mutate(_PRED_EMPTY, "extra_expectations",
+                 {"invalid_index_reads": [3, 7]}),
+         _OBS_EMPTY, 1, False),
     ]
 
     tmp = tempfile.mkdtemp(prefix="compare-selftest-")

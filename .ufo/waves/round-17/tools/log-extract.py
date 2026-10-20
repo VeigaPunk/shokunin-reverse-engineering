@@ -11,13 +11,27 @@ Emits JSON (sort_keys=True, indent=2) on stdout:
     {log_path, log_sha256, language_compiler,
      go_lines: [{line, level, component, message, raw}],
      untested_versions, snapshot_labels, go_version_logged,
-     missing_bootstrap, analyzer_errors, classification}
+     missing_bootstrap, analyzer_errors, eof_reads,
+     symbol_analysis_failures, classification}
 
 go_lines keeps every log record whose component is in the contract's named set
 or starts with "Go"/"Golang". `line` is the 1-based line number; `raw` is the
 verbatim line text (trailing whitespace preserved) so callers can re-anchor
 citations without re-reading the log. The deduplicated list fields
 (untested_versions, snapshot_labels, go_version_logged, analyzer_errors)
+
+Round-18 additive fields (round-18 contract "In-place additive fixes";
+tightened by L1 RevLogExtractScope/ConnC3Prediction): eof_reads is every
+`Unable to read past EOF: A, B` pair found at end of line on ANY raw
+line, including non-record stack-trace continuations (`Caused by: ...`),
+as [index, length] ints in log order (MemoryByteProvider.java:311-312
+emits `Long.toUnsignedString(index), length`). invalid_index_reads is
+every `Invalid index: N` at end of line on any raw line
+(MemoryByteProvider.java:302 EOFException; :173 IOException variant).
+A final line without a terminating newline is torn and not counted for
+either field. symbol_analysis_failures
+is the deduplicated list of parsed record messages containing
+"Go analysis failure" (GolangSymbolAnalyzer.java:182 Msg.error).
 preserve first-occurrence order; per-event duplicates remain in go_lines.
 
 Log line format observed (pilot ghidra.log files):
@@ -92,6 +106,13 @@ INVALID_VERSION_RE = re.compile(r"Invalid Go version string \[([^\]]*)\]")
 READING_RE = re.compile(r"^Reading Go binary info: (\S+)")
 LOG_FILE_RE = re.compile(r"^Using log file: (\S+)\s*$")
 IMPORT_RE = re.compile(r"^IMPORTING: file://(\S+)\s*$")
+# Round-18: EOF pairs may appear on continuation lines, so this scans the
+# raw line text, not just parsed record messages. ASCII digits only,
+# anchored at end of line with optional trailing spaces (L1
+# RevLogExtractScope/ConnC3Prediction: suffixed/torn lines must not count).
+EOF_READ_RE = re.compile(r"Unable to read past EOF: ([0-9]+), ([0-9]+)[ \t]*$")
+INVALID_INDEX_RE = re.compile(r"Invalid index: ([0-9]+)[ \t]*$")
+SYMBOL_FAILURE_TEXT = "Go analysis failure"
 
 
 class ExtractError(Exception):
@@ -146,18 +167,36 @@ def parse_log(log_path):
     mapper_errors = []
     log_file = None
     import_target = None
+    eof_reads = []
+    invalid_index_reads = []
+    symbol_analysis_failures = []
 
     # Split on "\n" only: ghidra.log records are newline-terminated, and
     # carrier-controlled text may contain U+2028/U+2029/\x0b, which
     # str.splitlines() would treat as record breaks (w2 LogExtractFuzz D1).
-    for lineno, raw in enumerate(text.split("\n"), start=1):
+    lines = text.split("\n")
+    # A final element lacking a terminating newline is a torn line:
+    # exclude it from eof_reads/invalid_index_reads only; record parsing
+    # is unchanged.
+    terminated = len(lines) if text.endswith("\n") else len(lines) - 1
+    for lineno, raw in enumerate(lines, start=1):
         raw = raw[:-1] if raw.endswith("\r") else raw
+        if lineno <= terminated:
+            em = EOF_READ_RE.search(raw)
+            if em:
+                eof_reads.append([int(em.group(1)), int(em.group(2))])
+            im = INVALID_INDEX_RE.search(raw)
+            if im:
+                invalid_index_reads.append(int(im.group(1)))
         m = LINE_RE.match(raw)
         if not m:
             continue  # continuation line / non-record
         level = m.group(3)
         component = m.group(4)
         message = m.group(5).rstrip()
+
+        if SYMBOL_FAILURE_TEXT in message:
+            symbol_analysis_failures.append(message)
 
         if language_compiler is None:
             lm = LANGUAGE_COMPILER_RE.match(message)
@@ -259,6 +298,9 @@ def parse_log(log_path):
         "go_version_logged": _dedupe(go_version_logged),
         "missing_bootstrap": missing_bootstrap,
         "analyzer_errors": _dedupe(analyzer_errors),
+        "eof_reads": eof_reads,
+        "invalid_index_reads": invalid_index_reads,
+        "symbol_analysis_failures": _dedupe(symbol_analysis_failures),
         "classification": classification,
     }
 
@@ -272,12 +314,12 @@ def _selftest():
     cases = 0
     try:
 
-        def run_case(name, lines, checks):
+        def run_case(name, lines, checks, trailing_newline=True):
             nonlocal cases
             cases += 1
             path = os.path.join(tmp, name + ".log")
             with open(path, "w", encoding="utf-8") as f:
-                f.write("\n".join(lines) + "\n")
+                f.write("\n".join(lines) + ("\n" if trailing_newline else ""))
             try:
                 result = parse_log(path)
             except ExtractError as e:
@@ -443,6 +485,133 @@ def _selftest():
             ],
             {"invalid_version_strings": ["devel"], "snapshot_route": "none",
              "classification": "other"},
+        )
+        if err:
+            return False, err
+
+        # Round-18: eof_reads from a stack-trace continuation line and
+        # symbol_analysis_failures from the GolangSymbolAnalyzer record
+        # (mirrors retained r17 aether log: "Caused by: java.io.EOFException:
+        # Unable to read past EOF: A, B" on a non-record line).
+        err = run_case(
+            "eof_stacktrace",
+            [
+                "2026-10-20 10:00:00 ERROR (GolangSymbolAnalyzer) Go analysis "
+                "failure java.io.IOException: java.lang.reflect.InvocationTarget"
+                "Exception  ",
+                "\tat ghidra.app.util.bin.BinaryReader.readNextByteArray("
+                "BinaryReader.java:704)  ",
+                "Caused by: java.io.EOFException: Unable to read past EOF: "
+                "17645861, 111938854",
+            ],
+            {
+                "classification": "other",
+                "analyzer_errors": [
+                    "Go analysis failure java.io.IOException: "
+                    "java.lang.reflect.InvocationTargetException"
+                ],
+                "symbol_analysis_failures": [
+                    "Go analysis failure java.io.IOException: "
+                    "java.lang.reflect.InvocationTargetException"
+                ],
+                "eof_reads": [[17645861, 111938854]],
+            },
+        )
+        if err:
+            return False, err
+
+        # Round-18: EOF pairs also count on real record lines (contract: any
+        # line), keep order and duplicates; failure messages dedupe.
+        err = run_case(
+            "eof_multi_and_failure_dedupe",
+            [
+                "2026-10-20 10:00:00 WARN  (GoRttiMapper) Unable to read past "
+                "EOF: 10, 20  ",
+                "\tCaused by: java.io.EOFException: Unable to read past EOF: "
+                "10, 20  ",
+                "\tCaused by: java.io.EOFException: Unable to read past EOF: "
+                "30, 40  ",
+                "2026-10-20 10:00:01 ERROR (GolangSymbolAnalyzer) Go analysis "
+                "failure boom  ",
+                "2026-10-20 10:00:02 ERROR (GolangSymbolAnalyzer) Go analysis "
+                "failure boom  ",
+            ],
+            {
+                "eof_reads": [[10, 20], [10, 20], [30, 40]],
+                "symbol_analysis_failures": ["Go analysis failure boom"],
+            },
+        )
+        if err:
+            return False, err
+
+        # Round-18 red cases (L1 RevLogExtractScope): near-miss, suffixed and
+        # torn shapes must NOT populate the new fields — fails if a naive
+        # `in`-match, loose regex, or missing EOL anchor/torn check captured
+        # them (extra space before the comma, missing second number,
+        # trailing suffix after a valid pair, lowercase failure text).
+        err = run_case(
+            "eof_near_miss",
+            [
+                "2026-10-20 10:00:00 WARN  (GoRttiMapper) Unable to read past "
+                "EOF: 1 , 2  ",
+                "\tCaused by: java.io.EOFException: Unable to read past EOF: "
+                "just 42  ",
+                "Caused by: java.io.EOFException: Unable to read past EOF: "
+                "11, 22 (retrying)  ",
+                "Caused by: java.io.EOFException: Unable to read past EOF: "
+                "-3, 7  ",
+                "2026-10-20 10:00:01 ERROR (GolangSymbolAnalyzer) go analysis "
+                "failure ignored  ",
+            ],
+            {
+                "eof_reads": [],
+                "symbol_analysis_failures": [],
+            },
+        )
+        if err:
+            return False, err
+
+        # Torn final line: file ending without "\n" must not count its pair
+        # (complete or truncated) or an Invalid index on it; earlier
+        # terminated lines still do.
+        err = run_case(
+            "eof_torn_final",
+            [
+                "Caused by: java.io.EOFException: Unable to read past EOF: "
+                "5, 6",
+                "2026-10-20 10:00:00 INFO  (GoRttiMapper) Reading Go binary "
+                "info: t.bin  ",
+                "Caused by: java.io.EOFException: Invalid index: 43",
+                "Caused by: java.io.EOFException: Unable to read past EOF: "
+                "7, 8",
+            ],
+            {
+                "eof_reads": [[5, 6]],
+                "invalid_index_reads": [43],
+                "bootstrap_attempts": 1,
+            },
+            trailing_newline=False,
+        )
+        if err:
+            return False, err
+
+        # Round-18 invalid_index_reads: positive on a real-form continuation
+        # line; red shapes (suffixed, negative, non-ASCII digits) must not
+        # count — the last fails only if \d was used instead of [0-9].
+        err = run_case(
+            "invalid_index_case",
+            [
+                "\tat ghidra.app.util.bin.MemoryByteProvider.ensureBounds("
+                "MemoryByteProvider.java:302)  ",
+                "Caused by: java.io.EOFException: Invalid index: 987654321",
+                "Caused by: java.io.EOFException: Invalid index: 12 (retrying)",
+                "Caused by: java.io.EOFException: Invalid index: -4",
+                "Caused by: java.io.EOFException: Invalid index: \u0661\u0662",
+            ],
+            {
+                "invalid_index_reads": [987654321],
+                "eof_reads": [],
+            },
         )
         if err:
             return False, err

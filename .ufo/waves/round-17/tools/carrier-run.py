@@ -4,7 +4,9 @@
 Runs `npx -y rea-agents@V inspect-go-binary|analyze|search` on a Go carrier
 binary while polling for REA's ephemeral `/tmp/rea-ghidra-*` session dirs and
 retaining each dir's `ghidra.log`/`script.log` into --out-dir/logs/<dirname>/
-(copy to `*.tmp` then `os.replace`).
+(copy to `*.tmp` then `os.replace`). Each mid-run pin check additionally
+retains its full pin map under --out-dir/pins/mid-<n>.json with a recorded
+sha256 (R17-PINMAP forward fix, round 18).
 
 Limitation: REA deletes its runtime root at close; this is a polling copy, so
 lines written after the final poll before deletion can be missing.
@@ -366,9 +368,14 @@ def run(carrier, label, out_dir, rea_version="6.5.0", timeout=1800.0,
 
 
     # wire pins_pre once (compare-during-run uses the same pre snapshot)
+    # R17-PINMAP forward fix (round 18): every mid-run pin check writes its
+    # full snapshot to out_dir/pins/mid-<n>.json (n global across steps, never
+    # reused) so the map, not only the comparator verdict, is retained.
+    mid_map_counter = [0]
+
     def run_polled(name, argv):
         return _run_polled(name, argv, out_dir, cwd, timeout, poll, runner,
-                           poller, pins, pins_pre)
+                           poller, pins, pins_pre, mid_map_counter)
 
     steps["analyze"] = run_polled(
         "analyze", npx_base + ["analyze", carrier, "--format", "json"])
@@ -435,7 +442,7 @@ def run(carrier, label, out_dir, rea_version="6.5.0", timeout=1800.0,
 
 
 def _run_polled(name, argv, out_dir, cwd, timeout, poll, runner, poller, pins,
-                pins_pre):
+                pins_pre, mid_map_counter=None):
     started = utcnow()
     stdout_path = os.path.join(out_dir, name + ".json")
     stderr_path = os.path.join(out_dir, name + ".stderr")
@@ -478,13 +485,36 @@ def _run_polled(name, argv, out_dir, cwd, timeout, poll, runner, poller, pins,
                 last_pin_check = now
                 mid = pins.snapshot(pin_paths)
                 cmp_mid = pins.compare(pins_pre, mid)
-                rec.setdefault("pin_checks", []).append({
+                check = {
                     "taken_at_utc": mid["taken_at_utc"],
                     "equal": cmp_mid["equal"],
                     "entries": len(mid["entries"]),
                     "changed": cmp_mid["changed"],
                     "missing": cmp_mid["missing"],
-                })
+                }
+                # Retain the full mid-run map with its digest (R17-PINMAP:
+                # QUALITY #19 and the knowledge entry claim the map is kept,
+                # not only the verdict). Naming is global, never per-step, so
+                # later steps can never overwrite an earlier step's map.
+                if mid_map_counter is not None:
+                    mid_map_counter[0] += 1
+                    map_path = os.path.join(
+                        out_dir, "pins", "mid-%d.json" % mid_map_counter[0])
+                    try:
+                        payload = json.dumps(
+                            mid, sort_keys=True, indent=2).encode("utf-8")
+                        os.makedirs(os.path.dirname(map_path), exist_ok=True)
+                        with open(map_path, "wb") as mf:
+                            mf.write(payload)
+                            mf.write(b"\n")
+                        check["map_path"] = map_path
+                        check["map_sha256"] = hashlib.sha256(
+                            payload + b"\n").hexdigest()
+                    except OSError as e:
+                        # An unretained map is recorded, never silent
+                        # (receipt-validate flags map_error).
+                        check["map_error"] = "mid map write failed: %s" % e
+                rec.setdefault("pin_checks", []).append(check)
                 if not cmp_mid["equal"]:
                     rec["pins_changed_during_run"] = {
                         "changed": cmp_mid["changed"],
@@ -616,6 +646,10 @@ def _selftest():
             and "search:main.main" in receipt["steps"]
             and receipt["steps"]["search:main.main"]["exit"] == 0
             and receipt["pins_compare"]["equal"]
+            and all(c.get("map_path") and os.path.isfile(c["map_path"])
+                    and sha256_file(c["map_path"]) == c.get("map_sha256")
+                    for s in receipt["steps"].values()
+                    for c in s.get("pin_checks") or [])
             and not os.path.exists(os.path.join(out_dir, "logs", "rea-ghidra-AAAAAA"))
             and os.path.isfile(os.path.join(out_dir, "inspect-go.json"))
             and os.path.isfile(os.path.join(out_dir, "analyze.json"))
@@ -642,6 +676,43 @@ def _selftest():
         cases += 1
         if not (code2 == 2 and receipt2["steps"]["analyze"]["exit"] == 3):
             failures.append("case2 nonzero analyze: code=%r" % code2)
+
+        # Case 3: carrier bytes mutated before analyze starts -> the first
+        # mid-run pin check records the drift and retains its full map under
+        # out3/pins/, the run exits 1 (R17-PINMAP: the map itself is kept).
+        out3 = os.path.join(root, "out3")
+
+        def runner_mutate(argv, cwd, out_f, err_f):
+            if "analyze" in " ".join(argv):
+                with open(carrier, "wb") as f:
+                    f.write(b"\x7fELF-mutated-mid-run")
+                return subprocess.Popen(
+                    [sys.executable, child_py, tmp_sessions,
+                     "rea-ghidra-DRIFT1", "0.3", "0"],
+                    cwd=cwd, stdout=out_f, stderr=err_f)
+            return fake_runner(argv, cwd, out_f, err_f)
+
+        receipt3, code3 = run(
+            carrier=carrier, label="selftest-drift", out_dir=out3,
+            timeout=30.0, poll=0.03, searches=(),
+            runner=runner_mutate, session_glob=glob_pat, pins_path=pins_src,
+            pin_paths=[carrier])
+        cases += 1
+        pchecks3 = receipt3["steps"]["analyze"].get("pin_checks") or []
+        ok3 = (
+            code3 == 1
+            and receipt3.get("mid_run_drift_steps") == ["analyze"]
+            and pchecks3
+            and any(not c.get("equal") for c in pchecks3)
+            and all(c.get("map_path")
+                    and os.path.dirname(c["map_path"]) ==
+                    os.path.join(out3, "pins")
+                    and os.path.isfile(c["map_path"])
+                    and sha256_file(c["map_path"]) == c.get("map_sha256")
+                    for c in pchecks3)
+        )
+        if not ok3:
+            failures.append("case3 mid-run drift map: code=%r" % code3)
     finally:
         shutil.rmtree(root, ignore_errors=True)
     if failures:

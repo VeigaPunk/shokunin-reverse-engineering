@@ -1,0 +1,43 @@
+{
+  "round": 18,
+  "lane": "kaidoku",
+  "baseline": "9011581d84527ba34c675f9cf912e54d2e72d470",
+  "declared_at": "2026-10-20T12:20:00-03:00",
+  "planner_seat": "L1 (KaidokuR18) holds the canonical planner seat; the validator rejects planner as a swarm role (orchestrator ruling 2026-10-19). Bounded planning data-walks ride scout/connector/revenger items.",
+  "lowest_axis": "coverage, depth and calibration tie at 10.0 (SCORECARD.md Owned axes and round-17 section); C1 works calibration, a tied-lowest non-retired axis. The stagnation nudge is not active: a capability entered the table in round 17.",
+  "claims": [
+    {
+      "id": "C1",
+      "axis": "calibration",
+      "claim": "Discharge the six defects routed by corpus/lessons/round-17-verifier-spotcheck.md:137-147 (R17-PINMAP, R17-VALIDATE16, R17-PRODUCER-REV, R17-SUMS-RUNLOG, R17-REGISTRY, R17-S032-DIGEST) with append-only named corrections, retained evidence and tool fixes, and turn the one partial outside disagreement (pin-map sentence) into a lesson-backed QUALITY criterion.",
+      "falsifiable_before_after": "routed-defects.py --root LANE --rev REV: open routed R17 defects 6 at 9011581 -> 0 at the delivered revision; each check is a revision-scoped Git-object test whose red state is the baseline; QUALITY data rows 20 -> 21 with rows 1-20 byte-identical.",
+      "sourced": "S033 (supersedes S032, opened this round)"
+    },
+    {
+      "id": "C2",
+      "axis": "operability",
+      "claim": "Make the lane's live revision pins jj-safe: the three HEAD-keyed sites routed by .ufo/waves/hyaku/jj-w1/reports/JjAuditKaidoku.md section 5 (round-17 verify.py source_revision = git rev-parse HEAD; citation-drift-probe --rev default HEAD; custody-pair repo-HEAD from Path.cwd()) read the branch tip (refs/heads/main) and refuse or flag an off-branch HEAD; a static lint counts the sites and a sandbox jj clone shows the old forms fail and the new ones hold.",
+      "falsifiable_before_after": "head-rev-lint.py --root LANE --rev REV: live HEAD-as-revision call sites 3 at 9011581 -> 0; jj-red-before.py in a throwaway jj-colocated clone with an unbookmarked commit: baseline forms record the off-branch commit (red), fixed forms record the branch tip or exit 2 (green).",
+      "sourced": "jj documentation row opened this round (colocated workspaces / HEAD)"
+    },
+    {
+      "id": "C3",
+      "axis": "depth",
+      "claim": "Replay the round-17 aether INFERENCE (Ghidra 12.1.4 reads Go 1.24/1.25 Swiss map types with the installed OldMapType layout, so method-carrying map types misread their uncommon/method data) on a controlled minimal pair: eight deterministic synthetic carriers {go1.24.6, go1.25.0} x {swiss, noswissmap} x {named map type with methods, none}, with per-carrier symbol-markup outcomes predicted from bytes plus installed source by an emulator calibrated on aether's logged EOF pair, frozen in Git before any REA run, then observed through retained, run-bound Ghidra logs.",
+      "falsifiable_before_after": "carriers with a frozen byte-level post-bootstrap outcome prediction compared against a bound retained log: 0 -> 8 (compare exit per carrier reported, match or not); the aether mechanism status moves from unreplayed INFERENCE to replayed-confirmed or replayed-refuted on the pair.",
+      "sourced": "Go 1.24 release notes / internal/abi map layout source rows opened this round"
+    }
+  ],
+  "frontier_step": "SOURCES census before (exit 0, 32 rows) and after; new rows only after opening; mistakes mined into corpus/lessons/round-18.md ## Mistakes; C1-C3 cite rows opened this round.",
+  "non_goals": "No REA or Ghidra repair, no upstream push, no claim about Go 1.26/1.27, no recovery-quality or semantic-correctness claim, no edit of round-17 retained receipts/logs, no SHONEN [x].",
+  "amendments": [
+    {
+      "at": "2026-10-20T13:25:00-03:00 (after wave 1, before any round-18 REA run)",
+      "why": "wave-1 critics: CriticC1/RevBase* (C1 token checks circular), CriticC2/ConnSiblingOverlap/ScoutLaneGitSitesNow/HeadRevLintTool (C2 baseline depends on the lint rule), CriticC3/ConnC3Prediction/RevContractC3 (methods/nomethods pair non-diagnostic)",
+      "C1": "open_count counts a defect open unless both its named-correction and its substance checks pass (routed-defects.py). Before 6 at 9011581 (named 6, substance 6) -> after 0.",
+      "C2": "head-rev-lint.py with the amended scope rule (contract.md amendments): live 3 at 9011581 (citation-drift-probe.py:477, custody-pair.py:327, round-17/verify.py:59), fixture 8, excluded seat-dir sites listed; after 0 live with compare-only/red-before sites listed as annotated. Plus jj-red-before.py receipt: 14/14 expectations held.",
+      "C3": "15 labels: 12 synthetic (adds 4 nethttp carriers with aether's 40-byte-slot named maps), calib-aether, calib-notesmd-cli, real-kimi-webbridge (go1.24.13, the only real non-r17 1.24/1.25 Go ELF found by RealCarrierCensus). Predictions frozen under H1 by tools/swiss-misread.py; diagnostic set D = {calib-aether (calibration only), s1246-swiss-nethttp, real-kimi-webbridge}; verdict rule frozen in predictions/decision-rule.json. Count: labels with a bound retained log and a compare carrying extra.eof_reads, 0 -> 15; mechanism status unreplayed INFERENCE -> confirmed/refuted/unresolved per the frozen rule.",
+      "sourced": "C1 S033 (supersedes S032); C2 S036 (jj 0.45.1 git-compatibility); C3 S034/S035 (Go 1.24 notes, internal/abi source) — C3 is the filed sourced claim."
+    }
+  ]
+}

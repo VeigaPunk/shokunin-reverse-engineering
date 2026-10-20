@@ -98,6 +98,28 @@ read it as a satisfied content contract. Closing this with a flag was considered
 and rejected: the round-3 evidence is that the fail-open lived in the
 error-carrying form, which the UNEVALUABLE class already closes.
 
+
+ROUND-18 HARDENING (seat CustodyPairBranchTip, wave round-18). jj-colocation
+risk R3 (`.ufo/waves/hyaku/jj-w1/reports/JjAuditKaidoku.md` §5): the receipt's
+`repo-HEAD` pin was `git rev-parse HEAD` taken at `Path.cwd()` — under jj that
+is `@-`, equal to the branch tip only immediately after a helper `bookmark
+set`, and any capture started outside the lane recorded a different repo or
+`(none)` while the rest of the receipt stayed internally consistent:
+
+  10. REPO CONTEXT BLOCK. `capture` gains `--repo DIR` whose default is the
+      lane root (`TOOL_PATH.parents[3]`, the directory containing `.ufo`),
+      never `Path.cwd()`. The header keeps `# repo-HEAD:` (still `git
+      rev-parse HEAD` in the repo — under jj that is `@-`, now flagged, not
+      hidden) and adds `# repo-root:`, `# repo-branch:`, `# repo-branch-tip:`
+      (`rev-parse --verify refs/heads/<branch>^{commit}`), `# repo-HEAD-is
+      -branch-tip: yes|no`, and `# repo-dirty: yes|no` (`status --porcelain
+      --untracked-files=no`, tracked modifications only). `verify` treats all
+      `#` header lines as metadata, exactly as `# repo-HEAD:` always was —
+      compare semantics are unchanged and `receipt-version` stays 2 (the
+      stanza shape did not change; the additions are comments). Selftest case
+      `repo-header-off-branch-tip-no` is the red case: a detached HEAD behind
+      the branch tip must record `repo-HEAD-is-branch-tip: no`.
+
 atime is deliberately NOT captured: reading a file (including this instrument's
 own sha256 pass on a relatime mount) can move atime, so an atime field would make
 the instrument non-idempotent over its own use.
@@ -184,9 +206,13 @@ import sys
 import time
 from pathlib import Path
 
-RECEIPT_VERSION = 2
+RECEIPT_VERSION = 2  # unchanged in round 18: the new header lines are '#' metadata
 TOOL_PATH = Path(__file__).resolve()
 SELF = sys.argv[0]
+
+# Round-18 R3 fix: the custody repo is the lane root that owns .ufo/, never cwd.
+LANE_ROOT = TOOL_PATH.parents[3]
+REPO_BRANCH = "main"
 
 CUSTODY_PATHS = (
     "~/.config/devin/mcp_config.json",
@@ -321,22 +347,54 @@ def capture_path(path: Path) -> dict:
 # receipt rendering
 # --------------------------------------------------------------------------- #
 
-def repo_head(cwd: Path) -> str:
+def _git_at(repo: Path, *argv: str) -> str | None:
+    """Read-only `git -C <repo> <argv>`; returns stripped stdout or None on any failure."""
     try:
         out = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=str(cwd), capture_output=True, text=True, timeout=10,
+            ["git", "-C", str(repo), *argv],
+            capture_output=True, text=True, timeout=10,
         )
         if out.returncode == 0:
             return out.stdout.strip()
     except Exception:
         pass
-    return "(none)"
+    return None
 
 
-def render_receipt(sections, label: str, now: float) -> str:
+def repo_context(repo: Path) -> dict:
+    """Round-18 repo header facts (jj-audit R3). `head` is `rev-parse HEAD` —
+    under jj colocation that is `@-`, kept so the receipt still records the
+    working-copy parent, but now flagged by `head_is_tip` instead of standing
+    alone. `dirty` counts tracked modifications only (untracked excluded).
+    A non-repo leaves every value unknown; `head_is_tip` then reads `no`
+    (a custody pin that cannot prove it is the branch tip must not read yes)."""
+    ctx = {
+        "root": str(repo),
+        "head": "(none)",
+        "branch": REPO_BRANCH,
+        "branch_tip": "(none)",
+        "head_is_tip": "no",
+        "dirty": "(none)",
+    }
+    if _git_at(repo, "rev-parse", "--git-dir") is None:
+        return ctx
+    head = _git_at(repo, "rev-parse", "HEAD")  # head-rev-lint: compare-only
+    tip = _git_at(repo, "rev-parse", "--verify", "refs/heads/%s^{commit}" % REPO_BRANCH)
+    status = _git_at(repo, "status", "--porcelain", "--untracked-files=no")
+    if head:
+        ctx["head"] = head
+    if tip:
+        ctx["branch_tip"] = tip
+    ctx["head_is_tip"] = "yes" if (head and tip and head == tip) else "no"
+    if status is not None:
+        ctx["dirty"] = "yes" if status else "no"
+    return ctx
+
+
+def render_receipt(sections, label: str, now: float, repo: Path) -> str:
     tool_sha = sha256_file(TOOL_PATH) if TOOL_PATH.exists() else "(unavailable)"
     present = sum(1 for s in sections if s.get("exists") == "yes")
+    ctx = repo_context(repo)
     lines = [
         "# custody-pair receipt v%d — READ-ONLY capture (sha256 + stat); no bytes written" % RECEIPT_VERSION,
         "# receipt-version: %d" % RECEIPT_VERSION,
@@ -346,7 +404,12 @@ def render_receipt(sections, label: str, now: float) -> str:
         "# capture-label: %s" % (label or "(none)"),
         "# host: %s  user: %s  kernel: %s" % (socket.gethostname(), getpass.getuser(), platform.release()),
         "# cwd: %s" % os.getcwd(),
-        "# repo-HEAD: %s" % repo_head(Path.cwd()),
+        "# repo-HEAD: %s" % ctx["head"],  # head-rev-lint: compare-only (retained @- pin, flagged below)
+        "# repo-root: %s" % ctx["root"],
+        "# repo-branch: %s" % ctx["branch"],
+        "# repo-branch-tip: %s" % ctx["branch_tip"],
+        "# repo-HEAD-is-branch-tip: %s" % ctx["head_is_tip"],
+        "# repo-dirty: %s" % ctx["dirty"],
         "# paths: %d  present: %d" % (len(sections), present),
         "# label-contract: MTIME_UTC_RENDER/CTIME_UTC_RENDER = gmtime(epoch) renders ('Z');",
         "#                 local renders are recorded separately under *_LOCAL_RENDER.",
@@ -678,9 +741,10 @@ def cmd_paths(_args) -> int:
 
 def cmd_capture(args) -> int:
     paths = [Path(p).expanduser() for p in (args.paths or CUSTODY_PATHS)]
+    repo = Path(getattr(args, "repo", None) or LANE_ROOT).expanduser().resolve()
     sections = [capture_path(p) for p in paths]
     now = time.time()
-    text = render_receipt(sections, args.label, now)
+    text = render_receipt(sections, args.label, now, repo)
     present = sum(1 for s in sections if s.get("exists") == "yes")
     unevaluable = sum(1 for s in sections
                       if s.get("stat_error") or s.get("read_error")
@@ -1269,6 +1333,59 @@ def cmd_selftest(args) -> int:
         assert "SHA256-CONTRACT: 0/0" in text2, "the vacuous contract line is not printed"
     run_case(cases, "both-sides-absent-is-agreement-match", case_both_absent)
 
+    # 26. ROUND-18 R3 RED CASE (jj-audit §5): a detached HEAD behind the branch
+    #     tip must record `repo-HEAD-is-branch-tip: no` — the off-branch commit
+    #     is still recorded under repo-HEAD, but flagged, never silently pinned.
+    #     Fixture repo lives under mkdtemp, jj never manages it.
+    def case_repo_tip():
+        repo = root / "repo-fixture"
+        repo.mkdir()
+        def git_f(*a):
+            p = subprocess.run(["git", "-C", str(repo), *a],
+                               capture_output=True, text=True)
+            assert p.returncode == 0, "fixture git %s failed: %s" % (a, p.stderr)
+            return p.stdout.strip()
+        git_f("init", "-q", "-b", "main")
+        git_f("-c", "user.email=e@x", "-c", "user.name=e", "commit", "-qm", "c1", "--allow-empty")
+        tip = git_f("rev-parse", "HEAD")  # head-rev-lint: compare-only (fixture)
+        git_f("-c", "user.email=e@x", "-c", "user.name=e", "commit", "-qm", "c2", "--allow-empty")
+        git_f("checkout", "-q", "--detach", "HEAD~")
+        assert git_f("rev-parse", "HEAD") == tip, "fixture HEAD is not the first commit"  # head-rev-lint: compare-only
+        rec = root / "repo-pre.txt"
+        rc = cmd_capture(argparse.Namespace(out=str(rec), paths=[str(fixture)],
+                                            label="selftest", repo=str(repo)))
+        assert rc == EXIT_MATCH, "capture exit %d" % rc
+        hdr = rec.read_text()
+        assert "# repo-HEAD-is-branch-tip: no" in hdr, \
+            "detached HEAD did not read no: %r" % hdr
+        assert "# repo-branch-tip: %s" % git_f("rev-parse", "refs/heads/main^{commit}") in hdr, \
+            "branch tip not pinned: %r" % hdr
+        assert "# repo-HEAD: %s" % tip in hdr, "repo-HEAD is not the off-branch commit"
+        assert "# repo-root: %s" % repo.resolve() in hdr, "repo-root missing"
+        assert "# repo-dirty: no" in hdr, "clean fixture repo did not read dirty=no"
+        git_f("checkout", "-q", "main")
+        out2 = root / "repo-tip.txt"
+        rc2 = cmd_capture(argparse.Namespace(out=str(out2), paths=[str(fixture)],
+                                             label="selftest", repo=str(repo)))
+        assert rc2 == EXIT_MATCH, "tip capture exit %d" % rc2
+        assert "# repo-HEAD-is-branch-tip: yes" in out2.read_text(), \
+            "on-tip HEAD did not read yes"
+    run_case(cases, "repo-header-off-branch-tip-no", case_repo_tip)
+
+    # 27. --repo honours its argument and defaults to LANE_ROOT, never the
+    #     caller's cwd: a capture run with cwd='/' must still pin the lane root.
+    def case_repo_cwd():
+        tool = str(Path(__file__).resolve())  # the running script (rule-#14 identity arm)
+        for tag, extra in (("default", []), ("explicit", ["--repo", str(root / "repo-fixture")])):
+            p = subprocess.run([sys.executable, tool, "capture", "--out", "-",
+                                "--paths", str(fixture)] + extra,
+                               capture_output=True, text=True, cwd="/")
+            assert p.returncode == 0, "capture failed (%s): %s" % (tag, p.stderr)
+            want = str(LANE_ROOT) if tag == "default" else str((root / "repo-fixture").resolve())
+            assert "# repo-root: %s" % want in p.stdout, \
+                "%s --repo did not pin %s: %r" % (tag, want, p.stdout[:400])
+    run_case(cases, "repo-arg-and-lane-root-default", case_repo_cwd)
+
     passed = sum(1 for _, ok, _ in cases if ok)
     for name, ok, why in cases:
         print("case %-42s %s%s" % (name, "PASS" if ok else "FAIL", ("  (%s)" % why) if why else ""))
@@ -1316,6 +1433,10 @@ def main(argv=None) -> int:
     p_cap.add_argument("--out", required=True, help="receipt path, or '-' for stdout")
     p_cap.add_argument("--label", default="", help="capture label recorded in the header")
     p_cap.add_argument("--paths", nargs="*", default=None, help="override paths (default: the 5 custody paths)")
+    p_cap.add_argument("--repo", default=str(LANE_ROOT),
+                       help="repository the receipt pins (default: the lane root that owns .ufo/, "
+                            "never the caller's cwd); the header records repo-root, repo-branch-tip, "
+                            "repo-HEAD-is-branch-tip and repo-dirty")
     p_cap.set_defaults(func=cmd_capture)
 
     p_ver = sub.add_parser("verify", help="compare two receipts, or a receipt against the live filesystem")

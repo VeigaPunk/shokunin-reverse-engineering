@@ -3,6 +3,7 @@
 
 Usage: python3 -I receipt-validate.py RECEIPT.json...
        python3 -I receipt-validate.py --selftest
+       python3 -I receipt-validate.py --require-mid-maps RECEIPT.json...
 
 For every receipt argument the tool:
 
@@ -22,6 +23,17 @@ For every receipt argument the tool:
   4. Re-runs pins.compare on the recorded pins_pre/pins_post snapshots
      and checks equality of {equal, changed, missing} against the
      recorded pins_compare. Timestamps are ignored.
+  5. For each step's pin_checks entry carrying map_path/map_sha256
+     (R17-PINMAP forward fix, round 18): recomputes the retained
+     mid-map file's digest, re-runs pins.compare(pins_pre, mid_map),
+     and rechecks the recorded equal/changed/missing/entries/taken_at_utc
+     verdict against the retained map. A recorded entries count that
+     cannot equal len(pins_pre.entries) is a finding in both modes.
+     Entries without map fields keep the round-17 verdict-only checks;
+     a recorded map_error is a finding. With --require-mid-maps (r18
+     receipts) every pin_checks entry must carry map_path+map_sha256
+     (mid_map_missing) and the analyze step must retain at least one
+     check (mid_checks_absent).
 
 pins.py is imported by absolute path via importlib from the resolved
 sibling `tools/pins.py`, mirroring retain.py's loader. When pins.py is
@@ -438,7 +450,143 @@ def rerun_pins_compare(receipt, pins, findings):
     return checks
 
 
-def validate_receipt(receipt, pins):
+def verify_mid_maps(receipt, pins, findings, require_mid_maps=False):
+    """Re-verify retained mid-run pin maps (R17-PINMAP forward fix, round 18).
+
+    For every step pin_checks entry that records map_path/map_sha256: the
+    map file's digest is recomputed against map_sha256, the map is parsed,
+    and the recorded equal/changed/missing verdict is recomputed by running
+    pins.compare(pins_pre, mid_map). entries/taken_at_utc are rechecked
+    against the map's own record; recorded entries is also compared with
+    len(pins_pre.entries) (mid_entries_mismatch, both modes — a forged
+    verdict-only entry cannot shrink the pin set). A recorded map_error (an
+    unretained map) is a finding; an entry with neither map field is the
+    round-17 shape and, without the flag, is left to the verdict-only checks
+    in check_binding. With require_mid_maps every pin_checks entry must
+    carry map_path+map_sha256 (mid_map_missing) and the analyze step must
+    carry at least one check (mid_checks_absent). The generic walk_pairs
+    <stem>_path/<stem>_sha256 convention also recomputes the digest; the
+    mid-specific codes here name which commitment failed."""
+    checks = 0
+    pre = receipt.get("pins_pre")
+    pre_entries = pre.get("entries") if isinstance(pre, dict) else None
+    for where, step in _iter_steps(receipt.get("steps")):
+        if not isinstance(step, dict):
+            continue
+        for i, chk in enumerate(step.get("pin_checks") or []):
+            if not isinstance(chk, dict):
+                continue
+            cwhere = f"{where}.pin_checks[{i}]"
+            map_path = chk.get("map_path")
+            map_sha = chk.get("map_sha256")
+            checks += 1
+            if ("entries" in chk and isinstance(pre_entries, dict)
+                    and chk.get("entries") != len(pre_entries)):
+                findings.append({"code": "mid_entries_mismatch",
+                                 "where": cwhere,
+                                 "recorded": chk.get("entries"),
+                                 "pins_pre_entries": len(pre_entries)})
+            if chk.get("map_error"):
+                findings.append({"code": "mid_map_write_error",
+                                 "where": cwhere,
+                                 "detail": chk["map_error"]})
+            if map_path is None and map_sha is None:
+                if require_mid_maps:
+                    findings.append({"code": "mid_map_missing",
+                                     "where": cwhere,
+                                     "detail": "map_path/map_sha256 required "
+                                              "but absent"})
+                # Round-17 shape: verdict-only entry, nothing to recompute.
+                continue
+            if not (isinstance(map_path, str) and isinstance(map_sha, str)
+                    and len(map_sha) == 64):
+                findings.append({"code": "mid_map_incomplete",
+                                 "where": cwhere,
+                                 "detail": "map_path/map_sha256 absent or malformed"})
+                continue
+            checks += 1
+            if not os.path.isfile(map_path):
+                findings.append({"code": "mid_map_missing",
+                                 "where": cwhere, "path": map_path})
+                continue
+            actual_sha = sha256_file(map_path)
+            if actual_sha != map_sha:
+                findings.append({"code": "mid_map_sha256_mismatch",
+                                 "where": cwhere, "path": map_path,
+                                 "recorded_sha256": map_sha,
+                                 "actual_sha256": actual_sha})
+            try:
+                with open(map_path, "r", encoding="utf-8") as handle:
+                    mid_map = json.load(handle)
+            except (OSError, json.JSONDecodeError) as error:
+                findings.append({"code": "mid_map_unparseable",
+                                 "where": cwhere, "path": map_path,
+                                 "error": str(error)})
+                continue
+            if not isinstance(mid_map, dict):
+                findings.append({"code": "mid_map_unparseable",
+                                 "where": cwhere, "path": map_path,
+                                 "error": "retained map is not an object"})
+                continue
+            checks += 1
+            if "taken_at_utc" in chk and chk.get(
+                    "taken_at_utc") != mid_map.get("taken_at_utc"):
+                findings.append({"code": "mid_map_taken_at_mismatch",
+                                 "where": cwhere,
+                                 "recorded": chk.get("taken_at_utc"),
+                                 "map": mid_map.get("taken_at_utc")})
+            entries = mid_map.get("entries")
+            if isinstance(chk.get("entries"), int) and isinstance(
+                    entries, dict) and chk["entries"] != len(entries):
+                findings.append({"code": "mid_map_entries_mismatch",
+                                 "where": cwhere,
+                                 "recorded": chk["entries"],
+                                 "map_entries": len(entries)})
+            if not isinstance(pre, dict):
+                findings.append({"code": "mid_map_no_pre",
+                                 "where": cwhere,
+                                 "detail": "pins_pre absent; verdict not recomputable"})
+                continue
+            checks += 1
+            try:
+                recomputed = pins.compare(pre, mid_map)
+            except Exception as error:
+                findings.append({"code": "pins_compare_error",
+                                 "where": cwhere,
+                                 "error": f"{type(error).__name__}: {error}"})
+                continue
+            for field in ("equal", "changed", "missing"):
+                exp = recomputed.get(field)
+                got = chk.get(field)
+                if field in ("changed", "missing") and isinstance(exp, list):
+                    match = isinstance(got, list) and sorted(got) == sorted(exp)
+                else:
+                    match = got == exp
+                if not match:
+                    findings.append({"code": "mid_map_compare_mismatch",
+                                     "where": f"{cwhere}.{field}",
+                                     "recorded": got,
+                                     "recomputed": exp})
+    if require_mid_maps:
+        checks += 1
+        steps = receipt.get("steps")
+        if isinstance(steps, dict):
+            astep = steps.get("analyze")
+            ok = isinstance(astep, dict) and bool(astep.get("pin_checks"))
+        elif isinstance(steps, list):
+            ok = any(isinstance(s, dict) and s.get("pin_checks")
+                     for s in steps)
+        else:
+            ok = False
+        if not ok:
+            findings.append({"code": "mid_checks_absent",
+                             "where": "$.steps.analyze.pin_checks",
+                             "detail": "analyze step has no mid-run pin "
+                                      "checks"})
+    return checks
+
+
+def validate_receipt(receipt, pins, require_mid_maps=False):
     """Validate one already-parsed receipt dict."""
     findings = []
     checks = 0
@@ -448,6 +596,8 @@ def validate_receipt(receipt, pins):
         checks += check_binding(receipt, findings)
     if pins is not None:
         checks += rerun_pins_compare(receipt, pins, findings)
+        checks += verify_mid_maps(receipt, pins, findings,
+                                  require_mid_maps=require_mid_maps)
     pre = receipt.get("pins_pre") if isinstance(receipt, dict) else None
     post = receipt.get("pins_post") if isinstance(receipt, dict) else None
     if isinstance(pre, dict):
@@ -464,7 +614,7 @@ def validate_receipt(receipt, pins):
     }
 
 
-def validate_paths(paths, pins):
+def validate_paths(paths, pins, require_mid_maps=False):
     """Validate every receipt path; returns (result_dict, exit_code)."""
     reports = []
     unreadable = 0
@@ -486,7 +636,8 @@ def validate_paths(paths, pins):
             reports.append(entry)
             unreadable += 1
             continue
-        result = validate_receipt(receipt, pins)
+        result = validate_receipt(receipt, pins,
+                                  require_mid_maps=require_mid_maps)
         result["status"] = "valid" if result["valid"] else "invalid"
         result.update(entry)
         reports.append(result)
@@ -502,6 +653,7 @@ def validate_paths(paths, pins):
         "tool": "receipt-validate.py",
         "pins_available": pins is not None,
         "pins_path": str(PINS_PATH),
+        "require_mid_maps": require_mid_maps,
         "receipts": reports,
         "counts": {
             "receipts": len(paths),
@@ -591,7 +743,9 @@ def _carrier_receipt(tmpdir, pins, carrier_file, log_file):
 
 def selftest(pins):
     """Green retain receipt, green carrier receipt, tampered-file red,
-    tampered pins_compare red, unreadable receipt. Exits 0/1."""
+    tampered pins_compare red, mid-map green/tampered/forged reds,
+    --require-mid-maps r17-shape/absent-checks reds and green, forged
+    verdict-only entries red, unreadable receipt. Exits 0/1."""
     cases = []
 
     def record(name, code, want, detail=""):
@@ -700,6 +854,148 @@ def selftest(pins):
         _out4c, code = validate_paths([str(receipt4c)], pins)
         record("carrier_mid_run_drift_red", code, 1)
 
+        # Case 4d: retained mid-run pin map (R17-PINMAP) intact -> exit 0.
+        data = _carrier_receipt(tmpdir, pins, pin_file, log_file)
+        mid_map = pins.snapshot(list(data["pins_pre"]["entries"]))
+        map_file = tmpdir / "mid-1.json"
+        map_file.write_text(json.dumps(mid_map, sort_keys=True, indent=2),
+                            encoding="utf-8")
+        data["steps"]["inspect-go-binary"]["pin_checks"] = [{
+            "taken_at_utc": mid_map["taken_at_utc"],
+            "equal": True, "changed": [], "missing": [],
+            "entries": len(mid_map["entries"]),
+            "map_path": str(map_file),
+            "map_sha256": sha256_file(map_file)}]
+        receipt4f = tmpdir / "r4f.json"
+        receipt4f.write_text(json.dumps(data), encoding="utf-8")
+        _out4f, code = validate_paths([str(receipt4f)], pins)
+        record("carrier_mid_map_green", code, 0,
+               json.dumps(_out4f["receipts"][0].get("findings", [])
+                          if _out4f["receipts"] else []))
+
+        # Case 4e: tampered retained mid map -> exit 1, specifically the
+        # mid-map digest finding (the generic stem walk alone would also
+        # flag it; the case asserts the mid-specific code).
+        with map_file.open("a", encoding="utf-8") as handle:
+            handle.write("tampered\n")
+        _out4g, code = validate_paths([str(receipt4f)], pins)
+        findings4g = (_out4g["receipts"][0].get("findings", [])
+                      if _out4g["receipts"] else [])
+        ok4g = code == 1 and any(
+            f.get("code") == "mid_map_sha256_mismatch" for f in findings4g)
+        cases.append({"case": "carrier_mid_map_tampered_red", "exit": code,
+                      "expected_exit": 1, "ok": ok4g,
+                      "detail": json.dumps(findings4g)})
+
+        # Case 4f: forged retained mid map (consistent digest, wrong
+        # content) -> exit 1, specifically the verdict recompare finding.
+        forged = json.loads(json.dumps(mid_map))
+        fkey = list(forged["entries"])[0]
+        forged["entries"][fkey]["sha256"] = "0" * 64
+        map_file.write_text(json.dumps(forged, sort_keys=True, indent=2),
+                            encoding="utf-8")
+        data["steps"]["inspect-go-binary"]["pin_checks"][0][
+            "map_sha256"] = sha256_file(map_file)
+        receipt4h = tmpdir / "r4h.json"
+        receipt4h.write_text(json.dumps(data), encoding="utf-8")
+        _out4h, code = validate_paths([str(receipt4h)], pins)
+        findings4h = (_out4h["receipts"][0].get("findings", [])
+                      if _out4h["receipts"] else [])
+        ok4h = code == 1 and any(
+            f.get("code") == "mid_map_compare_mismatch" for f in findings4h)
+        cases.append({"case": "carrier_mid_map_forged_red", "exit": code,
+                      "expected_exit": 1, "ok": ok4h,
+                      "detail": json.dumps(findings4h)})
+
+        # Case 4g: --require-mid-maps vs a verdict-only (r17-shape) receipt.
+        # Without the flag it stays green (round-17 behaviour); with it, the
+        # analyze pin_checks entries lack map_path/map_sha256 -> exit 1 with
+        # the mid-specific `mid_map_missing`.
+        data = _carrier_receipt(tmpdir, pins, pin_file, log_file)
+        n_pre = len(data["pins_pre"]["entries"])
+        verdict_only = {"taken_at_utc": utcnow(), "equal": True,
+                        "changed": [], "missing": [], "entries": n_pre}
+        data["steps"]["analyze"] = dict(
+            data["steps"]["inspect-go-binary"], argv=["npx", "analyze"],
+            pin_checks=[dict(verdict_only)])
+        r17ish = tmpdir / "r4i.json"
+        r17ish.write_text(json.dumps(data), encoding="utf-8")
+        _out4i, code = validate_paths([str(r17ish)], pins)
+        record("carrier_r17_shape_green_without_flag", code, 0,
+               json.dumps(_out4i["receipts"][0].get("findings", [])
+                          if _out4i["receipts"] else []))
+        _out4j, code = validate_paths([str(r17ish)], pins,
+                                      require_mid_maps=True)
+        findings4j = (_out4j["receipts"][0].get("findings", [])
+                      if _out4j["receipts"] else [])
+        ok4j = code == 1 and any(
+            f.get("code") == "mid_map_missing" for f in findings4j)
+        cases.append({"case": "carrier_flag_r17_shape_red", "exit": code,
+                      "expected_exit": 1, "ok": ok4j,
+                      "detail": json.dumps(findings4j)})
+
+        # Case 4h: flag on, map-bearing analyze checks -> exit 0.
+        data = _carrier_receipt(tmpdir, pins, pin_file, log_file)
+        mid_map2 = pins.snapshot(list(data["pins_pre"]["entries"]))
+        map_file2 = tmpdir / "mid-flag.json"
+        map_file2.write_text(json.dumps(mid_map2, sort_keys=True, indent=2),
+                             encoding="utf-8")
+        data["steps"]["analyze"] = dict(
+            data["steps"]["inspect-go-binary"], argv=["npx", "analyze"],
+            pin_checks=[{
+                "taken_at_utc": mid_map2["taken_at_utc"],
+                "equal": True, "changed": [], "missing": [],
+                "entries": len(mid_map2["entries"]),
+                "map_path": str(map_file2),
+                "map_sha256": sha256_file(map_file2)}])
+        flagged = tmpdir / "r4k.json"
+        flagged.write_text(json.dumps(data), encoding="utf-8")
+        _out4k, code = validate_paths([str(flagged)], pins,
+                                      require_mid_maps=True)
+        record("carrier_flag_mid_map_green", code, 0,
+               json.dumps(_out4k["receipts"][0].get("findings", [])
+                          if _out4k["receipts"] else []))
+
+        # Case 4i: flag on, analyze has an empty pin_checks -> exit 1 with
+        # `mid_checks_absent` (a silently unpinned analyze step).
+        data["steps"]["analyze"] = dict(
+            data["steps"]["inspect-go-binary"], argv=["npx", "analyze"],
+            pin_checks=[])
+        unpinned = tmpdir / "r4l.json"
+        unpinned.write_text(json.dumps(data), encoding="utf-8")
+        _out4l, code = validate_paths([str(unpinned)], pins,
+                                      require_mid_maps=True)
+        findings4l = (_out4l["receipts"][0].get("findings", [])
+                      if _out4l["receipts"] else [])
+        ok4l = code == 1 and any(
+            f.get("code") == "mid_checks_absent" for f in findings4l)
+        cases.append({"case": "carrier_flag_checks_absent_red", "exit": code,
+                      "expected_exit": 1, "ok": ok4l,
+                      "detail": json.dumps(findings4l)})
+
+        # Case 4j: forged verdict-only entry whose recorded `entries` cannot
+        # match pins_pre -> `mid_entries_mismatch` in BOTH modes (flag and
+        # no flag), so a shortened pin set never passes.
+        for label, flag in (("no_flag", False), ("flag", True)):
+            data = _carrier_receipt(tmpdir, pins, pin_file, log_file)
+            forged_v = {"taken_at_utc": utcnow(), "equal": True,
+                        "changed": [], "missing": [], "entries": 99}
+            data["steps"]["analyze"] = dict(
+                data["steps"]["inspect-go-binary"], argv=["npx", "analyze"],
+                pin_checks=[dict(forged_v)])
+            receipt_ev = tmpdir / ("r4m-%s.json" % label)
+            receipt_ev.write_text(json.dumps(data), encoding="utf-8")
+            _out4m, code = validate_paths(
+                [str(receipt_ev)], pins, require_mid_maps=flag)
+            findings4m = (_out4m["receipts"][0].get("findings", [])
+                          if _out4m["receipts"] else [])
+            ok4m = code == 1 and any(
+                f.get("code") == "mid_entries_mismatch"
+                for f in findings4m)
+            cases.append({"case": "carrier_entries_forged_red_" + label,
+                          "exit": code, "expected_exit": 1, "ok": ok4m,
+                          "detail": json.dumps(findings4m)})
+
         # Case 5: unreadable receipt path -> exit 2.
         _out5, code = validate_paths(
             [str(tmpdir / "does-not-exist.json")], pins)
@@ -721,6 +1017,10 @@ def main():
         "compare against live files.")
     parser.add_argument("--selftest", action="store_true",
                         help="run built-in fixtures and exit")
+    parser.add_argument("--require-mid-maps", action="store_true",
+                        help="require every pin_checks entry to carry "
+                        "map_path+map_sha256 and analyze to carry at least "
+                        "one mid-run check (r18 receipts)")
     parser.add_argument("receipts", nargs="*", metavar="RECEIPT.json")
     args = parser.parse_args()
 
@@ -735,7 +1035,8 @@ def main():
               "error": f"pins.py unavailable at {PINS_PATH}",
               "exit": 2})
         raise SystemExit(2)
-    out, code = validate_paths(args.receipts, pins)
+    out, code = validate_paths(args.receipts, pins,
+                               require_mid_maps=args.require_mid_maps)
     emit(out)
     raise SystemExit(code)
 
