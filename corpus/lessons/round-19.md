@@ -189,3 +189,42 @@ S039 is a new tier-A own-work row (opened 2026-10-20), not publication metadata.
   forecast for an aborting analyzer, and compile's separate RTTI NPE. The
   explicit map-path failure observation remains useful; these are not hidden
   as a green complete analyzer sweep.
+
+## Final measured execution (author-side)
+
+Source `b26a6c42207a859e70bd892c7e89a5befedf379b`, evidence
+`2a6229f2fb415ba8efecbc2ae24e69ec89b64986`: the single post-integration
+verification completed with **62 expected command exits, 26 content checks,
+no failed check**, no source/tool integrity mismatch, and equal pin maps at
+the two recorded instants. Ten post-fix mutants were killed, no survivor;
+the relative-root and pristine controls exit 0. Actual stdout/stderr, argv,
+times, tool identities and exits live in `verification.json` and `verify/`.
+This is not outside verification.
+
+- C1: strict B 7/7/7 open/named/substance, source 0/0/0.
+- C2: strict mismatches 2→0, nine statements, no unstated client; census
+  stale4→0, ambiguous/unresolved0, undeclared2 unchanged and FAIL/1 retained;
+  G11 and scope marker error lists empty.
+- C3: pass2 current validation 8/8 exit0, distinct bound count0→8,
+  comparisons7/8, vet13902080 and seven non-D logs without the named
+  failure signature. Compile's additional wrapper-attributed error is
+  separately recorded in verification.json, not hidden by the comparator.
+- No-harm source controls: coverage96/96→97/97 with no missing/dangling,
+  depth17/17 unchanged; old QUALITY21 rows identical plus #22; LOG/SCORECARD
+  and r12/r18 entries retain baseline prefixes; old lessons/runs/frozen
+  predictions unchanged. No capability row or new coverage ground.
+- SOURCES end census exit0 (W04 S033 retained): 39 rows, A34/B4/C1,
+  mined37/rejected2. S039 and six reverse-index updates are recorded above.
+- W1 90 / W2 72 seats, 162 total; W2 has72/72 reports and72 normal stop
+  records. W1 reportless42 and all90 terminal records are retained
+  separately. Two W2 job-cap refusals spawned none; third identical call
+  spawned72, no replacement of a dead seat.
+- Final misroot sweep: `git -C /home/vgpnk/Projects/shokunin status --porcelain`
+  exit0, retained in `evidence/misroot-status.txt`. Only watchdog/state
+  runtime entries appeared; no seat-authored misroot file. Copied/deleted
+  none, driver files untouched.
+
+LOG linkage: `LOG.md:2254` round-19 measured records; SCORECARD round-19
+measured records at `:2505`. Outside sample remains the non-author closure's
+duty; the carrier-execution breach and residual security/parser limitations
+are disclosed, not silently waived.

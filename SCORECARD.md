@@ -2501,3 +2501,67 @@ All SHONEN marks remain `[~]`; outside sampling belongs to closure.
 Planned: calibration on outside-routed disagreements, the census's two
 undeclared round-17 blocks, and the r12 operability add/withdraw decision;
 depth on the emulator's whole-walk versus first-failure read-list discrepancy.
+
+### Round-19 measured records (supersedes preliminary target language above)
+
+Verification source: `b26a6c42207a859e70bd892c7e89a5befedf379b`.
+Retained execution evidence: `2a6229f2fb415ba8efecbc2ae24e69ec89b64986`,
+`.ufo/waves/round-19/verification.json`: 62 commands with expected exits,
+26 content checks, no failed check, identical tool bytes at the two recorded
+pin instants, and zero source/tool integrity mismatches. Expected nonzero
+results remain explicit: census FAIL/1 and vet full-list compare/1.
+
+| Claim / axis | Measured before → after at B=`8a8da7e` and source `b26a6c4` | Counting command / evidence | Verdict |
+|---|---|---|---|
+| C1 calibration (owned, tied-lowest) | open/named/substance 7/7/7 → 0/0/0; strict exit 1→0; admission criteria 21→22, old 21 byte-identical | `python3 -I -B .ufo/waves/round-19/tools/routed-r18.py --root <LANE> --rev <REV> --strict`; `verify/routed-r18-{baseline,source}-strict.stdout`, `controls-r19.stdout` | **improved**, numeric proxy 10.0→10.0 (delta 0); trusted-code counter, not adversarial execution authenticity |
+| C2 freshness (fleet axis; no owned numeric proxy) | mismatched clients 2→0, final 9 stated claims / 0 unstated; stale loci 4→0, ambiguous/unresolved 0, undeclared unchanged 2 | `province-pins.py --root <LANE> --rev <REV> --strict`; baseline retained census and final `verify/c1-census-v10.stdout`; no SCOPE/DATED widening | **improved**; census still FAIL/1 on the two carried undeclared blocks, no new marker defect |
+| C3 depth (owned, sourced S038 provenance plus S035/S023/S003 mechanism) | frozen labels with current validated bound receipts + comparison 0→8; pass2 validation 8/8 exit 0; compare 7/8, both pass aggregate exits 1 | `python3 -I -B .ufo/waves/round-19/measure.py <REV>` field `c3.bound_validated` (prefers pass2); `verify/receipt-validate-*.stdout`; fresh log extraction and frozen membership checks | **improved**, numeric proxy 10.0→10.0 (delta 0); H1-specific index confirmed in two passes, full-list model rejected, compile's extra RTTI NPE retained |
+
+- R19-C3COUNT: supersedes the preliminary recursive `find runs` count in the
+  C3 row above: it counts 16 comparison files after pass2, not eight unique
+  labels. The measured command is `measure.py <REV>` field
+  `c3.bound_validated`, 0→8; raw pass1/pass2 artifacts remain separate.
+- R12-AXIS-DECISION: withdraw operability as an owned-axis improvement from
+  the author's r12 scorekeeping, rather than add a new owned proxy.
+  Historical outside admission is not rewritten; lesson round-19 records
+  the decision. Its source/custody debt is indexed by S039 and disclosed.
+- Post-fix falsification: `verify/postfix-mutations.stdout` reports 10 killed,
+  0 survived, pristine/relative-root exit 0. The paired strict receipt mutant
+  records its intermediate red restoration until the companion receipt is
+  also restored; no failed state is concealed.
+- No-harm: command A map 96/96→97/97, missing/dangling empty, depth 17/17→17/17;
+  scores stay 10.0. LOG/SCORECARD and the r12/r18 knowledge entries retain
+  baseline bytes as prefixes. Prior lessons and r17/r18 runs/predictions are
+  unchanged; round-19 frozen prediction tree unchanged. No capability row
+  added. Sources 36→39 (A 31→34, B4/C1 unchanged, mined34→37/rejected2 unchanged).
+- Waves: W1 90 (executor17/scout23/revenger4/connector8/scribe10/critic6/
+  sentinel2/reviewer18/simplifier2), 48 reports, 42 reportless with causes
+  (9 direct 429 errors, 33 parent-session aborts). Raw terminal records also
+  distinguish 20 report-present non-clean last messages. W2 72 (reviewer48/
+  mutation-tester4/scout10/connector2/critic4/sentinel2/scribe2), 72 reports,
+  72 normal stop records, no dead seat. Two job-cap refusals spawned none;
+  the third identical payload spawned W2. Total 162; L1 holds planner seat.
+
+Learning trends (author-side): expansion **unchanged** (held Go ground);
+quality **improved** (sourced re-verification, raw anomalies and model
+rejections retained); discernment **improved** through outside-routed
+R18-DEADSEAT-RECORD → lesson → grounded QUALITY #22. Current outside
+admit/reject sampling remains pending, never self-attested. SHONEN stays `[~]`.
+
+Planned (supersedes the preliminary plan): learn from the next outside
+sample; census's two undeclared blocks and registered nested-lint limit
+remain open. Future model work must forecast first failure and mask the
+variadic bit before claiming whole-walk equivalence; no such fix is claimed here.
+
+Exact command forms (run with REV set to baseline or verification source above):
+
+```sh
+LANE=/home/vgpnk/Projects/shokunin/kaidoku-shokunin
+python3 -I -B "$LANE/.ufo/waves/round-19/tools/routed-r18.py" --root "$LANE" --rev "$REV" --strict
+python3 -I -B "$LANE/.ufo/waves/round-19/tools/province-pins.py" --root "$LANE" --rev "$REV" --strict
+python3 -I -B "$LANE/.ufo/waves/round-19/measure.py" "$REV"
+```
+
+The census comparison uses the retained baseline output and the current
+`python3 -I -B "$LANE/.ufo/gates/c1-census-v10.py" --root "$LANE"` output,
+not an unsupported census `--rev` option. C2 is live-host time-indexed.

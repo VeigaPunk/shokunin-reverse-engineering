@@ -103,3 +103,15 @@ of `runs/pass2/t1250-compile/logs/rea-ghidra-07WMDZ/ghidra.log`, attributed to
 Thus “no analyzer errors” as a whole-log statement is rejected even though
 the existing compare reports 7/8. This anomaly is retained, not suppressed
 by expanding the predicted success class.
+
+### Delivered validation record
+
+The post-integration execution at `b26a6c42207a859e70bd892c7e89a5befedf379b`
+is retained in `2a6229f2fb415ba8efecbc2ae24e69ec89b64986`:
+`verify/receipt-validate-t1250-*.stdout` all exit0 with no findings, and
+`verify/measure-source.stdout` reports `run_tree: pass2`,
+`bound_validated: 8`, `compare_jsons: 8`, `matched: 7`.
+The verifier re-extracts all bound raw logs and applies the unchanged frozen
+membership rule separately from compare success. Its additional-error record
+explicitly retains compile's wrapper-attributed NPE. These are the current
+delivered binding results, not the historical first-pass zero-exit substitution.

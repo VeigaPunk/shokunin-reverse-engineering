@@ -2250,3 +2250,38 @@ Claims/amendment: `.ufo/waves/round-19/claims.json`.
   before final-message 429s. Dead seats never replaced. Verified partial
   patches reused; nested-lint patch rejected on selftest. Per-seat retained
   causes in wave1-outcomes.json; lesson round-19 records mistakes.
+
+## 2026-10-20 — round-19 measured records and final integration
+
+- Verification source `b26a6c42207a859e70bd892c7e89a5befedf379b`; evidence
+  `2a6229f2fb415ba8efecbc2ae24e69ec89b64986`: 62 expected command exits,
+  26 content checks held, no tool-integrity mismatch; ten post-fix mutants
+  killed with retained actual red/restore outputs.
+- C1 strict B→source: open/named/substance 7/7/7→0/0/0 (exit1→0);
+  QUALITY 21→22 with old rows identical. C2 strict mismatches 2→0, nine
+  statements and no unstated clients; census stale4→0 but undeclared2 and
+  FAIL/1 remain. Source-based no-harm map96/96→97/97, depth17/17 unchanged.
+- C3's first pass was not sufficient for a current live-binding claim after
+  the validator changed. A second pass from producer
+  `279e8b19c51658bfd05b9e31a1c0894ab2e70537` is preserved under runs/pass2,
+  using the unchanged `a1140e7` predictions. Final live receipt validation
+  8/8 exit0; comparisons7/8; vet again13902080; both aggregate exits1.
+  Compile's deferred RTTI NPE and the emulator's unmasked-variadic bug are
+  retained and explicitly rejected as full-model predictive success.
+- Correction to this round's earlier W1 summary: 42 means reportless seats,
+  not total non-clean last messages. Raw transcripts record50aborted /
+  12error /28stop; 17aborted+3error records have reports. W2 has72/72
+  reports and72normal stops. No dead seat was replaced; total162.
+- Source metadata: new S037/S038 identity-only, S039 historical own-work;
+  six used-by reverse links appended with exact old→new lesson records.
+  The r12 addendum is source-indexed and discloses custody, and the author
+  withdraws r12's owned-operability claim; historical outside verdict stays.
+- All new-code verification ran only after the falsification wave settled.
+  Outside sampling/admission stays the closure's duty. Known limits and the
+  carrier-version execution breach remain disclosed in lesson round-19.
+
+Additional targeted continuity run after fixing the reviewer-reported
+registry-path regression: round-18 `routed-defects.py --rev b26a6c4 --strict`
+exit0, open/named/substance0/0/0. Exact argv, tool SHA, stdout/stderr hashes
+and completion time: `.ufo/waves/round-19/evidence/r17-continuity.receipt.json`.
+This supplements (does not replace or inflate) the 62-command verification.
