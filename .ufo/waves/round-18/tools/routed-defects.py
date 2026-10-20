@@ -326,7 +326,7 @@ def _pinmaps_retained_check(root: str, rev: str) -> dict:
     if runs is None:
         return _check("substance", name, False,
                       f"{RUNS18}/ absent at rev")
-    failures = []
+    failures, good = [], []
     for run_dir in runs:
         receipt_path = f"{RUNS18}/{run_dir}/receipt.json"
         blob = _show(root, rev, receipt_path)
@@ -363,12 +363,17 @@ def _pinmaps_retained_check(root: str, rev: str) -> dict:
                 bad.append(f"pin_checks[{i}] blob at {resolved[0]} sha256 "
                            f"!= map_sha256 {ms[:16]}…")
         if not bad:
-            return _check("substance", name, True,
-                          f"{receipt_path}: {len(checks_list)} pin_checks "
-                          "each carry map_path + verified map_sha256")
+            good.append(run_dir)
+            continue
         failures.append(f"{run_dir}: {'; '.join(bad[:3])}")
+    # Wave-2 hardening (w2 TruthPINMAP F2, ScorecardAudit F3): every round-18
+    # receipt must carry verified mid maps, not just one.
+    if good and not failures:
+        return _check("substance", name, True,
+                      f"{len(good)} receipts; every pin_checks entry carries "
+                      "map_path + verified map_sha256")
     return _check("substance", name, False,
-                  ("no qualifying receipt; " + " | ".join(failures[:4]))
+                  ("receipts without verified mid maps: " + " | ".join(failures[:4]))
                   if failures else "no receipt.json under runs dirs")
 
 
@@ -459,7 +464,25 @@ def _d_validate16(root: str, rev: str) -> dict:
         ok = isinstance(vs, str) and len(vs) == 64 and all(
             c in "0123456789abcdefABCDEF" for c in vs)
         checks.append(_check("substance", "validator-sha256-pinned", ok,
-                             f"validator_sha256={vs!r}"))
+                             f"validator_sha256={vs!r} (format only; see limits)"))
+        # Wave-2 hardening (w2 GateVALIDATE16, ValidateRemapAttack): every
+        # summary entry's retained stdout exists at REV and hashes to its
+        # recorded stdout_sha256.
+        sdir = SUMMARY16.rsplit("/", 1)[0]
+        unbound = []
+        for r in (doc.get("receipts") or []):
+            if not isinstance(r, dict):
+                unbound.append("non-object entry")
+                continue
+            lab, want = r.get("label"), r.get("stdout_sha256")
+            blob = _show(root, rev, f"{sdir}/{lab}.stdout") if isinstance(lab, str) else None
+            if blob is None or not isinstance(want, str) or \
+                    hashlib.sha256(blob).hexdigest() != want:
+                unbound.append(str(lab))
+        checks.append(_check("substance", "summary-stdout-bound",
+                             bool(doc.get("receipts")) and not unbound,
+                             "every entry's stdout retained and hash-bound"
+                             if not unbound else f"unbound entries: {unbound[:4]}"))
     else:
         reason = ("summary absent/unparseable" if not isinstance(doc, dict)
                   else f"no run dirs at {RUNLOG_REV}:{RUNS17}/")
@@ -477,10 +500,14 @@ def _d_validate16(root: str, rev: str) -> dict:
         fraction = f"{zero_exits}/8"
         for path, label in (("SCORECARD.md", "scorecard"),
                             ("LOG.md", "log")):
-            ok, detail = _line_with(_text(_show(root, rev, path)), path,
-                                    "R17-VALIDATE16", fraction)
+            text = _text(_show(root, rev, path))
+            pat = re.compile(r"(?<![0-9])%d/8(?![0-9])" % zero_exits)
+            hit = None if text is None else next(
+                (ln.strip()[:200] for ln in text.splitlines()
+                 if "R17-VALIDATE16" in ln and pat.search(ln)), None)
             checks.append(_check("substance", f"{label}-states-true-count",
-                                 ok, detail))
+                                 hit is not None,
+                                 hit or f"{path}: no R17-VALIDATE16 line stating exactly {fraction}"))
     return _defect("R17-VALIDATE16", checks)
 
 
@@ -628,6 +655,10 @@ def _registry_rows(text: str, first_cell: str) -> list[list[str]]:
 def _scope_cell_ok(root: str, rev: str, cell: str) -> tuple[bool, str]:
     """'Write scope:' followed by >=3 words; backticked .ufo//corpus/ tokens
     must exist at REV."""
+    # Wave-2 hardening (w2 GateREGISTRY F2): the routed defect names both
+    # fields, so a pinned-values clause is required too.
+    if "Pinned values:" not in cell:
+        return False, "no 'Pinned values:' in 5th cell"
     idx = cell.find("Write scope:")
     if idx < 0:
         return False, "no 'Write scope:' in 5th cell"
@@ -693,6 +724,10 @@ def _d_registry(root: str, rev: str) -> dict:
     else:
         bad = [f"2nd cell is {r[1][:80]!r}" for r in rows
                if len(r) < 2 or not r[1].startswith("gate")]
+        # Wave-2 hardening (w2 GateREGISTRY F3): a gate's registered entry
+        # must be able to fail, i.e. carry --strict.
+        bad += [f"3rd cell lacks --strict: {r[2][:60]!r}" for r in rows
+                if len(r) < 3 or "--strict" not in r[2]]
         checks.append(_check("named", "skill-row-citation-drift", not bad,
                              "; ".join(bad) if bad else
                              "citation-drift 2nd cell starts with 'gate'"))
@@ -911,21 +946,22 @@ def _closed_files(fixture_revs: tuple[str, str] | None = None) -> dict[str, str]
                       "    entry = {}\n"
                       "    entry[\"map_sha256\"] = digest\n"
                       "    return entry\n"),
-        RECEIPT_VALIDATE: ("FINDING = \"mid_map_mismatch\"\n"
+        RECEIPT_VALIDATE: ("FINDINGS = (\"mid_map_sha256_mismatch\",\n"
+                           "            \"mid_map_compare_mismatch\")\n"
                            "def validate():\n"
-                           "    return FINDING\n"),
+                           "    return FINDINGS\n"),
         "SKILL.md": (
             "# skill\n\n| name | kind | cmd | selftest | scope | note |\n"
             "|---|---|---|---|---|---|\n"
-            "| go-route-compare | probe / k | `c` | `s` | Write scope: "
+            "| go-route-compare | probe / k | `c` | `s` | Pinned values: none. Write scope: "
             "`.ufo/waves/round-18/runs/` receipt files only | n |\n"
-            "| receipt-validate | gate / k | `c` | `s` | Write scope: "
+            "| receipt-validate | gate / k | `c` | `s` | Pinned values: none. Write scope: "
             "`.ufo/waves/round-18/runs/` receipt files only | n |\n"
-            "| pins | tool / k | `c` | `s` | Write scope: `corpus/` pin "
+            "| pins | tool / k | `c` | `s` | Pinned values: none. Write scope: `corpus/` pin "
             "snapshot files only | n |\n"
-            "| go-buildinfo-probe | probe / k | `c` | `s` | Write scope: "
+            "| go-buildinfo-probe | probe / k | `c` | `s` | Pinned values: none. Write scope: "
             "`.ufo/waves/round-18/runs/` receipt files only | n |\n"
-            "| citation-drift | gate / kaidoku | `c` | `s` | Write scope: "
+            "| citation-drift | gate / kaidoku | `c --strict` | `s` | Write scope: "
             "`.ufo/waves/round-18/runs/` receipt files only | n |\n"),
         "corpus/SOURCES.md": (
             "# src\n\n| id | source | kind | tier | scope | anchor | "
@@ -943,7 +979,10 @@ def _closed_files(fixture_revs: tuple[str, str] | None = None) -> dict[str, str]
             {"rev": VALIDATE16_REV,
              "labels": list(_LABELS),
              "validator_sha256": "f" * 64,
-             "receipts": [{"label": l, "exit": 0} for l in _LABELS]}),
+             "receipts": [{"label": l, "exit": 0,
+                           "stdout_sha256": hashlib.sha256(b"ok\n").hexdigest()}
+                          for l in _LABELS]}),
+        **{f"{SUMMARY16.rsplit('/', 1)[0]}/{l}.stdout": "ok\n" for l in _LABELS},
         S032_DIGESTS: json.dumps(
             {"page_digests": ["1" * 64, "2" * 64]}),
         "corpus/pins-note.txt": "x\n",
@@ -1142,7 +1181,7 @@ def _selftest() -> int:
                 # no lessons file, no anchored correction
                 CARRIER_RUN: ("# entry[\"map_sha256\"] = digest\n"
                               "pin_checks = {}\n"),
-                RECEIPT_VALIDATE: ("# finding mid_map_mismatch\n"
+                RECEIPT_VALIDATE: ("# finding mid_map_sha256_mismatch mid_map_compare_mismatch\n"
                                    "def validate():\n"
                                    "    return 0\n"),
                 "SCORECARD.md": (
@@ -1215,7 +1254,7 @@ def _selftest() -> int:
                     "| go-buildinfo-probe | probe / k | `c` | `s` | Write "
                     "scope: `.ufo/waves/round-18/runs/` receipt files only "
                     "| n |\n"
-                    "| citation-drift | gate / kaidoku | `c` | `s` | Write "
+                    "| citation-drift | gate / kaidoku | `c --strict` | `s` | Write "
                     "scope: `.ufo/waves/round-18/runs/` receipt files only "
                     "| n |\n"),
             }),

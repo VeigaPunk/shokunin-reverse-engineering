@@ -211,7 +211,7 @@ TOOL_PATH = Path(__file__).resolve()
 SELF = sys.argv[0]
 
 # Round-18 R3 fix: the custody repo is the lane root that owns .ufo/, never cwd.
-LANE_ROOT = TOOL_PATH.parents[3]
+LANE_ROOT = TOOL_PATH.parents[3] if len(TOOL_PATH.parents) > 3 else TOOL_PATH.parent
 REPO_BRANCH = "main"
 
 CUSTODY_PATHS = (
@@ -351,7 +351,7 @@ def _git_at(repo: Path, *argv: str) -> str | None:
     """Read-only `git -C <repo> <argv>`; returns stripped stdout or None on any failure."""
     try:
         out = subprocess.run(
-            ["git", "-C", str(repo), *argv],
+            ["git", "--no-optional-locks", "-C", str(repo), *argv],
             capture_output=True, text=True, timeout=10,
         )
         if out.returncode == 0:

@@ -13,8 +13,9 @@ exit 2 before running any command unless HEAD equals the branch tip, the
 tip equals refs/remotes/origin/main, and no tracked file is modified.
 The retained d0ab299 run (verification.json) used the pre-change bytes,
 where `source` was `git rev-parse HEAD`. Rerunning this script overwrites
-that retained round-17 evidence (verification.json + verify/); run it only
-in a throwaway clone.
+that retained round-17 evidence (verification.json + verify/) of the repo
+the script sits in: from round 18 `LANE` is derived from this file's path,
+so a copy inside a throwaway clone acts on that clone, never on the lane.
 
 Usage: python3 -I -B verify.py BASELINE_REV   (writes verification.json + verify/)
 """
@@ -27,7 +28,7 @@ import sys
 from datetime import datetime, timezone
 
 sys.dont_write_bytecode = True
-LANE = "/home/vgpnk/Projects/shokunin/kaidoku-shokunin"
+LANE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 W = LANE + "/.ufo/waves/round-17"
 T = W + "/tools"
 OUT = W + "/verify"

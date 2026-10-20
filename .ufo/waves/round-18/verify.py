@@ -36,6 +36,7 @@ PREDICTIONS = W + "/predictions"
 PY = ["python3", "-I", "-B"]
 GATES = LANE + "/.ufo/gates"
 REVPIN = T + "/revpin.py"
+GODATA = "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/data/typeinfo/golang"
 
 
 def now():
@@ -198,9 +199,9 @@ def main():
         receipt = os.path.join(rd, "receipt.json")
         pred = os.path.join(PREDICTIONS, lab + ".prediction.json")
         if os.path.isfile(receipt):
-            run("receipt-validate-" + lab, PY + [f"{T17}/receipt-validate.py", receipt], 0)
+            run("receipt-validate-" + lab, PY + [f"{T17}/receipt-validate.py", "--require-mid-maps", receipt], 0)
         else:
-            skip("receipt-validate-" + lab, PY + [f"{T17}/receipt-validate.py", receipt],
+            skip("receipt-validate-" + lab, PY + [f"{T17}/receipt-validate.py", "--require-mid-maps", receipt],
                  0, "no receipt.json in " + rd)
         obs = os.path.join(rd, "observation.json")
         if not os.path.isfile(obs):
@@ -234,6 +235,20 @@ def main():
     run("measure-baseline", PY + [f"{W}/measure.py", base], 0)
     run("measure-source", PY + [f"{W}/measure.py", source], 0)
     run("controls", PY + [f"{W}/controls.py", base, source], 0)
+    # Wave-2 additions (Verify18Review, OpenRoutedQueue): registered entry
+    # forms of revpin and swiss-misread, the runner selftest, census mode.
+    run("revpin-lane", PY + [f"{T}/revpin.py", "--root", LANE], 0)
+    run("selftest-run-carriers", ["bash", f"{W}/run-carriers.sh", "--selftest"], 0)
+    for lab, carrier in (("s1246-swiss-nethttp",
+                          "/home/vgpnk/.local/share/kaidoku-r18/carriers/s1246-swiss-nethttp"),
+                         ("real-kimi-webbridge",
+                          "/home/vgpnk/.kimi-webbridge/bin/kimi-webbridge"),
+                         ("calib-aether", "/usr/bin/aether")):
+        run("swiss-misread-" + lab, PY + [f"{T}/swiss-misread.py", "--carrier", carrier,
+                                          "--golang-root", GODATA], 0)
+    run("sources-census-counts", ["/home/vgpnk/Projects/shokunin/scripts/sources-census.sh",
+                                  "census", "--root",
+                                  "/home/vgpnk/Projects/shokunin", "kaidoku"], 0)
 
     run("citation-drift-strict", PY + [
         f"{GATES}/citation-drift/citation-drift-probe.py",
