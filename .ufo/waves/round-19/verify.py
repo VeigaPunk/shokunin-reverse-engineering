@@ -21,7 +21,7 @@ c1-census-v10 baseline receipt are read at the source revision (Git objects;
 `git show REV:path`, `git ls-tree`), and every lane tool the pass executes
 must have worktree bytes equal to its source blob (`tool_integrity`; a
 mismatch fails the pass). C3 run receipts and observations are read from
-`W19/runs/<label>/` as the run wrote them: they are runtime evidence, not
+`W19/runs/pass2/<label>/` as the preserved second pass wrote them: they are runtime evidence, not
 committed bytes, and round-17's remap lesson shows that relocating a receipt
 breaks its path bindings. predictions are materialized from the source blob
 into `verify/scratch-predictions/` so `compare.py` judges the frozen bytes.
@@ -69,7 +69,7 @@ T18 = LANE + "/.ufo/waves/round-18/tools"
 T17 = LANE + "/.ufo/waves/round-17/tools"
 GATES = LANE + "/.ufo/gates"
 OUT = W + "/verify"
-RUNS = W + "/runs"
+RUNS = W + "/runs/pass2"
 PRED = W + "/predictions"
 FLEET = "/home/vgpnk/Projects/shokunin"
 CENSUS = FLEET + "/scripts/sources-census.sh"
@@ -105,15 +105,20 @@ EXPECTED_EXITS = {
     "measure-baseline": 0,
     "measure-source": 0,
     # C3 retained-run checks.
-    # Live receipts correctly detect the forward-edited producer validator;
-    # source-bound clean validations are retained separately under evidence/.
-    "receipt-validate-": 1,
+    # The preserved second pass uses the final producer validator bytes.
+    "receipt-validate-": 0,
     "log-extract-": 0,
     "compare-t1250-vet": 1,  # frozen full-list prediction falsified
     "compare-": 0,
     "c1-census-v10": 1,  # two pre-existing undeclared blocks, no stale loci
     "sources-census-counts": 0,
     "sources-census": 0,
+    "r12-reconcile": 0,
+    "controls-r19": 0,
+    "citation-strict": 0,
+    "fixture-ok": 0,
+    "fixture-detects": 0,
+    "postfix-mutations": 0,
     # Registered revpin form and pin bookkeeping.
     "revpin-lane": 0,
     "pins-snapshot-pre": 0,
@@ -201,6 +206,8 @@ class Pass:
 
     def run(self, label: str, argv, expect: int, env=None) -> str:
         self._claim(label)
+        if expect != expected_for(label):
+            raise RuntimeError("caller expectation disagrees with committed table: " + label)
         rec = {
             "label": label,
             "argv": list(argv),
@@ -232,6 +239,8 @@ class Pass:
         """Record a command that could not run as an unevaluable unexpected
         exit instead of crashing the pass."""
         self._claim(label)
+        if expect != expected_for(label):
+            raise RuntimeError("skip expectation disagrees with committed table: " + label)
         rec = {
             "label": label,
             "argv": list(argv),
@@ -533,6 +542,14 @@ def full_pass(arg: str) -> int:
     for name in ("receipt-validate", "compare", "log-extract", "pins"):
         run_tool("selftest-w17-" + name, ".ufo/waves/round-17/tools/" + name + ".py",
                  ["--selftest"], 0)
+    run_tool("selftest-controls-r19", ".ufo/waves/round-19/controls-r19.py", ["--selftest"], 0)
+    run_tool("selftest-verify", ".ufo/waves/round-19/verify.py", ["--selftest"], 0)
+    run_tool("controls-r19", ".ufo/waves/round-19/controls-r19.py", [base, source], 0)
+    run_tool("citation-strict", ".ufo/gates/citation-drift/citation-drift-probe.py",
+             ["--root", LANE, "--rev", source,
+              "--table", A(".ufo/gates/citation-drift/pointer-table.json"),
+              "--expected", A(".ufo/gates/citation-drift/expected.json"), "--strict"], 0)
+    run_tool("postfix-mutations", ".ufo/waves/round-19/postfix-mutations.py", [source], 0)
 
     # Counting commands at the baseline and at the source revision.
     routed = ".ufo/waves/round-19/tools/routed-r18.py"
@@ -561,6 +578,7 @@ def full_pass(arg: str) -> int:
     labels, labels_source = labels_at(source)
     scratch_pred = OUT + "/scratch-predictions"
     os.makedirs(scratch_pred, exist_ok=True)
+    log_paths = {}
     for lab in labels:
         rd = os.path.join(RUNS, lab)
         receipt = os.path.join(rd, "receipt.json")
@@ -568,41 +586,38 @@ def full_pass(arg: str) -> int:
         if os.path.isfile(receipt):
             run_tool("receipt-validate-" + lab,
                      ".ufo/waves/round-17/tools/receipt-validate.py",
-                     ["--require-mid-maps", receipt], 1)
+                     ["--require-mid-maps", receipt], 0)
         else:
             argv = PY + [A(".ufo/waves/round-17/tools/receipt-validate.py"),
                          "--require-mid-maps", receipt]
-            p.skip("receipt-validate-" + lab, argv, 1,
+            p.skip("receipt-validate-" + lab, argv, 0,
                    "no receipt.json in " + rd)
-        obs = os.path.join(rd, "observation.json")
-        if not os.path.isfile(obs):
-            obs = None
-            log = None
-            if os.path.isfile(receipt):
-                try:
-                    bound = json.load(open(receipt)).get("bound_sessions") or []
-                    if bound:
-                        log = os.path.join(rd, "logs",
-                                           os.path.basename(bound[0]), "ghidra.log")
-                except (OSError, ValueError):
-                    log = None
-            if log and os.path.isfile(log) and os.path.isfile(
-                    A(".ufo/waves/round-17/tools/log-extract.py")):
-                obs = p.run("log-extract-" + lab,
-                            PY + [A(".ufo/waves/round-17/tools/log-extract.py"),
-                                  "--log", log], 0)
-                executed_tools.add(".ufo/waves/round-17/tools/log-extract.py")
+        # Reparse the bound raw log every time, not only when the producer's
+        # observation file is missing. Compare consumes this fresh output.
+        obs, log = None, None
+        if os.path.isfile(receipt):
+            try:
+                bound = json.load(open(receipt)).get("bound_sessions") or []
+                if bound:
+                    log = os.path.join(rd, "logs", os.path.basename(bound[0]), "ghidra.log")
+            except (OSError, ValueError):
+                pass
+        if log and os.path.isfile(log):
+            log_paths[lab] = log
+            obs = p.run("log-extract-" + lab,
+                        PY + [A(".ufo/waves/round-17/tools/log-extract.py"), "--log", log], 0)
+            executed_tools.add(".ufo/waves/round-17/tools/log-extract.py")
         if pred_rel not in all_paths:
             p.skip("compare-" + lab,
                    PY + [A(".ufo/waves/round-17/tools/compare.py"),
                          "--prediction", A(pred_rel),
-                         "--observation", str(obs)], 0,
+                         "--observation", str(obs)], 1 if lab == "t1250-vet" else 0,
                    "prediction absent at source: " + pred_rel)
         elif obs is None:
             p.skip("compare-" + lab,
                    PY + [A(".ufo/waves/round-17/tools/compare.py"),
                          "--prediction", A(pred_rel),
-                         "--observation", "(none)"], 0,
+                         "--observation", "(none)"], 1 if lab == "t1250-vet" else 0,
                    "no retained observation.json and no bound ghidra.log in " + rd)
         else:
             data = source_bytes(source, pred_rel)
@@ -620,6 +635,7 @@ def full_pass(arg: str) -> int:
           [CENSUS, "census", "--root", FLEET, "kaidoku"], 0)
     p.run("sources-census",
           [CENSUS, "validate", "--root", FLEET, "kaidoku"], 0)
+    p.run("r12-reconcile", ["node", A(".ufo/waves/arc3-loop1-round12/integration/c1/reconcile-all-go-ids.mjs")], 0)
 
     # Registered revpin form plus pin bookkeeping across the pass.
     run_tool("revpin-lane", ".ufo/waves/round-18/tools/revpin.py",
@@ -671,23 +687,55 @@ def full_pass(arg: str) -> int:
         try:
             live = json.load(open(OUT + "/receipt-validate-" + lab + ".stdout"))
             findings = live["receipts"][0]["findings"]
-            checks["receipt-current-drift-only-" + lab] = (
-                len(findings) == 2
-                and {f["code"] for f in findings} == {"sha256_mismatch", "size_mismatch"}
-                and all(f.get("path") == A(".ufo/waves/round-17/tools/receipt-validate.py")
-                        for f in findings))
-            retained = json.load(open(W + "/evidence/receipt-validation/" + lab + ".json"))
-            checks["receipt-source-bound-valid-" + lab] = retained["counts"] == {
-                "invalid": 0, "receipts": 1, "unreadable": 0, "valid": 1}
+            checks["receipt-final-pass-valid-" + lab] = (
+                not findings and live["counts"] == {
+                    "invalid": 0, "receipts": 1, "unreadable": 0, "valid": 1})
         except (OSError, ValueError, KeyError, IndexError):
             checks["receipt-content-" + lab] = False
+    additional_errors = {}
+    rule = json.loads(source_bytes(source, ".ufo/waves/round-19/predictions/decision-rule.json"))
+    for lab in labels:
+        try:
+            obs = json.load(open(OUT + "/log-extract-" + lab + ".stdout"))
+            indexes = set(obs["invalid_index_reads"])
+            failure = any("Go analysis failure" in s for s in obs["analyzer_errors"])
+            if lab in rule["diagnostic_set_D"]:
+                predicted = json.loads(source_bytes(
+                    source, ".ufo/waves/round-19/predictions/" + lab + ".prediction.json"))
+                checks["frozen-mechanism-" + lab] = (
+                    failure and bool(indexes & set(rule["h1_only_invalid_indexes"][lab]))
+                    and indexes <= set(predicted["extra_expectations"]["invalid_index_reads"])
+                    and obs["eof_reads"] == predicted["extra_expectations"]["eof_reads"])
+            else:
+                checks["frozen-mechanism-" + lab] = not failure
+            raw = open(log_paths[lab]).read().splitlines()
+            additional_errors[lab] = [
+                {"line": i, "text": s} for i, s in enumerate(raw, 1)
+                if " ERROR " in s and "Go analysis failure" not in s]
+        except (OSError, ValueError, KeyError):
+            checks["frozen-mechanism-" + lab] = False
     try:
         census_text = open(OUT + "/c1-census-v10.stdout").read()
         checks["census-only-carried-undeclared"] = (
             "stale=0 ambiguous=0 undeclared=2 unresolved=0" in census_text)
+        checks["census-no-new-marker-defect"] = (
+            "G11 current-ok without receipt language: []" in census_text
+            and "SCOPE-ERRORS (marker assertions): []" in census_text)
         cmp = json.load(open(OUT + "/compare-t1250-vet.stdout"))
         bad = [c["field"] for c in cmp["fields"] if not c["match"]]
         checks["vet-full-list-only-mismatch"] = bad == ["extra.invalid_index_reads"]
+        c1 = json.load(open(OUT + "/routed-r18-source-strict.stdout"))
+        c2 = json.load(open(OUT + "/province-pins-source-strict.stdout"))
+        counts = json.load(open(OUT + "/measure-source.stdout"))
+        checks["c1-closed"] = c1["open_count"] == 0
+        checks["c2-fully-stated"] = (
+            c2["mismatch_count"] == 0 and not c2["unstated_clients"] and len(c2["stated"]) >= 9)
+        checks["c3-bound-count"] = counts["c3_bound_validated"] == len(labels) == 8
+        mutations = json.load(open(OUT + "/postfix-mutations.stdout"))
+        checks["postfix-mutants-killed"] = (
+            mutations["pristine"]["exit"] == 0
+            and mutations["relative_root"]["exit"] == 0
+            and mutations["killed"] == 10 and not mutations["survived"])
     except (OSError, ValueError, KeyError):
         checks["expected-red-content"] = False
     failed_checks = [name for name, ok in sorted(checks.items()) if not ok]
@@ -700,6 +748,7 @@ def full_pass(arg: str) -> int:
                              "size": st.st_size, "mtime_ns": st.st_mtime_ns})
 
     record = {
+        "additional_errors_outside_frozen_signature": additional_errors,
         "producer": os.path.abspath(__file__),
         "python": sys.version,
         "orig_argv": getattr(sys, "orig_argv", sys.argv),

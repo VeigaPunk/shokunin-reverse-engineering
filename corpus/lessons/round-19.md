@@ -23,15 +23,17 @@ go1.25.0 toolchain ELFs. Claims and the in-round amendment: `.ufo/waves/round-19
 
 | Candidate | Decision | Evidence and limits |
 |---|---|---|
-| Knowledge entry `2026-10-20-r19-go125-toolchain-replay` | admit | See the entry; predictions frozen at `a1140e7` before the first analyze (run log starts 15:57:51 -03, freeze pushed 15:57:47); C3 outcome per the frozen rule |
-| QUALITY #22 (seat-status statements carry a cutoff and a per-seat retained cause) | admit | Grounded in R18-DEADSEAT-RECORD (`round-18-verifier-spotcheck.md:146,197`); red-before: `wave-outcomes.py` on round-18 wave 2 with no causes exits 1 naming 4 uncaused seats, green with `r18-dead-seats.json` causes exits 0 (`.ufo/waves/round-19/evidence/wave-outcomes/`) |
-| SOURCES S037 (npm registry rea-agents 6.7.0), S038 (go.dev JSON go1.25.0 archive) | admit (mined) | Opened 2026-10-20 by w1 `SourcesRowsDraft` and re-opened by the L1 the same day (integrity, publish time, sha256 and size reproduced); each scoped to identity/provenance only (w1 `CriticSourced.md`: metadata grounds identity sub-claims, not outcomes) |
+| Knowledge entry `2026-10-20-r19-go125-toolchain-replay` | admit, narrowly | Frozen membership rule, not a full-model prediction success. First-pass bind became red after a validator edit; preserved pass 2 uses final producer bytes. Vet repeats 13902080, full compare remains 7/8, compile has an extractor-omitted deferred RTTI NPE; all limits retained |
+| QUALITY #22 (seat-status statements carry a cutoff and a per-seat retained cause) | admit | R18-DEADSEAT-RECORD grounding; red exits 1 on 4 uncaused seats. Green input is `evidence/wave-outcomes/r18-w2-causes.json`, derived from (not identical to) `evidence/r18-dead-seats.json`; exits and stdout retained |
+| SOURCES S037/S038/S039 | admit (mined) | S037 grounds published package integrity/time, S038 official archive SHA-256/size, S039 the historical own-work experiment. They do not interchange identity metadata and behavioral evidence |
 | rea-agents 6.6.0 as a source | reject (no row) | Registry returns E404: no 6.6.0 was published (w1 `LiveConfigPins.md`) |
 | C2 "c1-census PASS" as first declared | reject as declared; admit stale 4 → 0 | The two undeclared blocks (SCORECARD 2380-2382, SKILL 511-519) are round-17 text outside the gate's fixed scope table; closing them needs a scope re-key, a gate change, not a freshness edit (w1 `ReviewC1CensusScope.md`); amended before measuring |
 | Emulator `diagnostic` field as the D-set rule | reject | It absorbs the full-walk failure into the H0 kind, so vet reads `diagnostic:false` while only H1 fails on the map path (w1 `H0H1Semantics.md`); D is frozen from the map-path booleans |
 | "toolchain binaries are held-out *applications*" / "first Go 1.25 held-out" | reject | They are toolchain ELFs; Go 1.25.0 was already held by r18 synthetics, so the new evidence is artifact-held-out (w1 `SiblingOverlap.md`, `CoverageMapGo125.md`) |
 | `head-rev-lint.py` `nested` class (dead seat HeadRevLintNested's partial clone) | reject | Its selftest fails (`SELFTEST: FAILED 3`, L1 run); the limit is registered in the SKILL row instead (`.ufo/waves/round-19/w1/inherited/HeadRevLintNested.patch` retained) |
 | `link` as a C3 carrier | exclude | No Go build info (emulator exit 2, `predictions/decision-rule.json` `excluded`) |
+| The full-walk candidate 1801722468838924630 as a real Ghidra read | reject | Unmasked variadic output-count bit in the frozen emulator; Ghidra masks it (w2 `KnowledgeMechanism`) |
+| “No analyzer errors” inferred from comparator silence | reject | Compile's deferred RTTI propagation NPE is attributed to AnalysisTaskWrapper and excluded by the extractor's Golang-component filter, both passes. No blanket clean-analysis or full-model-success claim |
 
 ### Opened sources and located quotes (access date 2026-10-20)
 
@@ -41,10 +43,11 @@ go1.25.0 toolchain ELFs. Claims and the in-round amendment: `.ufo/waves/round-19
 | S037 | https://registry.npmjs.org/rea-agents, packument `.time["6.7.0"]` | "2026-10-18T08:12:05.640Z" |
 | S038 | https://go.dev/dl/?mode=json&include=all, go1.25.0 entry (fetched copy line 14644) | "filename": "go1.25.0.linux-amd64.tar.gz", |
 | S038 | same entry, `sha256` field | "sha256": "2852af0cb20a13139b3448992e69b868e50ed0f8a1e5940ee1de9e19a123b613", |
+| S039 | own-work `.ufo/waves/arc3-loop1-round12/integration/c1/reconcile-all-go-ids.txt` at `8a8da7e`, line 28; opened 2026-10-20 | `records=27 matched=27 bundles=CR-1,CR-4,EX-2,EX-4,EX-5,EX-6,EX-8` |
 
 ### Registry changes (old → new)
 
-- New rows S037 (tier A, dataset) and S038 (tier A, dataset), both `mined`. Rows 36 → 38. No in-place change to S001–S036.
+- New rows S037/S038 (tier A dataset) and S039 (tier A own-work), all `mined`: rows 36 → 39. Six existing used-by cells were appended (S003/S023/S024/S026/S031/S035); exact old→new values are recorded under R19-USEDBY-APPEND below. No existing evidence/status/recheck cell changed.
 - Search log: one round-19 note appended (S037/S038 search, 6.6.0 rejection).
 
 ### Outside spot-check
@@ -84,8 +87,8 @@ Correction of round 18 (R18-INSTALL-RECORD; w1 `InstallRecordDraft.md`, values r
 | 2 | vacuous | R18-VALIDATOR-DIGEST / R18-MIDMAP-LISTSTEP: two round-18 checks passed fabricated inputs (any 64-hex digest; pin checks on any list step) | none (the r18 gate's selftest kept them green) | `routed-r18.py` substance checks: at 8a8da7e both are red ("format-only check"; "accepted"), recorded in `.ufo/waves/round-19/evidence/routed-r18-B.json` |
 | 3 | landing | R18-STRICT-BASELINE: the strict red baseline was claimed in SCORECARD round 18 with no retained run | QUALITY #18 | receipts retained; `routed-r18.py` re-hashes them and the tool blob |
 | 4 | stale-premise | PROVINCE/SKILL REA pins left at 6.5.0 for a round after the 13:35:56 config rewrite (carried in `round-18.md:89`) | `c1-census-v10.py` (red at baseline, stale 4) — known but not acted on | in-place rewrite; stale 4 → 0, `province-pins.py` 2 → 0 (both red at 8a8da7e) |
-| 5 | scope (this round) | w1 `InstallRecordDraft` ran `go version` with the go1.24.6/go1.25.0 `bin/go`, a C3 carrier, although the contract forbids executing carriers (`.ufo/waves/round-19/contract.md`, REA section) | the wave contract — not enforced by any tool | the install record above cites archive digests, not the executed output; no C3 measurement uses it; carriers' sha256 was re-checked at run time against the frozen `carriers.tsv` |
-| 6 | provider / landing (this round) | 42 of 90 wave-1 seats left no report: 9 died on Anthropic 429s (~9400 s retry-after; critics, sentinels, two scribes) and 33 were aborted when the L1 session exited on an Anthropic 429 (`.ufo/waves/round-19/wave1-outcomes.json`, causes with transcript pointers in `evidence/wave-outcomes/w1-causes.json`); 3 more seats wrote their report before their final message hit a 429 | none | dead seats were not replaced; their partial clones were reused only where the L1 re-ran their selftests (ValidatorDigestGuard, CitationDriftAliases, JjRedBeforeSafety, ProvincePinsTool, RunCarriersR19) and rejected otherwise (HeadRevLintNested); each kept as a dead seat in `wave1-outcomes.json` |
+| 5 | scope (this round) | InstallRecordDraft executed `bin/go version` despite the no-carrier-execution contract | wave contract, not technically enforced | **No demonstrated enforcement fix.** This remains a disclosed process violation; SHA-256 checks do not detect prior execution. Its output is not C3 outcome evidence |
+| 6 | provider / landing (this round) | 42/90 W1 seats lack reports (9 direct 429 errors, 33 parent-session aborts); 48 have reports | none | No replacements. All last-assistant states retained in `evidence/wave-outcomes/w1-terminal.json`: 50 aborted / 12 error / 28 stop. Of report-present seats, 17 have aborted and 3 error last records; do not infer death or absence solely from report presence. Selected partial clones re-tested and reused, failed nested-lint patch rejected |
 
 Misroot sweep: run before the report (see the fleet report).
 
@@ -132,3 +135,57 @@ sha256 line 14648. This pins the rendering used for Gate quotations, not the
 time-varying endpoint indefinitely. S037 version-document SHA-256
 `ae3429d52774e39bda4f8c9ba9aa141b26901ec65f82a394e540ed9cc479c236`.
 No existing SOURCES evidence cell was rewritten to add these clarifications.
+
+## Wave-2 source-index correction (R19-USEDBY-APPEND)
+
+Supersedes the initial Gate registry-change statement "No in-place change to S001–S036": only the following six used-by cells were appended; status/recheck/evidence cells stayed unchanged.
+
+- S003 `used-by`: `corpus/lessons/round-13.md, corpus/knowledge/2026-10-20-r14-go-version-diagnosis.md, corpus/lessons/round-14.md, corpus/knowledge/2026-10-20-r15-go-snapshot-inventory.md, corpus/lessons/round-15.md, corpus/knowledge/2026-10-20-r16-go-selection-preview.md, corpus/lessons/round-16.md, corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md, corpus/lessons/round-17.md, corpus/knowledge/2026-10-20-r18-swiss-map-replay.md` → `corpus/lessons/round-13.md, corpus/knowledge/2026-10-20-r14-go-version-diagnosis.md, corpus/lessons/round-14.md, corpus/knowledge/2026-10-20-r15-go-snapshot-inventory.md, corpus/lessons/round-15.md, corpus/knowledge/2026-10-20-r16-go-selection-preview.md, corpus/lessons/round-16.md, corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md, corpus/lessons/round-17.md, corpus/knowledge/2026-10-20-r18-swiss-map-replay.md, corpus/knowledge/2026-10-20-r19-go125-toolchain-replay.md`.
+- S023 `used-by`: `corpus/knowledge/2026-10-20-r15-go-snapshot-inventory.md, corpus/lessons/round-15.md, corpus/knowledge/2026-10-20-r16-go-selection-preview.md, corpus/lessons/round-16.md, corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md, corpus/knowledge/2026-10-20-r18-swiss-map-replay.md` → `corpus/knowledge/2026-10-20-r15-go-snapshot-inventory.md, corpus/lessons/round-15.md, corpus/knowledge/2026-10-20-r16-go-selection-preview.md, corpus/lessons/round-16.md, corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md, corpus/knowledge/2026-10-20-r18-swiss-map-replay.md, corpus/knowledge/2026-10-20-r19-go125-toolchain-replay.md`.
+- S024 `used-by`: `corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md, corpus/lessons/round-17.md` → `corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md, corpus/lessons/round-17.md, corpus/knowledge/2026-10-19-arc3-r12-go-evidence-id-domain.md`.
+- S026 `used-by`: `corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md, corpus/lessons/round-17.md` → `corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md, corpus/lessons/round-17.md, corpus/knowledge/2026-10-19-arc3-r12-go-evidence-id-domain.md`.
+- S031 `used-by`: `corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md, corpus/lessons/round-17.md` → `corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md, corpus/lessons/round-17.md, corpus/knowledge/2026-10-19-arc3-r12-go-evidence-id-domain.md`.
+- S035 `used-by`: `corpus/lessons/round-18.md, corpus/knowledge/2026-10-20-r18-swiss-map-replay.md` → `corpus/lessons/round-18.md, corpus/knowledge/2026-10-20-r18-swiss-map-replay.md, corpus/knowledge/2026-10-20-r19-go125-toolchain-replay.md`.
+
+S039 is a new tier-A own-work row (opened 2026-10-20), not publication metadata. Source: `.ufo/waves/arc3-loop1-round12/integration/c1/reconcile-all-go-ids.txt` at baseline `8a8da7e`, line 28, located quote: `records=27 matched=27 bundles=CR-1,CR-4,EX-2,EX-4,EX-5,EX-6,EX-8`; line 29 `exit=0`. It indexes the retained historical experiment and recomputation, not current Docker identity or uninterrupted custody. Final registry rows 36→39, additions A=3 (two dataset, one own-work); S037/S038 retain their identity-only scopes.
+
+## Wave-2 integration and residual limits
+
+- The source-counter patches address the falsifiers in `MutStrict`,
+  `CriticCounter`, `SubstanceVALIDATORDIGEST`, `SubstanceSTRICTBASELINE`,
+  `MutRegistry`, `MutInstall`, `MutAliases` and `SubstanceMIDMAPLISTSTEP`:
+  strict output is replayed with its pinned A18 producer; causes match the
+  pinned terminal report; buildinfo pins must name their actual source;
+  install version/hash associations, channel and reason are checked; remap
+  labels are distinct and historical; actual digest-gate wiring is mutated;
+  flag forwarding goes through validate_receipt; mutable aliases receive
+  lexical checks; relative roots are normalized and Git env is scrubbed.
+  `postfix-mutations.py` retains actual post-fix mutant and restoration exits.
+- `ToolPinsAntiVacuity` / `CriticFreshness`: parser no longer drops long
+  clauses, sentence-final periods, lowercase/Oxford client groups or incidental
+  “historical” words. Only an explicitly prefixed Historical: clause is
+  historical. Empty fixture overrides no longer read live config silently.
+  Final C2 assertion requires strict exit 0, no unstated clients and nine
+  statements, not merely a printed zero.
+- `SkillRegistryOld`: four citation findings came from two new index rows
+  shifting README coordinates. They now occupy prior blank lines, preserving
+  Frontier and frozen-scorecard pointer coordinates. The historical province
+  receipt timestamp is explicitly labelled historical. `SubstanceHEADALIASES`:
+  citation Tree now receives the resolved commit hash, not the moving branch
+  expression. The old five-finding strict runs remain in seat reports.
+- `ToolRunner` / `SandboxSecurity`: unsafe label traversal and unmatched
+  selectors are refused; timeout wording is per-step; new output writers use
+  exclusive random temporary files. Trusted lane Python/JavaScript is still
+  executed by checker/catalog tools: mkdtemp is not an OS security sandbox.
+- **Not claimed fixed:** citation snapshot-slug read escape on an adversarial
+  table/expected pair; the validator can treat a decoy package token in an
+  unrelated command as analyze (name/argv identity is not execution
+  authentication); wave-outcomes flat-map key collision for a seat literally
+  named `causes`; jj sandbox selftest coverage limits. Current round inputs
+  contain none of those attacks. No claim of adversarial authenticity or
+  complete validation coverage is made.
+- Known model weaknesses are retained: prior vet prediction exposure, the
+  unmasked-variadic full-walk bug, physically unattainable multi-index exact
+  forecast for an aborting analyzer, and compile's separate RTTI NPE. The
+  explicit map-path failure observation remains useful; these are not hidden
+  as a green complete analyzer sweep.

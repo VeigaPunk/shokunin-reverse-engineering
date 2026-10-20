@@ -152,7 +152,6 @@ A row is written when its file exists, never before.
 | `2026-10-16-l7-06-inspect-with-objdump` | `inspect_with_objdump` — `file_headers` only; two pinned jq ELF inputs returned RESULT, broader behavior unknown | REA 6.5.0; `.ufo/waves/luna-round-6/receipts/leg-8.md` + `.ufo/waves/luna-round-6/receipts-B/leg-8.md` | 2026-10-16 |
 | `2026-10-16-l8-01-6p4-symmetry-battery` | REA 6.4.0 symmetry battery, 10/10: version exact, 170 tools, six 6.5-only verbs typed-refused, six absences, jq control RESULT; zero config drift unproven | rea-agents@6.4.0 live MCP; `.ufo/waves/luna-round-8/receipts/leg-1.md:7,10`; `leg-2.md:9`; `leg-3.md:22`; `leg-4.md:13`; `leg-5.md:9`; `leg-6.md:11`; `leg-7.md:13`; `leg-8.md:10`; `leg-9.md:9-14`; `leg-10.md:15,24`; `MANIFEST.txt:1-9` | 2026-10-16 |
 | `2026-10-20-r19-go125-toolchain-replay` | Go 1.25.0 toolchain artifact holdout: vet's H1-only Invalid index 13902080, seven silent controls; frozen mechanism rule confirmed, full read-list compare 7/8 | S038 carrier provenance, S035/S023/S003 mechanism, round-19 bound logs | 2026-10-20 |
-
 ## Lessons
 
 | entry | round | gist |
@@ -168,7 +167,6 @@ A row is written when its file exists, never before.
 | `2026-10-18-mechanism-matched-walls` | arc2-loop1-round8 | wall engagements change exactly the mechanism the prior failure names; a natural control seals the attribution; a fifth engagement without a new mechanism retires the thread |
 | `2026-10-15-round-1-admission-correction` | 1 (same blocked recovery) | replaces unconditional admission diagnostic with routing/receipt/wave consistency checks; twelve isolated exit/finding cases; no new axis score or verified-round increment |
 | `round-19` | 19 | seven routed R18 fixes; client-pin freshness; Go toolchain holdout; QUALITY #22 per-seat causes; dead-seat partial reuse disclosed |
-
 ## Frontier
 
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).

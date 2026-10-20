@@ -390,7 +390,7 @@ def resolve_rev(root, rev, branch, findings):
     # explicit stable rev: evaluate exactly what was asked, as before; record
     # the normalized commit id when it resolves
     findings.rev_resolved = git_commit(root, "%s^{commit}" % rev) or rev
-    return rev, None
+    return findings.rev_resolved, None
 
 
 def run_check(root, rev, table_path, expected_path, snapshot_dir, branch="main"):

@@ -41,10 +41,10 @@ Grounded by existing rows (`corpus/SOURCES.md`):
 - **S026** (`corpus/SOURCES.md:32`): the linker writes `X:<exp>` after a dash when the version has no `-`. Grounds the form `-X:nodwarf5`. Scope: S026 is anchored to the go1.27.3 tree; the go1.26.5 linker was not opened, so that it matches is INFERENCE.
 - **S031** (`corpus/SOURCES.md:37`): `GOEXPERIMENT=nodwarf5` disables DWARF 5 generation at build time. Grounds the meaning of the token.
 
-Not grounded by any row:
+Grounding limits and in-round source-index correction:
 
 - Go 1.26.5 as a released toolchain: S025 (`corpus/SOURCES.md:31`) anchors `#go1.27.0`, `#go1.27.3` and `#go1.26.0` only.
-- The REA package-source claims (entry lines 11, 13, 15, 19–25) and the identity of rea-agents@6.7.0. No row names rea-agents or npm (`grep -n -i -E 'rea-agents|npm' corpus/SOURCES.md` → no match). Package identities are the hashes in `claims/c1/CR-4/evidence/package-source-hashes.txt:2-6`.
+- The REA package-source and measured envelope claims (entry lines 11, 13, 15, 19–25) are now indexed by **S039**, the retained own-work experiment and pinned recomputation inputs. S037 covers published package identity only, never the Evidence-ID projection. Neither row supplies continuous custody or generalizes beyond this sample; package-source identities remain in `claims/c1/CR-4/evidence/package-source-hashes.txt:2-6`.
 - Ghidra rows S003 and S023 and REA-skill rows S001–S002 do not bear on `inspect_go_binary` and are not cited for this entry.
 
 ### Custody legs

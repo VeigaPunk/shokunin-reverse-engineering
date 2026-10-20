@@ -72,15 +72,15 @@ TOOL_PATHS = {
 GATE_PATH = ".ufo/gates/c1-census-v10.py"
 PRED_RE = re.compile(r"^" + re.escape(ROUND) + r"/predictions/([^/]+)\.prediction\.json$")
 SUMS_PATH = f"{ROUND}/predictions/SHA256SUMS"
-RUNS_RE = re.compile(r"^" + re.escape(ROUND) + r"/runs/([^/]+)/compare\.json$")
-EXIT_RE = re.compile(r"^" + re.escape(ROUND) + r"/runs/([^/]+)/compare\.exit$")
+RUNS_RE = re.compile(r"^" + re.escape(ROUND) + r"/runs/(?:pass2/)?([^/]+)/compare\.json$")
+EXIT_RE = re.compile(r"^" + re.escape(ROUND) + r"/runs/(?:pass2/)?([^/]+)/compare\.exit$")
 SHA256_RE = re.compile(r"[0-9a-fA-F]{64}")
 VERDICT_RE = re.compile(r"^VERDICT:\s*(PASS|FAIL)\b", re.MULTILINE)
 CENSUS_TIMEOUT = 300
 
 LIMITS = [
-    "C1/C2 copy the tools' own contract JSON at the measured revision; measure.py "
-    "re-runs no defect check and no pin comparison.",
+    "C1/C2 delegate to the measured revision's tools; measure.py does not "
+    "independently reimplement those checks.",
     "C2's census facet is the `.ufo/gates/c1-census-v10.py` blob at REV run with "
     "`--root LANE`. The instrument reads the LANE working tree and the live host "
     "client configs, not REV's blobs, so its verdict is a live reading made by "
@@ -92,15 +92,16 @@ LIMITS = [
     "blobs whose `carrier.sha256` is a 64-hex string. Freeze order (prediction "
     "commit before any carrier run commit) is not verified here; that is the "
     "decision rule's receipt-validate binding gate.",
-    "C3 `matched` is the value each compare.json records for `all_match`, copied, "
-    "not re-derived; measure.py re-reads no run log and re-compares no field.",
-    "C3 `compare_exit0` reads `runs/<label>/compare.exit` verbatim as an integer; "
-    "a missing or non-integer exit is named, never guessed.",
+    "C3 prefers runs/pass2 when present, otherwise pass 1. Raw compare counts "
+    "copy recorded all_match/exit values, not a semantic log judgment. "
+    "bound_validated additionally re-runs REV's validator/pins on each receipt "
+    "only after its current bytes equal the committed receipt blob; validator "
+    "reads the recorded absolute live paths, so this field is time-dependent.",
     "A count of 0 is a measured zero (no matching artifact at that revision), not "
     "an error.",
-    "Tools are imported from a temporary copy of the revision's bytes and run "
-    "in-process against the resolved commit; the worktree is never read and no "
-    "carrier binary is executed.",
+    "Tools are imported from temporary revision copies (trusted lane code, "
+    "not an OS sandbox). C3 bound validation and C2 live census read the "
+    "working tree as explicitly described above. No carrier is executed.",
     "Import-time and call-time Python stdout/stderr are captured; a tool that "
     "writes straight to the process file descriptors (an uncaptured child) is "
     "outside that capture.",
@@ -120,6 +121,7 @@ def _git(root, *args):
         encoding="utf-8",
         capture_output=True,
         check=False,
+        env={k: v for k, v in os.environ.items() if not k.startswith(("GIT_", "JJ_"))},
     )
 
 
@@ -577,6 +579,13 @@ def _keep_bool(payload, name):
 
 
 def _claim_c3(root, revision, paths):
+    # Prefer the preserved final-producer pass, never count both replicates
+    # as distinct carriers. Historical fixtures with only pass 1 still work.
+    pass2 = f"{ROUND}/runs/pass2/"
+    use_pass2 = any(p.startswith(pass2) for p in paths)
+    if use_pass2:
+        paths = {p for p in paths if not p.startswith(f"{ROUND}/runs/")
+                 or p.startswith(pass2)}
     predictions, prediction_unparseable = _prediction_entries(root, revision, paths)
     sums = _sums_labels(root, revision, paths)
     exits = _exit_entries(root, revision, paths)
@@ -629,6 +638,35 @@ def _claim_c3(root, revision, paths):
     elif compare_unparseable:
         status = "could-not-evaluate"
         reason = compare_unparseable[0]["reason"]
+    bound = {}
+    if runs:
+        validator_rel = ".ufo/waves/round-17/tools/receipt-validate.py"
+        validator, verr = _read_blob(root, revision, validator_rel)
+        pins, perr = _read_blob(root, revision, ".ufo/waves/round-17/tools/pins.py")
+        if validator is not None and pins is not None:
+            with tempfile.TemporaryDirectory(prefix="measure19-bind-", dir="/tmp") as scratch:
+                v = Path(scratch) / "receipt-validate.py"
+                v.write_text(validator)
+                (Path(scratch) / "pins.py").write_text(pins)
+                for label, entry in runs.items():
+                    receipt_rel = entry["path"].rsplit("/", 1)[0] + "/receipt.json"
+                    receipt = Path(root) / receipt_rel
+                    committed, err = _read_blob(root, revision, receipt_rel)
+                    if committed is None or not receipt.is_file() or receipt.read_text() != committed:
+                        bound[label] = {"valid": False, "reason": "receipt absent or differs from REV"}
+                        continue
+                    proc = subprocess.run(
+                        [sys.executable, "-I", "-B", str(v), "--require-mid-maps", str(receipt)],
+                        capture_output=True, text=True)
+                    try:
+                        result = json.loads(proc.stdout)
+                        valid = proc.returncode == 0 and result["counts"]["valid"] == 1
+                        findings = result["receipts"][0]["findings"]
+                    except (ValueError, KeyError, IndexError):
+                        valid, findings = False, ["validator output unevaluable"]
+                    bound[label] = {"valid": valid, "exit": proc.returncode, "findings": findings}
+        else:
+            bound = {label: {"valid": False, "reason": "validator/pins absent at REV"} for label in runs}
     return {
         "status": status,
         "reason": reason,
@@ -645,6 +683,9 @@ def _claim_c3(root, revision, paths):
         "compare_exit_missing": exit_missing,
         "matched": len(matched),
         "matched_ids": matched,
+        "run_tree": "pass2" if use_pass2 else "pass1",
+        "bound_validated": sum(bool(e["valid"]) for e in bound.values()),
+        "binding": bound,
         "labels": {
             label: {
                 "prediction": predictions.get(label),
@@ -688,6 +729,7 @@ def measure(root, revision_requested):
         "c3_compare_jsons": c3["compare_jsons"],
         "c3_compare_exit0": c3["compare_exit0"],
         "c3_matched": c3["matched"],
+        "c3_bound_validated": c3["bound_validated"],
         "could_not_evaluate": any(
             claim["status"] != "evaluated" for claim in (c1, c2, c3)
         ),

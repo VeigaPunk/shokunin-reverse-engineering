@@ -359,8 +359,8 @@ def _write_json_atomic(path: str, doc) -> None:
         os.makedirs(parent, exist_ok=True)
         payload = json.dumps(doc, indent=2, ensure_ascii=True,
                              sort_keys=False) + "\n"
-        tmp = f"{path}.tmp.{os.getpid()}"
-        with open(tmp, "w", encoding="utf-8", newline="\n") as fh:
+        fd, tmp = tempfile.mkstemp(prefix=".wave-outcomes-", suffix=".tmp", dir=parent)
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(payload)
         os.replace(tmp, path)
     except OSError as exc:

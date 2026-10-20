@@ -5,17 +5,17 @@ host — native ELF through the Ghidra 12.1.4 provider, Electron/ASAR/JavaScript
 bundles, archives and packages; evidence-first static analysis that keeps
 observation, inference and unknowns separate.
 
-Surface summary: the `rea` MCP/CLI surfaces resolve per client: Devin, OMP
-and Kimi all register `rea-agents@6.7.0` (207 MCP tools + 153 CLI commands;
+Surface summary: the `rea` package requests in the client config files: Devin, OMP
+and Kimi all pin `rea-agents@6.7.0` (207 MCP tools + 153 CLI commands;
 catalog tools_sha256 `af39310c…`, the package's compiled, recorded identity;
-re-read 2026-10-20, round 19, `.ufo/waves/round-19/evidence/rea-catalog.json`).
+re-read 2026-10-20, round 19, `.ufo/waves/round-19/evidence/rea-catalog.json`). These are configured requests, not running-server versions; the doctor checks a separate Kimi JSON registration, not the live TOML pin.
 Round carrier runs pin the CLI explicitly to the superseded client pin `rea-agents@6.5.0` (same 207/153 counts; tools_sha256 `805433f1…`). Historical: Kimi resolved `rea-agents@6.4.0` (historical 170 MCP tools + 127 CLI commands; historical catalog tools_sha256 `25802f6d…`) before 2026-10-18; its npx cache is gone (historical, absent 2026-10-20). The Ghidra provider is at `/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC`;
 host binutils as non-REA fallback readers.
 
 Drift-prone values: reverified 2026-10-20 (round 19) — configured REA MCP pins are Devin
 `rea-agents@6.7.0` (`/home/vgpnk/.config/devin/mcp_config.json:7`), OMP
 `rea-agents@6.7.0` (`/home/vgpnk/.omp/agent/mcp.json:8`), and Kimi
-`rea-agents@6.7.0` (`~/.kimi-code/config.toml:4126`); Devin/OMP were rewritten 2026-10-20 13:35:56 -03 outside the lane (they carried the superseded 6.5.0 pin before). The operator disabled the OMP rea entry for the hyaku phase (10:12 -03); that rewrite dropped the `enabled: false` key, so the live OMP file no longer records the disable (round-19 w1 `LiveConfigPins.md`). Cache/catalog
+`rea-agents@6.7.0` (`~/.kimi-code/config.toml:4126`); Devin/OMP were rewritten 2026-10-20 13:35:56 -03 outside the lane (they carried the superseded 6.5.0 pin before). The operator disabled the OMP rea entry for the hyaku phase (10:12 -03); that rewrite dropped the `enabled: false` key, so the live OMP file no longer records the disable (round-19 w1 `LiveConfigPins.md`). Cache/catalog The `17:55:49Z receipt` and its old line-number pointers are historical, not current registration evidence.
 identities (re-derived 2026-10-20, round 19): 6.7.0 at `/home/vgpnk/.npm/_npx/a1722018f28f9df2` — 153 CLI
 commands, 207 MCP tools, `tools_sha256=af39310c9591bb981893ec0d2188b1bcf6e9cc8ba3ac513d5bbefc8ddcb85639`; 6.5.0 at
 `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6` — 153 CLI commands, 207 MCP tools, `tools_sha256=805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded`; historical 6.4.0 in npx cache directory
@@ -41,7 +41,7 @@ Surfaces owned now — each verified on this host 2026-10-13.
 
 | Surface | Ports / paths / config keys | Liveness / readiness probe | Verified evidence |
 |---|---|---|---|
-| REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml` — registers per-client pinned `rea-agents` (Devin/OMP/Kimi 6.7.0 since 2026-10-20 13:35:56 -03; see surface summary) with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` in an attached client → `analysis_provider_candidates` + `capabilities[]`; CLI: `rea doctor` (6.7.0 doctor: no devin/omp registration finding) | round-19 re-grepped pin/sha256 record `.ufo/waves/round-19/evidence/province-pins-integrated.json`; doctor outputs in `evidence/doctor/`; historical readiness probe 2026-10-13 |
+| REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml` — config files pin `rea-agents` (Devin/OMP/Kimi 6.7.0 since 2026-10-20 13:35:56 -03; see surface summary) with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` would inspect a running attached client; not exercised this round. CLI: `rea doctor` (6.7.0 doctor: no devin/omp registration finding, separate Kimi JSON registration missing) | round-19 re-grepped pin/sha256 record `.ufo/waves/round-19/evidence/province-pins-integrated.json`; doctor outputs in `evidence/doctor/`; historical readiness probe 2026-10-13 |
 | `rea` CLI | npx cache `~/.npm/_npx/*/node_modules/rea-agents` — no `rea` on PATH; 153 commands on the 6.5.0/6.7.0 pins, 127 on 6.4.0 (historical) | `npx -y rea-agents@6.4.0 --version` → `6.4.0` (2026-10-13 receipt) | wave 01/02/03 catalogs |
 | Ghidra provider | `GHIDRA_INSTALL_DIR` (876 MB install); headless `support/analyzeHeadless`; native decompiler `Ghidra/Features/Decompiler/os/linux_x86_64/decompile`; 39 processor modules; 34 features incl. PyGhidra/BSim | `rea doctor` → providerInspections `ghidra: configured+available`, 8/8 checks | `application.version=12.1.4`, build 2026-09-21, rev 8b6bbb85 |
 | JDK 21 substrate | `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`, exported in `.bashrc:29` + `.profile:4` (re-read 2026-10-20, w1 `GhidraJdkRecheck`); sole Java on host | `java -version` → 21.0.12.1 full JDK | meets Ghidra `java.min=21` exactly; single-Java fragility noted |
@@ -59,7 +59,7 @@ Surfaces owned now — each verified on this host 2026-10-13.
 | Verb families | `xrefs` (inbound-only, GOT+DWARF decomp), `trace` (literal feature, no from/to), `read-bytes`, `address-to-file-offset`, `function` dossier, `instructions` — address is POSITIONAL on all | `rea xrefs <path> <addr>` on libjq | exercised r3-15: read-bytes byte-exact vs objdump; addr→file-offset confirms rebase |
 | Recorded crashes (mechanism) | `inspect_recorded_crash <elf-core>` — `coredumpctl dump` output is already decompressed ELF (no `zstd -d`); **32 MiB decompressed cap**; `REA_PWNTOOLS_PYTHON` persistent venv `~/.local/share/kaidoku-pwnenv` | live run on a ≤32MiB core | crash-godot core → `ev_3686f9…`, 27 regs × threads, notes retained (r2-06); `inspect-binary-layout` first-held r4-13 (jq full RELRO observed) |
 | Evidence discipline | `detail:"summary"` + `parent_evidence_id` paging; `get_evidence_bundle` filters; `inspect-evidence-bundle`; `--snapshot <path>` JSON bundle | every Core probe emits `evidence_id` + `limitations[]`/`unknowns[]` | snapshot is evidence persistence, not a Ghidra DB cache (timed) |
-| Host fallback readers | `file`, `readelf`, `objdump`, `llvm-readobj`, `nm`, `strings`, `unzip`, `tar`, `gdb`, `eu-stack`, `coredumpctl`, `pacman`, `zstd`, `gpg`, `python3`, node/npx, plus `7z`, `xxd`, `radare2`, `strace`, `upx` (host-installed 2026-10-13, after this row's sweep) | `command -v <tool>` | absent: `cabextract`, `rizin`, `ltrace`, pacman-contrib |
+| Host fallback readers | `file`, `readelf`, `objdump`, `llvm-readobj`, `nm`, `strings`, `unzip`, `tar`, `gdb`, `eu-stack`, `coredumpctl`, `pacman`, `zstd`, `gpg`, `python3`, node/npx, `7z`, `xxd`, `radare2`, `strace`, `upx`, `rizin`; pacman-contrib package installed (rechecked 2026-10-20, round-19 w1 `FallbackReaders.md`, not installed by this round) | `command -v <tool>`; `pacman -Q pacman-contrib` | absent: `cabextract`, `ltrace`; historical 2026-10-13 list omitted the subsequently installed rizin and pacman-contrib |
 
 Cross-lane registry this lane maintains: the REA surface map — per-client
 registration state, provider availability, provider env keys, and the on-host

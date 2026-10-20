@@ -146,3 +146,14 @@ while the round-17 first pass (29118) did not (w2 `ReplicateAetherId.md`).
 - REA's `analyze` JSON shows no trace of the Go symbol-analysis abort on the
   three failing carriers; only the bound `ghidra.log` does (w2
   `ProvinceAccuracy.md`).
+
+## Round-19 continuation (2026-10-20; prior entry unchanged)
+
+`corpus/knowledge/2026-10-20-r19-go125-toolchain-replay.md` extends this
+entry's Go 1.25 calibration-only limit with a previously unrun official
+toolchain ELF (`vet`) whose log reports H1-only Invalid index 13902080.
+The candidate index was already predicted in round-18 wave-2
+`KnowledgeEntryReview.md:84-100`; the new result is an analyzer-outcome
+holdout, not a novel emulator prediction. The continuation reports exact
+compare misses and snapshot-specific receipt binding rather than rewriting
+this round's frozen evidence or its original scope.

@@ -77,14 +77,13 @@ ENV_CONFIGS = {
 
 _VER = r"\d+\.\d+\.\d+"
 _CLIENT = r"(?:Devin|OMP|Kimi)"
-_GROUP = rf"(?P<clients>\b{_CLIENT}\b(?:\s*(?:and|/|,)\s*\b{_CLIENT}\b)*)"
-# Client group -> short gap -> backticked/plain pin token. A gap may contain
-# dots that are not sentence ends (paths, dotted versions), but never a
-# sentence-ending ". " or a ";".
-_PREFIX_STMT = re.compile(_GROUP + r"(?:[^.;]|\.(?=\S)){0,160}?" +
-                          rf"`?rea-agents@(?P<ver>{_VER})`?")
-# Client group -> bare version, Core row only (e.g. "Devin/OMP 6.5.0").
-_BARE_STMT = re.compile(_GROUP + rf"[ \t]+(?P<ver>{_VER})(?![\w.])")
+_GROUP = rf"(?P<clients>\b{_CLIENT}\b(?:\s*(?:and|/|,)\s*(?:and\s+)?\b{_CLIENT}\b)*)"
+# Client group -> sentence-bounded gap -> pin token. No arbitrary gap cap:
+# a long explanatory clause must not silently hide a stale current pin.
+_PREFIX_STMT = re.compile(_GROUP + r"(?:[^.;]|\.(?=\S))*?" +
+                          rf"`?rea-agents@(?P<ver>{_VER})`?", re.I)
+# A sentence-final period is punctuation, not a fourth version component.
+_BARE_STMT = re.compile(_GROUP + rf"[ \t]+(?P<ver>{_VER})(?!\w|\.\d)", re.I)
 _LIVE_PIN = re.compile(rf"rea-agents@({_VER})")
 # Clause boundary: sentence punctuation, optional closer, then whitespace.
 _SEP = re.compile(r"[.;!?][)\]*'\"\u2019\u201d]?\s+")
@@ -93,8 +92,8 @@ RULES = {
     "stated": "each <clients> ... rea-agents@X.Y.Z occurrence in the three "
               "regions; the bare <clients> X.Y.Z form is accepted only in "
               "the Core REA MCP server row",
-    "historical": "a statement whose clause (between . ; ! ? separators) "
-                  "contains 'historical' is omitted as a non-current claim",
+    "historical": "only a clause explicitly prefixed Historical: or Historically: "
+                  "is omitted; an incidental historical word is not an exemption",
     "mismatch": "one entry per distinct (client, stated version) that "
                 "differs from the live pin; a client stated at two versions "
                 "yields one entry per stale version",
@@ -119,6 +118,7 @@ def _git(root: str, *args: str) -> subprocess.CompletedProcess:
     return subprocess.run(
         ["git", "--no-optional-locks", "-C", root, *args],
         capture_output=True, text=True, timeout=60, check=False,
+        env={k: v for k, v in os.environ.items() if not k.startswith(("GIT_", "JJ_"))},
     )
 
 
@@ -136,6 +136,7 @@ def _show(root: str, rev: str, path: str) -> bytes | None:
     proc = subprocess.run(
         ["git", "--no-optional-locks", "-C", root, "show", f"{rev}:{path}"],
         capture_output=True, timeout=60, check=False,
+        env={k: v for k, v in os.environ.items() if not k.startswith(("GIT_", "JJ_"))},
     )
     if proc.returncode != 0:
         return None
@@ -184,10 +185,11 @@ def _parse_region(entries, forms) -> list[dict]:
     found = {}
     for pattern in forms:
         for m in pattern.finditer(text):
-            if "historical" in _clause(text, m.start(), m.end()).lower():
+            if re.match(r"^\s*historical(?:ly)?\s*:", _clause(text, m.start(), m.end()), re.I):
                 continue
             line = first_line + text.count("\n", 0, m.start("ver"))
-            for client in re.findall(_CLIENT, m.group("clients")):
+            for spelling in re.findall(_CLIENT, m.group("clients"), re.I):
+                client = next(c for c in CLIENTS if c.casefold() == spelling.casefold())
                 found[(client, m.group("ver"), line)] = {
                     "client": client,
                     "version": m.group("ver"),
@@ -273,7 +275,7 @@ def collect(root: str, rev_arg: str) -> dict:
 
     live = []
     for client in CLIENTS:
-        path = os.environ.get(ENV_CONFIGS[client]) or DEFAULT_CONFIGS[client]
+        path = os.environ.get(ENV_CONFIGS[client], DEFAULT_CONFIGS[client])
         live.append(_read_live(client, path))
     live_by_client = {entry["client"]: entry for entry in live}
 
@@ -568,6 +570,27 @@ def _selftest() -> int:
         doc = doc_json(run("--root", repo, "--rev", rev_hist))
         check(doc.get("mismatch_count") == 0, "historical-excluded",
               f"{doc.get('mismatches')}")
+
+        # Wave-2 parser evasions: punctuation, long clauses, incidental
+        # historical wording, and lowercase/Oxford groups remain visible.
+        old = "Devin and OMP\nuse `rea-agents@6.7.0`"
+        adversarial = [
+            ("period", CLEAN_DOC.replace("Devin/OMP 6.7.0,", "Devin/OMP 6.5.0."), 2),
+            ("historical-word", CLEAN_DOC.replace(old,
+                "Devin and OMP\nuse `rea-agents@6.5.0` with historical context"), 2),
+            ("long-gap", CLEAN_DOC.replace(old,
+                "Devin and OMP " + "x" * 200 + " `rea-agents@6.5.0`"), 2),
+            ("lowercase", CLEAN_DOC.replace(old,
+                "devin and omp\nuse `rea-agents@6.5.0`"), 2),
+            ("oxford", CLEAN_DOC.replace(old,
+                "Devin, OMP, and Kimi use `rea-agents@6.5.0`"), 3),
+        ]
+        for label, content, want in adversarial:
+            selected = commit(content, label)
+            res = run("--root", repo, "--rev", selected, "--strict")
+            parsed = doc_json(res)
+            check(res.returncode == 1 and parsed.get("mismatch_count") == want,
+                  "parser-evasion-" + label, str(parsed.get("mismatches")))
 
         rev_uns = commit(UNSTATED_DOC, "unstated")
         res = run("--root", repo, "--rev", rev_uns, "--strict")

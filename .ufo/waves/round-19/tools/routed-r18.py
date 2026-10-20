@@ -11,9 +11,10 @@ Usage:
   python3 -I -B routed-r18.py --root LANE --rev REV [--strict]
   python3 -I -B routed-r18.py --selftest
 Exit: 0 printed (or --strict and open_count 0); 1 --strict with open defects; 2 unusable input.
-The live checks read only Git objects of REV plus, for DEADSEAT-RECORD, the fixed round-18
-delivered revision a245bb0 (report presence at integration). Tools taken from REV run from a
-mkdtemp copy; nothing is written to the lane.
+Checks read Git objects of REV plus pinned historical inputs 9011581 (validator),
+a245bb0 (r18 reports), and 4f6c73f (retained terminal-cause report). Extracted
+lane tools execute trusted code in mkdtemp, not an OS security sandbox.
+Nothing is written to the lane; do not use this checker on untrusted revisions.
 """
 import argparse
 import hashlib
@@ -41,13 +42,18 @@ ALIASES = ["@", "HEAD~0", "HEAD^{commit}", "HEAD@{0}", "@~0", "HEAD^0",
 EV = ".ufo/waves/round-19/evidence"
 
 
+def scrubbed_env():
+    return {k: v for k, v in os.environ.items()
+            if not k.startswith(("GIT_", "JJ_"))}
+
+
 class Git:
     def __init__(self, root):
-        self.root = root
+        self.root = os.path.abspath(root)
 
     def run(self, *args, binary=False):
         p = subprocess.run(["git", "--no-optional-locks", "-C", self.root, *args],
-                           capture_output=True)
+                           capture_output=True, env=scrubbed_env())
         return p.returncode, (p.stdout if binary else p.stdout.decode("utf-8", "replace"))
 
     def show(self, rev, path):
@@ -94,6 +100,7 @@ def s_midmap(g, rev, tmp):
         return False, "round-17/tools absent at REV"
     try:
         mod = load_module(os.path.join(tmp, ".ufo/waves/round-17/tools/receipt-validate.py"), "rv_r18")
+        pins = load_module(os.path.join(tmp, ".ufo/waves/round-17/tools/pins.py"), "pins_mid_counter")
     except Exception as e:  # noqa: BLE001 - any import failure is a red result
         return False, "receipt-validate.py does not import: %r" % (e,)
     pc = [{"taken_at_utc": "2026-10-20T00:00:00Z", "equal": True, "entries": 1,
@@ -102,19 +109,22 @@ def s_midmap(g, rev, tmp):
                      {"argv": ["npx", "-y", "rea-agents@6.5.0", "analyze"]}]}
     green = {"steps": [{"argv": ["npx", "-y", "rea-agents@6.5.0", "inspect-go-binary"]},
                        {"argv": ["npx", "-y", "rea-agents@6.5.0", "analyze"], "pin_checks": pc}]}
+    spoof = {"steps": [
+        {"argv": ["npx", "-y", "rea-agents@6.5.0", "inspect-go-binary", "analyze"], "pin_checks": pc},
+        {"name": "analyze"}]}
+    duplicate = {"steps": [{"name": "analyze", "pin_checks": pc}, {"name": "analyze"}]}
     out = {}
-    for name, rc in (("red", red), ("green", green)):
-        f = []
+    for name, rc in (("red", red), ("green", green), ("spoof", spoof), ("duplicate", duplicate)):
         try:
-            mod.verify_mid_maps(rc, {}, f, require_mid_maps=True)
-        except Exception as e:  # noqa: BLE001
-            return False, "verify_mid_maps raised on %s fixture: %r" % (name, e)
-        out[name] = any(x.get("code") == "mid_checks_absent" for x in f)
-    if not out["red"]:
-        return False, "list-shaped receipt with pin_checks only on a non-analyze step is accepted"
+            result = mod.validate_receipt(rc, pins, require_mid_maps=True)
+        except Exception as e:
+            return False, "validate_receipt raised on %s fixture: %r" % (name, e)
+        out[name] = any(x.get("code") == "mid_checks_absent" for x in result["findings"])
+    if not all(out[k] for k in ("red", "spoof", "duplicate")):
+        return False, "list/identity/flag-forwarding red fixture lacks mid_checks_absent: %s" % out
     if out["green"]:
-        return False, "list-shaped receipt with pin_checks on the analyze step is rejected (always-red)"
-    return True, "non-analyze-only list receipt -> mid_checks_absent; analyze-carrying list receipt clean"
+        return False, "analyze-carrying list is rejected as absent (always-red)"
+    return True, "three red list/identity fixtures raise mid_checks_absent through validate_receipt; analyze fixture does not (not a full valid-receipt claim)"
 
 
 def s_validator_digest(g, rev, tmp):
@@ -143,6 +153,26 @@ def s_validator_digest(g, rev, tmp):
         return False, "a well-formed wrong validator_sha256 is accepted"
     if not ok_good:
         return False, "the true validator digest is rejected"
+    summary_path = ".ufo/waves/round-18/evidence/validate16/summary.json"
+    summary = g.text(rev, summary_path)
+    if summary is None:
+        return False, "validate16 summary absent"
+    forged = json.loads(summary)
+    forged["validator_sha256"] = wrong
+    original_show = mod._show
+    def mutated_show(root, selected_rev, path):
+        if selected_rev == rev and path == summary_path:
+            return json.dumps(forged).encode()
+        return original_show(root, selected_rev, path)
+    mod._show = mutated_show
+    try:
+        actual_gate = mod._d_validate16(g.root, rev)
+    finally:
+        mod._show = original_show
+    failed = [c for c in actual_gate.get("checks", [])
+              if c.get("name") == "validator-sha256-pinned" and not c.get("ok")]
+    if not failed:
+        return False, "wrong digest does not reach the actual VALIDATE16 gate check"
     dj = g.text(rev, EV + "/validate16-remap/digests.json")
     if dj is None:
         return False, "validate16-remap/digests.json absent at REV"
@@ -153,6 +183,9 @@ def s_validator_digest(g, rev, tmp):
     copies = doc.get("copies") or []
     if len(copies) != 8:
         return False, "digests.json lists %d copies, want 8" % len(copies)
+    expected = {r["label"] for r in json.loads(g.text(A18, summary_path))["receipts"]}
+    if {c.get("label") for c in copies} != expected:
+        return False, "remap copy labels differ from the eight historical receipt labels"
     if doc.get("validator_sha256") != good:
         return False, "digests.json validator_sha256 != pinned validator blob digest"
     for c in copies:
@@ -175,6 +208,8 @@ def s_strict_baseline(g, rev, tmp):
         return False, "receipt unparseable"
     if r.get("rev") != B18 or "--strict" not in (r.get("argv") or []) or r.get("exit") != 1:
         return False, "receipt is not a --strict run at %s with exit 1" % B18
+    if r.get("tool_rev") != A18:
+        return False, "strict-baseline producer revision differs from pinned a245bb0"
     out = g.show(rev, base + ".stdout.txt")
     err = g.show(rev, base + ".stderr.txt")
     if out is None or sha(out) != r.get("stdout_sha256") or err is None or sha(err) != r.get("stderr_sha256"):
@@ -195,7 +230,7 @@ def s_strict_baseline(g, rev, tmp):
         f.write(tool)
     replay = subprocess.run(
         [sys.executable, "-I", "-B", replay_path, "--root", g.root,
-         "--rev", B18, "--strict"], capture_output=True)
+         "--rev", B18, "--strict"], capture_output=True, env=scrubbed_env())
     if replay.returncode != 1 or replay.stdout != out or replay.stderr != err:
         return False, "strict-baseline replay disagrees with retained exit/stdout/stderr"
     return True, "strict run at %s exit 1 (open %s), bytes and tool bound" % (B18[:7], doc.get("open_count"))
@@ -218,19 +253,19 @@ def s_head_aliases(g, rev, tmp):
         return False, "immutable/full-branch control lexically refused"
     accepted = []
     for a in ALIASES:
-        p = subprocess.run(base + ["--rev", a], capture_output=True, cwd=tmp)
+        p = subprocess.run(base + ["--rev", a], capture_output=True, cwd=tmp, env=scrubbed_env())
         if p.returncode != 2:
             accepted.append("%s->%d" % (a, p.returncode))
     if accepted:
         return False, "HEAD aliases not refused: " + ", ".join(accepted)
-    p = subprocess.run(base + ["--rev", "refs/heads/main"], capture_output=True, cwd=tmp)
+    p = subprocess.run(base + ["--rev", rev], capture_output=True, cwd=tmp, env=scrubbed_env())
     if p.returncode == 2:
-        return False, "refs/heads/main also refused (always-red)"
+        return False, "immutable source revision also refused (always-red)"
     skill = g.text(rev, "SKILL.md") or ""
     row = [l for l in skill.splitlines() if l.startswith("| head-rev-lint |")]
     if not row or not all(k in row[0] for k in ("round-17/verify.py", "revpin.py", "nested")):
         return False, "head-rev-lint registry row does not register the nested compare-only reads"
-    return True, "%d aliases exit 2, refs/heads/main evaluates; lint limit registered" % len(ALIASES)
+    return True, "%d aliases exit 2, immutable source evaluates; lint limit registered" % len(ALIASES)
 
 
 def s_deadseat(g, rev, tmp):
@@ -257,6 +292,18 @@ def s_deadseat(g, rev, tmp):
            or not str(s.get("source") or "").strip()]
     if bad:
         return False, "seats without cause/source: %s" % bad
+    authority = g.text("4f6c73f81ae8d31de18377d7ff57e4e10140ce48",
+                       ".ufo/waves/round-19/w1/DeadSeatHistoryR18.md") or ""
+    block = re.search(r"```json\n(.*?)\n```", authority, re.S)
+    if block is None:
+        return False, "pinned dead-seat history report unreadable"
+    observed = {s["seat"]: s for s in json.loads(block.group(1))["seats"]}
+    for s in seats:
+        actual = observed.get(s["name"])
+        if actual is None or s["cause"] != actual.get("error_line"):
+            return False, "cause differs from pinned terminal evidence: %s" % s["name"]
+        if not all(p in s["source"] for p in actual.get("evidence", [])):
+            return False, "source differs from pinned transcript pointers: %s" % s["name"]
     return True, "%d seats without a report at a245bb0, each with cause and source" % len(seats)
 
 
@@ -274,11 +321,14 @@ def s_registry(g, rev, tmp):
             continue
         m = re.search(r"Pinned values:(.*)", rows[0])
         cell = m.group(1).split("|")[0] if m else ""
-        if "probe; no persisted baseline" in cell:
+        if name == "pins" and "probe; no persisted baseline" in cell:
             continue
-        cited = re.findall(r"`?(\.ufo/[^\s`;,()]+|corpus/[^\s`;,()]+)`?", cell)
-        if not any(c.rstrip(".:") in paths for c in cited):
-            why.append("%s: Pinned values names no path that exists at REV" % name)
+        cited = [c.rstrip(".:") for c in
+                 re.findall(r"`?(\.ufo/[^\s`;,()]+|corpus/[^\s`;,()]+)`?", cell)]
+        expected = ".ufo/waves/round-17/tools/buildinfo-probe.py"
+        if not cited or any(c not in paths for c in cited) or (
+                name == "go-buildinfo-probe" and expected not in cited):
+            why.append("%s: missing/wrong/unresolvable pinned-value path" % name)
     return (not why), ("; ".join(why) or "both rows name an existing path or state no persisted baseline")
 
 
@@ -290,8 +340,15 @@ def s_install(g, rev, tmp):
     if sec is None:
         return False, "lesson has no `## Installs` section"
     body = sec.group(1)
-    miss = [v for v, h in GO_SHA.items() if v not in body or h not in body]
-    if miss or "go.dev" not in body:
+    miss = []
+    for version, digest in GO_SHA.items():
+        paragraph = re.search(r"^- " + re.escape(version) + r"\b(.*?)(?=^- |\Z)",
+                              body, re.M | re.S)
+        if paragraph is None or digest not in paragraph.group(1):
+            miss.append(version)
+    if (miss or "go.dev" not in body
+            or not re.search(r"\bChannel:\s*official\s+release\s+tarball\b", body)
+            or not re.search(r"(?m)^- Reason:\s+\S", body)):
         return False, "install record lacks version/full sha256/channel for %s" % (miss or "go.dev channel")
     return True, "go1.24.6 and go1.25.0 recorded with full sha256 and go.dev channel"
 
@@ -317,7 +374,7 @@ def evaluate(root, rev):
     full = full.strip()
     defects = []
     for did in IDS:
-        tmp = tempfile.mkdtemp(prefix="kr19-routed-")
+        tmp = tempfile.mkdtemp(prefix="kr19-routed-", dir="/tmp")
         try:
             try:
                 ok, why = SUBSTANCE[did](g, full, tmp)
@@ -342,7 +399,7 @@ def selftest():
         if not cond:
             fails.append(msg)
 
-    root = tempfile.mkdtemp(prefix="kr19-routed-selftest-")
+    root = tempfile.mkdtemp(prefix="kr19-routed-selftest-", dir="/tmp")
     try:
         env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t",
                    GIT_COMMITTER_EMAIL="t@t")
@@ -359,7 +416,8 @@ def selftest():
             "".join("- R18-%s: token only\n" % i for i in IDS))
         os.makedirs(os.path.join(root, "corpus/lessons"))
         open(os.path.join(root, LESSON), "w").write(
-            "".join("- R18-%s: token only\n" % i for i in IDS) + "## Installs\ngo1.24.6 go1.25.0 go.dev\n")
+            "".join("- R18-%s: token only\n" % i for i in IDS)
+            + "## Installs\ngo1.24.6 go1.25.0 go.dev\nChannel: official release tarball\n- Reason: build fixture carriers\n")
         open(os.path.join(root, "SKILL.md"), "w").write(
             "| pins | probe | x | y | Pinned values: none |\n| go-buildinfo-probe | probe | x | y | Pinned values: constants |\n"
             "| head-rev-lint | gate | nested round-17/verify.py revpin.py |\n")
@@ -372,11 +430,13 @@ def selftest():
             check(not d["substance"], "token-only fixture closed substance of %s: %s" % (d["id"], d["why"]))
         # install record green case: full hashes in the Installs section
         open(os.path.join(root, LESSON), "a").write(
-            "".join("%s %s\n" % (v, h) for v, h in GO_SHA.items()))
+            "".join("- %s %s\n" % (v, h) for v, h in GO_SHA.items()))
         # registry green case: name an existing path
         open(os.path.join(root, "SKILL.md"), "w").write(
             "| pins | probe | x | y | Pinned values: probe; no persisted baseline |\n"
-            "| go-buildinfo-probe | probe | x | y | Pinned values: `corpus/lessons/round-19.md` |\n")
+            "| go-buildinfo-probe | probe | x | y | Pinned values: `.ufo/waves/round-17/tools/buildinfo-probe.py` |\n")
+        os.makedirs(os.path.join(root, ".ufo/waves/round-17/tools"), exist_ok=True)
+        open(os.path.join(root, ".ufo/waves/round-17/tools/buildinfo-probe.py"), "w").write("# fixture\n")
         git("add", "-A")
         git("commit", "-q", "-m", "green install+registry")
         doc = evaluate(root, "refs/heads/main")
@@ -414,7 +474,8 @@ def main():
         return selftest()
     if not a.root or not a.rev:
         ap.error("--root and --rev are required")
-    if a.rev in ("HEAD", "@") or a.rev.startswith(("HEAD~", "HEAD^", "HEAD@", "@~", "@^")):
+    if ("HEAD" in a.rev or a.rev.startswith(("@", ":/"))
+            or "@{" in a.rev or a.rev in ALIASES):
         print("routed-r18: refusing HEAD-derived --rev %r; pass a commit id or refs/heads/main" % a.rev,
               file=sys.stderr)
         return 2

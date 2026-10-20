@@ -28,7 +28,8 @@
 # pessimistic per-MB reading (10.01 s/MB at 2.25 MB) predicts 215 s.
 # TIMEOUT_S=1200 is 14.9x the fitted estimate and 5.6x the pessimistic one,
 # and covers the whole REA_GHIDRA_STARTUP_TIMEOUT_MS=900000 startup budget
-# plus 300 s of analysis; a 9-row wave cannot stall longer than 3 h.
+# plus 300 s of analysis. This is a per-step budget, not a whole-wave ceiling:
+# inspect, analyze and optional searches run sequentially for each carrier.
 # Round-18 used 1500, i.e. 21.2x its own observed maximum.
 #
 # Exit 0 only if every selected carrier-run and compare exited 0; exit 1 when
@@ -200,6 +201,17 @@ PY
   chk "rm-guard exit" 1 "$?"
   chk "rm-guard left no dir" 1 "$([ -e "$guard" ]; echo $?)"
 
+  "${envbase[@]}" "PREDICTIONS_DIR=$root/predictions" bash "$0" nonexistent \
+    > "$root/unknown.stdout" 2> "$root/unknown.stderr"
+  chk "unknown-selector exit" 2 "$?"
+  mkdir -p "$root/predictions-traversal"
+  printf '../escape\t%s/carriers/fakeA\tk\t%s\n' "$root" "$shaA" \
+    > "$root/predictions-traversal/carriers.tsv"
+  "${envbase[@]}" "PREDICTIONS_DIR=$root/predictions-traversal" bash "$0" \
+    > "$root/traversal.stdout" 2> "$root/traversal.stderr"
+  chk "traversal-label exit" 2 "$?"
+  chk "traversal-label no output" 1 "$([ -e "$root/escape" ]; echo $?)"
+
   if [ "$fails" -gt 0 ]; then
     echo "SELFTEST: FAILED cases=$cases fails=$fails"
     return 1
@@ -237,6 +249,10 @@ while IFS=$'\t' read -r label path kind sha4 extra; do
   [ -z "$label" ] && continue
   case "$label" in \#*) continue ;; esac
   rows=$((rows + 1))
+  if [[ ! "$label" =~ ^[A-Za-z0-9][A-Za-z0-9_-]*$ ]]; then
+    echo "run-carriers: unsafe label '$label' (single basename required)" >&2
+    exit 2
+  fi
   case "$sha4" in
     ""|*[!0-9a-f]*)
       echo "run-carriers: $TSV row $rows ($label): sha256 column is not lowercase hex: '$sha4'" >&2
@@ -261,10 +277,12 @@ for t in "${W17_TOOLS[@]}"; do TOOLPINARGS+=(--pin "$TOOLS_DIR/$t"); done
 
 only="${1:-}"
 overall=0
+selected=0
 while IFS=$'\t' read -r label path kind sha4 extra; do
   [ -z "$label" ] && continue
   case "$label" in \#*) continue ;; esac
   [ -n "$only" ] && [ "$only" != "$label" ] && continue
+  selected=$((selected + 1))
   out="${RUNS_DIR:-runs}/$label"
   case "$out" in /*) outabs="$out" ;; *) outabs="$W/$out" ;; esac
   outabs=$(realpath -m "$outabs")
@@ -331,4 +349,8 @@ while IFS=$'\t' read -r label path kind sha4 extra; do
   echo "== $label end $(date -Iseconds) carrier-run=$rc compare=$(cat "$outabs/compare.exit" 2>/dev/null)"
   [ "$rc" = 0 ] && [ "$(cat "$outabs/compare.exit" 2>/dev/null)" = 0 ] || overall=1
 done < "$TSV"
+if [ "$selected" -eq 0 ]; then
+  echo "run-carriers: label selector '${only}' matched no carrier" >&2
+  exit 2
+fi
 exit $overall

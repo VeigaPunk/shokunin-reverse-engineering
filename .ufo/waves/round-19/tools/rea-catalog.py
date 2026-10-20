@@ -255,9 +255,15 @@ def main(argv=None):
     if args.out:
         out_path = Path(args.out)
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        tmp_path = out_path.with_name(out_path.name + ".tmp")
-        tmp_path.write_text(text, encoding="utf-8")
-        os.replace(tmp_path, out_path)
+        fd, tmp_path = tempfile.mkstemp(prefix=".rea-catalog-", suffix=".tmp",
+                                     dir=str(out_path.parent))
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                f.write(text)
+            os.replace(tmp_path, out_path)
+        finally:
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
         print(f"WROTE: {out_path}", file=sys.stderr)
 
     return 1 if (args.strict and findings) else 0
