@@ -78,6 +78,8 @@ def load_inputs(prediction_path, observation_path):
         try:
             with open(path, "r", encoding="utf-8") as fh:
                 data[tag] = json.load(fh)
+            if data[tag] is None:
+                errors.append("{0}: top-level JSON null is not an object".format(tag))
         except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
             data[tag] = None
             errors.append("{0}: cannot read/parse {1!r}: {2}".format(tag, path, exc))
@@ -96,6 +98,12 @@ def load_inputs(prediction_path, observation_path):
                 errors.append("prediction.expected.snapshot_label must be str|null")
             if not isinstance(exp.get("missing_bootstrap"), bool):
                 errors.append("prediction.expected.missing_bootstrap must be bool")
+            # Route fields (w2 CompareAttack D2-D4): both or neither, typed.
+            if "snapshot_route" in exp or "fallback_to" in exp:
+                if exp.get("snapshot_route") not in ("none", "info", "fallback"):
+                    errors.append("prediction.expected.snapshot_route must be none|info|fallback")
+                if not _is_str_or_none(exp.get("fallback_to", False)) or exp.get("fallback_to") == "":
+                    errors.append("prediction.expected.fallback_to must be a non-empty str or null")
 
     obs = data["observation"]
     if obs is not None:
@@ -108,6 +116,15 @@ def load_inputs(prediction_path, observation_path):
                 errors.append("observation.snapshot_labels must be list[str]")
             if not isinstance(obs.get("missing_bootstrap"), bool):
                 errors.append("observation.missing_bootstrap must be bool")
+            route_predicted = isinstance(pred, dict) and isinstance(pred.get("expected"), dict) \
+                and ("snapshot_route" in pred["expected"] or "fallback_to" in pred["expected"])
+            if route_predicted:
+                if not isinstance(obs.get("snapshot_route"), str):
+                    errors.append("observation.snapshot_route must be str when a route is predicted")
+                fb = obs.get("snapshot_fallbacks")
+                if not (isinstance(fb, list) and all(isinstance(f, dict) and isinstance(f.get("to"), str)
+                                                     for f in fb)):
+                    errors.append("observation.snapshot_fallbacks must be list[{to: str}] when a route is predicted")
 
     return pred, obs, errors
 
@@ -364,7 +381,7 @@ def _selftest():
         ("route_predicted_observation_lacks_route_red",
          _mutate(_mutate(_PRED_EMPTY, "expected.snapshot_route", "info"),
                  "expected.fallback_to", None),
-         _OBS_EMPTY, 1, False),
+         _OBS_EMPTY, 2, None),
         ("extra_expectation_red",
          _mutate(_PRED_EMPTY, "extra_expectations",
                  {"bootstrap_attempts_at_least": 1,

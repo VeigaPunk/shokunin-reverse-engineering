@@ -3,8 +3,8 @@
 // (Base-src.zip, ghidra/app/util/bin/format/golang/) over escaped test
 // strings from stdin and prints one result line per input.
 //
-// Escapes on stdin: \\ \n \r \t \uXXXX (UTF-16 units, so astral chars are
-// sent as a surrogate pair of \uXXXX escapes).
+// Escapes on stdin: "\\", "n", "r", "t" after a backslash, and 'u' + 4 hex
+// digits (UTF-16 units, so astral chars are sent as a surrogate pair).
 //
 // The "go" prefix strip replicates GoBuildInfo.java:488-489 verbatim:
 //   if (versionString.startsWith("go")) versionString = versionString.substring(2);

@@ -82,10 +82,13 @@ _JAVA_INT_MAX = 2147483647
 
 # GoVer.java:64-65 -- Objects.requireNonNullElse(s, "")
 #   .replaceAll("[^.0-9].*$", "")
-# Java replaceAll here is non-multiline: '.' does not match '\n' and '$'
-# binds at end of input or before a final line terminator, exactly like
-# Python's re.sub with this pattern.
-_TRAILING_JUNK_RE = re.compile(r"[^.0-9].*$")
+# Java (non-MULTILINE): '.' excludes the line terminators \n \r \u0085 \u2028
+# \u2029, and '$' binds at end of input or before one final terminator (\r\n
+# counts as one). Python's '.'/'$' differ, so the Java classes are spelled out
+# (w2 PredictJavaDiff F2: 18 disagreements with the naive Python pattern).
+_JAVA_LT = "\n\r\u0085\u2028\u2029"
+_TRAILING_JUNK_RE = re.compile(
+    "[^.0-9][^" + _JAVA_LT + "]*(?=(?:\r\n|[" + _JAVA_LT + "])?\\Z)(?!(?<=\r)\n)")
 
 
 def _load_selection_module():
@@ -121,9 +124,14 @@ def gover_parse(s, missing_patch_value=0):
         return None  # GoVer.java:66-68
     comps = []
     for piece in parts[:3]:  # parts[3:] are never read: GoVer.java:72-74
-        if piece == "" or len(piece) > 10 or int(piece) > _JAVA_INT_MAX:
+        # Integer.parseInt: ASCII digits only here (regex), any number of
+        # leading zeros, value <= Integer.MAX_VALUE (w2 PredictJavaDiff F1/F3).
+        if piece == "" or not piece.isascii() or not piece.isdigit():
             return None  # NumberFormatException, GoVer.java:77-80
-        comps.append(int(piece))
+        digits = piece.lstrip("0") or "0"
+        if len(digits) > 10 or int(digits) > _JAVA_INT_MAX:
+            return None  # overflow -> NumberFormatException
+        comps.append(int(digits))
     patch = comps[2] if len(parts) > 2 else missing_patch_value
     return (comps[0], comps[1], patch)  # GoVer.java:75
 

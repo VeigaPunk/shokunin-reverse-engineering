@@ -54,7 +54,9 @@ import subprocess
 import sys
 import tempfile
 
-# Contract: component in this set, or component starting with "Go"/"Golang".
+# Exact Go analyzer components seen in Ghidra 12.1.4 logs, plus Golang* analyzers
+# and Go fixup background commands (w2 LogExtractFuzz D2: a bare "Go" prefix let
+# lookalike components forge labels).
 GO_COMPONENTS = {
     "GoRttiMapper",
     "GoApiSnapshot",
@@ -63,6 +65,12 @@ GO_COMPONENTS = {
     "GoTypeManager",
     "GoFunctionFixup",
     "GoFunctionMultiReturn",
+    "GoBuildInfo",
+}
+GO_BACKGROUND_COMMANDS = {
+    "PropagateRttiBackgroundCommand",
+    "FixClosureFuncArgsBackgroundCommand",
+    "FixGcWriteBarrierFlagBackgroundCommand",
 }
 
 LINE_RE = re.compile(
@@ -82,8 +90,8 @@ FALLBACK_RE = re.compile(r"^Falling back from (\S+) to (\S+) for Go API snapshot
 API_INFO_RE = re.compile(r"^Using Go API snapshot for (\S+)\s*$")
 INVALID_VERSION_RE = re.compile(r"Invalid Go version string \[([^\]]*)\]")
 READING_RE = re.compile(r"^Reading Go binary info: (\S+)")
-LOG_FILE_RE = re.compile(r"Using log file: (\S+)")
-IMPORT_RE = re.compile(r"IMPORTING: file://(\S+)")
+LOG_FILE_RE = re.compile(r"^Using log file: (\S+)\s*$")
+IMPORT_RE = re.compile(r"^IMPORTING: file://(\S+)\s*$")
 
 
 class ExtractError(Exception):
@@ -96,10 +104,8 @@ def _is_go_component(component):
     # the contract allowlist dropped (w1 CriticCapabilityPreclaim F7, ReviewPilotLogs P3).
     return (
         component in GO_COMPONENTS
-        or component.startswith("Go")
-        or component.startswith("Golang")
-        or (component.endswith("BackgroundCommand")
-            and ("Rtti" in component or "Closure" in component))
+        or component in GO_BACKGROUND_COMMANDS
+        or (component.startswith("Golang") and component.isalnum())
     )
 
 
@@ -141,7 +147,11 @@ def parse_log(log_path):
     log_file = None
     import_target = None
 
-    for lineno, raw in enumerate(text.splitlines(), start=1):
+    # Split on "\n" only: ghidra.log records are newline-terminated, and
+    # carrier-controlled text may contain U+2028/U+2029/\x0b, which
+    # str.splitlines() would treat as record breaks (w2 LogExtractFuzz D1).
+    for lineno, raw in enumerate(text.split("\n"), start=1):
+        raw = raw[:-1] if raw.endswith("\r") else raw
         m = LINE_RE.match(raw)
         if not m:
             continue  # continuation line / non-record
@@ -153,12 +163,12 @@ def parse_log(log_path):
             lm = LANGUAGE_COMPILER_RE.match(message)
             if lm:
                 language_compiler = lm.group(1)
-        if log_file is None:
-            fm = LOG_FILE_RE.search(message)
+        if log_file is None and component == "LoggingInitialization":
+            fm = LOG_FILE_RE.match(message)
             if fm:
                 log_file = fm.group(1)
-        if import_target is None:
-            im = IMPORT_RE.search(message)
+        if import_target is None and component == "HeadlessAnalyzer":
+            im = IMPORT_RE.match(message)
             if im:
                 import_target = im.group(1)
 
@@ -175,19 +185,20 @@ def parse_log(log_path):
             }
         )
 
-        um = UNTESTED_RE.search(message)
+        um = UNTESTED_RE.search(message) if component == "GoRttiMapper" else None
         if um:
             untested_versions.append(um.group(1))
 
-        sm = SNAPSHOT_RE.match(message)
+        sm = (SNAPSHOT_RE.match(message)
+              if component in ("GoRttiMapper", "GoApiSnapshot") else None)
         if sm:
             snapshot_labels.append(sm.group(1))
 
-        gm = GO_VERSION_RE.match(message)
+        gm = GO_VERSION_RE.match(message) if component == "GolangSymbolAnalyzer" else None
         if gm:
             go_version_logged.append(gm.group(1))
 
-        if MISSING_BOOTSTRAP_TEXT in message:
+        if component == "GoRttiMapper" and message.startswith(MISSING_BOOTSTRAP_TEXT):
             missing_bootstrap = True
 
         if level == "ERROR" and component.startswith("Golang"):
@@ -200,7 +211,7 @@ def parse_log(log_path):
             ai = API_INFO_RE.match(message)
             if ai:
                 api_info_labels.append(ai.group(1))
-        iv = INVALID_VERSION_RE.search(message)
+        iv = INVALID_VERSION_RE.search(message) if component == "GoRttiMapper" else None
         if iv:
             invalid_versions.append(iv.group(1))
         if component == "GoRttiMapper":

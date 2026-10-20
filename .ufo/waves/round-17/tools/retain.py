@@ -28,6 +28,8 @@ import json
 import os
 import subprocess
 import sys
+
+sys.dont_write_bytecode = True  # never write __pycache__ next to imported pins.py
 import tempfile
 import time
 from datetime import datetime, timezone

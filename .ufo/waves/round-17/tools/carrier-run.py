@@ -123,21 +123,33 @@ def _stop_group(proc):
         return "kill"
 
 
-def bind_session(session_dir, files, carrier_sha256):
-    """Bind a retained session to this carrier from the log's own bytes:
-    ghidra.log names its own path ('Using log file: <dir>/ghidra.log') and the
-    imported copy ('IMPORTING: file://<dir>/target-<sha256[:12]>.bin')."""
-    out = {"logfile_ok": False, "target_ok": False}
+def bind_session(session_dir, files, carrier_sha256, carrier_md5=None):
+    """Bind a retained session to this carrier from the log's own records:
+    ghidra.log names its own path ('Using log file: <dir>/ghidra.log', component
+    LoggingInitialization), the imported copy ('IMPORTING: file://<dir>/target-
+    <sha256[:12]>.bin', component HeadlessAnalyzer) and, when given, the loader's
+    full target MD5. Lines are matched whole, never as substrings (w2 BindingFuzz)."""
+    out = {"logfile_ok": False, "target_ok": False, "md5_ok": None}
     ent = files.get("ghidra.log")
-    if not ent or not carrier_sha256:
+    if not ent or not carrier_sha256 or os.path.islink(ent["path"]):
         return out
     try:
         text = open(ent["path"], "rb").read().decode("utf-8", "replace")
     except OSError:
         return out
-    out["logfile_ok"] = ("Using log file: %s/ghidra.log" % session_dir) in text
-    out["target_ok"] = ("IMPORTING: file://%s/target-%s.bin"
-                        % (session_dir, carrier_sha256[:12])) in text
+    lines = [ln.rstrip("\r").rstrip() for ln in text.split("\n")]
+    out["logfile_ok"] = any(re.fullmatch(
+        r"\S+ \S+ INFO +\(LoggingInitialization\) Using log file: "
+        + re.escape("%s/ghidra.log" % session_dir), ln) for ln in lines)
+    out["target_ok"] = any(re.fullmatch(
+        r"\S+ \S+ INFO +\(HeadlessAnalyzer\) IMPORTING: "
+        + re.escape("file://%s/target-%s.bin" % (session_dir, carrier_sha256[:12])), ln)
+        for ln in lines)
+    if carrier_md5:
+        out["md5_ok"] = any(ln.startswith("Loading file://%s/target-%s.bin?MD5=%s"
+                                          % (session_dir, carrier_sha256[:12], carrier_md5))
+                            for ln in lines)
+        out["target_ok"] = out["target_ok"] and out["md5_ok"]
     return out
 
 
@@ -157,7 +169,7 @@ def run_step(argv, name, out_dir, cwd, timeout, runner):
             try:
                 exit_code = proc.wait(timeout=timeout)
             except subprocess.TimeoutExpired:
-                proc.kill()
+                rec["stop"] = _stop_group(proc)
                 try:
                     proc.wait(timeout=10)
                 except Exception:
@@ -325,6 +337,11 @@ def run(carrier, label, out_dir, rea_version="6.5.0", timeout=1800.0,
     receipt["pins_pre"] = pins_pre
     if pins_pre["entries"].get(carrier, {}).get("sha256"):
         receipt["carrier"]["sha256_pre"] = pins_pre["entries"][carrier]["sha256"]
+        _md5 = hashlib.md5()
+        with open(carrier, "rb") as _f:
+            for _chunk in iter(lambda: _f.read(1 << 20), b""):
+                _md5.update(_chunk)
+        receipt["carrier"]["md5_pre"] = _md5.hexdigest()
     for p, ent in pins_pre["entries"].items():
         if "error" in ent:
             receipt["error"] = "pin failed for %s: %s" % (p, ent["error"])
@@ -375,7 +392,8 @@ def run(carrier, label, out_dir, rea_version="6.5.0", timeout=1800.0,
     retained = poller.retained()
     carrier_sha = receipt["carrier"].get("sha256_pre")
     for ent in retained:
-        ent["binding"] = bind_session(ent["session_dir"], ent["files"], carrier_sha)
+        ent["binding"] = bind_session(ent["session_dir"], ent["files"], carrier_sha,
+                                      receipt["carrier"].get("md5_pre"))
     receipt["retained_logs"] = retained
     bound = [e["session_dir"] for e in retained
              if e["binding"]["logfile_ok"] and e["binding"]["target_ok"]]
@@ -404,7 +422,8 @@ def run(carrier, label, out_dir, rea_version="6.5.0", timeout=1800.0,
         return receipt, 2
     if not pins_cmp["equal"] or mid_drift:
         return receipt, 1
-    if steps["analyze"].get("exit") not in (0,):
+    if steps["analyze"].get("exit") not in (0,) or any(
+            s.get("timeout") for s in steps.values()):
         return receipt, 2
     # Exactly one bound session per polled REA step (analyze + each search), and a
     # leaked session parent (e.g. a surviving rea-ghidra-* root with session.json)

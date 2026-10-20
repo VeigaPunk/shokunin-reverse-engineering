@@ -5,35 +5,38 @@
 - **Target**: `corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md` (lines cited below; `nl -ba` numbering).
 - **Scope**: the `source:`/`verified-at:`/`recheck:` trio, the `Not examined` section, and QUALITY #4–#9.
 - **Method**: read-only. No REA `analyze`/`search`/`decompile`, no Ghidra, no carrier execution. Scratch only under `/tmp`; repository tools were copied, never edited. No installs.
-- **Working-tree state at review (moving)**: `git status --porcelain` currently shows `M` on `run-carriers.sh`, `receipt-validate.py`, `carrier-run.py`, `compare.py`, `predict.py`, `temporal-sweep.py` — not my edits; an integration pass is landing H1/H2/M1 fixes concurrently. The committed revision `da64646` still has the defects reported below. I ran the working-tree validator on the eight receipts: exit 0, 8/8 valid, 340 checks each; the working-tree script now honors `RUNS_DIR`. The knowledge entry itself is unchanged. Tool line numbers below are the committed revision.
+- **Working-tree state at review (moving)**: HEAD moved to `95e34db62f2693c455d7ee4dfef24b8f3ebc007d` (11:27:35 -03, "w2-hardened tools and frozen replicate expectations (pre-rerun)") during this review; that commit contains an earlier copy of this report and the H1/H2 tool fixes. **This working-tree file is the final revision of the report; the `95e34db` copy is earlier.** The assigned anchor remains `da64646`. At 11:33 the working tree still shows `M contract.md`, `M measure.py`, `M verify.py`, and an in-place `runs/` rewrite: 36 changed paths (16 `D`, 15 `M`, 5 `??`), with deleted logs for calib-*, pro-aether and pro-esbuild-0.21.5. My run-file checks used the committed `da64646` copies; the current working-tree runs may differ. The HEAD/working-tree validator (fix committed at `95e34db`) passed 8/8, 340 checks each, before the rerun. The knowledge entry itself is unchanged. Tool line numbers below are the committed `da64646` revision unless stated.
 
 ## Direct answers
 
-1. **Is the recheck runnable as written?** At the assigned revision `da64646`: the first half runs but **fails on every retained receipt**: exit `1`, `unrecognized_shape` (all eight). The receipts themselves are byte-intact — a `/tmp` copy with only the shape mismatch fixed returns 8/8 `valid` (336 checks each, exit 0), and the current **working-tree** validator (another seat's uncommitted fix) returns 8/8 `valid`, 340 checks each, exit 0. The second half (`run-carriers.sh <label>`) is destructive and underspecified; see H2.
+1. **Is the recheck runnable as written?** At the assigned revision `da64646`: the first half runs but **fails on every retained receipt**: exit `1`, `unrecognized_shape` (all eight). The receipts themselves are byte-intact — a `/tmp` copy with only the shape mismatch fixed returns 8/8 `valid` (336 checks each, exit 0), and the **HEAD/working-tree** validator (fix committed at `95e34db`) returned 8/8 `valid`, 340 checks each, exit 0 in a run before the in-place rerun. The second half (`run-carriers.sh <label>`) is destructive and underspecified; see H2.
 2. **Does `verified-at` overstate?** No on its checkable clauses: eight sessions, `rea-agents@6.5.0` argv, Ghidra `12.1.4` provider field, `13:47:06.688–14:00:05.228 UTC`, non-overlapping intervals, "author-side" qualifier. The overstatements sit in the Method (mid-run pins) and the recheck, not in `verified-at`. The `source:` line's "before any run" is false for the pilot (L6).
 3. **QUALITY #4–#9**: #4 partial (four rows lack absolute paths); #5 partial (two causal clauses unlabelled inside OBSERVATION bullets); #6 partial (`inspect-go-binary` IDs are not in `receipt.json`; the buildinfo-probe check is unretained); #7 partial (the integrated entry dropped its own draft's live limitations and does not name the retained evidence's detail level); #8 partial (provider/Ghidra pinned, but the live claim source is unnamed and the JDK/launch-flags item was dropped); #9 clean (no target-runtime claims; one ambiguous "at runtime" phrase).
-4. **Bottom line**: the observations are reproducible; the provenance wrapper is not. Fix H1 before the eight per-run wave-2 seats (`wave2-spec.json:14,19,24,29,34,39,44,49`) repeat the same failure, and before any capability row can pass the `receipt-validate.py` exit-0 gate (`w1/draft-scorecard.md:46`).
+4. **Bottom line**: the observations are reproducible; the provenance wrapper is not. Keep H1's fix (committed at `95e34db`) in the integrated tree before the eight per-run wave-2 seats (`wave2-spec.json:14,19,24,29,34,39,44,49`) repeat the failure, and before any capability row can pass the `receipt-validate.py` exit-0 gate (`w1/draft-scorecard.md:46`).
 
 ## High
 
 ### H1 — the recheck command exits 1 on all eight receipts (`receipt-validate.py` classifies the producer's shape as `unknown`)
 
 - **Where**: doc `:3`; `tools/receipt-validate.py:98-101` (classify), `:284` (step iteration), `:459-500` (selftest fixture); `tools/carrier-run.py:275,309,349` (producer).
-- **Observation** — exact command from doc `:3` (substituted label) and output:
+- **Observation** — the doc's command, run against the **committed** tool at `da64646` (the working tree is now modified):
   ```
-  $ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/receipt-validate.py \
+  $ git show da64646:.ufo/waves/round-17/tools/receipt-validate.py > /tmp/rv-committed/receipt-validate.py
+  $ git show da64646:.ufo/waves/round-17/tools/pins.py > /tmp/rv-committed/pins.py
+  $ python3 -I -B /tmp/rv-committed/receipt-validate.py \
       /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/runs/pro-aether/receipt.json
   {"counts":{"invalid":1,"receipts":1,"unreadable":0,"valid":0},
-   "exit":1, "pins_available":true,
+   "exit":1, "pins_available":true, "pins_path":"/tmp/rv-committed/pins.py",
    "receipts":[{"checks_performed":306,
      "findings":[{"code":"unrecognized_shape",
                   "detail":"receipt matches neither retain nor carrier shape",
                   "where":"$"}],
-     "kind":"unknown","status":"invalid","valid":false}],
+     "kind":"unknown","status":"invalid","valid":false,
+     "receipt":"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/runs/pro-aether/receipt.json"}],
    "tool":"receipt-validate.py"}
   EXIT=1
   ```
-  Same result for all eight (loop over `runs/*/receipt.json`): `kind=unknown`, `unrecognized_shape`, exit 1.
+  Same result for the seven receipts still present during the committed-tool run; `calib-esbuild-0.25.12/receipt.json` had been deleted by the in-place rerun at 11:28. The earlier all-eight loop, before the rerun and with the `da64646` tool, returned `kind=unknown`, `unrecognized_shape`, exit 1 for all eight. The doc's literal path now points at the HEAD/working-tree tool, which exits 0 on the same receipt; the failing state is the committed `da64646` revision, not the integrated tree.
 - **Cause** (observation from source): `classify()` requires `isinstance(receipt["steps"], list)`, but `carrier-run.py` writes `"steps": {}` and fills it by name (`steps["inspect-go-binary"]`, `steps["analyze"]`, `steps["search:…"]`). The selftest fixture at `receipt-validate.py:470` uses a **list** (`"steps": [{…}]`), so `--selftest` is green (`SELFTEST: CLEAN cases=5`, exit 0) while no real receipt can pass. `W1/ReceiptValidateTool.md:11,22` recorded the assumption and predicted `missing_field` on divergence; the actual result is `unrecognized_shape`. The only finding was `unrecognized_shape`; no digest finding was emitted (`checks_performed=306`), so the failure is classification-only.
 - **Fix verification** — copied validator + `pins.py` to `/tmp`, two minimal changes (`isinstance(..., (list, dict))`; `steps = list(steps.values())` when dict), then:
   ```
@@ -41,9 +44,9 @@
   {"counts":{"invalid":0,"receipts":8,"unreadable":0,"valid":8},"exit":0}
   each: kind="carrier", checks_performed=336, findings=[]
   ```
-  The working tree now contains an equivalent fix plus a `check_binding` block (another seat's edit); the working-tree tool on the same eight paths gives `8/8 valid`, `340` checks each, exit 0. My run of it is at `/tmp/rv-wt.json`.
-- **Severity**: high at `da64646` (the only stated recheck fails; C2's receipt-validates gate is unreachable). The working-tree fix, once committed, clears this.
-- **Smallest fix**: at `receipt-validate.py:98` accept `(list, dict)`; at `:284` iterate `steps.values()` when `steps` is a dict; keep a dict-shaped selftest fixture (the working-tree fixture is now a dict — do not regress it to a list). Commit the working-tree fix. Do not change `carrier-run.py` to a list — that would invalidate the eight retained receipts.
+  HEAD `95e34db` (and the working tree) contains an equivalent fix plus a `check_binding` block (another seat's edit); the HEAD/working-tree tool on the same eight paths gave `8/8 valid`, `340` checks each, exit 0 (run before the in-place rerun). My output is at `/tmp/rv-wt.json`.
+- **Severity**: high at `da64646` (the only stated recheck fails; C2's receipt-validates gate is unreachable). The fix at `95e34db` clears this.
+- **Smallest fix**: at `receipt-validate.py:98` accept `(list, dict)`; at `:284` iterate `steps.values()` when `steps` is a dict; keep a dict-shaped selftest fixture (the HEAD fixture is now a dict — do not regress it to a list). The fix is committed at `95e34db`; keep it. Do not change `carrier-run.py` to a list — that would invalidate the eight retained receipts.
 
 ### H2 — the second half of the recheck destroys the retained run and names fields that must differ
 
@@ -54,9 +57,10 @@
   14  out="runs/$label"
   15  rm -rf "$out"; mkdir -p "$out"
   ```
-  (The working tree now changes `:14` to `out="${RUNS_DIR:-runs}/$label"`; the `rm -rf` remains.) Following the doc's `bash …/run-carriers.sh <label>` deletes `runs/<label>/` — `receipt.json`, `inspect-go.json`, `analyze.json`, and the retained `logs/<session>/ghidra.log|script.log` — **before** the rerun. The old run is committed at `da64646` (113 tracked paths under `runs/`), but the doc never says so, and the doc's `:3` text does not use `RUNS_DIR`.
+  (HEAD `95e34db`/working tree changes `:14` to `out="${RUNS_DIR:-runs}/$label"`; the `rm -rf` remains.) Following the doc's `bash …/run-carriers.sh <label>` deletes `runs/<label>/` — `receipt.json`, `inspect-go.json`, `analyze.json`, and the retained `logs/<session>/ghidra.log|script.log` — **before** the rerun. The old run is committed at `da64646` (113 tracked paths under `runs/`), but the doc never says so, and the doc's `:3` text does not use `RUNS_DIR`.
   `observation.json` contains run-specific fields: `log_path=/home/…/runs/pro-aether/logs/rea-ghidra-JpGezV/ghidra.log`, `log_sha256=f39c3293…`, `log_bytes=22462`, `log_file_line=/tmp/kr17-rea-0o3ukbw2/rea-ghidra-JpGezV/ghidra.log`, `import_target=/tmp/kr17-rea-0o3ukbw2/rea-ghidra-JpGezV/target-06c91f55df41.bin`, and `go_lines[].line`. A rerun necessarily changes the `/tmp` paths, the log digest and byte count, and may change line numbers; a naive JSON diff always fails.
-- **Severity**: high for recheck reproducibility (the instruction, if followed, deletes the evidence it then asks you to compare; the first command's exit 1 is a de-facto guard only for a careful reader).
+  **This happened during the review** (observation, 11:30): `git status --porcelain -- .ufo/waves/round-17/runs` showed 23 changed paths — 12 `D`, 8 `M`, 3 `??` — including deleted `pro-notesmd-cli/receipt.json`, `observation.json`, `compare.json` and its two logs, three deleted `ghidra.log` files (plus the matching `script.log`s), and `calib-shfmt`/`calib-esbuild-0.25.12` receipts rewritten at 11:28/11:30. The committed copies at `da64646` are intact; the working-tree copies are not. H2 is observed, not hypothetical.
+- **Severity**: high for recheck reproducibility (the instruction, if followed, deletes the evidence it then asks you to compare; the first command's exit 1 is a de-facto guard only for a careful reader). The in-place rerun observed above is exactly this failure mode.
 - **Smallest fix**: `RUNS_DIR=/tmp/rr-<label> bash /home/…/run-carriers.sh <label>`; compare `carrier.sha256_pre` **before** rerunning; compare only `untested_versions`, `snapshot_labels`, `missing_bootstrap`, `snapshot_route`, `snapshot_fallbacks`, `analyzer_errors`, `bootstrap_attempts`, `classification`, `language_compiler`; state that `log_path`, `log_sha256`, `log_bytes`, `log_file_line`, `import_target`, `go_lines[].line` are run-specific and must differ.
 
 ## Medium
@@ -64,7 +68,7 @@
 ### M1 — "no mid-run check differed" has no retained instants (QUALITY #19)
 
 - **Where**: doc `:26-30`; `carrier-run.py:35` (`PIN_CHECK_S = 30.0`), `:422-432` (mid-check records only failures).
-- **Observation**: every receipt has `pins_pre`/`pins_post` with `taken_at_utc` and `pins_compare.equal:true`; none has `pins_changed_during_run` and none has a `pin_checks`/mid-check timestamp list. The mid-check loop re-snapshots all 146 paths every ~30 s and writes a record **only when `cmp_mid["equal"]` is false**. The doc's "hashed before, every 30 s during, and after each session (`tools/pins.py`)" attributes the loop to `pins.py`; the loop is `carrier-run.py:420-432`, and the instants are not retained. The working-tree validator now looks for `step.pin_checks` in its new `check_binding` block, but `carrier-run.py` is unmodified and emits only `pins_changed_during_run` on failure — so that branch is dead for the current receipts and the gap survives the validator fix.
+- **Observation**: every receipt has `pins_pre`/`pins_post` with `taken_at_utc` and `pins_compare.equal:true`; none has `pins_changed_during_run` and none has a `pin_checks`/mid-check timestamp list. The mid-check loop re-snapshots all 146 paths every ~30 s and writes a record **only when `cmp_mid["equal"]` is false**. The doc's "hashed before, every 30 s during, and after each session (`tools/pins.py`)" attributes the loop to `pins.py`; the loop is `carrier-run.py:420-432`, and the instants are not retained. At `da64646`, `carrier-run.py` emits only `pins_changed_during_run` on failure; HEAD `95e34db`/working tree adds `pin_checks` to `carrier-run.py` and the validator checks them, which fixes future runs but cannot retroactively add instants to the eight retained receipts — so the doc's sentence remains unretained for these runs.
 - **Severity**: medium (the pre/post maps satisfy #19; the mid-run sentence is an unrecorded measurement presented as retained evidence).
 - **Smallest fix**: either record `pins_checks: [{taken_at_utc, equal}]` (count plus first/last instant is enough) in `receipt.json`, or reword to "no failure was recorded (`pins_changed_during_run` absent in all eight); mid-check instants are not retained", and cite `carrier-run.py:420-432`.
 
@@ -76,6 +80,7 @@
   - `:137` "Ghidra class identity. The S003 source archive is not authenticated against the classes the installed provider loads (r14 limitation, unchanged)."
   - `:140` "Python source model fidelity. `selection.py` models file selection, not Java/Gson parsing; base-file parse and record usability were not checked." The integrated Method (`:31-40`) says predict.py "applies `GoVer.parse`" and "calls r16 `select_snapshot`", which reads as source-exact; `predict.py`'s own docstring says the selection module *models* `getApiSnapshotJsonFile`/`getPatchVerDiffFile`/`read`.
   - `:136` bundle sufficiency (range alone vs snapshot alone not tested); `:141` `GoRttiMapper.getSharedGoBinary` caching and the second analyzer pass; `:142` `ReaGhidraNoReturnFix` effect (the script actually ran: `script.log` shows `cleared=2 sites=3274 refit=952` for shfmt); `:143` JDK version and Ghidra launch flags.
+  - **Provider identities**: the draft's `:23` named the chain (`rea-agents@6.5.0`; provider `rea-workflow` v1 over upstream Ghidra 12.1.4; Go metadata provider `go-build-info` v1; JDK not examined). The integrated entry pins Ghidra but not `rea-workflow` v1 or the inspect provider; `inspect-go.json` records `analysis_profile: null`, so that provider identity is not even in the evidence.
   - **Detail level**: all eight `analyze.json` have `operation: binary_overview` and `relationship_coverage: null`; the entry nowhere says the retained REA evidence is an overview (no function/xref/decompile view), which #7 names explicitly.
 - **Severity**: medium-high (this is the entry's central inference surface: "the source model predicted the route" is a Python-model prediction, not the provider's Java/Gson code).
 - **Smallest fix**: add the three highest-value bullets — target execution, Python-model vs Java/Gson fidelity, S003 archive vs loaded classes — plus one sentence that the analyze evidence is `binary_overview` with `relationship_coverage: null`; optionally restore bundle sufficiency, the no-return script, and JDK/launch flags.
@@ -108,6 +113,8 @@
 
 ## Low (precision and citation depth)
 
+Bullets here are read-only source/annotation checks: the evidence is the cited path:line (or the shown command/output), and each names its smallest fix.
+
 - **L1 — unresolvable commit abbreviation `2716747`** (doc `:37`; also `run-carriers.sh:2`). `git rev-parse --verify 2716747^{commit}` → `fatal: Needed a single revision`; `2711674` → `271167473d87ef710f07ecdd98caf0ce12091686` (freeze time `2026-10-20 13:46:45 UTC`, first analyze `13:47:06.688 UTC`). Fix: `2711674` or the full hash in both places.
 - **L2 — `TransientProgramProperties.java` is not in the `source:` header's S003 member list** (doc `:1` vs `:77`). The file is in the same archive: `unzip -l …/Base-src.zip | grep TransientProgramProperties` → `ghidra/app/plugin/core/analysis/TransientProgramProperties.java`. Fix: add the member to the S003 parenthetical.
 - **L3 — two unlabelled causal clauses inside OBSERVATION bullets** (doc `:77`, `:81`). `:77` "because a null mapper is not cached (`TransientProgramProperties.java:107-110`)" is a source inference; `:81` "which comes from section names, not build info" is an inference whose basis is `predictions/pro-esbuild-0.27.7.prediction.json` (`ElfLoader.java:188-200`, `GoRttiMapper.hasGolangSections :201-210`), not the log. Fix: label both INFERENCE or split them into the labelled section with those anchors.
@@ -138,9 +145,9 @@
 
 ## Residual risk and verification gaps
 
-- I did not run `carrier-run.py`/`run-carriers.sh` (forbidden REA `analyze`); the rerun half of the recheck is inspected, not exercised. The `/tmp` patched validator is mine; I did not edit the repository tools. The working-tree `receipt-validate.py`/`run-carriers.sh` changes are another seat's (see header).
+- I did not run `carrier-run.py`/`run-carriers.sh` (forbidden REA `analyze`); the rerun half of the recheck is inspected, not exercised. The `/tmp` patched validator is mine; I did not edit the repository tools.
 - The mid-run pin check was not exercised; its behavior is read from source, and the receipts cannot falsify a missed check (that is M1).
 - The `run-log.txt` discrepancy (L5) could not be resolved from the retained files; I did not infer who removed the two lines.
-- The working-tree edits to `run-carriers.sh`/`receipt-validate.py` are another seat's; I verified the validator's 8-receipt result (exit 0, 340 checks) but did not review the rest of that diff (e.g., `check_binding`'s path handling). This report is anchored to `da64646`; re-run the doc's recheck after the L1 integrates the working tree.
+- The `receipt-validate.py`/`run-carriers.sh` fixes are another seat's, committed at `95e34db` (see header); I verified the validator's 8-receipt result (exit 0, 340 checks) but did not review the rest of that diff (e.g., `check_binding`'s path handling). This report is anchored to `da64646`; re-run the doc's recheck after the L1 integrates the working tree.
 - The eight wave-2 per-run tasks (`wave2-spec.json:14-49`) run the same command; at `da64646` they all fail (H1), but the working-tree fix would clear them. Confirm the committed tool before relying on their reports.
 - No tool installs or upgrades were needed or made.

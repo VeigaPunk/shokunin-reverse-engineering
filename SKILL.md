@@ -509,33 +509,38 @@ raw file digests separately.
 ## Retained Go carrier diagnostics — round 17
 
 `corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md` (S003/S023/S024/
-S025/S026/S029) runs real, pinned Go carriers through REA 6.5.0 `analyze`
-with the Ghidra analyzer log retained and bound to the run. It compares each
-log against a route predicted from installed source and frozen in Git before
-the run. Eight of eight matched, including six prospective carriers. Use it
-before attributing Go symbol loss to a layout change.
+S025/S026/S029/S031/S032) runs real, pinned Go carriers through REA 6.5.0
+`analyze` with the Ghidra analyzer log retained and bound to the run. It
+compares each log against a route predicted from installed source and frozen
+in Git before the measured runs. Scope: Ghidra 12.1.4, x86-64 Linux ELF, two
+passes per carrier. 8/8 routes matched in both passes. Of the six prospective
+carriers, three were on routes unseen at freeze (1.25.x fallback, no build
+info) and three repeated pilot-seen routes. Use it before attributing Go
+symbol loss to a layout change.
 
 | Signal in a bound `ghidra.log` | Decision | Limit |
 |---|---|---|
-| `GoApiSnapshot` INFO `Using Go API snapshot for X` | Base found; selected patch = requested patch | No file path, digest, or patched-content proof |
-| `GoApiSnapshot` WARN `Falling back from X to Y` | Lower patch data used; the next `GoRttiMapper` line still says `X` | Requested-label echo; never cite the mapper line as selection |
-| `Untested Go version [X]`, no snapshot line, `Missing Go bootstrap type info` ×2 | No installed base for X's minor (here 1.26.x/1.27.x) | Range check only logs; layout change neither shown nor excluded |
-| Only `Reading Go binary info` + `unable to get GoRttiMapper` | No build-info record (check `inspect-go-binary` `build_info: null`) | Not "not Go": the golang cspec comes from section names |
-| Bootstrap OK, then `Go analysis failure …` | Symbol markup aborted after bootstrap (aether 1.25.14) | Cause unknown; strings may still be recovered |
+| `GoApiSnapshot` INFO `Using Go API snapshot for X` | Base found; selected patch = X's patch, where X is the normalized version (rc/beta and `X:` suffixes dropped) | No file path, digest, or patched-content proof |
+| `GoApiSnapshot` WARN `Falling back from X to Y` | Lower patch data used; the next `GoRttiMapper` line still says `X` | Requested-label echo: never cite the mapper line as selection. Only fallback to the base (Y = M.m.0) was observed |
+| `Untested Go version [X]`, no snapshot line, `Missing Go bootstrap type info` (≥1; ×2 when no DWARF loads) | No installed base for X's minor (here 1.26.x/1.27.x) | Range check only logs; layout change neither shown nor excluded |
+| `Invalid Go version string [S]` | Build-info version found but unparseable | Source-only on this host |
+| Only `Reading Go binary info` + `unable to get GoRttiMapper` | No build-info record (check `inspect-go-binary` `build_info: null`, `go version -m`) | Not "not Go": on ELF the golang cspec comes from section names |
+| Bootstrap OK, then `GolangSymbolAnalyzer` `Go analysis failure …` | Symbol markup aborted after bootstrap (aether 1.25.14; strings still recovered) | INFERENCE, not replayed: Swiss maps read with the `OldMapType` layout from `go1.25.0.json` (S032 lead), not the patch fallback |
 
-Before running a carrier, give REA a private `TMPDIR`. Bind the session from
-the log's own `Using log file:` and `IMPORTING: …target-<sha[:12]>.bin`
-lines. Never copy `session.json` (it holds the bridge token).
+Before running a carrier, give REA a private `TMPDIR` and an allowlisted
+environment. Bind the session from whole log records: `Using log file:`, the
+`IMPORTING: …target-<sha[:12]>.bin` line, and the loader's full
+`?MD5=<carrier md5>`. Never copy `session.json` (it holds the bridge token).
 
 | Name | Kind / owner | Entry / status map | Fixture check | Pinned values / write scope |
 |---|---|---|---|---|
-| go-carrier-run | probe / kaidoku | `bash /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/run-carriers.sh <LABEL>`; per label in `predictions/carriers.tsv`: `tools/carrier-run.py` (exit 0 bound+pins equal, 1 pin drift, 2 analyze failure/unbound/could-not-evaluate) then `log-extract.py` and `compare.py` (0 match, 1 mismatch, 2 invalid) | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/carrier-run.py --selftest` (fake REA child, deleted session dir) | Carrier, r16 `selection.py`, frozen prediction and all 143 installed Go data files pinned pre, every 30 s, and post; writes only `runs/<LABEL>/` and a private `/tmp/kr17-rea-*` parent; never executes the carrier |
+| go-carrier-run | probe / kaidoku | `bash /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/run-carriers.sh <LABEL>`; per label in `predictions/carriers.tsv`: `tools/carrier-run.py` (exit 0 one bound session and pins equal at every recorded instant, 1 pre/post or mid-run pin drift, 2 analyze failure/timeout/unbound/leftover session parent/could-not-evaluate), then `log-extract.py` and `compare.py` (0 match, 1 mismatch, 2 invalid). The script exits nonzero if any of these is nonzero; `RUNS_DIR=/tmp/<dir>` makes a non-destructive recheck (the default `runs/<LABEL>` is replaced) | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/carrier-run.py --selftest` (fake REA child, deleted session dir) | Carrier, r16 `selection.py`, frozen prediction and all 143 installed Go data files pinned pre, every 30 s (retained) and post; allowlisted child env with private `/tmp/kr17-rea-*` `TMPDIR`; writes only `runs/<LABEL>/`; never executes the carrier. Exercised argv for every label is in `runs/run-log.txt`; the registry form is retained in `.ufo/waves/round-17/verification.json` |
 | go-log-extract | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/log-extract.py --log <GHIDRA_LOG>`; 0 emitted, 2 unreadable; route read from the `GoApiSnapshot` component only | same command with `--selftest` | Read-only; stdout only |
 | go-route-predict | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/predict.py --go-version <GO_VERSION> --golang-root <GOLANG_DIR>`; 0 emitted, 2 unparseable/empty version (no guess) | same command with `--selftest` | Imports r16 `selection.py`; read-only; stdout only |
-| go-route-compare | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/compare.py --prediction <PREDICTION> --observation <OBSERVATION>`; 0 all fields match, 1 any mismatch, 2 invalid input | same command with `--selftest` | `snapshot_label` is marked non-discriminating; route fields are compared only when predicted |
-| receipt-validate | gate / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/receipt-validate.py <RECEIPT>`; 0 valid, 1 digest/pin/field finding, 2 unreadable | same command with `--selftest` (tampered-file red case) | Recomputes recorded digests now; cannot prove during-run integrity |
+| go-route-compare | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/compare.py --prediction <PREDICTION> --observation <OBSERVATION>`; 0 all fields match, 1 any mismatch, 2 invalid input (including a predicted route with no observed route fields) | same command with `--selftest` | `snapshot_label` is marked non-discriminating; route fields and a hand prediction's `extra_expectations` are compared when present |
+| receipt-validate | gate / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/receipt-validate.py <RECEIPT>`; 0 valid, 1 digest/pin/binding/mid-run-drift finding, 2 unreadable | same command with `--selftest` (tampered file, foreign log, MD5 collision, stack-trace needles, mid-run drift red cases) | Consistency of recorded digests, pins and log binding now; not authenticity against a forger who rewrites and rehashes, and not during-run integrity |
 | pins | tool / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/pins.py compare <PRE> <POST>`; 0 equal, 1 differ (names paths), 2 unreadable; `snapshot --out <FILE> <PATH>` writes one map | same command with `--selftest` (mutated-file red case) | Identical bytes at two instants only, never continuity |
 | temporal-sweep | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/temporal-sweep.py --root <LANE> --rev <REV> --sites-rev <BASELINE>`; 0 reported, 2 could-not-evaluate | same command with `--selftest` | Git objects only; a site is corrected only by one line with `R16-PROVENANCE`, its exact `file:line` and "temporal stability not evidenced" |
-| invocation-audit | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/invocation-audit.py --root <LANE> --rev <REV>`; 0 reported, 2 could-not-evaluate | same command with `--selftest` | Git objects only; strips only a leading `python*` token and relativizes in-lane absolute paths, so `-I`/`-B`/`--strict` differences stay variants |
-| go-buildinfo-probe | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/buildinfo-probe.py <PATH>`; 0 emitted (`found:false` when no magic) | same command with `--selftest` | Independent stdlib reader per S024; read-only file bytes |
+| invocation-audit | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/invocation-audit.py --root <LANE> --rev <REV>`; 0 reported, 2 could-not-evaluate | same command with `--selftest` | Git objects only; counts an `argv` (never `orig_argv`) only when its recorded exit is 0/1 or absent; strips only a leading `python*` token and relativizes in-lane absolute paths (so results depend on the checkout path), keeping `-I`/`-B`/`--strict` differences as variants |
+| go-buildinfo-probe | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/tools/buildinfo-probe.py <PATH>`; 0 emitted (`found:false` when no magic), 2 unreadable | same command with `--selftest` | Stdlib reader modelled on go1.25.0 `debug/buildinfo` (keeps the writable-segment fallback that go1.27.3 removed, S024); cross-check with `go version -m` |
 | round17-structural-controls | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17/controls.py <BEFORE> <AFTER>`; 0 reported, 2 could-not-evaluate | same command with `--selftest` | Git objects only; old-prefix, frozen-blob, verifier and QUALITY-row byte checks; no semantic audit |

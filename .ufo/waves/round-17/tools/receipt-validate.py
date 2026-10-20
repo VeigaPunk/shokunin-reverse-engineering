@@ -41,9 +41,12 @@ import datetime
 import hashlib
 import importlib.util
 import json
+import re
 import os
 import shutil
 import sys
+
+sys.dont_write_bytecode = True  # never write __pycache__ next to imported pins.py
 import tempfile
 from pathlib import Path
 
@@ -120,28 +123,61 @@ def check_binding(receipt, findings):
     may carry a mid-run pin drift record; recorded mid-run checks must be equal."""
     checks = 0
     if "bound_sessions" not in receipt:
-        return checks
+        # Absence must not be safer than emptiness (w2 ReceiptForge F2).
+        findings.append({"code": "missing_field", "where": "$.bound_sessions"})
+        return checks + 1
     carrier = receipt.get("carrier") or {}
     _k, sha = newest_sha(carrier) if isinstance(carrier, dict) else (None, None)
+    # The carrier must be one of the pinned paths with the same digest (w2 ReceiptForge F4).
+    checks += 1
+    pin_ent = ((receipt.get("pins_pre") or {}).get("entries") or {}).get(
+        carrier.get("path") if isinstance(carrier, dict) else None) or {}
+    if not sha or pin_ent.get("sha256") != sha:
+        findings.append({"code": "carrier_not_pinned", "where": "$.carrier"})
     bound = receipt.get("bound_sessions") or []
     checks += 1
     if len(bound) < 1:
         findings.append({"code": "no_bound_session", "where": "$.bound_sessions"})
     by_dir = {e.get("session_dir"): e for e in receipt.get("retained_logs") or []
               if isinstance(e, dict)}
+    carrier_md5 = None
+    cpath = carrier.get("path") if isinstance(carrier, dict) else None
+    if sha and cpath and os.path.isfile(cpath) and sha256_file(cpath) == sha:
+        h = hashlib.md5()
+        with open(cpath, "rb") as f:
+            for chunk in iter(lambda: f.read(1 << 20), b""):
+                h.update(chunk)
+        carrier_md5 = h.hexdigest()
     for d in bound:
         checks += 1
         ent = by_dir.get(d) or {}
         path = ((ent.get("files") or {}).get("ghidra.log") or {}).get("path")
         try:
-            text = open(path, "rb").read().decode("utf-8", "replace") if path else ""
+            if not path or os.path.islink(path):
+                raise OSError("missing or symlinked log")
+            text = open(path, "rb").read().decode("utf-8", "replace")
         except OSError:
             text = ""
-        ok = (bool(sha) and f"Using log file: {d}/ghidra.log" in text
-              and f"IMPORTING: file://{d}/target-{sha[:12]}.bin" in text)
-        if not ok:
+        lines = [ln.rstrip("\r").rstrip() for ln in text.split("\n")]
+        # Line-anchored records (w2 BindingFuzz b05-b07: substrings inside stack
+        # traces or suffixed names bound falsely).
+        logfile_ok = any(re.fullmatch(
+            r"\S+ \S+ INFO +\(LoggingInitialization\) Using log file: "
+            + re.escape(f"{d}/ghidra.log"), ln) for ln in lines)
+        target_ok = bool(sha) and any(re.fullmatch(
+            r"\S+ \S+ INFO +\(HeadlessAnalyzer\) IMPORTING: "
+            + re.escape(f"file://{d}/target-{sha[:12]}.bin"), ln) for ln in lines)
+        # Full-digest binding when the pinned carrier is still on disk (w2
+        # BindingFuzz b04: 12-hex prefixes can collide): Ghidra's loader line
+        # carries the target's full MD5.
+        md5_ok = None
+        if carrier_md5 and sha:
+            md5_ok = any(ln.startswith(f"Loading file://{d}/target-{sha[:12]}.bin?MD5={carrier_md5}")
+                         for ln in lines)
+        if not (logfile_ok and target_ok and md5_ok is not False):
             findings.append({"code": "binding_mismatch", "where": "$.bound_sessions",
-                             "path": path or d})
+                             "path": path or d, "logfile_ok": logfile_ok,
+                             "target_ok": target_ok, "md5_ok": md5_ok})
     for where, step in _iter_steps(receipt.get("steps")):
         if not isinstance(step, dict):
             continue
@@ -610,10 +646,13 @@ def selftest(pins):
         # bound log names its own session path and target prefix -> exit 0.
         sess = "/tmp/rea-ghidra-selftest"
         sha12 = sha256_file(pin_file)[:12]
-        log_file.write_text(
-            f"INFO  Using log file: {sess}/ghidra.log\n"
-            f"INFO  (HeadlessAnalyzer) IMPORTING: file://{sess}/target-{sha12}.bin\n",
-            encoding="utf-8")
+        md5 = hashlib.md5(pin_file.read_bytes()).hexdigest()
+
+        def good_log(prefix=sha12, md5v=md5, extra=""):
+            return (f"2026-10-20 10:00:00 INFO  (LoggingInitialization) Using log file: {sess}/ghidra.log\n"
+                    f"2026-10-20 10:00:01 INFO  (HeadlessAnalyzer) IMPORTING: file://{sess}/target-{prefix}.bin\n"
+                    f"Loading file://{sess}/target-{prefix}.bin?MD5={md5v}...\n" + extra)
+        log_file.write_text(good_log(), encoding="utf-8")
         receipt4 = tmpdir / "r4.json"
         receipt4.write_text(json.dumps(
             _carrier_receipt(tmpdir, pins, pin_file, log_file)),
@@ -624,10 +663,7 @@ def selftest(pins):
                           if _out4["receipts"] else []))
 
         # Case 4b: foreign log (other target prefix) with consistent digests -> 1.
-        log_file.write_text(
-            f"INFO  Using log file: {sess}/ghidra.log\n"
-            f"INFO  (HeadlessAnalyzer) IMPORTING: file://{sess}/target-000000000000.bin\n",
-            encoding="utf-8")
+        log_file.write_text(good_log(prefix="000000000000"), encoding="utf-8")
         receipt4b = tmpdir / "r4b.json"
         receipt4b.write_text(json.dumps(
             _carrier_receipt(tmpdir, pins, pin_file, log_file)),
@@ -635,12 +671,27 @@ def selftest(pins):
         _out4b, code = validate_paths([str(receipt4b)], pins)
         record("carrier_foreign_log_red", code, 1)
 
+        # Case 4b2: right prefix, wrong full MD5 (prefix collision) -> 1;
+        # binding needles only inside a stack trace -> 1.
+        log_file.write_text(good_log(md5v="0" * 32), encoding="utf-8")
+        receipt4d = tmpdir / "r4d.json"
+        receipt4d.write_text(json.dumps(
+            _carrier_receipt(tmpdir, pins, pin_file, log_file)), encoding="utf-8")
+        _o, code = validate_paths([str(receipt4d)], pins)
+        record("carrier_md5_collision_red", code, 1)
+        log_file.write_text(
+            f"\tat x(Using log file: {sess}/ghidra.log)\n"
+            f"\tat y(IMPORTING: file://{sess}/target-{sha12}.bin)\n"
+            f"Loading file://{sess}/target-{sha12}.bin?MD5={md5}...\n", encoding="utf-8")
+        receipt4e = tmpdir / "r4e.json"
+        receipt4e.write_text(json.dumps(
+            _carrier_receipt(tmpdir, pins, pin_file, log_file)), encoding="utf-8")
+        _o, code = validate_paths([str(receipt4e)], pins)
+        record("carrier_stacktrace_needles_red", code, 1)
+
         # Case 4c: recorded mid-run pin drift -> 1.
         data = json.loads(receipt4.read_text(encoding="utf-8"))
-        log_file.write_text(
-            f"INFO  Using log file: {sess}/ghidra.log\n"
-            f"INFO  (HeadlessAnalyzer) IMPORTING: file://{sess}/target-{sha12}.bin\n",
-            encoding="utf-8")
+        log_file.write_text(good_log(), encoding="utf-8")
         data = _carrier_receipt(tmpdir, pins, pin_file, log_file)
         data["steps"]["inspect-go-binary"]["pin_checks"] = [
             {"taken_at_utc": utcnow(), "equal": False}]

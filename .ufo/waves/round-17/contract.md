@@ -121,3 +121,28 @@ files. `controls.py BEFORE AFTER`: generalize `/home/vgpnk/Projects/shokunin/kai
 (old LOG prefix retained; all old lessons/knowledge prefixes retained; prior `*-verifier-spotcheck.md`
 byte-identical; pre-existing `.ufo/waves/**` and `evidence/**` blobs byte-identical; QUALITY rows 1-18
 unchanged), retaining argv/orig_argv and resolved revisions.
+
+## As-built amendments (L1 integration, appended 2026-10-20; the text above is the w1 contract as dispatched)
+
+The shipped tools differ from the w1 text above; the tools and their selftests are authoritative.
+- predict.py: normalization is `GoBuildInfo.java:488-489` (strip one leading `go`) then `GoVer.parse`
+  (`GoVer.java:62-81`); `fromVersionString` does not exist in 12.1.4. `missing_bootstrap` is predicted from
+  `missing_base` as a proxy of the stronger source condition (`GoRttiMapper.java:351-361`). Adds
+  `expected.snapshot_route` (none/info/fallback) and `expected.fallback_to` from `GoApiSnapshot.java:148-166`.
+- log-extract.py: adds route fields read from the `GoApiSnapshot` component only, fallback pairs, invalid
+  version strings, `bootstrap_attempts` (count of `Reading Go binary info`, i.e. cache-miss supplier calls),
+  mapper errors, and the binding lines (`Using log file:`, `IMPORTING: file://…`); keeps Go fixup
+  background-command components.
+- compare.py: compares route fields when predicted and evaluates a hand prediction's `extra_expectations`.
+- carrier-run.py: private `TMPDIR` session parent per run, allowlisted child environment with
+  `NODE_DISABLE_COMPILE_CACHE=1`, `--pin` extra paths, every 30 s mid-run pin check retained in
+  `steps.<name>.pin_checks`, session binding from the log's own bytes, exit 1 on pre/post or mid-run pin
+  drift, exit 2 on analyze failure, unbound/extra sessions, or a leftover session parent; realpath carrier.
+- receipt-validate.py: accepts the producer's object-shaped `steps`; re-derives the log binding and fails on
+  recorded mid-run drift.
+- temporal-sweep.py: sites in LOG/SCORECARD/SKILL/r16 lesson/r16 verification plus all of `corpus/knowledge/`
+  and `corpus/lessons/` (excluding `*-verifier-spotcheck.md`), run/execution-scoped phrases with wrapped-line
+  joining, `--sites-rev` so deleted sites stay counted; a site is corrected only by one line carrying
+  `R16-PROVENANCE`, its exact `file:line` and "temporal stability not evidenced".
+- run-carriers.sh: wraps carrier-run + log-extract + compare per label; `RUNS_DIR` redirects output;
+  exits nonzero if any selected carrier-run or compare is nonzero.

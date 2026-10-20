@@ -103,6 +103,9 @@ def main():
                                      "--golang-root", GODATA], 2 if gv == "" else 0)
         carrier = json.load(open(f"{rd}/receipt.json"))["carrier"]["path"]
         run("buildinfo-probe-" + lab, PY + [f"{T}/buildinfo-probe.py", carrier], 0)
+        # Official Go toolchain reader (S024; reads the file, never runs it).
+        run("go-version-m-" + lab, ["/home/vgpnk/.local/opt/go-1.27.3/bin/go", "version", "-m",
+                                    carrier], 1 if gv == "" else 0)
 
     # Red demonstration for the route fields (Mistakes row 6): force the notesmd-cli
     # prediction's route to `info`; compare must fail. The contract's three fields alone pass.
@@ -160,10 +163,13 @@ def main():
                               f"{OUT}/tools-post.json"], 0)
 
     pins_post = pins.snapshot(pin_paths)
+    pycache = subprocess.run(["find", LANE + "/.ufo", "-name", "__pycache__"],
+                             capture_output=True, text=True).stdout.split()
     record = {
         "producer": __file__, "python": sys.version, "orig_argv": sys.orig_argv,
         "baseline_revision": base, "source_revision": source,
         "worktree_dirty_at_start": dirty.splitlines(),
+        "pycache_dirs_after_pass": pycache,
         "commands": cmds,
         "pins_pre": pins_pre, "pins_post": pins_post,
         "pins_compare": pins.compare(pins_pre, pins_post),
@@ -175,7 +181,8 @@ def main():
     print(json.dumps({"commands": len(cmds), "unexpected_exits": record["unexpected_exits"],
                       "pins_equal": record["pins_compare"]["equal"],
                       "source_revision": source}, indent=2))
-    return 0 if not record["unexpected_exits"] and record["pins_compare"]["equal"] else 1
+    return 0 if (not record["unexpected_exits"] and record["pins_compare"]["equal"]
+                 and not pycache) else 1
 
 
 if __name__ == "__main__":

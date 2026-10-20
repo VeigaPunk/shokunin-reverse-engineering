@@ -117,16 +117,17 @@ def census(root, revision):
         (line for line in quality.splitlines() if ROW19.match(line)), ""
     )
 
-    try:
-        capabilities = scorecard.split("## Capabilities\n", 1)[1].split(
-            "\n## ", 1
-        )[0]
-    except IndexError:
-        fail("SCORECARD.md has no delimited '## Capabilities' section")
+    if "## Capabilities\n" not in scorecard:
+        fail("SCORECARD.md has no '## Capabilities' section")
+    # Round-17 L1 integration (w2 ConnScorecardCapability F2): capability rows
+    # since r13 are appended in round sections under '### Capability addition'
+    # (the base table is never edited, citation pins), so scan every table row
+    # whose FIRST cell names the capability — never prose mentions.
     capability_rows = [
         line
-        for line in capabilities.splitlines()
-        if line.startswith("|") and CAPABILITY_TEXT in line
+        for line in scorecard.splitlines()
+        if line.startswith("|")
+        and line.split("|")[1].strip().startswith(CAPABILITY_TEXT)
     ]
 
     # SKILL registry rows: table rows `| name | kind | ... |` whose 2nd cell

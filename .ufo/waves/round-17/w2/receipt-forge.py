@@ -19,13 +19,32 @@ import tempfile
 from pathlib import Path
 
 W = Path("/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17")
-SRC = W / "runs" / "pro-notesmd-cli"
-DONOR = W / "runs" / "pro-op"          # second real run, for log/stdout swaps
+RUNS = W / "runs"
+SRC = RUNS / "pro-notesmd-cli"
 VALIDATOR = W / "tools" / "receipt-validate.py"
 SRC_PREFIX = str(SRC) + "/"
-SESSION = "rea-ghidra-eKKJuy"
-LOG_REL = Path("logs") / SESSION
-DONOR_LOG_REL = Path("logs") / "rea-ghidra-yRmWqx"
+
+
+def pick_donor():
+    """Pick a complete retained run dir (receipt + analyze.json + a session
+    dir under logs/ with a nonempty ghidra.log) other than SRC. Peer waves
+    regenerate runs mid-flight, so discovery happens at call time."""
+    for cand in sorted(RUNS.iterdir()):
+        if not cand.is_dir() or cand == SRC:
+            continue
+        logs = cand / "logs"
+        if not (cand / "receipt.json").is_file() \
+                or not (cand / "analyze.json").is_file() \
+                or not logs.is_dir():
+            continue
+        for sess in sorted(logs.iterdir()):
+            log = sess / "ghidra.log"
+            if sess.is_dir() and log.is_file() and log.stat().st_size:
+                return cand
+    return None
+
+
+DONOR = pick_donor()
 
 
 def sha256_file(path):
@@ -33,6 +52,29 @@ def sha256_file(path):
     h = hashlib.sha256()
     h.update(Path(path).read_bytes())
     return h.hexdigest()
+
+
+def first_log_dir(run_dir):
+    """Discover the single session dir under RUN/logs/ (peer waves may
+    regenerate run dirs, so the name is never hardcoded)."""
+    logs = Path(run_dir) / "logs"
+    kids = sorted(p.name for p in logs.iterdir() if p.is_dir())
+    if not kids:
+        raise SystemExit(f"no session dir under {logs}")
+    return Path("logs") / kids[0]
+
+
+LOG_REL = first_log_dir(SRC)
+DONOR_LOG_REL = first_log_dir(DONOR) if DONOR else None
+
+
+class NoDonor(Exception):
+    """Raised by forgeries that need a second complete run when none exists."""
+
+
+def need_donor():
+    if DONOR is None:
+        raise NoDonor("no complete donor run under W/runs at call time")
 
 
 def rewrite_paths(node, dst_prefix):
@@ -107,15 +149,18 @@ def f_edit_ghidra_log_rehash(dst, r):
 
 
 def f_swap_log_other_run(dst, r):
+    need_donor()
     donor = DONOR / DONOR_LOG_REL / "ghidra.log"
     p = dst / LOG_REL / "ghidra.log"
     shutil.copyfile(donor, p)
     rehash_log(r, p)
+    sess = r["retained_logs"][0]["session_dir"]
     return ("swapped in pro-op's ghidra.log + receipt digests updated; "
-            "session_dir still claims /tmp/kr17-rea-odi4abuq/rea-ghidra-eKKJuy")
+            f"session_dir still claims {sess}")
 
 
 def f_swap_log_keep_meta(dst, r):
+    need_donor()
     donor = DONOR / DONOR_LOG_REL / "ghidra.log"
     shutil.copyfile(donor, dst / LOG_REL / "ghidra.log")
     return "swapped in pro-op's ghidra.log; receipt digests untouched"
@@ -160,11 +205,110 @@ def f_carrier_path_swap(dst, r):
 
 
 def f_evidence_id_receipt(dst, r):
+    need_donor()
     steps = r["steps"]
-    steps["analyze"]["evidence_id"] = (
-        "ev_3d7ba7eca7ad3fbc187431def31c5e32079f1689d1441752511afef8a3743f41")
+    donor_r = json.loads((DONOR / "receipt.json").read_text(encoding="utf-8"))
+    steps["analyze"]["evidence_id"] = donor_r["steps"]["analyze"]["evidence_id"]
     return "steps.analyze.evidence_id replaced with pro-op's evidence id"
 
+
+def _all_log_entries(receipt):
+    """Yield every retained-logs entry dict (top level + per step)."""
+    for entry in receipt.get("retained_logs") or []:
+        if isinstance(entry, dict):
+            yield entry
+    steps = receipt.get("steps") or {}
+    step_items = steps.values() if isinstance(steps, dict) else steps
+    for step in step_items or []:
+        for entry in (step.get("retained_logs") or []):
+            if isinstance(entry, dict):
+                yield entry
+
+
+def f_edit_log_content_keep_binding(dst, r):
+    p = dst / LOG_REL / "ghidra.log"
+    lines = p.read_text(encoding="utf-8").splitlines()
+    lines = ["2026-10-20 11:30:08 INFO  (GolangSymbolAnalyzer) "
+             "Go version 1.99.0" if "Go version" in ln else ln
+             for ln in lines]
+    lines.append("2026-10-20 11:30:09 INFO  (GoApiSnapshot) "
+                 "Using Go API snapshot for go1.99 (forged)")
+    p.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    rehash_log(r, p)
+    return ("edited ghidra.log Go-version line + appended a forged snapshot "
+            "line, preserving the two substrings check_binding re-derives "
+            "(receipt-validate.py:142-143); digests updated to match")
+
+
+def f_synthesize_bound_session(dst, r):
+    """Fabricate a complete session from scratch: forged bound_sessions dir,
+    self-authored ghidra.log containing the two magic substrings, copied
+    script.log, all recorded paths/digests updated."""
+    fake_sess = "/tmp/kr17-forged-aaaaaa/rea-ghidra-ZZfake"
+    new_rel = Path("logs") / "rea-ghidra-ZZfake"
+    carrier = r["carrier"]["path"]
+    sha12 = r["carrier"]["sha256_post"][:12]
+    newdir = dst / new_rel
+    newdir.mkdir(parents=True, exist_ok=True)
+    # self-authored log satisfying check_binding's substring test
+    (newdir / "ghidra.log").write_text(
+        f"2026-10-20 11:30:06 INFO  (LoggingInitialization) "
+        f"Using log file: {fake_sess}/ghidra.log  \n"
+        f"2026-10-20 11:30:07 INFO  (HeadlessAnalyzer) "
+        f"IMPORTING: file://{fake_sess}/target-{sha12}.bin  \n"
+        f"2026-10-20 11:30:08 INFO  (GolangSymbolAnalyzer) "
+        f"Go version 1.42.0-forged  \n",
+        encoding="utf-8")
+    old_logdir = next(p for p in (dst / "logs").iterdir()
+                      if p.is_dir() and p != newdir)
+    # retain real script.log bytes at the forged path (bytes are real;
+    # recorded path lies about provenance)
+    shutil.copyfile(old_logdir / "script.log", newdir / "script.log")
+    for entry in _all_log_entries(r):
+        entry["session_dir"] = fake_sess
+        for name, slot in (entry.get("files") or {}).items():
+            np = dst / new_rel / name
+            slot["path"] = str(np)
+            slot["sha256"] = sha256_file(np)
+            slot["bytes"] = np.stat().st_size
+    r["bound_sessions"] = [fake_sess]
+    shutil.rmtree(old_logdir)
+    return ("synthesized a never-existent bound session: self-authored "
+            "ghidra.log containing the two substrings check_binding looks "
+            "for, bound_sessions replaced, every recorded digest updated; "
+            "original session log deleted")
+
+
+def f_normalize_delete_bound(dst, r):
+    f_shape_normalize(dst, r)
+    del r["bound_sessions"]
+    return ("carrier-shaped receipt without bound_sessions: "
+            "check_binding returns immediately at receipt-validate.py:124-125; "
+            "bound_sessions is not in CARRIER_REQUIRED")
+
+
+def f_bound_to_unbound(dst, r):
+    r["unbound_sessions"] = r.get("bound_sessions") or []
+    del r["bound_sessions"]
+    return ("real session moved from bound_sessions to unbound_sessions; "
+            "check_binding only fires when the key is present")
+
+
+
+def f_synthesize_carrier_lie(dst, r):
+    """Full fabrication: swap carrier to shfmt AND synthesize a fake bound
+    session whose log names target-<shfmt sha[:12]>.bin. Receipt passes
+    while claiming an analyze of shfmt that never happened; every step argv
+    and stdout still belongs to notesmd-cli bytes."""
+    other = Path("/usr/bin/shfmt")
+    digest = sha256_file(other)
+    r["carrier"]["path"] = str(other)
+    r["carrier"]["sha256_pre"] = digest
+    r["carrier"]["sha256_post"] = digest
+    f_synthesize_bound_session(dst, r)
+    return ("carrier swapped to /usr/bin/shfmt AND a fake bound session "
+            "synthesized with a log naming target-" + digest[:12] +
+            ".bin: receipt 'proves' an analyze of shfmt that never ran")
 
 def f_evidence_id_file(dst, r):
     p = dst / "analyze.json"
@@ -197,6 +341,7 @@ def f_delete_retained_logs(dst, r):
 
 
 def f_stdout_swap(dst, r):
+    need_donor()
     donor = DONOR / "analyze.json"
     p = dst / "analyze.json"
     shutil.copyfile(donor, p)
@@ -236,6 +381,17 @@ def f_normalize_delete_retained(dst, r):
     return "shape-normalize + retained_logs key and logs/ dir removed entirely"
 
 
+
+def f_normalize_empty_retained(dst, r):
+    f_shape_normalize(dst, r)
+    r["retained_logs"] = []
+    for step in r["steps"]:
+        step["retained_logs"] = []
+    shutil.rmtree(dst / "logs")
+    return ("shape-normalize + retained_logs emptied at top level and in "
+            "steps, logs/ removed: receipt retains zero log evidence; "
+            "CARRIER_REQUIRED only checks key presence")
+
 FORGERIES = [
     ("control", f_control),
     ("shape-normalize", f_shape_normalize),
@@ -246,6 +402,11 @@ FORGERIES = [
     ("pins-pre-forge-nofix", f_pins_pre_forge_nofix),
     ("pins-pre-forge-consistent", f_pins_pre_forge_consistent),
     ("delete-bound-sessions", f_delete_bound_sessions),
+    ("bound-to-unbound", f_bound_to_unbound),
+    ("normalize+delete-bound", f_normalize_delete_bound),
+    ("synthesize-bound-session", f_synthesize_bound_session),
+    ("synthesize-carrier-lie", f_synthesize_carrier_lie),
+    ("edit-log-keep-binding", f_edit_log_content_keep_binding),
     ("delete-retained-logs", f_delete_retained_logs),
     ("carrier-sha-lie", f_carrier_sha_lie),
     ("carrier-path-swap", f_carrier_path_swap),
@@ -259,6 +420,7 @@ FORGERIES = [
     ("normalize+pins-forge", f_normalize_pins_forge),
     ("normalize+carrier-swap", f_normalize_carrier_swap),
     ("normalize+delete-retained", f_normalize_delete_retained),
+    ("normalize+empty-retained", f_normalize_empty_retained),
 ]
 
 
@@ -272,7 +434,12 @@ def main():
         receipt_path = dst / "receipt.json"
         receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
         receipt = rewrite_paths(receipt, str(dst) + "/")
-        desc = mutator(dst, receipt)
+        try:
+            desc = mutator(dst, receipt)
+        except NoDonor as error:
+            results[name] = {"forgery": "needs donor run",
+                             "dir": str(dst), "skipped": str(error)}
+            continue
         receipt_path.write_text(
             json.dumps(receipt, sort_keys=True, indent=2) + "\n",
             encoding="utf-8")
@@ -317,11 +484,10 @@ def main():
             "exit0": passed_clean,
             "rejected_only_by_unrecognized_shape": shape_only,
             "note": (
-                "unrecognized_shape fires on every real round-17 receipt: "
-                "steps is a dict but classify() requires a list "
-                "(receipt-validate.py:98). Forgeries in "
-                "rejected_only_by_unrecognized_shape are otherwise "
-                "undetected."),
+                "exit0: validator accepted; rejected_only_by_unrecognized_"
+                "shape: rejected only by the pre-hardening misclassification "
+                "(steps dict vs list, fixed at 95e34db in classify()) — such "
+                "forgeries are otherwise undetected."),
         },
     }
     print(json.dumps(out, sort_keys=True, indent=2))

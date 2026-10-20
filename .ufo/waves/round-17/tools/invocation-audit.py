@@ -225,14 +225,21 @@ def argv_matches(pattern_tokens, argv_tokens):
 # -------------------------------------------------------------- receipt scan
 
 def iter_exercised_argvs(obj, keypath=""):
-    """Yield (keypath, argv_list) for every argv/orig_argv list-of-strings."""
+    """Yield (keypath, argv_list) for every `argv` list-of-strings that ran.
+
+    Round-17 L1 integration (w2 InvocationAuditAttack F1/F4): `orig_argv` is the
+    receipt producer's own command line, not an exercised registry command, so it
+    is ignored; an `argv` whose sibling `exit` is recorded and is neither 0 nor 1
+    (2 = could-not-evaluate, null = could not start/timeout) did not run as
+    advertised and is not counted."""
     if isinstance(obj, dict):
         for key, value in obj.items():
             child = f"{keypath}/{key}"
             if (
-                key in ("argv", "orig_argv")
+                key == "argv"
                 and isinstance(value, list)
                 and all(isinstance(x, str) for x in value)
+                and ("exit" not in obj or obj.get("exit") in (0, 1))
             ):
                 yield child, value
             yield from iter_exercised_argvs(value, child)
