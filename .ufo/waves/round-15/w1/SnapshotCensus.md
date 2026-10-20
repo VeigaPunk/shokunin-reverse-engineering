@@ -1,14 +1,17 @@
 # SnapshotCensus — installed Go snapshot inventory (round 15 C1)
 
-Status: implemented, **not executed** by this seat. No gate, verdict, or claim
-about the historical 1Password run. The parent executes the command and judges
-the result.
+Status: repaired after L1 reported the first execution exited 1. The failure
+was a key collision in `parse_diff`: the structural counts overwrote the numeric
+`patch` used by version sorting, so `scan_directory` compared dicts. The
+structural object is now `patch_structure`; numeric `patch` is unchanged. This
+seat has **not executed** the repaired file. No gate, verdict, or claim about
+the historical 1Password run.
 
 ## Files changed
 
 | Path | Role | Identity |
 |---|---|---|
-| `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-15/snapshot-inventory.py` | stdlib read-only inventory probe | SHA-256 `5d8bae44bc291a146024eb1ebedb8192488afa21c6ce56d6da8b48a5604856f0`, 19706 bytes, mode 755 |
+| `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-15/snapshot-inventory.py` | stdlib read-only inventory probe | SHA-256 `6a2a9b289ee456ea90bea8446e7d88ad7aa92035dcfaf5abab15a1b6e97cd55a`, 19746 bytes, mode 755 (repaired key separation) |
 | `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-15/w1/SnapshotCensus.md` | this report | — |
 
 No other file was written. No source registry row, corpus, skill, gate, or
@@ -119,9 +122,10 @@ fields, so the tool does not assume either definition exists.
   top-level key count/list, per-container field names plus `Funcs`/`Types` entry
   counts, and an `all_bucket` summary (`present`, `funcs`, `types`). Selected
   records repeat `all_bucket` and add targeted bootstrap details.
-- Diff inventory: filename, absolute path, bytes read, SHA-256, version,
-  `@ ` section count, per-container section counts, and `+ `/`- ` line counts;
-  a top-level `patch_diff_histogram` counts files per major.minor.
+- Diff inventory: filename, absolute path, bytes read, SHA-256, version, the
+  numeric `patch`, and `patch_structure` (`@ ` section count, per-container
+  section counts, `+ `/`- ` line counts); a top-level `patch_diff_histogram`
+  counts files per major.minor. Numeric `patch` remains the sort key.
 - One deterministic JSON document on stdout, `indent=2`, `sort_keys=True`,
   `allow_nan=False`, no timestamps. Exit 0 complete; exit 2 emitted-document
   error (bad root, missing resource dir, invalid selection token, read/parse
@@ -202,6 +206,8 @@ any target run's outcome.
      .bootstrap_types["runtime.pcHeader"].field_counts.all==13' /tmp/r15-inv-a.json
    jq -e '[.base_json.files[].all_bucket.funcs] ==
      [12453,12809,17231,17960,18523,25511,26243,26712,27192,28922,29041]' /tmp/r15-inv-a.json
+   jq -e '[.patch_diffs.files[] |
+     ((.patch|type)=="number" and (.patch_structure|type)=="object")] | all' /tmp/r15-inv-a.json
    jq -e '.selection.entries[] | select(.requested=="1.26.0") |
      .base_present==false and .base_sha256==null and
      .os_arch_map_keys==null and .bootstrap_types==null and

@@ -16,9 +16,9 @@ field names and `Funcs` / `Types` entry counts. Each base entry also carries an
 `all_bucket` summary with the `all` container's `Funcs` / `Types` counts.
 
 For every patch diff it records filename, absolute path, byte size, SHA-256,
-and the parsed top-level patch structure: number of `@ [path]` sections,
-per-container section counts, and `+ ` / `- ` line counts. Diffs are parsed,
-never applied.
+the numeric patch component (`patch`), and the parsed top-level structure
+(`patch_structure`): number of `@ [path]` sections, per-container section
+counts, and `+ ` / `- ` line counts. Diffs are parsed, never applied.
 
 A selection list (default `1.25.0` and `1.26.0`) reports, explicitly for each
 requested version: base filename/presence/path/size/digest, the base's OS/arch
@@ -229,7 +229,6 @@ def parse_diff(path, filename, errors):
         "path": path,
         "size": None,
         "sha256": None,
-        "patch": None,
     }
     version = file_version(filename, DIFF_RE)
     entry["major"], entry["minor"], entry["patch"] = version
@@ -278,7 +277,7 @@ def parse_diff(path, filename, errors):
             added += 1
         elif line.startswith("- "):
             removed += 1
-    entry["patch"] = {
+    entry["patch_structure"] = {
         "section_count": sections,
         "container_key_counts": container_counts,
         "added_line_count": added,

@@ -66,6 +66,7 @@ The previous genuine outside check admitted round 14 and routed two status-neutr
 | attribution / edit-anchor provenance | L1 append used an unobserved lesson snapshot tag; edit tool accepted stale tail append with warning | Tool stale-tag policy should have refused; L1 re-read actual lesson and filed tool issue | Preserve the valid append; use only read-returned tags thereafter. No claim that tool rejection prevented the edit. |
 | landing / premature used-by reference | registry used-by was extended before new targets were created in the same round | CORPUS row/path existence discipline | All referenced files are created before final census/commit; no intermediate registry is claimed conformant. Future ordering must create targets first. |
 | number-drift / survivor | connector reports' 98/114 patch counts and their named corrections; full installed-directory opening | CORPUS count-command rule and adversarial cross-check, not agreement among seats | Reject incomplete previews; retain final inventory output and per-minor histogram. No population accuracy or independent-origin count is inferred from repeated readers. |
+| provider / unexecuted static review | First L1 inventory execution at `856d193b8c21d3f7aeff3cb8a27b55a715ab897e`, `verification-initial.json`: exit 1 TypeError sorting dicts | Not caught by source-only reviews; no prior execution was claimed | Diff numeric `patch` was overwritten by a structural dictionary before sorting. Preserve the numeric key and name the structural field separately; rerun only after repair. The retained actual red-before traceback, not a model-only selfcheck, grounds this repair. |
 
 A source-law correction is not a controlled target repair. The raw-input limitation has an executable red exemplar; its opposite accepted form changes only quote bytes. Semantic source corrections rely on the retained, inspectable dispatch chain rather than a fabricated runtime experiment.
 
@@ -107,3 +108,19 @@ Initial lane state was clean at `9719dd232687f5ee78a4ed323b37f8810e833d10`. No e
 No capability is added to the repertoire or counted twice; C2 discharges the
 outside duties through improved calibration of the active wording.
 Current-round independent closure remains necessary.
+
+## First execution failure retained
+
+L1's first inventory execution at source revision
+`856d193b8c21d3f7aeff3cb8a27b55a715ab897e` returned exit 1 before producing
+JSON: `TypeError: '<' not supported between instances of 'dict' and 'dict'`
+at `scan_directory` sorting `item["patch"]`. `parse_diff` overwrote its
+numeric patch version with structural counters. The second determinism
+invocation failed identically; both original outputs/exit codes are retained
+in `.ufo/waves/round-15/verification-initial.json`, not silently replaced.
+Immutable measurements in that same attempt succeeded; later checks had
+not yet run when the orchestration cell stopped parsing empty stdout.
+
+The assigned tool owner repairs the field collision, without executing tests.
+No initial inventory success is claimed. Final measurements and checks name
+the repaired source revision, with the original red-before evidence preserved.
