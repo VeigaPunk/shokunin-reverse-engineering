@@ -1,0 +1,457 @@
+diff --git c/.ufo/waves/round-20/run-carriers.sh i/.ufo/waves/round-20/run-carriers.sh
+new file mode 100755
+index 0000000..88ed786
+--- /dev/null
++++ i/.ufo/waves/round-20/run-carriers.sh
+@@ -0,0 +1,451 @@
++#!/usr/bin/env bash
++# Round-20 sequential carrier runs. The carrier is never executed: the pinned
++# REA analyze step imports it into Ghidra headless. Predictions are frozen
++# before the L1 starts this runner. Each label is guarded immediately before
++# its run; the compare input is selected only from a receipt-bound session and
++# verified against the retained log SHA-256.
++#
++# Inputs: predictions/carriers.tsv (label, carrier path, class, sha256) and
++# predictions/<label>.prediction.json. Outputs are confined to runs/<label>/.
++# --dry-run prints the planned guard, analyze, and compare commands without
++# invoking the guard, REA, or writing outputs. --selftest uses isolated stubs;
++# it never launches REA or touches real carriers.
++set -u
++
++W=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
++W17=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-17
++LANE="${LANE:-/home/vgpnk/Projects/shokunin/kaidoku-shokunin}"
++G="${G:-/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/data/typeinfo/golang}"
++TOOLS_DIR="${TOOLS_DIR:-$W17/tools}"
++SELECTION_PY="${SELECTION_PY:-$LANE/.ufo/waves/round-16/selection.py}"
++SWISS_MISREAD="$W/tools/swiss-misread-v2.py"
++CARRIER_GUARD="$W/tools/carrier-guard.py"
++COMPARE_TOOL="$W/tools/compare-first-failure.py"
++FIRST_FAILURE_EXTRACTOR="$W/tools/first-failure-extract.py"
++REA_VERSION=6.5.0
++TIMEOUT_S=1200
++TSV="$W/predictions/carriers.tsv"
++W17_TOOLS=(carrier-run.py pins.py log-extract.py compare.py receipt-validate.py)
++SELFTEST_ROOT=
++
++usage() {
++  echo "usage: $0 [--dry-run] [<label>] | $0 --selftest" >&2
++}
++
++selftest() {
++  local root cases=0 fails=0 rc marker
++  root=$(python3 -I -B -c 'import tempfile; print(tempfile.mkdtemp(prefix="kr20-run-carriers-selftest-"))') || {
++    echo "SELFTEST: FAILED setup (tempfile.mkdtemp)"
++    return 1
++  }
++  SELFTEST_ROOT=$root
++  trap 'if [ -n "${SELFTEST_ROOT:-}" ]; then rm -rf -- "$SELFTEST_ROOT"; fi' EXIT
++  mkdir -p "$root/tools" "$root/shared-tools" "$root/predictions" \
++    "$root/carriers" "$root/go-data" "$root/fake-lane"
++  cp -- "$0" "$root/run-carriers.sh"
++
++  fail() { echo "SELFTEST: FAILED $1"; fails=$((fails + 1)); }
++  chk() {
++    cases=$((cases + 1))
++    if [ "$2" != "$3" ]; then fail "$1 (expected $2, got $3)"; fi
++  }
++  path_status() { if [ -e "$1" ]; then printf 0; else printf 1; fi; }
++
++  cat > "$root/tools/carrier-guard.py" <<'PY'
++import os, sys
++args = sys.argv[1:]
++if args != ["check", "--manifest", "predictions/carriers.tsv", "--record", "evidence/carrier-guard"]:
++    print("unexpected guard argv", file=sys.stderr)
++    sys.exit(2)
++with open("guard.calls", "a", encoding="utf-8") as f:
++    f.write("check\n")
++if os.path.exists("guard.fail"):
++    print("fixture guard finding", file=sys.stderr)
++    sys.exit(1)
++os.makedirs("evidence/carrier-guard", exist_ok=True)
++with open("evidence/carrier-guard/check-record.json", "w", encoding="utf-8") as f:
++    f.write("{}\n")
++PY
++  cat > "$root/tools/compare-first-failure.py" <<'PY'
++import json, os, sys
++args = sys.argv[1:]
++def value(flag):
++    try:
++        return args[args.index(flag) + 1]
++    except (ValueError, IndexError):
++        print("missing " + flag, file=sys.stderr)
++        sys.exit(2)
++pred = value("--prediction")
++log = value("--log")
++extractor = value("--extractor")
++if not os.path.isfile(log) or not os.path.isfile(extractor):
++    print("missing bound input", file=sys.stderr)
++    sys.exit(2)
++text = open(pred, encoding="utf-8").read()
++matched = "COMPARE_FAIL" not in text
++print(json.dumps({"matched": matched, "log": log, "extractor": extractor}))
++sys.exit(0 if matched else 1)
++PY
++  printf '#!/usr/bin/env python3\n' > "$root/tools/first-failure-extract.py"
++  printf '# fixture\n' > "$root/tools/swiss-misread-v2.py"
++
++  cat > "$root/shared-tools/carrier-run.py" <<'PY'
++import hashlib, json, os, sys
++args = sys.argv[1:]
++def value(flag):
++    return args[args.index(flag) + 1]
++out = value("--out-dir")
++label = value("--label")
++open(os.path.join(out, "stub-argv.txt"), "w", encoding="utf-8").write("\n".join(args) + "\n")
++log_dir = os.path.join(out, "logs", "rea-ghidra-" + label)
++os.makedirs(log_dir, exist_ok=True)
++log = os.path.join(log_dir, "ghidra.log")
++data = ("bound fixture log for " + label + "\n").encode()
++with open(log, "wb") as f:
++    f.write(data)
++session = "/tmp/rea-ghidra-" + label
++log_sha = hashlib.sha256(data).hexdigest()
++if label == "badbind":
++    log_sha = "0" * 64
++receipt = {
++    "label": label,
++    "bound_sessions": [session],
++    "retained_logs": [{"session_dir": session,
++                       "files": {"ghidra.log": {"path": log, "sha256": log_sha}}}],
++}
++with open(os.path.join(out, "receipt.json"), "w", encoding="utf-8") as f:
++    json.dump(receipt, f)
++PY
++  for tool in pins.py log-extract.py compare.py receipt-validate.py; do
++    printf '# fixture\n' > "$root/shared-tools/$tool"
++  done
++  printf 'go type fixture\n' > "$root/go-data/types"
++  printf 'selection fixture\n' > "$root/selection.py"
++  for label in good comparebad badbind guardfail; do
++    printf 'carrier %s\n' "$label" > "$root/carriers/$label"
++  done
++  printf '{}' > "$root/predictions/good.prediction.json"
++  printf '{"marker":"COMPARE_FAIL"}' > "$root/predictions/comparebad.prediction.json"
++  printf '{}' > "$root/predictions/badbind.prediction.json"
++  printf '{}' > "$root/predictions/guardfail.prediction.json"
++  local good_sha comparebad_sha badbind_sha guardfail_sha hash_line
++  hash_line=$(sha256sum -- "$root/carriers/good"); good_sha=${hash_line%% *}
++  hash_line=$(sha256sum -- "$root/carriers/comparebad"); comparebad_sha=${hash_line%% *}
++  hash_line=$(sha256sum -- "$root/carriers/badbind"); badbind_sha=${hash_line%% *}
++  hash_line=$(sha256sum -- "$root/carriers/guardfail"); guardfail_sha=${hash_line%% *}
++  {
++    printf 'good\t%s/carriers/good\tfixture\t%s\n' "$root" "$good_sha"
++    printf 'comparebad\t%s/carriers/comparebad\tfixture\t%s\n' "$root" "$comparebad_sha"
++    printf 'badbind\t%s/carriers/badbind\tfixture\t%s\n' "$root" "$badbind_sha"
++    printf 'guardfail\t%s/carriers/guardfail\tfixture\t%s\n' "$root" "$guardfail_sha"
++  } > "$root/predictions/carriers.tsv"
++
++  run_fixture() {
++    env LANE="$root/fake-lane" G="$root/go-data" \
++      TOOLS_DIR="$root/shared-tools" SELECTION_PY="$root/selection.py" \
++      bash "$root/run-carriers.sh" "$@"
++  }
++
++  if run_fixture --dry-run > "$root/dry.stdout" 2> "$root/dry.stderr"; then rc=0; else rc=$?; fi
++  chk "dry-run exit" 0 "$rc"
++  marker=$(python3 -I -B -c 'import sys; s=open(sys.argv[1]).read(); print(int("DRY-RUN label=good" in s and "compare-first-failure.py" in s))' "$root/dry.stdout")
++  chk "dry-run prints carrier and compare plan" 1 "$marker"
++  chk "dry-run does not call guard" 1 "$(path_status "$root/guard.calls")"
++  chk "dry-run creates no runs" 1 "$(path_status "$root/runs")"
++
++  if run_fixture good > "$root/good.stdout" 2> "$root/good.stderr"; then rc=0; else rc=$?; fi
++  chk "bound good run exit" 0 "$rc"
++  chk "good receipt present" 0 "$(path_status "$root/runs/good/receipt.json")"
++  chk "good run compares" 0 "$(cat "$root/runs/good/compare.exit" 2>/dev/null || printf missing)"
++  chk "good log binding recorded" 1 "$(python3 -I -B -c 'import json,sys; x=json.load(open(sys.argv[1])); print(int(x["verified"] is True and len(x["log_sha256"]) == 64 and x["session_dir"] == "/tmp/rea-ghidra-good"))' "$root/runs/good/comparison-log-binding.json" 2>/dev/null || printf missing)"
++  marker=$(python3 -I -B -c 'import sys; a=open(sys.argv[1]).read().splitlines(); print(int("--rea-version" in a and a[a.index("--rea-version") + 1] == "6.5.0" and "--timeout" in a and a[a.index("--timeout") + 1] == "1200" and a.count("--pin") == 13))' "$root/runs/good/stub-argv.txt")
++  chk "carrier runner receives REA pin timeout and all pins" 1 "$marker"
++
++  if run_fixture comparebad > "$root/comparebad.stdout" 2> "$root/comparebad.stderr"; then rc=0; else rc=$?; fi
++  chk "mismatch run exits 1" 1 "$rc"
++  chk "mismatch compare status retained" 1 "$(cat "$root/runs/comparebad/compare.exit" 2>/dev/null || printf missing)"
++
++  if run_fixture badbind > "$root/badbind.stdout" 2> "$root/badbind.stderr"; then rc=0; else rc=$?; fi
++  chk "bad log digest exits 1" 1 "$rc"
++  chk "bad log digest is unevaluable" 2 "$(cat "$root/runs/badbind/compare.exit" 2>/dev/null || printf missing)"
++  chk "bad log digest does not create binding" 1 "$(path_status "$root/runs/badbind/comparison-log-binding.json")"
++
++  : > "$root/guard.fail"
++  if run_fixture guardfail > "$root/guardfail.stdout" 2> "$root/guardfail.stderr"; then rc=0; else rc=$?; fi
++  chk "guard finding aborts with exit 1" 1 "$rc"
++  chk "guard finding starts no carrier run" 1 "$(path_status "$root/runs/guardfail")"
++  chk "guard ran once before each selected label" 4 "$(python3 -I -B -c 'import sys; print(sum(1 for _ in open(sys.argv[1])))' "$root/guard.calls")"
++
++  if run_fixture absent > "$root/absent.stdout" 2> "$root/absent.stderr"; then rc=0; else rc=$?; fi
++  chk "unknown selector exits 2" 2 "$rc"
++  cp -- "$root/predictions/carriers.tsv" "$root/carriers-valid.tsv"
++  printf '../escape\t%s/carriers/good\tfixture\t%s\n' "$root" "$good_sha" > "$root/predictions/carriers.tsv"
++  if run_fixture --dry-run > "$root/unsafe.stdout" 2> "$root/unsafe.stderr"; then rc=0; else rc=$?; fi
++  chk "unsafe manifest label exits 2" 2 "$rc"
++  chk "unsafe manifest creates no escaped run" 1 "$(path_status "$root/escape")"
++  cp -- "$root/carriers-valid.tsv" "$root/predictions/carriers.tsv"
++
++  if [ "$fails" -gt 0 ]; then
++    echo "SELFTEST: FAILED cases=$cases fails=$fails"
++    return 1
++  fi
++  echo "SELFTEST: CLEAN cases=$cases"
++  return 0
++}
++
++if [ "${1:-}" = "--selftest" ]; then
++  if [ "$#" -ne 1 ]; then usage; exit 2; fi
++  selftest
++  exit $?
++fi
++
++dry_run=0
++only=
++while [ "$#" -gt 0 ]; do
++  case "$1" in
++    --dry-run) dry_run=1 ;;
++    --*) usage; exit 2 ;;
++    *)
++      if [ -n "$only" ]; then usage; exit 2; fi
++      only=$1
++      ;;
++  esac
++  shift
++done
++
++missing=0
++for f in "$TOOLS_DIR/carrier-run.py" "$TOOLS_DIR/pins.py" \
++         "$TOOLS_DIR/log-extract.py" "$TOOLS_DIR/compare.py" \
++         "$TOOLS_DIR/receipt-validate.py" "$SWISS_MISREAD" "$CARRIER_GUARD" \
++         "$COMPARE_TOOL" "$FIRST_FAILURE_EXTRACTOR" "$SELECTION_PY" "$TSV"; do
++  [ -f "$f" ] || { echo "run-carriers: missing required path: $f" >&2; missing=1; }
++done
++[ -d "$G" ] || { echo "run-carriers: missing Go data dir: $G" >&2; missing=1; }
++[ "$missing" -eq 0 ] || exit 1
++
++if [ -s "$TSV" ] && [ -n "$(tail -c 1 "$TSV")" ]; then
++  echo "run-carriers: $TSV has no trailing newline" >&2
++  exit 2
++fi
++rows=0
++while IFS=$'\t' read -r label carrier carrier_class sha256 extra; do
++  [ -z "$label" ] && continue
++  case "$label" in \#*) continue ;; esac
++  rows=$((rows + 1))
++  if [[ ! "$label" =~ ^[A-Za-z0-9][A-Za-z0-9_-]*$ ]]; then
++    echo "run-carriers: unsafe label '$label' (single basename required)" >&2
++    exit 2
++  fi
++  if [ -z "$carrier" ] || [ -z "$carrier_class" ] || [ -n "$extra" ]; then
++    echo "run-carriers: $TSV row $rows ($label): expected exactly four nonempty TSV fields" >&2
++    exit 2
++  fi
++  case "$sha256" in
++    ""|*[!0-9a-f]*)
++      echo "run-carriers: $TSV row $rows ($label): sha256 is not lowercase hex" >&2
++      exit 2 ;;
++  esac
++  if [ "${#sha256}" -ne 64 ]; then
++    echo "run-carriers: $TSV row $rows ($label): sha256 is ${#sha256} hex chars, want 64" >&2
++    exit 2
++  fi
++done < "$TSV"
++if [ "$rows" -eq 0 ]; then
++  echo "run-carriers: $TSV has zero carrier rows" >&2
++  exit 2
++fi
++
++cd "$W" || { echo "run-carriers: cannot enter wave directory $W" >&2; exit 1; }
++mapfile -t GOFILES < <(find "$G" -type f | sort)
++[ "${#GOFILES[@]}" -gt 0 ] || { echo "run-carriers: no Go data files under $G" >&2; exit 1; }
++PINARGS=()
++for f in "${GOFILES[@]}"; do PINARGS+=(--pin "$f"); done
++TOOLPINARGS=()
++for t in "${W17_TOOLS[@]}"; do TOOLPINARGS+=(--pin "$TOOLS_DIR/$t"); done
++W20PINARGS=()
++for f in "$SWISS_MISREAD" "$CARRIER_GUARD" "$COMPARE_TOOL" "$FIRST_FAILURE_EXTRACTOR"; do
++  W20PINARGS+=(--pin "$f")
++done
++
++overall=0
++selected=0
++while IFS=$'\t' read -r label carrier carrier_class sha256 extra; do
++  [ -z "$label" ] && continue
++  case "$label" in \#*) continue ;; esac
++  [ -n "$only" ] && [ "$only" != "$label" ] && continue
++  selected=$((selected + 1))
++
++  outabs="$W/runs/$label"
++  pred="$W/predictions/$label.prediction.json"
++  if [ "$dry_run" -eq 1 ]; then
++    printf 'DRY-RUN label=%s carrier=%s sha256=%s receipt=%s\n' "$label" "$carrier" "$sha256" "$outabs/receipt.json"
++    printf '  guard: python3 -I -B %q check --manifest predictions/carriers.tsv --record evidence/carrier-guard\n' "$CARRIER_GUARD"
++    printf '  analyze: env REA_GHIDRA_STARTUP_TIMEOUT_MS=900000 python3 -I -B %q --carrier %q --label %q --out-dir %q --rea-version %q --timeout %q\n' \
++      "$TOOLS_DIR/carrier-run.py" "$carrier" "$label" "$outabs" "$REA_VERSION" "$TIMEOUT_S"
++    printf '  compare: python3 -I -B %q --prediction %q --log <receipt-bound sha256-verified ghidra.log> --extractor %q\n' \
++      "$COMPARE_TOOL" "$pred" "$FIRST_FAILURE_EXTRACTOR"
++    if [ ! -f "$carrier" ] || [ ! -f "$pred" ]; then
++      echo "run-carriers: $label: carrier or prediction is missing" >&2
++      overall=1
++      continue
++    fi
++    hash_line=$(sha256sum -- "$carrier")
++    actual=${hash_line%% *}
++    if [ "$actual" != "$sha256" ]; then
++      echo "run-carriers: $label: carrier sha256 mismatch (frozen $sha256, got $actual)" >&2
++      overall=1
++    fi
++    continue
++  fi
++
++  if python3 -I -B "$CARRIER_GUARD" check --manifest predictions/carriers.tsv --record evidence/carrier-guard; then
++    :
++  else
++    guard_rc=$?
++    echo "run-carriers: carrier guard refused $label (exit $guard_rc); aborting wave" >&2
++    exit "$guard_rc"
++  fi
++
++  if [ -L "$W/runs" ]; then
++    echo "run-carriers: refusing symlink run directory $W/runs" >&2
++    exit 1
++  fi
++  if [ -L "$outabs" ]; then
++    echo "run-carriers: refusing symlink output path $outabs" >&2
++    overall=1
++    continue
++  fi
++  rm -rf -- "$outabs"
++  mkdir -p -- "$outabs"
++  if [ ! -f "$carrier" ] || [ ! -f "$pred" ]; then
++    echo "run-carriers: skipping $label (missing carrier or prediction: $pred)" >&2
++    echo 2 > "$outabs/carrier-run.exit"
++    overall=1
++    continue
++  fi
++  hash_line=$(sha256sum -- "$carrier")
++  actual=${hash_line%% *}
++  if [ "$actual" != "$sha256" ]; then
++    echo "run-carriers: $label: carrier sha256 mismatch (frozen $sha256, got $actual)" >&2
++    echo 2 > "$outabs/carrier-run.exit"
++    overall=1
++    continue
++  fi
++
++  branch_tip=$(git -C "$LANE" rev-parse --verify "refs/heads/main^{commit}" 2>/dev/null || true)
++  if [ -n "$branch_tip" ]; then tipjson="\"$branch_tip\""; else tipjson=null; fi
++  {
++    echo "{"
++    echo "  \"label\": \"$label\","
++    echo "  \"recorded_at_utc\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\","
++    echo "  \"branch\": \"main\","
++    echo "  \"branch_tip\": $tipjson,"
++    echo "  \"tool_sha256\": {"
++    sep=
++    for t in "${W17_TOOLS[@]}"; do
++      tp="$TOOLS_DIR/$t"
++      hline=$(sha256sum -- "$tp")
++      h=${hline%% *}
++      printf '%s    "%s": "%s"\n' "$sep" "$tp" "$h"
++      sep=,
++    done
++    for tp in "$SWISS_MISREAD" "$CARRIER_GUARD" "$COMPARE_TOOL" "$FIRST_FAILURE_EXTRACTOR" "$SELECTION_PY"; do
++      hline=$(sha256sum -- "$tp")
++      h=${hline%% *}
++      printf '%s    "%s": "%s"\n' "$sep" "$tp" "$h"
++      sep=,
++    done
++    printf '\n  }\n}\n'
++  } > "$outabs/producer.json"
++
++  echo "== $label start $(date -Iseconds)"
++  env REA_GHIDRA_STARTUP_TIMEOUT_MS=900000 \
++    python3 -I -B "$TOOLS_DIR/carrier-run.py" --carrier "$carrier" --label "$label" --out-dir "$outabs" \
++      --rea-version "$REA_VERSION" --timeout "$TIMEOUT_S" --poll 0.5 \
++      --pin "$(realpath -- "$carrier")" --pin "$pred" --pin "$SELECTION_PY" \
++      "${TOOLPINARGS[@]}" "${W20PINARGS[@]}" "${PINARGS[@]}" \
++      > "$outabs/carrier-run.stdout" 2> "$outabs/carrier-run.stderr"
++  rc=$?
++  echo "$rc" > "$outabs/carrier-run.exit"
++
++  if [ ! -f "$outabs/receipt.json" ]; then
++    printf '{"status":"unevaluable","reason":"receipt_missing"}\n' > "$outabs/compare.json"
++    echo 2 > "$outabs/compare.exit"
++    echo "run-carriers: $label: carrier-run did not write receipt.json" >&2
++    overall=1
++    continue
++  fi
++  if log=$(python3 -I -B - "$outabs/receipt.json" "$outabs" <<'PY'
++import hashlib, json, os, re, sys
++
++def refuse(reason):
++    print("run-carriers: receipt log binding " + reason, file=sys.stderr)
++    raise SystemExit(1)
++
++receipt_path, outdir = sys.argv[1:]
++outdir = os.path.realpath(outdir)
++try:
++    with open(receipt_path, encoding="utf-8") as f:
++        receipt = json.load(f)
++except (OSError, ValueError) as exc:
++    refuse("unreadable: " + str(exc))
++bound = receipt.get("bound_sessions")
++if not isinstance(bound, list) or len(bound) != 1 or not isinstance(bound[0], str):
++    refuse("requires exactly one bound session")
++session = bound[0]
++base = os.path.basename(session)
++if not base or base in (".", ".."):
++    refuse("has an unsafe session path")
++retained = receipt.get("retained_logs")
++if not isinstance(retained, list):
++    refuse("has no retained-log inventory")
++entries = [e for e in retained if isinstance(e, dict) and e.get("session_dir") == session]
++if len(entries) != 1:
++    refuse("does not have one retained entry for the bound session")
++files = entries[0].get("files")
++if not isinstance(files, dict) or not isinstance(files.get("ghidra.log"), dict):
++    refuse("has no retained ghidra.log record")
++log_record = files["ghidra.log"]
++path = log_record.get("path")
++digest = log_record.get("sha256")
++expected_path = os.path.join(outdir, "logs", base, "ghidra.log")
++if path != expected_path:
++    refuse("path does not match the bound session's retained log")
++if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
++    refuse("has an invalid log SHA-256")
++if os.path.islink(path) or not os.path.isfile(path):
++    refuse("file is missing or is a symlink")
++h = hashlib.sha256()
++try:
++    with open(path, "rb") as f:
++        for chunk in iter(lambda: f.read(1 << 20), b""):
++            h.update(chunk)
++except OSError as exc:
++    refuse("file is unreadable: " + str(exc))
++if h.hexdigest() != digest:
++    refuse("digest does not match the retained log")
++binding = {"session_dir": session, "log_path": path, "log_sha256": digest, "verified": True}
++with open(os.path.join(outdir, "comparison-log-binding.json"), "w", encoding="utf-8") as f:
++    json.dump(binding, f, sort_keys=True, indent=2)
++    f.write("\n")
++print(path)
++PY
++  ); then
++    python3 -I -B "$COMPARE_TOOL" --prediction "$pred" --log "$log" \
++      --extractor "$FIRST_FAILURE_EXTRACTOR" > "$outabs/compare.json"
++    compare_rc=$?
++    echo "$compare_rc" > "$outabs/compare.exit"
++  else
++    printf '{"status":"unevaluable","reason":"receipt_log_binding_invalid"}\n' > "$outabs/compare.json"
++    echo 2 > "$outabs/compare.exit"
++    compare_rc=2
++  fi
++  echo "== $label end $(date -Iseconds) carrier-run=$rc compare=$compare_rc"
++  [ "$rc" -eq 0 ] && [ "$compare_rc" -eq 0 ] || overall=1
++done < "$TSV"
++
++if [ "$selected" -eq 0 ]; then
++  echo "run-carriers: label selector '${only}' matched no carrier" >&2
++  exit 2
++fi
++exit "$overall"

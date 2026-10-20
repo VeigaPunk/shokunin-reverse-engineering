@@ -115,6 +115,39 @@ def existing_evidence_path(text, paths):
             return True
     return False
 
+REFUSAL_TOKENS = ("invalid_request", "capability_unavailable", "provider_timeout",
+                  "unsupported_target", "VALIDATION_ERROR")
+
+
+def bound_evidence(root, revision, verb, texts, evidence_paths):
+    """Round-20 hardening (wave-1 CriticC2/ReviewClaimsC2): a target counts as
+    exercised only if an entry naming it cites an ``ev_`` id that occurs, at the
+    measured revision, inside a retained file under the C2 evidence prefix whose
+    bytes also carry the verb's operation token (underscore form) and no REA
+    refusal/error code. A fabricated id or an unrelated retained file no longer
+    counts. Returns [(ev_id, path)] pairs."""
+    op = verb.replace("-", "_")
+    found = []
+    for text in texts:
+        if not existing_evidence_path(text, evidence_paths):
+            continue
+        for ev in sorted(set(m.group(0) for m in HEX64.finditer(text))):
+            proc = subprocess.run(["git", "--no-optional-locks", "grep", "-l", "-F", ev, revision, "--",
+                                   EVIDENCE_PREFIX], cwd=root, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE, timeout=120, check=False)
+            if proc.returncode not in (0, 1):
+                raise Refusal(f"git_grep_failed exit={proc.returncode}")
+            hits = proc.stdout.decode("utf-8", "replace").split("\n")
+            for hit in hits:
+                if not hit:
+                    continue
+                path = hit.split(":", 1)[1] if hit.startswith(revision + ":") else hit
+                blob = git_show(root, revision, path)
+                if op in blob and ev in blob and not any(t in blob for t in REFUSAL_TOKENS):
+                    found.append((ev, path))
+                    break
+    return found
+
 
 def load_cli_commands(package_dir):
     package_dir = Path(package_dir).expanduser().resolve()
@@ -174,13 +207,11 @@ def measure(root, revision, commands, targets=DEFAULT_TARGETS):
     zero = [name for name in commands if per_command[name] == 0]
     target_results = {}
     for name in targets:
-        exercised = any(
-            HEX64.search(text) and existing_evidence_path(text, evidence_paths)
-            for text in target_entries[name]
-        )
+        bound = bound_evidence(root, resolved_rev, name, target_entries[name], evidence_paths)
         target_results[name] = {
             "entries": len(target_entries[name]),
-            "exercised": exercised,
+            "exercised": bool(bound),
+            "bound_evidence": bound[:5],
         }
     return {
         "rev": resolved_rev,
@@ -221,7 +252,11 @@ def selftest():
                            f"execute-rizin-command {evidence_path}.\n")
         write_fixture_file(root, "corpus/knowledge/missing-evidence-path.md",
                            f"project_harmony_application_graph {ev_id} at {EVIDENCE_PREFIX}missing.json.\n")
-        write_fixture_file(root, evidence_path, '{"retained":true}\n')
+        write_fixture_file(root, evidence_path,
+                           '{"evidence_id":"%s","operation":"inspect_wasm_artifact"}\n' % ev_id)
+        # forged: a well-formed id that occurs in no retained file, citing a real evidence path
+        write_fixture_file(root, "corpus/knowledge/forged.md",
+                           f"compare-wasm-interfaces ev_{'b' * 64} at {evidence_path}.\n")
         run_process(["git", "-C", str(root), "add", "--all"])
         run_process([
             "git", "-C", str(root), "-c", "user.name=verb-coverage-selftest",
@@ -238,7 +273,7 @@ def selftest():
         result = measure(root, revision, commands)
         cases.extend([
             ("hyphen_name_counts_entry", result["per_command"]["inspect-wasm-artifact"] == 1),
-            ("underscore_form_counts_entry", result["per_command"]["compare-wasm-interfaces"] == 1),
+            ("underscore_form_counts_entry", result["per_command"]["compare-wasm-interfaces"] == 2),
             ("not_mentioned_is_zero", "inspect-artifact" in result["zero"]),
             ("substring_trap_rejected", result["per_command"]["inspect-artifact"] == 0),
             ("evidence_id_and_existing_path_exercise",
@@ -247,6 +282,8 @@ def selftest():
              result["targets"]["execute-rizin-command"]["exercised"] is False),
             ("evidence_path_must_exist",
              result["targets"]["project-harmony-application-graph"]["exercised"] is False),
+            ("forged_id_not_in_retained_bytes",
+             result["targets"]["compare-wasm-interfaces"]["exercised"] is False),
         ])
         failed = [name for name, passed in cases if not passed]
         if failed:

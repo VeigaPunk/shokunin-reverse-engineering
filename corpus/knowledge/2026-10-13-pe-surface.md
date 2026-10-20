@@ -78,3 +78,11 @@ separated per candidate.
   `setuptools/cli-64.exe` (sha256 `bbb3de57…`, 14,336 B) → 8 segments,
   142 procedures, decompile of `entry` via Ghidra 12.1.4 — pure-Java PeLoader,
   wine-independent. See `2026-10-13-r2-pe-e2e-proof`. (round 2)
+
+## Round-20 erratum (append-only; 2026-10-20)
+
+The candidate "PE RE tooling gaps — radare2, rizin, mono tools, pedump all absent" is a 2026-10-13 observation and is now
+**stale**: re-running its own sweep on 2026-10-20 (`for t in rabin2 r2 radare2 rz-bin rizin xxd; do command -v $t; done`)
+resolves `rabin2`, `r2`, `radare2`, `rz-bin`, `rizin` and `xxd` under `/usr/bin` (rizin 0.8.2). REA's
+`execute-rizin-command` is now held on this PE (`corpus/knowledge/2026-10-20-r20-rizin-command-observation.md`). The
+original text above stays as the historical record; mono/monodis/pedump were not re-checked.

@@ -160,3 +160,12 @@ absorbed.
   [r5-audit C1: merged from the pruned Frontier bullet — its `compare_javascript_export_shapes` item is now held (Core, r4-09)].
 - **Operator-gated, still absent**: IDA (`REA_IDA_MCP_CONFIG`), Hopper
   (`HOPPER_LAUNCHER_PATH`), JEB.
+
+### Round-20 additions to Core (verified 2026-10-20)
+
+| Surface | Ports / keys | Probe | Verified evidence |
+|---|---|---|---|
+| WASM interface inspect/compare | `REA_WABT_BIN_DIRECTORY=/home/vgpnk/.local/opt/wabt-1.0.42/bin` (official release, S041; REA requires the exact banner of three WABT tools) | `inspect-wasm-artifact <module>`; `compare-wasm-interfaces <json>` with two inline inspect Evidence records | 4 shipped modules, 3 compare pairs (`corpus/knowledge/2026-10-20-r20-wasm-interfaces.md`) |
+| Rizin command observation | `rizin` on PATH (`/usr/bin/rizin`), optional `REA_RIZIN_COMMAND`; REA runs `rizin -N -q -c <cmd> <path>` | `execute-rizin-command <path> iI` | jq, libjq, round-2 PE (`corpus/knowledge/2026-10-20-r20-rizin-command-observation.md`); unrestricted shell-capable surface — read-only info commands only |
+| objdump target list | host GNU objdump; no artifact argument | `list-objdump-architectures` | equals host `objdump -i`, `subject: null` (`corpus/knowledge/2026-10-20-r20-objdump-architecture-list.md`) |
+| HarmonyOS application graph | none; input is `inspect-artifact` inventory Evidence | `project-harmony-application-graph <json>` | synthetic Stage/FA HAPs only (`corpus/knowledge/2026-10-20-r20-harmony-application-graph.md`) |

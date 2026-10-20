@@ -1,0 +1,166 @@
+diff --git c/.ufo/gates/citation-drift/citation-drift-probe.py i/.ufo/gates/citation-drift/citation-drift-probe.py
+index 55d34fc..3b6085c 100644
+--- c/.ufo/gates/citation-drift/citation-drift-probe.py
++++ i/.ufo/gates/citation-drift/citation-drift-probe.py
+@@ -27,9 +27,11 @@ ENTRY KINDS
+ 
+ TARGETS
+   repo-relative path       read as a Git object at --rev (immutable).
+-  @<slug>                  read from --snapshot-dir, after verifying its sha256
+-                           against expected.json `snapshots` (a mismatched
+-                           snapshot is `snapshot_tampered`, exit 2).
++  @<slug>                  read from --snapshot-dir only when the slug matches
++                           [A-Za-z0-9._-]+, contains no `..`, and its resolved
++                           path stays inside the directory; then verify its
++                           sha256 against expected.json `snapshots` (a mismatch
++                           is `snapshot_tampered`, exit 2).
+ 
+ FROZEN-RUN GUARD  expected.json pins the sha256 of the pointer table (the
+ `pointer_table` key). A table whose bytes differ from the pinned digest is
+@@ -95,7 +97,7 @@ class Findings:
+     def verdict(self, strict=False):
+         if not self.rows:
+             return CLEAN
+-        if any(f in ("snapshot_tampered", "snapshot_missing",
++        if any(f in ("snapshot_tampered", "snapshot_missing", "slug_unsafe",
+                      "pointer_table_unreadable", "pointer_table_tampered",
+                      "pointer_table_unpinned", "unpinned_legacy",
+                      "root_unreadable", "revision_unresolvable", "internal_error",
+@@ -158,6 +160,12 @@ class Tree:
+ 
+     def _snapshot(self, slug):
+         key = "@" + slug
++        if (not re.fullmatch(r"[A-Za-z0-9._-]+", slug) or ".." in slug):
++            self.findings.add(
++                "slug_unsafe", key,
++                "snapshot slug must match [A-Za-z0-9._-]+ and contain no '..'")
++            self.reported.add(key)
++            return None, "slug_unsafe"
+         if not self.snapshot_dir:
+             # a missing --snapshot-dir is a configuration error, not a drifted
+             # citation: it must read as could-not-evaluate, never as failed
+@@ -165,7 +173,19 @@ class Tree:
+                               "no --snapshot-dir given for snapshot target @%s" % slug)
+             self.reported.add(key)
+             return None, "no --snapshot-dir given for snapshot target @%s" % slug
+-        path = os.path.join(self.snapshot_dir, slug)
++        snapshot_root = os.path.realpath(self.snapshot_dir)
++        path = os.path.join(snapshot_root, slug)
++        try:
++            resolved = os.path.realpath(path)
++            inside = os.path.commonpath((snapshot_root, resolved)) == snapshot_root
++        except (OSError, ValueError):
++            resolved, inside = path, False
++        if not inside:
++            self.findings.add("slug_unsafe", key,
++                              "snapshot path resolves outside --snapshot-dir")
++            self.reported.add(key)
++            return None, "slug_unsafe"
++        path = resolved
+         if not os.path.isfile(path):
+             self.findings.add("snapshot_missing", key, path)
+             self.reported.add(key)
+@@ -559,7 +579,19 @@ ALIAS_CASES = [
+ ]
+ 
+ 
+-def fixture_table(case):
++
++def slug_escape_fixtures(case_dir):
++    return [
++        ("../x", os.path.join(case_dir, "x"), False),
++        ("a/b", os.path.join(case_dir, "snap", "a", "b"), False),
++        ("..x", os.path.join(case_dir, "snap", "..x"), False),
++        (os.path.join(case_dir, "absolute.cfg"),
++         os.path.join(case_dir, "absolute.cfg"), False),
++        ("symlink-outside.cfg", os.path.join(case_dir, "outside.cfg"), True),
++    ]
++
++
++def fixture_table(case, case_dir):
+     entries = [
+         {"id": "f-extracted", "kind": "extracted", "file": "CITING.md", "line": 1,
+          "pattern": r"`TARGET\.md:(\d+)`", "target": "TARGET.md", "target_group": 1,
+@@ -577,6 +609,13 @@ def fixture_table(case):
+         # a configuration error must read as could-not-evaluate (2), never 1
+         entries.append({"id": "f-snap", "kind": "exact", "file": "@external.cfg",
+                         "line": 1, "must_match": r"anything"})
++    if case == "slug_escape_refused":
++        entries.extend(
++            {"id": "f-slug-escape-%d" % index, "kind": "exact",
++             "file": "@" + slug, "line": 1,
++             "must_match": r"outside snapshot content"}
++            for index, (slug, _, _) in enumerate(
++                slug_escape_fixtures(case_dir), 1))
+     if case == "stamped":
+         # A stamp-qualified pointer whose target no longer holds the claim:
+         # recorded as history, and it must NOT redden the run.
+@@ -629,7 +668,7 @@ def selftest(expected_path):
+                         for name in ("ORIG_HEAD", "FETCH_HEAD", "MERGE_HEAD"):
+                             _plant_pseudoref(root, name)
+                     table = os.path.join(case_dir, "table.json")
+-                    json.dump(fixture_table(case), open(table, "w"))
++                    json.dump(fixture_table(case, case_dir), open(table, "w"))
+ 
+                 snapshot_dir = os.path.join(case_dir, "snap")
+                 os.makedirs(snapshot_dir)
+@@ -642,6 +681,20 @@ def selftest(expected_path):
+                     digests = {"external.cfg": "0" * 64}
+                 else:
+                     digests = {}
++                if case == "slug_escape_refused":
++                    outside_bytes = b"outside snapshot content\n"
++                    for slug, fixture_path, is_symlink in slug_escape_fixtures(case_dir):
++                        if is_symlink:
++                            with open(fixture_path, "wb") as f:
++                                f.write(outside_bytes)
++                            os.symlink(fixture_path,
++                                       os.path.join(snapshot_dir, slug))
++                        else:
++                            os.makedirs(os.path.dirname(fixture_path), exist_ok=True)
++                            with open(fixture_path, "wb") as f:
++                                f.write(outside_bytes)
++                        digests[slug] = sha256_bytes(outside_bytes)
++
+                 table_bytes = open(table, "rb").read()
+                 expected = {"snapshots": digests,
+                             "pointer_table": {"sha256": sha256_bytes(table_bytes)}}
+@@ -682,9 +735,21 @@ def selftest(expected_path):
+                         None if case == "no_snapshot_dir" else snapshot_dir)
+                     got_exit = findings.verdict(strict=True)
+                     got_ids = findings.ids()
++                slug_escape_complete = True
++                if case == "slug_escape_refused":
++                    got_slug_keys = {
++                        key for finding, key, _ in findings.rows
++                        if finding == "slug_unsafe"
++                    }
++                    expected_slug_keys = {
++                        "@" + slug
++                        for slug, _, _ in slug_escape_fixtures(case_dir)
++                    }
++                    slug_escape_complete = got_slug_keys == expected_slug_keys
+                 if want_finding == "citations_clean" and not got_ids:
+                     got_ids = {"citations_clean"}
+-                ok = (got_exit == want_exit) and (want_finding in got_ids)
++                ok = ((got_exit == want_exit) and (want_finding in got_ids)
++                      and slug_escape_complete)
+                 print("SELFTEST_CASE: %s case=%s exit=%d expected=%d finding=%s"
+                       % ("CLEAN" if ok else "FAILED", case, got_exit, want_exit,
+                          want_finding))
+diff --git c/.ufo/gates/citation-drift/expected.json i/.ufo/gates/citation-drift/expected.json
+index 740ab9d..17bdf1c 100644
+--- c/.ufo/gates/citation-drift/expected.json
++++ i/.ufo/gates/citation-drift/expected.json
+@@ -76,6 +76,11 @@
+       "exit_code": 2,
+       "finding": "pointer_table_tampered"
+     },
++    {
++      "case": "slug_escape_refused",
++      "exit_code": 2,
++      "finding": "slug_unsafe"
++    },
+     {
+       "case": "table_absent",
+       "exit_code": 2,

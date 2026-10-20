@@ -1,0 +1,33 @@
+# C2 Rizin leg
+
+## Observation
+
+Executed `npx -y rea-agents@6.5.0 execute-rizin-command <carrier> <command> --format json` on both requested carriers. Subject digests: `/usr/bin/jq` `e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806`; `/usr/lib/libjq.so.1` `7e8bccc6df37a55fb90703c9069b3770f5cdc502e96959c866d2f30fbf5e8b6b`. Every stdout JSON line below includes the REA Evidence ID, subject, provider, `command_arguments`, and raw result. Its same-stem `receipt.json` records CLI `argv`, cwd `/tmp/kr20-RizinLeg-2`, `env_REA` (empty for all calls), UTC start/end, process exit, carrier path/digest, and stdout/stderr paths, sizes, and SHA-256. The captured Rizin arguments were `[-N, -q, -c, <command>, <carrier>]` in every case. Process stderr files are empty; `libjq`'s Rizin warnings are retained in JSON `raw_result.stderr`.
+
+| Carrier / command | Evidence ID | Retained call and receipt |
+|---|---|---|
+| jq / `iI` | `ev_da001015882395e06e3097dfafd91fc944a9033c54eeeb178870e0847776cd31` | `.ufo/waves/round-20/evidence/c2/rizin/jq-iI-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/jq-iI-1.receipt.json:1-33` |
+| jq / `iI` repeat | `ev_da001015882395e06e3097dfafd91fc944a9033c54eeeb178870e0847776cd31` | `.ufo/waves/round-20/evidence/c2/rizin/jq-iI-repeat.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/jq-iI-repeat.receipt.json:1-35` |
+| jq / `iS` | `ev_f416c16977b5be272572d31bfbe0aa049c75d47944fead8fec4786c299f7e3f7` | `.ufo/waves/round-20/evidence/c2/rizin/jq-iS-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/jq-iS-1.receipt.json:1-35` |
+| jq / `ie` | `ev_ad4467b26d7b4a889481817f4faaff27428afe00a3389385a1a453ffb4aedc79` | `.ufo/waves/round-20/evidence/c2/rizin/jq-ie-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/jq-ie-1.receipt.json:1-35` |
+| jq / `il` | `ev_9a87f08dacb112b3c0c43196ef0f192287011d80f6a62159b20c657eca810933` | `.ufo/waves/round-20/evidence/c2/rizin/jq-il-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/jq-il-1.receipt.json:1-35` |
+| jq / `izj~?` | `ev_c392d97eead05a3d7d8e9ea0b006f212462a41cda349ef7f127a5687fdc120e5` | `.ufo/waves/round-20/evidence/c2/rizin/jq-izjtildeq-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/jq-izjtildeq-1.receipt.json:1-35` |
+| jq / `izj` | `ev_006e40cb22466343ac72c41240656ddecbab655eda01d43c2cd9a17976708cf5` | `.ufo/waves/round-20/evidence/c2/rizin/jq-izj-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/jq-izj-1.receipt.json:1-35` |
+| libjq / `iI` | `ev_fd5b0a3d6ab8a815ef39dc2a565245bab24f1c50d876fbd5f553486f52090e1b` | `.ufo/waves/round-20/evidence/c2/rizin/libjq-iI-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/libjq-iI-1.receipt.json:1-35` |
+| libjq / `iS` | `ev_9031ea9718e1984e806738a1e5c00b1850385e0d2e4d7c0b613492fc89a84483` | `.ufo/waves/round-20/evidence/c2/rizin/libjq-iS-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/libjq-iS-1.receipt.json:1-35` |
+| libjq / `ie` | `ev_ae17aa6e336ba4d97e7e4429862fe67ecd652bd8d5a70f5c4b54775b5ad6db8c` | `.ufo/waves/round-20/evidence/c2/rizin/libjq-ie-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/libjq-ie-1.receipt.json:1-35` |
+| libjq / `il` | `ev_4404e9272aa57c13588122334bd62c30692b777fb8005e6df48c3beb471f69b1` | `.ufo/waves/round-20/evidence/c2/rizin/libjq-il-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/libjq-il-1.receipt.json:1-35` |
+| libjq / `izj~?` | `ev_df84bca6233f93bbfc7d9c4cbec3d1a9bbda05e755e8e0534d3964cc786d4d89` | `.ufo/waves/round-20/evidence/c2/rizin/libjq-izjtildeq-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/libjq-izjtildeq-1.receipt.json:1-35` |
+| libjq / `izj` | `ev_c9417b3543b47eb08d2885a3b86d7a738150805add1d3478f0dae091c0844f35` | `.ufo/waves/round-20/evidence/c2/rizin/libjq-izj-1.stdout:1`; `.ufo/waves/round-20/evidence/c2/rizin/libjq-izj-1.receipt.json:1-35` |
+
+**Statuses and output caps.** All 13 REA calls exited 0, returned `completion_status=complete`, `output_truncated=false`, and `artifact_changed=false`; every `artifact_sha256_after` matched its subject digest. No numeric output-cap field was exposed. CLI JSON stdout ranged from 1,790 to 378,490 bytes; all retained files are under 8 MiB, no xz compression was needed, and each empty process-stderr file is hashed in its receipt. See the per-call stdout and receipts above. The `izj~?` result was only `1\n` on both files (not a string inventory); `izj` returned 76 string records for jq and 1,111 for libjq. The jq `iI` reports ELF64, 64-bit, little-endian, machine AMD x86-64; `iS` has 27 named sections; `ie` shows program/init/fini at `0x3cf0/0x3de0/0x3d90`; `il` lists `libjq.so.1`, `libonig.so.5`, `libc.so.6`. The libjq `ie` reports program/init/fini at `0x6040/0x8e50/0x8e00`; `il` lists `libm.so.6`, `libonig.so.5`, `libc.so.6`, and `ld-linux-x86-64.so.2`. These observations are in the corresponding JSON stdout records above.
+
+**Provider and repeatability.** REA reports `provider.id=rizin`, `provider.version=null`; separately, `/usr/bin/rizin -v` returned `rizin 0.8.2 @ linux-x86-64` (`.ufo/waves/round-20/evidence/c2/rizin/rizin-version.stdout:1`; receipt `.ufo/waves/round-20/evidence/c2/rizin/rizin-version.receipt.json:1-24`). Two identical jq `iI` invocations produced byte-identical 3,024-byte JSON (`sha256 c9297d5ad8700c0a13fd23b91e80cb2682177cee5d95f4fb33a0716244c2fe06` each), equal raw and normalized results, and the same Evidence ID; receipts are linked in the table.
+
+**Cross-check.** `readelf -W -S /usr/bin/jq` reports 28 section headers including section index 0; all 27 nonempty section names exactly match Rizin `iS` (no named-section differences). Retained output: `.ufo/waves/round-20/evidence/c2/rizin/readelf-jq-sections.stdout:1-37`; receipt with argv, carrier digest, hashes and exit: `.ufo/waves/round-20/evidence/c2/rizin/readelf-jq-sections.receipt.json:1-24`; Rizin output is in the jq `iS` row above.
+
+## Limitations and blockers
+
+**Observation:** REA's own `limitations` say executable version/formats remain unknown because no reliable version probe was performed; the separate host `rizin -v` observation does not change the provider's null version field. They also state Rizin commands/plugins may read external files or network resources not bound to this Evidence, and before/after digests cannot prove the exact bytes consumed. The libjq commands all emitted Rizin `ERROR: Cannot determine entrypoint, using 0x00006040.` and `WARNING: unimplemented ELF/X86_64 reloc type 16` in the embedded raw stderr while still exiting 0 with complete output and unchanged artifact digest. **No blocker observed.** No tool was installed or updated.
+
+Patch: `.ufo/waves/round-20/w1/patches/RizinLeg-2.patch` (baseline `14f0260ad319ecc26994381b2415d5a999003375`; `git diff --cached --stat`: 45 files, +552/-0).

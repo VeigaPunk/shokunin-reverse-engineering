@@ -1,0 +1,690 @@
+diff --git c/.ufo/waves/round-20/tools/carrier-guard.py i/.ufo/waves/round-20/tools/carrier-guard.py
+new file mode 100755
+index 0000000..382fe49
+--- /dev/null
++++ i/.ufo/waves/round-20/tools/carrier-guard.py
+@@ -0,0 +1,684 @@
++#!/usr/bin/env python3
++"""Protect manifest-listed carriers by clearing and checking execute mode bits.
++
++Usage:
++    carrier-guard.py {arm,check,disarm} --manifest TSV --record DIR
++    carrier-guard.py adopt --from MANUAL-ARM.json --record DIR
++    carrier-guard.py --selftest
++
++The TSV has label<TAB>path as its first two columns (an optional header is
++accepted); additional columns are ignored. Relative carrier paths are resolved
++against the current working directory. arm preflights every listed path as a
++regular, non-symlink file before changing any mode. Records are JSON and their
++taken_at_utc values are sampled from the clock when each record is written.
++
++This is only a mode-bit guard: it does not prevent loader-mapped execution
++(e.g. ``ld-linux … <file>``), and root or another privileged actor can bypass
++or restore the mode-bit restriction. It also cannot prevent execution of a
++separate copy of a carrier.
++
++--selftest creates and removes all fixtures in tempfile.mkdtemp() and uses
++only a temporary copy of /usr/bin/true; it never operates on configured
++carriers.
++"""
++
++from __future__ import annotations
++
++import argparse
++import csv
++import datetime as _datetime
++import hashlib
++import json
++import os
++import re
++import shutil
++import stat
++import subprocess
++import sys
++import tempfile
++
++SCHEMA = "ufo-carrier-guard-v1"
++_SHA256_RE = re.compile(r"[0-9a-f]{64}")
++_CHUNK_SIZE = 1024 * 1024
++
++
++class Refusal(RuntimeError):
++    """An unusable input or failed safe operation, named for the operator."""
++
++    def __init__(self, cause: str, detail: str):
++        super().__init__(detail)
++        self.cause = cause
++        self.detail = detail
++
++
++def _utc_now() -> tuple[str, str]:
++    now = _datetime.datetime.now(_datetime.timezone.utc)
++    return (now.isoformat(timespec="microseconds").replace("+00:00", "Z"),
++            now.strftime("%Y%m%dT%H%M%S.%fZ"))
++
++
++def _read_json(path: str, what: str):
++    try:
++        with open(path, "rb") as source:
++            raw = source.read()
++    except OSError as exc:
++        raise Refusal(f"{what}_unreadable",
++                      f"{path}: {exc.strerror or str(exc)}") from exc
++    try:
++        document = json.loads(raw.decode("utf-8"))
++    except UnicodeDecodeError as exc:
++        raise Refusal(f"{what}_invalid",
++                      f"{path}: not UTF-8 at byte {exc.start}") from exc
++    except json.JSONDecodeError as exc:
++        raise Refusal(f"{what}_invalid",
++                      f"{path}: {exc.msg} at line {exc.lineno} column {exc.colno}") from exc
++    return document
++
++
++def _load_manifest(path: str) -> list[dict[str, str]]:
++    entries = []
++    labels = set()
++    paths = set()
++    try:
++        with open(path, "r", encoding="utf-8", newline="") as source:
++            rows = csv.reader(source, delimiter="\t", strict=True)
++            for line_number, row in enumerate(rows, 1):
++                if not row or all(not field.strip() for field in row):
++                    continue
++                if (not entries and len(row) >= 2
++                        and row[0].strip().casefold() == "label"
++                        and row[1].strip().casefold() == "path"):
++                    continue
++                if len(row) < 2:
++                    raise Refusal("manifest_invalid",
++                                  f"{path}:{line_number}: expected label<TAB>path columns")
++                label, raw_path = row[0].strip(), row[1].strip()
++                if not label or not raw_path:
++                    raise Refusal("manifest_invalid",
++                                  f"{path}:{line_number}: label and path must be non-empty")
++                resolved = os.path.abspath(raw_path)
++                if label in labels:
++                    raise Refusal("manifest_invalid",
++                                  f"{path}:{line_number}: duplicate label {label!r}")
++                if resolved in paths:
++                    raise Refusal("manifest_invalid",
++                                  f"{path}:{line_number}: duplicate path {resolved}")
++                labels.add(label)
++                paths.add(resolved)
++                entries.append({"label": label, "path": resolved})
++    except Refusal:
++        raise
++    except (OSError, UnicodeError, csv.Error) as exc:
++        raise Refusal("manifest_unreadable",
++                      f"{path}: {getattr(exc, 'strerror', None) or str(exc)}") from exc
++    if not entries:
++        raise Refusal("manifest_empty", f"{path}: no carrier rows")
++    return entries
++
++
++def _open_regular(path: str) -> tuple[int, os.stat_result]:
++    try:
++        before = os.lstat(path)
++    except OSError as exc:
++        raise Refusal("not_regular_file",
++                      f"{path}: {exc.strerror or str(exc)}") from exc
++    if not stat.S_ISREG(before.st_mode):
++        raise Refusal("not_regular_file", f"{path}: path is not a regular file")
++    flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
++    flags |= getattr(os, "O_NONBLOCK", 0)
++    try:
++        fd = os.open(path, flags)
++    except OSError as exc:
++        cause = "not_regular_file" if exc.errno == getattr(os, "ELOOP", 40) else "carrier_unreadable"
++        raise Refusal(cause, f"{path}: {exc.strerror or str(exc)}") from exc
++    try:
++        opened = os.fstat(fd)
++        if not stat.S_ISREG(opened.st_mode):
++            raise Refusal("not_regular_file", f"{path}: opened object is not a regular file")
++        if (before.st_dev, before.st_ino) != (opened.st_dev, opened.st_ino):
++            raise Refusal("carrier_changed_during_open", f"{path}: file changed while opening")
++        return fd, opened
++    except BaseException:
++        os.close(fd)
++        raise
++
++
++def _digest_fd(fd: int, path: str) -> tuple[str, int]:
++    digest = hashlib.sha256()
++    size = 0
++    try:
++        os.lseek(fd, 0, os.SEEK_SET)
++        while True:
++            block = os.read(fd, _CHUNK_SIZE)
++            if not block:
++                break
++            digest.update(block)
++            size += len(block)
++    except OSError as exc:
++        raise Refusal("carrier_unreadable",
++                      f"{path}: {exc.strerror or str(exc)}") from exc
++    return digest.hexdigest(), size
++
++
++def _same_file_state(left: os.stat_result, right: os.stat_result) -> bool:
++    return ((left.st_dev, left.st_ino, left.st_mode, left.st_size,
++             left.st_mtime_ns, left.st_ctime_ns)
++            == (right.st_dev, right.st_ino, right.st_mode, right.st_size,
++                right.st_mtime_ns, right.st_ctime_ns))
++
++
++def _mode_text(mode: int) -> str:
++    return oct(stat.S_IMODE(mode))
++
++
++def _parse_mode(value, where: str) -> int:
++    try:
++        if isinstance(value, str):
++            mode = int(value, 0)
++        elif isinstance(value, int) and not isinstance(value, bool):
++            mode = value
++        else:
++            raise ValueError("expected an octal string or integer")
++    except ValueError as exc:
++        raise Refusal("arm_record_invalid", f"{where}: invalid mode ({exc})") from exc
++    if mode < 0 or mode > 0o7777:
++        raise Refusal("arm_record_invalid", f"{where}: mode is outside 0o0000..0o7777")
++    return mode
++
++
++def _validate_carriers(document, source: str) -> list[dict]:
++    if not isinstance(document, dict):
++        raise Refusal("arm_record_invalid", f"{source}: top level must be an object")
++    carriers = document.get("carriers")
++    if not isinstance(carriers, list) or not carriers:
++        raise Refusal("arm_record_invalid", f"{source}: carriers must be a non-empty array")
++    normalized = []
++    seen_paths = set()
++    for index, raw in enumerate(carriers, 1):
++        where = f"{source}: carriers[{index - 1}]"
++        if not isinstance(raw, dict):
++            raise Refusal("arm_record_invalid", f"{where}: expected an object")
++        path = raw.get("path")
++        if not isinstance(path, str) or not path:
++            raise Refusal("arm_record_invalid", f"{where}: path must be a non-empty string")
++        path = os.path.abspath(path)
++        if path in seen_paths:
++            raise Refusal("arm_record_invalid", f"{where}: duplicate path {path}")
++        seen_paths.add(path)
++        label = raw.get("label")
++        if not isinstance(label, str) or not label:
++            label = os.path.basename(path) or f"carrier-{index}"
++        sha256 = raw.get("sha256")
++        if not isinstance(sha256, str) or not _SHA256_RE.fullmatch(sha256):
++            raise Refusal("arm_record_invalid", f"{where}: sha256 must be 64 lowercase hex digits")
++        size = raw.get("size")
++        if not isinstance(size, int) or isinstance(size, bool) or size < 0:
++            raise Refusal("arm_record_invalid", f"{where}: size must be a non-negative integer")
++        mode_before = _parse_mode(raw.get("mode_before"), f"{where}.mode_before")
++        mode_after = _parse_mode(raw.get("mode_after"), f"{where}.mode_after")
++        if mode_after & 0o111:
++            raise Refusal("arm_record_invalid", f"{where}: mode_after still has execute bits")
++        ctime_ns = raw.get("ctime_ns_after")
++        if not isinstance(ctime_ns, int) or isinstance(ctime_ns, bool) or ctime_ns < 0:
++            raise Refusal("arm_record_invalid", f"{where}: ctime_ns_after must be a non-negative integer")
++        normalized.append({
++            "label": label,
++            "path": path,
++            "sha256": sha256,
++            "size": size,
++            "mode_before": _mode_text(mode_before),
++            "mode_after": _mode_text(mode_after),
++            "ctime_ns_after": ctime_ns,
++        })
++    return normalized
++
++
++def _new_record_path(record_dir: str, filename: str) -> str:
++    try:
++        os.makedirs(record_dir, exist_ok=True)
++    except OSError as exc:
++        raise Refusal("record_unwritable",
++                      f"{record_dir}: {exc.strerror or str(exc)}") from exc
++    if not os.path.isdir(record_dir):
++        raise Refusal("record_unwritable", f"{record_dir}: record path is not a directory")
++    path = os.path.join(record_dir, filename)
++    if os.path.lexists(path):
++        raise Refusal("record_exists", f"{path}: refusing to overwrite an existing record")
++    return path
++
++
++def _write_json(path: str, document: dict) -> None:
++    parent = os.path.dirname(path) or "."
++    fd = None
++    temporary = None
++    try:
++        fd, temporary = tempfile.mkstemp(prefix=".carrier-guard-", dir=parent)
++        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as output:
++            fd = None
++            json.dump(document, output, sort_keys=True, indent=2)
++            output.write("\n")
++            output.flush()
++            os.fsync(output.fileno())
++        os.link(temporary, path)
++        os.unlink(temporary)
++        temporary = None
++        try:
++            dir_fd = os.open(parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
++            try:
++                os.fsync(dir_fd)
++            finally:
++                os.close(dir_fd)
++        except OSError:
++            pass
++    except OSError as exc:
++        raise Refusal("record_unwritable",
++                      f"{path}: {exc.strerror or str(exc)}") from exc
++    finally:
++        if fd is not None:
++            os.close(fd)
++        if temporary is not None:
++            try:
++                os.unlink(temporary)
++            except OSError:
++                pass
++
++
++def _prepare_arm(record_dir: str) -> str:
++    return _new_record_path(record_dir, "arm.json")
++
++
++def _rollback_modes(changed: list[tuple[int, int]]) -> list[str]:
++    failures = []
++    for fd, mode, path in reversed(changed):
++        try:
++            os.fchmod(fd, mode)
++        except OSError as exc:
++            failures.append(f"{path}: {exc.strerror or str(exc)}")
++    return failures
++
++
++def arm(manifest_path: str, record_dir: str) -> tuple[int, str]:
++    entries = _load_manifest(manifest_path)
++    opened: list[tuple[dict[str, str], int, os.stat_result]] = []
++    changed: list[tuple[int, int, str]] = []
++    try:
++        # Open and validate every path before any carrier can be modified.
++        for entry in entries:
++            fd, st = _open_regular(entry["path"])
++            opened.append((entry, fd, st))
++        snapshots = []
++        for entry, fd, st in opened:
++            sha256, size = _digest_fd(fd, entry["path"])
++            after_read = os.fstat(fd)
++            if not _same_file_state(st, after_read):
++                raise Refusal("carrier_changed_during_arm",
++                              f"{entry['path']}: file changed during initial hash")
++            mode_before = stat.S_IMODE(st.st_mode)
++            snapshots.append((entry, fd, mode_before, sha256, size))
++        arm_path = _prepare_arm(record_dir)
++        carriers = []
++        for entry, fd, mode_before, sha_before, size_before in snapshots:
++            mode_after = mode_before & ~0o111
++            if mode_after != mode_before:
++                os.fchmod(fd, mode_after)
++                changed.append((fd, mode_before, entry["path"]))
++            after_mode = os.fstat(fd)
++            sha_after, size_after = _digest_fd(fd, entry["path"])
++            final = os.fstat(fd)
++            if not _same_file_state(after_mode, final):
++                raise Refusal("carrier_changed_during_arm",
++                              f"{entry['path']}: file changed while verifying the armed state")
++            if stat.S_IMODE(final.st_mode) != mode_after or mode_after & 0o111:
++                raise Refusal("arm_failed",
++                              f"{entry['path']}: execute bits could not be cleared")
++            if sha_after != sha_before or size_after != size_before:
++                raise Refusal("carrier_changed_during_arm",
++                              f"{entry['path']}: content changed while arming")
++            carriers.append({
++                "label": entry["label"],
++                "path": entry["path"],
++                "sha256": sha_after,
++                "size": size_after,
++                "mode_before": _mode_text(mode_before),
++                "mode_after": _mode_text(mode_after),
++                "ctime_ns_after": final.st_ctime_ns,
++            })
++        taken_at_utc, _ = _utc_now()
++        document = {"schema": SCHEMA, "action": "arm", "taken_at_utc": taken_at_utc,
++                    "carriers": carriers}
++        _write_json(arm_path, document)
++        return len(carriers), arm_path
++    except BaseException as exc:
++        rollback_failures = _rollback_modes(changed)
++        if rollback_failures and isinstance(exc, Refusal):
++            exc.detail += "; rollback failed: " + "; ".join(rollback_failures)
++        elif rollback_failures:
++            raise Refusal("rollback_failed", "; ".join(rollback_failures)) from exc
++        raise
++    finally:
++        for _, fd, _ in opened:
++            os.close(fd)
++
++
++def _load_arm(record_dir: str) -> tuple[str, list[dict]]:
++    path = os.path.join(record_dir, "arm.json")
++    document = _read_json(path, "arm_record")
++    carriers = _validate_carriers(document, path)
++    return path, carriers
++
++
++def _require_manifest_matches(manifest_path: str, carriers: list[dict]) -> None:
++    manifest_paths = {entry["path"] for entry in _load_manifest(manifest_path)}
++    record_paths = {carrier["path"] for carrier in carriers}
++    if manifest_paths != record_paths:
++        missing = sorted(record_paths - manifest_paths)
++        extra = sorted(manifest_paths - record_paths)
++        raise Refusal("manifest_mismatch",
++                      f"{manifest_path}: carrier set differs from arm.json "
++                      f"(missing={missing}, extra={extra})")
++
++
++def check(manifest_path: str, record_dir: str) -> tuple[int, str, int]:
++    arm_path, carriers = _load_arm(record_dir)
++    _require_manifest_matches(manifest_path, carriers)
++    findings = []
++    checked = 0
++    for carrier in carriers:
++        path = carrier["path"]
++        try:
++            fd, before = _open_regular(path)
++        except Refusal as exc:
++            findings.append({"label": carrier["label"], "path": path,
++                             "finding": "path_unavailable", "detail": exc.detail})
++            continue
++        try:
++            checked += 1
++            try:
++                sha256, size = _digest_fd(fd, path)
++                current = os.fstat(fd)
++            except Refusal as exc:
++                findings.append({"label": carrier["label"], "path": path,
++                                 "finding": "path_unavailable", "detail": exc.detail})
++                continue
++            if stat.S_IMODE(current.st_mode) & 0o111:
++                findings.append({"label": carrier["label"], "path": path,
++                                 "finding": "mode_restored",
++                                 "expected_exec_bits": 0,
++                                 "observed_mode": _mode_text(current.st_mode)})
++            if current.st_ctime_ns != carrier["ctime_ns_after"]:
++                findings.append({"label": carrier["label"], "path": path,
++                                 "finding": "ctime_changed",
++                                 "expected_ctime_ns": carrier["ctime_ns_after"],
++                                 "observed_ctime_ns": current.st_ctime_ns})
++            if sha256 != carrier["sha256"] or size != carrier["size"]:
++                findings.append({"label": carrier["label"], "path": path,
++                                 "finding": "content_changed",
++                                 "expected_sha256": carrier["sha256"],
++                                 "observed_sha256": sha256,
++                                 "expected_size": carrier["size"],
++                                 "observed_size": size})
++            if not _same_file_state(before, current):
++                findings.append({"label": carrier["label"], "path": path,
++                                 "finding": "changed_during_check"})
++        finally:
++            os.close(fd)
++    taken_at_utc, stamp = _utc_now()
++    check_path = os.path.join(record_dir, f"check-{stamp}.json")
++    document = {"schema": SCHEMA, "action": "check", "taken_at_utc": taken_at_utc,
++                "arm_record": arm_path, "carrier_count": len(carriers),
++                "checked_count": checked, "findings": findings}
++    _write_json(check_path, document)
++    return checked, check_path, len(findings)
++
++
++def disarm(manifest_path: str, record_dir: str) -> tuple[int, str]:
++    arm_path, carriers = _load_arm(record_dir)
++    _require_manifest_matches(manifest_path, carriers)
++    output_path = _new_record_path(record_dir, "disarm.json")
++    opened: list[tuple[dict, int, int]] = []
++    changed: list[tuple[int, int, str]] = []
++    try:
++        # As with arm, preflight all entries to avoid a partial restoration.
++        for carrier in carriers:
++            fd, st = _open_regular(carrier["path"])
++            opened.append((carrier, fd, stat.S_IMODE(st.st_mode)))
++        restored = []
++        for carrier, fd, mode_current in opened:
++            mode_before = int(carrier["mode_before"], 0)
++            if mode_current != mode_before:
++                os.fchmod(fd, mode_before)
++                changed.append((fd, mode_current, carrier["path"]))
++            st = os.fstat(fd)
++            observed_mode = stat.S_IMODE(st.st_mode)
++            if observed_mode != mode_before:
++                raise Refusal("disarm_failed",
++                              f"{carrier['path']}: expected mode {_mode_text(mode_before)}, "
++                              f"observed {_mode_text(observed_mode)}")
++            restored.append({"label": carrier["label"], "path": carrier["path"],
++                             "mode_before_disarm": _mode_text(mode_current),
++                             "mode_restored": _mode_text(observed_mode),
++                             "ctime_ns_after": st.st_ctime_ns})
++        taken_at_utc, _ = _utc_now()
++        _write_json(output_path, {"schema": SCHEMA, "action": "disarm",
++                                  "taken_at_utc": taken_at_utc,
++                                  "arm_record": arm_path, "carriers": restored})
++        return len(restored), output_path
++    except BaseException as exc:
++        rollback_failures = _rollback_modes(changed)
++        if rollback_failures and isinstance(exc, Refusal):
++            exc.detail += "; rollback failed: " + "; ".join(rollback_failures)
++        elif rollback_failures:
++            raise Refusal("rollback_failed", "; ".join(rollback_failures)) from exc
++        raise
++    finally:
++        for _, fd, _ in opened:
++            os.close(fd)
++
++
++def adopt(source_path: str, record_dir: str) -> tuple[int, str]:
++    source = _read_json(source_path, "manual_arm")
++    carriers = _validate_carriers(source, source_path)
++    arm_path = _prepare_arm(record_dir)
++    taken_at_utc, _ = _utc_now()
++    # Adoption is a pure record conversion: carrier paths are not statted, opened,
++    # hashed, chmodded, or otherwise accessed here.
++    _write_json(arm_path, {"schema": SCHEMA, "action": "arm",
++                           "taken_at_utc": taken_at_utc,
++                           "adopted_from": os.path.abspath(source_path),
++                           "carriers": carriers})
++    return len(carriers), arm_path
++
++
++def _write_manifest(path: str, rows: list[tuple[str, str]]) -> None:
++    with open(path, "w", encoding="utf-8", newline="") as output:
++        writer = csv.writer(output, delimiter="\t", lineterminator="\n")
++        writer.writerow(("label", "path"))
++        writer.writerows(rows)
++
++
++def _copy_true(destination: str) -> str:
++    source = "/usr/bin/true"
++    if not os.path.isfile(source):
++        raise AssertionError("/usr/bin/true is unavailable for the fixture")
++    shutil.copyfile(source, destination)
++    os.chmod(destination, 0o755)
++    return destination
++
++
++def _assert(condition: bool, message: str) -> None:
++    if not condition:
++        raise AssertionError(message)
++
++
++def run_selftest() -> int:
++    root = tempfile.mkdtemp(prefix="carrier-guard-selftest-")
++    outcomes = []
++
++    def case(case_id: str, operation) -> None:
++        try:
++            operation()
++        except Exception as exc:  # report a stable case id and its observed failure
++            outcomes.append((case_id, f"FAIL: {type(exc).__name__}: {exc}"))
++        else:
++            outcomes.append((case_id, "PASS"))
++
++    def test_exec_refused() -> None:
++        fixture_dir = os.path.join(root, "exec")
++        os.makedirs(fixture_dir)
++        fixture = _copy_true(os.path.join(fixture_dir, "true"))
++        manifest = os.path.join(fixture_dir, "manifest.tsv")
++        record = os.path.join(fixture_dir, "record")
++        _write_manifest(manifest, [("true", fixture)])
++        count, _ = arm(manifest, record)
++        _assert(count == 1, "one fixture carrier should be armed")
++        arm_doc = _read_json(os.path.join(record, "arm.json"), "selftest_arm")
++        carrier = arm_doc["carriers"][0]
++        _assert(int(carrier["mode_after"], 0) & 0o111 == 0,
++                "armed fixture must have no execute bits")
++        exec_options = {}
++        if os.geteuid() == 0:
++            # Root may bypass mode bits. Test the direct execve refusal as an
++            # unprivileged caller while keeping the fixture world-traversable.
++            os.chmod(root, 0o755)
++            os.chmod(fixture_dir, 0o755)
++            nobody = 65534
++            exec_options.update(user=nobody, group=nobody)
++        try:
++            subprocess.run([fixture], check=False, **exec_options)
++        except PermissionError:
++            return
++        raise AssertionError("direct execve of armed fixture did not raise PermissionError")
++
++    def test_tamper_and_disarm() -> None:
++        fixture_dir = os.path.join(root, "tamper")
++        os.makedirs(fixture_dir)
++        fixture = _copy_true(os.path.join(fixture_dir, "true"))
++        manifest = os.path.join(fixture_dir, "manifest.tsv")
++        record = os.path.join(fixture_dir, "record")
++        _write_manifest(manifest, [("true", fixture)])
++        arm(manifest, record)
++        os.chmod(fixture, 0o755)
++        with open(fixture, "ab") as output:
++            output.write(b"carrier-guard-selftest")
++        checked, check_path, findings_count = check(manifest, record)
++        _assert(checked == 1, "tampered carrier should be checked")
++        _assert(findings_count > 0, "tampering should produce findings")
++        check_doc = _read_json(check_path, "selftest_check")
++        found = {finding["finding"] for finding in check_doc["findings"]}
++        _assert({"mode_restored", "ctime_changed", "content_changed"} <= found,
++                f"check missed expected findings: {sorted(found)}")
++        restored, _ = disarm(manifest, record)
++        _assert(restored == 1, "disarm should restore one carrier")
++        _assert(stat.S_IMODE(os.stat(fixture).st_mode) == 0o755,
++                "disarm did not restore the original mode")
++
++    def test_refuses_non_regular_path() -> None:
++        fixture_dir = os.path.join(root, "preflight")
++        os.makedirs(fixture_dir)
++        fixture = _copy_true(os.path.join(fixture_dir, "true"))
++        directory = os.path.join(fixture_dir, "not-a-file")
++        os.mkdir(directory)
++        manifest = os.path.join(fixture_dir, "manifest.tsv")
++        _write_manifest(manifest, [("true", fixture), ("directory", directory)])
++        try:
++            arm(manifest, os.path.join(fixture_dir, "record"))
++        except Refusal as exc:
++            _assert(exc.cause == "not_regular_file", f"unexpected refusal cause {exc.cause}")
++        else:
++            raise AssertionError("arm accepted a non-regular manifest path")
++        _assert(stat.S_IMODE(os.stat(fixture).st_mode) == 0o755,
++                "preflight failure changed an earlier carrier")
++
++    def test_adopt_without_touching_carriers() -> None:
++        fixture_dir = os.path.join(root, "adopt")
++        os.makedirs(fixture_dir)
++        nonexistent = os.path.join(fixture_dir, "carrier-does-not-exist")
++        manual = os.path.join(fixture_dir, "manual-arm.json")
++        source = {"action": "manual-arm", "taken_at_utc": "source timestamp",
++                  "carriers": [{"path": nonexistent, "sha256": "a" * 64,
++                                "size": 7, "mode_before": "0o755",
++                                "mode_after": "0o644", "ctime_ns_after": 123}]}
++        _write_json(os.path.join(fixture_dir, "manual-temp.json"), source)
++        os.replace(os.path.join(fixture_dir, "manual-temp.json"), manual)
++        count, arm_path = adopt(manual, os.path.join(fixture_dir, "record"))
++        _assert(count == 1, "adopt should preserve one carrier record")
++        adopted = _read_json(arm_path, "selftest_adopt")
++        _assert(adopted["carriers"][0]["mode_before"] == "0o755",
++                "adopt did not retain the original mode")
++        _assert(not os.path.exists(nonexistent), "adopt unexpectedly created a carrier")
++        _assert(adopted["taken_at_utc"] != source["taken_at_utc"],
++                "adopt must timestamp its own record from the current clock")
++
++    try:
++        case("exec_refused", test_exec_refused)
++        case("mode_restored_and_content_changed", test_tamper_and_disarm)
++        case("non_regular_refused", test_refuses_non_regular_path)
++        case("adopt_without_touching_carriers", test_adopt_without_touching_carriers)
++    finally:
++        shutil.rmtree(root)
++    failures = [(case_id, result) for case_id, result in outcomes if result != "PASS"]
++    for case_id, result in outcomes:
++        print(f"SELFTEST CASE {case_id}: {result}")
++    if failures:
++        print(f"SELFTEST: FAILED cases={len(outcomes)} fails={len(failures)}")
++        return 1
++    print(f"SELFTEST: CLEAN cases={len(outcomes)}")
++    return 0
++
++
++def _parser() -> argparse.ArgumentParser:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--selftest", action="store_true",
++                        help="run isolated temporary-copy selftests")
++    commands = parser.add_subparsers(dest="command")
++    for name in ("arm", "check", "disarm"):
++        command = commands.add_parser(name)
++        command.add_argument("--manifest", required=True, metavar="TSV")
++        command.add_argument("--record", required=True, metavar="DIR")
++    adopt_parser = commands.add_parser("adopt")
++    adopt_parser.add_argument("--from", dest="source", required=True,
++                              metavar="MANUAL-ARM.json")
++    adopt_parser.add_argument("--record", required=True, metavar="DIR")
++    return parser
++
++
++def main(argv: list[str] | None = None) -> int:
++    parser = _parser()
++    args = parser.parse_args(argv)
++    if args.selftest:
++        return run_selftest()
++    if args.command is None:
++        parser.error("choose arm, check, disarm, adopt, or --selftest")
++    try:
++        if args.command == "arm":
++            count, record_path = arm(args.manifest, args.record)
++            print(f"ARMED carriers={count} record={record_path}")
++            return 0
++        if args.command == "check":
++            checked, record_path, finding_count = check(args.manifest, args.record)
++            if finding_count:
++                print(f"CHECK findings={finding_count} carriers_checked={checked} record={record_path}")
++                document = _read_json(record_path, "check_record")
++                for finding in document["findings"]:
++                    print(f"FINDING {finding['label']} {finding['finding']}: "
++                          f"{finding['path']}", file=sys.stderr)
++                return 1
++            print(f"CHECK clean carriers_checked={checked} record={record_path}")
++            return 0
++        if args.command == "disarm":
++            count, record_path = disarm(args.manifest, args.record)
++            print(f"DISARMED carriers={count} record={record_path}")
++            return 0
++        count, record_path = adopt(args.source, args.record)
++        print(f"ADOPTED carriers={count} record={record_path}")
++        return 0
++    except Refusal as exc:
++        print(f"REFUSED {exc.cause}: {exc.detail}", file=sys.stderr)
++        return 2
++    except OSError as exc:
++        print(f"REFUSED io_error: {exc.strerror or str(exc)}", file=sys.stderr)
++        return 2
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

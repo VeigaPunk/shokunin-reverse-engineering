@@ -1,0 +1,322 @@
+diff --git c/.ufo/waves/round-20/tools/first-failure-extract.py i/.ufo/waves/round-20/tools/first-failure-extract.py
+new file mode 100755
+index 0000000..8f8eead
+--- /dev/null
++++ i/.ufo/waves/round-20/tools/first-failure-extract.py
+@@ -0,0 +1,316 @@
++#!/usr/bin/env python3
++"""Extract the first Go-analysis I/O failure from a bound Ghidra log.
++
++The returned ``first_failure`` uses the C3 prediction shape.  Its line number
++is reported separately as ``first_failure_line``; ``cause_line`` points to the
++exception/detail line when the log exposes one.  ``last_line`` bounds any
++negative observation: a null first_failure means no qualifying failure was
++found through that line, not that analysis succeeded beyond it.
++
++Errors from other analyzers (including deferred AnalysisTaskWrapper failures)
++are retained independently in ``other_errors`` and never become the Go failure.
++Python 3 standard library only.
++"""
++
++import argparse
++import json
++import os
++import re
++import shutil
++import sys
++import tempfile
++
++LOG_RE = re.compile(
++    r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} ([A-Z]+) +\(([^)]*)\) (.*)$"
++)
++INVALID_INDEX_RE = re.compile(r"Invalid index: ([0-9]+)(?![0-9])")
++EOF_READ_RE = re.compile(r"Unable to read past EOF:\s*([0-9]+)\s*,\s*([0-9]+)")
++IO_EXCEPTION_RE = re.compile(r"\b(?:java\.io\.)?(?:EOFException|IOException)\b")
++GO_FAILURE_TEXT = "Go analysis failure"
++
++
++class ExtractError(Exception):
++    """Raised when the requested log cannot be read."""
++
++
++def _is_go_component(component):
++    return component in ("GoRttiMapper", "GoTypeManager") or (
++        component.startswith("Golang") and component[6:].isalnum()
++    )
++
++
++def _parse_records(lines):
++    records = []
++    for lineno, raw in enumerate(lines, start=1):
++        if raw.endswith("\r"):
++            raw = raw[:-1]
++        match = LOG_RE.match(raw)
++        if match:
++            records.append(
++                {
++                    "line": lineno,
++                    "level": match.group(1),
++                    "component": match.group(2),
++                    "message": match.group(3).rstrip(),
++                }
++            )
++    return records
++
++
++def _failure_context(lines, start):
++    """Return the triggering record and its following continuation lines."""
++    context = [(start + 1, lines[start].rstrip("\r"))]
++    for offset in range(start + 1, len(lines)):
++        raw = lines[offset].rstrip("\r")
++        if LOG_RE.match(raw):
++            break
++        context.append((offset + 1, raw))
++    return context
++
++
++def _phase(context, component):
++    text = "\n".join(raw for _line, raw in context)
++    if re.search(r"\b(?:gapScan|scanGaps|gap_scan)\b", text):
++        return "gap_scan"
++    if re.search(r"\b(?:discoverIndex|discoverTypes|discovery)\b", text):
++        return "discovery"
++    if re.search(r"markupGoTypes|MarkupSession|GoRttiMapper\.(?:getGoName|resolveNameOff)", text):
++        return "markup"
++    if component in ("GoRttiMapper", "GoTypeManager"):
++        return component
++    return "analysis"
++
++
++def _classify_failure(context, component):
++    invalid = None
++    eof = None
++    eof_exception = None
++    io_exception = None
++    other_exception = None
++
++    for lineno, raw in context:
++        if invalid is None:
++            match = INVALID_INDEX_RE.search(raw)
++            if match:
++                invalid = (lineno, int(match.group(1)))
++        if eof is None:
++            match = EOF_READ_RE.search(raw)
++            if match:
++                eof = (lineno, int(match.group(1)))
++        if eof_exception is None and "EOFException" in raw:
++            eof_exception = lineno
++        if io_exception is None and "IOException" in raw:
++            io_exception = lineno
++        if other_exception is None and re.search(r"\b\w+Exception\b", raw):
++            other_exception = lineno
++
++    phase = _phase(context, component)
++    if invalid is not None:
++        return {
++            "failure": {"kind": "invalid_index", "index": invalid[1], "va": None, "phase": phase},
++            "cause_line": invalid[0],
++        }
++    if eof is not None:
++        return {
++            "failure": {"kind": "eof", "index": eof[1], "va": None, "phase": phase},
++            "cause_line": eof[0],
++        }
++    if eof_exception is not None:
++        return {
++            "failure": {"kind": "eof", "index": None, "va": None, "phase": phase},
++            "cause_line": eof_exception,
++        }
++    if io_exception is not None:
++        return {
++            "failure": {"kind": "io_exception", "index": None, "va": None, "phase": phase},
++            "cause_line": io_exception,
++        }
++    return {
++        "failure": {"kind": "other", "index": None, "va": None, "phase": phase},
++        "cause_line": other_exception,
++    }
++
++
++def parse_log(log_path):
++    """Parse one Ghidra log; absence is scoped to its reported final line."""
++    try:
++        with open(log_path, "rb") as stream:
++            data = stream.read()
++    except OSError as exc:
++        raise ExtractError("cannot read log: %s" % exc)
++
++    text = data.decode("utf-8", errors="replace")
++    lines = text.split("\n")
++    if not text:
++        last_line = 0
++    elif text.endswith("\n"):
++        last_line = len(lines) - 1
++    else:
++        last_line = len(lines)
++
++    records = _parse_records(lines)
++    first_failure = None
++    first_failure_line = None
++    cause_line = None
++
++    for record in records:
++        component = record["component"]
++        message = record["message"]
++        if not _is_go_component(component):
++            continue
++        is_summary = GO_FAILURE_TEXT in message
++        is_direct_io_error = record["level"] == "ERROR" and (
++            IO_EXCEPTION_RE.search(message)
++            or INVALID_INDEX_RE.search(message)
++            or EOF_READ_RE.search(message)
++        )
++        if not is_summary and not is_direct_io_error:
++            continue
++
++        context = _failure_context(lines, record["line"] - 1)
++        classified = _classify_failure(context, component)
++        first_failure = classified["failure"]
++        first_failure_line = record["line"]
++        cause_line = classified["cause_line"]
++        break
++
++    other_errors = []
++    for record in records:
++        if record["level"] != "ERROR" or record["line"] == first_failure_line:
++            continue
++        other_errors.append(
++            {
++                "line": record["line"],
++                "component": record["component"],
++                "message": record["message"],
++            }
++        )
++
++    return {
++        "log_path": os.path.abspath(log_path),
++        "first_failure": first_failure,
++        "first_failure_line": first_failure_line,
++        "cause_line": cause_line,
++        "last_line": last_line,
++        "other_errors": other_errors,
++    }
++
++
++def _selftest():
++    cases = [
++        (
++            "first_go_failure_with_invalid_index",
++            "2026-01-01 00:00:00 ERROR (AnalysisTaskWrapper) deferred java.lang.NullPointerException\n"
++            "2026-01-01 00:00:01 ERROR (GolangSymbolAnalyzer) Go analysis failure java.io.IOException: wrapper\n"
++            "\tat ghidra.app.util.bin.format.golang.rtti.GoTypeManager.markupGoTypes(GoTypeManager.java:153)\n"
++            "Caused by: java.io.EOFException: Invalid index: 41\n"
++            "2026-01-01 00:00:02 ERROR (GolangStringAnalyzer) unrelated failure\n",
++            {
++                "kind": "invalid_index",
++                "index": 41,
++                "line": 2,
++                "cause_line": 4,
++                "phase": "markup",
++                "other_components": ["AnalysisTaskWrapper", "GolangStringAnalyzer"],
++            },
++        ),
++        (
++            "eof_read_and_wrapper_error_separate",
++            "2026-01-01 00:00:00 ERROR (GolangSymbolAnalyzer) Go analysis failure java.io.IOException: wrapper\n"
++            "\tat ghidra.app.util.bin.format.golang.structmapping.MarkupSession.markup(MarkupSession.java:127)\n"
++            "Caused by: java.io.EOFException: Unable to read past EOF: 900, 32\n"
++            "2026-01-01 00:00:01 ERROR (AnalysisTaskWrapper) deferred java.lang.NullPointerException: null key\n",
++            {
++                "kind": "eof",
++                "index": 900,
++                "line": 1,
++                "cause_line": 3,
++                "phase": "markup",
++                "other_components": ["AnalysisTaskWrapper"],
++            },
++        ),
++        (
++            "direct_other_io_exception",
++            "2026-01-01 00:00:00 ERROR (GoTypeManager) java.io.IOException: unexpected read failure\n",
++            {
++                "kind": "io_exception",
++                "index": None,
++                "line": 1,
++                "cause_line": 1,
++                "phase": "GoTypeManager",
++                "other_components": [],
++            },
++        ),
++        (
++            "absence_bounded_by_last_line",
++            "2026-01-01 00:00:00 ERROR (AnalysisTaskWrapper) deferred java.lang.NullPointerException\n"
++            "ordinary continuation\nfinal partial line",
++            {
++                "kind": None,
++                "index": None,
++                "line": None,
++                "cause_line": None,
++                "phase": None,
++                "other_components": ["AnalysisTaskWrapper"],
++                "last_line": 3,
++            },
++        ),
++    ]
++
++    tmp = tempfile.mkdtemp(prefix="first-failure-extract-selftest-")
++    failures = []
++    try:
++        for case_id, contents, expected in cases:
++            path = os.path.join(tmp, case_id + ".log")
++            with open(path, "w", encoding="utf-8", newline="") as stream:
++                stream.write(contents)
++            try:
++                result = parse_log(path)
++                found = result["first_failure"]
++                actual = {
++                    "kind": found["kind"] if found else None,
++                    "index": found["index"] if found else None,
++                    "line": result["first_failure_line"],
++                    "cause_line": result["cause_line"],
++                    "phase": found["phase"] if found else None,
++                    "other_components": [item["component"] for item in result["other_errors"]],
++                }
++                if "last_line" in expected:
++                    actual["last_line"] = result["last_line"]
++                if actual != expected:
++                    failures.append("%s expected=%r actual=%r" % (case_id, expected, actual))
++            except Exception as exc:
++                failures.append("%s raised %s: %s" % (case_id, type(exc).__name__, exc))
++    finally:
++        shutil.rmtree(tmp, ignore_errors=True)
++
++    if failures:
++        print("SELFTEST: FAILED %s cases=%d fails=%d" % (
++            "; ".join(failures), len(cases), len(failures)
++        ))
++        return 1
++    print("SELFTEST: CLEAN cases=%d" % len(cases))
++    return 0
++
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("log", nargs="?", help="bound Ghidra ghidra.log path")
++    parser.add_argument("--selftest", action="store_true", help="run synthetic log cases")
++    args = parser.parse_args(argv)
++
++    if args.selftest:
++        return _selftest()
++    if not args.log:
++        parser.error("LOG is required unless --selftest is used")
++    try:
++        result = parse_log(args.log)
++    except ExtractError as exc:
++        print("first-failure-extract: %s" % exc, file=sys.stderr)
++        return 2
++    print(json.dumps(result, sort_keys=True, indent=2))
++    return 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())

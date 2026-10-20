@@ -1,0 +1,588 @@
+diff --git c/.ufo/waves/round-20/verify.py i/.ufo/waves/round-20/verify.py
+new file mode 100755
+index 0000000..6014069
+--- /dev/null
++++ i/.ufo/waves/round-20/verify.py
+@@ -0,0 +1,582 @@
++#!/usr/bin/env python3
++"""One recorded round-20 post-integration verification pass.
++
++The baseline is fixed by the round contract. The SOURCE argument is resolved
++as a commit, and every counter is invoked from the source-matching worktree
++file while it reads the requested baseline/source Git objects. The pass records
++argv, cwd, expected/actual exit, and stdout/stderr SHA-256 for every command in
++W20/verification.json; stdout/stderr bytes are retained under W20/verify/.
++
++`--dry-run SOURCE` prints the complete command table without creating files or
++running commands. `--selftest` uses only a tempfile.mkdtemp() fixture outside
++the lane. Neither the verifier nor its selftest passes lane scratch paths to a
++tool.
++"""
++from __future__ import annotations
++
++import hashlib
++import json
++import os
++import shutil
++import subprocess
++import sys
++import tempfile
++from datetime import datetime, timezone
++from pathlib import Path
++
++sys.dont_write_bytecode = True
++
++BASELINE = "14f0260ad319ecc26994381b2415d5a999003375"
++LANE = str(Path(__file__).resolve().parents[3])
++W = LANE + "/.ufo/waves/round-20"
++TOOLS = W + "/tools"
++OUT = W + "/verify"
++VERIFY_REL = ".ufo/waves/round-20/verify.py"
++TOOLS_REL = ".ufo/waves/round-20/tools"
++MEASURE_REL = ".ufo/waves/round-20/measure.py"
++CONTROLS_REL = ".ufo/waves/round-20/controls-r20.py"
++RUN_CARRIERS_REL = ".ufo/waves/round-20/run-carriers.sh"
++FINAL_CENSUS_REL = TOOLS_REL + "/final-census.py"
++PY = ["python3", "-I", "-B"]
++
++# These are the round-20 tool deliverables with a --selftest interface. The
++# source-tree scan below adds any additional direct tools/*.py added later.
++REQUIRED_TOOLS = (
++    "carrier-guard.py",
++    "compare-first-failure.py",
++    "evidence-timestamps.py",
++    "final-census.py",
++    "first-failure-extract.py",
++    "retro-v2.py",
++    "revexec.py",
++    "routed-r19.py",
++    "swiss-misread-v2.py",
++    "verb-coverage.py",
++)
++
++EXPECTED_EXITS = {
++    "fixture-": 0,
++    "selftest-": 0,
++    "routed-r19-baseline-strict": 1,
++    "routed-r19-source-strict": 0,
++    "verb-coverage-baseline": 0,
++    "verb-coverage-source": 0,
++    "measure-baseline": 0,
++    "measure-source": 0,
++    "controls-r20": 0,
++    "evidence-timestamps-source": 0,
++    "final-census-tool": 0,
++}
++USAGE = (
++    "usage: python3 -I -B verify.py SOURCE_REV\n"
++    "       python3 -I -B verify.py --dry-run SOURCE_REV\n"
++    "       python3 -I -B verify.py --selftest\n"
++)
++
++
++def now() -> str:
++    return datetime.now(timezone.utc).isoformat()
++
++
++def sha(path: str) -> str:
++    h = hashlib.sha256()
++    with open(path, "rb") as f:
++        for chunk in iter(lambda: f.read(1 << 20), b""):
++            h.update(chunk)
++    return h.hexdigest()
++
++
++def sha_bytes(data: bytes) -> str:
++    return hashlib.sha256(data).hexdigest()
++
++
++def git_try(*args: str) -> subprocess.CompletedProcess:
++    return subprocess.run(
++        ["git", "-C", LANE, "--no-optional-locks", *args],
++        capture_output=True,
++        text=True,
++        check=False,
++    )
++
++
++def git_out(*args: str) -> str:
++    proc = git_try(*args)
++    if proc.returncode != 0:
++        raise RuntimeError("git %s failed: %s" % (" ".join(args), proc.stderr.strip()))
++    return proc.stdout
++
++
++def resolve_commit(rev: str) -> str | None:
++    proc = git_try("rev-parse", "--verify", rev + "^{commit}")
++    if proc.returncode != 0:
++        return None
++    return proc.stdout.strip() or None
++
++
++def source_bytes(rev: str, rel: str) -> bytes | None:
++    proc = subprocess.run(
++        ["git", "-C", LANE, "--no-optional-locks", "show", "%s:%s" % (rev, rel)],
++        capture_output=True,
++        check=False,
++    )
++    return proc.stdout if proc.returncode == 0 else None
++
++
++def source_paths(rev: str) -> set[str]:
++    listing = git_out("ls-tree", "-r", "--name-only", rev)
++    return {line for line in listing.splitlines() if line}
++
++
++def source_tools(paths: set[str]) -> list[str]:
++    """Every direct Python tool under W20/tools at the supplied Git revision."""
++    prefix = TOOLS_REL + "/"
++    return sorted({
++        path[len(prefix):]
++        for path in paths
++        if path.startswith(prefix)
++        and "/" not in path[len(prefix):]
++        and path.endswith(".py")
++    })
++
++
++def expected_for(label: str) -> int:
++    if label in EXPECTED_EXITS:
++        return EXPECTED_EXITS[label]
++    for prefix in sorted(EXPECTED_EXITS, key=len, reverse=True):
++        if prefix.endswith("-") and label.startswith(prefix):
++            return EXPECTED_EXITS[prefix]
++    raise KeyError("unplanned command label: " + label)
++
++
++def write_json(path: str, obj) -> None:
++    tmp = path + ".tmp"
++    with open(tmp, "w", encoding="utf-8") as f:
++        json.dump(obj, f, sort_keys=True, indent=2)
++        f.write("\n")
++    os.replace(tmp, path)
++
++
++class Pass:
++    """Run a command and retain its exact process result and byte hashes."""
++
++    def __init__(self, out_dir: str, cwd: str):
++        self.out_dir = out_dir
++        self.cwd = cwd
++        self.commands = []
++        self._labels = set()
++        os.makedirs(out_dir, exist_ok=True)
++
++    def _claim(self, label: str, expected_exit: int) -> None:
++        if label in self._labels:
++            raise RuntimeError("duplicate command label: " + label)
++        self._labels.add(label)
++        if expected_exit != expected_for(label):
++            raise RuntimeError("caller expectation disagrees with table: " + label)
++
++    def _paths(self, label: str) -> tuple[str, str]:
++        return (
++            os.path.join(self.out_dir, label + ".stdout"),
++            os.path.join(self.out_dir, label + ".stderr"),
++        )
++
++    def run(self, command: dict) -> dict:
++        label = command["label"]
++        expected = command["expected_exit"]
++        self._claim(label, expected)
++        stdout_path, stderr_path = self._paths(label)
++        rec = {
++            "label": label,
++            "argv": list(command["argv"]),
++            "cwd": self.cwd,
++            "expected_exit": expected,
++            "started_at_utc": now(),
++        }
++        if command.get("source_path"):
++            rec["source_path"] = command["source_path"]
++        with open(stdout_path, "wb") as stdout_file, open(stderr_path, "wb") as stderr_file:
++            try:
++                proc = subprocess.run(
++                    rec["argv"],
++                    cwd=self.cwd,
++                    stdout=stdout_file,
++                    stderr=stderr_file,
++                    check=False,
++                )
++                exit_code = proc.returncode
++            except OSError as exc:
++                stderr_file.write(("LAUNCH_ERROR: %s: %s\n" % (type(exc).__name__, exc)).encode())
++                exit_code = 2
++                rec["launch_error"] = "%s: %s" % (type(exc).__name__, exc)
++        rec.update({
++            "ended_at_utc": now(),
++            "exit": exit_code,
++            "stdout_path": stdout_path,
++            "stdout_sha256": sha(stdout_path),
++            "stderr_path": stderr_path,
++            "stderr_sha256": sha(stderr_path),
++            "exit_as_expected": exit_code == expected,
++        })
++        self.commands.append(rec)
++        return rec
++
++    def skip(self, command: dict, reason: str) -> dict:
++        label = command["label"]
++        expected = command["expected_exit"]
++        self._claim(label, expected)
++        stdout_path, stderr_path = self._paths(label)
++        with open(stdout_path, "wb") as f:
++            f.write(b"")
++        with open(stderr_path, "wb") as f:
++            f.write(("SKIPPED: " + reason + "\n").encode())
++        rec = {
++            "label": label,
++            "argv": list(command["argv"]),
++            "cwd": self.cwd,
++            "expected_exit": expected,
++            "started_at_utc": now(),
++            "ended_at_utc": now(),
++            "exit": 2,
++            "skipped_reason": reason,
++            "stdout_path": stdout_path,
++            "stdout_sha256": sha(stdout_path),
++            "stderr_path": stderr_path,
++            "stderr_sha256": sha(stderr_path),
++            "exit_as_expected": False,
++        }
++        if command.get("source_path"):
++            rec["source_path"] = command["source_path"]
++        self.commands.append(rec)
++        return rec
++
++    def unexpected(self) -> list[str]:
++        return [cmd["label"] for cmd in self.commands if not cmd["exit_as_expected"]]
++
++
++def build_plan(base: str, source: str, paths: set[str]) -> list[dict]:
++    """Build the stable command table; source paths gate execution, not planning."""
++    plan = []
++
++    def add(label: str, argv: list[str], expected: int, source_path: str | None = None) -> None:
++        if expected != expected_for(label):
++            raise RuntimeError("plan expectation disagrees with table: " + label)
++        entry = {"label": label, "argv": list(argv), "expected_exit": expected}
++        if source_path is not None:
++            entry["source_path"] = source_path
++            entry["source_present"] = source_path in paths
++        plan.append(entry)
++
++    def tool_argv(rel: str, *args: str) -> list[str]:
++        return PY + [os.path.join(LANE, rel), *args]
++
++    add("selftest-verify", tool_argv(VERIFY_REL, "--selftest"), 0, VERIFY_REL)
++    tool_names = sorted(set(REQUIRED_TOOLS) | set(source_tools(paths)))
++    for name in tool_names:
++        rel = TOOLS_REL + "/" + name
++        add("selftest-" + Path(name).stem, tool_argv(rel, "--selftest"), 0, rel)
++    add("selftest-measure", tool_argv(MEASURE_REL, "--selftest"), 0, MEASURE_REL)
++    add("selftest-controls-r20", tool_argv(CONTROLS_REL, "--selftest"), 0, CONTROLS_REL)
++    add("selftest-run-carriers",
++        ["bash", os.path.join(LANE, RUN_CARRIERS_REL), "--selftest"],
++        0, RUN_CARRIERS_REL)
++
++    routed = TOOLS_REL + "/routed-r19.py"
++    add("routed-r19-baseline-strict",
++        tool_argv(routed, "--root", LANE, "--rev", base, "--strict"), 1, routed)
++    add("routed-r19-source-strict",
++        tool_argv(routed, "--root", LANE, "--rev", source, "--strict"), 0, routed)
++
++    verb = TOOLS_REL + "/verb-coverage.py"
++    add("verb-coverage-baseline",
++        tool_argv(verb, "--root", LANE, "--rev", base), 0, verb)
++    add("verb-coverage-source",
++        tool_argv(verb, "--root", LANE, "--rev", source), 0, verb)
++
++    add("measure-baseline", tool_argv(MEASURE_REL, base), 0, MEASURE_REL)
++    add("measure-source", tool_argv(MEASURE_REL, source), 0, MEASURE_REL)
++    add("controls-r20",
++        tool_argv(CONTROLS_REL, base, source), 0, CONTROLS_REL)
++
++    timestamps = TOOLS_REL + "/evidence-timestamps.py"
++    add("evidence-timestamps-source",
++        tool_argv(timestamps, "--root", LANE, "--rev", source,
++                  "--path", ".ufo/waves/round-20", "--strict"),
++        0, timestamps)
++
++    add("final-census-tool",
++        tool_argv(FINAL_CENSUS_REL, "--root", LANE, "--out-dir", OUT),
++        0, FINAL_CENSUS_REL)
++    return plan
++
++
++def _plan_revisions(source_arg: str) -> tuple[str, str] | None:
++    base = resolve_commit(BASELINE)
++    if base is None:
++        print(json.dumps({"refused": True, "cause": "baseline_unresolvable", "baseline": BASELINE},
++                         sort_keys=True, indent=2))
++        return None
++    source = resolve_commit(source_arg)
++    if source is None:
++        print(json.dumps({"refused": True, "cause": "source_unresolvable", "source": source_arg,
++                          "baseline_revision": base}, sort_keys=True, indent=2))
++        return None
++    return base, source
++
++
++def dry_run(source_arg: str) -> int:
++    revisions = _plan_revisions(source_arg)
++    if revisions is None:
++        return 2
++    base, source = revisions
++    try:
++        paths = source_paths(source)
++        plan = build_plan(base, source, paths)
++    except Exception as exc:
++        print(json.dumps({"refused": True, "cause": "plan_failed: %s: %s" % (type(exc).__name__, exc)},
++                         sort_keys=True, indent=2))
++        return 2
++    print(json.dumps({
++        "dry_run": True,
++        "baseline_revision": base,
++        "source_revision": source,
++        "commands": plan,
++    }, sort_keys=True, indent=2))
++    return 0
++
++
++def check_final_census(out_dir: str, source: str) -> dict:
++    path = os.path.join(out_dir, "final-census.json")
++    result = {"path": path, "valid": False, "problems": []}
++    try:
++        record = json.load(open(path, encoding="utf-8"))
++    except (OSError, ValueError) as exc:
++        result["problems"].append("record_unreadable: %s" % exc)
++        return result
++
++    result["record"] = record
++    if record.get("rev") != source:
++        result["problems"].append("rev_mismatch")
++    if record.get("exit") != 0:
++        result["problems"].append("exit_not_zero")
++    if record.get("worktree_clean") is not True:
++        result["problems"].append("worktree_not_clean")
++    if not isinstance(record.get("argv"), list) or not record["argv"]:
++        result["problems"].append("argv_missing")
++
++    stdout_value = record.get("stdout_path")
++    if not isinstance(stdout_value, str) or not stdout_value:
++        result["problems"].append("stdout_path_missing")
++    else:
++        stdout_path = stdout_value if os.path.isabs(stdout_value) else os.path.join(LANE, stdout_value)
++        result["stdout_path_resolved"] = stdout_path
++        try:
++            if os.path.commonpath([os.path.realpath(out_dir), os.path.realpath(stdout_path)]) != os.path.realpath(out_dir):
++                result["problems"].append("stdout_outside_verify_dir")
++            actual_sha = sha(stdout_path)
++            result["stdout_sha256_actual"] = actual_sha
++            if record.get("stdout_sha256") != actual_sha:
++                result["problems"].append("stdout_sha256_mismatch")
++        except (OSError, ValueError) as exc:
++            result["problems"].append("stdout_unreadable: %s" % exc)
++    result["valid"] = not result["problems"]
++    return result
++
++
++def full_pass(source_arg: str) -> int:
++    revisions = _plan_revisions(source_arg)
++    if revisions is None:
++        return 2
++    base, source = revisions
++    try:
++        paths = source_paths(source)
++        plan = build_plan(base, source, paths)
++    except Exception as exc:
++        print(json.dumps({"refused": True, "cause": "plan_failed: %s: %s" % (type(exc).__name__, exc),
++                          "baseline_revision": base, "source_revision": source},
++                         sort_keys=True, indent=2))
++        return 2
++
++    os.makedirs(OUT, exist_ok=True)
++    runner = Pass(OUT, LANE)
++    integrity = {}
++    blob_cache = {}
++    worktree_cache = {}
++
++    for command in plan:
++        rel = command.get("source_path")
++        if rel is None:
++            runner.run(command)
++            continue
++        if not command.get("source_present"):
++            runner.skip(command, "absent_at_source: " + rel)
++            continue
++        if rel not in blob_cache:
++            blob_cache[rel] = source_bytes(source, rel)
++        data = blob_cache[rel]
++        if data is None:
++            runner.skip(command, "source_blob_unreadable: " + rel)
++            continue
++        worktree_path = os.path.join(LANE, rel)
++        if rel not in worktree_cache:
++            if os.path.isfile(worktree_path):
++                worktree_cache[rel] = sha(worktree_path)
++            else:
++                worktree_cache[rel] = None
++        source_sha = sha_bytes(data)
++        worktree_sha = worktree_cache[rel]
++        integrity[rel] = {
++            "source_sha256": source_sha,
++            "worktree_sha256": worktree_sha,
++            "match": worktree_sha is not None and source_sha == worktree_sha,
++        }
++        if worktree_sha is None:
++            runner.skip(command, "missing_worktree: " + rel)
++        elif source_sha != worktree_sha:
++            runner.skip(command, "worktree_source_mismatch: " + rel)
++        else:
++            runner.run(command)
++
++    final_census = check_final_census(OUT, source)
++    unexpected = runner.unexpected()
++    failures = list(unexpected)
++    if not final_census["valid"]:
++        failures.append("final_census_record_invalid")
++    record = {
++        "producer": os.path.abspath(__file__),
++        "python": sys.version,
++        "orig_argv": getattr(sys, "orig_argv", sys.argv),
++        "lane": LANE,
++        "baseline_revision": base,
++        "source_revision": source,
++        "expected_exits_table": dict(EXPECTED_EXITS),
++        "tool_integrity": [
++            {"path": rel, **integrity[rel]} for rel in sorted(integrity)
++        ],
++        "tool_integrity_mismatches": [
++            rel for rel in sorted(integrity) if not integrity[rel]["match"]
++        ],
++        "commands": runner.commands,
++        "final_census_check": final_census,
++        "unexpected_exits": unexpected,
++        "failures": failures,
++    }
++    write_json(os.path.join(W, "verification.json"), record)
++    print(json.dumps({
++        "commands": len(runner.commands),
++        "baseline_revision": base,
++        "source_revision": source,
++        "unexpected_exits": unexpected,
++        "final_census_valid": final_census["valid"],
++        "failures": failures,
++    }, sort_keys=True, indent=2))
++    return 0 if not failures else 1
++
++
++def selftest() -> int:
++    """Exercise recording, skip, plan and D5 receipt validation in mkdtemp."""
++    root = tempfile.mkdtemp(prefix="kr20-verify-selftest.")
++    failures = []
++    cases = 0
++
++    def check(ok: bool, detail: str) -> None:
++        nonlocal cases
++        cases += 1
++        if not ok:
++            failures.append(detail)
++
++    try:
++        check(os.path.commonpath([LANE, root]) != LANE,
++              "selftest fixture is not outside the lane")
++        plan = build_plan(BASELINE, BASELINE, set())
++        by_label = {item["label"]: item for item in plan}
++        check(by_label["routed-r19-baseline-strict"]["expected_exit"] == 1,
++              "baseline strict expectation is not 1")
++        check("--strict" in by_label["routed-r19-baseline-strict"]["argv"]
++              and BASELINE in by_label["routed-r19-baseline-strict"]["argv"],
++              "baseline strict argv is incomplete")
++        check(by_label["routed-r19-source-strict"]["expected_exit"] == 0
++              and BASELINE in by_label["routed-r19-source-strict"]["argv"],
++              "source strict expectation/argv is wrong")
++        required_selftests = {"selftest-" + Path(name).stem for name in REQUIRED_TOOLS}
++        check(required_selftests <= set(by_label), "required new-tool selftests missing from plan")
++        check({"selftest-measure", "selftest-controls-r20", "selftest-run-carriers", "selftest-verify"}
++              <= set(by_label), "round-level selftests missing from plan")
++
++        out = os.path.join(root, "verify")
++        runner = Pass(out, root)
++        runner.run({"label": "fixture-ok", "argv": PY + ["-c", "print('alpha'); print('warn', file=__import__('sys').stderr)"],
++                    "expected_exit": 0})
++        runner.run({"label": "fixture-detects", "argv": PY + ["-c", "import sys; print('beta'); sys.exit(7)"],
++                    "expected_exit": 0})
++        runner.skip({"label": "fixture-skip", "argv": PY + ["missing-fixture"], "expected_exit": 0},
++                    "fixture_absent")
++        first, second, skipped = runner.commands
++        check(first["exit"] == 0 and first["expected_exit"] == 0 and first["exit_as_expected"],
++              "successful command exits were not recorded")
++        check(first["argv"] == PY + ["-c", "print('alpha'); print('warn', file=__import__('sys').stderr)"],
++              "argv was not recorded verbatim")
++        check(first["stdout_sha256"] == sha_bytes(b"alpha\n")
++              and first["stderr_sha256"] == sha_bytes(b"warn\n"),
++              "stdout/stderr hashes do not match bytes")
++        check(second["exit"] == 7 and not second["exit_as_expected"]
++              and runner.unexpected() == ["fixture-detects", "fixture-skip"],
++              "unexpected exit accounting failed")
++        check(skipped["exit"] == 2 and "fixture_absent" in open(skipped["stderr_path"]).read(),
++              "skip record is incomplete")
++        saved = os.path.join(out, "verification.json")
++        write_json(saved, {"commands": runner.commands, "unexpected_exits": runner.unexpected()})
++        loaded = json.load(open(saved, encoding="utf-8"))
++        check(len(loaded["commands"]) == 3
++              and loaded["commands"][0]["argv"] == first["argv"]
++              and loaded["unexpected_exits"] == runner.unexpected(),
++              "verification JSON round trip failed")
++
++        census_out = os.path.join(root, "census")
++        os.makedirs(census_out)
++        census_stdout = os.path.join(census_out, "census.stdout")
++        with open(census_stdout, "wb") as f:
++            f.write(b"VERDICT: PASS\n")
++        write_json(os.path.join(census_out, "final-census.json"), {
++            "rev": BASELINE,
++            "worktree_clean": True,
++            "argv": ["python3", "c1-census-v10.py"],
++            "exit": 0,
++            "stdout_path": census_stdout,
++            "stdout_sha256": sha(census_stdout),
++        })
++        check(check_final_census(census_out, BASELINE)["valid"],
++              "valid final census receipt was rejected")
++        write_json(os.path.join(census_out, "final-census.json"), {
++            "rev": "0" * 40,
++            "worktree_clean": True,
++            "argv": ["python3", "c1-census-v10.py"],
++            "exit": 0,
++            "stdout_path": census_stdout,
++            "stdout_sha256": sha(census_stdout),
++        })
++        check(not check_final_census(census_out, BASELINE)["valid"],
++              "wrong-revision final census receipt was accepted")
++    finally:
++        shutil.rmtree(root, ignore_errors=True)
++
++    if failures:
++        print("SELFTEST: FAILED cases=%d fails=%d: %s"
++              % (cases, len(failures), "; ".join(failures)))
++        return 1
++    print("SELFTEST: CLEAN cases=%d" % cases)
++    return 0
++
++
++def main(argv=None) -> int:
++    args = list(sys.argv if argv is None else argv)[1:]
++    if args == ["--selftest"]:
++        return selftest()
++    if len(args) == 2 and args[0] == "--dry-run":
++        return dry_run(args[1])
++    if len(args) != 1 or args[0].startswith("-"):
++        sys.stderr.write(USAGE)
++        return 2
++    return full_pass(args[0])
++
++
++if __name__ == "__main__":
++    sys.exit(main())

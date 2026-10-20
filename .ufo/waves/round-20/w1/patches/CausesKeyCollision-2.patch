@@ -1,0 +1,47 @@
+diff --git c/.ufo/waves/round-19/tools/wave-outcomes.py i/.ufo/waves/round-19/tools/wave-outcomes.py
+index ff6a980..2890de8 100755
+--- c/.ufo/waves/round-19/tools/wave-outcomes.py
++++ i/.ufo/waves/round-19/tools/wave-outcomes.py
+@@ -234,7 +234,8 @@ def load_causes(path: str, seats: dict, by_agent: dict, registration: str):
+     doc, sha = _read_json(path, "causes")
+     wave = None
+     raw = doc
+-    if isinstance(doc, dict) and "causes" in doc:
++    if (isinstance(doc, dict) and isinstance(doc.get("causes"), dict)
++            and "wave" in doc):
+         wave = doc.get("wave") if isinstance(doc.get("wave"), str) else None
+         raw = doc["causes"]
+         if not isinstance(raw, dict):
+@@ -703,13 +704,29 @@ def _selftest() -> int:
+         # ---- wrapped map -------------------------------------------------
+         reg, rdir, cpath, out = fixture(
+             "c22", {"Alpha": "executor", "Bravo": "critic"}, {"Alpha": "a\n"},
+-            {"causes": {"Bravo": "exited 1"}})
++            {"wave": "selftest", "causes": {"Bravo": "exited 1"}})
++        r = run_cli("--registration", reg, "--report-dir", rdir,
++                    "--causes", cpath, "--out", out)
++        doc = load_out(out)
++        check(r.returncode == 0 and doc.get("wave") == "selftest"
++              and doc.get("seats", [{}])[1].get("cause") == "exited 1",
++              "wrapped-causes", f"rc={r.returncode} doc={doc}")
++
++        # ---- a seat named "causes" stays a flat-map entry ---------------
++        reg, rdir, cpath, out = fixture(
++            "c22b", {"causes": "executor"}, {},
++            {"causes": {"cause": "worker aborted",
++                        "source": "history://K19.causes"}})
+         r = run_cli("--registration", reg, "--report-dir", rdir,
+                     "--causes", cpath, "--out", out)
+         doc = load_out(out)
+         check(r.returncode == 0
+-              and doc.get("seats", [{}])[1].get("cause") == "exited 1",
+-              "wrapped-causes", f"rc={r.returncode} doc={doc}")
++              and doc.get("seats") == [{
++                  "name": "causes", "role": "executor",
++                  "report_present": False, "cause": "worker aborted"}]
++              and doc.get("cause_sources", {}).get("causes")
++              == "history://K19.causes",
++              "seat_named_causes", f"rc={r.returncode} doc={doc}")
+ 
+         # ---- flat map with metadata keys ---------------------------------
+         reg, rdir, cpath, out = fixture(

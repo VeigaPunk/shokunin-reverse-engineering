@@ -1,0 +1,163 @@
+diff --git c/.ufo/gates/custody-pair/README.md i/.ufo/gates/custody-pair/README.md
+index 2c96243..36d1e71 100644
+--- c/.ufo/gates/custody-pair/README.md
++++ i/.ufo/gates/custody-pair/README.md
+@@ -52,6 +52,7 @@ resolved path *or* by inode (a hardlink alias is refused too) — and refuses a
+ receipt or sidecar aimed at the sidecar-shaped neighbour (`<measured> +
+ ".sha256"`) of a measured path. `selftest --scratch` requires an existing,
+ non-`/tmp` directory; anything else is a declared USAGE exit 2.
++`selftest --scratch` refuses any Git worktree (`scratch_inside_worktree`) and always removes its fixture directory, including on failure.
+ 
+ ## Receipt fields (v2)
+ 
+diff --git c/.ufo/gates/custody-pair/custody-pair.py i/.ufo/gates/custody-pair/custody-pair.py
+index 921752b..23750dc 100755
+--- c/.ufo/gates/custody-pair/custody-pair.py
++++ i/.ufo/gates/custody-pair/custody-pair.py
+@@ -247,7 +247,7 @@ EXIT_METADATA_DRIFT = 12
+ EXIT_ABSENT = 13
+ EXIT_UNEVALUABLE = 14
+ EXIT_USAGE = 2
+-EXIT_SELFTEST_FAIL = 3
++EXIT_SELFTEST_FAIL = 1
+ 
+ SEVERITY = {
+     "MATCH": 0,
+@@ -883,7 +883,19 @@ def run_case(cases: list, name: str, fn) -> None:
+         cases.append((name, False, "%s: %s" % (type(exc).__name__, exc)))
+ 
+ 
+-def cmd_selftest(args) -> int:
++def scratch_inside_worktree(path: Path) -> bool:
++    current = path.resolve()
++    while True:
++        marker = current / ".git"
++        if marker.exists() or marker.is_symlink():
++            return True
++        parent = current.parent
++        if parent == current:
++            return False
++        current = parent
++
++
++def _cmd_selftest(args) -> int:
+     import tempfile
+ 
+     base = Path(args.scratch).expanduser() if args.scratch else default_scratch()
+@@ -894,11 +906,15 @@ def cmd_selftest(args) -> int:
+     if not base.is_dir():
+         print("USAGE: scratch base is not a directory: %s" % base, file=sys.stderr)
+         return EXIT_USAGE
++    if scratch_inside_worktree(base):
++        print("USAGE: scratch_inside_worktree: %s" % base, file=sys.stderr)
++        return EXIT_USAGE
+     try:
+         root = Path(tempfile.mkdtemp(prefix="custody-pair-selftest-", dir=str(base)))
+     except OSError as exc:
+         print("USAGE: cannot create a fixture root under %s (%s)" % (base, exc), file=sys.stderr)
+         return EXIT_USAGE
++    args._selftest_root = root
+ 
+     def capture_to(out_name: str, paths, label="selftest"):
+         out = root / out_name
+@@ -1236,6 +1252,59 @@ def cmd_selftest(args) -> int:
+         assert rc == EXIT_USAGE, "expected USAGE exit %d in-process for a missing base, got %d" % (EXIT_USAGE, rc)
+     run_case(cases, "selftest-missing-scratch-usage-exit", case_missing_scratch)
+ 
++    # D1: worktree scratch is refused before a fixture directory is created.
++    def case_scratch_in_worktree_refused():
++        worktree = root / "worktree"
++        (worktree / ".git").mkdir(parents=True)
++        scratch = worktree / "scratch"
++        scratch.mkdir()
++        tool = str(Path(__file__).resolve())
++        p = subprocess.run([sys.executable, tool, "selftest", "--scratch", str(scratch)],
++                           capture_output=True, text=True)
++        assert p.returncode == EXIT_USAGE, "expected USAGE exit 2, got %d" % p.returncode
++        assert "scratch_inside_worktree" in p.stderr, \
++            "worktree refusal did not name scratch_inside_worktree: %s" % p.stderr
++        assert not list(scratch.glob("custody-pair-selftest-*")), \
++            "worktree refusal created a selftest fixture directory"
++    run_case(cases, "scratch_in_worktree_refused", case_scratch_in_worktree_refused)
++
++    # D1: the wrapper removes its root after both a normal return and an exception.
++    def case_cleanup_after_run():
++        scratch = root / "cleanup-scratch"
++        scratch.mkdir()
++        driver = root / "cleanup-probe.py"
++        driver.write_text(
++            "import argparse, importlib.util, sys\n"
++            "from pathlib import Path\n"
++            "tool, base = Path(sys.argv[1]), Path(sys.argv[2])\n"
++            "spec = importlib.util.spec_from_file_location('custody_pair_selftest', tool)\n"
++            "module = importlib.util.module_from_spec(spec)\n"
++            "spec.loader.exec_module(module)\n"
++            "def skip_case(cases, name, fn):\n"
++            "    cases.append((name, True, ''))\n"
++            "module.run_case = skip_case\n"
++            "assert module.cmd_selftest(argparse.Namespace(scratch=str(base))) == module.EXIT_MATCH\n"
++            "assert not list(base.glob('custody-pair-selftest-*'))\n"
++            "def fail_case(cases, name, fn):\n"
++            "    raise RuntimeError('injected selftest failure')\n"
++            "module.run_case = fail_case\n"
++            "try:\n"
++            "    module.cmd_selftest(argparse.Namespace(scratch=str(base)))\n"
++            "except RuntimeError as exc:\n"
++            "    assert str(exc) == 'injected selftest failure'\n"
++            "else:\n"
++            "    raise AssertionError('injected failure was not raised')\n"
++            "assert not list(base.glob('custody-pair-selftest-*'))\n",
++            encoding="utf-8")
++        proc = subprocess.run([sys.executable, "-I", "-B", str(driver),
++                               str(Path(__file__).resolve()), str(scratch)],
++                              capture_output=True, text=True)
++        assert proc.returncode == 0, "cleanup probe failed: %s%s" % (proc.stdout, proc.stderr)
++        assert not list(scratch.glob("custody-pair-selftest-*")), \
++            "selftest fixture directory remained under scratch after exit"
++    run_case(cases, "cleanup_after_run", case_cleanup_after_run)
++
++
+     # 19. write guard must also refuse a hardlink alias of a measured path (D7/RV-11)
+     def case_guard_hardlink():
+         a = root / "guard-hardlink-a.conf"
+@@ -1452,13 +1521,27 @@ def cmd_selftest(args) -> int:
+     for name, ok, why in cases:
+         print("case %-42s %s%s" % (name, "PASS" if ok else "FAIL", ("  (%s)" % why) if why else ""))
+     failed = len(cases) - passed
+-    print("scratch: %s" % root)
+-    print("CUSTODY_PAIR_SELFTEST: %s cases=%d passed=%d failed=%d exit=%d"
+-          % ("CLEAN" if failed == 0 else "DIRTY", len(cases), passed, failed,
+-             EXIT_MATCH if failed == 0 else EXIT_SELFTEST_FAIL))
++    print("scratch: %s (removed on exit)" % root)
++    if failed == 0:
++        print("SELFTEST: CLEAN cases=%d" % len(cases))
++    else:
++        print("SELFTEST: FAILED cases=%d fails=%d" % (len(cases), failed))
+     return EXIT_MATCH if failed == 0 else EXIT_SELFTEST_FAIL
+ 
+ 
++def cmd_selftest(args) -> int:
++    import shutil
++
++    try:
++        return _cmd_selftest(args)
++    finally:
++        root = getattr(args, "_selftest_root", None)
++        if root is not None:
++            delattr(args, "_selftest_root")
++            shutil.rmtree(root)
++
++
++
+ def _run_verify(argv, out_path: Path) -> int:
+     """Run the verify path in-process, capturing stdout to out_path."""
+     import io
+@@ -1514,7 +1597,7 @@ def main(argv=None) -> int:
+     p_self = sub.add_parser("selftest", help="fixture-based selftest (never touches a custody path)")
+     p_self.add_argument("--scratch", default=None,
+                         help="fixture root (default: $CUSTODY_PAIR_SCRATCH, /dev/shm, /var/tmp); "
+-                             "a missing / non-directory / `/tmp` base is a USAGE exit 2")
++                             "requires an existing non-/tmp directory outside Git worktrees")
+     p_self.set_defaults(func=cmd_selftest)
+ 
+     p_paths = sub.add_parser("paths", help="print the 5 canonical custody paths")
