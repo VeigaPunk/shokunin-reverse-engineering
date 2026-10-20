@@ -2173,3 +2173,61 @@ The earlier calibration axis note and round-14 plan described the pre-review
 state. The outside sample is now complete; calibration's numeric axis score
 remains unchanged. Round 14 may mine one source-backed knowledge entry only
 if the matching uncovered coverage-map question remains.
+
+## Round 14 — source diagnosis and quote-regression capability, 2026-10-20
+
+Measured source commit: `3e99fbd6f05dc05341bdfbbd7e3b2b86785abc22`.
+Baseline: `767adafb97e2eef6980e2ad873d357e16721c467`.
+Motivation and landed work: LOG round-14; prior verifier spotcheck and
+`corpus/lessons/round-14.md`. `claims-review.json` (under this round's wave
+directory) records the pre-integration coverage→depth reclassification.
+The same Go symptom was already held; its missing source-backed bootstrap
+diagnosis is a deepening, not an earned broad-coverage increase.
+
+| Claim / axis | Numeric proxy delta | Supplemental before→after / counting command | Evidence and author-side verdict |
+|---|---|---|---|
+| C1 depth | 10.0→10.0, delta 0; existing finite citation proxy stays saturated | source-diagnostic entries 0→1; `python3 .ufo/waves/round-14/measure.py <revision>` against the two hashes above | new Go diagnosis plus append-only causal correction; **improved** technical depth, no historical-cause proof or provider execution |
+| C2 calibration / capability | 10.0→10.0, delta 0; the old failure-selected proxy is not relabeled | quote instrument 0→1 and grounded criterion 0→1, same measurement command; defect controls exit 1→0 with only quote/section changed | quote CLI selftest and frozen run in `.ufo/waves/round-14/verification.json`; **improved**, bounded regression capability, not a population accuracy estimate |
+| coverage | 10.0→10.0 | map integrity 91/91→92/92, missing/dangling remain empty, same command | unchanged domain coverage; token added on the existing Go row without moving pinned lines |
+| operability | no owned numeric proxy | new instrument runs; no independent claim | no harm; no new held REA operation |
+| freshness | no owned numeric proxy | named sources reopened; no provider replay | unchanged, no stale live-capability assertion introduced |
+| adjacency | no owned numeric proxy | local source/evidence checks only | unchanged; no sibling gate, config, or domain source-tree ownership taken |
+
+The table's boolean counts are not axis scores. Existing command A, with REV
+set to the measured source commit, still resolves 17/17 craft rule blocks.
+The craft section's bytes are identical to baseline; proof in
+`.ufo/waves/round-14/command-a-control.json`. Strict citation drift is clean
+with zero findings, and the scoped census is PASS with zero stale,
+ambiguous, undeclared and unresolved loci (`verification.json`).
+
+### Capability addition (demonstrated before this row)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| local raw-quote/heading regression audit | Rejects the retained S017 splice and S018 wrong section, accepts corrected controls, and refuses malformed/tampered inputs; frozen runs pin every manifest/source input | `python3 -I .ufo/waves/round-14/tools/quote-fidelity.py --selftest` → 28/28; same script `--frozen .ufo/waves/round-14/fixtures/expected.json` → seven expected verdicts matched; source commit above, `.ufo/waves/round-14/verification.json` | round-14 |
+
+Limits: captured raw UTF-8 substrings and Markdown/single-line HTML headings,
+not source authenticity, full-document completeness, semantic support,
+whole-registry validation, outside admission, or target execution.
+The source-diagnosis entry does not depend on this local parser.
+
+Sources remain 22 rows (A20/B1/C1, mined21/rejected1); no row quota.
+Required validation before and after exits 0. Six permitted used-by cell
+changes and their exact old→new values are in the lesson.
+
+Learning trends: expansion **unchanged** (deepening held Go ground, not a
+new broad surface); quality **improved** (unsupported causal inference
+superseded by source-conditional diagnosis); discernment **improved** only
+because the prior genuine outside quote findings became grounded QUALITY
+criterion 16 and exercised regressions. No author-side seat counts as the
+current round's independent reviewer; closure sampling remains pending.
+
+Saturation: the three owned finite proxies remain at their line; this
+demonstrated capability resets the capability stagnation interval. No axis
+is retired or declared mastered. The tied-lowest calibration obligation is
+worked by C2, and the capability move honors the stagnation nudge.
+
+Planned: after the fresh non-author sample, one depth/capability claim to
+discriminate bootstrap failure on a caller-selected real Go carrier with
+retained analyzer diagnostics; no implicit upgrade, recovery promise, or
+next-round execution is made here.

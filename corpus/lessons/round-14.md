@@ -90,3 +90,53 @@ SHONEN marks and historical log bytes remain unchanged. Source-source
 diagnosis and quoted-excerpt checks are causally separable; neither executes
 a target, changes client configuration, installs engines, or owns a sibling's gate.
 Tool installs/updates: none.
+
+## Executed verification and final author gate — 2026-10-20
+
+This addendum supersedes the provisional “selected for demonstration/admission”
+status above. The source work was committed first as
+`3e99fbd6f05dc05341bdfbbd7e3b2b86785abc22`; L1 then ran the commands once,
+after all wave seats finished. Complete argv, stdout/stderr and exit codes:
+`.ufo/waves/round-14/verification.json`. Instruments and expectation-file
+digests at that revision: `measurement-pins.json` in the same directory.
+
+| Command (from lane root) | Observed result |
+|---|---|
+| `python3 .ufo/waves/round-14/measure.py 767adafb97e2eef6980e2ad873d357e16721c467` | baseline: C1 entry 0, C2 instrument/criterion 0/0; mapped 91/91; sources 22 |
+| same command with `3e99fbd6f05dc05341bdfbbd7e3b2b86785abc22` | after: C1 entry 1, C2 instrument/criterion 1/1; mapped 92/92, no missing/dangling; sources 22; exit 0 |
+| `python3 -I .ufo/waves/round-14/tools/quote-fidelity.py --selftest` | CLEAN cases=28 passed=28 failed=0, exit 0; every case launches the actual CLI, not only a helper |
+| same script `--frozen .ufo/waves/round-14/fixtures/expected.json` | seven exact expected exit/finding lists matched; clean, exit 0 |
+| same script `--manifest .ufo/waves/round-14/fixtures/manifest-s017-red.json` | exit 1, `quote_not_contiguous@S017-Q1` |
+| same script with `manifest-s017-fixed.json` | exit 0, no findings; only quote text differs in this pair |
+| same script with `manifest-s018-red.json` | exit 1, `quote_location_mismatch@S018-Q1` |
+| same script with `manifest-s018-fixed.json` | exit 0, no findings; only section differs in this pair |
+| same script with `manifest-corrected.json` | exit 0, two quotes, zero findings |
+| registered citation-drift command with `--strict --rev 3e99fbd6f05dc05341bdfbbd7e3b2b86785abc22` | clean findings=0, exit 0 |
+| `python3 .ufo/gates/c1-census-v10.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin` | PASS; stale/ambiguous/undeclared/unresolved 0/0/0/0, exit 0 |
+
+The full path is `.ufo/waves/round-14/fixtures/` for abbreviated manifest
+names in the table. These are offline controls for known mistakes, not a
+sampled detection rate. The fix is demonstrably able to fail on both named
+defects, and input tampering/missing source pins fail closed in CLI selftests.
+
+Source census at round end:
+
+```text
+/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+kaidoku	ok	/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+exit=0
+```
+
+The same required command at round start printed the same TSV line and
+exit 0 (recorded above). Detailed census before→after is unchanged:
+22 rows, A20/B1/C1, mined21/rejected1, invalid tiers/statuses and missing
+registries zero; command/output/exit receipts are `sources-before.json`
+and `sources-after.json` under `.ufo/waves/round-14/`.
+Rows added by tier: A0/B0/C0. Frontier source statuses advanced: none.
+
+**Final author-side dispositions:** C1 depth improved; C2 calibration and
+the bounded regression capability improved. Coverage unchanged; no axis
+harm observed in the named controls. Expansion unchanged, quality improved,
+discernment improved by learning the prior outside findings. Current
+non-author admit/reject sampling is still pending; L2 opinions and green
+local tests are not that check.

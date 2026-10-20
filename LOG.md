@@ -1803,3 +1803,29 @@ layout-cause sentence in r4-10. Original log bytes remain append-only.
 The bounded sweep is retained in `.ufo/waves/round-14/correction-sweep.json`;
 current README and PROVINCE summaries now state historical inventories,
 with the old run's precise cause unknown.
+
+## 2026-10-20 — round-14 measured records
+
+Source work `3e99fbd6f05dc05341bdfbbd7e3b2b86785abc22`, baseline
+`767adafb97e2eef6980e2ad873d357e16721c467`. After all author-side seats
+completed, L1 ran the committed-work checks; complete commands and real
+outputs are `.ufo/waves/round-14/verification.json`.
+
+- `measure.py <revision>`: source-diagnostic entry 0→1, quote instrument
+  0→1, grounded criterion 0→1; mapped 91/91→92/92 with no missing/dangling.
+  Existing craft bytes are identical and command A resolves 17/17;
+  `command-a-control.json` records that control.
+- Quote CLI selftest: 28/28, exit 0. Frozen inputs: seven expected
+  exit/finding lists matched, exit 0. Known S017 splice and S018 wrong
+  heading each exit 1 with their named finding; quote-only and section-only
+  corrected controls respectively exit 0. Combined corrected manifest:
+  two quotes, zero findings, exit 0.
+- Strict citation-drift probe: clean, zero findings, exit 0. Scoped census:
+  PASS, stale/ambiguous/undeclared/unresolved zero, exit 0. Required sources
+  validation before and after: exit 0; registry remains 22 rows.
+- SCORECARD appends the demonstrated local-quote capability and per-axis
+  measurements, keeping all three saturated numeric proxies unchanged.
+  Lesson appends real red-before/corrected outputs and final author gate.
+- Trend verdicts: expansion unchanged, quality improved, discernment
+  improved by turning prior outside findings into criterion and regressions.
+  No current-round outside admission or SHONEN upgrade is asserted.

@@ -1,0 +1,163 @@
+{
+  "revision": "3e99fbd6f05dc05341bdfbbd7e3b2b86785abc22",
+  "commands": [
+    {
+      "label": "measure",
+      "argv": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/measure.py",
+        "3e99fbd6f05dc05341bdfbbd7e3b2b86785abc22"
+      ],
+      "exit": 0,
+      "stdout": "{\n  \"C1_source_diagnosis_entries\": 1,\n  \"C2_grounded_quality_criteria\": 1,\n  \"C2_quote_gate_instruments\": 1,\n  \"dangling\": [],\n  \"knowledge_files\": 92,\n  \"mapped\": 92,\n  \"missing\": [],\n  \"revision\": \"3e99fbd6f05dc05341bdfbbd7e3b2b86785abc22\",\n  \"sources_rows\": 22,\n  \"statuses\": {\n    \"mined\": 21,\n    \"queued\": 0,\n    \"rejected\": 1\n  },\n  \"tiers\": {\n    \"A\": 20,\n    \"B\": 1,\n    \"C\": 1\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "label": "quote-selftest",
+      "argv": [
+        "python3",
+        "-I",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/tools/quote-fidelity.py",
+        "--selftest"
+      ],
+      "exit": 0,
+      "stdout": "SELFTEST_CASE: CLEAN case=markdown_clean exit=0 expected=0 ids=none\nSELFTEST_CASE: CLEAN case=html_label_clean exit=0 expected=0 ids=none\nSELFTEST_CASE: CLEAN case=html_attributes_clean exit=0 expected=0 ids=none\nSELFTEST_CASE: CLEAN case=html_element_token_clean exit=0 expected=0 ids=none\nSELFTEST_CASE: CLEAN case=fenced_pseudo_heading_ignored exit=0 expected=0 ids=none\nSELFTEST_CASE: CLEAN case=splice_absent_everywhere exit=1 expected=1 ids=quote_not_contiguous@q-splice\nSELFTEST_CASE: CLEAN case=quote_elsewhere exit=1 expected=1 ids=quote_location_mismatch@q-loc\nSELFTEST_CASE: CLEAN case=section_absent exit=1 expected=1 ids=quote_location_mismatch@q-sec\nSELFTEST_CASE: CLEAN case=heading_exact_not_substring exit=1 expected=1 ids=quote_location_mismatch@q-exact\nSELFTEST_CASE: CLEAN case=duplicate_heading exit=2 expected=2 ids=invalid_manifest@q-dup\nSELFTEST_CASE: CLEAN case=quote_too_long exit=1 expected=1 ids=quote_too_long@q-long\nSELFTEST_CASE: CLEAN case=word_limit_boundary exit=0 expected=0 ids=none\nSELFTEST_CASE: CLEAN case=source_tampered_precedes_quotes exit=2 expected=2 ids=source_tampered@S1\nSELFTEST_CASE: CLEAN case=invalid_json exit=2 expected=2 ids=invalid_manifest@manifest\nSELFTEST_CASE: CLEAN case=duplicate_quote_id exit=2 expected=2 ids=invalid_manifest@manifest\nSELFTEST_CASE: CLEAN case=duplicate_source_key exit=2 expected=2 ids=invalid_manifest@manifest\nSELFTEST_CASE: CLEAN case=source_missing exit=2 expected=2 ids=invalid_manifest@S1\nSELFTEST_CASE: CLEAN case=source_not_utf8 exit=2 expected=2 ids=invalid_manifest@S1\nSELFTEST_CASE: CLEAN case=source_not_regular exit=2 expected=2 ids=invalid_manifest@S1\nSELFTEST_CASE: CLEAN case=path_escape exit=2 expected=2 ids=invalid_manifest@manifest\nSELFTEST_CASE: CLEAN case=absolute_path exit=2 expected=2 ids=invalid_manifest@manifest\nSELFTEST_CASE: CLEAN case=empty_quotes exit=2 expected=2 ids=invalid_manifest@manifest\nSELFTEST_CASE: CLEAN case=frozen_reproduces_clean exit=0 expected=0 ids=none\nSELFTEST_CASE: CLEAN case=frozen_verdict_mismatch exit=1 expected=1 ids=expected_verdict_mismatch@manifest.json\nSELFTEST_CASE: CLEAN case=frozen_source_tampered exit=2 expected=2 ids=snapshot_tampered@src/doc.md\nSELFTEST_CASE: CLEAN case=frozen_input_missing exit=2 expected=2 ids=snapshot_tampered@absent.json\nSELFTEST_CASE: CLEAN case=frozen_missing_source_pin exit=2 expected=2 ids=invalid_manifest@frozen\nSELFTEST_CASE: CLEAN case=frozen_invalid exit=2 expected=2 ids=invalid_manifest@frozen\nQUOTE_FIDELITY_SELFTEST: CLEAN cases=28 passed=28 failed=0 exit=0\n",
+      "stderr": ""
+    },
+    {
+      "label": "quote-frozen",
+      "argv": [
+        "python3",
+        "-I",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/tools/quote-fidelity.py",
+        "--frozen",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/expected.json"
+      ],
+      "exit": 0,
+      "stdout": "QUOTE_FIDELITY_FROZEN: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/expected.json\nQUOTE_FIDELITY_PIN: manifest=manifest-s017-original.json expected=exit:1,ids:quote_not_contiguous@S017-Q1 actual=exit:1,ids:quote_not_contiguous@S017-Q1 match\nQUOTE_FIDELITY_PIN: manifest=manifest-s017-red.json expected=exit:1,ids:quote_not_contiguous@S017-Q1 actual=exit:1,ids:quote_not_contiguous@S017-Q1 match\nQUOTE_FIDELITY_PIN: manifest=manifest-s017-fixed.json expected=exit:0,ids:none actual=exit:0,ids:none match\nQUOTE_FIDELITY_PIN: manifest=manifest-s017-location.json expected=exit:1,ids:quote_location_mismatch@S017-Q1 actual=exit:1,ids:quote_location_mismatch@S017-Q1 match\nQUOTE_FIDELITY_PIN: manifest=manifest-s018-red.json expected=exit:1,ids:quote_location_mismatch@S018-Q1 actual=exit:1,ids:quote_location_mismatch@S018-Q1 match\nQUOTE_FIDELITY_PIN: manifest=manifest-s018-fixed.json expected=exit:0,ids:none actual=exit:0,ids:none match\nQUOTE_FIDELITY_PIN: manifest=manifest-corrected.json expected=exit:0,ids:none actual=exit:0,ids:none match\nQUOTE_FIDELITY_VERDICT: clean mode=frozen manifests=7 findings=0 exit=0\n",
+      "stderr": ""
+    },
+    {
+      "label": "s017-red",
+      "argv": [
+        "python3",
+        "-I",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/tools/quote-fidelity.py",
+        "--manifest",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/manifest-s017-red.json"
+      ],
+      "exit": 1,
+      "stdout": "QUOTE_FIDELITY_MANIFEST: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/manifest-s017-red.json\nQUOTE_FIDELITY: quote_not_contiguous ident=S017-Q1 no contiguous occurrence in source\nQUOTE_FIDELITY_VERDICT: failed quotes=1 findings=1 exit=1\n",
+      "stderr": ""
+    },
+    {
+      "label": "s017-fixed",
+      "argv": [
+        "python3",
+        "-I",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/tools/quote-fidelity.py",
+        "--manifest",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/manifest-s017-fixed.json"
+      ],
+      "exit": 0,
+      "stdout": "QUOTE_FIDELITY_MANIFEST: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/manifest-s017-fixed.json\nQUOTE_FIDELITY_VERDICT: clean quotes=1 findings=0 exit=0\n",
+      "stderr": ""
+    },
+    {
+      "label": "s018-red",
+      "argv": [
+        "python3",
+        "-I",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/tools/quote-fidelity.py",
+        "--manifest",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/manifest-s018-red.json"
+      ],
+      "exit": 1,
+      "stdout": "QUOTE_FIDELITY_MANIFEST: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/manifest-s018-red.json\nQUOTE_FIDELITY: quote_location_mismatch ident=S018-Q1 quote lies outside the declared section\nQUOTE_FIDELITY_VERDICT: failed quotes=1 findings=1 exit=1\n",
+      "stderr": ""
+    },
+    {
+      "label": "s018-fixed",
+      "argv": [
+        "python3",
+        "-I",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/tools/quote-fidelity.py",
+        "--manifest",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/manifest-s018-fixed.json"
+      ],
+      "exit": 0,
+      "stdout": "QUOTE_FIDELITY_MANIFEST: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/manifest-s018-fixed.json\nQUOTE_FIDELITY_VERDICT: clean quotes=1 findings=0 exit=0\n",
+      "stderr": ""
+    },
+    {
+      "label": "quote-corrected",
+      "argv": [
+        "python3",
+        "-I",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/tools/quote-fidelity.py",
+        "--manifest",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/manifest-corrected.json"
+      ],
+      "exit": 0,
+      "stdout": "QUOTE_FIDELITY_MANIFEST: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-14/fixtures/manifest-corrected.json\nQUOTE_FIDELITY_VERDICT: clean quotes=2 findings=0 exit=0\n",
+      "stderr": ""
+    },
+    {
+      "label": "citation-strict",
+      "argv": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/citation-drift-probe.py",
+        "--root",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+        "--rev",
+        "3e99fbd6f05dc05341bdfbbd7e3b2b86785abc22",
+        "--table",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json",
+        "--expected",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/expected.json",
+        "--strict"
+      ],
+      "exit": 0,
+      "stdout": "CITATION_DRIFT_ROOT: /home/vgpnk/Projects/shokunin/kaidoku-shokunin\nCITATION_DRIFT_REVISION: 3e99fbd6f05dc05341bdfbbd7e3b2b86785abc22\nCITATION_DRIFT_TABLE: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/citation-drift/pointer-table.json\nCITATION_DRIFT_VERDICT: clean findings=0 exit=0\n",
+      "stderr": ""
+    },
+    {
+      "label": "census",
+      "argv": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/gates/c1-census-v10.py",
+        "--root",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin"
+      ],
+      "exit": 0,
+      "stdout": "live anchors (re-derived): {'devin': '6.5.0', 'omp': '6.5.0', 'kimi': '6.7.0'}\nPROVINCE.md    lines=162  loci=6\nSCORECARD.md   lines=2175 loci=12\nSKILL.md       lines=470  loci=2\n\n-- STALE (0) --\n\n-- AMBIGUOUS (0) --\n\n-- UNDECLARED (0) --\n\n-- UNRESOLVED (0) --\n\n-- HISTORICAL (5) --\n  PROVINCE.md block 64-71 [scope CURRENT]\n      :67 [bare] kimi=6.4.0 -> historical (inline marker)\n  PROVINCE.md block 125-125 [scope DATED]\n      :125 [bare] None=6.4.0 -> historical (dated scope)\n  SCORECARD.md block 536-538 [scope DATED]\n      :537 [bare] kimi=6.4.0 -> historical (dated scope)\n  SCORECARD.md block 620-620 [scope DATED]\n      :620 [bare] None=6.4.0 -> historical (dated scope)\n  SKILL.md block 10-16 [scope CURRENT]\n      :12 [pin] None=6.4.0 -> historical (inline marker)\n\n-- CURRENT-OK (7) --\n  PROVINCE.md block 44-44 [scope CURRENT]\n      :44 [bare] devin=6.5.0 -> current-ok (matches live devin)\n      :44 [bare] omp=6.5.0 -> current-ok (matches live omp)\n      :44 [bare] kimi=6.7.0 -> current-ok (matches live kimi)\n  SCORECARD.md block 619-619 [scope DATED]\n      :619 [bare] None=6.5.0 -> current-ok (value equals a live anchor)\n  SCORECARD.md block 687-702 [scope DATED]\n      :699 [pin] None=6.7.0 -> current-ok (value equals a live anchor)\n  SCORECARD.md block 732-738 [scope DATED]\n      :732 [bare] None=6.7.0 -> current-ok (value equals a live anchor)\n      :734 [bare] None=6.7.0 -> current-ok (value equals a live anchor)\n      :735 [bare] None=6.5.0 -> current-ok (value equals a live anchor)\n      :737 [bare] None=6.5.0 -> current-ok (value equals a live anchor)\n      :738 [bare] None=6.7.0 -> current-ok (value equals a live anchor)\n  SCORECARD.md block 748-767 [scope DATED]\n      :753 [bare] kimi=6.7.0 -> current-ok (matches live kimi)\n  SCORECARD.md block 1833-1839 [scope DATED]\n      :1834 [pin] None=6.7.0 -> current-ok (value equals a live anchor)\n  SCORECARD.md block 2042-2051 [scope DATED]\n      :2044 [bare] None=6.7.0 -> current-ok (value equals a live anchor)\n\n-- INFO (8) --\n  PROVINCE.md block 8-13 [scope CURRENT]\n      :9 [pin] omp=6.5.0 -> current-ok (matches live omp)\n      :10 [pin] kimi=6.7.0 -> current-ok (matches live kimi)\n      :12 [pin] kimi=6.4.0 -> historical (inline marker)\n  PROVINCE.md block 15-26 [scope CURRENT]\n      :16 [pin] devin=6.5.0 -> current-ok (matches live devin)\n      :17 [pin] omp=6.5.0 -> current-ok (matches live omp)\n      :18 [pin] kimi=6.7.0 -> current-ok (matches live kimi)\n      :19 [bare] __cache__=6.7.0 -> current-ok (cache holds 6.7.0)\n      :20 [bare] __cache__=6.5.0 -> current-ok (cache holds 6.5.0)\n      :21 [bare] __cache__=6.4.0 -> current-ok (cache holds 6.4.0)\n      :24 [bare] devin=6.5.0 -> current-ok (matches live devin)\n      :24 [bare] omp=6.5.0 -> current-ok (matches live omp)\n      :25 [bare] None=6.7.0 -> current-ok (version-intrinsic; 6.7.0 cache exists)\n      :25 [bare] None=6.4.0 -> current-ok (version-intrinsic; 6.4.0 cache exists)\n      :26 [bare] None=6.4.0 -> historical (inline marker)\n      :16 [ptr] __ptr__=/home/vgpnk/.config/devin/mcp_config.json:7 -> current-ok (pins 6.5.0)\n      :17 [ptr] __ptr__=/home/vgpnk/.omp/agent/mcp.json:8 -> current-ok (pins 6.5.0)\n      :18 [ptr] __ptr__=~/.kimi-code/config.toml:4126 -> current-ok (pins 6.7.0)\n  PROVINCE.md block 45-45 [scope DATED]\n      :45 [pin] None=6.4.0 -> historical (dated scope)\n      :45 [bare] None=6.5.0 -> current-ok (value equals a live anchor)\n      :45 [bare] None=6.7.0 -> current-ok (value equals a live anchor)\n      :45 [bare] None=6.4.0 -> historical (dated scope)\n      :45 [bare] None=6.4.0 -> historical (dated scope)\n  SCORECARD.md block 56-60 [scope CURRENT]\n      :59 [pin] kimi=6.7.0 -> current-ok (matches live kimi)\n      :57 [bare] devin=6.5.0 -> current-ok (matches live devin)\n      :57 [bare] omp=6.5.0 -> current-ok (matches live omp)\n      :57 [bare] kimi=6.4.0 -> historical (inline marker)\n      :58 [bare] None=6.4.0 -> historical (inline marker)\n      :60 [bare] kimi=6.7.0 -> current-ok (matches live kimi)\n  SCORECARD.md block 288-295 [scope DATED]\n      :289 [bare] omp=6.5.0 -> current-ok (matches live omp)\n      :291 [bare] kimi=6.4.0 -> historical (dated scope)\n      :288 [ptr] __ptr__=~/.config/devin/mcp_config.json:7 -> current-ok (pins 6.5.0)\n      :289 [ptr] __ptr__=~/.omp/agent/mcp.json:8 -> current-ok (pins 6.5.0)\n      :291 [ptr] __ptr__=~/.kimi-code/config.toml:1478 -> historical (dated scope)\n  SCORECARD.md block 526-532 [scope DATED]\n      :530 [bare] kimi=6.4.0 -> historical (dated scope)\n      :530 [bare] None=6.5.0 -> current-ok (value equals a live anchor)\n      :530 [bare] kimi=6.4.0 -> historical (dated scope)\n  SCORECARD.md block 1776-1783 [scope DATED]\n      :1780 [pin] None=6.4.0 -> historical (dated scope)\n      :1780 [bare] None=6.7.0 -> current-ok (value equals a live anchor)\n  SKILL.md block 18-20 [scope CURRENT]\n      :19 [pin] devin=6.5.0 -> current-ok (matches live devin)\n      :19 [pin] omp=6.5.0 -> current-ok (matches live omp)\n      :20 [pin] kimi=6.7.0 -> current-ok (matches live kimi)\n      :20 [bare] None=6.4.0 -> historical (inline marker)\n\nSCOPE-ERRORS (marker assertions): []\nFRONTIER register (G21): 14 rows asserted, errors: []\nUNREADABLE (could-not-evaluate): []\nG2 positive-assertion guard: ok (current-ok loci per file: PROVINCE.md=20, SCORECARD.md=19, SKILL.md=3; total loci=20; floor=1/file)\nG7 configured!=held warnings: []\nG11 current-ok without receipt language: []\nDECLARED FAIL CLASSES: []\nVERDICT: PASS  (stale=0 ambiguous=0 undeclared=0 unresolved=0)\n",
+      "stderr": ""
+    },
+    {
+      "label": "sources-validate",
+      "argv": [
+        "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh",
+        "validate",
+        "--root",
+        "/home/vgpnk/Projects/shokunin",
+        "kaidoku"
+      ],
+      "exit": 0,
+      "stdout": "kaidoku\tok\t/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md\n",
+      "stderr": ""
+    },
+    {
+      "label": "sources-census",
+      "argv": [
+        "/home/vgpnk/Projects/shokunin/scripts/sources-census.sh",
+        "census",
+        "--root",
+        "/home/vgpnk/Projects/shokunin",
+        "kaidoku"
+      ],
+      "exit": 0,
+      "stdout": "kaidoku\trows\t22\nkaidoku\ttier.A\t20\nkaidoku\ttier.B\t1\nkaidoku\ttier.C\t1\nkaidoku\tstatus.mined\t21\nkaidoku\tstatus.rejected\t1\nFLEET\trows\t22\nFLEET\ttier.A\t20\nFLEET\ttier.B\t1\nFLEET\ttier.C\t1\nFLEET\ttier.invalid\t0\nFLEET\tstatus.queued\t0\nFLEET\tstatus.mined\t21\nFLEET\tstatus.rejected\t1\nFLEET\tstatus.invalid\t0\nFLEET\tmissing\t0\n",
+      "stderr": ""
+    }
+  ]
+}
