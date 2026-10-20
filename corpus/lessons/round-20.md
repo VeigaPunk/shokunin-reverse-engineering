@@ -118,3 +118,19 @@ Misroot sweep: run before the report (see the fleet report).
   `ScoutSandboxPrimitives.md`); not a security boundary.
 - Adjacency: revenger-shokunin's PROVINCE still claims the REA toolset while its own routing assigns the live surface to
   kaidoku (wave-1 `ConnSiblingRizin.md`); reported, not absorbed; no L0 line.
+
+## C3 measured outcome (author-side)
+
+Freeze `808cbb31a1e24656da5ba4967497e602fbca7415` (committer 18:01:54 -03, helper `landed` before the runner); runs
+18:02:05–18:17:55 -03, 19 labels, carrier guard checked clean before each. First-failure comparison (frozen comparator and
+extractor bytes, frozen emulator outputs): **19/19 match** — 8 exact predicted `Invalid index` values, 11 silent.
+objdump's REA analyze ended `execution_failure` (Java heap OOM after the Go failure); receipts 19/19 valid under
+`--require-mid-maps`. Entry: `corpus/knowledge/2026-10-20-r20-go1246-first-failure-forecast.md`. The retro 8/8 on round-19
+go1.25.0 logs is a consistency check, not prediction evidence.
+
+## Registry used-by appends (R20-USEDBY-APPEND, old → new)
+
+For S003, S023 and S035 the `used-by` cell at `14f0260ad319ecc26994381b2415d5a999003375` is a byte prefix of the new cell;
+the only change is the appended suffix `, corpus/knowledge/2026-10-20-r20-go1246-first-failure-forecast.md`
+(old cells end `…, corpus/knowledge/2026-10-20-r19-go125-toolchain-replay.md`). S040 (new this round) gained
+`corpus/lessons/round-20.md` before its first commit; S047 (new) gained the C3 entry. No status or recheck cell changed.

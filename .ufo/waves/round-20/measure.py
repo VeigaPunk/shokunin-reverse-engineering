@@ -35,6 +35,10 @@ PRED_RE = re.compile(r"^" + re.escape(ROUND) + r"/predictions/([^/]+)\.predictio
 RECEIPT_RE = re.compile(r"^" + re.escape(ROUND) + r"/runs/([^/]+)/receipt\.json$")
 COMPARE_RE = re.compile(r"^" + re.escape(ROUND) + r"/runs/([^/]+)/compare\.json$")
 EXIT_RE = re.compile(r"^" + re.escape(ROUND) + r"/runs/([^/]+)/compare\.exit$")
+# Round-20 lesson Mistakes 6: the in-run compare received the wrong prediction file and exited 2
+# for every label; the post-run re-run with the frozen comparator on the frozen emulator outputs is
+# retained under evidence/compare-rerun/ and, when present, supersedes runs/<label>/compare.json.
+RERUN_RE = re.compile(r"^" + re.escape(ROUND) + r"/evidence/compare-rerun/(t[0-9]+-[^/]+)\.json$")
 
 LIMITS = [
     "C1 and C2 summaries come from the corresponding Python tool blobs at REV; "
@@ -261,6 +265,11 @@ def _read_label_blobs(root, revision, freeze, paths):
         match = EXIT_RE.fullmatch(rel)
         if match:
             exits[match.group(1)] = rel
+    for rel in sorted(paths):
+        match = RERUN_RE.fullmatch(rel)
+        if match and match.group(1) in comparisons:
+            comparisons[match.group(1)] = rel
+            exits.pop(match.group(1), None)
     return predictions, receipts, comparisons, exits
 
 

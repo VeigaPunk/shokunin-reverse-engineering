@@ -1,0 +1,366 @@
+diff --git c/.ufo/waves/round-20/tools/routed-r19.py i/.ufo/waves/round-20/tools/routed-r19.py
+index 2c8e2bc..cf25e61 100755
+--- c/.ufo/waves/round-20/tools/routed-r19.py
++++ i/.ufo/waves/round-20/tools/routed-r19.py
+@@ -52,27 +52,24 @@ WAVE_OUTCOMES = ".ufo/waves/round-19/tools/wave-outcomes.py"
+ JJ_RED_BEFORE = ".ufo/waves/round-18/tools/jj-red-before.py"
+ REVPIN = ".ufo/waves/round-18/tools/revpin.py"
+ ITEMS = ("D1", "D2", "D3", "D4", "D5", "D6a", "D6b", "D6c", "D6d", "D6e", "D6f")
+-UTC_FIXTURE_DATE = "2000-01-01T00:00:00Z"
+ 
+ 
+ class CounterError(Exception):
+     """Input or Git-object failure that makes the whole measurement unusable."""
+ 
+ 
+-def _clean_env(extra=None):
++def _clean_env():
+     env = {k: v for k, v in os.environ.items()
+            if not k.startswith(("GIT_", "JJ_")) and k != "TMPDIR"}
+     env["TMPDIR"] = "/tmp"
+-    if extra:
+-        env.update(extra)
+     return env
+ 
+ 
+-def _run_git(root, args, timeout=60, env=None):
++def _run_git(root, args, timeout=60):
+     """Run Git only; this is never an extracted Python-tool launch."""
+     argv = ["git", "--no-optional-locks", "-C", root, *args]
+     try:
+-        proc = subprocess.run(argv, capture_output=True, env=_clean_env(env),
++        proc = subprocess.run(argv, capture_output=True, env=_clean_env(),
+                               timeout=timeout)
+         return proc.returncode, proc.stdout, proc.stderr
+     except subprocess.TimeoutExpired as exc:
+@@ -147,8 +144,8 @@ def _revexec_preflight(git, rev, tmp):
+     return ready, git.revexec_why
+ 
+ 
+-def _fixture_git(root, args, env=None, timeout=90):
+-    return _run_git(root, args, timeout=timeout, env=env)
++def _fixture_git(root, args, timeout=90):
++    return _run_git(root, args, timeout=timeout)
+ 
+ 
+ def _text(data):
+@@ -160,6 +157,14 @@ def _combined(result):
+         return ""
+     return _text(result.get("stdout", b"")) + "\n" + _text(result.get("stderr", b""))
+ 
++def _failure_tail(text, lines=3, limit=800):
++    kept = [line.strip() for line in text.splitlines() if line.strip()]
++    details = [line for line in kept
++               if " FAIL" in line or line.startswith("Traceback") or
++               re.search(r"(?:Error|Exception):", line)]
++    selected = details[-lines:] if details else kept[-lines:]
++    return " | ".join(selected)[-limit:]
++
+ 
+ class GitObjects:
+     def __init__(self, root):
+@@ -338,54 +343,63 @@ def _live_custody_check(root):
+ 
+ def _s_d1(ctx):
+     git, root, rev, tmp = ctx["git"], ctx["root"], ctx["rev"], ctx["tmp"]
++    failures = []
+     source = git.blob(rev, CUSTODY)
+     if source is None:
+-        return False, "%s absent at REV" % CUSTODY
+-    source_text = _text(source)
+-    if (not _selftest_has_case(source_text, "cmd_selftest",
+-                               "scratch_in_worktree_refused") or
+-            not _selftest_has_case(source_text, "cmd_selftest",
+-                                   "cleanup_after_run")):
+-        return False, "custody-pair selftest lacks the worktree-refusal or cleanup fixture"
++        failures.append("%s absent at REV" % CUSTODY)
++    else:
++        source_text = _text(source)
++        if (not _selftest_has_case(source_text, "_cmd_selftest",
++                                   "scratch_in_worktree_refused") or
++                not _selftest_has_case(source_text, "_cmd_selftest",
++                                       "cleanup_after_run")):
++            failures.append("custody-pair selftest lacks the worktree-refusal or cleanup fixture")
++
+     inside, err = _run_tool(git, root, tmp, rev, rev, CUSTODY,
+                             ["selftest", "--scratch", root])
+     if err:
+-        return False, err
+-    inside_text = _combined(inside)
+-    if inside["returncode"] != 2 or "scratch_inside_worktree" not in inside_text:
+-        return False, "in-worktree scratch did not refuse exit 2 with scratch_inside_worktree"
++        failures.append(err)
++    else:
++        inside_text = _combined(inside)
++        if inside["returncode"] != 2 or "scratch_inside_worktree" not in inside_text:
++            failures.append("in-worktree scratch did not refuse exit 2 with scratch_inside_worktree")
+ 
+     outside_run, err = _run_tool(git, root, tmp, rev, rev, CUSTODY,
+                                  ["selftest", "--scratch", "."])
+     if err:
+-        return False, err
+-    outside_text = _combined(outside_run)
+-    if outside_run["returncode"] != 0 or "SELFTEST: CLEAN" not in outside_text:
+-        return False, "outside-workdir scratch selftest was not CLEAN exit 0"
++        failures.append(err)
++    else:
++        outside_text = _combined(outside_run)
++        if outside_run["returncode"] != 0 or "SELFTEST: CLEAN" not in outside_text:
++            failures.append("outside-workdir scratch selftest failed: exit=%r %s" % (
++                outside_run["returncode"], _failure_tail(outside_text)))
++    live_note = ""
+     if ctx["live"]:
+         live_ok, live_why = _live_custody_check(root)
+-        if not live_ok:
+-            return False, live_why
+-        return True, "in-worktree refusal; cleanup_after_run selftest CLEAN; " + live_why
++        if live_ok:
++            live_note = live_why
++        else:
++            failures.append(live_why)
++    if failures:
++        if live_note:
++            failures.append("live check passed: " + live_note)
++        return False, "; ".join(failures)
++    if ctx["live"]:
++        return True, "in-worktree refusal; cleanup_after_run selftest CLEAN; " + live_note
+     return True, "in-worktree refusal; outside sandbox scratch and cleanup_after_run selftest CLEAN"
+ 
+ 
+-def _commit_fixture(repo, message, commit_date=None):
++def _commit_fixture(repo, message):
+     rc, _out, err = _fixture_git(repo, ["add", "-A"])
+     if rc != 0:
+         raise CounterError("fixture_git_add: %s" % _text(err).strip())
+-    env = {}
+-    if commit_date:
+-        env = {"GIT_AUTHOR_DATE": commit_date,
+-               "GIT_COMMITTER_DATE": commit_date}
+     rc, _out, err = _fixture_git(
+         repo, ["-c", "user.name=RoutedR19 fixture",
+                "-c", "user.email=routed-r19@example.invalid",
+-               "commit", "-qm", message], env=env)
++               "commit", "-qm", message])
+     if rc != 0:
+         raise CounterError("fixture_git_commit: %s" % _text(err).strip())
+-    g = GitObjects(repo)
+-    return g.resolve("HEAD")
++    return GitObjects(repo).resolve("HEAD")
+ 
+ 
+ def _s_d2(ctx):
+@@ -401,25 +415,15 @@ def _s_d2(ctx):
+     if bad["returncode"] != 1 or not _future_dated_claim(bad_data, bad_text):
+         return False, "baseline claims.json:36 was not reported future_dated (exit 1)"
+ 
+-    repo = os.path.join(tmp, "d2-clean-repo")
+-    os.makedirs(repo)
+-    rc, _out, stderr = _fixture_git(repo, ["init", "-q", "-b", "main"])
+-    if rc != 0:
+-        return False, "clean fixture init failed: %s" % _text(stderr).strip()
+-    clean_path = os.path.join(repo, ".ufo", "waves", "round-20", "evidence")
+-    os.makedirs(clean_path)
+-    with open(os.path.join(clean_path, "clean.txt"), "w", encoding="utf-8") as fh:
+-        fh.write("introduced and recorded at " + UTC_FIXTURE_DATE + "\n")
+-    clean_rev = _commit_fixture(repo, "clean timestamp fixture", UTC_FIXTURE_DATE)
+-    clean, err = _run_tool(
+-        git, root, tmp, rev, rev, TIMESTAMPS,
+-        ["--root", repo, "--rev", clean_rev,
+-         "--path", ".ufo/waves/round-20/evidence", "--strict"])
++    clean, err = _run_tool(git, root, tmp, rev, rev, TIMESTAMPS, ["--selftest"])
+     if err:
+         return False, err
+-    if clean["returncode"] != 0 or "future_dated" in _combined(clean):
+-        return False, "clean timestamp fixture did not pass strict mode"
+-    return True, "future_dated at baseline claims.json:36 and clean committed timestamp fixture passed"
++    clean_text = _combined(clean)
++    if (clean["returncode"] != 0 or "SELFTEST: CLEAN" not in clean_text or
++            "PASS future_line_flagged" not in clean_text or
++            "PASS past_line_clean" not in clean_text):
++        return False, "evidence-timestamps selftest did not prove future-line and clean-fixture cases"
++    return True, "baseline claims.json:36 future_dated; future and past timestamp selftest cases passed"
+ 
+ 
+ def _manifest_paths(text, root):
+@@ -487,30 +491,46 @@ def _s_d3(ctx):
+     if not isinstance(arm, dict):
+         return False, "carrier-guard arm.json absent or invalid at REV"
+     try:
++        arm_paths = _record_carriers(arm, root)
+         manifest_blob = git.blob(rev, CARRIERS)
+         wanted = (_manifest_paths(_text(manifest_blob), root)
+-                  if manifest_blob is not None else None)
++                  if manifest_blob is not None else arm_paths)
++        if arm_paths != wanted:
++            return False, "arm.json carrier set differs from predictions/carriers.tsv"
+         check_paths = [path for path in files
+                        if path.startswith(CARRIER_EVIDENCE + "/check-")
+                        and path.endswith(".json")]
+-        passed = False
++        retained_check = False
+         for path in check_paths:
+             record = _json_bytes(git.blob(rev, path))
+-            if not isinstance(record, dict) or type(record.get("exit")) is not int \
+-                    or record.get("exit") != 0:
++            if not isinstance(record, dict) or record.get("action") != "check":
+                 continue
+-            try:
+-                current = _record_carriers(record, root)
+-            except (ValueError, TypeError):
+-                continue
+-            if (current == wanted if wanted is not None else bool(current)):
+-                passed = True
++            findings = record.get("findings")
++            count = len(wanted)
++            if (findings == [] and type(record.get("carrier_count")) is int and
++                    type(record.get("checked_count")) is int and
++                    record["carrier_count"] == count and
++                    record["checked_count"] == count and
++                    os.path.basename(str(record.get("arm_record", ""))) == "arm.json"):
++                retained_check = True
+                 break
+-        if not passed:
+-            return False, "no exit-0 check record has the required carrier set"
++        if not retained_check:
++            return False, "no complete finding-free check record matches the manifest carrier set"
+     except (ValueError, TypeError, UnicodeDecodeError) as exc:
+         return False, "carrier evidence invalid: %s" % exc
+-    return True, "clean exec_refused/mode_restored selftest; arm.json and matching exit-0 check record retained"
++
++    checked, err = _run_tool(
++        git, root, tmp, rev, rev, CARRIER_GUARD,
++        ["check", "--manifest", CARRIERS, "--record", CARRIER_EVIDENCE],
++        extras=(CARRIERS, arm_path))
++    if err:
++        return False, err
++    checked_text = _combined(checked)
++    marker = "CHECK clean carriers_checked=%d" % len(wanted)
++    if checked["returncode"] != 0 or marker not in checked_text:
++        return False, "fresh carrier-guard check did not pass: exit=%r %s" % (
++            checked["returncode"], checked_text.strip()[:800])
++    return True, "clean exec_refused/mode_restored selftest; retained arm/check records and fresh manifest check passed"
+ 
+ 
+ def _extract_archive(archive, dest):
+@@ -576,7 +596,11 @@ def _s_d4(ctx):
+         return False, err
+     output = _combined(result)
+     if result["returncode"] != 0 or "VERDICT: PASS" not in output:
+-        return False, "c1-census-v10 archive run did not print VERDICT: PASS exit 0"
++        lines = output.splitlines()
++        diagnostic = next((line for line in lines if line.startswith("ANCHOR-FAIL:")),
++                          lines[-1] if lines else "")
++        return False, "c1-census archive run failed: exit=%r %s" % (
++            result["returncode"], diagnostic)
+     return True, "c1-census-v10.py from REV passed over a git archive export"
+ 
+ 
+@@ -657,11 +681,10 @@ def _s_d6a(ctx):
+             path = value.get("path")
+             if is_nested and isinstance(path, str):
+                 normalized = path.replace("\\", "/")
+-                if "round-17" in normalized:
+-                    if normalized.endswith("verify.py"):
+-                        found.add("verify.py")
+-                    if normalized.endswith("revpin.py"):
+-                        found.add("revpin.py")
++                if "round-17" in normalized and normalized.endswith("verify.py"):
++                    found.add("verify.py")
++                if "round-18" in normalized and normalized.endswith("revpin.py"):
++                    found.add("revpin.py")
+             for key, child in value.items():
+                 collect(child, is_nested or str(key).lower() == "nested")
+         elif isinstance(value, list):
+@@ -669,16 +692,15 @@ def _s_d6a(ctx):
+                 collect(child, nested)
+         elif isinstance(value, str) and nested:
+             normalized = value.replace("\\", "/")
+-            if "round-17" in normalized:
+-                if normalized.endswith("verify.py"):
+-                    found.add("verify.py")
+-                if normalized.endswith("revpin.py"):
+-                    found.add("revpin.py")
++            if "round-17" in normalized and normalized.endswith("verify.py"):
++                found.add("verify.py")
++            if "round-18" in normalized and normalized.endswith("revpin.py"):
++                found.add("revpin.py")
+ 
+     collect(data)
+     if found != {"verify.py", "revpin.py"}:
+-        return False, "nested findings missing for round-17 verify.py and/or revpin.py"
+-    return True, "head-rev-lint reports both round-17 files as nested"
++        return False, "nested findings missing for round-17 verify.py and round-18 revpin.py"
++    return True, "head-rev-lint reports both round-17 verify.py and round-18 revpin.py as nested"
+ 
+ 
+ def _assignment_list(function, name="argv"):
+@@ -876,32 +898,58 @@ def _s_d6e(ctx):
+     return True, "seat_named_causes selftest fixture passed"
+ 
+ 
+-def _case_ids(text):
+-    return set(re.findall(r"\bjj_[A-Za-z0-9][A-Za-z0-9_-]*\b", text))
++def _case_ids(source):
++    try:
++        tree = ast.parse(source)
++    except (SyntaxError, TypeError, ValueError):
++        return set()
++    selftest = next((node for node in tree.body
++                     if isinstance(node, ast.FunctionDef) and node.name == "selftest"),
++                    None)
++    if selftest is None:
++        return set()
++    ids = set()
++    for node in ast.walk(selftest):
++        if isinstance(node, ast.Constant) and isinstance(node.value, str):
++            ids.update(match.group(0) for match in
++                       re.finditer(r"\bjj_[A-Za-z0-9][A-Za-z0-9_-]*\b", node.value))
++    return ids
+ 
+ 
+ def _s_d6f(ctx):
+     git, root, rev, tmp = ctx["git"], ctx["root"], ctx["rev"], ctx["tmp"]
++    current_blob = git.blob(rev, JJ_RED_BEFORE)
++    baseline_blob = git.blob(BASELINE, JJ_RED_BEFORE)
++    if current_blob is None or baseline_blob is None:
++        return False, "jj-red-before source absent at REV or baseline"
++    current_ids = _case_ids(_text(current_blob))
++    baseline_ids = _case_ids(_text(baseline_blob))
++    if len(current_ids) < len(baseline_ids) + 2:
++        return False, "jj_ source case ids at REV=%d baseline=%d; need at least two more" % (
++            len(current_ids), len(baseline_ids))
++    jj_path = shutil.which("jj") or os.path.expanduser("~/.local/bin/jj")
++    if not os.path.isfile(jj_path):
++        return False, "jj executable unavailable at the resolved --jj path"
+     extras = (REVPIN,)
++    args = ["--selftest", "--jj", jj_path]
+     current, err = _run_tool(git, root, tmp, rev, rev, JJ_RED_BEFORE,
+-                             ["--selftest"], extras=extras, timeout=360)
++                             args, extras=extras, timeout=360)
+     if err:
+         return False, err
+     current_text = _combined(current)
+     if current["returncode"] != 0 or "SELFTEST: CLEAN" not in current_text:
+-        return False, "jj-red-before selftest at REV was not CLEAN exit 0"
++        return False, "jj-red-before REV selftest exit=%r (jj_ ids %d vs %d): %s" % (
++            current["returncode"], len(current_ids), len(baseline_ids),
++            _failure_tail(current_text))
+     baseline, err = _run_tool(git, root, tmp, rev, BASELINE, JJ_RED_BEFORE,
+-                              ["--selftest"], extras=extras, timeout=360)
++                              args, extras=extras, timeout=360)
+     if err:
+         return False, err
+     baseline_text = _combined(baseline)
+     if baseline["returncode"] != 0 or "SELFTEST: CLEAN" not in baseline_text:
+-        return False, "jj-red-before baseline selftest was not CLEAN exit 0"
+-    current_ids, baseline_ids = _case_ids(current_text), _case_ids(baseline_text)
+-    if len(current_ids) < len(baseline_ids) + 2:
+-        return False, "jj_ case ids at REV=%d baseline=%d; need at least two more" % (
+-            len(current_ids), len(baseline_ids))
+-    return True, "jj-red-before selftest CLEAN; jj_ case ids %d at REV vs %d at baseline" % (
++        return False, "jj-red-before baseline selftest exit=%r: %s" % (
++            baseline["returncode"], baseline_text.strip()[:1000])
++    return True, "jj-red-before selftests CLEAN; source case ids %d at REV vs %d at baseline" % (
+         len(current_ids), len(baseline_ids))
+ 
+ 
