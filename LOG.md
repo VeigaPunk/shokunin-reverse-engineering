@@ -1829,3 +1829,54 @@ outputs are `.ufo/waves/round-14/verification.json`.
 - Trend verdicts: expansion unchanged, quality improved, discernment
   improved by turning prior outside findings into criterion and regressions.
   No current-round outside admission or SHONEN upgrade is asserted.
+
+## 2026-10-20 — round-15 — installed Go snapshot evidence and calibration corrections
+
+Declared C1 **depth**: retain installed JSON/diff byte identities and selection
+semantics, including requested-version labels versus actual fallback bytes.
+Declared C2 **calibration**: close both routed defects in the genuine outside
+`corpus/lessons/round-14-verifier-spotcheck.md`. All three owned finite proxies
+tie at 10; calibration is worked without inventing a higher score.
+
+- C1 adds `corpus/knowledge/2026-10-20-r15-go-snapshot-inventory.md` and the
+  read-only `.ufo/waves/round-15/snapshot-inventory.py` probe. S003 source
+  selection law and newly opened S023 JSON are distinct inputs from the
+  same installation, not independent corroborating origins. Requested Go
+  patch metadata must not stand for the actual selected base/diff bytes.
+  Detailed observed inventory will be retained with measured records.
+- **Named correction — virtual-dispatch advisory:** the prior
+  `ReviewGoInference.md:57-61,110,122,136` wording-only explanation is
+  superseded by the source call chain through overridden `getType` and
+  snapshot-backed `GoTypeManager.findTypeRec`. Named appended corrections
+  in round-14 lesson and knowledge entry qualify that whole advisory
+  pointer; the advisory artifact itself remains unchanged. The old target
+  cause stays UNKNOWN, and neither adding a JSON nor widening a range is
+  claimed to repair execution.
+- C2 adds QUALITY #17, preserving prior contiguous-quote requirements while
+  making manual-only input discipline explicit. The raw gate has no
+  representation classifier; excluded submissions have no valid claim
+  verdict even if the raw script returns 0/1/2. Two synthetic same-source
+  manifests retain the raw/rendered counterexample. Gate and old frozen
+  fixture bytes are unchanged; final executed outcomes follow in records.
+- The prior source-only architecture alternative is qualified: measured
+  unpatched bases' generic `all` bucket prevents a missing platform key
+  alone from making the applicable map empty. No patched-result replay.
+- Frontier: S023 added after opening actual JSON; S003/S007 permitted
+  used-by appends are logged old→new in the lesson. Source quotes carry
+  exact member/JSON anchors and access date. Detailed counts and final
+  validator output are recorded after all seats finish.
+- SHONEN canonical directory-name title and one evidence line per box are
+  restored; the older footer's 17/17 qualification moves into its evidence
+  line. All four boxes remain author-only `[~]`; no promotion.
+- Exactly one approved 32-seat task batch; `.ufo/waves/round-15/spec.json`,
+  `dispatch.json`, `task-result.json`, and `w1/swarm-registry.json`. L1 holds
+  planner; seats advise. Some advisory numerical/counterfactual claims
+  conflict and are not admitted by majority vote: the final persisted
+  inventory and explicit source boundaries govern.
+- Baseline `9719dd232687f5ee78a4ed323b37f8810e833d10` was clean; no inherited
+  lane debt, no verifier-file edits, no client/auth/db/config access, no
+  target/provider execution, no tool install/update, no new L0 question.
+
+Motivation, candidate admits/rejects, mistakes and source quotes:
+`corpus/lessons/round-15.md`. Work is committed before immutable after-counts;
+no unrun verification is called passed by this entry.

@@ -140,3 +140,27 @@ harm observed in the named controls. Expansion unchanged, quality improved,
 discernment improved by learning the prior outside findings. Current
 non-author admit/reject sampling is still pending; L2 opinions and green
 local tests are not that check.
+
+## Round-15 correction — virtual-dispatch advisory
+
+The Gate's first candidate row and Mistakes causal-overreach row cite
+`.ufo/waves/round-14/w1/ReviewGoInference.md`; its lines 57–61 are flawed
+advisory evidence, not support for the bootstrap mechanism. Contrary to that
+report, `registerStructures` reaches the mapper's overridden `getType`
+(`GoRttiMapper.java:380-386`), which calls `GoTypeManager.findDataType`.
+The latter's `findTypeRec` consults `apiSnapshot` for non-primitive definitions
+(`GoTypeManager.java:405-455`). An invalid snapshot is not merely a selector
+for error wording: it participates in the failed lookup chain.
+
+This correction also supersedes the same mechanism repeated in
+`ReviewGoInference.md:110` (H2's wording-only support/status cells), `:122`
+(the wording-only rationale, not the historical-cause prohibition), and `:136`
+(the then-untraced struct source). The comparison that both catch branches
+return null remains correct; it does not make their shared prerequisite
+independent of snapshot-backed type lookup.
+
+This named correction qualifies the advisory pointer without altering its
+filed bytes or the correct admitted round-14 knowledge entry. Evidence:
+S003 reopened 2026-10-20; `corpus/lessons/round-14-verifier-spotcheck.md`,
+routed defect 1, and `corpus/lessons/round-15.md`. No historical target replay
+or compiled-provider/source equivalence is inferred.

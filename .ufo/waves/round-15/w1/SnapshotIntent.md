@@ -1,0 +1,36 @@
+# Snapshot bootstrap intent — round 15
+
+**Axes:** depth; calibration.
+
+## Authorities and scope
+
+S007 is the installed `/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/docs/ChangeHistory.md`, SHA-256 `c6b25301cda77dca1683a2a1802d84256d35625cf8959cdced144579486f65c4`. Its header identifies Ghidra 12.1.4 at line 1. Under `Ghidra 12.0 Change History` (line 564), Improvements line 585 says: “Added support for Golang 1.24 and 1.25. Changed method of bootstrapping Go type info to use json Go snapshot files instead of gdt files.” This is the release-history statement of the transition; it does not itself explain runtime selection or diagnose a particular binary.
+
+Installed S003 is `/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/lib/Base-src.zip`, SHA-256 `f00d29c20119562eca7efd2740e8c67257ebd63ea24a3dfbc4dbbb9187a8d804`. The excerpts below are direct reads of its archive members, not execution. The local source registry is `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md` (S003 and S007). No LSP route was exposed for the archived source member, so no LSP references/implementation result is claimed; no grep result is used as semantic proof.
+
+## Reconstructed source contract
+
+| Signal | Observed installed-source behavior | What it does not establish |
+|---|---|---|
+| Version-range report | `GoRttiMapper.java:79,170-176` declares the tested range as 1.15–1.25. For a valid Go version outside it, the code emits `Msg.error(..., "Untested Go version ...")` but does not return or throw there; it proceeds to `GoApiSnapshot.get`. An invalid/unparseable Go version is a separate `BootstrapInfoException` branch. | The text “Untested Go version” is not by itself proof that snapshot selection or analysis stopped. `Msg.error` is the logger call used, but the branch continues. |
+| Snapshot/base metadata | `GoApiSnapshot.java:104-126` derives candidate architecture labels in order from OS+architecture, OS, `unix` where applicable, architecture, and `all`, then requests the base JSON for `goVer.withPatch(0)`. If no base provider is returned, `get` returns `GoApiSnapshot.EMPTY` (`:115`). The lookup is for that same major/minor base, not an earlier minor (`:122-126`). | A missing base and a present base that later yields no usable architecture record are different underlying conditions, even though both can produce an invalid/empty snapshot. The code does not identify the past target's condition without its metadata and logs. |
+| Patch-diff selection | `GoApiSnapshot.java:148-166` searches patch-diff files downward within the requested major/minor; it uses a found lower patch diff with the base, or uses the base directly when no patch diff is found. A lower-patch choice emits a fallback message. | Absence of an exact patch diff is not itself a fatal snapshot miss; the source does not search a prior minor's base. |
+| OS/architecture applicability | `GoApiSnapshot.java:205-239` filters the JSON to the eligible architecture labels and retains records in search order. `isInvalid()` at `:503-505` is simply `arches.isEmpty()`. Thus a JSON file may exist but still produce an invalid snapshot when none of the eligible labels has a record. | “Invalid snapshot” does not uniquely mean “base JSON file absent,” nor does it prove a binary-layout problem. |
+| Required-structure mapping | `GoRttiMapper.java:353-365` calls `registerStructures`. If that raises `IOException` while the snapshot is invalid, it raises `BootstrapInfoException("Missing Go bootstrap type info, unable to extract Go RTTI info.")`; if the snapshot is valid, it raises a distinct `IOException("Invalid Go bootstrap struct mapping info: ...")`. `DataTypeMapper.java:172-181` shows a concrete registration failure when a required mapped structure is unavailable. | The “Missing Go bootstrap type info” diagnostic is conditional on both registration failure and invalid snapshot. It does not independently prove whether the base file was absent or applicability filtering removed all records. A mapping failure with a valid snapshot is separately classified. |
+| Downstream handling / JSON path | `GoRttiMapper.java:114-125` catches `BootstrapInfoException` as a warning and returns null; the analyzer's null check returns false (`GolangSymbolAnalyzer.java:133-137`). The valid-snapshot mapping `IOException` takes the separate error path in `GoRttiMapper.java:114-125`. `GoRttiMapper.java:331,380-386` routes this mapper's type lookup through `GoTypeManager`; `GoTypeManager.java:448-449` obtains non-primitive definitions from `apiSnapshot`. | The presence of old `.gdt` files in an installation would not by itself show they are used by this JSON-backed lookup path. S007's “instead of gdt files” is consistent with this source path; it is not evidence that GDT files are absent from the installation. |
+
+A non-pinned listing of `/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/data/typeinfo/golang` showed base JSON names from `go1.15.0.json` through `go1.25.0.json` and patch-diff names through `go1.24.6.json.diff`; no `go1.26.0.json` appeared in that listing. This is only a current filename observation, not a cryptographically pinned inventory or a record of what any historical analysis process read. C1's inventory should pin file identities separately.
+
+## Last-known-good invariant, divergence, and limits
+
+**Source-level invariant:** an out-of-range but valid version is reported and still enters snapshot lookup; snapshot availability and applicability are distinct from the subsequent required-structure mapping; the mapping exception changes according to snapshot validity. This is the narrow contract supported by the installed 12.1.4 source and the S007 transition note.
+
+**Historical divergence: UNKNOWN.** The earlier entry `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-20-r14-go-version-diagnosis.md:83-90` records that the transient historical analyzer log was not retained and labels the original run's precise cause unknown. No source-reading result here reconstructs that target's Go version, GOOS/GOARCH, selected JSON/diff, registration outcome, or downstream layout. No target/provider run was performed.
+
+**Confidence:** high for the present source control-flow distinctions and S007's stated transition; unknown for the lost target run's cause. The observed current directory listing is intentionally not represented as the pinned inventory required by C1.
+
+## Proposed L1 checks (not run)
+
+1. Re-open S007 lines 1, 564, and 585 and the cited S003 members/anchors against the digests above.
+2. Cross-check C1's pinned inventory and selection record against the decision points in this table: missing base, patch-diff fallback, and present-but-no-eligible OS/architecture records must remain distinguishable; the bootstrap diagnostic alone must not select among them.
+3. Confirm integrated round-15 text keeps the prior target's exact cause UNKNOWN unless retained historical evidence is produced. No tests, build, lint, gate, or smoke check was run for this report.

@@ -104,3 +104,26 @@ Evidence: `.ufo/waves/round-14/w1/GoEntryDraft.md`,
 `.ufo/waves/round-14/w1/AttackNovelty.md`.
 The original study lead is fleet `.ufo/waves/kaika-w1/kaidoku-art.md`, K1;
 round-14 seats re-opened the sources rather than treating that draft as proof.
+
+## Round-15 advisory-pointer correction
+
+The `ReviewGoInference.md` evidence pointer above is retained only as a record
+of author-side review. Its lines 57–61 incorrectly treat snapshot validity
+as affecting only error wording and overlook virtual `getType` dispatch.
+It must not support the mechanism. The admitted source observations above
+remain supported by S003's `GoRttiMapper.java:380-386` and
+`GoTypeManager.java:405-455`, reopened 2026-10-20. Named correction:
+`corpus/lessons/round-14.md`, `Round-15 correction — virtual-dispatch advisory`;
+outside finding: `corpus/lessons/round-14-verifier-spotcheck.md`, routed defect 1.
+
+## Round-15 installed-data qualification
+
+The present-file/no-applicable-architecture path described at lines 51–54
+is a source-level possibility, not an observed failure in the installed
+base snapshots. The round-15 inventory checks each base's generic `all`
+bucket, which the source always includes in its search order. That prevents
+an absent platform-specific key alone from yielding an empty applicable
+map for those unpatched bases. Patch diffs are inventoried, not applied;
+this qualification does not assert all possible patched results.
+Pinned inventory and the requested-version-versus-byte-identity distinction:
+`corpus/knowledge/2026-10-20-r15-go-snapshot-inventory.md`.
