@@ -163,3 +163,33 @@ Full outputs/exits: `.ufo/waves/round-15/verification.json`.
 This current-round mistake is captured by the registered citation check.
 Only the evidence-line wording changes in its repair; no baseline pin or
 historical scorecard entry is rewritten.
+
+## Final author-side gate and revision
+
+The truthful SHONEN craft phrase is restored at final measured source
+`ba3b2195d080d3083d339a67c35359855ad164a5`.
+`final-recheck.json` records the immutable counts (all four claim-presence
+controls 1, map 93/93, source rows 23) and strict citation clean findings 0,
+exit 0. No instrument or pointer-table expectation changes were made in
+that wording-only repair.
+
+Final author-side dispositions: **C1 depth improved**, from the persisted
+installed byte pins and requested-label/selected-data distinction; **C2
+calibration improved**, both outside duties discharged. Neither gains
+numeric proxy points or a capability/stagnation credit. Coverage unchanged;
+no residual harm in the named controls. Expansion unchanged, quality improved,
+discernment improved by learning prior outside findings, not by treating
+author-side seats as outside reviewers. Current-round independent sampling
+and admission remain the separate non-author closure duty.
+
+Final required census (same command as round start):
+
+```text
+/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+kaidoku	ok	/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+exit=0
+```
+
+Tool installs/updates: none across L1 and all seats. Stale-lane: this is the
+sole named kaidoku mission, respawn-per-round; no other mission of this lane
+is open. The lane report names the pushed HEAD after records land.

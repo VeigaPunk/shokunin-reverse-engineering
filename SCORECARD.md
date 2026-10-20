@@ -2231,3 +2231,62 @@ Planned: after the fresh non-author sample, one depth/capability claim to
 discriminate bootstrap failure on a caller-selected real Go carrier with
 retained analyzer diagnostics; no implicit upgrade, recovery promise, or
 next-round execution is made here.
+
+## Round 15 — installed snapshot evidence and review-duty calibration, 2026-10-20
+
+Baseline: `9719dd232687f5ee78a4ed323b37f8810e833d10`.
+Final measured source/evidence revision:
+`ba3b2195d080d3083d339a67c35359855ad164a5`.
+Probe repair source: `7ad23fe1735cd868ec203d93deb13bb2c42889ad`.
+Motivation and accepted/rejected candidates: LOG round-15 and
+`corpus/lessons/round-15.md`; refinements in
+`.ufo/waves/round-15/claims-review.json`.
+
+| Claim / axis | Existing proxy delta | Supplemental before→after, command and revision | Author-side verdict and limits |
+|---|---|---|---|
+| C1 depth | 10.0→10.0, delta 0 | Entry/tool presence 0/0→1/1; `python3 .ufo/waves/round-15/measure.py <revision>` on baseline and final measured hash above. Actual inventory command is the new entry's `recheck:`; retained output and exits in `verification.json`, measured probe source above | **improved** by persisted per-file installed-data pins, patch histogram, generic bootstrap definitions and requested-version/fallback-byte distinction; not by repeated filenames or mere file presence. Two repaired-probe runs exit 0, byte-identical. No target recovery or historical causality claim |
+| C2 calibration | 10.0→10.0, delta 0 | Explicit manual-only criterion and named advisory correction 0/0→1/1; same immutable measurement command/revisions. Boundary red/raw-fixed commands in `verification.json` exit 1→0; only quote text differs, same source and ID | **improved**, two outside duties discharged through corrected active wording and source trace. Existing raw gate unchanged; no classifier, new capability, independent review or stagnation reset |
+| coverage | 10.0→10.0 | Map 92/92→93/93, missing/dangling empty; same measure command | unchanged domain ground; Go was already held |
+| operability | no owned numeric proxy | Actual first inventory run failed exit 1 at `856d193`; numeric/dict patch-key collision repaired; final script runs clean | no residual harm; initial red and repair retained, not silently treated as first-run success |
+| freshness | no owned numeric proxy | Installed resources reopened and byte-pinned; no provider replay | unchanged; no live runtime freshness claim |
+| adjacency | no owned numeric proxy | Local source/data and evidence wording only | unchanged; no sibling research method, configuration, engine or domain-target ownership taken |
+
+The before/after booleans are presence controls, not expertise scores or
+semantic proof. Source anchors and actual installed-data output supply C1's
+substance; the prior genuine outside lesson and explicit criterion supply C2's.
+No capability table row is added; no proxy is relabeled or retired.
+The three-way lowest-axis tie is worked through calibration.
+
+### Executed checks and honest repairs
+
+- Inventory: 11 base JSONs, 123 patch diffs; every base has generic `all`,
+  errors/skipped empty. Requested 1.25.7 has base 1.25.0 and no diff;
+  requested 1.26.8 has no base. These are selected source/data inputs,
+  not current-target observations. Full output SHA-256
+  `ad06fadc0166e172d65325e3366375e2d4a9730d714d154bbcd98137539bb2fe`.
+- Quote selftest 28/28, original frozen expectations seven matched, new
+  boundary frozen expectations two matched; all clean exit 0. The direct
+  rendered fixture produces exit 1 `quote_not_contiguous@raw-literal`;
+  the quote-only raw form is clean. This exposes the representation limit.
+- Craft bytes unchanged, command-A control 17/17 on both source revisions;
+  `no-harm-controls.json`. Append-only logs/old lesson/old knowledge retained;
+  outside verifier/advisory and existing raw-gate inputs unchanged.
+- Strict citation check first detected the SHONEN evidence-line wording
+  regression, exit 1. A wording-only correction preserved the truthful
+  pinned craft phrase; final revision check clean findings 0, exit 0,
+  `final-recheck.json`. Pointer baseline unchanged.
+- Required source census start/end exit 0; rows 22→23,
+  A20/B1/C1→A21/B1/C1, mined21/rejected1→mined22/rejected1.
+  S023 adds one opened code source; S003/S007 only permitted used-by appends.
+
+Learning trends: **expansion unchanged** (same Go ground), **quality improved**
+(stronger pinned data/selection diagnosis and corrected active source wording),
+**discernment improved** by learning both prior outside-routed defects into
+grounded criterion/lessons. This is not a new outside spotcheck: all 32 seats
+are author-side and current-round independent admit/reject sampling remains
+the closure duty. All four SHONEN marks remain `[~]`.
+
+Planned: only with an explicitly selected real Go carrier, retain new analyzer
+diagnostics and distinguish requested-version labels from fallback data in
+that run. No next-round execution, target choice, recovery success, or
+operator-authorization blocker is inferred from this source-only round.

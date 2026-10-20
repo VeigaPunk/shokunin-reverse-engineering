@@ -1880,3 +1880,43 @@ tie at 10; calibration is worked without inventing a higher score.
 Motivation, candidate admits/rejects, mistakes and source quotes:
 `corpus/lessons/round-15.md`. Work is committed before immutable after-counts;
 no unrun verification is called passed by this entry.
+
+## 2026-10-20 — round-15 measured records and repairs
+
+Baseline `9719dd232687f5ee78a4ed323b37f8810e833d10`; final measured
+source/evidence `ba3b2195d080d3083d339a67c35359855ad164a5`.
+Source work first landed at `856d193b8c21d3f7aeff3cb8a27b55a715ab897e`.
+
+- Actual first inventory run exit 1: numeric `patch` was overwritten with a
+  dictionary, making sort compare dictionaries. Both failed invocations are
+  retained in `verification-initial.json`. The only code repair names the
+  counters `patch_structure`, preserving numeric patch; landed at
+  `7ad23fe1735cd868ec203d93deb13bb2c42889ad`.
+- Repaired inventory ran twice exit 0, byte-identical; 11 base JSONs,
+  123 diffs, generic `all` in every base, no errors/skipped matching files.
+  Per-file identities, patch histogram and selected bootstrap structure are
+  committed in `inventory.json`. Command, stderr/stdout and exact exits:
+  `.ufo/waves/round-15/verification.json`.
+- Immutable counts: C1 entry/tool 0/0→1/1, C2 criterion/correction 0/0→1/1;
+  map 92/92→93/93, missing/dangling empty. These are presence controls;
+  technical/source content is checked separately, not inferred from naming.
+- Existing quote selftest 28/28 and seven frozen cases clean; new frozen
+  boundary cases both match. Rendered red exits 1
+  `quote_not_contiguous@raw-literal`; quote-only raw-fixed exits 0.
+  No representation classifier is introduced or claimed.
+- Citation check caught a SHONEN rewording regression, exit 1. Preserve
+  the truthful pinned craft phrase instead of changing baseline pins;
+  final revision strict check clean, zero findings, exit 0.
+  `final-recheck.json` retains the new measure/citation outputs.
+- Craft control remains byte-identical and 17/17; old raw instrument,
+  expectations, advisory and genuine outside verifier are unchanged.
+  Append-only checks and measurement pins match (`no-harm-controls.json`).
+- Required source census start/end exit 0; rows 22→23, new A1/B0/C0,
+  existing statuses/recheck unchanged; exact used-by deltas in the lesson.
+- SCORECARD records numeric deltas 0, C1 depth and C2 calibration improved,
+  no harmed axis or new capability credit. Expansion unchanged, quality
+  improved, discernment improved by learning prior routed defects. All
+  four SHONEN marks remain author-only `[~]`; independent closure pending.
+
+No new L0 question, no installation/update, no target/provider execution.
+Report lands after these records and the lane push, not before.
