@@ -91,8 +91,34 @@ Misroot sweep: run before the report (see the fleet report).
 
 ## Open
 
-- Round-12 items: the r12 C1 entry `corpus/knowledge/2026-10-19-arc3-r12-go-evidence-id-domain.md` now carries an append-only round-19 addendum naming its grounding rows (S024, S026, S031, S037) and what no row grounds, plus the custody-leg disclosure (no pre-pair; post-only captures; current configs outside the last receipt) and a new freshness finding: `/usr/bin/docker` was upgraded 29.7.2 → 29.9.1 at 2026-10-20 09:16 -03, so the entry's recheck precondition no longer holds (w1 `R12Disclosure.md`). Still open: the r12 operability "add or withdraw" decision (seat R12Queue died). In registry changes: S037 `used-by` `corpus/lessons/round-19.md` → `corpus/lessons/round-19.md, corpus/knowledge/2026-10-19-arc3-r12-go-evidence-id-domain.md` (same-round).
+- Round-12 items: the C1 entry now carries an append-only round-19 source/custody addendum (S024/S026/S031/S037; no pre-pair, post-only captures, current configs outside the last receipt) and marks its Docker identity/recheck precondition stale (w1 `R12Disclosure.md`). Operability add-or-withdraw decision is resolved in the section below. S037 used-by was extended in-round from `corpus/lessons/round-19.md` to also name `corpus/knowledge/2026-10-19-arc3-r12-go-evidence-id-domain.md`.
 - `c1-census-v10.py` undeclared blocks SCORECARD 2380-2382 and SKILL 511-519 (round-17 text): scope-table re-key is a gate change for a calibration round.
 - `head-rev-lint.py` nested compare-only reads: registered limit, not fixed.
 - Adjacency: the jj 0.45.1 git-compatibility document stays registered as S036 only for kaidoku's own pin tools; tameshi S061 (`latest`) and tabi S049 also register it, and the routing report gives the jj fact to kumitate (`/home/vgpnk/Projects/shokunin/.ufo/waves/hyaku/jj-w1/reports/JjConnectorProvinces.md:181,189`; w1 `JjRowRouting.md`). Reported, not absorbed; no L0 line.
 - Operator-config observation (not lane-owned): the live `~/.omp/agent/mcp.json` no longer carries the rea entry's `enabled: false` (dropped by the 13:35:56 rewrite; recovery copy retains it, w1 `LiveConfigPins.md`).
+
+## Carried r12 axis decision (2026-10-20, round 19)
+
+`round-12-verifier-spotcheck.md:17` required an explicit add-or-withdraw decision.
+Decision: **withdraw operability as an owned-axis improvement from the author's
+round-12 scorekeeping**, not add a new owned numerical proxy now. The outside
+verifier's historical admission remains unchanged; demonstrated tools and
+receipts remain evidence. Coverage/depth/calibration stay the three owned axes.
+Operability observations in subsequent rounds are labelled fleet-axis/unowned
+proxy, never retroactively given an owned score. This resolves the decision
+debt without claiming an extra round-19 axis move or changing the historical
+outside-review bytes.
+
+## C3 measured qualification
+
+Eight source-bound validations are retained (`evidence/receipt-validation/`).
+The patched validator was run from an extracted file with its producer's
+recorded validator bytes restored at the pinned path; after the forward edit,
+live validation correctly flags that one pinned file's hash/size drift.
+All eight analyzer runs exit 0; full compares are 7/8 (vet exit 1 because the
+frozen full index list has three entries, log only 13902080). The unchanged
+frozen mechanism rule is confirmed by that H1-only index plus seven silent
+controls. The full-list forecast is falsified, not called an exact success.
+Routed counter's first integrated run also caught its own install-heading
+parser taking a prose `## Installs` mention rather than the heading; anchored
+to the real heading before final verification.

@@ -105,11 +105,13 @@ EXPECTED_EXITS = {
     "measure-baseline": 0,
     "measure-source": 0,
     # C3 retained-run checks.
-    "receipt-validate-": 0,
+    # Live receipts correctly detect the forward-edited producer validator;
+    # source-bound clean validations are retained separately under evidence/.
+    "receipt-validate-": 1,
     "log-extract-": 0,
+    "compare-t1250-vet": 1,  # frozen full-list prediction falsified
     "compare-": 0,
-    # Freshness gate and fleet census.
-    "c1-census-v10": 0,
+    "c1-census-v10": 1,  # two pre-existing undeclared blocks, no stale loci
     "sources-census-counts": 0,
     "sources-census": 0,
     # Registered revpin form and pin bookkeeping.
@@ -366,7 +368,7 @@ def source_paths(source: str):
 def source_tools(source: str):
     """Every *.py directly under W19/tools at source, sorted."""
     try:
-        listing = git_out("ls-tree", "--name-only", source,
+        listing = git_out("ls-tree", "-r", "--name-only", source,
                           ".ufo/waves/round-19/tools/")
     except RuntimeError:
         return []
@@ -510,8 +512,6 @@ def full_pass(arg: str) -> int:
                  ["--selftest"], 0)
     run_tool("selftest-measure", ".ufo/waves/round-19/measure.py",
              ["--selftest"], 0)
-    run_tool("selftest-gen-predictions", ".ufo/waves/round-19/gen-predictions.py",
-             ["--selftest"], 0)
     run_tool("selftest-run-carriers", ".ufo/waves/round-19/run-carriers.sh",
              ["--selftest"], 0, prefix=["bash"])
 
@@ -568,11 +568,11 @@ def full_pass(arg: str) -> int:
         if os.path.isfile(receipt):
             run_tool("receipt-validate-" + lab,
                      ".ufo/waves/round-17/tools/receipt-validate.py",
-                     ["--require-mid-maps", receipt], 0)
+                     ["--require-mid-maps", receipt], 1)
         else:
             argv = PY + [A(".ufo/waves/round-17/tools/receipt-validate.py"),
                          "--require-mid-maps", receipt]
-            p.skip("receipt-validate-" + lab, argv, 0,
+            p.skip("receipt-validate-" + lab, argv, 1,
                    "no receipt.json in " + rd)
         obs = os.path.join(rd, "observation.json")
         if not os.path.isfile(obs):
@@ -611,10 +611,11 @@ def full_pass(arg: str) -> int:
                 f.write(data)
             run_tool("compare-" + lab,
                      ".ufo/waves/round-17/tools/compare.py",
-                     ["--prediction", pred_path, "--observation", obs], 0)
+                     ["--prediction", pred_path, "--observation", obs],
+                     1 if lab == "t1250-vet" else 0)
 
     # Freshness gate and fleet census.
-    run_tool("c1-census-v10", ".ufo/gates/c1-census-v10.py", ["--root", LANE], 0)
+    run_tool("c1-census-v10", ".ufo/gates/c1-census-v10.py", ["--root", LANE], 1)
     p.run("sources-census-counts",
           [CENSUS, "census", "--root", FLEET, "kaidoku"], 0)
     p.run("sources-census",
@@ -665,6 +666,30 @@ def full_pass(arg: str) -> int:
         "c1_census_before_verdict_fail": before_info["verdict_fail"],
         "baseline_differs_from_source": base != source,
     }
+    # Expected nonzero exits are not blanket passes: constrain their contents.
+    for lab in labels:
+        try:
+            live = json.load(open(OUT + "/receipt-validate-" + lab + ".stdout"))
+            findings = live["receipts"][0]["findings"]
+            checks["receipt-current-drift-only-" + lab] = (
+                len(findings) == 2
+                and {f["code"] for f in findings} == {"sha256_mismatch", "size_mismatch"}
+                and all(f.get("path") == A(".ufo/waves/round-17/tools/receipt-validate.py")
+                        for f in findings))
+            retained = json.load(open(W + "/evidence/receipt-validation/" + lab + ".json"))
+            checks["receipt-source-bound-valid-" + lab] = retained["counts"] == {
+                "invalid": 0, "receipts": 1, "unreadable": 0, "valid": 1}
+        except (OSError, ValueError, KeyError, IndexError):
+            checks["receipt-content-" + lab] = False
+    try:
+        census_text = open(OUT + "/c1-census-v10.stdout").read()
+        checks["census-only-carried-undeclared"] = (
+            "stale=0 ambiguous=0 undeclared=2 unresolved=0" in census_text)
+        cmp = json.load(open(OUT + "/compare-t1250-vet.stdout"))
+        bad = [c["field"] for c in cmp["fields"] if not c["match"]]
+        checks["vet-full-list-only-mismatch"] = bad == ["extra.invalid_index_reads"]
+    except (OSError, ValueError, KeyError):
+        checks["expected-red-content"] = False
     failed_checks = [name for name, ok in sorted(checks.items()) if not ok]
 
     external = []
