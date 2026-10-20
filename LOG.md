@@ -2121,3 +2121,47 @@ pushed before the pass); verification evidence `b31975de62de5413a6f2d244f2690eae
   capability row entered. Proxies stay at 10.0 with delta 0. Expansion
   unchanged, quality improved, discernment improved. SHONEN stays `[~]`.
   Outside sampling and admission belong to the closure.
+
+## 2026-10-20 — round-18: routed r17 defects, jj-safe pins, Swiss-map replay
+
+Baseline `9011581d84527ba34c675f9cf912e54d2e72d470` (r17 verifier spot-check).
+Motivation: `corpus/lessons/round-17-verifier-spotcheck.md:137-147` (six routed
+defects, one partial outside disagreement) and the jj-migration audit
+`/home/vgpnk/Projects/shokunin/.ufo/waves/hyaku/jj-w1/reports/JjAuditKaidoku.md`
+§5 (three HEAD-keyed live pins). Claims and amendments: `.ufo/waves/round-18/claims.json`.
+
+- Wave 1: 89 seats in one validated `task` call (executor19/scout23/reviewer15/
+  scribe10/connector8/critic6/revenger4/sentinel2/simplifier2), 89/89 reports.
+  Critics changed the round before any measurement: C1 token checks were
+  circular (a token-only commit closed 6/6), C2's declared "3" came from audit
+  prose, and C3's methods/nomethods pair was predicted non-diagnostic. Fixes:
+  substance checks, a scope rule written before measuring, four nethttp
+  carriers plus one real carrier, and a frozen decision rule.
+- Tool changes (in place, contracted): citation-drift `--rev` defaults to the
+  branch tip and refuses `--rev HEAD` off-tip; custody-pair records
+  `repo-branch-tip`/`repo-HEAD-is-branch-tip`/`repo-dirty` with `--repo`
+  (default lane root, never cwd); round-17 `verify.py` pins `refs/heads/main`
+  and refuses before running anything; `carrier-run.py` retains each mid-run
+  map; `receipt-validate.py` recomputes it and gains `--require-mid-maps`;
+  `log-extract.py` gains `eof_reads`, `invalid_index_reads`,
+  `symbol_analysis_failures`; `compare.py` gains the matching expectations.
+  All old outputs reproduce (16 r17 logs: old fields byte-equal; 8 r17
+  compare outputs byte-identical; 8 r17 receipts still exit 0 without the flag).
+- Predictions for 15 labels frozen and pushed at
+  `eb6c2668e5cb7054fd1e16d2f615cb65586d0fe0` (16:23:55Z); carrier pass
+  16:24:07–16:32:10Z, all 15 carrier-run 0 / compare 0
+  (`.ufo/waves/round-18/runs/run-log.txt`). Held-out diagnostic carriers:
+  s1246-swiss-nethttp `Invalid index: 22386945` and real go1.24.13
+  kimi-webbridge `Invalid index: 15606016`, both exactly as frozen; the
+  noswiss sibling and all 11 non-diagnostic synthetic carriers did not fail.
+  Verdict under the frozen rule: confirmed. kimi-webbridge also exercised the
+  first intermediate patch fallback (WARN 1.24.13 → 1.24.6).
+- R17-VALIDATE16: the 8 first-pass receipts at `da64646` validate 8/8 exit 0 under the `9011581` validator (prefix-remapped copies, `.ufo/waves/round-18/evidence/validate16/summary.json`); r17's "all 16" (`SCORECARD.md:2364`, `corpus/lessons/round-17.md:88,122`) had 8 retained runs.
+- R17-SUMS-RUNLOG: the pass-1 `da64646` `runs/run-log.txt` lists 7/8 carriers (calib-shfmt absent, its receipt present); the `carriers.tsv` manifest line dropped at `95e34db` is restored in `.ufo/waves/round-17/predictions/SHA256SUMS`.
+- R17-PRODUCER-REV: pass 1 was produced by 271167473d87ef710f07ecdd98caf0ce12091686 and pass 2 by 95e34db62f2693c455d7ee4dfef24b8f3ebc007d; `d0ab299` verified them.
+- Landed in this commit: knowledge `2026-10-20-r18-swiss-map-replay`; the
+  appended round-18 correction in the r17 entry; QUALITY #21; SOURCES
+  S033–S036; README Go row token (in place, line 35); SKILL rows
+  citation-drift/go-route-compare/receipt-validate/pins/go-buildinfo-probe
+  aligned and the r17 aether row qualified in place; two round-18 SKILL
+  sections appended. Measured values follow in the next entry.

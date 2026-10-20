@@ -2424,3 +2424,17 @@ Swiss-map markup, a replay that confirms or refutes the aether inference with
 a second Swiss-map carrier that has method-carrying map types, or (b)
 calibration on any routed disagreement from this round's closure. No carrier
 is chosen here.
+
+## Round 18 — routed r17 defects, jj-safe revision pins, Swiss-map replay, 2026-10-20
+
+Baseline: `9011581d84527ba34c675f9cf912e54d2e72d470`. C3 predictions frozen and
+pushed: `eb6c2668e5cb7054fd1e16d2f615cb65586d0fe0`. Claims and amendments:
+`.ufo/waves/round-18/claims.json`; motivation in LOG round-18 and
+`corpus/lessons/round-18.md`. Measured values and revisions are recorded in the
+"Measured records" subsection appended after the verification pass.
+
+### Routed r17 corrections (append-only)
+
+- R17-PINMAP: `SCORECARD.md:2374` ("pre/mid/post pin maps with instants") is wrong for mid-run instants: they retain the comparator verdict against the retained pre map, not the map; round-18 receipts retain each mid map with `map_sha256`.
+- R17-VALIDATE16: `SCORECARD.md:2364` ("all 16 receipts `receipt-validate.py` exit 0") had 8 retained validations; the 8 `da64646` receipts now validate 8/8 exit 0 via remapped copies (`.ufo/waves/round-18/evidence/validate16/summary.json`).
+- R17-PRODUCER-REV: `SCORECARD.md:2352-2356` names the verification revision; the receipts were produced by 271167473d87ef710f07ecdd98caf0ce12091686 (pass 1) and 95e34db62f2693c455d7ee4dfef24b8f3ebc007d (pass 2).

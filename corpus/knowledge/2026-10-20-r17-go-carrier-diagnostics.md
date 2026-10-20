@@ -196,3 +196,11 @@ its 47 MB size.
   bridge script. Absence claims hold only up to the last retained line.
 - The Python model vs Gson/Java behaviour, and the S003 source archive vs
   the loaded classes: not authenticated.
+
+## Round-18 correction (append-only; filed bytes above unchanged)
+
+Routed by `corpus/lessons/round-17-verifier-spotcheck.md:137-139`; evidence in `corpus/lessons/round-18.md` (Mistakes) and `.ufo/waves/round-18/`.
+
+R17-PINMAP: `2026-10-20-r17-go-carrier-diagnostics.md:30-32` ("each pin map is retained with its UTC instant … All maps are equal") is wrong for the mid-run instants: mid-run instants retain the comparator verdict against the retained pre map, not the map — each of the 29 second-pass `steps.analyze.pin_checks[]` entries keeps only `{taken_at_utc, equal, entries, changed, missing}` (`9011581:.ufo/waves/round-17/tools/carrier-run.py:479-487`); only the pre and post maps are retained. The statement that holds is: pre/post maps identical; 29 mid-run comparator verdicts `equal: true` against the pre map; the mid maps themselves were discarded.
+R17-PINMAP: the `recheck:` line (`2026-10-20-r17-go-carrier-diagnostics.md:3`, "exit 0 = … mid-run checks consistent") overstates the `9011581` validator, which only tested `equal` on mid-run entries (a forged verdict-only entry with a wrong `entries` count was accepted, w1 `CriticDiscernment.md`). From round 18 `carrier-run.py` writes each mid map to `pins/mid-<n>.json` with `map_path`/`map_sha256`, and `receipt-validate.py` recomputes it (`mid_map_sha256_mismatch`, `mid_map_compare_mismatch`, `mid_entries_mismatch`; `--require-mid-maps` for round-18 receipts).
+R17-PRODUCER-REV: the first-pass receipts (13:47:05–14:00:05Z, stored at `da64646`) were produced by `carrier-run.py` blob `bc964ac` at 271167473d87ef710f07ecdd98caf0ce12091686, and the second-pass receipts (14:27:41–14:40:02Z, stored at `d0ab299`) by blob `c536e3e` at 95e34db62f2693c455d7ee4dfef24b8f3ebc007d; `d0ab2992149a38794e5ef2474ba5d4ef5ee1e905` is the verification revision, not a producer (w1 `RevProducerRev.md`: receipt key alphabets, blob history, push times).

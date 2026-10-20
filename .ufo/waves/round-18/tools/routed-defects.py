@@ -274,13 +274,18 @@ def _d_pinmap(root: str, rev: str) -> dict:
         checks.append(_check("substance", "receipt-validate-mid-finding",
                              False, f"{RECEIPT_VALIDATE} absent at rev"))
     else:
+        # L1 amendment (wave-1 integration): the as-built validator names its
+        # findings `mid_map_sha256_mismatch` (digest) and
+        # `mid_map_compare_mismatch` (map vs pre map); contract.md's
+        # placeholder `mid_map_mismatch` was never an id. Both are required.
         code = _code_text(rsrc)
-        ok = code is not None and "mid_map_mismatch" in code
+        need = ("mid_map_sha256_mismatch", "mid_map_compare_mismatch")
+        ok = code is not None and all(n in code for n in need)
         checks.append(_check("substance", "receipt-validate-mid-finding", ok,
-                             "'mid_map_mismatch' in non-comment code"
+                             "both mid-map finding ids in non-comment code"
                              if ok else ("cannot tokenize" if code is None else
-                                         "'mid_map_mismatch' only in comments/"
-                                         "docstrings or absent")))
+                                         "a mid-map finding id is only in "
+                                         "comments/docstrings or absent")))
 
     checks.append(_pinmaps_retained_check(root, rev))
     return _defect("R17-PINMAP", checks)
