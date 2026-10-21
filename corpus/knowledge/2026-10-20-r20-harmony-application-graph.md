@@ -26,3 +26,11 @@ The two first projection attempts were `invalid_request` (exit 1): the input had
 **Unknown:** the `.abc` payload is an intentionally invalid text placeholder; the `ark` family is inferred from its suffix and is not proof of Ark bytecode. Resource contents were not decoded. Empty signing entries do not establish unsigned status (a ZIP signing block is outside central-directory inventory). No runtime behavior, valid device installation, N-API declaration/call, App Pack child recursion, HSP behavior, or `.har` shared-library identification was exercised. The zero bridge candidates are only the path-pair result for these two small inventories. `complete-within-inventory` means complete central-directory entry inventory, not semantic package completeness or whole-file coverage beyond that inventory.
 
 The `--schema` call reports `project-harmony-application-graph` input as one `inputJson` argument and `inspect-artifact` input as a `path` argument; those exact outputs are retained under `schema-project/` and `schema-inspect/`. The implementation/source citations and the command results together support this bounded holding; the schema alone is not evidence of successful capability.
+
+## Erratum — round-20 wave 2 (2026-10-21, appended; text above unchanged)
+
+- **S046 FA anchor.** The FA `config.json` statement is at `application-package-structure-fa.md:21`; the S046 row's `:14,18` anchors cover
+  the FA support note and assets layout, not the config sentence. The Stage `module.json5`/`module.json` anchors (`:27`, `:43`) stand.
+- **Quote rendering.** The Gate quote for S046 is rendered text; the raw Markdown wraps `app.json5`/`module.json5` in bold markers, so a
+  byte-contiguous search of the raw page does not match (the words and location do).
+- **Scope unchanged.** Synthetic Stage/FA HAPs only; no real HarmonyOS package, signing, device or runtime semantics.

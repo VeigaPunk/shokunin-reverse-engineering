@@ -105,6 +105,9 @@ Pending: the hyaku closure session (non-author) samples this round's admits and 
 | 6 | reference-drift (this round) | `run-carriers.sh` compare step passed `predictions/<label>.prediction.json`, whose `first_failure` holds the H1 object directly, to a comparator that requires `first_failure.h1`; every in-run compare exited 2 (`runs/*/compare.json`: "prediction: missing first_failure.h1") | none | compare re-run after the runs with the unchanged frozen comparator on the frozen emulator outputs `predictions/swiss-misread-v2/<label>.json`, whose `first_failure.h1` equals each prediction's `first_failure` for 19/19 labels (checked before re-running); both records retained |
 | 7 | landing (this round) | seat HeadRevNested's patch file embedded a read-tool truncation banner (`git apply`: corrupt patch at line 302) | none | patch regenerated from the seat's clone (`w1/patches/HeadRevNested-2.regenerated.patch`); selftest CLEAN 5 after apply |
 | 8 | scope (this round) | seats wrote overlapping `corpus/SOURCES.md`/`README.md` edits and both proposed id S040 (HarmonyLeg, RizinPeLeg) | contract `Writers` (patches) — not specific about shared registry files | L1 integrated SOURCES/README itself; RizinPeLeg applied with `--exclude` for those two files; README insertion that would shift pinned Frontier coordinates (`:175`, `:180`) was replaced by a row on a former blank line |
+| 9 | reference-drift (this round; found by the recovery coordinator) | routed-r19 `_s_d5` required `argv` as a flat string list and read the census stdout at the record's named rev, while `final-census.py` writes `argv` as a list of argv lists and the stdout lands only in the record commit; `_s_d3` demanded a fresh armed `check` even after the round's required disarm | none (each tool's selftest used its own fixture shape) | `_s_d5` accepts argv lists and reads stdout at REV; `_s_d3` accepts a disarm record later than every retained check. Red/green on one fixture commit (clone of `5c0b46c` + a real final-census record commit): the 7a1e0df counter blob reports D3 `no exit-0 check record…` and D5 `argv is absent or malformed` (exit 1), the fixed counter closes both (exit 0) — `.ufo/waves/round-20/verify/recovery/d3-d5-redgreen.txt` |
+| 10 | environment (this round) | revexec's sandbox made host `/tmp` read-only and HOME empty, so revision tools that hard-code `/tmp` (round-18 `jj-red-before.py`), refuse `/tmp` scratch (custody-pair, EDQUOT rule) or read client anchors under HOME (census) failed under the patched counter although their fixes existed: at `aad0869` D1 `outside-workdir selftest exit 1`, D4 `ANCHOR-FAIL`, D6f `Read-only file system at /tmp/…` (`.ufo/waves/round-20/w1/RoutedR19Tool.md` `## Integration fix`, item lines) | none | revexec work base moved to `/fast/scratch` (refused under /tmp or /var/tmp), `PrivateTmp=yes`, opt-in `--host-home` (read-only) used only for the live census; new selftest cases `private_tmp`, `host_home_passthrough`; at `81c2021` D1/D4/D6f substance true (`verify/recovery/routed-81c2021-live-strict.json`; the unpatched-counter measurement at `7a1e0df` is `verify/recovery/routed-7a1e0df-live-strict.json`) |
+| 11 | landing (this round) | attempt 1's coordinator stopped at 18:45 -03 after provider 429/quota/cyber-flag errors, before the SCORECARD/LOG rows, wave 2 and report; its last integration fix (`w1/patches/RoutedR19Fix.patch`) and the C3 entry survived only in checkpoint commits `aa78b0d`/`7a1e0df` marked "admission pending" | watchdog `lane-dead-no-report kaidoku round=20` (`/home/vgpnk/Projects/shokunin/.ufo/watchdog.log:544`) | recovery coordinator re-ran every counter before reuse (`## Recovery attempt 2`); practice: land SCORECARD/LOG claim rows right after integration so a dead coordinator leaves named state, not only checkpoints. No demonstrated gate fix |
 
 Misroot sweep: run before the report (see the fleet report).
 
@@ -134,3 +137,116 @@ For S003, S023 and S035 the `used-by` cell at `14f0260ad319ecc26994381b2415d5a99
 the only change is the appended suffix `, corpus/knowledge/2026-10-20-r20-go1246-first-failure-forecast.md`
 (old cells end `…, corpus/knowledge/2026-10-20-r19-go125-toolchain-replay.md`). S040 (new this round) gained
 `corpus/lessons/round-20.md` before its first commit; S047 (new) gained the C3 entry. No status or recheck cell changed.
+
+## Recovery attempt 2 (operator-authorized recovery coordinator, 2026-10-21)
+
+Attempt 1 (coordinator `KaidokuR20`) dispatched W1 once (100 spawn seats after one job-cap refusal that spawned none,
+`.ufo/waves/round-20/wave1-dispatch-attempts.json`; members and agent ids in `wave1-registry.json`; `w1/swarm-registry.json`
+is the validator's pre-record copy with 0 assigned). Role mix: executor 28, scout 22, reviewer 16, scribe 10, connector 8,
+critic 8, revenger 4, sentinel 2, simplifier 2. Reports: 98 under `w1/`; ConnSiblingHarmony and ConnJjSelftests have no
+report: each transcript's only assistant message stopped `aborted` ("Request was aborted", 17:46:51 -03) and the
+session ended `session_exit` reason `dispose` at 18:29:58 -03 with a pending `bash` call (no 429 text). RoutedR19Fix
+is not a separate seat: it is a resumed RoutedR19Tool-2 turn (same identity). Attempt-1 seats count toward the round total;
+none was respawned.
+
+Reused after re-verification (each re-run by the recovery coordinator, not trusted from text):
+- landed commits `d1d981d`…`aad0869` (claims, freeze, integrations): C2 `verb-coverage.py` at B 128/153, 0/5 exercised →
+  at `7a1e0df` 133/153, 5/5 bound; C3 `measure.py main --freeze 808cbb3` first_failure_bound 19, matched 19, receipts 19/19;
+  census PASS at `81c2021` (via routed-r19 D4 archive run).
+- checkpoint `aa78b0d`: `w1/patches/RoutedR19Fix.patch` applied unchanged (`git apply --check` clean) and extended
+  (Mistakes 9-10); the C3 knowledge entry, SOURCES used-by appends and README row (re-read; challenged in W2).
+- checkpoint `7a1e0df`: three >1 MiB generated Wasm seat patches retained as seat evidence only; no claim rests on them.
+
+Discarded (not relied on): attempt-1 prose stating D1-D6f closed (replaced by the measured counter); the in-run
+`runs/*/compare.json` records (Mistake 6; superseded by the retained re-run); the routed-r19 blob at `7a1e0df` (superseded).
+
+Recovery commits: `81c2021` (RoutedR19Fix applied; revexec work base/private /tmp/host-home; D5 shape; SCORECARD/LOG rows),
+`5c0b46c` (final guard checks and disarm of all three guards, modes restored to 0755; D3 disarm rule; W2 generator).
+
+## Recovery attempt 3 — integration of 169 reports, 2026-10-21
+
+Attempt 2 (coordinator `KaidokuR20Recovery`) ended on the Devin weekly quota before it filed a report; its own last commits are
+`81c2021` and `5c0b46c`. Attempt 3 was dispatched under the operator-authorized failed-coordinator recovery, with **no new seat
+spawned**: the round total stays 171 (wave 1: 100 spawned, 98 reports; wave 2: 71 spawned after two all-refused job-cap attempts,
+71 reports). All 169 reports are integrated; the two reportless wave-1 seats carry retained causes in
+`.ufo/waves/round-20/evidence/wave-outcomes/w1-causes.json` (both `session_exit` reason `dispose` at 2026-10-20T21:29:58Z, cancelled
+after 50/25 requests with a pending tool call; raw transcript paths cited) and the wave-outcomes record reads
+`seats=100 reports=98 missing=2 uncaused=0`, exit 0. W2 outcomes read `seats=71 reports=71 missing=0`, exit 0.
+
+Reused after re-verification (not trusted from attempt-2 prose): the attempt-1 commits `d1d981d`…`aad0869`; the wave-1 reports and
+retained C2/C3 evidence; the W2 reports; `verify/recovery/routed-{7a1e0df,81c2021}-live-strict.json` and `d3-d5-redgreen.txt`.
+Discarded: attempt-2 text that treated D1–D6f as closed before the required final-census record existed; the in-run
+`runs/*/compare.json` records (Mistake 6, superseded); the routed-r19 blob at `7a1e0df` (superseded by the fixed counter).
+
+### Wave-2 integration — code and evidence changes
+
+- `receipt-validate.py`: `_is_analyze_step` now requires `npx`, optional `-y/--yes`, then the pinned package operand and `analyze`;
+  second-package and non-npx decoys are refused. Selftest gains `argv_second_package_decoy`, `argv_non_npx_decoy`,
+  `argv_latest_refused` (w2 `AttackD6d.md`).
+- `wave-outcomes.py`: wrapper detection disambiguates a registered seat named `causes` from a wrapper map by value shape; the old
+  no-`wave` wrapper fixture is restored alongside `seat_named_causes` (w2 `AttackD6e.md`, `CriticNoHarmS.md`).
+- `evidence-timestamps.py`: the text-size skip is removed (only binary blobs are skipped and reported); the timestamp grammar accepts
+  compact `T±HHMM` and space+`Z`/offset forms. Selftest re-run in the final suite (w2 `AttackD2.md`).
+- `routed-r19.py`: D5 requires the record's `rev` to be REV's single direct parent, the fixed stdout path, the exact two-command argv,
+  `worktree_clean`, and both validators' success markers; D3 also accepts a disarm record later than every retained check and verifies
+  restored modes; D6d's fixture records the npx form (w2 `AttackD5.md`, `AttackD3Disarm.md`).
+- Evidence committed with this recovery: `w2/` (71 reports), `wave2-{assignments,registry,spec,dispatch,dispatch-attempts}.json`,
+  `wave2-result-attempt{1,2,3}.txt`, `verify/recovery/`, `verify/receipt-validation/`, `evidence/wave-outcomes/`.
+- Corrections: SOURCES **S048** (installed non-Harmony REA CLI/service source) and errata in the WASM, Rizin, objdump and Harmony
+  entries; QUALITY corrections for #23–#25; SKILL registry rows split and completed; this lesson's corrections below.
+
+### Corrections to this lesson's earlier claims
+
+- **Mistake 1 (D1):** the strict-red counter output was not retained (w1 recorded the baseline counter *without* `--strict`, exit 0,
+  `open_count=11`); the demonstrated red artifact is the residue sweep (136 files / two nested `.git` trees left by the baseline
+  selftest). C1's counting command must carry `--live`; without it the counter can read closed while untracked residue remains.
+- **Mistake 2 (D2):** the strict `exit 1` is not in the cited w1 report; the findings are (`claims.json:35` +65 s, `:36` +643 s) and the
+  independent oracle agrees. The strict run is demonstrated by the final suite, not by the w1 text.
+- **Mistake 4:** the quoted `SELFTEST: FAILED not_mentioned_is_zero,substring_trap_rejected,evidence_id_and_existing_path_exercise`
+  output is the pre-fix *positive* fixture set, not `forged_id_not_in_retained_bytes`. The new anti-forgery case exists and passes, but
+  no retained output shows it red before the predicate fix. The claim is the predicate change plus the passing case, not a retained
+  red-before for that case.
+- **C2 falsifier floor:** `claims.json` falsifies below three target verbs; the round measured 5/5. The claim is narrowed here to
+  mention-level coverage (128→133/153) plus the five exercised targets; `list-objdump-architectures` is pathless (`subject: null`) and
+  is not carrier-bound.
+- **C3 model errors:** the naive "stop on any ReadError" emulator forecast 5/8; the masked-variadic v2 forecasts 8/8 (19/19 with the
+  silent labels). The residual predicate/vacuity limits (continue-set, trail cleanup, empty-D refusal) are named in `## Open`.
+- **Mistake 8** is a coordination incident (overlapping SOURCES/README edits), not a demonstrated test red-before.
+
+## Mistakes — wave-2 additions (2026-10-21)
+
+| # | class | evidence | captured-by | fix (shown able to fail) |
+|---|---|---|---|---|
+| 12 | acceptance without authentication | R19-D6d decoy: second package-looking token + `analyze` passed; non-npx `/usr/bin/true rea-agents@6.5.0 analyze` passed (w2 `AttackD6d.md`) | none (the D6d text required npx but the predicate scanned every index) | `_is_analyze_step` anchors npx+package+subcommand; three named selftest decoys (red before the change, green after) |
+| 13 | fix regressed an accepted input | S's wave-outcomes required `wave` in a wrapper, so the previously accepted no-`wave` wrapper exited 2 `causes_unknown_seat` (w2 `CriticNoHarmS.md`) | QUALITY #16/#21 old-fixture retention, not enforced for tools | wrapper/seat disambiguation by registration membership; the old no-`wave` fixture restored beside `seat_named_causes` |
+| 14 | closure without its witness | D5's final-census record absent at S; D5's old check accepted a non-parent record and any argv shape (w2 `CriticAdmitC1.md`, `AttackD5.md`) | the contract's D5 wording, not the counter | counter now binds parent/argv/markers; the final record commit is the last lane write (this recovery) |
+| 15 | source mis-scope | S040 (Harmony) cited for WASM/Rizin/objdump implementations (w2 `EntryWasmClaims.md`, `EntryRizinClaims.md`, `EntryObjdumpClaims.md`) | SOURCES used-by/scope rule | S048 row + entry errata; S040 used-by unchanged |
+| 16 | registry rows not gate-conformant | `final-census` as a gate with no map/pinned path; three tools merged in one row; `carrier-guard adopt` syntax wrong (w2 `ReviewSkillRowsR20.md`) | PROTOCOL §Gate standard | rows split/rewritten with per-tool verdict maps, pinned paths and correct `adopt --from` form |
+| 17 | seat accounting without causes | two W1 seats had no retained cause record (w2 `ReviewWaveRecords.md`) | QUALITY #22 | `w1-causes.json` with transcript pointers + `w1-outcomes.json` exit 0 (`seats=100 reports=98 uncaused=0`) |
+
+## Gate addendum — S048 quote (opened 2026-10-21)
+
+| Row | URL / location | Accessed | Quote (location) |
+|---|---|---|---|
+| S048 | retained installed-source extract `.ufo/waves/round-20/evidence/c2/rizin-pe/rea-cli-source-notes.md:8` (package `rea-agents@6.5.0`, `dist/application/reverse/ReverseEngineeringService.js:150-168`) | 2026-10-21 (re-read) | "non-access-denied, non-timeout digest failures become `AnalysisInputError`" (source note line 8) |
+
+## Claim bounds stated at integration
+
+- **C1:** eleven routed items; 10 are substance-closed by the counter at the work tip; D5 closes by the final-census record commit
+  (the record's `rev` is that commit's parent, and the counter verifies parent, argv, markers and the two-path tree diff). Final numbers
+  are in the SCORECARD measured-record section and the fleet report.
+- **C2:** mention-level 128/153 → 133/153; five targets `exercised` under the counter's ID/path/operation-token rule; pathless
+  `list-objdump-architectures` is `subject: null` and not carrier-bound; Harmony is synthetic path-hint only.
+- **C3:** 19/19 first-failure matches (8 exact `Invalid index`, 11 silent through the retained log end) for the 19 frozen go1.24.6
+  toolchain ELFs. "Held out" means held out from prior Ghidra first-failure outcomes for these exact artifacts, not version-held-out;
+  the R18 synthetic `22386945` result and the pprof candidate lead were known before the freeze. The comparator checks `kind` and
+  `index` only; `t1246-link` was excluded; `t1246-objdump` ended on a later Java heap OOM.
+
+### Residual limits accepted (not fixed this round)
+
+C1/C3 share the receipt validator as a verification authority (claim separability attack, w2 `CriticSeparabilityS.md`); D6a's
+duplicate-name nested-read limitation; D6b exposes a read-only host HOME (including `.ssh` names) under `--host-home`; QUALITY #23
+still skips binary blobs; QUALITY #25 remains a token check; the census DATED shelter and same-line laundering; carrier-guard
+loader-mapped execution; the C3 predicate/vacuity residuals; census W04 for S033/S047; S041/S045/S046 quotes are rendered text, and
+S043's `-c` anchors (`rizin.c:111,586-588`) remain unadded; no real HarmonyOS package, device or runtime was exercised.
+

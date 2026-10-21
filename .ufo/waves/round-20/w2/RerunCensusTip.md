@@ -1,0 +1,10 @@
+HOLDS — R20 C1/D4 census passes at measured source S and fails the baseline control as claimed.
+Axes: calibration (attacked); coverage and depth are outside this census-only check.
+
+**Observation — commands/results.** Archived each Git revision into `/tmp/rerun-census.1kua5Z/{S,B}` (both `git archive --format=tar REV | tar -xf - -C DIR` pipelines reported exit 0). Then ran:
+- `python3 -I -B /tmp/rerun-census.1kua5Z/S/.ufo/gates/c1-census-v10.py --root /tmp/rerun-census.1kua5Z/S` — exit 0; `VERDICT: PASS (stale=0 ambiguous=0 undeclared=0 unresolved=0)`; no scope/frontier errors or unreadable files.
+- `python3 -I -B /tmp/rerun-census.1kua5Z/B/.ufo/gates/c1-census-v10.py --root /tmp/rerun-census.1kua5Z/B` — exit 1; `VERDICT: FAIL (stale=0 ambiguous=0 undeclared=2 unresolved=0)`. The two undeclared records are `SCORECARD.md` block 2380-2382 (two loci) and `SKILL.md` block 511-519 (one locus).
+
+**Observation — source evidence.** At S (`5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9`), `.ufo/gates/c1-census-v10.py:278-289` adds those two ranges as DATED and keys them to unique text anchors; `:413-431` resolves anchors and records non-unique/missing-anchor errors, while `:441-460` checks the DATED markers. The asserted content is at `SCORECARD.md:2374-2382` and `SKILL.md:511-519`. At B (`14f0260ad319ecc26994381b2415d5a999003375`), the SCOPE table ends at `.ufo/gates/c1-census-v10.py:277` without either row; the corresponding blocks therefore appear as scope `None` and undeclared. S's classifier marks unscoped nonhistorical records UNDECLARED (`.ufo/gates/c1-census-v10.py:638-640`), and its final predicate/exit mapping is at `:799-842`.
+
+**Inference.** The requested S/B contrast is reproduced from each revision's archived gate and inputs; this supports the narrow D4 claim, not broader C1 closure. **Verification gap:** no LSP device is mounted (`read xd://lsp` returned “No such tool”); thus no status/references/definition/diagnostics were available. No text grep was used.

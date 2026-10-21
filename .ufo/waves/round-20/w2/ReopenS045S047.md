@@ -1,0 +1,17 @@
+PARTIAL — S045 is exact rendered text but not a byte-contiguous raw-HTML excerpt; S047 holds.
+
+At measured revision `5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9`, SOURCES rows are `corpus/SOURCES.md:51` (S045) and `:53` (S047); Gate quotes are `corpus/lessons/round-20.md:48` and `:50`.
+
+## S045 — PARTIAL (quote fidelity only)
+
+**Observed:** `docs` / tier `A` accurately describe the GNU Binutils manual; `-i`/`--info` says the list shows architectures and object formats available for `-b` or `-m`. The fetched page hash and size match the SOURCES anchor: `4fe129bd37a262b2db8e7f55f35fdd2644ec6f76b03a8e4a405614b0715e8028`, 68,879 bytes; Last-Modified is 2026-07-26. Raw HTML `objdump.html:345-348` locates `-i`/`--info`; the sentence spans lines 347-348 and wraps `-b`/`-m` in `<samp>` tags. The rendered manual text has the exact words and punctuation quoted at Gate line 48. Thus the attribution and scope (not a host-specific list or output format/order) are honest, but the Gate quote is **not literally a contiguous raw-HTML byte string**; line wrapping and markup have been normalized.
+
+**Commands / results:** `git show 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9:corpus/SOURCES.md | grep -E '^\\| (S045|S047) '` — exit 0. `curl -fsS -D /tmp/tmp.Y8wxlf3em5/headers.txt -o /tmp/tmp.Y8wxlf3em5/objdump.html https://sourceware.org/binutils/docs/binutils/objdump.html` — exit 0; `wc -c < /tmp/tmp.Y8wxlf3em5/objdump.html` — 68879, exit 0; `sha256sum /tmp/tmp.Y8wxlf3em5/objdump.html` — recorded hash above, exit 0. **Inference:** `docs`/A fit an upstream manual; scope and `-i`/`--info` anchor are accurate.
+
+## S047 — HOLDS
+
+**Observed:** `dataset` / tier `A` fit Go's official release-index JSON. Fetching `https://go.dev/dl/?mode=json&include=all` produced the recorded document digest `6b83804b8dd2d6052bb93cc03e4aba2ddee834f82c15f7bf8faacf5f91825950` and 2,256,879 bytes. Its lines 19264/19268/19269 name `go1.24.6.linux-amd64.tar.gz`, give the exact Gate quote (`"sha256": "bbca37cc395c974ffa4893ee35819ad23ebb27426df87af92e93a9ec66ef8712",`) and size `78583176`. A fresh archive fetch was 78,583,176 bytes with that exact SHA-256; its 14,175 non-directory members extracted to scratch compared equal to `/home/vgpnk/.local/opt/go-1.24.6`. This supports the narrow carrier-provenance scope, not other Go releases or runtime behavior. No Go toolchain binary was executed.
+
+**Commands / results:** `curl -fsS -o /tmp/tmp.hJK15vLMGP/godl.json 'https://go.dev/dl/?mode=json&include=all'` — exit 0; `wc -c` — 2256879, exit 0; `sha256sum` and `awk 'NR==19264 || NR==19268 || NR==19269 {printf "L%d: %s\\n", NR, $0}' /tmp/tmp.hJK15vLMGP/godl.json` — expected digest/three lines, exit 0. `curl -fsSL -o /tmp/tmp.YPQgf3hSQV/go1.24.6.linux-amd64.tar.gz https://go.dev/dl/go1.24.6.linux-amd64.tar.gz` — exit 0; archive `sha256sum` — expected digest, exit 0; `tar -tzf ... | awk '!/\\/$/ {n++} END {print n+0}'` — 14175, exit 0; `diff -qr /tmp/tmp.YPQgf3hSQV/unpacked/go /home/vgpnk/.local/opt/go-1.24.6` — exit 0, zero differences.
+
+**Used-by at S:** `git cat-file -e` succeeded for all listed paths: S045 `corpus/knowledge/2026-10-20-r20-objdump-architecture-list.md` and `corpus/lessons/round-20.md`; S047 `corpus/knowledge/2026-10-20-r20-go1246-first-failure-forecast.md` and `corpus/lessons/round-20.md`. S047's forecast correctly describes the archive as carrier provenance and limits its claims to the held-out toolchain artifacts.

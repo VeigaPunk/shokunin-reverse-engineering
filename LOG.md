@@ -2310,3 +2310,16 @@ admitted knowledge). Claims: `.ufo/waves/round-20/claims.json`.
   applied the retained `RoutedR19Fix` counter patch, fixed the revexec sandbox
   integration (work base off /tmp, private /tmp, read-only host HOME for the live
   census) and the D5 record-shape check, then ran the falsification wave.
+- Attempt 3 (operator-authorized failed-coordinator recovery, 2026-10-21) spawned
+  no seat: round total stays 171 (W1 100 spawned / 98 reports; W2 71 spawned /
+  71 reports). Integrated 169 reports and the retained evidence; recorded the
+  two W1 causes and both wave-outcome files; fixed the wave-2 findings reachable
+  in code and corpus — receipt-validate npx/decoy anchoring, wave-outcomes
+  wrapper disambiguation with the restored old fixture, evidence-timestamps
+  text-size skip removal and wider grammar, routed-r19 D5 parent/argv/marker
+  checks and D3 disarm rule, SOURCES S048 plus four entry errata, QUALITY
+  corrections #23–#25, SKILL registry rows split/completed. D5's required
+  final-census record and the measured claim verdicts are the subsequent
+  record commits; attempt-2's claim that D1–D6f were closed without that record
+  is discarded, not inherited.
+

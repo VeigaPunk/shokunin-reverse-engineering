@@ -1,0 +1,11 @@
+PARTIAL — round-20 counters at S: C1 is falsified at D5; C2/C3 measured counters pass.
+
+Observation — `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-20/measure.py --help` (exit 0); `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-20/measure.py 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9 --freeze 808cbb31a1e24656da5ba4967497e602fbca7415` (exit 0). Output resolved revision S and freeze F exactly; `could_not_evaluate=false`.
+
+Observation — C1: evaluated, `tool_exit=1`, `open_count=1`, `named_open=0`, `substance_open=1`; D5 is named but substance-false: `final-census.json absent or invalid at REV` (`.ufo/waves/round-20/tools/routed-r19.py:644-649`). C1 requires every item closed and says any open item falsifies (`.ufo/waves/round-20/claims.json:15-18`); therefore C1 is falsified at S. Inference — outer `could_not_evaluate=false` means the inner evaluator ran, not that its claim passed: `measure.py:228-235,479-481` accepts inner exit 1 as evaluated.
+
+Observation — C2: evaluated, `tool_exit=0`; all five targets are exercised: inspect-wasm-artifact 1 entry, compare-wasm-interfaces 1, execute-rizin-command 2, list-objdump-architectures 1, project-harmony-application-graph 1 (`claims.json:25-30`). C2's per-target retained-evidence counter passes; its stated limit remains mention-level, not full verb mastery (`claims.json:29`).
+
+Observation — C3: evaluated, `first_failure_bound=19`, `matched=19`; raw counts: 19 prediction files, 19 freeze-equal, 19 receipts/19 valid, 19 compare records/19 matched, 0 compare-exit files. Inference — the measured bound/match count is 19/19 for labels at S under `measure.py:392-445`. Residual: this counter compares Git blob identities and validates retained records; it does not establish run-before/after-freeze chronology or re-extract the run logs (`claims.json:36-39`; `measure.py:46-53`).
+
+Verification gap — no LSP device is mounted (`read xd://lsp` returned “No such tool”), so no LSP status/references/definition/diagnostics were available. No tools installed or updated. Recorded at 2026-10-21T04:18:32-03:00.

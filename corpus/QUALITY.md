@@ -46,3 +46,20 @@ naming the row it supersedes, never rewritten.
 | 6 | "Tool X is broken/missing" without checking REA's spawn wrapper — providers run under `prlimit` (wakaru: `--as=1GiB` kills node's V8 isolate; bind the real ELF, not the npm shim) | r4u-05: dist-source trace found `runWakaruCommand` → `prlimit --as=1073741824`; node shim OOMs, native ELF works down to 256MiB |
 
 For tier definitions, scope, and recheck policy, use `corpus/SOURCES.md`; claim admission still follows this QUALITY bar.
+
+## Corrections appended — round 20 wave 2 (2026-10-21)
+
+Criteria 23–25 above stay as written; these corrections narrow them after the wave-2 attacks (`w2/CriticQuality2325.md`, `w2/RerunTimestampsW20.md`).
+
+- **#23 (timestamp completeness).** The checker skips binary blobs and reported them as `files_skipped`; the pre-wave-2 build also
+  skipped text blobs over 4 MiB, which admitted a demonstrated false pass (a tracked >4 MiB text file with a future timestamp returned
+  strict exit 0). The fixed scanner removes the text-size skip (only binary blobs are skipped) and reports every skip. A green `--strict`
+  run now establishes completeness only over scanned text blobs: `files_skipped > 0` requires a named review of the skipped paths. Zoneless
+  timestamps remain unchecked and so stated.
+- **#24 (no-execution bypasses).** Add loader-mapped execution (`ld-linux … <carrier>`) to the named bypass list, alongside copy+exec,
+  `memfd_create`+`fexecve`, in-process loaders, user-namespace bind mounts, same-owner chmod between instants, executables outside the
+  manifest, and root. A green check still attests inode state at its instant, never non-execution.
+- **#25 (verb held/exercised).** The predicate's error-token list was incomplete: `execution_failure` (an observed REA failure code) and
+  `could_not_evaluate` also mark a failed run and must not count. The predicate remains a token check over retained bytes, not receipt
+  authentication; a forged id, an error envelope, or a pathless verb still needs the stated limits. `list-objdump-architectures` counts
+  only with `subject: null` stated.

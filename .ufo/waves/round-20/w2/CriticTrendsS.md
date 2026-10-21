@@ -1,0 +1,26 @@
+PARTIAL — attack: whether round-20 trend evidence at measured source S supports strict C2 subject-binding and a closed discernment verdict.
+
+## Proposed trend verdicts (per `/home/vgpnk/Projects/shokunin/LEARNING.md:26-48`)
+
+- **HOLDS — expansion: improved** [INFERENCE]. At S, B→S adds four C2 knowledge entries (WASM interfaces, Rizin command observation, objdump architecture listing, Harmony graph) plus the Go entry, and edits the old PE-surface entry. The new C2 entries are mapped: the static-tools row is added at `corpus/README.md:67`; Harmony is named and scoped in the Archives & packages row at `:25`. Sources S040-S046 are mined at `corpus/SOURCES.md:46-52`. Do not count the Go forecast as uncovered ground: it extends the already-held Go row (`corpus/README.md:33`). The old Rizin-absent statement is explicitly marked stale in the round-20 PE erratum (`corpus/knowledge/2026-10-13-pe-surface.md`, appended round-20 erratum; `corpus/lessons/round-20.md:26-37`). **Strongest harm case:** `claims.json:25,27` says every target entry has a subject SHA-256, but `2026-10-20-r20-objdump-architecture-list.md:9-11` records `list-objdump-architectures` with `subject: null`; the subject-bearing jq run is a different `inspect-with-objdump disassemble` operation. This defeats the strict all-target subject-binding wording, not expansion by itself: the pathless limit is disclosed and the other new C2 surfaces remain mapped. Smallest correction: report four subject-bearing target runs plus one pathless host-list observation; do not attribute the companion run's subject to the list verb.
+
+- **HOLDS — quality: improved, narrowly** [INFERENCE]. The Go entry replaces the earlier whole-read-list forecast with a frozen first-failure test: at S it records eight exact first `Invalid index` matches and eleven silent prefixes, explicitly notes the objdump OOM happened after its Go failure, and limits the conclusion to one Ghidra/REA version and Go 1.24.6 toolchain ELFs (`2026-10-20-r20-go1246-first-failure-forecast.md:14-20,33-43,64-72`; freeze F precedes S). The WABT, Harmony and Rizin entries likewise scope what was and was not examined; the PE-surface stale Rizin claim is marked, not left uncorrected. No observed new entry fails its stated recheck at S. **Strongest harm case:** treating 19/19 as 19 successful analyses or general Go recovery would be false: objdump exits `execution_failure`, and silence means no Go-analysis failure in the retained log prefix, not successful type recovery (`...first-failure-forecast.md:43,64-72`). The entry already states these limits; preserve them.
+
+- **PARTIAL — discernment: improved only for prior outside-routed disagreements** [INFERENCE]. QUALITY #23/#24 turn round-19 outside findings D2/D3 into grounded timestamp and execution-guard criteria (`corpus/QUALITY.md:33-34`; `corpus/lessons/round-19-verifier-spotcheck.md:182-185`); #25 also learns from the in-lane C2 counterexample (`QUALITY.md:35`). This supports learning from those prior disagreements, not agreement on round-20 admits/rejects. **Strongest harm case:** the round-20 non-author sample is still explicitly pending at `corpus/lessons/round-20.md:62-64`; author-side wave reports cannot substitute. If that sample finds an unlearned disagreement, discernment is harmed under LEARNING.md:35. Smallest correction: label the improvement as R19-route learning only and keep current-round admit/reject validation pending until the required outside sample.
+
+## Observation and commands
+
+`[OBSERVATION]` The canonical LEARNING.md is outside the kaidoku Git tree: `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9:LEARNING.md` → exit 128 (path absent); read `/home/vgpnk/Projects/shokunin/LEARNING.md:26-48` for the rubric. Revision-scoped reads used S, not the checkout. Exact commands and exits:
+
+```text
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff --name-status 14f0260ad319ecc26994381b2415d5a999003375 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9 -- corpus/knowledge  # 0
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff --unified=2 14f0260ad319ecc26994381b2415d5a999003375 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9 -- corpus/README.md  # 0
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin merge-base --is-ancestor 808cbb31a1e24656da5ba4967497e602fbca7415 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9  # 0
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9:corpus/lessons/round-20.md  # 0
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9:corpus/SOURCES.md  # 0
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9:corpus/QUALITY.md  # 0
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9:corpus/knowledge/2026-10-20-r20-objdump-architecture-list.md  # 0
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9:corpus/knowledge/2026-10-20-r20-go1246-first-failure-forecast.md  # 0
+```
+
+No installs or runtime/test commands were used. Impacted axes: coverage (expansion/C2 binding), depth (C3 scope), calibration (outside spot-check).

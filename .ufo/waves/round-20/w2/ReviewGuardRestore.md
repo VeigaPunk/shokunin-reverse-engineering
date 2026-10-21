@@ -1,0 +1,13 @@
+HOLDS
+
+Severity: None; no restoration defect found. Exploit path: none observed in the assigned mode-restoration surface. Impact: no recorded Go carrier remains unexpectedly non-executable or has an unexpected mode at the sample time. Smallest remediation: none; no chmod or other mutation was made.
+
+Observation (source revision S = `5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9`): the `git ls-tree`/`jq` inventory returned exactly three `carrier-guard*/disarm.json` paths (exit 0). The Go 1.24.6 `carrier-guard/` directory has no `manifest.tsv` at S (`git show S:.ufo/waves/round-20/evidence/carrier-guard/manifest.tsv`, exit 128); its `arm.json` adopts the L1 `manual-arm.json`. The 20 path+`mode_before` pairs in manual-arm and arm match (diff exit 0). For Go 1.25.0 and 1.27.3, the manifest path sets match their arm path sets (diff exit 0; 9 and 10 entries). In all three guards, `disarm.json` references the corresponding arm record and the full arm `(path, mode_before)` set equals the disarm `(path, mode_restored)` set (diffs exit 0).
+
+Observation (live mode check): `stat -c '%a' -- "$path"` exited 0 for each of the 39 arm-record paths (20 + 9 + 10); every arm `mode_before` is `0o755` and every live mode is `755`. The 19 Go 1.25.0/1.27.3 manifest paths were also statted directly; all were `755` (exit 0). No still-cleared or wrongly restored mode was observed. This is a point-in-time mode check, not a claim that modes cannot change after sampling.
+
+Evidence anchors at S: Go 1.24.6 `manual-arm.json:1-170`, `arm.json:1-188`, `disarm.json:1-148`; Go 1.25.0 `manifest.tsv:1-10`, `arm.json:1-88`, `disarm.json:1-71`; Go 1.27.3 `manifest.tsv:1-11`, `arm.json:1-97`, `disarm.json:1-78` (complete files; line counts from `git show S:<path> | wc -l`, exit 0).
+
+Commands / exit codes: `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin ls-tree -r --name-only 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9 -- .ufo/waves/round-20/evidence | jq -Rr 'select(contains("/carrier-guard") and endswith("/disarm.json"))'` → 0; `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9:.ufo/waves/round-20/evidence/carrier-guard/manifest.tsv` → 128 (absent as expected for this manually armed set). The per-carrier stat loops and the manifest/arm and arm/disarm path-mode comparisons above each exited 0. One initial manifest extractor overescaped jq's tab separator (`split("\\t")`), yielding `null` and a `stat` failure (exit 1); the corrected `split("\t")` sweeps reported all 19 manifest paths successfully (exit 0).
+
+Report time: 2026-10-21T04:14:13-03:00

@@ -539,6 +539,20 @@ def _s_d3(ctx):
             return False, "carrier disarm record invalid: %s" % exc
         if disarm_paths != wanted:
             return False, "disarm.json carrier set differs from predictions/carriers.tsv"
+        if os.path.normpath(str(disarm.get("arm_record", ""))) != os.path.normpath(
+                os.path.join(root, arm_path)):
+            # The CLI accepts a relative record directory as well.
+            if os.path.normpath(str(disarm.get("arm_record", ""))) != os.path.normpath(
+                    "evidence/carrier-guard/arm.json"):
+                return False, "disarm.json arm_record does not name the retained arm"
+        original_modes = {os.path.realpath(c["path"]): c["mode_before"]
+                          for c in arm["carriers"]}
+        for carrier in disarm["carriers"]:
+            path = os.path.realpath(carrier["path"])
+            if carrier.get("mode_restored") != original_modes.get(path):
+                return False, "disarm mode_restored differs from arm mode_before: " + path
+            if ctx["live"] and oct(os.stat(path).st_mode & 0o7777) != carrier["mode_restored"]:
+                return False, "live carrier mode differs from disarm mode_restored: " + path
         disarm_at = str(disarm.get("taken_at_utc", ""))
         check_times = [str((_json_bytes(git.blob(rev, p)) or {}).get("taken_at_utc", ""))
                        for p in check_paths]
@@ -657,8 +671,8 @@ def _s_d5(ctx):
             not all(isinstance(cmd, list) and cmd and all(isinstance(x, str) for x in cmd)
                     for cmd in argv)):
         return False, "final census record argv is not a nonempty list of argv lists"
-    if not _safe_relpath(stdout_path):
-        return False, "final census stdout_path is not a safe lane-relative path"
+    if stdout_path != W20 + "/verify/final-census.stdout":
+        return False, "final census stdout_path is not the fixed census transcript"
     if not isinstance(stdout_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", stdout_sha):
         return False, "final census stdout_sha256 is absent or malformed"
     if not isinstance(target_rev, str) or not target_rev:
@@ -667,11 +681,26 @@ def _s_d5(ctx):
         census_rev = git.resolve(target_rev)
     except CounterError as exc:
         return False, "final census record rev does not resolve: %s" % exc
+    rc, parents, err = git.run(["rev-list", "--parents", "-n", "1", rev])
+    fields = _text(parents).split()
+    if rc != 0 or len(fields) != 2 or fields[1] != census_rev:
+        return False, "final census record rev is not REV's single direct parent"
+    expected_argv = [
+        ["python3", "-I", "-B", CENSUS, "--root", ctx["root"]],
+        ["/home/vgpnk/Projects/shokunin/scripts/sources-census.sh",
+         "validate", "--root", "/home/vgpnk/Projects/shokunin", "kaidoku"],
+    ]
+    if argv != expected_argv or record.get("worktree_clean") is not True:
+        return False, "final census argv or clean-worktree assertion differs from the recorder contract"
     # The record commit (REV) adds the record and its stdout on top of the
     # measured tip (census_rev); the stdout bytes are read at REV.
     stdout = git.blob(rev, stdout_path)
     if stdout is None or hashlib.sha256(stdout).hexdigest() != stdout_sha:
         return False, "final census stdout is absent at named rev or its sha256 differs"
+    output = _text(stdout)
+    if ("VERDICT: PASS" not in output or
+            "kaidoku\tok\t/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md" not in output):
+        return False, "final census transcript lacks both validators' success markers"
     rc, changed, err = git.run(["diff", "--no-renames", "--name-only", "-z",
                                 rev, census_rev], timeout=90)
     if rc != 0:
@@ -889,9 +918,8 @@ def _s_d6d(ctx):
         "label": "analyze-token-decoy",
         "carrier": {"path": carrier_path, "sha256": empty_sha, "size": 0},
         "steps": [{
-            "step": "inspect-go-binary",
             "argv": ["npx", "-y", "rea-agents@6.5.0", "inspect-go-binary",
-                     "--", "analyze"],
+                     "rea-agents@6.5.0", "analyze"],
             "cwd": tmp, "exit": 0,
             "stdout_path": stdout_path, "stdout_sha256": empty_sha,
             "stderr_path": stderr_path, "stderr_sha256": empty_sha,

@@ -1,0 +1,20 @@
+FALSIFIED
+
+## Counterexample — `wave-outcomes.py` loses a previously accepted wrapper
+
+**Observation.** At B, `.ufo/waves/round-19/tools/wave-outcomes.py:237-244` unwraps any object with a `causes` key; the old selftest at `:703-712` exercises `{"causes":{"Bravo":"exited 1"}}` with no `wave`. At S, the parser at `:237-245` additionally requires `"wave" in doc`; its revised `wrapped-causes` fixture adds `"wave":"selftest"` (`:704-713`), so it no longer checks the old input. The new `seat_named_causes` case (`:715-729`) tests a distinct flat-map shape.
+
+**Observed reproduction.** Detached clones were checked out at B and S (`git clone -q --no-hardlinks /home/vgpnk/Projects/shokunin/kaidoku-shokunin /var/tmp/r20-noharm-pywvfsjy/source` — exit 0; `git -C /var/tmp/r20-noharm-pywvfsjy/source checkout -q --detach 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9` — exit 0; `git -C /var/tmp/r20-noharm-pywvfsjy/source rev-parse HEAD` — exit 0, exact S). With identical no-`wave` causes JSON and registration:
+
+- B: `python3 -I -B .ufo/waves/round-19/tools/wave-outcomes.py --registration /var/tmp/r20-noharm-pywvfsjy/wave-causes-old-shape-c7g4cpke/baseline/registration.json --report-dir /var/tmp/r20-noharm-pywvfsjy/wave-causes-old-shape-c7g4cpke/baseline/reports --causes /var/tmp/r20-noharm-pywvfsjy/wave-causes-old-shape-c7g4cpke/baseline/causes.json --out /var/tmp/r20-noharm-pywvfsjy/wave-causes-old-shape-c7g4cpke/baseline/out.json` — exit 0; Bravo retains cause `exited 1`.
+- S: same command with `source/registration.json`, `source/reports`, `source/causes.json`, `source/out.json` — exit 2, `causes_unknown_seat`: `causes` is neither a seat nor agentId. No output is produced.
+
+**Inference / axes.** This is a real compatibility regression, not a changed historical artifact: it falsifies the “in-place tool edits keep old selftests” criterion even though the updated aggregate selftest passes (B 33 cases; S 34, both exit 0). Impact: calibration (the same valid cause input changes from accepted to refused) and coverage (the previously accepted no-wave wrapper is now untested/unsupported); no depth impact demonstrated.
+
+**Smallest safe correction.** Preserve the no-wave wrapper form and disambiguate by registration membership: unwrap a dict-valued `doc["causes"]` when `"causes"` is not itself a registered seat; when it is a seat, parse the top-level object as the flat map. Restore the old no-wave fixture alongside `seat_named_causes`.
+
+## Other requested no-harm checks
+
+**Observation.** The revision-pinned `python3 -I -B .ufo/waves/round-20/controls-r20.py 14f0260ad319ecc26994381b2415d5a999003375 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9` from the S clone exited 0 (`pass: true`; all 15 checks true): LOG/SCORECARD byte prefixes hold; prior lessons and r17-19 runs/predictions have no added/changed/deleted paths; QUALITY rows 1-22 are identical; coverage is 97/97 → 102/102 (10.0) and depth 17/17 (10.0). `git -C /var/tmp/r20-noharm-pywvfsjy/source diff --name-status 14f0260ad319ecc26994381b2415d5a999003375 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9 -- .ufo/waves/round-17/runs .ufo/waves/round-17/predictions .ufo/waves/round-18/runs .ufo/waves/round-18/predictions .ufo/waves/round-19/runs .ufo/waves/round-19/predictions` exited 0 with no output. `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin blame 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9 -L 175,180 -- corpus/README.md` exited 0: S lines 175 and 180 still contain the Frontier entries. The source-pinned `python3 -I -B .ufo/gates/citation-drift/citation-drift-probe.py --root /var/tmp/r20-noharm-pywvfsjy/source --rev 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9 --strict` exited 0, `clean findings=0`.
+
+**Observation.** Baseline/source selftests all exited 0: custody-pair 31/33; receipt-validate 26/28; head-rev-lint 3/5; jj-red-before 9/11; wave-outcomes 33/34; citation-drift-probe 33/34. `c1-census-v10.py --selftest` at S exited 0, 3 cases. These passing counts do not establish retention of the old wave-outcomes fixture; the counterexample above shows it was changed.

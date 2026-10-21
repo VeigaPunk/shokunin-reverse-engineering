@@ -6,8 +6,9 @@ Usage: evidence-timestamps.py --root LANE --rev REV --path LANE_RELATIVE_DIR
        evidence-timestamps.py --selftest
 
 Revision-scoped reads use Git objects and ``git blame --porcelain``; the working
- tree is never read. Binary blobs and blobs larger than 4 MiB are reported as
- skipped. Every timestamp occurrence is reported, including quoted text.
+tree is never read. Binary blobs are reported as skipped (the caller must review
+every skip); text size is not a reason to skip. ASCII JSON Unicode escapes are
+decoded on each source line before scanning, without changing its blame line.
 """
 
 import argparse
@@ -21,19 +22,11 @@ import subprocess
 import sys
 import tempfile
 
-MAX_BLOB_BYTES = 4 * 1024 * 1024
 HEADER_RE = re.compile(rb"^(\^?[0-9a-f]{40,64}) ([0-9]+) ([0-9]+)(?: ([0-9]+))?$")
 TIMESTAMP_RE = re.compile(
-    rb"(?<![0-9])"
-    rb"(?:"
-    rb"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}"
-    rb"(?::[0-9]{2}(?:\.[0-9]+)?)?(?:Z|[+-][0-9]{2}:[0-9]{2})"
-    rb"(?![A-Za-z0-9])"
-    rb"|"
-    rb"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}"
-    rb"(?::[0-9]{2})? [+-][0-9]{2}(?:[0-9]{2})?"
+    rb"(?<![0-9])[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}"
+    rb"(?::[0-9]{2}(?:\.[0-9]+)?)? ?(?:Z|[+-][0-9]{2}(?::?[0-9]{2})?)"
     rb"(?![A-Za-z0-9:])"
-    rb")"
 )
 
 
@@ -123,17 +116,11 @@ def _tree_entries(root, revision, scope):
 
 def _parse_timestamp(value):
     text = value.decode("ascii")
-    if "T" in text:
-        normalized = text[:-1] + "+00:00" if text.endswith("Z") else text
-        parsed = dt.datetime.fromisoformat(normalized)
-    else:
-        date, rest = text.split(" ", 1)
-        clock, zone = rest.rsplit(" ", 1)
-        if len(zone) == 3:
-            zone += ":00"
-        elif len(zone) == 5:
-            zone = zone[:3] + ":" + zone[3:]
-        parsed = dt.datetime.fromisoformat(date + "T" + clock + zone)
+    normalized = (text[:10] + "T" + text[11:]) if text[10] == " " else text
+    normalized = normalized.replace(" ", "")
+    if normalized.endswith("Z"):
+        normalized = normalized[:-1] + "+00:00"
+    parsed = dt.datetime.fromisoformat(normalized)
     if parsed.tzinfo is None:
         raise ValueError("timestamp has no timezone")
     return parsed
@@ -217,9 +204,6 @@ def collect(root, revision, raw_scope, allow_values=()):
             size = int(size_output.strip())
         except ValueError as exc:
             raise ToolError("blob_size_invalid", f"Git returned an invalid size for {display}") from exc
-        if size > MAX_BLOB_BYTES:
-            skipped.append({"path": display, "reason": "over_4_mib", "size_bytes": size})
-            continue
         blob = _git(root, "cat-file", "blob", object_id)
         if b"\0" in blob:
             skipped.append({"path": display, "reason": "binary", "size_bytes": size})
@@ -234,7 +218,9 @@ def collect(root, revision, raw_scope, allow_values=()):
                 committer_time = dt.datetime.fromtimestamp(epoch, dt.timezone.utc)
             except (OverflowError, OSError, ValueError) as exc:
                 raise ToolError("blame_time_invalid", f"unrepresentable committer-time in {display}:{line_number}") from exc
-            for match in TIMESTAMP_RE.finditer(source_line):
+            decoded_line = re.sub(rb"\\u00([0-7][0-9a-fA-F])",
+                                  lambda m: bytes([int(m.group(1), 16)]), source_line)
+            for match in TIMESTAMP_RE.finditer(decoded_line):
                 raw_timestamp = match.group(0)
                 try:
                     timestamp = _parse_timestamp(raw_timestamp)
@@ -264,9 +250,9 @@ def collect(root, revision, raw_scope, allow_values=()):
         "scope": scope,
         "summary": {
             "files_scanned": scanned_count,
-            "files_scanned_rule": "tracked text blobs under --path at --rev, at most 4 MiB each",
+            "files_scanned_rule": "all tracked text blobs under --path at --rev, no size skip",
             "files_skipped": len(skipped),
-            "files_skipped_rule": "tracked blobs excluded because they contain NUL or exceed 4 MiB",
+            "files_skipped_rule": "tracked blobs excluded because they contain NUL; every skip needs review",
             "finding_count": len(findings),
             "finding_count_rule": "explicitly zoned timestamp occurrences strictly later than their line's introducing committer-time",
             "unexempted_finding_count": unexempted,
@@ -397,11 +383,24 @@ def _selftest():
             (1, "2020-01-01T00:00:00Z"), (2, "2020-02-01T00:00:00Z")], \
             f"findings={(payload or {}).get('findings')!r}"
 
+    def alternate_and_large_text():
+        values = (b"2021-01-01T00:00:00+0000", b"2021-01-01 00:00:00 Z",
+                  b"2021-01-01 00:00:00.500 +00:00",
+                  b"2021-01-01\\u005400:00:00\\u005a")
+        content = b"\n".join(values) + b"\n" + b"x" * (4 * 1024 * 1024 + 1)
+        repo, revision, _ = _fixture_repo(
+            scratch, "alternate-large", content, "2020-01-01T00:00:00+00:00")
+        result, payload = _run_tool(script, repo, revision, extra=("--strict",))
+        assert result.returncode == 1
+        assert payload["summary"]["files_skipped"] == 0
+        assert len(payload["findings"]) == 4, payload["findings"]
+
     for case_id, function in (
         ("future_line_flagged", future_line_flagged),
         ("past_line_clean", past_line_clean),
         ("zulu_and_offset_parsed", zulu_and_offset_parsed),
         ("later_commit_line_uses_own_time", later_commit_line_uses_own_time),
+        ("alternate_and_large_text", alternate_and_large_text),
     ):
         check(case_id, function)
 

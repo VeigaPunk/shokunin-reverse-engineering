@@ -234,15 +234,17 @@ def load_causes(path: str, seats: dict, by_agent: dict, registration: str):
     doc, sha = _read_json(path, "causes")
     wave = None
     raw = doc
-    if (isinstance(doc, dict) and isinstance(doc.get("causes"), dict)
-            and "wave" in doc):
+    # A registered reserved-name seat is a flat-map entry when its value has
+    # the documented cause-object shape. Otherwise "causes" wraps a map.
+    cause_value = doc.get("causes") if isinstance(doc, dict) else None
+    flat_causes = ("causes" in seats and isinstance(cause_value, dict)
+                   and bool(set(cause_value) & set(CAUSE_KEYS))
+                   and set(cause_value) <= set(CAUSE_KEYS) | {"source"})
+    if isinstance(cause_value, dict) and not flat_causes:
         wave = doc.get("wave") if isinstance(doc.get("wave"), str) else None
-        raw = doc["causes"]
-        if not isinstance(raw, dict):
-            raise Refusal("causes_invalid",
-                          f"{path}: 'causes' is {type(raw).__name__}, "
-                          f"expected an object keyed by seat")
-    elif isinstance(doc, dict) and "seats" in doc:
+        raw = cause_value
+    elif (isinstance(doc, dict) and "seats" in doc
+          and ("seats" not in seats or isinstance(doc["seats"], list))):
         wave = doc.get("wave") if isinstance(doc.get("wave"), str) else None
         raw = doc["seats"]
         if not isinstance(raw, list):
@@ -727,6 +729,23 @@ def _selftest() -> int:
               and doc.get("cause_sources", {}).get("causes")
               == "history://K19.causes",
               "seat_named_causes", f"rc={r.returncode} doc={doc}")
+
+        for label, members, causes_doc in (
+            ("wrapped_no_wave", {"Bravo": "critic"},
+             {"causes": {"Bravo": "exited 1"}}),
+            ("reserved_flat_objects", {"causes": "critic", "cause": "critic",
+                                       "wave": "critic", "seats": "critic"},
+             {"causes": {"cause": "for-causes"}, "cause": "for-cause",
+              "wave": "for-wave", "seats": {"cause": "for-seats"}}),
+            ("wrapped_reserved_seat", {"causes": "critic"},
+             {"wave": "w", "causes": {"causes": "for-causes"}}),
+        ):
+            reg, rdir, cpath, out = fixture(label, members, {}, causes_doc)
+            r = run_cli("--registration", reg, "--report-dir", rdir,
+                        "--causes", cpath, "--out", out)
+            doc = load_out(out)
+            check(r.returncode == 0 and doc.get("causes_recorded") == len(members),
+                  label, f"rc={r.returncode} doc={doc}")
 
         # ---- flat map with metadata keys ---------------------------------
         reg, rdir, cpath, out = fixture(

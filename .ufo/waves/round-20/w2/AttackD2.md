@@ -1,0 +1,19 @@
+PARTIAL — the linter catches the tested contract-shaped timestamps and compares against committer time, but misses several alternate timestamp spellings in the requested attack.
+
+## Observations
+
+- At measured source S (`5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9`), the timestamp-tool blob hash and working-tree hash both observed as `53a8026d06e5e2d99a0e450a573cf272231774c5` (both hash commands exited 0). The regex accepts `T...Z` / `T...±HH:MM`, and space-separated signed `HH[MM]`; it does not express compact `T±HHMM` or space+Z (`.ufo/waves/round-20/tools/evidence-timestamps.py:26-36`). **Observation:** blame parsing reads `committer-time` (`:157-174`); collection invokes `git blame --porcelain` and compares the parsed instant to that time (`:228-254`). The measured caller invokes the tool with `--strict` (`.ufo/waves/round-20/verify.py:299-303`).
+- Built a two-commit repo and all scratch under `tempfile.mkdtemp()` at `/tmp/kaidoku-r20-d2-65k_pkjr`; it was removed after the run. First commit `74306f958bb287fee6f021f449bf1fbe41fb08df` had author time `2030-01-01T00:00:00Z`, committer time `2020-01-01T00:00:00Z`. Second/final commit `6d19c3f5c2c411016beacca411acd2e721de1bca` had author time `2019-01-01T00:00:00Z`, committer time `2022-01-01T00:00:00Z`. `git show -s --format=%H%n%aI%n%cI` and both `git blame --porcelain` commands exited 0; blame showed those distinct author/committer epochs.
+- Fixture JSON had future-dated values (2021-01-01) on lines 2–8 in `evidence/cases.json`: colon-offset/Z, compact `T+0000`, space+Z, fractional `T...Z`, fractional space+offset, JSON-escaped T, JSON-escaped Z. `json.loads` decoded both escaped forms to `2021-01-01T00:00:00Z` (exit 0). Line 1 of a separate file introduced in the second commit had `2021-01-01T00:00:00Z`.
+- `python3 -I -B /tmp/kaidoku-r20-d2-65k_pkjr/evidence-timestamps.py --root /tmp/kaidoku-r20-d2-65k_pkjr/fixture --rev 6d19c3f5c2c411016beacca411acd2e721de1bca --path .ufo/waves/round-20 --strict` exited **1**. JSON reported 2 files scanned, 0 skipped, 2 findings: `evidence/cases.json:2` (`2021-01-01T00:00:00Z`) and `:5` (`2021-01-01T00:00:00.500Z`), each against committer time `2020-01-01T00:00:00Z`. It did not report lines 3, 4, 6, 7, or 8: compact `T+0000`, space+Z, space-fractional, and both JSON-escaped timestamp spellings. The second-commit control was not reported because its timestamp precedes its committer time, despite being later than its author time.
+
+## Inference / limits
+
+The committer-vs-author check holds for both opposing controls. The contract explicitly enumerates colon offsets for `T` and signed offsets for the space form (`contract.md:41-45`); the ordinary fractional `T...Z` case is detected. The observed misses are outside that enumerated lexical grammar, so this is **partial**, not proof that the stated grammar itself fails. It does falsify a broader reading that all semantically explicit-zone timestamps in JSON are covered: the scanner applies its regex to raw lines, not JSON-decoded strings. No LSP device/server was available in the provided tool routes; caller/definition tracing used literal source search and verified source blobs instead.
+
+## Commands and exits
+
+- `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9:.ufo/waves/round-20/tools/evidence-timestamps.py` (stdout captured to the mkdtemp script) — 0.
+- `git -C /tmp/kaidoku-r20-d2-65k_pkjr/fixture init --quiet`; both `git add -A`; both `git commit --quiet -m ...`; both `git rev-parse HEAD`; both `git show -s --format=%H%n%aI%n%cI ...`; both `git blame --porcelain ...` — each 0.
+- Timestamp linter command above — 1, with JSON result described above.
+- Installs: none.

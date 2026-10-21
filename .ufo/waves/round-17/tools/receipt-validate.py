@@ -134,9 +134,9 @@ def _iter_steps(steps):
 def _is_analyze_step(step):
     """True only when a step's argv records the packaged analyze invocation.
 
-    The argv must contain the exact `rea-agents@<version>` package token
-    immediately followed by `analyze`; a decoy token elsewhere cannot
-    identify the step.
+    Accept the npx executable, optional -y/--yes, then the pinned package
+    operand and its analyze subcommand. Never search later carrier/options
+    arguments for another package-looking token.
     """
     if not isinstance(step, dict):
         return False
@@ -144,15 +144,16 @@ def _is_analyze_step(step):
     if declared and any(value != "analyze" for value in declared):
         return False
     argv = step.get("argv")
-    if not isinstance(argv, list):
+    if not isinstance(argv, list) or not all(isinstance(x, str) for x in argv):
         return False
-    return any(
-        isinstance(token, str)
-        and re.fullmatch(r"rea-agents@\d+\.\d+\.\d+", token)
-        and i + 1 < len(argv)
-        and argv[i + 1] == "analyze"
-        for i, token in enumerate(argv)
-    )
+    if not argv or os.path.basename(argv[0]) != "npx":
+        return False
+    i = 1
+    if i < len(argv) and argv[i] in ("-y", "--yes"):
+        i += 1
+    return (i + 1 < len(argv)
+            and re.fullmatch(r"rea-agents@\d+\.\d+\.\d+", argv[i]) is not None
+            and argv[i + 1] == "analyze")
 
 
 def _claims_analyze_step(step):
@@ -1145,7 +1146,7 @@ def selftest(pins):
         decoy_data["steps"] = [
             dict(decoy_base, argv=[
                 "npx", "-y", "rea-agents@6.5.0", "inspect-go-binary",
-                "analyze"], pin_checks=[dict(map_check3)]),
+                "rea-agents@6.5.0", "analyze"], pin_checks=[dict(map_check3)]),
             dict(decoy_base, argv=[
                 "npx", "-y", "rea-agents@6.5.0", "analyze",
                 str(pin_file), "--format", "json"], pin_checks=[])]
@@ -1168,6 +1169,14 @@ def selftest(pins):
             "npx", "-y", "rea-agents@6.5.0", "analyze", "--format", "json"]}
         record("argv_analyze_after_package_accepted",
                int(_is_analyze_step(positive)), 1)
+        for label, argv in (
+                ("argv_second_package_decoy", ["npx", "--yes", "rea-agents@6.5.0",
+                  "inspect-go-binary", "rea-agents@6.5.0", "analyze"]),
+                ("argv_non_npx_decoy", ["/usr/bin/true", "rea-agents@6.5.0", "analyze"]),
+                ("argv_latest_refused", ["npx", "--yes", "rea-agents@latest", "analyze"])):
+            record(label, int(_is_analyze_step({"argv": argv})), 0)
+        record("argv_absolute_npx_yes_accepted", int(_is_analyze_step({"argv": [
+            "/usr/bin/npx", "--yes", "rea-agents@6.5.0", "analyze"]})), 1)
         duplicate = {"steps": [
             {"name": "analyze", "pin_checks": [dict(map_check3)]},
             {"step": "analyze", "pin_checks": [dict(map_check3)]}]}

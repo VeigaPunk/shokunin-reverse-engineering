@@ -47,3 +47,13 @@ Caps (S040, wave-1 `ScoutRizinSchema.md`, source-read): 120000 ms deadline and 1
 Three carriers and one local Rizin CLI version were exercised; the runs do not validate parser correctness beyond the retained outputs and the jq section cross-check, prove which exact Rizin binary REA launched (`provider.version: null`), or cover other formats/commands/plugins. External files/network/plugin effects are not bound by this Evidence. The invalid-path output is generic, and `!` was intentionally not invoked in any retained call. This entry supersedes the rizin-absent statement in `corpus/knowledge/2026-10-13-pe-surface.md` (see its round-20 erratum).
 
 - claim: `execute-rizin-command` held on ELF and PE carriers; e.g. `ev_da001015882395e06e3097dfafd91fc944a9033c54eeeb178870e0847776cd31` (jq `iI`, `.ufo/waves/round-20/evidence/c2/rizin/jq-iI-1.stdout`) and `ev_42df7881706281b45be31d097db03d0659f9f98701d7a42fff9cfddfff497a29` (PE `iI`, `.ufo/waves/round-20/evidence/c2/rizin-pe/01-iI/stdout.toon`); sources S043, S044, S040.
+
+## Erratum — round-20 wave 2 (2026-10-21, appended; text above unchanged)
+
+- **Source identity.** REA's argv, digest gate and caps are anchored by **S048** (installed `rea-agents@6.5.0` CLI/service source and the
+  retained extract `evidence/c2/rizin-pe/rea-cli-source-notes.md`), not S040 (Harmony projection only). S043/S044 remain the Rizin-side
+  sources.
+- **Digest-error mapping.** The source note limits the `AnalysisInputError` projection to non-access-denied, non-timeout digest failures
+  (`rea-cli-source-notes.md:8`); the two tested path errors are within it. Do not read the sentence as covering every digest failure.
+- **"Only input rule".** The package schema requires a path and a command (both nonempty, strict object) and the command refinement rejects
+  CR/LF/NUL; the narrower true statement is "no command allow/deny list and no shell-command filter" (`w1/ScoutRizinSchema.md:13-25,68-70`).

@@ -1,0 +1,9 @@
+HOLDS
+
+**Observation.** Ran `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-20/tools/verb-coverage.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 14f0260ad319ecc26994381b2415d5a999003375` — exit 0. JSON reports `rev=14f0260ad319ecc26994381b2415d5a999003375`, package `6.5.0`, `mentioned=128/153`, and `target_exercised=0/5`; all five targets have `entries:0`, `exercised:false`, and empty `bound_evidence`.
+
+**Observation.** The compared assertion is C2's baseline `128/153` and five target verbs (`.ufo/waves/round-20/claims.json:26-29`, at S). Its scope explicitly limits the metric to entry mentions and says a mention alone is not mastery (`claims.json:27-29`). The counter contract defines the evidence-bound `exercised` check (`.ufo/waves/round-20/contract.md:71-75`); S's implementation reads the selected revision tree and reports per-command mentions and target results (`.ufo/waves/round-20/tools/verb-coverage.py:202-240`).
+
+**Observation / scope caveat.** The checker itself is not present in B (`git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin --no-optional-locks cat-file -e 14f0260ad319ecc26994381b2415d5a999003375:.ufo/waves/round-20/tools/verb-coverage.py` — exit 128); the requested run therefore used the current checker against B's Git tree. Its working-tree blob hash (`988f8f6c8c29412c27b79e25cd82de7a0fb82f3c`) equals the S blob hash (`git hash-object .ufo/waves/round-20/tools/verb-coverage.py` and `git rev-parse 5c0b46c4d35f7256f340ab3f53a8b1a66a2aa5d9:.ufo/waves/round-20/tools/verb-coverage.py` — both exit 0), so this run exercised the measured-source checker, not a baseline copy.
+
+**Verification gap.** No LSP device is mounted (`read xd://lsp` returned “No such tool”); no grep result is used as semantic proof. No tools were installed.

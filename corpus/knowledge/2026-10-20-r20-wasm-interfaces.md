@@ -43,3 +43,17 @@ Per S042 an import entry is module name + field name + external type, an export 
 therefore a type change at the same name; renames appear as add+remove. Interface equality does not establish ABI or runtime
 compatibility (REA's own limitations). Not examined: modules >8 MiB (REA input cap), non-function import kinds beyond those present,
 `interface.state: partial` paths, MCP `detail: "summary"`.
+
+## Erratum — round-20 wave 2 (2026-10-21, appended; text above unchanged)
+
+- **Source identity.** The `source:` line's `S040` is the Harmony-only installed-source row. The non-Harmony implementation source for
+  the WASM verbs is **S048** (installed `rea-agents@6.5.0` CLI/service: `reverseEngineeringCommands.js`, `ReverseEngineeringService.js`,
+  `domain/reverseEngineering.js`, `contracts/reverseEngineeringToolContracts.js`; retained extract
+  `.ufo/waves/round-20/evidence/c2/rizin-pe/rea-cli-source-notes.md`). S041 (WABT release identity) and S042 (module grammar) stand.
+- **Scope of the absent-pair statement.** "No same-module, different-bytes version pair exists on this host" holds for the scanned roots
+  (`/usr/lib`, `/opt`, `/home/vgpnk/.npm/_npx`, `-xdev`) only; other mounts were not scanned (w1 `ScoutWasmCarriers.md:95-103,135-136`).
+- **Install attribution.** The archive digest and extracted bytes are supported; the "installed by the round-20 L1 at 17:31 -03" instant is
+  the L1's recorded action and has no retained install-event receipt. Treat it as a recorded action, not an observed event.
+- **Replay.** A compare replay must regenerate `input_json` from the retained inspection Evidence; the receipt's temporary input path is
+  not retained, so `argv` alone is not self-contained.
+- **WABT signature resolution.** The export-signature explanation remains inference (S042 grammar; WABT not instrumented for that claim).

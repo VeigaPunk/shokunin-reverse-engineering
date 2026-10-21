@@ -14,3 +14,15 @@ recheck: Compare `.ufo/waves/round-20/evidence/c2/objdump/architectures-json/std
 ## Limits
 
 This establishes one host's BFD inventory and one successful `disassemble` operation on one ELF. It does not establish REA's objdump executable version, general architecture coverage, or disassembly equivalence. `format` and `architecture` remain unknown/null in the inspect Evidence. This covers an operation beyond the previously held `file_headers` example; it does not replace that record.
+
+## Erratum — round-20 wave 2 (2026-10-21, appended; text above unchanged)
+
+- **Source identity.** The `list-objdump-architectures` implementation is anchored by **S048** (installed `rea-agents@6.5.0`
+  `dist/cli/reverseEngineeringCommands.js:104-112`, retained extract `evidence/c2/rizin-pe/rea-cli-source-notes.md`), not S040
+  (Harmony projection only). S045 remains the objdump manual source.
+- **Receipt coverage.** The adjacent `receipt.json` files are receipts for the REA CLI runs (argv, env, interval, exit, output hashes,
+  carrier identity). The local `objdump` comparison has no receipt; its capture artifacts are
+  `evidence/c2/objdump/comparison/objdump-executable.txt` (path, time, binary hash), `comparison-results.txt` (cmp/diff exits) and the
+  per-command stdout/stderr. Do not read line 3 as covering both sides with receipts.
+- **Pathless subject.** `list-objdump-architectures` has `subject: null` by construction; the jq digest on the companion disassembly run is
+  not its subject.
