@@ -250,3 +250,21 @@ still skips binary blobs; QUALITY #25 remains a token check; the census DATED sh
 loader-mapped execution; the C3 predicate/vacuity residuals; census W04 for S033/S047; S041/S045/S046 quotes are rendered text, and
 S043's `-c` anchors (`rizin.c:111,586-588`) remain unadded; no real HarmonyOS package, device or runtime was exercised.
 
+## Correction to the D6d fix — pinned validator bytes (2026-10-21)
+
+The first integration changed `.ufo/waves/round-17/tools/receipt-validate.py` in place. That broke C3: every round-20 run receipt records the
+validator's SHA-256 and size in `pins_post`, so all 19 bound receipts became `sha256_mismatch`/`size_mismatch` and
+`measure.py --freeze 808cbb3` read `first_failure_bound=0`. The pinned file is therefore **restored byte-for-byte** (sha256
+`a31c7db8…be22c`, size 55,518) and the D6d fix lands as the successor `.ufo/waves/round-17/tools/receipt-validate-v2.py`
+(sha256 `7b7f4aba…d9b`, 32-case selftest). `routed-r19.py` D6d now runs the successor against two receipts: the post-package decoy must be
+refused `analyze_step_unauthenticated` and a valid `npx -y rea-agents@6.5.0 analyze` control must be accepted. The old registry row
+stays; the successor has its own row. This is the supersession pattern the frozen trace collector used: never rewrite bytes another
+round's receipts pin.
+
+Wave-2 timestamps: the widened scanner (text of every size) finds one future-dated fixture literal in `w2/AttackD2.md:6`
+(`2030-01-01T00:00:00Z`, the seat's own test-repo author time). The seat report is not rewritten; the strict run applies
+`--allow w2/AttackD2.md:6`, records the exemption and its reason, and the other finding (the `w1-causes.json` cutoff) was corrected to
+the recorded `session_exit` instant. Binary blobs (15, including the synthetic HAPs and `.xz` outputs) are reported as skipped and
+reviewed as binary carriers, not text evidence.
+
+

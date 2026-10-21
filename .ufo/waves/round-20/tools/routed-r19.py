@@ -48,6 +48,7 @@ FINAL_CENSUS = W20 + "/verify/final-census.json"
 HEAD_LINT = ".ufo/waves/round-18/tools/head-rev-lint.py"
 CITATION_PROBE = ".ufo/gates/citation-drift/citation-drift-probe.py"
 RECEIPT_VALIDATE = ".ufo/waves/round-17/tools/receipt-validate.py"
+RECEIPT_VALIDATE_V2 = ".ufo/waves/round-17/tools/receipt-validate-v2.py"
 PINS = ".ufo/waves/round-17/tools/pins.py"
 WAVE_OUTCOMES = ".ufo/waves/round-19/tools/wave-outcomes.py"
 JJ_RED_BEFORE = ".ufo/waves/round-18/tools/jj-red-before.py"
@@ -906,7 +907,6 @@ def _s_d6c(ctx):
 
 def _s_d6d(ctx):
     git, root, rev, tmp = ctx["git"], ctx["root"], ctx["rev"], ctx["tmp"]
-    receipt_path = os.path.join(tmp, "d6d-receipt.json")
     carrier_path = os.path.join(tmp, "carrier.bin")
     stdout_path = os.path.join(tmp, "stdout.log")
     stderr_path = os.path.join(tmp, "stderr.log")
@@ -914,24 +914,35 @@ def _s_d6d(ctx):
         with open(path, "wb") as fh:
             fh.write(b"")
     empty_sha = hashlib.sha256(b"").hexdigest()
-    receipt = {
-        "label": "analyze-token-decoy",
-        "carrier": {"path": carrier_path, "sha256": empty_sha, "size": 0},
-        "steps": [{
-            "argv": ["npx", "-y", "rea-agents@6.5.0", "inspect-go-binary",
-                     "rea-agents@6.5.0", "analyze"],
-            "cwd": tmp, "exit": 0,
-            "stdout_path": stdout_path, "stdout_sha256": empty_sha,
-            "stderr_path": stderr_path, "stderr_sha256": empty_sha,
-        }],
-        "retained_logs": [], "bound_sessions": [],
-        "pins_pre": {"entries": {}}, "pins_post": {"entries": {}},
-        "pins_compare": {"equal": True, "changed": [], "missing": []},
-    }
-    with open(receipt_path, "w", encoding="utf-8") as fh:
-        json.dump(receipt, fh)
-    result, err = _run_tool(git, root, tmp, rev, rev, RECEIPT_VALIDATE,
-                            ["--require-mid-maps", receipt_path], extras=(PINS,))
+
+    def write_receipt(name, argv):
+        path = os.path.join(tmp, name)
+        receipt = {
+            "label": name,
+            "carrier": {"path": carrier_path, "sha256": empty_sha, "size": 0},
+            "steps": [{
+                "argv": argv,
+                "cwd": tmp, "exit": 0,
+                "stdout_path": stdout_path, "stdout_sha256": empty_sha,
+                "stderr_path": stderr_path, "stderr_sha256": empty_sha,
+            }],
+            "retained_logs": [], "bound_sessions": [],
+            "pins_pre": {"entries": {}}, "pins_post": {"entries": {}},
+            "pins_compare": {"equal": True, "changed": [], "missing": []},
+        }
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(receipt, fh)
+        return path
+
+    decoy = write_receipt(
+        "d6d-decoy.json",
+        ["npx", "-y", "rea-agents@6.5.0", "inspect-go-binary",
+         "rea-agents@6.5.0", "analyze"])
+    control = write_receipt(
+        "d6d-control.json",
+        ["npx", "-y", "rea-agents@6.5.0", "analyze", carrier_path])
+    result, err = _run_tool(git, root, tmp, rev, rev, RECEIPT_VALIDATE_V2,
+                            ["--require-mid-maps", decoy, control], extras=(PINS,))
     if err:
         return False, err
     text = _combined(result)
@@ -940,7 +951,16 @@ def _s_d6d(ctx):
             not (_has_code(data, "analyze_step_unauthenticated") or
                  "analyze_step_unauthenticated" in text)):
         return False, "decoy analyze token was not rejected as analyze_step_unauthenticated"
-    return True, "receipt validator rejected analyze outside the post-package argv position"
+    receipts = data.get("receipts") if isinstance(data, dict) else None
+    by_name = {}
+    if isinstance(receipts, list):
+        for entry in receipts:
+            if isinstance(entry, dict):
+                by_name[os.path.basename(str(entry.get("receipt", "")))] = entry
+    control_entry = by_name.get(os.path.basename(control))
+    if not isinstance(control_entry, dict) or control_entry.get("valid") is not True:
+        return False, "valid npx analyze control was not accepted by the successor validator"
+    return True, "successor validator rejects the post-package decoy and accepts the npx control"
 
 
 def _s_d6e(ctx):
