@@ -2335,3 +2335,33 @@ admitted knowledge). Claims: `.ufo/waves/round-20/claims.json`.
   lane write; admission belongs to the non-author closure.
 
 
+## 2026-10-21 — round-21: record association and bounded observations
+
+Declared C1 calibration and C2 depth in `.ufo/waves/round-21/claims.json`
+at `f4e95af909d692156e984bf2049e1c7fb4a2a836`, baseline
+`2dd430cb6bcad60ff4db720c052074f1f75eecbc`. Motivating outside findings:
+`corpus/lessons/round-20-verifier-spotcheck.md`, R20-EVIDENCE and R20-SEP.
+Round 20 remains admitted and is not redone.
+
+- C1: new `round-21/tools/verb-coverage.py` binds exact id and operation in
+  supported JSON records and rejects typed refusal envelopes/duplicate names.
+  Its `isolated-control.py` owns an inert positive and decoy fixture without
+  reading C3 receipts. Current SKILL registry callers cut over; historical
+  R20 bytes remain for remeasurement.
+- C2: new `round-21/tools/compare-first-failure.py` requires the bounded
+  extractor envelope and explicit typed failure members, preserving kind/index
+  equality and asymmetric-null mismatch. No analyzed carrier or REA producer
+  is executed; nineteen old pairs are retrospective regression, not forecasts.
+- Frozen independent contract: `53166ab0aae495c964d956050ca0ca3a4f29014a`;
+  concrete input bytes: `d93c85887d9ae77d224c82c8f56bc8cca86d1a75`.
+  `round-21/battery.py` compares the same twelve C1 and twenty C2 cases at
+  either revision, separately; `fixtures/expected.json` pins input digests.
+- Frontier: S049/S050 reopened this round; lesson `round-21.md` records the
+  located quotes and mistake classes. QUALITY #26–27 sharpen the specific
+  record-association and bounded-silence errors, not general authentication.
+- Recovery inherited and re-read the claim/spec/lesson/source rows and external
+  worktree bases. The old registration proves zero seats spawned (job-cap
+  refusal); a fresh unchanged validated 64-seat W1 was dispatched. Dead seats
+  are not replaced. Final measurements and terminal seat records are appended
+  after the stable source commit, never inferred from unrun checks.
+

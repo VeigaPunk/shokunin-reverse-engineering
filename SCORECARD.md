@@ -2618,3 +2618,29 @@ SHONEN marks remain `[~]`.
 Corrections to the rows above: C1's counting command must carry `--live` (the leftover check); C2's universal carrier/subject wording is
 narrowed for the pathless target; C3's "held out" is limited to prior first-failure outcomes for the exact artifacts; C1 and C3 share
 the receipt validator as a verification authority (claim-separability residual, w2 `CriticSeparabilityS.md`).
+
+## Round 21 — record-bound evidence and bounded first-failure observations
+
+Baseline B=`2dd430cb6bcad60ff4db720c052074f1f75eecbc`;
+declaration `f4e95af909d692156e984bf2049e1c7fb4a2a836`.
+C1 calibration (tied-lowest finite proxy) and C2 depth are distinct predicates,
+not two labels for the same move. Claim names below are round-qualified:
+R21-C2 is the comparator, **not** R20-C2's five-verb coverage claim.
+
+| Claim / axis | Falsifiable finite move | Counting command | Score delta / limits |
+|---|---|---|---|
+| R21-C1 calibration, sourced S049/S050 | Frozen twelve record decisions: remove baseline false accepts while retaining positive controls; independent C1 receipt control avoids C3 fixtures | `python3 -I -B .ufo/waves/round-21/battery.py --root <LANE> --rev <REV> --claim C1`; `tools/isolated-control.py --root <LANE>` | 10.0→10.0, delta 0; finite error discrimination, not mastery/authentication |
+| R21-C2 depth | Frozen twenty bounded-observation/failure decisions: malformed input cannot become clean or crash; valid mismatch remains exit 1; nineteen retained matches survive | same battery with `--claim C2 --regression` | 10.0→10.0, delta 0; exact-artifact retrospective compatibility, not new forecast/type-recovery capability |
+
+Frozen contract `53166ab0aae495c964d956050ca0ca3a4f29014a`, concrete fixture
+bytes `d93c85887d9ae77d224c82c8f56bc8cca86d1a75`; both precede measurements.
+Measured revision/results are appended after the stable implementation lands.
+No capability is pre-claimed; saturation 10.0/window 10 and retired axes stay
+unchanged. Coverage is not claimed this round; no new knowledge entry or source
+row count alone becomes expansion.
+
+Planned (supersedes prior queue): finish the two declared finite improvements,
+then take the independent outside admit/reject sample. R20 source-anchor,
+lint/sandbox, timestamp exclusions, census/guard bypass and adjacency residuals
+remain named in `corpus/lessons/round-21.md`, not silently closed.
+
