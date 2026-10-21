@@ -1,0 +1,43 @@
+{
+  "schema": "kaidoku-tool-pins-v1",
+  "round": 24,
+  "recorded_utc": "2026-10-21T16:43:45Z",
+  "installer": "KagiR27-2 acting as kaidoku r24 L1, before claim freeze",
+  "wireshark": {
+    "version": "4.6.9",
+    "source_url": "https://www.wireshark.org/download/src/all-versions/wireshark-4.6.9.tar.xz",
+    "source_sha256": "d062d416a1ab3a49975aafe3a671c882dde0562ccd71b078808ceb59d465fc0f",
+    "source_bytes": 56477044,
+    "signatures_url": "https://www.wireshark.org/download/SIGNATURES-4.6.9.txt",
+    "signatures_copy": ".ufo/waves/round-24/evidence/tool/SIGNATURES-4.6.9.txt",
+    "signatures_sha256": "bfb295581bb1d8da8fe1406f138d1f12bb9174558824ee7ecfa823bf9e594fb5",
+    "signature_check": "gpg --verify in a throwaway GNUPGHOME after --recv-keys 5A5ADBA7DBEA6C3F87224F1982244A78E6FEAEEA from keys.openpgp.org: Good signature from Gerald Combs <gerald@wireshark.org>, key not certified by a trusted signature (no web-of-trust path); SHA256 line for the tarball equals source_sha256",
+    "build": {
+      "channel": "official source release built locally (no pacman transaction; pacman pause respected)",
+      "cmake": "cmake 4.4.4 via `uv tool install cmake` (PyPI wheel)",
+      "configure": "cmake -G Ninja ../wireshark-4.6.9 -DCMAKE_BUILD_TYPE=Release -DBUILD_wireshark=OFF -DBUILD_logray=OFF -DBUILD_stratoshark=OFF -DUSE_qt6=OFF -DENABLE_LUA=OFF -DBUILD_androiddump=OFF -DBUILD_sshdump=OFF -DBUILD_ciscodump=OFF -DBUILD_wifidump=OFF -DBUILD_sdjournal=OFF -DBUILD_dpauxmon=OFF -DBUILD_randpktdump=OFF -DBUILD_udpdump=OFF -DBUILD_etwdump=OFF -DCMAKE_INSTALL_PREFIX=/home/vgpnk/.local/opt/wireshark-4.6.9",
+      "configure_log": ".ufo/waves/round-24/evidence/tool/wireshark-cmake.log",
+      "build_dir": "/fast/scratch/kaidoku-r24/tshark/build (scratch; not retained)",
+      "commands": ["ninja -j24 tshark capinfos", "ninja -j24 install"],
+      "prefix": "/home/vgpnk/.local/opt/wireshark-4.6.9"
+    },
+    "binaries": {
+      "/home/vgpnk/.local/opt/wireshark-4.6.9/bin/tshark": "00ed7bde4e041eca9f2e0b32c79ff598a76a55d042489c08c6211bfc6c6f770d",
+      "/home/vgpnk/.local/opt/wireshark-4.6.9/bin/capinfos": "1b3385db34286867c2c29c5c6bd5635282fbe0e151aa28b293969e1213eb54ba"
+    },
+    "version_output": "TShark (Wireshark) 4.6.9 (Git commit 2d548b197c75).",
+    "rea_env": {
+      "REA_TSHARK_COMMAND": "/home/vgpnk/.local/opt/wireshark-4.6.9/bin/tshark",
+      "REA_CAPINFOS_COMMAND": "/home/vgpnk/.local/opt/wireshark-4.6.9/bin/capinfos"
+    },
+    "limits": "Binary digests identify this local build only; they are not reproducible-build claims. Lua disabled, so Lua dissectors/plugins are absent from inspect-packet-fields registrations."
+  },
+  "capture_inputs": {
+    "carrier": "test/captures/ inside the signature-checked wireshark-4.6.9.tar.xz above; each capture's own sha256 is recorded in its run/envelope subject digest",
+    "reproduce": "curl -fsSLO <source_url>; sha256sum -c; tar xf; files under wireshark-4.6.9/test/captures/"
+  },
+  "rea": {
+    "package": "rea-agents@6.5.0",
+    "producer": ".ufo/waves/round-24/tools/run-rea.py"
+  }
+}
