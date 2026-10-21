@@ -36,7 +36,8 @@ def main():
     a.out.mkdir(parents=True, exist_ok=False)
     checks = []
     def record(name, argv, expected_exit, predicate=lambda out: True):
-        r = subprocess.run(argv, capture_output=True, text=True, check=False)
+        child_env = dict(os.environ, TMPDIR=str(runtime))
+        r = subprocess.run(argv, env=child_env, capture_output=True, text=True, check=False)
         try:
             output = json.loads(r.stdout)
         except ValueError:
