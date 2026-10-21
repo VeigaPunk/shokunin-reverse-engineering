@@ -527,6 +527,26 @@ def _s_d3(ctx):
     except (ValueError, TypeError, UnicodeDecodeError) as exc:
         return False, "carrier evidence invalid: %s" % exc
 
+    # After the round's runs the guard is disarmed (modes restored, recorded in
+    # disarm.json). A disarmed guard cannot pass a fresh check, so a valid disarm
+    # record over the same carrier set, taken after every retained check, stands
+    # in for the fresh check; without one the live guard must still be armed.
+    disarm = _json_bytes(git.blob(rev, CARRIER_EVIDENCE + "/disarm.json"))
+    if isinstance(disarm, dict) and disarm.get("action") == "disarm":
+        try:
+            disarm_paths = _record_carriers(disarm, root)
+        except (ValueError, TypeError) as exc:
+            return False, "carrier disarm record invalid: %s" % exc
+        if disarm_paths != wanted:
+            return False, "disarm.json carrier set differs from predictions/carriers.tsv"
+        disarm_at = str(disarm.get("taken_at_utc", ""))
+        check_times = [str((_json_bytes(git.blob(rev, p)) or {}).get("taken_at_utc", ""))
+                       for p in check_paths]
+        if not disarm_at or any(not t or t >= disarm_at for t in check_times):
+            return False, "disarm.json is not later than every retained check record"
+        return True, ("clean exec_refused/mode_restored selftest; retained arm/check records; "
+                      "disarm recorded after the last of %d checks" % len(check_times))
+
     checked, err = _run_tool(
         git, root, tmp, rev, rev, CARRIER_GUARD,
         ["check", "--manifest", CARRIERS, "--record", CARRIER_EVIDENCE],
