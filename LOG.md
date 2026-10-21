@@ -2598,3 +2598,47 @@ Baseline counting argv/stdout/stderr/exit1 are retained in
 without modifying the inherited counter or its frozen expectations.
 R22's102 reportless seats remain evidence with their recorded causes or
 unknown causes; no conjectural explanation or replacement earns credit.
+
+### Round-23 source work and scoped corrections
+
+Actual L1 original envelopes/run records are retained under
+`.ufo/waves/round-23/evidence/c1/`: decoder catalog/UART help, exact synthetic
+Hi decode, selected public sigrok-dumps recording decode and invalid-decoder
+execution_failure; plus independently fetched legacy-layout Saber1330203
+inspect-dart-aot success. The public APK's digest is
+`a7b1f5c8c077aafc8903eb8246d9b6f5fc8ebb4829dc5cb32bd2cdd8ba3ea618`.
+New sourced entries and S058–S061 preserve signature-module load failure,
+leading/nonmatching hex annotations, the failed literal-text prediction,
+partial Dart string pool and R22's unchanged carrier-specific refusal.
+
+The cumulative metric now has one explicit new-entry scan, retaining the
+reviewed R22 binder rather than duplicating its identity policy. Historical
+award is measured at B; current old-root/catalog/source preservation is
+checked. W1's metadata-refusal counterexample is addressed by a whole-envelope
+structural refusal walk; independent21-case controls and manifest are frozen
+before demonstration. Active authority is frozen/expected-v2.json; v1's
+unexercised proposal bytes remain evidence, not the active oracle.
+
+SKILL/PROVINCE additions are EOF-only. README rows consume existing separator
+lines so older downstream numbered pointers are not shifted wholesale. Existing
+QUALITY criteria already cover the mined mistakes and are intentionally
+unchanged; no incidental calibration/depth claim is added.
+The actual final verification producer is verify.py, registered as a probe;
+results are not inferred from these written implementations.
+
+W1 CriticLifecycle supplied a durable93-row R22 transcript receipt. It
+distinguishes13 terminal Haiku failures,32 capacity-retrying seats and48
+same-instant aborts; abort/dispose mechanisms remain unexplained, and all102
+R22 reportless seats remain uncredited. Its initial overreading of “unknown
+where unknown” and zero-based transcript citations were explicitly corrected.
+W1 advisory scope deviations, including ConnectDartSymbols production-tree
+writes before L1's stop, are retained and disclosed; only the independent
+L1 carrier run is admitted as the new Dart witness.
+
+Tool acquisition: lane-local extraction of the pre-existing official
+sigrok-cli0.7.2 AppImage (SHA25649d2f597…9f50b614), selected through the
+reproducible launcher, to enable offline discovery/decode. Actual extraction,
+version banner and selected dependency pins are retained; no package/global
+configuration transaction, full-installation authentication or continuous
+custody is claimed. All three dispatched executors died with capacity errors,
+so no absent executor result earned credit or replacement.

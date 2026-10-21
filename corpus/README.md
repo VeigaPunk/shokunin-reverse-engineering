@@ -69,8 +69,8 @@ A row is written when its file exists, never before.
 | Static tool verbs (REA 6.5.0, round 20) | `2026-10-20-r20-wasm-interfaces`, `2026-10-20-r20-rizin-command-observation`, `2026-10-20-r20-objdump-architecture-list` | held — first runs of `inspect-wasm-artifact` (4 shipped modules, WABT 1.0.42) and `compare-wasm-interfaces` (synthetic changed pair, distinct-module pair, identical control); `execute-rizin-command` on jq/libjq/PE (unrestricted shell-capable surface, read-only info commands only); `list-objdump-architectures` (= host `objdump -i`, subject null) plus `inspect-with-objdump disassemble` on jq; Harmony projection is mapped under Archives & packages |
 | Static Flutter APK boundary (round 22) | `2026-10-21-r22-flutter-static-boundary` | held narrowly — REA6.5.0 identify-flutter-build parsed one pinned Godot APK as non-Flutter; no positive Dart/source-recovery/runtime claim from this negative |
 | Partial Flutter positive and Dart refusal (round 22) | `2026-10-21-r22-flutter-positive-dart-refusal` | held narrowly — Saber identify-flutter-build succeeds with partial coverage; inspect-dart-aot refuses missing dynamic snapshot symbols and is not counted |
+| Offline signal and Dart-layout REA envelopes (round 23) | `2026-10-21-r23-offline-signal-envelopes`, `2026-10-21-r23-dart-legacy-layout-boundary` | held narrowly — tool-subject decoder catalog with a signature-module failure; selected synthetic/public UART annotations, not hardware acquisition; legacy-layout Saber libapp headers complete but string pool partial, not universal Dart/source recovery |
 ## Knowledge
-
 | entry | topic | source | verified-at |
 |---|---|---|---|
 | `2026-10-13-rea-cli-surface` | 127-command CLI inventory, global options, argument shapes | `npx rea-agents@6.4.0 --help` ×16 | 2026-10-13 |
@@ -156,8 +156,8 @@ A row is written when its file exists, never before.
 | `2026-10-20-r19-go125-toolchain-replay` | Go 1.25.0 toolchain artifact holdout: vet's H1-only Invalid index 13902080, seven silent controls; frozen mechanism rule confirmed, full read-list compare 7/8 | S038 carrier provenance, S035/S023/S003 mechanism, round-19 bound logs | 2026-10-20 |
 | `2026-10-21-r22-flutter-static-boundary` | Parsed non-Flutter APK negative versus refusal; ABI/release-documentation limits; no runtime or source-recovery claim | S051–S053, bound retained REA6.5.0 identify_flutter_build record | 2026-10-21 |
 | `2026-10-21-r22-flutter-positive-dart-refusal` | One pinned Flutter-positive partial result versus separate Dart-symbol refusal; no source recovery/runtime claim | S054/S055; complete retained original CLI envelopes and L1 producing argv/exit | 2026-10-21 |
+| `2026-10-21-r23-offline-signal-envelopes`, `2026-10-21-r23-dart-legacy-layout-boundary` | Offline decoder discovery/recordings and carrier-conditional Dart AOT parsing; retained diagnostics/refusal boundaries | S058–S061; original L1 REA6.5.0 envelopes, carrier digests and producing records | 2026-10-21 |
 ## Lessons
-
 | entry | round | gist |
 |---|---|---|
 | `2026-10-13-round-1` | 1 | rejects-as-calibration; `--schema`>`--help`; doctor healthy≠usable; ASAR/extract-file/tmpdir gotchas; snapshot≠DB cache; verify-then-disassemble |
@@ -173,8 +173,8 @@ A row is written when its file exists, never before.
 | `round-19` | 19 | seven routed R18 fixes; client-pin freshness; Go toolchain holdout; QUALITY #22 per-seat causes; dead-seat partial reuse disclosed |
 | `round-21` | 21 | record-bound Evidence association and explicit bounded observations; QUALITY #26–28; frozen twelve/twenty-case before→after and separately frozen inert receipt control |
 | `round-22` | 22 | source-backed uncovered catalog evidence and receipt-matched dispositions; lost93-seat W1 explicitly excluded from claim evidence |
+| `round-23` | 23 | cumulative frozen completeness, offline signal boundaries, retained diagnostics and reportless-seat uncertainty; no replacement credit |
 ## Frontier
-
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
 - RISC-V deep analysis — `target_unavailable` bypassed via e_machine patch + language override (r5-01); full EXEC already runs direct analyzeHeadless (10,766 functions @900 s cap).
 - `.jsc` → source mapping — Ignition disassembly held (r4-07); View8/jsc2js-style mapper is next for typora's real app.

@@ -216,3 +216,27 @@ round; replacement work performed no debugger/target execution. Correct aliases 
 counter are grounded in REA6.5.0 source and synthetic controls only; they grant
 no ownership or authorization to run a tracer. The sigrok verbs remain
 unexercised; no recording decode or hardware contact is claimed.
+
+### Round-23 offline envelope additions — 2026-10-21
+
+This dated section supersedes the round-22 instant's statement that sigrok
+verbs were unexercised, without rewriting that historical partition.
+`corpus/knowledge/2026-10-21-r23-offline-signal-envelopes.md` (S058–S060)
+holds REA6.5.0 decoder discovery on the local launcher and file-only UART
+decode on one synthetic and one digest-pinned public recording. Discovery
+is a tool-subject observation with a signature-module load failure; no
+full-installation, hardware isolation or acquisition capability is claimed.
+Offline recording envelopes fit artifact evidence; hardware acquisition and
+device control remain Adjacent/unowned, not absorbed into this province.
+
+`corpus/knowledge/2026-10-21-r23-dart-legacy-layout-boundary.md` (S061)
+holds static inspect-dart-aot on the exact archived Saber1330203 APK whose
+libapp exports the supported four dynamic snapshot symbols. Its section/header
+coverage is complete and string-pool projection partial. R22's selected
+Saber1360103 refusal stays valid and unchanged; no universal SDK/build,
+decompilation or target execution claim follows.
+
+The six-verb completeness denominator remains fixed. Both debugger verbs
+remain unheld/Adjacent; kaidoku/revenger arbitration is still open.
+No process attach, live device operation or general signal-analysis
+ownership is earned by these offline observations.

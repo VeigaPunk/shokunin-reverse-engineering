@@ -704,3 +704,40 @@ Saber identifies as Flutter with partial coverage while its separate Dart
 AOT reader refuses the missing dynamic symbols. Never transfer success from
 one producer to another, infer a Dart version from an unmapped snapshot hash,
 or count a refusal as a second held verb.
+
+## Offline recording and carrier-layout envelopes — round 23
+
+Use the source-backed entries
+`corpus/knowledge/2026-10-21-r23-offline-signal-envelopes.md` (S058–S060)
+and `corpus/knowledge/2026-10-21-r23-dart-legacy-layout-boundary.md` (S061).
+They extend the frozen six-verb inventory without claiming full completeness,
+signal hardware ownership, source recovery or debugger execution.
+
+| Selected input | Bounded decision |
+|---|---|
+| Decoder discovery | `inspect-signal-decoders --all` or exact decoder help; the subject/digest names the configured launcher. Read diagnostics: an exhausted window excludes modules that failed to load |
+| Existing raw UART sample file | Explicit `--input_format binary:numchannels=1:samplerate=960000`, `--decoders uart:rx=0:baudrate=9600`, `--annotations uart=rx-data`; returned lines are literal sample-range annotations, not observed device behavior |
+| Selected sigrok session file | Preserve the recording digest and documented channel mapping; public provenance is source attribution. Leading annotations may disagree with an expected payload; do not call the entire output lossless |
+| Dart APK exporting the supported four dynamic snapshot symbols | `inspect-dart-aot` can report complete libapp section/header coverage while string_pool stays partial. Preserve prior carrier-specific refusals; no universal SDK compatibility follows |
+| Live debugger, acquisition or device-control request | Still Adjacent/unheld. Offline parsing does not resolve the kaidoku/revenger arbitration |
+
+Signal CLI uses `REA_SIGROK_COMMAND` (absolute selected launcher),
+sigrok-cli0.7.2 with libsigrokdecode and `/usr/bin/prlimit`; the checked
+lane-local reproduction recipe and selected dependency pins are under
+`.ufo/waves/round-23/`. The envelope's `hardware_acquisition:not-performed`
+is a provider declaration, not an independent device-contact monitor.
+No no-execution guard or OS sandbox is asserted.
+
+### Round-23 measurement registry
+
+| Name | Kind / owner | Entry / verdict map | Self-invocation | Pinned values / write scope |
+|---|---|---|---|---|
+| round23-C1 | gate / kaidoku | `python3 -I -B .ufo/waves/round-23/tools/count-c1.py --root <LANE> --rev <REV>`; 0 clean c1_complete6/6, 1 failed c1_incomplete, 2 could-not-evaluate/unevaluable. Round improvement target is k>=2, not a green completeness gate | Same entry with `--root <LANE> --selftest`; 0 selftest_clean, 1 selftest_failed, 2 could-not-evaluate including snapshot_tampered | Fixed B and six targets, reviewed R22/R21/R20 hashes; active frozen/expected-v2.json pins separately authored fixture program/template, manifest digest in executable. Old v1 proposals retained, not active. Reads committed inputs only; removed temporary files/private Git clones under ignored round23/runtime. New scan requires S058+ linkage and traverses metadata/sibling refusal ancestry before reviewed binding; local association, not authentication. Actual envelope/run consistency is separately described |
+| round23-signal-description | probe / kaidoku | `python3 -I -B .ufo/waves/round-23/tools/describe-signals.py --root <LANE> --rev <REV>`; 0 report produced, inspect discrepancy fields; 2 could-not-evaluate | No selftest: field/consistency descriptor, not admission oracle | Named committed original envelopes/run records/carriers; stdout only, no producer replay or live-tree writes |
+| round23-dart-description | probe / kaidoku | `python3 -I -B .ufo/waves/round-23/tools/describe-dart.py --root <LANE> --rev <REV>`; 0 report produced, inspect discrepancy fields; 2 could-not-evaluate | No selftest: field/consistency descriptor, not admission oracle | Named committed L1 envelope/run/fetch; stdout only, no target replay, SDK inference or live-tree writes |
+| round23-final-producer | probe / kaidoku | `python3 -I -B .ufo/waves/round-23/verify.py --root <LANE> --rev <SOURCE-COMMIT> --out <NEW-DIR>`; 0 declared finite conditions observed, 1 discrepancy, 2 could-not-evaluate/invocation | No independent selftest: exercises the child gate's own self-invocation, immutable before/after counts, tampered-input red, same-input metadata red/green, original run consistency, prior no-harm and source prefixes | Extracts one committed private clone under ignored runtime, uses only pinned/frozen source and retained records; writes a new output directory, removes private clones. No REA replay, native judge, authentication or outside admission |
+
+Checklist: count each verb once; retain the exact incomplete remainder; separate
+catalog mentions from held targets; never replace a parent refusal with a
+detached success copy; report every module-load warning and projection cap.
+Source relevance and ownership remain manual admission duties, not token matches.
