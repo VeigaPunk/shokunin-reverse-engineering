@@ -77,7 +77,7 @@ def main():
         (control_copy/'tools').mkdir(parents=True)
         (control_copy/'fixtures').mkdir()
         shutil.copyfile(wave/'tools/isolated-control.py',control_copy/'tools/isolated-control.py')
-        (control_copy/'fixtures/isolated-receipt.json').write_text('{}\n',encoding='utf-8')
+        (control_copy/'fixtures/isolated-receipt-v2.json').write_text('{}\n',encoding='utf-8')
         red_control=run('independent-template-red',py+[str(control_copy/'tools/isolated-control.py'),'--root',str(scratch)],2)
         red_control['pass']=red_control['pass'] and 'snapshot_tampered' in red_control['stdout']
         (out/'independent-template-red.json').write_text(json.dumps(red_control,indent=2)+'\n',encoding='utf-8')

@@ -2417,3 +2417,18 @@ SOURCES gains the bounded two-document direct-opening Search log and study path;
 existing table rows remain unchanged. Final demonstration outcomes are appended
 only after execution.
 
+### Round-21 independent-template failed positive
+
+Post-wave source `93c931a205e2e52b2a4257e9f895a175ea5f0727` was actually
+14/16 clean expected checks (`verify/final/summary.json`): the new independent
+positive omitted `python`/`orig_argv` and the validator returned1 with those
+two `missing_field` findings. Both failed records are preserved. The frozen
+12/20 case matrices, nineteen retrospective pairs and invalid-revision1→2
+compatibility pair passed; that does not excuse the failed positive.
+
+The separately frozen v2 input
+`ae73ec7734c8edc70350995267ddc1f0d2f603e4` supplies those required metadata
+fields without a validator fixture builder. The active registry cuts over to
+v2; v1 stays only as red evidence. A fresh final-fixed record directory avoids
+overwriting any failed or earlier passing observation.
+

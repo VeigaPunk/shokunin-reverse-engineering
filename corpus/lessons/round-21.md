@@ -132,3 +132,20 @@ The source registry also adds the explicit S049→S050 study path and bounded
 direct-opening Search log; no prior table row was edited. Post-correction
 measurements use a separate `verify/final/` output directory when exercised,
 preserving every initial V receipt rather than overwriting it.
+
+### Independent-template red state
+
+The first post-wave source `93c931a205e2e52b2a4257e9f895a175ea5f0727`
+produced14/16 expected checks (`verify/final/summary.json`). Both failures
+were the isolated control's positive: the independently authored v1 receipt
+omitted required `python` and `orig_argv`. The actual validator returned1
+with `missing_field` at `$.python` and `$.orig_argv`
+(`verify/final/isolated-without-C3.json`). This is a real failed positive,
+not called clean or hidden by the decoy's expected failure.
+
+| Mistake class | Evidence | Captured-by | Fix |
+|---|---|---|---|
+| reference-drift — incomplete standalone metadata schema | the two `missing_field` findings above | positive-control requirement in QUALITY28; it caught the defect | Separate v2 fixture adds only the required runtime metadata fields and keeps the expected exits/command payloads. It is frozen at `ae73ec7734c8edc70350995267ddc1f0d2f603e4`; the renderer supplies metadata independently without importing validator code. V1 and the failed run remain evidence. |
+
+The final corrected demonstration uses a fresh `verify/final-fixed/`
+directory; its outcome is not inferred from the earlier14 green checks.

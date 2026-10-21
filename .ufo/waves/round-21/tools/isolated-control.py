@@ -15,8 +15,8 @@ import sys
 import tempfile
 import time
 
-TEMPLATE_SHA256='d9d679d98f8df643facb841ec86bb10d1fe1768f1b54d5104fe9be19b1f0af29'
-TEMPLATE_FREEZE='174948f0e6052ec90a0c51f14516ded210b99273'
+TEMPLATE_SHA256='5346426d237cc56dc8cf7d25187206cab561b91e8b37bd402e85338d112da25c'
+TEMPLATE_FREEZE='ae73ec7734c8edc70350995267ddc1f0d2f603e4'
 
 
 def substitute(value, replacements):
@@ -41,7 +41,7 @@ def snapshot(path):
 def evaluate(root):
     validator=Path(root)/'.ufo/waves/round-17/tools/receipt-validate-v2.py'
     pins_path=validator.with_name('pins.py')
-    template_path=Path(__file__).resolve().parents[1]/'fixtures/isolated-receipt.json'
+    template_path=Path(__file__).resolve().parents[1]/'fixtures/isolated-receipt-v2.json'
     template_bytes=template_path.read_bytes()
     if hashlib.sha256(template_bytes).hexdigest()!=TEMPLATE_SHA256:
         raise ValueError('snapshot_tampered: independent receipt template')
@@ -59,7 +59,8 @@ def evaluate(root):
         data=substitute(template['receipt'],{'@carrier@':str(carrier),'@carrier_sha@':digest,
                          '@work@':str(work),'@log@':str(log),
                          '@log_sha@':hashlib.sha256(log.read_bytes()).hexdigest(),
-                         '@instant@':datetime.now(timezone.utc).isoformat()})
+                         '@instant@':datetime.now(timezone.utc).isoformat(),
+                         '@python@':sys.version,'@orig_argv@':getattr(sys,'orig_argv',sys.argv)})
         pre,mid,post=snapshot(carrier),snapshot(carrier),snapshot(carrier)
         data['pins_pre'],data['pins_post']=pre,post
         data['pins_compare']={'equal':pre['entries']==post['entries'],'changed':[],
