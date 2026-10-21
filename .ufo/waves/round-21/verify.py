@@ -27,7 +27,7 @@ def main():
     records=[]
     def run(name,argv,expected):
         proc=subprocess.run(argv,capture_output=True,text=True,check=False,timeout=300,cwd=root)
-        record={'id':name,'argv':argv,'measured_revision':args.after,'exit':proc.returncode,'expected_exit':expected,'stdout':proc.stdout,'stderr':proc.stderr,'pass':proc.returncode==expected}
+        record={'id':name,'argv':argv,'measured_revision':args.before if name.startswith('before-') else args.after,'exit':proc.returncode,'expected_exit':expected,'stdout':proc.stdout,'stderr':proc.stderr,'pass':proc.returncode==expected}
         records.append(record)
         (out/(name+'.json')).write_text(json.dumps(record,indent=2)+'\n',encoding='utf-8')
         print(name,proc.returncode,'expected',expected,flush=True)
