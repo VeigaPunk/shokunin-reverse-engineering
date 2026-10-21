@@ -708,8 +708,8 @@ or count a refusal as a second held verb.
 ## Offline recording and carrier-layout envelopes — round 23
 
 Use the source-backed entries
-`corpus/knowledge/2026-10-21-r23-offline-signal-envelopes.md` (S058–S060)
-and `corpus/knowledge/2026-10-21-r23-dart-legacy-layout-boundary.md` (S061).
+`corpus/knowledge/2026-10-21-r23-offline-signal-envelopes.md` (current S059/S060/S062; S058 superseded)
+and `corpus/knowledge/2026-10-21-r23-dart-legacy-layout-boundary.md` (current S063; S061 superseded).
 They extend the frozen six-verb inventory without claiming full completeness,
 signal hardware ownership, source recovery or debugger execution.
 

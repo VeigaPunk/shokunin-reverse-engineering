@@ -57,6 +57,8 @@ def bind_new(r22, r21, text, verb, evidence_id):
 
 
 def measure(root, revision):
+    if git(root, 'rev-parse', '--show-prefix').strip():
+        raise ValueError('root_not_repository_top')
     rev = git(root, 'rev-parse', '--verify', '--end-of-options', revision+'^{commit}').decode().strip()
     legacy = git(root, 'show', rev+':'+LEGACY)
     if hashlib.sha256(legacy).hexdigest() != LEGACY_SHA256:
@@ -72,7 +74,7 @@ def measure(root, revision):
     if source_rows(new_sources)[:len(source_rows(old_sources))] != source_rows(old_sources):
         raise ValueError('historical_sources_changed')
     def knowledge_blobs(ref):
-        entries = git(root, 'ls-tree', '-r', '-z', ref, '--', 'corpus/knowledge/')
+        entries = git(root, 'ls-tree', '-r', '-z', '--full-tree', ref, '--', 'corpus/knowledge/')
         return {entry.partition(b'\t')[2]: (entry.partition(b'\t')[0].split()[0],
                                            entry.partition(b'\t')[0].split()[2])
                 for entry in entries.split(b'\0') if entry}
@@ -167,8 +169,9 @@ def main():
             del os.environ[key]
     os.environ['GIT_NO_REPLACE_OBJECTS'] = '1'
     os.environ.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='/dev/null',
-                      GIT_CONFIG_COUNT='1', GIT_CONFIG_KEY_0='core.hooksPath',
-                      GIT_CONFIG_VALUE_0='/dev/null')
+                      GIT_CONFIG_COUNT='2', GIT_CONFIG_KEY_0='core.hooksPath',
+                      GIT_CONFIG_VALUE_0='/dev/null', GIT_CONFIG_KEY_1='core.attributesFile',
+                      GIT_CONFIG_VALUE_1='/dev/null')
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root', type=Path, required=True)
     p.add_argument('--rev')

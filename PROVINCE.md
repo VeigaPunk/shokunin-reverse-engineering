@@ -221,7 +221,7 @@ unexercised; no recording decode or hardware contact is claimed.
 
 This dated section supersedes the round-22 instant's statement that sigrok
 verbs were unexercised, without rewriting that historical partition.
-`corpus/knowledge/2026-10-21-r23-offline-signal-envelopes.md` (S058–S060)
+`corpus/knowledge/2026-10-21-r23-offline-signal-envelopes.md` (current S059/S060/S062; S058 superseded)
 holds REA6.5.0 decoder discovery on the local launcher and file-only UART
 decode on one synthetic and one digest-pinned public recording. Discovery
 is a tool-subject observation with a signature-module load failure; no
@@ -229,10 +229,10 @@ full-installation, hardware isolation or acquisition capability is claimed.
 Offline recording envelopes fit artifact evidence; hardware acquisition and
 device control remain Adjacent/unowned, not absorbed into this province.
 
-`corpus/knowledge/2026-10-21-r23-dart-legacy-layout-boundary.md` (S061)
+`corpus/knowledge/2026-10-21-r23-dart-legacy-layout-boundary.md` (current S063; S061 superseded)
 holds static inspect-dart-aot on the exact archived Saber1330203 APK whose
 libapp exports the supported four dynamic snapshot symbols. Its section/header
-coverage is complete and string-pool projection partial. R22's selected
+coverage is complete while overall and string-pool coverage are partial. R22's selected
 Saber1360103 refusal stays valid and unchanged; no universal SDK/build,
 decompilation or target execution claim follows.
 

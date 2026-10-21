@@ -2705,3 +2705,33 @@ Carried pointer defect, not repaired or called clean: SCORECARD:69 points at
 README:180 while the held/not-frontier bullet is at README:186, present at B.
 Other inherited pointer-probe findings and SOURCE/TIME/LINT-SANDBOX/
 CENSUS-GUARD/ADJACENCY residuals remain open.
+
+### Round-23 same-identity residual review
+
+Three successful W2 critics reviewed committed source
+`9d64b95393bb7134e9fe0dfa9f68df91338a3665` under residual-review.json,
+writing ResidualGit/Numerator/Sources.md without replacing any seat. They
+confirmed the four source corrections and the historical-entry/symlink cause
+fixes by source inspection; no final25-case run was claimed by those reviews.
+
+Remaining concrete Git findings are addressed before final execution:
+both entry points neutralize the default attributes file as well as hooks/
+global/system config; the counter requires repo-top root and uses full-tree
+knowledge listings; producer setup exceptions map2; snapshot census passes
+the clone's exact --file and verifies the reported path. A nonroot negative
+control accompanies the existing forced-Git setup failure. No user config
+was read or edited to implement those controls.
+
+Residual source points are closed by explicit current-authority notes,
+updated SKILL/PROVINCE references, a contextual overall-coverage quote, the
+SOURCES supersession search-log entry and a located quote from the later
+retained guide copy. No identity between separate main-branch fetches is
+claimed. These are precision corrections, not another axis claim.
+
+Lifecycle correction is authoritative in wave1-outcomes-correction.json:
+two peer-caused wakes, zero replacements/outputs, final seven Haiku plus
+five Codex-capacity failures among the12 reportless R23 W1 seats. R22 W1
+reportlessness remains unexplained debt for all93: observed error/abort
+labels are not causal explanations or work credit. All102 R22 reportless
+seats remain uncredited. W1's “capacity-retrying” and zero-notice summaries
+are explicitly superseded, not silently cleaned.

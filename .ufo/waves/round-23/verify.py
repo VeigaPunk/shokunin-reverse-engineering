@@ -22,8 +22,9 @@ def main():
             del os.environ[key]
     os.environ['GIT_NO_REPLACE_OBJECTS'] = '1'
     os.environ.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='/dev/null',
-                      GIT_CONFIG_COUNT='1', GIT_CONFIG_KEY_0='core.hooksPath',
-                      GIT_CONFIG_VALUE_0='/dev/null')
+                      GIT_CONFIG_COUNT='2', GIT_CONFIG_KEY_0='core.hooksPath',
+                      GIT_CONFIG_VALUE_0='/dev/null', GIT_CONFIG_KEY_1='core.attributesFile',
+                      GIT_CONFIG_VALUE_1='/dev/null')
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root', type=Path, required=True)
     p.add_argument('--rev', required=True)
@@ -45,7 +46,7 @@ def main():
         try:
             output = json.loads(r.stdout)
         except ValueError:
-            output = {}
+            output = {'text': r.stdout}
         passed = r.returncode == expected_exit and predicate(output)
         data = {'argv': argv, 'expected_exit': expected_exit, 'exit': r.returncode,
                 'env_overrides': {'TMPDIR':str(runtime), **(env_overrides or {})},
@@ -63,6 +64,7 @@ def main():
         counter = w/'tools/count-c1.py'
         argv = [sys.executable,'-I','-B',str(counter),'--root',str(clone)]
         record('before-c1',argv+['--rev',B],1,lambda o:o.get('t1_exercised_count')==1 and o.get('t1_total')==6)
+        record('nonroot-refusal',[sys.executable,'-I','-B',str(counter),'--root',str(clone/'corpus'),'--rev',rev],2,lambda o:o.get('error')=='root_not_repository_top')
         record('after-c1',argv+['--rev',rev],1,lambda o:o.get('t1_exercised_count')==4 and o.get('t1_total')==6 and o.get('t1_exercised')==['identify-flutter-build','inspect-dart-aot','inspect-signal-decoders','decode-signal-recording'])
         record('selftest',argv+['--selftest'],0,lambda o:o.get('passed')==25 and o.get('total')==25)
         controlled_bin = clone/'.ufo/waves/round-23/runtime/controlled-git'
@@ -94,6 +96,8 @@ def main():
                         row.get('subject_digest_matches_carrier') and row.get('argv_target_matches_subject')):
                     return False
             by_name = {row['name']: row for row in rows}
+            if set(by_name) != {'inventory','uart-help','decode-uart-hi','decode-official-uart','decode-invalid-decoder'}:
+                return False
             return (by_name['decode-uart-hi'].get('synthetic_exact') is True and
                     by_name['inventory'].get('decoder_count') == 110 and
                     by_name['decode-official-uart'].get('annotation_line_count') == 12885 and
@@ -153,7 +157,7 @@ def main():
         (a.out/'source-prefixes.json').write_text(json.dumps(details,indent=2)+'\n');checks.append({'name':'source-prefixes','passed':ok})
         census_script = Path('/home/vgpnk/Projects/shokunin/scripts/sources-census.sh')
         (a.out/'census-tool.json').write_text(json.dumps({'path':str(census_script),'sha256':hashlib.sha256(census_script.read_bytes()).hexdigest(),'input_scope':'private committed clone; explicit date2026-10-21'},indent=2)+'\n')
-        record('snapshot-source-census',[str(census_script),'validate','--root','/home/vgpnk/Projects/shokunin','--today','2026-10-21',str(clone)],0)
+        record('snapshot-source-census',[str(census_script),'validate','--root','/home/vgpnk/Projects/shokunin','--today','2026-10-21','--file',str(clone/'corpus/SOURCES.md')],0,lambda o:str(clone/'corpus/SOURCES.md') in o.get('text',''))
         pins={str(path.relative_to(clone)):hashlib.sha256(path.read_bytes()).hexdigest() for path in [counter,w/'tools/counter-fixtures.py',w/'frozen/expected-v3.json',w/'frozen/fixture.json',w/'frozen/pre-v3-counter.py',w/'tools/describe-signals.py',w/'tools/describe-dart.py']}
         (a.out/'source-pins.json').write_text(json.dumps({'source_rev':rev,'pins':pins},indent=2)+'\n')
     summary={'source_rev':rev,'before':B,'checks':checks,'passed':sum(x['passed'] for x in checks),'total':len(checks),'failed':[x['name'] for x in checks if not x['passed']]}
@@ -164,6 +168,6 @@ def main():
 if __name__=='__main__':
     try:
         raise SystemExit(main())
-    except (OSError, ValueError, subprocess.CalledProcessError) as error:
+    except (OSError, ValueError, KeyError, RuntimeError, subprocess.CalledProcessError) as error:
         print(json.dumps({'finding':'unevaluable','error':str(error)}))
         raise SystemExit(2)

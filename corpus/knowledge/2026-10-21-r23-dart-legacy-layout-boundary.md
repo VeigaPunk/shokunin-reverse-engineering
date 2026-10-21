@@ -108,3 +108,8 @@ numeric kind/length values. Offsets are within the selected libapp, not APK
 container offsets or virtual addresses. Printable-run capacity and projection
 limits remain producer-reported; a referenced but absent capped flag is not
 invented, and projected strings are not validated source paths or class names.
+
+**Current source authority:** S063 replaces S061's coverage wording. The
+original source header remains historical provenance; this entry's admitted
+current interpretation is the exact selected-carrier qualification in S063
+and the named W2 corrections, not a universal rule inferred from S061.

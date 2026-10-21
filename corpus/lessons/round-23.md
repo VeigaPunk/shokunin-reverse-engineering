@@ -206,3 +206,22 @@ until6/6; those prose claims are rejected. Similarly, one RunBefore seat ran
 C instead of B and honestly reported the mistake; it earns no baseline-run
 credit. Main's actual before run and final named-source run supply that
 measurement, without replacement or backfill of the seat.
+
+### Contextual quote and source-header clarification
+
+For S063, the exact raw substring
+`"printable_run_count":50666},"coverage":"partial"` locates the overall
+normalized_result coverage after string_pool closes, rather than its internal
+coverage field. L1 checked the raw bytes once; source digest/location and
+verbatim substring are retained in evidence/sources/coverage-quote-context.json.
+This is a contextual quote, not an independent recomputation of that number.
+Knowledge headers retain their originally filed source ids, while explicit
+current-authority notes name S062/S063 and supersede the old wording.
+
+The excluded guide's **later retained copy**, lines129–130 under “Discover
+decoders before choosing settings”, says:
+“When sigrok reports a selected decoder ID as not installed, help and decoding
+return `invalid_request` naming `decoder` or `decoders`;”
+This contiguous19-word passage supports only what that unversioned copy says
+at its recorded access. The original earlier reading was not byte-retained;
+no byte identity across those instants is asserted and neither is6.5.0 authority.

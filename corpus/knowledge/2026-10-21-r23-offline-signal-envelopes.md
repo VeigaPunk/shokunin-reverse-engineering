@@ -172,3 +172,9 @@ incomplete trailing frame. This is separate source analysis, not a new REA
 run or a proof that every data annotation is a valid framed byte. The
 admitted result remains the selected literal annotation view. Producer
 warnings outside that requested class are not “parsed-and-empty”.
+
+**Current source authority:** S062 replaces S058's attribution wording;
+S059 supplies the dataset author's provenance and S060 supplies the original
+local observations. The original source header is retained as historical
+provenance under the append-only correction rule. Semantic admission follows
+this explicit supersession, not the counter's lexical first-line eligibility.

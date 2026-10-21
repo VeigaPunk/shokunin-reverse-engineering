@@ -112,6 +112,8 @@
 
 - 2026-10-21 round23 — Question: which remaining frozen T1 verbs have defensible offline, original-envelope witnesses? Direct opening of versioned sigrok-cli manual, pinned sigrok-dumps README, current upstream REA signal guide, L1 signal envelopes and L1 legacy-layout Dart envelope: identified5 source families, screened5, included4 rows S058–S061, excluded1 (unversioned newer REA guide is not authority for6.5.0 refusal behavior). L1 separately fetched digest-pinned public recording/APK bytes; artifacts are not inflated into additional source rows. Stop: selected offline positives and actual refusal limits are grounded; both debugger verbs remain Adjacent, no source or row quota substitutes for a run.
 
+- 2026-10-21 round23 W2 correction — No new source family was identified. Reopened the already-retained manual and L1 Dart envelope and appended S062/S063 to supersede S058/S061 attribution/coverage overreach, without changing immutable cells. The excluded guide is https://raw.githubusercontent.com/morluto/rea/main/docs/signal-recordings.md ; its later same-round retained copy has sha2568997ec52c2f432bb1722aa1d3a27301a4e4c6c0553bb7bbbcb75b6ed59765fa9 (guide-fetch.json). That copy supports only its own access instant, not byte identity with the earlier unretained main-branch reading; it remains excluded as6.5.0 authority. Unique-family search counts stay identified5/screened5/included4/excluded1; the two added rows are corrections, not discovery.
+
 ## Leads (unopened)
 
 - IEEE S&P 2022 SoK, “Demystifying Binary Lifters Through the Lens of Downstream Applications” (DOI `10.1109/SP46214.2022.9833799`): only Crossref metadata was returned; the primary paper and an anchorable quote remain unopened.
