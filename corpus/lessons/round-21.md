@@ -149,3 +149,28 @@ not called clean or hidden by the decoy's expected failure.
 
 The final corrected demonstration uses a fresh `verify/final-fixed/`
 directory; its outcome is not inferred from the earlier14 green checks.
+
+### Exercised corrected Gate
+
+At final source F=`2f351728f961f3a9a4f53cd1706ad594bf5b5f9a`, the exact
+`verify.py --root <LANE> --before 2dd430cb6bcad60ff4db720c052074f1f75eecbc
+--after F --out-dir <LANE>/.ufo/waves/round-21/verify/final-fixed` command
+exited0:16/16 expected checks, no failed child. Raw records are in that
+directory; the failed14/16 run stays in `verify/final/`.
+
+| Candidate | Decision and observed result |
+|---|---|
+| Independent v1 positive template | reject: validator exit1, `missing_field` at python/orig_argv; flip: a separately frozen complete metadata template, demonstrated by v2 |
+| Independent v2 positive and otherwise-identical package decoy | admit within metadata scope: positive0, decoy1 with `analyze_step_unauthenticated`, no C3 input files and no validator builder/import; `final-fixed/isolated-without-C3.json` |
+| Altered independent template | reject as unevaluable: exit2 `snapshot_tampered`; `final-fixed/independent-template-red.json` |
+| Frozen matrices at B/F | C1 false-clean9→0/passed3→12 of12; C2 false-clean5→0/crash1→0/passed14→20 of20; nineteen retrospective pairs19/19; per-case records retain the same frozen expectations |
+
+The v2 template SHA256 is
+`5346426d237cc56dc8cf7d25187206cab561b91e8b37bd402e85338d112da25c`;
+validator/pins SHA256 are retained in the isolated record. No cryptographic
+authentication or successful target analysis is inferred from metadata acceptance.
+Final no-harm recount keeps1134 prior files and all25 prior admission rows;
+QUALITY now has28 rows. Source rows remain48→50 with old48 unchanged
+(`final-fixed/source-rows.json`, `source-integrity.json`), final source census
+exit0 with the same two W04 scope warnings. Outside current-round sampling
+remains pending; author-side gate decisions do not supply it.

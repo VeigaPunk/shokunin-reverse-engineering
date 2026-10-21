@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/python",
+    "-I",
+    "-B",
+    "-c",
+    "import collections,json,re,subprocess,sys; result=[]\nfor rev in sys.argv[2:]:\n text=subprocess.check_output(['git','-C',sys.argv[1],'show',rev+':corpus/SOURCES.md'],text=True); rows=[[c.strip() for c in line.split('|')[1:-1]] for line in text.splitlines() if re.match(r'^\\|\\s*S[0-9]{3,}\\s*\\|',line)]; result.append({'revision':rev,'rows':len(rows),'tiers':dict(collections.Counter(r[3] for r in rows)),'statuses':dict(collections.Counter(r[7] for r in rows))})\nprint(json.dumps(result,sort_keys=True))",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+    "2dd430cb6bcad60ff4db720c052074f1f75eecbc",
+    "2f351728f961f3a9a4f53cd1706ad594bf5b5f9a"
+  ],
+  "exit": 0,
+  "stdout": "[{\"revision\": \"2dd430cb6bcad60ff4db720c052074f1f75eecbc\", \"rows\": 48, \"statuses\": {\"mined\": 46, \"rejected\": 2}, \"tiers\": {\"A\": 42, \"B\": 5, \"C\": 1}}, {\"revision\": \"2f351728f961f3a9a4f53cd1706ad594bf5b5f9a\", \"rows\": 50, \"statuses\": {\"mined\": 48, \"rejected\": 2}, \"tiers\": {\"A\": 44, \"B\": 5, \"C\": 1}}]\n",
+  "stderr": ""
+}

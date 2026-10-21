@@ -2681,3 +2681,47 @@ Planned: learn from that outside sample; retain every explicitly open residual
 in lesson round-21. The declared finite work is complete; source-only or proxy
 measurements never close the separate provider, authentication or adjacency gaps.
 
+### Round-21 delivered correction measurements
+
+Final measured source F=`2f351728f961f3a9a4f53cd1706ad594bf5b5f9a`.
+This supersedes the initial control-independence wording, not the retained
+initial V observations. W2 `R21Attack63.md` identified the validator-owned
+fixture-builder coupling; independent v1 then failed its positive on missing
+metadata (14/16 at `93c931a205e2e52b2a4257e9f895a175ea5f0727`,
+`verify/final/summary.json`). Neither failure is hidden.
+
+Actual final command:
+`python3 -I -B .ufo/waves/round-21/verify.py --root <LANE> --before
+2dd430cb6bcad60ff4db720c052074f1f75eecbc --after F --out-dir
+<LANE>/.ufo/waves/round-21/verify/final-fixed`
+exited0 with **16/16 expected checks** (`verify/final-fixed/summary.json`).
+
+- **R21-C1 calibration: improved**, delta0 at10.0. Frozen3/12→12/12,
+  false-clean9→0, crashes0→0, battery `--claim C1` at B/F; raw records under
+  `verify/final-fixed/before-C1.json`, `after-C1.json`. Separate genuinely
+  independent positive0/decoy1 succeeds in a root without C3 inputs
+  (`isolated-without-C3.json`); v2 template freeze
+  `ae73ec7734c8edc70350995267ddc1f0d2f603e4`,
+  SHA256 `5346426d237cc56dc8cf7d25187206cab561b91e8b37bd402e85338d112da25c`.
+  Both validator/pins digests are retained. Altering that template returns2
+  `snapshot_tampered`; the old helper's invalid-revision crash1 now maps2,
+  a supplementary compatibility case, not a new frozen-denominator case.
+- **R21-C2 depth: improved**, delta0 at10.0. Frozen14/20→20/20,
+  false-clean5→0 and undeclared-crash1→0, battery `--claim C2` at B/F;
+  final adds `--regression`,19/19 old log pairs match with bound digests.
+  C2 source SHA256 stays `990bc17c6dd5a4fc80d89e27a30c26916ec9f42e012a94c1f3ea69f6bb92ef5c`.
+- **No observed harm in committed controls:**1134 prior files unchanged,
+  map102/102, citations17/17, LOG/SCORECARD prefixes, prior25 QUALITY rows
+  identical; rows26–28 now present (`verify/final-fixed/no-harm.json`).
+  Sources48→50, old48 rows unchanged (`source-rows.json`,
+  `source-integrity.json` in that same directory); final census exit0.
+  Four schema mutants killed with positives retained/restoration checked
+  (`w2/R21Attack65.md`–`68.md`); no general gate-correctness claim.
+
+Waves: W1=64 (executor3/reviewer20/scout20/connector8/scribe6/critic6/sentinel1),
+26 reports,19 errors,19 aborts. W2=68 (reviewer56/scout7/connector1/
+mutation-tester4),49 reports,19 errors. Total132 seats/75 reports/57
+reportless, all causes recorded, no dead-seat replacement. L1 holds the
+canonical planner seat. Verdicts remain author-side until independent closure;
+all SHONEN marks remain `[~]`, capability table unchanged.
+

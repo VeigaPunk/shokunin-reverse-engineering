@@ -2432,3 +2432,23 @@ fields without a validator fixture builder. The active registry cuts over to
 v2; v1 stays only as red evidence. A fresh final-fixed record directory avoids
 overwriting any failed or earlier passing observation.
 
+### Round-21 final corrected demonstration
+
+Final source F=`2f351728f961f3a9a4f53cd1706ad594bf5b5f9a`:
+`python3 -I -B .ufo/waves/round-21/verify.py --root <LANE> --before
+2dd430cb6bcad60ff4db720c052074f1f75eecbc --after F --out-dir
+<LANE>/.ufo/waves/round-21/verify/final-fixed` exited0,16/16 expected checks.
+The independent v2 positive0/decoy1 and altered-template2 all meet their
+declared outcomes; no C3 inputs or validator fixture builders are used.
+Both frozen matrices retain their full denominators and pass12/12,20/20;
+nineteen retrospective pairs remain matches. Final no-harm, source-row and
+source-integrity records preserve1134 prior files, old25 QUALITY rows and
+old48 source rows; QUALITY28 total, source50 total, final census exit0.
+All raw records and failed earlier observations remain under round21.
+
+R21-C1/calibration and R21-C2/depth are improved within their finite scopes;
+scores stay10.0/delta0. Expansion unchanged, quality improved, discernment
+improved through outside-R20 feedback turned into criteria; current outside
+sampling/promotion is not self-attested. No capability, ownership, runtime,
+authentication, continuous-custody or security-containment claim is added.
+
