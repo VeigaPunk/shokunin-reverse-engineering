@@ -1,0 +1,34 @@
+# ConnProposal — R21 C1 calibration / C2 depth
+
+## Evidence and axis mapping
+
+- **R21 C1 — calibration.** `.ufo/waves/round-21/claims.json:8` targets false attribution: require the cited Evidence ID and requested operation in the same successful record, and reject typed refusal/error records. This addresses a substantive decision-quality defect, not whether a command or battery happened to run: the R20 `verb-coverage.py:136-166` searches for an ID and checks whether all target tokens occur somewhere in the evidence blob, then rejects known refusal tokens. It does not establish that the ID and operation belong to the same record. The R21 frozen contract makes this testable (`fixture-contract.json:5-17`): 3 positive cases, 7 record/operation/refusal negatives, and 2 malformed/ambiguous cases. S049/S050 in `corpus/SOURCES.md:55-56` explain why duplicate JSON members need an explicit ambiguity policy; neither source promotes this local predicate to Evidence authentication.
+- **R21 C2 — depth.** `.ufo/waves/round-21/claims.json:9` concerns interpretation of the observation, not process health. R20 `compare-first-failure.py:12-15,28-35,50-78` accepts `None` as a shape-valid failure and unwraps an observation only when both envelope fields exist; therefore a naked null can compare equal to a predicted null, while a missing or malformed observation is not distinguished from bounded observed silence. The frozen contract addresses the semantic boundary (`fixture-contract.json:19-39`): 3 valid matching cases, 4 well-formed mismatches, and 13 absent/malformed/unusable observations. `kind_index_positive` explicitly allows typed phase/VA differences, while `nullable_eof_positive` preserves a real nullable index; do not silently strengthen the existing equality predicate to whole-object equality.
+- The 19 R20 outcomes are a separate retrospective regression population, not new forecasts: R21 `fixture-contract.json:41-42` and `claims.json:11` say so. R20 retained 19 matches (8 non-null failures, 11 bounded-null/silent cases) at the declared kind/index-or-silence granularity (`corpus/lessons/round-20-verifier-spotcheck.md:114-128`; `.ufo/waves/round-20/w2/AttackFirstFailureOracle.md:5-6,31`). The mutation report observed surviving equal-index/different-kind and asymmetric-null mutants (`.ufo/waves/round-20/w2/MutateCompareFF.md:34-42,105-109`), directly motivating the frozen R21 negatives rather than a generic robustness claim.
+- R20's verifier identifies the exact C1 integration debt: its aggregate C1 check still used `runs/t1246-addr2line/receipt.json` as a positive control, and its R20-SEP action is to remove that dependency while keeping positive/decoy controls (`corpus/lessons/round-20-verifier-spotcheck.md:130-138,177`). R21 C1 states this removal explicitly; a standalone unit fixture alone would not prove the aggregate routed control no longer depends on that receipt.
+
+## Distinctness and blocking conflict
+
+The predicates are substantively disjoint: C1 binds **which record supports which operation**; C2 compares **which first-failure observation was actually bounded and what kind/index it contains**. The current claim states separate battery dispatch and a retrospective-only R20 regression (`claims.json:11`), and the frozen contract forbids cross-loading the successor code (`fixture-contract.json:41`). C1's false attribution is calibration; C2's absent-vs-silence and kind/index semantics are depth. A generic successful process exit, parseable input, or “no crash” demonstrates neither axis.
+
+**Round-local label collision is the blocking reporting conflict:** R20 names C2 as *coverage* and C3 as *depth* (`corpus/lessons/round-20-verifier-spotcheck.md:90,112`), while R21 names C2 as *depth* (`claims.json:9`). Any roll-up that keys only on `C2`, or describes the inherited 19/19 as fresh R21 prediction performance, is ambiguous/wrong. Qualify references as `R21-C1/calibration`, `R21-C2/depth`, and `R20-C3/depth (retrospective)`; keep the inherited exact-artifact matches outside the R21 synthetic denominator. There is no predicate-level C1/C2 contradiction in the current claims.
+
+## One bounded move
+
+Publish a **round-qualified, per-case outcome ledger** from the existing frozen contracts, with separate C1 and C2 semantic labels rather than one aggregate “battery green” score. This is a reporting/integration guard, not a shared validation helper: preserve separate C1/C2 execution and counterfactuals, but make the decision each case tests and its expected/observed exit visible. It joins the two proposals without merging their predicates and prevents runner operability from masquerading as calibration or depth.
+
+**Acceptance condition:**
+
+1. R21-C1 reports all 12 frozen IDs individually: the 3 positives exit 0, all 7 wrong-record/operation/refusal negatives exit 1, and malformed JSON/duplicate-member ambiguity exit 2; zero frozen false accepts and zero rejected positives. Its routed positive/decoy control still passes when the R20 C3 receipt is not available, not merely when the isolated validator fixture is run. No C2 successor code is loaded.
+2. R21-C2 reports all 20 frozen IDs individually: the 3 valid matches (including bounded silence and nullable EOF) exit 0; the 4 well-formed asymmetric-null/kind/index mismatches exit 1; all 13 absent/malformed/unusable observations exit 2, without false-clean nulls or unhandled crashes. It runs with the baseline C1 predicate and without loading C1 successor code.
+3. Separately report the 19 retained R20 exact-artifact comparisons as retrospective 19/19 compatibility; do not add them to the 20-case fixture denominator or describe them as new R21 predictions. Preserve phase/VA non-equality and the local, non-authentication boundary.
+
+If only the battery process exit or “no crash” is available, the axes remain unproven. If C1 still requires the C3 receipt, or C2 imports the C1 repair, causal separation fails even if a shared test helper is green.
+
+## Checks for parent (not run here)
+
+- Run the frozen claim-specific battery commands from the lane root at the intended revision: `python3 -I -B .ufo/waves/round-21/battery.py --root <LANE> --rev <REV> --claim C1` and the corresponding `--claim C2` command. Confirm per-case IDs/counts/exits against `fixture-contract.json:5-42`, not an expanded denominator.
+- Inspect/test the C1 routed positive control with the R20 C3 receipt unavailable, and verify the C2 invocation uses baseline C1 behavior; do not infer independence from sharing or not sharing helper code alone.
+- Preserve the 19 historical predictions/logs/comparator/receipt authorities unchanged; no REA producer, carrier, or new forecast run is part of this acceptance.
+
+This was read-only proposal analysis. No tests/build/lint/smoke, provider/carrier execution, package install, or validation run was performed.
