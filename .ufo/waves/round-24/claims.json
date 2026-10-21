@@ -1,0 +1,54 @@
+{
+  "schema": "kaidoku-round-claims-v1",
+  "round": 24,
+  "baseline": "fe10219ec6e92c32b7eb40d83fbcac888756c6c1",
+  "instrument_rev": "97ade2e5e2dcf6cfd01d0da8634879d14969f9cc",
+  "declared_at": "2026-10-21T16:50:00+00:00",
+  "axes": {"coverage": 10, "depth": 10, "calibration": 10},
+  "lowest_axis_rule": "All owned finite proxies tie at 10; C1 works coverage (tied-lowest). Last capability round 17, window 10: no stagnation waiver.",
+  "instruments": {
+    ".ufo/waves/round-24/tools/count-c1.py": "f185960598b7c9b203156db42567dfa42c103e73c435bf4e5aa536e86dcff00c",
+    ".ufo/waves/round-24/tools/freeze-gate.py": "1e2a937018feec21ad200f80a4c9a749b3de4af190fff548eb4dd84717b8870f"
+  },
+  "instrument_rule": "Instruments were committed at instrument_rev before this file; each later change must be appended under instrument_supersessions with its commit and reason (routed r23 closure defect: instrument absent at freeze, revised three times).",
+  "claims": [
+    {
+      "id": "R24-C1",
+      "axis": "coverage",
+      "t2": ["inspect-pcap-client", "inspect-pcap-capture", "inspect-packet-fields", "inspect-packet-capture"],
+      "before": 0,
+      "total": 4,
+      "before_record": ".ufo/waves/round-24/measure/before-c1.json",
+      "target": "sourced original-envelope bound held count >=2/4 with exact k reported; complete only at 4/4. The R23 six-verb T1 denominator is untouched and stays 4/6.",
+      "counting_command": "python3 -I -B .ufo/waves/round-24/tools/count-c1.py --root <LANE> --rev <REV>",
+      "sourced": "Witness entries cite S064+ rows opened this round (Wireshark 4.6.9 tshark/capinfos manuals, the signature-checked source release and its test captures, REA6.5.0 pcap/tshark provider source, own-work envelopes) with exact used-by.",
+      "boundary": "Saved captures from the pinned Wireshark source tree and the installed dissector registry only; no live capture, no dumpcap, no network interface, no decryption keys. TShark is a lane-recorded local build, not a pacman package.",
+      "falsifiers": ["refusal counted", "envelope differs from producer stdout", "producer exit nonzero", "verb mentioned without bound envelope", "source row not opened this round", "historical evidence or knowledge changed", "same verb double counted"],
+      "not_claimed": ["live traffic capture", "protocol-semantics verification beyond TShark dissector output", "decryption", "debugger verbs", "independent non-author admission"]
+    },
+    {
+      "id": "R24-C2",
+      "axis": "calibration",
+      "before": "0/10 retained claim freezes disclosed with machine-checked instrument status; no round-24 freeze",
+      "before_record": ".ufo/waves/round-24/measure/before-c2.json",
+      "target": "every retained claim freeze (r14..r24) audited from Git objects and disclosed exactly in corpus/claim-freezes.tsv; round-24 itself CLEAN (instruments present and pinned at freeze, any later revision disclosed); exit 0",
+      "counting_command": "python3 -I -B .ufo/waves/round-24/tools/freeze-gate.py --root <LANE> --rev <REV> --require-clean round-24 --disclosures corpus/claim-freezes.tsv",
+      "falsifiers": ["instrument absent at freeze reported CLEAN", "post-freeze revision undisclosed but CLEAN", "pin mismatch unreported", "disclosure row disagrees with gate yet counted", "historical freeze silently skipped"],
+      "not_claimed": ["authenticity of commit times or authors", "that historical rounds were wrongly admitted", "detection of instruments named only outside claims.json"]
+    }
+  ],
+  "frontier_step": "S064+ rows opened this round; one mined mistake (R23 instrument absent at freeze) with a fix shown able to fail (C2 red on round-23).",
+  "routed_defects": [
+    "corpus/README.md: restore the three blank separator lines lost in round 23",
+    "freeze instruments before claims (this file's instrument_rev precedes it)",
+    "APK/sigrok/AppImage inputs no longer on disk: pin re-acquisition recipes with digests and re-verify"
+  ],
+  "no_harm": [
+    "All pre-round knowledge and source rows unchanged",
+    "LOG/SCORECARD prefixes preserved",
+    "R23 counter still 4/6 at final; R22 C1=1/6 and C2=14/14",
+    "map integrity and blank-line separators restored, not lost",
+    "source census exit 0"
+  ],
+  "inherited": "R22's 102 reportless seats stay uncredited; kaidoku/revenger debugger arbitration open (L0)."
+}
