@@ -179,6 +179,7 @@ A row is written when its file exists, never before.
 | `round-22` | 22 | source-backed uncovered catalog evidence and receipt-matched dispositions; lost93-seat W1 explicitly excluded from claim evidence |
 | `round-23` | 23 | cumulative frozen completeness, offline signal boundaries, retained diagnostics and reportless-seat uncertainty; no replacement credit |
 | `round-24` | 24 | instruments frozen before claims, claim-freeze audit R14–R24 disclosed, saved-capture family held, README separators and reproduction inputs repaired |
+| `round-24-verifier-spotcheck` | 24 | Main's non-author judgment: bounded four-verb coverage; original frozen calibration9/11 unmet, not admitted; preservation/source checks and genuine heavy-wave debt retained. No knowledge-map or historical target re-score. |
 
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
