@@ -2583,3 +2583,18 @@ Final wave cutoff is in final-wave-outcomes.json: W1 93 dispatched,
 no replacement; five recovery launch refusals spawned zero. Parent-death
 causation was corrected explicitly. All marks remain author-side `[~]`;
 outside admission/sampling and kaidoku/revenger L0 arbitration remain open.
+
+## 2026-10-21 — round-23: extend the frozen T1 completeness line
+
+Baseline B=`aa1450b82f9ede35aada63efe8a34e01c6e02f72`; declaration
+`.ufo/waves/round-23/claims.json`. One claim, R23-C1 coverage: cumulative
+sourced, original-envelope-bound T1 held count1/6→k/6 with k>=2.
+The six-verb denominator is unchanged; incomplete remains incomplete.
+Coverage works a tied-lowest owned finite proxy10.0; no scalar increase,
+capability, promotion, debugger ownership or provider stability is claimed.
+Baseline counting argv/stdout/stderr/exit1 are retained in
+`.ufo/waves/round-23/before-r22-c1.json`; source census exits0 in
+`start-census.json`. The cumulative counter will reuse reviewed R22 binding
+without modifying the inherited counter or its frozen expectations.
+R22's102 reportless seats remain evidence with their recorded causes or
+unknown causes; no conjectural explanation or replacement earns credit.

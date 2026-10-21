@@ -2798,3 +2798,20 @@ separability,provenance,source-rows}.json.
 No new capability/promotion/ownership row. Completeness still1/6 and the
 remaining five T1 verbs are not claimed. Outside admit/reject sampling
 remains pending; no author-side seat becomes a non-author verifier.
+
+## Round 23 — cumulative frozen completeness
+
+Declared R23-C1 coverage only, baseline
+`aa1450b82f9ede35aada63efe8a34e01c6e02f72`; finite owned proxies
+coverage/depth/calibration remain10.0, so coverage is tied-lowest.
+`.ufo/waves/round-23/claims.json` freezes the same six T1 verbs and target
+1/6→k/6 with k>=2, never a preclaimed6/6. Counting command:
+`python3 -I -B .ufo/waves/round-23/tools/count-c1.py --root <LANE> --rev <REV>`.
+The inherited counter's actual baseline output is retained in
+`before-r22-c1.json`, exit1 and count1. The cumulative implementation will
+preserve the original-envelope/source binding and accept the two explicitly
+named round evidence roots, not broaden target ownership.
+
+Planned: finish this declared finite move and retain every unheld verb,
+R22 reportless-seat uncertainty and outside-review duty explicitly.
+No capability, retirement, promotion or mastery is preclaimed.
