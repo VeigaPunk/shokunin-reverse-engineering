@@ -7,7 +7,10 @@ given --rev), the gate reads Git objects only and reports, per claim freeze:
   freeze      first commit that added the claims file (its freeze commit)
   instruments lane-relative script paths named inside each claim's strings
               (*.py, *.sh, *.mjs, *.js under .ufo/ or corpus/ or tools/)
-  findings    INSTRUMENT_NONE      no instrument path named by any claim
+  findings    INSTRUMENT_NONE      no instrument path or name named by any claim
+              INSTRUMENT_UNRESOLVED  a claim names a script only by bare file
+                                   name (no lane path), so the frozen
+                                   instrument cannot be identified from Git
               INSTRUMENT_ABSENT    a named instrument is not a blob at freeze
               INSTRUMENT_UNPINNED  claims file records no sha256 for it
               INSTRUMENT_PIN_MISMATCH  recorded sha256 != blob at freeze
@@ -41,6 +44,7 @@ import subprocess
 
 CLAIMS = re.compile(r'^\.ufo/waves/(round-[0-9]+)/claims\.json$')
 SCRIPT = re.compile(r'(?<![A-Za-z0-9_./-])((?:\.ufo|corpus|tools)/[A-Za-z0-9._/-]+\.(?:py|sh|mjs|js))(?![A-Za-z0-9_-])')
+BARE = re.compile(r'(?<![A-Za-z0-9_./-])([A-Za-z0-9_][A-Za-z0-9_.-]*\.(?:py|sh|mjs|js))(?![A-Za-z0-9_/-])')
 
 
 def git(root, *args, ok=(0,)):
@@ -85,10 +89,14 @@ def audit_one(root, measured, claims_path):
     disclosed = current.get('instrument_supersessions') if isinstance(current, dict) else None
     disclosed = {(d.get('path'), d.get('commit')) for d in disclosed
                  if isinstance(d, dict) and d.get('reason')} if isinstance(disclosed, list) else set()
-    paths = sorted({m.group(1) for claim in claims for s in strings(claim) for m in SCRIPT.finditer(s)})
+    texts = [s for claim in claims for s in strings(claim)]
+    paths = sorted({m.group(1) for s in texts for m in SCRIPT.finditer(s)})
+    bare = sorted({m.group(1) for s in texts for m in BARE.finditer(s)} - {p.rsplit('/', 1)[-1] for p in paths})
     findings = []
-    if not paths:
+    if not paths and not bare:
         findings.append({'finding': 'INSTRUMENT_NONE'})
+    for name in bare:
+        findings.append({'finding': 'INSTRUMENT_UNRESOLVED', 'name': name})
     for path in paths:
         digest = blob_sha256(root, freeze, path)
         if digest is None:
@@ -134,8 +142,8 @@ def audit(root, rev, require_clean, disclosures):
     by_round = {CLAIMS.match(r['claims_file']).group(1): r for r in results}
     failed = [r for r in require_clean if r not in by_round or by_round[r]['verdict'] != 'CLEAN']
     summary = {f: sum(1 for r in results for x in r['findings'] if x['finding'] == f)
-               for f in ('INSTRUMENT_NONE', 'INSTRUMENT_ABSENT', 'INSTRUMENT_UNPINNED',
-                         'INSTRUMENT_PIN_MISMATCH', 'INSTRUMENT_REVISED')}
+               for f in ('INSTRUMENT_NONE', 'INSTRUMENT_UNRESOLVED', 'INSTRUMENT_ABSENT',
+                         'INSTRUMENT_UNPINNED', 'INSTRUMENT_PIN_MISMATCH', 'INSTRUMENT_REVISED')}
     result = {'claim': 'R24-C2', 'rev': measured, 'audited': len(results),
               'clean': sum(r['verdict'] == 'CLEAN' for r in results),
               'flagged': [rnd for rnd, r in by_round.items() if r['verdict'] != 'CLEAN'],
