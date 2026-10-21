@@ -938,9 +938,8 @@ def _s_d6d(ctx):
         "d6d-decoy.json",
         ["npx", "-y", "rea-agents@6.5.0", "inspect-go-binary",
          "rea-agents@6.5.0", "analyze"])
-    control = write_receipt(
-        "d6d-control.json",
-        ["npx", "-y", "rea-agents@6.5.0", "analyze", carrier_path])
+    control = os.path.join(
+        root, ".ufo/waves/round-20/runs/t1246-addr2line/receipt.json")
     result, err = _run_tool(git, root, tmp, rev, rev, RECEIPT_VALIDATE_V2,
                             ["--require-mid-maps", decoy, control], extras=(PINS,))
     if err:
