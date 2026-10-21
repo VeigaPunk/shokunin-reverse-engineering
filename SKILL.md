@@ -741,3 +741,37 @@ Checklist: count each verb once; retain the exact incomplete remainder; separate
 catalog mentions from held targets; never replace a parent refusal with a
 detached success copy; report every module-load warning and projection cap.
 Source relevance and ownership remain manual admission duties, not token matches.
+
+## Saved packet captures and frozen instruments — round 24
+
+Use `corpus/knowledge/2026-10-21-r24-pcap-family-envelopes.md` (S064–S067).
+The four REA6.5.0 packet-capture verbs need an absolute
+`REA_TSHARK_COMMAND` (and `REA_CAPINFOS_COMMAND` for the `pcap` provider)
+naming TShark 4.x; this host's pinned build is
+`/home/vgpnk/.local/opt/wireshark-4.6.9/bin/` (`.ufo/waves/round-24/tool-pins.json`).
+Without it every verb returns `capability_unavailable` (round-22 evidence), a
+tool-absence refusal, never a traffic statement.
+
+| Question about a saved capture | Verb and bounded decision |
+|---|---|
+| Which TShark/capinfos will REA use? | `inspect-pcap-client`: subject null, reports configured paths/sources/versions only |
+| What is in this capture overall (endpoints, DNS, TLS SNI, HTTP URIs, protocol stacks)? | `inspect-pcap-capture <path>`: confidence `derived`; DNS answers are tied to one question per response packet; encryption/truncation hide layers; a pcapng with Decryption Secrets Blocks exposes decrypted layers without any lane key — say so |
+| Which packets carry these exact fields? | `inspect-packet-capture <path> --fields a --fields b [--display_filter …] [--decode_as …]`: repeat `--fields` per field (a comma-joined value is an invalid field list); output is TShark dissector output under prlimit, missing fields mean absent output, a filtered result is not traffic absence |
+| Does this installation know protocol/field X? | `inspect-packet-fields --kind fields --protocol X` (or `--kind protocols`, `--query`): registrations of the installed TShark, never traffic; Lua dissectors are absent in a Lua-off build |
+| Live interface, `dumpcap`, keys supplied by the analyst | Adjacent/unheld — not this lane |
+
+**Freeze the instrument before the claim (QUALITY33).** Commit every counting
+script first, then freeze `claims.json` with an `instruments` map of sha256
+pins; a later fix is appended to `instrument_supersessions` (path, commit,
+reason) with a re-taken before record. Check with
+`python3 -I -B .ufo/waves/round-24/tools/freeze-gate.py --root <LANE> --rev <REV> --require-clean round-<N> --disclosures corpus/claim-freezes.tsv`
+and append the round's ledger row.
+
+### Round-24 measurement registry
+
+| Name | Kind / owner | Entry / verdict map | Self-invocation | Pinned values / write scope |
+|---|---|---|---|---|
+| round24-C1 | gate / kaidoku | `python3 -I -B .ufo/waves/round-24/tools/count-c1.py --root <LANE> --rev <REV>`; 0 c1_complete 4/4, 1 c1_incomplete, 2 unevaluable | none in the instrument (BUILD selftest items attack it) | Fixed BASE `fe10219e`, four T2 verbs, reviewed R22 binder digest, catalog/knowledge/SOURCES/R22–R23 evidence guards; reads Git objects only; temp dir only |
+| round24-C2 | gate / kaidoku | `python3 -I -B .ufo/waves/round-24/tools/freeze-gate.py --root <LANE> --rev <REV> --require-clean round-24 --disclosures corpus/claim-freezes.tsv`; 0 required freezes CLEAN and every freeze disclosed exactly, 1 otherwise, 2 unevaluable | none in the instrument | Reads Git objects only; finding codes NONE/UNRESOLVED/ABSENT/UNPINNED/PIN_MISMATCH/REVISED; supersession 1 at `9fb4eacd` disclosed |
+| round24-producer | probe / kaidoku | `python3 .ufo/waves/round-24/tools/run-rea.py --out-dir <DIR> --name <N> [--tshark] -- <verb> …` writes `<N>.run.json` and byte-equal `<N>.envelope.json`; exit mirrors REA | — | refuses overwrite; records env overrides and TShark/capinfos digests |
+| round24-repro | probe / kaidoku | `python3 -I -B .ufo/waves/round-24/repro/fetch-inputs.py --manifest .ufo/waves/round-24/repro/inputs.json --dest <DIR>`; 0 all match, 1 mismatch, 2 fetch error | — | official URLs, sha256, sizes; deletes bytes unless `--keep` |

@@ -70,6 +70,8 @@ A row is written when its file exists, never before.
 | Static Flutter APK boundary (round 22) | `2026-10-21-r22-flutter-static-boundary` | held narrowly — REA6.5.0 identify-flutter-build parsed one pinned Godot APK as non-Flutter; no positive Dart/source-recovery/runtime claim from this negative |
 | Partial Flutter positive and Dart refusal (round 22) | `2026-10-21-r22-flutter-positive-dart-refusal` | held narrowly — Saber identify-flutter-build succeeds with partial coverage; inspect-dart-aot refuses missing dynamic snapshot symbols and is not counted |
 | Offline signal and Dart-layout REA envelopes (round 23) | `2026-10-21-r23-offline-signal-envelopes`, `2026-10-21-r23-dart-legacy-layout-boundary` | held narrowly — tool-subject decoder catalog with a signature-module failure; selected synthetic/public UART annotations, not hardware acquisition; legacy-layout Saber libapp headers complete but string pool partial, not universal Dart/source recovery |
+| Saved packet-capture REA envelopes (round 24) | `2026-10-21-r24-pcap-family-envelopes` | held narrowly — all four packet-capture family verbs on public Wireshark 4.6.9 test captures and the installed registry with a recorded local TShark build; no live capture, lane-held decryption or protocol-correctness claim |
+
 ## Knowledge
 | entry | topic | source | verified-at |
 |---|---|---|---|
@@ -157,6 +159,8 @@ A row is written when its file exists, never before.
 | `2026-10-21-r22-flutter-static-boundary` | Parsed non-Flutter APK negative versus refusal; ABI/release-documentation limits; no runtime or source-recovery claim | S051–S053, bound retained REA6.5.0 identify_flutter_build record | 2026-10-21 |
 | `2026-10-21-r22-flutter-positive-dart-refusal` | One pinned Flutter-positive partial result versus separate Dart-symbol refusal; no source recovery/runtime claim | S054/S055; complete retained original CLI envelopes and L1 producing argv/exit | 2026-10-21 |
 | `2026-10-21-r23-offline-signal-envelopes`, `2026-10-21-r23-dart-legacy-layout-boundary` | Offline decoder discovery/recordings and carrier-conditional Dart AOT parsing; retained diagnostics/refusal boundaries | S058–S061; original L1 REA6.5.0 envelopes, carrier digests and producing records | 2026-10-21 |
+| `2026-10-21-r24-pcap-family-envelopes` | Saved-capture summaries, field queries, registry listing and client report; embedded-secrets boundary; prlimit limits | S064–S067; original L1 REA6.5.0 envelopes, capture digests and producing records | 2026-10-21 |
+
 ## Lessons
 | entry | round | gist |
 |---|---|---|
@@ -174,6 +178,8 @@ A row is written when its file exists, never before.
 | `round-21` | 21 | record-bound Evidence association and explicit bounded observations; QUALITY #26–28; frozen twelve/twenty-case before→after and separately frozen inert receipt control |
 | `round-22` | 22 | source-backed uncovered catalog evidence and receipt-matched dispositions; lost93-seat W1 explicitly excluded from claim evidence |
 | `round-23` | 23 | cumulative frozen completeness, offline signal boundaries, retained diagnostics and reportless-seat uncertainty; no replacement credit |
+| `round-24` | 24 | instruments frozen before claims, claim-freeze audit R14–R24 disclosed, saved-capture family held, README separators and reproduction inputs repaired |
+
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
 - RISC-V deep analysis — `target_unavailable` bypassed via e_machine patch + language override (r5-01); full EXEC already runs direct analyzeHeadless (10,766 functions @900 s cap).

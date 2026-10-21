@@ -271,3 +271,31 @@ turn the original refusal into a success.
   envelopes do not establish hardware isolation or resolve sibling ownership.
 - Both live debugger verbs remain Adjacent/unheld; the kaidoku/revenger
   arbitration question remains open.
+
+## Round-24 saved-capture holdings — 2026-10-21
+
+This dated section supersedes the round-22 `frontier-blocked` placement of
+`inspect-packet-fields`, `inspect-packet-capture`, `inspect-pcap-client` and
+`inspect-pcap-capture` (table above) for the current host state, without
+rewriting that table: the round-22 refusals were true when no TShark existed.
+`corpus/knowledge/2026-10-21-r24-pcap-family-envelopes.md` (S064–S067) holds
+all four verbs on public test captures from the signature-checked Wireshark
+4.6.9 source tree and on the installed dissector registry, using the lane's
+recorded local TShark/capinfos 4.6.9 build (`.ufo/waves/round-24/tool-pins.json`).
+
+| Verb | Current bounded holding |
+|---|---|
+| inspect-pcap-client | Held as tool-subject configuration report; no capture read |
+| inspect-pcap-capture | Held on saved pcap/pcapng summaries (derived); embedded TLS secrets in a test capture are a property of that input |
+| inspect-packet-fields | Held as installed-registry listing; not traffic |
+| inspect-packet-capture | Held as TShark field output under prlimit on a saved capture; not protocol-semantics verification |
+
+Removing or replacing the pinned TShark returns these verbs to the round-22
+refusal state. The frozen R23 six-verb T1 is unchanged (4/6).
+
+## Adjacent — round-24 explicit exclusion
+
+- Live packet capture (`dumpcap`, interfaces, promiscuous mode), analyst-
+  supplied decryption keys and network-forensics case ownership remain
+  unowned/Adjacent; saved-capture envelopes do not absorb them.
+- Live debugger verbs remain Adjacent/unheld; kaidoku/revenger arbitration is open.
