@@ -290,8 +290,10 @@ recorded local TShark/capinfos 4.6.9 build (`.ufo/waves/round-24/tool-pins.json`
 | inspect-packet-fields | Held as installed-registry listing; not traffic |
 | inspect-packet-capture | Held as TShark field output under prlimit on a saved capture; not protocol-semantics verification |
 
-Removing or replacing the pinned TShark returns these verbs to the round-22
-refusal state. The frozen R23 six-verb T1 is unchanged (4/6).
+Missing or unrunnable TShark returns the round-22 refusal state; replacing
+it or its libraries with another runnable installation need not be refused.
+The recorded digests identify this build, not a full dependency lock.
+The frozen R23 six-verb T1 is unchanged (4/6).
 
 ## Adjacent — round-24 explicit exclusion
 

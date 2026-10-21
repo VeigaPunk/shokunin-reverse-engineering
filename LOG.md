@@ -2759,3 +2759,29 @@ deviations are explicit; no replacement or unreturned output earned credit.
 Independent closure/admit-reject sampling remains outside this author lane.
 No round24 was started, no global package/config/service change was made,
 and the only tool acquisition is the recorded lane-local sigrok extraction.
+
+## 2026-10-21 — round-24: freeze the instrument, then hold the saved-capture family
+
+Motivating evidence: fleet MANIFEST rounds[424] (r23 closure) routed three
+defects — README separators lost, R23's counting script absent at its claim
+freeze and revised three times, r22/r23 inputs off disk. Round 22 left the
+four packet-capture verbs `frontier-blocked` for want of TShark.
+
+- Built TShark/capinfos 4.6.9 from the signature-checked official source into
+  `/home/vgpnk/.local/opt/wireshark-4.6.9` (cmake via `uv tool`; no pacman);
+  pins in `.ufo/waves/round-24/tool-pins.json`.
+- Committed `count-c1.py`, `freeze-gate.py` and the producer `run-rea.py` at
+  `97ade2e5`, then froze `claims.json` at `5dc49bfe` with sha256 pins; before
+  records in `.ufo/waves/round-24/measure/`.
+- R24-C1: five L1 envelopes on Wireshark test captures and the installed
+  registry (`evidence/c1/l1-*`), knowledge entry, S064–S067; held 0/4 → 4/4.
+- R24-C2: claim-freeze audit R14–R24, ledger `corpus/claim-freezes.tsv`,
+  QUALITY33, S068; disclosed 0/10 → 11/11, round-24 CLEAN. One own gate
+  revision (bare script names) disclosed as supersession `9fb4eacd`.
+- Selftest 17/17 red/green controls (`tools/selftest.py`); no-harm: R23 4/6,
+  R22 1/6 and 14/14, census exit 0 with the carried four W04.
+- Wave conduct: the validated 85-seat BUILD wave was refused 20/20 times by the
+  session job cap (`wave1-refusals.jsonl`), so zero BUILD seats ran; an
+  ordinary 8-seat residual review (4 critic, 4 reviewer) was refused once
+  and spawned on its second try (`residual-attempts.jsonl`). Their findings
+  and dispositions are appended to the round-24 lesson.

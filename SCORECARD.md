@@ -2881,3 +2881,30 @@ RunBefore's wrong-target run is not credited as a baseline measurement.
 No new capability, retirement, promotion or outside admission. Planned:
 learn from the independent closure's admit/reject sample; retain all explicit
 SOURCE/TIME/LINT-SANDBOX/CENSUS-GUARD/ADJACENCY and unexplained-seat debt.
+
+## Round 24 — frozen instruments, claim-freeze audit, saved-capture family
+
+Declared two claims (`.ufo/waves/round-24/claims.json`), baseline
+B=`fe10219ec6e92c32b7eb40d83fbcac888756c6c1`. Instruments were committed at
+`97ade2e5` and pinned by sha256 before the freeze commit `5dc49bfe`
+(routed r23 defect). Owned finite proxies coverage/depth/calibration tie at
+10.0; C1 works coverage (tied-lowest). Last capability round 17, window 10:
+no stagnation waiver. Saturation 10.0 / window 10 unchanged; retired: none.
+
+| Axis | Claim | Before → after (counting command, measured revision in the final section below) | Evidence |
+|---|---|---|---|
+| coverage | R24-C1 | packet-capture family held 0/4 → 4/4 (`python3 -I -B .ufo/waves/round-24/tools/count-c1.py --root <LANE> --rev <REV>`); lexical catalog zero-mention 16 → 12 (a separate measure). Finite proxy 10.0 → 10.0, delta 0. The frozen R23 T1 stays 4/6 | `corpus/knowledge/2026-10-21-r24-pcap-family-envelopes.md`; `.ufo/waves/round-24/evidence/c1/`; S064–S067 |
+| calibration | R24-C2 | retained claim freezes disclosed with machine-checked instrument status 0/10 → 11/11, round-24 CLEAN (`python3 -I -B .ufo/waves/round-24/tools/freeze-gate.py --root <LANE> --rev <REV> --require-clean round-24 --disclosures corpus/claim-freezes.tsv`). Finite proxy 10.0 → 10.0, delta 0 | `corpus/claim-freezes.tsv`; QUALITY33; S068; lesson M24-1 |
+| depth | — | unchanged | — |
+
+Routed r23 defects: README blank separators restored (3); instruments frozen
+before claims (one disclosed supersession `9fb4eacd`); reproduction inputs
+pinned with official URLs and re-verified 6/6 (`.ufo/waves/round-24/repro/`).
+No capability row is entered: the pcap verbs are coverage holdings of an
+existing REA route and the freeze gate is a calibration instrument, not a new
+repertoire item.
+
+Planned (round 25): learn from the outside closure's admit/reject sample of
+S064–S068 and the freeze ledger; consider extending the freeze gate to
+instruments named outside `claims.json`; debugger verbs wait on the
+kaidoku/revenger L0 ruling.

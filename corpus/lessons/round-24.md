@@ -69,3 +69,95 @@ show 0/10 disclosed. This is exactly the deviation path QUALITY33 allows; it is 
 - C1's denominator is the four catalog verbs that a local TShark unlocks; it is a finite family, not the network-forensics domain. The frozen R23 six-verb T1 stays 4/6.
 - C2 checks only what `claims.json` names; instruments named elsewhere (lesson prose, LOG) are invisible to it. Commit times and authors are not authenticated.
 - R22's 102 reportless seats stay uncredited.
+
+## Residual review and corrections
+
+The 85-seat validated BUILD wave never spawned: all 20 unchanged calls were
+refused with `Background job limit reached (100)` (`wave1-refusals.jsonl`).
+The ordinary residual batch spawned on try 2: four critics/four reviewers;
+their reports are under `.ufo/waves/round-24/residual/`. No refused seat
+earns work credit. BUILD probe/selftest references above describe planned,
+unrun work, not exercised evidence.
+
+- **ResSources/ResHonesty/ResC1Instrument:** REA passes `-T json`, not the
+  first draft's `-T fields`; `-2` is conditional. Corrected the entry and
+  appended S069/S070 superseding S065/S066. `PcapProvider.js:330` reads
+  `capinfos -M`; its counts/times support the holding, so the capinfos
+  rejection was wrong and its flip fired: admitted S071, retained
+  `sources/capinfos-4.6.9.adoc`. New-row quotes/access-date 2026-10-21:
+  S069 same tshark quote as S065 (17 words after whitespace collapse);
+  S070 same limits quote as S066 (19 words, not 17);
+  S071 https://www.wireshark.org/docs/man-pages/capinfos.html,
+  “Print raw (machine readable) values in long reports.” (9 words),
+  retained AsciiDoc line218. S068's first quote has 12 words, not 13.
+  Full locate methods/digests: `sources/residual-corrections.json`.
+- **S067 qualification:** “digest-bound” applies to the four capture/tool
+  envelopes, not the pathless `inspect-pcap-client` observation (null subject,
+  no artifact/tool digest in that envelope; producer digests are separate).
+- **ResHonesty:** tool pins initially covered launchers, not libraries.
+  Added the three local Wireshark-library hashes; system libraries remain
+  unpinned. Replaced-tool/library identity is checked by comparing digests,
+  not by assuming REA will refuse another runnable installation. The
+  signature is good for a keyserver-fetched key, without independent
+  fingerprint anchor or web-of-trust authentication.
+- **Boundary clarification:** the frozen “no decryption keys” means no
+  lane-supplied keys. The selected TLS capture embeds two TLSK DSB blocks
+  (offsets 96/5224); TShark applied those automatically. That does not confer
+  analyst-key/decryption ownership. The planned BUILD probes using
+  secret-bearing inputs never ran.
+- **ResSeparability:** C1-only overlay counts 4/4 without C2's ledger/gate
+  change/S068; C2-only overlay gives 11/11 disclosed without C1 envelopes.
+  Declared edges: C2 audits C1's instrument history; malformed S068 can
+  cause C1's whole-registry parser to fail (deleting S068 does not).
+  `claims.json` is read only by C2; shared prose files are read by neither.
+- **C2 interpretation:** instrument-freeze audit, not claim-text immutability.
+  The unchanged prior cohort improves 0/10 → 10/10 disclosed (all FLAGGED);
+  round24 adds one author-assessed CLEAN row after disclosure of its gate
+  revision. The frozen original gate at the after revision gives **9/11,
+  exit1** (R17/R18 ledger codes mismatch); the revised, disclosed gate gives
+  **11/11, exit0**. At the supersession commit itself, before the disclosure
+  landed, round24 was FLAGGED. These are different results, both retained.
+  Ledger agreement can be achieved by transcription; this is transparent
+  self-assessment bookkeeping, not independent empirical confirmation.
+- **ResC2Gate limits:** historical R14–R24 verdicts independently agreed.
+  Nonetheless `./`, `<LANE>/`, `$LANE/`, absolute paths, `scripts/`, `.ts`,
+  uppercase extensions, `-m module` and directory commands can escape its
+  narrow pattern; forged supersession sha256 and later claim-text edits
+  are unchecked; same-commit instruments are present but not strictly
+  prior. None alters these eleven verdicts. Twelve arc3
+  `claims-frozen.md` files are outside the frozen `round-*/claims.json`
+  scope. These are named next-round debt, not silently repaired after
+  measurement.
+- **Selftest disclosure:** `tools/selftest.py` was written after candidate
+  `69e82c48`, its expectations chosen after observing the candidate. It is
+  a post-hoc 17-case L1 regression check, not an independently frozen oracle.
+  The initial /tmp clone run failed for lack of disk space; the /fast run
+  passed17/17. Final evidence binds its executed bytes.
+- **Timestamp error:** frozen `claims.json` says declared_at 16:50Z although
+  its commit finalized at 16:44:44Z. That literal is wrong and is not used as
+  timing evidence; the commit ordering I before F is the freeze evidence.
+- **Census defect:** no live start census was taken before source edits.
+  `measure/start-census.json` is explicitly a later BASE-clone reconstruction,
+  exit0/four W04, not a retroactively claimed start-time execution.
+- **ResRepro:** hardened fetcher containment (including extracted members),
+  partial cleanup, usage/extraction errors, bounded curl, archive pinning and
+  duplicate ids; corrected AppImage attribution to its extraction record.
+  Run1 retains its historical non-JSON `exit=0` trailer; run2 is valid JSONL.
+  Manifest/script digests and the negative manifest are retained with run2.
+
+No source-row historical cells were rewritten. Initial source-row wording
+errors stay superseded/qualified rather than laundered.
+
+Further residual corrections (ResC1Envelopes-2): REA does enforce Wireshark
+4.x (3.6.20 refused; 4.0.0/4.99.99 accepted), input timestamps span
+2002–2018, and registry discovery has a 32 MiB glossary / 8 MiB selected
+record budget (4 MiB applies to packet output). Corrected the entry.
+All five replayed IDs and normalized results match; complete envelopes vary
+in duration. Retained refusal now supports the comma-fields statement.
+
+S072 supersedes S067's blanket digest-bound wording. Gate, opened2026-10-21:
+`.ufo/waves/round-24/evidence/c1/l1-pcap-client.envelope.json`,
+“Artifact identity is unavailable for this observation.” (7 words, once);
+null-subject client distinguished from the other four envelopes.
+Final registry 63 → 72: nine new tier-A rows over six source families,
+three supersessions (S069/S070/S072); existing rows' cells unchanged.

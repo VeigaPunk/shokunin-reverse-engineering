@@ -1,4 +1,4 @@
-source: S064 Wireshark4.6.9 signed source release and test captures; S065 tshark(1)4.6.9 manual; S066 REA6.5.0 installed capture providers; S067 original REA6.5.0 envelopes in .ufo/waves/round-24/evidence/c1/
+source: S064 Wireshark4.6.9 source release/test captures; S069 supersedes S065 tshark(1); S070 supersedes S066 REA6.5.0 capture providers; S072 supersedes S067 original packet-capture envelopes; S071 capinfos(1)
 verified-at: 2026-10-21, round24; exact producing argv/environment/stdout/stderr/exit retained in adjacent .run.json files written by .ufo/waves/round-24/tools/run-rea.py
 recheck: python3 -I -B .ufo/waves/round-24/tools/count-c1.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <MEASURED-COMMIT>; a real replay re-runs each retained argv with the REA_TSHARK_COMMAND/REA_CAPINFOS_COMMAND recorded in the run file after reproducing the build in .ufo/waves/round-24/tool-pins.json
 
@@ -11,9 +11,10 @@ round24. This entry holds the four REA6.5.0 packet-capture family verbs
 4.6.9 source release. It claims no live capture, interface access, decryption
 practice, protocol-correctness verification or network-forensics ownership.
 Round 22 placed all four verbs `frontier-blocked` because no TShark existed on
-the host (`.ufo/waves/round-22/evidence/c2/inspect-pcap-*.json`, ENOENT and
-missing REA_TSHARK_COMMAND refusals); those refusals stay valid for that host
-state and are not rewritten.
+the host (`.ufo/waves/round-22/evidence/c2/inspect-pcap-client.json`,
+`inspect-pcap-capture.json`, `inspect-packet-fields.json` and
+`inspect-packet-capture.json` in that same directory, ENOENT/missing
+REA_TSHARK_COMMAND refusals); those host-state refusals are not rewritten.
 
 ## The tool is a recorded local build
 
@@ -22,10 +23,13 @@ TShark/capinfos 4.6.9 were built from the official source tarball
 equal to the `SHA256(...)` line of the signed `SIGNATURES-4.6.9.txt`; gpg
 reports a good signature by key `5A5ADBA7DBEA6C3F87224F1982244A78E6FEAEEA`
 without a web-of-trust path) into `/home/vgpnk/.local/opt/wireshark-4.6.9`
-with Lua disabled; no pacman transaction. Binary digests and the configure
-command are in `.ufo/waves/round-24/tool-pins.json`. A missing or replaced
-binary at that path ends every holding below; the round-22 refusals show what
-REA returns then.
+with Lua disabled; no pacman transaction. Launcher and Wireshark-library
+digests and the configure command are in `.ufo/waves/round-24/tool-pins.json`;
+system libraries (libpcap, glib, c-ares, libgcrypt, gnutls) are not pinned,
+and the signing key came from a keyserver without an independent fingerprint
+anchor. A missing or unrunnable tool at that path returns the round-22
+refusals; a replaced library or another TShark 4.x would not by itself be
+refused, so the digests are the identity check, not REA.
 
 ## Client inspection is tool-subject
 
@@ -35,7 +39,11 @@ REA returns then.
 operation `inspect_pcap_client`, provider `pcap`. `subject` is null and the
 only limitation is "Artifact identity is unavailable for this observation."
 It reports both commands as `environment`-sourced and echoes their version
-strings; it does not check version range itself and reads no capture.
+strings; it reads no capture. ResC1Envelopes-2 confirmed REA does enforce
+Wireshark 4.x: a 3.6.20 stub is refused, 4.0.0/4.99.99 accepted (the first
+draft incorrectly denied this validation). It is held pathless (the
+round-21 binder admits a null subject); it carries no artifact/tool digest,
+so it is the weakest of the four holdings.
 
 ## Capture summaries are derived, not observed
 
@@ -70,12 +78,16 @@ capability the lane holds. SNI is a ClientHello field and needs no decryption.
 subject sha256 `69e489a26a59208a1dd56fbea4c606b1e59e8ac32d3d4789ca6cc81e71bad3f2`)
 returned frame 1, URI `/v4/iuident.cab?0307011208`, source `10.0.0.5`,
 output window 1 matching/1 returned/`has_more:false`, read scope `to-eof`,
-confidence `observed`. REA builds `-r … -T fields … -2 … -Y … -d … -e`
-(S066, `TsharkCaptureProvider.js:203-217`); `-2` is two-pass analysis that
-"allows it to fill in fields that require future knowledge" (S065).
-The fields option is an array: a comma-joined single value was refused by
-TShark as an invalid field list (L1 probe before the retained run; repeat
-`--fields` per field).
+confidence `observed`. REA6.5.0 runs `-n -r capture -T json
+--no-duplicate-keys --temp-dir=. [-2] [-c N] [-Y filter] [-d sel]… -e frame.number -e …`
+(S070, `TsharkCaptureProvider.js:201-218`); `-2` is added only when two-pass is
+requested (the default, used here) and is two-pass analysis that "allows it to
+fill in fields that require future knowledge" (S065). The fields option is an
+array: a comma-joined single value is refused by TShark as an invalid field
+list — retained refusal record
+`.ufo/waves/round-24/evidence/probes/refusal-comma-fields.envelope.json`
+(`ok:false`, `execution_failure`, exit 1; recorded after the residual review
+asked for it, not counted). Repeat `--fields` per field.
 
 **Observation:** `inspect-packet-fields --kind fields --protocol dns`
 (`.ufo/waves/round-24/evidence/c1/l1-packet-fields-dns.envelope.json`,
@@ -90,15 +102,22 @@ build, Lua-registered dissectors are absent from that registry.
 
 - tshark-capture runs under prlimit: at most 1 GiB address space per process,
   64 MiB per file, 30 CPU seconds, no core dumps; resident input 32 MiB, 30 s
-  wall clock per command, 4 MiB combined output (S066 line 263). The pcap
-  provider reports its own inherited ceilings (300 CPU seconds). Neither is an
-  OS sandbox; installed libraries and dissectors are trusted.
+  wall clock per command, 4 MiB combined packet-output
+  (S070, `TsharkCaptureProvider.js:263`). Registry discovery instead has a
+  32 MiB glossary-output / 8 MiB selected-record budget.
+  The pcap provider sets 1 GiB / 64 MiB / 300 CPU seconds
+  (`dist/pcap/PcapNativeBound.js:28-30`, S070). Neither is an OS sandbox;
+  installed libraries and dissectors are trusted.
+- `inspect-pcap-capture` takes `file_type`, `packet_count` and capture times
+  from `capinfos -M` (`dist/pcap/PcapProvider.js:330`, S070; capinfos(1) S071)
+  and fails if TShark's packet count disagrees; endpoints, DNS, SNI and URIs
+  come from TShark.
 - Missing fields are absent producer output, not zero; a filtered result
   does not establish traffic absence.
-- Inputs are tiny, old, public test captures (2004–2018 timestamps). Nothing
+- Inputs are tiny, old, public test captures (2002–2018 timestamps). Nothing
   here says how these verbs behave on large, truncated, encrypted-without-
-  secrets or adversarial captures; those are round-24 BUILD probe questions,
-  not holdings.
+  secrets or adversarial captures. The planned BUILD probes for those
+  questions never ran (the wave was refused by the job cap); they are open.
 
 ## Not claimed
 
@@ -106,3 +125,8 @@ Live capture or `dumpcap`; interface or device access; TLS/QUIC decryption
 with lane-held keys; protocol-semantics correctness beyond TShark dissector
 output; complete REA pcap behaviour; the frozen R23 debugger verbs (still
 unheld/Adjacent); outside admission.
+
+Residual replay by ResC1Envelopes-2 reproduced all five evidence IDs and
+normalized results byte-for-byte; whole envelope bytes differ in duration.
+Its DSB-stripped control removes HTTP while retaining SNI. Replay compares
+identity/normalized fields, not complete envelope byte equality.

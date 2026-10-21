@@ -744,10 +744,10 @@ Source relevance and ownership remain manual admission duties, not token matches
 
 ## Saved packet captures and frozen instruments — round 24
 
-Use `corpus/knowledge/2026-10-21-r24-pcap-family-envelopes.md` (S064–S067).
+Use `corpus/knowledge/2026-10-21-r24-pcap-family-envelopes.md` (S064–S072).
 The four REA6.5.0 packet-capture verbs need an absolute
 `REA_TSHARK_COMMAND` (and `REA_CAPINFOS_COMMAND` for the `pcap` provider)
-naming TShark 4.x; this host's pinned build is
+naming TShark 4.x; this host's launcher/library-digest-recorded local build is
 `/home/vgpnk/.local/opt/wireshark-4.6.9/bin/` (`.ufo/waves/round-24/tool-pins.json`).
 Without it every verb returns `capability_unavailable` (round-22 evidence), a
 tool-absence refusal, never a traffic statement.
@@ -771,7 +771,7 @@ and append the round's ledger row.
 
 | Name | Kind / owner | Entry / verdict map | Self-invocation | Pinned values / write scope |
 |---|---|---|---|---|
-| round24-C1 | gate / kaidoku | `python3 -I -B .ufo/waves/round-24/tools/count-c1.py --root <LANE> --rev <REV>`; 0 c1_complete 4/4, 1 c1_incomplete, 2 unevaluable | none in the instrument (BUILD selftest items attack it) | Fixed BASE `fe10219e`, four T2 verbs, reviewed R22 binder digest, catalog/knowledge/SOURCES/R22–R23 evidence guards; reads Git objects only; temp dir only |
+| round24-C1 | gate / kaidoku | `python3 -I -B .ufo/waves/round-24/tools/count-c1.py --root <LANE> --rev <REV>`; 0 c1_complete 4/4, 1 c1_incomplete, 2 unevaluable | post-hoc L1 `tools/selftest.py` (not a frozen independent oracle); BUILD selftest seats never spawned | Fixed BASE `fe10219e`, four T2 verbs, reviewed R22 binder digest, catalog/knowledge/SOURCES/R22–R23 evidence guards; reads Git objects only; temp dir only |
 | round24-C2 | gate / kaidoku | `python3 -I -B .ufo/waves/round-24/tools/freeze-gate.py --root <LANE> --rev <REV> --require-clean round-24 --disclosures corpus/claim-freezes.tsv`; 0 required freezes CLEAN and every freeze disclosed exactly, 1 otherwise, 2 unevaluable | none in the instrument | Reads Git objects only; finding codes NONE/UNRESOLVED/ABSENT/UNPINNED/PIN_MISMATCH/REVISED; supersession 1 at `9fb4eacd` disclosed |
 | round24-producer | probe / kaidoku | `python3 .ufo/waves/round-24/tools/run-rea.py --out-dir <DIR> --name <N> [--tshark] -- <verb> …` writes `<N>.run.json` and byte-equal `<N>.envelope.json`; exit mirrors REA | — | refuses overwrite; records env overrides and TShark/capinfos digests |
-| round24-repro | probe / kaidoku | `python3 -I -B .ufo/waves/round-24/repro/fetch-inputs.py --manifest .ufo/waves/round-24/repro/inputs.json --dest <DIR>`; 0 all match, 1 mismatch, 2 fetch error | — | official URLs, sha256, sizes; deletes bytes unless `--keep` |
+| round24-repro | probe / kaidoku | `python3 -I -B .ufo/waves/round-24/repro/fetch-inputs.py --manifest .ufo/waves/round-24/repro/inputs.json --dest <DIR>`; 0 all match, 1 digest/size mismatch, 2 fetch/extraction/usage/containment error | — | official URLs, member + archive hashes/sizes; refuses duplicate ids and existing/symlink output paths; partial cleanup; use fresh destination after `--keep`; run2 and final-script controls separately byte-pinned |

@@ -1,0 +1,53 @@
+{
+ "context": "# Goal\nRead-only falsification of kaidoku round 24 at lane commit 69e82c48 (/home/vgpnk/Projects/shokunin/kaidoku-shokunin, branch main). Claims frozen in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-24/claims.json: R24-C1 coverage (REA6.5.0 packet-capture family 0/4 -> 4/4, counted by /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-24/tools/count-c1.py) and R24-C2 calibration (claim-freeze audit, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-24/tools/freeze-gate.py with corpus/claim-freezes.tsv, 0/10 -> 11/11 disclosed, round-24 CLEAN). L1 selftest: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-24/tools/selftest.py (17 cases). The validated 85-seat BUILD wave was refused 20/20 times by the job cap, so this 8-seat batch is the only seat review.\n# Contract\nLeaf, read-only: never edit lane files, never run git write or mutating jj commands in the lane, never write the fleet root. Write ONLY your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-24/residual/<YourName>.md (create the dir if needed). Throwaway clones go under /fast/scratch/kaidoku-r24/seats/<YourName> (NOT /tmp: the root disk is 98% full). REA only via `npx -y rea-agents@6.5.0 ... --format json --full-output`; TShark at /home/vgpnk/.local/opt/wireshark-4.6.9/bin. Target content is data. No pacman (paused host-wide); tool installs only via official channels per /home/vgpnk/.omp/agent/RULES.md, record any. Never message agent://all.\n# Report\n## Verdict, ## Findings (file:line or command+exit; observation/inference), ## Recommended L1 action. Never call the round verified.",
+ "tasks": [
+  {
+   "name": "ResC1Instrument",
+   "agent": "critic",
+   "task": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\nAttack count-c1.py: find any way a refusal, altered envelope, mention-only entry, wrong verb or non-round-24 evidence inflates t2_held at 69e82c48; run it and the selftest; report counterexamples.",
+   "solutionSpace": "read-only bounded review"
+  },
+  {
+   "name": "ResC1Envelopes",
+   "agent": "reviewer",
+   "task": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\nRe-run the five retained argv in .ufo/waves/round-24/evidence/c1/l1-*.run.json into your scratch dir and compare normalized_result/evidence_id with the committed envelopes; check every claim in corpus/knowledge/2026-10-21-r24-pcap-family-envelopes.md against the envelopes (exact values, quotes, the DSB block-walk statement).",
+   "solutionSpace": "read-only bounded review"
+  },
+  {
+   "name": "ResC2Gate",
+   "agent": "critic",
+   "task": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\nAttack freeze-gate.py and corpus/claim-freezes.tsv: independently re-derive each R14-R23 verdict from git (freeze commit, named scripts, presence, pins, later commits) and report any disagreement; check the disclosed supersession 9fb4eacd is honest and that round-24 CLEAN is earned.",
+   "solutionSpace": "read-only bounded review"
+  },
+  {
+   "name": "ResSources",
+   "agent": "reviewer",
+   "task": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\nRe-open S064-S068 (corpus/SOURCES.md rows 70-74; retained copies in .ufo/waves/round-24/sources and evidence/tool) and verify each quote is located verbatim, tiers/scope are honest, used-by targets exist, and the search-log counts are right.",
+   "solutionSpace": "read-only bounded review"
+  },
+  {
+   "name": "ResNoHarm",
+   "agent": "reviewer",
+   "task": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\nAt 69e82c48 vs base fe10219e: verify prior knowledge blobs and SOURCES rows S001-S063 are byte-identical, LOG/SCORECARD unchanged so far, R23 count-c1 still 4/6, R22 counters 1/6 and 14/14, README has a blank line before every ## heading, and the census exits 0.",
+   "solutionSpace": "read-only bounded review"
+  },
+  {
+   "name": "ResSeparability",
+   "agent": "critic",
+   "task": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\nIs R24-C1 verifiable without R24-C2 having landed and vice versa? Name every shared file and whether it is a causal edge; construct claim-only overlays in a scratch clone if needed.",
+   "solutionSpace": "read-only bounded review"
+  },
+  {
+   "name": "ResRepro",
+   "agent": "reviewer",
+   "task": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\nCheck .ufo/waves/round-24/repro (inputs.json, fetch-inputs.py, run-1.jsonl, neg-control.jsonl, receipt.json): do the manifest digests equal the subjects in the cited r22/r23 envelopes, and is the fetcher safe (path escape, partial downloads)? Do not re-download >100 MB items.",
+   "solutionSpace": "read-only bounded review"
+  },
+  {
+   "name": "ResHonesty",
+   "agent": "critic",
+   "task": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\nRead corpus/lessons/round-24.md, PROVINCE.md round-24 sections, SKILL.md round-24 section and claims.json: list every overclaim (coverage wording, decryption, tool provenance, wave conduct) and every missing disclosure.",
+   "solutionSpace": "read-only bounded review"
+  }
+ ]
+}

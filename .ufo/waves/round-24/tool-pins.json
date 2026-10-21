@@ -30,10 +30,19 @@
       "REA_TSHARK_COMMAND": "/home/vgpnk/.local/opt/wireshark-4.6.9/bin/tshark",
       "REA_CAPINFOS_COMMAND": "/home/vgpnk/.local/opt/wireshark-4.6.9/bin/capinfos"
     },
+    "libraries_added_after_residual_review": {
+      "recorded_utc": "2026-10-21 (after ResHonesty-2 finding 6)",
+      "/home/vgpnk/.local/opt/wireshark-4.6.9/lib/libwireshark.so.19.1.9": "52c9467fdb82fac6622d2c5eba247bb3d09cc4ce1f57e948fcbaa8b79d6806a5",
+      "/home/vgpnk/.local/opt/wireshark-4.6.9/lib/libwiretap.so.16.0.9": "2256c7184aef995126ffd7d8764d36e4d2027f660df668e2f45bc1d5181f76b9",
+      "/home/vgpnk/.local/opt/wireshark-4.6.9/lib/libwsutil.so.17.0.0": "dc4db1d50211f72939c0113a5ed7d17a59ac41ec4cf65d8cc15dfe068b628d8f",
+      "unpinned_system_libraries": ["/usr/lib/libpcap.so.1", "/usr/lib/libglib-2.0.so.0", "/usr/lib/libcares.so.2", "/usr/lib/libgcrypt.so.20", "/usr/lib/libgnutls.so.30"],
+      "note": "Dissector code lives in libwireshark; system libraries come from the host's pacman packages and are not pinned here. A replaced library, or any other TShark 4.x at the configured path, would not by itself cause an REA refusal; only a missing/unrunnable tool does."
+    },
+    "signature_anchor_limit": "The signing key was fetched from keys.openpgp.org; no independent anchor for its fingerprint (e.g. a wireshark.org key page) was recorded this round, so 'signature-checked' means a good signature from that keyserver key, nothing stronger.",
     "limits": "Binary digests identify this local build only; they are not reproducible-build claims. Lua disabled, so Lua dissectors/plugins are absent from inspect-packet-fields registrations."
   },
   "capture_inputs": {
-    "carrier": "test/captures/ inside the signature-checked wireshark-4.6.9.tar.xz above; each capture's own sha256 is recorded in its run/envelope subject digest",
+    "carrier": "test/captures/ inside the wireshark-4.6.9.tar.xz above (good signature, see signature_anchor_limit); each capture's own sha256 is recorded in its run/envelope subject digest",
     "reproduce": "curl -fsSLO <source_url>; sha256sum -c; tar xf; files under wireshark-4.6.9/test/captures/"
   },
   "rea": {
