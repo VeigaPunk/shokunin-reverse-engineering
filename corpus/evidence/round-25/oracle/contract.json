@@ -1,0 +1,34 @@
+{
+  "schema": "kaidoku-r25-explicit-reference-contract-v1",
+  "consumer": "A caller who already selected a claims file and one instrument reference, and needs to check that reference's Git-object custody. This is not a historical-round auditor or a claim-admission authority.",
+  "entry": "python3 -I -B tools/round-25/instrument-custody.py --root <repository-top> --request-json <literal-JSON>",
+  "request_members": {
+    "claims_file": "Exact lane-relative .ufo/waves/round-N/claims.json path; not a discovered cohort",
+    "freeze": "Full lowercase40hex first-add commit of claims_file in measured history",
+    "measured": "Full lowercase40hex commit",
+    "reference": "One literal reference, not a shell command",
+    "sha256": "Full lowercase64hex hash of instrument blob at freeze",
+    "supersessions": "Array of unique full commit identities with lowercase64hex sha256 and nonblank string reason; all must change this instrument after freeze and at/before measured"
+  },
+  "normalization": {
+    "supported_prefixes": ["./", "<LANE>/", "$LANE/"],
+    "rule": "At most one supported leading prefix is stripped. The result is an ASCII lane-relative path with at least two nonempty components, no dot/parent components, no whitespace, backslash, colon or shell metacharacters; allowed components use letters/digits/underscore/dot/hyphen; no component begins with a dash. Suffix py/sh/js/mjs/ts is matched case-insensitively. Any lane-relative root including scripts is supported, not only a regex root allowlist.",
+    "bare_names": "reference_unresolved, exit2; never guess by basename even when unique",
+    "unsupported": "reference_unsupported, exit2; never evidence of no instrument or clean absence",
+    "absolute_paths": "Unsupported in this finite consumer API; caller supplies a lane-relative reference explicitly, never silently rebases an external path"
+  },
+  "git_checks": [
+    "Read one repository top and explicit immutable commit objects; neutralize inherited Git routing/replacement configuration; never run audited source",
+    "First-add claims identity must exactly equal declared freeze, freeze must be ancestor of measured; ambiguous/readded/nonlinear unsupported claims history is unevaluable, not guessed",
+    "Enumerate exact freeze tree entry before reading blob. Missing regular path is instrument_absent1; nonregular or unreadable Git object is unevaluable2",
+    "Instrument must exist with the same blob and regular mode in the unique freeze parent; otherwise instrument_not_prior1",
+    "Frozen blob SHA256 must match request sha256; otherwise pin_mismatch1",
+    "Enumerate all post-freeze commits that change the exact instrument path; a missing disclosure is revision_undisclosed1",
+    "Each supersession must name a real commit in that exact path-change set, and its digest must match the blob at that commit; forged or wrong-path entries cannot be silently ignored"
+  ],
+  "deterministic_primary_order": ["request_invalid2", "reference_unresolved2 or reference_unsupported2", "measured_commit_unavailable2", "freeze/claims identity errors2", "instrument_absent1 or nonregular/unevaluable2", "instrument_not_prior1", "pin_mismatch1", "supersession_commit_unavailable2", "supersession_not_revision1", "supersession_digest_mismatch1", "revision_undisclosed1", "clean0"],
+  "expected_json": "An object with finding:string, scope:explicit_reference_custody_only, and useful object identities/digests or error metadata. Ruler grades only exact process exit and primary finding across every frozen case and retains whole stdout/stderr.",
+  "not_claimed": ["R24 original calibration claim repaired or admitted", "11/11 revised agreement proves original9/11", "R23 six4/6 equals R24 four4/4", "discovery of all instruments in arbitrary prose/shell", "authenticity of Git authors/committer time or SHA provenance", "claim text immutability", "trusted semantic reason text", "proof of which historical instrument actually executed", "whole-domain/no-axis-harm proof from34 cases", "live target, ELF metadata held item, packet secret bodies, USB/devices/chains or remote execution"],
+  "prerequisite_order": "Main-authorized exception: independent cases+contract+executable ruler land before claims; claim freezes their digests; candidate auditor under test is implemented only after actual claims landing. Candidate is not mislabelled as a preexisting ruler. Any compatibility finding from old R24 gate reading new R25 claims is disclosed separately, never repaired by modifying old gate/ledger.",
+  "baseline_count_interpretation": "Missing candidate is unavailable. Ruler records every case not_observed, executed0, matched0; do not claim34 experimentally observed old failures. The substantive before counterexamples are source-derived and outside R24's unchanged original failure record."
+}
