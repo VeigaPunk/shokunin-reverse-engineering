@@ -1,0 +1,43 @@
+{
+  "schema":"kaidoku-r21-fixture-contract-v1",
+  "frozen_before_measurements":true,
+  "basis":"Independent local application contract, not JSON-spec required fields or Evidence authentication",
+  "C1":[
+    {"id":"same_record_positive","expected_exit":0,"rule":"cited exact id and exact operation in same successful supported Evidence record"},
+    {"id":"wrapper_positive","expected_exit":0,"rule":"supported result.evidence wrapper preserves same-record identity"},
+    {"id":"split_records","expected_exit":1,"rule":"cited id belongs to operation A; requested operation B exists only in a distinct record"},
+    {"id":"operation_in_notes","expected_exit":1,"rule":"requested operation appears only as prose/metadata string, record operation differs"},
+    {"id":"id_in_notes","expected_exit":1,"rule":"cited id appears only as prose/metadata string, not the requested record id"},
+    {"id":"execution_failure","expected_exit":1,"rule":"matching record carries typed execution_failure error"},
+    {"id":"could_not_evaluate","expected_exit":1,"rule":"matching record carries typed could_not_evaluate status/error"},
+    {"id":"error_envelope","expected_exit":1,"rule":"matching id and operation remain inside typed refusal envelope"},
+    {"id":"objdump_architectures_positive","expected_exit":0,"rule":"inspect_with_objdump, architectures operation parameter, subject null accepted with pathless limit"},
+    {"id":"objdump_wrong_parameter","expected_exit":1,"rule":"inspect_with_objdump record disassemble, architectures only unrelated prose"},
+    {"id":"malformed_json","expected_exit":2,"rule":"not a supported parseable Evidence representation"},
+    {"id":"duplicate_member_ambiguity","expected_exit":2,"rule":"contradictory duplicate operation names cannot select last-wins success"}
+  ],
+  "C2":[
+    {"id":"bounded_silent_positive","expected_exit":0,"rule":"prediction null, explicit envelope first_failure null and integer last_line"},
+    {"id":"kind_index_positive","expected_exit":0,"rule":"same non-null kind/index, typed phase/va can differ"},
+    {"id":"nullable_eof_positive","expected_exit":0,"rule":"legitimate eof kind with explicit null index retains matching semantics"},
+    {"id":"null_predicted_object_observed","expected_exit":1,"rule":"well-formed but different outcomes"},
+    {"id":"object_predicted_null_observed","expected_exit":1,"rule":"well-formed but different outcomes"},
+    {"id":"kind_mismatch_equal_index","expected_exit":1,"rule":"different kind at equal index is mismatch"},
+    {"id":"index_mismatch_equal_kind","expected_exit":1,"rule":"different index at equal kind is mismatch"},
+    {"id":"naked_null","expected_exit":2,"rule":"no observation envelope or last_line bound"},
+    {"id":"naked_failure","expected_exit":2,"rule":"no observation envelope or last_line bound"},
+    {"id":"missing_failure_member","expected_exit":2,"rule":"missing first_failure is not observed silence"},
+    {"id":"missing_last_line","expected_exit":2,"rule":"absence needs explicit observation bound"},
+    {"id":"negative_last_line","expected_exit":2,"rule":"last_line cannot be negative"},
+    {"id":"boolean_last_line","expected_exit":2,"rule":"bool is not a line count"},
+    {"id":"string_last_line","expected_exit":2,"rule":"string is not a line count"},
+    {"id":"missing_index","expected_exit":2,"rule":"failure index member must exist, nullable is distinct from absent"},
+    {"id":"boolean_index","expected_exit":2,"rule":"bool is not a failure index"},
+    {"id":"string_index","expected_exit":2,"rule":"string is not a failure index"},
+    {"id":"missing_phase","expected_exit":2,"rule":"failure shape must retain typed phase even though equality ignores it"},
+    {"id":"malformed_extractor_json","expected_exit":2,"rule":"decode failure is unevaluable"},
+    {"id":"extractor_nonzero","expected_exit":2,"rule":"failed extraction is not an observation"}
+  ],
+  "separation":"C1 tests do not load C2 successor; C2 tests do not load C1 successor. R20 original predictions/logs/comparator/extractor and original receipt validator remain historical authorities at their pinned revisions.",
+  "regression":"Nineteen retained R20 exact-artifact prediction/log pairs; retrospective compatibility only, no new freeze or provider run. Any new attack cases are supplementary and reported separately from this fixed denominator."
+}
