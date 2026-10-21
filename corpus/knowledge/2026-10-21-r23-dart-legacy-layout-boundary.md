@@ -64,3 +64,47 @@ The successful layout result and the existing refusal are distinct artifact
 outcomes, not contradictory provider verdicts. Count `inspect-dart-aot` once;
 extra builds or a separate identify success do not add another T1 verb.
 Both debugger verbs remain unheld/Adjacent, with no live attach or execution.
+
+## Round-23 W2 qualification — exact coverage and selection limits
+
+S063 supersedes S061's sufficient-condition wording. Exporting the four names
+alone does not guarantee complete libapp observations: this selected carrier
+also has the supported kind-3 data headers, a valid shared hash and declared
+lengths fitting their symbols. `normalized_result.coverage` is **partial**;
+`libapp.coverage` is complete and `string_pool.coverage` is partial. These are
+three distinct coverage fields, not one global complete result.
+
+“Legacy-layout” in this filename/title is descriptive terminology borrowed
+from the connector's proposal, not an admitted SDK-generation or version
+mapping. The admitted fact is this selected x86_64 libapp's **four-symbol
+layout**. The R22 refusal does not echo its selected ABI, so this comparison
+does not rule out ABI-selection differences or prove the causal SDK boundary.
+The producer's own kind-3 “Dart2.14” limitation text is retained but not adopted
+as a version-identification rule.
+
+The L1 urllib fetch was observed in the coordinator tool transcript. Its
+committed HTTP200/digest record is author-produced, not an authenticated
+network transcript or proof distinguishing download from a same-byte copy.
+“Independently fetched” describes that observed L1 action, not independently
+verified publication/signature/custody. The full digest and public reproducer,
+not the independence adjective, identify the admitted artifact.
+
+Recheck precision (QUALITY21): describe-dart.py **extracts and reports** the
+producer's section table, snapshot hash and lower-bound fields; it does not
+recompute those from APK/libapp bytes. Its independent recomputations are
+the committed envelope's byte digest and envelope/run equality; other
+comparisons bind retained path/digest/command strings. The earlier sentence
+calling all producer fields “recomputed” is superseded on that point.
+Re-running the parser itself requires the exact public APK and retained argv.
+
+“First successful” in the opening paragraph means **first admitted holding**
+in this frozen lane inventory, not the earliest successful call on the host:
+the unadmitted connector and synthetic schema probes ran earlier. No
+non-author independence is implied by the L1 action.
+
+The table's “not a data header” explanation is layout interpretation;
+observed fields are the symbol names, offsets/sizes, magic flags and null or
+numeric kind/length values. Offsets are within the selected libapp, not APK
+container offsets or virtual addresses. Printable-run capacity and projection
+limits remain producer-reported; a referenced but absent capped flag is not
+invented, and projected strings are not validated source paths or class names.

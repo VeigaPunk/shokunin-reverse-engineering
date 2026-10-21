@@ -42,7 +42,7 @@ def main():
             row = {'name': name, 'envelope_sha256': hashlib.sha256(raw).hexdigest(),
                    'stdout_byte_equal': run['stdout'].encode('utf-8') == raw,
                    'argv': run['argv'], 'env_overrides': run.get('env_overrides'),
-                   'exit': run['exit'], 'ok': envelope.get('ok'),
+                   'exit': run['exit'], 'original_stderr': run['stderr'], 'ok': envelope.get('ok'),
                    'command': meta_command, 'operation': data.get('operation'),
                    'evidence_id': data.get('evidence_id'), 'subject': data.get('subject'),
                    'artifact': normalized.get('artifact'), 'selection': normalized.get('selection'),

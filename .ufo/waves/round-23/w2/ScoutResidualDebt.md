@@ -1,0 +1,27 @@
+# R23 W2 — residual-debt source review
+
+## Findings
+
+**Observed — pinned source.** Reviewed candidate commit `2838351450ff1ee4baa620c962a1153450d53311` (parent `6615aeae642aec36959180e7ea940b2794c7f1cb`; baseline B is `aa1450b82f9ede35aada63efe8a34e01c6e02f72`) by Git-object reads, not the moving worktree. Candidate blob SHA-256: `corpus/lessons/round-23.md` `8327a21fbae3c976af820e10063d973f1862a945a041d4b02a90906700a70723`; `SKILL.md` `be7d85f8bedb8748b73fcdfaaf627d73ffcf2578d9ab9d3bb9296b353d14cf9b`; `PROVINCE.md` `541a5b209031045240e76ca5915705ecd475ac4841cc2fbb6701ef28c9e0844c`.
+
+- **Closure/completeness:** The lesson says the frozen six-verb claim remains incomplete until 6/6 (lines 3–6), reports 4/6 with exit 1 and both debugger verbs unheld (90–91), and says outside admit/reject sampling remains the closure's duty (101). The only already-supplied closure is explicitly R22's historical closure at `rounds[415]` (39–41); it is not attributed to R23. The Skill says the inventory is not fully complete (SKILL.md:713–714), while its counter row/checklist preserves the six-verb denominator and exact remainder (SKILL.md:735, 740–743); Province says the denominator is fixed and the debugger/arbitration question remains open (PROVINCE.md:238–242).
+- **Mastery:** The lesson reports only that owned finite proxies tie at 10.0 and disclaims scalar increase, capability, promotion, dynamic ownership, and outside admission (5–6). The frozen claim contract (`.ufo/waves/round-23/claims.json:11`) says no mastery or capability is preclaimed. I found no claim of mastery in the scoped candidate text. A detached reading of “10.0” without “finite proxies” would be misleading, but the pinned passage itself bounds it.
+- **SOURCE/TIME:** The lesson limits S058/S059 to manual/dataset meaning and provenance, and S060/S061 to the exact returned window/selected artifact (16–19); it records fetch URL/status/size/digest/time (27), says existing S001–S057 cells are unchanged (21–26), and explicitly leaves SOURCE/TIME among the residuals open (42). The Skill preserves source relevance/ownership as manual admission duties, not token matches (SKILL.md:743). Nothing here claims complete source coverage or durable time custody.
+- **LINT-SANDBOX / OS and hardware isolation:** The lesson admits scope deviations, says instructions were not enforcement, and does not claim a technical write-scope guard (52); it limits the runtime pins to one instant, disclaims continuous custody, full dependency attestation and acquisition isolation, and keeps hardware Adjacent/unowned (72–76). The Skill explicitly says `hardware_acquisition:not-performed` is not an independent device-contact monitor and asserts no no-execution guard or OS sandbox (SKILL.md:724–729). Province disclaims hardware isolation/acquisition capability and keeps device control Adjacent/unowned (PROVINCE.md:223–229). I found no OS-isolation or acquisition-isolation success claim.
+- **CENSUS-GUARD:** The lesson records both censuses as exit 0 *with carried W04 scope warnings* (95–96), while explicitly keeping CENSUS-GUARD open (42). This is not described as a warning-free census or as closure.
+- **ADJACENCY:** The lesson keeps hardware and both debugger verbs Adjacent/unheld and carries the sibling overlap question (74–76); Skill says live debugger/acquisition/device-control requests remain Adjacent/unheld (SKILL.md:722); Province says no process attach, live device operation, or general signal-analysis ownership was earned (PROVINCE.md:238–242).
+
+**Inference (high confidence, scoped to these three documents):** No accidental closure, mastery, or OS/hardware-isolation inference appears in the pinned lesson/skill/province carry. The qualifications are explicit and mutually consistent. The candidate documentation characterizes R23 as a partial coverage improvement, not completeness or an ownership expansion; this source-only review does not independently validate its measurement.
+
+## Remaining unknowns / open risks
+
+- The lesson names “W04 scope warnings” but does not define their exact content here; therefore the exit-0 census result cannot be interpreted more broadly than the stated warned result. The residual is expressly open.
+- The retained one-instant runtime pins and fetch metadata do not establish continuous time/custody or full dependency/source attestation; those are explicitly disclaimed, not closed.
+- No current-round non-author admit/reject sample is claimed (lesson 38–42, 100–101). Nothing in this review supplies outside admission or resolves the sibling arbitration.
+- The 10.0 phrase is bounded as a finite proxy, not mastery; avoid quoting it without lines 5–6 and the frozen non-mastery boundary.
+
+## Method and delivery
+
+Inspected only the pinned candidate documentation and the frozen claim boundary. `git show`/`git diff` Git-object inspection was read-only; no producer, census, selftest, build, lint, formatter, target, device, or process command was run. No LSP route was exposed in the available tool inventory; this is a prose-source review, not semantic proof about implementation. No installs.
+
+Produced file: `.ufo/waves/round-23/w2/ScoutResidualDebt.md` (SHA-256 supplied in the handoff).

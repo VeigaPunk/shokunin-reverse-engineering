@@ -99,3 +99,110 @@ The initial literal Hello World prediction is explicitly false, not counted
 as a clean forecast; synthetic exact annotation text and actual nonempty
 public output remain separate observations. Fresh W2 reviews the committed
 candidate. Outside admit/reject sampling remains the closure's duty.
+
+## W2 corrections — source, lifecycle and oracle scope
+
+Additional Gate rows opened/reopened by L1 on2026-10-21:
+
+| Row | URL / location | Located quote, at most25 words | Decision |
+|---|---|---|---|
+| S062 | Same versioned manual URL as S058; retained sigrok-cli.1 input-file option, line111 | “Load input from a file instead of a hardware device.” | Supersedes S058's attribution: explicit sampling rate is only in the synthetic call; the public session uses metadata, grounded by S060's separate run |
+| S063 | Original L1 Dart envelope, data.normalized_result.coverage | `\"coverage\":\"partial\"` | Supersedes S061's sufficient-condition wording; selected four-symbol libapp complete, overall/string_pool partial |
+
+No immutable source cell was rewritten. S058/S061 remain historical rows with
+explicit superseding S062/S063; existing status/recheck/used-by cells are
+unchanged. These are two corrections to already-opened source families, not
+two new discoveries. The original five-family search remains five families.
+The excluded guide now has URL, retained bytes and SHA in
+evidence/sources/guide-fetch.json: unversioned main is still not6.5.0 authority.
+
+S060's admission includes inventory and **both** selected decode envelopes,
+as the original Gate's admit paragraph states, not merely its inventory quote.
+The help record is non-counted supporting text; the invalid-decoder record is
+an actual reject. The successful envelopes' launcher hash is not present in
+that refusal, which has no data/subject/id. Carrier/path identity for the
+refusal is only its requested argv, not independently bound by its envelope.
+No absent-provider or clean-byte interpretation is admitted.
+
+S059's README documents a625kHz band including9600baud, not physical timing
+measured by this lane. File-specific metadata supplies625kHz and TX;9600 is
+the chosen decoder setting and filename description. `rx=TX` maps the
+recording's channel **name** to the observer decoder's RX input; it is not
+a contradiction with the author's transmitter label, nor a numeric probe
+index assertion. The historical acquisition command is not a recheck recipe.
+
+W2 Source061 correctly distinguished **extracting** producer fields from
+recomputing them from an APK. The Dart entry now has that named correction;
+descriptor checks compare retained fields and hash the envelope, not a
+second independent APK parse. Both entries qualify explicit overrides versus
+ambient environment, requested limits versus kernel readback, one-instant
+pins versus custody, filtered annotations versus lossless frames, and
+descriptive “legacy” terminology versus an unsupported SDK-generation claim.
+Provider predictions were not commit-frozen before the probes and are not
+claimed as preregistered forecasts. The counting claim and counter control
+expectations have separate pre-measurement commits.
+
+### Lifecycle corrections, no credit change
+
+Superseding the earlier “not resumed”/eight-Haiku-terminal wording:
+L1 neither resumed nor replaced a dead seat, but two peer messages woke
+SourceDartSnapshots and BuildSignalRunner. Both re-failed without output;
+SourceDartSnapshots' final error is Codex capacity after fallback, not its
+first Anthropic429. Current observations and per-seat last models/write
+bindings are retained in wave1-outcomes-correction.json and
+w2/lifecycle-scan-projection.json. Twelve W1 seats remain reportless.
+
+For R22 W1, only13 have observed own terminal Haiku failures. The other80
+have unexplained stop mechanisms:48 recorded abort labels and32 nonterminal
+capacity errors followed by silence. “Capacity-retrying at dispose” was an
+inference and is withdrawn. All93 dispose mechanisms remain unexplained.
+The old recount's zero terminal notices/93 unknown-per-child fields are
+superseded by the13 retained parent notices, not silently edited. Its
+generated_at was authored, not a clock reading. All102 R22 reportless seats
+remain uncredited; observations are not an explanation or an excuse.
+
+Explicit scope deviations retained as unadmitted artifacts include
+UartSemantics' w1/_uart source tree, CoverageMap's .tmp-counter runs,
+HistoricalSeatEvidence's recount script/json/sidecar, CounterRefusals'
+sidecar/unassigned run, AppImageLibraries' executor-only clone privilege,
+PlannerDataWalk's extraction/probes, ConnectCounters' unassigned counters,
+SchemaDart's synthetic builds/probes and outside-lane scratch across several
+roles. AppImageLibraries' “lane bounds kept” is not accepted as compliance.
+The extra93-row receipt was explicitly requested by L1 and is distinguished
+from those unauthorized attachments. ConnectDartSymbols' last write was before
+stop **delivery**, not before the earlier send instant; no technical scope
+guard is claimed. Only the separately observed L1 envelopes enter the holding
+entries, not these advisory files.
+
+### Frozen control semantics and deliberately bounded claims
+
+The old_source v1 expectation1 became v2/v3 expectation2 because its fixture
+edits baseline S051's used-by and now correctly hits historical_sources_changed
+before source eligibility. It tests immutability, **not** an isolated S058-floor
+mutant. V3 also freezes prior knowledge modes/blobs; with unchanged old rows
+and entries, an old row cannot acquire a new entry's backlink. The explicit
+S058 floor remains defensive, but isolated floor mutation coverage is not claimed.
+Stable error strings are now asserted for the named preflight cases.
+
+The same committed C counter is retained as frozen/pre-v3-counter.py to
+demonstrate four named false accepts: missing/changed inherited entry and
+symlink Evidence/knowledge. V3's25-case expectation manifest is frozen before
+the new demonstration. Earlier21/21 receipts and v1/v2 proposals remain
+unchanged; no new pass is inferred until the final producer runs.
+
+Per-record unsupported JSON (binder2) is a non-counting candidate; the outer
+count may still report incomplete1. Strict UTF-8/read-set failures are whole-run
+unevaluable2. These are different layers, not clean interpretations of bad
+records. No mutation-complete parser proof, coordinated author/oracle-tamper
+detector, source-relevance classifier or cryptographic authentication is claimed.
+Generic alien metadata keys and serialized JSON strings are not interpreted
+as arbitrary failure languages; adding such heuristics could mistake target
+data for producer status. The actual CLI shapes/recognized refusal vocabulary
+and manual original-run admission remain the boundary.
+
+Some W2 source-trace prose incorrectly calls a hypothetical count2 “complete”
+or exit0. The actual counter and retained outputs use exit1/c1_incomplete
+until6/6; those prose claims are rejected. Similarly, one RunBefore seat ran
+C instead of B and honestly reported the mistake; it earns no baseline-run
+credit. Main's actual before run and final named-source run supply that
+measurement, without replacement or backfill of the seat.

@@ -116,3 +116,59 @@ independent syscall/device-contact monitor was run. No target/device execution,
 attach, hardware acquisition or debugger ownership is claimed or credited.
 Dart parsing and both debugger verbs remain unheld; prior R22 identify remains
 one verb regardless of how many success envelopes cite it.
+
+## Round-23 W2 correction — source attribution and current holding
+
+This dated correction supersedes only the statements named here; original
+envelopes, predictions and earlier committed prose are retained.
+
+- The final paragraph's “Dart parsing … remain unheld” statement predates
+  the independently retained four-symbol Saber result. It is superseded by
+  `2026-10-21-r23-dart-legacy-layout-boundary.md`: inspect-dart-aot is now held
+  on that exact selected x86_64 carrier, not generally. Both debugger verbs
+  remain unheld/Adjacent.
+- S062 supersedes S058's overly broad sampling-attribution wording.
+  `samplerate=960000` is explicit only in the synthetic binary call. The
+  public `.sr` call has input_format:null and uses its recording metadata;
+  decoder/channel selections are explicit in both. This does not change
+  any observed result or interpret the manual as REA output authority.
+- The sentence “at least one actual direction is still required” was not
+  established by the retained help alone (which lists required channels:
+  none). Withdraw that global assertion here; only the selected RX settings
+  were exercised. No universal channel-validation rule is admitted.
+- Host glib/gio/gobject/libusb/expat resolve outside the extracted bundle.
+  The one-instant manifest pins selected gmodule/glib/gio files, not host
+  gobject/libusb/expat. Those other host dependencies remain unpinned; the
+  banner is version text, not complete dependency attestation or isolation.
+- The otherwise-unlocated “current upstream guide” sentence refers to
+  https://raw.githubusercontent.com/morluto/rea/main/docs/signal-recordings.md .
+  Retained lead copy `evidence/sources/rea-signal-guide-main.md` and
+  `guide-fetch.json` under round23 record a new same-round access and SHA256
+  `8997ec52c2f432bb1722aa1d3a27301a4e4c6c0553bb7bbbcb75b6ed59765fa9`.
+  It is unversioned main, excluded as6.5.0 authority, not a source row or
+  grounds to rewrite the actual execution_failure.
+
+The original acquisition/non-contact labels remain provider declarations;
+no independent monitor or full hardware-isolation proof was added.
+
+Further W2 precision: the raw carrier contains no absolute sampling-rate
+metadata;960000Hz is a **caller-declared interpretation**, while the pinned
+bytes establish100 samples per planted bit. The provenance header's
+“environment” means retained explicit env_overrides only; ambient environment
+was not captured. The reported prlimit arguments/limits are requested or
+provider-declared values, not a retained kernel readback of effective ceilings.
+Accordingly, the earlier “declared/measured provider settings” wording is
+superseded on “measured”; no stronger enforcement claim is made.
+
+W2 PredictionHonesty also records tail truncation and an annotation-range
+overhang in the public recording output. Their causes remain unknown; the
+entry's non-lossless qualification applies to both the leading and trailing
+anomalies. No absent-traffic, complete-frame or acquisition claim follows.
+
+The requested `uart=rx-data` annotation filter excludes warning classes.
+W2 OriginalPublic's retained independent bit-analysis program/output under
+`.ufo/waves/round-23/w2/retained-runs/OriginalPublic/` reports leading framing errors and an
+incomplete trailing frame. This is separate source analysis, not a new REA
+run or a proof that every data annotation is a valid framed byte. The
+admitted result remains the selected literal annotation view. Producer
+warnings outside that requested class are not “parsed-and-empty”.

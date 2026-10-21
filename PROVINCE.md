@@ -240,3 +240,34 @@ The six-verb completeness denominator remains fixed. Both debugger verbs
 remain unheld/Adjacent; kaidoku/revenger arbitration is still open.
 No process attach, live device operation or general signal-analysis
 ownership is earned by these offline observations.
+
+### Round-23 current T1 readiness — explicit supersession after W2
+
+This section supersedes the **current-readiness** statements in
+`### Round-22 narrowly added static ground`, including both “unexercised”
+and “no recording decode … is claimed”, and supersedes the earlier round-23
+paragraph wherever it omits these limits. Round numbers and these named
+sections, not the shared calendar date, identify the supersession. R22's
+actual selected-carrier refusal and historical observations remain intact.
+
+| Frozen T1 verb | Current bounded holding |
+|---|---|
+| identify-flutter-build | Held from R22; unchanged exact APK witnesses, not a new round-23 verb |
+| inspect-dart-aot | Conditionally held on selected x86_64 Saber1330203, S063: supported four-symbol headers with complete libapp coverage; overall/string_pool partial. R22's refusal did not echo its selected ABI, so no causal SDK/ABI-boundary conclusion is made |
+| debug-with-gdb | Not held; Adjacent, no permitted live debugger run |
+| debug-with-rizin | Not held; Adjacent, no permitted live debugger run |
+| inspect-signal-decoders | Held only as launcher-subject discovery/help; returned catalog excludes the failed signature module, not comprehensive decoder functionality |
+| decode-signal-recording | Held on the exact synthetic/public offline recordings; literal annotations and diagnostics, not lossless traffic recovery, live acquisition or device execution |
+
+The actual IDs and subject digests are now explicit in LOG's round-23
+bound-holding table. The former R22 “Dart not held” readiness statement is
+superseded only by this different selected four-symbol artifact; it does not
+turn the original refusal into a success.
+
+## Adjacent — round-23 explicit exclusion
+
+- Hardware signal acquisition, live device control and general hardware
+  protocol-analysis ownership remain unowned/Adjacent. Offline REA recording
+  envelopes do not establish hardware isolation or resolve sibling ownership.
+- Both live debugger verbs remain Adjacent/unheld; the kaidoku/revenger
+  arbitration question remains open.

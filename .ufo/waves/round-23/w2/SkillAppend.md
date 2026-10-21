@@ -1,0 +1,43 @@
+# SkillAppend — R23-C1 source review of SKILL.md append
+
+Scope: SKILL append only, at candidate 2838351450ff1ee4baa620c962a1153450d53311 (B=aa1450b82f9ede35aada63efe8a34e01c6e02f72). All bytes read via `git show <rev>:PATH`; the moving worktree was not reviewed (its `tools/count-c1.py` already diverges: 191 worktree lines vs 173 candidate-blob lines, referencing `expected-v3.json` post-candidate — lane drift, out of scope). No live tool run, no counting command executed (not my seat).
+
+## Findings
+
+### F1 [medium] — round23-final-producer registry verdict "2 could-not-evaluate/invocation" is unimplemented
+- Claim: SKILL.md:738 (registry row `round23-final-producer`, entry column, candidate blob e21f0b113b3e9ab3356ed998652bef66fb8b5e84): "…2 could-not-evaluate/invocation".
+- Implementation: `.ufo/waves/round-23/verify.py` (blob 7bb3f4b8f0743ff73e3776258513bc81727eed21) has no top-level try/except; the only `except` is the per-record `json.loads` guard at verify.py:42-43. `a.out.mkdir(parents=True, exist_ok=False)` (verify.py:36), `git_input_unreadable` ValueError from `git()` (verify.py:33-34), and `subprocess.run(..., check=True)` clone/checkout failures (verify.py:54-55) all escape `main()` → uncaught-exception interpreter exit 1 with traceback (verify.py:115 only returns 0/1; verify.py:118 `raise SystemExit(main())`). Exit code 2 is unreachable.
+- Consequence: invocation/input failures are observed as exit 1, which the same verdict map labels "1 discrepancy" — the map's 0/1/2 contract does not match observed behavior on any error path.
+- Status: observed (static, exit-code semantics of CPython unhandled exceptions); not executed.
+
+### F2 [low] — selftest git-infrastructure failures exit 1, not the mapped 2
+- `.ufo/waves/round-23/tools/counter-fixtures.py` (blob 55356faade5c11165783fc551a8a7f5275e65a6f) line 26-27: `command()` raises `RuntimeError(p.stderr)` on any git failure.
+- `count-c1.py` (blob 0f966a50018bba2fa5af3d6f9af1541f660c43c2) `main()` catches `(OSError, ValueError, UnicodeError, RecursionError, KeyError)` only; `RuntimeError` is absent, so a git failure during `--selftest` exits via uncaught exception (1), not the registry's "2 could-not-evaluate" (SKILL.md:735, self-invocation column). `snapshot_tampered` (ValueError) does map to 2 as claimed. Registry wording holds for the named case only.
+- Status: observed statically.
+
+### F3 [low/info] — "Existing raw UART sample file" row hard-codes one exercised samplerate
+- SKILL.md:721 (append table row): recipe `--input_format binary:numchannels=1:samplerate=960000`. This byte-matches the retained synthetic run `.ufo/waves/round-23/evidence/c1/decode-uart-hi.run.json` argv (observed). But the corpus' official sigrok-dumps session (S059, hello_world_8n1_9600.sr, 625 kHz) was decoded without `--input_format` and with `uart:rx=TX` (`decode-official-uart.run.json` argv, observed). A reader applying the binary-file recipe to a different raw file — or to the .sr session — gets a wrong rate/format. The separate "Selected sigrok session file" row covers the .sr case, so this is a scoping nit, not a false statement about the exercised call. [INFERENCE for the misreading risk; argv facts observed.]
+
+### F4 [info] — census dependency is an absolute, unpinned host path
+- verify.py:110 invokes `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh` (outside the repo, not listed in `source-pins.json` output of the same script nor in `.ufo/waves/round-23/tool-runtime-pins.json`). Registry column says "uses only pinned/frozen source and retained records". Consistent with claims.json no_harm "source census exit0", but the census binary itself is an environment pin, not a content pin. Portability/wording tension only.
+
+## Verified matches (no defect found)
+- **Append is purely additive / Queue-drain rules unchanged / prior prefix intact.** Base blob be3f275e73dafada42d5fa1833e618ece83487c1, candidate blob e21f0b113b3e9ab3356ed998652bef66fb8b5e84; single hunk `@@ -704,3 +704,40 @@`, 37 insertions, 0 deletions. First 706 lines (the entire base file, including the "Queue-drain craft" decision rules, SKILL.md:81 ff.) sha256 `4898fa74bd691e82ff89bb91caa51bd6673d567288243fd59d21d848a13a8ad8` at both revisions — byte-identical. Observed.
+- **round23-C1 row (SKILL.md:735) vs count-c1.py.** Flags `--root` (required) / `--rev` / `--selftest` (count-c1.py:155-158 region); exit 0 iff 6/6 else 1; 2 on caught errors with finding `unevaluable`; selftest verdicts `selftest_clean`/`selftest_failed` exit 0/1 (counter-fixtures.py:113-116), `snapshot_tampered` → 2; BASELINE fixed aa1450b8…; six targets = r22.T1 (round-22 count-c1.py:31-32, same six frozen verbs/order as claims.json); reviewed hashes: R22 counter pinned by LEGACY_SHA256 c925918f…, R21/R20 helpers pinned inside `revision_helpers` (round-22 count-c1.py:50-66, HELPER_SHA256); refusal-ancestry traversal of metadata/sibling containers before `bind_cli` (bind_new, count-c1.py:39-50); new-entry gate = S-id ≥58, grade A/B, mined, 2026-10-21, entry in used-by (count-c1.py:117-125); temp dir + loaded legacy module confined to `.ufo/waves/round-23/runtime` and auto-removed. All observed.
+- **expected-v2 active, v1 retained not active.** Candidate `SELFTEST_MANIFEST_SHA256 458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f` == sha256 of frozen/expected-v2.json (recomputed, match). expected-v2 pins counter-fixtures.py `f2990b35…` and fixture.json `a1f5aff8…`; both recomputed against candidate blobs — match ("separately authored fixture program/template"). expected-v1.json ≡ expected.json (both ad1b4462…), unreferenced by the candidate counter. Selftest expects 21 cases; expected-v2.json contains exactly 21; verify.py asserts passed==21/total==21. Observed.
+- **Probe rows (SKILL.md:736-737) vs describe-signals.py (blob e7e9d0538b846204f1bb75ded77fc21c23964197) / describe-dart.py (blob 37d0c66a756c2cf388ae4088010dbffbbad37051).** `--root`/`--rev` required, no selftest flag, exit 0 report / 2 unevaluable, stdout-only, committed inputs via `git show` only; dart row reads exactly the named envelope/run/fetch triple. Observed.
+- **Decision-table flag syntax matches retained producing argv** (observed in run records; these are REA-CLI spellings — upstream sigrok-cli 0.7.2 options.c uses `--input-format`/`--protocol-decoders`/`--protocol-decoder-annotations`, so the table must not be read as upstream sigrok-cli syntax): `inspect-signal-decoders --all` (inventory.run.json; uart-help adds `--decoder uart`); `--input_format binary:numchannels=1:samplerate=960000`, `--decoders uart:rx=0:baudrate=9600`, `--annotations uart=rx-data` (decode-uart-hi.run.json).
+- **"Signal CLI uses REA_SIGROK_COMMAND (absolute selected launcher), sigrok-cli0.7.2 with libsigrokdecode and /usr/bin/prlimit"**: every run record carries `env_overrides.REA_SIGROK_COMMAND = …/tools/sigrok-cli.sh`; literal `/usr/bin/prlimit` present in decode-uart-hi.envelope.json; dependency pins under `.ufo/waves/round-23/tool-runtime-pins.json` (sigrok-cli.sh 50fe4359…, squashfs sigrok-cli 10fed05a…, libsigrok, libsigrokdecode, uart pd.py). Observed.
+- **Dart row**: "four dynamic snapshot symbols … complete libapp section/header coverage while string_pool stays partial" matches knowledge `2026-10-21-r23-dart-legacy-layout-boundary.md:57` and the verify.py dart-record predicate (coverage complete, 4 sections, string_pool partial). Knowledge `source:` lines carry S058–S060 and S061 exactly as the SKILL cites; `hardware_acquisition:not-performed` quote matches offline-signal-envelopes.md:114. Observed.
+- **Registry vs frozen claims**: "0 clean c1_complete6/6 … k>=2, not a green completeness gate" matches claims.json R23-C1 (baseline1/6, target>=2, incomplete unless6) and verify.py `after-c1` expecting exit 1 at count 4/6. Observed.
+
+## Produced files and hashes
+- `.ufo/waves/round-23/w2/SkillAppend.md` (this report) — sha256 recorded at write time by Main; no other files produced.
+
+## Installs
+None.
+
+## Open risks
+- F1 makes the producer's 0/1/2 verdict map partially fictional on error paths; if L1's acceptance tooling keys on exit 2 for "invocation" failures, it will misclassify them as discrepancies. Fix is L1's (add a top-level except mapping to 2), not mine.
+- Worktree drift (count-c1.py 191 lines, expected-v3.json) means any later counting run must be pinned to 2838351 bytes or re-reviewed; this report covers only 2838351450ff1ee4baa620c962a1153450d53311.
+- F3/F4 are wording tensions inside the append, not falsifiers of R23-C1; no claim of the frozen claims.json was contradicted by the reviewed bytes.

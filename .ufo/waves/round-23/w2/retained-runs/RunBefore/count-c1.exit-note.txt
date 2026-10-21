@@ -1,0 +1,9 @@
+count-c1.exit: intentionally not written (no such file exists).
+
+Observed exit code of the single counter invocation: 1
+  - source: tool result "Command exited with code 1" for that invocation (wall time 3.61 s)
+  - why no file: the persistent shell still had `set -e` from the earlier clone-setup command;
+    the counter's non-zero return aborted the shell before `echo $? > count-c1.exit`
+  - corroboration: stdout finding=c1_incomplete; counter main() maps t1_exercised_count != 6 to exit 1
+  - shell reset: `set +e` applied before any further command
+  - no second execution of the counter occurred

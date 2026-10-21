@@ -35,6 +35,7 @@ def main():
         data = envelope['data']
         n = data['normalized_result']
         print(json.dumps({'rev': rev, 'ok': envelope.get('ok'), 'exit': run['exit'],
+                          'original_stderr': run['stderr'], 'overall_coverage': n['coverage'],
                           'envelope_sha256': hashlib.sha256(raw).hexdigest(),
                           'stdout_byte_equal': raw == run['stdout'].encode(),
                           'argv': run['argv'], 'env_overrides': run['env_overrides'],

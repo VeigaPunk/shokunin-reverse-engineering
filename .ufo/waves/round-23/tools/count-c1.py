@@ -22,7 +22,7 @@ import tempfile
 LEGACY = '.ufo/waves/round-22/tools/count-c1.py'
 LEGACY_SHA256 = 'c925918fb871151f86065aa5b3e9d10334ab845ed67c265ae0977f05e09b1879'
 ROOTS = ('.ufo/waves/round-22/evidence/c1/', '.ufo/waves/round-23/evidence/c1/')
-SELFTEST_MANIFEST_SHA256 = '458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f'
+SELFTEST_MANIFEST_SHA256 = 'c0701915d7129a9b5078899c080cbe8be01cfe8b7381a33819e3866dc220b75f'
 BASELINE = 'aa1450b82f9ede35aada63efe8a34e01c6e02f72'
 CATALOG = '.ufo/waves/round-20/verify/round20/verb-coverage.json'
 
@@ -71,6 +71,15 @@ def measure(root, revision):
     source_rows = lambda text: [line for line in text.splitlines() if re.match(r'^\| S[0-9]+ \|', line)]
     if source_rows(new_sources)[:len(source_rows(old_sources))] != source_rows(old_sources):
         raise ValueError('historical_sources_changed')
+    def knowledge_blobs(ref):
+        entries = git(root, 'ls-tree', '-r', '-z', ref, '--', 'corpus/knowledge/')
+        return {entry.partition(b'\t')[2]: (entry.partition(b'\t')[0].split()[0],
+                                           entry.partition(b'\t')[0].split()[2])
+                for entry in entries.split(b'\0') if entry}
+    current_knowledge = knowledge_blobs(rev)
+    if any(current_knowledge.get(path) != digest
+           for path, digest in knowledge_blobs(BASELINE).items()):
+        raise ValueError('historical_knowledge_changed')
     runtime = root / '.ufo/waves/round-23/runtime'
     runtime.mkdir(parents=True, exist_ok=True)
     tempfile.tempdir = str(runtime)
@@ -91,7 +100,11 @@ def measure(root, revision):
             rows[cells[1]] = cells
     targets = {verb: {'historical': historical['targets'][verb]['bound_evidence'], 'new': []}
                for verb in r22.T1}
-    files = git(root, 'ls-tree', '-r', '--name-only', rev, '--', 'corpus/knowledge/').decode('utf-8').splitlines()
+    try:
+        regular_blobs = dict(r20.tree_entries(root, rev))
+    except r20.Refusal as error:
+        raise ValueError(str(error)) from error
+    files = [path for path in regular_blobs if path.startswith('corpus/knowledge/')]
     catalog = r21.decode(git(root, 'show', rev+':'+CATALOG).decode('utf-8'))['cli_commands']
     mentioned = set()
     cited_pattern = re.compile(r'(?<![/A-Za-z0-9_.-])'+re.escape(ROOTS[1])+r'[A-Za-z0-9._/-]+')
@@ -112,6 +125,8 @@ def measure(root, revision):
         for evidence_path in sorted(set(cited_pattern.findall(text))):
             if not evidence_path.endswith('.json'):
                 continue  # Carrier bytes are cited provenance, not JSON Evidence.
+            if evidence_path not in regular_blobs:
+                continue  # Symlink target text is not an Evidence file.
             # Git fails closed on missing/absolute/traversal citations; no live path reads.
             if '..' in evidence_path.split('/'):
                 raise ValueError('evidence_path_invalid')
@@ -135,7 +150,7 @@ def measure(root, revision):
 
 def selftest(root):
     frozen = root / '.ufo/waves/round-23/frozen'
-    raw = (frozen/'expected-v2.json').read_bytes()
+    raw = (frozen/'expected-v3.json').read_bytes()
     if hashlib.sha256(raw).hexdigest() != SELFTEST_MANIFEST_SHA256:
         raise ValueError('snapshot_tampered: manifest')
     manifest = json.loads(raw)
@@ -151,6 +166,9 @@ def main():
         if key.startswith('GIT_'):
             del os.environ[key]
     os.environ['GIT_NO_REPLACE_OBJECTS'] = '1'
+    os.environ.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='/dev/null',
+                      GIT_CONFIG_COUNT='1', GIT_CONFIG_KEY_0='core.hooksPath',
+                      GIT_CONFIG_VALUE_0='/dev/null')
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root', type=Path, required=True)
     p.add_argument('--rev')
@@ -164,7 +182,7 @@ def main():
                 raise ValueError('revision_required')
             result = measure(a.root.resolve(), a.rev)
             code = 0 if result['t1_exercised_count'] == 6 else 1
-    except (OSError, ValueError, UnicodeError, RecursionError, KeyError) as error:
+    except (OSError, ValueError, UnicodeError, RecursionError, KeyError, RuntimeError) as error:
         result, code = {'finding': 'unevaluable', 'error': str(error)}, 2
     print(json.dumps(result, sort_keys=True))
     return code

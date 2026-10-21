@@ -2661,3 +2661,47 @@ reports,12 retained terminal failures, no replacement. All six remaining
 read-only seats finalized under a bounded close instruction. No reportless
 seat's intended implementation or source opening is credited. Fresh W2
 attacks the actual committed candidate, not W1's stale absent-file proposals.
+
+### Round-23 bound-holding table and W2 source corrections
+
+Trigger → action → outcome: missing frozen T1 holdings → L1 selected inert
+offline files/compatible public APK, pinned bytes, ran REA6.5.0 → retained
+the following original successful observations, with literal limits intact.
+
+| Verb | Evidence ID | Subject SHA256 / limit |
+|---|---|---|
+| inspect-signal-decoders | ev_940cf7bbd6ba6e8def3e7f29dad9dc03bccbd0f39a094a4787d3dd563164fdd0 | Launcher50fe43590a7b8f88f285f788ff6cb3bead8a3fe11be6a8b3c59f39f1f3470902; returned catalog only, signature module failed |
+| decode-signal-recording | ev_1d361f25aeaa07b5c03ffbbd43c61d061407b96c6c62bf783913d03a62c67e5c | Public recording01b72610cdc4510dd46c8ce82b163947adbbab5b9883aea164c00e15af900b61; literal annotations, not lossless framing or observed acquisition |
+| Same decode verb, positive synthetic control only | ev_bcadf773da826e70bfb79c492ddf111cd3f226fdd30addb4a15aabdc3602bd3e | Synthetic4a2e729f514482287c17596cff3b29f07141fae9e86353680c99b1065e861727; caller-declared rate, not another held verb |
+| inspect-dart-aot | ev_d2ff19d7100f34b52e4b2bc52ee115e48428624f7da57814e5f184b4bd4c7491 | APK a7b1f5c8c077aafc8903eb8246d9b6f5fc8ebb4829dc5cb32bd2cdd8ba3ea618; selected x86_64 four-symbol libapp complete, overall/string-pool partial |
+
+All original envelopes and producing stdout/stderr/argv/explicit overrides
+are under `.ufo/waves/round-23/evidence/c1/`. Ambient environment, dependency
+custody throughout runs and independent publication authentication were not
+captured. Retrospective source/provenance qualifications do not rewrite these
+bytes or turn a refusal into success.
+
+W2 CriticSourcesFinal/ScopeFinal/Original/Source061 exposed precise wording
+defects. S062/S063 supersede S058/S061 without changing immutable cells;
+knowledge gets named append-only corrections for overall coverage, declarative
+settings, limited rechecks and the earlier stale “Dart unheld” sentence.
+The exact current holding table in PROVINCE names all six verbs and explicitly
+supersedes R22 readiness, while preserving its selected-carrier refusal.
+The grouped two-entry README index row is intentional to retain prior cited
+line positions; both files are separately named in the coverage map and counted
+as files, not as one row.
+
+W2 CriticNumerator/Git identified two real counter gaps: prior knowledge could
+disappear while historical credit persisted, and symlink target text could be
+treated as a file. The successor checks prior knowledge modes/blobs and reuses
+the reviewed regular-file tree selector. V3 freezes25 cases with four added
+negatives and an exact pre-v3 counter for controlled red comparison; no v1/v2
+fixture or earlier green receipt is rewritten. The final producer also separates
+snapshot census from required live census, strengthens original-run comparisons,
+and maps setup failures to could-not-evaluate. These changes await their final
+named-source run, rather than borrowing W2's earlier-source21/21 result.
+
+Carried pointer defect, not repaired or called clean: SCORECARD:69 points at
+README:180 while the held/not-frontier bullet is at README:186, present at B.
+Other inherited pointer-probe findings and SOURCE/TIME/LINT-SANDBOX/
+CENSUS-GUARD/ADJACENCY residuals remain open.

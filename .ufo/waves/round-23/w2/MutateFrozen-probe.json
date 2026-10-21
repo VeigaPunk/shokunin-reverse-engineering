@@ -1,0 +1,316 @@
+{
+  "schema": "kaidoku-r23-mutate-frozen-v1",
+  "revision": "2838351450ff1ee4baa620c962a1153450d53311",
+  "axes": [
+    "coverage: frozen fixture fail-closed gate",
+    "calibration: no coverage-count or full-suite claim",
+    "isolation: source bytes unchanged and exact restoration"
+  ],
+  "source_pins": {
+    ".ufo/waves/round-23/tools/count-c1.py": {
+      "sha256": "f4b8d16ac195ca106a99cbb9236d36d1283dee349c6fef3a49567de0bbea0cc2",
+      "bytes": 8382
+    },
+    ".ufo/waves/round-23/tools/counter-fixtures.py": {
+      "sha256": "f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f",
+      "bytes": 6560
+    },
+    ".ufo/waves/round-23/frozen/fixture.json": {
+      "sha256": "a1f5aff8ebb5e5d327522031b74ed91283708907af0fc4a6df24812479bfef4b",
+      "bytes": 2394
+    },
+    ".ufo/waves/round-23/frozen/expected-v2.json": {
+      "sha256": "458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f",
+      "bytes": 2389
+    }
+  },
+  "clone_pins_before": {
+    ".ufo/waves/round-23/tools/count-c1.py": {
+      "sha256": "f4b8d16ac195ca106a99cbb9236d36d1283dee349c6fef3a49567de0bbea0cc2",
+      "bytes": 8382
+    },
+    ".ufo/waves/round-23/tools/counter-fixtures.py": {
+      "sha256": "f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f",
+      "bytes": 6560
+    },
+    ".ufo/waves/round-23/frozen/fixture.json": {
+      "sha256": "a1f5aff8ebb5e5d327522031b74ed91283708907af0fc4a6df24812479bfef4b",
+      "bytes": 2394
+    },
+    ".ufo/waves/round-23/frozen/expected-v2.json": {
+      "sha256": "458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f",
+      "bytes": 2389
+    }
+  },
+  "mutated_pins": {
+    ".ufo/waves/round-23/tools/count-c1.py": {
+      "sha256": "f4b8d16ac195ca106a99cbb9236d36d1283dee349c6fef3a49567de0bbea0cc2",
+      "bytes": 8382
+    },
+    ".ufo/waves/round-23/tools/counter-fixtures.py": {
+      "sha256": "f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f",
+      "bytes": 6560
+    },
+    ".ufo/waves/round-23/frozen/fixture.json": {
+      "sha256": "e8fff600c84acaae59f285b515a71bdccce6be23a9c074d6a5efd0e882c2c9c0",
+      "bytes": 2395
+    },
+    ".ufo/waves/round-23/frozen/expected-v2.json": {
+      "sha256": "458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f",
+      "bytes": 2389
+    }
+  },
+  "restored_pins": {
+    ".ufo/waves/round-23/tools/count-c1.py": {
+      "sha256": "f4b8d16ac195ca106a99cbb9236d36d1283dee349c6fef3a49567de0bbea0cc2",
+      "bytes": 8382
+    },
+    ".ufo/waves/round-23/tools/counter-fixtures.py": {
+      "sha256": "f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f",
+      "bytes": 6560
+    },
+    ".ufo/waves/round-23/frozen/fixture.json": {
+      "sha256": "a1f5aff8ebb5e5d327522031b74ed91283708907af0fc4a6df24812479bfef4b",
+      "bytes": 2394
+    },
+    ".ufo/waves/round-23/frozen/expected-v2.json": {
+      "sha256": "458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f",
+      "bytes": 2389
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "show",
+        "2838351450ff1ee4baa620c962a1153450d53311:.ufo/waves/round-23/tools/count-c1.py"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "exit": 0,
+      "stdout": "#!/usr/bin/env python3\n\"\"\"R23 cumulative T1 counter; original R22 binding policy is reused unchanged.\n\nTwo fixed evidence roots, one frozen six-verb denominator. New witnesses also\nneed an S058+ mined A/B row opened2026-10-21 with the exact entry in used-by.\nHistorical witnesses are measured at the frozen baseline, never extended by\nnew files under the old root. New entries are scanned explicitly and use the\nreviewed original-envelope binder. Source relevance/admission remain manual.\n0=clean6/6;1=failed/incomplete;2=could-not-evaluate. No authentication claim.\n\"\"\"\nimport argparse\nimport hashlib\nimport types\nimport json\nimport os\nfrom pathlib import Path\nimport re\nimport subprocess\nimport sys\nimport tempfile\n\nLEGACY = '.ufo/waves/round-22/tools/count-c1.py'\nLEGACY_SHA256 = 'c925918fb871151f86065aa5b3e9d10334ab845ed67c265ae0977f05e09b1879'\nROOTS = ('.ufo/waves/round-22/evidence/c1/', '.ufo/waves/round-23/evidence/c1/')\nSELFTEST_MANIFEST_SHA256 = '458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f'\nBASELINE = 'aa1450b82f9ede35aada63efe8a34e01c6e02f72'\nCATALOG = '.ufo/waves/round-20/verify/round20/verb-coverage.json'\n\ndef git(root, *args):\n    p = subprocess.run(['git', '-C', str(root), *args], capture_output=True, check=False)\n    if p.returncode:\n        raise ValueError('git_input_unreadable')\n    return p.stdout\n\n\ndef load(path, name):\n    module = types.ModuleType(name)\n    module.__file__ = str(path)\n    exec(compile(path.read_bytes(), str(path), 'exec'), module.__dict__)\n    return module\n\ndef bind_new(r22, r21, text, verb, evidence_id):\n    # Keep refusal ancestry in metadata/sibling containers as well as data.\n    try:\n        pending = [r21.decode(text)]\n        while pending:\n            node = pending.pop()\n            if isinstance(node, list):\n                pending.extend(node)\n            elif isinstance(node, dict):\n                if ('ok' in node and node['ok'] is not True) or r21.refused(node):\n                    return 1\n                pending.extend(node.values())\n        return r22.bind_cli(r21, text, verb, evidence_id)\n    except (ValueError, RecursionError):\n        return 2\n\n\ndef measure(root, revision):\n    rev = git(root, 'rev-parse', '--verify', '--end-of-options', revision+'^{commit}').decode().strip()\n    legacy = git(root, 'show', rev+':'+LEGACY)\n    if hashlib.sha256(legacy).hexdigest() != LEGACY_SHA256:\n        raise ValueError('legacy_source_untrusted')\n    if git(root, 'show', rev+':'+CATALOG) != git(root, 'show', BASELINE+':'+CATALOG):\n        raise ValueError('catalog_changed')\n    old_root = ROOTS[0].rstrip('/')\n    if git(root, 'rev-parse', rev+':'+old_root) != git(root, 'rev-parse', BASELINE+':'+old_root):\n        raise ValueError('historical_evidence_changed')\n    old_sources = git(root, 'show', BASELINE+':corpus/SOURCES.md').decode('utf-8')\n    new_sources = git(root, 'show', rev+':corpus/SOURCES.md').decode('utf-8')\n    source_rows = lambda text: [line for line in text.splitlines() if re.match(r'^\\| S[0-9]+ \\|', line)]\n    if source_rows(new_sources)[:len(source_rows(old_sources))] != source_rows(old_sources):\n        raise ValueError('historical_sources_changed')\n    runtime = root / '.ufo/waves/round-23/runtime'\n    runtime.mkdir(parents=True, exist_ok=True)\n    tempfile.tempdir = str(runtime)\n    with tempfile.TemporaryDirectory(prefix='counter-') as directory:\n        path = Path(directory) / 'r22.py'\n        path.write_bytes(legacy)\n        r22 = load(path, 'reviewed_r22_counter')\n        historical = r22.measure(root, BASELINE)\n        if historical['t1_exercised'] != ['identify-flutter-build']:\n            raise ValueError('historical_baseline_changed')\n        r21, r20 = r22.revision_helpers(root, rev)\n    rows = {}\n    for line in git(root, 'show', rev+':corpus/SOURCES.md').decode('utf-8').splitlines():\n        cells = [c.strip() for c in line.split('|')]\n        if len(cells) == 13 and re.fullmatch(r'S[0-9]{3,}', cells[1]):\n            if cells[1] in rows:\n                raise ValueError('duplicate_source_id')\n            rows[cells[1]] = cells\n    targets = {verb: {'historical': historical['targets'][verb]['bound_evidence'], 'new': []}\n               for verb in r22.T1}\n    files = git(root, 'ls-tree', '-r', '--name-only', rev, '--', 'corpus/knowledge/').decode('utf-8').splitlines()\n    catalog = r21.decode(git(root, 'show', rev+':'+CATALOG).decode('utf-8'))['cli_commands']\n    mentioned = set()\n    cited_pattern = re.compile(r'(?<![/A-Za-z0-9_.-])'+re.escape(ROOTS[1])+r'[A-Za-z0-9._/-]+')\n    for entry in files:\n        text = git(root, 'show', rev+':'+entry).decode('utf-8')\n        mentioned.update(verb for verb in catalog if r20.command_pattern(verb).search(text))\n        first = text.partition('\\n')[0]\n        if not first.startswith('source:'):\n            continue\n        eligible = False\n        for sid in re.findall(r'\\bS[0-9]{3,}\\b', first):\n            row = rows.get(sid)\n            if row and int(sid[1:]) >= 58 and row[4] in ('A', 'B') and row[8] == 'mined' and row[9] == '2026-10-21' and entry in [x.strip() for x in row[11].split(',')]:\n                eligible = True\n        if not eligible:\n            continue\n        ids = sorted(set(r20.HEX64.findall(text)))\n        for evidence_path in sorted(set(cited_pattern.findall(text))):\n            if not evidence_path.endswith('.json'):\n                continue  # Carrier bytes are cited provenance, not JSON Evidence.\n            # Git fails closed on missing/absolute/traversal citations; no live path reads.\n            if '..' in evidence_path.split('/'):\n                raise ValueError('evidence_path_invalid')\n            blob = git(root, 'show', rev+':'+evidence_path).decode('utf-8')\n            for verb in r22.T1:\n                if not r20.command_pattern(verb).search(text):\n                    continue\n                for eid in ids:\n                    if eid in blob and bind_new(r22, r21, blob, verb, eid) == 0:\n                        targets[verb]['new'].append({'entry': entry, 'evidence_id': eid, 'path': evidence_path})\n    for target in targets.values():\n        target['exercised'] = bool(target['historical'] or target['new'])\n    held = [verb for verb in r22.T1 if targets[verb]['exercised']]\n    return {'rev': rev, 'historical_rev': BASELINE, 'claim': 'R23-C1',\n            'finding': 'c1_complete' if len(held)==6 else 'c1_incomplete',\n            't1': list(r22.T1), 't1_exercised': held, 't1_exercised_count': len(held), 't1_total': 6,\n            'targets': targets, 'catalog_mentioned_count': len(mentioned),\n            'catalog_total': len(catalog), 'catalog_zero_count': len(catalog)-len(mentioned),\n            'limit': 'local original-envelope/source linkage; run stdout checked separately; manual source relevance; no authentication'}\n\n\ndef selftest(root):\n    frozen = root / '.ufo/waves/round-23/frozen'\n    raw = (frozen/'expected-v2.json').read_bytes()\n    if hashlib.sha256(raw).hexdigest() != SELFTEST_MANIFEST_SHA256:\n        raise ValueError('snapshot_tampered: manifest')\n    manifest = json.loads(raw)\n    for rel, digest in manifest['inputs'].items():\n        if hashlib.sha256((root/rel).read_bytes()).hexdigest() != digest:\n            raise ValueError('snapshot_tampered: '+rel)\n    fixtures = load(root / '.ufo/waves/round-23/tools/counter-fixtures.py', 'r23_independent_fixtures')\n    return fixtures.run(root, Path(__file__).resolve(), manifest)\n\n\ndef main():\n    for key in tuple(os.environ):\n        if key.startswith('GIT_'):\n            del os.environ[key]\n    os.environ['GIT_NO_REPLACE_OBJECTS'] = '1'\n    p = argparse.ArgumentParser(description=__doc__)\n    p.add_argument('--root', type=Path, required=True)\n    p.add_argument('--rev')\n    p.add_argument('--selftest', action='store_true')\n    a = p.parse_args()\n    try:\n        if a.selftest:\n            result, code = selftest(a.root.resolve())\n        else:\n            if not a.rev:\n                raise ValueError('revision_required')\n            result = measure(a.root.resolve(), a.rev)\n            code = 0 if result['t1_exercised_count'] == 6 else 1\n    except (OSError, ValueError, UnicodeError, RecursionError, KeyError) as error:\n        result, code = {'finding': 'unevaluable', 'error': str(error)}, 2\n    print(json.dumps(result, sort_keys=True))\n    return code\n\nif __name__ == '__main__':\n    raise SystemExit(main())\n",
+      "stderr": "",
+      "started_utc": "2026-10-21T15:03:04.752908+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "2838351450ff1ee4baa620c962a1153450d53311:.ufo/waves/round-23/tools/counter-fixtures.py"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "exit": 0,
+      "stdout": "#!/usr/bin/env python3\n\"\"\"Independent synthetic fixtures: no validator fixture builder or decision import.\n\nAll Git writes are confined to disposable clones under the lane runtime root.\nSynthetic minimal envelopes are control inputs, never producer Evidence claims.\n\"\"\"\nimport copy\nimport json\nimport os\nfrom pathlib import Path\nimport subprocess\nimport sys\nimport tempfile\n\nPREFIX = '.ufo/waves/round-23/evidence/c1/'\nENTRY = 'corpus/knowledge/control-r23-synthetic.md'\n\n\ndef run(root, counter, manifest):\n    results = []\n    runtime = root / '.ufo/waves/round-23/runtime'\n    runtime.mkdir(parents=True, exist_ok=True)\n    fixture = json.loads((root/'.ufo/waves/round-23/frozen/fixture.json').read_text())\n    def command(argv, cwd):\n        p = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, check=False)\n        if p.returncode:\n            raise RuntimeError(p.stderr)\n        return p.stdout\n    with tempfile.TemporaryDirectory(prefix='fixture-', dir=runtime) as directory:\n        repo = Path(directory)/'repo'\n        command(['git', 'clone', '--shared', '--no-checkout', str(root), str(repo)], root)\n        command(['git', 'checkout', fixture['base']], repo)\n        for name, expected in manifest['cases'].items():\n            # Reset only this disposable clone, never the lane checkout/index.\n            command(['git', 'reset', '--hard', fixture['base']], repo)\n            command(['git', 'clean', '-fd'], repo)\n            documents = copy.deepcopy(fixture['documents'])\n            selected = ['inspect-signal-decoders']\n            if name == 'all_six':\n                selected = list(documents)\n            if name == 'same_verb':\n                selected = ['identify-flutter-build']\n            if name == 'mention_only':\n                selected = []\n            evidence = repo / PREFIX\n            evidence.mkdir(parents=True, exist_ok=True)\n            text = 'source: S058 synthetic isolated control\\nverified-at: fixture\\nrecheck: selftest\\n\\n'\n            for verb in selected:\n                envelope = documents[verb]\n                if name == 'refused_parent':\n                    envelope['ok'] = False\n                elif name == 'nested_refusal':\n                    envelope['data']['normalized_result'] = {'errors': ['execution_failure']}\n                elif name == 'wrong_command':\n                    envelope['meta']['command'] = 'identify-flutter-build'\n                elif name == 'wrong_operation':\n                    envelope['data']['operation'] = 'identify_flutter_build'\n                elif name == 'meta_false':\n                    envelope['meta']['ok'] = False\n                elif name == 'meta_array':\n                    envelope['meta']['raw_result'] = [{'ok': False}]\n                elif name == 'sibling_refusal':\n                    envelope['result'] = {'errors': ['execution_failure']}\n                eid = envelope['data']['evidence_id']\n                path = PREFIX+verb+'.json'\n                raw = json.dumps(envelope)\n                if name == 'duplicate_member':\n                    raw = raw.replace('\"ok\": true', '\"ok\": false, \"ok\": true')\n                (repo/path).write_text(raw+'\\n')\n                text += verb+' '+eid+' '+path+'\\n'\n            if name == 'absolute_citation':\n                text = text.replace(PREFIX, '/tmp/not-the-lane/'+PREFIX)\n            if name == 'mention_only':\n                text += 'inspect-signal-decoders ev_'+'a'*64+'\\n'\n            if name == 'missing_source':\n                text = text.replace('source: S058 synthetic isolated control', 'source: none')\n            if name == 'old_source':\n                text = text.replace('source: S058', 'source: S051')\n            (repo/ENTRY).write_text(text)\n            source = repo/'corpus/SOURCES.md'\n            body = source.read_text()\n            usedby = 'corpus/knowledge/not-this-entry.md' if name == 'wrong_usedby' else ENTRY\n            row = '| S058 | isolated control | own-work | A | synthetic control only | fixture | control, not real Evidence | mined | 2026-10-21 | on-release | '+usedby+' |\\n'\n            body = body.replace('\\n## Paths', '\\n'+row+'\\n## Paths', 1)\n            if name == 'old_source':\n                body = '\\n'.join(line.rstrip().rstrip('|')+', '+ENTRY+' |' if line.startswith('| S051 |') else line for line in body.splitlines())+'\\n'\n            source.write_text(body)\n            if name == 'helper_tamper':\n                p = repo/'.ufo/waves/round-22/tools/count-c1.py'\n                p.write_text(p.read_text()+'\\n# changed control\\n')\n            if name == 'invalid_utf8':\n                (evidence/'inspect-signal-decoders.json').write_bytes(b'\\xff')\n            if name == 'historical_root_injection':\n                (repo/'.ufo/waves/round-22/evidence/c1/new-control.json').write_text('{}')\n            if name == 'inherited_lost':\n                (repo/'.ufo/waves/round-22/evidence/c1/identify-godot.envelope.json').unlink()\n            if name == 'catalog_changed':\n                p = repo/'.ufo/waves/round-20/verify/round20/verb-coverage.json'\n                p.write_text(p.read_text()+'\\n')\n            command(['git', 'add', '--', ENTRY, 'corpus/SOURCES.md', PREFIX,\n                     '.ufo/waves/round-22/tools/count-c1.py', '.ufo/waves/round-22/evidence/c1',\n                     '.ufo/waves/round-20/verify/round20/verb-coverage.json'], repo)\n            command(['git', '-c', 'user.name=isolated-fixture', '-c', 'user.email=fixture@invalid', 'commit', '-m', 'synthetic counter control'], repo)\n            revision = command(['git', 'rev-parse', 'HEAD'], repo).strip()\n            argv = [sys.executable, '-I', '-B', str(counter), '--root', str(repo), '--rev', revision]\n            p = subprocess.run(argv, capture_output=True, text=True, check=False)\n            try:\n                out = json.loads(p.stdout)\n            except ValueError:\n                out = {}\n            observed = {'exit': p.returncode, 'count': out.get('t1_exercised_count'), 'finding': out.get('finding')}\n            passed = all(observed.get(key) == value for key, value in expected.items())\n            results.append({'case': name, 'expected': expected, 'observed': observed, 'passed': passed,\n                            'argv': argv, 'stdout': p.stdout, 'stderr': p.stderr})\n    return {'finding': 'selftest_clean' if all(x['passed'] for x in results) else 'selftest_failed',\n            'passed': sum(x['passed'] for x in results), 'total': len(results), 'cases': results}, 0 if all(x['passed'] for x in results) else 1\n",
+      "stderr": "",
+      "started_utc": "2026-10-21T15:03:04.753918+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "2838351450ff1ee4baa620c962a1153450d53311:.ufo/waves/round-23/frozen/fixture.json"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "exit": 0,
+      "stdout": "{\n  \"base\": \"aa1450b82f9ede35aada63efe8a34e01c6e02f72\",\n  \"documents\": {\n    \"identify-flutter-build\": {\n      \"ok\": true,\n      \"meta\": {\n        \"command\": \"identify-flutter-build\"\n      },\n      \"data\": {\n        \"evidence_id\": \"ev_1111111111111111111111111111111111111111111111111111111111111111\",\n        \"operation\": \"identify_flutter_build\",\n        \"normalized_result\": {\n          \"control\": \"synthetic, never a producer observation\"\n        }\n      }\n    },\n    \"inspect-dart-aot\": {\n      \"ok\": true,\n      \"meta\": {\n        \"command\": \"inspect-dart-aot\"\n      },\n      \"data\": {\n        \"evidence_id\": \"ev_2222222222222222222222222222222222222222222222222222222222222222\",\n        \"operation\": \"inspect_dart_aot\",\n        \"normalized_result\": {\n          \"control\": \"synthetic, never a producer observation\"\n        }\n      }\n    },\n    \"debug-with-gdb\": {\n      \"ok\": true,\n      \"meta\": {\n        \"command\": \"debug-with-gdb\"\n      },\n      \"data\": {\n        \"evidence_id\": \"ev_3333333333333333333333333333333333333333333333333333333333333333\",\n        \"operation\": \"gdb_console\",\n        \"normalized_result\": {\n          \"control\": \"synthetic, never a producer observation\"\n        }\n      }\n    },\n    \"debug-with-rizin\": {\n      \"ok\": true,\n      \"meta\": {\n        \"command\": \"debug-with-rizin\"\n      },\n      \"data\": {\n        \"evidence_id\": \"ev_4444444444444444444444444444444444444444444444444444444444444444\",\n        \"operation\": \"rizin_debug_command\",\n        \"normalized_result\": {\n          \"control\": \"synthetic, never a producer observation\"\n        }\n      }\n    },\n    \"inspect-signal-decoders\": {\n      \"ok\": true,\n      \"meta\": {\n        \"command\": \"inspect-signal-decoders\"\n      },\n      \"data\": {\n        \"evidence_id\": \"ev_5555555555555555555555555555555555555555555555555555555555555555\",\n        \"operation\": \"inspect_signal_decoders\",\n        \"normalized_result\": {\n          \"control\": \"synthetic, never a producer observation\"\n        }\n      }\n    },\n    \"decode-signal-recording\": {\n      \"ok\": true,\n      \"meta\": {\n        \"command\": \"decode-signal-recording\"\n      },\n      \"data\": {\n        \"evidence_id\": \"ev_6666666666666666666666666666666666666666666666666666666666666666\",\n        \"operation\": \"decode_signal_recording\",\n        \"normalized_result\": {\n          \"control\": \"synthetic, never a producer observation\"\n        }\n      }\n    }\n  }\n}\n",
+      "stderr": "",
+      "started_utc": "2026-10-21T15:03:04.755076+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "2838351450ff1ee4baa620c962a1153450d53311:.ufo/waves/round-23/frozen/expected-v2.json"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "exit": 0,
+      "stdout": "{\n  \"schema\": \"r23-independent-counter-controls-v2\",\n  \"inputs\": {\n    \".ufo/waves/round-23/tools/counter-fixtures.py\": \"f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f\",\n    \".ufo/waves/round-23/frozen/fixture.json\": \"a1f5aff8ebb5e5d327522031b74ed91283708907af0fc4a6df24812479bfef4b\"\n  },\n  \"cases\": {\n    \"positive\": {\n      \"exit\": 1,\n      \"count\": 2,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"all_six\": {\n      \"exit\": 0,\n      \"count\": 6,\n      \"finding\": \"c1_complete\"\n    },\n    \"same_verb\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"mention_only\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"missing_source\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"old_source\": {\n      \"exit\": 2,\n      \"count\": null,\n      \"finding\": \"unevaluable\"\n    },\n    \"wrong_usedby\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"refused_parent\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"nested_refusal\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"wrong_command\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"wrong_operation\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"duplicate_member\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"helper_tamper\": {\n      \"exit\": 2,\n      \"count\": null,\n      \"finding\": \"unevaluable\"\n    },\n    \"invalid_utf8\": {\n      \"exit\": 2,\n      \"count\": null,\n      \"finding\": \"unevaluable\"\n    },\n    \"meta_false\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"meta_array\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"sibling_refusal\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"absolute_citation\": {\n      \"exit\": 1,\n      \"count\": 1,\n      \"finding\": \"c1_incomplete\"\n    },\n    \"historical_root_injection\": {\n      \"exit\": 2,\n      \"count\": null,\n      \"finding\": \"unevaluable\"\n    },\n    \"inherited_lost\": {\n      \"exit\": 2,\n      \"count\": null,\n      \"finding\": \"unevaluable\"\n    },\n    \"catalog_changed\": {\n      \"exit\": 2,\n      \"count\": null,\n      \"finding\": \"unevaluable\"\n    }\n  }\n}\n",
+      "stderr": "",
+      "started_utc": "2026-10-21T15:03:04.755841+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "clone",
+        "--local",
+        "--no-hardlinks",
+        "--no-checkout",
+        "--no-tags",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-23/runtime/MutateFrozen/clone"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "Cloning into '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-23/runtime/MutateFrozen/clone'...\ndone.\n",
+      "started_utc": "2026-10-21T15:03:04.761544+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-23/runtime/MutateFrozen/clone",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "checkout",
+        "--detach",
+        "2838351450ff1ee4baa620c962a1153450d53311"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "HEAD is now at 2838351 round-23: retain measured four-of-six coverage and refusal controls\n",
+      "started_utc": "2026-10-21T15:03:04.964281+00:00"
+    },
+    {
+      "argv": [
+        "python3",
+        "-I",
+        "-B",
+        ".ufo/waves/round-23/tools/count-c1.py",
+        "--root",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-23/runtime/MutateFrozen/clone",
+        "--selftest"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-23/runtime/MutateFrozen/clone",
+      "exit": 2,
+      "stdout": "{\"error\": \"snapshot_tampered: .ufo/waves/round-23/frozen/fixture.json\", \"finding\": \"unevaluable\"}\n",
+      "stderr": "",
+      "started_utc": "2026-10-21T15:03:48.814961+00:00"
+    },
+    {
+      "argv": [
+        "rm",
+        "-rf",
+        "--",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-23/runtime/MutateFrozen/clone"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "started_utc": "2026-10-21T15:04:30.273729+00:00"
+    }
+  ],
+  "bounded_detector": {
+    "description": "Same SHA256 manifest/input predicate across pristine, mutated and restored bytes; not full selftest on pristine/restored",
+    "stages": [
+      {
+        "stage": "pristine",
+        "manifest_sha256": "458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f",
+        "manifest_expected": "458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f",
+        "inputs": {
+          ".ufo/waves/round-23/tools/counter-fixtures.py": {
+            "sha256": "f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f",
+            "expected_sha256": "f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f",
+            "bytes": 6560,
+            "matches": true
+          },
+          ".ufo/waves/round-23/frozen/fixture.json": {
+            "sha256": "a1f5aff8ebb5e5d327522031b74ed91283708907af0fc4a6df24812479bfef4b",
+            "expected_sha256": "a1f5aff8ebb5e5d327522031b74ed91283708907af0fc4a6df24812479bfef4b",
+            "bytes": 2394,
+            "matches": true
+          }
+        },
+        "finding": "snapshot_intact",
+        "error": null
+      },
+      {
+        "stage": "mutated",
+        "manifest_sha256": "458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f",
+        "manifest_expected": "458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f",
+        "inputs": {
+          ".ufo/waves/round-23/tools/counter-fixtures.py": {
+            "sha256": "f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f",
+            "expected_sha256": "f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f",
+            "bytes": 6560,
+            "matches": true
+          },
+          ".ufo/waves/round-23/frozen/fixture.json": {
+            "sha256": "e8fff600c84acaae59f285b515a71bdccce6be23a9c074d6a5efd0e882c2c9c0",
+            "expected_sha256": "a1f5aff8ebb5e5d327522031b74ed91283708907af0fc4a6df24812479bfef4b",
+            "bytes": 2395,
+            "matches": false
+          }
+        },
+        "finding": "snapshot_tampered",
+        "error": "snapshot_tampered: .ufo/waves/round-23/frozen/fixture.json"
+      },
+      {
+        "stage": "restored",
+        "manifest_sha256": "458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f",
+        "manifest_expected": "458b30d5a6420c1b37874c3364d3ae3b22529d6c3560b5241848a21eec97096f",
+        "inputs": {
+          ".ufo/waves/round-23/tools/counter-fixtures.py": {
+            "sha256": "f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f",
+            "expected_sha256": "f2990b35d113b5e44317e7f00e6ca5157baae1efb5ee1a1b8e4995d0ace1a97f",
+            "bytes": 6560,
+            "matches": true
+          },
+          ".ufo/waves/round-23/frozen/fixture.json": {
+            "sha256": "a1f5aff8ebb5e5d327522031b74ed91283708907af0fc4a6df24812479bfef4b",
+            "expected_sha256": "a1f5aff8ebb5e5d327522031b74ed91283708907af0fc4a6df24812479bfef4b",
+            "bytes": 2394,
+            "matches": true
+          }
+        },
+        "finding": "snapshot_intact",
+        "error": null
+      }
+    ]
+  },
+  "mutation": {
+    "path": ".ufo/waves/round-23/frozen/fixture.json",
+    "operation": "append exactly one LF byte",
+    "bytes_added_hex": "0a"
+  },
+  "selftest_invocations": 1,
+  "expected": {
+    "exit": 2,
+    "stdout_object": {
+      "finding": "unevaluable",
+      "error": "snapshot_tampered: .ufo/waves/round-23/frozen/fixture.json"
+    },
+    "stderr": ""
+  },
+  "observed_selftest": {
+    "argv": [
+      "python3",
+      "-I",
+      "-B",
+      ".ufo/waves/round-23/tools/count-c1.py",
+      "--root",
+      "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-23/runtime/MutateFrozen/clone",
+      "--selftest"
+    ],
+    "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-23/runtime/MutateFrozen/clone",
+    "exit": 2,
+    "stdout": "{\"error\": \"snapshot_tampered: .ufo/waves/round-23/frozen/fixture.json\", \"finding\": \"unevaluable\"}\n",
+    "stderr": "",
+    "started_utc": "2026-10-21T15:03:48.814961+00:00"
+  },
+  "probe_error": null,
+  "verdict": "killed",
+  "restored_exact": true,
+  "clone_removed": true,
+  "cleanup": {
+    "command": {
+      "argv": [
+        "rm",
+        "-rf",
+        "--",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-23/runtime/MutateFrozen/clone"
+      ],
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "started_utc": "2026-10-21T15:04:30.273729+00:00"
+    },
+    "clone_path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-23/runtime/MutateFrozen/clone",
+    "exists_after_removal": false,
+    "restored_before_removal": true
+  }
+}

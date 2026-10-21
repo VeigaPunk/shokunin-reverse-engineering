@@ -67,6 +67,9 @@ def run(root, counter, manifest):
                 if name == 'duplicate_member':
                     raw = raw.replace('"ok": true', '"ok": false, "ok": true')
                 (repo/path).write_text(raw+'\n')
+                if name == 'symlink_evidence':
+                    (repo/path).unlink()
+                    (repo/path).symlink_to(raw)
                 text += verb+' '+eid+' '+path+'\n'
             if name == 'absolute_citation':
                 text = text.replace(PREFIX, '/tmp/not-the-lane/'+PREFIX)
@@ -77,6 +80,9 @@ def run(root, counter, manifest):
             if name == 'old_source':
                 text = text.replace('source: S058', 'source: S051')
             (repo/ENTRY).write_text(text)
+            if name == 'symlink_knowledge':
+                (repo/ENTRY).unlink()
+                (repo/ENTRY).symlink_to(text)
             source = repo/'corpus/SOURCES.md'
             body = source.read_text()
             usedby = 'corpus/knowledge/not-this-entry.md' if name == 'wrong_usedby' else ENTRY
@@ -97,7 +103,12 @@ def run(root, counter, manifest):
             if name == 'catalog_changed':
                 p = repo/'.ufo/waves/round-20/verify/round20/verb-coverage.json'
                 p.write_text(p.read_text()+'\n')
-            command(['git', 'add', '--', ENTRY, 'corpus/SOURCES.md', PREFIX,
+            prior_entry = repo/'corpus/knowledge/2026-10-21-r22-flutter-static-boundary.md'
+            if name == 'inherited_entry_lost':
+                prior_entry.unlink()
+            if name == 'inherited_entry_changed':
+                prior_entry.write_text(prior_entry.read_text()+'\nchanged control\n')
+            command(['git', 'add', '--', 'corpus/knowledge', 'corpus/SOURCES.md', PREFIX,
                      '.ufo/waves/round-22/tools/count-c1.py', '.ufo/waves/round-22/evidence/c1',
                      '.ufo/waves/round-20/verify/round20/verb-coverage.json'], repo)
             command(['git', '-c', 'user.name=isolated-fixture', '-c', 'user.email=fixture@invalid', 'commit', '-m', 'synthetic counter control'], repo)
@@ -108,7 +119,8 @@ def run(root, counter, manifest):
                 out = json.loads(p.stdout)
             except ValueError:
                 out = {}
-            observed = {'exit': p.returncode, 'count': out.get('t1_exercised_count'), 'finding': out.get('finding')}
+            observed = {'exit': p.returncode, 'count': out.get('t1_exercised_count'),
+                        'finding': out.get('finding'), 'error': out.get('error')}
             passed = all(observed.get(key) == value for key, value in expected.items())
             results.append({'case': name, 'expected': expected, 'observed': observed, 'passed': passed,
                             'argv': argv, 'stdout': p.stdout, 'stderr': p.stderr})
