@@ -2785,3 +2785,22 @@ four packet-capture verbs `frontier-blocked` for want of TShark.
   ordinary 8-seat residual review (4 critic, 4 reviewer) was refused once
   and spawned on its second try (`residual-attempts.jsonl`). Their findings
   and dispositions are appended to the round-24 lesson.
+
+### Round-24 final delivery
+
+Measured source `5c88c05b8cff9ebd63521c1395fc5295eaded8c3`, executed
+producer bound in `.ufo/waves/round-24/final-producer.json`: 12/12
+finite conditions, exit0. C1 0/4→4/4. C2 frozen original after9/11 exit1,
+disclosed revised after11/11 exit0; both retained, no silent oracle replacement.
+Post-hoc selftest17/17. All 1141 prior files unchanged, old32 QUALITY rows,
+map107/107, citations17/17, LOG/SCORECARD prefix and source/README preservation.
+Sources63→72, live end census0/five W04. Eight residual seats completed,
+zero dead/replaced; 85-seat BUILD refused20 times, no heavy-wave credit.
+
+Accepted residual findings corrected the `-T json`/conditional `-2` text,
+capinfos attribution, client-null-subject wording, 2002 timestamp and output
+budgets; S069/S070/S072 supersede immutable initial cells. Repro fetcher
+symlink/regular-file containment and cleanup defects fixed with same-identity
+reviewer controls; six-input run2 plus final-script controls separately pinned.
+Open gate limitations, timestamp error, reconstructed start census and
+post-hoc oracle timing are explicit in the lesson.

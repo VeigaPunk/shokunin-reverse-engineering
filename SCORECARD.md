@@ -2908,3 +2908,27 @@ Planned (round 25): learn from the outside closure's admit/reject sample of
 S064–S068 and the freeze ledger; consider extending the freeze gate to
 instruments named outside `claims.json`; debugger verbs wait on the
 kaidoku/revenger L0 ruling.
+
+### Round-24 final measured outcome
+
+Measured revision `5c88c05b8cff9ebd63521c1395fc5295eaded8c3`.
+Executed committed `tools/final-measure.py` bytes, producer receipt
+`.ufo/waves/round-24/final-producer.json`: exit0, 12/12 expected finite
+conditions (`final/summary.json`), not independent admission.
+
+- C1: 0/4 → 4/4, catalog zero16→12; baseline exit1, final exit0.
+- C2: original frozen gate after-result 9/11 exact, exit1 (R17/R18 mismatch);
+  disclosed revised gate 11/11 exact, exit0. Unchanged prior cohort 0/10→10/10
+  disclosed, all FLAGGED; round24 adds one CLEAN author-assessed row. Thus
+  C2 is **not met with unchanged frozen bytes**, met under the disclosed
+  supersession; independent closure must adjudicate, not silently substitute.
+- Post-hoc L1 selftest17/17; R23 stays4/6, R22 stays1/6 and14/14.
+- No-harm: 1141 prior files identical, old32 criteria retained + QUALITY33,
+  LOG/SCORECARD prefixes; mapping106/106→107/107, citations17/17.
+  Whole old SOURCES lines and old README nonempty rows retained;
+  all README h2 separators blank, with loss controls red.
+- Registry63→72; end census exit0, five W04 (four inherited plus S069's
+  duplicate manual URL). Start census is a disclosed later BASE reconstruction.
+
+All finite proxy scores stay10.0. Neither a green producer nor ledger
+transcription confers independent admission or mastery.

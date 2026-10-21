@@ -1,0 +1,44 @@
+f185960598b7c9b203156db42567dfa42c103e73c435bf4e5aa536e86dcff00c  /fast/scratch/kaidoku-r24/seats/ResSeparability-2/tools/count-c1.py
+1e2a937018feec21ad200f80a4c9a749b3de4af190fff548eb4dd84717b8870f  /fast/scratch/kaidoku-r24/seats/ResSeparability-2/tools/freeze-gate-orig.py
+8a71fe84b94310b1b600793b4af011e586359304a6302ee33662d6522290b329  /fast/scratch/kaidoku-r24/seats/ResSeparability-2/tools/freeze-gate.py
+== O0 HEAD
+C1 O0 exit=0 held=4/4 err=None
+C2 O0 exit=0 audited=11 disclosures={'exact': 11, 'of': 11, 'missing': [], 'mismatched': [], 'stray': []} r24=('CLEAN', []) err=None
+== O1 C1-only on 74cd4e3 (frozen claims + envelopes, no gate revision, no ledger, no S068)
+C1 O1 exit=0 held=4/4 err=None
+C2 O1 exit=1 audited=11 disclosures={'exact': 0, 'of': 11, 'missing': ['round-14', 'round-15', 'round-16', 'round-17', 'round-18', 'round-19', 'round-20', 'round-21', 'round-22', 'round-23', 'round-24'], 'mismatched': [], 'stray': []} r24=('CLEAN', []) err=None
+C2 O1-noledger exit=0 audited=11 disclosures=None r24=('CLEAN', []) err=None
+C2 O1-origgate exit=0 audited=11 disclosures=None r24=('CLEAN', []) err=None
+== O1b C1-only on 97ade2e (no claims.json at all)
+C1 O1b exit=0 held=4/4 err=None
+== O2 C2-only on 9fb4eac with C1 envelopes removed (supersession hash preserved)
+C1 O2 exit=1 held=0/4 err=None
+C2 O2 exit=0 audited=11 disclosures={'exact': 11, 'of': 11, 'missing': [], 'mismatched': [], 'stray': []} r24=('CLEAN', []) err=None
+== O2b C2-only on 5dc49bf, gate revision re-applied (no C1 commit in ancestry)
+C2 O2b-literal exit=1 audited=11 disclosures={'exact': 10, 'of': 11, 'missing': [], 'mismatched': ['round-24'], 'stray': []} r24=('FLAGGED', [('INSTRUMENT_REVISED', 'freeze-gate.py', ['bfd073d808672be8be5740c32fc3df7f2389ad83'])]) err=None
+C1 O2b exit=1 held=0/4 err=None
+C2 O2b-rewritten exit=0 audited=11 disclosures={'exact': 11, 'of': 11, 'missing': [], 'mismatched': [], 'stray': []} r24=('CLEAN', []) err=None
+== X1 HEAD + post-freeze edit to C1 instrument count-c1.py
+C1 X1 exit=0 held=4/4 err=None
+C2 X1 exit=1 audited=11 disclosures={'exact': 10, 'of': 11, 'missing': [], 'mismatched': ['round-24'], 'stray': []} r24=('FLAGGED', [('INSTRUMENT_REVISED', 'count-c1.py', ['b6658b6fefe16cb369f26f55636d9fbfe90b9676'])]) err=None
+== X2 HEAD + C2 S068 row malformed as duplicate id S064
+C1 X2 exit=2 held=None/None err=duplicate_source_id: S064
+C2 X2 exit=0 audited=11 disclosures={'exact': 11, 'of': 11, 'missing': [], 'mismatched': [], 'stray': []} r24=('CLEAN', []) err=None
+== X3 HEAD + R24-C1 claim text edited post-freeze (total 4->2, target)
+C1 X3 exit=0 held=4/4 err=None
+C2 X3 exit=0 audited=11 disclosures={'exact': 11, 'of': 11, 'missing': [], 'mismatched': [], 'stray': []} r24=('CLEAN', []) err=None
+== X4 HEAD - S068 row and path line
+C1 X4 exit=0 held=4/4 err=None
+C2 X4 exit=0 audited=11 disclosures={'exact': 11, 'of': 11, 'missing': [], 'mismatched': [], 'stray': []} r24=('CLEAN', []) err=None
+== X5 HEAD - C1 knowledge entry and envelopes
+C1 X5 exit=1 held=0/4 err=None
+C2 X5 exit=0 audited=11 disclosures={'exact': 11, 'of': 11, 'missing': [], 'mismatched': [], 'stray': []} r24=('CLEAN', []) err=None
+== X6 HEAD - claim-freezes.tsv and QUALITY33
+C1 X6 exit=0 held=4/4 err=None
+C2 X6 exit=0 audited=11 disclosures=None r24=('CLEAN', []) err=None
+== X7 HEAD + post-freeze edit to producer run-rea.py
+C1 X7 exit=0 held=4/4 err=None
+C2 X7 exit=0 audited=11 disclosures={'exact': 11, 'of': 11, 'missing': [], 'mismatched': [], 'stray': []} r24=('CLEAN', []) err=None
+== X8 HEAD + revert freeze-gate to frozen 97ade2e blob (C2 instrument revision undone)
+C1 X8 exit=0 held=4/4 err=None
+C2 X8 exit=1 audited=11 disclosures={'exact': 10, 'of': 11, 'missing': [], 'mismatched': ['round-24'], 'stray': []} r24=('FLAGGED', [('INSTRUMENT_REVISED', 'freeze-gate.py', ['d4a7aac403bf0f7d61206ed04df9f240e18d8958'])]) err=None

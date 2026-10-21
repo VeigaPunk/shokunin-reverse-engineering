@@ -161,3 +161,24 @@ S072 supersedes S067's blanket digest-bound wording. Gate, opened2026-10-21:
 null-subject client distinguished from the other four envelopes.
 Final registry 63 → 72: nine new tier-A rows over six source families,
 three supersessions (S069/S070/S072); existing rows' cells unchanged.
+
+## Final executed measurements
+
+Source `5c88c05b8cff9ebd63521c1395fc5295eaded8c3`; committed producer
+executed by its Git bytes (`final-producer.json`, executed sha256), output
+under `.ufo/waves/round-24/final/`: exit0,12/12 expected conditions.
+C1 held0/4→4/4 (catalog zero16→12); C2 original frozen9/11 exit1 versus
+disclosed revised11/11 exit0; prior cohort0/10→10/10 and new round24 CLEAN.
+Original-byte C2 target is not met; revised-byte result awaits closure
+adjudication. Selftest17/17 is explicitly post-hoc.
+
+No-harm1141 prior files identical, old32 QUALITY rows, prefix preservation,
+map106/106→107/107, citations17/17; source/README preservation and loss
+controls execute (`final/prior-controls.json`, `preservation-controls.json`).
+R23 still4/6, R22 still1/6 and14/14. Live end census0, five W04 versus four
+in BASE reconstruction (new S069 duplicates a manual URL).
+
+ResNoHarm's actual state observations agree; its counterexamples show that
+the two claim instruments alone are not a complete no-harm gate. The final
+producer executes the separately retained preservation controls. Its C2
+claim-text/disclosure-pin loopholes stay named debt, not hidden by CLEAN.
