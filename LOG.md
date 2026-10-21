@@ -2452,3 +2452,33 @@ improved through outside-R20 feedback turned into criteria; current outside
 sampling/promotion is not self-attested. No capability, ownership, runtime,
 authentication, continuous-custody or security-containment claim is added.
 
+## 2026-10-21 — round-22: uncovered static evidence and honest catalog dispositions
+
+Frozen declaration `75f04a446c61761182145c058e545551ca4ecd76`,
+baseline B=`7787fea4d6fd718726de92ed20759d11ce7b8b48`:
+R22-C1 coverage targets sourced bound non-refused T1 evidence (frozen k>=1
+of six); R22-C2 calibration targets fourteen receipt-matched T2 dispositions.
+The replacement KaidokuR22R retains the same claim22 attempt1; no next round.
+
+Motivation: expansion was unchanged in r21; its closure reported57/132
+reportless seats. This round's lost W1 dispatched93 but parent Anthropic429
+terminated every seat with zero reports; `wave1-terminal.json` records each
+identity/cause and no output is credited. Recovery-wave specs preserve the
+live role routing without any model parameters; headroom grants do not
+override the observed100-job task refusal. All dispatch refusals are retained.
+
+Executed new L1 work: the selected Godot APK's static identify-flutter-build
+probe exits0 and returns a parsed negative, bound in
+`corpus/knowledge/2026-10-21-r22-flutter-static-boundary.md` (S051–S053).
+`capture-probes.py` records fourteen explicit T2 request outcomes. ADB uses
+the false-client control; Frida enumeration actually works, but impossible
+PID instrumentation is refused. `PROVINCE.md` names these limits instead
+of asserting absent providers/devices or absorbing revenger's province.
+
+The original counters exhibited two actual false accepts:
+missing-source C1 still counted6, and probe-alias C2 still counted14
+(`verify/red-C1.json`, `red-C2.json`). Successor counters require source
+linkage and verb/probe equality, with subprocess self-invocations over
+independently expected fixtures. QUALITY29–30 and lesson round22 mine
+the defects; earlier rows/knowledge remain untouched. Final measurements
+are recorded separately at their committed source revision.

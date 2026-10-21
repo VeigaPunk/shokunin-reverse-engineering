@@ -18,6 +18,8 @@ Exit 0 when all T2 verbs are accounted with no mismatch, 1 otherwise, 2 when
 the revision itself cannot be read.
 """
 import argparse
+import importlib.util
+from pathlib import Path
 import json
 import re
 import subprocess
@@ -99,7 +101,7 @@ def check(row, root, rev):
         return "receipt_unevaluable"
     if not isinstance(env, dict) or not isinstance(env.get("meta"), dict):
         return "receipt_not_envelope"
-    if env["meta"].get("command") != row["probe"]:
+    if row["probe"] != row["verb"] or env["meta"].get("command") != row["probe"]:
         return "probe_mismatch"
     observed = row["observed"]
     try:
@@ -149,9 +151,20 @@ def measure(root, rev):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", required=True)
-    parser.add_argument("--rev", required=True)
+    parser.add_argument("--root")
+    parser.add_argument("--rev")
+    parser.add_argument("--selftest", action="store_true")
     args = parser.parse_args()
+    if args.selftest:
+        root = Path(__file__).resolve().parents[4]
+        spec = importlib.util.spec_from_file_location("r22_c2_fixtures", root / ".ufo/waves/round-22/tools/counter-fixtures.py")
+        fixtures = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(fixtures)
+        result, code = fixtures.run("C2", Path(__file__).resolve(), root)
+        print(json.dumps(result, sort_keys=True))
+        return code
+    if not args.root or not args.rev:
+        parser.error("--root and --rev required unless --selftest")
     try:
         out = measure(args.root, args.rev)
     except (OSError, UnicodeError, ValueError) as error:

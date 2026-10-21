@@ -658,3 +658,34 @@ Checklist: pin the producing revision and fixture digest; retain actual exit,
 stdout/stderr and finding id; run positive controls alongside negatives; test C1
 and C2 separately. R20's nineteen exact-artifact log pairs are retrospective
 regression only; no new provider execution or forecast is implied.
+
+## Static Flutter and calibrated catalog dispositions — round 22
+
+For the first static Flutter boundary see
+`corpus/knowledge/2026-10-21-r22-flutter-static-boundary.md` (S051–S053).
+A parsed `flutter_detected:false` is a scoped negative, not a refusal and
+not absence of every native library. Read `normalized_result.coverage`,
+retain the target SHA-256 and exact id/operation, and keep any extracted
+Evidence record alongside its untouched CLI envelope. No static identity
+record establishes source recovery or execution.
+
+Before interpreting a provider refusal, inspect the producing argv and
+environment: an explicit false-client ADB control says nothing about the
+real client's devices. Frida enumeration can work while an impossible-PID
+instrumentation request fails; never turn that failure into provider
+absence. `PROVINCE.md` Round-22 dispositions retain these distinctions.
+The kaidoku/revenger dynamic-analysis boundary remains an open L0 question.
+
+### Round-22 measurement registry
+
+| Name | Kind / owner | Entry / verdict map | Self-invocation | Pinned values / write scope |
+|---|---|---|---|---|
+| round22-C1 | gate / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/count-c1.py --root <LANE> --rev <REV>`; 0 all six held, 1 incomplete finite set, 2 unevaluable. Claim admission separately uses frozen k>=1, not a disguised six-of-six pass | same command with `--selftest` (no root/rev), subprocess controls with stable expected counts/finding | T1 and scope in claims.json; expected fixtures in counter-fixtures.py; frozen old source in frozen/count-c1.py. No live-tree writes; selftests mutate only removed temporary Git repos. Source/id/operation binding is local, not authentication |
+| round22-C2 | gate / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/count-c2.py --root <LANE> --rev <REV>`; 0 fourteen matched and no foreign/mismatched rows, 1 incomplete/mismatch, 2 unevaluable | same command with `--selftest` (no root/rev), expected count/status plus exits | T2/grammar in claims.json and count-c2.py; independent expected fixtures in counter-fixtures.py; frozen old source in frozen/count-c2.py. No live-tree writes; selftest scratch only. Receipt agreement is not general provider availability |
+| round22-capture-probes | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/capture-probes.py --out <NEW-DIR>`; 0 producer completed (child errors retained), other exit could-not-evaluate | No selftest: records requested outputs, does not grade a stored baseline | Writes new output directory only; invokes fixed REA6.5.0 calls, explicit false-client ADB and impossible-PID Frida request. Never reuse an existing output directory. No actual selected process, hardware or remote endpoint |
+
+Checklist: open source rows before writing them; bind each counted entry's
+`source:` to a mined round-22 row naming it in `used-by`; keep matching
+positive and missing-source/probe-alias negatives. Count mentions and
+exercised targets separately. A partial k/6 result remains exit1 even when
+it meets this round's frozen k>=1 improvement predicate.

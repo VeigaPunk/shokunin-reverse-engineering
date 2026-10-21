@@ -2725,3 +2725,24 @@ reportless, all causes recorded, no dead-seat replacement. L1 holds the
 canonical planner seat. Verdicts remain author-side until independent closure;
 all SHONEN marks remain `[~]`, capability table unchanged.
 
+## Round 22 — uncovered catalog evidence and calibrated dispositions
+
+Baseline B=`7787fea4d6fd718726de92ed20759d11ce7b8b48`;
+declaration `75f04a446c61761182145c058e545551ca4ecd76`.
+Owned coverage/depth/calibration finite proxies remain10.0; C1 and C2
+work tied-lowest axes. Stagnation nudge not invoked (last capability17,
+window10). No capability, promotion, dynamic ownership or mastery is added.
+
+| Claim / axis | Frozen falsifiable move | Counting command | Baseline / limits |
+|---|---|---|---|
+| R22-C1 coverage, sourced S051–S053 | T1 bound/sourced exercised count0→k of6; frozen improvement target k>=1, not6/6 | `python3 -I -B .ufo/waves/round-22/tools/count-c1.py --root <LANE> --rev <REV>` | B count0/6, catalog mentions133/153 and zero20, exit1 (`verify/before-c1.json`); after verdict records follow source-revision measurement. Score10.0→10.0 delta0 |
+| R22-C2 calibration | T2 receipt-matched dispositions0→14/14, mismatched[]; explicit controls are not claims of actual device/provider absence | same path `tools/count-c2.py --root <LANE> --rev <REV>` | B count0/14, exit1 (`verify/before-c2.json`); score10.0→10.0 delta0 |
+
+Causal separation contract: C1 reads sourced knowledge/evidence-c1 and its
+source registry; C2 reads PROVINCE/evidence-c2. `verify.py` applies each
+claim's data diff alone onto B in removed private clones and records both
+counters, rather than inferring separation from filenames.
+
+Planned (supersedes r21 queue): complete these frozen finite predicates and
+the new independent closure's admit/reject sample; retain all explicit
+R20/R21 residuals. Kaidoku/revenger overlap remains open, not waived.

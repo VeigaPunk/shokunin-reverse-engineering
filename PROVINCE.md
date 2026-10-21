@@ -169,3 +169,37 @@ absorbed.
 | Rizin command observation | `rizin` on PATH (`/usr/bin/rizin`), optional `REA_RIZIN_COMMAND`; REA runs `rizin -N -q -c <cmd> <path>` | `execute-rizin-command <path> iI` | jq, libjq, round-2 PE (`corpus/knowledge/2026-10-20-r20-rizin-command-observation.md`); unrestricted shell-capable surface — read-only info commands only |
 | objdump target list | host GNU objdump; no artifact argument | `list-objdump-architectures` | equals host `objdump -i`, `subject: null` (`corpus/knowledge/2026-10-20-r20-objdump-architecture-list.md`) |
 | HarmonyOS application graph | none; input is `inspect-artifact` inventory Evidence | `project-harmony-application-graph <json>` | synthetic Stage/FA HAPs only (`corpus/knowledge/2026-10-20-r20-harmony-application-graph.md`) |
+
+### Round-22 catalog dispositions
+
+REA6.5.0, observed 2026-10-21. These rows calibrate gaps and adjacent ground;
+they do not absorb revenger's contested runtime province. ADB rows are explicit
+`REA_ADB_PATH=/usr/bin/false` unavailable-client controls, NOT observations of
+device absence or of the real adb binary. No device operation was dispatched.
+The Frida enumeration provider was available; the missing impossible PID
+does not establish provider absence. No real process was attached or hooked.
+Each producing argv/env/stdout/stderr/exit is beside its receipt in a `.run.json`.
+
+| verb | placement | probe | observed | receipt | reason |
+|---|---|---|---|---|---|
+| inspect-packet-fields | frontier-blocked | inspect-packet-fields | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/inspect-packet-fields.json | Explicit TShark configuration unavailable for this request; no field registrations examined |
+| inspect-packet-capture | frontier-blocked | inspect-packet-capture | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/inspect-packet-capture.json | Supplied empty pcap not dissected because TShark configuration unavailable; not a traffic-absence claim |
+| inspect-pcap-client | frontier-blocked | inspect-pcap-client | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/inspect-pcap-client.json | Selected tshark command ENOENT; capinfos availability not independently established |
+| inspect-pcap-capture | frontier-blocked | inspect-pcap-capture | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/inspect-pcap-capture.json | Selected tshark command ENOENT; no packet summary capability acquired |
+| list-cutter-sessions | frontier-blocked | list-cutter-sessions | ok-empty:sessions | .ufo/waves/round-22/evidence/c2/list-cutter-sessions.json | Empty discovered sessions at this instant only; security status not_checked |
+| cutter-command | frontier-blocked | cutter-command | error:invalid_request | .ufo/waves/round-22/evidence/c2/cutter-command-missing.json | Well-formed nonexistent UUID/generation rejected; earlier malformed argument receipt retained separately |
+| list-frida-devices | adjacent | list-frida-devices | ok-field:cleanup_error=null | .ufo/waves/round-22/evidence/c2/list-frida-devices.json | Provider successfully enumerated local descriptors; not provider absence, remote connection, or lane ownership |
+| list-frida-processes | adjacent | list-frida-processes | ok-field:device_id="local" | .ufo/waves/round-22/evidence/c2/list-frida-processes.json | Provider returned local process names/PIDs; no command lines, hooking, or runtime ownership acquired |
+| instrument-with-frida | adjacent | instrument-with-frida | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/instrument-with-frida.json | PID2147483647 is not a real selected process; missing-process refusal is not provider absence |
+| inspect-adb-package | frontier-blocked | inspect-adb-package | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/inspect-adb-package.json | Explicit false-client control refused version inspection before device contact; real client/device unexamined |
+| list-adb-services | frontier-blocked | list-adb-services | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/list-adb-services.json | Explicit false-client control only; no binder-service list observed |
+| inspect-adb-window | frontier-blocked | inspect-adb-window | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/inspect-adb-window.json | Explicit false-client control only; no focused window observed |
+| start-adb-activity | frontier-blocked | start-adb-activity | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/start-adb-activity.json | Explicit false-client version refusal; no activity start or device mutation |
+| stop-adb-app | frontier-blocked | stop-adb-app | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/stop-adb-app.json | Explicit false-client version refusal; no app stop or device mutation |
+
+### Round-22 narrowly added static ground
+
+`identify-flutter-build` successfully parsed the selected Godot APK as a
+negative (not a refusal); `corpus/knowledge/2026-10-21-r22-flutter-static-boundary.md`
+pins its target, id, argv and limits. Positive Flutter/Dart recovery and the
+remaining T1 debugger/signal verbs stay unclaimed unless separately demonstrated.
