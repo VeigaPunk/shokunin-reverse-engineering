@@ -1,0 +1,36 @@
+{
+  "seat": "KaidokuR22R.DispositionInspectAdbPackage-6",
+  "verb": "inspect-adb-package",
+  "claim": "R22-C2",
+  "measured_rev": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67",
+  "row": {
+    "placement": "frontier-blocked",
+    "probe": "inspect-adb-package",
+    "observed": "error:capability_unavailable",
+    "receipt": ".ufo/waves/round-22/evidence/c2/inspect-adb-package.json",
+    "counter_status": "matched",
+    "counter_exit": 0,
+    "accounted_count": "14/14"
+  },
+  "cli_surface": {
+    "usage": "rea inspect-adb-package <serial> <package>",
+    "args": {"serial": "string minLength 1 required", "package": "string minLength 1 required"},
+    "additionalProperties": false,
+    "serial_free_siblings": ["inspect-adb-client", "list-adb-devices"]
+  },
+  "corroborating_probe": {
+    "argv": ["npx", "-y", "rea-agents@6.5.0", "list-adb-devices", "--format", "json", "--full-output"],
+    "env_overrides": {"REA_ADB_PATH": "/usr/bin/false"},
+    "exit": 1,
+    "stderr": "",
+    "stdout_summary": "ok:false error.code=capability_unavailable category=unsupported_provider operation=list_adb_devices duration=6ms"
+  },
+  "verdict": {
+    "frontier_blocked_supported": true,
+    "adjacent_supported": false,
+    "device_availability_supported": false,
+    "basis": "shared client-version gate fires before serial/package resolution; identical envelope on serial-free list-adb-devices under the same REA_ADB_PATH=/usr/bin/false control"
+  },
+  "recover_receipts_json": "not yet available in .ufo/waves/round-22/w2/",
+  "tooling": [{"tool": "rea-agents", "version": "6.5.0", "channel": "npx cache", "reason": "contract-pinned CLI; no install performed"}]
+}

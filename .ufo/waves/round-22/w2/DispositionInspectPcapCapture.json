@@ -1,0 +1,85 @@
+{
+  "seat": "KaidokuR22R.DispositionInspectPcapCapture-6",
+  "head": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67",
+  "date": "2026-10-21",
+  "recover_receipts_json": "not yet available; envelope review not performed",
+  "cli_surface": {
+    "inspect-pcap-capture": {
+      "args": {"path": "string minLength 1, required, additionalProperties false"},
+      "detail_flag": false,
+      "mcp_only": ["detail (analysisDetailSchema)", "inspect_analysis_view kind=pcap paging"]
+    },
+    "inspect-pcap-client": {"args": {}, "additionalProperties": false}
+  },
+  "env_contract_6_5_0": {
+    "REA_TSHARK_COMMAND": "absolute required when set non-blank; else PATH fallback 'tshark'",
+    "REA_CAPINFOS_COMMAND": "absolute required when set non-blank; else PATH fallback 'capinfos'",
+    "version_gate": "regex ^<tool> (Wireshark) 4.x.y on --version stdout, both tools",
+    "REA_TSHARK_PRLIMIT_COMMAND": "default /usr/bin/prlimit; prepared only after client gate passes",
+    "client_gate_precedes_capture_read": true,
+    "localPathStringSchema": "nulFreeStringSchema.min(1); no existence check",
+    "failure_code": "capability_unavailable (category unsupported_provider) for ENOENT, run-fail, not-absolute, version-unresolved"
+  },
+  "host_state": {
+    "tshark": "absent (exit 1)",
+    "capinfos": "absent (exit 1)",
+    "dumpcap": "absent (exit 1)",
+    "prlimit": "/usr/bin/prlimit (present)"
+  },
+  "controls": [
+    {
+      "id": "A-ambient-receipted",
+      "argv": "npx -y rea-agents@6.5.0 inspect-pcap-capture empty.pcap --format json --full-output",
+      "exit": 1,
+      "code": "capability_unavailable",
+      "reason": "Cannot run selected tool tshark: spawn tshark ENOENT",
+      "duration": "29ms"
+    },
+    {
+      "id": "B-false-client",
+      "env": {"REA_TSHARK_COMMAND": "/usr/bin/false", "REA_CAPINFOS_COMMAND": "/usr/bin/false"},
+      "argv": "npx -y rea-agents@6.5.0 inspect-pcap-capture .ufo/waves/round-22/evidence/c2/empty.pcap --format json --full-output",
+      "exit": 1,
+      "code": "capability_unavailable",
+      "message": "The selected tool /usr/bin/false cannot report its version: Command failed; inspect its exit status and diagnostics.",
+      "captured_stdout_prefix": "false (GNU coreutils) 9.12",
+      "captured_exit_code": 1,
+      "duration": "83ms",
+      "deterministic_regardless_of_path_state": true
+    },
+    {
+      "id": "C-absolute-nonexistent",
+      "env": {"REA_TSHARK_COMMAND": "/nonexistent-definitely-absent/tshark"},
+      "argv": "npx -y rea-agents@6.5.0 inspect-pcap-client --format json --full-output",
+      "exit": 1,
+      "code": "capability_unavailable",
+      "message": "Cannot run selected tool /nonexistent-definitely-absent/tshark: spawn /nonexistent-definitely-absent/tshark ENOENT",
+      "duration": "67ms"
+    },
+    {
+      "id": "D-non-absolute-env",
+      "env": {"REA_TSHARK_COMMAND": "tshark"},
+      "argv": "npx -y rea-agents@6.5.0 inspect-pcap-client --format json --full-output",
+      "exit": 1,
+      "code": "capability_unavailable",
+      "message": "REA_TSHARK_COMMAND must be an absolute path to the tshark binary",
+      "duration": "2ms"
+    }
+  ],
+  "disposition_support": {
+    "frontier-blocked": "supported: all refusal variants produce error:capability_unavailable matching count-c2 grammar; false-client variant deterministic and PATH-independent",
+    "adjacent": "not supported: ok-* shapes unreachable with unavailable client; refusal is toolchain gap, not lane-deferred ground"
+  },
+  "counter_run": {
+    "argv": "python3 -I -B .ufo/waves/round-22/tools/count-c2.py --root <LANE> --rev HEAD",
+    "exit": 0,
+    "accounted_count": 14,
+    "t2_total": 14,
+    "mismatched": [],
+    "foreign_rows": [],
+    "inspect-pcap-capture": "matched",
+    "caveat": "working-tree count-c2.py modified vs HEAD (+33/-13 hardening); run used working-tree copy against HEAD objects"
+  },
+  "installs": [],
+  "verdict": "PROVINCE pcap-capture row receipt/row/probe coherent; optional hardening = new false-client receipt + row update (L1 decision); RecoverReceipts.json envelope pending"
+}

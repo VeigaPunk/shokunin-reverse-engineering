@@ -680,12 +680,27 @@ The kaidoku/revenger dynamic-analysis boundary remains an open L0 question.
 
 | Name | Kind / owner | Entry / verdict map | Self-invocation | Pinned values / write scope |
 |---|---|---|---|---|
-| round22-C1 | gate / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/count-c1.py --root <LANE> --rev <REV>`; 0 all six held, 1 incomplete finite set, 2 unevaluable. Claim admission separately uses frozen k>=1, not a disguised six-of-six pass | same command with `--selftest` (no root/rev), subprocess controls with stable expected counts/finding | T1 and scope in claims.json; expected fixtures in counter-fixtures.py; frozen old source in frozen/count-c1.py. No live-tree writes; selftests mutate only removed temporary Git repos. Source/id/operation binding is local, not authentication |
-| round22-C2 | gate / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/count-c2.py --root <LANE> --rev <REV>`; 0 fourteen matched and no foreign/mismatched rows, 1 incomplete/mismatch, 2 unevaluable | same command with `--selftest` (no root/rev), expected count/status plus exits | T2/grammar in claims.json and count-c2.py; independent expected fixtures in counter-fixtures.py; frozen old source in frozen/count-c2.py. No live-tree writes; selftest scratch only. Receipt agreement is not general provider availability |
+| round22-C1 | gate / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/count-c1.py --root <LANE> --rev <REV>`; 0 c1_complete/all six, 1 c1_incomplete, 2 unevaluable. Frozen claim improvement is k>=1, not an all-six pass | `--selftest` (optional `--root <LANE>` for a relocated executable): 0 counter_controls_clean, 1 counter_controls_failed, 2 snapshot_tampered/unevaluable | Fixed T1/claim in claims.json; original counters and v1 fixture retained in frozen/. Active independent inputs: frozen/expected-v2.json (manifest SHA constant in script), fixture program and dependency hashes; reviewed helper hashes in frozen/helper-hashes.json. Original CLI envelope/exact command/direct record required; aliases from S056. No live-tree write; removed private Git fixtures only. Local association, not authentication |
+| round22-C2 | gate / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/count-c2.py --root <LANE> --rev <REV>`; 0 dispositions_complete/14 matched, 1 dispositions_incomplete, 2 unevaluable | `--selftest` (optional `--root <LANE>`): 0 counter_controls_clean, 1 counter_controls_failed, 2 snapshot_tampered/unevaluable | Fixed T2/grammar in claims.json; frozen/expected-v2.json authenticates the independent fixture/dependency bytes before execution. Original source retained in frozen/count-c2.py. No live-tree writes, selftest private fixtures only. Strict observed-field/code agreement; semantic reason/placement and run metadata are separate admission checks |
 | round22-capture-probes | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/capture-probes.py --out <NEW-DIR>`; 0 producer completed (child errors retained), other exit could-not-evaluate | No selftest: records requested outputs, does not grade a stored baseline | Writes new output directory only; invokes fixed REA6.5.0 calls, explicit false-client ADB and impossible-PID Frida request. Never reuse an existing output directory. No actual selected process, hardware or remote endpoint |
+| round22-verify | probe / kaidoku | `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/verify.py --root <LANE> --rev <SOURCE-COMMIT> --out <NEW-DIR>`; 0 expected child conditions recorded, 1 discrepancy, 2 invalid invocation | Explicit final-suite producer, not an independent admission authority; self-invocation belongs to the child gates above | Writes only new output directory and removed external fixtures. Extracts candidate/frozen source from the requested commit, checks all old source rows and child controls, records positive/tampered selftest inputs, exact producer/envelope consistency and section-partitioned separability. Reuses R21 regression/no-harm gates; no REA target runs inside this producer |
 
 Checklist: open source rows before writing them; bind each counted entry's
 `source:` to a mined round-22 row naming it in `used-by`; keep matching
 positive and missing-source/probe-alias negatives. Count mentions and
 exercised targets separately. A partial k/6 result remains exit1 even when
 it meets this round's frozen k>=1 improvement predicate.
+
+The active C1 witness is the **original CLI envelope**, not an extracted
+bare record. Check success, exact producer verb, exact cited file and actual
+operation. A retained copy cannot erase a refused parent. S056 grounds the
+debugger aliases only; both debugger verbs remain Adjacent and not held.
+The metric also refuses unreviewed helper bytes before import, uses strict
+UTF-8, resolves one commit and ignores inherited Git routing/replacement refs.
+
+For the positive static boundary, read
+`corpus/knowledge/2026-10-21-r22-flutter-positive-dart-refusal.md` (S054/S055).
+Saber identifies as Flutter with partial coverage while its separate Dart
+AOT reader refuses the missing dynamic symbols. Never transfer success from
+one producer to another, infer a Dart version from an unmapped snapshot hash,
+or count a refusal as a second held verb.

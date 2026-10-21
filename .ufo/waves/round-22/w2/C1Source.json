@@ -1,0 +1,45 @@
+{
+  "id": "KaidokuR22R.C1Source-6",
+  "claim": "R22-C1",
+  "target": ".ufo/waves/round-22/tools/count-c1.py",
+  "counter_version_reviewed": {"git_hash_object": "50b49a22271e9b2bba7e83be603002cb51b861ed", "mtime": "2026-10-21T10:19:47-03:00"},
+  "midflight_rewrites_observed": [
+    {"hash": "38e5ef5", "state": "HEAD-committed v1: bare-record r21.bind, worktree helpers"},
+    {"hash": "f243b9f27dfd734a0916f7fb1131140c9a549048", "mtime": "2026-10-21T10:12:18-03:00", "state": "v2: CLI-envelope bind_cli, CLI_BIND_VERB, rev-pinned helpers"},
+    {"hash": "50b49a22271e9b2bba7e83be603002cb51b861ed", "mtime": "2026-10-21T10:19:47-03:00", "state": "v3: source: must be first line, tier A/B gate, data must be direct record, raw_result/normalized_result/ok refusal walk, allow_nan round-trip"}
+  ],
+  "lane_measurements_v3": [
+    {"argv": "python3 -I -B .ufo/waves/round-22/tools/count-c1.py --root <LANE> --rev 7787fea4d6fd718726de92ed20759d11ce7b8b48", "exit": 1, "t1_exercised_count": 0, "t1_total": 6, "matches": "before_expected"},
+    {"argv": "python3 -I -B .ufo/waves/round-22/tools/count-c1.py --root <LANE> --rev HEAD(2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67)", "exit": 1, "t1_exercised_count": 1, "t1_exercised": ["identify-flutter-build"], "witness": ["ev_3458b996b71e3dccde0177728ba60ef94800dd373db5a704048e18526d9d866b", ".ufo/waves/round-22/evidence/c1/identify-godot.envelope.json"], "unsupported_candidates": [".ufo/waves/round-22/evidence/c1/identify-godot-run.json", ".ufo/waves/round-22/evidence/c1/identify-godot.evidence.json"]}
+  ],
+  "selftest": {"argv": "python3 -I -B .ufo/waves/round-22/tools/count-c1.py --selftest", "exit": 0, "note": "11 C1 controls incl. helper_drift (rev-pinned helpers) and forged_debug_operation (gdb_console/rizin_debug_command mapping)"},
+  "assigned_falsifier": "a counted entry lacks a round-22 S### citation (bound matching record present)",
+  "assigned_falsifier_direct_forms": [
+    {"case": "no_source_direct_target", "entry_source_line": "source: none", "bound_record_cited": true, "got_exercised": false, "exit": 1, "verdict": "blocked"},
+    {"case": "old_row_only", "entry_source_line": "source: S007", "got_exercised": false, "verdict": "blocked"},
+    {"case": "entry_unlisted", "entry_source_line": "source: S051 but S051 used-by names a different entry", "got_exercised": false, "verdict": "blocked"},
+    {"case": "codeblock_source_line", "source: only inside fenced block", "got_exercised": false, "verdict": "blocked by v3 first-line rule"}
+  ],
+  "findings": [
+    {"severity": "high", "id": "F1-duplicate-row-forgery", "falsifier_hit": "a counted entry lacks a round-22 S### citation", "observed": "duplicate_row_forgery case: second | S051 | row overwrites source_rows['S051'] (dict last-wins, no duplicate rejection); forged entry whose honest S051 used-by never named it becomes eligible; bound envelope counts; t1_exercised_count=1, counter exit 1, per-verb exercised=true", "cause": "source_rows[cells[1]] assignment without duplicate detection; SOURCES.md parsed for qualifying rows anywhere in the file", "fix": "raise ValueError('duplicate_source_row: '+cells[1]) when cells[1] already in source_rows; counter maps it to exit 2 unevaluable via existing handler"},
+    {"severity": "medium", "id": "F2-typed-refusal-in-meta-counts", "falsifier_hit": "a typed refusal envelope counts", "observed": "meta_error_refusal: {ok:true, meta:{command, error:{code:'execution_failure'}}, data:{bound record}} -> exercised=true; meta_exit_code_refusal: meta.exit_code=1 -> exercised=true; both count=1", "cause": "bind_cli checks r21.refused(envelope) which never descends into 'meta', and the v3 refusal walk covers only raw_result/normalized_result and ok!=True nodes", "fix": "in bind_cli after refused(envelope): if r21.refused(envelope.get('meta')): return 1; add 'meta' to the pending-walk keys"},
+    {"severity": "medium", "id": "F3-directory-citation-counts-unnamed-file", "falsifier_hit": "adjacent: bound record counts though the entry never cites the file by full lane path", "observed": "directory_citation case: eligible entry citing only '.ufo/waves/round-22/evidence/c1/' binds a witness from identify-flutter-build.json it never names; exercised=true", "cause": "r20.is_cited accepts cited prefixes ending '/' (directory acceptance), contradicting the docstring 'cites a retained file ... by full lane path'", "fix": "override in measure(): r20.is_cited = lambda path, cited: path in cited (exact-match only); real r22 entry cites three full file paths, so no honest regression observed"},
+    {"severity": "low", "id": "F4-eligibility-by-string-identity", "observed": "witness gate is 'code == 0 and text in eligible' keyed by file CONTENT, not path; a byte-identical ineligible clone of an eligible entry passes the gate", "impact": "no count delta today (identical text names identical verbs/ids/paths); correctness hazard only", "fix": "track eligible as a set of paths and gate on the current path"},
+    {"severity": "low", "id": "F5-any-sid-naming", "observed": "eligibility uses any() over S### tokens on the first line: one qualifying row naming the entry suffices even when the line cites additional rows that do not name it", "impact": "citation honesty rests entirely on SOURCES used-by truthfulness; consistent with declared manual limit but stricter all() (every cited sid must name the entry) would close mixed-citation drift at the cost of false negatives for entries also citing unlisted older rows"},
+    {"severity": "low", "id": "F6-helper-load-before-resolve", "observed": "revision_helpers loads helpers at the RAW --rev argument; r20.resolve_revision runs later inside _measure", "impact": "option-injection-shaped --rev fails safely (git show rejects), but helpers could be read at a different effective revision than the one finally measured (TOCTOU on 'HEAD')", "fix": "resolve the revision first and pass the resolved sha to revision_helpers"}
+  ],
+  "hardening_confirmed": [
+    "ok:false envelope refused (ok_false_control: exercised=false)",
+    "record-level error code inside data refused (data_refusal_control: exercised=false)",
+    "bare-record R21 representation (identify-godot.evidence.json shape) unevaluable, never counts (bare_record_control; HEAD unsupported_candidates)",
+    "worktree helper mutation cannot flip counts (fixture helper_drift expects 6/6, passes; revision_helpers loads r20/r21 from rev blobs)",
+    "forged debug_with_gdb/debug_with_rizin operations do not count; CLI_BIND_VERB mapping grounded in rea-agents 6.5.0 dist: reconstructionObligationLedgerSchemas-Bao0xMr-.js:949 '\"debug-with-gdb\": [\"gdb_console\"]', toolContracts gdb_console/rizin_debug_command"
+  ],
+  "grounding": {"identify_envelope_meta": {"command": "identify-flutter-build", "duration": "122ms"}, "note": "meta.command == catalog-verb expectation verified for identify-flutter-build on the retained envelope; the same assumption for debug-with-gdb/debug-with-rizin meta.command values is [INFERENCE] from package source, not from an executed CLI run (execution forbidden this wave)"},
+  "tooling": {"installs": "none", "rea": "not invoked", "adb": "not touched", "lane_writes": [".ufo/waves/round-22/w2/C1Source.md", ".ufo/waves/round-22/w2/C1Source.json"], "scratch": "/tmp/c1w2-attack.py driver + temp git clones only"},
+  "residual_risk": [
+    "SOURCES.md row truthfulness (mined/opened/tier/used-by) remains manual per declared limit; the counter cannot detect an honestly-formatted dishonest row",
+    "verifier must re-run verify.py after the final counter lands: the counter changed at 10:12:18 and 10:19:47 during this review, so any earlier verify.py runs predate v3",
+    "count-c2.py and frozen v1 red controls not in scope; not reviewed"
+  ]
+}

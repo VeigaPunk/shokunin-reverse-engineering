@@ -1,0 +1,169 @@
+{
+  "schema": "kaidoku-r22-author-review-v1",
+  "seat": "KaidokuR22R.ControlPromotion-6",
+  "scope": ["SHONEN four canonical boxes", "author marks", "outside-review distinction", "no-harm control scope"],
+  "baseline": "7787fea4d6fd718726de92ed20759d11ce7b8b48",
+  "candidate_head": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67",
+  "final_revision_exists": false,
+  "worktree_was_changing": true,
+  "findings": [
+    {
+      "severity": "P2",
+      "title": "C1 separability text omits corpus/SOURCES.md",
+      "evidence": [
+        "claims.json:36 says C1 reads only corpus/knowledge and evidence/c1",
+        "tools/count-c1.py:43-48 reads corpus/SOURCES.md to construct eligible source rows; :57-60 applies those rows to knowledge entries",
+        "verify.py:85-87 includes corpus/SOURCES.md in the C1-only sandbox"
+      ],
+      "recommendation": "Keep corpus/SOURCES.md in final C1-only checks and state that it is part of the counter read set in round summaries."
+    },
+    {
+      "severity": "P2",
+      "title": "Red-control pass checks only the suite exit",
+      "evidence": [
+        "verify.py:32-40 marks a record passing from expected exit unless a validator is supplied; red fixture calls at :61-62 expect exit 1 without validating case outcomes",
+        "At a then-current fixture snapshot, frozen C1 fixture output included all_six=(exit 1,count 0,pass false) and missing_source=(exit 1,count 0,pass true). A broken positive case can therefore yield the expected failing-suite exit."
+      ],
+      "recommendation": "Validate the intended red case and positive control individually, or preserve frozen-fixture inputs compatible with the old counter; rerun at final revision."
+    }
+  ],
+  "shonen_observation": {
+    "four_boxes": 4,
+    "marks": ["[~]", "[~]", "[~]", "[~]"],
+    "diff_B_to_HEAD_exit": 0,
+    "worktree_status_for_SHONEN": "clean",
+    "outside_admit_reject_sample_observed": false,
+    "assessment": "Author marks are appropriately pending; W2 reports are not outside admission."
+  },
+  "commands": [
+    {
+      "command": "git rev-parse HEAD",
+      "exit": 0,
+      "stdout": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67\n",
+      "stderr": ""
+    },
+    {
+      "command": "git diff --exit-code 7787fea4d6fd718726de92ed20759d11ce7b8b48 HEAD -- SHONEN.md",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "git status --porcelain -- SHONEN.md",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": ["python3", "-I", "-B", ".ufo/waves/round-22/tools/count-c1.py", "--root", "/home/vgpnk/Projects/shokunin/kaidoku-shokunin", "--rev", "HEAD"],
+      "exit": 1,
+      "stdout": {
+        "claim": "R22-C1",
+        "rev": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67",
+        "catalog_total": 153,
+        "catalog_mentioned_count": 134,
+        "catalog_zero_count": 19,
+        "t1_exercised": ["identify-flutter-build"],
+        "t1_exercised_count": 1,
+        "t1_total": 6,
+        "bound_evidence": [["ev_3458b996b71e3dccde0177728ba60ef94800dd373db5a704048e18526d9d866b", ".ufo/waves/round-22/evidence/c1/identify-godot.envelope.json"]]
+      },
+      "stderr": "No stderr was visible in the tool result; not separately redirected.",
+      "note": "This is a partial 1/6 result and exit 1, consistent with the counter requiring all six for exit 0 and the separate frozen improvement threshold k>=1."
+    },
+    {
+      "shell_command": "cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 -I -B .ufo/waves/round-22/tools/count-c2.py --root \"$PWD\" --rev HEAD | python3 -c \"import json,sys;d=json.load(sys.stdin);print(json.dumps({'accounted':d['accounted_count'],'mismatched':d['mismatched'],'foreign':d['foreign_rows'],'statuses':{k:v['status'] for k,v in d['per_verb'].items()}},indent=1))\"; echo \"EXIT_C2_HEAD=$?\"",
+      "counter_process_exit": "not separately captured (pipeline exit is the parser's exit)",
+      "pipeline_exit": 0,
+      "parser_stdout": {
+        "accounted": 14,
+        "mismatched": [],
+        "foreign": [],
+        "statuses": {
+          "cutter-command": "matched",
+          "inspect-adb-package": "matched",
+          "inspect-adb-window": "matched",
+          "inspect-packet-capture": "matched",
+          "inspect-packet-fields": "matched",
+          "inspect-pcap-capture": "matched",
+          "inspect-pcap-client": "matched",
+          "instrument-with-frida": "matched",
+          "list-adb-services": "matched",
+          "list-cutter-sessions": "matched",
+          "list-frida-devices": "matched",
+          "list-frida-processes": "matched",
+          "start-adb-activity": "matched",
+          "stop-adb-app": "matched"
+        }
+      },
+      "stderr": "No stderr was visible in the tool result; not separately redirected."
+    },
+    {
+      "shell_command": "cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 -I -B .ufo/waves/round-21/battery.py --root \"$PWD\" --rev HEAD --claim C1 >/tmp/r21c1.json 2>/tmp/r21c1.err; echo \"EXIT_R21_C1=$?\"",
+      "exit": 0,
+      "stdout_file": "/tmp/r21c1.json",
+      "stderr_file": "/tmp/r21c1.err",
+      "stderr": "",
+      "stdout_summary": {"finding": "battery_clean", "passed": 12, "total": 12, "false_clean": 0, "violations": 0}
+    },
+    {
+      "shell_command": "cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 -I -B .ufo/waves/round-21/battery.py --root \"$PWD\" --rev HEAD --claim C2 --regression >/tmp/r21c2.json 2>/tmp/r21c2.err; echo \"EXIT_R21_C2=$?\"",
+      "exit": 0,
+      "stdout_file": "/tmp/r21c2.json",
+      "stderr_file": "/tmp/r21c2.err",
+      "stderr": "",
+      "stdout_summary": {"finding": "battery_clean", "passed": 20, "total": 20, "false_clean": 0, "violations": 0, "regression_receipts": 18}
+    },
+    {
+      "shell_command": "cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 -I -B .ufo/waves/round-21/controls.py --root \"$PWD\" --before 7787fea4d6fd718726de92ed20759d11ce7b8b48 --after HEAD >/tmp/r21ctrl.json 2>/tmp/r21ctrl.err; echo \"EXIT_R21_CTRL=$?\"",
+      "exit": 0,
+      "stdout_file": "/tmp/r21ctrl.json",
+      "stderr_file": "/tmp/r21ctrl.err",
+      "stderr": "",
+      "stdout_summary": {
+        "finding": "controls_clean",
+        "append_only_prefixes": {"LOG.md": true, "SCORECARD.md": true},
+        "prior_files_checked": 1135,
+        "prior_files_changed": [],
+        "quality_prior_rows_identical": true
+      }
+    },
+    {
+      "shell_command": "cd /home/vgpnk/Projects/shokunin && bash scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku; echo \"EXIT_CENSUS=$?\"",
+      "exit": 0,
+      "stdout": [
+        "kaidoku W04 S033 duplicate url github.com/NationalSecurityAgency/ghidra/pull/9348 across scopes",
+        "kaidoku W04 S047 duplicate url go.dev/dl/?mode=json&include=all`, across scopes",
+        "kaidoku W04 S054 duplicate url developer.android.com/ndk/guides/abis across scopes",
+        "kaidoku ok /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md"
+      ],
+      "stderr": "No stderr was visible in the tool result; not separately redirected."
+    },
+    {
+      "shell_command": "cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 -I -B .ufo/waves/round-22/tools/counter-fixtures.py --claim C1 --counter .ufo/waves/round-22/frozen/count-c1.py --root \"$PWD\" 2>/dev/null | python3 -c \"import json,sys;d=json.load(sys.stdin);print([(c['id'],c['exit'],c['count'],c['pass']) for c in d['cases']])\"; echo \"EXIT_RED_FROZEN_C1=$?\"",
+      "pipeline_exit": 0,
+      "counter_fixtures_exit": "not separately captured; raw stderr redirected to /dev/null",
+      "parser_stdout": [
+        ["all_six", 1, 0, false],
+        ["missing_source", 1, 0, true],
+        ["refusal", 1, 0, true],
+        ["split_record", 1, 0, true],
+        ["uncited_path", 1, 0, true],
+        ["duplicate_json", 1, 0, true],
+        ["wrong_command", 1, 0, true],
+        ["extraction_only", 1, 4, false],
+        ["refused_with_extraction", 1, 4, false],
+        ["forged_debug_operation", 1, 0, false],
+        ["helper_drift", 1, null, false]
+      ],
+      "observed_during": "The fixture file changed later in the review; this is snapshot evidence, not a final-suite result."
+    }
+  ],
+  "verification_gaps": [
+    "No final revision or final-after verification existed at observation.",
+    "No outside non-author admit/reject sample was observed.",
+    "No LSP tool route was exposed; no LSP status/references/definition/diagnostics were claimed.",
+    "No full round-22 verify.py run was performed; no build, lint, formatter, or install/update was performed."
+  ],
+  "tooling": {"installed_or_updated": false, "reason": "None required."}
+}

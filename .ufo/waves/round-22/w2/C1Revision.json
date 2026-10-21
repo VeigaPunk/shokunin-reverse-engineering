@@ -1,0 +1,79 @@
+{
+  "schema": "kaidoku-r22-review-attachment-v1",
+  "target": ".ufo/waves/round-22/tools/count-c1.py",
+  "requested_revision": "7787fea4d6fd718726de92ed20759d11ce7b8b48",
+  "worktree_state": {
+    "target_modified": true,
+    "target_absent_at_requested_revision": true,
+    "baseline_cat_file_exit": 128,
+    "head": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67"
+  },
+  "findings": [
+    {
+      "id": "C1R-1",
+      "severity": "high",
+      "title": "Selected revision helper code executes during measurement",
+      "location": ".ufo/waves/round-22/tools/count-c1.py:31-52",
+      "reproduction": {
+        "argv": ["/usr/bin/python", "-I", "-B", "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/count-c1.py", "--root", "/tmp/c1-rev-helper-final-8095odjw", "--rev", "ab874df3d867d91490a9304d77af064d4a2048b3"],
+        "exit": 0,
+        "stderr": "",
+        "marker_exists": true,
+        "marker_content": "executed",
+        "stdout_block": "C1Revision.md: Adversarial committed-helper side effect"
+      },
+      "narrow_fix": "Use independently pinned, trusted helper source (verified by immutable revision/hash) or implement the required helper logic in the counter; do not import source from the revision being measured."
+    },
+    {
+      "id": "C1R-2",
+      "severity": "medium",
+      "title": "List-nested refusal envelope is counted",
+      "location": ".ufo/waves/round-22/tools/count-c1.py:67-79",
+      "reproduction": {
+        "argv": ["/usr/bin/python", "-I", "-B", "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/count-c1.py", "--root", "/tmp/c1-array-refusal-review-owxep7p4", "--rev", "9088684e395b2fd8982fb0cd7db9d9731fd96ef5"],
+        "exit": 1,
+        "stderr": "",
+        "stdout_block": "C1Revision.md: Adversarial array-nested refusal",
+        "observed": "t1_exercised_count=1 and identify-flutter-build exercised=true although data.raw_result contains a list item with ok=false and error.code=capability_unavailable"
+      },
+      "narrow_fix": "Recursively traverse dicts and lists beneath raw_result/normalized_result and apply refusal checks to each object; add a list-nested refusal control."
+    },
+    {
+      "id": "C1R-3",
+      "severity": "medium",
+      "title": "Lossy UTF-8 replacement lets malformed evidence bind",
+      "location": ".ufo/waves/round-22/tools/count-c1.py:93-96; .ufo/waves/round-20/tools/verb-coverage.py:94-96",
+      "reproduction": {
+        "argv": ["/usr/bin/python", "-I", "-B", "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/count-c1.py", "--root", "/tmp/c1-invalid-utf8-final-96a18xcc", "--rev", "2e949793b8e3df450e6a78395639901aa737cc7c"],
+        "exit": 1,
+        "stderr": "",
+        "raw_evidence_contains_invalid_utf8": true,
+        "stdout_block": "C1Revision.md: Adversarial invalid-UTF-8 evidence"
+      },
+      "narrow_fix": "Read retained evidence blobs as bytes and strict-decode UTF-8 before parsing; keep any replacement decoding needed for prose separate from evidence JSON."
+    }
+  ],
+  "controls": {
+    "current_selftest": {
+      "argv": ["/usr/bin/python", "-I", "-B", "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-22/tools/count-c1.py", "--selftest"],
+      "exit": 0,
+      "finding": "counter_controls_clean",
+      "case_count": 23,
+      "failed_cases": [],
+      "not_covered": ["committed selected-revision helper execution", "list-nested refusal", "invalid UTF-8 evidence"]
+    },
+    "exact_path_vs_directory": {
+      "exact_file_paths": {"exit": 0, "count": "6/6", "rev": "36bba2239f36a9552e99f74bda4d9edae2189460"},
+      "directory_only": {"exit": 1, "count": "0/6", "rev": "56e4a82f6ecaf1044cf65e1a754d9f49c5a9bc52"},
+      "interpretation": "The earlier directory-prefix false positive was fixed in the current worktree by requiring exact citation membership (count-c1.py:127); current selftest includes directory_citation and passes."
+    },
+    "baseline_measurement": {"argv": "python3 -I -B .ufo/waves/round-22/tools/count-c1.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 7787fea4d6fd718726de92ed20759d11ce7b8b48", "exit": 1, "count": "0/6", "catalog_zero_count": 20},
+    "head_measurement": {"argv": "python3 -I -B .ufo/waves/round-22/tools/count-c1.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev HEAD", "exit": 1, "count": "1/6", "catalog_zero_count": 19, "bound_path": ".ufo/waves/round-22/evidence/c1/identify-godot.envelope.json"}
+  },
+  "verification_gaps": {
+    "lsp": "Unavailable: read xd://lsp returned no such tool; no status/references/definition/diagnostics request could be made.",
+    "runtime": "No REA/runtime invocation, target execution, device access, debugger attach, or remote connection.",
+    "installs": [],
+    "production_edits": false
+  }
+}

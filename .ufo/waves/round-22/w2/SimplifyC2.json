@@ -1,0 +1,34 @@
+{
+  "agent": "KaidokuR22R.SimplifyC2-6",
+  "claim": "R22-C2",
+  "target": ".ufo/waves/round-22/tools/count-c2.py",
+  "baseline": "7787fea4d6fd718726de92ed20759d11ce7b8b48",
+  "lane_head": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67",
+  "commands": [
+    {
+      "argv": ["python3", "-I", "-B", ".ufo/waves/round-22/tools/count-c2.py", "--selftest"],
+      "exit": 0
+    },
+    {
+      "argv": ["python3", "-I", "-B", ".ufo/waves/round-22/tools/count-c2.py", "--root", ".", "--rev", "7787fea4d6fd718726de92ed20759d11ce7b8b48"],
+      "exit": 1,
+      "accounted_count": 0,
+      "t2_total": 14
+    },
+    {
+      "argv": ["python3", "-I", "-B", ".ufo/waves/round-22/tools/count-c2.py", "--root", ".", "--rev", "HEAD"],
+      "exit": 0,
+      "accounted_count": 14,
+      "mismatched": []
+    }
+  ],
+  "findings": {
+    "frozen_wrong_branch": "meta.command compared to probe only; verb!=probe with meta==probe counted matched",
+    "tools_fix_present": "row probe != verb guard added vs frozen",
+    "residual_clarify": "compare meta.command to row verb not probe; remove unused import re",
+    "dead_branches": [],
+    "dead_imports": ["re"]
+  },
+  "patch_kind": "clarify_probe_association",
+  "tool_installs": []
+}

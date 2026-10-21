@@ -1,0 +1,35 @@
+{
+  "seat": "KaidokuR22R.DispositionInspectPacketFields-6",
+  "verb": "inspect-packet-fields",
+  "provider": "tshark-capture",
+  "baseline": "7787fea4d6fd718726de92ed20759d11ce7b8b48",
+  "lane_head": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67",
+  "cli_params": {
+    "kind": {"enum": ["protocols", "fields"], "default": "protocols"},
+    "protocol": {"type": "string|null", "minLength": 1, "maxLength": 8192, "default": null},
+    "query": {"type": "string", "maxLength": 8192, "default": ""},
+    "offset": {"type": "integer", "minimum": 0, "default": 0},
+    "limit": {"type": "integer", "exclusiveMinimum": 0, "default": 50},
+    "all": {"type": "boolean", "default": false, "maps_to": "limit:null"},
+    "non_contact": "every valid combination; no capture file, interface, serial or remote endpoint exists"
+  },
+  "probes": [
+    {"argv": "npx -y rea-agents@6.5.0 inspect-packet-fields --format json --full-output", "env": "REA_TSHARK_COMMAND unset", "exit": 1, "code": "capability_unavailable", "source": "frozen receipt .ufo/waves/round-22/evidence/c2/inspect-packet-fields.json + .run.json"},
+    {"argv": "… --kind fields --protocol tcp --query seq --format json --full-output", "env": "REA_TSHARK_COMMAND=relative/tshark", "exit": 1, "code": "capability_unavailable"},
+    {"argv": "… --format json --full-output", "env": "REA_TSHARK_COMMAND=/nonexistent/tshark", "exit": 1, "code": "capability_unavailable", "reason": "ENOENT realpath"},
+    {"argv": "… --format json --full-output", "env": "REA_TSHARK_COMMAND=/usr/bin/false", "exit": 1, "code": "execution_failure", "diagnostics": "exit_code 1; coreutils false banner in stdout (spawned, failed tshark@4 identity)"},
+    {"argv": "… --kind bogus --format json --full-output", "env": "none", "exit": 1, "code": "VALIDATION_ERROR", "note": "rejected at CLI arg-parse before provider"}
+  ],
+  "host": {"tshark": "absent", "capinfos": "absent", "dumpcap": "absent", "prlimit": "/usr/bin/prlimit", "REA_TSHARK_COMMAND": "not exported (.bashrc inventory)"},
+  "disposition_support": {
+    "frontier-blocked": "SUPPORTED via error:capability_unavailable (unset/relative/ENOENT) or error:execution_failure (/usr/bin/false); scoped to configuration control, not device/traffic availability",
+    "adjacent": "NOT SUPPORTED by absent-client control — adjacent requires ok:true operation; no absent client can yield ok-empty/ok-field"
+  },
+  "counter_verification": {
+    "at_HEAD": {"exit": 0, "accounted": "14/14", "this_verb_status": "matched"},
+    "at_baseline": {"accounted": "0/14", "this_verb_status": "unaccounted", "matches": "claims.json before_expected"},
+    "calibration_gap": "count-c2.py checks placement and observed independently; adjacent+error:* combination would report matched (semantic impossibility not counter-enforced)"
+  },
+  "recover_receipts": "not yet available — w2/RecoverReceipts.json absent; producer seat KaidokuR22R.RecoverReceipts-6 failed (retry budget exhausted, turn_rate_limit_exceeded)",
+  "installs": []
+}

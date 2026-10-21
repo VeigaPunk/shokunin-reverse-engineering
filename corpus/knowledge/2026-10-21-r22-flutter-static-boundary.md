@@ -24,3 +24,34 @@ The uncovered catalog surface is `identify-flutter-build`, selected in R22-C1. T
 | Static identity metadata | Do not infer runtime behavior or recovered Dart source |
 
 Counting command: `python3 -I -B .ufo/waves/round-22/tools/count-c1.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV>`. Baseline records and delivered measurements live under `.ufo/waves/round-22/verify/`; a mention without a bound record must not count.
+
+## Round-22 source qualification
+
+S054 supersedes S052's teaching clause after W2 `PrimaryAndroid.md`:
+the official ABI guide establishes the expected packaged-library path,
+not any REA record semantics. **Inference:** the claim about REA ABI fields
+is the lane's reading of its retained REA record, not a quotation or promise
+from Android documentation. The same seat's read-only ZIP listing found
+native libraries in this Godot APK despite the Flutter-specific `abis:[]`;
+see its exact command/output in `.ufo/waves/round-22/w2/PrimaryAndroid.json`.
+No package was installed or executed. The guide's page date is
+2026-05-15 UTC; a digest of one downloaded rendering does not pin every
+future rendering. S051/S053 and the exact parsed-negative observation remain
+unchanged; no positive Flutter/Dart result is added.
+
+## Current witness authority — round-22 correction
+
+S057 supersedes S053's use of the extracted copy as held-verb authority.
+The copy's contents remain accurate historical data, but current C1 does
+not count it: the witness is
+`.ufo/waves/round-22/evidence/c1/identify-godot.envelope.json`, preserving
+`ok:true`, exact `meta.command` and the direct Evidence record. A refused
+producer or mismatched command cannot become clean merely because a
+detached data record is retained. The final suite separately compares this
+envelope with the producing run's exact stdout and verifies the copy equals
+its data; that comparison is local consistency, not authentication.
+
+The complementary Saber observation is in
+`2026-10-21-r22-flutter-positive-dart-refusal.md`: static identification is
+partial-positive, while its Dart reader refuses. Neither observation
+changes the scope of the Godot negative or authorizes execution.

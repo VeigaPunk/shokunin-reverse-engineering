@@ -1,0 +1,27 @@
+{
+  "seat": "KaidokuR22R.C2Types-6",
+  "claim": "R22-C2",
+  "target": ".ufo/waves/round-22/tools/count-c2.py",
+  "file_sha_tag": "5EAE",
+  "baseline": "7787fea4d6fd718726de92ed20759d11ce7b8b48",
+  "environment": {"python": "3.14.8", "git": "2.56.0", "os": "linux-x86_64"},
+  "tool_installs": [],
+  "scratch_repos": ["/tmp/r22c2-repo-oj8g3vmy", "/tmp/r22c2-repo2-*"],
+  "findings": [
+    {"id": "F1", "severity": "high", "title": "ok-field uses Python ==: JSON true/false match 1/0 recursively",
+     "evidence": "cases 02,03,04,05 all exit 0 v0=matched on contradictory receipt/row",
+     "kind": "implementation_flaw"},
+    {"id": "F2", "severity": "medium", "title": "overflow literals (1e999/2e999 -> inf) enter envelope and match ok-field",
+     "evidence": "case 06 exit 0 matched (2e999 vs 1e999); literal Infinity token rejected (asymmetry)",
+     "kind": "implementation_flaw", "converges_with": "C2Json-6 F1"},
+    {"id": "F3a", "severity": "low", "title": "observed 'error:' (empty code) matches error.code ''", "evidence": "case 09 exit 0 matched", "kind": "implementation_flaw"},
+    {"id": "F3b", "severity": "low", "title": "ok-field:=5 empty dotted path matches data key ''", "evidence": "case 11 exit 0 matched", "kind": "implementation_flaw"},
+    {"id": "F4", "severity": "low", "title": "non-UTF8 receipt aborts whole run exit 2 unevaluable", "evidence": "case A exit 2 finding=unevaluable", "kind": "implementation_flaw", "converges_with": "C2Json-6 F3"},
+    {"id": "F5", "severity": "low", "title": "first HEADING match wins; exact-duplicate later sections ignored", "evidence": "cases C,D", "kind": "implementation_flaw", "converges_with": "C2Json-6 F4 (variant)"},
+    {"id": "F6", "severity": "insignificant", "title": "in-prefix directory receipt mislabeled receipt_outside_prefix", "evidence": "case J exit 1", "kind": "taxonomy_nit"}
+  ],
+  "error_path_verified_clean": ["error:0 vs int code", "ok:0 numeric", "error observed but ok true", "literal duplicate member", "int64 precision exact", "ok-empty vs dict", "1200-deep nesting"],
+  "fix": "json_same recursive comparator (bool via is, int/float unified, containers recurse) + parse_float finite guard; +14/-1 lines in count-c2.py",
+  "selftest": "not run this session; frozen fixtures do not cover F1-F3",
+  "report": ".ufo/waves/round-22/w2/C2Types.md"
+}

@@ -2746,3 +2746,29 @@ counters, rather than inferring separation from filenames.
 Planned (supersedes r21 queue): complete these frozen finite predicates and
 the new independent closure's admit/reject sample; retain all explicit
 R20/R21 residuals. Kaidoku/revenger overlap remains open, not waived.
+
+### Round-22 read-set / counter-authority correction
+
+Supersedes only the abbreviated `touches`/separability wording in frozen
+claims.json: C1 includes the new SOURCES/knowledge/map rows, evidence/c1,
+evidence/sources and the static PROVINCE section; C2 includes evidence/c2
+and the dispositions section. The old retained catalog and reviewed
+R20/R21 helper bytes are immutable shared measurement dependencies, not
+C2 data. Source and section partitions are checked explicitly by verify.py;
+cross-cell outputs except rev must equal their baselines. Common round
+bookkeeping is not claimed as independent domain data.
+
+Current C1 consumes original CLI envelopes only; copies cannot erase parent
+refusals. Both gates resolve trustworthy Git inputs; v2 selftest authority
+is frozen/expected-v2.json with a digest pinned in each executable. Old
+counter sources/v1 inputs are retained for exact original red reproductions.
+The original source-link intermediate and the envelope correction get
+separate positive/negative records; no old failure or fixture is overwritten.
+
+S051–S057 support this round's entry/source/identifier qualifications; own-work
+is permitted by CORPUS, but tier C alone is not admitted. Actual Saber work
+adds a partial Flutter positive and an inspect-dart-aot refusal, not a second
+held target. Debugger identifiers are corrected in the metric without
+claiming tracer ownership or execution. Final measured verdicts and source
+revision are recorded after the committed recount; no scalar/capability row
+is pre-claimed.

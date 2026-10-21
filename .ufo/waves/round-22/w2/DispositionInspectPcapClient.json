@@ -1,0 +1,73 @@
+{
+  "seat": "KaidokuR22R.DispositionInspectPcapClient-6",
+  "verb": "inspect-pcap-client",
+  "claim": "R22-C2",
+  "measured_rev": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67",
+  "row": {
+    "placement": "frontier-blocked",
+    "probe": "inspect-pcap-client",
+    "observed": "error:capability_unavailable",
+    "receipt": ".ufo/waves/round-22/evidence/c2/inspect-pcap-client.json",
+    "counter_status": "matched",
+    "counter_exit": 0,
+    "accounted_count": "14/14",
+    "counter_executed": "worktree .ufo/waves/round-22/tools/count-c2.py against HEAD committed PROVINCE.md and receipt; counter script itself was modified relative to HEAD"
+  },
+  "cli_surface": {
+    "usage": "rea inspect-pcap-client",
+    "args": "zero positionals, zero verb options; args schema properties empty, additionalProperties false",
+    "selection": "PATH fallback tshark then capinfos; absolute REA_TSHARK_COMMAND and REA_CAPINFOS_COMMAND overrides; no other env key referenced",
+    "sibling_contrast": ["inspect-packet-fields and inspect-packet-capture require absolute REA_TSHARK_COMMAND up front, provider_id tshark-capture; this verb PATH-falls back, provider_id pcap"],
+    "contact": "none by construction; resolves binaries and version-checks only"
+  },
+  "receipt_facts": {
+    "ok": false,
+    "error_code": "capability_unavailable",
+    "category": "unsupported_provider",
+    "provider_id": "pcap",
+    "operation": "inspect_pcap_client",
+    "details_reason": "Cannot run selected tool tshark: spawn tshark ENOENT",
+    "meta_command": "inspect-pcap-client",
+    "duration": "31ms",
+    "run_env_overrides": {}
+  },
+  "corroborating_probes": [
+    {
+      "kind": "explicit-false-client-control",
+      "env_overrides": {"REA_TSHARK_COMMAND": "/usr/bin/false", "REA_CAPINFOS_COMMAND": "/usr/bin/false"},
+      "exit": 1,
+      "error_code": "capability_unavailable",
+      "basis": "same error code/category; gate fires on how binary was selected, not on how absence arose"
+    },
+    {
+      "kind": "staged-gate-stub",
+      "env_overrides": {"REA_TSHARK_COMMAND": "/tmp/r22-pcap-stubs/tshark", "REA_CAPINFOS_COMMAND": "/usr/bin/false"},
+      "exit": 1,
+      "basis": "tshark passed, error blames /usr/bin/false at capinfos stage; tshark checked first, capinfos second"
+    },
+    {
+      "kind": "non-contact-mechanics-proof",
+      "env_overrides": {"REA_TSHARK_COMMAND": "/tmp/r22-pcap-stubs/tshark", "REA_CAPINFOS_COMMAND": "/tmp/r22-pcap-stubs/capinfos"},
+      "exit": 0,
+      "evidence_id": "ev_f55e48988fef49cb3d8981a371a45cd406bf440dcd521bc8cc5daa03369eba9e",
+      "normalized_client_fields": ["tshark_command", "tshark_source=environment", "tshark_version", "capinfos_command", "capinfos_source=environment", "capinfos_version"],
+      "limitations": ["Artifact identity is unavailable for this observation."],
+      "caveat": "mechanics demonstration on echo-only stubs; NOT a capability claim; stub banners accepted verbatim so no Wireshark-4.x validation occurs at this verb"
+    }
+  ],
+  "host_facts": {"tshark_on_path": false, "capinfos_on_path": false, "wireshark_packages": "none (pacman -Qs empty)"},
+  "verdict": {
+    "frontier_blocked_supported": true,
+    "adjacent_supported": false,
+    "tool_availability_supported": false,
+    "provenance_nuance": "production receipt used env_overrides {} = PATH-absence observation, not the explicit ADB-style /usr/bin/false control; row reason states observed cause precisely (ENOENT tshark), so calibration intact",
+    "gate_order": "tshark version gate before capinfos; capinfos genuinely unreached in production run"
+  },
+  "counter_divergence": {
+    "committed_HEAD_vs_frozen": "HEAD tools/count-c2.py includes probe==verb and --selftest; frozen/count-c2.py is older and lacks these",
+    "worktree_vs_HEAD": "worktree tools/count-c2.py is modified from HEAD: adds exact unique-heading validation, malformed-row rejection, type-sensitive JSON equality, recursion guards, revised finding/limit output, and selftest-root behavior",
+    "measurement_limit": "14/14 matched output was produced by the modified worktree script against HEAD's committed row and receipt; it is not an execution of the exact committed script"
+  },
+  "recover_receipts_json": "not yet available in .ufo/waves/round-22/w2/ (checked twice, last 13:08:07Z 2026-10-21); no verb-envelope review performed against it",
+  "tooling": [{"tool": "rea-agents", "version": "6.5.0", "channel": "npx cache", "reason": "contract-pinned CLI; no install performed"}]
+}

@@ -1,0 +1,36 @@
+{
+  "seat": "KaidokuR22R.SchemaDebugWithRizin-6",
+  "verb": "debug-with-rizin",
+  "rea_version": "6.5.0",
+  "target_executed": false,
+  "lane_head": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67",
+  "baseline": "7787fea4d6fd718726de92ed20759d11ce7b8b48",
+  "probes": [
+    {"argv": ["npx", "-y", "rea-agents@6.5.0", "debug-with-rizin", "--help"], "cwd": "/tmp", "exit": 0, "stdout_sha256": "325bd83f37e4ac92937986c3d985b30d1ee2ad99c9aadc6ae52f5755a0435d81", "stdout_bytes": 1046, "stderr": "bash time output only"},
+    {"argv": ["npx", "-y", "rea-agents@6.5.0", "debug-with-rizin", "--schema"], "cwd": "/tmp", "exit": 0, "stdout_sha256": "07361c89ac32cbc9fe0038ff523c2c24b5fb28268ecdd540ed4efa96c605982d", "stdout_bytes": 646, "stderr": ""},
+    {"argv": ["npx", "-y", "rea-agents@6.5.0", "--version"], "exit": 0, "stdout": "6.5.0"},
+    {"argv": ["rizin", "-v"], "exit": 0, "stdout": "Database must be a file\nrizin 0.8.2 @ linux-x86-64"},
+    {"argv": ["pacman", "-Q", "rizin"], "exit": 0, "stdout": "rizin 0.8.2-2"},
+    {"argv": ["tty"], "exit": 1, "stdout": "not a tty"}
+  ],
+  "schema": {
+    "args": {"path": "string minLength 1 (required)", "command": "string minLength 1 (required); source refine rejects \\r/\\n, not in --schema"},
+    "options": {"inferiorTty": "string minLength 1 (REQUIRED; help lists it under Options)", "backend": "string minLength 1 (optional, -D)"},
+    "additionalProperties": false
+  },
+  "launch_argv": ["${REA_RIZIN_COMMAND:-rizin}", "-N", "-0", "-d", "-R", "stdout=<tty>", "-R", "stderr=<tty>", "-e", "dbg.exitkills=false", "[-D <backend>]", "<resolved_path>"],
+  "effects": ["mutatesTarget", "mutatesSession", "executesForeignCode", "writesFilesystem", "launchesProcess", "accessesNetwork", "changesUiState", "mayDiscardData", "idempotent:false"],
+  "limits": {"MAX_SESSIONS": 8, "MAX_PENDING_COMMANDS": 16, "FRAME_TIMEOUT_MS": 120000, "STARTUP_TIMEOUT_MS": 30000, "CLEANUP_COMMAND_TIMEOUT_MS": 1000, "MAX_FRAME_BYTES": 16777216, "MAX_COMMAND_OUTPUT_BYTES": 16777216, "MAX_QUEUED_FRAME_BYTES": 4194304, "MAX_QUEUED_FRAMES": 4096, "MAX_COMMAND_FRAMES": 4096, "MAX_RECENT_FRAME_BYTES": 16384, "MAX_DIAGNOSTIC_BYTES": 65536},
+  "emitted_operation": "rizin_debug_command",
+  "predicate_type": "rea.debugger.command-observation",
+  "counter_expected_operation": "debug_with_rizin",
+  "bind_probe": {
+    "rizin_debug_command": {"finding": "evidence_unbound", "exit": 1},
+    "debug_with_rizin": {"finding": "evidence_bound", "exit": 0},
+    "gdb_console(debug-with-gdb)": {"finding": "evidence_unbound", "exit": 1}
+  },
+  "c1_structurally_uncountable": ["debug-with-rizin", "debug-with-gdb"],
+  "c1_ceiling_without_counter_change": "4/6",
+  "prerequisites": {"linux": "met", "proc": "met", "rizin": "/usr/bin/rizin 0.8.2-2", "inferior_tty_chardev": "unmet in agent shell (not a tty)", "ptrace_scope": "unknown", "contract_admission_for_target_execution": "forbidden this wave"},
+  "installs": []
+}

@@ -2482,3 +2482,66 @@ linkage and verb/probe equality, with subprocess self-invocations over
 independently expected fixtures. QUALITY29–30 and lesson round22 mine
 the defects; earlier rows/knowledge remain untouched. Final measurements
 are recorded separately at their committed source revision.
+
+### Round-22 lifecycle and source qualifications
+
+Correction to the paragraph above that said the parent failure terminated
+every seat: Main later established only that no KaidokuR22.* seats were live;
+children do not necessarily die with their parent. The per-child cause is
+therefore unknown, not universally proved parent-death. Preserve the initial
+account as superseded evidence and use `wave1-terminal-correction.json`;
+any late W1 report is a completed seat, never discarded.
+
+New recovery W2 accepted64 seats on try6 after five whole-wave job-cap
+refusals; the93 lost/reportless W1 seats are never replaced. The one scribe
+and three executors then reported Haiku429 and Codex-capacity failures;
+final per-seat cutoffs and outcomes are retained before landing the report.
+
+W2 PrimaryAndroid found that S052's REA-record clause is the lane's
+inference, not Android text. S054 appends the narrower source statement;
+the knowledge entry adds a named qualification and S052 is not rewritten.
+SimplifyC1's single binding pass removes duplicate work; SimplifyC2's
+independent alias reproduction and docstring cleanup preserve the predicate.
+Both belong to the same C1/C2 work, not additional axis claims.
+
+### Round-22 corrected read set and final source authority
+
+Correction to `claims.json:36` and its `touches` shorthand: C1 necessarily
+owns the added SOURCES rows, the new knowledge/map rows, evidence/c1 and
+evidence/sources, and the static-ground PROVINCE section. Its unchanged
+retained catalog and reviewed R20/R21 helpers are measurement dependencies.
+C2 owns evidence/c2 and only the dispositions PROVINCE section. The frozen
+declaration stays unchanged; verify.py applies these actual data partitions,
+compares full cross outputs except rev, and checks the province partition.
+Common lesson/log/score bookkeeping is not a third claim. This resolves
+CriticCausal's read-set record defect without pretending the original
+sentence was complete.
+
+W2 CriticQuality exposed detached-copy refusal laundering; C1 now requires
+the original CLI envelope/exact command/direct record and exact file path.
+Typed producer/meta/nested refusals, duplicate source ids, invalid UTF-8,
+unreviewed helper bytes and redirected Git inputs cannot create a witness.
+Operation aliases are source-grounded by S056, never runtime authorization.
+C2's success/error branches now distinguish JSON boolean/numeric values,
+finite/overflowing numbers, malformed encodings and actual table sections;
+field/code agreement is explicitly not semantic reason or availability proof.
+QUALITY31–32 capture the grounded lessons.
+
+The v2 independent program/dependency digests were frozen in
+`frozen/expected-v2.json` before the final demonstration; manifest SHA
+`1abdd9df347610a77f01afbe157c7fdbfb4c90bc2e26b6b3ecebd08fbd930bb8`
+is enforced by both selftest modes. V1 controls and counter sources remain
+unchanged. The final producer records the original named false accepts,
+the source-link intermediate green, a genuine positive retained by old/new
+code, and the same input with only the original parent changed to refusal.
+Those are isolated controls, not fabricated REA observations.
+
+New actual carrier work: W2 found the originally selected Saber APK after
+earlier incomplete searches. L1 reverified the declared full digest and ran
+identify-flutter-build and inspect-dart-aot anew. The first succeeded with
+partial coverage; the second actually refused missing dynamic snapshot
+symbols. S055 and the new positive/refusal knowledge entry preserve both;
+no earlier fl.json output was reused. S054 and S057 qualify source/copy
+authority without rewriting prior rows. The finite held target remains
+one verb unless the committed recount says otherwise; no Dart recovery,
+debugger, hardware or dynamic-ownership capability is claimed.

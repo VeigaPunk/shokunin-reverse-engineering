@@ -1,0 +1,57 @@
+{
+  "seat": "KaidokuR22R.DispositionInspectPacketCapture-6",
+  "verb": "inspect-packet-capture",
+  "claim": "R22-C2",
+  "baseline": "7787fea4d6fd718726de92ed20759d11ce7b8b48",
+  "head_observed": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67",
+  "row": {
+    "verb": "inspect-packet-capture",
+    "placement": "frontier-blocked",
+    "probe": "inspect-packet-capture",
+    "observed": "error:capability_unavailable",
+    "receipt": ".ufo/waves/round-22/evidence/c2/inspect-packet-capture.json",
+    "grammar_valid": true,
+    "receipt_matched": true,
+    "duplicate": false
+  },
+  "counter": {
+    "command": "python3 -I -B .ufo/waves/round-22/tools/count-c2.py --root <LANE> --rev <REV>",
+    "head": {"accounted_count": 14, "mismatched": [], "exit": 0},
+    "baseline": {"accounted_count": 0, "exit": 1},
+    "note": "tools/ worktree copy adds probe==verb and --selftest vs frozen/; row passes both"
+  },
+  "probe": {
+    "argv": ["npx", "-y", "rea-agents@6.5.0", "inspect-packet-capture", "<LANE>/.ufo/waves/round-22/evidence/c2/empty.pcap", "--fields", "frame.number", "--format", "json", "--full-output"],
+    "env_overrides": {},
+    "recorded_exit": 1,
+    "recorded_stderr": "",
+    "rerun": {"exit": 1, "stdout_vs_receipt": "byte-identical", "stderr_bytes": 0},
+    "pcap_sha256": "acc530668c8bc60b2d229281130b1899bfc81d70fdada5c34b3236c628f739c8",
+    "pcap_note": "24-byte pcap global header only, zero packet records, linktype 1"
+  },
+  "schema": {
+    "required_arg": "path (local capture)",
+    "required_option": "--fields (array 1-1024, items 1-8192 chars; frame.number always included)",
+    "optional": ["--display_filter (1-8192|null)", "--decode_as (<=1024)", "--packet_limit (>0 <=2147483647|null)", "--two_pass (bool, default true)", "--match_offset (0..2^53-1, default 0)", "--match_limit (>0, default 50)", "--all_matches (bool, default false)"],
+    "non_contact": "entire surface is local-file inspection plus local TShark client; no device/remote/target parameter exists"
+  },
+  "absent_client_controls": [
+    {"env": "REA_TSHARK_COMMAND unset", "exit": 1, "ok": false, "code": "capability_unavailable", "reason": "Supply absolute REA_TSHARK_COMMAND for TShark 4.x."},
+    {"env": "REA_TSHARK_COMMAND=/nonexistent/kaidoku-r22-tshark", "exit": 1, "ok": false, "code": "capability_unavailable", "reason": "ENOENT realpath"},
+    {"env": "REA_TSHARK_COMMAND=/usr/bin/false", "exit": 1, "ok": false, "code": "execution_failure", "reason": "provider spawned the binary; diagnostics exit_code 1 with GNU false banner on stdout"},
+    {"env": "sibling inspect-pcap-capture REA_TSHARK_COMMAND=/usr/bin/false", "exit": 1, "ok": false, "code": "capability_unavailable", "reason": "version-probe gate: selected tool cannot report its version"}
+  ],
+  "disposition_support": {
+    "frontier_blocked": "supported by env-unset or nonexistent-path control preserving error:capability_unavailable; /usr/bin/false does NOT reproduce that code for tshark-capture (yields execution_failure) and would observed_mismatch if paired with the current row value",
+    "adjacent": "unsupported: every absent-client path yields ok:false; ok-empty/ok-field require ok:true; no client-free success path exists in this verb",
+    "device_availability": "not applicable: verb has no device leg; control tests client selection only"
+  },
+  "recover_receipts": "not yet available - .ufo/waves/round-22/w2/RecoverReceipts.json absent at review time",
+  "env_observed": {
+    "REA_TSHARK_COMMAND": "unset in this shell (env|grep ^REA_ lists ADB/APKTOOL/BINWALK/JADX/PWNTOOLS/UNBLOB/WAKARU only)",
+    "host_tools": "command -v tshark/capinfos/dumpcap: absent; /usr/bin/prlimit present"
+  },
+  "verdict": "No actionable defect for this verb: row is grammar-valid, receipt-matched, honest, and counter-matched at HEAD (14/14 exit 0) and unaccounted at baseline (exit 1). Informational: /usr/bin/false control maps to execution_failure for tshark-capture, unlike pcap/adb providers.",
+  "installs": "none; npx cache hit for rea-agents@6.5.0 [INFERENCE from ~1s runtime + PROVINCE-recorded cache dir]",
+  "constraints": "no device/target/hook, no remote, no config/account inspection, no lane writes outside w2 report + .json"
+}

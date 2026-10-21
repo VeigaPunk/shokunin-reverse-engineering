@@ -1,0 +1,66 @@
+{
+  "seat": "KaidokuR22R.DispositionInstrumentWithFrida-6",
+  "verb": "instrument-with-frida",
+  "date": "2026-10-21",
+  "cli": "rea-agents@6.5.0",
+  "disposition_supported": "adjacent",
+  "frontier_blocked_supportable": false,
+  "absent_client_control": "unsupported: no REA_FRIDA* env key exists; provider is vendored in-process frida npm module; verify artifact frida-unsupported-env.json shows REA_FRIDA_PYTHON=/usr/bin/false did not disable provider (list-frida-devices exit 0, devices enumerated)",
+  "probes": [
+    {
+      "argv": ["npx", "-y", "rea-agents@6.5.0", "instrument-with-frida", "attach", "abc", "--script", "x", "--format", "json", "--full-output"],
+      "exit": 1,
+      "observed": "error.code=invalid_request",
+      "issue": "attach mode needs a positive integer process ID.",
+      "contact": "none (CLI input validation)"
+    },
+    {
+      "argv": ["npx", "-y", "rea-agents@6.5.0", "instrument-with-frida", "attach", "2147483647", "--format", "json", "--full-output"],
+      "exit": 1,
+      "observed": "error.code=invalid_request",
+      "issue": "Provide exactly one of --script or --script-file.",
+      "contact": "none (CLI input validation)"
+    },
+    {
+      "argv": ["npx", "-y", "rea-agents@6.5.0", "instrument-with-frida", "attach", "2147483647", "--device-id", "kaidoku-r22-nonexistent", "--script", "x", "--format", "json", "--full-output"],
+      "exit": 1,
+      "observed": "error.code=capability_unavailable",
+      "reason": "Device not found",
+      "duration": "1057ms",
+      "contact": "local device enumeration only (DEVICE_LOOKUP_TIMEOUT_MS=1000); no remote/device I/O"
+    },
+    {
+      "argv": ["npx", "-y", "rea-agents@6.5.0", "instrument-with-frida", "spawn", "/kaidoku-r22-nonexistent-program", "--script", "x", "--format", "json", "--full-output"],
+      "exit": 1,
+      "observed": "error.code=capability_unavailable",
+      "reason": "Unable to find executable at '/kaidoku-r22-nonexistent-program'",
+      "duration": "11ms",
+      "contact": "refusal before exec; nothing ran"
+    },
+    {
+      "argv": ["npx", "-y", "rea-agents@6.5.0", "instrument-with-frida", "attach", "1", "--script", "x", "--token", "foo", "--format", "json", "--full-output"],
+      "exit": 1,
+      "observed": "error.code=VALIDATION_ERROR (CLI arg envelope, not REA analysis envelope)",
+      "issue": "Remote credentials and connection options require remoteAddress",
+      "contact": "none (arg schema validation)"
+    }
+  ],
+  "wave1_receipt": {
+    "path": ".ufo/waves/round-22/evidence/c2/instrument-with-frida.run.json",
+    "argv_tail": ["attach", "2147483647", "--script", "// inert", "--format", "json", "--full-output"],
+    "exit": 1,
+    "observed": "error.code=capability_unavailable",
+    "reason": "Unable to find process with pid 2147483647",
+    "pid_max_host": 4194304,
+    "note": "impossible PID > pid_max; refusal at device.attach on local session; script never loaded (loadScript runs post-startSession per FridaInstrumentationService.js:149-180)"
+  },
+  "counter_check": {
+    "argv": ["python3", "-I", "-B", ".ufo/waves/round-22/tools/count-c2.py", "--root", ".", "--rev", "HEAD"],
+    "rev": "2ee3d9f",
+    "exit": 0,
+    "accounted_count": 14,
+    "mismatched": [],
+    "instrument_with_frida": "matched"
+  },
+  "recover_receipts": "ABSENT: .ufo/waves/round-22/w2/RecoverReceipts.json does not exist; envelope review deferred"
+}

@@ -1,0 +1,57 @@
+{
+  "seat": "KaidokuR22R.DispositionStartAdbActivity-6",
+  "verb": "start-adb-activity",
+  "baseline": "7787fea4d6fd718726de92ed20759d11ce7b8b48",
+  "lane_head_observed": "2ee3d9f",
+  "control": "REA_ADB_PATH=/usr/bin/false explicit unavailable-client control; not a device observation",
+  "probes": [
+    {
+      "argv": ["env", "REA_ADB_PATH=/usr/bin/false", "npx", "-y", "rea-agents@6.5.0", "start-adb-activity", "--help"],
+      "exit": 0,
+      "stdout_summary": "usage: rea start-adb-activity <serial> <action> [options]; options --data-uri, --component, --extra (repeatable type:key:value); globals incl. --schema, --format, --full-output",
+      "stderr": ""
+    },
+    {
+      "argv": ["env", "REA_ADB_PATH=/usr/bin/false", "npx", "-y", "rea-agents@6.5.0", "start-adb-activity", "--schema"],
+      "exit": 0,
+      "stdout_summary": "args{serial:string minLength1 required, action:string minLength1 required, additionalProperties:false}; options{data-uri,component,extra:array items string minLength1 default [], additionalProperties:false}",
+      "stderr": ""
+    },
+    {
+      "argv": ["env", "REA_ADB_PATH=/usr/bin/false", "npx", "-y", "rea-agents@6.5.0", "schema", "start-adb-activity"],
+      "exit": 0,
+      "stdout_summary": "COMMAND_NOT_FOUND error body; 'schema' is not a command",
+      "stderr": ""
+    },
+    {
+      "argv": ["env", "REA_ADB_PATH=/usr/bin/false", "npx", "-y", "rea-agents@6.5.0", "start-adb-activity", "kaidoku-r22r-review-no-device", "android.intent.action.VIEW", "--format", "json", "--full-output"],
+      "exit": 1,
+      "stdout": "{\"ok\":false,\"error\":{\"code\":\"capability_unavailable\",\"category\":\"unsupported_provider\",\"message\":\"The selected adb binary did not report a usable version.\",\"retryable\":false,\"remediation\":{\"action\":\"The selected adb binary did not report a usable version.\"},\"details\":{\"provider_id\":\"adb\",\"operation\":\"start_adb_activity\",\"reason\":\"The selected adb binary did not report a usable version.\"}},\"meta\":{\"command\":\"start-adb-activity\",\"duration\":\"6ms\"}}",
+      "stderr": "",
+      "note": "reproduces frozen receipt .ufo/waves/round-22/evidence/c2/start-adb-activity.json except duration 5ms->6ms and sentinel serial"
+    },
+    {
+      "argv": ["env", "REA_ADB_PATH=/usr/bin/false", "npx", "-y", "rea-agents@6.5.0", "start-adb-activity", "x", "y"],
+      "exit": 1,
+      "stdout_summary": "bare error object (code/category/message/retryable/remediation/details); NO ok field, NO meta object",
+      "stderr": "",
+      "note": "without --format json --full-output the output is not a counter-conforming envelope"
+    },
+    {
+      "argv": ["env", "REA_ADB_PATH=/usr/bin/false", "npx", "-y", "rea-agents@6.5.0", "start-adb-activity", "x", "y", "--format", "json"],
+      "exit": 1,
+      "stdout_summary": "bare JSON error object; NO ok field, NO meta object",
+      "stderr": "",
+      "note": "--full-output is load-bearing for the ok/meta envelope the C2 counter requires"
+    }
+  ],
+  "row_verdict": {
+    "row": "| start-adb-activity | frontier-blocked | start-adb-activity | error:capability_unavailable | .ufo/waves/round-22/evidence/c2/start-adb-activity.json | Explicit false-client version refusal; no activity start or device mutation |",
+    "head_line": "PROVINCE.md:197 at HEAD",
+    "counter_status": "matched",
+    "placement_supported": "frontier-blocked",
+    "placement_not_supported": "adjacent (no non-contact ok outcome exists for this device-mutating verb; lane never supplies an ownership-refusal reading)",
+    "never_supports": "actual device availability or adb client usability"
+  },
+  "recover_receipts_json": "absent: .ufo/waves/round-22/w2/ contained only swarm-registry.json at review time; not yet available for row-grammar review"
+}

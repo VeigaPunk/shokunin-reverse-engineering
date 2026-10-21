@@ -178,7 +178,12 @@ they do not absorb revenger's contested runtime province. ADB rows are explicit
 device absence or of the real adb binary. No device operation was dispatched.
 The Frida enumeration provider was available; the missing impossible PID
 does not establish provider absence. No real process was attached or hooked.
-Each producing argv/env/stdout/stderr/exit is beside its receipt in a `.run.json`.
+Run files retain producing argv/stdout/stderr/exit. The five ADB overrides
+are explicit; the manual missing-Cutter retry has no env_overrides member,
+so its whole ambient environment is not claimed captured. The counter grades
+only the stated observed field/code, not reason/placement semantics or all
+enumeration contents. Those remain manual admission decisions; the final
+suite separately compares receipts with run stdout/argv/exit and ADB overrides.
 
 | verb | placement | probe | observed | receipt | reason |
 |---|---|---|---|---|---|
@@ -199,7 +204,15 @@ Each producing argv/env/stdout/stderr/exit is beside its receipt in a `.run.json
 
 ### Round-22 narrowly added static ground
 
-`identify-flutter-build` successfully parsed the selected Godot APK as a
-negative (not a refusal); `corpus/knowledge/2026-10-21-r22-flutter-static-boundary.md`
-pins its target, id, argv and limits. Positive Flutter/Dart recovery and the
-remaining T1 debugger/signal verbs stay unclaimed unless separately demonstrated.
+`identify-flutter-build` parsed Godot as a negative and Saber as Flutter-positive
+with **partial** coverage; both observations and target identities are in
+`corpus/knowledge/2026-10-21-r22-flutter-static-boundary.md` and
+`corpus/knowledge/2026-10-21-r22-flutter-positive-dart-refusal.md`.
+`inspect-dart-aot` refused Saber's missing dynamic snapshot symbols and is not
+held. Identification does not imply source recovery or runtime observation.
+
+`debug-with-gdb` and `debug-with-rizin` remain **Adjacent and not held** in this
+round; replacement work performed no debugger/target execution. Correct aliases in the
+counter are grounded in REA6.5.0 source and synthetic controls only; they grant
+no ownership or authorization to run a tracer. The sigrok verbs remain
+unexercised; no recording decode or hardware contact is claimed.

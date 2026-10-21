@@ -1,0 +1,28 @@
+{
+  "verb": "inspect-adb-window",
+  "claim": "R22-C2",
+  "reviewer": "KaidokuR22R.DispositionInspectAdbWindow-6",
+  "recover_receipts_json": "absent",
+  "row": {
+    "placement": "frontier-blocked",
+    "probe": "inspect-adb-window",
+    "observed": "error:capability_unavailable",
+    "receipt": ".ufo/waves/round-22/evidence/c2/inspect-adb-window.json",
+    "grammar_check": "matched"
+  },
+  "verdict": "row correctly formed; absent-client control supports frontier-blocked, not adjacent and not a device-availability claim",
+  "cli": {
+    "usage": "rea inspect-adb-window <serial>",
+    "schema": {"serial": {"type": "string", "minLength": 1, "required": true}, "additionalProperties": false},
+    "non_contact_env": {"REA_ADB_PATH": "/usr/bin/false"},
+    "valid_serial_example": "kaidoku-r22-no-device"
+  },
+  "observed_runs": [
+    {"argv": "npx -y rea-agents@6.5.0 inspect-adb-window --help", "exit": 0},
+    {"argv": "npx -y rea-agents@6.5.0 inspect-adb-window --schema", "exit": 0},
+    {"argv": "REA_ADB_PATH=/usr/bin/false npx -y rea-agents@6.5.0 inspect-adb-window kaidoku-r22-no-device --format json --full-output", "exit": 1, "stdout_code": "capability_unavailable", "stderr": ""},
+    {"argv": "REA_ADB_PATH=/usr/bin/false npx -y rea-agents@6.5.0 inspect-adb-window --format json --full-output", "exit": 1, "stdout_code": "VALIDATION_ERROR", "note": "serial required; validation precedes provider gate"}
+  ],
+  "residual": ["count-c2 reads via git show <REV>: receipts and PROVINCE row must be committed at measured revision"],
+  "blockers": []
+}

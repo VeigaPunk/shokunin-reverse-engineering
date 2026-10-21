@@ -1,0 +1,38 @@
+{
+  "seat": "KaidokuR22R.SchemaDecodeSignalRecording-6",
+  "verb": "decode-signal-recording",
+  "rea_version": "6.5.0",
+  "operation": "decode_signal_recording",
+  "counter_operation_match": true,
+  "held": false,
+  "host_ready": false,
+  "blockers": ["sigrok-cli absent (exit 127)", "libsigrokdecode absent", "REA_SIGROK_COMMAND unset", "pacman transactions paused; no install"],
+  "predicted_outcome_if_run": {"code": "capability_unavailable", "phase": "configuration", "counter": "evidence_refused", "basis": "INFERENCE from source"},
+  "commands": [
+    {"argv": ["npx", "-y", "rea-agents@6.5.0", "decode-signal-recording", "--help"], "exit": 0, "stdout_sha256": "6134b1b24508f23c12aeea0664ab7b919b9b024116bbfb5c04927c591001133d"},
+    {"argv": ["npx", "-y", "rea-agents@6.5.0", "decode-signal-recording", "--schema"], "exit": 0, "stdout_sha256": "3631c903bcee3d9f0c10ff10d70221fda28e0756b9c7ebd67f912e6a6ad85f61"},
+    {"argv": ["npx", "-y", "rea-agents@6.5.0", "decode-signal-recording", "--schema", "--format", "json"], "exit": 0, "stdout_sha256": "baf2134dfe90d819b3fee2158c87add7ebe5e90b045350f26d33506c65fdbc8c"},
+    {"argv": ["sigrok-cli", "--version"], "exit": 127, "stderr": "error: command not found: sigrok-cli"},
+    {"argv": ["prlimit", "--version"], "exit": 0, "stdout": "prlimit from util-linux 2.42.4"},
+    {"argv": ["pacman", "-Qi", "sigrok-cli"], "exit": 1},
+    {"argv": ["pacman", "-Qi", "libsigrokdecode"], "exit": 1},
+    {"argv": ["pacman", "-Si", "sigrok-cli"], "exit": 0, "stdout_selected": "Repository: extra; Version: 0.7.2-3"}
+  ],
+  "input_limits": {
+    "path": "required; CLI resolve() to absolute",
+    "decoders": "required string 1..8192, no NUL",
+    "input_format": "string 1..8192 no NUL | null (default null = autodetect)",
+    "annotations": "string 1..8192 no NUL | null (default null)",
+    "line_offset": "int >= 0, default 0",
+    "line_limit": "int > 0 | null, default 50; CLI --all_lines -> null, mutually exclusive",
+    "selector_budget_utf8_bytes": 32768,
+    "schema_hidden_constraints": ["no-NUL refine", "32 KiB selector budget", "line_limit default 50"]
+  },
+  "runtime_limits": {"input_bytes": 33554432, "output_bytes": 4194304, "command_timeout_ms": 30000, "address_space_bytes": 1073741824, "file_bytes": 67108864, "cpu_seconds": 30, "core": 0, "max_concurrent_decodes": 1},
+  "effects": {"mutatesTarget": false, "mutatesSession": true, "writesFilesystem": true, "launchesProcess": true, "accessesNetwork": false, "changesUiState": false, "mayDiscardData": false, "executesForeignCode": false, "mutatesDevice": false, "idempotent": true},
+  "provider": {"id": "sigrok-recording", "version": "sigrok-cli@0.7.2"},
+  "calibration_gap": "exit-0 empty decode (output_window.total_lines 0) binds and would count under count-c1.py; no C1 falsifier excludes it",
+  "lane_head": "2ee3d9f51c6a995d1aefe48f6a44cfd08d492d67",
+  "claim_baseline": "7787fea4d6fd718726de92ed20759d11ce7b8b48",
+  "installs": []
+}

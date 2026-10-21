@@ -68,6 +68,7 @@ A row is written when its file exists, never before.
 | `knowledge/2026-10-16-l8-01-6p4-symmetry-battery` | REA 6.4.0 MCP surface (170-name tools/list) with the six 6.5-only names absent and per-call typed-refused (`-32602`, `Tool <name> not found`: `inspect_go_binary`, `inspect_rust_binary`, `inspect_electron_fuses`, `inspect_sqlite_database`, `search_bytes`, `inspect_with_objdump`); live `inspect_binary_layout` control RESULT; per-name A6 corroboration (6/6), six-of-37 scope | REA 6.4.0 subprocess battery; round-8 `receipts/leg-1..10.md` + `leg-2-tools.txt` + `CB6.md:12` |
 | Static tool verbs (REA 6.5.0, round 20) | `2026-10-20-r20-wasm-interfaces`, `2026-10-20-r20-rizin-command-observation`, `2026-10-20-r20-objdump-architecture-list` | held — first runs of `inspect-wasm-artifact` (4 shipped modules, WABT 1.0.42) and `compare-wasm-interfaces` (synthetic changed pair, distinct-module pair, identical control); `execute-rizin-command` on jq/libjq/PE (unrestricted shell-capable surface, read-only info commands only); `list-objdump-architectures` (= host `objdump -i`, subject null) plus `inspect-with-objdump disassemble` on jq; Harmony projection is mapped under Archives & packages |
 | Static Flutter APK boundary (round 22) | `2026-10-21-r22-flutter-static-boundary` | held narrowly — REA6.5.0 identify-flutter-build parsed one pinned Godot APK as non-Flutter; no positive Dart/source-recovery/runtime claim from this negative |
+| Partial Flutter positive and Dart refusal (round 22) | `2026-10-21-r22-flutter-positive-dart-refusal` | held narrowly — Saber identify-flutter-build succeeds with partial coverage; inspect-dart-aot refuses missing dynamic snapshot symbols and is not counted |
 ## Knowledge
 
 | entry | topic | source | verified-at |
@@ -154,6 +155,7 @@ A row is written when its file exists, never before.
 | `2026-10-16-l8-01-6p4-symmetry-battery` | REA 6.4.0 symmetry battery, 10/10: version exact, 170 tools, six 6.5-only verbs typed-refused, six absences, jq control RESULT; zero config drift unproven | rea-agents@6.4.0 live MCP; `.ufo/waves/luna-round-8/receipts/leg-1.md:7,10`; `leg-2.md:9`; `leg-3.md:22`; `leg-4.md:13`; `leg-5.md:9`; `leg-6.md:11`; `leg-7.md:13`; `leg-8.md:10`; `leg-9.md:9-14`; `leg-10.md:15,24`; `MANIFEST.txt:1-9` | 2026-10-16 |
 | `2026-10-20-r19-go125-toolchain-replay` | Go 1.25.0 toolchain artifact holdout: vet's H1-only Invalid index 13902080, seven silent controls; frozen mechanism rule confirmed, full read-list compare 7/8 | S038 carrier provenance, S035/S023/S003 mechanism, round-19 bound logs | 2026-10-20 |
 | `2026-10-21-r22-flutter-static-boundary` | Parsed non-Flutter APK negative versus refusal; ABI/release-documentation limits; no runtime or source-recovery claim | S051–S053, bound retained REA6.5.0 identify_flutter_build record | 2026-10-21 |
+| `2026-10-21-r22-flutter-positive-dart-refusal` | One pinned Flutter-positive partial result versus separate Dart-symbol refusal; no source recovery/runtime claim | S054/S055; complete retained original CLI envelopes and L1 producing argv/exit | 2026-10-21 |
 ## Lessons
 
 | entry | round | gist |
