@@ -2365,3 +2365,31 @@ Round 20 remains admitted and is not redone.
   are not replaced. Final measurements and terminal seat records are appended
   after the stable source commit, never inferred from unrun checks.
 
+### Round-21 measured continuation
+
+At V=`a75c3c67e4e658a232e1842ab1aceb383b711269`,
+`python3 -I -B .ufo/waves/round-21/verify.py --root <LANE> --before
+2dd430cb6bcad60ff4db720c052074f1f75eecbc --after V` exited0; all13 declared
+command exits matched (`verify/summary.json` and per-command raw records).
+R21-C1 false-clean9→0, passed3/12→12/12; R21-C2 false-clean5→0,
+uncaught-crash1→0, passed14/20→20/20. The old nineteen R20-C3 pairs remain
+matches with equal retained-log digests; retrospective only. Separate inert
+positive/decoy metadata controls pass without any C3 files. Frozen-input
+mutation exits2 `snapshot_tampered`; self-invocation tests keep finding ids.
+
+No-harm (`verify/no-harm.json`) keeps1134 prior files identical, map102/102,
+cited rules17/17 and old25 QUALITY rows; sources48→50 with old48 rows identical
+(`verify/source-rows.json`, `source-integrity.json`). Both source census
+invocations exit0 with the carried W04 scope warnings. The five historical
+verb targets retain exact-record witnesses,133/153 mentions. No capability
+row or province surface is added. SHONEN stays author-asserted `[~]`;
+independent current-round admission and admit/reject sampling are not supplied
+by lane-dispatched seats.
+
+W1 terminal evidence (`wave1-terminal.json`, `wave1-outcomes.json`):64 seats,
+26 reports after byte-exact ScoutCatalogBytes misroot relocation,38 without
+reports and all38 causes retained. Nineteen terminal errors and nineteen
+aborts are distinct; dead seats are not replaced. W2 is a fresh68-item
+post-build attack wave, not a retry of dead identities; its first whole
+dispatch was job-cap refused and its unchanged second dispatch succeeded.
+

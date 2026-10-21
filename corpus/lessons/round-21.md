@@ -36,3 +36,74 @@ Candidate rejection rules frozen with the claims: reject a matching id/operation
 - R20 C3 remains nineteen exact-artifact outcome-held-out forecasts, not general Go-version prediction. This round's replay of those observations is retrospective regression, not new prediction. Pathless objdump subject:null, synthetic Harmony, and later objdump OOM remain explicit boundaries.
 
 No native carrier, REA producer, provider probe, account/configuration, host package/service/boot, or secret material is in this round's planned execution. No tool installation is required.
+
+## Exercised Gate decisions — recovery integration
+
+The coordinator retained the predecessor's frozen declaration, fixture contract,
+source rows and lesson after reopening both official sources. It discarded no
+claimed result: the predecessor had run no implementation. The three external
+worktrees remain unused after all executor seats died; no file from them is
+credited. Stable measured source V=`a75c3c67e4e658a232e1842ab1aceb383b711269`.
+
+- **Admit within scope:** valid same-record/wrapped Evidence, pathless
+  architecture listing with its exact parameter, bounded-null observation,
+  typed nullable EOF and kind/index match with different phase/va.
+- **Reject:** cross-record/prose id-operation association, typed execution
+  refusal/could-not-evaluate envelopes, wrong objdump operation parameter.
+  Unsupported/malformed/duplicate-member JSON is unevaluable (exit2), not an
+  admitted success. Both well-formed asymmetric-null outcomes remain mismatches
+  (exit1); naked null is unevaluable rather than bounded silence.
+- **Execution evidence:** `.ufo/waves/round-21/verify/summary.json`, producer
+  `python3 -I -B .ufo/waves/round-21/verify.py --root <LANE> --before
+  2dd430cb6bcad60ff4db720c052074f1f75eecbc --after V`, exit0,13/13 expected exits.
+  Each child record retains producing argv/stdout/stderr and measured revision.
+- **Shown able to fail:** same frozen C1 battery at B exits1 with nine false
+  clean accepts, at V exits0 with all twelve expected decisions; C2 at B exits1
+  with five false cleans and one `KeyError: 'index'`, at V exits0 with all
+  twenty expected decisions. See `verify/before-C1.json`, `before-C2.json`,
+  `after-C1.json`, `after-C2.json`. Expectations/inputs are the same frozen
+  Git blobs; only each claim's selected validator changes.
+- **R20-SEP current authority:** `verify/isolated-without-C3.json` shows the
+  C1-owned metadata positive exit0 and package-decoy exit1 with
+  `analyze_step_unauthenticated`, from a scratch root containing only the R17
+  validator/pins. Recorded fixture argv is never executed. Old R20 aggregate
+  and original C3 authority bytes remain historical, not silently patched.
+- **No-harm:** `verify/no-harm.json`:1134 prior files byte-identical,
+  map102/102 and citation rules17/17 unchanged, prior25 admission rows retained.
+  `verify/verb-coverage.json`: all five old target booleans still supported by
+  genuine record ids,133/153 mentions. Nineteen retained R20-C3 log pairs match
+  with equal log digests; these are retrospective, not new predictions.
+- **Frozen-input negative:** `verify/frozen-input-red.json` mutates a copied
+  fixture to `{}`; same battery returns2 `snapshot_tampered`. Expected manifest
+  keys and digests are checked against fixed contract/fixture Git revisions;
+  no authentication or temporal-continuity claim follows.
+- **Outside sample:** pending the independent non-author closure. Every W1/W2
+  seat is author-side and cannot supply that sample or SHONEN promotion marks.
+
+## Sources census and frontier disposition
+
+Source rows48→50, A42→44/B5/C1 unchanged, mined46→48/rejected2 unchanged —
+re-runnable argv and raw output: `.ufo/waves/round-21/verify/source-rows.json`.
+S049/S050 were reopened on2026-10-21 with the original located quotes above;
+both are mined by this lesson and ground R21-C1/QUALITY26. No prior row's
+status/recheck/used-by cell changed; new rows are additions, not old→new edits.
+No new knowledge entry or province frontier surface is admitted; expansion
+therefore remains unchanged.
+
+Recovery-start census command and actual exit0 output are retained in
+`.ufo/waves/round-21/start-census.json`; inherited source drafts were already
+present then. The original round-start48-row count is frozen in claims.json.
+Final identical command/exit0 is in `verify/sources-census.json`:
+
+```text
+/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+kaidoku W04 S033 duplicate url github.com/NationalSecurityAgency/ghidra/pull/9348 across scopes
+kaidoku W04 S047 duplicate url go.dev/dl/?mode=json&include=all`, across scopes
+kaidoku ok /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+exit=0
+```
+
+This round incorporates the outside R20-EVIDENCE/SEP feedback as bounded
+criteria26–27; all other residual dispositions above stay open. No install,
+package/service/boot mutation, provider call or analyzed-carrier execution
+occurred in the coordinator's implemented work.

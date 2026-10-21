@@ -2644,3 +2644,40 @@ then take the independent outside admit/reject sample. R20 source-anchor,
 lint/sandbox, timestamp exclusions, census/guard bypass and adjacency residuals
 remain named in `corpus/lessons/round-21.md`, not silently closed.
 
+### Round-21 measured records — 2026-10-21
+
+Source V=`a75c3c67e4e658a232e1842ab1aceb383b711269`.
+Producer: `python3 -I -B .ufo/waves/round-21/verify.py --root <LANE>
+--before 2dd430cb6bcad60ff4db720c052074f1f75eecbc --after V`.
+Raw argv/stdout/stderr/expected and observed exits: `round-21/verify/*.json`;
+summary: **13/13 expected exits**, no failed check.
+
+| Claim / axis | Observed before → after at B/V | Verdict / score |
+|---|---|---|
+| R21-C1 calibration, sourced S049/S050 | Frozen cases passed 3/12→12/12; false-clean accepts 9→0; crashes 0→0. `verify/before-C1.json`, `after-C1.json`, battery `--claim C1` at B/V. Separate `verify/isolated-without-C3.json`: positive exit0 and decoy exit1 with `analyze_step_unauthenticated`; root holds only validator/pins, no C3 run/prediction | improved, finite record discrimination; 10.0→10.0 delta0 |
+| R21-C2 depth | Frozen cases passed 14/20→20/20; false-clean 5→0; undeclared crashes 1→0. `verify/before-C2.json`, `after-C2.json`, battery `--claim C2` at B/V (after adds `--regression`). Nineteen retained R20-C3 log/prediction pairs: 19/19 exit0 and log digests equal | improved, bounded observation semantics; 10.0→10.0 delta0 |
+
+No-harm recount (`controls.py --root <LANE> --before B --after V`,
+`verify/no-harm.json`): map102/102→102/102, citations17/17→17/17,
+1134 prior R20/knowledge/lesson files checked with zero byte changes,
+LOG/SCORECARD prefixes retained, prior25 QUALITY admission rows identical;
+new rows26–27 follow. `verify/verb-coverage.json` rebinds all five historical
+targets using exact record ids; mentions remain133/153. Pathless objdump and
+synthetic Harmony stay limited; no new coverage claim is made.
+
+Frozen-input mutation (`verify/frozen-input-red.json`) exits2 with
+`snapshot_tampered`. Self-invocation selftests for binding, comparison,
+controls and isolated receipt control all exit0, retaining finding ids.
+Manifest inputs are bound to the two named frozen Git commits; these are
+snapshot identity checks, not authentication or continuous custody.
+
+SOURCES48→50 (A42→44, B5/C1 unchanged; mined46→48/rejected2 unchanged),
+command/outputs in `verify/source-rows.json`; start and final source censuses
+exit0 with carried W04 scope warnings. No prior registry cells changed.
+No capability row added; no promotion or non-author claim admission asserted.
+Current-round outside admit/reject sampling remains the closure's duty.
+
+Planned: learn from that outside sample; retain every explicitly open residual
+in lesson round-21. The declared finite work is complete; source-only or proxy
+measurements never close the separate provider, authentication or adjacency gaps.
+

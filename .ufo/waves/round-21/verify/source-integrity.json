@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/python",
+    "-I",
+    "-B",
+    "-c",
+    "import json,re,subprocess,sys\ndef rows(rev):\n text=subprocess.check_output(['git','-C',sys.argv[1],'show',rev+':corpus/SOURCES.md'],text=True); return {line.split('|')[1].strip():line for line in text.splitlines() if re.match(r'^\\|\\s*S[0-9]{3,}\\s*\\|',line)}\nb,a=rows(sys.argv[2]),rows(sys.argv[3]); print(json.dumps({'before':sys.argv[2],'after':sys.argv[3],'prior_rows_checked':len(b),'prior_rows_changed':[k for k,v in b.items() if a.get(k)!=v],'added':sorted(set(a)-set(b))},sort_keys=True))",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+    "2dd430cb6bcad60ff4db720c052074f1f75eecbc",
+    "a75c3c67e4e658a232e1842ab1aceb383b711269"
+  ],
+  "exit": 0,
+  "stdout": "{\"added\": [\"S049\", \"S050\"], \"after\": \"a75c3c67e4e658a232e1842ab1aceb383b711269\", \"before\": \"2dd430cb6bcad60ff4db720c052074f1f75eecbc\", \"prior_rows_changed\": [], \"prior_rows_checked\": 48}\n",
+  "stderr": ""
+}
