@@ -107,3 +107,28 @@ This round incorporates the outside R20-EVIDENCE/SEP feedback as bounded
 criteria26–27; all other residual dispositions above stay open. No install,
 package/service/boot mutation, provider call or analyzed-carrier execution
 occurred in the coordinator's implemented work.
+
+## Post-wave correction
+
+W2 `R21Attack63.md` correctly distinguishes removing a C3-file dependency from
+an independently authored positive: the initial control invoked the validator's
+own `_carrier_receipt` builder. Supersedes only the initial control's
+independence wording above, not the observed V exits or the frozen12/20 cases.
+
+| Mistake class | Evidence | Captured-by | Fix |
+|---|---|---|---|
+| vacuous — self-generated positive oracle | `.ufo/waves/round-21/w2/R21Attack63.md`; initial control at V | none; new QUALITY28 captures it | A separately authored inert receipt template and expected exits were frozen at `174948f0e6052ec90a0c51f14516ded210b99273` before the replacement demonstration. Rendering uses no validator import/builder or decision code; both validator/pins digests and template digest are retained. An altered template must return2, while independent positive0 and otherwise-identical package-decoy1 remain required. |
+| reference-drift — aggregate CLI refusal class escaped the successor | coordinator source review of `verb-coverage.py` old-helper boundary | existing 0/1/2 registry contract | Convert only the old helper's declared Refusal exception to the successor's unevaluable error class. A supplementary invalid-revision pre-fix1/post-fix2 pair is separate from the frozen twelve-case denominator. |
+
+W2 settled68 seats:49 reports,19 terminal errors; W1 settled64:26 reports,
+19 terminal errors and19 aborts. Per-seat names, actual answering providers/models,
+terminal text and cutoffs are in `wave1-terminal.json`/`wave2-terminal.json`;
+all missing-report causes resolve in the corresponding causes/outcomes files.
+No dead seat was replaced. All four assigned schema mutations were killed
+with positive controls and restored bytes (`w2/R21Attack65.md`–`68.md`).
+These are author-side results, not the required outside sample.
+
+The source registry also adds the explicit S049→S050 study path and bounded
+direct-opening Search log; no prior table row was edited. Post-correction
+measurements use a separate `verify/final/` output directory when exercised,
+preserving every initial V receipt rather than overwriting it.

@@ -111,6 +111,13 @@ def legacy_helpers(root):
 
 def measure(root, revision):
     old = legacy_helpers(root)
+    try:
+        return _measure(old, root, revision)
+    except old.Refusal as error:
+        raise ValueError(str(error)) from error
+
+
+def _measure(old, root, revision):
     revision = old.resolve_revision(root, revision)
     tree = old.tree_entries(root, revision)
     paths = [path for path, _ in tree]

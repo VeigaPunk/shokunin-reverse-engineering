@@ -167,7 +167,7 @@ A row is written when its file exists, never before.
 | `2026-10-18-mechanism-matched-walls` | arc2-loop1-round8 | wall engagements change exactly the mechanism the prior failure names; a natural control seals the attribution; a fifth engagement without a new mechanism retires the thread |
 | `2026-10-15-round-1-admission-correction` | 1 (same blocked recovery) | replaces unconditional admission diagnostic with routing/receipt/wave consistency checks; twelve isolated exit/finding cases; no new axis score or verified-round increment |
 | `round-19` | 19 | seven routed R18 fixes; client-pin freshness; Go toolchain holdout; QUALITY #22 per-seat causes; dead-seat partial reuse disclosed |
-| `round-21` | 21 | record-bound Evidence association and explicit bounded observations; sourced QUALITY #26–27; frozen twelve/twenty-case before→after and separate inert receipt control |
+| `round-21` | 21 | record-bound Evidence association and explicit bounded observations; QUALITY #26–28; frozen twelve/twenty-case before→after and separately frozen inert receipt control |
 ## Frontier
 
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).

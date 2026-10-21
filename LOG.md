@@ -2393,3 +2393,27 @@ aborts are distinct; dead seats are not replaced. W2 is a fresh68-item
 post-build attack wave, not a retry of dead identities; its first whole
 dispatch was job-cap refused and its unchanged second dispatch succeeded.
 
+### Round-21 post-wave integration
+
+W2 settled68 seats/49 reports/19 terminal errors, all causes retained in
+`wave2-terminal.json`, `wave2-causes.json`, `wave2-outcomes.json`; total
+132 dispatched seats,75 reports,57 reportless, no replacements. Four assigned
+schema mutants were killed with positives preserved and exact restoration
+(`w2/R21Attack65.md`–`68.md`).
+
+Accepted W2 `R21Attack63.md`: the initial no-C3 control still used the validator's
+own fixture builder. The replacement consumes independently authored
+`fixtures/isolated-receipt.json` frozen at
+`174948f0e6052ec90a0c51f14516ded210b99273`, with separate expected exits and a
+persisted digest; no validator import/builder supplies its data or decisions.
+QUALITY28 records that lesson; current SKILL registry names the template,
+validator and pins digests. Old V evidence remains, narrowed rather than erased.
+
+The aggregate mention-counter boundary also maps only the old helper's
+declared Refusal into exit2; a supplementary invalid-revision pair is outside
+the frozen12/20 denominator. `verify.py --out-dir .../verify/final` preserves the
+initial13 receipts while recording the post-correction stable source.
+SOURCES gains the bounded two-document direct-opening Search log and study path;
+existing table rows remain unchanged. Final demonstration outcomes are appended
+only after execution.
+

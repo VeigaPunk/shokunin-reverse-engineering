@@ -19,11 +19,14 @@ def main():
     ap.add_argument('--root',required=True)
     ap.add_argument('--before',required=True)
     ap.add_argument('--after',required=True)
+    ap.add_argument('--out-dir',help='new record directory under this round; preserve earlier runs')
     args=ap.parse_args()
     root=Path(args.root).resolve()
     wave=root/'.ufo/waves/round-21'
-    out=wave/'verify'
-    out.mkdir(exist_ok=True)
+    out=Path(args.out_dir).resolve() if args.out_dir else wave/'verify'
+    if wave not in out.parents:
+        ap.error('--out-dir must be below this round directory')
+    out.mkdir(parents=True,exist_ok=True)
     records=[]
     def run(name,argv,expected):
         proc=subprocess.run(argv,capture_output=True,text=True,check=False,timeout=300,cwd=root)
@@ -62,6 +65,22 @@ def main():
         (copy/'fixtures/battery.json').write_text('{}\n',encoding='utf-8')
         red=run('frozen-input-red',py+[str(copy/'battery.py'),'--root',str(root),'--rev',args.after,'--claim','C1'],2)
         red['pass']=red['pass'] and 'snapshot_tampered' in red['stdout']
+        # A supplementary pre-fix CLI compatibility case; not a frozen C1 case.
+        old_revision='a75c3c67e4e658a232e1842ab1aceb383b711269'
+        old_counter=scratch/'old-verb-coverage.py'
+        old_counter.write_bytes(subprocess.check_output(['git','--no-optional-locks','-C',str(root),'show',old_revision+':.ufo/waves/round-21/tools/verb-coverage.py']))
+        legacy=run('bad-revision-before',py+[str(old_counter),'--root',str(root),'--rev','R21_NO_SUCH_REVISION'],1)
+        legacy['measured_revision']=old_revision
+        (out/'bad-revision-before.json').write_text(json.dumps(legacy,indent=2)+'\n',encoding='utf-8')
+        run('bad-revision-after',py+[str(wave/'tools/verb-coverage.py'),'--root',str(root),'--rev','R21_NO_SUCH_REVISION'],2)
+        control_copy=scratch/'red-control'
+        (control_copy/'tools').mkdir(parents=True)
+        (control_copy/'fixtures').mkdir()
+        shutil.copyfile(wave/'tools/isolated-control.py',control_copy/'tools/isolated-control.py')
+        (control_copy/'fixtures/isolated-receipt.json').write_text('{}\n',encoding='utf-8')
+        red_control=run('independent-template-red',py+[str(control_copy/'tools/isolated-control.py'),'--root',str(scratch)],2)
+        red_control['pass']=red_control['pass'] and 'snapshot_tampered' in red_control['stdout']
+        (out/'independent-template-red.json').write_text(json.dumps(red_control,indent=2)+'\n',encoding='utf-8')
         (out/'frozen-input-red.json').write_text(json.dumps(red,indent=2)+'\n',encoding='utf-8')
     run('sources-census',['/home/vgpnk/Projects/shokunin/scripts/sources-census.sh','validate','--root','/home/vgpnk/Projects/shokunin','kaidoku'],0)
     summary={'before':args.before,'after':args.after,'producer_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'checks':len(records),'passed':sum(r['pass'] for r in records),'failed':[r['id'] for r in records if not r['pass']],'records':[r['id'] for r in records]}
