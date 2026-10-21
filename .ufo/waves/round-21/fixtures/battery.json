@@ -1,0 +1,361 @@
+{
+  "schema": "kaidoku-r21-battery-fixtures-v1",
+  "C1": [
+    {
+      "id": "same_record_positive",
+      "expected_exit": 0,
+      "evidence": "{\"evidence_id\": \"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"operation\": \"inspect_wasm_artifact\"}",
+      "verb": "inspect-wasm-artifact",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "wrapper_positive",
+      "expected_exit": 0,
+      "evidence": "{\"result\": {\"evidence\": {\"evidence_id\": \"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"operation\": \"inspect_wasm_artifact\"}}}",
+      "verb": "inspect-wasm-artifact",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "split_records",
+      "expected_exit": 1,
+      "evidence": "[{\"evidence_id\": \"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"operation\": \"inspect_artifact\"}, {\"evidence_id\": \"ev_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"operation\": \"inspect_wasm_artifact\"}]",
+      "verb": "inspect-wasm-artifact",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "operation_in_notes",
+      "expected_exit": 1,
+      "evidence": "{\"evidence_id\": \"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"operation\": \"inspect_artifact\", \"notes\": \"inspect_wasm_artifact\"}",
+      "verb": "inspect-wasm-artifact",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "id_in_notes",
+      "expected_exit": 1,
+      "evidence": "{\"evidence_id\": \"ev_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"operation\": \"inspect_wasm_artifact\", \"notes\": \"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+      "verb": "inspect-wasm-artifact",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "execution_failure",
+      "expected_exit": 1,
+      "evidence": "{\"evidence_id\": \"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"operation\": \"inspect_wasm_artifact\", \"error\": {\"code\": \"execution_failure\"}}",
+      "verb": "inspect-wasm-artifact",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "could_not_evaluate",
+      "expected_exit": 1,
+      "evidence": "{\"evidence_id\": \"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"operation\": \"inspect_wasm_artifact\", \"status\": \"could_not_evaluate\"}",
+      "verb": "inspect-wasm-artifact",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "error_envelope",
+      "expected_exit": 1,
+      "evidence": "{\"error\": {\"code\": \"execution_failure\"}, \"result\": {\"evidence\": {\"evidence_id\": \"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"operation\": \"inspect_wasm_artifact\"}}}",
+      "verb": "inspect-wasm-artifact",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "objdump_architectures_positive",
+      "expected_exit": 0,
+      "evidence": "{\"evidence_id\": \"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"operation\": \"inspect_with_objdump\", \"parameters\": {\"operation\": \"architectures\"}, \"subject\": null}",
+      "verb": "list-objdump-architectures",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "objdump_wrong_parameter",
+      "expected_exit": 1,
+      "evidence": "{\"evidence_id\": \"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"operation\": \"inspect_with_objdump\", \"parameters\": {\"operation\": \"disassemble\"}, \"notes\": \"architectures\"}",
+      "verb": "list-objdump-architectures",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "malformed_json",
+      "expected_exit": 2,
+      "evidence": "{\"evidence_id\":\"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"operation\":\"inspect_wasm_artifact\"",
+      "verb": "inspect-wasm-artifact",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "duplicate_member_ambiguity",
+      "expected_exit": 2,
+      "evidence": "{\"evidence_id\":\"ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"operation\":\"inspect_artifact\",\"operation\":\"inspect_wasm_artifact\"}",
+      "verb": "inspect-wasm-artifact",
+      "evidence_id": "ev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "C2": [
+    {
+      "id": "bounded_silent_positive",
+      "expected_exit": 0,
+      "prediction": {
+        "first_failure": {
+          "h1": null
+        }
+      },
+      "stdout": "{\"first_failure\": null, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "kind_index_positive",
+      "expected_exit": 0,
+      "prediction": {
+        "first_failure": {
+          "h1": {
+            "kind": "invalid_index",
+            "index": 9,
+            "va": null,
+            "phase": "analysis"
+          }
+        }
+      },
+      "stdout": "{\"first_failure\": {\"kind\": \"invalid_index\", \"index\": 9, \"va\": 10, \"phase\": \"different\"}, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "nullable_eof_positive",
+      "expected_exit": 0,
+      "prediction": {
+        "first_failure": {
+          "h1": {
+            "kind": "eof",
+            "index": null,
+            "va": null,
+            "phase": "analysis"
+          }
+        }
+      },
+      "stdout": "{\"first_failure\": {\"kind\": \"eof\", \"index\": null, \"va\": null, \"phase\": \"analysis\"}, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "null_predicted_object_observed",
+      "expected_exit": 1,
+      "prediction": {
+        "first_failure": {
+          "h1": null
+        }
+      },
+      "stdout": "{\"first_failure\": {\"kind\": \"invalid_index\", \"index\": 9, \"va\": null, \"phase\": \"analysis\"}, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "object_predicted_null_observed",
+      "expected_exit": 1,
+      "prediction": {
+        "first_failure": {
+          "h1": {
+            "kind": "invalid_index",
+            "index": 9,
+            "va": null,
+            "phase": "analysis"
+          }
+        }
+      },
+      "stdout": "{\"first_failure\": null, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "kind_mismatch_equal_index",
+      "expected_exit": 1,
+      "prediction": {
+        "first_failure": {
+          "h1": {
+            "kind": "invalid_index",
+            "index": 9,
+            "va": null,
+            "phase": "analysis"
+          }
+        }
+      },
+      "stdout": "{\"first_failure\": {\"kind\": \"other\", \"index\": 9, \"va\": null, \"phase\": \"analysis\"}, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "index_mismatch_equal_kind",
+      "expected_exit": 1,
+      "prediction": {
+        "first_failure": {
+          "h1": {
+            "kind": "invalid_index",
+            "index": 9,
+            "va": null,
+            "phase": "analysis"
+          }
+        }
+      },
+      "stdout": "{\"first_failure\": {\"kind\": \"invalid_index\", \"index\": 10, \"va\": null, \"phase\": \"analysis\"}, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "naked_null",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": null
+        }
+      },
+      "stdout": "null",
+      "extractor_exit": 0
+    },
+    {
+      "id": "naked_failure",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": {
+            "kind": "invalid_index",
+            "index": 9,
+            "va": null,
+            "phase": "analysis"
+          }
+        }
+      },
+      "stdout": "{\"kind\": \"invalid_index\", \"index\": 9, \"va\": null, \"phase\": \"analysis\"}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "missing_failure_member",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": null
+        }
+      },
+      "stdout": "{\"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "missing_last_line",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": null
+        }
+      },
+      "stdout": "{\"first_failure\": null}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "negative_last_line",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": null
+        }
+      },
+      "stdout": "{\"first_failure\": null, \"last_line\": -1}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "boolean_last_line",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": null
+        }
+      },
+      "stdout": "{\"first_failure\": null, \"last_line\": true}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "string_last_line",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": null
+        }
+      },
+      "stdout": "{\"first_failure\": null, \"last_line\": \"8\"}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "missing_index",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": {
+            "kind": "invalid_index",
+            "index": 9,
+            "va": null,
+            "phase": "analysis"
+          }
+        }
+      },
+      "stdout": "{\"first_failure\": {\"kind\": \"invalid_index\", \"va\": null, \"phase\": \"analysis\"}, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "boolean_index",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": {
+            "kind": "invalid_index",
+            "index": 9,
+            "va": null,
+            "phase": "analysis"
+          }
+        }
+      },
+      "stdout": "{\"first_failure\": {\"kind\": \"invalid_index\", \"index\": true, \"va\": null, \"phase\": \"analysis\"}, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "string_index",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": {
+            "kind": "invalid_index",
+            "index": 9,
+            "va": null,
+            "phase": "analysis"
+          }
+        }
+      },
+      "stdout": "{\"first_failure\": {\"kind\": \"invalid_index\", \"index\": \"9\", \"va\": null, \"phase\": \"analysis\"}, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "missing_phase",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": {
+            "kind": "invalid_index",
+            "index": 9,
+            "va": null,
+            "phase": "analysis"
+          }
+        }
+      },
+      "stdout": "{\"first_failure\": {\"kind\": \"invalid_index\", \"index\": 9, \"va\": null}, \"last_line\": 8}",
+      "extractor_exit": 0
+    },
+    {
+      "id": "malformed_extractor_json",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": null
+        }
+      },
+      "stdout": "{",
+      "extractor_exit": 0
+    },
+    {
+      "id": "extractor_nonzero",
+      "expected_exit": 2,
+      "prediction": {
+        "first_failure": {
+          "h1": null
+        }
+      },
+      "stdout": "{\"first_failure\": null, \"last_line\": 8}",
+      "extractor_exit": 7
+    }
+  ]
+}
