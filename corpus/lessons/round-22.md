@@ -146,3 +146,41 @@ actually refuses four missing dynamic snapshot symbols. This disproves the
 worker's expected partial-success prediction and is recorded as a refusal,
 not converted to a second held verb. Both original envelopes/run records
 are retained under evidence/c1.
+
+## Exercised delivered Gate
+
+Source V=`e9db7e2d5798ff3d5f1ba5ccd76bb86f2cc5c1bb`; final producer
+`verify.py --root <LANE> --rev V --out <LANE>/.ufo/waves/round-22/verify/final`
+exits0,30/30 expected checks. All actual argv/stdout/stderr/exits and
+source digests are retained in that new directory, preserving initial red
+records and every seat's earlier candidate-snapshot observation.
+
+- Admit within scope: Godot parsed negative and Saber partial Flutter
+  positive, original-envelope authority and actual source linkage.
+- Reject as held: Saber's actual unsupported_target Dart-symbol refusal;
+  detached-copy laundering, forged command/operation, malformed/ambiguous
+  records or source input, and the undispatched debugger/signal ambitions.
+- Same v1 controls reproduce the intended old false accepts with positives
+  retained; source-link intermediate passes. The genuine-envelope focused
+  regression keeps positive1 under both code versions; a parent-only
+  refusal leaves old1 but current0. No real REA producer output is rewritten.
+- Selftests pass32 C1 and31 C2 cases; same argv after a copied fixture
+  mutation gives2 snapshot_tampered. Helpers and independent inputs are
+  pinned; no sandbox/authentication/continuous-custody claim follows.
+- Full cross-output causal checks pass. Eighteen producer/envelope pairs
+  and five ADB overrides agree. Source old50 rows preserved; source57,
+  A51/B5/C1, mined55/rejected2. End census exit0, W04 S033/S047/S054.
+- Prior1135 files, all28 old admission rows, prefixes and17 citation rules
+  remain unchanged; coverage map102/102→104/104. Timestamp check at V:
+  174 text files, zero findings, no exemptions; the sole24-byte binary
+  skip is the deliberately header-only pcap.
+
+Final wave accounting: final-wave-outcomes.json records the actual cutoff,
+all93 W1 ids (reportless/no live; child cause unknown),55 W2 reports and9
+terminal provider failures,157 total and zero replacements. W1 final glob
+contained only its registry: no late report was discarded. The source
+contains both parent lifecycle statements and their explicit correction.
+All work remains author-side until the independent closure's admit/reject
+sample; SHONEN stays four `[~]`. No tool was installed by the replacement
+or a reporting W2 seat. The public Saber re-fetch actually returned200,
+42305081 bytes and the declared digest (evidence/sources/saber-download.json).

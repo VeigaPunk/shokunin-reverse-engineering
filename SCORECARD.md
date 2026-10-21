@@ -2772,3 +2772,29 @@ held target. Debugger identifiers are corrected in the metric without
 claiming tracer ownership or execution. Final measured verdicts and source
 revision are recorded after the committed recount; no scalar/capability row
 is pre-claimed.
+
+### Round-22 delivered measurements
+
+Measured source V=`e9db7e2d5798ff3d5f1ba5ccd76bb86f2cc5c1bb`;
+producer `python3 -I -B .ufo/waves/round-22/verify.py --root <LANE>
+--rev V --out <LANE>/.ufo/waves/round-22/verify/final`: exit0,
+30/30 expected checks. Raw argv/stdout/stderr/exit and source digests are
+retained under verify/final; no whole-wave success is inferred from intent.
+
+| Claim / axis | Actual before → after at B/V | Verdict / score |
+|---|---|---|
+| R22-C1 coverage, sourced S051–S057 | Held0/6→1/6, only identify-flutter-build. Count command `tools/count-c1.py --root <LANE> --rev B` or V; both exit1 because the completeness gate requires6. Frozen improvement predicate k>=1 verifies. Catalog mentions133/153→135/153, zeros20→18 | improved within finite scope;10.0→10.0 delta0. Positive Saber is partial; inspect-dart-aot is refused, not held |
+| R22-C2 calibration | Accounted0/14→14/14, no mismatched/foreign rows. `tools/count-c2.py --root <LANE> --rev B` exits1, at V exits0 | improved, receipt-field/control calibration only;10.0→10.0 delta0 |
+
+No-harm: prior1135 files byte-identical; LOG/SCORECARD prefixes and28 old
+admission rows preserved; map102/102→104/104, citation rules17/17.
+Causal data partitions pass full cross-output checks;18 run/envelope pairs
+and five ADB overrides agree. Selftests32/32 and31/31; changed frozen input
+returns2 snapshot_tampered. Source50→57 (A44→51, B5/C1 retained;
+mined48→55/rejected2 retained), old rows identical, census exit0.
+All evidence: verify/final/{summary,after-c1,after-c2,prior-controls,
+separability,provenance,source-rows}.json.
+
+No new capability/promotion/ownership row. Completeness still1/6 and the
+remaining five T1 verbs are not claimed. Outside admit/reject sampling
+remains pending; no author-side seat becomes a non-author verifier.

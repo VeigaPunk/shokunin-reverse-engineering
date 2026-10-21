@@ -2545,3 +2545,41 @@ no earlier fl.json output was reused. S054 and S057 qualify source/copy
 authority without rewriting prior rows. The finite held target remains
 one verb unless the committed recount says otherwise; no Dart recovery,
 debugger, hardware or dynamic-ownership capability is claimed.
+
+### Round-22 exercised final measurements
+
+Committed source V=`e9db7e2d5798ff3d5f1ba5ccd76bb86f2cc5c1bb`.
+`python3 -I -B .ufo/waves/round-22/verify.py --root <LANE> --rev V
+--out <LANE>/.ufo/waves/round-22/verify/final` exited0 with30/30 expected
+conditions (`verify/final/summary.json`, invocation in final-producer.json).
+
+R22-C1 coverage **improved**, finite1/6 from0/6; completeness gate remains
+exit1, not6/6. Catalog mentions133→135 of153, zeros20→18; two new entries
+hold the parsed negative/partial-positive boundary, while the Dart refusal
+does not count. R22-C2 calibration **improved**, dispositions0→14/14,
+mismatched[]/foreign[], exit0. Both finite proxies remain10.0/delta0.
+
+Self-invocations pass32 C1 and31 C2 cases. Identical selftest argv after a
+copied input mutation returns2 snapshot_tampered. Original red positives
+remain accepted while missing_source/probe_alias false accepts reproduce;
+the source-link intermediate is green. The envelope regression retains a
+genuine positive at1 under old/new code; with only the parent refused, old
+code still counts1 and current code counts0. This is a controlled fixture,
+not a real producer refusal.
+
+Separability: C1-only1/6 with C2 baseline0; C2-only14/14 with C1 baseline0,
+both cross outputs identical to baseline except rev. Province partition
+matches byte-for-byte. Eighteen producer/envelope pairs agree; all five
+explicit ADB overrides pass. Prior1135 files unchanged, all28 prior QUALITY
+rows/prefixes preserved, map102/102→104/104, citations17/17 unchanged.
+Source rows50→57, all50 prior rows identical, seven new A/mined rows;
+end census exits0 with W04 S033/S047/S054. Timestamp gate at V exits0,
+174 text files, zero findings/exemptions; sole binary skip is the known
+24-byte empty pcap, not a missing text scan.
+
+Final wave cutoff is in final-wave-outcomes.json: W1 93 dispatched,
+0 reports/no live seats, per-child causes unknown; W2 64 dispatched,
+55 retained reports and9 named terminal provider failures. Total157,
+no replacement; five recovery launch refusals spawned zero. Parent-death
+causation was corrected explicitly. All marks remain author-side `[~]`;
+outside admission/sampling and kaidoku/revenger L0 arbitration remain open.
