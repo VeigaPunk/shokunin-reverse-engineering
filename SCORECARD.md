@@ -2815,3 +2815,32 @@ named round evidence roots, not broaden target ownership.
 Planned: finish this declared finite move and retain every unheld verb,
 R22 reportless-seat uncertainty and outside-review duty explicitly.
 No capability, retirement, promotion or mastery is preclaimed.
+
+### Round-23 initial committed measurements
+
+Measured source V=`6615aeae642aec36959180e7ea940b2794c7f1cb`.
+Producer `python3 -I -B .ufo/waves/round-23/verify.py --root <LANE>
+--rev V --out <LANE>/.ufo/waves/round-23/verify/initial` actually exits0,
+12/12 expected conditions; raw argv/stdout/stderr in verify/initial and
+verify-initial-producer.json.
+
+R23-C1 coverage: cumulative sourced held1/6→4/6, both counter exits1;
+completeness remains incomplete. Exact held set is inherited identify,
+inspect-dart-aot, inspect-signal-decoders and decode-signal-recording.
+Both debugger verbs remain unheld/Adjacent. Frozen k>=2 improvement verifies
+author-side; finite coverage proxy10.0→10.0, delta0. Mentions135/153→137/153
+are a separate lexical measure, never the held numerator.
+
+No-harm controls: old1138 files unchanged, old32 QUALITY rows retained,
+LOG/SCORECARD prefixes preserved; map104/104→106/106, citations17/17,
+SKILL/PROVINCE prefixes retained. Source57→61, A51→55, B5/C1 unchanged,
+mined55→59/rejected2 unchanged; old57 rows identical, census exit0 with
+carried W04 warnings. R22 counters stay C1=1/6 and C2=14/14.
+Independent21-case selftest exits0; changed frozen input returns2;
+same metadata input keeps legacy/current positive0/0 but the two named
+legacy false accepts0 become current1. Evidence is retained, not inferred.
+
+No new capability, retirement or promotion. W1=64 seats,52 nonempty reports,
+12 named provider failures, zero replacements (wave1-outcomes.json).
+Fresh W2 falsification and non-author closure remain distinct duties;
+author-side verdicts do not certify outside admission.

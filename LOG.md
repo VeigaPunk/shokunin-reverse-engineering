@@ -2642,3 +2642,22 @@ version banner and selected dependency pins are retained; no package/global
 configuration transaction, full-installation authentication or continuous
 custody is claimed. All three dispatched executors died with capacity errors,
 so no absent executor result earned credit or replacement.
+
+### Round-23 exercised initial verification
+
+Source V=`6615aeae642aec36959180e7ea940b2794c7f1cb`; verify.py actual
+argv/stdout/stderr/exit in verify-initial-producer.json and verify/initial.
+Exit0,12/12 conditions: cumulative1/6→4/6 (incomplete exit1 both sides),
+selftest21/21, frozen-input mutation exit2, metadata positive0/0 and
+legacy false accepts0→current1 for meta.ok:false and metadata arrays.
+Both original R22 counters retain1/6 and14/14. No-harm prior1138 files,
+32 old criteria and prefixes hold; map104→106 at full structural coverage,
+17/17 citation rules. Source57→61 with old rows unchanged; census exits0.
+This demonstrates the refusal fix can fail without changing its positive;
+it is not Evidence authentication or outside admission.
+
+W1 closed at the cutoff in wave1-outcomes.json:64 spawned,52 nonempty
+reports,12 retained terminal failures, no replacement. All six remaining
+read-only seats finalized under a bounded close instruction. No reportless
+seat's intended implementation or source opening is credited. Fresh W2
+attacks the actual committed candidate, not W1's stale absent-file proposals.

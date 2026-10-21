@@ -74,3 +74,28 @@ Selected actual runtime pins are retained at one instant; no continuous custody,
 full dependency attestation or acquisition isolation is asserted. Hardware remains
 Adjacent/unowned. Both debugger verbs remain unheld and the sibling overlap L0
 question is carried. No round24 is started.
+
+## Exercised initial measurements
+
+Source V=`6615aeae642aec36959180e7ea940b2794c7f1cb`, actual producer
+`python3 -I -B .ufo/waves/round-23/verify.py --root <LANE> --rev V
+--out <LANE>/.ufo/waves/round-23/verify/initial`: exit0,12/12 conditions.
+This addendum supplies the demonstration deferred at source-writing time:
+metadata-red-green.json retains identical synthetic positive and two metadata
+negative inputs, legacy/current outcomes0/0,0/1,0/1. The frozen21-case suite
+passes, and changing only its copied input gives2 snapshot_tampered.
+Thus the named fix is shown able to fail; no new authenticity or sandbox
+claim is inferred.
+
+Cumulative T1 count1/6→4/6, completeness still exit1; both debugger verbs
+remain unheld. Mentions135→137 of153 are lexical only. Old R22 predicates
+retain1/6 and14/14. No-harm1138 prior files unchanged;32 prior criteria and
+all prefixes hold; map104/104→106/106, citations17/17.
+Sources57→61 (A51→55, B5/C1; mined55→59, rejected2), old rows unchanged.
+Initial and post-source census both exit0 with carried W04 scope warnings.
+All values and exact child commands are retained under verify/initial.
+
+The initial literal Hello World prediction is explicitly false, not counted
+as a clean forecast; synthetic exact annotation text and actual nonempty
+public output remain separate observations. Fresh W2 reviews the committed
+candidate. Outside admit/reject sampling remains the closure's duty.
