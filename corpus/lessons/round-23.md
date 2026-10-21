@@ -225,3 +225,35 @@ return `invalid_request` naming `decoder` or `decoders`;”
 This contiguous19-word passage supports only what that unversioned copy says
 at its recorded access. The original earlier reading was not byte-retained;
 no byte identity across those instants is asserted and neither is6.5.0 authority.
+
+## Final exercised Gate
+
+Measured F=`fe18f13f79847d88af1efd8e23df3157d70c0171`; the materialized
+Git verifier's exact execution is retained in verify-final-producer.json.
+Final producer exits0,15/15 conditions. V3 selftest25/25; exact old counter
+on those same25 fixtures21/25, with precisely inherited_entry_lost,
+inherited_entry_changed, symlink_evidence and symlink_knowledge falsely
+accepted before the fix. Positive/all-six controls remain accepted.
+Thus the named source/read-set repairs have exercised failures, not merely
+source-review approval. The original21-case green and all earlier proposals
+remain preserved at their own revisions.
+
+Cumulative held1/6→4/6, exact remainder two debugger verbs; counter stays
+incomplete1. Original R22 predicates remain1/6 and14/14. Old1138 files,
+32 criteria and prefixes hold; map106/106 and citations17/17. Source57→63,
+old57 identical, six A rows added (four source families plus two superseding
+rows); no old mutable-cell change. Snapshot and live end censuses exit0,
+with W04 S033/S047/S054/S062 rather than a warning-free claim.
+
+W2 returned64 nonempty fixed-candidate reports, including the wrong-target
+RunBefore report; three same-identity critic appendices reviewed repairs.
+They are author-side, not outside admission. No replacement or additional
+round was dispatched. The original R22 W1 reportless loss remains unexplained
+debt despite newly retained event labels; all102 R22 reportless seats remain
+uncredited. The fleet misroot sweep left unrelated Kama/runtime files alone.
+
+Trend assessments: expansion improved (two sourced entries on uncovered
+offline/positive-layout ground); quality unchanged (prior knowledge preserved,
+within-round corrections not relabeled prior freshness); discernment unchanged
+(current-round outside admit/reject sample remains pending). No scalar trend,
+capability row or promotion is asserted.

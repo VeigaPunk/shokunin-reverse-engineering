@@ -2844,3 +2844,40 @@ No new capability, retirement or promotion. W1=64 seats,52 nonempty reports,
 12 named provider failures, zero replacements (wave1-outcomes.json).
 Fresh W2 falsification and non-author closure remain distinct duties;
 author-side verdicts do not certify outside admission.
+
+### Round-23 final delivered measurements
+
+Final measured source F=`fe18f13f79847d88af1efd8e23df3157d70c0171`.
+The coordinator materialized verify.py from that exact Git object before
+execution; argv/stdout/stderr/executed SHA are in verify-final-producer.json.
+`verify.py --root <LANE> --rev F --out <LANE>/.ufo/waves/round-23/verify/final`
+actually exits0, **15/15** expected conditions, no failed check.
+
+R23-C1 coverage: **1/6→4/6**, exact unchanged six-verb denominator,
+both counter exits1/c1_incomplete. Held set: historical identify plus
+inspect-dart-aot, inspect-signal-decoders and decode-signal-recording.
+Only debug-with-gdb/debug-with-rizin remain unheld/Adjacent. Frozen k>=2
+improvement verifies author-side; coverage finite proxy10.0→10.0, delta0.
+Lexical catalog mentions135/153→137/153, not a held-coverage denominator.
+Counting command is the declared tools/count-c1.py --root <LANE> --rev B/F;
+both immutable outputs are retained under verify/final.
+
+V3 selftest **25/25**; same v3 fixtures against the exact pre-v3 counter
+give21/25 with the four named false accepts, positives preserved.
+Input tamper, forced Git setup failure and nonroot invocation each produce
+declared exit2, not clean. Original-run comparisons and metadata red/green
+hold. R22 predicates still1/6 and14/14. All raw records are under verify/final.
+
+No-harm:1138 prior files unchanged;32 old criteria retained; map104/104→106/106,
+citations17/17; prefixes and all prior README nonempty lines preserved;
+prior round20/21/22 wave trees identical. Source57→63, A51→57/B5/C1,
+mined55→61/rejected2; old57 rows identical. S062/S063 correct S058/S061
+without rewriting immutable cells. Snapshot census and actual live end census
+both exit0; carried W04 plus S062 scope-duplicate warning are disclosed.
+
+W1=64/52 reports/12 reportless; W2=64/64 reports/0 reportless,128 unique
+spawns total. Three same-identity successful-critic follow-ups add no seat.
+RunBefore's wrong-target run is not credited as a baseline measurement.
+No new capability, retirement, promotion or outside admission. Planned:
+learn from the independent closure's admit/reject sample; retain all explicit
+SOURCE/TIME/LINT-SANDBOX/CENSUS-GUARD/ADJACENCY and unexplained-seat debt.

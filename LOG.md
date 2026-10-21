@@ -2735,3 +2735,27 @@ reportlessness remains unexplained debt for all93: observed error/abort
 labels are not causal explanations or work credit. All102 R22 reportless
 seats remain uncredited. W1's “capacity-retrying” and zero-notice summaries
 are explicitly superseded, not silently cleaned.
+
+### Round-23 final exercised source — complete author-side delivery
+
+Source F=`fe18f13f79847d88af1efd8e23df3157d70c0171`; executed verifier
+bytes came directly from its Git object, not an unbound working-tree script.
+verify-final-producer.json and verify/final retain actual argv, output,
+exits and source hashes. Exit0,15/15 conditions: before1/6, after4/6,
+both incomplete1; selftest25/25; exact pre-v3 counter21/25, four named
+false accepts killed; input tamper/setup failure/nonroot controls2;
+metadata positive0/0 and negatives0/1. No failed check was suppressed.
+
+Original records, R22 retained1/6 and14/14, no-harm1138 old files,
+32 criteria,17/17 citations,106/106 map, source63 rows and snapshot
+census all match declared conditions. Live end census exits0, W04
+S033/S047/S054/S062. Fleet mandatory no-pathspec status sweep found no owned
+misroot; the untracked round23/falsify artifacts are Kama-owned and untouched
+(fleet-misroot.json plus fleet-misroot-owner.json).
+
+Waves retain64+64 unique spawns,52+64 nonempty reports and12 reportless
+W1 seats. Final lifecycle correction, same-id peer wakes and assignment/scope
+deviations are explicit; no replacement or unreturned output earned credit.
+Independent closure/admit-reject sampling remains outside this author lane.
+No round24 was started, no global package/config/service change was made,
+and the only tool acquisition is the recorded lane-local sigrok extraction.
