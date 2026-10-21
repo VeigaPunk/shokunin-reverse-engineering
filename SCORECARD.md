@@ -2596,3 +2596,25 @@ Final measured revision and verification records are appended after integration.
 | C1 calibration (owned, tied-lowest) | 10.0→10.0 (delta 0) | routed r19 items open 11→0 target: `python3 -I -B .ufo/waves/round-20/tools/routed-r19.py --root <LANE> --rev <REV> --strict --live`; census FAIL/1→PASS/0; QUALITY 22→25, rows 1-22 identical | Final measured verdict appended after verification |
 | C2 coverage (owned; sourced S040-S046) | 10.0→10.0 (delta 0) | CLI verbs named in admitted knowledge 128/153→133/153; targets exercised 0/5→5/5: `python3 -I -B .ufo/waves/round-20/tools/verb-coverage.py --root <LANE> --rev <REV>` | Mention-level catalog coverage; `exercised` binds the ev id into retained evidence bytes |
 | C3 depth (owned; sourced S047 + S003/S023/S035) | 10.0→10.0 (delta 0) | frozen first-failure labels bound + compared 0→19, matched 19/19: `python3 -I -B .ufo/waves/round-20/measure.py <REV> --freeze 808cbb31a1e24656da5ba4967497e602fbca7415` field `c3.first_failure_bound` | 8 exact `Invalid index` values, 11 predicted-silent; retro 8/8 on r19 logs is a consistency check only |
+
+### Round-20 measured records (2026-10-21; supersedes the tentative target language above)
+
+Verification source **V=`37e10c545a05cf8ede9a2da0e45d44eb13c7835f`** (all integration fixes committed; D5 is open at V by construction and is
+closed only by its final-census record commit). Receipts: `.ufo/waves/round-20/verify/round20/`. The record commit adds only
+`verify/final-census.json` and `verify/final-census.stdout`; the L1's post-record counter run is retained in the fleet report.
+
+| Claim / axis | Measured result at V | Counting command / receipt | Verdict and limits |
+|---|---|---|---|
+| C1 calibration | routed items 11 → **1** at V (only D5, the record witness this row's commit is designed to add); census PASS (stale/ambiguous/undeclared/unresolved 0/0/0/0); controls pass; QUALITY rows 1–22 byte-identical, 23–25 appended | `routed-r19.py --root <LANE> --rev V --strict --live` exit1 (`verify/round20/routed-b1b.json`); `c1-census-v10.py` exit0 (`c1-census.stdout`); `controls-r20.py` exit0 (`controls.json`) | **improved**, numeric proxy 10.0→10.0 (delta 0); D5 closes at the record commit (counter run in the report). D6d fix is the successor validator; the pinned W17 bytes are unchanged |
+| C2 coverage | mentioned **128/153 → 133/153**; five targets `exercised`; README map 102/102 | `verb-coverage.py --root <LANE> --rev V` exit0 (`verb-coverage.json`) | **improved**, numeric proxy 10.0→10.0 (delta 0); mention-level catalog coverage, not mastery; `list-objdump-architectures` is pathless (`subject: null`) |
+| C3 depth | frozen first-failure bound **0 → 19**, matched **19/19**; 19/19 bound receipts valid; freeze `808cbb3` | `measure.py V --freeze 808cbb31a1e24656da5ba4967497e602fbca7415` exit0 (`measure.json`) | **improved**, numeric proxy 10.0→10.0 (delta 0); exact-artifact outcome-held-out only, not version-held-out; comparator checks kind+index |
+
+No-harm: `controls-r20.py` exit 0 (`pass: true`, no failed checks); `evidence-timestamps.py --strict` exit 0 over the round-20 tree
+(975 text files scanned, 15 binary blobs reported as skipped, one applied `--allow` for a seat's fixture literal); append-only prefixes
+hold; prior runs/predictions unchanged. SOURCES rows 39→48 (S040–S048, all mined; S048 is the installed non-Harmony REA source); the
+sources census exits 0 with the carried W04 for S033/S047. No capability row is added. Saturation 10.0 / window 10 unchanged; all
+SHONEN marks remain `[~]`.
+
+Corrections to the rows above: C1's counting command must carry `--live` (the leftover check); C2's universal carrier/subject wording is
+narrowed for the pathless target; C3's "held out" is limited to prior first-failure outcomes for the exact artifacts; C1 and C3 share
+the receipt validator as a verification authority (claim-separability residual, w2 `CriticSeparabilityS.md`).

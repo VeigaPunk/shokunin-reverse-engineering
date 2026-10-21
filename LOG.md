@@ -2322,4 +2322,16 @@ admitted knowledge). Claims: `.ufo/waves/round-20/claims.json`.
   final-census record and the measured claim verdicts are the subsequent
   record commits; attempt-2's claim that D1–D6f were closed without that record
   is discarded, not inherited.
+- Attempt-3 measured records at V=`37e10c545a05cf8ede9a2da0e45d44eb13c7835f`:
+  C1 routed items 11→1 at V (D5 is the final-census record witness, closed by
+  the record commit); census PASS (0/0/0/0); controls pass; D6d successor
+  validator rejects the decoy and accepts a retained control. C2 133/153
+  mentions with 5/5 targets exercised. C3 bound 19/19, matched 19/19, receipts
+  19/19 valid against the frozen `808cbb3` predictions. Timestamp strict run
+  exit 0 over 975 text files with 15 binary skips reviewed and one applied
+  allow for a seat's fixture literal. SOURCES 39→48; wave outcomes W1
+  100/98/2 uncaused0 and W2 71/71. Receipts under
+  `.ufo/waves/round-20/verify/round20/`. The final-census record is the next
+  lane write; admission belongs to the non-author closure.
+
 
