@@ -1,0 +1,40 @@
+{
+  "schema": "kaidoku-round-claims-v1",
+  "round": 22,
+  "author": "KaidokuR22 (L1, attempt 1)",
+  "declared_at": "2026-10-21",
+  "baseline": "7787fea4d6fd718726de92ed20759d11ce7b8b48",
+  "axis_scores_at_baseline": {"coverage": 10.0, "depth": 10.0, "calibration": 10.0},
+  "lowest_axis_rule": "all owned axes tie at 10.0; both claims work a tied-lowest axis; stagnation nudge not active (last capability round 17, window 10)",
+  "trend_furthest_behind": "expansion (unchanged since round 17 per closures)",
+  "catalog": "retained rea-agents 6.5.0 CLI catalog, .ufo/waves/round-20/verify/round20/verb-coverage.json; 153 commands, 20 with zero knowledge mentions at baseline",
+  "claims": [
+    {
+      "id": "R22-C1",
+      "axis": "coverage",
+      "sourced": "knowledge entries counted by this claim cite S### rows opened in round 22 (S051 onward)",
+      "move": "hold zero-mention catalog verbs T1 with executed, retained, bound REA Evidence cited by new knowledge entries on uncovered coverage-map ground",
+      "t1": ["identify-flutter-build", "inspect-dart-aot", "debug-with-gdb", "debug-with-rizin", "inspect-signal-decoders", "decode-signal-recording"],
+      "counting_command": "python3 -I -B .ufo/waves/round-22/tools/count-c1.py --root <LANE> --rev <REV>",
+      "before_expected": "t1_exercised_count 0/6, catalog_zero_count 20, exit 1 at baseline",
+      "after_target": "t1_exercised_count k/6 reported exactly as measured; verified only if k>=1, every counted verb's entry cites a round-22 S### row, and no prior knowledge file changes",
+      "falsifiers": ["a mention without a bound non-refused record counts", "a typed refusal envelope counts", "an evidence id cited by the entry but absent from the cited file counts", "a counted entry lacks a round-22 S### citation"],
+      "touches": ["corpus/knowledge/2026-10-21-r22-*.md", "corpus/README.md coverage-map rows", ".ufo/waves/round-22/evidence/c1/"]
+    },
+    {
+      "id": "R22-C2",
+      "axis": "calibration",
+      "move": "name every frozen T2 zero-mention catalog verb the lane does not hold with a probe receipt whose observed outcome matches the disposition row (gaps named honestly, not silently absent)",
+      "t2": ["inspect-packet-fields", "inspect-packet-capture", "inspect-pcap-client", "inspect-pcap-capture", "list-cutter-sessions", "cutter-command", "list-frida-devices", "list-frida-processes", "instrument-with-frida", "inspect-adb-package", "list-adb-services", "inspect-adb-window", "start-adb-activity", "stop-adb-app"],
+      "counting_command": "python3 -I -B .ufo/waves/round-22/tools/count-c2.py --root <LANE> --rev <REV>",
+      "before_expected": "accounted_count 0/14, exit 1 at baseline",
+      "after_target": "accounted_count 14/14, mismatched [], exit 0",
+      "falsifiers": ["a row whose receipt error code differs from its observed value is accepted", "a receipt from a different probe command is accepted", "a receipt outside .ufo/waves/round-22/evidence/c2/ is accepted", "duplicate rows for one verb are accepted"],
+      "touches": ["PROVINCE.md section '### Round-22 catalog dispositions'", ".ufo/waves/round-22/evidence/c2/"]
+    }
+  ],
+  "separability": "C1 counter reads only corpus/knowledge and evidence/c1; C2 counter reads only PROVINCE.md and evidence/c2. Each is verified by applying its own diff alone onto the baseline in a scratch clone.",
+  "no_harm": ["prior corpus/knowledge files byte-identical B->final", "prior SOURCES rows byte-identical", "LOG/SCORECARD prefixes preserved", "prior QUALITY rows identical", "sources census exit 0", "round-21 batteries at final still exit 0 for C1 and C2"],
+  "frontier_step": "curate SOURCES rows opened this round; census before/after; mine one mistake into corpus/lessons/round-22.md ## Mistakes",
+  "not_claimed": ["mastery", "provider availability over time", "Evidence authentication", "dynamic-analysis ownership (kaidoku/revenger overlap stays open)"]
+}
