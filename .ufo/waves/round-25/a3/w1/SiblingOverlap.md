@@ -30,8 +30,14 @@ once, but only as a falsifier, not as held knowledge. Revenger's EVM work sits o
    The completed hidden sweep (10:46:48Z) again lists only `W3EvmSelectorConstants.md` as revenger's 4byte/openchain/sigdb file.
 5. Kagi's 744 hits are nested sandbox copies of one line, `.ufo/waves/round-25/build/ConnSiblings4.md:26`:
    "`corpus/verify_*.py` are 11 fixture verifiers (EVM, PE resources, icons, JS graphs)" (a note about revenger's verifiers).
-6. Unknown: the first all-lane `-uu` sweep (all ignored files, including sandboxes) did not finish inside its 60 s window
-   and was moved to the background by the harness. No result from it is used. The hidden-inclusive per-lane sweep in item 3 did complete.
+6. The first all-lane `-uu` sweep (every ignored file, including sandboxes) was killed at 3600 s with no output; none of it is used.
+   Replacement: per-lane `timeout 60 rg -i -l -uu -g '!.git' -g '!.jj' -g '!node_modules' -g '!**/sandboxes/**' -g '!**/clone/**'
+   -g '!*.txt' -e '4byte\.directory|openchain|signature (database|db)|sig\.eth|evmole|inspect.evm'` at 11:43:13Z.
+   Results: 17 lanes rc=1 (no match); revenger 115 files, but only `W3EvmSelectorConstants.md` matches the database terms
+   (rerun 11:44:22Z, rc=0); tsukuroi 6 files, i.e. its pinned kaidoku PROVINCE snapshots plus one 2026-10-15 session log quoting
+   the old "selectors stay bare hashes (no signature DB → no name resolution)" Frontier line.
+   **Unknown:** gitignored files in mori-shokunin. Its `-uu` sweep was interrupted twice (rc=124 at 50 s). The default and hidden
+   sweeps for mori found 0 hits.
 
 ## Overlap table
 
