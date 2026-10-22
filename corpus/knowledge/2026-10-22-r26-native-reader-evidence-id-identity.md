@@ -4,14 +4,17 @@ verified-at: 2026-10-22, round 26; 24 CLI calls 12:11:50Z–12:15:45Z, package r
 
 recheck: `python3 -I -B tools/round-26/c1-id-identity.py --root <LANE> --rev <REV>` re-derives each verdict from the committed envelopes (offline). A live recheck copies `/usr/bin/jq` to a second directory with the same file name, checks both sha256 values equal `e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806`, and runs the argv in `.ufo/waves/round-26/claims.json` `verbs_argv` with `TMPDIR` set to a private scratch directory, never `/tmp`. Run it from the host login shell: the verbs need `GHIDRA_INSTALL_DIR` and the `REA_*` provider variables that `~/.bashrc` exports; without them they return `provider_unavailable` with `ok: false` and no id (seat reports `.ufo/waves/round-26/w1/ReplayA.md`, `ReplayB.md`).
 
-# Evidence-ID identity of the eight native reader verbs at REA 6.5.0 — seven content-keyed, `inspect-binary-layout` path-sensitive
+# Evidence-ID identity of eight native reader verbs at REA 6.5.0 on `/usr/bin/jq` — seven keep their id in another directory, `inspect-binary-layout` does not
 
 Coverage-map ground: evidence-ID identity per verb at the lane's carrier pin. Before this
 entry the lane held a family-wide statement (`corpus/README.md` Known gaps, evidence-ID bullet)
 backed by two-path controls at 6.4.0 (`analyze`/`inspect` in r5-01, `function` in r9-02) and
 at 6.7.0 for four `inspect-*` verbs outside this set. No two-path control existed at 6.5.0 for
 any of the eight verbs below, and five of them (`decompile`, `xrefs`, `read-bytes`,
-`instructions`, `inspect-binary-layout`) had none at any pin.
+`instructions`, `inspect-binary-layout`) had none at any pin. The eight verbs are the set chosen by
+round-25 seat `.ufo/waves/round-25/a3/w1/PlannerWalk.md`, not a family the package defines; the
+package has other verbs that read native binaries (for example `search-bytes`,
+`address-to-file-offset` and `inspect-native-instruction`), which were not measured.
 
 ## Observation
 
@@ -90,14 +93,18 @@ omits when it is null (`dist/domain/evidence.js:175-178` in each package), and 6
 `/usr/bin/jq` confirm it: `inspect-binary-layout` 6.5.0 `ev_294a449c…` versus 6.7.0
 `ev_d1256a96…`, `function` `ev_b2b7e9e4…` versus `ev_177586c6…`. The lane's stored 6.7.0
 envelopes (arc3 rounds 7, 10, 11, 12) recompute exactly under the 6.7.0 rule and never under the
-6.5.0 rule. So compare ids only within one pin. The relations themselves were measured here at
+6.5.0 rule. So compare ids only within one pin and one provider build: the hashed provider identity
+includes the observed Ghidra version (`12.1.4` here), and the 6.5.0 source accepts any 12.1.x build
+(`dist/ghidra/GhidraInstallationPolicy.js:39,44,50`, seat report `.ufo/waves/round-26/w2/EntryOverreach.md`);
+changing only that string in a committed envelope changes the recomputed id for `decompile`,
+`analyze` and `read-bytes`. Whether a different 12.1.x build changes the live ids is inference; it was not run. The relations themselves were measured here at
 6.5.0 only; the two 6.7.0 calls above are single base runs and test no relation. That the same
 eight relations hold at 6.7.0 is inference from the shared projection rule, not a measurement.
 
 ## Use
 
 - To show two envelopes from these seven verbs came from the same bytes and request, compare ids;
-  for `inspect-binary-layout`, compare `.data.subject.digest.sha256` and the parameters instead,
+  for `inspect-binary-layout`, compare `.data.subject.digest.sha256` and the parameters other than `parameters.path` instead,
   because the same bytes at another path get another id.
 - An equal id between `analyze` and `inspect` is expected and is not evidence that two verbs agree.
 - Equal ids do not authenticate the subject path or module name: those fields are outside the
@@ -105,9 +112,17 @@ eight relations hold at 6.7.0 is inference from the shared projection rule, not 
 
 ## Limits
 
-One carrier, one pin (`rea-agents@6.5.0`), one address for the five address-taking verbs,
+One carrier, one pin (`rea-agents@6.5.0`), one Ghidra build (12.1.4), one address for the five address-taking verbs,
 default parameters otherwise, and three runs per verb. The copy kept the file name `jq`, so the
-table shows directory-insensitivity at an identical file name; sensitivity to a different file
-name or extension was not tested. No claim is made for other pins, other carriers, other
+table shows directory-insensitivity at an identical file name. One falsify-wave replay (seat report
+`.ufo/waves/round-26/w2/ReplayRenamedCopy.md`, not a table row) ran a copy named `jq-renamed.bin`:
+`analyze`, `decompile` and `function` kept their table ids and `inspect-binary-layout` gave a new id;
+name and extension changed together, and the other four verbs were not run on it. An earlier
+round already saw `function` keep its id on a renamed copy (`libc.so.6` to `libsystem_c.so`,
+`corpus/knowledge/2026-10-14-r9-02-queue-a-ops-2.md:146-169`). Content-keyed does not mean the
+provider is deterministic on every carrier: round 17 saw `analyze` give two ids for one file at one
+path (`corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md:116-122`, `string_count` off by one).
+The same `inspect-binary-layout` id `ev_294a449c…` was recorded at 6.4.0
+(`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:26`), so for that verb 6.4.0 and 6.5.0 agree. No claim is made for other pins, other carriers, other
 parameter values, error envelopes, MCP sessions, or other verbs. The envelopes do not record
 the package version; the pin rests on the call records and the resolved package root.

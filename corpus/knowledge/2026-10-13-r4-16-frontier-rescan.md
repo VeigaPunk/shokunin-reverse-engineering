@@ -973,3 +973,7 @@ official-proxy ops (D).
   `:195-206`, the per-errata "table lines" values, and the self/sibling
   pointers `:751-752`, `corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:99-104`,
   `:110-120`, `:115-118`. The `/tmp` scratch (`:244-247`) is gone as expected.
+
+## Round-26 pointer (appended; filed text above unchanged)
+
+Lines 735-737 extend content addressing to `pwntools-elf` from same-path repeats only. Round 26 measured identity across directories at `rea-agents@6.5.0`: `inspect-binary-layout` (the `pwntools-elf` layout verb) is path-sensitive, so its id re-derives byte-exact only at the same path; see `corpus/knowledge/2026-10-22-r26-native-reader-evidence-id-identity.md` and `corpus/evidence/round-26/c1/table.tsv`.

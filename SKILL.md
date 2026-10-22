@@ -879,3 +879,31 @@ the freeze and is false at the tip. The round 25 verifier spot check calls the
 claim abandoned; no committed lane record contains a retirement decision, and
 the lane's committed records say the claim was not continued and was reported
 as not pursued, not as met. Use the lane's wording.
+
+## Evidence-ID identity per verb at a named pin — round 26
+
+This section supersedes, for the verbs it names, the two-class reading of the craft rule
+"Evidence ids are content-addressed per verb family" (`SKILL.md:86-107`): there is a third class,
+path-sensitive, and an id held "byte-exact across a day" (`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:11`,
+an `inspect-binary-layout` id on `/usr/bin/jq`) re-derives only at the same path. Source:
+`corpus/knowledge/2026-10-22-r26-native-reader-evidence-id-identity.md` (table
+`corpus/evidence/round-26/c1/table.tsv`; S079 for the minting rule).
+
+| verb at `rea-agents@6.5.0` (carrier `/usr/bin/jq`) | id class | to show two envelopes came from the same bytes and request |
+|---|---|---|
+| `analyze`, `inspect` (one operation, `binary_overview`; same id for both) | content-keyed across directories | compare ids; read `.meta.command` to tell the two verbs apart |
+| `decompile`, `xrefs`, `read-bytes`, `function`, `instructions` | content-keyed across directories | compare ids |
+| `inspect-binary-layout` | path-sensitive (path in `parameters.path`, `normalized_result.artifact.path`, a location) | compare `.data.subject.digest.sha256` and the parameters other than `parameters.path`; an id match also proves the same path |
+
+Decision rules:
+
+- Compare ids only within one pin and one Ghidra build: 6.5.0 and 6.7.0 mint different ids for the
+  same bytes and request (`relationship_coverage` in the 6.7.0 projection), and the observed Ghidra
+  version is inside the hashed provider identity.
+- A different id on a same-path repeat is a real provider difference, not a path effect: round 17
+  saw one on `/usr/bin/aether` (`analyze`, `string_count` 29118 → 29117,
+  `corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md:116-122`). Content-keyed means the path is not
+  hashed; it does not promise the provider is deterministic on every carrier.
+- Recompute an id offline with `python3 -I -B tools/round-26/recompute-ids.py <envelope>` before
+  trusting it; a match shows the envelope's hashed fields are intact, not that the run was the
+  one claimed (`.meta.command` and the call record say that).
