@@ -20,7 +20,7 @@ explicitly marked current; the added lesson-index row shifts later README lines.
 
 | Axis | Baseline → current score, 0–10 | Observable and limitation | Evidence / counting command | Last-change round |
 |---|---|---|---|---|
-| coverage | 9.72 → 10.0 | 78/78 knowledge files mapped; index integrity only, **not** fraction of the REA domain held | `corpus/README.md:11-67`; command A; baseline `a79945c4`, measured `3395b6d` | luna-round-1 + luna-round-7 |
+| coverage | 9.72 → 10.0 | 107/107 knowledge files mapped; index integrity only, **not** fraction of the REA domain held | `corpus/README.md` `## Coverage map`; command A; baseline `a79945c4`, measured `3395b6d`; recount 107/107, missing [], dangling [] at `7ef837a473ae65d924b9ea34e7748f722a6cd7d5` (round 25 attempt 3; the row said 78/78 from luna-round-7 until then) | luna-round-1 + luna-round-7; count refreshed round 25 |
 | depth | 10 → 10 | 9/9 queue-drain rule blocks have resolvable file/range citations at `638fb211`; **not** semantic correctness, generality, or fresh execution — the r3 semantic contradiction removal is measured by the contradiction census, not this proxy | `SKILL.md:77-191`; command A; baseline `a79945c4`, measured `638fb211` | r1 measurement + luna-round-3 |
 | calibration | 0 → 10 | 9/9 preselected reconciliation obligations aligned (2026-10-15); 2026-10-16 per-client REA surface reconciled to live receipts — **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; luna-round-2 receipts `.ufo/waves/luna-round-2/receipts/`; measured at `75af886a` | operator-steered r1 + luna-round-2 |
 
@@ -3042,3 +3042,9 @@ S073 is narrow; new S074 supplies additional primary primitives, with local
 policy/census URL limits explicit. No after score, capability admission,
 F or implementation permission is claimed at this handoff.
 
+
+## Round 25 attempt 3 — repair the round-24 outside verdict, then name EVM selectors
+
+Round-24 outside decision: `corpus/lessons/round-24-verifier-spotcheck.md` records round 24 as **not admitted, rejected-honest-stop** (R24-C1 coverage improved and finite; R24-C2 calibration unmet at 9/11 on its original frozen gate). This card accepts that verdict; no round-24 score or verdict above is rewritten.
+
+Claims (frozen by attempt 2 at `7ef837a473ae65d924b9ea34e7748f722a6cd7d5`, instruments at `9dcd11ecb412fe4828f274580018039b8edbc05a`, kept unchanged by attempt 3): R25-C1 calibration, 5 fixed self-assessment items, mismatches 5 → target 0; R25-C2 coverage, knowledge Markdown 107 → target 108 with the EVM selector-naming entry sourced by a row opened 2026-10-22. Attempt 1's prospective 34-case custody claim (`.ufo/waves/round-25/claims.json`) was not continued and has no after value.

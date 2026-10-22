@@ -2949,3 +2949,8 @@ immutable thereafter. The only truthful FLAGGED row follows final measured
 metadata, old header/all11 rows unchanged; no supersession laundering.
 No source/gate/fixture/candidate execution, F or code permission is claimed.
 
+## 2026-10-22 — round-25 attempt 3: repair the round-24 outside verdict, then name EVM selectors
+
+- Round-24 outside decision recorded: `corpus/lessons/round-24-verifier-spotcheck.md` rules round 24 not admitted, rejected-honest-stop (R24-C2 original frozen gate 9/11, exit 1; the revised gate's 11/11 does not substitute). New `corpus/QUALITY.md` row 34 turns that disagreement into a criterion.
+- Motivating evidence for R25-C1: the attempt-2 before receipt `corpus/evidence/round-25/a2/before/c1-calibration.json` (5/5 mismatches at `9dcd11ec`): the coverage row still said 78/78 while command A counts 107/107 at `7ef837a4`; SHONEN's boundary pointer `PROVINCE.md:88-116` began in `## Frontier`, not `## Adjacent` (95); no SCORECARD, LOG or QUALITY line recorded the round-24 decision.
+- Motivating evidence for R25-C2: `PROVINCE.md` Frontier said "selectors stay bare hashes (no signature DB → no name resolution)"; attempt 2 saved 138 signature-database lookups for six carriers but never analyzed them.

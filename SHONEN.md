@@ -9,4 +9,4 @@ Promotion to shokunin requires all of:
 - [~] Instructions executable by an agent without oral context
   asserted: historical 2026-10-15 operator-steered round 1 executed the bounded native recipe and the scorecard counting recipes; `corpus/lessons/2026-10-15-round-1.md`; historical audit claims are not current outside verification.
 - [~] No cross-domain bleed (PROVINCE.md still accurate)
-  asserted boundary only: `PROVINCE.md:88-116` (safety refusal at :114-116; range refreshed arc2-loop1-round1 per CR5's stale-range finding); province-version alignment is contested by the 6.5.0/207/v42 observations in `corpus/lessons/2026-10-15-round-1.md`; no promotion or complete accuracy claimed.
+  asserted boundary only: `PROVINCE.md:95-116` (the `## Adjacent` refusal list; safety refusal at :114-116; range refreshed round 25 attempt 3, the earlier `88-116` began inside `## Frontier`); province-version alignment is contested by the 6.5.0/207/v42 observations in `corpus/lessons/2026-10-15-round-1.md`; no promotion or complete accuracy claimed.
