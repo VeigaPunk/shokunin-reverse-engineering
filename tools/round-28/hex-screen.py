@@ -13,7 +13,7 @@ import os
 import re
 import sys
 
-HEX = re.compile(r"\A(?:0x)?(?:[0-9a-fA-F]{2})*\Z")
+HEX = re.compile(r"\A(?:0[xX])?(?:[0-9a-fA-F]{2})*\Z")
 PLACEHOLDER = re.compile(r"__\$[0-9a-fA-F]{34}\$__")
 
 

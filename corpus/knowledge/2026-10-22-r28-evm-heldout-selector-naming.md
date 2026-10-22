@@ -32,7 +32,9 @@ below are the observed held-out result, and they do not make the claim met.
 | `fourbyte_sole_args_consistent` | 90 | 90 | 0 | 97 |
 | `fourbyte_first` | 96 | 94 | 2 | 91 |
 
-Other tally fields: REA recovered 186 of 187 selectors (the missing one is h09's `useIt(uint256)`).
+Other tally fields: REA ran on 60 of the 61 carriers and recovered all 186 held-out selectors on
+those 60. The 187th, h09's `useIt(uint256)`, has no run because REA refused the input; it was not
+analysed and missed (tally field `recovered_by_rea` 186; seat `CriticC1Miss`).
 For 167 selectors, REA's inferred arguments match the ABI. For 145, the true name is in some
 database, and 42 have no candidate in either database. Both `fourbyte_first` errors are spam
 names returned first: `burn(uint256)` came back as `collate_propagate_storage(bytes16)` (h10),
@@ -62,7 +64,8 @@ The 145 → 143 → 137 steps come from the sole-candidate check (2 rows) and th
 ## Use
 
 - The round-25 primary rule kept a zero error count out of sample (0 of 137), at a cost of 50
-  unnamed rows. When a name must be right, prefer it over `fourbyte_first`, which was wrong twice.
+  unnamed rows: 49 rows that were run, plus h09's row, which has no run. When a name must be right,
+  prefer the primary rule over `fourbyte_first`, which was wrong twice.
 - Before freezing any EVM carrier list, screen every runtime file for non-hex bytes (`__$` linker
   placeholders). Link the file (`solc --link`, S086 `:91`) or leave it out before the freeze, not
   after.
