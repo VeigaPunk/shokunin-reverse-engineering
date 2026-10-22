@@ -1,0 +1,62 @@
+{
+  "round": "round-27",
+  "attempt": 1,
+  "frozen_by": "kaidoku L1 round 27, before any R27-C1 table run and before the R27-C2 tool exists",
+  "base": "cd32264f7ee356a9c0f48bd8e3fcdac222db22a0",
+  "freeze_kind": "instruments-first: both counters, their red selftests and their before receipts are committed in the same commit as this file, before any data they count. The C1 counter refuses runs that started, and envelopes first committed, before its own commit.",
+  "instruments": {
+    "tools/round-27/c1-rename-identity.py": "e0a079955c16a759dc3ba4facb6d954431ce605ea2a6da680f43b20cea743bb7",
+    "tools/round-27/c2-xpin-check.py": "d8de667ff82a46d5c0c9a19d4fc2f5a3c36c12fa037f9a32287046a377209bd3"
+  },
+  "pre_freeze_probe": {
+    "what": "one REA 6.5.0 call to learn whether 0x103d40 (ELF entry 0x3d40 rebased) is a function in tinyxxd; not a table row and never used as one",
+    "argv": "TMPDIR=/fast/scratch/hyaku/kaidoku-r27/l1/tmp npx -y rea-agents@6.5.0 function /usr/bin/tinyxxd 0x103d40 --format json --full-output",
+    "utc": "2026-10-22T14:45:23Z",
+    "exit": 0,
+    "evidence_id": "ev_8af5c38f4d264e35f3f746fd53b35a4166350d1cdab0bfa2328b431fd0e001fc",
+    "envelope_sha256": "936601375c6b87b04e870156dd8f67fdeb286ff5837dc1687f9ef4c845f45cc0",
+    "seen": "procedure entry at 0x103d40, 38 bytes; .data.subject.name is the file name 'tinyxxd'"
+  },
+  "claims": [
+    {
+      "id": "R27-C1",
+      "axis": "depth",
+      "kind": "learning claim (PROVINCE core: evidence identity of the native reader verbs at the round carrier pin, extended to a renamed copy and a second carrier)",
+      "statement": "At rea-agents@6.5.0, the committed table corpus/evidence/round-27/c1/table.tsv has one complete row for each of 16 frozen (carrier, verb) pairs: 8 verbs on /usr/bin/jq and on /usr/bin/tinyxxd. Each row's verdict (content-keyed, rename-sensitive or unstable) re-derives from three committed envelopes: base path, same-path repeat, and a byte-identical copy under another directory, file name and extension. A knowledge entry cites the table and a SOURCES row new since the base, opened 2026-10-22, status mined, listed in corpus/lessons/round-27.md ## Gate.",
+      "carriers": {
+        "jq": {"base": "/usr/bin/jq", "renamed": "/fast/scratch/hyaku/kaidoku-r27/carrier/renamed/jq-r27-renamed.dat", "sha256": "e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806", "size": 30800, "address": "0x103fa0", "package": "jq 1.8.2-1"},
+        "tinyxxd": {"base": "/usr/bin/tinyxxd", "renamed": "/fast/scratch/hyaku/kaidoku-r27/carrier/renamed/tinyxxd-r27-renamed.dat", "sha256": "7b1e5d0c970afe686c8d6b60fcf0298981e16adf08c3f0f128ee007a0403ae65", "size": 38928, "address": "0x103d40", "package": "tinyxxd 1.3.17-1"}
+      },
+      "verbs_argv": {
+        "analyze": "analyze <PATH> --format json --full-output",
+        "inspect": "inspect <PATH> --format json --full-output",
+        "decompile": "decompile <PATH> <ADDR> --format json --full-output",
+        "xrefs": "xrefs <PATH> <ADDR> --format json --full-output",
+        "read-bytes": "read-bytes <PATH> <ADDR> --length 64 --format json --full-output",
+        "function": "function <PATH> <ADDR> --format json --full-output",
+        "instructions": "instructions <PATH> <ADDR> --format json --full-output",
+        "inspect-binary-layout": "inspect-binary-layout <PATH> --format json --full-output"
+      },
+      "invocation": "TMPDIR=<seat scratch>/tmp npx -y rea-agents@6.5.0 <argv>; base and repeat use the carrier's base path, renamed uses its renamed path. After each call the seat records pkg_version and pkg_json_sha256 read from /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json (frozen: 6.5.0, a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c).",
+      "counting_command": "python3 -I -B tools/round-27/c1-rename-identity.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV>",
+      "rules": "as coded in the pinned counter: runs.tsv and table.tsv headers frozen; per run path, argv, exit 0, utc_start after the counter commit, frozen package version and package.json sha256, distinct envelope sha256 equal to the file bytes, ok envelope, .meta.command equal to the verb, evidence_id equal across envelope, runs.tsv and table, evidence_id recomputing under the 6.5.0 rule (tools/round-26/recompute-ids.py), subject sha256 equal to the carrier, own path present and the row's other path absent, subject.name equal to the run's file name; verdict unstable if base != repeat, content-keyed if renamed == base, else rename-sensitive.",
+      "before": {"rows_complete": 0, "rows_total": 16, "entry_ok": 0, "exit": 1, "receipt": ".ufo/waves/round-27/before/c1-at-cd32264f.txt"},
+      "target": {"rows_complete": 16, "rows_total": 16, "entry_ok": 1, "exit": 0},
+      "limits": "Two carriers, one pin, one address per carrier, three runs per pair. The renamed copy changes directory, file name and extension together; for jq the round-26 table already holds the directory-only control. Any verdict counts as complete; the claim is that the 16 verdicts re-derive, not which verdict each pair gets. Says nothing about other pins, MCP sessions, parameters or error envelopes."
+    },
+    {
+      "id": "R27-C2",
+      "axis": "operability (fleet axis, unowned proxy; capability acquisition)",
+      "kind": "capability acquisition: attribute a saved REA envelope to the evidence-ID rule of rea-agents 6.5.0, 6.7.0, both or neither, from its bytes, using each installed package's own canonical digest code",
+      "statement": "tools/round-27/xpin-attribute.mjs, committed at REV, prints for each round-26 envelope the stored id, the id under the 6.5.0 rule, the id under the 6.7.0 rule and the attribution, agreeing with the checker's independent recompute on 24 of 24 round-26 envelopes and on 3 of 3 generated red envelopes; SCORECARD ## Capabilities has a row naming the tool; SOURCES has a row new since the base, opened 2026-10-22, status mined, naming the installed 6.7.0 package root a1722018f28f9df2, listed in the round-27 ## Gate.",
+      "tool_contract": "node tools/round-27/xpin-attribute.mjs --pkg65 <6.5.0 package root> --pkg67 <6.7.0 package root> ENVELOPE...; one stdout line per envelope: <path as given> TAB <stored id> TAB <id under 6.5.0 rule> TAB <id under 6.7.0 rule> TAB <6.5.0|6.7.0|both|none>; exit 0. The ids must come from each package's own exported digestCanonicalValue and that package's own semanticProjection source text, not a retyped projection.",
+      "counting_command": "python3 -I -B tools/round-27/c2-xpin-check.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV>",
+      "before": {"r26_rows_ok": 0, "red_ok": 0, "capability_row": 0, "source_row": 0, "exit": 1, "receipt": ".ufo/waves/round-27/before/c2-at-cd32264f.txt"},
+      "target": {"r26_rows_ok": 24, "red_ok": 3, "capability_row": 1, "source_row": 1, "exit": 0},
+      "limits": "The 6.7.0 ids are computed from the 6.7.0 package's code on 6.5.0-produced evidence objects; no 6.7.0 run is made this round, so the claim is attribution by rule fit, not what 6.7.0 would emit for the same carrier. The checker does not test that the tool avoids a retyped projection; that is a reviewer item."
+    }
+  ],
+  "not_claimed": [
+    "calibration: the 11 stale SCORECARD statements disclosed at SCORECARD.md:3075 are hygiene this round, corrected without a claim (Main session note 2; a third calibration claim would trip the same-surface sentinel)"
+  ]
+}
