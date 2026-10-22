@@ -1,0 +1,373 @@
+{
+ "wave": "kaidoku28-a2",
+ "reportDir": ".ufo/waves/round-28/a2",
+ "maxLanes": 73,
+ "context": "# Goal\nKaidoku round 28, attempt 2: the single v2 wave (build items and attack items together) for lane repo /home/vgpnk/Projects/shokunin/kaidoku-shokunin (reverse engineering of shipped artifacts with REA on this Linux host). Lane base 935c36608008f79e3dea4f1ed191df3c89e3b848. Two claims, each frozen with its own counter, selftest and before receipts before its data:\n- R28-C1 (coverage, learning claim; frozen at lane commit 87d3dfb65fec4b636664bd5727822feba5d35317, file /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-28/claims.json): a held-out test of the round-25 EVM selector naming rule (entry /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md). 61 held-out carriers (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/carriers.tsv, chosen by /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/select-heldout.py) and 187 held-out selectors (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/heldout.tsv). Counter /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py. REA runs committed at ca4069a4f53b4ccc2a68a4b228ae9dd6b32b89c3 (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/runs.tsv and envelopes/): 60 exit 0, carrier h09 exit 1 (REA refused its runtime file because it holds an unlinked library placeholder `__$...$__`). The frozen target runs_ok 61/61 therefore cannot be met; the round will report that miss honestly. Lookups and the tally are still being produced by the L1.\n- R28-C2 (depth, learning claim; frozen at lane commit 86fa8526aeaf98704f22a17dcb9965fb087b0be1, file /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-28/claims-c2.json): Sourcify's 4byte service code (github.com/argotorg/sourcify commit 189cd726f7ed8fb3d2f503402d5c133e0f50e1fd, services/4byte/src/api/handlers.ts function filterResponse, and services/4byte/src/utils/canonical-signatures.json, pinned copy /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c2/canonical-signatures.json) says a candidate is `filtered` exactly when its selector is a canonical key and its name differs from the canonical signature. Counter /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c2-filtered-flag.py tests that rule on a fresh openchain fetch of 230 selectors (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c2/selectors.tsv), being fetched by the L1 now.\n- Routed defects from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-27-verifier-spotcheck.md (section Routed defects, 8 items) are fixed or explained this round as hygiene, not claims.\n# Contract\n- Paths: every path is absolute. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kaidoku-shokunin - write it at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/<that path>. Write nothing else inside /home/vgpnk/Projects/shokunin/kaidoku-shokunin. Put scripts, drafts, raw output and other artifacts under /fast/scratch/hyaku/kaidoku-r28/seats/a2/<your item name>/ and list each with its sha256 in the report; the L1 integrates and commits.\n- Bounds: read-only on the lane. Never edit lane files (SCORECARD, LOG, SKILL, PROVINCE, SHONEN, QUALITY, SOURCES, corpus/, tools/, .ufo/ other than your own report). Never mutate the fleet repo /home/vgpnk/Projects/shokunin, sibling lanes, lane jj state or the lane Git index. Seats never commit, push or update refs anywhere in the lane. No git add/commit/checkout/reset/stash/switch/pull/push in the lane. Never run any jj command at the fleet root /home/vgpnk/Projects/shokunin; in the lane, jj only read-only with --ignore-working-copy. Read-only git (show, log, ls-tree, cat-file, diff, rev-parse) is fine. A check that needs Git writes or file mutation runs in a sandbox clone `git clone -q /home/vgpnk/Projects/shokunin/kaidoku-shokunin /fast/scratch/hyaku/kaidoku-r28/seats/a2/<your item name>/clone`.\n- Messages: the only message target is agent://KaidokuR28a2 (the L1), and only for a blocker. Never message agent://all or any other seat.\n- Evidence: every finding names its producing command, an exact output excerpt, exit code and UTC time; label each conclusion observation, inference or unknown. Never fabricate; an unrun check has not passed. Attack seats name what they attack and give a verdict: holds, fails (with the counterexample) or could-not-evaluate.\n- Sources: open primary sources by ordinary means only (plain HTTP fetch such as curl, git clone of a public repository, a normal reader, or a local file read); never use a headless browser or any other tool to pass a bot challenge, captcha or access control. A source you cannot open that way is recorded as unopened and supports nothing. For each opened source record URL or path, access date 2026-10-22, sha256 of the bytes read, and one located quote of at most 25 contiguous words copied from the served bytes with its line or section (label any quote taken from rendered HTML as a composite).\n- Network lookups to 4byte.directory or api.openchain.xyz: at most 10 requests per seat, one second apart, only if your item says so.\n- REA: only if your item says so; CLI only, `TMPDIR=/fast/scratch/hyaku/kaidoku-r28/seats/a2/<your item name>/tmp npx -y rea-agents@6.5.0 <argv>`, never MCP devices; calls one after another. Package root (read-only): 6.5.0 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/.\n- Tooling: the operator authorizes installs and upgrades that help the task - read /home/vgpnk/.omp/agent/RULES.md first, use official channels, and record tool, version, channel and reason in your report. All pacman transactions are PAUSED host-wide (pacman guard): install only via `uv tool`, `uv venv` + `uv pip`, `npx`, or an official binary in ~/.local/bin; never -Sy, -Syu, -U, -R, downgrade, or restart a host service.\n- You are a leaf: no delegation and no background jobs. Finish within 30 minutes. Keep the report under 100 lines. Write plain English with spaced words, no run-together tokens or private jargon.\n\n# State at dispatch (attempt 2)\n- Lane tip a267311678309fd17772407e8afa122ec3219289 (main). Attempt 1 of this round died at 17:26Z; its seats are dead and never resumed. Data committed: C1 runs/envelopes (ca4069a4), C1 lookups and tally (cb8d495e), C2 openchain fetch of 230 responses (a2673116, fetched 17:22:05Z-17:25:57Z, after the C2 freeze 86fa8526 at 17:21:55Z).\n- Counter at a2673116, observed by the L1: C1 `runs_ok=60/61 rows_complete=186/187 tally_equal=1 entry_ok=0` (h09 refused by REA: unlinked library placeholder; primary rule named 137, right 137, wrong 0, no_name 50). The C1 frozen target 61/61 and 187/187 is therefore missed: an honest stop for R28-C1 that the round reports as such. C2 `responses_complete=230/230 entries=246 mismatches=0 predicted_true=59 entry_ok=0` (entry, source row and lesson Gate still to land).\n- Planned new SOURCES rows (ids reserved by the L1; a row is written only after its source is opened this round): S084 Sourcify services/4byte/src/api/handlers.ts filterResponse at commit 189cd726f7ed8fb3d2f503402d5c133e0f50e1fd; S085 services/4byte/src/utils/canonical-signatures.json at the same commit; S086 Solidity documentation on library linking placeholders (for the h09 cause); S087 4byte.directory server source ordering (only if opened).\n- Drafting seats (scribes) and executors never write lane files: they return their draft text or diff inside their report, and the L1 integrates. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kaidoku-shokunin — write it at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/<that path>.\n- Tooling authorization (operator, 2026-10-19): you may install or update tools that help the task without asking; read /home/vgpnk/.omp/agent/RULES.md first and record each install. All pacman transactions are PAUSED host-wide (use uv tool / npx / an official binary in ~/.local/bin).\n",
+ "items": [
+  {
+   "name": "SourceFilterCode",
+   "role": "scout",
+   "prompt": "# Target\nR28-C2 source row: Sourcify 4byte filterResponse code.\n# Work\nOpen https://raw.githubusercontent.com/argotorg/sourcify/189cd726f7ed8fb3d2f503402d5c133e0f50e1fd/services/4byte/src/api/handlers.ts by plain curl. Record sha256, the line numbers of function filterResponse, and a located quote (≤25 contiguous words) of the assignment `signatureItem.filtered = signatureItem.name !== expectedCanonical.signature`. Also check whether any other code path in services/4byte/src sets `filtered` to true (grep the same commit; you may git clone --filter=blob:none the public repo into your seat dir). Compare with the L1's sparse checkout at /fast/scratch/hyaku/kaidoku-r28/src/sourcify (read-only).\n# Acceptance\nReport: URL, sha256, line range, quote, list of every place `filtered` is assigned with file:line, verdict whether the rule in claims-c2.json is the complete rule in code (holds / fails with the counterexample)."
+  },
+  {
+   "name": "SourceCanonicalList",
+   "role": "scout",
+   "prompt": "# Target\nR28-C2 source row: canonical-signatures.json at the pinned commit.\n# Work\ncurl https://raw.githubusercontent.com/argotorg/sourcify/189cd726f7ed8fb3d2f503402d5c133e0f50e1fd/services/4byte/src/utils/canonical-signatures.json; compare sha256 with the lane copy /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c2/canonical-signatures.json (expected 5572beb596c9062be042b11be4a8cbd6a875be67a518dc0046b220433878b3e2). Count keys. List the file's commit history (git log on a blob-less clone in your seat dir) and say whether the staging branch tip (0966a3bcf13a46b335dae390a0c95b3b0d980c69) has the same file bytes.\n# Acceptance\nReport: URL, sha256, equal or not, key count, commit history lines, staging comparison, one located quote of a key and its signature."
+  },
+  {
+   "name": "SourceSourcifyBlog",
+   "role": "scout",
+   "prompt": "# Target\nR28-C2 candidate source: the Sourcify blog post 'Spam or Legit? Analyzing 4byte Selector Collisions'.\n# Work\nOpen https://docs.sourcify.dev/blog/signatures-analysis/ by plain curl (served HTML; label quotes composite when they cross tags). Find what it says the `filtered` field means and how the canonical list is chosen. Compare each statement with the code rule in claims-c2.json. Say whether the post should become a SOURCES row (and for what scope) or be rejected (and why).\n# Acceptance\nReport: URL, sha256 of the served bytes, ≤25-word quotes with location, agree/disagree per statement with the code, row or reject recommendation with reason."
+  },
+  {
+   "name": "ScoutOpenchainDeploy",
+   "role": "scout",
+   "prompt": "# Target\nR28-C2 limit: is api.openchain.xyz served by the Sourcify 4byte service, and at which revision?\n# Work\nUsing at most 6 plain HTTP requests (curl -sI and curl -s), record response headers, redirects and any version or health endpoint for https://api.openchain.xyz/signature-database/v1/lookup?function=0xa9059cbb&filter=false and https://api.4byte.sourcify.dev/signature-database/v1/lookup?function=0xa9059cbb&filter=false; compare the two bodies byte for byte. Check the lane row S078 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md for what the lane already holds.\n# Acceptance\nReport: per request the command, status, relevant headers, sha256 of body; whether the two hosts return identical bytes; what can and cannot be said about the deployed code revision (observation vs inference)."
+  },
+  {
+   "name": "Scout4byteOrdering",
+   "role": "scout",
+   "prompt": "# Target\nRound-25 entry inference: 4byte.directory's default result order (decision rule 3 says newest submission first, observed but not documented).\n# Work\nFind the 4byte.directory server source (the public GitHub repository behind www.4byte.directory, e.g. pipermerriam/ethereum-function-signature-registry) and locate the API view and queryset ordering for /api/v1/signatures/. Use plain curl or git clone into your seat dir. Quote the ordering line. No 4byte API requests needed.\n# Acceptance\nReport: repository URL, commit, file:line, ≤25-word quote, sha256 of the file; verdict whether the code confirms, contradicts or cannot settle 'newest first' in the round-25 entry, and whether the deployed site is known to run that code (inference labelled)."
+  },
+  {
+   "name": "ScoutUnlinkedPlaceholder",
+   "role": "scout",
+   "prompt": "# Target\nR28-C1 miss cause: REA 6.5.0 refused carrier h09 (exit 1, invalid_format).\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/envelopes/h09.json and the runtime file named for h09 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/carriers.tsv. Locate in the installed REA 6.5.0 package (/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/) the code that emits 'Hex carrier requires complete hexadecimal byte pairs' and quote it with file:line and sha256. Explain the Solidity unlinked-library placeholder format (`__$<34 hex>$__`, solc documentation 'Library Linking' if you can open it by curl) and say whether REA offers any linking option.\n# Acceptance\nReport: the REA code location and quote, the placeholder offset in the h09 runtime, the solc doc quote if opened, and whether any other of the 61 runtime files contains non-hex bytes (offline scan command and output)."
+  },
+  {
+   "name": "ProvenanceA",
+   "role": "scout",
+   "prompt": "# Target\nR28-C1 ground truth: ABI/runtime pairing for carriers h01-h20.\n# Work\nFor each carrier h01-h20 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/carriers.tsv, read the directory holding its runtime and ABI (git ls-tree at main) and any compile log, solc/vyper command or source file there. Decide whether runtime and ABI come from the same compile (same contract, same source). Then compare the selectors REA recovered (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/envelopes/<carrier>.json, normalized_result.functions[].selector) with the ABI's function selectors (keccak-256 of the canonical signature; you may import keccak256 and abi_signatures from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-25/a2/resolve-selectors.py).\n# Acceptance\nReport: one line per carrier: compiler and version if known, pairing verdict (same compile / mispaired / unknown) with the evidence path, REA-only selectors, ABI-only selectors."
+  },
+  {
+   "name": "ProvenanceB",
+   "role": "scout",
+   "prompt": "# Target\nR28-C1 ground truth: ABI/runtime pairing for carriers h21-h40.\n# Work\nSame method as for h01-h20: for each carrier h21-h40 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/carriers.tsv read its directory and compile records, judge the pairing, and compare REA-recovered selectors (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/envelopes/<carrier>.json) with ABI selectors (keccak-256 via /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-25/a2/resolve-selectors.py).\n# Acceptance\nReport: one line per carrier: compiler and version if known, pairing verdict with evidence path, REA-only selectors, ABI-only selectors."
+  },
+  {
+   "name": "ProvenanceC",
+   "role": "scout",
+   "prompt": "# Target\nR28-C1 ground truth: ABI/runtime pairing for carriers h41-h61.\n# Work\nSame method: for each carrier h41-h61 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/carriers.tsv read its directory and compile records, judge the pairing, and compare REA-recovered selectors (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/envelopes/<carrier>.json) with ABI selectors (keccak-256 via /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-25/a2/resolve-selectors.py).\n# Acceptance\nReport: one line per carrier: compiler and version if known, pairing verdict with evidence path, REA-only selectors, ABI-only selectors."
+  },
+  {
+   "name": "ScoutRegistryFormat",
+   "role": "scout",
+   "prompt": "# Target\nRouted defect 3: SKILL.md gate registry rows for round-27 and round-28 instruments.\n# Work\nRead the gate registry sections in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md for rounds 22-24 (around lines 679, 731, 770) and list the exact columns or fields a registry row carries (gate or probe, verdict map, selftest spelling, pinned values). Then, for /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-27/c1-rename-identity.py, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-27/c2-xpin-check.py, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c2-filtered-flag.py, extract from the code the facts each field needs (exit codes and their meaning, selftest command, pinned files and sha256 values).\n# Acceptance\nReport: the field list with the line it comes from, then one fact block per tool with file:line pointers. Do not write SKILL.md."
+  },
+  {
+   "name": "ReviewC1Counter",
+   "role": "reviewer",
+   "prompt": "# Target\nR28-C1 counter correctness.\n# Work\nReview /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py against the claim in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-28/claims.json. Check: every file it loads is pinned or is counted data; the rule_outputs function equals the round-25 tools/round-25/a3/tally-resolution.py definition; the scoring unit and the 'not recovered' handling match the claim; time checks use the counter's own commit; nothing lets a forged or reused record pass; nothing refuses a legitimate record (including byte-identical lookup bodies).\n# Acceptance\nReport: numbered findings, each with file:line, severity, and holds / fails with a concrete counterexample."
+  },
+  {
+   "name": "ReviewC1Selftest",
+   "role": "reviewer",
+   "prompt": "# Target\nR28-C1 selftest discrimination.\n# Work\nIn a sandbox clone, run `python3 -I -B tools/round-28/c1-heldout-naming.py --selftest` and then, for each red case, show that it fails for its own named reason and not an incidental one (e.g. temporarily print the FAIL lines per case in your sandbox copy). Check the green case really exercises a wrong name and byte-identical 4byte bodies.\n# Acceptance\nReport: per case the FAIL reason observed, a verdict per case (discriminating / incidental), and any missing red case you think the claim needs."
+  },
+  {
+   "name": "ReviewC2Counter",
+   "role": "reviewer",
+   "prompt": "# Target\nR28-C2 counter correctness.\n# Work\nReview /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c2-filtered-flag.py against /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-28/claims-c2.json and the Sourcify filterResponse code at /fast/scratch/hyaku/kaidoku-r28/src/sourcify/services/4byte/src/api/handlers.ts. Check the predicate matches the code exactly (including a null result list, an absent canonical signature field, case of hex keys), the time and pin checks, and whether any entry kind escapes the count.\n# Acceptance\nReport: numbered findings with file:line, severity, holds / fails with a counterexample."
+  },
+  {
+   "name": "ReviewC2Selftest",
+   "role": "reviewer",
+   "prompt": "# Target\nR28-C2 selftest discrimination.\n# Work\nIn a sandbox clone run `python3 -I -B tools/round-28/c2-filtered-flag.py --selftest`; for each red case show it fails for its own reason (print FAIL lines in your sandbox copy). Check both rule branches are exercised by the green case.\n# Acceptance\nReport: per case the observed FAIL reason and a discriminating / incidental verdict; missing cases."
+  },
+  {
+   "name": "ReviewSelectionRule",
+   "role": "reviewer",
+   "prompt": "# Target\nR28-C1 carrier selection rule.\n# Work\nIn a sandbox clone run `python3 -I -B tools/round-28/select-heldout.py --root <clone> --rev 935c36608008f79e3dea4f1ed191df3c89e3b848 --out <seat dir>` and diff its output with the committed /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/carriers.tsv and heldout.tsv. Then list ABI files the rule dropped (no paired runtime, no new selector, round-25 runtime) with counts, and check the pairing order cannot pick a runtime from another contract in the same directory.\n# Acceptance\nReport: diff result, dropped-ABI counts by reason with examples, pairing risks found with paths, verdict on whether the frozen lists are what the documented rule produces."
+  },
+  {
+   "name": "ReviewFreezeOrder",
+   "role": "reviewer",
+   "prompt": "# Target\nFreeze order of both claims (QUALITY rows 33, 38).\n# Work\nUsing git log --format='%H %cI %s' and git log --diff-filter=A on /home/vgpnk/Projects/shokunin/kaidoku-shokunin, show that each counter, its pinned inputs and before receipts were first committed before any data it counts (C1 runs, envelopes, lookups, tally; C2 db/). Check every runs.tsv utc_start and manifest utc against the counter commit times. If tools/round-24 freeze-gate exists (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-24/tools/freeze-gate.py), run it in a sandbox clone for round 28 and report its output.\n# Acceptance\nReport: commit times table, any data earlier than its counter (fails) or none (holds), freeze-gate output and exit code."
+  },
+  {
+   "name": "CriticC1Width",
+   "role": "critic",
+   "prompt": "# Target\nR28-C1 claim statement versus its counting command.\n# Work\nCompare each phrase of the R28-C1 statement in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-28/claims.json with what /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py actually counts. Flag every phrase the counter does not check (universal words, 'unchanged', 'against each compiler ABI', 'all made after the freeze').\n# Acceptance\nReport: phrase-by-phrase table: checked by (file:line) or unchecked; verdict per phrase."
+  },
+  {
+   "name": "CriticC1Miss",
+   "role": "critic",
+   "prompt": "# Target\nR28-C1 honest-stop handling.\n# Work\nThe frozen target is runs_ok 61/61 but carrier h09 is refused by REA (unlinked library placeholder). Attack every way the round could mishandle this: re-running h09, dropping h09, editing the counter or lists, narrowing the target, or describing 60/61 as met. Say what the honest report must contain and what the lesson's Mistakes row should name as captured-by (which rule should have caught a non-hex carrier before the freeze).\n# Acceptance\nReport: list of forbidden moves with the rule each breaks (cite protocol or QUALITY rows by path:line), the required report statements, and a proposed Mistakes row."
+  },
+  {
+   "name": "CriticC2Width",
+   "role": "critic",
+   "prompt": "# Target\nR28-C2 claim statement versus its counting command.\n# Work\nCompare each phrase of the R28-C2 statement in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-28/claims-c2.json with /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c2-filtered-flag.py. Attack the assumption that api.openchain.xyz runs commit 189cd726, and say what a 0-mismatch result does and does not show (for example: 0 of 187 held-out selectors are canonical keys, so for them the rule only predicts 'false').\n# Acceptance\nReport: phrase table with checked/unchecked, a list of things a 0-mismatch result would not show, verdict."
+  },
+  {
+   "name": "CriticC2PreFreeze",
+   "role": "critic",
+   "prompt": "# Target\nR28-C2 pre-registration.\n# Work\nBefore the C2 freeze the L1 applied the rule to the committed round-25 openchain responses (216 entries, 0 mismatches; disclosed in claims-c2.json pre_freeze_probe) and had already seen the round-28 C1 lookups being fetched. Judge whether the fresh fetch after the freeze is still a fair test, what bias the probe could introduce, and how QUALITY rows 33 and 38 (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md) apply.\n# Acceptance\nReport: verdict (fair test / weakened / invalid) with reasons and the exact disclosure the report must carry."
+  },
+  {
+   "name": "CriticSeparability",
+   "role": "critic",
+   "prompt": "# Target\nCausal separability of R28-C1 and R28-C2.\n# Work\nCheck that each claim verifies without the other: shared files (SOURCES rows, lesson Gate, resolver), shared data, shared knowledge entries. Both counters require a new mined SOURCES row in the round-28 Gate. Check whether one claim's success can be manufactured by the other's artifacts.\n# Acceptance\nReport: dependency list with paths; verdict separable / entangled with the specific entanglement."
+  },
+  {
+   "name": "CriticHeldoutMeaning",
+   "role": "critic",
+   "prompt": "# Target\nWhat the R28-C1 held-out test can teach.\n# Work\nMost held-out names are lane-invented (f0(uint256), g3(uint256), read_alpha(uint256)). Using /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/heldout.tsv, classify the 187 rows into plausible-public names versus lane-invented patterns (state your rule), and argue what the primary rule's named/right/wrong numbers will and will not mean for deployed contracts. Judge hypotheses H1 and H2 in claims.json for clarity.\n# Acceptance\nReport: classification counts with your rule, interpretation limits, verdict on H1/H2 wording."
+  },
+  {
+   "name": "CriticLearningClaim",
+   "role": "critic",
+   "prompt": "# Target\nSession quality bar: does each claim change what kaidoku knows or can do in PROVINCE core or frontier?\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/PROVINCE.md (Frontier bullet 'EVM bytecode (extended)'), the round-25 entry and both claim files. Judge each claim against the session quality bar (a claim must be admitted knowledge on uncovered ground, a stronger entry superseding a weaker one, a SKILL.md decision table grounded in entries, or a running capability). Name the exact PROVINCE line each claim should move or annotate.\n# Acceptance\nReport: per claim verdict (qualifies / does not) with reasons and the PROVINCE line."
+  },
+  {
+   "name": "CriticIdenticalOutputs",
+   "role": "critic",
+   "prompt": "# Target\nSession note: counters must not be sunk unfairly by identical repeated outputs.\n# Work\nAttack both counters (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c2-filtered-flag.py) for any place where two legitimate records with identical bytes (identical envelopes, identical lookup bodies, identical empty results) would be refused or double counted. Compare with the round-27 failure (QUALITY row 40, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md).\n# Acceptance\nReport: each place checked with file:line and verdict; any counterexample input."
+  },
+  {
+   "name": "CriticHypotheses",
+   "role": "critic",
+   "prompt": "# Target\nR28-C1 pre-registered hypotheses H1 and H2.\n# Work\nRead hypothesis_reported_not_target in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-28/claims.json. Judge whether H1 and H2 were stated before data, whether they are falsifiable with the committed tally fields, and whether reporting them 'not as targets' is honest or a hedge.\n# Acceptance\nReport: verdict per hypothesis and the exact tally fields that decide each."
+  },
+  {
+   "name": "ConnectorSiblings",
+   "role": "connector",
+   "prompt": "# Target\nSibling-lane overlap on EVM selectors and signature databases.\n# Work\nSearch sibling lane repos under /home/vgpnk/Projects/shokunin/*-shokunin (read-only; exclude kaidoku) for work on EVM selectors, 4byte, openchain, Sourcify, signature databases or evmole (grep -ril). Read what you find.\n# Acceptance\nReport: per sibling hit: path, what it holds, overlap or conflict with R28-C1/C2, and whether kaidoku should cite or ignore it."
+  },
+  {
+   "name": "ConnectorRuleMechanism",
+   "role": "connector",
+   "prompt": "# Target\nConnect the filtered mechanism (R28-C2) with the round-25 naming rules.\n# Work\nGiven the code rule (filtered only for canonical keys), re-read the round-25 entry /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md and its tally /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-25/a3/c2/analyze/tally.json. Derive which of the five rules must give identical answers on non-canonical selectors, which round-25 statements about `filtered` become explained or wrong, and what this predicts for the held-out rows.\n# Acceptance\nReport: derived equalities with the argument, round-25 statements affected (path:line), predictions for R28-C1."
+  },
+  {
+   "name": "ConnectorProvince",
+   "role": "connector",
+   "prompt": "# Target\nMap round-28 work onto PROVINCE and the coverage map.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/PROVINCE.md, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/README.md (Coverage map, Frontier) and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md EVM sections. List the exact lines a held-out naming result and a filtered-flag mechanism would update, and any stale statement they contradict.\n# Acceptance\nReport: line list with proposed change type (annotate / move to core / correct)."
+  },
+  {
+   "name": "ReviewArgsOutOfSample",
+   "role": "reviewer",
+   "prompt": "# Target\nRound-25 finding out of sample: REA 6.5.0 argument inference on held-out carriers.\n# Work\nFor every committed envelope in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/envelopes/ with exit 0 in runs.tsv, compare inferred_arguments per selector with the ABI parameter list (canonical types, from the carrier's ABI). Split by compiler (Vyper vs solc; judge from the carrier directory). Check the round-25 claim that Vyper `address` reads as `uint256`.\n# Acceptance\nReport: totals matched/mismatched by compiler, mismatch patterns with examples (carrier, selector, inferred, ABI), verdict on the round-25 finding out of sample."
+  },
+  {
+   "name": "ReviewR27SelftestRed",
+   "role": "reviewer",
+   "prompt": "# Target\nRouted defect 2: the round-27 C2 selftest is red at the tip.\n# Work\nIn a sandbox clone run `python3 -I -B tools/round-27/c2-xpin-check.py --selftest`; record output and exit. Read case correct-stub and explain exactly why it fails now (cite .ufo/waves/round-27/w2/RecountC2.md). Propose the minimal fixture change that keeps the case's intent (a stub tool must still be refused) without depending on whether the capability row exists at the measured revision.\n# Acceptance\nReport: observed output and exit, cause with file:line, proposed change as a diff in your report (not applied to the lane)."
+  },
+  {
+   "name": "ReviewQuality37",
+   "role": "reviewer",
+   "prompt": "# Target\nRouted defect 1: r26 entry and QUALITY row 37 say analyze/inspect ids are content-keyed without the suffix condition.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r26-native-reader-evidence-id-identity.md (table rows for analyze/inspect and section Use), /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md row 37, the round-27 entry /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r27-renamed-copy-evidence-id-identity.md and S083 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md. State precisely which sentences need a pointer and the exact condition (both paths map to the same snapshot suffix) with its source line.\n# Acceptance\nReport: sentence list with path:line, the condition with its evidence pointer, verdict on whether the r27 entry already states it correctly."
+  },
+  {
+   "name": "ReviewSpotcheckRouting",
+   "role": "reviewer",
+   "prompt": "# Target\nCoverage of the 8 routed defects by this round's plan.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-27-verifier-spotcheck.md (Routed defects 1-8) and the two round-28 claim files. For each defect say what in the round answers it so far and what is missing. Defect 8 (mutation tests) cannot use mutation-tester seats this round (route down); say what the L1 must run itself.\n# Acceptance\nReport: per defect: addressed / partly / not, with evidence paths, and the remaining work list."
+  },
+  {
+   "name": "ReviewPinCoverage",
+   "role": "reviewer",
+   "prompt": "# Target\nRouted defect 4: every file a counter loads is pinned.\n# Work\nFor /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c2-filtered-flag.py, list every file each reads (trace show() and open() calls) and classify it as pinned (sha256 in PINS and in claims loaded_by_counter), counted data, or unpinned code/input. Verify each pinned sha256 equals the committed bytes at main.\n# Acceptance\nReport: per counter a file table with class and verified sha256; any unpinned input is a finding."
+  },
+  {
+   "name": "ScribeC2Entry",
+   "role": "scribe",
+   "prompt": "# Target\nDraft the R28-C2 knowledge entry /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r28-openchain-filtered-flag.md (text only, in your report; the L1 writes the file).\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-28/claims-c2.json, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c2-filtered-flag.py (check_entry, lines 109-136), the Sourcify code at /fast/scratch/hyaku/kaidoku-r28/src/sourcify/services/4byte/src/api/handlers.ts, and 3 example responses in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c2/db/ (one canonical key with filtered=true entries, e.g. openchain-a9059cbb.json, one non-canonical). Follow the shape of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md (first three lines `source:`, `verified-at:`, `recheck:`). Line 1 must be `source: S084, S085` plus any older row it rests on. The body must contain the exact phrase `mismatches 0 of 246 entries`, name `corpus/evidence/round-28/c2/`, state predicted_true 59, the rule, what it means for the round-25 rules (non-canonical selectors are never filtered), the limit that the deployed revision is assumed, and a `## Use` section.\n# Acceptance\nReport: the full draft (under 70 lines) in one fenced block, plus every number in it with the file it came from."
+  },
+  {
+   "name": "ScribeC1Entry",
+   "role": "scribe",
+   "prompt": "# Target\nDraft the R28-C1 knowledge entry /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r28-evm-heldout-selector-naming.md (text only, in your report).\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-28/claims.json, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/tally.json, runs.tsv and envelopes/h09.json, and the round-25 entry /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md. Line 1 `source: S086` plus the older rows the r25 entry rests on; then `verified-at:` and `recheck:`. The body must contain the exact phrase `named 137, right 137, wrong 0`, name `corpus/evidence/round-28/c1/tally.json`, report every rule in the tally (named/right/wrong/no_name), H1 and H2 as observed, the 50 no_name rows split by cause if the tally allows, and state plainly that the frozen claim target (61/61 runs, 187/187 rows) was missed at 60/61 and 186/187 because REA 6.5.0 refused carrier h09 (unlinked library placeholder), so the claim is an honest stop. Add `## Limits` (lane-invented names) and `## Use`.\n# Acceptance\nReport: full draft (under 80 lines) in one fenced block, each number with its source field."
+  },
+  {
+   "name": "ScribeLessonMistakes",
+   "role": "scribe",
+   "prompt": "# Target\nDraft `## Mistakes` rows for /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-28.md.\n# Work\nRead the format of `## Mistakes` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-27.md and the contract in /home/vgpnk/Projects/shokunin/CORPUS.md (section on lessons/mistakes). Mistakes to draft: (M28-1) the C1 carrier list was frozen without screening carriers for non-hex bytes, so h09 (unlinked library placeholder `__$...$__`) made the 61/61 target unreachable before any run (evidence /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/runs.tsv row h09, envelopes/h09.json); captured-by: which rule should have caught it (none, or QUALITY row 38/40?) and a fix that can be shown to fail (a pre-freeze screen that a fixture with a placeholder carrier fails). (M28-2) attempt 1 died mid-round in a process restart leaving 4 untracked paths. Use class · evidence pointer · captured-by · fix.\n# Acceptance\nReport: draft rows in a fenced block; for each fix say how it was or can be shown able to fail."
+  },
+  {
+   "name": "ScribeR26Pointer",
+   "role": "scribe",
+   "prompt": "# Target\nRouted defect 1 of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-27-verifier-spotcheck.md (lines 150-152).\n# Work\nDraft (a) an appended pointer block for /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r26-native-reader-evidence-id-identity.md that names the analyze/inspect rows and `## Use` and says the content-keyed id holds only when both paths map to the same snapshot suffix (S083; round-27 entry /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r27-renamed-copy-evidence-id-identity.md); (b) a new QUALITY row 41 for /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md, in that file's table format, superseding row 37 with the suffix condition and citing the round-27 lesson and spot-check line.\n# Acceptance\nReport: both drafts in fenced blocks with exact insertion points (line numbers at main)."
+  },
+  {
+   "name": "ScribeRegistryRows",
+   "role": "scribe",
+   "prompt": "# Target\nRouted defect 3: SKILL.md gate registry rows.\n# Work\nRead the registry sections in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md near lines 679, 731 and 770 (rounds 22-24). Draft one registry block, in that same shape, covering /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-27/c1-rename-identity.py, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-27/c2-xpin-check.py, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c2-filtered-flag.py: gate or probe, verdict map (exit codes), selftest spelling and case count, pinned values (sha256 from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-27/claims.json and round-28 claims files). Read each tool to confirm.\n# Acceptance\nReport: the draft block in a fenced block and the line after which it belongs."
+  },
+  {
+   "name": "ScribeScorecardClarify",
+   "role": "scribe",
+   "prompt": "# Target\nRouted defect 7: SCORECARD clarification.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SCORECARD.md lines 3115-3140 and lines 10-20 at main. Draft one appended clarification bullet: lines 16-17 are SCORECARD's own baseline-citation rule (not AXES rule lines), and the current planned field is the one at line 3128. Verify those line numbers yourself and correct them if they differ.\n# Acceptance\nReport: the bullet text and the verified line numbers with quoted line content."
+  },
+  {
+   "name": "ScribeQualityHtmlQuote",
+   "role": "scribe",
+   "prompt": "# Target\nRouted defect 6: quotes from rendered HTML.\n# Work\nCheck whether /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md already has a criterion that Gate quotes are contiguous served bytes or labelled composite (grep 'composite'). If not, draft QUALITY row 42 in the table format, citing the S082 lesson (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-27.md) and spot-check line 157.\n# Acceptance\nReport: grep output, and either the existing row number or the drafted row."
+  },
+  {
+   "name": "ScribeCoverageMap",
+   "role": "scribe",
+   "prompt": "# Target\nCoverage-map and PROVINCE lines for the two new round-28 entries.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/README.md (## Coverage map; how round-25..27 entries were added) and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/PROVINCE.md (Frontier 'EVM bytecode (extended)'). Draft the coverage-map rows for corpus/knowledge/2026-10-22-r28-evm-heldout-selector-naming.md and corpus/knowledge/2026-10-22-r28-openchain-filtered-flag.md and a PROVINCE annotation line, in the existing formats.\n# Acceptance\nReport: each draft line with its insertion point (line number at main)."
+  },
+  {
+   "name": "ScribeSkillPointer",
+   "role": "scribe",
+   "prompt": "# Target\nSKILL.md EVM naming guidance pointer.\n# Work\nFind the SKILL.md lines in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md that state the round-25 EVM selector naming rules (grep openchain, 4byte, filtered). Draft an appended pointer: held-out result (primary rule named 137, right 137, wrong 0 on 187 held-out selectors, tally /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/tally.json) and the filtered-flag mechanism (only canonical-list selectors are ever filtered; 0 mismatches of 246 entries).\n# Acceptance\nReport: the lines found (path:line + text) and the draft pointer."
+  },
+  {
+   "name": "ExecRecountC1",
+   "role": "executor",
+   "prompt": "# Target\nRe-run the R28-C1 counter and selftest.\n# Work\ngit clone -q /home/vgpnk/Projects/shokunin/kaidoku-shokunin /fast/scratch/hyaku/kaidoku-r28/seats/a2/ExecRecountC1/clone; in the clone run `python3 -I -B tools/round-28/c1-heldout-naming.py --root <clone> --rev a267311678309fd17772407e8afa122ec3219289` and `--selftest`; also `--emit-tally` and diff with the committed tally.json.\n# Acceptance\nReport: full counter stdout, exit codes, selftest summary, tally diff result."
+  },
+  {
+   "name": "ExecRecountC2",
+   "role": "executor",
+   "prompt": "# Target\nRe-run the R28-C2 counter and selftest.\n# Work\nClone as for C1 into /fast/scratch/hyaku/kaidoku-r28/seats/a2/ExecRecountC2/clone; run `python3 -I -B tools/round-28/c2-filtered-flag.py --root <clone> --rev a267311678309fd17772407e8afa122ec3219289` and `--selftest`.\n# Acceptance\nReport: stdout tail, exit codes, selftest summary."
+  },
+  {
+   "name": "ExecIndependentC2",
+   "role": "executor",
+   "prompt": "# Target\nIndependent re-derivation of the R28-C2 numbers without the lane counter.\n# Work\nWrite your own script (in your seat dir) that reads /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c2/selectors.tsv, canonical-signatures.json and db/openchain-*.json, and for every candidate entry predicts filtered = (selector is a canonical key AND name != canonical signature). Count responses, entries, mismatches, predicted_true. Also count entries per selector class (canonical / not).\n# Acceptance\nReport: script sha256, the four numbers, and whether they equal 230/246/0/59."
+  },
+  {
+   "name": "ExecIndependentC1",
+   "role": "executor",
+   "prompt": "# Target\nIndependent re-derivation of the R28-C1 primary-rule triple.\n# Work\nWrite your own script: for each of the 187 rows in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/heldout.tsv, take REA's inferred arguments from the carrier envelope (envelopes/<carrier>.json), the openchain candidates from db/openchain-<sel>.json, keep candidates with filtered=false whose keccak-256 equals the selector (use pycryptodome or eth-hash via `uv venv`; or reuse /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-25/a2/resolve-selectors.py keccak only) and whose parameter list matches; name the selector only if exactly one remains; compare with the ABI signature in heldout.tsv. Count named/right/wrong/no_name.\n# Acceptance\nReport: script sha256, counts, and agreement with named 137, right 137, wrong 0, no_name 50; list any row that differs."
+  },
+  {
+   "name": "ExecR27SelftestFix",
+   "role": "executor",
+   "prompt": "# Target\nRouted defect 2: round-27 C2 selftest red at the tip.\n# Work\nIn a sandbox clone at /fast/scratch/hyaku/kaidoku-r28/seats/a2/ExecR27SelftestFix/clone run `python3 -I -B tools/round-27/c2-xpin-check.py --selftest` (record red output). Find case correct-stub, re-anchor its fixture so the case still demands refusal of a stub tool independent of whether the capability row exists at the measured revision, and run the selftest green in the clone. Do not change the counting logic (count path) at all; only the selftest fixture.\n# Acceptance\nReport: before/after selftest output and exit codes, a unified diff of the fixture change in a fenced block, and the proof that the count path is byte-unchanged (diff of everything outside the selftest function)."
+  },
+  {
+   "name": "ExecH09Probe",
+   "role": "executor",
+   "prompt": "# Target\nR28-C1 miss cause reproduction (not counted data).\n# Work\nRead carrier h09's runtime path from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/carriers.tsv; count `__$` placeholders and their offsets. In your seat dir, make a copy with each 40-char placeholder replaced by 40 zeros, run `TMPDIR=<seat>/tmp npx -y rea-agents@6.5.0 inspect-evm-interface <copy> hex --format json` once on the original and once on the linked copy, and compare recovered selectors with the h09 ABI selectors in heldout.tsv. Scratch only; never in the lane.\n# Acceptance\nReport: placeholder count/offsets, both exits and error text, recovered selector list for the linked copy, and whether the held-out selector 395c1d44 is recovered."
+  },
+  {
+   "name": "ExecFreezeGate",
+   "role": "executor",
+   "prompt": "# Target\nFreeze-order gate for round 28.\n# Work\nIf /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-24/tools/freeze-gate.py exists, run it for round 28 in a sandbox clone (/fast/scratch/hyaku/kaidoku-r28/seats/a2/ExecFreezeGate/clone) as its usage says; otherwise write a short script that checks, for each claim file in .ufo/waves/round-28/, that each instrument's first commit time precedes the first commit of every data path it counts (C1: runs.tsv, envelopes, db, tally; C2: db).\n# Acceptance\nReport: commands, output, exit codes, a table claim/instrument/first-commit/first-data-commit."
+  },
+  {
+   "name": "ExecR26IdsRecheck",
+   "role": "executor",
+   "prompt": "# Target\nQUALITY row 37 / defect 1 live check.\n# Work\nUsing REA 6.5.0 (CLI, TMPDIR in your seat dir), run `analyze` on one carrier from the round-27 table /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-27/c1/table.tsv that was content-keyed and on a copy of it with a different extension in your seat dir; record both evidence_ids. Expectation from round 27: different suffix changes the id.\n# Acceptance\nReport: argv, exits, both ids, verdict holds/fails."
+  },
+  {
+   "name": "MutQualityRow38",
+   "role": "mutation-tester",
+   "prompt": "# Target\nRouted defect 8: mutation test of QUALITY row 38 (instrument committed before data) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md.\n# Work\nFind the gate or counter code that enforces the row in the round-28 counters (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py, c2-filtered-flag.py). In a sandbox clone (/fast/scratch/hyaku/kaidoku-r28/seats/a2/MutQualityRow38/clone), apply at least 3 mutations that weaken exactly that check, run the counter's --selftest after each, and revert. A mutation the selftest does not catch is a surviving mutant.\n# Acceptance\nReport: per mutation the diff, selftest result (killed/survived), and the case that killed it."
+  },
+  {
+   "name": "MutQualityRow39",
+   "role": "mutation-tester",
+   "prompt": "# Target\nRouted defect 8: mutation test of QUALITY row 39 (REA call records name pkg version and package.json sha256) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md.\n# Work\nFind the gate or counter code that enforces the row in the round-28 counters (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py, c2-filtered-flag.py). In a sandbox clone (/fast/scratch/hyaku/kaidoku-r28/seats/a2/MutQualityRow39/clone), apply at least 3 mutations that weaken exactly that check, run the counter's --selftest after each, and revert. A mutation the selftest does not catch is a surviving mutant.\n# Acceptance\nReport: per mutation the diff, selftest result (killed/survived), and the case that killed it."
+  },
+  {
+   "name": "MutQualityRow40",
+   "role": "mutation-tester",
+   "prompt": "# Target\nRouted defect 8: mutation test of QUALITY row 40 (refusal gates ship a green case for legitimate look-alikes) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md.\n# Work\nFind the gate or counter code that enforces the row in the round-28 counters (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py, c2-filtered-flag.py). In a sandbox clone (/fast/scratch/hyaku/kaidoku-r28/seats/a2/MutQualityRow40/clone), apply at least 3 mutations that weaken exactly that check, run the counter's --selftest after each, and revert. A mutation the selftest does not catch is a surviving mutant.\n# Acceptance\nReport: per mutation the diff, selftest result (killed/survived), and the case that killed it."
+  },
+  {
+   "name": "MutXpinTool",
+   "role": "mutation-tester",
+   "prompt": "# Target\nRouted defect 8: mutation test of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-27/xpin-attribute.mjs.\n# Work\nIn a sandbox clone, apply at least 4 mutations (e.g., swap the 6.5.0/6.7.0 projection, drop relationship_coverage, mislabel both, skip the id comparison) and re-run the tool on the 24 round-26 envelopes listed in corpus/evidence/round-27/c2/r26-attribution.tsv as the round-27 receipt describes (--pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents --pkg67 /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents); compare with the committed receipt.\n# Acceptance\nReport: per mutation the diff and killed/survived by the receipt diff."
+  },
+  {
+   "name": "MutC1Counter",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation test of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c1-heldout-naming.py.\n# Work\nIn a sandbox clone apply at least 5 mutations to the rule scoring and run checks (e.g. accept filtered=true candidates, skip the args check, treat no_name as right, skip the subject digest check, skip the package sha check). Run --selftest after each; revert.\n# Acceptance\nReport: per mutation diff and killed/survived with the killing case."
+  },
+  {
+   "name": "MutC2Counter",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation test of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-28/c2-filtered-flag.py.\n# Work\nIn a sandbox clone apply at least 5 mutations (case-insensitive name compare, ignore canonical membership, drop time check, drop URL check, count only first entry). Run --selftest after each, and also the real count at a267311678309fd17772407e8afa122ec3219289; revert.\n# Acceptance\nReport: per mutation diff, selftest killed/survived, and whether the real count changes."
+  },
+  {
+   "name": "MutC1Tally",
+   "role": "mutation-tester",
+   "prompt": "# Target\ntally_equal check of the R28-C1 counter.\n# Work\nIn a sandbox clone, edit corpus/evidence/round-28/c1/tally.json in 3 different small ways (one count, one row verdict, key order only) and run the counter at a working-tree-equivalent revision (commit in the sandbox clone only). Record whether tally_equal drops to 0 for each.\n# Acceptance\nReport: per edit, counter output line and verdict."
+  },
+  {
+   "name": "MutLessonGate",
+   "role": "mutation-tester",
+   "prompt": "# Target\nThe entry_ok source-row checks in both round-28 counters.\n# Work\nIn a sandbox clone write a minimal entry, SOURCES row and lesson Gate that pass; then mutate: row status to 'candidate', opened date to 2026-10-21, row absent from ## Gate, row present at base. Commit in the sandbox only and run each counter.\n# Acceptance\nReport: per mutation the entry_ok value; any surviving mutant."
+  },
+  {
+   "name": "ProbeOpenchainSourcify",
+   "role": "scout",
+   "prompt": "# Target\nHypothesis: api.openchain.xyz and api.4byte.sourcify.dev return byte-identical bodies for filter=false lookups.\n# Work\nWith at most 6 plain curl requests (1 s apart), fetch `/signature-database/v1/lookup?function=<sel>&filter=false` on both hosts for 0xa9059cbb (canonical key) and 0x395c1d44 (non-canonical). Compare sha256 and parsed JSON.\n# Acceptance\nReport: commands, statuses, sha256, verdict holds/fails."
+  },
+  {
+   "name": "ProbeFilterTrue",
+   "role": "scout",
+   "prompt": "# Target\nHypothesis: openchain's default (filter=true) response omits exactly the entries flagged filtered=true in the filter=false response.\n# Work\nFor 3 canonical selectors from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c2/canonical-signatures.json, fetch the default lookup once (≤3 requests, 1 s apart) and compare names with the committed filter=false responses in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c2/db/.\n# Acceptance\nReport: per selector the set difference and verdict."
+  },
+  {
+   "name": "ProbeCanonicalStaging",
+   "role": "scout",
+   "prompt": "# Target\nHypothesis: canonical-signatures.json on Sourcify's current default branch equals the pinned copy (sha256 5572beb5...).\n# Work\ncurl the file from the default branch (raw.githubusercontent.com/argotorg/sourcify/<default branch>/services/4byte/src/utils/canonical-signatures.json); compare sha256 and keys.\n# Acceptance\nReport: URL, sha256, key diff, verdict."
+  },
+  {
+   "name": "ProbeFilteredNullName",
+   "role": "reviewer",
+   "prompt": "# Target\nHypothesis: in the committed C2 responses no candidate lacks a name or has a non-boolean filtered.\n# Work\nScan /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c2/db/openchain-*.json with jq or python; report counts of field shapes.\n# Acceptance\nReport: command, counts, verdict."
+  },
+  {
+   "name": "SourceSolidityLinking",
+   "role": "scout",
+   "prompt": "# Target\nS086 candidate: Solidity documentation on library linking placeholders.\n# Work\nOpen by plain curl the Solidity docs source in the solidity GitHub repo (e.g. https://raw.githubusercontent.com/ethereum/solidity/develop/docs/using-the-compiler.rst section 'Library Linking'); record sha256, a ≤25-word contiguous quote describing the `__$<34 hex>$__` placeholder with its line number, and the commit or tag if you can pin one (prefer a release tag such as v0.8.30).\n# Acceptance\nReport: URL (pinned), sha256, quote with line, recommendation for the SOURCES row (kind, tier, scope, anchor)."
+  },
+  {
+   "name": "ScoutR25FilteredStatements",
+   "role": "scout",
+   "prompt": "# Target\nRound-25 statements about `filtered`.\n# Work\ngrep -n filtered in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-25*.md; list each statement and whether the C2 mechanism explains, contradicts or leaves it unchanged.\n# Acceptance\nReport: path:line, quoted text, verdict per statement."
+  },
+  {
+   "name": "ReviewTallySlice1",
+   "role": "reviewer",
+   "prompt": "# Target\nR28-C1 tally rows 1-47 (data rows in order of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/heldout.tsv).\n# Work\nFor each row in that slice, read the carrier envelope (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/envelopes/<carrier>.json) inferred arguments, the openchain response (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/db/openchain-<sel>.json) and the tally row in tally.json; check the primary rule verdict (named right / named wrong / no_name) by hand or a short script.\n# Acceptance\nReport: count agree/disagree; every disagreement with the evidence."
+  },
+  {
+   "name": "ReviewTallySlice2",
+   "role": "reviewer",
+   "prompt": "# Target\nR28-C1 tally rows 48-94 (data rows in order of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/heldout.tsv).\n# Work\nFor each row in that slice, read the carrier envelope (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/envelopes/<carrier>.json) inferred arguments, the openchain response (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/db/openchain-<sel>.json) and the tally row in tally.json; check the primary rule verdict (named right / named wrong / no_name) by hand or a short script.\n# Acceptance\nReport: count agree/disagree; every disagreement with the evidence."
+  },
+  {
+   "name": "ReviewTallySlice3",
+   "role": "reviewer",
+   "prompt": "# Target\nR28-C1 tally rows 95-141 (data rows in order of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/heldout.tsv).\n# Work\nFor each row in that slice, read the carrier envelope (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/envelopes/<carrier>.json) inferred arguments, the openchain response (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/db/openchain-<sel>.json) and the tally row in tally.json; check the primary rule verdict (named right / named wrong / no_name) by hand or a short script.\n# Acceptance\nReport: count agree/disagree; every disagreement with the evidence."
+  },
+  {
+   "name": "ReviewTallySlice4",
+   "role": "reviewer",
+   "prompt": "# Target\nR28-C1 tally rows 142-187 (data rows in order of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/heldout.tsv).\n# Work\nFor each row in that slice, read the carrier envelope (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/envelopes/<carrier>.json) inferred arguments, the openchain response (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c1/db/openchain-<sel>.json) and the tally row in tally.json; check the primary rule verdict (named right / named wrong / no_name) by hand or a short script.\n# Acceptance\nReport: count agree/disagree; every disagreement with the evidence."
+  },
+  {
+   "name": "ReviewPredictedTrue",
+   "role": "reviewer",
+   "prompt": "# Target\nThe 59 predicted_true entries of R28-C2.\n# Work\nList every candidate entry with filtered=true in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c2/db/; confirm its selector is a canonical key and its name differs from the canonical signature in canonical-signatures.json; also list canonical-key entries with filtered=false and confirm each equals the canonical signature.\n# Acceptance\nReport: counts of both lists and any exception."
+  },
+  {
+   "name": "ReviewManifestC2",
+   "role": "reviewer",
+   "prompt": "# Target\nR28-C2 fetch manifest integrity.\n# Work\nFor /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-28/c2/db/manifest.json check: 230 entries, one per selector in selectors.tsv, URL equals the frozen pattern, status 200, sha256 equals the file bytes, utc after 2026-10-22T17:21:55Z.\n# Acceptance\nReport: counts per check and any failure."
+  },
+  {
+   "name": "ReviewInheritedCommits",
+   "role": "reviewer",
+   "prompt": "# Target\nAttempt-1 inherited commits 87d3dfb6, 86fa8526, ca4069a4, cb8d495e, a2673116 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin.\n# Work\ngit show --stat each; confirm author kaidoku-shokunin, that nothing after the freezes edits claims.json, claims-c2.json or the counters (git log 935c3660..a2673116 -- those paths), and that the w1-spec/dispatch/registry committed in a2673116 show no dispatched seat (agentId null).\n# Acceptance\nReport: per commit verdict, and any later edit to a frozen file."
+  },
+  {
+   "name": "CriticRoundHonesty",
+   "role": "critic",
+   "prompt": "# Target\nRound 28 report honesty given the C1 miss.\n# Work\nGiven C1 60/61 and 186/187 (miss) and C2 likely met, write the exact statements the report and SCORECARD must carry (claim verdicts, round not admissible if any claim misses, axis verdicts), and attack any phrasing that would present C1 as met or partly met.\n# Acceptance\nReport: required statements and forbidden phrasings with the rule cited (path:line)."
+  },
+  {
+   "name": "CriticSourceRows",
+   "role": "critic",
+   "prompt": "# Target\nPlanned SOURCES rows S084-S087.\n# Work\nRead the SOURCES.md contract in /home/vgpnk/Projects/shokunin/CORPUS.md (section SOURCES.md) and existing rows S078-S083 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md. Attack the plan: is S085 (a data file from the same commit) a separate row or part of S084; tiers; does any duplicate an existing row (e.g. S078); W04 duplicate-url risk.\n# Acceptance\nReport: per row verdict (admit / merge / reject) with reason."
+  }
+ ]
+}
