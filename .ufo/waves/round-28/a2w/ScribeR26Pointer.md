@@ -29,21 +29,20 @@ Lane HEAD moved during this seat's run and is now `071270b5` (main). Both items 
   `supersedes 37 for `analyze` and `inspect``. Committed by `9db24c9e` (15:23:33-03:00).
 
 Verdict on acceptance: holds. The committed pointer names the rows and `## Use` and carries
-the suffix condition; row 41 supersedes 37 with the suffix condition and cites the round-27
-entry plus spot-check lines :112 (the "Knowledge sweep" bullet naming rows :32-33, `## Use`
-and row 37) and :152 (the defect itself).
+the suffix condition; row 41 supersedes 37 with that condition and cites the round-27 entry
+plus spot-check :112 ("Knowledge sweep", naming rows :32-33, `## Use`, row 37) and :152.
 
 Verbatim conflict for the judge: the assignment says the row should cite "the round-27
 lesson"; the committed row 41 does not cite `corpus/lessons/round-27.md` — my draft below
-adds it. Inserting my row would also duplicate row number 41 (rows 41-44 already occupy
-:51-54), so the drafts are reference text, not a second insertion. If the L1 wants the extra
-citation, QUALITY's own rule (never rewrite a criterion) suggests a new superseding row or a
-citation-cell amendment, at the L1's choice.
+adds it. Inserting my row would also duplicate row number 41 (rows 41-44 occupy :51-54), so
+the drafts are reference text, not a second insertion. If the L1 wants the extra citation,
+QUALITY's rule (never rewrite a criterion) suggests a new superseding row or a citation-cell
+amendment, at the L1's choice.
 
 ## Draft (a) — appended pointer block
 
 Insertion point: end of file, after line 135 (the last line at lane commit a2673116; at
-observed main 071270b5 the committed equivalent already occupies :137-146 — adopt only if the
+observed main 071270b5 the committed equivalent occupies :137-146 — adopt only if the
 committed block is judged insufficient).
 
 ```markdown
@@ -83,13 +82,11 @@ All read-only; lane `/home/vgpnk/Projects/shokunin/kaidoku-shokunin`, 2026-10-22
 - `git show HEAD:corpus/QUALITY.md | sed -n '51p'` — exit 0 — committed row 41 (above).
 - `sed -n '112p;150,152p' corpus/lessons/round-27-verifier-spotcheck.md` — exit 0 — :112 names
   rows :32-33, `## Use`, row 37; :152 is defect 1's text.
-- `git status --porcelain` — exit 0 — lane files mid-integration by the L1 during this run; no
-  seat writes.
+- `git status --porcelain` — exit 0 — lane files mid-integration by the L1 during this run; no seat writes.
 
 ## Out of scope
 
-No lane writes, no REA or network calls, no re-verification of the suffix rule (drafting
-route only). Routed defects 2-8 belong to other seats.
+No lane writes; no REA or network calls; the suffix rule was not re-verified (drafting route only). Routed defects 2-8 belong to other seats.
 
 ## Artifacts
 
