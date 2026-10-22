@@ -209,3 +209,7 @@ R18-FALLBACK: `2026-10-20-r17-go-carrier-diagnostics.md:129` and `:185-187` ("no
 ## Round-26 pointer (appended; filed text above unchanged)
 
 Lines 116-122 call the repeated `analyze` ids "consistent with the content-keyed `analyze` id". Under the round-26 rule (`.ufo/waves/round-26/claims.json`, `derived_verdict`) a same-path pair with different ids is `unstable`, so the aether carrier is an unstable case for `analyze` at `rea-agents@6.5.0`, while `/usr/bin/jq` is content-keyed (`corpus/knowledge/2026-10-22-r26-native-reader-evidence-id-identity.md`). Content-keyed means the path is not hashed; it does not mean the provider is deterministic on every carrier.
+
+## Round-27 pointer (appended; filed text above unchanged)
+
+"Content-keyed `analyze` id" holds across paths only when both paths map to the same snapshot suffix: at `rea-agents@6.5.0` the file extension enters the `analyze` id through `normalized_result.document` (`corpus/knowledge/2026-10-22-r27-renamed-copy-evidence-id-identity.md`). The same-path repeats above are not affected.

@@ -934,3 +934,13 @@ Decision rules:
 - A frozen counter that refuses duplicate envelope bytes must allow two genuine runs that return
   byte-identical envelopes: a fast verb can repeat `meta.duration` to the millisecond (tinyxxd
   `inspect-binary-layout`, `132ms` twice; lesson M27-2 in `corpus/lessons/round-27.md`).
+
+### Round-27 falsify-wave corrections to the section above (appended)
+
+- The suffix is taken from the target path after `realpath` on Linux (`dist/cli-runtime/binary-BVOr2mgE.js:293`, `:5261`, `:5318` in the 6.5.0 package), so a symlink's own extension does not count; Windows uses the typed path. The rule is case-sensitive (`.dat` and `.DAT` differ). Both read from the code, not run (`.ufo/waves/round-27/w2/CriticEntryMechanism.md`, `CriticSkillTable.md`).
+- "Extension class" means the snapshot suffix after the rule: the extension if it matches `^\.[A-Za-z0-9]{1,12}$`, else `.bin`. No extension and `.bin` give one suffix. Live: a 13-character extension gave `.bin` and the base id; `.dat` gave the renamed id; a name-only copy kept the base id (`FalsifySuffixMapping.md`, `FalsifyExtensionOnly.md`).
+- The address-verb row holds only for extensions that do not change the route: `.js`, `.mjs`, `.cjs`, `.map`, `.plist`, `.asar`, `.hop`, and ZIP bytes named `.zip`, `.ipa`, `.apk` or `.app` change `subject.format` or the provider (read from the code, not run).
+- `inspect-binary-layout` hashes the normalized absolute path, without following symlinks: `/usr/bin/../bin/jq` and `/usr/bin/jq` should give one id (read from the code, not run).
+- Limits of the section: Ghidra provider, CLI, Linux, two carriers, `rea-agents@6.5.0`.
+- The third decision rule above is a counter-design rule; QUALITY row 40 states it in full. Note that the call-record fields that tell two genuine runs apart (`utc_start`, seat) are written by the seat, so they separate an honest tie from a copy only as far as the seat is trusted.
+- `SKILL.md:411-412` and the round-26 table row at `:894` ("content-keyed across directories" for `analyze`, `inspect`) hold only when both paths map to the same suffix.

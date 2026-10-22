@@ -322,3 +322,5 @@ providers, macOS-only surfaces, EVM bytecode extended) is unchanged by this roun
   digest code (package roots `~/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents` and
   `~/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents`). The 6.7.0 side is a rule fit
   over 6.5.0-produced evidence objects, not a 6.7.0 run.
+
+Round-27 outcome note (appended after the falsify wave): R27-C1 missed its frozen target (15 of 16 rows under its counter; one genuine byte-identical repeat refused), and the identity lines above hold for the Ghidra provider on Linux with extensions that do not change the route; see the corrections section of `corpus/knowledge/2026-10-22-r27-renamed-copy-evidence-id-identity.md`.

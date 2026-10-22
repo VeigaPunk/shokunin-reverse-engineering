@@ -88,3 +88,12 @@ here and the round-27 entry cites it.
 - Claim width: "At rea-agents@6.5.0" rests on the invocation and the per-call `package.json`
   read; a 6.7.0 `function` envelope would fit the 6.5.0 rule too, because the two rules agree
   whenever `relationship_coverage` is set (`CriticClaimWidth.md`).
+
+## Corrections after the falsify wave (wave 2, `.ufo/waves/round-27/w2/`)
+
+- Claim outcome: R27-C1 missed (15 of 16 rows, `entry_ok` 1, exit 1 at `97358f75`); R27-C2 met (24/24, 3/3, rows 1 and 1, exit 0 at `97358f75` and at the tip `4084d897`). Re-derived by seats `RecountC1`, `RederiveC1Own` and `RecountC2`.
+- Gate, S082: the Arch JSON quote is `"build_date": "2026-09-29T17:52:26Z"` in the served bytes (one space after the colon; the line above dropped it). The three Arch page quotes ("Build Date: …", "Last Packager: …", "Upstream URL: …") are rendered-text composites of a table label cell and its value cell, not contiguous byte strings, and the page sha256 `4e5fff12…` does not reproduce because the page carries a per-request CSP nonce. The S082 anchor cell repeats the composed Build Date string and is read the same way. The local `desc`, `mtree` and sync-database lines reproduce byte for byte (`ReopenS082.md`).
+- Gate, S081: all five quotes and hashes reproduce; the anchor range `canonicalDigest.js:8-25` omits the closing line 26 (`ReopenS081.md`).
+- Falsify-wave note on the "six `both` rows": they are the `function` verb, operation `analyze_function` (`XpinOnR27Envelopes.md`).
+- Live checks added in wave 2: a name-only copy kept the `analyze` id and an extension-only copy changed it (`FalsifyExtensionOnly.md`); a 13-character extension mapped to `.bin` (`FalsifySuffixMapping.md`).
+- Dead seats: six wave-2 mutation-tester seats died at spawn with "Error: No model selected." and were not replaced, so QUALITY rows 38-40 and the M27 fixes got no wave-2 mutation test this round; their "shown able to fail" evidence is the real-byte runs cited in each row.
