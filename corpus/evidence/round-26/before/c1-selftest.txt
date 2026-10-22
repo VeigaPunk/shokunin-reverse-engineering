@@ -1,0 +1,311 @@
+green                          exit=0 rows_complete=8 entry_ok=1 expected={'rows_complete': 8, 'entry_ok': 1, 'exit': 0} -> PASS
+missing_envelope               exit=1 rows_complete=7 entry_ok=1 expected={'rows_complete': 7, 'entry_ok': 1, 'exit': 1} -> PASS
+    reason: analyze: envelope_missing:copy; verdict_mismatch:analyze:table=content-keyed:derived=no-id
+envelope_ok_false              exit=1 rows_complete=7 entry_ok=1 expected={'rows_complete': 7, 'entry_ok': 1, 'exit': 1} -> PASS
+    reason: analyze: envelope_ok_not_true:base
+wrong_subject_sha256           exit=1 rows_complete=7 entry_ok=1 expected={'rows_complete': 7, 'entry_ok': 1, 'exit': 1} -> PASS
+    reason: analyze: subject_sha256_mismatch:base
+id_cell_mismatch               exit=1 rows_complete=7 entry_ok=1 expected={'rows_complete': 7, 'entry_ok': 1, 'exit': 1} -> PASS
+    reason: analyze: id_cell_mismatch:base
+wrong_verdict                  exit=1 rows_complete=7 entry_ok=1 expected={'rows_complete': 7, 'entry_ok': 1, 'exit': 1} -> PASS
+    reason: analyze: verdict_mismatch:analyze:table=path-sensitive:derived=content-keyed
+unknown_verb                   exit=1 rows_complete=7 entry_ok=1 expected={'rows_complete': 7, 'entry_ok': 1, 'exit': 1} -> PASS
+    reason: xrefs: row_missing
+duplicate_verb_row             exit=1 rows_complete=7 entry_ok=1 expected={'rows_complete': 7, 'entry_ok': 1, 'exit': 1} -> PASS
+    reason: inspect: duplicate_verb_row
+table_subject_sha256_mismatch  exit=1 rows_complete=7 entry_ok=1 expected={'rows_complete': 7, 'entry_ok': 1, 'exit': 1} -> PASS
+    reason: analyze: table_subject_sha256_mismatch:analyze:table=0000000000000000000000000000000000000000000000000000000000000000
+gzip_envelopes                 exit=0 rows_complete=8 entry_ok=1 expected={'rows_complete': 8, 'entry_ok': 1, 'exit': 0} -> PASS
+no_id_verdict                  exit=0 rows_complete=8 entry_ok=1 expected={'rows_complete': 8, 'entry_ok': 1, 'exit': 0} -> PASS
+entry_missing                  exit=1 rows_complete=8 entry_ok=0 expected={'rows_complete': 8, 'entry_ok': 0, 'exit': 1} -> PASS
+    reason: entry: entry_missing
+entry_source_without_table     exit=1 rows_complete=8 entry_ok=0 expected={'rows_complete': 8, 'entry_ok': 0, 'exit': 1} -> PASS
+    reason: entry: source_line_does_not_name_table
+sources_row_other_date         exit=1 rows_complete=8 entry_ok=0 expected={'rows_complete': 8, 'entry_ok': 0, 'exit': 1} -> PASS
+    reason: entry: no_cited_source_row_opened_today_and_named_in_lesson_gate
+gate_omits_id                  exit=1 rows_complete=8 entry_ok=0 expected={'rows_complete': 8, 'entry_ok': 0, 'exit': 1} -> PASS
+    reason: entry: no_cited_source_row_opened_today_and_named_in_lesson_gate
+usage_error_missing_rev        exit=2 expected=2 -> PASS
+{
+ "selftest": "R26-C1 c1-id-identity.py",
+ "cases": 16,
+ "failures": 0,
+ "results": [
+  {
+   "case": "green",
+   "mutation": "none",
+   "expected": {
+    "rows_complete": 8,
+    "entry_ok": 1,
+    "exit": 0
+   },
+   "observed": {
+    "rows_complete": 8,
+    "entry_ok": 1,
+    "exit": 0
+   },
+   "pass": true,
+   "first_reasons": []
+  },
+  {
+   "case": "missing_envelope",
+   "mutation": "missing_envelope",
+   "expected": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "analyze: envelope_missing:copy; verdict_mismatch:analyze:table=content-keyed:derived=no-id"
+   ]
+  },
+  {
+   "case": "envelope_ok_false",
+   "mutation": "envelope_ok_false",
+   "expected": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "analyze: envelope_ok_not_true:base"
+   ]
+  },
+  {
+   "case": "wrong_subject_sha256",
+   "mutation": "wrong_subject_sha256",
+   "expected": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "analyze: subject_sha256_mismatch:base"
+   ]
+  },
+  {
+   "case": "id_cell_mismatch",
+   "mutation": "id_cell_mismatch",
+   "expected": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "analyze: id_cell_mismatch:base"
+   ]
+  },
+  {
+   "case": "wrong_verdict",
+   "mutation": "wrong_verdict",
+   "expected": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "analyze: verdict_mismatch:analyze:table=path-sensitive:derived=content-keyed"
+   ]
+  },
+  {
+   "case": "unknown_verb",
+   "mutation": "unknown_verb",
+   "expected": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "xrefs: row_missing"
+   ]
+  },
+  {
+   "case": "duplicate_verb_row",
+   "mutation": "duplicate_verb_row",
+   "expected": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "inspect: duplicate_verb_row"
+   ]
+  },
+  {
+   "case": "table_subject_sha256_mismatch",
+   "mutation": "table_subject_sha256_mismatch",
+   "expected": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 7,
+    "entry_ok": 1,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "analyze: table_subject_sha256_mismatch:analyze:table=0000000000000000000000000000000000000000000000000000000000000000"
+   ]
+  },
+  {
+   "case": "gzip_envelopes",
+   "mutation": "gzip_envelopes",
+   "expected": {
+    "rows_complete": 8,
+    "entry_ok": 1,
+    "exit": 0
+   },
+   "observed": {
+    "rows_complete": 8,
+    "entry_ok": 1,
+    "exit": 0
+   },
+   "pass": true,
+   "first_reasons": []
+  },
+  {
+   "case": "no_id_verdict",
+   "mutation": "no_id_verdict",
+   "expected": {
+    "rows_complete": 8,
+    "entry_ok": 1,
+    "exit": 0
+   },
+   "observed": {
+    "rows_complete": 8,
+    "entry_ok": 1,
+    "exit": 0
+   },
+   "pass": true,
+   "first_reasons": []
+  },
+  {
+   "case": "entry_missing",
+   "mutation": "entry_missing",
+   "expected": {
+    "rows_complete": 8,
+    "entry_ok": 0,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 8,
+    "entry_ok": 0,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "entry: entry_missing"
+   ]
+  },
+  {
+   "case": "entry_source_without_table",
+   "mutation": "entry_source_without_table",
+   "expected": {
+    "rows_complete": 8,
+    "entry_ok": 0,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 8,
+    "entry_ok": 0,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "entry: source_line_does_not_name_table"
+   ]
+  },
+  {
+   "case": "sources_row_other_date",
+   "mutation": "sources_row_other_date",
+   "expected": {
+    "rows_complete": 8,
+    "entry_ok": 0,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 8,
+    "entry_ok": 0,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "entry: no_cited_source_row_opened_today_and_named_in_lesson_gate"
+   ]
+  },
+  {
+   "case": "gate_omits_id",
+   "mutation": "gate_omits_id",
+   "expected": {
+    "rows_complete": 8,
+    "entry_ok": 0,
+    "exit": 1
+   },
+   "observed": {
+    "rows_complete": 8,
+    "entry_ok": 0,
+    "exit": 1
+   },
+   "pass": true,
+   "first_reasons": [
+    "entry: no_cited_source_row_opened_today_and_named_in_lesson_gate"
+   ]
+  },
+  {
+   "case": "usage_error_missing_rev",
+   "mutation": "none",
+   "expected": {
+    "exit": 2
+   },
+   "observed": {
+    "exit": 2
+   },
+   "pass": true,
+   "first_reasons": []
+  }
+ ]
+}
