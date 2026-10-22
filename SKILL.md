@@ -775,3 +775,58 @@ and append the round's ledger row.
 | round24-C2 | gate / kaidoku | `python3 -I -B .ufo/waves/round-24/tools/freeze-gate.py --root <LANE> --rev <REV> --require-clean round-24 --disclosures corpus/claim-freezes.tsv`; 0 required freezes CLEAN and every freeze disclosed exactly, 1 otherwise, 2 unevaluable | none in the instrument | Reads Git objects only; finding codes NONE/UNRESOLVED/ABSENT/UNPINNED/PIN_MISMATCH/REVISED; supersession 1 at `9fb4eacd` disclosed |
 | round24-producer | probe / kaidoku | `python3 .ufo/waves/round-24/tools/run-rea.py --out-dir <DIR> --name <N> [--tshark] -- <verb> …` writes `<N>.run.json` and byte-equal `<N>.envelope.json`; exit mirrors REA | — | refuses overwrite; records env overrides and TShark/capinfos digests |
 | round24-repro | probe / kaidoku | `python3 -I -B .ufo/waves/round-24/repro/fetch-inputs.py --manifest .ufo/waves/round-24/repro/inputs.json --dest <DIR>`; 0 all match, 1 digest/size mismatch, 2 fetch/extraction/usage/containment error | — | official URLs, member + archive hashes/sizes; refuses duplicate ids and existing/symlink output paths; partial cleanup; use fresh destination after `--keep`; run2 and final-script controls separately byte-pinned |
+
+
+## Explicit instrument-reference custody — round 25 prospective authority
+
+Parent landed the fixed ruler and literal oracle at
+`62feef9c0cbd5aadafa453456c55c28832175206` before a round-25 SRT or candidate.
+This is an explicit caller-selected reference contract, not arbitrary-shell
+discovery or historical admission. The ruler executes **the selected
+candidate CLI only**, never audited instruments, carriers or fixture code.
+The candidate `tools/round-25/instrument-custody.py` is not implemented at
+this phase; missing candidate is unavailable2 and cases are not observed.
+
+S073 supports the merge-base/cat-file primitives only. S074 separately
+locates log/rev-list traversal, tree/mode fields and Git environment
+semantics. Unique-first-add, equal unique-parent blob/mode, conservative
+unsupported-history/nonregular decisions, exact-member and output-label
+policies are declared API choices, not mandates or a correctness
+certificate from those manuals. A source census is structural; it does
+not validate every second/associated URL or quotation.
+
+The exact prospective claims path is `.ufo/waves/round-25/claims.json`.
+Only actual Main first-add F can establish discovery of a twelfth freeze.
+The sole truthful FLAGGED ledger append follows actual final metadata
+findings, preserving the old header/all11 rows. Literal QUALITY33 cyclic
+debt stays unmet; original R24 frozen9/11 stays unmet, revised11/11 is
+only disclosure agreement, and no require-clean R25 claim is made.
+
+| Name | Kind / owner | Entry / verdict map | Self-invocation | Pinned values / write scope |
+|---|---|---|---|---|
+| round25-custody-ruler | gate, conformance limits disclosed / kaidoku | `python3 -I -B tools/round-25/ruler.py --root <LANE> --rev <FULL-MEASURED-COMMIT> --oracle-rev 62feef9c0cbd5aadafa453456c55c28832175206 --oracle-sha256 6c851cd704b84ef728415d674ad78ec7ff4da449883f1aeba3e4ca47631cd3e0 --work-parent <OWNED-FAST-SCRATCH-OUTSIDE-LANE>`; 0 original34 pairs exact, 1 observed pair mismatch, 2 unavailable/tampered/unsettled/root-state-change/unevaluable measurement | None exposed: separate gate-selftest conformance is not claimed | Ruler sha25620fe3f3d3d68ba21c8d8bbfed175bb57db46a8618bd179b179acb6fda99d0532; original34/I immutable. Ruler0 is the finite score, not C1 success alone: separate Main-held contract/dataflow controls must also hold. Private scratch/stdout only; selected subject has explicit root/private cwd; no automatic restore/retry |
+
+
+**Complete C1 contract, separate from its34 score.** First-add identity and
+ancestry/at-or-before constraints, identical regular blob **and mode** in
+the unique freeze parent, nonregular/readded-history handling, duplicate
+and unknown-member rejection, direct candidate Git-environment isolation,
+and scope/useful output evidence remain load-bearing. Main-held controls
+are frozen in `corpus/evidence/round-25/main-held-contract-controls.json`;
+they are reported separately, never folded into or substituted for34.
+
+**Non-tautology.** Even34/34 fails C1 if the subject uses oracle/test/ruler/
+gate/fixture content as decision logic, expected answers, imports or
+execution, or embeds case-keyed answer tables. An explicitly caller-selected
+grammar-valid instrument Git blob may be read opaquely for raw identity,
+hash, mode and history, including a ruler/gate/test-helper when selected;
+its semantics are never imported, executed or interpreted. Main reviews
+actual Git dataflow and held consumer outcomes, not a source-word test.
+
+**Measurement limits.** Main must quiesce shared worktrees and jj/ref/index
+writers. Root lstat/index/ref snapshots attest named instants only, not
+continuous/all-content/object-store immutability, global absence or
+containment. A guard/resource/setup abort is CNE, not an observed candidate
+failure; no weakening the guard, automatic rerun or empty-receipt masking.
+Main alone controls final execution and admission.
+

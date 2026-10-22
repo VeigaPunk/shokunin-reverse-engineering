@@ -2932,3 +2932,113 @@ conditions (`final/summary.json`), not independent admission.
 
 All finite proxy scores stay10.0. Neither a green producer nor ledger
 transcription confers independent admission or mastery.
+
+
+## Round 25 — prospective explicit-reference custody
+
+Baseline `18e7eb6d9fe8842678af5f1cffbd680ead4ad473`; Parent-landed
+prerequisite authority I=`62feef9c0cbd5aadafa453456c55c28832175206`.
+One proposed claim R25-C1, **calibration**, a tied-lowest owned finite proxy
+(coverage/depth/calibration all10). No score delta, retirement, capability
+admission, mastery or promotion is recorded at this prospective phase.
+
+The prospective complete target is every one of the fixed34 exact
+process-exit/primary-finding pairs in
+`corpus/evidence/round-25/oracle/cases.json`, measured by
+`tools/round-25/ruler.py` from I. It is a new explicit caller-selected
+reference API, not arbitrary-shell/cohort discovery or an old R24 re-score.
+Before availability must come from Main's actual receipt: an absent
+candidate means cases not observed/executed0, not34 observed failures.
+No after value or verdict is preclaimed.
+
+Planned, superseding the earlier round25 queue: receive the real before
+receipt, complete qualified proposal distillation, and have Main decide and
+land `reports/round-25/claims.json` with I and all authority digests before
+any `tools/round-25/instrument-custody.py` implementation. All original34
+targets and full no-harm duties remain; a failed/unprovable target is not
+converted to a narrower or exploratory claim.
+
+Original R24 frozen C2 remains **unmet9/11 exit1**; replacement11/11 is
+only disclosed ledger agreement. R23 six-verb4/6 and R24 four-verb4/4
+remain distinct. QUALITY33's literal subject/measurement cycle is unmet
+conformance debt, and its unchanged R24 detector does not discover the new
+durable claims path: undetected, not CLEAN. See
+`corpus/lessons/round-25.md` for S073, source/rejection decisions, conduct
+limits, exact prerequisite digests and Parent-only admission authority.
+
+
+### Actual round25 prerequisite before
+
+Main's actual I ruler over B returned exit2/candidate_unavailable:
+declared34, executed0, exact0, all34 not_observed, candidate SHA null.
+Receipts: `corpus/evidence/round-25/prerequisite/parent-before-process.json`
+and `parent-proof.json`. Wrong oracle SHA returned exit2,
+finding=`could_not_evaluate`, error=`snapshot_tampered:oracle`
+(`parent-tamper-process.json`). This establishes
+unavailable-before, not34 empirical old failures or an after verdict.
+Prospective full SRT: `reports/round-25/claims.json`; implementation remains
+stopped until qualified distillation, Main decision and actual SRT landing.
+
+
+### Prospective round25 claims path correction
+
+Before any SRT freeze, Main corrected its earlier categorical `.ufo/**`
+helper-scope premise. The exactly named future claims file
+`.ufo/waves/round-25/claims.json` is not ignored (actual own check-ignore
+exit1/unmatched record); it is prospectively selected instead of the
+unlanded reports-path draft. I and the complete34 targets stay unchanged.
+This removes the planned reports-path discovery mismatch, not QUALITY33's
+literal cyclic debt. No old-detector CLEAN or old-matrix rerun is claimed.
+Full correction and retained earlier phase statements: lesson round25,
+Prospective path erratum before claims freeze.
+
+
+### Round25 full preregistration handoff, no after verdict
+
+The actual planner and distiller are terminal completed; total66 actual seats
+retains the POSTproposal planner chronology and W1 executor0/required3 UNMET
+debt. Distillation retains one calibration claim and all34 I wants, not
+broader discovery, alternate labels, basename guessing or a prior-round rescue.
+Pin scope is63/64 reported matches plus P55's unqualified post-barrier mismatch;
+scratch/draft/role limitations are retained, not cleared by report counts.
+
+The exact prospective SRT is `.ufo/waves/round-25/claims.json` WITH dash.
+The selected subject is openly named inside claims[] as a post-freeze
+candidate, not a preexisting counting authority. Main B2 permits only a later
+truthful R25 FLAGGED ledger append after actual F and full measured metadata
+findings, preserving the header/all11 old rows. No anticipated row, matrix
+rerun, actual twelfth-freeze observation or old-detector CLEAN is claimed now.
+Any eventual exit0 from disclosure agreement is not12 clean rounds or
+original R24 C2 rescue; cyclic debt remains unmet.
+
+All34 full after targets, exact pinned authority, actual unavailable-before
+receipt and explicit no-harm duties (including that narrow additive exception)
+are submitted for Main's decision. No SRT or code approval follows from this
+entry. `corpus/lessons/round-25.md` and
+`corpus/evidence/round-25/proposal/{distillation.md,qualification-erratum.json,actual-seat-budget.json}`
+carry complete qualified evidence; the original distillation is unchanged.
+
+
+### Pre-F v2 — full contract is not the34 score
+
+Main's outside critic held F. Frozen v1 files/hashes remain preserved;
+I/original34 and the real before2/executed0/not_observed34 remain unchanged.
+Separate prospective Main-held H01–H16 and variants are now defined at
+`corpus/evidence/round-25/main-held-contract-controls.json`; their outcomes
+are not yet observed and are never folded into34. C1 also requires real
+first-add/ancestry/at-before/unique-parent blob+mode, nonregular/history,
+duplicate/unknown-member, direct Git-ENV and semantic scope/output behavior.
+
+Even34/34 fails C1 for oracle/test/ruler/gate/fixture expected-answer logic,
+imports/execution or case-keyed answer tables. Explicitly selected Git blobs
+may only be read opaquely as custody data. Main-held dataflow/consumer
+evidence, not a source-word test, decides this rule. Shared-state quiescence
+is required; a guard/resource/setup abort is CNE, not candidate failure.
+
+The distiller's own outside scratch/pickle write and false sole-file claim
+are added as unqualified provenance, with original report unchanged and no
+pickle access or replacement. All role/pin/epoch/old9/11 debts survive.
+S073 is narrow; new S074 supplies additional primary primitives, with local
+policy/census URL limits explicit. No after score, capability admission,
+F or implementation permission is claimed at this handoff.
+

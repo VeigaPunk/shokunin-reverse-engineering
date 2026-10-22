@@ -2804,3 +2804,148 @@ symlink/regular-file containment and cleanup defects fixed with same-identity
 reviewer controls; six-input run2 plus final-script controls separately pinned.
 Open gate limitations, timestamp error, reconstructed start census and
 post-hoc oracle timing are explicit in the lesson.
+
+
+## 2026-10-21 — round25 prospective ruler/oracle custody
+
+- Motivating outside evidence: `corpus/lessons/round-24-verifier-spotcheck.md:19-24,45,55,63` rejects original9/11 rescue by replacement11/11 and names spelling/supersession blind spots. Original bytes/outputs/ledger remain unchanged; this round proposes a distinct finite explicit-reference API on calibration, not a retrospective cohort re-score.
+- Main actually landed and pushed I=`62feef9c0cbd5aadafa453456c55c28832175206`: `tools/round-25/ruler.py` plus `corpus/evidence/round-25/oracle/{cases,contract,derivation}.json`. All34 literal expected exit/finding pairs are prospective, fixed before any candidate implementation. Ruler sha25620fe3f3d3d68ba21c8d8bbfed175bb57db46a8618bd179b179acb6fda99d0532; cases6c851cd704b84ef728415d674ad78ec7ff4da449883f1aeba3e4ca47631cd3e0.
+- S073 admits official Git ancestry/object semantics, opened2026-10-21; S068 is rejected as sole Git-semantics support but retained unchanged for plan/deviation distinctions. Located quotes and the prospective M25-1 failure obligation are in `corpus/lessons/round-25.md`; no working-fix or outside source-verifier result is preclaimed.
+- Original policy-v2 proposal batch actually spawned64 once and all64 reached terminal completed, zero failures/replacements; completion is not qualification/admission. Private settlement pins actualIDs/reports and preserves P55 input-epoch breach, P18 scratch report and other qualification limits. The ordinary distiller request was capacity-refused with zero spawned, not counted as work or replaced.
+- Prospective optional preservation.py was removed before SRT/results after Parent found overstrict prefix false-red risk; exact draft remains private. Full no-harm duties are not reduced: Main independently reviews explicit allowed diff plus all prior blob/mode/source/index/history obligations. This is not a result-driven target change.
+- No candidate or SRT landing is yet claimed, and author executes no source/gate/fixture/tests/build/lint/formatter. Parent owns real before CLI receipt, immutable-candidate measurements and admission. Absent candidate means not_observed/executed0, never34 observed failures. QUALITY33 cyclic role/subject debt stays unmet; old detector's reports-path blindness is undetected, never CLEAN.
+
+
+### Round25 actual prerequisite before, Parent-owned CLI
+
+Main ran the committed I ruler with --rev B and --oracle-rev I: exit2,
+candidate_unavailable, total34/executed0/exact0/34not_observed, candidate
+SHA null. The separate wrong-oracle-SHA run returned exit2 and
+snapshot_tampered:oracle. Byte-exact Main receipts:
+`corpus/evidence/round-25/prerequisite/{parent-before-process,parent-tamper-process,parent-proof}.json`.
+No old R24 gate or held item was rerun. Complete prospective SRT draft:
+`reports/round-25/claims.json`, not yet Main-approved or landed; no candidate
+implementation. This is an unavailable baseline, not34 observed failures.
+
+
+### Round25 prospective path correction — Parent error corrected before freeze
+
+Supersedes the categorical `.ufo/**`-landing-ban premise in the prospective
+round25 draft/custody discussion, not any old round's evidence or target.
+Main corrected its earlier reading of helper `repo_path_allowed`: bare
+`.ufo` and runtime state are barred, but exactly named descendant artifact
+files are not categorically barred. No helper/config/policy was changed.
+Own `git check-ignore --no-index --verbose --non-matching --
+.ufo/waves/round-25/claims.json` actually returned exit1 and the unmatched
+`::` record: this exact future file is not ignored.
+
+The future, not-yet-landed SRT path is therefore prospectively selected as
+`.ufo/waves/round-25/claims.json`, using the existing convention. The
+reports-path draft is unlanded, unapproved and not authority. No new claims
+side effect is made while awaiting ordinary distillation and Parent approval.
+I and all34 cases/contract/derivation remain unchanged. Avoiding the planned
+reports-path discovery mismatch does **not** clear literal QUALITY33 cyclic
+subject/instrument debt or grant an actual old-detector CLEAN.
+
+
+### Round25 actual ordinary admissions and chronological correction
+
+Actual native distiller first admitted as
+`KaidokuR25AuthorS3.Kd25Distill-2` after the earlier whole-call capacity
+refusal0, unchanged logical request. Actual native planner first admitted
+as `KaidokuR25AuthorS3.Kd25Planner` only after the original64 proposal
+terminal barrier and Main's fourth priority callback. P54 remains an actual
+reviewer advisory datawalk, never a relabelled planner; the author is not
+another L1, and Main alone judges. This preserves, rather than repairs
+retroactively, the missing pre-wave native-planner chronology.
+
+Actual spent66=64+1+1, no replacement or per-seat routing override; ordinary
+results still pending at this entry. IDs/refusal/role evidence:
+`corpus/evidence/round-25/proposal/{actual-seat-budget,distiller-admission,planner-admission}.json`.
+No candidate, new64 wave or SRT admission is claimed.
+
+
+### Round25 completed distillation, qualifications and ready-to-review SRT
+
+Both actual ordinary seats are terminal completed: native planner
+`KaidokuR25AuthorS3.Kd25Planner` (POSTproposal64, not P54 relabel) and
+distiller `KaidokuR25AuthorS3.Kd25Distill-2`. Actual spent66, not a full
+role-conformance certificate: W1 executor0/required3 stays UNMET.
+Unchanged originals are retained in
+`corpus/evidence/round-25/proposal/{planner-advisory,distillation}.md`.
+The distillation's54,497 bytes/sha256a4390dc1a649271ee83a7f5241e99849c659468ea04b7b640087431255756897
+remain untouched. C1 stays one calibration claim and all34 I wants; broader
+cohort/claim-text discovery, alternate labels, basename guessing and old9/11
+rescue are not adopted.
+
+Pin qualification is63/64 reported matches plus P55 post-barrier mismatch
+expected1582406dc5f984eeb19bc0cee93166b37ebe9b7cdd16060c937f2732434d606d
+versus current1df3c360f5a1fe6b7e238bc0b4d79a6b71dcf553d681192fce7a7127621c38bb,
+not a full raw-byte custody/qualification certificate. No expected pin is
+reissued and no current body is called original. P18's native scratch
+disclosure is not exonerated by report omission; P17/P25 outside-scratch
+metadata and P17/P52/P33 draft-epoch inputs remain unqualified. Evidence and
+scope limits: `corpus/evidence/round-25/proposal/qualification-erratum.json`, not rewritten history.
+
+S073's competing readonly proposals are not duplicated registry rows;
+Main accepted the one current Git merge-base/cat-file source row, no old
+row renumbering or I/oracle change. Prospective SRT now exists only at exact
+`.ufo/waves/round-25/claims.json`, replacing the obsolete unlanded reports
+draft before any freeze. The subject path is also explicit inside claims[],
+not hidden from the retained narrow reader. Main B2 permits only a later
+truthful R25 FLAGGED ledger append after actual F/measured findings, retaining
+the header/all11 old rows. No row is written or old matrix rerun now;
+pending current-surface redness and literal QUALITY33 cyclic debt remain.
+The full SRT is ready for Main's review, not yet approval/landing or code
+permission. All34 after targets and full explicit no-harm duties survive.
+
+
+### Prospective B2 disclosure exception, exact path and unchanged target
+
+Main explicitly authorizes only an additive truthful R25 FLAGGED ledger row
+**after actual F and full measured Git findings are known**, retaining the
+existing header and all11 old rows byte-identically. No row is written at
+preregistration, no anticipated finding is called observed, and no old
+failure-matrix confirmation or author source execution is authorized.
+Any later current-gate exit0 can establish only disclosure agreement, not12
+clean rounds or original R24 C2 rescue; require-clean R25 remains red.
+
+The exact prospective file is `.ufo/waves/round-25/claims.json` WITH dash;
+earlier round25 shorthand is not an audited path. It is still unlanded and
+no twelfth-freeze observation is asserted. This explicitly bounded exception,
+all34 full after wants, I's fixed hashes, and all other no-harm duties are
+in the SRT submitted for Main's actual approval/landing. No code permission
+or full conformance/admission is preclaimed.
+
+
+### Pre-F v2 outside-review disposition — no implementation authority
+
+Main held F after outside review; the exact frozen v1 23 paths/hashes are
+preserved privately at `kaidoku-r25-author-handoff/frozen-prereg-v1/`.
+I's four blobs/original34 wants and actual unavailable-before stay unchanged.
+The original distillation is untouched, including its false line237
+sole-file statement: Main's critic reports native transcript58-63 writing
+`/tmp/kd25_digest.pkl` via pickle.dump. The distiller is an unqualified
+scratch/provenance source, not blanket-clean clusters; the file is not
+opened, unpickled, read, reproduced or deleted, and no leaf is replaced.
+
+Before any candidate output, separate Main-held H01–H16/variants are declared
+in `corpus/evidence/round-25/main-held-contract-controls.json`, with inert
+Git facts in `control-git-facts.json`. Original34 is still its own score;
+first-add/ancestry/at-before, equal unique-parent blob AND mode, nonregular/
+re-added history, duplicate/unknown fields, direct Git-ENV isolation and
+scope/useful output remain required. Even34/34 fails C1 for forbidden oracle/
+expected-answer dataflow or case-keyed tables. Legitimate explicitly selected
+Git blobs may be read opaquely for custody hashes, never as executed/imported/
+interpreted semantics. Main checks dataflow and consumer controls, not words.
+
+S073 supports merge-base/cat-file; new S074 locates five additional primary
+manuals, while local API acceptance/error rules are labelled local policy.
+Census does not validate associated/second URLs. Actual tamper labels are
+finding=could_not_evaluate, error=snapshot_tampered:oracle, exit2.
+Main must quiesce shared WTs/jj/refs/index; a guard/resource abort is CNE,
+not candidate failure. F must uniquely parent I, copied by Main, claims
+immutable thereafter. The only truthful FLAGGED row follows final measured
+metadata, old header/all11 rows unchanged; no supersession laundering.
+No source/gate/fixture/candidate execution, F or code permission is claimed.
+
