@@ -1,0 +1,44 @@
+{
+  "schema": "kaidoku-round-claims-a2",
+  "round": 25,
+  "attempt": 2,
+  "baseline": "18e7eb6d9fe8842678af5f1cffbd680ead4ad473",
+  "lane_tip_at_start": "fafdd283432731a675b71e201bb9ba767c394553",
+  "instrument_commit": "9dcd11ecb412fe4828f274580018039b8edbc05a",
+  "instruments": {
+    "tools/round-25/a2/c1-calibration.py": "4378af84fa8e036f62e85e81a07d21d0ed899a34b56f790a4682f0c965356eee",
+    "tools/round-25/a2/c2-coverage.py": "7a7e6d6529033c5dfac6da252507ac597b30f0a3d4740522d17f87f4ee6b2c70"
+  },
+  "attempt_1_note": "Attempt 1's claims file .ufo/waves/round-25/claims.json, its oracle, ruler and custody CLI stay byte-unchanged. Attempt 2 does not continue its preregistration packet and makes no claim on its 34-case contract.",
+  "axes_before": {"coverage": 10, "depth": 10, "calibration": 10},
+  "lowest_axis_rule": "All three owned finite proxies tie at 10. C1 works calibration and C2 works coverage, both tied-lowest.",
+  "claims": [
+    {
+      "id": "R25-C1",
+      "axis": "calibration",
+      "type": "repair-first calibration: mismatches between lane self-assessment and observed state, including the round-24 routed outside verdict",
+      "command": "python3 -I -B tools/round-25/a2/c1-calibration.py --root <LANE> --rev <REV>",
+      "before": {"rev": "9dcd11ecb412fe4828f274580018039b8edbc05a", "items": 5, "mismatches": 5, "exit": 1, "receipt": "corpus/evidence/round-25/a2/before/c1-calibration.json"},
+      "target": {"items": 5, "mismatches": 0, "exit": 0},
+      "items": {
+        "I1": "SCORECARD records the round-24 outside decision on one line citing the spot-check and rejected-honest-stop",
+        "I2": "LOG records the same",
+        "I3": "a QUALITY admission-criterion row cites the round-24 spot-check (its source disagreement becomes a criterion)",
+        "I4": "SCORECARD owned-axes coverage row N/N equals the knowledge Markdown count at the revision",
+        "I5": "SHONEN boundary pointer PROVINCE.md:A-B starts inside the ## Adjacent section"
+      },
+      "limits": "Five fixed items only. A green result shows those five statements agree with the repository at the revision; it is not a full audit of SCORECARD or SHONEN."
+    },
+    {
+      "id": "R25-C2",
+      "axis": "coverage",
+      "type": "learning claim: admitted knowledge on PROVINCE frontier ground (EVM selector name resolution; PROVINCE frontier says selectors stay bare hashes)",
+      "command": "python3 -I -B tools/round-25/a2/c2-coverage.py --root <LANE> --rev <REV>",
+      "before": {"rev": "9dcd11ecb412fe4828f274580018039b8edbc05a", "knowledge_md": 107, "entry_sourced": 0, "exit": 1, "receipt": "corpus/evidence/round-25/a2/before/c2-coverage.json"},
+      "target": {"knowledge_md": 108, "entry_sourced": 1, "exit": 0},
+      "entry": "corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md",
+      "limits": "The counter checks presence, count and source linkage, not the entry's truth; the falsify wave and the closure judge the content."
+    }
+  ],
+  "no_harm": "Prior knowledge entries, lessons and QUALITY rows stay byte-unchanged except appended rows; checked by git diff --name-status against the baseline at the measured revision."
+}
