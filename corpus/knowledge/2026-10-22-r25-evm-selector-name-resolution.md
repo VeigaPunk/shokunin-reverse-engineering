@@ -173,3 +173,33 @@ single candidate, so the rule had no choice to make.
   verification record. Sending selectors to the two public services reveals
   which selectors were looked up.
 - Seat reports cited by file name above are in `.ufo/waves/round-25/a3/w1/`.
+
+## Correction (round 26 wave 1): the 138 saved responses are per carrier-selector row
+
+The sentence in "The measured procedure" (line 41) — "138 saved lookup responses (one complete
+4byte.directory page and one openchain `filter=false` response per selector, all HTTP 200, every
+sha256 re-checked equal to its manifest)" — is wrong in one word: "per selector". It reads as one
+pair of responses per distinct selector, which would be 86. The 138 responses are two per
+carrier-selector row, and there are 69 such rows over the six carriers; the six carriers use 43
+distinct selectors. A selector shared by three carriers therefore contributes six saved responses,
+not two.
+
+Command (read-only, committed evidence under `corpus/evidence/round-25/a2/c2/`):
+
+    find corpus/evidence/round-25/a2/c2 -path '*/db/4byte-*.json' | wc -l        # 69
+    find corpus/evidence/round-25/a2/c2 -path '*/db/openchain-*.json' | wc -l    # 69
+    find corpus/evidence/round-25/a2/c2 -path '*/db/4byte-*.json' -printf '%f\n' \
+      | sed -E 's/^4byte-(.*)-p[0-9]+\.json$/\1/' | sort -u | wc -l            # 43
+
+69 rows x 2 responses = 138 saved responses; 138 = 2 x 69 carrier-selector rows, not 2 x 43
+distinct selectors. Per kind, 16 of the 43 selectors were fetched for more than one carrier
+(26 extra copies); those copies are byte-identical across carriers, so the 138 files hold 43
+distinct 4byte bodies and 43 distinct openchain bodies. All 138 manifest entries still re-check
+equal to their manifest `sha256` with `status` 200. `corpus/evidence/round-25/a3/c2/analyze/
+tally.json` carries the same pair: `per_carrier_rows.selector_rows` = 69 and
+`distinct_selectors.selector_rows` = 43. Apart from the carrier count below, nothing else in the entry changes: the rule scores are per
+carrier row (69) and per distinct selector (43) as stated, and the `filter=true` re-fetch under
+"Limits" was already once per distinct selector (43 responses in
+`corpus/evidence/round-25/a3/c2/filter-true/manifest.json`).
+
+Second correction (round 26 wave-1 seat `.ufo/waves/round-26/w1/EntryNumbers.md`): line 51 says shared ERC-20 selectors "appear in up to four carriers". The measured maximum is three (selectors per carrier count: 27 on one carrier, 6 on two, 10 on three, none on four; for example `095ea7b3` on rv2token, kdxtoken and stewardtoken).

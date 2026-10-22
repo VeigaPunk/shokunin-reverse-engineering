@@ -830,3 +830,52 @@ containment. A guard/resource/setup abort is CNE, not an observed candidate
 failure; no weakening the guard, automatic rerun or empty-receipt masking.
 Main alone controls final execution and admission.
 
+
+## Superseding note — round 25 custody subject landed; the filed wording above is superseded
+
+This note is appended after the round 25 section above and changes no filed byte
+of that section. The section above was written at the claims freeze commit
+`a4ab912a956fb863fedb0e9b9bb866777af27495`, when the subject
+`tools/round-25/instrument-custody.py` did not exist. Its sentence stating that
+the candidate is not implemented at this phase, that a missing candidate gives
+an unavailable verdict with exit 2, and that the cases are therefore not
+observed, described that moment. It is superseded from commit
+`fafdd283432731a675b71e201bb9ba767c394553` onward.
+
+What landed. Commit `fafdd283432731a675b71e201bb9ba767c394553` (parent
+`a4ab912a956fb863fedb0e9b9bb866777af27495`) added one file,
+`tools/round-25/instrument-custody.py`: 514 lines, 21190 bytes, sha256
+`54c43cdc01930fcb58f14053d8099f4b28352147656a05d811574cc74e7d34fb`, blob
+`8a6e21f18e805c7ce44e03a9a4872e9063073c32`, mode 100755. The same blob is at
+the current lane tip. The fixed ruler and the 34 literal pairs are unchanged:
+the ruler sha256 at the tip is
+`20fe3f3d3d68ba21c8d8bbfed175bb57db46a8618bd179b179acb6fda99d0532`, and the
+cases sha256 at `62feef9c0cbd5aadafa453456c55c28832175206` is
+`6c851cd704b84ef728415d674ad78ec7ff4da449883f1aeba3e4ca47631cd3e0`. The
+registry row `round25-custody-ruler` above therefore keeps its entry, its exit
+map and its pinned digests unchanged.
+
+The claim was not continued. The attempt 1 calibration claim R25-C1 in
+`.ufo/waves/round-25/claims.json`, the explicit caller selected 34 case
+custody contract, was not continued and has no after value in this lane. The
+lane's own wording is "not pursued, not as met"
+(`corpus/lessons/round-25.md`, the "Attempt 3" heading, lines 361 to 364, and
+`SCORECARD.md` line 3050). The freeze ledger row for round 25 is FLAGGED with
+the findings INSTRUMENT_ABSENT and INSTRUMENT_REVISED, the latter naming
+`fafdd283` (`corpus/claim-freezes.tsv` line 13; receipt
+`corpus/evidence/round-25/a3/after/freeze-gate-at-1e064f9b.json`).
+
+One outside measurement exists and is not a lane receipt. The ruler was run over
+the subject at commit `fafdd283432731a675b71e201bb9ba767c394553` and recorded
+exit 0, 34 of 34 exact, finding `all_declared_pairs_exact`, at
+2026-10-22T03:28:48Z. That receipt lives outside this lane, in the fleet
+repository at `.ufo/waves/hyaku/kaidoku25-prerequisite/parent-after-process.json`,
+sha256 `d15f5581a6e968121cb9963a561a95421e24a871842dd5829acb994a7d64a958`. Its
+own authority record states that admission is false. It is not a claim of this
+lane, so no axis score, no admission and no custody conclusion follows here.
+
+Wording on the two records above. "Not implemented at this phase" was true at
+the freeze and is false at the tip. The round 25 verifier spot check calls the
+claim abandoned; no committed lane record contains a retirement decision, and
+the lane's committed records say the claim was not continued and was reported
+as not pursued, not as met. Use the lane's wording.
