@@ -62,3 +62,10 @@ Note on M26-3: the evidence pointer `.ufo/reports/round-25/kaidoku.md:49` is in 
 - M26-3: not shown able to fail this round. The report counts Sources from the lane-round base (78 at `a0639d8e`, 80 at the tip); no counter for this check exists.
 - M26-1 overstates QUALITY row 29: only row 32 limits the red/green outcome to a red repair demonstration.
 
+- S079 (new this round): `source` cell now names the canonical package tarball URL as well as the installed copy, and `used-by` changed from `corpus/knowledge/2026-10-22-r26-native-reader-evidence-id-identity.md` to that entry plus `corpus/lessons/round-26.md`; the search-log line now gives identified, screened, included and excluded counts (seat report `.ufo/waves/round-26/w2/ReopenS079.md`).
+
+## Mistakes found at round end
+
+| id | class | evidence pointer | captured-by | fix and how it was shown able to fail |
+|---|---|---|---|---|
+| M26-7 | misroot: two round-26 seats wrote their files at the fleet root instead of the lane (`.ufo/waves/round-26/w2/CustodyNoteReview.md`, sha256 `f0482c47…1b13`; `kaidoku-r26/seats/EntryCorrection/final-report.md`, sha256 `ec2a97af…a7c1`) | `git -C /home/vgpnk/Projects/shokunin status --porcelain -uall` at 13:18:54Z; wave-2 seat report `.ufo/waves/round-26/w2/FleetMisroot.md` found the second one | the prompt's misroot sweep (addendum §6 item 3), run at round end | Both copied byte-exact into the same relative paths in this lane (`cmp` equal), then the fleet copies deleted. The wave contexts already said every `Report:` path is lane-relative; one seat still resolved it from the fleet root. Shown able to fail: the same porcelain command lists the files before the move and not after |

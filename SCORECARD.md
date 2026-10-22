@@ -3079,3 +3079,9 @@ Outside decision on round 25 (`corpus/lessons/round-25-verifier-spotcheck.md`): 
 No axis is retired; no capability row is added.
 
 - **planned:** depth — a renamed-copy and second-carrier extension of the identity table (does a different file name or extension change the seven content-keyed ids; one non-jq ELF), measured by the same counter pattern; second choice: calibration on the 11 disclosed statements from `C2Cherrypick.md`.
+
+### Round-26 falsify-wave corrections (wave 2, 32 seats, `.ufo/waves/round-26/w2/`)
+
+- R26-C2 wording (seat `C2Width.md`): read "the six fixed items K1–K6 pass their frozen claims.json rules at `46ebfd2f` (and at the later commits); 5 of the 6 failed at `a0639d8e`". The rules check counts, revisions, a substring and the absence of the word "contested", not whether each statement is true; K5 checks a revision prefix and does not run command B. Of the 11 further statements from `C2Cherrypick.md`, 8 are observed disagreements and 3 (its items 1, 8 and 9) are partly inference; the grouping above was loose (they sit in the header lines 12 and 14, the round-1 sections, Open gaps lines 78-83 and the planned field at 152-154, not in the capability pointers, which hold).
+- SHONEN line 12 was refreshed again after the measured commit: it said the 6.5.0/207/v42 observations were "superseded" at `PROVINCE.md:8-14`, but v42 is current at `PROVINCE.md:24` (seat `ScorecardRowsTruth.md`); it now says they agree. K6 passes either way and could not catch this.
+- R26-C1: both counters have disclosed false accepts (lesson `corpus/lessons/round-26.md`, M26-5 and "Falsify-wave findings kept as disclosures"). The committed envelopes themselves were checked directly: 24 of 24 match their frozen argv, paths, call-record sha256 and the 6.5.0 id rule, and none is the probe (seats `ArgvAndPaths.md`, `RecomputeIndependent.md`, `PinEvidence.md`).

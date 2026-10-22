@@ -893,13 +893,14 @@ an `inspect-binary-layout` id on `/usr/bin/jq`) re-derives only at the same path
 |---|---|---|
 | `analyze`, `inspect` (one operation, `binary_overview`; same id for both) | content-keyed across directories | compare ids; read `.meta.command` to tell the two verbs apart |
 | `decompile`, `xrefs`, `read-bytes`, `function`, `instructions` | content-keyed across directories | compare ids |
-| `inspect-binary-layout` | path-sensitive (path in `parameters.path`, `normalized_result.artifact.path`, a location) | compare `.data.subject.digest.sha256` and the parameters other than `parameters.path`; an id match also proves the same path |
+| `inspect-binary-layout` | path-sensitive (path in `parameters.path`, `normalized_result.artifact.path`, a location) | compare `.data.subject.digest.sha256` (the verb's only parameter is the path); an id match also proves the same path |
 
 Decision rules:
 
 - Compare ids only within one pin and one Ghidra build: 6.5.0 and 6.7.0 mint different ids for the
-  same bytes and request (`relationship_coverage` in the 6.7.0 projection), and the observed Ghidra
-  version is inside the hashed provider identity.
+  same bytes and request (`relationship_coverage` in the 6.7.0 projection; measured live for
+  `analyze`, `function` and `inspect-binary-layout`), and the observed Ghidra version is inside the
+  hashed provider identity.
 - A different id on a same-path repeat is a real provider difference, not a path effect: round 17
   saw one on `/usr/bin/aether` (`analyze`, `string_count` 29118 → 29117,
   `corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md:116-122`). Content-keyed means the path is not

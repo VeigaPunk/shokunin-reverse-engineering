@@ -2,7 +2,7 @@ source: `corpus/evidence/round-26/c1/table.tsv` (24 committed REA 6.5.0 envelope
 
 verified-at: 2026-10-22, round 26; 24 CLI calls 12:11:50Z–12:15:45Z, package root `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/` (version 6.5.0)
 
-recheck: `python3 -I -B tools/round-26/c1-id-identity.py --root <LANE> --rev <REV>` re-derives each verdict from the committed envelopes (offline). A live recheck copies `/usr/bin/jq` to a second directory with the same file name, checks both sha256 values equal `e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806`, and runs the argv in `.ufo/waves/round-26/claims.json` `verbs_argv` with `TMPDIR` set to a private scratch directory, never `/tmp`. Run it from the host login shell: the verbs need `GHIDRA_INSTALL_DIR` and the `REA_*` provider variables that `~/.bashrc` exports; without them they return `provider_unavailable` with `ok: false` and no id (seat reports `.ufo/waves/round-26/w1/ReplayA.md`, `ReplayB.md`).
+recheck: `python3 -I -B tools/round-26/c1-id-identity.py --root <LANE> --rev <REV>` re-derives each verdict from the committed envelopes (offline). A live recheck copies `/usr/bin/jq` to a second directory with the same file name, checks both sha256 values equal `e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806`, and runs the argv in `.ufo/waves/round-26/claims.json` `verbs_argv` with `TMPDIR` set to a private scratch directory, never `/tmp`. Run it from the host login shell: the Ghidra verbs need `GHIDRA_INSTALL_DIR` and `inspect-binary-layout` needs an absolute `REA_PWNTOOLS_PYTHON` (both exported by `~/.bashrc`; the other `REA_*` variables were not tested); without `GHIDRA_INSTALL_DIR` the Ghidra verbs return `provider_unavailable` with `ok: false` and no id (seat reports `.ufo/waves/round-26/w1/ReplayA.md`, `ReplayB.md`).
 
 # Evidence-ID identity of eight native reader verbs at REA 6.5.0 on `/usr/bin/jq` — seven keep their id in another directory, `inspect-binary-layout` does not
 
@@ -44,7 +44,7 @@ in `.meta.duration`; base and copy additionally differ in `.data.subject.local_p
 not reproducible run to run while the evidence id is. Two independent replays in other sessions
 (seat reports `.ufo/waves/round-26/w1/ReplayA.md` and `ReplayB.md`) reproduced the base ids, gave
 the content-keyed verbs the same id at a third directory, gave `inspect-binary-layout` a third
-distinct id at that third directory, and kept the id after only the file's modification time changed.
+distinct id at that third directory, and kept the `inspect-binary-layout` id after only the file's modification time changed.
 
 `analyze` and `inspect` return the same id because both CLI verbs call one operation,
 `binary_overview`, with empty parameters (seat report `.ufo/waves/round-26/w1/IdentityClaimsMap.md`,
@@ -60,14 +60,16 @@ projection (`:156-180`). The projection keeps the subject's `digest`, `format` a
 the provider. A verb is path-sensitive exactly when it writes the path
 into one of those kept fields. `inspect-binary-layout` does: its service writes the run path
 into `parameters.path`, `normalized_result.artifact.path` and an `artifact-path` location
-(`dist/application/binaryDiagnostics/BinaryLayoutService.js:61-67`). The other seven verbs (five
+(`dist/application/binaryDiagnostics/BinaryLayoutService.js:61-67`; the result's `artifact.path` is
+set by `dist/native/pwntools/PwntoolsLayoutProvider.js:17-21`). The other seven verbs (five
 answered by the Ghidra provider, `analyze` and `inspect` by the `rea-workflow` provider, per the
 envelopes) put no path in those fields; the Ghidra runs analyse a private content-named byte
-copy. A blind prediction written
-from the source before the run outputs were read matched all eight verdicts (seat report
+copy. A prediction written from
+the source before its author read the run outputs (by the seat's own statement; sealed 29 seconds
+after the last table run ended) matched all eight verdicts (seat report
 `.ufo/waves/round-26/w1/PredictionCritic.md`, predictions at 12:16:14Z).
 
-No cache served the repeats. The 6.5.0 caches are content-keyed and none is reached by the frozen
+No cache served the repeats, by source reading (no cache-hit test was run). The 6.5.0 caches are content-keyed and none is reached by the frozen
 argv: the in-memory analysis snapshot lives for one process (and a cached in-session replay adds a
 hashed limitation, which would change the id), the snapshot file is read only with `--snapshot`,
 and each Ghidra run imports a content-named copy into a fresh private project that is deleted
@@ -93,20 +95,20 @@ present, while 6.5.0 omits it when it is null (`dist/domain/evidence.js:175-177`
 6.7.0's `function` result changes two `analysis_profile.parameters` values (keys unchanged). Live pairs on
 `/usr/bin/jq` confirm it: `inspect-binary-layout` 6.5.0 `ev_294a449c…` versus 6.7.0
 `ev_d1256a96…`, `function` `ev_b2b7e9e4…` versus `ev_177586c6…`. The lane's stored 6.7.0
-records from arc3 rounds 7, 10, 11 and 12 (145) all recompute under the 6.7.0 rule; the 133 with a
+records from the arc-3 loop rounds 7, 10, 11 and 12 (145) all recompute under the 6.7.0 rule; the 133 with a
 null `relationship_coverage` never recompute under the 6.5.0 rule, and the 12 round-12 records with
 a non-null value recompute under both (seat report `.ufo/waves/round-26/w2/PinDiffCheck.md`). So compare ids only within one pin and one provider build: the hashed provider identity
 includes the observed Ghidra version (`12.1.4` here), and the 6.5.0 source accepts any 12.1.x build
 (`dist/ghidra/GhidraInstallationPolicy.js:39,44,50`, seat report `.ufo/waves/round-26/w2/EntryOverreach.md`);
-changing only that string in a committed envelope changes the recomputed id for `decompile`,
-`analyze` and `read-bytes`. Whether a different 12.1.x build changes the live ids is inference; it was not run. The relations themselves were measured here at
+changing only that string in a committed envelope changes the recomputed id for all seven
+Ghidra or `rea-workflow` verbs (seat reports `EntryOverreach.md`, `.ufo/waves/round-26/w2/EntryTruth.md`). Whether a different 12.1.x build changes the live ids is inference; it was not run. The relations themselves were measured here at
 6.5.0 only; the two 6.7.0 calls above are single base runs and test no relation. That the same
 eight relations hold at 6.7.0 is inference from the shared projection rule, not a measurement.
 
 ## Use
 
 - To show two envelopes from these seven verbs came from the same bytes and request, compare ids;
-  for `inspect-binary-layout`, compare `.data.subject.digest.sha256` and the parameters other than `parameters.path` instead,
+  for `inspect-binary-layout`, compare `.data.subject.digest.sha256` instead (its only parameter is the path),
   because the same bytes at another path get another id.
 - An equal id between `analyze` and `inspect` is expected and is not evidence that two verbs agree.
 - Equal ids do not authenticate the subject path or module name: those fields are outside the
@@ -127,4 +129,7 @@ path (`corpus/knowledge/2026-10-20-r17-go-carrier-diagnostics.md:116-122`, `stri
 The same `inspect-binary-layout` id `ev_294a449c…` was recorded at 6.4.0
 (`corpus/knowledge/2026-10-14-r12-01-queue-b-ready.md:26`), so for that verb 6.4.0 and 6.5.0 agree. No claim is made for other pins, other carriers, other
 parameter values, error envelopes, MCP sessions, or other verbs. The envelopes do not record
-the package version; the pin rests on the call records and the resolved package root.
+the package version, and the call records hold the verb argv but not the npx package spec. The pin
+rests on envelope content: the 6.5.0 id rule reproduces 24 of 24 ids and the 6.7.0 rule 3 of 24 (all
+`function`, whose profile literals v3 and v1 are 6.5.0 forms), and live 6.5.0 reruns reproduce the
+base ids (seat report `.ufo/waves/round-26/w2/PinEvidence.md`).
