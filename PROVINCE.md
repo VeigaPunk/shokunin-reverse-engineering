@@ -91,7 +91,7 @@ frontier rescan]
 - **EVM bytecode (extended)** — selectors held on synthetic dispatcher
   (Core, r3-07), real solc-0.8.37 carriers (Core, arc3-r1/r3) and a vyper-0.4.3
   carrier (arc3-r4); names are labelled candidates from saved signature-DB lookups, never verified (`corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md`).
-  Round 28: the round-25 primary naming rule held out of sample at 0 wrong of 137 named (187 held-out selectors; claim missed at 60/61 runs, `corpus/knowledge/2026-10-22-r28-evm-heldout-selector-naming.md`), and openchain's `filtered` flag is set only for 36 canonical-list selectors (`corpus/knowledge/2026-10-22-r28-openchain-filtered-flag.md`).
+  Round 28 (claim R28-C1 missed, 60 of 61 runs; Frontier status unchanged): on 187 held-out selectors the round-25 primary naming rule was observed at named 137, right 137, wrong 0 (`corpus/knowledge/2026-10-22-r28-evm-heldout-selector-naming.md`). openchain's `filtered` flag is set only for selectors on Sourcify's 36-key canonical list; it was re-observed on 10 of those keys, the deployed revision is not identified, and the test is not held out (`corpus/knowledge/2026-10-22-r28-openchain-filtered-flag.md`).
 
 ## Adjacent
 

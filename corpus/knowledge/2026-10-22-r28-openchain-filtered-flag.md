@@ -19,7 +19,10 @@ selector, so those candidates keep the `filtered: false` they were built with. W
 the service then drops the candidates marked `filtered`.
 
 So `filtered` is not a spam score. It is true exactly when the selector is one of the 36 canonical
-keys and the candidate's name differs from that key's kept signature.
+keys and the candidate's name differs from that key's kept signature. Five of the 36 keys
+(`0x60806040`, `0x60a06040`, `0x60c06040`, `0x60e06040`, `0x61010060`, source `system:magic`) have
+no `signature` field, so every candidate for them is marked (seat `SourceFilterCode`). None of
+them is among the tested selectors.
 
 ## Test (R28-C2, live service, one fetch instant)
 
@@ -48,11 +51,27 @@ keys and the candidate's name differs from that key's kept signature.
 
 ## Limits
 
-- The service behind `api.openchain.xyz` is assumed, not shown, to run this commit. A different
-  deployed list would show up as mismatches, and none did on these 246 entries.
-- One fetch instant, one host. The test covers only the 10 canonical keys among these selectors,
-  not all 36.
+- The test does not identify the deployed revision. The service behind `api.openchain.xyz` is
+  assumed, not shown, to run this commit. The frozen claim's `limits` say that a different deployed
+  list "would show up as mismatches". That is wrong. The seat `CriticC2Width` found that the 35-key
+  list at the service's first commit `5fc5ebc3` also gives 0 mismatches here, and so does any list
+  that differs only on the 26 keys outside these selectors.
+- One fetch instant, one host. The test covers only the 10 canonical keys among these selectors (9
+  ERC-20 selectors and `owner()`), not all 36. In all 10 responses the canonical name was listed
+  first, so "canonical key and not first in the list" fits the data equally well
+  (`CriticC2Width`).
 - Says nothing about result order or `hasVerifiedContract`.
+- Pre-registration was weakened (seat `CriticC2PreFreeze`, `.ufo/waves/round-28/a2w/CriticC2PreFreeze.md`;
+  mistake M28-4). Before the freeze (`86fa8526`, 17:21:55Z) the L1 ran this rule on the 69
+  committed round-25 openchain responses (216 entries, 0 mismatches). The probe time recorded in
+  `claims-c2.json`, "17:24Z", is later than the freeze commit, so it is wrong, and the true time
+  is unknown. By then the L1 had also fetched 125 of the 187 held-out openchain `filter=false`
+  responses for R28-C1. In all, 168 of the 230 test selectors already had a response in the lane
+  before the freeze (`tools/round-28/preseen-overlap.py`, exit 1). The seat found that the fresh
+  responses repeat those (name, filtered) pairs, and all 59 predicted-true entries come from the 10
+  round-25 canonical selectors that were probed. So the test is a re-observation, at a second
+  instant, of a rule read from code, not a held-out prediction. 26 of the 36 canonical keys stay
+  untested. A held-out test would freeze a list built from those 26 keys before fetching anything.
 
 ## Use
 

@@ -1,8 +1,8 @@
-source: S086 Solidity docs, Library Linking (unlinked placeholder, cause of the h09 refusal); S084 and S085 Sourcify filter code and canonical list (why the filter step is inert on these rows); the round-25 entry's rows S075, S076, S077, S078, S021
+source: S086 Solidity docs, Library Linking (unlinked placeholder, cause of the h09 refusal); the round-25 entry's rows S075, S076, S077, S078, S021 (the body also points to the R28-C2 entry's rows for why the filter step is inert)
 verified-at: 2026-10-22, round 28 (R28-C1); 61 REA `rea-agents@6.5.0` `inspect-evm-interface` calls 17:17Z (`corpus/evidence/round-28/c1/runs.tsv`), 374 saved lookups (`corpus/evidence/round-28/c1/db/manifest.json`), all after the counter froze at lane commit 87d3dfb6 (17:17:16Z)
 recheck: python3 -I -B tools/round-28/c1-heldout-naming.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV> (offline over committed bytes; at the round-28 tip it prints `runs_ok=60/61 rows_complete=186/187 tally_equal=1` and exits 1: the frozen claim is missed)
 
-# The round-25 EVM naming rule, scored once on held-out selectors: named 137, right 137, wrong 0
+# The round-25 EVM naming rule, scored once on held-out selectors: named 137, right 137, wrong 0 (claim missed, 60 of 61 runs)
 
 The round-25 entry (`corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md`) picked
 its primary naming rule on the same 69 rows it scored. This round scored that rule, unchanged, on
