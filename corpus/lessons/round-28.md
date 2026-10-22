@@ -33,7 +33,12 @@ recheck or used-by.
 | S085 | https://raw.githubusercontent.com/argotorg/sourcify/189cd726f7ed8fb3d2f503402d5c133e0f50e1fd/services/4byte/src/utils/canonical-signatures.json; opened 2026-10-22T17:49Z | `5572beb596c9062be042b11be4a8cbd6a875be67a518dc0046b220433878b3e2` (equal to the lane copy `corpus/evidence/round-28/c2/canonical-signatures.json`) | `"0xd55ec697": {` | `:2`; 36 keys |
 | S086 | https://raw.githubusercontent.com/ethereum/solidity/v0.8.30/docs/using-the-compiler.rst; opened 2026-10-22T18:20Z | `76e5db1df6cb67b189c0e8e0b27ed9546a03e5655ffdb400653d62196baac4ae` | `you will notice that the bytecode contains substrings of the form ``__$53aea86b7d70b31448b230b20ae141a537$__``` | `:74`, Library Linking |
 
-Considered and not made rows: none this round.
+Considered and not made rows: the planned S087 (4byte.directory server source, for result order) was never opened, so it is not a row; it stays an unopened lead.
+
+Gate notes after the wave (seat `CriticSourceRows`, `.ufo/waves/round-28/a2w/CriticSourceRows.md`; rows are not edited in place, so the notes live here):
+- S084: the "every other candidate keeps `filtered: false`" half rests on `handlers.ts:90` (`filtered: false,` in `mapLookupResult`) and `:262` (the same literal in the second lookup path), not only on `:47-48`. Re-checked by the L1 with `sed -n 86,92p` and `sed -n 258,264p` on the opened bytes.
+- S085: the kept signature for the quoted key is on the next line, `:3` `"signature": "upgrade()",`.
+- S086: the 34-character rule is at `:75` (`The placeholder is a 34 character prefix of the hex encoding of the keccak256 hash of the fully qualified library name.`, 21 words). Tag `v0.8.30` resolves to commit `73712a01b2de56d9ad91e3b6936f85c90cb7de36` (seat `SourceSolidityLinking`, `git ls-remote`). The h09 carrier was built with solc 0.8.37, and the seat reports that the Library Linking text is identical at v0.8.37. The REA refusal in the row's teaches cell comes from the run's envelope (`corpus/evidence/round-28/c1/envelopes/h09.json`), not from these docs.
 
 ## Mistakes
 

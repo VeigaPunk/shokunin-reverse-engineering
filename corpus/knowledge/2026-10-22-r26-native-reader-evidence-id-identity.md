@@ -133,3 +133,14 @@ the package version, and the call records hold the verb argv but not the npx pac
 rests on envelope content: the 6.5.0 id rule reproduces 24 of 24 ids and the 6.7.0 rule 3 of 24 (all
 `function`, whose profile literals v3 and v1 are 6.5.0 forms), and live 6.5.0 reruns reproduce the
 base ids (seat report `.ufo/waves/round-26/w2/PinEvidence.md`).
+
+## Pointer appended in round 28 (routed defect 1 of `corpus/lessons/round-27-verifier-spotcheck.md:152`)
+
+The table rows `analyze` and `inspect` (`:32-33`) and the `## Use` section call these two ids
+content-keyed. That holds within this entry's scope: the copy kept the same file name in another
+directory. Round 27 (`corpus/knowledge/2026-10-22-r27-renamed-copy-evidence-id-identity.md`, S083)
+showed the condition. The `analyze` and `inspect` id is the same across two paths only when both
+map to the same Ghidra snapshot suffix (`target-<sha256[0:12]><suffix>`; the suffix is the path's
+extension if it matches `^\.[A-Za-z0-9]{1,12}$`, else `.bin`). A copy with another extension gets
+another id. The other five content-keyed verbs are not affected. QUALITY row 41 supersedes row 37
+for these two verbs.

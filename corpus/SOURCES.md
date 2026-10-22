@@ -160,6 +160,8 @@
 
 - 2026-10-22 UTC, round 27 after wave 2 (S083) — Question: which 6.5.0 code puts the file extension into the `analyze` and `inspect` ids, and which code the CLI actually runs. Where searched: the installed 6.5.0 package (`dist/ghidra/GhidraTargetSnapshot.js`, the bundled `dist/cli-runtime/binary-BVOr2mgE.js`, `bridge/ghidra/ReaGhidraBridge.java`). Identified 3 files of one family (the installed 6.5.0 package, whose tarball identity is S080); screened 3; included 1 row (S083), because S079's source and anchor cells cannot change in place and the wave-2 reviewer `ReopenS079Snapshot.md` showed the Gate-note route was wrong; excluded 0.
 
+- 2026-10-22 UTC, round 28 (S084, S085, S086) — Question: what sets openchain's `filtered` flag, and why does REA 6.5.0 refuse a lane-compiled EVM runtime? Where searched: the Sourcify repository at commit `189cd726f7ed8fb3d2f503402d5c133e0f50e1fd` (`services/4byte/src/api/handlers.ts`, `services/4byte/src/utils/canonical-signatures.json`), and the Solidity documentation source at tag `v0.8.30` (`docs/using-the-compiler.rst`). Identified 2 families (Sourcify service code, Solidity docs); screened 3 files; included 3 rows (S084 code, S085 the data file the code reads, S086 docs); excluded 0. S076 (the OpenAPI page) stays: it documents the `filter` parameter but not the rule. Stop: both questions have a primary source that a live test (R28-C2) or a refusal message (h09) agrees with.
+
 ## Leads (unopened)
 
 - IEEE S&P 2022 SoK, “Demystifying Binary Lifters Through the Lens of Downstream Applications” (DOI `10.1109/SP46214.2022.9833799`): only Crossref metadata was returned; the primary paper and an anchorable quote remain unopened.
