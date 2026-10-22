@@ -1,0 +1,30 @@
+{
+  "round": "round-28",
+  "attempt": 1,
+  "frozen_by": "kaidoku L1 round 28, before the R28-C2 fetch; a second claim with its own freeze, declared after the R28-C1 freeze (87d3dfb65fec4b636664bd5727822feba5d35317) and after the R28-C1 REA runs showed carrier h09 refused (unlinked library placeholder). R28-C1's frozen claim and counter are unchanged; this file adds a separate claim and never edits R28-C1.",
+  "base": "935c36608008f79e3dea4f1ed191df3c89e3b848",
+  "freeze_kind": "instruments-first: counter, selftest (17 cases), frozen selector list, pinned canonical-signatures.json copy, collector and before receipts committed with this file, before the fetch the counter counts. The counter refuses responses fetched, and files first committed, before its own commit.",
+  "instruments": {"tools/round-28/c2-filtered-flag.py": "4fdf7db81c5e56b3dfe8232ae87b89e3094e047f979adb088550381095fd60ef"},
+  "loaded_by_counter": {
+    "corpus/evidence/round-28/c2/selectors.tsv": "ad1b50982922ed69f6953b490716746adb5d5587c4395d29489b1db7fab464ae",
+    "corpus/evidence/round-28/c2/canonical-signatures.json": "5572beb596c9062be042b11be4a8cbd6a875be67a518dc0046b220433878b3e2"
+  },
+  "producers_not_counters": {"tools/round-28/collect-c2.py": "0ea57ac5e66a9a53f8df375b4b995893f8c997b34ac06d1f9ef454f1c59e3b2c"},
+  "pre_freeze_probe": {
+    "what": "Before this freeze the L1 applied the rule to the 69 round-25 openchain responses already committed under corpus/evidence/round-25/a2/c2/*/db/ (216 candidate entries, 0 mismatches, 10 of the 43 round-25 selectors are canonical keys, 0 of the 187 held-out selectors are). That committed data is not counted; the claim counts only the fresh fetch made after this freeze.",
+    "utc": "2026-10-22T17:24Z"
+  },
+  "claims": [
+    {
+      "id": "R28-C2",
+      "axis": "depth (learning claim: what openchain's filtered flag means, the input of the round-25 naming rule's filter step)",
+      "kind": "sourced mechanism test: a rule read from Sourcify's 4byte service code at commit 189cd726f7ed8fb3d2f503402d5c133e0f50e1fd (services/4byte/src/api/handlers.ts filterResponse; services/4byte/src/utils/canonical-signatures.json, 36 keys) predicts the live flag",
+      "statement": "For each of the 230 selectors in corpus/evidence/round-28/c2/selectors.tsv (round 25's 43 and round 28's 187 held-out), one openchain filter=false response fetched after this freeze is committed; on every candidate entry in those responses, filtered is true exactly when the selector is a key of the pinned canonical-signatures.json and the name differs from that key's signature (mismatches 0), with both branches present (predicted_true >= 1). A knowledge entry states 'mismatches M of N entries' and cites a SOURCES row new since the base, opened 2026-10-22, status mined, listed in the round-28 ## Gate.",
+      "counting_command": "python3 -I -B tools/round-28/c2-filtered-flag.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV>",
+      "invocation": "python3 -I -B tools/round-28/collect-c2.py (after this freeze commit)",
+      "before": {"responses_complete": 0, "entries": 0, "mismatches": 0, "predicted_true": 0, "entry_ok": 0, "exit": 2, "why": "the pinned inputs are absent at the base", "receipt": ".ufo/waves/round-28/before/c2-at-935c3660.txt"},
+      "target": {"responses_complete": "230/230", "entries": ">= 1", "mismatches": 0, "predicted_true": ">= 1", "entry_ok": 1, "exit": 0},
+      "limits": "The service that answers api.openchain.xyz is assumed, not shown, to run this code revision; a deployed canonical list that differs from the pinned copy shows as mismatches. One fetch instant. Says nothing about hasVerifiedContract or result order."
+    }
+  ]
+}
