@@ -29,6 +29,7 @@ import json
 import os
 import sys
 import time
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
@@ -145,7 +146,10 @@ def cmd_fetch(a):
             manifest.append({"file": name, "url": url, "status": status,
                              "utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                              "sha256": hashlib.sha256(body).hexdigest()})
-            url = json.loads(body).get("next")
+            nxt = json.loads(body).get("next")
+            url = urllib.parse.urljoin("https://www.4byte.directory/", nxt) if nxt else None
+            if url and not url.startswith("https://www.4byte.directory/api/v1/signatures/?"):
+                raise SystemExit(f"refusing pagination URL outside www.4byte.directory: {nxt!r}")
             page += 1
             time.sleep(1.1)
         url = f"https://api.openchain.xyz/signature-database/v1/lookup?function=0x{sel}&filter=false"

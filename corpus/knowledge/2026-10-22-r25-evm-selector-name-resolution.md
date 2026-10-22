@@ -1,5 +1,5 @@
 source: S075 4byte.directory API documentation; S076 Sourcify 4byte signature service OpenAPI (openchain-compatible lookup); S077 EVMole interpretation reference; S078 Sourcify 2025 Recap (openchain takeover and database seeding); S021 Solidity ABI specification (Function Selector, opened 2026-10-19)
-verified-at: 2026-10-22, round 25 attempt 3; REA `rea-agents@6.5.0` envelopes replayed byte-equal in `corpus/evidence/round-25/a3/c2/rea-replay/`; lookups saved 2026-10-22T08:28Z–08:30Z with sha256 per response in each `db/manifest.json`
+verified-at: 2026-10-22, round 25 attempt 3; REA `rea-agents@6.5.0` envelopes replayed byte-equal in `corpus/evidence/round-25/a3/c2/rea-replay/`; lookups saved 2026-10-22T08:28:09Z–08:31:37Z with sha256 per response in each `db/manifest.json`
 recheck: python3 -I -B tools/round-25/a3/tally-resolution.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin (offline; reads only saved envelopes, saved lookups and compiler ABIs; expected output equals `corpus/evidence/round-25/a3/c2/analyze/tally.json`)
 
 # EVM selector names are labelled candidates from a signature database, never a recovered fact
@@ -48,7 +48,12 @@ against the ABI.
 
 Counts from `corpus/evidence/round-25/a3/c2/analyze/tally.json`. The first
 number is per carrier row (69 rows); the number in brackets is per distinct
-selector (43), because shared ERC-20 selectors appear in up to four carriers:
+selector (43), because shared ERC-20 selectors appear in up to four carriers.
+The bracketed count keeps each selector's first carrier in `carriers.tsv`
+order; REA's arguments can differ by carrier for one selector, so another
+choice moves one cell (the 4byte parameter-list rule becomes 29 named, 28
+right, 1 wrong, because `a9059cbb` is read correctly on the solc carriers and
+wrongly on the Vyper token):
 
 | naming rule | named | right | wrong | no name |
 |---|---|---|---|---|
@@ -79,10 +84,13 @@ single candidate, so the rule had no choice to make.
    label went to 49 of 69 rows (31 of 43 distinct) with none wrong, and 20
    rows got no label.
 3. Never take the first 4byte.directory result: 26 of its 59 row names (12 of
-   34 distinct) were wrong. The saved pages list higher ids first; for
-   `transfer(address,uint256)` the first saved result was
-   `workMyDirefulOwner(uint256,uint256)`. `[inference]` Popular selectors
-   attract junk submissions over time.
+   34 distinct) were wrong. The default order is newest submission first: all
+   26 saved pages with two or more results run by `created_at` descending,
+   and live requests honour `ordering=created_at` but ignore `ordering=id`
+   (seat report `C2FourbyteOrder.md`). For `transfer(address,uint256)` the
+   first saved result was `workMyDirefulOwner(uint256,uint256)`.
+   `[inference]` Popular selectors attract junk submissions over time, so
+   newest-first puts junk on top.
 4. No candidate in either database is **UNKNOWN**, not evidence that the
    function has no public name: 6 distinct selectors (7 rows) had no candidate,
    among them `fee_of(uint256,uint256)` (`0c751377`) and
@@ -117,7 +125,10 @@ single candidate, so the rule had no choice to make.
   EVMole 0.9.3 types an argument as `address` only from a 160-bit AND mask on
   the calldata word; Vyper 0.4.3 instead rejects non-zero high bits with
   `x >> 160` (SHR), which 0.9.3 does not read, so the type falls back to
-  `uint256`.
+  `uint256`. The arc3-r4 Vyper entry already recorded `address` read as
+  `uint256` on this carrier family
+  (`corpus/knowledge/2026-10-19-arc3-r4-evm-vyper-leg.md`); this round adds
+  the cause and its effect on naming.
 - **The Vyper misses are fixed upstream, not in REA.** Run directly, EVMole
   0.9.4 (npm, published 2026-10-13) recovered every ABI argument list on both
   Vyper carriers; REA 6.3.0, 6.4.0, 6.5.0 and 6.7.0 all pin `evmole` 0.9.3
@@ -139,7 +150,7 @@ single candidate, so the rule had no choice to make.
   obfuscated contracts are not measured. The failure the rule cannot catch
   (the true name absent, a colliding name present, REA's arguments matching
   the collider) did not occur here and is not ruled out.
-- The lookups are one snapshot (2026-10-22T08:28Z–08:30Z); a re-fetch of all
+- The lookups are one snapshot (2026-10-22T08:28:09Z–08:31:37Z); a re-fetch of all
   43 selectors at 10:45Z was byte-identical (wave-1 seat report
   `C2LiveDrift.md`). Both databases take public submissions, so a later
   lookup can add a colliding or junk entry and change any count above.
