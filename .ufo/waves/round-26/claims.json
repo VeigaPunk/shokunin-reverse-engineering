@@ -1,0 +1,71 @@
+{
+  "round": "round-26",
+  "attempt": 1,
+  "frozen_by": "kaidoku L1 round 26, before any table REA run and before any repair edit",
+  "base": "a0639d8e61e486e2a716ff94cddd89a73200a02c",
+  "freeze_kind": "definitions-first: the counting rules below bind; the two instruments are written in wave 1 to these rules, committed and sha256-pinned before any after-measurement, and attacked by mutation-testers. Under the round-24 freeze gate this freeze is INSTRUMENT_ABSENT by design and is disclosed as such.",
+  "pre_freeze_probe": {
+    "what": "one REA 6.5.0 call to learn the envelope shape; not a table row and never used as one",
+    "argv": "TMPDIR=/fast/scratch/hyaku/kaidoku-r26/l1/tmp npx -y rea-agents@6.5.0 inspect-binary-layout /usr/bin/jq --format json --full-output",
+    "utc": "2026-10-22T11:59:16Z",
+    "exit": 0,
+    "evidence_id": "ev_294a449cecf2d7b6e72b63b8385b6dcacf589b58c55d9de3ce1b0a81760a71bd",
+    "envelope_sha256": "689680863a6e3dbd8c5a442aee52042a4601fd37e0555aa6db66d3a8ab3b195a",
+    "fields_seen": [".ok", ".data.evidence_id", ".data.subject.digest.sha256", ".data.normalized_result.artifact.sha256"]
+  },
+  "claims": [
+    {
+      "id": "R26-C1",
+      "axis": "depth",
+      "kind": "learning claim (PROVINCE core: evidence identity of the native reader verbs at the round carrier pin)",
+      "statement": "At rea-agents@6.5.0, on /usr/bin/jq (30,800 B, sha256 e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806), the committed table corpus/evidence/round-26/c1/table.tsv has one row for each of the 8 frozen verbs, and each row's verdict re-derives from three committed envelopes (base, same-path repeat, byte-identical copy at the alternate path). A knowledge entry cites the table and a SOURCES row opened 2026-10-22 whose id appears in corpus/lessons/round-26.md under ## Gate.",
+      "carrier": {"path": "/usr/bin/jq", "alternate_path": "/fast/scratch/hyaku/kaidoku-r26/carrier/alt/jq", "sha256": "e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806", "size": 30800},
+      "verbs_argv": {
+        "analyze": "analyze <PATH> --format json --full-output",
+        "inspect": "inspect <PATH> --format json --full-output",
+        "decompile": "decompile <PATH> 0x103fa0 --format json --full-output",
+        "xrefs": "xrefs <PATH> 0x103fa0 --format json --full-output",
+        "read-bytes": "read-bytes <PATH> 0x103fa0 --length 64 --format json --full-output",
+        "function": "function <PATH> 0x103fa0 --format json --full-output",
+        "instructions": "instructions <PATH> 0x103fa0 --format json --full-output",
+        "inspect-binary-layout": "inspect-binary-layout <PATH> --format json --full-output"
+      },
+      "invocation": "TMPDIR=<seat scratch>/tmp npx -y rea-agents@6.5.0 <argv>; base and repeat use PATH=/usr/bin/jq, copy uses PATH=the alternate path; same argv otherwise.",
+      "counting_command": "python3 -I -B tools/round-26/c1-id-identity.py --root <LANE> --rev <REV>",
+      "rules": {
+        "inputs": "Git objects at REV only: corpus/evidence/round-26/c1/table.tsv (tab-separated, header verb, verdict, base_id, repeat_id, copy_id, subject_sha256) and corpus/evidence/round-26/c1/envelopes/<verb>-<run>.json or .json.gz for run in base, repeat, copy.",
+        "row_complete": "the verb is one of the 8 frozen verbs; all three envelopes exist and parse; each has ok == true; each subject sha256 (first present of .data.subject.digest.sha256, then .data.normalized_result.artifact.sha256) equals the carrier sha256; the table's three id cells equal the envelopes' .data.evidence_id values; the table verdict equals the derived verdict.",
+        "derived_verdict": "no-id if any of the three envelopes lacks a string .data.evidence_id starting ev_; else unstable if base != repeat; else content-keyed if copy == base; else path-sensitive.",
+        "entry_ok": "1 if corpus/knowledge/2026-10-22-r26-native-reader-evidence-id-identity.md exists, its source: line names corpus/evidence/round-26/c1/table.tsv and at least one S### whose SOURCES.md row has opened 2026-10-22 and whose id appears in the ## Gate section of corpus/lessons/round-26.md; else 0.",
+        "diagnostics_not_gating": "whether each envelope's text contains the path it was run on"
+      },
+      "before": {"rows_complete": 0, "rows_total": 8, "entry_ok": 0, "basis": "corpus/evidence/round-26/ absent at base"},
+      "target": {"rows_complete": 8, "rows_total": 8, "entry_ok": 1, "exit": 0},
+      "limits": "One carrier, one pin, one address for the address-taking verbs, three runs per verb. Says nothing about other carriers, pins, parameters, MCP sessions or error envelopes. Any verdict value counts as complete; the claim is that the verdicts re-derive, not which verdict each verb gets."
+    },
+    {
+      "id": "R26-C2",
+      "axis": "calibration",
+      "kind": "calibration: count mismatches between fixed self-assessment statements (SCORECARD ## Owned axes rows, SHONEN) and observed repo state",
+      "statement": "Six fixed self-assessment items K1-K6, taken from the round-25 wave-1 seat report .ufo/waves/round-25/a3/w1/C1Cherrypick.md (E1, E2, E3, E5) and routed by corpus/lessons/round-25-verifier-spotcheck.md defect 2, go from the before count measured at base to 0 mismatches. Not a full audit of SCORECARD or SHONEN.",
+      "counting_command": "python3 -I -B tools/round-26/c2-calibration.py --root <LANE> --rev <REV>",
+      "rules": {
+        "row_scope": "A row is the line starting with '| depth |', '| coverage |' or '| calibration |' inside the SCORECARD.md section that begins at the heading '## Owned axes' and ends before the next line starting with '## '. Cells split on ' | '. Column 3 is the observable cell, column 4 the evidence cell. Rows elsewhere in SCORECARD are never read (round-25 first-row false accept).",
+        "command_A": "SCORECARD.md ## Measurement recipes recipe A, evaluated on Git objects of the named revision.",
+        "craft_span": "H = line number of the line starting '## Queue-drain craft' in SKILL.md at REV; L = last non-blank line before the next line starting '## '.",
+        "K1": "depth row: the first N/M token in the observable cell has N == M == command A rule_blocks == citation_resolved_rules at REV.",
+        "K2": "depth row: the evidence cell contains the string SKILL.md:H-L for the craft span at REV.",
+        "K3": "depth row: the first 7-40 hex revision following the word 'measured' in the evidence cell resolves, and command A at that revision gives rule_blocks == citation_resolved_rules == the K1 N.",
+        "K4": "coverage row: the first N/M token in the observable cell has N == M == command A mapped == knowledge_files at REV (README ## Coverage map is read by command A), and the first 7-40 hex revision following the word 'measured' in the evidence cell resolves and gives the same N/M under command A.",
+        "K5": "calibration row: the first 7-40 hex revision following the word 'measured' in the evidence cell is a prefix of measured_revision in evidence/round-1-2026-10-15/result.json at REV.",
+        "K6": "SHONEN.md: the line after the box line '- [~] No cross-domain bleed' (or '- [x] ...') does not contain the word 'contested', and every PROVINCE.md:A-B or PROVINCE.md:A pointer in it is inside PROVINCE.md's line count at REV.",
+        "output": "JSON with per-item pass/mismatch and observed values, items 6, mismatches count; exit 0 iff mismatches == 0, exit 1 otherwise, exit 2 on input error.",
+        "fixtures": "The instrument ships a selftest with at least one red fixture per item (a mutated copy that must be counted as a mismatch), including a decoy '| coverage |' row outside ## Owned axes."
+      },
+      "before_expected": "5 of 6 by reading at base (K3 expected to hold: measured 638fb211 gives 9/9, matching the stale 9/9); the instrument's measured value at base decides.",
+      "target": {"items": 6, "mismatches": 0, "exit": 0},
+      "excluded_and_disclosed": "C1Cherrypick E4 (Last-change column, labelled inference by the seat) and the C9 outside-verifier wording are not items."
+    }
+  ],
+  "causal_separation": "R26-C1 lands new evidence, a table, an entry and a SOURCES row; R26-C2 edits only SCORECARD ## Owned axes rows and one SHONEN line. Coupling disclosed: C1's entry raises command A's knowledge count, so K4 reads whatever count the tree holds; the L1 lands C1 first and then states the coverage row from command A at that commit. Without C1, K4 is met with the 108/108 count; the C2 instrument never reads C1's evidence files."
+}
