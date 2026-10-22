@@ -90,7 +90,7 @@ frontier rescan]
   `unsupported_host` on Linux; recorded so the lane never claims them.
 - **EVM bytecode (extended)** — selectors held on synthetic dispatcher
   (Core, r3-07), real solc-0.8.37 carriers (Core, arc3-r1/r3) and a vyper-0.4.3
-  carrier (arc3-r4); selectors stay bare hashes (no signature DB → no name resolution).
+  carrier (arc3-r4); names are labelled candidates from saved signature-DB lookups, never verified (`corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md`).
 
 ## Adjacent
 

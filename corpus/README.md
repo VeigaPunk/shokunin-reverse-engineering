@@ -71,6 +71,7 @@ A row is written when its file exists, never before.
 | Partial Flutter positive and Dart refusal (round 22) | `2026-10-21-r22-flutter-positive-dart-refusal` | held narrowly — Saber identify-flutter-build succeeds with partial coverage; inspect-dart-aot refuses missing dynamic snapshot symbols and is not counted |
 | Offline signal and Dart-layout REA envelopes (round 23) | `2026-10-21-r23-offline-signal-envelopes`, `2026-10-21-r23-dart-legacy-layout-boundary` | held narrowly — tool-subject decoder catalog with a signature-module failure; selected synthetic/public UART annotations, not hardware acquisition; legacy-layout Saber libapp headers complete but string pool partial, not universal Dart/source recovery |
 | Saved packet-capture REA envelopes (round 24) | `2026-10-21-r24-pcap-family-envelopes` | held narrowly — all four packet-capture family verbs on public Wireshark 4.6.9 test captures and the installed registry with a recorded local TShark build; no live capture, lane-held decryption or protocol-correctness claim |
+| EVM selector naming (round 25) | `2026-10-22-r25-evm-selector-name-resolution` | held narrowly — offline naming rule scored against compiler ABIs on six lane-compiled carriers (69 selector rows) from saved 4byte.directory and openchain lookups; names stay labelled candidates, no verified name or deployed-contract rate |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -160,6 +161,7 @@ A row is written when its file exists, never before.
 | `2026-10-21-r22-flutter-positive-dart-refusal` | One pinned Flutter-positive partial result versus separate Dart-symbol refusal; no source recovery/runtime claim | S054/S055; complete retained original CLI envelopes and L1 producing argv/exit | 2026-10-21 |
 | `2026-10-21-r23-offline-signal-envelopes`, `2026-10-21-r23-dart-legacy-layout-boundary` | Offline decoder discovery/recordings and carrier-conditional Dart AOT parsing; retained diagnostics/refusal boundaries | S058–S061; original L1 REA6.5.0 envelopes, carrier digests and producing records | 2026-10-21 |
 | `2026-10-21-r24-pcap-family-envelopes` | Saved-capture summaries, field queries, registry listing and client report; embedded-secrets boundary; prlimit limits | S064–S067; original L1 REA6.5.0 envelopes, capture digests and producing records | 2026-10-21 |
+| `2026-10-22-r25-evm-selector-name-resolution` | Selector-to-name candidates from two saved signature-database snapshots; scored naming rules, collisions, UNKNOWN for no candidate | S075–S077, S021; REA6.5.0 envelopes replayed equal; 138 saved lookups with sha256 | 2026-10-22 |
 
 ## Lessons
 | entry | round | gist |
