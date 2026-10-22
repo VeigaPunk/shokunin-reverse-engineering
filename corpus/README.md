@@ -195,7 +195,7 @@ A row is written when its file exists, never before.
 | `round-24` | 24 | instruments frozen before claims, claim-freeze audit R14–R24 disclosed, saved-capture family held, README separators and reproduction inputs repaired |
 | `round-24-verifier-spotcheck` | 24 | Main's non-author judgment: bounded four-verb coverage; original frozen calibration9/11 unmet, not admitted; preservation/source checks and genuine heavy-wave debt retained. No knowledge-map or historical target re-score. |
 | `round-25` | 25 | Prospective explicit-reference custody: fixed I/original34 plus separately declared Main-held full-contract/dataflow controls; actual unavailable-before, source/epoch/role/pin/scratch debts; no candidate result or admission preclaimed |
-| `round-29` | 29 | fresh-carrier and never-fetched-selector tests frozen with hex and pre-seen screens; r27 selftest repaired as a disclosed selftest-only revision; freeze gate over every claims*.json; mistakes M29-1..3 (filing with a live seat, ledger out of step with its gate, unpinned name in the L1's own freeze) |
+| `round-29` | 29 | fresh-carrier and never-fetched-selector tests frozen with hex and pre-seen screens; r27 selftest repaired as a disclosed selftest-only revision; freeze gate over every claims*.json; pre-file gate; mistakes M29-1..4 (filing with a live seat, ledger out of step with its gate, unpinned name in the L1's own freeze, red seat results dropped at integration) |
 
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).

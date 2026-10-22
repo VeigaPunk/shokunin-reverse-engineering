@@ -1,4 +1,4 @@
-source: S088 ERC-4626 Tokenized Vaults standard text (ethereum/ERCs `3c0f7076`, the published list behind carrier n04); the round-25 entry's rows S075, S076, S077, S078 for the databases; S084/S087 for the `filtered` flag
+source: S088 ERC-4626 Tokenized Vaults standard text (ethereum/ERCs `3c0f7076`, the published list behind carrier n04); the round-25 entry's rows S075, S076, S078 for the databases and S077 for REA's EVMole interpretation; S084/S087 for the `filtered` flag
 verified-at: 2026-10-22, round 29 (R29-C1); 16 REA `rea-agents@6.5.0` `inspect-evm-interface` calls 20:03:21Z–20:03:37Z (`corpus/evidence/round-29/c1/runs.tsv`), 304 saved lookups 20:03:39Z–20:08:52Z (`corpus/evidence/round-29/c1/db/manifest.json`, every one HTTP 200 on its first try), all after the claim froze at lane commit dbd87cfa
 recheck: python3 -I -B tools/round-29/c1-fresh-naming.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV> (offline over committed bytes; expected `runs_ok=16/16 rows_complete=152/152 tally_equal=1 entry_ok=1`, exit 0)
 
@@ -50,8 +50,8 @@ hold: H1 (wrong at most 5% of named) and H2 (named at least half of 152).
 - 24 rows: the ABI has a `bytes32` argument and REA 6.5.0 infers `uint256` for it (for example
   `getRoleAdmin(bytes32)` inferred `uint256`), so no candidate is argument-consistent. This is most
   of carrier n12 (TimelockController, 9 rows) and n15 (ENS registry, 9 rows).
-- 3 rows: a `string` argument is inferred as `bytes` (`castVoteWithReason`, `propose`,
-  `setBaseURI`).
+- 3 rows: a `string` argument is inferred as `bytes` (`castVoteWithReason`, `setBaseURI`, and
+  `propose`, whose `string[]` is also inferred as `bytes[]`; seat `ExecArgsBreakdown`).
 - 3 rows: REA's arguments match, but openchain returns more than one unfiltered candidate with
   that argument list, so the rule abstains. `nonces(address)` competes with
   `_$_$$_$__$$$$$$$$__$__$$_$$$_$$$(address)`, `setApprovalForAll(address,bool)` with
@@ -65,9 +65,10 @@ recall; it never produced a wrong name here or in round 28.
 ## The filter step is inert on these rows
 
 None of the 152 selectors is a key of the canonical list, so openchain marks every candidate
-`filtered: false` (S084, S087; R29-C2 observed 0 of 199 entries on these selectors marked
-filtered). The filter step therefore removes nothing; the abstentions above come from argument
-consistency and from spam collisions that the canonical list does not cover.
+`filtered: false` (S084, S087). This claim's own lookups agree: 0 of the 199 candidates in
+`corpus/evidence/round-29/c1/db/openchain-*.json` carry `filtered: true`. The filter step
+therefore removes nothing; the abstentions above come from argument consistency and from spam
+collisions that the canonical list does not cover.
 
 ## Reading against round 28
 
@@ -81,13 +82,17 @@ first 4byte.directory result is often a spam collision, so "take the first 4byte
 - Carriers are compiled stubs that hold a published function list; they are not deployed contracts
   and carry no events or custom errors. One compiler (solcjs 0.8.37, no optimizer), one REA pin,
   one lookup snapshot.
-- The screen removes selectors the lane has written down, not names the L1 or the databases'
-  users know. The names are well known by design, so this measures the rule on public names; an
-  obscure or private name is the round-28 case.
+- The held-out property is narrow: the 152 selectors are unseen at the base as 8-hex tokens, and
+  collection came after the freeze, but the names were author-selected by the L1 and some name
+  strings were already in the lane (for example `"signature": "token1()",` in the canonical-list
+  copy, there under another key; wave-1 critic `CriticHeldOutC1`). Read the result as a
+  completeness-targeted score on author-selected public names, not as a blind test; an obscure
+  or private name is the round-28 case.
 - `openchain_first` scoring 152/152 here is not a rule to adopt: it has no abstention, and on the
   round-25 rows it was wrong once where the primary rule was not
-  (`corpus/evidence/round-25/a3/c2/analyze/tally.json`: named 62, right 61, wrong 1); in round 28
-  it was not wrong (145/145).
+  (`corpus/evidence/round-25/a3/c2/analyze/tally.json`, per carrier-selector row: named 62, right
+  61, wrong 1; per distinct selector 37/36/1 against the primary rule's 29/29/0); in round 28 it
+  was not wrong (145/145).
 - Only carrier n04's interface list has a source row (S088); the other 15 lists were written by
   the L1 from the published standards without opening them this round. The ground truth for
   every row is still the compiler ABI, not the standard text.

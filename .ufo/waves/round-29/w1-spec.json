@@ -1,0 +1,228 @@
+{
+ "wave": "kaidoku29-w1",
+ "reportDir": ".ufo/waves/round-29/w1",
+ "maxLanes": 44,
+ "context": "# Goal\nKaidoku round 29, wave 1 (one v1 wave of verification and attack items, plus three drafting items) for lane repo /home/vgpnk/Projects/shokunin/kaidoku-shokunin (reverse engineering of shipped artifacts with REA on this Linux host). Lane base bacbe9cc31d09b5e58e265b0138bd75d0cdb6b47. Measured tip 18be864a528873b2b70d8c94e31f880290249e90. Both claims frozen together at lane commit dbd87cfa09eb89306c4e07d3171a4556eb732024 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-29/claims.json, before any REA run, lookup or fetch; data committed at 4fcea97875a7fe1d816fb871cbc60a1c3632efa0.\n- R29-C1 (coverage, learning claim): the round-25 EVM selector naming rule (primary rule openchain_sole_unfiltered_args_consistent; entry /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md) scored unchanged on 16 fresh carriers compiled this round by /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-29/make-carriers.py (solcjs 0.8.37; /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-29/c1/carriers.tsv, src/, compiled/) and 152 held-out selectors (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-29/c1/heldout.tsv; selected by /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-29/select-heldout.py, screened by /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-29/preseen.py). Counter /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-29/c1-fresh-naming.py. Target runs_ok 16/16, rows_complete 152/152, tally_equal 1, entry_ok 1, exit 0. Entry /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r29-evm-fresh-selector-naming.md, claim row S088.\n- R29-C2 (depth, learning claim): Sourcify's filterResponse rule (S084, S087; handlers.ts :47-48 `filtered = name !== expectedCanonical.signature` for canonical keys, false otherwise) predicts openchain's `filtered` flag on 178 selectors with no openchain response in the lane at the base (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-29/c2/selectors.tsv: 26 canonical keys + 152 R29-C1 selectors; pinned list /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-29/c2/canonical-signatures.json). Counter /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-29/c2-filtered-unseen.py. Target responses_complete 178/178, mismatches 0, predicted_true>=1, predicted_false>=1, entry_ok 1, exit 0. Entry /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r29-openchain-filtered-unseen.md, claim row S087.\n- Hygiene (not claims): round-27 selftest patch applied to /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-27/c2-xpin-check.py (commit 7431096bb16e7dd3c37e08f7307952e231b94cf8, disclosed under instrument_supersessions in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-27/claims.json); new gate /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-29/freeze-gate.py (every claims*.json) with ledger /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/claim-freezes-v2.tsv; ledger corrections in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/claim-freezes.tsv; pre-file check /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-29/prefile-check.sh; lesson /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-29.md (Gate, Mistakes M29-1..3); QUALITY rows 45-47 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md; SOURCES rows S087, S088 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md. Receipts under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-29/before/ and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-29/after/.\n# Contract\n- Paths: every path is absolute. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kaidoku-shokunin - write it at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/<that path>. Write nothing else inside /home/vgpnk/Projects/shokunin/kaidoku-shokunin. Put scripts, drafts, raw output and other artifacts under /fast/scratch/hyaku/kaidoku-r29/seats/w1/<your item name>/ and list each with its sha256 in the report; the L1 integrates and commits.\n- Bounds: read-only on the lane. Never edit lane files (SCORECARD, LOG, SKILL, PROVINCE, SHONEN, QUALITY, SOURCES, corpus/, tools/, .ufo/ other than your own report). Never mutate the fleet repo /home/vgpnk/Projects/shokunin, sibling lanes, lane jj state or the lane Git index. Seats never run git or jj writes in the lane or the fleet repo: no git add/commit/checkout/reset/stash/switch/pull/push/fetch/worktree there, no mutating jj command anywhere; in the lane, jj only read-only with --ignore-working-copy. Read-only git (show, log, ls-tree, cat-file, diff, rev-parse, grep) is fine. Any check that needs Git writes or file mutation runs in a sandbox clone: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git clone -q /home/vgpnk/Projects/shokunin/kaidoku-shokunin /fast/scratch/hyaku/kaidoku-r29/seats/w1/<your item name>/clone`, with GIT_DIR, GIT_WORK_TREE and GIT_INDEX_FILE unset for every git command you run there.\n- Messages: the only message target is agent://KaidokuR29 (the L1), and only for a blocker. Never message agent://all or any other seat.\n- Evidence: every finding names its producing command, an exact output excerpt, exit code and UTC time; label each conclusion observation, inference or unknown. Never fabricate; an unrun check has not passed. Attack seats name what they attack and give a verdict: holds, fails (with the counterexample) or could-not-evaluate.\n- Sources: open primary sources by ordinary means only (plain HTTP fetch such as curl, git ls-remote or git clone of a public repository, a local file read); never use a headless browser or any tool to pass a bot challenge, captcha or access control. For each opened source record URL, access date 2026-10-22, sha256 of the bytes read, and one located quote of at most 25 contiguous words from the served bytes with its line.\n- Network lookups to 4byte.directory or api.openchain.xyz: none, unless your item says so; then at most 10 requests, one second apart.\n- REA: none, unless your item says so; CLI only (`TMPDIR=/fast/scratch/hyaku/kaidoku-r29/seats/w1/<your item name>/tmp npx -y rea-agents@6.5.0 <argv>`), never MCP devices.\n- Tooling: the operator authorizes you to install or update tools that help the task without asking - read /home/vgpnk/.omp/agent/RULES.md first, use official channels, and record each install (tool, version, channel, reason) in your report. All pacman transactions are PAUSED host-wide (pacman guard): install only via `uv tool`, `uv venv` + `uv pip`, `npx`, or an official binary in ~/.local/bin; never pacman -S, -Sy, -Syu, -U, -R, never a downgrade, never restart a host service.\n- Leaf: do not spawn agents, except that an executor may spawn one read-only labrat probe for one falsifiable hypothesis. Do not run your own swarm.\n- Finish by writing your report, then stop. Do not keep writing after your report is written.",
+ "items": [
+  {
+   "name": "ExecRecountC1",
+   "role": "executor",
+   "prompt": "# Target\nRe-run the R29-C1 counter, selftest and tally recompute at the measured tip.\n# Work\nClone the lane into /fast/scratch/hyaku/kaidoku-r29/seats/w1/ExecRecountC1/clone. In the clone run `python3 -I -B tools/round-29/c1-fresh-naming.py --root <clone> --rev 18be864a528873b2b70d8c94e31f880290249e90`, `--selftest`, and `--root <clone> --emit-tally` (after `git checkout -q --detach 18be864a528873b2b70d8c94e31f880290249e90` in the clone) and diff the emitted tally with corpus/evidence/round-29/c1/tally.json.\n# Acceptance\nReport: full counter stdout, exit codes, selftest summary, tally diff result; verdict on the claimed after-state runs_ok=16/16 rows_complete=152/152 tally_equal=1 entry_ok=1 exit 0."
+  },
+  {
+   "name": "ExecRecountC2",
+   "role": "executor",
+   "prompt": "# Target\nRe-run the R29-C2 counter and selftest at the measured tip.\n# Work\nClone the lane into /fast/scratch/hyaku/kaidoku-r29/seats/w1/ExecRecountC2/clone; run `python3 -I -B tools/round-29/c2-filtered-unseen.py --root <clone> --rev 18be864a528873b2b70d8c94e31f880290249e90` and `--selftest`.\n# Acceptance\nReport: full stdout, exit codes; verdict on responses_complete=178/178 entries=252 mismatches=0 predicted_true=38 predicted_false=214 entry_ok=1 exit 0."
+  },
+  {
+   "name": "ExecIndependentC1",
+   "role": "executor",
+   "prompt": "# Target\nRe-derive the R29-C1 primary triple without any lane counter or resolver code.\n# Work\nWrite your own scorer under /fast/scratch/hyaku/kaidoku-r29/seats/w1/ExecIndependentC1/ that reads, at 18be864a528873b2b70d8c94e31f880290249e90 via git show: heldout.tsv, the 16 envelopes in corpus/evidence/round-29/c1/envelopes/ (normalized_result.functions[].selector and inferred_arguments), the openchain responses in corpus/evidence/round-29/c1/db/, and the compiled ABIs. Primary rule: for each held-out row whose selector REA recovered on its carrier, the name is the only openchain candidate with filtered=false whose parameter list (canonical types, no spaces) equals REA's inferred_arguments; else no name. Compute keccak with an independent implementation (for example pycryptodome or eth-hash installed into a uv venv) only to check that each ABI signature hashes to its selector.\n# Acceptance\nReport: named/right/wrong/no_name, args_match count, and any row where your result differs from corpus/evidence/round-29/c1/tally.json; verdict on the entry's triple 'named 122, right 122, wrong 0'."
+  },
+  {
+   "name": "ExecIndependentC2",
+   "role": "executor",
+   "prompt": "# Target\nRe-derive R29-C2 mismatches without the lane counter.\n# Work\nOwn script under /fast/scratch/hyaku/kaidoku-r29/seats/w1/ExecIndependentC2/: for every selector in corpus/evidence/round-29/c2/selectors.tsv at 18be864a528873b2b70d8c94e31f880290249e90, read db/openchain-<sel>.json and the pinned canonical-signatures.json; predict filtered = (0x<sel> is a key) and (name != key's signature, missing signature counts as different). Count entries, predicted true/false, mismatches, per set (canonical, c1); also check each manifest entry's sha256 equals its file bytes and that utc is later than the freeze commit time of dbd87cfa (git log -1 --format=%cI dbd87cfa).\n# Acceptance\nReport: the counts and any mismatch; verdict on 'mismatches 0 of 252 entries', predicted_true 38, predicted_false 214."
+  },
+  {
+   "name": "ExecRebuildCarriers",
+   "role": "executor",
+   "prompt": "# Target\nDeterminism and screen of the fresh carriers.\n# Work\nIn a clone at 18be864a528873b2b70d8c94e31f880290249e90 under /fast/scratch/hyaku/kaidoku-r29/seats/w1/ExecRebuildCarriers/clone, re-run `python3 -I -B tools/round-29/make-carriers.py` after editing only its LANE constant to point at the clone (in the clone, never in the lane), then `git status --porcelain` and `git diff --stat` in the clone; also run `python3 -I -B tools/round-28/hex-screen.py --root <clone> corpus/evidence/round-29/c1/carriers.tsv`, and check each runtime file is non-empty and contains no `__$` placeholder.\n# Acceptance\nReport: whether the rebuild is byte-identical to the committed carriers (paths that differ, if any), hex-screen output and exit code; verdict on 'hex-screened 16/16'."
+  },
+  {
+   "name": "ExecPreseenIndependent",
+   "role": "executor",
+   "prompt": "# Target\nIndependently test the claim that none of the 152 R29-C1 selectors appears anywhere in the lane at the base, and none of the 178 R29-C2 selectors has an openchain response there.\n# Work\nWithout tools/round-29/preseen.py: at base bacbe9cc31d09b5e58e265b0138bd75d0cdb6b47, enumerate every blob (git ls-tree -r, git cat-file --batch), including binary files, and search each for every selector in four spellings (lower, upper, with and without 0x) and as 4 raw bytes; separately find every JSON blob with an openchain response shape (result.function keys) and every file named openchain-*.json or 4byte-*.json.\n# Acceptance\nReport: for each hit the selector, path and spelling; counts for the C1 set (152) and C2 set (178); verdict on the frozen claims 'overlap=0'."
+  },
+  {
+   "name": "ExecFreezeOrder",
+   "role": "executor",
+   "prompt": "# Target\nFreeze order and pin integrity for round 29.\n# Work\nRead-only git in the lane: confirm .ufo/waves/round-29/claims.json was first added in dbd87cfa; every sha256 in its instruments, loaded_by_counter and producers_not_counters equals the blob at dbd87cfa and at 18be864a528873b2b70d8c94e31f880290249e90; every runs.tsv utc_start and every manifest utc in both db/manifest.json files is later than dbd87cfa's commit time; every data file under corpus/evidence/round-29/c1/{envelopes,db}, c1/runs.tsv, c1/tally.json and c2/db was first committed after dbd87cfa; no file under tools/round-29 named in the claims changed between dbd87cfa and 18be864a528873b2b70d8c94e31f880290249e90 except tools/round-29/freeze-gate.py and prefile-check.sh (added later, not instruments).\n# Acceptance\nReport: a table of each check with command and result; verdict holds/fails."
+  },
+  {
+   "name": "ExecGateV2",
+   "role": "executor",
+   "prompt": "# Target\nBehaviour of the new gate tools/round-29/freeze-gate.py against the round-24 gate.\n# Work\nRun both gates at 18be864a528873b2b70d8c94e31f880290249e90 with --disclosures (corpus/claim-freezes.tsv for the old gate, corpus/claim-freezes-v2.tsv for the new) and compare freeze lists. In a sandbox clone under /fast/scratch/hyaku/kaidoku-r29/seats/w1/ExecGateV2/, build a small fixture repo (git init in scratch) with a round-N/claims.json and a round-N/claims-x.json, where claims-x.json names an unpinned instrument; show the new gate flags it and the old gate does not see it; show a sha recorded under producers_not_counters suppresses INSTRUMENT_UNPINNED in the new gate only.\n# Acceptance\nReport: outputs, exit codes, the fixture's file list with sha256; verdict on 'the new gate audits every claims*.json' and on its pin-key change."
+  },
+  {
+   "name": "ExecR27Patch",
+   "role": "executor",
+   "prompt": "# Target\nRe-verify the round-27 selftest repair.\n# Work\nIn the lane (read-only): sha256 of tools/round-27/c2-xpin-check.py at 18be864a528873b2b70d8c94e31f880290249e90 must be 1c8259a8fe4f5823e30f067d549d19b75a5202096c5dbc5215785b785d636783; compare every line outside def selftest() with the frozen copy at bacbe9cc (git show). In a clone under /fast/scratch/hyaku/kaidoku-r29/seats/w1/ExecR27Patch/clone at 18be864a528873b2b70d8c94e31f880290249e90, run `python3 -I -B tools/round-27/c2-xpin-check.py --selftest`, and run the round-27 C2 counting command from .ufo/waves/round-27/claims.json at the round-27 measured revision named in its after receipts (.ufo/waves/round-27/after/) with both the old (bacbe9cc) and new script, and compare outputs.\n# Acceptance\nReport: sha, non-selftest diff result, selftest summary and exit, the two measurement outputs; verdict on 'selftest-only revision, measurement unchanged'."
+  },
+  {
+   "name": "ExecPrefile",
+   "role": "executor",
+   "prompt": "# Target\nPre-file check tools/round-29/prefile-check.sh.\n# Work\nIn a clone under /fast/scratch/hyaku/kaidoku-r29/seats/w1/ExecPrefile/clone: run the check clean (expect exit 0), then with one modified tracked file, one untracked file, one staged change, each separately (expect exit 1 and the path printed); also run it with no argument (expect 2) and on a non-repository directory.\n# Acceptance\nReport: every run with output and exit; verdict on QUALITY row 47's 'fails when porcelain is non-empty'."
+  },
+  {
+   "name": "ExecCanonicalHash",
+   "role": "executor",
+   "prompt": "# Target\nThe entry's finding that 6 of 31 kept canonical signatures do not hash to their key.\n# Work\nWith an independent keccak-256 (for example pycryptodome in a uv venv under /fast/scratch/hyaku/kaidoku-r29/seats/w1/ExecCanonicalHash/), hash every `signature` in corpus/evidence/round-29/c2/canonical-signatures.json at 18be864a528873b2b70d8c94e31f880290249e90 and compare the first 4 bytes with its key; also hash every candidate name in the 178 c2 responses against its selector.\n# Acceptance\nReport: the list of keys whose signature does not match, with computed selector; counts of signature-bearing keys and magic keys; any candidate name that does not hash to its selector; verdict on '6 of the 31 kept signatures do not hash to their own key'."
+  },
+  {
+   "name": "ExecEnvelopeAudit",
+   "role": "executor",
+   "prompt": "# Target\nR29-C1 REA call records.\n# Work\nAt 18be864a528873b2b70d8c94e31f880290249e90: for each row of corpus/evidence/round-29/c1/runs.tsv check exit 0, argv equals `npx -y rea-agents@6.5.0 inspect-evm-interface /home/vgpnk/Projects/shokunin/kaidoku-shokunin/<runtime> hex --format json`, pkg_version 6.5.0, pkg_json_sha256 equals sha256 of /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json, envelope sha256 equals the committed bytes, envelope operation inspect_evm_interface, provider version evmole@0.9.3, subject digest equals the carrier's runtime_sha256, subject local_path equals the runtime path; and the number of functions per envelope equals the ABI function count.\n# Acceptance\nReport: per-carrier table; verdict on runs_ok 16/16."
+  },
+  {
+   "name": "ExecManifestC1",
+   "role": "executor",
+   "prompt": "# Target\nR29-C1 lookup manifest.\n# Work\nAt 18be864a528873b2b70d8c94e31f880290249e90: corpus/evidence/round-29/c1/db/manifest.json (304 entries): sha256 of each file equals its entry, every URL has the frozen shape (4byte page 0 `https://www.4byte.directory/api/v1/signatures/?hex_signature=0x<sel>`, openchain `https://api.openchain.xyz/signature-database/v1/lookup?function=0x<sel>&filter=false`), status 200, tries recorded, one openchain file and at least one 4byte page per held-out selector, any p1+ pages linked from the previous page's `next`, no file without a manifest entry and no entry without a file.\n# Acceptance\nReport: counts and every exception; verdict on rows_complete 152/152."
+  },
+  {
+   "name": "ExecManifestC2",
+   "role": "executor",
+   "prompt": "# Target\nR29-C2 fetch manifest.\n# Work\nAt 18be864a528873b2b70d8c94e31f880290249e90: corpus/evidence/round-29/c2/db/manifest.json (178 entries): sha256, URL shape, status 200, utc, one file per selector in selectors.tsv, no extra files; every body parses with ok=true and holds the selector key.\n# Acceptance\nReport: counts and exceptions; verdict on responses_complete 178/178."
+  },
+  {
+   "name": "ExecArgsBreakdown",
+   "role": "executor",
+   "prompt": "# Target\nThe R29-C1 entry's explanation of the 30 no-name rows.\n# Work\nFrom corpus/evidence/round-29/c1/tally.json and the db responses at 18be864a528873b2b70d8c94e31f880290249e90, classify the 30 rows where the primary rule gives no name: inferred arguments differ from the ABI parameter list (and how: bytes32 as uint256, string as bytes, other), or arguments match but more than one unfiltered candidate has that parameter list, or other. Check the entry's claims '24 rows bytes32', '3 rows string as bytes', '3 rows ties', and the named examples.\n# Acceptance\nReport: the classification table and any row the entry misdescribes; verdict."
+  },
+  {
+   "name": "MutC1Counter",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation test of tools/round-29/c1-fresh-naming.py.\n# Work\nIn a clone under /fast/scratch/hyaku/kaidoku-r29/seats/w1/MutC1Counter/clone, apply one mutant at a time to the counter (at least: drop the CLAIM row check, accept any cited row, drop the s-not-in-base check, off-by-one in TARGET, drop a PINS entry, compare utc with >= instead of >, accept non-200 status, drop tally_equal), run `--selftest`, record killed/survived; revert between mutants.\n# Acceptance\nReport: mutant list with diff, selftest result, killed or survived; the survivors are coverage findings."
+  },
+  {
+   "name": "MutC2Counter",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation test of tools/round-29/c2-filtered-unseen.py.\n# Work\nIn a clone under /fast/scratch/hyaku/kaidoku-r29/seats/w1/MutC2Counter/clone, one mutant at a time (at least: drop predicted_false >= 1, drop the claim-row check, treat a key with no signature as unfiltered, compare names case-insensitively, accept a non-boolean flag, accept a fetch before the counter commit, drop the sha check), run `--selftest`, record killed/survived.\n# Acceptance\nReport: mutant table; survivors as coverage findings, especially whether the magic-key branch is tested."
+  },
+  {
+   "name": "MutFreezeGateV2",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation test of tools/round-29/freeze-gate.py.\n# Work\nIn a clone under /fast/scratch/hyaku/kaidoku-r29/seats/w1/MutFreezeGateV2/clone, mutate the CLAIMS regex (back to claims.json only), PIN_KEYS (drop producers_not_counters), freeze_key (always round-N), and the sort key; for each, run the gate at 18be864a528873b2b70d8c94e31f880290249e90 with --disclosures corpus/claim-freezes-v2.tsv and record whether exit code or output changes. Note whether the gate has any selftest.\n# Acceptance\nReport: mutant table with observed effect; verdict on whether a regression in the gate would be caught, and by what."
+  },
+  {
+   "name": "MutPreseen",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation test of tools/round-29/preseen.py.\n# Work\nIn a clone under /fast/scratch/hyaku/kaidoku-r29/seats/w1/MutPreseen/clone: mutants (drop -i case folding in name_seen, drop the 0x strip, narrow OC_NAME, skip the JSON body scan, change -w), each run with `--rev bacbe9cc31d09b5e58e265b0138bd75d0cdb6b47 --check corpus/evidence/round-29/c1/heldout.tsv --kind name` and with the C2 list `--kind flag`, and with a planted test list that contains one known-seen selector (for example a9059cbb) to see whether each mutant still reports the overlap.\n# Acceptance\nReport: mutant table; whether the screen can fail; survivors."
+  },
+  {
+   "name": "MutPrefile",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation test of tools/round-29/prefile-check.sh.\n# Work\nIn a clone under /fast/scratch/hyaku/kaidoku-r29/seats/w1/MutPrefile/clone, mutate the script (test -z instead of -n, drop untracked via --untracked-files=no, exit 0 on dirty) and run it against a dirty and a clean clone.\n# Acceptance\nReport: mutant table; verdict on whether the red receipt .ufo/waves/round-29/after/prefile-check-red-r28.txt would catch each."
+  },
+  {
+   "name": "ReviewEntryC1",
+   "role": "reviewer",
+   "prompt": "# Target\nReview the R29-C1 entry against its evidence.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r29-evm-fresh-selector-naming.md and check every number and claim against corpus/evidence/round-29/c1/ and .ufo/waves/round-29/ at 18be864a528873b2b70d8c94e31f880290249e90, including the round-25 and round-28 comparisons (corpus/evidence/round-25/a3/c2/analyze/tally.json, corpus/evidence/round-28/c1/tally.json).\n# Acceptance\nReport: each statement checked with verdict; overclaims; wording fixes."
+  },
+  {
+   "name": "ReviewEntryC2",
+   "role": "reviewer",
+   "prompt": "# Target\nReview the R29-C2 entry against its evidence.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r29-openchain-filtered-unseen.md and check every number, example and claim (table, magic keys, mis-keyed list, separation section) against corpus/evidence/round-29/c2/ at 18be864a528873b2b70d8c94e31f880290249e90.\n# Acceptance\nReport: statement-by-statement verdicts; overclaims."
+  },
+  {
+   "name": "ReopenS087",
+   "role": "reviewer",
+   "prompt": "# Target\nRe-open SOURCES row S087.\n# Work\nFetch the S087 URL from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md and the same-commit canonical-signatures.json with curl; sha256 both; locate the Gate quote at :47-48 and `filterResponse` :39-66; run `git ls-remote https://github.com/argotorg/sourcify.git HEAD refs/heads/master refs/heads/staging`. Check the row's cells and the lesson Gate row in corpus/lessons/round-29.md.\n# Acceptance\nReport: hashes, located quote, ls-remote output; verdict admit/reject with reasons."
+  },
+  {
+   "name": "ReopenS088",
+   "role": "reviewer",
+   "prompt": "# Target\nRe-open SOURCES row S088 and match it to carrier n04.\n# Work\nFetch the S088 URL with curl; sha256; locate the Gate quote at :18 and the method blocks; list every method name and input types from the YAML blocks and compare with corpus/evidence/round-29/c1/compiled/Erc4626.abi.json at 18be864a528873b2b70d8c94e31f880290249e90.\n# Acceptance\nReport: hash, quote, the method comparison table; verdict admit/reject."
+  },
+  {
+   "name": "ReviewLesson",
+   "role": "reviewer",
+   "prompt": "# Target\nReview corpus/lessons/round-29.md.\n# Work\nCheck the lesson at 18be864a528873b2b70d8c94e31f880290249e90: each Mistakes row has class, evidence pointer, captured-by and a fix shown able to fail with a resolvable receipt; the Gate table follows QUALITY row 42 (quotes at most 25 contiguous words); the Claims section matches claims.json.\n# Acceptance\nReport: row-by-row verdicts and missing receipts."
+  },
+  {
+   "name": "ReviewQualityRows",
+   "role": "reviewer",
+   "prompt": "# Target\nReview QUALITY rows 45-47.\n# Work\nRead rows 45-47 of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md at 18be864a528873b2b70d8c94e31f880290249e90: each must state a criterion, a failure condition and a case that resolves to committed bytes; compare with rows 29, 33 and 44 for overlap or contradiction.\n# Acceptance\nReport: per-row verdict, contradictions, wording fixes."
+  },
+  {
+   "name": "ReviewLedger",
+   "role": "reviewer",
+   "prompt": "# Target\nReview both freeze ledgers.\n# Work\nAt 18be864a528873b2b70d8c94e31f880290249e90, run both gates with --disclosures (round-24 gate with corpus/claim-freezes.tsv; tools/round-29/freeze-gate.py with corpus/claim-freezes-v2.tsv) and read the changed rows (round-26, round-27, round-28, round-29, the three v2-only rows): does each pointer's prose match what the gate reports and what the repository shows?\n# Acceptance\nReport: exit codes and per-row verdicts."
+  },
+  {
+   "name": "ReviewClaimsJson",
+   "role": "reviewer",
+   "prompt": "# Target\nReview .ufo/waves/round-29/claims.json against the frozen inputs.\n# Work\nCheck every count and statement in the claims file at dbd87cfa against the committed inputs (carriers 16; held-out 152; C2 178 = 26 + 152; 26 exclusions = 19 prior + 7 name_seen; 10 canonical keys left out) and the before receipts in .ufo/waves/round-29/before/.\n# Acceptance\nReport: per-statement verdict; any statement the inputs do not support."
+  },
+  {
+   "name": "ReviewR27Supersession",
+   "role": "reviewer",
+   "prompt": "# Target\nReview the round-27 instrument_supersessions append and its ledger note.\n# Work\nRead .ufo/waves/round-27/claims.json at 18be864a528873b2b70d8c94e31f880290249e90 versus bacbe9cc; check the appended object against the round-24 gate's supersession rule (path, commit, reason) and against any immutability statement in the round-27 or round-25 claims files; check corpus/claim-freezes.tsv row round-27's note.\n# Acceptance\nReport: verdict on whether the append is a legitimate disclosure or a rewrite of a frozen file."
+  },
+  {
+   "name": "ReviewReadmeRows",
+   "role": "reviewer",
+   "prompt": "# Target\nReview the corpus/README.md rows added this round.\n# Work\nAt 18be864a528873b2b70d8c94e31f880290249e90: the two Coverage map rows, two Knowledge index rows and the round-29 Lessons row: accurate against the entries, same format as neighbours; run command A from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SCORECARD.md (Owned axes coverage row) at 18be864a528873b2b70d8c94e31f880290249e90 and report the map count.\n# Acceptance\nReport: per-row verdict and the command A output."
+  },
+  {
+   "name": "CriticHeldOutC1",
+   "role": "critic",
+   "prompt": "# Target\nAttack the held-out status of R29-C1.\n# Work\nThe L1 wrote the 16 interfaces from its own knowledge of well-known standards. Argue whether a test of the naming rule on well-known names can fail, whether name_seen (git grep of 8-hex words at the base) is a sufficient screen, and whether the L1 could have known the answers before the freeze. Use claims.json `limits`, the entry's Limits and the receipts.\n# Acceptance\nReport: the strongest objection, whether it sinks the claim as declared (a coverage learning claim with a completeness target) or only its interpretation, and what wording the SCORECARD should use."
+  },
+  {
+   "name": "CriticHeldOutC2",
+   "role": "critic",
+   "prompt": "# Target\nAttack the held-out status of R29-C2.\n# Work\nThe L1 read the canonical list before the freeze (an input of the rule). Could the outcome have been known? Is predicted_true >= 1 a real risk or a certainty? Does the c1 set (all predicted false) add a test or pad the count? Check the separation section of the C2 entry.\n# Acceptance\nReport: strongest objection; verdict on 'held-out test' vs 're-observation'."
+  },
+  {
+   "name": "CriticSeparability",
+   "role": "critic",
+   "prompt": "# Target\nAttack causal separability of R29-C1 and R29-C2.\n# Work\nThey share one freeze commit and C2's selector list contains all of C1's held-out selectors. Can each be verified without the other having landed? Does either counter read the other's data or entry? Check both counters' code and claims.json.\n# Acceptance\nReport: verdict with specific code lines."
+  },
+  {
+   "name": "CriticAxisFit",
+   "role": "critic",
+   "prompt": "# Target\nAttack the axis assignment and the lowest-axis rule.\n# Work\nRead /home/vgpnk/Projects/shokunin/AXES.md and the lane /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SCORECARD.md (Owned axes, Saturation, the round-28 planned field at :3128). Is R29-C1 a coverage move and R29-C2 a depth move under the lane's own axis definitions? Does the round satisfy the lowest-scoring-axis rule or the stagnation nudge? Does it work the planned field?\n# Acceptance\nReport: verdict per claim and what the SCORECARD row must say."
+  },
+  {
+   "name": "CriticTargets",
+   "role": "critic",
+   "prompt": "# Target\nAttack target sizing and post-freeze edits.\n# Work\nCompare targets in claims.json at dbd87cfa with the after receipts .ufo/waves/round-29/after/c1-at-18be864a.txt and c2-at-18be864a.txt; `git diff dbd87cfa 18be864a528873b2b70d8c94e31f880290249e90 -- .ufo/waves/round-29/claims.json tools/round-29/c1-fresh-naming.py tools/round-29/c2-filtered-unseen.py corpus/evidence/round-29/c1/carriers.tsv corpus/evidence/round-29/c1/heldout.tsv corpus/evidence/round-29/c2/selectors.tsv corpus/evidence/round-29/c2/canonical-signatures.json`. Any narrowing, re-run, or input edit after the freeze?\n# Acceptance\nReport: diff results; verdict."
+  },
+  {
+   "name": "CriticMisKeyed",
+   "role": "critic",
+   "prompt": "# Target\nAttack the mis-keyed canonical list finding and its scope.\n# Work\nThe C2 entry says 6 of 31 kept signatures do not hash to their key and that this hides true names. Is the finding correct (check with any keccak), is it outside the frozen claim and labelled so, and is 'hides the true name' supported for each of the 6 (which candidate is the true name, by what evidence)?\n# Acceptance\nReport: verdict per key; wording the entry should use."
+  },
+  {
+   "name": "CriticMistakes",
+   "role": "critic",
+   "prompt": "# Target\nAttack the mined mistakes M29-1..3.\n# Work\nAre the classes right, the captured-by fields honest, and does each fix fail on real bytes as claimed (.ufo/waves/round-29/after/prefile-check-red-r28.txt, ledger-before-fix.txt, freeze-gates-at-dbd87cfa.txt)? Is there a larger mistake in round 29 or 28 the lesson misses?\n# Acceptance\nReport: per-mistake verdict and any missing mistake with evidence."
+  },
+  {
+   "name": "ScoutCorrectionSites",
+   "role": "scout",
+   "prompt": "# Target\nFind earlier corpus statements the round-29 findings correct.\n# Work\nSearch /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/, SKILL.md and PROVINCE.md at 18be864a528873b2b70d8c94e31f880290249e90 for statements about openchain's filtered flag, the canonical list ('the signature it keeps', 'canonical signature'), the round-25 rule's recall, or REA's inferred argument types (bytes32/uint256, string/bytes) that round 29 contradicts or sharpens; e.g. S085's teaches cell and the round-28 entry.\n# Acceptance\nReport: a list of path:line, current text, and the round-29 evidence that bears on it; no edits."
+  },
+  {
+   "name": "ScoutProvinceFrontier",
+   "role": "scout",
+   "prompt": "# Target\nPROVINCE.md frontier and core text for EVM.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/PROVINCE.md at 18be864a528873b2b70d8c94e31f880290249e90: the EVM lines in core and the Frontier bullet 'EVM bytecode (extended)' (round-28 annotation near :94). What does each say, and what would a one-line round-29 annotation have to say to be accurate given the two round-29 entries?\n# Acceptance\nReport: the current lines with line numbers and a proposed annotation text, with reasons."
+  },
+  {
+   "name": "ScoutSkillRegistry",
+   "role": "scout",
+   "prompt": "# Target\nSKILL.md measurement registry for rounds 27-28.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md at 18be864a528873b2b70d8c94e31f880290249e90: the '### Round-27/28 measurement registry' section at the end and the earlier registry table near :767-775. What row format do they use, and what rows round 29 needs (two counters, the v2 gate, the pre-file check)?\n# Acceptance\nReport: exact format with line numbers and proposed rows."
+  },
+  {
+   "name": "ConnectorSiblings",
+   "role": "connector",
+   "prompt": "# Target\nSibling-overlap scan for round 29.\n# Work\nScan the sibling lane repos under /home/vgpnk/Projects/shokunin/*-shokunin/ (read-only; skip kaidoku-shokunin) for corpus material on EVM selectors, 4byte/openchain/Sourcify, solc output, or freeze gates/ledgers. Name overlaps, contested scope, and anything kaidoku should cite or must not absorb.\n# Acceptance\nReport: overlaps with paths and line numbers; adjacency verdict."
+  },
+  {
+   "name": "ScribeScorecard",
+   "role": "scribe",
+   "prompt": "# Target\nDraft the SCORECARD round-29 section.\n# Work\nRead the round-28 section of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SCORECARD.md (from '## Round 28' to the end) for format. Draft a '## Round 29 \u2014 ...' section: base, freeze, claims table (claim, axis, before at bacbe9cc, after at 18be864a528873b2b70d8c94e31f880290249e90, counting command, verdict 'target met' as measured), the hygiene list for the six routed defects of corpus/lessons/round-28-verifier-spotcheck.md with pointers, the owned-axes note, and a planned field. Use only receipts under .ufo/waves/round-29/. Write the draft to /fast/scratch/hyaku/kaidoku-r29/seats/w1/ScribeScorecard/draft.md.\n# Acceptance\nReport: the draft path with sha256 and a short note of any number you could not ground."
+  },
+  {
+   "name": "ScribeLog",
+   "role": "scribe",
+   "prompt": "# Target\nDraft the LOG.md round-29 entry.\n# Work\nRead the last entry of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/LOG.md for format; draft a round-29 entry with re-verification results (both counters at 18be864a528873b2b70d8c94e31f880290249e90, census, gates) and evidence pointers. Write to /fast/scratch/hyaku/kaidoku-r29/seats/w1/ScribeLog/draft.md.\n# Acceptance\nReport: draft path with sha256."
+  },
+  {
+   "name": "ScribeRegistry",
+   "role": "scribe",
+   "prompt": "# Target\nDraft SKILL.md registry rows for round 29.\n# Work\nRead the end of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md ('### Round-27/28 measurement registry') and draft rows for tools/round-29/c1-fresh-naming.py, tools/round-29/c2-filtered-unseen.py, tools/round-29/freeze-gate.py and tools/round-29/prefile-check.sh in that format, each with its command and the observed result at 18be864a528873b2b70d8c94e31f880290249e90. Write to /fast/scratch/hyaku/kaidoku-r29/seats/w1/ScribeRegistry/draft.md.\n# Acceptance\nReport: draft path with sha256."
+  }
+ ]
+}

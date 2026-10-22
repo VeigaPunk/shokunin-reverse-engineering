@@ -81,3 +81,17 @@ them is among the tested selectors.
   is the default.
 - When the canonical list changes (S085 recheck `on-release`), re-run the counter over a fresh
   fetch before relying on this entry.
+
+## Pointer appended in round 29
+
+Round 29 tested this rule on 178 selectors with no prior openchain response in the lane,
+including the 26 canonical keys this entry did not fetch: mismatches 0 of 252 entries
+(`corpus/knowledge/2026-10-22-r29-openchain-filtered-unseen.md`). It also found that 6 of the 31
+kept signatures in the list do not hash to their own key (for example `0xc45a0155` keeps
+`mint(address,int24,int24,uint128,bytes)`, which is `0x3c8a7d8d`), so under those keys every
+candidate is filtered, the true name included. Read the title and the Use gloss above ("not the
+canonical name") as "differs from the string the list keeps", which for those 6 keys belongs to
+another selector; and S085's "the signature it keeps for each" does not hold for 11 of the 36 keys
+(5 keep none, 6 keep another selector's). The "not first" alternative in the Limits is also
+contradicted on fresh data: under `0xc45a0155` the first candidate is filtered, and on the c1 set
+non-first spam candidates are unfiltered (round-29 wave-1 seat `ScoutCorrectionSites`).

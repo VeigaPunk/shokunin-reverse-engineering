@@ -12,26 +12,17 @@ on selectors with no openchain response anywhere in the lane at the base, frozen
 
 ## Rule (code, S087; unchanged from S084)
 
-`filterResponse` (`handlers.ts:39-66` at both `0966a3bc` and `189cd726`) sets, for every
-candidate under a selector that is a key of `canonical-signatures.json`,
+`filterResponse` (`handlers.ts:39-66` at both `0966a3bc` and `189cd726`) looks up each selector's
+entry in `canonical-signatures.json` (`:44-45`) and sets, for every candidate under a listed key,
 `filtered = name !== expectedCanonical.signature` (`:47-48`). Every other candidate keeps
-`filtered: false`. Three consequences the round-28 entry did not state:
+`filtered: false`. Two consequences follow from the code:
 
 - A key with no `signature` (the 5 `system:magic` keys such as `0x60806040`, the usual start of
   creation code) makes the comparison `name !== undefined`, so every candidate under it is
-  filtered.
+  filtered. The round-28 entry predicted this from the code (its `:24`) with no fetched data for
+  it; this round tests it.
 - When the kept signature is not among the stored candidates, every candidate under that key is
   filtered, and a `filter=true` request returns nothing for it.
-- **6 of the 31 kept signatures do not hash to their own key** (first 4 bytes of keccak-256 of
-  the signature, computed with the round-25 resolver's `selector_of` over the S087 bytes):
-  `0x0d0f30c6` keeps `token1()` (which is `0xd21220a7`), `0x1a686502` keeps
-  `uniswapV3SwapCallback(int256,int256,bytes)` (`0xfa461e33`), `0x89035730` keeps
-  `flash(address,uint256,uint256,bytes)` (`0x490e6cbc`), `0xc45a0155` keeps
-  `mint(address,int24,int24,uint128,bytes)` (`0x3c8a7d8d`), `0xfc6f7865` keeps
-  `uniswapV3MintCallback(uint256,uint256,bytes)` (`0xd3487997`) and `0x8abf6077` keeps
-  `proxyOwner()` (`0x025313a2`). Every stored candidate hashes to its selector (all 252 entries
-  fetched here do), so under these 6 keys no candidate can equal the kept signature and every
-  candidate, including the true name, is filtered.
 
 ## Test (R29-C2, frozen at dbd87cfa, fetched once after)
 
@@ -51,32 +42,62 @@ Counter output: **mismatches 0 of 252 entries**, `predicted_true=38`, `predicted
 branches hold unseen data. 4 canonical keys returned no candidate (`0x0d0f30c6`, `0x60c06040`,
 `0x60e06040`, `0x61010060`).
 
+How much each branch tests (wave-1 critic `CriticHeldOutC2`): only `mismatches` can falsify the
+rule; `predicted_true >= 1` is computed from names and the list, never from the observed flag, so
+it is a coverage guard, not a test. Of the 53 canonical-set entries, 37 under 15 keys whose kept
+signature was among the returned candidates test the name-versus-kept-signature comparison (22
+predicted true, 15 false); 16 under 7 keys (2 `system:magic`, 5 mis-keyed, below) are filtered
+because the key is listed at all. The 199 c1 entries test only the "false outside the list"
+branch, which round 28 had already checked; they also rule out the rivals in the Separation
+section.
+
 Cases the rule predicted that round 28 had not seen:
 - `0x60806040` (`system:magic`): 6 candidates, all spam-like names, all `filtered: true`;
   `0x60a06040`: 4 of 4.
-- The mis-keyed entries: 5 of the 6 returned candidates and every one was filtered, as predicted:
-  `0x1a686502` (only candidate `liquidity()`), `0x89035730` (`parameters()`), `0x8abf6077`
-  (`impl()`), `0xfc6f7865` (`collect((uint256,address,uint128,uint128))`), and `0xc45a0155`
-  (2 candidates, one of them `factory()`, the function R29-C1 carrier n08 holds under that
-  selector). `0x0d0f30c6` returned no candidate.
+- 5 keys whose kept signature is for another selector (next section): every returned candidate
+  was filtered, as predicted.
+
+## Mis-keyed list entries (post-fetch reading of the pinned list, not counted)
+
+After the fetch the L1 hashed every kept signature of the pinned list (first 4 bytes of
+keccak-256, the round-25 resolver's `selector_of`; receipt
+`.ufo/waves/round-29/after/canonical-keyhash.txt`; re-derived with OpenSSL and pycryptodome by
+wave-1 seats `CriticMisKeyed` and `ExecCanonicalHash`). **6 of the 31 kept signatures do not hash to
+their own key**:
+
+| key | kept signature (hashes to) | stored candidates (all `filtered: true`) | is the true name hidden? |
+|---|---|---|---|
+| `0x0d0f30c6` | `token1()` (`0xd21220a7`) | none | no candidate is stored, so nothing is hidden |
+| `0x1a686502` | `uniswapV3SwapCallback(int256,int256,bytes)` (`0xfa461e33`) | `liquidity()` | yes: `liquidity()` is declared in Uniswap v3-core `IUniswapV3PoolState` (seat `CriticMisKeyed`) |
+| `0x89035730` | `flash(address,uint256,uint256,bytes)` (`0x490e6cbc`) | `parameters()` | yes: `IUniswapV3PoolDeployer` (same seat) |
+| `0xc45a0155` | `mint(address,int24,int24,uint128,bytes)` (`0x3c8a7d8d`) | `factory()` and one spam-like name | yes: `factory()`, which R29-C1 carrier n06 (`UniV2Pair`) holds under this selector |
+| `0xfc6f7865` | `uniswapV3MintCallback(uint256,uint256,bytes)` (`0xd3487997`) | `collect((uint256,address,uint128,uint128))` | yes: v3-periphery `INonfungiblePositionManager` (same seat) |
+| `0x8abf6077` | `proxyOwner()` (`0x025313a2`) | `impl()` | inference only: `impl()` is the only stored preimage; no declaring source was opened |
+
+All 252 candidates fetched here hash to their own selector, so under a mis-keyed key no candidate
+can equal the kept string. A side effect (seat `CriticMisKeyed`): `token1()`'s real selector
+`0xd21220a7` is not a canonical key, so its three spam-like candidates stay unfiltered beside
+`token1()` (R29-C1 lookup `corpus/evidence/round-29/c1/db/openchain-d21220a7.json`).
 
 ## What this means
 
-- The round-25 naming rules' filter step is inert for any selector outside the 36 keys (R29-C1:
-  0 of 199 entries filtered on its 152 rows).
+- The round-25 naming rules' filter step is inert for any selector outside the 36 keys: the
+  rule predicts `false` there, and all 199 c1 entries here are `false`.
 - For a canonical key, `filtered` is not a spam score: it means "differs from the one string
-  Sourcify stored". For the 6 mis-keyed entries that string belongs to another selector, so the
-  flag hides every stored name, the true one included: a rule that drops filtered candidates can
-  never return `factory()` for `0xc45a0155`. Before trusting a canonical key, check that its kept
-  signature hashes to it.
+  Sourcify stored". If the deployed list equals the pinned one, a rule that drops filtered
+  candidates can never return `factory()` for `0xc45a0155`, or `liquidity()`, `parameters()`,
+  `collect(...)` for the other mis-keyed keys. Before trusting a canonical key, check that its
+  kept signature hashes to it.
 
 ## Separation (what a different service would have shown)
 
 A service that set `filtered` from `hasVerifiedContract`, or marked every non-first candidate,
 would have shown mismatches on the c1 set, where the rule predicts `false` for all 199 entries
 and several selectors have spam collisions (for example `0x7ecebe00` has 3 candidates). A service
-applying a list whose kept signature differs on any of the 26 keys would have shown mismatches
-there. A list equal to the pinned one on these 26 keys but different on the other 10 is not
+applying a list whose kept signature differs on one of the 15 keys whose kept signature was
+returned would have shown mismatches there; on the 4 keys with no candidate and the 7 keys where
+every candidate is filtered, a different kept string that matches no candidate gives the same
+flags. A list equal to the pinned one on these keys but different on the other 10 is not
 separated by this test.
 
 ## Limits
@@ -85,14 +106,17 @@ separated by this test.
   code and list on 2026-10-22 (S087).
 - One fetch instant; says nothing about result order or `hasVerifiedContract`.
 - The 26 canonical keys are all of the unanswered ones, not a sample; the c1 set is R29-C1's
-  selectors, which share that claim's freeze. C2 counts only its own fetch.
-- The mis-keyed count (6 of 31) is computed by the L1 over the pinned list; it is not a counter
-  output and was found after the fetch.
+  selectors, which share that claim's freeze.
+- The counter counts files under `corpus/evidence/round-29/c2/db/`; it cannot tell its own fetch
+  from a copy of R29-C1's lookups of the same URLs, whose bodies are byte-identical (seat
+  `CriticSeparability`). The two fetches ran as separate processes; their stdout logs are
+  `.ufo/waves/round-29/after/c2-fetch.log` and `c1-lookups.log`.
+- The mis-keyed count is a post-fetch reading by the L1, not a counter output.
 
 ## Use
 
 Treat `filtered: true` as "this selector has a Sourcify-chosen canonical string and this candidate
 is not it". For a selector outside the 36-key list the flag carries no information. For
-`system:magic` keys every candidate is filtered. For `0x0d0f30c6`, `0x1a686502`, `0x89035730`,
-`0x8abf6077`, `0xc45a0155` and `0xfc6f7865` the kept string is for another selector, so a filtered
-candidate there may still be the true name.
+`system:magic` keys every candidate is filtered. For `0x1a686502`, `0x89035730`, `0x8abf6077`,
+`0xc45a0155` and `0xfc6f7865` the kept string belongs to another selector, so a filtered candidate
+there may still be the true name.

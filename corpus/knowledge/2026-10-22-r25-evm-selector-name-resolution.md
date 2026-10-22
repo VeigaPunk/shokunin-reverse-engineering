@@ -204,3 +204,15 @@ carrier row (69) and per distinct selector (43) as stated, and the `filter=true`
 `corpus/evidence/round-25/a3/c2/filter-true/manifest.json`).
 
 Second correction (round 26 wave-1 seat `.ufo/waves/round-26/w1/EntryNumbers.md`): line 51 says shared ERC-20 selectors "appear in up to four carriers". The measured maximum is three (selectors per carrier count: 27 on one carrier, 6 on two, 10 on three, none on four; for example `095ea7b3` on rv2token, kdxtoken and stewardtoken). The same line calls them "shared ERC-20 selectors"; only 5 of the 16 shared selectors are ERC-20 standard functions.
+
+## Pointer appended in round 29
+
+Round 29 scored the primary rule, unchanged, on 152 never-written selectors from 16 fresh
+published-interface carriers: named 122, right 122, wrong 0
+(`corpus/knowledge/2026-10-22-r29-evm-fresh-selector-naming.md`). Two readings above are
+sample-bound (round-29 wave-1 seat `ScoutCorrectionSites`): the argument check's main failure on
+solc carriers is REA 6.5.0 inferring `uint256` for `bytes32` (24 of 27 argument mismatches there)
+and `bytes` for `string` (3), not only Vyper; and the `filter=true` equality with
+"drop filtered candidates" holds only where the kept signature is among the stored candidates —
+under 6 mis-keyed list entries every candidate is filtered
+(`corpus/knowledge/2026-10-22-r29-openchain-filtered-unseen.md`).
