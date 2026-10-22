@@ -1,4 +1,4 @@
-source: `corpus/evidence/round-27/c1/table.tsv` (48 committed REA 6.5.0 envelopes in `corpus/evidence/round-27/c1/envelopes/`, call records with package version and `package.json` sha256 per call in `corpus/evidence/round-27/c1/runs.tsv`); S082 tinyxxd 1.3.17-1 package record tying the second carrier's bytes to its Arch package (opened 2026-10-22); S079 installed `rea-agents@6.5.0` package source, re-opened 2026-10-22 for `dist/ghidra/GhidraTargetSnapshot.js` (sha256 `a27e410752f5474b3a97f7388bf8fdace65d21d5dad8858ad3c27e310f03f52b`)
+source: `corpus/evidence/round-27/c1/table.tsv` (48 committed REA 6.5.0 envelopes in `corpus/evidence/round-27/c1/envelopes/`, call records with package version and `package.json` sha256 per call in `corpus/evidence/round-27/c1/runs.tsv`); S082 tinyxxd 1.3.17-1 package record tying the second carrier's bytes to its Arch package (opened 2026-10-22); S083 rea-agents 6.5.0 Ghidra target-snapshot naming code (`dist/cli-runtime/binary-BVOr2mgE.js`, `dist/ghidra/GhidraTargetSnapshot.js` sha256 `a27e410752f5474b3a97f7388bf8fdace65d21d5dad8858ad3c27e310f03f52b`, `bridge/ghidra/ReaGhidraBridge.java`; opened 2026-10-22); S079 installed `rea-agents@6.5.0` package source
 
 verified-at: 2026-10-22, round 27; 48 CLI calls 14:54:51Z–14:57:40Z by eight wave-1 seats (`.ufo/waves/round-27/w1/Run*.md`), package root `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/` (version 6.5.0, `package.json` sha256 `a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c`, read after every call)
 
@@ -120,3 +120,8 @@ content-keyed across directories only while the extension class stays the same.
   `jq.dat` in another directory gave the `.dat` id `ev_a60580a9…3cd2`. For `analyze` on these
   carriers the extension, not the name, moves the id. Directory alone was not varied in round 27
   (round 26's directory-only copy kept the id).
+- Two wording errors above (`.ufo/waves/round-27/w2/ReviewEntryNumbers.md`): the 48 calls ran
+  14:54:51Z–14:56:43Z (14:57:40Z is a seat's after-run carrier digest time, not a call end), and
+  the round-26 entry says "seven keep their id", not "seven content-keyed verbs"; the count holds.
+- The program name reaches `document` through the bridge's `listDocuments`, which returns
+  `currentProgram.getName()` (`bridge/ghidra/ReaGhidraBridge.java:1972-1976`, S083).
