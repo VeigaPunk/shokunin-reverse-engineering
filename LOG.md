@@ -2968,3 +2968,14 @@ No source/gate/fixture/candidate execution, F or code permission is claimed.
 - Wave 1: 33 seats (`.ufo/waves/round-26/w1/`), 12 attack seats; all returned. Findings folded into the entry: the cache confound ruled out, the minting rule from source, the 6.5.0 versus 6.7.0 id difference, the provider names, the login-shell environment a recheck needs.
 - Routed round-25 defects: SKILL.md custody superseding note, round-25 entry correction, QUALITY row 35 (round-24 capinfos reversal; the round-24 outside reviewer disagreed with the initial rejection, `corpus/lessons/round-24-verifier-spotcheck.md:44`, `:61`).
 - Re-verification: the carrier `/usr/bin/jq` sha256 `e8156675…7806` is unchanged since round arc3-r11 (2026-10-19); the 6.5.0 package matches its npm registry integrity (S080).
+
+## 2026-10-22 — round 27: renamed-copy evidence-ID identity on two carriers (honest stop, 15 of 16); cross-pin attribution capability
+
+- Motivating evidence for R27-C1: the round-26 planned field (`SCORECARD.md`, round-26 section: "does a different file name or extension change the seven content-keyed ids; one non-jq ELF") and the round-26 entry, whose copy kept the name `jq`.
+- Motivating evidence for R27-C2: routed defects 1 and 4 of `corpus/lessons/round-26-verifier-spotcheck.md` (no SOURCES row for the 6.7.0 code; envelopes carry no package version).
+- Freeze: claims, both counters, red selftests (22 and 6 cases, 0 failures) and before receipts at `a4f674b3`, 14:51:23Z, before any data; one pre-freeze REA probe (14:45:23Z) disclosed and committed at `.ufo/waves/round-27/pre-freeze-probe/`.
+- Measured at `97358f75`: R27-C1 0 → 15 of 16 rows, entry_ok 0 → 1, exit 1 (missed by one row; honest stop; the counter refused a genuine byte-identical repeat); R27-C2 0 → 24 of 24, 0 → 3 of 3, capability row and S081 present, exit 0.
+- Learned: at 6.5.0, `analyze` and `inspect` ids change with the file extension (Ghidra program name `target-<sha256[0:12]><suffix>` in `normalized_result.document`), five address verbs keep their ids under a full rename, and `inspect-binary-layout` hashes the path. Two scouts predicted all 8 verdicts from the code without reading round-27 envelopes.
+- Wave 1: 33 seats (`.ufo/waves/round-27/w1/`), 13 attack seats; all returned; no dead seat.
+- Re-verification: FreshnessR26 re-ran two round-26 rows on `/usr/bin/jq` today and got the same ids (`.ufo/waves/round-27/w1/FreshnessR26.md`); both carriers' sha256 values equal their pacman mtree records (S082).
+- Hygiene: the 11 stale SCORECARD statements got append-only corrected readings in the round-27 SCORECARD section (not a claim).
