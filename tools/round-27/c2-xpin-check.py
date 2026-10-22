@@ -298,29 +298,39 @@ for f in files:
 def selftest():
     here = os.path.dirname(os.path.abspath(__file__))
     lane = os.path.abspath(os.path.join(here, "..", ".."))
-    rev = git(lane, "rev-parse", "HEAD").strip()
     scratch = tempfile.mkdtemp(prefix="r27c2-selftest-", dir="/fast/scratch/hyaku" if os.path.isdir("/fast/scratch/hyaku") else None)
     stub = os.path.join(scratch, "stub.py")
     open(stub, "w").write(STUB)
-    rc = os.path.join(lane, RECOMPUTE_PATH)
     me = os.path.abspath(__file__)
     failures = 0
+    # The stub cases are anchored at fixed revisions, never at the live lane
+    # HEAD: at HEAD the round-27 capability row and the S081 source row exist,
+    # so the counter's exit code there followed later lane commits and the
+    # correct-stub case could hold no verdict. C2_REV added the capability row,
+    # BASE precedes it. correct-stub is measured at both, each with base == rev,
+    # so no SOURCES row is new since the base and the refusal of the stub is
+    # demanded whether or not the capability row exists at that revision.
+    C2_REV = "97358f759a531f7ebc0354fb937d546da8d3b8bd"
     cases = [
-        ("correct-stub", "correct", "r26_rows_ok=24/24 red_ok=3/3"),
-        ("lazy-stub (echoes stored id for both pins; only the 3 both-rows pass)", "lazy", "r26_rows_ok=3/24 red_ok=1/3"),
-        ("only65-stub (no 6.7.0 rule; only the 3 both-rows pass)", "only65", "r26_rows_ok=3/24 red_ok=1/3"),
-        ("skip-stub (drops one envelope)", "skip", "r26_rows_ok=23/24"),
+        ("correct-stub", "correct", "r26_rows_ok=24/24 red_ok=3/3", [(C2_REV, C2_REV), (BASE, BASE)]),
+        ("lazy-stub (echoes stored id for both pins; only the 3 both-rows pass)", "lazy", "r26_rows_ok=3/24 red_ok=1/3", [(C2_REV, BASE)]),
+        ("only65-stub (no 6.7.0 rule; only the 3 both-rows pass)", "only65", "r26_rows_ok=3/24 red_ok=1/3", [(C2_REV, BASE)]),
+        ("skip-stub (drops one envelope)", "skip", "r26_rows_ok=23/24", [(C2_REV, BASE)]),
     ]
-    for name, mode, want in cases:
-        buf = _Buffer()
-        try:
-            got = measure(lane, rev, BASE, tool_cmd=[sys.executable, stub, rc, mode, me], out=buf)
-        except InputError as error:
-            got, _ = 2, buf.write("input error: %s\n" % error)
-        text = buf.getvalue()
-        ok = want in text and got == 1
+    for name, mode, want, anchors in cases:
+        ok = True
+        for rev, base in anchors:
+            rc = os.path.join(scratch, "recompute-%s.py" % rev[:8])
+            open(rc, "wb").write(show(lane, rev, RECOMPUTE_PATH))
+            buf = _Buffer()
+            try:
+                got = measure(lane, rev, base, tool_cmd=[sys.executable, stub, rc, mode, me], out=buf)
+            except InputError as error:
+                got, _ = 2, buf.write("input error: %s\n" % error)
+            text = buf.getvalue()
+            ok = ok and want in text and got == 1
+            print("%s %s at %s: exit %d, expects %r | %s" % ("PASS" if ok else "FAIL", name, rev[:8], got, want, text.strip().split("\n")[-1]))
         failures += 0 if ok else 1
-        print("%s %s: exit %d, expects %r | %s" % ("PASS" if ok else "FAIL", name, got, want, text.strip().split("\n")[-1]))
     # the default path with no tool at REV (the round base)
     buf = _Buffer()
     got = measure(lane, BASE, BASE, out=buf)

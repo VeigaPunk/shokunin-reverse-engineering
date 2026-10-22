@@ -2,7 +2,7 @@
 
 Seat: KaidokuR28a2.ExecR27SelftestFix. Read-only on the lane; all work in a sandbox clone
 `/fast/scratch/hyaku/kaidoku-r28/seats/a2w/ExecR27SelftestFix/clone` (clone of lane tip
-a267311678309fd17772407e8afa122ec3219289). Run 2026-10-22T18:24Z–19:19Z. No tools installed.
+a267311678309fd17772407e8afa122ec3219289). Run 2026-10-22T18:24Z–19:26Z. No tools installed.
 
 ## Verdict
 
@@ -37,11 +37,12 @@ Both measure with `base == rev`, so no SOURCES row is new since the base and
 the capability row. The three wrong stubs keep `base = BASE` and are anchored at
 `97358f75`, so their refusal is still caused by the wrong row counts (`3/24`, `3/24`,
 `23/24`), not by the rows. The stub is given the recompute module **of the revision under
-test**, so the case reads no working-tree file.
+test**, so the case reads no working-tree file. The dead `rev = git(lane, ...HEAD...)`
+and outer `rc` assignments are removed.
 
 ## Before / after (lane tip a2673116)
 
-Before — pristine file (2026-10-22T19:17:43Z, exit 1):
+Before — pristine file (2026-10-22T19:24:51Z, exit 1):
 
 ```
 FAIL correct-stub: exit 0, expects 'r26_rows_ok=24/24 red_ok=3/3' | r26_rows_ok=24/24 red_ok=3/3 capability_row=1 source_row=1 (S081) rev=a267311678309fd17772407e8afa122ec3219289
@@ -58,7 +59,7 @@ selftest cases=6 failures=1
 EXIT=1
 ```
 
-After — patched file, same command and tip (2026-10-22T19:17:48Z, exit 0):
+After — patched file, same command and tip (2026-10-22T19:24:55Z, exit 0):
 
 ```
 PASS correct-stub at 97358f75: exit 1, expects 'r26_rows_ok=24/24 red_ok=3/3' | r26_rows_ok=24/24 red_ok=3/3 capability_row=1 source_row=0 rev=97358f759a531f7ebc0354fb937d546da8d3b8bd
@@ -81,7 +82,7 @@ EXIT=0
 ```diff
 --- out/original.py
 +++ out/patched.py
-@@ -298,29 +298,41 @@
+@@ -298,29 +298,39 @@
  def selftest():
      here = os.path.dirname(os.path.abspath(__file__))
      lane = os.path.abspath(os.path.join(here, "..", ".."))
@@ -98,9 +99,7 @@ EXIT=0
 +    # correct-stub case could hold no verdict. C2_REV added the capability row,
 +    # BASE precedes it. correct-stub is measured at both, each with base == rev,
 +    # so no SOURCES row is new since the base and the refusal of the stub is
-+    # demanded whether or not the capability row exists at that revision. The
-+    # stub is given the recompute module of that revision, so no working-tree
-+    # file is read.
++    # demanded whether or not the capability row exists at that revision.
 +    C2_REV = "97358f759a531f7ebc0354fb937d546da8d3b8bd"
      cases = [
 -        ("correct-stub", "correct", "r26_rows_ok=24/24 red_ok=3/3"),
@@ -154,20 +153,20 @@ $ sha256sum out/*.nonselftest.py
 ```
 
 Every changed line lies inside `selftest()` (prefix and suffix are byte-identical). The
-whole-file sha256 moves from `d8de667ff82a46d5c0c9c19d4fc2f5a3c36c12fa037f9a32287046a377209bd3`
+whole-file sha256 moves from `d8de667ff82a46d5c0c9a19d4fc2f5a3c36c12fa037f9a32287046a377209bd3`
 (pinned in `.ufo/waves/round-27/claims.json`) to
-`545e6f72495813fee9d38463d1b5961e26819755d3a994ce1559c4e9f6143e35`. **The L1 must re-pin
+`1c8259a8fe4f5823e30f067d549d19b75a5202096c5dbc5215785b785d636783`. **The L1 must re-pin
 that instrument sha256**; round-27 already carries `INSTRUMENT_REVISED` at
 `corpus/claim-freezes.tsv:15`, so this is the expected shape of the change.
 
 Counter behaviour is unchanged: `--root clone --rev <rev>` gives byte-identical output and
-exit code for pristine and patched files at all three revisions tried (2026-10-22T19:19:11Z):
+exit code for pristine and patched files at all three revisions tried (2026-10-22T19:26:31Z):
 `97358f75` exit 0, `cd32264f` exit 1, `a2673116` exit 0 — IDENTICAL in each case.
 
 ## The re-anchored fixture still has teeth
 
 Seven mutations of the count path, each applied to a fresh clone, each run with
-`--selftest` (2026-10-22T19:18Z). Killed = the selftest exits non-zero.
+`--selftest` (2026-10-22T19:25Z). Killed = the selftest exits non-zero.
 
 | mutant | patched | pristine (baseline) |
 |---|---|---|
@@ -201,14 +200,13 @@ Under `/fast/scratch/hyaku/kaidoku-r28/seats/a2w/ExecR27SelftestFix/artifacts/`:
 
 | file | sha256 |
 |---|---|
-| `c2-xpin-check.py.patched` (the patched counter; the L1 applies it) | `545e6f72495813fee9d38463d1b5961e26819755d3a994ce1559c4e9f6143e35` |
-| `fixture-change.diff` | `4d69bcc78643efd113b5575cf42c3ae56a621f846eacdaabba2572ebfc00d7e2` |
+| `c2-xpin-check.py.patched` (the patched counter; the L1 applies it) | `1c8259a8fe4f5823e30f067d549d19b75a5202096c5dbc5215785b785d636783` |
+| `fixture-change.diff` | `f5aefd751195b1355ebaa197931c1e1c5a0b2635db45cf99339835185efd4ac3` |
 | `before-selftest.txt` | `a80244fc73c93e65595eca7aad49a9a610fd8d18ae9ea87f0d46e86ce92feb6a` |
 | `after-selftest.txt` | `131ffb67d92ea4c9125b05544b7879ff54e3163e727c01170f43aa909690b429` |
 | `original.nonselftest.py` / `patched.nonselftest.py` (proof) | `960ad22897549532a700796188197af7b6b9f5c75278421b790a400d255c2587` (both) |
 | `split.py` (proof helper) | `703ef5ee2d04316773701a44fc7ae67111a870e925e95b3f9d21f45889bbce58` |
 | `mutate.py` (mutation harness) | `86eefcddef4910317ca680ea029b53940c5eac445a2750241f7d73c1f9e5e097` |
-| `mutation-results-patched.txt` | `bed4d21dd5dfc63e738dc5d5eaab906457547f88d42304dcf764578785958153` |
 | `hermetic-across-tips.txt` | `484afc17bde1054ab1a3e92694c8eb583d176f6cd17bc13e626f074b00e1aa78` |
 
 The sandbox clone also carries the patch in its working tree.
@@ -217,7 +215,7 @@ The sandbox clone also carries the patch in its working tree.
 
 1. **Re-pin the instrument.** `.ufo/waves/round-27/claims.json` pins
    `tools/round-27/c2-xpin-check.py` at `d8de667f…09bd3`; after this patch it is
-   `545e6f72…43e35`. The claim's `counting_command` is unchanged and still produces the
+   `1c8259a8…d636783`. The claim's `counting_command` is unchanged and still produces the
    same numbers, but the pin must be updated.
 2. **Do not count this as a claim** — the defect text says so; this is hygiene.
 3. **M1 survives** (pre-existing, see above). Closing it needs a count-path change, which
