@@ -354,3 +354,44 @@ measured commit, preserving the old header/all11 rows and every as-of F/M
 finding. No12-CLEAN interpretation or original9/11 rescue is allowed.
 There is still no F, candidate/code/runtime permission or admission.
 
+## Attempt 3 — repair the round-24 outside verdict, then name EVM selectors
+
+Attempt 3 (2026-10-22, dispatched 09:19Z) keeps attempt 2's frozen claims
+(`.ufo/waves/round-25/a2/claims.json`, freeze `7ef837a4`, instruments
+`9dcd11ec`). Attempt 1's prospective 34-case custody claim above was not
+continued: it has no after value in this round and is reported as not
+pursued, not as met. Everything above this heading is attempt 1's record and
+stays unchanged.
+
+### Gate
+
+New rows, each opened on 2026-10-22 before it was written:
+
+| row | URL | located quote (at most 25 words) | section |
+|---|---|---|---|
+| S075 | https://www.4byte.directory/docs/ | "If the provided query is exactly 4 bytes long then results are filtered by exact match." | Signatures > Filtering on `hex_signature` |
+| S076 | https://api.4byte.sourcify.dev/api-docs/swagger.json (linked from https://docs.sourcify.dev/docs/api/) | `filter`: "Whether or not to filter out junk results" | `/signature-database/v1/lookup` parameters |
+| S077 | https://raw.githubusercontent.com/cdump/evmole/master/agent/skills/evm-bytecode-analysis/references/interpretation.md | "A selector is a four-byte dispatch value found by static bytecode analysis. It does not supply a verified function name." | Evidence and inference |
+| S078 | https://docs.sourcify.dev/blog/recap-2025/ | "We implemented the exact openchain API and now Sourcify serves all signature requests to openchain.xyz as well." | `4byte.sourcify.dev` |
+
+Registry changes, old → new: S075, S076 and S077 none → `mined`
+(recheck 180d, 90d and on-release; used-by the new entry and this lesson),
+landed at `08c7a729`. After wave 1: S075 `teaches` "the documentation states
+no result order" → "the page says nothing about result order"; S077
+`teaches` now says the REA-to-EVMole link comes from REA's envelopes, not
+the page; S078 none → `mined` (recheck 365d). No row older than this round
+changed status, recheck or used-by. Opened and not made a row: the EVMole
+README (its `cast selectors --resolve` example shows that a resolver exists
+and adds no rule) and the Sourcify API page itself (it only links the
+OpenAPI file, which is S076). Saved copies with sha256 of every opened page:
+`corpus/evidence/round-25/a3/sources/SHA256SUMS`.
+
+### Mistakes
+
+| id | class | evidence pointer | captured-by | fix and how it was shown able to fail |
+|---|---|---|---|---|
+| M25-5 | stale self-assessment number | `corpus/evidence/round-25/a2/before/c1-calibration.json` item I4: the SCORECARD coverage row said 78/78 while command A counts 107/107 at `7ef837a4`; the row text was last set in luna-round-7 while about 29 entries were added later | none: command A counts mapping but never compares the count with the row's own text | R25-C1 item I4 compares the row's N/N with the knowledge count at the revision. Shown able to fail by the before receipt itself (exit 1, stated [78, 78], observed 107). |
+| M25-6 | outside verdict not carried into the lane's self-assessment | same receipt, items I1-I3: no SCORECARD, LOG or QUALITY line recorded the round-24 rejected-honest-stop before round 25 froze its claims | none | QUALITY row 34; R25-C1 items I1-I3 test for the record. Shown able to fail by the before receipt (3 of 3 false at `9dcd11ec`). |
+| M25-7 | producing argv not retained | `corpus/evidence/round-25/a2/c2/*/rea-run.txt` keep exit code, UTC and digests but not the REA command line or version | QUALITY row 31 (CLI evidence keeps the exact command) | Attempt 3 replayed all six runs with REA 6.5.0 and kept the argv in `corpus/evidence/round-25/a3/c2/rea-replay/runs.txt`; `compare.json` records parsed-JSON equality per carrier, which would read false on any difference. |
+| M25-8 | decision rule picked on its own scoring sample and reported as "0 wrong" | entry at `08c7a729`, rule 2 ("named 49 of 69 rows with 0 wrong"); wave-1 seat report `.ufo/waves/round-25/a3/w1/C2EntryOverreach.md` | none: QUALITY row 33 freezes counting instruments before claims, but nothing froze the naming rule before the lookups were scored | The entry now states that all five rules were written and scored on the same rows and that 0 wrong is not an error rate, and it uses a descriptive label instead of "leading candidate". Not yet shown able to fail: a next EVM naming round should freeze the rule and its expected counts before scoring new carriers. |
+| M25-9 | wording stronger than the source | S075 said the 4byte page "states no result order" (the page is silent); S077 credited "REA's EVM provider is EVMole" to a page that never names REA; the entry said openchain is "now served by Sourcify" citing only an OpenAPI file that claims compatibility | wave-1 seats `LessonGateDraft`, `SourcesOverlap`, `C2SourcifyService` (outside review, not an automatic check) | S075 and S077 teaches cells reworded; S078 (Sourcify's own takeover statement) added and cited. Shown able to fail only by the seats' finding it; no automatic check exists. |

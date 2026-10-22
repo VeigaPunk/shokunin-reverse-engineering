@@ -1,0 +1,326 @@
+<html lang="en">
+  <head>
+    <title>Ethereum Signature Database</title>
+    <link rel="shortcut icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/css/project.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Ethereum Signature Database</a>
+        </div><!-- /.navbar-header -->	
+        <div>
+					<ul class="nav navbar-nav">
+						<li><a href="/signatures/">Function Signatures</a></li>
+						<li><a href="/event-signatures/">Event Signatures</a></li>
+						<li><a href="/submit/">Submit Signatures</a></li>
+						<li><a href="/import-abi/">Submit ABI</a></li>
+						<li><a href="/import-solidity/">Submit Solidity Source File</a></li>
+					</ul>
+        </div><!-- /.navbar-links -->
+        <div class="pull-xs-right">
+					<ul class="nav navbar-nav">
+						<li><a href="/docs/">API Docs</a></li>
+					</ul>
+        </div><!-- /.navbar-right -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            
+          </div>
+        </div>
+      </div>
+    
+    
+  <div class="container main-content">
+    
+  <div class="row">
+    <div class="col-md-12">
+      <h1>API Documentation</h1>
+      <p>The function and event signature database exposes a RESTful API that is provided free to use by anyone without restriction.</p>
+      <h1>Authentication</h1>
+      <p>There is no authentication necessary to access this API</p>
+      <h1>Content Types</h1>
+      <p>All api endpoints accept requests with the following content types unless specified otherwise.</p>
+      <ul>
+        <li><code>application/json</code>
+        <li><code>application/x-www-form-urlencoded</code>
+        <li><code>multipart/form-data</code>
+      </ul>
+      <h1>Github Webhook Integration</h1>
+      <p>The easiest way to help populate the database is with a github webook on your repository.</p>
+      <ul>
+        <li>Under the <strong>Webhooks &amp; Services</strong> section in the repository settings, click the <strong>Add Webhook</strong> button.</li>
+        <li>Use the url: <code>https://www.4byte.directory/api/v1/receive-github-webhook/</code>.</li>
+        <li>Select the <code>application/json</code> content type.</li>
+      </ul>
+      <p>Once configured, after each new git push or merged pull request, the site will pull down your codebase and parse all of the solidity files for function and event signatures</p>
+      <h1>Importing Source Files</h1>
+      <h2>Solidity Imports <code>/api/v1/import-solidity/</a></code> <span class="label label-primary">POST</span></h2>
+      <p>This endpoint either solidity source files or the solidity source code itsel, parses it for function & event signatures and imports them.</p>
+      <h3>Example Request for Source Import</h3>
+      <pre>{
+  "source_code": "contract Wallet { function withdraw() { msg.sender.send(this.balance); } }"
+}</pre>
+      <h3>Example Request for File Import</h3>
+      <pre>$ curl -F source_file=@/path/to/some/Contract.sol https://www.4byte.directory/api/v1/import-solidity/</pre>
+      <h3>Example Response</h3>
+      <pre>{
+  "num_processed": 25,
+  "num_imported": 3,
+  "num_duplicates": 18,
+  "num_ignored": 4
+}</pre>
+      <h2>Content Types</h2>
+      <p>When importing files <code>multipart/form-data</code> is accepted.   Otherwise, all content types are accepted.</p>
+      <h3>How to import a bunch of files</h3>
+      <p>If you'd like to import many source files, you can do so with the following command line magic.</p>
+      <pre>$ find /path/to/recursively/search/ -name *.sol | xargs -n 1 -I {} curl -F source_file=@{} https://www.4byte.directory/api/v1/import-solidity/</pre>
+      <h1>Importing from Contract ABI</h1>
+      <p>You can import all of the function & event signatures from a contract by submitting the ABI</p>
+      <h3>Example Request</h3>
+      <pre>{
+  "contract_abi": '[
+    {"constant":false,"inputs":[],"name":"f","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"},
+    {"anonymous":false,"inputs":[{"name":"", "type":"string", "indexed":true}],"name":"E","type":"event"}
+  ]'
+}</pre>
+      <h3>Example Response</h3>
+      <pre>{
+  "num_processed": 4,
+  "num_imported": 2,
+  "num_duplicates": 1,
+  "num_ignored": 1
+}</pre>
+      <h1>Signatures</h1>
+      <p>The primary data model exposed by the API is the <code>Signature</code>.  Each signature is a mapping between the human readable function signature and the 4-byte function selector used by the EVM.  See the official <a href="https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI#function-selector" target="_blank">Ethereum Contract ABI documentation</a> for more information.</p>
+      <p>Each signature object returned from the API has the following fields.</p>
+      <ul>
+        <li><code>id</code> (integer): The primary key of the signature.</li>
+        <li><code>text_signature</code> (string): The text representation of the function signature.</li>
+        <li><code>bytes_signature</code> (string): The 4-byte function selector</li>
+        <li><code>hex_signature</code> (string): The hex encoded 4-byte function selector.</li>
+      </ul>
+      <pre>{
+  "id": 1,
+  "text_signature": "balanceOf(address)",
+  "bytes_signature": "r'\x13\xf7",
+  "hex_signature": "0x722713f7",
+}</pre>
+      <h2>Listing Signatures <code><a href="/api/v1/signatures/">/api/v1/signatures/</a></code> <span class="label label-primary">GET</span></h2>
+      <p>Returns a paginated list of signatures.</p>
+      <h3>Example Response</h4>
+      <pre>{
+  "next": "/api/v1/signatures/?page=2",
+  "previous": null,
+  "count": 100,
+  "results": [
+    { 
+      "id": 1,
+      "text_signature": "balanceOf(address)",
+      "bytes_signature": "r'\x13\xf7",
+      "hex_signature": "0x722713f7",
+    },
+    ...
+  ]
+}</pre>
+      <h3>Response Status Codes</h4>
+      <ul>
+        <li><code>200</code> Success</li>
+      </ul>
+      <h3>Filtering Results</h3>
+      <p>The following options are available for filtering the results</p>
+      <h4>Filtering on <code>text_signature</code></h4>
+      <blockquote><code>/api/v1/signatures/?text_signature=balanceOf()</code></blockquote>
+      <p>Exact match on the <code>text_signature</code> field.</p>
+      <blockquote><code>/api/v1/signatures/?text_signature__iexact</code></blockquote>
+      <p>Case insensitive exact match on the <code>text_signature</code> field.</p>
+      <blockquote><code>/api/v1/signatures/?text_signature__contains</code></blockquote>
+      <p>Substring match on the <code>text_signature</code> field.</p>
+      <blockquote><code>/api/v1/signatures/?text_signature__icontains</code></blockquote>
+      <p>Case insensitive substring match on the <code>text_signature</code> field.</p>
+      <blockquote><code>/api/v1/signatures/?text_signature__startswith</code></blockquote>
+      <p>Matches on beginning of the <code>text_signature</code> field.</p>
+      <blockquote><code>/api/v1/signatures/?text_signature__istartswith</code></blockquote>
+      <p>Case insensitive match on beginning of the <code>text_signature</code> field.</p>
+      <blockquote><code>/api/v1/signatures/?text_signature__endswith</code></blockquote>
+      <p>Matches on end of the <code>text_signature</code> field.</p>
+      <blockquote><code>/api/v1/signatures/?text_signature__iendswith</code></blockquote>
+      <p>Case insensitive match on end of the <code>text_signature</code> field.</p>
+      <h4>Filtering on <code>hex_signature</code></h4>
+      <p>Filters the results base on the <code>hex_signature</code> field.</p>
+      <blockquote><code>/api/v1/signatures/?hex_signature=0xabcd1234</code></blockquote>
+      <div class="alert alert-info" role="alert">
+        <p>The <code>0x</code> prefix on the query value is optional.</p>
+      </div>
+      <p>
+      <ul>
+        <li>If the provided query is exactly 4 bytes long then results are filtered by exact match.</li>
+        <li>If the provided query is less than 4 bytes long then the results are filtered by substring match.</li>
+        <li>If the provided query is longer than 4 bytes then the results are not filtered since it is an invalid query.</li>
+      </ul>
+      <h2>Creating Signatures <code>/api/v1/signatures/</code> <span class="label label-primary">POST</span></h2>
+      <p>Creates a new signature</p>
+      <h3>Example Request</h3>
+      <pre>{
+      "text_signature": "balanceOf(address)"
+}</pre>
+      <h3>Response Status Codes</h4>
+      <ul>
+        <li><code>200</code> Success</li>
+        <li><code>400</code> Error</li>
+      </ul>
+      <h4>Example Success Response</h3>
+      <p>On success, the serialized record will be returned</p>
+      <pre>{
+  "id": 1,
+  "text_signature": "balanceOf(address)",
+  "bytes_signature": "r'\x13\xf7",
+  "hex_signature": "0x722713f7",
+}</pre>
+      <h3>Accepted Formats for <code>text_signature</code></h3>
+      <p>Function signatures are <strong>normalized</strong> during creation.  The normalization process can handle a wide array of input formats.  Any of the following will normalize to <code>transfer(address,uint256)</code></p>
+      <ul>
+        <li></code>function transfer(address _to, uint _value)</code></li>
+        <li></code>function transfer(address _to, uint256 _value)</code></li>
+        <li></code>transfer(address _to, uint256 _value)</code></li>
+        <li></code>transfer(address _to, uint _value)</code></li>
+        <li></code>transfer(address, uint)</code></li>
+        <li></code>transfer(address, uint256)</code></li>
+        <li></code>transfer ( address, uint256 )</code></li>
+        <li></code>transfer ( address, uint256 )</code></li>
+      </ul>
+      <h3>Example Error Response</h3>
+      <p>When an error occurs, the response will be an object with keys mapping to arrays of error messages.  A <code>400</code> response will be returned if the signature is already present, or if the format of the signature could not be recognized.</p>
+      <pre>{
+      "text_signature": ["Unknown signature format"]
+}</pre>
+      <h2>Retrieving Signatures <code>/api/v1/signatures/:id/</code> <span class="label label-primary">GET</span></h2>
+      <p>You can retrieve an individual signature using this endpoint.</p>
+      <h3>Response Status Codes</h4>
+      <ul>
+        <li><code>200</code> Success</li>
+        <li><code>404</code> Not Found</li>
+      </ul>
+      <h4>Example Success Response</h3>
+      <p>On success, the serialized record will be returned</p>
+      <pre>{
+  "id": 1,
+  "text_signature": "balanceOf(address)",
+  "bytes_signature": "r'\x13\xf7",
+  "hex_signature": "0x722713f7",
+}</pre>
+    <h1>Event Signatures</h1>
+    <p>The API also exposes the signatures for events which are represented under the data model <code>Event Signature</code>.  Each signature is a mapping between the human readable event signature and the 32-byte event selector used by the EVM.  See the official <a href="https://solidity.readthedocs.io/en/develop/abi-spec.html" target="_blank">Ethereum Contract ABI documentation</a> for more information.</p>
+    <p>Each event signature object returned from the API has the following fields.</p>
+    <ul>
+      <li><code>id</code> (integer): The primary key of the event signature.</li>
+      <li><code>text_signature</code> (string): The text representation of the event signature.</li>
+      <li><code>bytes_signature</code> (string): The 32-byte event selector</li>
+      <li><code>hex_signature</code> (string): The hex encoded 32-byte event selector.</li>
+    </ul>  
+<pre>{
+  "id": 19,
+  "created_at": "2020-09-13T18:45:58.559831Z",
+  "text_signature": "RequestCreated(address,address,int256,uint256[12])",
+  "hex_signature": "0x15aac4af776447c09d895192c86bab463c38b92191f3ba3f7b8831723c548d6e",
+  "bytes_signature": "r'\x15\xaa\xc4\xafwdG\xc0\x9d\x89Q\x92\xc8k\xabF18\xb9!\x91\xf3\xba?{\x881r1T\x8dn"
+}</pre>
+    <h2>Listing Event Signatures <code><a href="/api/v1/event-signatures/">/api/v1/event-signatures/</a></code> <span class="label label-primary">GET</span></h2>
+    <p>Returns a paginated list of event signatures.</p>
+<pre>{
+  "next": "/api/v1/event-signatures/?page=2",
+  "previous": null,
+  "count": 100,
+  "results": [
+    {
+      "id": 1,
+      "created_at": "2020-09-13T18:45:58.559831Z",
+      "text_signature": "RequestCreated(address,address,int256,uint256[12])",
+      "hex_signature": "0x15aac4af776447c09d895192c86bab463c38b92191f3ba3f7b8831723c548d6e",
+      "bytes_signature": "r'\x15\xaa\xc4\xafwdG\xc0\x9d\x89Q\x92\xc8k\xabF18\xb9!\x91\xf3\xba?{\x881r1T\x8dn"
+    },
+    ...
+  ]
+}</pre>
+<h3>Response Status Codes</h4>
+<ul>
+  <li><code>200</code> Success</li>
+</ul>
+<h3>Filtering Results</h3>
+<p>Filtering results are done similarly to filtering <strong>function</strong> <code>Signature</code> results</p>
+<h2>Creating Event Signatures <code>/api/v1/event-signatures/</code> <span class="label label-primary">POST</span></h2>
+<p>Creates a new event signature</p>
+      <h3>Example Request</h3>
+<pre>{
+  "text_signature": "MyEvent(address,uint)"
+}</pre>
+      <h3>Response Status Codes</h4>
+      <ul>
+        <li><code>200</code> Success</li>
+        <li><code>400</code> Error</li>
+      </ul>
+      <h4>Example Success Response</h3>
+      <p>On success, the serialized record will be returned</p>
+<pre>{
+  "id": 1,
+  "created_at": "2020-09-13T18:45:58.559831Z",
+  "text_signature": "RequestCreated(address,address,int256,uint256[12])",
+  "hex_signature": "0x15aac4af776447c09d895192c86bab463c38b92191f3ba3f7b8831723c548d6e",
+  "bytes_signature": "r'\x15\xaa\xc4\xafwdG\xc0\x9d\x89Q\x92\xc8k\xabF18\xb9!\x91\xf3\xba?{\x881r1T\x8dn"
+}</pre>
+      <h3>Accepted Formats for <code>text_signature</code></h3>
+      <p>Event signatures are <strong>normalized</strong> during creation.  The normalization process can handle a wide array of input formats.  Any of the following will normalize to <code>transfer(address,uint256)</code></p>
+      <ul>
+        <li></code>event transfer(address _to, uint _value)</code></li>
+        <li></code>event transfer(address _to, uint256 _value)</code></li>
+        <li></code>transfer(address indexed _to, uint256 _value)</code></li>
+        <li></code>transfer(address _to, uint _value)</code></li>
+        <li></code>transfer(address, uint)</code></li>
+        <li></code>transfer(address, uint256)</code></li>
+        <li></code>transfer ( address, uint256 )</code></li>
+        <li></code>transfer ( address indexed, uint256 ) anonymous</code></li>
+      </ul>
+      <h3>Example Error Response</h3>
+      <p>When an error occurs, the response will be an object with keys mapping to arrays of error messages.  A <code>400</code> response will be returned if the signature is already present, or if the format of the event signature could not be recognized.</p>
+<pre>{
+  "text_signature": ["Unknown signature format"]
+}</pre>
+<h2>Retrieving Event Signatures <code>/api/v1/event-signatures/:id/</code> <span class="label label-primary">GET</span></h2>
+      <p>You can retrieve an individual event signature using this endpoint.</p>
+      <h3>Response Status Codes</h4>
+      <ul>
+        <li><code>200</code> Success</li>
+        <li><code>404</code> Not Found</li>
+      </ul>
+      <h4>Example Success Response</h3>
+      <p>On success, the serialized record will be returned</p>
+<pre>{
+  "id": 1,
+  "created_at": "2020-09-13T18:45:58.559831Z",
+  "text_signature": "RequestCreated(address,address,int256,uint256[12])",
+  "hex_signature": "0x15aac4af776447c09d895192c86bab463c38b92191f3ba3f7b8831723c548d6e",
+  "bytes_signature": "r'\x15\xaa\xc4\xafwdG\xc0\x9d\x89Q\x92\xc8k\xabF18\xb9!\x91\xf3\xba?{\x881r1T\x8dn"
+}</pre>
+
+</div>
+  </div>
+
+  </div>
+  <div class="main-footer panel-footer text-right">
+  <a class="footer-item" href="https://github.com/gobitfly/ethereum-function-signature-registry">Github Project Page</a>
+  <a class="footer-item" href="https://github.com/gobitfly/ethereum-function-signature-registry/issues/new">File an issue</a>
+  <span class="footer-item">with ♥ by <a target="_blank" href="https://beaconcha.in/">beaconcha.in</a></span>
+</div>
+
+
+  </body>
+</html>
