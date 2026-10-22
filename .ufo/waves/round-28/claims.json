@@ -1,0 +1,49 @@
+{
+  "round": "round-28",
+  "attempt": 1,
+  "frozen_by": "kaidoku L1 round 28, before any R28-C1 REA run or lookup",
+  "base": "935c36608008f79e3dea4f1ed191df3c89e3b848",
+  "freeze_kind": "instruments-first: the counter, its selftest (21 cases, green and red, including the legitimate look-alike of byte-identical lookup bodies), the frozen carrier and selector lists, the selection tool, the data collector and the before receipt are committed in the same commit as this file, before any data the counter counts. The counter refuses runs that started, and data files first committed, before its own commit.",
+  "instruments": {
+    "tools/round-28/c1-heldout-naming.py": "29c2b571ac97098ac90b6aefc2112306b8b816722fe25abb3d84e03f22eeb27c"
+  },
+  "loaded_by_counter": {
+    "tools/round-25/a2/resolve-selectors.py": "4be915668ea20a643d04c9b8ae3c83bc9f5fd1b4d8821e06cabdccce36b3c23d",
+    "corpus/evidence/round-28/c1/carriers.tsv": "4392b5c377cc2e343d385ba3b93206a0bb67df972bdc3814780819f1d4c5e71f",
+    "corpus/evidence/round-28/c1/heldout.tsv": "423654f9d71feb417725a1e5a290b1e028ee53ad628141281a8c08391dab6cef"
+  },
+  "pin_note": "Every file the counter reads as code or as frozen input is listed above and hard-coded in the counter's PINS; the counter exits 2 if any differs (routed defect 4 of the round-27 spot-check). The other files it reads are the data it counts (runs.tsv, envelopes/, db/, tally.json) and the entry, SOURCES.md and round-28 lesson it checks.",
+  "producers_not_counters": {
+    "tools/round-28/select-heldout.py": "0a96776dee29f03e2054ddc7a5878ad9537c355b93555a343247cc89fe3ec141",
+    "tools/round-28/collect-c1.py": "6aae4935b95be844358ea4289eb3a7013553371aaad66b978746df758ef1ecff"
+  },
+  "pre_freeze_probe": {
+    "what": "one REA 6.5.0 inspect-evm-interface call on VaultA (arc3-loop1-round3 EX-12) to time a call and read the envelope field names; output kept in L1 scratch only, never data",
+    "argv": "/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/.bin/rea inspect-evm-interface /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/arc3-loop1-round3/claims/c1/EX-12/VaultA.runtime.hex hex --format json",
+    "utc": "2026-10-22T17:12Z",
+    "exit": 0,
+    "evidence_id": "ev_d90219cc7798a1b4cf6772e0807e629906514e6683cef2ebaf99d121e99d98ea",
+    "seen": "operation inspect_evm_interface, provider evmole@0.9.3, 7 functions; subject.digest.sha256 equals sha256sum of the runtime file. No lookup was made before the freeze."
+  },
+  "claims": [
+    {
+      "id": "R28-C1",
+      "axis": "coverage (learning claim: PROVINCE Frontier bullet 'EVM bytecode (extended)', selector naming)",
+      "kind": "held-out test of the round-25 naming rule: the rule was picked on the same 69 rows it was scored on (round-25 entry, 'How these rules were chosen'); this round scores it, unchanged, on carriers and selectors frozen before any run or lookup",
+      "statement": "On 61 held-out carriers (one per distinct compiler-ABI interface among the lane's committed runtime-plus-ABI pairs, excluding the six round-25 carriers; corpus/evidence/round-28/c1/carriers.tsv) and the 187 distinct selectors among them that were not in round 25's 43 (heldout.tsv), the committed tally corpus/evidence/round-28/c1/tally.json scores the round-25 rules, unchanged, against each compiler ABI, from one REA 6.5.0 inspect-evm-interface call per carrier and one saved 4byte.directory and openchain lookup set per selector, all made after the freeze. A knowledge entry states the primary rule's named/right/wrong triple and cites a SOURCES row new since the base, opened 2026-10-22, status mined, listed in corpus/lessons/round-28.md ## Gate.",
+      "primary_rule": "openchain_sole_unfiltered_args_consistent: the only openchain candidate with filtered=false whose keccak and parameter list match REA's inferred arguments (round-25 rule 5, decision rule 2 of corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md)",
+      "scoring_unit": "one row per distinct held-out selector; REA's inferred arguments come from the selector's frozen carrier (heldout.tsv column 3); a selector REA does not recover on that carrier gets no name from any rule and counts as no_name",
+      "invocation": "python3 -I -B tools/round-28/collect-c1.py runs; python3 -I -B tools/round-28/collect-c1.py lookups; then python3 -I -B tools/round-28/c1-heldout-naming.py --root <LANE> --emit-tally > corpus/evidence/round-28/c1/tally.json. REA argv per carrier: npx -y rea-agents@6.5.0 inspect-evm-interface /home/vgpnk/Projects/shokunin/kaidoku-shokunin/<runtime> hex --format json; package pin 6.5.0, package.json sha256 a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c read after each call.",
+      "counting_command": "python3 -I -B tools/round-28/c1-heldout-naming.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV>",
+      "identical_outputs": "Identical repeated outputs cannot sink this counter: each carrier has one call keyed by carrier name and its envelope is bound by subject digest and path, so no cross-run byte comparison exists; lookup responses are keyed by manifest entry, and byte-identical bodies for different selectors (an empty 4byte result is the same bytes for every unknown selector) are accepted (selftest case green-identical-4byte-bodies-across-selectors; QUALITY row 40).",
+      "before": {"runs_ok": 0, "rows_complete": 0, "tally_equal": 0, "entry_ok": 0, "exit": 2, "why": "the frozen lists are absent at the base", "receipt": ".ufo/waves/round-28/before/c1-at-935c3660.txt"},
+      "target": {"runs_ok": "61/61", "rows_complete": "187/187", "tally_equal": 1, "entry_ok": 1, "exit": 0},
+      "hypothesis_reported_not_target": "H1: on the held-out rows the primary rule's wrong count is at most 5% of its named count (round 25 in-sample: 0 of 31 distinct). H2: the primary rule names fewer than half of the 187 rows, because many held-out names are lane-invented. Both are reported as observed; neither decides the claim.",
+      "limits": "Carriers were compiled by this lane in arc3-loop1 rounds 1-11 for other tests; most held-out names are lane-invented (f0(uint256), read_alpha(uint256)), so the test measures the rule against names a database may never have seen, not against deployed contracts. One lookup snapshot. One REA pin. The ground truth is each compiler ABI file paired by the frozen pairing rule in select-heldout.py; a mispaired ABI shows as unrecovered selectors, which the tally counts (recovered_by_rea)."
+    }
+  ],
+  "not_claimed": [
+    "The eight routed defects of corpus/lessons/round-27-verifier-spotcheck.md are fixed or explained as hygiene, not claims (the evidence-ID surface ran rounds 26 and 27; a third claim there would trip the session drift sentinel).",
+    "Calibration is not claimed (Main session note 3)."
+  ]
+}
