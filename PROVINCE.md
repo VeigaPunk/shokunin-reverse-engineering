@@ -301,3 +301,24 @@ The frozen R23 six-verb T1 is unchanged (4/6).
   supplied decryption keys and network-forensics case ownership remain
   unowned/Adjacent; saved-capture envelopes do not absorb them.
 - Live debugger verbs remain Adjacent/unheld; kaidoku/revenger arbitration is open.
+
+## Round-27 renamed-copy identity and cross-pin attribution — 2026-10-22
+
+Two dated additions to Core. Neither retires a Frontier bullet and neither rewrites the
+Core table above: the Frontier list (PE subtypes, recorded crashes above 32 MiB, alternate
+providers, macOS-only surfaces, EVM bytecode extended) is unchanged by this round.
+
+- Native reader evidence-ID identity at `rea-agents@6.5.0` now rests on two carriers and a
+  renamed copy: eight verbs on `/usr/bin/jq` (`0x103fa0`) and eight on `/usr/bin/tinyxxd`
+  (`0x103d40`), each with a base run, a same-path repeat, and a byte-identical copy under
+  another directory whose file name and extension also changed. 10 of 16 content-keyed, 6 rename-sensitive, 0 unstable. Against round 26, `analyze` and `inspect` turn rename-sensitive because the file extension reaches `normalized_result.document` (the Ghidra program name `target-<sha256[0:12]><suffix>`), the five address verbs stay content-keyed and `inspect-binary-layout` stays path-sensitive. Limits: one
+  pin, one Ghidra build (12.1.4), one address per carrier, default parameters, and the copy
+  moves directory, file name and extension together
+  (`corpus/knowledge/2026-10-22-r27-renamed-copy-evidence-id-identity.md`; table
+  `corpus/evidence/round-27/c1/table.tsv`).
+- Cross-pin attribution of a saved envelope is now a lane capability:
+  `tools/round-27/xpin-attribute.mjs` attributes an envelope to the 6.5.0 rule, the 6.7.0
+  rule, both or neither, from its bytes, using each installed package's own canonical
+  digest code (package roots `~/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents` and
+  `~/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents`). The 6.7.0 side is a rule fit
+  over 6.5.0-produced evidence objects, not a 6.7.0 run.
