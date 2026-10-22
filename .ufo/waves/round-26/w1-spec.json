@@ -1,0 +1,173 @@
+{
+ "wave": "kaidoku26-w1",
+ "context": "# Goal\nKaidoku round 26, attempt 1: wave 1 of two v1 waves (build plus first falsifiers) for lane repo /home/vgpnk/Projects/shokunin/kaidoku-shokunin (reverse engineering of shipped artifacts with REA on this Linux host). Lane base a0639d8e61e486e2a716ff94cddd89a73200a02c. Claims were frozen at commit c27f445e70cedbaf5300b2fd0a53e821d9b659a9 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-26/claims.json; read it first. The rules there bind; never re-define them.\n- R26-C1 depth (learning claim): evidence-ID identity table for eight native reader verbs (analyze, inspect, decompile, xrefs, read-bytes, function, instructions, inspect-binary-layout) at rea-agents@6.5.0 on /usr/bin/jq (30,800 B, sha256 e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806). Per verb: base and same-path repeat on /usr/bin/jq, and a copy run on the byte-identical alternate /fast/scratch/hyaku/kaidoku-r26/carrier/alt/jq (read-only for you; never modify it). The exact argv per verb is in claims.json `verbs_argv`. Counter to be written this wave: tools/round-26/c1-id-identity.py. Before 0 of 8; target 8 of 8 and entry_ok 1.\n- R26-C2 calibration: six fixed self-assessment items K1-K6 (SCORECARD.md `## Owned axes` depth/coverage/calibration rows and the SHONEN.md no-cross-domain-bleed line) against repo state, from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-25/a3/w1/C1Cherrypick.md. Counter to be written this wave: tools/round-26/c2-calibration.py. Target 0 mismatches.\n- Routed defects from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-25-verifier-spotcheck.md (section Routed defects) are also worked this round.\n# Contract\n- Paths: every path is absolute. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kaidoku-shokunin - write it at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/<that path>. Write nothing else inside /home/vgpnk/Projects/shokunin/kaidoku-shokunin. Put scripts, envelopes, raw output and other artifacts under /fast/scratch/hyaku/kaidoku-r26/seats/<your item name>/ and list each with its sha256 in the report; the L1 integrates and commits.\n- Bounds: read-only on the lane. Never edit lane files (SCORECARD, LOG, SKILL, PROVINCE, SHONEN, QUALITY, SOURCES, corpus/, tools/, .ufo/). Never mutate the fleet repo /home/vgpnk/Projects/shokunin, sibling lanes, lane jj state or the lane Git index. No git add/commit/checkout/reset/stash/switch/pull/push in the lane. Never run any jj command at the fleet root /home/vgpnk/Projects/shokunin; in the lane, jj only read-only with --ignore-working-copy. Read-only git (show, log, ls-tree, cat-file, diff, rev-parse) is fine. A check that needs Git writes or file mutation runs in a sandbox clone `git clone -q /home/vgpnk/Projects/shokunin/kaidoku-shokunin /fast/scratch/hyaku/kaidoku-r26/seats/<your item name>/clone`.\n- Evidence: every finding names its producing command, an exact output excerpt, exit code and UTC time; label each conclusion observation, inference or unknown. Never fabricate; an unrun check has not passed. Attack seats name what they attack and give a verdict: holds, fails (with the counterexample) or could-not-evaluate.\n- Sources: open primary sources this round by ordinary means only (plain HTTP fetch, a normal reader, or a local file read); never use a headless browser or any other tool to pass a bot challenge, captcha or access control. A source you cannot open that way is recorded as unopened and supports nothing. For each opened source record URL or path, access date 2026-10-22, sha256 of the bytes read, and one located quote of at most 25 words with its section or line.\n- REA: CLI only, `TMPDIR=/fast/scratch/hyaku/kaidoku-r26/seats/<your item name>/tmp npx -y rea-agents@6.5.0 <argv>` (create the tmp dir first), never MCP devices; never run REA on anything but /usr/bin/jq and copies of it. Run your REA calls one after another, not in parallel. The installed 6.5.0 package root is /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/ and 6.7.0 is under /home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents/ (read-only).\n- Tooling: you may install or upgrade tools that help the task - read /home/vgpnk/.omp/agent/RULES.md first, use official channels, and record tool, version, channel and reason in your report. All pacman transactions are PAUSED host-wide: install only via `uv tool`, `uv venv` + `uv pip`, `npx`, or an official binary in ~/.local/bin; never -Sy, -Syu, -U, -R, downgrade, or restart a host service.\n- You are a leaf: no delegation and no background jobs (an executor may run one read-only labrat probe if its card allows), never message agent://all. Message a sibling seat only by its exact id when your item says so. Finish within 45 minutes. Keep the report under 120 lines. Write plain English with spaced words, no run-together tokens.",
+ "reportDir": ".ufo/waves/round-26/w1",
+ "maxLanes": 40,
+ "items": [
+  {
+   "name": "RunAnalyzeInspect",
+   "role": "executor",
+   "prompt": "# Target\nR26-C1 table runs for verbs: analyze, inspect.\n# Work\nFor each verb, run three REA 6.5.0 CLI calls exactly as `verbs_argv` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-26/claims.json says: `base` and `repeat` with PATH=/usr/bin/jq, then `copy` with PATH=/fast/scratch/hyaku/kaidoku-r26/carrier/alt/jq. Before and after, record `sha256sum` of both carrier paths. Save each stdout as /fast/scratch/hyaku/kaidoku-r26/seats/RunAnalyzeInspect/envelopes/<verb>-<run>.json (stderr to <verb>-<run>.stderr). Append one line per call to /fast/scratch/hyaku/kaidoku-r26/seats/RunAnalyzeInspect/runs.tsv with columns verb, run, path, argv, exit, utc_start, utc_end, envelope_sha256, evidence_id (from .data.evidence_id or empty), subject_sha256 (.data.subject.digest.sha256, else .data.normalized_result.artifact.sha256). If a call fails, keep its output, retry it once, and record both attempts; never edit an envelope.\n# Acceptance\nReport: the runs.tsv content, per verb the three ids and whether base==repeat and base==copy, the derived verdict under the claims.json `derived_verdict` rule, envelope sizes, and every failure with its error text. When done, message seats KaidokuR26.RecomputeIds and KaidokuR26.CounterC1 with your envelopes directory path."
+  },
+  {
+   "name": "RunDecompileFunction",
+   "role": "executor",
+   "prompt": "# Target\nR26-C1 table runs for verbs: decompile, function.\n# Work\nFor each verb, run three REA 6.5.0 CLI calls exactly as `verbs_argv` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-26/claims.json says: `base` and `repeat` with PATH=/usr/bin/jq, then `copy` with PATH=/fast/scratch/hyaku/kaidoku-r26/carrier/alt/jq. Before and after, record `sha256sum` of both carrier paths. Save each stdout as /fast/scratch/hyaku/kaidoku-r26/seats/RunDecompileFunction/envelopes/<verb>-<run>.json (stderr to <verb>-<run>.stderr). Append one line per call to /fast/scratch/hyaku/kaidoku-r26/seats/RunDecompileFunction/runs.tsv with columns verb, run, path, argv, exit, utc_start, utc_end, envelope_sha256, evidence_id (from .data.evidence_id or empty), subject_sha256 (.data.subject.digest.sha256, else .data.normalized_result.artifact.sha256). If a call fails, keep its output, retry it once, and record both attempts; never edit an envelope.\n# Acceptance\nReport: the runs.tsv content, per verb the three ids and whether base==repeat and base==copy, the derived verdict under the claims.json `derived_verdict` rule, envelope sizes, and every failure with its error text. When done, message seats KaidokuR26.RecomputeIds and KaidokuR26.CounterC1 with your envelopes directory path."
+  },
+  {
+   "name": "RunXrefsInstructions",
+   "role": "executor",
+   "prompt": "# Target\nR26-C1 table runs for verbs: xrefs, instructions.\n# Work\nFor each verb, run three REA 6.5.0 CLI calls exactly as `verbs_argv` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-26/claims.json says: `base` and `repeat` with PATH=/usr/bin/jq, then `copy` with PATH=/fast/scratch/hyaku/kaidoku-r26/carrier/alt/jq. Before and after, record `sha256sum` of both carrier paths. Save each stdout as /fast/scratch/hyaku/kaidoku-r26/seats/RunXrefsInstructions/envelopes/<verb>-<run>.json (stderr to <verb>-<run>.stderr). Append one line per call to /fast/scratch/hyaku/kaidoku-r26/seats/RunXrefsInstructions/runs.tsv with columns verb, run, path, argv, exit, utc_start, utc_end, envelope_sha256, evidence_id (from .data.evidence_id or empty), subject_sha256 (.data.subject.digest.sha256, else .data.normalized_result.artifact.sha256). If a call fails, keep its output, retry it once, and record both attempts; never edit an envelope.\n# Acceptance\nReport: the runs.tsv content, per verb the three ids and whether base==repeat and base==copy, the derived verdict under the claims.json `derived_verdict` rule, envelope sizes, and every failure with its error text. When done, message seats KaidokuR26.RecomputeIds and KaidokuR26.CounterC1 with your envelopes directory path."
+  },
+  {
+   "name": "RunReadBytesLayout",
+   "role": "executor",
+   "prompt": "# Target\nR26-C1 table runs for verbs: read-bytes, inspect-binary-layout.\n# Work\nFor each verb, run three REA 6.5.0 CLI calls exactly as `verbs_argv` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-26/claims.json says: `base` and `repeat` with PATH=/usr/bin/jq, then `copy` with PATH=/fast/scratch/hyaku/kaidoku-r26/carrier/alt/jq. Before and after, record `sha256sum` of both carrier paths. Save each stdout as /fast/scratch/hyaku/kaidoku-r26/seats/RunReadBytesLayout/envelopes/<verb>-<run>.json (stderr to <verb>-<run>.stderr). Append one line per call to /fast/scratch/hyaku/kaidoku-r26/seats/RunReadBytesLayout/runs.tsv with columns verb, run, path, argv, exit, utc_start, utc_end, envelope_sha256, evidence_id (from .data.evidence_id or empty), subject_sha256 (.data.subject.digest.sha256, else .data.normalized_result.artifact.sha256). If a call fails, keep its output, retry it once, and record both attempts; never edit an envelope.\n# Acceptance\nReport: the runs.tsv content, per verb the three ids and whether base==repeat and base==copy, the derived verdict under the claims.json `derived_verdict` rule, envelope sizes, and every failure with its error text. When done, message seats KaidokuR26.RecomputeIds and KaidokuR26.CounterC1 with your envelopes directory path."
+  },
+  {
+   "name": "CounterC1",
+   "role": "executor",
+   "prompt": "# Target\nR26-C1 counting instrument, to be committed by the L1 at tools/round-26/c1-id-identity.py.\n# Work\nWrite /fast/scratch/hyaku/kaidoku-r26/seats/CounterC1/c1-id-identity.py implementing exactly the R26-C1 `rules` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-26/claims.json: CLI `--root <LANE> --rev <REV>` reading only Git objects (`git -C ROOT show REV:path`, `ls-tree`), envelopes as .json or .json.gz, JSON output with rows_total 8, rows_complete, per-row reasons, entry_ok and the non-gating path diagnostics; exit 0 iff rows_complete == 8 and entry_ok == 1, exit 1 otherwise, exit 2 on usage error. Use only the Python standard library; it must run under `python3 -I -B`. Add `--selftest` that builds a temporary Git repo with synthetic fixtures and shows each rule can fail: missing envelope, ok false, wrong subject sha256, id cell not equal to the envelope id, wrong verdict, unknown verb, duplicate verb row, entry missing, entry source line without the table, S-row opened on another date, S-row id absent from the lesson ## Gate section, and one fully green fixture. Run it at REV a0639d8e61e486e2a716ff94cddd89a73200a02c and c27f445e70cedbaf5300b2fd0a53e821d9b659a9 (expect rows_complete 0, entry_ok 0, exit 1). Seats KaidokuR26.MutR25Coverage may send you fixtures; include them if they arrive.\n# Acceptance\nReport: sha256 of the script, the selftest output, the two real runs (JSON and exit), and every place where you had to interpret the frozen rules."
+  },
+  {
+   "name": "CounterC2",
+   "role": "executor",
+   "prompt": "# Target\nR26-C2 counting instrument, to be committed by the L1 at tools/round-26/c2-calibration.py.\n# Work\nWrite /fast/scratch/hyaku/kaidoku-r26/seats/CounterC2/c2-calibration.py implementing exactly the R26-C2 `rules` K1-K6 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-26/claims.json: CLI `--root <LANE> --rev <REV>`, Git objects only, command A taken from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SCORECARD.md `## Measurement recipes` recipe A (evaluated on Git objects of each revision it needs), standard library only, runs under `python3 -I -B`, JSON output with per-item pass or mismatch and observed values, items 6, mismatches; exit 0 iff mismatches 0, 1 otherwise, 2 on input error. Add `--selftest` with at least one red fixture per item in a temporary Git repo, including a decoy `| coverage |` row outside `## Owned axes` that must not be read and a SHONEN pointer outside PROVINCE's line count. Run it at a0639d8e61e486e2a716ff94cddd89a73200a02c and c27f445e70cedbaf5300b2fd0a53e821d9b659a9. Seat KaidokuR26.MutR25Calib may send you fixtures from the round-25 instrument's false accepts; include them if they arrive.\n# Acceptance\nReport: script sha256, selftest output, the real runs (JSON and exit) with the before mismatch count, and every interpretation you made of the frozen rules."
+  },
+  {
+   "name": "RecomputeIds",
+   "role": "executor",
+   "prompt": "# Target\nHow rea-agents 6.5.0 mints `.data.evidence_id` for the eight R26-C1 verbs.\n# Work\nIn the installed 6.5.0 package (read-only), find the code that computes evidence ids (start from dist/ files that build `ev_` ids, for example an evidence.js) and, per verb, which envelope fields enter the hashed projection, in particular any path-bearing field. Write /fast/scratch/hyaku/kaidoku-r26/seats/RecomputeIds/recompute-ids.py (standard library) that recomputes the id from a saved envelope and prints match or mismatch. Validate it on the L1 probe envelope /fast/scratch/hyaku/kaidoku-r26/l1/probe-ibl.json (id ev_294a449c...). Then run it on every envelope under /fast/scratch/hyaku/kaidoku-r26/seats/Run*/envelopes/ that exists when you get there (run seats will message you).\n# Acceptance\nReport: the minting function with file:line citations and its sha256, a per-verb table of path-bearing fields in the projection (with file:line) and the predicted verdict, and recompute results per envelope (match count of total)."
+  },
+  {
+   "name": "CacheConfound",
+   "role": "scout",
+   "prompt": "# Target\nPossible confound for R26-C1: caching in rea-agents 6.5.0 CLI runs.\n# Work\nRead the 6.5.0 package source (read-only) and the cache locations it uses (Ghidra projects, snapshots, result caches under $TMPDIR, ~/.cache or elsewhere). Decide whether a same-path repeat call could be served from a cache keyed by path or by content, and whether a cached answer would carry the same evidence id as a fresh one. Do not run REA.\n# Acceptance\nReport: each cache with file:line, its key, and the inference for the base-repeat and base-copy comparisons per verb; say which verdict could be an artifact of caching."
+  },
+  {
+   "name": "IdentityClaimsMap",
+   "role": "scout",
+   "prompt": "# Target\nEvery existing lane statement about evidence-ID identity, for the R26-C1 entry to supersede or agree with.\n# Work\nSearch /home/vgpnk/Projects/shokunin/kaidoku-shokunin (corpus/README.md Known gaps bullet near line 203, corpus/knowledge/*, SKILL.md, PROVINCE.md, SCORECARD.md luna-round-3 section) for statements about evidence-id identity, path sensitivity or content keying. For each: path:line, pin, verb or family, stated verdict, and its evidence pointer.\n# Acceptance\nReport: a table of statements, and the list of statements that a per-verb 6.5.0 table would refine or contradict depending on outcome."
+  },
+  {
+   "name": "PinSourceDiff",
+   "role": "scout",
+   "prompt": "# Target\nWhether evidence-id minting differs between rea-agents 6.5.0 and 6.7.0 (and 6.4.0 if any copy exists on this host).\n# Work\nDiff the id-minting and projection code between the two installed packages (read-only). Search the npm cache for a 6.4.0 copy; do not download one.\n# Acceptance\nReport: files compared with sha256, the differing hunks that touch ids or projections (or none), and whether the lane's 6.7.0 controls (arc3 r7, r10, r11, r12 entries) can transfer to 6.5.0."
+  },
+  {
+   "name": "AddressCheck",
+   "role": "scout",
+   "prompt": "# Target\nThe frozen address 0x103fa0 used by five R26-C1 verbs on /usr/bin/jq.\n# Work\nWith host tools only (readelf, objdump, nm), check that file virtual address 0x3fa0 (Ghidra image base 0x100000 for this PIE) is a function start, which function it is (symbol, PLT, init, main), and whether any code references it (so `xrefs` is not trivially empty). Do not run REA.\n# Acceptance\nReport: commands, excerpts, and whether each address-taking verb's call is well-formed for this target."
+  },
+  {
+   "name": "SourceRowEvidence",
+   "role": "scribe",
+   "prompt": "# Target\nNew SOURCES row S079 for R26-C1: the installed rea-agents 6.5.0 evidence-id minting code.\n# Work\nRead the contract in /home/vgpnk/Projects/shokunin/CORPUS.md section `SOURCES.md \u2014 where a shokunin learns` and the row style in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md (for example S048, S056, S070). Open the 6.5.0 files that mint and project evidence ids (read-only; coordinate with seat KaidokuR26.RecomputeIds by message if you need the file names). Draft the exact table row (all 11 cells, status mined, opened 2026-10-22, used-by naming corpus/knowledge/2026-10-22-r26-native-reader-evidence-id-identity.md) and the lesson `## Gate` text: path, access date, sha256, a located quote of at most 25 words with its line.\n# Acceptance\nReport: the row and Gate text ready to paste, plus the commands that produced the sha256 and quote."
+  },
+  {
+   "name": "SourceRowRegistry",
+   "role": "scribe",
+   "prompt": "# Target\nNew SOURCES row S080: the npm registry record for rea-agents@6.5.0, the pin the R26-C1 runs use.\n# Work\nFetch https://registry.npmjs.org/rea-agents/6.5.0 by plain HTTP. Record dist.integrity, dist.shasum, version and publish time (from the packument https://registry.npmjs.org/rea-agents `time` field). Compare with the installed /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json and the npx cache metadata if present. Follow the row style of S037 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md and the contract in /home/vgpnk/Projects/shokunin/CORPUS.md.\n# Acceptance\nReport: the row (all 11 cells, status mined, opened 2026-10-22), the Gate text with URL, access date, sha256 of the fetched bytes and a quote of at most 25 words, and whether the installed package matches the registry record."
+  },
+  {
+   "name": "CustodyNote",
+   "role": "scribe",
+   "prompt": "# Target\nRouted defect 1 of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-25-verifier-spotcheck.md: the SKILL.md section `Explicit instrument-reference custody \u2014 round 25 prospective authority` and the registry row `round25-custody-ruler` say the candidate tools/round-25/instrument-custody.py is not implemented, while commit fafdd283 landed it and the claim was abandoned.\n# Work\nLocate every such statement in /home/vgpnk/Projects/shokunin/kaidoku-shokunin (SKILL.md, SCORECARD.md, LOG.md, lessons). Verify with read-only git what fafdd283 added and where the abandonment is recorded. Draft an append-only superseding note for SKILL.md (placed right after the section, no edits to filed bytes) and the replacement text for the registry row's status column if a status-cell change is needed; list each located line.\n# Acceptance\nReport: located lines with excerpts, the draft text with spaced words, and the commands used."
+  },
+  {
+   "name": "EntryCorrection",
+   "role": "scribe",
+   "prompt": "# Target\nRouted defect 4: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md says \"one complete 4byte.directory page and one openchain `filter=false` response per selector\"; the 138 responses are 2 per carrier-selector row (69 rows), not per distinct selector (43).\n# Work\nRe-derive 69, 43 and 138 from the committed evidence under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-25/ (manifests, carriers.tsv, tally output). Draft an append-only correction section for the entry that quotes the old phrase and states the corrected count with its command.\n# Acceptance\nReport: the commands and outputs for each number, the line number of the old phrase, and the correction text."
+  },
+  {
+   "name": "QualityRow",
+   "role": "scribe",
+   "prompt": "# Target\nRouted defect 5: the round-24 source disagreement (initial capinfos rejection, later S071 flip) has no QUALITY criterion.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-24-verifier-spotcheck.md, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-24.md, rows S066, S070, S071 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md (row style, last row 34). Decide whether the S071 flip already encodes the lesson; if not, draft QUALITY row 35 citing the spot-check by path and line, phrased as a checkable criterion with a way it can fail.\n# Acceptance\nReport: located evidence, the decision with reasons, and the row text."
+  },
+  {
+   "name": "LessonMistakes",
+   "role": "scribe",
+   "prompt": "# Target\n`## Mistakes` for /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-26.md (the L1 writes the file).\n# Work\nMine mistakes from round 25 and earlier with evidence pointers: the round-25 instrument false accepts (I4 first `| coverage |` row, C2 `opened` cell only; seat reports /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-25/a3/w1/C1Mutation.md and C2Mutation.md), the round-25 falsify wave that never ran (spot-check lines 18-23), and the report's Sources count from the attempt freeze instead of the lane-round base. For each: class, evidence pointer (path:line), captured-by (criterion or rule that should have caught it, or none), fix, and how the fix can be shown able to fail this round. Follow the format of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-25.md `## Mistakes`.\n# Acceptance\nReport: the Mistakes entries ready to paste."
+  },
+  {
+   "name": "ScorecardRows",
+   "role": "scribe",
+   "prompt": "# Target\nReplacement text for the SCORECARD.md `## Owned axes` depth, coverage and calibration rows and the SHONEN.md no-cross-domain-bleed asserted line, meeting R26-C2 items K1-K6 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-26/claims.json.\n# Work\nRun command A (SCORECARD.md `## Measurement recipes`, recipe A) in a sandbox clone at c27f445e70cedbaf5300b2fd0a53e821d9b659a9 and at the revisions you cite; read result.json measured_revision; compute the craft span H-L of SKILL.md. Draft new row text that keeps each row's limitations and history (old values stay as history clauses with their revisions) but whose first N/M token, measured revision and SKILL.md span are current. Note that R26-C1 will add one knowledge entry and one map row, so the coverage count will become 109/109 at the C1 commit; give the coverage row text with a placeholder revision named <C1-COMMIT> only for that one cell. For SHONEN, replace the stale contested clause with a pointer to PROVINCE.md's current pin lines.\n# Acceptance\nReport: the exact new lines, and for each of K1-K6 the observed value that makes it pass."
+  },
+  {
+   "name": "SiblingOverlap",
+   "role": "connector",
+   "prompt": "# Target\nSibling-lane overlap with R26-C1 (REA evidence-id identity, rea-agents 6.5.0 source rows) and R26-C2.\n# Work\nRead-only search of sibling lane repos under /home/vgpnk/Projects/shokunin/*-shokunin (not kaidoku) for evidence-id identity work, rea-agents source rows, or the same carrier, and the fleet MANIFEST.json for admitted sibling rounds that cite them.\n# Acceptance\nReport: overlaps with path:line, or the search commands showing none, and any contested scope to name in the report."
+  },
+  {
+   "name": "ReplayA",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack R26-C1 verdicts for analyze, decompile and xrefs with an independent replay.\n# Work\nCopy /usr/bin/jq to /fast/scratch/hyaku/kaidoku-r26/seats/ReplayA/alt2/jq and verify sha256. For each of the three verbs run the frozen argv once on /usr/bin/jq and once on your alt2 copy (6 calls). Save envelopes and a runs table under /fast/scratch/hyaku/kaidoku-r26/seats/ReplayA/. Compare your ids with the run seats' ids under /fast/scratch/hyaku/kaidoku-r26/seats/RunAnalyzeInspect/, /fast/scratch/hyaku/kaidoku-r26/seats/RunDecompileFunction/ and /fast/scratch/hyaku/kaidoku-r26/seats/RunXrefsInstructions/ if present.\n# Acceptance\nReport: your ids, whether your base ids equal the run seats' base ids (cross-session stability), whether your alt2 id equals their copy id (path dependence beyond one alternate), and a verdict per verb: holds, fails or could-not-evaluate."
+  },
+  {
+   "name": "ReplayB",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack R26-C1 verdicts for function, instructions, read-bytes, inspect and inspect-binary-layout with an independent replay.\n# Work\nCopy /usr/bin/jq to /fast/scratch/hyaku/kaidoku-r26/seats/ReplayB/alt3/jq and verify sha256. For each verb run the frozen argv once on /usr/bin/jq and once on your alt3 copy (10 calls). Save envelopes and a runs table under /fast/scratch/hyaku/kaidoku-r26/seats/ReplayB/. Compare with the run seats' ids under /fast/scratch/hyaku/kaidoku-r26/seats/Run*/ if present.\n# Acceptance\nReport: your ids, cross-session base stability, alt3 versus their copy id, and a verdict per verb."
+  },
+  {
+   "name": "EntryNumbers",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack the routed-defect-4 correction: the numbers 69 carrier-selector rows, 43 distinct selectors and 138 responses for /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-22-r25-evm-selector-name-resolution.md.\n# Work\nDerive the three numbers yourself from the committed evidence under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-25/ with commands of your own (do not reuse the lane tally tool). Check whether other sentences in the entry or /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/README.md repeat the per-selector wording.\n# Acceptance\nReport: each number with command and output, a verdict on the spot-check's statement, and every other location of the wording."
+  },
+  {
+   "name": "CustodyFacts",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack routed defect 1's premise: that commit fafdd283 landed tools/round-25/instrument-custody.py and that the attempt-1 claim was abandoned.\n# Work\nRead-only git in /home/vgpnk/Projects/shokunin/kaidoku-shokunin: `git show --stat fafdd283`, the file at the tip, its selftest if any (run it only in a sandbox clone), and the places recording the abandonment (SCORECARD round-25 sections, LOG, lesson round-25, corpus/claim-freezes.tsv).\n# Acceptance\nReport: verdict on each premise with evidence, and whether the tool runs (exit and excerpt) in the sandbox."
+  },
+  {
+   "name": "CapinfosFacts",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack routed defect 5's premise: the round-24 capinfos source disagreement and whether S071's flip already records the lesson.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-24-verifier-spotcheck.md, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-24.md, S066/S070/S071 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md and the QUALITY rows. Establish what was rejected, why, and what flipped it, with path:line.\n# Acceptance\nReport: timeline with path:line, and a verdict: a new QUALITY criterion is needed, or the flip already covers it (with reasons)."
+  },
+  {
+   "name": "C2BeforeManual",
+   "role": "reviewer",
+   "prompt": "# Target\nIndependent before-measurement of R26-C2 items K1-K6 at a0639d8e61e486e2a716ff94cddd89a73200a02c, without the lane counter.\n# Work\nWith plain git show, grep and command A (SCORECARD.md `## Measurement recipes` recipe A, run in a sandbox clone), evaluate each of K1-K6 as defined in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-26/claims.json.\n# Acceptance\nReport: per item the observed values, pass or mismatch, and the total; flag any rule whose wording is ambiguous."
+  },
+  {
+   "name": "C1Sizing",
+   "role": "critic",
+   "prompt": "# Target\nAttack the R26-C1 frozen statement versus its counting rules (claim sizing: the statement must not be wider than its counter).\n# Work\nRead R26-C1 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-26/claims.json. List every clause of the statement and say which rule checks it. Name false accepts the rules allow (for example envelopes from another pin or another carrier, a table copied from one run, a Gate section that names the id without a quote) and false rejects.\n# Acceptance\nReport: clause-to-rule table, false accepts and rejects with a concrete counterexample each, and the checks the falsify wave must run directly."
+  },
+  {
+   "name": "C2Cherrypick",
+   "role": "critic",
+   "prompt": "# Target\nAttack R26-C2's item selection: stale self-assessment statements outside K1-K6.\n# Work\nAt c27f445e70cedbaf5300b2fd0a53e821d9b659a9 read SCORECARD.md `## Owned axes`, the capabilities, planned, saturation and retired fields, and SHONEN.md; compare each self-assessment statement with observed repo state (commands, counts, files).\n# Acceptance\nReport: each further mismatch with path:line, observed value and command; label observation or inference. These are disclosures for the report, not new items."
+  },
+  {
+   "name": "PredictionCritic",
+   "role": "critic",
+   "prompt": "# Target\nBlind falsifier for the R26-C1 table: predict each verb's verdict from source before seeing results.\n# Work\nFrom the 6.5.0 package source only (read-only), predict for each of the eight verbs whether base and copy ids will be equal (content-keyed) or differ (path-sensitive), and whether repeats could differ (time stamps, random values in the hashed projection). Do not read the run seats' outputs until your predictions are written into your report draft; then compare.\n# Acceptance\nReport: predictions with file:line, then the comparison with whatever run outputs exist under /fast/scratch/hyaku/kaidoku-r26/seats/Run*/ at that time, naming every disagreement."
+  },
+  {
+   "name": "MutR25Calib",
+   "role": "mutation-tester",
+   "prompt": "# Target\nThe round-25 instrument /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-25/a2/c1-calibration.py false accepts (routed defect 3).\n# Work\nIn a sandbox clone at c27f445e70cedbaf5300b2fd0a53e821d9b659a9, build mutated commits: a decoy `| coverage |` row placed before `## Owned axes`, a SHONEN range pointing at PROVINCE Core tables inside the first `## Adjacent` span, and others you find. Confirm each is accepted by the round-25 instrument. Package each mutant as a patch file under /fast/scratch/hyaku/kaidoku-r26/seats/MutR25Calib/fixtures/ and message seat KaidokuR26.CounterC2 with the path.\n# Acceptance\nReport: mutant table with round-25 instrument results, and the fixture paths."
+  },
+  {
+   "name": "MutR25Coverage",
+   "role": "mutation-tester",
+   "prompt": "# Target\nThe round-25 instrument /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-25/a2/c2-coverage.py false accept \"reads only the opened cell\" (routed defect 3), as it bears on the R26-C1 `entry_ok` rule.\n# Work\nIn a sandbox clone, build mutants: a SOURCES row with opened 2026-10-22 that no lesson Gate mentions, a Gate that names the id without URL or quote, an entry whose source line names the row but not the table. Confirm the round-25 instrument's behaviour, then say which mutants the frozen R26-C1 entry_ok rule catches. Package mutants under /fast/scratch/hyaku/kaidoku-r26/seats/MutR25Coverage/fixtures/ and message seat KaidokuR26.CounterC1 with the path.\n# Acceptance\nReport: mutant table for both rules, and residual false accepts of entry_ok."
+  },
+  {
+   "name": "EnvelopePrivacy",
+   "role": "sentinel",
+   "prompt": "# Target\nWhether REA 6.5.0 envelopes for /usr/bin/jq are safe to commit to a public lane repo.\n# Work\nScan the L1 probe envelope /fast/scratch/hyaku/kaidoku-r26/l1/probe-ibl.json and any envelopes under /fast/scratch/hyaku/kaidoku-r26/seats/Run*/envelopes/ and /fast/scratch/hyaku/kaidoku-r26/seats/Replay*/ for host-private content: environment variables, tokens, user names beyond the home path, network addresses, file contents other than jq's bytes.\n# Acceptance\nReport: findings with JSON paths and excerpts (redact any secret), and a verdict: commit as is, commit with a stated redaction, or do not commit."
+  },
+  {
+   "name": "CensusCheck",
+   "role": "reviewer",
+   "prompt": "# Target\nSOURCES registry readiness for new rows S079 and S080.\n# Work\nRun `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` (read-only), count rows at a0639d8e61e486e2a716ff94cddd89a73200a02c with `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show a0639d8e:corpus/SOURCES.md | grep -cE '^\\| S[0-9]{3} \\|'`, check S079 and S080 are unused, and list the contract's per-row requirements from /home/vgpnk/Projects/shokunin/CORPUS.md that a new code or dataset row must meet (including Gate and duplicate-URL warnings).\n# Acceptance\nReport: census output and exit, row count, and a checklist for the two new rows."
+  },
+  {
+   "name": "FleetMisrootPrecheck",
+   "role": "scout",
+   "prompt": "# Target\nBaseline for the round-26 misroot sweep.\n# Work\nRun `git -C /home/vgpnk/Projects/shokunin status --porcelain` (read-only) now and list every untracked or modified path with its mtime. Mark any that already name kaidoku or round 26.\n# Acceptance\nReport: the list with times, so the L1 can tell later which fleet-root files appeared during this round."
+  }
+ ]
+}
