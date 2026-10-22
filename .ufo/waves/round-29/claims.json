@@ -1,0 +1,69 @@
+{
+  "round": "round-29",
+  "attempt": 1,
+  "frozen_by": "kaidoku L1 round 29, before any R29-C1 REA run, any R29-C1 lookup and any R29-C2 fetch",
+  "base": "bacbe9cc31d09b5e58e265b0138bd75d0cdb6b47",
+  "freeze_kind": "instruments-first: both counters with green and red selftests (C1 22 cases, C2 19 cases), the frozen carrier, selector and canonical-list inputs, the producers (carrier compiler, selection, pre-seen screen, both collectors) and the before receipts are committed in the same commit as this file, before any data either counter counts. Each counter refuses runs and lookups that started, and data files first committed, before its own commit.",
+  "screens_before_freeze": {
+    "hex": "python3 -I -B tools/round-28/hex-screen.py --root <LANE> corpus/evidence/round-29/c1/carriers.tsv -> carriers=16 fail=0, exit 0 (.ufo/waves/round-29/before/hex-screen-c1.txt; QUALITY row 43). Every runtime file is non-empty; the sources call no library, so no link placeholder exists.",
+    "preseen_c1_name": "python3 -I -B tools/round-29/preseen.py --root <LANE> --rev bacbe9cc31d09b5e58e265b0138bd75d0cdb6b47 --check corpus/evidence/round-29/c1/heldout.tsv --kind name -> overlap=0, exit 0 (before/preseen-c1-name.txt; QUALITY row 44)",
+    "preseen_c2_flag": "python3 -I -B tools/round-29/preseen.py --root <LANE> --rev bacbe9cc31d09b5e58e265b0138bd75d0cdb6b47 --check corpus/evidence/round-29/c2/selectors.tsv --kind flag -> overlap=0, exit 0 (before/preseen-c2-flag.txt)",
+    "selection_exclusions": "tools/round-29/select-heldout.py --base bacbe9cc dropped 26 of 178 ABI selectors before the freeze: 19 in round 25's 43 or round 28's 187, 7 found as a word somewhere in the lane (name_seen); it dropped the 10 canonical keys that already have an openchain response in the lane"
+  },
+  "instruments": {
+    "tools/round-29/c1-fresh-naming.py": "6ad79d1099730185bf867d98f6bb4f32c4a4a910bb346669fa2860b36993fdda",
+    "tools/round-29/c2-filtered-unseen.py": "00ca0a3d72515c2636c63f39785d799924dd6530f67cc8787b2a632817c5a801"
+  },
+  "loaded_by_counter": {
+    "tools/round-25/a2/resolve-selectors.py": "4be915668ea20a643d04c9b8ae3c83bc9f5fd1b4d8821e06cabdccce36b3c23d",
+    "corpus/evidence/round-29/c1/carriers.tsv": "94438ede707d98987af7d8a869aa5fdb5ac18872fb9cf57fe621e9593bdc6e9c",
+    "corpus/evidence/round-29/c1/heldout.tsv": "2db9e658d5076771ee249f9d027938103edb7933201abb4b391f1053323dca23",
+    "corpus/evidence/round-29/c2/selectors.tsv": "3a93f7837accb9acd66874707922317d9a8e0f8afb0c9cd87ee79f3d9fa15b5d",
+    "corpus/evidence/round-29/c2/canonical-signatures.json": "5572beb596c9062be042b11be4a8cbd6a875be67a518dc0046b220433878b3e2"
+  },
+  "producers_not_counters": {
+    "tools/round-29/make-carriers.py": "a629e066e549c09a6f7504ee278a15345b187e15dd3f2067835aad50859acae8",
+    "tools/round-29/select-heldout.py": "5545c86651c39618ee553c3780e5954e75b14c7524bff9c661b23f33d4a9f9f5",
+    "tools/round-29/preseen.py": "073381ca213573b8809a130cf3d958e0b253b4d56a7ce34079ef2f2b0c89d167",
+    "tools/round-29/collect-c1.py": "ff2e71274b6d3ea34e43ffb90b7324a86fd4e3f5792271f3c33e89e213602ec3",
+    "tools/round-29/collect-c2.py": "f5f37e71539d8d183b296f87cc70f41f5922cfe3189ebab06c93d537219108bc"
+  },
+  "pre_freeze_probe": {
+    "what": "none. No REA call, no 4byte.directory or openchain request was made this round before this commit. The L1 read the canonical list (an input of the rule, not an answer) and two Sourcify source files and the ERC-4626 text (S087, S088).",
+    "utc": null
+  },
+  "claims": [
+    {
+      "id": "R29-C1",
+      "axis": "coverage (learning claim: PROVINCE Frontier bullet 'EVM bytecode (extended)', selector naming on carriers the lane has never held)",
+      "kind": "held-out test of the round-25 naming rule on fresh carriers: round 28's test used the lane's own carriers and lane-invented names and missed one carrier on an unscreened input (M28-1); this round compiles 16 new carriers from published interface lists, screens them before the freeze and drops every selector the lane has written down anywhere",
+      "statement": "On the 16 carriers in corpus/evidence/round-29/c1/carriers.tsv (compiled this round by tools/round-29/make-carriers.py with solcjs 0.8.37, hex-screened 16/16 before this freeze) and the 152 distinct selectors among them in heldout.tsv (none in round 25's 43 or round 28's 187; none present as a word in any lane file at the base), the committed tally corpus/evidence/round-29/c1/tally.json scores the round-25 rules, unchanged, against each compiler ABI, from one REA 6.5.0 inspect-evm-interface call per carrier and one saved 4byte.directory and openchain lookup set per selector, all made after this freeze. A knowledge entry states the primary rule's named/right/wrong triple and cites S088 in its source: line, a SOURCES row new since the base, opened 2026-10-22, status mined, listed in corpus/lessons/round-29.md ## Gate.",
+      "primary_rule": "openchain_sole_unfiltered_args_consistent (round-25 rule 5; unchanged from tools/round-28/c1-heldout-naming.py)",
+      "scoring_unit": "one row per held-out selector; REA's inferred arguments come from the selector's frozen carrier (heldout.tsv column 3); a selector REA does not recover on that carrier gets no name from any rule and counts as no_name",
+      "claim_row": "S088",
+      "invocation": "python3 -I -B tools/round-29/collect-c1.py runs; python3 -I -B tools/round-29/collect-c1.py lookups; python3 -I -B tools/round-29/c1-fresh-naming.py --root <LANE> --emit-tally > corpus/evidence/round-29/c1/tally.json",
+      "counting_command": "python3 -I -B tools/round-29/c1-fresh-naming.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV>",
+      "before": {"runs_ok": 0, "rows_complete": 0, "tally_equal": 0, "entry_ok": 0, "exit": 2, "why": "the frozen lists are absent at the base", "receipt": ".ufo/waves/round-29/before/c1-at-bacbe9cc.txt"},
+      "target": {"runs_ok": "16/16", "rows_complete": "152/152", "tally_equal": 1, "entry_ok": 1, "exit": 0},
+      "hypothesis_reported_not_target": "H1: the primary rule's wrong count is at most 5% of its named count. H2: the primary rule names at least half of the 152 rows, because the names come from published interfaces that the databases hold. Both are reported as observed; neither decides the claim.",
+      "limits": "Carriers are compiled stubs that hold a published function list and only read their arguments; they are not deployed contracts and carry no event or error lists. One compiler (solcjs 0.8.37, no optimizer), one REA pin, one lookup snapshot. The held-out screen removes selectors the lane wrote down, not selectors the L1 or the models may know: the names are well known by design, so H2 tests database recall on public names, not the rule on obscure ones."
+    },
+    {
+      "id": "R29-C2",
+      "axis": "depth (learning claim: what openchain's filtered flag means, tested on selectors never fetched)",
+      "kind": "held-out test of a sourced mechanism: the rule read from Sourcify's filterResponse (S084 at master 189cd726; S087 re-opened at staging 0966a3bc, identical bytes) predicts the live flag on selectors with no openchain response in the lane at the base; round 28's test of the same rule was a re-observation (M28-4)",
+      "statement": "For each of the 178 selectors in corpus/evidence/round-29/c2/selectors.tsv (26 canonical-list keys with no openchain response in the lane at the base, and the 152 R29-C1 held-out selectors, none of them a canonical key), one openchain filter=false response fetched after this freeze is committed; on every candidate entry in those responses, filtered is true exactly when the selector is a key of the pinned canonical-signatures.json and the name differs from that key's signature (a key with no signature: every candidate), mismatches 0, with both branches present on unseen data (predicted_true >= 1 and predicted_false >= 1). A knowledge entry states 'mismatches M of N entries' and cites S087 in its source: line, a SOURCES row new since the base, opened 2026-10-22, status mined, listed in corpus/lessons/round-29.md ## Gate.",
+      "claim_row": "S087",
+      "invocation": "python3 -I -B tools/round-29/collect-c2.py (after this freeze commit)",
+      "counting_command": "python3 -I -B tools/round-29/c2-filtered-unseen.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV>",
+      "before": {"responses_complete": 0, "entries": 0, "mismatches": 0, "predicted_true": 0, "predicted_false": 0, "entry_ok": 0, "exit": 2, "why": "the pinned inputs are absent at the base", "receipt": ".ufo/waves/round-29/before/c2-at-bacbe9cc.txt"},
+      "target": {"responses_complete": "178/178", "entries": ">= 1", "mismatches": 0, "predicted_true": ">= 1", "predicted_false": ">= 1", "entry_ok": 1, "exit": 0},
+      "separation": "An alternative the test separates (M28-5): a service that sets filtered from hasVerifiedContract, or that marks every non-first candidate filtered, would give mismatches on the c1 set, where the rule predicts false for every entry; a service that applies a list other than the pinned one would give mismatches on any of the 26 canonical keys whose kept signature differs. A deployed list equal to the pinned one on these 26 keys but different elsewhere is not separated.",
+      "limits": "The deployed revision behind api.openchain.xyz is assumed. One fetch instant. Says nothing about result order or hasVerifiedContract. The c1 set and the canonical set come from the same freeze; C2 counts only its own fetch, never R29-C1's lookups."
+    }
+  ],
+  "not_claimed": [
+    "Calibration is not claimed.",
+    "Hygiene for the six routed defects of corpus/lessons/round-28-verifier-spotcheck.md is recorded in the SCORECARD round-29 section, not as claims."
+  ]
+}
