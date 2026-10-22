@@ -908,3 +908,29 @@ Decision rules:
 - Recompute an id offline with `python3 -I -B tools/round-26/recompute-ids.py <envelope>` before
   trusting it; a match shows the envelope's hashed fields are intact, not that the run was the
   one claimed (`.meta.command` and the call record say that).
+
+## Evidence-ID identity under a renamed copy and on a second carrier — round 27
+
+This section narrows the round-26 table above for `analyze` and `inspect`: they are
+content-keyed across directories only while the file extension class stays the same. Source:
+`corpus/knowledge/2026-10-22-r27-renamed-copy-evidence-id-identity.md` (table
+`corpus/evidence/round-27/c1/table.tsv`, carriers `/usr/bin/jq` and `/usr/bin/tinyxxd` (S082);
+mechanism in the 6.5.0 package, S079 family, `dist/ghidra/GhidraTargetSnapshot.js:13-14`, `:76-78`).
+
+| verb at `rea-agents@6.5.0`, same bytes at two paths | id across a copy with another directory, name and extension | what decides it |
+|---|---|---|
+| `decompile`, `xrefs`, `read-bytes`, `function`, `instructions` | equal on both carriers | no hashed field carries the path, name or extension |
+| `analyze`, `inspect` | differs when the extension class differs (`.dat` against none) | `normalized_result.document` is the Ghidra program name `target-<sha256[0:12]><suffix>`; suffix = the extension if it matches `^\.[A-Za-z0-9]{1,12}$`, else `.bin` |
+| `inspect-binary-layout` | differs whenever the path string differs | the path is hashed in three places |
+
+Decision rules:
+
+- Before comparing `analyze` or `inspect` ids of one file stored under two names, map each name's
+  extension through the suffix rule; if the suffixes differ, compare `.data.subject.digest.sha256`
+  instead. A differing `normalized_result.document` suffix explains the id change; do not report
+  it as a content change.
+- When collecting carriers for an identity table, never rename a copy's extension unless the
+  extension is the variable under test; the round-26 directory-only control kept the name `jq`.
+- A frozen counter that refuses duplicate envelope bytes must allow two genuine runs that return
+  byte-identical envelopes: a fast verb can repeat `meta.duration` to the millisecond (tinyxxd
+  `inspect-binary-layout`, `132ms` twice; lesson M27-2 in `corpus/lessons/round-27.md`).
