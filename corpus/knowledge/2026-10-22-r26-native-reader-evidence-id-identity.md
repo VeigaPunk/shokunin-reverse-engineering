@@ -87,13 +87,15 @@ Changing `subject.local_path` in an envelope leaves the recomputed id unchanged;
 
 The id values in the table are 6.5.0 values. Diffing the installed 6.5.0 and 6.7.0 packages
 (seat report `.ufo/waves/round-26/w1/PinSourceDiff.md`) found two causes of different ids for the
-same bytes and request: 6.7.0's projection always emits `relationship_coverage`, which 6.5.0
-omits when it is null (`dist/domain/evidence.js:175-178` in each package), and 6.7.0's
-`function` result carries changed `analysis_profile.parameters` names. Live pairs on
+same bytes and request: 6.7.0's projection emits `relationship_coverage` whenever the key is
+present, while 6.5.0 omits it when it is null (`dist/domain/evidence.js:175-177` in 6.5.0, `:178` in
+6.7.0; 6.7.0 also dropped the schema default, so its parser rejects records without the key), and
+6.7.0's `function` result changes two `analysis_profile.parameters` values (keys unchanged). Live pairs on
 `/usr/bin/jq` confirm it: `inspect-binary-layout` 6.5.0 `ev_294a449c…` versus 6.7.0
 `ev_d1256a96…`, `function` `ev_b2b7e9e4…` versus `ev_177586c6…`. The lane's stored 6.7.0
-envelopes (arc3 rounds 7, 10, 11, 12) recompute exactly under the 6.7.0 rule and never under the
-6.5.0 rule. So compare ids only within one pin and one provider build: the hashed provider identity
+records from arc3 rounds 7, 10, 11 and 12 (145) all recompute under the 6.7.0 rule; the 133 with a
+null `relationship_coverage` never recompute under the 6.5.0 rule, and the 12 round-12 records with
+a non-null value recompute under both (seat report `.ufo/waves/round-26/w2/PinDiffCheck.md`). So compare ids only within one pin and one provider build: the hashed provider identity
 includes the observed Ghidra version (`12.1.4` here), and the 6.5.0 source accepts any 12.1.x build
 (`dist/ghidra/GhidraInstallationPolicy.js:39,44,50`, seat report `.ufo/waves/round-26/w2/EntryOverreach.md`);
 changing only that string in a committed envelope changes the recomputed id for `decompile`,

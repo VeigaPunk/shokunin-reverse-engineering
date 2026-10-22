@@ -194,7 +194,8 @@ Command (read-only, committed evidence under `corpus/evidence/round-25/a2/c2/`):
 69 rows x 2 responses = 138 saved responses; 138 = 2 x 69 carrier-selector rows, not 2 x 43
 distinct selectors. Per kind, 16 of the 43 selectors were fetched for more than one carrier
 (26 extra copies); those copies are byte-identical across carriers, so the 138 files hold 43
-distinct 4byte bodies and 43 distinct openchain bodies. All 138 manifest entries still re-check
+distinct openchain bodies and 35 distinct 4byte bodies (nine selectors return the same empty-result
+4byte body; round-26 falsify seat `.ufo/waves/round-26/w2/EntryCorrectionReview.md`). All 138 manifest entries still re-check
 equal to their manifest `sha256` with `status` 200. `corpus/evidence/round-25/a3/c2/analyze/
 tally.json` carries the same pair: `per_carrier_rows.selector_rows` = 69 and
 `distinct_selectors.selector_rows` = 43. Apart from the carrier count below, nothing else in the entry changes: the rule scores are per
@@ -202,4 +203,4 @@ carrier row (69) and per distinct selector (43) as stated, and the `filter=true`
 "Limits" was already once per distinct selector (43 responses in
 `corpus/evidence/round-25/a3/c2/filter-true/manifest.json`).
 
-Second correction (round 26 wave-1 seat `.ufo/waves/round-26/w1/EntryNumbers.md`): line 51 says shared ERC-20 selectors "appear in up to four carriers". The measured maximum is three (selectors per carrier count: 27 on one carrier, 6 on two, 10 on three, none on four; for example `095ea7b3` on rv2token, kdxtoken and stewardtoken).
+Second correction (round 26 wave-1 seat `.ufo/waves/round-26/w1/EntryNumbers.md`): line 51 says shared ERC-20 selectors "appear in up to four carriers". The measured maximum is three (selectors per carrier count: 27 on one carrier, 6 on two, 10 on three, none on four; for example `095ea7b3` on rv2token, kdxtoken and stewardtoken). The same line calls them "shared ERC-20 selectors"; only 5 of the 16 shared selectors are ERC-20 standard functions.
