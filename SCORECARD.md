@@ -3315,3 +3315,7 @@ The input-author item received a provider cyber-policy refusal and later automat
 Reachable source/repair work is recorded in LOG and `corpus/lessons/round-33.md`: S101/S102 support a technical table and knowledge entry, while timestamp, disk and selectable-freeze selftest fixes retain separate red/green evidence. Source fidelity and isolated instrument selftests are not the original 32-row claim.
 
 - planned (only after a new steer): work another admissible frontier; do not recreate or reroute the held fixture-author item, reuse C2v3, or widen hybrid coverage from metadata alone.
+
+### Final independent evidence, not the original target
+
+Measured `49a6a1c52ccbaad0e747e2e64a8a7e85988ad29a`: isolated selftests 107/36/11 and repair selftests 5/17/3 pass; source-text quality 15/15 after the asymmetric-normalization fix; strict round-33 timestamps exit 0 without exemptions, and the legacy round-32 scope exits 0 only with five exact-line hash-bound allowances. Commands, immutable revision and all streams are `.ufo/waves/round-33/after/main-verification.json`. Source rows 100→102 are curation, not expansion or an axis score. These unlike quantities do not discharge R33-C1: before/after remain not evaluated, target unchanged, verdict unprovable / honest stop, scores 10→10, delta 0.

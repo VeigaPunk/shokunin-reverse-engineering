@@ -1,0 +1,22 @@
+LIMITATION	quoted-prose	quoted-prose limitation: the scan is lexical, so a command quoted, echoed, commented, or cited in prose is indistinguishable from an executed command. RED hits can be false positives, and GREEN lines do not prove execution.
+LIMITATION	scope	scope limitation: only an explicit /fast/scratch argument in the same simple command is seen; cwd (cd /fast/scratch && find .), variables, aliases, and command substitution are not resolved.
+SELFTEST	PASS	red-literal-find	[(1, 'RED', 'bare-find')]
+SELFTEST	PASS	red-literal-du	[(1, 'RED', 'bare-du')]
+SELFTEST	PASS	green-absolute-find	[(1, 'GREEN', 'absolute-find')]
+SELFTEST	PASS	green-absolute-du	[(1, 'GREEN', 'absolute-du')]
+SELFTEST	PASS	green-unrelated-path	[]
+SELFTEST	PASS	green-prefix-boundary	[]
+SELFTEST	PASS	red-env-wrapper	[(1, 'RED', 'bare-find')]
+SELFTEST	PASS	red-relative-path	[(1, 'RED', 'other-path-find')]
+SELFTEST	PASS	red-du-option	[(1, 'RED', 'bare-du')]
+SELFTEST	PASS	red-after-and	[(1, 'RED', 'bare-find')]
+SELFTEST	PASS	green-red-mixed	[(1, 'GREEN', 'absolute-du'), (1, 'RED', 'bare-du')]
+SELFTEST	PASS	quoted-prose-limitation	[(1, 'RED', 'bare-find')]
+SELFTEST	PASS	joined-continuation	[(1, 'RED', 'bare-find')]
+SELFTEST	PASS	green-prose-slash-compound	[]
+OUTER	PASS	outer-red-literal-find	exit=1	hits=[('RED', '/fast/scratch/hyaku/kaidoku-r33/R33DiskGuard/selftest-fixtures-0u9x4gwg/red-literal-find.txt:1', 'bare-find')]
+OUTER	PASS	outer-green-absolute	exit=0	hits=[('GREEN', '/fast/scratch/hyaku/kaidoku-r33/R33DiskGuard/selftest-fixtures-0u9x4gwg/green-absolute.txt:1', 'absolute-find'), ('GREEN', '/fast/scratch/hyaku/kaidoku-r33/R33DiskGuard/selftest-fixtures-0u9x4gwg/green-absolute.txt:2', 'absolute-du')]
+OUTER	PASS	outer-missing-file	exit=2	hits=[]
+CLEANUP	PASS	/fast/scratch/hyaku/kaidoku-r33/R33DiskGuard/selftest-fixtures-0u9x4gwg
+SELFTEST SUMMARY	lexical=14	outer=3	cases=17	pass=17	fail=0	cleanup=PASS
+RESULT	PASS
