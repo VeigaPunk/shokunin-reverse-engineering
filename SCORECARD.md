@@ -3238,3 +3238,30 @@ Width disclosures: C1's 16 carriers are one producer's release (uv 0.13.0), 5 di
 - Axis fit before data: C1 fit narrowly (positive extraction is new governed ground, not a new verb; token gates do not prove Core governance), C2 fit (trivial predictors 0–2 of 19) (`CriticAxisFitC1.md`, `CriticAxisFitC2.md`).
 - Containment: a seat tool rewrote 4 carriers in place (M30-2, caught by the pin check, restored, `chattr +i`); sentinel mediums on GIT_DIR redirection and record-controlled paths (`SentinelNoExec.md`); runs unset GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE.
 - planned: depth or coverage — `inspect-rust-binary` refusal signatures on PE and Mach-O containers (section-table edits) and the 256 MiB/8 MiB bounds, with a counter that compares the full refusal envelope (M30-3) and distinct-branch mutants for the shared-message pairs; second choice: calibration on the lane's SHONEN/SCORECARD pointer set with `axis-fit-gate.py` run before data.
+
+
+## Round 31 — `inspect-sqlite-database`: database-scope schema on 12 published SQLite files, and 23 refusal/edge outcomes predicted from code
+
+Base `c369242fee9f559f895e3f7956b1242076c7b1be`. Outside decision on round 30 (`corpus/lessons/round-30-verifier-spotcheck.md`): admitted, coverage and depth improved, calibration unchanged; its 8 routed defects are dispositioned in `corpus/lessons/round-31.md`. Anti-loop: leaves REA's Rust reader for its SQLite reader. Instruments, carriers, predictions and claims frozen at `35ba7c52` (04:05Z); before receipts at `c369242f` exit 2 for both (`.ufo/waves/round-31/before/`). Pre-data control wave `w1` (44 seats); control receipts committed at `7474d269`, none met a target; data `f368a101`; docs `0007731e`.
+
+Lowest-axis basis: coverage, depth and calibration are tied at 10 at the base (owned-axes rows above), none retired (`Verdicts, planned, retired`: "retired: none"); on a tie every owned axis is a lowest axis, so both claims satisfy the rule. Recorded in `claims.json` before data (round-30 routed defect 5).
+
+| claim | axis (surface moved) | before (at `c369242f`) | after (at `0007731e`) | counting command | verdict |
+|---|---|---|---|---|---|
+| R31-C1 `inspect-sqlite-database --schema-scope database` on 12 published files vs an independent reader; entry citing S096 | coverage — PROVINCE Core gains the operation (unmoved: `git show <REV>:PROVINCE.md \| grep -c -E 'inspect[_-]sqlite[_-]database'` gives 0 at the base) | exit 2 (`PIN pinned input absent`); PROVINCE 0 rows; one inventory-scope run in knowledge (l7-04) | `carriers=12 pass=12 target=12 entry_ok=1 (ok) province_ok=1 (ok)`, exit 0 (`.ufo/waves/round-31/after/c1-sqlite-positive-at-0007731e.txt`) | `python3 -I -B tools/round-31/c1-sqlite-positive.py --root <LANE> --rev <REV>` | target met as measured; pre-data axis ruling narrow fit (`w1/CriticAxisFitC1.md`) |
+| R31-C2 refusal/edge signatures of the 6.5.0 SQLite reader predicted from code (S092); SKILL decision table | depth — SKILL.md gains a 23-row decision table (unmoved: `git show <REV>:SKILL.md \| grep -c inspect-sqlite-database` gives 0 at the base) | exit 2 (predictions absent) | `requests=23 matches=23 target=23 entry_ok=1 (ok) skill_ok=1 (ok)`, exit 0 (`after/c2-sqlite-refusals-at-0007731e.txt`) | `python3 -I -B tools/round-31/c2-sqlite-refusals.py --root <LANE> --rev <REV>` | target met as measured; pre-data axis ruling fit (`w1/CriticAxisFitC2.md`) |
+
+Correction to R31-C1's frozen surface sentence (M31-1): "a verb the lane has never run or named" is false; `corpus/knowledge/2026-10-16-l7-04-inspect-sqlite-database.md` holds one path-only inventory run (luna-round-6/7). The PROVINCE zero holds under every spelling; the new ground is the first Core row and the database-scope reading on 12 files.
+
+Owned-axes rows: coverage and depth refreshed to their `c369242f` recount (116/116, 17/17; routed defect 5), scores unchanged at 10; both claims are recorded here. Freeze integrity: `tools/round-31/freeze-integrity.py` CLEAN at `0007731e` (`after/freeze-integrity-at-0007731e.txt`).
+
+Width disclosures: C1's 12 carriers are 12 distinct schemas in 3 families (PROJ, Chinook, GeoPackage), all UTF-8 without WAL; kinds and columns in the oracle come from libsqlite3 (shared upstream with REA, different build), names/declarations/root pages from a pure-Python file parser. C2's mutants derive from one carrier; five messages are shared by 2–3 requests; at 6.7.0 two budget rows would change (static reading).
+
+### Round-31 wave-1 findings (`w1`, 44 seats, `.ufo/waves/round-31/w1/`)
+
+- Shape: one v1 control-and-build wave of 44 (scribe 11, critic 10, mutation-tester 9, reviewer 5, executor 3, revenger 2, scout 2, sentinel 1, connector 1), validated under policy v1, dispatched as one task call at 04:09Z.
+- Controls (none met a target): C1 do-nothing 0/12, junk-row 0/12, all-false 0/12, no-reader 0/12, id-rotated shortcut 0/12, Core-placement shortcut `province_ok=0`; C2 do-nothing, junk-row, all-accept and predictions-copied-as-observations 0/23 (round 30's copied-predictions control scored 16/19), id-rotated shortcut 1/23, after-freeze amendment 0/23 (caught only by the new freeze-integrity gate, M31-2).
+- Predictions traced to code before data: 13 of 13 `m-*` rows agree (`RevPredTraceB.md`); pointers 21 exact, 14 contain, 1 adjacent, 0 wrong (`ReviewPointers.md`).
+- Mutation (findings; frozen counters not edited): C1 judge 8/18 killed, C2 judge 9/24, oracle 8/12 (4 invisible on these carriers).
+- Counter limits found: write mode prints the target line without the committed clause (M31-3); post-freeze edits of frozen inputs unseen by the counters and the round-30 prefreeze gate (M31-2); doc gates are substring checks.
+- Containment: carriers, mutants and downloads `chattr +i` before dispatch, every pin intact (`SentinelContainment.md`); one seat ran `git commit` in the fleet repo (no commit; M31-7).
