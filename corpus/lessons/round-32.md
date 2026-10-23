@@ -66,3 +66,11 @@ Frozen-instrument findings are retained, not silently repaired:
 - `a2audit/A2SelftestHoles.md`: five of eight bounded mutations survive the existing selftests; four concern C1 committed/source clauses and one C2's exact five-word threshold. These are frozen-test limitations, not claimed repairs.
 - `a2audit/A2FreezeBytes.md`: C2's word tokenizer admits hyphens while prose says letters; Core exclusion matching is case-sensitive. These are disclosed boundary differences, not post-freeze amendments.
 - The reused freeze-integrity gate has no self-invocation mode; its registry names that conformance limitation.
+
+## Independent witness, inherited scratch and dispatch accounting
+
+`a2audit/A2PEIndependent.md` reports a separately authored stdlib byte reader, created before its oracle witness, with 372/372 label/oracle/LLVM comparisons. Reproduction inputs/scripts and original outputs are committed under `independent-pe/`. The byte scan corroborates both export directories and code-map tags; it does not observe a loader, EC execution or internal function analysis. The archived comparator has no selftest and retains its original absolute scratch BASE.
+
+All seven inherited untracked w1 dispatch/registry files were discarded after their names, hashes, roster and uncertainty were re-derived into `attempt1-discard.json`. None supplies claim outcomes. The scratch filesystem outside the lane is not swept; original immutable carrier bytes remain pinned.
+
+The 32-seat attempt-2 audit wave settled completely, with no dead/cancelled seats (`a2audit-settle.json`). Three executor and seven reviewer sessions encountered nonterminal 429-driven configured fallbacks; exact excerpts/model histories are retained, and no safety-filter switch was observed. Residual review is a single ordinary eight-seat reviewer/critic payload, not a padded 32-seat second wave. Its first task call was refused at the actual 100-job ceiling; under Main's 07:10Z ruling the same eight names/order/content were resent and accepted. The two failed async gate acquisitions spawned no task seats; inline acquisition granted the slots. `a2residual-dispatch.json` retains these distinctions.
