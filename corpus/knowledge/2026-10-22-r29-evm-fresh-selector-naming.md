@@ -104,3 +104,5 @@ candidate with `filtered: false` whose parameter list matches REA's inferred arg
 to abstain when an argument is `bytes32` (REA infers `uint256`) or `string` (REA infers `bytes`),
 and when a spam name shares the same argument list. On these 152 fresh rows it named 80% and was
 never wrong.
+
+Correction (R29-C1 carrier provenance, round 30, routed defect 5 of `corpus/lessons/round-29-verifier-spotcheck.md`): only carrier n04 rests on an opened source (S088); the other 15 lists were written from the L1's knowledge of the standards and are author-selected names, not opened published interfaces.

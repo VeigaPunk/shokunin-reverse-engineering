@@ -78,6 +78,8 @@ A row is written when its file exists, never before.
 | openchain `filtered` flag mechanism (round 28) | `2026-10-22-r28-openchain-filtered-flag` | held narrowly — Sourcify `filterResponse` at commit `189cd726` marks `filtered` only for the 36 canonical-list selectors whose candidate name differs from the kept signature; live test on 230 openchain responses: mismatches 0 of 246 entries, 59 predicted true; deployed revision assumed, one fetch instant |
 | EVM selector naming on fresh published-interface carriers (round 29) | `2026-10-22-r29-evm-fresh-selector-naming` | measured — the round-25 primary rule scored unchanged on 152 held-out selectors (none written anywhere in the lane) from 16 fresh, hex-screened carriers: named 122, right 122, wrong 0, no name 30 (24 `bytes32` inferred as `uint256`, 3 `string` as `bytes`, 3 spam ties); one compiler, one REA pin, one lookup snapshot; stubs, not deployed contracts |
 | openchain `filtered` flag on never-fetched selectors (round 29) | `2026-10-22-r29-openchain-filtered-unseen` | held narrowly — the S084/S087 rule predicted the flag on 178 selectors with no prior response in the lane: mismatches 0 of 252 entries, 38 predicted true, 214 false; 6 of the 31 kept canonical signatures do not hash to their key, so every candidate under those keys is filtered; deployed revision assumed, one fetch instant |
+| `inspect-rust-binary` positive class (round 30) | `2026-10-23-r30-rust-auditable-positive` | held — REA 6.5.0 reads the full cargo-auditable `.dep-v0` graph exactly (packages, edges, root, kind, offset, size) on 16 of 16 uv 0.13.0 wheel members in ELF, PE and thin Mach-O; 5 distinct package documents, one producer, one pin |
+| `inspect-rust-binary` refusal signatures (round 30) | `2026-10-23-r30-rust-auditable-refusals` | held narrowly — 19 of 19 code-predicted accept/refuse outcomes with exact messages on ELF x86_64 mutants of one carrier; 13 of 16 refusals carry the message only in `error.details.issues` |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -174,6 +176,8 @@ A row is written when its file exists, never before.
 | `2026-10-22-r28-openchain-filtered-flag` | What sets openchain's `filtered` flag, from Sourcify code, tested on 230 live responses | S084, S085, S078, S076; 230 saved responses in `corpus/evidence/round-28/c2/db/` | 2026-10-22 |
 | `2026-10-22-r29-evm-fresh-selector-naming` | Held-out score of the round-25 EVM naming rules on 152 never-seen selectors from 16 fresh published-interface carriers; why 30 rows get no name | S088; 16 REA 6.5.0 envelopes and 304 saved lookups in `corpus/evidence/round-29/c1/` | 2026-10-22 |
 | `2026-10-22-r29-openchain-filtered-unseen` | openchain's `filtered` flag predicted from code on 178 never-fetched selectors; mis-keyed canonical entries | S087; 178 saved responses in `corpus/evidence/round-29/c2/db/` | 2026-10-22 |
+| `2026-10-23-r30-rust-auditable-positive` | REA 6.5.0 `inspect-rust-binary` on images that carry a `.dep-v0` section: exact package graph on 16 uv carriers across ELF/PE/Mach-O | S089, S091; 16 envelopes in `corpus/evidence/round-30/c1/` | 2026-10-23 |
+| `2026-10-23-r30-rust-auditable-refusals` | REA 6.5.0 `inspect-rust-binary` gate order and refusal messages, predicted from code and observed on 19 mutants | S090; 19 envelopes in `corpus/evidence/round-30/c2/` | 2026-10-23 |
 
 ## Lessons
 | entry | round | gist |
@@ -223,3 +227,6 @@ A row is written when its file exists, never before.
 - R4 recheck reports `skill:identity` as `config_drift` (`37/170/stale`): the shared `~/.agents/skills` copy matches the bundled v37 skill byte-for-byte, but the `~/.claude/skills` destination is missing; destination drift, not content drift (`corpus/knowledge/2026-10-13-r4-16-frontier-rescan.md:31-40`; corroborated by `corpus/knowledge/2026-10-13-doctor-taxonomy.md:76-81` and `corpus/knowledge/2026-10-13-r2-doctor-reverify-r2.md:30-33`).
 - LOG.md discipline during parallel waves: a lane's dispatch scope overrides ambient append rules — encode explicitly in future wave prompts.
 - Criterion-5 (observation/inference labels) is not uniformly applied in round-1 entries — violations recorded as errata; applies to all future entries at write time.
+
+
+Correction (R29-C1 carrier provenance, round 30): only carrier n04 rests on an opened source (S088); the other 15 lists were written from the L1's knowledge of the standards and are author-selected names, not opened published interfaces (rows 79 and 175 above).

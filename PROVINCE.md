@@ -326,3 +326,15 @@ providers, macOS-only surfaces, EVM bytecode extended) is unchanged by this roun
   over 6.5.0-produced evidence objects, not a 6.7.0 run.
 
 Round-27 outcome note (appended after the falsify wave): R27-C1 missed its frozen target (15 of 16 rows under its counter; one genuine byte-identical repeat refused), and the identity lines above hold for the Ghidra provider on Linux with extensions that do not change the route; see the corrections section of `corpus/knowledge/2026-10-22-r27-renamed-copy-evidence-id-identity.md`.
+
+## Round-30 `inspect-rust-binary` positive class and refusal signatures — 2026-10-23
+
+Addition to Core (the Core table above is not rewritten; the Frontier list is unchanged by this round):
+
+| Surface | Ports / keys | Probe | Verified evidence |
+|---|---|---|---|
+| Rust dependency metadata (cargo-auditable `.dep-v0`) via `inspect-rust-binary` | none (REA's own container and zlib/JSON reader, provider-free); `rea-agents@6.5.0` | `inspect-rust-binary <image> --format json --full-output` on an image carrying one `.dep-v0` section (ELF, PE, thin Mach-O; `__DATA,.dep-v0` on Mach-O) | 16 of 16 uv 0.13.0 PyPI wheel members (ELF x86_64/aarch64/riscv64, PE x86_64/arm64, Mach-O x86_64/arm64): package multiset, edges, root, kind, section offset and size equal an independent decode (`corpus/knowledge/2026-10-23-r30-rust-auditable-positive.md`, ids in its Results table); 19 of 19 code-predicted accept/refuse signatures on ELF mutants (`corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md`; decision table in SKILL.md) |
+
+Before round 30 the lane held only `auditable_metadata: null` runs of `inspect-rust-binary` (no section). Limits: one producer (5 distinct package documents across 16 carriers), one pin, Linux host; the embedded list is file content and is not authenticated by REA.
+
+Correction (R29-C1 carrier provenance, round 30, routed defect 5 of `corpus/lessons/round-29-verifier-spotcheck.md`): only carrier n04 rests on an opened source (S088); the other 15 lists were written from the L1's knowledge of the standards and are author-selected names, not opened published interfaces.

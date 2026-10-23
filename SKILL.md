@@ -962,3 +962,42 @@ Decision rules:
 | round29-C2 | gate / kaidoku | `python3 -I -B tools/round-29/c2-filtered-unseen.py --root <LANE> --rev <REV> [--base <BASE>]`; 0 responses_complete=178/178 entries>=1 mismatches=0 predicted_true>=1 predicted_false>=1 entry_ok=1, 1 otherwise, 2 pin failure. Rule from S084/S087 `filterResponse`; a key with no `signature` filters every candidate; entry_ok needs row S087. `predicted_true` is computed from names and the list, so only `mismatches` tests the rule | `python3 -I -B tools/round-29/c2-filtered-unseen.py --selftest`: 19 cases incl. `red-cites-other-new-row`, `red-no-false-branch`, pin refusal. Green at freeze (`before/c2-selftest.txt`) and at `18be864a`. Mutation: a case-insensitive name compare survives (`w1/MutC2Counter.md`) | Counter sha256 00ca0a3d72515c2636c63f39785d799924dd6530f67cc8787b2a632817c5a801; loads selectors.tsv 3a93f783…, canonical-signatures.json 5572beb5…; writes only private temp dirs |
 | round29-freeze | gate / kaidoku (hygiene; QUALITY row 46) | `python3 -I -B tools/round-29/freeze-gate.py --root <LANE> --rev <REV> [--require-clean round-N]... [--disclosures corpus/claim-freezes-v2.tsv]`: the round-24 gate over every `.ufo/waves/round-*/claims*.json` (key `round-N` or `round-N/<file>`), reading `instruments`, `loaded_by_counter` and `producers_not_counters` as pins; 0 when required freezes are CLEAN and the ledger agrees exactly, 1 otherwise, 2 unevaluable. `--require-clean round-29` is red (M29-3) | none in the instrument. Behaviour shown by `w1/ExecGateV2.md` (fixture with an unpinned `claims-x.json`); 3 of 4 mutants killed by the ledger check, a sort-key mutant survives (`w1/MutFreezeGateV2.md`) | sha256 25b54339ce5f966309ce159fd2767579521d05eb239916d7dee0269f88b93eb2 (pinned here only; no claims file pins it); reads Git objects only |
 | round29-prefile | check / kaidoku (hygiene; QUALITY row 47) | `sh tools/round-29/prefile-check.sh <LANE>`: 0 `prefile: PASS` when `git status --porcelain` is empty (run with GIT_OPTIONAL_LOCKS=0) and both freeze gates exit 0 with `--disclosures` at HEAD; 1 `prefile: FAIL` with each failing step; 2 usage or unreadable tree. Cannot see a still-running seat | none in the instrument. Red on clean clones at the round-26/27/28 filing commits (`.ufo/waves/round-29/after/prefile-gate-at-filings.txt`); tree-step cases in `w1/ExecPrefile.md`; an untracked-file omission mutant is caught only by an untracked-only probe (`w1/MutPrefile.md`) | sha256 5c3586b277e16b7c43ae32a4160643442f6b9612b7e2d74cd6e76c12c688cdd9; read-only |
+
+## Rust dependency metadata (`inspect-rust-binary`) — round 30
+
+Held on the positive class (an image with one cargo-auditable `.dep-v0` section) for ELF, PE and thin Mach-O at `rea-agents@6.5.0`: the full package graph equals an independent decode on 16 uv 0.13.0 carriers (`corpus/knowledge/2026-10-23-r30-rust-auditable-positive.md`). Refusal signatures below were predicted from the 6.5.0 code (S090) and observed live on 19 ELF x86_64 mutants (`corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md`). Read `error.details.issues` as well as `error.message`: for `invalid_request` refusals the message field is generic.
+
+| Input condition | REA 6.5.0 outcome | error code (observed) | Threshold / gate |
+|---|---|---|---|
+| original section bytes moved to a 16-aligned offset at EOF (sh_offset/sh_size patched) | accepted, packages equal | ok | section may sit anywhere in the file |
+| same JSON re-compressed with zlib level 9, at EOF | accepted, packages equal | ok | any complete zlib stream |
+| `root` removed from every package, at EOF | accepted, packages equal | ok | zero roots allowed; `root_package_index: null` |
+| sh_size = 0 | refused: `Dependency section is not file-backed` | invalid_request | size must be > 0 |
+| sh_type = SHT_NOBITS (8) | refused: `Dependency section is not file-backed` | invalid_request | SHT_NOBITS is not file-backed |
+| sh_flags |= SHF_COMPRESSED (0x800) | refused: `Compressed dependency sections are unsupported` | unsupported_target | SHF_COMPRESSED (0x800) refused |
+| `.comment` header renamed to `.dep-v0` (two sections) | refused: `Image contains more than one dependency section` | invalid_request | exactly one `.dep-v0` |
+| section replaced by 9,870 patterned non-zlib bytes | refused: `Dependency section is not a complete zlib stream` | invalid_request | complete zlib stream |
+| original stream + 4 trailing bytes | refused: `Dependency section is not a complete zlib stream` | invalid_request | no bytes after the stream (node v24.21.0 rejects trailing junk) |
+| 1,048,577-byte section | refused: `Dependency section exceeds the 1 MiB compressed limit` | resource_constraint | 1 MiB compressed section |
+| JSON padded with 3 MiB of spaces (14,009 compressed bytes, inflate bound 896,576) | refused: `Inflated dependency JSON exceeds the size limit` | resource_constraint | inflated ≤ min(8 MiB, 64 × section bytes) |
+| zlib(`ff fe fd`) | refused: `Dependency JSON is not valid UTF-8` | invalid_request | UTF-8 |
+| zlib(`{"packages":[`) | refused: `Dependency section JSON is invalid` | invalid_request | valid JSON |
+| zlib(33 `[` + 33 `]`) | refused: `Dependency JSON nesting exceeds 32 levels` | invalid_request | nesting ≤ 32 |
+| zlib(`{"format":-1,"packages":[]}`) | refused: `Dependency JSON does not match the format schema` | invalid_request | `format` a non-negative integer |
+| package 0 gains `features: []` | refused: `Dependency package 0 does not match the package schema` | invalid_request | package keys only name/version/source/kind/dependencies/root |
+| package 0 `kind` = `dev` | refused: `Dependency package 0 does not match the package schema` | invalid_request | `kind` only `runtime` or `build` |
+| package 463 already root; package 0 also `root: true` | refused: `Dependency JSON declares more than one root package` | invalid_request | at most one root |
+| package 0 gains dependency index 584 (= package count) | refused: `Dependency index 584 from package 0 is outside the package list` | invalid_request | every dependency index < package count |
+
+Limits: one ELF x86_64 base carrier for the refusals; one pin; the 256 MiB input cap and 8 MiB report budget are code-read only. A green run says the embedded list was read faithfully, not that it is true (REA limitation text). Counter: `tools/round-30/c2-rust-refusals.py` (`inspect-rust-binary`, positive class counter `tools/round-30/c1-rust-positive.py`).
+
+### Round-30 measurement registry
+
+| tool | purpose | command | exit codes | selftest |
+|---|---|---|---|---|
+| `tools/round-30/c1-rust-positive.py` | R30-C1 counter: live `inspect-rust-binary` vs the independent oracle on 16 carriers, committed-envelope agreement, entry/PROVINCE gates | `python3 -I -B tools/round-30/c1-rust-positive.py --root <LANE> --rev <REV>` | 0 target met, 1 measured not met, 2 pin absent/altered | `--selftest` 25 cases |
+| `tools/round-30/c2-rust-refusals.py` | R30-C2 counter and deterministic mutant builder (`--build`) | `python3 -I -B tools/round-30/c2-rust-refusals.py --root <LANE> --rev <REV>` (one at a time) | 0/1/2 as above | `--selftest` 16 cases |
+| `tools/round-30/rust_dep_oracle.py` | independent `.dep-v0` reader (ELF/PE/Mach-O section tables, zlib, json); no REA code | imported by both counters | — | none (checked against llvm-readobj on 16 carriers, w1 `RevOracleVsReadobj.md`) |
+| `tools/round-30/axis-fit-gate.py` | M30-1 fix: coverage/depth claims need `surface`, `unmoved_command` and control receipts committed before the first envelope | `python3 -I -B tools/round-30/axis-fit-gate.py --root <LANE> --round <N> --rev <REV>` | 0 pass, 1 findings, 2 unreadable | `--selftest` 18 cases; round 29 exit 1 |
+| `tools/round-30/prefreeze-gate.py` | routed defect 3 (M29-3): pins present at the freeze, no data at or before it, no named-but-unpinned tool | `python3 -I -B tools/round-30/prefreeze-gate.py --root <LANE> --round <N>` | 0/1/2 | `--selftest` 20 cases; round 29 exit 1 |
+| `tools/round-30/settle-gate.py` | routed defect 4 (M29-1): every registry seat has a settle-ledger row and returned reports are unchanged since settling | `python3 -I -B tools/round-30/settle-gate.py --root <LANE> --round <N>` | 0/1/2 | `--selftest` 13 cases; round 29 exit 1 |
