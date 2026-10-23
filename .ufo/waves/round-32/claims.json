@@ -1,0 +1,52 @@
+{
+ "round": 32,
+ "lane": "kaidoku",
+ "base": "283aad7fe56d82f4ed4f8e43f099c2e1ceed5525",
+ "fleet_pin": "cef00867ab3279ac2c2d10421e3e62c0e5d693f3",
+ "freeze_rule": "This file is the round-32 freeze: the first commit that adds it is the freeze commit. Counters, predicates, labels, targets, the 12-carrier list, the 12 predictions, the C2 key list and fleet pin are fixed from that commit; a miss under them is reported, never amended, never re-scaled. Control receipts are committed before the data commit.",
+ "lowest_axis": "At the base the three owned axes (coverage, depth, calibration) are tied at 10 with none retired (SCORECARD.md:23-25 and :155 at 283aad7f); on a tie every owned axis is a lowest axis, so C1 (coverage) and C2 (calibration) both work a lowest-scoring non-retired axis.",
+ "anti_loop": "Rounds 30 and 31 were REA reader coverage plus refusal-table depth (Rust reader, SQLite reader). Round 32 leaves that shape: C1 moves a PROVINCE Frontier reserve edge class (ARM64X hybrid PE, PROVINCE.md:83 under ## Frontier :73) into Core with no refusal table; C2 is calibration of the lane's own repertoire table against the outside closure record.",
+ "pre_freeze_probe": "One REA 6.5.0 inspect and one analyze run on a probe DLL (/fast/scratch/hyaku/kaidoku-r32/probe/x.dll, sha256 424777cb..., 2 native and 2 EC exports, not a carrier) at about 05:56Z fixed the segment and procedure_count rules; the probe cannot separate native-count from EC-count, max or union rules, which the 12 carriers do (native != EC count on 6 carriers). Two inspect runs on the probe were equal except meta. No REA run touched any of the 12 carriers before the freeze.",
+ "claims": [
+  {
+   "id": "R32-C1",
+   "axis": "coverage",
+   "surface": "PROVINCE Core gains the ARM64X hybrid PE edge class read by REA 6.5.0 inspect (Ghidra import): at the base PROVINCE names ARM64X once, as a Frontier reserve (PROVINCE.md:83 under ## Frontier at :73), and no lane run of an ARM64X file is recorded.",
+   "novelty_sweep": "Checked against the lane's own history before freezing (round-31 routed lesson): git grep -n -i -E 'arm64x|arm64ec|chpe' 283aad7f -- corpus PROVINCE.md SKILL.md SCORECARD.md LOG.md gives 17 lines, each naming ARM64X as frontier/reserve/planned-not-run or as a source (PROVINCE:83, README:218, SOURCES S019 and :117, knowledge 2026-10-13-r3-pe-arm64.md:42,71 untested, lessons round-13 'no ARM64X sample was sought', LOG:1721,1745, SCORECARD:2108,2129-2130,2160); file names: git ls-tree -r --name-only 283aad7f | grep -c -i -E 'arm64x|arm64ec|chpe' gives 0; .ufo/waves/arc2-loop1-round3/E6.md:280 reports a census of 37 ARM64 PEs with no ARM64X hybrid found. No sentence here claims the lane never named ARM64X.",
+   "unmoved_command": "git -C <LANE> show <REV>:PROVINCE.md | grep -n ARM64X (base: one line, :83, under ## Frontier) ; the counter's province_ok=0 at the base",
+   "predicate_label": "P1-pass",
+   "predicate": "A carrier passes when the oracle classifies its pinned bytes as ARM64X (COFF machine 0xAA64, a CHPE code map with at least one ARM64 and one ARM64EC range); its live REA 6.5.0 inspect run exits 0 with an ok envelope whose operation is binary_overview and whose subject sha256 equals the frozen sha256; the envelope's format, architecture, document, image_base, segments (name, start, end, length, image_base, address_space, in order), segment_count and procedure_count equal the oracle's expected report, and procedure_count also equals the frozen prediction in predictions.tsv (the native-view export count); and its committed envelope, first added after the freeze commit, equals the live envelope in every field except meta, and the round-32 entry names that evidence_id.",
+   "counter": "python3 -I -B tools/round-32/c1-arm64x-positive.py --root <LANE> --rev <REV>",
+   "target": "carriers=12 pass=12 target=12 entry_ok=1 province_ok=1, exit 0",
+   "write_mode": "--write-evidence stores envelopes and prints WRITE-MODE ... not a receipt, exit 3; it never prints the target line (round-31 routed defect 6).",
+   "doc_gates": "entry_ok: the entry corpus/knowledge/2026-10-23-r32-arm64x-hybrid-pe.md cites S099. province_ok: a PROVINCE.md table row names ARM64X and the entry, and its nearest preceding heading names Core and not Frontier/Adjacent/exclusion.",
+   "claim_row": "S099 (Microsoft Learn, Arm64X PE files, https://learn.microsoft.com/en-us/windows/arm/arm64x-pe, opened 2026-10-23)",
+   "carriers": "12 ARM64X DLLs built reproducibly (two builds byte-identical) by tools/round-32/build-arm64x-carriers.sh with host LLVM 23.1.3 from LLVM's own lld test inputs at llvmorg-23.1.3 (S098, committed under corpus/evidence/round-32/c1/inputs/); native/EC export counts 1/1,2/2,3/3,4/1,1/4,5/5,6/2,2/6,7/3,3/7,8/8,1/2; -O0/-O1/-O2; pinned under /fast/scratch/hyaku/kaidoku-r32/carriers/ with chattr +i.",
+   "limits": "Carriers are author-built (not published binaries) from a published toolchain and published test inputs; every function is an exported leaf, so the procedure_count rule is not tested for internal or call-reached functions; no carrier has a section whose VirtualSize exceeds SizeOfRawData, so the segment-length rule max(VirtualSize, SizeOfRawData) is not separated from SizeOfRawData; one REA pin (6.5.0), one host, one Ghidra build; the oracle is a pure-Python PE reader (llvm-readobj is a witness only)."
+  },
+  {
+   "id": "R32-C2",
+   "axis": "calibration",
+   "surface": "SCORECARD.md `## Capabilities`, the lane's self-declared repertoire, against the outside closure record (fleet MANIFEST.json capabilities_added for kaidoku, written by non-author closures). At the base the section credits 1 of the 4 outside-recorded capabilities (round 27); rounds 13, 14 and 17 sit only in append-only tables deeper in the card (SCORECARD.md:2134, :2206, :2373), as an earlier observation at SCORECARD.md:3116 noted without repair.",
+   "unmoved_command": "python3 -I -B tools/round-32/c2-capability-calibration.py --root <LANE> --rev 283aad7f (statements=4 match=1, exit 1)",
+   "predicate_label": "P2-match",
+   "predicate": "Forward: a statement is one capabilities_added item of a MANIFEST.json round entry with lane kaidoku at fleet commit cef00867ab3279ac2c2d10421e3e62c0e5d693f3; it matches when the `## Capabilities` section of SCORECARD.md at REV (from the line `## Capabilities` to the next `## ` heading) holds a table row whose first cell matches the statement's frozen key pattern and whose last cell names that round (round[- ]?N, not followed by a digit). Reverse: every row of that section whose last cell names a round that has a kaidoku MANIFEST closure entry must be the matching row of a forward statement for that round.",
+   "counter": "python3 -I -B tools/round-32/c2-capability-calibration.py --root <LANE> --rev <REV>",
+   "target": "statements=4 match=4 target=4 reverse_mismatch=0, exit 0",
+   "key_list": "13 /source(-curation)? registry/, 14 /quote.{0,40}regression audit/, 17 /Ghidra-session log capture/, 27 /cross-pin evidence-ID attribution/ (case-insensitive, over both the MANIFEST item and the row's first cell)",
+   "limits": "Four statements; the MANIFEST record covers hyaku-numbered rounds only (luna/arc rows in the section are outside the statement set); the counter checks identity and round, not the row's evidence pointer (the w1 wave re-opens each pointer)."
+  }
+ ],
+ "instruments": {
+  "tools/round-32/c1-arm64x-positive.py": "7a534be655f940728879e1d25e43a20685371e25232ded94eeb2d5bcc0800f1a",
+  "tools/round-32/arm64x_oracle.py": "17eea1f9768ec73e4e66712e7cf4221de83a1052cda40c5801d1e64a80936686",
+  "tools/round-32/c2-capability-calibration.py": "c3412b04f5b6c663367217f3a5747f7e3bc32b7a06d4400e53f9e92654bc4446",
+  "tools/round-32/build-arm64x-carriers.sh": "7da284da5986295263c69a8b7ee779638428d3bb6c9d5c9d8fb224c40a737ba3"
+ },
+ "frozen_inputs": {
+  "corpus/evidence/round-32/c1/carriers.tsv": "8cf97b37f72bf5b494ac5993a88051e4697038c8f66606e2a6e17fda1bf3d16e",
+  "corpus/evidence/round-32/c1/predictions.tsv": "fd8049498e519d13c9bd28415327a0bafa75c43684b2d1998d8e5d769737c56b",
+  "corpus/evidence/round-32/c1/inputs/loadconfig-arm64.s": "7c29f128a447f8ce481159961b14932d7011c6af3bc55a1830387d433864ba2d",
+  "corpus/evidence/round-32/c1/inputs/loadconfig-arm64ec.s": "c043b74850a4c3033d21fa22701eb808a6b0bd5b46fd2bfab08d4ae43332c0d4"
+ }
+}
