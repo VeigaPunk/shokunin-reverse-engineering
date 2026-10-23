@@ -1,0 +1,63 @@
+{
+  "schema": "r33-hashed-allow-gate-v1",
+  "scope": ".ufo/waves/round-32",
+  "base": "428315a8f5674b952def862910af6e07a6c2224b",
+  "line_hash_rule": "sha256 of the entire source line bytes at --rev, LF delimiter excluded (Git object bytes)",
+  "allow": [
+    {
+      "file": "a2audit-gate.json",
+      "line": 14,
+      "field": "settle_deadline",
+      "tokens": ["2026-10-23T07:35:00Z"],
+      "token_rule": "deadline-only: the line's single timestamp token is the settle_deadline value; no execution instant",
+      "line_sha256": "8c727cad3617fa4ab79a61febdbf6b0ddd8b15880bb54e0889c8585ae3d9ec4b",
+      "introduced_by": "33393e594f1e278777fa49020b42c66ac4fa352e",
+      "committer_time": "2026-10-23T06:56:11Z",
+      "reason": "Dispatch-plan settle cutoff written 38m49s before the cutoff it schedules. The only timestamp on the line is the planned deadline token 2026-10-23T07:35:00Z; the pinned line hash refuses this allowance if any future execution instant is inserted into the same line."
+    },
+    {
+      "file": "a2audit-settle.json",
+      "line": 3,
+      "field": "settle_deadline",
+      "tokens": ["2026-10-23T07:35:00Z"],
+      "token_rule": "deadline-only: the line's single timestamp token is the settle_deadline value; no execution instant",
+      "line_sha256": "8c727cad3617fa4ab79a61febdbf6b0ddd8b15880bb54e0889c8585ae3d9ec4b",
+      "introduced_by": "bbdd793d55807cfea9193ef5aaf0ae86a5c25a10",
+      "committer_time": "2026-10-23T07:14:24Z",
+      "reason": "Settle metadata repeats the dispatch cutoff; observed_cutoff_utc 07:12:53 and every seat transcript time <=07:07:22. The only timestamp on the line is the planned deadline token 2026-10-23T07:35:00Z; the pinned line hash refuses this allowance if any future execution instant is inserted into the same line."
+    },
+    {
+      "file": "a2residual-dispatch.json",
+      "line": 17,
+      "field": "deadline",
+      "tokens": ["2026-10-23T07:55:00Z"],
+      "token_rule": "deadline-only: the line's single timestamp token is the residual deadline value; no execution instant",
+      "line_sha256": "1213815d435402b8ddde10e67f0faca71a9e798b5607caa5cb1b31944c47729b",
+      "introduced_by": "bbdd793d55807cfea9193ef5aaf0ae86a5c25a10",
+      "committer_time": "2026-10-23T07:14:24Z",
+      "reason": "Residual dispatch specification written 40m36s before the deadline it schedules. The only timestamp on the line is the planned deadline token 2026-10-23T07:55:00Z; the pinned line hash refuses this allowance if any future execution instant is inserted into the same line."
+    },
+    {
+      "file": "a2residual-settle.json",
+      "line": 3,
+      "field": "deadline",
+      "tokens": ["2026-10-23T07:55:00Z"],
+      "token_rule": "deadline-only: the line's single timestamp token is the residual deadline value; no execution instant",
+      "line_sha256": "3d42105e95a6420edce5857477487c29f4883ad2e29269cde31ddfd3f986cd77",
+      "introduced_by": "9ef97f08b655d951650ba5d32f41f1b1cf9653f4",
+      "committer_time": "2026-10-23T07:30:33Z",
+      "reason": "Settle metadata repeats the residual dispatch deadline; every seat transcript time <=07:26:35. The only timestamp on the line is the planned deadline token 2026-10-23T07:55:00Z; the pinned line hash refuses this allowance if any future execution instant is inserted into the same line."
+    },
+    {
+      "file": "a2after/timestamps-strict-at-9ef97f08.txt",
+      "line": 3,
+      "field": "findings[].timestamp (stdout echo)",
+      "tokens": ["2026-10-23T07:55:00Z", "2026-10-23T07:55:00Z"],
+      "token_rule": "deadline-only: the only tokens later than the line's committer time are the two 07:55:00Z planned-deadline echoes for a2residual-dispatch.json:17 and a2residual-settle.json:3; no utc_start/utc_end execution field appears on the line",
+      "line_sha256": "3bcd5127ee49014d02a9c248c614e725fbc117b67e65f49f6cbcf399b462de03",
+      "introduced_by": "547d6f2c9f7b67201ec8eb60a04320127048003d",
+      "committer_time": "2026-10-23T07:41:55Z",
+      "reason": "Frozen stdout echo of the prior strict run committed at 07:41:55Z. Its only future-dated tokens are the two 2026-10-23T07:55:00Z planned-deadline echoes (finding strings for the two residual deadline fields); the 07:35:00Z echo tokens are already past relative to the line and the line carries no utc_start/utc_end execution field. The pinned whole-line hash is what makes this allowance safe: inserting any future execution instant into this line changes the hash, the wrapper refuses all allowances, and the inserted instant is never exempted."
+    }
+  ]
+}
