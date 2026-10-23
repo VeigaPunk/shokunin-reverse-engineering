@@ -37,6 +37,7 @@ The S100 flip requires both reopened representations to explicitly document the 
 | M32-1 / stale-premise | Round-31 verifier defect 1: the CLI spelling exists in README and an l7-04 filename outside the old content-only sweep | QUALITY 56 was too narrow | QUALITY 57 supersedes 56, adding README and filenames; `a2audit/A2R31Corrections.md` retains the widened red-before sweep |
 | M32-2 / vacuous | `a2audit/A2C2False.md`, `A2C2Labels.md`: negative prose and vocabulary bags meet the unchanged C2v3 target | pre-data adversarial control wave; frozen claim-sizing rule | Honest stop, frozen counter unchanged; actual false-accept receipt and full fixture committed at `411f3a80`. No semantic gate repair is claimed in this round |
 | M32-3 / reference-drift | A2C1 control scoring from Eval initially inherited no GHIDRA_INSTALL_DIR/JAVA_HOME, unlike Bash | control seats reported provider failures instead of crediting discrimination | Record the actual environment and resolve the missing keys explicitly before a new scoring run. Original failures are retained as unevaluable discrimination, not evidence that committed-envelope checks rejected the control |
+| M32-4 / scope | `a2audit/A2AttemptForensics.md:77-83` records scoped `find` inventories under inherited `/fast/scratch`, contrary to the disk directive | operator's disk instruction; the wave context repeated bounded-write guards but omitted the literal no-find reminder | No retroactive compliance or enforced fix is claimed. Use the specialized glob/read inventory in future dispatches; this inventory supports no claim outcome and is excluded from admission evidence |
 
 ## Round-31 routed defects
 
@@ -94,3 +95,53 @@ All eight residual reviewers/critics returned before their 07:55Z deadline; no d
 - `a2residual/FinalCustodyOrder.md`: controls precede C1 production by ancestry/time; the first run begins 22 seconds after the controls commit; frozen bytes and all ten receipt rows agree. Auxiliary partial-positive C2 timing remains unknown, as corrected above.
 
 Native-view segment comparison does not distinguish `max(VirtualSize, SizeOfRawData)` from raw size on these inputs: every section has raw size at least virtual size. A raw-greater-than-virtual example exercises the chosen value, not separation from the raw-only shortcut.
+
+## Final L1 measurements
+
+After all forty accepted attempt-2 seats settled, the L1 measured immutable revision `9ef97f08b655d951650ba5d32f41f1b1cf9653f4`:
+
+- C1: `carriers=12 pass=12 target=12 entry_ok=1 (ok) province_ok=1 (ok)`, exit 0 (`a2after/c1-at-9ef97f08.txt`). The base run is exit 2, not a fabricated province-gate measurement.
+- C2: `statements=4 match=4 target=4 reverse_mismatch=0`, exit 0 (`a2after/c2v3-at-9ef97f08.txt`), **not calibration improvement**, because the fixed negative controls attain the same target.
+- Freeze-integrity: all three claim files CLEAN (8/2/2 pins), exit 0; exact disclosure ledgers 19/19 and 24/24, exit 0. V3's historical-anchor INSTRUMENT_UNPINNED flag remains disclosed.
+- Source rows 97 → 100; A 91 → 94, B 5 → 5, C 1 → 1; mined 95 → 97, rejected 2 → 3; malformed 0 → 0 (`a2after/source-count-base.txt`, `source-count-after.txt`, with exact Python argv and revisions).
+- Strict timestamp gate **exit 1**, four unexempted planned deadlines: `a2audit-gate.json:14`, `a2audit-settle.json:3`, `a2residual-dispatch.json:17`, `a2residual-settle.json:3`. The fields denote planned settle deadlines, not future-dated run evidence. No exemption or green verdict is claimed. The retained diagnostic quotes those values; this result is only for `9ef97f08`, not a later receipt/bookkeeping tip.
+
+Round verdict: **rejected-honest-stop**. C1 verifies narrowly; C2 is a falsified measure despite its numerical target. Full command/output receipts are committed under `a2after/`.
+
+### Source census, before → after
+
+Command for both calls:
+
+```sh
+/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+```
+
+Before, 06:45:22Z (`a2before/census-start.txt`):
+
+```text
+kaidoku	W04	S033 duplicate url github.com/NationalSecurityAgency/ghidra/pull/9348 across scopes
+kaidoku	W04	S047 duplicate url go.dev/dl/?mode=json&include=all`, across scopes
+kaidoku	W04	S054 duplicate url developer.android.com/ndk/guides/abis across scopes
+kaidoku	W04	S062 duplicate url raw.githubusercontent.com/sigrokproject/sigrok-cli/sigrok-cli-0.7.2/doc/sigrok-cli.1 across scopes
+kaidoku	W04	S069 duplicate url www.wireshark.org/docs/man-pages/tshark.html across scopes
+kaidoku	W04	S083 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	W04	S090 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	W04	S092 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	ok	/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+exit=0
+```
+
+After, 07:35:01Z (`a2after/census-end.txt`):
+
+```text
+kaidoku	W04	S033 duplicate url github.com/NationalSecurityAgency/ghidra/pull/9348 across scopes
+kaidoku	W04	S047 duplicate url go.dev/dl/?mode=json&include=all`, across scopes
+kaidoku	W04	S054 duplicate url developer.android.com/ndk/guides/abis across scopes
+kaidoku	W04	S062 duplicate url raw.githubusercontent.com/sigrokproject/sigrok-cli/sigrok-cli-0.7.2/doc/sigrok-cli.1 across scopes
+kaidoku	W04	S069 duplicate url www.wireshark.org/docs/man-pages/tshark.html across scopes
+kaidoku	W04	S083 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	W04	S090 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	W04	S092 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	ok	/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+exit=0
+```

@@ -1,0 +1,8 @@
+utc_start=2026-10-23T07:35:01+00:00
+argv=["env", "-u", "GIT_DIR", "-u", "GIT_WORK_TREE", "-u", "GIT_INDEX_FILE", "python3", "-I", "-B", "-c", "import collections,re,subprocess,sys; root,rev=sys.argv[1:]; text=subprocess.check_output(['git','-C',root,'show',rev+':corpus/SOURCES.md'],text=True); rows=[x.split('|') for x in text.splitlines() if re.match(r'^\\|[ \\t]*S[0-9]{3,}[ \\t]*\\|',x)]; print('rows='+str(len(rows))); print('tiers='+str(dict(sorted(collections.Counter(x[4].strip() for x in rows).items())))); print('status='+str(dict(sorted(collections.Counter(x[8].strip() for x in rows).items())))); print('malformed='+str(sum(len(x)!=13 for x in rows)))", "/home/vgpnk/Projects/shokunin/kaidoku-shokunin", "283aad7fe56d82f4ed4f8e43f099c2e1ceed5525"]
+rows=97
+tiers={'A': 91, 'B': 5, 'C': 1}
+status={'mined': 95, 'rejected': 2}
+malformed=0
+exit=0
+utc_end=2026-10-23T07:35:01+00:00
