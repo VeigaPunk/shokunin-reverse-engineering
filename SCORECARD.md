@@ -3305,3 +3305,13 @@ C1's independent evidence: `.ufo/waves/round-32/a2audit/A2BuildRecheck.md` (12/1
 Base `428315a8f5674b952def862910af6e07a6c2224b`. The outside round-32 decision is **rejected-honest-stop** (`corpus/lessons/round-32-verifier-spotcheck.md:59-84`): bounded native-view coverage improved; calibration remained unprovable because denial and word bags also met C2v3's frozen target; no axis was harmed. This supersedes the round-32 section's pending-outside-decision sentence, not its recorded measurements.
 
 Repair routing is in `corpus/lessons/round-33.md`. C2v3 is excluded as admission evidence. The planned round-33 learning surface is depth: sourced structural CHPE bounds and failure decisions absent from the base's metadata-only classifier, with no hybrid coverage widening. All three owned proxies remain tied at 10, none retired; depth satisfies the lowest-axis obligation. Scores remain unchanged until a measured surface and frozen claim are recorded; no calibration gain is inferred from repairs alone.
+
+### R33-C1 stopped; no measurement substituted
+
+Declared surface: depth, a source-traceable CHPE structural-profile decision table/reader on the already bounded hybrid-PE ground. Planned target: 32 independent fixture rows matched, errors 0 and source/table checks true, under P33-structural-match. The exact unchanged sentence is retained in `.ufo/waves/round-33/claim-stop.json`.
+
+The input-author item received a provider cyber-policy refusal and later automatic model switch. Main confirmed the hold. Its outputs and derivative controls were removed from the lane and are not evidence; the same task is not rebuilt or rerouted. The claim was stopped before freeze: **before/after counts not evaluated**, no admissible fixture manifest and therefore no legal counting command for the missing study. **Verdict unprovable; honest stop.** This is not an exploratory claim or a rescaled source-text/selftest target. Owned scores remain 10→10, delta 0; no calibration gain or new capability row.
+
+Reachable source/repair work is recorded in LOG and `corpus/lessons/round-33.md`: S101/S102 support a technical table and knowledge entry, while timestamp, disk and selectable-freeze selftest fixes retain separate red/green evidence. Source fidelity and isolated instrument selftests are not the original 32-row claim.
+
+- planned (only after a new steer): work another admissible frontier; do not recreate or reroute the held fixture-author item, reuse C2v3, or widen hybrid coverage from metadata alone.

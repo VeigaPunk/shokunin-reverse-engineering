@@ -83,6 +83,7 @@ A row is written when its file exists, never before.
 | `inspect-sqlite-database` database-scope schema on published files (round 31) | `2026-10-23-r31-sqlite-positive` | held — REA 6.5.0 reports every table, column, index, view and trigger of 12 published SQLite files (5 PROJ `proj.db`, 2 Chinook, 5 GeoPackages with R*Tree virtual/shadow tables) exactly as an independent reader; 3 schema families, one pin; extends l7-04 |
 | `inspect-sqlite-database` refusal and edge signatures (round 31) | `2026-10-23-r31-sqlite-refusals` | held narrowly — 23 of 23 code-predicted outcomes (20 refusals with exact code, issue and message; 3 acceptances) on requests and mutants of one carrier; both budget rows changed at 6.7.0 in live probes (`.ufo/waves/round-31/w2/ProbePin670.md`); only three requests re-run at that pin |
 | ARM64X hybrid PE native-view import (round 32) | `2026-10-23-r32-arm64x-hybrid-pe` | bounded Core: twelve synthetic exported-leaf DLLs, native-view ordered segments and procedure counts; published hybrids, EC recovery, internal functions and runtime remain Frontier |
+| CHPE structural profile/source boundary (round 33) | `2026-10-23-r33-chpe-structural-profile` | sourced detail on existing hybrid ground; original independent carrier claim stopped by a provider safety hold, no replacement measurement, no coverage widening |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -184,6 +185,7 @@ A row is written when its file exists, never before.
 | `2026-10-23-r31-sqlite-positive` | REA 6.5.0 `inspect-sqlite-database --schema-scope database` on 12 published SQLite files: full schema equals an independent reader | S096, S097, S093, S094, S095; 12 envelopes in `corpus/evidence/round-31/c1/` | 2026-10-23 |
 | `2026-10-23-r31-sqlite-refusals` | REA 6.5.0 `inspect-sqlite-database` input, file-set and worker refusals predicted from code and observed on 23 requests | S092; 23 envelopes in `corpus/evidence/round-31/c2/` | 2026-10-23 |
 | `2026-10-23-r32-arm64x-hybrid-pe` | ARM64X synthetic hybrid PE native-view import/overview; raw machine vs CHPE classification and native/EC count distinction | S099, S098; original envelopes and producing records in `corpus/evidence/round-32/c1/` | 2026-10-23 |
+| `2026-10-23-r33-chpe-structural-profile` | CHPE source field decoding versus explicit conservative local profile; original claim stopped, isolated selftests are not production evidence | S101, S102; pinned LLVM/PE sources and independent instrument code; no held fixture data | 2026-10-23 |
 
 ## Lessons
 | entry | round | gist |
@@ -209,6 +211,7 @@ A row is written when its file exists, never before.
 | `round-30` | 30 | repair-first after the round-29 axis-misfit rejection: pre-data control wave (10 controls, none met a target) before data; `inspect-rust-binary` positive class on ELF/PE/Mach-O (16/16) and 19/19 code-predicted refusal signatures; axis-fit, prefreeze and settle gates; mistakes M30-1..5 (carrier tampering by a seat tool caught by the pin check) |
 | `round-31` | 31 | leaves REA's Rust reader for its SQLite reader: database-scope schema on 12 published files against an independent reader, 23 code-predicted refusal/edge outcomes; full-envelope committed checks (M30-3 repaired), Core-placement check, freeze-integrity and cited-runs gates; mistakes M31-1..7 (single-spelling novelty grep, post-freeze edits unseen, write-mode target lines, uncommitted PASS citations, a typed size, a path-dependent selftest, a seat git command in the fleet repo) |
 | `round-32` | 32 | inherited hybrid-PE coverage freeze rechecked; C2 calibration honest stop because negative prose and word bags pass its frozen counter; r31 routed corrections; scoped Core and retained Frontier boundaries |
+| `round-33` | 33 | repair-first timestamp/disk/selftest fixes, source-backed CHPE profile boundaries, and honest stop on a provider-filtered input-author item; all dependent outputs quarantined |
 
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).

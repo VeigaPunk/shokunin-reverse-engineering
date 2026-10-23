@@ -1,0 +1,94 @@
+{
+  "schema": "r33-document-spec/1",
+  "checks": [
+    {
+      "kind": "file_sha256",
+      "path": "corpus/evidence/round-33/sources/Object-COFF.h",
+      "sha256": "214d3f4a186be95dee7df0d19edaf04408b45f9d243152e2a4c2fb2f762f2320"
+    },
+    {
+      "kind": "file_sha256",
+      "path": "corpus/evidence/round-33/sources/BinaryFormat-COFF.h",
+      "sha256": "a44641df4bf2ecf96bbfa86b5145c3679b043a579a5df6afba1ac2852b593339"
+    },
+    {
+      "kind": "file_sha256",
+      "path": "corpus/evidence/round-33/sources/Chunks.h",
+      "sha256": "09e505a28bb8aa521f1023c30b2810198e3ea89e2d578423c2c6076d6e2db3f1"
+    },
+    {
+      "kind": "file_sha256",
+      "path": "corpus/evidence/round-33/sources/Chunks.cpp",
+      "sha256": "550c20df652f683c20ef041e4feec63326b09ece9469fe4fe90b6ce03b79ab14"
+    },
+    {
+      "kind": "file_sha256",
+      "path": "corpus/evidence/round-33/sources/COFFObjectFile.cpp",
+      "sha256": "444fc3fafbca8d2c047df81fd22cf295de05d2d06f7c08524464dd143b881743"
+    },
+    {
+      "kind": "file_sha256",
+      "path": "corpus/evidence/round-33/sources/Writer.cpp",
+      "sha256": "229163a9be04e588b7b9c2bc6f3f6dc889138886bae660b713502a29aed587bd"
+    },
+    {
+      "kind": "file_sha256",
+      "path": "corpus/evidence/round-33/sources/pe-format.md",
+      "sha256": "563f2dd952e16ca836036189ee82e46f1dbde29d716ee4ea5d2277e9562609d8"
+    },
+    {
+      "kind": "file_sha256",
+      "path": "corpus/evidence/round-33/sources/arm64ec-codemap.test",
+      "sha256": "edf6964b69261a5354d90b2fed1689c089b8600393f5a7b63e5047b42c229022"
+    },
+    {
+      "kind": "file_sha256",
+      "path": "corpus/evidence/round-33/sources/COFFDumper.cpp",
+      "sha256": "f107c5a884bbf0b69b8af2cfa92e0b5578e1357477ec9f8aead241c26b4047a3"
+    },
+    {
+      "kind": "file_quote",
+      "path": "corpus/evidence/round-33/sources/Object-COFF.h",
+      "line": 768,
+      "quote": "The two low bits of StartOffset contain a range type."
+    },
+    {
+      "kind": "file_quote",
+      "path": "corpus/evidence/round-33/sources/pe-format.md",
+      "line": 133,
+      "quote": "At location 0x3c, the stub has the file offset to the PE signature."
+    },
+    {
+      "kind": "file_section",
+      "path": "SKILL.md",
+      "heading": "## CHPE structural profile — round 33",
+      "text_file": ".ufo/waves/round-33/expected-skill-body.txt",
+      "text_file_sha256": "4977789211d81daba0075488d5bcde8f066a3fb9a7281bb0b61cb44e94eee946"
+    },
+    {
+      "kind": "file_any_line",
+      "path": "corpus/knowledge/2026-10-23-r33-chpe-structural-profile.md",
+      "lines": [
+        "source: S101 (LLVM llvmorg-23.1.3, commit 0d261d1ca552c95a8f007e061c787ac7132fbcbc; corpus/evidence/round-33/sources/), S102 (https://learn.microsoft.com/en-us/windows/win32/debug/pe-format; served Markdown corpus/evidence/round-33/sources/pe-format.md)"
+      ]
+    },
+    {
+      "kind": "file_any_line",
+      "path": "corpus/SOURCES.md",
+      "lines": [
+        "| S101 | LLVM CHPE field and emitter definitions — https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-23.1.3/llvm/include/llvm/Object/COFF.h | code | A | LLVM 23.1.3 CHPE low-bit tags, table layout and emitter/reader behavior; not Windows validity or tag authenticity | commit 0d261d1ca552c95a8f007e061c787ac7132fbcbc; Object-COFF.h:734-773, Chunks.h:475-486, Chunks.cpp:944-955, COFFObjectFile.cpp:756-778; corpus/evidence/round-33/sources/ and .ufo/waves/round-33/source-anchor-map.json | Decode StartOffset low two bits separately from Length; distinguish source facts from this round's stricter profile | mined | 2026-10-23 | on-release | corpus/knowledge/2026-10-23-r33-chpe-structural-profile.md |",
+        "| S102 | PE Format header boundaries — https://learn.microsoft.com/en-us/windows/win32/debug/pe-format | spec | A | DOS/PE signature location, optional-header probe bounds and stated section-count limit only; S100 remains rejected for CHPE field/tag authority | served Markdown capture corpus/evidence/round-33/sources/pe-format.md:133-141,222-224; sha256 563f2dd952e16ca836036189ee82e46f1dbde29d716ee4ea5d2277e9562609d8, opened 2026-10-23 | Locate the PE signature via 0x3c and bound directory probes by the declared optional-header size; no CHPE offset/tag definition is inferred | mined | 2026-10-23 | 90d | corpus/knowledge/2026-10-23-r33-chpe-structural-profile.md |"
+      ]
+    },
+    {
+      "kind": "file_any_line",
+      "path": "corpus/lessons/round-33.md",
+      "lines": [
+        "- **S101 admitted, scoped LLVM authority:** opened 2026-10-23 at commit `0d261d1ca552c95a8f007e061c787ac7132fbcbc`; URL https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-23.1.3/llvm/include/llvm/Object/COFF.h . Located quote at retained `corpus/evidence/round-33/sources/Object-COFF.h:768`: “The two low bits of StartOffset contain a range type.” (10 words). The other retained LLVM files ground emitter and reader distinctions; they do not prove Windows behavior or instruction authenticity.",
+        "- **S102 admitted for PE headers only:** URL https://learn.microsoft.com/en-us/windows/win32/debug/pe-format?accept=text/markdown , accessed 2026-10-23; served `text/markdown` capture `corpus/evidence/round-33/sources/pe-format.md:133`. Quote: “At location 0x3c, the stub has the file offset to the PE signature.” (13 words). The scope is signature/header probe boundaries, not CHPE tag/offset authority.",
+        "- **S100 scoped rejection retained, not reversed:** the same PE specification is still rejected as a source for CHPEMetadataPointer offsets and code-map tag semantics. L1 bounded sweep `CHPE|CHPEMetadataPointer|0[xX][cC]8|code.?map` over the newly served Markdown found no matches. Flip: that specification explicitly documents those CHPE fields/tags. S102 admits a different scope; S100's row and flip remain unchanged.",
+        "- Registry changes: new S101 and S102 only. No prior row's status/recheck/used-by changes. The source family study path is LLVM fields → LLVM reader/emitter/test boundaries → local conservative profile; Microsoft headers are a separate scope."
+      ]
+    }
+  ]
+}
