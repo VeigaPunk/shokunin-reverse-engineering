@@ -967,6 +967,8 @@ Decision rules:
 
 Held on the positive class (an image with one cargo-auditable `.dep-v0` section) for ELF, PE and thin Mach-O at `rea-agents@6.5.0`: the full package graph equals an independent decode on 16 uv 0.13.0 carriers (`corpus/knowledge/2026-10-23-r30-rust-auditable-positive.md`). Refusal signatures below were predicted from the 6.5.0 code (S090) and observed live on 19 ELF x86_64 mutants (`corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md`). Read `error.details.issues` as well as `error.message`: for `invalid_request` refusals the message field is generic.
 
+Decision table for `inspect-rust-binary` refusals (evidence `corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md`, 19 of 19 predictions observed live):
+
 | Input condition | REA 6.5.0 outcome | error code (observed) | Threshold / gate |
 |---|---|---|---|
 | original section bytes moved to a 16-aligned offset at EOF (sh_offset/sh_size patched) | accepted, packages equal | ok | section may sit anywhere in the file |

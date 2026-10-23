@@ -200,6 +200,7 @@ A row is written when its file exists, never before.
 | `round-24-verifier-spotcheck` | 24 | Main's non-author judgment: bounded four-verb coverage; original frozen calibration9/11 unmet, not admitted; preservation/source checks and genuine heavy-wave debt retained. No knowledge-map or historical target re-score. |
 | `round-25` | 25 | Prospective explicit-reference custody: fixed I/original34 plus separately declared Main-held full-contract/dataflow controls; actual unavailable-before, source/epoch/role/pin/scratch debts; no candidate result or admission preclaimed |
 | `round-29` | 29 | fresh-carrier and never-fetched-selector tests frozen with hex and pre-seen screens; r27 selftest repaired as a disclosed selftest-only revision; freeze gate over every claims*.json; pre-file gate; mistakes M29-1..4 (filing with a live seat, ledger out of step with its gate, unpinned name in the L1's own freeze, red seat results dropped at integration) |
+| `round-30` | 30 | repair-first after the round-29 axis-misfit rejection: pre-data control wave (10 controls, none met a target) before data; `inspect-rust-binary` positive class on ELF/PE/Mach-O (16/16) and 19/19 code-predicted refusal signatures; axis-fit, prefreeze and settle gates; mistakes M30-1..5 (carrier tampering by a seat tool caught by the pin check) |
 
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
