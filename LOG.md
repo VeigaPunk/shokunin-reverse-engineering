@@ -3006,3 +3006,15 @@ No source/gate/fixture/candidate execution, F or code permission is claimed.
 - Round-28 routed defects 1–6 handled (SCORECARD round-29 section): seat report committed, r27 selftest green after a disclosed selftest-only revision, gate over every `claims*.json` with a v2 ledger, claim-specific Gate rows, pre-file check.
 - Mistakes mined: M29-1 (filing with a live seat; a lane check cannot see it, corrected after the wave), M29-2 (ledger out of step with its gate at three filings, red seat results not carried; QUALITY row 46), M29-3 (the round-29 claims text names an unpinned script; both gates flag it), M29-4 (red seat results dropped at integration; `tools/round-29/prefile-check.sh`, QUALITY row 47, red on the round-26/27/28 filing commits).
 - Wave: one v1 wave `w1`, 44 seats (`.ufo/waves/round-29/w1/`), 43 returned, 1 dead (`CriticAxisFit`, provider unreachable); entries corrected from its findings (SCORECARD round-29 wave findings).
+
+
+## 2026-10-23 — round 30: `inspect-rust-binary` positive class on ELF, PE and thin Mach-O; refusal signatures predicted from code
+
+- Outside decision on round 29 recorded first: `corpus/lessons/round-29-verifier-spotcheck.md` rules round 29 `rejected-honest-stop` for axis misfit (R29-C1).
+- Motivating evidence for R30-C1: every lane run of `inspect-rust-binary` returned `auditable_metadata: null` (`corpus/knowledge/2026-10-16-l7-02-inspect-rust-binary.md:10` "Untested: non-ELF inputs"); PROVINCE named the verb 0 times; host `~/.local/bin/uv` and the official uv wheels carry `.dep-v0` sections (llvm-readobj screen before the freeze).
+- Motivating evidence for R30-C2: the 6.5.0 reader's gates and literal messages in the published code (S090), never tested by the lane.
+- Freeze `4ee65c67`, controls `f39f4530` (10 controls, none met a target), data `24da3459`, measured `92b1dd2d`: C1 `carriers=16 pass=16`, exit 0; C2 `mutants=19 matches=19`, exit 0 (at `24da3459` C2 printed `skill_ok=0`, exit 1, M30-4).
+- Learned: REA 6.5.0 reads the full dependency graph (573–596 packages, about 3,000 edges, root, build kind) exactly on ELF x86_64/aarch64/riscv64, PE x86_64/arm64 and thin Mach-O x86_64/arm64; on PE it reads `min(VirtualSize, SizeOfRawData)`. Its refusals follow the code's gate order; 13 of 16 refusal kinds return `invalid_request` with a generic `error.message` and the specific message only in `error.details.issues`.
+- Re-verification: rea-agents 6.5.0 tarball byte-identical to the installed `dist/` (S090); PyPI uv 0.13.0 JSON byte-identical to the committed copy (S091); census exit 0.
+- Mistakes mined: M30-1 (round-29 axis misfit; QUALITY 48, axis-fit gate), M30-2 (seat tool rewrote 4 carriers in place; QUALITY 49), M30-3 (P2 refusal committed clause compares only `ok`), M30-4 (`skill_ok=0` at the first after-measurement), M30-5 (round-29 "published" carriers).
+- Correction (R29-C1 carrier provenance, round 30): only carrier n04 rests on an opened source (S088); the other 15 lists were written from the L1's knowledge of the standards and are author-selected names, not opened published interfaces (`LOG.md:2997`, `:3004`).

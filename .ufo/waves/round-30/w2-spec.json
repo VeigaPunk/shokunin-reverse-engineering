@@ -1,0 +1,178 @@
+{
+ "wave": "kaidoku30-w2",
+ "reportDir": ".ufo/waves/round-30/w2",
+ "maxLanes": 34,
+ "context": "# Goal\nKaidoku round 30, wave 2 (one v1 falsify wave: fresh seats attack what wave 1 and the L1 produced) for lane repo /home/vgpnk/Projects/shokunin/kaidoku-shokunin (reverse engineering of shipped artifacts with REA on this Linux host). Lane base d210fb8fa62d2af04d009cfa0c65a4e8137dc742. Instruments committed at 0dbabf78b6abbead98d96a720089b8490452a46c; both claims frozen at lane commit 4ee65c6771058284aa947a266475839d196ed4d4 (2026-10-23T02:35:13Z) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-30/claims.json. Pre-data control receipts committed at f39f4530 (none of 10 controls met a target); data committed at 24da3459 (16 C1 and 19 C2 live envelopes, corpus/evidence/round-30/c1|c2/envelopes, runs.tsv). Measured revision 92b1dd2ddc119fda89a611ba515bdf6cfe906f76: C1 `carriers=16 pass=16 target=16 entry_ok=1 province_ok=1` exit 0; C2 `mutants=19 matches=19 target=19 entry_ok=1 skill_ok=1` (receipts /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-30/after/). At 24da3459 C2 printed skill_ok=0 (exit 1) before the SKILL lead line was fixed (mistake M30-4). Carriers are now `chattr +i`; one wave-1 seat tool (llvm-objcopy --dump-section without an output file) rewrote 4 carriers in place during wave 1 (M30-2) \u2014 never run any tool that can write its input on a carrier or mutant; copy bytes to your scratch first.\n- R30-C1 (coverage; surface: REA operation inspect_rust_binary on its positive input class, images carrying a cargo-auditable `.dep-v0` section, in ELF, PE and thin Mach-O). Counter `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-30/c1-rust-positive.py --root <LANE-OR-CLONE> --rev <REV>` (oracle module tools/round-30/rust_dep_oracle.py). Frozen carrier list /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/carriers.tsv: 16 members of 7 official uv 0.13.0 PyPI wheels, files at /fast/scratch/hyaku/kaidoku-r30/carriers/<id> (mode 0444). Target line `carriers=16 pass=16 target=16 entry_ok=1 province_ok=1`, exit 0. Predicate label P1-pass; the predicate sentence P1 is in claims.json and in the counter docstring.\n- R30-C2 (depth; surface: a SKILL.md decision table of inspect_rust_binary refusal signatures predicted from the REA 6.5.0 code). Counter `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-30/c2-rust-refusals.py --root <LANE-OR-CLONE> --rev <REV>`. 19 deterministic mutants of carrier elf-x86_64-uvx, predictions frozen in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c2/predictions.tsv (3 predicted accepted, 16 predicted refused with an exact message). Mutant files at /fast/scratch/hyaku/kaidoku-r30/mutants/<id>. Target `mutants=19 matches=19 target=19 entry_ok=1 skill_ok=1`, exit 0. Label P2-match.\n- Both counters run REA live on every carrier or mutant (a committed envelope is a record that must agree with the live run). The C2 counter REWRITES the shared mutant files on every run (byte-identical), so ONLY seat ReRunC2 may run the C2 counter in measure mode or any REA run on a mutant; every other seat may run `c2-rust-refusals.py --selftest` only, or a modified copy whose MUT_DIR points into its own scratch directory.\n- Never execute any carrier or mutant (they are foreign-architecture, Windows and macOS images): read their bytes only.\n\n# Contract\n- Paths: every path is absolute. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kaidoku-shokunin - write it at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/<that path>. Write nothing else inside /home/vgpnk/Projects/shokunin/kaidoku-shokunin. Put scripts, drafts, raw output and other artifacts under /fast/scratch/hyaku/kaidoku-r30/seats/w2/<your item name>/ and list each with its sha256 in the report; the L1 integrates and commits.\n- Bounds: read-only on the lane. Never edit lane files (SCORECARD, LOG, SKILL, PROVINCE, SHONEN, QUALITY, SOURCES, corpus/, tools/, .ufo/ other than your own report). Never mutate the fleet repo /home/vgpnk/Projects/shokunin, sibling lanes, lane jj state or the lane Git index. Seats never run git or jj writes in the lane or the fleet repo: no git add/commit/checkout/reset/stash/switch/pull/push/fetch/worktree there, no mutating jj command anywhere; in the lane, jj only read-only with --ignore-working-copy. Read-only git (show, log, ls-tree, cat-file, diff, rev-parse, grep) is fine. Any check that needs Git writes or file mutation runs in a sandbox clone: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git clone -q /home/vgpnk/Projects/shokunin/kaidoku-shokunin /fast/scratch/hyaku/kaidoku-r30/seats/w2/<your item name>/clone`, with GIT_DIR, GIT_WORK_TREE and GIT_INDEX_FILE unset for every git command you run there; sandbox commits use `git -c user.name=ctl -c user.email=ctl@sandbox commit`.\n- Processes: cap every command with `timeout` (at most 900 s), never start an unbounded recursive test run, and kill any process tree you started before you return.\n- Messages: the only message target is agent://KaidokuR30 (the L1), and only for a blocker. Never message agent://all or any other seat.\n- Evidence: every finding names its producing command, an exact output excerpt, exit code and UTC time; label each conclusion observation, inference or unknown. Never fabricate; an unrun check has not passed. Attack seats name what they attack and give a verdict: holds, fails (with the counterexample) or could-not-evaluate. A control seat reports the control it built, the exact counter command, the full counter stdout, its exit code, and whether the control MET the frozen target line (it must not).\n- Sources: open primary sources by ordinary means only (plain HTTP fetch such as curl, git ls-remote or git clone of a public repository, a local file read); never use a headless browser or any tool to pass a bot challenge, captcha or access control. For each opened source record URL, access date 2026-10-23, sha256 of the bytes read, and one located quote of at most 25 contiguous words from the served bytes with its line.\n- REA: none, unless your item says so; CLI only (`TMPDIR=/fast/scratch/hyaku/kaidoku-r30/seats/w2/<your item name>/tmp timeout 300 npx -y rea-agents@6.5.0 <argv>`), never MCP devices.\n- Tooling: the operator authorizes you to install or update tools that help the task without asking - read /home/vgpnk/.omp/agent/RULES.md first, use official channels, and record each install (tool, version, channel, reason) in your report. All pacman transactions are PAUSED host-wide (pacman guard): install only via `uv tool`, `uv venv` + `uv pip`, `npx`, or an official binary in ~/.local/bin; never pacman -S, -Sy, -Syu, -U, -R, never a downgrade, never restart a host service.\n- Leaf: do not spawn agents, except that an executor may spawn one read-only labrat probe for one falsifiable hypothesis. Do not run your own swarm.\n- Finish by writing your report, then stop. Do not keep writing after your report is written.",
+ "items": [
+  {
+   "name": "ReDeriveElfX86",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack R30-C1 on the elf-x86_64 carriers: does REA's committed and live output really equal the .dep-v0 contents, judged by a reader you write yourself (not tools/round-30/rust_dep_oracle.py and not the counter)?\n# Work\nFor each carrier id starting `elf-x86_64` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/carriers.tsv: copy the carrier bytes from /fast/scratch/hyaku/kaidoku-r30/carriers/<id> into /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReDeriveElfX86/; extract the section with your own method (e.g. `llvm-objcopy --dump-section .dep-v0=<out> <in> <scratch-out-object>` ALWAYS with an explicit output object on the copy, or your own parser); inflate and parse it; compare name/version/source/kind/root and dependency edges by (name, version) with the committed envelope /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/envelopes/<id>.json; run REA once live per carrier (allowed: `inspect-rust-binary /fast/scratch/hyaku/kaidoku-r30/carriers/<id> --format json --full-output`) and compare evidence_id and packages with the committed one.\n# Acceptance\nReport: per carrier packages/edges/root/kind agreement, offset/size agreement, live-vs-committed evidence_id, any disagreement as a counterexample; verdict holds/fails."
+  },
+  {
+   "name": "ReDeriveElfArm",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack R30-C1 on the elf-aarch64 carriers: does REA's committed and live output really equal the .dep-v0 contents, judged by a reader you write yourself (not tools/round-30/rust_dep_oracle.py and not the counter)?\n# Work\nFor each carrier id starting `elf-aarch64` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/carriers.tsv: copy the carrier bytes from /fast/scratch/hyaku/kaidoku-r30/carriers/<id> into /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReDeriveElfArm/; extract the section with your own method (e.g. `llvm-objcopy --dump-section .dep-v0=<out> <in> <scratch-out-object>` ALWAYS with an explicit output object on the copy, or your own parser); inflate and parse it; compare name/version/source/kind/root and dependency edges by (name, version) with the committed envelope /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/envelopes/<id>.json; run REA once live per carrier (allowed: `inspect-rust-binary /fast/scratch/hyaku/kaidoku-r30/carriers/<id> --format json --full-output`) and compare evidence_id and packages with the committed one.\n# Acceptance\nReport: per carrier packages/edges/root/kind agreement, offset/size agreement, live-vs-committed evidence_id, any disagreement as a counterexample; verdict holds/fails."
+  },
+  {
+   "name": "ReDeriveElfRiscv",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack R30-C1 on the elf-riscv64 carriers: does REA's committed and live output really equal the .dep-v0 contents, judged by a reader you write yourself (not tools/round-30/rust_dep_oracle.py and not the counter)?\n# Work\nFor each carrier id starting `elf-riscv64` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/carriers.tsv: copy the carrier bytes from /fast/scratch/hyaku/kaidoku-r30/carriers/<id> into /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReDeriveElfRiscv/; extract the section with your own method (e.g. `llvm-objcopy --dump-section .dep-v0=<out> <in> <scratch-out-object>` ALWAYS with an explicit output object on the copy, or your own parser); inflate and parse it; compare name/version/source/kind/root and dependency edges by (name, version) with the committed envelope /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/envelopes/<id>.json; run REA once live per carrier (allowed: `inspect-rust-binary /fast/scratch/hyaku/kaidoku-r30/carriers/<id> --format json --full-output`) and compare evidence_id and packages with the committed one.\n# Acceptance\nReport: per carrier packages/edges/root/kind agreement, offset/size agreement, live-vs-committed evidence_id, any disagreement as a counterexample; verdict holds/fails."
+  },
+  {
+   "name": "ReDerivePeX86",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack R30-C1 on the pe-x86_64 carriers: does REA's committed and live output really equal the .dep-v0 contents, judged by a reader you write yourself (not tools/round-30/rust_dep_oracle.py and not the counter)?\n# Work\nFor each carrier id starting `pe-x86_64` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/carriers.tsv: copy the carrier bytes from /fast/scratch/hyaku/kaidoku-r30/carriers/<id> into /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReDerivePeX86/; extract the section with your own method (e.g. `llvm-objcopy --dump-section .dep-v0=<out> <in> <scratch-out-object>` ALWAYS with an explicit output object on the copy, or your own parser); inflate and parse it; compare name/version/source/kind/root and dependency edges by (name, version) with the committed envelope /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/envelopes/<id>.json; run REA once live per carrier (allowed: `inspect-rust-binary /fast/scratch/hyaku/kaidoku-r30/carriers/<id> --format json --full-output`) and compare evidence_id and packages with the committed one.\n# Acceptance\nReport: per carrier packages/edges/root/kind agreement, offset/size agreement, live-vs-committed evidence_id, any disagreement as a counterexample; verdict holds/fails."
+  },
+  {
+   "name": "ReDerivePeArm",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack R30-C1 on the pe-arm64 carriers: does REA's committed and live output really equal the .dep-v0 contents, judged by a reader you write yourself (not tools/round-30/rust_dep_oracle.py and not the counter)?\n# Work\nFor each carrier id starting `pe-arm64` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/carriers.tsv: copy the carrier bytes from /fast/scratch/hyaku/kaidoku-r30/carriers/<id> into /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReDerivePeArm/; extract the section with your own method (e.g. `llvm-objcopy --dump-section .dep-v0=<out> <in> <scratch-out-object>` ALWAYS with an explicit output object on the copy, or your own parser); inflate and parse it; compare name/version/source/kind/root and dependency edges by (name, version) with the committed envelope /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/envelopes/<id>.json; run REA once live per carrier (allowed: `inspect-rust-binary /fast/scratch/hyaku/kaidoku-r30/carriers/<id> --format json --full-output`) and compare evidence_id and packages with the committed one.\n# Acceptance\nReport: per carrier packages/edges/root/kind agreement, offset/size agreement, live-vs-committed evidence_id, any disagreement as a counterexample; verdict holds/fails."
+  },
+  {
+   "name": "ReDeriveMachoX86",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack R30-C1 on the macho-x86_64 carriers: does REA's committed and live output really equal the .dep-v0 contents, judged by a reader you write yourself (not tools/round-30/rust_dep_oracle.py and not the counter)?\n# Work\nFor each carrier id starting `macho-x86_64` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/carriers.tsv: copy the carrier bytes from /fast/scratch/hyaku/kaidoku-r30/carriers/<id> into /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReDeriveMachoX86/; extract the section with your own method (e.g. `llvm-objcopy --dump-section .dep-v0=<out> <in> <scratch-out-object>` ALWAYS with an explicit output object on the copy, or your own parser); inflate and parse it; compare name/version/source/kind/root and dependency edges by (name, version) with the committed envelope /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/envelopes/<id>.json; run REA once live per carrier (allowed: `inspect-rust-binary /fast/scratch/hyaku/kaidoku-r30/carriers/<id> --format json --full-output`) and compare evidence_id and packages with the committed one.\n# Acceptance\nReport: per carrier packages/edges/root/kind agreement, offset/size agreement, live-vs-committed evidence_id, any disagreement as a counterexample; verdict holds/fails."
+  },
+  {
+   "name": "ReDeriveMachoArm",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack R30-C1 on the macho-arm64 carriers: does REA's committed and live output really equal the .dep-v0 contents, judged by a reader you write yourself (not tools/round-30/rust_dep_oracle.py and not the counter)?\n# Work\nFor each carrier id starting `macho-arm64` in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/carriers.tsv: copy the carrier bytes from /fast/scratch/hyaku/kaidoku-r30/carriers/<id> into /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReDeriveMachoArm/; extract the section with your own method (e.g. `llvm-objcopy --dump-section .dep-v0=<out> <in> <scratch-out-object>` ALWAYS with an explicit output object on the copy, or your own parser); inflate and parse it; compare name/version/source/kind/root and dependency edges by (name, version) with the committed envelope /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/envelopes/<id>.json; run REA once live per carrier (allowed: `inspect-rust-binary /fast/scratch/hyaku/kaidoku-r30/carriers/<id> --format json --full-output`) and compare evidence_id and packages with the committed one.\n# Acceptance\nReport: per carrier packages/edges/root/kind agreement, offset/size agreement, live-vs-committed evidence_id, any disagreement as a counterexample; verdict holds/fails."
+  },
+  {
+   "name": "ReRunC1",
+   "role": "reviewer",
+   "prompt": "# Target\nRe-run the frozen C1 counter and selftest in a fresh clone at the measured revision.\n# Work\nClone into /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReRunC1/clone; `git -C clone checkout -q --detach 92b1dd2ddc119fda89a611ba515bdf6cfe906f76`; run `timeout 900 python3 -I -B clone/tools/round-30/c1-rust-positive.py --root /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReRunC1/clone --rev 92b1dd2ddc119fda89a611ba515bdf6cfe906f76` and `--selftest`, with GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE unset.\n# Acceptance\nReport: full stdout, exits, comparison with /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-30/after/c1-rust-positive-at-92b1dd2d.txt; verdict on the target line."
+  },
+  {
+   "name": "ReRunC2",
+   "role": "reviewer",
+   "prompt": "# Target\nRe-run the frozen C2 counter (the ONLY C2 measure-mode/mutant REA runner this wave) and selftest in a fresh clone at the measured revision; then test C2 separability.\n# Work\nClone into /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReRunC2/clone; checkout 92b1dd2ddc119fda89a611ba515bdf6cfe906f76 detached; run `timeout 900 python3 -I -B clone/tools/round-30/c2-rust-refusals.py --root /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReRunC2/clone --rev 92b1dd2ddc119fda89a611ba515bdf6cfe906f76` and `--selftest`. Then in a second clone delete corpus/evidence/round-30/c1/envelopes and runs.tsv, the C1 entry and the PROVINCE round-30 section, sandbox-commit, and run the C2 counter again (it must still exit 0: separability). Sequential only.\n# Acceptance\nReport: stdouts, exits, separability verdict."
+  },
+  {
+   "name": "SepC1",
+   "role": "critic",
+   "prompt": "# Target\nAttack R30-C1 separability: does the C1 counter reach its target with all C2 evidence absent?\n# Work\nClone into /fast/scratch/hyaku/kaidoku-r30/seats/w2/SepC1/clone at 92b1dd2ddc119fda89a611ba515bdf6cfe906f76; delete corpus/evidence/round-30/c2/envelopes, c2/runs.tsv, the C2 entry and the round-30 SKILL section; sandbox-commit; run the C1 counter with --rev main (REA live on carriers is allowed; never run C2).\n# Acceptance\nReport: stdout, exit, verdict."
+  },
+  {
+   "name": "ReviewC2Messages",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack R30-C2 from the committed bytes only (no REA): does each committed refusal envelope carry its frozen message, and where?\n# Work\nFor the 19 rows of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c2/predictions.tsv, read /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c2/envelopes/<id>.json and .stderr; locate the predicted message (error.message, error.details.issues, details.reason); for the 3 acceptances compare packages with your own decode of the mutant bytes copied from /fast/scratch/hyaku/kaidoku-r30/mutants/ into your scratch.\n# Acceptance\nReport: 19-row table (id, message location, exact field, match), verdict, and whether the entry's claim '13 of 16 refusals carry the message only in error.details.issues' holds."
+  },
+  {
+   "name": "ReopenS089",
+   "role": "reviewer",
+   "prompt": "# Target\nRe-open SOURCES row S089 and attack its quote, hash and scope.\n# Work\nRead the S089 row in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md and the Gate row in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-30.md; fetch the three pinned URLs with curl; compare sha256; locate the quote at README.md:95; check the row does not claim REA behavior.\n# Acceptance\nReport: hash equality, quote location and word count, verdict admit/reject."
+  },
+  {
+   "name": "ReopenS090",
+   "role": "reviewer",
+   "prompt": "# Target\nRe-open SOURCES row S090 and attack its hash, quote and the line ranges it cites.\n# Work\nFetch https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz into /fast/scratch/hyaku/kaidoku-r30/seats/w2/ReopenS090/, verify sha256 531717a0\u2026, extract package/dist/rust/RustAuditableReader.js, check line 7 quote and each cited range in the row of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md; compare with the installed copy.\n# Acceptance\nReport: verdict and any wrong range."
+  },
+  {
+   "name": "ReopenS091",
+   "role": "reviewer",
+   "prompt": "# Target\nRe-open SOURCES row S091 (PyPI uv 0.13.0 JSON) and attack its digests and kind.\n# Work\nFetch https://pypi.org/pypi/uv/0.13.0/json; compare with /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/pypi-uv-0.13.0.json and the 7 wheel digests in carriers.tsv; check the quote and that kind `dataset` fits /home/vgpnk/Projects/shokunin/CORPUS.md.\n# Acceptance\nReport: verdict."
+  },
+  {
+   "name": "ReviewEntryC1",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack the R30-C1 entry: is every number, id and claim in it backed by committed bytes, and are its limits complete?\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-23-r30-rust-auditable-positive.md; check each Results row against /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/envelopes/ (jq), the 5-distinct-documents claim, the PE size statement, the 'kind null or build' claim, the source line, and QUALITY rows 4-7 of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md.\n# Acceptance\nReport: claim-by-claim table, defects."
+  },
+  {
+   "name": "ReviewEntryC2",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack the R30-C2 entry: numbers, codes, the gate-order inference, the 'empty message unreachable' inference, limits.\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md; check its table against /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c2/ (envelopes, runs.tsv, predictions.tsv) and the inference statements against the REA code in /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/rust/ and dist/go/.\n# Acceptance\nReport: claim-by-claim table, defects."
+  },
+  {
+   "name": "ReviewSkillTable",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack the round-30 SKILL.md section: can a reader act on it alone, and does every row match observed envelopes?\n# Work\nRead the section `## Rust dependency metadata (\\`inspect-rust-binary\\`) \u2014 round 30` and `### Round-30 measurement registry` at the end of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md; compare each row with /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c2/envelopes/; check registry commands and selftest counts by running each `--selftest` (no measure mode for C2).\n# Acceptance\nReport: row table, defects."
+  },
+  {
+   "name": "ReviewProvince",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack the round-30 PROVINCE.md addition: does it move the claimed surface into Core without rewriting Core or Frontier, and is the Core row correct?\n# Work\n`git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff d210fb8f 92b1dd2ddc119fda89a611ba515bdf6cfe906f76 -- PROVINCE.md`; check only appended lines, the Core row cells against the entries, the 'Frontier list unchanged' statement, and run the claims.json unmoved_command at d210fb8f and at 92b1dd2ddc119fda89a611ba515bdf6cfe906f76.\n# Acceptance\nReport: verdict on the surface move (moved/unmoved) with both command outputs."
+  },
+  {
+   "name": "ReviewRecipeA",
+   "role": "reviewer",
+   "prompt": "# Target\nRecount the lane coverage map and depth proxy (SCORECARD recipe A) at the base and the measured revision.\n# Work\nRun SCORECARD.md recipe A (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/SCORECARD.md `## Measurement recipes` A) for REV=d210fb8f and REV=92b1dd2ddc119fda89a611ba515bdf6cfe906f76.\n# Acceptance\nReport: both JSON outputs; verdict that 116/116 mapped and 17/17 rule blocks hold (or not)."
+  },
+  {
+   "name": "CriticAxisC1After",
+   "role": "critic",
+   "prompt": "# Target\nAfter data: is R30-C1 a coverage move (surface entered governance) or a quality re-score, under AXES.md and the round-29 ruling?\n# Work\nRead /home/vgpnk/Projects/shokunin/AXES.md, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-29-verifier-spotcheck.md, the R30-C1 claim in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-30/claims.json, the entry, PROVINCE diff d210fb8f..92b1dd2ddc119fda89a611ba515bdf6cfe906f76, and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-30/w1/CriticAxisFitC1.md. Name the cheapest do-nothing or trivial baseline and whether it meets the target.\n# Acceptance\nReport: verdict fit/misfit with reasons."
+  },
+  {
+   "name": "CriticAxisC2After",
+   "role": "critic",
+   "prompt": "# Target\nAfter data: is R30-C2 a depth move, and could a predictor that never read the code have matched 19/19?\n# Work\nRead claims.json, predictions.tsv, the entry, the SKILL table, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-30/w1/CriticAxisFitC2.md and CtlC2Sequence.md.\n# Acceptance\nReport: verdict with reasons; whether the shared-message pairs weaken the 19/19."
+  },
+  {
+   "name": "CriticControlsAfter",
+   "role": "critic",
+   "prompt": "# Target\nAttack the pre-data control evidence: were the controls built and scored before data, by the frozen counters, and does any control (or the M30-3 weakness) undermine either verdict?\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-30/controls/receipts.tsv and receipts-detail.tsv, the six Ctl* reports in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-30/w1/, `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin log --format='%H %cI %s' d210fb8f..92b1dd2ddc119fda89a611ba515bdf6cfe906f76`; run `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-30/axis-fit-gate.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --round 30 --rev 92b1dd2ddc119fda89a611ba515bdf6cfe906f76`.\n# Acceptance\nReport: order table, gate output, verdict."
+  },
+  {
+   "name": "CriticFreezeAfter",
+   "role": "critic",
+   "prompt": "# Target\nAttack freeze integrity after data: did any frozen instrument or input change after 4ee65c67, and did any REA data precede the control receipts?\n# Work\n`git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff --stat 4ee65c67 92b1dd2ddc119fda89a611ba515bdf6cfe906f76 -- tools/round-30/c1-rust-positive.py tools/round-30/c2-rust-refusals.py tools/round-30/rust_dep_oracle.py corpus/evidence/round-30/c1/carriers.tsv corpus/evidence/round-30/c2/predictions.tsv`; check runs.tsv utc_start values against f39f4530's committer time; run `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-30/prefreeze-gate.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --round 30`.\n# Acceptance\nReport: verdict."
+  },
+  {
+   "name": "CriticHonesty",
+   "role": "critic",
+   "prompt": "# Target\nAttack the round's self-description: SCORECARD round-30 section, LOG entry and lesson against the evidence.\n# Work\nRead the round-30 sections of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SCORECARD.md, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/LOG.md and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-30.md at 92b1dd2ddc119fda89a611ba515bdf6cfe906f76 or later on main (they may land after this wave starts; if absent, attack the lesson only). Look for overclaims, universal words without enumeration, missing honest stops.\n# Acceptance\nReport: list of overclaims with pointers."
+  },
+  {
+   "name": "MutAxisFitGate",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation-test /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-30/axis-fit-gate.py against its own selftest.\n# Work\nCopy it to /fast/scratch/hyaku/kaidoku-r30/seats/w2/MutAxisFitGate/; apply at least 8 single-clause mutants on its pass/fail logic; run `--selftest` for each.\n# Acceptance\nReport: mutant table, kill count, survivors as missing cases."
+  },
+  {
+   "name": "MutPrefreezeGate",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation-test /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-30/prefreeze-gate.py against its own selftest.\n# Work\nCopy it to /fast/scratch/hyaku/kaidoku-r30/seats/w2/MutPrefreezeGate/; apply at least 8 single-clause mutants on its pass/fail logic; run `--selftest` for each.\n# Acceptance\nReport: mutant table, kill count, survivors as missing cases."
+  },
+  {
+   "name": "MutSettleGate",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation-test /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-30/settle-gate.py against its own selftest.\n# Work\nCopy it to /fast/scratch/hyaku/kaidoku-r30/seats/w2/MutSettleGate/; apply at least 8 single-clause mutants on its pass/fail logic; run `--selftest` for each.\n# Acceptance\nReport: mutant table, kill count, survivors as missing cases."
+  },
+  {
+   "name": "MutC1Oracle2",
+   "role": "mutation-tester",
+   "prompt": "# Target\nMutation-test the C1 counter's multiset comparison on REAL data: would a REA that dropped build-kind packages, dropped edges or deduplicated uv/uvx be caught?\n# Work\nCopy tools/round-30/c1-rust-positive.py and rust_dep_oracle.py into /fast/scratch/hyaku/kaidoku-r30/seats/w2/MutC1Oracle2/; write a harness that feeds judge() the committed envelopes from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/c1/envelopes/ with programmatic damage (drop every kind=build package; drop 1 edge; drop the root flag; swap two versions) and the oracle reading of the same carrier (copy carrier bytes to scratch first).\n# Acceptance\nReport: each damage \u2192 verdict; any damage that passes is a finding."
+  },
+  {
+   "name": "ReviewM293",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack the integrated M29-3 disclosure in round-29 claims.json: append-only, accurate sha, gate behaviour.\n# Work\n`git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff d210fb8f 92b1dd2ddc119fda89a611ba515bdf6cfe906f76 -- .ufo/waves/round-29/claims.json`; check the sha256 of tools/round-28/c1-heldout-naming.py at bacbe9cc; run `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-29/freeze-gate.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 92b1dd2ddc119fda89a611ba515bdf6cfe906f76` and `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-30/prefreeze-gate.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --round 29`.\n# Acceptance\nReport: verdict; note that INSTRUMENT_UNPINNED stays FLAGGED by design."
+  },
+  {
+   "name": "ReviewCorrections",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack the round-30 corrections: SHONEN pointer fix, R29 'published' corrections at every site, SCORECARD:3166 correction, l7-02 pointer.\n# Work\nRead the diffs `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff d210fb8f main -- SHONEN.md PROVINCE.md corpus/README.md corpus/knowledge/2026-10-22-r29-evm-fresh-selector-naming.md corpus/knowledge/2026-10-16-l7-02-inspect-rust-binary.md SCORECARD.md LOG.md`; verify SHONEN 97-118/116-118 against PROVINCE.md at main; check each site named in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-30/w1/ScribeR29Provenance.md and ScribeScorecard3166.md got its appended correction and no old line was deleted.\n# Acceptance\nReport: per-site table; deletions found (should be 0 except SHONEN's one pointer line)."
+  },
+  {
+   "name": "ReviewQuality4849",
+   "role": "reviewer",
+   "prompt": "# Target\nAttack QUALITY rows 48 and 49 and mistakes M30-1..M30-5: grounded, falsifiable, and is each 'shown able to fail' true?\n# Work\nRead /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md rows 48-49 and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-30.md `## Mistakes`; check each cited receipt exists and says what is claimed.\n# Acceptance\nReport: per row/mistake verdict."
+  },
+  {
+   "name": "SentinelEvidence",
+   "role": "sentinel",
+   "prompt": "# Target\nAttack the committed round-30 evidence for tampering or inconsistency: envelope subject digests vs frozen carriers/mutants, runs.tsv vs envelopes, package.json pin per run.\n# Work\nFor every envelope under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-30/*/envelopes/ compare data.subject.digest.sha256 with carriers.tsv/predictions.tsv; check runs.tsv exit and pkg_json_sha256 columns; check `lsattr /fast/scratch/hyaku/kaidoku-r30/carriers`; read-only.\n# Acceptance\nReport: findings table."
+  },
+  {
+   "name": "ScoutMisroot",
+   "role": "scout",
+   "prompt": "# Target\nMisroot sweep: did any round-30 seat write files into the fleet root /home/vgpnk/Projects/shokunin instead of the lane?\n# Work\nRun `git -C /home/vgpnk/Projects/shokunin status --porcelain` and list untracked files whose content names kaidoku round 30 (grep -l 'round-30' / 'KaidokuR30' / 'kaidoku-r30'); do not touch them.\n# Acceptance\nReport: list with paths and the content line that names this lane; or 'none' with the command output."
+  },
+  {
+   "name": "ConnFleetOverlap2",
+   "role": "connector",
+   "prompt": "# Target\nAfter data: does any sibling lane's committed ground conflict with the round-30 entries (Rust metadata, uv binaries, REA error-envelope shape `invalid_request` with details.issues)?\n# Work\nGrep sibling lanes /home/vgpnk/Projects/shokunin/*-shokunin (one lane per call; never a fleet-root search) for `details.issues`, `invalid_request`, `inspect-rust-binary`, `.dep-v0`, `uv 0.13`.\n# Acceptance\nReport: overlaps with cite-not-absorb notes."
+  }
+ ]
+}
