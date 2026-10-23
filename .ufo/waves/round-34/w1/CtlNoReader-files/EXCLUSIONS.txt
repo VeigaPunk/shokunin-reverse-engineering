@@ -1,0 +1,32 @@
+CtlNoReader — excluded control record
+====================================
+
+One optional control was removed from this seat's deliverables by L1 scope
+correction. It was an out-of-scope side-channel probe, it is not used as
+evidence anywhere in the report, and no result derived from it is claimed.
+
+Reason (verbatim): unrequested process-memory side-channel probe; not used as evidence
+
+Removed files (identical digests in the lane and in the seat sandbox; both copies
+were deleted):
+
+  b788c7d749cafd204bdcaa1dd2f5ef2096140e27bf7d077e4cfa71587677057a  control-reader-parent-memory.py
+  523cd28e9e4aa1ff5174b94a588dd534993931aed7f126684b433df2f97d8715  receipt-parent-memory.json
+  0a65edf5c1a6fe820eacade8e77a45f2e08ac368d1eb2ef441f050acc578a410  receipt-parent-memory.meta
+  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  receipt-parent-memory.stderr
+
+Removed invocation: the single `run_control parent-memory ...` line in
+`run-controls.sh`, deleted from both the lane copy and the sandbox copy.
+
+Statement of what happened, at a high level only:
+
+  The control was an optional attempt to obtain the scoring harness's live
+  runtime rename mapping by reading another process's memory rather than the
+  carrier. It was attempted once and was denied by the host. No memory contents
+  were obtained and none are reproduced here. No environment or process
+  contents are recorded here.
+
+Retained, unaffected: the five ordinary no-reader controls
+(`constant-e01`, `constant-empty`, `plausible-synthetic`, `oracle-by-size`,
+`oracle-root-discovered`), their receipts, and their truthful reported results
+in `CtlNoReader.md`.

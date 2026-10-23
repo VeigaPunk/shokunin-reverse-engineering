@@ -1,0 +1,27 @@
+    docs = []
+    for path, expected in contract["documents"].items():
+        try:
+            ok = digest(blob(root, rev, path)) == expected
+        except Unevaluable:
+            ok = False
+        docs.append({"path": path, "ok": ok})
+    try:
+        skill = blob(root, rev, "SKILL.md").decode("utf-8")
+        approved = blob(root, frozen, contract["skill_section"]["approved"]).decode("utf-8")
+        docs.append({"path": "SKILL.md#" + contract["skill_section"]["heading"], "ok": section(skill, contract["skill_section"]["heading"]) == approved.strip()})
+    except (Unevaluable, UnicodeError):
+        docs.append({"path": "SKILL.md#version-needs", "ok": False})
+    try:
+        registry = blob(root, rev, "corpus/SOURCES.md").decode("utf-8").splitlines()
+        for source_id, expected_row in contract["source_rows"].items():
+            docs.append({"path": "corpus/SOURCES.md#" + source_id, "ok": registry.count(expected_row) == 1})
+    except (Unevaluable, UnicodeError):
+        docs.append({"path": "corpus/SOURCES.md#round34", "ok": False})
+    for path, expected in contract["sources"].items():
+        if digest(blob(root, frozen, path)) != expected:
+            raise Unevaluable("source_pin:" + path)
+        try:
+            source_ok = digest(blob(root, rev, path)) == expected
+        except Unevaluable:
+            source_ok = False
+        docs.append({"path": path, "ok": source_ok})

@@ -1,0 +1,23 @@
+## GNU ELF version requirements — section-derived metadata (round 34)
+
+Use `corpus/knowledge/2026-10-23-r34-elf-version-needs.md` for the source/observation/inference split. This adds technical depth to the existing native ELF surface, not a new REA verb or wider Core coverage. Sources: S103 (LSB 5.0.0 §10.7.4) and S104 (pinned glibc 2.42 `elf.h`).
+
+| Decision | Exact field/threshold | Meaning and limit |
+|---|---|---|
+| Find the requirement records | Section type `SHT_GNU_verneed = 0x6ffffffe`; section `sh_link` identifies its string table | S103 capture:615–640; S104:459. Do not infer records from a section-name string alone. |
+| Decode Verneed | 16 bytes, `<HHIII`: `vn_version` +0, `vn_cnt` +2, `vn_file` +4, `vn_aux` +8, `vn_next` +12; current version 1 | S103:671–677,717; S104:1124–1138. Half/Word widths are 16/32 bits, not pointer-sized. |
+| Follow links | `vn_aux`/`vn_next` are byte offsets relative to the current Verneed; `vna_next` relative to the current Vernaux | S103 §10.7.4; S104:1130–1132,1158–1160. Bound the destination before reading; list count comes from the record, not a guessed file sweep. |
+| Decode Vernaux | 16 bytes, `<IHHII`: raw hash +0, flags +4, other +6, name offset +8, next +12 | S103:839–845; S104:1153–1161. Strings must terminate inside the linked string table under this local profile. |
+| Preserve meaning | `vna_other` is the version identifier associated with `.gnu.version`; retain raw bit 15, flags and hash | S103:937 defines the identifier; do not adopt S104's stale `Unused` comment. Weak flag bit is `0x2`; this reader does not authenticate the stored name hash or resolve symbols. |
+| Apply the local profile | ELF64 little-endian, x86_64/AArch64, ET_EXEC/ET_DYN, OSABI 0/3, 64-byte ELF/section headers; one version-needs section | Conservative implementation scope, not universal ELF validity. AArch64/ET_EXEC branches were not exercised by the development public-library selftest. |
+| Bound local work | Input ≤536870912 bytes; requirement entries ≤1024; section ≤65536 bytes; auxiliary total ≤4096; names ≤1024 bytes | Explicit local caps in `tools/round-34/elf-version-needs.py:LIMITS`; no completeness claim beyond this profile. |
+| Stop rather than overclaim | Sectionless or extended-numbering input is unsupported; absent verneed on a supported sectioned image returns an empty list | No section-derived record is not proof of no dynamic-only requirement. DT_VERNEED/DT_VERNEEDNUM consistency, per-symbol associations, runtime selection and satisfiability remain unknown. |
+
+Error patterns are local-reader findings, not host-loader verdicts: `error.unsupported.no_section_table` / `error.unsupported.shnum_extended` → unsupported, exit 11; `error.malformed.verneed_link` / `error.malformed.strtab_offset` → local parse rejection, exit 12; `error.io.read` / `error.io.size` → unevaluable I/O/cap, exit 13. All declared findings and their exact bounds are available with `--findings`. Helper/AST selftests do not demonstrate every malformed ELF branch.
+
+Checklist:
+1. Pin the supplied artifact's original path, SHA-256 and size; use a mode-0644 private copy. Never execute it to read metadata.
+2. Read static references with `readelf --version-info --wide <copy>` and `readelf --section-headers --wide <copy>`; distinguish captured output from an expected field inferred by a separate author.
+3. Run `python3 -I -B tools/round-34/elf-version-needs.py <copy>`. Success yields sorted `{schema:1,needed:[{file,versions:[{name,flags,other,hash}]}]}`; retain argv/stdout/stderr/exit and exact original digest.
+4. For the frozen round-34 finite comparison, run `python3 -I -B tools/round-34/version-needs-counter.py --root <lane> --freeze <freeze-commit> --rev <measured-commit>`. The second schedule changes only string-table naming on never-executed private copies; raw hash values remain recorded metadata, not consistency/authenticity evidence.
+5. Label decoded declarations as observation/inference; actual symbol resolution, selected dependency, instruction behavior, loader acceptance and authenticity are unknown without their own evidence.

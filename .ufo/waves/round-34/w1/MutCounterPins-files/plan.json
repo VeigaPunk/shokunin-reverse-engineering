@@ -1,0 +1,819 @@
+{
+  "axes": [
+    "carrier byte/size pin enforcement",
+    "carrier ID/digest uniqueness",
+    "unsafe path rejection",
+    "canonical expected-record shape",
+    "exact restoration"
+  ],
+  "cases": [
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "carrier_pin:text-a",
+      "name": "wrong-declared-digest",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "sha256"
+      ],
+      "source_rule": "score:114-116",
+      "value": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "carrier_pin:text-a",
+      "name": "wrong-declared-size",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "size"
+      ],
+      "source_rule": "score:114-116",
+      "value": 384
+    },
+    {
+      "action": "file",
+      "expected_exit": 2,
+      "expected_finding": "carrier_pin:text-a",
+      "file": "carrier-a.txt",
+      "name": "same-size-carrier-byte",
+      "source_rule": "score:114-116",
+      "value": "TEXU\n{\n  \"needed\": [\n    {\n      \"file\": \"libA\",\n      \"versions\": [\n        {\n          \"flags\": 0,\n          \"hash\": 1,\n          \"name\": \"VER_1\",\n          \"other\": 2\n        },\n        {\n          \"flags\": 0,\n          \"hash\": 2,\n          \"name\": \"VER_2\",\n          \"other\": 2\n        }\n      ]\n    },\n    {\n      \"file\": \"libB\",\n      \"versions\": []\n    }\n  ],\n  \"schema\": 1\n}\n"
+    },
+    {
+      "action": "file",
+      "expected_exit": 2,
+      "expected_finding": "carrier_pin:text-a",
+      "file": "carrier-a.txt",
+      "name": "shortened-carrier-byte",
+      "source_rule": "score:114-116",
+      "value": "TEXT\n{\n  \"needed\": [\n    {\n      \"file\": \"libA\",\n      \"versions\": [\n        {\n          \"flags\": 0,\n          \"hash\": 1,\n          \"name\": \"VER_1\",\n          \"other\": 2\n        },\n        {\n          \"flags\": 0,\n          \"hash\": 2,\n          \"name\": \"VER_2\",\n          \"other\": 2\n        }\n      ]\n    },\n    {\n      \"file\": \"libB\",\n      \"versions\": []\n    }\n  ],\n  \"schema\": 1\n}"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "zero-size",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "size"
+      ],
+      "source_rule": "validate_manifest:153-154",
+      "value": 0
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "oversized-size",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "size"
+      ],
+      "source_rule": "validate_manifest:153-154",
+      "value": 16777217
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "boolean-size",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "size"
+      ],
+      "source_rule": "validate_manifest:153-154",
+      "value": true
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "float-size",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "size"
+      ],
+      "source_rule": "validate_manifest:153-154",
+      "value": 1.0
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_duplicate",
+      "name": "duplicate-id",
+      "path": [
+        "manifest",
+        "carriers",
+        1,
+        "id"
+      ],
+      "source_rule": "validate_manifest:149-150",
+      "value": "text-a"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_duplicate",
+      "name": "duplicate-digest",
+      "path": [
+        "manifest",
+        "carriers",
+        1,
+        "sha256"
+      ],
+      "source_rule": "validate_manifest:149-150",
+      "value": "96759f5ad5a3235bc618c71297c135942e503fb70e120d44fc27c0db553c27e9"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "unsafe_path",
+      "name": "empty-path",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "path"
+      ],
+      "source_rule": "safe_path:57-61; validate_manifest:148",
+      "value": ""
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "unsafe_path",
+      "name": "absolute-path",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "path"
+      ],
+      "source_rule": "safe_path:57-61; validate_manifest:148",
+      "value": "/not-opened/MutCounterPins.txt"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "unsafe_path",
+      "name": "parent-path",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "path"
+      ],
+      "source_rule": "safe_path:57-61; validate_manifest:148",
+      "value": "../not-opened.txt"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "unsafe_path",
+      "name": "embedded-parent-path",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "path"
+      ],
+      "source_rule": "safe_path:57-61; validate_manifest:148",
+      "value": "sub/../carrier-a.txt"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "unsafe_path",
+      "name": "colon-path",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "path"
+      ],
+      "source_rule": "safe_path:57-61; validate_manifest:148",
+      "value": "head:carrier-a.txt"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "unsafe_path",
+      "name": "nul-path",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "path"
+      ],
+      "source_rule": "safe_path:57-61; validate_manifest:148",
+      "value": "carrier-a.txt\u0000suffix"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "expected-not-object",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected"
+      ],
+      "source_rule": "canonical:35-36; validate_manifest:153-154",
+      "value": []
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "expected-extra-field",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "extra"
+      ],
+      "source_rule": "canonical:35-36; validate_manifest:153-154",
+      "value": 1
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "expected-boolean-schema",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "schema"
+      ],
+      "source_rule": "canonical:35-36; validate_manifest:153-154",
+      "value": true
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "expected-string-schema",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "schema"
+      ],
+      "source_rule": "canonical:35-36; validate_manifest:153-154",
+      "value": "1"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "expected-unknown-schema",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "schema"
+      ],
+      "source_rule": "canonical:35-36; validate_manifest:153-154",
+      "value": 2
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "needed-not-list",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed"
+      ],
+      "source_rule": "canonical:37-38; validate_manifest:153-154",
+      "value": {}
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "needed-record-not-object",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0
+      ],
+      "source_rule": "canonical:41-42; validate_manifest:153-154",
+      "value": []
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "needed-record-extra-field",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "extra"
+      ],
+      "source_rule": "canonical:41-42; validate_manifest:153-154",
+      "value": 1
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "needed-file-empty",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "file"
+      ],
+      "source_rule": "canonical:41-42; validate_manifest:153-154",
+      "value": ""
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "needed-file-not-string",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "file"
+      ],
+      "source_rule": "canonical:41-42; validate_manifest:153-154",
+      "value": 7
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "versions-not-list",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions"
+      ],
+      "source_rule": "canonical:41-42; validate_manifest:153-154",
+      "value": {}
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "version-not-object",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0
+      ],
+      "source_rule": "canonical:46-47; validate_manifest:153-154",
+      "value": []
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "version-extra-field",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "extra"
+      ],
+      "source_rule": "canonical:46-47; validate_manifest:153-154",
+      "value": 1
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "version-name-empty",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "name"
+      ],
+      "source_rule": "canonical:46-47; validate_manifest:153-154",
+      "value": ""
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "version-name-not-string",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "name"
+      ],
+      "source_rule": "canonical:46-47; validate_manifest:153-154",
+      "value": false
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "versions-unsorted",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions"
+      ],
+      "source_rule": "canonical:52-54; validate_manifest:153-154",
+      "value": [
+        {
+          "flags": 0,
+          "hash": 2,
+          "name": "VER_2",
+          "other": 2
+        },
+        {
+          "flags": 0,
+          "hash": 1,
+          "name": "VER_1",
+          "other": 2
+        }
+      ]
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "versions-duplicate-name-other",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        1,
+        "name"
+      ],
+      "source_rule": "canonical:52-54; validate_manifest:153-154",
+      "value": "VER_1"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "needed-files-unsorted",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed"
+      ],
+      "source_rule": "canonical:55; validate_manifest:153-154",
+      "value": [
+        {
+          "file": "libB",
+          "versions": []
+        },
+        {
+          "file": "libA",
+          "versions": [
+            {
+              "flags": 0,
+              "hash": 1,
+              "name": "VER_1",
+              "other": 2
+            },
+            {
+              "flags": 0,
+              "hash": 2,
+              "name": "VER_2",
+              "other": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "needed-files-duplicate",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        1,
+        "file"
+      ],
+      "source_rule": "canonical:55; validate_manifest:153-154",
+      "value": "libA"
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "flags-boolean",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "flags"
+      ],
+      "source_rule": "canonical:48-49; validate_manifest:153-154",
+      "value": true
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "flags-negative",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "flags"
+      ],
+      "source_rule": "canonical:48-49; validate_manifest:153-154",
+      "value": -1
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "flags-overflow",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "flags"
+      ],
+      "source_rule": "canonical:50-51; validate_manifest:153-154",
+      "value": 65536
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "other-boolean",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "other"
+      ],
+      "source_rule": "canonical:48-49; validate_manifest:153-154",
+      "value": true
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "other-negative",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "other"
+      ],
+      "source_rule": "canonical:48-49; validate_manifest:153-154",
+      "value": -1
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "other-overflow",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "other"
+      ],
+      "source_rule": "canonical:50-51; validate_manifest:153-154",
+      "value": 65536
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "hash-boolean",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "hash"
+      ],
+      "source_rule": "canonical:48-49; validate_manifest:153-154",
+      "value": true
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "hash-negative",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "hash"
+      ],
+      "source_rule": "canonical:48-49; validate_manifest:153-154",
+      "value": -1
+    },
+    {
+      "action": "set",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "hash-overflow",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "hash"
+      ],
+      "source_rule": "canonical:50-51; validate_manifest:153-154",
+      "value": 4294967296
+    },
+    {
+      "action": "delete",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "expected-missing-schema",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "schema"
+      ],
+      "source_rule": "canonical:35-36; validate_manifest:153-154"
+    },
+    {
+      "action": "delete",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "expected-missing-needed",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed"
+      ],
+      "source_rule": "canonical:35-36; validate_manifest:153-154"
+    },
+    {
+      "action": "delete",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "needed-missing-file",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "file"
+      ],
+      "source_rule": "canonical:41-42; validate_manifest:153-154"
+    },
+    {
+      "action": "delete",
+      "expected_exit": 2,
+      "expected_finding": "manifest_row_schema",
+      "name": "version-missing-hash",
+      "path": [
+        "manifest",
+        "carriers",
+        0,
+        "expected",
+        "needed",
+        0,
+        "versions",
+        0,
+        "hash"
+      ],
+      "source_rule": "canonical:46-47; validate_manifest:153-154"
+    }
+  ],
+  "freeze": "54a87a51a865ab931fd355e767303337b05cccf4",
+  "original_files_utf8": {
+    "carrier-a.txt": "TEXT\n{\n  \"needed\": [\n    {\n      \"file\": \"libA\",\n      \"versions\": [\n        {\n          \"flags\": 0,\n          \"hash\": 1,\n          \"name\": \"VER_1\",\n          \"other\": 2\n        },\n        {\n          \"flags\": 0,\n          \"hash\": 2,\n          \"name\": \"VER_2\",\n          \"other\": 2\n        }\n      ]\n    },\n    {\n      \"file\": \"libB\",\n      \"versions\": []\n    }\n  ],\n  \"schema\": 1\n}\n",
+    "carrier-b.txt": "TEXT\n{\n  \"needed\": [],\n  \"schema\": 1\n}\n",
+    "reader.py": "import json, sys\nfrom pathlib import Path\nraw = Path(sys.argv[1]).read_bytes()\nif not raw.startswith(b\"TEXT\\n\"):\n    raise SystemExit(3)\nprint(json.dumps(json.loads(raw[5:]), sort_keys=True))\n",
+    "spec.json": "{\n  \"documents_ok\": true,\n  \"manifest\": {\n    \"carriers\": [\n      {\n        \"expected\": {\n          \"needed\": [\n            {\n              \"file\": \"libA\",\n              \"versions\": [\n                {\n                  \"flags\": 0,\n                  \"hash\": 1,\n                  \"name\": \"VER_1\",\n                  \"other\": 2\n                },\n                {\n                  \"flags\": 0,\n                  \"hash\": 2,\n                  \"name\": \"VER_2\",\n                  \"other\": 2\n                }\n              ]\n            },\n            {\n              \"file\": \"libB\",\n              \"versions\": []\n            }\n          ],\n          \"schema\": 1\n        },\n        \"id\": \"text-a\",\n        \"path\": \"carrier-a.txt\",\n        \"sha256\": \"96759f5ad5a3235bc618c71297c135942e503fb70e120d44fc27c0db553c27e9\",\n        \"size\": 383\n      },\n      {\n        \"expected\": {\n          \"needed\": [],\n          \"schema\": 1\n        },\n        \"id\": \"text-b\",\n        \"path\": \"carrier-b.txt\",\n        \"sha256\": \"730f7684ce977c79121036b8f65c4e8ac2a8d2e2e5048ee754efde14d4384f66\",\n        \"size\": 39\n      }\n    ],\n    \"schema\": 1\n  },\n  \"target\": 2\n}\n"
+  },
+  "predicate_verbatim": "P34-version-needs: twelve public ELF carriers yield exactly their independently frozen GNU version-needs records on opaque paths, including randomized same-length string-table naming wherever requirements are present, and the pinned source-backed decision table is present.",
+  "production_score": false,
+  "source": "tools/round-34/version-needs-counter.py"
+}

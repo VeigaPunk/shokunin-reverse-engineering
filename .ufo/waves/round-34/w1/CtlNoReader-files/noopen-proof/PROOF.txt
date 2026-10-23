@@ -1,0 +1,47 @@
+CtlNoReader: no-open proof for the no-reader replay controls
+==========================================================
+
+Claim: every control reader in this seat NEVER opens the carrier input file.
+
+Evidence A -- standalone strace of each control reader
+-----------------------------------------------------
+Command shape:
+  strace -f -qq -e trace=openat,open,statx,newfstatat,readlink \
+      -o trace-<name>.txt python3 -I -B reader-<name>.py <opaque-path>
+
+  control              exit  opens_of_carrier  stat_of_carrier  any_ref
+  constant-e01           0          0                 0             0
+  constant-empty         0          0                 0             0
+  plausible-synthetic    0          0                 0             0
+  oracle-by-size         0          0                 1             1
+
+  "opens_of_carrier" counts openat/open lines naming the opaque carrier path.
+  "stat_of_carrier"  counts statx/newfstatat lines naming it.
+  oracle-by-size performs exactly one statx (os.stat of the path) and zero
+  opens: it reads no carrier byte.
+
+Evidence B -- strace of the REAL frozen counter run
+---------------------------------------------------
+Command:
+  strace -f -qq -e trace=openat,open -o strace-counter-run.txt \
+    python3 tools/round-34/version-needs-counter.py \
+      --root . --rev 54a87a51... --freeze 54a87a51... \
+      --control-reader <seatdir>/control-reader-oracle-by-size.py
+
+  total lines naming an "opaque-*.data" carrier path : 24
+  distinct pids performing those opens               : 1  (pid 2148875)
+  pid 2148875 is the counter process itself           : confirmed by the
+      first line of that pid mentioning version-needs-counter.py
+  flags on ALL 24 opens                              : O_WRONLY|O_CREAT|O_TRUNC
+  opens with O_RDONLY on any opaque carrier path     : 0
+
+  => Every opaque-file open is the COUNTER writing the carrier into its temp
+     directory. No reader subprocess ever opens a carrier for reading.
+
+Evidence C -- source review
+---------------------------
+control-reader-constant-e01.py, control-reader-constant-empty.py and
+control-reader-plausible-synthetic.py never reference sys.argv[1] at all.
+control-reader-oracle-by-size.py and control-reader-oracle-root-discovered.py
+reference argv[1] only through os.stat() or /proc reads; neither of them calls
+open()/read() on it.

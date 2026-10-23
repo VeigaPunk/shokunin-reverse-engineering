@@ -1,0 +1,70 @@
+{
+  "reviewer": "KaidokuR34.RevOracleC",
+  "assignment": "independently review expected records e09-e12; retained readelf outputs, own readelf static commands on private copies, linked .dynstr offsets; compare names/flags/index/hash; distinguish hash inference",
+  "utc": "2026-10-23T10:54:26Z",
+  "frozen_manifest": {
+    "path": ".ufo/waves/round-34/expected.json",
+    "sha256": "f22e7e3b8f70c7a5dda784919f6df53a1feaf11cca0e4bba767509d51717974d",
+    "matches_claims_manifest_sha256": true
+  },
+  "carriers_used": "sandbox copies /fast/scratch/hyaku/kaidoku-r34/w1/RevOracleC/corpus/evidence/round-34/elf/e{09,10,11,12}.bin at freeze 54a87a51a865ab931fd355e767303337b05cccf4",
+  "own_readelf": {
+    "binary": "/usr/bin/readelf",
+    "version": "GNU readelf (GNU Binutils) 2.47",
+    "commands": "readelf --version-info --wide <private copy>",
+    "exit_codes": {"e09": 0, "e10": 0, "e11": 0, "e12": 0},
+    "stdout_sha256": {
+      "e09": "64eedbee679866f0cfded318a0e83d8216b3e415a412979673c58bede70e2bf2",
+      "e10": "c0630abb4399578c5ddc15430a8beff73ef44bf10ffc7691b73bece1f7169e44",
+      "e11": "f6e372a4fe1e9b994a4e5209e0b601389cd1f137176e31f10818c3d1bb236638",
+      "e12": "cf2ded89ffb6823969c850408064e501136b8b261c8e2e62a271865d023cd6e7"
+    },
+    "matches_retained_captures": {
+      "e09": true,
+      "e10": true,
+      "e11": true,
+      "e12": true
+    }
+  },
+  "direct_struct_parse_vs_manifest": {
+    "method": "independent minimal ELF64 struct parser (SHT_GNU_verneed chain, vn_file/vna_name resolved through linked .dynstr); canonicalization file asc, then (name, other) asc",
+    "e09": {"match": true, "needed_files": 3, "version_records": 42, "string_table": {"offset": 12880, "size": 8972}},
+    "e10": {"match": true, "needed_files": 4, "version_records": 25, "string_table": {"offset": 194832, "size": 313059}},
+    "e11": {"match": true, "needed_files": 61, "version_records": 77, "string_table": {"offset": 44880, "size": 34454}},
+    "e12": {"match": true, "needed_files": 0, "version_records": 0, "string_table": null}
+  },
+  "retained_readelf_parse_vs_manifest": {
+    "method": "regex parse of retained captured/readelf-version-info.txt (name/flags/Version per required library)",
+    "e09": {"match": true},
+    "e10": {"match": true},
+    "e11": {"match": true},
+    "e12": {"match": true, "note": "44-byte capture: 'No version information found in this file.'; mirrors own readelf"}
+  },
+  "string_table_offsets": {
+    "e09": ".dynstr section offset 0x3250 (12880) size 0x230c (8972) == manifest string_table",
+    "e10": ".dynstr section offset 0x2f910 (194832) size 0x4c743 (313059) == manifest string_table",
+    "e11": ".dynstr section offset 0xaf50 (44880) size 0x8696 (34454) == manifest string_table",
+    "e12": "no verneed; .dynstr size 1; manifest string_table null (no invented .dynstr)"
+  },
+  "hash_provenance": {
+    "policy": "manifest hash is stored vna_hash field from Vernaux",
+    "check": "read stored vna_hash u32 from bytes; compare with SysV ELF string hash of referenced name",
+    "all_stored_equal_sysv_hash": true,
+    "checked_entries": 144,
+    "note": "stored vna_hash is byte-readable in each binary and equals both manifest value and recomputed SysV hash; field-read and recompute are not distinguishable by value, but bytes carry exactly the manifest values"
+  },
+  "versym_index_crosscheck": {
+    "method": "collect distinct nonzero .gnu.version (VERSYM) u16 indices and compare against every vna_other",
+    "e09": {"vna_other_count": 42, "missing_from_versym": [68]},
+    "e10": {"vna_other_count": 25, "missing_from_versym": [82]},
+    "e11": {"vna_other_count": 77, "missing_from_versym": [78]},
+    "note": "the only missing indices are the GLIBC_ABI_DT_RELR anchors (version 68/82/78 resp.); no symbol in these objects carries that index, so the VERSYM array never stores it. Manifest records it exactly as stored in Vernaux; not a record defect."
+  },
+  "manifest_totals": {
+    "needed": 107,
+    "auxiliary": 339,
+    "matches_claims_width": true
+  },
+  "no_target_execution": true,
+  "no_production_reader_or_counter_run": true
+}

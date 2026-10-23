@@ -1,0 +1,35 @@
+{
+  "observed_utc": "2026-10-23T10:53:48.991050+00:00",
+  "runs": [
+    {
+      "revision": "ec3125ad3d130d92f888a4128dfaa2982f36fff7",
+      "argv": [
+        "python3",
+        "-I",
+        "-B",
+        "-c",
+        "import json,re,subprocess,sys,collections; t=subprocess.check_output(['git','-C',sys.argv[1],'show',sys.argv[2]+':corpus/SOURCES.md'],text=True); rows=[[c.strip() for c in l.split('|')[1:-1]] for l in t.splitlines() if re.match(r'^\\| *S[0-9]{3,} *\\|',l)]; good=[r for r in rows if len(r)==11]; print(json.dumps({'rows':len(rows),'malformed':len(rows)-len(good),'tiers':dict(sorted(collections.Counter(r[3] for r in good).items())),'status':dict(sorted(collections.Counter(r[7] for r in good).items()))},sort_keys=True))",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+        "ec3125ad3d130d92f888a4128dfaa2982f36fff7"
+      ],
+      "exit": 0,
+      "stdout": "{\"malformed\": 0, \"rows\": 102, \"status\": {\"mined\": 99, \"rejected\": 3}, \"tiers\": {\"A\": 96, \"B\": 5, \"C\": 1}}\n",
+      "stderr": ""
+    },
+    {
+      "revision": "54a87a51a865ab931fd355e767303337b05cccf4",
+      "argv": [
+        "python3",
+        "-I",
+        "-B",
+        "-c",
+        "import json,re,subprocess,sys,collections; t=subprocess.check_output(['git','-C',sys.argv[1],'show',sys.argv[2]+':corpus/SOURCES.md'],text=True); rows=[[c.strip() for c in l.split('|')[1:-1]] for l in t.splitlines() if re.match(r'^\\| *S[0-9]{3,} *\\|',l)]; good=[r for r in rows if len(r)==11]; print(json.dumps({'rows':len(rows),'malformed':len(rows)-len(good),'tiers':dict(sorted(collections.Counter(r[3] for r in good).items())),'status':dict(sorted(collections.Counter(r[7] for r in good).items()))},sort_keys=True))",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+        "54a87a51a865ab931fd355e767303337b05cccf4"
+      ],
+      "exit": 0,
+      "stdout": "{\"malformed\": 0, \"rows\": 105, \"status\": {\"mined\": 101, \"rejected\": 4}, \"tiers\": {\"A\": 99, \"B\": 5, \"C\": 1}}\n",
+      "stderr": ""
+    }
+  ]
+}

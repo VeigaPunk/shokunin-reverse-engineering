@@ -1,0 +1,26 @@
+case clean: PASS freeze=1ae5a96f06e8 pins=2 exit=0
+case tampered_pin: PASS exit=1 changed=1 sha=2412b990a7d3
+case restored_after_change: FAIL restore commit must still fail: 'FAIL\tbin/tool.py\tsha=94eb0c109cd7\tcommits_after_freeze=0516618,be39d4e'
+case absent_claims: PASS exit=2 claims=.ufo/waves/round-99/claims.json absent
+case missing_pinned_file: PASS exit=1 sha=absent changed=1
+case compat_absent_frozen_inputs: PASS exit=0 pins=1
+case compat_empty_frozen_inputs: PASS exit=0 pins=2
+case compat_round32_shape: PASS exit=0 pins=8
+case schema_empty_instruments: PASS exit=3 code=instruments_empty
+case schema_omitted_instruments: PASS exit=3 code=instruments_missing
+case schema_no_pin_keys: PASS exit=3 code=instruments_missing
+case schema_empty_list_instruments: PASS exit=3 code=instruments_not_object
+case schema_empty_string_instruments: PASS exit=3 code=instruments_not_object
+case schema_pair_list_instruments: PASS exit=3 code=instruments_not_object
+case schema_empty_list_frozen_inputs: PASS exit=3 code=frozen_inputs_not_object
+case schema_null_instruments: PASS exit=3 code=instruments_not_object
+case schema_null_frozen_inputs: PASS exit=3 code=frozen_inputs_not_object
+case schema_bad_digest: PASS exit=3 code=pin_digest_format
+case schema_absolute_pin: PASS exit=3 code=pin_path_not_relative
+case schema_parent_pin: PASS exit=3 code=pin_path_not_relative
+case schema_empty_pin_key: PASS exit=3 code=pin_key_empty
+case schema_duplicate_pin: PASS exit=3 code=pin_path_duplicate
+case schema_malformed_json: PASS exit=3 code=claims_not_json
+case schema_top_level_array: PASS exit=3 code=claims_not_object
+case schema_top_level_null: PASS exit=3 code=claims_not_object
+freeze-integrity-selftest: FAIL cases=25 failed=restored_after_change elapsed_s=2.23

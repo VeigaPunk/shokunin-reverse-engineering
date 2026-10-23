@@ -1,0 +1,49 @@
+RevFreezeOrder — evidence receipt (read-only audit, 2026-10-23)
+Lane root: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+Sandbox: /fast/scratch/hyaku/kaidoku-r34/w1/RevFreezeOrder (HEAD 54a87a51a865ab931fd355e767303337b05cccf4)
+
+Git history (sandbox and production identical):
+  ec3125ad ← 8897a67f (instruments) ← 54a87a51 (claims freeze) ← d52e2404 (HEAD)
+First-add (git log --diff-filter=A):
+  tools/round-34/version-needs-counter.py, elf-version-needs.py, freeze-integrity.py,
+  .ufo/waves/round-34/prep/R34Expected-files/author_expected.py,
+  .ufo/waves/round-34/expected.json, corpus/evidence/round-34/elf/e01..e12.bin
+  → all in 8897a67f6074580d6eac1a3fc0e37fdcd7aa0df0
+Freeze commit 54a87a51 adds only: .ufo/waves/round-34/claims.json,
+  corpus/claim-freezes.tsv, corpus/claim-freezes-v2.tsv
+Post-freeze production delta (54a87a51..d52e2404): w1 dispatch metadata + before/c1-at-base.json only.
+
+Digests (sha256):
+  expected.json / prep/R34Expected-files/manifest.json = f22e7e3b8f70c7a5dda784919f6df53a1feaf11cca0e4bba767509d51717974d
+  knowledge doc = d721189c9df0a267c22dd566d488deb3c19e3b1365f1e1f8cfaf0ba2092aa639
+  approved-skill-section.txt = c156effc825c46930bc08309888102a47e7011c5b589a453dceb2e961c8d2ba6
+  lsb-symversion.html = 982fe1208c76eda09d8619f3907783899e4e73b19c34f3e22314fb36cc8f7f91
+  glibc-elf.h = fd6e7f3e3c74ee9d64b9f92ce3cc31b34413ca2622a167320ea053ce9a68110f
+  counter (at 8897a67f, at 54a87a51, worktree) = d7f0a8cf3ca08562437d40711d15e7ad4f6fa44edb4e8934c36f4673e4e7c45e
+  reader (at 8897a67f, worktree) = ac7d24a546022c7cc8295450a2692c51c07099e42a1aa02fb69c29455dae3f33
+  freeze-integrity = fe955c5789123a94a575a2a2e29e2fac8702889817417b4d9892e91bc8a40138
+  author_expected.py = 916e066964ebe09c1015ed641621f9ec51354c1399eef65263537cbaf8b9c797
+  carriers e01..e12 = 8398af7d…/dcd2b469…/64c10d9b…/24c47749…/c14c8f49…/5eb48dd5…/339d917c…/1c6062e0…/d8fab7fc…/f5fc7380…/a24a2309…/1dc03d8f… (all match frozen_inputs)
+  claims.json at 54a87a51 = d52e2404 = worktree = bb971710cb17ef775227cceb1b7024b7380e859564a28648709dd1c786a997a4
+  prep/R34Expected-files/MANIFEST.sha256 content lists f22e7e3b… (file digest 5787ab4001d34e97de393a4e989c574318ae7bb997e999e90ae9e1ee61bae1ad)
+  challenge/schedule.json = 95199e90ee73cb278d7d2105f15e043eea4341e1682a69ea27f9d4053a0dcf2d
+
+Manifest analysis (python3 json):
+  carriers=12; needed=107; aux=339; e12 expected needschema:1,"needed":[]}, string_table null.
+  All string_table offset+size within file sizes; all carrier size+sha256 verified.
+
+Checks performed:
+  - grep version-needs-counter.py for author_challenge|author_expected|challenge|schedule → only "Sattolo" comment; no schedule coupling.
+  - grep source captures: glibc-elf.h:459 SHT_GNU_verneed 0x6ffffffe; 1124-1161 Elf64_Verneed/VER_NEED_CURRENT/Elf64_Vernaux.
+    lsb-symversion.html Verneed/Vernaux structure blocks ~644-677 and ~833-845.
+  - glob corpus/evidence/round-34/** → only elf/e01..e12.bin.
+
+Before receipts:
+  before/c1-at-base.json: exit 1, finding reader_absent, matched 0, met_target false
+    (freeze 54a87a51…, rev ec3125ad…; reader absent at base).
+  before/counter-selftest.json: instrument 859f2fbd8efd890db734f74693aeb7a2ddb57431428819fa0d0edcf126371855 (superseded)
+  before/counter-selftest-stable-findings.json: instrument 80aa26d67b94d6c2a1a1b50127692d12a82a0f6be9daf9e47720ed787d6f6419 (superseded)
+  before/counter-selftest-final-prefreeze.json: instrument d7f0a8cf… (frozen) exit 0
+  before/counter-selftest-at-instruments.json: instrument d7f0a8cf… exit 0
+
+No production data exists; no parser/counter executed by this seat; no tools installed.

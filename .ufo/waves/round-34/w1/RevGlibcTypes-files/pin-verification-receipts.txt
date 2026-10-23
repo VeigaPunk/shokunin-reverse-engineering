@@ -1,0 +1,67 @@
+Kaidoku round 34 — RevGlibcTypes — S104 pin verification receipts
+seat: KaidokuR34.RevGlibcTypes (reviewer, read-only prose; no parser run, no target binary execution)
+observed: 2026-10-23 UTC, final receipt 2026-10-23T10:58:02Z
+sandbox: /fast/scratch/hyaku/kaidoku-r34/w1/RevGlibcTypes (separate clone/worktree)
+sandbox HEAD: 54a87a51a865ab931fd355e767303337b05cccf4 (git rev-parse HEAD with env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE)
+freeze under test: 54a87a51a865ab931fd355e767303337b05cccf4
+lane root for all relative paths: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+
+[A1] capture digests and lane/sandbox equality
+argv: /usr/bin/sha256sum <lane>/.ufo/waves/round-34/prep/R34SourceNovelty-files/glibc-elf.h <sandbox>/.ufo/waves/round-34/prep/R34SourceNovelty-files/glibc-elf.h <sandbox>/.ufo/waves/round-34/approved-skill-section.txt <sandbox>/corpus/knowledge/2026-10-23-r34-elf-version-needs.md
+stdout:
+fd6e7f3e3c74ee9d64b9f92ce3cc31b34413ca2622a167320ea053ce9a68110f  <lane>/.ufo/waves/round-34/prep/R34SourceNovelty-files/glibc-elf.h
+fd6e7f3e3c74ee9d64b9f92ce3cc31b34413ca2622a167320ea053ce9a68110f  <sandbox>/.ufo/waves/round-34/prep/R34SourceNovelty-files/glibc-elf.h
+c156effc825c46930bc08309888102a47e7011c5b589a453dceb2e961c8d2ba6  <sandbox>/.ufo/waves/round-34/approved-skill-section.txt
+d721189c9df0a267c22dd566d488deb3c19e3b1365f1e1f8cfaf0ba2092aa639  <sandbox>/corpus/knowledge/2026-10-23-r34-elf-version-needs.md
+argv: /usr/bin/cmp <lane-capture> <sandbox-capture> && echo CAPTURE-IDENTICAL
+stdout: CAPTURE-IDENTICAL, exit 0
+match to claims.json frozen_inputs: glibc-elf.h fd6e7f3e…, approved-skill-section.txt c156effc…, knowledge md d721189c… — all three equal.
+
+[A2] upstream refetch of the exact pinned URL
+argv: /usr/bin/timeout 100 /usr/bin/curl -fsSL 'https://raw.githubusercontent.com/bminor/glibc/d2097651cc57834dbfcaa102ddfacae0d86cfb66/elf/elf.h' -o up-github-elf.h
+exit: 0 (github_exit=0)
+argv: /usr/bin/sha256sum up-github-elf.h
+stdout: fd6e7f3e3c74ee9d64b9f92ce3cc31b34413ca2622a167320ea053ce9a68110f  up-github-elf.h
+argv: /usr/bin/cmp up-github-elf.h <sandbox-capture> && echo UPSTREAM-BYTE-IDENTICAL
+stdout: UPSTREAM-BYTE-IDENTICAL, exit 0
+argv: /usr/bin/stat -c '%s %n' on archived refetch and lane capture
+stdout: 195524  upstream-refetch-elf.h ; 195524  glibc-elf.h (equal sizes)
+
+[A3] pinned commit == glibc-2.42 release tag (two hosts)
+argv: /usr/bin/timeout 100 /usr/bin/env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git ls-remote https://github.com/bminor/glibc.git 'refs/tags/glibc-2.42' 'refs/tags/glibc-2.42^{}'
+stdout:
+d7be9df5ad9febb95e608e28dad3d89aa2049e33	refs/tags/glibc-2.42
+d2097651cc57834dbfcaa102ddfacae0d86cfb66	refs/tags/glibc-2.42^{}
+exit: 0
+argv: /usr/bin/timeout 100 /usr/bin/env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git ls-remote https://sourceware.org/git/glibc.git 'refs/tags/glibc-2.42' 'refs/tags/glibc-2.42^{}'
+stdout:
+d7be9df5ad9febb95e608e28dad3d89aa2049e33	refs/tags/glibc-2.42
+d2097651cc57834dbfcaa102ddfacae0d86cfb66	refs/tags/glibc-2.42^{}
+exit: 0 ; observed 2026-10-23T10:58:02Z
+conclusion: pinned commit d2097651cc57834dbfcaa102ddfacae0d86cfb66 is the peeled glibc-2.42 tag on both github/bminor and sourceware — the "glibc 2.42" label is exact.
+
+[A4] archival copies written by this seat (own scope only)
+cp up-github-elf.h → .ufo/waves/round-34/w1/RevGlibcTypes-files/upstream-refetch-elf.h (sha256 fd6e7f3e…, 195524 bytes)
+this file: .ufo/waves/round-34/w1/RevGlibcTypes-files/pin-verification-receipts.txt
+no other lane write performed; no production or shared file touched.
+
+[B] line-number evidence (read/grep tools against the capture; byte-identity to upstream makes these commit-exact)
+28 : typedef uint16_t Elf64_Half;
+33 : typedef uint32_t Elf64_Word;
+43 : typedef uint64_t Elf64_Addr;
+46 : typedef uint64_t Elf64_Off;
+61 : #define EI_NIDENT (16)
+81-97   : Elf64_Ehdr — e_ident[16], e_type H, e_machine H, e_version W, e_entry A, e_phoff O, e_shoff O, e_flags W, e_ehsize H, e_phentsize H, e_phnum H, e_shentsize H, e_shnum H, e_shstrndx H
+397-409 : Elf64_Shdr — sh_name W, sh_type W, sh_flags X, sh_addr A, sh_offset O, sh_size X, sh_link W, sh_info W, sh_addralign X, sh_entsize X
+459 : #define SHT_GNU_verneed	  0x6ffffffe	/* Version needs section.  */  (grep: single occurrence in the header)
+1085-1086 : #define VER_FLG_WEAK	0x2		/* Weak version identifier.  Also / used by vna_flags below.  */
+1124-1133 : Elf64_Verneed — Elf64_Half vn_version, Elf64_Half vn_cnt, Elf64_Word vn_file (comment 1129), Elf64_Word vn_aux (1130), Elf64_Word vn_next (1131, comment 1132)
+1137-1139 : VER_NEED_NONE 0, VER_NEED_CURRENT 1, VER_NEED_NUM 2
+1153-1161 : Elf64_Vernaux — Elf64_Word vna_hash, Elf64_Half vna_flags, Elf64_Half vna_other /* Unused */ (1157), Elf64_Word vna_name (1158), Elf64_Word vna_next (1159, comment 1160)
+1147 : Elf32_Half vna_other carries the same stale /* Unused */ comment (Elf32 twin)
+
+[C] live SKILL section equality (frozen sandbox tree)
+SKILL.md lines 1158-1184 carry the approved-skill-section.txt content verbatim: heading, intro line, the 8-row decision table, error-patterns paragraph, checklist 1-5. No drift observed (visual full-block comparison; approved txt ends at checklist 5 as designed).
+
+[D] tooling record
+No tool installed or upgraded this item: curl, git, coreutils (sha256sum/cmp/stat) already present and sufficient. No pacman/uv/npm action taken.

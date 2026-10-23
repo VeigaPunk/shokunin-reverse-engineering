@@ -1,0 +1,60 @@
+# ScoutNoveltyAlias command receipt
+# sandbox: /fast/scratch/hyaku/kaidoku-r34/w1/ScoutNoveltyAlias
+# HEAD (sandbox): 54a87a51a865ab931fd355e767303337b05cccf4
+# sweep revision (base): ec3125ad3d130d92f888a4128dfaa2982f36fff7
+# ancestor check: merge-base --is-ancestor BASE HEAD → exit 0
+# No production reader, counter, REA, or target binary was executed.
+# No tool installed. Pacman not used.
+
+2026-10-23T10:53:06Z
+git grep -n -I -e verneed -e vernaux -e 'gnu\.version' -e 'symbol version' -e Elf64_Verneed -e Elf64_Vernaux -e DT_VERNEED -e SHT_GNU_ver -e version_r -e 'version needs' -e 'version-need' ec3125ad -- SKILL.md PROVINCE.md README.md corpus/README.md corpus/SOURCES.md corpus/knowledge
+exit 0
+only hit: corpus/knowledge/2026-10-13-elf-observation-jq.md:116
+
+2026-10-23T10:53:06Z
+git ls-tree -r --name-only ec3125ad | grep -E -i 'verneed|vernaux|version_r|symbol[-_. ]version|gnu\.version|version-needs|version_needs'
+exit 1 (zero filenames)
+
+2026-10-23T10:53:06Z
+git grep -n -I -e vn_version -e vn_cnt -e vn_file -e vn_aux -e vna_hash -e vna_flags -e vna_other -e vna_name -e vna_next -e VER_NEED_CURRENT -e VER_FLG_WEAK -e Elf64_Verneed -e Elf64_Vernaux -e Elfxx_Verneed -e Elfxx_Vernaux ec3125ad
+exit 1 (zero field-token lines in the tracked tree)
+
+2026-10-23T10:53:18Z
+git grep -l -I -F 'gnu.version_r' ec3125ad
+exit 0, 45 files
+git grep -l -I -i -F 'verneed' ec3125ad
+exit 0, 13 files
+
+2026-10-23T10:53:18Z
+git grep -n -I -i -E 'verneed|vernaux|gnu\.version|symbol version|version requirement|SHT_GNU_ver' ec3125ad -- corpus/lessons corpus/QUALITY.md LOG.md SCORECARD.md MINT.md README.md corpus/README.md corpus/SOURCES.md SKILL.md PROVINCE.md
+exit 1
+
+2026-10-23T10:53:44Z
+git grep -l -I -e vn_version -e vna_other -e Elf64_Verneed -e 'Version Requirements' ec3125ad -- '*.md' '*.py' '*.json' '*.txt'
+exit 1
+
+2026-10-23T10:53:44Z
+git diff --stat ec3125ad 54a87a51 -- SKILL.md PROVINCE.md README.md corpus/README.md corpus/SOURCES.md corpus/QUALITY.md LOG.md SCORECARD.md MINT.md corpus/knowledge corpus/lessons
+SKILL.md +43; corpus/knowledge/2026-10-23-r34-elf-version-needs.md +47; corpus/SOURCES.md +7; corpus/README.md +3/-1; LOG.md +10; SCORECARD.md +12; corpus/QUALITY.md +2; corpus/lessons/round-34.md +43
+PROVINCE.md and README.md absent from the stat (unchanged)
+
+git grep -F 'GNU ELF version requirements' ec3125ad → exit 1
+git grep -n -F 'GNU ELF version requirements' 54a87a51 -- SKILL.md → SKILL.md:1158
+git cat-file -e ec3125ad:corpus/knowledge/2026-10-23-r34-elf-version-needs.md → absent
+git grep -F '| S103 |' ec3125ad -- corpus/SOURCES.md → exit 1
+git grep -n -F '| S103 |' 54a87a51 -- corpus/SOURCES.md → corpus/SOURCES.md:109
+
+later same session
+git grep -l -I -F SHT_GNU_verneed ec3125ad → 9 files, 9 lines
+git grep -l -I -F VERNEED ec3125ad → 4 files
+git grep -l -I -i -e 'symbol versioning' -e 'version requirements' -e Elf64_Verneed ec3125ad → exit 1
+git grep -l -I -F gnu.version ec3125ad -- tools → exit 1
+git diff --numstat ec3125ad 54a87a51 -- PROVINCE.md → empty, exit 0
+
+classification of the 45 gnu.version_r blobs (git show at base; markers vn_version/vn_cnt/vna_hash/vna_flags/vna_other/vna_name/Elf64_Verneed/Elf64_Vernaux):
+section-name-and-span 31
+section-header-type-label 9
+readelf-or-rizin-type-column 4
+knowledge-strings-mention 1
+field_markers yes: 0
+see base-gnu-version-r-classification.tsv
