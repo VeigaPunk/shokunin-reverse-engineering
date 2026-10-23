@@ -1,0 +1,74 @@
+{
+ "round": 30,
+ "lane": "kaidoku",
+ "base": "d210fb8fa62d2af04d009cfa0c65a4e8137dc742",
+ "instrument_commit": "0dbabf78b6abbead98d96a720089b8490452a46c",
+ "freeze_rule": "This file is the round-30 freeze: the first commit that adds it is the freeze commit. Counters, predicates, labels, targets, carrier list and predictions below are fixed from that commit; a miss under them is reported, never amended, never re-scaled.",
+ "claims": [
+  {
+   "id": "R30-C1",
+   "axis": "coverage",
+   "surface": "PROVINCE Core gains the positive input class of REA operation inspect_rust_binary (an image that carries a cargo-auditable .dep-v0 section) on three container formats (ELF x86_64/aarch64/riscv64, PE x86_64/arm64, thin Mach-O x86_64/arm64). At the base the lane holds only null-metadata runs of this verb (corpus/knowledge/2026-10-16-l7-02-inspect-rust-binary.md, corpus/knowledge/2026-10-19-arc3-r10-rust-evidence-id-domain.md: no .dep-v0 found) and PROVINCE.md names inspect-rust-binary 0 times.",
+   "unmoved_command": "git -C <LANE> show <REV>:PROVINCE.md | grep -c 'inspect-rust-binary' (0 at base) ; git -C <LANE> ls-tree -r --name-only <REV> -- corpus/evidence/round-30/c1/envelopes | grep -c '\\.json$' (0 at base)",
+   "predicate_label": "P1-pass",
+   "predicate": "A carrier passes when its live REA 6.5.0 inspect-rust-binary run exits 0 with an ok envelope whose operation is inspect_rust_binary and whose subject sha256 equals the carrier's frozen sha256, and whose auditable_metadata package list equals, as a multiset of (name, version, source, kind, root, dependency (name, version) set) tuples, the non-empty list that the independent oracle decodes from the carrier's own .dep-v0 section, with REA's file_offset and compressed_bytes equal to the oracle's section offset and size; and its committed envelope, first added after the freeze commit, carries the same evidence_id and package multiset, and the round-30 entry names that evidence_id.",
+   "counter": "python3 -I -B tools/round-30/c1-rust-positive.py --root <LANE> --rev <REV>",
+   "target": "carriers=16 pass=16 target=16 entry_ok=1 province_ok=1, exit 0",
+   "claim_row": "S089",
+   "entry": "corpus/knowledge/2026-10-23-r30-rust-auditable-positive.md",
+   "before": "exit 2 at d210fb8f (PIN pinned input absent)",
+   "carriers": "16 members of 7 official uv 0.13.0 PyPI wheels (wheel sha256 from the committed PyPI JSON); host ~/.local/bin/uv and uvx are byte-identical to the manylinux x86_64 members and are not separate carriers",
+   "limits": "uv and uvx of one wheel carry the same dependency document; the 16 carriers hold 5 distinct package lists (573-596 packages). The oracle shares the format spec (S089) with REA, not code. One REA pin (6.5.0), one host (Linux)."
+  },
+  {
+   "id": "R30-C2",
+   "axis": "depth",
+   "surface": "SKILL.md gains a decision table of inspect_rust_binary refusal signatures (exact messages and the 1 MiB compressed / 64x inflate ratio / 32-level nesting limits, file-backed and compressed-flag gates, schema, root and index checks) predicted from the REA 6.5.0 code (S090) and tested live on 19 deterministic mutants of carrier elf-x86_64-uvx (3 predicted accepted, 16 predicted refused). At the base no SKILL.md line names inspect-rust-binary.",
+   "unmoved_command": "git -C <LANE> show <REV>:SKILL.md | grep -c 'inspect-rust-binary' (0 at base)",
+   "predicate_label": "P2-match",
+   "predicate": "A mutant matches when its live REA 6.5.0 inspect-rust-binary run agrees with its frozen prediction: for a predicted refusal, the envelope is not ok and the frozen message appears verbatim in the run's stdout or stderr; for a predicted acceptance, the run exits 0 with an ok inspect_rust_binary envelope whose subject sha256 is the mutant's sha256 and whose package multiset, file_offset and compressed_bytes equal the oracle's reading of the mutant; and its committed envelope, first added after the freeze commit, agrees with the live run on ok and evidence_id.",
+   "counter": "python3 -I -B tools/round-30/c2-rust-refusals.py --root <LANE> --rev <REV>",
+   "target": "mutants=19 matches=19 target=19 entry_ok=1 skill_ok=1, exit 0",
+   "claim_row": "S090",
+   "entry": "corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md",
+   "before": "exit 2 at d210fb8f (PIN predictions file differs from d210fb8f: absent)",
+   "limits": "Mutants are ELF x86_64 only; predictions are read from the 6.5.0 dist JavaScript (dist/rust, dist/go) that the CLI bundle repeats; node v24.21.0 is the runtime whose zlib rejects trailing junk (probed before the freeze with node alone, no REA run)."
+  }
+ ],
+ "separability": "C1 reads only corpus/evidence/round-30/c1 and its 16 carriers; C2 reads only corpus/evidence/round-30/c2, its 19 mutants and the frozen sha256 of its base carrier from the C1 carrier list (a frozen input, not a C1 result). Each counter can exit 0 with the other claim's evidence absent.",
+ "controls_required_before_data": [
+  "do-nothing",
+  "junk-row (entry + PROVINCE/SKILL lines without envelopes)",
+  "all-false (committed refusal or null-metadata envelopes)",
+  "no-reader (envelopes fabricated from the oracle reading, never produced by REA)",
+  "shortcut keyed on ids/labels (another carrier's or mutant's envelope under the id; predictions copied as observations)"
+ ],
+ "instruments": {
+  "tools/round-30/rust_dep_oracle.py": "f0b144c6f489b5a78970bcd837cdf3d31ac52e3851bdd574f4f24dda4be9d81d",
+  "tools/round-30/c1-rust-positive.py": "e07563d6c0c27aafcf3996c363ec849951774ebd2fc4eda52e9f2384c323ed2a",
+  "tools/round-30/c2-rust-refusals.py": "1c357fca7b00a8aa1a524d17b7cda50526a3aa49af87f07bb94a51f678857a6b"
+ },
+ "frozen_inputs": {
+  "corpus/evidence/round-30/c1/carriers.tsv": "c968cd1e41bcda0e5f0714d659c7859febf90249415f2b6431f26203369e4e4b",
+  "corpus/evidence/round-30/c1/pypi-uv-0.13.0.json": "2eaed6c87b935f909946768885051f65341552f6d94e4fc23612a6d72e284b4c",
+  "corpus/evidence/round-30/c2/predictions.tsv": "6852df3ab8d5c98551f8768125fd3cb63d361e58868ff797ceb423c2f6c87315"
+ },
+ "loaded_by_counter": {
+  "c1": [
+   "tools/round-30/rust_dep_oracle.py",
+   "corpus/evidence/round-30/c1/carriers.tsv"
+  ],
+  "c2": [
+   "tools/round-30/rust_dep_oracle.py",
+   "corpus/evidence/round-30/c1/carriers.tsv",
+   "corpus/evidence/round-30/c2/predictions.tsv"
+  ]
+ },
+ "rea_pin": {
+  "package": "rea-agents@6.5.0",
+  "package_json": "~/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json",
+  "package_json_sha256": "a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c"
+ },
+ "pre_freeze_probe": "none of REA on any carrier or mutant. Before the freeze the L1 ran: llvm-readobj section screens (.dep-v0 present in all 18 uv/uvx/uvw members), the round-30 oracle on the 16 carriers (packages and edges counted, the reference, not the tested output), and one node zlib probe (rejectGarbageAfterEnd on node v24.21.0 throws ERR_TRAILING_JUNK_AFTER_STREAM_END).",
+ "kill_rule": "A claim verifies only if its counter at the measured revision prints its target line and exits 0. Any other outcome is an honest stop for that claim."
+}
