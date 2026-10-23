@@ -1,0 +1,30 @@
+# C mutant C1-1 (C1-1 kill: entry without the claim row)
+start_utc=2026-10-23T10:35:01Z exit=1 expect_exit=1 pass=True seconds=0.036
+# argv: ["timeout", "--kill-after=5s", "120s", "prlimit", "--as=2147483648", "--fsize=4194304", "--", "python3", "-I", "-B", "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34LegacyGaps-files/tmp/run-280559/mut-C1-1/wrapper_successor.py", "--selftest"]
+# must_stdout: ["FAIL\tC1-1 kill: entry without the claim row"] missing=[]
+
+## stdout
+ok	accept: cited row, equal envelope, named evidence, post-freeze time	all clauses ok
+ok	meta-only difference is excluded from the full comparison	all clauses ok
+FAIL	C1-1 kill: entry without the claim row	all clauses ok
+ok	C1-1 kill: entry absent	entry absent; entry does not name ev-k01-fixture
+ok	C1-1 kill: entry is empty	entry does not cite S099; entry does not name ev-k01-fixture
+ok	claim row not supplied	claim row not supplied by the record
+ok	C1-2 kill: same data, committed top-level ok differs	committed envelope differs from the live envelope (full comparison)
+ok	C1-2 kill: same data, committed envelope carries an extra outer field	committed envelope differs from the live envelope (full comparison)
+ok	data payload differs	committed envelope differs from the live envelope (full comparison)
+ok	C1-2 crash path: committed JSON is a list, clean fail	committed envelope is not a JSON object; committed envelope is not a JSON object
+ok	committed text malformed	committed envelope is not JSON; committed envelope is not JSON
+ok	live envelope is a list	live envelope absent or not an object; live envelope absent or not an object
+ok	C1-3 kill: live evidence_id omitted from the entry	entry does not name ev-k01-fixture
+ok	C1-3 kill: live data has no evidence_id	committed envelope differs from the live envelope (full comparison); live envelope carries no evidence_id
+ok	C1-3: evidence_id present but entry is not text	entry absent; entry does not name ev-k01-fixture
+ok	C1-4 kill: first-added exactly at the freeze commit time	committed envelope not added after the freeze
+ok	added before the freeze	committed envelope not added after the freeze
+ok	added absent	first-add commit time absent
+ok	freeze commit time absent	freeze commit time absent
+ok	added one second after the freeze	all clauses ok
+selftest cases=20 failures=1
+
+## stderr
+

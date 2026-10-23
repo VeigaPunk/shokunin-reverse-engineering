@@ -1,0 +1,761 @@
+{
+  "base_commit": "ec3125ad3d130d92f888a4128dfaa2982f36fff7",
+  "verdicts": {
+    "count": {
+      "verdict": "SURVIVED",
+      "expected": "SURVIVED: existing count-limit recipe is 2000; no committed recipe has cm_count == 1024.",
+      "detector_seconds_total": 6.9008864289935445,
+      "identical_stdout_all_phases": true,
+      "mutant_hash_matches_plan": true
+    },
+    "metadata": {
+      "verdict": "KILLED",
+      "expected": "KILLED by metadata_zero_tail and metadata_cross_section in both layouts, which should become candidate.structural with the shortened span.",
+      "detector_seconds_total": 6.800646561008762,
+      "identical_stdout_all_phases": false,
+      "mutant_hash_matches_plan": true
+    },
+    "tag": {
+      "verdict": "KILLED",
+      "expected": "KILLED by existing tag3 in both layouts; a selftest crash also counts as detection only if pristine and restored pass. The exact child error is not exposed by the unchanged selftest.",
+      "detector_seconds_total": 6.015252298006089,
+      "identical_stdout_all_phases": false,
+      "mutant_hash_matches_plan": true
+    }
+  },
+  "phases": {
+    "count": {
+      "pristine": {
+        "argv": [
+          "/usr/bin/timeout",
+          "--signal=TERM",
+          "--kill-after=2s",
+          "30s",
+          "/usr/bin/prlimit",
+          "--as=268435456",
+          "--cpu=20",
+          "--fsize=1048575",
+          "--nproc=8192",
+          "--nofile=128",
+          "--core=0",
+          "--",
+          "/usr/bin/python3",
+          "-I",
+          "-B",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/chpe_profile.py",
+          "--selftest"
+        ],
+        "cleanup_signal": "ESRCH: owned group already absent",
+        "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count",
+        "detector_cli_concurrency_max": 1,
+        "elapsed_seconds": 2.316851809999207,
+        "end_utc": "2026-10-23T10:25:15.550988+00:00",
+        "environment_overrides": {
+          "LC_ALL": "C.UTF-8",
+          "TMPDIR": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/tmp"
+        },
+        "exit": 0,
+        "kill_grace_seconds": 2,
+        "kind": "count",
+        "nproc_is_per_uid_not_tree_quota": true,
+        "owned_group_absent_after_cleanup": true,
+        "parser_exact_pristine_final": true,
+        "phase": "pristine",
+        "process_group": 73863,
+        "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+        "selftest_summary": {
+          "cases": 107,
+          "failed": [],
+          "finding_ids_defined": 45,
+          "finding_ids_produced": 45,
+          "finding_ids_uncovered": [],
+          "pass": true,
+          "recipe_ids_unknown": [],
+          "selftest": "chpe_profile",
+          "vocabulary_ok": true
+        },
+        "sibling_exact_pristine_final": true,
+        "source_after_detector": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_before": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_derived_cli_launch_max": 107,
+        "source_final": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "start_utc": "2026-10-23T10:25:13.233974+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/pristine.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 21794,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/pristine.stdout",
+          "sha256": "bb11bba0de20f2aac16ee08f4dccaf583a87ea65b06494c494acd2110bb8f2bd"
+        },
+        "supervisor_limit_seconds": 35,
+        "wall_limit_seconds": 30
+      },
+      "mutated": {
+        "argv": [
+          "/usr/bin/timeout",
+          "--signal=TERM",
+          "--kill-after=2s",
+          "30s",
+          "/usr/bin/prlimit",
+          "--as=268435456",
+          "--cpu=20",
+          "--fsize=1048575",
+          "--nproc=8192",
+          "--nofile=128",
+          "--core=0",
+          "--",
+          "/usr/bin/python3",
+          "-I",
+          "-B",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/chpe_profile.py",
+          "--selftest"
+        ],
+        "cleanup_signal": "ESRCH: owned group already absent",
+        "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count",
+        "detector_cli_concurrency_max": 1,
+        "elapsed_seconds": 2.3171298550005304,
+        "end_utc": "2026-10-23T10:25:42.331436+00:00",
+        "environment_overrides": {
+          "LC_ALL": "C.UTF-8",
+          "TMPDIR": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/tmp"
+        },
+        "exit": 0,
+        "kill_grace_seconds": 2,
+        "kind": "count",
+        "nproc_is_per_uid_not_tree_quota": true,
+        "owned_group_absent_after_cleanup": true,
+        "parser_exact_pristine_final": true,
+        "phase": "mutated",
+        "process_group": 86929,
+        "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+        "restored_in_finally_utc": "2026-10-23T10:25:42.331388+00:00",
+        "selftest_summary": {
+          "cases": 107,
+          "failed": [],
+          "finding_ids_defined": 45,
+          "finding_ids_produced": 45,
+          "finding_ids_uncovered": [],
+          "pass": true,
+          "recipe_ids_unknown": [],
+          "selftest": "chpe_profile",
+          "vocabulary_ok": true
+        },
+        "sibling_exact_pristine_final": true,
+        "source_after_detector": {
+          "chpe_profile.py": "e2ae2ccbac921e9d9c5e500faf03f16c378eb85f5157d04007e9f238ae65f492",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_before": {
+          "chpe_profile.py": "e2ae2ccbac921e9d9c5e500faf03f16c378eb85f5157d04007e9f238ae65f492",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_derived_cli_launch_max": 107,
+        "source_final": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "start_utc": "2026-10-23T10:25:40.014270+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/mutated.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 21794,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/mutated.stdout",
+          "sha256": "bb11bba0de20f2aac16ee08f4dccaf583a87ea65b06494c494acd2110bb8f2bd"
+        },
+        "supervisor_limit_seconds": 35,
+        "wall_limit_seconds": 30
+      },
+      "restored": {
+        "argv": [
+          "/usr/bin/timeout",
+          "--signal=TERM",
+          "--kill-after=2s",
+          "30s",
+          "/usr/bin/prlimit",
+          "--as=268435456",
+          "--cpu=20",
+          "--fsize=1048575",
+          "--nproc=8192",
+          "--nofile=128",
+          "--core=0",
+          "--",
+          "/usr/bin/python3",
+          "-I",
+          "-B",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/chpe_profile.py",
+          "--selftest"
+        ],
+        "cleanup_signal": "ESRCH: owned group already absent",
+        "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count",
+        "detector_cli_concurrency_max": 1,
+        "elapsed_seconds": 2.266904763993807,
+        "end_utc": "2026-10-23T10:25:44.616431+00:00",
+        "environment_overrides": {
+          "LC_ALL": "C.UTF-8",
+          "TMPDIR": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/tmp"
+        },
+        "exit": 0,
+        "kill_grace_seconds": 2,
+        "kind": "count",
+        "nproc_is_per_uid_not_tree_quota": true,
+        "owned_group_absent_after_cleanup": true,
+        "parser_exact_pristine_final": true,
+        "phase": "restored",
+        "process_group": 87040,
+        "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+        "selftest_summary": {
+          "cases": 107,
+          "failed": [],
+          "finding_ids_defined": 45,
+          "finding_ids_produced": 45,
+          "finding_ids_uncovered": [],
+          "pass": true,
+          "recipe_ids_unknown": [],
+          "selftest": "chpe_profile",
+          "vocabulary_ok": true
+        },
+        "sibling_exact_pristine_final": true,
+        "source_after_detector": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_before": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_derived_cli_launch_max": 107,
+        "source_final": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "start_utc": "2026-10-23T10:25:42.349497+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/restored.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 21794,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/count/restored.stdout",
+          "sha256": "bb11bba0de20f2aac16ee08f4dccaf583a87ea65b06494c494acd2110bb8f2bd"
+        },
+        "supervisor_limit_seconds": 35,
+        "wall_limit_seconds": 30
+      }
+    },
+    "metadata": {
+      "pristine": {
+        "argv": [
+          "/usr/bin/timeout",
+          "--signal=TERM",
+          "--kill-after=2s",
+          "30s",
+          "/usr/bin/prlimit",
+          "--as=268435456",
+          "--cpu=20",
+          "--fsize=1048575",
+          "--nproc=8192",
+          "--nofile=128",
+          "--core=0",
+          "--",
+          "/usr/bin/python3",
+          "-I",
+          "-B",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/chpe_profile.py",
+          "--selftest"
+        ],
+        "cleanup_signal": "ESRCH: owned group already absent",
+        "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata",
+        "detector_cli_concurrency_max": 1,
+        "elapsed_seconds": 2.2667435910116183,
+        "end_utc": "2026-10-23T10:25:17.836897+00:00",
+        "environment_overrides": {
+          "LC_ALL": "C.UTF-8",
+          "TMPDIR": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/tmp"
+        },
+        "exit": 0,
+        "kill_grace_seconds": 2,
+        "kind": "metadata",
+        "nproc_is_per_uid_not_tree_quota": true,
+        "owned_group_absent_after_cleanup": true,
+        "parser_exact_pristine_final": true,
+        "phase": "pristine",
+        "process_group": 75249,
+        "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+        "selftest_summary": {
+          "cases": 107,
+          "failed": [],
+          "finding_ids_defined": 45,
+          "finding_ids_produced": 45,
+          "finding_ids_uncovered": [],
+          "pass": true,
+          "recipe_ids_unknown": [],
+          "selftest": "chpe_profile",
+          "vocabulary_ok": true
+        },
+        "sibling_exact_pristine_final": true,
+        "source_after_detector": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_before": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_derived_cli_launch_max": 107,
+        "source_final": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "start_utc": "2026-10-23T10:25:15.569945+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/pristine.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 21794,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/pristine.stdout",
+          "sha256": "bb11bba0de20f2aac16ee08f4dccaf583a87ea65b06494c494acd2110bb8f2bd"
+        },
+        "supervisor_limit_seconds": 35,
+        "wall_limit_seconds": 30
+      },
+      "mutated": {
+        "argv": [
+          "/usr/bin/timeout",
+          "--signal=TERM",
+          "--kill-after=2s",
+          "30s",
+          "/usr/bin/prlimit",
+          "--as=268435456",
+          "--cpu=20",
+          "--fsize=1048575",
+          "--nproc=8192",
+          "--nofile=128",
+          "--core=0",
+          "--",
+          "/usr/bin/python3",
+          "-I",
+          "-B",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/chpe_profile.py",
+          "--selftest"
+        ],
+        "cleanup_signal": "ESRCH: owned group already absent",
+        "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata",
+        "detector_cli_concurrency_max": 1,
+        "elapsed_seconds": 2.2667660449951654,
+        "end_utc": "2026-10-23T10:25:46.901939+00:00",
+        "environment_overrides": {
+          "LC_ALL": "C.UTF-8",
+          "TMPDIR": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/tmp"
+        },
+        "exit": 1,
+        "kill_grace_seconds": 2,
+        "kind": "metadata",
+        "nproc_is_per_uid_not_tree_quota": true,
+        "owned_group_absent_after_cleanup": true,
+        "parser_exact_pristine_final": true,
+        "phase": "mutated",
+        "process_group": 87187,
+        "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+        "restored_in_finally_utc": "2026-10-23T10:25:46.901903+00:00",
+        "selftest_summary": {
+          "cases": 107,
+          "failed": [
+            {
+              "case": "metadata_zero_tail",
+              "exit": 0,
+              "got": "candidate.structural",
+              "layout": "L0",
+              "pass": false,
+              "want": "outside_profile.metadata_zero_tail",
+              "want_exit": 11
+            },
+            {
+              "case": "metadata_cross_section",
+              "exit": 0,
+              "got": "candidate.structural",
+              "layout": "L0",
+              "pass": false,
+              "want": "outside_profile.metadata_cross_section",
+              "want_exit": 11
+            },
+            {
+              "case": "metadata_zero_tail",
+              "exit": 0,
+              "got": "candidate.structural",
+              "layout": "L1",
+              "pass": false,
+              "want": "outside_profile.metadata_zero_tail",
+              "want_exit": 11
+            },
+            {
+              "case": "metadata_cross_section",
+              "exit": 0,
+              "got": "candidate.structural",
+              "layout": "L1",
+              "pass": false,
+              "want": "outside_profile.metadata_cross_section",
+              "want_exit": 11
+            }
+          ],
+          "finding_ids_defined": 45,
+          "finding_ids_produced": 43,
+          "finding_ids_uncovered": [
+            "outside_profile.metadata_cross_section",
+            "outside_profile.metadata_zero_tail"
+          ],
+          "pass": false,
+          "recipe_ids_unknown": [],
+          "selftest": "chpe_profile",
+          "vocabulary_ok": true
+        },
+        "sibling_exact_pristine_final": true,
+        "source_after_detector": {
+          "chpe_profile.py": "ede5fb65a206d9bfff54363e771e843ad7a1b0cd3a3a6889896a1131b8954a9e",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_before": {
+          "chpe_profile.py": "ede5fb65a206d9bfff54363e771e843ad7a1b0cd3a3a6889896a1131b8954a9e",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_derived_cli_launch_max": 107,
+        "source_final": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "start_utc": "2026-10-23T10:25:44.635137+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/mutated.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 22613,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/mutated.stdout",
+          "sha256": "f8c25e7a9078d1af4352f7ef719a24074ff9469db2c52b42b58ca082d9e511b3"
+        },
+        "supervisor_limit_seconds": 35,
+        "wall_limit_seconds": 30
+      },
+      "restored": {
+        "argv": [
+          "/usr/bin/timeout",
+          "--signal=TERM",
+          "--kill-after=2s",
+          "30s",
+          "/usr/bin/prlimit",
+          "--as=268435456",
+          "--cpu=20",
+          "--fsize=1048575",
+          "--nproc=8192",
+          "--nofile=128",
+          "--core=0",
+          "--",
+          "/usr/bin/python3",
+          "-I",
+          "-B",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/chpe_profile.py",
+          "--selftest"
+        ],
+        "cleanup_signal": "ESRCH: owned group already absent",
+        "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata",
+        "detector_cli_concurrency_max": 1,
+        "elapsed_seconds": 2.267136925001978,
+        "end_utc": "2026-10-23T10:25:49.187150+00:00",
+        "environment_overrides": {
+          "LC_ALL": "C.UTF-8",
+          "TMPDIR": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/tmp"
+        },
+        "exit": 0,
+        "kill_grace_seconds": 2,
+        "kind": "metadata",
+        "nproc_is_per_uid_not_tree_quota": true,
+        "owned_group_absent_after_cleanup": true,
+        "parser_exact_pristine_final": true,
+        "phase": "restored",
+        "process_group": 87372,
+        "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+        "selftest_summary": {
+          "cases": 107,
+          "failed": [],
+          "finding_ids_defined": 45,
+          "finding_ids_produced": 45,
+          "finding_ids_uncovered": [],
+          "pass": true,
+          "recipe_ids_unknown": [],
+          "selftest": "chpe_profile",
+          "vocabulary_ok": true
+        },
+        "sibling_exact_pristine_final": true,
+        "source_after_detector": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_before": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_derived_cli_launch_max": 107,
+        "source_final": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "start_utc": "2026-10-23T10:25:46.919987+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/restored.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 21794,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/metadata/restored.stdout",
+          "sha256": "bb11bba0de20f2aac16ee08f4dccaf583a87ea65b06494c494acd2110bb8f2bd"
+        },
+        "supervisor_limit_seconds": 35,
+        "wall_limit_seconds": 30
+      }
+    },
+    "tag": {
+      "pristine": {
+        "argv": [
+          "/usr/bin/timeout",
+          "--signal=TERM",
+          "--kill-after=2s",
+          "30s",
+          "/usr/bin/prlimit",
+          "--as=268435456",
+          "--cpu=20",
+          "--fsize=1048575",
+          "--nproc=8192",
+          "--nofile=128",
+          "--core=0",
+          "--",
+          "/usr/bin/python3",
+          "-I",
+          "-B",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/chpe_profile.py",
+          "--selftest"
+        ],
+        "cleanup_signal": "ESRCH: owned group already absent",
+        "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag",
+        "detector_cli_concurrency_max": 1,
+        "elapsed_seconds": 3.333843168002204,
+        "end_utc": "2026-10-23T10:25:21.189440+00:00",
+        "environment_overrides": {
+          "LC_ALL": "C.UTF-8",
+          "TMPDIR": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/tmp"
+        },
+        "exit": 0,
+        "kill_grace_seconds": 2,
+        "kind": "tag",
+        "nproc_is_per_uid_not_tree_quota": true,
+        "owned_group_absent_after_cleanup": true,
+        "parser_exact_pristine_final": true,
+        "phase": "pristine",
+        "process_group": 76322,
+        "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+        "selftest_summary": {
+          "cases": 107,
+          "failed": [],
+          "finding_ids_defined": 45,
+          "finding_ids_produced": 45,
+          "finding_ids_uncovered": [],
+          "pass": true,
+          "recipe_ids_unknown": [],
+          "selftest": "chpe_profile",
+          "vocabulary_ok": true
+        },
+        "sibling_exact_pristine_final": true,
+        "source_after_detector": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_before": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_derived_cli_launch_max": 107,
+        "source_final": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "start_utc": "2026-10-23T10:25:17.855414+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/pristine.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 21794,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/pristine.stdout",
+          "sha256": "bb11bba0de20f2aac16ee08f4dccaf583a87ea65b06494c494acd2110bb8f2bd"
+        },
+        "supervisor_limit_seconds": 35,
+        "wall_limit_seconds": 30
+      },
+      "mutated": {
+        "argv": [
+          "/usr/bin/timeout",
+          "--signal=TERM",
+          "--kill-after=2s",
+          "30s",
+          "/usr/bin/prlimit",
+          "--as=268435456",
+          "--cpu=20",
+          "--fsize=1048575",
+          "--nproc=8192",
+          "--nofile=128",
+          "--core=0",
+          "--",
+          "/usr/bin/python3",
+          "-I",
+          "-B",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/chpe_profile.py",
+          "--selftest"
+        ],
+        "cleanup_signal": "ESRCH: owned group already absent",
+        "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag",
+        "detector_cli_concurrency_max": 1,
+        "elapsed_seconds": 0.4142545049980981,
+        "end_utc": "2026-10-23T10:25:49.620008+00:00",
+        "environment_overrides": {
+          "LC_ALL": "C.UTF-8",
+          "TMPDIR": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/tmp"
+        },
+        "exit": 1,
+        "kill_grace_seconds": 2,
+        "kind": "tag",
+        "nproc_is_per_uid_not_tree_quota": true,
+        "owned_group_absent_after_cleanup": true,
+        "parser_exact_pristine_final": true,
+        "phase": "mutated",
+        "process_group": 87505,
+        "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+        "restored_in_finally_utc": "2026-10-23T10:25:49.619970+00:00",
+        "sibling_exact_pristine_final": true,
+        "source_after_detector": {
+          "chpe_profile.py": "589439faafb6473f30815ceec0a8cb711a5642b463a5e803d3da924ba0e7b35d",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_before": {
+          "chpe_profile.py": "589439faafb6473f30815ceec0a8cb711a5642b463a5e803d3da924ba0e7b35d",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_derived_cli_launch_max": 107,
+        "source_final": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "start_utc": "2026-10-23T10:25:49.205717+00:00",
+        "stderr": {
+          "bytes": 1114,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/mutated.stderr",
+          "sha256": "4420301c5f8de4ec6ef6346981897de56e793f32d7ae3456162d5be2d173c7e1"
+        },
+        "stdout": {
+          "bytes": 0,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/mutated.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "supervisor_limit_seconds": 35,
+        "wall_limit_seconds": 30
+      },
+      "restored": {
+        "argv": [
+          "/usr/bin/timeout",
+          "--signal=TERM",
+          "--kill-after=2s",
+          "30s",
+          "/usr/bin/prlimit",
+          "--as=268435456",
+          "--cpu=20",
+          "--fsize=1048575",
+          "--nproc=8192",
+          "--nofile=128",
+          "--core=0",
+          "--",
+          "/usr/bin/python3",
+          "-I",
+          "-B",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/chpe_profile.py",
+          "--selftest"
+        ],
+        "cleanup_signal": "ESRCH: owned group already absent",
+        "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag",
+        "detector_cli_concurrency_max": 1,
+        "elapsed_seconds": 2.2671546250057872,
+        "end_utc": "2026-10-23T10:25:51.905443+00:00",
+        "environment_overrides": {
+          "LC_ALL": "C.UTF-8",
+          "TMPDIR": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/tmp"
+        },
+        "exit": 0,
+        "kill_grace_seconds": 2,
+        "kind": "tag",
+        "nproc_is_per_uid_not_tree_quota": true,
+        "owned_group_absent_after_cleanup": true,
+        "parser_exact_pristine_final": true,
+        "phase": "restored",
+        "process_group": 87525,
+        "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+        "selftest_summary": {
+          "cases": 107,
+          "failed": [],
+          "finding_ids_defined": 45,
+          "finding_ids_produced": 45,
+          "finding_ids_uncovered": [],
+          "pass": true,
+          "recipe_ids_unknown": [],
+          "selftest": "chpe_profile",
+          "vocabulary_ok": true
+        },
+        "sibling_exact_pristine_final": true,
+        "source_after_detector": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_before": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "source_derived_cli_launch_max": 107,
+        "source_final": {
+          "chpe_profile.py": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+          "selftest_pegen.py": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51"
+        },
+        "start_utc": "2026-10-23T10:25:49.638263+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/restored.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 21794,
+          "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ParserBounds-files/tag/restored.stdout",
+          "sha256": "bb11bba0de20f2aac16ee08f4dccaf583a87ea65b06494c494acd2110bb8f2bd"
+        },
+        "supervisor_limit_seconds": 35,
+        "wall_limit_seconds": 30
+      }
+    }
+  },
+  "recommendation": "Exclude the untested 1024 equality boundary and the archived CHPE instrument from round-34 ELF admission. No selftest-only successor can behaviorally distinguish the count mutant using the unchanged existing corpus. Keep metadata/tag kills as instrument-only evidence; stopped R33-C1 and held materials remain excluded.",
+  "all_nine_receipts_group_absent": true
+}

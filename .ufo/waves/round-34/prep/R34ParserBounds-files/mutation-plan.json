@@ -1,0 +1,43 @@
+{
+  "axes": [
+    "detector sensitivity/depth",
+    "exact restoration/reproducibility",
+    "bounded isolation/operability"
+  ],
+  "mutations": {
+    "count": {
+      "old": "    if cm_count > MAX_CODE_MAP_COUNT:\n",
+      "new": "    if cm_count >= MAX_CODE_MAP_COUNT:\n",
+      "expected": "SURVIVED: existing count-limit recipe is 2000; no committed recipe has cm_count == 1024.",
+      "cases": [
+        "code_map_count_limit"
+      ],
+      "pristine_sha256": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+      "mutant_sha256": "e2ae2ccbac921e9d9c5e500faf03f16c378eb85f5157d04007e9f238ae65f492"
+    },
+    "metadata": {
+      "old": "    msec, m = need(sections, soh, meta_rva, CHPE_METADATA_SIZE, \"metadata\")\n",
+      "new": "    msec, m = need(sections, soh, meta_rva, 12, \"metadata\")\n",
+      "expected": "KILLED by metadata_zero_tail and metadata_cross_section in both layouts, which should become candidate.structural with the shortened span.",
+      "cases": [
+        "metadata_zero_tail",
+        "metadata_cross_section"
+      ],
+      "pristine_sha256": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+      "mutant_sha256": "ede5fb65a206d9bfff54363e771e843ad7a1b0cd3a3a6889896a1131b8954a9e"
+    },
+    "tag": {
+      "old": "        if tag not in TAGS:\n",
+      "new": "        if tag > 3:\n",
+      "expected": "KILLED by existing tag3 in both layouts; a selftest crash also counts as detection only if pristine and restored pass. The exact child error is not exposed by the unchanged selftest.",
+      "cases": [
+        "tag3"
+      ],
+      "pristine_sha256": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+      "mutant_sha256": "589439faafb6473f30815ceec0a8cb711a5642b463a5e803d3da924ba0e7b35d"
+    }
+  },
+  "detector": "original chpe_profile.py --selftest with byte-identical selftest_pegen.py",
+  "no_new_pe_inputs": true,
+  "no_successor_patch_without_existing_discriminator": true
+}

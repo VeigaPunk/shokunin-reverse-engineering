@@ -3319,3 +3319,15 @@ Reachable source/repair work is recorded in LOG and `corpus/lessons/round-33.md`
 ### Final independent evidence, not the original target
 
 Measured `49a6a1c52ccbaad0e747e2e64a8a7e85988ad29a`: isolated selftests 107/36/11 and repair selftests 5/17/3 pass; source-text quality 15/15 after the asymmetric-normalization fix; strict round-33 timestamps exit 0 without exemptions, and the legacy round-32 scope exits 0 only with five exact-line hash-bound allowances. Commands, immutable revision and all streams are `.ufo/waves/round-33/after/main-verification.json`. Source rows 100→102 are curation, not expansion or an axis score. These unlike quantities do not discharge R33-C1: before/after remain not evaluated, target unchanged, verdict unprovable / honest stop, scores 10→10, delta 0.
+
+## Round 34 — prospective GNU ELF version-needs depth
+
+Base `ec3125ad3d130d92f888a4128dfaa2982f36fff7`. Outside round 33 is **rejected-honest-stop** (`corpus/lessons/round-33-verifier-spotcheck.md`): depth unprovable, quality/discernment improved, no harm. R33-C1 stays stopped; the held builder and derivatives and U064N008Hf47eb933 are not inputs. Append-only correction to report:8: SKILL gained 72 lines, not unchanged; PROVINCE was unchanged. The historical parser pin now links to its normalization-only supersession.
+
+One planned claim, **R34-C1 / depth**: source-grounded GNU Verneed/Vernaux decoding and a technical decision table, on the native ELF surface already owned. The three owned numeric proxies are tied at 10, none retired; depth is tied-lowest without a stagnation waiver. No coverage, calibration or repertoire credit is inferred from finite row counts. Existing scores stay 10→10.
+
+P34-version-needs: twelve public ELF carriers yield exactly their independently frozen GNU version-needs records on opaque paths, including randomized same-length string-table naming wherever requirements are present, and the pinned source-backed decision table is present.
+
+Target 12: each carrier matches its independently authored canonical record on both schedules, with all exact source/table/document bindings true. Eleven carriers have GNU requirements; the static empty-requirement carrier repeats its empty record without inventing a string table. This is static field interpretation, never loader behavior/authenticity. Counting command: `python3 -I -B tools/round-34/version-needs-counter.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze <freeze-revision> --rev <measured-commit>`. S103/S104 ground the new knowledge entry and SKILL table; S105 is a real retained scoped rejection.
+
+Independent authoring, source opening, profile-development probes and selftests are preparation, not P34 measurements. The twelve production carrier digests exclude the reader's four development binaries. Before any production target run, fresh adversarial seats score the unchanged counter on do-nothing/junk/all-false/no-reader/label-keyed/original-SHA replay controls; those receipts must land first. A target-met shortcut stops the claim; no post-data rule change or exploratory relabel.

@@ -1,0 +1,11 @@
+--- a/chpe_profile.py
++++ b/chpe_profile.py
+@@ -247,7 +247,7 @@
+     if chpe_va < image_base or chpe_va - image_base >= RVA_LIMIT:
+         raise Stop("malformed.chpe_pointer_outside_image", "CHPEMetadataPointer is not ImageBase + uint32 RVA")
+     meta_rva = chpe_va - image_base
+-    msec, m = need(sections, soh, meta_rva, CHPE_METADATA_SIZE, "metadata")
++    msec, m = need(sections, soh, meta_rva, 12, "metadata")
+     version, cm_rva, cm_count = struct.unpack_from("<III", b, m)
+     facts["metadata"] = {"rva": "%#x" % meta_rva, "section": msec["name"], "extent": CHPE_METADATA_SIZE,
+                          "version": version, "code_map_rva": "%#x" % cm_rva, "code_map_count": cm_count}

@@ -1,0 +1,11 @@
+--- a/chpe_profile.py
++++ b/chpe_profile.py
+@@ -266,7 +266,7 @@
+         tag, start = start_raw & 3, start_raw & ~3
+         r = {"index": i, "tag": tag, "kind": TAGS.get(tag), "rva": "%#x" % start, "length": length}
+         ranges.append(r)
+-        if tag not in TAGS:
++        if tag > 3:
+             raise Stop("outside_profile.range_tag_unrecognized", "range %d tag %d is not 0/1/2" % (i, tag), index=i)
+         if length == 0:
+             raise Stop("outside_profile.range_length_zero", "range %d length is zero" % i, index=i)

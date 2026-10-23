@@ -1,0 +1,402 @@
+#!/usr/bin/env python3
+"""R33 scratch-only CHPE structural profile classifier (stdlib only; no LLVM, no REA, no r32 oracle).
+
+  chpe_profile.py <path>       print one JSON object {finding_id, classification, facts, ...}
+  chpe_profile.py --selftest   synthetic PE32+ fixtures from selftest_pegen.py, independent of carriers
+  chpe_profile.py --findings   emit the full finding-id table with class, basis and source anchor
+
+Exit: 0 structural_candidate, 10 not_candidate, 11 outside_profile, 12 malformed, 2 usage/IO error.
+
+The classifier answers one bounded question: do the declared CHPE metadata and code map of a PE32+
+image pass this profile's structural guards? `structural_candidate` is never a claim that the image is a
+genuine ARM64X hybrid, that its code decodes as the tagged ISA, that its ABI is correct, or that Windows
+loads it. Classification is decided by the first failing guard in FINDINGS order (first-failure
+precedence); the input path and file name are never read into the decision or the output.
+
+Classes:
+  malformed        bytes the parser must decode are absent or self-contradictory (truncation, bad
+                   signatures, a required structure that no section maps, RVA arithmetic overflow)
+  not_candidate    decodes, but carries no ARM64 + ARM64EC code map under this profile
+  outside_profile  decodes, but fails a bounded profile rule; NOT a PE malformedness verdict
+  structural_candidate  passed every guard below
+
+Basis labels per guard: pe_format (Microsoft PE format spec), llvm_reader (LLVM 23.1.3 reader/layout),
+profile_limit (defensive bound chosen by this profile, not a PE or LLVM requirement — LLVM itself
+enforces none of tag sanity, version, length alignment, overlap or executability; an LLVM code comment
+reports MS link.exe emits empty ranges and an LLVM test expects a cross-section range, i.e. those are
+documented producer behaviors, not this seat's observed runs), profile_gate (the candidate decision
+itself). Anchor files are pinned in this seat's scratch directory under the L1-retained names.
+"""
+
+import hashlib
+import json
+import os
+import struct
+import subprocess
+import sys
+import tempfile
+
+SCHEMA = "r33-chpe-structural/1"
+PROFILE = "r33-chpe-profile/1"
+SCOPE = ("bounded structural plausibility of declared CHPE metadata only; structural_candidate never proves "
+         "a genuine ARM64X hybrid, instruction validity, ABI correctness or Windows loadability")
+EXIT = {"structural_candidate": 0, "not_candidate": 10, "outside_profile": 11, "malformed": 12}
+
+MACHINE_ARM64 = 0xAA64
+MACHINE_HYBRID_LABELS = (0xA641, 0xA64E)
+PE32PLUS = 0x20B
+LC_CHPE_OFFSET = 0xC8
+LC_CHPE_END = 0xD0
+CHPE_METADATA_SIZE = 0x5C
+CHPE_VERSION = 2
+RANGE_ENTRY_SIZE = 8
+TAGS = {0: "ARM64", 1: "ARM64EC", 2: "AMD64"}
+SCN_MEM_EXECUTE = 0x20000000
+MAX_SECTIONS = 96
+MAX_CODE_MAP_COUNT = 1024
+RVA_LIMIT = 1 << 32
+
+PEF = "pe-format.md"
+OCH = "Object-COFF.h"
+OCF = "COFFObjectFile.cpp"
+BCH = "BinaryFormat-COFF.h"
+LWR = "Writer.cpp"
+LCH = "Chunks.h"
+LCP = "Chunks.cpp"
+LCT = "arm64ec-codemap.test"
+
+# (finding_id, classification, basis, anchor). List order is the documented first-failure precedence;
+# the {kind} span findings expand per structure in the order unmapped, header, cross_section, zero_tail.
+SPAN_KINDS = ("unmapped", "header", "cross_section", "zero_tail")
+SPAN_CLASS = {"unmapped": "malformed", "header": "outside_profile",
+              "cross_section": "outside_profile", "zero_tail": "outside_profile"}
+
+
+def _span_rows(prefix, malformed_basis, anchor):
+    rows = []
+    for k in SPAN_KINDS:
+        cls = SPAN_CLASS[k] if prefix != "range" else "outside_profile"
+        basis = malformed_basis if cls == "malformed" else "profile_limit"
+        rows.append(("%s.%s_%s" % (cls, prefix, k), cls, basis, anchor))
+    return rows
+
+
+FINDINGS = [
+    ("malformed.truncated_dos_header", "malformed", "pe_format", PEF + ":128-133"),
+    ("malformed.no_mz", "malformed", "pe_format", PEF + ":128-133"),
+    ("malformed.pe_offset_out_of_file", "malformed", "pe_format", PEF + ":133"),
+    ("malformed.no_pe_signature", "malformed", "pe_format", PEF + ":137"),
+    ("not_candidate.machine_not_arm64", "not_candidate", "profile_gate", BCH + ":101"),
+    ("outside_profile.machine_hybrid_label", "outside_profile", "profile_limit", BCH + ":102-103; " + OCH + ":954-958"),
+    ("malformed.optional_header_truncated", "malformed", "pe_format", PEF + ":222"),
+    ("outside_profile.not_pe32plus", "outside_profile", "profile_limit", PEF + ":226-231"),
+    ("malformed.data_directories_truncated", "malformed", "pe_format", PEF + ":224,290,348"),
+    ("outside_profile.section_count_limit", "outside_profile", "profile_limit", PEF + ":141 (loader limit 96)"),
+    ("malformed.section_table_truncated", "malformed", "pe_format", PEF + ":146"),
+    ("malformed.section_rva_overflow", "malformed", "pe_format", PEF + ":389-392"),
+    ("malformed.section_raw_out_of_file", "malformed", "pe_format", PEF + ":391-392,501"),
+    ("not_candidate.no_load_config", "not_candidate", "profile_gate", PEF + ":348; " + OCF + ":745-746"),
+] + _span_rows("load_config", "llvm_reader", OCF + ":747-752,472-494") + [
+    ("not_candidate.load_config_lacks_chpe_field", "not_candidate", "llvm_reader", OCF + ":758-760; " + OCH + ":713"),
+    ("not_candidate.chpe_pointer_zero", "not_candidate", "llvm_reader", OCF + ":761"),
+    ("malformed.chpe_pointer_outside_image", "malformed", "llvm_reader", OCF + ":762-764"),
+] + _span_rows("metadata", "llvm_reader", OCF + ":763-767; " + OCH + ":734-760") + [
+    ("outside_profile.metadata_version_unrecognized", "outside_profile", "profile_limit", OCH + ":735,757"),
+    ("not_candidate.code_map_empty", "not_candidate", "llvm_reader", OCF + ":772-773"),
+    ("outside_profile.code_map_count_limit", "outside_profile", "profile_limit", "profile bound 1024"),
+] + _span_rows("code_map", "llvm_reader", OCF + ":772-778") + [
+    ("outside_profile.range_tag_unrecognized", "outside_profile", "profile_limit", OCH + ":762,768-772"),
+    ("outside_profile.range_length_zero", "outside_profile", "profile_limit",
+     LWR + ":613-614 (MS link.exe emits empty ranges; lld skips only empty chunks)"),
+    ("malformed.range_rva_overflow", "malformed", "llvm_reader", OCH + ":764-772 (uint32 RVA)"),
+    ("outside_profile.range_length_unaligned", "outside_profile", "profile_limit",
+     "ARM64/ARM64EC tags only; A64 fixed 4-byte instructions; no AMD64 rule (" + LCP + ":952-954 has none)"),
+] + _span_rows("range", "profile_limit", LCT + ":183-192 (multi-section range is valid lld output)") + [
+    ("outside_profile.range_not_executable", "outside_profile", "profile_limit",
+     BCH + ":335; " + LCH + ":475-486 (execute bit selects map membership only); " + LCT + ":159-167"),
+    ("outside_profile.range_overlap", "outside_profile", "profile_limit", "not mandated by " + OCH + ":764-773"),
+    ("not_candidate.no_arm64_range", "not_candidate", "profile_gate", OCH + ":762"),
+    ("not_candidate.no_arm64ec_range", "not_candidate", "profile_gate", OCH + ":762"),
+    ("candidate.structural", "structural_candidate", "profile_gate", "all guards above passed"),
+]
+FINDING_INDEX = {f[0]: i for i, f in enumerate(FINDINGS)}
+assert len(FINDING_INDEX) == len(FINDINGS)
+
+
+class Stop(Exception):
+    def __init__(self, finding_id, reason, **detail):
+        super().__init__(finding_id)
+        self.finding_id = finding_id
+        self.reason = reason
+        self.detail = detail
+
+
+def u16(b, o):
+    return struct.unpack_from("<H", b, o)[0]
+
+
+def u32(b, o):
+    return struct.unpack_from("<I", b, o)[0]
+
+
+def u64(b, o):
+    return struct.unpack_from("<Q", b, o)[0]
+
+
+def resolve(sections, size_of_headers, rva, size):
+    """Map [rva, rva+size) to file bytes. Status: ok, unmapped, header, cross_section, zero_tail.
+
+    The containing section is the one whose virtual extent [VirtualAddress, +VirtualSize) holds rva
+    (LLVM getRvaPtr rule); the whole span must lie in that section's file-backed prefix
+    [VirtualAddress, +min(VirtualSize, SizeOfRawData)), so a span never reaches the loader's zero tail."""
+    end = rva + size
+    for s in sections:
+        if s["va"] <= rva < s["va"] + s["vsize"]:
+            if end > s["va"] + s["vsize"]:
+                return "cross_section", s, None
+            if end > s["va"] + min(s["vsize"], s["rsize"]):
+                return "zero_tail", s, None
+            return "ok", s, s["rptr"] + rva - s["va"]
+    if end <= size_of_headers:
+        return "header", None, None
+    return "unmapped", None, None
+
+
+def need(sections, soh, rva, size, prefix):
+    status, sec, off = resolve(sections, soh, rva, size)
+    if status != "ok":
+        cls = "outside_profile" if prefix == "range" else SPAN_CLASS[status]
+        raise Stop("%s.%s_%s" % (cls, prefix, status),
+                   "%s span rva %#x size %#x is %s" % (prefix, rva, size, status),
+                   rva=rva, size=size, status=status, section=sec["name"] if sec else None)
+    return sec, off
+
+
+def analyse(b, facts):
+    n = len(b)
+    if n < 0x40:
+        raise Stop("malformed.truncated_dos_header", "file shorter than 0x40-byte DOS header", bytes=n)
+    if b[:2] != b"MZ":
+        raise Stop("malformed.no_mz", "first two bytes are not MZ")
+    pe = u32(b, 0x3C)
+    facts["pe_offset"] = pe
+    if pe + 24 > n:
+        raise Stop("malformed.pe_offset_out_of_file", "PE signature + COFF header past end of file", pe_offset=pe)
+    if b[pe:pe + 4] != b"PE\0\0":
+        raise Stop("malformed.no_pe_signature", "no PE\\0\\0 at offset from 0x3c")
+    machine, nsec, _, _, _, opt_size, chars = struct.unpack_from("<HHIIIHH", b, pe + 4)
+    facts.update(machine="%#06x" % machine, section_count=nsec, optional_header_size=opt_size,
+                 characteristics="%#06x" % chars)
+    if machine in MACHINE_HYBRID_LABELS:
+        raise Stop("outside_profile.machine_hybrid_label",
+                   "on-disk machine %#06x is a hybrid label; profile covers on-disk 0xAA64 only" % machine)
+    if machine != MACHINE_ARM64:
+        raise Stop("not_candidate.machine_not_arm64", "COFF machine %#06x is not 0xAA64" % machine)
+    opt = pe + 24
+    if opt_size < 112 or opt + opt_size > n:
+        raise Stop("malformed.optional_header_truncated", "optional header shorter than 112 bytes or past file end")
+    magic = u16(b, opt)
+    facts["magic"] = "%#05x" % magic
+    if magic != PE32PLUS:
+        raise Stop("outside_profile.not_pe32plus", "optional header magic %#x is not PE32+" % magic)
+    image_base = u64(b, opt + 24)
+    soh = u32(b, opt + 60)
+    ndirs = u32(b, opt + 108)
+    facts.update(image_base="%#x" % image_base, size_of_headers=soh, data_directory_count=ndirs)
+    if 112 + 8 * ndirs > opt_size:
+        raise Stop("malformed.data_directories_truncated",
+                   "NumberOfRvaAndSizes %d does not fit the optional header" % ndirs)
+    if nsec > MAX_SECTIONS:
+        raise Stop("outside_profile.section_count_limit", "%d sections exceed 96" % nsec)
+    sec_off = opt + opt_size
+    if sec_off + 40 * nsec > n:
+        raise Stop("malformed.section_table_truncated", "section table past end of file")
+    sections = []
+    for i in range(nsec):
+        raw = b[sec_off + 40 * i: sec_off + 40 * i + 40]
+        name = raw[:8].rstrip(b"\0").decode("latin-1")
+        vsize, va, rsize, rptr = struct.unpack_from("<IIII", raw, 8)
+        sc = u32(raw, 36)
+        sections.append({"name": name, "va": va, "vsize": vsize, "rsize": rsize, "rptr": rptr,
+                         "characteristics": sc, "executable": bool(sc & SCN_MEM_EXECUTE)})
+    facts["sections"] = [{"name": s["name"], "va": "%#x" % s["va"], "vsize": s["vsize"], "rsize": s["rsize"],
+                          "rptr": s["rptr"], "executable": s["executable"]} for s in sections]
+    for s in sections:
+        if s["va"] + max(s["vsize"], s["rsize"]) > RVA_LIMIT:
+            raise Stop("malformed.section_rva_overflow", "section %s extent passes 2^32" % s["name"], section=s["name"])
+    for s in sections:
+        if s["rsize"] and s["rptr"] + s["rsize"] > n:
+            raise Stop("malformed.section_raw_out_of_file", "section %s raw data past end of file" % s["name"],
+                       section=s["name"])
+    dirs = [struct.unpack_from("<II", b, opt + 112 + 8 * i) for i in range(ndirs)]
+    if ndirs <= 10 or dirs[10][0] == 0:
+        raise Stop("not_candidate.no_load_config", "no load configuration data directory")
+    lc_rva, lc_dir_size = dirs[10]
+    facts["load_config"] = {"rva": "%#x" % lc_rva, "directory_size": lc_dir_size}
+    _, lc = need(sections, soh, lc_rva, 4, "load_config")
+    lc_size = u32(b, lc)
+    facts["load_config"]["size_field"] = lc_size
+    if lc_size < LC_CHPE_END:
+        raise Stop("not_candidate.load_config_lacks_chpe_field",
+                   "load config Size %#x does not reach CHPEMetadataPointer end 0xd0" % lc_size)
+    _, lc = need(sections, soh, lc_rva, max(lc_dir_size, LC_CHPE_END), "load_config")
+    chpe_va = u64(b, lc + LC_CHPE_OFFSET)
+    facts["chpe_metadata_pointer"] = "%#x" % chpe_va
+    if chpe_va == 0:
+        raise Stop("not_candidate.chpe_pointer_zero", "CHPEMetadataPointer is zero")
+    if chpe_va < image_base or chpe_va - image_base >= RVA_LIMIT:
+        raise Stop("malformed.chpe_pointer_outside_image", "CHPEMetadataPointer is not ImageBase + uint32 RVA")
+    meta_rva = chpe_va - image_base
+    msec, m = need(sections, soh, meta_rva, CHPE_METADATA_SIZE, "metadata")
+    version, cm_rva, cm_count = struct.unpack_from("<III", b, m)
+    facts["metadata"] = {"rva": "%#x" % meta_rva, "section": msec["name"], "extent": CHPE_METADATA_SIZE,
+                         "version": version, "code_map_rva": "%#x" % cm_rva, "code_map_count": cm_count}
+    if version != CHPE_VERSION:
+        raise Stop("outside_profile.metadata_version_unrecognized", "metadata Version %d is not 2" % version)
+    if cm_count == 0:
+        raise Stop("not_candidate.code_map_empty", "CodeMapCount is zero")
+    if cm_count > MAX_CODE_MAP_COUNT:
+        raise Stop("outside_profile.code_map_count_limit", "CodeMapCount %d exceeds profile bound 1024" % cm_count)
+    csec, c = need(sections, soh, cm_rva, RANGE_ENTRY_SIZE * cm_count, "code_map")
+    facts["code_map"] = {"rva": "%#x" % cm_rva, "section": csec["name"], "extent": RANGE_ENTRY_SIZE * cm_count}
+    ranges = []
+    facts["ranges"] = ranges
+    for i in range(cm_count):
+        start_raw, length = struct.unpack_from("<II", b, c + RANGE_ENTRY_SIZE * i)
+        tag, start = start_raw & 3, start_raw & ~3
+        r = {"index": i, "tag": tag, "kind": TAGS.get(tag), "rva": "%#x" % start, "length": length}
+        ranges.append(r)
+        if tag not in TAGS:
+            raise Stop("outside_profile.range_tag_unrecognized", "range %d tag %d is not 0/1/2" % (i, tag), index=i)
+        if length == 0:
+            raise Stop("outside_profile.range_length_zero", "range %d length is zero" % i, index=i)
+        if start + length > RVA_LIMIT:
+            raise Stop("malformed.range_rva_overflow", "range %d end passes 2^32" % i, index=i)
+        if tag in (0, 1) and length % 4:
+            raise Stop("outside_profile.range_length_unaligned",
+                       "range %d (%s) length %#x is not a multiple of 4" % (i, TAGS[tag], length), index=i)
+        rsec, roff = need(sections, soh, start, length, "range")
+        r.update(section=rsec["name"], file_offset=roff)
+        if not rsec["executable"]:
+            raise Stop("outside_profile.range_not_executable",
+                       "range %d lies in non-executable section %s" % (i, rsec["name"]), index=i)
+    order = sorted(range(cm_count), key=lambda k: (int(ranges[k]["rva"], 16), k))
+    facts["ranges_in_ascending_order"] = order == list(range(cm_count))
+    for a, z in zip(order, order[1:]):
+        if int(ranges[a]["rva"], 16) + ranges[a]["length"] > int(ranges[z]["rva"], 16):
+            raise Stop("outside_profile.range_overlap", "ranges %d and %d overlap" % (a, z), indices=[a, z])
+    kinds = sorted({r["kind"] for r in ranges})
+    facts["kinds"] = kinds
+    if "ARM64" not in kinds:
+        raise Stop("not_candidate.no_arm64_range", "code map has no ARM64 range")
+    if "ARM64EC" not in kinds:
+        raise Stop("not_candidate.no_arm64ec_range", "code map has no ARM64EC range")
+    return "candidate.structural", "every profile guard passed"
+
+
+def classify_bytes(b):
+    facts = {}
+    try:
+        fid, reason = analyse(b, facts)
+        detail = {}
+    except Stop as e:
+        fid, reason, detail = e.finding_id, e.reason, e.detail
+    except struct.error as e:  # defensive: every read above is bounds-checked first
+        fid, reason, detail = "malformed.internal_short_read", str(e), {}
+    row = FINDINGS[FINDING_INDEX[fid]] if fid in FINDING_INDEX else (fid, "malformed", "defensive", "")
+    return {"schema": SCHEMA, "profile": PROFILE, "scope": SCOPE, "finding_id": fid, "classification": row[1],
+            "basis": row[2], "anchor": row[3], "precedence": FINDING_INDEX.get(fid, -1),
+            "reasons": [reason], "detail": detail, "facts": facts,
+            "input": {"sha256": hashlib.sha256(b).hexdigest(), "bytes": len(b)}}
+
+
+def selftest():
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import selftest_pegen as gp  # fixture recipe lives outside the parser by design
+    results, ok = [], True
+    produced = set()
+    with tempfile.TemporaryDirectory(prefix="r33st-") as td:
+        for L in gp.LAYOUTS:
+            for name, build, want in gp.CASES:
+                b = build(L)
+                assert len(b) < (1 << 20)
+                path = os.path.join(td, os.urandom(8).hex())
+                with open(path, "wb") as f:
+                    f.write(b)
+                p = subprocess.run([sys.executable, "-I", "-B", os.path.abspath(__file__), path],
+                                   capture_output=True, timeout=30)
+                out = json.loads(p.stdout)
+                want_exit = EXIT[FINDINGS[FINDING_INDEX[want]][1]]
+                good = (out["finding_id"] == want and p.returncode == want_exit
+                        and out["classification"] in EXIT
+                        and out["input"]["sha256"] == hashlib.sha256(b).hexdigest())
+                produced.add(out["finding_id"])
+                ok &= good
+                results.append({"layout": L["name"], "case": name, "want": want, "got": out["finding_id"],
+                                "want_exit": want_exit, "exit": p.returncode, "pass": good})
+        # filename/label invariance: identical bytes under a label-like name and a random name
+        b = gp.canonical(gp.LAYOUTS[0]).build()
+        outs = []
+        for nm in ("not_candidate.no_load_config.dll", os.urandom(8).hex()):
+            p = os.path.join(td, nm)
+            with open(p, "wb") as f:
+                f.write(b)
+            outs.append(_run_cli(p))
+        inv = outs[0] == outs[1] and outs[0][1]["finding_id"] == "candidate.structural"
+        ok &= inv
+        results.append({"case": "filename_invariance", "pass": inv})
+        # able-to-fail: a wrong expectation must register as a mismatch
+        fail_ok = outs[0][1]["finding_id"] != "not_candidate.no_load_config"
+        ok &= fail_ok
+        results.append({"case": "wrong_expectation_detected", "pass": fail_ok})
+        # usage/IO error path
+        p = subprocess.run([sys.executable, "-I", "-B", os.path.abspath(__file__), os.path.join(td, "absent")],
+                           capture_output=True, timeout=30)
+        io_ok = p.returncode == 2
+        ok &= io_ok
+        results.append({"case": "missing_file_exit_2", "exit": p.returncode, "pass": io_ok})
+    # every pinned recipe expectation must be an id the parser can emit
+    vocab_ok = all(want in FINDING_INDEX for _, _, want in gp.CASES)
+    uncovered = sorted(set(FINDING_INDEX) - produced)
+    allowed = set(FINDING_INDEX) | {"candidate.structural"}
+    vocab_ok &= produced <= allowed and not any(("valid" in f or "authentic" in f) for f in produced)
+    ok &= vocab_ok
+    summary = {"selftest": "chpe_profile", "pass": bool(ok), "cases": len(results),
+               "failed": [r for r in results if not r["pass"]], "finding_ids_produced": len(produced),
+               "finding_ids_defined": len(FINDINGS), "finding_ids_uncovered": uncovered,
+               "recipe_ids_unknown": sorted(w for _, _, w in gp.CASES if w not in FINDING_INDEX),
+               "vocabulary_ok": vocab_ok, "results": results}
+    print(json.dumps(summary, sort_keys=True, indent=1))
+    return 0 if ok else 1
+
+
+def _run_cli(path):
+    p = subprocess.run([sys.executable, "-I", "-B", os.path.abspath(__file__), path], capture_output=True,
+                       timeout=30)
+    return p.returncode, json.loads(p.stdout)
+
+
+def main(argv):
+    if argv == ["--selftest"]:
+        return selftest()
+    if argv == ["--findings"]:
+        print(json.dumps([dict(zip(("finding_id", "classification", "basis", "anchor"), f), precedence=i)
+                          for i, f in enumerate(FINDINGS)], indent=1))
+        return 0
+    if len(argv) != 1 or argv[0].startswith("--"):
+        sys.stderr.write("usage: chpe_profile.py <path> | --selftest | --findings\n")
+        return 2
+    try:
+        with open(argv[0], "rb") as f:
+            b = f.read()
+    except OSError as e:
+        print(json.dumps({"schema": SCHEMA, "finding_id": "error.io", "classification": "error",
+                          "reasons": [e.strerror or str(e)]}, sort_keys=True))
+        return 2
+    out = classify_bytes(b)
+    print(json.dumps(out, sort_keys=True))
+    return EXIT[out["classification"]]
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

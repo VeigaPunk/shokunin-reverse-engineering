@@ -1,0 +1,57 @@
+[
+ {
+  "name": "S1 located at the expected line",
+  "file": "source.md",
+  "quote": "The two low bits of StartOffset contain a range type.",
+  "line": 2,
+  "expect": "pass"
+ },
+ {
+  "name": "S2 located with no line requirement",
+  "file": "source.md",
+  "quote": "Binary format that allows both native ARM64 and ARM64EC code to coexist in the same file.",
+  "expect": "pass"
+ },
+ {
+  "name": "N1 expected line after the real one",
+  "file": "source.md",
+  "quote": "The two low bits of StartOffset contain a range type.",
+  "line": 3,
+  "expect": "fail"
+ },
+ {
+  "name": "N2 fabricated quote",
+  "file": "source.md",
+  "quote": "The three low bits of StartOffset contain a range type.",
+  "line": 2,
+  "expect": "fail"
+ },
+ {
+  "name": "N3 contiguous 26-word run",
+  "file": "source.md",
+  "quote": "w01 w02 w03 w04 w05 w06 w07 w08 w09 w10 w11 w12 w13 w14 w15 w16 w17 w18 w19 w20 w21 w22 w23 w24 w25 w26",
+  "line": 4,
+  "expect": "fail"
+ },
+ {
+  "name": "N4 quote spanning two raw lines",
+  "file": "source.md",
+  "quote": "A quote that starts here and\ncontinues on the next raw line.",
+  "line": 5,
+  "expect": "fail"
+ },
+ {
+  "name": "N5 empty quote",
+  "file": "source.md",
+  "quote": "",
+  "expect": "fail"
+ },
+ {
+  "name": "D1 drift census (informational)",
+  "kind": "diagnostic"
+ },
+ {
+  "name": "D2 html drift lines (informational)",
+  "kind": "diagnostic"
+ }
+]

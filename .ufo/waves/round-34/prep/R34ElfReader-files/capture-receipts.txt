@@ -1,0 +1,98 @@
+R34ElfReader capture and producing-argv receipts
+Seat: KaidokuR34.R34ElfReader (UFO-FSD executor)
+Lane: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+UTC: captures 2026-10-23T10:24Z-10:32Z; lane copies 2026-10-23T10:35Z-10:37Z
+
+Every lane copy below was made with cp -p and verified byte-identical by sha256 against its
+source. No selftest or probe was rerun to produce this receipt; the log bytes are the original
+observations cited in ../R34ElfReader.md. All paths below are absolute unless stated.
+
+1) Host glibc header behind H_A
+   lane copy: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ElfReader-files/elf.h-glibc-2.44
+   source: /usr/include/elf.h
+   bytes: 195703
+   sha256 (source == copy): c81533b751ce45e737d91c49a3a2ed5123b0dbc7006259a40ccb3904221847ca
+   provenance: pacman -Qo /usr/include/elf.h -> glibc 2.44+r50+g1848099f063e-1
+               pacman -Q glibc -> glibc 2.44+r50+g1848099f063e-1
+               pacman -Q binutils -> binutils 2.47-4
+               package mtime 2026-09-27 13:35:47 -0300
+   producing argv: none (package-installed file)
+   copy argv: cp -p /usr/include/elf.h <lane>/elf.h-glibc-2.44
+   anchor note: H_A in the decision table is this host 2.44 header, not S104's pinned glibc 2.42
+   commit d2097651cc57834dbfcaa102ddfacae0d86cfb66. The sibling capture
+   ../R34SourceNovelty-files/glibc-elf.h (sha256 fd6e7f3e3c74ee9d64b9f92ce3cc31b34413ca2622a167320ea053ce9a68110f)
+   was compared against this copy; see elf-h-2.42-vs-2.44-comparison.txt: all 15 macros and all
+   four Elf64 struct field sequences are identical, with Verneed/Vernaux line numbers differing
+   by exactly 2 (host 1126-1135/1155-1163; pinned 1124-1133/1153-1161).
+
+2) binutils readelf source behind R_A
+   lane copy: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ElfReader-files/readelf.c-binutils-2_47
+   bytes: 689644
+   sha256 (source == copy): 7e81eedf19b2b93663bb3f598f74b54c107bd699f551667eb1b3d0e33eddeeff
+   producing argv (successful):
+     cd /fast/scratch/hyaku/kaidoku-r34/R34ElfReader
+     timeout 25 curl -fsSL -o readelf.try "https://sourceware.org/git/?p=binutils-gdb.git;a=blob_plain;f=binutils/readelf.c;hb=binutils-2_47"
+     mv readelf.try readelf.c
+   prior attempts: raw.githubusercontent.com/bminor/binutils-gdb/binutils-2_47/binutils/readelf.c
+   and .../master/binutils/readelf.c both returned HTTP 404; the sourceware request succeeded.
+   host tool: GNU readelf (GNU Binutils) 2.47; package binutils 2.47-4.
+   cited spans: readelf.c lines 9089, 14020-14155 (SHT_GNU_verneed case, chain/overflow checks).
+
+3) LSB source behind L_A
+   lane copy: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/prep/R34ElfReader-files/lsb-symversion.html
+   bytes: 19109
+   sha256 (source == copy): 982fe1208c76eda09d8619f3907783899e4e73b19c34f3e22314fb36cc8f7f91
+   producing argv:
+     cd /fast/scratch/hyaku/kaidoku-r34/R34ElfReader
+     timeout 20 curl -fsSL -o lsb-symversion.html "https://refspecs.linuxfoundation.org/LSB_5.0.0/LSB-Core-generic/LSB-Core-generic/symversion.html"
+
+4) Retained selftest and probe logs (no rerun)
+   Common context: cwd = <lane>/R34ElfReader-files; PYTHONDONTWRITEBYTECODE=1.
+
+   4a) selftest-internal.log
+       lane copy: .../R34ElfReader-files/selftest-internal.log
+       origin: /fast/scratch/hyaku/kaidoku-r34/R34ElfReader/selftest-internal.log
+       bytes: 5914
+       sha256 (origin == copy): f82a116662703734b628f0c089dd38246229d5c88fb0b850e6895c51995a047b
+       producing argv: timeout 120 python3 -I -B reader.py --selftest > <scratch>/selftest-internal.log 2>&1
+       exit: 0; last line: reader-selftest: PASS checks=128 binaries=0
+
+   4b) selftest-outer.log
+       lane copy: .../R34ElfReader-files/selftest-outer.log
+       origin: /fast/scratch/hyaku/kaidoku-r34/R34ElfReader/selftest-outer.log
+       bytes: 7413
+       sha256 (origin == copy): b1626303f4de5fed248e177ec509dc7af6645ce8fb14ebe9677226969f458156
+       producing argv: timeout 180 python3 -I -B reader.py --selftest \
+         --binaries <scratch>/pub/libz.so.1 <scratch>/pub/libgcc_s.so.1 \
+                    <scratch>/pub/liblzma.so.5 <scratch>/pub/ld-linux-x86-64.so.2 \
+         > <scratch>/selftest-outer.log 2>&1
+       exit: 0; last line: reader-selftest: PASS checks=140 binaries=4
+
+   4c) rename-probe.log (origin file was named mutprobe.log; bytes unchanged, descriptive lane name)
+       lane copy: .../R34ElfReader-files/rename-probe.log
+       origin: /fast/scratch/hyaku/kaidoku-r34/R34ElfReader/mutprobe.log
+       bytes: 407
+       sha256 (origin == copy): b729c42c5ff43aeace066dfe818da3dd66b97bb3cf001beb59fc61d3f7c8e47a
+       producing argv: timeout 90 python3 -B <scratch>/mutprobe.py > <scratch>/mutprobe.log 2>&1
+       exit: 0; last line: mutprobe: PASS
+
+   4d) rename-probe.py (probe source, retained as the producing receipt for 4c)
+       lane copy: .../R34ElfReader-files/rename-probe.py
+       origin: /fast/scratch/hyaku/kaidoku-r34/R34ElfReader/mutprobe.py
+       bytes: 3290
+       sha256 (origin == copy): dfba3117a5560f56d30169dd2b4af4666fb746527325e92d96f9795edc704a9b
+       note: writes <scratch>/mutated/libz.so.1, parses it, then deletes it; the derived copy was
+       never executed. It is not part of the reader deliverable.
+
+5) Deliverable provenance
+   reader.py: written by this seat with the write tool; no generated argv.
+     bytes 38603; sha256 fb7e6a65a66469631206ad4a37eef091ad44598c9e1fe40aa487754202c45123
+   decision-table.json: timeout 60 python3 -I -B reader.py --findings > decision-table.json
+     exit 0; bytes 17148; sha256 cc44ac7a1cbb267a3b1204e55f565be8df7fd80195998f2aec588b4bb58c7e92
+     a fresh pipe of the same argv reproduced the identical digest.
+
+6) Development ELF inputs
+   See development-binaries.tsv. All four were copied with cp -L from /usr/lib into
+   /fast/scratch/hyaku/kaidoku-r34/R34ElfReader/pub, and each copy digest equals the digest of its
+   resolved /usr/lib target. They are development selftest inputs only and must be excluded from
+   the production/expected-author binary list.

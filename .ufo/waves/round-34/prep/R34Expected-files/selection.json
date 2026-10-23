@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "date": "2026-10-23",
+  "predicate": "Static GNU ELF Verneed/Vernaux metadata interpretation of already-built benign host binaries. No exploitation, no vulnerability work, no target execution, no synthetic binary construction.",
+  "selection_rule": "12 distinct regular-file ELF binaries under /usr/bin and /usr/lib, diverse version-needs shapes, byte-exact mode-0644 copies, total retained binaries <= 16 MiB, deterministic readelf + direct-structure cross-check.",
+  "prefreeze_selection_change": {
+    "when": "before freeze, before any production reader run",
+    "reason": "reader development selftested libz, libgcc_s, liblzma and ld-linux; the prospective production carrier set must not overlap those development observations",
+    "excluded_carrier": {
+      "id": "e11",
+      "source_path": "/usr/lib/ld-linux-x86-64.so.2",
+      "sha256": "f5e11cc62f8f2c24dff532982559f4303dba3b17e7450551372a88c8e7ea8757",
+      "size": 263152,
+      "shape": "dynamic loader, DT_VERNEED absent, 7 verdef records"
+    },
+    "replacement_carrier": {
+      "id": "e11",
+      "source_path": "/usr/bin/net",
+      "sha256": "a24a23098ea81cc03bf0d48becfb2809c4a557b1274be5a8112273472b40fc1f",
+      "size": 1097344,
+      "shape": "61 Verneed records / 77 Vernaux records (largest needed-file fan-out in the set)"
+    },
+    "zero_verneed_note": "no dynamic zero-verneed carrier retained (ld-linux was the only candidate); /usr/bin/sln (e12) is a static executable with no version sections and remains the absent-section control"
+  },
+  "dev_selftest_excluded_binaries": [
+    {
+      "name": "libz.so.1",
+      "source_path": "/usr/lib/libz.so.1",
+      "sha256": "6c78c5e58c3bb49a1cd151a95cdf1a17fe07a91a57a59e0279b984c533075ca9"
+    },
+    {
+      "name": "libgcc_s.so.1",
+      "source_path": "/usr/lib/libgcc_s.so.1",
+      "sha256": "e618cb9c90c2eb3a1dad1cfea5b6c1eebcf2e799ad805976f4ae47bdd61c716a"
+    },
+    {
+      "name": "liblzma.so.5",
+      "source_path": "/usr/lib/liblzma.so.5",
+      "sha256": "6e4dae5b099ec0e40a56beead2e51f858535aa794b5a8574a6723dfc1da8a3c1"
+    },
+    {
+      "name": "ld-linux-x86-64.so.2",
+      "source_path": "/usr/lib/ld-linux-x86-64.so.2",
+      "sha256": "f5e11cc62f8f2c24dff532982559f4303dba3b17e7450551372a88c8e7ea8757"
+    }
+  ],
+  "carrier_digest_overlap_with_dev_selftest": [],
+  "referenced_soname_note": {
+    "explanation": "Verneed File: names inside other carriers may spell the same sonames; those are referenced strings, not carrier bytes or carrier digests.",
+    "libgcc_s.so.1": ["e06", "e07", "e10"],
+    "liblzma.so.5": ["e04"],
+    "ld-linux-x86-64.so.2": ["e10"],
+    "libz.so.1": []
+  },
+  "carriers": [
+    {"id": "e01", "source_path": "/usr/bin/true", "sha256": "8398af7d1f94a88be3303caa083616ad22a12783e4dfee0373298bc61aef0662", "size": 43320},
+    {"id": "e02", "source_path": "/usr/bin/perl", "sha256": "dcd2b4690688005830ffb06eb0283a7766aefb043f0e4c7b3fe62b005338abbf", "size": 14416},
+    {"id": "e03", "source_path": "/usr/bin/curl", "sha256": "64c10d9b0a6baa4b576899e6baeec9d62ab2f03dfe87679d0b8101c2059bd61b", "size": 223536},
+    {"id": "e04", "source_path": "/usr/bin/xz", "sha256": "24c477492f40fd8b1b6eca2d6cc020e47d4c9c11ee1bfb9ba57fb8e2f6a11bda", "size": 96992},
+    {"id": "e05", "source_path": "/usr/bin/bash", "sha256": "c14c8f498f3be96f076ceb07d65dba584a86dca3c86b5dce65ed0f6cae73358d", "size": 1195144},
+    {"id": "e06", "source_path": "/usr/bin/fwupdtool", "sha256": "5eb48dd58bf3ad5f0d14242ff16dddf4987d205540dc9298ebcf5679dcccaf93", "size": 194992},
+    {"id": "e07", "source_path": "/usr/bin/fwupdmgr", "sha256": "339d917c85b0f1a92b25e6e409ce2e97fd1b494a86857fcbd85d596052fd3fbc", "size": 153776},
+    {"id": "e08", "source_path": "/usr/lib/libsmbclient.so.0.8.1", "sha256": "1c6062e004637d8ddf46aa7a325c48b0795a9cee797c5b68b9d088e7301f3242", "size": 174032},
+    {"id": "e09", "source_path": "/usr/lib/libssl3.so", "sha256": "d8fab7fcf524fc91463dfe561fd584c5903b92b4e1ae8aedb06de27baa3d7243", "size": 448920},
+    {"id": "e10", "source_path": "/usr/lib/libstdc++.so.6.0.36", "sha256": "f5fc7380f2ae46fa4053a64be04e7b98109f1066a4bbfff3c37042488aa0be0e", "size": 2939928},
+    {"id": "e11", "source_path": "/usr/bin/net", "sha256": "a24a23098ea81cc03bf0d48becfb2809c4a557b1274be5a8112273472b40fc1f", "size": 1097344},
+    {"id": "e12", "source_path": "/usr/bin/sln", "sha256": "1dc03d8fdacc17b802b28a01407ba0a814ee8fbf9d83522065773e09fd964aa1", "size": 747400}
+  ],
+  "totals": {
+    "original_carrier_bytes": 7329800,
+    "challenge_carrier_bytes": 6582400,
+    "retained_binary_bytes": 13912200,
+    "cap_bytes": 16777216,
+    "within_cap": true
+  },
+  "frozen_artifacts": {
+    "manifest_sha256": "f22e7e3b8f70c7a5dda784919f6df53a1feaf11cca0e4bba767509d51717974d",
+    "schedule_sha256": "95199e90ee73cb278d7d2105f15e043eea4341e1682a69ea27f9d4053a0dcf2d"
+  }
+}

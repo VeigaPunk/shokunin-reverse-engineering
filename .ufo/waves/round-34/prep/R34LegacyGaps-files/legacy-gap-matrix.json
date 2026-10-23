@@ -1,0 +1,150 @@
+{
+ "schema": "r34-legacy-gap-matrix-v1",
+ "generated_utc": "2026-10-23T10:35:01Z",
+ "base": "ec3125ad3d130d92f888a4128dfaa2982f36fff7",
+ "seat": "KaidokuR34.R34LegacyGaps",
+ "sources_read": {
+  "corpus/lessons/round-33-verifier-spotcheck.md": "defects 3/4, lines 124-138",
+  "corpus/lessons/round-32-verifier-spotcheck.md": "defects 4/5, lines 111-117",
+  ".ufo/waves/round-32/a2audit/A2SelftestHoles.md": "mutation table, 3 killed / 5 survived",
+  ".ufo/waves/round-33/prep/R33MutantLimits.md": "sections 1-4 (bound vs repair, inventory)",
+  "SKILL.md": "registry rows 1077-1084, 1100-1101"
+ },
+ "frozen_instruments_untouched": {
+  "tools/round-32/c1-arm64x-positive.py": {
+   "sha256": "7a534be655f940728879e1d25e43a20685371e25232ded94eeb2d5bcc0800f1a",
+   "equals_freeze_pin": true
+  },
+  "tools/round-32/c2-capability-calibration-v3.py": {
+   "sha256": "5955e8ace76d93c7891a43ca282f129c8874cd1878a05c9f29e0b81d3cab2f9f",
+   "equals_freeze_pin": true
+  }
+ },
+ "r32_wrapper_mutants": [
+  {
+   "id": "C1-1",
+   "instrument": "tools/round-32/c1-arm64x-positive.py",
+   "line": 132,
+   "clause": "if CLAIM_ROW not in text:",
+   "mutant": "if not text:",
+   "r32_verdict": "survived",
+   "r34_disposition": "repaired by successor",
+   "successor": "R34LegacyGaps-files/wrapper_successor.py::entry_cite",
+   "discriminator": "non-empty entry that names the evidence id but omits S099",
+   "red_green": "R34LegacyGaps-files/receipts/C_mutant_C1-1__C1-1_kill__entry_without_the_claim_row_.txt",
+   "limits": "successor validates the predicate only; the entry text is supplied by the caller"
+  },
+  {
+   "id": "C1-2",
+   "instrument": "tools/round-32/c1-arm64x-positive.py",
+   "line": 121,
+   "clause": "if strip_meta(committed) != strip_meta(live):",
+   "mutant": "if committed.get(\"data\") != (live or {}).get(\"data\"):",
+   "r32_verdict": "survived",
+   "r34_disposition": "repaired by successor, crash path closed",
+   "successor": "R34LegacyGaps-files/wrapper_successor.py::envelope_equal (+ committed_json)",
+   "discriminator": "same data with changed top-level ok; same data with an extra outer field; non-object committed JSON fails cleanly instead of raising AttributeError",
+   "red_green": "R34LegacyGaps-files/receipts/C_mutant_C1-2__C1-2_kill__same_data__committed_top-level_ok_differs_.txt",
+   "limits": "top-level `meta` stays excluded, matching the frozen semantics; nested differences inside meta are not compared"
+  },
+  {
+   "id": "C1-3",
+   "instrument": "tools/round-32/c1-arm64x-positive.py",
+   "line": 124,
+   "clause": "if not eid or eid not in entry_text:",
+   "mutant": "if not eid:",
+   "r32_verdict": "survived",
+   "r34_disposition": "repaired by successor",
+   "successor": "R34LegacyGaps-files/wrapper_successor.py::evidence_id",
+   "discriminator": "live evidence_id ev-k01-fixture absent from the entry text",
+   "red_green": "R34LegacyGaps-files/receipts/C_mutant_C1-3__C1-3_kill__live_evidence_id_omitted_from_the_entry_.txt",
+   "limits": "substring presence only, as in the frozen clause; it does not require the id to sit in an evidence field"
+  },
+  {
+   "id": "C1-4",
+   "instrument": "tools/round-32/c1-arm64x-positive.py",
+   "line": 115,
+   "clause": "if freeze_ct is None or added is None or added <= freeze_ct:",
+   "mutant": "if freeze_ct is None or added is None or added < freeze_ct:",
+   "r32_verdict": "survived",
+   "r34_disposition": "repaired by successor for the comparison predicate only",
+   "successor": "R34LegacyGaps-files/wrapper_successor.py::post_freeze",
+   "discriminator": "added == freeze_ct must fail; added == freeze_ct + 1 must pass",
+   "red_green": "R34LegacyGaps-files/receipts/C_mutant_C1-4__C1-4_kill__first-added_exactly_at_the_freeze_commit_time_.txt",
+   "limits": "the git acquisition path (first_added: `git log --diff-filter=A --format=%ct`) is NOT exercised; the successor receives two integer epoch seconds as JSON, and the same-second blind edge documented in A2FreezeBytes finding 3 remains"
+  },
+  {
+   "id": "C2-1",
+   "instrument": "tools/round-32/c2-capability-calibration-v3.py",
+   "line": 168,
+   "clause": "if len(shared) < MIN_DESC_WORDS:",
+   "mutant": "if len(shared) <= MIN_DESC_WORDS:",
+   "r32_verdict": "survived",
+   "r34_disposition": "open bounded limit; deliberately NOT repaired",
+   "successor": null,
+   "discriminator_spec": "an otherwise valid row sharing exactly MIN_DESC_WORDS distinct anchored words must match, and one sharing MIN_DESC_WORDS-1 must not",
+   "reason": "C2v3 is falsified as a semantic measure and barred from admission (QUALITY 58, r33 spotcheck defect 4, R33MutantLimits section 3). Shipping a successor clause would resurrect a banned instrument without the denial/word-bag/off-topic controls a v4 must freeze before data.",
+   "recommendation": "exclude from round-34 admission; any future calibration instrument must freeze the boundary pair plus QUALITY-58 controls before data"
+  }
+ ],
+ "archived_secondary_gates": [
+  {
+   "id": "independent-pe/compare.py",
+   "path": ".ufo/waves/round-32/independent-pe/compare.py",
+   "sha256": "b955f90849192ceeeee26b2849f2ec8dc1d4032e9fd05bf02e9e039cf9ed4209",
+   "r34_disposition": "separate selftest added; pass/fail now demonstrated",
+   "method": "read-only import of the archived file through R34LegacyGaps-files/replay/indep_pe_replay.py, rebinding only the hardcoded TSV and BASE globals to a bounded fixture directory",
+   "fixture": "R34LegacyGaps-files/fixtures/indep-pe/ (carriers.tsv header+k01 row, indep.json k01 result, oracle.stdout.jsonl k01 line, readobj-k01.txt copy, provenance.json)",
+   "green": "31/31 checks pass, exit 0; receipts/G_archived_independent-pe_green.txt",
+   "red": "sha256 tampered in indep.json; label_sha256 fails, exit 1; receipts/G_archived_independent-pe_red__tampered_sha256_.txt",
+   "limits": [
+    "the replay shim rebinds globals because the archived file ignores argv (SKILL.md:1101); the archived bytes are unchanged",
+    "the run needs the host llvm-readobj for a version string only; recorded LLVM 23.1.3",
+    "the fixture is one carrier of twelve, so this proves ability to fail, not the archived 372/372 replay",
+    "carrier row paths point at /fast/scratch but are never opened by the comparator"
+   ]
+  },
+  {
+   "id": "source-reopen/verify_quotes.py",
+   "path": ".ufo/waves/round-32/source-reopen/verify_quotes.py",
+   "sha256": "a41689cc875ca28ea5bd3566bcf5c93eba3c6c54ce532b977960c07f0bc20e73",
+   "r34_disposition": "NOT repaired in place; successor core only; exclude archived script from round-34 admission",
+   "reasons": [
+    "executes at import with no __main__ guard, so it cannot be replayed from fixtures without editing it",
+    "hardcodes absolute SNAP, C1IN and a /fast/scratch RE directory",
+    "records informational diagnostics through the same row list with literal true predicates (drift:html:*), so its row count overstates checks"
+   ],
+   "successor": "R34LegacyGaps-files/quote_support_successor.py",
+   "successor_scope": "mechanical support predicate only: one raw contiguous line, exact expected line, <=25 words; diagnostics are printed as INFO and excluded from the check count",
+   "green": "selftest 9 cases 0 failures; case fixtures 7 support / 2 informational / 0 failures; receipts/D_quote_selftest.txt, receipts/E_quote_cases_green.txt",
+   "red": "tampered cases exit 1 with 2 failures; Q-1 and Q-2 mutants killed; receipts/E_quote_cases_tampered.txt, receipts/F_*.txt",
+   "not_covered": [
+    "source identity sha256 sets (EXPECT/LIVE_EXPECT)",
+    "live drift characterization and census.json",
+    "S099/S100 HTML/Markdown specific rows",
+    "the archived script's own pass/fail verdict map remains unselftested and is not conformance evidence"
+   ]
+  },
+  {
+   "id": "final-c1-witness/pe_own_compare.py",
+   "path": ".ufo/waves/round-32/final-c1-witness/pe_own_compare.py",
+   "sha256": "587dadc65d756ccc25d9b05cbbdec0b61fb38b742ee651ebe278e06e1b023251",
+   "r34_disposition": "open bounded limit; exclude from round-34 admission",
+   "reason": "own_parse reads the pinned carrier DLL bytes; a selftest would require authoring binary PE content, which this wave forbids, and the committed captures do not reconstruct the bytes (SKILL.md:1100)",
+   "unrepaired_text_gaps": [
+    "tsv rows are split positionally with no schema check; a short row raises IndexError instead of a clean fail",
+    "readobj text parsing is exercised only through the binary-gated path"
+   ],
+   "status": "not executed; not declared conformant; recorded as not_run in run-receipt.json"
+  }
+ ],
+ "residual_limits_of_the_repairs": [
+  "The successor instruments are not wired into any round-34 claim and produce no admission verdict.",
+  "C1-1/C1-3 remain substring checks; a wrong-but-present token still passes.",
+  "C1-4 compares caller-supplied integers; commit-time acquisition and DAG ancestry are out of scope.",
+  "The four r32 C1 mutants are killed against the successor, not against the frozen instrument; the frozen instrument still has zero cases for those clauses and its bytes are unchanged.",
+  "pe_own_compare has no selftest and no replay path without binary content.",
+  "verify_quotes' non-support rows remain unselftested and the archived file is excluded from admission.",
+  "No round-34 gate may cite these receipts as a claim outcome; they are repair evidence for the routed defect only."
+ ]
+}
