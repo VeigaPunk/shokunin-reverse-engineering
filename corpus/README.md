@@ -81,7 +81,8 @@ A row is written when its file exists, never before.
 | `inspect-rust-binary` positive class (round 30) | `2026-10-23-r30-rust-auditable-positive` | held — REA 6.5.0 reads the full cargo-auditable `.dep-v0` graph exactly (packages, edges, root, kind, offset, size) on 16 of 16 uv 0.13.0 wheel members in ELF, PE and thin Mach-O; 5 distinct package lists, 7 distinct dependency documents, one producer, one pin |
 | `inspect-rust-binary` refusal signatures (round 30) | `2026-10-23-r30-rust-auditable-refusals` | held narrowly — 19 of 19 code-predicted accept/refuse outcomes with exact messages on ELF x86_64 mutants of one carrier; 13 of 16 refusals carry the message only in `error.details.issues` |
 | `inspect-sqlite-database` database-scope schema on published files (round 31) | `2026-10-23-r31-sqlite-positive` | held — REA 6.5.0 reports every table, column, index, view and trigger of 12 published SQLite files (5 PROJ `proj.db`, 2 Chinook, 5 GeoPackages with R*Tree virtual/shadow tables) exactly as an independent reader; 3 schema families, one pin; extends l7-04 |
-| `inspect-sqlite-database` refusal and edge signatures (round 31) | `2026-10-23-r31-sqlite-refusals` | held narrowly — 23 of 23 code-predicted outcomes (20 refusals with exact code, issue and message; 3 acceptances) on requests and mutants of one carrier; two budget rows change at 6.7.0 (static) |
+| `inspect-sqlite-database` refusal and edge signatures (round 31) | `2026-10-23-r31-sqlite-refusals` | held narrowly — 23 of 23 code-predicted outcomes (20 refusals with exact code, issue and message; 3 acceptances) on requests and mutants of one carrier; both budget rows changed at 6.7.0 in live probes (`.ufo/waves/round-31/w2/ProbePin670.md`); only three requests re-run at that pin |
+| ARM64X hybrid PE native-view import (round 32) | `2026-10-23-r32-arm64x-hybrid-pe` | bounded Core: twelve synthetic exported-leaf DLLs, native-view ordered segments and procedure counts; published hybrids, EC recovery, internal functions and runtime remain Frontier |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -182,6 +183,7 @@ A row is written when its file exists, never before.
 | `2026-10-23-r30-rust-auditable-refusals` | REA 6.5.0 `inspect-rust-binary` gate order and refusal messages, predicted from code and observed on 19 mutants | S090; 19 envelopes in `corpus/evidence/round-30/c2/` | 2026-10-23 |
 | `2026-10-23-r31-sqlite-positive` | REA 6.5.0 `inspect-sqlite-database --schema-scope database` on 12 published SQLite files: full schema equals an independent reader | S096, S097, S093, S094, S095; 12 envelopes in `corpus/evidence/round-31/c1/` | 2026-10-23 |
 | `2026-10-23-r31-sqlite-refusals` | REA 6.5.0 `inspect-sqlite-database` input, file-set and worker refusals predicted from code and observed on 23 requests | S092; 23 envelopes in `corpus/evidence/round-31/c2/` | 2026-10-23 |
+| `2026-10-23-r32-arm64x-hybrid-pe` | ARM64X synthetic hybrid PE native-view import/overview; raw machine vs CHPE classification and native/EC count distinction | S099, S098; original envelopes and producing records in `corpus/evidence/round-32/c1/` | 2026-10-23 |
 
 ## Lessons
 | entry | round | gist |
@@ -206,6 +208,7 @@ A row is written when its file exists, never before.
 | `round-29` | 29 | fresh-carrier and never-fetched-selector tests frozen with hex and pre-seen screens; r27 selftest repaired as a disclosed selftest-only revision; freeze gate over every claims*.json; pre-file gate; mistakes M29-1..4 (filing with a live seat, ledger out of step with its gate, unpinned name in the L1's own freeze, red seat results dropped at integration) |
 | `round-30` | 30 | repair-first after the round-29 axis-misfit rejection: pre-data control wave (10 controls, none met a target) before data; `inspect-rust-binary` positive class on ELF/PE/Mach-O (16/16) and 19/19 code-predicted refusal signatures; axis-fit, prefreeze and settle gates; mistakes M30-1..5 (carrier tampering by a seat tool caught by the pin check) |
 | `round-31` | 31 | leaves REA's Rust reader for its SQLite reader: database-scope schema on 12 published files against an independent reader, 23 code-predicted refusal/edge outcomes; full-envelope committed checks (M30-3 repaired), Core-placement check, freeze-integrity and cited-runs gates; mistakes M31-1..7 (single-spelling novelty grep, post-freeze edits unseen, write-mode target lines, uncommitted PASS citations, a typed size, a path-dependent selftest, a seat git command in the fleet repo) |
+| `round-32` | 32 | inherited hybrid-PE coverage freeze rechecked; C2 calibration honest stop because negative prose and word bags pass its frozen counter; r31 routed corrections; scoped Core and retained Frontier boundaries |
 
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
@@ -215,7 +218,7 @@ A row is written when its file exists, never before.
 - `capture-electron-scenario` — typed refusal (Playwright handshake) despite same app launching manually.
 - sasquatch (AUR) — unblob squashfs recursion; 7z fallback covers today.
 - adb device surface — 22/24 verbs need a live device/emulator.
-- PE reserve: ARM64X hybrids; signal-desktop 38.5MB asar held r4-05 (directory-format route-around for chunk-heap walls).
+- PE hybrid frontier: published ARM64X binaries, dual-view/EC recovery and internal-function analysis remain unverified. Synthetic exported-leaf native-view import/overview is bounded Core (round 32); signal-desktop 38.5MB asar held r4-05 (directory-format route-around for chunk-heap walls).
 - Runtime-obs depth — call-target resolution, managed `verify`/`project`, and the process-capture pair are held, not frontier (r5-02, r9-02, r11-01); the census's Queue A is drained (r4-16 erratum :913-915), so the "~26 self-provisionable" driver is spent. Residual depth only: 283 of 286 cataloged jq GOT-indirect sites unprobed (2 `jmp *` untested, r5-02:152-155); managed `inferred` variant has no observed example (r9-02:82-84); managed↔managed compare grades all-`unknown` (r12-02:65).
 - Blocked-on-operator: IDA (`REA_IDA_MCP_CONFIG`), Hopper (`HOPPER_LAUNCHER_PATH`), JEB — all absent.
 

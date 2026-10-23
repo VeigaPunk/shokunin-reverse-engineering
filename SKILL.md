@@ -1046,3 +1046,30 @@ How to use it: check option dependencies first (row limit, columns and `selected
 | `tools/round-31/sqlite_oracle.py` | independent SQLite schema reader: pure-Python `sqlite_schema` b-tree parser plus libsqlite3 PRAGMAs | imported by both counters; `python3 -I -B tools/round-31/sqlite_oracle.py <files>` prints counts | — | none (mutation: wave-1 `MutOracle.md`, 8 of 12 killed) |
 | `tools/round-31/freeze-integrity.py` | M31-2 fix: pinned inputs at `--rev` equal the freeze-commit digests and are untouched after the freeze | `python3 -I -B tools/round-31/freeze-integrity.py --root <LANE> --round <N> --rev <REV>` | 0 CLEAN, 1 FAIL, 2 no freeze commit | none; shown able to fail on the wave-1 amended-predictions clone (exit 1) |
 | `tools/round-31/cited-runs-gate.py` | routed defect 1 (round 30): every gate/counter result a report asserts cites a committed receipt that contains it | `python3 -I -B tools/round-31/cited-runs-gate.py --report <report.md> --lane <LANE> --rev <REV>` | 0 all backed, 1 UNCITED/UNBACKED findings, 2 usage | `--selftest` 17 cases; round-30 report exit 1 |
+
+## ARM64X hybrid PE — round 32 native-view boundary
+
+Source definitions: S099 (Microsoft Arm64X documentation, hybrid content/default Arm64 appearance), S098 (LLVM 23.1.3 load-config inputs). Observed envelopes and twelve Evidence IDs: `corpus/knowledge/2026-10-23-r32-arm64x-hybrid-pe.md`, `corpus/evidence/round-32/c1/`.
+
+| Condition | Decision |
+|---|---|
+| Raw COFF machine 0xAA64 | Insufficient to separate plain ARM64 and ARM64X. Read CHPE metadata/code-map ranges as well; LLVM's displayed ARM64X machine label is not the raw field. |
+| Frozen carrier has declared ARM64 and ARM64EC map ranges | REA 6.5.0 `inspect <path> --format json --full-output` exercises its native-view overview. This metadata classifier is not proof of valid instruction/ABI content or Windows loading. |
+| Need the EC view | Do not infer it from native procedure counts: k05 reports one procedure despite four EC exports. Dual-view recovery/decompilation stays Frontier. |
+| Need the demonstrated native view | Pin the DLL hash, retain original envelopes and per-call argv/package identity, compare ordered segment fields and native-export procedure counts, then require whole committed/live equality except `meta`. |
+| Need internal-function counts, published hybrids or runtime behavior | Untested by these twelve synthetic exported-leaf DLLs; no holding is inferred. |
+
+Reader environment: pass the existing `GHIDRA_INSTALL_DIR=/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC` and `JAVA_HOME=/usr/lib/jvm/java-21-openjdk` explicitly when the child environment lacks them. Provider-unavailable control runs do not exercise committed-envelope discrimination.
+
+### Round-32 instrument registry
+
+| name | kind | entry command | verdict map | selftest | pinned-value path | write scope | owner |
+|---|---|---|---|---|---|---|---|
+| ARM64X positive counter | gate | `python3 -I -B tools/round-32/c1-arm64x-positive.py --root <LANE> --rev <REV>` | 0 clean/target met; 1 failed; 2 could-not-evaluate (pins); 3 could-not-evaluate (write mode, never a receipt); uncaught errors are could-not-evaluate, not a predicate result | same command `--selftest`, 18 cases | `.ufo/waves/round-32/claims.json`; carriers.tsv/predictions.tsv | read-only measure; `--write-evidence` writes round-32 c1 envelopes/runs in the selected root | kaidoku |
+| Capability calibration v3 | gate, **falsified semantic measure** | `python3 -I -B tools/round-32/c2-capability-calibration-v3.py --root <LANE> --rev <REV>` | 0 lexical target met only, not semantic calibration; 1 failed; 2 could-not-evaluate (pins/statement coverage) | `--selftest`, 18 cases | `.ufo/waves/round-32/claims-v3.json`; fleet pin cef00867 | read-only | kaidoku |
+| Superseded capability v1/v2 | historical gates, not active claims | `python3 -I -B tools/round-32/c2-capability-calibration.py --root <LANE> --rev <REV>`; corresponding `-v2.py` | 0 clean under superseded predicate; 1 failed; 2 could-not-evaluate | `--selftest` | claims.json / claims-v2.json | read-only | kaidoku |
+| ARM64X byte oracle | probe | `python3 -I -B tools/round-32/arm64x_oracle.py <DLL>` | 0 report produced; exceptions/nonzero could-not-evaluate; not a capability verdict | none; independent reader/build witnesses retained in a2audit | claims.json input/oracle hashes | read-only | kaidoku |
+| Carrier builder | probe | `bash tools/round-32/build-arm64x-carriers.sh <LANE> <NEW-OUTPUT>` | 0 build completed; nonzero could-not-evaluate; compare hashes separately | no selftest; independent rebuild in `A2BuildRecheck.md` | claims.json inputs and carriers.tsv | selected new scratch output only, never pinned originals | kaidoku |
+| Freeze integrity, selectable claims | gate | `python3 -I -B tools/round-32/freeze-integrity.py --root <LANE> --round 32 --rev <REV> --claims .ufo/waves/round-32/claims.json` (also claims-v2/v3) | 0 clean; 1 failed; 2 could-not-evaluate (no freeze) | no self-invocation mode; inherited gate-conformance limitation, not selftest credit | each selected claims file at its first-add commit | read-only | kaidoku |
+
+C2's negative-assessment and vocabulary-bag controls both meet its unchanged target. The round stops honestly on C2; summary restoration is useful maintenance, not a verified calibration improvement. Source S100 is rejected only as authority for CHPE offset/tag fields absent from the PE Format specification.

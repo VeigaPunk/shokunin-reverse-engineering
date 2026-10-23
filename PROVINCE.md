@@ -79,8 +79,8 @@ Android decode, runtime-obs extended, cross-version extended — each now held
 in "Round-4 additions to Core" below; reconciliation follows the r4-16
 frontier rescan]
 
-- **PE subtypes** — x86-64 AND ARM64 both held (r3-08: cli-arm64.exe, 136
-  procedures via Ghidra). Reserve: ARM64X hybrids (the 91MB Godot ARM64 template is held, arc2-r7).
+- **PE subtypes** — x86-64 AND ARM64 both held (r3-08: cli-arm64.exe, 136 procedures via Ghidra). ARM64X synthetic exported-leaf native-view import/overview is now bounded Core (round 32, below);
+  published hybrids, dual-view/EC recovery and internal-function analysis remain Frontier. The 91MB Godot ARM64 template is plain ARM64 and held (arc2-r7).
 - **Recorded crashes >32 MiB** — mechanism held (Core), and a sub-cap organic
   core is now reachable (chrome_crashpad 17.6MB, probed exit 0); the huge
   organic cores still exceed the cap; no cap-raising knob exists. Retention decays oldest-first.
@@ -349,3 +349,11 @@ Addition to Core for REA's SQLite reader (the Core table above is not rewritten;
 | Offline SQLite schema via `inspect-sqlite-database` (`inspect_sqlite_database`) | none (REA's own snapshot copy plus an owned node:sqlite worker, SQLite 3.53.4 in node v24.21.0; provider-free); `rea-agents@6.5.0` | `inspect-sqlite-database <file> --schema-scope database --format json --full-output` on a quiescent database file with no hot journal | 12 of 12 published files (5 PROJ `proj.db` from pyproj wheels, 2 Chinook v1.4.5 databases, 5 GeoPackages with R*Tree virtual and shadow tables): every table, column, index, view and trigger equals an independent reader (`corpus/knowledge/2026-10-23-r31-sqlite-positive.md`, evidence ids in its Carriers table); refusal and edge table in SKILL.md (`corpus/knowledge/2026-10-23-r31-sqlite-refusals.md`) |
 
 Limits: three schema families, one pin, Linux host, all files UTF-8 without WAL. The reader reports SQLite's own catalog; it is not an integrity check, it never executes views or triggers, and its row sample has unspecified order. Input above 256 MiB (database plus WAL), a non-empty journal with a nonzero header, and symlinked database or journal paths are refused (SKILL.md table).
+
+## Round-32 additions to Core (verified 2026-10-23)
+
+| Surface | Verified holding | Entry |
+|---|---|---|
+| ARM64X hybrid PE through REA 6.5.0 `inspect` | Native-view `binary_overview` on twelve pinned, author-built exported-leaf DLLs; raw COFF 0xAA64 plus CHPE ARM64/ARM64EC ranges; ordered segments and native-view procedure counts checked against the frozen byte oracle and predictions. Not dual-view recovery, decompilation or execution | `corpus/knowledge/2026-10-23-r32-arm64x-hybrid-pe.md` |
+
+The frozen carriers and original envelopes are in `corpus/evidence/round-32/c1/`; source definitions/input provenance are S099/S098. The fixture builder is not a general PE build tool or a claim to PE-format maintenance. Published hybrids, internal functions and the EC view remain unverified Frontier scope.

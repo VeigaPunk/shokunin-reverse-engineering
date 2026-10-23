@@ -2,6 +2,8 @@
 
 Author: kaidoku L1, attempt 2. Base `283aad7fe56d82f4ed4f8e43f099c2e1ceed5525`. Attempt 1's three landed freeze commits (`9a73680a`, `9d54070b`, `f382e3b7`) are part of this round. Its 36 w1 seats died with omp SIGSEGV at 06:19:06Z; no reports are used or identities replaced. Attempt 2 preserves the freezes and re-checks their bytes and baseline measurements (`.ufo/waves/round-32/a2before/`).
 
+Wave evidence paths abbreviated as `a2audit/...`, `controls/...`, `claims*.json` or `a2after/...` below are relative to `.ufo/waves/round-32/`.
+
 ## Claims
 
 - **R32-C1 — coverage:** ARM64X hybrid PE moves from the PROVINCE Frontier reserve to bounded Core coverage through REA 6.5.0 `inspect`. Frozen predicate `P1-pass`, target `carriers=12 pass=12 target=12 entry_ok=1 province_ok=1`, exit 0, in `.ufo/waves/round-32/claims.json` (freeze `9a73680a`). The novelty statement is a bounded absence of a recorded hybrid REA run, not absence of naming or an ARM64X-targeted linker attempt. The widened historical audit is `a2audit/A2NoveltyFull.md`.
@@ -15,6 +17,18 @@ The owned axes are tied at 10 at the base, none retired, so both declared axes s
 - **Reject as authority for CHPE offset/tag values:** the Microsoft PE Format specification. Its served bytes name ARM64X machine types but contain no `CHPEMetadataPointer`, `CodeMap`, or `0xC8`; `a2audit/A2SourceReject.md` retains the bounded search and flip. The page is not rejected for other scopes.
 - **Reject as a claim measure:** C2v3's five-word lexical description condition. `A2C2False` scores 4/4 while denying all four capabilities; `A2C2Labels` scores 4/4 on alphabetized word bags. The frozen predicates remain unchanged and these are failed discrimination controls, not successful repairs.
 - Outside admit/reject spot-check: not performed by this L1 or its seats. Author-dispatched reviewers are still the lane; final admission belongs to the non-author closure.
+
+### Opened source rows
+
+All new rows were opened on **2026-10-23**; existing source rows have no status/recheck/used-by changes. New rows: S098/S099 `mined`, S100 `rejected` (tier A for each stated scope). Used-by: S098/S099 the round-32 hybrid entry; S100 this lesson.
+
+| row / decision | URL opened this round | located contiguous quote, at most 25 words | source identity / limit |
+|---|---|---|---|
+| S098 / admit input provenance | https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-23.1.3/lld/test/COFF/Inputs/loadconfig-arm64ec.s (paired loadconfig-arm64.s also reopened) | ARM64EC line 20: `.xword __chpe_metadata` | SHA-256 `c043b74850a4c3033d21fa22701eb808a6b0bd5b46fd2bfab08d4ae43332c0d4`; paired `7c29f128a447f8ce481159961b14932d7011c6af3bc55a1830387d433864ba2d`; bytes equal the committed inputs. References are not populated-map or reader-result proof |
+| S099 / admit definition/default-view scope | https://learn.microsoft.com/en-us/windows/arm/arm64x-pe | retained Markdown line 50: “Arm64X is a new type of binary that can contain both the classic Arm64 code and [Arm64EC code](arm64ec) together.” | SHA-256 `a9be76a821bc44cc2257c9cfb7f72100257a6ad0e28944f982e6acf6e1092d66`; `corpus/evidence/round-32/sources/arm64x-pe.md`; line 64 separately explains default Arm64 appearance |
+| S100 / reject CHPE offset/tag authority | https://learn.microsoft.com/en-us/windows/win32/debug/pe-format and its MicrosoftDocs/win32 docs Markdown | retained Markdown line 131: “Binary format that allows both native ARM64 and ARM64EC code to coexist in the same file.” | HTML SHA-256 `d0c584f14a3a464c45f3544d35cd0146cc6bf480aeb2e47ce5c3fcab42a6f0b1`; Markdown `b17271a341f9b6e3204cf3f04ed905c25c03fd4cadb7a57bd4aaf38cf56a2fe0`; both retained under `corpus/evidence/round-32/sources/`. Machine types are documented, CHPE offset/tags are not |
+
+The S100 flip requires both reopened representations to explicitly document the PE32+ CHPEMetadataPointer offset 200/0xC8 and numeric code-map tag bit meanings. A different page or one conjunct does not flip it. The exact bounded absence census is `a2audit/A2SourceReject.md`; a forbidden/failed GitHub search is not absence evidence.
 
 ## Mistakes
 
@@ -39,3 +53,16 @@ The owned axes are tied at 10 at the base, none retired, so both declared axes s
 - The introduction's “36 w1 seats died” overstates the evidence. The registry contains **36 planned items** with null IDs and no reports. `a2audit/A2AttemptForensics.md` identifies one accepted 12-seat chunk, one later refused 12-seat chunk, and 12 with no later-start evidence. The assignment supplies the SIGSEGV cause for started seats; only one exact accepted runtime ID survives. All 36 planned items remain excluded, but unstarted/unknown items are not counted as observed deaths.
 - Frozen C1 motivation prose says six asymmetric native/EC export-count carriers. The fixed roster contains **seven** (`k04,k05,k07,k08,k09,k10,k12`), as `a2audit/A2AxisCoverage.md` notes. The predicate, 12-carrier target and predictions do not depend on the erroneous six; they remain byte-unchanged.
 - C2's reverse check covers scalar-lane closure numbers 12–31, not every historical kaidoku closure or namespace. `a2audit/A2ReverseDomain.md` identifies 11 map-identified closures omitted by the selector and confirms no fifth capability item is lost. Four-item alignment is not whole-repertoire calibration.
+
+## Producer and instrument limits
+
+All ten fresh control reports and `controls/a2-receipts.tsv` landed at `33393e594f1e278777fa49020b42c66ac4fa352e` before C1's producer ran. Five C1 controls score 0/12 with both doc gates green; C2 empty/junk/no-reader controls score 0/4, while negative prose and word bags score 4/4. Four C1 seats first encountered the missing Eval-provider environment; those failures are retained separately and are not discrimination credit.
+
+The post-control producer stores original envelopes and per-call argv/UTC/package identity. Its write-mode receipt `a2after/c1-write.txt` exits 3 and prints no target line. `a2audit/A2CitedReport.md` closes the missing round-31 report run with an observed gate exit 0 (seven recognized assertions) and 17/17 selftest, not universal report-result coverage or retroactive timing proof.
+
+Frozen-instrument findings are retained, not silently repaired:
+- `a2audit/A2LivePredicate.md`: first-added ordering uses committer timestamps, not DAG ancestry; inherited GIT_DIR can redirect the counter's own Git calls; plumbing errors can look like predicate misses. The lane measurement unsets Git routing variables and records actual commit/run order.
+- `a2audit/A2CHPEBits.md`: metadata-only ARM64X classification accepts forged map tags on a pure ARM64 fixture. The actual frozen carriers have an independently reproduced dual-object build/LLVM hybrid-view witness, but the classifier alone proves declared structure, not valid EC instruction/ABI content or Windows loading.
+- `a2audit/A2SelftestHoles.md`: five of eight bounded mutations survive the existing selftests; four concern C1 committed/source clauses and one C2's exact five-word threshold. These are frozen-test limitations, not claimed repairs.
+- `a2audit/A2FreezeBytes.md`: C2's word tokenizer admits hyphens while prose says letters; Core exclusion matching is case-sensitive. These are disclosed boundary differences, not post-freeze amendments.
+- The reused freeze-integrity gate has no self-invocation mode; its registry names that conformance limitation.
