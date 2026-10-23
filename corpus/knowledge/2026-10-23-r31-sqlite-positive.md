@@ -61,3 +61,10 @@ Inference (S092 code, `dist/sqlite/SqliteDatabaseInspection.js:144-294`): REA re
 ## Supersedes / pointers
 
 Extends, does not replace, `corpus/knowledge/2026-10-16-l7-04-inspect-sqlite-database.md` (one inventory-scope run). Refusal and edge signatures: `corpus/knowledge/2026-10-23-r31-sqlite-refusals.md`. Pre-data controls (`.ufo/waves/round-31/controls/receipts.tsv`, committed at `7474d269` before the data `f368a101`): do-nothing, junk-row, all-false, no-reader and id-rotated shortcut all scored pass 0 of 12, exit 1; a Core-placement shortcut with real envelopes failed `province_ok` in both variants.
+
+## Wave-2 corrections (round 31, appended)
+
+- All 12 committed envelopes re-derived by six non-author seats with readers other than the lane oracle (sqlite3 CLI 3.54.0, Python sqlite3): 0 mismatches, except that a GeoPackage seat reports SQLite's `table_xinfo` lists the 5 R*Tree columns while REA reports `columns_completeness: unsupported`, `columns: []` — REA's documented choice not to expand virtual tables, which the oracle mirrors (w2 `ReDeriveGpkgB.md`).
+- Independence (w2 `CriticOracleIndep.md`, w1 `CriticOracle.md`): the oracle re-implements REA's own rules for `kind: unknown` (shadow-prefix) and trigger folding, so it is not independent for those; neither is exercised by any carrier. On four extra non-carrier files (reserved bytes, case-variant trigger target, generated columns, STRICT) REA equalled the oracle (w2 `MutOracleSurvivors.md`; author-built, not counted).
+- Engine version: the CLI path reports SQLite 3.53.4 (node v24.21.0); l7-04's MCP receipt under the same 6.5.0 pin reported 3.54.0 — the engine is a property of the runtime, not the pin.
+- Oracle defects not affecting the 12 carriers: `wal` would be the string `present` instead of REA's object; the `comparable()` docstring wrongly says `rows` is dropped.

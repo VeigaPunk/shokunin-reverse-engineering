@@ -1,6 +1,6 @@
 # `inspect-sqlite-database` refusal and edge signatures at REA 6.5.0: 23 of 23 outcomes predicted from the code before any run
 
-source: S092 (REA 6.5.0 SQLite reader code, `package/dist/sqlite/`, `dist/domain/sqlite/`, `dist/artifacts/readStableArtifact.js`, byte-identical to the installed copy); S096 and S097 for the file-format and PRAGMA terms
+source: S092 (REA 6.5.0 SQLite reader code, `package/dist/sqlite/`, `dist/domain/sqlite/`, `dist/artifacts/readStableArtifact.js`, byte-identical to the installed copy)
 verified-at: 2026-10-23, round 31 (R31-C2); 23 live `rea-agents@6.5.0` calls 2026-10-23T04:19:10+00:00–2026-10-23T04:19:27+00:00 (`corpus/evidence/round-31/c2/runs.tsv`), after the freeze `35ba7c52` (predictions frozen there) and the control receipts `7474d269`
 recheck: `python3 -I -B tools/round-31/c2-sqlite-refusals.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV>`; the mutants live at `/fast/scratch/hyaku/kaidoku-r31/mutants/` (rebuild with `--build` from carrier `chinook`; pins in `.ufo/waves/round-31/claims.json` `mutant_sha256`/`mutant_sibling_sha256`); target `requests=23 matches=23 target=23 entry_ok=1 skill_ok=1`, exit 0. Quote only a run without `--write-evidence`.
 
@@ -63,3 +63,12 @@ At `rea-agents@6.7.0` the budget refusal becomes `AnalysisResourceConstraintErro
 ## Supersedes / pointers
 
 Extends `corpus/knowledge/2026-10-16-l7-04-inspect-sqlite-database.md`; positive class `corpus/knowledge/2026-10-23-r31-sqlite-positive.md`. Pre-data controls (`.ufo/waves/round-31/controls/receipts.tsv`): do-nothing 0, junk-row 0, all-accept 0, predictions copied as observations 0 (round 30's same control scored 16 of 19; the full-envelope rule is the repair of M30-3), id-rotated shortcut 1 of 23.
+
+## Wave-2 corrections (round 31, appended)
+
+- Prior history: besides l7-04, `corpus/knowledge/2026-10-16-l8-01-6p4-symmetry-battery.md:12` records `inspect_sqlite_database` as `Tool <name> not found` at REA 6.4.0 (w2 `ReviewEntryC2.md`).
+- "Each pair on distinct code branches" (here and in the frozen `claims.json` limits) is false: the shared pairs mostly hit one decision site (`readStableArtifact.js:33`, `SqliteDatabaseSnapshot.js:77-79,119`, `SqliteDatabaseWorker.js:24-33`, `SqliteDatabaseInspection.js:187-189`; only `q-view-as-table` is a second site at `:302-303`). The 23 requests are 23 input conditions over 16 signature tuples (w2 `CriticAxisC2After.md`).
+- Trivial predictors: "at most 3 of 23" is the all-accept baseline; a docs + SQLite-errmsg + base-tree-transfer predictor reaches 7 of 23 (w2 `CriticAxisC2After.md`), still far below 23.
+- The pre-freeze probe ran REA three times on the non-carrier `p.db` (one TOON output, two JSON), not twice as `claims.json` says.
+- The C2 acceptance comparison uses the oracle's `comparable()` subset (drops `engine.version`, `limitations`), which the frozen predicate sentence does not state.
+- Pin drift, observed live (w2 `ProbePin670.md`): at 6.7.0 `m-over-256mib` and `m-wal-over` return `resource_constraint`, resource `file-size`, `retryable:false`, `reported_limits` with the observed byte total, no `issues`; `m-journal-hot` is identical to 6.5.0 outside `meta`. "The other 21 rows' code paths are unchanged" overstates: several modules on those paths changed; only `m-journal-hot` was run live and 20 rows are unverified at 6.7.0.

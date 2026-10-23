@@ -38,7 +38,7 @@ New SOURCES rows (all opened 2026-10-23 by wave-1 scribes; the L1 re-read each r
 Rejected: a row for the REA `main`-branch SQLite guide (`CriticAxisFitC2.md` read it; it describes a later release, not
 the 6.5.0 pin, so it cannot teach the pinned behaviour); a row for node:sqlite / libsqlite3 builds (host readers used as
 oracle and probe, not learning sources); a separate row for pyproj 3.7.2 (its `proj.db` is byte-identical to 3.7.1's).
-Row changes old→new: none to existing rows; S092–S097 new (status `mined`, used-by the two round-31 entries).
+Row changes old→new: none to existing rows; S092–S097 new (status `mined`); used-by: S092 the refusals entry, S093–S097 the positive entry. After wave 2 (`w2/ReopenS092.md`, `ReopenS097.md`): S092 used-by `…r31-sqlite-refusals.md` → `…r31-sqlite-refusals.md; …r31-sqlite-positive.md` (the positive entry cites S092); the refusals entry's nominal S096/S097 citation was removed instead of widening those rows. S094's Gate hash is of a mutable API document (download counts change; w2 `ReopenS094.md`); the stable identity is the two asset hashes in `carriers.tsv`.
 
 ## Mistakes
 
@@ -63,3 +63,5 @@ Round-30 routed defects (`corpus/lessons/round-30-verifier-spotcheck.md:142-151`
 8. Round-29 docstring: `tools/round-29/c1-fresh-naming.py` docstring-only fix (AST equal without the docstring, `w1/ExecR29Docstring.md`), with an `instrument_supersessions` entry in `.ufo/waves/round-29/claims.json`.
 
 Census note: the round-start census was run at 04:21Z, after the freeze, with `corpus/SOURCES.md` unchanged from the base (`git diff --stat c369242f -- corpus/SOURCES.md` empty): `.ufo/waves/round-31/before/sources-census-start.txt`.
+
+Wave-2 additions: M31-8 — the frozen `claims.json` says the pre-freeze probe ran twice (it ran three times) and that shared-message pairs sit on distinct branches (most share one site); both corrected in the refusals entry (w2 `CriticAxisC2After.md`); captured-by: the after-data critic; not shown able to fail. LOG note for M31-1: the round-31 LOG entry is read with the SCORECARD round-31 correction of the C1 surface sentence.
