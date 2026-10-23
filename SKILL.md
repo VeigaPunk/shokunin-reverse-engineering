@@ -965,7 +965,7 @@ Decision rules:
 
 ## Rust dependency metadata (`inspect-rust-binary`) — round 30
 
-Held on the positive class (an image with one cargo-auditable `.dep-v0` section) for ELF, PE and thin Mach-O at `rea-agents@6.5.0`: the full package graph equals an independent decode on 16 uv 0.13.0 carriers (`corpus/knowledge/2026-10-23-r30-rust-auditable-positive.md`). Refusal signatures below were predicted from the 6.5.0 code (S090) and observed live on 19 ELF x86_64 mutants (`corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md`). Read `error.details.issues` as well as `error.message`: for `invalid_request` refusals the message field is generic.
+Held on the positive class (an image with one cargo-auditable `.dep-v0` section) for ELF, PE and thin Mach-O at `rea-agents@6.5.0`: the full package graph equals an independent decode on 16 uv 0.13.0 carriers (`corpus/knowledge/2026-10-23-r30-rust-auditable-positive.md`). Refusal signatures below were predicted from the 6.5.0 code (S090) and observed live on 19 ELF x86_64 mutants (`corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md`). Read `error.details.issues` as well as `error.message`: for `invalid_request` refusals the message field is generic. The reader message is prefixed `Selected artifact <path>: `, so match it as a substring.
 
 Decision table for `inspect-rust-binary` refusals (evidence `corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md`, 19 of 19 predictions observed live):
 
@@ -976,8 +976,8 @@ Decision table for `inspect-rust-binary` refusals (evidence `corpus/knowledge/20
 | `root` removed from every package, at EOF | accepted, packages equal | ok | zero roots allowed; `root_package_index: null` |
 | sh_size = 0 | refused: `Dependency section is not file-backed` | invalid_request | size must be > 0 |
 | sh_type = SHT_NOBITS (8) | refused: `Dependency section is not file-backed` | invalid_request | SHT_NOBITS is not file-backed |
-| sh_flags |= SHF_COMPRESSED (0x800) | refused: `Compressed dependency sections are unsupported` | unsupported_target | SHF_COMPRESSED (0x800) refused |
-| `.comment` header renamed to `.dep-v0` (two sections) | refused: `Image contains more than one dependency section` | invalid_request | exactly one `.dep-v0` |
+| sh_flags OR SHF_COMPRESSED (0x800) | refused: `Compressed dependency sections are unsupported` | unsupported_target | SHF_COMPRESSED (0x800) refused |
+| `.comment` header renamed to `.dep-v0` (two sections) | refused: `Image contains more than one dependency section` | invalid_request | at most one `.dep-v0` (none gives ok with `auditable_metadata: null`, code-read `RustBinaryImage.js:45-49`) |
 | section replaced by 9,870 patterned non-zlib bytes | refused: `Dependency section is not a complete zlib stream` | invalid_request | complete zlib stream |
 | original stream + 4 trailing bytes | refused: `Dependency section is not a complete zlib stream` | invalid_request | no bytes after the stream (node v24.21.0 rejects trailing junk) |
 | 1,048,577-byte section | refused: `Dependency section exceeds the 1 MiB compressed limit` | resource_constraint | 1 MiB compressed section |
@@ -991,15 +991,15 @@ Decision table for `inspect-rust-binary` refusals (evidence `corpus/knowledge/20
 | package 463 already root; package 0 also `root: true` | refused: `Dependency JSON declares more than one root package` | invalid_request | at most one root |
 | package 0 gains dependency index 584 (= package count) | refused: `Dependency index 584 from package 0 is outside the package list` | invalid_request | every dependency index < package count |
 
-Limits: one ELF x86_64 base carrier for the refusals; one pin; the 256 MiB input cap and 8 MiB report budget are code-read only. A green run says the embedded list was read faithfully, not that it is true (REA limitation text). Counter: `tools/round-30/c2-rust-refusals.py` (`inspect-rust-binary`, positive class counter `tools/round-30/c1-rust-positive.py`).
+Limits: one ELF x86_64 base carrier for the refusals; one pin (npx cache path `~/.npm/_npx/ad9a3fdbcad992c6`); node v24.21.0; messages are substrings of `error.details.issues[0].message`, `error.message` or `error.details.reason`; shared-message pairs (empty/NOBITS, not-zlib/trailing, extra-field/kind-dev) do not prove which branch fired; the 256 MiB input cap, the 8 MiB absolute inflate cap and the 8 MiB report budget are code-read only. "Packages equal" means equal to the oracle's reading of the same mutant. A green run says the embedded list was read faithfully, not that it is true (REA limitation text). Counter: `tools/round-30/c2-rust-refusals.py` (`inspect-rust-binary`, positive class counter `tools/round-30/c1-rust-positive.py`).
 
 ### Round-30 measurement registry
 
 | tool | purpose | command | exit codes | selftest |
 |---|---|---|---|---|
-| `tools/round-30/c1-rust-positive.py` | R30-C1 counter: live `inspect-rust-binary` vs the independent oracle on 16 carriers, committed-envelope agreement, entry/PROVINCE gates | `python3 -I -B tools/round-30/c1-rust-positive.py --root <LANE> --rev <REV>` | 0 target met, 1 measured not met, 2 pin absent/altered | `--selftest` 25 cases |
-| `tools/round-30/c2-rust-refusals.py` | R30-C2 counter and deterministic mutant builder (`--build`) | `python3 -I -B tools/round-30/c2-rust-refusals.py --root <LANE> --rev <REV>` (one at a time) | 0/1/2 as above | `--selftest` 16 cases |
+| `tools/round-30/c1-rust-positive.py` | R30-C1 counter: live `inspect-rust-binary` vs the independent oracle on 16 carriers, committed-envelope agreement, entry/PROVINCE gates | `python3 -I -B tools/round-30/c1-rust-positive.py --root <LANE> --rev <REV>` | 0 target met, 1 measured not met, 2 carrier list or carrier pin absent/altered (a missing REA `package.json` crashes with exit 1; only its version string is compared) | `--selftest` 25 cases |
+| `tools/round-30/c2-rust-refusals.py` | R30-C2 counter and deterministic mutant builder (`--build`) | `python3 -I -B tools/round-30/c2-rust-refusals.py --root <LANE> --rev <REV>` (one at a time: measure mode rewrites the shared mutants under `/fast/scratch/hyaku/kaidoku-r30/mutants/`) | 0/1/2, except an altered base carrier prints `PIN base carrier altered` with exit 1 | `--selftest` 16 cases |
 | `tools/round-30/rust_dep_oracle.py` | independent `.dep-v0` reader (ELF/PE/Mach-O section tables, zlib, json); no REA code | imported by both counters | — | none (checked against llvm-readobj on 16 carriers, w1 `RevOracleVsReadobj.md`) |
 | `tools/round-30/axis-fit-gate.py` | M30-1 fix: coverage/depth claims need `surface`, `unmoved_command` and control receipts committed before the first envelope | `python3 -I -B tools/round-30/axis-fit-gate.py --root <LANE> --round <N> --rev <REV>` | 0 pass, 1 findings, 2 unreadable | `--selftest` 18 cases; round 29 exit 1 |
-| `tools/round-30/prefreeze-gate.py` | routed defect 3 (M29-3): pins present at the freeze, no data at or before it, no named-but-unpinned tool | `python3 -I -B tools/round-30/prefreeze-gate.py --root <LANE> --round <N>` | 0/1/2 | `--selftest` 20 cases; round 29 exit 1 |
+| `tools/round-30/prefreeze-gate.py` | routed defect 3 (M29-3): pins present at the freeze, no data at or before it, no named-but-unpinned tool | `python3 -I -B tools/round-30/prefreeze-gate.py --root <LANE> --round <N>` | 0/1/2 | `--selftest` 20 cases; round 29 exit 1 before the M29-3 disclosure (`a6e7d9ce`), exit 0 (CLEAN) from `004053d6` |
 | `tools/round-30/settle-gate.py` | routed defect 4 (M29-1): every registry seat has a settle-ledger row and returned reports are unchanged since settling | `python3 -I -B tools/round-30/settle-gate.py --root <LANE> --round <N>` | 0/1/2 | `--selftest` 13 cases; round 29 exit 1 |

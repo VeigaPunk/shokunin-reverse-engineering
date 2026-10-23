@@ -1,6 +1,6 @@
-source: S089 (cargo-auditable `.dep-v0` format, README/PARSING.md/schema at `e2316a67`); S091 (PyPI release record for uv 0.13.0, the wheel digests behind every carrier)
+source: S089 (cargo-auditable `.dep-v0` format, README/PARSING.md/schema at `e2316a67`); S090 (REA 6.5.0 reader code, for the inference in Results); S091 (PyPI release record for uv 0.13.0, the wheel digests behind every carrier)
 verified-at: 2026-10-23, round 30 (R30-C1); 16 live `rea-agents@6.5.0` `inspect-rust-binary` calls 2026-10-23T02:59:33+00:00–2026-10-23T03:00:31+00:00 (`corpus/evidence/round-30/c1/runs.tsv`), all after the freeze commit `4ee65c67` (02:35:13Z) and after the control receipts `f39f4530`
-recheck: `python3 -I -B tools/round-30/c1-rust-positive.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV>` (re-runs REA live on the 16 carriers at `/fast/scratch/hyaku/kaidoku-r30/carriers/`, rebuilt from the S091 wheels if absent; target `carriers=16 pass=16 target=16 entry_ok=1 province_ok=1`, exit 0)
+recheck: `python3 -I -B tools/round-30/c1-rust-positive.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV>` (re-runs REA live on the 16 carriers at `/fast/scratch/hyaku/kaidoku-r30/carriers/`, which must be present: re-extract an absent one by hand from its S091 wheel (`carriers.tsv` names wheel and member); the counter exits 2 on an absent or altered carrier; target `carriers=16 pass=16 target=16 entry_ok=1 province_ok=1`, exit 0)
 
 # `inspect-rust-binary` on cargo-auditable images: REA 6.5.0 reads the full `.dep-v0` dependency graph exactly on ELF, PE and thin Mach-O (16 of 16)
 
@@ -43,7 +43,7 @@ The carriers are 16 members of seven official uv 0.13.0 PyPI wheels. Host `/home
 
 ## Results
 
-Observation. Every carrier passed P1: REA's `auditable_metadata.packages` equals the oracle's decoding as a multiset of (name, version, source, kind, root, dependency (name, version) set) tuples, and REA's `file_offset` and `compressed_bytes` equal the oracle's section offset and content size (for PE the content size is `min(VirtualSize, SizeOfRawData)`, not the padded raw size). Every envelope reports `format_version` 1, a single root package `uv 0.13.0`, and `kind` values `null` (absent in the section) or `build`. Collection run stdout: `carriers=16 pass=16 target=16` (`corpus/evidence/round-30/c1/runs.tsv`); envelopes `corpus/evidence/round-30/c1/envelopes/<id>.json`, stderr beside each.
+Observation. Every carrier passed P1: REA's `auditable_metadata.packages` equals the oracle's decoding as a multiset of (name, version, source, kind, root, dependency (name, version) set) tuples, and REA's `file_offset` and `compressed_bytes` equal the oracle's section offset and content size (for PE the content size is `min(VirtualSize, SizeOfRawData)`, not the padded raw size). Every envelope reports `format_version` 1, a single root package `uv 0.13.0`, and `kind` values `null` (absent in the section) or `build`. Counter stdout `carriers=16 pass=16 target=16` (`.ufo/waves/round-30/after/c1-rust-positive-at-24da3459.txt`, `…-at-92b1dd2d.txt`; per-run rows in `corpus/evidence/round-30/c1/runs.tsv`); envelopes `corpus/evidence/round-30/c1/envelopes/<id>.json`, stderr beside each.
 
 | id | evidence_id | packages | edges | file_offset | compressed_bytes | root package | verdict |
 |---|---|---:|---:|---:|---:|---|---|
@@ -64,13 +64,13 @@ Observation. Every carrier passed P1: REA's `auditable_metadata.packages` equals
 | macho-arm64-uv | `ev_7f9ac67aa01cc62f2a0a8d0d4bd50f34fd195523eaf73a6560ceb4b313b9b35d` | 573 | 2975 | 28893720 | 9667 | uv 0.13.0 | P1-pass |
 | macho-arm64-uvx | `ev_6fcab3d46593ceb4056e5b67c540119f6fbdd113a79661462819e5317e3687f7` | 573 | 2975 | 298304 | 9667 | uv 0.13.0 | P1-pass |
 
-What this adds to Core: before this round every lane run of the verb returned `auditable_metadata: null` (no section). The positive class is now held on three containers and five architectures, with the edge list (about 3,000 edges per carrier), the root index and the build/runtime kind preserved. REA also reports a `rustc_commit` object (`evidence_kind: inferred`) from compiler path strings; the counter does not score it.
+What this adds to Core: before this round every lane run of the verb returned `auditable_metadata: null` (no section). Inference: the positive class is now held on three containers and three ISAs (x86-64, AArch64/ARM64, RISC-V 64) in seven format×architecture pairs, with the edge list (about 3,000 edges per carrier), the root index and the build/runtime kind preserved. REA also reports a `rustc_commit` object (`evidence_kind: inferred`) from compiler path strings; the counter does not score it.
 
 Inference. Because REA 6.5.0 inflates and parses the section itself (S090) and the oracle does the same with Python's zlib and json, agreement shows REA does not drop, deduplicate, reorder-lose or mis-index packages on these inputs; it does not show that the embedded list is true (REA's own limitation: "Embedded dependency metadata is file content. It does not authenticate package names, versions, sources, or the compiler that produced the binary.").
 
 ## Limits
 
-- Width: one producer (astral's uv 0.13.0 release build), so 16 carriers hold 5 distinct package documents; uv and uvx of one wheel carry the same dependency document; the 16 carriers hold 5 distinct package lists (573-596 packages). The oracle shares the format spec (S089) with REA, not code. One REA pin (6.5.0), one host (Linux).
+- Width: one producer (astral's uv 0.13.0 release build), so 16 carriers hold 5 distinct package lists (name, version, source, kind) and 7 distinct dependency documents, one per wheel, whose edges differ between architectures (wave 2 `ReDeriveElfX86.md`, `ReviewProvince.md`); uv, uvx and uvw of one wheel carry the same dependency document; the 16 carriers hold 5 distinct package lists (573-596 packages). The oracle shares the format spec (S089) with REA, not code. One REA pin (6.5.0), one host (Linux).
 
 ## Supersedes / pointers
 
@@ -79,3 +79,4 @@ This positive-class entry is complementary to, not a replacement for, the two ea
 - Pre-data controls (`.ufo/waves/round-30/controls/receipts.tsv`, committed before the data): do-nothing, junk-row, all-false, no-reader and id-keyed shortcut all scored `pass` 0 or 1 of 16 under the frozen counter, exit 1.
 - Counter limits found by the wave (`.ufo/waves/round-30/w1/CriticTargetsControls.md`, `RevSelftestLookalikes.md`, `SentinelNoExec.md`): the committed-record clause compares evidence_id and packages but not subject, operation or range; `entry_ok`/`province_ok` are token checks; `GIT_DIR` in the caller's environment can redirect the counter's git reads (runs here unset it).
 - Supersedes only the clause "Untested: non-ELF inputs" of `corpus/knowledge/2026-10-16-l7-02-inspect-rust-binary.md:10` for the positive class; that entry is not rewritten (pointer appended there).
+- Not examined (wave 2 `ReviewEntryC1.md`): detail level is `--full-output` only; all 16 carriers are 64-bit little-endian; `source` values are only `crates.io` and `local`; no document has duplicate (name, version) pairs or duplicate dependency indices, so deduplication and mis-indexing are not stressed; PE sections with `VirtualSize` 0 or larger than `SizeOfRawData` are not exercised; the counter compares packages, offset and size but not `dependency_edges` or `root_package_index` (both were checked equal by wave-2 seats). Control pass counts are in `.ufo/waves/round-30/controls/receipts-detail.tsv`.

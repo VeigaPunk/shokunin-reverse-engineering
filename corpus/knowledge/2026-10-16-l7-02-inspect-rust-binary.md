@@ -11,4 +11,4 @@ recheck: Under `npx -y rea-agents@6.5.0 --mcp`, call `inspect_rust_binary` on th
 
 ## Pointer appended in round 30
 
-The clause "Untested: non-ELF inputs, missing-metadata/rejected-input behavior" is superseded for REA 6.5.0 by `corpus/knowledge/2026-10-23-r30-rust-auditable-positive.md` (positive `.dep-v0` class on ELF, PE and thin Mach-O, 16 of 16) and `corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md` (19 accept/refuse signatures on ELF mutants). The observations above stay as recorded; the "other REA versions" clause is unchanged.
+The clause "Untested: non-ELF inputs, missing-metadata/rejected-input behavior" is superseded for REA 6.5.0 only in part — positive PE and Mach-O inputs and rejected ELF inputs; PE and Mach-O rejections stay untested — by `corpus/knowledge/2026-10-23-r30-rust-auditable-positive.md` (positive `.dep-v0` class on ELF, PE and thin Mach-O, 16 of 16) and `corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md` (19 accept/refuse signatures on ELF mutants). The observations above stay as recorded; the "other REA versions" clause is unchanged.

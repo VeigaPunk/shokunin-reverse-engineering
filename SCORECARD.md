@@ -3214,7 +3214,7 @@ Base `d210fb8fa62d2af04d009cfa0c65a4e8137dc742`. Outside decision on round 29 re
 
 Owned axes rows above are unchanged: the three finite proxies stay at 10; both claims are recorded here. Knowledge files 114 → 116 (recipe A at `92b1dd2d`: mapped 116/116, depth 17/17 rule blocks), both new entries in the coverage map and knowledge index. Selftests: C1 25 cases, C2 16 cases, 0 failures (`after/*-selftest.txt`).
 
-Width disclosures: C1's 16 carriers are one producer's release (uv 0.13.0), 5 distinct package documents (uv and uvx of one wheel share one); the oracle shares the format spec (S089) with REA, not code. C2's mutants are ELF x86_64 only and three message pairs are shared by two mutants each. For refusals, P2's committed-record clause compares only `ok` (M30-3, a fabricated-refusal control scored 16 of 19 committed matches); the live re-run decides. The entry and PROVINCE/SKILL gates are token checks; the Core row and the table were written to be read, and wave 2 reviews them.
+Width disclosures: C1's 16 carriers are one producer's release (uv 0.13.0), 5 distinct package lists and 7 distinct dependency documents, one per wheel (uv, uvx and uvw of one wheel share one; wave-2 `ReDeriveElfX86.md`, `ReviewProvince.md`); the oracle shares the format spec (S089) with REA, not code. C2's mutants are ELF x86_64 only and three message pairs are shared by two mutants each. For refusals, P2's committed-record clause compares only `ok` (M30-3, a fabricated-refusal control scored 16 of 19 committed matches); the live re-run decides. The entry and PROVINCE/SKILL gates are token checks; the Core row and the table were written to be read, and wave 2 reviews them.
 
 ### Round-29 routed defects (hygiene, not claims)
 
@@ -3227,7 +3227,7 @@ Width disclosures: C1's 16 carriers are one producer's release (uv 0.13.0), 5 di
 7. `c1-fresh-naming.py` docstring: not revised (no round-29 counter revision this round).
 
 - **Correction — round-28 S085 teaches cell (round 30):** At `SCORECARD.md:3166`, the old line says “S085's ‘the signature it keeps for each’ covers 31 of 36 keys; 5 `system:magic` keys have none.” Observation: 31 of 36 keys carry a signature, and 6 of those 31 signatures do not hash to their own key; the five remaining keys are `system:magic` keys with no `signature`. Inference from `31 - 6`: only 25 keys keep their own signature. Evidence: `corpus/lessons/round-29.md:27-42`; `.ufo/waves/round-29/after/canonical-keyhash.txt:2-10`; `.ufo/waves/round-29/w1/ExecCanonicalHash.md:20-48`; `.ufo/waves/round-29/w1/ReopenS087.md:56-63,77-87`; `corpus/lessons/round-29-verifier-spotcheck.md:95-99,127-129`; `corpus/knowledge/2026-10-22-r28-openchain-filtered-flag.md:89-95`.
-- Correction (R29-C1 carrier provenance, round 30): only carrier n04 rests on an opened source (S088); the other 15 lists were written from the L1's knowledge of the standards and are author-selected names, not opened published interfaces (`SCORECARD.md:3171`, `:3177`, `:3182`).
+- Correction (R29-C1 carrier provenance, round 30): only carrier n04 rests on an opened source (S088); the other 15 lists were written from the L1's knowledge of the standards and are author-selected names, not opened published interfaces (`SCORECARD.md:3171`, `:3182`).
 
 ### Round-30 wave-1 findings (`w1`, 39 seats, `.ufo/waves/round-30/w1/`)
 
