@@ -11,7 +11,7 @@ Every file the counter loads is pinned below by sha256 (routed defect 4 of the r
 spot-check): the round-25 resolver it imports, and the frozen carrier and selector lists.
 
 Counts, at --rev:
-  runs_ok        carriers in corpus/evidence/round-28/c1/carriers.tsv with exactly one valid
+  runs_ok        carriers in corpus/evidence/round-29/c1/carriers.tsv with exactly one valid
                  call record in runs.tsv: exit 0, frozen argv, package version 6.5.0 and the
                  frozen package.json sha256, utc_start strictly after the counter's own commit,
                  envelope file first committed no earlier than the counter, envelope sha256 equal
@@ -24,7 +24,7 @@ Counts, at --rev:
                  counter. Byte-identical response bodies for different selectors are legitimate
                  (an empty result is the same bytes for every unknown selector) and are never
                  refused: responses are keyed by their manifest entry, not by their bytes.
-  tally_equal    1 when corpus/evidence/round-28/c1/tally.json equals the tally this counter
+  tally_equal    1 when corpus/evidence/round-29/c1/tally.json equals the tally this counter
                  recomputes from the committed envelopes and responses.
   entry_ok       1 when the knowledge entry exists, opens with source:/verified-at:/recheck:,
                  names tally.json, states the primary rule's triple exactly as

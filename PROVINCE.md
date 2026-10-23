@@ -338,3 +338,14 @@ Addition to Core (the Core table above is not rewritten; the Frontier list is un
 Before round 30 the lane held only `auditable_metadata: null` runs of `inspect-rust-binary` (no section). Limits: one producer (5 distinct package lists and 7 distinct dependency documents, one per wheel, across 16 carriers), one pin, Linux host; the embedded list is file content and is not authenticated by REA.
 
 Correction (R29-C1 carrier provenance, round 30, routed defect 5 of `corpus/lessons/round-29-verifier-spotcheck.md`): only carrier n04 rests on an opened source (S088); the other 15 lists were written from the L1's knowledge of the standards and are author-selected names, not opened published interfaces.
+
+
+## Round-31 additions to Core (verified 2026-10-23)
+
+Addition to Core for REA's SQLite reader (the Core table above is not rewritten; the Frontier list is unchanged by this round). The lane's one earlier run of this operation (`corpus/knowledge/2026-10-16-l7-04-inspect-sqlite-database.md`, scope `inventory`, one pnpm index copy) had not entered PROVINCE.
+
+| Surface | Ports / keys | Probe | Verified evidence |
+|---|---|---|---|
+| Offline SQLite schema via `inspect-sqlite-database` (`inspect_sqlite_database`) | none (REA's own snapshot copy plus an owned node:sqlite worker, SQLite 3.53.4 in node v24.21.0; provider-free); `rea-agents@6.5.0` | `inspect-sqlite-database <file> --schema-scope database --format json --full-output` on a quiescent database file with no hot journal | 12 of 12 published files (5 PROJ `proj.db` from pyproj wheels, 2 Chinook v1.4.5 databases, 5 GeoPackages with R*Tree virtual and shadow tables): every table, column, index, view and trigger equals an independent reader (`corpus/knowledge/2026-10-23-r31-sqlite-positive.md`, evidence ids in its Carriers table); refusal and edge table in SKILL.md (`corpus/knowledge/2026-10-23-r31-sqlite-refusals.md`) |
+
+Limits: three schema families, one pin, Linux host, all files UTF-8 without WAL. The reader reports SQLite's own catalog; it is not an integrity check, it never executes views or triggers, and its row sample has unspecified order. Input above 256 MiB (database plus WAL), a non-empty journal with a nonzero header, and symlinked database or journal paths are refused (SKILL.md table).

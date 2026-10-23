@@ -1003,3 +1003,46 @@ Limits: one ELF x86_64 base carrier for the refusals; one pin (npx cache path `~
 | `tools/round-30/axis-fit-gate.py` | M30-1 fix: coverage/depth claims need `surface`, `unmoved_command` and control receipts committed before the first envelope | `python3 -I -B tools/round-30/axis-fit-gate.py --root <LANE> --round <N> --rev <REV>` | 0 pass, 1 findings, 2 unreadable | `--selftest` 18 cases; round 29 exit 1 |
 | `tools/round-30/prefreeze-gate.py` | routed defect 3 (M29-3): pins present at the freeze, no data at or before it, no named-but-unpinned tool | `python3 -I -B tools/round-30/prefreeze-gate.py --root <LANE> --round <N>` | 0/1/2 | `--selftest` 20 cases; round 29 exit 1 before the M29-3 disclosure (`a6e7d9ce`), exit 0 (CLEAN) from `004053d6` |
 | `tools/round-30/settle-gate.py` | routed defect 4 (M29-1): every registry seat has a settle-ledger row and returned reports are unchanged since settling | `python3 -I -B tools/round-30/settle-gate.py --root <LANE> --round <N>` | 0/1/2 | `--selftest` 13 cases; round 29 exit 1 |
+
+
+## SQLite databases (`inspect-sqlite-database`) — round 31
+
+Held at `rea-agents@6.5.0` on published files at scope `database` (`corpus/knowledge/2026-10-23-r31-sqlite-positive.md`). Decision table for `inspect-sqlite-database` refusals and edge cases (evidence `corpus/knowledge/2026-10-23-r31-sqlite-refusals.md`; 23 of 23 predicted from the 6.5.0 code before the runs and observed live). Every refusal exits 1 with `error.category: invalid_input` and exactly one `details.issues` entry; `<path>` is the requested path.
+
+| request id | input condition | outcome code | issue path / reason | message or result |
+|---|---|---|---|---|
+| `q-rowlimit-no-table` | `--row-limit 5` without `--table` (chinook) | invalid_request | `row_limit` / invalid_value | row_limit requires an explicit table selection |
+| `q-columns-no-table` | `--column Name` without `--table` | invalid_request | `columns` / invalid_value | columns requires an explicit table selection |
+| `q-scope-no-table` | `--schema-scope selected_table` without `--table` | invalid_request | `schema_scope` / invalid_value | selected_table schema scope requires table |
+| `q-missing-table` | `--table NoSuchTable` (absent) | invalid_request | `table` / invalid_format | Selected ordinary table does not exist with that exact name: NoSuchTable |
+| `q-case-table` | `--table album` (table is `Album`; exact-name lookup, no case folding) | invalid_request | `table` / invalid_format | Selected ordinary table does not exist with that exact name: album |
+| `q-view-as-table` | `--table coordinate_operation_view` (a view, proj-371) | invalid_request | `table` / invalid_format | Selected ordinary table does not exist with that exact name: coordinate_operation_view |
+| `q-missing-column` | `--table Album --column Nope` | invalid_request | `columns` / invalid_format | Selected column does not exist with that exact name in table Album: Nope |
+| `q-virtual-rows` | `--table rtree_curve_geometry` (R*Tree virtual table, gpkg-curve) | invalid_request | `table` / invalid_format | Rows from virtual table rtree_curve_geometry are outside the ordinary-table inspection profile. |
+| `q-shadow-rows` | `--table rtree_curve_geometry_node` (R*Tree shadow table) | invalid_request | `table` / invalid_format | Rows from shadow table rtree_curve_geometry_node are outside the ordinary-table inspection profile. |
+| `q-ok-rows` | `--table Album --row-limit 3` | accept | — | 3 Album rows, columns AlbumId, Title, ArtistId; order unspecified |
+| `m-missing` | path does not exist (parent directory exists) | invalid_request | `path` / invalid_value | Selected SQLite database does not exist: <path> |
+| `m-enotdir` | a path component is a regular file | invalid_request | `path` / invalid_value | Selected database file set could not be read (ENOTDIR): <path> |
+| `m-not-sqlite` | first 16 header bytes zeroed | invalid_request | `path` / invalid_format | file is not a database |
+| `m-bad-pagesize` | header page size 768 (not a power of two) | invalid_request | `path` / invalid_format | file is not a database |
+| `m-journal-hot` | sibling `-journal` with a nonzero 28-byte header | invalid_request | `path` / invalid_format | Rollback journal may require recovery: <path>-journal. Supply a clean offline snapshot; only empty journals or a fully zeroed header are supported. |
+| `m-journal-short` | sibling `-journal` of 10 zero bytes | invalid_request | `path` / invalid_format | Rollback journal may require recovery: <path>-journal. Supply a clean offline snapshot; only empty journals or a fully zeroed header are supported. |
+| `m-journal-empty` | sibling empty `-journal` | accept | — | full schema, equal to the oracle; the journal is not copied |
+| `m-journal-zero28` | sibling `-journal` of 28 zero bytes | accept | — | full schema, equal to the oracle; the journal is not copied |
+| `m-journal-symlink` | sibling `-journal` is a symlink | invalid_request | `path` / invalid_format | Expected a regular journal without a symlink: <path>-journal |
+| `m-db-symlink` | the database path is a symlink to a valid database | invalid_request | `path` / invalid_format | Expected a regular file without a symlink: <path> |
+| `m-directory` | the database path is a directory | invalid_request | `path` / invalid_format | Expected a regular file without a symlink: <path> |
+| `m-over-256mib` | sparse database of 268,435,457 bytes | invalid_request | `path` / out_of_range | Selected SQLite database and WAL exceed the combined 268435456-byte snapshot budget: <path> |
+| `m-wal-over` | 1,067,008-byte database + sparse `-wal` of 267,368,449 bytes (sum = budget + 1) | invalid_request | `path` / out_of_range | Selected SQLite database and WAL exceed the combined 268435456-byte snapshot budget: <path> |
+
+How to use it: check option dependencies first (row limit, columns and `selected_table` need `--table`); give the exact table name (no case folding; a view name is reported as a missing table); expect virtual and shadow tables to be listed but refused for rows; inspect a copy without its journal if the journal is not empty; never pass a symlink. At `rea-agents@6.7.0` the 256 MiB budget refusal becomes `resource_constraint` (static reading, not run).
+
+### Round-31 measurement registry
+
+| tool | purpose | command | exit codes | selftest |
+|---|---|---|---|---|
+| `tools/round-31/c1-sqlite-positive.py` | R31-C1 counter: live `inspect-sqlite-database --schema-scope database` vs the independent oracle on 12 carriers, full committed-envelope equality, entry and Core-placement gates | `python3 -I -B tools/round-31/c1-sqlite-positive.py --root <LANE> --rev <REV>` | 0 target met, 1 not met, 2 carrier list or carrier pin absent/altered. `--write-evidence` skips the committed-record clause and is never a receipt | `--selftest` 14 cases |
+| `tools/round-31/c2-sqlite-refusals.py` | R31-C2 counter (23 frozen predictions, full-envelope committed check) and mutant builder (`--build`) | `python3 -I -B tools/round-31/c2-sqlite-refusals.py --root <LANE> --rev <REV>` | 0/1/2 (2 also for an altered mutant or sibling journal/WAL pin) | `--selftest` 12 cases |
+| `tools/round-31/sqlite_oracle.py` | independent SQLite schema reader: pure-Python `sqlite_schema` b-tree parser plus libsqlite3 PRAGMAs | imported by both counters; `python3 -I -B tools/round-31/sqlite_oracle.py <files>` prints counts | — | none (mutation: wave-1 `MutOracle.md`, 8 of 12 killed) |
+| `tools/round-31/freeze-integrity.py` | M31-2 fix: pinned inputs at `--rev` equal the freeze-commit digests and are untouched after the freeze | `python3 -I -B tools/round-31/freeze-integrity.py --root <LANE> --round <N> --rev <REV>` | 0 CLEAN, 1 FAIL, 2 no freeze commit | none; shown able to fail on the wave-1 amended-predictions clone (exit 1) |
+| `tools/round-31/cited-runs-gate.py` | routed defect 1 (round 30): every gate/counter result a report asserts cites a committed receipt that contains it | `python3 -I -B tools/round-31/cited-runs-gate.py --report <report.md> --lane <LANE> --rev <REV>` | 0 all backed, 1 UNCITED/UNBACKED findings, 2 usage | `--selftest` 17 cases; round-30 report exit 1 |

@@ -80,6 +80,8 @@ A row is written when its file exists, never before.
 | openchain `filtered` flag on never-fetched selectors (round 29) | `2026-10-22-r29-openchain-filtered-unseen` | held narrowly — the S084/S087 rule predicted the flag on 178 selectors with no prior response in the lane: mismatches 0 of 252 entries, 38 predicted true, 214 false; 6 of the 31 kept canonical signatures do not hash to their key, so every candidate under those keys is filtered; deployed revision assumed, one fetch instant |
 | `inspect-rust-binary` positive class (round 30) | `2026-10-23-r30-rust-auditable-positive` | held — REA 6.5.0 reads the full cargo-auditable `.dep-v0` graph exactly (packages, edges, root, kind, offset, size) on 16 of 16 uv 0.13.0 wheel members in ELF, PE and thin Mach-O; 5 distinct package lists, 7 distinct dependency documents, one producer, one pin |
 | `inspect-rust-binary` refusal signatures (round 30) | `2026-10-23-r30-rust-auditable-refusals` | held narrowly — 19 of 19 code-predicted accept/refuse outcomes with exact messages on ELF x86_64 mutants of one carrier; 13 of 16 refusals carry the message only in `error.details.issues` |
+| `inspect-sqlite-database` database-scope schema on published files (round 31) | `2026-10-23-r31-sqlite-positive` | held — REA 6.5.0 reports every table, column, index, view and trigger of 12 published SQLite files (5 PROJ `proj.db`, 2 Chinook, 5 GeoPackages with R*Tree virtual/shadow tables) exactly as an independent reader; 3 schema families, one pin; extends l7-04 |
+| `inspect-sqlite-database` refusal and edge signatures (round 31) | `2026-10-23-r31-sqlite-refusals` | held narrowly — 23 of 23 code-predicted outcomes (20 refusals with exact code, issue and message; 3 acceptances) on requests and mutants of one carrier; two budget rows change at 6.7.0 (static) |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -178,6 +180,8 @@ A row is written when its file exists, never before.
 | `2026-10-22-r29-openchain-filtered-unseen` | openchain's `filtered` flag predicted from code on 178 never-fetched selectors; mis-keyed canonical entries | S087; 178 saved responses in `corpus/evidence/round-29/c2/db/` | 2026-10-22 |
 | `2026-10-23-r30-rust-auditable-positive` | REA 6.5.0 `inspect-rust-binary` on images that carry a `.dep-v0` section: exact package graph on 16 uv carriers across ELF/PE/Mach-O | S089, S091; 16 envelopes in `corpus/evidence/round-30/c1/` | 2026-10-23 |
 | `2026-10-23-r30-rust-auditable-refusals` | REA 6.5.0 `inspect-rust-binary` gate order and refusal messages, predicted from code and observed on 19 mutants | S090; 19 envelopes in `corpus/evidence/round-30/c2/` | 2026-10-23 |
+| `2026-10-23-r31-sqlite-positive` | REA 6.5.0 `inspect-sqlite-database --schema-scope database` on 12 published SQLite files: full schema equals an independent reader | S096, S097, S093, S094, S095; 12 envelopes in `corpus/evidence/round-31/c1/` | 2026-10-23 |
+| `2026-10-23-r31-sqlite-refusals` | REA 6.5.0 `inspect-sqlite-database` input, file-set and worker refusals predicted from code and observed on 23 requests | S092; 23 envelopes in `corpus/evidence/round-31/c2/` | 2026-10-23 |
 
 ## Lessons
 | entry | round | gist |
@@ -201,6 +205,7 @@ A row is written when its file exists, never before.
 | `round-25` | 25 | Prospective explicit-reference custody: fixed I/original34 plus separately declared Main-held full-contract/dataflow controls; actual unavailable-before, source/epoch/role/pin/scratch debts; no candidate result or admission preclaimed |
 | `round-29` | 29 | fresh-carrier and never-fetched-selector tests frozen with hex and pre-seen screens; r27 selftest repaired as a disclosed selftest-only revision; freeze gate over every claims*.json; pre-file gate; mistakes M29-1..4 (filing with a live seat, ledger out of step with its gate, unpinned name in the L1's own freeze, red seat results dropped at integration) |
 | `round-30` | 30 | repair-first after the round-29 axis-misfit rejection: pre-data control wave (10 controls, none met a target) before data; `inspect-rust-binary` positive class on ELF/PE/Mach-O (16/16) and 19/19 code-predicted refusal signatures; axis-fit, prefreeze and settle gates; mistakes M30-1..5 (carrier tampering by a seat tool caught by the pin check) |
+| `round-31` | 31 | leaves REA's Rust reader for its SQLite reader: database-scope schema on 12 published files against an independent reader, 23 code-predicted refusal/edge outcomes; full-envelope committed checks (M30-3 repaired), Core-placement check, freeze-integrity and cited-runs gates; mistakes M31-1..7 (single-spelling novelty grep, post-freeze edits unseen, write-mode target lines, uncommitted PASS citations, a typed size, a path-dependent selftest, a seat git command in the fleet repo) |
 
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
