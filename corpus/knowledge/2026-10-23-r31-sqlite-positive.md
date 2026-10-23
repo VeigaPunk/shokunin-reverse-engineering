@@ -68,3 +68,7 @@ Extends, does not replace, `corpus/knowledge/2026-10-16-l7-04-inspect-sqlite-dat
 - Independence (w2 `CriticOracleIndep.md`, w1 `CriticOracle.md`): the oracle re-implements REA's own rules for `kind: unknown` (shadow-prefix) and trigger folding, so it is not independent for those; neither is exercised by any carrier. On four extra non-carrier files (reserved bytes, case-variant trigger target, generated columns, STRICT) REA equalled the oracle (w2 `MutOracleSurvivors.md`; author-built, not counted).
 - Engine version: the CLI path reports SQLite 3.53.4 (node v24.21.0); l7-04's MCP receipt under the same 6.5.0 pin reported 3.54.0 — the engine is a property of the runtime, not the pin.
 - Oracle defects not affecting the 12 carriers: `wal` would be the string `present` instead of REA's object; the `comparable()` docstring wrongly says `rows` is dropped.
+
+## Novelty-scope correction appended — round 32
+
+The sentence in Claim that “the zero count holds only for the hyphenated CLI spelling” is limited to the old content-only search of PROVINCE.md, SKILL.md and corpus/knowledge. It is false for the corpus as a whole: at base `c369242f`, `corpus/README.md:65,163` and the filename `corpus/knowledge/2026-10-16-l7-04-inspect-sqlite-database.md` already name the hyphenated spelling. The admitted coverage move remains the first PROVINCE Core row and database-scope schema reading, not first naming or first execution. Evidence: `corpus/lessons/round-31-verifier-spotcheck.md:73-80,150`; the widened search is QUALITY row 57.

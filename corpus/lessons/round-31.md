@@ -65,3 +65,12 @@ Round-30 routed defects (`corpus/lessons/round-30-verifier-spotcheck.md:142-151`
 Census note: the round-start census was run at 04:21Z, after the freeze, with `corpus/SOURCES.md` unchanged from the base (`git diff --stat c369242f -- corpus/SOURCES.md` empty): `.ufo/waves/round-31/before/sources-census-start.txt`.
 
 Wave-2 additions: M31-8 — the frozen `claims.json` says the pre-freeze probe ran twice (it ran three times) and that shared-message pairs sit on distinct branches (most share one site); both corrected in the refusals entry (w2 `CriticAxisC2After.md`); captured-by: the after-data critic; not shown able to fail. LOG note for M31-1: the round-31 LOG entry is read with the SCORECARD round-31 correction of the C1 surface sentence.
+
+## Corrections appended — round 32
+
+- Line 21's “at most 3 of 23” is superseded: the strongest trivial predictor scores **7 of 23**, not 3. The three ceilings are 3, 5 and 7 (`corpus/lessons/round-31-verifier-spotcheck.md:86-92`; `corpus/knowledge/2026-10-23-r31-sqlite-refusals.md:71`). The 23/23 measured target is unchanged.
+- Line 6's controls-commit time is **04:18:47Z**, the committer time of `7474d269`, not 04:18:49Z (`corpus/lessons/round-31-verifier-spotcheck.md:42`). The freeze → controls → data order is unchanged.
+- The census-start receipt has no internal timestamp. Any stated 04:21Z run time is unproven and withdrawn; its recorded output/exit remain evidence. Round-32 receipts include UTC start/end inside the retained bytes.
+- The round-31 fleet report's “w2 seat ran git commit” is an attribution error: it was **w1 `CriticSeparability`**, not w2 (`corpus/lessons/round-31-verifier-spotcheck.md:26-36`). No commit landed. The no-Git-write instruction was not tool-enforced, and M31-7 remains **not shown able to fail**.
+- M31-4's “is run through [the cited-runs gate] before filing” lacks a committed run over the round-31 report. Round 32 retains a new run; it cannot retroactively prove pre-filing execution.
+- Novelty scope: the hyphenated CLI spelling occurs in base `corpus/README.md:65,163` and the l7-04 filename. A content-only grep over PROVINCE/SKILL/knowledge is not a corpus-wide zero. QUALITY row 57 supersedes row 56 to include README and filenames.

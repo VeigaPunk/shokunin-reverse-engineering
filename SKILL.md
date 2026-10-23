@@ -1035,7 +1035,7 @@ Held at `rea-agents@6.5.0` on published files at scope `database` (`corpus/knowl
 | `m-over-256mib` | sparse database of 268,435,457 bytes | invalid_request | `path` / out_of_range | Selected SQLite database and WAL exceed the combined 268435456-byte snapshot budget: <path> |
 | `m-wal-over` | 1,067,008-byte database + sparse `-wal` of 267,368,449 bytes (sum = budget + 1) | invalid_request | `path` / out_of_range | Selected SQLite database and WAL exceed the combined 268435456-byte snapshot budget: <path> |
 
-How to use it: check option dependencies first (row limit, columns and `selected_table` need `--table`); give the exact table name (no case folding; a view name is reported as a missing table); expect virtual and shadow tables to be listed but refused for rows; inspect a copy without its journal if the journal is not empty; never pass a symlink. At `rea-agents@6.7.0` the 256 MiB budget refusal becomes `resource_constraint` (static reading, not run).
+How to use it: check option dependencies first (row limit, columns and `selected_table` need `--table`); give the exact table name (no case folding; a view name is reported as a missing table); expect virtual and shadow tables to be listed but refused for rows; inspect a copy without its journal if the journal is not empty; never pass a symlink. At `rea-agents@6.7.0` the 256 MiB budget refusal was observed as `resource_constraint` for `m-over-256mib` and `m-wal-over`; `m-journal-hot` was also run, but the other 20 requests were not re-run at that pin (`.ufo/waves/round-31/w2/ProbePin670.md`). This corrects the earlier “static reading, not run” wording.
 
 ### Round-31 measurement registry
 
