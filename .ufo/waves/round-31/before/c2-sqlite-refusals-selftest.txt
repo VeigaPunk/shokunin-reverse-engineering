@@ -1,0 +1,14 @@
+ok	refusal exact	refused invalid_request invalid_value
+ok	refusal wrong exit	exit 0 != 1
+ok	refusal wrong code	code 'x' != 'invalid_request'
+ok	refusal wrong message	issues [{"path": ["path"], "reason": "invalid_value", "message": "gone: /q"}] != [{"path": ["path"], "reason": "invalid_value", "message": "gone: /p/db"}]
+ok	refusal wrong reason	issues [{"path": ["path"], "reason": "invalid_format", "message": "gone: /p/db"}] != [{"path": ["path"], "reason": "invalid_value", "message": "gone: /p/db"}]
+ok	refusal extra issue	issues [{"path": ["path"], "reason": "invalid_value", "message": "gone: /p/db"}, {"path": ["path"], "reason": "invalid_value", "message": "gone: /p/db"}] != [{"path": ["path"], "reason": "invalid_value", "message": "gone: /p/db"}]
+ok	refusal but ok	envelope ok, refusal predicted
+ok	no envelope	no JSON envelope (exit 1)
+ok	accept but refused	accept predicted, exit 1 ok False
+ok	meta ignored
+ok	data compared
+ok	error compared
+selftest cases=12 failures=0
+exit=0

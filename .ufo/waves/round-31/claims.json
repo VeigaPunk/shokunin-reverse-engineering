@@ -1,0 +1,81 @@
+{
+ "round": 31,
+ "lane": "kaidoku",
+ "base": "c369242fee9f559f895e3f7956b1242076c7b1be",
+ "freeze_rule": "This file is the round-31 freeze: the first commit that adds it is the freeze commit. Counters, predicates, labels, targets, the 12-carrier list, the 23 predictions and the mutant pins below are fixed from that commit; a miss under them is reported, never amended, never re-scaled.",
+ "lowest_axis": "At the base the three owned axes (coverage, depth, calibration) are tied at 10 with none retired (SCORECARD.md:21-25 at c369242f); on a tie every axis is a lowest axis, so C1 (coverage) and C2 (depth) both work a lowest-scoring non-retired axis. The tie is the basis, recorded here before data (round-30 routed defect 5).",
+ "claims": [
+  {
+   "id": "R31-C1",
+   "axis": "coverage",
+   "surface": "PROVINCE Core gains REA operation inspect_sqlite_database (CLI inspect-sqlite-database), a verb the lane has never run or named: at the base PROVINCE.md, SKILL.md and corpus/knowledge name inspect-sqlite-database 0 times. Positive input class: published SQLite 3 databases from three producers (PROJ proj.db in 5 pyproj wheels, 2 Chinook v1.4.5 release databases, 5 GeoPackage fixtures with R*Tree virtual and shadow tables from the pyogrio 0.11.1 sdist), read at scope database.",
+   "unmoved_command": "git -C <LANE> show <REV>:PROVINCE.md | grep -c 'inspect-sqlite-database' (0 at base) ; git -C <LANE> grep -c inspect-sqlite-database <REV> -- PROVINCE.md SKILL.md corpus/knowledge (no hits at base)",
+   "predicate_label": "P1-pass",
+   "predicate": "A carrier passes when its live REA 6.5.0 inspect-sqlite-database --schema-scope database run exits 0 with an ok envelope whose operation is inspect_sqlite_database and whose subject sha256 equals the carrier's frozen sha256, and whose normalized_result, without engine.version and limitations, equals the independent oracle's report field for field (artifact, wal, engine name, database_encoding, and every table, index, view and trigger with name, sql, root page, kind, without_rowid, strict, column count, column completeness and all column fields; rows null); and its committed envelope, first added after the freeze commit, equals the live envelope in every field except meta, and the round-31 entry names that evidence_id.",
+   "counter": "python3 -I -B tools/round-31/c1-sqlite-positive.py --root <LANE> --rev <REV>",
+   "target": "carriers=12 pass=12 target=12 entry_ok=1 province_ok=1, exit 0",
+   "doc_gates": "entry_ok: the entry cites S096. province_ok: a PROVINCE.md table row names inspect-sqlite-database and the entry, and its nearest preceding heading names Core and not Frontier/Adjacent/exclusion (placement, round-30 routed defect 6).",
+   "claim_row": "S096",
+   "entry": "corpus/knowledge/2026-10-23-r31-sqlite-positive.md",
+   "carriers": "12: proj.db members of pyproj 3.4.1/3.5.0/3.6.1/3.7.0/3.7.1 manylinux x86_64 wheels (wheel sha256 from committed PyPI JSON; 3.7.2's proj.db is byte-identical to 3.7.1's and is not a carrier), Chinook_Sqlite.sqlite and Chinook_Sqlite_AutoIncrementPKs.sqlite (GitHub release v1.4.5), five .gpkg members of pyogrio-0.11.1.tar.gz (PyPI sdist sha256 e1441dc9...).",
+   "limits": "Oracle: the sqlite_schema rows come from a pure-Python file-format parser (no SQLite code); kinds, without_rowid, strict and columns come from the system libsqlite3 3.54.0 through Python (REA's node bundles SQLite 3.53.4), so the column oracle shares upstream SQLite, not REA code. proj-341/350/361 may share one schema. All carriers UTF-8, no WAL. One REA pin (6.5.0), one host."
+  },
+  {
+   "id": "R31-C2",
+   "axis": "depth",
+   "surface": "SKILL.md gains a decision table of inspect_sqlite_database refusal and edge signatures predicted from the REA 6.5.0 code (S092) before any run: input-schema dependencies (row_limit/columns/selected_table need table), exact-name table selection (missing, case-variant, view), column selection, virtual and shadow row refusal, file-set checks (missing, ENOTDIR, not-a-database, invalid page size, hot/short/empty/zeroed/symlinked rollback journal, symlinked or directory database) and the 256 MiB combined database+WAL budget; 23 requests (20 refusals, 3 acceptances). At the base no SKILL.md line names inspect-sqlite-database.",
+   "unmoved_command": "git -C <LANE> show <REV>:SKILL.md | grep -c 'inspect-sqlite-database' (0 at base)",
+   "predicate_label": "P2-match",
+   "predicate": "A request matches when its live REA 6.5.0 run agrees with its frozen prediction: for a predicted refusal the process exits 1, the envelope has ok=false, error.code equals the predicted code and error.details.issues is exactly one issue equal to the predicted {path, reason, message}; for a predicted acceptance the run exits 0 with an ok inspect_sqlite_database envelope whose subject sha256 is the request file's sha256 and whose report equals the oracle (or, for q-ok-rows, selects 3 Album rows with columns AlbumId, Title, ArtistId, each in the oracle's table); and its committed envelope, first added after the freeze commit, equals the live envelope in every field except meta (full-envelope rule, round-30 routed defect 2 / M30-3).",
+   "counter": "python3 -I -B tools/round-31/c2-sqlite-refusals.py --root <LANE> --rev <REV>",
+   "target": "requests=23 matches=23 target=23 entry_ok=1 skill_ok=1, exit 0",
+   "doc_gates": "entry_ok: the entry cites S092. skill_ok: SKILL.md names the verb and the entry, and holds a table row per request id naming its predicted code (or accept) and message prefix.",
+   "claim_row": "S092",
+   "entry": "corpus/knowledge/2026-10-23-r31-sqlite-refusals.md",
+   "limits": "Predictions read from the 6.5.0 dist JavaScript (dist/sqlite, dist/domain, dist/artifacts); the CLI runs the cli-runtime bundle. Five messages are shared by two or three requests (missing-table x3, not-a-database x2, journal-recovery x2, regular-file x2, budget x2), each pair on distinct code branches. The 'file is not a database' text is SQLite's own message, predicted from the worker's errcode mapping. Mutants derive from carrier chinook only."
+  }
+ ],
+ "separability": "C1 reads corpus/evidence/round-31/c1 and its 12 carriers. C2 reads corpus/evidence/round-31/c2, its mutants, the frozen sha256 of three carriers from the C1 carrier list (a frozen input, not a C1 result) and the shared oracle module. Each counter can exit 0 with the other claim's envelopes, entry and doc rows absent.",
+ "controls_required_before_data": [
+  "do-nothing",
+  "junk-row (entry + PROVINCE/SKILL rows without envelopes)",
+  "all-false (committed refusal envelopes for C1; all-accept for C2)",
+  "no-reader (envelopes fabricated from the oracle or the predictions, never produced by REA)",
+  "shortcut keyed on ids/labels (another carrier's or request's envelope under the id)"
+ ],
+ "instruments": {
+  "tools/round-31/sqlite_oracle.py": "aefd8639383bc6be7048b3e7115769c1f325a3b24fc111f3646acec83f41dc6b",
+  "tools/round-31/c1-sqlite-positive.py": "048020881b0a2732b870634101338161e086225a334d841bb6f35a723eb540a0",
+  "tools/round-31/c2-sqlite-refusals.py": "d23948959835038f4622261b551616863af1e47f3c66a558b8f3b5a232e28223"
+ },
+ "frozen_inputs": {
+  "corpus/evidence/round-31/c1/carriers.tsv": "46f180b837b77297cfba11f4cc805d9f849034e411c279bf5744fa6c21c19211",
+  "corpus/evidence/round-31/c2/predictions.tsv": "acac45e3a6f0b266af56028b86b999172586fef1cbb82b8afa050c2eaf0262f8"
+ },
+ "mutant_sha256": {
+  "m-not-sqlite": "768fc036b7f2a094524104b3573ae8534087c386a4c67a975b22dd81a6253450",
+  "m-bad-pagesize": "7dc1d180e4c996d1e5dd3ab2d08aec6a8ee50bcce3bf8ec36865909f93177395",
+  "m-journal-hot": "bdf635be69850bd3be09c9a2dbeef7ddfb80036bd3ef3381383cd03b61e4a61a",
+  "m-journal-short": "bdf635be69850bd3be09c9a2dbeef7ddfb80036bd3ef3381383cd03b61e4a61a",
+  "m-journal-empty": "bdf635be69850bd3be09c9a2dbeef7ddfb80036bd3ef3381383cd03b61e4a61a",
+  "m-journal-zero28": "bdf635be69850bd3be09c9a2dbeef7ddfb80036bd3ef3381383cd03b61e4a61a",
+  "m-journal-symlink": "bdf635be69850bd3be09c9a2dbeef7ddfb80036bd3ef3381383cd03b61e4a61a",
+  "m-over-256mib": "8a14e15c97369da109502ea5482f33fa605d47114d5f617d48d464566fc0fc5b",
+  "m-wal-over": "bdf635be69850bd3be09c9a2dbeef7ddfb80036bd3ef3381383cd03b61e4a61a"
+ },
+ "rea_pin": {
+  "package": "rea-agents@6.5.0",
+  "package_json": "~/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json",
+  "package_json_sha256": "a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c"
+ },
+ "pre_freeze_probe": "REA ran only on /fast/scratch/hyaku/kaidoku-r31/probe/p.db, an L1-built non-carrier (one table, index, view, trigger, rtree virtual table), twice at scope database: exit 0, the oracle's report equalled REA's, and the two envelopes differed only in meta.duration. No REA run on any carrier or mutant and no refusal request before the freeze. The oracle ran on the 12 carriers (counts only).",
+ "kill_rule": "A claim verifies only if its counter at the measured revision prints its target line and exits 0. Any other outcome is an honest stop for that claim.",
+ "mutant_sibling_sha256": {
+  "m-journal-hot-journal": "e5e2cd476e660007e4cfd54782539fb93dc8bd4cb4c2c79a8f95682a7c287a4b",
+  "m-journal-short-journal": "01d448afd928065458cf670b60f5a594d735af0172c8d67f22a81680132681ca",
+  "m-journal-empty-journal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "m-journal-zero28-journal": "3addfb141cd7c9c4c6543a82191a3707ac29c7a041217782e61d4d91c691aee8",
+  "m-journal-symlink-journal": "symlink:/fast/scratch/hyaku/kaidoku-r31/carriers/chinook.sqlite",
+  "m-wal-over-wal": "e1945862076f1d52e8984d0a342b46db37e734fe521a742cd8f5a75e83624292"
+ }
+}
