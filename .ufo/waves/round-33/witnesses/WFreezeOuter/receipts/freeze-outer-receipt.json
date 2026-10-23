@@ -1,0 +1,79 @@
+{
+ "seat": "KaidokuR33.WFreezeOuter",
+ "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "lane_revision": "d7076120e4f00c6d18aa77b8764d14861e820eb2",
+ "round32_base": "283aad7fe56d82f4ed4f8e43f099c2e1ceed5525",
+ "instrument": {
+  "path": "tools/round-33/freeze-integrity.py",
+  "sha256": "a753b1d70ce8d7062fe9ffae8a31d90eb21fe26c30649d51bd95bd68ad656bb2",
+  "blob_at_rev_matches_worktree": true,
+  "preserved_r32_gate": {"path": "tools/round-32/freeze-integrity.py", "sha256": "6b5aa1dfcaef04b8d6e58babebf826d677d6eeecc8b13906213dfd8f041804cd"}
+ },
+ "toolchain": {"python": "3.14.8", "git": "2.56.0", "installs_this_run": "none"},
+ "runs": [
+  {"id": "selftest", "argv": ["python3", "-I", "-B", "<lane>/tools/round-33/freeze-integrity.py", "--selftest"],
+   "start_utc": "2026-10-23T09:30:44Z", "end_utc": "2026-10-23T09:30:44Z", "exit": 0,
+   "stdout_sha256": "740d541e4bdc214de15f9c8791bd3415a97f24e70894e88a49d9652336398bf1", "stderr_bytes": 0,
+   "cases": [
+    {"case": "clean", "exit": 0, "line": "case clean: PASS freeze=2d1365bd0fca pins=2 exit=0"},
+    {"case": "tampered_pin", "exit": 1, "line": "case tampered_pin: PASS exit=1 changed=1 sha=2412b990a7d3"},
+    {"case": "restored_after_change", "exit": 1, "line": "case restored_after_change: PASS exit=1 digest_matches history_flagged commits_after_freeze=a5de85f,e52f529"},
+    {"case": "absent_claims", "exit": 2, "line": "case absent_claims: PASS exit=2 claims=.ufo/waves/round-99/claims.json absent"},
+    {"case": "missing_pinned_file", "exit": 1, "line": "case missing_pinned_file: PASS exit=1 sha=absent changed=1"}
+   ],
+   "summary": "freeze-integrity-selftest: PASS cases=5 elapsed_s=0.24 base=/fast/scratch/hyaku/kaidoku-r33/R33FreezeSelftest"},
+  {"id": "claims.json", "argv_claims": ".ufo/waves/round-32/claims.json", "rev": "d7076120",
+   "start_utc": "2026-10-23T09:30:50Z", "end_utc": "2026-10-23T09:30:50Z", "exit": 0,
+   "pins": 8, "freeze": "9a73680af21b", "changed": 0,
+   "stdout_sha256": "445ac4bcb509b77e3141b5504c0afd7745161cf007f1065d1e6f6a6f5e262559"},
+  {"id": "claims-v2.json", "argv_claims": ".ufo/waves/round-32/claims-v2.json", "rev": "d7076120",
+   "start_utc": "2026-10-23T09:30:50Z", "end_utc": "2026-10-23T09:30:50Z", "exit": 0,
+   "pins": 2, "freeze": "9d54070bebce", "changed": 0,
+   "stdout_sha256": "9802e1c2f8b0f4922cacb46ade8d84b612cd75bd60f07bbdb9f8694673be895a"},
+  {"id": "claims-v3.json", "argv_claims": ".ufo/waves/round-32/claims-v3.json", "rev": "d7076120",
+   "start_utc": "2026-10-23T09:30:50Z", "end_utc": "2026-10-23T09:30:50Z", "exit": 0,
+   "pins": 2, "freeze": "f382e3b7978e", "changed": 0,
+   "stdout_sha256": "7430fa990960e126e45c4b1b12228d358c18c0695bd6590f607add5bd3c8f679"},
+  {"id": "default_rev_head", "argv_claims": ".ufo/waves/round-32/claims.json", "rev": "HEAD", "exit": 0,
+   "summary": "freeze-integrity: CLEAN pins=8 freeze=9a73680af21b rev=HEAD",
+   "stdout_sha256": "3f226c5d6474c4cfac7be7fc43648893ab5b895401a6863a3985e5f131ac480e"},
+  {"id": "round33_absent", "rev": "d7076120", "round": 33, "exit": 2,
+   "summary": "freeze-integrity: ERROR no commit adds .ufo/waves/round-33/claims.json at d7076120e4f00c6d18aa77b8764d14861e820eb2",
+   "stdout_sha256": "3f581f1ba58743aaefd52627f0301dd8c5028b0c12cbeacd4acfa9f0b834544b"},
+  {"id": "r32_gate_cross", "argv_claims": ".ufo/waves/round-32/claims.json", "rev": "d7076120", "exit": 0,
+   "pins": 8, "freeze": "9a73680af21b",
+   "start_utc": "2026-10-23T09:32:23Z", "end_utc": "2026-10-23T09:32:23Z",
+   "stdout_sha256": "445ac4bcb509b77e3141b5504c0afd7745161cf007f1065d1e6f6a6f5e262559",
+   "note": "byte-identical stdout to the round-33 gate on the same data"}
+ ],
+ "rev_sweep": [
+  {"rev": "283aad7f", "start_utc": "2026-10-23T09:33:42Z", "end_utc": "2026-10-23T09:33:42Z", "exit": 2, "line": "ERROR no commit adds .ufo/waves/round-32/claims.json at 283aad7f"},
+  {"rev": "428315a8", "start_utc": "2026-10-23T09:33:42Z", "end_utc": "2026-10-23T09:33:42Z", "exit": 0, "line": "CLEAN pins=8 freeze=9a73680af21b rev=428315a8"},
+  {"rev": "9a73680af21b", "start_utc": "2026-10-23T09:33:42Z", "end_utc": "2026-10-23T09:33:43Z", "exit": 0, "line": "CLEAN pins=8 freeze=9a73680af21b rev=9a73680af21b"},
+  {"rev": "d7076120", "start_utc": "2026-10-23T09:33:43Z", "end_utc": "2026-10-23T09:33:43Z", "exit": 0, "line": "CLEAN pins=8 freeze=9a73680af21b rev=d7076120"}
+ ],
+ "independent_checks": {
+  "pin_digest_agreement": "11/11 distinct pinned paths: rev blob sha256 == pin digest and worktree file sha256 == rev blob",
+  "freeze_files_unmodified_since_own_freeze": {"claims.json": "9a73680af21b", "claims-v2.json": "9d54070bebce", "claims-v3.json": "f382e3b7978e"},
+  "ancestry": {"283aad7f_ancestor_of_428315a8": true, "9a73680a_ancestor_of_d7076120": true, "428315a8_ancestor_of_9a73680a": false},
+  "round32_file_census_at_rev": {"files": 39, "pinned": 11, "unpinned": 28,
+    "unpinned_groups": {"envelopes": 24, "sources": 3, "runs.tsv": 1}},
+  "gate_diff_vs_r32": {"added_lines": 223, "removed_lines": 4,
+    "removed": ["docstring line 2", "usage line", "ap.add_argument(\"--root\", required=True)", "ap.add_argument(\"--round\", required=True)"],
+    "pin_loop_changed": false}
+ },
+ "replica_control": {
+  "script": "/fast/scratch/hyaku/kaidoku-r33/w1/WFreezeOuter/build-replica-control.py",
+  "payload_bytes": 84635, "pinned_paths": 11, "replica_freeze": "21aa5b38121a5de725a30f6df2793fd62852253c",
+  "start_utc": "2026-10-23T09:31:59Z", "end_utc": "2026-10-23T09:31:59Z", "exit": 0,
+  "matrix": [
+   {"state": "s1_freeze", "claims.json": [0, "CLEAN pins=8"], "claims-v2.json": [0, "CLEAN pins=2"], "claims-v3.json": [0, "CLEAN pins=2"]},
+   {"state": "s2_tampered", "claims.json": [1, "FAIL pins=8 changed=1"], "claims-v2.json": [0, "CLEAN pins=2"], "claims-v3.json": [0, "CLEAN pins=2"]},
+   {"state": "s3_restored", "claims.json": [1, "FAIL pins=8 changed=1 sha=17eea1f9768e commits_after_freeze=eeec327,94e066b"], "claims-v2.json": [0, "CLEAN pins=2"], "claims-v3.json": [0, "CLEAN pins=2"]},
+   {"state": "s4_claims_edited", "claims.json": [1, "FAIL pins=8 changed=1 (freeze-commit pin copy used)"], "claims-v2.json": [0, "CLEAN pins=2"], "claims-v3.json": [0, "CLEAN pins=2"]}
+  ],
+  "stdout_sha256": "728333f5df6f6a15ada43691ac025ca30a5bad7b5a69975cb185ae77e017e362"
+ },
+ "lane_safety": {"tracked_dirty_before": 0, "tracked_dirty_after": 0, "lock_files": 0, "pycache_created": 0, "selftest_residue": "none (base holds only pre-existing 05:10-05:11 author files)"},
+ "scope": "instrument/repair evidence only; not an admission benchmark, not a revived R33-C1 carrier claim"
+}

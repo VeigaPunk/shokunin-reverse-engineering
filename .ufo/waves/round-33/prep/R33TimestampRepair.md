@@ -191,3 +191,7 @@ Counterfactual proving the hash binding is what prevents laundering: invoking th
 **Files changed by this seat:** only `.ufo/waves/round-33/prep/R33TimestampRepair.md` (this report). Scratch artifacts are under `/fast/scratch/hyaku/kaidoku-r33/R33TimestampRepair/`; no tracked file, tool, claim, or round-32 evidence was modified.
 
 Trailer: `.ufo/waves/round-33/prep/R33TimestampRepair.md`
+
+## L1 admission-language clarification
+
+The phrase “admission evidence” in the historical-fixture paragraph above means retained timestamp-repair evidence only. It is not an R33-C1 measurement or evidence that round 33 admits. The original carrier claim remains stopped and unprovable; no held-derived control is accepted. This wording clarification changes no prior run, code, expected fixture or count.

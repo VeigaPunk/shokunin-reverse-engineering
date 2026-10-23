@@ -1,0 +1,17 @@
+{
+  "change": {
+    "after": "if cm_count >= MAX_CODE_MAP_COUNT:",
+    "before": "if cm_count > MAX_CODE_MAP_COUNT:"
+  },
+  "expected_detector": "Unmodified existing chpe_profile.py --selftest with original selftest_pegen.py. A nonzero selftest exit with a finding/exit mismatch would kill the mutant only if the pristine and restored runs pass.",
+  "location": "chpe_profile.py:258",
+  "mutant": "R33-WMutCount-inclusive-upper-bound",
+  "patch_sha256": "a88389a08c11a91fc71590dae7f855b2c5cf3717a54b4b0acf7fc86ffb4121fd",
+  "predicted_output": "[INFERENCE] survival: the existing count-limit recipe sets 2000 in both layouts, which satisfies both >1024 and >=1024; no existing recipe explicitly asserts the 1024 boundary.",
+  "rationale": "Plausible inclusive/exclusive comparison error at the declared 1024-row profile limit; smallest one-character behavior-bearing change.",
+  "recorded_utc": "2026-10-23T09:34:43.016534+00:00",
+  "selftest_sibling_sha256": "aea5475c0ceadbccc6c0f3a1dd3b4e7abbd1d29d9000d8080ce7b9e5347e5b51",
+  "source_sha256_before": "b364de7034be5fa09210cde8e0292570e6903cd837858993338b5c0027c1b71c",
+  "source_sha256_mutant": "e2ae2ccbac921e9d9c5e500faf03f16c378eb85f5157d04007e9f238ae65f492",
+  "unexercised_semantic_effect": "[INFERENCE] cm_count=1024 would now stop at outside_profile.code_map_count_limit instead of continuing to table-span validation. No new boundary fixture is built or run."
+}

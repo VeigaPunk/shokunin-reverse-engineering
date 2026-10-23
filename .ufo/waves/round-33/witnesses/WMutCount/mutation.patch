@@ -1,0 +1,11 @@
+--- a/chpe_profile.py
++++ b/chpe_profile.py
+@@ -255,7 +255,7 @@
+         raise Stop("outside_profile.metadata_version_unrecognized", "metadata Version %d is not 2" % version)
+     if cm_count == 0:
+         raise Stop("not_candidate.code_map_empty", "CodeMapCount is zero")
+-    if cm_count > MAX_CODE_MAP_COUNT:
++    if cm_count >= MAX_CODE_MAP_COUNT:
+         raise Stop("outside_profile.code_map_count_limit", "CodeMapCount %d exceeds profile bound 1024" % cm_count)
+     csec, c = need(sections, soh, cm_rva, RANGE_ENTRY_SIZE * cm_count, "code_map")
+     facts["code_map"] = {"rva": "%#x" % cm_rva, "section": csec["name"], "extent": RANGE_ENTRY_SIZE * cm_count}

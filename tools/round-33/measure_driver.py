@@ -24,11 +24,11 @@ Document spec (optional, JSON, frozen before data): {"schema": "r33-document-spe
                                 "text_file_sha256": H},
     {"kind": "file_any_line","path": P, "lines": [S, ...]},
     {"kind": "file_exists",  "path": P}, ...]}
-file_section compares the markdown section body (heading line through the next heading of same or
-shallower depth, heading excluded) to the approved text_file after per-line right-trimming and a single
-trailing newline, and also pins text_file itself by sha256. file_sha256 pins whole-file bytes so a
-fabricated or off-topic file cannot pass by carrying one quoted phrase. All reads go through the same
-Source (worktree or Git rev). No NLP: wording is frozen, reviewers reopen meaning.
+file_section compares the body after its heading to the approved text_file, applying the same
+leading/trailing-blank-line and per-line right-whitespace normalization to both. The approved file
+itself is pinned by sha256. file_sha256 pins whole-file bytes so a fabricated or off-topic file
+cannot pass by carrying one quoted phrase. All reads use the same Source (worktree or Git rev).
+No NLP: wording is reviewed separately.
 
 For every row the driver checks the bytes against the row's sha256, writes them to a fresh random path
 (random directory, random file name, no extension, read-only) under this seat's scratch tmp dir, and runs
@@ -297,9 +297,8 @@ def check_document_spec(raw, want_sha, src):
             if sha256(approved) != tfh.lower():
                 res["detail"] = "text_file sha256 mismatch"
                 continue
-            approved_norm = b"\n".join(ln.rstrip() for ln in approved.split(b"\n")).rstrip() + b"\n"
-            got_norm = b"\n".join(ln.rstrip() for ln in (got_body or b"").split(b"\n")).rstrip() + b"\n"
-            res["ok"] = got_body is not None and got_norm == approved_norm
+            approved_norm = _norm_body(approved)
+            res["ok"] = got_body is not None and got_body == approved_norm
             res["detail"] = None if res["ok"] else ("no such heading" if got_body is None
                                                     else "section bytes differ")
     return {"sha256": got, "docs_ok": all(r["ok"] for r in results), "checks": results}
@@ -659,6 +658,17 @@ def selftest():
         _write(sp, sraw)
         code, out = run(stub["honest"], ma, ha, document_spec=sp, document_spec_sha256=sha256(sraw))
         check("green_docspec_docs_ok", code == 0 and out["docs_ok"] is True and out["receipt"]["green"])
+        blank_approved = b"\n" + approved + b"\n"
+        _write(os.path.join(docs, "approved.txt"), blank_approved)
+        blank_checks = [dict(c, text_file_sha256=sha256(blank_approved))
+                        if c["kind"] == "file_section" else c for c in spec["checks"]]
+        blank_raw = json.dumps(dict(spec, checks=blank_checks), sort_keys=True).encode()
+        blank_path = os.path.join(td, "spec-blank-margins.json")
+        _write(blank_path, blank_raw)
+        code, out = run(stub["honest"], ma, ha, document_spec=blank_path,
+                        document_spec_sha256=sha256(blank_raw))
+        check("green_docspec_blank_margins", code == 0 and out["docs_ok"] is True)
+        _write(os.path.join(docs, "approved.txt"), approved)
         fab = skill.replace(b"approved section body", b"denied section body")
         _write(os.path.join(docs, "SKILL.md"), fab)
         code, out = run(stub["honest"], ma, ha, document_spec=sp, document_spec_sha256=sha256(sraw))

@@ -1,0 +1,61 @@
+# WFreezeRegistry — freeze-integrity selftest & registry vs preserved r31/r32 variants (read-only)
+
+- **Seat:** `KaidokuR33.WFreezeRegistry` (UFO-FSD reviewer)
+- **Measured revision:** `d7076120e4f00c6d18aa77b8764d14861e820eb2` (lane HEAD; `git status` clean for `tools/round-33`, `tools/round-31`, `tools/round-32`, and both claims trees; only `.ufo/waves/round-33/w1*` untracked).
+- **Scope:** read-only comparison of the new `tools/round-33/freeze-integrity.py` selftest and its SKILL.md registry row against the preserved r31/r32 tools, receipts, and claims pins. **No gate was executed** (assignment forbids running gates; the prep selftest log `R33FreezeSelftest.md` is the only exercised run evidence). Method: source reads, `git show`/`git log` object reads, `sha256sum`/`diff` on pinned files, `git status`.
+- **No installs, no builds, no selftest/gate executions, no git/jj writes.**
+
+## 1. Findings by severity
+
+### MEDIUM
+
+**M1. The new registry row mislabels the exit map: uncaught errors exit 1 ("failed"), not 2 ("could-not-evaluate").**
+`SKILL.md:1092` (new row) says: `0 clean, 1 failed, 2 could-not-evaluate (missing freeze or usage); uncaught errors could-not-evaluate`.
+`tools/round-33/freeze-integrity.py:287-288` runs `sys.exit(main())` with no try/except anywhere in `main()`; an uncaught exception (e.g. `json.loads` on a malformed claims blob at `:267`, or a `git` failure surfaced through `git()` returning a nonzero rc that is not checked) propagates to Python's default handler → **exit 1**, which is the registered "failed" code, not 2. Only `ap.error()` (usage, `:256`) and the absent-freeze-commit branch (`:261-262`) return 2. This is the same misstatement class flagged as MEDIUM M1 in `prep/R33RegistryAudit.md` for the r32 counter rows ("uncaught errors are could-not-evaluate" vs actual exit 1) — the new row repeats it for the new tool. Consequence: under the new row's own verdict map, a crash is indistinguishable from a measured FAIL by exit code; the "could-not-evaluate" claim is overstated.
+
+**M2. The selftest exercises only the default `--claims` path and `--rev HEAD`; the `--claims <rel>` variant path is uncovered.**
+The five cases run `_run_gate` with `--root <fixture> --round 99` only (`:100-107`), i.e. the default claims path `.ufo/waves/round-99/claims.json` and the default `--rev HEAD`. The selectable-claims path — the exact feature that distinguishes the r33/r32 tools from r31 (`--claims` option) and the documented production entry (`--claims <RELATIVE-CLAIMS>` in the row) — is never exercised by the selftest. The row's claim "five isolated cases assert exits and stable findings" is accurate for what it covers, but the coverage is the default path only; a regression in `--claims` handling would pass the selftest.
+(Neighbor seat `WFreezeOuter` runs the `--round 32 --claims` variants against the real lane at `d7076120`; that evidence is separate from this selftest coverage statement.)
+
+### LOW
+
+**L1. Default `--rev HEAD` caveat exists but is undisclosed.**
+`--rev` defaults to `"HEAD"` (`:249`), inherited unchanged from r31/r32 (`tools/round-31/freeze-integrity.py:39`, `tools/round-32/freeze-integrity.py:37`). Consequences of a HEAD-based run: (a) the measurement is anchored to a moving ref — the gate re-resolves `HEAD` on every read, so a run without an explicit `--rev` is not reproducible and a later commit silently changes what was checked; (b) the gate reads Git objects only, so if it runs against a *jj colocated checkout*, `HEAD` is the last jj checkout, not necessarily the current workspace content; (c) uncommitted worktree edits are invisible. The tool docstring (`:12`), the SKILL rows (r31 `:1047`, r32 `:1073`, r33 `:1092`) all show `--rev <REV>` as if mandatory and never mention the default. All archived receipts (`.ufo/waves/round-31/after/*`, `round-32/a2after/*`) pass explicit revisions, so no recorded run is affected; this is a disclosure gap, not an observed bad measurement. `[INFERENCE]` on the concrete jj-stale consequence (current `HEAD` == `d7076120`, same as the measured revision, so no staleness is observed today); the code default is a fact.
+
+**L2. The gate never checks the claims file's own post-freeze integrity — inherited blind spot, unchanged.**
+The pin loop (`:269-277`) iterates `instruments`/`frozen_inputs` only; the claims file itself is not pinned and its history since the freeze commit is not examined. A post-freeze edit of `claims.json` (e.g. re-pin a changed digest) is invisible to the gate — documented earlier in `round-31/w2/MutFreezeIntegrity.md` fixture (e) (`git` shows the sanity control on a *pinned instrument / pin set*; the blob-identity evidence for claims files lives in separate audits, e.g. `round-32/a2audit/A2FreezeBytes.md`, not in this gate). Unchanged in r33; the selftest does not cover it.
+
+**L3. Selftest expectations are recomputed with the same primitive the gate uses — partial fit to the "committed expected values" clause.**
+Per the §Gate self-test standard (quoted in `interactive-sessions/20261015T050057Z/*.jsonl`), a selftest should assert expected values committed independently of recomputation. Here the expected digests are computed in-fixture via `_sha(payload)` (`:127,150,169` — the same `hashlib.sha256` the gate uses), not committed constants; a systematic byte-feed/hash bug shared by fixture construction and gate would pass. The exit-code and summary-line assertions are literal and stable, and the restored case asserts the causal property (restore commit still fails, `:180`), which is the morally critical check — so only the digest-expectation half is coupled.
+
+**L4. Selftest child environment does not scrub `GIT_CONFIG_PARAMETERS`.**
+`_run_gate` (`:102-105`) drops `GIT_DIR`/`GIT_WORK_TREE`/`GIT_INDEX_FILE` and sets `GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_TERMINAL_PROMPT=0`; the parent `git()` (`:49`) also drops the three `GIT_*` vars. `GIT_CONFIG_PARAMETERS` (a global leak vector) is not dropped anywhere. The new row's own caveat — "not immunity to every Git environment override" (`:1094`) — discloses exactly this class, so this is a residual bound, not an undisclosed regression.
+
+**L5. No live production-path run is part of this seat's evidence (by design).**
+The "new self-invocation tests exit+stable finding" confirmation rests on: (a) the exercised artifact `R33FreezeSelftest.md` (selftest run 2026-10-23T08:11:00Z, exit 0, PASS cases=5, `freeze-integrity-selftest: PASS`; invocation guard exit 2); and (b) `diff` of the committed tool vs the tested scratch copy — only 3 lines diverge, all in the docstring (module description and `tools/round-32` → `tools/round-33` usage paths); zero code lines differ. The committed tool SHA is `a753b1d70ce8d7062fe9ffae8a31d90eb21fe26c30649d51bd95bd68ad656bb2` (11,777 B); the tested scratch copy is `2afc7f8e…b6d4fda` (11,732 B). So the five-case PASS transfers to the committed tool by identity except docstrings `[INFERENCE]` — a strict independent rerun would require executing the gate, which this seat must not do.
+
+## 2. Confirmations
+
+- **No old pinned bytes changed.** Object reads at `d7076120` match every frozen digest (claims.json/v2/v3 instruments + frozen_inputs):
+  - r31: `sqlite_oracle.py` `aefd8639…` ✓, `c1-sqlite-positive.py` `048020881b…` ✓, `c2-sqlite-refusals.py` `d239489598…` ✓, `carriers.tsv` `46f180b837…` ✓, `predictions.tsv` `acac45e3a6…` ✓.
+  - r32 v1: `c1-arm64x-positive.py` `7a534be6…` ✓, `arm64x_oracle.py` `17eea1f9…` ✓, `c2-capability-calibration.py` `c3412b04…` ✓, `build-arm64x-carriers.sh` `7da284da…` ✓, `carriers.tsv` `8cf97b37…` ✓, `predictions.tsv` `fd804949…` ✓, `loadconfig-arm64.s` `7c29f128…` ✓, `loadconfig-arm64ec.s` `c043b748…` ✓.
+  - r32 v2/v3: `c2-capability-calibration-v2.py` `82434cba…` ✓, `c2-capability-calibration-v3.py` `5955e8ac…` ✓, `freeze-integrity.py` `6b5aa1df…` ✓ (identical in both v2 and v3 pins).
+  - `git log HEAD -- <claims paths>` shows each claims file added exactly once at its freeze commit (`35ba7c52`, `9a73680a`, `9d54070b`, `f382e3b7`) with no later commit touching it.
+- **New self-invocation tests: exits + stable findings.** Source review of `selftest()`/`_case_*` confirms each case asserts both the exit code (`_check(rc == …)`) and stable finding text (`freeze-integrity: CLEAN pins=2`, `FAIL … changed=1`, `sha=absent`, `commits_after_freeze` content, `ERROR no commit adds … at HEAD`); `_run_gate` bounds via `communicate(timeout=120)` + `os.killpg(SIGKILL)` on timeout (`:108-116`), and fixture cleanup happens in `finally: _drop(root)` on every case (`:141,160,184,198,212`). Exit map confirmed: 0 clean / 1 tampered, restored-tamper, missing pinned / 2 absent claims (and usage). The registry row's wording "five isolated cases assert exits and stable findings, not production measurements" is consistent with the code.
+- **Historical archived comparator selftest limitations remain disclosed.**
+  - r31 `freeze-integrity.py` row (`SKILL.md:1047`): "none; shown able to fail on the wave-1 amended-predictions clone (exit 1)" — matches `controls/freeze-integrity-ctl-rewritepred.txt` (FAIL, exit 1) and `after/freeze-integrity-at-*` (CLEAN, exit 0) receipts.
+  - r32 row (`SKILL.md:1073`): "no self-invocation mode; inherited gate-conformance limitation, not selftest credit" — accurate (no `--selftest` in r32 source), and open routed defect 3 (`corpus/lessons/round-32-verifier-spotcheck.md:115`) that demanded this exact repair is recorded.
+  - The new Round-33 instrument-status block (`SKILL.md:1082-1085`) retains the disclosure for the older selectable gate and the three archived comparison/quote scripts ("retain their disclosed missing-selftest limitation; a historical run is not a newly conformant gate"), consistent with `prep/R33RegistryAudit.md` L1/L3/L4 and `prep/R33MutantLimits.md` §4.
+- **Caller/read-set scope.** Committed references to `tools/round-33/freeze-integrity.py` (git grep at HEAD): `SKILL.md`, `corpus/lessons/round-33.md`, `prep/R33MutantLimits.md`, plus the tool itself — no in-lane programmatic caller; entry is manual/L1-invoked. Read set is Git objects only (`git log`/`git show`, `:258,264,270,272`); no worktree/index reads, no writes; production entry is read-only. The selftest's read/write set is confined to disposable fixture repos beneath `/fast/scratch/hyaku/kaidoku-r33/R33FreezeSelftest` (verified: retained artifacts only — selftest-run.log, invocation-check.log/err, selftest.diff, freeze-integrity.py — no leftover fixture dirs) and never touches the lane.
+- **Default HEAD caveat** exists (see L1); it is not disclosed in any of the three rows. All historical receipts pinned explicit revisions, so this does not invalidate recorded evidence.
+- **Round-33 freeze state:** no `claims.json` exists for round 33 (`git ls-tree HEAD .ufo/waves/round-33/claims.json` empty; none on disk), consistent with `claim-stop.json` `freeze_status: NOT FROZEN`. The new gate is not itself freeze-pinned (no round-33 freeze exists), and the row does not claim it is; it is registered as the "active successor" gate. A default-path run against round 33 would correctly exit 2 ("no freeze").
+
+## 3. Residual risk and verification gaps
+
+- No gate was executed by this seat (per assignment); selftest behavior is sourced from the retained exercised log + code identity (L5). A strict independent rerun is left to the main agent's check (`prep/R33FreezeSelftest.md` §5 recheck path).
+- The r33 tool is unpinned (no round-33 freeze). If it later becomes claim-relevant, pin it and re-run the gate — per `prep/R33Overlap.md` and the claim-stop rule ("Source/repair checks and isolated original instrument selftests may be retained as reachable work").
+- `HEAD`-relative runs (L1) and claims-file self-integrity (L2) remain latent gaps of the inherited design; neither is a regression of the r33 extension.
+- Exit-code behavior for uncaught exceptions (M1) is by source inspection (no try/except wrapper; `sys.exit(main())`); the exact traceback/exit is `[INFERENCE]` from Python defaults, while exit 1 itself follows from the absence of any handler.
+- The `--claims` variant-path selftest gap (M2) is covered by the sibling `WFreezeOuter` run against the lane, not by the selftest itself.
+
+Trailer: `.ufo/waves/round-33/w1/WFreezeRegistry.md`
