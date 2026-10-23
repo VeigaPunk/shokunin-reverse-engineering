@@ -1,0 +1,52 @@
+{
+ "round": 32,
+ "lane": "kaidoku",
+ "base": "283aad7fe56d82f4ed4f8e43f099c2e1ceed5525",
+ "fleet_pin": "cef00867ab3279ac2c2d10421e3e62c0e5d693f3",
+ "supersedes": {
+  "files": [
+   ".ufo/waves/round-32/claims.json (C2 v1, freeze 9a73680a)",
+   ".ufo/waves/round-32/claims-v2.json (C2 v2, freeze 9d54070b)"
+  ],
+  "claim": "R32-C2 only (R32-C1 stays frozen in claims.json, unchanged)",
+  "reason": "Both supersessions happened before any seat was dispatched and before any data, from the L1's own label-keyed controls: v1 was met by one junk row naming all four capabilities and rounds (controls/l1-c2-v1-allin1-receipt.txt); v2 was met by rows with the right names and rounds and an irrelevant resolving evidence path (controls/l1-c2-v2-irrelevant-path-receipt.txt). v3 ties evidence to anchor paths frozen at the base and the MANIFEST pin, and requires the what-it-can-do cell to share >=5 words with the anchored description. The v1 and v2 counter files stay in the tree, pinned by their freeze files, and are not the claim's counter.",
+  "at": "2026-10-23T06:09:57Z"
+ },
+ "freeze_rule": "This file freezes R32-C2 v3: the first commit that adds it is its freeze commit. Its counter, predicate, label, key list, anchors, fleet pin and target are fixed from that commit; a miss under them is reported, never amended, never re-scaled. The pre-data control wave w1 scores its controls before any data commit.",
+ "claims": [
+  {
+   "id": "R32-C2",
+   "axis": "calibration",
+   "surface": "SCORECARD.md `## Capabilities`, the lane's self-declared repertoire, against the outside closure record (fleet MANIFEST.json capabilities_added for kaidoku, written by non-author closures). At the base the section credits 1 of the 4 outside-recorded capabilities (round 27); rounds 13, 14 and 17 sit only in append-only tables deeper in the card (SCORECARD.md:2134, :2206, :2373), as an earlier observation at SCORECARD.md:3116 noted without repair.",
+   "unmoved_command": "python3 -I -B tools/round-32/c2-capability-calibration-v3.py --root <LANE> --rev 283aad7f (statements=4 match=1, exit 1)",
+   "predicate_label": "P2-match",
+   "predicate": "Forward: a statement is one capabilities_added item of a MANIFEST.json round entry with lane kaidoku at fleet commit cef00867ab3279ac2c2d10421e3e62c0e5d693f3. Its anchor paths are the relative lane paths named in the MANIFEST item and in the evidence cells of every capability-table row outside the `## Capabilities` section of SCORECARD.md at the base 283aad7f whose first cell matches the statement's key. It matches when the `## Capabilities` section of SCORECARD.md at REV holds a table row, not matched by another statement, whose first cell matches the statement's frozen key pattern and no other key pattern, whose last cell names exactly one round and that round is the MANIFEST round (round[- ]?N, N not followed by a digit), whose evidence cell names, inside backticks, at least one anchor path that resolves to a file at REV, and whose what-it-can-do cell shares at least 5 distinct words (letters, length >= 4, case-folded) with the anchored description (the MANIFEST item plus the second cell of every base capability row whose first cell matches the key). Reverse: every row of that section whose last cell names a round that has a kaidoku MANIFEST closure entry must be the matching row of a forward statement.",
+   "counter": "python3 -I -B tools/round-32/c2-capability-calibration-v3.py --root <LANE> --rev <REV>",
+   "target": "statements=4 match=4 target=4 reverse_mismatch=0, exit 0",
+   "key_list": "13 /source(-curation)? registry/, 14 /quote.{0,40}regression audit/, 17 /Ghidra-session log capture/, 27 /cross-pin evidence-ID attribution/ (case-insensitive, over the MANIFEST item and the row's first cell)",
+   "limits": "Four statements; the MANIFEST record covers hyaku-numbered rounds only (luna/arc rows in the section are outside the statement set); the description check is a 5-shared-word overlap, so a row that copies the anchored description passes (that copy is the claimed repair); the evidence check is anchor-path presence and resolution, not that the path demonstrates the capability (wave seats re-open each pointer).",
+   "anchors_at_freeze": {
+    "13": [
+     "corpus/SOURCES.md",
+     "corpus/lessons/round-13.md"
+    ],
+    "14": [
+     ".ufo/waves/round-14/fixtures/expected.json",
+     ".ufo/waves/round-14/tools/quote-fidelity.py",
+     ".ufo/waves/round-14/verification.json"
+    ],
+    "17": [
+     ".ufo/waves/round-17/run-carriers.sh"
+    ],
+    "27": [
+     "tools/round-27/xpin-attribute.mjs"
+    ]
+   }
+  }
+ ],
+ "instruments": {
+  "tools/round-32/c2-capability-calibration-v3.py": "5955e8ace76d93c7891a43ca282f129c8874cd1878a05c9f29e0b81d3cab2f9f",
+  "tools/round-32/freeze-integrity.py": "6b5aa1dfcaef04b8d6e58babebf826d677d6eeecc8b13906213dfd8f041804cd"
+ },
+ "frozen_inputs": {}
+}
