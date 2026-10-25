@@ -157,6 +157,13 @@
    "id": "N4",
    "severity": "medium",
    "what": "the defect list has two authorities: the stop record lists F1-F5, the SCORECARD section lists six numbered items, and this addendum adds F6/Y1-Y5/N1-N3. N4 also records that a mutated root (gate and red config changed) still returns GATE_COUNTER_OK because no counted run reads the pins, and that a gate spawning no counter and no reader satisfies all six clauses."
+  },
+  {
+   "consequence": "the stop's measurement stands (its decisive source is bound and present), but the record did not account for its own wave when it landed. Round total 67 seats: 66 dispatched, 66 settled, 0 dead, 0 refused; 34/34 and 32/32 reports on disk at handoff.",
+   "evidence": ".ufo/waves/round-34/r34b/w2/AWaveAccounting.md (census 07:44Z; 34/34 w1, 27/32 w2 at census, 0 dead/refused)",
+   "id": "N5",
+   "severity": "high",
+   "what": "seat accounting defects, none of which touch the measurement: (D1) the stop was declared and recorded while 16 of 34 wave-1 reports were still outstanding and two seats were running, and claim-stop.json carries no seat-accounting fields; (D2) the committed w2-seat-map.json listed 31 entries for a 32-item spec (AAdjacencyCite missing) \u2014 repaired in this addendum's commit to 32; (D3) wave-1 seat-map size fields recorded character counts, 8-10 bytes short; (D4) the AAdjacencyCite dispatch prompt carried a mangled directive line ('IMMEDIATELY STOP ASKING CLAUSES.') although its on-disk assignment was clean \u2014 one seat received a corrupted Godspeed directive; (D5) no r34b wave-1 settle/dispatch receipt exists (wave-2 has prompts on disk only); (D6) the CtlMultiset-files tree gained files after the record commit."
   }
  ],
  "predicate_status": "satisfied as written (registered scope): all six frozen clauses held; the stop is taken under the round contract's admission standard, not under the frozen kill rule's own trigger",
