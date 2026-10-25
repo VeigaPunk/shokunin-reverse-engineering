@@ -7,7 +7,7 @@ avoid. Read-only. No lane file written except this one. No score awarded or prop
 reopened, no frozen instrument is edited, and the twelve R34-C1 carriers and the production reader were not run.
 
 Method: MANIFEST rounds ledger + committed lane and fleet reports + committed lesson/QUALITY rows + the
-round-33/34 verifier spot-checks, plus three bounded probes of the round's own mini surface (below). Everything
+round-33/34 verifier spot-checks, plus a set of bounded probes of the round's own mini surface (below). Everything
 cited was read from committed bytes or from a lane working tree; the only executions were python counters in my
 own `/fast/scratch/hyaku/kaidoku-r34b/w2/ASiblingStop/` scratch, with readers run by counters, never as programs
 of interest.
@@ -108,7 +108,7 @@ chousa r34 was dispatched and admitted the next day. Recurrence is a routing sig
 4. **Make the falsifier a committed artifact under the lane, not a scratch path.** kake's round-34 criterion (a)
    rejects sandbox-only pointers outright, and its closure note records that the retained control bundles resolve
    only from the lane. kaidoku already commits `CtlMultiset-files/nameset.py` (sha256 `2e8feaea…a88b97`, verified
-   below); the *fix* the wave produced is still scratch-only — see §7 item 5.
+   below); the *fix* the wave produced is still scratch-only — see §6 item 5.
 5. **Recover by regenerating content, not by adding a class.** chousa r34 (per-seed content) and mado r25 both
    rebuilt the surface instead of extending the roster. mado names the defect it was fixing: "v1–v3 took the
    expected table for each generated case from the counter's own line model, so a transcription of that model would
@@ -118,14 +118,16 @@ chousa r34 was dispatched and admitted the next day. Recurrence is a routing sig
 ## 6. What this lane should avoid
 
 1. **Do not register the multiset class as an eighth class and re-freeze R34-C2.** That is the roster race: chousa
-   r32 → r33 stopped twice on the same blocker class precisely because the remedy was deferred, and kake r37
-   stopped because the declared consequence was not applied. A new class is always found next.
+   stopped twice on the same blocker class (r32 C2 metadata control, r33 C1 fixture-literal mask) while the remedy
+   stayed a routing item, and kake r37 stopped because the declared consequence was not applied. A new class is
+   always found next.
 2. **Do not let a differential or auxiliary check rescue the claim.** chousa r33 closed that door explicitly ("the
    fuzz… cannot rescue the claim"). kaidoku's equivalent temptation is the `RevControls` / selftest / mutant
    evidence: it is attack evidence, not the frozen measure.
-3. **Do not amend the counter after seats have scored it.** chousa QUALITY 41 and defect E4 exist because five
-   receipts bound uncommitted bytes; kake r34's criterion (a) exists for the same reason. Any successor instrument
-   must name the gate SHA-256 in every receipt.
+3. **Do not amend the counter after seats have scored it.** chousa QUALITY 41 exists because the gate was edited in
+   place while wave-2 seats scored it, and its defect E4 because five receipts named gate bytes that were never
+   committed; kake r34's criterion (a) closes the same hole for cited artifacts. Any successor instrument must
+   name the gate SHA-256 in every receipt.
 4. **Do not argue the stop is over-broad because the tool "really works".** kake r34's closure measured exactly
    that (28/28 vs 7/28) and still refused admission. That argument has no precedent in the sample.
 5. **Do not cite the wave's fix from `/fast/scratch`.** The wave-1 seat wrote `mini-counter-fresh.py` to its scratch
@@ -167,7 +169,8 @@ there; the layout channel is what remains.
 invariant-free instead of roster-complete. Generate the eight fixtures per run with (a) fresh names, flags and
 values, (b) the name pool written in an order drawn **independently of record order**, (c) expected records computed
 from the generation, and (d) a per-fixture assertion that the pool order is not the record order (a lucky identity
-shuffle would hand out a free pass — my probe's single match is that case). Target stays 8. With that surface no
+shuffle hands out a free pass: my probe's single match is `gen-6`, a two-record fixture where identity is a 1-in-2
+event, 07:39:23Z). Target stays 8. With that surface no
 reader that omits `name_off` can meet the target, whatever class anyone invents, so the green verdict stops
 depending on an enumerated roster; the association clause of the predicate becomes true by construction rather than
 by delegation.
@@ -215,7 +218,7 @@ Scratch: `/fast/scratch/hyaku/kaidoku-r34b/w2/ASiblingStop/` (`probe-fixtures.py
 | R6 | 07:35:52Z | four counter runs on the seat's fresh counter and its one-line pool-shuffle variant, seed `probe-a` | 0/0/0/1 | table in §7 |
 | R7 | 07:36:03Z | three counter runs on the frozen `mini-counter.py`, seed `probe-a` | 1/0/0 | zip 3/8, nameset 8/8, structural 8/8 |
 | R8 | 07:37:06Z | `python3` over `MANIFEST.json` (stop count, lanes, reversal candidates) | 0 | 95 stops / 18 lanes / 1 reversal candidate (souji r22, new claims) |
-| R9 | 07:37:26Z | `bash -c 'time python3 … fresh-counter-poolshuffle.py … zip_reader.py'` | 1 | wall 0.127 s |
+| R9 | 07:37:26Z | `bash -c 'time python3 … fresh-counter-poolshuffle.py … zip_reader.py'` | 1 | wall 0.127 s; exit 1 is the counter's `met_target=false`, expected. A prior `/usr/bin/time` attempt returned 127 (binary absent) at 07:37:23Z; timing was therefore taken with the shell builtin |
 
 **Not run / not verified.** The successor surface (pool-order decoupling inside a *frozen* instrument) does not
 exist and was not built in-lane; the zip reader was not scored under `replay-gate.py` with a registered-class config;

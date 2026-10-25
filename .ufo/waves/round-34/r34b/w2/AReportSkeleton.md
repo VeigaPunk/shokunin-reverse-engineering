@@ -10,7 +10,7 @@ claim), **pointer completeness** (no claim without a location), **non-overclaim*
 never described as landed), **conflict preservation** (contradictions reported verbatim, not
 resolved here).
 
-## 0. Observation cutoff, and why this file has two states
+## 0. Observation cutoff, and why this file has several states
 
 - **Final cutoff HEAD:** `417a8211` (`2026-10-25T07:38:22Z`), parents `5a0435ff` ← `66b84027`.
   Everything asserted as landed below is at `417a8211` unless it names another revision.
@@ -20,11 +20,11 @@ resolved here).
   was fixed by `417a8211`. Each finding is kept with its resolution and fix pointer — none was
   deleted to make the record look cleaner, and one of my own provenance claims (that the S106
   capture existed only in scratch) was **wrong** and is corrected in Draft 4.
-- **An earlier revision of this file (381 lines) was snapshotted into `5a0435ff` by the L1
-  while I was working; this text supersedes it and is uncommitted.**
-- **Still moving at the cutoff:** `corpus/SOURCES.md` (+1 line, restoring S105), `LOG.md`,
-  `SCORECARD.md`, and the `w2/` reports are uncommitted deltas (`git status --porcelain`,
-  07:36:07Z). Nothing uncommitted is described as landed.
+- **Earlier revisions of this file were snapshotted by the L1 while I was working** (381 lines in
+  `5a0435ff`, 416 lines in `417a8211`); this text supersedes both and is uncommitted.
+- **Still moving at the cutoff** (`git status --porcelain`, 07:38:22Z): `LOG.md`,
+  `SCORECARD.md`, `w2/ANoCredit.md`, this file and the knowledge entry are uncommitted deltas, and
+  12 of the 32 wave-2 seats have no report on disk. Nothing uncommitted is described as landed.
 - Paths are relative to `kaidoku-shokunin/.ufo/waves/round-34/r34b/` unless they start with
   `corpus/`, `tools/` or `SKILL.md`/`LOG.md`/`SCORECARD.md` (lane root).
 - **UNPROVEN** = the claim could not be resolved to committed bytes at the cutoff. It is not an
@@ -159,12 +159,14 @@ fixture format, one size class (`w1/ExecGreenIndependence.md:162`) with tautolog
 fixture↔expected agreement (`:139`); trailing NUL padding lets single-record fixtures draw the
 identity permutation (10/5000 beta, 13/5000 epsilon: `w1/ExecPermuteAudit.md:150-151`).
 
-**Wave 2 (this wave) is not settled at the cutoff.** 32 seats (`w2-spec.json`: reviewer 10,
-critic 6, executor 6, scribe 5, mutation-tester 2, sentinel 1, connector 1, revenger 1). Ten
-wave-2 reports plus this file were snapshotted into `5a0435ff`; more were in flight. Several
-wave-2 findings already forced corrections in `5a0435ff` (the addendum's `why` names
-`w2/AStopCompleteness.md`), so wave-2 is **partially effective, not settled**: no
-"stop falsified"/"stop sustained" verdict may be written before settle (finding G11).
+**Wave 2 (this wave) is landed but not settled.** 32 seats (`w2-spec.json`: reviewer 10,
+critic 6, executor 6, scribe 5, mutation-tester 2, sentinel 1, connector 1, revenger 1). 20
+reports are tracked at `417a8211` (including this one); 12 seats have no report on disk, among
+them `AStopJustified`, `ASealVerdict`, `AAxisVerdict`, `AWhatRemains` and `AWaveAccounting`.
+Wave-2 findings already forced corrections (`5a0435ff`, whose addendum names
+`w2/AStopCompleteness.md`; `417a8211`, which records the repair's own defeats), so wave 2 is
+**effective but partial**: no "stop falsified"/"stop sustained" verdict may be written before all
+32 settle (finding G11).
 
 **Inherited claim untouched.** R34-C1's five frozen artifacts are byte-identical from
 `54a87a51`; its reader and carriers were not executed
@@ -183,7 +185,7 @@ by me).
 | `c79bbe7b0959132b9873ff3431cf5eb313b58b33` | the freeze: `claims.json` (90 lines), gate, six-clause counter, two configs, eight fixtures, nine readers, `spec.json`, `expected.json` — 27 files, +1345/−0 | `claims.json`; `LOG.md:3094-3103` |
 | `b917ea64ebbeab49b8258d71ffb34e700715ffe6` | after wave-1 record audits: before/production/control receipts (13 files), `instruments.json`, `predicate-reconciliation.json`, `w1-payload.json`, `w1-seat-map.json`, `w1-spec.json`, the then-written w1 reports, all 30 prompts, `w1/swarm-registry.json`, the id-assimilation guard (105 registered vs 132 staged ids, `assimilation/collisions` empty) — 77 files, +6001 | `LOG.md:3094-3103`; `w1/ExecRecountC2.md:132` (F6) |
 | `cd75b92e583735729546b0ea3b250f2df6d0652a` | the stop: `claim-stop.json` (87 lines), `w1/CtlMultiset-files/{nameset,pathkey,mini-counter-fresh}.py` — 4 files, +352 | `LOG.md:3098-3100`; `SCORECARD.md:3347-3369` |
-| `66b84027` | the stopped claim's record: SCORECARD run-6 section (+26), LOG run-6 block (+11), lesson M34-5..M34-11, QUALITY 68-73 (+6), SKILL instrument registry (+14), S106 row, knowledge entry, README (+4), the remaining w1 reports, `census-start.txt`, `w2-spec.json`, `w2-seat-map.json`, 32 w2 prompts | `SKILL.md:1209-1222`; `corpus/QUALITY.md:78-83`; `corpus/SOURCES.md:111`; `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md` |
+| `66b84027` | the stopped claim's record: SCORECARD run-6 section (+26), LOG run-6 block (+11), lesson M34-5..M34-11, QUALITY 68-73 (+6), SKILL instrument registry (+14), S106 row (at `:111`; S105 absent in this blob), knowledge entry, README (+4), the remaining w1 reports, `census-start.txt`, `w2-spec.json`, `w2-seat-map.json`, 32 w2 prompts | `SKILL.md:1209-1222`; `corpus/QUALITY.md:78-83`; `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md` |
 | `5a0435ffb9a8921206144e0b61fe3c12a89b59c2` | the stop's binding: `after/freeze-integrity-instruments.txt` (26-pin receipt), `claim-stop-addendum.json` (96 lines: decisive receipts, artifact shas, F6, report-only classes, wording corrections), `nameset-green-receipt.json`, `payload-keyed-receipt.json`, `payload_keyed.py`, `census-end.txt`, lesson M34-12, the QUALITY 68/70 corrections, and the first ten w2 reports — 18 files, +3118/−1 | `claim-stop-addendum.json`; `corpus/QUALITY.md` corrections section; `LOG.md:3094-3103` |
 | `417a8211` | the final repair and wave-2 landing: S105 restored and QUALITY 73 restored after the anchor replacement, the S106 capture re-bound by pointer, the row-swap repair's own defeats recorded, and wave-2 reports landed (20 of 32 at the cutoff) — 19 files, +2748/−283 | `git show --stat 417a8211`; `corpus/SOURCES.md:111-112`; `corpus/QUALITY.md:83-84`; `w2/` |
 
@@ -192,9 +194,9 @@ is inherited through `f432c8e3` and not rewritten (`claims.json:inherited_tip`;
 `SCORECARD.md:3349`). `corpus/lessons/round-34.md` gained the new attempt as an appended section
 and now also M34-12; the attempt-1 text is untouched.
 
-**Uncommitted at the cutoff — NOT landed:** the S105 restoration in `corpus/SOURCES.md` (+1 line),
-the `LOG.md`/`SCORECARD.md` deltas, and the `w2/` reports (including this file's current text).
-`git status --porcelain` at 07:36:07Z is the pointer.
+**Uncommitted at the cutoff — NOT landed:** `LOG.md`, `SCORECARD.md`, `w2/ANoCredit.md`, the
+knowledge-entry edit, this file's current text, and the 12 missing wave-2 reports.
+`git status --porcelain` at 07:38:22Z is the pointer.
 
 **All three findings from my passes are now answered in committed bytes.** The asserted-but-absent
 freeze-integrity receipt (G1) is a landed artifact from `5a0435ff`; the three-vs-four-seed

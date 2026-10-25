@@ -96,10 +96,32 @@
    "what": "the stop record's defect list was closed before wave 1 closed; F5 (receipt binding) is now resolved and F6 (identity leak) was missing from the first filing"
   }
  ],
+ "outside_style_disposition": "A closure-style read of this round (w2/ASealVerdict.md) returns ok+conformance-defect, not rejected-honest-stop: the disposition is correct under the round contract's admission standard, and the three defects above are append-only repairable without touching frozen bytes. No score, capability, clause, target, predicate or frozen byte changes with this read.",
+ "post_filing_findings": [
+  {
+   "evidence": ".ufo/waves/round-34/r34b/w2/ASealVerdict.md finding 1 (07:37:41Z)",
+   "id": "Y1",
+   "severity": "critical",
+   "what": "the counting command's gate path is production-legal (--gate) and unpinned, so a 1,226-byte mock gate that opens no file plus --rev 0000... yields GATE_COUNTER_OK with all six clauses and measured_revision=0000...; the receipt therefore proves the receipt shape, not that the frozen gate ran, and the stop record's sentence 'the six frozen clauses hold on the frozen bytes' rests on the gate path being the pinned one"
+  },
+  {
+   "evidence": "w2/ASealVerdict.md finding 2 (07:34:32Z)",
+   "id": "Y2",
+   "severity": "high",
+   "what": "the F3 repair as worded (class count) is defeated by a count-preserving swap of one registered reader; QUALITY 70 already requires count+names+digests and the stop record should say so"
+  },
+  {
+   "evidence": "w2/ASealVerdict.md finding 3, w2/APinsEnforced.md",
+   "id": "Y3",
+   "severity": "high",
+   "what": "F1's 'repair_landed' overstates a post-data documentary audit: the enforced container verifies only from b917ea64 onward, exits 2 at the claim freeze c79bbe7b, and is not consumed by any counted run"
+  }
+ ],
  "predicate_status": "satisfied as written (registered scope): all six frozen clauses held; the stop is taken under the round contract's admission standard, not under the frozen kill rule's own trigger",
  "record": ".ufo/waves/round-34/r34b/claim-stop.json",
  "repair_route_correction": "class-count equality is insufficient (count is not identity, and the pinned and registered sets were equal at the freeze): the counting command must digest-check the pinned config and readers, the reader's cwd must be outside the judge root, fresh content must not be reseeded from argv, and no content digest may appear in the input path (w2/AStopJustified.md, w2/ARepairFresh.md, w2/ASentinelNewArtifacts.md C9).",
  "schema": 1,
+ "sibling_precedent": ".ufo/waves/round-34/r34b/w2/ASiblingStop.md: chousa r33 stopped on a fixture-literal mask (156/156) and was routed as a written criterion before build, then admitted the next round; kake r34's criterion (a) ('declare a target a do-nothing control cannot reach') is the twin.",
  "status": "append-only addendum; the stop record is not edited",
  "unbound_artifacts_now_bound": [
   ".ufo/waves/round-34/r34b/w1/CtlMultiset-files/mini-counter-fresh.py",

@@ -14,8 +14,8 @@ and its committed M34-12 row assert "S105 restored verbatim … end recount 106 
 `corpus/SOURCES.md` blob is byte-identical to `66b84027`'s and still 105 rows; and
 (b) `5a0435ff` deletes `QUALITY` row **73** (the receipt-binding criterion the round's own M34-11 routes to)
 while inserting row 74, leaving committed rows 68–72,74.
-Neither is capability/score credit. Both are being repaired in the working tree right now (uncommitted: S105
-restored → 106 rows, QUALITY 73 restored).
+Neither is capability/score credit. Both were closed by the later repairs `417a8211`/`b62b4767` (S105 restored →
+106 rows; QUALITY 73 restored; SCORECARD count corrected to 68-74), verified at tip `1675a8d8` in §7.
 
 The lane moved while I verified: my opening commands (before 07:32:25Z) saw `cd75b92e` as `HEAD` with the
 corpus drafts already dirty; my first `HEAD` read at **07:32:27Z** already returned `66b84027`, and the landing
@@ -32,6 +32,7 @@ All statements below name their revision and observation UTC.
 | r34b stop | `cd75b92e583735729546b0ea3b250f2df6d0652a` | `claim-stop.json` blob `544209aa32f6f38e3152bdf16c8e563621538a75` |
 | docs landing (arrived during this wave) | `66b840274390d0868c913a544947f9eb40a4ffe6` | SCORECARD/LOG/SKILL/QUALITY/SOURCES/README/lessons/knowledge; same `claim-stop.json` blob |
 | repair landing (arrived during this wave) | `5a0435ffb9a8921206144e0b61fe3c12a89b59c2` | binds receipts + `claim-stop-addendum.json`, adds `w2` reports, edits `corpus/QUALITY.md` (9+/1−) and `corpus/lessons/round-34.md` (+1); SCORECARD/LOG/SOURCES unchanged from `66b84027` |
+| repair landings (arrived after F1/F1b were found) | `417a8211…`, `b62b4767…`, `1675a8d848…` | restore S105 and QUALITY 73, correct the SCORECARD criteria count to `68-74`, record predicate status and LOG wording, land the last reports. Tip at close observed 07:39:30Z |
 
 `claims.json` declares both `base_revision=ec3125ad…` and `inherited_tip=f432c8e3…`; the two are not the same
 revision, and the assignment's phrase "the round base" is only unambiguous if it means the inherited tip for
@@ -221,9 +222,9 @@ Receipts: `/fast/scratch/hyaku/kaidoku-r34b/w2/ANoCredit/nocr-receipt.json`,
 
 ## 6. Residual risk and verification gaps
 
-- The round was landing while I measured. `66b84027` arrived at 07:32:25Z and `5a0435ff` at 07:35:10Z; six
-  guard/corpus files were still dirty at 07:37:44Z (LOG, SCORECARD, QUALITY, SOURCES, lessons, r34b knowledge).
-  Any later commit can change the answer; re-run §2/§3 against the final tip, not this one.
+- The round was landing while I measured: `66b84027` arrived 07:32:25Z, `5a0435ff` 07:35:10Z, and three more
+  commits through `1675a8d8` 07:39:13Z. Any later commit can change the answer; §7 is the latest verified tip,
+  and §2/§3 must be re-run against whatever tip the round is finally closed at.
 - F1 and F1b are real in committed bytes at both tips; the working tree already contains both repairs (S105
   restored → 106 rows; QUALITY 73 restored ahead of 74). A landing that includes them closes both. A landing
   that omits either leaves a false census line, a destroyed rejection row, or a deleted criterion that four
@@ -237,7 +238,32 @@ Receipts: `/fast/scratch/hyaku/kaidoku-r34b/w2/ANoCredit/nocr-receipt.json`,
 - "Unchanged" claims are revision-specific by construction; any future statement of the form "SCORECARD/LOG/
   SKILL/corpus unchanged" must name the tip it was measured at (this is precisely QUALITY 65/M34-1).
 
-## 7. Tooling
+## 7. Final tip at report close (after the repair landings)
+
+Further landings arrived while this report was being written: `417a8211` ("restore S105 and QUALITY 73 after
+anchor-replacement…"), `b62b4767` ("correct the SCORECARD criteria count to QUALITY 68-74 (seven rows)") and
+`1675a8d8` (predicate status, LOG blindness wording, last reports). At tip `1675a8d848…` (committer
+07:39:13Z, observed 07:39:30Z; later commits possible):
+
+| check | result |
+|---|---|
+| `corpus/SOURCES.md` | **106** rows, `S105` = 1, `S106` = 1, A100/B5/C1, mined 102, rejected 4 (blob `dc7a3ccc66…`) |
+| `corpus/QUALITY.md` | rows 70, 71, 72, **73**, **74** all present (blob `0d187a0663…`) |
+| `SCORECARD.md` | `## Capabilities` sha256 `42c2f7b8…` and owned-axis lines sha256 `346c0208…`, both identical to `ec3125ad` (blob `2b325e0f6d…`); the defect line now reads "QUALITY 68-74 encode each (seven rows…)" |
+| `LOG.md` | blob `2e2e829d…`; `:3100` still "rows 105→106, all-A tier unchanged" — the **count is now true** (106 rows) |
+| `SKILL.md` | unchanged `c2e76469…`; still cites "QUALITY 68-73" twice |
+| `corpus/knowledge/2026-10-25-r34b-…-stop.md` | blob `fc560ac3…`; header still cites "corpus/QUALITY.md rows 67-73" |
+| `PROVINCE.md` | `d453a29d…`, unchanged since base |
+| `corpus` tree | `2c4467364100bce3a369c923de9dc4b8df8a7652` |
+
+So **F1 and F1b are closed in the final bytes**: S105 is restored verbatim (106 rows, `rejected 4`, `mined 102`)
+and QUALITY 73 is back. Residual, all low: (i) "all-A tier unchanged" is numerically A 99→100
+(`f432c8e3` → tip) even though the row count now matches; (ii) `SKILL.md` (2 hits) and the knowledge entry
+(1 hit) still cite `QUALITY 68-73`, omitting the new row 74 — an incomplete range, not a dangling one; (iii) the
+base-identity ambiguity (F2) is untouched. No step of the repair introduced a capability row or a score change:
+both invariant hashes equal the base at the tip.
+
+## 8. Tooling
 
 No install or update: the audit used only `git` (read-only subcommands), `grep`/`sed`, `date` and `sha256sum`
 already on the host. No pacman/uv/npx/pip transaction was attempted; no host service was touched.

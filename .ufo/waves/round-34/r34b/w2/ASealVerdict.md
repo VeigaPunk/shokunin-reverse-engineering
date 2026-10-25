@@ -258,7 +258,7 @@ All paths under `/fast/scratch/hyaku/kaidoku-r34b/w2/ASealVerdict/`. Lane copy `
 | R7 | `freeze-integrity.py --claims claims.json --rev c79bbe7b…` | 3 (`instruments_missing`) | 07:34:41Z |
 | R8 | `freeze-integrity.py --claims instruments.json --rev c79bbe7b…` | 2 (no commit adds container) | 07:34:41Z |
 | R9 | `freeze-integrity.py --claims instruments.json --rev HEAD` | 0 (`CLEAN pins=26 freeze=b917ea64ebbe`) | 07:34:53Z |
-| R10 | `git cat-file -e cd75b92e:…/MutGateBranches.md` and `RevFreezeOrder.md` | 1 (missing) | 07:34:53Z |
+| R10 | `git cat-file -e cd75b92e:…/MutGateBranches.md` (same for `RevFreezeOrder.md`) | 128 (missing; `exists on disk, but not in 'cd75b92e'`) | 07:39:17Z |
 | R11 | `c2-…-counter.py` mock gate + all-zero rev, combined | 0 (`GATE_COUNTER_OK`, `measured_revision=0000…`) | 07:37:41Z |
 | R12 | `git rev-parse HEAD`, `git status --porcelain -- tools/round-34 …` | 0 (`5a0435ff`, clean) | 07:35:11Z / 07:38:16Z |
 
