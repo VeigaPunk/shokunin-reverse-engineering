@@ -3369,3 +3369,14 @@ Learning trends: expansion **unchanged** (the entry documents an instrument and 
 - **planned (round 35, after a steer):** depth or coverage — the fresh-content replay counter (`w1/CtlMultiset-files/mini-counter-fresh.py`: 8/8 structural, 0/8 for all nine structure-blind classes) plus the forced-payload-perturbation surface demonstrated by `w1/MutShortcutClasses.md`, frozen with the class set asserted against the pinned set, `met_target == (matched == target)`, digest-bound class entries and a reserved positive-control label; the green surface must vary size, order, payload and name vocabulary together, and the class set must include one class per keyable invariant. Second choice: calibration over the six record defects, counted as mismatches against observed repo state.
 - **retired:** none. Coverage, depth and calibration stay tied at 10; no axis is saturated by a finite proxy.
 
+
+## Round 35 — stopped on frozen counter falsification
+
+Base `aa04633a686d49756763b1feed4be6830d5bb479`; claims `plans/round-35-claims.md`; canonical snapshot `2323d197456f1328459d9420aff025cffbcb3e27`.
+
+| claim | axis | before | measured evidence | verdict |
+|---|---|---|---|---|
+| R35-C1: assimilate jsc2js `.jsc -> source mapping` frontier through S125/S129 | coverage | C1 do-nothing counter fails at base, exit 1; `.ufo/waves/round-35/controls/c1-do-nothing.json` | Not scored on post-freeze data; no source entries/rows admitted. C1 remains unprovable / stopped for this round; do not credit coverage. | unprovable |
+| R35-C2: close round-34 D1-D4 record defects | calibration | C2 do-nothing counter fails at base, exit 1; `.ufo/waves/round-35/controls/c2-do-nothing.json` | Frozen counter falsified: D1 couples to C1's SOURCES change; fake census substrings pass; D3 accepts S1060; D4 exact heading/table shape does not fit existing records (`.ufo/waves/round-35/w1/R35CriticClaims.md:9-45`). | unprovable / honest stop |
+
+The counter selftests are mechanism checks only (C1 and C2 each green=0/red=1); they do not rescue a falsified claim. No score delta or capability is claimed; owned proxy scores remain coverage/depth/calibration 10→10. No axes harmed. Round-35 trend verdicts are not inferred from claim counters alone; outside spot-check remains pending. Retired: none.
