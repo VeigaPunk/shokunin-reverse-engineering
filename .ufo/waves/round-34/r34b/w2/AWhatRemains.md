@@ -3,7 +3,9 @@
 Seat: `L1Kaidoku34-2.AWhatRemains` (critic, wave 2). Round 34 / run-6 re-dispatch, attempt 1.
 Lane: `/home/vgpnk/Projects/shokunin/kaidoku-shokunin` (read-only; all execution from a scratch clone).
 Scratch: `/fast/scratch/hyaku/kaidoku-r34b/w2/AWhatRemains/`.
-Window: 2026-10-25T07:29:29Z … 2026-10-25T07:44:04Z (UTC throughout).
+Window: 2026-10-25T07:29:29Z … 2026-10-25T07:46:39Z (UTC throughout). The lane advanced during the wave
+(`cd75b92e` → `f8f3758a`); `tools/round-34` did not move (`git diff cd75b92e..HEAD -- tools/round-34` empty),
+and the revision-scoped statements below were re-checked at `f8f3758a`.
 Frozen subject: claim `R34-C2`, freeze `c79bbe7b0959132b9873ff3431cf5eb313b58b33`, stop record `cd75b92e`.
 Tooling: none installed; `python3 -I -B` (system interpreter) only. No ELF carrier, fixture, reader or production
 reader was executed as a program of interest; readers ran only as children of a counter. R34-C1's production
@@ -13,7 +15,7 @@ reader was not executed.
 own public record: the only instrument-enforced facts are the 26 file digests and "a *gate file* at this path prints
 REFUSED/CLEAN against *this config*"; every broader reading ("at revision X", "the gate discriminates", "the green
 surface forces traversal", "the selftest kills its mutants", "five classes reach 8/8") needs an explicit narrowing,
-and four of them are already false as stated.
+and several are already false as stated (§4).
 
 ---
 
@@ -85,9 +87,10 @@ on the red side.
 
 **A7 — "five unregistered classes" is true at the target but not reproducible from committed bytes.** I scored the
 five variant readers at 8/8 (R14), but their sources live only in
-`/fast/scratch/hyaku/kaidoku-r34b/w1/MutShortcutClasses/variants/`, not in lane VCS. The only committed class sources
+`/fast/scratch/hyaku/kaidoku-r34b/w1/MutShortcutClasses/variants/`, not in lane VCS. Every variant file I scored (R14) lives only in that scratch tree; the only committed class sources
 are `nameset.py` (`2e8f…`), `pathkey.py`, and `mini-counter-fresh.py` under `w1/CtlMultiset-files/`. A future round
-may cite the *scores*; it may not claim a committed, re-runnable artifact for four of the five.
+may cite the *scores*; it may not claim a committed, re-runnable artifact for the variant classes — four of
+SCORECARD's five named classes have no committed source.
 
 **A8 — the stop's own counterexample is stronger than the stop says, in one direction and weaker in another.**
 Stronger: nameset is seed-invariant (9/9) and its key is proven invariant by construction (pool reordering preserves
@@ -104,14 +107,15 @@ directions are already touched in w1 (`ExecPermuteAudit` sha-identity 1/474 per 
 **Ranking criterion.** Rank 1 = refutable by one command against committed bytes, with a named fatal counterexample
 and no new data needed. Rank rises as the decisive test needs reconstruction (new readers, new seeds) or as the claim's
 scope depends on files outside the lane. Every claim below is phrased so that *one* observed counterexample refutes it;
-the "narrowing" column is what must be in the sentence for it not to be already false.
+the "Narrowing" line is what must be in the sentence for it not to be already false.
 
 ### C1 (rank 1) — Frozen-instrument integrity
 **Claim.** "At `cd75b92e`, the 26 files pinned in `.ufo/waves/round-34/r34b/instruments.json` are byte-identical to
 their sha256 pins, unmodified since freeze commit `b917ea64`, and the `tools/round-34` tree is byte-identical to
 `c79bbe7b`."
 **Evidence.** R3 (`CLEAN pins=26`, exit 0); `git ls-tree -r c79bbe7b -- tools/round-34 | sha256sum` =
-`git ls-tree -r HEAD …` = `c3d3a29b…`; direct `sha256sum` of counter/gate/configs/micro-counter equals the pins.
+`git ls-tree -r cd75b92e …` = `c3d3a29b…`; `git diff cd75b92e..f8f3758a -- tools/round-34` empty; direct
+`sha256sum` of counter/gate/configs/micro-counter equals the pins.
 **Narrowing.** Exactly 26 instrument files; excludes `claims.json`, `SCORECARD.md`, the predicate text, the stop record,
 and all of `.ufo/…/w1`. "Frozen" means tree identity, not that the frozen sentence is true.
 **Decisive falsifier.** Any one changed byte in a pinned path at the measured rev → `freeze-integrity: FAIL changed=1`.
@@ -184,7 +188,7 @@ seed and 0/8 at the two other seeds tested (`alt-1`, `s3`); (iii) filename-hash 
 `s2b_label_hash_replay`); fixture multiset check (8 distinct keys); `permute()` source rewrites `name_off` only.
 **Narrowing.** These are memorizations of the eight synthetic payloads under a layout-only transform: all six score
 0/8 under the perturbed-payload control (`w1/MutShortcutClasses.md` §3.4) and the digest/filename classes are
-seed-sensitive. This is **not** evidence about the R34-C1 carriers, and four of the five variant sources are
+seed-sensitive. This is **not** evidence about the R34-C1 carriers, and every variant reader source is
 uncommitted (A7).
 **Decisive falsifier.** Payload/flag perturbation per fixture → all six 0/8 while structural stays 8/8 (w1 receipt);
 or a fresh non-default seed → digest class 0/8 (R12).
@@ -217,21 +221,21 @@ stricter than the gate on the positive row — but both trust the printed fields
 **Smallest safe correction.** In `run_counter`, require `matched == target iff met_target` and reject otherwise;
 hash-bind the gate (C6) and run at least one gate-side mutation from the counter.
 
-### C10 (rank 10) — C1 containment and the bookkeeping stop
+### C10 (rank 10) — R34-C1 containment and the bookkeeping stop
 **Claim.** "R34-C1's reader, counter, manifest and twelve carriers are unchanged since `54a87a5` and were not executed
 this round; no capability row and no owned-axis change entered SCORECARD (coverage/depth/calibration stay 10)."
-**Evidence.** R17: 12/12 carriers match sha+size; empty `git diff 54a87a5..HEAD` for reader/counter/manifest/carriers;
-`SCORECARD.md` diff since base is 48 insertions confined to the run-6 section, no R34 capability row; `w1/
-RevR34C1Untouched.md`.
+**Evidence.** R17: 12/12 carriers match sha+size; empty `git diff 54a87a5..HEAD` for reader/counter/manifest/carriers
+(re-checked at `f8f3758a`); the run-6 SCORECARD section (landed by the L1 after `cd75b92e`) has no R34 capability row
+and its owned-axis rows read coverage/depth/calibration 10 → 10; `w1/RevR34C1Untouched.md`.
 **Narrowing.** "Not executed" is an absence-of-evidence audit (grep of receipts), not a positive proof; my
 contribution is hashing bytes only. The score statement is bookkeeping, not measurement.
 **Decisive falsifier.** One carrier digest mismatch, or one R34 row in the capabilities table.
 **Smallest safe correction.** None needed for this round; for the next, bind a no-exec claim to a syscall/audit record
 rather than a grep.
 
-**Why this order.** C1–C3 and C6–C7 have one-command fatal tests against committed bytes; C4–C5 need one derived
-config or one mutated source; C7's seed leg needs new probes (run here, 6 seeds + 3 digest seeds); C8's evidence
-partly lives outside VCS; C9 is formal (a synthetic gate/counter); C10 is documentary. Nothing above rank 6 can be
+**Why this order.** C1–C6 have one-command fatal tests against committed bytes (C3's evidence is one derived
+config, C5's one mutated source); C7's seed leg needs probes (run here: 6 extra nameset seeds, 3 digest seeds); C8's
+evidence partly lives outside VCS; C9 is formal (a synthetic gate/counter); C10 is documentary. Nothing above rank 6 can be
 stated without C1's hash check in the same sentence, because the counter itself does not bind what it measured.
 
 ---
@@ -262,7 +266,7 @@ stated without C1's hash check in the same sentence, because the counter itself 
 | D3 | selftest/mutant clause is self-attested by the gate's stdout | R8 | counter-side mutation; never accept the gate's own summary |
 | D4 | positive control trusted by class label | R13 | reserved positive class; resolve positive path from the pin, not from config text |
 | D5 | deterministic transform + digest-bearing output filename | R12, R14; `mini-counter.py` `permute`, `score` naming | fresh per-run nonce seed; random filename; renaming + payload perturbation |
-| D6 | 4 of 5 "five classes" readers uncommitted | R14 paths; lane `git ls-files` | commit variant sources with hashes before citing them |
+| D6 | all five variant reader sources uncommitted (four of SCORECARD's five classes) | R14 paths; lane `git ls-files` | commit variant sources with hashes before citing them |
 
 ---
 
