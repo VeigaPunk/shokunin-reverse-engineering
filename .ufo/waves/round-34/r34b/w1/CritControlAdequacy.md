@@ -28,10 +28,11 @@ from the code; say whether the frozen clauses catch it. Read-only on lane VCS; e
 literal verdicts.** Delta to the pinned gate: **+16 / −1 lines** (one rename, one dispatch block);
 the production path spawns **nothing**. Observed `GATE_COUNTER_OK`, all six clauses, exit 0
 (`receipts/gate-name-sniff.json`, 2026-10-25T07:28:15Z). Strictest form (C1b, +18/−1) fabricates
-the seven registry rows, so **every measured field of its receipt equals the committed production
-receipt** (`receipts/lane-c1b-mimic.json` equals the committed receipt on `clauses/finding/
-met_target/exit/selftest_failures/mutants_killed/green.positive_matched/
-green.shortcuts_below_target/red.classes_over_target`).
+the seven registry rows, so its receipt equals the committed production receipt on **every field the
+six clauses read** (`clauses/finding/met_target/exit/selftest_failures/mutants_killed/
+green.positive_matched/green.shortcuts_below_target/red.classes_over_target`, and `green.line`) —
+`receipts/lane-c1b-mimic.json` differs only in `gate_path` and in the red line's cosmetic
+`shortcuts_below_target=0`, a string no clause reads (C0e below removes even that difference).
 
 **Cheaper still, and not a gate control at all (C0e): the counter never records or validates
 `--root`.** A three-file synthetic root (`tools/round-34/{replay-gate.py,gate-config-mini.json,
@@ -44,7 +45,7 @@ distinguish it.
 
 ## 2. Mechanism — why every candidate below is invisible to the frozen clauses
 
-1. **The two configs differ in exactly one token** (verified by JSON compare): `counter.argv[4]` is
+1. **The two configs differ in exactly one token** (verified by JSON compare): `counter.argv[3]` is
    `mini-counter.py` vs `naive-counter.py`. `positive_control`, `predicate`, `schema`, `shortcuts`
    and `target` are identical. The only signal a gate can key on is the counter module name — which
    makes the key cheaper, not harder. (The brief's "reads the red case's fixture names" idea cannot
@@ -75,13 +76,13 @@ distinguish it.
 
 | # | Control | Cost | Work skipped | Predicted verdict | Observed | Frozen clause that catches it |
 |---|---------|------|--------------|-------------------|----------|-------------------------------|
-| C0e | stub gate at the default path in a synthetic root; prints the production lines, spawns nothing | 43 lines / 3 files | everything | `GATE_COUNTER_OK` | **OK, receipt byte-identical** (`p2`, 07:35:04Z) | none |
+| C0e | stub gate at the default path in a synthetic root; prints the production lines, spawns nothing | 47 lines / 3 files | everything | `GATE_COUNTER_OK` | **OK, receipt byte-identical** (`p2`, 07:35:04Z) | none |
 | C0 | stub gate keyed on config basename in a synthetic root | 39 lines / 3 files | everything | `GATE_COUNTER_OK` | **OK**, exit 0 (`p1`, 07:28:11Z) | none (`gate_present` = path exists) |
 | **C1** | **gate keyed on `naive-counter.py`/`mini-counter.py` in `config["counter"]["argv"]`; literal verdicts** | **+16/−1** | **all scoring; zero spawns** | `GATE_COUNTER_OK` | **OK, exit 0** (`gate-name-sniff`, 07:28:15Z); still CLEAN/REFUSED with `mini-fix/` **deleted** (07:35:20Z) | none |
-| C1b | C1 plus the seven registry-shaped rows | +18/−1 | all scoring; receipt field-identical to production | `GATE_COUNTER_OK` | **OK**; identical to the committed receipt except `gate_path` (`lane-c1b-mimic`, 07:32:45Z) | none |
+| C1b | C1 plus the seven registry-shaped rows | +18/−1 | all scoring; claused fields identical to production | `GATE_COUNTER_OK` | **OK**; equals the committed receipt on every claused field and `green.line`; differs only in `gate_path` and the red line's unread below-count (`lane-c1b-mimic`, 07:32:45Z) | none |
 | C2 | red keyed on the naive counter; green runs **only** the structural positive control | +19/−1 | the seven shortcut scores | `GATE_COUNTER_OK` | **OK**, `below=0` (`gate-structural-only`, 07:28:16Z; lane 07:32:46Z) | none |
 | C3 | three-line red fake; green honest | +10/−1 | the refusal demonstration | `GATE_COUNTER_OK` | **OK**, `below=7` (`gate-red-fake-only`, 07:28:17Z) | none |
-| C4 | gate replays the committed control receipts' verdicts | ~+10 | everything | `GATE_COUNTER_OK` | not run; same constant source as C1 (three of five committed control receipts already carry `red=REFUSED`) | none |
+| C4 | gate replays the committed control receipts' verdicts | ~+10 | everything | `GATE_COUNTER_OK` | not run; same constant source as C1 (two of the five committed control receipts already carry `red=REFUSED`) | none |
 
 No-spawn proof (the `mini-fix` tree deleted from the root; 2026-10-25T07:35:20Z):
 
@@ -123,7 +124,7 @@ work.
 **Impossibility first.** C0e's receipt is byte-identical to the production receipt, so no post-hoc
 field check can bind it. Recording `root`/`argv` in the receipt, adding a
 `shortcuts_below_target == 7` clause, or asserting a green row count are all forgeable in the same
-39 lines (C1b already emits seven rows; C0e already emits the right counts). The defect is the
+47 lines (C1b already emits seven rows; C0e already emits the right counts). The defect is the
 evidence chain: the receipt is produced by the object under test and scored by a counter that reads
 only that self-report, with the tree and the gate supplied by the caller.
 
@@ -136,13 +137,14 @@ only that self-report, with the tree and the gate supplied by the caller.
    `tree_sha256`, the executed blobs' digests, the verifier's own digest, argv/cwd/UTC, the gate
    verdicts, and the derived rows; `met` requires (class, matched, met_target) agreement on **both**
    configs.
-2. The six clauses stay exactly as frozen. The four candidates become control gates that must MISS;
+2. The six clauses stay exactly as frozen. The candidates in §3 become control gates that must MISS;
    they do, because none is in the producer's execution path.
 3. Pin the producer digest in the wave's evidence envelope (not in frozen `claims.json`) and make the
    L1 run it in the lane; any other receipt is not evidence.
 
-Tested draft — written and run at 2026-10-25T07:39:15Z, `C2_BOUND_OK failed=-`, exit 0,
-`tree_sha256 e6bed50bf38a60c8…`, against the pinned rev:
+Tested file: `/fast/scratch/hyaku/kaidoku-r34b/w1/CritControlAdequacy/candidates/c2-bound-receipt.py`
+(sha256 `ef1963ecf8810565fad5d17570472a2b8b2e2e26ea3f5f78cd0962f1689807c1`), run at
+2026-10-25T07:42:59Z → `C2_BOUND_OK failed=-`, exit 0, `tree_sha256 e6bed50bf38a60c8…`:
 
 ```python
 #!/usr/bin/env python3
@@ -152,14 +154,21 @@ Additive: no frozen instrument is edited. The receipt this emits is evidence of 
 *this* process executed -- the pinned subtree extracted from `rev`, hashed before it ran,
 and re-derived per reader counter-side -- not of what a gate reported about itself.
 """
-import argparse, hashlib, io, json, subprocess, sys, tarfile, tempfile
+import argparse
+import hashlib
+import io
+import json
+import subprocess
+import sys
+import tarfile
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
 GATE = "tools/round-34/replay-gate.py"
 CONFIGS = {"red": "tools/round-34/gate-config-naive.json",
            "green": "tools/round-34/gate-config-mini.json"}
-CLAIMS = ".ufo/waves/round-34/r34b/claims.json"   # instruments.json postdates the rev
+CLAIMS = ".ufo/waves/round-34/r34b/claims.json"
 SUBTREE = "tools/round-34"
 
 
@@ -175,7 +184,10 @@ def sha(data):
 
 
 def manifest(root):
-    rows = [(str(p.relative_to(root)), sha(p.read_bytes())) for p in sorted(root.rglob("*")) if p.is_file()]
+    rows = []
+    for path in sorted(root.rglob("*")):
+        if path.is_file():
+            rows.append((str(path.relative_to(root)), sha(path.read_bytes())))
     return sha(json.dumps(rows, sort_keys=True).encode()), dict(rows)
 
 
@@ -195,24 +207,29 @@ def derive(work, kind):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--repo", required=True); parser.add_argument("--rev", required=True)
-    parser.add_argument("--receipt"); parser.add_argument("--json-out")
+    parser.add_argument("--repo", required=True)
+    parser.add_argument("--rev", required=True)
+    parser.add_argument("--receipt", help="compare against an existing counter receipt")
+    parser.add_argument("--json-out")
     args = parser.parse_args()
     repo = Path(args.repo).resolve()
     commit = git(repo, "rev-parse", "--verify", args.rev + "^{commit}").decode().strip()
     pins = json.loads(git(repo, "show", f"{commit}:{CLAIMS}"))["claims"][0]["pins"]
+    checks = {}
     with tempfile.TemporaryDirectory(prefix="c2-bound-") as work:
         work = Path(work)
         tarfile.open(fileobj=io.BytesIO(git(repo, "archive", commit, SUBTREE))).extractall(work)
         tree_digest, files = manifest(work)
         executed = {rel: files[rel] for rel in (GATE, *CONFIGS.values())}
-        checks = {"executed_blobs_are_pinned": all(executed[rel] == pins[rel] for rel in executed)}
+        checks["executed_blobs_are_pinned"] = all(executed[rel] == pins[rel] for rel in executed)
         rows = {kind: derive(work, kind) for kind in CONFIGS}
-        gate_out, verdicts = work / "gate.json", {}
+        # the pinned gate's own verdicts, run from the same extracted tree
+        gate_out = work / "gate.json"
+        verdicts = {}
         for kind, rel in CONFIGS.items():
-            run = subprocess.run([sys.executable, "-I", "-B", str(work / GATE), "--root", str(work),
-                                  "--config", str(work / rel), "--json-out", str(gate_out)],
-                                 cwd=work, capture_output=True, text=True)
+            run = subprocess.run([sys.executable, "-I", "-B", str(work / GATE), "--root",
+                                  str(work), "--config", str(work / rel), "--json-out",
+                                  str(gate_out)], cwd=work, capture_output=True, text=True)
             verdicts[kind] = {"exit": run.returncode, "line": run.stdout.strip().splitlines()[-1],
                               "payload": json.loads(gate_out.read_text())}
             gate_out.unlink()
@@ -226,7 +243,9 @@ def main():
                                   and verdicts["red"]["payload"]["verdict"] == "REPLAY_GATE_REFUSED")
     checks["gate_clears_green"] = (verdicts["green"]["exit"] == 0
                                    and verdicts["green"]["payload"]["verdict"] == "REPLAY_GATE_CLEAN")
-    shape = lambda rs: [(r["class"], r["matched"], r["met_target"]) for r in rs]
+    def shape(rows):
+        return [(r["class"], r["matched"], r["met_target"]) for r in rows]
+
     checks["gate_rows_agree_with_derivation"] = (
         shape(verdicts["green"]["payload"]["rows"]) == shape(green)
         and shape(verdicts["red"]["payload"]["rows"]) == shape(red))
@@ -235,12 +254,11 @@ def main():
         checks["receipt_matches_reproduction"] = (
             old.get("green", {}).get("positive_matched") == green[0]["matched"]
             and old.get("green", {}).get("shortcuts_below_target") ==
-                sum(1 for row in green[1:] if not row["met_target"])
+            sum(1 for row in green[1:] if not row["met_target"])
             and sorted(old.get("red", {}).get("classes_over_target") or []) ==
-                sorted(row["class"] for row in red if row["met_target"] and row["class"] != "structural"))
+            sorted(row["class"] for row in red if row["met_target"] and row["class"] != "structural"))
     ok = all(checks.values())
-    receipt = {"schema": 1, "rev": commit,
-               "utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    receipt = {"schema": 1, "rev": commit, "utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                "verifier_sha256": sha(Path(__file__).read_bytes()), "argv": sys.argv,
                "cwd": str(Path.cwd()), "tree_sha256": tree_digest, "executed": executed,
                "checks": checks, "met": ok, "derived": rows,
@@ -256,18 +274,18 @@ if __name__ == "__main__":
     sys.exit(main())
 ```
 
-What each candidate loses (all six candidates lack the producer's provenance and row set):
+What each candidate loses (none of them is in the producer's execution path):
 
 | candidate | why it cannot pass | decisive check |
 |---|---|---|
-| C0e, C0 | producer never reads a caller root; a stub receipt has no `tree_sha256`/`derived`/`verifier_sha256` | receipt shape + `executed_blobs_are_pinned` |
+| C0e, C0 | the producer never reads a caller root; a stub receipt has no `tree_sha256`/`derived`/`verifier_sha256` | receipt shape + `executed_blobs_are_pinned` |
 | C1 | its green set has one row; the honest set has eight | `green_registers_eight`, `gate_rows_agree_with_derivation` |
 | C1b | fabricated rows are all `matched: 0`; the honest `size-keyed` row is `matched: 1` | `gate_rows_agree_with_derivation` (matched level, both configs) |
 | C2 | green rows = the positive control only; below-count 0 vs 7 | `green_registers_eight`, `green_all_shortcuts_below` |
-| C3 | red rows are two rows with `matched: 0`; honest red has eight and `size-keyed=1` | `gate_rows_agree_with_derivation` (red) |
+| C3 | its red rows are two rows (`structural 8`, `label-memorization 8`); honest red has eight, with `size-keyed=1` | `gate_rows_agree_with_derivation` (red) |
 | C4 | same falsified rows as C1 | as C1 |
 
-Rejected repairs (each was tested or is falsified by C1b/C0e): recording `root`/`argv` in the receipt;
+Rejected repairs (each tested or falsified by C1b/C0e): recording `root`/`argv` in the receipt;
 adding `green.shortcuts_below_target == 7` (C1b fabricates 7); a green row-count assertion (C1b emits
 8; kills C2 only); a "red-last selftest case" (F4's route — the cheat is in the dispatch, not in a
 row); hashing the worktree under `--root` (C0e forges the worktree, so hash the bytes extracted from
@@ -277,7 +295,7 @@ disk, but not in 'c79bbe7b…'`, exit 1), so a rev-bound verifier must read `cla
 as the draft does.
 
 **Residual limit, stated honestly.** A fabricated producer receipt is not distinguishable by field
-checks alone; what the correction removes is the *cheap* path (a 39-line stub producing byte-identical
+checks alone; what the correction removes is the *cheap* path (a 47-line stub producing byte-identical
 JSON). Reproducing the producer's receipt now requires running the pinned bytes, and an independent
 seat can confirm a receipt in one 4.2 s run (`C2_BOUND_OK`, same `tree_sha256` and `derived`).
 
@@ -307,7 +325,7 @@ python3 -I -B $C --root lane-copy  --rev NOT-A-REVISION-0xF00D \
         --json-out receipts/p5-freetext-rev.json                                          # exit 0, 07:29Z
 python3 -I -B candidates/c2-bound-receipt.py --repo <LANE> --rev $REV \
         --receipt <LANE>/.ufo/waves/round-34/r34b/after/c2-at-instruments.json \
-        --json-out receipts/p6-bound-produce.json                                         # C2_BOUND_OK, exit 0, 07:39:15Z
+        --json-out receipts/p6-bound-produce.json                                         # C2_BOUND_OK, exit 0, 07:42:59Z
 ```
 
 `p0-baseline.json` sha256 `da78f44419ecf83935e1fe6b1cd72f611c5a0e7e03029e97580d515a0796f3e9`
@@ -318,7 +336,7 @@ digest-keyed 0 / string-scan 0 / record-order-replay 0 / label-memorization 0`; 
 except `label-memorization 8`. Candidate digests: `gate-name-sniff.py 6fd20675…`,
 `gate-name-sniff-mimic.py 330630e0…`, `gate-structural-only.py 8f356f26…`,
 `gate-red-fake-only.py bbb76339…`, `gate-synthetic-exact.py 610b4b02…`,
-`gate-synthetic-stub.py 5f1f5c51…`, `c2-bound-receipt.py` (final) `b474cdb1…`.
+`gate-synthetic-stub.py 5f1f5c51…`, `c2-bound-receipt.py ef1963ec…`.
 No ELF carrier, reader-as-program or fixture was executed as a program; readers ran only as python
 under the counters, and the `mini-fix` tree was deleted in the no-spawn probes.
 
@@ -326,9 +344,9 @@ under the counters, and the `mini-fix` tree was deleted in the no-spawn probes.
 
 **R34-C2's control set is inadequate, and the defect is not clause tuning: the six frozen clauses are
 satisfiable — byte-for-byte — by a 16-line counter-name-keyed gate that runs no reader (C1/C1b), and
-by a 3-file synthetic root with a 43-line stub that runs nothing at all (C0e, `cmp` IDENTICAL).
+by a 3-file synthetic root with a 47-line stub that runs nothing at all (C0e, `cmp` IDENTICAL).
 Cheapest uncaught control = C1; cheapest receipt-level skip = C0e. The claim is already stopped at
 `cd75b92e` for the unregistered-class reason, so no new stop is proposed; the required repair is a
 pinned verifier-producer that extracts, hashes, executes and re-derives from the git objects at the
-measured rev and emits the receipt of record (`§6`, tested `C2_BOUND_OK` 07:39:15Z), not a seventh
+measured rev and emits the receipt of record (`§6`, tested `C2_BOUND_OK` 07:42:59Z), not a seventh
 clause, a row-count assertion, or a recorded `root`/`argv`.**

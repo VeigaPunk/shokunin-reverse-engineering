@@ -2,12 +2,12 @@
 
 Seat: `L1Kaidoku34-2.ARerunAll` (leaf). Lane: `/home/vgpnk/Projects/shokunin/kaidoku-shokunin`.
 Scratch: `/fast/scratch/hyaku/kaidoku-r34b/w2/ARerunAll/`.
-Measurement window: **2026-10-25T07:29:49Z … 2026-10-25T07:38:57Z**.
+Measurement window: **2026-10-25T07:29:49Z … 2026-10-25T07:41:47Z**.
 Runtime: `/usr/bin/python3` = Python 3.14.8; `git` 2.56.0; `rsync` 3.5.1. **No tool installed or upgraded; no pacman transaction; no network.**
 No lane file was written. No VCS mutation in the lane (clones only). No ELF, fixture or reader was executed as a program of interest: fixtures were read as static bytes; every reader ran as `python3 -I -B` inside a counter (the counter-owned argv or my scratch probe counter).
 
-**Verdict: `RERUN_ALL_REPRODUCED committed_receipts=6/6_byte_identical product=GATE_COUNTER_OK exit=0 controls=5/5_MISS counterexamples=reproduced move=no_stop_invalidation`.
-The stop's six frozen clauses reproduce byte-for-byte at the lane tip and at the wave-2 tip; every committed control reproduces byte-for-byte; both post-stop decisive classes reproduce at the tip. The stop is not falsified by reproduction — but three provenance/expectation defects in the production record are reproduced below.**
+**Verdict: `RERUN_ALL_REPRODUCED committed_receipts=6/6_byte_identical product=GATE_COUNTER_OK exit=0 controls=5/5_discriminated counterexamples=reproduced provenance=gate_channel_unpinned_reproduced move=no_stop_invalidation`.
+The stop's six frozen clauses reproduce byte-for-byte at the lane tip and at the wave-2 tip; every committed control reproduces byte-for-byte; both post-stop decisive classes reproduce at the tip. The stop is not falsified by reproduction — but the counting command cannot prove **which gate** produced its receipt (independently reproduced below), and four observation-level defects remain (P2–P4 and the name-specific red clause).**
 
 ---
 
@@ -120,7 +120,7 @@ Both measure the same bytes. Consequence: `measured_revision` in any C2 receipt 
 
 * **Supports the stop.** The six frozen clauses hold, byte-identically, at the lane tip and at every observed wave-2 tip. Every committed control reproduces. Both post-stop decisive classes reproduce at the tip, including the addendum's payload-keyed receipt with all eight zeroed digests matching. The registered-class probe refuses the unregistered class. Nothing here revives the claim or moves a clause.
 * **Does not falsify the stop.** I found no reproduction in which the production counter returns `GATE_COUNTER_OK` at a root whose instrument bytes differ from the pins, and no control that turns into a pass.
-* **Reproduction-visible defects, classified against the record as filed.** The stop record (`cd75b92e`) disclosed F1–F5; the append-only addendum (landed `5a0435ff`, extended at `39f433b2`) adds F6, X1–X5 and Y1–Y5. My probes reproduce four of those disclosures independently and add three observations that are not in the addendum text I read:
+* **Reproduction-visible defects, classified against the record as filed.** The stop record (`cd75b92e`) disclosed F1–F5; the append-only addendum (landed `5a0435ff`, extended at `39f433b2`) adds F6, X1–X5 and Y1–Y5. My probes independently reproduce F1's container mechanics, F2's predicate divergence, X4/P1, Y1/P5 and Y3/P6; F3 and F6 are source-confirmed only (§7). Three observations are not in the addendum text I read:
   1. **X4/P1** `measured_revision` is an argv echo and no counted run reads VCS (§6). **Already disclosed (X4); independently reproduced.**
   2. **Y1/P5** the `--gate` channel is unpinned and a 1.7 KB file-opaque mock gate yields `GATE_COUNTER_OK` with all six clauses and a forged rev (§6). **Already disclosed (Y1, critical); independently reproduced with a receipt** (`mock-gate-probe.json`).
   3. **Y3/P6** the enforced container exits 2 at the claim freeze and verifies only from `b917ea64` (§6/§7). **Already disclosed (Y3); independently reproduced.**
@@ -158,4 +158,4 @@ Receipt digests at the measured wave-2 tip (`sha256sum` of `<scratch>/receipts-t
 
 ## 11. Final verdict line
 
-`RERUN_ALL_REPRODUCED committed=6/6_byte_identical product=GATE_COUNTER_OK selftest_failures=0 mutants_killed=3 red=REPLAY_GATE_REFUSED green=REPLAY_GATE_CLEAN green_positive_matched=8 controls=5/5_MISS(nameset=8/8 seed_kaidoku-r34-mini-v1 observed; nameset=8/8 alt-1; nameset=8/8 alt-2; nameset=8/8 alt-3; payload_keyed=8/8 plain; payload_keyed=8/8 names_zeroed_digests_identical; structural_zeroed=0/8; nameset_registered=REPLAY_GATE_REFUSED) stop_tip=cd75b92e wave2_tip_measured=417a8211 pins=26/26 exit=0 utc=2026-10-25T07:38:57Z defects_reproduced=P1_rev_label_inert,P2_control_plan_expectation,P3_fixed_print_gate,P4_before_root_swap stop_invalidated=no`
+`RERUN_ALL_REPRODUCED committed=6/6_byte_identical product=GATE_COUNTER_OK selftest_failures=0 mutants_killed=3 red=REPLAY_GATE_REFUSED green=REPLAY_GATE_CLEAN green_positive_matched=8 controls=5/5_discriminated counterexamples=nameset_8/8_x4seeds,payload_keyed_8/8_names_zeroed_digests_identical,structural_zeroed_0/8,nameset_registered_REFUSED stop_tip=cd75b92e wave2_tip_measured=417a8211 pins=26/26 exit=0 utc=2026-10-25T07:41:47Z provenance_probes=X4/P1_reproduced,Y1/P5_forged_GATE_COUNTER_OK_reproduced,Y3/P6_reproduced defects_new=P2_control_plan_expectation,P3_fixed_print_gate,P4_before_root_swap,P_red_name_specific stop_invalidated=no`
