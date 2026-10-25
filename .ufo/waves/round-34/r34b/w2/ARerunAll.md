@@ -165,7 +165,7 @@ Both measure the same bytes. Consequence: `measured_revision` in any C2 receipt 
 | `<scratch>/wave2-inflight-20261025T073210Z/` | rsync snapshot (no `.git`, no `__pycache__`) |
 
 Receipt digests at the measured wave-2 tip (`sha256sum` of `<scratch>/receipts-tip417a/*.json`):
-`prod-rev-frozen da78f444…`, `prod-rev-tip 0cc17186…`, `ctl-do-nothing bce6aa9f…`, `ctl-always-clean 22f819c4…`, `ctl-vacuous-no-floor a12f720d…`, `ctl-no-positive-check 50516d79…`, `ctl-junk-clean 25485cb9…`. All six digests are identical to the receipts produced at `cd75b92e` (`<scratch>/receipts-tip/`) — the whole set is invariant across roots.
+`prod-rev-frozen da78f444…`, `prod-rev-tip 0cc17186…`, `ctl-do-nothing bce6aa9f…`, `ctl-always-clean 22f819c4…`, `ctl-vacuous-no-floor a12f720d…`, `ctl-no-positive-check 50516d79…`, `ctl-junk-clean 25485cb9…`. All six named digests are identical to the receipts produced at `cd75b92e` (`<scratch>/receipts-tip/`) — the whole set is invariant across roots.
 
 ## 11. Final verdict line
 

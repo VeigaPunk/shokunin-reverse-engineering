@@ -178,7 +178,7 @@ they differ from the pins.
 ### C7 (rank 7) — Reachability of the green target without traversal
 **Claim.** "The green target is reachable without reading the header, the record array or `name_off`:
 (i) content-multiset memorization, 8/8 at nine seeds; (ii) transformed-digest replay, 8/8 at the counter's default
-seed and 0/8 at any other seed; (iii) filename-hash replay, 8/8 because the output name is
+seed and 0/8 at the two other seeds tested (`alt-1`, `s3`); (iii) filename-hash replay, 8/8 because the output name is
 `opaque-<sha256(transformed)[:20]>.data`."
 **Evidence.** R2, R11 (nameset); R12 (`tabledigest` 8/8 default, 0/8 `alt-1`/`s3`); R14 (`s2b_digest_replay`,
 `s2b_label_hash_replay`); fixture multiset check (8 distinct keys); `permute()` source rewrites `name_off` only.
@@ -188,10 +188,11 @@ seed-sensitive. This is **not** evidence about the R34-C1 carriers, and four of 
 uncommitted (A7).
 **Decisive falsifier.** Payload/flag perturbation per fixture → all six 0/8 while structural stays 8/8 (w1 receipt);
 or a fresh non-default seed → digest class 0/8 (R12).
-**Smallest safe correction.** (a) same-length **renaming** of the pool, not reordering (R16: with per-run expected,
+**Smallest safe correction.** (a) same-length **renaming** of the pool, not reordering (R18: with per-run expected,
 structural 8/8 and all six 0/8 — probe `probes/mini-counter-rename.py`, sha `2dc88856…`); (b) a fresh unpredictable
 seed per run, because at the default seed even the renaming transform is memorizable by digest
-(`tabledigest-rename.py` 8/8, 07:42:29Z); (c) perturb at least one payload field so memorization and decoding diverge.
+(R19, `tabledigest-rename.py` 8/8, 07:42:29Z); (c) perturb at least one payload field so memorization and decoding
+diverge.
 
 ### C8 (rank 8) — Registration falsifies, and the correction's limits
 **Claim.** "Registering a target-met class turns the same frozen gate from CLEAN to REFUSED with byte-identical
