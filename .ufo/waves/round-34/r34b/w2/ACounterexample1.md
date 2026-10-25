@@ -86,8 +86,8 @@ tokens containing `.so.`, and looks the resulting name multiset up in an embedde
 | same, `--seed alt-1` | 07:33:08Z | **0** | `matched=8 met_target=true`, rows 8/8 |
 | same, `--seed alt-2` | 07:33:08Z | **0** | `matched=8 met_target=true`, rows 8/8 |
 
-Earlier independent run before the table was regenerated (07:30:07Z) reproduced the same 8/8 on all
-three seeds. The counter ignores `--seed` in its output document, so `seed=null` in the receipt is the
+The first run of this reader (07:30:07Z, same file, same three seeds) reproduced the same 8/8 on all
+three seeds before the consolidated receipt sweep at 07:33. The counter ignores `--seed` in its output document, so `seed=null` in the receipt is the
 counter's omission, not mine.
 
 **Class:** content-multiset memorization — sorted multiset of SONAME tokens as key, stored
@@ -115,8 +115,9 @@ Negative control `frozen/pathkey.py` on the same counter: `matched=0`, exit 1, e
 I did **not** open `nameset.py`/`pathkey.py` source files. I did read, before writing my reader,
 `w1/ExecRedReproduce.md` lines 1–120, which describes the class and the fixture format consequence
 (stopping before its appendix), and I later read lines 124–263, whose Appendix A quotes the source of
-`r_nameset.py`. Sequence on the clock: my reader and table were written and first run (reader built
-07:30:05Z, frozen receipts 07:30:07Z) **before** the appendix read; the class itself is also stated in
+`r_nameset.py`. Sequence on the clock: my reader and table were written and first run (frozen receipts
+07:30:07Z, `receipts.log`; the build call immediately precedes them) **before** the appendix read;
+the class itself is also stated in
 `claim-stop.json` ("content-multiset memorization (SONAME-set key + stored name->flags/value table)").
 So: artifact independent (own tokenizer, own table shape, own refusal behaviour), knowledge not blind —
 I did not rediscover the class from nothing. This report does not claim a blind rediscovery.
@@ -125,7 +126,7 @@ I did not rediscover the class from nothing. This report does not claim a blind 
 
 ## 4. Black-box proof that the stop's source is header- and record-blind
 
-Probe counter `mut-counter.py` runs a reader on one static file; three mutations of `alpha.mrec`
+Probe counter `mut-counter.py` runs a reader on one static file; four mutations of `alpha.mrec`
 (count 3, records at 16, pool at 40), receipts 2026-10-25T07:32:28Z and 07:33:28Z:
 
 | input mutation | `nameset.py` | `memtable_a.py` | `structural.py` (control) |
@@ -209,7 +210,9 @@ invocation that pins the seed in argv. The content *is* a deterministic function
 seed that the counter hands to its child in its own command line. Crucially, the counter **replaces the
 child environment** (`PATH`/`HOME` only), so a seed passed by environment or kept out of argv would not
 leak; the leak is specifically argv, and `--seed` is the documented reproducibility path. A repair audit
-that pins seeds for reproducible receipts re-opens the exact class it was built to exclude.
+that pins seeds for reproducible receipts re-opens the gap the repair was built to close — a
+structure-blind class meeting the target without record traversal — even though it is a replay class,
+not the memorization class.
 
 ### 7.3 Boundary: what the fresh counter still admits
 

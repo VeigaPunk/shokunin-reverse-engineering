@@ -191,20 +191,24 @@ E11 **conditional on the used-by file existing**, E12 pass (row sits inside `## 
 W02 n/a, W03 pass (used-by not `—`), W04 pass (first `sourceware.org` URL in the registry).
 
 **Answer: yes, the row as drafted passes the lane's census, provided its `used-by` target exists.**
-That proviso is not decorative: at 07:28:45Z
+That proviso is not decorative. In my first live-tree read (no separate clock stamp on that shell call;
+the same call measured `wc -l corpus/SOURCES.md` = 207 and showed `| S106 |` at `:112`)
 `test -e LANE/corpus/knowledge/2026-10-25-r34-pre-freeze-shortcut-replay-gate.md` returned **1** (absent),
 and a `--file` run against a root lacking that path emits `E11 S106 missing used-by
-corpus/knowledge/2026-10-25-r34-pre-freeze-shortcut-replay-gate.md` → exit 1. At 07:32:16Z the file
-exists but is **0 bytes** (mtime 04:32 local), and the census passes — because `usedby_findings()` only
-does `[ ! -e "$dir/$path" ]`. So the census certifies a path, never content (F6).
+corpus/knowledge/2026-10-25-r34-pre-freeze-shortcut-replay-gate.md` → exit 1. At 07:32:16Z and again at
+07:35:18Z the file exists but is **0 bytes** (mtime 04:32 local), and the census passes — because
+`usedby_findings()` only does `[ ! -e "$dir/$path" ]`. So the census certifies a path, never content (F6).
 
 ## 7. Observed live divergence (not my deliverable, recorded because it contradicts both drafts)
 
-Between my first and second read the lane registry changed under me: at 07:29Z `corpus/SOURCES.md` ended
-at S105 + `## Paths`; at 07:32Z it was 207 lines with an **uncommitted** `| S106 |` at `:111`
-(`git status --porcelain` → ` M corpus/SOURCES.md`, plus untracked knowledge files). The live row differs
-from the draft: commit-pinned URL (`hb=6ce87bbc…`), no `external.h` clause, 203-char anchor with
-`14058, 14067-14068, 14072-14076, 14102-14106, 14149`, and `used-by
+Between my first and second read the lane registry changed under me, repeatedly:
+`corpus/SOURCES.md` was 207 lines with `| S106 |` at `:112` in my first live read, 124 743 bytes with the
+row at `:111` at 07:32:02Z, and 208 lines / 125 359 bytes / sha256 `77707752…` with the row at `:112` at
+07:35:18Z; `git status --porcelain` reports ` M corpus/SOURCES.md` plus untracked knowledge files. So the
+landing is **in flight** and no stable line number exists to audit — the frozen baseline remains
+`HEAD` (`5abcd365…`, 203 lines, no S106). The live row differs from the draft: commit-pinned URL
+(`hb=6ce87bbc…`), no `external.h` clause, 203-char anchor with `14058, 14067-14068, 14072-14076,
+14102-14106, 14149`, and `used-by
 corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md` (7 522 bytes, untracked, exists).
 Every line number in that landed anchor is true on the capture (verified in §5). I did not run the census
 against the live file because it is being written concurrently; the fixture result in §6 is the honest
@@ -269,8 +273,13 @@ live fetches), `python3 3.14.8` (`-` stdin scripts only, text), `GNU Awk 5.4.1` 
 `/fast/scratch/hyaku/kaidoku-r34b/w2/ASourceS106/` (`refetch-2_47.c`, `commit-fetch.c`,
 `external-2_47-refetch.h`, `census/{lane,head,lane_knowledge,synth,base}/`).
 
+One rule deviation, disclosed and cleaned: the committed-HEAD registry snapshot was first spilled to
+`/tmp/r34_head_sources.md` (124 743 bytes, outside the permitted roots) before being copied into scratch;
+it was removed at 2026-10-25T07:35:46Z (`ls` → no such file). No lane byte was written outside this
+report.
+
 SOURCE_EVIDENCE_AGREES_WITH_ONE_QUOTE_LOCATION_DEFECT — capture sha256 `7e81eedf…` reconfirmed locally
-and by two live fetches; 13 cited anchors and 4 refusal sites exact; six quotes `<=25` tokens; Gate quote
-Q1 fails single-line locality at `:14067` (spans `:14067-14068`) and must be re-cited; drafted row passes
-`sources-census.sh validate` (exit 0, 106 rows, tier.A 100) with E11 satisfied only by a present-but-empty
-used-by path.
+and by two live fetches; every cited anchor and refusal site present at its cited line; seven quote checks
+on six passages, all `<=25` tokens; Gate quote Q1 fails single-line locality at `:14067` (spans
+`:14067-14068`) and must be re-cited; drafted row passes `sources-census.sh validate` (exit 0, 106 rows,
+tier.A 100) with E11 satisfied only by a present-but-empty used-by path.

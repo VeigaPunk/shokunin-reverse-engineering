@@ -19,9 +19,10 @@ cat-file`, `git ls-tree`); no add/commit/stash/checkout/reset/pull/push, no jj m
   on the bytes present now (a third, cut-based extractor and 108−2 structural arithmetic agree).
 - **The registry moved four times during this wave**, and one of those states was **committed**:
   landing commit `66b84027` ("… land the stopped claim's record — … S106, knowledge entry …",
-  `2026-10-25T07:32:25Z`) **contains no `S105` row**, while **12 citations** in
-  `corpus/knowledge/2026-10-23-r34-elf-version-needs.md`, `corpus/lessons/round-34.md`,
-  `corpus/QUALITY.md`, `SCORECARD.md` and `LOG.md` point at S105. The row was restored 30 s after
+  `2026-10-25T07:32:25Z`) **contains no `S105` row**, while **8 lines of that same commit** still
+  reference S105 (2 inside `corpus/SOURCES.md` — the `S103 → S104` trail line and the 2026-10-23
+  search-log entry — plus `corpus/knowledge/2026-10-23-r34-elf-version-needs.md` 1,
+  `corpus/lessons/round-34.md` 3, `SCORECARD.md` 1, `LOG.md` 1). The row was restored 30 s after
   the commit and **that restore is still uncommitted** (` M corpus/SOURCES.md`).
 - Also still true from the frozen tree: `c79bbe7b` names `S106` as the round's only
   `sources_opened_this_round`, but that revision contains **no S106 row**. The citation was
@@ -157,11 +158,13 @@ $ git cat-file -p HEAD:corpus/SOURCES.md | grep -cE '^ {0,3}\|[[:space:]]*S106[[
 
 Why it matters, stated as facts:
 
-- `S105` is cited **12 times** across `corpus/knowledge/2026-10-23-r34-elf-version-needs.md`,
-  `corpus/lessons/round-34.md`, `corpus/QUALITY.md`, `SCORECARD.md`, `LOG.md` and
-  `corpus/SOURCES.md` (`grep -rno 'S105' corpus/ SCORECARD.md LOG.md SKILL.md | wc -l` = 12).
-  At `HEAD` the registry has no row to resolve those citations to — the committed record is
-  internally dangling, exactly in the S105/S100 CHPE-rejection lineage the same commit edits.
+- `S105` is referenced on **8 lines at the landing commit `66b84027`** while the row itself is
+  absent: 2 lines inside `corpus/SOURCES.md` (the `S103 → S104` trail line "S105 is rejected for
+  GNU-specific authority…" and the 2026-10-23 search-log entry), plus
+  `corpus/knowledge/2026-10-23-r34-elf-version-needs.md` 1, `corpus/lessons/round-34.md` 3,
+  `SCORECARD.md` 1, `LOG.md` 1. On the current worktree it is 11 lines (3 in `SOURCES.md`, the row
+  included). So the committed record cites a source it no longer lists — inside the same S105/S100
+  CHPE-rejection lineage the commit edits.
 - The row was **restored 30 s later** (state D) and is **byte-identical to the frozen row**
   (`git cat-file -p c79bbe7b:corpus/SOURCES.md | grep '^| S105' | sha256sum` =
   `grep '^| S105' corpus/SOURCES.md | sha256sum` = `2912dcb9…`), i.e. an accidental
@@ -217,8 +220,11 @@ because commit `66b84027` happened to include it.
   mine: `5abcd365…` (07:28:09Z), `3c79e486…` (07:30:25Z), `77707752…` (07:33:21–07:34:12Z). A
   path-only receipt would have silently blended four different registries, and the *findings* were
   identical across all of them, so findings alone cannot detect the drift.
-- The worktree is still dirty (` M corpus/SOURCES.md`); `HEAD` currently under-reports the registry
-  by one row (S105) and is therefore the version a fresh reader would get.
+- The worktree is still dirty (` M corpus/SOURCES.md`; plus ` M corpus/QUALITY.md`,
+  ` M corpus/lessons/round-34.md`, `?? corpus/knowledge/2026-10-25-r34-pre-freeze-shortcut-replay-gate.md`
+  from parallel seats), so `HEAD` currently under-reports the registry by one row (S105) and is
+  therefore the version a fresh reader would get, while the worktree is a mix of landed and
+  in-flight edits.
 - No blockers: the assigned command ran, both independent counts closed on every state, and every
   number above carries a command, exit and UTC.
 
@@ -235,6 +241,7 @@ no build, lint or bulk test suite run.
 counts 106 data rows and 106 unique ids at `sha256 77707752…` by three independent patterns
 (105/105 on the pre-edit bytes `5abcd365…`), tiers 100 A / 5 B / 1 C, status 102 mined / 4
 rejected; and the stop's own landing commit `66b84027` committed a registry missing `S105` — a row
-cited 12 times, with the byte-identical restore left uncommitted — while the frozen revision
+still referenced on 8 lines of that same commit, with the byte-identical restore left uncommitted —
+while the frozen revision
 `c79bbe7b` cites `S106` as its only opened source before that row exists: two F5-class record
 defects (candidate F6), not capability data, and no score moves.**

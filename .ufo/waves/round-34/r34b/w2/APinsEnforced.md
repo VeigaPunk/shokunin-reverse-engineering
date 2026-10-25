@@ -210,14 +210,14 @@ No score, capability row or claim state is changed by this report; I award none 
 | C | A1 with `--rev c79bbe7b0959132b9873ff3431cf5eb313b58b33` | 2 | 07:29:32Z |
 | D | `python3 -I -B tools/round-34/freeze-integrity.py --root . --round 34 --rev cd75b92e…` | 0 | 07:32:58Z |
 | A2 | A1 with `--rev 66b840274390d0868c913a544947f9eb40a4ffe6` | 0 | 07:33:45Z |
-| P0 | `git clone -q --shared <lane> $S/p1 && git checkout -q cd75b92e…`; A1 argv with `--rev HEAD` | 0 | 07:30:27Z |
+| P0 | `git clone -q --shared <lane> $S/p0 && git checkout -q cd75b92e…`; A1 argv with `--rev HEAD`, output captured to `p0.out` | 0 | 07:35:10Z |
 | P1 | p1: append line to `tools/round-34/replay-gate.py`; `git -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false commit -q -am …`; gate `--rev HEAD` | 1 | 07:32:03Z |
 | P2 | p2 (fresh clone): worktree-only append to `replay-gate.py`; gate `--rev HEAD` | 0 | 07:32:04Z |
 | P3 | p3 (fresh clone): rewrite tip container (forged pin + zeroed `frozen_claims_sha256`), commit; gate `--rev HEAD` | 0 | 07:32:05Z |
 | M | pin-fidelity loop (`git show <rev>:<path>` → sha256, 3 revs × 26 paths) | 0 | 07:28:3x–07:29:0xZ |
 
-Scratch contents (only these were created): `APinsEnforced/p1/`, `p2/`, `p3/` (`--shared` clones),
-`p1.out`, `p2.out`, `p3.out`, `container-at-newtip.out`, `round34-claims-gate.out`.
+Scratch contents (only these were created): `APinsEnforced/p0/`, `p1/`, `p2/`, `p3/` (`--shared` clones),
+`p0.out`, `p1.out`, `p2.out`, `p3.out`, `container-at-newtip.out`, `round34-claims-gate.out`.
 
 ## 6. Evidence pointers
 

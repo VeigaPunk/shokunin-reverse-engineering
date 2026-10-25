@@ -7,8 +7,8 @@ Lane writes: this report only. No lane VCS command, no frozen instrument/claims/
 
 ## Answer in one paragraph
 
-The repair reproduces its own published sweep (the eight registered shortcut readers, the two
-wave-1 classes, 0/8; `structural` 8/8) but it does **not** close the class it claims to close.
+The repair reproduces its own published sweep (the seven registered shortcut readers plus the
+unregistered eighth reader file `label_keyed.py`, the two wave-1 classes, all 0/8; `structural` 8/8) but it does **not** close the class it claims to close.
 A structure-blind reader that never reads `name_off` (`mine/poszip.py`) reaches the target
 **8/8 on all four named seeds and on ten further independent `os.urandom` seeds**, while scoring
 **0/8 on the frozen permuted counter** — the repair lowers the bar by deleting the only transformation (pool permutation)
@@ -111,7 +111,7 @@ that fixture's expected records. It never opens `argv[1]`.
 
 Boundary stated precisely: the `env` handed to the child is `{"PATH", "HOME"}` only, so the seed
 does **not** leak through the environment; it leaks through argv, and only when `--seed` is passed.
-With `os.urandom` the class refuses (all eight reader calls exit 3). Every receipt in this round
+With `os.urandom` the class refuses (all eight reader calls exit 3; receipt `out/sweep/seedreplay-urandom.json`); on the named seeds all eight exit 0. Every receipt in this round
 passes `--seed` explicitly, so under the round's own operating practice this class is live.
 Not tested (unrun): reading `/proc/<ppid>/mem`; `yama/ptrace_scope` is **1** here, which per its
 documented semantics restricts attach to descendants, so I did not pursue the ancestor-memory route.
@@ -169,15 +169,15 @@ The phrase has two defensible readings and the repair fails both:
 | **D1 (stop's gloss):** "meets the target without walking records" | `seedreplay` 8/8 on every explicit seed; `seededtable` 8/8 on every published seed (`poszip` walks rows, so it is excluded here) | **false** whenever the seed is on argv or already published — both true of every receipt in this round |
 | **D2 (capability):** does not recover the name→record association from the file / never reads `name_off` | `poszip` 8/8 on **all** seeds including urandom | **false unconditionally** |
 
-So the answer to the assignment's question is **no**: the eight registered readers plus the two
-wave-1 classes stay at 0/8 and `structural` meets 8/8, but three of my structure-blind classes meet
-8/8 (`poszip` on 4/4 seeds; `seedreplay` on 3/3 explicit seeds; `seededtable` on 6/6 published seeds).
+So the answer to the assignment's question is **no**: the seven registered readers, the eighth
+reader file `label_keyed.py`, and the two wave-1 classes stay at 0/8 and `structural` meets 8/8, but three of my structure-blind classes meet
+8/8 (`poszip` on 14/14 seeds — 4 named + 10 urandom; `seedreplay` on 3/3 explicit seeds; `seededtable` on 6/6 published seeds).
 
 ## 5. The repair as an instrument: defects found in the artifact itself
 
 Line references are to the copied artifact (`counter/mini-counter-fresh.py`, 6221 bytes, sha `5181330d…`).
 
-1. **Permutation deleted.** No `permute()`; the pool is built in record order (`generate`, lines ~78-89). This is the root cause of R-A and the reason the repair is weaker than the frozen surface. A repair that keeps the frozen predicate shape must keep a transform that breaks positional correspondence.
+1. **Permutation deleted.** No `permute()`; the pool is built in record order (`generate`, lines 64-78). This is the root cause of R-A and the reason the repair is weaker than the frozen surface. A repair that keeps the frozen predicate shape must keep a transform that breaks positional correspondence.
 2. **`--root` is dead.** The parser declares it (`parser.add_argument("--root", default=".")`), but `args.root` is referenced **zero** times; the counter scores only `--control-reader`. A gate that passes `--root` gets no validation that the lane/root is the expected one.
 3. **No `--selftest`, no red arm.** The frozen counter has `--selftest` (structural positive control) and the gate supplies the red/refused arm from `gate-config-naive.json`. The fresh counter has neither, so its own "8/8 structural" number exists only as a one-off report line, not as an assertion the instrument can re-run.
 4. **Seed published in output.** `score()` emits `"seed": str(seed)`. Combined with the practice of passing `--seed` on argv (both in the report's sweep and in the round's receipts), the "unpublished expected" premise is contradicted by the instrument's own I/O.
@@ -205,8 +205,8 @@ transform) and replays a table. The identity-keyed classes are correctly defeate
 wave falsifies the stop's measurement; my findings falsify only the *proposed repair*.
 
 Record-defect spot checks (bounded, read-only):
-- F1's repair container exists: `instruments.json` carries the 26-pin map, and every digest in it is
-  byte-identical to `claims[0].pins` (compared by reading both files). `freeze-integrity.py` itself
+- F1's repair container exists: `instruments.json` carries the 26-pin map, and all 26 digests are
+  byte-identical to `claims[0].pins` (verified programmatically: `inst==claims` is true). `freeze-integrity.py` itself
   was **not run** here (unrun) — it needs the lane VCS and is another seat's surface.
 - F2 is confirmed as disclosed: `predicate-reconciliation.json` records A/B/C as three distinct
   sentences with distinct hashes, and the governing sentence is A.
@@ -271,7 +271,7 @@ fresh-counter config.
 
 ## VERDICT
 
-`REPAIR_IS_NEW_INSTRUMENT_POST_FREEZE_NOT_A_CORRECTION — fresh sweep reproduces (8 registered +
+`REPAIR_IS_NEW_INSTRUMENT_POST_FREEZE_NOT_A_CORRECTION — fresh sweep reproduces (7 registered + label_keyed +
 nameset + pathkey = 0/8; structural 8/8 x14), but structure-blind classes still meet target:
 poszip 8/8 on 14/14 seeds incl. 10 independent urandom seeds (frozen surface 0/8 x3), seedreplay
 8/8 on 3/3 explicit seeds / 0 on urandom, published-seed table 8/8 on 6/6 published seeds / 0 on
