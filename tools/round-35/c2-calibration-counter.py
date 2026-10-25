@@ -162,8 +162,8 @@ def selftest(args):
         os.makedirs(os.path.join(d, "corpus/knowledge"), exist_ok=True)
         os.makedirs(os.path.join(d, ".ufo/waves/round-35/assimilation"), exist_ok=True)
         os.makedirs(os.path.join(d, ".ufo/waves/round-35"), exist_ok=True)
-        os.makedirs(os.path.join(d, "plans"), exist_ok=True)
-        with open(os.path.join(d, "plans/round-35-freeze.json"), "w") as f:
+        os.makedirs(os.path.join(d, ".ufo/waves/round-35"), exist_ok=True)
+        with open(os.path.join(d, ".ufo/waves/round-35/claims-canonical.json"), "w") as f:
             json.dump({"round": 35, "predicate": PREDICATE, "claims": ["C1", "C2"]}, f)
         with open(os.path.join(d, "corpus/SOURCES.md"), "w") as f:
             f.write("| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n")
@@ -192,6 +192,7 @@ def selftest(args):
         subprocess.run(["git", "add", "-A"], cwd=d, check=True)
         subprocess.run(["git", "commit", "-qm", "green"], cwd=d, check=True)
         base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=d, text=True).strip()
+        freeze = base
         # second commit: a post-base corpus/SOURCES.md change, so D-1's
         # first-change ordering is exercised (census commit precedes it)
         with open(os.path.join(d, "corpus/SOURCES.md"), "a") as f:
@@ -200,7 +201,7 @@ def selftest(args):
         subprocess.run(["git", "commit", "-qm", "green2-sources-change"], cwd=d, check=True)
         # green tip: fix first commit time ordering
         green = subprocess.run([sys.executable, "-I", "-B", __file__,
-                                "--root", d, "--base", base, "--rev", "HEAD", "--freeze", base],
+                                "--root", d, "--base", base, "--rev", "HEAD", "--freeze", freeze],
                                capture_output=True, text=True)
         if green.returncode != 0:
             return "green-failed", green.stdout + green.stderr
@@ -211,7 +212,7 @@ def selftest(args):
         subprocess.run(["git", "add", "-A"], cwd=d, check=True)
         subprocess.run(["git", "commit", "-qm", "red"], cwd=d, check=True)
         red = subprocess.run([sys.executable, "-I", "-B", __file__,
-                              "--root", d, "--base", base, "--rev", "HEAD", "--freeze", base],
+                              "--root", d, "--base", base, "--rev", "HEAD", "--freeze", freeze],
                              capture_output=True, text=True)
         if red.returncode == 0:
             return "red-accepted", red.stdout
@@ -237,7 +238,7 @@ def main():
         ap.print_usage(file=sys.stderr)
         sys.exit(2)
 
-    claims = show(args.root, args.freeze, "plans/round-35-freeze.json")
+    claims = show(args.root, args.freeze, ".ufo/waves/round-35/claims-canonical.json")
     if claims is None:
         print("C2: claims file absent at freeze revision", file=sys.stderr)
         sys.exit(2)
