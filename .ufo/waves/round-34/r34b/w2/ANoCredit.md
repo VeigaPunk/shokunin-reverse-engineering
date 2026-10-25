@@ -225,10 +225,9 @@ Receipts: `/fast/scratch/hyaku/kaidoku-r34b/w2/ANoCredit/nocr-receipt.json`,
 - The round was landing while I measured: `66b84027` arrived 07:32:25Z, `5a0435ff` 07:35:10Z, and three more
   commits through `1675a8d8` 07:39:13Z. Any later commit can change the answer; §7 is the latest verified tip,
   and §2/§3 must be re-run against whatever tip the round is finally closed at.
-- F1 and F1b are real in committed bytes at both tips; the working tree already contains both repairs (S105
-  restored → 106 rows; QUALITY 73 restored ahead of 74). A landing that includes them closes both. A landing
-  that omits either leaves a false census line, a destroyed rejection row, or a deleted criterion that four
-  committed files still cite.
+- F1 and F1b were real in committed bytes at `66b84027` and `5a0435ff`; both are closed from `417a8211`
+  onward (§7). If the round keeps landing, re-check for the one failure class both shared: an append anchored on
+  the previous row (S105, QUALITY 73) rather than inserted beside it.
 - I did not execute any counter, reader, carrier or fixture (out of scope and forbidden here), so I did not
   verify the claim-stop's `matched=8` / `met_target=true` observation, the frozen-clause verdict, or the five
   record defects' substance; those belong to the other wave-2 seats. I did not run builds, linters or suites.
@@ -256,6 +255,11 @@ anchor-replacement…"), `b62b4767` ("correct the SCORECARD criteria count to QU
 | `PROVINCE.md` | `d453a29d…`, unchanged since base |
 | `corpus` tree | `2c4467364100bce3a369c923de9dc4b8df8a7652` |
 
+One more commit, `2eafca42` (observed 07:40:37Z), adds only post-filing seal records and late reports:
+`git diff --numstat 1675a8d8..2eafca42 -- SCORECARD.md LOG.md SKILL.md PROVINCE.md corpus/` is empty (exit 0),
+and the tallies and invariant hashes above are unchanged at that tip (106 rows, `S105` = 1, QUALITY 73 = 1,
+`42c2f7b8…`, `346c0208…`).
+
 So **F1 and F1b are closed in the final bytes**: S105 is restored verbatim (106 rows, `rejected 4`, `mined 102`)
 and QUALITY 73 is back. Residual, all low: (i) "all-A tier unchanged" is numerically A 99→100
 (`f432c8e3` → tip) even though the row count now matches; (ii) `SKILL.md` (2 hits) and the knowledge entry
@@ -268,11 +272,15 @@ both invariant hashes equal the base at the tip.
 No install or update: the audit used only `git` (read-only subcommands), `grep`/`sed`, `date` and `sha256sum`
 already on the host. No pacman/uv/npx/pip transaction was attempted; no host service was touched.
 
-**VERDICT: no capability row, no owned-axis score change, no score deltas, and no credit-bearing coverage-map or
-knowledge-index row for R34-C2 in the committed bytes at `cd75b92e`, `66b84027` or `5a0435ff` — the no-credit
-claim holds at every tip; but the record does not: the landings overclaim their own source census
-(`LOG.md:3100` "rows 105→106" vs 105 committed rows, S105 destroyed, `rejected 4→3`, and `5a0435ff`'s M34-12
-row asserting a restore its tree lacks) and `5a0435ff` deletes QUALITY 73 while four committed files still cite
-"QUALITY 68-73"; the round base is also ambiguous between `ec3125ad` (declared) and `f432c8e3` (r34b start). The
-docs are not settled until the working-tree repairs (S105 restore, QUALITY 73 restore) land and the base used
-for any "unchanged" statement is named.**
+**VERDICT: the no-credit claim HOLDS at every committed tip I measured — `cd75b92e` (stop), `66b84027`,
+`5a0435ff`, `1675a8d8` (final): no capability row (`## Capabilities` sha256 `42c2f7b8…` identical to base), no
+owned-axis score change (rows 23-25 sha256 `346c0208…` identical to base), no score cell rewritten, and no
+credit-bearing coverage-map or knowledge-index row for R34-C2 (the two rows added after the stop explicitly say
+"held as a tool, not as capability" / "capability denied"). Two committed record defects existed at the
+intermediate landings — `LOG.md:3100` "rows 105→106" while `corpus/SOURCES.md` had 105 rows with S105
+overwritten (`rejected 4→3`), and `5a0435ff` deleting QUALITY 73 while four committed files still cited
+"QUALITY 68-73" — and both are closed at `417a8211`/`b62b4767` (106 rows with S105 restored, QUALITY 70-74
+present, SCORECARD corrected to 68-74). Residual low items: "all-A tier unchanged" is numerically A 99→100;
+`SKILL.md` (×2) and the r34b knowledge entry still cite `QUALITY 68-73`, omitting row 74; and the round base is
+ambiguous between `ec3125ad` (declared) and `f432c8e3` (r34b start), so any "unchanged" statement must name
+its tip.**
