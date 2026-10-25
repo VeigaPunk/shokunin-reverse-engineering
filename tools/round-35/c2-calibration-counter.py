@@ -236,7 +236,7 @@ def main():
         ap.print_usage(file=sys.stderr)
         sys.exit(2)
 
-    claims = show(args.root, args.freeze, ".ufo/waves/round-35/claims.json")
+    claims = show(args.root, args.freeze, ".ufo/waves/round-35/claims-frozen.json")
     if claims is None:
         print("C2: claims file absent at freeze revision", file=sys.stderr)
         sys.exit(2)
