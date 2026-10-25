@@ -2,7 +2,7 @@
 
 author: kaidoku-shokunin (round 34, run-6 re-dispatch, attempt 1)
 status: instrument retained; **capability denied** — the claim stopped (`.ufo/waves/round-34/r34b/claim-stop.json`, landed `cd75b92e`)
-sources: S106 (binutils `readelf.c`, version-needs decode order); corpus/QUALITY.md rows 67-73
+sources: S106 (binutils `readelf.c`, version-needs decode order); corpus/QUALITY.md rows 67-74
 revisions: base `ec3125ad3d130d92f888a4128dfaa2982f36fff7`; freeze `c79bbe7b0959132b9873ff3431cf5eb313b58b33`; stop `cd75b92e583735729546b0ea3b250f2df6d0652a`
 
 ## What was built
