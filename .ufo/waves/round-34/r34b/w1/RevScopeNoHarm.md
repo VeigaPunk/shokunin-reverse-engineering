@@ -227,7 +227,28 @@ the frozen tree.
 4. **jj colocation.** I deliberately ran no `jj` command (a jj read can snapshot the working
    copy, i.e. mutate); all VCS evidence is `git` read-only against commits.
 
-## 7. Tooling record
+## 7. Post-audit cross-checks (2026-10-25T07:22:19Z artifacts, verified 07:23Z)
+
+While I was writing, two new wave artefacts appeared under the allowed prefix
+(`.ufo/waves/round-34/r34b/instruments.json`, `…/predicate-reconciliation.json`, both
+04:22:19 -03:00). They do not change the scope verdict — both are inside
+`.ufo/waves/round-34/**` — and I verified them against the frozen bytes:
+
+- `instruments.json.frozen_claims_sha256` == sha256(`claims.json`) ==
+  `de3afbfb61d70fee177392b256719bb665ad07d999303999381442120facd828` → **match**;
+- `instruments.json.instruments` == `claims.json.claims[0].pins` as dicts (26 entries) → **equal**;
+  so the independent pin manifest re-binds exactly the byte set I hashed (§3), not a superset.
+- `predicate-reconciliation.json.finding == "PREDICATE_IDENTITY_FALSE"` — independent
+  corroboration of **F1**, reached from the same frozen bytes:
+  `A_claims_and_configs.text == claims.predicate` (sha256 `7c6c17f0…` over the text) and
+  `B_counter_and_receipts` = counter constant + receipts. Its chosen route is *disclose, do not
+  repair* (`repair_route: QUALITY 68; no post-freeze patch`), which matches my reading of the
+  kill rule: the frozen `predicate_identity` is a miss to be reported, not re-worded.
+- Its third site `C_mini_counter` is the **separate** predicate namespace `P34-mini-records`
+  (`mini-counter.py:23`), so it is not a third breach of the `P34-shortcut-replay` identity —
+  only A vs B are the same label with different sentences.
+
+## 8. Tooling record
 
 No tool installed, upgraded or removed (no pacman, no `uv tool`, no `npx`, no `~/.local/bin`
 change). Tools used: `git` (read-only subcommands), `python3` (`/usr/bin/python3`, static
@@ -238,3 +259,5 @@ to `tools/round-34/**` + `.ufo/waves/round-34/**`; docs and corpus untouched; 26
 committed blobs; **F1 (predicate_identity false: sentence A ≠ sentence B) is a frozen claim-level
 miss that must be reported, not edited**; F2 (unpinned receipts) and F3 (before-receipt revision)
 are evidence gaps I closed or quantified; F4 is inert-instrument hygiene, not a dropped class.
+F1 is independently corroborated by `predicate-reconciliation.json` (§7), which discloses rather
+than repairs. Scope conclusion is unchanged at 2026-10-25T07:24Z.

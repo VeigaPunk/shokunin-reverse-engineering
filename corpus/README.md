@@ -85,6 +85,8 @@ A row is written when its file exists, never before.
 | ARM64X hybrid PE native-view import (round 32) | `2026-10-23-r32-arm64x-hybrid-pe` | bounded Core: twelve synthetic exported-leaf DLLs, native-view ordered segments and procedure counts; published hybrids, EC recovery, internal functions and runtime remain Frontier |
 | CHPE structural profile/source boundary (round 33) | `2026-10-23-r33-chpe-structural-profile` | sourced detail on existing hybrid ground; original independent carrier claim stopped by a provider safety hold, no replacement measurement, no coverage widening |
 
+| Instrument admission (shortcut replay) | `2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop` | held as a tool, not as capability — a committed gate refuses a registered target-met shortcut and clears an identity-defeating counter; the round's own green surface was met 8/8 by five unregistered structure-blind classes, so no capability or score is claimed |
+
 ## Knowledge
 | entry | topic | source | verified-at |
 |---|---|---|---|
@@ -187,6 +189,7 @@ A row is written when its file exists, never before.
 | `2026-10-23-r32-arm64x-hybrid-pe` | ARM64X synthetic hybrid PE native-view import/overview; raw machine vs CHPE classification and native/EC count distinction | S099, S098; original envelopes and producing records in `corpus/evidence/round-32/c1/` | 2026-10-23 |
 | `2026-10-23-r33-chpe-structural-profile` | CHPE source field decoding versus explicit conservative local profile; original claim stopped, isolated selftests are not production evidence | S101, S102; pinned LLVM/PE sources and independent instrument code; no held fixture data | 2026-10-23 |
 | `2026-10-23-r34-elf-version-needs` | GNU version-needs layout/offsets, raw index/flags/hash decoding and conservative section-derived profile; no runtime resolution or authenticity claim | S103, S104; independent public-carrier expected-author record and revision-bound counter described in SCORECARD/round-34 lesson | 2026-10-23 |
+| `2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop` | pre-freeze shortcut-replay gate: three verdicts and the clause each depends on, seven registered classes and what each memorises, the green surface's single-axis perturbation, five unregistered classes at 8/8, the fresh-content repair route, nine disclosed limits; capability **denied** by the round's own stop | S106; `tools/round-34/replay-gate.py`; receipts `.ufo/waves/round-34/r34b/{before,after,controls}/`; stop `cd75b92e` | 2026-10-25 |
 
 ## Lessons
 | entry | round | gist |
@@ -213,6 +216,7 @@ A row is written when its file exists, never before.
 | `round-31` | 31 | leaves REA's Rust reader for its SQLite reader: database-scope schema on 12 published files against an independent reader, 23 code-predicted refusal/edge outcomes; full-envelope committed checks (M30-3 repaired), Core-placement check, freeze-integrity and cited-runs gates; mistakes M31-1..7 (single-spelling novelty grep, post-freeze edits unseen, write-mode target lines, uncommitted PASS citations, a typed size, a path-dependent selftest, a seat git command in the fleet repo) |
 | `round-32` | 32 | inherited hybrid-PE coverage freeze rechecked; C2 calibration honest stop because negative prose and word bags pass its frozen counter; r31 routed corrections; scoped Core and retained Frontier boundaries |
 | `round-33` | 33 | repair-first timestamp/disk/selftest fixes, source-backed CHPE profile boundaries, and honest stop on a provider-filtered input-author item; all dependent outputs quarantined |
+| `round-34` (run-6 re-dispatch) | 34 | second claim after the inherited C1 stop: a pre-freeze shortcut-replay gate frozen at `c79bbe7b`, six clauses met, then stopped because five unregistered structure-blind classes reach the green 8/8; predicate-identity, pin-enforcement, class-drop and label-collision defects disclosed; S106 admitted |
 
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).

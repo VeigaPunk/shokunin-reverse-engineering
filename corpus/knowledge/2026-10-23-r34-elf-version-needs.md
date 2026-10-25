@@ -45,3 +45,8 @@ A pass of the counter means the frozen finite set matched the independent record
 ## Reject and follow-up boundary
 
 S105, the opened System V gABI draft, is rejected as authority for these GNU-specific structures: the four fetched chapters do not name Verneed/Vernaux or `.gnu.version_r` (`corpus/lessons/round-34.md`, Gate). It remains useful generic ELF material, not an inferred GNU extension specification. The held round-33 builder and its outputs are not inputs to this entry, its parser or its counter.
+
+## Pointer appended in round 34 (run-6 re-dispatch) — S106 narrows the `sh_link` wording
+
+The row at line 15 says to use section `sh_link` to select the version-needs string table. S106 (binutils `readelf.c` at tag `binutils-2_47`, sha256 `7e81eedf19b2b93663bb3f598f74b54c107bd699f551667eb1b3d0e33eddeeff`) shows the canonical reader resolves both `vn_file` and `vna_name` through the **dynamic** string table (`DT_STRTAB`/`DT_STRSZ`, `:467-470`; `.dynstr` fallbacks `:8854-8869`), and prints `sh_link` only as a `Link:` label (`:14047-14048`). The two routes coincide when the linked table is `.dynstr`; they are not the same rule. This entry is not rewritten: R34-C1 stays stopped and was not re-scored. Ground: S106; evidence `.ufo/waves/round-34/r34b/w1/ScribeSourcesRow.md` and `ScribeKnowledgeEntry.md` F3.
+

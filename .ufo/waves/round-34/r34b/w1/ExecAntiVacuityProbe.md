@@ -220,9 +220,10 @@ python3 -I -B tools/round-34/replay-gate.py --root . --config $S/configs/{struct
 python3 -I -B tools/round-34/replay-gate.py --selftest                            # exit 0, 0 failures, 3/3 mutants killed
 ```
 
-Artifacts: `$S/readers/` (5 probe readers + 2 forged counters + `mini-counter-target4.py` scratch copy),
-`$S/configs/` (19 configs), `$S/receipts/` (19 gate receipts), `$S/logs/` (24 files),
-`$S/root-copy/` (tools copy). Probe reader hashes: `value_low16.py`
+Artifacts: `$S/readers/` (5 probe readers + 3 forged counters + `mini-counter-target4.py` scratch copy,
+9 files), `$S/configs/` (18 configs), `$S/receipts/` (19 gate receipts: 18 configs plus the
+missing-config run), `$S/logs/` (18 files: 12 gate/stdout transcripts, 6 counter scores),
+`$S/root-copy/` (tools copy, 1 probe reader). Probe reader hashes: `value_low16.py`
 `87a579677eae5c4f50febaa053763884b346692b8e1e149e7f15f07f5b1400d8`, `name_cap20.py`
 `7e4f8819f2bfc3ebe5952b226bdb4128eed2489b03bcffb080d91638fe4c4ac6`.
 
