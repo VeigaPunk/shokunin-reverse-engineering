@@ -6,12 +6,16 @@ that SCORECARD/LOG/SKILL/corpus are still unchanged from the round base. Read-on
 carrier or fixture was executed; no tool was installed (nothing to install, no pacman/uv/npx transaction).
 
 **Headline.** No capability row, no owned-axis score change, and no credit-bearing coverage/index row exists in
-the committed bytes at the stop commit `cd75b92e` or at the post-stop docs landing `66b84027`. One committed
-record **does** overclaim against its own bytes: the landing's LOG says the source census went `105→106` while
-the committed `corpus/SOURCES.md` at that same revision has **105** rows and the rejected row **S105 is gone**
-(replaced by S106) — i.e. an append silently destroyed a rejection row (`rejected 4→3`) and the LOG reports the
-opposite direction. That is a record defect, not capability/score credit. It is being repaired in the working
-tree right now (uncommitted M34-12 + QUALITY 74, S105 restored).
+the committed bytes at the stop commit `cd75b92e` or at either post-stop docs landing (`66b84027`,
+`5a0435ff`). Two committed record defects **do** contradict their own bytes:
+(a) the landing's LOG says the source census went `105→106` while the committed `corpus/SOURCES.md` still has
+**105** rows and the rejected row **S105 is gone** (replaced by S106, `rejected 4→3`), and `5a0435ff`'s message
+and its committed M34-12 row assert "S105 restored verbatim … end recount 106 rows" although `5a0435ff`'s
+`corpus/SOURCES.md` blob is byte-identical to `66b84027`'s and still 105 rows; and
+(b) `5a0435ff` deletes `QUALITY` row **73** (the receipt-binding criterion the round's own M34-11 routes to)
+while inserting row 74, leaving committed rows 68–72,74.
+Neither is capability/score credit. Both are being repaired in the working tree right now (uncommitted: S105
+restored → 106 rows, QUALITY 73 restored).
 
 The lane moved while I verified: my opening commands (before 07:32:25Z) saw `cd75b92e` as `HEAD` with the
 corpus drafts already dirty; my first `HEAD` read at **07:32:27Z** already returned `66b84027`, and the landing
@@ -27,6 +31,7 @@ All statements below name their revision and observation UTC.
 | r34b freeze | `c79bbe7b0959132b9873ff3431cf5eb313b58b33` | instruments only; no guard file |
 | r34b stop | `cd75b92e583735729546b0ea3b250f2df6d0652a` | `claim-stop.json` blob `544209aa32f6f38e3152bdf16c8e563621538a75` |
 | docs landing (arrived during this wave) | `66b840274390d0868c913a544947f9eb40a4ffe6` | SCORECARD/LOG/SKILL/QUALITY/SOURCES/README/lessons/knowledge; same `claim-stop.json` blob |
+| repair landing (arrived during this wave) | `5a0435ffb9a8921206144e0b61fe3c12a89b59c2` | binds receipts + `claim-stop-addendum.json`, adds `w2` reports, edits `corpus/QUALITY.md` (9+/1−) and `corpus/lessons/round-34.md` (+1); SCORECARD/LOG/SOURCES unchanged from `66b84027` |
 
 `claims.json` declares both `base_revision=ec3125ad…` and `inherited_tip=f432c8e3…`; the two are not the same
 revision, and the assignment's phrase "the round base" is only unambiguous if it means the inherited tip for
@@ -54,6 +59,12 @@ Tree hashes: `corpus` = `7eaf60a4bc87c96b36fe93da7a00151713a5b94e` (base) → `a
 and `8afe0bd78039bbd85a6d2e9035ef9716edbd0856` at both `cd75b92e` and `66b84027` — the landing changed no
 instrument. Full-width hashes in `/fast/scratch/hyaku/kaidoku-r34b/w2/ANoCredit/nocr-receipt-v2.json` and
 `nocr-receipt-v3.json`.
+
+Second landing `5a0435ff` (observed 07:37:4xZ): `corpus` tree `6885404f328a8f06e1081c33bd634cd68562d855`;
+`corpus/QUALITY.md` `426584ca47…`, `corpus/lessons/round-34.md` `37e9ae5bef…` (this is where the in-flight
+working-tree lessons blob landed); `corpus/SOURCES.md` **still** `a7ee80725a…`, `SCORECARD.md` still
+`8b8f9c33ac…`, `LOG.md` still `74f1982286…`, `SKILL.md` still `c2e76469d0…`, `PROVINCE.md` still `d453a29dde…`,
+`corpus/README.md` still `59782a47f2…`, r34b knowledge entry still `4673776d0c…`.
 
 ## 3. Clause-by-clause
 
@@ -100,7 +111,10 @@ records coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10`, verdic
   `8897a67f`, `54a87a51`, `abbd7604`, `f432c8e3`; the `README 2 1` is the coverage-row append quoted above.
   So the "unchanged from the round base" invariant is false under the literal `base_revision` and true only
   under `inherited_tip`.
-- After the landing `66b84027` (post-stop), all four categories changed again; §4/§5 evaluate those bytes.
+- After the landing `66b84027` (post-stop), all four categories changed again; `5a0435ff` changed only
+  `corpus/QUALITY.md` (+9/−1) and `corpus/lessons/round-34.md` (+1) on top of it. §4/§5 evaluate those bytes.
+  The SCORECARD/LOG/SKILL blobs at `5a0435ff` are still exactly `66b84027`'s, so §3.1–§3.2 hold unchanged at the
+  newest tip.
 
 ## 4. Findings by severity
 
@@ -115,6 +129,25 @@ its anchor and overwrote the rejected gABI row; the count stayed 105 and the cen
 worktree `rows=106 A100/B5/C1 mined=102 rejected=4`). The repair is already drafted but **uncommitted**
 (`M34-12`, `QUALITY 74`, S105 restored verbatim ahead of S106), so the committed landing still carries the
 false `105→106` and the destroyed rejection row.
+
+At the next tip `5a0435ff` (commit message: "… the M34-12 row swap …") the committed `corpus/lessons/round-34.md`
+row M34-12 says "S105 restored verbatim from the base blob `f432c8e3:corpus/SOURCES.md` ahead of S106; end
+recount 106 rows, A 100/B 5/C 1, mined 102, rejected 4" — but `5a0435ff:corpus/SOURCES.md` is byte-identical
+to `66b84027` (`a7ee80725a…`) and still tallies `rows=105 S105=0 S106=1 A99/B5/C1 mined=102 rejected=3`
+(07:37:4xZ). So the record now asserts a repair that the same commit's tree does not contain; the restore
+exists only in the working tree (`rows=106 S105=1 mined=102 rejected=4` at 07:37:44Z). `LOG.md:3100` was not
+corrected at either tip.
+
+**F1b — The repair landing deletes QUALITY row 73 and leaves four committed files pointing at it (High, record).**
+`5a0435ff`'s `corpus/QUALITY.md` diff is one deletion and one insertion: `-| 73 …` / `+| 74 …`. The committed
+table therefore reads 68, 69, 70, 71, 72, 74 — the receipt-binding criterion "A receipt states what produced it:
+exact argv, reader digest, the commit the bytes were read at, and a UTC instant …" is gone
+(`git show 5a0435ff:corpus/QUALITY.md | grep -c '^| 73 '` = 0; `grep -c "A receipt states what produced it"` = 0;
+07:37:4xZ). Four committed files still cite the range: `SKILL.md` "QUALITY 68-73" (2 hits), the r34b knowledge
+entry "corpus/QUALITY.md rows 67-73", `SCORECARD.md` "QUALITY 68-73", `LOG.md` "QUALITY 68-73". The working tree
+restores 73 ahead of 74 (uncommitted at 07:37:44Z), so the tip again describes a state its bytes do not have.
+This is the same anchor-replacement class as M34-12 — committed by the very edit that inserts QUALITY 74, the
+criterion that names that class.
 
 **F2 — Base identity is ambiguous in the claim and in the round's own prose (Medium).**
 `claims.json` carries `base_revision=ec3125ad…` and `inherited_tip=f432c8e3…`; the SCORECARD header and the
@@ -176,18 +209,25 @@ items the stop record lists in `not_claimed` (`capability`, `coverage`, `depth s
 | 07:33:41Z | `sed -n 20,26p` of `ec3125ad:SCORECARD.md` and `66b84027:SCORECARD.md` | 0 | owned-axis rows identical (True) |
 | 07:33:5xZ | section hash of `## Capabilities` at both revs | 0 | `42c2f7b8…` twice, 10 rows |
 | 07:34:30Z | per-revision `grep -c '^| S[0-9]'`, `| A |`, `| mined |`, `| rejected |` on `corpus/SOURCES.md` | 0 | F1 tallies |
-| 07:34:45Z | `git log --oneline -2`, `git status --porcelain=v1`, `git hash-object` × 9 | 0 | final snapshot; HEAD `66b84027` |
+| 07:34:45Z | `git log --oneline -2`, `git status --porcelain=v1`, `git hash-object` × 9 | 0 | final snapshot at that moment; HEAD `66b84027` |
+| 07:37:26Z | `git log --oneline -2`, `git status --porcelain=v1` | 0 | new tip `5a0435ff…`; working tree M LOG/SCORECARD/QUALITY/SOURCES/lessons/knowledge |
+| 07:37:4xZ | `git show --stat 5a0435ff`, `git diff --numstat 66b84027..5a0435ff -- SCORECARD.md LOG.md SKILL.md PROVINCE.md corpus/` | 0 | only `corpus/QUALITY.md 9 1` and `corpus/lessons/round-34.md 1 0` |
+| 07:37:4xZ | `git show 5a0435ff:corpus/SOURCES.md` tallies (`^| S[0-9]`, `^| S105 `, `^| S106 `, tier/status) | 0 | rows 105, S105 0, S106 1, A99/B5/C1, mined 102, rejected 3 |
+| 07:37:4xZ | `git show 5a0435ff:corpus/QUALITY.md \| grep -c '^| 73 '` | 0 | 0 (worktree 1) → F1b |
+| 07:37:4xZ | `git grep -c 'QUALITY 68-73'` / `'rows 67-73'` at `5a0435ff` | 0 | SKILL 2, knowledge 1, SCORECARD 1, LOG 1 |
 
 Receipts: `/fast/scratch/hyaku/kaidoku-r34b/w2/ANoCredit/nocr-receipt.json`,
 `nocr-receipt-v2.json`, `nocr-receipt-v3.json`, `nocr-receipt-v4.json`.
 
 ## 6. Residual risk and verification gaps
 
-- The round was landing while I measured. `66b84027` arrived at 07:32:25Z; three corpus files were still being
-  edited at 07:34:45Z. Any later commit can change the answer; re-run §2/§3 against the final tip, not this one.
-- F1 is real in committed bytes now but is already being repaired in the working tree; a landing that includes
-  M34-12/QUALITY 74 **and** the S105 restore closes it. A landing that omits them leaves a false census line
-  and a destroyed rejection row in the record.
+- The round was landing while I measured. `66b84027` arrived at 07:32:25Z and `5a0435ff` at 07:35:10Z; six
+  guard/corpus files were still dirty at 07:37:44Z (LOG, SCORECARD, QUALITY, SOURCES, lessons, r34b knowledge).
+  Any later commit can change the answer; re-run §2/§3 against the final tip, not this one.
+- F1 and F1b are real in committed bytes at both tips; the working tree already contains both repairs (S105
+  restored → 106 rows; QUALITY 73 restored ahead of 74). A landing that includes them closes both. A landing
+  that omits either leaves a false census line, a destroyed rejection row, or a deleted criterion that four
+  committed files still cite.
 - I did not execute any counter, reader, carrier or fixture (out of scope and forbidden here), so I did not
   verify the claim-stop's `matched=8` / `met_target=true` observation, the frozen-clause verdict, or the five
   record defects' substance; those belong to the other wave-2 seats. I did not run builds, linters or suites.
@@ -203,8 +243,10 @@ No install or update: the audit used only `git` (read-only subcommands), `grep`/
 already on the host. No pacman/uv/npx/pip transaction was attempted; no host service was touched.
 
 **VERDICT: no capability row, no owned-axis score change, no score deltas, and no credit-bearing coverage-map or
-knowledge-index row for R34-C2 in the committed bytes at `cd75b92e` or `66b84027` — the no-credit claim holds;
-but the landing commit overclaims its own source census (`LOG.md:3100` "rows 105→106" vs 105 committed rows
-with S105 destroyed, `rejected 4→3`) and the round base is ambiguous between `ec3125ad` (declared) and
-`f432c8e3` (r34b start), so the docs are not settled until F1 is landed from the working-tree repair and the
-base used for any "unchanged" statement is named.**
+knowledge-index row for R34-C2 in the committed bytes at `cd75b92e`, `66b84027` or `5a0435ff` — the no-credit
+claim holds at every tip; but the record does not: the landings overclaim their own source census
+(`LOG.md:3100` "rows 105→106" vs 105 committed rows, S105 destroyed, `rejected 4→3`, and `5a0435ff`'s M34-12
+row asserting a restore its tree lacks) and `5a0435ff` deletes QUALITY 73 while four committed files still cite
+"QUALITY 68-73"; the round base is also ambiguous between `ec3125ad` (declared) and `f432c8e3` (r34b start). The
+docs are not settled until the working-tree repairs (S105 restore, QUALITY 73 restore) land and the base used
+for any "unchanged" statement is named.**

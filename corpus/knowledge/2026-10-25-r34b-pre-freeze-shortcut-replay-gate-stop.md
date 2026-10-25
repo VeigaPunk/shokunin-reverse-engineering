@@ -7,7 +7,7 @@ revisions: base `ec3125ad3d130d92f888a4128dfaa2982f36fff7`; freeze `c79bbe7b0959
 
 ## What was built
 
-`tools/round-34/replay-gate.py` makes QUALITY 67 executable. Given a config it
+`tools/round-34/replay-gate.py` was built to make QUALITY 67 executable. It does not discharge that criterion on its own: the round's own stop shows that a registered-class set can hold while the surface is still shape-recoverable. Given a config it
 
 1. runs a **registered structural reader** (the positive control) through the counter under test;
 2. runs each **registered shortcut class** through the same counter, with the same predicate;
@@ -21,7 +21,7 @@ revisions: base `ec3125ad3d130d92f888a4128dfaa2982f36fff7`; freeze `c79bbe7b0959
 
 `tools/round-34/c2-shortcut-gate-counter.py` runs the gate's isolated self-test, the red case and the green case in one command and reports six clauses: `gate_present`, `selftest_clean`, `mutants_killed`, `red_refused`, `green_clean`, `green_positive_meets_target`.
 
-The demonstration surface is deliberately synthetic: eight 512-byte `MREC` record-chain fixtures (magic, `u16 version`, `u16 count`, `u32 records_off`, `u32 names_off`, 8-byte records, NUL-terminated ASCII name pool), `expected.json` from the writer's spec, and eight readers. The **red** config uses a shape-only counter that scores readers on the fixture's own path; the **green** config permutes each fixture's name pool per run and passes only opaque temporary paths.
+The demonstration surface is deliberately synthetic: eight 512-byte `MREC` record-chain fixtures (magic, `u16 version`, `u16 count`, `u32 records_off`, `u32 names_off`, 8-byte records, NUL-terminated ASCII name pool), `expected.json` from the writer's spec, and nine reader files (seven registered classes, the structural positive control, one inert pin). The **red** config uses a shape-only counter that scores readers on the fixture's own path; the **green** config permutes each fixture's name pool per run and passes only opaque temporary paths.
 
 ## Measured
 

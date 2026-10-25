@@ -12,14 +12,14 @@ resolved here).
 
 ## 0. Observation cutoff, and why this file has two states
 
-- **Final cutoff HEAD:** `5a0435ffb9a8921206144e0b61fe3c12a89b59c2`
-  (`2026-10-25T07:35:33Z`), parent `66b84027`. Everything asserted as landed below is at
-  `5a0435ff` unless it names another revision.
-- **The lane moved twice during this seat.** My first pass observed HEAD `66b84027`; two
-  findings I recorded there (an asserted-but-absent freeze-integrity receipt, and a
-  three-vs-four-seed undercount in the stop record) were **fixed by `5a0435ff`** before this
-  report was finished. Both states are recorded: the finding, then its resolution, with the fix
-  pointer. I have not deleted my own findings to make the record look cleaner.
+- **Final cutoff HEAD:** `417a8211` (`2026-10-25T07:38:22Z`), parents `5a0435ff` ← `66b84027`.
+  Everything asserted as landed below is at `417a8211` unless it names another revision.
+- **The lane moved three times during this seat** (`66b84027` → `5a0435ff` → `417a8211`). My
+  first pass observed `66b84027`; the freeze-integrity receipt I found missing and the
+  three-vs-four-seed undercount I found were fixed by `5a0435ff`, and the S105 row drop I found
+  was fixed by `417a8211`. Each finding is kept with its resolution and fix pointer — none was
+  deleted to make the record look cleaner, and one of my own provenance claims (that the S106
+  capture existed only in scratch) was **wrong** and is corrected in Draft 4.
 - **An earlier revision of this file (381 lines) was snapshotted into `5a0435ff` by the L1
   while I was working; this text supersedes it and is uncommitted.**
 - **Still moving at the cutoff:** `corpus/SOURCES.md` (+1 line, restoring S105), `LOG.md`,
@@ -84,10 +84,11 @@ records no argv or exit code — the CLEAN assertion is the tool's own printed l
 
 **Wave 1 — the first falsifiers.** 34 seats in one validated `task` call (`w1-spec.json`,
 `w1-seat-map.json`): executor 7, reviewer 6, scribe 5, mutation-tester 4, critic 4, scout 3,
-sentinel 2, revenger 2, connector 1. All 34 reports are now landed (`66b84027`); the wave still
-has **no settle or provider-provenance record** — every `w1/swarm-registry.json:members` entry
-carries `agentId: null`, and `w1-payload.json` holds only name/role/task. "34/34 completed, 0
-dead, 0 holds" is therefore **UNPROVEN** and must not be written (finding G4).
+sentinel 2, revenger 2, connector 1. 33 of the 34 reports are landed (`66b84027`); the 34th,
+`w1/CritControlAdequacy.md`, was written at 07:37:14Z and is untracked at the cutoff. The wave
+still has **no settle or provider-provenance record** — every `w1/swarm-registry.json:members`
+entry carries `agentId: null`, and `w1-payload.json` holds only name/role/task. "34/34 completed,
+0 dead, 0 holds" is therefore **UNPROVEN** and must not be written (finding G4).
 
 **Stop, with its receipts now bound.** The green surface's only perturbation is a per-run
 name-pool permutation, so record order, count, every `flags`/`value` byte and the name multiset
@@ -184,6 +185,7 @@ by me).
 | `cd75b92e583735729546b0ea3b250f2df6d0652a` | the stop: `claim-stop.json` (87 lines), `w1/CtlMultiset-files/{nameset,pathkey,mini-counter-fresh}.py` — 4 files, +352 | `LOG.md:3098-3100`; `SCORECARD.md:3347-3369` |
 | `66b84027` | the stopped claim's record: SCORECARD run-6 section (+26), LOG run-6 block (+11), lesson M34-5..M34-11, QUALITY 68-73 (+6), SKILL instrument registry (+14), S106 row, knowledge entry, README (+4), the remaining w1 reports, `census-start.txt`, `w2-spec.json`, `w2-seat-map.json`, 32 w2 prompts | `SKILL.md:1209-1222`; `corpus/QUALITY.md:78-83`; `corpus/SOURCES.md:111`; `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md` |
 | `5a0435ffb9a8921206144e0b61fe3c12a89b59c2` | the stop's binding: `after/freeze-integrity-instruments.txt` (26-pin receipt), `claim-stop-addendum.json` (96 lines: decisive receipts, artifact shas, F6, report-only classes, wording corrections), `nameset-green-receipt.json`, `payload-keyed-receipt.json`, `payload_keyed.py`, `census-end.txt`, lesson M34-12, the QUALITY 68/70 corrections, and the first ten w2 reports — 18 files, +3118/−1 | `claim-stop-addendum.json`; `corpus/QUALITY.md` corrections section; `LOG.md:3094-3103` |
+| `417a8211` | the final repair and wave-2 landing: S105 restored and QUALITY 73 restored after the anchor replacement, the S106 capture re-bound by pointer, the row-swap repair's own defeats recorded, and wave-2 reports landed (20 of 32 at the cutoff) — 19 files, +2748/−283 | `git show --stat 417a8211`; `corpus/SOURCES.md:111-112`; `corpus/QUALITY.md:83-84`; `w2/` |
 
 **Inherited state.** Base `ec3125ad3d130d92f888a4128dfaa2982f36fff7`; the attempt-1 (R34-C1) stop
 is inherited through `f432c8e3` and not rewritten (`claims.json:inherited_tip`;
@@ -194,13 +196,12 @@ and now also M34-12; the attempt-1 text is untouched.
 the `LOG.md`/`SCORECARD.md` deltas, and the `w2/` reports (including this file's current text).
 `git status --porcelain` at 07:36:07Z is the pointer.
 
-**Two findings from my first pass, both answered at `5a0435ff`:** the asserted-but-absent
-freeze-integrity receipt (G1) is now a landed artifact, and the three-vs-four-seed undercount (G3)
-is now bound as four seeds. **One is still open:** the S105 row was swapped out by the S106 insert
-in `66b84027` and, at `5a0435ff`, `corpus/SOURCES.md` still holds 105 rows with S105 absent
-(row-id diff, §8) — the lesson M34-12 and QUALITY 74 documenting the swap are landed, the
-restoration is not (finding G2). The report may not print the LOG's "rows 105→106" as fact until
-the restore lands.
+**All three findings from my passes are now answered in committed bytes.** The asserted-but-absent
+freeze-integrity receipt (G1) is a landed artifact from `5a0435ff`; the three-vs-four-seed
+undercount (G3) is bound as four seeds there; and the S105 drop (G2) is restored at `417a8211`,
+where `corpus/SOURCES.md` holds 106 rows with both S105 and S106 (`:111-112`). The lesson M34-12
+and QUALITY 74 record the swap, and the commit also records the repair's own defeats, so the
+"rows 105→106" sentence is now true of the landed blob — cite `417a8211`, not `66b84027`.
 
 **Repair receipt nuance (G1, narrowed).** The landed receipt's label is `freeze=b917ea64ebbe`, the
 commit that added the container, not the frozen `c79bbe7b`; the file carries no argv and no exit
@@ -249,21 +250,21 @@ must not convert "six clauses met" into an axis gain.
 
 ## Draft 4 — Sources & frontier
 
-- **Row counts — S105 is still missing at HEAD (G2).** At `5a0435ff`, `corpus/SOURCES.md` holds
-  105 rows, ids S001–S106 with **S105 absent**; the working tree at 07:36:07Z holds 106 with S105
-  restored (uncommitted). The row swap is disclosed and routed (lesson M34-12; QUALITY 74), and
-  the census stayed exit-0 throughout, which is the point of the lesson. Correct wording until
-  the restore lands: "105 rows, S105 dropped by the S106 insert, restoration in flight"; after it
-  lands: "105→106, tier A 99→100, mined 101→102, rejected 4→4, malformed 0" (M34-12's own first
-  recount: `A 99→99`, `rejected 4→3`).
-- **Rows added.** S106 only (`corpus/SOURCES.md:111`): GNU binutils `readelf.c`, tag
+- **Row counts — 105→106, S105 retained (G2 closed at `417a8211`).** `corpus/SOURCES.md` at HEAD
+  holds 106 rows with S105 at `:111` and S106 at `:112` (row-id diff, §8). The intervening
+  `66b84027` blob held 105 with S105 dropped; that swap is disclosed and routed (lesson M34-12;
+  QUALITY 74) and the repair's own defeats are recorded in `417a8211`. Report the counts as
+  "105→106, tier A 99→100, mined 101→102, rejected 4→4, malformed 0", and cite `417a8211` — the
+  sentence is false of `66b84027` alone (M34-12's first recount: `A 99→99`, `rejected 4→3`).
+- **Rows added.** S106 only (`corpus/SOURCES.md:112`): GNU binutils `readelf.c`, tag
   `binutils-2_47`, tier A, status mined, scope limited to the `SHT_GNU_verneed` section-header
-  decode. Verified against the capture: sha256 `7e81eedf…`, 689,644 bytes; `:14149` carries
+  decode. Verified against the **in-lane** capture
+  `.ufo/waves/round-34/prep/R34ElfReader-files/readelf.c-binutils-2_47` (tracked since
+  `8897a67f`): sha256 `7e81eedf…`, 689,644 bytes; `:14149` carries
   `warn (_("Missing Version Needs information\n"));`; the record walk at `:14056` (`endbuf`),
-  `:14072-14076` (`vn_version…vn_next`) and `:14102-14106` (aux fields) is as cited. **Provenance
-  limit:** the capture lives only in
-  `/fast/scratch/hyaku/kaidoku-r34b/w1/ScoutReadelfSource/`, not in the lane — the row is
-  verifiable only while that scratch survives.
+  `:14072-14076` (`vn_version…vn_next`) and `:14102-14106` (aux fields) is as cited. Correction
+  to my first pass: the capture was **already tracked in the lane**, so the row is source-backed
+  without depending on any scratch directory.
 - **Census.** `census-start.txt` and `census-end.txt` are both now landed (`66b84027`,
   `5a0435ff`); each shows nine `W04` duplicate-URL warnings and a final
   `kaidoku ok …/corpus/SOURCES.md` line. Neither records an **exit code**, so "both exit 0"
@@ -325,7 +326,7 @@ must not convert "six clauses met" into an axis gain.
 
 - [~] **SKILL.md contains real decision tables, error patterns, checklists, cited sources** —
   advanced this attempt by the instrument-registry row, three verdict/exit rows and the limits
-  paragraph (`SKILL.md:1209-1222`), landed `66b84027`, citing S106 (`corpus/SOURCES.md:111`); the
+  paragraph (`SKILL.md:1209-1222`), landed `66b84027`, citing S106 (`corpus/SOURCES.md:112`); the
   registry's "26 pins, CLEAN" is now backed by a landed receipt
   (`after/freeze-integrity-instruments.txt`) whose label names `b917ea64`. Not earned: no
   non-author has exercised the paragraph.
@@ -354,17 +355,17 @@ must not convert "six clauses met" into an axis gain.
 | id | severity | status | finding | pointer |
 |---|---|---|---|---|
 | G1 | high | **resolved** at `5a0435ff` | Freeze-integrity receipt over the 26-pin container was asserted in the stop record, QUALITY 68 and SKILL but did not exist at `66b84027`. Now landed; label names `b917ea64` (container commit), not the freeze; no argv/exit recorded. | `after/freeze-integrity-instruments.txt`; `claim-stop-addendum.json:enforced_pin_receipt`; `SKILL.md:1221` |
-| G2 | **high, open** | open at `5a0435ff` | S105 row replaced by S106 at `66b84027`; HEAD still 105 rows, S105 absent. M34-12/QUALITY 74 document the swap; the restore is uncommitted. "Rows 105→106" is false at HEAD. | `git show HEAD:corpus/SOURCES.md`; uncommitted `corpus/SOURCES.md`; `LOG.md:3100`; `corpus/QUALITY.md:74` |
+| G2 | high | **resolved** at `417a8211` | S105 was replaced by S106 at `66b84027` (105 rows, S105 absent); restored at `417a8211` (106 rows, S105 `:111`, S106 `:112`). M34-12/QUALITY 74 document the swap and the repair's own defeats. "Rows 105→106" is true only of `417a8211`. | `git show --stat 417a8211`; `corpus/SOURCES.md:111-112`; `LOG.md:3100`; `corpus/QUALITY.md:83-84` |
 | G3 | med | **resolved** at `5a0435ff` | Stop record listed three counterexample seeds; producer recorded four. Addendum binds four with exact argv/UTC. Use the addendum, never the bare stop record, for the seed count. | `claim-stop.json:observed.seeds`; `claim-stop-addendum.json:decisive_receipts[0]`; `w1/ExecRedReproduce.md:81-85` |
-| G4 | med | open | 34 wave-1 seats, no settle/provider record; registry members all `agentId: null`. "34/34, 0 dead, 0 holds" is UNPROVEN; all 34 reports are landed, which is a different fact. | `w1-spec.json`; `w1/swarm-registry.json`; `w1-payload.json` |
+| G4 | med | open | 34 wave-1 seats; 33 reports landed, `CritControlAdequacy.md` written 07:37:14Z and untracked; no settle/provider record and all registry members `agentId: null`. "34/34, 0 dead, 0 holds" is UNPROVEN. | `w1-spec.json`; `w1/swarm-registry.json`; `w1-payload.json` |
 | G5 | med | open | "Five independent seats produced structure-blind readers" overstates: the met-target set is two committed-source classes (nameset, payload) plus at least six report-only variants, one of which is a scribe draft. "Five" is a floor; name the seats and mark the provenance. | `claim-stop-addendum.json:classes_without_committed_source`; `w1/*.md` |
 | G6 | med | open | `green_positive_meets_target` is never the failing clause of any shipped control or mutant; one of the six clauses is asserted, never discriminated. Do not call it exercised. | `controls/*.json`; `w1/MutCounterClauses.md:137` |
 | G7 | low | open | The registered `fixed-slice` reader is a printable-run scanner, not a fixed-slice replay; "seven shortcut classes" overstates the registry even before the unregistered classes. | `w1/CritCounterLimits.md:37-38`; `tools/round-34/gate-config-mini.json:15` |
 | G8 | low | open | The lander knowledge entry points at a wave-2 file for one class lineage; the wave-2 file postdates it. Replace after settle. Also: a 0-byte untracked knowledge file was removed before 07:37:12Z; do not re-land it empty. | knowledge entry class table; `corpus/knowledge/2026-10-25-r34-pre-freeze-shortcut-replay-gate.md` (0 bytes) |
 | G9 | low | open | Census start/end artifacts carry no exit code; "both exit 0" is prose over artifacts that print `ok`. | `census-start.txt`; `census-end.txt`; `LOG.md:3100` |
 | G10 | info | open | Axis-label conflict C1 (depth vs operability) is live between committed files. Preserve verbatim; do not resolve. | `w1/CritAxisFit.md:234-239`; `claims.json:claims[0].axis`; `SCORECARD.md:3353` |
-| G11 | info | open | Wave 2 unsettled at the cutoff; ten reports landed in `5a0435ff`, more in flight. No falsification verdict before settle. | `w2-spec.json`; `w2/` |
-| G12 | med | disclosed | Four of the met-target classes have no committed source; they may be reported only as report-only scores. | `claim-stop-addendum.json:classes_without_committed_source` |
+| G11 | info | open | Wave 2 not fully settled: 20 of 32 reports are tracked at `417a8211`, the rest in flight (e.g. `ASiblingStop.md`, `AStopJustified.md` untracked). No falsification verdict before all 32 settle. | `w2-spec.json`; `git ls-files w2/*.md`; `git status --porcelain` |
+| G12 | med | disclosed | At least six met-target variants have no committed source (the addendum names four; seat reports add prefix-keyed, topology-keyed, name-pool keyed and label-hash replay); they may be reported only as report-only scores, never as this round's evidence. | `claim-stop-addendum.json:classes_without_committed_source` |
 | G13 | low | disclosed | "Reads no header" was the wrong blindness test; blindness is content-contingent. Use the addendum's wording (decodes no header field, no record entry, no `name_off`). | `claim-stop-addendum.json:wording_corrections[0]`; `nameset.py:48-55` |
 | G14 | info | preserved | Predicate-site count has two readings: `predicate-reconciliation.json` treats `P34-mini-records` as a separate namespace; the QUALITY correction counts it as a third scoring site. Report both, pick neither. | `predicate-reconciliation.json:sites.C_mini_counter`; `corpus/QUALITY.md` corrections |
 
@@ -390,6 +391,7 @@ counter, gate, fixture or carrier executed. No install.
 | 07:33:28Z | row-id diff again; `cat census-end.txt \| tail -1` | 0 | 106 vs HEAD 105, `S105` added in tree; census end `ok`, 9 W04 |
 | 07:35:30Z | `git log --oneline -4`, `git show --stat HEAD`, `git show HEAD:corpus/knowledge/…stop.md \| wc -l`, `grep -n "1,979" w1/CritCounterLimits.md` | 0 | new HEAD `5a0435ff`; knowledge entry 73 lines; probe E gate size at `w1/CritCounterLimits.md:93` |
 | 07:36:07Z | `date -u`, `git status --porcelain`, row-id diff, `sed -n '112,122p' corpus/QUALITY.md` | 0 | HEAD 105 rows (S105 absent), tree 106 (S105 restored); QUALITY corrections text read |
+| 07:38:22Z | `git log --oneline -2`, `git show --stat 417a8211`, inline `python3` row-id diff on `HEAD:corpus/SOURCES.md`, `git cat-file -e HEAD:.ufo/waves/round-34/prep/R34ElfReader-files/readelf.c-binutils-2_47`, `sha256sum` of it | 0 | HEAD `417a8211`; 106 rows, S105 at 111 and S106 at 112; capture tracked since `8897a67f`, `7e81eedf…`, 689,644 B |
 | 07:37:12Z | `sha256sum w1/CtlMultiset-files/nameset-green-receipt.json w1/CtlMultiset-files/payload-keyed-receipt.json`; `wc -l claim-stop-addendum.json after/freeze-integrity-instruments.txt` | 0 | receipts `fa6e8f09…` and `23e26fe4…` = addendum; addendum 96 lines; pin receipt 27 lines (26 `ok` rows + summary); the 0-byte knowledge file is gone |
 
 Taken as given rather than re-derived (marked so the L1 can decide): the 30-field receipt identity
@@ -408,9 +410,10 @@ over existing bytes); touch any sibling lane, the fleet root, `~/.omp`, `~/.conf
 `~/.kimi-code`; message other seats. Wave-2 verdicts, seal and scorecard credit belong to other
 seats.
 
-**Final verdict line:** `SKELETON_DRAFTED` — six sections drafted at HEAD `5a0435ff`
-(2026-10-25T07:35:33Z) with a per-claim pointer; 14 findings recorded, of which **G2 (S105 still
-dropped from `corpus/SOURCES.md` at HEAD, restore uncommitted)** must be resolved before filing,
-G4/G5/G6/G12 must qualify the "34/34 seats" and "five classes" wording, and G1/G3 are resolved by
-`5a0435ff` and should be cited from that commit, not from the bare stop record; wave 2 is
-unsettled, so no falsification verdict on the stop is offered here.
+**Final verdict line:** `SKELETON_DRAFTED` — six sections drafted at HEAD `417a8211`
+(2026-10-25T07:38:22Z) with a per-claim pointer; 14 findings recorded, of which G1, G2 and G3 are
+**resolved in committed bytes** (`5a0435ff`, `417a8211`) and must be cited from those commits (the
+bare stop record undercounts its seeds and predates its own pin receipt); G4/G5/G6/G9/G12 remain
+open and must qualify the "34/34 seats", "five classes" and "both censuses exit 0" wording; wave 2
+is landed but not fully settled (20 of 32 reports tracked), so no falsification verdict on the
+stop is offered here.
