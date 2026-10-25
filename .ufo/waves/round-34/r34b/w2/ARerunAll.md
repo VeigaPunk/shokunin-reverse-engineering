@@ -4,7 +4,7 @@ Seat: `L1Kaidoku34-2.ARerunAll` (leaf). Lane: `/home/vgpnk/Projects/shokunin/kai
 Scratch: `/fast/scratch/hyaku/kaidoku-r34b/w2/ARerunAll/`.
 Measurement window: **2026-10-25T07:29:49Z … 2026-10-25T07:44:17Z**.
 Runtime: `/usr/bin/python3` = Python 3.14.8; `git` 2.56.0; `rsync` 3.5.1. **No tool installed or upgraded; no pacman transaction; no network.**
-No lane file was written. No VCS mutation in the lane (clones only). No ELF, fixture or reader was executed as a program of interest: fixtures were read as static bytes; every reader ran as `python3 -I -B` inside a counter (the counter-owned argv or my scratch probe counter).
+No file other than this report was written in the lane. No VCS mutation in the lane (clones only). No ELF, fixture or reader was executed as a program of interest: fixtures were read as static bytes; every reader ran as `python3 -I -B` inside a counter (the counter-owned argv or my scratch probe counter).
 
 **Verdict: `RERUN_ALL_REPRODUCED committed_receipts=6/6_byte_identical product=GATE_COUNTER_OK exit=0 controls=5/5_discriminated counterexamples=reproduced provenance=gate_channel_unpinned_reproduced move=no_stop_invalidation`.
 The stop's six frozen clauses reproduce byte-for-byte at the lane tip and at the wave-2 tip; every committed control reproduces byte-for-byte; both post-stop decisive classes reproduce at the tip. The stop is not falsified by reproduction — but the counting command cannot prove **which gate** produced its receipt (independently reproduced below), and four observation-level defects remain (P2–P4 and the name-specific red clause).**
@@ -17,7 +17,7 @@ The stop's six frozen clauses reproduce byte-for-byte at the lane tip and at the
 |---|---|---|
 | reproduction fidelity | do the six committed receipts reproduce byte-identically in a fresh clone? | yes, 6/6 JSON + 6/6 verdict lines |
 | tip invariance | does the wave-2 tip change any clause? | no; identical output at every observed tip |
-| provenance strength | does the receipt prove the revision it names? | **no** — `--rev` is an unverified label (P1) |
+| provenance strength | does the receipt prove the revision and the gate it names? | **no** — `--rev` is an unverified label and `--gate` is unpinned (P1/P5) |
 | control discrimination | does each control fail the clause the claim predicts? | **2 of 5 predicted clause failures are wrong** (P2) |
 | decisive-evidence reachability | do the stop's counterexample receipts reproduce? | yes (nameset 4 seeds; payload-keyed plain + zeroed) |
 
@@ -27,7 +27,7 @@ The stop's six frozen clauses reproduce byte-for-byte at the lane tip and at the
 * **In-flight wave-2 worktree** (no wave-2 commit existed yet at 07:32:10Z): `rsync -a --exclude .git --exclude __pycache__ <LANE>/ <scratch>/wave2-inflight-20261025T073210Z/`. 26/26 instrument pins matched in the snapshot.
 * **Wave-2 tip, first commit** `66b840274390d0868c913a544947f9eb40a4ffe6` — fresh clone.
 * **Wave-2 tip, second commit** `5a0435ffb9a8921206144e0b61fe3c12a89b59c2` (bind the stop's decisive receipts) — fresh clone.
-* **Wave-2 tip, measured** `417a8211398e4fcb05e9d311af1877a702327b20` — fresh clone, full matrix at 07:38:30–07:38:57Z. The tip kept moving while this seat ran: observed sequence `cd75b92e → 66b84027 → 5a0435ff → 417a8211 → b62b4767 → 39f433b2 → c05984e7`; at report finalization (07:41:47Z) HEAD was `c05984e72a7afb59c995359cfd16c51d94a1480d`. `git diff 417a8211..HEAD -- tools .ufo/waves/round-34/r34b/{after,controls,claims.json,claim-stop.json,instruments.json}` is **empty**; the only evidence-side change is append-only text in `claim-stop-addendum.json` (it gained Y1–Y5 at `39f433b2`; `git diff 39f433b2..c05984e7` on all of those paths is empty). 26/26 pins match at HEAD. The closure must re-pin the commit it closes on; the invariance argument here is the empty instrument diff plus the pin check, not an assumption.
+* **Wave-2 tip, measured** `417a8211398e4fcb05e9d311af1877a702327b20` — fresh clone, full matrix at 07:38:30–07:38:57Z. The tip kept moving while this seat ran: observed sequence `cd75b92e → 66b84027 → 5a0435ff → 417a8211 → b62b4767 → 39f433b2 → c05984e7 → debc8dad`; at report finalization (07:44:50Z) HEAD was `debc8dad18c0e962626b9165df6bd77b4302daee`. `git diff 417a8211..debc8dad -- tools .ufo/waves/round-34/r34b/{after,controls,claims.json,claim-stop.json,instruments.json}` is **empty**; the only evidence-side change is append-only text in `claim-stop-addendum.json` (it gained Y1–Y5 at `39f433b2`; unchanged since). 26/26 pins match at HEAD. The closure must re-pin the commit it closes on; the invariance argument here is the empty instrument diff plus the pin check, not an assumption.
 * **Base tip** `ec3125ad3d130d92f888a4128dfaa2982f36fff7` — fresh clone, detached, to reproduce `before/c2-at-base.txt`.
 * One matrix script drives identical argv at every root: `<scratch>/run-matrix.sh`. Every invocation is logged with `ARGV`, `START_UTC`, `END_UTC`, `EXIT` in `<scratch>/receipts-*/<label>.cmd` (exact argv preserved there verbatim).
 
@@ -51,6 +51,16 @@ Production argv (all roots):
 | gate red (direct) | embedded `red.line` | exit 2, 07:30:33–34Z | exit 2, 07:38:44–45Z | `REPLAY_GATE_REFUSED finding=shortcut_meets_target shortcuts_below_target=6 shortcuts_over_target=label-memorization` identical |
 
 The same matrix was also run at the in-flight worktree snapshot (07:32:16–07:32:38Z), at `66b84027` (07:34:54–07:35:10Z) and at `5a0435ff` (07:35:58–07:36:14Z): all five roots (those four plus `417a8211`) produce the same six receipts byte-identically. The only inter-clone delta anywhere is the absolute `config`/`root` strings embedded by `replay-gate.py` in the *uncommitted direct* `gate-green.json` / `gate-red.json`; the committed receipts do not carry those fields.
+
+Exact argv for the five controls (same production argv as above, plus one override; run with cwd = the root under test):
+
+```
+--gate tools/round-34/absent-gate.py
+--gate .ufo/waves/round-34/r34b/controls/gates/gate-always-clean.py
+--gate .ufo/waves/round-34/r34b/controls/gates/gate-vacuous-no-floor.py
+--gate .ufo/waves/round-34/r34b/controls/gates/gate-no-positive-check.py
+--gate .ufo/waves/round-34/r34b/controls/gates/gate-junk-clean.py
+```
 
 ## 4. Control exits and the clause each control fails
 
@@ -93,7 +103,7 @@ Class-registration probe (scratch copy of the green config + `{"class":"content-
 **P1 — `--rev` is a label, not a measurement (independently confirms the addendum's X4).** `c2-shortcut-gate-counter.py:73` writes `"measured_revision": args.rev`; the file makes no `git` call (only `subprocess.run` for the gate, lines 36/73–80). Probe: same root = the `ec3125ad` clone (which contains **no** `tools/round-34` at all — `git ls-tree`), run once with `--rev ec3125ad…` and once with `--rev c79bbe7b…`:
 * `--rev ec3125ad…` → `…measured_revision=ec3125ad3d130d92f888a4128dfaa2982f36fff7…`, exit 2
 * `--rev c79bbe7b…` → `…measured_revision=c79bbe7b0959132b9873ff3431cf5eb313b58b33…`, exit 2
-Both measure the same bytes. Consequence: `measured_revision` in any C2 receipt cannot establish which tree was measured; only the byte pins can. For this round the pins do establish it: the seven inspected instrument files are byte-identical at `c79bbe7b` and `cd75b92e` (`git show <rev>:<path> | sha256sum`), and all 26 pins match at every root I cloned (cd75b92e, 66b84027, 5a0435ff, 417a8211, c05984e7). The verdict is not undermined; the field is decorative and the closure should not cite it as provenance.
+Both measure the same bytes. Consequence: `measured_revision` in any C2 receipt cannot establish which tree was measured; only the byte pins can. For this round the pins do establish it: the seven inspected instrument files are byte-identical at `c79bbe7b` and `cd75b92e` (`git show <rev>:<path> | sha256sum`), and all 26 pins match at every root I cloned (cd75b92e, 66b84027, 5a0435ff, 417a8211, c05984e7, debc8dad). The verdict is not undermined; the field is decorative and the closure should not cite it as provenance.
 
 **P5 — the counting command's `--gate` channel is unpinned and a file-opaque mock gate passes all six clauses (independently reproduces the addendum's critical finding Y1).** Scratch `mock-gate.py` (`sha256 54451ee6…`, 1.7 KB, opens no file and reads no `--root`) decides only on the config basename the counter passes:
 `/usr/bin/python3 -I -B tools/round-34/c2-shortcut-gate-counter.py --root . --rev 0000000000000000000000000000000000000000 --gate <scratch>/mock-gate.py --json-out <scratch>/receipts-tip417a/mock-gate-probe.json`
@@ -133,7 +143,7 @@ Both measure the same bytes. Consequence: `measured_revision` in any C2 receipt 
 
 * **Unrun:** `tools/round-34/freeze-integrity.py --selftest` (not the C2 counter); the M3/mutant reconstructions owned by wave-1 (F4); the `mini-counter-fresh.py` fresh-content sweep (the addendum explicitly does not claim it as this round's evidence); any execution of the R34-C1 production reader or its twelve carriers (forbidden).
 * **F3** is source-confirmed only; **F6** is source-confirmed only (see §7).
-* The wave-2 tip is a **moving target**: it advanced through `cd75b92e → 66b84027 → 5a0435ff → 417a8211 → b62b4767 → 39f433b2 → c05984e7` during this seat. The measured tip is `417a8211`; every later commit I observed leaves the restricted evidence paths (`tools`, `after`, `controls`, `claims.json`, `claim-stop.json`, `instruments.json`) byte-identical (the addendum gained text at `39f433b2` only), and 26/26 pins hold at HEAD. The closure should re-pin whatever commit it closes on and can reuse `<scratch>/run-matrix.sh` unchanged.
+* The wave-2 tip is a **moving target**: it advanced through `cd75b92e → 66b84027 → 5a0435ff → 417a8211 → b62b4767 → 39f433b2 → c05984e7 → debc8dad` during this seat. The measured tip is `417a8211`; every later commit I observed leaves the restricted evidence paths (`tools`, `after`, `controls`, `claims.json`, `claim-stop.json`, `instruments.json`) byte-identical (the addendum gained text at `39f433b2` only), and 26/26 pins hold at HEAD. The closure should re-pin whatever commit it closes on and can reuse `<scratch>/run-matrix.sh` unchanged.
 * Scratch is 2.8 GB (five clones + one rsync snapshot) under `/fast/scratch/…`; it may be reclaimed. Every receipt and line quoted here is in the report, and the committed receipts are byte-identical, so the report stands alone.
 
 ## 10. Evidence pointers (scratch)
