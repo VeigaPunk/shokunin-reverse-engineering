@@ -63,8 +63,8 @@ def selftest(root):
                     "verified-at: 2026-10-25\n"
                     "recheck: 180d\n"
                 )
-        os.makedirs(os.path.join(d, ".ufo/waves/round-35"), exist_ok=True)
-        with open(os.path.join(d, ".ufo/waves/round-35/claims.json"), "w") as f:
+        os.makedirs(os.path.join(d, "plans"), exist_ok=True)
+        with open(os.path.join(d, "plans/round-35-freeze.json"), "w") as f:
             json.dump({"round": 35, "predicate": PREDICATE, "claims": ["C1", "C2"]}, f)
         with open(os.path.join(d, "PROVINCE.md"), "w") as f:
             f.write("## Round-35 additions to Core\n")
@@ -158,7 +158,7 @@ def main():
         ap.print_usage(file=sys.stderr)
         sys.exit(2)
 
-    claims = show(args.root, args.freeze, ".ufo/waves/round-35/claims-frozen.json")
+    claims = show(args.root, args.freeze, "plans/round-35-freeze.json")
 
     if claims is None:
         print("C1: claims file absent at freeze revision", file=sys.stderr)
