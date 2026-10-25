@@ -2,7 +2,7 @@
 
 Seat: `L1Kaidoku34-2.ARerunAll` (leaf). Lane: `/home/vgpnk/Projects/shokunin/kaidoku-shokunin`.
 Scratch: `/fast/scratch/hyaku/kaidoku-r34b/w2/ARerunAll/`.
-Measurement window: **2026-10-25T07:29:49Z … 2026-10-25T07:41:47Z**.
+Measurement window: **2026-10-25T07:29:49Z … 2026-10-25T07:44:17Z**.
 Runtime: `/usr/bin/python3` = Python 3.14.8; `git` 2.56.0; `rsync` 3.5.1. **No tool installed or upgraded; no pacman transaction; no network.**
 No lane file was written. No VCS mutation in the lane (clones only). No ELF, fixture or reader was executed as a program of interest: fixtures were read as static bytes; every reader ran as `python3 -I -B` inside a counter (the counter-owned argv or my scratch probe counter).
 
@@ -50,7 +50,7 @@ Production argv (all roots):
 | gate green (direct) | embedded `green.line` | exit 0, 07:30:32–33Z | exit 0, 07:38:43–44Z | `REPLAY_GATE_CLEAN finding=no_shortcut_meets_target shortcuts_below_target=7 shortcuts_over_target=-` identical |
 | gate red (direct) | embedded `red.line` | exit 2, 07:30:33–34Z | exit 2, 07:38:44–45Z | `REPLAY_GATE_REFUSED finding=shortcut_meets_target shortcuts_below_target=6 shortcuts_over_target=label-memorization` identical |
 
-The same matrix was also run at the in-flight worktree snapshot (07:32:16–07:32:38Z), at `66b84027` (07:34:54–07:35:10Z) and at `5a0435ff` (07:35:58–07:36:14Z): all four roots produce the same six receipts byte-identically. The only inter-clone delta anywhere is the absolute `config`/`root` strings embedded by `replay-gate.py` in the *uncommitted direct* `gate-green.json` / `gate-red.json`; the committed receipts do not carry those fields.
+The same matrix was also run at the in-flight worktree snapshot (07:32:16–07:32:38Z), at `66b84027` (07:34:54–07:35:10Z) and at `5a0435ff` (07:35:58–07:36:14Z): all five roots (those four plus `417a8211`) produce the same six receipts byte-identically. The only inter-clone delta anywhere is the absolute `config`/`root` strings embedded by `replay-gate.py` in the *uncommitted direct* `gate-green.json` / `gate-red.json`; the committed receipts do not carry those fields.
 
 ## 4. Control exits and the clause each control fails
 
@@ -85,8 +85,8 @@ Observation (P3): the junk gate that prints fixed `{"cases":12,"failures":0,"mut
 Every transformed fixture the nameset run saw was a **permuted copy** with a different digest from the pinned fixture (`transformed_sha256` c7adf97f…, ee5b4266…, f4ad00ab…, be4be5e7…, 48c701c7…, be1f1fba…, 398e12c9…, 80078364…; all 512 bytes), so the 8/8 is not a pass-through of original fixture bytes.
 
 Class-registration probe (scratch copy of the green config + `{"class":"content-multiset","path":"…/nameset.py"}`, 8 shortcuts; **pinned config untouched**):
-`/usr/bin/python3 -I -B tools/round-34/replay-gate.py --root . --config <scratch>/gate-config-nameset-registered.json`
-→ **`REPLAY_GATE_REFUSED finding=shortcut_meets_target shortcuts_below_target=7 shortcuts_over_target=content-multiset`**, exit **2**. The frozen CLEAN is a function of the registered set, as the stop says.
+`/usr/bin/python3 -I -B tools/round-34/replay-gate.py --root . --config <scratch>/gate-config-nameset-registered.json --json-out <scratch>/receipts-tip417a/gate-nameset-registered.json`
+→ **`REPLAY_GATE_REFUSED finding=shortcut_meets_target shortcuts_below_target=7 shortcuts_over_target=content-multiset`**, exit **2**, UTC 07:44:16–07:44:17Z (`gate-nameset-registered.json`, `sha256 556ff0b0…`, 9 rows). The frozen CLEAN is a function of the registered set, as the stop says.
 
 ## 6. Provenance probes that bear on the stop's evidence
 
@@ -126,15 +126,15 @@ Both measure the same bytes. Consequence: `measured_revision` in any C2 receipt 
   3. **Y3/P6** the enforced container exits 2 at the claim freeze and verifies only from `b917ea64` (§6/§7). **Already disclosed (Y3); independently reproduced.**
   4. **P2** two of the five `control_plan` predictions name the wrong failing clause (no-positive-check → green; vacuous → UNEVALUABLE). The controls still produce MISS, so discrimination holds, but the claim text is wrong about *why*. Not found in the addendum text read at 07:36–07:41Z.
   5. **P3** a fixed-print gate clears `selftest_clean` + `mutants_killed` + `green_clean`; only `red_refused` refuses it, and the counter's `green.shortcuts_below_target` disagrees with the gate's printed line (0 vs 7). The clause set is not independently discriminative for a gate that fabricates its own selftest output. Not found in the addendum text.
-  6. **P4** the `before` receipt is a root swap over a tree that never contained the counter (§6). Related to X4 but distinct in that the committed receipt's `finding=gate_absent` is an artefact of the root choice.
-  7. The counter's `red_refused` clause is **name-specific**: `c2-shortcut-gate-counter.py:116` requires the literal `"label-memorization"` in `classes_over_target`. A different shape-only class over target in the red config would not satisfy the red clause. With P5, the clause is also satisfiable by a gate that simply prints the name. Not exercised (the frozen red config contains exactly that class), but the red clause measures *this one reader label*, not "a shape-only counter" as predicate sentence A says.
+  6. **P4** the `before` receipt is a root swap over a tree that never contained the counter (§6). Related to X4 but distinct in that the committed receipt's `finding=gate_absent` is an artefact of the root choice. Not in the addendum text.
+  7. The counter's `red_refused` clause is **name-specific**: `c2-shortcut-gate-counter.py:116` requires the literal `"label-memorization"` in `classes_over_target`. A different shape-only class over target in the red config would not satisfy the red clause. With P5, the clause is also satisfiable by a gate that simply prints the name. Not exercised (the frozen red config contains exactly that class), but the red clause measures *this one reader label*, not "a shape-only counter" as predicate sentence A says. Not in the addendum text; source-level.
 
 ## 9. Unrun, limits, risks
 
 * **Unrun:** `tools/round-34/freeze-integrity.py --selftest` (not the C2 counter); the M3/mutant reconstructions owned by wave-1 (F4); the `mini-counter-fresh.py` fresh-content sweep (the addendum explicitly does not claim it as this round's evidence); any execution of the R34-C1 production reader or its twelve carriers (forbidden).
 * **F3** is source-confirmed only; **F6** is source-confirmed only (see §7).
 * The wave-2 tip is a **moving target**: it advanced through `cd75b92e → 66b84027 → 5a0435ff → 417a8211 → b62b4767 → 39f433b2 → c05984e7` during this seat. The measured tip is `417a8211`; every later commit I observed leaves the restricted evidence paths (`tools`, `after`, `controls`, `claims.json`, `claim-stop.json`, `instruments.json`) byte-identical (the addendum gained text at `39f433b2` only), and 26/26 pins hold at HEAD. The closure should re-pin whatever commit it closes on and can reuse `<scratch>/run-matrix.sh` unchanged.
-* Scratch is 2.3 GB (four clones + one rsync snapshot) under `/fast/scratch/…`; it may be reclaimed. Every receipt and line quoted here is in the report, and the committed receipts are byte-identical, so the report stands alone.
+* Scratch is 2.8 GB (five clones + one rsync snapshot) under `/fast/scratch/…`; it may be reclaimed. Every receipt and line quoted here is in the report, and the committed receipts are byte-identical, so the report stands alone.
 
 ## 10. Evidence pointers (scratch)
 
@@ -151,6 +151,7 @@ Both measure the same bytes. Consequence: `measured_revision` in any C2 receipt 
 | `<scratch>/mock-gate.py` (`sha256 54451ee6…`) | file-opaque probe gate for P5/Y1 |
 | `<scratch>/receipts-tip417a/mock-gate-probe.json` (`sha256 4a418e7c…`) | the forged `GATE_COUNTER_OK` receipt (all six clauses true, `measured_revision=0000…`) |
 | `<scratch>/gate-config-nameset-registered.json` (`sha256 0b5f1ba2…`) | copy of the green config plus `content-multiset` (pinned config untouched) |
+| `<scratch>/receipts-tip417a/gate-nameset-registered.json` (`sha256 556ff0b0…`) | REFUSED with `classes_over_target=[content-multiset]` |
 | `<scratch>/wave2-inflight-20261025T073210Z/` | rsync snapshot (no `.git`, no `__pycache__`) |
 
 Receipt digests at the measured wave-2 tip (`sha256sum` of `<scratch>/receipts-tip417a/*.json`):
@@ -158,4 +159,4 @@ Receipt digests at the measured wave-2 tip (`sha256sum` of `<scratch>/receipts-t
 
 ## 11. Final verdict line
 
-`RERUN_ALL_REPRODUCED committed=6/6_byte_identical product=GATE_COUNTER_OK selftest_failures=0 mutants_killed=3 red=REPLAY_GATE_REFUSED green=REPLAY_GATE_CLEAN green_positive_matched=8 controls=5/5_discriminated counterexamples=nameset_8/8_x4seeds,payload_keyed_8/8_names_zeroed_digests_identical,structural_zeroed_0/8,nameset_registered_REFUSED stop_tip=cd75b92e wave2_tip_measured=417a8211 pins=26/26 exit=0 utc=2026-10-25T07:41:47Z provenance_probes=X4/P1_reproduced,Y1/P5_forged_GATE_COUNTER_OK_reproduced,Y3/P6_reproduced defects_new=P2_control_plan_expectation,P3_fixed_print_gate,P4_before_root_swap,P_red_name_specific stop_invalidated=no`
+`RERUN_ALL_REPRODUCED committed=6/6_byte_identical product=GATE_COUNTER_OK selftest_failures=0 mutants_killed=3 red=REPLAY_GATE_REFUSED green=REPLAY_GATE_CLEAN green_positive_matched=8 controls=5/5_discriminated counterexamples=nameset_8/8_x4seeds,payload_keyed_8/8_names_zeroed_digests_identical,structural_zeroed_0/8,nameset_registered_REFUSED stop_tip=cd75b92e wave2_tip_measured=417a8211 pins=26/26 exit=0 utc=2026-10-25T07:44:17Z provenance_probes=X4/P1_reproduced,Y1/P5_forged_GATE_COUNTER_OK_reproduced,Y3/P6_reproduced defects_new=P2_control_plan_expectation,P3_fixed_print_gate,P4_before_root_swap,P_red_name_specific stop_invalidated=no`
