@@ -1,0 +1,81 @@
+{
+  "seed": "d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b",
+  "class": "failure-depth-limited",
+  "id": "H39",
+  "endian": "be",
+  "compression": "gzip",
+  "label": "partial-body-failure",
+  "action": "salvage-partial",
+  "declared_features": {
+    "handler_set": [
+      "squashfs_v4_be"
+    ],
+    "gap_kinds": [
+      "depth-limited",
+      "extractor-failure"
+    ],
+    "gap_dependencies": [],
+    "be_argv": "yes",
+    "symlink_removed": false,
+    "published": "nonzero"
+  },
+  "declared_extras": {
+    "extraction_failed": true,
+    "max_depth": 1
+  },
+  "class_expected": {
+    "label": "partial-body-failure",
+    "action": "salvage-partial",
+    "reported_only": true
+  },
+  "nested": null,
+  "chunks": [
+    {
+      "offset": 0,
+      "length": 202,
+      "sha256": "51264ca6a249d24553dfb8c8320d4719f8c9235a9a00d73b9b6cf68e5dbb6e7e",
+      "role": "valid image, zero regular files (depth ceiling, publishes nothing)",
+      "endian": "be",
+      "compression": "gzip"
+    },
+    {
+      "offset": 4096,
+      "length": 456,
+      "sha256": "d6e6d118cdd8a68c5893f0999850373c214dd15d45797375f41cc42aeb4cd619",
+      "role": "id-table metadata block zeroed (extraction fails)",
+      "endian": "be",
+      "compression": "gzip"
+    }
+  ],
+  "oracle": {
+    "kind": "two-chunk",
+    "layout": "two-chunk",
+    "pad": 4096,
+    "parts": [
+      {
+        "offset": 0,
+        "length": 202,
+        "sha256": "51264ca6a249d24553dfb8c8320d4719f8c9235a9a00d73b9b6cf68e5dbb6e7e",
+        "role": "valid image, zero regular files (depth ceiling, publishes nothing)",
+        "endian": "be",
+        "compression": "gzip"
+      },
+      {
+        "offset": 4096,
+        "length": 456,
+        "sha256": "d6e6d118cdd8a68c5893f0999850373c214dd15d45797375f41cc42aeb4cd619",
+        "role": "id-table metadata block zeroed (extraction fails)",
+        "endian": "be",
+        "compression": "gzip"
+      }
+    ],
+    "expected_published": [
+      "4096-4552.squashfs_v4_be"
+    ],
+    "corruption": {
+      "recipe": "zero-id-table",
+      "chunk": 2,
+      "chunk_offset": 4096
+    }
+  }
+}

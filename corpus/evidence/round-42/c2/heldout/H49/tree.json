@@ -1,0 +1,90 @@
+{
+  "seed": "d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b",
+  "class": "legacy-partial",
+  "id": "H49",
+  "endian": "le",
+  "compression": "gzip",
+  "label": "partial-body-failure",
+  "action": "salvage-partial",
+  "fixture": {
+    "clean": {
+      "id": "v2ns-le",
+      "handler": "squashfs_v2_nonstandard",
+      "endian": "le",
+      "sha256": "f25cf3ea531de5c19eb1949eb351e1bb6ee1b91d8f211598e6c4fb695de9e24a",
+      "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v2_nonstandard/little_endian/__input__/squashfs_v2.0_le.bin"
+    },
+    "damaged": {
+      "id": "v2ns-be",
+      "handler": "squashfs_v2_nonstandard",
+      "endian": "be",
+      "sha256": "6560be64cb26ed19e645191c0c8241dc41f4b8c2d1d0492308786e23c3df6a7b",
+      "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v2_nonstandard/big_endian/__input__/squashfs_v2.0_be.bin"
+    },
+    "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+  },
+  "chunks": [
+    {
+      "offset": 0,
+      "length": 4096,
+      "fixture": "v2ns-le",
+      "handler": "squashfs_v2_nonstandard",
+      "endian": "le",
+      "role": "clean legacy fixture",
+      "sha256": "f25cf3ea531de5c19eb1949eb351e1bb6ee1b91d8f211598e6c4fb695de9e24a"
+    },
+    {
+      "offset": 4096,
+      "length": 4096,
+      "fixture": "v2ns-be",
+      "handler": "squashfs_v2_nonstandard",
+      "endian": "be",
+      "role": "pinned 4-byte zero window (4 B) -> sasquatch fails",
+      "sha256": "71b63de30064c3c530f3c5631769f73a823e660f18151d2f1fbca8cdd11ed540"
+    }
+  ],
+  "declared_features": {
+    "handler_set": [
+      "squashfs_v2_nonstandard"
+    ],
+    "gap_kinds": [
+      "extractor-failure"
+    ],
+    "gap_dependencies": [],
+    "be_argv": "yes",
+    "symlink_removed": false,
+    "published": "nonzero"
+  },
+  "declared_extras": {
+    "extraction_failed": true,
+    "max_depth": 3
+  },
+  "class_expected": {
+    "label": "partial-body-failure",
+    "action": "salvage-partial",
+    "reported_only": true
+  },
+  "oracle": {
+    "kind": "two-fixture",
+    "parts": [
+      {
+        "offset": 0,
+        "length": 4096,
+        "fixture": "v2ns-le",
+        "handler": "squashfs_v2_nonstandard",
+        "endian": "le",
+        "role": "clean legacy fixture",
+        "sha256": "f25cf3ea531de5c19eb1949eb351e1bb6ee1b91d8f211598e6c4fb695de9e24a"
+      },
+      {
+        "offset": 4096,
+        "length": 4096,
+        "fixture": "v2ns-be",
+        "handler": "squashfs_v2_nonstandard",
+        "endian": "be",
+        "role": "pinned 4-byte zero window (4 B) -> sasquatch fails",
+        "sha256": "71b63de30064c3c530f3c5631769f73a823e660f18151d2f1fbca8cdd11ed540"
+      }
+    ]
+  }
+}
