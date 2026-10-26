@@ -5,7 +5,8 @@
 #     Run REA extract-firmware (rea-agents 6.5.0, unblob 26.6.4) on CARRIER
 #     with stock unblob (no external extractor needed for standard BE v4),
 #     printing the envelope JSON to stdout and keeping the output tree in
-#     OUTDIR. Uses REA_UNBLOB_COMMAND when set; never runs sasquatch.
+#     OUTDIR (OUTDIR must not exist; REA creates it). Uses
+#     REA_UNBLOB_COMMAND when set; never runs sasquatch.
 #
 #   c1-run.sh oracle CARRIER OUTDIR [SCRATCH]
 #     Extract with ~/.local/bin/sasquatch-v4be -be into OUTDIR (cross-tool
@@ -23,7 +24,7 @@ export TMPDIR="$S"
 case "$MODE" in
   after)
     : "${REA_UNBLOB_COMMAND:?set REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob}"
-    mkdir -p "$OUT"
+    rm -rf "$OUT"          # REA refuses an existing extraction root; it creates $OUT itself
     npx -y rea-agents@6.5.0 extract-firmware --format json "$CARRIER" "$OUT"
     ;;
   oracle)
