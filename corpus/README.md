@@ -226,6 +226,7 @@ A row is written when its file exists, never before.
 | `round-33` | 33 | repair-first timestamp/disk/selftest fixes, source-backed CHPE profile boundaries, and honest stop on a provider-filtered input-author item; all dependent outputs quarantined |
 | `round-34` (run-6 re-dispatch) | 34 | second claim after the inherited C1 stop: a pre-freeze shortcut-replay gate frozen at `c79bbe7b`, six clauses met, then stopped because five unregistered structure-blind classes reach the green 8/8; predicate-identity, pin-enforcement, class-drop and label-collision defects disclosed; S106 admitted |
 | `round-36` | 36 | fresh-start round: sasquatch SquashFS recursion moved Frontier → Core (R36-C1, 4/4 frozen carriers) and self-assessment pointer/count drift repaired (R36-C2, 3 → 0); one assimilated entry admitted, three refused; counter blind spots found by the wave recorded as criteria |
+| `round-38` | 38 | attempt 2 after a dead attempt 1: BE SquashFS v4 measured but R38-C1 stopped under its first-freeze counter (3/4, K2 in-tree symlink gap); the attempt-1 post-scoring amendments are reported, not adopted (QUALITY 79, `freeze-drift.py`); R38-C2 pointer repair; one assimilated entry admitted, two refused |
 
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
