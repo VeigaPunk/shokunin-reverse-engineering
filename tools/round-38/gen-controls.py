@@ -196,7 +196,7 @@ def main(argv=None):
             except Exception:
                 res['output_raw'] = r.stdout[:2000]
         elif a.kind in ('c2-1', 'c2-2', 'c2-3'):
-            d, b, rv, c = c2_fixture(a.kind, a.kind.split('-')[1])
+            d, b, rv, c = c2_fixture(a.kind, {'c2-1': 'junk', 'c2-2': 'delete', 'c2-3': 'substitute'}[a.kind])
             r = subprocess.run(['python3', '-I', '-B', os.path.join(HERE, 'c2-counter.py'),
                                 '--root', d, '--rev', rv, '--base', b], capture_output=True, text=True)
             res = {'control': a.kind, 'argv': sys.argv, 'exit': r.returncode}
@@ -213,9 +213,9 @@ def main(argv=None):
         json.dump(res, open(a.out, 'w'), indent=1, sort_keys=True)
         return 2
     json.dump(res, open(a.out, 'w'), indent=1, sort_keys=True)
-    # control must NOT meet the target: exit 0 (or 2 unevaluable) is expected; exit 1 = control met target.
-    return 0 if res.get('exit') != 1 else 1
-
-
+    # control must NOT meet the target: counter exit != 0 is expected; exit 0 = control met target (kill condition).
+    ok = res.get('exit') != 0
+    print(json.dumps({'control': a.kind, 'counter_exit': res.get('exit'), 'kill': not ok}))
+    return 0 if ok else 1
 if __name__ == '__main__':
     sys.exit(main())
