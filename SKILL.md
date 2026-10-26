@@ -454,7 +454,7 @@ bullet is bounded by the lines it cites.
 
 - **SquashFS `extract-firmware` outcome triage v4 (round 42).** Table v4 answers the
   same (label, action) pair from the same eight envelope fields as v3 and moves three
-  boundaries v3 could not express. (1) It covers the **whole SquashFS handler family**, not
+  boundaries v3 could not express (`corpus/knowledge/2026-10-26-r42-sqfs-triage-v4.md:1-14`). (1) It covers the **whole SquashFS handler family**, not
   the v4 handlers alone. `H` is the precedence text's `H` — the handler names in
   `normalized_result.chunks[].handler` *and* `normalized_result.extraction_gaps[].handler`,
   nulls dropped (S119 `firmwareAnalysis.js:95`) — `F` is the members of `H` that start

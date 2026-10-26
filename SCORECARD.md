@@ -3465,3 +3465,23 @@ Owned scores: coverage 10 → 10 (map proxy 130/130 → 133/133; command A at `e
 
 - **planned (round 42, after a steer):** depth — refreeze R41-C2 with one declared-tuple key shared by generator and counter and a frozen-counter dry run on the dev arm (QUALITY 84), keep the v3 table bytes, and widen the combo family until a named-class lookup cannot reach the target on held-out combos (`w2/R41W2C2Combos.md`: CTL-C2-7 8/12 on combos). Second choice: calibration — the 18 host-local SOURCES rows (R41-CL3). R36-CL5, R40-CL2 remain open.
 - **retired:** none.
+
+## Round 42 — SquashFS v3 promoted to Core on four published LZMA rootfs images; triage table v4 matches its evaluator 78/78 but stops on one combo's declared gap set
+
+Base `c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c`; freeze `d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b` (`plans/round-42-claims.md`); controls `b024051c`; data `d5e22b51`; C1 landing and measured revision `eb8215ac87860f0e52745a4f842485bf8a6fe3b8`; scores `d4b4b4fb`. Wave 1: 43 seats (`.ufo/waves/round-42/w1/`). Lesson `corpus/lessons/round-42.md`.
+
+| claim | axis / surface | before | after | counting command | measured at | verdict (author) |
+|---|---|---|---|---|---|---|
+| R42-C1 | coverage — SquashFS v3 (`squashfs_v3`, `squashfs_v3_ddwrt`) Frontier → Core: PROVINCE `## Round-42 additions to Core`, entry `2026-10-26-r42-squashfs-v3-core`, README rows, S131–S134 | `carriers_matched 0`, exit 1 at the freeze (CTL-C1-0); round-41 receipts relabelled 0/4 (CTL-C1-1) | `carriers_matched 4`, every binding true, `frozen_path_changed []`, exit 0 with a counter-time REA rerun (`.ufo/waves/round-42/l1/scores/c1-at-eb8215ac.json`, `counter_sha256 0f5052f9…`) | `python3 -I -B tools/round-42/c1-counter.py --root <LANE> --rev <REV> --freeze d1681696… --pkg65 <rea-agents 6.5.0> --carrier-cache <CACHE> --work <S> --json-out <OUT>` | `eb8215ac` | **met** |
+| R42-C2 | depth — SKILL rule block 21 (`<!-- sqfs-triage-table v4 -->`, 13 columns, 15 rules), interpreter `tools/round-42/sqfs-triage-v4.py`, evaluator `tools/round-42/indep-eval-v4.py` | exit 2 `no_manifest_at_rev` at the freeze; base SKILL and the v3 table under the v4 marker 0/78 on the dev arm | `matched 78` of 78, `combo_unseen_majority` 19/24, but `observed_features_match_declared` false (combo C02 declared gap set lacks `depth-limited`), exit 1 (`l1/scores/c2-at-eb8215ac.json`) | `python3 -I -B tools/round-42/c2-counter.py --root <LANE> --rev <REV> --freeze d1681696… --json-out <OUT>` | `eb8215ac` | **not met — honest stop** |
+
+Owned scores: coverage 10 → 10 (map proxy 133/133 → 135/135, command A at `d4b4b4fb`); depth 10 → 10 (rule blocks 20 → 21; the block-21 citation was added after scoring so command A resolves 21/21 — measured in the report; the depth claim itself stopped, so no depth improvement is claimed); calibration 10 → 10 (no calibration claim). Capability row entered: **SquashFS v3 recursion through REA (`squashfs_v3`, `squashfs_v3_ddwrt`, LZMA bodies, both byte orders) with a non-sasquatch LZMA oracle (backhand-cli v3_lzma + 7-Zip)**, demonstrated by the C1 receipts. No capability row for triage v4 (R42-C2 stopped).
+
+### Capability addition (demonstrated before this row)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| SquashFS v3 recursion through REA | extract published SquashFS 3.0 LZMA rootfs images (`squashfs_v3`, `squashfs_v3_ddwrt`, LE and BE) through REA `extract-firmware`, with the extractor command logged and an oracle from two readers that are not sasquatch | `.ufo/waves/round-42/l1/scores/c1-at-eb8215ac.json`; `corpus/evidence/round-42/c1/` | 42 |
+
+- **planned (round 43, after a steer):** depth — refreeze R42-C2 with the generator refusing any manifest whose declared tuple differs from its own observed run (QUALITY 85, R42-CL1), table v4 bytes kept; and a wave 2 that attacks the round-42 C1 landing (R42-CL2). Second choice: land R41-CL3's prepared in-lane copies (`w1/R42LocalSrc.md`). R40-CL2 remains open.
+- **retired:** none.

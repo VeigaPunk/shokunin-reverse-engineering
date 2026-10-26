@@ -3170,3 +3170,13 @@ No source/gate/fixture/candidate execution, F or code permission is claimed.
 - **Re-verification (freshness):** both AVM vendor chains re-fetched and re-hashed at the freeze (`fetch-vendor.py` exit 0) and again by wave 2 (`w2/R41W2C1Chain.md`, `w2/R41W2ReproV3.md`); the binwalk README re-opened by the L1 (sha256 `87b8277e…`).
 - **Wave 2** (33 seats): C1 reproduced; C2 stop confirmed and its cause exact; defects routed R41-CL1..CL6 (`corpus/lessons/round-41.md`).
 - **Frontier step:** SOURCES 126 → 129 (S127, S128, S129); assimilation admit `firmware-region-vocabulary` (→ `2026-10-26-binwalk-v3-unit-of-work`), reject `unblob-sasquatch-dependency`; QUALITY 84; S126 made durable (round-40 closure D1).
+
+## Round 42 — 2026-10-26 (KaidokuR42)
+
+- **Claims:** R42-C1 coverage (SquashFS v3 Frontier → Core), R42-C2 depth (triage table v4). Frozen `d1681696` (`plans/round-42-claims.md`).
+- **Wave 1** (43 seats, `.ufo/waves/round-42/w1/`): oracle decision (unsquashfs reads no LZMA v3 → backhand-cli v3_lzma + 7-Zip), carriers from OpenWrt/DD-WRT, C2 precedence amendment A1 after the critic, Sentinel H1–H5 provenance bindings, dry runs that caught three probe/interface defects before the freeze (M42-1, M42-3).
+- **Data:** C1 REA `--max-depth 1` receipts on OW-A8092/OW-X86FS/DW-MEGA/DW-FONERA (409/403/447/569 files; one `unpublished-entry` per symlink, one `depth-limited`); logged extractor `sasquatch -be|-le`. C2 held-out 78 envelopes seeded by the freeze.
+- **Scores at `eb8215ac`:** C1 4/4 exit 0; C2 78/78 matched, exit 1 on `observed_features_match_declared` (C02).
+- **Re-verification (freshness):** the four carrier images re-fetched at scoring time by `fetch-carrier.py` (exit 0, pins equal); publisher md5 lines equal the fetched bytes.
+- **Frontier step:** SOURCES 129 → 134 (S130–S134); census exit 0 at start and end; assimilation none adopted (`w1/R42Assim.md` kept as the next round's start).
+- **Tool install:** backhand-cli 0.25.5 via `cargo install --features v3,v3_lzma,gzip,xz --root ~/.local/opt/backhand-0.25.5-v3` (official crate; reason: an LZMA v3 oracle reader that is not sasquatch).
