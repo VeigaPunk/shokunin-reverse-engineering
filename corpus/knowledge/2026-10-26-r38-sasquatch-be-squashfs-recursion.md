@@ -35,10 +35,13 @@ PATH entries by directory name and never removed `~/.local/bin`.
 - K1's `link-to-hello -> ../hello.txt` points outside the extraction root. unblob removes it
   and logs `MaliciousSymlinkRemoved`, so no gap is recorded.
 - K2's `var/lib/run-link -> ../../a/run.sh` stays inside the tree. REA keeps it as metadata
-  and records one `unpublished-entry` gap on every run.
+  and records one `unpublished-entry` gap on every run in which `sasquatch-v4be` extracts the
+  image (the before-arm extracts nothing, so it records only the dependency gap).
 
-So "no extraction gap" is unreachable on any carrier with an in-tree symlink. This is the same
-behaviour the round-36 LE entry recorded (`unpublished-entry` for symlinks).
+So "no extraction gap" is unreachable on any extracted carrier that holds a symlink whose target
+resolves inside the extraction tree (K2). A symlink that escapes the tree is removed instead (K1),
+which is why K1 is gap-free although it holds a symlink. This matches the round-36 LE entry
+(`unpublished-entry` for symlinks).
 
 **Status.** This is not a Core promotion. Round 38's coverage claim R38-C1 required "no
 extraction gap" on all four carriers under its first-freeze counter, and K2 fails it, so the

@@ -54,6 +54,9 @@ def main(argv=None):
         return finish(res, a.json_out, 2)
     log = git(a.root, 'log', '--format=%H%x09%cI%x09%s', '--name-only', '--no-renames',
               f'{a.freeze}..{a.rev}', '--', *[f':(glob){p}' for p in paths])
+    if log.returncode:
+        res.update(verdict='unevaluable', reason='git log failed: ' + log.stderr.strip()[:300])
+        return finish(res, a.json_out, 2)
     drift, cur = [], None
     for line in log.stdout.splitlines():
         if '\t' in line:
@@ -63,6 +66,10 @@ def main(argv=None):
         elif line.strip() and cur is not None:
             cur['paths'].append(line.strip())
     res['drift'] = drift
+    # Does REV still ship the freeze bytes? (a restore after drift leaves a commit list but no net diff)
+    net = git(a.root, 'diff', '--name-only', '--no-renames', a.freeze, a.rev, '--', *[f':(glob){p}' for p in paths])
+    res['net_changed'] = [x for x in net.stdout.splitlines() if x.strip()]
+    res['ships_freeze_bytes'] = not res['net_changed']
     res['verdict'] = 'drift' if drift else 'clean'
     return finish(res, a.json_out, 1 if drift else 0)
 
