@@ -1,0 +1,30 @@
+fixture=/fast/scratch/hyaku/kaidoku-r38/R38W2CritGateBypass/fx.d4kD toplevel=/fast/scratch/hyaku/kaidoku-r38/R38W2CritGateBypass/fx.d4kD
+F(freeze)=84a8c6afd800b3261d682b0d8386ad27fdfba59d
+CASE A1-default :: gate_exit=0 verdict=clean 0
+CASE A1-explicit :: gate_exit=1 verdict=drift 1
+CASE A2-default :: gate_exit=0 verdict=clean 0
+CASE A2-explicit :: gate_exit=1 verdict=drift 1
+CASE A3-default :: gate_exit=0 verdict=clean 0
+CASE A3-explicit :: gate_exit=1 verdict=drift 1
+CASE A4-default :: gate_exit=0 verdict=clean 0
+CASE A4-explicit :: gate_exit=1 verdict=drift 1
+CASE A5-default :: gate_exit=1 verdict=drift 1
+CASE A5-carriers-blob :: /fast/scratch/hyaku/kaidoku-r38/R38W2CritGateBypass/outside-carriers.json
+CASE A5-after-external-edit :: gate_exit=1 verdict=drift 1
+CASE A5-counter-reads-blob :: json.loads FAILS -> JSONDecodeError
+CASE A6-amendment-as-own-freeze :: gate_exit=0 verdict=clean  (offered freeze is the amendment commit itself)
+CASE A6-same-rev-honest-freeze :: gate_exit=1 drift_commits=2
+CASE A6-default-set-blind :: F..A6 default drift=2 ['4fe27d4d', 'b9cc9d7d']
+CASE A7-rev-unbound :: gate_exit=0 verdict=clean  (receipt asserts revision 11cfa178; gate was told 84a8c6afd800b3261d682b0d8386ad27fdfba59d)
+REVS F=84a8c6afd800b3261d682b0d8386ad27fdfba59d A0=45ddb388f3a8116c39a91cfe6b7b1e3d542a880f A1=a6cb0a8697c1daf731b7486aedf89c79d5244e78 A2=729cbf0ffc29d97b7f567202a1c5be862011ab57 A3=30df3d83e2c47698ecf3dfeedea9b73edca3caaf A4=11cfa178c7db6f3f590d1e48dabf0711c37b2b10 A5=b9cc9d7dfc7d3d8be430159f8ba9cfa8519b1ace A6=4fe27d4defbe164a85b7a93e061103ab06ac5919
+DERIVED-FREEZE=84a8c6afd800b3261d682b0d8386ad27fdfba59d
+KEPT=/fast/scratch/hyaku/kaidoku-r38/R38W2CritGateBypass/fx.d4kD
+PINGATE F..A0 docs-only (pass leg)           exit=0 clean []
+PINGATE F..A1 new counter path               exit=1 drift ['counter-not-in-freeze']
+PINGATE F..A2 harness+after receipt          exit=1 drift ['bytes-differ']
+PINGATE F..A3 xpin helper                    exit=1 drift ['bytes-differ']
+PINGATE F..A4 carrier bytes                  exit=1 drift ['bytes-differ']
+PINGATE F..A5 carriers.json symlink          exit=1 drift ['non-regular-kill-rule-path', 'bytes-differ']
+PINGATE F..A6 counter amended                exit=1 drift ['non-regular-kill-rule-path', 'bytes-differ', 'counter-not-frozen']
+PINGATE A6 offered as 1st freeze             exit=1 drift ['freeze-not-first', 'non-regular-kill-rule-path', 'bytes-differ', 'counter-not-frozen']
+PINGATE receipt rev != measured rev          exit=1 drift ['receipt-rev-unbound']

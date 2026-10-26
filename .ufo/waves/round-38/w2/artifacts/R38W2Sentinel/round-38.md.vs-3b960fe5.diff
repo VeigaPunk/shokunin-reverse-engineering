@@ -1,0 +1,100 @@
+0a1,99
+> # Round 38 — BE SquashFS v4 measured but stopped under its first freeze; a frozen rule edited after scoring is not the rule
+> 
+> Base `77091b492cc53f8743bd0701b1e7d5e66123dd84`. First freeze `e059ca9391642d5b71b6662cabcbdce0d9308719`
+> (claims doc, both counters and selftests, harness, carriers, instrument map, census start). Control
+> receipts `efd5c47a72a50b3a434783f82268fb4a96e636a1` (7 controls, all exit 1). Attempt 1 (L1
+> `KaidokuR38`) ran wave 1 (40 seats, `.ufo/waves/round-38/w1/`) and died at 03:37:05 without a report.
+> Attempt 2 (L1 `KaidokuR38a2`) re-verifies the inherited bytes and lands this round.
+> 
+> Verdicts by the first-freeze bytes: **R38-C1 honest stop** (`carriers_matched 3`, K2 fails on one
+> `unpublished-entry` gap; `.ufo/waves/round-38/l1/scores/c1-v1-at-3b960fe5.json`). **R38-C2** is
+> measured at the landing commit (`.ufo/waves/round-38/l1/scores/c2-final.json`).
+> 
+> ## Mistakes
+> 
+> | id | class | evidence | captured-by | fix (shown able to fail) |
+> |---|---|---|---|---|
+> | M38-1 | freeze integrity — a frozen predicate and counter were amended after seats had scored, and the amendment called itself "pre-scoring" | `git log e059ca93..077e212b -- plans/round-38-claims.md tools/round-38/c1-counter.py` lists `79f69347` (03:30:33, predicate + counter) and `f1010f67` (03:32:55, counter: gaps other than `missing-extractor-dependency` no longer fail). Before both, a seat ran the first-freeze counter on K1 receipts (`.ufo/waves/round-38/w1/R38ExecAfterK1.md` §2e, frozen sha `a7a62b09…`), and K2's symlink gap had been reported (`R38ExecAfterK2.md` lines 7-11). The v3 counter turns K2 from fail to pass: 3/4 → 4/4 on the same receipts (`.ufo/waves/round-38/l1/scores/c1-v{1,3}-at-3b960fe5*.json`) | QUALITY 55 (frozen input checked for any commit touching it after the freeze), held as prose with no executable check | `tools/round-38/freeze-drift.py`, QUALITY 79: exit **1** from `e059ca93` to `077e212b` (`.ufo/waves/round-38/l1/freeze-drift-077e212b.json`, both commits listed), exit **0** to `cb4326b2` (`freeze-drift-cb4326b2.json`), exit 2 when freeze is not an ancestor. Attempt 2 scores C1 with the first-freeze bytes |
+> | M38-2 | control reproducibility — the frozen control generator was degenerate and its kill signal inverted; it was fixed one commit after the freeze, in the same commit as the receipts | `.ufo/waves/round-38/w1/R38ReviewerControlReplay.md` F1-F3: at `e059ca93`, `gen-controls.py:199` passes `'1'/'2'/'3'` where `c2_fixture` branches on `junk/delete/substitute`, so CTL-C2-1/2/3 all mint the repaired green fixture (`met_target true`); `:217` inverts the exit. At `efd5c47a` all seven replay to exit 1 | none (no rule required control generators inside the freeze) | QUALITY 80; `freeze-drift.py … tools/round-38/gen-controls.py` from `e059ca93` to `077e212b` → exit **1** listing `efd5c47a` (`.ufo/waves/round-38/l1/freeze-drift-gen-controls.json`). The C2 counter is unchanged throughout (sha `7f137b66…` at the freeze and at `main`), and the fix landed before the wave was dispatched (03:09 vs 03:16), so C2 is judged with its frozen counter and the corrected controls, and the defect is disclosed |
+> | M38-3 | stale premise at the freeze — "no external extractor dependency" for standard BE v4 | first-freeze claims doc: "run with stock unblob 26.6.4; no external extractor dependency". unblob 26.6.4 `SquashFSExtractor` runs `sasquatch-v4be` for BE v4 (S112, lines 24-70). The probe behind the premise filtered PATH components by name (`grep -v sasquatch`), so `~/.local/bin/sasquatch-v4be` stayed reachable (`.ufo/waves/round-38/w1/R38RevengerPremise.md` §0; `R38ExecBeforeArmRecheck.md`) | none | a before-arm that removes the directory itself: with `$HOME/.local/bin` off PATH all four carriers give `missing-extractor-dependency` [`sasquatch-v4be`] and 0 files (`corpus/evidence/round-38/c1/K*/before.json`); with it on PATH they publish (`after.json`). The same carrier is red or green depending only on the arm |
+> | M38-4 | harness — the frozen after-mode harness could not produce a receipt | `c1-run.sh after` at `9c9d496b` ran `mkdir -p "$OUT"` before REA, and REA refuses an existing extraction root ("Extraction output root already exists"): exit 1 (`.ufo/waves/round-38/w1/artifacts/R38ExecAfterK3/harness-after-mode-failure.txt`) | none: the controls never ran the harness | `cb4326b2` removed the pre-create; the same invocation exits 0 (`R38ExecAfterK3/harness-after-mode-post-fix-ok.json`). The harness is outside the kill-rule set, so this is not an M38-1 class amendment |
+> 
+> ## Gate
+> 
+> ### Sources opened this round (2026-10-26)
+> 
+> | row | decision | located quote (≤25 words) / access | reason | flip |
+> |---|---|---|---|---|
+> | S112 unblob `squashfs.py` @ 26.6.4 (BE v4 scope) | admit | re-opened by L1 attempt 2, 2026-10-26T03:43-03:00: `curl …/26.6.4/python/unblob/handlers/filesystem/squashfs.py \| sha256sum` → `2d7b901b…9287` (= S108 digest); line 26 `V4BE_EXECUTABLE = "sasquatch-v4be"` | same URL as S108 with a BE-v4 dependency scope; census W04 (across scopes), not E04 | the tag moves (digest changes) |
+> | S113 unblob 26.6.4 `squashfs_v4_be/__input__` fixtures | admit | LFS pointer `squashfs_v4.nopad.bin`: "oid sha256:a29ddc15f5a6abcabf28b7161837eb56b34111e48420e7392e648f2fdfe956ed / size 307" (`.ufo/waves/round-38/w1/R38ScoutUnblobFixtures.md`) | closes R37-CL2's fixture half: K3/K4 bytes equal the tag's LFS objects | an oid differs from the lane carrier digest |
+> | S114 Freetz AVM-BE format note | admit (scope: AVM marker only) | "This document summarizes all (so far known) technical details about a non-standard SquashFS format (called AVM-BE below)" (`R38ScoutFreetzAvm.md`; same bytes as `.ufo/waves/round-37/probes/avm.txt`, sha256 `c1c43f6f…a5d5`) | closes R37-CL2's text half; names the committed round-37 copy | upstream rewording of the `mkfs_time`/`bytes_used` statement |
+> | S115 7-Zip 26.04 BE v4 refusal | **reject** (as an oracle) | `7z l` → "Cannot open the file as archive", exit 2, on K1-K4 (`.ufo/waves/round-38/w1/artifacts/R38CrossToolK4/7z-refusal.txt`) | R37-CL3's 7-Zip candidate: a refusal is not an independent extraction oracle; the wave-1 lesson draft also reports that 7-Zip's format page lists SquashFS under unpacking (`.ufo/waves/round-38/w1/artifacts/R38ScribeLessonSkeleton/lesson.md`, S115 row; not re-opened by the L1), so "7-Zip cannot read SquashFS" would overstate | a 7-Zip release opens these carriers and publishes oracle-matching members |
+> | S116 unblob.org formats matrix | admit (via assimilation) | opened by L1 attempt 2, 2026-10-26T03:44:24-03:00, HTTP 200, 216890 B, sha256 `8f8c29af…bbc5`; meta "parses unknown binary blobs for more than 30 different archive, compression, and file-system formats" | producer coverage statement, re-countable (97 `<h2 id=`, 3 × "more than 30") | counts change on refetch |
+> 
+> Registry cell changes (old → new): **S110** scope "…and its Debian-package install route only; not evidence about any image" → "…and its Debian-package install route, plus its own "78+" format-count sentence (lines 5, 22) only; not evidence about any image"; used-by `corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md` → that entry plus `corpus/knowledge/2026-10-26-unblob-format-matrix.md`. No status or recheck cell changed. Rows 111 → 116 (S112–S116 appended).
+> 
+> ### Assimilation — theme sasquatch / unblob (`/home/vgpnk/Projects/shokuknow/merge/kaidoku`, read-only)
+> 
+> Id-collision check (scratch, addendum §10 pattern): registry ids S001–S111 (111) vs staged S106–S237
+> (132) → **6 collisions, S106–S111** (`.ufo/waves/round-38/assimilation/{reg-ids,staged-ids,collisions}`).
+> The guard was proven on an indented `  | S002 |` fixture first (`.ufo/waves/round-38/w1/artifacts/R38ExecIdCollision/guard-proof.txt`).
+> Renumber map, by document: staged **S122** (unblob.org/formats) → lane **S116** (new row); staged
+> **S106** (unblob README) → lane **S110** (same document, existing row, no new row). Only rows that
+> admitted entries cite were appended (one).
+> 
+> - **ADMIT `unblob-format-matrix`** → `corpus/knowledge/2026-10-26-unblob-format-matrix.md`. Re-opened
+>   live (S116 above). Reproduced: 97 `<h2 id=`; "more than 30 different" × 3; ten `SquashFS (…)`
+>   sections including `v4-BE`; "Does not support encrypted ZIP files"; README @26.6.4 line 5 "78+".
+>   One correction: `v4-broadcom` (not "v4-Broadcom"). The staged "42 vendor-attributed entries" was
+>   kept: 42 of 97 sections carry a `Vendor:` field, one of them `unknown`. An attempt-2 draft wrongly
+>   called it a word count; wave-2 seat `R38W2SrcS116` caught that before the final landing (M38-5). PROVINCE scope: firmware-extraction producer
+>   contract, same ground as the round-36 Core row. Flip to refuse: the page drops `SquashFS (v4-BE)` or
+>   the counts change.
+> - **REFUSE `sasquatch-unblob-compatibility-precondition`** (staged round 7, S165). Its claim "Neither
+>   tool is present on the lane host" is false here: `ls -la ~/.local/bin/sasquatch
+>   ~/.local/bin/sasquatch-v4be ~/.local/bin/unblob` (2026-10-26) lists 382824 B and 436232 B binaries
+>   and the unblob uv-tool link. "No published source states the compatibility" is contradicted by
+>   S110 line 49 and S112. Its only source is a campaign-local tsv
+>   (`lanes/kaidoku/round7/work/r7-local-measurements.tsv`), not a lane-retained byte. Flip: none; this is a
+>   superseded host snapshot.
+> - **REFUSE `sasquatch-unblob-avm-branch`** (staged round 9; S189–S192). S189 is the unpinned
+>   `unblob/main` handler, while lane S108/S112 pin tag 26.6.4. S190/S191 are campaign-local
+>   `lanes/kaidoku/round9/work/lead2-avm-branch.tsv` rows that the lane does not hold. Its closing
+>   premise ("a real AVM image still needs a tool this host does not have") conflicts with the staged
+>   sibling `avm-image-extraction.md`. The valid part (`-be` is dropped when `bytes_used == mkfs_time`)
+>   is already carried by S112/S114 in the round-38 BE entry. Flip: the branch is re-measured on a
+>   lane-built AVM carrier with the source repinned to 26.6.4.
+> - Scratch-mirror census before the first append: attempt-1 seat `.ufo/waves/round-38/w1/R38ExecMirrorGate.md` (exit 0 on S112–S115). Attempt 2's registry, with S116 and the S110 edit, validates exit 0 in the real lane (end census in the report).
+> 
+> ### Quarantine slice (absent-defect register, read-only; kaidoku data rows: 5)
+> 
+> Derived with the addendum §10 `awk` (`.ufo/waves/round-38/assimilation/quarantine-slice`).
+> Hand-checked live by wave-1 seat `R38ExecQuarantine` (`.ufo/waves/round-38/w1/R38ExecQuarantine.md` §3)
+> and re-checked in wave 2:
+> 
+> - **S150 refuse (fabrication class)** — zenn.dev article live (174,088 B); the registered heading
+>   「シンボルがない場合のヒント」 occurs 0 times.
+> - **S113 (staged) adopt-with-anchor, count corrected** — adb page lists 21 locales + `x-default`, not 17.
+> - **S117 unverifiable (not fabrication)** — IEEE Xplore HTTP 202 with an empty body; Crossref confirms
+>   the paper exists.
+> - **S136 adopt-with-anchor** — `corpus/knowledge/2026-10-13-r4u-06-adb-surface.md` line 8.
+> - **S147 adopt-with-anchor** — `HOST-CONTRACT.md` line 41; the heading names in the row are wrong.
+> - No admitted entry cites any of the five, so none is appended.
+> 
+> ## Routed defects (round-37 closure)
+> 
+> - **R37-CL1** (cite only committed receipts): every receipt this round cites is committed:
+>   `corpus/evidence/round-38/c1/K*/{before,after}.json`, `.ufo/waves/round-38/l1/scores/`, and the
+>   wave-1 artifacts.
+> - **R37-CL2** (register round-37 outside material): S113 (BE fixtures) and S114 (Freetz note) are the
+>   provenance rows.
+> - **R37-CL3** (file Gate decisions, including the 7-Zip rejection): this section; S115 is a rejected row.
+> - **R36-CL1**: `.ufo/waves/round-36/w2.ready.dispatched` was committed in the freeze `e059ca93`. The
+>   round-38 `w1.ready.dispatched` stamp was committed at `3b960fe5`.
+> - `considerthese/` is absent in this lane.
+> 
+> ## Criteria added
+> 
+> QUALITY 79 (first-freeze rule + `freeze-drift.py`) and QUALITY 80 (controls inside the freeze),
+> `corpus/QUALITY.md`.

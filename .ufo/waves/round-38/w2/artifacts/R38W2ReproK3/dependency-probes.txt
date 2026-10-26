@@ -1,0 +1,90 @@
+# R38W2ReproK3 dependency probes (unblob 26.6.4 squashfs_v4_be requires external sasquatch-v4be)
+
+## unblob handler source (installed, sha256 of unblob exe 0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09)
+
+PAD_SIZES = [4_096, 1_024]
+
+
+class SquashFSExtractor(Extractor):
+    EXECUTABLE = "sasquatch"
+    V4BE_EXECUTABLE = "sasquatch-v4be"
+
+    def __init__(self, version: int, big_endian_magic: int):
+        self.version = version
+        self.big_endian_magic = big_endian_magic
+
+    def extract(self, inpath: Path, outdir: Path):
+        with File.from_path(inpath) as file:
+            endian = get_endian(file, self.big_endian_magic)
+
+        commands_args = []
+        executable = self.EXECUTABLE
+
+        match endian, self.version:
+            case Endian.BIG, 4:
+                executable = self.V4BE_EXECUTABLE
+                struct_parser = StructParser(SquashFSv4LEHandler.C_DEFINITIONS)
+                with File.from_path(inpath) as f:
+                    header = struct_parser.parse(
+                        SquashFSv4LEHandler.HEADER_STRUCT, f, Endian.BIG
+                    )
+                    # see https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt
+                    is_avm = header.bytes_used == header.mkfs_time
+                    if not is_avm:
+                        commands_args.append("-be")
+            case Endian.BIG, _:
+                commands_args.append("-be")
+            case Endian.LITTLE, _:
+                commands_args.append("-le")
+
+        commands_args.extend(
+            [
+                "-no-exit-code",
+                "-f",
+                "-d",
+                "{outdir}",
+                "{inpath}",
+            ]
+        )
+        extractor = Command(executable, *commands_args)
+        extractor.extract(inpath, outdir)
+
+    def get_dependencies(self) -> list[str]:
+        return [self.EXECUTABLE, self.V4BE_EXECUTABLE]
+
+
+class _SquashFSBase(StructHandler):
+
+## sasquatch-v4be identity
+fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6  /home/vgpnk/.local/bin/sasquatch-v4be
+ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754  /home/vgpnk/.local/bin/sasquatch
+unsquashfs version 4.5.1 (2022/03/17)
+copyright (C) 2022 Phillip Lougher <phillip@squashfs.org.uk>
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+
+## probe K1s on carrier.sqsh (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K1/carrier.sqsh)
+  2026-10-26 06:56.13 [debug    ] Running extract command        command='sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r38/R38W2ReproK3/cli/K1s/extracted/carrier.sqsh_extract /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K1/carrier.sqsh' pid=2900198
+  2026-10-26 06:56.13 [error    ] Can't run extract command. Is the extractor installed? __typename__=ExtractorDependencyNotFoundReport dependencies=['sasquatch-v4be'] pid=2900198 severity=<Severity.ERROR: 'ERROR'>
+  extracted regular files: 0
+
+## probe K2s on carrier.sqsh (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K2/carrier.sqsh)
+  2026-10-26 06:57.10 [debug    ] Running extract command        command='sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r38/R38W2ReproK3/cli/K2s/extracted/carrier.sqsh_extract /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K2/carrier.sqsh' pid=2924215
+  2026-10-26 06:57.10 [error    ] Can't run extract command. Is the extractor installed? __typename__=ExtractorDependencyNotFoundReport dependencies=['sasquatch-v4be'] pid=2924215 severity=<Severity.ERROR: 'ERROR'>
+  extracted regular files: 0
+
+## probe stripped on carrier.bin (/fast/scratch/hyaku/kaidoku-r38/R38W2ReproK3/in/carrier.bin)
+  2026-10-26 06:55.42 [debug    ] Running extract command        command='sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r38/R38W2ReproK3/cli/stripped/extracted/carrier.bin_extract /fast/scratch/hyaku/kaidoku-r38/R38W2ReproK3/in/carrier.bin' pid=2882356
+  2026-10-26 06:55.42 [error    ] Can't run extract command. Is the extractor installed? __typename__=ExtractorDependencyNotFoundReport dependencies=['sasquatch-v4be'] pid=2882356 severity=<Severity.ERROR: 'ERROR'>
+  extracted regular files: 0
+
+## probe K4s on carrier.bin (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K4/carrier.bin)
+  2026-10-26 06:57.10 [debug    ] Running extract command        command='sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r38/R38W2ReproK3/cli/K4s/extracted/carrier.bin_extract /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K4/carrier.bin' pid=2924216
+  2026-10-26 06:57.10 [error    ] Can't run extract command. Is the extractor installed? __typename__=ExtractorDependencyNotFoundReport dependencies=['sasquatch-v4be'] pid=2924216 severity=<Severity.ERROR: 'ERROR'>
+  extracted regular files: 0
+
+## probe default on carrier.bin (/fast/scratch/hyaku/kaidoku-r38/R38W2ReproK3/in/carrier.bin)
+  2026-10-26 06:55.43 [debug    ] Running extract command        command='sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r38/R38W2ReproK3/cli/default/extracted/carrier.bin_extract /fast/scratch/hyaku/kaidoku-r38/R38W2ReproK3/in/carrier.bin' pid=2882657
+  extracted regular files: 4
+

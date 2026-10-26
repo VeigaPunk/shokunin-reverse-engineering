@@ -1,0 +1,34 @@
+# live re-verification of the S116 / S110 anchors (my own fetches, 2026-10-26T07:02:36Z)
+
+## S116 https://unblob.org/formats/
+curl -fsSL --max-time 60 -o s116.html https://unblob.org/formats/  -> exit 0
+bytes: 216890
+sha256: 8f8c29aff33d5aa1ee2a69f8a66f272d45fa3dd98d271c95337c3ff15a65bbc5   (row claims 8f8c29aff33d5aa1ee2a69f8a66f272d45fa3dd98d271c95337c3ff15a65bbc5)
+grep -o '<h2 id=' | wc -l            -> 97   (row claims 97)
+grep -o 'more than 30 different' | wc -l -> 3   (entry claims 3)
+id="squashfs-v4-be" occurrences     -> 1
+sections with <p class="admonition-title">Fully supported</p>     -> 89
+sections with <p class="admonition-title">Partially supported</p> -> 8  (sum 97)
+sections with <strong>Vendor:</strong> -> 42  ('Vendor:' total in page: 42)
+vendor value 'unknown' sections      -> squashfs-v3-non-standard only
+sections with <strong>Handler type:</strong> -> 97
+ZIP section status -> Partially supported; note present: 'Does not support encrypted ZIP files.'
+ten SquashFS heading texts:
+  squashfs-v1              SquashFS (v1)&para;
+  squashfs-v2              SquashFS (v2)&para;
+  squashfs-v2-non-standard SquashFS (v2-non-standard)&para;
+  squashfs-v3              SquashFS (v3)&para;
+  squashfs-v3-broadcom     SquashFS (v3-Broadcom)&para;
+  squashfs-v3-ddwrt        SquashFS (v3-DDWRT)&para;
+  squashfs-v3-non-standard SquashFS (v3-non-standard)&para;
+  squashfs-v4-be           SquashFS (v4-BE)&para;
+  squashfs-v4-broadcom     SquashFS (v4-broadcom)&para;
+  squashfs-v4-le           SquashFS (v4-LE)&para;
+
+## S110 https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/README.md
+curl -fsSL --max-time 60 -> exit 0
+lines/bytes: 235 / 7580   (row claims 235 lines)
+sha256: 6544d60f22f7b521f8705b3bba5d47a50e428ccbd3359542708dbd009ccf3716   (row claims 6544d60f22f7b521f8705b3bba5d47a50e428ccbd3359542708dbd009ccf3716)
+line 5:  unblob parses unknown binary blobs for **78+ archive, compression, and file-system formats**, extracts their content recursively, and carves out unknown chunks. It is the perfect companion for extracting, analyzing, and reverse engineering firmware images.
+line 22: - **78+ supported formats** — archives, compression streams, and file systems including SquashFS, JFFS2, UBI/UBIFS, ext, CPIO, ZIP, 7-Zip, gzip, XZ, LZMA, LZ4, and many more. See the [full list](https://unblob.org/formats/).
+line 49: For SquashFS support, also install [sasquatch](https://github.com/onekey-sec/sasquatch):

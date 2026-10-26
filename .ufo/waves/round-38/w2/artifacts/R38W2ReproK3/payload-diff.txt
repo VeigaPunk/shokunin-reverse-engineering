@@ -1,0 +1,24 @@
+# R38W2ReproK3 semantic payload comparison (committed vs fresh REA 6.5.0 runs)
+
+normalization: normalized_result.output_directory dropped; chunks/gaps provider_id, derivations provider_blob_id, files.path dropped.
+full-envelope scrub additionally normalizes: REA/unblob staging dirs (<SC>), provider blob ids (<BLOB>), evidence_id (<EV>), subject.local_path (<P>).
+
+before v1: payload_equal=True
+  full_envelope_scrubbed_equal=False (committed 6693B vs fresh 6608B canonical JSON)
+  first textual difference at char 3306:
+    committed:  "operation": "extract_firmware", "parameters": {"max_depth": 3, "max_output_bytes": 268435456, "max_output_files": 10000, "output_directory": "<SC>", "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K3/carrier.bin"}, "predicate_type": "rea.analysis", "provider": {"id": "unblob", "name": "Unblob", "version": "26.6.4"}, "raw
+    fresh:      "operation": "extract_firmware", "parameters": {"max_depth": 3, "max_output_bytes": 268435456, "max_output_files": 10000, "output_directory": "<SC>", "path": "<SC>"}, "predicate_type": "rea.analysis", "provider": {"id": "unblob", "name": "Unblob", "version": "26.6.4"}, "raw_result": {"execution": {"args": ["--process-num", "1", "--depth", "3", "--randomness
+
+after v1: payload_equal=True
+  full_envelope_scrubbed_equal=False (committed 10425B vs fresh 10340B canonical JSON)
+  first textual difference at char 4714:
+    committed:  "operation": "extract_firmware", "parameters": {"max_depth": 3, "max_output_bytes": 268435456, "max_output_files": 10000, "output_directory": "<SC>", "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K3/carrier.bin"}, "predicate_type": "rea.analysis", "provider": {"id": "unblob", "name": "Unblob", "version": "26.6.4"}, "raw
+    fresh:      "operation": "extract_firmware", "parameters": {"max_depth": 3, "max_output_bytes": 268435456, "max_output_files": 10000, "output_directory": "<SC>", "path": "<SC>"}, "predicate_type": "rea.analysis", "provider": {"id": "unblob", "name": "Unblob", "version": "26.6.4"}, "raw_result": {"execution": {"args": ["--process-num", "1", "--depth", "3", "--randomness
+
+before v2: payload_equal=True
+  full_envelope_scrubbed_equal=True (committed 6693B vs fresh 6693B canonical JSON)
+
+after v2: payload_equal=True
+  full_envelope_scrubbed_equal=True (committed 10425B vs fresh 10425B canonical JSON)
+
+Note: v1 arms used the scratch copy of the carrier as `parameters.path`, so only that field (and the fresh output_directory) differs; v2 arms used the committed lane carrier path and every non-volatile byte matches.

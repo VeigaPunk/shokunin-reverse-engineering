@@ -1,0 +1,60 @@
+diff --git a/PROVINCE.md b/PROVINCE.md
+index 43882885..42e3006b 100644
+--- a/PROVINCE.md
++++ b/PROVINCE.md
+@@ -41,7 +41,7 @@ Surfaces owned now — each verified on this host 2026-10-13.
+ 
+ | Surface | Ports / paths / config keys | Liveness / readiness probe | Verified evidence |
+ |---|---|---|---|
+-| REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml` — config files pin `rea-agents` (Devin/OMP/Kimi 6.7.0 since 2026-10-20 13:35:56 -03; see surface summary) with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` would inspect a running attached client; not exercised this round. CLI: `rea doctor` (6.7.0 doctor: no devin/omp registration finding, separate Kimi JSON registration missing) | round-19 re-grepped pin/sha256 record `.ufo/waves/round-19/evidence/province-pins-integrated.json`; doctor outputs in `evidence/doctor/`; historical readiness probe 2026-10-13 |
++| REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml` — config files pin `rea-agents` (Devin/OMP/Kimi 6.7.0 since 2026-10-20 13:35:56 -03; see surface summary) with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` would inspect a running attached client; not exercised this round. CLI: `rea doctor` (6.7.0 doctor: no devin/omp registration finding, separate Kimi JSON registration missing) | round-19 re-grepped pin/sha256 record `.ufo/waves/round-19/evidence/province-pins-integrated.json`; doctor outputs in `.ufo/waves/round-19/evidence/doctor/` (doctor-6.5.0.txt, doctor-6.7.0.txt); historical readiness probe 2026-10-13 |
+ | `rea` CLI | npx cache `~/.npm/_npx/*/node_modules/rea-agents` — no `rea` on PATH; 153 commands on the 6.5.0/6.7.0 pins, 127 on 6.4.0 (historical) | `npx -y rea-agents@6.4.0 --version` → `6.4.0` (2026-10-13 receipt) | wave 01/02/03 catalogs |
+ | Ghidra provider | `GHIDRA_INSTALL_DIR` (876 MB install); headless `support/analyzeHeadless`; native decompiler `Ghidra/Features/Decompiler/os/linux_x86_64/decompile`; 39 processor modules; 34 features incl. PyGhidra/BSim | `rea doctor` → providerInspections `ghidra: configured+available`, 8/8 checks | `application.version=12.1.4`, build 2026-09-21, rev 8b6bbb85 |
+ | JDK 21 substrate | `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`, exported in `.bashrc:29` + `.profile:4` (re-read 2026-10-20, w1 `GhidraJdkRecheck`); sole Java on host | `java -version` → 21.0.12.1 full JDK | meets Ghidra `java.min=21` exactly; single-Java fragility noted |
+@@ -154,7 +154,7 @@ absorbed.
+ - **`.jsc` → source mapping** — Ignition disassembly held; a View8/jsc2js-style
+   bytecode-to-source mapper is the next frontier for typora's real app.
+ - **sasquatch** — unblob's squashfs recursion extractor (AUR-only); 7z fallback
+-  covers the carved-image path today. [2026-10-26: superseded for LE SquashFS v4 — see `## Round-36 additions to Core`; big-endian/AVM stays here.]
++  covers the carved-image path today. [2026-10-26: superseded for LE SquashFS v4 — see `## Round-36 additions to Core`; big-endian/AVM stays here. Round 38: standard BE v4 measured through `sasquatch-v4be` (`corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md`), not promoted — R38-C1 honest stop, K2's in-tree symlink leaves an `unpublished-entry` gap.]
+ - **adb device surface** — 22/24 verbs need a live device/emulator;
+   `collect-adb-bugreport` blocks ~10min on dead serial.
+ - **Signal/1Password-scale asar analysis** — 1Password's 40.7MB asar + 188MB
+diff --git a/corpus/README.md b/corpus/README.md
+index 1b2de01e..ad9ede14 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -88,6 +88,8 @@ A row is written when its file exists, never before.
+ | Instrument admission (shortcut replay) | `2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop` | held as a tool, not as capability — a committed gate refuses a registered target-met shortcut and clears an identity-defeating counter; the round's own green surface was met 8/8 by five unregistered structure-blind classes, so no capability or score is claimed |
+ | AppImage/SquashFS recursion (round 36) | `2026-10-26-r36-sasquatch-squashfs-recursion` | held (bounded, LE SquashFS v4) — with sasquatch 4.5.1 on PATH, REA `extract-firmware` (rea-agents 6.5.0, unblob 26.6.4) publishes every regular file of the frozen `unsquashfs` 4.7.5 oracle on four frozen carriers (K1 3/3, K2 4/4, K3 nvim v0.12.6 x86-64 AppImage 2130/2130, K4 aarch64 AppImage 2130/2130) and none without it; symlinks stay `unpublished-entry`; big-endian/AVM and vendor-mangled images not measured. Dated supersession of the Firmware row's "recursion blocked by missing sasquatch" (2026-10-13 state, kept as history) |
+ | unblob's sasquatch dependency (round 36, assimilated) | `2026-10-26-unblob-sasquatch-dependency` | held as producer contract — unblob README (tag 26.6.4) makes SquashFS support conditional on an external sasquatch and documents a Debian-package route; devttys0 README self-labels sasquatch "Very beta."; re-grounded from the shokuknow package with three corrections |
++| Big-endian SquashFS v4 through REA (round 38) | `2026-10-26-r38-sasquatch-be-squashfs-recursion` | measured, **not promoted** (Frontier) — with `sasquatch-v4be` 4.5.1 reachable, the `squashfs_v4_be` handler publishes every oracle regular file on four frozen carriers (K1 5/5, K2 3/3, K3 4/4, K4 4/4) and none without it; K2's in-tree symlink stays an `unpublished-entry` gap, so R38-C1 ("no extraction gap" on 4/4 under the first-freeze counter) is an honest stop; AVM-BE and vendor-mangled images not measured |
++| unblob's format matrix (round 38, assimilated) | `2026-10-26-unblob-format-matrix` | held as producer coverage statement — unblob.org lists 97 handler sections including `SquashFS (v4-BE)` and the vendor-mangled SquashFS variants; its meta description's "more than 30" conflicts with the README's "78+"; coverage claim only, never an extraction outcome; re-grounded from the shokuknow package with two corrections |
+ 
+ ## Knowledge
+ | entry | topic | source | verified-at |
+@@ -194,6 +196,8 @@ A row is written when its file exists, never before.
+ | `2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop` | pre-freeze shortcut-replay gate: three verdicts and the clause each depends on, seven registered classes and what each memorises, the green surface's single-axis perturbation, five unregistered classes at 8/8, the fresh-content repair route, nine disclosed limits; capability **denied** by the round's own stop | S106; `tools/round-34/replay-gate.py`; receipts `.ufo/waves/round-34/r34b/{before,after,controls}/`; stop `cd75b92e` | 2026-10-25 |
+ | `2026-10-26-r36-sasquatch-squashfs-recursion` | REA `extract-firmware` SquashFS recursion with and without sasquatch on four frozen LE v4 carriers: gap record, member parity with the `unsquashfs` oracle, 17 recursion extras per AppImage, symlinks as `unpublished-entry`, install provenance, oracle limits | S107, S108, S109; receipts `corpus/evidence/round-36/c1/`; counter `tools/round-36/c1-counter.py` | 2026-10-26 |
+ | `2026-10-26-unblob-sasquatch-dependency` | unblob's producer contract: SquashFS support needs an external sasquatch; Debian-package route; "Very beta." self-label (assimilated from shokuknow `merge/kaidoku`, re-grounded) | S110, S111 | 2026-10-26 |
++| `2026-10-26-r38-sasquatch-be-squashfs-recursion` | standard big-endian SquashFS v4 via REA: `sasquatch-v4be` is a structural dependency (handler argv, AVM `-be` drop), before/after arms on four frozen carriers, the two symlink outcomes (escape removed vs in-tree `unpublished-entry`); Frontier, not Core | S112, S113, S114; receipts `corpus/evidence/round-38/c1/` | 2026-10-26 |
++| `2026-10-26-unblob-format-matrix` | unblob's producer coverage matrix: 97 handler sections, ten SquashFS variants incl. `v4-BE`, ZIP limitation, "more than 30" vs "78+" count conflict (assimilated from shokuknow `merge/kaidoku`, re-grounded) | S116, S110 | 2026-10-26 |
+ 
+ ## Lessons
+ | entry | round | gist |
+@@ -222,6 +226,7 @@ A row is written when its file exists, never before.
+ | `round-33` | 33 | repair-first timestamp/disk/selftest fixes, source-backed CHPE profile boundaries, and honest stop on a provider-filtered input-author item; all dependent outputs quarantined |
+ | `round-34` (run-6 re-dispatch) | 34 | second claim after the inherited C1 stop: a pre-freeze shortcut-replay gate frozen at `c79bbe7b`, six clauses met, then stopped because five unregistered structure-blind classes reach the green 8/8; predicate-identity, pin-enforcement, class-drop and label-collision defects disclosed; S106 admitted |
+ | `round-36` | 36 | fresh-start round: sasquatch SquashFS recursion moved Frontier → Core (R36-C1, 4/4 frozen carriers) and self-assessment pointer/count drift repaired (R36-C2, 3 → 0); one assimilated entry admitted, three refused; counter blind spots found by the wave recorded as criteria |
++| `round-38` | 38 | attempt 2 after a dead attempt 1: BE SquashFS v4 measured but R38-C1 stopped under its first-freeze counter (3/4, K2 in-tree symlink gap); the attempt-1 post-scoring amendments are reported, not adopted (QUALITY 79, `freeze-drift.py`); R38-C2 pointer repair; one assimilated entry admitted, two refused |
+ 
+ ## Frontier
+ - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
+@@ -231,6 +236,7 @@ A row is written when its file exists, never before.
+ - `capture-electron-scenario` — typed refusal (Playwright handshake) despite same app launching manually.
+ - sasquatch (AUR) — unblob squashfs recursion; 7z fallback covers today.
+ - sasquatch — 2026-10-26 dated note on the line above (kept as history): LE SquashFS v4 recursion is now Core (`2026-10-26-r36-sasquatch-squashfs-recursion`); "AUR" was one route, the producer documents a Debian package (`2026-10-26-unblob-sasquatch-dependency`). Still frontier: big-endian/AVM (`sasquatch-v4be`) and vendor-mangled images.
++- sasquatch-v4be — 2026-10-26 round 38: standard big-endian v4 measured (`2026-10-26-r38-sasquatch-be-squashfs-recursion`) and **not promoted**: R38-C1 stopped on K2's in-tree symlink gap under its first-freeze counter. Still frontier: standard BE v4 promotion, AVM-BE, vendor-mangled images.
+ - adb device surface — 22/24 verbs need a live device/emulator.
+ - PE hybrid frontier: published ARM64X binaries, dual-view/EC recovery and internal-function analysis remain unverified. Synthetic exported-leaf native-view import/overview is bounded Core (round 32); signal-desktop 38.5MB asar held r4-05 (directory-format route-around for chunk-heap walls).
+ - Runtime-obs depth — call-target resolution, managed `verify`/`project`, and the process-capture pair are held, not frontier (r5-02, r9-02, r11-01); the census's Queue A is drained (r4-16 erratum :913-915), so the "~26 self-provisionable" driver is spent. Residual depth only: 283 of 286 cataloged jq GOT-indirect sites unprobed (2 `jmp *` untested, r5-02:152-155); managed `inferred` variant has no observed example (r9-02:82-84); managed↔managed compare grades all-`unknown` (r12-02:65).

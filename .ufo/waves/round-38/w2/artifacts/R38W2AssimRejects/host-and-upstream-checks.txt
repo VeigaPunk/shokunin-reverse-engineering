@@ -1,0 +1,65 @@
+R38W2AssimRejects — checks run 2026-10-26 (all commands read-only; no VCS mutation, no REA)
+
+A. Host state of the extractors (refusal-1 ground a)
+  $ ls -la --time-style=full-iso ~/.local/bin/sasquatch ~/.local/bin/sasquatch-v4be ~/.local/bin/unblob
+  -rwxr-xr-x 382824 2026-10-26 01:22:37.798098889 -0300 /home/vgpnk/.local/bin/sasquatch
+  -rwxr-xr-x 436232 2026-10-26 01:22:37.798186059 -0300 /home/vgpnk/.local/bin/sasquatch-v4be
+  lrwxrwxrwx     51 2026-10-25 18:10:59.309295936 -0300 /home/vgpnk/.local/bin/unblob -> /home/vgpnk/.local/share/uv/tools/unblob/bin/unblob
+  $ sha256sum ~/.local/bin/sasquatch ~/.local/bin/sasquatch-v4be
+  ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754  sasquatch
+  fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6  sasquatch-v4be
+  (both digests equal the ones the lane already carries: r36 entry line 137, S110 point 3)
+  $ ~/.local/bin/unblob --version            -> 26.6.4                      exit 0
+  $ ~/.local/bin/unblob --show-external-dependencies | grep sasquatch
+      sasquatch                   ✓
+      sasquatch-v4be              ✓                                          exit 0
+  $ ls /usr/bin/sasquatch /usr/local/bin/sasquatch /usr/bin/unblob /usr/local/bin/unblob
+      No such file or directory (all four)                                 exit 2
+  $ python3 -V                               -> Python 3.14.8              exit 0
+  $ python3 -c 'import unblob'               -> ModuleNotFoundError: No module named 'unblob'   exit 1
+  $ echo $PATH contains /home/vgpnk/.local/bin (so `command -v sasquatch` resolves there)
+  $ ~/.local/share/uv/tools/unblob/bin/python -V -> Python 3.13.16
+      (the staged round-8 entry records "Python 3.11.17" at this same path: the env was rebuilt)
+
+B. Pin identity and the upstream handler (refusal-2 ground a)
+  $ curl -fsS .../unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py | sha256sum
+  2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287   590 lines   (= S108/S112 digest)
+  $ curl -fsS .../unblob/main/python/unblob/handlers/filesystem/squashfs.py | sha256sum
+  2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287   -> diff vs 26.6.4: EMPTY
+  grep: line 26 V4BE_EXECUTABLE = "sasquatch-v4be"; lines 48-50
+    is_avm = header.bytes_used == header.mkfs_time / if not is_avm: commands_args.append("-be")
+
+C. README at the pin (refusal-1 ground "no published source")
+  $ curl -fsS .../unblob/26.6.4/README.md | sha256sum
+  6544d60f22f7b521f8705b3bba5d47a50e428ccbd3359542708dbd009ccf3716   235 lines  (= S110 digest)
+  $ sed -n '49p' README.md
+  For SquashFS support, also install [sasquatch](https://github.com/onekey-sec/sasquatch):
+  (a dependency/install statement; the sentence does not state version-pair compatibility)
+
+D. AVM-BE format note and the AVM build route (refusal-2 ground c, flip testability)
+  $ curl -fsS .../Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt | sha256sum
+  c1c43f6f97d7477dcdab15203d11e43b49beb12e3a43a3b52bdd71b672a9a5d5   (= S114 digest)
+  line 14 carries the mkfs_time/bytes_used equivalence sentence.
+  $ curl -fsSL https://downloads.sourceforge.net/project/squashfs/squashfs/squashfs4.3/squashfs4.3.tar.gz
+    182550 bytes ; md5 d92ab59aabf5173f2a59089531e30dbf   (= the staged S197/S201 pin, exact)
+  $ curl -fsS .../Freetz-NG/freetz-ng/86c23d9.../patches/613-avm_format_as_option.patch | sha256sum
+    9af3b3debee9f6a144c03411a439e51f4ba4f9a1bd3aaac6b8760fa9394193f8
+    contains #ifdef AVM_FORMAT_AS_OPTION and the -no-mkfs-time option
+  $ curl -sS https://download.avm.de/fritzbox/fritzbox-6490-cable/other/fritz.os/
+    http=200 bytes=592, lists FRITZ.Box_6490_Cable-07.57.image
+
+E. Campaign-local tsv bytes anywhere on the host (both refusals' provenance ground)
+  $ ls -d /home/vgpnk/Projects/shokunin/lanes            -> No such file or directory   exit 2
+  $ find /home/vgpnk/Projects/shokunin -name 'r7-local-measurements.tsv' \
+        -o -name 'lead2-avm-branch.tsv'                  -> no output                    exit 0
+  $ cd kaidoku-shokunin && find . -name '*local-measurements*' -o -name '*avm*.tsv' -> no output
+  The cited tsvs exist nowhere on this host, not merely outside the lane.
+
+F. The one theme entry with no provenance defect (wrongly-skipped candidate)
+  $ curl -sS .../onekey-sec/sasquatch/releases.atom   http=200 16794 B
+    8 tags matching sasquatch-v*: v4.5.1-6, -5, -4, -3, -2, -1, v1.0.1, v1.0
+    newest entry updated 2026-01-27T11:54:41Z
+  $ curl -sS .../releases/expanded_assets/sasquatch-v4.5.1-6   http=200
+    sasquatch_1.0_{amd64,arm64,armhf}.deb + sasquatch-dbgsym_1.0_{amd64,arm64,armhf}.deb  (6 assets)
+  $ curl -sS -H 'Accept: application/vnd.github+json' .../api.github.com/repos/onekey-sec/sasquatch/releases
+    http=403 API rate limit exceeded -> the staged entry's own recheck command cannot run unauthenticated

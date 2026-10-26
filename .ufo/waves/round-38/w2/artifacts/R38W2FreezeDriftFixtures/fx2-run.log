@@ -1,0 +1,346 @@
+
+===== (c-deep) deeper oracle path, clean range =====
+
+### (c-deep1) default set, only deeper oracle added: e026aa5c2514812a747606f9077f9fa78b4c085a..0a580f085b4047f374cb59f3947ab3a9ba0e3389
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.cdeep.nh1a --freeze e026aa5c2514812a747606f9077f9fa78b4c085a --rev 0a580f085b4047f374cb59f3947ab3a9ba0e3389
+EXIT 0
+{
+ "tool": "freeze-drift",
+ "freeze": "e026aa5c2514812a747606f9077f9fa78b4c085a",
+ "rev": "0a580f085b4047f374cb59f3947ab3a9ba0e3389",
+ "paths": [
+  "plans/round-38-claims.md",
+  "tools/round-38/c1-counter.py",
+  "tools/round-38/c2-counter.py",
+  ".ufo/waves/round-38/c1/carriers.json",
+  "corpus/evidence/round-37/c1/*/oracle.tsv"
+ ],
+ "drift": [],
+ "verdict": "clean"
+}
+
+### (c-deep2) same, explicit K*/oracle.tsv glob
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.cdeep.nh1a --freeze e026aa5c2514812a747606f9077f9fa78b4c085a --rev 0a580f085b4047f374cb59f3947ab3a9ba0e3389 corpus/evidence/round-37/c1/K*/oracle.tsv
+EXIT 0
+{
+ "tool": "freeze-drift",
+ "freeze": "e026aa5c2514812a747606f9077f9fa78b4c085a",
+ "rev": "0a580f085b4047f374cb59f3947ab3a9ba0e3389",
+ "paths": [
+  "corpus/evidence/round-37/c1/K*/oracle.tsv"
+ ],
+ "drift": [],
+ "verdict": "clean"
+}
+  0a580f0 add oracle two levels down
+   corpus/evidence/round-37/c1/K2/deep/oracle.tsv | 2 ++
+   1 file changed, 2 insertions(+)
+
+===== (d3) rename into frozen path (destination absent at freeze) =====
+fatal: pathspec 'tools/round-38/c2-counter.py' did not match any files
+fatal: destination exists, source=tools/round-38/other.py, destination=tools/round-38/c2-counter.py
+On branch main
+nothing to commit, working tree clean
+
+### (d3a) rename into frozen path: 3408f9ba784720f0fb7b857cd77c9a88a04fea76..3408f9ba784720f0fb7b857cd77c9a88a04fea76
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.d3.t8Hh --freeze 3408f9ba784720f0fb7b857cd77c9a88a04fea76 --rev 3408f9ba784720f0fb7b857cd77c9a88a04fea76
+EXIT 0
+{
+ "tool": "freeze-drift",
+ "freeze": "3408f9ba784720f0fb7b857cd77c9a88a04fea76",
+ "rev": "3408f9ba784720f0fb7b857cd77c9a88a04fea76",
+ "paths": [
+  "plans/round-38-claims.md",
+  "tools/round-38/c1-counter.py",
+  "tools/round-38/c2-counter.py",
+  ".ufo/waves/round-38/c1/carriers.json",
+  "corpus/evidence/round-37/c1/*/oracle.tsv"
+ ],
+ "drift": [],
+ "verdict": "clean"
+}
+
+### (d3b) rename over existing frozen path: e026aa5c2514812a747606f9077f9fa78b4c085a..8ab2bffc01c169b3639f5504f01f8dff4ac365ca
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.d3b.M9So --freeze e026aa5c2514812a747606f9077f9fa78b4c085a --rev 8ab2bffc01c169b3639f5504f01f8dff4ac365ca
+EXIT 1
+{
+ "tool": "freeze-drift",
+ "freeze": "e026aa5c2514812a747606f9077f9fa78b4c085a",
+ "rev": "8ab2bffc01c169b3639f5504f01f8dff4ac365ca",
+ "paths": [
+  "plans/round-38-claims.md",
+  "tools/round-38/c1-counter.py",
+  "tools/round-38/c2-counter.py",
+  ".ufo/waves/round-38/c1/carriers.json",
+  "corpus/evidence/round-37/c1/*/oracle.tsv"
+ ],
+ "drift": [
+  {
+   "commit": "8ab2bffc01c169b3639f5504f01f8dff4ac365ca",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "rename other over c2-counter",
+   "paths": [
+    "tools/round-38/c2-counter.py"
+   ]
+  }
+ ],
+ "verdict": "drift"
+}
+
+===== (e-revert) edit then revert =====
+
+### (e-rev1) linear edit+revert, rev bytes == freeze bytes: e026aa5c2514812a747606f9077f9fa78b4c085a..8461ba93b0f928dbce5aa261d3a0564bfcba3cdf
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.erev.0U92 --freeze e026aa5c2514812a747606f9077f9fa78b4c085a --rev 8461ba93b0f928dbce5aa261d3a0564bfcba3cdf
+EXIT 1
+{
+ "tool": "freeze-drift",
+ "freeze": "e026aa5c2514812a747606f9077f9fa78b4c085a",
+ "rev": "8461ba93b0f928dbce5aa261d3a0564bfcba3cdf",
+ "paths": [
+  "plans/round-38-claims.md",
+  "tools/round-38/c1-counter.py",
+  "tools/round-38/c2-counter.py",
+  ".ufo/waves/round-38/c1/carriers.json",
+  "corpus/evidence/round-37/c1/*/oracle.tsv"
+ ],
+ "drift": [
+  {
+   "commit": "8461ba93b0f928dbce5aa261d3a0564bfcba3cdf",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "revert claims",
+   "paths": [
+    "plans/round-38-claims.md"
+   ]
+  },
+  {
+   "commit": "9dc545d366e3054a565d77dc43c77da095ec1732",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "amend claims",
+   "paths": [
+    "plans/round-38-claims.md"
+   ]
+  }
+ ],
+ "verdict": "drift"
+}
+  bytes identical: yes
+
+===== (e-revert2) evil merge reverts the claims edit =====
+  MERGE_PARENTS=70e527933a291b721d3566562ea3ed4871bdc2f2 fca0c60edca112817290d1765a16d6b96a78ed39 0f17d1ef91b764d8b8a7ab643803c005ea4ea598
+
+### (e-rev2) evil merge reverts claims, rev bytes == freeze: e026aa5c2514812a747606f9077f9fa78b4c085a..70e527933a291b721d3566562ea3ed4871bdc2f2
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.erev2.q8XL --freeze e026aa5c2514812a747606f9077f9fa78b4c085a --rev 70e527933a291b721d3566562ea3ed4871bdc2f2
+EXIT 1
+{
+ "tool": "freeze-drift",
+ "freeze": "e026aa5c2514812a747606f9077f9fa78b4c085a",
+ "rev": "70e527933a291b721d3566562ea3ed4871bdc2f2",
+ "paths": [
+  "plans/round-38-claims.md",
+  "tools/round-38/c1-counter.py",
+  "tools/round-38/c2-counter.py",
+  ".ufo/waves/round-38/c1/carriers.json",
+  "corpus/evidence/round-37/c1/*/oracle.tsv"
+ ],
+ "drift": [
+  {
+   "commit": "70e527933a291b721d3566562ea3ed4871bdc2f2",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "merge side",
+   "paths": []
+  },
+  {
+   "commit": "fca0c60edca112817290d1765a16d6b96a78ed39",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "amend claims",
+   "paths": [
+    "plans/round-38-claims.md"
+   ]
+  }
+ ],
+ "verdict": "drift"
+}
+fatal: cannot change to '70e527933a291b721d3566562ea3ed4871bdc2f2:plans/round-38-claims.md': No such file or directory
+  bytes identical at rev: no
+  raw git log --name-only over claims:
+  70e5279 merge side
+  fca0c60 amend claims
+
+plans/round-38-claims.md
+  raw git log -m --name-only over claims:
+  70e5279 merge side
+
+plans/round-38-claims.md
+  70e5279 merge side
+
+plans/round-38-claims.md
+  fca0c60 amend claims
+
+plans/round-38-claims.md
+
+===== (e-merge) merge, claims edit on side only, rev = merge =====
+
+### (e-m1) side-only claims edit merged: e026aa5c2514812a747606f9077f9fa78b4c085a..1cc6f55dfbf5cd784699cbe787573e07bf3374b0
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.emerge.7ELr --freeze e026aa5c2514812a747606f9077f9fa78b4c085a --rev 1cc6f55dfbf5cd784699cbe787573e07bf3374b0
+EXIT 1
+{
+ "tool": "freeze-drift",
+ "freeze": "e026aa5c2514812a747606f9077f9fa78b4c085a",
+ "rev": "1cc6f55dfbf5cd784699cbe787573e07bf3374b0",
+ "paths": [
+  "plans/round-38-claims.md",
+  "tools/round-38/c1-counter.py",
+  "tools/round-38/c2-counter.py",
+  ".ufo/waves/round-38/c1/carriers.json",
+  "corpus/evidence/round-37/c1/*/oracle.tsv"
+ ],
+ "drift": [
+  {
+   "commit": "bf8274f10e6fa3c25aab1d0de02fde247668e737",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "side amends claims",
+   "paths": [
+    "plans/round-38-claims.md"
+   ]
+  }
+ ],
+ "verdict": "drift"
+}
+
+===== (g4) mode change only / symlink swap =====
+
+### (g4a) chmod-only change to counter: e026aa5c2514812a747606f9077f9fa78b4c085a..5023387d312e149c5dee77ec0059a3de26d733ff
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.g4.KtFn --freeze e026aa5c2514812a747606f9077f9fa78b4c085a --rev 5023387d312e149c5dee77ec0059a3de26d733ff
+EXIT 1
+{
+ "tool": "freeze-drift",
+ "freeze": "e026aa5c2514812a747606f9077f9fa78b4c085a",
+ "rev": "5023387d312e149c5dee77ec0059a3de26d733ff",
+ "paths": [
+  "plans/round-38-claims.md",
+  "tools/round-38/c1-counter.py",
+  "tools/round-38/c2-counter.py",
+  ".ufo/waves/round-38/c1/carriers.json",
+  "corpus/evidence/round-37/c1/*/oracle.tsv"
+ ],
+ "drift": [
+  {
+   "commit": "5023387d312e149c5dee77ec0059a3de26d733ff",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "chmod +x counter",
+   "paths": [
+    "tools/round-38/c1-counter.py"
+   ]
+  }
+ ],
+ "verdict": "drift"
+}
+
+### (g4b) frozen counter replaced by symlink: e026aa5c2514812a747606f9077f9fa78b4c085a..dd3d9d51f96ef7e1d1dd09a7c83c609abaa42308
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.g4.KtFn --freeze e026aa5c2514812a747606f9077f9fa78b4c085a --rev dd3d9d51f96ef7e1d1dd09a7c83c609abaa42308
+EXIT 1
+{
+ "tool": "freeze-drift",
+ "freeze": "e026aa5c2514812a747606f9077f9fa78b4c085a",
+ "rev": "dd3d9d51f96ef7e1d1dd09a7c83c609abaa42308",
+ "paths": [
+  "plans/round-38-claims.md",
+  "tools/round-38/c1-counter.py",
+  "tools/round-38/c2-counter.py",
+  ".ufo/waves/round-38/c1/carriers.json",
+  "corpus/evidence/round-37/c1/*/oracle.tsv"
+ ],
+ "drift": [
+  {
+   "commit": "dd3d9d51f96ef7e1d1dd09a7c83c609abaa42308",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "replace c2 counter with symlink",
+   "paths": [
+    "tools/round-38/c2-counter.py"
+   ]
+  },
+  {
+   "commit": "5023387d312e149c5dee77ec0059a3de26d733ff",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "chmod +x counter",
+   "paths": [
+    "tools/round-38/c1-counter.py"
+   ]
+  }
+ ],
+ "verdict": "drift"
+}
+
+===== (g8) directory pathspec =====
+
+### (g8) pathspec 'tools/round-38' (a directory)
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.g8.U8vw --freeze e026aa5c2514812a747606f9077f9fa78b4c085a --rev 62119bc2698ad42af696743a379ed3ac4b7c1570 tools/round-38
+EXIT 1
+{
+ "tool": "freeze-drift",
+ "freeze": "e026aa5c2514812a747606f9077f9fa78b4c085a",
+ "rev": "62119bc2698ad42af696743a379ed3ac4b7c1570",
+ "paths": [
+  "tools/round-38"
+ ],
+ "drift": [
+  {
+   "commit": "62119bc2698ad42af696743a379ed3ac4b7c1570",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "edit c1",
+   "paths": [
+    "tools/round-38/c1-counter.py"
+   ]
+  }
+ ],
+ "verdict": "drift"
+}
+
+===== (g9) refs and shallow clone =====
+
+### (g9a) --freeze is a tag name
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/fx2.g8.U8vw --freeze freezetag --rev 62119bc2698ad42af696743a379ed3ac4b7c1570
+EXIT 1
+{
+ "tool": "freeze-drift",
+ "freeze": "freezetag",
+ "rev": "62119bc2698ad42af696743a379ed3ac4b7c1570",
+ "paths": [
+  "plans/round-38-claims.md",
+  "tools/round-38/c1-counter.py",
+  "tools/round-38/c2-counter.py",
+  ".ufo/waves/round-38/c1/carriers.json",
+  "corpus/evidence/round-37/c1/*/oracle.tsv"
+ ],
+ "drift": [
+  {
+   "commit": "62119bc2698ad42af696743a379ed3ac4b7c1570",
+   "committed": "2026-10-26T03:55:54-03:00",
+   "subject": "edit c1",
+   "paths": [
+    "tools/round-38/c1-counter.py"
+   ]
+  }
+ ],
+ "verdict": "drift"
+}
+  shallow repo commits: 1, has freeze object: no
+
+### (g9b) shallow clone, freeze object absent
+$ python3 freeze-drift.py --root /fast/scratch/hyaku/kaidoku-r38/R38W2FreezeDriftFixtures/shallow.git --freeze e026aa5c2514812a747606f9077f9fa78b4c085a --rev 62119bc2698ad42af696743a379ed3ac4b7c1570
+EXIT 2
+{
+ "tool": "freeze-drift",
+ "freeze": "e026aa5c2514812a747606f9077f9fa78b4c085a",
+ "rev": "62119bc2698ad42af696743a379ed3ac4b7c1570",
+ "paths": [
+  "plans/round-38-claims.md",
+  "tools/round-38/c1-counter.py",
+  "tools/round-38/c2-counter.py",
+  ".ufo/waves/round-38/c1/carriers.json",
+  "corpus/evidence/round-37/c1/*/oracle.tsv"
+ ],
+ "verdict": "unevaluable",
+ "reason": "unknown revision e026aa5c2514812a747606f9077f9fa78b4c085a"
+}
+DONE2

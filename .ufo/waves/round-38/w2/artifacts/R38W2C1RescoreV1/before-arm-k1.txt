@@ -1,0 +1,35 @@
+Before arm re-run, independent of the committed receipts
+cmd: env PATH=<session PATH minus /home/vgpnk/.local/bin> npx -y rea-agents@6.5.0 extract-firmware \
+       corpus/evidence/round-37/c1/K1/carrier.sqsh $S/reruns/K1-before-out --full-output --format json
+     REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob (absolute, survives the strip)
+path check under the stripped PATH: SASQUATCH_ABSENT V4BE_ABSENT UNBLOB_ABSENT; npx/node resolve to the fnm dir
+REA exit=0
+coverage=partial published_bytes=0 files=0
+handlers=["squashfs_v4_be"]
+extraction_gaps=[
+ {
+  "kind": "missing-extractor-dependency",
+  "input_path": "$input",
+  "relative_path": null,
+  "handler": "squashfs_v4_be",
+  "provider_id": "3713904:1",
+  "range": {
+   "offset": 0,
+   "length": 9780
+  },
+  "root_file_range": {
+   "offset": 0,
+   "length": 9780
+  },
+  "dependencies": [
+   "sasquatch-v4be"
+  ],
+  "continuation_id": "4ca863d04cc06d61e7be38d0811847a15f55c70f028fdf45e8fefdf75957a07a"
+ }
+]
+
+Same field values as the committed corpus/evidence/round-38/c1/K1/before.json at 3b960fe5
+(kind=missing-extractor-dependency, handler=squashfs_v4_be, dependencies=["sasquatch-v4be"], 0 files).
+=> the after receipts (all oracle files published) necessarily ran with sasquatch-v4be reachable,
+   which the first-freeze predicate parenthetical ("stock unblob 26.6.4; no external extractor
+   dependency") excludes. c1-counter.py v1 tests no such clause.

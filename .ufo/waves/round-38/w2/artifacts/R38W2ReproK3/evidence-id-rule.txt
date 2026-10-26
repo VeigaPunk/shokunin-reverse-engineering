@@ -1,0 +1,51 @@
+# evidence-id rule under rea-agents 6.5.0 (rederived, not taken from the lane's xpin tool)
+
+## dist/domain/evidence.js:156-182 semanticProjection (includes raw_result and normalized_result verbatim)
+const semanticProjection = (evidence) => ({
+    subject: evidence.subject === null
+        ? null
+        : {
+            digest: evidence.subject.digest,
+            format: evidence.subject.format,
+            architecture: evidence.subject.architecture,
+        },
+    provider: evidence.provider,
+    analysis_profile: evidence.analysis_profile,
+    predicate_type: evidence.predicate_type,
+    operation: evidence.operation,
+    parameters: evidence.parameters,
+    raw_result: evidence.raw_result,
+    normalized_result: evidence.normalized_result,
+    confidence: evidence.confidence,
+    authority: evidence.authority,
+    environment: evidence.environment,
+    limitations: evidence.limitations,
+    ...(evidence.relationship_coverage === null
+        ? {}
+        : { relationship_coverage: evidence.relationship_coverage }),
+    locations: evidence.locations,
+    evidence_links: evidence.evidence_links,
+});
+/** Hash semantic content, including raw results and excluding display-subject fields. */
+const computeEvidenceId = (evidence) => `ev_${digestCanonicalValue(semanticProjection(evidence), "Evidence")}`;
+
+## self-recompute of the stored records (id = ev_ + digestCanonicalValue(projection, 'Evidence'))
+committed-after.json	ev_e31cb7007efb0943de2d957585b499acface02818280ffd351a95add20fcaa66	ev_e31cb7007efb0943de2d957585b499acface02818280ffd351a95add20fcaa66	MATCH
+committed-before.json	ev_18d7d6efd2221c1b3404b8caaea150b8f6fd4ea2eb2727aa6fdc60e2ae341ed2	ev_18d7d6efd2221c1b3404b8caaea150b8f6fd4ea2eb2727aa6fdc60e2ae341ed2	MATCH
+fresh-after-v1.json	ev_609d4ed0f3ac1356f2ac28aa60e9f31558e784deca834b691e9b11918ec704a1	ev_609d4ed0f3ac1356f2ac28aa60e9f31558e784deca834b691e9b11918ec704a1	MATCH
+fresh-after-v2.json	ev_d5e7d6ad2fc68dea9bee19372b59fde34a371bfe3c7ab8129b0668aac8b5cf28	ev_d5e7d6ad2fc68dea9bee19372b59fde34a371bfe3c7ab8129b0668aac8b5cf28	MATCH
+fresh-after.json	ev_609d4ed0f3ac1356f2ac28aa60e9f31558e784deca834b691e9b11918ec704a1	ev_609d4ed0f3ac1356f2ac28aa60e9f31558e784deca834b691e9b11918ec704a1	MATCH
+fresh-before-v1.json	ev_04e23163a9551f65a58b520e3dd6477a04b8e2243a14ead81c58ad73f0fdf1a8	ev_04e23163a9551f65a58b520e3dd6477a04b8e2243a14ead81c58ad73f0fdf1a8	MATCH
+fresh-before-v2.json	ev_f3a00f7618a10dd2ce6cdd6d50e035dcbd4f94f80257a5a0b18e19bc0e3db375	ev_f3a00f7618a10dd2ce6cdd6d50e035dcbd4f94f80257a5a0b18e19bc0e3db375	MATCH
+fresh-before.json	ev_04e23163a9551f65a58b520e3dd6477a04b8e2243a14ead81c58ad73f0fdf1a8	ev_04e23163a9551f65a58b520e3dd6477a04b8e2243a14ead81c58ad73f0fdf1a8	MATCH
+a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c  /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json
+rea-agents version: 6.5.0
+
+## cross-run id sensitivity tests (why a fresh run cannot reproduce the stored id)
+committed after id:            ev_e31cb7007efb0943de2d957585b499acface02818280ffd351a95add20fcaa66
+v2 payload, committed outdir:  recompute gives ev_d0c1051d3b3039448e20c9c97eebe74b194aa963f65a3160a8afd6c8010c0183 (MISMATCH)
+v2 payload, committed outdir + committed provider_id/provider_blob_id:
+                               recompute gives ev_f1b06663bd377485ba18a7fe1e8403f8cc6d810515acc718468eb1fa2a6a5898 (MISMATCH)
+=> parameters (incl. output_directory and path), raw_result (staging paths, argv) and normalized_result
+   (absolute file paths, provider ids) all enter the projection, so the id authenticates the stored
+   record against tampering; it is not a cross-run payload fingerprint.

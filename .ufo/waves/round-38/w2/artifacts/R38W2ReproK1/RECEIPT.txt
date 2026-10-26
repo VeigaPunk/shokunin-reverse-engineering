@@ -1,0 +1,129 @@
+R38W2ReproK1 — instrument receipt for the K1 C1 independent re-run
+Seat: R38W2ReproK1 (leaf). Date: 2026-10-26. Lane root: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+Scratch (since removed): /fast/scratch/hyaku/kaidoku-r38/R38W2ReproK1
+
+ENVIRONMENT
+  npx/node: /run/user/1000/fnm_multishells/6713_1792986395296/bin/{npx,node}
+  rea: npx -y rea-agents@6.5.0   (rea --version -> 6.5.0)
+  unblob: /home/vgpnk/.local/bin/unblob -> /home/vgpnk/.local/share/uv/tools/unblob/bin/unblob
+          (unblob --version -> 26.6.4)
+  sasquatch:     /home/vgpnk/.local/bin/sasquatch
+  sasquatch-v4be: /home/vgpnk/.local/bin/sasquatch-v4be
+  No tool installs or upgrades were performed by this seat.
+
+CARRIER PIN
+  manifest: .ufo/waves/round-38/c1/carriers.json  K1 sha256
+            1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e
+  copied to scratch, sha256  1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e  MATCH
+  committed blob sha256 (git show REV:corpus/evidence/round-37/c1/K1/carrier.sqsh | sha256sum)
+    77091b492cc53f8743bd0701b1e7d5e66123dd84  1cfb6c33...117e  MATCH
+    3b960fe5f9a7f1dfa22819f98dc0fa983f4260a8  1cfb6c33...117e  MATCH
+    e059ca9391642d5b71b6662cabcbdce0d9308719  1cfb6c33...117e  MATCH
+
+RECEIPTS ARE THE FROZEN BYTES
+  working tree  corpus/evidence/round-38/c1/K1/before.json
+    85055c92e689f9c293bb0bf1f0ffaab169d2f95c1079d3b6f4f1500b8fd4c72f
+  git show 3b960fe...:before.json  85055c92...c72f  IDENTICAL
+  working tree  corpus/evidence/round-38/c1/K1/after.json
+    3dab103ba27e15a3305b1b43bcb9684a6637cf9deabbb6a74ff0b57a04a91d4e
+  git show 3b960fe...:after.json   3dab103b...1d4e  IDENTICAL
+  git ls-tree -r e059ca9 -- corpus/evidence/round-38/c1/K1/  -> EMPTY
+    (expected: the round-38 receipts are claim data produced after the first freeze)
+
+RUNS (all EXIT 0, stderr 0 bytes)
+  PN  = $PATH with every entry equal to $HOME/.local/bin removed
+  A) before-arm, ~/.local/bin unreachable by name:
+     env -u TMPDIR PATH="$PN" REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob TMPDIR="$S" \
+       npx -y rea-agents@6.5.0 extract-firmware --format json "$S/carrier.sqsh" "$S/out-before-1" \
+       > env-before.json                                 EXIT=0
+     PATH="$PN" command -v sasquatch / sasquatch-v4be / unblob -> NONE / NONE / NONE
+  B) after-arm, default PATH:
+     REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob \
+       npx -y rea-agents@6.5.0 extract-firmware --format json "$S/carrier.sqsh" "$S/out-after-1" \
+       > env-after.json                                  EXIT=0
+     command -v sasquatch -> /home/vgpnk/.local/bin/sasquatch
+     command -v sasquatch-v4be -> /home/vgpnk/.local/bin/sasquatch-v4be
+  C) arm A (discriminator), only the LE sasquatch reachable:
+     mkdir bin-le; ln -s ~/.local/bin/sasquatch bin-le/sasquatch
+     PATH="$S/bin-le:$PN" REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob \
+       npx -y rea-agents@6.5.0 extract-firmware --format json "$S/carrier.sqsh" "$S/out-armA2" \
+       > env-armA.json                                   EXIT=0
+  D) arm B (discriminator), only the BE sasquatch-v4be reachable:
+     mkdir bin-be; ln -s ~/.local/bin/sasquatch-v4be bin-be/sasquatch-v4be
+     PATH="$S/bin-be:$PN" REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob \
+       npx -y rea-agents@6.5.0 extract-firmware --format json "$S/carrier.sqsh" "$S/out-armB" \
+       > env-armB.json                                   EXIT=0
+
+STAGED ENVELOPES (sha256)
+  env-before.json cbe48dbf25c8392c791016d56da689eac611d59e6ebd4227f354c805cb79359e  7920 B
+  env-after.json  a776197dce2f20746327ce4b1f5e45a550140d9ba7b087ff91ebffabfd781ffb 18824 B
+  env-armA.json   15ffc01a32d41069d08a8426f9e65b9a2fb88fbb3346464f3cf67478e5b910f9  7912 B
+  env-armB.json   88cc2bb7ddd280d97bb93ec949e007d48f4bd5fbf232966ad625102bc4551591 18803 B
+
+PAYLOAD COMPARISON (canon.jq; volatile fields dropped: provider_id, provider_blob_id,
+blob_id, subject.local_path; scratch roots scrubbed to <SCRATCH>)
+  diff committed-before vs rerun-before, all fields            -> 2 hunks (PID ids, carrier path)
+  diff committed-before vs rerun-before, volatile dropped      -> EMPTY  (diff-before-residual.txt, 0 B)
+  diff committed-after  vs rerun-after,  all fields            -> PID ids only + leaf blob ids
+  diff committed-after  vs rerun-after,  volatile dropped      -> EMPTY  (diff-after-residual.txt, 0 B)
+  diff armA vs committed-before,         volatile dropped      -> EMPTY  (diff-armA-vs-before.txt, 0 B)
+  diff armB vs committed-after,          volatile dropped      -> EMPTY  (diff-armB-vs-after.txt, 0 B)
+
+OBSERVED VALUES
+  before (committed and rerun, identical)
+    chunks: 1 x squashfs_v4_be, range 0..9780, extraction_failed true
+    files: 0    coverage: partial    published_bytes: 0
+    gaps: [{kind: missing-extractor-dependency, relative_path: null, handler: squashfs_v4_be,
+            dependencies: ["sasquatch-v4be"], continuation_id: 4ca863d0...a07a}]
+    diagnostics: [{stage: squashfs_v4_be, missing_dependencies: ["sasquatch-v4be"],
+                   __typename__: ExtractorDependencyNotFoundReport}]
+  after (committed and rerun, identical)
+    chunks: 1 x squashfs_v4_be, range 0..9780, extraction_failed false
+    files: 5    coverage: partial    published_bytes: 9656    gaps: []    unpublished: []
+    diagnostics: [{__typename__: MaliciousSymlinkRemoved, severity: WARNING,
+                   link: .../extracted/firmware.bin_extract/link-to-hello,
+                   target: .../extracted/hello.txt}]   (same modulo scratch root)
+
+ORACLE
+  corpus/evidence/round-37/c1/K1/oracle.tsv (5 rows) vs
+    committed after envelope files (prefix firmware.bin_extract/ stripped) -> MATCH
+    rerun      after envelope files                                      -> MATCH
+    armB       after envelope files                                      -> MATCH
+  on-disk sha256 of out-after-1/firmware.bin_extract/** vs oracle.tsv     -> MATCH (disk.tsv)
+  sum(oracle size) = 9656 = normalized_result.published_bytes             -> consistent
+
+EVIDENCE-ID RULE (node tools/round-27/xpin-attribute.mjs --pkg65 <rea-agents 6.5.0> --pkg67 <same>)
+  wrap-c-before.json ev_555b795c...e97968  stored == 6.5.0 == 6.7.0  both
+  wrap-c-after.json  ev_400465e0...fc1e9   stored == 6.5.0 == 6.7.0  both
+  wrap-n-before.json ev_1631a1ff...026db   stored == 6.5.0 == 6.7.0  both
+  wrap-n-after.json  ev_ea381748...04c5a   stored == 6.5.0 == 6.7.0  both
+  --parse: all four "parseEvidence-6.5.0 accept" / "parseEvidence-6.7.0 accept"
+
+DEPENDENCY MECHANISM (read-only)
+  unblob 26.6.4 handlers/filesystem/squashfs.py:25-26
+    EXECUTABLE = "sasquatch" ; V4BE_EXECUTABLE = "sasquatch-v4be"
+  same file :514ff  class SquashFSv4BEHandler(NAME = "squashfs_v4_be"), EXTRACTOR = SquashFSExtractor(4, 0x73717368)
+  unblob dependencies.py:30  is_installed = shutil.which(command) is not None   (PATH-only)
+  ls /home/vgpnk/.local/share/uv/tools/unblob/bin/  -> no sasquatch*, no squashfs reader shipped
+
+PROVENANCE OF THE PUBLISHED BYTES (receipt side)
+  grep -c sasquatch corpus/evidence/round-38/c1/K1/after.json            -> 0
+  committed after ChunkReport.extraction_reports                        -> []
+  -> the after receipt records no external extractor identity or version
+
+FREEZE COUNTER (read-only, not executed by this seat)
+  git show e059ca9:tools/round-38/c1-counter.py: docstring lines 7-9 state the
+  "no external extractor dependency" condition; the match expression (lines 177-191)
+  tests oracle_frozen, oracle_files, after_present, after_subject_ok, after_operation_ok,
+  after_handler_ok, after_gaps_empty, after_evidence_id_ok, after_oracle_hits only.
+  No test consumes extractor provenance.
+
+LIMITS OF THIS SEAT
+  - K2, K3, K4 were not re-run here.
+  - The frozen counter was not executed here (out of seat); the K1 leg is verified from its
+    source text plus the values above.
+  - coverage "partial" on the after arm is not explained in the envelope; the limitations text
+    says missing extractors / unknown / encrypted chunks / depth limits and "only regular files
+    are published" yield partial coverage. [INFERENCE] the removed symlink plus unpublished
+    filesystem metadata keep it partial. Identical in committed and rerun, so not a receipt
+    divergence.

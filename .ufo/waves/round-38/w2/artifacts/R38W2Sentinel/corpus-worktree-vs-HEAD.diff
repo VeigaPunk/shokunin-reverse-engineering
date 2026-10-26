@@ -1,0 +1,67 @@
+diff --git i/corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md w/corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md
+index 1c8f9d85..d4dafebb 100644
+--- i/corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md
++++ w/corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md
+@@ -35,10 +35,11 @@ PATH entries by directory name and never removed `~/.local/bin`.
+ - K1's `link-to-hello -> ../hello.txt` points outside the extraction root. unblob removes it
+   and logs `MaliciousSymlinkRemoved`, so no gap is recorded.
+ - K2's `var/lib/run-link -> ../../a/run.sh` stays inside the tree. REA keeps it as metadata
+-  and records one `unpublished-entry` gap on every run.
++  and records one `unpublished-entry` gap on every run in which `sasquatch-v4be` extracts the
++  image (the before-arm extracts nothing, so it records only the dependency gap).
+ 
+-So "no extraction gap" is unreachable on any carrier with an in-tree symlink. This is the same
+-behaviour the round-36 LE entry recorded (`unpublished-entry` for symlinks).
++So "no extraction gap" is unreachable on any extracted carrier that holds an in-tree symlink. This
++is the same behaviour the round-36 LE entry recorded (`unpublished-entry` for symlinks).
+ 
+ **Status.** This is not a Core promotion. Round 38's coverage claim R38-C1 required "no
+ extraction gap" on all four carriers under its first-freeze counter, and K2 fails it, so the
+diff --git i/corpus/knowledge/2026-10-26-unblob-format-matrix.md w/corpus/knowledge/2026-10-26-unblob-format-matrix.md
+index 6cdb7fdd..bc734ae2 100644
+--- i/corpus/knowledge/2026-10-26-unblob-format-matrix.md
++++ w/corpus/knowledge/2026-10-26-unblob-format-matrix.md
+@@ -8,17 +8,19 @@ recheck: 180d — `curl -fsSL https://unblob.org/formats/ | grep -o '<h2 id=' |
+ Assimilated in round 38 from the shokuknow `corpus-expansion-1` package
+ (`merge/kaidoku/knowledge/corpus/knowledge/unblob-format-matrix.md`, staged 2026-10-23). The lane
+ re-opened both sources on 2026-10-26 and renumbered the staged ids by document: staged S122 → S116
+-(new row), staged S106 → S110 (existing row, same URL at tag 26.6.4). Two corrections were made
+-before admission: the staged "v4-Broadcom" is spelled `SquashFS (v4-broadcom)` on the page, and the
+-staged "42 vendor-attributed entries" was a count of the word `Vendor` (42 occurrences), not a
+-per-handler attribution count.
++(new row), staged S106 → S110 (existing row, same URL at tag 26.6.4). One correction was made
++before admission: the staged "v4-Broadcom" is spelled `SquashFS (v4-broadcom)` on the page. The
++staged "42 vendor-attributed entries" stands as a per-section count: 42 of the 97 sections carry
++one `Vendor:` field, and one of the 42 values is the literal `unknown` (`squashfs-v3-non-standard`).
++(Wave-2 seat `R38W2SrcS116` caught an earlier draft that wrongly "corrected" this count.)
+ 
+ **Claim (producer's coverage statement, not outcome).** The documentation site's
+ "Supported Formats" page carries 97 `<h2 id=` handler sections. Each section has a support status
+-("Fully supported" / "Partially supported"), a handler type, and in some cases a vendor (S116).
+-Ten SquashFS sections are listed: `v1`, `v2`, `v2-non-standard`, `v3`, `v3-Broadcom`,
+-`v3-DDWRT`, `v3-non-standard`, `v4-BE`, `v4-broadcom`, `v4-LE`. The matrix also records limits
+-as well as support: ZIP carries "Does not support encrypted ZIP files."
++(89 "Fully supported", 8 "Partially supported", counted per section), a handler type, and 42 of
++them a `Vendor:` field (S116). Ten SquashFS sections are listed: `v1`, `v2`, `v2-non-standard`,
++`v3`, `v3-Broadcom`, `v3-DDWRT`, `v3-non-standard`, `v4-BE`, `v4-broadcom`, `v4-LE`. The matrix
++also records limits as well as support: ZIP is "Partially supported" with "Does not support
++encrypted ZIP files."
+ 
+ **The count conflict.** The page's own meta description says unblob "parses unknown binary blobs
+ for more than 30 different archive, compression, and file-system formats" (S116, 3 occurrences in
+diff --git i/corpus/lessons/round-38.md w/corpus/lessons/round-38.md
+index 7de6b216..fe6fe317 100644
+--- i/corpus/lessons/round-38.md
++++ w/corpus/lessons/round-38.md
+@@ -45,8 +45,9 @@ admitted entries cite were appended (one).
+ - **ADMIT `unblob-format-matrix`** → `corpus/knowledge/2026-10-26-unblob-format-matrix.md`. Re-opened
+   live (S116 above). Reproduced: 97 `<h2 id=`; "more than 30 different" × 3; ten `SquashFS (…)`
+   sections including `v4-BE`; "Does not support encrypted ZIP files"; README @26.6.4 line 5 "78+".
+-  Two corrections: `v4-broadcom` (not "v4-Broadcom"); "42 vendor-attributed entries" is 42
+-  occurrences of `Vendor`, not a per-handler count. PROVINCE scope: firmware-extraction producer
++  One correction: `v4-broadcom` (not "v4-Broadcom"). The staged "42 vendor-attributed entries" was
++  kept: 42 of 97 sections carry a `Vendor:` field, one of them `unknown`. An attempt-2 draft wrongly
++  called it a word count; wave-2 seat `R38W2SrcS116` caught that before the final landing (M38-5). PROVINCE scope: firmware-extraction producer
+   contract, same ground as the round-36 Core row. Flip to refuse: the page drops `SquashFS (v4-BE)` or
+   the counts change.
+ - **REFUSE `sasquatch-unblob-compatibility-precondition`** (staged round 7, S165). Its claim "Neither

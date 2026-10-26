@@ -1,0 +1,40 @@
+R38W2AssimRejects — AVM branch re-measured at the pin, lane bytes only (2026-10-26)
+
+Instrument: ~/.local/bin/unblob 26.6.4 (--version -> 26.6.4), default python3 3.14.8 (irrelevant),
+PATH shim $S/shim/{sasquatch,sasquatch-v4be} logging "$@" then exec of the real binary in
+~/.local/bin. No REA, no network, no build.
+
+Carriers (both derived from committed lane bytes):
+  control.bin      = corpus/evidence/round-37/c1/K4/carrier.bin  (unmodified, 307 B)
+  avm-marker.bin   = same bytes with the BE uint32 at offset 8 (mkfs_time) set to
+                     the BE uint64 at offset 40 (bytes_used = 307)
+
+Superblock before/after (xxd -l 48):
+  00000000: 7371 7368 0000 0005 621f 5e09 0002 0000   mkfs_time = 0x621f5e09 = 1646222857
+  ...
+  00000020: 0000 0000 0000 0080 0000 0000 0000 0133   bytes_used = 0x133 = 307
+  patched: mkfs_time = 307, bytes_used = 307 (only 4 bytes differ)
+
+Runs (unblob -e OUT --report rep.json --log log.txt <carrier>) — exit 0 for both:
+
+control:
+  sasquatch-v4be -be -no-exit-code -f -d .../out-control/control.bin_extract .../control.bin
+  extracted 4 files; all four sha256 equal corpus/evidence/round-37/c1/K4/oracle.tsv:
+    MATCH apple1.txt 6181259c6b2ca629a56920b422e9a8f212a4d0bcead923df92dbd66fbb7e1c30
+    MATCH apple2.txt 919fc82d6f1031d305dbce2fc5a74a6df5ddf2da472ee4d137c681cef28d4aff
+    MATCH apple3.txt 2d95014ed3f24e86ce5fc3a4529f057d7b2318d9b24b54f2e9476b154bd21ec6
+    MATCH apple4.txt 08d9b05b15b998f2dbc741399fef4350c7863cc85df2305d7da4e83e8c8a959d
+
+avm-marker:
+  sasquatch-v4be -no-exit-code -f -d .../out-avm-marker/avm-marker.bin_extract .../avm-marker.bin
+  (the -be flag is gone: the AVM branch is taken at 26.6.4 on lane bytes)
+  extracted 0 files; unblob report: ExtractCommandFailedReport (Severity.WARNING), child exit_code=1
+  decoded child stderr:
+    SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess
+    read_id_table: failed to read id table block
+    FATAL ERROR: File system corruption detected
+
+Conclusion: the staged round-9 entry's decision logic and its loud failure mode both reproduce at
+the pinned tag, with no campaign-local byte and no build. The refusal's flip ("branch re-measured on
+a lane-built AVM carrier with the source repinned to 26.6.4") is therefore cheaply testable; the
+pin is not a blocker (unblob/main is byte-identical to 26.6.4, sha256 2d7b901b…9287).

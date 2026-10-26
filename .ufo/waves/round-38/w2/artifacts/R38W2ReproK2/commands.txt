@@ -1,0 +1,40 @@
+# R38W2ReproK2 — exact commands, exit codes, timings (2026-10-26, seat R38W2ReproK2)
+# Tools: rea-agents 6.5.0 (npx cache /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents),
+#        unblob 26.6.4 (~/.local/bin/unblob -> ~/.local/share/uv/tools/unblob), node v24.21.0, npx 11.19.0.
+# No installs, no upgrades. sasquatch / sasquatch-v4be 4.5.1 left untouched.
+
+S=/fast/scratch/hyaku/kaidoku-r38/R38W2ReproK2
+
+# 0. carrier copy + pin
+cp /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K2/carrier.sqsh "$S/carrier.sqsh"
+sha256sum "$S/carrier.sqsh"                       # 403cb0a827966bbe17a70e08af7d39b43260da8201d1b9001bbc4228cbc99154  == carriers.json pin
+git -C <lane> cat-file -p e059ca93:corpus/evidence/round-37/c1/K2/carrier.sqsh | sha256sum   # same digest (committed bytes at the freeze)
+
+# 1. before-arm (sasquatch-v4be unreachable): $HOME/.local/bin stripped from PATH, REA_UNBLOB_COMMAND absolute
+STRIP="$(printf '%s' "$PATH" | tr ':' '\n' | grep -v -F "$HOME/.local/bin" | paste -sd:)"
+env PATH="$STRIP" sh -c 'command -v sasquatch-v4be'                 # absent (rc 1); node/npx still resolve
+env PATH="$STRIP" REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob TMPDIR="$S" \
+  npx -y rea-agents@6.5.0 extract-firmware --format json "$S/carrier.sqsh" "$S/out-before" > "$S/before-env.json"
+#   shell exit 0 (REA wrote an envelope); envelope raw_result.execution.exit_code = 1; out dir empty (0 files); wall 1.77 s
+#   repeat into out-before2 -> before-env2.json (identical payload)
+
+# 2. after-arm (default PATH, sasquatch-v4be 4.5.1 reachable)
+env REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob TMPDIR="$S" \
+  npx -y rea-agents@6.5.0 extract-firmware --format json "$S/carrier.sqsh" "$S/out-after" > "$S/after-env.json"
+#   shell exit 0; envelope exit_code = 0; 3 published files; wall 1.69 s
+#   repeats: out-after2 -> after-env2.json, out-after3 -> after-env3.json (identical payloads)
+
+# 3. evidence-id attributes (rea-agents 6.5.0 rule, package's own semantics)
+node <lane>/tools/round-27/xpin-attribute.mjs --pkg65 <pkg> --pkg67 <pkg> {mine,ref}-{before,after}.wrapped.json
+#   all four envelopes self-verify: stored id == id under the 6.5.0 rule (xpin.txt)
+
+# 4. first-freeze counter (judged rule)
+git -C <lane> show e059ca93:tools/round-38/c1-counter.py > "$S/c1-counter-v1.py"   # sha256 a7a62b09...
+python3 -I -B "$S/c1-counter-v1.py" --root <lane> --rev 3b960fe5f9a7f1dfa22819f98dc0fa983f4260a8 \
+  --freeze e059ca9391642d5b71b6662cabcbdce0d9308719 --pkg65 <pkg> --json-out "$S/c1-v1-3b960fe5.json"
+#   exit 1; carriers_matched 3; K2 matched false (after_gaps_empty false); province_core_row/section false
+#   same at rev 0fc61133 (exit 1, carriers_matched 3)
+
+# 5. worktree counter (amended, NOT the judged rule) for contrast only
+python3 -I -B <lane>/tools/round-38/c1-counter.py --root <lane> --rev 3b960fe5... --freeze e059ca93... --pkg65 <pkg> --json-out "$S/c1-counter-3b960fe5.json"
+#   exit 1; carriers_matched 4 (K2 after_no_missing_extractor_gap true); met_target false (province_core_row false)

@@ -1,0 +1,29 @@
+# R38W2AssimAdmit verification log — 2026-10-26
+
+## curl https://unblob.org/formats/
+HTTP 200 216890B
+8f8c29aff33d5aa1ee2a69f8a66f272d45fa3dd98d271c95337c3ff15a65bbc5  formats.html
+grep -o "<h2 id=" | wc -l -> 97
+grep -c 'more than 30 different' -> 3
+grep -o Vendor | wc -l -> 42
+ten squashfs ids:
+<h2 id="squashfs-v1">SquashFS (v1)
+<h2 id="squashfs-v2">SquashFS (v2)
+<h2 id="squashfs-v2-non-standard">SquashFS (v2-non-standard)
+<h2 id="squashfs-v3">SquashFS (v3)
+<h2 id="squashfs-v3-broadcom">SquashFS (v3-Broadcom)
+<h2 id="squashfs-v3-ddwrt">SquashFS (v3-DDWRT)
+<h2 id="squashfs-v3-non-standard">SquashFS (v3-non-standard)
+<h2 id="squashfs-v4-be">SquashFS (v4-BE)
+<h2 id="squashfs-v4-broadcom">SquashFS (v4-broadcom)
+<h2 id="squashfs-v4-le">SquashFS (v4-LE)
+
+## curl https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/README.md
+6544d60f22f7b521f8705b3bba5d47a50e428ccbd3359542708dbd009ccf3716  README-26.6.4.md
+lines 5,22:
+unblob parses unknown binary blobs for **78+ archive, compression, and file-syst
+- **78+ supported formats** — archives, compression streams, and file systems 
+diff HEAD vs tag: IDENTICAL
+
+## unblob clone tag 26.6.4 = commit 1fcc7a0a584a70a96c31f5a276c20944d199a089
+squashfs.py:25-26 EXECUTABLE=sasquatch V4BE_EXECUTABLE=sasquatch-v4be; get_dependencies returns both

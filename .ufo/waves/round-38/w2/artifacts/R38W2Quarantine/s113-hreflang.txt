@@ -1,0 +1,54 @@
+# S113 (staged adb page) hreflang census — independent re-fetch 2026-10-26
+## adb.html
+237f0e0dfbf82496beb32f937a57be65aa501157ba5f816cb381b4497461fb89  /fast/scratch/hyaku/kaidoku-r38/R38W2Quarantine/adb.html
+368059 /fast/scratch/hyaku/kaidoku-r38/R38W2Quarantine/adb.html
+## adb2.html
+edd47e22dfd97e331b8e9ae64d712a1eab25857b50595dda43c006eece0da567  /fast/scratch/hyaku/kaidoku-r38/R38W2Quarantine/adb2.html
+368063 /fast/scratch/hyaku/kaidoku-r38/R38W2Quarantine/adb2.html
+## distinct hreflang tags (first fetch)
+      1 hreflang="ar"
+      1 hreflang="bn"
+      1 hreflang="de"
+      1 hreflang="en"
+      1 hreflang="es-419"
+      1 hreflang="fa"
+      1 hreflang="fr"
+      1 hreflang="he"
+      1 hreflang="hi"
+      1 hreflang="id"
+      1 hreflang="it"
+      1 hreflang="ja"
+      1 hreflang="ko"
+      1 hreflang="pl"
+      1 hreflang="pt-BR"
+      1 hreflang="ru"
+      1 hreflang="th"
+      1 hreflang="tr"
+      1 hreflang="vi"
+      1 hreflang="x-default"
+      1 hreflang="zh-Hans"
+      1 hreflang="zh-Hant"
+total hreflang occurrences: 22
+distinct locales (excl x-default): 21
+second fetch distinct: 22
+## pattern battery (why "17" reproduces)
+a) hreflang="[a-z-]*"      -> 18
+b) hreflang="[a-z][a-z]"    -> 17
+c) hreflang="[a-z]*"        -> 17
+d) distinct, any tag       -> 22
+e) grep -c hreflang (lines) -> 21
+## tags dropped by the [a-z]* pattern (the five that make 22-5=17)
+hreflang="es-419"
+hreflang="pt-BR"
+hreflang="x-default"
+hreflang="zh-Hans"
+hreflang="zh-Hant"
+## row provenance recheck command from the staged row (still passes)
+grep -c 'tools/adb?hl=ja' -> 1
+## the five tags a two-letter/lowercase-only extractor drops (22 - 5 = 17)
+hreflang="es-419"
+hreflang="pt-BR"
+hreflang="x-default"
+hreflang="zh-Hans"
+hreflang="zh-Hant"
+survivors of hreflang="[a-z]*" (the 17): ar bn de en fa fr he hi id it ja ko pl ru th tr vi 

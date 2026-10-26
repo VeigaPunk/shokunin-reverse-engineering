@@ -1,0 +1,86 @@
+{
+  "probe": "R38W2AvmProbe \u2014 AVM marker on standard-BE SquashFS v4 (frontier recon for round 39)",
+  "dated": "2026-10-26",
+  "input_sha256": {
+    "k1-orig": "1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e",
+    "k1-avm": "91be6f2897a8c859d27747153a7823e15c3703714ea493957087bf9884461df1",
+    "k4-avm": "59a8708d08089f225ed577cf27576f45f85f9513127cc081748fcf86f2f7fb66"
+  },
+  "patch": {
+    "bytes_used_offset": 40,
+    "bytes_used_width": 8,
+    "mkfs_time_offset": 8,
+    "mkfs_time_width": 4,
+    "endianness": "big-endian (BE v4 superblock)",
+    "changed_offsets": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "rule": "mkfs_time := bytes_used (uint32 truncation); K1 bytes_used 9780 (0x2634); K4 307 (0x133)"
+  },
+  "unblob": {
+    "version": "26.6.4",
+    "handler_sha256": "2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287",
+    "is_avm_line": "squashfs.py:48-50 (installed package == S112 tag blob)"
+  },
+  "rea_avm_run": {
+    "evidence_id": "ev_b035737ad1a58ae428db9843f8f3ed0f8db197f9d2e29e01ec6fa72a73348afe",
+    "ok": true,
+    "coverage": "partial",
+    "command": "sasquatch-v4be -no-exit-code -f -d /tmp/rea-firmware-SuWPba/extracted/firmware.bin_extract /tmp/rea-firmware-SuWPba/firmware.bin",
+    "exit_code": 1,
+    "stderr": "SquashFS version [1024.0] / inode count [184549376] suggests a SquashFS image of a different endianess\nread_id_table: failed to read id table block\nFATAL ERROR: File system corruption detected\n",
+    "chunk_extraction_failed": true,
+    "gap_kind": "extractor-failure",
+    "continuation_id": "7bca61a18c2e24f811bce926abefe387b4e009310796c1962f95828397e96f76",
+    "published_bytes": 0,
+    "files": 0,
+    "file_magic_on_input": "Squashfs filesystem, big endian, version 4.0, zlib compressed, 9780 bytes, 11 inodes, blocksize: 4096 bytes, created: Thu Jan  1 02:43:00 1970\\012- data"
+  },
+  "rea_orig_run": {
+    "evidence_id": "ev_90a0a2eb8ac50934963d866add7940e77828400571d6aa57c0d01950f7014a74",
+    "ok": true,
+    "coverage": "partial",
+    "chunk_extraction_failed": false,
+    "published_bytes": 9656,
+    "files": [
+      "firmware.bin_extract/bin/run",
+      "firmware.bin_extract/docs/deep/nested/file.dat",
+      "firmware.bin_extract/docs/readme.md",
+      "firmware.bin_extract/empty",
+      "firmware.bin_extract/hello.txt"
+    ],
+    "gaps": 0,
+    "diagnostics": [
+      "MaliciousSymlinkRemoved"
+    ]
+  },
+  "sasquatch_matrix": {
+    "k1-orig-noflag": {
+      "exit": 1,
+      "files": 0
+    },
+    "k1-orig-beflag": {
+      "exit": 0,
+      "files": 5
+    },
+    "k1-avm-noflag": {
+      "exit": 1,
+      "files": 0
+    },
+    "k1-avm-beflag": {
+      "exit": 0,
+      "files": 5
+    },
+    "k4-avm-noflag": {
+      "exit": 1,
+      "files": 0
+    },
+    "k4-avm-beflag": {
+      "exit": 0,
+      "files": 4
+    }
+  }
+}

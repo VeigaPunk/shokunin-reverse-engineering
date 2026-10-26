@@ -1,0 +1,56 @@
+# R38W2C2Rescore — exact commands, outputs, exit codes (2026-10-26)
+
+## 1. frozen counter identity
+git show e059ca9391642d5b71b6662cabcbdce0d9308719:tools/round-38/c2-counter.py | sha256sum -> 7f137b664984595e4d63068a7fa0be2c74a7c57fe5cd5e3a0b794918d2a7b0f7  -
+git show 3b960fe5f9a7f1dfa22819f98dc0fa983f4260a8:tools/round-38/c2-counter.py | sha256sum -> 7f137b664984595e4d63068a7fa0be2c74a7c57fe5cd5e3a0b794918d2a7b0f7  -
+git show 0fc6113376a156fddc3ec385386d71c3a4a9f690:tools/round-38/c2-counter.py | sha256sum -> 7f137b664984595e4d63068a7fa0be2c74a7c57fe5cd5e3a0b794918d2a7b0f7  -
+git show 77091b492cc53f8743bd0701b1e7d5e66123dd84:tools/round-38/c2-counter.py -> fatal: path 'tools/round-38/c2-counter.py' exists on disk, but not in '77091b492cc53f8743bd0701b1e7d5e66123dd84'
+sha256sum (worktree) tools/round-38/c2-counter.py -> 7f137b664984595e4d63068a7fa0be2c74a7c57fe5cd5e3a0b794918d2a7b0f7  tools/round-38/c2-counter.py
+
+## 2. selftest
+{"selftest": "c2-counter", "cases": 14, "green_ok": 1, "red_ok": 13, "failures": []}
+exit=0
+
+## 3. rev=0fc6113376a156fddc3ec385386d71c3a4a9f690  base=77091b492cc53f8743bd0701b1e7d5e66123dd84
+{"assertion_mismatches": [], "guards_ok": true, "met_target": true, "mismatches": 0, "revision": "0fc6113376a156fddc3ec385386d71c3a4a9f690", "unresolved": []}
+exit=0
+
+## 4. do-nothing control: rev=base=77091b492cc53f8743bd0701b1e7d5e66123dd84
+{"assertion_mismatches": [], "guards_ok": false, "met_target": false, "mismatches": 1, "revision": "77091b492cc53f8743bd0701b1e7d5e66123dd84", "unresolved": [["prov_core:REA MCP server", "evidence/doctor/"]]}
+exit=1
+
+## 5. control: rev=first freeze e059ca9391642d5b71b6662cabcbdce0d9308719 (claims+counter frozen, repairs not landed)
+{"assertion_mismatches": [], "guards_ok": false, "met_target": false, "mismatches": 1, "revision": "e059ca9391642d5b71b6662cabcbdce0d9308719", "unresolved": [["prov_core:REA MCP server", "evidence/doctor/"]]}
+exit=1
+
+## 6. control: rev=3b960fe5f9a7f1dfa22819f98dc0fa983f4260a8 (C1/receipts landed, SCORECARD coverage row not yet re-stated)
+{"assertion_mismatches": [{"check": "O1 coverage mapped/files", "observed": [126, 126], "stated": [124, 124]}], "guards_ok": true, "met_target": false, "mismatches": 1, "revision": "3b960fe5f9a7f1dfa22819f98dc0fa983f4260a8", "unresolved": []}
+exit=1
+
+## 7. current tip e265533ea3a7cd4d9a75a24ef737c2ff0e98e95f
+{"assertion_mismatches": [], "guards_ok": true, "met_target": true, "mismatches": 0, "revision": "e265533ea3a7cd4d9a75a24ef737c2ff0e98e95f", "unresolved": []}
+exit=0
+
+## 8. off-lane reproduction from a scratch clone (proves git-show-addressed reads are tree-independent)
+git clone -q --no-hardlinks <lane> $S/clone ; git -C $S/clone rev-parse --show-toplevel -> /fast/scratch/hyaku/kaidoku-r38/R38W2C2Rescore/clone
+{"assertion_mismatches": [], "guards_ok": true, "met_target": true, "mismatches": 0, "revision": "0fc6113376a156fddc3ec385386d71c3a4a9f690", "unresolved": []}
+exit=0
+
+## 9. receipt identity: on-disk claim vs my reproduction (argv excluded)
+json equal (argv excluded): True
+d467d2d6a33bbf58989e6f9c8bc4353734fe530ab2868926c970721634dc88ab  .ufo/waves/round-38/l1/scores/c2-at-0fc61133.json
+
+## 10. tracking status of the receipt
+?? .ufo/waves/round-38/l1/scores/c2-at-0fc61133.json
+(end porcelain)
+.ufo/waves/round-38/l1/scores/c1-v1-at-3b960fe5.json
+.ufo/waves/round-38/l1/scores/c1-v3-at-3b960fe5-NOT-THE-RULE.json
+git ls-tree -r --name-only 0fc61133 | grep round-38/l1/scores ->
+.ufo/waves/round-38/l1/scores/c1-v1-at-3b960fe5.json
+.ufo/waves/round-38/l1/scores/c1-v3-at-3b960fe5-NOT-THE-RULE.json
+
+## 11. the pointer the landing cites (after cell of SCORECARD R38-C2 row; lesson line 11)
+git cat-file -t 0fc6113376a156fddc3ec385386d71c3a4a9f690:.ufo/waves/round-38/l1/scores/c2-final.json -> fatal: path '.ufo/waves/round-38/l1/scores/c2-final.json' does not exist in '0fc6113376a156fddc3ec385386d71c3a4a9f690'
+git cat-file -t e265533ea3a7cd4d9a75a24ef737c2ff0e98e95f:.ufo/waves/round-38/l1/scores/c2-final.json -> fatal: path '.ufo/waves/round-38/l1/scores/c2-final.json' does not exist in 'e265533ea3a7cd4d9a75a24ef737c2ff0e98e95f'
+find <lane> -name c2-final.json -> ./.ufo/waves/round-36/after/c2-final.json 
+git log --all --oneline -- "*c2-final.json" -> 018ae628 round-36: wave-2 results (36/36 settled), last reports, final receipts|6286d38f |633dabdb |a53b9c24 |2618cf07 round-36: r4u-03 entry supersession note (wave-2 R36W2CriticTrends quality leg); final receipts and census end|2a1d4f4f |

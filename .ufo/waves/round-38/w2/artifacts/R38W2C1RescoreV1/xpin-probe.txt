@@ -1,0 +1,19 @@
+Evidence-id binding probe (tools/round-27/xpin-attribute.mjs at freeze e059ca93, --pkg65=--pkg67=rea-agents 6.5.0)
+Input: committed corpus/evidence/round-38/c1/K2/after.json at 3b960fe5. Columns: stored id, id under 6.5.0 rule, verdict.
+
+as-committed                ev_e93867860c3f05683442a776b6984c2c2661d9389e12a1c6c2e23f77ed028914  ev_e93867860c3f05683442a776b6984c2c2661d9389e12a1c6c2e23f77ed028914  both
+parameters.output_directory changed -> /some/other/dir
+                            ev_e93867860c3f05683442a776b6984c2c2661d9389e12a1c6c2e23f77ed028914  ev_309dc7742556b3e6ae5b20e7c39fc84b842ed8b30a97b4e7c8c0604ca49c8141  none
+subject.local_path changed  -> /x/y/carrier.sqsh
+                            ev_e93867860c3f05683442a776b6984c2c2661d9389e12a1c6c2e23f77ed028914  ev_e93867860c3f05683442a776b6984c2c2661d9389e12a1c6c2e23f77ed028914  both
+stored evidence_id -> "ev_deadbeef"
+                            ev_deadbeef                                                  ev_e93867860c3f05683442a776b6984c2c2661d9389e12a1c6c2e23f77ed028914  none
+raw_result emptied          -> {"report": []}
+                            ev_e93867860c3f05683442a776b6984c2c2661d9389e12a1c6c2e23f77ed028914  ev_c907fa4474dd604cc819593299909355118461e9e6bbfe19f2bcec75ee36109b  none
+
+Reading: the 6.5.0 id varies with parameters.output_directory and raw_result (volatile run paths) and is
+invariant to subject.local_path. A faithful fresh run of the same carrier therefore mints a DIFFERENT id:
+K2 fresh rerun (scratch outdir) minted ev_0bc9d25a7f0b6807b24d26b2d68a0cf8f4238dc98d622c9920a6219273298c83
+with normalized_result identical to the committed receipt (see rerun-comparison.txt).
+=> c1-counter.py's after_evidence_id_ok is a self-consistency test of the committed envelope, not a
+   provenance/reproducibility test of the run that produced it. It does reject a forged stored id (row 4).

@@ -1,0 +1,30 @@
+# R38W2SymlinkRea — exact commands (scratch S=/fast/scratch/hyaku/kaidoku-r38/R38W2SymlinkRea)
+export TMPDIR=$S HYAKU_SCRATCH=/fast/scratch/hyaku REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob
+
+# fixtures (system mksquashfs 4.7.5, squashfs v4 LE gzip, 4 KiB blocks)
+mkdir -p fxE && mksquashfs fxE-src fxE/carrier.sqsh -comp gzip -b 4096 -noappend -no-progress -all-root
+#   fxA-src: hello.txt, dir/data.bin, dir/in-link -> ../hello.txt, abs-link -> /etc/hostname
+#   fxB-src: alpha.txt, a-loop -> b-loop, b-loop -> a-loop
+#   fxC-src: root.txt, sub/out-link -> ../../outside.txt
+#   fxD-src: keep.txt, dangling-link -> missing-file.txt
+#   fxE-src: real.bin (mode 755), same-link -> real.bin
+
+# runs (npx rea-agents@6.5.0 resolved from the pre-existing cache /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6)
+npx -y rea-agents@6.5.0 extract-firmware <carrier> <outdir-not-existing> --format json --full-output > <name>-run.json
+#   fxA/fxA-out   exit 0    fxA/fxA-out2 (rerun) exit 0
+#   fxB/fxB-out   exit 0    fxC/fxC-out exit 0    fxD/fxD-out exit 0    fxE/fxE-out exit 0
+C=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1
+npx -y rea-agents@6.5.0 extract-firmware $C/K1/carrier.sqsh kK1-out --format json --full-output > kK1-run.json   # exit 0
+npx -y rea-agents@6.5.0 extract-firmware $C/K2/carrier.sqsh kK2-out --format json --full-output > kK2-run.json   # exit 0
+
+# code-path line numbers
+grep -n "entry.kind !== \"file\"" firmware/FirmwarePublication.js          # 69
+grep -n "kind: \"unpublished-entry\"" firmware/FirmwarePublication.js      # 302
+grep -n "coverage: unpublished.length" firmware/FirmwarePublication.js     # 103
+grep -n "kind: stat.isSymbolicLink()" firmware/FirmwareFiles.js            # 179
+grep -n "coverage: depths.length" firmware/FirmwareReports.js              # 419
+grep -n "0o600" artifacts/SafeOutputTree.js                                # 119
+
+# oracle-side (BE carriers; unsquashfs 4.7.5 refuses BE)
+sasquatch-v4be -be -ll $C/K1/carrier.sqsh | grep link-to-hello   # lrwxrwxrwx ... -> ../hello.txt
+sasquatch-v4be -be -ll $C/K2/carrier.sqsh | grep run-link       # lrwxrwxrwx ... -> ../../a/run.sh

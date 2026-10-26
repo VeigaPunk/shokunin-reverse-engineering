@@ -1,0 +1,15 @@
+# guard proof — pattern: ^ {0,3}\|[[:space:]]*S[0-9]{3,}
+# mechanism: grep -oE <pattern> | grep -oE 'S[0-9]+' | sort ; comm -12
+
+A both sides 2-space-indented S002             reg=S001,S002,S004,    staged=S001,S002,S003,    collisions=S001,S002,     count=2 bytes=10
+  -> GUARD PASS: indented S002 caught
+
+B registry 2-space only                        reg=S001,S002,         staged=S002,              collisions=S002,          count=1 bytes=5
+C staged 2-space only                          reg=S002,              staged=S001,S002,         collisions=S002,          count=1 bytes=5
+D registry 3-space (window edge)               reg=S002,              staged=S002,              collisions=S002,          count=1 bytes=5
+E registry 4-space (control)                   reg=                   staged=S002,              collisions=               count=0 bytes=0
+F registry tab (control)                       reg=                   staged=S002,              collisions=               count=0 bytes=0
+
+# Real files: rows the pattern misses
+  SOURCES.md: S-id rows total=116 matched=116 depth>=4=0 tab-indented=0
+  SOURCES.append.md: S-id rows total=132 matched=132 depth>=4=0 tab-indented=0
