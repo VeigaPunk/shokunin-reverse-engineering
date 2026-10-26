@@ -1,0 +1,29 @@
+### C0 selftest
+VERDICT controls_bound=1/1
+VERDICT controls_unbound=1/2
+selftest green(bound control)   rc=0 (want 0)
+selftest red(unbound control)   rc=1 (want 1)
+selftest PASS
+exit=0
+
+### C1 r38 controls at tip 7e979514, claim freeze e059ca93, freeze-tip efd5c47a
+  ctl-c1-0-do-nothing.json: exit=1 FAIL freeze_is_claim(freeze=f1010f67!=claim); path_is_freeze_copy(bytes differ from efd5c47a)
+  ctl-c1-1-three-carriers.json: exit=1 FAIL argv_binds_freeze; revision_resolves(output.revision a3646b58 absent); path_is_freeze_copy(bytes differ from efd5c47a)
+  ctl-c1-2-wrong-handler.json: exit=1 FAIL argv_binds_freeze; revision_resolves(output.revision a4cf495d absent); path_is_freeze_copy(bytes differ from efd5c47a)
+  ctl-c2-0-do-nothing.json: exit=1 FAIL argv_binds_freeze
+  ctl-c2-1-junk-count.json: exit=1 FAIL argv_binds_freeze; revision_resolves(output.revision 87dc8502 absent)
+  ctl-c2-2-delete-bad-pointer.json: exit=1 FAIL argv_binds_freeze; revision_resolves(output.revision d8fe10c7 absent)
+  ctl-c2-3-substitute-other-document.json: exit=1 FAIL argv_binds_freeze; revision_resolves(output.revision 21028bcd absent)
+VERDICT controls_unbound=7/7
+exit=1
+
+### C2 r38 controls at efd5c47a (freeze-adjacent)
+  ctl-c1-0-do-nothing.json: exit=1 BOUND
+  ctl-c1-1-three-carriers.json: exit=1 FAIL argv_binds_freeze; revision_resolves(output.revision 801e2019 absent)
+  ctl-c1-2-wrong-handler.json: exit=1 FAIL argv_binds_freeze; revision_resolves(output.revision 9f5b5b6f absent)
+  ctl-c2-0-do-nothing.json: exit=1 FAIL argv_binds_freeze
+  ctl-c2-1-junk-count.json: exit=1 FAIL argv_binds_freeze; revision_resolves(output.revision 87dc8502 absent)
+  ctl-c2-2-delete-bad-pointer.json: exit=1 FAIL argv_binds_freeze; revision_resolves(output.revision d8fe10c7 absent)
+  ctl-c2-3-substitute-other-document.json: exit=1 FAIL argv_binds_freeze; revision_resolves(output.revision 21028bcd absent)
+VERDICT controls_unbound=6/7
+exit=1

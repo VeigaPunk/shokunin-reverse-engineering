@@ -1,0 +1,90 @@
+# R39-C2 heldout-gen.py determinism transcript
+# host: Linux 7.2.11-arch1-1   python3: Python 3.14.8
+# unblob: 26.6.4
+# sasquatch-v4be: fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6  (~/.local/bin/sasquatch-v4be)
+# sasquatch:      ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754  (~/.local/bin/sasquatch)
+# rea-agents: 6.5.0 via npx
+# seed A = sha256('dev1') = cf4b9c1f5eb31deb9ea41f56faa757b68be9cab8b73f463229df17036bdfa13e
+# seed C = sha256('dev2') = 45366849ffd75b4cad725450f0569d11fedbaa6dd747d4480b1d1abb8ba5e305
+
+$ rm -rf det-a det-b det-c det-sub
+
+$ python3 -I -B heldout-gen.py --seed <dev1> --out det-a
+  H01  clean-be                   be/gzip after  772455e55f5ad14e7ed77e5b128af1d9e201360536b3048ef0521af769ec0147
+  H02  clean-be                   be/gzip after  f98446127bb6c93d7597d838c693e303606f1aaa1b5605a526a182687328d300
+  H03  clean-le                   le/gzip after  7b6358b3b17941f774d77733a229aa9c4a3e87bbc29c84535220d781c27bee95
+  H04  clean-le                   le/xz   after  6b6b405bba70738f296139053cd1e3be098b8ca09b47289bd19676fb82c444fa
+  H05  escaping-symlink-removed   be/xz   after  8148c1bf9b1697465eb79f76ddce3566fe646cf9a88caed8046848e91e26476f
+  H06  escaping-symlink-removed   be/xz   after  32f57998512d1498d7e303af76a098ddf67a830da204711198a1dc92204f4901
+  H07  in-tree-symlink-metadata   be/xz   after  2ab8b3bbb1786ef20ad65f6f540d542f545a5bc5344bd402296602fd8b269da4
+  H08  in-tree-symlink-metadata   be/xz   after  2cef1ff1e89b5c489523589af55d253d328af27c8dc19cf8db2eeea9177a88cf
+  H09  dep-missing-be             be/xz   before ce055d84644709fe50da2de1ef52bb76f35a5efe552b3eb4742e3cbe93768c5c
+  H10  dep-missing-be             be/xz   before 3d2fa607ce2bcd8224106a130a5e6d99daf55e2c2b5d361bad1c7a921f601e71
+  H11  dep-missing-le             le/gzip before b771bb3c10aa0ab366a9cf97e11a81ab84ec7482eb6afc1b695550f1f54385be
+  H12  dep-missing-le             le/xz   before acb82d43e42dd1f549db35f7f50cecb9019700e3395204fefb5ec453dc377aae
+  H13  avm-marker-be-dropped      avm/gzip after  51e8f4800ba432aadbe919572b3ab6e280c33e2289668f0a40a2f37b59ddc3cb
+  H14  avm-marker-be-dropped      avm/gzip after  b9c4fbd1f597a848fc06c300765c8b6efbd45a14b32f0c59fa257f8bcbcddeae
+  H15  body-extractor-failure     be/xz   after  124ac0819e8770fab7429a944532c5570dd29967ffe14964acac2f1e7e5b95bc
+  H16  body-extractor-failure     be/xz   after  640e7b1b015369f7ec5eb398388449f4b13e0a771ba7baaa79fe4cf42c719525
+
+$ python3 -I -B heldout-gen.py --seed <dev1> --out det-b    # same seed, fresh dir
+  (wrote det-b, no output on stdout beyond the table)
+
+$ python3 -I -B heldout-gen.py --seed <dev2> --out det-c    # different seed
+  (wrote det-c)
+
+$ cmp det-a/manifest.json det-b/manifest.json; echo exit=$?
+exit=0
+$ diff -r det-a det-b >/dev/null; echo exit=$?      # manifest, oracle, carrier bytes
+exit=0
+$ cmp det-a/manifest.json det-c/manifest.json; echo exit=$?   # different seed: expect 1
+exit=1
+
+# per-carrier carrier.sqsh sha256: seed A vs seed C
+  H01  A=772455e55f5ad14e7ed77e5b128af1d9e201360536b3048ef0521af769ec0147  C=1945c8019a0130b696ec80d60752c2715703d351b2c751e4839a6f7f8eaa736c  differs=yes
+  H02  A=f98446127bb6c93d7597d838c693e303606f1aaa1b5605a526a182687328d300  C=926a671b90864f41d89db144cdf6773b42fd4c136757d672123589a16bf91cd1  differs=yes
+  H03  A=7b6358b3b17941f774d77733a229aa9c4a3e87bbc29c84535220d781c27bee95  C=9f1f63e9d6bbc670a0bde7035377185a313ff35359d17abf1d27b07aebdc3569  differs=yes
+  H04  A=6b6b405bba70738f296139053cd1e3be098b8ca09b47289bd19676fb82c444fa  C=cabb105e9653ba7873128303e38cc62d9b022f7f4fd0b913dac59d86526ac16e  differs=yes
+  H05  A=8148c1bf9b1697465eb79f76ddce3566fe646cf9a88caed8046848e91e26476f  C=471321d54d91c429edfc25116942d8d5c936fd7c21d90fc09fe68f8f474c6888  differs=yes
+  H06  A=32f57998512d1498d7e303af76a098ddf67a830da204711198a1dc92204f4901  C=33837c1c0b24d8cbdfe0f2396e076bc6db8de5327f41c19fe1aee858d54c75af  differs=yes
+  H07  A=2ab8b3bbb1786ef20ad65f6f540d542f545a5bc5344bd402296602fd8b269da4  C=7948fde2773410b143c701135e4b09c55a00e3f43cfbb50c920533cf780c19be  differs=yes
+  H08  A=2cef1ff1e89b5c489523589af55d253d328af27c8dc19cf8db2eeea9177a88cf  C=55513bd3b352f764fe32d614450ced11e5ced610f1d90028e4ae2cedc4ada1c0  differs=yes
+  H09  A=ce055d84644709fe50da2de1ef52bb76f35a5efe552b3eb4742e3cbe93768c5c  C=3a6374c4c3313b07fbd5c7fa1aea305da2afd3566980ed1f3725d6572ed648a2  differs=yes
+  H10  A=3d2fa607ce2bcd8224106a130a5e6d99daf55e2c2b5d361bad1c7a921f601e71  C=324423dd8cbaff8a12ed94f72137fb0ff8f2451c7b178a24122f3b7331b781b5  differs=yes
+  H11  A=b771bb3c10aa0ab366a9cf97e11a81ab84ec7482eb6afc1b695550f1f54385be  C=96d48ba4beb6b8400b0e207b76351f2e85931588a9b538ca56bb06faa5bf0497  differs=yes
+  H12  A=acb82d43e42dd1f549db35f7f50cecb9019700e3395204fefb5ec453dc377aae  C=d0748272c5699c329973f533742953bba1f54f0ee7a9dd7d867d56eddd2c5430  differs=yes
+  H13  A=51e8f4800ba432aadbe919572b3ab6e280c33e2289668f0a40a2f37b59ddc3cb  C=d2ecb915ac61a49d123093d04fa15c48bbcd209c73c204bb21141496da71e08f  differs=yes
+  H14  A=b9c4fbd1f597a848fc06c300765c8b6efbd45a14b32f0c59fa257f8bcbcddeae  C=970c9867a91eec98ea537cc15e1dcee144e1d4b0354239d08b8b73cab6d6277c  differs=yes
+  H15  A=124ac0819e8770fab7429a944532c5570dd29967ffe14964acac2f1e7e5b95bc  C=3870fe8475cb450e2f06297e385e20b9a1877313c2e753ff2f795781f5d9a497  differs=yes
+  H16  A=640e7b1b015369f7ec5eb398388449f4b13e0a771ba7baaa79fe4cf42c719525  C=a4dcfa7d8c37acc3752e15c42818100343cdbb7aa0206225a2cb0fcc3714d969  differs=yes
+
+# compression id written into the superblock (SquashFS: 1=gzip, 2=lzma, 4=xz)
+  H01  be/gzip comp_id=1
+  H02  be/gzip comp_id=1
+  H03  le/gzip comp_id=1
+  H04  le/xz   comp_id=4
+  H05  be/xz   comp_id=4
+  H06  be/xz   comp_id=4
+  H07  be/xz   comp_id=4
+  H08  be/xz   comp_id=4
+  H09  be/xz   comp_id=4
+  H10  be/xz   comp_id=4
+  H11  le/gzip comp_id=1
+  H12  le/xz   comp_id=4
+  H13  avm/gzip comp_id=1
+  H14  avm/gzip comp_id=1
+  H15  be/xz   comp_id=4
+  H16  be/xz   comp_id=4
+
+# subset stability: --classes clean-be must not move the selected class carriers
+$ python3 -I -B heldout-gen.py --seed <dev1> --out det-sub --classes clean-be
+  H01 sub=772455e55f5ad14e7ed77e5b128af1d9e201360536b3048ef0521af769ec0147  full=772455e55f5ad14e7ed77e5b128af1d9e201360536b3048ef0521af769ec0147
+  H02 sub=f98446127bb6c93d7597d838c693e303606f1aaa1b5605a526a182687328d300  full=f98446127bb6c93d7597d838c693e303606f1aaa1b5605a526a182687328d300
+
+# failures: existing --out, unknown class, short seed
+  /fast/scratch/hyaku/kaidoku-r39/R39C2HeldoutGen/det-sub already holds a manifest.json; use a fresh --out
+  exit=1
+  unknown class(es): nope; known: clean-be, clean-le, escaping-symlink-removed, in-tree-symlink-metadata, dep-missing-be, dep-missing-le, avm-marker-be-dropped, body-extractor-failure, no-squashfs-chunk, version-minor-mismatch
+  exit=1
+  --seed must be at least 16 hex characters, got 'nothex'
+  exit=1

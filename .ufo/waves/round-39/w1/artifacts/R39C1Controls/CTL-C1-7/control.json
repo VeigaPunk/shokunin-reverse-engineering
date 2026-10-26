@@ -1,0 +1,28 @@
+{
+ "control": "CTL-C1-7",
+ "title": "escaping symlink kept as an unpublished-entry gap",
+ "shortcut": "CTL-C1-3 bytes, except an escaping symlink (K1's link-to-hello, any escaping row in K5/K6) also gets an unpublished-entry gap. The published-file set is unchanged.",
+ "overlay_static": [
+  "corpus/evidence/round-39/c1/K1/after.json",
+  "corpus/evidence/round-39/c1/K2/after.json",
+  "corpus/evidence/round-39/c1/K3/after.json",
+  "corpus/evidence/round-39/c1/K4/after.json"
+ ],
+ "generate": {"mode": "escaping-gap", "ids": ["K5", "K6"]},
+ "docs": ["core", "frontier", "sources", "readme", "entry"],
+ "entry": "corpus/knowledge/2026-10-26-r39-sasquatch-be-squashfs-promotion.md",
+ "commit": {"mode": "post-freeze", "split": ["receipts", "docs"], "commits": [
+  "round-39 CTL-C1-7 receipts: escaping symlink kept as a gap",
+  "round-39 CTL-C1-7 docs: Core row, entry, SOURCES, README"
+ ]},
+ "measured_rev": "HEAD after both commits",
+ "expected": {
+  "exit": 1,
+  "met_target": false,
+  "carriers_matched": "K1 fails; K5/K6 fail if they hold an escaping symlink; K2, K3, K4 pass",
+  "refusing_binding": "no gap may name a path that symlinks.tsv marks escaping",
+  "per_carrier": "K1 records one unpublished-entry gap on link-to-hello, which symlinks.tsv marks escaping; a counter that only checks every in-tree symlink has a gap (superset check) passes this control",
+  "isolates": "the other direction of the gap rule: an extra gap is as fatal as a missing one"
+ },
+ "defeat_risk": "medium - set equality is required; a one-directional check passes it"
+}

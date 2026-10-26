@@ -1,0 +1,75 @@
+# escaping-link publication check (primary -a runs); NAME = link basename
+# "fields" = JSON paths in the full envelope where NAME occurs.
+# published = NAME in files[].relative_path or unpublished_entries[].relative_path
+== D1-in-first carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/bin/run', 'firmware.bin_extract/hello.txt']
+   unpublished=['firmware.bin_extract/a_in']
+   z_out     fields=['.normalized_result.diagnostics[0].report.link', '.raw_result.report[5].reports[4].link'] published=no
+   a_in      fields=['.normalized_result.derivations[3].child_path', '.normalized_result.extraction_gaps[0].input_path', '.normalized_result.extraction_gaps[0].relative_path', '.normalized_result.unpublished_entries[0].relative_path', '.raw_result.report[3].reports[0].path', '.raw_result.report[3].task.path', '.raw_result.report[4].subtasks[2].path'] published=YES
+   output_symlinks=[]
+== D2-out-first carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/bin/run', 'firmware.bin_extract/hello.txt']
+   unpublished=['firmware.bin_extract/z_in']
+   a_out     fields=['.normalized_result.diagnostics[0].report.link', '.raw_result.report[5].reports[4].link'] published=no
+   z_in      fields=['.normalized_result.derivations[3].child_path', '.normalized_result.extraction_gaps[0].input_path', '.normalized_result.extraction_gaps[0].relative_path', '.normalized_result.unpublished_entries[0].relative_path', '.raw_result.report[3].reports[0].path', '.raw_result.report[3].task.path', '.raw_result.report[4].subtasks[2].path'] published=YES
+   output_symlinks=[]
+== D3-nested-multi carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/hello.txt']
+   unpublished=['firmware.bin_extract/deep/b_in2', 'firmware.bin_extract/deep/up_in']
+   out_up    fields=['.normalized_result.diagnostics[0].report.link', '.raw_result.report[5].reports[4].link'] published=no
+   up_in     fields=['.normalized_result.derivations[1].child_path', '.normalized_result.extraction_gaps[1].input_path', '.normalized_result.extraction_gaps[1].relative_path', '.normalized_result.unpublished_entries[1].relative_path', '.raw_result.report[1].reports[0].path', '.raw_result.report[1].task.path', '.raw_result.report[2].subtasks[1].path'] published=YES
+   b_in2     fields=['.normalized_result.derivations[0].child_path', '.normalized_result.extraction_gaps[0].input_path', '.normalized_result.extraction_gaps[0].relative_path', '.normalized_result.unpublished_entries[0].relative_path', '.raw_result.report[0].reports[0].path', '.raw_result.report[0].task.path', '.raw_result.report[2].subtasks[0].path'] published=YES
+   output_symlinks=[]
+== D4-chase-first carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/hello.txt']
+   unpublished=[]
+   b_escape  fields=['.normalized_result.diagnostics[1].report.link', '.raw_result.report[2].reports[5].link'] published=no
+   a_chase   fields=['.normalized_result.diagnostics[0].report.link', '.raw_result.report[2].reports[4].link'] published=no
+   output_symlinks=[]
+== D5-escape-first carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/hello.txt']
+   unpublished=['firmware.bin_extract/z_chase']
+   a_escape  fields=['.normalized_result.diagnostics[0].report.link', '.normalized_result.unpublished_entries[0].link_target', '.raw_result.report[1].reports[0].link_target', '.raw_result.report[3].reports[4].link'] published=no
+   z_chase   fields=['.normalized_result.derivations[1].child_path', '.normalized_result.extraction_gaps[0].input_path', '.normalized_result.extraction_gaps[0].relative_path', '.normalized_result.unpublished_entries[0].relative_path', '.raw_result.report[1].reports[0].path', '.raw_result.report[1].task.path', '.raw_result.report[2].subtasks[1].path'] published=YES
+   output_symlinks=[]
+== D6-two-escaping carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/hello.txt']
+   unpublished=['firmware.bin_extract/in_link']
+   out_a     fields=['.normalized_result.diagnostics[0].report.link', '.raw_result.report[3].reports[4].link'] published=no
+   out_b     fields=['.normalized_result.diagnostics[1].report.link', '.raw_result.report[3].reports[5].link'] published=no
+   in_link   fields=['.normalized_result.derivations[1].child_path', '.normalized_result.extraction_gaps[0].input_path', '.normalized_result.extraction_gaps[0].relative_path', '.normalized_result.unpublished_entries[0].relative_path', '.raw_result.report[1].reports[0].path', '.raw_result.report[1].task.path', '.raw_result.report[2].subtasks[1].path'] published=YES
+   output_symlinks=[]
+== C1-target-first carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/hello.txt']
+   unpublished=['firmware.bin_extract/z_link']
+   a_target  fields=['.normalized_result.diagnostics[0].report.link', '.normalized_result.unpublished_entries[0].link_target', '.raw_result.report[1].reports[0].link_target', '.raw_result.report[3].reports[4].link'] published=no
+   z_link    fields=['.normalized_result.derivations[1].child_path', '.normalized_result.extraction_gaps[0].input_path', '.normalized_result.extraction_gaps[0].relative_path', '.normalized_result.unpublished_entries[0].relative_path', '.raw_result.report[1].reports[0].path', '.raw_result.report[1].task.path', '.raw_result.report[2].subtasks[1].path'] published=YES
+   output_symlinks=[]
+== C2-chase-first carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/hello.txt']
+   unpublished=[]
+   z_target  fields=['.normalized_result.diagnostics[1].report.link', '.raw_result.report[2].reports[5].link'] published=no
+   a_chase   fields=['.normalized_result.diagnostics[0].report.link', '.raw_result.report[2].reports[4].link'] published=no
+   output_symlinks=[]
+== C3-root-escape carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/hello.txt']
+   unpublished=['firmware.bin_extract/deep/z_link']
+   a_target  fields=['.normalized_result.diagnostics[0].report.link', '.normalized_result.unpublished_entries[0].link_target', '.raw_result.report[0].reports[0].link_target', '.raw_result.report[4].reports[4].link'] published=no
+   z_link    fields=['.normalized_result.derivations[0].child_path', '.normalized_result.extraction_gaps[0].input_path', '.normalized_result.extraction_gaps[0].relative_path', '.normalized_result.unpublished_entries[0].relative_path', '.raw_result.report[0].reports[0].path', '.raw_result.report[0].task.path', '.raw_result.report[1].subtasks[0].path'] published=YES
+   output_symlinks=[]
+== C4-root-chase carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/hello.txt']
+   unpublished=[]
+   z_target  fields=['.normalized_result.diagnostics[1].report.link', '.raw_result.report[3].reports[5].link'] published=no
+   a_chase   fields=['.normalized_result.diagnostics[0].report.link', '.raw_result.report[3].reports[4].link'] published=no
+   output_symlinks=[]
+== D7-corrupt-body carrier_sha256_matches_envelope=True
+   files=[]
+   unpublished=[]
+   output_symlinks=[]
+== D8-dir-links carrier_sha256_matches_envelope=True
+   files=['firmware.bin_extract/docs/a.txt', 'firmware.bin_extract/hello.txt']
+   unpublished=[]
+   d_out     fields=['.normalized_result.diagnostics[0].report.link', '.raw_result.report[4].reports[4].link'] published=no
+   d_in      fields=[] published=no
+   output_symlinks=[]

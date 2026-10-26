@@ -1,0 +1,49 @@
+### B0 selftest
+VERDICT checkpoint_ok reports=2
+VERDICT checkpoint_incomplete missing_reports=1
+selftest green(committed wave) rc=0 (want 0)
+selftest red(lost report)      rc=1 (want 1)
+selftest PASS
+exit=0
+
+### B1 rev=077e212b ledger=.ufo/waves/round-38/r38-w1-results.json
+ledger absent at 077e212b: .ufo/waves/round-38/r38-w1-results.json
+exit=1
+
+### B2 rev=3b960fe5 ledger=.ufo/waves/round-38/r38-w1-results.json
+ledger absent at 3b960fe5: .ufo/waves/round-38/r38-w1-results.json
+exit=1
+
+### B3 rev=7e979514 ledger=.ufo/waves/round-38/r38-w1-results.json
+ledger .ufo/waves/round-38/r38-w1-results.json at 7e979514: results=40 named_reports=26 unbound_rows=14
+  reports present in tree: 26/26
+  rows with no report pointer (14): ['R38ExecAfterK1', 'R38ExecAfterK2', 'R38ExecAfterK3', 'R38CrossToolK1', 'R38CrossToolK3', 'R38CrossToolK4', 'R38ExecSelftests', 'R38ExecQuarantine']
+VERDICT checkpoint_incomplete unbound_rows=14 of 40
+exit=1
+
+### B4 rev=7e979514 ledger=.ufo/waves/round-38/r38-w2-results.json
+ledger .ufo/waves/round-38/r38-w2-results.json at 7e979514: results=44 named_reports=36 unbound_rows=8
+  reports present in tree: 36/36
+  rows with no report pointer (8): ['R38W2ReproK2', 'R38W2ReproK4', 'R38W2C2Rescore', 'R38W2FreezeDriftFixtures', 'R38W2ScribeReport', 'R38W2ScribeTrend', 'R38W2ScribeGateXref', 'R38W2AvmProbe']
+VERDICT checkpoint_incomplete unbound_rows=8 of 44
+exit=1
+
+### B5 rev=790561d4 ledger=.ufo/waves/round-36/w2-results.json
+ledger absent at 790561d4: .ufo/waves/round-36/w2-results.json
+exit=1
+
+### B6 rev=018ae628 ledger=.ufo/waves/round-36/w2-results.json
+ledger .ufo/waves/round-36/w2-results.json at 018ae628: results=36 named_reports=31 unbound_rows=5
+  reports present in tree: 31/31
+  rows with no report pointer (5): ['R36W2ExecC1Final', 'R36W2ExecC2Final', 'R36W2ScoutS108', 'R36W2ReviewerSeatAccounting', 'R36W2ReviewerCustodyOrder']
+VERDICT checkpoint_incomplete unbound_rows=5 of 36
+exit=1
+
+### B7 rev=7e979514 ledger=.ufo/waves/round-36/w1-results.json
+ledger .ufo/waves/round-36/w1-results.json at 7e979514: results=43 named_reports=33 unbound_rows=10
+  reports present in tree: 31/33
+  MISSING kaidoku-shokunin/.ufo/waves/round-36/w1/R36ScoutQuarantine.md
+  MISSING kaidoku-shokunin/.ufo/waves/round-36/w1/R36ScribeSources.md
+  rows with no report pointer (10): ['R36ExecReproK1', 'R36ExecReproK4', 'R36ExecRecountC2', 'R36ExecIndependentC1', 'R36ExecSasquatchDirect', 'R36ExecHarnessRun', 'R36ScribeEntry', 'R36ScribeSkill']
+VERDICT checkpoint_incomplete unbound_rows=10 of 43
+exit=1

@@ -90,6 +90,7 @@ A row is written when its file exists, never before.
 | unblob's sasquatch dependency (round 36, assimilated) | `2026-10-26-unblob-sasquatch-dependency` | held as producer contract — unblob README (tag 26.6.4) makes SquashFS support conditional on an external sasquatch and documents a Debian-package route; devttys0 README self-labels sasquatch "Very beta."; re-grounded from the shokuknow package with three corrections |
 | Big-endian SquashFS v4 through REA (round 38) | `2026-10-26-r38-sasquatch-be-squashfs-recursion` | measured, **not promoted** (Frontier) — with `sasquatch-v4be` 4.5.1 reachable, the `squashfs_v4_be` handler publishes every oracle regular file on four frozen carriers (K1 5/5, K2 3/3, K3 4/4, K4 4/4) and none without it; K2's in-tree symlink stays an `unpublished-entry` gap, so R38-C1 ("no extraction gap" on 4/4 under the first-freeze counter) is an honest stop; AVM-BE and vendor-mangled images not measured |
 | unblob's format matrix (round 38, assimilated) | `2026-10-26-unblob-format-matrix` | held as producer coverage statement — unblob.org lists 97 handler sections including `SquashFS (v4-BE)` and the vendor-mangled SquashFS variants; its meta description's "more than 30" conflicts with the README's "78+"; coverage claim only, never an extraction outcome; re-grounded from the shokuknow package with one correction |
+| SquashFS `extract-firmware` outcome triage (round 39) | `2026-10-26-r39-sqfs-outcome-triage` | held as an executable SKILL craft table (eight labels: no chunk, BE/LE dependency miss, AVM-marker `-be` drop, damage with `-be`, escaping symlink removed, in-tree symlink kept, clean), backed by development envelopes; R39-C2 scores it on a held-out set generated after the freeze |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -198,6 +199,7 @@ A row is written when its file exists, never before.
 | `2026-10-26-unblob-sasquatch-dependency` | unblob's producer contract: SquashFS support needs an external sasquatch; Debian-package route; "Very beta." self-label (assimilated from shokuknow `merge/kaidoku`, re-grounded) | S110, S111 | 2026-10-26 |
 | `2026-10-26-r38-sasquatch-be-squashfs-recursion` | standard big-endian SquashFS v4 via REA: `sasquatch-v4be` is a structural dependency (handler argv, AVM `-be` drop), before/after arms on four frozen carriers, the two symlink outcomes (escape removed vs in-tree `unpublished-entry`); Frontier, not Core | S112, S113, S114; receipts `corpus/evidence/round-38/c1/` | 2026-10-26 |
 | `2026-10-26-unblob-format-matrix` | unblob's producer coverage matrix: 97 handler sections, ten SquashFS variants incl. `v4-BE`, ZIP limitation, "more than 30" vs "78+" count conflict (assimilated from shokuknow `merge/kaidoku`, re-grounded) | S116, S117 | 2026-10-26 |
+| `2026-10-26-r39-sqfs-outcome-triage` | SquashFS `extract-firmware` outcome triage: handler, gap kind, dependency name, recorded `-be` token, `MaliciousSymlinkRemoved` and file count separate eight outcome labels; backs the round-39 SKILL craft triage table | S112, S118, S119, S120, S121 | 2026-10-26 |
 
 ## Lessons
 | entry | round | gist |

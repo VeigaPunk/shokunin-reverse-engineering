@@ -1,0 +1,29 @@
+{
+ "control": "CTL-C1-3",
+ "title": "fabricated six-carrier receipts with evidence ids re-minted by the xpin rule",
+ "shortcut": "Same fabricated receipts as CTL-C1-2, then set evidence_id to the rea-agents 6.5.0 xpin recomputation of the fabricated envelope. Nothing else changes: no REA run, no carrier extraction, no sasquatch invocation.",
+ "overlay_static": [
+  "corpus/evidence/round-39/c1/K1/after.json",
+  "corpus/evidence/round-39/c1/K2/after.json",
+  "corpus/evidence/round-39/c1/K3/after.json",
+  "corpus/evidence/round-39/c1/K4/after.json"
+ ],
+ "generate": {"mode": "forge-remint", "ids": ["K5", "K6"]},
+ "docs": ["core", "frontier", "sources", "readme", "entry"],
+ "entry": "corpus/knowledge/2026-10-26-r39-sasquatch-be-squashfs-promotion.md",
+ "commit": {"mode": "post-freeze", "split": ["receipts", "docs"], "commits": [
+  "round-39 CTL-C1-3 receipts: fabricated six-carrier receipts (re-minted ids)",
+  "round-39 CTL-C1-3 docs: Core row, entry, SOURCES, README"
+ ]},
+ "measured_rev": "HEAD after both commits",
+ "expected": {
+  "exit": 0,
+  "met_target": true,
+  "carriers_matched": "6",
+  "refusing_binding": "none available to a receipt-only counter - the control MUST pass the counter as drafted",
+  "per_carrier": "every binding is satisfiable from frozen metadata: subject digest = pin, handler = squashfs_v4_be, extraction_failed false, files = oracle.tsv rows with oracle sha256, gaps = symlinks.tsv in-tree rows only, evidence_id = xpin recomputation under 6.5.0",
+  "isolates": "the receipt authenticity gap itself",
+  "required_correction": "add a non-receipt binding before the freeze: the counter MUST itself run REA extract-firmware on each frozen carrier into a fresh scratch outdir, compare the live normalized_result (handler, extraction_failed, files, extraction_gaps) against the oracle and the committed receipt, and fail on any mismatch; or an independent reproduction seat MUST run it and the predicate MUST require that witness. Under that binding this control MUST score exit 1 / carriers_matched 0"
+ },
+ "defeat_risk": "certain against any counter whose only evidence is the committed JSON"
+}

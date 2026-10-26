@@ -1,0 +1,28 @@
+{
+ "control": "CTL-C1-9",
+ "title": "BE handler named but the chunk is marked extraction_failed",
+ "shortcut": "CTL-C1-3 bytes, except chunks[0].extraction_failed = true while the handler stays squashfs_v4_be and the published files/gaps stay oracle-perfect. This is the AVM-probe failure shape with a success-shaped file list.",
+ "overlay_static": [
+  "corpus/evidence/round-39/c1/K1/after.json",
+  "corpus/evidence/round-39/c1/K2/after.json",
+  "corpus/evidence/round-39/c1/K3/after.json",
+  "corpus/evidence/round-39/c1/K4/after.json"
+ ],
+ "generate": {"mode": "failed-chunk", "ids": ["K5", "K6"]},
+ "docs": ["core", "frontier", "sources", "readme", "entry"],
+ "entry": "corpus/knowledge/2026-10-26-r39-sasquatch-be-squashfs-promotion.md",
+ "commit": {"mode": "post-freeze", "split": ["receipts", "docs"], "commits": [
+  "round-39 CTL-C1-9 receipts: failed chunk beside a correct handler",
+  "round-39 CTL-C1-9 docs: Core row, entry, SOURCES, README"
+ ]},
+ "measured_rev": "HEAD after both commits",
+ "expected": {
+  "exit": 1,
+  "met_target": false,
+  "carriers_matched": "0",
+  "refusing_binding": "no chunk may have extraction_failed true (and no extractor-failure gap may accompany the BE handler)",
+  "per_carrier": "handler is squashfs_v4_be and all oracle files are listed, so a counter that only tests handler membership passes this control; the draft's 'with no failed chunk' clause is the binding that must be implemented",
+  "isolates": "chunk success, not just handler naming; matches the round-38 AVM probe's observed shape (extraction_failed true + extractor-failure gap)"
+ },
+ "defeat_risk": "medium-low - explicitly stated in the draft; only a handler-membership-only implementation passes"
+}

@@ -1,0 +1,17 @@
+## Queue-drain craft (probe fragment — R39C2ReconClean, NOT the lane's SKILL.md)
+
+Feasibility fragment for the R39-C2 grammar. The frozen interpreter will read the real
+`SKILL.md` `## Queue-drain craft` section; this file only carries a candidate block so the
+grammar can be exercised before the freeze. Nothing here is a lane edit.
+
+<!-- sqfs-triage-table v1 -->
+
+| label | handler | gap kinds | dependencies | -be in child argv | symlink removed | published files | cause -> action | source |
+|---|---|---|---|---|---|---|---|---|
+| avm-marker-be-dropped | `squashfs_v4_be` | `extractor-failure` | `none` | `no` | `no` | `0` | superblock carries the AVM marker (`bytes_used == mkfs_time`), so unblob omits `-be` and the BE extractor reads the body as the wrong endianness -> rebuild without the marker or extract with `sasquatch-v4be -be`; do not report the body as damaged | `unblob 26.6.4 handlers/filesystem/squashfs.py:44-53`; round-38 probe `rea-k1-avm.json` |
+| body-extractor-failure | `squashfs_v4_be` | `extractor-failure` | `none` | `yes` | `no` | `0` | the `-be` extractor was invoked and failed on the image body or tables -> read the stage report's `exit_code`/`stderr` before touching the carrier; no entry was published, so no oracle row can match | `unblob 26.6.4 squashfs.py:44-53`; `rea-agents 6.5.0 dist/firmware/FirmwarePublication.js:250-259` |
+| dep-missing-be | `squashfs_v4_be` | `missing-extractor-dependency` | `sasquatch-v4be` | `n/a` | `no` | `0` | the BE extractor binary is not resolvable on the child `PATH`; the container was recognised and nothing was attempted -> install the onekey-sec deb pair into `~/.local/bin` and rerun into a fresh outdir | `rea-agents 6.5.0 dist/firmware/FirmwarePublication.js:208-215`; `corpus/evidence/round-38/c1/K1/before.json` |
+| dep-missing-le | `squashfs_v4_le` | `missing-extractor-dependency` | `sasquatch` | `n/a` | `no` | `0` | the LE extractor binary is not resolvable on the child `PATH` -> install `sasquatch` and rerun into a fresh outdir | `rea-agents 6.5.0 dist/firmware/FirmwarePublication.js:208-215`; `corpus/evidence/round-36/c1/K1/before.json` |
+| escaping-symlink-removed | `squashfs_v4*` | `none` | `none` | `n/a` | `yes` | `>0` | a symlink resolved outside the extraction root and unblob removed it; it is published nowhere and recorded as no gap -> the regular files are the only evidence, and the missing link is not an extraction failure | `unblob 26.6.4 extractor.py:52-89`; round-38 probe `rea-k1-orig.json` |
+| in-tree-symlink-metadata | `squashfs_v4*` | `unpublished-entry` | `none` | `n/a` | `no` | `>0` | a symlink resolved inside the extraction root and is retained as metadata only -> expect one `unpublished-entry` gap per link, `coverage` `partial`, and do not claim the link as published | `rea-agents 6.5.0 dist/firmware/FirmwarePublication.js:66-77,301-307`; `corpus/evidence/round-38/c1/K2/after.json` |
+| clean | `squashfs_v4*` | `none` | `none` | `n/a` | `no` | `>0` | recursion published every regular file with no gap and no removal -> compare the oracle's `(relative-path suffix, sha256)` rows and record both arms; never compare file counts across arms | `corpus/evidence/round-38/c1/K3/after.json`; `corpus/evidence/round-38/c1/K4/after.json` |

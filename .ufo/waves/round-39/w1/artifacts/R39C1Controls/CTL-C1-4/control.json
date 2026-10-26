@@ -1,0 +1,28 @@
+{
+ "control": "CTL-C1-4",
+ "title": "materialised in-tree symlink (no gap, link path published as a regular file)",
+ "shortcut": "Like CTL-C1-3, but for every in-tree symlink the receipt drops the unpublished-entry gap, removes the unpublished_entries metadata and publishes a regular file at the link path carrying the target's sha256 and size. The published regular-file set still contains every oracle file.",
+ "overlay_static": [
+  "corpus/evidence/round-39/c1/K1/after.json",
+  "corpus/evidence/round-39/c1/K2/after.json",
+  "corpus/evidence/round-39/c1/K3/after.json",
+  "corpus/evidence/round-39/c1/K4/after.json"
+ ],
+ "generate": {"mode": "materialise", "ids": ["K5", "K6"]},
+ "docs": ["core", "frontier", "sources", "readme", "entry"],
+ "entry": "corpus/knowledge/2026-10-26-r39-sasquatch-be-squashfs-promotion.md",
+ "commit": {"mode": "post-freeze", "split": ["receipts", "docs"], "commits": [
+  "round-39 CTL-C1-4 receipts: fabricated receipts with the in-tree symlink materialised",
+  "round-39 CTL-C1-4 docs: Core row, entry, SOURCES, README"
+ ]},
+ "measured_rev": "HEAD after both commits",
+ "expected": {
+  "exit": 1,
+  "met_target": false,
+  "carriers_matched": "K1, K3, K4 pass; K2 fails; K5/K6 fail only if their frozen symlinks.tsv holds an in-tree row (expected), so 3 or fewer",
+  "refusing_binding": "gaps == exactly the frozen in-tree symlink set (set equality, not subset)",
+  "per_carrier": "K2 has zero gaps but symlinks.tsv names var/lib/run-link as in-tree; the counter MUST require a gap there and MUST refuse the published link path as an ordinary oracle file (the oracle does not list it)",
+  "isolates": "the direction of the gap rule that catches a receipt dropping a required gap while publishing the link path; a counter that only checks every gap is on a symlink path passes this control"
+ },
+ "defeat_risk": "medium - very plausible implementation (subset check) lets it through; the kill rule names this control"
+}

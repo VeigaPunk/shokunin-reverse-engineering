@@ -1,0 +1,16 @@
+# probe (R39C1CarrierK6): gen-squashfs.py drops a symlink whose target is a directory
+# tree:  a/f.txt (2 B), dirlink -> a (directory), flink -> a/f.txt (file)
+# $ python3 tools/round-37/gen-squashfs.py $S/probe/t $S/probe/p.sqsh --endian be --comp xz
+wrote p.sqsh 306 bytes, inodes 4
+# $ find tree -mindepth 1 -printf '%y %p %l\n' | sort
+d ./a 
+f ./a/f.txt 
+l ./dirlink a
+l ./flink a/f.txt
+# $ sasquatch-v4be -be -lls p.sqsh
+Reading a different endian SQUASHFS filesystem on /fast/scratch/hyaku/kaidoku-r39/R39C1CarrierK6/probe/p.sqsh
+drwxr-xr-x vgpnk/vgpnk              37 2023-11-14 19:13 squashfs-root
+drwxr-xr-x vgpnk/vgpnk              28 2023-11-14 19:13 squashfs-root/a
+-rw-r--r-- vgpnk/vgpnk               2 2023-11-14 19:13 squashfs-root/a/f.txt
+lrwxrwxrwx vgpnk/vgpnk               7 2023-11-14 19:13 squashfs-root/flink -> a/f.txt
+# RESULT: 'dirlink' is absent from the image (inode count 4 = dir, dir, file, 1 symlink); 'flink' survives.

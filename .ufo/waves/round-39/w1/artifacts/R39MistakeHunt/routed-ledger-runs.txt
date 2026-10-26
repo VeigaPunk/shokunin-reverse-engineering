@@ -1,0 +1,40 @@
+### selftest
+VERDICT complete=3/3
+VERDICT missing=2/3 ['R41-CL2', 'R41-CL3']
+selftest green(complete) rc=0 (want 0)
+selftest red(dropped)   rc=1 (want 1)
+selftest PASS
+exit=0
+
+### A1 closure=round-38 spotcheck (Routed defects section) vs round-39 claims+prompt
+closure corpus/lessons/round-38-verifier-spotcheck.md: 6 routed ids ['R38-CL1', 'R38-CL2', 'R38-CL3', 'R38-CL4', 'R36-CL1', 'R37-CL1']
+  R38-CL1: DROPPED
+  R38-CL2: DROPPED
+  R38-CL3: DROPPED
+  R38-CL4: DROPPED
+  R36-CL1: DROPPED
+  R37-CL1: DROPPED
+VERDICT missing=6/6 ['R38-CL1', 'R38-CL2', 'R38-CL3', 'R38-CL4', 'R36-CL1', 'R37-CL1']
+exit=1
+
+### A2 closure=round-36 spotcheck vs round-38 lesson+report
+closure corpus/lessons/round-36-verifier-spotcheck.md: 6 routed ids ['R36-CL1', 'R36-CL2', 'R36-CL3', 'R36-CL4', 'R36-CL5', 'R36-CL6']
+  R36-CL1: named in round-38.md
+  R36-CL2: DROPPED
+  R36-CL3: DROPPED
+  R36-CL4: DROPPED
+  R36-CL5: DROPPED
+  R36-CL6: DROPPED
+VERDICT missing=5/6 ['R36-CL2', 'R36-CL3', 'R36-CL4', 'R36-CL5', 'R36-CL6']
+exit=1
+
+### A3 closure=round-36 spotcheck vs round-37 report (pass-through round)
+closure corpus/lessons/round-36-verifier-spotcheck.md: 6 routed ids ['R36-CL1', 'R36-CL2', 'R36-CL3', 'R36-CL4', 'R36-CL5', 'R36-CL6']
+  R36-CL1: named in kaidoku.md
+  R36-CL2: DROPPED
+  R36-CL3: DROPPED
+  R36-CL4: DROPPED
+  R36-CL5: DROPPED
+  R36-CL6: DROPPED
+VERDICT missing=5/6 ['R36-CL2', 'R36-CL3', 'R36-CL4', 'R36-CL5', 'R36-CL6']
+exit=1

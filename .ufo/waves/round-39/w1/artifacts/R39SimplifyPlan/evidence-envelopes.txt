@@ -1,0 +1,76 @@
+# receipt/envelope fields relied on by this review (round-38 evidence + AVM probe), generated from committed bytes
+
+## K1  corpus/evidence/round-38/c1/K1/after.json
+ provider: {'id': 'unblob', 'name': 'Unblob', 'version': '26.6.4'}
+ subject.digest: {'sha256': '1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e'} local_path: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K1/carrier.sqsh
+ parameters.output_directory: /fast/scratch/hyaku/kaidoku-r38/l1-receipts/K1-after
+ environment: None
+ chunks: [('squashfs_v4_be', {'offset': 0, 'length': 9780}, False)]
+ extraction_gaps: []
+ unpublished_entries: []
+ files: ['firmware.bin_extract/bin/run', 'firmware.bin_extract/docs/deep/nested/file.dat', 'firmware.bin_extract/docs/readme.md', 'firmware.bin_extract/empty', 'firmware.bin_extract/hello.txt']
+ diagnostics: ['MaliciousSymlinkRemoved']
+
+## K2  corpus/evidence/round-38/c1/K2/after.json
+ provider: {'id': 'unblob', 'name': 'Unblob', 'version': '26.6.4'}
+ subject.digest: {'sha256': '403cb0a827966bbe17a70e08af7d39b43260da8201d1b9001bbc4228cbc99154'} local_path: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K2/carrier.sqsh
+ parameters.output_directory: /fast/scratch/hyaku/kaidoku-r38/l1-receipts/K2-after
+ environment: None
+ chunks: [('squashfs_v4_be', {'offset': 0, 'length': 1606}, False)]
+ extraction_gaps: [('unpublished-entry', 'firmware.bin_extract/var/lib/run-link', None, [])]
+ unpublished_entries: [('firmware.bin_extract/var/lib/run-link', 'symlink', '../../a/run.sh')]
+ files: ['firmware.bin_extract/a/run.sh', 'firmware.bin_extract/space name.txt', 'firmware.bin_extract/var/lib/data.bin']
+ diagnostics: []
+
+## K3  corpus/evidence/round-38/c1/K3/after.json
+ provider: {'id': 'unblob', 'name': 'Unblob', 'version': '26.6.4'}
+ subject.digest: {'sha256': '9c7c523c5d1d1cafc0b679af9092ce0289d9656f6a24bc3bd0009f95b69397c0'} local_path: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K3/carrier.bin
+ parameters.output_directory: /fast/scratch/hyaku/kaidoku-r38/l1-receipts/K3-after
+ environment: None
+ chunks: [('squashfs_v4_be', {'offset': 0, 'length': 4096}, False)]
+ extraction_gaps: []
+ unpublished_entries: []
+ files: ['firmware.bin_extract/apple1.txt', 'firmware.bin_extract/apple2.txt', 'firmware.bin_extract/apple3.txt', 'firmware.bin_extract/apple4.txt']
+ diagnostics: []
+
+## K4  corpus/evidence/round-38/c1/K4/after.json
+ provider: {'id': 'unblob', 'name': 'Unblob', 'version': '26.6.4'}
+ subject.digest: {'sha256': 'a29ddc15f5a6abcabf28b7161837eb56b34111e48420e7392e648f2fdfe956ed'} local_path: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K4/carrier.bin
+ parameters.output_directory: /fast/scratch/hyaku/kaidoku-r38/l1-receipts/K4-after
+ environment: None
+ chunks: [('squashfs_v4_be', {'offset': 0, 'length': 307}, False)]
+ extraction_gaps: []
+ unpublished_entries: []
+ files: ['firmware.bin_extract/apple1.txt', 'firmware.bin_extract/apple2.txt', 'firmware.bin_extract/apple3.txt', 'firmware.bin_extract/apple4.txt']
+ diagnostics: []
+
+## round-36 LE before-arm (sasquatch stripped) — dependency gap shape
+  K1 [('missing-extractor-dependency', 'squashfs_v4_le', ['sasquatch'])] [('squashfs_v4_le', True)]
+  K2 [('missing-extractor-dependency', 'squashfs_v4_le', ['sasquatch'])] [('squashfs_v4_le', True)]
+  K3 [('missing-extractor-dependency', 'squashfs_v4_le', ['sasquatch'])] [('elf64', False), ('squashfs_v4_le', True), ('elf64', False)]
+  K4 [('missing-extractor-dependency', 'squashfs_v4_le', ['sasquatch'])] [('elf64', False), ('squashfs_v4_le', True), ('elf64', False)]
+
+## round-38 AVM-marker probe envelopes
+  rea-k1-avm.json ok= True coverage= partial
+   chunks: [('squashfs_v4_be', True)]
+   gaps: [('extractor-failure', 'squashfs_v4_be', [])]
+   files: 0 diagnostic typename: ExtractCommandFailedReport
+   stderr: SquashFS version [1024.0] / inode count [184549376] suggests a SquashFS image of a different endianess | read_id_table: failed to read id table block | FATAL ERROR: File system corruption detected | 
+  rea-k1-orig.json ok= True coverage= partial
+   chunks: [('squashfs_v4_be', False)]
+   gaps: []
+   files: 5 diagnostic typename: MaliciousSymlinkRemoved
+   stderr: 
+
+## K1 escaping-symlink signal (round-38 receipt) — diagnostics, not a gap
+  [
+ {
+  "input_path": "$input",
+  "report": {
+   "__typename__": "MaliciousSymlinkRemoved",
+   "severity": "WARNING",
+   "link": "/fast/scratch/hyaku/kaidoku-r38/l1-receipts/sc/rea-firmware-sciGcS/extracted/firmware.bin_extract/link-to-hello",
+   "target": "/fast/scratch/hyaku/kaidoku-r38/l1-receipts/sc/rea-firmware-sciGcS/extracted/hello.txt"
+  }
+ }
+]

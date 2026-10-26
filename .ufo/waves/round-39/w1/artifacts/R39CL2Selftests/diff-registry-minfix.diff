@@ -1,0 +1,33 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39CL2Selftests/registry-immutable.sh	2026-10-26 13:43:45.250986505 -0300
++++ /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39CL2Selftests/registry-immutable.fixed.sh	2026-10-26 13:44:18.537422505 -0300
+@@ -6,6 +6,13 @@
+ # Round-38 mistake M38-8: the S110 scope cell was widened in place at 3b960fe5.
+ #
+ # registry-immutable.sh --selftest
++#
++# VARIANT NOTE (R39CL2Selftests, advisory): this copy adds the two append-only
++# checks the round-38 run mode lacks — a base row missing at REV (deletion) and a
++# changed relative order of surviving rows — plus --selftest. It is NOT the
++# assigned deliverable; tools/round-38/registry-immutable.sh is unchanged by this
++# seat. Take this file only if the L1 authorises the behaviour change (proof:
++# SELFTEST cases=5 pass=5 fail=0 and the three round-38 receipts reproduce).
+ # Builds a throwaway fixture repository under $TMPDIR and exercises five
+ # green/red constructs (append-only 0, in-place cell edit 1, row deletion 1,
+ # reorder 1, allowed-cell change 0). Prints SELFTEST cases=n pass=n fail=n and
+@@ -94,9 +101,14 @@
+ lane=$1 base=$2 rev=$3
+ rows() { git -C "$lane" show "$1:corpus/SOURCES.md" | grep -E '^ {0,3}\| *S[0-9]{3,} *\|'; }
+ # columns (awk -F'|'): 2 id, 3 source, 4 kind, 5 tier, 6 scope, 7 anchor, 8 teaches, 9 status, 10 opened, 11 recheck, 12 used-by
+-awk -F'|' 'NR==FNR { id=$2; gsub(/ /,"",id); b[id]=$0; next }
++awk -F'|' 'NR==FNR { id=$2; gsub(/ /,"",id); b[id]=$0; order[++nb]=id; next }
+   { id=$2; gsub(/ /,"",id); if (!(id in b)) next
++    revorder[++nr]=id; seen[id]=1
+     n=split(b[id], o, "|"); bad=""
+     for (c=2; c<=12; c++) if (c!=9 && c!=11 && c!=12 && o[c]!=$c) bad=bad " " c
+     if (bad!="") { print id, "changed columns:" bad; hit=1 } }
+-  END { exit hit ? 1 : 0 }' <(rows "$base") <(rows "$rev")
++  END { for (i=1;i<=nb;i++) if (!(order[i] in seen)) { print order[i], "row deleted (append-only)"; hit=1 }
++        j=0
++        for (i=1;i<=nb;i++) if (order[i] in seen) common[++j]=order[i]
++        for (i=1;i<=nr;i++) if (revorder[i] != common[i]) { print order[i] " / " revorder[i], "row reordered (append-only)"; hit=1; break }
++        exit hit ? 1 : 0 }' <(rows "$base") <(rows "$rev")

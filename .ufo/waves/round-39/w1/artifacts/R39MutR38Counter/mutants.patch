@@ -1,0 +1,217 @@
+=== M01_gap_allow_one ===
+@@ -175,7 +175,7 @@
+                 d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']
+                 d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'
+                 d['after_handler_ok'] = HANDLER in chunk_handlers(env)
+-                d['after_gaps_empty'] = gaps(env) == []
++                d['after_gaps_empty'] = len(gaps(env)) < 2
+                 d['after_oracle_hits'] = matched(oracle, published(env))
+             per[k] = d
+         ev = evidence_ids(root, freeze, pkg65, envs, work)
+=== M02_gap_check_dropped ===
+@@ -186,7 +186,7 @@
+             ok = (d['oracle_frozen'] and d['oracle_files'] > 0
+                   and d.get('after_present')
+                   and d.get('after_subject_ok') and d.get('after_operation_ok')
+-                  and d.get('after_handler_ok') and d.get('after_gaps_empty')
++                  and d.get('after_handler_ok')
+                   and d.get('after_evidence_id_ok')
+                   and d.get('after_oracle_hits') == d['oracle_files'])
+             d['matched'] = bool(ok)
+=== M03_oracle_path_only ===
+@@ -136,7 +136,7 @@
+ def matched(oracle, files):
+     hits = 0
+     for rel, sha in oracle:
+-        if any(sha == fs and (fp == rel or fp.endswith('/' + rel)) for fp, fs in files):
++        if any((fp == rel or fp.endswith('/' + rel)) for fp, fs in files):
+             hits += 1
+     return hits
+ 
+=== M04_oracle_exact_path ===
+@@ -136,7 +136,7 @@
+ def matched(oracle, files):
+     hits = 0
+     for rel, sha in oracle:
+-        if any(sha == fs and (fp == rel or fp.endswith('/' + rel)) for fp, fs in files):
++        if any(sha == fs and fp == rel for fp, fs in files):
+             hits += 1
+     return hits
+ 
+=== M05_oracle_any_hit ===
+@@ -188,7 +188,7 @@
+                   and d.get('after_subject_ok') and d.get('after_operation_ok')
+                   and d.get('after_handler_ok') and d.get('after_gaps_empty')
+                   and d.get('after_evidence_id_ok')
+-                  and d.get('after_oracle_hits') == d['oracle_files'])
++                  and (d.get('after_oracle_hits') or 0) > 0)
+             d['matched'] = bool(ok)
+             n += bool(ok)
+         res['carrier_ids'] = ids
+=== M06_handler_any_squashfs ===
+@@ -174,7 +174,7 @@
+                 envs[f'{k}/after'] = env
+                 d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']
+                 d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'
+-                d['after_handler_ok'] = HANDLER in chunk_handlers(env)
++                d['after_handler_ok'] = any(h and 'squashfs' in str(h) for h in chunk_handlers(env))
+                 d['after_gaps_empty'] = gaps(env) == []
+                 d['after_oracle_hits'] = matched(oracle, published(env))
+             per[k] = d
+=== M07_handler_any_present ===
+@@ -174,7 +174,7 @@
+                 envs[f'{k}/after'] = env
+                 d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']
+                 d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'
+-                d['after_handler_ok'] = HANDLER in chunk_handlers(env)
++                d['after_handler_ok'] = len(chunk_handlers(env)) > 0
+                 d['after_gaps_empty'] = gaps(env) == []
+                 d['after_oracle_hits'] = matched(oracle, published(env))
+             per[k] = d
+=== M08_evid_drop_pkg_eq ===
+@@ -182,7 +182,7 @@
+         n = 0
+         for k, d in per.items():
+             key = f'{k}/after'
+-            d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')
++            d['after_evidence_id_ok'] = key in ev and ev[key][0].startswith('ev_')
+             ok = (d['oracle_frozen'] and d['oracle_files'] > 0
+                   and d.get('after_present')
+                   and d.get('after_subject_ok') and d.get('after_operation_ok')
+=== M09_evid_drop_prefix ===
+@@ -182,7 +182,7 @@
+         n = 0
+         for k, d in per.items():
+             key = f'{k}/after'
+-            d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')
++            d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1]
+             ok = (d['oracle_frozen'] and d['oracle_files'] > 0
+                   and d.get('after_present')
+                   and d.get('after_subject_ok') and d.get('after_operation_ok')
+=== M10_evid_either ===
+@@ -182,7 +182,7 @@
+         n = 0
+         for k, d in per.items():
+             key = f'{k}/after'
+-            d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')
++            d['after_evidence_id_ok'] = key in ev and (ev[key][0] == ev[key][1] or ev[key][0].startswith('ev_'))
+             ok = (d['oracle_frozen'] and d['oracle_files'] > 0
+                   and d.get('after_present')
+                   and d.get('after_subject_ok') and d.get('after_operation_ok')
+=== M11_note_superseded_only ===
+@@ -206,7 +206,7 @@
+         re.search(r'(?<![A-Za-z0-9-])squashfs_v4_be(?![A-Za-z0-9])', cells(r)[0]) and ENTRY in r
+         for r in rows)
+     b['frontier_note'] = bool(prov) and any(
+-        'big-endian' in l and 'superseded' in l for l in prov.decode().splitlines())
++        'superseded' in l for l in prov.decode().splitlines())
+     ent = show(root, rev, ENTRY)
+     b['entry_present'] = ent is not None
+     src_ids = set()
+=== M12_sources_pad_short_rows ===
+@@ -223,7 +223,7 @@
+                 continue
+             c = cells(line)
+             if len(c) != 11:
+-                continue
++                c = c + [''] * (11 - len(c))
+             used = [u.strip() for u in c[10].split(',')]
+             if c[0] in src_ids and c[8] == OPENED and ENTRY in used:
+                 ok_ids.append(c[0])
+=== M13_bind_drop_entry_present ===
+@@ -234,7 +234,7 @@
+     b['coverage_map_row'] = bool(cm) and any(STEM in l for l in cm if l.lstrip().startswith('|'))
+     res['bindings'] = b
+     bind_ok = all(b[x] for x in ('province_core_section', 'province_core_row', 'frontier_note',
+-                                 'entry_present', 'sourced', 'coverage_map_row'))
++                                 'sourced', 'coverage_map_row'))
+     res['met_target'] = bool(res['carriers_unchanged'] and res['carriers_matched'] == TARGET and bind_ok)
+     return res
+ 
+=== M14_provrow_drop_entry ===
+@@ -203,7 +203,7 @@
+     b['province_core_section'] = sec is not None
+     rows = [l for l in (sec or []) if l.lstrip().startswith('|')]
+     b['province_core_row'] = any(
+-        re.search(r'(?<![A-Za-z0-9-])squashfs_v4_be(?![A-Za-z0-9])', cells(r)[0]) and ENTRY in r
++        re.search(r'(?<![A-Za-z0-9-])squashfs_v4_be(?![A-Za-z0-9])', cells(r)[0])
+         for r in rows)
+     b['frontier_note'] = bool(prov) and any(
+         'big-endian' in l and 'superseded' in l for l in prov.decode().splitlines())
+=== M15_sid_any_digits ===
+@@ -78,7 +78,7 @@
+ 
+ 
+ def sid_tokens(text):
+-    return set(re.findall(r'(?<![0-9A-Za-z])(S\d{3,})(?![0-9A-Za-z])', text))
++    return set(re.findall(r'(?<![0-9A-Za-z])(S\d+)(?![0-9A-Za-z])', text))
+ 
+ 
+ def evidence_ids(root, freeze, pkg65, envelopes, work):
+=== M16_sid_drop_tail_bound ===
+@@ -78,7 +78,7 @@
+ 
+ 
+ def sid_tokens(text):
+-    return set(re.findall(r'(?<![0-9A-Za-z])(S\d{3,})(?![0-9A-Za-z])', text))
++    return set(re.findall(r'(?<![0-9A-Za-z])(S\d{3,})', text))
+ 
+ 
+ def evidence_ids(root, freeze, pkg65, envelopes, work):
+=== M17_sid_drop_head_bound ===
+@@ -78,7 +78,7 @@
+ 
+ 
+ def sid_tokens(text):
+-    return set(re.findall(r'(?<![0-9A-Za-z])(S\d{3,})(?![0-9A-Za-z])', text))
++    return set(re.findall(r'(S\d{3,})(?![0-9A-Za-z])', text))
+ 
+ 
+ def evidence_ids(root, freeze, pkg65, envelopes, work):
+=== M18_sid_exactly_three ===
+@@ -78,7 +78,7 @@
+ 
+ 
+ def sid_tokens(text):
+-    return set(re.findall(r'(?<![0-9A-Za-z])(S\d{3,})(?![0-9A-Za-z])', text))
++    return set(re.findall(r'(?<![0-9A-Za-z])(S\d{3})(?![0-9A-Za-z])', text))
+ 
+ 
+ def evidence_ids(root, freeze, pkg65, envelopes, work):
+=== C1_gap_plus_evid ===
+@@ -175,14 +175,14 @@
+                 d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']
+                 d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'
+                 d['after_handler_ok'] = HANDLER in chunk_handlers(env)
+-                d['after_gaps_empty'] = gaps(env) == []
++                d['after_gaps_empty'] = len(gaps(env)) < 2
+                 d['after_oracle_hits'] = matched(oracle, published(env))
+             per[k] = d
+         ev = evidence_ids(root, freeze, pkg65, envs, work)
+         n = 0
+         for k, d in per.items():
+             key = f'{k}/after'
+-            d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')
++            d['after_evidence_id_ok'] = key in ev and ev[key][0].startswith('ev_')
+             ok = (d['oracle_frozen'] and d['oracle_files'] > 0
+                   and d.get('after_present')
+                   and d.get('after_subject_ok') and d.get('after_operation_ok')
+=== C2_handler_plus_evid ===
+@@ -174,7 +174,7 @@
+                 envs[f'{k}/after'] = env
+                 d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']
+                 d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'
+-                d['after_handler_ok'] = HANDLER in chunk_handlers(env)
++                d['after_handler_ok'] = len(chunk_handlers(env)) > 0
+                 d['after_gaps_empty'] = gaps(env) == []
+                 d['after_oracle_hits'] = matched(oracle, published(env))
+             per[k] = d
+@@ -182,7 +182,7 @@
+         n = 0
+         for k, d in per.items():
+             key = f'{k}/after'
+-            d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')
++            d['after_evidence_id_ok'] = key in ev and ev[key][0].startswith('ev_')
+             ok = (d['oracle_frozen'] and d['oracle_files'] > 0
+                   and d.get('after_present')
+                   and d.get('after_subject_ok') and d.get('after_operation_ok')

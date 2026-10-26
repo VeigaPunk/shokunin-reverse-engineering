@@ -1,0 +1,28 @@
+{
+ "control": "CTL-C1-6",
+ "title": "wrong gap kind on the in-tree symlink (missing-extractor-dependency)",
+ "shortcut": "CTL-C1-3 bytes, except the in-tree symlink gap is rewritten to kind missing-extractor-dependency with dependencies [sasquatch-v4be]; path set is unchanged.",
+ "overlay_static": [
+  "corpus/evidence/round-39/c1/K1/after.json",
+  "corpus/evidence/round-39/c1/K2/after.json",
+  "corpus/evidence/round-39/c1/K3/after.json",
+  "corpus/evidence/round-39/c1/K4/after.json"
+ ],
+ "generate": {"mode": "wrong-gap-kind", "ids": ["K5", "K6"]},
+ "docs": ["core", "frontier", "sources", "readme", "entry"],
+ "entry": "corpus/knowledge/2026-10-26-r39-sasquatch-be-squashfs-promotion.md",
+ "commit": {"mode": "post-freeze", "split": ["receipts", "docs"], "commits": [
+  "round-39 CTL-C1-6 receipts: wrong gap kind on the in-tree symlink",
+  "round-39 CTL-C1-6 docs: Core row, entry, SOURCES, README"
+ ]},
+ "measured_rev": "HEAD after both commits",
+ "expected": {
+  "exit": 1,
+  "met_target": false,
+  "carriers_matched": "K1, K3, K4 pass; K2 fails; K5/K6 fail if they hold an in-tree symlink",
+  "refusing_binding": "each gap's kind == unpublished-entry on an in-tree symlink path",
+  "per_carrier": "K2's only gap is on the right path with the wrong kind and a dependency list; a counter that matches gaps by relative path only passes this control",
+  "isolates": "gap-kind equality, one half of the stated symlink rule"
+ },
+ "defeat_risk": "medium-low - the draft states the kind explicitly; only a path-only comparison passes"
+}

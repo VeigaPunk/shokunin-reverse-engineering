@@ -1,0 +1,40 @@
+== freeze-drift (round-38 l1 receipts)
+parity fd-final: rc=1 stdout=identical
+parity fd-0fc61133: rc=1 stdout=identical
+parity fd-077e212b: rc=1 stdout=identical
+parity fd-cb4326b2: rc=0 stdout=identical
+parity fd-genctrl: rc=1 stdout=identical
+== intended-doc (round-38 l1 receipts)
+parity id-base: rc=1 stdout=identical
+parity id-final: rc=0 stdout=identical
+parity id-0fc61133: rc=0 stdout=identical
+parity id-s2: rc=0 stdout=identical
+parity id-s2-hist: rc=0 stdout=identical
+== registry-immutable (round-38 l1 receipts)
+parity rm-atfinal: rc=0 stdout=identical
+parity rm-0fc61133: rc=1 stdout=identical
+parity rm-base: rc=0 stdout=identical
+== registry-immutable.fixed.sh (optional variant, same receipts)
+parity rmfix-atfinal: rc=0 stdout=identical
+parity rmfix-0fc61133: rc=1 stdout=identical
+parity rmfix-base: rc=0 stdout=identical
+== usage path (no arguments) parity
+parity usage-freeze-drift: rc=2 stdout+stderr=identical (usage path)
+parity usage-intended-doc: rc=2 stdout+stderr=identical (usage path)
+== committed-receipt cross-check (patched stdout, normalised)
+receipt freeze-drift-final.json: identical to patched stdout (verdict, drift, paths, net fields)
+receipt freeze-drift-0fc61133.json: identical to patched stdout (verdict, drift, paths, net fields)
+receipt freeze-drift-077e212b.json: identical to patched stdout (verdict, drift, paths, net fields)
+receipt freeze-drift-cb4326b2.json: identical to patched stdout (verdict, drift, paths, net fields)
+receipt freeze-drift-gen-controls.json: identical to patched stdout (verdict, drift, paths, net fields)
+receipt intended-doc/base.json: byte-identical to patched stdout
+receipt intended-doc/final.json: byte-identical to patched stdout
+receipt intended-doc/landed-0fc61133.json: byte-identical to patched stdout
+receipt intended-doc/shortcut-s2.json: not reproducible at today's HEAD (rev was 'HEAD'); historical HEAD e265533e comparison below
+  id-s2 at HEAD:        "verdict": "bound"
+  id-s2 at e265533e:    "verdict": "bound", reasons 
+  stored receipt:       "verdict": "not-bound", reasons ["intended path not named in the unit row"]
+receipt registry-immutable/at-final.txt: body identical to patched stdout (stdout carried no 'exit N' line; rc recorded = 0)
+receipt registry-immutable/at-0fc61133.txt: body identical to patched stdout (stdout carried no 'exit N' line; rc recorded = 1)
+receipt registry-immutable/base-vs-base.txt: body identical to patched stdout (stdout carried no 'exit N' line; rc recorded = 0)
+PARITY cases=18 mismatches=0

@@ -1,0 +1,49 @@
+2026-10-26 16:46.14 [debug    ] Logging configured             extract_root=. pid=2374244 vebosity_level=0
+2026-10-26 16:46.14 [info     ] Creating extraction directory  extract_root=. pid=2374244
+2026-10-26 16:46.14 [info     ] Start processing file          file=/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate/carriers/be-trunc-half.sqsh pid=2374244
+2026-10-26 16:46.14 [info     ] Activated FS access restrictions; rules=[Read("/"), ReadWrite("/dev/shm"), ReadWrite("/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate/ub-trunc/extracted"), RemoveDir("/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate/ub-trunc/extracted"), RemoveFile("/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate/ub-trunc/extracted"), MakeDir("/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate/ub-trunc"), ReadWrite("unblob.log"), ReadWrite(".")], status=FullyEnforced pid=2374244
+2026-10-26 16:46.14 [debug    ] Detected file-magic            magic='Squashfs filesystem, big endian, version 4.0, zlib compressed, 27033 bytes, 14 inodes, blocksize: 4096 bytes, created: Tue Nov 14 22:13:20 2023\\012- data' path=/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate/carriers/be-trunc-half.sqsh pid=2390016
+2026-10-26 16:46.14 [debug    ] Processing file                path=/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate/carriers/be-trunc-half.sqsh pid=2390016 size=0x34cc
+2026-10-26 16:46.14 [debug    ] Calculating chunk for pattern match handler=squashfs_v4_be pid=2390016 real_offset=0x0 start_offset=0x0
+2026-10-26 16:46.14 [debug    ] Seek outside file during chunk calculation handler=squashfs_v4_be pid=2390016
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/file_utils.py", line 76, in seek
+    super().seek(pos, whence)  # pyright: ignore[reportArgumentType]
+    ~~~~~~~~~~~~^^^^^^^^^^^^^
+ValueError: seek out of range
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py", line 83, in calculate_chunk
+    file.seek(end_of_data_offset)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/file_utils.py", line 78, in seek
+    raise SeekError from e
+unblob.file_utils.SeekError
+2026-10-26 16:46.14 [debug    ] Calculating chunk for pattern match handler=lzma pid=2390016 real_offset=0x2f start_offset=0x2f
+2026-10-26 16:46.14 [debug    ] File format is invalid         handler=lzma pid=2390016
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/lzma.py", line 95, in calculate_chunk
+    raise InvalidInputFormat
+unblob.file_utils.InvalidInputFormat
+2026-10-26 16:46.14 [debug    ] Calculating chunk for pattern match handler=lzma pid=2390016 real_offset=0x47 start_offset=0x47
+2026-10-26 16:46.14 [debug    ] File format is invalid         handler=lzma pid=2390016
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/lzma.py", line 95, in calculate_chunk
+    raise InvalidInputFormat
+unblob.file_utils.InvalidInputFormat
+2026-10-26 16:46.14 [debug    ] Ended searching for chunks     all_chunks=[] pid=2390016
+2026-10-26 16:46.14 [debug    ] Calculating entropy for file   path=/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate/carriers/be-trunc-half.sqsh pid=2390016 size=0x34cc
+2026-10-26 16:46.14 [debug    ] Shannon entropy calculated     block_size=0x400 highest=97.83 lowest=87.75 mean=97.24 path=/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate/carriers/be-trunc-half.sqsh pid=2390016 size=0x34cc
+2026-10-26 16:46.14 [debug    ] Chi square probability calculated block_size=0x400 highest=92.32 lowest=0.0 mean=38.27 path=/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate/carriers/be-trunc-half.sqsh pid=2390016 size=0x34cc
+2026-10-26 16:46.14 [info     ] JSON report written            path=report.json pid=2374244

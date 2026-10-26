@@ -1,0 +1,28 @@
+{
+ "control": "CTL-C1-2",
+ "title": "fabricated six-carrier receipts that keep the old evidence id",
+ "shortcut": "Build every after.json from frozen metadata only (carrier pin, oracle.tsv, symlinks.tsv) without running REA, but keep the round-38 evidence_id (K5/K6 borrow K1's). Files, gaps, handler and subject pin are all correct; only the stored id is stale.",
+ "overlay_static": [
+  "corpus/evidence/round-39/c1/K1/after.json",
+  "corpus/evidence/round-39/c1/K2/after.json",
+  "corpus/evidence/round-39/c1/K3/after.json",
+  "corpus/evidence/round-39/c1/K4/after.json"
+ ],
+ "generate": {"mode": "forge-old", "ids": ["K5", "K6"]},
+ "docs": ["core", "frontier", "sources", "readme", "entry"],
+ "entry": "corpus/knowledge/2026-10-26-r39-sasquatch-be-squashfs-promotion.md",
+ "commit": {"mode": "post-freeze", "split": ["receipts", "docs"], "commits": [
+  "round-39 CTL-C1-2 receipts: fabricated six-carrier receipts (stale ids)",
+  "round-39 CTL-C1-2 docs: Core row, entry, SOURCES, README"
+ ]},
+ "measured_rev": "HEAD after both commits",
+ "expected": {
+  "exit": 1,
+  "met_target": false,
+  "carriers_matched": "0",
+  "refusing_binding": "after_evidence_id_ok false on all six",
+  "per_carrier": "subject pin, handler, oracle files and gap set all pass; the xpin 6.5.0 recomputation yields ev_75e9a1... for K1 (stored ev_400465...), ev_48785c... for K2 (stored ev_e93867...), ev_71b950... for K3 (stored ev_e31cb7...), ev_aaf9e3... for K4 (stored ev_4348dc...), and K1's stale id for K5/K6",
+  "isolates": "the evidence-id recomputation binding; proves a receipt-only counter that only checks an ev_ prefix or trusts the stored id is defeated"
+ },
+ "defeat_risk": "low - the round-38 counter already recomputed; it defeats this control"
+}

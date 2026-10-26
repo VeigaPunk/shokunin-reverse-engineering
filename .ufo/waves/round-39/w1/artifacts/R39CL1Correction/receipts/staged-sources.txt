@@ -1,0 +1,37 @@
+# Staged sources: existence, identity, first lines (read-only sibling project)
+# measured 2026-10-26T13:43:50-03:00 on plazir27 by seat R39CL1Correction
+
+-rw-r--r-- 1 vgpnk vgpnk 1204 Oct 24 01:07 /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round7/work/r7-local-measurements.tsv
+-rw-r--r-- 1 vgpnk vgpnk 1177 Oct 24 07:15 /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round9/work/lead2-avm-branch.tsv
+
+d8fa9eae176afd371a930acaca94991d841084f3a50929935a7ada0dbd98af6d  /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round7/work/r7-local-measurements.tsv
+709cddc7aa37b143da9607a8183b48878b33b1c33d015db1463b76d4dea1ea43  /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round9/work/lead2-avm-branch.tsv
+
+--- r7-local-measurements.tsv (header + M5; M1-M4 elided by the seat, full file is 6 lines) ---
+measure_id	pipeline	subject	tool_version	input_bytes	output_bytes	nul_bytes	literal_observed	observation
+M5	sasquatch-unblob-probe	host	not installed	0	0	0	No module named 'unblob'	sasquatch is absent from PATH and unblob is not importable on this host; the compatibility fact stays operator-side
+
+--- lead2-avm-branch.tsv (header + AVM-branch rows) ---
+item	value
+fixture_header_bytes_used	307
+patched_probe_mkfs_time	307
+patched_probe_bytes_used	307
+patched_probe_is_avm_by_unblob_parser	True
+original_be_command	sasquatch-v4be -be -no-exit-code -f -d {outdir} {inpath}
+original_be_result	extracted apple1.txt apple2.txt apple3.txt apple4.txt
+avm_branch_command	sasquatch-v4be -no-exit-code -f -d {outdir} {inpath}
+avm_branch_observable_difference	the -be flag is absent on the AVM branch
+avm_branch_result	extraction failed: 'suggests a SquashFS image of a different endianess' and 'FATAL ERROR: File system corruption detected'
+real_avm_image_built	no - this host's mksquashfs 4.7.5 offers no big-endian creation option, and a real AVM image additionally requires XZ compression
+
+--- the round-38 sweep, re-run ---
+$ find /home/vgpnk/Projects/shokunin -name r7-local-measurements.tsv -o -name lead2-avm-branch.tsv
+exit=0 hits=0
+
+$ find /home/vgpnk/Projects/shokuknow -name r7-local-measurements.tsv -o -name lead2-avm-branch.tsv
+/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round7/work/r7-local-measurements.tsv
+/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round9/work/lead2-avm-branch.tsv
+
+--- base the staged paths are relative to ---
+/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round7/work
+/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round9/work

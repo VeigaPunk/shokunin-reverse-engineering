@@ -1,0 +1,13 @@
+# convention check: standard normalisers clamp a leading '..' at '/'; a real extraction directory does not.
+# host: Linux 7.2.11-arch1-1
+# commands run in /fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/conv (T = extraction root, T/../hello.txt exists)
+$ readlink -f conv/T/link-to-hello
+/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/conv/hello.txt   <- outside T: escaping
+$ python3 -c 'import posixpath; print(posixpath.normpath("/../hello.txt"))'
+/hello.txt
+$ python3 -c 'import os; print(os.path.realpath("/../hello.txt"))'
+/hello.txt
+$ node -e "console.log(require(\"path\").posix.normalize(\"/../hello.txt\"))"
+/hello.txt
+# => normpath/realpath/path.posix.normalize all clamp and would call K1 'in-tree';
+#    unblob 26.6.4 removes it (MaliciousSymlinkRemoved) and K1's frozen receipt has zero gaps.

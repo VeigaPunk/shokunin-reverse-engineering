@@ -1,0 +1,51 @@
+# absence-sweep.py real-case demo (R38-CL1) -- 2026-10-26T16:45:32Z  python=Python 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+# claims: lanes/kaidoku/round7/work/r7-local-measurements.tsv ; lanes/kaidoku/round9/work/lead2-avm-branch.tsv
+# lane HEAD (read-only): a2f64e1da78afcf8cc39287106604dbcc270844c
+
+=== claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv
+$ python3 -I -B absence-sweep.py --claim lanes/kaidoku/round7/work/r7-local-measurements.tsv --root /home/vgpnk/Projects/shokunin
+NOTE claim is unanchored: no root holds a 'lanes' directory, so ABSENT only covers these roots and not the base the staged path is relative to
+VERDICT ABSENT claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv roots=1 hits=0 dirs_walked=119607 skipped_dirs=0 elapsed=1.741s
+exit=0 wall_ms=1790
+$ python3 -I -B absence-sweep.py --claim lanes/kaidoku/round7/work/r7-local-measurements.tsv --root /home/vgpnk/Projects/shokunin --root /home/vgpnk/Projects/shokuknow
+HIT /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round7/work/r7-local-measurements.tsv kind=file size=1204 root=/home/vgpnk/Projects/shokuknow
+VERDICT PRESENT claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv roots=2 hits=1 dirs_walked=122475 skipped_dirs=0 elapsed=1.235s
+exit=1 wall_ms=1279
+
+=== claim=lanes/kaidoku/round9/work/lead2-avm-branch.tsv
+$ python3 -I -B absence-sweep.py --claim lanes/kaidoku/round9/work/lead2-avm-branch.tsv --root /home/vgpnk/Projects/shokunin
+NOTE claim is unanchored: no root holds a 'lanes' directory, so ABSENT only covers these roots and not the base the staged path is relative to
+VERDICT ABSENT claim=lanes/kaidoku/round9/work/lead2-avm-branch.tsv roots=1 hits=0 dirs_walked=119608 skipped_dirs=0 elapsed=1.185s
+exit=0 wall_ms=1231
+$ python3 -I -B absence-sweep.py --claim lanes/kaidoku/round9/work/lead2-avm-branch.tsv --root /home/vgpnk/Projects/shokunin --root /home/vgpnk/Projects/shokuknow
+HIT /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round9/work/lead2-avm-branch.tsv kind=file size=1177 root=/home/vgpnk/Projects/shokuknow
+VERDICT PRESENT claim=lanes/kaidoku/round9/work/lead2-avm-branch.tsv roots=2 hits=1 dirs_walked=122476 skipped_dirs=0 elapsed=1.204s
+exit=1 wall_ms=1248
+
+=== --json, both roots, second claim
+{
+ "anchored_roots": [
+  "/home/vgpnk/Projects/shokuknow"
+ ],
+ "claim": "lanes/kaidoku/round9/work/lead2-avm-branch.tsv",
+ "dirs_walked": 122476,
+ "elapsed_s": 1.176,
+ "entries_seen": 991884,
+ "exit_code": 1,
+ "hits": [
+  {
+   "kind": "file",
+   "path": "/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round9/work/lead2-avm-branch.tsv",
+   "root": "/home/vgpnk/Projects/shokuknow",
+   "size": 1177
+  }
+ ],
+ "roots": [
+  "/home/vgpnk/Projects/shokunin",
+  "/home/vgpnk/Projects/shokuknow"
+ ],
+ "skipped_dirs": 0,
+ "truncated": false,
+ "verdict": "PRESENT"
+}
+exit=1

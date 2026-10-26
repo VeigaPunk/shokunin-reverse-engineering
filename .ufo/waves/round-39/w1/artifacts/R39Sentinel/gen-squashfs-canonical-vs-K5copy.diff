@@ -1,0 +1,33 @@
+--- tools/round-37/gen-squashfs.py	2026-10-26 02:54:26.641139931 -0300
++++ .ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/gen-squashfs.py	2026-10-26 13:42:11.346018039 -0300
+@@ -1,7 +1,16 @@
+ #!/usr/bin/env python3
+ """Minimal deterministic SquashFS v4 writer (LE / BE / AVM-BE). Dev prototype.
+ Todos: no fragments, no xattrs, no export table, no sparse, no empty-dir
+-entries (dirs write one header+entries block)."""
++entries (dirs write one header+entries block).
++
++DERIVED: verbatim copy of tools/round-37/gen-squashfs.py (sha256
++1c7c5e88324d64ad5935e81f205a609a8361466e5aea9ba461575f4e01ba8dd5) with one fix --
++the directory-entry name_size field counts UTF-8 BYTES, not str characters.
++Stock rejects every non-ASCII name: `len(name) - 1` is a character count while
++`name.encode()` writes the UTF-8 bytes, so unsquashfs 4.5.1 dies with
++`get_metadata: failed to read block` on any directory holding one. Byte-identical
++output to stock for every ASCII tree (K1/K2 pins rebuild to 1cfb6c33../403cb0a8..).
++"""
+ import argparse, os, struct, zlib, lzma
+ 
+ MAGIC = {'le': b'hsqs', 'be': b'sqsh', 'avm': b'sqsh'}
+@@ -143,9 +152,10 @@
+                 kind = 'D' if typ == TYPE_DIR else ('F' if typ == TYPE_FILE else 'L')
+                 child_path = name if d == '' else os.path.join(d, name)
+                 b, o = inode_ref[key_of(kind, child_path)]
++                nb = name.encode()
+                 entry = (pack(e, 'H', o) + pack(e, 'h', ino - first_ino) +
+-                         pack(e, 'H', typ) + pack(e, 'H', len(name) - 1))
+-                tbl += entry + name.encode()
++                         pack(e, 'H', typ) + pack(e, 'H', len(nb) - 1))
++                tbl += entry + nb
+         db, do = dir_meta.append(bytes(tbl))
+         dir_ref[d] = (db, do, len(tbl) + 3)
+         parent = 1 if d == '' else inode_no[('D', os.path.dirname(d))]

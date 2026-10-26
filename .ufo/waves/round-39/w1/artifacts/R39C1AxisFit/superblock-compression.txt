@@ -1,0 +1,18 @@
+# SquashFS v4 BE superblock fields (offsets per tools/round-38/w2/artifacts/R38W2AvmProbe/make-avm-copy.py docstring)
+# fields: 0 magic 3 block_size 5 compression(u16) 9 s_major 10 s_minor 12 bytes_used
+.ufo/waves/round-39/w1/artifacts/R39C1CarrierK6/carrier.sqsh   magic=b'sqsh' block_size=4096 compression=2 s_major=4 s_minor=0 bytes_used=14925 actual=14925
+corpus/evidence/round-37/c1/K1/carrier.sqsh                    magic=b'sqsh' block_size=4096 compression=1 s_major=4 s_minor=0 bytes_used=9780 actual=9780
+corpus/evidence/round-37/c1/K2/carrier.sqsh                    magic=b'sqsh' block_size=4096 compression=1 s_major=4 s_minor=0 bytes_used=1606 actual=1606
+corpus/evidence/round-37/c1/K3/carrier.bin                     magic=b'sqsh' block_size=131072 compression=1 s_major=4 s_minor=0 bytes_used=307 actual=4096
+corpus/evidence/round-37/c1/K4/carrier.bin                     magic=b'sqsh' block_size=131072 compression=1 s_major=4 s_minor=0 bytes_used=307 actual=307
+
+# tools/round-37/gen-squashfs.py:8  COMP = {'gzip': 1, 'xz': 2}
+# gen-squashfs comp_bytes(kind=xz) emits lzma.FORMAT_RAW LZMA2 preset 6, so --comp xz writes a
+# compression id of 2 while the body is an LZMA2 stream. K6 (built with --comp xz) therefore
+# declares id 2, not id 4. sasquatch-v4be decodes it (K6: 7/7 files, 3/3 link targets).
+# -> the claim must not say "xz"; a compression binding must be "id != 1", not "id == 2 (xz)".
+
+# POSIX clamping vs the frozen classification (K1 flips):
+  posixpath.normpath('/../hello.txt') = '/hello.txt'
+  naive POSIX join for K1 (link at image root, target '../hello.txt'): '/hello.txt' -> in-tree
+  naive POSIX join for K2 (/var/lib/run-link -> ../../a/run.sh): '/a/run.sh' -> in-tree (correct)

@@ -1,0 +1,63 @@
+# R39C2ReconTruncate — exact commands exercised (2026-10-26)
+
+Lane root L=/home/vgpnk/Projects/shokunin/kaidoku-shokunin
+Scratch  S=/fast/scratch/hyaku/kaidoku-r39/R39C2ReconTruncate   (removed at the end; all cited outputs copied here)
+Artifacts A=$L/.ufo/waves/round-39/w1/artifacts/R39C2ReconTruncate
+
+## tools observed
+    $HOME/.local/bin/unblob --version            -> 26.6.4
+    sha256sum $HOME/.local/bin/unblob            -> 0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09
+    sha256sum $HOME/.local/bin/sasquatch-v4be    -> fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6  (4.5.1)
+    python3 --version                            -> Python 3.14.8
+    npx -y rea-agents@6.5.0 --version            -> 6.5.0
+    sha256sum /bin/true                          -> 8398af7d1f94a88be3303caa083616ad22a12783e4dfee0373298bc61aef0662 (ELF prefix used only by the wrapped dev carriers)
+
+## dev carriers (deterministic; tree authored by dev-carriers.py, xorshift fill)
+    cd "$S"
+    PYTHONDONTWRITEBYTECODE=1 python3 "$A/dev-carriers.py" "$PWD" "$PWD/carriers"
+    # determinism check: same script into a second tree root, byte-for-byte equal for all 24 carriers
+    PYTHONDONTWRITEBYTECODE=1 python3 "$A/dev-carriers.py" "$PWD/tree2" "$PWD/carriers2"
+    for f in carriers/*.sqsh carriers/*.bin; do b=$(basename "$f"); s1=$(sha256sum "$f"|cut -d' ' -f1); s2=$(sha256sum "carriers2/$b"|cut -d' ' -f1); [ "$s1" = "$s2" ] && echo "same $b" || echo "DIFF $b $s1 $s2"; done
+    # output: "same <id>" for every carrier present at that revision (18 of the final 24);
+    # the four carriers added afterwards (be-elfwrap, be-elfwrap-trunc, be-prefix4k-trunc,
+    # le-prefix4k-trunc) are pure functions of the same base images, and the base image bytes were
+    # re-verified unchanged after every rebuild: be-base-gzip.sqsh sha256 = 7fc66d5f478cf7245d84856c785fa7c03ea6ad8b268c4078646553a7c8099497
+
+Inside dev-carriers.py each image comes from
+    python3 $L/tools/round-37/gen-squashfs.py TREE OUT --endian le|be --comp gzip|xz
+and each mutation is a pure function of the image and its superblock bytes_used (offset 40, uint64, endian-matched).
+
+## REA extract-firmware (one run per carrier; fresh outdir each; cwd = $S)
+    for c in carriers/*.sqsh carriers/*.bin; do
+      id=$(basename "$c"); id=${id%.*}
+      REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware \
+        --format json --full-output "$PWD/$c" "$PWD/ext/$id" > "env/$id.json" 2> "env/$id.stderr.txt"
+    done
+    # all 24 runs: exit 0, envelope ok=true, subject.digest.sha256 == carrier sha256
+
+## composed carriers (prefix 4 KiB + tree with one symlink), prefix bytes = (i*131+7)&0xFF
+    cp -a devtree tree-link   && ln -s config.ini        tree-link/etc/config-link
+    cp -a devtree tree-escape && ln -s ../../../etc/passwd tree-escape/etc/passwd-link
+    python3 $L/tools/round-37/gen-squashfs.py tree-link   comp/_link-base.img   --endian be --comp gzip
+    python3 $L/tools/round-37/gen-squashfs.py tree-escape comp/_escape-base.img --endian be --comp gzip
+    # pre = 4096 bytes; carrier = pre + base image; then the same REA command as above
+
+## direct unblob runs (mechanism evidence)
+    cd "$S/ub-trunc" && $HOME/.local/bin/unblob --report report.json --log unblob.log -e extracted "$S/carriers/be-trunc-half.sqsh"
+    cd "$S/ub-prefix" && $HOME/.local/bin/unblob --report report.json --log unblob.log -e extracted "$S/carriers/be-prefix4k.bin"
+    # trunc: extracted/ empty, report.json holds only StatReport/FileMagicReport/HashReport/RandomnessReport
+    #        unblob.log: "Seek outside file during chunk calculation handler=squashfs_v4_be" ... "all_chunks=[]"
+    # prefix: UnknownChunkReport 0..4096 + ChunkReport squashfs_v4_be 4096..31129, extracted/0-4096.unknown published
+
+## direct extractor probes (the extractor is never reached by REA on a zero-chunk input)
+    sasquatch-v4be -be -d sasq/be-trunc-half  carriers/be-trunc-half.sqsh   -> exit 1, "Read on filesystem failed because EOF"
+    sasquatch-v4be -be -d sasq/be-oversize-x2 carriers/be-oversize-x2.sqsh  -> exit 1, "Bad id count in super block"
+    sasquatch-v4be -le -d sasq/le-trunc-half  carriers/le-trunc-half.sqsh   -> exit 1, "Block size too small"
+
+## feature extraction / separability (grammar-faithful)
+    PYTHONDONTWRITEBYTECODE=1 python3 "$A/features.py" env               carriers/manifest.json "$A/dev-features"
+    PYTHONDONTWRITEBYTECODE=1 python3 "$A/features.py" ref               ref/manifest.json      "$A/ref-features"
+    PYTHONDONTWRITEBYTECODE=1 python3 "$A/features.py" comp-env          comp/manifest.json     "$A/comp-features"
+    # ref/ = the 8 round-38 K1-K4 {before,after}.json receipts plus both round-38 AVM probe envelopes (read-only copies)
+
+No pacman transaction, no tool install, no VCS mutation, no REA run on K5/K6 or any held-out carrier.

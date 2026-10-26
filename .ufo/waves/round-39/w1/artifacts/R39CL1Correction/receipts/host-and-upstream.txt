@@ -1,0 +1,55 @@
+# Host-state and upstream grounds, re-checked 2026-10-26 by R39CL1Correction
+
+## refusal 1 (i): the staged M5 clause 'sasquatch is absent from PATH and unblob is not importable'
+$ command -v sasquatch sasquatch-v4be unblob
+/home/vgpnk/.local/bin/sasquatch
+/home/vgpnk/.local/bin/sasquatch-v4be
+/home/vgpnk/.local/bin/unblob
+$ ls -l ~/.local/bin/sasquatch ~/.local/bin/sasquatch-v4be; stat -c %y
+-rwxr-xr-x 1 vgpnk vgpnk 382824 Oct 26 01:22 /home/vgpnk/.local/bin/sasquatch
+-rwxr-xr-x 1 vgpnk vgpnk 436232 Oct 26 01:22 /home/vgpnk/.local/bin/sasquatch-v4be
+ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754  /home/vgpnk/.local/bin/sasquatch
+fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6  /home/vgpnk/.local/bin/sasquatch-v4be
+/home/vgpnk/.local/bin/sasquatch 2026-10-26 01:22:37.798098889 -0300
+/home/vgpnk/.local/bin/sasquatch-v4be 2026-10-26 01:22:37.798186059 -0300
+$ ls /usr/bin/{sasquatch,sasquatch-v4be,unblob} /usr/local/bin/{sasquatch,sasquatch-v4be,unblob}
+ls: cannot access '/usr/bin/sasquatch': No such file or directory
+ls: cannot access '/usr/local/bin/sasquatch': No such file or directory
+ls: cannot access '/usr/bin/sasquatch-v4be': No such file or directory
+ls: cannot access '/usr/local/bin/sasquatch-v4be': No such file or directory
+ls: cannot access '/usr/bin/unblob': No such file or directory
+ls: cannot access '/usr/local/bin/unblob': No such file or directory
+$ python3 -V; python3 -c "import unblob"
+Python 3.14.8
+ModuleNotFoundError: No module named 'unblob'
+
+## refusal 1 (ii): lane bytes for the pair — r38 after/before arms on K1
+after  files=5
+after  oracle rows matched=5/5
+before files=0
+before gaps=["missing-extractor-dependency"]
+before dependencies=["sasquatch-v4be"]
+
+## refusal 2 (i): pin vs unpinned main
+$ sha256sum sq-pin.py sq-main.py <installed 26.6.4>
+2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287  squashfs.py@26.6.4 (raw tag, 2026-10-26 refetch)
+2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287  squashfs.py@main
+2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287  installed uv-tool 26.6.4 copy
+
+## refusal 1 (iii): producer's declared dependency, README @26.6.4 (sha256 6544d60f22f7b521f8705b3bba5d47a50e428ccbd3359542708dbd009ccf3716)
+sed: error opening input file 'README-pin.md': No such file or directory (os error 2)
+
+## refusal 2 (ii): closing premise — AVM publishes the image
+$ curl -sS -o /dev/null -w "%{http_code} %{size_download}" https://download.avm.de/fritzbox/fritzbox-6490-cable/other/fritz.os/
+200 592
+<a href="info_de.txt">info_de.txt</a>                                        04-Sep-2023 17:08              111698
+
+## R38-CL3: the v3 receipt the overstatement cites
+{"carriers_matched":4,"met_target":false}
+## refusal 1 (iii): producer's declared dependency, README @26.6.4
+6544d60f22f7b521f8705b3bba5d47a50e428ccbd3359542708dbd009ccf3716  /fast/scratch/hyaku/kaidoku-r39/R39CL1Correction/README-pin.md
+49:For SquashFS support, also install [sasquatch](https://github.com/onekey-sec/sasquatch):
+
+## refusal 2 (ii): closing premise — AVM publishes the image
+http=200 bytes=592
+FRITZ.Box_6490_Cable-07.57.image</a>                   04-Sep-2023 17:08            39741440

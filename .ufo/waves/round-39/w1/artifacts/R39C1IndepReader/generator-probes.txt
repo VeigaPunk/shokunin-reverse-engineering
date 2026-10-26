@@ -1,0 +1,33 @@
+## P1 non-ASCII filename -> char-count size field
+C-le-gzip directory body (hex): 0100000000000000020000000000000002000800706c61696e2e7478742400010002000900c3a92d6e616d652e747874
+  entry name_bytes=b'plain.txt' declared_size_field=8 (=> 9 name bytes) header_start_block=0 offset=0
+  entry name_bytes=b'\xc3\xa9-name.tx' declared_size_field=9 (=> 10 name bytes) header_start_block=0 offset=36
+  tree C names and real byte lengths: {'plain.txt': 9, 'é-name.txt': 11}
+  stream error after those entries: metadata body out of bounds: offset 279 length 271, image 285 bytes
+  -> the non-ASCII name is 11 bytes on disk but its entry declares 9, so the directory stream is one byte out of step; sqfs-list refuses with exit 2 and unsquashfs fails:
+     unsquashfs exit 1: Parallel unsquashfs: Using 32 processors
+
+## P2 inode ref block field is a block count, not a byte offset
+L-le-gzip (300 one-byte files): inode table 10836 bytes, first block payload 8192, second block header at 8590
+  stored root_inode ref = 0x0000000000010a30 (block field 1, offset 2608)
+  the second metadata block starts 8194 bytes after the inode table start, so the ref must be 0x0000000020020a30; the generator stored the block *count* (1) instead, and the reader looks at inode_table_start+1
+  contrast: K1 root_inode ref = 0x15c (block field 0, offset 348) and K1 fits one inode block, so count and byte offset coincide
+  sqfs-list exit 2: sqfs-list: metadata block at 397: decompression failed: Error -3 while decompressing data: invalid stored block lengths
+  unsquashfs exit 1: FATAL ERROR: read_inode: failed to read inode 397:2608
+
+## P3 symlinks to directories are dropped
+  tree B symlinks: ['abs', 'dot', 'self', 'up']
+  image symlinks:  ['abs', 'self', 'up']
+  dropped:         ['dot']
+
+## P4 metadata is always stored uncompressed by the generator
+  A-le-gzip        {'compressed_data_blocks': 6, 'compressed_metadata_blocks': 0, 'fragment_slices': 0, 'raw_data_blocks': 3, 'raw_metadata_blocks': 2, 'sparse_blocks': 0}
+  B-le-xz          {'compressed_data_blocks': 3, 'compressed_metadata_blocks': 0, 'fragment_slices': 0, 'raw_data_blocks': 1, 'raw_metadata_blocks': 2, 'sparse_blocks': 0}
+  B-be-gzip        {'compressed_data_blocks': 3, 'compressed_metadata_blocks': 0, 'fragment_slices': 0, 'raw_data_blocks': 1, 'raw_metadata_blocks': 2, 'sparse_blocks': 0}
+  B-be-xz          {'compressed_data_blocks': 3, 'compressed_metadata_blocks': 0, 'fragment_slices': 0, 'raw_data_blocks': 1, 'raw_metadata_blocks': 2, 'sparse_blocks': 0}
+  C-le-gzip        (refused: no inspect summary)
+  L-le-gzip        (refused: no inspect summary)
+  D-le-mksq-gzip   {'compressed_data_blocks': 4, 'compressed_metadata_blocks': 2, 'fragment_slices': 3, 'raw_data_blocks': 0, 'raw_metadata_blocks': 1, 'sparse_blocks': 0}
+  D-le-mksq-xz     {'compressed_data_blocks': 4, 'compressed_metadata_blocks': 2, 'fragment_slices': 3, 'raw_data_blocks': 0, 'raw_metadata_blocks': 1, 'sparse_blocks': 0}
+  S-le-mksq-gzip   {'compressed_data_blocks': 2, 'compressed_metadata_blocks': 2, 'fragment_slices': 0, 'raw_data_blocks': 0, 'raw_metadata_blocks': 0, 'sparse_blocks': 1}
+  every generator image shows compressed_metadata_blocks = 0: the only compressed metadata in this wave is in K3/K4 and in the mksquashfs fixtures, so K5/K6 built by this generator add no compressed-metadata coverage.

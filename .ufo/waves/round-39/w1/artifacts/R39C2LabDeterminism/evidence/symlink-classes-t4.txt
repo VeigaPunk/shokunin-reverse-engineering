@@ -1,0 +1,13 @@
+# t4 tree (gen-squashfs.py, --endian be --comp gzip), symlink targets in image:
+bin/intree      -> ../etc/a.conf            (relative, resolves inside)
+bin/rel-escape  -> ../../../../hello.txt    (relative, resolves outside)
+bin/abs-escape  -> /etc/passwd              (absolute)
+bin/dangling    -> missing                  (relative, nonexistent inside)
+etc/a.conf, bin/tool regular files
+
+# REA 6.5.0 result (unblob 26.6.4, sasquatch-v4be on child PATH):
+published files: ['firmware.bin_extract/bin/tool', 'firmware.bin_extract/etc/a.conf']
+gaps: [('unpublished-entry', 'firmware.bin_extract/bin/abs-escape'), ('unpublished-entry', 'firmware.bin_extract/bin/dangling'), ('unpublished-entry', 'firmware.bin_extract/bin/intree')]
+diagnostic __typename__: MaliciousSymlinkRemoved severity WARNING
+  link  : /fast/scratch/hyaku/kaidoku-r39/R39C2LabDeterminism/rea-firmware-xgGDuQ/extracted/firmware.bin_extract/bin/rel-escape
+  target: /fast/scratch/hyaku/kaidoku-r39/R39C2LabDeterminism/hello.txt

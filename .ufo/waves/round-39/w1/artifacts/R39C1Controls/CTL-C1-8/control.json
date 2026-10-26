@@ -1,0 +1,28 @@
+{
+ "control": "CTL-C1-8",
+ "title": "extra unpublished-entry gap on a published regular file",
+ "shortcut": "CTL-C1-3 bytes, except one extra unpublished-entry gap is added on the first oracle regular-file path on every carrier. The path exists in the oracle and is published, so the claim's gap rule has no reason to accept it.",
+ "overlay_static": [
+  "corpus/evidence/round-39/c1/K1/after.json",
+  "corpus/evidence/round-39/c1/K2/after.json",
+  "corpus/evidence/round-39/c1/K3/after.json",
+  "corpus/evidence/round-39/c1/K4/after.json"
+ ],
+ "generate": {"mode": "extra-gap", "ids": ["K5", "K6"]},
+ "docs": ["core", "frontier", "sources", "readme", "entry"],
+ "entry": "corpus/knowledge/2026-10-26-r39-sasquatch-be-squashfs-promotion.md",
+ "commit": {"mode": "post-freeze", "split": ["receipts", "docs"], "commits": [
+  "round-39 CTL-C1-8 receipts: extra gap on a published regular file",
+  "round-39 CTL-C1-8 docs: Core row, entry, SOURCES, README"
+ ]},
+ "measured_rev": "HEAD after both commits",
+ "expected": {
+  "exit": 1,
+  "met_target": false,
+  "carriers_matched": "0",
+  "refusing_binding": "gap set equality against the frozen in-tree symlink rows",
+  "per_carrier": "every carrier carries one gap whose path is a published oracle regular file; a counter that counts gaps against the symlink table length without comparing the path set could pass",
+  "isolates": "gap-path identity, independent of kind"
+ },
+ "defeat_risk": "low-medium - only a count-only gap check passes"
+}

@@ -313,6 +313,35 @@ bullet is bounded by the lines it cites.
   `.ufo/waves/arc3-loop1-round12/claims/verdicts/VZ-1.md:42`; rule draft
   `.ufo/waves/arc3-loop1-round12/claims/c2/EX-16.md`).
 
+- **SquashFS `extract-firmware` outcome triage (round 39).** An REA 6.5.0
+  `extract-firmware` envelope on a SquashFS v4 input resolves to one of eight
+  labels from six fields: the squashfs chunk handler, the gap kinds, the gap
+  `dependencies` (a miss names `sasquatch-v4be` for big-endian and `sasquatch`
+  for little-endian), whether a recorded sasquatch argv carries `-be`, whether
+  `MaliciousSymlinkRemoved` was reported, and the published file count
+  (`corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md:11-28`). An AVM-marked
+  standard-BE image and a damaged one both end as `extractor-failure` with zero
+  files; only the recorded `-be` token separates them, because unblob drops `-be`
+  exactly when `bytes_used == mkfs_time`
+  (`corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md:29-40`). A kept in-tree
+  symlink is one `unpublished-entry` gap; an escaping one is removed with a report
+  and no gap; a missing chunk is a silent empty envelope
+  (`corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md:41-54`). Rows are tried
+  top to bottom; the first match wins, no match is `unclassified`
+  (interpreter `tools/round-39/sqfs-triage.py`).
+
+  <!-- sqfs-triage-table v1 -->
+  | label | handler | gap kinds | dependencies | -be in child argv | symlink removed | published files | cause -> action | source |
+  | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+  | no-squashfs-chunk | `none` | `*` | `*` | `n/a` | `*` | `*` | no chunk carries a squashfs handler: unblob's finder dropped a truncated image, a `bytes_used` past the end or a non-4 `s_major` without a report -> check the magic and superblock before rerunning; an empty envelope is not an empty filesystem | knowledge entry :50-54 |
+  | dep-missing-be | `squashfs_v4_be` | `missing-extractor-dependency` | `sasquatch-v4be` | `n/a` | `no` | `*` | the big-endian handler needed sasquatch-v4be and it was not on the unblob child PATH -> put the sasquatch-v4be 4.5.1 binary on that PATH and rerun into a fresh output directory; the image is unmeasured, not unreadable | S112 lines 68-69; S120 command.py:101-102 |
+  | dep-missing-le | `squashfs_v4_le` | `missing-extractor-dependency` | `sasquatch` | `n/a` | `no` | `*` | the little-endian handler needed plain sasquatch and it was not on the child PATH -> put sasquatch on that PATH and rerun; sasquatch-v4be alone does not satisfy this gap; an AppImage before-arm still publishes its ELF prefix and the opaque container range | S112 lines 68-69; S120 command.py:101-102 |
+  | avm-marker-be-dropped | `squashfs_v4_be` | `extractor-failure` | `none` | `no` | `no` | `0` | mkfs_time equals bytes_used, unblob read the AVM marker and omitted -be, so sasquatch-v4be read a standard-BE body with the wrong byte order -> do not treat it as damage; rerun through a PATH wrapper named sasquatch-v4be that appends -be (REA has no flag passthrough) | S112 lines 44-50; S121 |
+  | body-extractor-failure | `squashfs_v4_be` | `extractor-failure` | `none` | `yes` | `no` | `0` | the extractor ran with -be and still failed, so the image body or header is damaged -> keep the failing command and stderr from diagnostics, compare against a known-good carrier, never patch the envelope into a success | S120 report.py:91-98; knowledge entry :29-40 |
+  | escaping-symlink-removed | `squashfs_v4_*` | `*` | `*` | `n/a` | `yes` | `>0` | a symlink target resolved outside the extraction root; unblob removed it and reported MaliciousSymlinkRemoved, and REA records no gap for it -> expect the path to be absent; never materialise the link or match it against the regular-file oracle | S118 extractor.py:79-91 |
+  | in-tree-symlink-metadata | `squashfs_v4_*` | `unpublished-entry` | `none` | `n/a` | `no` | `>0` | a symlink target resolved inside the extraction root; it is kept as metadata and recorded as one unpublished-entry gap per link -> expected, not a failure; count one gap per in-tree link and publish nothing for it | S119 FirmwarePublication.js:68-75,301-308 |
+  | clean | `squashfs_v4_*` | `none` | `none` | `n/a` | `no` | `>0` | every regular file was published, no gap was recorded and no symlink was removed -> nothing to fix; match files to an oracle by relative-path suffix and sha256 | S119; knowledge entry :11-19 |
+
 
 
 

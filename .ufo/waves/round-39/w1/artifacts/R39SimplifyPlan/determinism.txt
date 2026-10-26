@@ -1,0 +1,41 @@
+# Held-out regeneration feasibility: generator byte-determinism
+# seat R39SimplifyPlan, 2026-10-26. Scratch: /fast/scratch/hyaku/kaidoku-r39/R39SimplifyPlan (removed on exit).
+# Purpose: P39-C2's clause "every carrier regenerates byte-identically from that seed" is only freezable
+# if tools/round-37/gen-squashfs.py (the compression/format layer heldout-gen.py would reuse) is
+# byte-deterministic. Wall-clock mtime in SquashFS inodes would make it false on every run.
+
+$ S=/fast/scratch/hyaku/kaidoku-r39/R39SimplifyPlan; export TMPDIR="$S"
+$ T1=$(mktemp -d "$S/tree1.XXXX"); mkdir -p "$T1/var/lib" "$T1/a"
+$ printf 'alpha\n' > "$T1/a/run.sh"; printf 'beta\n' > "$T1/var/lib/f1"
+$ ln -s ../../a/run.sh "$T1/var/lib/run-link"
+$ G=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-37/gen-squashfs.py
+$ for i in 1 2; do python3 "$G" "$T1" "$S/out$i.sqsh" --endian be --comp gzip; done
+wrote /fast/scratch/hyaku/kaidoku-r39/R39SimplifyPlan/out1.sqsh 482 bytes, inodes 7
+wrote /fast/scratch/hyaku/kaidoku-r39/R39SimplifyPlan/out2.sqsh 482 bytes, inodes 7
+096606a45435cab61a444d35c3426217f5548799ba6e2c377f12aecf47007ddd  out1.sqsh
+096606a45435cab61a444d35c3426217f5548799ba6e2c377f12aecf47007ddd  out2.sqsh
+$ for i in 3 4; do python3 "$G" "$T1" "$S/out$i.sqsh" --endian be --comp xz; done
+c9440bbd34811440861a40192195581fc5f18d7486ef6cb47ff04ae92d72ebde  out3.sqsh
+c9440bbd34811440861a40192195581fc5f18d7486ef6cb47ff04ae92d72ebde  out4.sqsh
+
+# Second run with a 3-second gap and a FRESH tree (same bytes, different mtimes on disk):
+$ T1=$(mktemp -d "$S/tree2.XXXX"); mkdir -p "$T1/var/lib" "$T1/a"
+$ printf 'alpha\n' > "$T1/a/run.sh"; printf 'beta\n' > "$T1/var/lib/f1"
+$ python3 "$G" "$T1" "$S/d1.sqsh" --endian be --comp gzip >/dev/null; sleep 3
+$ python3 "$G" "$T1" "$S/d2.sqsh" --endian be --comp gzip >/dev/null
+061c552b7e556607f74aa3a37e0728556684c8d03c492520ffe80d4ed227867a  d1.sqsh
+061c552b7e556607f74aa3a37e0728556684c8d03c492520ffe80d4ed227867a  d2.sqsh
+
+# Why: the generator writes a constant timestamp into every inode instead of stat()'s mtime
+$ grep -n "MKFS_TIME" tools/round-37/gen-squashfs.py | head -3
+14:MKFS_TIME = 1700000000
+105:                pack(e, 'I', MKFS_TIME) + pack(e, 'I', inode_no[('F', r)]))
+114:                pack(e, 'I', MKFS_TIME) + pack(e, 'I', inode_no[('L', r)]))
+
+# VERDICT: byte-determinism holds for repeated runs over the same source tree — within one second
+# (out1/out2) and across a 3 s wall-clock gap (d1/d2) — for both --comp gzip and --comp xz.
+# The generalisation to a tree created at a different time is NOT measured here; it rests on the code
+# above: every inode is packed with the constant MKFS_TIME, and no stat()/st_mtime is ever read
+# (grep for mtime/st_mtime/utime/time( returns only these constant uses). [INFERENCE for the
+# fresh-tree case.] heldout-gen.py must therefore build its trees itself, never by shelling out to
+# tar/cp and letting stat() set mtimes.

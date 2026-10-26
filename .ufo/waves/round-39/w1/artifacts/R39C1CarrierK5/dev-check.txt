@@ -1,0 +1,92 @@
+$ sasquatch-v4be -be -ll carrier.sqsh
+Reading a different endian SQUASHFS filesystem on /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/carrier.sqsh
+drwxr-xr-x vgpnk/vgpnk             115 2023-11-14 19:13 squashfs-root
+-rw-r--r-- vgpnk/vgpnk             148 2023-11-14 19:13 squashfs-root/README.txt
+drwxr-xr-x vgpnk/vgpnk              31 2023-11-14 19:13 squashfs-root/config
+-rw-r--r-- vgpnk/vgpnk              54 2023-11-14 19:13 squashfs-root/config/app.conf
+-rw-r--r-- vgpnk/vgpnk               0 2023-11-14 19:13 squashfs-root/empty.flag
+-rw-r--r-- vgpnk/vgpnk              34 2023-11-14 19:13 squashfs-root/notes with space.txt
+drwxr-xr-x vgpnk/vgpnk              28 2023-11-14 19:13 squashfs-root/usr
+drwxr-xr-x vgpnk/vgpnk              38 2023-11-14 19:13 squashfs-root/usr/share
+drwxr-xr-x vgpnk/vgpnk              95 2023-11-14 19:13 squashfs-root/usr/share/demo
+drwxr-xr-x vgpnk/vgpnk              49 2023-11-14 19:13 squashfs-root/usr/share/demo/assets
+drwxr-xr-x vgpnk/vgpnk              39 2023-11-14 19:13 squashfs-root/usr/share/demo/assets/icons
+-rw-r--r-- vgpnk/vgpnk              37 2023-11-14 19:13 squashfs-root/usr/share/demo/assets/icons/アイコン.txt
+-rw-r--r-- vgpnk/vgpnk              58 2023-11-14 19:13 squashfs-root/usr/share/demo/assets/manifest.json
+lrwxrwxrwx vgpnk/vgpnk              22 2023-11-14 19:13 squashfs-root/usr/share/demo/escape -> ../../../../etc/shadow
+lrwxrwxrwx vgpnk/vgpnk              15 2023-11-14 19:13 squashfs-root/usr/share/demo/link-blob -> ../opt/blob.bin
+lrwxrwxrwx vgpnk/vgpnk               9 2023-11-14 19:13 squashfs-root/usr/share/demo/link-notes -> notes.txt
+-rw-r--r-- vgpnk/vgpnk              30 2023-11-14 19:13 squashfs-root/usr/share/demo/notes.txt
+drwxr-xr-x vgpnk/vgpnk              31 2023-11-14 19:13 squashfs-root/usr/share/opt
+-rw-r--r-- vgpnk/vgpnk            5000 2023-11-14 19:13 squashfs-root/usr/share/opt/blob.bin
+drwxr-xr-x vgpnk/vgpnk              37 2023-11-14 19:13 squashfs-root/var
+drwxr-xr-x vgpnk/vgpnk              31 2023-11-14 19:13 squashfs-root/var/lib
+-rw-r--r-- vgpnk/vgpnk           20000 2023-11-14 19:13 squashfs-root/var/lib/state.db
+drwxr-xr-x vgpnk/vgpnk              31 2023-11-14 19:13 squashfs-root/var/log
+-rw-r--r-- vgpnk/vgpnk              18 2023-11-14 19:13 squashfs-root/var/log/last.log
+exit=0
+
+$ sasquatch-v4be -be -no-exit-code -f -d $S/x2 carrier.sqsh
+Reading a different endian SQUASHFS filesystem on /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/carrier.sqsh
+
+Trying to decompress using default gzip decompressor...
+
+Successfully decompressed with default gzip decompressor
+
+Trying to decompress using default gzip decompressor...
+
+Successfully decompressed with default gzip decompressor
+Parallel unsquashfs: Using 1 processor
+13 inodes (14 blocks) to write
+
+
+[=================================================================|] 27/27 100%
+
+created 10 files
+created 11 directories
+created 3 symlinks
+created 0 devices
+created 0 fifos
+created 0 sockets
+created 0 hardlinks
+exit=0
+
+$ find $S/x2 -type l -printf "%P -> %l\\n"
+usr/share/demo/escape -> ../../../../etc/shadow
+usr/share/demo/link-blob -> ../opt/blob.bin
+usr/share/demo/link-notes -> notes.txt
+
+# per-file oracle comparison (path, sha256, size)
+OK	README.txt	f649d29ac7069ddb273cb29b941a02292a96407d190b81facc69ad4589b8b0e8	148
+OK	config/app.conf	1a64be63eb5cbc4408ade9a66692b3944729a0935de219a4a038892b3ca833b6	54
+OK	empty.flag	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	0
+OK	notes with space.txt	8d68ae9e930f226b6c4f5578e0cb7b3e9edbd4b05c25685f31334dabf09f44d1	34
+OK	usr/share/demo/assets/icons/アイコン.txt	f48693f92b3b74feba8255f91fe35cb115b39186c45d763b39f9c308ee070ba2	37
+OK	usr/share/demo/assets/manifest.json	5dd83cc19da1cb9b191ef8c271b5c446af7acd08c7b4e5aa7bf2f667942ef4fa	58
+OK	usr/share/demo/notes.txt	4664d8139fba1632f2a9084d3855d732028caf14eb3602351884c7661e06f0a9	30
+OK	usr/share/opt/blob.bin	4336d9833b074d112e4eb630851d8dd87b94e2c860a15c2bfe5ad6695247d474	5000
+OK	var/lib/state.db	a9d330f29bc255930ee5b0d77f28985ba33d69fae22b1fd67d7e5692a76badc2	20000
+OK	var/log/last.log	12afa793045ebacf2dd903ac7fc22e807da2719648f07625fdbd351dbbe27a5f	18
+comparison_fail=0
+# cross-derivation: tables derived from the BUILT image (sasquatch-v4be -be -ll + extraction)
+651cb7e3fc83b829fd425f866ed4d22bce910bc83316b3d772ea70e5075fc2d7  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/oracle.tsv
+651cb7e3fc83b829fd425f866ed4d22bce910bc83316b3d772ea70e5075fc2d7  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/oracle-from-image.tsv
+9d7c1b6a4bc9e41d5735ae13131b03c962c8e0a23dd881853337a3991ffea2f3  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/symlinks.tsv
+9d7c1b6a4bc9e41d5735ae13131b03c962c8e0a23dd881853337a3991ffea2f3  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/symlinks-from-image.tsv
+
+# stock generator on the frozen src/ (my own measurement; exit codes in stock-rebuild-check.txt)
+stock_rebuild_sha256=7bd4a42d90331dbdc02705bf89123fdb2d02f4028368c03ff8108212737c584d
+sasquatch_ll_rc=1  # see stock-rebuild-check.txt; the `$?` captured by this append block was cat's
+Reading a different endian SQUASHFS filesystem on /fast/scratch/hyaku/kaidoku-r39/R39C1CarrierK5/stock-rebuild.sqsh
+File system corrupted: invalid characters in name
+FATAL ERROR: dir_scan: failed to read directory squashfs-root/usr/share/demo/assets/icons
+drwxr-xr-x vgpnk/vgpnk             115 2023-11-14 19:13 squashfs-root
+-rw-r--r-- vgpnk/vgpnk             148 2023-11-14 19:13 squashfs-root/README.txt
+drwxr-xr-x vgpnk/vgpnk              31 2023-11-14 19:13 squashfs-root/config
+-rw-r--r-- vgpnk/vgpnk              54 2023-11-14 19:13 squashfs-root/config/app.conf
+-rw-r--r-- vgpnk/vgpnk               0 2023-11-14 19:13 squashfs-root/empty.flag
+-rw-r--r-- vgpnk/vgpnk              34 2023-11-14 19:13 squashfs-root/notes with space.txt
+drwxr-xr-x vgpnk/vgpnk              28 2023-11-14 19:13 squashfs-root/usr
+drwxr-xr-x vgpnk/vgpnk              38 2023-11-14 19:13 squashfs-root/usr/share
+drwxr-xr-x vgpnk/vgpnk              95 2023-11-14 19:13 squashfs-root/usr/share/demo
+drwxr-xr-x vgpnk/vgpnk              49 2023-11-14 19:13 squashfs-root/usr/share/demo/assets

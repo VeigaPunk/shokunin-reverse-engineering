@@ -1,0 +1,256 @@
+{
+ "dev-carrier": {
+  "note": "dev carrier: abs-in(/hello.txt) kept+rewritten to hello.txt; dangle(missing.txt) kept; a/b/rel(../../hello.txt) kept; a/b/deep-up(../../../hello.txt) removed; a/b/updir(../..) was silently dropped by gen-squashfs.py (os.walk classifies a dir-target symlink as a directory)",
+  "rea_coverage": "partial",
+  "rea_diagnostics": [
+   {
+    "__typename__": "MaliciousSymlinkRemoved",
+    "link": "/tmp/rea-firmware-FnVRiI/extracted/firmware.bin_extract/a/b/deep-up",
+    "severity": "WARNING",
+    "target": "/tmp/rea-firmware-FnVRiI/extracted/hello.txt"
+   }
+  ],
+  "rea_evidence_id": "ev_9d4382e645112e51254df2e88084bb397bec93b78c783b6df8e51951af86b8c0",
+  "rea_files": [
+   "firmware.bin_extract/hello.txt"
+  ],
+  "rea_gap_kinds": [
+   "unpublished-entry",
+   "unpublished-entry",
+   "unpublished-entry"
+  ],
+  "rea_gap_paths": [
+   "firmware.bin_extract/a/b/rel",
+   "firmware.bin_extract/abs-in",
+   "firmware.bin_extract/dangle"
+  ],
+  "rea_unpublished_entries": [
+   {
+    "kind": "symlink",
+    "link_target": "../../hello.txt",
+    "relative_path": "firmware.bin_extract/a/b/rel"
+   },
+   {
+    "kind": "symlink",
+    "link_target": "hello.txt",
+    "relative_path": "firmware.bin_extract/abs-in"
+   },
+   {
+    "kind": "symlink",
+    "link_target": "missing.txt",
+    "relative_path": "firmware.bin_extract/dangle"
+   }
+  ],
+  "sha256": "186903e6679ab5b82ec3d54efc9f68768cb72c735df039273d8c3e0a79c72442",
+  "tree": [
+   "d dev/tree -> ",
+   "d dev/tree/a -> ",
+   "d dev/tree/a/b -> ",
+   "f dev/tree/hello.txt -> ",
+   "l dev/tree/a/b/deep-up -> ../../../hello.txt",
+   "l dev/tree/a/b/rel -> ../../hello.txt",
+   "l dev/tree/abs-in -> /hello.txt",
+   "l dev/tree/a/b/updir -> ../..",
+   "l dev/tree/dangle -> missing.txt"
+  ],
+  "unblob_reports": [
+   {
+    "kind": "MaliciousSymlinkRemoved",
+    "link": "/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/dev/u1/carrier.sqsh_extract/a/b/deep-up",
+    "target": "/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/dev/u1/hello.txt"
+   },
+   {
+    "kind": "kept-symlink",
+    "link_target": "hello.txt",
+    "path": "/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/dev/u1/carrier.sqsh_extract/abs-in"
+   },
+   {
+    "kind": "kept-symlink",
+    "link_target": "missing.txt",
+    "path": "/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/dev/u1/carrier.sqsh_extract/dangle"
+   },
+   {
+    "kind": "kept-symlink",
+    "link_target": "../../hello.txt",
+    "path": "/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/dev/u1/carrier.sqsh_extract/a/b/rel"
+   }
+  ]
+ },
+ "dev2-carrier": {
+  "note": "dev2: abs-up(/../out.txt) removed (absolute target is lstripped once, then .. escapes); sub/abs-in(/hello.txt) kept+rewritten to ../hello.txt; sub/up-one(../hello.txt) kept",
+  "sha256": "de5b51e55843fe697635046e870c9270d55764ead9df695932f7aac1d555d9cb",
+  "tree": [
+   "d dev2/tree -> ",
+   "d dev2/tree/sub -> ",
+   "f dev2/tree/hello.txt -> ",
+   "l dev2/tree/abs-up -> /../out.txt",
+   "l dev2/tree/sub/abs-in -> /hello.txt",
+   "l dev2/tree/sub/up-one -> ../hello.txt"
+  ],
+  "unblob_reports": [
+   {
+    "kind": "MaliciousSymlinkRemoved",
+    "link": "/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/dev2/u/carrier.sqsh_extract/abs-up",
+    "target": "../out.txt"
+   },
+   {
+    "kind": "kept-symlink",
+    "link_target": "../hello.txt",
+    "path": "/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/dev2/u/carrier.sqsh_extract/sub/abs-in"
+   },
+   {
+    "kind": "kept-symlink",
+    "link_target": "../hello.txt",
+    "path": "/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/dev2/u/carrier.sqsh_extract/sub/up-one"
+   }
+  ]
+ },
+ "dev3-loop-carrier": {
+  "note": "cycle: a->b, b->a, self->self. All kept, no MaliciousSymlinkRemoved; a was REWRITTEN to a->a. 4 unpublished entries, 4 gaps, coverage partial. Path.resolve() on the unblob venv python 3.13.16 returns the unresolved path, so is_recursive_link() never raises.",
+  "rea": {
+   "coverage": "partial",
+   "diagnostics": [],
+   "evidence_id": "ev_2493f2c24d23d41a94dc70379707c21a832d152bb16dbc6b50388efc90ef3c7c",
+   "files": [
+    "firmware.bin_extract/hello.txt"
+   ],
+   "gap_kinds": [
+    "unpublished-entry",
+    "unpublished-entry",
+    "unpublished-entry",
+    "unpublished-entry"
+   ],
+   "gap_paths": [
+    "firmware.bin_extract/a",
+    "firmware.bin_extract/b",
+    "firmware.bin_extract/ok",
+    "firmware.bin_extract/self"
+   ],
+   "unpublished_entries": [
+    {
+     "kind": "symlink",
+     "link_target": "a",
+     "relative_path": "firmware.bin_extract/a"
+    },
+    {
+     "kind": "symlink",
+     "link_target": "a",
+     "relative_path": "firmware.bin_extract/b"
+    },
+    {
+     "kind": "symlink",
+     "link_target": "hello.txt",
+     "relative_path": "firmware.bin_extract/ok"
+    },
+    {
+     "kind": "symlink",
+     "link_target": "self",
+     "relative_path": "firmware.bin_extract/self"
+    }
+   ]
+  },
+  "sha256": "d5255bcc26f54ae4ea12d09733097666a52ef825afcae9efa1ae9c731b35dcec",
+  "tree": [
+   "d dev3/tree -> ",
+   "f dev3/tree/hello.txt -> ",
+   "l dev3/tree/a -> b",
+   "l dev3/tree/b -> a",
+   "l dev3/tree/ok -> hello.txt",
+   "l dev3/tree/self -> self"
+  ],
+  "unblob_reports": [
+   {
+    "kind": "kept-symlink",
+    "link_target": "a",
+    "path": "a"
+   },
+   {
+    "kind": "kept-symlink",
+    "link_target": "self",
+    "path": "self"
+   },
+   {
+    "kind": "kept-symlink",
+    "link_target": "hello.txt",
+    "path": "ok"
+   },
+   {
+    "kind": "kept-symlink",
+    "link_target": "a",
+    "path": "b"
+   }
+  ]
+ },
+ "dev4-chain-carrier": {
+  "note": "chain: x->y, y->../outside.txt (both REMOVED, 2 diagnostics, 0 gaps for them); p->q, q->hello.txt (both kept, targets FLATTENED to hello.txt, 2 gaps). The one-step lexical class calls x in-tree; the receipt follows the chain.",
+  "rea": {
+   "coverage": "partial",
+   "diagnostics": [
+    "MaliciousSymlinkRemoved",
+    "MaliciousSymlinkRemoved"
+   ],
+   "evidence_id": "ev_4a57e09c2ad3e84bc1c410777a79db67a776e00068f0d013b2fbc24e5ccc970b",
+   "files": [
+    "firmware.bin_extract/hello.txt"
+   ],
+   "gap_kinds": [
+    "unpublished-entry",
+    "unpublished-entry"
+   ],
+   "gap_paths": [
+    "firmware.bin_extract/p",
+    "firmware.bin_extract/q"
+   ],
+   "unpublished_entries": [
+    {
+     "kind": "symlink",
+     "link_target": "hello.txt",
+     "relative_path": "firmware.bin_extract/p"
+    },
+    {
+     "kind": "symlink",
+     "link_target": "hello.txt",
+     "relative_path": "firmware.bin_extract/q"
+    }
+   ]
+  },
+  "sha256": "7e43200e91757077aa14a2b292dcc9d74b05aac90e96b9c8894fd192fc4d6b89",
+  "tree": [
+   "d dev4/tree -> ",
+   "f dev4/tree/hello.txt -> ",
+   "l dev4/tree/p -> q",
+   "l dev4/tree/q -> hello.txt",
+   "l dev4/tree/x -> y",
+   "l dev4/tree/y -> ../outside.txt"
+  ],
+  "unblob_reports": [
+   {
+    "kind": "MaliciousSymlinkRemoved",
+    "link": "x",
+    "target": "/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/dev4/u/outside.txt"
+   },
+   {
+    "kind": "MaliciousSymlinkRemoved",
+    "link": "y",
+    "target": "/fast/scratch/hyaku/kaidoku-r39/R39C1SymlinkK1K4/dev4/u/outside.txt"
+   },
+   {
+    "kind": "kept-symlink",
+    "link_target": "hello.txt",
+    "path": "p"
+   },
+   {
+    "kind": "kept-symlink",
+    "link_target": "hello.txt",
+    "path": "q"
+   }
+  ]
+ },
+ "python_loop_resolution": {
+  "Path(\"loop-link\").resolve()": "returns the unresolved path, no RuntimeError",
+  "os.path.realpath": "returns the unresolved path",
+  "unblob_interpreter": "python 3.13.16"
+ },
+ "rea_version": "6.5.0",
+ "unblob_version": "26.6.4"
+}

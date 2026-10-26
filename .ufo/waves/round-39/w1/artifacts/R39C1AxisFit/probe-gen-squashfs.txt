@@ -1,0 +1,23 @@
+# probe: tools/round-37/gen-squashfs.py TREE OUT --endian be --comp gzip
+## source tree (find -printf "%y %p -> %l")
+d t/dir -> 
+f t/dir/f.txt -> 
+f t/hello.txt -> 
+l t/abs -> /etc/passwd
+l t/dangling -> missing.txt
+l t/dir-link -> dir
+l t/esc -> ../outside.txt
+l t/in-tree -> hello.txt
+## build stdout
+wrote out-be.sqsh 522 bytes, inodes 8
+## image listing: sasquatch-v4be -be -ll
+Reading a different endian SQUASHFS filesystem on out-be.sqsh
+drwxr-xr-x vgpnk/vgpnk              96 2023-11-14 19:13 /fast/scratch/hyaku/kaidoku-r39/R39C1AxisFit/probe/ls
+lrwxrwxrwx vgpnk/vgpnk              11 2023-11-14 19:13 abs -> /etc/passwd
+lrwxrwxrwx vgpnk/vgpnk              11 2023-11-14 19:13 dangling -> missing.txt
+drwxr-xr-x vgpnk/vgpnk              28 2023-11-14 19:13 dir
+-rw-r--r-- vgpnk/vgpnk               7 2023-11-14 19:13 dir/f.txt
+lrwxrwxrwx vgpnk/vgpnk              14 2023-11-14 19:13 esc -> ../outside.txt
+-rw-r--r-- vgpnk/vgpnk               6 2023-11-14 19:13 hello.txt
+lrwxrwxrwx vgpnk/vgpnk               9 2023-11-14 19:13 in-tree -> hello.txt
+## verdict: dir-link (symlink whose target is a directory) is ABSENT from the built image; absolute target /etc/passwd is preserved verbatim

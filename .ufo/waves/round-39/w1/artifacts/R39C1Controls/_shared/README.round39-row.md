@@ -1,0 +1,1 @@
+| Big-endian SquashFS v4 through REA (round 39) | `{{STEM}}` | held (Core) — standard BE v4 on six frozen carriers; in-tree symlinks stay one `unpublished-entry` gap each, escaping symlinks are removed by unblob and record no gap |

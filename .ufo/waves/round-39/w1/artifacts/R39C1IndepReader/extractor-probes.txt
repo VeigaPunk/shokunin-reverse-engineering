@@ -1,0 +1,107 @@
+## unsquashfs 4.7.5 on the LE development fixtures
+A-le-gzip: exit 0 
+  extracted regular files: 6, reader rows: 6, IDENTICAL (path, sha256, size)
+  extractor kept symlinks: [('link-abs', '/a/exact.bin'), ('link-chain', 'link-same'), ('link-same', 'a/exact.bin'), ('link-up', '../outside.txt')]
+B-le-xz: exit 1 (Parallel unsquashfs: Using 32 processors)
+  partial output: [('x/one.txt', '2c8b08da5ce60398e1f19af0e5dccc744df274b826abe585eaba68c525434806', '4'), ('x/two.bin', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', '0')]
+D-le-mksq-gzip: exit 0 
+  extracted regular files: 6, reader rows: 6, IDENTICAL (path, sha256, size)
+  extractor kept symlinks: [('abs-link', '/big.bin'), ('loop', 'loop'), ('nested/link-in', '../nested/deep/file.txt'), ('nested/link-out', '../../outside.txt')]
+D-le-mksq-xz: exit 0 
+  extracted regular files: 6, reader rows: 6, IDENTICAL (path, sha256, size)
+  extractor kept symlinks: [('abs-link', '/big.bin'), ('loop', 'loop'), ('nested/link-in', '../nested/deep/file.txt'), ('nested/link-out', '../../outside.txt')]
+S-le-mksq-gzip: exit 0 
+  extracted regular files: 1, reader rows: 1, IDENTICAL (path, sha256, size)
+
+## sasquatch-v4be 4.5.1 (unblob BE extractor, -be)
+K1: exit 0 
+  extracted regular files: 5, reader rows: 5, IDENTICAL (path, sha256, size)
+  extractor kept symlinks: [('link-to-hello', '../hello.txt')]
+B-be-gzip: exit 0 
+  extracted regular files: 2, reader rows: 2, IDENTICAL (path, sha256, size)
+  extractor kept symlinks: [('abs', '/x/one.txt'), ('self', 'self'), ('up', '../../etc/passwd')]
+B-be-xz: exit 1 (Parallel unsquashfs: Using 1 processor)
+  note: on B-be-xz the generator wrote raw LZMA2 under compression id 2; sasquatch-v4be tries every decompressor and fails.
+
+## chain and loop fixture (built here with mksquashfs 4.7.5, LE gzip)
+mksquashfs exit 0
+reader exit 0
+reader classes: {'a': 'in-tree', 'b': 'in-tree', 'p': 'in-tree', 'q': 'in-tree', 'self': 'in-tree', 'x': 'escaping', 'y': 'escaping'}
+expected (chain-aware POSIX resolution, loop = kept): {'a': 'in-tree', 'b': 'in-tree', 'p': 'in-tree', 'q': 'in-tree', 'self': 'in-tree', 'x': 'escaping', 'y': 'escaping'}
+unblob exit 0
+unblob kept (post-rewrite targets): [('a', 'a'), ('b', 'a'), ('p', 'hello.txt'), ('q', 'hello.txt'), ('self', 'self')]
+unblob removed: ['x', 'y']
+kept set MATCHES, removed set MATCHES
+
+## unblob 26.6.4 (the engine REA 6.5.0 wraps)
+K1: exit 0
+  extracted regular files: 5, reader rows: 5, IDENTICAL (path, sha256, size)
+  kept by unblob:  []
+  reader in-tree:  []
+  MaliciousSymlinkRemoved: ['link-to-hello']
+  reader escaping: ['link-to-hello']
+  link link-to-hello -> ../hello.txt [escaping]
+  (unblob rewrites a kept absolute target relative to the link directory before writing it back; the reader reports the raw on-disk target.)
+K2: exit 0
+  extracted regular files: 3, reader rows: 3, IDENTICAL (path, sha256, size)
+  kept by unblob:  ['var/lib/run-link']
+  reader in-tree:  ['var/lib/run-link']
+  MaliciousSymlinkRemoved: []
+  reader escaping: []
+  link var/lib/run-link -> ../../a/run.sh [in-tree]
+  (unblob rewrites a kept absolute target relative to the link directory before writing it back; the reader reports the raw on-disk target.)
+K3: exit 0
+  extracted regular files: 4, reader rows: 4, IDENTICAL (path, sha256, size)
+  kept by unblob:  []
+  reader in-tree:  []
+  MaliciousSymlinkRemoved: []
+  reader escaping: []
+  (unblob rewrites a kept absolute target relative to the link directory before writing it back; the reader reports the raw on-disk target.)
+K4: exit 0
+  extracted regular files: 4, reader rows: 4, IDENTICAL (path, sha256, size)
+  kept by unblob:  []
+  reader in-tree:  []
+  MaliciousSymlinkRemoved: []
+  reader escaping: []
+  (unblob rewrites a kept absolute target relative to the link directory before writing it back; the reader reports the raw on-disk target.)
+A-le-gzip: exit 0
+  extracted regular files: 6, reader rows: 6, IDENTICAL (path, sha256, size)
+  kept by unblob:  ['link-abs', 'link-chain', 'link-same']
+  reader in-tree:  ['link-abs', 'link-chain', 'link-same']
+  MaliciousSymlinkRemoved: ['link-up']
+  reader escaping: ['link-up']
+  link link-abs -> /a/exact.bin [in-tree]
+  link link-chain -> link-same [in-tree]
+  link link-same -> a/exact.bin [in-tree]
+  link link-up -> ../outside.txt [escaping]
+  (unblob rewrites a kept absolute target relative to the link directory before writing it back; the reader reports the raw on-disk target.)
+B-be-gzip: exit 0
+  extracted regular files: 2, reader rows: 2, IDENTICAL (path, sha256, size)
+  kept by unblob:  ['abs', 'self']
+  reader in-tree:  ['abs', 'self']
+  MaliciousSymlinkRemoved: ['up']
+  reader escaping: ['up']
+  link abs -> /x/one.txt [in-tree]
+  link self -> self [in-tree]
+  link up -> ../../etc/passwd [escaping]
+  (unblob rewrites a kept absolute target relative to the link directory before writing it back; the reader reports the raw on-disk target.)
+D-le-mksq-gzip: exit 0
+  extracted regular files: 6, reader rows: 6, IDENTICAL (path, sha256, size)
+  kept by unblob:  ['abs-link', 'loop', 'nested/link-in']
+  reader in-tree:  ['abs-link', 'loop', 'nested/link-in']
+  MaliciousSymlinkRemoved: ['nested/link-out']
+  reader escaping: ['nested/link-out']
+  link abs-link -> /big.bin [in-tree]
+  link loop -> loop [in-tree]
+  link nested/link-in -> ../nested/deep/file.txt [in-tree]
+  link nested/link-out -> ../../outside.txt [escaping]
+  (unblob rewrites a kept absolute target relative to the link directory before writing it back; the reader reports the raw on-disk target.)
+S-le-mksq-gzip: exit 0
+  extracted regular files: 1, reader rows: 1, IDENTICAL (path, sha256, size)
+  kept by unblob:  []
+  reader in-tree:  []
+  MaliciousSymlinkRemoved: []
+  reader escaping: []
+  (unblob rewrites a kept absolute target relative to the link directory before writing it back; the reader reports the raw on-disk target.)
+
+verdict: EVERY EXTRACTOR AGREES

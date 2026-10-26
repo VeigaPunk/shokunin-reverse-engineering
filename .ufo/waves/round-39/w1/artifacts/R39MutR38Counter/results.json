@@ -1,0 +1,451 @@
+{
+ "baseline": {
+  "selftest": {
+   "rc": 0,
+   "cases": 15,
+   "green_ok": 1,
+   "red_ok": 14,
+   "failures": []
+  },
+  "rev": {
+   "rc": 1,
+   "met_target": false,
+   "carriers_matched": 3,
+   "note": "correct honest-stop red: K2 extraction_gaps=[unpublished-entry .../var/lib/run-link]; PROVINCE.md at 7e979514 has no '## Round-38 additions to Core' section (BE stayed Frontier)"
+  },
+  "detector_working": true
+ },
+ "scoring_command": "python3 <mutant>.py --root <lane> --rev 7e97951460647e4fc39542b7a4f0255b5bf1af17 --freeze e059ca9391642d5b71b6662cabcbdce0d9308719 --pkg65 ~/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents",
+ "xpin_columns": "f[0]=path f[1]=stored evidence_id f[2]=id recomputed under 6.5.0 pin f[3]=id67 f[4]=attribution; counter uses (f[1],f[2]) so ev[key][0]==ev[key][1] means stored id == recomputed id (receipt honesty), not pkg65==pkg67",
+ "mutants": [
+  {
+   "mutant": "M01_gap_allow_one",
+   "sha12": null,
+   "clause": "gap clause",
+   "change": "after_gaps_empty: gaps(env)==[] -> len(gaps(env))<2",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 4,
+    "deltas_vs_pristine": [
+     "carriers_matched 3->4",
+     "K2.after_gaps_empty False->True",
+     "K2.matched False->True"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "gap clause has no isolated selftest kill (C1 proves the red case is held up only by the evidence-id clause); on real REV data the mutant flips K2 matched -> carriers 3->4, i.e. the clause is what rejects K2's real unpublished-entry honest-stop receipt"
+  },
+  {
+   "mutant": "M02_gap_check_dropped",
+   "sha12": null,
+   "clause": "gap clause",
+   "change": "ok-conjunction: dropped 'and d.get(after_gaps_empty)'",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 4,
+    "deltas_vs_pristine": [
+     "carriers_matched 3->4",
+     "K2.matched False->True"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "same as M01; REV delta carriers 3->4"
+  },
+  {
+   "mutant": "M03_oracle_path_only",
+   "sha12": null,
+   "clause": "oracle-match clause",
+   "change": "matched(): dropped 'sha == fs' (path-only match)",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "no selftest red case publishes a right-path/wrong-sha file; no REV delta (real receipts match sha anyway)"
+  },
+  {
+   "mutant": "M04_oracle_exact_path",
+   "sha12": null,
+   "clause": "oracle-match clause",
+   "change": "matched(): dropped \"fp.endswith('/'+rel)\" tolerance",
+   "selftest": {
+    "rc": 1,
+    "green_ok": 0,
+    "red_ok": 14,
+    "failures": [
+     "green: want 0 got 1"
+    ]
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 0,
+    "deltas_vs_pristine": [
+     "carriers_matched 3->0",
+     "K1.after_oracle_hits 5->0",
+     "K1.matched True->False",
+     "K2.after_oracle_hits 3->0",
+     "K3.after_oracle_hits 4->0",
+     "K3.matched True->False",
+     "K4.after_oracle_hits 4->0",
+     "K4.matched True->False"
+    ]
+   },
+   "verdict": "KILLED",
+   "reading": "selftest green case kills it (dev published paths are nested); at REV hits drop to 0/5,0/3,0/4,0/4 -> carriers 3->0: the prefix tolerance is load-bearing on real REA layouts"
+  },
+  {
+   "mutant": "M05_oracle_any_hit",
+   "sha12": null,
+   "clause": "oracle-match clause",
+   "change": "ok-conjunction: hits==oracle_files -> (hits or 0)>0",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "no red case has a partial oracle match; no REV delta"
+  },
+  {
+   "mutant": "M06_handler_any_squashfs",
+   "sha12": null,
+   "clause": "handler clause",
+   "change": "after_handler_ok: HANDLER in handlers -> any 'squashfs' in handler",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "LE red case stays red only via evidence-id side channel (DBG07: K3 after_handler_ok=true, after_evidence_id_ok=false); handler clause itself has zero isolated coverage"
+  },
+  {
+   "mutant": "M07_handler_any_present",
+   "sha12": null,
+   "clause": "handler clause",
+   "change": "after_handler_ok -> len(chunks)>0",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "same as M06; C2 composite flips the LE case green"
+  },
+  {
+   "mutant": "M08_evid_drop_pkg_eq",
+   "sha12": null,
+   "clause": "evidence-id recompute",
+   "change": "after_evidence_id_ok: dropped stored==recomputed (f[1]==f[2])",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "the stored-id honesty check has no negative selftest case; biggest gap because this clause is what masks handler/gap mutants"
+  },
+  {
+   "mutant": "M09_evid_drop_prefix",
+   "sha12": null,
+   "clause": "evidence-id recompute",
+   "change": "dropped startswith('ev_')",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED (equivalent-in-practice)",
+   "reading": "with the freeze xpin pin, recomputed ids are always ev_*, so stored==recomputed implies ev_ prefix; unkillable without mocking xpin"
+  },
+  {
+   "mutant": "M10_evid_either",
+   "sha12": null,
+   "clause": "evidence-id recompute",
+   "change": "== -> (== or startswith)",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "killed by a tampered-stored-id red case, which does not exist yet"
+  },
+  {
+   "mutant": "M11_note_superseded_only",
+   "sha12": null,
+   "clause": "bindings (frontier_note)",
+   "change": "'big-endian' in l and 'superseded' in l -> 'superseded' in l",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "no near-miss note fixture; no REV delta (real note has both words)"
+  },
+  {
+   "mutant": "M12_sources_pad_short_rows",
+   "sha12": null,
+   "clause": "bindings (SOURCES row shape)",
+   "change": "len(c)!=11 skip -> pad short rows with ''",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED (equivalent mutant)",
+   "reading": "padded rows get c[8]=''/c[10]='' and can never satisfy opened+used-by, so behavior is identical on all inputs; not a test gap"
+  },
+  {
+   "mutant": "M13_bind_drop_entry_present",
+   "sha12": null,
+   "clause": "bindings (entry_present)",
+   "change": "dropped 'entry_present' from bind_ok",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "redundant-with-sourced today; one removed-ENTRY-but-SOURCES-claims case makes it independent"
+  },
+  {
+   "mutant": "M14_provrow_drop_entry",
+   "sha12": null,
+   "clause": "bindings (province_core_row)",
+   "change": "dropped 'and ENTRY in r'",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "no fixture pairs a handler cell with a wrong entry path; no REV delta (no Core row exists at REV)"
+  },
+  {
+   "mutant": "M15_sid_any_digits",
+   "sha12": null,
+   "clause": "S-id token match",
+   "change": "S\\d{3,} -> S\\d+",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "no short-id fixture (e.g. entry 'source: S7' + registry S7)"
+  },
+  {
+   "mutant": "M16_sid_drop_tail_bound",
+   "sha12": null,
+   "clause": "S-id token match",
+   "change": "dropped (?![0-9A-Za-z])",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "S1120 case matches greedily either way; needs a glued-token fixture (S1123a)"
+  },
+  {
+   "mutant": "M17_sid_drop_head_bound",
+   "sha12": null,
+   "clause": "S-id token match",
+   "change": "dropped (?<![0-9A-Za-z])",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "needs a leading-junk fixture (XS112)"
+  },
+  {
+   "mutant": "M18_sid_exactly_three",
+   "sha12": null,
+   "clause": "S-id token match",
+   "change": "S\\d{3,} -> S\\d{3}",
+   "selftest": {
+    "rc": 0,
+    "green_ok": 1,
+    "red_ok": 14,
+    "failures": []
+   },
+   "rev_7e979514": {
+    "rc": 1,
+    "met_target": false,
+    "carriers_matched": 3,
+    "deltas_vs_pristine": [
+     "NO DELTA"
+    ]
+   },
+   "verdict": "SURVIVED",
+   "reading": "the S1120 case is red under both (registry has S112, not S1120); needs a green case citing a 4-digit id whose registry row exists"
+  }
+ ],
+ "composites": [
+  {
+   "name": "C1_gap_plus_evid",
+   "selftest_failures": [
+    "extraction gap present: want 1 got 0"
+   ],
+   "proves": "gap red case is held up solely by the evidence-id clause"
+  },
+  {
+   "name": "C2_handler_plus_evid",
+   "selftest_failures": [
+    "wrong chunk handler (LE): want 1 got 0"
+   ],
+   "proves": "LE-handler red case is held up solely by the evidence-id clause"
+  }
+ ],
+ "restoration": {
+  "lane_tools_round38_clean": true,
+  "lane_counter_sha256": "a7a62b098709035607375078a12d2668bb6d36bbabfc5a7459f04d00a9516db8",
+  "mutants_lived_in_scratch_only": true
+ }
+}

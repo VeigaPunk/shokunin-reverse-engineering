@@ -1,0 +1,53 @@
+# cited source excerpts (exact lines, generated 2026-10-26T16:44:43Z)
+## unblob /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py
+25:    EXECUTABLE = "sasquatch"
+26:    V4BE_EXECUTABLE = "sasquatch-v4be"
+37:        executable = self.EXECUTABLE
+41:                executable = self.V4BE_EXECUTABLE
+48:                    is_avm = header.bytes_used == header.mkfs_time
+49:                    if not is_avm:
+68:    def get_dependencies(self) -> list[str]:
+69:        return [self.EXECUTABLE, self.V4BE_EXECUTABLE]
+## unblob extractor.py symlink sanitiser
+9:from .file_utils import carve, is_safe_path
+11:from .report import MaliciousSymlinkRemoved
+42:def is_recursive_link(path: Path) -> bool:
+50:def fix_symlink(path: Path, outdir: Path, task_result: TaskResult) -> Path:
+60:        error_report = MaliciousSymlinkRemoved(
+67:    raw_target = os.readlink(path)  # noqa: PTH115
+68:    if not raw_target:
+73:    target = Path(raw_target)
+79:    safe = is_safe_path(outdir, target)
+83:        error_report = MaliciousSymlinkRemoved(
+91:        path.symlink_to(relative_target)
+## unblob extractors/command.py
+11:    ExtractorDependencyNotFoundReport,
+25:class Command(Extractor):
+69:        except FileNotFoundError:
+70:            error_report = ExtractorDependencyNotFoundReport(
+101:    def get_dependencies(self) -> list[str]:
+102:        return [self._executable]
+112:    def get_dependencies(self) -> list[str]:
+## unblob report.py
+118:class ExtractorDependencyNotFoundReport(ErrorReport):
+133:class MaliciousSymlinkRemoved(ErrorReport):
+## rea-agents 6.5.0 gap derivation (dist/cli-runtime/cli.js)
+14053:var GAP_CONTINUATIONS, UNNAMED_DEPENDENCY_CONTINUATION, MAX_EXTRACTION_DEPTH, depthContinuation, nestedUnknownContinuation, emptyGap, gapSortKey, publishFirmwareExtraction, dependencyExtractionGaps, extractionGaps;
+14064:		GAP_CONTINUATIONS = {
+14074:		depthContinuation = (maxDepth, publishedChildPaths) => maxDepth < MAX_EXTRACTION_DEPTH ? GAP_CONTINUATIONS["depth-limited"] : publishedChildPaths.length > 0 ? `This extraction already ran at the lane's maximum depth. To continue, rerun extract_firmware with path set to any eligible published child below this path and a fresh output directory; each child listed here restarts the depth budget: ${publishedChildPaths.map((path) => JSON.stringify(path)).join(", ")}.` : `This extraction already ran at the lane's maximum depth, and no published child under this path is both nonempty and within the ${FIRMWARE_LIMITS.inputBytes}-byte firmware input limit, so the depth budget cannot be restarted from this output. Treat the region below this path as unexamined.`;
+14189:						continuation_id: continuation(dependencies.length > 0 ? GAP_CONTINUATIONS["missing-extractor-dependency"] : UNNAMED_DEPENDENCY_CONTINUATION)
+14199:					continuation_id: continuation(dependencies.length > 0 ? GAP_CONTINUATIONS["missing-extractor-dependency"] : UNNAMED_DEPENDENCY_CONTINUATION)
+14206:					continuation_id: continuation(dependencies.length > 0 ? GAP_CONTINUATIONS["missing-extractor-dependency"] : UNNAMED_DEPENDENCY_CONTINUATION)
+14233:				continuation_id: kind === "unknown-chunk-handler" && chunk.input_path.startsWith("$output/") ? nestedContinuationId(chunk.input_path) : continuation(GAP_CONTINUATIONS[kind])
+14269:				...chunkGaps("unknown-chunk-handler", (chunk) => chunk.handler === null),
+## rea-agents 6.5.0 gap-kind enum (dist/domain/firmware/firmwareAnalysis.js)
+85:        "missing-extractor-dependency",
+90:        "unpublished-entry",
+139:            kind: z.enum(["symlink", "special"]),
+14068:			"extractor-failure": "The producer retained this chunk's extraction problem in diagnostics. Review the reported failure, then rerun extract_firmware on the same immutable input with a fresh output_directory; the region is not decoded content.",
+14235:			const dependencyChunkKeys = new Set(normalized.chunk_missing_dependencies.map(({ input_path, provider_id }) => JSON.stringify([input_path, provider_id])));
+14260:				...normalized.failed_extraction_stages.filter(({ kind }) => kind === "extractor-failure").map(({ input_path, provider_id, handler }) => ({
+14261:					kind: "extractor-failure",
+14271:				...chunkGaps("extractor-failure", (chunk) => chunk.extraction_failed === true && chunk.handler !== null && chunk.encrypted !== true && !dependencyChunkKeys.has(JSON.stringify([chunk.input_path, chunk.provider_id]))),
+14769:							kind: "extractor-failure"
+14823:								kind: dependencies === null ? "extractor-failure" : "missing-extractor-dependency"

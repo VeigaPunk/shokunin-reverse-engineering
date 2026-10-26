@@ -1,0 +1,32 @@
+==== routed-ledger --selftest
+VERDICT complete=3/3
+VERDICT missing=2/3 ['R41-CL2', 'R41-CL3']
+selftest green(complete) rc=0 (want 0)
+selftest red(dropped)   rc=1 (want 1)
+selftest PASS
+exit=0
+
+==== wave-checkpoint --selftest
+VERDICT checkpoint_ok reports=2
+VERDICT checkpoint_incomplete missing_reports=1
+selftest green(committed wave) rc=0 (want 0)
+selftest red(lost report)      rc=1 (want 1)
+selftest PASS
+exit=0
+
+==== context-rules --selftest
+VERDICT good.json complete
+VERDICT bad.json missing=['scratch-no-find-du']
+selftest green(all rules)   rc=0 (want 0)
+selftest red(missing rule)  rc=1 (want 1)
+selftest PASS
+exit=0
+
+==== control-bind --selftest
+VERDICT controls_bound=1/1
+VERDICT controls_unbound=1/2
+selftest green(bound control)   rc=0 (want 0)
+selftest red(unbound control)   rc=1 (want 1)
+selftest PASS
+exit=0
+

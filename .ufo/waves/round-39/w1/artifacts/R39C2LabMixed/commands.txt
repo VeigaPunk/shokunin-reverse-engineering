@@ -1,0 +1,30 @@
+# R39C2LabMixed dev-run commands (round 39 wave 1)
+# lane: /home/vgpnk/Projects/shokunin/kaidoku-shokunin  base a2f64e1da78afcf8cc39287106604dbcc270844c (read-only)
+# scratch: /fast/scratch/hyaku/kaidoku-r39/R39C2LabMixed (removed at end; carriers/envelopes copied to this artifacts dir)
+
+## versions
+python3: Python 3.14.8
+unblob: 26.6.4
+rea-agents: 6.5.0
+sasquatch-v4be: unsquashfs version 4.5.1 (2022/03/17)
+
+## build (per carrier, tree authored by make-dev-carriers.py)
+python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C2LabMixed/make-dev-carriers.py /home/vgpnk/Projects/shokunin/kaidoku-shokunin /fast/scratch/hyaku/kaidoku-r39/R39C2LabMixed
+# template: python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-37/gen-squashfs.py <TREE> <OUT> --endian be --comp gzip
+
+## REA (each carrier x2, fresh output dir, TMPDIR=$S)
+cd "$S" && TMPDIR="$S" REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output images/<CARRIER>.sqsh out-<CARRIER>-<a|b>/run > env-<CARRIER>-<a|b>.json
+
+## grammar exercise
+python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C2LabMixed/sqfs-triage.py --skill /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C2LabMixed/SKILL-fixture.md --table-only
+python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C2LabMixed/sqfs-triage.py --skill /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C2LabMixed/SKILL-fixture.md envelopes/*.json
+
+## artifact checksums
+1c7c5e88324d64ad5935e81f205a609a8361466e5aea9ba461575f4e01ba8dd5  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-37/gen-squashfs.py
+2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287  /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py
+1bb498119429ed80ae29caf9772d2b6210c22b6a8a2c8beb6cfea94550bcd23a  /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/extractor.py
+feb59a14e9a622f3432981cee7d25e85172324c341f6931b00fc23f3aa1537ca  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-38/w2/artifacts/R38W2AvmProbe/rea-k1-avm.json
+3dab103ba27e15a3305b1b43bcb9684a6637cf9deabbb6a74ff0b57a04a91d4e  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-38/c1/K1/after.json
+
+## note
+# no package installs/updates were performed in this seat; sasquatch/sasquatch-v4be/unblob were used as installed and never moved.

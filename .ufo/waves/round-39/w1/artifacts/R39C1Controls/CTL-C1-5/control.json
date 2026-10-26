@@ -1,0 +1,28 @@
+{
+ "control": "CTL-C1-5",
+ "title": "receipts (and docs) added in the freeze commit itself",
+ "shortcut": "The bytes of CTL-C1-3 are committed together with the frozen carriers.json, counter, predicate and oracle, i.e. the after.json first appears in the freeze commit, not in a commit that descends from it. Everything else is identical and green.",
+ "overlay_static": [
+  "corpus/evidence/round-39/c1/K1/after.json",
+  "corpus/evidence/round-39/c1/K2/after.json",
+  "corpus/evidence/round-39/c1/K3/after.json",
+  "corpus/evidence/round-39/c1/K4/after.json"
+ ],
+ "generate": {"mode": "forge-remint", "ids": ["K5", "K6"]},
+ "docs": ["core", "frontier", "sources", "readme", "entry"],
+ "entry": "corpus/knowledge/2026-10-26-r39-sasquatch-be-squashfs-promotion.md",
+ "commit": {"mode": "in-freeze", "split": ["freeze"], "commits": [
+  "round-39 freeze (CTL-C1-5): counter, predicate, carriers, oracle, receipts, docs"
+ ]},
+ "measured_rev": "the freeze commit itself",
+ "expected": {
+  "exit": 1,
+  "met_target": false,
+  "carriers_matched": "0",
+  "refusing_binding": "first add of every after.json MUST be a commit that strictly descends from the freeze (add_commit != freeze and freeze is an ancestor of add_commit)",
+  "per_carrier": "subject pin, handler, files, gaps, evidence id and every documentation binding pass at the freeze revision; only the strict-descendant rule refuses",
+  "isolates": "ancestry strictness; a counter that tests merge-base --is-ancestor freeze add_commit without add_commit != freeze returns 0 for the freeze commit and passes this control",
+  "note": "a stronger sibling variant commits the receipts in the freeze's parent commit; it defeats a strict-descendant check only if the counter does not also require freeze < add_commit"
+ },
+ "defeat_risk": "medium-high - ancestry checks are usually written non-strict"
+}

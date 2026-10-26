@@ -1,0 +1,45 @@
+### D0 selftest
+VERDICT good.json complete
+VERDICT bad.json missing=['scratch-no-find-du']
+selftest green(all rules)   rc=0 (want 0)
+selftest red(missing rule)  rc=1 (want 1)
+selftest PASS
+exit=0
+
+### D1 rule scratch-no-find-du across r36->r39 specs
+spec .ufo/waves/round-36/w2-spec.json (3664 B)
+  scratch-no-find-du: present
+VERDICT w2-spec.json complete
+spec .ufo/waves/round-38/w1-spec.json (3869 B)
+  scratch-no-find-du: ABSENT
+VERDICT w1-spec.json missing=['scratch-no-find-du']
+spec .ufo/waves/round-38/w2-spec.json (5041 B)
+  scratch-no-find-du: ABSENT
+VERDICT w2-spec.json missing=['scratch-no-find-du']
+spec .ufo/waves/round-39/w1-spec.json (4995 B)
+  scratch-no-find-du: ABSENT
+VERDICT w1-spec.json missing=['scratch-no-find-du']
+exit=1
+
+### D2 rule unblob-cd-scratch across the same specs
+spec .ufo/waves/round-36/w2-spec.json (3664 B)
+  unblob-cd-scratch: ABSENT
+VERDICT w2-spec.json missing=['unblob-cd-scratch']
+spec .ufo/waves/round-38/w1-spec.json (3869 B)
+  unblob-cd-scratch: ABSENT
+VERDICT w1-spec.json missing=['unblob-cd-scratch']
+spec .ufo/waves/round-38/w2-spec.json (5041 B)
+  unblob-cd-scratch: ABSENT
+VERDICT w2-spec.json missing=['unblob-cd-scratch']
+spec .ufo/waves/round-39/w1-spec.json (4995 B)
+  unblob-cd-scratch: present
+VERDICT w1-spec.json complete
+exit=1
+
+### D3 all three rules, round-39 wave 1 (live)
+spec .ufo/waves/round-39/w1-spec.json (4995 B)
+  scratch-no-find-du: ABSENT
+  unblob-cd-scratch: present
+  tmpdir-pinned: present
+VERDICT w1-spec.json missing=['scratch-no-find-du']
+exit=1

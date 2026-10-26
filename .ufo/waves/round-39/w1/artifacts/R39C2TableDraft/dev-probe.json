@@ -1,0 +1,75 @@
+{
+  "probe": "R39C2TableDraft dev carriers for the SquashFS outcome triage table (pre-freeze, development only)",
+  "dated": "2026-10-26",
+  "tools": {
+    "rea_agents": "6.5.0",
+    "unblob": "26.6.4",
+    "sasquatch_v4be": "4.5.1 (~/.local/bin/sasquatch-v4be)"
+  },
+  "tree": "fresh four-file tree: hello.txt (17 B), bin/run.sh (19 B), docs/readme.md (9 B), docs/deep/nested/file.dat (9000 B)",
+  "gen_command": "python3 -I -B tools/round-37/gen-squashfs.py tree dev-clean.sqsh --endian be --comp gzip",
+  "carriers": {
+    "dev-clean": {
+      "path": "dev-clean.sqsh",
+      "bytes": 1542,
+      "sha256": "9ac4e80743e6ec66534b874d7a81c9d3b07a2bbc8dca6653e83c665ea23caefc"
+    },
+    "dev-corrupt": {
+      "path": "dev-corrupt.sqsh",
+      "bytes": 1542,
+      "sha256": "c19b10ded866e211d7c412492c0c44af7caf502a9734d6abf99ab76ce2d47dca",
+      "damage": "bytes 942-1342 overwritten with 0xff before bytes_used (1542); superblock intact, mkfs_time 1700000000 != bytes_used, so no AVM marker"
+    }
+  },
+  "envelopes": {
+    "dev-clean": {
+      "input": "dev-clean.sqsh",
+      "evidence_id": "ev_99947d1e752836838995c18dfdb6e02cdfea7abe1f27c7a22a2beddf8d9ca088",
+      "handler": [
+        "squashfs_v4_be"
+      ],
+      "chunk_extraction_failed": [
+        false
+      ],
+      "gap_kinds": [],
+      "gap_dependencies": [],
+      "diagnostics": [],
+      "recorded_command": [],
+      "published_files": 4,
+      "published_relative_paths": [
+        "firmware.bin_extract/bin/run.sh",
+        "firmware.bin_extract/docs/deep/nested/file.dat",
+        "firmware.bin_extract/docs/readme.md",
+        "firmware.bin_extract/hello.txt"
+      ],
+      "subject_digest_sha256": "9ac4e80743e6ec66534b874d7a81c9d3b07a2bbc8dca6653e83c665ea23caefc",
+      "parameter_path": "/fast/scratch/hyaku/kaidoku-r39/R39C2TableDraft/dev-clean.sqsh",
+      "envelope_file": "rea-dev-clean.envelope.json"
+    },
+    "dev-corrupt": {
+      "input": "dev-corrupt.sqsh",
+      "evidence_id": "ev_400f9ff3b39fa895e855f65c870db1512c9552f4fc562ed9293c490fc35feab5",
+      "handler": [
+        "squashfs_v4_be"
+      ],
+      "chunk_extraction_failed": [
+        true
+      ],
+      "gap_kinds": [
+        "extractor-failure"
+      ],
+      "gap_dependencies": [],
+      "diagnostics": [
+        "ExtractCommandFailedReport"
+      ],
+      "recorded_command": [
+        "sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r39/R39C2TableDraft/rea-firmware-WTZwy1/extracted/firmware.bin_extract /fast/scratch/hyaku/kaidoku-r39/R39C2TableDraft/rea-firmware-WTZwy1/firmware.bin"
+      ],
+      "published_files": 0,
+      "published_relative_paths": [],
+      "subject_digest_sha256": "c19b10ded866e211d7c412492c0c44af7caf502a9734d6abf99ab76ce2d47dca",
+      "parameter_path": "/fast/scratch/hyaku/kaidoku-r39/R39C2TableDraft/dev-corrupt.sqsh",
+      "envelope_file": "rea-dev-corrupt.envelope.json"
+    }
+  }
+}

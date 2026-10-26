@@ -1,0 +1,51 @@
+# AVM-branch ground, re-derived on dev carriers built this wave
+# generator: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-37/gen-squashfs.py
+# tree: hello.txt, docs/a.txt, docs/b.txt   carriers: --endian be|avm --comp gzip
+
+## header fields
+be.sqsh	size=382	magic=b'sqsh'	mkfs_time=1700000000	bytes_used=382	is_avm=False	sha256=45a14a939b0314f9e9a76dec5d1da97d4cff6760b3a8b397fd737b30a0e6e61f
+avm.sqsh	size=382	magic=b'sqsh'	mkfs_time=382	bytes_used=382	is_avm=True	sha256=d37cd95db86ca3d85d01a63f17e8ed4e8817fde218111619708469ea41407f38
+
+## direct sasquatch-v4be (4.5.1), both flag states
+carrier=be.sqsh flag=-be files=3 stderr1=Reading a different endian SQUASHFS filesystem on /fast/scratch/hyaku/kaidoku-r39/R39CL1Correction/be.sqsh
+carrier=be.sqsh flag=<none> files=0 stderr1=SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess
+carrier=avm.sqsh flag=-be files=3 stderr1=Reading a different endian SQUASHFS filesystem on /fast/scratch/hyaku/kaidoku-r39/R39CL1Correction/avm.sqsh
+carrier=avm.sqsh flag=<none> files=0 stderr1=SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess
+
+## unblob 26.6.4 child argv, from unblob.log (FS-access-restricted child)
+2026-10-26 16:42.32 [debug    ] Running extract command        command='sasquatch-v4be -be -no-exit-code -f -d run-be/ext/be.sqsh_extract run-be/be.sqsh' pid=925861
+2026-10-26 16:42.34 [debug    ] Running extract command        command='sasquatch-v4be -no-exit-code -f -d run-avm/ext/avm.sqsh_extract run-avm/avm.sqsh' pid=952717
+2026-10-26 16:42.34 [error    ] Extract command failed         __typename__=ExtractCommandFailedReport command='sasquatch-v4be -no-exit-code -f -d run-avm/ext/avm.sqsh_extract run-avm/avm.sqsh' exit_code=0x1 pid=952717 severity=<Severity.WARNING: 'WARNING'> stderr=U3F1YXNoRlMgdmVyc2lvbiBbMTAyNC4wXSA
+
+## files unblob published
+run-be/ext/be.sqsh_extract/docs/a.txt
+run-be/ext/be.sqsh_extract/docs/b.txt
+run-be/ext/be.sqsh_extract/hello.txt
+avm: 0 files
+
+## REA extract-firmware envelopes (CLI, fresh outdirs)
+carrier=be.sqsh exit=0
+  files=3 diagnostics=[] gaps=0
+carrier=avm.sqsh exit=0
+  files=0 diagnostics=["ExtractCommandFailedReport"] gaps=1
+  gap kind=extractor-failure handler=squashfs_v4_be range=0+382
+  child stderr: SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess
+  child stderr: read_id_table: failed to read id table block
+  child stderr: FATAL ERROR: File system corruption detected
+
+## pinned handler, 26.6.4 (installed copy = tag = main today)
+
+        match endian, self.version:
+            case Endian.BIG, 4:
+                executable = self.V4BE_EXECUTABLE
+                struct_parser = StructParser(SquashFSv4LEHandler.C_DEFINITIONS)
+                with File.from_path(inpath) as f:
+                    header = struct_parser.parse(
+                        SquashFSv4LEHandler.HEADER_STRUCT, f, Endian.BIG
+                    )
+                    # see https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt
+                    is_avm = header.bytes_used == header.mkfs_time
+                    if not is_avm:
+                        commands_args.append("-be")
+            case Endian.BIG, _:
+                commands_args.append("-be")
