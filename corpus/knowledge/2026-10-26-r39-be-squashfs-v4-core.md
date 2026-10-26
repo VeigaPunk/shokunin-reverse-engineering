@@ -38,6 +38,7 @@ in-tree link; the right test is "gaps equal the in-tree link set" (round 38's st
 **Preconditions and failure signatures.** Without `sasquatch-v4be` on the child `PATH`, K1–K4
 publish nothing (no K5/K6 before-arm was run) and carry `missing-extractor-dependency` naming `sasquatch-v4be` (round-38 before-arms).
 An image whose `mkfs_time` equals `bytes_used` loses `-be` and fails; see the triage entry above.
+[2026-10-26, round 40: true only for a standard-BE body carrying the marker; a genuine AVM-layout body extracts without `-be` — `corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md`, **Correction**.]
 
 **Limits.** Six carriers, four written by this lane's own generator (no third-party BE v4 writer is
 available; `mksquashfs` writes LE only) and two from unblob's test suite. A receipt-only counter cannot
