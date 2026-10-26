@@ -106,3 +106,29 @@ Main approved the stop under the frozen kill rule. This is the **third straight 
 `w1/RevDecisionTable.md` finds five wrong single-field Ehdr line locators in `FINDINGS`/the detailed JSON (full struct range and scalar bounds correct), inconsistent `malformed` versus `unsupported` classification for three profile exclusions, and multi-fault corners that do not follow the declared precedence array. The parser's full tie-break is `(name,other,flags,hash)`; the finite counter forbids duplicate `(name,other)` pairs, so this did not affect its admissible record shape. These findings are marked, not silently repaired in frozen code or approved text. The reopened S103/S104 field layouts remain separately supported; full instrument-table conformance is not asserted.
 
 An executor's optional process-memory side-channel probe exceeded the no-reader replay assignment. Its code/raw records and procedural details are excluded before shipping; only a high-level exclusion/hash record is retained (`w1/CtlNoReader-files/EXCLUSIONS.txt`). No result from it supports any claim, and it was not rerun. This is a scope/safety exclusion, not a provider-policy hold or a replacement/reroute. The five ordinary no-reader controls remain bounded evidence. The decisive fixed-slice control is independent and was already landed.
+
+## Corrections appended — round 36
+
+- **D-2 (seat accounting): the final wave-2 count is 31/32, not 32/32.** Re-measured at lane
+  `d2e46ef5e2b2e8ba681b2fa55d50f298c4c4b8be` (2026-10-26): `jq 'length'
+  .ufo/waves/round-34/r34b/w2-seat-map.json` = 32 (the map was repaired by `35152484`), `ls
+  .ufo/waves/round-34/r34b/w2/*.md | wc -l` = 31, and the set difference is `AAdjacencyCite` — its prompt
+  `.ufo/waves/round-34/r34b/w2/prompts/AAdjacencyCite.md` is committed (2848 bytes, from `66b84027`), no
+  `.ufo/waves/round-34/r34b/w2/AAdjacencyCite.md` exists, and `w2/AWaveAccounting.md:81` records its scratch
+  directory as empty and removed. Wave 1 is 34/34 (`ls .ufo/waves/round-34/r34b/w1/*.md | wc -l` = 34;
+  `w1-seat-map.json` = 34). Two authoritative records still carry the wrong number and are **superseded**:
+  `.ufo/reports/round-34/kaidoku.md:38` (`sha256 61d747e0…`) "… 34/34 and 32/32 reports on disk", and this
+  addendum's `post_filing_findings[id=N5].consequence` "66 settled, 0 dead, 0 refused, 34/34 and 32/32
+  reports on disk at handoff". Corrected accounting: **67 planned, 66 dispatched, 34/34 wave-1 and 31/32
+  wave-2 reports on disk, `AAdjacencyCite` unreported (not settled), 0 dead, 0 refused.** The repair trail is
+  addendum item N6 (appended, not an edit of N5); `w2/AWaveAccounting.md:66` already stated 31/32 at its
+  07:44Z census and `:50`'s "31 entries" describes the pre-`35152484` map. QUALITY 76 and M34-15/M34-16 are
+  unchanged; no measurement, clause or score moves.
+- **D-3 (provenance trio): appended to the entry, never rewritten.** At `d2e46ef5`,
+  `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md` (73 lines) still counts
+  `grep -c '^source:'` = 0, `^verified-at:` = 0, `^recheck:` = 0, and it is the only markdown entry among
+  the lane's last 17 knowledge files without the trio (the other 16 each count 1/1/1). Round 36 appends the
+  trio block at the entry's end, citing S106 (`corpus/SOURCES.md:112`, status `mined`, opened 2026-10-25,
+  recheck `on-release`, used-by that entry) and the round-34 stop receipts. Residual, recorded not hidden:
+  `CORPUS.md:163` requires the trio to "come first", which an append cannot satisfy; the appended fields
+  exist so freshness sweeps and counters read them.

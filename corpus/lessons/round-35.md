@@ -32,3 +32,50 @@ The 0–3-leading-space extractor was tested on a scratch fixture whose registry
 ## Gate result / spot-check handoff
 
 One explicit admit (S125/S129 theme; two bounded sources), at least one explicit reject (S150), and the quarantine dispositions are recorded for outside review. C1/C2 claim scoring remains stopped; no admission is asserted. A fresh non-author closure is required to reopen any source for adoption and to rule on claim findings.
+
+## Corrections appended — round 36
+
+- **R35-D1 (trend grade): `quality: improved` is withdrawn.** `.ufo/reports/round-35/kaidoku.md:46` grades
+  `quality: improved`. `LEARNING.md:34` defines the quality observable as a weaker entry superseded by a
+  stronger one, or stale entries re-verified with none failing; round 35 changed no knowledge entry
+  (`git diff --name-only aa04633a cab59f22 -- corpus/knowledge/` = 0 files), `corpus/QUALITY.md` is
+  byte-identical across the round (`git diff --stat aa04633a cab59f22 -- corpus/QUALITY.md` empty) and
+  `corpus/SOURCES.md` is unchanged (0 files). Superseded grade: **quality: unchanged**, as the round-35
+  verifier spot-check already ruled (`corpus/lessons/round-35-verifier-spotcheck.md:102`). M35-1..M35-4 are
+  mined mistakes, which the round requires and which do not move this observable.
+- **R35-D2 (seat accounting): artifacts landed; the settle receipt is still malformed.** `3ca5a80f` landed
+  `w1-results.json`/`w1-dispatch.json`/`w1-spec.json`; `cab59f22` committed the 14 outstanding files (12 seat
+  reports + `claims-canonical-note.md` + `w1-settle.json`) — the commit is labelled an in-flight
+  orchestration snapshot, not a landing. At `d2e46ef5`: 64/64 wave-1 reports are tracked and none is
+  zero-byte; `w1-results.json` holds 64 entries whose `output` is `null` for all 64, each carrying the note
+  "orchestrator kernel restarted mid-wave; seat output … not retained — read the seat report file in the wave
+  dir" (the verifier's "all-null" means these outputs, not the entries; the same is true at `3b1ab3c9`).
+  `w1-settle.json` is tracked but its bytes are `{"spawned": 2, "settled": 2, "dead": 0, "spawned": 7}` — a
+  duplicate `spawned` key and totals that match no wave of 64 seats. Corrected accounting: **64 wave-1 seats,
+  64/64 reports on disk, 0 dead, 0 refused; the settle receipt is not a source for those totals.** The
+  report's "settled/dead … not yet verified" (`.ufo/reports/round-35/kaidoku.md:14`) is superseded by the
+  committed reports, not by the settle file.
+- **R35-D3 (C2 design): the named defects stand in frozen bytes; the attempt is superseded, not repaired.**
+  In `tools/round-35/c2-calibration-counter.py`: (a) D-1 needs a `corpus/SOURCES.md` change after the base
+  (`:63-77`, failure `D1_no_sources_change_after_base`) and no such change exists across `aa04633a..cab59f22`,
+  so C2 could only be green if C1 landed — the severability breach; (b) D-3 accepts any `source:` line
+  containing `S106` (`:126`, `re.search(r"(?m)^source\s*:.*S106", body)`), a substring test that `S1060`
+  would pass — the token-exactness breach; (c) D-4 demands eight cells for `### Round-32 instrument registry`
+  and `### Round-34 run-6 instrument registry` (`:20-24`), while the round-32 section contains a 4-cell
+  residual-witness table (`SKILL.md:1081-1084`), the run-6 table is 5 cells (`SKILL.md:1213-1219`), and the
+  second constant does not equal the heading at `SKILL.md:1209` (the control receipt records
+  `D4_section_missing:### Round-34 run-6 instrument registry`); (d) D-2 sums `w1-settle.json` +
+  `w2-settle.json` (`:26-29`) although `.ufo/waves/round-35/w2-settle.json` does not exist. No post-freeze C2
+  measurement was ever run (`.ufo/reports/round-35/kaidoku.md:32`). Round 36's C2 is a different, severable
+  predicate (freeze `790561d4`) and does not reuse these bytes; the counter is not edited and the defects stay
+  recorded here.
+- **R35-D4 (C1 package): still staged, still unadopted.** At `d2e46ef5`, `corpus/SOURCES.md` holds 106 rows
+  with `S106` as the highest id, so S125/S129 are absent; `corpus/knowledge/` holds no
+  `2026-10-25-r35-jsc2js-*` entry; `PROVINCE.md:147` still carries the `.jsc` → source mapping as a frontier
+  bullet and `corpus/README.md:224` as the open gap. The package exists only as prep captures
+  (`.ufo/waves/round-35/prep/jsc-sources/`), claims/controls and seat reports.
+- **R35-D5 (report before final commit): confirmed; this block is the erratum.** `.ufo/reports/round-35/kaidoku.md`
+  is one fleet commit (`33be25b8`), mtime `2026-10-25 16:20:46 -03`, `sha256 4071d187…`; `3ca5a80f` (16:43:52)
+  and `cab59f22` (23:16:39) land after it. The report's `:14` already declares its own accounting unverified,
+  so the bytes are not dishonest — they are superseded by the two later commits and by this block. The fleet
+  report is not rewritten.

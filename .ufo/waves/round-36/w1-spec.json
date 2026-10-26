@@ -1,0 +1,395 @@
+{
+ "wave": "r36-w1",
+ "milestone": "Round 36 build drafts and first falsifiers",
+ "reportDir": ".ufo/waves/round-36/w1",
+ "context": "# Target\nkaidoku-shokunin round 36, wave 1 (build drafts + first falsifiers). Lane root (absolute): /home/vgpnk/Projects/shokunin/kaidoku-shokunin. L1 = KaidokuR36 (integration owner).\nRead first: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-36-claims.md (frozen claims R36-C1 coverage, R36-C2 calibration; freeze 790561d4e3aca732a434081aa9573ec2fa5fd7d0; control receipts 6a870b9290e9566468d7d9e6d1b8308daf025b12; C1 after receipts 3310d8fa27bfaa95ad858c4aaad6f6377f853982; base cab59f221fe19726b5692bfa4d9a9679e96b8a73).\nKey paths: counters /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-36/c1-counter.py and c2-counter.py; harness /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-36/c1-run.sh; carriers/oracle/receipts /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/{carriers.json,K1..K4/}; controls /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-36/controls/; REA 6.5.0 package root /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents.\n\n# Bounds (binding)\n- Write ONLY your own report file. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kaidoku-shokunin \u2014 write it at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/<that path>. Never write anywhere else in the lane, the fleet repo /home/vgpnk/Projects/shokunin (outside the lane), sibling lanes, or /home/vgpnk/Projects/shokuknow (read-only; run no campaign tool there).\n- Never mutate VCS: no git add/commit/checkout/reset/stash/pull/push and no mutating jj in the lane. Read-only git (show, log, diff, ls-files, rev-parse, cat-file) is fine. A fixture repo is created as D=$(mktemp -d \"$S/fx.XXXX\") && git -C \"$D\" init -q, and every later git call names -C \"$D\"; verify git -C \"$D\" rev-parse --show-toplevel equals $D before its first commit.\n- Scratch: S=/fast/scratch/hyaku/kaidoku-r36/<your seat name>; mkdir -p \"$S\"; export TMPDIR=\"$S\"; trap 'rm -rf -- \"$S\"' EXIT. Clones, downloads, REA output dirs and fixtures live there; /tmp only for files <50 MB. Remove your scratch before you finish; copy anything you cite into your report (paths under /tmp or scratch are not evidence).\n- REA only through the CLI: npx -y rea-agents@6.5.0 <command> (never xd://mcp__rea_* devices); set REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob for extract-firmware.\n- Tooling authorization (operator, 2026-10-19): you may install/upgrade tools that help the task \u2014 first read /home/vgpnk/.omp/agent/RULES.md (official channels, update-safety gate) and record tool/version/channel/reason in your report. pacman guard: ALL pacman transactions are PAUSED host-wide \u2014 use uv tool / npx / an official release binary in ~/.local/bin instead; never -Sy/-Syu/-U/-R, never restart a host service. sasquatch 4.5.1 (official onekey-sec deb) is already installed in ~/.local/bin by the L1 \u2014 do not reinstall or remove it.\n- Leaf seat: no subagents, no background jobs, never message agent://all. Advisory only: report evidence (exact commands, outputs, exit codes, limits); mark inference as [INFERENCE]. Never change a frozen predicate, counter, carrier or oracle; a found defect is reported, not repaired.",
+ "items": [
+  {
+   "name": "R36ScoutSasquatchRelease",
+   "role": "scout",
+   "prompt": "Open the onekey-sec/sasquatch release `sasquatch-v4.5.1-6` (https://github.com/onekey-sec/sasquatch/releases/tag/sasquatch-v4.5.1-6 and the API https://api.github.com/repos/onekey-sec/sasquatch/releases/tags/sasquatch-v4.5.1-6). Record access UTC, published date, asset names/sizes, GitHub `digest` of sasquatch_1.0_amd64.deb if present, and compare with the installed ~/.local/bin/sasquatch (sha256, `-version`). Give one located quote of at most 25 words from the release page/body and draft one 11-column SOURCES.md row (id S107; columns id|source|kind|tier|scope|anchor|teaches|status|opened|recheck|used-by; opened 2026-10-26; status mined; recheck an ISO date, NNd or on-release; no `|` inside cells; used-by `corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md`).",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScoutUnblobHandler",
+   "role": "scout",
+   "prompt": "Open unblob's SquashFS handler at the tag matching the installed unblob 26.6.4 (first find the tag: https://api.github.com/repos/onekey-sec/unblob/tags; then python/unblob/handlers/filesystem/squashfs.py at that tag; also read the installed copy under ~/.local/share/uv/tools/unblob/). Locate the extractor argv (`sasquatch -le|-be -no-exit-code -f -d ...`), get_dependencies and the v4 BE / AVM branch. Report whether tag source == installed source for that file (diff). One located quote \u226425 words; draft SOURCES row S108 (11 columns, opened 2026-10-26, used-by the round-36 entry path `corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md`).",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScoutNeovimRelease",
+   "role": "scout",
+   "prompt": "Open neovim release v0.12.6 (https://github.com/neovim/neovim/releases/tag/v0.12.6 and API .../releases/tags/v0.12.6). Confirm the published `digest` of nvim-linux-x86_64.appimage and nvim-linux-arm64.appimage equals the sha256 frozen in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/carriers.json (K3/K4). One located quote \u226425 words from the release page; draft SOURCES row S109 (carrier provenance; 11 columns, opened 2026-10-26, used-by the round-36 entry path).",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScoutAppImageSpec",
+   "role": "scout",
+   "prompt": "Find and open the primary source for the AppImage type-2 layout (AppImage specification: ELF runtime followed by an appended SquashFS payload; offset = end of the ELF) and squashfs-tools' documentation of `unsquashfs -o/-offset`. This grounds the oracle's offset rule in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-36/c1-run.sh (oracle mode). Give URL, access date and a \u226425-word located quote for each; say whether the c1-run.sh rule (e_shoff + e_shnum*e_shentsize) matches the spec; draft an 11-column SOURCES row (id S110) only if a source is a genuine primary source.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScoutUnblobReadme",
+   "role": "scout",
+   "prompt": "Assimilation candidate `/home/vgpnk/Projects/shokuknow/merge/kaidoku/knowledge/corpus/knowledge/unblob-sasquatch-dependency.md` cites the unblob README and the devttys0/sasquatch README. Re-open both yourself today (pin unblob README at the 26.6.4 tag if possible), locate each quote the entry relies on (\u226425 words, located), and say whether every factual sentence of the entry is supported, stale or wrong (e.g. does the README still publish the deb install commands? which version?). Verdict per sentence; recommend admit/refuse under the lane's QUALITY bar (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md).",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScoutPrebuiltInventory",
+   "role": "scout",
+   "prompt": "Assimilation candidate `/home/vgpnk/Projects/shokuknow/merge/kaidoku/knowledge/corpus/knowledge/sasquatch-prebuilt-package-inventory.md`. Re-open https://api.github.com/repos/onekey-sec/sasquatch/releases yourself; check each number it states (8 releases, newest tag/date, asset matrix, the body quote). Verdict per claim (supported / stale / wrong) with your own located quote; recommend admit/refuse.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScoutQuarantine",
+   "role": "scout",
+   "prompt": "Quarantine slice for kaidoku (5 rows) is at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-36/assimilation/quarantine-slice (S150 payload-absent; S113, S117 could not be fetched; S136, S147 no locator). Round 35 recorded verdicts at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-35/assimilation/quarantine-verdicts.md. Re-check each row today from the staged row in /home/vgpnk/Projects/shokuknow/merge/kaidoku/SOURCES.append.md: fetch the cited source, try to locate the quote; give a per-row verdict (fabrication-class refuse / unverifiable / locatable) and whether it agrees with round 35. None of these rows will be appended this round unless an admitted entry cites it \u2014 say whether any sasquatch-theme entry does.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ConnSiblingOverlap",
+   "role": "connector",
+   "prompt": "Sibling-overlap scan for the R36-C1 surface (sasquatch / unblob / SquashFS / AppImage extraction). Grep the sibling lanes under /home/vgpnk/Projects/shokunin/*-shokunin (PROVINCE.md, SKILL.md, corpus/SOURCES.md, corpus/knowledge) read-only for these terms. Report which lanes hold or contest this ground (esp. revenger: shipped-artifact runtime; tsukuroi: host tooling/installs), and whether kaidoku moving sasquatch to Core absorbs another lane's province. Name exact file:line evidence.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ConnAssimilationTheme",
+   "role": "connector",
+   "prompt": "Map the sasquatch/unblob/AVM theme inside /home/vgpnk/Projects/shokuknow/merge/kaidoku (MERGE-REPORT.md, MERGE-REPORT.json, SOURCES.append.md, knowledge/corpus/knowledge/*sasquatch*, *unblob*, *avm*). For each entry: staged S-ids it cites, whether its evidence is campaign-local (e.g. `lanes/kaidoku/round*/work/*.tsv`, not lane-observed), overlap with the lane's own R36-C1 receipts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1, and a PROVINCE.md scope check (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/PROVINCE.md). Collision file: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-36/assimilation/collisions (S106 collides). Recommend at most 3 entries to admit and at least 1 to refuse, with reasons and flip conditions.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ConnSeparability",
+   "role": "connector",
+   "prompt": "Cross-claim pattern check: are R36-C1 and R36-C2 causally separable as frozen? List every file each counter reads (c1-counter.py, c2-counter.py), every input they share, and any edit one claim's landing forces on the other (e.g. C1's new knowledge entry moves command A's count that C2 checks; C1's PROVINCE edits may shift the `## Adjacent` range C2 checks). Propose the landing order and measurement revisions that keep both separable, without changing any frozen rule.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecReproK1",
+   "role": "executor",
+   "prompt": "Independent reproduction of R36-C1 carrier K1. Get the carrier (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/carriers.json: fixture path in the lane, or download the URL into your scratch and check sha256). Run `npx -y rea-agents@6.5.0 extract-firmware --format json <carrier> <fresh out dir>` twice: with ~/.local/bin/sasquatch on PATH, and with every PATH dir containing `sasquatch` removed. For each run compare the set of (relative_path, sha256) in normalized_result.files and the extraction_gaps kinds/dependencies against the committed /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K1/after.json and before.json (evidence ids will differ because output_directory differs \u2014 say so, do not count it). Also run /usr/bin/unsquashfs yourself at the right offset and compare with /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K1/oracle.tsv. Report counts, diffs and exit codes.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecReproK2",
+   "role": "executor",
+   "prompt": "Independent reproduction of R36-C1 carrier K2. Get the carrier (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/carriers.json: fixture path in the lane, or download the URL into your scratch and check sha256). Run `npx -y rea-agents@6.5.0 extract-firmware --format json <carrier> <fresh out dir>` twice: with ~/.local/bin/sasquatch on PATH, and with every PATH dir containing `sasquatch` removed. For each run compare the set of (relative_path, sha256) in normalized_result.files and the extraction_gaps kinds/dependencies against the committed /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K2/after.json and before.json (evidence ids will differ because output_directory differs \u2014 say so, do not count it). Also run /usr/bin/unsquashfs yourself at the right offset and compare with /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K2/oracle.tsv. Report counts, diffs and exit codes.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecReproK3",
+   "role": "executor",
+   "prompt": "Independent reproduction of R36-C1 carrier K3. Get the carrier (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/carriers.json: fixture path in the lane, or download the URL into your scratch and check sha256). Run `npx -y rea-agents@6.5.0 extract-firmware --format json <carrier> <fresh out dir>` twice: with ~/.local/bin/sasquatch on PATH, and with every PATH dir containing `sasquatch` removed. For each run compare the set of (relative_path, sha256) in normalized_result.files and the extraction_gaps kinds/dependencies against the committed /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K3/after.json and before.json (evidence ids will differ because output_directory differs \u2014 say so, do not count it). Also run /usr/bin/unsquashfs yourself at the right offset and compare with /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K3/oracle.tsv. Report counts, diffs and exit codes.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecReproK4",
+   "role": "executor",
+   "prompt": "Independent reproduction of R36-C1 carrier K4. Get the carrier (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/carriers.json: fixture path in the lane, or download the URL into your scratch and check sha256). Run `npx -y rea-agents@6.5.0 extract-firmware --format json <carrier> <fresh out dir>` twice: with ~/.local/bin/sasquatch on PATH, and with every PATH dir containing `sasquatch` removed. For each run compare the set of (relative_path, sha256) in normalized_result.files and the extraction_gaps kinds/dependencies against the committed /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K4/after.json and before.json (evidence ids will differ because output_directory differs \u2014 say so, do not count it). Also run /usr/bin/unsquashfs yourself at the right offset and compare with /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K4/oracle.tsv. Report counts, diffs and exit codes.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecRecountC1",
+   "role": "executor",
+   "prompt": "Re-run the frozen C1 counter: `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-36/c1-counter.py --selftest --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents` and `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-36/c1-counter.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 3310d8fa27bfaa95ad858c4aaad6f6377f853982 --freeze 790561d4e3aca732a434081aa9573ec2fa5fd7d0 --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents` and at --rev cab59f221fe19726b5692bfa4d9a9679e96b8a73. Paste outputs and exit codes; confirm carriers_matched and which bindings are still false at 3310d8fa27bfaa95ad858c4aaad6f6377f853982.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecRecountC2",
+   "role": "executor",
+   "prompt": "Re-run the frozen C2 counter selftest and `--root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev cab59f221fe19726b5692bfa4d9a9679e96b8a73 --base cab59f221fe19726b5692bfa4d9a9679e96b8a73`. Then WITHOUT using any counter code write your own short script that recomputes the same three base mismatches from git objects at cab59f221fe19726b5692bfa4d9a9679e96b8a73 (unresolved backticked pointers in SCORECARD `## Owned axes`/`## Capabilities` rows and SHONEN.md boxes; the coverage row's stated `N/N knowledge files mapped` vs command A in SCORECARD.md `## Measurement recipes`). Report agreement or every disagreement.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecIndependentC1",
+   "role": "executor",
+   "prompt": "Write an independent C1 checker that shares no code with c1-counter.py: for each carrier K1..K4 read /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K*/oracle.tsv, before.json, after.json (git show 3310d8fa27bfaa95ad858c4aaad6f6377f853982:<path>), and compute: oracle files; after files matching an oracle row by path suffix and sha256; before files matching; sasquatch gaps before/after; count of after files NOT in the oracle (recursion extras, carved runtime) and what they are. Compare with the counter's per-carrier numbers in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-36/interim/c1-after-receipts-only.json.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecEvidenceIds",
+   "role": "executor",
+   "prompt": "Recompute the evidence_id of all 8 committed envelopes (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K*/before.json, after.json at 3310d8fa27bfaa95ad858c4aaad6f6377f853982) with rea-agents 6.5.0's own code but WITHOUT the lane's xpin tool: import digestCanonicalValue from /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/domain/canonicalDigest.js and the semantic projection from /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/domain/evidence.js (or use an exported parse/validate function or the `evidence-export` CLI verb if it validates ids). Report stored vs recomputed per envelope, and show one tampered copy (one file sha changed) failing.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecSasquatchDirect",
+   "role": "executor",
+   "prompt": "Run ~/.local/bin/sasquatch directly with the exact argv unblob 26.6.4 builds (read it from the installed handler under ~/.local/share/uv/tools/unblob/): `sasquatch -le -no-exit-code -f -d <out> <img>` on the K1 and K2 fixtures (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/fixtures/*.sqsh) and on K3 at its squashfs offset (carve with dd first). Compare outputs with the oracle.tsv files. Also check the installed binary's dynamic deps (ldd) and that `sasquatch-v4be -help` runs. Report.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecSourceTreeOracle",
+   "role": "executor",
+   "prompt": "Oracle independence check for K1/K2: compare /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K1/oracle.tsv and K2/oracle.tsv (unsquashfs output) with the committed source trees /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/fixtures/k1-src and k2-src (regular files: relative path + sha256 + size; symlinks excluded). Then rebuild both images from the source trees with the exact mksquashfs flags implied by carriers.json kinds (xz / gzip -b 4096, -noappend -all-root -mkfs-time 0 -all-time 0) in scratch and say whether the image sha256 reproduces.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecAppImageExtract",
+   "role": "executor",
+   "prompt": "Second oracle for K3 that does not share unsquashfs code: download the K3 AppImage (URL/sha in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/carriers.json) into scratch and run its own runtime `./nvim-linux-x86_64.appimage --appimage-extract` inside scratch (it writes squashfs-root/ in cwd). Manifest regular files (relative path, sha256) and compare with /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K3/oracle.tsv. For K4 (aarch64 runtime) report whether qemu-aarch64 exists; if not, say K4 has only the unsquashfs oracle. Record the runtime's squashfs implementation if visible (strings).",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ExecHarnessRun",
+   "role": "executor",
+   "prompt": "Run the harness /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-36/c1-run.sh in all three modes on the K2 fixture with OUTDIR inside your scratch, with HYAKU_SCRATCH pointed at your scratch. Check: it never writes under /tmp (strace -f -e trace=openat,mkdir or inotifywait if available; else inspect), the before-mode PATH filter really hides sasquatch, the receipts match the committed K2 ones in content (paths/shas), and its scratch is removed on exit (also on a forced failure, e.g. a nonexistent carrier). Report defects.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScribeEntry",
+   "role": "scribe",
+   "prompt": "Draft the knowledge entry corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md (full markdown in your report, fenced). Header lines first, one per line: `source: S107 \u2014 <sasquatch release URL> \u2014 ...`, `source: S108 \u2014 <unblob squashfs.py at tag v26.6.4> \u2014 ...`, `source: S109 \u2014 <neovim v0.12.6 release> \u2014 ...`, `verified-at: 2026-10-26`, `recheck: 180d \u2014 <one command>`. Body: what REA extract-firmware does on SquashFS without sasquatch (gap kind missing-extractor-dependency, continuation instruction, files: [] / carved chunk only) and with it, per carrier K1..K4 (oracle file counts, published counts, extras from recursion, unpublished-entry gaps for symlinks), the install provenance (official deb sha256 efbc92bd\u2026, binaries' sha256 from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1/K1/after-run.json), the oracle method and its limits (unsquashfs-derived, K1/K2 also equal their source trees), and what is NOT claimed (BE/AVM, vendor-mangled images). Every number must come from committed files under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1 \u2014 cite path for each.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScribeProvince",
+   "role": "scribe",
+   "prompt": "Draft PROVINCE.md edits (text only): (1) a new section `## Round-36 additions to Core` with a table `| Surface | Ports / keys | Probe | Verified evidence |` whose first row's first cell starts with `sasquatch` and whose row cites `corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md` and the receipts dir; (2) an append-only pointer for the Frontier bullet at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/PROVINCE.md:149-150 (do not rewrite the old bullet text; propose a one-line dated note placed in the new section instead); (3) the `## Adjacent` bullet at PROVINCE.md:110-115 says the lane never runs installers \u2014 reconcile it with the operator tooling directive of 2026-10-19 (/home/vgpnk/.omp/agent/RULES.md) by an appended dated sentence that keeps client-config edits and `rea setup` operator-owned. Note: adding lines inside `## Adjacent` shifts the range SHONEN.md box 4 cites (`PROVINCE.md:97-118`) \u2014 give the new range.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScribeReadme",
+   "role": "scribe",
+   "prompt": "Draft corpus/README.md edits (text only): a `## Coverage map` row for `2026-10-26-r36-sasquatch-squashfs-recursion` in the existing table shape (read /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/README.md first), an appended dated note for the Firmware row (README:44, `recursion blocked by missing sasquatch`), and the Known-gaps line README:227 (`sasquatch (AUR)`). Append-only style: never rewrite historical text; add dated supersession notes. Also draft the README `## Frontier` change if that section lists sasquatch.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScribeSkill",
+   "role": "scribe",
+   "prompt": "Draft a SKILL.md section `## SquashFS recursion through sasquatch \u2014 round 36` for /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md: a decision table (signal in the REA envelope \u2192 meaning \u2192 action), e.g. `extraction_gaps[].kind=missing-extractor-dependency, dependencies=[sasquatch]` \u2192 install the official sasquatch deb binaries in ~/.local/bin and rerun on the same input with a fresh output_directory; `unpublished-entry` \u2192 symlinks/special files, not a sasquatch failure; AppImage \u2192 ELF chunk + squashfs_v4_le chunk at the ELF end. Plus an instrument-registry table for the two round-36 counters in the PROTOCOL \u00a7Gate standard shape: tool | gate or probe | verdict map (exit codes) | self-test command | pinned-value path | write scope | owner. Read /home/vgpnk/Projects/kimi-shokunin/skills/shokunin/protocol/PROTOCOL.md `Gate standard` first. Cite committed paths only.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScribeSources",
+   "role": "scribe",
+   "prompt": "Draft the SOURCES.md rows to append for this round in the exact 11-column census schema used by /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md (read its header and a few rows; read /home/vgpnk/Projects/shokunin/CORPUS.md section `SOURCES.md \u2014 where a shokunin learns`). Rows: S107 onekey-sec/sasquatch release sasquatch-v4.5.1-6; S108 unblob squashfs.py at the 26.6.4 tag; S109 neovim v0.12.6 release. No `|` inside cells, recheck as ISO date / NNd / on-release, status mined, opened 2026-10-26, used-by exactly `corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md`. Then build a scratch mirror (copy of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus plus your rows) and run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <mirror>/corpus/SOURCES.md`; paste output and exit code.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScribeLessonMistakes",
+   "role": "scribe",
+   "prompt": "Draft `## Mistakes` rows for /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-36.md (table: id | class | evidence | captured-by | fix). Mine from evidence: (a) the Frontier bullet `sasquatch (AUR-only)` (PROVINCE.md:149, README:227) stood from round 4 to 36 although the upstream deb route existed (see /home/vgpnk/Projects/shokuknow/merge/kaidoku/knowledge/corpus/knowledge/sasquatch-prebuilt-package-inventory.md) \u2014 what rule should have caught a packaging-route claim; (b) SCORECARD coverage row `116/116` stale vs observed 122/122 (C2 counter base receipt /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-36/controls/ctl-c2-0-do-nothing.json); (c) r35 report filed before the final lane commit (closure /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-35-verifier-spotcheck.md R35-D5). For each fix, say how it is shown able to fail (a red case), citing a committed red receipt where one exists.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScribeRoutedDefects",
+   "role": "scribe",
+   "prompt": "Draft appended corrections (text only) for still-open routed defects: r34 D-2 (seat accounting 31/32, AAdjacencyCite unreported) and D-3 (provenance trio for corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md \u2014 an appended block, never a rewrite) from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-34-verifier-spotcheck.md:120-150; R35-D1..D5 from round-35-verifier-spotcheck.md:105-111. Verify each fact yourself first with read-only commands (e.g. `ls /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-34/r34b/w2/*.md | wc -l`, `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin ls-files .ufo/waves/round-35 | wc -l`, `jq` on w1-settle.json) and paste them. Say which defects are now closed by already-landed commits (name the commit).",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ScribeAssimilationGate",
+   "role": "scribe",
+   "prompt": "Draft the assimilation `## Gate` block for corpus/lessons/round-36.md: theme sasquatch/unblob from /home/vgpnk/Projects/shokuknow/merge/kaidoku; collision evidence /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-36/assimilation/{reg-ids,staged-ids,collisions,id-guard-proof/} (106 registry ids, 132 staged, collision S106; proof fixture yields S002); per candidate entry (unblob-sasquatch-dependency, sasquatch-prebuilt-package-inventory, sasquatch-unblob-compatibility, sasquatch-unblob-compatibility-precondition) a decision admit/refuse with reason and flip condition, under PROVINCE scope and QUALITY bar; renumber map by document (staged id \u2192 lane id) for any admitted row. Read the four entries and their SOURCES.append rows first.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36CriticC1Shortcut",
+   "role": "critic",
+   "prompt": "Attack R36-C1 as frozen: find the cheapest input that makes the frozen c1-counter print met_target true WITHOUT a real sasquatch-enabled extraction (structure-blind / replay / relabel / unpublished trick). Consider: envelopes whose evidence id is recomputed by REA's own digest code after editing (fabrication cost?), a before.json produced with sasquatch present, path-suffix collisions, oracle rows that are trivially matched, the --pkg65 path, carriers.json identity. Build any candidate in a fixture repo under scratch and score it with the frozen counter. Report each class with cost and result.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36CriticC2Shortcut",
+   "role": "critic",
+   "prompt": "Attack R36-C2 as frozen: find an edit to SCORECARD.md/SHONEN.md that drives c2-counter to met_target WITHOUT making the self-assessment match observed state (e.g. adding a resolving pointer that names the same basename in another directory, moving a statement out of the surfaces, editing a count regex shape so it is absent-but-not-counted, splitting a box). Score candidates on fixture repos (copy the lane state at cab59f221fe19726b5692bfa4d9a9679e96b8a73 into scratch). Report classes and results.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36CriticPredicateIdentity",
+   "role": "critic",
+   "prompt": "Check predicate identity for both claims: the predicate sentence in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-36-claims.md vs the docstring in each counter vs the conditions the code actually tests vs the receipt fields. List every divergence (a condition the sentence states that code does not test, or vice versa). Also check the claims are named by the surface moved (\u00a79) and that no universal clause appears without an enumerating counter.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36MutantC1",
+   "role": "mutation-tester",
+   "prompt": "Mutation-test tools/round-36/c1-counter.py on a scratch copy (never edit the lane file): at least 10 mutants (flip == / !=, endswith \u2192 in, drop the evidence-id check, drop before_oracle_hits==0, drop carriers_unchanged, accept any heading, accept S-id substring, ignore used-by, TARGET 4\u21923, off-by-one on oracle_files). Run the selftest (`--selftest --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents`) against each mutant; report killed/survived and the case that kills each.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36MutantC2",
+   "role": "mutation-tester",
+   "prompt": "Mutation-test tools/round-36/c2-counter.py on a scratch copy: at least 10 mutants (drop guards_ok, pointers_not_fewer >= \u2192 >, suffix match \u2192 basename match, skip range check, heading_range stop rule, absent \u2192 match, regex for counts, Capabilities table end, SHONEN continuation-line rule). Run `--selftest` per mutant; report killed/survived and which real-lane shortcut each survivor would admit.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ReviewerReceipts",
+   "role": "reviewer",
+   "prompt": "Review C1 custody: in git order, freeze 790561d4e3aca732a434081aa9573ec2fa5fd7d0 (carriers, oracle, before receipts) precedes control receipts 6a870b9290e9566468d7d9e6d1b8308daf025b12, which precede after receipts 3310d8fa27bfaa95ad858c4aaad6f6377f853982 (git log --format='%H %cI' -- paths). Check each K*/before-run.json has empty sasquatch and each after-run.json names ~/.local/bin/sasquatch with sha256 ad02d27a\u2026 and `unsquashfs version 4.5.1`; carriers' sha256 in receipts equal carriers.json; utc stamps ordered before < after; the install happened after controls (report what evidence exists for that and what is only the L1's word).",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ReviewerControls",
+   "role": "reviewer",
+   "prompt": "Re-derive every control receipt under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-36/controls/ (c1-0..2, c2-0..3): read each JSON, confirm the exit and the reason it failed is the intended guard (e.g. ctl-c1-2 fails on after_evidence_id_ok=false, not on something incidental). Then rebuild CTL-C1-1 and CTL-C2-2 yourself in fixture repos (fetch 6a870b9290e9566468d7d9e6d1b8308daf025b12 into a fresh `git init` repo) and re-score. Report agreement.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ReviewerHarnessCode",
+   "role": "reviewer",
+   "prompt": "Code review of /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-36/c1-run.sh, c1-counter.py, c2-counter.py for: hardcoded /tmp (addendum \u00a77 item 4), unbounded writes, shell quoting, error paths that silently pass, git calls without -C, selftest fixture identity confined to scratch repos, and any place where a frozen rule differs from plans/round-36-claims.md. Severity-ranked findings with file:line.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ReviewerAdjacency",
+   "role": "reviewer",
+   "prompt": "Adjacency review: does installing sasquatch into ~/.local/bin and moving it to Core conflict with /home/vgpnk/Projects/shokunin/kaidoku-shokunin/PROVINCE.md `## Adjacent` (lines 97-118, esp. 110-115 'Installing engines ... operator-owned ... never runs the installer') or with SHONEN box 4 (`No cross-domain bleed`)? Weigh against the operator directive in /home/vgpnk/.omp/agent/RULES.md (2026-10-19). Recommend the minimal accurate PROVINCE amendment and whether the round must report an adjacency harm, unchanged or improved.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36SentinelInstall",
+   "role": "sentinel",
+   "prompt": "Security review of the sasquatch install: ~/.local/bin/sasquatch and sasquatch-v4be (sha256, file type, setuid bits, RPATH/RUNPATH, linked libs), provenance against the official deb (download it into scratch, verify sha256 efbc92bd27594e01211e1b582f105a463a0017360a0746a93de3f283906ade95, compare extracted binaries byte-for-byte), and PATH shadowing (does anything else named sasquatch exist on PATH?). Also: running a neovim AppImage runtime (`--appimage-extract`) executes shipped code \u2014 note the risk boundary. Report.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36RevengerOracle",
+   "role": "revenger",
+   "prompt": "Reverse-engineer how independent the R36-C1 oracle really is: sasquatch 4.5.1 is a patched unsquashfs; the oracle is /usr/bin/unsquashfs 4.7.5. Establish (from source/strings/version history) which decompression and directory-walk code they share, and whether a shared bug could make both agree on a wrong tree. Then say which carriers have an oracle that shares no code (K1/K2 source trees; K3 AppImage runtime --appimage-extract via squashfuse?). Give a bounded verdict.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36ReviewerQualityBar",
+   "role": "reviewer",
+   "prompt": "Read /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md in full. List every criterion that binds the round-36 instruments and the planned C1 entry (e.g. catalog-listed vs held, gate selftests, structure-blind replay before freeze, pin enforcement, per-file/table-scoped evidence, seat accounting). For each, check the frozen counters/harness/receipts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-36 and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-36/c1 and say met / not met / not applicable with file:line evidence.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R36CriticRoutedCoverage",
+   "role": "critic",
+   "prompt": "Attack the round's handling of inherited outside verdicts: enumerate every disagreement and routed defect in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-35-verifier-spotcheck.md, round-34-verifier-spotcheck.md (Routed defects) and round-33-verifier-spotcheck.md (Routed defects), and for each say whether the frozen round-36 plan (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-36-claims.md) or already-landed commits address it, and what remains owed (a QUALITY criterion, a fix, or a stated reason). Be strict; cite line numbers.",
+   "axes": [
+    "coverage",
+    "calibration"
+   ]
+  }
+ ]
+}

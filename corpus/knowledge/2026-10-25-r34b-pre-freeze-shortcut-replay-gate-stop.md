@@ -71,3 +71,9 @@ That is the standard a structure-sensitive decoder has to meet: bounded record t
 ## Rejected
 
 Treating CLEAN as held capability. CLEAN is relative to the caller's class list; the round's own counterexample shows the list, not the fixture design, was doing the work.
+
+## Provenance trio (appended round 36 — the header above is not rewritten)
+
+source: S106 — GNU binutils `readelf` version-needs reader, https://sourceware.org/git/?p=binutils-gdb.git;a=blob_plain;f=binutils/readelf.c;hb=6ce87bbc521cf46eaee9a1f7ef61cee2cdfb3e32 (tracked capture `.ufo/waves/round-34/prep/R34ElfReader-files/readelf.c-binutils-2_47`, sha256 `7e81eedf19b2b93663bb3f598f74b54c107bd699f551667eb1b3d0e33eddeeff`); corpus/QUALITY.md rows 67-74 as cited above.
+verified-at: 2026-10-26 — re-read at lane `d2e46ef5e2b2e8ba681b2fa55d50f298c4c4b8be`: `corpus/SOURCES.md:112` (S106, mined, opened 2026-10-25, recheck `on-release`, used-by this entry); stop record `.ufo/waves/round-34/r34b/claim-stop.json`; addendum `.ufo/waves/round-34/r34b/claim-stop-addendum.json`; seat report `.ufo/waves/round-34/r34b/w2/AWaveAccounting.md`; lesson `corpus/lessons/round-34.md` (M34-15, M34-16); `corpus/QUALITY.md:126` row 76.
+recheck: on-release — reopen S106 at the next binutils tag and re-read the claim-stop record; the standing check `grep -n '^| S106 ' corpus/SOURCES.md` must keep this entry in `used-by`.
