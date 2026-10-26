@@ -1,4 +1,4 @@
-# Genuine AVM-layout big-endian SquashFS v4 extracts through REA: big-endian fields, little-endian block lengths, no `-be` (round 40)
+# Genuine AVM-layout big-endian SquashFS v4 extracts through REA: big-endian fields, little-endian block lengths, no `-be` (round 40, measured, not promoted)
 
 source: S124 — https://raw.githubusercontent.com/Freetz-NG/freetz-ng/9a7236926bffaa6af16f84b3db27017cb5f02724/make/host-tools/squashfs4-be-host/patches/350-unsquashfs__AVM_BE.patch — the reader patch that swaps only the 2-byte metadata block length — opened 2026-10-26 (`.ufo/waves/round-40/w1/R40SrcFreetz.md`)
 source: S125 — https://download.avm.de/fritzbox/fritzbox-6490-cable/other/fritz.os/ — `info_en.txt`: FRITZ!Box 6490 Cable, FRITZ!OS 07.57 — opened 2026-10-26 (`.ufo/waves/round-40/w1/R40SrcAvmVendor.md`)
@@ -26,7 +26,7 @@ and the big-endian reading does not (`tools/round-40/sqfs-list.py --layout auto 
 `layout_ok` clause of `tools/round-40/c1-counter.py`). On the four round-40 carriers and on the 7490
 07.62 and 7430 07.31 development members the identity is exact (`.ufo/waves/round-40/w1/R40C1ReconGaps.md` §2).
 
-**Core, measured (R40-C1).** REA 6.5.0 `extract-firmware --max-depth 1` (unblob 26.6.4,
+**Measured; R40-C1 stopped, not promoted.** The frozen counter matched 3 of 4 carriers at `42c10a58`: L2 failed only `nonregular_unpublished_ok`, because its path-suffix test reads the published regular file `usr/bin/busy` as the symlink `bin/busy` (`.ufo/waves/round-40/l1/scores/c1-at-42c10a58.json`); L2's receipt publishes no symlink path. Promotion waits for a re-frozen counter. REA 6.5.0 `extract-firmware --max-depth 1` (unblob 26.6.4,
 `sasquatch-v4be` 4.5.1 on the child PATH) on four frozen carriers, receipts
 `corpus/evidence/round-40/c1/{V1,V2,L1,L2}/after.json`:
 
