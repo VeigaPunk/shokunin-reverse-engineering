@@ -1,0 +1,28 @@
+# census receipts (scripts/sources-census.sh, read-only)
+
+## real lane: validate --root /home/vgpnk/Projects/shokunin kaidoku
+kaidoku	W04	S092 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	W04	S102 duplicate url learn.microsoft.com/en-us/windows/win32/debug/pe-format across scopes
+kaidoku	ok	/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+RC=0
+
+## validate --file mirror/corpus/SOURCES.md
+RC=1  E12=0  E-other=0  W04=9
+
+## validate --file mirror/corpus/SOURCES.outside.md
+RC=1  E12=1  E-other=1  W04=9
+file	E12	S112 row outside Registry section
+
+## validate --file mirror/corpus/SOURCES.subhead.md
+RC=1  E12=0  E-other=0  W04=9
+
+## validate --file mirror/corpus/SOURCES.scribe-in.md
+RC=1  E12=0  E-other=0  W04=10
+
+## validate --file mirror/corpus/SOURCES.scribe-after.md
+RC=1  E12=5  E-other=5  W04=9
+file	E12	S112 row outside Registry section
+file	E12	S113 row outside Registry section
+file	E12	S114 row outside Registry section
+file	E12	S115 row outside Registry section
+file	E12	S116 row outside Registry section

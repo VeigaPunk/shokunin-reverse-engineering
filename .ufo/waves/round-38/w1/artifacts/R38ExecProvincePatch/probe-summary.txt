@@ -1,0 +1,47 @@
+R38ExecProvincePatch — C1 carrier measurements + findings (wave 1, advisory)
+lane root: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+lane HEAD at measurement: cb4326b2aa4c2024af0651fe6115b82d0c4de3df; PROVINCE.md bytes identical at base
+  77091b492cc53f8743bd0701b1e7d5e66123dd84 and HEAD (sha256 ecfa491fa315047a6797bd660b239f29e5e1d9c548e38e943e398a9eb0a8d242)
+freeze: e059ca9391642d5b71b6662cabcbdce0d9308719
+
+Invocation per carrier (harness after-mode usable since cb4326b2; the 03:18 direct-CLI runs are the same REA call):
+  npx -y rea-agents@6.5.0 extract-firmware --format json <carrier> <fresh outdir>
+  env: REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob (unblob 26.6.4); PATH carries ~/.local/bin/sasquatch-v4be
+
+carrier	carrier_sha256	exit	handler	gaps	unpublished_entries	coverage	published_bytes	files	oracle_rows	oracle_hits	evidence_id
+K1	1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e	0	['squashfs_v4_be']	[]	[]	partial	9656	5	5	5	ev_eccca7337fd7dfe589a67aa33474400ce0001f51e35d70270e1d910e931ca8d6
+K2	403cb0a827966bbe17a70e08af7d39b43260da8201d1b9001bbc4228cbc99154	0	['squashfs_v4_be']	[('unpublished-entry', 'firmware.bin_extract/var/lib/run-link')]	[('symlink', 'firmware.bin_extract/var/lib/run-link', '../../a/run.sh')]	partial	10283	3	3	3	ev_66d89e96ca47811e881af56f81048eec56c306099715a9bcf18e23ff6a83a3e4
+K3	9c7c523c5d1d1cafc0b679af9092ce0289d9656f6a24bc3bd0009f95b69397c0	0	['squashfs_v4_be']	[]	[]	complete	28	4	4	4	ev_05731564198b2377cc76e5dccc12d85fe764dc86fb733f408dba383c69984176
+K4	a29ddc15f5a6abcabf28b7161837eb56b34111e48420e7392e648f2fdfe956ed	0	['squashfs_v4_be']	[]	[]	complete	28	4	4	4	ev_b62e21b8c51c73aac83b9be8435afac1ae103f6ea1b5ef8fb260764738128d58
+
+F1 — K2 extraction gap (falsifies P38-C1 after_gaps_empty for K2):
+  K2 after.json: coverage="partial", files=3/3 oracle hits;
+  extraction_gaps=[{kind:"unpublished-entry", relative_path:"firmware.bin_extract/var/lib/run-link", dependencies:[], continuation_id:"602c674b..."}];
+  unpublished_entries=[{kind:"symlink", relative_path:"firmware.bin_extract/var/lib/run-link", link_target:"../../a/run.sh"}].
+  Reproduced 4x by this seat (two outdirs, then same outdir path twice); normalized_result identical each time.
+  Independent peer artifact with the same gap: .ufo/waves/round-38/w1/artifacts/R38ExecAfterK2/after.json
+  K1 carries a dangling symlink (src: link-to-hello -> ../hello.txt), reports coverage="partial", no unpublished
+  entries and 0 gaps — so the gap is specific to the resolvable link [INFERENCE].
+
+F2 — c1-run.sh after-mode at the freeze commit could not produce a receipt (fixed at HEAD cb4326b2):
+  freeze blob 96666472dd3b036bec38cf14a026267d352b8f2a line 26: mkdir -p "$OUT" before npx; REA refuses:
+    {"code":"execution_failure", ..., "details":{"diagnostics":{"reason":"Extraction output root already exists"}}} exit 1
+  observed 4x (K1..K4) by this seat at 03:18; peer artifact
+  .ufo/waves/round-38/w1/artifacts/R38ExecAfterK3/harness-after-mode-failure.txt records the same exit 1.
+  HEAD blob a95a1a9e510688cf1d98b6e927babe75e160dbdf line 27 is rm -rf "$OUT"; post-fix harness run exit 0,
+  handler squashfs_v4_be, gaps 0, 5 files, evidence ev_06b367256c4251a9b7c4555d1fd131e4d8c4e1c03c8ebbb099c3df6f997900f0.
+
+F3 — evidence_id is not a function of the recorded request identity (identical K2 runs differ):
+  run1: evidence_id=ev_6e8500aaffc1eca9b9ea93e21be251269240ecce99f109a565ef5e36d2a601e9 subject.local_path=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K2/carrier.sqsh
+  run2: evidence_id=ev_58fba4864fc8460d4ea8e91a8fabea2bbeb37e3ea5c164e0dc7de5004018791c subject.local_path=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K2/carrier.sqsh
+  same output_directory both runs: /fast/scratch/hyaku/kaidoku-r38/R38ExecProvincePatch/k2same
+  69 envelope paths differ, all inside raw_result: unblob scratch paths rea-firmware-<rand>/... and blob ids;
+  normalized_result is identical. Consequence for the counter identity binding not exercised here (no counter run).
+
+F4 — the BE handler shells out to sasquatch-v4be on PATH:
+  unblob 26.6.4 unblob/handlers/filesystem/squashfs.py: EXECUTABLE="sasquatch", V4BE_EXECUTABLE="sasquatch-v4be",
+  class SquashFSv4BEHandler NAME="squashfs_v4_be"; SquashFSExtractor.extract picks V4BE_EXECUTABLE and appends "-be"
+  unless header.bytes_used == header.mkfs_time (AVM-BE). Peer receipt with a shim-only PATH:
+  .ufo/waves/round-38/w1/artifacts/R38ExecAfterK3/after.json -> missing-extractor-dependency, 0 files;
+  with a declared extractor: 4 files, 0 gaps (diagnostic-after-with-declared-extractor.json).
+  F3 envelopes retained as determinism-K2-run1.json / determinism-K2-run2.json in this directory.

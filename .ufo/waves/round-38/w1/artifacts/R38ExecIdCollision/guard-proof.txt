@@ -1,0 +1,43 @@
+# R38ExecIdCollision — guard proof for the id-collision pattern
+# pattern (registry side and staged side, identical): ^ {0,3}\|[[:space:]]*S[0-9]{3,}
+# mechanism: grep -oE '<pattern>' FILE | grep -oE 'S[0-9]+' | sort  -> ids ; comm -12 reg staged -> collisions
+# host date: 2026-10-26T03:20:56-03:00
+
+## A. the required proof: scratch registry with a 2-space indented '  | S002 |' row
+  registry file:
+    | S001 | r1 |
+      | S002 | r2 two-space |
+    | S004 | r4 |
+  staged file:
+    | S001 | s1 |
+      | S002 | s2 two-space |
+    | S003 | s3 |
+  reg ids    : S001 S002 S004 
+  staged ids : S001 S002 S003 
+  collisions : S001 S002    (count 2, file 10 bytes)
+
+## B. indentation matrix (each case: registry row vs staged row for S002)
+  case b: reg=[S002 ] staged=[S002 ] collisions=1 bytes=5
+  case c: reg=[S002 ] staged=[S002 ] collisions=1 bytes=5
+  case d: reg=[S002 ] staged=[S002 ] collisions=1 bytes=5
+  case e: reg=[] staged=[S002 ] collisions=0 bytes=0
+  case f: reg=[] staged=[S002 ] collisions=0 bytes=0
+
+## C. real-file pattern coverage (does any S-row escape the 0-3-space pattern?)
+  registry rows indented >=4 spaces : 0
+  staged   rows indented >=4 spaces : 0
+  registry tab-indented S rows      : 0
+  staged   tab-indented S rows      : 0
+  registry S-id rows not matched    : 0
+  staged   S-id rows not matched    : 0
+
+## D. observed id spaces (from the frozen command, verbatim)
+  reg-ids    : 111 ids, first S001, last S111
+  staged-ids : 132 ids, first S106, last S237
+  collisions : 6 ids -> S106 S107 S108 S109 S110 S111 
+  sha256 reg-ids    : 015e600e6e4465b725fb0a9c6666fb47383b585b16b64ed63f3cad825b17a9f3
+  sha256 staged-ids : 93841167c73394fa7f15835b802caa9964757971a654c0d0837ec166c5da089b
+  sha256 collisions : b184a46122e93fbd013414d708fd2d53dd519626f2a8ce416aae6a6231d5fb72
+  sha256 corpus/SOURCES.md                        : 5a4c1c8c3ed0a5fd01e03bc57e93b00a563b35f8e5dc791e966e4f4251b92ef6
+  sha256 SOURCES.append.md (shokuknow, read-only) : b82d1276d837867d3a39f56e57a255249802b9d0665b230f1bc87c9424510449
+  lane HEAD at read: cb4326b2aa4c2024af0651fe6115b82d0c4de3df

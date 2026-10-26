@@ -1,0 +1,16 @@
+# tools/round-38/c1-run.sh 'after' mode, measured at HEAD 9c9d496b73cf066b02639dc54647934a0ba4297a
+# (freeze e059ca93 and the wave-1 dispatch commit both carried: mkdir -p "$OUT" before REA)
+# seat R38ExecAfterK3, run at 2026-10-26T06:18:33Z (03:18:33 -03:00)
+## argv
+bash tools/round-38/c1-run.sh after <scratch>/carrier.bin <scratch>/out-harness <scratch>/harness-scratch
+## exit
+1
+## stderr
+(empty, 0 B)
+## stdout
+{"code":"execution_failure","category":"execution_failure","message":"Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.","retryable":false,"remediation":{"action":"Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."},"details":{"provider_id":"unblob","operation":"extract_firmware","diagnostics":{"reason":"Extraction output root already exists"}}}
+## note
+/home/vgpnk/.local/bin was on PATH for this run, so the sole cause is REA's existing-output-root rule
+(dist/artifacts/SafeOutputTree.js:56-58, non-recursive mkdir -> EEXIST -> ArtifactReaderFailure).
+Fixed by the L1 in commit cb4326b2 ("harness fix (REA refuses existing extraction root; oracle mode
+unchanged"), 03:19:01 -03:00, which replaces the mkdir with rm -rf "$OUT".

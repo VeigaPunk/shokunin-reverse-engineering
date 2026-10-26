@@ -1,0 +1,382 @@
+{
+ "note": "Each probe applied to a scratch copy of the frozen counter (mirrored layout), then `--selftest` re-run. exit 0 = selftest still green => the mutated check is NOT detected by the selftest. Anchors are exact single-occurrence strings from the frozen bytes.",
+ "c1_mutations": [
+  {
+   "probe": "M1 always met_target=True",
+   "exit": 1,
+   "red_ok": 0,
+   "failures": 14,
+   "verdict": "detected: every red case depends on the final predicate"
+  },
+  {
+   "probe": "M2 drop after_handler_ok+after_gaps_empty",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "NOT detected in shipped fixture form (the two envelopes also break their stored evidence id)"
+  },
+  {
+   "probe": "M3 drop carriers_unchanged guard",
+   "exit": 1,
+   "failures": [
+    "carriers changed after freeze: want 1 got 0"
+   ],
+   "verdict": "detected"
+  },
+  {
+   "probe": "M4 force coverage_map_row=True",
+   "exit": 1,
+   "failures": [
+    "coverage map lacks stem: want 1 got 0"
+   ],
+   "verdict": "detected"
+  },
+  {
+   "probe": "P1 re-mint wrong-handler+gap envelopes (unchanged predicate)",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "green => handler/gap checks DO catch internally-consistent bad envelopes"
+  },
+  {
+   "probe": "P2 P1 + drop handler/gap conjuncts",
+   "exit": 1,
+   "failures": [
+    "wrong chunk handler (LE): want 1 got 0",
+    "extraction gap present: want 1 got 0"
+   ],
+   "verdict": "attribution proven: those 2 cases are carried by the handler/gap conjuncts"
+  },
+  {
+   "probe": "Q1 drop after_subject_ok",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "NOT detected"
+  },
+  {
+   "probe": "Q2 drop after_evidence_id_ok",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "NOT detected"
+  },
+  {
+   "probe": "Q3 drop oracle_frozen",
+   "exit": 1,
+   "failures": [
+    "oracle changed after freeze: want 1 got 0"
+   ],
+   "verdict": "detected"
+  },
+  {
+   "probe": "Q4 substring S-id membership",
+   "exit": 1,
+   "failures": [
+    "S-id substring S1120: want 1 got 0"
+   ],
+   "verdict": "detected (exact S-id membership is genuinely exercised)"
+  },
+  {
+   "probe": "Q5 drop after_oracle_hits==oracle_files",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "NOT detected"
+  },
+  {
+   "probe": "Q6 drop after_gaps_empty alone",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "NOT detected alone (masked by evidence-id binding); see P2"
+  },
+  {
+   "probe": "Q7 force frontier_note=True",
+   "exit": 1,
+   "failures": [
+    "frontier note absent: want 1 got 0"
+   ],
+   "verdict": "detected"
+  },
+  {
+   "probe": "Q8 force entry_present=True",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "NOT detected"
+  },
+  {
+   "probe": "Q9 force province_core_row=True",
+   "exit": 1,
+   "failures": [
+    "province row without handler in first cell",
+    "province row absent"
+   ],
+   "verdict": "detected (2 cases)"
+  },
+  {
+   "probe": "Q10 drop used-by check",
+   "exit": 1,
+   "failures": [
+    "used-by lacks entry: want 1 got 0"
+   ],
+   "verdict": "detected"
+  },
+  {
+   "probe": "Q11 drop opened-date check",
+   "exit": 1,
+   "failures": [
+    "source row opened earlier: want 1 got 0"
+   ],
+   "verdict": "detected"
+  },
+  {
+   "probe": "Q12 coverage map without stem",
+   "exit": 1,
+   "failures": [
+    "coverage map lacks stem: want 1 got 0"
+   ],
+   "verdict": "detected"
+  },
+  {
+   "probe": "Q13 drop after_operation_ok",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "NOT detected"
+  },
+  {
+   "probe": "Q14 drop after_present",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "NOT detected"
+  },
+  {
+   "probe": "Q15 drop oracle_files>0",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "NOT detected"
+  },
+  {
+   "probe": "R1 positive control: corrupt stored evidence_id on green envelope",
+   "exit": 1,
+   "green_ok": 0,
+   "failures": [
+    "green: want 0 got 1"
+   ],
+   "verdict": "predicate catches a wrong stored id; no selftest case exercises it"
+  },
+  {
+   "probe": "R2 positive control: publish 1 of 2 oracle files, id re-minted",
+   "exit": 1,
+   "green_ok": 0,
+   "failures": [
+    "green: want 0 got 1"
+   ],
+   "verdict": "predicate catches partial publication; no selftest case exercises it"
+  },
+  {
+   "probe": "R3 drop after_present+after_subject_ok",
+   "exit": 0,
+   "red_ok": 14,
+   "verdict": "missing-receipt case multiply caught (handler/gaps/operation) - neither conjunct individually necessary"
+  }
+ ],
+ "c2_mutations": [
+  {
+   "probe": "N1 always met_target=True",
+   "exit": 1,
+   "red_ok": 0,
+   "failures": 13,
+   "verdict": "detected"
+  },
+  {
+   "probe": "P3 drop len(failed) from mismatches (assertion machinery disabled)",
+   "exit": 0,
+   "red_ok": 13,
+   "verdict": "NOT detected: assertions O1-O4/R1-R3 never decide a case"
+  },
+  {
+   "probe": "P4 force guards_ok=True",
+   "exit": 1,
+   "red_ok": 9,
+   "failures": [
+    "unresolved pointer deleted (fewer pointers)",
+    "substituted by other document",
+    "range beyond file",
+    "new unresolved pointer"
+   ],
+   "verdict": "exactly 4 named cases are red only via the incidental guard failure"
+  },
+  {
+   "probe": "N2 disable assertion comparison (`if False:`)",
+   "exit": 0,
+   "red_ok": 13,
+   "verdict": "confirms P3"
+  }
+ ],
+ "c2_per_case_attribution": [
+  {
+   "case": "green: repaired by document",
+   "got": 0,
+   "assertion_mismatches": [],
+   "unresolved": [],
+   "guards_ok": true,
+   "pointers": 5,
+   "base_pointers": 5
+  },
+  {
+   "case": "do-nothing",
+   "got": 1,
+   "assertion_mismatches": [
+    "O1 coverage mapped/files"
+   ],
+   "unresolved": [
+    [
+     "prov_core:REA MCP server",
+     "evidence/doctor/"
+    ]
+   ],
+   "guards_ok": false,
+   "pointers": 5,
+   "base_pointers": 5
+  },
+  {
+   "case": "junk count",
+   "got": 1,
+   "assertion_mismatches": [
+    "O1 coverage mapped/files"
+   ],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 4,
+   "base_pointers": 5
+  },
+  {
+   "case": "count deleted",
+   "got": 1,
+   "assertion_mismatches": [
+    "O1 coverage mapped/files"
+   ],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 4,
+   "base_pointers": 5
+  },
+  {
+   "case": "unresolved pointer deleted (fewer pointers)",
+   "got": 1,
+   "assertion_mismatches": [],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 4,
+   "base_pointers": 5
+  },
+  {
+   "case": "substituted by other document",
+   "got": 1,
+   "assertion_mismatches": [],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 4,
+   "base_pointers": 5
+  },
+  {
+   "case": "province unresolved pointer kept",
+   "got": 1,
+   "assertion_mismatches": [],
+   "unresolved": [
+    [
+     "prov_core:REA MCP server",
+     "evidence/doctor/"
+    ]
+   ],
+   "guards_ok": false,
+   "pointers": 5,
+   "base_pointers": 5
+  },
+  {
+   "case": "box removed",
+   "got": 1,
+   "assertion_mismatches": [
+    "R3 SHONEN box4 Adjacent range"
+   ],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 3,
+   "base_pointers": 5
+  },
+  {
+   "case": "craft range off by one",
+   "got": 1,
+   "assertion_mismatches": [
+    "R1 depth row craft range",
+    "R2 SHONEN box1 craft range"
+   ],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 4,
+   "base_pointers": 5
+  },
+  {
+   "case": "adjacent range wrong",
+   "got": 1,
+   "assertion_mismatches": [
+    "R3 SHONEN box4 Adjacent range"
+   ],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 4,
+   "base_pointers": 5
+  },
+  {
+   "case": "range beyond file",
+   "got": 1,
+   "assertion_mismatches": [],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 4,
+   "base_pointers": 5
+  },
+  {
+   "case": "new unresolved pointer",
+   "got": 1,
+   "assertion_mismatches": [],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 4,
+   "base_pointers": 5
+  },
+  {
+   "case": "calibration count wrong",
+   "got": 1,
+   "assertion_mismatches": [
+    "O3 calibration aligned/total"
+   ],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 4,
+   "base_pointers": 5
+  },
+  {
+   "case": "SHONEN rule count wrong",
+   "got": 1,
+   "assertion_mismatches": [
+    "O4 SHONEN box1 rule blocks"
+   ],
+   "unresolved": [],
+   "guards_ok": false,
+   "pointers": 4,
+   "base_pointers": 5
+  }
+ ],
+ "c2_fixture_paths_outside_counter_allowlist": {
+  "LANE_regex": "^(corpus/|tools/|\\.ufo/|plans/|evidence/|scripts/|considerthese/|SCORECARD\\.md|SHONEN\\.md|SKILL\\.md|PROVINCE\\.md|LOG\\.md)",
+  "unmatched_fixture_tokens": [
+   "x.md",
+   "docs/x.md",
+   "docs/x.md:1-9",
+   "d/y.md",
+   "d/missing.md"
+  ],
+  "consequence": "pointers() skips them, so 'range beyond file' and 'new unresolved pointer' never create a token; 'substituted by other document' cannot be observed; pointer counts drop 5->4"
+ },
+ "concurrency": {
+  "probe": "6 concurrent c1 --selftest sharing one HYAKU_SCRATCH, 4 rounds",
+  "result": "24/24 exit 0, failures []",
+  "residue": "each run leaves $HYAKU_SCRATCH/kaidoku-r38/mint.wrapped.json (shared path, write-then-read window)"
+ }
+}

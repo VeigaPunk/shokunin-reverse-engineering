@@ -1,0 +1,54 @@
+diff --git i/tools/round-38/c1-counter.py w/tools/round-38/c1-counter.py
+index 8e33ac68..d24b48ce 100755
+--- i/tools/round-38/c1-counter.py
++++ w/tools/round-38/c1-counter.py
+@@ -7,4 +7,7 @@ Predicate P38-C1 (frozen; same sentence in plans/round-38-claims.md):
+-  stock unblob 26.6.4; no external extractor dependency) publishes every
+-  regular file of the frozen independent oracle (same relative-path suffix,
+-  same sha256), names the squashfs_v4_be handler, carries no extraction gap,
+-  and recomputes to its stored evidence id under the rea-agents 6.5.0 rule;
++  sasquatch-v4be available, as unblob 26.6.4's SquashFSExtractor requires)
++  publishes every regular file of the frozen independent oracle (same
++  relative-path suffix, same sha256), names the squashfs_v4_be handler,
++  carries no extraction gap, and recomputes to its stored evidence id under
++  the rea-agents 6.5.0 rule; the paired committed before-receipt (run with
++  sasquatch-v4be unavailable) publishes none of them and names
++  sasquatch-v4be as a missing extractor dependency;
+@@ -167,14 +170,17 @@ def measure(root, rev, freeze, pkg65):
+-            raw = show(root, rev, f'{AFTERDIR}/{k}/after.json')
+-            try:
+-                env = json.loads(raw) if raw else None
+-            except json.JSONDecodeError:
+-                env = None
+-            d['after_present'] = isinstance(env, dict)
+-            if isinstance(env, dict):
+-                envs[f'{k}/after'] = env
+-                d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']
+-                d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'
+-                d['after_handler_ok'] = HANDLER in chunk_handlers(env)
+-                d['after_gaps_empty'] = gaps(env) == []
+-                d['after_oracle_hits'] = matched(oracle, published(env))
+-            per[k] = d
++            for mode in ('before', 'after'):
++                raw = show(root, rev, f'{AFTERDIR}/{k}/{mode}.json')
++                try:
++                    env = json.loads(raw) if raw else None
++                except json.JSONDecodeError:
++                    env = None
++                d[f'{mode}_present'] = isinstance(env, dict)
++                if isinstance(env, dict):
++                    envs[f'{k}/{mode}'] = env
++                    d[f'{mode}_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']
++                    d[f'{mode}_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'
++                    d[f'{mode}_oracle_hits'] = matched(oracle, published(env))
++            d['after_handler_ok'] = HANDLER in chunk_handlers(envs.get(f'{k}/after'))
++            d['after_gaps_empty'] = gaps(envs.get(f'{k}/after')) == []
++            d['before_missing_extractor_gap'] = any(
++                g.get('kind') == 'missing-extractor-dependency' and 'sasquatch-v4be' in (g.get('dependencies') or [])
++                for g in gaps(envs.get(f'{k}/before')))
+@@ -182 +187,0 @@ def measure(root, rev, freeze, pkg65):
+-        n = 0
+@@ -186,0 +192,3 @@ def measure(root, rev, freeze, pkg65):
++                  and d.get('before_present') and d.get('before_subject_ok')
++                  and d.get('before_operation_ok') and d.get('before_missing_extractor_gap')
++                  and d.get('before_oracle_hits') == 0

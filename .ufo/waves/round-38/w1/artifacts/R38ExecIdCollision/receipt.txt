@@ -1,0 +1,62 @@
+R38ExecIdCollision — id-collision receipt (kaidoku round 38, wave 1)
+host time: 2026-10-26T03:22:01-03:00; lane HEAD: cb4326b2aa4c2024af0651fe6115b82d0c4de3df
+
+## 1. the frozen command, verbatim (A=.ufo/waves/round-38/assimilation)
+A=.ufo/waves/round-38/assimilation; mkdir -p "$A"
+grep -oE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' corpus/SOURCES.md | grep -oE 'S[0-9]+' | sort > "$A/reg-ids"
+grep -oE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' /home/vgpnk/Projects/shokuknow/merge/kaidoku/SOURCES.append.md | grep -oE 'S[0-9]+' | sort > "$A/staged-ids"
+comm -12 "$A/reg-ids" "$A/staged-ids" > "$A/collisions"
+
+## 2. outputs
+reg-ids    : 111 ids, S001..S111 contiguous=True
+staged-ids : 132 ids, S106..S237 contiguous=True
+collisions : 6 ids: S106 S107 S108 S109 S110 S111 
+
+## 3. digests of the evidence files (committed as wave evidence under assimilation/)
+015e600e6e4465b725fb0a9c6666fb47383b585b16b64ed63f3cad825b17a9f3  .ufo/waves/round-38/assimilation/reg-ids
+93841167c73394fa7f15835b802caa9964757971a654c0d0837ec166c5da089b  .ufo/waves/round-38/assimilation/staged-ids
+b184a46122e93fbd013414d708fd2d53dd519626f2a8ce416aae6a6231d5fb72  .ufo/waves/round-38/assimilation/collisions
+registry source : 5a4c1c8c3ed0a5fd01e03bc57e93b00a563b35f8e5dc791e966e4f4251b92ef6  corpus/SOURCES.md
+staged source   : b82d1276d837867d3a39f56e57a255249802b9d0665b230f1bc87c9424510449  /home/vgpnk/Projects/shokuknow/merge/kaidoku/SOURCES.append.md
+
+## 4. why the collision exists (stale packaging premise)
+MERGE-REPORT.json: {'lane': 'kaidoku', 'accepted': 132, 'existing_rows': 105, 'renumbered': [], 'first_id': 'S106'}
+MERGE-REPORT.md line: - lane registry currently holds **105** rows; first staged id is **S106**
+registry row count at 66b84027^ (the commit that added S106): 105
+commits that added the colliding registry rows:
+  66b84027 round-34: land the stopped claim's record — SCORECARD section, LOG entry, lesson M34-5..M34-11, QUALITY 68-73, SKILL instrument registry, S106, knowledge entry and README rows
+  ffc81341 round-36: R36-C1 landing — sasquatch SquashFS recursion to Core (entry, S107-S109, PROVINCE Core row + Adjacent tooling note, README rows, SKILL table/registry); assimilated unblob-sasquatch-dependency (S110-S111); SCORECARD/SHONEN restated
+
+## 5. existing renumber-by-document precedent (the map already applied once)
+registry S110 anchor tail: (staged as package S106, renumbered by document)
+registry S111 anchor tail: (staged as package S107, renumbered by document)
+adopted entry line 8: staged ids renumbered by document (staged S106 → S110, staged S107 → S111)
+
+## 6. document-level checks
+registry rows with no URL: 19 -> S001,S002,S003,S006,S007,S023,S039,S040,S048,S053,S055,S056,S057,S060,S063,S066,S067,S070,S072
+distinct registry URLs held by >1 row: 7 (9 W04 rows; census-start.txt lists S033,S047,S054,S062,S069,S083,S090,S092,S102)
+staged rows whose URL duplicates another staged row:
+   2 ['S128', 'S138'] https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/main/client/commandline.cpp
+   2 ['S131', 'S143'] https://cynex.nict.go.jp/pdf/library/WP_MAinSO.pdf
+   2 ['S141', 'S158'] https://zenn.dev/topics/リバースエンジニアリング
+   2 ['S183', 'S189'] https://raw.githubusercontent.com/onekey-sec/unblob/main/python/unblob/handlers/filesystem/squashfs.py
+   2 ['S194', 'S204'] https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android11-release/services/core/java/com/android/server/am/ActivityManagerShellCommand.java
+   2 ['S224', 'S237'] https://raw.githubusercontent.com/aosp-mirror/platform_system_core/android11-release/adb/protocol.txt
+staged rows whose URL equals a registry row's URL:
+   staged S107 == registry ['S111']
+
+## 7. staged column hygiene (escape-aware; the naive split misleads)
+  cell-count histogram (escaping '\|' honoured): {11: 132}   expected 11 cells = 11-column schema
+  rows outside the schema: none
+  opened distribution: {'2026-10-23': 54, '2026-10-24': 78}
+  (a naive .split('|') over-counts cells because in-cell pipes are written '\|' —
+   e.g. S127 reports 13 cells naively and 11 cells escape-aware. No schema defect.)
+
+## 8. base-tree cross-check
+  registry rows at 77091b49: 111
+  registry rows at HEAD     : 111
+  staged rows opened 2026-10-26: 0
+
+## 9. tier check for the duplicate-document pair
+  registry S111: kind= docs  tier= B 
+  staged   S107: kind= docs  tier= A 

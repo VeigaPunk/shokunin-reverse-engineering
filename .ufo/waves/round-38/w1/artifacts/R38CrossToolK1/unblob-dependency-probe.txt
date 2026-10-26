@@ -1,0 +1,50 @@
+# unblob 26.6.4 CLI on K1/carrier.sqsh, PATH WITHOUT ~/.local/bin
+$ env -i HOME=/home/vgpnk PATH=/usr/bin:/bin TERM=dumb ~/.local/bin/unblob -e out --report report.json --log log.txt -f carrier.sqsh
+exit=1
+--- summary table (stdout) ---
+
+╭────────────────────────────── unblob (26.6.4) ───────────────────────────────╮
+│ Output path: None                                                            │
+│ Extracted files: 1                                                           │
+│ Extracted directories: 0                                                     │
+│ Extracted links: 0                                                           │
+│ Extraction directory size: 9.55 KB                                           │
+╰────────────────────────────────── Summary ───────────────────────────────────╯
+         Chunks distribution          
+┏━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+┃ Chunk type     ┃  Size   ┃  Ratio  ┃
+┡━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━┩
+│ SQUASHFS_V4_BE │ 9.55 KB │ 100.00% │
+│ UNKNOWN        │ 0.00 B  │  0.00%  │
+└────────────────┴─────────┴─────────┘
+Chunk identification ratio: 100.00%
+                  Encountered errors                  
+┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Severity       ┃ Name                              ┃
+┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ Severity.ERROR │ ExtractorDependencyNotFoundReport │
+└────────────────┴───────────────────────────────────┘
+[?25h--- report.json ChunkReport ---
+{
+ "id": "1753408:1",
+ "handler_name": "squashfs_v4_be",
+ "start_offset": 0,
+ "end_offset": 9780,
+ "size": 9780,
+ "is_encrypted": false,
+ "extraction_reports": [
+  {
+   "severity": "ERROR",
+   "dependencies": [
+    "sasquatch-v4be"
+   ],
+   "__typename__": "ExtractorDependencyNotFoundReport"
+  }
+ ],
+ "__typename__": "ChunkReport"
+}
+--- log: extract command + dependency error ---
+2026-10-26 06:19.02 [debug    ] Running extract command        command='sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r38/R38CrossToolK1/ubB/out/carrier.sqsh_extract /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K1/carrier.sqsh' pid=1753408
+2026-10-26 06:19.02 [error    ] Can't run extract command. Is the extractor installed? __typename__=ExtractorDependencyNotFoundReport dependencies=['sasquatch-v4be'] pid=1753408 severity=<Severity.ERROR: 'ERROR'>
+--- published files under out/ ---
+ (none printed above = nothing published)

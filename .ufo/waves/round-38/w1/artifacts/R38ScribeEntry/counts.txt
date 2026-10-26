@@ -1,0 +1,93 @@
+# R38ScribeEntry — commands and verbatim outputs behind the entry draft
+# Lane root: /home/vgpnk/Projects/shokunin/kaidoku-shokunin (cwd for every command)
+# Collected 2026-10-26T06:22Z–06:24Z. Read-only: no extraction was re-run by this seat.
+
+## 1. Carrier pins (frozen at .ufo/waves/round-38/c1/carriers.json)
+$ sha256sum corpus/evidence/round-37/c1/K*/carrier.*
+1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e  corpus/evidence/round-37/c1/K1/carrier.sqsh
+403cb0a827966bbe17a70e08af7d39b43260da8201d1b9001bbc4228cbc99154  corpus/evidence/round-37/c1/K2/carrier.sqsh
+9c7c523c5d1d1cafc0b679af9092ce0289d9656f6a24bc3bd0009f95b69397c0  corpus/evidence/round-37/c1/K3/carrier.bin
+a29ddc15f5a6abcabf28b7161837eb56b34111e48420e7392e648f2fdfe956ed  corpus/evidence/round-37/c1/K4/carrier.bin
+
+## 2. Oracle row counts
+$ wc -l corpus/evidence/round-37/c1/K*/oracle.tsv
+   5 …/K1/oracle.tsv
+   3 …/K2/oracle.tsv
+   4 …/K3/oracle.tsv
+   4 …/K4/oracle.tsv
+  16 total
+
+## 3. Receipt counts (wave-1 drafts, uncommitted)
+$ for f in …/R38ExecProvincePatch/after-K1.json …/R38ExecAfterK2/after.json \
+       …/R38ExecAfterK3/diagnostic-after-with-declared-extractor.json …/R38ExecAfterK4/after.json; do
+    jq -c '.normalized_result|{files:(.files|length),bytes:.published_bytes,gaps:(.extraction_gaps|length),cov:.coverage,handlers:[.chunks[].handler]}' "$f"; done
+K1 {"files":5,"bytes":9656,"gaps":0,"cov":"partial","handlers":["squashfs_v4_be"]}
+K2 {"files":3,"bytes":10283,"gaps":1,"cov":"partial","handlers":["squashfs_v4_be"]}
+K3 {"files":4,"bytes":28,"gaps":0,"cov":"complete","handlers":["squashfs_v4_be"]}
+K4 {"files":4,"bytes":28,"gaps":0,"cov":"complete","handlers":["squashfs_v4_be"]}
+
+## 4. The K3 draft at the frozen receipt path (missing-extractor arm)
+$ jq -c '.normalized_result|{files:(.files|length),gaps:(.extraction_gaps|length),cov:.coverage,
+          handlers:[.chunks[].handler],deps:[.extraction_gaps[].dependencies]}' \
+     .ufo/waves/round-38/w1/artifacts/R38ExecAfterK3/after.json
+{"files":0,"gaps":1,"cov":"partial","handlers":["squashfs_v4_be"],"deps":[["sasquatch-v4be"]]}
+$ jq -r '.normalized_result.extraction_continuations[0].id' …/R38ExecAfterK3/after.json
+4ca863d04cc06d61e7be38d0811847a15f55c70f028fdf45e8fefdf75957a07a
+$ jq -r '.normalized_result.extraction_continuations[0].instruction' …/R38ExecAfterK3/after.json
+REA installs nothing. Add the named dependency to your own environment and rerun extract_firmware on the same immutable input with a fresh output_directory to re-evaluate the affected region; otherwise it stays unextracted.
+
+## 5. K2's gap
+$ jq -r '.normalized_result.unpublished_entries[]?|"\(.kind) \(.relative_path) -> \(.link_target)"' \
+     .ufo/waves/round-38/w1/artifacts/R38ExecAfterK2/after.json
+symlink firmware.bin_extract/var/lib/run-link -> ../../a/run.sh
+
+## 6. K1's removed symlink (zero gaps, coverage partial)
+$ jq -c '.normalized_result.diagnostics[]?|{t:.report.__typename__,s:.report.severity}' \
+     .ufo/waves/round-38/w1/artifacts/R38ExecProvincePatch/after-K1.json
+{"t":"MaliciousSymlinkRemoved","s":"WARNING"}
+$ find corpus/evidence/round-37/c1/K1/src corpus/evidence/round-37/c1/K2/src -type l -printf '%p -> %l\n'
+corpus/evidence/round-37/c1/K1/src/link-to-hello -> ../hello.txt
+corpus/evidence/round-37/c1/K2/src/var/lib/run-link -> ../../a/run.sh
+
+## 7. Oracle hits (frozen matching rule: sha256 equal and path equal or /rel suffix)
+K1 oracle 5 hits 5
+K2 oracle 3 hits 3
+K3 oracle 4 hits 4
+K4 oracle 4 hits 4
+
+## 8. Cross-tool legs
+$ wc -l .ufo/waves/round-38/w1/artifacts/R38CrossToolK4/{sasquatch-v4be,harness-oracle}-K*.tsv
+5 / 3 / 4 / 4 rows each (8 files)
+$ cat .ufo/waves/round-38/w1/artifacts/R38CrossToolK4/oracle-compare.tsv
+carrier	oracle_rows	extracted_rows	path+sha_diff	oracle_vs_src
+K1	5	5	identical	identical
+K2	3	3	identical	identical
+K3	4	4	identical	-
+K4	4	4	identical	-
+$ cat .ufo/waves/round-38/w1/artifacts/R38CrossToolK4/unblob-command-K3.txt
+sasquatch-v4be -be -no-exit-code -f -d <scratch>/unblob/out-K3/carrier.bin_extract <lane>/corpus/evidence/round-37/c1/K3/carrier.bin
+$ cat .ufo/waves/round-38/w1/artifacts/R38CrossToolK4/tool-versions.txt
+sasquatch-v4be: unsquashfs version 4.5.1 (2022/03/17)  sha256=fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6
+sasquatch: unsquashfs version 4.5.1 (2022/03/17)
+unsquashfs: unsquashfs version 4.7.5 (2026/03/01)
+7z: 7-Zip 26.04 (x64) 2026-10-05
+unblob: 26.6.4
+rea-agents: version:6.5.0
+
+## 9. Reader refusals (4/4 carriers each)
+7-Zip 26.04: "ERROR: <carrier> : Cannot open the file as archive", "Errors: 1", exit_code=2 on K1,K2,K3,K4
+unsquashfs 4.7.5: "Reading a different endian SQUASHFS filesystem" + "FATAL ERROR: Can't find a valid SQUASHFS superblock", exit_code=1 on K1,K2,K3,K4
+
+## 10. Frozen counter state (peer receipts, read-only)
+$ jq -c '{revision,carriers_matched,met_target,bindings}' .ufo/waves/round-38/w1/artifacts/R38ExecRecountBase/c1-at-base.json
+revision 77091b492cc53f8743bd0701b1e7d5e66123dd84; carriers_matched 0; met_target false;
+bindings {coverage_map_row:false, entry_present:false, frontier_note:true, province_core_row:false,
+          province_core_section:false, sourced:false, opened_source_rows:[]}
+$ … c1-at-freeze.json  → revision e059ca9391642d5b71b6662cabcbdce0d9308719; carriers_matched 0; met_target false
+$ … c1-at-tip.json     → revision 9c9d496b; carriers_matched 0; met_target false; carriers_unchanged true
+
+## 11. K4 evidence ids for one subject (xpin rule visible in tools/round-27/xpin-attribute.mjs)
+subject a29ddc15f5a6abcabf28b7161837eb56b34111e48420e7392e648f2fdfe956ed
+ev_3d1197d1… (R38ExecAfterK4/after.json)
+ev_de83842f… (R38ExecAfterK4/after-scratchcopy-crosscheck.json)
+ev_b62e21b8… (R38ExecProvincePatch/after-K4.json)

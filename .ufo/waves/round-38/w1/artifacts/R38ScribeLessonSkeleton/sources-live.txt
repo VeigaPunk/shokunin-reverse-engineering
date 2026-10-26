@@ -1,0 +1,20 @@
+# live-source measurements taken by this seat (2026-10-26, scratch `/fast/scratch/hyaku/kaidoku-r38/R38ScribeLessonSkeleton`, now removed)
+
+## unblob.org/formats/ (assimilation Decision 1)
+$ curl -sS -m 40 -o formats.html -w 'http=%{http_code} bytes=%{size_download}\n' https://unblob.org/formats/
+http=200 bytes=216890
+$ grep -o '<h2 id=' formats.html | wc -l   -> 97
+$ grep -c 'more than 30 different' formats.html -> 3
+$ sha256sum formats.html
+8f8c29aff33d5aa1ee2a69f8a66f272d45fa3dd98d271c95337c3ff15a65bbc5
+
+## Freetz AVM-BE note, older raw path (S114 / R37-CL2)
+$ curl -sS -m 30 -o freetz-old.txt https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt   -> HTTP 200
+c1c43f6f97d7477dcdab15203d11e43b49beb12e3a43a3b52bdd71b672a9a5d5  /fast/scratch/hyaku/kaidoku-r38/R38ScribeLessonSkeleton/freetz-old.txt
+1496
+diff against the committed copy: IDENTICAL
+committed copy: c1c43f6f97d7477dcdab15203d11e43b49beb12e3a43a3b52bdd71b672a9a5d5  .ufo/waves/round-37/probes/avm.txt
+
+## Freetz-NG wiki page (S114 primary) and both URL status codes
+200 https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt
+200 https://raw.githubusercontent.com/Freetz-NG/freetz-ng/master/docs/wiki/60_Development/squashfs4-be.en.md

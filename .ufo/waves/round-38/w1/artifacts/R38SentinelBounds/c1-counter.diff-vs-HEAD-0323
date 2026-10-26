@@ -1,0 +1,69 @@
+diff --git i/tools/round-38/c1-counter.py w/tools/round-38/c1-counter.py
+index 8e33ac68..d24b48ce 100755
+--- i/tools/round-38/c1-counter.py
++++ w/tools/round-38/c1-counter.py
+@@ -4,10 +4,13 @@
+ Predicate P38-C1 (frozen; same sentence in plans/round-38-claims.md):
+   At the measured revision, for each of the four frozen big-endian SquashFS
+   v4 carriers, the committed REA extract-firmware after-receipt (run with
+-  stock unblob 26.6.4; no external extractor dependency) publishes every
+-  regular file of the frozen independent oracle (same relative-path suffix,
+-  same sha256), names the squashfs_v4_be handler, carries no extraction gap,
+-  and recomputes to its stored evidence id under the rea-agents 6.5.0 rule;
++  sasquatch-v4be available, as unblob 26.6.4's SquashFSExtractor requires)
++  publishes every regular file of the frozen independent oracle (same
++  relative-path suffix, same sha256), names the squashfs_v4_be handler,
++  carries no extraction gap, and recomputes to its stored evidence id under
++  the rea-agents 6.5.0 rule; the paired committed before-receipt (run with
++  sasquatch-v4be unavailable) publishes none of them and names
++  sasquatch-v4be as a missing extractor dependency;
+   PROVINCE.md holds a round-38 Core row naming squashfs_v4_be that cites the
+   round-38 knowledge entry, which cites a SOURCES.md row opened
+   2026-10-26 whose used-by lists that entry; the round-38 frontier note
+@@ -164,26 +167,31 @@ def measure(root, rev, freeze, pkg65):
+             d['oracle_frozen'] = o_freeze is not None and o_freeze == o_rev
+             oracle = load_oracle(o_freeze) if o_freeze else []
+             d['oracle_files'] = len(oracle)
+-            raw = show(root, rev, f'{AFTERDIR}/{k}/after.json')
+-            try:
+-                env = json.loads(raw) if raw else None
+-            except json.JSONDecodeError:
+-                env = None
+-            d['after_present'] = isinstance(env, dict)
+-            if isinstance(env, dict):
+-                envs[f'{k}/after'] = env
+-                d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']
+-                d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'
+-                d['after_handler_ok'] = HANDLER in chunk_handlers(env)
+-                d['after_gaps_empty'] = gaps(env) == []
+-                d['after_oracle_hits'] = matched(oracle, published(env))
+-            per[k] = d
++            for mode in ('before', 'after'):
++                raw = show(root, rev, f'{AFTERDIR}/{k}/{mode}.json')
++                try:
++                    env = json.loads(raw) if raw else None
++                except json.JSONDecodeError:
++                    env = None
++                d[f'{mode}_present'] = isinstance(env, dict)
++                if isinstance(env, dict):
++                    envs[f'{k}/{mode}'] = env
++                    d[f'{mode}_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']
++                    d[f'{mode}_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'
++                    d[f'{mode}_oracle_hits'] = matched(oracle, published(env))
++            d['after_handler_ok'] = HANDLER in chunk_handlers(envs.get(f'{k}/after'))
++            d['after_gaps_empty'] = gaps(envs.get(f'{k}/after')) == []
++            d['before_missing_extractor_gap'] = any(
++                g.get('kind') == 'missing-extractor-dependency' and 'sasquatch-v4be' in (g.get('dependencies') or [])
++                for g in gaps(envs.get(f'{k}/before')))
+         ev = evidence_ids(root, freeze, pkg65, envs, work)
+-        n = 0
+         for k, d in per.items():
+             key = f'{k}/after'
+             d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')
+             ok = (d['oracle_frozen'] and d['oracle_files'] > 0
++                  and d.get('before_present') and d.get('before_subject_ok')
++                  and d.get('before_operation_ok') and d.get('before_missing_extractor_gap')
++                  and d.get('before_oracle_hits') == 0
+                   and d.get('after_present')
+                   and d.get('after_subject_ok') and d.get('after_operation_ok')
+                   and d.get('after_handler_ok') and d.get('after_gaps_empty')

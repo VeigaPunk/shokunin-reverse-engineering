@@ -1,0 +1,58 @@
+# R38ExecBeforeArmRecheck — PATH-strip construction and extractor-dependency evidence
+# captured 2026-10-26T03:24:06-03:00 on the lane worktree at HEAD cb4326b2aa4c2024af0651fe6115b82d0c4de3df
+
+## strip rule
+for d in $PATH components: drop d if test -x "$d/sasquatch" || test -x "$d/sasquatch-v4be"
+dropped: /home/vgpnk/.local/bin 
+PATH before: /run/user/1000/fnm_multishells/6713_1792986395296/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/home/vgpnk/.local/share/mise/installs/node/latest/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2590_1792986109655/bin:/home/vgpnk/.local/share/omarchy/bin:/run/user/1000/fnm_multishells/1600_1792986098392/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/vgpnk/.minimax/bin:/home/vgpnk/.minimax-code/bin:/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin
+PATH after : /run/user/1000/fnm_multishells/6713_1792986395296/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/share/mise/installs/node/latest/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2590_1792986109655/bin:/home/vgpnk/.local/share/omarchy/bin:/run/user/1000/fnm_multishells/1600_1792986098392/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/vgpnk/.minimax/bin:/home/vgpnk/.minimax-code/bin:/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin
+
+## resolve check under stripped PATH
+sasquatch -> ABSENT
+sasquatch-v4be -> ABSENT
+unblob -> ABSENT
+node -> /run/user/1000/fnm_multishells/6713_1792986395296/bin/node
+npx -> /run/user/1000/fnm_multishells/6713_1792986395296/bin/npx
+python3 -> /usr/bin/python3
+
+## unblob 26.6.4 external-dependency table, stripped PATH
+The following executables found installed, which are needed by unblob:
+    7z                          ✓
+    debugfs                     ✓
+    fsck.erofs                  ✗
+    jefferson                   ✗
+    lz4                         ✓
+    lziprecover                 ✗
+    lzop                        ✗
+    partclone.restore           ✗
+    sasquatch                   ✗
+    sasquatch-v4be              ✗
+    simg2img                    ✓
+    ubireader_extract_files     ✗
+    ubireader_extract_images    ✗
+    unar                        ✗
+    zstd                        ✓
+
+## unblob 26.6.4 external-dependency table, stock PATH
+The following executables found installed, which are needed by unblob:
+    7z                          ✓
+    debugfs                     ✓
+    fsck.erofs                  ✗
+    jefferson                   ✗
+    lz4                         ✓
+    lziprecover                 ✗
+    lzop                        ✗
+    partclone.restore           ✗
+    sasquatch                   ✓
+    sasquatch-v4be              ✓
+    simg2img                    ✓
+    ubireader_extract_files     ✗
+    ubireader_extract_images    ✗
+    unar                        ✗
+    zstd                        ✓
+
+## installed extractor binaries (provenance)
+unblob           : 26.6.4
+sasquatch-v4be   : unsquashfs version 4.5.1 (2022/03/17) copyright (C) 2022 Phillip Lougher <phillip@squashfs.org.uk>  This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2, or (at your option) any later version.  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. 
+7z               :  64-bit locale=en_US.UTF-8 Threads:32 OPEN_MAX:524288, ASM
+unsquashfs       : unsquashfs version 4.7.5 (2026/03/01)

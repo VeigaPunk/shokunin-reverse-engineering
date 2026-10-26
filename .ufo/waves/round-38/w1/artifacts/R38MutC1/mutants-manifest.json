@@ -1,0 +1,245 @@
+[
+ {
+  "id": "M01_hit_anchor_unanchored_suffix",
+  "class": "oracle hit counting",
+  "old": "if any(sha == fs and (fp == rel or fp.endswith('/' + rel)) for fp, fs in files):",
+  "new": "if any(sha == fs and fp.endswith(rel) for fp, fs in files):",
+  "predicted": "SURVIVE",
+  "sha256": "71b108ab778b0949a8127370a19b24489736f5eeb94adae72eaf0a616797ab52",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M01_hit_anchor_unanchored_suffix/c1-counter.py\t2026-10-26 03:23:38.954302490 -0300\n@@ -136,7 +136,7 @@\n def matched(oracle, files):\n     hits = 0\n     for rel, sha in oracle:\n-        if any(sha == fs and (fp == rel or fp.endswith('/' + rel)) for fp, fs in files):\n+        if any(sha == fs and fp.endswith(rel) for fp, fs in files):\n             hits += 1\n     return hits\n \n"
+ },
+ {
+  "id": "M02_hit_condition_always_true",
+  "class": "oracle hit counting",
+  "old": "if any(sha == fs and (fp == rel or fp.endswith('/' + rel)) for fp, fs in files):",
+  "new": "if True:",
+  "predicted": "KILL",
+  "sha256": "10befa08612c2a398e8f1d5d5d77a3b70b283eb349f601d2a8325b9f8d8bdefa",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M02_hit_condition_always_true/c1-counter.py\t2026-10-26 03:23:38.955357639 -0300\n@@ -136,7 +136,7 @@\n def matched(oracle, files):\n     hits = 0\n     for rel, sha in oracle:\n-        if any(sha == fs and (fp == rel or fp.endswith('/' + rel)) for fp, fs in files):\n+        if True:\n             hits += 1\n     return hits\n \n"
+ },
+ {
+  "id": "M03_handler_check_true",
+  "class": "handler check",
+  "old": "d['after_handler_ok'] = HANDLER in chunk_handlers(env)",
+  "new": "d['after_handler_ok'] = True",
+  "predicted": "KILL",
+  "sha256": "11a915085da5c6f5b7e4ce4193a1f667263261a9443d7713715ba8f8b214bbd2",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M03_handler_check_true/c1-counter.py\t2026-10-26 03:23:38.956154959 -0300\n@@ -174,7 +174,7 @@\n                 envs[f'{k}/after'] = env\n                 d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']\n                 d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'\n-                d['after_handler_ok'] = HANDLER in chunk_handlers(env)\n+                d['after_handler_ok'] = True\n                 d['after_gaps_empty'] = gaps(env) == []\n                 d['after_oracle_hits'] = matched(oracle, published(env))\n             per[k] = d\n"
+ },
+ {
+  "id": "M04_handler_substring_match",
+  "class": "handler check",
+  "old": "d['after_handler_ok'] = HANDLER in chunk_handlers(env)",
+  "new": "d['after_handler_ok'] = any(HANDLER in (h or '') for h in chunk_handlers(env))",
+  "predicted": "SURVIVE",
+  "sha256": "b973059fa78145f1877099833ea3b8f40d87cf79c5417b230feb06e59c3f92c1",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M04_handler_substring_match/c1-counter.py\t2026-10-26 03:23:38.957046789 -0300\n@@ -174,7 +174,7 @@\n                 envs[f'{k}/after'] = env\n                 d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']\n                 d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'\n-                d['after_handler_ok'] = HANDLER in chunk_handlers(env)\n+                d['after_handler_ok'] = any(HANDLER in (h or '') for h in chunk_handlers(env))\n                 d['after_gaps_empty'] = gaps(env) == []\n                 d['after_oracle_hits'] = matched(oracle, published(env))\n             per[k] = d\n"
+ },
+ {
+  "id": "M05_gap_check_true",
+  "class": "gap check",
+  "old": "d['after_gaps_empty'] = gaps(env) == []",
+  "new": "d['after_gaps_empty'] = True",
+  "predicted": "KILL",
+  "sha256": "424fae18f3d2183d77570ea3c8797b11761fd401c5fca8aafdd668446a85341b",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M05_gap_check_true/c1-counter.py\t2026-10-26 03:23:38.957778969 -0300\n@@ -175,7 +175,7 @@\n                 d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']\n                 d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'\n                 d['after_handler_ok'] = HANDLER in chunk_handlers(env)\n-                d['after_gaps_empty'] = gaps(env) == []\n+                d['after_gaps_empty'] = True\n                 d['after_oracle_hits'] = matched(oracle, published(env))\n             per[k] = d\n         ev = evidence_ids(root, freeze, pkg65, envs, work)\n"
+ },
+ {
+  "id": "M06_gap_check_len_le_1",
+  "class": "gap check",
+  "old": "d['after_gaps_empty'] = gaps(env) == []",
+  "new": "d['after_gaps_empty'] = len(gaps(env)) <= 1",
+  "predicted": "KILL",
+  "sha256": "9b386e868b6611733ee7dde6e401a170ceb2a894888dd48b70329c0b732fc225",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M06_gap_check_len_le_1/c1-counter.py\t2026-10-26 03:23:38.958711518 -0300\n@@ -175,7 +175,7 @@\n                 d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']\n                 d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'\n                 d['after_handler_ok'] = HANDLER in chunk_handlers(env)\n-                d['after_gaps_empty'] = gaps(env) == []\n+                d['after_gaps_empty'] = len(gaps(env)) <= 1\n                 d['after_oracle_hits'] = matched(oracle, published(env))\n             per[k] = d\n         ev = evidence_ids(root, freeze, pkg65, envs, work)\n"
+ },
+ {
+  "id": "M07_evidence_id_equality_dropped",
+  "class": "evidence-id check",
+  "old": "d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')",
+  "new": "d['after_evidence_id_ok'] = key in ev and ev[key][0].startswith('ev_')",
+  "predicted": "SURVIVE",
+  "sha256": "36011b911b6e2f834621cf6fd9656964d3eaab5e788ddf79025640ea4a4bc31c",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M07_evidence_id_equality_dropped/c1-counter.py\t2026-10-26 03:23:38.959525348 -0300\n@@ -182,7 +182,7 @@\n         n = 0\n         for k, d in per.items():\n             key = f'{k}/after'\n-            d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')\n+            d['after_evidence_id_ok'] = key in ev and ev[key][0].startswith('ev_')\n             ok = (d['oracle_frozen'] and d['oracle_files'] > 0\n                   and d.get('after_present')\n                   and d.get('after_subject_ok') and d.get('after_operation_ok')\n"
+ },
+ {
+  "id": "M08_evidence_id_prefix_dropped",
+  "class": "evidence-id check",
+  "old": "d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')",
+  "new": "d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1]",
+  "predicted": "SURVIVE",
+  "sha256": "192df20b91d25d28d9bad7c44a4db2bbdb4800e7dcc9dcf0dfe369f3bc32acad",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M08_evidence_id_prefix_dropped/c1-counter.py\t2026-10-26 03:23:38.960329318 -0300\n@@ -182,7 +182,7 @@\n         n = 0\n         for k, d in per.items():\n             key = f'{k}/after'\n-            d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')\n+            d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1]\n             ok = (d['oracle_frozen'] and d['oracle_files'] > 0\n                   and d.get('after_present')\n                   and d.get('after_subject_ok') and d.get('after_operation_ok')\n"
+ },
+ {
+  "id": "M09_evidence_id_keyin_dropped",
+  "class": "evidence-id check",
+  "old": "d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')",
+  "new": "d['after_evidence_id_ok'] = ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')",
+  "predicted": "KILL-crash",
+  "sha256": "0e5d76b80681452a816e853a31e65264f7884d90d9158a48d7b576add81e283a",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M09_evidence_id_keyin_dropped/c1-counter.py\t2026-10-26 03:23:38.961039947 -0300\n@@ -182,7 +182,7 @@\n         n = 0\n         for k, d in per.items():\n             key = f'{k}/after'\n-            d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')\n+            d['after_evidence_id_ok'] = ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')\n             ok = (d['oracle_frozen'] and d['oracle_files'] > 0\n                   and d.get('after_present')\n                   and d.get('after_subject_ok') and d.get('after_operation_ok')\n"
+ },
+ {
+  "id": "M10_province_section_true",
+  "class": "binding province_core_section",
+  "old": "b['province_core_section'] = sec is not None",
+  "new": "b['province_core_section'] = True",
+  "predicted": "SURVIVE",
+  "sha256": "d766ad5d2193ed5f0d6a640cdd751b7f4ce2e18c0fd9bafeb9c3b3a9c458a666",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M10_province_section_true/c1-counter.py\t2026-10-26 03:23:38.963179087 -0300\n@@ -200,7 +200,7 @@\n     b = {}\n     prov = show(root, rev, 'PROVINCE.md')\n     sec = section(prov.decode(), CORE_HEADING) if prov else None\n-    b['province_core_section'] = sec is not None\n+    b['province_core_section'] = True\n     rows = [l for l in (sec or []) if l.lstrip().startswith('|')]\n     b['province_core_row'] = any(\n         re.search(r'(?<![A-Za-z0-9-])squashfs_v4_be(?![A-Za-z0-9])', cells(r)[0]) and ENTRY in r\n"
+ },
+ {
+  "id": "M11_province_row_regex_loose",
+  "class": "binding province_core_row",
+  "old": "re.search(r'(?<![A-Za-z0-9-])squashfs_v4_be(?![A-Za-z0-9])', cells(r)[0])",
+  "new": "re.search(r'squashfs_v4_be', cells(r)[0])",
+  "predicted": "SURVIVE",
+  "sha256": "df0d0e69ea25f823be5bfcc83ef01d037d6be658b97e13cf235144675f212716",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M11_province_row_regex_loose/c1-counter.py\t2026-10-26 03:23:38.964010506 -0300\n@@ -203,7 +203,7 @@\n     b['province_core_section'] = sec is not None\n     rows = [l for l in (sec or []) if l.lstrip().startswith('|')]\n     b['province_core_row'] = any(\n-        re.search(r'(?<![A-Za-z0-9-])squashfs_v4_be(?![A-Za-z0-9])', cells(r)[0]) and ENTRY in r\n+        re.search(r'squashfs_v4_be', cells(r)[0]) and ENTRY in r\n         for r in rows)\n     b['frontier_note'] = bool(prov) and any(\n         'big-endian' in l and 'superseded' in l for l in prov.decode().splitlines())\n"
+ },
+ {
+  "id": "M12_province_row_entry_citation_dropped",
+  "class": "binding province_core_row",
+  "old": "cells(r)[0]) and ENTRY in r",
+  "new": "cells(r)[0])",
+  "predicted": "SURVIVE",
+  "sha256": "f0bb37b3ab299a23bdfc49c03efbecc1ed948c3b7216f8e0755677d4bcedbbcc",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M12_province_row_entry_citation_dropped/c1-counter.py\t2026-10-26 03:23:38.965876616 -0300\n@@ -203,7 +203,7 @@\n     b['province_core_section'] = sec is not None\n     rows = [l for l in (sec or []) if l.lstrip().startswith('|')]\n     b['province_core_row'] = any(\n-        re.search(r'(?<![A-Za-z0-9-])squashfs_v4_be(?![A-Za-z0-9])', cells(r)[0]) and ENTRY in r\n+        re.search(r'(?<![A-Za-z0-9-])squashfs_v4_be(?![A-Za-z0-9])', cells(r)[0])\n         for r in rows)\n     b['frontier_note'] = bool(prov) and any(\n         'big-endian' in l and 'superseded' in l for l in prov.decode().splitlines())\n"
+ },
+ {
+  "id": "M13_frontier_note_bigend_dropped",
+  "class": "binding frontier_note",
+  "old": "'big-endian' in l and 'superseded' in l",
+  "new": "'superseded' in l",
+  "predicted": "SURVIVE",
+  "sha256": "898401bbe3f40217e201f39795d444ed6572e415cef14389c4cb91cdba692f63",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M13_frontier_note_bigend_dropped/c1-counter.py\t2026-10-26 03:23:38.966801185 -0300\n@@ -206,7 +206,7 @@\n         re.search(r'(?<![A-Za-z0-9-])squashfs_v4_be(?![A-Za-z0-9])', cells(r)[0]) and ENTRY in r\n         for r in rows)\n     b['frontier_note'] = bool(prov) and any(\n-        'big-endian' in l and 'superseded' in l for l in prov.decode().splitlines())\n+        'superseded' in l for l in prov.decode().splitlines())\n     ent = show(root, rev, ENTRY)\n     b['entry_present'] = ent is not None\n     src_ids = set()\n"
+ },
+ {
+  "id": "M14_entry_present_true",
+  "class": "binding entry_present",
+  "old": "b['entry_present'] = ent is not None",
+  "new": "b['entry_present'] = True",
+  "predicted": "SURVIVE",
+  "sha256": "15a123c1c809bd70be12152f111b485c6dbba480e1935ba538155ddace9df11e",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M14_entry_present_true/c1-counter.py\t2026-10-26 03:23:38.967524915 -0300\n@@ -208,7 +208,7 @@\n     b['frontier_note'] = bool(prov) and any(\n         'big-endian' in l and 'superseded' in l for l in prov.decode().splitlines())\n     ent = show(root, rev, ENTRY)\n-    b['entry_present'] = ent is not None\n+    b['entry_present'] = True\n     src_ids = set()\n     if ent:\n         for line in ent.decode().splitlines():\n"
+ },
+ {
+  "id": "M15_sourced_opened_dropped",
+  "class": "binding sourced",
+  "old": "if c[0] in src_ids and c[8] == OPENED and ENTRY in used:",
+  "new": "if c[0] in src_ids and ENTRY in used:",
+  "predicted": "KILL",
+  "sha256": "1e2a8aaef2f7c6411dbbc9991028543b8a5ace4480b70529937672a0c0f4684c",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M15_sourced_opened_dropped/c1-counter.py\t2026-10-26 03:23:38.969505214 -0300\n@@ -225,7 +225,7 @@\n             if len(c) != 11:\n                 continue\n             used = [u.strip() for u in c[10].split(',')]\n-            if c[0] in src_ids and c[8] == OPENED and ENTRY in used:\n+            if c[0] in src_ids and ENTRY in used:\n                 ok_ids.append(c[0])\n     b['opened_source_rows'] = sorted(ok_ids)\n     b['sourced'] = bool(ok_ids)\n"
+ },
+ {
+  "id": "M16_sourced_usedby_dropped",
+  "class": "binding sourced",
+  "old": "if c[0] in src_ids and c[8] == OPENED and ENTRY in used:",
+  "new": "if c[0] in src_ids and c[8] == OPENED:",
+  "predicted": "KILL",
+  "sha256": "36b6a18299fe53fafc79e732f79ff295a03ae060934b4123b6f1f2d41d96a349",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M16_sourced_usedby_dropped/c1-counter.py\t2026-10-26 03:23:38.970400164 -0300\n@@ -225,7 +225,7 @@\n             if len(c) != 11:\n                 continue\n             used = [u.strip() for u in c[10].split(',')]\n-            if c[0] in src_ids and c[8] == OPENED and ENTRY in used:\n+            if c[0] in src_ids and c[8] == OPENED:\n                 ok_ids.append(c[0])\n     b['opened_source_rows'] = sorted(ok_ids)\n     b['sourced'] = bool(ok_ids)\n"
+ },
+ {
+  "id": "M17_coverage_map_any_line",
+  "class": "binding coverage_map_row",
+  "old": "b['coverage_map_row'] = bool(cm) and any(STEM in l for l in cm if l.lstrip().startswith('|'))",
+  "new": "b['coverage_map_row'] = bool(cm) and any(STEM in l for l in cm)",
+  "predicted": "SURVIVE",
+  "sha256": "c7abc3d39091cdfa6e060eb1e54a532a0d9672254010923989f23028d77605fe",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M17_coverage_map_any_line/c1-counter.py\t2026-10-26 03:23:38.971273454 -0300\n@@ -231,7 +231,7 @@\n     b['sourced'] = bool(ok_ids)\n     readme = show(root, rev, 'corpus/README.md')\n     cm = section(readme.decode(), '## Coverage map') if readme else None\n-    b['coverage_map_row'] = bool(cm) and any(STEM in l for l in cm if l.lstrip().startswith('|'))\n+    b['coverage_map_row'] = bool(cm) and any(STEM in l for l in cm)\n     res['bindings'] = b\n     bind_ok = all(b[x] for x in ('province_core_section', 'province_core_row', 'frontier_note',\n                                  'entry_present', 'sourced', 'coverage_map_row'))\n"
+ },
+ {
+  "id": "M18_carriers_unchanged_nonnull",
+  "class": "carriers_unchanged",
+  "old": "res['carriers_unchanged'] = cur == frozen",
+  "new": "res['carriers_unchanged'] = cur is not None",
+  "predicted": "KILL",
+  "sha256": "9fc00a4b2e588daf1a89f3cadc35eb6d2f5ea2b0fd5518cfe3826028247698c3",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M18_carriers_unchanged_nonnull/c1-counter.py\t2026-10-26 03:23:38.972415653 -0300\n@@ -149,7 +149,7 @@\n     if frozen is None:\n         raise Unevaluable('carriers.json absent at freeze')\n     cur = show(root, rev, CARRIERS)\n-    res['carriers_unchanged'] = cur == frozen\n+    res['carriers_unchanged'] = cur is not None\n     spec = json.loads(frozen)\n     ids = [c['id'] for c in spec['carriers']]\n     work = tempfile.mkdtemp(prefix='c1-counter.', dir=scratch_root())\n"
+ },
+ {
+  "id": "M19_carriers_unchanged_parsed_eq",
+  "class": "carriers_unchanged",
+  "old": "res['carriers_unchanged'] = cur == frozen",
+  "new": "res['carriers_unchanged'] = json.loads(cur) == json.loads(frozen) if cur else False",
+  "predicted": "SURVIVE",
+  "sha256": "0503c0a4edf736f3839256ad2d530ca7b1529a6bf3f975284df8ed682f6a1a3a",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M19_carriers_unchanged_parsed_eq/c1-counter.py\t2026-10-26 03:23:38.974078263 -0300\n@@ -149,7 +149,7 @@\n     if frozen is None:\n         raise Unevaluable('carriers.json absent at freeze')\n     cur = show(root, rev, CARRIERS)\n-    res['carriers_unchanged'] = cur == frozen\n+    res['carriers_unchanged'] = json.loads(cur) == json.loads(frozen) if cur else False\n     spec = json.loads(frozen)\n     ids = [c['id'] for c in spec['carriers']]\n     work = tempfile.mkdtemp(prefix='c1-counter.', dir=scratch_root())\n"
+ },
+ {
+  "id": "M20_target_eq_to_ge",
+  "class": "target comparison",
+  "old": "res['met_target'] = bool(res['carriers_unchanged'] and res['carriers_matched'] == TARGET and bind_ok)",
+  "new": "res['met_target'] = bool(res['carriers_unchanged'] and res['carriers_matched'] >= TARGET and bind_ok)",
+  "predicted": "SURVIVE",
+  "sha256": "fe3a489dc22132c694cf88c8d2c1856235301ca0f7c1788ac71fae4379285a42",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M20_target_eq_to_ge/c1-counter.py\t2026-10-26 03:23:38.974913663 -0300\n@@ -235,7 +235,7 @@\n     res['bindings'] = b\n     bind_ok = all(b[x] for x in ('province_core_section', 'province_core_row', 'frontier_note',\n                                  'entry_present', 'sourced', 'coverage_map_row'))\n-    res['met_target'] = bool(res['carriers_unchanged'] and res['carriers_matched'] == TARGET and bind_ok)\n+    res['met_target'] = bool(res['carriers_unchanged'] and res['carriers_matched'] >= TARGET and bind_ok)\n     return res\n \n \n"
+ },
+ {
+  "id": "M21_bindok_sourced_dropped",
+  "class": "bind_ok tuple",
+  "old": "'entry_present', 'sourced', 'coverage_map_row'))",
+  "new": "'entry_present', 'coverage_map_row'))",
+  "predicted": "KILL",
+  "sha256": "5a6ab9c20245f70a4c075708905a59d8f6e9a3fa4bb1afb26334d91388724883",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M21_bindok_sourced_dropped/c1-counter.py\t2026-10-26 03:23:38.975845792 -0300\n@@ -234,7 +234,7 @@\n     b['coverage_map_row'] = bool(cm) and any(STEM in l for l in cm if l.lstrip().startswith('|'))\n     res['bindings'] = b\n     bind_ok = all(b[x] for x in ('province_core_section', 'province_core_row', 'frontier_note',\n-                                 'entry_present', 'sourced', 'coverage_map_row'))\n+                                 'entry_present', 'coverage_map_row'))\n     res['met_target'] = bool(res['carriers_unchanged'] and res['carriers_matched'] == TARGET and bind_ok)\n     return res\n \n"
+ },
+ {
+  "id": "M22_subject_ok_true",
+  "class": "subject-digest binding",
+  "old": "d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']",
+  "new": "d['after_subject_ok'] = True",
+  "predicted": "SURVIVE",
+  "sha256": "c99a56a777ca46abb59ac4cf46d076d244cf9ce260a4602bd4bfe1cd57a2fe50",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M22_subject_ok_true/c1-counter.py\t2026-10-26 03:23:38.977675441 -0300\n@@ -172,7 +172,7 @@\n             d['after_present'] = isinstance(env, dict)\n             if isinstance(env, dict):\n                 envs[f'{k}/after'] = env\n-                d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']\n+                d['after_subject_ok'] = True\n                 d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'\n                 d['after_handler_ok'] = HANDLER in chunk_handlers(env)\n                 d['after_gaps_empty'] = gaps(env) == []\n"
+ },
+ {
+  "id": "M23_operation_ok_true",
+  "class": "operation/provider binding",
+  "old": "d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'",
+  "new": "d['after_operation_ok'] = True",
+  "predicted": "SURVIVE",
+  "sha256": "e8bed27c2bdb42dcf3a2c0b29a597cbc8f2241e939fc3ec144d13630c700b334",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M23_operation_ok_true/c1-counter.py\t2026-10-26 03:23:38.979486231 -0300\n@@ -173,7 +173,7 @@\n             if isinstance(env, dict):\n                 envs[f'{k}/after'] = env\n                 d['after_subject_ok'] = ((env.get('subject') or {}).get('digest') or {}).get('sha256') == c['sha256']\n-                d['after_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'\n+                d['after_operation_ok'] = True\n                 d['after_handler_ok'] = HANDLER in chunk_handlers(env)\n                 d['after_gaps_empty'] = gaps(env) == []\n                 d['after_oracle_hits'] = matched(oracle, published(env))\n"
+ },
+ {
+  "id": "M24_oracle_frozen_eq_dropped",
+  "class": "oracle_frozen",
+  "old": "d['oracle_frozen'] = o_freeze is not None and o_freeze == o_rev",
+  "new": "d['oracle_frozen'] = o_freeze is not None",
+  "predicted": "KILL",
+  "sha256": "bf03e2382311f5b114ba053c05e97a21f2cf6e0d856e7b8b2e5f080d55cc9326",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M24_oracle_frozen_eq_dropped/c1-counter.py\t2026-10-26 03:23:38.981870600 -0300\n@@ -161,7 +161,7 @@\n             d = {'id': k}\n             o_freeze = show(root, freeze, f'{ORADIR}/{k}/oracle.tsv')\n             o_rev = show(root, rev, f'{ORADIR}/{k}/oracle.tsv')\n-            d['oracle_frozen'] = o_freeze is not None and o_freeze == o_rev\n+            d['oracle_frozen'] = o_freeze is not None\n             oracle = load_oracle(o_freeze) if o_freeze else []\n             d['oracle_files'] = len(oracle)\n             raw = show(root, rev, f'{AFTERDIR}/{k}/after.json')\n"
+ },
+ {
+  "id": "M25_oracle_files_positive_dropped",
+  "class": "oracle_files>0 guard",
+  "old": "ok = (d['oracle_frozen'] and d['oracle_files'] > 0",
+  "new": "ok = (d['oracle_frozen']",
+  "predicted": "SURVIVE",
+  "sha256": "99a21517da1962cfbd642d7e1d5a78f11e87b93855479d029f636bbe24c1f3d9",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M25_oracle_files_positive_dropped/c1-counter.py\t2026-10-26 03:23:38.982676000 -0300\n@@ -183,7 +183,7 @@\n         for k, d in per.items():\n             key = f'{k}/after'\n             d['after_evidence_id_ok'] = key in ev and ev[key][0] == ev[key][1] and ev[key][0].startswith('ev_')\n-            ok = (d['oracle_frozen'] and d['oracle_files'] > 0\n+            ok = (d['oracle_frozen']\n                   and d.get('after_present')\n                   and d.get('after_subject_ok') and d.get('after_operation_ok')\n                   and d.get('after_handler_ok') and d.get('after_gaps_empty')\n"
+ },
+ {
+  "id": "M26_target_constant_3",
+  "class": "target comparison",
+  "old": "TARGET = 4",
+  "new": "TARGET = 3",
+  "predicted": "KILL",
+  "sha256": "7a116f50f0d33f7fa8c8e95950380782741d5c24be3a57f493bd1817406c8abc",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M26_target_constant_3/c1-counter.py\t2026-10-26 03:23:38.984095529 -0300\n@@ -34,7 +34,7 @@\n HANDLER = 'squashfs_v4_be'\n XPIN = 'tools/round-27/xpin-attribute.mjs'\n OPENED = '2026-10-26'\n-TARGET = 4\n+TARGET = 3\n \n \n class Unevaluable(Exception):\n"
+ },
+ {
+  "id": "M27_handler_constant_le",
+  "class": "handler check",
+  "old": "HANDLER = 'squashfs_v4_be'",
+  "new": "HANDLER = 'squashfs_v4_le'",
+  "predicted": "KILL",
+  "sha256": "c629dea9a75738b871d986ea6731fb42807d0224a10725c3e7d91e55ef81ab65",
+  "diff": "--- /fast/scratch/hyaku/kaidoku-r38/R38MutC1/base/c1-counter.py\t2026-10-26 03:23:18.374616139 -0300\n+++ /fast/scratch/hyaku/kaidoku-r38/R38MutC1/M27_handler_constant_le/c1-counter.py\t2026-10-26 03:23:38.985031649 -0300\n@@ -31,7 +31,7 @@\n ENTRY = 'corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md'\n STEM = '2026-10-26-r38-sasquatch-be-squashfs-recursion'\n CORE_HEADING = '## Round-38 additions to Core'\n-HANDLER = 'squashfs_v4_be'\n+HANDLER = 'squashfs_v4_le'\n XPIN = 'tools/round-27/xpin-attribute.mjs'\n OPENED = '2026-10-26'\n TARGET = 4\n"
+ }
+]

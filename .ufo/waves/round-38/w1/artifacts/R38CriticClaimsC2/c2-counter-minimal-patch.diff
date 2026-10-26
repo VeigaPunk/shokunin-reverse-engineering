@@ -1,0 +1,112 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-38/c2-counter.py	2026-10-26 03:06:08.572481798 -0300
++++ patched-c2.py	2026-10-26 03:25:58.689582097 -0300
+@@ -25,7 +25,7 @@
+ import argparse, json, os, re, shutil, subprocess, sys, tempfile
+ 
+ TOKEN = re.compile(r'`([^`\s]+)`')
+-PTR = re.compile(r'^([A-Za-z0-9_.][A-Za-z0-9_./+-]*?)(?::(\d+)(?:-(\d+))?)?$')
++PTR = re.compile(r'^([A-Za-z0-9_.][A-Za-z0-9_./+*?#-]*?)(?::(\d+)(?:-(\d+))?)?$')
+ LANE = re.compile(r'^(corpus/|tools/|\.ufo/|plans/|evidence/|scripts/|considerthese/|SCORECARD\.md|SHONEN\.md|SKILL\.md|PROVINCE\.md|LOG\.md)')
+ BOX1 = 'SKILL.md contains real decision tables'
+ BOX4 = 'No cross-domain bleed'
+@@ -60,7 +60,12 @@
+     return row.strip().strip('|').split('|')[0].strip()
+ 
+ 
++DUPES = []
++
++
+ def units(root, rev):
++    global DUPES
++    DUPES = []
+     sc = show(root, rev, 'SCORECARD.md')
+     sh = show(root, rev, 'SHONEN.md')
+     pv = show(root, rev, 'PROVINCE.md')
+@@ -70,25 +75,36 @@
+     owned = section(sc, '## Owned axes') or []
+     for l in owned:
+         if l.startswith('|') and not l.startswith('|---') and first_cell(l) != 'Axis':
+-            u['owned:' + first_cell(l)] = l
++            k = 'owned:' + first_cell(l)
++            if k in u:
++                DUPES.append(k)
++            u[k] = l
+     caps = section(sc, '## Capabilities') or []
+     started = False
+     for l in caps:
+         if l.startswith('|'):
+             started = True
+             if not l.startswith('|---') and first_cell(l) != 'Capability':
+-                u['cap:' + first_cell(l)] = l
++                k = 'cap:' + first_cell(l)
++                if k in u:
++                    DUPES.append(k)
++                u[k] = l
+         elif started:
+             break
+     for head, prefix in (('## Core', 'prov_core:'), ('## Frontier', 'prov_frontier:')):
+         for l in (section(pv, head) or []):
+             if l.lstrip().startswith('|') and not l.lstrip().startswith('|---'):
+-                u[prefix + first_cell(l)] = l
++                k = prefix + first_cell(l)
++                if k in u:
++                    DUPES.append(k)
++                u[k] = l
+     cur = None
+     for l in sh.splitlines():
+         m = re.match(r'^- \[[ x~]\] (.*)$', l)
+         if m:
+             cur = 'shonen:' + m.group(1).strip()
++            if cur in u:
++                DUPES.append(cur)
+             u[cur] = l
+         elif cur and l.startswith('  '):
+             u[cur] += '\n' + l
+@@ -174,7 +190,9 @@
+     for r in (rev, base):
+         if subprocess.run(['git', '-C', root, 'cat-file', '-e', f'{r}^{{commit}}'], capture_output=True).returncode:
+             raise Unevaluable(f'unknown revision {r}')
+-    U, B = units(root, rev), units(root, base)
++    U = units(root, rev)
++    dup_rev = list(DUPES)
++    B = units(root, base)
+     cache = {}
+     res = {'revision': rev, 'base': base, 'predicate': 'P38-C2'}
+     unresolved, total = [], 0
+@@ -185,6 +203,9 @@
+                 unresolved.append([k, tok])
+     res['pointers'] = total
+     res['unresolved'] = unresolved
++    pinned = 'evidence/round-1-2026-10-15/result.json'
++    blob_pin = subprocess.run(['git', '-C', root, 'rev-parse', f'{base}:{pinned}'], capture_output=True, text=True).stdout.strip()
++    blob_rev = subprocess.run(['git', '-C', root, 'rev-parse', f'{rev}:{pinned}'], capture_output=True, text=True).stdout.strip()
+     A = command_a(root, rev)
+     Bc = command_b(root, rev)
+     res['observed'] = {'command_a': A, 'command_b': Bc}
+@@ -202,6 +223,7 @@
+         return (int(m.group(1)), int(m.group(2))) if m else None
+ 
+     checks = {
++        'G0 command-B evidence pinned to base': (blob_pin, blob_rev),
+         'O1 coverage mapped/files': (stated(U.get('owned:coverage'), r'(\d+)/(\d+) knowledge files mapped'), (A['mapped'], A['knowledge_files'])),
+         'O2 depth resolved/rules': (stated(U.get('owned:depth'), r'(\d+)/(\d+) queue-drain rule blocks'), (A['resolved_rules'], A['rule_blocks'])),
+         'O3 calibration aligned/total': (stated(U.get('owned:calibration'), r'(\d+)/(\d+) preselected reconciliation obligations'), Bc),
+@@ -227,13 +249,17 @@
+     unrepaired = []
+     for k, path in bad_base:
+         ok = any(resolves(root, rev, p2, a2, b2, cache) and (p2.rstrip('/') == path or p2.rstrip('/').endswith('/' + path))
++                 and exists(root, base, p2.rstrip('/'))
+                  for _, p2, a2, b2 in pointers(U.get(k, '')))
+         if not ok:
+             unrepaired.append([k, path])
+     res['guards'] = {'missing_units': missing_units, 'base_pointers': base_total, 'pointers_not_fewer': total >= base_total,
+                      'base_unresolved': [list(x) for x in bad_base], 'unrepaired': unrepaired}
+     res['guards_ok'] = not missing_units and total >= base_total and not unrepaired
+-    res['mismatches'] = len(unresolved) + len(failed)
++    res['duplicate_units'] = sorted(set(dup_rev))
++    res['mismatches'] = len(unresolved) + len(failed) + len(set(dup_rev))
++    if not os.environ.get('PATCH_KEEP_DUPES') and dup_rev:
++        res['guards_ok'] = False
+     res['met_target'] = res['mismatches'] == 0 and res['guards_ok']
+     return res
+ 

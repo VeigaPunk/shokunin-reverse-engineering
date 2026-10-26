@@ -1,0 +1,381 @@
+{
+ "baseline": {
+  "json": {
+   "cases": 14,
+   "failures": [],
+   "green_ok": 1,
+   "red_ok": 13,
+   "selftest": "c2-counter"
+  },
+  "rc": 0,
+  "stderr": "",
+  "stdout": "{\"selftest\": \"c2-counter\", \"cases\": 14, \"green_ok\": 1, \"red_ok\": 13, \"failures\": []}"
+ },
+ "frozen_counter_disk_sha256_after": "7f137b664984595e4d63068a7fa0be2c74a7c57fe5cd5e3a0b794918d2a7b0f7",
+ "frozen_counter_disk_sha256_before": "7f137b664984595e4d63068a7fa0be2c74a7c57fe5cd5e3a0b794918d2a7b0f7",
+ "frozen_counter_untouched": true,
+ "lane_base_donothing": {
+  "rc": 1,
+  "stderr": "",
+  "stdout": "{\"assertion_mismatches\": [], \"guards_ok\": false, \"met_target\": false, \"mismatches\": 1, \"revision\": \"77091b492cc53f8743bd0701b1e7d5e66123dd84\", \"unresolved\": [[\"prov_core:REA MCP server\", \"evidence/doctor/\"]]}"
+ },
+ "mutants": [
+  {
+   "crash": false,
+   "family": "pointer-resolver",
+   "green_case_ok": true,
+   "killed": false,
+   "mutant": "A1-resolver-range-dropped",
+   "mutant_sha256": "16a97432f1fc285fe78567a51d454ee1fb63aec7d0b0356704d641b748b61118",
+   "new": "    return True",
+   "old": "    return 1 <= lo <= hi <= cache[p]",
+   "prediction": "killed",
+   "rc": 0,
+   "selftest": {
+    "cases": 14,
+    "failures": [],
+    "green_ok": 1,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "SURVIVED"
+  },
+  {
+   "crash": false,
+   "family": "pointer-resolver",
+   "green_case_ok": true,
+   "killed": false,
+   "mutant": "A2-resolver-trailing-slash-kept",
+   "mutant_sha256": "e339d997f83037a6adf9ead077c87f69751471ded45b2ac4ddb770b873248b0c",
+   "new": "    p = path",
+   "old": "    p = path.rstrip('/')",
+   "prediction": "survived",
+   "rc": 0,
+   "selftest": {
+    "cases": 14,
+    "failures": [],
+    "green_ok": 1,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "SURVIVED"
+  },
+  {
+   "crash": false,
+   "family": "pointer-resolver",
+   "green_case_ok": true,
+   "killed": false,
+   "mutant": "A3-lane-filter-dropped",
+   "mutant_sha256": "bd3ece74f566fe6f2972603858411d581babc7942b5d5e831ad5aefc400e4aee",
+   "new": "        if False:\n            continue",
+   "old": "        if not LANE.match(path):\n            continue",
+   "prediction": "survived",
+   "rc": 0,
+   "selftest": {
+    "cases": 14,
+    "failures": [],
+    "green_ok": 1,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "SURVIVED"
+  },
+  {
+   "crash": false,
+   "family": "unit-enumeration",
+   "green_case_ok": false,
+   "killed": true,
+   "mutant": "B1-shonen-first-box-only",
+   "mutant_sha256": "43b2fc7bc8ea63827c8fcbb7fa538402b866a9c0a2177c3724e1d5017d9c28fd",
+   "new": "        if m and not any(k.startswith('shonen:') for k in u):\n            cur = 'shonen:' + m.group(1).strip()",
+   "old": "        if m:\n            cur = 'shonen:' + m.group(1).strip()",
+   "prediction": "killed",
+   "rc": 1,
+   "selftest": {
+    "cases": 14,
+    "failures": [
+     "green: repaired by document: want 0 got 1"
+    ],
+    "green_ok": 0,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "killed"
+  },
+  {
+   "crash": false,
+   "family": "unit-enumeration",
+   "green_case_ok": true,
+   "killed": false,
+   "mutant": "B2-frontier-section-dropped",
+   "mutant_sha256": "fe671e9e6b075249b2850e36c79020838466efc388dc942f3ef2b0c017cebd1e",
+   "new": "    for head, prefix in (('## Core', 'prov_core:'),):",
+   "old": "    for head, prefix in (('## Core', 'prov_core:'), ('## Frontier', 'prov_frontier:')):",
+   "prediction": "survived",
+   "rc": 0,
+   "selftest": {
+    "cases": 14,
+    "failures": [],
+    "green_ok": 1,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "SURVIVED"
+  },
+  {
+   "crash": false,
+   "family": "range-bounds",
+   "green_case_ok": true,
+   "killed": false,
+   "mutant": "C1-heading-stop-ignored",
+   "mutant_sha256": "8cb09630a1cb98501c789c38644cff824e6d031fc4f9e6143ef1682f9148467d",
+   "new": "        if stop(lines[i]):\n            continue",
+   "old": "        if stop(lines[i]):\n            break",
+   "prediction": "killed",
+   "rc": 0,
+   "selftest": {
+    "cases": 14,
+    "failures": [],
+    "green_ok": 1,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "SURVIVED"
+  },
+  {
+   "crash": false,
+   "family": "range-bounds",
+   "green_case_ok": false,
+   "killed": true,
+   "mutant": "C2-heading-upper-plus1",
+   "mutant_sha256": "32ab441141c4ff1f23159adbc5a11c7100e4a4ff0d1b2af8c7cf4628aa858d1c",
+   "new": "    return (start + 1, last + 2)",
+   "old": "    return (start + 1, last + 1)",
+   "prediction": "killed",
+   "rc": 1,
+   "selftest": {
+    "cases": 14,
+    "failures": [
+     "green: repaired by document: want 0 got 1"
+    ],
+    "green_ok": 0,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "killed"
+  },
+  {
+   "crash": false,
+   "family": "range-bounds",
+   "green_case_ok": true,
+   "killed": false,
+   "mutant": "C3-heading-last-start-minus1",
+   "mutant_sha256": "286ccb53370d655503c0bc3e3a1d842464416613dff0d542ce4970145b9e8bda",
+   "new": "    last = start - 1\n    for i in range(start + 1, len(lines)):",
+   "old": "    last = start\n    for i in range(start + 1, len(lines)):",
+   "prediction": "survived",
+   "rc": 0,
+   "selftest": {
+    "cases": 14,
+    "failures": [],
+    "green_ok": 1,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "SURVIVED"
+  },
+  {
+   "crash": false,
+   "family": "count-comparison",
+   "green_case_ok": false,
+   "killed": true,
+   "mutant": "D1-assertion-inverted",
+   "mutant_sha256": "752b892662b887ab493c296c3f81ebbd2e9696516c7a5aad1e8e598dcc2976e7",
+   "new": "        if s is None or o is None or tuple(s) == tuple(o):",
+   "old": "        if s is None or o is None or tuple(s) != tuple(o):",
+   "prediction": "killed",
+   "rc": 1,
+   "selftest": {
+    "cases": 14,
+    "failures": [
+     "green: repaired by document: want 0 got 1"
+    ],
+    "green_ok": 0,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "killed"
+  },
+  {
+   "crash": false,
+   "family": "count-comparison",
+   "green_case_ok": true,
+   "killed": false,
+   "mutant": "D2-mismatches-drops-assertions",
+   "mutant_sha256": "e3d590450fb7382d3d434ddf6940949588c5797973a6a90fb9b9f3d8d67540c7",
+   "new": "    res['mismatches'] = len(unresolved)",
+   "old": "    res['mismatches'] = len(unresolved) + len(failed)",
+   "prediction": "survived",
+   "rc": 0,
+   "selftest": {
+    "cases": 14,
+    "failures": [],
+    "green_ok": 1,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "SURVIVED"
+  },
+  {
+   "crash": false,
+   "family": "guard-missing_units",
+   "green_case_ok": true,
+   "killed": false,
+   "mutant": "E1-missing-units-ignored",
+   "mutant_sha256": "8e2d5b276e3b420c09e9dbe0028aa5e47bbea4ad07c6f1d1b8ee6f079c3161ee",
+   "new": "    res['guards_ok'] = total >= base_total and not unrepaired",
+   "old": "    res['guards_ok'] = not missing_units and total >= base_total and not unrepaired",
+   "prediction": "survived",
+   "rc": 0,
+   "selftest": {
+    "cases": 14,
+    "failures": [],
+    "green_ok": 1,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "SURVIVED"
+  },
+  {
+   "crash": false,
+   "family": "guard-pointers_not_fewer",
+   "green_case_ok": false,
+   "killed": true,
+   "mutant": "E2-pointers-not-fewer-strict",
+   "mutant_sha256": "80ca80793dda872bce42930010b99ab27f74d483f215da7d71c3082c76dee1a5",
+   "new": "    res['guards_ok'] = not missing_units and total > base_total and not unrepaired",
+   "old": "    res['guards_ok'] = not missing_units and total >= base_total and not unrepaired",
+   "prediction": "killed",
+   "rc": 1,
+   "selftest": {
+    "cases": 14,
+    "failures": [
+     "green: repaired by document: want 0 got 1"
+    ],
+    "green_ok": 0,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "killed"
+  },
+  {
+   "crash": false,
+   "family": "guard-unrepaired",
+   "green_case_ok": true,
+   "killed": false,
+   "mutant": "E3-unrepaired-ignored",
+   "mutant_sha256": "47fab797c81daf9b114fc75f30e4cb5a6d1c34eefbec670db4ba9248899e5a86",
+   "new": "    res['guards_ok'] = not missing_units and total >= base_total",
+   "old": "    res['guards_ok'] = not missing_units and total >= base_total and not unrepaired",
+   "prediction": "survived",
+   "rc": 0,
+   "selftest": {
+    "cases": 14,
+    "failures": [],
+    "green_ok": 1,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "SURVIVED"
+  },
+  {
+   "crash": false,
+   "family": "guard-bad_base",
+   "green_case_ok": true,
+   "killed": false,
+   "mutant": "E4-base-resolution-at-rev",
+   "mutant_sha256": "f3105fddef14faafea7a0a744a71a6b802cd289b56894625b39e8ab6c6f7d8fe",
+   "new": "            if not resolves(root, rev, path, a, b, cache):",
+   "old": "            if not resolves(root, base, path, a, b, {}):",
+   "prediction": "survived",
+   "rc": 0,
+   "selftest": {
+    "cases": 14,
+    "failures": [],
+    "green_ok": 1,
+    "red_ok": 13,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "SURVIVED"
+  },
+  {
+   "crash": false,
+   "family": "count-comparison/target",
+   "green_case_ok": true,
+   "killed": true,
+   "mutant": "F1-met-target-or",
+   "mutant_sha256": "c62b78f64a5fd730de3121f2b79483e6bd8b546edb5ac23d44601b8bbe660412",
+   "new": "    res['met_target'] = res['mismatches'] == 0 or res['guards_ok']",
+   "old": "    res['met_target'] = res['mismatches'] == 0 and res['guards_ok']",
+   "prediction": "killed",
+   "rc": 1,
+   "selftest": {
+    "cases": 14,
+    "failures": [
+     "unresolved pointer deleted (fewer pointers): want 1 got 0",
+     "substituted by other document: want 1 got 0",
+     "range beyond file: want 1 got 0",
+     "new unresolved pointer: want 1 got 0"
+    ],
+    "green_ok": 1,
+    "red_ok": 9,
+    "selftest": "c2-counter"
+   },
+   "stderr_tail": "",
+   "verdict": "killed"
+  }
+ ],
+ "provenance": {
+  "blob_at_freeze_sha256": "7f137b664984595e4d63068a7fa0be2c74a7c57fe5cd5e3a0b794918d2a7b0f7",
+  "disk_equals_freeze_blob": true,
+  "disk_sha256": "7f137b664984595e4d63068a7fa0be2c74a7c57fe5cd5e3a0b794918d2a7b0f7",
+  "freeze_commit": "e059ca9391642d5b71b6662cabcbdce0d9308719"
+ },
+ "seat": "R38MutC2",
+ "summary": {
+  "applied": 15,
+  "killed": [
+   "B1-shonen-first-box-only",
+   "C2-heading-upper-plus1",
+   "D1-assertion-inverted",
+   "E2-pointers-not-fewer-strict",
+   "F1-met-target-or"
+  ],
+  "survived": [
+   "A1-resolver-range-dropped",
+   "A2-resolver-trailing-slash-kept",
+   "A3-lane-filter-dropped",
+   "B2-frontier-section-dropped",
+   "C1-heading-stop-ignored",
+   "C3-heading-last-start-minus1",
+   "D2-mismatches-drops-assertions",
+   "E1-missing-units-ignored",
+   "E3-unrepaired-ignored",
+   "E4-base-resolution-at-rev"
+  ]
+ }
+}

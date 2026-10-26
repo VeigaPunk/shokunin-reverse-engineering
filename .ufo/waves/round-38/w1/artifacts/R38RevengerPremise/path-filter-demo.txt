@@ -1,0 +1,21 @@
+# PATH filter demonstration — K3 carrier (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-37/c1/K3/carrier.bin)
+# sha256 9c7c523c5d1d1cafc0b679af9092ce0289d9656f6a24bc3bd0009f95b69397c0
+# date 2026-10-26T03:30:41-03:00; unblob 26.6.4
+
+$PATH=/run/user/1000/fnm_multishells/6713_1792986395296/bin:/home/vgpnk/.local/share/fnm:/home/vgpnk/.opencode/bin:/home/vgpnk/.local/bin:/home/vgpnk/.local/share/mise/installs/node/latest/bin:/home/vgpnk/.local/share/mise/shims:/run/user/1000/fnm_multishells/2590_1792986109655/bin:/home/vgpnk/.local/share/omarchy/bin:/run/user/1000/fnm_multishells/1600_1792986098392/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/vgpnk/.minimax/bin:/home/vgpnk/.minimax-code/bin:/home/vgpnk/.grok/bin:/home/vgpnk/.kimi-code/bin
+
+## A — v1-replication shape: filter PATH *components* by name (grep -v sasquatch)
+  /home/vgpnk/.local/bin still present: 1
+  resolution in a fresh process: /home/vgpnk/.local/bin/sasquatch-v4be
+  unblob exit=0 published_regular_files=4 dependency_not_found_reports=[]
+  -> after-arm semantics: complete extraction, no gap (the 'does not reproduce' observation)
+
+## B — round-37 harness shape: drop every PATH dir holding sasquatch or sasquatch-v4be
+  /home/vgpnk/.local/bin still present: 0
+  resolution in a fresh process: NONE
+  unblob exit=1 published_regular_files=0 dependency_not_found_reports=[('ExtractorDependencyNotFoundReport', ['sasquatch-v4be'])]
+  -> before-arm semantics: coverage partial, 0 bytes published, gap names sasquatch-v4be
+
+## C — same shell, stale bash hash table (secondary trap for 'command -v' guards)
+  in-process `PATH=$P_B command -v sasquatch-v4be` => /home/vgpnk/.local/bin/sasquatch-v4be   # lies
+  after `hash -r`                             => NONE

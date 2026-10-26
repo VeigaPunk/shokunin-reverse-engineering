@@ -1,0 +1,31 @@
+# Round-38 quarantine hand-check — kaidoku slice (seat R38ExecQuarantine)
+# Register (READ-ONLY, never edited): /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md
+#   sha256 of register consulted this round: see report §register.
+# Slice derivation (the assignment's exact awk, run 2026-10-26):
+#   awk -F'|' -v l='kaidoku' '$2 ~ ("`" l "`") && $3 ~ /round[0-9]+/ && $4 ~ /S[0-9]+/ {print $4, $5}' "$R"
+# Slice rows: 5 (every line carries an S-id). Register lines 82, 315, 316, 317, 318.
+# The pre-existing .ufo/waves/round-38/assimilation/quarantine-slice is byte-identical to the
+# slice this seat re-derived (diff exit 0; sha256 7383a90e7c04c7238dfa3d19d2f9e857852bd24288c5ff9e9873bce697c28e6a).
+#
+# Registry rows (id -> owning file, read-only): S113/S117 -> lanes/kaidoku/SOURCES-PROPOSED.md:26,:30
+#   S136 -> lanes/kaidoku/round4/SOURCES-PROPOSED.md:15
+#   S147/S150 -> lanes/kaidoku/round5/SOURCES-PROPOSED.md:18,:21
+#
+# Verdict vocabulary: ADOPT-WITH-ANCHOR | REFUSE (fabrication class) | UNVERIFIABLE
+#
+| id | round | register class | verdict | anchor / reason |
+|---|---|---|---|---|
+| S150 | round5 | payload-absent | REFUSE (fabrication class) | live https://zenn.dev/yasu01/articles/7370bd5d414ec4 HTTP 200, 174088 B, sha256 42d59c487aff730f2d3f3db9b44e2f3f8b5ca578b8849da4e38fbad633766e34. Registered section heading 「シンボルがない場合のヒント」 occurs 0 times; the substring 「ヒント」 occurs 0 times; 「シンボルがない」 occurs 0 times. The article is real and on-topic (h1 「実バイナリを逆アセンブルして読む——シンボルなしの世界に踏み込む」), and the row's own recheck command still holds (grep -c llvm-objdump -> 6, matching the row). The named section does not exist: real H2s are はじめに / 道具の準備 / 実例：小さなプログラムを逆アセンブルする / パターン認識のコツ / AArch64 で同じバイナリを読む / 読み進めるためのワークフロー / まとめ / シリーズを終えて. 「パターン認識のコツ」 occurs 4x (real <h2 id="…パターン認識のコツ">). FLIP: re-anchor to real contiguous text (e.g. H2 「パターン認識のコツ」, or the strip walkthrough at data-line 154). |
+| S113 | round1 | never-checked (fetch failed at campaign time) | ADOPT-WITH-ANCHOR, prose count must be corrected | live https://developer.android.com/tools/adb?hl=en HTTP 200, 368063 B, sha256 e6d50f924b8880cc5fe03216c7f7d979da086f91247f51ef0611a76d36738198. Locale matrix present: 22 `hreflang="…"` links = 21 language locales (ar bn de en es-419 fa fr he hi id it ja ko pl pt-BR ru th tr vi zh-Hans zh-Hant) + `x-default`; the row's recheck `grep -c 'tools/adb?hl=ja'` -> 1. The row's scope sentence "served in 17 locales" is NOT reproducible from live bytes (21 locales + x-default today). Mechanism (one document, many locales, bare URL not stable) is present -> adopt the row; the number must be re-stated before the row is relied on. Not the fabrication class. |
+| S117 | round1 | never-checked (fetch failed at campaign time) | UNVERIFIABLE (not fabrication) | https://doi.org/10.1109/SP46214.2022.9833799 -> 302 -> https://ieeexplore.ieee.org/document/9833799/ returns HTTP 202 with a 0-byte body (publisher serves no payload). Companion Semantic Scholar graph API returned HTTP 429 (Too Many Requests) on two attempts (20 s apart); dblp returned a bot-challenge HTML page (HTTP 202). Crossref, DOI-keyed, HTTP 200: title "SoK: Demystifying Binary Lifters Through the Lens of Downstream Applications", container "2022 IEEE Symposium on Security and Privacy (SP)", pages 1100-1119, so the paper exists; the abstract-level quotes ("four … LLVM IR lifters; 252,063 executables") could not be checked against any readable body. FLIP: re-open when the publisher or S2 serves a body. |
+| S136 | round4 | no-locator (gate block named no locator) | ADOPT-WITH-ANCHOR | Locator supplied: corpus/knowledge/2026-10-13-r4u-06-adb-surface.md, 12897 B. Heading at line 3 `# kaidoku-r4u / 06 — ADB surface: client present, zero devices`; the row's quoted phrase `2 of 24 verbs are` occurs exactly once, at line 8 (`Answer: the adb surface is **bound and partially live** — 2 of 24 verbs are`). Row recheck `grep -c '2 of 24 verbs are'` -> 1, matching the row. Own-work, locatable now; still unadopted (no admitted entry cites it). |
+| S147 | round5 | no-locator (gate block named no locator) | ADOPT-WITH-ANCHOR (locator heading names need correction) | Locator supplied: $HOME/.agents/skills/reverse-engineer-anything/HOST-CONTRACT.md, 3386 B. `grep -c '207 tools'` -> 1, at line 41 `- REA release: \`rea-agents@6.7.0\`, skill v42, 207 tools.` The row's named sections are approximate: the file's headings are `## State as of this writing` (line 39, containing the quoted release line) and `## Expected \`doctor\` output on this host` (line 46); there is no "REA release" heading. DRIFT CAVEAT: this round's frozen counting command pins the npx cache at rea-agents 6.5.0 (…/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json -> "version": "6.5.0"), while the contract text says 6.7.0; the document is locatable but its host-state sentence no longer matches the round's pinned package. |
+#
+# Auxiliary observations (advisory; not verdicts on these rows)
+# - All five used-by targets named in these registry rows exist only as proposals in
+#   /home/vgpnk/Projects/shokuknow/lanes/kaidoku{,/round4,/round5}/KNOWLEDGE-PROPOSED.md
+#   (adb-locale-pinned-reference, offline-lifter-survey-scope, adb-verb-classification-join,
+#   rea-catalogue-version-join, japanese-no-symbols-reading-workflow); none is present under
+#   the lane's corpus/knowledge/. That is consistent with "mined, unadopted" and is a defect only
+#   if a row is treated as landed.
+# - No register row was edited and no lane file outside this seat's artifacts/report was written.

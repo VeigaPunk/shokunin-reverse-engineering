@@ -1,0 +1,56 @@
+# R38ExecBeforeArmRecheck — exact commands
+# lane root: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+# lane HEAD at capture: cb4326b2aa4c2024af0651fe6115b82d0c4de3df
+# seat scratch: /fast/scratch/hyaku/kaidoku-r38/R38ExecBeforeArmRecheck (removed after artifacts copied)
+# S = scratch root, P = stripped PATH (see path-strip.txt), A = this artifact dir
+
+## 0. environment
+PATH-strip: drop every PATH component d with -x "$d/sasquatch" or -x "$d/sasquatch-v4be"
+  dropped: /home/vgpnk/.local/bin   (only such component)
+  P resolves: sasquatch ABSENT, sasquatch-v4be ABSENT, unblob ABSENT, node/npx = fnm dir, python3 = /usr/bin
+~/.local/bin/unblob --version                    -> 26.6.4
+npx -y rea-agents@6.5.0 (pkg root)               -> /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents (rea-agents 6.5.0)
+
+## 1. dependency table (both PATHs) — artifact path-strip.txt
+env PATH="$P" ~/.local/bin/unblob --show-external-dependencies
+~/.local/bin/unblob --show-external-dependencies
+
+## 2. before-arm (treatment: sasquatch stripped) and after-arm control (stock PATH),
+##    through the harness, one run per carrier per arm.
+##    HEAD harness bytes = e059ca93 harness bytes + the rm -rf "$OUT" line (see harness-freeze-vs-head.diff).
+env PATH="$P" REA_UNBLOB_COMMAND="$HOME/.local/bin/unblob" \
+  bash tools/round-38/c1-run.sh after corpus/evidence/round-37/c1/K1/carrier.sqsh "$S/run/h-K1-stripped" "$S/h/K1-stripped"
+env         REA_UNBLOB_COMMAND="$HOME/.local/bin/unblob" \
+  bash tools/round-38/c1-run.sh after corpus/evidence/round-37/c1/K1/carrier.sqsh "$S/run/h-K1-stock"    "$S/h/K1-stock"
+# ... identical for K2/carrier.sqsh, K3/carrier.bin, K4/carrier.bin
+# exit status observed: 0 in all 8 runs (gap-ness is only visible in the envelope)
+
+## 3. independent second reproduction of every cell (direct npx, same argv as the harness)
+env PATH="$P" REA_UNBLOB_COMMAND="$HOME/.local/bin/unblob" npx -y rea-agents@6.5.0 \
+  extract-firmware --format json corpus/evidence/round-37/c1/K3/carrier.bin "$S/run/K3-stripped"
+env         REA_UNBLOB_COMMAND="$HOME/.local/bin/unblob" npx -y rea-agents@6.5.0 \
+  extract-firmware --format json corpus/evidence/round-37/c1/K3/carrier.bin "$S/run/K3-stock"
+# ... identical for K1, K2, K4  -> artifacts/envelopes/direct-K*-*.json
+
+## 4. evidence-id recompute (counter's own rule: xpin tool at the freeze commit)
+git show e059ca9391642d5b71b6662cabcbdce0d9308719:tools/round-27/xpin-attribute.mjs  # unchanged at HEAD
+node tools/round-27/xpin-attribute.mjs --pkg65 <rea650> --pkg67 <rea650> "$S"/wrap/*.wrapped.json
+# wrapped = {"data": <envelope>}, one per cell -> artifacts/xpin-recompute.txt (8/8 "both")
+
+## 5. frozen harness bytes (freeze e059ca93) vs HEAD — artifact harness-freeze-vs-head.diff
+git show e059ca9391642d5b71b6662cabcbdce0d9308719:tools/round-38/c1-run.sh > "$S/frozen-c1-run.sh"
+env PATH="$P" REA_UNBLOB_COMMAND="$HOME/.local/bin/unblob" \
+  bash "$S/frozen-c1-run.sh" after corpus/evidence/round-37/c1/K3/carrier.bin "$S/run/frozen-fail" "$S/hf"
+# -> exit 1, code execution_failure, diagnostics.reason "Extraction output root already exists"
+#    (frozen branch does `mkdir -p "$OUT"`; REA's SafeOutputTree.create does an exclusive mkdir)
+
+## 6. extractor hypotheses closed
+7z l corpus/evidence/round-37/c1/K3/carrier.bin            -> exit 2, "Cannot open the file as archive" (7-Zip 26.04)
+unsquashfs -l corpus/evidence/round-37/c1/K3/carrier.bin   -> exit 1, "Can't find a valid SQUASHFS superblock" (unsquashfs 4.7.5)
+
+## 7. frozen inputs (read-only verification)
+git ls-tree -r 77091b492cc53f8743bd0701b1e7d5e66123dd84 corpus/evidence/round-37/c1/K2/src
+   -> var/lib/run-link is mode 120000, blob 034758ff… = "../../a/run.sh" (a live in-image link)
+git ls-tree -r 77091b492cc53f8743bd0701b1e7d5e66123dd84 corpus/evidence/round-37/c1/K1/src
+   -> link-to-hello is mode 120000, blob 55bf5ed0… = "../hello.txt" (dangles outside src/)
+git status --porcelain corpus/evidence/round-37/c1 .ufo/waves/round-38/c1   -> clean

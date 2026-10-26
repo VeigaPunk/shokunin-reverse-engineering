@@ -1,0 +1,54 @@
+# R38 PROVINCE.md patch (draft) — seat R38ExecProvincePatch
+# Lane root: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+# Base: 77091b492cc53f8743bd0701b1e7d5e66123dd84 (PROVINCE.md clean at that revision)
+# Freeze: e059ca9391642d5b71b6662cabcbdce0d9308719
+#
+# STATUS: PROVISIONAL. Edit 1 (C2 doctor pointer) is landable as drafted.
+# Edits 2-3 (C1 Core row + frontier note) are gated on a round-38 C1 ruling:
+# at wave-1 measurement K2 carries one frozen-relevant `unpublished-entry`
+# extraction gap, so P38-C1's `after_gaps_empty` binding is unmet on K2 and
+# the counter cannot reach carriers_matched == 4 under the frozen rule.
+# The row below states that measurement instead of claiming "0 gaps on all
+# four"; do not land it as a promotion row until the L1 rules on the gap.
+# Nothing here was applied to PROVINCE.md.
+# NOTE: tools/round-38/c1-counter.py is modified in the worktree relative to
+# HEAD and adds a per-carrier `before.json` arm; its PROVINCE.md bindings and
+# its `after_gaps_empty` condition are unchanged, so this patch and F1 hold
+# under both versions (see the seat report §4 F5).
+#
+# === Edit 1 of 3 — Core `REA MCP server` row (PROVINCE.md:44), C2 ===
+--- BEFORE (PROVINCE.md:44)
+| REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml` — config files pin `rea-agents` (Devin/OMP/Kimi 6.7.0 since 2026-10-20 13:35:56 -03; see surface summary) with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` would inspect a running attached client; not exercised this round. CLI: `rea doctor` (6.7.0 doctor: no devin/omp registration finding, separate Kimi JSON registration missing) | round-19 re-grepped pin/sha256 record `.ufo/waves/round-19/evidence/province-pins-integrated.json`; doctor outputs in `evidence/doctor/`; historical readiness probe 2026-10-13 |
++++ AFTER (PROVINCE.md:44)
+| REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml` — config files pin `rea-agents` (Devin/OMP/Kimi 6.7.0 since 2026-10-20 13:35:56 -03; see surface summary) with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` would inspect a running attached client; not exercised this round. CLI: `rea doctor` (6.7.0 doctor: no devin/omp registration finding, separate Kimi JSON registration missing) | round-19 re-grepped pin/sha256 record `.ufo/waves/round-19/evidence/province-pins-integrated.json`; doctor outputs in `.ufo/waves/round-19/evidence/doctor/`; historical readiness probe 2026-10-13 |
+#
+# === Edit 2 of 3 — round-4 frontier `sasquatch` bullet continuation (PROVINCE.md:157), C1 ===
+--- BEFORE (PROVINCE.md:157)
+  covers the carved-image path today. [2026-10-26: superseded for LE SquashFS v4 — see `## Round-36 additions to Core`; big-endian/AVM stays here.]
++++ AFTER (PROVINCE.md:157)
+  covers the carved-image path today. [2026-10-26: superseded for LE SquashFS v4 — see `## Round-36 additions to Core`; big-endian standard SquashFS v4 superseded for Core — see `## Round-38 additions to Core`; AVM-BE and vendor-mangled images stay here.]
+#
+# === Edit 3 of 3 — append at EOF, after PROVINCE.md:374, C1 ===
++++ APPEND (13 lines, in order)
+
+## Round-38 additions to Core
+
+Addition to Core for standard big-endian SquashFS v4 (the Core table above is not rewritten; the Frontier list is bounded by the round-38 note below).
+
+| Surface | Ports / keys | Probe | Verified evidence |
+|---|---|---|---|
+| Standard big-endian SquashFS v4 via the `squashfs_v4_be` handler | no new REA key — unblob 26.6.4 `unblob/handlers/filesystem/squashfs.py` selects `squashfs_v4_be` and runs `sasquatch-v4be` from `PATH` with `-be` (`~/.local/bin/sasquatch-v4be`, official onekey-sec deb, sha256 `fac88740…`); `REA_UNBLOB_COMMAND=~/.local/bin/unblob` (26.6.4); `rea-agents@6.5.0` | `extract-firmware --format json` on the four frozen carriers — K1/K2 synthetic standard-BE v4 gzip images (`tools/round-37/gen-squashfs.py`), K3/K4 the unblob 26.6.4 `squashfs_v4_be` integration fixtures — against the frozen regular-file oracle `corpus/evidence/round-37/c1/K*/oracle.tsv` | carriers `corpus/evidence/round-37/c1/carriers.json`; receipts `corpus/evidence/round-38/c1/K*/after.json`; handler `squashfs_v4_be` named on all four; every oracle file published with matching sha256 (K1 5/5, K2 3/3, K3 4/4, K4 4/4); zero extraction gaps on K1/K3/K4, one `unpublished-entry` gap on K2 (`var/lib/run-link` symlink); entry `corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md` |
+
+Limits (measured 2026-10-26, round 38 wave 1): standard big-endian SquashFS v4 only — AVM-BE (the `bytes_used == mkfs_time` variant) and vendor-mangled images are not covered and stay Frontier. Coverage reads `complete` only on K3/K4; K1 and K2 read `partial` (K2's `partial` comes from its one unpublished symlink entry). The handler shells out to `sasquatch-v4be` on `PATH`, so a run without that dependency records `missing-extractor-dependency` and publishes no files (`.ufo/waves/round-38/w1/artifacts/R38ExecAfterK3/after.json`).
+
+Frontier note, 2026-10-26 (round 38): the big-endian half of the `- **sasquatch** — …` bullet under `### Round-4 frontier (post-unlock)` (`PROVINCE.md:156-157`) is superseded for standard big-endian SquashFS v4 as measured above, and so is the closing clause of the round-36 frontier note; AVM-BE and vendor-mangled images stay Frontier (`corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md`).
+
+# === end of patch ===
+# Static checks over the patched text (no counter run by this seat):
+#   '## Round-38 additions to Core' heading occurs 1x as a whole line (the
+#   other textual mention is inside backticks on the edited bullet line); the
+#   single row whose first cell contains squashfs_v4_be also contains the
+#   entry path; 2 lines carry both 'big-endian' and 'superseded';
+#   '`evidence/doctor/`' occurs 0x and the resolved
+#   '`.ufo/waves/round-19/evidence/doctor/`' occurs 2x (line 23 already
+#   carried it).

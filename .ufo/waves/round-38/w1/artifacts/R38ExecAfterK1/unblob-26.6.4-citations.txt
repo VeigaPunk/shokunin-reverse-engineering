@@ -1,0 +1,68 @@
+# unblob 26.6.4 source excerpts cited by R38ExecAfterK1 (read-only, installed at /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob)
+## handlers/filesystem/squashfs.py:24-26,38-48,60-70
+    class SquashFSExtractor(Extractor):
+        EXECUTABLE = "sasquatch"
+        V4BE_EXECUTABLE = "sasquatch-v4be"
+    
+            match endian, self.version:
+                case Endian.BIG, 4:
+                    executable = self.V4BE_EXECUTABLE
+                    struct_parser = StructParser(SquashFSv4LEHandler.C_DEFINITIONS)
+                    with File.from_path(inpath) as f:
+                        header = struct_parser.parse(
+                            SquashFSv4LEHandler.HEADER_STRUCT, f, Endian.BIG
+                        )
+                        # see https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt
+                        is_avm = header.bytes_used == header.mkfs_time
+                    "-d",
+                    "{outdir}",
+                    "{inpath}",
+                ]
+            )
+            extractor = Command(executable, *commands_args)
+            extractor.extract(inpath, outdir)
+    
+        def get_dependencies(self) -> list[str]:
+            return [self.EXECUTABLE, self.V4BE_EXECUTABLE]
+    
+
+## handlers/filesystem/squashfs.py:525-528,551-554 (v4 LE / v4 BE extractor wiring)
+        ]
+    
+        EXTRACTOR = SquashFSExtractor(4, 0x73_71_73_68)
+    
+        BIG_ENDIAN_MAGIC = 0x71_73_68_73
+    
+        EXTRACTOR = SquashFSExtractor(4, 0x71_73_68_73)
+    
+
+## extractors/command.py:66-75 (exec failure -> ExtractorDependencyNotFoundReport)
+    
+                    logger.error("Extract command failed", **error_report.model_dump())
+                    raise ExtractError(error_report)
+            except FileNotFoundError:
+                error_report = ExtractorDependencyNotFoundReport(
+                    dependencies=self.get_dependencies()
+                )
+                logger.error(
+                    "Can't run extract command. Is the extractor installed?",
+                    **error_report.model_dump(),
+
+## dependencies.py:18-34 (PATH is the only installation probe)
+    def get_dependencies(
+        handlers: Handlers, dir_handlers: DirectoryHandlers
+    ) -> list[Dependency]:
+        all_commands = set()
+        for handler in handlers:
+            commands = handler.get_dependencies()
+            all_commands.update(commands)
+        for handler in dir_handlers:
+            commands = handler.get_dependencies()
+            all_commands.update(commands)
+        rv = []
+        for command in sorted(all_commands):
+            is_installed = shutil.which(command) is not None
+            rv.append(Dependency(command=command, is_installed=is_installed))
+        return rv
+    
+    
