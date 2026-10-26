@@ -5,15 +5,16 @@ Seat: critic, leaf, round 36 wave 2. Attacks the four `## Gate` assimilation dec
 No counter, predicate, carrier, oracle, receipt, SOURCES row or knowledge entry was edited; no
 subagent was dispatched; no VCS mutation; nothing installed or upgraded.
 
-Tree state while reporting (`git rev-parse HEAD`): `6f2ba761bb5bcd6482d45523379376dcb6a386f6`.
-`git diff --stat 01a44dbf..HEAD` touches only six `.ufo/` files; the lesson blob is identical at
-`01a44dbf` and `HEAD` (`366daace55a3709abe5023aa9b9169c6896d521d`), so the decisions are read at the
-assigned integration tip. **One caveat carried through this report:** the working tree carries an
-uncommitted sibling edit to the admitted entry —
-`git status --porcelain` → ` M corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md`,
-`git diff` header `index aa476af8..939a0839` — which repairs two defects found below. Findings judge
-the **committed blob `aa476af8`** (what the Gate decided); the in-flight repair is cited as evidence
-that the landed text did not meet the Gate's own bar, not as a fix.
+Tree state: the review began at `6f2ba761bb5bcd6482d45523379376dcb6a386f6` and an L1 wave-2
+correction commit landed **mid-review**: `38c1a8be78906b1b031eb2035766d9f24d22f0d7` (lesson S109 word
+count; `S107` asset set; `S111` teaches; pip-route scope and "Very beta" attribution in the admitted
+entry; dated supersession notes on `PROVINCE.md:156-157` and `corpus/README.md:44`). That commit swept an
+earlier revision of this report (23840 B); the edits after it are uncommitted, in this file only.
+`git diff 6f2ba761..38c1a8be -- corpus/lessons/round-36.md` changes only the S109 bullet — the four Gate
+decisions (lines 41–44) are byte-identical, so the citations below hold at both revisions. Findings judge
+the **state the Gate decided** (entry blob `aa476af8`, as landed in `ffc81341`/`01a44dbf`); the
+correction now committed as blob `939a0839` is cited where it bears on a finding, because a repair landing
+one commit after integration is itself evidence about what the Gate let through.
 
 ## 0. Verdicts on the three assigned questions
 
@@ -105,10 +106,11 @@ tested — so the flip could not fire on two of the three defects above.
 
 Impacted axes: **calibration**. Smallest safe correction: extend the flip test in the lesson's Decision 1
 beyond c1–c3 to "any claim not carried by the cited route/section", and fold the two wave-2 scouts'
-D1/D2/D3 and item 1 into the decision record (the working-tree repair is already doing this — cite it
-from the lesson so the correction is durable). Note the only SOURCES-side consequence I found is the
-tier question on S111 (`w2/R36W2ScoutS111.md` §3, B vs A); `sources-census.sh validate` is unaffected
-either way.
+D1/D2/D3 and item 1 into the decision record. The repair itself is now committed (`38c1a8be`, entry
+blob `939a0839`: pip-route scope, devttys0-only beta label) but the lesson's Decision 1 still records
+only c1–c3 as its correction set — cite the repair from the lesson, or the next round repeats the
+unqualified version. The only SOURCES-side consequence I found is the tier question on S111
+(`w2/R36W2ScoutS111.md` §3, B vs A); `sources-census.sh validate` is unaffected either way.
 
 ### F3 — Decision 2's reasons hold; its flip is incomplete, and its refusal line is not the one Decision 1 used
 
@@ -139,10 +141,13 @@ Two defects in the decision record:
    admission novelty. The plan's `≥1 admit / ≥1 reject` is satisfied without such a line, so the
    refusal stands, but an unstated rule is exactly what a later round will apply differently.
 
-Impacted axes: **calibration** (gate consistency), **coverage** (the refused entry's surviving true
-content — the three-architecture asset matrix, which `S107` records only for amd64 — stays outside the
-corpus). Smallest safe corrections: add the recheck condition to the flip; state the correction-vs-
-refusal test in one sentence, or land entry 3 with its corrections the way entry 1 was landed.
+Impacted axes: **calibration** (gate consistency), **coverage** (narrower than at integration: the
+refused entry's asset matrix is now partly held — the `38c1a8be` revision of `corpus/SOURCES.md:113`
+records all six `sasquatch_1.0_*`/`dbgsym_1.0_*` assets — so what remains outside the corpus is the
+per-release breakdown "7 of 8, `sasquatch-v1.0` amd64-only" and the upstream-4.5.1-vs-package-1.0
+attribution to tag name, deb control and `-version`). Smallest safe corrections: add the recheck
+condition to the flip; state the correction-vs-refusal test in one sentence, or land entry 3 with its
+corrections the way entry 1 was landed.
 
 ### F4 — Decision 3's second clause is false and contradicts three lane surfaces and the round's own connector
 
@@ -150,7 +155,9 @@ Lesson `:43`: "… and the lane's own R36-C1 receipts supersede it." Evidence ag
 
 - C1 entry `:175` "Little-endian SquashFS v4 only" and `:180` "**No big-endian or AVM result.** All four
   carriers are LE v4 … nothing here exercises it";
-- `PROVINCE.md:372` "`sasquatch-v4be` is its big-endian sibling, unmeasured";
+- `PROVINCE.md:372` "`sasquatch-v4be` is its big-endian sibling, unmeasured"; since `38c1a8be` the
+  Frontier bullet itself carries "[2026-10-26: superseded for LE SquashFS v4 …; **big-endian/AVM stays
+  here**]" (`PROVINCE.md:156-157`) — a fourth lane surface saying the BE exercise is not superseded;
 - `SCORECARD.md:3396` planned round-37 coverage: "big-endian SquashFS v4 through `sasquatch-v4be`";
 - the round's own connector, on this exact entry: "Adds the BE-branch exercise (`sasquatch-v4be`) that
   C1's frozen scope excludes" (`w1/R36ConnAssimilationTheme.md:142`), with the sibling note at `:151`
@@ -194,11 +201,11 @@ into the lane, admitting row naming this refusal (QUALITY #35/#36)."
 
 Credit channels checked one by one:
 
-- **SOURCES.** `awk -F'|'` field 12 on `corpus/SOURCES.md:113-117`: S107–S109 carry
+- **SOURCES.** `awk -F'|'` field 12 on `corpus/SOURCES.md:113-117` (re-checked at `38c1a8be`): S107–S109 carry
   `corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md` only; S110–S111 carry
   `corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md` only. No row lists both; no duplicate
   URL+scope; `sources-census.sh validate --file corpus/SOURCES.md --today 2026-10-26` → **exit 0**,
-  exactly the 9 pre-existing `W04` (the lesson's append-gate claim holds at HEAD).
+  exactly the 9 pre-existing `W04` (the lesson's append-gate claim holds).
 - **Capability.** `SCORECARD.md:627` cites the C1 entry and the C1 receipts only.
 - **Knowledge units.** `git ls-tree -r … | grep -c '\.md$'` → 122 at `cab59f22`/`d2e46ef5`, 124 at
   `ffc81341`/`HEAD`. Both new entries count, so `SCORECARD.md:23 "124/124 … two entries added"` and
@@ -229,8 +236,10 @@ entry as new coverage-map ground.
   lesson `:39` (staged S106 → S110 unblob README; staged S107 → S111 devttys0) matches the landed rows
   `corpus/SOURCES.md:116-117`, whose anchor cells carry "(staged as package S…, renumbered by document)".
   The gate report's earlier draft numbering (S107/S108) is stale superseded text, not a lane defect.
-- **Append gate.** The lesson's claim is true at HEAD: census `validate` exits 0 with only the 9
-  pre-existing `W04`; no `E01/E02/E03/E04/E09/E11` for the appended rows; `used-by` paths all resolve.
+- **Append gate.** The lesson's claim is true at both revisions (verified at `6f2ba761` and again after
+  `38c1a8be`): census `validate` exits 0 with only the 9 pre-existing `W04`; no
+  `E01/E02/E03/E04/E09/E11` for the appended rows; `used-by` paths all resolve and each row still lists
+  exactly one entry after the `S107` asset-set and `S111` teaches edits.
 - **Decision 1's flip condition (README digests) has not fired.** Re-fetched today:
   `…/unblob/26.6.4/README.md` sha256 `6544d60f22f7b521f8705b3bba5d47a50e428ccbd3359542708dbd009ccf3716`,
   235 lines; `…/devttys0/sasquatch/master/README.md` sha256
@@ -275,11 +284,12 @@ defects in F2, and **no** evidence that S110/S111 were fabricated, mis-hashed, o
 
 | # | command | outcome |
 |---|---|---|
-| 1 | `git rev-parse HEAD`; `git log --oneline cab59f22..HEAD`; `git diff --stat 01a44dbf..HEAD`; `git rev-parse 01a44dbf:corpus/lessons/round-36.md HEAD:…` | `6f2ba761`; 7 commits (`790561d4`…`6f2ba761`); only `.ufo/` files differ after `01a44dbf`; lesson blob `366daace` identical |
+| 1 | `git rev-parse HEAD`; `git log --oneline cab59f22..HEAD`; `git diff --stat 01a44dbf..HEAD`; `git rev-parse 01a44dbf:corpus/lessons/round-36.md HEAD:…` | began at `6f2ba761` (7 commits, `790561d4`…`6f2ba761`; lesson blob `366daace`); HEAD is now `38c1a8be` |
+| 1b | `git log --oneline -3`; `git diff --stat 6f2ba761..38c1a8be`; `git diff 6f2ba761..38c1a8be -- corpus/lessons/round-36.md corpus/SOURCES.md corpus/README.md PROVINCE.md` | 29 files (22 w2 reports + 7 corpus/province); lesson differs only in the S109 bullet; Gate lines 41–44 identical |
 | 2 | `git grep -c -iE 'sasquatch' d2e46ef5 -- corpus/knowledge PROVINCE.md SKILL.md corpus/README.md` | `r4u-03:14`, `PROVINCE.md:1`, `corpus/README.md:3` |
 | 3 | `git grep -c -iE 'ExtractorDependencyNotFoundReport\|missing-extractor-dependency' d2e46ef5 -- corpus skills` | `r4u-03:4`; `c1/K{1,2,3,4}/before.json:1` each |
-| 4 | `git diff -- corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md`; `git hash-object` that file | uncommitted repair, `aa476af8 → 939a0839` |
-| 5 | `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file corpus/SOURCES.md --today 2026-10-26` | **exit 0**, 9 `W04`, no E-code |
+| 4 | `git diff -- corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md`; `git hash-object` that file; `git rev-parse HEAD:…` | repair `aa476af8 → 939a0839`, committed in `38c1a8be` |
+| 5 | `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file corpus/SOURCES.md --today 2026-10-26` (at `6f2ba761` and again at `38c1a8be`) | **exit 0** both times, the same 9 `W04`, no E-code; used-by still single-per-row after the S107/S111 edits |
 | 6 | `awk -F'\|'` on rows S107–S111 (field 12 = used-by) | single entry per row, no row with both |
 | 7 | `curl -fsSL …/unblob/26.6.4/README.md`, `…/devttys0/sasquatch/master/README.md`; `sha256sum`; `sed -n '43p;49p;52p;53p'`, `sed -n '12p;17p;26p'`; `sed -n '35,90p'` | digests/lines reproduce; Docker `:64`, Kali `:77-79` |
 | 8 | `read` of `…/releases/tag/sasquatch-v4.5.1-6` and `…/tag/sasquatch-v1.0` | body has no `1.0`; "Assets 8" vs "Assets 4" |

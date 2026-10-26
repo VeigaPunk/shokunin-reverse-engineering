@@ -122,7 +122,7 @@ absorbed.
   channel and reason recorded (round 36: sasquatch 4.5.1, official onekey-sec
   deb, into `~/.local/bin`); `rea setup` runs and client-config edits
   (registration refreshes for `claude_code`/`codex`/`grok_build`/`opencode`/
-  `pi`) stay **operator-owned** and lane-untouched.
+  `pi`) stay **operator-owned** and lane-untouched. Full-system upgrades go through tsukuroi-shokunin's update-safety gate first (that ground is tsukuroi's), partial upgrades (`pacman -Sy <pkg>`) are never run, and pacman stays paused host-wide per the 2026-10-20 orchestrator ruling.
 
 
 ### Round-4 additions to Core (verified 2026-10-13)

@@ -19,7 +19,8 @@ reproduced by the command beside it).
 **Custody holds on all three assigned checks; no defect found.** The six round-36 commits form a
 single-parent chain in the claimed order, in both ancestry and committer time; twelve frozen files are
 byte-identical at the freeze commit, at the integration tip, at the current lane HEAD, in the working
-tree, and in **every** one of the lane's 857 refs; and the four `after-run.json` `utc` stamps
+tree, and in **every** one of the lane's refs (857 refs / 349 instances at `6f2ba761`, 866 / 457 at
+`2618cf07`, `divergent=0` both times); and the four `after-run.json` `utc` stamps
 (`2026-10-26T04:22:42Z`) are later than the controls commit (`2026-10-26T04:22:29Z`) by 13 s.
 
 Three calibration findings, none of which breaks the claim, are recorded in §6:
@@ -53,18 +54,25 @@ pair, all exit 0). Times are the committer dates; UTC derived with
 | 4 | `d2e46ef5e2b2e8ba681b2fa55d50f298c4c4b8be` | 2026-10-26T01:27:16-03:00 | `2026-10-26T04:27:16Z` | 2 | R36-C2 self-assessment repairs (coverage row 122/122; receipts-B and ScoutSkillPlacement pointers repaired by document) |
 | 5 | `ffc813417d3bceeeb7b028b12ce0be8a5dc33d95` | 2026-10-26T01:47:30-03:00 | `2026-10-26T04:47:30Z` | 20 | R36-C1 landing — sasquatch SquashFS recursion to Core …; assimilated unblob-sasquatch-dependency |
 | 6 | `01a44dbf45913a1bdcabbbfb85b7bb9d232cb930` | 2026-10-26T01:50:56-03:00 | `2026-10-26T04:50:56Z` | 57 | lesson (M36-1..7, Gate, assimilation), QUALITY 77-78, SCORECARD round-36 section, LOG, routed-defect corrections, receipts, wave-1 spec and reports |
-| — | `6f2ba761bb5bcd6482d45523379376dcb6a386f6` (current `HEAD`/`main`) | 2026-10-26T02:01:31-03:00 | `2026-10-26T05:01:31Z` | 6 | wave-1 results (43/43 settled) and last report; wave-2 spec/dispatch |
+| — | `6f2ba761bb5bcd6482d45523379376dcb6a386f6` | 2026-10-26T02:01:31-03:00 | `2026-10-26T05:01:31Z` | 6 | wave-1 results (43/43 settled) and last report; wave-2 spec/dispatch |
+| — | `38c1a8be78906b1b031eb2035766d9f24d22f0d7` | 2026-10-26T02:11:08-03:00 | `2026-10-26T05:11:08Z` | 29 | wave-2 corrections (assimilated entry pip-route scope + Very-beta attribution, S107 asset set, S111 teaches, lesson quote count, dated pointers on superseded PROVINCE/README lines) |
+| — | `2618cf0726d8a96360e489482b29ad4cfd455199` (current `HEAD`/`main` at the time of writing) | 2026-10-26T02:11:32-03:00 | `2026-10-26T05:11:32Z` | 10 | r4u-03 entry supersession note (wave-2 R36W2CriticTrends quality leg); final receipts and census end |
 
 - Claimed order `790561d4 < 6a870b92 < 3310d8fa < d2e46ef5 < ffc81341 < 01a44dbf` holds in ancestry
   (parent chain `cab59f22 → 790561d4 → 6a870b92 → 3310d8fa → d2e46ef5 → ffc81341 → 01a44dbf`, each
   `merge-base --is-ancestor` exit 0) **and** in committer time, strictly increasing, with no author
   date differing from its committer date on any of them.
-- `git reflog show main --date=iso` (342 entries) shows one `export from jj` line per commit with no
-  intervening reset/amend entry between `cab59f22` and `6f2ba761`; the six hashes appear there in the
-  same order, so no tip rewrite is visible in the lane's own pointer history.
-- Note, factual, not a defect: the assigned integration tip `01a44dbf` is **not** the repository tip —
-  `main`/`origin/main`/`HEAD` are `6f2ba761`, one bookkeeping commit later ("wave-1 results (43/43
-  settled) and last report; wave-2 spec/dispatch").
+- `git reflog show main --date=iso` (342 entries at `6f2ba761`, 344 at `2618cf07`) shows one
+  `export from jj` line per commit with no intervening reset/amend entry between `cab59f22` and the
+  tip; the six hashes appear there in the same order, so no tip rewrite is visible in the lane's own
+  pointer history.
+- Factual, not a defect: the assigned integration tip `01a44dbf` is not the repository tip. The lane
+  kept moving while this review ran — `01a44dbf` → `6f2ba761` (bookkeeping + wave-1 reports + wave-2
+  dispatch) → `38c1a8be` (wave-2 corrections to PROVINCE/README/SOURCES/the assimilated entry/the
+  lesson) → `2618cf07` (report collection, the r4u-03 entry note, `.ufo/waves/round-36/after/c1-final.json`
+  and `c2-final.json`, `census-end.txt`; it also commits an earlier snapshot of this report). None of
+  the three post-range commits touches a frozen path (§3, re-verified at `2618cf07`), and the report
+  below states the revision at which each check was run.
 
 ## 2. Commit content matches its label (custody of the object graph)
 
@@ -84,7 +92,8 @@ pair, all exit 0). Times are the committer dates; UTC derived with
 - `01a44dbf` (57): `corpus/lessons/round-36.md` (new), `corpus/QUALITY.md`, `SCORECARD.md`, `LOG.md`,
   the routed-defect corrections (`corpus/lessons/round-34.md`, `round-35.md`,
   `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md`), the two wave-1 counter
-  receipts, the wave-1 spec/dispatch files and 42 wave-1 report/registry files.
+  receipts, the wave-1 spec/dispatch files and 43 wave-1 report/registry files (42 `.md` +
+  `swarm-registry.json`).
 
 The two receipts committed in `ffc81341` and `01a44dbf` still measure their *named* revisions because
 both counters read git objects, not the worktree:
@@ -113,10 +122,11 @@ The glob form was proved to match before use: `git ls-files -- 'corpus/evidence/
 lists 4 files, and the `K*/before.json` form likewise.
 
 1. **Assigned command form.** `git diff --name-status 790561d4 01a44dbf -- <the 12 paths>` → no output,
-   exit 0. Same with `--stat` (no output) and against the current `HEAD` `6f2ba761` (no output).
-   The full `git diff --name-status 790561d4 01a44dbf` lists 98 paths, none of them a frozen path
-   (`grep -E 'counter|oracle|before|carrier|claims'` on that output matches only `*-run.json`,
-   `after*`, receipts, `plans`-free paths).
+   exit 0. Same with `--stat` (no output), and same against the later tips `6f2ba761` and `2618cf07`
+   (no output both times).
+   The full `git diff --name-status 790561d4 01a44dbf` lists 98 paths; filtering its path column with
+   `grep -E '^(plans/round-36-claims\.md|tools/round-36/(c1|c2)-counter\.py)$|^corpus/evidence/round-36/c1/(carriers\.json|K[1-4]/(oracle\.tsv|before\.json))$'`
+   returns no line, exit 1 — zero of the twelve frozen names appear.
 2. **Per-file blob equality** (`git rev-parse <rev>:<path>`, compared against `git hash-object` of the
    worktree file): 12/12 `SAME`, and 12/12 worktree = freeze = tip. E.g.
    `plans/round-36-claims.md` = `899b87bd…1ac0`; `c1-counter.py` = `654c3cd0…951c` (mode 100755);
@@ -127,10 +137,15 @@ lists 4 files, and the `K*/before.json` form likewise.
    only `790561d4` and `3310d8fa`, the latter exclusively for the `after*` files (added alongside,
    not overwriting anything), so the harness `c1-run.sh` and the selftest fixtures named by the
    freeze message are also unchanged.
-4. **Every ref, not just the first-parent line.** 857 refs (4 `refs/heads`, 843 `refs/jj/keep`,
-   10 `refs/remotes`; `git for-each-ref` namespace census) were swept with
-   `git ls-tree -r <ref> -- <12 paths>` and every blob compared to the frozen value:
-   `refs_scanned=857 frozen_path_instances=349 divergent=0`.
+4. **Every ref, not just the first-parent line.** `git for-each-ref` (all namespaces: `refs/heads`,
+   `refs/jj`, `refs/remotes`; no tags in this repo) was swept with `git ls-tree -r <ref> -- <12 paths>`
+   and every blob compared to the frozen value. Two sweeps, because the tip moved during the review:
+   - at `6f2ba761` (857 refs: 4 heads + 843 `refs/jj/keep` + 10 remotes) →
+     `refs_scanned=857 frozen_path_instances=349 divergent=0`;
+   - at `2618cf07` (866 refs) → `refs_scanned=866 frozen_path_instances=457 divergent=0`
+     (the +9 refs × 12 = +108 instances are exactly the wave-2 commits and their jj snapshots).
+   Mechanics were proved before trusting the sweep: `git ls-tree -r main -- <12 paths>` → 12 lines,
+   same at `790561d4` → 12, same at `cab59f22` → 0 (the files did not exist at the base).
    The only non-ancestor commits that carry frozen paths at all are two jj keep snapshots,
    `787926b61de60dc6caf61e930f7e5598a03ee1e8` and `c341c6f89b379c18c77657d39f2fc9e2aec2cc42`, both with
    the freeze commit's own `change-id oxpvyylvqwowonskttoknqokynxouwkx`, both parented on `cab59f22`,
@@ -149,7 +164,7 @@ lists 4 files, and the `K*/before.json` form likewise.
 | `790561d4` freeze commit (committer) | — | 01:21:38 | `04:21:38Z` |
 
 - **Assigned check: passes.** `04:22:42Z` > `04:22:29Z` by 13 s. The same stamps are also later than
-  the freeze commit (81 s) and earlier than the after-receipts commit (17 s), so the receipts were
+  the freeze commit (64 s) and earlier than the after-receipts commit (17 s), so the receipts were
   written by a run that started inside that window.
 - **Independent anchor.** `stat -c '%n mtime=%y ctime=%z size=%s' /home/vgpnk/.local/bin/sasquatch` →
   `mtime=ctime=2026-10-26 01:22:37.798 -03`, `size=382824`, `sha256 ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754`,
@@ -211,7 +226,13 @@ So the scratch path in the receipts does not make the measured bytes unidentifia
    C2-checked range; `SHONEN.md` is untouched at `01a44dbf`, and no knowledge file was added there, so
    the 124/124 count cannot have moved. I did **not** re-run either frozen counter (other seats own
    that); the point is only that the frozen C2 verdict is revision-scoped to `ffc81341` and the tip's
-   self-assessment state is, strictly, outside it.
+   self-assessment state is, strictly, outside it. The same holds for the later wave-2 commits:
+   `38c1a8be` edits PROVINCE/README/SOURCES/the assimilated entry/the lesson, and `2618cf07` edits the
+   r4u-03 knowledge entry (a content edit, so the file count cannot move) — the wave-2 final receipts
+   that do cover this state measure `38c1a8be` (`after/c1-final.json`: `revision 38c1a8be`,
+   `carriers_matched 4`, `met_target true`; `after/c2-final.json`: `revision 38c1a8be`, `mismatches 0`,
+   `guards_ok true`, `pointers 41`, `met_target true`), i.e. one commit behind the tip at the time of
+   writing. I verified the receipts' `revision` fields only; their verdicts are other seats' work.
 5. Found nothing else. I looked for: a frozen path modified anywhere (none), a divergent blob in any
    ref (none), a merge or extra commit in the range (none), a tip rewrite in the reflog (none), a
    receipt whose `revision` post-dates its commit (none: `3310d8fa` receipt ≤ `3310d8fa` commit,

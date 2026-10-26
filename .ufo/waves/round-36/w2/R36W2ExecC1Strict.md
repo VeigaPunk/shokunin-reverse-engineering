@@ -1,49 +1,58 @@
 # R36W2ExecC1Strict — independent strict check of P36-C1 and of the surfaces the claim moves
 
 Seat: leaf executor (wave 2, round 36). Read-only on the lane; the only lane write is this file.
-Lane root `/home/vgpnk/Projects/shokunin/kaidoku-shokunin`. Measured revision
-`ffc813417d3bceeeb7b028b12ce0be8a5dc33d95` (R36-C1 landing), freeze
-`790561d4e3aca732a434081aa9573ec2fa5fd7d0`, integration tip `01a44dbf45913a1bdcabbbfb85b7bb9d232cb930`,
+Lane root `/home/vgpnk/Projects/shokunin/kaidoku-shokunin`. Assigned measurement revision
+`ffc813417d3bceeeb7b028b12ce0be8a5dc33d95` (R36-C1 landing), assigned tip
+`01a44dbf45913a1bdcabbbfb85b7bb9d232cb930`, freeze `790561d4e3aca732a434081aa9573ec2fa5fd7d0`,
 base `cab59f221fe19726b5692bfa4d9a9679e96b8a73`. Axes: coverage, calibration.
 
 No subagent, no background job, no tool install, no VCS mutation (only `git show` / `git diff` /
 `git rev-parse` / `git cat-file` / `git archive` reads). The checker does not import, exec or even read
 `tools/round-36/c1-counter.py`; the frozen counter is cited here only as the claim's own instrument.
 
+**The lane moved while this seat ran** (it does not fight the VCS; the wave harness commits seat
+outputs). At `ffc81341` and at the assigned tip `01a44db` my three false surface readings stand as
+reported. Commit `38c1a8be` ("wave-2 corrections … dated pointers on superseded PROVINCE/README lines")
+then annotated two of the three surfaces; see §4b. This report states both states, because the
+assignment's revisions and the current tip disagree.
+
 ---
 
 ## 0. Verdict
 
 **The P36-C1 sentence survives.** Every clause about the four carriers, the receipts, the evidence ids
-and the Core-row/entry/SOURCES chain reads true at `ffc81341`, and stays true at the tip. I could not
-falsify it with checks the frozen counter does not perform (published byte-size equality, per-row match
-uniqueness, `published_bytes` arithmetic, run-record pins, oracle `regular_files`/offset cross-check,
-and an independent `unsquashfs` re-derivation of the K1/K2 oracle).
+and the Core-row/entry/SOURCES chain reads true at `ffc81341`, at `01a44db`, and again at the current
+tip `2618cf07`. I could not falsify it with checks the frozen counter does not perform (published
+byte-size equality, per-row match uniqueness, `published_bytes` arithmetic, run-record pins, oracle
+`regular_files`/offset cross-check, and an independent `unsquashfs` re-derivation of the K1/K2 oracle).
 
-**Three of the seat's five extra surface conditions are false.** They are *annotation* conditions, not
-predicate clauses: the claim's own frozen wording (`plans/round-36-claims.md` P36-C1) never asks the
-Frontier bullet or the README Firmware row to be annotated, so the frozen counter is right to score
-`met_target` while these readings fail.
+**The seat's five extra surface conditions:** at the assigned revisions three are false (`S2a`, `S2b`,
+`S3`); at the current tip two remain false (`S2a` on its citation clause, `S2b`). They are *annotation*
+conditions, not predicate clauses: the claim's own frozen wording (`plans/round-36-claims.md` P36-C1)
+never asks the Frontier bullet or the README Firmware row to be annotated, so the frozen counter is
+right to score `met_target` while these readings fail.
 
-| # | seat condition | reading | verdict |
-|---|---|---|---|
-| S2a | PROVINCE.md Frontier sasquatch bullet **carries** a dated supersession note that **cites the entry** | note inside the bullet text | **FALSE** — `PROVINCE.md:156-157` is byte-identical to the base; no date, no supersession, no citation |
-| S2b | same, loose: a dated note referring to the bullet exists and cites the entry (path or stem) | note anywhere in `PROVINCE.md` | **FALSE** — the note at `PROVINCE.md:374` cites only `corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md`; neither the r36 entry path nor its stem appears in it |
-| S3 | README **Firmware** sasquatch line carries a dated note | line itself or within 2 lines | **FALSE** — `corpus/README.md:44` is unchanged and still present-tense "recursion blocked by missing sasquatch"; line 45 is the next table row |
-| S4 | README **Frontier** sasquatch line carries a dated note | line itself or within 2 lines | **TRUE** — `corpus/README.md:232` (historical bullet) + `:233` (dated note, cites the entry stem and the dependency stem) |
-| S7 | the entry cites S-rows opened 2026-10-26 whose used-by lists it | exact comma item in the used-by cell | **TRUE** — `corpus/SOURCES.md:113-115` (S107/S108/S109, `opened` 2026-10-26, used-by exactly the entry path) |
+| # | seat condition | reading | at `ffc81341` / `01a44db` | at `2618cf07` (current tip) |
+|---|---|---|---|---|
+| S2a | PROVINCE.md Frontier sasquatch bullet **carries** a dated supersession note that **cites the entry** | note inside the bullet text | **FALSE** — `PROVINCE.md:156-157` byte-identical to base; no date, no supersession, no citation | **FALSE** — the bullet now **does** carry a dated note (`:157`), but it points at `## Round-36 additions to Core`, not at the entry (no path, no stem) |
+| S2b | same, loose: a dated note referring to the bullet exists and cites the entry (path or stem) | note anywhere in `PROVINCE.md` | **FALSE** — the note at `PROVINCE.md:374` cites only `corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md` | **FALSE** — `:374` unchanged; still no r36 entry path or stem |
+| S3 | README **Firmware** sasquatch line carries a dated note | line itself or within 2 lines | **FALSE** — `corpus/README.md:44` present-tense "recursion blocked by missing sasquatch", no note; `:45` is the next table row | **TRUE** — `:44` now ends the clause `[2026-10-13 state; superseded 2026-10-26 for LE SquashFS v4 by \`2026-10-26-r36-sasquatch-squashfs-recursion\`]` |
+| S4 | README **Frontier** sasquatch line carries a dated note | line itself or within 2 lines | **TRUE** — `:232` historical bullet + `:233` dated note (entry stem + dependency stem) | **TRUE** (unchanged) |
+| S7 | the entry cites S-rows opened 2026-10-26 whose used-by lists it | exact comma item in the used-by cell | **TRUE** — `corpus/SOURCES.md:113-115` (S107/S108/S109) | **TRUE** (rows edited for asset/teaches detail at `38c1a8be`; `opened` and `used-by` unchanged) |
 
 `S2a`/`S2b` together mean: the supersession note exists, is dated, and points at the bullet by line
 (`PROVINCE.md:156-157`), but it lives 218 lines below the bullet in a different section
 (`## Round-36 additions to Core`) and it names the *assimilated dependency* entry, not the coverage
-entry. A reader who lands on the Frontier bullet at `PROVINCE.md:156` finds no marker there; a reader
-who lands on the note is one hop from the dependency entry, not from the measurement entry — the hop
-is only closed indirectly by "as measured above" pointing at the Core row at `:372`, which does cite
-the entry. If "the entry" in the seat sentence means the dependency entry, `S2b` passes on citation
-grounds but `S2a` still fails because the bullet itself carries nothing.
+entry. A reader who lands on the Frontier bullet finds a pointer to the section (tip only, not at the
+assigned revisions) but no path to the measurement entry; a reader who lands on the note is one hop
+from the dependency entry. The hop to the measurement entry is closed only by "as measured above"
+pointing at the Core row at `:372`, which does cite it. If "the entry" in the seat sentence means the
+dependency entry, `S2b` passes on citation grounds and `S2a` fails only because the bullet names no
+entry at all.
 
 Mechanical summary at `ffc81341`: `23` conditions true, `3` false —
-false set `['S2a_province_bullet_carries_dated_note_citing_entry', 'S2b_province_dated_sasquatch_note_cites_entry', 'S3_readme_firmware_sasquatch_line_carries_dated_note']`.
+false set `['S2a_province_bullet_carries_dated_note_citing_entry', 'S2b_province_dated_sasquatch_note_cites_entry', 'S3_readme_firmware_sasquatch_line_carries_dated_note']`. The same three are false at `01a44db`; at `2618cf07` the false set is
+`['S2a_province_bullet_carries_dated_note_citing_entry', 'S2b_province_dated_sasquatch_note_cites_entry']`.
 
 ---
 
@@ -71,8 +80,8 @@ so no working-tree state can leak in. 26 conditions:
   Nothing about the id rule is retyped.
 * `R10` before and after are different measurements (published sha sets differ).
 * `R11` every published file has a non-empty `relative_path` and a 64-hex sha256.
-* `R12` receipt bytes at the receipts commit `3310d8fa` and at the integration tip `01a44dbf` equal
-  the bytes at the measured revision (no silent re-issue between landing and tip).
+* `R12` receipt bytes at the receipts commit `3310d8fa` and at the assigned tip `01a44dbf` equal the
+  bytes at the measured revision (no silent re-issue between landing and tip).
 * `R13` run records: `before-run.json` has `sasquatch: ""` for all four; `after-run.json` has a
   sasquatch path, a 64-hex sha256, the same sha256 in all four, both exits 0, after utc >= before utc.
 * `R14` `published_bytes` equals the sum of the published file sizes (before and after).
@@ -81,9 +90,11 @@ so no working-tree state can leak in. 26 conditions:
 * `O1` independent oracle reproduction: K1/K2 fixtures are committed, so they are re-extracted with
   the local `/usr/bin/unsquashfs 4.7.5 (2026/03/01)` and compared row for row (path, sha256, size) to
   the frozen `oracle.tsv`. K3/K4 carriers are remote (not committed), so their oracle is not re-derived.
-* `S1`–`S7`, `X1` the surface conditions in §0 plus the stated-count calibration.
+* `S1`–`S7` the surface conditions in §0; `X1` stated-count calibration — the counts are read from the
+  `## Coverage map` row that carries them (not from the first row holding the stem), so a second
+  stem-bearing row cannot shadow them (control 18).
 
-### 1.1 Calibration (17 controls, `selftest-strict.py`, appendix D)
+### 1.1 Calibration (18 controls, `selftest-strict.py`, appendix D)
 
 Each control builds a throwaway git fixture in scratch from
 `git archive ffc81341 -- PROVINCE.md corpus/README.md corpus/SOURCES.md corpus/evidence/round-36/c1 <entry>`,
@@ -91,7 +102,7 @@ commits it as the freeze, applies one mutation, commits, and runs the checker wi
 `--rev HEAD --freeze <freeze> --skip-cross-rev`. `git -C $D rev-parse --show-toplevel` was checked
 against `$D` before the first commit. Fixtures are removed per case.
 
-`17/17` pass, exit 0:
+`18/18` pass, exit 0:
 
 | # | control | result | unexpected |
 |---|---|---|---|
@@ -109,17 +120,20 @@ against `$D` before the first commit. Fixtures are removed per case.
 | 12 | append an oracle row after freeze | pass | `—` |
 | 13 | change a carrier sha256 | pass | `—` |
 | 14 | break the README coverage stem | pass | `—` |
-| 15 | add the entry path to the PROVINCE Frontier note | pass | `—` |
-| 16 | make the PROVINCE Frontier bullet carry the note | pass | `—` |
-| 17 | add a dated note after the README Firmware row | pass | `—` |
+| 15 | add a second stem row without counts | pass | `—` |
+| 16 | add the entry path to the PROVINCE Frontier note | pass | `—` |
+| 17 | make the PROVINCE Frontier bullet carry the note | pass | `—` |
+| 18 | add a dated note after the README Firmware row | pass | `—` |
 
-Three of these controls matter for the finding:
+Four of these controls matter for the finding:
 
 * `delete the PROVINCE Core row` → `S1` red: the predicate binding is falsifiable, not a free pass.
 * `add the entry path to the PROVINCE Frontier note` → only `S2b` turns green, `S2a` stays red; the
-  detector is not stuck false, it is reporting placement plus citation.
-* `add a dated note after the README Firmware row` → `S3` green: the missing landing (finding F2) is
-  exactly the wave-1 draft text, and the condition would have passed had it been applied.
+  detector is not stuck false, it reports placement and citation separately.
+* `make the PROVINCE Frontier bullet carry the note` → only `S2a`'s placement clause turns green
+  (which is exactly what `38c1a8be` later did); the citation clause stays red.
+* `add a dated note after the README Firmware row` → `S3` green: the missing landing (finding F2) was
+  the wave-1 draft text, and `38c1a8be` has since applied that shape.
 
 One control is expected to stay **green**, and is the instrument's own blind spot:
 
@@ -131,15 +145,17 @@ One control is expected to stay **green**, and is the instrument's own blind spo
 That second row is the same class the round's lesson records as M36-4 and the wave-1 critic recorded
 as its F1. It is stated here as an instrument limit, not as a suspicion about the committed receipts:
 the committed pair is corroborated by four independent wave-1 reproductions
-(`.ufo/waves/round-36/w1/R36ExecReproK{1,2,3,4}.md`) and by the run records, and **no receipt field
-inside the `after` envelope names sasquatch at all** (checked: `raw_result.execution.stdout`/`stderr`
-contain no sasquatch string in K1/K3 either mode; the positive evidence is the gap's disappearance
-plus `after-run.json`). A strictly receipt-internal checker therefore proves *absence of the recorded
-gap*, never *presence of a sasquatch run*.
+(`.ufo/waves/round-36/w1/R36ExecReproK{1,2,3,4}.md`) and by the run records. Inside the `after`
+envelopes, `normalized_result` names sasquatch nowhere in any of the four carriers (checker `R5`
+evidence `sasquatch_mention_paths` is empty for all four), and the captured
+`raw_result.execution.stdout`/`stderr` of K1 and K3 contain no sasquatch string in either mode — the
+positive in-receipt evidence is the gap's disappearance plus `after-run.json`. A strictly
+receipt-internal checker therefore proves *absence of the recorded gap*, never *presence of a
+sasquatch run*.
 
 ---
 
-## 2. Receipt evidence, per carrier at `ffc81341`
+## 2. Receipt evidence, per carrier at `ffc81341` (identical at the tip)
 
 | carrier | carrier sha256 (carriers.json) | oracle rows (distinct) | after published | oracle rows matched (unique) | before published | before oracle hits | before gap | after sasquatch gap | after `published_bytes` = Σsizes | after `coverage` | stored evidence id (6.5.0 authentic) |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -154,28 +170,29 @@ Cross-checks that also read true:
   `sasquatch: /home/vgpnk/.local/bin/sasquatch`, `sasquatch_sha256
   ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754`, version
   `unsquashfs version 4.5.1 (2022/03/17)`; exits 0; before `2026-10-26T04:17:49Z` < after
-  `2026-10-26T04:22:42Z` (K1/K3; same for K2/K4 records). The installed binary on this host today is
-  the same `ad02d27a…4754` (382824 B), i.e. the run-record digest is reproducible, not just asserted.
+  `2026-10-26T04:22:42Z`. The installed binary on this host today is the same `ad02d27a…4754`
+  (382824 B), i.e. the run-record digest is reproducible, not just asserted.
 * `R15`: `oracle-run.json` offsets 0/0/944632/936456 equal each `after` receipt's `squashfs_v4_le`
   chunk `root_file_range.offset`; `regular_files` 3/4/2130/2130 equal the oracle row counts.
 * `O1`: K1 re-extracted from the committed fixture (sha256 `93802938…a589`, equal to
   `carriers.json`) yields exactly the 3 frozen rows; K2 (`ce5bf60e…084f`) exactly the 4 frozen rows;
   zero symmetric difference; `unsquashfs` exit 0. The K2 symlink stays out of the regular-file set.
 * `R12`: the eight receipt files at `3310d8fa` and at `01a44dbf` are byte-identical to those at
-  `ffc81341`.
+  `ffc81341`; the receipts are also unchanged at `2618cf07`.
 * `X1`: the counts the docs state are the counts observed — PROVINCE row "oracle 3, 4, 2,130, 2,130"
   (`PROVINCE.md:372`) and README "K1 3/3, K2 4/4, K3 …, 2130/2130, K4 …, 2130/2130"
-  (`corpus/README.md:89`). The entry's own table (`entry:83-88`) matches too, including
-  `published 2147 / extras 17` and `coverage` values; extras decompose as 9 `carved.elf` + 8 one-byte
-  `.padding` (all sha256 `6e340b9c…01d`, the digest of a single NUL) = 17, as the entry states.
+  (`corpus/README.md:89` at the assigned revisions). The entry's own table (`entry:83-88`) matches too,
+  including `published 2147 / extras 17` and `coverage` values; extras decompose as 9 `carved.elf` +
+  8 one-byte `.padding` (all sha256 `6e340b9c…01d`, the digest of a single NUL) = 17.
 
 ---
 
-## 3. Surface findings, with file:line
+## 3. Surface findings at the assigned revisions, with file:line
 
-### F1 — the PROVINCE Frontier note dropped the entry citation the wave-1 draft had (S2a, S2b)
+### F1 — the PROVINCE Frontier note never cited the measurement entry (S2a, S2b)
 
-`PROVINCE.md:156-157` at `ffc81341`, verbatim (2 lines, unchanged from base):
+`PROVINCE.md:156-157` at `ffc81341` and `01a44db`, verbatim, byte-identical to base
+(`sha256 48778874…6ae8` of the two base lines 149-150 and of the landing lines 156-157):
 
 ```
 - **sasquatch** — unblob's squashfs recursion extractor (AUR-only); 7z fallback
@@ -205,37 +222,35 @@ with the entry path. `.ufo/waves/round-36/w1/R36ScribeProvince.md:63`:
 
 The citation slot was re-filled with the *dependency* entry and the measurement entry was dropped. The
 Core row three lines above (`PROVINCE.md:372`) does cite the entry, and the note says "as measured
-above", so the chain is recoverable by a careful reader; [INFERENCE] the edit was made to satisfy
-M36-1's "Frontier notes cite S110 by entry" line and the entry citation was lost in that rewrite.
+above", so the chain is recoverable by a careful reader; [INFERENCE] the rewrite was made to satisfy
+M36-1's "Frontier notes cite S110 by entry" line and the entry citation was lost in it.
 
-### F2 — the README Firmware row carries no dated note; the wave-1 draft row was not landed (S3)
+### F2 — the README Firmware row carried no dated note (S3)
 
-`corpus/README.md:44` at `ffc81341` (unchanged from base; grep of every `sasquatch` line in the
-file returns nine: `44, 89, 90, 164, 195, 196, 224, 232, 233`):
+`corpus/README.md:44` at `ffc81341` and `01a44db` (unchanged from base; `grep -n sasquatch` over the
+whole file returns nine lines: `44, 89, 90, 164, 195, 196, 224, 232, 233`):
 
 ```
-| Firmware | `2026-10-13-r2-firmware-probe`, `2026-10-13-r4u-01-firmware-deep`, `2026-10-13-r4u-03-unblob-extract` | held (partial) — … AppImage SquashFS carved but recursion blocked by missing sasquatch; … |
+| Firmware | … | held (partial) — … AppImage SquashFS carved but recursion blocked by missing sasquatch; … |
 ```
 
-`corpus/README.md:45` is `| Frontier prerequisites | …` — no note row was inserted. The landing diff
+`:45` is `| Frontier prerequisites | …` — no note row was inserted. The landing diff
 `git diff d2e46ef5 ffc81341 -- corpus/README.md` adds exactly six lines: two `## Coverage map` rows
 (`:89`, `:90`), two `## Knowledge` rows (`:195`, `:196`), one `## Lessons` row (`:224`) and one
-`## Frontier` bullet (`:233`). No `## Coverage map` row adjacent to the Firmware row, and no dated
-annotation on `:44` itself.
+`## Frontier` bullet (`:233`). No row adjacent to the Firmware row and no dated annotation on `:44`.
 
 The wave-1 draft for this surface was written and is unambiguous —
 `.ufo/waves/round-36/w1/R36ScribeReadme.md:49-55` ("Draft B — dated note appended to the Firmware row",
-"Insert immediately after current line 44") with the row text starting
+"Insert immediately after current line 44"), row text starting
 `| Firmware (2026-10-26 note) | \`2026-10-26-r36-sasquatch-squashfs-recursion\` | dated supersession of the row above, which is not rewritten: … |`.
-It was not applied. My control `add a dated note after the README Firmware row` shows the condition
-would have read true with that row in place.
+It was not applied at landing. Control 17 shows the condition would have read true with such a row.
 
-Consequence: the row the claim names as the moved surface (`plans/round-36-claims.md` R36-C1 "Surface
-moved") is still present-tense false at the point of the statement. The supersession is recorded in two
-other places (`corpus/README.md:89` "Dated supersession of the Firmware row's … (2026-10-13 state, kept
-as history)" and `:233`), which is why a whole-file reader is not misled, but a reader of the Firmware
-row alone is. This is the M36-1 shape (stale present-tense route/gap prose) one layer down: the round
-found the stale premise and did not put the correction on the line it corrected.
+Consequence at the assigned revisions: the row the claim names as the moved surface
+(`plans/round-36-claims.md` R36-C1 "Surface moved") was still present-tense false at the point of the
+statement. The supersession was recorded in two other places (`corpus/README.md:89` "Dated
+supersession of the Firmware row's … (2026-10-13 state, kept as history)" and `:233`), so a whole-file
+reader was not misled, but a reader of the Firmware row alone was. That is the M36-1 shape (stale
+present-tense route/gap prose) one layer down.
 
 ### S4 — the README Frontier line does carry its note (true)
 
@@ -249,8 +264,8 @@ found the stale premise and did not put the correction on the line it corrected.
   (`sasquatch-v4be`) and vendor-mangled images.
 ```
 
-Note the file's own convention is bare stems, so the entry is cited by stem, not by path; the exact
-path appears only in `## Coverage map` (`:89`) and `## Knowledge` (`:195`).
+The file's convention is bare stems, so the entry is cited by stem, not by path; the exact path appears
+in `## Coverage map` (`:89`) and `## Knowledge` (`:195`).
 
 ### S1/S5/S6/S7 — predicate bindings (true)
 
@@ -263,33 +278,55 @@ path appears only in `## Coverage map` (`:89`) and `## Knowledge` (`:195`).
 * `corpus/SOURCES.md:113` (S107), `:114` (S108), `:115` (S109): each row has 11 cells, cell 9
   (`opened`) `2026-10-26`, and cell 11 (`used-by`) is exactly
   `corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md` — the exact-item test, not a
-  substring test, and an `S1070`-style token cannot satisfy it (token boundary regex, exercised by the
-  frozen counter's own case and by my `break S107 used-by` control, which leaves S108/S109 valid and
-  still turns `S7` red).
+  substring test, and an `S1070`-style token cannot satisfy it (token-boundary regex; control 11
+  leaves S108/S109 valid and still turns `S7` red).
 
 ### Dated history, not defects
 
 `corpus/README.md:164` (`## Knowledge` index row for the 2026-10-13 entry: "squashfs needs sasquatch
-(7z fallback)") and `:44`'s clause are index/historical text about a past state. `:164` is correctly
-historical by the file's index convention. `:44` is the row the claim names as moved, which is why F2
-treats it as unannotated rather than as history.
+(7z fallback)") is correctly historical by the file's index convention. `:44`'s clause was the row the
+claim named as moved, which is why F2 treats it as unannotated rather than as history (since fixed at
+`38c1a8be`; §4b).
 
 ---
 
-## 4. Revision sweep (instrument discriminates)
+## 4. Revision sweep
 
 `strict-c1.py --rev <REV> --freeze 790561d4 --json-out …` (all read-only):
 
 | revision | false conditions | reading |
 |---|---|---|
 | `cab59f22` (base) | all 26 | honest stop: no carriers, no oracle, no receipts, no entry, no Core row |
-| `790561d4` (freeze) | 19 | freeze-only inputs: oracle/carriers/before present, after and all surfaces absent; `R6`/`R7`/`R9` (before half) already true |
+| `790561d4` (freeze) | 19 | freeze-only inputs: oracle/carriers/before present, after and every surface absent; `R6`/`R7`/`R9` (before half) already true |
 | `d2e46ef5` (C2 landing) | 9 | receipts landed (`R*` all true), every textual surface absent |
-| `3310d8fa` (receipts commit) | 9 | identical to the previous row: the receipt commit adds no prose |
-| `ffc81341` (C1 landing) | 3 | `S2a`, `S2b`, `S3` |
-| `01a44dbf` (tip) | 3 | unchanged: `git diff ffc81341 01a44dbf -- PROVINCE.md corpus/README.md corpus/SOURCES.md <entry>` is empty |
+| `3310d8fa` (receipts commit) | 9 | identical: the receipt commit adds no prose |
+| `ffc81341` (C1 landing, assigned) | 3 | `S2a`, `S2b`, `S3` |
+| `01a44dbf` (assigned tip) | 3 | unchanged; `git diff ffc81341 01a44dbf -- PROVINCE.md corpus/README.md corpus/SOURCES.md <entry>` is empty |
+| `38c1a8be` (wave-2 corrections) | 2 | `S3` flips true; `S2a`'s placement clause flips true but its citation clause stays false; `S2b` unchanged |
+| `2618cf07` (current tip) | 2 | `S2a` (citation), `S2b` |
 
-The same three surface readings are false at the tip, so this is not a mid-round artefact.
+### 4b. What changed after dispatch (`01a44db` -> `38c1a8be` -> `2618cf07`)
+
+`38c1a8be` ("round-36: wave-2 corrections (… dated pointers on superseded PROVINCE/README lines)")
+edits, in the files this seat measured: `PROVINCE.md` (1 line), `corpus/README.md` (1 line),
+`corpus/SOURCES.md` (4 lines: the S107 asset set and S111 teaches cells), the assimilated entry
+(22 lines) and the lesson (2 lines). The two surface edits are exactly the lines F1/F2 report:
+
+* `PROVINCE.md:157` now reads `  covers the carved-image path today. [2026-10-26: superseded for LE
+  SquashFS v4 — see \`## Round-36 additions to Core\`; big-endian/AVM stays here.]` — so the bullet
+  *carries* a dated supersession note, but the note names a section, not the entry. `S2a` remains
+  false on "cites the entry" only.
+* `corpus/README.md:44` now ends the clause `[2026-10-13 state; superseded 2026-10-26 for LE SquashFS
+  v4 by \`2026-10-26-r36-sasquatch-squashfs-recursion\`]` — `S3` true (dated note on the line, entry
+  cited by stem).
+* `PROVINCE.md:374` and the Core row `:372` are unchanged; `S2b` is therefore still false.
+
+`2618cf07` touched only `corpus/knowledge/2026-10-13-r4u-03-unblob-extract.md` (a supersession note in
+the older entry) and seat outputs; none of my conditions moved.
+
+The residual after the correction is one attribute: the PROVINCE Frontier bullet's dated note points
+at the section instead of the entry, and the section's own Frontier note cites S110 rather than the
+measurement entry. Everything else the seat asked for is now true at the current tip.
 
 ---
 
@@ -310,12 +347,17 @@ The same three surface readings are false at the tip, so this is not a mid-round
    satisfied by exactly one published file (`R16` true, `match_counts == [1]`). A future carrier with
    byte-identical files at such a pair would let one published file satisfy two rows.
 4. **The README/PROVINCE wording conditions are mine, not the frozen predicate's.** The frozen
-   predicate's own bindings are `S1`, `S5`, `S6`, `S7`, and all four are true; the seat's extra
-   annotation conditions are what fail. I did not change any frozen predicate, counter, carrier or
-   oracle, and I did not repair the lane.
-5. A sibling wave-2 reviewer independently flagged placement of the `PROVINCE.md:374` note as drift
-   debt (`.ufo/waves/round-36/w2/R36W2ReviewerProvince.md:129`); that is compatible with F1 but is not
-   evidence for it — F1 rests on the citation measurement above.
+   predicate's own bindings are `S1`, `S5`, `S6`, `S7`, plus the carrier/receipt clauses, and all are
+   true; the seat's extra annotation conditions are what fail. I did not change any frozen predicate,
+   counter, carrier or oracle, and I did not repair the lane.
+5. **The lane moved under the measurement.** The assignment named `ffc81341` and `01a44db`; commits
+   `38c1a8be` and `2618cf07` landed while this seat ran. §4b reports the second state from the same
+   checker (no code change between the two sweeps beyond the `X1` row-selection fix described above,
+   which was revalidated by control 18 and by re-running the assigned revisions: their verdicts did
+   not change).
+6. A sibling wave-2 reviewer flagged placement of the `PROVINCE.md:374` note as drift debt
+   (`.ufo/waves/round-36/w2/R36W2ReviewerProvince.md:129`); compatible with F1, but not evidence
+   for it — F1 rests on the citation measurement above.
 
 ---
 
@@ -326,23 +368,24 @@ S=/fast/scratch/hyaku/kaidoku-r36/R36W2ExecC1Strict; mkdir -p "$S"; export TMPDI
 # appendices A, B, C, D written into "$S"
 python3 -I -B "$S/strict-c1.py"  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin  --rev ffc813417d3bceeeb7b028b12ce0be8a5dc33d95  --freeze 790561d4e3aca732a434081aa9573ec2fa5fd7d0  --pkg650 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents  --json-out "$S/strict-at-ffc81341.json"
 # -> prints TRUE/FALSE per condition, "all_true: False", exit 1
+# same with --rev 01a44dbf… / 38c1a8be… / 2618cf07… for §4 and §4b
 python3 -I -B "$S/selftest-strict.py"
-# -> {"selftest": "strict-c1", "cases": 17, "pass": 17, "failures": []}, exit 0
+# -> {"selftest": "strict-c1", "cases": 18, "pass": 18, "failures": []}, exit 0
 ```
 
-Exit codes observed: strict check `1` (three surface conditions false), selftest `0`, base/freeze/tip
-sweep `1` each (correctly not met). Checksums of the instrument as run:
+Exit codes observed: strict check `1` at every measured revision (three surface conditions false at
+the assigned ones, two at the tip); selftest `0`. Checksums of the instrument as run:
 
 ```
-c7166510360f57f8822e4a8c196ee76fba831c0f682d3bffb87f504874226b12  strict-c1.py
+07e88934eb8a223a5fe5761cebe074837add737a29d67c1078df90ff3aab0986  strict-c1.py
 9c024c96475ca40f9f0e9a624f4faafd28822828a3cddc03c0b7f03abc86b069  evid-650.mjs
 46e4d0db8bbd1d295e72f42a7bc25fa0697c2d00a351feb4e0246146c2e43df3  forge-rehash.mjs
-b6b03ce8cb1e685b8bc316d8c3b96219b1a296b856cf256447425d8d332045cd  selftest-strict.py
+3b2d05b936a9304392175f7b681cba3b6008ea1842feaea70e79629cc9602d6f  selftest-strict.py
 ```
 
 Tool installs: none. The scratch tree was removed before this seat finished; everything cited here
-(including the four instrument sources above and the two JSON receipts in appendices E and F) is copied
-into this report because scratch paths are not evidence.
+(including the four instrument sources above and the JSON receipts in appendices E–G) is copied into
+this report because scratch paths are not evidence.
 
 ---
 
@@ -350,13 +393,16 @@ into this report because scratch paths are not evidence.
 
 * `.ufo/waves/round-36/w2/R36W2ExecC1Strict.md` (this report) — only write.
 * No lane source, tool, counter, carrier, oracle, receipt, VCS object or `shokuknow` file touched.
+  (The lane's own commits during this run were made by the wave harness, not by this seat.)
 
-### What the L1 has to decide (not repaired by me)
+### State of the two gaps
 
-1. Apply the wave-1 Firmware note (`R36ScribeReadme.md:49-55`) after `corpus/README.md:44`, or record a
-   reason for leaving the row present-tense; today the claim's named surface is unannotated.
-2. Either add the entry citation to `PROVINCE.md:374`, or state that the Core row at `:372` is the
-   intended carrier of that citation and that the note deliberately cites only S110.
+1. **README Firmware row** — resolved at `38c1a8be` (`corpus/README.md:44` now carries the dated
+   supersession and names the entry). Nothing left to do.
+2. **PROVINCE Frontier bullet citation** — open. The bullet now carries a dated note (`PROVINCE.md:157`)
+   but points at the section; `PROVINCE.md:374` cites only S110. Either name
+   `corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md` in the bullet note or in `:374`,
+   or record that the Core row `:372` is the intended sole carrier of that citation.
 
 ---
 
@@ -889,8 +935,10 @@ def main():
     if m:
         stated['province_row'] = [int(m.group(1)), int(m.group(2)),
                                   int(m.group(3).replace(',', '')), int(m.group(4).replace(',', ''))]
+    counts_row = next((l for _, l in cm_hits if re.search(r'K\d \d+/\d+', l)), '')
     stated['readme_row'] = [[int(x), int(y), int(z)] for x, y, z in
-                            re.findall(r'K(\d) (\d+)/(\d+)', cm_hits[0][1] if cm_hits else '')]
+                            re.findall(r'K(\d) (\d+)/(\d+)', counts_row)]
+    stated['readme_counts_line'] = next((n for n, l in cm_hits if l is counts_row), None)
     observed = {k: {'oracle_rows': per[k]['oracle_rows'],
                     'after_matched': len(per[k]['after']['hits']) if per[k]['after'] else None} for k in ks}
     ok_counts = True
@@ -1085,6 +1133,7 @@ SRC_REV = 'ffc813417d3bceeeb7b028b12ce0be8a5dc33d95'
 PKG650 = '/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents'
 CHECKER = os.path.join(SEAT, 'strict-c1.py')
 EVDIR = 'corpus/evidence/round-36/c1'
+STEM_ = '2026-10-26-r36-sasquatch-squashfs-recursion'
 ENTRY = 'corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md'
 PATHS = ['PROVINCE.md', 'corpus/README.md', 'corpus/SOURCES.md', EVDIR, ENTRY]
 GITENV = dict(os.environ, GIT_AUTHOR_NAME='fixture', GIT_AUTHOR_EMAIL='fixture@invalid',
@@ -1254,6 +1303,19 @@ def m_change_carrier_sha(dst):
     json.dump(spec, open(p, 'w'), indent=1)
 
 
+def m_duplicate_stem_row(dst):
+    """A second Coverage-map row carries the stem before the counts row: X1 must still find the
+    counts, i.e. selection by 'first row holding the stem' is not enough."""
+    def fn(ls):
+        out = []
+        for l in ls:
+            out.append(l)
+            if l.startswith('## Coverage map'):
+                out.append('| Firmware-adjacent duplicate | `' + STEM_ + '` | dated note 2026-10-26 |\n')
+        return out
+    mutate_text(dst, 'corpus/README.md', fn)
+
+
 def m_break_coverage_stem(dst):
     mutate_text(dst, 'corpus/README.md',
                 lambda ls: [l.replace('2026-10-26-r36-sasquatch-squashfs-recursion', '2026-10-26-r36-other') for l in ls])
@@ -1311,6 +1373,8 @@ CASES = [
     ('append an oracle row after freeze', m_append_oracle_row, {'want_false': {'R2_oracle_frozen_nonempty'}}),
     ('change a carrier sha256', m_change_carrier_sha, {'want_false': {'R1_carriers_frozen_unchanged_and_ids'}}),
     ('break the README coverage stem', m_break_coverage_stem, {'want_false': {'S5_readme_coverage_map_row'}}),
+    ('add a second stem row without counts', m_duplicate_stem_row,
+     {'want_true': {'S5_readme_coverage_map_row', 'X1_stated_counts_equal_observed'}}),
     ('add the entry path to the PROVINCE Frontier note', m_note_cites_entry, {'want_true': {S2B}}),
     ('make the PROVINCE Frontier bullet carry the note', m_bullet_carries_note, {'want_true': {S2A}}),
     ('add a dated note after the README Firmware row', m_firmware_row_note, {'want_true': {S3}}),
@@ -1360,7 +1424,7 @@ if __name__ == '__main__':
     sys.exit(main())
 ```
 
-## Appendix E — measured conditions at `ffc81341` (checker `--json-out`, `hits`/`published_shas`
+## Appendix E — measured conditions at `ffc81341` (checker `--json-out`; `hits` / `published_shas`
 lists elided)
 
 ```json
@@ -1942,6 +2006,7 @@ lists elided)
      2130,
      2130
     ],
+    "readme_counts_line": 89,
     "readme_row": [
      [
       1,
@@ -1967,8 +2032,8 @@ lists elided)
 ```json
 {
  "selftest": "strict-c1",
- "cases": 17,
- "pass": 17,
+ "cases": 18,
+ "pass": 18,
  "failures": [],
  "detail": [
   {
@@ -2152,6 +2217,17 @@ lists elided)
    "detail": {}
   },
   {
+   "case": "add a second stem row without counts",
+   "pass": true,
+   "unexpected": [],
+   "false_conditions": [
+    "S2a_province_bullet_carries_dated_note_citing_entry",
+    "S2b_province_dated_sasquatch_note_cites_entry",
+    "S3_readme_firmware_sasquatch_line_carries_dated_note"
+   ],
+   "detail": {}
+  },
+  {
    "case": "add the entry path to the PROVINCE Frontier note",
    "pass": true,
    "unexpected": [],
@@ -2177,11 +2253,104 @@ lists elided)
    "unexpected": [],
    "false_conditions": [
     "S2a_province_bullet_carries_dated_note_citing_entry",
-    "S2b_province_dated_sasquatch_note_cites_entry",
-    "X1_stated_counts_equal_observed"
+    "S2b_province_dated_sasquatch_note_cites_entry"
    ],
    "detail": {}
   }
  ]
 }
 ```
+
+## Appendix G — the three surface conditions at the current tip `2618cf07`
+
+```json
+{
+ "all_true": false,
+ "conditions": {
+  "S2a_province_bullet_carries_dated_note_citing_entry": {
+   "bullet_cites_entry_path": false,
+   "bullet_is_dated_note": true,
+   "bullet_line": 156,
+   "bullet_span": [
+    156,
+    157
+   ],
+   "bullet_text": "- **sasquatch** \u2014 unblob's squashfs recursion extractor (AUR-only); 7z fallback\n  covers the carved-image path today. [2026-10-26: superseded for LE SquashFS v4 \u2014 see `## Round-36 additions to Core`; ",
+   "in_frontier_section": true,
+   "ok": false
+  },
+  "S2b_province_dated_sasquatch_note_cites_entry": {
+   "notes": [
+    {
+     "cites_dep_entry": true,
+     "cites_entry_path": false,
+     "cites_entry_stem": false,
+     "in_core_section": true,
+     "in_frontier_section": false,
+     "line": 374
+    }
+   ],
+   "ok": false
+  },
+  "S3_readme_firmware_sasquatch_line_carries_dated_note": {
+   "firmware_row": [
+    44
+   ],
+   "firmware_row_dated_note_lines": [
+    44
+   ],
+   "firmware_row_mentions_sasquatch": [
+    44
+   ],
+   "firmware_row_still_says_blocked": true,
+   "ok": true
+  },
+  "X1_stated_counts_equal_observed": {
+   "observed": {
+    "K1": {
+     "after_matched": 3,
+     "oracle_rows": 3
+    },
+    "K2": {
+     "after_matched": 4,
+     "oracle_rows": 4
+    },
+    "K3": {
+     "after_matched": 2130,
+     "oracle_rows": 2130
+    },
+    "K4": {
+     "after_matched": 2130,
+     "oracle_rows": 2130
+    }
+   },
+   "ok": true,
+   "stated": {
+    "province_row": [
+     3,
+     4,
+     2130,
+     2130
+    ],
+    "readme_counts_line": 89,
+    "readme_row": [
+     [
+      1,
+      3,
+      3
+     ],
+     [
+      2,
+      4,
+      4
+     ]
+    ]
+   }
+  }
+ },
+ "false_conditions": [
+  "S2a_province_bullet_carries_dated_note_citing_entry",
+  "S2b_province_dated_sasquatch_note_cites_entry"
+ ],
+ "revision": "2618cf0726d8a96360e489482b29ad4cfd455199"
+}```
