@@ -1219,3 +1219,79 @@ Registered because the instruments are relied upon and will be reused; the capab
 | `tools/round-34/mini-fix/build.py` | Rebuilds the eight fixtures and `expected.json` from `spec.json` deterministically | `python3 -I -B tools/round-34/mini-fix/build.py [<dir>]` | 0 | none |
 
 Known limits of the pair, each disclosed in `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md` and routed to QUALITY 68-74: `CLEAN` is relative to the caller's class list (five unregistered classes reach the green 8/8); `met_target` is trusted from the counter's receipt and never cross-checked with `matched`; class labels are free text and a relabelled class is excluded from the refusal set; the registered set is not asserted against the pinned set; the frozen pin map sits under `claims[0].pins`, which `tools/round-34/freeze-integrity.py` rejects (`instruments_missing`, exit 3) — the enforced container is `.ufo/waves/round-34/r34b/instruments.json` (26 pins, CLEAN); `--rev` is an echoed label; receipts carry no argv. The repair route is `.ufo/waves/round-34/r34b/w1/CtlMultiset-files/mini-counter-fresh.py` (fresh content per run; 8/8 structural, 0/8 for nine structure-blind classes), which is a next-round instrument and not evidence for this round.
+
+## SquashFS recursion through sasquatch — round 36
+
+Round-36 moved sasquatch (unblob's `squashfs_v4_le` recursion extractor) from the PROVINCE Frontier
+bullet into a Core row. The REA `extract-firmware` envelope is the only judge of whether recursion
+happened; no amount of local `unsquashfs` success substitutes for it, and no receipt is ever edited to
+look like a pass. Claims, target and kill rule: `plans/round-36-claims.md` (R36-C1); carrier, oracle
+and before-arm evidence: `corpus/evidence/round-36/c1/`.
+
+### Decision table — REA envelope signal to action
+
+| Signal in the `extract-firmware` envelope | Meaning | Action |
+|---|---|---|
+| `extraction_gaps[]` entry with `kind` = `missing-extractor-dependency`, `dependencies` = `["sasquatch"]`, `handler` = `squashfs_v4_le` — recalled (`corpus/evidence/round-36/c1/K1/before.json`, `K3/before.json`) | The `squashfs_v4_le` handler reached a SquashFS 4.0 little-endian container and the extractor binary was not resolvable on `PATH` for that run. `range.offset`/`range.length` are the container's byte span; `root_file_range` repeats it when the container is the input root. The envelope does **not** say the image is unreadable | Install the official onekey-sec `sasquatch_1.0_amd64.deb` binaries into `~/.local/bin` (`sasquatch`, `sasquatch-v4be`; no pacman, no AUR, no rebuild — `plans/round-36-claims.md`), confirm `command -v sasquatch` resolves, then rerun `extract-firmware` on **the same input** with a **fresh `output_directory`**. Keep the old envelope as the paired before-arm; `K3/after-run.json` records `/home/vgpnk/.local/bin/sasquatch`, `unsquashfs version 4.5.1 (2022/03/17)`, sha256 `ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754` |
+| No sasquatch gap, and every oracle regular file is present at a path whose suffix is the oracle's relative path with equal sha256 — recalled (`K1/after.json`: 3/3, 0 gaps) | Recursion published the filesystem's regular files. `publish = regular files only` | Nothing to install. Record both arms and the oracle unchanged; score with the counter, never by eye |
+| Before arm publishes nothing, or publishes the container as one opaque file `…/<offset>-<end>.squashfs_v4_le` — recalled (`K1/before.json`: 0 files, `published_bytes` 0; `K3/before.json`: 2 files, the carved ELF and `944632-11454968.squashfs_v4_le`) | Blocked recursion is *opaque container publication*, not a partial extraction: the container's own bytes are published as a single file and no entry inside it is | Never compare file counts across arms, and never read the opaque range file as an extracted file. Compare the oracle's `(relative-path suffix, sha256)` rows only |
+| `extraction_gaps[]` with `kind` = `unpublished-entry`, and/or `normalized_result.unpublished_entries[]` with `kind` = `symlink` and a `link_target` — recalled (`K2/after.json` `var/notice-link`; `K3`/`K4/after.json` `.DirIcon`, `nvim.png`) | Symlinks (and special files) are retained as metadata only: `extraction_continuations[].instruction` = "The entry is retained as metadata; only regular files are published, without executable permission bits" (`K3/after.json`). **Not** a sasquatch failure and **not** blocked recursion: an after-arm with recursion published still carries these gaps | Do not chase it, do not claim it as published, do not install anything. Filter gaps by `kind` + dependency name (`c1-counter.py` `sasquatch_gap()`), never by "gaps list is empty" |
+| AppImage: `chunks[]` holds one `elf64` chunk starting at 0 and exactly one `squashfs_v4_le` chunk whose `range.offset` equals the ELF end — recalled (`K3/after.json`: `elf64` 0..944632, `squashfs_v4_le` 944632..11454968; `K4` 936456..) | Type-2 layout: an ELF runtime with the filesystem appended; `hsqs` sits at that offset, not at byte 0 | Run the independent oracle as `/usr/bin/unsquashfs -o <that offset>`. The harness rule `e_shoff + e_shnum*e_shentsize` (`tools/round-36/c1-run.sh`, oracle mode) is **one operand** of the type-2 runtime rule (the runtime takes the larger of it and the end of the last section header); the two coincide on K3/K4 (`K3/oracle-run.json` `squashfs_offset` 944632) — do not state the AppImage specification defines any offset |
+| After-envelope `files` count exceeds the oracle's regular-file count — recalled (`K3`/`K4` 2147 vs 2130; nested `…/usr/bin/nvim_extract/0-11170568.elf64_extract/carved.elf`) | Nested carves and nested ELF extracts are published beside the squashfs files | Match by suffix + sha256. Extras are not extra extraction and are not evidence of a second filesystem; count equality is not identity |
+| `operation` ≠ `extract_firmware`, or `provider.id` ≠ `unblob` — the counter's own binding | Wrong verb or wrong provider: the receipt is not comparable to a squashfs-recursion claim | Rerun `npx -y rea-agents@6.5.0 extract-firmware --format json <input> <fresh-outdir>`; do not relabel a receipt from another verb |
+| An envelope whose `files` or `extraction_gaps` were edited by hand no longer recomputes to its stored `ev_…` id under the rea-agents 6.5.0 rule (`c1-counter.py` `evidence_ids()`, frozen `tools/round-27/xpin-attribute.mjs`; selftest case "forged oracle-copy envelope") | A patched envelope is not a receipt, however plausible its file list | Never patch, reorder or trim an envelope. A receipt that does not recompute is a failed measurement, and the remedy is a rerun, not an edit |
+
+### Reproduction order (a later run must not retrofit a before-arm)
+
+1. `tools/round-36/c1-run.sh oracle CARRIER OUTDIR` — independent `/usr/bin/unsquashfs` 4.7.5, offset
+   0 for a bare image and the ELF end for an AppImage, regular files only.
+2. `tools/round-36/c1-run.sh before CARRIER OUTDIR` — the harness strips every `PATH` directory that
+   holds an executable `sasquatch` and refuses (exit 2) if one survives. Keep this envelope.
+3. Install the two deb binaries into `~/.local/bin`; `command -v sasquatch` must resolve.
+4. `tools/round-36/c1-run.sh after CARRIER OUTDIR` — `PATH` as given, fresh output directory; exit 0
+   with `sasquatch_version` populated in `<mode>-run.json`.
+5. Score at a named revision with the counter; a miss is an honest stop, and the counter, predicate,
+   carriers and oracle are never changed after the freeze commit.
+
+Harness exit map (`tools/round-36/c1-run.sh`): 0 ok, 2 usage/environment error, 3 tool failure.
+
+### Round-36 instrument registry
+
+| tool | gate or probe | verdict map (exit codes) | self-test command | pinned-value path | write scope | owner |
+|---|---|---|---|---|---|---|
+| `tools/round-36/c1-counter.py` | gate — R36-C1 coverage, sasquatch squashfs recursion Frontier → Core | 0 clean (`carriers_matched == 4` and every binding true); 1 failed (target not met at the measured revision); 2 could-not-evaluate (missing `--root`/`--rev`/`--freeze`/`--pkg65`, unknown revision, git/node failure, `xpin` tool absent at the freeze). No other code | `python3 -I -B tools/round-36/c1-counter.py --selftest --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents` — flag spelling `--selftest`; 14 isolated git-fixture cases (1 green, 13 red), exit 0 iff no case fails, 1 otherwise | Freeze `790561d4e3aca732a434081aa9573ec2fa5fd7d0` pins `corpus/evidence/round-36/c1/carriers.json` (K1-K4 id + sha256), every `K*/oracle.tsv` and `tools/round-27/xpin-attribute.mjs`; `carriers_unchanged`/`oracle_frozen` compare measured-revision bytes against the freeze bytes, so a post-freeze edit is visible, not silent. Target `4` is a literal in the script. Selftest fixtures: `tools/round-36/selftest/dev-{before,after}.json`, `dev-oracle.tsv`, `dev-le-xz.sqsh`. Control verdicts committed at `6a870b9290e9566468d7d9e6d1b8308daf025b12` under `.ufo/waves/round-36/controls/ctl-c1-{0,1,2}-*.{json,out}` (each `CTL-C1-n exit=1`) | Reads git objects, `node`, and the rea-agents 6.5.0 package tree; writes only a private directory under `$HYAKU_SCRATCH/kaidoku-r36` (default `/fast/scratch/hyaku/kaidoku-r36`) and `--json-out`; `--selftest` creates and removes one `c1-selftest.*` git fixture repo per case under the same root (each fixture asserts `git -C <fixture> rev-parse --show-toplevel` equals the fixture) | kaidoku |
+| `tools/round-36/c2-counter.py` | gate — R36-C2 calibration, self-assessment surfaces vs observed repo state | 0 clean (`mismatches == 0` and `guards_ok`); 1 failed; 2 could-not-evaluate (missing `--root`/`--rev`/`--base`, unknown revision, `SCORECARD.md`/`SHONEN.md` absent). No other code | `python3 -I -B tools/round-36/c2-counter.py --selftest` — flag spelling `--selftest`; 13 isolated git-fixture cases (1 green, 12 red), exit 0 iff no case fails, 1 otherwise | Base `cab59f221fe19726b5692bfa4d9a9679e96b8a73` is the guard baseline: no unit removed, no fewer pointers than at the base, and every pointer unresolved at the base repaired by a resolving pointer to the same document. Stated values live in SCORECARD `## Owned axes` / `## Capabilities` and the SHONEN boxes and are compared with command A (`corpus/knowledge` files ↔ `corpus/README.md` coverage map, queue-drain rule blocks ↔ resolvable `corpus/knowledge/…:line-range`) and command B (`evidence/round-1-2026-10-15/result.json` aligned/total obligations), plus two observed heading ranges (`SKILL.md` `## Queue-drain craft`, `PROVINCE.md` `## Adjacent`). Control verdicts under `.ufo/waves/round-36/controls/ctl-c2-{0,1,2,3}-*.{json,out}` (each `.out` ends `ctl-c2-n-… exit=1`) | Reads git objects only; `--json-out`; `--selftest` creates and removes one `c2-selftest.*` git fixture repo per case under `$HYAKU_SCRATCH/kaidoku-r36` | kaidoku |
+
+Both rows are read-only over every surface they do not own and never act on an external surface. A
+verdict names the revision it was measured against; a run over a moving worktree is not comparable to
+one over the cited commit.
+
+### Limits (read with every row above)
+
+1. The blocked-recursion signal is byte range + dependency name only. The envelope does not say
+   whether sasquatch of any version would parse a vendor-mangled table, and no such carrier exists.
+2. Big-endian and AVM SquashFS, vendor-mangled images, loader behaviour, and the extracted programs are
+   not claimed. `sasquatch-v4be` is installed but no carrier exercises it.
+3. Published files carry no permission bits (`extraction_continuations[].instruction`); executing an
+   extracted program needs its own evidence.
+4. K3/K4 identity is `subject.digest.sha256`. `subject.local_path` in the committed envelopes points
+   into scratch and is not durable evidence.
+5. The AppImage offset caution above is observed equivalence on K3/K4 under the runtime's two-operand
+   rule, not a general theorem about arbitrary ELF layouts.
+6. The 7z fallback path was not retested in round 36.
+7. No digest-pinned `expected.json` baseline exists for these two counters: input identity is pinned by
+   the freeze commit (a git object the counter compares byte-for-byte), and the expected exits are the
+   selftest case table in the script plus the committed control receipts — not a separate digest file.
+8. This registry covers the two round-36 counters only. `tools/round-35/c1-coverage-counter.py` and
+   `tools/round-35/c2-calibration-counter.py` still have **no** registry row at this home; that debt is
+   reported in round 36 and is not discharged here.
+9. Found by the round-36 wave after the freeze (`.ufo/waves/round-36/w1/R36CriticC1Shortcut.md`): the C1
+   counter checks receipt integrity, not provenance — an `after.json` fabricated from the oracle and
+   re-hashed with REA's own 6.5.0 digest code scores `met_target`. Provenance rests on the four
+   independent reproductions (`.ufo/waves/round-36/w1/R36ExecReproK{1,2,3,4}.md`), not on the counter.
+   The verdict also depends on the `--pkg65` package root, which no receipt pins.
+10. Found by the same wave (`.ufo/waves/round-36/w1/R36CriticC2Shortcut.md`): the C2 counter keys units by
+   first cell / box title (a later duplicate row or box shadows the earlier one), validates only the first
+   statement per unit, accepts any same-basename document as a repair, guards pointers by count not
+   identity, and does not bound the knowledge population below the base. A green C2 is therefore checked
+   again by the stricter non-counter re-derivation recorded in the round-36 lesson, never cited alone.

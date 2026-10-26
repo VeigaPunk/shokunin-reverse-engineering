@@ -116,6 +116,13 @@ absorbed.
 - **Quality/safety verdicts on findings** — the lane answers "what does this
   shipped artifact do, per evidence id X" — never "is it safe, trustworthy, or
   licensed for reuse" `(unowned)`.
+- **Tooling, dated 2026-10-26** — the 2026-10-19 operator directive
+  (`/home/vgpnk/.omp/agent/RULES.md`) lets an agent install or upgrade the
+  tooling its task needs through official channels only, with tool, version,
+  channel and reason recorded (round 36: sasquatch 4.5.1, official onekey-sec
+  deb, into `~/.local/bin`); `rea setup` runs and client-config edits
+  (registration refreshes for `claude_code`/`codex`/`grok_build`/`opencode`/
+  `pi`) stay **operator-owned** and lane-untouched.
 
 
 ### Round-4 additions to Core (verified 2026-10-13)
@@ -357,3 +364,11 @@ Limits: three schema families, one pin, Linux host, all files UTF-8 without WAL.
 | ARM64X hybrid PE through REA 6.5.0 `inspect` | Native-view `binary_overview` on twelve pinned, author-built exported-leaf DLLs; raw COFF 0xAA64 plus CHPE ARM64/ARM64EC ranges; ordered segments and native-view procedure counts checked against the frozen byte oracle and predictions. Not dual-view recovery, decompilation or execution | `corpus/knowledge/2026-10-23-r32-arm64x-hybrid-pe.md` |
 
 The frozen carriers and original envelopes are in `corpus/evidence/round-32/c1/`; source definitions/input provenance are S099/S098. The fixture builder is not a general PE build tool or a claim to PE-format maintenance. Published hybrids, internal functions and the EC view remain unverified Frontier scope.
+
+## Round-36 additions to Core
+
+| Surface | Ports / keys | Probe | Verified evidence |
+|---|---|---|---|
+| sasquatch squashfs recursion | no new REA key — unblob 26.6.4 `unblob/handlers/filesystem/squashfs.py` runs `sasquatch` from `PATH` (`sasquatch-v4be` is its big-endian sibling, unmeasured); `REA_UNBLOB_COMMAND=~/.local/bin/unblob` (26.6.4); sasquatch 4.5.1, official onekey-sec deb, at `~/.local/bin/sasquatch` (sha256 `ad02d27a…`) | `extract-firmware` on the four frozen carriers — K1/K2 synthetic LE v4 squashfs (xz; gzip 4 KiB blocks, nested dirs, a symlink), K3/K4 neovim v0.12.6 `nvim-linux-{x86_64,arm64}.appimage` — against the frozen `/usr/bin/unsquashfs` 4.7.5 regular-file oracle | carriers `corpus/evidence/round-36/c1/carriers.json`; receipts `corpus/evidence/round-36/c1/` (oracle 3, 4, 2,130, 2,130 regular files, all published after, none before; every `after.json` carries zero `missing-extractor-dependency` gaps against one `dependencies: ["sasquatch"]` gap in the paired `before.json`, the only remaining after-gaps being `unpublished-entry` 0/1/2/2 for symlinks); `tools/round-36/c1-counter.py`; entry `corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md` |
+
+Frontier note, 2026-10-26: the `- **sasquatch** — …` bullet under `### Round-4 frontier (post-unlock)` (`PROVINCE.md:156-157`; `PROVINCE.md:149-150` before this round's 7-line Adjacent addition) is superseded for little-endian SquashFS v4 as measured above; its "(AUR-only)" was wrong as a route statement — unblob's own README documents the Debian-package install (`corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md`). Big-endian/AVM and vendor-mangled images stay Frontier.

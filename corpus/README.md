@@ -86,6 +86,8 @@ A row is written when its file exists, never before.
 | CHPE structural profile/source boundary (round 33) | `2026-10-23-r33-chpe-structural-profile` | sourced detail on existing hybrid ground; original independent carrier claim stopped by a provider safety hold, no replacement measurement, no coverage widening |
 
 | Instrument admission (shortcut replay) | `2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop` | held as a tool, not as capability — a committed gate refuses a registered target-met shortcut and clears an identity-defeating counter; the round's own green surface was met 8/8 by five unregistered structure-blind classes, so no capability or score is claimed |
+| AppImage/SquashFS recursion (round 36) | `2026-10-26-r36-sasquatch-squashfs-recursion` | held (bounded, LE SquashFS v4) — with sasquatch 4.5.1 on PATH, REA `extract-firmware` (rea-agents 6.5.0, unblob 26.6.4) publishes every regular file of the frozen `unsquashfs` 4.7.5 oracle on four frozen carriers (K1 3/3, K2 4/4, K3 nvim v0.12.6 x86-64 AppImage 2130/2130, K4 aarch64 AppImage 2130/2130) and none without it; symlinks stay `unpublished-entry`; big-endian/AVM and vendor-mangled images not measured. Dated supersession of the Firmware row's "recursion blocked by missing sasquatch" (2026-10-13 state, kept as history) |
+| unblob's sasquatch dependency (round 36, assimilated) | `2026-10-26-unblob-sasquatch-dependency` | held as producer contract — unblob README (tag 26.6.4) makes SquashFS support conditional on an external sasquatch and documents a Debian-package route; devttys0 README self-labels sasquatch "Very beta."; re-grounded from the shokuknow package with three corrections |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -190,6 +192,8 @@ A row is written when its file exists, never before.
 | `2026-10-23-r33-chpe-structural-profile` | CHPE source field decoding versus explicit conservative local profile; original claim stopped, isolated selftests are not production evidence | S101, S102; pinned LLVM/PE sources and independent instrument code; no held fixture data | 2026-10-23 |
 | `2026-10-23-r34-elf-version-needs` | GNU version-needs layout/offsets, raw index/flags/hash decoding and conservative section-derived profile; no runtime resolution or authenticity claim | S103, S104; independent public-carrier expected-author record and revision-bound counter described in SCORECARD/round-34 lesson | 2026-10-23 |
 | `2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop` | pre-freeze shortcut-replay gate: three verdicts and the clause each depends on, seven registered classes and what each memorises, the green surface's single-axis perturbation, five unregistered classes at 8/8, the fresh-content repair route, nine disclosed limits; capability **denied** by the round's own stop | S106; `tools/round-34/replay-gate.py`; receipts `.ufo/waves/round-34/r34b/{before,after,controls}/`; stop `cd75b92e` | 2026-10-25 |
+| `2026-10-26-r36-sasquatch-squashfs-recursion` | REA `extract-firmware` SquashFS recursion with and without sasquatch on four frozen LE v4 carriers: gap record, member parity with the `unsquashfs` oracle, 17 recursion extras per AppImage, symlinks as `unpublished-entry`, install provenance, oracle limits | S107, S108, S109; receipts `corpus/evidence/round-36/c1/`; counter `tools/round-36/c1-counter.py` | 2026-10-26 |
+| `2026-10-26-unblob-sasquatch-dependency` | unblob's producer contract: SquashFS support needs an external sasquatch; Debian-package route; "Very beta." self-label (assimilated from shokuknow `merge/kaidoku`, re-grounded) | S110, S111 | 2026-10-26 |
 
 ## Lessons
 | entry | round | gist |
@@ -217,6 +221,7 @@ A row is written when its file exists, never before.
 | `round-32` | 32 | inherited hybrid-PE coverage freeze rechecked; C2 calibration honest stop because negative prose and word bags pass its frozen counter; r31 routed corrections; scoped Core and retained Frontier boundaries |
 | `round-33` | 33 | repair-first timestamp/disk/selftest fixes, source-backed CHPE profile boundaries, and honest stop on a provider-filtered input-author item; all dependent outputs quarantined |
 | `round-34` (run-6 re-dispatch) | 34 | second claim after the inherited C1 stop: a pre-freeze shortcut-replay gate frozen at `c79bbe7b`, six clauses met, then stopped because five unregistered structure-blind classes reach the green 8/8; predicate-identity, pin-enforcement, class-drop and label-collision defects disclosed; S106 admitted |
+| `round-36` | 36 | fresh-start round: sasquatch SquashFS recursion moved Frontier → Core (R36-C1, 4/4 frozen carriers) and self-assessment pointer/count drift repaired (R36-C2, 3 → 0); one assimilated entry admitted, three refused; counter blind spots found by the wave recorded as criteria |
 
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
@@ -225,6 +230,7 @@ A row is written when its file exists, never before.
 - >90MB PE scale — CLOSED, not frontier: r7's validated analyzer-disable recipe produced a mitigated hold; r8's no-disable control OOM-killed at 9G in 4m42.945s. No natural hold at this cap; rerun id-stability remains unknown (`SCORECARD.md:1216`; r7: `corpus/knowledge/2026-10-18-arc2-r7-pe-wall.md:13-37`; r8: `.ufo/waves/arc2-loop1-round8/E2.md:23-45`).
 - `capture-electron-scenario` — typed refusal (Playwright handshake) despite same app launching manually.
 - sasquatch (AUR) — unblob squashfs recursion; 7z fallback covers today.
+- sasquatch — 2026-10-26 dated note on the line above (kept as history): LE SquashFS v4 recursion is now Core (`2026-10-26-r36-sasquatch-squashfs-recursion`); "AUR" was one route, the producer documents a Debian package (`2026-10-26-unblob-sasquatch-dependency`). Still frontier: big-endian/AVM (`sasquatch-v4be`) and vendor-mangled images.
 - adb device surface — 22/24 verbs need a live device/emulator.
 - PE hybrid frontier: published ARM64X binaries, dual-view/EC recovery and internal-function analysis remain unverified. Synthetic exported-leaf native-view import/overview is bounded Core (round 32); signal-desktop 38.5MB asar held r4-05 (directory-format route-around for chunk-heap walls).
 - Runtime-obs depth — call-target resolution, managed `verify`/`project`, and the process-capture pair are held, not frontier (r5-02, r9-02, r11-01); the census's Queue A is drained (r4-16 erratum :913-915), so the "~26 self-provisionable" driver is spent. Residual depth only: 283 of 286 cataloged jq GOT-indirect sites unprobed (2 `jmp *` untested, r5-02:152-155); managed `inferred` variant has no observed example (r9-02:82-84); managed↔managed compare grades all-`unknown` (r12-02:65).
