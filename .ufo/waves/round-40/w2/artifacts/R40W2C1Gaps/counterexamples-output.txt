@@ -1,0 +1,49 @@
+L1 base gaps: [('depth-limited', None), ('unpublished-entry', 'firmware.bin_extract/bin/sh'), ('unpublished-entry', 'firmware.bin_extract/etc/mtab')]
+
+== LOOSENESS probes (wrong receipts the rule alone accepts) ==
+  CX-A duplicate unpublished-entry on one symlink      gap_check=True  AS-EXPECTED  | 4 gaps (1 structural) on 13 non-regular entries
+    -> rule has no per-entry cap; claim text says ONE per symlink
+  CX-B fabricated deep-prefix path satisfies required gap gap_check=True  AS-EXPECTED  | 3 gaps (1 structural) on 13 non-regular entries
+    -> gap attributed to bin/sh via suffix; path is no real entry
+  CX-C './'-prefixed gap path                          gap_check=True  AS-EXPECTED  | 3 gaps (1 structural) on 13 non-regular entries
+    -> same_rel endswith accepts ./bin/sh
+  CX-D symlink materialised as regular file, gap kept  gap_check=True  AS-EXPECTED  | 3 gaps (1 structural) on 13 non-regular entries
+    -> gap_check alone passes; see sibling binding below
+  CX-D sibling nonregular_published -> ['firmware.bin_extract/bin/sh'] (caught by nonregular_unpublished_ok)
+  CX-E zero structural gaps (drop depth-limited)       gap_check=True  AS-EXPECTED  | 2 gaps (0 structural) on 13 non-regular entries
+    -> "at most one" allows zero; fresh run has 1 -> projection catches
+  CX-F exact duplicate depth-limited gap               gap_check=False AS-EXPECTED  | structural gaps over allowance {'depth-limited': [2, 1]}
+    -> structural cap 1 enforced
+  CX-R swapped symlink gap paths                       gap_check=True  AS-EXPECTED  | 3 gaps (1 structural) on 13 non-regular entries
+    -> harmless: both entries still covered
+  CX-S dependencies unchecked on structural gap        gap_check=True  AS-EXPECTED  | 3 gaps (1 structural) on 13 non-regular entries
+    -> gap_check never reads dependencies
+  CX-T unpublished_entries field emptied, gaps kept    gap_check=True  AS-EXPECTED  | 3 gaps (1 structural) on 13 non-regular entries
+    -> gap_check reads only extraction_gaps; projection compares the field
+
+== TIGHTNESS probes (honest shapes the rule rejects) ==
+  CX-O honest gap on usr/lib multi-matches lib+usr/lib (L1 dirs) gap_check=False AS-EXPECTED  | gap path 'firmware.bin_extract/usr/lib' matches 2 non-regular entries
+    -> suffix collision: len(hits)=2 -> honest symlink gap at usr/lib would be rejected
+  CX-U escaping symlink removed with MSR, no gap (recon t1/t2/t2b shape) gap_check=False AS-EXPECTED  | required gap absent on ['bin/escape']
+    -> required[symlink]=true demands a gap unblob never records for removed links
+  CX-V same but with MSR diagnostic recorded in receipt gap_check=False AS-EXPECTED  | required gap absent on ['bin/escape']
+    -> gap_check has no diagnostics input at all
+
+== NEGATIVE controls (must fail; rule not loose here) ==
+  N1 depth-limited WITH a path                         gap_check=False AS-EXPECTED  | structural gap kind 'depth-limited' carries a path 'x'
+  N2 unknown-chunk-handler null path                   gap_check=False AS-EXPECTED  | structural gaps over allowance {'unknown-chunk-handler': [1, 0]}
+  N3 unpublished-entry null path                       gap_check=False AS-EXPECTED  | gap kind 'unpublished-entry' has no path and no structural allowance
+  N4 gap on a dir entry                                gap_check=False AS-EXPECTED  | gap kind 'unpublished-entry' not allowed for 'dir' entry 'lib' (allowed [])
+  N5 gap on the char device (V1 table)                 gap_check=False AS-EXPECTED  | gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/led' (allowed [])
+  N6 gap path matching nothing                         gap_check=False AS-EXPECTED  | gap path 'no/such/path' matches 0 non-regular entries
+  N7 required gap dropped (etc/mtab)                   gap_check=False AS-EXPECTED  | required gap absent on ['etc/mtab']
+  N8 unknown gap kind on symlink                       gap_check=False AS-EXPECTED  | gap kind 'weird-gap' not allowed for 'symlink' entry 'bin/sh' (allowed ['unpublished-entry'])
+  N9 structural kind outside the rule                  gap_check=False AS-EXPECTED  | gap kind 'residual-chunk' has no path and no structural allowance
+  N10 empty-string path                                gap_check=False AS-EXPECTED  | gap path '' matches 0 non-regular entries
+  N11 two depth-limited + one unknown-chunk-handler    gap_check=False AS-EXPECTED  | structural gaps over allowance {'depth-limited': [2, 1], 'unknown-chunk-handler': [1, 0]}
+
+== composite closure demo (projection vs mutated receipts, plus-extractor) ==
+  CX-A dup gap             projection_equal=False differing=['extraction_gaps']
+  CX-B deep prefix         projection_equal=False differing=['extraction_gaps']
+  CX-E no depth-limited    projection_equal=False differing=['extraction_gaps']
+  CX-T empty unpub field   projection_equal=False differing=['unpublished_entries']

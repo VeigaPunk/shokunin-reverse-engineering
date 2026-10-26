@@ -1,0 +1,35 @@
+# frozen matcher, verbatim from tools/round-40/c1-counter.py
+#   (module doc, lines 54-56) nonregular_unpublished_ok  no published regular file path equals a
+#   non-regular entry path (a materialised symlink/device would both publish the path and keep the gap)
+def same_rel(candidate, rel):
+    return bool(candidate) and bool(rel) and (candidate == rel or candidate.endswith("/" + rel))
+def nonregular_published(files, nonreg):
+    hits = []
+    for fp, _, _ in files:
+        for rel, _kind in nonreg:
+            if same_rel(fp, rel): hits.append(fp)
+    return hits
+
+V1  published=697 nonregular=381  nonregular_unpublished_ok=True  hits=[]  exact-boundary collisions=[]
+V2  published=8 nonregular=95  nonregular_unpublished_ok=True  hits=[]  exact-boundary collisions=[]
+L1  published=7 nonregular=13  nonregular_unpublished_ok=True  hits=[]  exact-boundary collisions=[]
+L2  published=6 nonregular=10  nonregular_unpublished_ok=False  hits=['firmware.bin_extract/usr/bin/busy']  exact-boundary collisions=[]
+     witness: 'firmware.bin_extract/usr/bin/busy' endswith "/bin/busy"
+
+# L2: the two bindings that cannot hold together on the pinned bytes
+  oracle_hits_ok           requires a published path ending in /usr/bin/busy (oracle row, 40000 bytes)
+  nonregular_unpublished_ok requires NO published path ending in /bin/busy (nonregular row, symlink)
+  every path ending in /usr/bin/busy also ends in /bin/busy -> jointly unsatisfiable
+
+# the same run on disk: the extraction tree has no bin/ directory at all, so nothing was materialised
+  L1 extract top level: ['etc', 'lib', 'sbin', 'usr', 'var'] | extract/bin exists: False
+  L2 extract top level: ['etc', 'opt', 'usr', 'zero'] | extract/bin exists: False
+
+# why the 70-case battery missed it: the only red case for this binding
+#   (tools/round-40/c1-counter.py:1794) appends the published path
+#   firmware.bin_extract/usr/share/demo/escape against the fixture non-regular row
+#   usr/share/demo/escape -- an EXACT-boundary match. No case builds a published path whose
+#   parent directory tail in turn ends with a non-regular entry path (the L2 shape).
+#   Fixture published sets (selftest spec_data): V1 README.txt, config/app.conf; L1 bin/run,
+#   docs/deep/blob.bin; L2 etc/motd; V2 var/info.txt -- none is a suffix superstring of a fixture
+#   non-regular path.

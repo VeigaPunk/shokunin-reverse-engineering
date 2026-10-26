@@ -1,0 +1,70 @@
+# fetched 2026-10-26, sha256
+s112 unblob squashfs.py @26.6.4: 2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287  (equals installed unblob handler digest, w1 R40C1MarkerBoundary section 2)
+s121 sasquatch unsquashfs.c @sasquatch-v4.5.1-6: ece42b66f37ba67707c2c51b47b643c027232153705f59d238da79958a54cb40  (equals SOURCES S121 anchor)
+s124 Freetz-NG 350-unsquashfs__AVM_BE.patch @9a72369: 7f0a1b252d4bbde747efe98d1f97b52eab28d55ee957b7307d0344cbe1e220fc  (equals SOURCES S124 anchor)
+
+# S112 lines 40-58
+40	case Endian.BIG, 4:
+41	executable = self.V4BE_EXECUTABLE
+42	struct_parser = StructParser(SquashFSv4LEHandler.C_DEFINITIONS)
+43	with File.from_path(inpath) as f:
+44	header = struct_parser.parse(
+45	SquashFSv4LEHandler.HEADER_STRUCT, f, Endian.BIG
+46	)
+47	# see https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt
+48	is_avm = header.bytes_used == header.mkfs_time
+49	if not is_avm:
+50	commands_args.append("-be")
+51	case Endian.BIG, _:
+52	commands_args.append("-be")
+53	case Endian.LITTLE, _:
+54	commands_args.append("-le")
+55	    16	
+56	commands_args.extend(
+57	[
+58	"-no-exit-code",
+
+# S121 lines 664-670 (read_block)
+664	if(swap) {
+665	if(read_fs_bytes(fd, start, 2, &c_byte) == FALSE)
+666	goto failed;
+667	c_byte = (c_byte >> 8) | ((c_byte & 0xff) << 8);
+668	} else 
+669	if(read_fs_bytes(fd, start, 2, &c_byte) == FALSE)
+670	goto failed;
+
+# S121 lines 4389-4394 (-be option)
+4389	} else if(strcmp(argv[i], "-be") == 0) {
+4390	#if __BYTE_ORDER == __BIG_ENDIAN
+4391	swap = 0;
+4392	#else
+4393	swap = 1;
+4394	#endif
+
+# S114 AVM-BE-format.txt line map (fetched 1496 B, sha256 c1c43f6f97d7477dcdab15203d11e43b49beb12e3a43a3b52bdd71b672a9a5d5 per w1 R40SrcFreetz)
+     1	 - the only data field stored in the little-endian format is the block length value at the beginning
+     2	   of each block
+     3	 - super-block field 'mkfs_time' contains (instead of the filesystem creation time) the same value
+     4	   as the super-block field 'bytes_used'
+
+# S125 listing + info_en hashes (fetched into scratch this session)
+063ec39af00bd45e668519cc2ce95debf41cf5d56ed9dcde37223b57f6d8f7bc  s125-listing.html
+6c601b342da91f7598dde1e7842ba92a61a1ec7f4b3d00564573fea3d11070a7  s125-info_en.txt
+
+# S125 info_en.txt lines 8-14
+Product:        FRITZ!Box 6490 Cable
+ 
+Version:        FRITZ!OS 7.57
+
+Language:       English, French, German, Italian, Polish, Spanish
+
+Release date:   04.09.2023
+
+# S126 image: sha256 + superblock (parsed in place under shokuknow, read-only)
+c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32  /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs
+size 4096 magic sqsh
+mkfs_time 365 bytes_used 365
+inode_table_start 121 directory_table_start 239
+first metadata header 7400 -> LE 116 / BE 29696
+LE walk: 121 + 2 + 116 = 239 == directory_table_start: True
+BE walk: 121 + 2 + 29696 = 29819 == directory_table_start: False

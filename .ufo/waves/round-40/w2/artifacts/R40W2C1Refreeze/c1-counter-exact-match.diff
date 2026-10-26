@@ -1,0 +1,213 @@
+diff --git i/tools/round-40/c1-counter.py w/tools/round-40/c1-counter.py
+index bec56743..6a9fc134 100755
+--- i/tools/round-40/c1-counter.py
++++ w/tools/round-40/c1-counter.py
+@@ -6,8 +6,9 @@ Predicate P40-C1 (draft `plans/round-40-claims.md`, embedded here clause by clau
+   REA 6.5.0 `extract-firmware` after-receipt (unblob 26.6.4, sasquatch-v4be 4.5.1
+   reachable on the child PATH), first added in a commit that descends from the
+   freeze, names the `squashfs_v4_be` handler with no failed chunk, publishes every
+-  regular file of the frozen independent oracle (same relative-path suffix, same
+-  sha256), carries only the extraction gaps the frozen gap rule allows, has a
++  regular file of the frozen independent oracle (same path relative to the
++  chunk extract root, same sha256), carries only the extraction gaps the frozen
++  gap rule allows, has a
+   subject digest equal to the carrier pin and recomputes to its evidence id; the
+   carrier bytes hash to the frozen pin and its superblock is the genuine AVM
+   layout (big-endian `sqsh`, v4.0, `mkfs_time == bytes_used`, first metadata block
+@@ -45,15 +46,18 @@ Per-carrier clauses (all must hold; `matched` = conjunction):
+   operation_ok             operation == extract_firmware and provider.id == unblob
+   handler_ok               a chunk names squashfs_v4_be
+   chunks_ok                no chunk carries extraction_failed: true
+-  oracle_hits_ok           every oracle regular file is published (same
+-                           relative-path suffix, same sha256)
++  oracle_hits_ok           every oracle regular file is published (exact path
++                           relative to the chunk extract root, same sha256)
+   gaps_ok                  every extraction gap lands on exactly one non-regular
+-                           entry and its kind is allowed for that entry's kind by
+-                           the frozen gap rule, and every entry the rule marks
++                           entry (exact path relative to the chunk extract root)
++                           and its kind is allowed for that entry's kind by the
++                           frozen gap rule, and every entry the rule marks
+                            required carries at least one allowed gap
+   nonregular_unpublished_ok  no published regular file path equals a non-regular
+                            entry path (a materialised symlink/device would both
+-                           publish the path and keep the gap)
++                           publish the path and keep the gap); equality is exact
++                           relative to the chunk extract root, so a deeper file
++                           whose path merely ends with the entry path is not one
+   run_provenance_ok        parameters.output_directory names this round's scratch
+                            segment (/kaidoku-r40/); `parameters` is inside the
+                            hashed 6.5.0 semanticProjection, so it cannot be edited
+@@ -603,8 +607,38 @@ def provenance_ok(output_directory):
+     return '..' not in output_directory.split('/')
+ 
+ 
++def extract_rel(path):
++    """A receipt path relative to its chunk extract root.
++
++    unblob extracts a chunk into `<staged name>_extract/`, so a receipt path is
++    `<chunk>_extract/<rel>` while the oracle and non-regular tables are relative
++    to the extracted filesystem's root. The leading component is dropped only
++    when it is that root; a nested extraction keeps the components after the
++    first root (`a_extract/b_extract/x` -> `b_extract/x`), which no table row
++    names. Null and non-string paths stay null."""
++    if not isinstance(path, str):
++        return None
++    p = path
++    while p.startswith('$output/'):
++        p = p[len('$output/'):]
++    parts = [x for x in p.split('/') if x not in ('', '.')]
++    if parts and parts[0].endswith('_extract'):
++        parts = parts[1:]
++    return '/'.join(parts)
++
++
+ def same_rel(candidate, rel):
+-    return bool(candidate) and bool(rel) and (candidate == rel or candidate.endswith('/' + rel))
++    """Exact match of a receipt path against a filesystem-relative path.
++
++    Round-40 wave 2 defect (L2, the counter scored 3/4 at 42c10a58): the former
++    rule was `candidate == rel or candidate.endswith('/' + rel)`, so the regular
++    file `firmware.bin_extract/usr/bin/busy` satisfied the symlink entry
++    `bin/busy` and failed `nonregular_unpublished_ok` on a carrier whose
++    extraction is faithful. A path suffix is not a path: the candidate is
++    resolved against its chunk extract root and compared for equality, so a
++    deeper file can neither publish a non-regular entry nor stand in for an
++    oracle row."""
++    return bool(rel) and bool(candidate) and extract_rel(candidate) == rel
+ 
+ 
+ def published(env):
+@@ -653,9 +687,10 @@ def gap_check(gaps_list, nonreg, model):
+     """Gaps only where the frozen rule allows them.
+ 
+     Two families, both frozen data:
+-      path-resolved   a gap with a relative_path must resolve (suffix match) to
+-                      exactly one non-regular entry and its kind must be listed
+-                      for that entry's kind in `allowed`
++      path-resolved   a gap with a relative_path must resolve (exact match after
++                      the chunk extract root) to exactly one non-regular entry
++                      and its kind must be listed for that entry's kind in
++                      `allowed`
+       structural      a gap with relative_path null (unblob's own bookkeeping:
+                       `unknown-chunk-handler` for a residual chunk,
+                       `depth-limited` for a truncated task) must have its kind in
+@@ -1554,11 +1589,12 @@ def selftest(pkg65):
+         return rows.encode()
+ 
+     def frozen_files(blob_map=None, pin_map=None, nonreg_map=None, rule_text=None,
+-                     **over):
++                     oracle_map=None, **over):
+         bm = blob_map or carriers
+         pm = pin_map or pins
+         nm = nonreg_map if nonreg_map is not None else {
+             k: spec_data[k]['nonreg'] for k in ids}
++        om = oracle_map if oracle_map is not None else {k: oracle_tsv(k) for k in ids}
+         f = {XPIN: xpin,
+              CARRIERS: spec_json(pin_map=pm),
+              GAPRULE: (rule_text if rule_text is not None else rule).encode(),
+@@ -1570,19 +1606,21 @@ def selftest(pkg65):
+              'corpus/README.md': _readme()}
+         for k in ids:
+             f[f'{AFTERDIR}/{k}/carrier.sqsh'] = bm[k]
+-            f[f'{AFTERDIR}/{k}/oracle.tsv'] = oracle_tsv(k)
++            f[f'{AFTERDIR}/{k}/oracle.tsv'] = om[k]
+             f[f'{AFTERDIR}/{k}/nonregular.tsv'] = nm[k].encode()
+         f.update(over)
+         return f
+ 
+     def build(blob_over=None, env_over=None, receipt_over=None, nonreg_over=None,
+-              rule_text=None, spec_text=None):
++              oracle_over=None, rule_text=None, spec_text=None):
+         """A pin-consistent (frozen files, receipts) pair for one variant."""
+         bm = dict(carriers)
+         bm.update(blob_over or {})
+         pm = {k: sha(bm[k]) for k in ids}
+         nm = {k: spec_data[k]['nonreg'] for k in ids}
+         nm.update(nonreg_over or {})
++        om = {k: oracle_tsv(k) for k in ids}
++        om.update(oracle_over or {})
+         envs = receipt_envs(over=env_over)   # applies env_over exactly once
+         for k in ids:
+             if bm[k] != carriers[k]:
+@@ -1598,7 +1636,8 @@ def selftest(pkg65):
+             else:
+                 r[p] = content
+         frozen_map = frozen_files(blob_map=bm, pin_map=pm, nonreg_map=nm,
+-                                  rule_text=rule_text, **(over_spec(spec_text)))
++                                  oracle_map=om, rule_text=rule_text,
++                                  **(over_spec(spec_text)))
+         return frozen_map, r
+ 
+     def over_spec(spec_text):
+@@ -1802,6 +1841,70 @@ def selftest(pkg65):
+             'size': 1, 'sha256': 'd' * 64}), remint=False)], 0, 1,
+         want_fail='evidence_id_ok')
+ 
++    # ---- path collision: `usr/bin/busy` is a different file from `bin/busy`
++    # L2 scored 3/4 at 42c10a58 on exactly this: the suffix rule read the regular
++    # file `usr/bin/busy` as the symlink entry `bin/busy`. Every case below pins
++    # one direction of the collision on V2 (one oracle row, no non-regular rows).
++    def pub(e, rel, h, size=5):
++        e['normalized_result']['files'].append({
++            'relative_path': 'firmware.bin_extract/' + rel,
++            'path': '/x/' + rel, 'size': size, 'sha256': h})
++
++    def entry(e, rel, gap=True, target='../sbin/busy'):
++        e['normalized_result']['unpublished_entries'].append({
++            'relative_path': 'firmware.bin_extract/' + rel, 'kind': 'symlink',
++            'link_target': target})
++        if gap:
++            e['normalized_result']['extraction_gaps'].append({
++                'kind': 'unpublished-entry', 'handler': HANDLER,
++                'relative_path': 'firmware.bin_extract/' + rel,
++                'dependencies': []})
++
++    def oracle_rows(rows):
++        return ''.join(f'{rel}\t{h}\t{size}\n' for rel, h, size in rows).encode()
++
++    def same_run(recs, k='V2'):
++        return mk_same_runner({**green_envs, k: json.loads(recs[receipt_path(k)])})
++
++    deep_file, deep_recs = build(
++        env_over={'V2': lambda e: (pub(e, 'usr/bin/busy', fsha(7)),
++                                   entry(e, 'bin/busy'))},
++        nonreg_over={'V2': 'bin/busy\tsymlink\n'})
++    add('regular usr/bin/busy is not the symlink entry bin/busy',
++        [deep_file, deep_recs], 0, 0, runner=same_run(deep_recs))
++    shallow_file, shallow_recs = build(
++        env_over={'V2': lambda e: (pub(e, 'bin/busy', fsha(8)),
++                                   entry(e, 'usr/bin/busy'))},
++        nonreg_over={'V2': 'usr/bin/busy\tsymlink\n'})
++    add('regular bin/busy is not the symlink entry usr/bin/busy (reverse)',
++        [shallow_file, shallow_recs], 0, 0, runner=same_run(shallow_recs))
++    materialised, materialised_recs = build(
++        env_over={'V2': lambda e: (pub(e, 'bin/busy', fsha(9)),
++                                   entry(e, 'bin/busy', gap=False))},
++        nonreg_over={'V2': 'bin/busy\tsymlink\n'})
++    add('regular file at the entry path itself is a materialised symlink',
++        [materialised, materialised_recs], 0, 1,
++        want_fail='nonregular_unpublished_ok', runner=same_run(materialised_recs))
++    oracle_shadow, oracle_shadow_recs = build(
++        env_over={'V2': lambda e: pub(e, 'usr/bin/busy', fsha(7))},
++        oracle_over={'V2': oracle_rows([('var/info.txt', fsha(3), 40),
++                                        ('bin/busy', fsha(7), 5)])})
++    add('deeper file with the oracle row sha256 does not publish oracle bin/busy',
++        [oracle_shadow, oracle_shadow_recs], 0, 1,
++        want_fail='oracle_hits_ok', runner=same_run(oracle_shadow_recs))
++    wrong_gap, wrong_gap_recs = build(
++        env_over={'V2': lambda e: (entry(e, 'bin/busy', gap=False),
++                                   e['normalized_result']['extraction_gaps'].append({
++                                       'kind': 'unpublished-entry',
++                                       'handler': HANDLER,
++                                       'relative_path':
++                                           'firmware.bin_extract/usr/bin/busy',
++                                       'dependencies': []}))},
++        nonreg_over={'V2': 'bin/busy\tsymlink\n'})
++    add('gap on usr/bin/busy does not resolve to the symlink entry bin/busy',
++        [wrong_gap, wrong_gap_recs], 0, 1, want_fail='gaps_ok',
++        runner=same_run(wrong_gap_recs))
++
+     # ---- freeze integrity
+     add('carrier bytes changed after freeze',
+         [frozen, {**good, f'{AFTERDIR}/V1/carrier.sqsh': b'changed carrier\n'}],

@@ -1,0 +1,92 @@
+{
+ "seat": "R40W2C1Refreeze",
+ "wave": "round-40 wave 2",
+ "kind": "round-41 fix prototype (evidence for the plan, NOT a claim)",
+ "target_defect": "tools/round-40/c1-counter.py same_rel() suffix matching (frozen at 7fce308631a8b457d6b7c5a4b39a923c4e9a49de)",
+ "measured_revision": "42c10a58cb2cae3a4a0122af35a0cf95ac718043",
+ "freeze": "7fce308631a8b457d6b7c5a4b39a923c4e9a49de",
+ "defect_evidence": {
+  "source": ".ufo/waves/round-40/l1/scores/c1-at-42c10a58.json",
+  "carriers_matched": 3,
+  "exit_code": 1,
+  "failing_carrier": "L2",
+  "failing_clause": "nonregular_unpublished_ok",
+  "nonregular_published": ["firmware.bin_extract/usr/bin/busy"],
+  "L2_nonregular_row": "bin/busy\tsymlink\t/usr/bin/busy",
+  "L2_published_file": {"relative_path": "firmware.bin_extract/usr/bin/busy", "sha256_prefix": "e28f81fc56768810", "size": 40000},
+  "suffix_rule": "candidate == rel or candidate.endswith('/' + rel)",
+  "collisions_by_carrier_suffix_rule": {"V1": 0, "V2": 0, "L1": 0, "L2": 1},
+  "oracle_rows_exact_after_root_strip": {"V1": [697, 697], "V2": [8, 8], "L1": [7, 7], "L2": [6, 6]}
+ },
+ "patch": {
+  "file": "tools/round-40/c1-counter.py (sandbox clone only)",
+  "diff": "c1-counter-exact-match.diff",
+  "diff_sha256": "8fa0a813297eb5ca4f20ed449bcac61c1d3d053ef6793664c22a15e83779c0a8",
+  "patched_file_sha256": "8e19a016e061d7fd77b4f672e059048a54bf76dc6d1d349ad8eaa30aa0de0e9d",
+  "applies_cleanly_at": "42c10a58cb2cae3a4a0122af35a0cf95ac718043",
+  "apply_check": "git apply --check exit 0",
+  "semantics": "extract_rel(): drop the leading <chunk>_extract component; same_rel(): exact equality of extract_rel(candidate) and the table path",
+  "clauses_tightened": ["oracle_hits_ok", "nonregular_unpublished_ok", "gaps_ok"],
+  "clauses_relaxed": []
+ },
+ "selftest": {
+  "round40_frozen_counter": {"cases": 70, "green_ok": 5, "red_ok": 65, "failures": [], "exit": 0, "artifact": "selftest-orig-round40.txt"},
+  "patched_counter": {"cases": 75, "green_ok": 7, "red_ok": 68, "failures": [], "exit": 0, "artifact": "selftest-exact.txt"},
+  "suffix_mutant_exact_plus_suffix": {"cases": 75, "green_ok": 6, "red_ok": 66, "exit": 1,
+   "failures": [
+    "regular usr/bin/busy is not the symlink entry bin/busy: want 0 got 1",
+    "deeper file with the oracle row sha256 does not publish oracle bin/busy: want 1 got 0",
+    "gap on usr/bin/busy does not resolve to the symlink entry bin/busy: want 1 got 0"
+   ],
+   "artifact": "selftest-suffixmut.txt", "diff": "mutant-suffix-matcher.diff",
+   "mutant_diff_sha256": "0a1cb6fcca5316ad1a7b7f201a4e81bc05441fdb4e83f60d69175c2a5ae2d8e4"},
+  "new_cases": [
+   "regular usr/bin/busy is not the symlink entry bin/busy (expect met)",
+   "regular bin/busy is not the symlink entry usr/bin/busy (reverse, expect met)",
+   "regular file at the entry path itself is a materialised symlink (expect nonregular_unpublished_ok red)",
+   "deeper file with the oracle row sha256 does not publish oracle bin/busy (expect oracle_hits_ok red)",
+   "gap on usr/bin/busy does not resolve to the symlink entry bin/busy (expect gaps_ok red)"
+  ]
+ },
+ "scoring": [
+  {"run": "patched, real lane history, patch uncommitted in the sandbox worktree",
+   "root": "sandbox clone @42c10a58 (git rev-parse --show-toplevel verified)",
+   "rev": "42c10a58cb2cae3a4a0122af35a0cf95ac718043",
+   "freeze": "7fce308631a8b457d6b7c5a4b39a923c4e9a49de",
+   "carriers_matched": 4, "met_target": true, "exit_code": 0,
+   "all_bindings_true": true, "frozen_path_changed": [],
+   "projection_ok": {"V1": true, "V2": true, "L1": true, "L2": true},
+   "artifact": "score-1-exact-wt.json"},
+  {"run": "patched, reconstructed freeze-clean history (patch inside the freeze commit; receipts added after)",
+   "rev": "2053b953d5a8b787c03f99f6e6dd3941d81799ff",
+   "freeze": "c7457af1a80a394eb3fb2991308e23f1fe181609",
+   "range_touches": ["corpus/evidence/round-40/c1/{V1,V2,L1,L2}/after.json"],
+   "carriers_matched": 4, "met_target": true, "exit_code": 0, "frozen_path_changed": [],
+   "artifact": "score-2-exact-recon.json"},
+  {"run": "round-40 frozen counter, same reconstructed history (control)",
+   "rev": "2053b953d5a8b787c03f99f6e6dd3941d81799ff",
+   "freeze": "c7457af1a80a394eb3fb2991308e23f1fe181609",
+   "carriers_matched": 3, "met_target": false, "exit_code": 1,
+   "L2_nonregular_published": ["firmware.bin_extract/usr/bin/busy"],
+   "artifact": "score-3-orig-recon.json"},
+  {"run": "patched, demotion tip (documents-only demotion commit)",
+   "rev": "4d62ee5a86b4692a13f682b29ed7975e8d7e5326",
+   "freeze": "7fce308631a8b457d6b7c5a4b39a923c4e9a49de",
+   "carriers_matched": 4, "met_target": false, "exit_code": 1,
+   "frozen_path_changed": [],
+   "false_bindings": ["province_core_section", "province_core_row"],
+   "note": "the demotion commit removed the `## Round-40 additions to Core` heading, so the fix alone does not make the tip score: the Core row must be restored and the counter re-frozen",
+   "artifact": "score-4-exact-tip.json"}
+ ],
+ "vendor_cache": {
+  "source": "copied from /fast/scratch/hyaku/kaidoku-r40/_l1/cache, re-hashed at score time by the counter",
+  "V1_pin": "ac4098bd11a76f8ad001faac0f1a5e018708d9b03943dfebb2b18a24e0038e95",
+  "V2_pin": "5ccc7614263e4b4b392025e1561e071a744b6464a4c88548633e87f71f3d089b"
+ },
+ "limits": [
+  "not admissible under P40-C1: c1-counter.py is a frozen C1 path, so a post-freeze patch trips frozen_path_changed; the fix must land at or before a round-41 freeze",
+  "the new selftest cases use fixture carriers; the real-data evidence is the L2 re-score",
+  "the round-40 landing stays 3/4 honest-stop unless the L1 re-opens it"
+ ],
+ "tooling": "no installs or upgrades; unblob 26.6.4 at ~/.local/bin (untouched), npx rea-agents@6.5.0 from the existing npx cache"
+}

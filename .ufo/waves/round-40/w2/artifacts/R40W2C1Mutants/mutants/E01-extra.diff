@@ -1,0 +1,11 @@
+--- pristine/c1-extra.py
++++ mutant/E01-extra.py
+@@ -91,7 +91,7 @@
+         if fo is None or no is None:
+             detail[cid] = 'oracle/nonregular absent at rev'
+             continue
+-        ok_f = rows(open(f, 'rb').read()) == rows(fo)
++        ok_f = len(rows(open(f, 'rb').read())) == len(rows(fo))
+         ok_n = rows(open(n, 'rb').read()) == rows(no)
+         detail[cid] = 'ok' if ok_f and ok_n else 'mismatch files=%s nonregular=%s' % (ok_f, ok_n)
+     good = bool(detail) and all(v == 'ok' for v in detail.values())

@@ -1,0 +1,14 @@
+Independent AVM-layout probe of my rebuilt V1 carrier (my own struct/lzma code, not lane tooling).
+carrier sha256 ac4098bd11a76f8ad001faac0f1a5e018708d9b03943dfebb2b18a24e0038e95, 5442392 bytes
+magic b'sqsh'  (big-endian SquashFS 4.0; LE would be b'hsqs')
+inodes 1079  mkfs_time 5442392  block_size 65536  fragments 112  compression 4 (xz)
+block_log 16  flags 704  no_ids 1  s_major 4  s_minor 0  root_inode 474485514
+bytes_used 5442392  id_table_start 5442384  xattr_id_table_start 18446744073709551615
+inode_table_start 5421468  directory_table_start 5430042  fragment_table_start 5440850  export_table_start 5442362
+AVM marker mkfs_time == bytes_used: True
+inode_table_start metadata header bytes 6405 -> little-endian 1380, big-endian 25605
+  LE 1380 (stored-flag 0) xz-decompresses to 8192 bytes  => plausible metadata block
+  BE 25605 exceeds the 8192 max metadata block => implausible
+LE reading of the superblock is nonsense (inodes 923009024, block_size 256, s_major 1024)
+=> BE structural fields + LE metadata block-length headers: the genuine AVM layout the claim names.
+Regular-file accounting: 697 published files + 381 non-regular entries (117 dir, 263 symlink, 1 char device) + root inode = 1079 == superblock inodes.

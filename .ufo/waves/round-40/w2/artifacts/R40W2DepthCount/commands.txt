@@ -1,0 +1,99 @@
+R40W2DepthCount — commands and raw outputs (lane /home/vgpnk/Projects/shokunin/kaidoku-shokunin)
+S=/fast/scratch/hyaku/kaidoku-r40/R40W2DepthCount   (removed after the run)
+
+A. command A via the lane's own implementation
+   depthcount.py imports command_a() from tools/round-38/c2-counter.py by file path (no copy) and
+   adds a detail pass using the same split/regex/line-range rules.
+
+$ cd $S && OUT=depth-3revs.json python3 -I -B depthcount.py \
+    fa6a8a3f85ec65946b3a54d37c0ddd1d6748664f 42c10a58cb2cae3a4a0122af35a0cf95ac718043 4d62ee5a86b4692a13f682b29ed7975e8d7e5326
+{"command_a": {"knowledge_files": 128, "mapped": 128, "resolved_rules": 18, "rule_blocks": 18}, "dangling_map": 0, "mapped": 128, "missing_map": 0, "rev": "fa6a8a3f", "total": 128, "unresolved_refs": 0, "zero_citation_rules": 0}
+{"command_a": {"knowledge_files": 130, "mapped": 130, "resolved_rules": 19, "rule_blocks": 19}, "dangling_map": 0, "mapped": 130, "missing_map": 0, "rev": "42c10a58", "total": 130, "unresolved_refs": 0, "zero_citation_rules": 0}
+{"command_a": {"knowledge_files": 130, "mapped": 130, "resolved_rules": 19, "rule_blocks": 19}, "dangling_map": 0, "mapped": 130, "missing_map": 0, "rev": "4d62ee5a", "total": 130, "unresolved_refs": 0, "zero_citation_rules": 0}
+EXIT=0
+
+$ cd $S && OUT=52b0eb29.json python3 -I -B depthcount.py 52b0eb2907c704ed5f184c47b14c723208e5cbbc
+{"command_a": {"knowledge_files": 128, "mapped": 128, "resolved_rules": 18, "rule_blocks": 18}, ...}
+EXIT=0
+
+$ cd $S && OUT=anchors.json python3 -I -B depthcount.py 8b9634ed 45e89864e967d7501110b529cb8517b26b92c7ef 7fce308631a8b457d6b7c5a4b39a923c4e9a49de 73c7bf9c73bd7b4891c4e46c93d1d29c287e4541
+{"command_a": {"knowledge_files": 128, "mapped": 128, "resolved_rules": 18, "rule_blocks": 18}, "rev": "8b9634ed", ...}
+{"command_a": {"knowledge_files": 129, "mapped": 129, "resolved_rules": 19, "rule_blocks": 19}, "rev": "45e89864", ...}
+{"command_a": {"knowledge_files": 129, "mapped": 129, "resolved_rules": 19, "rule_blocks": 19}, "rev": "7fce3086", ...}
+{"command_a": {"knowledge_files": 129, "mapped": 129, "resolved_rules": 19, "rule_blocks": 19}, "rev": "73c7bf9c", ...}
+EXIT=0
+
+per-revision totals from depth-3revs.json (detail pass):
+fa6a8a3f blocks 18 resolved 18 citations 70 resolved_citations 70 zero_cit [] dangling 0
+42c10a58 blocks 19 resolved 19 citations 76 resolved_citations 76 zero_cit [] dangling 0
+4d62ee5a blocks 19 resolved 19 citations 76 resolved_citations 76 zero_cit [] dangling 0
+
+B. round-38 self-assessment counter (the lane's calibration instrument for the same surfaces)
+$ cd LANE && for pair in base r39 measured freeze; do
+    python3 -I -B tools/round-38/c2-counter.py --root LANE --rev <rev> --base fa6a8a3f... --json-out $S/c2r38-<pair>.json; echo EXIT=$?; done
+
+base (rev=fa6a8a3f):
+{"assertion_mismatches": [{"check": "R1 depth row craft range", "observed": [81, 343], "stated": [316, 343]}], "guards_ok": true, "met_target": false, "mismatches": 1, "revision": "fa6a8a3f...", "unresolved": []}
+EXIT=1
+r39 (rev=52b0eb29, base=fa6a8a3f):
+{"assertion_mismatches": [{"check": "O1 coverage mapped/files", "observed": [128, 128], "stated": [126, 126]}, {"check": "O2 depth resolved/rules", "observed": [18, 18], "stated": [17, 17]}, {"check": "O4 SHONEN box1 rule blocks", "observed": [18, 18], "stated": [17, 17]}, {"check": "R1 depth row craft range", "observed": [81, 343], "stated": [81, 314]}, {"check": "R2 SHONEN box1 craft range", "observed": [81, 343], "stated": [81, 314]}], "guards_ok": false, "met_target": false, "mismatches": 5, ...}
+EXIT=1
+freeze (rev=7fce3086):
+{"assertion_mismatches": [{"check": "O1 coverage mapped/files", "observed": [129, 129], "stated": [128, 128]}, {"check": "O2 depth resolved/rules", "observed": [19, 19], "stated": [18, 18]}, {"check": "O4 SHONEN box1 rule blocks", "observed": [19, 19], "stated": [18, 18]}, {"check": "R1 depth row craft range", "observed": [81, 375], "stated": [316, 343]}, {"check": "R2 SHONEN box1 craft range", "observed": [81, 375], "stated": [81, 343]}], "guards_ok": true, "met_target": false, "mismatches": 5, ...}
+EXIT=1
+measured (rev=42c10a58):
+{"assertion_mismatches": [{"check": "O1 coverage mapped/files", "observed": [130, 130], "stated": [128, 128]}, {"check": "O2 depth resolved/rules", "observed": [19, 19], "stated": [18, 18]}, {"check": "O4 SHONEN box1 rule blocks", "observed": [19, 19], "stated": [18, 18]}, {"check": "R1 depth row craft range", "observed": [81, 375], "stated": [316, 343]}, {"check": "R2 SHONEN box1 craft range", "observed": [81, 375], "stated": [81, 343]}], "guards_ok": true, "met_target": false, "mismatches": 5, ...}
+EXIT=1
+tip (rev=4d62ee5a): identical to measured (c2r38-at-tip.json), EXIT=1
+
+C. independent wave-1 gate (authored by R40MistakeHunt for MH-11), same recipe, living rows vs bytes
+$ python3 -I -B LANE/.ufo/waves/round-40/w1/artifacts/R40MistakeHunt/axis-record-gate.py --root LANE --rev <rev>
+fa6a8a3f: coverage row=(128,128) computed=(128,128) / depth row=(18,18) computed=(18,18) / findings=0 / EXIT=0
+7fce3086: coverage row=(128,128) computed=(129,129) / depth row=(18,18) computed=(19,19) / findings=2 / EXIT=1
+42c10a58: coverage row=(128,128) computed=(130,130) / depth row=(18,18) computed=(19,19) / findings=2 / EXIT=1
+4d62ee5a: coverage row=(128,128) computed=(130,130) / depth row=(18,18) computed=(19,19) / findings=2 / EXIT=1
+
+D. counter-sensitivity probes (sandbox clone, fixture identity inside it only)
+$ D=$(mktemp -d $S/fx.XXXX) && git clone -q --shared LANE "$D/lane"
+$ git -C "$D/lane" rev-parse --show-toplevel   ->  $D/lane   (equals the fixture dir)
+$ cd "$D/lane" && OUT=$S/probe.json python3 -I -B $S/probe.py "$D/lane"
+{"case": "T0 control clone HEAD", "knowledge_files": 130, "mapped": 130, "resolved_rules": 19, "rev": "0b15c8b2", "rule_blocks": 19}
+{"case": "T1 coverage-map row removed", "knowledge_files": 130, "mapped": 129, "resolved_rules": 19, "rev": "e01dac4b", "rule_blocks": 19}
+{"case": "T2 block19 precise ranges -> bare filenames", "knowledge_files": 130, "mapped": 130, "resolved_rules": 19, "rev": "155729ba", "rule_blocks": 19}
+{"case": "T3 block19 range past EOF (46-57 of 56)", "knowledge_files": 130, "mapped": 130, "resolved_rules": 18, "rev": "7b7d4851", "rule_blocks": 19}
+{"case": "T4 citation-free rule block appended", "knowledge_files": 130, "mapped": 130, "resolved_rules": 19, "rev": "6aeb10e1", "rule_blocks": 20}
+{"case": "T5 block19 cites missing knowledge file", "knowledge_files": 130, "mapped": 130, "resolved_rules": 18, "rev": "57b04a71", "rule_blocks": 19}
+EXIT=0
+
+E. structural check of coverage credit (corpus/README.md `## Coverage map` at 42c10a58)
+$ git show 42c10a58:corpus/README.md | sed -n '/## Coverage map/,/^## /p' > readme-measured.md
+classification of the 130 stems by table column (coverage-stem-columns.json):
+84 entries-column only | 43 subject-column only (`knowledge/<stem>` row label) | 2 both
+| 1 entries + state/evidence (`2026-10-26-r36-sasquatch-squashfs-recursion`)
+=> no stem is credited by incidental prose alone.
+
+F. block 18 / craft-section geometry
+$ git show 52b0eb29:SKILL.md | sed -n '316,343p' > b18-r39.txt
+$ git show 4d62ee5a:SKILL.md | sed -n '316,346p' > b18-tip.txt
+$ diff -u b18-r39.txt b18-tip.txt
+@@ -13,7 +13,10 @@
+-  (interpreter `tools/round-39/sqfs-triage.py`).
++  (interpreter `tools/round-39/sqfs-triage.py`). Superseded for routing by rule
++  block 19 (table v2, round 40); this v1 table stays as the round-39 record and
++  mislabels mixed-link images, partial failures, empty trees and non-firmware
++  envelopes (`corpus/knowledge/2026-10-26-r40-sqfs-triage-v2.md:27-36`).
+=> the v1 table bytes are unchanged; the block grew by 3 lines, so block 18 is
+   316-346 at the tip while the depth row and SHONEN box1 still say 316-343.
+$ git show 4d62ee5a:SKILL.md | grep -n '^- \*\*SquashFS `extract-firmware` outcome triage'
+316:  ... (round 39)
+348:  ... v2 (round 40)
+craft section 81 .. 375 (`## Config custody...` at 380), block 19 citations:
+corpus/knowledge/2026-10-26-r40-sqfs-triage-v2.md:11-18, :19-26, :27-36, :37-45, :46-56
+(entry is 56 lines; body is 9-56, so the five ranges tile the whole body)
+
+G. round-40 did not touch the axis records
+$ git log --oneline 7fce3086..4d62ee5a -- SCORECARD.md SHONEN.md     -> (no output)
+$ git diff --stat fa6a8a3f 42c10a58 -- SCORECARD.md                  -> (no output)
+$ git diff --stat 42c10a58 4d62ee5a                                  -> PROVINCE.md 6, corpus/README.md 6, entry 4, 6 score files
+$ grep -c "SCORECARD\|Coverage map\|corpus/README" tools/round-40/*.py
+  c2-counter.py:0  c1-extra.py:0  c1-counter.py:8 (uses `## Coverage map` only to check the C1 entry stem)

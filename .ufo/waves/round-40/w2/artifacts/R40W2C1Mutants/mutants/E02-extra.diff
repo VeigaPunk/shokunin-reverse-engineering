@@ -1,0 +1,11 @@
+--- pristine/c1-extra.py
++++ mutant/E02-extra.py
+@@ -110,7 +110,7 @@
+     cited = set(re.findall(r'\bS\d{3,}\b', '\n'.join(
+         l for l in entry.decode('utf-8', 'replace').splitlines() if l.lower().startswith('source'))))
+     at_base, at_rev = sids(show(root, base, 'corpus/SOURCES.md')), sids(show(root, rev, 'corpus/SOURCES.md'))
+-    new = sorted(s for s in cited if s not in at_base and s in at_rev
++    new = sorted(s for s in cited if s in at_rev
+                  and (ENTRY in at_rev[s] or STEM in at_rev[s]))
+     return bool(new), {'cited': sorted(cited), 'new_with_used_by': new}
+ 

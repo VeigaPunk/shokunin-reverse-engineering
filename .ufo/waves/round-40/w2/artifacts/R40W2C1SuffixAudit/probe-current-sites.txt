@@ -1,0 +1,24 @@
+== S1 same_rel FP (L2 live) ==
+ same_rel(firmware.bin_extract/usr/bin/busy, bin/busy) = True
+ nonregular_published(L2 files, L2 nonreg) = ['firmware.bin_extract/usr/bin/busy']
+== S2 oracle_hits FP: real path missing, deeper copy present ==
+ hits for oracle [(usr/bin/busy,...)] = 1 /1
+== S3 oracle_hits FP via empty digest, wrong name ==
+ oracle row zero(empty) hit by tmp/zero = 1
+== S4 gap_check: gap put on the REGULAR file satisfies the symlink requirement ==
+ honest-gap-set   : (True, '3 gaps (1 structural) on 10 non-regular entries')
+ misplaced-gap-set: (True, '3 gaps (1 structural) on 10 non-regular entries')
+== S5 gap ambiguity: nested non-regular rels ==
+ one gap on bin/busy -> (False, "gap path 'bin/busy' matches 2 non-regular entries")
+== S6 gap trailing slash ==
+ path bin/busy/ -> False | gap_check: (False, "gap path 'bin/busy/' matches 0 non-regular entries")
+== S7 rel_suffix root-only / no-root / collision / traversal ==
+  'firmware.bin_extract'                        -> 'firmware.bin_extract'
+  'carrier.bin_extract'                         -> 'carrier.bin_extract'
+  '$output/a_extract/'                          -> 'a_extract'
+  'firmware.bin_extract/usr/bin/busy'           -> 'usr/bin/busy'
+  'usr/bin/busy'                                -> 'usr/bin/busy'
+  'a_extract/x'                                 -> 'x'
+  'b_extract/x'                                 -> 'x'
+  '$output/a_extract/../../etc/passwd'          -> '../../etc/passwd'
+  '$output/firmware.bin_extract/opt/x_extract/y' -> 'opt/x_extract/y'

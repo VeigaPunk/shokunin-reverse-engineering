@@ -1,0 +1,55 @@
+# read sets, R40-C1 vs R40-C2 (measured, not guessed)
+
+Method
+- `strace -f -e trace=openat -y` around each counter; plus a `git` shim on PATH that logs argv
+  (GITLOG) so every git invocation is named; plus the counters' own declared read sets.
+- Object-id -> path mapping came from `git rev-list --objects --all` in the lane. CAVEAT: rev-list
+  prints each object once, so a shared blob/tree can be named under a different path than the one the
+  counter opened. Path sets below are therefore read as *blob identities*, and the per-claim claims are
+  backed by the deletion sandboxes (walk.json), not by the mapping alone.
+
+C1 (`tools/round-40/c1-counter.py`, run at tip 0b15c8b2, freeze 7fce3086)
+- working-tree lane reads: the counter script itself only. Everything else is read as git blobs at a rev.
+- git argv (34 invocations, artifact c1-gitargv.txt): 23 `show`, 5 `log`, 4 `merge-base`, 2 `cat-file`.
+  Not one argv names a C2 path or SKILL.md.
+- data read at REV: `.ufo/waves/round-40/c1/{carriers.json,gap-rule.json}`;
+  `corpus/evidence/round-40/c1/{V1,V2,L1,L2}/{after.json,oracle.tsv,nonregular.tsv,carrier.sqsh}`;
+  `corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md`; `PROVINCE.md`; `corpus/README.md`;
+  `corpus/SOURCES.md`; `tools/round-27/xpin-attribute.mjs` (at the freeze); `plans/round-40-claims.md`.
+- outside the lane: the carrier cache (sha256-named), the REA package, unblob, sasquatch-v4be.
+- ONE cross-claim read, content-blind: `git log --pretty=format: --name-only --no-renames FREEZE..REV`
+  is issued WITHOUT a pathspec, so it enumerates every changed path name in the range - 131 of them are
+  `corpus/evidence/round-40/c2/...` at freeze..tip. The trace shows 27 of C2's directory-tree objects
+  opened for it. No C2 file *contents* are read and no binding depends on them (c1-B, walk.json).
+
+C2 (`tools/round-40/c2-counter.py`, run at tip 0b15c8b2, freeze 7fce3086)
+- working-tree lane reads: the counter script itself only.
+- blobs read at REV: `corpus/evidence/round-40/c2/heldout/manifest.json`, each carrier + envelope;
+  `SKILL.md` at REV, at the freeze and at the derived base; `plans/round-40-claims.md` (FROZEN tuple).
+- blobs read at the FREEZE and materialised into scratch (`writer.materialised_files`, 26 files):
+  every tracked file under `tools/round-40` and `tools/round-39`, of which 7 are C1's tools
+  (c1-counter.py, c1-extra.py, c1-run.sh, fetch-vendor.py, gen-squashfs.py, mk-l-carriers.py,
+  sqfs-list.py). Executed: `tools/round-39/gen-squashfs.py` only (importlib, as the carrier writer),
+  plus the frozen interpreter and the frozen generator.
+- NOT read: PROVINCE.md, corpus/README.md, corpus/SOURCES.md, any corpus/knowledge file, any
+  `corpus/evidence/round-40/c1/...` path, C1's carriers.json / gap-rule.json.
+
+Frozen-path sets
+- C1: claims + 7 tools + c1/{carriers.json,gap-rule.json} + the carriers/oracles/nonregular tables.
+- C2: claims + 3 tools + the SKILL v2 block + tools/round-39/gen-squashfs.py.
+- Intersection: `plans/round-40-claims.md` ONLY. One post-freeze edit of that file makes BOTH counters
+  exit 2 `frozen_path_changed` (c1-S1, c2-S1) - a shared denominator, by construction.
+
+Writers are distinct artifacts
+- C1's L carriers: tools/round-40/gen-squashfs.py (sha256 309c502d...) via mk-l-carriers.py.
+- C2's held-out carriers: tools/round-39/gen-squashfs.py (sha256 f535e60e...) via heldout-gen-v2.py.
+- The two hashes differ; the round-39 writer's `avm` endian is the marker on a standard-BE body, so the
+  held-out AVM class cannot be a genuine AVM-layout carrier (see layout-probe.json: H17/H18 have
+  header_endian=big, layout=be; C1's L1 has header_endian=little, layout=avm).
+
+Interpreter isolation (observation, not a score path)
+- `tools/round-40/sqfs-triage-v2.py` hardcodes `LANE = /home/vgpnk/Projects/shokunin/kaidoku-shokunin`
+  and resolves its selftest fixtures from `corpus/evidence/round-39/{c1,c2}/...` plus `LANE/SKILL.md`.
+  `--selftest` from a scratch cwd printed `SELFTEST cases=45 pass=45 fail=0`, exit 0 - i.e. it read the
+  real lane and round-39's C1 evidence, not the tree under test. The scored path is unaffected (the
+  counter passes explicit envelope paths from scratch).

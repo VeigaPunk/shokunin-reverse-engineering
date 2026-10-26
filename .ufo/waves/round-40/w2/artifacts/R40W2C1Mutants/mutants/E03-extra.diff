@@ -1,0 +1,11 @@
+--- pristine/c1-extra.py
++++ mutant/E03-extra.py
+@@ -76,7 +76,7 @@
+         else:
+             fp = os.path.join(cache or '', pin + '.bin')
+             raw = open(fp, 'rb').read() if cache and os.path.isfile(fp) else None
+-        if raw is None or hashlib.sha256(raw).hexdigest() != pin:
++        if raw is None or hashlib.sha256(raw).hexdigest() != pin.upper():
+             detail[cid] = 'carrier bytes absent or pin mismatch'
+             continue
+         img = os.path.join(work, '%s.img' % cid)

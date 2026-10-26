@@ -1,0 +1,169 @@
+{
+ "carriers": {
+  "L1": {
+   "first_segments": {
+    "firmware.bin_extract": 7
+   },
+   "gap_resolution": {
+    "odd": [],
+    "path_resolved_exact": 2,
+    "structural": 1
+   },
+   "nonregular_internal_suffix_pairs": [
+    [
+     "lib",
+     "usr/lib"
+    ]
+   ],
+   "nonregular_row_suffix_of_oracle_row": [],
+   "nonregular_rows": 13,
+   "nonregular_rows_by_kind": {
+    "dir": 11,
+    "symlink": 2
+   },
+   "oracle_hit_classification": {
+    "exact_only": 7,
+    "multi_match": 0,
+    "no_match": [],
+    "shadow_only": []
+   },
+   "oracle_internal_suffix_pairs": [],
+   "oracle_rows": 7,
+   "published_files": 7,
+   "published_x_nonregular_hits": []
+  },
+  "L2": {
+   "first_segments": {
+    "firmware.bin_extract": 6
+   },
+   "gap_resolution": {
+    "odd": [],
+    "path_resolved_exact": 2,
+    "structural": 1
+   },
+   "nonregular_internal_suffix_pairs": [
+    [
+     "bin",
+     "usr/bin"
+    ]
+   ],
+   "nonregular_row_suffix_of_oracle_row": [
+    [
+     "bin/busy",
+     "usr/bin/busy"
+    ]
+   ],
+   "nonregular_rows": 10,
+   "nonregular_rows_by_kind": {
+    "dir": 8,
+    "symlink": 2
+   },
+   "oracle_hit_classification": {
+    "exact_only": 6,
+    "multi_match": 0,
+    "no_match": [],
+    "shadow_only": []
+   },
+   "oracle_internal_suffix_pairs": [],
+   "oracle_rows": 6,
+   "published_files": 6,
+   "published_x_nonregular_hits": [
+    {
+     "classification": "SUFFIX-SHADOW",
+     "kind": "symlink",
+     "nonregular_row": "bin/busy",
+     "prefix": "firmware.bin_extract/usr",
+     "published": "firmware.bin_extract/usr/bin/busy"
+    }
+   ]
+  },
+  "V1": {
+   "first_segments": {
+    "firmware.bin_extract": 697
+   },
+   "gap_resolution": {
+    "odd": [],
+    "path_resolved_exact": 263,
+    "structural": 1
+   },
+   "nonregular_internal_suffix_pairs": [
+    [
+     "bin",
+     "usr/bin"
+    ],
+    [
+     "lib",
+     "lib/modules/2.6.39.4/kernel/lib"
+    ],
+    [
+     "lib",
+     "usr/lib"
+    ],
+    [
+     "sbin",
+     "usr/sbin"
+    ]
+   ],
+   "nonregular_row_suffix_of_oracle_row": [],
+   "nonregular_rows": 381,
+   "nonregular_rows_by_kind": {
+    "char-device": 1,
+    "dir": 117,
+    "symlink": 263
+   },
+   "oracle_hit_classification": {
+    "exact_only": 697,
+    "multi_match": 0,
+    "no_match": [],
+    "shadow_only": []
+   },
+   "oracle_internal_suffix_pairs": [],
+   "oracle_rows": 697,
+   "published_files": 697,
+   "published_x_nonregular_hits": []
+  },
+  "V2": {
+   "first_segments": {
+    "firmware.bin_extract": 8
+   },
+   "gap_resolution": {
+    "odd": [],
+    "path_resolved_exact": 85,
+    "structural": 1
+   },
+   "nonregular_internal_suffix_pairs": [],
+   "nonregular_row_suffix_of_oracle_row": [],
+   "nonregular_rows": 95,
+   "nonregular_rows_by_kind": {
+    "char-device": 1,
+    "dir": 9,
+    "symlink": 85
+   },
+   "oracle_hit_classification": {
+    "exact_only": 8,
+    "multi_match": 0,
+    "no_match": [],
+    "shadow_only": []
+   },
+   "oracle_internal_suffix_pairs": [],
+   "oracle_rows": 8,
+   "published_files": 8,
+   "published_x_nonregular_hits": []
+  }
+ },
+ "inputs": {
+  "frozen_score": ".ufo/waves/round-40/l1/scores/c1-at-42c10a58.json",
+  "receipts": [
+   "corpus/evidence/round-40/c1/<ID>/after.json"
+  ],
+  "tables": [
+   "corpus/evidence/round-40/c1/<ID>/oracle.tsv",
+   "corpus/evidence/round-40/c1/<ID>/nonregular.tsv"
+  ]
+ },
+ "question": "Is L2 red nonregular_unpublished_ok a pure path-suffix false positive, and can the same suffix logic false-pass oracle_hits_ok/gaps_ok on V1/V2/L1/L2?",
+ "same_rel": "(candidate == rel) or candidate.endswith(\"/\" + rel)  [c1-counter.py:606-607]",
+ "seat": "R40W2C1L2FalseNeg",
+ "source_counter": "tools/round-40/c1-counter.py @ 42c10a58cb2cae3a4a0122af35a0cf95ac718043 (working tree identical, git diff empty)",
+ "true_match_rule": "a match is EXACT-AT-EXTRACT iff the candidate prefix (path minus the matched rel) ends with \"_extract\" (the REA chunk extract root, always \"firmware.bin_extract\" in these four receipts); otherwise it is a SUFFIX-SHADOW"
+}

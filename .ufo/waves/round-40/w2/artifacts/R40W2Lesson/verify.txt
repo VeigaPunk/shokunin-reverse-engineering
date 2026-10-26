@@ -1,0 +1,101 @@
+R40W2Lesson — verification transcript (2026-10-26). All commands run from the fleet root unless a
+`cd` is shown; scratch S=/fast/scratch/hyaku/kaidoku-r40/R40W2Lesson (removed at exit).
+
+1) S123 — rea-agents 6.5.0 quote, tarball identity
+   cd "$S"; curl -sS -o rea.tgz https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz \
+     -w 'HTTP %{http_code} bytes %{size_download}\n'
+     -> HTTP 200 bytes 5634033
+   sha256sum rea.tgz
+     -> 531717a06e92ca651aab52691190f916fac044272c01f875e22c5e293218e699  rea.tgz   (= S123)
+   tar xzf rea.tgz -C pkg package/dist/firmware/FirmwareProvider.js package/package.json
+   grep -n "engineName = request.operation" pkg/package/dist/firmware/FirmwareProvider.js
+     -> 141:        const engineName = request.operation === "inspect_firmware_regions" ? "binwalk" : "unblob";
+   python3 -c "import json;print(json.load(open('pkg/package/package.json'))['version'])"
+     -> 6.5.0
+   diff -q pkg/package/dist/firmware/FirmwareProvider.js .../node_modules/rea-agents/dist/firmware/FirmwareProvider.js
+     -> INSTALLED-EQUAL
+   tar tzf rea.tgz | grep -c '/dist/'  -> 1574
+   curl -sSI <tarball>  -> HTTP/2 200, date Mon, 26 Oct 2026 19:28:30 GMT, last-modified Wed, 14 Oct 2026 12:56:16 GMT
+
+2) S124 — Freetz-NG patch at the pinned commit
+   curl -sS -o s124.patch <url at 9a7236926bffaa6af16f84b3db27017cb5f02724> -w ...
+     -> HTTP 200 bytes 2217
+   sha256sum s124.patch -> 7f0a1b252d4bbde747efe98d1f97b52eab28d55ee957b7307d0344cbe1e220fc (= S124)
+   cmp s124.patch .ufo/waves/round-40/w1/artifacts/R40SrcFreetz/350-unsquashfs__AVM_BE.patch -> CMP-IDENTICAL
+   grep -n "block length in AVM-BE format is stored in LE order" s124.patch
+     -> 35:+	/* block length in AVM-BE format is stored in LE order */
+   awk 'NR==22' patch -> "c_byte = (c_byte >> 8) | ((c_byte & 0xff) << 8);"
+   sed -n '34,40p' patch -> "#if __BYTE_ORDER == __BIG_ENDIAN / swap_block_length = 1" ... "#elif LITTLE_ENDIAN /
+     swap_block_length = 0; // do NOT swap block length, already in the right order"
+   550-mkfs_time patch line 25 -> "+	if (sBlk.s.s_major == 4 && sBlk.s.mkfs_time == (int)sBlk.s.bytes_used) {"
+     sha256 603c36c9e610a4f1a41548d167b7b984c8c7ac587c73fa5b19d1484d2aab15a7
+   AVM-BE-format.txt.fetched-2026-10-26 sha256 c1c43f6f97d7477dcdab15203d11e43b49beb12e3a43a3b52bdd71b672a9a5d5;
+     lines 8-9 "the only data field stored in the little-endian format is the block length value at the
+     beginning / of each block"; lines 13-14 "super-block field 'mkfs_time' contains ... the same value /
+     as the super-block field 'bytes_used'"
+
+3) S125 — vendor page
+   curl -sS -o info_en.txt .../info_en.txt -> HTTP 200 bytes 67591
+   sha256sum info_en.txt -> 6c601b342da91f7598dde1e7842ba92a61a1ec7f4b3d00564573fea3d11070a7 (= S125)
+   sed -n '8,14p' info_en.txt -> "Product:        FRITZ!Box 6490 Cable" (8), blank, "Version:
+     FRITZ!OS 7.57" (10), blank, "Language: ..." (12), blank, "Release date:   04.09.2023" (14)
+   curl -sS -o fritz.image .../FRITZ.Box_6490_Cable-07.57.image -> HTTP 200 bytes 39741440
+   sha256sum fritz.image -> f518ce6baa05b30d84264d9349cca9bf0b9402986d4112bda8ad73a04f9ede6d (= V1 pin)
+   tar xf fritz.image ./var/content ./var/version
+   sha256sum var/content var/version ->
+     ab238b0ed62419a4f3f32454e81bb14ef4bbce7ce462f7631f9555a38eca9557  var/content   (= S125)
+     288451feb464cffe24faccd236a49e6bf97a24b4687753eb875fdd95958fbdb3  var/version
+   grep -n "Product=|Version=|Build=" var/content -> 1:Product=Fritz_Box_HW213a (FRITZ!Box 6490 Cable),
+     4:Version=07.57, 5:Build=107830
+   tar tvf fritz.image -> ./var/remote/var/tmp/filesystem.image 5443592; ./var/remote/var/tmp/x86/
+     filesystem.image 28200968; ./var/content 346; ./var/version 47
+   retained artifact hashes (equal to the rows): info_de.txt 3becce79…, image-members/content ab238b0e…,
+     version 288451fe…, info.txt b0360d88…
+
+4) S126 — retained own-work TSV and image
+   sha256sum lead1-avm-image.tsv -> f205807de8016ead8732d77f14acf5e99e6527e02d6281566f6070b7c8539eb0 (= S126)
+   rows: image_path image_bytes image_magic … image_mkfs_time 365, image_bytes_used 365, image_is_avm
+     "yes - mkfs_time equals bytes_used, the AVM marker", unblob_handler squashfs_v4_be,
+     unblob_be_flag "absent - the AVM branch passes no -be", extracted_files apple1..4
+   sha256sum avm-be.squashfs -> c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32
+   sha256sum unblob.log -> 352e0d794143df9cc4fa6113d72ee5a620ea0aa201a930e00e91590518aed5d7
+   grep -c "Processing file" unblob.log -> 5 (1 input + 4 published files)
+   grep -n "Running extract command" unblob.log ->
+     command='sasquatch-v4be -no-exit-code -f -d /tmp/r11-avm3/avm-be.squashfs_extract ...' (no -be)
+
+5) Registry — used-by cells, ids, contract
+   git show fa6a8a3f:corpus/SOURCES.md | awk -F'|' ...   (old used-by)
+   field-level diff base vs HEAD on S112 S114 S118 S119 S120 S121 -> changed cells: ['used-by'] for all six
+   git diff fa6a8a3f..7fce3086 -- corpus/SOURCES.md   -> +| S123
+   git diff 7fce3086..42c10a58 -- corpus/SOURCES.md   -> S112 S114 S118 S119 S120 S121 rewritten (used-by),
+     +| S124 +| S125 +| S126
+   git diff 42c10a58..HEAD -- corpus/SOURCES.md       -> (no S-row change)
+   grep -cE '^\| S[0-9]+' corpus/SOURCES.md -> 126 ; uniq -d -> empty ; last row S126
+   grep '^source:' on the two round-40 entries ->
+     avm entry: S124 S125 S126 S114 S112 S121 ; triage v2: S112 S118 S119 S120 S123
+   S107/S108 used-by unchanged (base and head both single r36 entry)
+
+6) Collision artifacts (read, not re-run)
+   wc -l collision/{reg-ids,staged-ids,collisions} -> 122 / 132 / 17
+   collision/collisions -> S106 … S122 ; renumber-map.tsv -> S200→S123 S201→S124 S192→S125
+   cat -A collision/reg-fixture.md -> "| S001 | …" at column zero and "  | S002 | …" indented two spaces
+   collision/fx-reg = S001 S002 ; fx-reg-colzero = S001 ; fx-collisions = S002 ; fx-collisions-colzero = empty (0 B)
+
+7) Quarantine slice (read, not re-fetched)
+   sha256sum quarantine-slice -> 7383a90e7c04c7238dfa3d19d2f9e857852bd24288c5ff9e9873bce697c28e6a
+   five lines: S150, S113, S117, S136, S147
+
+8) Calibration K-1 — unblob severity mapping (installed, not modified)
+   sha256sum unblob/report.py unblob/cli.py ->
+     2329783fc645de8aae94b82443277bceb6ceac968549ff65917c7b2d454cc9ee  report.py
+     fc775f1ad66f05c0f6ba77fb74c80112ea99b4baf07900d7d701b7932259f86c  cli.py
+   report.py:91-95 -> class ExtractCommandFailedReport(ErrorReport): … severity: Severity = Severity.WARNING
+   cli.py:464-475 -> get_exit_code_from_reports: severity_to_exit_code = [(Severity.ERROR, 1),
+     (Severity.WARNING, 0)]; returns 0 when no error severity is present
+   SKILL.md:363 header cell list (block marker at :361) includes "-be in child argv" between "dependencies" and "symlink removed"
+
+9) Freeze contents
+   git ls-tree -r --name-only 7fce3086 -- .ufo/waves/round-40/w1 | wc -l -> 1443 (107 .md)
+
+Writes: only .ufo/waves/round-40/w2/artifacts/R40W2Lesson/{gate.md,verify.txt} and the seat report.
+No REA, unblob, sasquatch or carrier run; no tool installed; no VCS mutation.

@@ -1,0 +1,54 @@
+diff --git 1/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C2Counter/c2-counter.py 2/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-40/c2-counter.py
+index 68747dbc..ab902b6f 100755
+--- 1/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C2Counter/c2-counter.py
++++ 2/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-40/c2-counter.py
+@@ -66,6 +66,7 @@ import sys
+ import tempfile
+ 
+ MANIFEST = 'corpus/evidence/round-40/c2/heldout/manifest.json'
++NOMATCH_PAIR = ('unclassified', 'none')
+ SKILL = 'SKILL.md'
+ INTERP = 'tools/round-40/sqfs-triage-v2.py'
+ GEN = 'tools/round-40/heldout-gen-v2.py'
+@@ -76,9 +77,9 @@ MARKER_V1 = '<!-- sqfs-triage-table v1 -->'
+ MARKER_V2 = '<!-- sqfs-triage-table v2 -->'
+ CRAFT = '## Queue-drain craft'
+ V2_COLUMNS = ('label', 'operation', 'provider', 'action')
+-GEN_TREE_PREFIXES = ('tools/round-40', 'tools/round-37')
++GEN_TREE_PREFIXES = ('tools/round-40', 'tools/round-39')  # L1 freeze fix: the generator's writer is round-39's
+ WRITER_ENV = 'KAIDOKU_GEN_SQUASHFS'
+-DEFAULT_WRITER = 'tools/round-37/gen-squashfs.py'
++DEFAULT_WRITER = 'tools/round-39/gen-squashfs.py'
+ 
+ 
+ class Unevaluable(Exception):
+@@ -438,7 +439,7 @@ def measure(root, rev_arg, freeze_arg, base_arg=None):
+         and set(per) <= set(classes)
+     b['n_equals_twice_classes'] = N > 0 and N == 2 * len(classes)
+     b['ids_unique'] = bool(ids) and len(set(ids)) == len(ids) and all(ids)
+-    b['arms_valid'] = bool(carriers) and all(c.get('arm') in ('after', 'before')
++    b['arms_valid'] = bool(carriers) and all(c.get('arm') in ('after', 'before', 'ood')
+                                              for c in carriers)
+ 
+     # ---- tables
+@@ -740,7 +741,9 @@ def measure(root, rev_arg, freeze_arg, base_arg=None):
+ 
+         matched = sum(1 for row in res['carriers'] if row['pair_match'])
+         matched_rows = [row['row'] for row in res['carriers'] if row['pair_match']]
+-        reported = bool(got) and all(r.get('row') is not None for r in res['carriers'])
++        # L1 freeze fix (dry run): the no-match pair (unclassified, none) has no row by design
++        reported = bool(got) and all(r.get('row') is not None or r.get('label') == NOMATCH_PAIR[0]
++                                     for r in res['carriers'])
+         b['decisions_reported'] = reported
+         distinct = len(set(matched_rows)) if matched_rows else 0
+         res['distinct_decisions'] = distinct
+@@ -751,7 +754,8 @@ def measure(root, rev_arg, freeze_arg, base_arg=None):
+         pairs = {}
+         for row in res['carriers']:
+             pairs.setdefault((row['expected_label'], row['expected_action']), set()).add(row['row'])
+-        consistent = reported and all(len(v) == 1 and None not in v for v in pairs.values()) \
++        consistent = reported and all(len(v) == 1 and (None not in v or k == NOMATCH_PAIR)
++                                      for k, v in pairs.items()) \
+             and len(set(next(iter(v)) for v in pairs.values())) == len(pairs)
+         b['row_decisions_consistent'] = bool(consistent)
+         res['decision_pairs'] = {'%s/%s' % k: sorted(v, key=lambda x: (x is None, str(x)))

@@ -1,0 +1,40 @@
+# R40W2C2Shortcut — exact commands (all cwd-independent; scratch S removed at exit)
+# host: python 3.14.8, git 2.5x; no tools installed; no pacman transaction; no VCS mutation in the lane.
+# lane HEAD observed at dispatch of this seat: 0b15c8b2c593b7954efda92249ef3fa895c79f99 (tip given 4d62ee5a)
+# SKILL.md v2 block sha256 (block bytes): 51e17a8d67acd574... identical at FREEZE 7fce3086, REV 42c10a58, worktree HEAD; 6603 bytes.
+# frozen tool sha256: sqfs-triage-v2.py 336c621c46e78ca5...; c2-counter.py 9bd792494ca042d8...;
+#                     heldout-gen-v2.py 644d8f6e44e0a46d...; gen-squashfs.py f535e60ee15222a7...
+#                     heldout/manifest.json 232a3bf65d5adca1...
+
+# 1. reproduce the landed C2 verdict (independent run, exit 0)
+cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+TMPDIR=$S HYAKU_SCRATCH=/fast/scratch/hyaku python3 -I -B tools/round-40/c2-counter.py \
+  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin \
+  --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 \
+  --freeze 7fce308631a8b457d6b7c5a4b39a923c4e9a49de --json-out $S/c2-repro.json
+# -> {"matched":26,"n":26,"met_target":true,"bindings_false":[],"distinct_decisions":12,"exit_code":0}
+
+# 2. dump the 26 held-out feature vectors through the frozen interpreter's own features()
+python3 -I -B $S/dump.py            # -> feat.json (saved in this dir)
+
+# 3. minimum-cell search over the 8 grammar columns (all subsets x all cell values)
+python3 -I -B $S/min2.py            # -> 21 non-* cells reach 11/11 pairs
+python3 -I -B $S/lattice.py         # -> no <=5-column key separates; 6 reachable column sets
+
+# 4. build + score alternative tables with the frozen interpreter (same method as controls/c2)
+python3 -I -B $S/finalize.py        # min-v2-table-21cells.md 26/26 heldout AND 26/26 dev
+                                    # min6-v2-table-23cells.md 26/26 heldout AND 26/26 dev
+python3 -I -B $S/probe.py           # column zeroing / row dropping on the committed table
+python3 -I -B $S/combos.py          # joint column removal
+python3 -I -B $S/probe4.py          # the 7 committed controls on the HELD-OUT set
+python3 -I -B $S/artifacts.py       # real-envelope + multi-gap probes -> *.tsv
+
+# 5. swap the frozen v2 block for the 21-cell table inside a --shared sandbox clone, then run the counter
+D=$(mktemp -d $S/fx.XXXX); git clone -q --shared /home/vgpnk/Projects/shokunin/kaidoku-shokunin "$D/lane"
+test "$(git -C "$D/lane" rev-parse --show-toplevel)" = "$D/lane"
+# rewrite the block in $D/lane/SKILL.md, then:
+git -C "$D/lane" -c user.name=fx -c user.email=fx@fx commit -q -am "w2 fixture: swap the v2 block for the 21-cell table"
+python3 -I -B tools/round-40/c2-counter.py --root "$D/lane" --rev HEAD \
+  --freeze 7fce308631a8b457d6b7c5a4b39a923c4e9a49de --json-out $S/c2-minfixture.json
+# -> {"matched":26,"met_target":false,"bindings_false":["v2_table_identical"],"exit_code":1}
+rm -rf -- "$D"

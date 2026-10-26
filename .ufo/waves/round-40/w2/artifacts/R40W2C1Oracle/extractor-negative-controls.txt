@@ -1,0 +1,23 @@
+carrier bytes: V1/V2 rebuilt by fetch-vendor.py (chain exit 0), L1/L2 from corpus/evidence/round-40/c1/*/carrier.sqsh
+tool: /home/vgpnk/.local/bin/sasquatch-v4be sha256 fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6, 4.5.1
+
+positive (the extraction the claim rests on):
+  sasquatch-v4be -f -no-exit-code -n -d x/<ID>/root out/<ID>/carrier   -> rc=0 on all four
+
+negative controls on the same bytes:
+  sasquatch          -f -no-exit-code -n -d neg/<ID>-le/root  -> rc=1, 0 files, "Block size and block_log do not match"/"Block size too small"
+  sasquatch-v4be -be -f -no-exit-code -n -d neg/<ID>-be/root  -> rc=1, 0 files, "read_id_table: failed to read id table block"
+  => the working AVM path is BE structural fields + LE metadata headers (no -be), exactly the claimed layout
+
+synthesised discriminators (tools/round-40/gen-squashfs.py from the L2 tree, gzip):
+  stdbe.sqsh      --endian be   241390 bytes sha256 98575b569aba4d8706a9ab93ab4eccad847c17b17a48c53ae3607f6257d75025
+                  mkfs_time 1700000000, bytes_used 241390, marker False
+    sqfs-list --layout avm -> rc=2 "metadata body out of bounds: offset 240271 length 7555"
+    sqfs-list --layout be  -> rc=0, file table == L2 oracle
+    sasquatch-v4be (no -be) -> rc=1, 0 files, "File system corruption detected"
+  marker-be.sqsh  --endian avm  241390 bytes sha256 f75fc6bf14248e3a2090b5381eff2322f6bd78593b6af1507413d47634dfd2cf
+                  mkfs_time 241390 == bytes_used 241390, marker True (marker on a standard-BE body)
+    sqfs-list --layout avm -> rc=2 (same offset/length)
+    sqfs-list --layout be  -> rc=0, file table == L2 oracle
+    sasquatch-v4be (no -be) -> rc=1, 0 files
+  => the AVM marker alone does not make the layout work; the LE metadata header does

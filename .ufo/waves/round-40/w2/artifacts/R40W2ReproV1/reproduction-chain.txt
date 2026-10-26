@@ -1,0 +1,28 @@
+V1 reproduction chain (all commands run by seat R40W2ReproV1, 2026-10-26 UTC)
+S=/fast/scratch/hyaku/kaidoku-r40/R40W2ReproV1
+
+1. download (carriers.json external.url):
+   curl -fsSL --retry 3 -o image.bin https://download.avm.de/fritzbox/fritzbox-6490-cable/other/fritz.os/FRITZ.Box_6490_Cable-07.57.image   # exit 0, 39741440 bytes, 4.7s
+   sha256(image.bin) = f518ce6baa05b30d84264d9349cca9bf0b9402986d4112bda8ad73a04f9ede6d   (== external.image_sha256)
+
+2. member carve (external.member = ./var/remote/var/tmp/filesystem.image, tar size 5443592):
+   tar -xOf image.bin ./var/remote/var/tmp/filesystem.image > member.bin   # exit 0
+   sha256(member.bin) = 334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a3015ad3f3d4   (== external.member_sha256)
+   head -c 5442392 member.bin > carrier.bin
+   sha256(carrier.bin) = ac4098bd11a76f8ad001faac0f1a5e018708d9b03943dfebb2b18a24e0038e95   (== carriers.json V1 sha256), 5442392 bytes
+
+3. fresh REA run (no lane tooling involved):
+   cd $S && REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 1 $S/carrier.bin $S/out1   # exit 0, 3.5s wall
+   envelope.json sha256 = 09d4693b6394e697ccbd5f20ad4a276b2c3f1e4abd22d725a36f3ead9e409504, 385179 bytes, ok=true
+   envelope .data sha256 = 389fba2bb28590726c0e6e050e6a63009364b7bbb2cdb1bb1f59fcf4f9fcefdf, 498627 bytes
+
+4. direct extractor evidence:
+   ~/.local/bin/unblob -v --process-num 1 --depth 1 --extract-dir $S/ub1 $S/carrier.bin   # exit 0, 0.6s
+   PATH=/usr/bin:/bin ~/.local/bin/unblob ... (no sasquatch-v4be)   # exit 1, ExtractorDependencyNotFoundReport
+   PATH=<nodebin>:/usr/bin:/bin npx -y rea-agents@6.5.0 extract-firmware ... $S/out_nodep   # exit 0, ok=true, 0 files, extraction_failed=true
+
+tool pins on this host:
+   unblob 26.6.4  sha256 0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09  (== committed run.json pin)
+   sasquatch-v4be 4.5.1  sha256 fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6  (== committed run.json pin)
+   rea-agents 6.5.0 (npx -y, package root /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents)
+   python3 3.14.8

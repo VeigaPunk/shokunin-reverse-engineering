@@ -1,0 +1,11 @@
+--- pristine/c1-counter.py
++++ mutant/M02-counter.py
+@@ -539,7 +539,7 @@
+     d['bytes_used'] = int.from_bytes(raw[40:48], 'big')
+     d['inode_table_start'] = its = int.from_bytes(raw[64:72], 'big')
+     d['directory_table_start'] = dts = int.from_bytes(raw[72:80], 'big')
+-    d['marker'] = d['mkfs_time'] == d['bytes_used']
++    d['marker'] = d['mkfs_time'] != d['bytes_used']
+     d['bytes_used_sane'] = 0 < d['bytes_used'] <= len(raw)
+     d['version_v4'] = (d['major'], d['minor']) == (4, 0)
+     d['meta_header_hex'] = None

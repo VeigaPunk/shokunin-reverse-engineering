@@ -1,0 +1,149 @@
+{
+ "direct_sasquatch_v4be": {
+  "V1": {
+   "devices_created": 0,
+   "dirs": 118,
+   "exit": 2,
+   "files": 697,
+   "sha_size_mismatches_vs_oracle": 0,
+   "symlink_target_mismatches_vs_nonregular": 0,
+   "symlinks": 263
+  },
+  "V2": {
+   "devices_created": 0,
+   "dirs": 10,
+   "exit": 2,
+   "files": 8,
+   "sha_size_mismatches_vs_oracle": 0,
+   "symlink_target_mismatches_vs_nonregular": 0,
+   "symlinks": 85
+  },
+  "command": "~/.local/bin/sasquatch-v4be -d OUT <fresh carrier>   # no -be",
+  "exit_2_cause": "device creation skipped without privilege (created 0 devices); the 1 char device per carrier is never materialised, so a rerun that treats sasquatch exit != 0 as failure would report a false failure"
+ },
+ "failure_matrix": [
+  {
+   "cache_bytes_written": 0,
+   "exit": 1,
+   "link": "url",
+   "mutation": "V1 url -> 404"
+  },
+  {
+   "cache_bytes_written": 0,
+   "exit": 1,
+   "link": "carrier_sha256",
+   "mutation": "V2 carrier pin -> 0*64"
+  },
+  {
+   "exit": 0,
+   "finding": "member_sha256 is reported but never compared; the link is unbound",
+   "link": null,
+   "mutation": "V1 external.member_sha256 -> deadbeef*8"
+  },
+  {
+   "exit": 1,
+   "link": "carrier_sha256",
+   "mutation": "V1 external.length -> whole member (5443592)",
+   "note": "the bytes_used truncation is load-bearing"
+  }
+ ],
+ "fetch_vendor_real_run": {
+  "V1": "ok",
+  "V2": "ok",
+  "exit": 0,
+  "note": "see fetch-vendor-real-run.json"
+ },
+ "fetch_vendor_selftest": {
+  "cases": 8,
+  "exit": 0,
+  "fail": 0,
+  "pass": 8
+ },
+ "frozen_inputs_untouched_freeze_to_tip": true,
+ "frozen_reader_on_fresh_bytes": {
+  "V1": {
+   "exit": 0,
+   "files": 697,
+   "nonregular_rows": 381,
+   "nonregular_tsv_identical": true,
+   "oracle_tsv_identical": true
+  },
+  "V2": {
+   "exit": 0,
+   "files": 8,
+   "nonregular_rows": 95,
+   "nonregular_tsv_identical": true,
+   "oracle_tsv_identical": true
+  },
+  "command": "python3 -I -B tools/round-40/sqfs-list.py --layout avm --files F --nonregular N <fresh carrier>"
+ },
+ "independent_rebuild": {
+  "carriers_byte_identical_to_fetch_vendor_cache": true,
+  "carved_carrier_sha256_match": true,
+  "image_sha256_match": true,
+  "member_sha256_match": true
+ },
+ "receipt_bindings": {
+  "V1": {
+   "chunk_handler": "squashfs_v4_be",
+   "committed_after_json_sha256": "98aaa5f90abb434694a26a0599d8bcc6cf6301c35c7aa1befa6de98b00567776",
+   "gap_kinds": {
+    "depth-limited": 1,
+    "unpublished-entry": 263
+   },
+   "match": true,
+   "run_json_receipt_sha256": "98aaa5f90abb434694a26a0599d8bcc6cf6301c35c7aa1befa6de98b00567776",
+   "subject_digest_equals_carrier_pin": true,
+   "unpublished_kinds": {
+    "symlink": 263
+   }
+  },
+  "V2": {
+   "chunk_handler": "squashfs_v4_be",
+   "committed_after_json_sha256": "ab761fba0cd78946a1efcd1a007380dce0abfda406cbf3c60e1953d85590770b",
+   "gap_kinds": {
+    "depth-limited": 1,
+    "unpublished-entry": 85
+   },
+   "match": true,
+   "run_json_receipt_sha256": "ab761fba0cd78946a1efcd1a007380dce0abfda406cbf3c60e1953d85590770b",
+   "subject_digest_equals_carrier_pin": true,
+   "unpublished_kinds": {
+    "symlink": 85
+   }
+  },
+  "receipts_hold_only_paths_sizes_digests": {
+   "after_json_strings_gt_2000_chars": 0,
+   "files_row_fields": [
+    "analysis_depth",
+    "mime_type",
+    "original_file_range",
+    "path",
+    "relative_path",
+    "reported_sha256",
+    "runtime_address",
+    "sha256",
+    "size"
+   ],
+   "nonregular_tsv_columns": "relative_path, kind, link_target",
+   "oracle_tsv_columns": "relative_path, sha256, size",
+   "run_json_strings_gt_2000_chars": 0
+  }
+ },
+ "schema": "r40w2-c1chain-repro-v1",
+ "toolchain_identity": {
+  "sasquatch_v4be": {
+   "installed_sha256": "fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6",
+   "match": true,
+   "receipt_sha256": "fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6",
+   "version_line": "unsquashfs version 4.5.1 (2022/03/17)"
+  },
+  "unblob": {
+   "installed_shim_sha256": "0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09",
+   "match": true,
+   "receipt_sha256": "0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09",
+   "shim_resolves_to": "/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob",
+   "version": "26.6.4"
+  }
+ }
+}

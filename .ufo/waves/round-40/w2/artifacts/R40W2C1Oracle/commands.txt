@@ -1,0 +1,25 @@
+S=/fast/scratch/hyaku/kaidoku-r40/R40W2C1Oracle
+export TMPDIR="$S"; cd "$S"
+
+# 1. vendor carriers rebuilt from the pinned chain (never committed; licence)
+python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-40/fetch-vendor.py \
+  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 7fce308631a8b457d6b7c5a4b39a923c4e9a49de \
+  --cache "$S/cache" --image-cache "$S/imagecache"          # exit 0, both ok:true
+
+# 2. frozen reader, --layout avm, all four carriers, diff vs committed tables
+git -C .../kaidoku-shokunin show 7fce308...:tools/round-40/sqfs-list.py > reader/sqfs-list.py
+python3 -I -B reader/sqfs-list.py --layout avm --files out/<ID>/oracle.tsv --nonregular out/<ID>/nonregular.tsv out/<ID>/carrier
+diff corpus/evidence/round-40/c1/<ID>/{oracle,nonregular}.tsv out/<ID>/...
+
+# 3. independent extraction + per-file/per-link comparison
+sasquatch-v4be -f -no-exit-code -n -d x/<ID>/root out/<ID>/carrier
+python3 -I -B cmp.py                # -> sasq-compare.json
+
+# 4. AVM layout identity, ~40 lines of stdlib Python (avm-id2.py)
+python3 -I -B avm-id2.py            # -> avm-id2.json
+
+# 5. discriminators and negative controls (see extractor-negative-controls.txt)
+python3 -I -B gen-squashfs.py --endian {be,avm} --comp gzip x/L2/root {stdbe,marker-be}.sqsh
+python3 -I -B reader/sqfs-list.py --layout avm ... / --layout be ...
+
+# 6. receipts vs oracle reconciliation (rec.py -> receipts.json)

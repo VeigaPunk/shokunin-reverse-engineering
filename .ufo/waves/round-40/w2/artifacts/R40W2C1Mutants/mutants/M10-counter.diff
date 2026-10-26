@@ -1,0 +1,11 @@
+--- pristine/c1-counter.py
++++ mutant/M10-counter.py
+@@ -1030,7 +1030,7 @@
+             elif isinstance(c.get('external'), dict) and carrier_cache and pin:
+                 # external vendor carrier: bytes fetched by fetch-vendor.py; the pin
+                 # (frozen in carriers.json) is still checked below on these bytes.
+-                fp = os.path.join(carrier_cache, pin + '.bin')
++                fp = os.path.join(carrier_cache, pin[:32] + '.bin')
+                 raw = open(fp, 'rb').read() if os.path.isfile(fp) else None
+             else:
+                 raw = None

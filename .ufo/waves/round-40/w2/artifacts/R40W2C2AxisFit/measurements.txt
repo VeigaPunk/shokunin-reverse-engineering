@@ -1,0 +1,96 @@
+# R40W2C2AxisFit — measurement transcript (all commands run 2026-10-26, host linux 7.2.11, python 3.14.8)
+# LANE=/home/vgpnk/Projects/shokunin/kaidoku-shokunin
+# S=/fast/scratch/hyaku/kaidoku-r40/R40W2C2AxisFit   (removed at finish)
+# Frozen bytes used: git show 42c10a58:SKILL.md -> S/SKILL-42c10a58.md
+#                    git show 42c10a58:tools/round-40/sqfs-triage-v2.py -> S/triage.py
+# Scoring harness S/score.py runs that frozen interpreter over the 26 committed
+# envelopes and compares to manifest.json's (label, action) per carrier.
+
+## 1. did the craft section move?
+$ git diff --numstat fa6a8a3f..42c10a58 -- SKILL.md
+33      1       SKILL.md
+$ git log --oneline fa6a8a3f..42c10a58 -- SKILL.md
+7fce3086 round-40: freeze — ... SKILL triage v2 block 19 + entry ...
+=> one commit, 33 insertions / 1 deletion (block 19 = 29 lines incl. marker + actions line + 11 rows;
+   block 18 gains 3 lines of supersession text). v1 table bytes unchanged (receipt binding v1_table_identical).
+
+## 2. base unmoved / measured parsable
+$ python3 -I -B S/triage.py --skill S/SKILL-base.md --json <H01 envelope>
+sqfs-triage-v2: marker '<!-- sqfs-triage-table v2 -->' absent from the craft section
+EXIT=2
+$ python3 -I -B S/triage.py --skill S/SKILL-42c10a58.md --table-only
+marker line: 361  actions line: 362  table line: 363  rules: 11
+EXIT=0
+$ python3 -I -B S/triage.py --selftest
+SELFTEST cases=45 pass=45 fail=0
+EXIT=0
+
+## 3. independent re-run of the counting command (writes only to scratch)
+$ python3 -I -B tools/round-40/c2-counter.py --root $LANE --rev 42c10a58 --freeze 7fce3086 --json-out S/c2-rerun.json
+{"matched": 26, "n": 26, "met_target": true, "bindings_ok": true, "bindings_false": [],
+ "exit_code": 0, "distinct_decisions": 12, "unclassified_expected": 2, "unclassified_observed": 2}
+EXIT=0        (artifact: c2-rerun-at-42c10a58.json)
+
+## 4. how much of the 26/26 is v1 ground, measured ON THE SCORED SET
+$ python3 -I -B S/score.py S/triage.py .ufo/waves/round-40/controls/c2/CTL-C2-2.md
+matched 18/26
+  MISS H05,H06 (clean-empty)  -> unclassified
+  MISS H11,H12 (mixed)        -> escaping-symlink-removed/expect-link-absent
+  MISS H21,H22 (partial)      -> unclassified
+  MISS H25,H26 (out-of-domain)-> no-squashfs-chunk/inspect-input
+rules used: [1..8]
+$ python3 -I -B S/score.py S/triage.py .ufo/waves/round-40/controls/c2/CTL-C2-4.md
+matched 24/26  (misses = the two unclassified envelopes)
+=> new triage decisions in the 26: 3 classes x 2 = 6 envelopes (23%); 2 envelopes (8%) are the
+   abstention pair; 18 (69%) were already decided by the round-39 v1 table.
+   Effective independent decisions: 13 classes (2 replicates each), not 26.
+
+## 5. is the eighth field load-bearing? (mutant table, frozen interpreter, same 26 envelopes)
+   mutant: every `dependencies` cell of the 11 v2 rows set to `*`   (table-nodeps.diff)
+$ python3 -I -B S/score.py S/triage.py S/SKILL-nodeps.md
+matched 26/26     rules used: [1..11]
+=> seven fields decide the whole scored set; `D` never changes a decision on it.
+
+## 6. is the depth content scored at all?
+   mutant: every `cause` cell := "PLACEHOLDER -> PLACEHOLDER", every `source` cell := "-"  (table-placebo.diff)
+$ python3 -I -B S/score.py S/triage.py S/SKILL-placebo.md
+matched 26/26
+=> the counter never reads cause/source beyond "non-empty" and "'->' present" (triage.py:363-371).
+   No cited source and no named error signature is exercised by the MET verdict.
+
+## 7. post-freeze table edit is refused (sandbox clone, fixture identity verified)
+$ git clone -q --shared $LANE $D/lane ; git -C $D/lane rev-parse --show-toplevel  -> $D/lane
+$ (mutate one action cell: mixed-symlinks audit-symlinks -> count-gap; commit as fx)
+$ python3 -I -B tools/round-40/c2-counter.py --root $D/lane --rev <mutant> --freeze 7fce3086
+{"matched": 24, "met_target": false, "bindings_false": ["v2_table_identical"],
+ "frozen_paths_changed": [], "exit_code": 1}
+EXIT=1        (artifact: c2-mutated-table-sandbox.json)
+=> the table bytes are protected by a binding, not by the frozen-path detector (exit 1, not exit 2).
+
+## 8. what the table does on the round's own C1 carriers (real committed after-receipts)
+$ for id in V1 V2 L1 L2; do python3 -I -B S/triage.py --skill S/SKILL-42c10a58.md --json corpus/evidence/round-40/c1/$id/after.json; done
+V1 unclassified row=None  H=squashfs_v4_be G=depth-limited,unpublished-entry BE=n/a SR=no P=697
+V2 unclassified row=None  H=squashfs_v4_be G=depth-limited,unpublished-entry BE=n/a SR=no P=8
+L1 unclassified row=None  H=squashfs_v4_be G=depth-limited,unpublished-entry BE=n/a SR=no P=7
+L2 unclassified row=None  H=squashfs_v4_be G=depth-limited,unpublished-entry BE=n/a SR=no P=6
+=> gap-kind matching is exact-set equality (triage.py:604 frozenset(values) == payload), and the
+   frozen C1 gap rule permits one depth-limited gap, so the designed C1 profile cannot match any
+   specific row. Disclosed in the entry's Limits ("not covered: ... depth-limited envelopes").
+
+## 9. combined gap set: wrong label AND wrong action (synthetic, same feature extractor)
+   input: H11 (mixed: G={unpublished-entry}, SR=yes, P=5) + one `extractor-failure` gap
+$ python3 -I -B S/triage.py --skill S/SKILL-42c10a58.md --json S/syn-partial-mixed.json
+label=escaping-symlink-removed action=expect-link-absent row=8 G=extractor-failure,unpublished-entry SR=yes P=5
+   (+ one `depth-limited` gap: same answer)
+=> a partial extraction failure is routed to "expect the link absent" and the salvage instruction
+   is lost. Not disclosed anywhere; no selftest case has a multi-kind gap set (the mixed fixture
+   K5/K6 is asserted to have G == ['unpublished-entry'] in `c_mixed_before_escaping`).
+
+## 10. pre-seen answers at the freeze
+$ git log --format='%H %cI' --diff-filter=A -- .ufo/waves/round-40/w1/artifacts/R40C2HeldoutGen/dev-run
+7fce308631a8b457d6b7c5a4b39a923c4e9a49de 2026-10-26T16:13:52-03:00
+$ .ufo/waves/round-40/controls/c2-dev-scores.json  -> controls["ADOPTED:SKILL.md"] = {matched: 26, meets_target: true}
+$ .ufo/waves/round-40/w1/artifacts/R40C2HeldoutGen/interpreter-vs-generator.txt
+  "interpreter vs generator: 26/26 (label, action) pairs agree"
+=> committed in the freeze commit: the adopted table already answered all 26 dev envelopes / 13 classes.
+   The held-out run is a fresh-byte re-observation of the same 13 decisions, not an unseen-decision test.

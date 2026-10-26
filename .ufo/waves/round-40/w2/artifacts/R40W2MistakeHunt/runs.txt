@@ -1,0 +1,234 @@
+# environment
+$ python3 -V
+Python 3.14.8
+$ unblob --version
+26.6.4
+$ sasquatch-v4be -version
+unsquashfs version 4.5.1 (2022/03/17)
+copyright (C) 2022 Phillip Lougher <phillip@squashfs.org.uk>
+$ node -v
+v24.21.0
+$ git -C LANE rev-parse HEAD
+0b15c8b2c593b7954efda92249ef3fa895c79f99
+$ python3 -c "import sys;print(sys.version)"
+3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+
+# MH-1  one path helper, two domains (publication + gap resolution)
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher frozen --oracle
+V1 matcher=frozen control=none published=697 nonregular=381 hits=0 [] | oracle=697/697
+V2 matcher=frozen control=none published=8 nonregular=95 hits=0 [] | oracle=8/8
+L1 matcher=frozen control=none published=7 nonregular=13 hits=0 [] | oracle=7/7
+L2 matcher=frozen control=none published=6 nonregular=10 hits=1 ['firmware.bin_extract/usr/bin/busy<-bin/busy'] | oracle=6/6
+exit=1
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher exact --oracle
+V1 matcher=exact control=none published=697 nonregular=381 hits=0 [] | oracle=697/697
+V2 matcher=exact control=none published=8 nonregular=95 hits=0 [] | oracle=8/8
+L1 matcher=exact control=none published=7 nonregular=13 hits=0 [] | oracle=7/7
+L2 matcher=exact control=none published=6 nonregular=10 hits=0 [] | oracle=6/6
+exit=0
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher frozen --control materialised --ids L2
+L2 matcher=frozen control=materialised published=8 nonregular=10 hits=3 ['firmware.bin_extract/usr/bin/busy<-bin/busy', 'firmware.bin_extract/bin/busy<-bin/busy', 'firmware.bin_extract/usr/bin/ls<-usr/bin/ls']
+exit=0
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher exact --control materialised --ids L2
+L2 matcher=exact control=materialised published=8 nonregular=10 hits=2 ['firmware.bin_extract/bin/busy<-bin/busy', 'firmware.bin_extract/usr/bin/ls<-usr/bin/ls']
+exit=0
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher exact --control deeper --ids L2
+L2 matcher=exact control=deeper published=8 nonregular=10 hits=0 []
+exit=0
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher frozen --control wrong-root --oracle --ids L2
+L2 matcher=frozen control=wrong-root published=6 nonregular=10 hits=1 ['nested/wrong-root/firmware.bin_extract/usr/bin/busy<-bin/busy'] | oracle=6/6
+exit=1
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher exact --control wrong-root --oracle --ids L2
+L2 matcher=exact control=wrong-root published=6 nonregular=10 hits=0 [] | oracle=0/6
+exit=0
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher frozen --gaps
+V1 gaps matcher=frozen control=none gaps=264 accepted=263 []
+V2 gaps matcher=frozen control=none gaps=86 accepted=85 []
+L1 gaps matcher=frozen control=none gaps=3 accepted=2 []
+L2 gaps matcher=frozen control=none gaps=3 accepted=2 []
+exit=0
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher exact --gaps
+V1 gaps matcher=exact control=none gaps=264 accepted=263 []
+V2 gaps matcher=exact control=none gaps=86 accepted=85 []
+L1 gaps matcher=exact control=none gaps=3 accepted=2 []
+L2 gaps matcher=exact control=none gaps=3 accepted=2 []
+exit=0
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher frozen --gaps --control bogus-gap --ids L2
+L2 gaps matcher=frozen control=bogus-gap gaps=4 accepted=3 ["firmware.bin_extract/usr/bin/busy<-['bin/busy']"]
+exit=1
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh1-suffix-domain.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --matcher exact --gaps --control bogus-gap --ids L2
+L2 gaps matcher=exact control=bogus-gap gaps=4 accepted=2 []
+exit=0
+
+# MH-2  candidate reservation (a pick is not a reserved input)
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh2-candidate-reservation.py --reserved /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/c1/carriers.json --scan /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40SrcAvmVendor.md
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorScout/candidates.tsv
+pin     V1   334e56dfba6a /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorScout/candidates.tsv
+pin     V2   3948449d8970 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorScout/candidates.tsv
+pin     V2   cacc6461ba49 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorScout/candidates.tsv
+pin     V2   3948449d8970 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorScout/image-sha256.txt
+pin     V1   334e56dfba6a /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1Reader/validation-matrix.tsv
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1Reader/layout-facts.md
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1Reader/commands.txt
+pin     V1   334e56dfba6a /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1AvmWriter/probe-v1-be.txt
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1AvmWriter/genuine-images.txt
+pin     V1   334e56dfba6a /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1AvmWriter/genuine-images.txt
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40SrcAvmVendor/row.md
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40SrcAvmVendor/fetched.sha256
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40CL6Receipts/r39-w2-status.json
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorV1/provenance.json
+pin     V1   334e56dfba6a /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorV1/provenance.json
+pin     V1   ac4098bd11a7 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorV1/provenance.json
+pin     V1   ac4098bd11a7 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorV1/superblock.json
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorV1/emit.py
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorV1/CARVE.md
+pin     V1   ac4098bd11a7 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorV1/CARVE.md
+pin     V1   ac4098bd11a7 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorV1/SHA256SUMS.txt
+pin     V1   ac4098bd11a7 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorV1/carrier-v1-be.sqsh.REMOVED-by-L1.sha256
+pin     V1   ac4098bd11a7 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40Sentinel/06-repo-size-lfs.txt
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40Sentinel/09-carriers-and-identity.txt
+pin     V1   334e56dfba6a /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40Sentinel/09-carriers-and-identity.txt
+pin     V1   ac4098bd11a7 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40Sentinel/09-carriers-and-identity.txt
+pin     V1   f518ce6baa05 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1ReconWrap/carrier-screen.tsv
+reserved=4 hits=29 fatal=0
+exit=0
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh2-candidate-reservation.py --reserved /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/rig-draft-7430.json --scan /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts
+pin     V2-draft-7430 3dd6940c3aea /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorScout/candidates.tsv
+pin     V2-draft-7430 b919a6a218a5 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorScout/candidates.tsv
+pin     V2-draft-7430 3dd6940c3aea /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorScout/image-sha256.txt
+pin     V2-draft-7430 3dd6940c3aea /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorScout/carve.sh
+pin     V2-draft-7430 b919a6a218a5 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1VendorScout/carve.sh
+run     V2-draft-7430 b919a6a218a5 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1ReconGaps/env-7430-member-d1.json.gz
+pin     V2-draft-7430 3dd6940c3aea /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1ReconGaps/vendor-scan.tsv
+pin     V2-draft-7430 b919a6a218a5 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1ReconGaps/vendor-scan.tsv
+pin     V2-draft-7430 3dd6940c3aea /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1ReconGaps/image-pins.txt
+reserved=1 hits=9 fatal=1
+exit=1
+
+# MH-3  report placement / duplicate authority
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh3-report-placement.py --wave /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1
+seat-identity              R40ConnSibling                             w1/R40ConnSibling.md declares Seat: R40ConnSibling-2
+report-at-artifacts-root   artifacts/R40SrcAvmVendor.md               a report-shaped md sits at the artifacts root
+duplicate-report           artifacts/R40SrcAvmVendor.md               byte-identical to ['w1/R40SrcAvmVendor.md']
+report-at-artifacts-root   artifacts/R40SrcReaOps.md                  a report-shaped md sits at the artifacts root
+duplicate-report           artifacts/R40SrcReaOps.md                  byte-identical to ['w1/R40SrcReaOps.md']
+duplicate-report           artifacts/R40ConnSibling-2/R40ConnSibling.md byte-identical to ['w1/R40ConnSibling.md']
+dir=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1 findings=6
+exit=1
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh3-report-placement.py --wave /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1 --fixture-move /fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/fx-w1
+dir=/fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/fx-w1 findings=0
+exit=0
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh3-report-placement.py --wave /fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/fx-w1
+missing-report             R40SrcFreetz                               registry member has no w1/R40SrcFreetz.md
+dir=/fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/fx-w1 findings=1
+exit=1
+
+# MH-4  recipe fit: fill byte x compressor (zero fill vs 0xFF)
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh4-recipe-fit.py --work /fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/mh4 --shapes s1,s2,s3,h1,h2 --fills 00 --comps gzip,xz --expect partial-body-failure
+s1-gzip-00         target=zz.bin  fill=00 blocks=1 size=1500  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+s1-xz-00           target=zz.bin  fill=00 blocks=1 size=1500  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+s2-gzip-00         target=zz.bin  fill=00 blocks=2 size=7093  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+s2-xz-00           target=zz.bin  fill=00 blocks=2 size=7093  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+s3-gzip-00         target=zz.bin  fill=00 blocks=3 size=9000  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+s3-xz-00           target=zz.bin  fill=00 blocks=3 size=9000  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+h1-gzip-00         target=zz.bin  fill=00 blocks=1 size=3100  -> handler=squashfs_v4_be failed=False files=2 gaps=[] fits(partial-body-failure)=False (extraction_failed False)
+h1-xz-00           target=zz.bin  fill=00 blocks=1 size=3100  -> handler=squashfs_v4_be failed=False files=2 gaps=[] fits(partial-body-failure)=False (extraction_failed False)
+h2-gzip-00         target=zz.bin  fill=00 blocks=2 size=7093  -> handler=squashfs_v4_be failed=False files=2 gaps=[] fits(partial-body-failure)=False (extraction_failed False)
+h2-xz-00           target=zz.bin  fill=00 blocks=2 size=7093  -> handler=squashfs_v4_be failed=False files=2 gaps=[] fits(partial-body-failure)=False (extraction_failed False)
+runs=10 not_fit=4
+exit=1
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh4-recipe-fit.py --work /fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/mh4 --shapes s1,s2,s3,h1,h2 --fills ff --comps gzip,xz --expect partial-body-failure
+s1-gzip-ff         target=zz.bin  fill=ff blocks=1 size=1500  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+s1-xz-ff           target=zz.bin  fill=ff blocks=1 size=1500  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+s2-gzip-ff         target=zz.bin  fill=ff blocks=2 size=7093  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+s2-xz-ff           target=zz.bin  fill=ff blocks=2 size=7093  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+s3-gzip-ff         target=zz.bin  fill=ff blocks=3 size=9000  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+s3-xz-ff           target=zz.bin  fill=ff blocks=3 size=9000  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+h1-gzip-ff         target=zz.bin  fill=ff blocks=1 size=3100  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+h1-xz-ff           target=zz.bin  fill=ff blocks=1 size=3100  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+h2-gzip-ff         target=zz.bin  fill=ff blocks=2 size=7093  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+h2-xz-ff           target=zz.bin  fill=ff blocks=2 size=7093  -> handler=squashfs_v4_be failed=True files=2 gaps=['extractor-failure'] fits(partial-body-failure)=True 
+runs=10 not_fit=0
+exit=0
+
+# MH-5  vendor-restricted payload pins
+fixture sha256 a084f7d6a958af4de32d40660a62ed40644dc69b1d1127a3c43963c2d4ef5e99
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh5-vendor-bytes.py --rig /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/rig-vendor-fixture.json --root /fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/fx-vendor
+tree         PINNED a084f7d6a958af4d /fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/fx-vendor/artifacts/R40C1VendorV1/carrier-v1-be.sqsh
+pins=1 candidates=1 fatal=1
+exit=1
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh5-vendor-bytes.py --rig /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/rig-vendor-fixture.json --root /fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/fx-vendor
+pins=1 candidates=0 fatal=0
+exit=0
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh5-vendor-bytes.py --rig /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/rig-vendor-pins.json --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --git
+pins=2 candidates=0 fatal=0
+exit=0
+fixture repo ready: c1ad9bf
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/mh5-vendor-bytes.py --rig /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w2/artifacts/R40W2MistakeHunt/rig-vendor-fixture.json --root /fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/fx-git --git
+tree         PINNED a084f7d6a958af4d /fast/scratch/hyaku/kaidoku-r40/R40W2MistakeHunt/fx-git/carrier-v1-be.sqsh
+git          PINNED a084f7d6a958af4d c83c893eb946665496c6be90f6e28055369304fc
+pins=1 candidates=2 fatal=2
+exit=1
+
+# lane state at the time of these runs
+ M SKILL.md
+?? .ufo/waves/round-40/r40-w1-status.json
+?? .ufo/waves/round-40/w2.ready
+?? .ufo/waves/round-40/w2.ready.dispatched
+?? .ufo/waves/round-40/w2/R40W2Assim.md
+?? .ufo/waves/round-40/w2/R40W2C1AxisFit.md
+?? .ufo/waves/round-40/w2/R40W2C1Chain.md
+?? .ufo/waves/round-40/w2/R40W2C1Fabricate.md
+?? .ufo/waves/round-40/w2/R40W2C1Gaps.md
+?? .ufo/waves/round-40/w2/R40W2C1L2FalseNeg.md
+?? .ufo/waves/round-40/w2/R40W2C1Oracle.md
+?? .ufo/waves/round-40/w2/R40W2C1PatchReview.md
+?? .ufo/waves/round-40/w2/R40W2C1Refreeze.md
+?? .ufo/waves/round-40/w2/R40W2C1Rescore.md
+?? .ufo/waves/round-40/w2/R40W2C1SuffixAudit.md
+?? .ufo/waves/round-40/w2/R40W2C2AxisFit.md
+?? .ufo/waves/round-40/w2/R40W2C2CounterMutants.md
+?? .ufo/waves/round-40/w2/R40W2C2EntryReview.md
+?? .ufo/waves/round-40/w2/R40W2C2IndepEval.md
+?? .ufo/waves/round-40/w2/R40W2C2InterpMutants.md
+?? .ufo/waves/round-40/w2/R40W2C2RegenA.md
+?? .ufo/waves/round-40/w2/R40W2C2RegenB.md
+?? .ufo/waves/round-40/w2/R40W2C2Rescore.md
+?? .ufo/waves/round-40/w2/R40W2C2TableReview.md
+?? .ufo/waves/round-40/w2/R40W2Census.md
+?? .ufo/waves/round-40/w2/R40W2ConnLedger.md
+?? .ufo/waves/round-40/w2/R40W2ConnRouted.md
+?? .ufo/waves/round-40/w2/R40W2DepthCount.md
+?? .ufo/waves/round-40/w2/R40W2HarmCheck.md
+?? .ufo/waves/round-40/w2/R40W2Lesson.md
+?? .ufo/waves/round-40/w2/R40W2ReproL.md
+?? .ufo/waves/round-40/w2/R40W2ReproV1.md
+?? .ufo/waves/round-40/w2/R40W2ReproV2.md
+?? .ufo/waves/round-40/w2/R40W2Scorecard.md
+?? .ufo/waves/round-40/w2/R40W2Sentinel.md
+?? .ufo/waves/round-40/w2/R40W2Separability.md
+?? .ufo/waves/round-40/w2/R40W2SrcReopen.md
+?? .ufo/waves/round-40/w2/artifacts/

@@ -1,0 +1,29 @@
+L2 nonregular_unpublished_ok false positive — repro (commit: c1-counter.py same_rel / nonregular_published)
+
+Receipt published file:      firmware.bin_extract/usr/bin/busy  (regular file, oracle row usr/bin/busy, sha e28f81fc…)
+Nonregular table row:        bin/busy  symlink  /usr/bin/busy
+
+Current predicate (suffix match):
+  candidate.endswith('/' + rel)
+  'firmware.bin_extract/usr/bin/busy'.endswith('/bin/busy') -> True   # FALSE POSITIVE
+
+Fixed predicate (exact after extract-root prefix strip):
+  rel_suffix('firmware.bin_extract/usr/bin/busy') = 'usr/bin/busy'
+  'usr/bin/busy' == 'bin/busy' -> False                              # passes
+
+Why the receipt is correct (c1-at-42c10a58.json L2 block):
+  oracle_files 6, oracle_hits 6, oracle_hits_ok true
+  gaps_ok true: depth-limited x1 (structural) + unpublished-entry x2 (bin/busy, usr/bin/ls)
+  chunks_ok true: one squashfs_v4_be chunk, extraction_failed false
+  handler_ok true, layout_ok true, subject_pin_ok true, projection_ok true (projection_diff [])
+  nonregular_kinds [dir, symlink]; no published symlink path in the receipt
+  -> the only failing clause is nonregular_unpublished_ok, from suffix over-match
+
+Carrier construction (tools/round-40/mk-l-carriers.py:56-77):
+  'usr/bin/busy': stream('L2/busy', 40000)   # regular file
+  'usr/bin/ls': 'busy'                        # in-tree relative symlink
+  'bin/busy': '/usr/bin/busy'                 # absolute symlink
+=> the L2 carrier doubles as a permanent regression fixture for the fix.
+
+Evidence: l1/scores/c1-at-42c10a58.json : 132-203 (L2 block), 347 (carriers_matched 3);
+corpus/evidence/round-40/c1/L2/{after.json,nonregular.tsv,oracle.tsv}.

@@ -1,0 +1,17 @@
+diff --git 1/a/tools/round-40/c1-counter.py 2/b/tools/round-40/c1-counter.py
+index 6a9fc13..a81cad1 100755
+--- 1/a/tools/round-40/c1-counter.py
++++ 2/b/tools/round-40/c1-counter.py
+@@ -637,9 +637,11 @@ def same_rel(candidate, rel):
+     extraction is faithful. A path suffix is not a path: the candidate is
+     resolved against its chunk extract root and compared for equality, so a
+     deeper file can neither publish a non-regular entry nor stand in for an
+     oracle row."""
+-    return bool(rel) and bool(candidate) and extract_rel(candidate) == rel
++    return bool(candidate) and bool(rel) and (candidate == rel
++                                              or candidate.endswith('/' + rel)
++                                              or extract_rel(candidate) == rel)
+ 
+ 
+ def published(env):
+     nr = env.get('normalized_result') or {}

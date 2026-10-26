@@ -1,0 +1,25 @@
+diff --git 1/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C2HeldoutGen/heldout-gen-v2.py 2/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-40/heldout-gen-v2.py
+index 0c7c4b68..ac8c853a 100755
+--- 1/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C2HeldoutGen/heldout-gen-v2.py
++++ 2/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-40/heldout-gen-v2.py
+@@ -148,7 +148,7 @@ ACTION_SETS = {
+         'unclassified': 'not-comparable',
+     },
+ }
+-DEFAULT_ACTION_SET = 'tabledraft'
++DEFAULT_ACTION_SET = 'interp'  # L1 freeze binding: the SKILL v2 table uses the interp vocabulary
+ NO_MATCH_TOKEN = 'none'
+ ACTIONS_LINE_TAG = '<!-- sqfs-triage-actions:'
+ ACTIONS = ACTION_SETS[DEFAULT_ACTION_SET]
+@@ -223,8 +223,10 @@ RECIPES = {
+                                    symlinks=(), corruption='zero-id-table'),
+     # The extractor ran with -be, wrote every file before the damaged one, then
+     # failed: published files > 0.  R39-CL3 D1.
++    # L1 freeze fix (dry run df4fef39 H22): a zeroed single-block xz file extracted clean,
++    # so the partial recipe is pinned to gzip (an all-zero block is never a gzip stream).
+     'partial-body-failure': dict(label='partial-body-failure',
+-                                 endian='be', arm='after', comp='k',
++                                 endian='be', arm='after', comp='gzip',
+                                  tree='random', content='pattern',
+                                  symlinks=(), corruption='partial'),
+     'no-squashfs-chunk': dict(label='no-squashfs-chunk',
