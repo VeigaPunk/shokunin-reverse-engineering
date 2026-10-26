@@ -1,0 +1,36 @@
+# evidence-id recompute under the rea-agents 6.5.0 rule
+# rule: ev_<sha256(canonical(semanticProjection(evidence)))>; semanticProjection/canonicaliser lifted from
+#   rea-agents/dist/cli-runtime/reconstructionObligationLedgerSchemas-Bao0xMr-.js (computeEvidenceId l.557, semanticProjection l.536, digestCanonicalValue l.30)
+# script: evid.mjs (this directory); digestCanonicalValue called from the shipped bundle after init_canonicalDigest()
+
+{"file":"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c1/K5/after.json","stored":"ev_b69020cd9e023a45af295839c18b0ccb349241af8fe166b764beda2ba9d4e309","recomputed":"ev_b69020cd9e023a45af295839c18b0ccb349241af8fe166b764beda2ba9d4e309","match":true}
+{"file":"/fast/scratch/hyaku/kaidoku-r39/R39W2ReproK5/scratch/mine_data.json","stored":"ev_939f3ce934eb7df9fa5d1c71f3d86e4c0e6ac427640caa22c791bf9bb5d418e2","recomputed":"ev_939f3ce934eb7df9fa5d1c71f3d86e4c0e6ac427640caa22c791bf9bb5d418e2","match":true}
+{"file":"/fast/scratch/hyaku/kaidoku-r39/R39W2ReproK5/scratch/mine2_data.json","stored":"ev_2ff6dbd57e6fbb66c3ebb70dbbc8db83ac4dc9c9fddeaf50da593fa2e64465fe","recomputed":"ev_2ff6dbd57e6fbb66c3ebb70dbbc8db83ac4dc9c9fddeaf50da593fa2e64465fe","match":true}
+
+# committed artifacts vs the original run artifacts still present in l1 scratch
+\$ sha256sum /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/K5-out/{after,run}.json corpus/evidence/round-39/c1/K5/{after,run}.json
+d66f80936608eb02787d7a710042379e20909b85fc55e3f80755feee61858f3a  /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/K5-out/after.json
+6cf2fb9c7693e35b8a2fd84a3572e9faed40ddd2624d83a6c06881fffac57663  /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/K5-out/run.json
+d66f80936608eb02787d7a710042379e20909b85fc55e3f80755feee61858f3a  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c1/K5/after.json
+6cf2fb9c7693e35b8a2fd84a3572e9faed40ddd2624d83a6c06881fffac57663  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c1/K5/run.json
+
+\$ cmp ...
+after.json: byte-identical
+run.json: byte-identical
+
+\$ stat original artifacts (mtime vs commit time 2026-10-26T14:18:32-03:00)
+/fast/scratch/hyaku/kaidoku-r39/l1/c1runs/K5-out/after.json mtime=2026-10-26 14:17:10.623653276 -0300 size=35151
+/fast/scratch/hyaku/kaidoku-r39/l1/c1runs/K5-out/run.json mtime=2026-10-26 14:17:10.650361133 -0300 size=6187
+
+# my two independent runs (this seat)
+e8dfe67a840a75eb5edd3d7218d7ed1877c0b69e131a37a8864a36e583e30617  /fast/scratch/hyaku/kaidoku-r39/R39W2ReproK5/scratch/out.json
+7ea5164058ecfa307801354356be4039731b6df5d98e099dbb3b54ea440b52c4  /fast/scratch/hyaku/kaidoku-r39/R39W2ReproK5/scratch/out2.json
+run1 stderr bytes: 0  run2 stderr bytes: 0
+out ok=True meta={"command": "extract-firmware", "duration": "2356ms"} handlers=['squashfs_v4_be'] files=10 gaps=2 coverage=partial evidence_id=ev_939f3ce934eb7df9fa5d1c71f3d86e4c0e6ac427640caa22c791bf9bb5d418e2 subject=5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228
+out2 ok=True meta={"command": "extract-firmware", "duration": "2550ms"} handlers=['squashfs_v4_be'] files=10 gaps=2 coverage=partial evidence_id=ev_2ff6dbd57e6fbb66c3ebb70dbbc8db83ac4dc9c9fddeaf50da593fa2e64465fe subject=5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228
+{"file":"/fast/scratch/hyaku/kaidoku-r39/R39W2ReproK5/scratch/mine3_data.json","stored":"ev_fd82c58affa5d2e3e3251e244915557f541ed87cd88eb4de1ad611821790cc6b","recomputed":"ev_fd82c58affa5d2e3e3251e244915557f541ed87cd88eb4de1ad611821790cc6b","match":true}
+
+## run3 = re-run with the carrier copied as carrier.sqsh (same basename as the frozen path)
+envelope sha256: 987afcd5c39a0be02fd233476114f7463bbf259db8fb9234d2bb030a107e6be7  bytes: 31311
+whole-document diff vs committed after.json after normalising only run-local values (scratch/tmp paths, blob ids, evidence id, meta duration): 0 residual diffs
+=> committed after.json is byte-for-byte reproducible modulo run-local identifiers

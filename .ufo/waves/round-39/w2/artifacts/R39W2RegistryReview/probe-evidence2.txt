@@ -1,0 +1,47 @@
+## r37 c1-counter probes (row: --selftest without args -> 2; placeholder -> 1 FileNotFoundError make_fixture :323; scoring at base -> 1 TypeError load_oracle :93)
+c1-counter.py: error: the following arguments are required: --root, --rev, --freeze, --pkg65
+no-args EXIT=2
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/kaidoku-r37/selftest/green/corpus/knowledge/2026-10-26-r37-be-squashfs-v4.md'
+placeholder EXIT=1
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-37/c1-counter.py", line 93, in load_oracle
+    parts = line.split('\t')
+TypeError: a bytes-like object is required, not 'str'
+scoring EXIT=1
+
+## harness usage probes
+unknown carrier KZ
+r37-unknown-carrier EXIT=1  (row 2-list says this is 2; undeclared-1 note says 1)
+usage: tools/round-37/c1-run.sh before|after K OUTDIR [SCRATCH]
+r37-bad-mode EXIT=2
+tools/round-38/c1-run.sh: line 24: 1: mode
+r38-missing-arg EXIT=1
+usage: tools/round-38/c1-run.sh {before|after|oracle} CARRIER OUTDIR [SCRATCH]
+r38-bad-mode EXIT=2
+
+## r39 c1-run.sh refusals
+c1-run.sh: SCRATCH /tmp/foreign-scratch lacks a /kaidoku-r39/ segment: a receipt written from it fails the R39-C1 counter's run_provenance_ok clause (parameters.output_directory is hashed into the evidence id). Use the default scratch, or set C1_ALLOW_FOREIGN_SCRATCH=1 for a dev run.
+foreign-scratch EXIT=2
+          C1_ALLOW_FOREIGN_SCRATCH=1 (permit a SCRATCH without a /kaidoku-r39/ segment)
+bad-mode EXIT=2
+
+## r39 c1-run.sh after+oracle on K1 (entry runs as stated)
+after EXIT=0
+receipt_written True exit 0 prov_seg True
+oracle EXIT=0
+link-to-hello	../hello.txt	escaping
+
+## r37 c1-run.sh after on K1 (entry runs as stated)
+r37-after EXIT=0
+after-run.json
+after.json
+
+## gen-controls c1-1 (row: counter_exit 1, kill false, exit 0)
+{"control": "c1-1", "counter_exit": 1, "kill": false}
+gc EXIT=0
+
+## adversarial sqfs-triage envelopes (row: 1 only for failed --selftest)
+/fast/scratch/hyaku/kaidoku-r39/R39W2RegistryReview/adv1.json	clean
+adv1 EXIT=0
+sqfs-triage: /fast/scratch/hyaku/kaidoku-r39/R39W2RegistryReview/adv3.json: not a JSON object
+adv3 EXIT=2

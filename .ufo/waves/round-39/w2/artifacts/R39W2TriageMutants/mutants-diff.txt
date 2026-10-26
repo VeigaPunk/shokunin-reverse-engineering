@@ -1,0 +1,113 @@
+== BE-any-to-all ==
+  OLD "        be = 'no'\n        for cmd in commands:\n            if '-be' in (command_tokens(cmd) or []):\n                be = 'yes'\n                break"
+  NEW "        be = 'yes'\n        for cmd in commands:\n            if '-be' not in (command_tokens(cmd) or []):\n                be = 'no'\n                break"
+== BE-first-cmd-only ==
+  OLD "        for cmd in commands:\n            if '-be'"
+  NEW "        for cmd in commands[:1]:\n            if '-be'"
+== BE-invert-yes-no ==
+  OLD "        be = 'no'\n        for cmd in commands:"
+  NEW "        be = 'yes'\n        for cmd in commands:"
+== BE-na-to-no ==
+  OLD "    if not commands:\n        be = 'n/a'"
+  NEW "    if not commands:\n        be = 'no'"
+== BE-substring ==
+  OLD "            if '-be' in (command_tokens(cmd) or []):"
+  NEW "            if '-be' in str(cmd):"
+== BE-token-prefix ==
+  OLD "            if '-be' in (command_tokens(cmd) or []):"
+  NEW "            if any(t.startswith('-be') for t in (command_tokens(cmd) or [])):"
+== CMD-dedup-drop ==
+  OLD '        if tokens and names_sasquatch(tokens) and cmd not in commands:'
+  NEW '        if tokens and names_sasquatch(tokens):'
+== D-last-wins ==
+  OLD '            if isinstance(dep, str):\n                dependencies.add(dep)'
+  NEW '            if isinstance(dep, str):\n                dependencies = {dep}'
+== D-nonstr-included ==
+  OLD "        for dep in _as_list(gap.get('dependencies')):\n            if isinstance(dep, str):\n                dependencies.add(dep)"
+  NEW "        for dep in _as_list(gap.get('dependencies')):\n            dependencies.add(dep)"
+== G-first-kind-only ==
+  OLD '            gap_kinds.add(kind)\n        for dep'
+  NEW '            if not gap_kinds:\n                gap_kinds.add(kind)\n        for dep'
+== G-nonstr-included ==
+  OLD "        kind = gap.get('kind')\n        if isinstance(kind, str):\n            gap_kinds.add(kind)"
+  NEW "        kind = gap.get('kind')\n        gap_kinds.add(kind)"
+== GD-first-gap-only ==
+  OLD '            gap_kinds.add(kind)\n        for dep'
+  NEW '            gap_kinds.add(kind)\n            break\n        for dep'
+== H-exact-v4be ==
+  OLD "and handler.startswith('squashfs'):"
+  NEW "and handler == 'squashfs_v4_be':"
+== H-lower ==
+  OLD "and handler.startswith('squashfs'):"
+  NEW "and handler.lower().startswith('squashfs'):"
+== H-no-filter ==
+  OLD "if isinstance(handler, str) and handler.startswith('squashfs'):"
+  NEW 'if isinstance(handler, str):'
+== H-prefix-squash ==
+  OLD "and handler.startswith('squashfs'):"
+  NEW "and handler.startswith('squash'):"
+== P-bool ==
+  OLD "        'P': len(_as_list(nr.get('files'))),"
+  NEW "        'P': bool(_as_list(nr.get('files'))),"
+== P-plus-unpublished ==
+  OLD "        'P': len(_as_list(nr.get('files'))),"
+  NEW "        'P': len(_as_list(nr.get('files'))) + len(_as_list(nr.get('unpublished_entries'))),"
+== P-unpublished-swap ==
+  OLD "        'P': len(_as_list(nr.get('files'))),"
+  NEW "        'P': len(_as_list(nr.get('unpublished_entries'))),"
+== RM-exact-subset ==
+  OLD '    return frozenset(values) == payload'
+  NEW '    return payload >= frozenset(values)'
+== RM-exact-superset ==
+  OLD '    return frozenset(values) == payload'
+  NEW '    return payload <= frozenset(values)'
+== RM-fnmatch-equals ==
+  OLD "        if not any(fnmatch.fnmatchcase(value, payload) for value in feat['H']):"
+  NEW "        if not any(value == payload for value in feat['H']):"
+== RM-fnmatch-nocase ==
+  OLD 'fnmatch.fnmatchcase(value, payload)'
+  NEW 'fnmatch.fnmatch(value, payload)'
+== RM-gt0-loose ==
+  OLD "    if files == '>0' and feat['P'] <= 0:"
+  NEW "    if files == '>0' and feat['P'] < 0:"
+== RM-hnone-inverted ==
+  OLD "    if kind == 'none':\n        if feat['H']:\n            return False"
+  NEW "    if kind == 'none':\n        if not feat['H']:\n            return False"
+== RM-last-match ==
+  OLD 'def classify(rules, feat):\n    for rule in rules:\n        if rule_matches(rule, feat):\n            return rule\n    return None'
+  NEW 'def classify(rules, feat):\n    last = None\n    for rule in rules:\n        if rule_matches(rule, feat):\n            last = rule\n    return last'
+== RM-none-inverted ==
+  OLD "    if kind == 'none':\n        return not values"
+  NEW "    if kind == 'none':\n        return bool(values)"
+== RM-star-false ==
+  OLD "    if kind == 'any':\n        return True"
+  NEW "    if kind == 'any':\n        return False"
+== RM-zero-loose ==
+  OLD "    if files == '0' and feat['P'] != 0:"
+  NEW "    if files == '0' and feat['P'] < 0:"
+== SQ-exact-name ==
+  OLD "        if token.rsplit('/', 1)[-1].startswith('sasquatch'):"
+  NEW "        if token.rsplit('/', 1)[-1] == 'sasquatch':"
+== SQ-no-basename ==
+  OLD "        if token.rsplit('/', 1)[-1].startswith('sasquatch'):"
+  NEW "        if token.startswith('sasquatch'):"
+== SQ-substring ==
+  OLD "        if token.rsplit('/', 1)[-1].startswith('sasquatch'):"
+  NEW "        if 'sasquatch' in token:"
+== SQ-v4be-only ==
+  OLD "        if token.rsplit('/', 1)[-1].startswith('sasquatch'):"
+  NEW "        if token.rsplit('/', 1)[-1].startswith('sasquatch-v4be'):"
+== SR-diagnostics-only ==
+  OLD "    if symlink == 'no':\n        for found in _iter_dicts(data.get('raw_result')):\n            if found.get('__typename__') == SYMLINK_TYPENAME:\n                symlink = 'yes'\n                break\n"
+  NEW '    # mutant: raw_result SR fallback removed\n'
+== SR-invert ==
+  OLD "    symlink = 'no'\n    for diag in _as_list(nr.get('diagnostics')):"
+  NEW "    symlink = 'yes'\n    for diag in _as_list(nr.get('diagnostics')):"
+== SR-raw-only ==
+  OLD "    for diag in _as_list(nr.get('diagnostics')):\n        report = diag.get('report') if isinstance(diag, dict) else None\n        if isinstance(report, dict) and report.get('__typename__') == SYMLINK_TYPENAME:\n            symlink = 'yes'\n            break\n"
+  NEW '    # mutant: diagnostics SR scan removed\n'
+== SR-substring ==
+  OLD "if isinstance(report, dict) and report.get('__typename__') == SYMLINK_TYPENAME:"
+  NEW "if isinstance(report, dict) and SYMLINK_TYPENAME in str(report.get('__typename__')):"
+  OLD "            if found.get('__typename__') == SYMLINK_TYPENAME:"
+  NEW "            if SYMLINK_TYPENAME in str(found.get('__typename__')):"

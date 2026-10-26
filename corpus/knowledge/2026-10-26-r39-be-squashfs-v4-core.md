@@ -32,10 +32,11 @@ as metadata only and REA records one `unpublished-entry` gap for it; a removed l
 the producer side, with source lines, is in `corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md`
 (Symlinks paragraph). "No extraction gap" is therefore the wrong success test for any image holding an
 in-tree link; the right test is "gaps equal the in-tree link set" (round 38's stop,
-`corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md`).
+`corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md`; the little-endian holding is
+`corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md`).
 
-**Preconditions and failure signatures.** Without `sasquatch-v4be` on the child `PATH` the same carriers
-publish nothing and carry `missing-extractor-dependency` naming `sasquatch-v4be` (round-38 before-arms).
+**Preconditions and failure signatures.** Without `sasquatch-v4be` on the child `PATH`, K1–K4
+publish nothing (no K5/K6 before-arm was run) and carry `missing-extractor-dependency` naming `sasquatch-v4be` (round-38 before-arms).
 An image whose `mkfs_time` equals `bytes_used` loses `-be` and fails; see the triage entry above.
 
 **Limits.** Six carriers, four written by this lane's own generator (no third-party BE v4 writer is

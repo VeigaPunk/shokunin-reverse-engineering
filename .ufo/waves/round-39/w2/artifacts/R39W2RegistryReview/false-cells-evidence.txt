@@ -1,0 +1,24 @@
+## F1 evidence: registry-immutable.sh bad revisions (row claims: git's own code 128, undeclared -> could-not-evaluate)
+--- bad BASE rev (0000000...) vs good rev 52b0eb29 ---
+fatal: path 'corpus/SOURCES.md' exists on disk, but not in '0000000000000000000000000000000000000000'
+S001 row deleted (append-only)
+S002 row deleted (append-only)
+S003 row deleted (append-only)
+...
+EXIT=1
+--- good base a2f64e1d vs bad REV rev (0000000...) ---
+fatal: path 'corpus/SOURCES.md' exists on disk, but not in '0000000000000000000000000000000000000000'
+S001 row deleted (append-only)
+S002 row deleted (append-only)
+EXIT=1
+
+## F2 evidence: mk-carriers undeclared exit 3 on unwritable --out
+mk-carriers: no carriers given (pass --spec FILE and/or 4-tuples)
+EXIT=2
+(note: --spec /dev/null parses to zero tuples -> Bad -> 2; the 3 path needs a valid tuple, shown below)
+mk-carriers: X carrier escapes --root: /fast/scratch/hyaku/kaidoku-r39/R39W2RegistryReview/gs.sqsh
+EXIT=2
+## F2 evidence (corrected): mk-carriers.py undeclared exit 3 on unwritable --out
+$ mk-carriers.py --root LANE --out <unwritable>/m.json K2 <lane carrier/oracle/symlinks>
+mk-carriers: cannot write /fast/scratch/hyaku/kaidoku-r39/R39W2RegistryReview/nowrite/m.json: [Errno 13] Permission denied
+EXIT=3   (row declares only 0 and 2)

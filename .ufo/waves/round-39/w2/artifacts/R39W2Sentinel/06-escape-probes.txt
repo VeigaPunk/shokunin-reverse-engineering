@@ -1,0 +1,40 @@
+# escaping-symlink probes for K5/K6 src trees (read-only host reads; content withheld)
+2026-10-26T14:37:46-03:00
+
+## host permissions of the two escape targets
+/etc/shadow mode=600 owner=root
+/etc/passwd mode=644 owner=root
+
+## A. depth-preserved copy (cp -a of the whole tree) keeps links inert
+islink: True readlink: ../../../../etc/passwd
+realpath: /fast/scratch/hyaku/etc/passwd exists: False
+
+copy root = $S/K6src, link dir = $S/K6src/data (2 components below the root). 4x .. lands two levels above the copy root,
+at /fast/scratch/hyaku -> nonexistent. The copy preserves the in-image relation (in the image, data/../../../.. is also two
+levels above the image root), so a faithful copy keeps the link pointing OUTSIDE the tree.
+
+## B. hazard probe: a BARE link lifted into a dir at depth<=3 (as any naive 'cp -a link dest/' would)
+passwd-link -> /etc/passwd exists: True
+   READABLE: 64B sample sha256[:16]= 7092cbe64ac6f123
+shadow-link -> /etc/shadow exists: True
+   read error: PermissionError Permission denied
+
+=> K6's /etc/passwd target becomes readable the moment the BARE link is placed at depth<=3;
+   K5's /etc/shadow target stays unreadable even then (0600 root).
+
+## C. shared clone reproduces links as links; targets stay inside the clone and are absent
+lrwxrwxrwx 1 vgpnk vgpnk 22 Oct 26 14:37 clone/corpus/evidence/round-39/c1/K5/src/usr/share/demo/escape -> ../../../../etc/shadow
+lrwxrwxrwx 1 vgpnk vgpnk 22 Oct 26 14:37 clone/corpus/evidence/round-39/c1/K6/src/data/escape-deep -> ../../../../etc/passwd
+../../../../etc/shadow | realpath: /fast/scratch/hyaku/kaidoku-r39/R39W2Sentinel/clone/corpus/evidence/round-39/c1/K5/etc/shadow | exists: False
+../../../../etc/passwd | realpath: /fast/scratch/hyaku/kaidoku-r39/R39W2Sentinel/clone/corpus/evidence/round-39/etc/passwd | exists: False
+clone status lines: 0
+
+## D. REA receipts: escaping links are removed, never published
+K5 published 10 files; any escape/link path published? []
+   gaps: [('firmware.bin_extract/usr/share/demo/link-blob', 'unpublished-entry'), ('firmware.bin_extract/usr/share/demo/link-notes', 'unpublished-entry')]
+   diagnostics: ['MaliciousSymlinkRemoved']
+   unpublished: [('firmware.bin_extract/usr/share/demo/link-blob', 'symlink'), ('firmware.bin_extract/usr/share/demo/link-notes', 'symlink')]
+K6 published 8 files; any escape/link path published? []
+   gaps: [('firmware.bin_extract/a/b/link-in', 'unpublished-entry')]
+   diagnostics: ['MaliciousSymlinkRemoved', 'MaliciousSymlinkRemoved']
+   unpublished: [('firmware.bin_extract/a/b/link-in', 'symlink')]

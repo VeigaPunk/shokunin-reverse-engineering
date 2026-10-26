@@ -1,0 +1,30 @@
+# three committed round-38 registry-immutable receipts replayed under the landed bytes
+# pairs pinned by .ufo/waves/round-39/w1/artifacts/R39CL2Selftests/parity-all.sh:100
+case at-final(expect 0) rc=0 stdout=[]
+case at-0fc61133(expect 1) rc=1 stdout=[S110 changed columns: 6]
+case base-vs-base(expect 0) rc=0 stdout=[]
+
+# unknown revision (could-not-evaluate path) - landed bytes
+rc=1  deleted-lines=117  first-lines:
+fatal: path 'corpus/SOURCES.md' exists on disk, but not in 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
+S001 row deleted (append-only)
+S002 row deleted (append-only)
+
+# unknown revision - round-38 bytes (a2f64e1d:tools/round-38/registry-immutable.sh, sha256 2595a397...)
+rc=0  stdout=[fatal: path 'corpus/SOURCES.md' exists on disk, but not in 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef']
+
+# root commit b3669e60 (valid rev without corpus/SOURCES.md)
+landed rc=1 deleted-lines=117
+round-38 rc=0 stdout=[fatal: path 'corpus/SOURCES.md' exists on disk, but not in 'b3669e60f6dee601bab48cf152455cbf224e32d3']
+
+# fixture proof: round-38 bytes vs landed bytes on deletion and reorder
+# fixture repo under $S/fx.XXXX (git init), rows S001..S003, then delete S003, then swap S001/S002
+# toplevel=/fast/scratch/hyaku/kaidoku-r39/R39W2Census/fx.oS9y
+base-registry-immutable.sh deletion rc=0 out=[]
+base-registry-immutable.sh reorder rc=0 out=[]
+registry-immutable.sh deletion rc=1 out=[S003 row deleted (append-only)]
+registry-immutable.sh reorder rc=1 out=[S003 row deleted (append-only)
+S001 / S002 row reordered (append-only)]
+
+# base tool sha256: 2595a3970f5ccade5a7d73a378214f1213b16c21b66686d7b345b1e50314d47c
+# landed tool sha256: b3ea8fc7e36fa8be0e9dfb98e540b95c3919db65c82d134dc1c7c2973817b669

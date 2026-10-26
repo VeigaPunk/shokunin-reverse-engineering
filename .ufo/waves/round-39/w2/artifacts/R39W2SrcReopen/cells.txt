@@ -1,0 +1,29 @@
+S118 cells=11 status=mined opened=2026-10-26 recheck=on-release
+  ANCHOR: tag 26.6.4 = commit 1fcc7a0a584a70a96c31f5a276c20944d199a089; HTTP 200, 4129 B, sha256 1bb498119429ed80ae29caf9772d2b6210c22b6a8a2c8beb6cfea94550bcd23a, equal to the installed copy; lines 79-87 remove an unsafe link and report it, lines 73-77 re-root absolute targets, lines 88-91 rewrite kept links relative; docstring "either removed it it attempts to traverse outside of the extraction directory or rewritten to be fully portable"
+  TEACHES: An escaping symlink is removed with a report and leaves no gap; an in-tree or absolute target is kept as a link
+  USED-BY: corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md
+  RAWPIPES=12 backslash-pipe=False
+
+S119 cells=11 status=mined opened=2026-10-26 recheck=on-release
+  ANCHOR: tarball sha256 531717a06e92ca651aab52691190f916fac044272c01f875e22c5e293218e699, integrity sha512-C6BG7LyrAdR74mSjertM6PrxJkcNZ2bfQNOJornPo9erDEp2tyPRVYPnV5Yodr+1RqewCQla68WulXlVnveD+A== equal to `npm view` and to S080; all 1574 dist files equal the installed copy; `dist/domain/firmware/firmwareAnalysis.js:84-91` six gap kinds, `:100` "Extractor executables named by the producer; empty when it named none."; `dist/firmware/FirmwarePublication.js:68-75,301-308` non-file entries become `unpublished-entry`
+  TEACHES: Read gap kind, dependency name and diagnostics together; a dependency row suppresses the failure row for the same chunk
+  USED-BY: corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md
+  RAWPIPES=12 backslash-pipe=False
+
+S120 cells=11 status=mined opened=2026-10-26 recheck=on-release
+  ANCHOR: tag 26.6.4 = commit 1fcc7a0a584a70a96c31f5a276c20944d199a089; report.py sha256 2329783fc645de8aae94b82443277bceb6ceac968549ff65917c7b2d454cc9ee (406 lines), extractors/command.py sha256 8ae7d2a3980b80b25274d2351a724631be40c79bc8a2da3be14dae2bf09f85af, both equal to the installed copy; report.py:91-98 "Describes an error when failed to run the extraction command"; command.py:101-102 returns only `[self._executable]`
+  TEACHES: The failed argv is recorded only on a non-zero exit, and a missing-binary report names the one executable the chosen extractor needed
+  USED-BY: corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md
+  RAWPIPES=12 backslash-pipe=False
+
+S121 cells=11 status=mined opened=2026-10-26 recheck=on-release
+  ANCHOR: tag sasquatch-v4.5.1-6 = commit 15573bf46c671c8ed23e8c0c50e6187e0c8d0b62; unsquashfs.c 4619 lines sha256 ece42b66f37ba67707c2c51b47b643c027232153705f59d238da79958a54cb40, lines 4389-4400 `-be` sets the swap flag; `debian/rules` lines 15-18 build the tree twice, the second as "CFLAGS=-DFIX_BE dh_auto_build" copied to sasquatch-v4be; installed binaries sha256 ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754 and fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6
+  TEACHES: sasquatch-v4be reads big-endian v4 only when told `-be`; without the flag it misreads a standard-BE body
+  USED-BY: corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md
+  RAWPIPES=12 backslash-pipe=False
+
+S122 cells=11 status=mined opened=2026-10-26 recheck=on-release
+  ANCHOR: tag 26.6.4 = commit 1fcc7a0a584a70a96c31f5a276c20944d199a089; opened 2026-10-26T17:09:05Z, HTTP 200, 27989 B, sha256 87d4dc9a51bc4e92ee410fba77dfcf88fb32266e58e1e6be0ea70bfe44320745, equal to the installed copy; lines 34-39 `basedir.joinpath(path).resolve().relative_to(basedir.resolve())`, False on ValueError
+  TEACHES: A link escapes when its resolved target leaves the extraction directory; `..` is not clamped at the root
+  USED-BY: corpus/knowledge/2026-10-26-r39-be-squashfs-v4-core.md
+  RAWPIPES=12 backslash-pipe=False

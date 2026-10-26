@@ -1,0 +1,35 @@
+# R39W2ReproK1 commands and outputs (scratch S=/fast/scratch/hyaku/kaidoku-r39/R39W2ReproK1, seat R39W2ReproK1)
+## 1 carrier pin
+$ sha256sum carrier.sqsh
+1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e  /fast/scratch/hyaku/kaidoku-r39/R39W2ReproK1/carrier.sqsh
+$ git cat-file -p 49f592427d49d80c0e28891fbe6fb47f244f4b53 | sha256sum
+1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e  -
+
+## 2 REA after-arm
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output $S/carrier.sqsh $S/out1  (exit 0)
+
+## 3 sasquatch-v4be oracle listing (file sha256 size) + links
+FILE empty e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0
+FILE hello.txt 0da249108ff14fde04d11119e2d86dabc20aa18a95f0411164294674d62951ff 29
+LINK link-to-hello ../hello.txt
+FILE bin/run 299001868fb8c02fd431c336c6d058f5558c5dff5b5af5e6fe04b870a6a9cbba 18
+FILE docs/readme.md 98f8c3bfbe995a851e73f06598216243ce5b282d970fff82932a65dafdbdb742 609
+FILE docs/deep/nested/file.dat b7e769c3ad3cb09448d2e517b491ac6d949eb0b508cc0dde0035a4994cddfa21 9000
+
+## 4 unblob published tree vs oracle.tsv
+unblob==oracle: True (5/5 relative_path+sha256+size, escaping link-to-hello absent)
+
+## 5 evidence-id recompute (rea-agents 6.5.0 rule)
+wrap_theirs.json  ev_2ed128... ev_2ed128... ev_2ed128... both
+wrap_mine.json    ev_8e1df3... ev_8e1df3... ev_8e1df3... both
+
+## 6 envelope/data byte arithmetic
+committed after.json = 19238 bytes = jq -c compact 19237 + trailing LF
+recorded envelope bytes 19315 - 19237 = 78 = wrapper; my own run 17252 - 17174 = 78 (identical wrapper)
+
+## 7 byte identity of committed receipts vs surviving run artifacts
+$ cmp K1-out/after.json corpus/evidence/round-39/c1/K1/after.json -> identical (sha 3f450687...)
+$ cmp K1-out/run.json   corpus/evidence/round-39/c1/K1/run.json   -> identical (sha 5761e619...)
+
+## 8 frozen counter at REV (independent run)
+{"bindings": {"carriers_spec_ok": true, "coverage_map_row": true, "entry_present": true, "entry_source_ids": ["S122"], "frontier_note": true, "opened_source_rows": ["S122"], "province_core_row": true, "province_core_section": true, "sourced": true, "symlink_coverage": true, "symlink_coverage_detail": {"escaping": 4, "in_tree": 4, "max_in_tree_per_carrier": 2}, "xz_leg": true, "xz_leg_detail": {"K1": 1, "K2": 1, "K3": 1, "K4": 1, "K5": 1, "K6": 4}}, "carriers_matched": 6, "carriers_unchanged": true, "freeze": "8fcda41c96cbf00b113d2c8e136cc14e7fcaba0b", "frozen_path_changed": [], "met_target": true, "revision": "6fdaf4f162aff156fcef0e52998a5469c64fd6f0"}

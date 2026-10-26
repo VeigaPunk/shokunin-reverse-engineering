@@ -1,0 +1,14 @@
+MATCH  chunk handlers + extraction_failed: [["squashfs_v4_be", false, {"length": 15867, "offset": 0}, {"length": 15867, "offset": 0}]]
+MATCH  files (relative_path, sha256, size): 8
+MATCH  extraction_gaps (kind, relative_path): [["unpublished-entry", "firmware.bin_extract/a/b/link-in"]]
+MATCH  unpublished_entries (relative_path, link_target): [["firmware.bin_extract/a/b/link-in", "../../etc/config.ini"]]
+MATCH  diagnostics __typename__ set: ["MaliciousSymlinkRemoved"]
+MATCH  diagnostics link/target basenames: [["MaliciousSymlinkRemoved", "escape-deep", "passwd"], ["MaliciousSymlinkRemoved", "outside", "outside"]]
+MATCH  coverage / published_bytes: ["partial", 28119]
+MATCH  selection (sha256/len/offset): {"length": 15867, "offset": 0, "sha256": "00152518a3902a1a13892ec4bfd280a258f162d8fdf77260ea2b41f4f482b25b"}
+MATCH  subject digest == carrier pin: {"sha256": "00152518a3902a1a13892ec4bfd280a258f162d8fdf77260ea2b41f4f482b25b"}
+MATCH  operation/provider/engine: ["extract_firmware", {"id": "unblob", "name": "Unblob", "version": "26.6.4"}, {"executable_path": "/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob", "executable_sha256": "0ce7b624f540c2191ff144892584997fe3fb6ab28ab6e
+MATCH  evidence_id recomputes (committed): "ev_d99acec37229d4bc431fb9ad517c6dff58e18e9419de9c4b7d5414b722693ee9"
+MATCH  evidence_id recomputes (repro): "ev_536542aa49dd45e4639d121b01108c95a6137a0a6b9a8019754598e0aef94a95"
+MATCH  depth_limited_paths empty: []
+VERDICT: ALL SEMANTIC FIELDS MATCH

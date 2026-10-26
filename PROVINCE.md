@@ -154,7 +154,7 @@ absorbed.
 - **`.jsc` → source mapping** — Ignition disassembly held; a View8/jsc2js-style
   bytecode-to-source mapper is the next frontier for typora's real app.
 - **sasquatch** — unblob's squashfs recursion extractor (AUR-only); 7z fallback
-  covers the carved-image path today. [2026-10-26: superseded for LE SquashFS v4 — see `## Round-36 additions to Core`; big-endian/AVM stays here. Round 38: standard BE v4 measured through `sasquatch-v4be` (`corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md`), not promoted — R38-C1 honest stop, K2's in-tree symlink leaves an `unpublished-entry` gap.]
+  covers the carved-image path today. [2026-10-26: superseded for LE SquashFS v4 — see `## Round-36 additions to Core`; big-endian/AVM stays here. Round 38: standard BE v4 measured through `sasquatch-v4be` (`corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md`), not promoted — R38-C1 honest stop, K2's in-tree symlink leaves an `unpublished-entry` gap. Round 39: standard BE v4 is Core — see `## Round-39 additions to Core` (`2026-10-26-r39-be-squashfs-v4-core`); AVM-BE and vendor-mangled stay here.]
 - **adb device surface** — 22/24 verbs need a live device/emulator;
   `collect-adb-bugreport` blocks ~10min on dead serial.
 - **Signal/1Password-scale asar analysis** — 1Password's 40.7MB asar + 188MB
@@ -373,7 +373,7 @@ The frozen carriers and original envelopes are in `corpus/evidence/round-32/c1/`
 
 Frontier note, 2026-10-26: the `- **sasquatch** — …` bullet under `### Round-4 frontier (post-unlock)` (`PROVINCE.md:156-157`; `PROVINCE.md:149-150` before this round's 7-line Adjacent addition) is superseded for little-endian SquashFS v4 as measured above; its "(AUR-only)" was wrong as a route statement — unblob's own README documents the Debian-package install (`corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md`). Big-endian/AVM and vendor-mangled images stay Frontier.
 
-Round-38 note, 2026-10-26: the row's aside "`sasquatch-v4be` … unmeasured" is history as of round 38 — standard big-endian v4 was measured through `sasquatch-v4be` on four frozen carriers (`corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md`) and **not promoted**: R38-C1 stopped under its first-freeze counter on K2's `unpublished-entry` symlink gap. Big-endian SquashFS stays Frontier.
+Round-38 note, 2026-10-26: the row's aside "`sasquatch-v4be` … unmeasured" is history as of round 38 — standard big-endian v4 was measured through `sasquatch-v4be` on four frozen carriers (`corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md`) and **not promoted**: R38-C1 stopped under its first-freeze counter on K2's `unpublished-entry` symlink gap. Big-endian SquashFS stays Frontier. Round 39: superseded for standard big-endian v4 by `## Round-39 additions to Core` below (`2026-10-26-r39-be-squashfs-v4-core`).
 
 ## Round-39 additions to Core
 

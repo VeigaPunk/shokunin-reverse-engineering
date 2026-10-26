@@ -1,0 +1,31 @@
+pass absent-empty-root                exit=0 want=0
+FAIL present-exact                    exit=0 want=1
+  stdout='VERDICT ABSENT claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv roots=1 hits=0 dirs_walked=1 skipped_dirs=0 elapsed=0.000s\n'
+  stderr=''
+FAIL present-second-root              exit=0 want=1
+  stdout='VERDICT ABSENT claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv roots=2 hits=0 dirs_walked=2 skipped_dirs=0 elapsed=0.000s\n'
+  stderr=''
+pass multi-root-only-clean-is-absent  exit=0 want=0
+pass substring-decoy                  exit=0 want=0
+pass missing-root                     exit=2 want=2
+pass file-root                        exit=2 want=2
+pass missing-claim                    exit=2 want=2
+pass absolute-claim                   exit=2 want=2
+pass dotdot-claim                     exit=2 want=2
+FAIL nested-roots-dedup               exit=0 want=1
+  stdout='VERDICT ABSENT claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv roots=1 hits=0 dirs_walked=1 skipped_dirs=0 elapsed=0.000s\n'
+  stderr=''
+FAIL duplicate-roots-dedup            exit=0 want=1
+  stdout='VERDICT ABSENT claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv roots=1 hits=0 dirs_walked=1 skipped_dirs=0 elapsed=0.000s\n'
+  stderr=''
+FAIL symlink-hit                      exit=0 want=1
+  stdout='VERDICT ABSENT claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv roots=1 hits=0 dirs_walked=1 skipped_dirs=0 elapsed=0.000s\n'
+  stderr=''
+FAIL unreadable-subtree-incomplete    exit=0 want=2
+  stdout='VERDICT ABSENT claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv roots=1 hits=0 dirs_walked=1 skipped_dirs=0 elapsed=0.000s\n'
+  stderr="NOTE claim is unanchored: no root holds a 'lanes' directory, so ABSENT only covers these roots and not the base the staged path is relative to\n"
+pass same-tree-readable-absent        exit=0 want=0
+pass glob-claim                       exit=2 want=2
+pass unanchored-note                  exit=0 want=0
+pass json-shape                       exit=0 want=0
+SELFTEST cases=18 pass=12 fail=6

@@ -1,0 +1,19 @@
+# generator cross-check: two writer copies rebuild the pinned bytes from the oracle tree
+writers:
+f535e60ee15222a7b0809cf53858e72a82040a519450c562e369224d4fe41188  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-39/gen-squashfs.py
+833a40a98713a64a9afd88d4ff526a036afc0a260624b0c3e352b1471e96a099  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/gen-squashfs.py
+
+rebuilds (tree = sasquatch extraction of the pinned carrier, incl. the 3 symlinks, modes renormalised by the writer):
+5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228  /fast/scratch/hyaku/kaidoku-r39/R39W2ReproK5/regen.sqsh
+5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228  /fast/scratch/hyaku/kaidoku-r39/R39W2ReproK5/regen-w1.sqsh
+5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228  /fast/scratch/hyaku/kaidoku-r39/R39W2ReproK5/x
+tools/round-39 writer: byte-identical
+w1-artifact writer: byte-identical
+
+# pre-freeze carrier artifact in the freeze commit
+\$ sha256sum .ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/carrier.sqsh
+5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/carrier.sqsh
+\$ git rev-parse 8fcda41:.ufo/.../w1/artifacts/R39C1CarrierK5/carrier.sqsh HEAD:...
+ed7e62c29622d2de927db0f6877af9d3540f9d5a
+ed7e62c29622d2de927db0f6877af9d3540f9d5a
+(same blob as corpus/evidence/round-39/c1/K5/carrier.sqsh = ed7e62c29622d2de927db0f6877af9d3540f9d5a)

@@ -1,0 +1,24 @@
+$ python3 -I -B tools/round-39/absence-sweep.py --claim lanes/kaidoku/round7/work/r7-local-measurements.tsv --root /home/vgpnk/Projects/shokunin
+VERDICT ABSENT claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv roots=1 hits=0 dirs_walked=120177 skipped_dirs=0 elapsed=1.434s
+STDERR: NOTE claim is unanchored: no root holds a 'lanes' directory, so ABSENT only covers these roots and not the base the staged path is relative to
+exit=0
+
+$ ... --root /home/vgpnk/Projects/shokunin --root /home/vgpnk/Projects/shokuknow
+HIT /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round7/work/r7-local-measurements.tsv kind=file size=1204 root=/home/vgpnk/Projects/shokuknow
+VERDICT PRESENT claim=lanes/kaidoku/round7/work/r7-local-measurements.tsv roots=2 hits=1 dirs_walked=123045 skipped_dirs=0 elapsed=1.267s
+exit=1
+
+$ ... lead2-avm-branch fleet-only / both-roots
+VERDICT ABSENT claim=lanes/kaidoku/round9/work/lead2-avm-branch.tsv roots=1 hits=0 dirs_walked=120177 skipped_dirs=0 elapsed=1.220s
+STDERR: NOTE claim is unanchored: no root holds a 'lanes' directory, so ABSENT only covers these roots and not the base the staged path is relative to
+exit=0
+
+
+STDERR: usage: absence-sweep.py [-h] [--claim CLAIM] [--root ROOT]
+                        [--max-hits MAX_HITS] [--json] [--selftest]
+absence-sweep.py: error: unrecognized arguments: /home/vgpnk/Projects/shokuknow
+exit=2
+
+$ ... --selftest
+SELFTEST cases=18 pass=18 fail=0
+exit=0

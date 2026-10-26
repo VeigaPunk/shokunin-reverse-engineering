@@ -1,0 +1,38 @@
+exit=0
+stdout:
+skill: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md
+marker line: 333  table line: 334  rules: 8
+1. no-squashfs-chunk
+   handler=('none', None) gap_kinds=('any', None) dependencies=('any', None) be='n/a' symlink_removed='*' files='*'
+   cause: no chunk carries a squashfs handler: unblob's finder dropped a truncated image, a `bytes_used` past the end or a non-4 `s_major` without a report -> check the magic and superblock before rerunning; an empty envelope is not an empty filesystem
+   source: knowledge entry :50-54
+2. dep-missing-be
+   handler=('pattern', 'squashfs_v4_be') gap_kinds=('exact', frozenset({'missing-extractor-dependency'})) dependencies=('exact', frozenset({'sasquatch-v4be'})) be='n/a' symlink_removed='no' files='*'
+   cause: the big-endian handler needed sasquatch-v4be and it was not on the unblob child PATH -> put the sasquatch-v4be 4.5.1 binary on that PATH and rerun into a fresh output directory; the image is unmeasured, not unreadable
+   source: S112 lines 68-69; S120 command.py:101-102
+3. dep-missing-le
+   handler=('pattern', 'squashfs_v4_le') gap_kinds=('exact', frozenset({'missing-extractor-dependency'})) dependencies=('exact', frozenset({'sasquatch'})) be='n/a' symlink_removed='no' files='*'
+   cause: the little-endian handler needed plain sasquatch and it was not on the child PATH -> put sasquatch on that PATH and rerun; sasquatch-v4be alone does not satisfy this gap; an AppImage before-arm still publishes its ELF prefix and the opaque container range
+   source: S112 lines 68-69; S120 command.py:101-102
+4. avm-marker-be-dropped
+   handler=('pattern', 'squashfs_v4_be') gap_kinds=('exact', frozenset({'extractor-failure'})) dependencies=('none', None) be='no' symlink_removed='no' files='0'
+   cause: mkfs_time equals bytes_used, unblob read the AVM marker and omitted -be, so sasquatch-v4be read a standard-BE body with the wrong byte order -> do not treat it as damage; rerun through a PATH wrapper named sasquatch-v4be that appends -be (REA has no flag passthrough)
+   source: S112 lines 44-50; S121
+5. body-extractor-failure
+   handler=('pattern', 'squashfs_v4_be') gap_kinds=('exact', frozenset({'extractor-failure'})) dependencies=('none', None) be='yes' symlink_removed='no' files='0'
+   cause: the extractor ran with -be and still failed, so the image body or header is damaged -> keep the failing command and stderr from diagnostics, compare against a known-good carrier, never patch the envelope into a success
+   source: S120 report.py:91-98; knowledge entry :29-40
+6. escaping-symlink-removed
+   handler=('pattern', 'squashfs_v4_*') gap_kinds=('any', None) dependencies=('any', None) be='n/a' symlink_removed='yes' files='>0'
+   cause: a symlink target resolved outside the extraction root; unblob removed it and reported MaliciousSymlinkRemoved, and REA records no gap for it -> expect the path to be absent; never materialise the link or match it against the regular-file oracle
+   source: S118 extractor.py:79-91
+7. in-tree-symlink-metadata
+   handler=('pattern', 'squashfs_v4_*') gap_kinds=('exact', frozenset({'unpublished-entry'})) dependencies=('none', None) be='n/a' symlink_removed='no' files='>0'
+   cause: a symlink target resolved inside the extraction root; it is kept as metadata and recorded as one unpublished-entry gap per link -> expected, not a failure; count one gap per in-tree link and publish nothing for it
+   source: S119 FirmwarePublication.js:68-75,301-308
+8. clean
+   handler=('pattern', 'squashfs_v4_*') gap_kinds=('none', None) dependencies=('none', None) be='n/a' symlink_removed='no' files='>0'
+   cause: every regular file was published, no gap was recorded and no symlink was removed -> nothing to fix; match files to an oracle by relative-path suffix and sha256
+   source: S119; knowledge entry :11-19
+
+stderr:

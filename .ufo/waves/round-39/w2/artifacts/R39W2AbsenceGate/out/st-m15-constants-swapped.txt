@@ -1,0 +1,21 @@
+pass absent-empty-root                exit=1 want=1
+pass present-exact                    exit=0 want=0
+pass present-second-root              exit=0 want=0
+pass multi-root-only-clean-is-absent  exit=1 want=1
+pass substring-decoy                  exit=1 want=1
+pass missing-root                     exit=2 want=2
+pass file-root                        exit=2 want=2
+pass missing-claim                    exit=2 want=2
+pass absolute-claim                   exit=2 want=2
+pass dotdot-claim                     exit=2 want=2
+pass nested-roots-dedup               exit=0 want=0
+pass duplicate-roots-dedup            exit=0 want=0
+pass symlink-hit                      exit=0 want=0
+pass unreadable-subtree-incomplete    exit=2 want=2
+pass same-tree-readable-absent        exit=1 want=1
+pass glob-claim                       exit=2 want=2
+pass unanchored-note                  exit=1 want=1
+FAIL json-shape                       exit=1 want=1
+  stdout='{\n "anchored_roots": [],\n "claim": "lanes/kaidoku/round7/work/r7-local-measurements.tsv",\n "dirs_walked": 1,\n "elapsed_s": 0.0,\n "entries_seen": 0,\n "exit_code": 1,\n "hits": [],\n "roots": [\n  "/fast/scratch/hyaku/kaidoku-r39/R39W2AbsenceGate/absence-sweep-selftest-oii9gzqk/c3-clean"\n ],\n "skipped_dirs": 0,\n "truncated": false,\n "verdict": "ABSENT"\n}\n'
+  stderr="NOTE claim is unanchored: no root holds a 'lanes' directory, so ABSENT only covers these roots and not the base the staged path is relative to\n"
+SELFTEST cases=18 pass=17 fail=1

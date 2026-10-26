@@ -1,0 +1,43 @@
+diff --git i/.ufo/waves/round-39/w1/R39C1IndepReader.md w/.ufo/waves/round-39/w1/R39C1IndepReader.md
+index e1f698e8..c6983e1b 100644
+--- i/.ufo/waves/round-39/w1/R39C1IndepReader.md
++++ w/.ufo/waves/round-39/w1/R39C1IndepReader.md
+@@ -200,13 +200,21 @@ use fragments (`superblock.fragments == 1`).
+ ## 6. Correction: symlink loops are *kept*, not removed
+ 
+ The draft's symlink rule is two-sided (resolves inside → kept, escapes → removed). A
+-third case exists and behaves like the kept side:
++third case exists and behaves like the kept side (under the runtime measured here, and
++see the version pin below):
+ 
+-* measured: `unblob` 26.6.4's bundled interpreter is Python 3.13.16; on a self-loop
+-  (`loop -> loop`) and a mutual loop (`a -> b`, `b -> a`) `Path.resolve()` returns the
+-  unresolved path instead of raising `RuntimeError` (checked with both the host 3.14.8
+-  and the unblob venv 3.13.16). `is_recursive_link` (`extractor.py:44-48`) therefore
+-  never fires, `is_safe_path` sees an inside path, and the link is kept.
++* measured: `unblob` 26.6.4's bundled interpreter is Python 3.13.16
++  (`~/.local/share/uv/tools/unblob/bin/python3`); on a self-loop (`loop -> loop`) and a
++  mutual loop (`a -> b`, `b -> a`) `Path.resolve()` returns the unresolved path instead
++  of raising `RuntimeError` (checked with both the host 3.14.8 and the unblob venv
++  3.13.16). `is_recursive_link` (`extractor.py:44-48`) therefore never fires,
++  `is_safe_path` sees an inside path, and the link is kept.
++  **This is an interpreter-version dependency, not a SquashFS rule**: on an interpreter
++  whose `Path.resolve()` raises (pre-3.13 behaviour) `is_recursive_link` returns true and
++  `fix_symlink` removes the link as `MaliciousSymlinkRemoved`, flipping the receipt from
++  in-tree/gap to escaping/no-gap. The freeze should pin `unblob` 26.6.4 with its
++  Python 3.13.16 runtime, or keep cycles out of the frozen six — the same carrier
++  classified either way is otherwise an honest-looking evidence flip.
+ * measured end to end: `extractor-probes.txt` — unblob keeps `loop` in D-le-mksq-gzip and
+   `self` in B-be-gzip, with **no** `MaliciousSymlinkRemoved` entry. A kept symlink is
+   published as metadata only, so REA records an `unpublished-entry` gap for it, exactly
+@@ -343,6 +351,10 @@ that coverage only exists in K3/K4 (and in the mksquashfs fixtures).
+   read with the same endian-prefixed `u32` as everything else), but the combination is
+   `[INFERENCE]`, not measured; `mksquashfs` cannot write BE and the lane generator writes
+   no sparse files.
++* **Loop classification is environment-pinned**: measured against unblob 26.6.4 on its
++  bundled Python 3.13.16 (§6). Under an interpreter that raises from
++  `Path.resolve()` on a loop, `is_recursive_link` fires and the same link becomes
++  `escaping`. Both directions are `[INFERENCE]` for other interpreter versions.
+ * **Empty symlink target** is classified `escaping` from source reading
+   (`extractor.py:68-72`, removed with no report) and `[INFERENCE]` from source only: no
+   writer here can create such an entry.

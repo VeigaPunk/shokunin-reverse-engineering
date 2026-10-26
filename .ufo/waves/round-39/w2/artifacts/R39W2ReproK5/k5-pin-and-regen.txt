@@ -1,0 +1,22 @@
+# K5 provenance re-run capture (seat R39W2ReproK5, 2026-10-26T17:32:20Z)
+
+## carrier pin
+5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228  /fast/scratch/hyaku/kaidoku-r39/R39W2ReproK5/x
+5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c1/K5/carrier.sqsh
+26813 bytes
+
+## superblock (BE parse)
+magic b'sqsh' 0x73717368
+inode_count 24 mkfs_time 1700000000
+block_size 4096 fragments 0
+compression 1 block_log 12
+flags 0x0 no_ids 1
+s_major 4 s_minor 0
+root_inode 814 bytes_used 26813
+id_table_start 26805 xattr_table_start 18446744073709551615
+size 26813 (bytes_used == file size, no padding)
+
+## deterministic regeneration from the sasquatch tree
+$ python3 tools/round-39/gen-squashfs.py $S/tree $S/regen.sqsh --endian be --comp gzip
+5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228  /fast/scratch/hyaku/kaidoku-r39/R39W2ReproK5/regen.sqsh
+cmp: byte-identical to the pinned carrier

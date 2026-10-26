@@ -1,0 +1,45 @@
+# cross-claim input audit (read-only, lane bytes)
+
+## 1. carrier/oracle byte disjointness
+C1 pins            : ['K1', 'K2', 'K3', 'K4', 'K5', 'K6'] 6
+C2 manifest pins   : 20 distinct
+pin intersection   : EMPTY
+H carrier bytes matching a C1 pin: NONE
+H files byte-identical to a round-38 C1 file: 0
+H subject digests  : 20 | overlap with round-38 C1 subjects: EMPTY
+
+## 2. textual cross-references
+C2 held-out data referencing round-39/c1 or round-37/c1 : 0
+C1 receipts referencing round-39/c2 / heldout / triage   : 0
+c1-counter.py refs to round-39/c2|sqfs-triage|heldout     : 0
+c1-counter.py refs to SKILL                              : 0
+c2-counter.py refs to round-39/c1|round-37/c1            : 0
+heldout-gen.py refs to round-39/c1|round-37/c1           : 0
+sqfs-triage.py absolute-lane constants (selftest only)   :
+98:LANE = '/home/vgpnk/Projects/shokunin/kaidoku-shokunin'
+99:SELFTEST_ENVELOPES = {
+107:SELFTEST_SKILL = LANE + '/SKILL.md'
+1023:    with open(SELFTEST_SKILL, 'r', encoding='utf-8') as handle:
+1030:    _require(start is not None, 'real-skill: no craft heading in %s' % SELFTEST_SKILL)
+
+## 3. SOURCES row provenance and used-by (column 10)
+S112 cells=11 opened=2026-10-26 used-by=corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md
+S118 cells=11 opened=2026-10-26 used-by=corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md
+S119 cells=11 opened=2026-10-26 used-by=corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md
+S120 cells=11 opened=2026-10-26 used-by=corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md
+S121 cells=11 opened=2026-10-26 used-by=corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md
+S122 cells=11 opened=2026-10-26 used-by=corpus/knowledge/2026-10-26-r39-be-squashfs-v4-core.md
+S112 first mention commit: 3b960fe5 round-38 (attempt 2): C1 claim data (before/after receipts), C2 pointer repair, BE v4 entry (not promoted), assimilated unblob-format-matrix entry, SOURCES S112-S116, QUALITY 79-80 + freeze-drift gate, wave-1 evidence
+S118 first mention commit: 8fcda41c round-39: freeze R39-C1 (BE SquashFS v4 Frontier->Core) and R39-C2 (SKILL triage table, held-out seed = freeze); wave-1 evidence
+S119 first mention commit: 8fcda41c round-39: freeze R39-C1 (BE SquashFS v4 Frontier->Core) and R39-C2 (SKILL triage table, held-out seed = freeze); wave-1 evidence
+S120 first mention commit: 8fcda41c round-39: freeze R39-C1 (BE SquashFS v4 Frontier->Core) and R39-C2 (SKILL triage table, held-out seed = freeze); wave-1 evidence
+S121 first mention commit: 8fcda41c round-39: freeze R39-C1 (BE SquashFS v4 Frontier->Core) and R39-C2 (SKILL triage table, held-out seed = freeze); wave-1 evidence
+S122 first mention commit: 3b960fe5 round-38 (attempt 2): C1 claim data (before/after receipts), C2 pointer repair, BE v4 entry (not promoted), assimilated unblob-format-matrix entry, SOURCES S112-S116, QUALITY 79-80 + freeze-drift gate, wave-1 evidence
+
+## 4. entry citations
+C1 entry  (2026-10-26-r39-be-squashfs-v4-core.md) source: 1
+S122 
+C2 entry  (2026-10-26-r39-sqfs-outcome-triage.md) source ids: S112 S118 S119 S120 S121 
+
+## 5. SKILL.md triage-block identity at HEAD
+table {'bytes': 3086, 'header_ok': True, 'identical': True, 'present': True} bindings_false []

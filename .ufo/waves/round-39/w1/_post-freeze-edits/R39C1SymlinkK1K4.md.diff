@@ -1,0 +1,72 @@
+diff --git i/.ufo/waves/round-39/w1/R39C1SymlinkK1K4.md w/.ufo/waves/round-39/w1/R39C1SymlinkK1K4.md
+index a990f326..f3e0def2 100644
+--- i/.ufo/waves/round-39/w1/R39C1SymlinkK1K4.md
++++ w/.ufo/waves/round-39/w1/R39C1SymlinkK1K4.md
+@@ -113,8 +113,9 @@ Live re-verification on a dev carrier (`evidence/dev-links-envelope.json`, REA 6
+ | `x -> y`, `y -> ../outside.txt` (dev4, chain out) | `x` looks in-tree one-step | **both removed**, 2 WARNINGs | **0 gaps** for `x` and `y` (`evidence/dev4-chain-envelope.json`) |
+ | `p -> q`, `q -> hello.txt` (dev4, chain in) | in-tree | both kept, targets **flattened to `hello.txt`** | 2 gaps with `link_target = hello.txt` |
+ 
+-The last two rows are why §6.7 asks for a chain-free K5/K6: a one-step lexical class is exact for
+-every single-link image and only approximate once one link's target names another link.
++The last two rows are why `classify()` follows an in-image chain to a fixed point before it writes a
++class: a one-step lexical class would label `x` `in-tree` while its receipt has no gap at all, and
++would miss that `p`'s recorded `link_target` is the flattened `hello.txt`.
+ 
+ ## 4. Cross-checks against the upstream unblob fixture (K3/K4 provenance)
+ 
+@@ -161,19 +162,25 @@ appears for absolute targets: `/../out.txt` is removed by unblob but would clamp
+ > (`unblob/extractor.py:fix_symlink` + `unblob/file_utils.py:is_safe_path`), and it is the only
+ > convention under which K1's frozen receipt (removed, zero gaps) is the predicted outcome.
+ 
+-`symlink-tables.py:classify()` is that rule, in 15 lines, with K1/K2 assertions; the counter can
++`symlink-tables.py:classify()` is that rule, in ~30 lines, with K1/K2 assertions; the counter can
+ import or copy it. Freeze K1 as `escaping`, K2 as `in-tree`, K3/K4 as no rows.
+ 
++**One addition the frozen sentence needs.** When the target names another symlink of the same
++image, the same walk is applied to that link, pruned at the first escape: an out-chain makes every
++link pointing into it `escaping` (unblob removes the whole chain), an in-chain ends `in-tree` at the
++final destination, and a cycle is `in-tree` (unblob keeps cycles — `Path.resolve()` no longer raises
++under python ≥ 3.13, so `is_recursive_link()` never fires). Measured on `dev3`/`dev4` (§3, §6.7).
++K1–K4 contain no chain, so this clause changes no row here; it keeps the frozen table exact if a
++K5/K6 ever carries one.
++
+ ## 6. Secondary hazards for the freeze (none of them fatal, all cheap to avoid)
+ 
+ 1. **Absolute targets are re-rooted, not escaped — except when they ascend.** `/hello.txt` is kept
+    but recorded as `link_target: hello.txt`; `/../out.txt` is **removed** (unblob lstrips one `/`,
+    then `..` escapes — measured, `evidence/dev-outcomes.json` `dev2-carrier`). So "absolute =
+    in-tree" holds only for targets that do not literally begin with `..` after the strip; a
+-   `symlinks.tsv` convention that maps every absolute target to `in-tree` is wrong for `/../x`. The
+-   draft does not compare `link_target` to the oracle row, which is correct — do **not** add that
+-   binding if K5/K6 carry absolute targets; if K5/K6 need `link_target` equality, restrict them to
+-   relative targets.
++   `symlinks.tsv` convention that maps every absolute target to `in-tree` is wrong for `/../x`. See
++   §6.8 for the general rule on `link_target`.
+ 2. **`tools/round-37/gen-squashfs.py` silently drops symlinks whose target is an existing
+    directory.** `os.walk` classifies them as `dirnames` and the generator only packs `fnames`
+    (`gen-squashfs.py:59-66`); `a/b/updir -> ../..` never reached the image (8 inodes instead of 9).
+@@ -203,10 +210,20 @@ import or copy it. Freeze K1 as `escaping`, K2 as `in-tree`, K3/K4 as no rows.
+    **kept**, because `Path.resolve()` under unblob's own interpreter (python 3.13.16) returns the
+    unresolved path instead of raising, so `is_recursive_link()` never fires — and `a -> b` is
+    rewritten to a self-loop `a -> a`. Corroborated independently by seat `R39C1IndepReader`.
+-   Consequence: `symlinks.tsv` classes are one-step assertions and are only honest for
+-   chain-free images. K1–K4 are chain-free (0 chains reported by `symlink-tables.py
+-   chain_report()`); a frozen K5/K6 must be chain-free and cycle-free, or the table must resolve
+-   chains and the predicate must state the flattened `link_target` behaviour.
++   Consequence: a one-step class is exact only for chain-free images. `symlinks.tsv` now records
++   the *chain-resolved* class (`symlink-tables.py:classify()` walks an in-image chain to a fixed
++   point, cycle ⇒ `in-tree`), so K5/K6 need no chain-free restriction — but every link that points
++   into a chain must be re-checked after the image is built, because one out-chain link flips the
++   class of all its predecessors. `chain_report()` lists the chains and cycles in a table so that
++   review is mechanical; K1–K4 report none. The cycle class is an **interpreter-version
++   dependency, not a SquashFS rule**: it holds because `Path.resolve()` returns the unresolved path
++   instead of raising under `~/.local/share/uv/tools/unblob/bin/python3` = 3.13.16. Under an
++   interpreter whose `resolve()` raises, `is_recursive_link()` fires and the same link becomes
++   `escaping`/no-gap — so the freeze should pin that runtime (or keep cycles out of K5/K6).
++8. **`link_target` is a derived field, never the image bytes**, in four measured ways: absolute
++   (`/hello.txt` → `hello.txt`), chain (`q` flattened into `p`), cycle (`a -> b` → `a -> a`), and
++   plain relative targets, which are stable. Assert classes and gap paths against the oracle, never
++   `link_target` equality.
+ 
+ ## 7. Sources (rows for `SOURCES.md`, opened 2026-10-26)
+ 

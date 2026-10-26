@@ -1,0 +1,30 @@
+## r37 gen-squashfs determinism (row: two le/gzip runs byte-identical) + magics
+wrote /fast/scratch/hyaku/kaidoku-r39/R39W2RegistryReview/g37a.sqsh 210 bytes, inodes 2
+EXIT=0
+12ab150bd5ba08d37369b093828206f411c402d98756b86de75b91c4a3bd7144  /fast/scratch/hyaku/kaidoku-r39/R39W2RegistryReview/g37a.sqsh
+12ab150bd5ba08d37369b093828206f411c402d98756b86de75b91c4a3bd7144  /fast/scratch/hyaku/kaidoku-r39/R39W2RegistryReview/g37b.sqsh
+be/xz magic: sqsh
+le/gzip magic: hsqs
+
+## r39 gen-squashfs entry (row: 0 image written; 2 argparse)
+wrote /fast/scratch/hyaku/kaidoku-r39/R39W2RegistryReview/gs.sqsh 360 bytes, inodes 5
+EXIT=0
+gen-squashfs.py: error: the following arguments are required: tree, out
+no-args EXIT=2
+
+## r39 sqfs-list entry (row: 0 ok; 2 unreadable) + garbage
+files 2 links 1
+EXIT=0
+sqfs-list: image is 11 bytes, shorter than a superblock
+garbage EXIT=2
+
+## r39 heldout-gen entry + guards (row: 0 written; 1 existing-out/unknown-class/bad-seed)
+entry EXIT=1  carriers=20
+/fast/scratch/hyaku/kaidoku-r39/R39W2RegistryReview/heldout-entry already holds a manifest.json; use a fresh --out
+existing-out EXIT=1
+unknown class(es): nope; known: clean-be, clean-le, escaping-symlink-removed, in-tree-symlink-metadata, dep-missing-be, dep-missing-le, avm-marker-be-dropped, body-extractor-failure, no-squashfs-chunk, version-minor-mismatch
+bad-class EXIT=1
+--seed must be at least 16 hex characters, got 'zzzz'
+bad-seed EXIT=1
+
+NOTE (capture correction): the "r39 heldout-gen entry EXIT=1" line in probe-evidence.txt is the existing-out guard firing because an earlier entry run had already created that --out; the clean entry run (fresh dir, exit 0, 20 carriers) is in mkcarriers-heldout-evidence.txt.

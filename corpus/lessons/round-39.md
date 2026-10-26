@@ -33,6 +33,8 @@ Author verdicts (closure pending):
 | M39-6 | a draft predicate's classification sentence would have failed an honest carrier: "POSIX join against the image root /" clamps `..` and calls K1's escaping link in-tree | `w1/R39C1SymlinkK1K4.md` §5, `w1/R39C1AxisFit.md` (d.0) | wave-1 pre-freeze attack | frozen rule is extraction-root containment (S122 `is_safe_path`, no clamping); `tools/round-39/sqfs-list.py` symlink tables equal the frozen K1/K2 tables |
 | M39-7 | the lane's own carrier writer mis-encoded non-ASCII names and labelled raw LZMA2 as compression id 2 ("xz"), so a carrier called xz exercised no xz decoding | `w1/R39Sentinel.md` 1–2; `w1/R39C1CarrierK5.md` §7; `w1/R39C2HeldoutGen.md` §3 | none | `tools/round-39/gen-squashfs.py`; K6 rebuilt with a compressible file: `sqfs-list.py --inspect` reports compression `xz`, 4 compressed data blocks; the C1 `xz_leg` binding reads the superblock id |
 | M39-8 | a seat's shell fell back to the fleet root and wrote three curl outputs there | `w1/R39SrcSasquatch.md` §8 (self-reported, removed by the seat) | the §3 misroot sweep | `git -C /home/vgpnk/Projects/shokunin status --porcelain` before the report shows no round-39 file |
+| M39-9 | a wave-2 seat wrote its report into the fleet repo (`/home/vgpnk/Projects/shokunin/.ufo/waves/round-39/w2/R39W2HeldReproB.md`): every prompt carried a lane-relative `Report:` trailer and the context's absolute anchor | `w2/R39W2Sentinel.md` F1 | the §3 misroot sweep | moved into the lane (`cmp` equal, sha256 `d37db669430d681e84e8543fbae6fc4c870a23e417158473497d5f13f120482a`), fleet copy deleted; `git -C /home/vgpnk/Projects/shokunin status --porcelain` shows no round-39 file afterwards |
+| M39-10 | two wave-1 seats kept editing their reports and one artifact after the freeze commit had captured them, and one committed carrier was deleted from the worktree | `w2/R39W2Sentinel.md` F2 (edits 14:13:30-14:14:45 after `8fcda41c` at 14:12:51) | none | freeze bytes restored at the original paths; late edits and diffs kept in `.ufo/waves/round-39/w1/_post-freeze-edits/`; `git status --porcelain` on `w1/` empty before the final commit |
 
 ## Gate
 
@@ -46,8 +48,10 @@ Author verdicts (closure pending):
 | S121 | https://raw.githubusercontent.com/onekey-sec/sasquatch/sasquatch-v4.5.1-6/squashfs-tools/unsquashfs.c | 2026-10-26 (`w1/R39SrcSasquatch.md`) | "CFLAGS=-DFIX_BE dh_auto_build" (`debian/rules` lines 15-18 at the same tag) |
 | S122 | https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/file_utils.py | 2026-10-26T17:09:05Z (L1) | "basedir.joinpath(path).resolve().relative_to(basedir.resolve())" (`is_safe_path`, lines 34-39) |
 
-Registry: 117 → 122 rows, appends only; no existing row changed (status, recheck, used-by: none
-old→new). Admitted as sources, all tier A, status `mined`. Rejected candidates: the sasquatch
+Registry: 117 → 122 rows, appends plus one used-by change: S112 used-by
+`corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md` → that entry plus
+`corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md`, which cites S112 (found by `w2/R39W2Census.md`;
+CORPUS rule 2 allows used-by changes; `tools/round-38/registry-immutable.sh` exits 0). Admitted as sources, all tier A, status `mined`. Rejected candidates: the sasquatch
 seat's draft row carried an escaped `\|`, rewritten without pipes; the unblob-reports seat's
 one-row-for-five-files draft was narrowed to `report.py` + `command.py`.
 
@@ -62,7 +66,11 @@ re-grounding. Both reject `avm-image-build-blocker` and `avm-le-variant-reachabi
 refuted by bytes opened this round). Decision: reject those two; defer both admit candidates (flip: one
 entry re-grounded on lane receipts against a real AVM image). Id-collision guard proven on an indented
 fixture (`w1/artifacts/R39AssimAvmScout/`). Quarantine slice: 5 rows, byte-identical to round 38, all
-five verdicts re-opened and held (`w1/R39Quarantine.md`).
+five verdicts re-opened (`w1/R39Quarantine.md`). Correction (`w2/R39W2Quarantine.md`): four hold; S150's
+"refuse (fabrication)" holds only for the register's tested heading — the row's gate quote and second quote
+are present on the live page, so under this prompt's rule (present → adopt with the anchor located) the
+defensible disposition is re-anchor, not refuse. Nothing is appended this round; the flip is recorded for
+the next assimilation round.
 
 ## Corrections to round 38
 
@@ -99,3 +107,20 @@ Append-only; the round-38 text is not rewritten.
 ## Criteria added
 
 - QUALITY 82 (M39-1).
+
+## Wave 2 (39 seats, after the landing)
+
+Both claims reproduce: C1 6/6 and C2 20/20 re-scored at `6fdaf4f1` and `52b0eb29`
+(`w2/R39W2C1Rescore.md`, `w2/R39W2C2Rescore.md`); six independent REA re-runs reproduce every C1 receipt
+(`w2/R39W2ReproK{1..6}.md`), four seats reproduce all 20 held-out envelopes and their labels
+(`w2/R39W2HeldRepro{A,B,C,D}.md`), K5/K6 rebuild byte-for-byte (`w2/R39W2K5K6Rebuild.md`), the held-out set
+regenerates from the freeze seed, and the two claims are separable (`w2/R39W2Separability.md`). Limits found,
+recorded rather than repaired in frozen bytes: a re-minted fabrication reaches 6/6 on the C1 counter
+(`w2/R39W2C1Fabricate.md`, the disclosed limit); a table with no `-be` and no `symlink removed` cell reaches
+16/20, an 8-row table reaches 20/20, and the `cause -> action` column is unscored (`w2/R39W2C2Shortcut.md`,
+`w2/R39W2C2AxisFit.md`); 18 of 39 interpreter mutants and 9 counter mutants survive their detectors
+(`w2/R39W2TriageMutants.md`, `w2/R39W2C2Mutants.md`); two table rows exclude measured outcomes and two causes
+are over-specific (`w2/R39W2C2TableReview.md`, recorded in the triage entry). Repaired in the final commit:
+the SCORECARD round-39 record, PROVINCE `:157`/`:376` pointers, the S112 used-by, the registry-immutable
+registry cell, the BE entry's before-arm wording, M39-9 and M39-10.
+

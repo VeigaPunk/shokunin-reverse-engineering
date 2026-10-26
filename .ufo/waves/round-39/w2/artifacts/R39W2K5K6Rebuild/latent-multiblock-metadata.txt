@@ -1,0 +1,36 @@
+# latent writer limit: 301-file tree -> inode metadata spans 2 blocks
+$ mkdir big; 300 files f000.txt..f299.txt; gen-squashfs.py big big.sqsh --endian be --comp gzip
+300
+sqfs-list: zero-length metadata block at 3097
+reader exit=2
+sqfs-list: zero-length metadata block at 3097
+$ superblock root_ref
+root_ref=0x10a30 block_field=1 offset=2608 inode_table_start=3096 dir_table_start=13932
+inode meta block: stream byte offset 0 size 8192
+inode meta block: stream byte offset 8194 size 2640
+
+# metadata block counts per committed BE carrier (K1,K2,K5,K6 + C2 held-out H*.sqsh where magic=sqsh)
+corpus/evidence/round-39/c2/heldout/H01/carrier.sqsh     size= 66874 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H02/carrier.sqsh     size= 57228 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H03/carrier.sqsh     magic=b'hsqs' (not BE)
+corpus/evidence/round-39/c2/heldout/H04/carrier.sqsh     magic=b'hsqs' (not BE)
+corpus/evidence/round-39/c2/heldout/H05/carrier.sqsh     size= 27081 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H06/carrier.sqsh     size= 72124 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H07/carrier.sqsh     size= 23906 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H08/carrier.sqsh     size= 52954 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H09/carrier.sqsh     size= 56191 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H10/carrier.sqsh     size= 98503 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H11/carrier.sqsh     magic=b'hsqs' (not BE)
+corpus/evidence/round-39/c2/heldout/H12/carrier.sqsh     magic=b'hsqs' (not BE)
+corpus/evidence/round-39/c2/heldout/H13/carrier.sqsh     size= 73710 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H14/carrier.sqsh     size= 44879 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H15/carrier.sqsh     size= 68087 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H16/carrier.sqsh     size= 53248 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H17/carrier.sqsh     size= 98362 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H18/carrier.sqsh     size= 75540 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H19/carrier.sqsh     size= 65324 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c2/heldout/H20/carrier.sqsh     size= 38261 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c1/K5/carrier.sqsh              size= 26813 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-39/c1/K6/carrier.sqsh              size= 15867 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-37/c1/K1/carrier.sqsh              size=  9780 inode_meta_blocks=1 dir_meta_blocks=1
+corpus/evidence/round-37/c1/K2/carrier.sqsh              size=  1606 inode_meta_blocks=1 dir_meta_blocks=1

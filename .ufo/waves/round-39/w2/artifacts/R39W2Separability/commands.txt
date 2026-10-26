@@ -1,0 +1,55 @@
+# exact commands and exit codes (all runs cd $S, HYAKU_SCRATCH=/fast/scratch/hyaku)
+S=/fast/scratch/hyaku/kaidoku-r39/R39W2Separability
+git clone -q --shared /home/vgpnk/Projects/shokunin/kaidoku-shokunin "$S/clone"   # HEAD e40a25df, git status --porcelain 0
+
+C1_INV='python3 -I -B $S/clone/tools/round-39/c1-counter.py --root $S/clone --rev <REV> --freeze 8fcda41c96cbf00b113d2c8e136cc14e7fcaba0b --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents --json-out $S/art/<name>.json'
+C2_INV='python3 -I -B $S/clone/tools/round-39/c2-counter.py --root $S/clone --rev <REV> --freeze 8fcda41c96cbf00b113d2c8e136cc14e7fcaba0b --json-out $S/art/<name>.json'
+
+revs:
+  HEAD          e40a25df3987d881513de581112d2dad30605673
+  freeze        8fcda41c96cbf00b113d2c8e136cc14e7fcaba0b
+  author rev    6fdaf4f162aff156fcef0e52998a5469c64fd6f0
+  state A (C1 landing absent)          bfa22bf0015fd7909eafbe544f50efc65e763b99
+  state B (C2 data absent)             b85e076e38dc73a3aa580ee52817a900115799b6
+  state C (both absent)                b4290e85c5573b9882da9efcb589de6237f89a12
+  state D (C1 carriers+receipts+landing absent) 2cfcf14325c61186677289d7eb82763650b82a24
+  state E (C1 landed; C2 data+entry absent)      868fcf68ed3a1e4f66800ea7e39de3672f73b9bb
+  state F (C1 frozen tool touched)     f21dcef302e39b8c16e6495557f064e931e35210
+  state G (C2 frozen tool touched)     d4dd85dfa353b29db9556b34b278c0a254247f11
+  state H (shared claims file touched) 3689abd3684265d8af012bbc2a2888186629cb80
+
+C1 @ freeze           exit 1  ({carriers_matched:0, met_target:false})
+C2 @ freeze           exit 2  (no_manifest_at_rev)
+C1 @ 6fdaf4f1         exit 0  carriers_matched 6, frozen_path_changed []   (agrees with l1/scores/c1-at-6fdaf4f1.json)
+C2 @ 6fdaf4f1         exit 0  matched 20, bindings_false []                (agrees with l1/scores/c2-at-6fdaf4f1.json)
+C1 @ HEAD             exit 0  carriers_matched 6
+C2 @ HEAD             exit 0  matched 20, triage_table_identical true (3086 B)
+
+C1 @ A  exit 1  carriers_matched 0; receipt_present false per carrier; doc bindings province_core_row/entry_present/sourced/coverage_map_row/frontier_note false
+C2 @ A  exit 0  matched 20, bindings_false [], triage_table_identical true
+C1 @ B  exit 0  carriers_matched 6, frozen_path_changed []
+C2 @ B  exit 2  no_manifest_at_rev
+C1 @ C  exit 1  carriers_matched 0
+C2 @ C  exit 2  no_manifest_at_rev
+C1 @ D  exit 2  frozen_path_changed (17 frozen carrier/oracle/symlink paths)
+C2 @ D  exit 0  matched 20
+C1 @ E  exit 0  carriers_matched 6
+C2 @ E  exit 2  no_manifest_at_rev
+C1 @ F  exit 2  frozen_path_changed ['tools/round-39/c1-counter.py']
+C2 @ F  exit 0  matched 20
+C1 @ G  exit 0  carriers_matched 6
+C2 @ G  exit 2  frozen_path_changed
+C1 @ H  exit 2  frozen_path_changed ['plans/round-39-claims.md']
+C2 @ H  exit 2  frozen_path_changed
+
+# state construction (in the scratch clone only; no lane/fleet VCS write)
+A: git checkout 8fcda41c -- PROVINCE.md corpus/SOURCES.md; delete the 12 round-39 C1 receipts (K1..K6 after.json+run.json), the C1 knowledge entry, and the 3 C1 README lines added by 6fdaf4f1 (coverage row, knowledge row, sasquatch-v4be note)
+B: git rm -r corpus/evidence/round-39/c2
+C: B applied on top of A
+D: A + git rm -r corpus/evidence/round-37/c1 corpus/evidence/round-39/c1
+E: git rm -r corpus/evidence/round-39/c2 corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md
+F: append one docstring marker line to tools/round-39/c1-counter.py
+G: append one docstring marker line to tools/round-39/sqfs-triage.py
+H: append one line to plans/round-39-claims.md
+
+# tooling: none installed or upgraded for this seat (python3 3.x, node v24.21.0, rea-agents 6.5.0 npx cache used read-only)

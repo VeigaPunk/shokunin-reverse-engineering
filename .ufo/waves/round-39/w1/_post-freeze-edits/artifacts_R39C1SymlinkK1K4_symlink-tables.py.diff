@@ -1,0 +1,29 @@
+diff --git i/.ufo/waves/round-39/w1/artifacts/R39C1SymlinkK1K4/symlink-tables.py w/.ufo/waves/round-39/w1/artifacts/R39C1SymlinkK1K4/symlink-tables.py
+index 82e8361e..810f9922 100755
+--- i/.ufo/waves/round-39/w1/artifacts/R39C1SymlinkK1K4/symlink-tables.py
++++ w/.ufo/waves/round-39/w1/artifacts/R39C1SymlinkK1K4/symlink-tables.py
+@@ -19,6 +19,12 @@ verified on live dev carriers (see evidence/dev-links-envelope.json):
+     `MaliciousSymlinkRemoved`; REA records no extraction gap).
+   * Otherwise the link is class `in-tree` (kept as a symlink; REA records one
+     `unpublished-entry` gap + one `unpublished_entries[]` row).
++  * If the resolved path is itself a symlink of the same image, the same walk is
++    applied to it and the chain is followed to a fixed point: escaping anywhere
++    => `escaping` (unblob removes the whole chain); a cycle => `in-tree` (unblob
++    keeps cycles: Path.resolve() returns the unresolved path under python >= 3.13,
++    so is_recursive_link() never raises); otherwise `in-tree` at the final
++    destination, whose recorded link_target is the flattened one.
+ 
+   Do NOT classify with posixpath.normpath / path.posix.normalize / realpath:
+   those clamp a leading '..' at '/', which turns K1's escaping link into
+@@ -219,9 +225,10 @@ def main(argv=None):
+         else:
+             image = os.path.join(lane, ORADIR, k, 'carrier.bin')
+             raw = image_symlinks(image, a.sasquatch)
++        links = dict(raw)
+         rows = []
+         for rel, target in raw:
+-            klass, resolved = classify(rel, target)
++            klass, resolved = classify(rel, target, links)
+             rows.append((rel, target, klass))
+             combined.append((k, rel, target, klass, resolved, receipt_outcome(lane, k)))
+         tables[k] = rows

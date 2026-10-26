@@ -1,0 +1,11 @@
+# full REA path instrumented: strace -f -e trace=execve around
+#   npx -y rea-agents@6.5.0 extract-firmware --format json --full-output <H01 copy> <fresh outdir>
+# PATH began with a pass-through shim dir (arm 'after': $HOME/.local/bin still present)
+808913 execve("$S/shim/sasquatch-v4be", ["sasquatch-v4be", "-be", "-no-exit-code", "-f", "-d", "/fast/scratch/hyaku/kaidoku-r39/"..., "/fast/scratch/hyaku/kaidoku-r39/"...]
+808913 execve("/home/vgpnk/.local/bin/sasquatch-v4be", ["/home/vgpnk/.local/bin/sasquatch"..., "-be", "-no-exit-code", "-f", "-d", "/fast/scratch/hyaku/kaidoku-r39/"..., "/fast/scratch/hyaku/kaidoku-r39/"...]
+
+# the resulting envelope still records NO extractor command for a successful run:
+chunks: [{"handler": "squashfs_v4_be", "extraction_failed": false, "range": {"offset": 0, "length": 66874}}]
+diagnostics: []
+files: 7 coverage: complete
+any "command" with sasquatch in envelope: False

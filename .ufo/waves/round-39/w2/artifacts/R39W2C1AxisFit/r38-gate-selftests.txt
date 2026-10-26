@@ -1,0 +1,13 @@
+# round-38 gate selftests, run in the scratch clone at 6fdaf4f1 (TMPDIR=$S)
+## python3 -I -B tools/round-38/freeze-drift.py --selftest
+case default-path-set: expect exit=1 got 1 PASS
+SELFTEST cases=8 pass=8 fail=0
+exit=0
+## python3 -I -B tools/round-38/intended-doc.py --selftest
+case unknown-revision: expect exit=2 got 2 PASS
+SELFTEST cases=9 pass=9 fail=0
+exit=0
+## bash tools/round-38/registry-immutable.sh --selftest
+case allowed-cells: expect exit=0 got 0 PASS
+SELFTEST cases=5 pass=5 fail=0
+exit=0

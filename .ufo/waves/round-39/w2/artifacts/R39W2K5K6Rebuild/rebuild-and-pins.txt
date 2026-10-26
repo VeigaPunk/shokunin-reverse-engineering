@@ -1,0 +1,15 @@
+# rebuild (from cp -a src)
+$ sha256sum K5-rebuild.sqsh K6-rebuild.sqsh
+5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228  K5-rebuild.sqsh
+00152518a3902a1a13892ec4bfd280a258f162d8fdf77260ea2b41f4f482b25b  K6-rebuild.sqsh
+$ cmp committed rebuild
+K5 cmp: identical
+K6 cmp: identical
+$ sha256sum after touch -d 2001-02-03 + chmod -R go-rwx + umask 077
+5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228  K5-mt.sqsh
+00152518a3902a1a13892ec4bfd280a258f162d8fdf77260ea2b41f4f482b25b  K6-mt.sqsh
+$ git ls-tree 6fdaf4f1 (blob) vs git hash-object working file
+100644 blob ed7e62c29622d2de927db0f6877af9d3540f9d5a	corpus/evidence/round-39/c1/K5/carrier.sqsh
+100644 blob 6894984376e1ecbccac3308e44e8c4cb1db3ef97	corpus/evidence/round-39/c1/K6/carrier.sqsh
+ed7e62c29622d2de927db0f6877af9d3540f9d5a
+6894984376e1ecbccac3308e44e8c4cb1db3ef97

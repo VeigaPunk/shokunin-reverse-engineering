@@ -1,0 +1,182 @@
+exit=0
+stdout:
+{
+  "results": [
+    {
+      "features": {
+        "BE": "n/a",
+        "D": [],
+        "G": [],
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "P": 7,
+        "SR": "no",
+        "commands": []
+      },
+      "label": "clean",
+      "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c2/heldout/H01/envelope.json",
+      "row": [
+        "clean",
+        "squashfs_v4_*",
+        "none",
+        "none",
+        "n/a",
+        "no",
+        ">0",
+        "every regular file was published, no gap was recorded and no symlink was removed -> nothing to fix; match files to an oracle by relative-path suffix and sha256",
+        "S119; knowledge entry :11-19"
+      ],
+      "rule": 8
+    },
+    {
+      "features": {
+        "BE": "n/a",
+        "D": [],
+        "G": [],
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "P": 3,
+        "SR": "yes",
+        "commands": []
+      },
+      "label": "escaping-symlink-removed",
+      "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c2/heldout/H05/envelope.json",
+      "row": [
+        "escaping-symlink-removed",
+        "squashfs_v4_*",
+        "*",
+        "*",
+        "n/a",
+        "yes",
+        ">0",
+        "a symlink target resolved outside the extraction root; unblob removed it and reported MaliciousSymlinkRemoved, and REA records no gap for it -> expect the path to be absent; never materialise the link or match it against the regular-file oracle",
+        "S118 extractor.py:79-91"
+      ],
+      "rule": 6
+    },
+    {
+      "features": {
+        "BE": "no",
+        "D": [],
+        "G": [
+          "extractor-failure"
+        ],
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "P": 0,
+        "SR": "no",
+        "commands": [
+          "sasquatch-v4be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/rea-firmware-WEO0vr/extracted/firmware.bin_extract /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/rea-firmware-WEO0vr/firmware.bin"
+        ]
+      },
+      "label": "avm-marker-be-dropped",
+      "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c2/heldout/H13/envelope.json",
+      "row": [
+        "avm-marker-be-dropped",
+        "squashfs_v4_be",
+        "extractor-failure",
+        "none",
+        "no",
+        "no",
+        "0",
+        "mkfs_time equals bytes_used, unblob read the AVM marker and omitted -be, so sasquatch-v4be read a standard-BE body with the wrong byte order -> do not treat it as damage; rerun through a PATH wrapper named sasquatch-v4be that appends -be (REA has no flag passthrough)",
+        "S112 lines 44-50; S121"
+      ],
+      "rule": 4
+    },
+    {
+      "features": {
+        "BE": "yes",
+        "D": [],
+        "G": [
+          "extractor-failure"
+        ],
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "P": 0,
+        "SR": "no",
+        "commands": [
+          "sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/rea-firmware-OfEMmp/extracted/firmware.bin_extract /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/rea-firmware-OfEMmp/firmware.bin"
+        ]
+      },
+      "label": "body-extractor-failure",
+      "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c2/heldout/H15/envelope.json",
+      "row": [
+        "body-extractor-failure",
+        "squashfs_v4_be",
+        "extractor-failure",
+        "none",
+        "yes",
+        "no",
+        "0",
+        "the extractor ran with -be and still failed, so the image body or header is damaged -> keep the failing command and stderr from diagnostics, compare against a known-good carrier, never patch the envelope into a success",
+        "S120 report.py:91-98; knowledge entry :29-40"
+      ],
+      "rule": 5
+    },
+    {
+      "features": {
+        "BE": "n/a",
+        "D": [],
+        "G": [],
+        "H": [],
+        "P": 0,
+        "SR": "no",
+        "commands": []
+      },
+      "label": "no-squashfs-chunk",
+      "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c2/heldout/H17/envelope.json",
+      "row": [
+        "no-squashfs-chunk",
+        "none",
+        "*",
+        "*",
+        "n/a",
+        "*",
+        "*",
+        "no chunk carries a squashfs handler: unblob's finder dropped a truncated image, a `bytes_used` past the end or a non-4 `s_major` without a report -> check the magic and superblock before rerunning; an empty envelope is not an empty filesystem",
+        "knowledge entry :50-54"
+      ],
+      "rule": 1
+    },
+    {
+      "features": {
+        "BE": "yes",
+        "D": [],
+        "G": [
+          "extractor-failure"
+        ],
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "P": 0,
+        "SR": "no",
+        "commands": [
+          "sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/rea-firmware-mAva8r/extracted/firmware.bin_extract /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/rea-firmware-mAva8r/firmware.bin"
+        ]
+      },
+      "label": "body-extractor-failure",
+      "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c2/heldout/H19/envelope.json",
+      "row": [
+        "body-extractor-failure",
+        "squashfs_v4_be",
+        "extractor-failure",
+        "none",
+        "yes",
+        "no",
+        "0",
+        "the extractor ran with -be and still failed, so the image body or header is damaged -> keep the failing command and stderr from diagnostics, compare against a known-good carrier, never patch the envelope into a success",
+        "S120 report.py:91-98; knowledge entry :29-40"
+      ],
+      "rule": 5
+    }
+  ],
+  "rules": 8,
+  "skill": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md"
+}
+
+stderr:

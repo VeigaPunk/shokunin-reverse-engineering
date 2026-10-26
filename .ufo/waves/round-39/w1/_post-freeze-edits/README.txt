@@ -1,0 +1,1 @@
+Wave-1 seat edits made after the freeze commit 8fcda41c (14:12:51 -03): R39C1IndepReader.md and R39C1SymlinkK1K4.md edited 14:13:30-14:14:45, symlink-tables.py +8/-1, evidence/carrier.sqsh deleted (found by w2/R39W2Sentinel.md F2). The committed (freeze) bytes are restored at the original paths; the late edits are kept here with their diffs. Nothing frozen depended on them.

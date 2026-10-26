@@ -1,0 +1,40 @@
+# independent superblock parse (my code, BE) + xz block validation
+K5-rebuild.sqsh magic b'sqsh' len 26813 sha 5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228
+  inodes=24 mkfs=1700000000 block_size=4096 frags=0 comp_id=1 block_log=12 flags=0x0 ids=1 version=4.0 root_ref=0x32e bytes_used=26813
+  inode_tbl=25457 dir_tbl=26305 id_tbl=26805 frag_tbl=0xffffffffffffffff xattr=0xffffffffffffffff lookup=0xffffffffffffffff
+   REG ino=12 start=96 frag=0xffffffff size=148 blocks=1 compressed_blocks=1 raw_blocks=0 first_xz_hdr=78da3d8d310e
+   REG ino=14 start=227 frag=0xffffffff size=0 blocks=0 compressed_blocks=0 raw_blocks=0 first_xz_hdr=-
+   REG ino=15 start=227 frag=0xffffffff size=34 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   REG ino=13 start=261 frag=0xffffffff size=54 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   REG ino=18 start=315 frag=0xffffffff size=30 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   REG ino=17 start=345 frag=0xffffffff size=58 blocks=1 compressed_blocks=1 raw_blocks=0 first_xz_hdr=78daabe65250
+   REG ino=16 start=402 frag=0xffffffff size=37 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   REG ino=19 start=439 frag=0xffffffff size=5000 blocks=2 compressed_blocks=0 raw_blocks=2 first_xz_hdr=-
+   REG ino=20 start=5439 frag=0xffffffff size=20000 blocks=5 compressed_blocks=0 raw_blocks=5 first_xz_hdr=-
+   REG ino=21 start=25439 frag=0xffffffff size=18 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   type 0 unexpected; stop
+K6-rebuild.sqsh magic b'sqsh' len 15867 sha 00152518a3902a1a13892ec4bfd280a258f162d8fdf77260ea2b41f4f482b25b
+  inodes=21 mkfs=1700000000 block_size=4096 frags=0 comp_id=4 block_log=12 flags=0x0 ids=1 version=4.0 root_ref=0x2d4 bytes_used=15867
+  inode_tbl=14691 dir_tbl=15449 id_tbl=15859 frag_tbl=0xffffffffffffffff xattr=0xffffffffffffffff lookup=0xffffffffffffffff
+   REG ino=11 start=96 frag=0xffffffff size=22 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   REG ino=12 start=118 frag=0xffffffff size=23 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   REG ino=13 start=141 frag=0xffffffff size=13579 blocks=4 compressed_blocks=0 raw_blocks=4 first_xz_hdr=-
+   REG ino=14 start=13720 frag=0xffffffff size=15 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   REG ino=15 start=13735 frag=0xffffffff size=11 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   REG ino=16 start=13746 frag=0xffffffff size=50 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   REG ino=17 start=13796 frag=0xffffffff size=19 blocks=1 compressed_blocks=0 raw_blocks=1 first_xz_hdr=-
+   REG ino=18 start=13815 frag=0xffffffff size=14400 blocks=4 compressed_blocks=4 raw_blocks=0 first_xz_hdr=fd377a585a00
+   type 0 unexpected; stop
+
+# K6 per-block xz verification
+inode 18 size 14400 block sizes [224, 232, 228, 192] (0x01000000 bit clear = compressed)
+  block 0 len=224 magic=fd377a585a00 decompressed=4096 crc32=4925b2a1
+  block 1 len=232 magic=fd377a585a00 decompressed=4096 crc32=ae76b12e
+  block 2 len=228 magic=fd377a585a00 decompressed=4096 crc32=a1e86f31
+  block 3 len=192 magic=fd377a585a00 decompressed=2112 crc32=e6ed827b
+
+# xz --test on the four extracted blocks
+k6-blk0.xz: xz --test exit=0
+k6-blk1.xz: xz --test exit=0
+k6-blk2.xz: xz --test exit=0
+k6-blk3.xz: xz --test exit=0

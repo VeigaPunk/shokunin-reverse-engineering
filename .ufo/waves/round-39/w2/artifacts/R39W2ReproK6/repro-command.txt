@@ -1,0 +1,9 @@
+seat scratch: /fast/scratch/hyaku/kaidoku-r39/R39W2ReproK6
+S=/fast/scratch/hyaku/kaidoku-r39/R39W2ReproK6
+cp <lane>/corpus/evidence/round-39/c1/K6/carrier.sqsh "$S/carrier.sqsh"     # pin verified, see carrier-pin.out
+cd "$S" && REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 \
+  extract-firmware --format json --full-output "$S/carrier.sqsh" "$S/extract" \
+  > "$S/envelope.json" 2> "$S/rea.err"                                       # exit 0, stderr 0 bytes
+sasquatch-v4be -be -no-exit-code -f -d "$S/x" "$S/carrier.sqsh"              # exit 0 -> sasquatch-files.tsv + sasquatch-symlinks.tsv
+unblob --extract-dir "$S/ub-extract" "$S/carrier.sqsh"                        # exit 0 -> unblob-direct.out
+python3 artifacts/R39W2ReproK6/compare.py artifacts/R39W2ReproK6/repro-envelope.json

@@ -1,0 +1,66 @@
+R39W2C1Fabricate — exact commands (all in scratch S=/fast/scratch/hyaku/kaidoku-r39/R39W2C1Fabricate)
+
+Environment: Python 3.14.8, node v24.21.0, npx 11.19.0, git 2.56.0,
+REA 6.5.0 (/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents),
+unblob 26.6.4 sha256 0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09
+(both /home/vgpnk/.local/share/uv/tools/unblob/bin/unblob and /home/vgpnk/.local/bin/unblob).
+Nothing was installed, upgraded or moved.
+
+1. clone (shared) and reset to the author's commit
+   git clone -q --shared /home/vgpnk/Projects/shokunin/kaidoku-shokunin "$S/clone"
+   cd "$S/clone" && git reset -q --hard 6fdaf4f162aff156fcef0e52998a5469c64fd6f0
+
+2. fabricate six receipts, no REA / no unblob / no sasquatch subprocess
+   (harness: lane .ufo/waves/round-39/w1/artifacts/R39C1Controls/_harness/fabricate_receipts.py,
+    mode forge-remint; only subprocess it runs is `node tools/round-27/xpin-attribute.mjs`)
+   cd "$S/clone" && python3 -I -B \
+     .ufo/waves/round-39/w1/artifacts/R39C1Controls/_harness/fabricate_receipts.py \
+     --carriers .ufo/waves/round-39/c1/carriers.json --lane-root "$S/clone" \
+     --mode forge-remint \
+     --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents \
+     --out "$S/fab" \
+     --outdir-base /fast/scratch/hyaku/kaidoku-r39/R39W2C1Fabricate/ctlruns
+   exit 0.  ctlruns/ was never created (the receipts name a path that does not exist).
+
+3. commit over the real receipts
+   for k in K1 K2 K3 K4 K5 K6; do cp "$S/fab/$k/after.json" "corpus/evidence/round-39/c1/$k/after.json"; done
+   git -c user.name=seat -c user.email=seat@local commit -qam "fabricated receipts (no REA)"
+   -> 9d5b60e3371a2504b658f972dadc4a8d47580e2b (parent 6fdaf4f1)
+
+4. score
+   HYAKU_SCRATCH=$S python3 -I -B tools/round-39/c1-counter.py --root "$S/clone" \
+     --rev 9d5b60e3371a2504b658f972dadc4a8d47580e2b \
+     --freeze 8fcda41c96cbf00b113d2c8e136cc14e7fcaba0b \
+     --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents \
+     --json-out "$S/c1-fabricated.json"
+   exit 0; carriers_matched 6; met_target true; all 11 bindings true; frozen_path_changed [].
+
+   control arm (real receipts):
+   same command with --rev 6fdaf4f162aff156fcef0e52998a5469c64fd6f0 --json-out "$S/c1-real.json"
+   exit 0; carriers_matched 6; met_target true.
+
+5. independent extraction (unblob only, no REA), staged as REA stages it (file named firmware.bin)
+   for each carrier: cp <carrier> "$S/stage-$k/firmware.bin"; cd "$S/stage-$k"; \
+     /home/vgpnk/.local/share/uv/tools/unblob/bin/unblob --process-num 1 --depth 3 \
+       --randomness-depth 0 --report report.json --log unblob.log --extract-dir extracted firmware.bin
+   K1 0.87 s wall, exit 0; K2..K6 exit 0.
+   All six stdout banners are byte-identical to raw_result.execution.stdout.text in the committed
+   receipts (K1 from $S/unblob-K1/stdout.txt, K2..K6 from $S/stage-$k/stdout.txt).
+
+6. one REA probe (for blob-id semantics only; not used by the fabricated receipts)
+   cd "$S" && mkdir -p "$S/probe-K4" && \
+   env REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware \
+     --format json --full-output <lane>/corpus/evidence/round-37/c1/K4/carrier.bin "$S/probe-K4/out"
+   exit 0; chunk provider_id 1406648:1; evidence id ev_5d5547cc...
+
+7. blob_id semantics
+   /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/identifiers.py:17
+     return f"{os.getpid()}:{__last_id}"
+   and each run's unblob.log first line carries the same pid= (528604 K1, 373847 K5, 2395811 K6).
+
+8. host PID-allocation rate (calibration for the committed receipts' blob ids)
+   cat /proc/sys/kernel/pid_max        -> 4194304
+   17:32:08Z ns_last_pid 2395721 / 17:32:13Z 2502432  -> 21342 /s
+   17:35:12Z ns_last_pid 1602821 / 17:35:17Z 1757193  -> 30874 /s
+   own unblob pids: 17:30:41 528604, 17:32:09 2395811, 17:33:55 373847,
+                    17:34:40 902530, 17:34:41 917144, 17:34:42 931169

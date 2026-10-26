@@ -1,0 +1,18 @@
+# bash tools/round-38/registry-immutable.sh --selftest
+case append-only: expect exit=0 got 0 PASS
+case in-place-cell: expect exit=1 got 1 PASS
+case row-deletion: expect exit=1 got 1 PASS
+case row-reorder: expect exit=1 got 1 PASS
+case allowed-cells: expect exit=0 got 0 PASS
+SELFTEST cases=5 pass=5 fail=0
+EXIT=0
+
+# python3 -I -B tools/round-38/freeze-drift.py --selftest
+case default-path-set: expect exit=1 got 1 PASS
+SELFTEST cases=8 pass=8 fail=0
+EXIT=0
+
+# python3 -I -B tools/round-38/intended-doc.py --selftest
+case unknown-revision: expect exit=2 got 2 PASS
+SELFTEST cases=9 pass=9 fail=0
+EXIT=0

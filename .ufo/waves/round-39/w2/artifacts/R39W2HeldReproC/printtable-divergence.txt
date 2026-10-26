@@ -1,0 +1,20 @@
+Observation: sqfs-triage.py TABLE_BLOCK (printed by --print-table, "print the frozen table block")
+is NOT the table in SKILL.md, which is the one parse_skill() uses for classification.
+Interpreter sha256 ef4a8a8b7428cf7221dd3aa16bc587507d308b1eacf01074def276e744beacf2 is unchanged since freeze 8fcda41.
+
+rule 1 no-squashfs-chunk          identical predicates
+rule 2 dep-missing-be             predicate diff: {'files': ('*', '0')}
+rule 3 dep-missing-le             predicate diff: {'files': ('*', '0')}
+rule 4 avm-marker-be-dropped      identical predicates
+rule 5 body-extractor-failure     identical predicates
+rule 6 escaping-symlink-removed   predicate diff: {'handler': ("('pattern', 'squashfs_v4_*')", "('pattern', 'squashfs_v4_be')")}
+rule 7 in-tree-symlink-metadata   predicate diff: {'handler': ("('pattern', 'squashfs_v4_*')", "('pattern', 'squashfs_v4_be')")}
+rule 8 clean                      predicate diff: {'handler': ("('pattern', 'squashfs_v4_*')", "('pattern', 'squashfs_v4_be')")}
+
+Behavioral consequence (frozen interpreter, held-out envelopes):
+  H03  TABLE_BLOCK-skill -> unclassified                  SKILL.md -> clean
+  H04  TABLE_BLOCK-skill -> unclassified                  SKILL.md -> clean
+  H11  TABLE_BLOCK-skill -> dep-missing-le                SKILL.md -> dep-missing-le
+  H13  TABLE_BLOCK-skill -> avm-marker-be-dropped         SKILL.md -> avm-marker-be-dropped
+
+c2-counter.py reads SKILL (line 28: SKILL = "SKILL.md"), not --print-table or TABLE_BLOCK, so the 20/20 verdict is unaffected.

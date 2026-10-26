@@ -58,3 +58,17 @@ never this entry. Development evidence only: the claim R39-C2 is scored on a hel
 after the freeze. Not covered: AVM-BE bodies (LE block lengths, XZ), vendor-mangled images,
 `unknown-chunk-handler`, `encrypted-chunk` and `depth-limited` gaps (they fall to `unclassified`),
 little-endian body damage (no row), and anything about extracted programs.
+
+**Wave-2 review of the frozen table (round 39, after the score).** The table labels all 20 held-out
+envelopes, and no label leaks through envelope fields (`.ufo/waves/round-39/w2/R39W2C2Shortcut.md`), but
+the attacks bound what the score shows. A table with no `-be` and no `symlink removed` cell reaches 16/20,
+so those two features decide four envelopes; an 8-row table with 7 non-`*` cells also reaches 20/20; the
+`cause -> action` column is not scored at all (`w2/R39W2C2AxisFit.md`). Measured outcomes the frozen rows
+miss or mislabel: a damaged image that still publishes files (row 5 requires `0`), a clean image that
+publishes none (row 8 requires `>0`), and an image holding both symlink kinds, which row order labels
+`escaping-symlink-removed` although it also carries `unpublished-entry` gaps (K5 and K6 of R39-C1). Row 6's
+cause omits the symlink-loop branch of `MaliciousSymlinkRemoved` (S118 lines 58-65); row 7's gap is also
+emitted for `special` entries, not only symlinks (S119 `firmwareAnalysis.js:137-141`); row 4's `PATH`
+wrapper action is untested here and must not be left installed (`w2/R39W2C2TableReview.md`). The
+interpreter also labels a non-firmware REA envelope by these rows when its fields happen to match
+(`w2/R39W2C2AxisFit.md` C2). These are corrections for the next table version, not edits to the frozen one.
