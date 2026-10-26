@@ -1,0 +1,72 @@
+R42CritC1Draft — probe log (2026-10-26, seat R42CritC1Draft)
+All runs in scratch S=/fast/scratch/hyaku/kaidoku-r42/R42CritC1Draft (TMPDIR=$S).
+Host: linux 7.2.11-arch1-1 x64; python3 3.14.8; node v24.21.0; npx 11.19.0;
+unblob 26.6.4; sasquatch 4.5.1 / sasquatch-v4be 4.5.1; unsquashfs 4.7.5;
+7-Zip 26.04; rea-agents 6.5.0 via npx. No tools installed/upgraded (authorization
+rule read; nothing missing). No VCS mutation; no lane writes outside report+artifacts.
+
+1) Base-sweep for v3 ground (read-only git at base c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c):
+   git grep -nE 'squashfs_v3|squashfs-v3|v1–v3|v1-v3|s_major' -- tools/ plans/ .ufo/ SKILL.md PROVINCE.md SCORECARD.md corpus/
+   -> only knowledge/artifact source copies (unblob squashfs.py 26.6.4 texts) and
+      producer-statement text (2026-10-26-unblob-format-matrix.md); no receipt/handler/run.
+   git grep 'squashfs_v3' corpus/ -> 0 matches.
+
+2) Fixtures (MIT, unblob 26.6.4 test tree, media.githubusercontent.com media/onekey-sec/unblob/26.6.4/...):
+   downloaded 6 files, sha256:
+     v1_le.bin       b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71
+     v2_le.bin       7c62dbe388b972119f5d17a12836a016737d58276184f4caa2a90dafd924f124
+     v3_be.bin       4e9493d9c6f868005dea8f11992129c3399e0bcb8f3a966c750cb925989ca97c
+     v3_be.lzma.bin 71971c7a05d2d0b44bc976bc168f7b9134af8dc9fec83553889a9b5473469495
+     v3_le.bin       0161351caec8e9da6e3e5ac7b046fd11d832efb18eb09e33011e6d19d50cd1f7
+     v3_le.lzma.bin 2ac15e5c993f330854497b2fd032d2e87873a288fab6da2fe72106bb40b43124
+   unsquashfs -s on all 6: OK (3:0 superblocks, both endians, gzip and LZMA).
+   unsquashfs -lls: OK on gzip fixtures (v1_le, v2_le, v3_le, v3_be); FAILS on LZMA
+   fixtures (v3_le.lzma.bin, v3_be.lzma.bin) with:
+     "gzip uncompress failed with error code -3 / read_block: failed to read block
+      @0x84 / get_metadata: failed to read block / FATAL ERROR: read_inode: failed
+      to read inode 132:64"
+   7z l: OK on all 6; lists entries incl. symlinks as `.....` rows (size=target
+   length, e.g. bin/ash 7); no kind discrimination in listing.
+
+3) OpenWrt Kamikaze 7.09 dev image (designated development; never a C1 carrier):
+   URL https://archive.openwrt.org/kamikaze/7.09/atheros-2.6/openwrt-atheros-2.6-root.squashfs
+   md5 d0a4cbd0c81f158aa852ae57360d410f (== archive md5sums) ; sha256
+   70d7c4c7ce6794a627bdfb38a1efae45363888a194caef260f389be5241aff58 ; size 1179648.
+   unsquashfs -s: "Found a valid big endian SQUASHFS 3:0 superblock"; fs size 995971;
+   block 65536; 353 inodes; 13 fragments.
+   unsquashfs -lls: FAILS ("gzip uncompress failed ... FATAL ERROR: File system
+   corruption detected") — see unsquashfs-err.txt.
+   7z l: Type SquashFS; File System = SquashFS 3.0; Method = LZMA Spec;
+   Big-endian = +; Physical Size = 999424; Tail Size = 180224; WARNINGS: data after
+   end of archive; 309 files, 43 folders.
+   Tail 999424..1179648 is all-zero padding (probe: 4096 bytes, zero_frac 1.0).
+
+4) unblob 26.6.4 direct on dev image (allowed: development):
+   unblob -e <out> -d 1 ath.squashfs -> exit 0; chunks: SQUASHFS_V3 976.00 KB
+   (0-999424), UNKNOWN 176.00 KB (999424-1179648); chunk ratio 84.72%.
+   Extract tree 0-999424.squashfs_v3_extract: 147 regular files, 162 symlinks,
+   44 dirs, 0 char/block devices, 0 hardlink-inode duplicates, /dev empty.
+   unblob -e on v3_le.bin / v3_be.bin / v3_le.lzma.bin: all exit 0, 100% SQUASHFS_V3
+   (handler name squashfs_v3 for gzip AND LZMA images).
+
+5) REA 6.5.0 (CLI only): cd $S; REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob
+   npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 1
+   <input> <fresh outdir> (exit 0 both runs).
+   a) full published bytes ath.squashfs -> envelope dev-full-after.json:
+      chunks [handler None, 'squashfs_v3']; files 148 (incl.
+      firmware.bin_extract/999424-1179648.unknown); extraction_gaps:
+      unknown-chunk-handler 1 (range offset 999424 len 180224), depth-limited 1,
+      unpublished-entry 162; diagnostics 0; coverage partial; published_bytes
+      3094836; subject digest == file sha256; parameters.max_depth 1.
+   b) truncated to fs extent 0..999424 -> envelope dev-trunc-after.json:
+      chunks ['squashfs_v3']; files 147; gaps depth-limited 1 + unpublished-entry 162;
+      NO unknown-chunk-handler; published_bytes 2914612.
+
+6) Round-41 context read (read-only):
+   R41W2ReproV3.md: round-41 carrier "V3" (FRITZ!Box 5490) receipt handler is
+   squashfs_v4_be; magic sqsh v4.0; i.e. round-41's V3 was NOT a SquashFS v3 run.
+   R41W2C1Fabricate.md: S1 oracle-only fabrication scored matched on V3/L3/L4
+   (projection_ok true), refused only on V4 (extractor-determined removal set);
+   S2 round-40 relabel 0/4; S34 semantic edits refused by projection_ok alone.
+   tools/round-41/c1-counter.py clause list + projection profile (plus-extractor)
+   quoted in report.

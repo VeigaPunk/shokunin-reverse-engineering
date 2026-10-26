@@ -1,0 +1,51 @@
+# Extractor-argv evidence — unblob 26.6.4 on its own SquashFS fixtures (development inputs)
+
+Host: unblob 26.6.4 at /home/vgpnk/.local/bin/unblob; sasquatch 4.5.1 and sasquatch-v4be in the same dir; run
+2026-10-26 between 21:52:58Z and 21:53:14Z with cwd = scratch root and `unblob.log` written there by unblob.
+Fixtures are the LFS payloads listed in fixtures-58.tsv, copied to run/<name>.bin.
+
+Commands (each `rm -rf <outdir>` first; unblob refuses a pre-existing outdir):
+
+    unblob -e run/o1 run/v3le.bin      # squashfs_v3/little_endian/__input__/squashfs_v3.le.nopad.bin
+    unblob -e run/o2 run/v3be.bin      # squashfs_v3/big_endian/__input__/squashfs_v3.be.nopad.bin
+    unblob -e run/o3 run/v2le.bin      # squashfs_v2/little_endian/__input__/squashfs_v2.0_le.bin
+
+All three exited 0 and each extract dir holds apple1.txt..apple4.txt (v3) or the v2 member set. The
+`Running extract command` line unblob itself logged (verbatim `command=` value, scratch root elided):
+
+    run/v3le.bin rc=0 'sasquatch -le -no-exit-code -f -d <scratch>/run/o1/v3le.bin_extract <scratch>/run/v3le.bin'
+    run/v3be.bin rc=0 'sasquatch -be -no-exit-code -f -d <scratch>/run/o2/v3be.bin_extract <scratch>/run/v3be.bin'
+    run/v2le.bin rc=0 'sasquatch -le -no-exit-code -f -d <scratch>/run/o3/v2le.bin_extract <scratch>/run/v2le.bin'
+
+So on the v3 path the binary is plain `sasquatch` with `-le` (LE) or `-be` (BE); `sasquatch-v4be` was never
+invoked. The v1/v2 handlers reach the same `-le`/`-be` branch because `_SquashFSBase.EXTRACTOR` is
+`SquashFSExtractor(3, 0x73_71_73_68)` (squashfs.py:75) and only the v4-BIG case selects the other binary
+(squashfs.py:39-41).
+
+Handler-detection checks on the two fixtures whose bytes contradict their directory label:
+
+    unblob -e run/e1 run/ddwrt_le.bin   # squashfs_v3_ddwrt/little_endian/__input__/squashfs_v3_le.bin
+    unblob -e run/e2 run/bc_be.bin      # squashfs_v3_broadcom/big_endian/__input__/squashfs_v3_be.bin
+    unblob -e run/f1 run/bc_le.bin      # squashfs_v3_broadcom/little_endian/__input__/squashfs_v3_le.bin
+    unblob -e run/f2 run/ddwrt_be.bin   # squashfs_v3_ddwrt/big_endian/__input__/squashfs_v3.be.nopad.bin
+
+Results (from unblob's own chunk-distribution table, rc=0 each):
+
+    ddwrt_le.bin (magic hsqs, duplicate of squashfs_v3/little_endian/squashfs_v3_le.bin) -> SQUASHFS_V3
+    bc_be.bin    (magic sqsh, duplicate of squashfs_v3/big_endian/squashfs_v3_be.bin)     -> SQUASHFS_V3
+    bc_le.bin    (magic shsq)                                                             -> SQUASHFS_V3_BROADCOM
+    ddwrt_be.bin (magic tqsh)                                                             -> SQUASHFS_V3_DDWRT
+
+Dependency-reporting check:
+
+    unblob --show-external-dependencies
+    > The following executables found installed, which are needed by unblob:
+    >     sasquatch                   ✓
+    >     sasquatch-v4be              ✓
+    exit=0
+
+The list is the union over all handlers (`dependencies.py:21-31`), not per chunk; it names `sasquatch-v4be`
+even when only v1-v3 work is contemplated. The per-extraction failure report is narrower:
+`ExtractorDependencyNotFoundReport(dependencies=self.get_dependencies())` is fed by
+`Command.get_dependencies()` = `[self._executable]` (command.py:70-72, 101-102; field at report.py:122), i.e.
+the single binary that failed to spawn.

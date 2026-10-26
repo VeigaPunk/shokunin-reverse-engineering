@@ -1,0 +1,492 @@
+{
+ "claim": "R42-C1",
+ "seat": "R42C1ImgVendor",
+ "target": 4,
+ "verdict": "four vendor SquashFS-major-3 carriers, both big-endian; backhand 0.25.5 and 7-Zip 26.04 agree on every regular file (path+sha256) of all four; unsquashfs 4.7.5 reads none of them (all LZMA)",
+ "superblock_layout_note": "squashfs 3.x on disk is PACKED: inodes@4, s_major@28, s_minor@30, block_size_1@32, block_log@34, flags@36, no_uids@37, no_guids@38, mkfs_time@39, root_inode@43, block_size@51, fragments@55, fragment_table_start_2@59, bytes_used@63, uid_start@71, guid_start@79, inode_table_start@87, directory_table_start@95, fragment_table_start@103, lookup_table_start@111. Verified byte-for-byte against unsquashfs 4.7.5, 7-Zip 26.04 and unblob 26.6.4 dissect.cstruct parsing of SquashFSv3Handler.C_DEFINITIONS.",
+ "carriers": [
+  {
+   "id": "V1-tplink-wr741nd",
+   "source_kind": "vendor",
+   "product": "TP-Link TL-WR741ND v1/v2, firmware 100910 (zip member \"wr741nv1_en_3_12_4_up(100910).bin\")",
+   "url": "https://archive.org/download/TP-Link_TL-WR741NDV1_100910_ce76a/ce76a7c4713f45e2c8b24704fc686494.zip",
+   "provenance": "archive.org copy of the vendor zip. The vendor page https://www.tp-link.com/us/support/download/tl-wr741nd/v1/ returns 200 but exposes firmware only via JS; the legacy static paths (static.tp-link.com/resources/software/TL-WR741ND_V1_100910.zip and two variants) return 404 -> vendor URL dead.",
+   "http_status": 200,
+   "accessed_utc": "GET 2026-10-26T21:54:19Z; HEAD re-verify 2026-10-26T22:05:28Z (302 -> 200, content-length 2939930)",
+   "zip": {
+    "bytes": 2939930,
+    "sha256": "9f46170b34ba8a4effad8db627a989208e80e4e5980605d3bb3739dc60997c86"
+   },
+   "member": {
+    "name": "wr741nv1_en_3_12_4_up(100910).bin",
+    "bytes": 3932160,
+    "sha256": "f8fa728dca39040e1e42045fa625c81bb4f0506a53baf6b09249a67d7d06cadf"
+   },
+   "container_chain": "TP-Link proprietary 0x200-byte header at 0 (u32 1, \"TP-LINK Technologies\", \"ver. 1.0\", CRC/region words); no uImage(HDR0)/TRX/CFE; SquashFS superblock at 0x100000",
+   "sb_offset": 1048576,
+   "sb_offset_hex": "0x100000",
+   "superblock": {
+    "magic": "qshs",
+    "s_major": 3,
+    "s_minor": 1,
+    "inodes": 431,
+    "block_size": 65536,
+    "block_log": 16,
+    "flags": 224,
+    "no_uids": 1,
+    "no_guids": 0,
+    "mkfs_time": 1284348555,
+    "root_inode": 133501898,
+    "fragments": 48,
+    "bytes_used": 2059310,
+    "uid_start": 2059306,
+    "inode_table_start": 2051249,
+    "directory_table_start": 2054330
+   },
+   "endianness": "BE",
+   "unblob_2664_handlers": [
+    "squashfs_v3_broadcom"
+   ],
+   "backhand_kind": "netgear_be_v3_0_lzma",
+   "compression": "LZMA; 7z \"File System = SquashFS-LZMA 3.1\", Method \"LZMA ZLIB\"",
+   "chunk_end": 3108864,
+   "chunk_end_rule": "round_up_4096",
+   "carve": {
+    "offset": 1048576,
+    "length": 2060288,
+    "end": 3108864,
+    "sha256": "f4b10e19758f1ad55222ac2fe7c2c7637ab512ca4c80ec08b5cecdf5075f47c1"
+   },
+   "fs_shape": {
+    "symlinks": 55,
+    "symlinks_absolute": 0,
+    "symlinks_target_contains_dotdot": 20,
+    "device_nodes_from_7z_listing": 42,
+    "directories": 35,
+    "regular_files": 298
+   },
+   "oracle": {
+    "backhand": {
+     "version": "0.25.5 (v3,gzip,lzma,xz)",
+     "kind": "netgear_be_v3_0_lzma",
+     "rc": 0,
+     "tree": {
+      "file": 298,
+      "link": 55,
+      "dir": 35,
+      "other": 0
+     }
+    },
+    "7z": {
+     "version": "26.04",
+     "listing_rc": 0,
+     "listing_counts": {
+      "b": 9,
+      "c": 33,
+      "d": 35,
+      "f": 298,
+      "l": 55
+     },
+     "tree": {
+      "file": 360,
+      "link": 35,
+      "dir": 35,
+      "other": 0
+     }
+    },
+    "regular_files": {
+     "backhand": 298,
+     "7z_tree_regular": 360,
+     "agree_path_and_sha256": 298,
+     "sha256_mismatches": [],
+     "only_backhand": []
+    },
+    "symlinks": {
+     "backhand": 55,
+     "7z": 35,
+     "7z_refused_dotdot_targets": 20
+    },
+    "unsquashfs_4_7_5": {
+     "superblock_rc": 1,
+     "listing_rc": 1,
+     "stderr_tail": [
+      "FATAL ERROR: Can't find a valid SQUASHFS superblock on probes/tplink-wr741nd-v1.1048576.sqfs"
+     ]
+    }
+   },
+   "usable_as_c1_carrier": true,
+   "note": "The archive items TP-Link_TL-WR741NDV1_100910_ce76a and TP-Link_TL-WR741NDV2_100910_ce76a carry the SAME zip bytes (one image shipped for both revisions)."
+  },
+  {
+   "id": "V2-dlink-dir615c",
+   "source_kind": "vendor",
+   "product": "D-Link DIR-615 revision C, firmware 3.13NA (zip-internal release notes: \"Firmware: 3.13NA\", \"Date: 09/30/10\")",
+   "url": "http://legacyfiles.us.dlink.com/DIR-615/REVC/FIRMWARE/DIR-615_REVC_FIRMWARE_3.13.ZIP",
+   "provenance": "official D-Link legacy firmware host, Apache directory index (http only; https presents an unverifiable certificate)",
+   "http_status": 200,
+   "accessed_utc": "GET 2026-10-26T21:54:37Z; HEAD re-verify 2026-10-26T22:05:27Z (200, content-length 3492669)",
+   "zip": {
+    "bytes": 3492669,
+    "sha256": "cf3199520172803efe02b1e2418ad222762ee868d6081724f53121fc7959c8f5"
+   },
+   "member": {
+    "name": "dir615_revC_FW_313NA/DIR615C1_FW313NAB09.bin",
+    "bytes": 3866650,
+    "sha256": "e03750f81c91b9228fd574d4cc473577362fb04be5bc13b6e8f3896fa53be99b"
+   },
+   "container_chain": "uImage magic 0x27051956 + \"Linux Kernel Image\" at 0 (ih_size 0x000ED643) -> 1 MiB kernel partition; SquashFS superblock at 0x100000",
+   "sb_offset": 1048576,
+   "sb_offset_hex": "0x100000",
+   "superblock": {
+    "magic": "sqsh",
+    "s_major": 3,
+    "s_minor": 0,
+    "inodes": 580,
+    "block_size": 65536,
+    "block_log": 16,
+    "flags": 64,
+    "no_uids": 3,
+    "no_guids": 3,
+    "mkfs_time": 1284454565,
+    "root_inode": 268699393,
+    "fragments": 65,
+    "bytes_used": 2518754,
+    "uid_start": 2518730,
+    "inode_table_start": 2508805,
+    "directory_table_start": 2513395
+   },
+   "endianness": "BE",
+   "unblob_2664_handlers": [
+    "squashfs_v3"
+   ],
+   "backhand_kind": "be_v3_0_lzma",
+   "compression": "LZMA; 7z \"File System = SquashFS 3.0\", Method \"LZMA Spec\"",
+   "chunk_end": 3567616,
+   "chunk_end_rule": "round_up_4096",
+   "carve": {
+    "offset": 1048576,
+    "length": 2519040,
+    "end": 3567616,
+    "sha256": "7e4587066558183f33d8affbbfe572f9c44c025612f8ee24d8206ad3ca33a336"
+   },
+   "fs_shape": {
+    "symlinks": 73,
+    "symlinks_absolute": 2,
+    "symlinks_target_contains_dotdot": 23,
+    "device_nodes_from_7z_listing": 40,
+    "directories": 47,
+    "regular_files": 419
+   },
+   "oracle": {
+    "backhand": {
+     "version": "0.25.5 (v3,gzip,lzma,xz)",
+     "kind": "be_v3_0_lzma",
+     "rc": 0,
+     "tree": {
+      "file": 419,
+      "link": 73,
+      "dir": 47,
+      "other": 0
+     }
+    },
+    "7z": {
+     "version": "26.04",
+     "listing_rc": 0,
+     "listing_counts": {
+      "b": 11,
+      "c": 29,
+      "d": 47,
+      "f": 419,
+      "l": 73
+     },
+     "tree": {
+      "file": 482,
+      "link": 50,
+      "dir": 47,
+      "other": 0
+     }
+    },
+    "regular_files": {
+     "backhand": 419,
+     "7z_tree_regular": 482,
+     "agree_path_and_sha256": 419,
+     "sha256_mismatches": [],
+     "only_backhand": []
+    },
+    "symlinks": {
+     "backhand": 73,
+     "7z": 50,
+     "7z_refused_dotdot_targets": 23
+    },
+    "unsquashfs_4_7_5": {
+     "superblock_rc": 0,
+     "listing_rc": 1,
+     "stderr_tail": [
+      "read_block: failed to read block @0x266d4a",
+      "read_fragment_table: failed to read fragment table block",
+      "FATAL ERROR: File system corruption detected"
+     ]
+    }
+   },
+   "usable_as_c1_carrier": true,
+   "note": null
+  },
+  {
+   "id": "V3-dlink-dir825b",
+   "source_kind": "vendor",
+   "product": "D-Link DIR-825 revision B, firmware 2.03NA (release notes: \"Firmware: 2.03NA\", \"Date: 04/27/10\")",
+   "url": "http://legacyfiles.us.dlink.com/DIR-825/REVB/FIRMWARE/DIR-825_REVB_FIRMWARE_2.03.ZIP",
+   "provenance": "official D-Link legacy firmware host",
+   "http_status": 200,
+   "accessed_utc": "GET 2026-10-26T21:54:37Z; HEAD re-verify 2026-10-26T22:05:28Z (200, content-length 4173799)",
+   "zip": {
+    "bytes": 4173799,
+    "sha256": "70106e1288617614ac43acc965fb5ed0b9c1f94b2347b3cf4daa6168afb70013"
+   },
+   "member": {
+    "name": "dir825_revB_fw_203NA/dir825_revB_fw_203NA.bin",
+    "bytes": 4194330,
+    "sha256": "379836b8625f32fb3c2642656f056e9bf43f929101e2ff758bb5049c5373ef2d"
+   },
+   "container_chain": "uImage magic 0x27051956 + \"Linux Kernel Image\" at 0 (ih_size 0x000FFAFC); SquashFS superblock at 0x100000",
+   "sb_offset": 1048576,
+   "sb_offset_hex": "0x100000",
+   "superblock": {
+    "magic": "sqsh",
+    "s_major": 3,
+    "s_minor": 0,
+    "inodes": 630,
+    "block_size": 65536,
+    "block_log": 16,
+    "flags": 64,
+    "no_uids": 2,
+    "no_guids": 3,
+    "mkfs_time": 1269599419,
+    "root_inode": 290327910,
+    "fragments": 77,
+    "bytes_used": 3126468,
+    "uid_start": 3126448,
+    "inode_table_start": 3115339,
+    "directory_table_start": 3120588
+   },
+   "endianness": "BE",
+   "unblob_2664_handlers": [
+    "squashfs_v3"
+   ],
+   "backhand_kind": "be_v3_0_lzma",
+   "compression": "LZMA; 7z \"File System = SquashFS 3.0\", Method \"LZMA Spec\"",
+   "chunk_end": 4177920,
+   "chunk_end_rule": "round_up_4096",
+   "carve": {
+    "offset": 1048576,
+    "length": 3129344,
+    "end": 4177920,
+    "sha256": "cabee68272d8513b6c36579d5b0a4ee9d0638c65d6de7e33b5b994d2152df6dc"
+   },
+   "fs_shape": {
+    "symlinks": 77,
+    "symlinks_absolute": 2,
+    "symlinks_target_contains_dotdot": 23,
+    "device_nodes_from_7z_listing": 45,
+    "directories": 51,
+    "regular_files": 456
+   },
+   "oracle": {
+    "backhand": {
+     "version": "0.25.5 (v3,gzip,lzma,xz)",
+     "kind": "be_v3_0_lzma",
+     "rc": 0,
+     "tree": {
+      "file": 456,
+      "link": 77,
+      "dir": 51,
+      "other": 0
+     }
+    },
+    "7z": {
+     "version": "26.04",
+     "listing_rc": 0,
+     "listing_counts": {
+      "b": 14,
+      "c": 31,
+      "d": 51,
+      "f": 456,
+      "l": 77
+     },
+     "tree": {
+      "file": 524,
+      "link": 54,
+      "dir": 51,
+      "other": 0
+     }
+    },
+    "regular_files": {
+     "backhand": 456,
+     "7z_tree_regular": 524,
+     "agree_path_and_sha256": 456,
+     "sha256_mismatches": [],
+     "only_backhand": []
+    },
+    "symlinks": {
+     "backhand": 77,
+     "7z": 54,
+     "7z_refused_dotdot_targets": 23
+    },
+    "unsquashfs_4_7_5": {
+     "superblock_rc": 0,
+     "listing_rc": 1,
+     "stderr_tail": [
+      "read_block: failed to read block @0x2fb2fd",
+      "read_fragment_table: failed to read fragment table block",
+      "FATAL ERROR: File system corruption detected"
+     ]
+    }
+   },
+   "usable_as_c1_carrier": true,
+   "note": null
+  },
+  {
+   "id": "V4-dlink-dir632",
+   "source_kind": "vendor",
+   "product": "D-Link DIR-632 revision A, firmware 1.03 (member \"DIR632_FW_103.bin\")",
+   "url": "http://legacyfiles.us.dlink.com/DIR-632/REVA/FIRMWARE/DIR-632_REVA_FIRMWARE_1.03.ZIP",
+   "provenance": "official D-Link legacy firmware host",
+   "http_status": 200,
+   "accessed_utc": "GET 2026-10-26T22:00:00Z; HEAD re-verify 2026-10-26T22:05:28Z (200, content-length 3643888)",
+   "zip": {
+    "bytes": 3643888,
+    "sha256": "f61d47c1c5cbf6ab76e67ac7282bc4eab95ed45cf0ee947f0afcafb25a424c6e"
+   },
+   "member": {
+    "name": "DIR632_FW_103.bin",
+    "bytes": 7667736,
+    "sha256": "a1a4a97059772b525dd1595b0302b81d6eb6c5d7bb589a7d816cad0f68beec4f"
+   },
+   "container_chain": "uImage magic 0x27051956 + \"Linux Kernel Image\" at 0 (ih_size 0x00100C15); SquashFS superblock at 0x1F0000; ASCII \"CFE\" at 3491934",
+   "sb_offset": 2031616,
+   "sb_offset_hex": "0x1f0000",
+   "superblock": {
+    "magic": "sqsh",
+    "s_major": 3,
+    "s_minor": 0,
+    "inodes": 592,
+    "block_size": 65536,
+    "block_log": 16,
+    "flags": 64,
+    "no_uids": 3,
+    "no_guids": 3,
+    "mkfs_time": 1328583508,
+    "root_inode": 278267951,
+    "fragments": 72,
+    "bytes_used": 2587533,
+    "uid_start": 2587509,
+    "inode_table_start": 2577183,
+    "directory_table_start": 2581991
+   },
+   "endianness": "BE",
+   "unblob_2664_handlers": [
+    "squashfs_v3"
+   ],
+   "backhand_kind": "be_v3_0_lzma",
+   "compression": "LZMA; 7z \"File System = SquashFS 3.0\", Method \"LZMA Spec\"",
+   "chunk_end": 4620288,
+   "chunk_end_rule": "round_up_4096",
+   "carve": {
+    "offset": 2031616,
+    "length": 2588672,
+    "end": 4620288,
+    "sha256": "0762054e07bde99c50c83d4a46c2ba5f399cd441d8259f1427df587499b257dc"
+   },
+   "fs_shape": {
+    "symlinks": 75,
+    "symlinks_absolute": 2,
+    "symlinks_target_contains_dotdot": 24,
+    "device_nodes_from_7z_listing": 44,
+    "directories": 51,
+    "regular_files": 421
+   },
+   "oracle": {
+    "backhand": {
+     "version": "0.25.5 (v3,gzip,lzma,xz)",
+     "kind": "be_v3_0_lzma",
+     "rc": 0,
+     "tree": {
+      "file": 421,
+      "link": 75,
+      "dir": 51,
+      "other": 0
+     }
+    },
+    "7z": {
+     "version": "26.04",
+     "listing_rc": 0,
+     "listing_counts": {
+      "b": 12,
+      "c": 32,
+      "d": 51,
+      "f": 421,
+      "l": 75
+     },
+     "tree": {
+      "file": 489,
+      "link": 51,
+      "dir": 51,
+      "other": 0
+     }
+    },
+    "regular_files": {
+     "backhand": 421,
+     "7z_tree_regular": 489,
+     "agree_path_and_sha256": 421,
+     "sha256_mismatches": [],
+     "only_backhand": []
+    },
+    "symlinks": {
+     "backhand": 75,
+     "7z": 51,
+     "7z_refused_dotdot_targets": 24
+    },
+    "unsquashfs_4_7_5": {
+     "superblock_rc": 0,
+     "listing_rc": 1,
+     "stderr_tail": [
+      "read_block: failed to read block @0x2779d5",
+      "read_fragment_table: failed to read fragment table block",
+      "FATAL ERROR: File system corruption detected"
+     ]
+    }
+   },
+   "usable_as_c1_carrier": true,
+   "note": null
+  }
+ ],
+ "rejected": [
+  {
+   "image": "D-Link DIR-601 rev A 1.01",
+   "reason": "squashfs_v3 BE at 0xF0000, same LZMA family; adds no axis",
+   "image_sha256": "ef52eebab2446b8b8179798e0d14517e1b9321cff93debe55d79b4460bc51335"
+  },
+  {
+   "image": "D-Link DSL-2740B rev A 1.00 and 2.06",
+   "reason": "SquashFS v4 Broadcom LE at 0x100 (unblob squashfs_v4_broadcom, s_major=4); not a v3 carrier",
+   "image_sha256": [
+    "3a3b5e64ccc40aedefebc8387db979164f057ddb86655aad9932b1696279fad9",
+    "a383c518ffddf6f07f92b4cc141616fb2f2978d4595659da921ba37d49400010"
+   ]
+  },
+  {
+   "image": "D-Link DIR-130/330/450/451, DIR-625/628/635/655 rev A, DIR-825 rev A, DGL-4500",
+   "reason": "no SquashFS magic anywhere in the image"
+  },
+  {
+   "image": "Draytek Vigor2820 v3.3.7.9 (.all, fw.draytek.com.tw)",
+   "reason": "no SquashFS magic in 5,784,456 bytes",
+   "image_sha256": "a70ce64e68ab6c52c6f10c11f212e5f1cc1108f1b9c6443eb30b9379ccba61ea"
+  },
+  {
+   "image": "Linksys WRT54G v8 8.00.8.001 (archive.org FW_WRT54G_v8_8.00.8.001)",
+   "reason": "no SquashFS magic in 1,768,904 bytes",
+   "image_sha256": "a6a2e710652c70aa1cd59b28fa47b424f678fa8dab68c0c0ce5030fde41a4bc8"
+  }
+ ]
+}

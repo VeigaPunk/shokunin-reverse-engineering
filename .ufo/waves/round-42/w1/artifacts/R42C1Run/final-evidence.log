@@ -1,0 +1,84 @@
+# R42C1Run final evidence battery
+harness_sha256=60fccdf36efa865215a05edadfd971878c187a807486ca97c983e32ce70b4fb4
+oracle_sha256=61fd53b7ddcca109581d094cb002aeb78472c5bda41e82915f6ab46745372871
+date_utc=2026-10-26T22:03:01Z kernel=7.2.11-arch1-1 jq=/home/vgpnk/.local/bin/jq jq_ver=jq-1.8.2
+unblob=26.6.4 sha=0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09
+sasquatch=/home/vgpnk/.local/bin/sasquatch sha=ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754 ver=unsquashfs version 4.5.1 (2022/03/17)
+sasquatch_v4be=/home/vgpnk/.local/bin/sasquatch-v4be sha=fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6 (never used by this harness)
+rea=6.5.0
+unsquashfs=unsquashfs version 4.7.5 (2026/03/01)
+seven_zip=7-Zip 26.04 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-10-05
+
+## S0 static checks
+bash_n_rc=0
+shellcheck_warning_rc=0
+shellcheck_all_rc=0
+
+## S1 round-41 harness on the same many-symlink carrier (R41-CL2 baseline)
+round41_harness_rc=126
+stderr=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/c1-run.sh: line 547: /home/vgpnk/.local/bin/jq: Argument list too long
+files_in_outdir=after.json (no run.json)
+
+## A after arm: unblob v3 LE fixture (hsqs, 4096 B)
+rc=0
+{"receipt_written":true,"depth_ok":true,"handler":["squashfs_v3"],"files":2,"gap_kinds":["depth-limited"],"max_depth":1,"output_directory":"/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/A/extract","subject":"0161351caec8e9da6e3e5ac7b046fd11d832efb18eb09e33011e6d19d50cd1f7","evidence_id":"ev_9f41174c3e6c27cad63178441fdaec9924f00b8e8a253cf812a0e772d73301f8","sasquatch":"4.5.1","rea":"6.5.0","unblob":"26.6.4","sb":{"magic":"hsqs","version":"3.0","compression":"ZLIB"}}
+files_on_disk=after.envelope.json,after.json,run.json,
+
+## B after arm: synthetic v4 LE 640 files / 1600 in-tree symlinks (R41-CL2 scale proof)
+carrier_sha256=f342f747ce094e833740c45266fde158d1c21358963f44c0e3c499237004c99e size=188416
+rc=0
+{"receipt_written":true,"summary_bytes":316232,"receipt_bytes":856518,"files":640,"unpublished":1600,"summary_error":null,"receipt_error":null}
+
+## C after arm: OpenWrt Kamikaze 7.09 x86 squashfs.image (development input)
+url=https://archive.openwrt.org/kamikaze/7.09/x86-2.6/openwrt-x86-2.6-squashfs.image sha256=a0a4fcf30e0a42fa09d1f6e9577d624ef78e402590f23549389a59e250441c12 size=5529092
+rc=0
+{"receipt_written":true,"handlers":["extfs","padding","squashfs_v3"],"files":145,"squashfs_chunk":[{"provider_id":"3634339:1","handler":"extfs","offset":32256,"length":4611072,"encrypted":false,"extraction_failed":false},{"provider_id":"3634339:2","handler":"squashfs_v3","offset":4677120,"length":786432,"encrypted":false,"extraction_failed":false}],"sb":null}
+
+## D oracle arm: every accepted magic family (unblob 26.6.4 fixtures, MIT)
+hsqs fixture_sha256=0161351caec8e9da6e3e5ac7b046fd11d832efb18eb09e33011e6d19d50cd1f7 rc=0
+{"magic":"hsqs","family":"standard","byte_order":"little","version":"3.0","compression":"ZLIB","agree":true,"mismatch":0,"files":2,"nonregular":0,"copied":true,"oracle_tsv_sha":"81695dbeeead98e791f110fcbb1ad8271d0def1c84bebb557378d8d09e58a2a9"}
+sqsh fixture_sha256=4e9493d9c6f868005dea8f11992129c3399e0bcb8f3a966c750cb925989ca97c rc=0
+{"magic":"sqsh","family":"standard","byte_order":"big","version":"3.0","compression":"ZLIB","agree":true,"mismatch":0,"files":2,"nonregular":0,"copied":true,"oracle_tsv_sha":"81695dbeeead98e791f110fcbb1ad8271d0def1c84bebb557378d8d09e58a2a9"}
+tqsh fixture_sha256=daa8e72d355db1067a36bacd4b15853fb49ce7bb4fa6d6efafc0e7f09be8c9e1 rc=0
+{"magic":"tqsh","family":"ddwrt","byte_order":"big","version":"3.1","compression":"ZLIB","agree":true,"mismatch":0,"files":4,"nonregular":0,"copied":true,"oracle_tsv_sha":"638a6f75579ae1ff508d3152723b1b9b279a90090e180cc63a2a6a758a477d23"}
+shsq fixture_sha256=6baad4387dd51c8010de694420a35b6709706a268f7ba9e96e6417fb969f37d3 rc=0
+{"magic":"shsq","family":"broadcom","byte_order":"little","version":"3.0","compression":"ZLIB","agree":true,"mismatch":0,"files":2,"nonregular":0,"copied":true,"oracle_tsv_sha":"81695dbeeead98e791f110fcbb1ad8271d0def1c84bebb557378d8d09e58a2a9"}
+zlqs fixture_sha256=3bce6ae378319fd2ac08c73ede9b3890a6d0f78c16392f09117cc3ffd70d1acb rc=0
+{"magic":"zlqs","family":"nonstandard","byte_order":"little","version":"3.0","compression":"ZLIB","agree":true,"mismatch":0,"files":2,"nonregular":0,"copied":true,"oracle_tsv_sha":"81695dbeeead98e791f110fcbb1ad8271d0def1c84bebb557378d8d09e58a2a9"}
+
+## E oracle arm: magic at offset 512 (carved chunk with a header)
+rc=0
+{"offset":512,"offset_passed":true,"files":2}
+
+## F negative battery
+F1 missing plain sasquatch
+rc=2 msg=c1-run.sh: plain sasquatch is not resolvable on PATH (the R42-C1 extractor; sasquatch-v4be is NOT a substitute)
+F2 relative REA_UNBLOB_COMMAND
+rc=2 msg=c1-run.sh: REA_UNBLOB_COMMAND must be an absolute path (got: unblob)
+F3 absolute but missing unblob
+rc=2 msg=c1-run.sh: REA_UNBLOB_COMMAND is missing or not executable: /nonexistent/unblob
+F4 foreign OUTDIR
+rc=2 msg=c1-run.sh: OUTDIR /fast/scratch/hyaku/kaidoku-r42/R42C1Run/ev-F4 is outside the round-42 evidence root /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/corpus/evidence/round-42/c1; pass a bare id (e.g. V1), an in-root path, or C1_ALLOW_FOREIGN_OUTDIR=1 for a development run
+F5 foreign SCRATCH
+rc=2 msg=c1-run.sh: SCRATCH /fast/scratch/hyaku/r42-foreign3/z lacks a /kaidoku-r42/ segment: a receipt written from it fails the R42-C1 run-provenance clause (parameters.output_directory is hashed into the evidence id). Use the default scratch, or set C1_ALLOW_FOREIGN_SCRATCH=1 for a dev run.
+F6 oracle on a container image (magic beyond the 1 MiB window)
+rc=2 msg=c1-run.sh: no SquashFS magic (hsqs|sqsh|hsqt|tqsh|shsq|qshs|zlqs|sqlz) in the first 1 MiB of /fast/scratch/hyaku/kaidoku-r42/R42C1Run/fx/openwrt-7.09-x86-squashfs.image
+F7 bare-id OUTDIR in an installed-style lane
+rc=0 {"outdir":"/fast/scratch/hyaku/kaidoku-r42/R42C1Run/fake-lane/corpus/evidence/round-42/c1/DEVX","outdir_id":"DEVX","outdir_under_evidence_root":true,"evidence_root":"/fast/scratch/hyaku/kaidoku-r42/R42C1Run/fake-lane/corpus/evidence/round-42/c1"}
+F8 advisory sasquatch cross-check
+rc=0 {"extract_exit":0,"files_equal":true,"check_files":2,"mismatch_count":0}
+F9 oracle exits 3 (producer disagreement)
+rc=3 msg=c1-run.sh: oracle exited 3 (see /fast/scratch/hyaku/kaidoku-r42/R42C1Run/ev-F9/oracle-run.json) run={"agree":false,"copied":false} files=oracle-inner.json,oracle-run.json,
+F10 malformed tables, tool exit 0
+rc=3 msg=c1-run.sh: oracle tables unusable (see /fast/scratch/hyaku/kaidoku-r42/R42C1Run/ev-F10/oracle-run.json) run={"table_error":"oracle tables failed validation (see message above)","tables_copied":false} files=oracle-inner.json,oracle-run.json,
+F11 oracle --help lacks --json
+rc=2 msg=c1-run.sh: oracle does not advertise --json in --help: /fast/scratch/hyaku/kaidoku-r42/R42C1Run/fake/oracle-nojson.py
+F12 oracle tool missing
+rc=2 msg=c1-run.sh: oracle tool not found: /fast/scratch/hyaku/kaidoku-r42/R42C1Run/no-such-oracle.py (set C1_ORACLE to the installed tools/round-42/sqfs3-oracle.py)
+F13 truncated carrier (8 B, magic only)
+rc=2 msg=c1-run.sh: oracle could not read the carrier (exit 2; see /fast/scratch/hyaku/kaidoku-r42/R42C1Run/ev-F13/oracle-run.json): a producer rejects the image, so it cannot become a frozen carrier run={"sb":null,"exit":2}
+
+## G stale-output cleanup in the oracle arm
+G1 rc=0 files=nonregular.tsv,oracle-inner.json,oracle-run.json,oracle.tsv,
+G2 rc=3 run={"previous_outputs":[{"path":"oracle.tsv","sha256":"81695dbeeead98e791f110fcbb1ad8271d0def1c84bebb557378d8d09e58a2a9"},{"path":"nonregular.tsv","sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},{"path":"oracle-inner.json","sha256":"7d4ae85903dd07af282a2abd0096e4424f5f49e46ac9295dbdc7f46b7ef5bc63"}],"agree":false,"copied":false} files=oracle-inner.json,oracle-run.json,
+G3 (clean restore) rc=0 run={"previous_outputs":[],"agree":true,"files":2}

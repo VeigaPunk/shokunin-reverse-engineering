@@ -1,0 +1,73 @@
+{
+  "seat": "R42C1DevRun",
+  "round": 42,
+  "wave": "w1",
+  "date_utc": "2026-10-26",
+  "dev_inputs": [
+    {
+      "name": "openwrt-x86-2.6-squashfs.image",
+      "url": "https://archive.openwrt.org/kamikaze/7.09/x86-2.6/openwrt-x86-2.6-squashfs.image",
+      "md5": "fd7bb3294050d8bd5ea01f532e144f54",
+      "sha256": "a0a4fcf30e0a42fa09d1f6e9577d624ef78e402590f23549389a59e250441c12",
+      "size_bytes": 5529092,
+      "note": "Disk image with MBR; SquashFS v3 LE superblock at offset 4677120 (MBR partition 1, sector 9135)."
+    },
+    {
+      "name": "openwrt-brcm47xx-2.6-squashfs.trx",
+      "url": "https://archive.openwrt.org/kamikaze/7.09/brcm47xx-2.6/openwrt-brcm47xx-2.6-squashfs.trx",
+      "md5": "e7d46481381f8d8879206da84f468211",
+      "sha256": "42b0259f62505bd5573ca762fae6ec5799e602e87f9e9d6ce7676aacef5bb446",
+      "size_bytes": 1904640,
+      "note": "TRX container (kernel + SquashFS v3 LE at offset 753664)."
+    }
+  ],
+  "carved_fs": [
+    {
+      "file": "x86-rootfs.squashfs",
+      "carve": "dd if=openwrt-x86-2.6-squashfs.image of=x86-rootfs.squashfs bs=1 skip=4677120",
+      "size_bytes": 851972,
+      "sha256": "338962dd399af3454ff8d0c01469495815454323cf88b6159f78ef3972d5f2c8",
+      "note": "carved to EOF; contains 65540 trailing junk bytes after fs end (7z: Physical Size 786432, Tail Size 65540)."
+    },
+    {
+      "file": "brcm47xx-rootfs.squashfs",
+      "carve": "dd if=openwrt-brcm47xx-2.6-squashfs.trx of=brcm47xx-rootfs.squashfs bs=1 skip=753664 count=1061809",
+      "size_bytes": 1061809,
+      "sha256": "13a4f1b8f30044185730b92ad46ff39feebf959d554b6b33c742373b737c6912",
+      "note": "carved exactly to filesystem size (unsquashfs -s: Filesystem size 1061809)."
+    }
+  ],
+  "readers": {
+    "unsquashfs": {"version": "4.7.5", "path": "/usr/bin/unsquashfs", "v3_ok": false, "why": "gzip only for v3; these images use LZMA (OpenWrt squashfs-lzma). stderr: 'gzip uncompress failed with error code -3 ... FATAL ERROR: File system corruption detected'."},
+    "7z": {"version": "26.04", "path": "/usr/bin/7z", "v3_ok": true, "method": "LZMA Spec", "physical_size_x86": 786432, "physical_size_trx": 1061809},
+    "sasquatch": {"version": "4.5.1", "path": "/home/vgpnk/.local/bin/sasquatch", "v3_ok": true, "decompress_chain": "gzip->lzo->lz4->xz->zstd->lzma"}
+  },
+  "oracle_agreement": {
+    "x86": {"entries": 331, "kind_mismatch": 0, "size_mismatch": 0, "regular": 137, "nonregular": 194},
+    "trx": {"entries": 362, "kind_mismatch": 0, "size_mismatch": 0, "regular": 156, "nonregular": 206}
+  },
+  "rea_runs": {
+    "command": "cd <run> && REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 1 <input> <fresh outdir>",
+    "without_arm": "child PATH stripped of /home/vgpnk/.local/bin (hides sasquatch; npx/node/7z remain reachable)",
+    "results": {
+      "x86-fs-with": {"exit": 0, "duration_ms": 1344, "chunks": 2, "handlers": ["(null)", "squashfs_v3"], "files": 138, "oracle_regular": 137, "missing": 0, "extra": ["firmware.bin_extract/786432-851972.unknown"], "hashdiff": 0, "gaps": {"unpublished-entry": 152, "depth-limited": 1, "unknown-chunk-handler": 1}, "diagnostics": 0, "depth_limited_paths": ["$output/firmware.bin_extract/0-786432.squashfs_v3_extract"]},
+      "trx-fs-with": {"exit": 0, "duration_ms": 1321, "chunks": 1, "handlers": ["squashfs_v3"], "files": 156, "oracle_regular": 156, "missing": 0, "extra": [], "hashdiff": 0, "gaps": {"unpublished-entry": 163, "depth-limited": 1}, "diagnostics": 0, "depth_limited_paths": ["$output/firmware.bin_extract"]},
+      "x86-fs-without": {"exit": 0, "duration_ms": 1048, "chunks": 2, "handlers": ["(null)", "squashfs_v3"], "files": 2, "gaps": {"missing-extractor-dependency": 1, "unknown-chunk-handler": 1}, "diagnostics": ["ExtractorDependencyNotFoundReport"], "gap_dependencies": ["sasquatch"], "extraction_failed": true},
+      "trx-fs-without": {"exit": 0, "duration_ms": 1126, "chunks": 1, "handlers": ["squashfs_v3"], "files": 0, "gaps": {"missing-extractor-dependency": 1}, "diagnostics": ["ExtractorDependencyNotFoundReport"], "gap_dependencies": ["sasquatch"], "extraction_failed": true},
+      "trx-img-with": {"exit": 0, "duration_ms": 1199, "chunks": 1, "handlers": ["trx_v1"], "files": 3, "gaps": {"depth-limited": 1}, "diagnostics": 0, "note": "inner SquashFS not reached at max-depth 1 (container depth consumed); published part0/part1/part2"},
+      "trx-img-without": {"exit": 0, "duration_ms": 1209, "chunks": 1, "handlers": ["trx_v1"], "files": 3, "gaps": {"depth-limited": 1}, "diagnostics": 0, "note": "same as with; trx_v1 extractor does not depend on sasquatch"}
+    },
+    "extract_root_prefix": {
+      "x86-fs-with": "$output/firmware.bin_extract/0-786432.squashfs_v3_extract/",
+      "trx-fs-with": "$output/firmware.bin_extract/",
+      "note": "$output = the REA --output-directory; the published path prefix is the chunk extract root from derivations[].child_path."
+    },
+    "subject": {"name": "input basename", "digest_source": "sha256 of the input bytes", "observed": "subject.digest.sha256 == pin for both fs inputs; evidence_id null at envelope top level (raw_result.report holds the REA report)"}
+  },
+  "symlink_dispositions": {
+    "x86": {"oracle_symlinks": 152, "unpublished_every": 152, "removed": 0, "dirs_published_or_gapped": 0, "devices_present": 0},
+    "trx": {"oracle_symlinks": 163, "unpublished_every": 163, "removed": 0, "dirs_published_or_gapped": 0, "devices_present": 0},
+    "note": "No MaliciousSymlinkRemoved diagnostic appeared on any with-sasquatch run, including absolute-target links (etc/mtab -> /proc/mounts, etc/rc.d/* -> /etc/init.d/*). Escaping symlinks are retained as unpublished entries, not removed."
+  },
+  "tools_installed": []
+}

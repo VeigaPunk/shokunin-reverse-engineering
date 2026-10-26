@@ -1,0 +1,54 @@
+selftest fixed  want GREEN got GREEN [ok]
+selftest broken want RED got RED [ok]
+selftest exit=0
+--- r41 pair ---
+gen      fixtures/gen-r41.py
+counter  fixtures/counter-r41.py
+shape    build_carrier:1349           resolves via class_expected.features (counter:1498)
+shape    build_combo_carrier:1443     UNRESOLVED
+man-key  classes                  generator writes it: True (counter:1046)
+man-key  carriers                 generator writes it: True (counter:1047)
+man-key  seed                     generator writes it: True (counter:1059)
+man-key  generator                generator writes it: True (counter:1062)
+man-key  rea_params               generator writes it: False (counter:1459)
+man-key  class_features           generator writes it: False (counter:1489)
+man-key  classes_features         generator writes it: False (counter:1489)
+man-key  feature_tuples           generator writes it: False (counter:1489)
+man-key  features_by_class        generator writes it: False (counter:1489)
+man-key  class_tuples             generator writes it: False (counter:1489)
+man-key  carriers                 generator writes it: True (counter:2143)
+man-key  carriers                 generator writes it: True (counter:2173)
+read     class_expected.features      counter:1498
+read     features                     counter:1500
+read     declared_features            counter:1502
+verdict  RED
+r41 exit=1
+--- fixed pair (files) ---
+gen      fixtures/gen-fixed.py
+counter  fixtures/counter-fixed.py
+shape    build_class:18               resolves via declared_features (counter:14)
+shape    build_combo:24               resolves via declared_features (counter:14)
+read     declared_features            counter:14
+verdict  GREEN
+fixed exit=0
+--- v4 standin gen vs r41 counter (contract probe) ---
+gen      /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Counter/standin-heldout-gen-v4.py
+counter  fixtures/counter-r41.py
+shape    emit:238                     resolves via declared_features (counter:1502)
+man-key  classes                  generator writes it: True (counter:1046)
+man-key  carriers                 generator writes it: True (counter:1047)
+man-key  seed                     generator writes it: True (counter:1059)
+man-key  generator                generator writes it: True (counter:1062)
+man-key  rea_params               generator writes it: False (counter:1459)
+man-key  class_features           generator writes it: False (counter:1489)
+man-key  classes_features         generator writes it: False (counter:1489)
+man-key  feature_tuples           generator writes it: False (counter:1489)
+man-key  features_by_class        generator writes it: False (counter:1489)
+man-key  class_tuples             generator writes it: False (counter:1489)
+man-key  carriers                 generator writes it: True (counter:2143)
+man-key  carriers                 generator writes it: True (counter:2173)
+read     class_expected.features      counter:1498
+read     features                     counter:1500
+read     declared_features            counter:1502
+verdict  GREEN
+probe exit=0

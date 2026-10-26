@@ -1,0 +1,11 @@
+--- pristine
++++ M22
+@@ -1082,7 +1082,7 @@
+         if kind in structural:
+             return False, 'structural gap kind %r carries a path %r' % (kind, rp)
+         hits = [r for r, _k, _d in nonreg if same_rel(rp, r, root)]
+-        if len(hits) != 1:
++        if not hits:
+             return False, 'gap path %r matches %d non-regular entries' % (rp, len(hits))
+         entry_kind = by_rel[hits[0]][0]
+         if kind not in allowed.get(entry_kind, []):

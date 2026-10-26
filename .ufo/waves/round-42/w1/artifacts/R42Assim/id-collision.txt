@@ -1,0 +1,33 @@
+# REGISTRY ID COLLISION CHECK — R42Assim, 2026-10-26
+
+Lane registry at base `c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c`: `corpus/SOURCES.md`,
+`grep -oE '^\| S[0-9]+ '` → **129 ids, S001–S129, contiguous**.
+Staged package `merge/kaidoku/SOURCES.append.md`: **132 ids, S106–S237**.
+
+```
+$ comm -12 reg-ids staged-ids | tr '\n' ' '
+S106 S107 S108 S109 S110 S111 S112 S113 S114 S115 S116 S117 S118 S119 S120 S121 S122 S123 S124 S125 S126 S127 S128 S129
+```
+
+**24 collisions (S106–S129).** First free lane id: **S130**, which coincides with staged S130.
+
+Consequence for this seat: no staged row is appended verbatim. The five rows I propose
+(`drafts/sources-rows.md`) are re-grounded and renumbered by document, and their proposed ids
+(S130–S136, S108 reused as a held row) start at the first free slot. A verbatim append of the staged
+rows would have overwritten 24 live rows — the round-34 M34-12 failure mode (S105 overwritten by the
+S106 insert at the same row count).
+
+Guard (re-runnable):
+
+```
+cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+git show c4a38ea2:corpus/SOURCES.md | grep -oE '^\| S[0-9]+ ' | tr -d '| ' | sort > reg-ids
+grep -oE '^\| S[0-9]+ ' /home/vgpnk/Projects/shokuknow/merge/kaidoku/SOURCES.append.md | tr -d '| ' | sort > staged-ids
+comm -12 reg-ids staged-ids | wc -l
+```
+
+The pattern is anchored at column zero (`^\| S`); it is **not** proven against an indented fixture
+this wave, so it inherits the round-40 caveat that a `  | S002` row would not be caught — the lane's
+registry rows are column-zero in every row at the base (checked: `grep -c '^ *| S[0-9]'` equals
+`grep -c '^| S[0-9]'`), so the narrower pattern is sufficient for this file, and that equality is the
+check to re-run rather than trusting the pattern alone.

@@ -1,0 +1,14 @@
+# cross-extractor agreement on a development image of the candidate format
+input: https://archive.openwrt.org/kamikaze/7.09/atheros-2.6/openwrt-atheros-2.6-root.squashfs
+  sha256 70d7c4c7ce6794a627bdfb38a1efae45363888a194caef260f389be5241aff58 (1179648 B)
+  handler squashfs_v3, magic sqsh, v3.0 BE, bytes_used 999424, block_size 65536, LZMA (7z: "LZMA Spec")
+A) unblob 26.6.4 -d 1 + sasquatch 4.5.1 (-be) extraction tree, regular files: 147
+B) 7z 26.04 `l -slt` typed regular files (Mode starts "-"):                   147
+   identical path set: True
+   identical size+sha256 on every path: True, compared 147
+C) typed symlinks: 162
+   7z materialised 81 as symlinks and 80 as 0-byte regular files (phantoms)
+   unblob/sasquatch extraction tree symlinks: 162 (a naive os.walk counts 161 because the
+   link-to-directory `var` lands in os.walk's dirnames; direct lstat shows 162 = the 7z count)
+   unblob logs "Ignoring special file (link, chrdev, blkdev, fifo, socket...)" while recursing,
+   so the pipeline relies on REA gap rows, not on published link files, for every symlink.

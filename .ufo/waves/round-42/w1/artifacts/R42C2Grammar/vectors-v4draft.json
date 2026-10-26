@@ -1,0 +1,1838 @@
+{
+ "_readme": [
+  "R42-C2 (amendment A1) feature-tuple vectors, grammar seat R42C2Grammar.",
+  "features -> expected (label, action) + decides = the A1 step whose guard",
+  "fired (mechanically checkable); reached = a step whose guard was",
+  "evaluated and failed (else-continue / BE guard), absent when equal.",
+  "Expected pairs are hand-derived from plans/round-42-claims.md ## R42-C2",
+  "steps 1-15 and cross-checked against ref-eval-v4draft.py classify().",
+  "Feature semantics are the A1 feature paragraph verbatim: H = chunk",
+  "handlers union gap handlers; F = squashfs_-prefixed subset of H;",
+  "L = F members matching squashfs_v1*/v2*/v3*; HF = handlers on",
+  "extractor-failure gaps, falling back to F when none carries one;",
+  "D = union of gap dependencies; BE in yes|no|n/a; SR yes|no; P int.",
+  "HF=[] means \"no failing gap carries a handler\" (the A1 fallback) or",
+  "\"no extractor-failure gap\" - steps 6/7 are unreachable in the latter.",
+  "build-envelope.py realizes a vector as a synthetic REA envelope",
+  "readable by both frozen round-41 tools."
+ ],
+ "_pinned": {
+  "source": "plans/round-42-claims.md ## R42-C2 amendment A1 steps 1-15",
+  "step3_membership": "D holds = membership, be-arm tested first",
+  "step6_membership": "squashfs_v4_be in HF (membership, not equality)",
+  "step7_no_be_guard": "step 7 has no BE condition",
+  "hf_fallback": "HF = F when no extractor-failure gap carries a handler",
+  "legacy_glob": "squashfs_v[123]* == union of squashfs_v1*/v2*/v3*",
+  "handler_inventory": [
+   "cpio",
+   "squashfs_v1",
+   "squashfs_v2",
+   "squashfs_v2_nonstandard",
+   "squashfs_v3",
+   "squashfs_v3_broadcom",
+   "squashfs_v3_ddwrt",
+   "squashfs_v3_nonstandard",
+   "squashfs_v4_be",
+   "squashfs_v4_broadcom",
+   "squashfs_v4_le",
+   "trx_v1"
+  ]
+ },
+ "vectors": [
+  {
+   "id": "V01",
+   "decides": 1,
+   "tag": "domain-guard",
+   "note": "wrong operation; everything else in-domain",
+   "features": {
+    "OP": "extract_image",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 1
+   },
+   "expected": {
+    "label": "unclassified",
+    "action": "none"
+   }
+  },
+  {
+   "id": "V02",
+   "decides": 1,
+   "tag": "domain-guard",
+   "note": "wrong provider id",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "binwalk",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 1
+   },
+   "expected": {
+    "label": "unclassified",
+    "action": "none"
+   }
+  },
+  {
+   "id": "V03",
+   "decides": 1,
+   "tag": "domain-guard",
+   "note": "wrong OP with a maximal tuple: step 1 precedes all",
+   "features": {
+    "OP": "extract_image",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "squashfs_v4_be"
+    ],
+    "HF": [
+     "squashfs_v3"
+    ],
+    "G": [
+     "depth-limited",
+     "extractor-failure",
+     "missing-extractor-dependency",
+     "unknown-chunk-handler",
+     "unpublished-entry"
+    ],
+    "D": [
+     "sasquatch"
+    ],
+    "BE": "no",
+    "SR": "yes",
+    "P": 3
+   },
+   "expected": {
+    "label": "unclassified",
+    "action": "none"
+   }
+  },
+  {
+   "id": "V04",
+   "decides": 2,
+   "tag": "container",
+   "note": "A1 container class: SquashFS image inside a TRX at --max-depth 1",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "trx_v1"
+    ],
+    "HF": [],
+    "G": [
+     "depth-limited"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "container-depth-limited",
+    "action": "raise-depth"
+   }
+  },
+  {
+   "id": "V05",
+   "decides": 2,
+   "tag": "container",
+   "note": "container with no chunk carved at all",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [],
+    "HF": [],
+    "G": [
+     "depth-limited"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "container-depth-limited",
+    "action": "raise-depth"
+   }
+  },
+  {
+   "id": "V06",
+   "decides": 2,
+   "tag": "container",
+   "note": "SR=yes rides along: step 2 precedes the SR rows",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "trx_v1"
+    ],
+    "HF": [],
+    "G": [
+     "depth-limited"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "yes",
+    "P": 0
+   },
+   "expected": {
+    "label": "container-depth-limited",
+    "action": "raise-depth"
+   }
+  },
+  {
+   "id": "V07",
+   "decides": 2,
+   "tag": "container",
+   "note": "dependency gap rides along: step 2 precedes step 4",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "trx_v1"
+    ],
+    "HF": [],
+    "G": [
+     "depth-limited",
+     "missing-extractor-dependency"
+    ],
+    "D": [
+     "sasquatch"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "container-depth-limited",
+    "action": "raise-depth"
+   }
+  },
+  {
+   "id": "V08",
+   "decides": 2,
+   "tag": "container",
+   "note": "residue rides along on a container: step 2 precedes step 9",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "trx_v1"
+    ],
+    "HF": [],
+    "G": [
+     "depth-limited",
+     "unknown-chunk-handler"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "container-depth-limited",
+    "action": "raise-depth"
+   }
+  },
+  {
+   "id": "V09",
+   "decides": 3,
+   "tag": "no-chunk",
+   "note": "bare envelope, no chunks",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "no-squashfs-chunk",
+    "action": "inspect-input"
+   }
+  },
+  {
+   "id": "V10",
+   "decides": 3,
+   "tag": "no-chunk",
+   "note": "only a non-SquashFS chunk: F is prefix-scoped to squashfs_",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "cpio"
+    ],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 2
+   },
+   "expected": {
+    "label": "no-squashfs-chunk",
+    "action": "inspect-input"
+   }
+  },
+  {
+   "id": "V11",
+   "decides": 3,
+   "tag": "no-chunk",
+   "note": "dependency gap with F empty: step 3 precedes step 4",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "cpio"
+    ],
+    "HF": [],
+    "G": [
+     "missing-extractor-dependency"
+    ],
+    "D": [
+     "sasquatch"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "no-squashfs-chunk",
+    "action": "inspect-input"
+   }
+  },
+  {
+   "id": "V12",
+   "decides": 3,
+   "tag": "no-chunk",
+   "note": "residue gap with F empty and no depth gap: step 3 precedes step 9",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "cpio"
+    ],
+    "HF": [],
+    "G": [
+     "unknown-chunk-handler"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 1
+   },
+   "expected": {
+    "label": "no-squashfs-chunk",
+    "action": "inspect-input"
+   }
+  },
+  {
+   "id": "V13",
+   "decides": 3,
+   "tag": "no-chunk",
+   "note": "SR=yes with F empty and no gaps: step 3 precedes step 12",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "cpio"
+    ],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "yes",
+    "P": 0
+   },
+   "expected": {
+    "label": "no-squashfs-chunk",
+    "action": "inspect-input"
+   }
+  },
+  {
+   "id": "V14",
+   "decides": 3,
+   "tag": "no-chunk",
+   "note": "container chunk WITHOUT a depth gap falls to step 3 (the 2/3 boundary)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "trx_v1"
+    ],
+    "HF": [],
+    "G": [
+     "unknown-chunk-handler"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 1
+   },
+   "expected": {
+    "label": "no-squashfs-chunk",
+    "action": "inspect-input"
+   }
+  },
+  {
+   "id": "V15",
+   "decides": 4,
+   "tag": "dep",
+   "note": "v4 BE chunk resolves sasquatch-v4be",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [],
+    "G": [
+     "missing-extractor-dependency"
+    ],
+    "D": [
+     "sasquatch-v4be"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "dep-missing-be",
+    "action": "install-extractor-be"
+   }
+  },
+  {
+   "id": "V16",
+   "decides": 4,
+   "tag": "dep",
+   "note": "legacy chunk resolves plain sasquatch (confirmed on real envelopes)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [],
+    "G": [
+     "missing-extractor-dependency"
+    ],
+    "D": [
+     "sasquatch"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "dep-missing-le",
+    "action": "install-extractor-le"
+   }
+  },
+  {
+   "id": "V17",
+   "decides": 4,
+   "tag": "dep",
+   "note": "v4 LE chunk also resolves plain sasquatch",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "missing-extractor-dependency"
+    ],
+    "D": [
+     "sasquatch"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "dep-missing-le",
+    "action": "install-extractor-le"
+   }
+  },
+  {
+   "id": "V18",
+   "decides": 4,
+   "tag": "dep",
+   "note": "D naming both: membership + be-arm-first (one-column exact-set table diverges)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [],
+    "G": [
+     "missing-extractor-dependency"
+    ],
+    "D": [
+     "sasquatch",
+     "sasquatch-v4be"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "dep-missing-be",
+    "action": "install-extractor-be"
+   }
+  },
+  {
+   "id": "V19",
+   "decides": 15,
+   "tag": "dep",
+   "note": "dependency gap naming neither: else-continue falls to step 15",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "missing-extractor-dependency"
+    ],
+    "D": [
+     "unsquashfs"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 4
+   },
+   "expected": {
+    "label": "unclassified",
+    "action": "none"
+   },
+   "reached": 4
+  },
+  {
+   "id": "V20",
+   "decides": 4,
+   "tag": "dep",
+   "note": "dep + partial failure: step 4 precedes step 5",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [
+     "squashfs_v3"
+    ],
+    "G": [
+     "extractor-failure",
+     "missing-extractor-dependency"
+    ],
+    "D": [
+     "sasquatch"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 5
+   },
+   "expected": {
+    "label": "dep-missing-le",
+    "action": "install-extractor-le"
+   }
+  },
+  {
+   "id": "V21",
+   "decides": 4,
+   "tag": "dep",
+   "note": "dep + zero-file failure: step 4 precedes step 6",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [
+     "squashfs_v4_be"
+    ],
+    "G": [
+     "extractor-failure",
+     "missing-extractor-dependency"
+    ],
+    "D": [
+     "sasquatch-v4be"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "dep-missing-be",
+    "action": "install-extractor-be"
+   }
+  },
+  {
+   "id": "V22",
+   "decides": 10,
+   "tag": "dep",
+   "note": "dep else-continue reaches step 10 (depth)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "depth-limited",
+     "missing-extractor-dependency"
+    ],
+    "D": [
+     "unsquashfs"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 1
+   },
+   "expected": {
+    "label": "depth-limited",
+    "action": "raise-depth"
+   },
+   "reached": 4
+  },
+  {
+   "id": "V23",
+   "decides": 11,
+   "tag": "dep",
+   "note": "dep else-continue reaches step 11 (SR rows)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "missing-extractor-dependency",
+     "unpublished-entry"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "yes",
+    "P": 0
+   },
+   "expected": {
+    "label": "mixed-symlinks",
+    "action": "audit-symlinks"
+   },
+   "reached": 4
+  },
+  {
+   "id": "V24",
+   "decides": 5,
+   "tag": "partial",
+   "note": "partial with depth + link gaps + removal: step 5 absorbs them all",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [
+     "squashfs_v4_be"
+    ],
+    "G": [
+     "depth-limited",
+     "extractor-failure",
+     "unpublished-entry"
+    ],
+    "D": [],
+    "BE": "yes",
+    "SR": "yes",
+    "P": 7
+   },
+   "expected": {
+    "label": "partial-body-failure",
+    "action": "salvage-partial"
+   }
+  },
+  {
+   "id": "V25",
+   "decides": 5,
+   "tag": "partial",
+   "note": "partial on a FAILING legacy chunk: P>0 beats step 7",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [
+     "squashfs_v3"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 3
+   },
+   "expected": {
+    "label": "partial-body-failure",
+    "action": "salvage-partial"
+   }
+  },
+  {
+   "id": "V26",
+   "decides": 5,
+   "tag": "partial",
+   "note": "partial + residue: step 5 precedes step 9",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [
+     "squashfs_v4_le"
+    ],
+    "G": [
+     "extractor-failure",
+     "unknown-chunk-handler"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 1
+   },
+   "expected": {
+    "label": "partial-body-failure",
+    "action": "salvage-partial"
+   }
+  },
+  {
+   "id": "V27",
+   "decides": 6,
+   "tag": "avm",
+   "note": "A1 avm class: failing v4_be, BE argv recorded without -be",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [
+     "squashfs_v4_be"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "avm-marker-be-dropped",
+    "action": "wrap-extractor-be"
+   }
+  },
+  {
+   "id": "V28",
+   "decides": 8,
+   "tag": "avm",
+   "note": "BE=n/a (timeout, no argv): step 6 needs BE=no, falls to step 8",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [
+     "squashfs_v4_be"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "body-extractor-failure",
+    "action": "preserve-failure"
+   },
+   "reached": 6
+  },
+  {
+   "id": "V29",
+   "decides": 8,
+   "tag": "avm",
+   "note": "BE=yes envelope-level (a legacy sibling ran -be) blocks step 6; HF={v4_be} not legacy -> step 8",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "squashfs_v4_be"
+    ],
+    "HF": [
+     "squashfs_v4_be"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "yes",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "body-extractor-failure",
+    "action": "preserve-failure"
+   },
+   "reached": 6
+  },
+  {
+   "id": "V30",
+   "decides": 6,
+   "tag": "avm",
+   "note": "both v4_be and legacy failing: membership fires step 6 before step 7",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "squashfs_v4_be"
+    ],
+    "HF": [
+     "squashfs_v3",
+     "squashfs_v4_be"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "avm-marker-be-dropped",
+    "action": "wrap-extractor-be"
+   }
+  },
+  {
+   "id": "V31",
+   "decides": 7,
+   "tag": "legacy",
+   "note": "A1 legacy class: failing v3 chunk, BE=no",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [
+     "squashfs_v3"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "legacy-body-failure",
+    "action": "cross-read-legacy"
+   }
+  },
+  {
+   "id": "V32",
+   "decides": 7,
+   "tag": "legacy",
+   "note": "BE=yes: step 7 has NO BE condition (a BE v3 chunk runs sasquatch -be)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [
+     "squashfs_v3"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "yes",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "legacy-body-failure",
+    "action": "cross-read-legacy"
+   }
+  },
+  {
+   "id": "V33",
+   "decides": 7,
+   "tag": "legacy",
+   "note": "BE=n/a (legacy timeout): still step 7, not step 8",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [
+     "squashfs_v3"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "legacy-body-failure",
+    "action": "cross-read-legacy"
+   }
+  },
+  {
+   "id": "V34",
+   "decides": 7,
+   "tag": "legacy",
+   "note": "ddwrt variant is in L",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3_ddwrt"
+    ],
+    "HF": [
+     "squashfs_v3_ddwrt"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "legacy-body-failure",
+    "action": "cross-read-legacy"
+   }
+  },
+  {
+   "id": "V35",
+   "decides": 7,
+   "tag": "legacy",
+   "note": "v1 handler is in L",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v1"
+    ],
+    "HF": [
+     "squashfs_v1"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "legacy-body-failure",
+    "action": "cross-read-legacy"
+   }
+  },
+  {
+   "id": "V36",
+   "decides": 7,
+   "tag": "legacy",
+   "note": "MIXED: legacy failing beside a CLEAN v4_be chunk (one-column table fires avm)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "squashfs_v4_be"
+    ],
+    "HF": [
+     "squashfs_v3"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "legacy-body-failure",
+    "action": "cross-read-legacy"
+   }
+  },
+  {
+   "id": "V37",
+   "decides": 7,
+   "tag": "legacy",
+   "note": "MIXED: legacy failing beside a clean v4_le chunk (both encodings agree)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "squashfs_v4_le"
+    ],
+    "HF": [
+     "squashfs_v3"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "legacy-body-failure",
+    "action": "cross-read-legacy"
+   }
+  },
+  {
+   "id": "V38",
+   "decides": 7,
+   "tag": "legacy",
+   "note": "MIXED: legacy and v4_le both failing -> step 7",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "squashfs_v4_le"
+    ],
+    "HF": [
+     "squashfs_v3",
+     "squashfs_v4_le"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "legacy-body-failure",
+    "action": "cross-read-legacy"
+   }
+  },
+  {
+   "id": "V39",
+   "decides": 8,
+   "tag": "body",
+   "note": "failing v4_le chunk, single chunk",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [
+     "squashfs_v4_le"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "body-extractor-failure",
+    "action": "preserve-failure"
+   }
+  },
+  {
+   "id": "V40",
+   "decides": 8,
+   "tag": "body",
+   "note": "MIXED: v4_le failing beside a CLEAN legacy chunk (one-column table fires legacy)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "squashfs_v4_le"
+    ],
+    "HF": [
+     "squashfs_v4_le"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "body-extractor-failure",
+    "action": "preserve-failure"
+   }
+  },
+  {
+   "id": "V41",
+   "decides": 8,
+   "tag": "body",
+   "note": "MIXED: v4_le failing beside a CLEAN v4_be chunk (one-column table fires avm)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be",
+     "squashfs_v4_le"
+    ],
+    "HF": [
+     "squashfs_v4_le"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "body-extractor-failure",
+    "action": "preserve-failure"
+   }
+  },
+  {
+   "id": "V42",
+   "decides": 8,
+   "tag": "body",
+   "note": "v4_broadcom failing: in F, not in L, not v4_be",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_broadcom"
+    ],
+    "HF": [
+     "squashfs_v4_broadcom"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "body-extractor-failure",
+    "action": "preserve-failure"
+   }
+  },
+  {
+   "id": "V43",
+   "decides": 8,
+   "tag": "body",
+   "note": "MIXED: v4_broadcom failing beside a clean legacy chunk",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "squashfs_v4_broadcom"
+    ],
+    "HF": [
+     "squashfs_v4_broadcom"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "body-extractor-failure",
+    "action": "preserve-failure"
+   }
+  },
+  {
+   "id": "V44",
+   "decides": 8,
+   "tag": "body",
+   "note": "MIXED: v4_broadcom failing beside a clean v4_be chunk",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be",
+     "squashfs_v4_broadcom"
+    ],
+    "HF": [
+     "squashfs_v4_broadcom"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "body-extractor-failure",
+    "action": "preserve-failure"
+   }
+  },
+  {
+   "id": "V45",
+   "decides": 6,
+   "tag": "avm",
+   "note": "HF fallback to F (no failing gap handler recorded): F={v3,v4_be} -> step 6 membership",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "squashfs_v4_be"
+    ],
+    "HF": [],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "avm-marker-be-dropped",
+    "action": "wrap-extractor-be"
+   }
+  },
+  {
+   "id": "V46",
+   "decides": 7,
+   "tag": "legacy",
+   "note": "HF fallback to F={v3,v4_le}: no v4_be, legacy present -> step 7",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "legacy-body-failure",
+    "action": "cross-read-legacy"
+   }
+  },
+  {
+   "id": "V47",
+   "decides": 8,
+   "tag": "body",
+   "note": "failing handler is the NON-SquashFS chunk: HF={cpio} decides, not F",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "cpio",
+     "squashfs_v4_le"
+    ],
+    "HF": [
+     "cpio"
+    ],
+    "G": [
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "body-extractor-failure",
+    "action": "preserve-failure"
+   }
+  },
+  {
+   "id": "V48",
+   "decides": 9,
+   "tag": "residue",
+   "note": "A1 residue class: unclaimed bytes beside a SquashFS chunk",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "unknown-chunk-handler"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 3
+   },
+   "expected": {
+    "label": "unknown-residue",
+    "action": "isolate-residue"
+   }
+  },
+  {
+   "id": "V49",
+   "decides": 9,
+   "tag": "residue",
+   "note": "residue + depth: step 9 precedes step 10 (L1-named boundary)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "depth-limited",
+     "unknown-chunk-handler"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 2
+   },
+   "expected": {
+    "label": "unknown-residue",
+    "action": "isolate-residue"
+   }
+  },
+  {
+   "id": "V50",
+   "decides": 9,
+   "tag": "residue",
+   "note": "residue + SR: step 9 precedes steps 11/12",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [],
+    "G": [
+     "unknown-chunk-handler"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "yes",
+    "P": 0
+   },
+   "expected": {
+    "label": "unknown-residue",
+    "action": "isolate-residue"
+   }
+  },
+  {
+   "id": "V51",
+   "decides": 4,
+   "tag": "residue",
+   "note": "dep + residue: step 4 precedes step 9",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [],
+    "G": [
+     "missing-extractor-dependency",
+     "unknown-chunk-handler"
+    ],
+    "D": [
+     "sasquatch"
+    ],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "dep-missing-le",
+    "action": "install-extractor-le"
+   }
+  },
+  {
+   "id": "V52",
+   "decides": 8,
+   "tag": "residue",
+   "note": "zero-file failure + residue: step 8 precedes step 9",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [
+     "squashfs_v4_le"
+    ],
+    "G": [
+     "extractor-failure",
+     "unknown-chunk-handler"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "body-extractor-failure",
+    "action": "preserve-failure"
+   }
+  },
+  {
+   "id": "V53",
+   "decides": 10,
+   "tag": "depth",
+   "note": "depth gap on a SquashFS chunk",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "depth-limited"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 6
+   },
+   "expected": {
+    "label": "depth-limited",
+    "action": "raise-depth"
+   }
+  },
+  {
+   "id": "V54",
+   "decides": 10,
+   "tag": "depth",
+   "note": "depth + in-tree links + removal: step 10 precedes step 11",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [],
+    "G": [
+     "depth-limited",
+     "unpublished-entry"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "yes",
+    "P": 2
+   },
+   "expected": {
+    "label": "depth-limited",
+    "action": "raise-depth"
+   }
+  },
+  {
+   "id": "V67",
+   "decides": 10,
+   "tag": "depth",
+   "note": "container chunk AND a separate top-level SquashFS chunk: F nonempty -> step 10, not 2",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "trx_v1"
+    ],
+    "HF": [],
+    "G": [
+     "depth-limited"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 1
+   },
+   "expected": {
+    "label": "depth-limited",
+    "action": "raise-depth"
+   }
+  },
+  {
+   "id": "V55",
+   "decides": 11,
+   "tag": "mixed",
+   "note": "SR + in-tree links",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "unpublished-entry"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "yes",
+    "P": 4
+   },
+   "expected": {
+    "label": "mixed-symlinks",
+    "action": "audit-symlinks"
+   }
+  },
+  {
+   "id": "V56",
+   "decides": 11,
+   "tag": "mixed",
+   "note": "mixed on a legacy chunk: grammar-reachable, fixtures cannot build it (no v3 writer)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [],
+    "G": [
+     "unpublished-entry"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "yes",
+    "P": 0
+   },
+   "expected": {
+    "label": "mixed-symlinks",
+    "action": "audit-symlinks"
+   }
+  },
+  {
+   "id": "V57",
+   "decides": 12,
+   "tag": "escaping",
+   "note": "removal report, empty gap set",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "yes",
+    "P": 2
+   },
+   "expected": {
+    "label": "escaping-symlink-removed",
+    "action": "expect-link-absent"
+   }
+  },
+  {
+   "id": "V58",
+   "decides": 12,
+   "tag": "escaping",
+   "note": "escaping on a legacy chunk with P=0",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "yes",
+    "P": 0
+   },
+   "expected": {
+    "label": "escaping-symlink-removed",
+    "action": "expect-link-absent"
+   }
+  },
+  {
+   "id": "V59",
+   "decides": 13,
+   "tag": "in-tree",
+   "note": "exact singleton gap set",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "unpublished-entry"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 1
+   },
+   "expected": {
+    "label": "in-tree-symlink-metadata",
+    "action": "count-gap"
+   }
+  },
+  {
+   "id": "V60",
+   "decides": 13,
+   "tag": "in-tree",
+   "note": "in-tree on a legacy chunk",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [],
+    "G": [
+     "unpublished-entry"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "in-tree-symlink-metadata",
+    "action": "count-gap"
+   }
+  },
+  {
+   "id": "V61",
+   "decides": 14,
+   "tag": "clean",
+   "note": "clean legacy chunk (the R41-CL4 fix, positive arm)",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3"
+    ],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 5
+   },
+   "expected": {
+    "label": "clean",
+    "action": "none"
+   }
+  },
+  {
+   "id": "V62",
+   "decides": 14,
+   "tag": "clean",
+   "note": "clean-empty on a v1 chunk",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v1"
+    ],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "clean-empty",
+    "action": "confirm-empty"
+   }
+  },
+  {
+   "id": "V63",
+   "decides": 14,
+   "tag": "clean",
+   "note": "clean v4 chunk",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 1
+   },
+   "expected": {
+    "label": "clean",
+    "action": "none"
+   }
+  },
+  {
+   "id": "V64",
+   "decides": 14,
+   "tag": "clean",
+   "note": "clean with a non-SquashFS sibling chunk: sibling does not matter",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le",
+     "trx_v1"
+    ],
+    "HF": [],
+    "G": [],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 2
+   },
+   "expected": {
+    "label": "clean",
+    "action": "none"
+   }
+  },
+  {
+   "id": "V65",
+   "decides": 15,
+   "tag": "unclassified",
+   "note": "unpublished-entry beside an unknown gap kind: not the exact singleton",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_le"
+    ],
+    "HF": [],
+    "G": [
+     "encrypted-chunk",
+     "unpublished-entry"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "no",
+    "P": 2
+   },
+   "expected": {
+    "label": "unclassified",
+    "action": "none"
+   }
+  },
+  {
+   "id": "V66",
+   "decides": 15,
+   "tag": "unclassified",
+   "note": "SR=yes beside an unrelated gap: step 11 needs unpublished-entry",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v4_be"
+    ],
+    "HF": [],
+    "G": [
+     "encrypted-chunk"
+    ],
+    "D": [],
+    "BE": "n/a",
+    "SR": "yes",
+    "P": 0
+   },
+   "expected": {
+    "label": "unclassified",
+    "action": "none"
+   }
+  },
+  {
+   "id": "V68",
+   "decides": 7,
+   "tag": "legacy",
+   "note": "container chunk + failing legacy chunk: failure rows precede depth/residue",
+   "features": {
+    "OP": "extract_firmware",
+    "PR": "unblob",
+    "H": [
+     "squashfs_v3",
+     "trx_v1"
+    ],
+    "HF": [
+     "squashfs_v3"
+    ],
+    "G": [
+     "depth-limited",
+     "extractor-failure"
+    ],
+    "D": [],
+    "BE": "no",
+    "SR": "no",
+    "P": 0
+   },
+   "expected": {
+    "label": "legacy-body-failure",
+    "action": "cross-read-legacy"
+   }
+  }
+ ]
+}

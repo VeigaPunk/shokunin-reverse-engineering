@@ -1,0 +1,29 @@
+# input pins (R42C1Revenger).  All are DEVELOPMENT inputs, never C1 carriers.
+# unblob 26.6.4 fixtures (MIT, LFS at tag 26.6.4): fetched from the media endpoint; the tree API
+# reports the LFS-pointer size (128/129 B), the media endpoint serves the object (4096 B).
+name	bytes	sha256	source
+v3_le.bin	4096	0161351caec8e9da6e3e5ac7b046fd11d832efb18eb09e33011e6d19d50cd1f7	https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3/little_endian/__input__/squashfs_v3_le.bin
+v3_be.bin	4096	4e9493d9c6f868005dea8f11992129c3399e0bcb8f3a966c750cb925989ca97c	https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3/big_endian/__input__/squashfs_v3_be.bin
+v3_ns_le.bin	4096	3bce6ae378319fd2ac08c73ede9b3890a6d0f78c16392f09117cc3ffd70d1acb	https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3_nonstandard/little_endian/__input__/squashfs_v3_le.bin
+v2_le.bin	4096	7c62dbe388b972119f5d17a12836a016737d58276184f4caa2a90dafd924f124	https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v2/little_endian/__input__/squashfs_v2.0_le.bin
+v1_le.bin	4096	b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71	https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v1/little_endian/__input__/squashfs_v1.0_le.bin
+v4_le.bin	4096	a754b315013874eaa07f67f918278a699b8503ece1c6bbf11f153c62d7f49c69	https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v4_le/__input__/squashfs_v4.bin
+v4_be.bin	4096	9c7c523c5d1d1cafc0b679af9092ce0289d9656f6a24bc3bd0009f95b69397c0	https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v4_be/__input__/squashfs_v4.bin
+bad_symlink.squashfs	4096	0c55f810260e48d4db63d02b92a0a07e0e8b04c46070a2f3ef1f2314eaab0d37	https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v4_le/__input__/bad_symlink.squashfs
+kamikaze-wrt54g.bin	1904672	3cdbe4266da9c9a793e5ef985a4527ecbc931a79511781cd96bc81cd897d6904	https://archive.openwrt.org/kamikaze/7.09/brcm47xx-2.6/openwrt-wrt54g-2.6-squashfs.bin
+k809.trx	2494464	6117a6b12ddeff572da46df98f0af9fac61ee3c6bd1d191124789c5541a17006	https://archive.openwrt.org/kamikaze/8.09/brcm47xx/openwrt-brcm47xx-squashfs.trx
+# derived inputs (rebuild commands, all on the fixtures above):
+#  v3_ddwrt_be.bin      = v3_be.bin, bytes 0..4 := "tqsh"
+#  v3_ddwrt_le2.bin     = v3_le.bin, bytes 0..4 := "hsqt"
+#  v3_broadcom_be2.bin  = v3_be.bin, bytes 0..4 := "qshs"
+#  v3_broadcom_le.bin   = v3_le.bin, bytes 0..4 := "shsq"
+#  v3_exact.bin         = v3_le.bin[:258]                      (bytes_used exact carve)
+#  v3_ffpad.bin         = v3_le.bin[:258] + 0xff*3838          (non-zero trailing padding)
+#  v3_carved.bin        = "A"*4096 + v3_le.bin                 (v3 chunk at file offset 4096)
+#  v3_dmg_inode.bin     = v3_le.bin, bytes [132:188) zeroed     (inode-table metadata block destroyed)
+#  v3_dmg_dir.bin       = v3_le.bin, bytes [188:246) zeroed     (directory table destroyed)
+#  v3_dmg_inode_late.bin= v3_le.bin, bytes [170:188) zeroed
+#  v3_dmg_ddwrt_be2.bin = v3_be.bin, bytes [132:188) zeroed and 0..4 := "tqsh"
+#  kamikaze_carve.bin   = kamikaze-wrt54g.bin[753696:753696+1061809]  (hsqs v3.0, bytes_used 1061809)
+#  k809_carve.bin       = k809.trx[779264:]                   (hsqs v3.0, bytes_used 1619688)
+#

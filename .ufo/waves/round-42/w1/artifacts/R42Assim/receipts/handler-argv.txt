@@ -1,0 +1,17 @@
+# unblob 26.6.4 squashfs.py handler argv block (installed copy == tag == main, sha256 2d7b901b...)
+25:    EXECUTABLE = "sasquatch"
+26:    V4BE_EXECUTABLE = "sasquatch-v4be"
+36:        commands_args = []
+37:        executable = self.EXECUTABLE
+40:            case Endian.BIG, 4:
+41:                executable = self.V4BE_EXECUTABLE
+48:                    is_avm = header.bytes_used == header.mkfs_time
+49:                    if not is_avm:
+50:                        commands_args.append("-be")
+51:            case Endian.BIG, _:
+52:                commands_args.append("-be")
+53:            case Endian.LITTLE, _:
+54:                commands_args.append("-le")
+56:        commands_args.extend(
+65:        extractor = Command(executable, *commands_args)
+69:        return [self.EXECUTABLE, self.V4BE_EXECUTABLE]

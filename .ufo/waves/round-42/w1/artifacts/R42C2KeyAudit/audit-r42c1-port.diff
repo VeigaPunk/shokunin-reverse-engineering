@@ -1,0 +1,1904 @@
+--- base/c1-counter.py	2026-10-26 18:50:44.065299714 -0300
++++ /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Counter/c1-counter.py	2026-10-26 19:01:44.192637026 -0300
+@@ -1,30 +1,74 @@
+ #!/usr/bin/env python3
+-"""R41-C1 counter (coverage: genuine AVM-layout big-endian SquashFS v4 -> Core).
++"""R42-C1 counter (coverage: the SquashFS v3 handler family through REA -> Core).
++
++Port of `tools/round-41/c1-counter.py` (round-42 seat R42C1Counter). The claims
++text is `plans/round-42-claims.md` R42-C1; the predicate is embedded here clause
++by clause:
++
++  At the measured revision, for each frozen carrier, the committed round-42
++  REA 6.5.0 `extract-firmware --max-depth 1` after-receipt (unblob 26.6.4,
++  sasquatch 4.5.1 on the child PATH, never sasquatch-v4be), first added in a
++  commit that descends from the freeze, names the carrier's frozen
++  `squashfs_v3*` handler with no failed chunk, publishes every regular file of
++  the frozen independent oracle at its exact relative path under the chunk
++  extract root (segment-bounded, round-41 closure D5) with the same sha256 and
++  size, publishes no non-regular oracle entry as a file, accounts for every
++  non-regular oracle row by the frozen gap rule (one `unpublished-entry` gap or
++  one `MaliciousSymlinkRemoved` diagnostic per symlink; devices and directories
++  invisible; at most one structural `depth-limited`; no
++  `unknown-chunk-handler`), has a subject digest equal to the carrier pin and
++  recomputes its evidence id; the carrier bytes hash to the pin and their
++  superblock reads the magic/major/minor/endianness/compression frozen per
++  carrier, carved to exactly `bytes_used`; **and** a counter-time REA rerun of
++  the same bytes has the same semantic projection as the committed receipt (a
++  receipt fabricated from the oracle, however its evidence id is minted, cannot
++  equal a real run); PROVINCE.md holds a `## Round-42 additions to Core` row
++  naming the `squashfs_v3` handler family that cites the round-42 knowledge
++  entry, which cites a SOURCES row opened 2026-10-26 whose used-by lists it; a
++  round-42 frontier note supersedes the Frontier text for the v1-v3 family;
++  corpus/README.md maps the entry stem; no frozen C1 path changed after the
++  freeze.
+ 
+-Predicate P41-C1 (draft `plans/round-41-claims.md`, embedded here clause by clause):
+-  At the measured revision, for each frozen AVM carrier, the committed round-41
+-  REA 6.5.0 `extract-firmware` after-receipt (unblob 26.6.4, sasquatch-v4be 4.5.1
+-  reachable on the child PATH), first added in a commit that descends from the
+-  freeze, names the `squashfs_v4_be` handler with no failed chunk, publishes every
+-  regular file of the frozen independent oracle at the exact path relative to the
+-  chunk's extract root (same sha256), publishes no non-regular entry at its exact
+-  path, carries only the extraction gaps the frozen gap rule allows, has a
+-  subject digest equal to the carrier pin and recomputes to its evidence id; the
+-  carrier bytes hash to the frozen pin and its superblock is the genuine AVM
+-  layout (big-endian `sqsh`, v4.0, `mkfs_time == bytes_used`, first metadata block
+-  length little-endian); **and** a fresh REA run of the same carrier made by this
+-  counter at scoring time (scratch output directory) yields the same semantic
+-  projection as the committed receipt (routed R39-CL5: a receipt fabricated from
+-  the oracle, however its evidence id is minted, cannot equal a real run);
+-  PROVINCE.md holds a `## Round-41 additions to Core` row naming the AVM layout
+-  that cites the round-41 knowledge entry, which cites a SOURCES.row opened
+-  2026-10-26 whose used-by lists it; a round-41 frontier note supersedes the AVM
+-  part of the Frontier text; corpus/README.md maps the entry stem; no frozen C1
+-  path changed after the freeze.
++Target: carriers_matched == 4 (ids frozen in carriers.json) and every binding
++true.
+ 
+-Target: carriers_matched == 4 (V3, V4, L3, L4) and every binding true.
++Changes from the round-41 counter (all four are routed-defect repairs)
++  (1) carrier layout      the AVM v4 layout probes (the `mkfs_time == bytes_used`
++                          marker and the little-endian metadata header) are
++                          replaced by a SquashFS v3 superblock probe driven by
++                          the per-carrier frozen `superblock` block: family magic
++                          bytes, `s_major`, minor, endianness, and the
++                          compression class read from the inode table's first
++                          compressed metadata block. `bytes_used` is now the
++                          u64 at offset 63 (the packed v3 struct, verified
++                          against squashfs-tools images) and `carve_ok` requires
++                          the carve to be exactly `bytes_used` bytes.
++  (2) handler binding     round 41 hardcoded `squashfs_v4_be` and accepted any
++                          derivation edge whose handler starts `squashfs_v4`.
++                          Here each carrier freezes its own v3-family handler
++                          (`squashfs_v3[_ddwrt|_broadcom|_nonstandard]`); the
++                          chunk must name it and the extract root is the
++                          `derivations[]` edge whose handler equals it. No
++                          prefix test, no default handler: a v4 handler on a v3
++                          carrier fails `handler_ok` and leaves no root.
++  (3) path rule           the exact relative-path rule is unchanged (R40-CL1),
++                          and every prefix test is segment-bounded: `P == CR or
++                          P.startswith(CR + '/')`, never `P.startswith(CR)`
++                          (round-41 closure D5, `.ufo/waves/round-41/w2/
++                          R41W2C1PathRule.md`). The two D5 findings are closed:
++                          a removal diagnostic's `report.link` must sit under the
++                          run's own extraction root (`dirname(output_directory)`),
++                          so a decoy path segment-run no longer resolves, and a
++                          receipt path with an empty / `.` / `..` component or a
++                          trailing slash fails `path_shape_ok` instead of being
++                          normalised into an oracle row.
++  (4) receipt identity    every receipt this counter writes carries `counter`
++                          and `counter_sha256` = sha256 of the counter file's own
++                          bytes (round-41 closure D4: `counter_sha256 null` made
++                          tool identity rest on a separate diff). `--verify-receipt`
++                          re-checks a written receipt against the file it names.
+ 
+-The extract root (R40-CL1 repair; R41C1Revenger 1 is the normative rule)
++The extract root (R40-CL1 repair; carried from round 41, per-carrier handler)
+   Every path comparison against the oracle and non-regular tables is equality
+   after mapping the receipt path into its chunk's extract root, never a suffix
+   test, and the root is never reconstructed from the path text:
+@@ -36,21 +80,29 @@
+                        `depth_limited_paths[]` are `$output/`-prefixed
+                        (rea-agents 6.5.0 FirmwareFiles.js:177 vs :191-200)
+     root               the child path of every `derivations[]` edge whose handler
+-                       starts `squashfs_v4` (FirmwareReports.js:341-357 taken from
+-                       unblob's own subtasks); a whole-file chunk's root is
++                       EQUALS the carrier's frozen handler
++                       (FirmwareReports.js:341-357 taken from unblob's own
++                       subtasks); a whole-file chunk's root is
+                        `firmware.bin_extract` (`selected.bin_extract` under a
+                        range selection), and a carved or nested chunk's root is
+-                       `<parent>/<start>-<end>.<handler>_extract`
++                       `<parent>/<start>-<end>.<handler>_extract`. Round 41
++                       accepted any edge whose handler started `squashfs_v4`;
++                       that prefix test is gone, so a receipt that extracted some
++                       other SquashFS chunk cannot lend this carrier a root
+     one root           the subject root is that root when the receipt has exactly
+-                       one; several `squashfs_v4` roots are ambiguous and the
+-                       freeze can name the intended one with the optional
++                       one; several roots of the carrier's handler are ambiguous
++                       and the freeze can name the intended one with the optional
+                        `oracle_root` key of the carrier entry, otherwise the
+                        three path clauses fail closed with `extract_root: null`
+     whole segments     `rel(P)` is `''` for P == root, `P[len(root)+1:]` for
+                        `P.startswith(root + '/')`, else None - an entry outside
+                        the root belongs to another namespace (a carve artifact of
+                        the parent, a sibling root, a deeper root) and is neither
+-                       compared against this oracle nor reported as published
++                       compared against this oracle nor reported as published.
++                       The prefix test is segment-bounded in both directions: a
++                       root `x_extract` does NOT own `x_extract2/...` (round-41
++                       closure D5), which is why `under_root()` exists and why
++                       the selftest pins it
+     keyed by root      with one root per carrier the (root, rel) key collapses to
+                        rel, and a path outside the root cannot satisfy a row
+                        (R41C1Revenger C3: two roots carry `sbin/tool` with
+@@ -58,11 +110,21 @@
+   Round 40 matched with `candidate.endswith('/' + rel)` (defect R40-CL1: the
+   regular file `usr/bin/busy` scored as the symlink entry `bin/busy`). Neither a
+   suffix nor a fixed number of `_extract` segments is a root: a carve at a
+-  nonzero offset (`<root>/4096-6513.squashfs_v4_be_extract/...`) and a nested
+-  image (`<root>/nested/inner.squashfs_extract/...`) move the root as deep as
+-  the path to the chunk (R41C1Revenger C1/C2/C5).
++  nonzero offset (`<root>/4096-6513.squashfs_v3_extract/...`) and a nested image
++  (`<root>/nested/inner.squashfs_extract/...`) move the root as deep as the path
++  to the chunk (R41C1Revenger C1/C2/C5).
++
++Path shape (round-41 closure D5, second finding)
++  A receipt path is a spelling, and a spelling that cannot name a regular file is
++  not one: `path_shape_ok` requires every path the receipt normalises
++  (`receipt_paths()`) to be `$input`, `$output/<rel>` or a bare `<rel>` whose
++  components are non-empty, none is `.` or `..`, and which does not end in `/`.
++  Round 41 normalised `firmware.bin_extract/var/info.txt/` and `/./` spellings
++  into the oracle row `var/info.txt`; a trailing slash names a directory, so it
++  fails closed here. The four committed round-41 receipts satisfy this rule
++  unchanged (re-checked: 269/8188/28/29 receipt paths, 0 unclean).
+ 
+-Removal disposition (R41C1DevCore 7.1-7.3, for the V4 rootfs carrier)
++Removal disposition (carried; the diagnostic path is now run-bound)
+   unblob deletes escaping symlinks after reporting `MaliciousSymlinkRemoved`,
+   deletes empty-target symlinks with no report at all, and never publishes a
+   link as a regular file. The frozen gap rule may therefore carry a `removed`
+@@ -74,13 +136,20 @@
+                         both gapped and removed
+     silent              an entry whose kind and oracle detail are listed under
+                         `removed.silent` may carry no record at all; the check is
+-                        per row (stricter than the count rule the routing text
+-                        states, which the freeze should re-word to match), so
+-                        nothing else can hide behind the allowance
++                        per row, so nothing else can hide behind the allowance
+   A diagnostic's path is its `report.link`, an absolute path inside REA's private
+-  extraction root; it is mapped by locating the subject root as whole segments and
+-  taking the remainder. With no `removed` block the clause behaves exactly as in
+-  round 40 (a required entry must be gapped).
++  extraction root. Round 41 mapped it by searching for the root's segment run
++  anywhere in the link, so `/scratch/decoy/firmware.bin_extract/bin/link`
++  satisfied a required `bin/link` while the run wrote to
++  `/scratch/run-V4/` (D5, first finding). The link is now bound to the run: it
++  must start, segment-bounded, with `dirname(parameters.output_directory)` -
++  measured on the committed round-41 receipts, where the run wrote to
++  `<run>/extract` and unblob reported links under
++  `<run>/rea-firmware-<uuid>/extracted/<root>/...` - and the root's segment run
++  must appear after that prefix. No trusted prefix (relative or absent
++  `output_directory`) means no resolution, which fails the check closed.
++  With no `removed` block the clause behaves exactly as in round 40 (a required
++  entry must be gapped).
+   The rerun projection carries diagnostics as `[__typename__, rel]` instead of
+   the typename alone, so a rerun that removed a *different* link no longer
+   matches (R41C1DevCore 7.3).
+@@ -91,55 +160,73 @@
+   carrier_fresh_ok         the pin is not one a previous C1 freeze already scored
+                            (carriers.json `prior_pins` plus the previous round's
+                            carrier table, both read at the freeze commit). The
+-                           claim's kill rule names relabelled round-40 receipts
++                           claim's kill rule names relabelled round-41 receipts
+                            as a control that must stop C1; without this clause a
+                            rename is indistinguishable from new coverage
+-  layout_ok                genuine AVM layout (see layout_probe): BE `sqsh` magic,
+-                           v4.0, mkfs_time == bytes_used (the AVM marker),
+-                           0 < bytes_used <= file size, and the 2-byte metadata
+-                           block header at inode_table_start decodes as a
+-                           little-endian block length (1..8192) while the
+-                           big-endian decode does not, or the single-block
+-                           identity `inode_table_start + 2 + len ==
+-                           directory_table_start` settles it
++  layout_ok                the superblock is the v3 family image the table froze
++                           (see layout_probe): the frozen 4 magic bytes, `s_major`
++                           == 3 and the frozen minor, `bytes_used` (u64 at 63) in
++                           (119, file size], `inode_table_start` and
++                           `directory_table_start` inside the file, the 2-byte
++                           metadata block header at `inode_table_start` decoding
++                           as the superblock's endianness (length 1..8192, and
++                           the single-block identity `its + 2 + len == dts` when
++                           the opposite endianness is plausible too), and the
++                           declared compression class present among the metadata
++                           blocks of the inode table (zlib `78 xx` or LZMA
++                           `5d 00 ..`). The round-41 AVM probes (BE `sqsh` v4.0,
++                           `mkfs_time == bytes_used`, little-endian metadata
++                           header) are gone: they describe a format v3 does not
++                           have
++  carve_ok                 the carrier is exactly the filesystem it claims: the
++                           frozen carve `length` (external carrier) or the file
++                           size (committed carrier) equals the superblock
++                           `bytes_used` and the bytes are that length. A sloppy
++                           carve leaves trailing bytes, unblob then stops the
++                           chunk at the padding boundary or at `bytes_used`, the
++                           chunk stops being the whole input and the oracle root
++                           moves one `<start>-<end>.<handler>_extract` deeper
+   oracle_ok                oracle.tsv parses (rel, sha256[, size]); >= 1 row; no
+                            duplicate paths; every sha256 is 64 hex
+   nonregular_ok            nonregular.tsv parses (rel, kind[, detail]); empty is
+                            allowed; duplicate (rel, kind) rows are not
+-  carve_ok                 the carrier is exactly the filesystem it claims: for an
+-                           external carrier the frozen carve `length` equals the
+-                           superblock `bytes_used` and the bytes are that length;
+-                           for a committed carrier the file size equals
+-                           `bytes_used`. A sloppy carve leaves trailing bytes, the
+-                           chunk stops being the whole input, and the oracle root
+-                           moves one `<start>-<end>.<handler>_extract` deeper
+-  receipt_present          corpus/evidence/round-41/c1/<id>/after.json parses
++  receipt_present          corpus/evidence/round-42/c1/<id>/after.json parses
+   receipt_fresh            its first-add commit at REV is a strict descendant of
+                            --freeze (not the freeze commit itself)
++  evidence_envelope_ok     the committed after-receipt is an REA evidence
++                           envelope, not a score receipt: no `counter_sha256` or
++                           `exit_code` key may appear in it (those belong to the
++                           receipts this counter writes; a score receipt relabelled
++                           as evidence would otherwise be indistinguishable)
+   subject_pin_ok           subject.digest.sha256 == the frozen pin
+   operation_ok             operation == extract_firmware and provider.id == unblob
+-  handler_ok               a chunk names squashfs_v4_be
++  handler_ok               a chunk names the carrier's frozen v3-family handler
++                           exactly (no prefix test, no default)
+   chunks_ok                no chunk carries extraction_failed: true
+   oracle_hits_ok           every oracle regular file is published at its exact
+                            path under the chunk extract root (rel ==, sha256 ==
+                            and size ==), the root taken from the receipt's
+-                           `derivations[]` edge, not from path text
+-  gaps_ok                  disposition check (R41C1DevCore 7.1): every extraction
+-                           gap lands on exactly one non-regular entry at its exact
+-                           path and its kind is allowed for that entry's kind;
+-                           every removal diagnostic the frozen rule names resolves
+-                           to a non-regular entry of a listed kind and no entry is
+-                           both gapped and removed; every entry the rule marks
+-                           required carries exactly one disposition (an allowed
+-                           gap, a removal diagnostic, or - only when the rule
+-                           lists it under `silent` - nothing at all)
++                           `derivations[]` edge for this carrier's handler
++  gaps_ok                  disposition check: every extraction gap lands on
++                           exactly one non-regular entry at its exact path and
++                           its kind is allowed for that entry's kind; every
++                           removal diagnostic the frozen rule names resolves to
++                           a non-regular entry of a listed kind under the run's
++                           own extraction root and no entry is both gapped and
++                           removed; every entry the rule marks required carries
++                           exactly one disposition (an allowed gap, a removal
++                           diagnostic, or - only when the rule lists it under
++                           `silent` - nothing at all)
+   nonregular_unpublished_ok  no published regular file path equals a non-regular
+                            entry path (a materialised symlink/device would both
+                            publish the path and keep the gap); equality is exact
+                            relative to the chunk extract root, so a deeper file
+                            whose path merely ends with the entry path is not one
++  path_shape_ok            every normalised receipt path is a legal spelling (see
++                           `Path shape`): no empty/`.`/`..` component, no
++                           trailing slash. Closes D5's second finding
+   run_provenance_ok        parameters.output_directory names this round's scratch
+-                           segment (/kaidoku-r41/); `parameters` is inside the
++                           segment (/kaidoku-r42/); `parameters` is inside the
+                            hashed 6.5.0 semanticProjection, so it cannot be edited
+                            without breaking evidence_id_ok
+   evidence_id_ok           stored evidence id == the id recomputed under the
+@@ -155,33 +242,42 @@
+ Non-vacuity bindings (properties of the frozen set, so they cannot be gamed after
+ the freeze):
+   carriers_spec_ok         `target` frozen in carriers.json equals this counter's
+-                           target; exactly that many distinct ids; the expected id
+-                           set; distinct pins; id/path/sha256/oracle/nonregular
+-                           present and well-formed; an external carrier also
+-                           names `member_sha256` (and `nested.sha256` when it has
+-                           a `nested` block), so the fetch chain is bound in the
+-                           table rather than in the fetcher (routed R40-CL6); an
+-                           optional `oracle_root` must be a path string and
+-                           `prior_pins` a list of 64-hex pins
++                           target; exactly that many distinct ids; distinct pins;
++                           id/path/sha256/oracle/nonregular/handler/superblock
++                           present and well-formed; the handler is in the
++                           `squashfs_v3` family and agrees with the frozen
++                           variant (`squashfs_v3` for standard, `_ddwrt`,
++                           `_broadcom`, `_nonstandard` otherwise); the superblock
++                           block names a family magic, an endianness, major 3,
++                           the matching variant and a compression class; an
++                           external carrier also names `member_sha256` (and
++                           `nested.sha256` when it has a `nested` block), so the
++                           fetch chain is bound in the table rather than in the
++                           fetcher (routed R40-CL6); an optional `oracle_root`
++                           must be a relative path string and `prior_pins` a
++                           list of 64-hex pins
+   gap_rule_ok              gap-rule.json parses to {allowed: {kind: [gap kind]},
+                            required?: {kind: bool}, removed?: {diagnostic, kinds,
+                            disposition, silent?}, structural?: {kind: limit}};
+                            every non-regular kind that appears in any frozen
+                            nonregular.tsv is a key of `allowed`
+-  compression_coverage     >= 1 carrier with the gzip compression id and >= 1 with
+-                           an xz id (2 = squashfs-tools XZ, 4 = the lane writer's
+-                           xz), so both decompressor legs are bound
++  endianness_coverage      >= 1 carrier with the v3 little-endian family magic and
++                           >= 1 with the big-endian family magic, so both
++                           sasquatch legs (`-le`, `-be`) are bound. This replaces
++                           round 41's gzip/xz binding: v3.0 has no compression id
++                           field, and the extractor choice that matters here is
++                           the endian flag
+   frozen_tables_valid      carriers.json and gap-rule.json parse at the freeze
+                            commit itself (routed R39-CL4)
+ 
+ Documentation bindings:
+-  province_core_section    PROVINCE.md has the `## Round-41 additions to Core`
++  province_core_section    PROVINCE.md has the `## Round-42 additions to Core`
+                            heading
+-  province_core_row        a table row in that section whose first cell names
+-                           `squashfs_v4_be`, whose text names the AVM layout
+-                           (AVM[ _-]layout) and cites the entry path
+-  frontier_note            one line carries `Round-41 frontier note`, the entry
+-                           stem and the AVM-layout token
++  province_core_row        a table row in that section whose first cell names a
++                           `squashfs_v3*` handler, whose text names SquashFS v3
++                           (squashfs[ _-]?v3) and cites the entry path
++  frontier_note            one line carries `Round-42 frontier note`, the entry
++                           stem and the SquashFS v3 token
+   entry_present            the knowledge entry exists at REV
+   sourced                  the entry's `source:` lines name an S-id whose
+                            corpus/SOURCES.md row is opened 2026-10-26 and lists the
+@@ -189,12 +285,25 @@
+   coverage_map_row         corpus/README.md `## Coverage map` maps the entry stem
+ 
+ Freeze-drift binding (routed defect R38-CL4, kept): if any commit in FREEZE..REV
+-touches plans/round-41-claims.md, tools/round-41/c1-counter.py,
+-.ufo/waves/round-41/c1/carriers.json, .ufo/waves/round-41/c1/gap-rule.json, or any
++touches plans/round-42-claims.md, tools/round-42/c1-counter.py,
++tools/round-42/c1-extra.py, tools/round-42/c1-run.sh,
++tools/round-42/fetch-carrier.py, tools/round-42/sqfs3-oracle.py,
++.ufo/waves/round-42/c1/carriers.json, .ufo/waves/round-42/c1/gap-rule.json, or any
+ carrier/oracle/nonregular file carriers.json lists, the counter exits 2 with
+ reason `frozen_path_changed` and never reports met. A later restore does not
+ un-block (the log of the range is inspected, not the endpoints).
+ 
++Receipt identity (round-41 closure D4)
++  Every receipt this counter writes (`--json-out`, and the stdout summary is not
++  a receipt) carries
++      counter          the absolute path of the counter file that produced it
++      counter_sha256   sha256 of that file's bytes
++  so tool identity never rests on a separate `git diff`. `--verify-receipt PATH`
++  re-reads a written receipt, hashes the file it names and exits 0 (match), 1
++  (missing or mismatched key) or 2 (unreadable). The committed REA after-receipts
++  must NOT carry the key: `counter_identity_ok` fails a receipt that mixes the
++  two shapes, and the selftest pins both directions.
++
+ The rerun clause (routed R39-CL5)
+   Between the receipt checks and the verdict, a carrier whose bytes hash to the
+   pin and whose receipt parses is re-run by this counter:
+@@ -249,23 +358,27 @@
+ Usage:
+   c1-counter.py --root LANE --rev REV --freeze FREEZE --pkg65 REA650_PKG_ROOT
+                 [--json-out PATH] [--unblob PATH] [--rea-timeout SECONDS]
++                [--carrier-cache DIR] [--work DIR]
+   c1-counter.py --selftest  --pkg65 REA650_PKG_ROOT
+-  c1-counter.py --selftest-rea --pkg65 REA650_PKG_ROOT [--unblob PATH]
+-                [--rea-timeout SECONDS]
++  c1-counter.py --selftest-rea --pkg65 REA650_PKG_ROOT --dev-carrier PATH
++                [--unblob PATH] [--rea-timeout SECONDS]
++  c1-counter.py --verify-receipt PATH
+ Exit: 0 target met, 1 target not met, 2 unevaluable (bad args, git/node failure,
+ frozen path changed, rerun environment error, --no-rerun). Reads lane bytes only
+ through git objects (`git show REV:path`); writes only a private scratch dir
+-under $HYAKU_SCRATCH (default /fast/scratch/hyaku)/kaidoku-r41/counter and
+---json-out.
++under $HYAKU_SCRATCH (default /fast/scratch/hyaku)/kaidoku-r42/counter, or
++--work, and --json-out.
+ 
+ `--selftest` is offline and deterministic: it drives measure() in-process with a
+ simulated REA runner (the simulator only exists inside selftest(); main() never
+-passes anything but the real runner). `--selftest-rea` is the real-path check:
+-it runs REA 6.5.0 on the retained development AVM image
+-/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs
+-(sha256 c7f74691...; NOT a C1 carrier), builds a one-carrier fixture lane around
+-two real runs and asserts a green verdict, then relabels an oracle-only
+-fabrication and asserts it red.
++passes anything but the real runner). Its fixture carriers are synthetic v3
++superblocks, which is exactly what `layout_probe` tests. `--selftest-rea` is the
++real-path check: it runs REA 6.5.0 twice on the SquashFS v3 image named by
++--dev-carrier (a development input the caller has established it may run REA on -
++an unblob 26.6.4 test fixture or the OpenWrt Kamikaze 7.09 development image,
++NEVER a published C1 candidate), builds a one-carrier fixture lane around the
++first run, asserts a green verdict under the second, then replaces the receipt
++with an oracle-only fabrication and asserts it red.
+ """
+ import argparse
+ import hashlib
+@@ -277,53 +390,66 @@
+ import sys
+ import tempfile
+ 
+-CARRIERS = '.ufo/waves/round-41/c1/carriers.json'
+-GAPRULE = '.ufo/waves/round-41/c1/gap-rule.json'
+-AFTERDIR = 'corpus/evidence/round-41/c1'
+-ENTRY = 'corpus/knowledge/2026-10-26-r41-avm-be-squashfs-core.md'
+-STEM = '2026-10-26-r41-avm-be-squashfs-core'
+-CORE_HEADING = '## Round-41 additions to Core'
+-FRONTIER_MARK = 'Round-41 frontier note'
+-HANDLER = 'squashfs_v4_be'
+-SQUASHFS_PREFIX = 'squashfs_v4'         # derivation handlers of a SquashFS chunk
++CARRIERS = '.ufo/waves/round-42/c1/carriers.json'
++GAPRULE = '.ufo/waves/round-42/c1/gap-rule.json'
++AFTERDIR = 'corpus/evidence/round-42/c1'
++ENTRY = 'corpus/knowledge/2026-10-26-r42-squashfs-v3-core.md'
++STEM = '2026-10-26-r42-squashfs-v3-core'
++CORE_HEADING = '## Round-42 additions to Core'
++FRONTIER_MARK = 'Round-42 frontier note'
++DEFAULT_HANDLER = 'squashfs_v3'         # only for selftest fixtures
+ XPIN = 'tools/round-27/xpin-attribute.mjs'
+-PRIOR_CARRIERS = '.ufo/waves/round-40/c1/carriers.json'   # pins round 40 already scored
++PRIOR_CARRIERS = '.ufo/waves/round-41/c1/carriers.json'   # pins an earlier freeze scored
+ OPENED = '2026-10-26'
+ TARGET = 4
+-IDS = ('V3', 'V4', 'L3', 'L4')
+-PROV_SEGMENT = '/kaidoku-r41/'
++IDS = ()                                # ids are frozen data in carriers.json
++PROV_SEGMENT = '/kaidoku-r42/'
+ REA_PIN = 'rea-agents@6.5.0'
+ METADATA_MAX = 8192
+ UNCOMPRESSED_FLAG = 0x8000
+-GZIP_ID = 1
+-XZ_IDS = (2, 4)
+-DEV_AVM_IMAGE = ('/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/'
+-                 'avm-be.squashfs')
+ FROZEN_PATHS = (
+-    'plans/round-41-claims.md',
+-    'tools/round-41/c1-counter.py',
+-    'tools/round-41/c1-extra.py',
+-    'tools/round-41/c1-run.sh',
+-    'tools/round-41/fetch-vendor.py',
+-    'tools/round-41/sqfs-list.py',
+-    'tools/round-41/gen-squashfs.py',
+-    'tools/round-41/mk-l-carriers.py',
++    'plans/round-42-claims.md',
++    'tools/round-42/c1-counter.py',
++    'tools/round-42/c1-extra.py',
++    'tools/round-42/c1-run.sh',
++    'tools/round-42/fetch-carrier.py',
++    'tools/round-42/sqfs3-oracle.py',
+     CARRIERS,
+     GAPRULE,
+ )
+-HANDLER_RE = re.compile(r'(?<![A-Za-z0-9_-])' + HANDLER + r'(?![A-Za-z0-9_-])')
+-AVM_LAYOUT_RE = re.compile(r'AVM[ _-]layout', re.IGNORECASE)
++# SquashFS v3 family: four unblob 26.6.4 handlers share one superblock layout and
++# differ only in the 4 magic bytes. `hsqs`/`sqsh` is plain v3 (the pair the two
++# non-sasquatch readers on PATH, unsquashfs 4.7.5 and 7z, both accept); the other
++# three are vendor variants that need a lane reader for the oracle.
++MAGIC_BY_VARIANT = {
++    'standard': {'le': b'hsqs', 'be': b'sqsh'},
++    'ddwrt': {'le': b'hsqt', 'be': b'tqsh'},
++    'broadcom': {'le': b'shqs', 'be': b'qshs'},
++    'nonstandard': {'le': b'zlqs', 'be': b'sqlz'},
++}
++HANDLER_BY_VARIANT = {
++    'standard': 'squashfs_v3',
++    'ddwrt': 'squashfs_v3_ddwrt',
++    'broadcom': 'squashfs_v3_broadcom',
++    'nonstandard': 'squashfs_v3_nonstandard',
++}
++VARIANT_BY_HANDLER = {h: v for v, h in HANDLER_BY_VARIANT.items()}
++ENDIANNESSES = ('le', 'be')
++COMPRESSIONS = ('gzip', 'lzma')
++SQUASHFS3_SB_SIZE = 119                 # packed squashfs_super_block (v3)
++HANDLER_RE = re.compile(r'(?<![A-Za-z0-9_-])squashfs_v3(_[a-z]+)?(?![A-Za-z0-9_-])')
++SQFS3_TEXT_RE = re.compile(r'squashfs[ _-]?v3|squashfs\s+3', re.IGNORECASE)
+ SID_RE = re.compile(r'(?<![0-9A-Za-z])(S\d{3,})(?![0-9A-Za-z])')
+ SHA_RE = re.compile(r'^[0-9a-f]{64}$')
+ BINDINGS = ('province_core_section', 'province_core_row', 'frontier_note',
+             'entry_present', 'sourced', 'coverage_map_row', 'carriers_spec_ok',
+-            'gap_rule_ok', 'compression_coverage', 'frozen_tables_valid')
++            'gap_rule_ok', 'endianness_coverage', 'frozen_tables_valid')
+ CLAUSES = ('carrier_present', 'carrier_pin_ok', 'carrier_fresh_ok', 'layout_ok',
+            'carve_ok', 'oracle_ok', 'nonregular_ok', 'receipt_present',
+-           'receipt_fresh', 'subject_pin_ok', 'operation_ok', 'handler_ok',
+-           'chunks_ok', 'oracle_hits_ok', 'gaps_ok',
+-           'nonregular_unpublished_ok', 'run_provenance_ok', 'evidence_id_ok',
+-           'projection_ok')
++           'receipt_fresh', 'evidence_envelope_ok', 'subject_pin_ok',
++           'operation_ok', 'handler_ok', 'chunks_ok', 'oracle_hits_ok',
++           'gaps_ok', 'nonregular_unpublished_ok', 'path_shape_ok',
++           'run_provenance_ok', 'evidence_id_ok', 'projection_ok')
+ 
+ 
+ class Unevaluable(Exception):
+@@ -355,13 +481,74 @@
+     return p.stdout if p.returncode == 0 else None
+ 
+ 
++WORK_OVERRIDE = None
++
++
+ def scratch_root():
++    """Private scratch directory for counter runs.
++
++    $HYAKU_SCRATCH (or --work) decides; nothing is ever written to a hardcoded
++    /tmp path."""
++    if WORK_OVERRIDE:
++        os.makedirs(WORK_OVERRIDE, exist_ok=True)
++        return WORK_OVERRIDE
+     d = os.path.join(os.environ.get('HYAKU_SCRATCH', '/fast/scratch/hyaku'),
+-                     'kaidoku-r41', 'counter')
++                     'kaidoku-r42', 'counter')
+     os.makedirs(d, exist_ok=True)
+     return d
+ 
+ 
++# ------------------------------------------------------------- receipt identity
++
++def counter_identity(path=None):
++    """(counter path, sha256 of its bytes) for the counter that writes a receipt.
++
++    Round-41 closure D4: score receipts recorded `counter_sha256 null`, so tool
++    identity rested on a separate `git diff` of the frozen path. The digest is of
++    the counter file itself (the tool), which is what a reader can re-hash from
++    the revision it names."""
++    p = path or os.path.abspath(__file__)
++    try:
++        with open(p, 'rb') as fh:
++            digest = hashlib.sha256(fh.read()).hexdigest()
++    except OSError:
++        return {'counter': p, 'counter_sha256': None}
++    return {'counter': p, 'counter_sha256': digest}
++
++
++def stamp_receipt(doc, path=None):
++    doc.update(counter_identity(path))
++    return doc
++
++
++def receipt_identity_ok(doc):
++    """(ok, why) for a receipt this counter wrote: key present and honest.
++
++    A missing or null `counter_sha256`, a non-hex digest, or a digest that does
++    not describe the file named by `counter` is a failure; an unreadable counter
++    file is a failure too (a receipt must be checkable offline)."""
++    if not isinstance(doc, dict):
++        return False, 'not an object'
++    if 'counter_sha256' not in doc:
++        return False, 'missing counter_sha256'
++    digest = doc.get('counter_sha256')
++    if digest is None:
++        return False, 'counter_sha256 is null'
++    if not isinstance(digest, str) or not SHA_RE.match(digest.lower()):
++        return False, 'counter_sha256 is not 64 hex'
++    path = doc.get('counter')
++    if not isinstance(path, str) or not path:
++        return False, 'missing counter path'
++    try:
++        with open(path, 'rb') as fh:
++            actual = hashlib.sha256(fh.read()).hexdigest()
++    except OSError as e:
++        return False, 'counter file unreadable: %s' % e
++    if actual != digest.lower():
++        return False, 'counter_sha256 does not describe %s' % path
++    return True, 'ok'
++
++
+ def section(text, heading):
+     lines = text.splitlines()
+     try:
+@@ -584,8 +771,8 @@
+ def carriers_spec(spec, target, expected_ids):
+     """(ids, problems) for the frozen carrier list."""
+     probs = []
+-    if 'claim' in spec and spec.get('claim') != 'R41-C1':
+-        probs.append('claim %r != R41-C1' % (spec.get('claim'),))
++    if 'claim' in spec and spec.get('claim') != 'R42-C1':
++        probs.append('claim %r != R42-C1' % (spec.get('claim'),))
+     cs = spec.get('carriers')
+     if not isinstance(cs, list):
+         return [], probs + ['carriers is not a list']
+@@ -622,10 +809,10 @@
+             if not isinstance(v, str) or not v:
+                 probs.append('carrier %r lacks %s' % (c.get('id'), key))
+         if ext is not None:
+-            # Round-40 L1 amendment (before the freeze): vendor AVM members are not
+-            # redistributable (AVM licence, R40SrcAvmVendor), so their bytes are pinned
+-            # by URL -> image sha256 -> tar member -> carve length -> carrier sha256 and
+-            # fetched into --carrier-cache by tools/round-41/fetch-vendor.py.
++            # External carriers (published vendor/distribution images that are not
++            # redistributable) are pinned by URL -> image sha256 -> member ->
++            # carve length -> carrier sha256 and fetched into --carrier-cache by
++            # tools/round-42/fetch-carrier.py.
+             if not isinstance(ext, dict):
+                 probs.append('carrier %r external is not an object' % (c.get('id'),))
+             else:
+@@ -664,6 +851,57 @@
+         sha = c.get('sha256')
+         if isinstance(sha, str) and not SHA_RE.match(sha.lower()):
+             probs.append('carrier %r sha256 is not 64 hex' % (c.get('id'),))
++        # R42-C1: the carrier freezes its own handler and superblock. The handler
++        # must be one of the four unblob 26.6.4 v3 handlers and must agree with
++        # the frozen variant; the superblock block must name a family magic, an
++        # endianness, major 3, the matching variant and a compression class. A v4
++        # handler here is a table defect, never a carrier (routed round-41
++        # hardcoded `squashfs_v4_be`).
++        handler = c.get('handler')
++        variant = None
++        if not isinstance(handler, str) or handler not in VARIANT_BY_HANDLER:
++            probs.append('carrier %r handler %r is not a squashfs_v3 family handler %r'
++                         % (c.get('id'), handler, sorted(VARIANT_BY_HANDLER)))
++        else:
++            variant = VARIANT_BY_HANDLER[handler]
++        sb = c.get('superblock')
++        if not isinstance(sb, dict):
++            probs.append('carrier %r lacks a superblock block' % (c.get('id'),))
++        else:
++            magic = sb.get('magic')
++            endian = sb.get('endianness')
++            if endian not in ENDIANNESSES:
++                probs.append('carrier %r superblock.endianness %r is not le/be'
++                             % (c.get('id'), endian))
++            if not (isinstance(magic, str) and len(magic.encode('latin1', 'replace')) == 4):
++                probs.append('carrier %r superblock.magic is not 4 bytes'
++                             % (c.get('id'),))
++            elif endian in ENDIANNESSES:
++                implied = next((v for v, pair in MAGIC_BY_VARIANT.items()
++                                if pair.get(endian) == magic.encode('latin1')), None)
++                if implied is None:
++                    probs.append('carrier %r superblock.magic %r is not a v3 family '
++                                 'magic for %s' % (c.get('id'), magic, endian))
++                elif sb.get('variant') is not None and sb.get('variant') != implied:
++                    probs.append('carrier %r superblock.variant %r contradicts magic %r'
++                                 % (c.get('id'), sb.get('variant'), magic))
++                elif variant is not None and implied != variant:
++                    probs.append('carrier %r handler %r is the %r variant but the '
++                                 'superblock magic is %r'
++                                 % (c.get('id'), handler, variant, implied))
++            if sb.get('major') != 3:
++                probs.append('carrier %r superblock.major %r is not 3'
++                             % (c.get('id'), sb.get('major')))
++            minor = sb.get('minor')
++            if minor is not None and not (isinstance(minor, int)
++                                          and not isinstance(minor, bool)
++                                          and minor >= 0):
++                probs.append('carrier %r superblock.minor is not a non-negative int'
++                             % (c.get('id'),))
++            if sb.get('compression') not in COMPRESSIONS:
++                probs.append('carrier %r superblock.compression %r not in %r'
++                             % (c.get('id'), sb.get('compression'),
++                                list(COMPRESSIONS)))
+         receipt = c.get('receipt')
+         if receipt is not None and not isinstance(receipt, str):
+             probs.append('carrier %r receipt is not a string' % (c.get('id'),))
+@@ -679,85 +917,164 @@
+ 
+ # ------------------------------------------------------------- carrier layout
+ 
+-def layout_probe(raw):
+-    """Decode the AVM layout signals of a carrier's SquashFS v4 superblock.
+-
+-    SquashFS v4 big-endian superblock: magic 0:4, inodes 4:8, mkfs_time 8:12,
+-    block_size 12:16, fragments 16:20, compression 20:22, block_log 22:24,
+-    flags 24:26, no_ids 26:28, s_major 28:30, s_minor 30:32, root_inode 32:40,
+-    bytes_used 40:48, id_table_start 48:56, xattr_id_table_start 56:64,
+-    inode_table_start 64:72, directory_table_start 72:80, ... (96 bytes).
++def sb_u(raw, off, width, endian):
++    """An unsigned superblock field, read with the filesystem's endianness."""
++    return int.from_bytes(raw[off:off + width], 'big' if endian == 'be' else 'little')
++
++
++def compression_class(chunk):
++    """`gzip` / `lzma` for the first bytes of a compressed block, else None.
++
++    v3 stored zlib streams (`78 01/5e/9c/da`) and, in the LZMA variants,
++    LZMA-alone streams (`5d 00 ..`, or the 5-byte-props form `00 00 80 00`)."""
++    if len(chunk) >= 2 and chunk[0] == 0x78 and chunk[1] in (0x01, 0x5E, 0x9C, 0xDA):
++        return 'gzip'
++    if chunk[:2] == b'\x5d\x00' or chunk[:4] == b'\x00\x00\x80\x00':
++        return 'lzma'
++    return None
++
++
++def metadata_blocks(raw, start, stop, endian):
++    """[(offset, length, uncompressed)] walking the metadata chain [start, stop).
+ 
+-    The AVM layout keeps every superblock field big-endian and writes the 2-byte
+-    metadata block-length header (bit 15 = uncompressed, bits 0..14 = length)
+-    little-endian. The marker `mkfs_time == bytes_used` is a timestamp proxy and
+-    is necessary but not sufficient: a standard BE body with a normalised
+-    timestamp carries it and fails extraction, so the block-length endianness is
+-    the format test."""
+-    d = {'size': len(raw) if raw is not None else 0}
++    A metadata block is a 2-byte header (bit 15 = stored uncompressed, bits 0..14
++    = length) followed by that many bytes, in the filesystem's endianness - the
++    AVM little-endian header of round 41 is a v4-BE vendor quirk and does not
++    exist in v3."""
++    out = []
++    o = start
++    while o + 2 <= stop and o + 2 <= len(raw):
++        header = sb_u(raw, o, 2, endian)
++        length = header & ~UNCOMPRESSED_FLAG
++        if not (1 <= length <= METADATA_MAX):
++            break
++        out.append((o, length, bool(header & UNCOMPRESSED_FLAG)))
++        o += 2 + length
++    return out
++
++
++def layout_probe(raw, expect=None):
++    """Decode a SquashFS v3 superblock and check it against the frozen block.
++
++    squashfs_super_block (v3, packed, 119 bytes; verified field by field against
++    squashfs-tools images in both endiannesses): magic 0:4, inodes 4:8,
++    bytes_used_2 8:12, uid_start_2 12:16, guid_start_2 16:20,
++    inode_table_start_2 20:24, directory_table_start_2 24:28, s_major 28:30,
++    s_minor 30:32, block_size_1 32:34, block_log 34:36, flags 36, no_uids 37,
++    no_guids 38, mkfs_time 39:43 (unaligned: the struct is packed), root_inode
++    43:51, block_size 51:55, fragments 55:59, fragment_table_start_2 59:63,
++    bytes_used 63:71, uid_start 71:79, guid_start 79:87, inode_table_start 87:95,
++    directory_table_start 95:103, fragment_table_start 103:111,
++    lookup_table_start 111:119.
++
++    v3 has no compression-id field, no `mkfs_time == bytes_used` marker and no
++    little-endian metadata header: the format signals are the 4 magic bytes
++    (which also pick the unblob handler variant), major/minor, the endianness the
++    fields decode with, and the compression class of the inode table's metadata
++    blocks. Every expected value comes from the carrier's frozen `superblock`
++    block - the probe never supplies a default."""
++    d = {'size': len(raw) if raw is not None else 0, 'declared': expect}
+     if raw is None:
+         d.update(ok=False, reason='absent')
+         return d
+-    if len(raw) < 96:
+-        d.update(ok=False, reason='shorter than a 96-byte superblock')
++    if not isinstance(expect, dict):
++        d.update(ok=False, reason='no frozen superblock block')
+         return d
++    if len(raw) < SQUASHFS3_SB_SIZE:
++        d.update(ok=False, reason='shorter than the 119-byte v3 superblock')
++        return d
+     d['magic'] = raw[0:4].decode('latin1')
+-    d['be_magic'] = raw[0:4] == b'sqsh'
+-    d['mkfs_time'] = int.from_bytes(raw[8:12], 'big')
+-    d['block_size'] = int.from_bytes(raw[12:16], 'big')
+-    d['compression'] = int.from_bytes(raw[20:22], 'big')
+-    d['major'] = int.from_bytes(raw[28:30], 'big')
+-    d['minor'] = int.from_bytes(raw[30:32], 'big')
+-    d['bytes_used'] = int.from_bytes(raw[40:48], 'big')
+-    d['inode_table_start'] = its = int.from_bytes(raw[64:72], 'big')
+-    d['directory_table_start'] = dts = int.from_bytes(raw[72:80], 'big')
+-    d['marker'] = d['mkfs_time'] == d['bytes_used']
+-    d['bytes_used_sane'] = 0 < d['bytes_used'] <= len(raw)
+-    d['version_v4'] = (d['major'], d['minor']) == (4, 0)
++    endian = expect.get('endianness')
++    d['endianness'] = endian
++    if endian not in ENDIANNESSES:
++        d.update(ok=False, reason='frozen endianness %r is not le/be' % (endian,))
++        return d
++    d['major'] = sb_u(raw, 28, 2, endian)
++    d['minor'] = sb_u(raw, 30, 2, endian)
++    d['block_size'] = sb_u(raw, 51, 4, endian)
++    d['block_log'] = sb_u(raw, 34, 2, endian)
++    d['flags'] = raw[36]
++    d['bytes_used'] = bu = sb_u(raw, 63, 8, endian)
++    d['inode_table_start'] = its = sb_u(raw, 87, 8, endian)
++    d['directory_table_start'] = dts = sb_u(raw, 95, 8, endian)
++    d['fragment_table_start'] = sb_u(raw, 103, 8, endian)
++    d['lookup_table_start'] = sb_u(raw, 111, 8, endian)
++    d['bytes_used_sane'] = SQUASHFS3_SB_SIZE <= bu <= len(raw)
++    d['starts_sane'] = bool(d['bytes_used_sane'] and SQUASHFS3_SB_SIZE <= its < dts <= bu)
+     d['meta_header_hex'] = None
+-    d['meta_len_le'] = d['meta_len_be'] = None
+-    d['le_plausible'] = d['be_plausible'] = False
+-    d['le_identity'] = d['be_identity'] = False
+-    d['layout_le'] = False
++    d['meta_len'] = d['meta_len_other'] = None
+     d['meta_signal'] = 'none'
+-    if not (0 < its <= len(raw) - 2):
+-        d.update(ok=False, reason='inode_table_start %d outside the file' % its)
+-        return d
+-    hdr = raw[its:its + 2]
+-    d['meta_header_hex'] = hdr.hex()
+-    le = int.from_bytes(hdr, 'little')
+-    be = int.from_bytes(hdr, 'big')
+-    d['meta_len_le'] = le &~ UNCOMPRESSED_FLAG
+-    d['meta_len_be'] = be &~ UNCOMPRESSED_FLAG
+-    d['meta_flag_le'] = bool(le & UNCOMPRESSED_FLAG)
+-    d['meta_flag_be'] = bool(be & UNCOMPRESSED_FLAG)
+-    d['le_plausible'] = 1 <= d['meta_len_le'] <= METADATA_MAX
+-    d['be_plausible'] = 1 <= d['meta_len_be'] <= METADATA_MAX
+-    d['le_identity'] = its + 2 + d['meta_len_le'] == dts
+-    d['be_identity'] = its + 2 + d['meta_len_be'] == dts
+-    if d['le_plausible'] and not d['be_plausible']:
+-        d['layout_le'] = True
+-        d['meta_signal'] = 'plausibility'
+-    elif d['le_plausible'] and d['be_plausible']:
+-        if d['le_identity'] and not d['be_identity']:
+-            d['layout_le'] = True
+-            d['meta_signal'] = 'identity'
++    d['meta_identity'] = False
++    d['meta_identity_other'] = False
++    d['compression'] = None
++    d['compression_signatures'] = {}
++    if d['starts_sane']:
++        other = 'le' if endian == 'be' else 'be'
++        hdr = raw[its:its + 2]
++        d['meta_header_hex'] = hdr.hex()
++        length = int.from_bytes(hdr, 'big' if endian == 'be' else 'little')
++        length_other = int.from_bytes(hdr, 'big' if other == 'be' else 'little')
++        d['meta_len'] = length & ~UNCOMPRESSED_FLAG
++        d['meta_len_other'] = length_other & ~UNCOMPRESSED_FLAG
++        plausible = 1 <= d['meta_len'] <= METADATA_MAX
++        plausible_other = 1 <= d['meta_len_other'] <= METADATA_MAX
++        d['meta_identity'] = its + 2 + d['meta_len'] == dts
++        d['meta_identity_other'] = its + 2 + d['meta_len_other'] == dts
++        if plausible and not plausible_other:
++            d['meta_signal'] = 'plausibility'
++        elif plausible and plausible_other:
++            # both decodes plausible: only the single-block identity separates them
++            d['meta_signal'] = 'identity' if (d['meta_identity']
++                                              and not d['meta_identity_other']) \
++                else 'ambiguous'
+         else:
+-            d['meta_signal'] = 'ambiguous'
+-    else:
+-        d['meta_signal'] = 'be' if d['be_plausible'] else 'neither'
++            d['meta_signal'] = 'other' if plausible_other else 'neither'
++        sigs = {}
++        for off, blen, unc in metadata_blocks(raw, its, dts, endian):
++            if unc:
++                continue
++            cls = compression_class(raw[off + 2:off + 2 + blen])
++            if cls:
++                sigs[cls] = sigs.get(cls, 0) + 1
++        d['compression_signatures'] = sigs
++        if sigs:
++            d['compression'] = max(sorted(sigs), key=lambda k: sigs[k])
++    variants = {v: pair for v, pair in MAGIC_BY_VARIANT.items()}
++    d['variant_implied'] = next(
++        (v for v, pair in variants.items() if pair.get(endian) == raw[0:4]), None)
+     reason = None
+-    if not d['be_magic']:
+-        reason = 'magic %r is not big-endian sqsh' % (d['magic'],)
+-    elif not d['version_v4']:
+-        reason = 'version %d.%d is not 4.0' % (d['major'], d['minor'])
+-    elif not d['marker']:
+-        reason = 'AVM marker absent (mkfs_time %d != bytes_used %d)' % (
+-            d['mkfs_time'], d['bytes_used'])
++    magic = expect.get('magic')
++    if not isinstance(magic, str) or len(magic.encode('latin1', 'replace')) != 4:
++        reason = 'frozen superblock has no 4-byte magic'
++    elif raw[0:4] != magic.encode('latin1'):
++        reason = 'magic %r is not the frozen %r' % (d['magic'], magic)
++    elif d['variant_implied'] is None:
++        reason = 'magic %r is not a v3 family magic for %s' % (d['magic'], endian)
++    elif expect.get('variant') is not None and d['variant_implied'] != expect['variant']:
++        reason = 'magic %r implies variant %r, frozen %r' % (
++            d['magic'], d['variant_implied'], expect.get('variant'))
++    elif d['major'] != 3:
++        reason = 's_major %d is not 3' % d['major']
++    elif expect.get('minor') is not None and d['minor'] != expect.get('minor'):
++        reason = 's_minor %d is not the frozen %r' % (d['minor'], expect.get('minor'))
+     elif not d['bytes_used_sane']:
+-        reason = 'bytes_used %d outside 1..%d' % (d['bytes_used'], len(raw))
+-    elif not d['layout_le']:
+-        reason = 'first metadata block length is not little-endian (%s)' % d['meta_signal']
++        reason = 'bytes_used %d outside 119..%d' % (d['bytes_used'], len(raw))
++    elif not d['starts_sane']:
++        reason = 'inode/directory table starts %d/%d outside the filesystem (%d)' % (
++            d['inode_table_start'], d['directory_table_start'], d['bytes_used'])
++    elif d['meta_signal'] in ('neither', 'other'):
++        reason = ('first metadata block length does not decode %s-endian (%s, '
++                  'len %r)' % (endian, d['meta_signal'], d['meta_len']))
++    elif d['meta_signal'] == 'ambiguous':
++        reason = ('metadata length plausible both ways and the single-block '
++                  'identity does not settle it (len %r vs %r, its %d, dts %d)'
++                  % (d['meta_len'], d['meta_len_other'], its, dts))
++    elif not d['compression_signatures']:
++        reason = ('compression undetermined: no compressed metadata block in the '
++                  'inode table (flags 0x%02x)' % d['flags'])
++    elif expect.get('compression') not in d['compression_signatures']:
++        reason = 'compression %r absent from the inode table signatures %r' % (
++            expect.get('compression'), d['compression_signatures'])
+     d['ok'] = reason is None
+     d['reason'] = reason
+     return d
+@@ -766,7 +1083,7 @@
+ # ------------------------------------------------------------- receipt shape
+ 
+ def provenance_ok(output_directory):
+-    """A receipt run by this round: absolute, inside the kaidoku-r41 scratch
++    """A receipt run by this round: absolute, inside the kaidoku-r42 scratch
+     segment, and without a `..` segment that could leave it."""
+     if not isinstance(output_directory, str) or not os.path.isabs(output_directory):
+         return False
+@@ -775,6 +1092,26 @@
+     return '..' not in output_directory.split('/')
+ 
+ 
++def trusted_run_root(output_directory):
++    """The trusted directory a run's private extraction tree lives under.
++
++    Measured on the committed round-41 receipts: `parameters.output_directory` is
++    `<run>/extract` while unblob's `MaliciousSymlinkRemoved.link` is
++    `<run>/rea-firmware-<uuid>/extracted/<root>/<rel>` (rea-agents 6.5.0
++    FirmwareCommand.js:54, FirmwareProvider.js:151). `dirname(output_directory)`
++    is therefore the component-bounded prefix that binds a diagnostic to its run;
++    None when there is no absolute output directory to bind to (round-41 closure
++    D5: the path rule accepted a decoy segment-run from any directory)."""
++    if not isinstance(output_directory, str) or not os.path.isabs(output_directory):
++        return None
++    if '..' in output_directory.split('/'):
++        return None
++    parent = os.path.dirname(output_directory.rstrip('/'))
++    if not parent or parent == '/':
++        return None
++    return parent
++
++
+ # ------------------------------------------------------------- extract root
+ 
+ def path_parts(path):
+@@ -791,6 +1128,46 @@
+     return [x for x in p.split('/') if x not in ('', '.')]
+ 
+ 
++def path_shape_problem(path):
++    """Why a receipt path is not a legal spelling, or None.
++
++    Round-41 closure D5, second finding: `path_parts()` normalised a trailing
++    slash and `/./` away, so a malformed publication `.../var/info.txt/` satisfied
++    the oracle row `var/info.txt`. A trailing slash names a directory, an empty
++    component is not a name, `.` and `..` are not names either, and an absolute
++    path is not a receipt path. `$input` and one `$output/` sigil are the only
++    prefixes REA emits."""
++    if not isinstance(path, str) or not path:
++        return 'empty path'
++    p = path
++    if p == '$input':
++        return None
++    if p.startswith('$output/'):
++        p = p[len('$output/'):]
++    elif p.startswith('/'):
++        return 'absolute path %r' % (path,)
++    if not p:
++        return 'empty path after $output/'
++    if p.endswith('/'):
++        return 'trailing slash in %r' % (path,)
++    parts = p.split('/')
++    for comp in parts:
++        if comp == '':
++            return 'empty component in %r' % (path,)
++        if comp in ('.', '..'):
++            return '%r component in %r' % (comp, path)
++    return None
++
++
++def path_shape_ok(env):
++    """(ok, first problem) over every path the receipt normalises."""
++    for p in receipt_paths(env):
++        problem = path_shape_problem(p)
++        if problem:
++            return False, problem
++    return True, None
++
++
+ def receipt_paths(env):
+     """Every path a receipt normalizes, as relative to REA's unblob output root.
+ 
+@@ -840,27 +1217,43 @@
+     return path
+ 
+ 
+-def squashfs_roots(env):
+-    """The receipt's chunk extract roots, read from its own derivations.
+-
+-    unblob's subtasks are published as `derivations[]` edges and the child path
+-    is the directory a chunk was extracted into (rea-agents 6.5.0
+-    FirmwareReports.js:341-357). Only edges whose handler starts
+-    `squashfs_v4` are filesystem roots for this claim: a whole-file chunk's root
+-    is `firmware.bin_extract` (`selected.bin_extract` under a range selection),
+-    a carved chunk's root is `<parent>/<start>-<end>.<handler>_extract`, and a
+-    nested image's root is `<parent>/<path to image>_extract`.
++def under_root(path, root):
++    """Segment-bounded containment: `P == CR or P.startswith(CR + '/')`.
++
++    Never `P.startswith(CR)`: a root `x_extract` does not own `x_extract2/...`
++    (round-41 closure D5). The round-40 matcher was the mirror-image defect - a
++    suffix test - and both are pinned in the selftest."""
++    if not isinstance(path, str) or not isinstance(root, str) or not root:
++        return False
++    p = strip_output(path)
++    if p == root:
++        return True
++    return p.startswith(root.rstrip('/') + '/')
++
++
++def squashfs_roots(env, handler):
++    """The receipt's chunk extract roots for one frozen handler.
++
++    unblob's subtasks are published as `derivations[]` edges and the child path
++    is the directory a chunk was extracted into (rea-agents 6.5.0
++    FirmwareReports.js:341-357). Only edges whose handler EQUALS the carrier's
++    frozen handler are roots for this claim (round 41 accepted any handler
++    starting `squashfs_v4`): a whole-file chunk's root is `firmware.bin_extract`
++    (`selected.bin_extract` under a range selection), a carved chunk's root is
++    `<parent>/<start>-<end>.<handler>_extract`, and a nested image's root is
++    `<parent>/<path to image>_extract`.
+ 
+     Returns them deepest first, so a caller that wants a deterministic default
+     sees the most specific root first; the counter never uses that order to guess
+     (see subject_root)."""
+     nr = env.get('normalized_result') or {}
+     out = set()
++    if not isinstance(handler, str) or not handler:
++        return []
+     for d in nr.get('derivations') or []:
+         if not isinstance(d, dict):
+             continue
+-        h = d.get('handler')
+-        if not (isinstance(h, str) and h.startswith(SQUASHFS_PREFIX)):
++        if d.get('handler') != handler:
+             continue
+         child = strip_output(d.get('child_path'))
+         if isinstance(child, str) and child:
+@@ -868,57 +1261,68 @@
+     return sorted(out, key=lambda r: (-len(r), r))
+ 
+ 
+-def subject_root(env, hint=None):
++def subject_root(env, handler, hint=None):
+     """(extract root, how) of the chunk whose filesystem the oracle describes.
+ 
+-    Exactly one `squashfs_v4` derivation root is the normal case and needs no
+-    hint. Several roots (a wrapper carrier that also extracted a nested image)
+-    cannot be resolved from the receipt alone, so the freeze may name the
++    Exactly one derivation root of the carrier's handler is the normal case and
++    needs no hint. Several roots (a wrapper carrier that also extracted a nested
++    image) cannot be resolved from the receipt alone, so the freeze may name the
+     intended root per carrier (`oracle_root` in carriers.json); without that hint
+     the answer is None and the three path clauses fail closed. A hint that names
+     no root at all is a frozen-table error and also resolves to None."""
+-    roots = squashfs_roots(env)
++    roots = squashfs_roots(env, handler)
+     if not roots:
+-        return None, 'no squashfs_v4 derivation edge'
++        return None, 'no %s derivation edge' % (handler,)
+     if hint is not None:
+         if hint not in roots:
+             return None, 'oracle_root %r not among %r' % (hint, roots)
+         return hint, 'oracle_root from carriers.json'
+     if len(roots) == 1:
+-        return roots[0], 'single squashfs_v4 derivation root'
+-    return None, 'ambiguous: %d squashfs_v4 roots %r (freeze oracle_root)' % (
+-        len(roots), roots)
++        return roots[0], 'single %s derivation root' % (handler,)
++    return None, 'ambiguous: %d %s roots %r (freeze oracle_root)' % (
++        len(roots), handler, roots)
+ 
+ 
+-def chunk_roots(env, hint=None):
++def chunk_roots(env, handler, hint=None):
+     """[{extract_root, subject}] for the receipt, for reporting."""
+-    root, how = subject_root(env, hint)
+-    return {'roots': squashfs_roots(env), 'subject': root, 'source': how}
++    root, how = subject_root(env, handler, hint)
++    return {'roots': squashfs_roots(env, handler), 'subject': root, 'source': how}
+ 
+ 
+-def diagnostic_rel(diagnostic, root):
++def diagnostic_rel(diagnostic, root, output_directory=None):
+     """A removal diagnostic's entry path relative to the chunk extract root.
+ 
+     unblob reports `MaliciousSymlinkRemoved(link=<absolute path inside its
+     extraction dir>, target=...)` (unblob extractor.py:79-87) and REA stores it
+     with `input_path` naming the task directory, so the entry path exists only in
+-    `link`. The root is located as a run of whole segments and the remainder is
+-    the entry's path; None when the link carries no such run (that diagnostic
+-    cannot be resolved and fails the disposition check closed)."""
++    `link`. The link must sit under the run's own extraction tree
++    (`trusted_run_root`, segment-bounded), and the root's segment run must appear
++    after that prefix; None when it does not (that diagnostic cannot be resolved
++    and fails the disposition check closed, round-41 closure D5)."""
+     if root is None or not isinstance(diagnostic, dict):
+         return None
+     report = diagnostic.get('report')
+     link = report.get('link') if isinstance(report, dict) else None
+     if not isinstance(link, str) or not link:
+         return None
++    trusted = trusted_run_root(output_directory)
++    if trusted is None:
++        return None
++    if not under_root(link, trusted):
++        return None
+     segs = [x for x in link.split('/') if x not in ('', '.')]
++    tsegs = [x for x in trusted.split('/') if x not in ('', '.')]
++    if segs[:len(tsegs)] != tsegs:
++        return None
+     rsegs = root.split('/')
+-    for i in range(len(segs) - len(rsegs), -1, -1):
++    start = len(tsegs)
++    for i in range(len(segs) - len(rsegs), start - 1, -1):
+         if segs[i:i + len(rsegs)] == rsegs:
+             return '/'.join(segs[i + len(rsegs):])
+     return None
+ 
+ 
++
+ def diagnostics(env):
+     nr = env.get('normalized_result') or {}
+     return [d for d in (nr.get('diagnostics') or []) if isinstance(d, dict)]
+@@ -938,6 +1342,11 @@
+     `usr/bin/busy` scored as the symlink entry `bin/busy`."""
+     if root is None or not isinstance(path, str) or not path:
+         return None
++    if not under_root(path, root):
++        # the raw spelling is not inside the root, so no amount of component
++        # normalisation may make it so (a root `x_extract` never owns
++        # `x_extract2/...`; round-41 closure D5)
++        return None
+     parts = path_parts(path)
+     if parts is None:
+         return None
+@@ -1037,7 +1446,7 @@
+     return False
+ 
+ 
+-def disposition_check(gaps_list, diags, nonreg, model, root):
++def disposition_check(gaps_list, diags, nonreg, model, root, output_directory=None):
+     """Three families, all frozen data (R41C1DevCore 7.1).
+ 
+     path-resolved gap   a gap with a relative_path must resolve (exact match after
+@@ -1101,7 +1510,7 @@
+         for d in diags:
+             if diagnostic_typename(d) != removal_name:
+                 continue
+-            rel = diagnostic_rel(d, root)
++            rel = diagnostic_rel(d, root, output_directory)
+             if rel is None:
+                 return False, ('removal diagnostic without a path under the root: %r'
+                                % (d.get('input_path'),))
+@@ -1232,7 +1641,7 @@
+     return '/'.join(parts)
+ 
+ 
+-def projection(env, profile='core'):
++def projection(env, profile='core', handler=None):
+     """Semantic projection compared between a committed receipt and a fresh run.
+ 
+     `profile` is frozen data (the optional `projection` key of carriers.json,
+@@ -1257,7 +1666,7 @@
+         raise Unevaluable('unknown projection profile %r' % (profile,))
+     nr = env.get('normalized_result') or {}
+     subject = ((env.get('subject') or {}).get('digest') or {}).get('sha256')
+-    proj_root = subject_root(env)[0]
++    proj_root = subject_root(env, handler)[0] if handler else None
+ 
+     def norm(path):
+         """Run-invariant form of a receipt path: its rel under the subject root.
+@@ -1336,7 +1745,10 @@
+         if not isinstance(d, dict):
+             continue
+         typename = diagnostic_typename(d) or '<none>'
+-        rel = diagnostic_rel(d, proj_root) if proj_root else None
++        rel = diagnostic_rel(d, proj_root,
++                             (env.get('parameters') or {}).get('output_directory')
++                             if isinstance(env.get('parameters'), dict) else None) \
++            if proj_root else None
+         if rel is None:
+             rel = norm(d.get('input_path'))
+         diags.append([typename, rel])
+@@ -1524,6 +1936,8 @@
+             k = c.get('id')
+             d = {'id': k}
+             pin = (c.get('sha256') or '').lower() or None
++            handler = c.get('handler') if isinstance(c.get('handler'), str) else None
++            d['handler'] = handler
+             cpath = c.get('path')
+             opath = c.get('oracle')
+             npath = c.get('nonregular')
+@@ -1532,7 +1946,7 @@
+             if cpath:
+                 raw = show(root, rev, cpath)
+             elif isinstance(c.get('external'), dict) and carrier_cache and pin:
+-                # external vendor carrier: bytes fetched by fetch-vendor.py; the pin
++                # external carrier: bytes fetched by fetch-carrier.py; the pin
+                 # (frozen in carriers.json) is still checked below on these bytes.
+                 fp = os.path.join(carrier_cache, pin + '.bin')
+                 raw = open(fp, 'rb').read() if os.path.isfile(fp) else None
+@@ -1544,14 +1958,16 @@
+                                    and hashlib.sha256(raw).hexdigest() == pin)
+             d['carrier_fresh_ok'] = (pin is not None and pin not in prior)
+             d['carrier_fresh_against'] = prior_sources
+-            d['layout'] = layout_probe(raw)
++            d['layout'] = layout_probe(raw, c.get('superblock'))
+             d['layout_ok'] = bool(d['layout'].get('ok'))
++            d['layout_reason'] = d['layout'].get('reason')
+             d['compression'] = d['layout'].get('compression')
++            d['endianness'] = d['layout'].get('endianness')
+             # carve_ok: the carrier is exactly the filesystem it claims. A carve
+             # that runs past bytes_used leaves trailing bytes, unblob then stops
+-            # the chunk at bytes_used, the chunk is no longer the whole input and
+-            # the oracle root moves one `<start>-<end>.<handler>_extract` deeper
+-            # (measured: R41C1Counter artifacts/chunk-naming.json, 'trailing-512').
++            # the chunk at the padding boundary or at bytes_used, the chunk is no
++            # longer the whole input and the oracle root moves one
++            # `<start>-<end>.<handler>_extract` deeper.
+             ext = c.get('external') if isinstance(c.get('external'), dict) else None
+             bu = d['layout'].get('bytes_used')
+             size = d['layout'].get('size')
+@@ -1594,27 +2010,31 @@
+ 
+             if env is not None:
+                 envs[f'{k}/after'] = env
++                # a score receipt relabelled as evidence is not an REA envelope
++                d['evidence_envelope_ok'] = not ({'counter_sha256', 'exit_code'}
++                                                 & set(env))
++                params = env.get('parameters') or {}
++                od = params.get('output_directory') if isinstance(params, dict) else None
++                d['output_directory'] = od
+                 subj = env.get('subject') or {}
+                 d['subject_pin_ok'] = ((subj.get('digest') or {}).get('sha256')
+                                        if isinstance(subj, dict) else None) == pin
+                 prov = env.get('provider') or {}
+                 d['operation_ok'] = (env.get('operation') == 'extract_firmware'
+                                      and isinstance(prov, dict) and prov.get('id') == 'unblob')
+-                d['handler_ok'] = HANDLER in chunk_handlers(env)
++                d['chunk_handlers'] = chunk_handlers(env)
++                d['handler_ok'] = (handler is not None
++                                   and handler in chunk_handlers(env))
+                 d['chunks_ok'] = not chunk_failed(env)
+-                root_value, root_how = subject_root(
+-                    env, (c.get('oracle_root')
+-                          if isinstance(c.get('oracle_root'), str) else None))
++                hint = (c.get('oracle_root')
++                        if isinstance(c.get('oracle_root'), str) else None)
++                root_value, root_how = subject_root(env, handler, hint)
+                 d['extract_root'] = root_value
+                 d['extract_root_source'] = root_how
+-                d['chunk_roots'] = chunk_roots(
+-                    env, (c.get('oracle_root')
+-                          if isinstance(c.get('oracle_root'), str) else None))
++                d['chunk_roots'] = chunk_roots(env, handler, hint)
+                 if root_value:
+-                    rp = root_value.split('/')
+                     d['extract_root_confirmed'] = any(
+-                        (path_parts(p) or [])[:len(rp)] == rp
+-                        for p in receipt_paths(env))
++                        under_root(p, root_value) for p in receipt_paths(env))
+                 else:
+                     d['extract_root_confirmed'] = False
+                 files = published(env)
+@@ -1627,21 +2047,21 @@
+                 d['diagnostics'] = len(diags)
+                 d['removals'] = sorted(
+                     rel for rel, diag in
+-                    ((diagnostic_rel(x, root_value), x) for x in diags)
++                    ((diagnostic_rel(x, root_value, od), x) for x in diags)
+                     if rel is not None
+                     and diagnostic_typename(diag) == (model.get('removed') or {}
+                                                       ).get('diagnostic'))
+                 ok, why = disposition_check(gaps(env), diags, nonreg, model,
+-                                            root_value)
++                                            root_value, od)
+                 d['gaps_ok'] = ok
+                 d['gaps_note'] = why
+                 esc = nonregular_published(files, nonreg, root_value)
+                 d['nonregular_published'] = esc[:5]
+                 d['nonregular_unpublished_ok'] = (root_value is not None
+                                                   and not esc)
+-                params = env.get('parameters') or {}
+-                od = params.get('output_directory') if isinstance(params, dict) else None
+-                d['output_directory'] = od
++                shape_ok, shape_why = path_shape_ok(env)
++                d['path_shape_ok'] = shape_ok
++                d['path_shape_note'] = shape_why
+                 d['run_provenance_ok'] = provenance_ok(od)
+ 
+                 # rerun clause: fresh REA run of the REV carrier bytes
+@@ -1652,7 +2072,8 @@
+                         d['projection_error'] = payload
+                     else:
+                         eq, keys, detail = projection_diff(
+-                            projection(env, profile), projection(payload, profile),
++                            projection(env, profile, handler),
++                            projection(payload, profile, handler),
+                             profile)
+                         d['projection_ok'] = eq
+                         d['projection_diff'] = keys
+@@ -1688,12 +2109,12 @@
+     b['province_core_section'] = sec is not None
+     rows = [l for l in (sec or []) if l.lstrip().startswith('|')]
+     b['province_core_row'] = any(
+-        HANDLER_RE.search(cells(r)[0]) and AVM_LAYOUT_RE.search(r) and ENTRY in r
++        HANDLER_RE.search(cells(r)[0]) and SQFS3_TEXT_RE.search(r) and ENTRY in r
+         for r in rows)
+     b['province_core_rows_seen'] = [
+         cells(r)[0] for r in rows if HANDLER_RE.search(cells(r)[0])]
+     b['frontier_note'] = any(FRONTIER_MARK in l and STEM in l
+-                             and AVM_LAYOUT_RE.search(l)
++                             and SQFS3_TEXT_RE.search(l)
+                              for l in prov_text.splitlines())
+     ent = show(root, rev, ENTRY)
+     b['entry_present'] = ent is not None
+@@ -1728,10 +2149,16 @@
+     uncovered = sorted(kinds_seen - set(model.get('allowed') or {}))
+     b['gap_rule_ok'] = not plan_probs and not uncovered
+     b['gap_rule_uncovered_kinds'] = uncovered
+-    comps = [d.get('compression') for d in (res.get('carriers') or {}).values()]
+-    b['compression_coverage'] = (any(c == GZIP_ID for c in comps)
+-                                 and any(c in XZ_IDS for c in comps))
+-    b['compression_detail'] = comps
++    ends = [d.get('endianness') for d in (res.get('carriers') or {}).values()]
++    # Both sasquatch legs must be bound: unblob 26.6.4 calls `sasquatch -le` for a
++    # little-endian v3 superblock and `sasquatch -be` for a big-endian one, so a
++    # freeze whose carriers are all one endianness tests one flag of the
++    # extractor, not the family.
++    b['endianness_coverage'] = (any(e == 'le' for e in ends)
++                                and any(e == 'be' for e in ends))
++    b['endianness_detail'] = ends
++    b['compression_detail'] = [d.get('compression')
++                               for d in (res.get('carriers') or {}).values()]
+     b['frozen_tables_valid'] = bool(res.get('frozen_tables_valid'))
+     res['bindings'] = b
+     res['met_target'] = bool(res['carriers_unchanged'] and res['gap_rule_unchanged']
+@@ -1740,7 +2167,26 @@
+     return res
+ 
+ 
++def write_receipt(doc, path):
++    """Write a score receipt and prove its own identity on the way out.
++
++    Round-41 closure D4: the receipt records the counter's digest, so a reader
++    can re-hash the tool from the revision it names instead of trusting a
++    separate diff. The check is done on the bytes that landed, not on the dict."""
++    stamped = stamp_receipt(dict(doc))
++    with open(path, 'w') as fh:
++        json.dump(stamped, fh, indent=1, sort_keys=True)
++    try:
++        with open(path) as fh:
++            written = json.load(fh)
++    except (OSError, json.JSONDecodeError) as e:
++        return stamped, False, 'receipt unreadable after write: %s' % e
++    ok, why = receipt_identity_ok(written)
++    return stamped, ok, why
++
++
+ def main(argv=None):
++    global WORK_OVERRIDE
+     ap = argparse.ArgumentParser()
+     ap.add_argument('--root')
+     ap.add_argument('--rev')
+@@ -1749,25 +2195,50 @@
+     ap.add_argument('--json-out')
+     ap.add_argument('--unblob')
+     ap.add_argument('--carrier-cache',
+-                    help='directory holding <sha256>.bin for external vendor carriers '
+-                         '(filled by tools/round-41/fetch-vendor.py)')
++                    help='directory holding <sha256>.bin for external carriers '
++                         '(filled by tools/round-42/fetch-carrier.py)')
++    ap.add_argument('--work', help='scratch directory (default '
++                    '$HYAKU_SCRATCH/kaidoku-r42/counter)')
+     ap.add_argument('--rea-timeout', type=int, default=900)
+     ap.add_argument('--no-rerun', action='store_true')
+     ap.add_argument('--selftest', action='store_true')
+     ap.add_argument('--selftest-rea', action='store_true')
++    ap.add_argument('--dev-carrier', help='a v3 image the caller may run REA on '
++                    '(unblob 26.6.4 fixture or the Kamikaze 7.09 dev image), used '
++                    'by --selftest-rea')
++    ap.add_argument('--verify-receipt', help='exit 0 if the receipt at PATH carries '
++                    'a counter_sha256 that describes the counter file it names')
+     a = ap.parse_args(argv)
++    if a.work:
++        WORK_OVERRIDE = os.path.abspath(a.work)
++        os.makedirs(WORK_OVERRIDE, exist_ok=True)
++    if a.verify_receipt:
++        try:
++            with open(a.verify_receipt) as fh:
++                doc = json.load(fh)
++        except (OSError, json.JSONDecodeError) as e:
++            print(json.dumps({'verify': a.verify_receipt, 'reason': str(e),
++                              'ok': False}, sort_keys=True))
++            return 2
++        ok, why = receipt_identity_ok(doc)
++        print(json.dumps({'verify': a.verify_receipt, 'ok': ok,
++                          'counter': doc.get('counter') if isinstance(doc, dict) else None,
++                          'counter_sha256': (doc.get('counter_sha256')
++                                             if isinstance(doc, dict) else None),
++                          'detail': why}, sort_keys=True))
++        return 0 if ok else 1
+     if a.selftest:
+         return selftest(a.pkg65)
+     if a.selftest_rea:
+-        return selftest_rea(a.pkg65, a.unblob, a.rea_timeout)
++        return selftest_rea(a.pkg65, a.unblob, a.rea_timeout, a.dev_carrier)
+     if a.no_rerun:
+         out = {'reason': 'rerun_disabled',
+-               'detail': 'P41-C1 binds a fresh REA run of each carrier; '
++               'detail': 'P42-C1 binds a fresh REA run of each carrier; '
+                          '--no-rerun cannot be scored',
+                'argv': sys.argv, 'exit_code': 2}
+         print(json.dumps({k: out[k] for k in ('reason', 'detail')}, sort_keys=True))
+         if a.json_out:
+-            json.dump(out, open(a.json_out, 'w'), indent=1, sort_keys=True)
++            write_receipt(out, a.json_out)
+         return 2
+     if not (a.root and a.rev and a.freeze and a.pkg65):
+         print('usage: --root --rev --freeze --pkg65 required', file=sys.stderr)
+@@ -1784,7 +2255,7 @@
+                           'frozen_path_changed': res.get('frozen_path_changed', [])},
+                          sort_keys=True))
+         if a.json_out:
+-            json.dump(res, open(a.json_out, 'w'), indent=1, sort_keys=True)
++            write_receipt(res, a.json_out)
+         return 2
+     res['argv'] = sys.argv
+     res['exit_code'] = 0 if res['met_target'] else 1
+@@ -1794,82 +2265,119 @@
+                                           'bindings', 'met_target', 'exit_code')},
+                      sort_keys=True))
+     if a.json_out:
+-        json.dump(res, open(a.json_out, 'w'), indent=1, sort_keys=True)
++        stamped, ok, why = write_receipt(res, a.json_out)
++        if not ok:
++            print(json.dumps({'reason': 'receipt_identity_failed', 'detail': why},
++                             sort_keys=True), file=sys.stderr)
++            return 2
+     return res['exit_code']
+ 
+ 
+ # ---------------------------------------------------------------- selftest
+ 
+-def find_xpin(here):
+-    """Locate tools/round-27/xpin-attribute.mjs from a checkout or an artifact dir."""
+-    for d in [here] + [os.path.dirname(here)] + \
+-            [os.path.abspath(os.path.join(here, *(['..'] * n))) for n in range(2, 10)]:
+-        for rel in ('round-27/xpin-attribute.mjs', 'tools/round-27/xpin-attribute.mjs'):
+-            p = os.path.join(d, rel)
+-            if os.path.isfile(p):
+-                return p
+-    raise SystemExit('xpin-attribute.mjs not found from ' + here)
++def find_xpin(here):
++    """Locate tools/round-27/xpin-attribute.mjs from a checkout or an artifact dir."""
++    for d in [here] + [os.path.dirname(here)] + \
++            [os.path.abspath(os.path.join(here, *(['..'] * n))) for n in range(2, 10)]:
++        for rel in ('round-27/xpin-attribute.mjs', 'tools/round-27/xpin-attribute.mjs'):
++            p = os.path.join(d, rel)
++            if os.path.isfile(p):
++                return p
++    raise SystemExit('xpin-attribute.mjs not found from ' + here)
++
++
++def sb_v3(variant='standard', endian='le', *, minor=0, compression='gzip',
++          magic=None, major=3, bytes_used=None, meta_len=54,
++          meta_header=None, meta_uncompressed=False, dts_override=None,
++          pad=0):
++    """A fixture carrier: a coherent SquashFS v3 image, laid out as the format is.
++
++    Not a real filesystem - `layout_probe` is a superblock/relocation test and
++    these bytes exercise it exactly: the (variant, endianness) magic, a data
++    region, one inode-table metadata block carrying the declared compression
++    signature, a directory table, and tables after it. `bytes_used` is the total
++    length unless overridden; `pad` appends bytes past `bytes_used` (a sloppy
++    carve); `meta_header` writes a given 2-byte header verbatim and `meta_len`
++    still sizes the payload, so the plausibility/identity split can be driven."""
++    body = bytearray(SQUASHFS3_SB_SIZE)
++    m = magic if magic is not None else MAGIC_BY_VARIANT[variant][endian]
++    body[0:4] = m
++    body += b'block-payload-' * 3
++    its = len(body)
++    if compression == 'gzip':
++        meta = b'\x78\x9c' + b'Z' * max(0, meta_len - 2)
++    else:
++        meta = b'\x5d\x00\x00' + b'Z' * max(0, meta_len - 3)
++    meta = meta[:meta_len] if meta_len >= 2 else meta
++    if meta_header is not None:
++        header = meta_header
++    else:
++        header = (meta_len | (UNCOMPRESSED_FLAG if meta_uncompressed else 0)).to_bytes(
++            2, 'big' if endian == 'be' else 'little')
++    body += header + meta
++    dts = its + 2 + meta_len if dts_override is None else dts_override
++    if len(body) < dts:
++        body += b'\x00' * (dts - len(body))
++    fts = len(body) + 8
++    lts = fts + 8
++    total = lts + 8
++    body += b'\x00' * (total - len(body))
++    order = 'big' if endian == 'be' else 'little'
++
++    def put(off, width, value):
++        body[off:off + width] = (int(value) & ((1 << (8 * width)) - 1)).to_bytes(
++            width, order)
+ 
+-
+-def sb_carrier(compression, tag=b'', *, marker=True, meta_le=True,
+-               meta_header=None, identity_le=False, marker_value=None, pad=64):
+-    """A fixture carrier: a coherent BE SquashFS v4 superblock, a metadata block
+-    header at inode_table_start and nothing else.
+-
+-    Not a real filesystem - the layout clause is a superblock test and these
+-    bytes exercise it exactly. `meta_le` writes a little-endian block length;
+-    `meta_header` writes given bytes verbatim (for headers whose length is
+-    plausible both ways); `identity_le` aims directory_table_start at the
+-    LE-computed next metadata block."""
+-    meta_len = 116 if meta_le else 58
+-    its = 512
+-    body = bytearray(its + 2 + pad)
+-    body[0:4] = b'sqsh'
+-    body[12:16] = (4096).to_bytes(4, 'big')
+-    body[20:22] = compression.to_bytes(2, 'big')
+-    body[28:30] = (4).to_bytes(2, 'big')
+-    body[30:32] = (0).to_bytes(2, 'big')
+-    if meta_header is not None:
+-        hdr = meta_header
+-    else:
+-        hdr = (meta_len | (0x8000 if meta_le else 0)).to_bytes(
+-            2, 'little' if meta_le else 'big')
+-    body[its:its + 2] = hdr
+-    used = len(body) if marker_value is None else marker_value
+-    mkfs = (used & 0xFFFFFFFF) if marker else 1700000000
+-    body[8:12] = mkfs.to_bytes(4, 'big')
+-    body[40:48] = used.to_bytes(8, 'big')
+-    body[64:72] = its.to_bytes(8, 'big')
+-    if identity_le:
+-        dts = its + 2 + (int.from_bytes(hdr, 'little') & ~UNCOMPRESSED_FLAG)
+-    else:
+-        dts = len(body) - 8
+-    body[72:80] = dts.to_bytes(8, 'big')
+-    if tag:
+-        body[-len(tag):] = tag
++    used = total if bytes_used is None else bytes_used
++    put(4, 4, 4)                      # inodes
++    put(28, 2, major)                 # s_major
++    put(30, 2, minor)                 # s_minor
++    put(32, 2, 0)                     # block_size_1
++    put(34, 2, 16)                    # block_log
++    body[36] = 0x40                   # flags: duplicates removed
++    body[37] = 1                      # no_uids
++    body[38] = 0                      # no_guids
++    put(39, 4, 1640000000)            # mkfs_time (unaligned, packed struct)
++    put(43, 8, 64)                    # root_inode
++    put(51, 4, 65536)                 # block_size
++    put(55, 4, 1)                     # fragments
++    put(63, 8, used)                  # bytes_used
++    put(71, 8, total - 12)            # uid_start
++    put(79, 8, 0)                     # guid_start
++    put(87, 8, its)                   # inode_table_start
++    put(95, 8, dts)                   # directory_table_start
++    put(103, 8, fts)                  # fragment_table_start
++    put(111, 8, lts)                  # lookup_table_start
++    if pad:
++        body += b'\x00' * pad
+     return bytes(body)
+ 
+ 
+ def mk_env(name, pin, files=(), gaps=(), unpub=(), diags=(), chunks=None,
+-           outdir='/fast/scratch/hyaku/kaidoku-r41/selftest/after',
++           handler=DEFAULT_HANDLER,
++           outdir='/fast/scratch/hyaku/kaidoku-r42/selftest/after',
+            subject_name='carrier.sqsh', chunk_dir='firmware.bin_extract',
+            operation='extract_firmware', provider='unblob', derivations=None):
+     """A receipt-shaped REA envelope (`data` object) for fixture carriers.
+ 
+     `derivations` defaults to the one edge rea-agents 6.5.0 publishes for a
+-    whole-file chunk (`$input` -> `$output/<chunk_dir>`, handler
+-    `squashfs_v4_be`), which is what the counter reads the extract root from.
+-    `diags` is a list of (typename, rel) or (typename, rel, target)."""
++    whole-file chunk (`$input` -> `$output/<chunk_dir>`, the carrier's own
++    handler), which is what the counter reads the extract root from. Diagnostic
++    links are absolute and sit under the run's extraction tree, the shape the
++    committed round-41 receipts show: `<dirname(outdir)>/rea-firmware-<id>/
++    extracted/<chunk_dir>/<rel>`."""
++    link_base = '%s/rea-firmware-fixture/extracted/%s' % (
++        os.path.dirname(outdir.rstrip('/')), chunk_dir)
+     if chunks is None:
+         chunks = [{'input_path': '$input', 'provider_id': '3028394:1',
+                    'range': {'offset': 0, 'length': 4096},
+-                   'handler': HANDLER, 'encrypted': False,
++                   'handler': handler, 'encrypted': False,
+                    'root_file_range': {'offset': 0, 'length': 4096},
+                    'extraction_failed': False}]
+     if derivations is None:
+         derivations = [{'parent_path': '$input',
+                         'child_path': '$output/' + chunk_dir,
+-                        'provider_blob_id': '3028394:1', 'handler': HANDLER,
++                        'provider_blob_id': '3028394:1', 'handler': handler,
+                         'parent_file_range': {'offset': 0, 'length': 4096}}]
+     rel_files = []
+     published_bytes = 0
+@@ -1886,7 +2394,7 @@
+     for kind, rel, deps in gaps:
+         gap_rows.append({
+             'kind': kind, 'input_path': '$output/%s/%s' % (chunk_dir, rel),
+-            'relative_path': '%s/%s' % (chunk_dir, rel), 'handler': HANDLER,
++            'relative_path': '%s/%s' % (chunk_dir, rel), 'handler': handler,
+             'provider_id': '3028394:1', 'range': None, 'root_file_range': None,
+             'dependencies': list(deps), 'continuation_id': 'continuation-fixture',
+         })
+@@ -1904,7 +2412,7 @@
+         diag_rows.append({
+             'input_path': '$output/' + chunk_dir,
+             'report': {'__typename__': typename, 'severity': 'WARNING',
+-                       'link': '%s/%s/%s' % (outdir, chunk_dir, rel),
++                       'link': '%s/%s' % (link_base, rel),
+                        'target': target}})
+     return {
+         'analysis_profile': None,
+@@ -1953,12 +2461,22 @@
+     staged extraction directory name. Every path a receipt normalizes is moved
+     with the root (files, gaps, unpublished entries, derivation edges,
+     depth-limited task paths, diagnostic links), so the receipt stays internally
+-    consistent and `subject_root` still derives the same namespace."""
++    consistent and `subject_root` still derives the same namespace. Diagnostic
++    links are re-homed under the new run's private extraction tree, because the
++    counter resolves them relative to `dirname(output_directory)`."""
+     e = json.loads(json.dumps(env))
+-    root = '/fast/scratch/hyaku/kaidoku-r41/counter/rerun/%s' % tag
++    root = '/fast/scratch/hyaku/kaidoku-r42/counter/rerun/%s' % tag
+     outdir = root + '/out'
++    link_base = '%s/rea-firmware-%s/extracted/%s' % (root, tag, chunk_dir)
+     nr = e['normalized_result']
+-    old_root = subject_root(e)[0]
++    old_params = e.get('parameters') if isinstance(e.get('parameters'), dict) else {}
++    old_out = old_params.get('output_directory')
++    handler = None
++    for deriv in nr.get('derivations') or []:
++        if isinstance(deriv, dict) and isinstance(deriv.get('handler'), str):
++            handler = deriv['handler']
++            break
++    old_root = subject_root(e, handler)[0]
+ 
+     def remap(path):
+         p = strip_output(path)
+@@ -1967,10 +2485,18 @@
+         if old_root:
+             if p == old_root:
+                 return chunk_dir
+-            if p.startswith(old_root + '/'):
++            if under_root(p, old_root):
+                 return chunk_dir + p[len(old_root):]
+         return p
+ 
++    tails = []
++    for d in nr.get('diagnostics') or []:
++        report = d.get('report')
++        if isinstance(report, dict) and isinstance(report.get('link'), str):
++            tails.append(diagnostic_rel({'report': {'link': report['link']}},
++                                        old_root, old_out))
++        else:
++            tails.append(None)
+     nr['output_directory'] = outdir
+     for f in nr.get('files') or []:
+         rel = remap(f.get('relative_path'))
+@@ -1986,23 +2512,18 @@
+         g['continuation_id'] = 'continuation-' + tag
+     for u in nr.get('unpublished_entries') or []:
+         u['relative_path'] = remap(u.get('relative_path'))
+-    for d in nr.get('derivations') or []:
++    for deriv in nr.get('derivations') or []:
+         for key in ('parent_path', 'child_path'):
+-            v = strip_output(d.get(key))
++            v = strip_output(deriv.get(key))
+             if isinstance(v, str) and v and v != '$input':
+-                d[key] = '$output/' + remap(v)
++                deriv[key] = '$output/' + remap(v)
+     nr['depth_limited_paths'] = ['$output/' + remap(x)
+                                  for x in nr.get('depth_limited_paths') or []]
+-    for d in nr.get('diagnostics') or []:
++    for d, tail in zip(nr.get('diagnostics') or [], tails):
+         report = d.get('report')
+-        if isinstance(report, dict):
+-            link = report.get('link')
+-            if isinstance(link, str) and link:
+-                # the link is absolute; keep its tail after the old root
+-                tail = diagnostic_rel({'report': {'link': link}}, old_root)
+-                report['link'] = ('%s/%s/%s' % (outdir, chunk_dir, tail)
+-                                  if tail is not None else link)
+-            d['input_path'] = '$output/' + chunk_dir
++        if isinstance(report, dict) and tail is not None:
++            report['link'] = '%s/%s' % (link_base, tail)
++        d['input_path'] = '$output/' + chunk_dir
+     e['parameters'] = dict(e['parameters'])
+     e['parameters']['path'] = root + '/carrier.bin'
+     e['parameters']['output_directory'] = outdir
+@@ -2034,13 +2555,14 @@
+     return out
+ 
+ 
+-def _province(row=True, heading=CORE_HEADING, cell='`squashfs_v4_be`',
+-              layout='AVM layout', note=True, cited=ENTRY):
++def _province(row=True, heading=CORE_HEADING, cell='`squashfs_v3`',
++              layout='SquashFS v3 rootfs', note=True, cited=ENTRY,
++              stem=None, section_text='## Next'):
+     r = f'| {cell} | {layout} | x | `{cited}` |\n' if row else ''
+-    fn = (f'- {FRONTIER_MARK}, 2026-10-26: the Frontier AVM-layout part is '
+-          f'superseded by `{STEM}`.\n') if note else ''
++    fn = (f'- {FRONTIER_MARK}, 2026-10-26: the Frontier v1-v3 part is '
++          f'superseded by `{stem or STEM}`.\n') if note else ''
+     return (f'# P\n\n{heading}\n\n| Surface | Layout | a | Entry |\n|---|---|---|---|\n{r}\n'
+-            f'## Next\n{fn}\n')
++            f'{section_text}\n{fn}\n')
+ 
+ 
+ def _entry(sid='S1121'):
+@@ -2068,14 +2590,29 @@
+     work = tempfile.mkdtemp(prefix='c1-selftest-work.', dir=sroot)
+ 
+     sha = lambda b: hashlib.sha256(b).hexdigest()
+-    ids = list(IDS)
++    ids = list(IDS) or ['V3', 'V4', 'L3', 'L4']
++    HANDLER = DEFAULT_HANDLER          # fixture-local: the plain v3 handler
+ 
+-    # fixture carriers: AVM layout, gzip and xz legs
++    # Fixture carriers: four v3 images covering both endiannesses (so the
++    # `endianness_coverage` binding is exercised) and three of the four family
++    # handlers. All are exact carves: bytes_used == len(bytes).
+     carriers = {
+-        'V3': sb_carrier(GZIP_ID, b'V3-avm'),
+-        'V4': sb_carrier(4, b'V4-avm'),
+-        'L3': sb_carrier(GZIP_ID, b'L3-avm'),
+-        'L4': sb_carrier(2, b'L4-avm'),
++        'V3': sb_v3('standard', 'le'),
++        'V4': sb_v3('standard', 'be'),
++        'L3': sb_v3('ddwrt', 'le', minor=1),
++        'L4': sb_v3('broadcom', 'be', minor=1),
++    }
++    handlers = {'V3': 'squashfs_v3', 'V4': 'squashfs_v3',
++                'L3': 'squashfs_v3_ddwrt', 'L4': 'squashfs_v3_broadcom'}
++    superblocks = {
++        'V3': {'magic': 'hsqs', 'endianness': 'le', 'major': 3, 'minor': 0,
++               'variant': 'standard', 'compression': 'gzip'},
++        'V4': {'magic': 'sqsh', 'endianness': 'be', 'major': 3, 'minor': 0,
++               'variant': 'standard', 'compression': 'gzip'},
++        'L3': {'magic': 'hsqt', 'endianness': 'le', 'major': 3, 'minor': 1,
++               'variant': 'ddwrt', 'compression': 'gzip'},
++        'L4': {'magic': 'qshs', 'endianness': 'be', 'major': 3, 'minor': 1,
++               'variant': 'broadcom', 'compression': 'gzip'},
+     }
+     pins = {k: sha(v) for k, v in carriers.items()}
+     fsha = lambda i: sha(('f%s' % i).encode())
+@@ -2111,7 +2648,8 @@
+             out[k] = mk_env(k.lower() + '.sqsh', pins[k],
+                             files=sd['files'], gaps=sd['gaps'],
+                             unpub=sd['unpub'], diags=sd['diags'],
+-                            outdir='/fast/scratch/hyaku/kaidoku-r41/selftest/%s-after' % k)
++                            handler=handlers[k],
++                            outdir='/fast/scratch/hyaku/kaidoku-r42/selftest/%s-after' % k)
+         for k, fn in (over or {}).items():
+             fn(out[k])
+         return out
+@@ -2126,15 +2664,18 @@
+     def receipts(envs):
+         return {receipt_path(k): json.dumps(e) for k, e in envs.items()}
+ 
+-    rule = json.dumps({'claim': 'R41-C1',
++    rule = json.dumps({'claim': 'R42-C1',
+                        'allowed': {'symlink': ['unpublished-entry'],
+                                    'device': ['unpublished-entry']}}, indent=1)
+ 
+     def spec_json(pin_map=None, drop=None, target=None, receipt_override=None,
+                   projection=None, external=None, oracle_root=None,
+-                  external_drop=None, prior_pins=None):
++                  external_drop=None, prior_pins=None, handler_over=None,
++                  super_over=None):
+         """carriers.json text. `external` turns one carrier into a vendor entry
+-        (with a member_sha256 block that `external_drop` can remove a key from)."""
++        (with a member_sha256 block that `external_drop` can remove a key from);
++        `handler_over`/`super_over` replace a carrier's frozen handler or
++        superblock block (the red cases)."""
+         pm = pin_map or pins
+         cs = []
+         for k in ids:
+@@ -2142,14 +2683,16 @@
+                 continue
+             c = {'id': k,
+                  'sha256': pm[k],
++                 'handler': (handler_over or {}).get(k, handlers[k]),
++                 'superblock': dict((super_over or {}).get(k, superblocks[k])),
+                  'oracle': f'{AFTERDIR}/{k}/oracle.tsv',
+                  'nonregular': f'{AFTERDIR}/{k}/nonregular.tsv'}
+             if k == external:
+-                ext = {'url': 'https://download.avm.de/fritzbox/x/y.image',
++                ext = {'url': 'https://download.example.invalid/vendor/x.image',
+                        'image_sha256': 'a' * 64,
+                        'member': './var/tmp/filesystem.image',
+                        'member_sha256': 'b' * 64,
+-                       'length': 4096}
++                       'length': len(carriers[k])}
+                 for key in (external_drop or ()):
+                     ext.pop(key, None)
+                 c['external'] = ext
+@@ -2160,7 +2703,7 @@
+             if receipt_override and k in receipt_override:
+                 c['receipt'] = receipt_override[k]
+             cs.append(c)
+-        spec = {'claim': 'R41-C1', 'carriers': cs}
++        spec = {'claim': 'R42-C1', 'carriers': cs}
+         if target is not None:
+             spec['target'] = target
+         if projection is not None:
+@@ -2183,8 +2726,8 @@
+         f = {XPIN: xpin,
+              CARRIERS: spec_json(pin_map=pm),
+              GAPRULE: (rule_text if rule_text is not None else rule).encode(),
+-             'plans/round-41-claims.md': b'# plan\n',
+-             'tools/round-41/c1-counter.py': open(os.path.abspath(__file__), 'rb').read(),
++             'plans/round-42-claims.md': b'# plan\n',
++             'tools/round-42/c1-counter.py': open(os.path.abspath(__file__), 'rb').read(),
+              'PROVINCE.md': _province(),
+              ENTRY: _entry(),
+              'corpus/SOURCES.md': _registry(),
+@@ -2335,33 +2878,46 @@
+         [frozen, mutant('V3', lambda e: e['subject']['digest'].__setitem__(
+             'sha256', '2' * 64))], 0, 1, want_fail='subject_pin_ok')
+ 
+-    # ---- carrier layout controls
+-    stripped = sb_carrier(4, b'V3-stripped', marker=False)
+-    s_frozen, s_receipts = build(blob_over={'V3': stripped})
+-    add('marker-stripped genuine-LE-lengths carrier', [s_frozen, s_receipts], 0, 1,
++    # ---- carrier layout controls (v3 superblock, both endiannesses)
++    # wrong minor: the frozen superblock says 0, the bytes say 1
++    add('s_minor does not match the frozen superblock',
++        list(build(blob_over={'V3': sb_v3('standard', 'le', minor=1)})), 0, 1,
++        want_fail='layout_ok')
++    # a v4 image is not a v3 carrier even with a v3-family handler
++    add('s_major 4 with the frozen v3 magic',
++        list(build(blob_over={'V3': sb_v3('standard', 'le', major=4)})), 0, 1,
+         want_fail='layout_ok')
+-    add('standard-BE carrier (BE block lengths)',
+-        [build(blob_over={'V3': sb_carrier(GZIP_ID, b'V3-be', meta_le=False)})[0],
+-         build(blob_over={'V3': sb_carrier(GZIP_ID, b'V3-be', meta_le=False)})[1]],
++    # the metadata header must decode in the superblock's endianness: write the
++    # BE spelling of 54 on an LE carrier (LE reads 13824, implausible)
++    add('metadata header in the other endianness',
++        list(build(blob_over={'V3': sb_v3('standard', 'le', meta_header=b'\x00\x36')})),
+         0, 1, want_fail='layout_ok')
+-    # 8c00: LE length 140, BE length 3072 - plausible both ways, asymmetric
+-    ambiguous = sb_carrier(GZIP_ID, b'V3-amb', meta_header=b'\x8c\x00', pad=200)
+-    add('metadata length plausible both ways (no identity)',
+-        [build(blob_over={'V3': ambiguous})[0], build(blob_over={'V3': ambiguous})[1]],
+-        0, 1, want_fail='layout_ok')
+-    amb_id = sb_carrier(GZIP_ID, b'V3-ambid', meta_header=b'\x8c\x00', pad=200,
+-                        identity_le=True)
++    # 8c00: LE length 140, BE length 3072 - plausible both ways; the identity
++    # (its + 2 + len == dts) is the only signal, so it must settle it
++    ambiguous = sb_v3('standard', 'le', meta_len=140, meta_header=b'\x8c\x00',
++                      dts_override=0)
++    ambiguous = bytearray(ambiguous)
++    its = int.from_bytes(ambiguous[87:95], 'little')
++    ambiguous[95:103] = (its + 2 + 3072 - 128).to_bytes(8, 'little')
++    add('metadata length plausible both ways and no identity settles it',
++        list(build(blob_over={'V3': bytes(ambiguous)})), 0, 1, want_fail='layout_ok')
++    amb_id = sb_v3('standard', 'le', meta_len=140, meta_header=b'\x8c\x00')
+     add('ambiguous length settled by the single-block identity',
+-        [build(blob_over={'V3': amb_id})[0], build(blob_over={'V3': amb_id})[1]], 0, 0)
+-    lx = sb_carrier(4, b'V3-le-magic')
+-    lx = b'hsqs' + lx[4:]
+-    add('little-endian superblock magic', [build(blob_over={'V3': lx})[0],
+-                                          build(blob_over={'V3': lx})[1]], 0, 1,
++        list(build(blob_over={'V3': amb_id})), 0, 0)
++    # magic of the other endianness: hsqs on a carrier frozen as BE
++    add('little-endian magic on a big-endian frozen carrier',
++        list(build(blob_over={'V4': sb_v3('standard', 'le')})), 0, 1,
+         want_fail='layout_ok')
+-    big_used = sb_carrier(GZIP_ID, b'V3-used', marker_value=0xFFFFFFF0)
+-    add('bytes_used beyond the file', [build(blob_over={'V3': big_used})[0],
+-                                      build(blob_over={'V3': big_used})[1]], 0, 1,
++    big_used = sb_v3('standard', 'le', bytes_used=0xFFFFFFF0)
++    add('bytes_used beyond the file', list(build(blob_over={'V3': big_used})), 0, 1,
+         want_fail='layout_ok')
++    # declared compression must be visible in the inode table's metadata blocks
++    lz = sb_v3('standard', 'le', compression='lzma')
++    add('declared gzip but the inode table carries LZMA',
++        list(build(blob_over={'V3': lz})), 0, 1, want_fail='layout_ok')
++    unc = sb_v3('standard', 'le', meta_uncompressed=True)
++    add('inode table metadata uncompressed leaves compression undetermined',
++        list(build(blob_over={'V3': unc})), 0, 1, want_fail='layout_ok')
+ 
+     # ---- missing / malformed frozen inputs (absent at the freeze itself)
+     no_carrier = {**frozen, f'{AFTERDIR}/V4/carrier.sqsh': None}

@@ -1,0 +1,17 @@
+--- pristine
++++ M01
+@@ -942,10 +942,11 @@
+     if parts is None:
+         return None
+     pret = root.split('/')
+-    if parts[:len(pret)] != pret:
++    joined = '/'.join(parts)
++    pre = '/'.join(pret)
++    if not joined.startswith(pre):
+         return None
+-    rest = parts[len(pret):]
+-    return '/'.join(rest) if rest else ''
++    return joined[len(pre):].lstrip('/')
+ 
+ 
+ def strip_rel(rel):

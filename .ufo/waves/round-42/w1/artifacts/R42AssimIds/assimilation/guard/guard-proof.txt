@@ -1,0 +1,21 @@
+# R42AssimIds — id-collision guard proof (0-3-space pattern)
+# fixture: census-valid scratch registry carrying ONE indented colliding row
+
+$ grep -n "S002" guard/registry-indented.md
+8:  | S002 | indented colliding row — https://example.invalid/two | docs | A | scope two | anc two | teaches two | mined | 2026-10-26 | 180d | corpus/lessons/round-42.md |
+
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file validate/corpus/SOURCES.md
+file	ok	/fast/scratch/hyaku/kaidoku-r42/R42AssimIds/work/validate/corpus/SOURCES.md
+exit=0   (registry census-valid with the indented row present)
+
+$ grep -oE "^\\|[[:space:]]*S[0-9]{3,}" guard/registry-indented.md | grep -oE "S[0-9]+" | sort    # column-zero-only: BROKEN
+S001 S003
+$ comm -12 reg-ids-zero-broken staged-ids-zero-broken | wc -l   ->  0   (false green)
+
+$ grep -oE "^ {0,3}\\|[[:space:]]*S[0-9]{3,}" guard/registry-indented.md | grep -oE "S[0-9]+" | sort   # 0-3 spaces: GUARD
+S001 S002 S003
+$ comm -12 reg-ids-guard staged-ids-guard -> S002   (count 1)
+
+# staged fixture (guard/staged.md):
+  | S002 | staged indented row |
+| S099 | staged other |

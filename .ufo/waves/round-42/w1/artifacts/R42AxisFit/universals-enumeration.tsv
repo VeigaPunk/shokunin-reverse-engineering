@@ -1,0 +1,28 @@
+claims_line	clause_snippet	universal_token	enumerable_by_counting_command	status_or_fix
+5	every change from this draft is listed in `## Changes from the draft`	every	yes (freeze-commit diff enumerates the changes)	ok — process definition, not a scored universal
+6	Controls are scored before any claim data	any	yes (ordering rule)	ok
+8	on the tie every owned axis is a lowest axis	every	yes (owned-axis set is finite)	ok
+11	the v3 table sends every SquashFS v1–v3 chunk to `no-squashfs-chunk`	every	not a scored clause (describes round-41 defect cause)	ok — routed-defect citation
+17	no commit in `FREEZE..REV` touches a frozen path of that claim	no	yes (git log over the frozen path list)	ok — freeze-integrity rule
+19	Every score receipt records the scorer's exit code and the sha256 of the counter file it ran	every	yes (receipt fields)	ok — QUALITY 84 trace
+20	every counter is dry-run end to end, as frozen, on the dev arm before the freeze	every	yes (dry-run receipt per counter)	ok — QUALITY 84
+21	with every binding evaluated in the dry-run receipt	every	yes (receipt lists bindings)	ok
+26	no REA run on a v3 chunk is in the corpus	no	yes (counter exit 1 at the freeze shows it unmoved)	ok — before-state sentence
+30	the C1 counter at the freeze exits 1 (no round-42 receipts, no Core row)	no	yes (CTL-C1-0 receipt)	ok — do-nothing control
+32	for each frozen carrier (count fixed at the freeze, target 4)	each	yes (carriers.json enumerates the carriers)	ok; keep count fixed (non-vacuity binding)
+35	names a `squashfs_v3*` handler (the one frozen per carrier) with no failed chunk	every/no	PARTIAL — handler set enumerable (pin one exact name per carrier); "no failed chunk" needs the counter to enumerate EVERY chunk of the receipt and define "failed" (extraction_failed == true, plus any failed chunk not listed in chunks[])	freeze exact per-carrier handler NAME (not just the `squashfs_v3*` prefix: there are four v3-family handler names); define failed-chunk enumeration
+37	publishes every regular file of the frozen independent oracle at its exact relative path ... with the same sha256 and size, and no non-regular oracle entry as a file	every/no	yes (full-tree comparison against oracle.tsv / nonregular.tsv rows; require whole-table, never sampling)	ok — carry round-41 exact-path rule
+39	accounts for every non-regular oracle row by the frozen gap rule ... at most one structural `depth-limited`; no `unknown-chunk-handler`	every/no	yes (nonregular.tsv rows vs gap-rule.json gap counts; unknown-chunk-handler absence)	ok — freeze gap-rule.json completely (all kinds that appear in any nonregular.tsv)
+42	PROVINCE, entry, README row and a SOURCES row absent at the base whose used-by lists the entry exist; no frozen C1 path changed after the freeze	no	yes (git show at base; git diff over frozen paths)	ok
+47	unblob test fixtures belong to C2 and are never C1 carriers	never	yes (separability sentence)	ok
+53	`carriers_matched == 4`, every binding true	every	yes (binding receipt enumerates each binding boolean)	ok — freeze the binding list in the counter
+58	covering the whole SquashFS handler family	whole	PARTIAL — the family set is enumerable (10 handler NAMEs in unblob 26.6.4 squashfs.py: v1, v2, v2_nonstandard, v3, v3_ddwrt, v3_broadcom, v3_nonstandard, v4_le, v4_be, v4_broadcom) but the draft does not yet make the generator/counter enumerate them	require per-handler fixture pins for all 10 NAMEs and a counter binding asserting each pinned handler appears in >= 1 held-out class; explicitly exclude the orphan `squashfs_v3_adaptive` fixture dir (no handler class with that NAME in 26.6.4)
+62	the frozen v4 interpreter on the base `SKILL.md` exits 2 (no v4 marker)	no	yes (CTL-C2-0 base control)	ok
+63	labels every legacy-chunk envelope `no-squashfs-chunk` or `unclassified`	every	control-behaviour claim; verify at freeze on dev envelopes (it fails the target whatever it labels)	ok — record what CTL-C2-0b actually labels; the kill rule only needs full-score absence
+71	F = ∅ → (`no-squashfs-chunk`, `inspect-input`)	(none)	—	ok — this is the R41-CL4 repair (F now = all `squashfs_` handler names, not v4-only)
+73	every v1–v3 chunk and every v4 LE chunk resolves plain `sasquatch` [to be confirmed by wave 1 on real REA envelopes; label wording may change]	every	NO — not enumerated by any counting command; it is a proposition about future REA runs, not about held-out envelopes	fix: replace with a bounded statement over the frozen dev-arm fixture runs ("on the frozen dev-arm runs of the pinned v1–v3 and v4-LE fixtures, every recorded dependency set D = {sasquatch}"), or drop it from the predicate; keep the step-3 decision rule dependent only on observed D membership — and mark the sentence non-normative so the independent evaluator does not read it as a rule
+89	gives every held-out envelope the same (label, action) pair as the frozen evaluator	every	yes (matched == n)	ok
+93	every envelope's observed feature tuple equals the tuple the manifest declares under ONE key (`declared_features`), read by the counter under exactly that key	every	yes (per-carrier binding; R41-CL1 fix)	ok — generator writes ONLY `declared_features`; counter reads ONLY it; no alias fallback (r41 counter had 3 fallback keys — remove them)
+99	matched == n, every binding true, and ... CTL-C2-7 ... scores strictly fewer than half of the held-out combos	every	yes (n from the frozen seed; lookup-control score is a concrete threshold)	ok — make the <50% combo threshold its own receipt binding so it is reported
+101	any control at full score on the development envelopes stops C2 before held-out generation	any	yes (kill rule)	ok
+115	every carrier pin, oracle and non-regular table	every	yes (all are frozen files)	ok

@@ -1,0 +1,28 @@
+Reader independence matrix (R42CritC1Draft, 2026-10-26)
+readers: unsquashfs 4.7.5; 7-Zip 26.04; (extractor sasquatch 4.5.1 shown for
+comparison only; never an oracle producer).
+
+input           superblock   unsquashfs -s  unsquashfs -lls  7z l           sasquatch-extract(unblob)
+v1_le.bin      v1.0 LE     ok              ok               ok             ok
+v2_le.bin      v2.0 LE     ok              ok               ok             ok
+v3_le.bin      v3.0 LE gz ok              ok               ok             ok
+v3_be.bin      v3.0 BE gz ok              ok               ok             ok (unblob uses -be)
+v3_le.lzma.bin v3.0 LE lz ok              FAIL gzip -3     ok             ok (handler squashfs_v3)
+v3_be.lzma.bin v3.0 BE lz ok              FAIL gzip -3     ok             ok (handler squashfs_v3)
+ath.squashfs   v3.0 BE lz ok              FAIL gzip -3     ok (LZMA Spec) ok (handler squashfs_v3)
+
+Conclusions:
+- unsquashfs 4.7.5 reads v1–v3 gzip only; LZMA v3 (the dominant real-world flavor:
+  OpenWrt Kamikaze 7.09 rootfs proves it) fails hard -> cannot be an oracle producer
+  for LZMA v3 carriers.
+- 7-Zip 26.04 reads v3 gzip and LZMA, BE and LE; but its listing gives no entry-kind
+  discrimination (symlinks appear as `.....` regular rows with size = target length;
+  no `l`/`c`/`b` attribute letters), so it alone cannot build the non-regular table.
+- Therefore the draft's pair {unsquashfs 4.7.5, 7-Zip} satisfies "agree file-for-file"
+  only on gzip v3 images; on LZMA v3 images the pair cannot even both read the carrier.
+- Real v3 rootfs gap profile observed (ath.squashfs through REA, truncated fs):
+  chunks [squashfs_v3], 147 published regular files, gaps = 1 depth-limited + 162
+  unpublished-entry (the 162 symlinks), 0MaliciousSymlinkRemoved, devices invisible
+  (empty /dev), empty dirs invisible, no hardlinks in this image.
+- Full-file carrier adds: 1 unknown-chunk-handler gap (zero tail) + one extra
+  published file (999424-1179648.unknown).

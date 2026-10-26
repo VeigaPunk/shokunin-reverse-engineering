@@ -1,0 +1,83 @@
+=== mutant m1-inhead (selftest must reject it)
+SELFTEST PASS green-clean                                  expect=0 got=0
+SELFTEST PASS red-wave-running-no-dispatched               expect=1 got=1
+SELFTEST FAIL red-wave-no-results                          expect=1 got=0
+         exit 0 != expected 1
+         missing output: 'no results file'
+         missing output: 'looked for w1-results.json and r41-w1-results.json'
+SELFTEST PASS green-results-both-naming-variants           expect=0 got=0
+SELFTEST PASS red-tracked-modification                     expect=1 got=1
+SELFTEST PASS red-untracked-in-every-scope                 expect=1 got=1
+SELFTEST PASS red-stray-err-in-lane-root                   expect=1 got=1
+SELFTEST FAIL red-dead-pointer                             expect=1 got=0
+         exit 0 != expected 1
+         missing output: 'cited wave report missing from HEAD: w2/R41Missing.md'
+         missing output: 'GATE RED'
+SELFTEST PASS red-lesson-not-committed                     expect=1 got=1
+SELFTEST PASS green-dirty-lesson-reads-head-bytes          expect=0 got=0
+SELFTEST FAIL advisory-partial-ledger                      expect=0 got=0
+         missing output: 'results ledger has 2 entries vs dispatch total 3 (partial)'
+SELFTEST PASS advisory-only-ignored-residue-and-bare-name  expect=0 got=0
+SELFTEST cases=12 pass=9 fail=3
+EXIT=1
+=== mutant m2-noerrcheck (selftest must reject it)
+SELFTEST PASS green-clean                                  expect=0 got=0
+SELFTEST PASS red-wave-running-no-dispatched               expect=1 got=1
+SELFTEST PASS red-wave-no-results                          expect=1 got=1
+SELFTEST PASS green-results-both-naming-variants           expect=0 got=0
+SELFTEST PASS red-tracked-modification                     expect=1 got=1
+SELFTEST PASS red-untracked-in-every-scope                 expect=1 got=1
+SELFTEST FAIL red-stray-err-in-lane-root                   expect=1 got=0
+         exit 0 != expected 1
+         missing output: 'stray stderr file in lane root: green.err'
+SELFTEST PASS red-dead-pointer                             expect=1 got=1
+SELFTEST PASS red-lesson-not-committed                     expect=1 got=1
+SELFTEST PASS green-dirty-lesson-reads-head-bytes          expect=0 got=0
+SELFTEST PASS advisory-partial-ledger                      expect=0 got=0
+SELFTEST PASS advisory-only-ignored-residue-and-bare-name  expect=0 got=0
+SELFTEST cases=12 pass=11 fail=1
+EXIT=1
+=== mutant m3-alwaysgreen (selftest must reject it)
+SELFTEST PASS green-clean                                  expect=0 got=0
+SELFTEST FAIL red-wave-running-no-dispatched               expect=1 got=0
+         exit 0 != expected 1
+         missing output: 'GATE RED'
+SELFTEST FAIL red-wave-no-results                          expect=1 got=0
+         exit 0 != expected 1
+SELFTEST PASS green-results-both-naming-variants           expect=0 got=0
+SELFTEST FAIL red-tracked-modification                     expect=1 got=0
+         exit 0 != expected 1
+SELFTEST FAIL red-untracked-in-every-scope                 expect=1 got=0
+         exit 0 != expected 1
+SELFTEST FAIL red-stray-err-in-lane-root                   expect=1 got=0
+         exit 0 != expected 1
+SELFTEST FAIL red-dead-pointer                             expect=1 got=0
+         exit 0 != expected 1
+         missing output: 'GATE RED'
+SELFTEST FAIL red-lesson-not-committed                     expect=1 got=0
+         exit 0 != expected 1
+         missing output: 'GATE RED'
+SELFTEST PASS green-dirty-lesson-reads-head-bytes          expect=0 got=0
+SELFTEST PASS advisory-partial-ledger                      expect=0 got=0
+SELFTEST PASS advisory-only-ignored-residue-and-bare-name  expect=0 got=0
+SELFTEST cases=12 pass=5 fail=7
+EXIT=1
+=== mutant m4-nodispatchcheck (selftest must reject it)
+SELFTEST PASS green-clean                                  expect=0 got=0
+SELFTEST FAIL red-wave-running-no-dispatched               expect=1 got=0
+         exit 0 != expected 1
+         missing output: 'FAIL'
+         missing output: 'no w1.ready.dispatched'
+         missing output: 'GATE RED'
+SELFTEST PASS red-wave-no-results                          expect=1 got=1
+SELFTEST PASS green-results-both-naming-variants           expect=0 got=0
+SELFTEST PASS red-tracked-modification                     expect=1 got=1
+SELFTEST PASS red-untracked-in-every-scope                 expect=1 got=1
+SELFTEST PASS red-stray-err-in-lane-root                   expect=1 got=1
+SELFTEST PASS red-dead-pointer                             expect=1 got=1
+SELFTEST PASS red-lesson-not-committed                     expect=1 got=1
+SELFTEST PASS green-dirty-lesson-reads-head-bytes          expect=0 got=0
+SELFTEST PASS advisory-partial-ledger                      expect=0 got=0
+SELFTEST PASS advisory-only-ignored-residue-and-bare-name  expect=0 got=0
+SELFTEST cases=12 pass=11 fail=1
+EXIT=1

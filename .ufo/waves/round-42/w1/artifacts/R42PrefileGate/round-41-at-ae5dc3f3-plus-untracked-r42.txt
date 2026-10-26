@@ -1,0 +1,19 @@
+$ git -C CLONE rev-parse --short HEAD   (ae5dc3f3 + the round-42 draft untracked in the lane at 18:41)
+ae5dc3f3
+$ git -C CLONE status --porcelain
+?? plans/round-42-claims.md
+$ prefile-gate.py --root CLONE --round 41
+prefile-gate: root=/fast/scratch/hyaku/kaidoku-r42/R42PrefileGate/fx.NPYs/lane round=41 head=ae5dc3f3
+(a) waves settled                                        PASS
+    PASS  2/2 waves settled (w1, w2)
+    note  wave w1 settled: .ufo/waves/round-41/r41-w1-results.json (252545 bytes)
+    note  wave w2 settled: .ufo/waves/round-41/r41-w2-results.json (132150 bytes)
+(b) tree clean under round scopes                        FAIL
+    FAIL  uncommitted under round scope: ?? plans/round-42-claims.md
+(c) no stray .err in lane root                           WARN
+    PASS  no *.err in lane root
+    WARN  2 tracked + 0 untracked .err under round evidence/wave dirs (outside the lane-root rule; e.g. .ufo/waves/round-41/w1/artifacts/R41C2ControlTables.step.err)
+(d) lesson wave-report pointers resolve in HEAD          PASS
+    PASS  7 w*/<Name>.md citation(s) resolve in HEAD (0 nested advisory, 15 bare name(s) checked)
+GATE RED — failing: b  (exit 1)
+EXIT=1

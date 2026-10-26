@@ -1,0 +1,131 @@
+{
+  "evidence_id": "ev_3b67e3007baa8d0780840a6a1313e6a3e17ffac183f7d8fa3d2e60eb47dbb1ce",
+  "subject": {
+    "name": "carrier.sqsh",
+    "digest": {
+      "sha256": "f43f5e115e9246e78468fc583509e3506319b3fb0ec5e32233a4b5479b59672b"
+    },
+    "local_path": "/fast/scratch/hyaku/kaidoku-r42/R42C2Gen/dev42/H25/carrier.sqsh",
+    "format": "file",
+    "architecture": null
+  },
+  "provider": {
+    "id": "binwalk",
+    "name": "Binwalk",
+    "version": "3.1.0"
+  },
+  "analysis_profile": null,
+  "predicate_type": "rea.analysis",
+  "operation": "inspect_firmware_regions",
+  "parameters": {
+    "path": "/fast/scratch/hyaku/kaidoku-r42/R42C2Gen/dev42/H25/carrier.sqsh"
+  },
+  "raw_result": {
+    "report": [
+      {
+        "Analysis": {
+          "file_path": "/fast/scratch/hyaku/kaidoku-r42/R42C2Gen/rea-firmware-YMLMIw/firmware.bin",
+          "file_map": [
+            {
+              "offset": 0,
+              "id": "4887ffc8-3604-487a-9741-7d6e62b1e901",
+              "size": 106143,
+              "name": "squashfs",
+              "confidence": 250,
+              "description": "SquashFS file system, big endian, version: 4.0, compression: gzip, inode count: 11, block size: 4096, image size: 106143 bytes, created: 2023-11-14 22:13:20",
+              "always_display": false,
+              "extraction_declined": false
+            }
+          ],
+          "extractions": {}
+        }
+      }
+    ],
+    "execution": {
+      "stdout": {
+        "text": "",
+        "bytes": 0,
+        "observedBytes": 0
+      },
+      "stderr": {
+        "text": "",
+        "bytes": 0,
+        "observedBytes": 0
+      },
+      "exit_code": 0,
+      "signal": null,
+      "command": "/usr/bin/binwalk",
+      "args": [
+        "--quiet",
+        "--search-all",
+        "--threads",
+        "1",
+        "--log",
+        "/fast/scratch/hyaku/kaidoku-r42/R42C2Gen/rea-firmware-YMLMIw/report.json",
+        "/fast/scratch/hyaku/kaidoku-r42/R42C2Gen/rea-firmware-YMLMIw/firmware.bin"
+      ],
+      "resource_limiter": "/usr/bin/prlimit"
+    },
+    "version_execution": {
+      "stdout": {
+        "text": "binwalk 3.1.0\n",
+        "bytes": 14,
+        "observedBytes": 14
+      },
+      "stderr": {
+        "text": "",
+        "bytes": 0,
+        "observedBytes": 0
+      },
+      "exit_code": 0,
+      "signal": null,
+      "command": "/usr/bin/binwalk",
+      "args": [
+        "--version"
+      ],
+      "resource_limiter": "/usr/bin/prlimit"
+    }
+  },
+  "normalized_result": {
+    "engine": {
+      "name": "binwalk",
+      "version": "3.1.0",
+      "executable_path": "/usr/bin/binwalk",
+      "executable_sha256": "5fc19aac1f357a66a47e8b20a8038a84cb93971cb5d331bd4503b02fcc0a40d6",
+      "source_revision": null,
+      "worker_count": 1
+    },
+    "input_size": 106143,
+    "regions": [
+      {
+        "provider_id": "4887ffc8-3604-487a-9741-7d6e62b1e901",
+        "offset": 0,
+        "reported_size": 106143,
+        "signature": "squashfs",
+        "description": "SquashFS file system, big endian, version: 4.0, compression: gzip, inode count: 11, block size: 4096, image size: 106143 bytes, created: 2023-11-14 22:13:20",
+        "reported_confidence": 250,
+        "size_basis": "provider_reported_validation_unknown"
+      }
+    ],
+    "coverage": "signature_scan"
+  },
+  "confidence": "observed",
+  "authority": "shipped-artifact",
+  "environment": null,
+  "limitations": [
+    "Signature matches and reported sizes do not establish partition validity, encryption or runtime mappings. Binwalk may infer unknown lengths before emitting its report.",
+    "Only Linux is supported by this integration. One worker, inherited per-process address-space/file-size/CPU limits and a deadline constrain execution; staging byte and entry budgets are polled and may transiently overshoot. Limits are not aggregate process-memory or filesystem quotas.",
+    "Unblob's default sandbox and skip rules remain enabled. Missing external extractors, unknown chunks, encrypted chunks and depth limits yield partial coverage. Extracted code is never executed; only regular files are published, without executable permission bits.",
+    "extraction_gaps lists regions that were carved or left unextracted and names extractor dependencies the producer reported as missing. A listed gap does not mean the target is corrupt or that a retained region is empty.",
+    "The actual launcher executable is hashed. Interpreter, shared libraries and installed Python package dependencies are not independently attested; source revision remains unknown for caller-supplied builds."
+  ],
+  "relationship_coverage": null,
+  "locations": [
+    {
+      "kind": "file-offset-range",
+      "start": 0,
+      "end": 106143
+    }
+  ],
+  "evidence_links": []
+}

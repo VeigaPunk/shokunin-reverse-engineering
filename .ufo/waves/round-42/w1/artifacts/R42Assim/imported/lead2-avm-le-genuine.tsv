@@ -1,0 +1,15 @@
+item	value
+route	squashfs-tools 4.3 tarball + Freetz's 23-patch set + Freetz-NG's 613-avm_format_as_option.patch, built with -DTARGET_FORMAT=AVM_LE -DAVM_FORMAT_AS_OPTION
+tarball_md5	d92ab59aabf5173f2a59089531e30dbf
+image_path	lanes/kaidoku/round13/work/avm-le-genuine.squashfs (4096 bytes)
+mksquashfs_arguments	-comp xz -no-mkfs-time -all-root -no-progress -no-exports -no-sparse -b 65536
+superblock_magic	hsqs - little-endian
+superblock_compression	4 (xz)
+mkfs_time	361
+bytes_used	361
+avm_marker	SET - mkfs_time equals bytes_used, which is upstream's own AVM marker
+upstream_unsquashfs_stat	Creation or last append time is not available because of modified AVM-format (mkfs_time == bytes_used)
+unblob_handler	squashfs_v4_le
+unblob_command	sasquatch -le -no-exit-code -f -d {outdir} {inpath}
+unblob_result	all four files extracted; apple1.txt reads "apple"
+sasquatch_v4be_direct	FATAL ERROR: Block size too small.  File system is corrupt.

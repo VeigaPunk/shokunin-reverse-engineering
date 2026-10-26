@@ -1,0 +1,323 @@
+{
+ "target": "tools/round-41/c1-counter.py @ lane main base c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c (git blob 57c628fe6e2c52b8a94100c04107735f911a33e8)",
+ "pristine_sha256": "bbabbfecb229e8992fb07149cad0cf9171a2bf31513bd5db77ddb3c4f8845cfc",
+ "detector": "c1-counter.py --selftest --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents (offline, deterministic)",
+ "baseline": {
+  "tag": "baseline",
+  "exit": 0,
+  "seconds": 14.0,
+  "cases": 97,
+  "green_ok": 12,
+  "red_ok": 85,
+  "failures": [],
+  "stderr_head": "",
+  "sha256": "bbabbfecb229e8992fb07149cad0cf9171a2bf31513bd5db77ddb3c4f8845cfc",
+  "verdict": "pass"
+ },
+ "final_restore_run": {
+  "exit": 0,
+  "cases": 97,
+  "failures": [],
+  "sha256": "bbabbfecb229e8992fb07149cad0cf9171a2bf31513bd5db77ddb3c4f8845cfc",
+  "verdict": "pass"
+ },
+ "n_mutants": 22,
+ "n_killed": 12,
+ "n_survived": 10,
+ "mutants": [
+  {
+   "id": "M01",
+   "area": "extract-root derivation / exact-path matcher",
+   "mutation": "extract_rel: whole-segment root equality replaced by a raw string startswith \u2014 the non-segment-bounded prefix mutant (a path `rootX/rest` is treated as inside `root`).",
+   "mutant_selftest_exit": 0,
+   "selftest_failures": [],
+   "killed": false,
+   "verdict": "SURVIVED",
+   "killed_by": null,
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M02",
+   "area": "exact-path matcher",
+   "mutation": "same_rel: exact root-mapped equality replaced by the round-40 legacy suffix rule (R40-CL1 reintroduced).",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "probe 'dir 1: regular usr/bin/busy vs symlink entry bin/busy': exact matcher True, want False",
+    "probe 'deeper-than-oracle file vs oracle row usr/bin/busy': exact matcher True, want False",
+    "probe 'nested chunk root file vs outer-root table row lib/x': exact matcher True, want False",
+    "only 0 matcher probes discriminate exact from the round-40 suffix rule, want >= 3",
+    "regular usr/bin/busy does not satisfy the symlink entry bin/busy: want 0 got 1",
+    "deeper file with the oracle row sha256 does not publish oracle bin/busy: want 1 got 0",
+    "gap on usr/bin/busy does not resolve to the symlink entry bin/busy: want 1 got 0",
+    "two chunks: the nested chunk file does not publish outer-root row lib/x: want 1 got 0",
+    "padded carrier: the same rows one level too shallow score nothing: want 1 got 0"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "path probe 'dir 1: regular usr/bin/busy vs symlink entry bin/busy' (+2 probes, discriminator-count assertion, 5 end-to-end cases)",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M03",
+   "area": "extract-root derivation",
+   "mutation": "subject_root: several squashfs_v4 roots no longer fail closed; the deepest root is guessed.",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "root probe 'two roots without a hint': ('firmware.bin_extract/core.sqsh_extract', 'single squashfs_v4 derivation root'), want (None, 'ambiguous')",
+    "root probe 'two portion chunk roots': ('firmware.bin_extract/2500-5000.squashfs_v4_be_extract', 'single squashfs_v4 derivation root'), want (None, '')",
+    "root probe 'ambiguous handler chunks': ('firmware.bin_extract/a.sqsh_extract', 'single squashfs_v4 derivation root'), want (None, '')",
+    "two chunks with oracle_root: the nested file is another namespace: want 0 got 1",
+    "two handler chunks and no input handler chunk fail closed: want failing clause 'gaps_ok', failing=['projection_ok']",
+    "two handler chunks and no input handler chunk fail closed: want 1 got 1"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "root probe 'two roots without a hint' (+ 'two portion chunk roots', 'ambiguous handler chunks'; case 'two chunks with oracle_root' want 0 got 1)",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M04",
+   "area": "extract-root derivation",
+   "mutation": "subject_root: a frozen oracle_root hint is accepted without checking it names an actual derivation root.",
+   "mutant_selftest_exit": 0,
+   "selftest_failures": [],
+   "killed": false,
+   "verdict": "SURVIVED",
+   "killed_by": null,
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M05",
+   "area": "exact-path matcher (path normalization)",
+   "mutation": "path_parts: \".\" segments are no longer dropped, so a receipt path containing `/./` no longer normalizes to the oracle row path.",
+   "mutant_selftest_exit": 0,
+   "selftest_failures": [],
+   "killed": false,
+   "verdict": "SURVIVED",
+   "killed_by": null,
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M06",
+   "area": "oracle hit-set equality",
+   "mutation": "oracle_hits_ok: full hit-set equality (hits == oracle rows) relaxed to 'at least one oracle row published'.",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "deeper file with the oracle row sha256 does not publish oracle bin/busy: want 1 got 0",
+    "two chunks: the nested chunk file does not publish outer-root row lib/x: want 1 got 0"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "'deeper file with the oracle row sha256 does not publish oracle bin/busy' (+ 'two chunks: nested chunk file does not publish outer-root row lib/x')",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M07",
+   "area": "non-regular unpublished",
+   "mutation": "nonregular_published: exact matcher replaced by the legacy suffix matcher, so a deeper file whose path ends with a non-regular entry path counts as publishing it.",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "regular usr/bin/busy does not satisfy the symlink entry bin/busy: want 0 got 1"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "'regular usr/bin/busy does not satisfy the symlink entry bin/busy' (want 0 got 1)",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M08",
+   "area": "gap-rule counts (structural allowance)",
+   "mutation": "disposition_check: structural per-kind allowance is read as limit+1 (an off-by-one relaxation of the count rule).",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "structural gaps over the allowance: want failing clause 'gaps_ok', failing=['projection_ok']",
+    "structural gaps over the allowance: want 1 got 1"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "'structural gaps over the allowance' (want_fail clause assertion)",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M09",
+   "area": "gap-rule counts (required default)",
+   "mutation": "disposition_check: an entry kind with a non-empty allowed list defaults to NOT required (need = required.get(kind, False)), so materialised entries without an explicit `required` block need no disposition.",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "required gap missing (symlink materialised): want failing clause 'gaps_ok', failing=['nonregular_unpublished_ok', 'projection_ok']",
+    "required gap missing (symlink materialised): want 1 got 1"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "'required gap missing (symlink materialised)' (want_fail clause assertion)",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M10",
+   "area": "gap-rule counts (kind allowance)",
+   "mutation": "disposition_check: any gap kind is accepted on an entry whose kind has any allowance (membership test dropped).",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "disallowed gap kind on a symlink entry: want failing clause 'gaps_ok', failing=['projection_ok']",
+    "disallowed gap kind on a symlink entry: want 1 got 1"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "'disallowed gap kind on a symlink entry' (want_fail clause assertion)",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M22",
+   "area": "gap-rule counts (gap-to-entry resolution)",
+   "mutation": "disposition_check: a gap path may match MULTIPLE non-regular entries (uniqueness check `!= 1` relaxed to `not hits`); the first match wins.",
+   "mutant_selftest_exit": 0,
+   "selftest_failures": [],
+   "killed": false,
+   "verdict": "SURVIVED",
+   "killed_by": null,
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M11",
+   "area": "handler binding (receipt clause)",
+   "mutation": "handler_ok: exact handler name `squashfs_v4_be` accepted for any handler with the `squashfs_v4` prefix.",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "chunk handler is the LE handler: want failing clause 'handler_ok', failing=['projection_ok']",
+    "chunk handler is the LE handler: want 1 got 1"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "'chunk handler is the LE handler' (want_fail clause assertion)",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M12",
+   "area": "handler binding (province row regex)",
+   "mutation": "HANDLER_RE: segment-boundary lookarounds dropped \u2014 a token like `xsquashfs_v4_bex` in a PROVINCE row cell now matches.",
+   "mutant_selftest_exit": 0,
+   "selftest_failures": [],
+   "killed": false,
+   "verdict": "SURVIVED",
+   "killed_by": null,
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M13",
+   "area": "evidence id recompute",
+   "mutation": "evidence_ids: the stored id is compared to itself ((f[2], f[2])) \u2014 the recomputed id is never actually checked, only the ev_ prefix is.",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "evidence id stale after an edit: want failing clause 'evidence_id_ok', failing=['projection_ok']",
+    "evidence id stale after an edit: want 1 got 1"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "'evidence id stale after an edit' (want_fail clause assertion; projection backstop)",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M14",
+   "area": "rerun projection (diagnostics identity)",
+   "mutation": "projection: diagnostics projected as typename only (the round-40 shape), so a rerun removing a different link matches again \u2014 R41C1DevCore 7.3 reverted.",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "a rerun that removed a different link breaks the projection: want 1 got 0"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "'a rerun that removed a different link breaks the projection' (want 1 got 0)",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M15",
+   "area": "rerun projection (parameter replay)",
+   "mutation": "REPLAY_PARAMS: the recorded `--max-depth` is no longer replayed to the rerun.",
+   "mutant_selftest_exit": 0,
+   "selftest_failures": [],
+   "killed": false,
+   "verdict": "SURVIVED",
+   "killed_by": null,
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M16",
+   "area": "rerun projection (real runner argv)",
+   "mutation": "make_real_runner: REA pin changed to rea-agents@6.0.0 in the rerun argv. --selftest injects every runner, so this should survive unless the offline selftest inspects the real runner.",
+   "mutant_selftest_exit": 0,
+   "selftest_failures": [],
+   "killed": false,
+   "verdict": "SURVIVED",
+   "killed_by": null,
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M17",
+   "area": "frozen-path drift (carrier table collection)",
+   "mutation": "frozen_drift: carrier `path` entries are no longer added to the frozen set \u2014 carrier bytes can change after the freeze without a drift verdict.",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "carrier bytes changed after freeze: want 2 got 1",
+    "carrier bytes changed then restored: want 2 got 0"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "'carrier bytes changed after freeze' want 2 got 1 (+ 'carrier bytes changed then restored' want 2 got 0)",
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M18",
+   "area": "frozen-path drift (endpoint equality)",
+   "mutation": "met_target: the endpoint-equality clauses (carriers_unchanged / gap_rule_unchanged) no longer gate the verdict \u2014 only the drift log does.",
+   "mutant_selftest_exit": 0,
+   "selftest_failures": [],
+   "killed": false,
+   "verdict": "SURVIVED",
+   "killed_by": null,
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M19",
+   "area": "receipt exit codes (CLI verdict mapping)",
+   "mutation": "main(): res['exit_code'] is hardcoded to 0 \u2014 a met/miss receipt always exits 0.",
+   "mutant_selftest_exit": 0,
+   "selftest_failures": [],
+   "killed": false,
+   "verdict": "SURVIVED",
+   "killed_by": null,
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M20",
+   "area": "receipt exit codes (unevaluable mapping)",
+   "mutation": "main(): an Unevaluable outcome exits 1 instead of 2 \u2014 unevaluable and target-miss become indistinguishable at the CLI.",
+   "mutant_selftest_exit": 0,
+   "selftest_failures": [],
+   "killed": false,
+   "verdict": "SURVIVED",
+   "killed_by": null,
+   "restored_sha256_matches_pristine": true
+  },
+  {
+   "id": "M21",
+   "area": "receipt exit codes (selftest in-loop mapping)",
+   "mutation": "selftest loop: a FrozenPathChanged exception is recorded as exit 1 instead of 2 \u2014 drift cases (want 2) should catch it.",
+   "mutant_selftest_exit": 1,
+   "selftest_failures": [
+    "carrier bytes changed after freeze: want 2 got 1 (frozen_path_changed)",
+    "carrier bytes changed then restored: want 2 got 1 (frozen_path_changed)",
+    "oracle changed after freeze: want 2 got 1 (frozen_path_changed)",
+    "nonregular table changed after freeze: want 2 got 1 (frozen_path_changed)",
+    "carriers.json changed after freeze: want 2 got 1 (frozen_path_changed)",
+    "gap-rule.json changed after freeze: want 2 got 1 (frozen_path_changed)",
+    "gap-rule.json touched then restored: want 2 got 1 (frozen_path_changed)",
+    "counter edited after freeze: want 2 got 1 (frozen_path_changed)",
+    "claims edited after freeze: want 2 got 1 (frozen_path_changed)"
+   ],
+   "killed": true,
+   "verdict": "killed",
+   "killed_by": "all 9 freeze-drift cases (want 2 got 1, reason frozen_path_changed)",
+   "restored_sha256_matches_pristine": true
+  }
+ ]
+}

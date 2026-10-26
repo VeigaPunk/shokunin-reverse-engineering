@@ -1,0 +1,6385 @@
+{
+  "seed": "e48947bb2a1542206bc6a324257b3500231946e3",
+  "round": 42,
+  "claim": "R42-C2",
+  "generator": {
+    "name": "heldout-gen-v4.py",
+    "version": "r42-c2-v4",
+    "sha256": "a054e5cdbf32b54e9ec19711230c67b17f404d5fe79c8a1aa8c579aa32bec051",
+    "carriers_per_class": 2,
+    "writer": {
+      "name": "gen-squashfs.py",
+      "path": "tools/round-39/gen-squashfs.py",
+      "sha256": "f535e60ee15222a7b0809cf53858e72a82040a519450c562e369224d4fe41188",
+      "block_encoder": "gzip=zlib level 9, comp_id 1; xz=.xz container/CRC32, comp_id 4 (replaces stock raw-LZMA2 and comp_id 2)"
+    },
+    "partial_pin": {
+      "rule": "R40-CL4",
+      "pinned_by": "compressed-length",
+      "fill": "00",
+      "max_damaged_block": 136,
+      "measured_fail_range": [
+        26,
+        136
+      ],
+      "measured_absorbed_from": 1730,
+      "measured_by": "round-40 w2 R40W2MistakeHunt MH-4 \u00a73"
+    },
+    "fixtures": {
+      "pins": "fixtures.json",
+      "pins_sha256": "9f957663c1f21940ec17e32f98485425145b6c4e7eb265a7b12327b629c3da9b",
+      "project": "onekey-sec/unblob",
+      "commit": "1fcc7a0a584a70a96c31f5a276c20944d199a089",
+      "url_base": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs",
+      "license": "MIT",
+      "count": 14,
+      "resolution": "committed copy under --fixtures-dir, else the cache under --scratch, else the pinned URL with --fetch; each candidate is sha256-checked",
+      "damage_recipe": "pinned 4-byte zero window at damage_offset; pre-verified with sasquatch 4.5.1 + REA 6.5.0, never probed at run time"
+    }
+  },
+  "action_vocabulary": [
+    "audit-symlinks",
+    "confirm-empty",
+    "count-gap",
+    "cross-read-legacy",
+    "expect-link-absent",
+    "inspect-input",
+    "install-extractor-be",
+    "install-extractor-le",
+    "isolate-residue",
+    "none",
+    "preserve-failure",
+    "raise-depth",
+    "salvage-partial",
+    "wrap-extractor-be"
+  ],
+  "action_set": "draft42",
+  "action_source": null,
+  "label_actions": {
+    "unclassified": "none",
+    "container-depth-limited": "raise-depth",
+    "no-squashfs-chunk": "inspect-input",
+    "dep-missing-be": "install-extractor-be",
+    "dep-missing-le": "install-extractor-le",
+    "partial-body-failure": "salvage-partial",
+    "avm-marker-be-dropped": "wrap-extractor-be",
+    "legacy-body-failure": "cross-read-legacy",
+    "body-extractor-failure": "preserve-failure",
+    "unknown-residue": "isolate-residue",
+    "depth-limited": "raise-depth",
+    "mixed-symlinks": "audit-symlinks",
+    "escaping-symlink-removed": "expect-link-absent",
+    "in-tree-symlink-metadata": "count-gap",
+    "clean": "none",
+    "clean-empty": "confirm-empty"
+  },
+  "new_labels": [
+    "depth-limited",
+    "legacy-body-failure"
+  ],
+  "new_label_tokens_binding": "draft42 tokens are the round-42 precedence text verbatim (rule 1-13); the frozen SKILL v4 action line decides, and a mismatch is a loud exit (--actions-set/--actions-file; carriers do not change)",
+  "precedence_observations": [
+    {
+      "rule": 3,
+      "claim": "every v1-v3 chunk resolves plain `sasquatch` [TBC]",
+      "measured": "CONFIRMED: unblob SquashFSExtractor runs `sasquatch -be` for a v1-v3 BIG-endian chunk (handler version != 4), and the failing Command reports its own executable (unblob/extractors/command.py:68-73), so D = ['sasquatch'] and rule 3 answers (dep-missing-le, install-extractor-le) for a big-endian legacy chunk.",
+      "carriers": [
+        "legacy-dep-missing-be"
+      ]
+    },
+    {
+      "rule": 6,
+      "claim": "a v1-v3 body failure lands legacy-body-failure",
+      "measured": "CONFIRMED on all 14 pinned fixtures x both endianness strata: G={extractor-failure}, P=0, argv -be/-le recorded, handler from the v1-v3 family."
+    },
+    {
+      "rule": 8,
+      "claim": "depth-limited is minted whenever max_depth == 1",
+      "measured": "REFINED: only when an extraction actually reached the ceiling.  A clean chunk at --max-depth 1 mints it; a FAILING root chunk mints nothing (G={extractor-failure} only). A failing non-root chunk does not suppress it, because the sibling chunk still hits the ceiling."
+    }
+  ],
+  "rea": {
+    "default_max_depth": 3,
+    "per_class": {
+      "clean-be": 3,
+      "clean-le": 3,
+      "clean-empty": 3,
+      "escaping-symlink-removed": 3,
+      "in-tree-symlink-metadata": 3,
+      "mixed-symlinks": 3,
+      "dep-missing-be": 3,
+      "dep-missing-le": 3,
+      "avm-marker-be-dropped": 3,
+      "body-extractor-failure": 3,
+      "partial-body-failure": 3,
+      "no-squashfs-chunk": 3,
+      "out-of-domain": null,
+      "partial-in-tree": 3,
+      "partial-mixed": 3,
+      "depth-limited-alone": 1,
+      "depth-limited-in-tree": 1,
+      "depth-limited-mixed": 1,
+      "body-extractor-failure-le": 3,
+      "failure-depth-limited": 1,
+      "legacy-clean": 3,
+      "legacy-dep-missing-be": 3,
+      "legacy-dep-missing-le": 3,
+      "legacy-body-failure": 3,
+      "legacy-partial": 3,
+      "container-depth-limited": 1,
+      "unknown-residue": 3,
+      "combo": null
+    }
+  },
+  "declared_schema": {
+    "binding": "observed_features_match_declared",
+    "key": "declared_features",
+    "fields": [
+      "handler_set",
+      "gap_kinds",
+      "gap_dependencies",
+      "be_argv",
+      "symlink_removed",
+      "published"
+    ],
+    "types": {
+      "handler_set": "sorted list of handler names (empty = no chunk)",
+      "gap_kinds": "sorted list of extraction_gaps[].kind",
+      "gap_dependencies": "sorted union of extraction_gaps[].dependencies",
+      "be_argv": "'yes' | 'no' | 'n/a' -- whether a recorded extractor child argv carries -be; 'n/a' when no argv is recorded (a successful run records none)",
+      "symlink_removed": "bool -- a MaliciousSymlinkRemoved diagnostic",
+      "published": "'nonzero' (P > 0) | 'zero' (P == 0)"
+    },
+    "location": "carriers[].declared_features -- ONE key for every class, combos included (R41-CL1).  There is no `declared` key and no `class_expected.features` key; declared_extras carries extraction_failed and max_depth, which are NOT part of the binding"
+  },
+  "families": {
+    "combo": {
+      "count": 24,
+      "id_prefix": "C",
+      "factors": [
+        "base",
+        "second_v4",
+        "links",
+        "residue",
+        "wrap",
+        "damage",
+        "dep",
+        "max_depth",
+        "endian",
+        "comp",
+        "legacy_fixture"
+      ],
+      "combo_bases": [
+        "v4",
+        "legacy"
+      ],
+      "links_values": [
+        "none",
+        "in-tree",
+        "escaping",
+        "both"
+      ],
+      "min_decisions": 2,
+      "class_expected": null,
+      "note": "factorial: expected tuple computed from the drawn factors, label given by the evaluator only"
+    }
+  },
+  "replicate_variation": [
+    "compression",
+    "tree-shape",
+    "endianness-where-the-class-allows"
+  ],
+  "out_of_domain": {
+    "operation": "inspect-firmware-regions",
+    "label": "unclassified",
+    "action": "none"
+  },
+  "combo_unseen": {
+    "binding": "combo_unseen_majority",
+    "definition": "a combo is UNSEEN when its observed feature tuple is outside the union of the NAMED classes' declared tuples; the union is the dev arm's, so the only way to carry this at the freeze is a lookup control's own key set",
+    "named_tuple_union_size": 39,
+    "named_tuple_union_sha256": "8cd6da93024d46c64975884c9cd47c6695a3814ce287097300b8eee3bab1d8de",
+    "combos": 24,
+    "declared_outside": 22,
+    "declared_outside_ids": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "C08",
+      "C09",
+      "C10",
+      "C12",
+      "C13",
+      "C14",
+      "C15",
+      "C16",
+      "C17",
+      "C18",
+      "C19",
+      "C20",
+      "C21",
+      "C22",
+      "C23"
+    ],
+    "decisions_per_combo": {
+      "C01": 2,
+      "C02": 3,
+      "C03": 5,
+      "C04": 5,
+      "C05": 4,
+      "C06": 4,
+      "C07": 4,
+      "C08": 3,
+      "C09": 2,
+      "C10": 4,
+      "C11": 3,
+      "C12": 4,
+      "C13": 2,
+      "C14": 3,
+      "C15": 4,
+      "C16": 5,
+      "C17": 4,
+      "C18": 5,
+      "C19": 2,
+      "C20": 4,
+      "C21": 4,
+      "C22": 3,
+      "C23": 4,
+      "C24": 2
+    },
+    "min_decisions": 2,
+    "note": "declared_outside is the prediction from the declared tuples; --verify recomputes it from the OBSERVED tuples and prints both.  The two agree whenever the binding observed_features_match_declared holds."
+  },
+  "classes": [
+    "clean-be",
+    "clean-le",
+    "clean-empty",
+    "escaping-symlink-removed",
+    "in-tree-symlink-metadata",
+    "mixed-symlinks",
+    "dep-missing-be",
+    "dep-missing-le",
+    "avm-marker-be-dropped",
+    "body-extractor-failure",
+    "partial-body-failure",
+    "no-squashfs-chunk",
+    "out-of-domain",
+    "partial-in-tree",
+    "partial-mixed",
+    "depth-limited-alone",
+    "depth-limited-in-tree",
+    "depth-limited-mixed",
+    "body-extractor-failure-le",
+    "failure-depth-limited",
+    "legacy-clean",
+    "legacy-dep-missing-be",
+    "legacy-dep-missing-le",
+    "legacy-body-failure",
+    "legacy-partial",
+    "container-depth-limited",
+    "unknown-residue",
+    "combo"
+  ],
+  "carriers": [
+    {
+      "id": "H01",
+      "class": "clean-be",
+      "label": "clean",
+      "action": "none",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H01/carrier.sqsh",
+      "sha256": "5b0e3eb94904f67b0ea26e872c52acf612870cbbb70c3c6fa40292fbc133cc9c",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "clean",
+        "action": "none",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H02",
+      "class": "clean-be",
+      "label": "clean",
+      "action": "none",
+      "arm": "after",
+      "endian": "be",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H02/carrier.sqsh",
+      "sha256": "b3259529bc52301f175a4bde3e6e36a50c1044b11c2cf38ac8bb416532893c1e",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "clean",
+        "action": "none",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H03",
+      "class": "clean-le",
+      "label": "clean",
+      "action": "none",
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H03/carrier.sqsh",
+      "sha256": "aca01de674ca9ea2148ebb84004608a51f9db729e6b4e27c2f4d0246de41c126",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "clean",
+        "action": "none",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H04",
+      "class": "clean-le",
+      "label": "clean",
+      "action": "none",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H04/carrier.sqsh",
+      "sha256": "9925a8f58ab9073ae75f840736764c2633373e10cda6d1955383356c6eda5a52",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "clean",
+        "action": "none",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H05",
+      "class": "clean-empty",
+      "label": "clean-empty",
+      "action": "confirm-empty",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "empty",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H05/carrier.sqsh",
+      "sha256": "5a7643692475358e77f1ada4a9e21e30c22a1002f67fc05705702415448ae007",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "clean-empty",
+        "action": "confirm-empty",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H06",
+      "class": "clean-empty",
+      "label": "clean-empty",
+      "action": "confirm-empty",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "empty",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H06/carrier.sqsh",
+      "sha256": "0128924a560f62387b5cdcf5429748a6c407085e9bc133e08c4c13264b64e9fd",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "clean-empty",
+        "action": "confirm-empty",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H07",
+      "class": "escaping-symlink-removed",
+      "label": "escaping-symlink-removed",
+      "action": "expect-link-absent",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "escaping"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H07/carrier.sqsh",
+      "sha256": "0cd2bf02876efb7121516d101f2c52a20fcb9fe8c2ab14db10118b46dde6fb9d",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "escaping-symlink-removed",
+        "action": "expect-link-absent",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H08",
+      "class": "escaping-symlink-removed",
+      "label": "escaping-symlink-removed",
+      "action": "expect-link-absent",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "escaping"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H08/carrier.sqsh",
+      "sha256": "4e1c7c36f3f054d20a71ff0a2f8a087163dcacfb02711b0fad2d2f45b2a7559e",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "escaping-symlink-removed",
+        "action": "expect-link-absent",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H09",
+      "class": "in-tree-symlink-metadata",
+      "label": "in-tree-symlink-metadata",
+      "action": "count-gap",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "in-tree"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H09/carrier.sqsh",
+      "sha256": "719ee32939ed428643d2742a143c581b631d3a1bedda3de28972f060a7c2d936",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "in-tree-symlink-metadata",
+        "action": "count-gap",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H10",
+      "class": "in-tree-symlink-metadata",
+      "label": "in-tree-symlink-metadata",
+      "action": "count-gap",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "in-tree"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H10/carrier.sqsh",
+      "sha256": "b45b01cc79b9092d10e13f80dacfe27501b7396818d03e939da7a7f7649dfa8c",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "in-tree-symlink-metadata",
+        "action": "count-gap",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H11",
+      "class": "mixed-symlinks",
+      "label": "mixed-symlinks",
+      "action": "audit-symlinks",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "escaping",
+        "in-tree"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H11/carrier.sqsh",
+      "sha256": "ccadd8f9013c59926dabdeb7bf2566835b896c8faec5f2c0aecb65a34e6b9b8a",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "mixed-symlinks",
+        "action": "audit-symlinks",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H12",
+      "class": "mixed-symlinks",
+      "label": "mixed-symlinks",
+      "action": "audit-symlinks",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "escaping",
+        "in-tree"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H12/carrier.sqsh",
+      "sha256": "9218243d3e60adacb496188a0d3a34d85db893f3f4c6e95516bd930db97ff3d3",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "mixed-symlinks",
+        "action": "audit-symlinks",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H13",
+      "class": "dep-missing-be",
+      "label": "dep-missing-be",
+      "action": "install-extractor-be",
+      "arm": "before",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H13/carrier.sqsh",
+      "sha256": "23341c6edf863edfcf93ec26a447b0863a33fe923aa9cf92b08e70884abd9749",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch-v4be"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "dep-missing-be",
+        "action": "install-extractor-be",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H14",
+      "class": "dep-missing-be",
+      "label": "dep-missing-be",
+      "action": "install-extractor-be",
+      "arm": "before",
+      "endian": "be",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H14/carrier.sqsh",
+      "sha256": "fb0c0c555572aa7f42ab0779955a97d965126ee547945e9f76e5192e3e52afd4",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch-v4be"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "dep-missing-be",
+        "action": "install-extractor-be",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H15",
+      "class": "dep-missing-le",
+      "label": "dep-missing-le",
+      "action": "install-extractor-le",
+      "arm": "before",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H15/carrier.sqsh",
+      "sha256": "d3f59ab7692d5e4d7fb7f0a0987cc15344ecba7491e0a7008a65172ed4c62567",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "dep-missing-le",
+        "action": "install-extractor-le",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H16",
+      "class": "dep-missing-le",
+      "label": "dep-missing-le",
+      "action": "install-extractor-le",
+      "arm": "before",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H16/carrier.sqsh",
+      "sha256": "d71ee43b3bc3be67118e2cad067f249eb589a56486ce0ddb936303c59c2e88d9",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "dep-missing-le",
+        "action": "install-extractor-le",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H17",
+      "class": "avm-marker-be-dropped",
+      "label": "avm-marker-be-dropped",
+      "action": "wrap-extractor-be",
+      "arm": "after",
+      "endian": "avm",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H17/carrier.sqsh",
+      "sha256": "d439a8341c0bdcb5b449db01415d40d4158fda13246bd05b45b4109e8b850674",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "avm-marker-be-dropped",
+        "action": "wrap-extractor-be",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H18",
+      "class": "avm-marker-be-dropped",
+      "label": "avm-marker-be-dropped",
+      "action": "wrap-extractor-be",
+      "arm": "after",
+      "endian": "avm",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H18/carrier.sqsh",
+      "sha256": "71a1259dfb53607cb9e0013084d1483141a0899acc2f4c86407dc154017240c8",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "avm-marker-be-dropped",
+        "action": "wrap-extractor-be",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H19",
+      "class": "body-extractor-failure",
+      "label": "body-extractor-failure",
+      "action": "preserve-failure",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [],
+      "corruption": "zero-id-table",
+      "damage": {
+        "recipe": "zero-id-table"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H19/carrier.sqsh",
+      "sha256": "f9f63c62cc1bb5ba70d5b1e5c886b472e2f1acb2c1527faaae11e1a3366b9424",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "body-extractor-failure",
+        "action": "preserve-failure",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H20",
+      "class": "body-extractor-failure",
+      "label": "body-extractor-failure",
+      "action": "preserve-failure",
+      "arm": "after",
+      "endian": "be",
+      "compression": "xz",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [],
+      "corruption": "zero-id-table",
+      "damage": {
+        "recipe": "zero-id-table"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H20/carrier.sqsh",
+      "sha256": "99452c61efcf83f687abe0201d071152845830f87ea945cb52a84dfe7b3f0a2a",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "body-extractor-failure",
+        "action": "preserve-failure",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H21",
+      "class": "partial-body-failure",
+      "label": "partial-body-failure",
+      "action": "salvage-partial",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 5,
+        "blocks": [
+          {
+            "path": "cilkor2/3zb1/fhda/rtlf",
+            "offset": 793,
+            "length": 88
+          },
+          {
+            "path": "cilkor2/3zb1/gc811r_",
+            "offset": 395,
+            "length": 96
+          },
+          {
+            "path": "cilkor2/3zb1/gc811r_",
+            "offset": 491,
+            "length": 37
+          },
+          {
+            "path": "cilkor2/3zb1/gc811r_",
+            "offset": 528,
+            "length": 37
+          },
+          {
+            "path": "cilkor2/3zb1/gc811r_",
+            "offset": 565,
+            "length": 22
+          },
+          {
+            "path": "cilkor2/3zb1/y-gwlx3pf",
+            "offset": 587,
+            "length": 95
+          },
+          {
+            "path": "cilkor2/3zb1/y-gwlx3pf",
+            "offset": 682,
+            "length": 37
+          },
+          {
+            "path": "cilkor2/3zb1/y-gwlx3pf",
+            "offset": 719,
+            "length": 37
+          },
+          {
+            "path": "cilkor2/3zb1/y-gwlx3pf",
+            "offset": 756,
+            "length": 37
+          },
+          {
+            "path": "efklt2",
+            "offset": 227,
+            "length": 95
+          },
+          {
+            "path": "efklt2",
+            "offset": 322,
+            "length": 37
+          },
+          {
+            "path": "efklt2",
+            "offset": 359,
+            "length": 36
+          }
+        ],
+        "blocks_damaged": 12,
+        "bytes_damaged": 654,
+        "paths": [
+          "cilkor2/3zb1/fhda/rtlf",
+          "cilkor2/3zb1/gc811r_",
+          "cilkor2/3zb1/y-gwlx3pf",
+          "efklt2"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "-rq"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H21/carrier.sqsh",
+      "sha256": "aa935955ad872e36d8dbe8ab8700e297117f2783b0c58f7a2080b37abe617af4",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H22",
+      "class": "partial-body-failure",
+      "label": "partial-body-failure",
+      "action": "salvage-partial",
+      "arm": "after",
+      "endian": "be",
+      "compression": "xz",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 3,
+        "blocks": [
+          {
+            "path": "i821f/rs1",
+            "offset": 1004,
+            "length": 88
+          },
+          {
+            "path": "ook1f",
+            "offset": 244,
+            "length": 84
+          }
+        ],
+        "blocks_damaged": 2,
+        "bytes_damaged": 172,
+        "paths": [
+          "i821f/rs1",
+          "ook1f"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "i821f/5uuez"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H22/carrier.sqsh",
+      "sha256": "078c24585ed50552b8ca103efccad79b26f280dce2233ac3fcbbcb6ca13ed816",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H23",
+      "class": "no-squashfs-chunk",
+      "label": "no-squashfs-chunk",
+      "action": "inspect-input",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": "bad-major",
+      "damage": {
+        "recipe": "bad-major"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H23/carrier.sqsh",
+      "sha256": "e6fba78d93b5ec398a8e2dd1d7eb047db2aa4f1f5d98968c4c4d5516697badbf",
+      "declared_features": {
+        "handler_set": [],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "no-squashfs-chunk",
+        "action": "inspect-input",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H24",
+      "class": "no-squashfs-chunk",
+      "label": "no-squashfs-chunk",
+      "action": "inspect-input",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": "bad-major",
+      "damage": {
+        "recipe": "bad-major"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H24/carrier.sqsh",
+      "sha256": "979e972086bb36899f2f8e7c68d58a7b7828f4180367d283f069d5fc66cc1fd7",
+      "declared_features": {
+        "handler_set": [],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "no-squashfs-chunk",
+        "action": "inspect-input",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H25",
+      "class": "out-of-domain",
+      "label": "unclassified",
+      "action": "none",
+      "arm": "ood",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": null,
+        "operation": "not_extract_firmware"
+      },
+      "operation": "inspect_firmware_regions",
+      "carrier": "H25/carrier.sqsh",
+      "sha256": "f43f5e115e9246e78468fc583509e3506319b3fb0ec5e32233a4b5479b59672b",
+      "declared_features": {
+        "handler_set": [],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": null
+      },
+      "class_expected": {
+        "label": "unclassified",
+        "action": "none",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H26",
+      "class": "out-of-domain",
+      "label": "unclassified",
+      "action": "none",
+      "arm": "ood",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": null,
+        "operation": "not_extract_firmware"
+      },
+      "operation": "inspect_firmware_regions",
+      "carrier": "H26/carrier.sqsh",
+      "sha256": "0700df1bf9917e226f70f10e6e4962ad61d65bdff6e1d2f5b67e473278b585b6",
+      "declared_features": {
+        "handler_set": [],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": null
+      },
+      "class_expected": {
+        "label": "unclassified",
+        "action": "none",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H27",
+      "class": "partial-in-tree",
+      "label": "partial-body-failure",
+      "action": "salvage-partial",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [
+        "in-tree"
+      ],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 7,
+        "blocks": [
+          {
+            "path": "eeif",
+            "offset": 333,
+            "length": 95
+          },
+          {
+            "path": "eeif",
+            "offset": 428,
+            "length": 37
+          },
+          {
+            "path": "eeif",
+            "offset": 465,
+            "length": 37
+          },
+          {
+            "path": "eeif",
+            "offset": 502,
+            "length": 37
+          },
+          {
+            "path": "eeif",
+            "offset": 539,
+            "length": 36
+          },
+          {
+            "path": "m0bxhnc7h",
+            "offset": 575,
+            "length": 96
+          },
+          {
+            "path": "m0bxhnc7h",
+            "offset": 671,
+            "length": 37
+          },
+          {
+            "path": "m0bxhnc7h",
+            "offset": 708,
+            "length": 37
+          },
+          {
+            "path": "m0bxhnc7h",
+            "offset": 745,
+            "length": 37
+          },
+          {
+            "path": "m0bxhnc7h",
+            "offset": 782,
+            "length": 28
+          },
+          {
+            "path": "uzbhxw",
+            "offset": 810,
+            "length": 95
+          },
+          {
+            "path": "uzbhxw",
+            "offset": 905,
+            "length": 37
+          },
+          {
+            "path": "uzbhxw",
+            "offset": 942,
+            "length": 37
+          },
+          {
+            "path": "uzbhxw",
+            "offset": 979,
+            "length": 37
+          },
+          {
+            "path": "uzbhxw",
+            "offset": 1016,
+            "length": 37
+          },
+          {
+            "path": "vaifn/2p76",
+            "offset": 1053,
+            "length": 95
+          },
+          {
+            "path": "vaifn/2p76",
+            "offset": 1148,
+            "length": 37
+          },
+          {
+            "path": "vaifn/2p76",
+            "offset": 1185,
+            "length": 37
+          },
+          {
+            "path": "vaifn/2p76",
+            "offset": 1222,
+            "length": 31
+          },
+          {
+            "path": "vaifn/ghipf12p",
+            "offset": 1253,
+            "length": 94
+          },
+          {
+            "path": "vaifn/ghipf12p",
+            "offset": 1347,
+            "length": 37
+          },
+          {
+            "path": "vaifn/ghipf12p",
+            "offset": 1384,
+            "length": 20
+          },
+          {
+            "path": "vaifn/orn9mqla",
+            "offset": 1404,
+            "length": 95
+          },
+          {
+            "path": "vaifn/orn9mqla",
+            "offset": 1499,
+            "length": 37
+          },
+          {
+            "path": "vaifn/orn9mqla",
+            "offset": 1536,
+            "length": 36
+          }
+        ],
+        "blocks_damaged": 25,
+        "bytes_damaged": 1239,
+        "paths": [
+          "eeif",
+          "m0bxhnc7h",
+          "uzbhxw",
+          "vaifn/2p76",
+          "vaifn/ghipf12p",
+          "vaifn/orn9mqla"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "3asle8"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H27/carrier.sqsh",
+      "sha256": "f87902c7624b960f4d45f75c4ff86bdaf487275a66b2490162fe36a65fe4fb9a",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H28",
+      "class": "partial-in-tree",
+      "label": "partial-body-failure",
+      "action": "salvage-partial",
+      "arm": "after",
+      "endian": "be",
+      "compression": "xz",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [
+        "in-tree"
+      ],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 4,
+        "blocks": [
+          {
+            "path": "s-d8vz5/o4dtnlb/72s2s/s4gf6bf2",
+            "offset": 860,
+            "length": 96
+          },
+          {
+            "path": "s-d8vz5/o4dtnlb/72s2s/s4gf6bf2",
+            "offset": 956,
+            "length": 96
+          },
+          {
+            "path": "s-d8vz5/o4dtnlb/72s2s/s4gf6bf2",
+            "offset": 1052,
+            "length": 96
+          },
+          {
+            "path": "s-d8vz5/o4dtnlb/72s2s/s4gf6bf2",
+            "offset": 1148,
+            "length": 92
+          },
+          {
+            "path": "s-d8vz5/p7_t_m_w",
+            "offset": 628,
+            "length": 84
+          },
+          {
+            "path": "s8hmnu",
+            "offset": 244,
+            "length": 92
+          }
+        ],
+        "blocks_damaged": 6,
+        "bytes_damaged": 556,
+        "paths": [
+          "s-d8vz5/o4dtnlb/72s2s/s4gf6bf2",
+          "s-d8vz5/p7_t_m_w",
+          "s8hmnu"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "s-d8vz5/n-w9ppzyz"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H28/carrier.sqsh",
+      "sha256": "4a6bc8c7d955133633581ff96947d358d7a6fbae4c812ff65d178c2fa82e6711",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H29",
+      "class": "partial-mixed",
+      "label": "partial-body-failure",
+      "action": "salvage-partial",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [
+        "in-tree",
+        "escaping"
+      ],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 6,
+        "blocks": [
+          {
+            "path": "voz5-9a3l/167rj9",
+            "offset": 265,
+            "length": 95
+          },
+          {
+            "path": "voz5-9a3l/167rj9",
+            "offset": 360,
+            "length": 37
+          },
+          {
+            "path": "voz5-9a3l/167rj9",
+            "offset": 397,
+            "length": 37
+          },
+          {
+            "path": "voz5-9a3l/167rj9",
+            "offset": 434,
+            "length": 37
+          },
+          {
+            "path": "voz5-9a3l/167rj9",
+            "offset": 471,
+            "length": 26
+          },
+          {
+            "path": "voz5-9a3l/4yr",
+            "offset": 497,
+            "length": 95
+          },
+          {
+            "path": "voz5-9a3l/4yr",
+            "offset": 592,
+            "length": 37
+          },
+          {
+            "path": "voz5-9a3l/4yr",
+            "offset": 629,
+            "length": 37
+          },
+          {
+            "path": "voz5-9a3l/4yr",
+            "offset": 666,
+            "length": 37
+          },
+          {
+            "path": "voz5-9a3l/4yr",
+            "offset": 703,
+            "length": 26
+          },
+          {
+            "path": "voz5-9a3l/g3-hnp8",
+            "offset": 729,
+            "length": 95
+          },
+          {
+            "path": "voz5-9a3l/g3-hnp8",
+            "offset": 824,
+            "length": 38
+          },
+          {
+            "path": "voz5-9a3l/gy8nih",
+            "offset": 862,
+            "length": 95
+          },
+          {
+            "path": "voz5-9a3l/gy8nih",
+            "offset": 957,
+            "length": 37
+          },
+          {
+            "path": "voz5-9a3l/gy8nih",
+            "offset": 994,
+            "length": 37
+          },
+          {
+            "path": "voz5-9a3l/gy8nih",
+            "offset": 1031,
+            "length": 37
+          },
+          {
+            "path": "voz5-9a3l/gy8nih",
+            "offset": 1068,
+            "length": 19
+          },
+          {
+            "path": "voz5-9a3l/zc_gmz",
+            "offset": 1087,
+            "length": 96
+          },
+          {
+            "path": "voz5-9a3l/zc_gmz",
+            "offset": 1183,
+            "length": 22
+          }
+        ],
+        "blocks_damaged": 19,
+        "bytes_damaged": 940,
+        "paths": [
+          "voz5-9a3l/167rj9",
+          "voz5-9a3l/4yr",
+          "voz5-9a3l/g3-hnp8",
+          "voz5-9a3l/gy8nih",
+          "voz5-9a3l/zc_gmz"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "vkrer"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H29/carrier.sqsh",
+      "sha256": "96f9769fc3bcdbb7f00841993b8899f2dc91e4d81d88016fc3d5dda054c473ce",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H30",
+      "class": "partial-mixed",
+      "label": "partial-body-failure",
+      "action": "salvage-partial",
+      "arm": "after",
+      "endian": "be",
+      "compression": "xz",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [
+        "in-tree",
+        "escaping"
+      ],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 3,
+        "blocks": [
+          {
+            "path": "0-3921l9/48lud",
+            "offset": 816,
+            "length": 96
+          },
+          {
+            "path": "0-3921l9/48lud",
+            "offset": 912,
+            "length": 88
+          }
+        ],
+        "blocks_damaged": 2,
+        "bytes_damaged": 184,
+        "paths": [
+          "0-3921l9/48lud"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "0-3921l9/0ks2oufb"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H30/carrier.sqsh",
+      "sha256": "fe2c962a7221fed60f272db7a679d7203236ed8b214ae70f7bf2aa2c4245b105",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H31",
+      "class": "depth-limited-alone",
+      "label": "depth-limited",
+      "action": "raise-depth",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": {
+        "path": "665k.sqsh",
+        "mode": "le",
+        "compression": "gzip",
+        "handler_expected": "squashfs_v4_le",
+        "inner_files": [
+          "rhr6i0/pcc4uuto"
+        ],
+        "size": 485,
+        "sha256": "fb5c5f20935d170e2baa294586b3026704a29a1d062c7ab7f7ec614fe0d86c74"
+      },
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "H31/carrier.sqsh",
+      "sha256": "785e9edfb18b5a707f1769fc7bf39b0f850a12ccc84fb9499e53b140f3a05250",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "depth-limited"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": {
+        "label": "depth-limited",
+        "action": "raise-depth",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H32",
+      "class": "depth-limited-alone",
+      "label": "depth-limited",
+      "action": "raise-depth",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": {
+        "path": "6xbg.sqsh",
+        "mode": "le",
+        "compression": "gzip",
+        "handler_expected": "squashfs_v4_le",
+        "inner_files": [
+          "fjz9unl-/ttbqntet",
+          "fjz9unl-/3ugbmh"
+        ],
+        "size": 2257,
+        "sha256": "3f659b64beef46cf6e98679d3cdce962a8c54876e9390e7f773aac1759dc0730"
+      },
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "H32/carrier.sqsh",
+      "sha256": "58e05e2c4c9d49d5330581a1a506db0ea83b7d90ab0d6471d444c0436b824c36",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "depth-limited"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": {
+        "label": "depth-limited",
+        "action": "raise-depth",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H33",
+      "class": "depth-limited-in-tree",
+      "label": "depth-limited",
+      "action": "raise-depth",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "in-tree"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": {
+        "path": "qy-7h.sqsh",
+        "mode": "le",
+        "compression": "gzip",
+        "handler_expected": "squashfs_v4_le",
+        "inner_files": [
+          "qf07/wrhxrmyzq",
+          "qf07/vtikp"
+        ],
+        "size": 2004,
+        "sha256": "4a58a0924039acd67524d783a7b12131374c662bcb5e23f711260e6d9e192d26"
+      },
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "H33/carrier.sqsh",
+      "sha256": "1f4b701e037be0c79ccd858ce048f0f15f10224b0b672732631f511f7db9f4e3",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": {
+        "label": "depth-limited",
+        "action": "raise-depth",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H34",
+      "class": "depth-limited-in-tree",
+      "label": "depth-limited",
+      "action": "raise-depth",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "in-tree"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": {
+        "path": "q32w_vzd.sqsh",
+        "mode": "le",
+        "compression": "gzip",
+        "handler_expected": "squashfs_v4_le",
+        "inner_files": [
+          "nnf/ra5n",
+          "nnf/krziqg5"
+        ],
+        "size": 3079,
+        "sha256": "40315089247c65b8f0ee190c68a01219c814506cb38dd4347c88431f9c73469f"
+      },
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "H34/carrier.sqsh",
+      "sha256": "9c970a8ece6acb9d1b743be00b9b5a2915b4a72913db3e8e8db5c3561f58a452",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": {
+        "label": "depth-limited",
+        "action": "raise-depth",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H35",
+      "class": "depth-limited-mixed",
+      "label": "depth-limited",
+      "action": "raise-depth",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "in-tree",
+        "escaping"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": {
+        "path": "8dljtd.sqsh",
+        "mode": "le",
+        "compression": "gzip",
+        "handler_expected": "squashfs_v4_le",
+        "inner_files": [
+          "ll_j1px/v1k4",
+          "ll_j1px/eqecc"
+        ],
+        "size": 1668,
+        "sha256": "aaf068c679299d84d78c4ed98ca14eb933067d80ffe4b5d6481f6ca9dfc7f058"
+      },
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "H35/carrier.sqsh",
+      "sha256": "07d4add0231884782537d29a55056ed9e06d45e7c84ba9501bb0153775f7b663",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": {
+        "label": "depth-limited",
+        "action": "raise-depth",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H36",
+      "class": "depth-limited-mixed",
+      "label": "depth-limited",
+      "action": "raise-depth",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "in-tree",
+        "escaping"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image",
+      "chunks": null,
+      "nested": {
+        "path": "iw06u12k/haxjd_t.sqsh",
+        "mode": "le",
+        "compression": "gzip",
+        "handler_expected": "squashfs_v4_le",
+        "inner_files": [
+          "1dzty3uu/s39zf"
+        ],
+        "size": 705,
+        "sha256": "0de8535f4ae8af5871883989ca1c802b46a9eb4ebebe5805c45ef9390543e23a"
+      },
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "H36/carrier.sqsh",
+      "sha256": "76db2572342a62e1ec859c40be63eaa5a0c38a33bb899461cd33b4b646093ff8",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": {
+        "label": "depth-limited",
+        "action": "raise-depth",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H37",
+      "class": "body-extractor-failure-le",
+      "label": "body-extractor-failure",
+      "action": "preserve-failure",
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [],
+      "corruption": "zero-id-table",
+      "damage": {
+        "recipe": "zero-id-table"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H37/carrier.sqsh",
+      "sha256": "e7c873fa0484c266500466f0eb7ca6777542d8cdfc954f6f67a11daec74e2954",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "body-extractor-failure",
+        "action": "preserve-failure",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H38",
+      "class": "body-extractor-failure-le",
+      "label": "body-extractor-failure",
+      "action": "preserve-failure",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [],
+      "corruption": "zero-id-table",
+      "damage": {
+        "recipe": "zero-id-table"
+      },
+      "layout": "single-image",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H38/carrier.sqsh",
+      "sha256": "b2808a071bf2beb55b7d51faafd0be0bfd8b816a7de4db56ba3b4959544edf08",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "body-extractor-failure",
+        "action": "preserve-failure",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H39",
+      "class": "failure-depth-limited",
+      "label": "partial-body-failure",
+      "action": "salvage-partial",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": null,
+      "content": "pattern",
+      "symlinks": [],
+      "corruption": null,
+      "damage": {
+        "recipe": "zero-id-table",
+        "chunk": 2,
+        "chunk_offset": 4096
+      },
+      "layout": "two-chunk",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 205,
+          "sha256": "5fc443dbcff6acb0f750246e5bdedd04ca4703202597efec303a7df20ce20627",
+          "role": "valid image, zero regular files (depth ceiling, publishes nothing)",
+          "endian": "be",
+          "compression": "gzip"
+        },
+        {
+          "offset": 4096,
+          "length": 703,
+          "sha256": "5f11e728e58941879abc5aaf70cd990425f2de5d2662b4dee242b9dcdfd46432",
+          "role": "id-table metadata block zeroed (extraction fails)",
+          "endian": "be",
+          "compression": "gzip"
+        }
+      ],
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "H39/carrier.sqsh",
+      "sha256": "9c887309a7e4666cb09ac9eaa187dc44e914350ee41902a7f4ccaf57771d8580",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 1
+      },
+      "class_expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H40",
+      "class": "failure-depth-limited",
+      "label": "partial-body-failure",
+      "action": "salvage-partial",
+      "arm": "after",
+      "endian": "le",
+      "compression": "xz",
+      "tree": null,
+      "content": "pattern",
+      "symlinks": [],
+      "corruption": null,
+      "damage": {
+        "recipe": "zero-id-table",
+        "chunk": 2,
+        "chunk_offset": 4096
+      },
+      "layout": "two-chunk",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 203,
+          "sha256": "56927d31e14a22430f7de05a820a26f03c1a5dd2bf6636b95e2e36151cbb755f",
+          "role": "valid image, zero regular files (depth ceiling, publishes nothing)",
+          "endian": "le",
+          "compression": "xz"
+        },
+        {
+          "offset": 4096,
+          "length": 938,
+          "sha256": "9602c58ca00a2008418f022ca4c4eee53371237e272235a4f2118b4c81bf4268",
+          "role": "id-table metadata block zeroed (extraction fails)",
+          "endian": "le",
+          "compression": "xz"
+        }
+      ],
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "H40/carrier.sqsh",
+      "sha256": "86d1c48b90e87b3387c9d63de86d5e115121a7ada9deb85c109207ef8941aa45",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 1
+      },
+      "class_expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial",
+        "reported_only": true
+      }
+    },
+    {
+      "id": "H41",
+      "class": "legacy-clean",
+      "label": "clean",
+      "action": "none",
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-fixture",
+      "chunks": null,
+      "nested": null,
+      "fixture": {
+        "clean": {
+          "id": "v3ns-le",
+          "handler": "squashfs_v3_nonstandard",
+          "endian": "le",
+          "sha256": "3bce6ae378319fd2ac08c73ede9b3890a6d0f78c16392f09117cc3ffd70d1acb",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3_nonstandard/little_endian/__input__/squashfs_v3_le.bin"
+        },
+        "damaged": null,
+        "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+      },
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H41/carrier.sqsh",
+      "sha256": "3bce6ae378319fd2ac08c73ede9b3890a6d0f78c16392f09117cc3ffd70d1acb",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3_nonstandard"
+        ],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "clean",
+        "action": "none",
+        "reported_only": true
+      },
+      "seed_dependent": false
+    },
+    {
+      "id": "H42",
+      "class": "legacy-clean",
+      "label": "clean",
+      "action": "none",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-fixture",
+      "chunks": null,
+      "nested": null,
+      "fixture": {
+        "clean": {
+          "id": "v2-be",
+          "handler": "squashfs_v2",
+          "endian": "be",
+          "sha256": "79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v2/big_endian/__input__/squashfs_v2.0_be.bin"
+        },
+        "damaged": null,
+        "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+      },
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H42/carrier.sqsh",
+      "sha256": "79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v2"
+        ],
+        "gap_kinds": [],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "clean",
+        "action": "none",
+        "reported_only": true
+      },
+      "seed_dependent": false
+    },
+    {
+      "id": "H43",
+      "class": "legacy-dep-missing-be",
+      "label": "dep-missing-le",
+      "action": "install-extractor-le",
+      "arm": "before",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-fixture",
+      "chunks": null,
+      "nested": null,
+      "fixture": {
+        "clean": {
+          "id": "v1-be",
+          "handler": "squashfs_v1",
+          "endian": "be",
+          "sha256": "529e10775cc152e6c5df0c6c63316811004cc73ce99f03989c86ffd396d631e6",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v1/big_endian/__input__/squashfs_v1.0_be.bin"
+        },
+        "damaged": null,
+        "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+      },
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H43/carrier.sqsh",
+      "sha256": "529e10775cc152e6c5df0c6c63316811004cc73ce99f03989c86ffd396d631e6",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v1"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "dep-missing-le",
+        "action": "install-extractor-le",
+        "reported_only": true
+      },
+      "seed_dependent": false
+    },
+    {
+      "id": "H44",
+      "class": "legacy-dep-missing-be",
+      "label": "dep-missing-le",
+      "action": "install-extractor-le",
+      "arm": "before",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-fixture",
+      "chunks": null,
+      "nested": null,
+      "fixture": {
+        "clean": {
+          "id": "v3-be",
+          "handler": "squashfs_v3",
+          "endian": "be",
+          "sha256": "4e9493d9c6f868005dea8f11992129c3399e0bcb8f3a966c750cb925989ca97c",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3/big_endian/__input__/squashfs_v3_be.bin"
+        },
+        "damaged": null,
+        "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+      },
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H44/carrier.sqsh",
+      "sha256": "4e9493d9c6f868005dea8f11992129c3399e0bcb8f3a966c750cb925989ca97c",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "dep-missing-le",
+        "action": "install-extractor-le",
+        "reported_only": true
+      },
+      "seed_dependent": false
+    },
+    {
+      "id": "H45",
+      "class": "legacy-dep-missing-le",
+      "label": "dep-missing-le",
+      "action": "install-extractor-le",
+      "arm": "before",
+      "endian": "le",
+      "compression": "lzma",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-fixture",
+      "chunks": null,
+      "nested": null,
+      "fixture": {
+        "clean": {
+          "id": "v3adapt-le",
+          "handler": "squashfs_v3",
+          "endian": "le",
+          "sha256": "2ac15e5c993f330854497b2fd032d2e87873a288fab6da2fe72106bb40b43124",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3_adaptive/__input__/squashfs_v3_le.lzma.bin"
+        },
+        "damaged": null,
+        "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+      },
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H45/carrier.sqsh",
+      "sha256": "2ac15e5c993f330854497b2fd032d2e87873a288fab6da2fe72106bb40b43124",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "dep-missing-le",
+        "action": "install-extractor-le",
+        "reported_only": true
+      },
+      "seed_dependent": false
+    },
+    {
+      "id": "H46",
+      "class": "legacy-dep-missing-le",
+      "label": "dep-missing-le",
+      "action": "install-extractor-le",
+      "arm": "before",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-fixture",
+      "chunks": null,
+      "nested": null,
+      "fixture": {
+        "clean": {
+          "id": "v2-le",
+          "handler": "squashfs_v2",
+          "endian": "le",
+          "sha256": "7c62dbe388b972119f5d17a12836a016737d58276184f4caa2a90dafd924f124",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v2/little_endian/__input__/squashfs_v2.0_le.bin"
+        },
+        "damaged": null,
+        "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+      },
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H46/carrier.sqsh",
+      "sha256": "7c62dbe388b972119f5d17a12836a016737d58276184f4caa2a90dafd924f124",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v2"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "dep-missing-le",
+        "action": "install-extractor-le",
+        "reported_only": true
+      },
+      "seed_dependent": false
+    },
+    {
+      "id": "H47",
+      "class": "legacy-body-failure",
+      "label": "legacy-body-failure",
+      "action": "cross-read-legacy",
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": "fixture-damage",
+      "damage": {
+        "recipe": "fixture-damage",
+        "fixture": "v2ns-le",
+        "offset": 88,
+        "length": 4,
+        "chunk": 1
+      },
+      "layout": "single-fixture",
+      "chunks": null,
+      "nested": null,
+      "fixture": {
+        "clean": {
+          "id": "v2ns-le",
+          "handler": "squashfs_v2_nonstandard",
+          "endian": "le",
+          "sha256": "f25cf3ea531de5c19eb1949eb351e1bb6ee1b91d8f211598e6c4fb695de9e24a",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v2_nonstandard/little_endian/__input__/squashfs_v2.0_le.bin"
+        },
+        "damaged": null,
+        "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+      },
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H47/carrier.sqsh",
+      "sha256": "61a9af7e073037ee64e39bd8de9872f0af29ba863df89a2d5dbf2d0e172ecd29",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v2_nonstandard"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "legacy-body-failure",
+        "action": "cross-read-legacy",
+        "reported_only": true
+      },
+      "seed_dependent": false
+    },
+    {
+      "id": "H48",
+      "class": "legacy-body-failure",
+      "label": "legacy-body-failure",
+      "action": "cross-read-legacy",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": "fixture-damage",
+      "damage": {
+        "recipe": "fixture-damage",
+        "fixture": "v1-be",
+        "offset": 72,
+        "length": 4,
+        "chunk": 1
+      },
+      "layout": "single-fixture",
+      "chunks": null,
+      "nested": null,
+      "fixture": {
+        "clean": {
+          "id": "v1-be",
+          "handler": "squashfs_v1",
+          "endian": "be",
+          "sha256": "529e10775cc152e6c5df0c6c63316811004cc73ce99f03989c86ffd396d631e6",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v1/big_endian/__input__/squashfs_v1.0_be.bin"
+        },
+        "damaged": null,
+        "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+      },
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H48/carrier.sqsh",
+      "sha256": "de68578772787a66a9541bb64aaca699d4d167d2fd2d27152506d6ff330db4e8",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v1"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "legacy-body-failure",
+        "action": "cross-read-legacy",
+        "reported_only": true
+      },
+      "seed_dependent": false
+    },
+    {
+      "id": "H49",
+      "class": "legacy-partial",
+      "label": "partial-body-failure",
+      "action": "salvage-partial",
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": "fixture-damage",
+      "damage": {
+        "recipe": "fixture-damage",
+        "fixture": "v3-be",
+        "offset": 132,
+        "length": 4,
+        "chunk": 2,
+        "chunk_offset": 4096
+      },
+      "layout": "two-fixture",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v3bc-le",
+          "handler": "squashfs_v3_broadcom",
+          "endian": "le",
+          "role": "clean legacy fixture",
+          "sha256": "6baad4387dd51c8010de694420a35b6709706a268f7ba9e96e6417fb969f37d3"
+        },
+        {
+          "offset": 4096,
+          "length": 4096,
+          "fixture": "v3-be",
+          "handler": "squashfs_v3",
+          "endian": "be",
+          "role": "pinned 4-byte zero window (4 B) -> sasquatch fails",
+          "sha256": "dd24e920f5eacfb27647b9ab43e420d8b883676935d8376cd842566a93768f1c"
+        }
+      ],
+      "nested": null,
+      "fixture": {
+        "clean": {
+          "id": "v3bc-le",
+          "handler": "squashfs_v3_broadcom",
+          "endian": "le",
+          "sha256": "6baad4387dd51c8010de694420a35b6709706a268f7ba9e96e6417fb969f37d3",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3_broadcom/little_endian/__input__/squashfs_v3_le.bin"
+        },
+        "damaged": {
+          "id": "v3-be",
+          "handler": "squashfs_v3",
+          "endian": "be",
+          "sha256": "4e9493d9c6f868005dea8f11992129c3399e0bcb8f3a966c750cb925989ca97c",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3/big_endian/__input__/squashfs_v3_be.bin"
+        },
+        "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+      },
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H49/carrier.sqsh",
+      "sha256": "93995910c175502354fb8bd593a1fe9d1b6b9f6ead366cf8f16846f39c92bc8f",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3",
+          "squashfs_v3_broadcom"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial",
+        "reported_only": true
+      },
+      "seed_dependent": false
+    },
+    {
+      "id": "H50",
+      "class": "legacy-partial",
+      "label": "partial-body-failure",
+      "action": "salvage-partial",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": "fixture-damage",
+      "damage": {
+        "recipe": "fixture-damage",
+        "fixture": "v2ns-be",
+        "offset": 88,
+        "length": 4,
+        "chunk": 2,
+        "chunk_offset": 4096
+      },
+      "layout": "two-fixture",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v3adapt-be",
+          "handler": "squashfs_v3",
+          "endian": "be",
+          "role": "clean legacy fixture",
+          "sha256": "71971c7a05d2d0b44bc976bc168f7b9134af8dc9fec83553889a9b5473469495"
+        },
+        {
+          "offset": 4096,
+          "length": 4096,
+          "fixture": "v2ns-be",
+          "handler": "squashfs_v2_nonstandard",
+          "endian": "be",
+          "role": "pinned 4-byte zero window (4 B) -> sasquatch fails",
+          "sha256": "71b63de30064c3c530f3c5631769f73a823e660f18151d2f1fbca8cdd11ed540"
+        }
+      ],
+      "nested": null,
+      "fixture": {
+        "clean": {
+          "id": "v3adapt-be",
+          "handler": "squashfs_v3",
+          "endian": "be",
+          "sha256": "71971c7a05d2d0b44bc976bc168f7b9134af8dc9fec83553889a9b5473469495",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3_adaptive/__input__/squashfs_v3_be.lzma.bin"
+        },
+        "damaged": {
+          "id": "v2ns-be",
+          "handler": "squashfs_v2_nonstandard",
+          "endian": "be",
+          "sha256": "6560be64cb26ed19e645191c0c8241dc41f4b8c2d1d0492308786e23c3df6a7b",
+          "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v2_nonstandard/big_endian/__input__/squashfs_v2.0_be.bin"
+        },
+        "pins": "1fcc7a0a584a70a96c31f5a276c20944d199a089"
+      },
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H50/carrier.sqsh",
+      "sha256": "c633b93083958d3d1a2d786a53905804b67b0df8bf0b76c2bc7c3d2b2dbce95f",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v2_nonstandard",
+          "squashfs_v3"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial",
+        "reported_only": true
+      },
+      "seed_dependent": false
+    },
+    {
+      "id": "H51",
+      "class": "container-depth-limited",
+      "label": "container-depth-limited",
+      "action": "raise-depth",
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "tar-container",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "H51/carrier.sqsh",
+      "sha256": "732150acf497b9f7b01a809bbbc2476da1a2265aa8ad2cc80c7d6ff1589d6eea",
+      "declared_features": {
+        "handler_set": [
+          "tar"
+        ],
+        "gap_kinds": [
+          "depth-limited"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": {
+        "label": "container-depth-limited",
+        "action": "raise-depth",
+        "reported_only": true
+      },
+      "seed_dependent": true,
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 42813,
+        "sha256": "732150acf497b9f7b01a809bbbc2476da1a2265aa8ad2cc80c7d6ff1589d6eea"
+      },
+      "inner": {
+        "kind": "generated-v4",
+        "endian": "le",
+        "compression": "gzip",
+        "handler": "squashfs_v4_le",
+        "sha256": "0d7def5339fc0b1d03ae7f41172624267e7c3bf20ed94718a7f05c2d9affda40",
+        "files": 5
+      }
+    },
+    {
+      "id": "H52",
+      "class": "container-depth-limited",
+      "label": "container-depth-limited",
+      "action": "raise-depth",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "tar-container",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "H52/carrier.sqsh",
+      "sha256": "924345466a2ecf64fbb028270a4840ca5b85bf065467c0fa005ae64d8094ac05",
+      "declared_features": {
+        "handler_set": [
+          "tar"
+        ],
+        "gap_kinds": [
+          "depth-limited"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": {
+        "label": "container-depth-limited",
+        "action": "raise-depth",
+        "reported_only": true
+      },
+      "seed_dependent": false,
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 4096,
+        "sha256": "924345466a2ecf64fbb028270a4840ca5b85bf065467c0fa005ae64d8094ac05"
+      },
+      "inner": {
+        "kind": "pinned-fixture",
+        "fixture": "v3ns-be",
+        "handler": "squashfs_v3_nonstandard",
+        "endian": "be",
+        "sha256": "01b2792bd5b5fb3455282cb84351f2e0c7e67de9b861de5a3503cdc7710c3661"
+      }
+    },
+    {
+      "id": "H53",
+      "class": "unknown-residue",
+      "label": "unknown-residue",
+      "action": "isolate-residue",
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "image+residue",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H53/carrier.sqsh",
+      "sha256": "699f161b6ee31fd59513e32f32c2e59d24d8cc4357416a34f138a6d8747bbe7f",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "unknown-residue",
+        "action": "isolate-residue",
+        "reported_only": true
+      },
+      "seed_dependent": true,
+      "residue": {
+        "offset": 49152,
+        "length": 64,
+        "sha256": "7b694aa34a43c18ec6c290b3f82aa5d8d5328c9ffd48c6a8195a77bb3cb7d800"
+      }
+    },
+    {
+      "id": "H54",
+      "class": "unknown-residue",
+      "label": "unknown-residue",
+      "action": "isolate-residue",
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "image+residue",
+      "chunks": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "H54/carrier.sqsh",
+      "sha256": "72c6878b652a9dad54fc0df40723326fe45229de2028216b283448a45b8852ed",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v1"
+        ],
+        "gap_kinds": [
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": {
+        "label": "unknown-residue",
+        "action": "isolate-residue",
+        "reported_only": true
+      },
+      "seed_dependent": true,
+      "residue": {
+        "offset": 4096,
+        "length": 64,
+        "sha256": "c5b5080d18bec178f681a615d81c9b9e80e2db3f918a6387823b0c05a2af58cc"
+      }
+    },
+    {
+      "id": "C01",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 1,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 0,
+        "links": "none",
+        "residue": 0,
+        "wrap": 0,
+        "damage": 1,
+        "dep": 0,
+        "max_depth": 3,
+        "endian": "be",
+        "comp": "fixture",
+        "legacy_fixture": "v3adapt-be",
+        "legacy_handler": "squashfs_v3",
+        "body_v4": 0,
+        "two_chunk": false,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "legacy chunk",
+          "damage"
+        ]
+      },
+      "decisions": [
+        "legacy chunk",
+        "damage"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "be",
+      "compression": "fixture",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": "fixture-damage",
+      "damage": {
+        "recipe": "fixture-damage",
+        "fixture": "v3adapt-be",
+        "offset": 132,
+        "length": 4,
+        "chunk": 1
+      },
+      "layout": "single-fixture",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v3adapt-be",
+          "handler": "squashfs_v3",
+          "endian": "be",
+          "sha256": "c261b0520976f6591bd465c5879f3406e4888a284359db50f2feb2bd8a1e0d4c"
+        }
+      ],
+      "container": null,
+      "residue": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C01/carrier.sqsh",
+      "sha256": "c261b0520976f6591bd465c5879f3406e4888a284359db50f2feb2bd8a1e0d4c",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": false,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C02",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 2,
+      "factors": {
+        "base": "v4",
+        "second_v4": 0,
+        "links": "both",
+        "residue": 0,
+        "wrap": 1,
+        "damage": 1,
+        "dep": 0,
+        "max_depth": 3,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v1-le",
+        "legacy_handler": "squashfs_v1",
+        "body_v4": true,
+        "two_chunk": false,
+        "damage_endian": "le",
+        "redraw": 0,
+        "decisions": [
+          "container wrap",
+          "links",
+          "damage"
+        ]
+      },
+      "decisions": [
+        "container wrap",
+        "links",
+        "damage"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [
+        "b",
+        "o",
+        "t",
+        "h"
+      ],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 5,
+        "blocks": [
+          {
+            "path": "9jt8",
+            "offset": 263,
+            "length": 95
+          },
+          {
+            "path": "9jt8",
+            "offset": 358,
+            "length": 37
+          },
+          {
+            "path": "9jt8",
+            "offset": 395,
+            "length": 33
+          },
+          {
+            "path": "gtsl1a8q8/bsnfc-p1/31yb/u66",
+            "offset": 735,
+            "length": 95
+          },
+          {
+            "path": "gtsl1a8q8/bsnfc-p1/31yb/u66",
+            "offset": 830,
+            "length": 37
+          },
+          {
+            "path": "gtsl1a8q8/bsnfc-p1/31yb/u66",
+            "offset": 867,
+            "length": 37
+          },
+          {
+            "path": "gtsl1a8q8/bsnfc-p1/31yb/u66",
+            "offset": 904,
+            "length": 37
+          },
+          {
+            "path": "gtsl1a8q8/bsnfc-p1/31yb/u66",
+            "offset": 941,
+            "length": 35
+          },
+          {
+            "path": "gtsl1a8q8/bsnfc-p1/xzzgf0o",
+            "offset": 620,
+            "length": 96
+          },
+          {
+            "path": "gtsl1a8q8/bsnfc-p1/xzzgf0o",
+            "offset": 716,
+            "length": 19
+          },
+          {
+            "path": "gtsl1a8q8/k92f",
+            "offset": 428,
+            "length": 94
+          },
+          {
+            "path": "gtsl1a8q8/k92f",
+            "offset": 522,
+            "length": 37
+          },
+          {
+            "path": "gtsl1a8q8/k92f",
+            "offset": 559,
+            "length": 37
+          },
+          {
+            "path": "gtsl1a8q8/k92f",
+            "offset": 596,
+            "length": 24
+          }
+        ],
+        "blocks_damaged": 14,
+        "bytes_damaged": 713,
+        "paths": [
+          "9jt8",
+          "gtsl1a8q8/bsnfc-p1/31yb/u66",
+          "gtsl1a8q8/bsnfc-p1/xzzgf0o",
+          "gtsl1a8q8/k92f"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "8i1e3p0_d",
+        "chunk": 1
+      },
+      "layout": "tar(single-image)",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 1608,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "7444820636450015ccd5a5eebc86e6a2780cfb7dbdec6ebc97684f0f4a57d391"
+        }
+      ],
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 1608,
+        "sha256": "7d5486b35bfb0d8a7ac0b474540e5cf92f8a7d2aba73fdb51ae8dbcde7df1dc1"
+      },
+      "residue": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C02/carrier.sqsh",
+      "sha256": "7d5486b35bfb0d8a7ac0b474540e5cf92f8a7d2aba73fdb51ae8dbcde7df1dc1",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le",
+          "tar"
+        ],
+        "gap_kinds": [
+          "extractor-failure",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C03",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 3,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 1,
+        "links": "in-tree",
+        "residue": 1,
+        "wrap": 0,
+        "damage": 1,
+        "dep": 0,
+        "max_depth": 3,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v3-le",
+        "legacy_handler": "squashfs_v3",
+        "body_v4": 1,
+        "two_chunk": true,
+        "damage_endian": "le",
+        "redraw": 1,
+        "decisions": [
+          "residue",
+          "legacy chunk",
+          "second v4 chunk",
+          "links",
+          "damage"
+        ]
+      },
+      "decisions": [
+        "residue",
+        "legacy chunk",
+        "second v4 chunk",
+        "links",
+        "damage"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [
+        "i",
+        "n",
+        "-",
+        "t",
+        "r",
+        "e",
+        "e"
+      ],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 4,
+        "blocks": [
+          {
+            "path": "i271/flekb",
+            "offset": 171,
+            "length": 95
+          },
+          {
+            "path": "i271/flekb",
+            "offset": 266,
+            "length": 37
+          },
+          {
+            "path": "i271/flekb",
+            "offset": 303,
+            "length": 37
+          },
+          {
+            "path": "i271/flekb",
+            "offset": 340,
+            "length": 36
+          },
+          {
+            "path": "i271/s60qengr/2e9",
+            "offset": 376,
+            "length": 94
+          },
+          {
+            "path": "i271/s60qengr/2e9",
+            "offset": 470,
+            "length": 37
+          },
+          {
+            "path": "i271/s60qengr/2e9",
+            "offset": 507,
+            "length": 37
+          },
+          {
+            "path": "i271/s60qengr/2e9",
+            "offset": 544,
+            "length": 24
+          },
+          {
+            "path": "i271/s60qengr/m5iv74yo-",
+            "offset": 568,
+            "length": 94
+          },
+          {
+            "path": "i271/s60qengr/m5iv74yo-",
+            "offset": 662,
+            "length": 26
+          }
+        ],
+        "blocks_damaged": 10,
+        "bytes_damaged": 517,
+        "paths": [
+          "i271/flekb",
+          "i271/s60qengr/2e9",
+          "i271/s60qengr/m5iv74yo-"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "6y5b4-2",
+        "chunk": 2
+      },
+      "layout": "legacy+v4+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v3-le",
+          "handler": "squashfs_v3",
+          "endian": "le",
+          "sha256": "0161351caec8e9da6e3e5ac7b046fd11d832efb18eb09e33011e6d19d50cd1f7"
+        },
+        {
+          "offset": 4096,
+          "length": 1141,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "ca055d42872c78bbb4d39a0ab5e9b7297b639bc800b85aec97febb40bea57d1a"
+        }
+      ],
+      "container": null,
+      "residue": {
+        "offset": 8192,
+        "length": 64,
+        "sha256": "ac1763f1e95330ab2c95b7a9dcc42d8da289eed39b3e52c367348789ed20cd50"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C03/carrier.sqsh",
+      "sha256": "fb088a30a530efa86947cefa40bc80f99d08ca65a03bafe764c2d44f10ae3322",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3",
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "extractor-failure",
+          "unknown-chunk-handler",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C04",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 4,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 1,
+        "links": "escaping",
+        "residue": 0,
+        "wrap": 1,
+        "damage": 0,
+        "dep": 1,
+        "max_depth": 3,
+        "endian": "be",
+        "comp": "gzip",
+        "legacy_fixture": "v2-be",
+        "legacy_handler": "squashfs_v2",
+        "body_v4": 1,
+        "two_chunk": true,
+        "damage_endian": "be",
+        "redraw": 1,
+        "decisions": [
+          "container wrap",
+          "legacy chunk",
+          "second v4 chunk",
+          "links",
+          "dependency"
+        ]
+      },
+      "decisions": [
+        "container wrap",
+        "legacy chunk",
+        "second v4 chunk",
+        "links",
+        "dependency"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "before",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "e",
+        "s",
+        "c",
+        "a",
+        "p",
+        "i",
+        "n",
+        "g"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "tar(legacy+v4)",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v2-be",
+          "handler": "squashfs_v2",
+          "endian": "be",
+          "sha256": "79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0"
+        },
+        {
+          "offset": 4096,
+          "length": 55571,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "be",
+          "compression": "gzip",
+          "handler": "squashfs_v4_be",
+          "sha256": "64e5d185525a607245d6bbb1bab8024cc4cbacc18dc77b3322bd1f71177d691d"
+        }
+      ],
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 59667,
+        "sha256": "c4d60267a995f4ba832c7c1b8e51d4c5d4fe5b9defa0da816a77e5819e6e2fb7"
+      },
+      "residue": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C04/carrier.sqsh",
+      "sha256": "c4d60267a995f4ba832c7c1b8e51d4c5d4fe5b9defa0da816a77e5819e6e2fb7",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v2",
+          "squashfs_v4_be",
+          "tar"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch",
+          "sasquatch-v4be"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C05",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 5,
+      "factors": {
+        "base": "v4",
+        "second_v4": 0,
+        "links": "escaping",
+        "residue": 1,
+        "wrap": 1,
+        "damage": 0,
+        "dep": 1,
+        "max_depth": 3,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v2ns-le",
+        "legacy_handler": "squashfs_v2_nonstandard",
+        "body_v4": true,
+        "two_chunk": false,
+        "damage_endian": "le",
+        "redraw": 0,
+        "decisions": [
+          "container wrap",
+          "residue",
+          "links",
+          "dependency"
+        ]
+      },
+      "decisions": [
+        "container wrap",
+        "residue",
+        "links",
+        "dependency"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "before",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "e",
+        "s",
+        "c",
+        "a",
+        "p",
+        "i",
+        "n",
+        "g"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "tar(single-image)+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 45434,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "19e3243c939a1e77bdcf45f37fadf252b7520940cbe418bb4f7b4b7610f737e2"
+        }
+      ],
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 45434,
+        "sha256": "71a74bea266c9cceee812d11249ebae422dfead13eec94a60b6f7785b852a688"
+      },
+      "residue": {
+        "offset": 53248,
+        "length": 64,
+        "sha256": "431beed4160f4a1a96636a327c079c2de8ec5525c90b5efe1b78a46fac554d99"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C05/carrier.sqsh",
+      "sha256": "cd392916469d8ea6c40901436220d3e9bf41ba89d365b6053f593e9938292871",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le",
+          "tar"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency",
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C06",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 6,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 1,
+        "links": "both",
+        "residue": 1,
+        "wrap": 0,
+        "damage": 0,
+        "dep": 0,
+        "max_depth": 3,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v3adapt-be",
+        "legacy_handler": "squashfs_v3",
+        "body_v4": 1,
+        "two_chunk": true,
+        "damage_endian": "le",
+        "redraw": 0,
+        "decisions": [
+          "residue",
+          "legacy chunk",
+          "second v4 chunk",
+          "links"
+        ]
+      },
+      "decisions": [
+        "residue",
+        "legacy chunk",
+        "second v4 chunk",
+        "links"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "b",
+        "o",
+        "t",
+        "h"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "legacy+v4+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v3adapt-be",
+          "handler": "squashfs_v3",
+          "endian": "be",
+          "sha256": "71971c7a05d2d0b44bc976bc168f7b9134af8dc9fec83553889a9b5473469495"
+        },
+        {
+          "offset": 4096,
+          "length": 72828,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "41515f2ee27fe97371a31d03fec9ba6dda17c496399e2a667126089519a690bd"
+        }
+      ],
+      "container": null,
+      "residue": {
+        "offset": 77824,
+        "length": 64,
+        "sha256": "1797cbd8d6c42d86b0fc21dad2a8fb5eb0e3d06b0bcd5c32364559fd0b857d06"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C06/carrier.sqsh",
+      "sha256": "b30140aa9a65c93bd6d459ab1c156441acbfd1174d9882c60cfa311f11fd96ae",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3",
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "unknown-chunk-handler",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C07",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 7,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 1,
+        "links": "none",
+        "residue": 1,
+        "wrap": 0,
+        "damage": 0,
+        "dep": 1,
+        "max_depth": 3,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v3adapt-be",
+        "legacy_handler": "squashfs_v3",
+        "body_v4": 1,
+        "two_chunk": true,
+        "damage_endian": "le",
+        "redraw": 0,
+        "decisions": [
+          "residue",
+          "legacy chunk",
+          "second v4 chunk",
+          "dependency"
+        ]
+      },
+      "decisions": [
+        "residue",
+        "legacy chunk",
+        "second v4 chunk",
+        "dependency"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "before",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "legacy+v4+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v3adapt-be",
+          "handler": "squashfs_v3",
+          "endian": "be",
+          "sha256": "71971c7a05d2d0b44bc976bc168f7b9134af8dc9fec83553889a9b5473469495"
+        },
+        {
+          "offset": 4096,
+          "length": 89204,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "ad1cfd0436a8f95f17ed645e0c69a8d0a974f6887c2f9d971e01514addf0d1a0"
+        }
+      ],
+      "container": null,
+      "residue": {
+        "offset": 94208,
+        "length": 64,
+        "sha256": "89bd6ceaedc8a70c3c51ed3c02fa113d510df8cbca4fd1c106abffc09594d594"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C07/carrier.sqsh",
+      "sha256": "f607521ac2a221e15c24fe70ae7a9eb9501a13b085874f07a46fc479225c2af9",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3",
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency",
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C08",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 8,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 0,
+        "links": "none",
+        "residue": 1,
+        "wrap": 1,
+        "damage": 1,
+        "dep": 0,
+        "max_depth": 1,
+        "endian": "be",
+        "comp": "fixture",
+        "legacy_fixture": "v1-be",
+        "legacy_handler": "squashfs_v1",
+        "body_v4": 0,
+        "two_chunk": false,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "container wrap",
+          "max_depth 1",
+          "residue"
+        ]
+      },
+      "decisions": [
+        "container wrap",
+        "max_depth 1",
+        "residue"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "be",
+      "compression": "fixture",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": "fixture-damage",
+      "damage": {
+        "recipe": "fixture-damage",
+        "fixture": "v1-be",
+        "offset": 72,
+        "length": 4,
+        "chunk": 1
+      },
+      "layout": "tar(single-fixture)+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v1-be",
+          "handler": "squashfs_v1",
+          "endian": "be",
+          "sha256": "de68578772787a66a9541bb64aaca699d4d167d2fd2d27152506d6ff330db4e8"
+        }
+      ],
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 4096,
+        "sha256": "8a49e8b7b6297d5e294c5098979e695c093e3895102201a855dfe9d287042d32"
+      },
+      "residue": {
+        "offset": 12288,
+        "length": 64,
+        "sha256": "f853ddbcfd2207c8fe2c3b347bc4070582d03330dd10211799a61380d0bd7748"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "C08/carrier.sqsh",
+      "sha256": "7e64a0670948b2842486ef99995de5b3b3a645e27230edcfa2d6100823fda84c",
+      "declared_features": {
+        "handler_set": [
+          "tar"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C09",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 9,
+      "factors": {
+        "base": "v4",
+        "second_v4": 0,
+        "links": "escaping",
+        "residue": 0,
+        "wrap": 0,
+        "damage": 1,
+        "dep": 0,
+        "max_depth": 3,
+        "endian": "be",
+        "comp": "gzip",
+        "legacy_fixture": "v3ns-le",
+        "legacy_handler": "squashfs_v3_nonstandard",
+        "body_v4": true,
+        "two_chunk": false,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "links",
+          "damage"
+        ]
+      },
+      "decisions": [
+        "links",
+        "damage"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [
+        "e",
+        "s",
+        "c",
+        "a",
+        "p",
+        "i",
+        "n",
+        "g"
+      ],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 4,
+        "blocks": [
+          {
+            "path": "o_t40",
+            "offset": 322,
+            "length": 95
+          },
+          {
+            "path": "o_t40",
+            "offset": 417,
+            "length": 37
+          },
+          {
+            "path": "o_t40",
+            "offset": 454,
+            "length": 37
+          },
+          {
+            "path": "o_t40",
+            "offset": 491,
+            "length": 33
+          },
+          {
+            "path": "zz8wvyx/4yo/hd5-c",
+            "offset": 605,
+            "length": 95
+          },
+          {
+            "path": "zz8wvyx/4yo/hd5-c",
+            "offset": 700,
+            "length": 37
+          },
+          {
+            "path": "zz8wvyx/4yo/hd5-c",
+            "offset": 737,
+            "length": 37
+          },
+          {
+            "path": "zz8wvyx/4yo/hd5-c",
+            "offset": 774,
+            "length": 19
+          },
+          {
+            "path": "zz8wvyx/b38",
+            "offset": 524,
+            "length": 81
+          }
+        ],
+        "blocks_damaged": 9,
+        "bytes_damaged": 471,
+        "paths": [
+          "o_t40",
+          "zz8wvyx/4yo/hd5-c",
+          "zz8wvyx/b38"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "n2y0oyd",
+        "chunk": 1
+      },
+      "layout": "single-image",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 1253,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "be",
+          "compression": "gzip",
+          "handler": "squashfs_v4_be",
+          "sha256": "33fc89b9e87c07f85db9e830a0632418be3984a2165a0416546827187a887412"
+        }
+      ],
+      "container": null,
+      "residue": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C09/carrier.sqsh",
+      "sha256": "33fc89b9e87c07f85db9e830a0632418be3984a2165a0416546827187a887412",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C10",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 10,
+      "factors": {
+        "base": "v4",
+        "second_v4": 0,
+        "links": "both",
+        "residue": 1,
+        "wrap": 0,
+        "damage": 0,
+        "dep": 1,
+        "max_depth": 1,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v1-be",
+        "legacy_handler": "squashfs_v1",
+        "body_v4": true,
+        "two_chunk": false,
+        "damage_endian": "le",
+        "redraw": 0,
+        "decisions": [
+          "max_depth 1",
+          "residue",
+          "links",
+          "dependency"
+        ]
+      },
+      "decisions": [
+        "max_depth 1",
+        "residue",
+        "links",
+        "dependency"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "before",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "b",
+        "o",
+        "t",
+        "h"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 55683,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "944a27b929625604a8214308876859a89fed2cf132a6884384a64cd51d0ea0a4"
+        }
+      ],
+      "container": null,
+      "residue": {
+        "offset": 57344,
+        "length": 64,
+        "sha256": "08b1efcdc6af8626737f76013784d442f8a6d86de9e064f25fe41a4fa4af6820"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "C10/carrier.sqsh",
+      "sha256": "a36a0448f25b0404e2cdff708b23bc9523b33d4cd20f45e72f7e2ceb716e4557",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency",
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 1
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C11",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 11,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 0,
+        "links": "none",
+        "residue": 0,
+        "wrap": 0,
+        "damage": 0,
+        "dep": 1,
+        "max_depth": 1,
+        "endian": "be",
+        "comp": "fixture",
+        "legacy_fixture": "v2-be",
+        "legacy_handler": "squashfs_v2",
+        "body_v4": 0,
+        "two_chunk": false,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "max_depth 1",
+          "legacy chunk",
+          "dependency"
+        ]
+      },
+      "decisions": [
+        "max_depth 1",
+        "legacy chunk",
+        "dependency"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "before",
+      "endian": "be",
+      "compression": "fixture",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-fixture",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v2-be",
+          "handler": "squashfs_v2",
+          "endian": "be",
+          "sha256": "79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0"
+        }
+      ],
+      "container": null,
+      "residue": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "C11/carrier.sqsh",
+      "sha256": "79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v2"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "zero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 1
+      },
+      "class_expected": null,
+      "seed_dependent": false,
+      "outside_named_union_declared": false
+    },
+    {
+      "id": "C12",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 12,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 1,
+        "links": "in-tree",
+        "residue": 0,
+        "wrap": 0,
+        "damage": 0,
+        "dep": 1,
+        "max_depth": 3,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v3ns-be",
+        "legacy_handler": "squashfs_v3_nonstandard",
+        "body_v4": 1,
+        "two_chunk": true,
+        "damage_endian": "le",
+        "redraw": 1,
+        "decisions": [
+          "legacy chunk",
+          "second v4 chunk",
+          "links",
+          "dependency"
+        ]
+      },
+      "decisions": [
+        "legacy chunk",
+        "second v4 chunk",
+        "links",
+        "dependency"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "before",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "i",
+        "n",
+        "-",
+        "t",
+        "r",
+        "e",
+        "e"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "legacy+v4",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v3ns-be",
+          "handler": "squashfs_v3_nonstandard",
+          "endian": "be",
+          "sha256": "01b2792bd5b5fb3455282cb84351f2e0c7e67de9b861de5a3503cdc7710c3661"
+        },
+        {
+          "offset": 4096,
+          "length": 50718,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "506d668af68f790a6c94dec9befb59a08e5eff11b6f23b2d53880c8a0d011e9a"
+        }
+      ],
+      "container": null,
+      "residue": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C12/carrier.sqsh",
+      "sha256": "d8ec5cf629b7461ede98b4d5833b952c938f77457248d3ac6801c05fa91648ef",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3_nonstandard",
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C13",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 13,
+      "factors": {
+        "base": "v4",
+        "second_v4": 0,
+        "links": "escaping",
+        "residue": 0,
+        "wrap": 0,
+        "damage": 1,
+        "dep": 0,
+        "max_depth": 3,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v2-le",
+        "legacy_handler": "squashfs_v2",
+        "body_v4": true,
+        "two_chunk": false,
+        "damage_endian": "le",
+        "redraw": 0,
+        "decisions": [
+          "links",
+          "damage"
+        ]
+      },
+      "decisions": [
+        "links",
+        "damage"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [
+        "e",
+        "s",
+        "c",
+        "a",
+        "p",
+        "i",
+        "n",
+        "g"
+      ],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 7,
+        "blocks": [
+          {
+            "path": "-qc-tz4ul",
+            "offset": 249,
+            "length": 95
+          },
+          {
+            "path": "-qc-tz4ul",
+            "offset": 344,
+            "length": 37
+          },
+          {
+            "path": "-qc-tz4ul",
+            "offset": 381,
+            "length": 38
+          },
+          {
+            "path": "a7-zy3xc",
+            "offset": 419,
+            "length": 96
+          },
+          {
+            "path": "a7-zy3xc",
+            "offset": 515,
+            "length": 26
+          },
+          {
+            "path": "ba6cz3/4oj91",
+            "offset": 699,
+            "length": 95
+          },
+          {
+            "path": "ba6cz3/4oj91",
+            "offset": 794,
+            "length": 37
+          },
+          {
+            "path": "ba6cz3/4oj91",
+            "offset": 831,
+            "length": 37
+          },
+          {
+            "path": "ba6cz3/4oj91",
+            "offset": 868,
+            "length": 37
+          },
+          {
+            "path": "ba6cz3/4oj91",
+            "offset": 905,
+            "length": 37
+          },
+          {
+            "path": "ba6cz3/jgi05",
+            "offset": 942,
+            "length": 86
+          },
+          {
+            "path": "d_1bo",
+            "offset": 541,
+            "length": 83
+          },
+          {
+            "path": "jfypw",
+            "offset": 624,
+            "length": 75
+          }
+        ],
+        "blocks_damaged": 13,
+        "bytes_damaged": 779,
+        "paths": [
+          "-qc-tz4ul",
+          "a7-zy3xc",
+          "ba6cz3/4oj91",
+          "ba6cz3/jgi05",
+          "d_1bo",
+          "jfypw"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "--h",
+        "chunk": 1
+      },
+      "layout": "single-image",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 1582,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "076c0333717226baba0866dfc0b3de3309920f566434b316fc91896346e55d13"
+        }
+      ],
+      "container": null,
+      "residue": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C13/carrier.sqsh",
+      "sha256": "076c0333717226baba0866dfc0b3de3309920f566434b316fc91896346e55d13",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C14",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 14,
+      "factors": {
+        "base": "v4",
+        "second_v4": 0,
+        "links": "both",
+        "residue": 1,
+        "wrap": 1,
+        "damage": 0,
+        "dep": 0,
+        "max_depth": 1,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v3ddwrt-be",
+        "legacy_handler": "squashfs_v3_ddwrt",
+        "body_v4": true,
+        "two_chunk": false,
+        "damage_endian": "le",
+        "redraw": 0,
+        "decisions": [
+          "container wrap",
+          "max_depth 1",
+          "residue"
+        ]
+      },
+      "decisions": [
+        "container wrap",
+        "max_depth 1",
+        "residue"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "b",
+        "o",
+        "t",
+        "h"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "tar(single-image)+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 36431,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "a0b9883589cc2e27fbfc533e93e960705ab8ae91de48cf5952f91af450f776dd"
+        }
+      ],
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 36431,
+        "sha256": "5a3b4e16b847307d8694d7b6fd058790379120a737706a9a83276d8537555de5"
+      },
+      "residue": {
+        "offset": 40960,
+        "length": 64,
+        "sha256": "d15871a6efd6e0e2b4109746084887ab850488bf80fb69d1f58df541af3643ef"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "C14/carrier.sqsh",
+      "sha256": "544f26c87c144e3fbad2c8cfee51b06dac2b68037e00e22ed87366e11a04da8c",
+      "declared_features": {
+        "handler_set": [
+          "tar"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C15",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 15,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 0,
+        "links": "none",
+        "residue": 1,
+        "wrap": 1,
+        "damage": 1,
+        "dep": 0,
+        "max_depth": 3,
+        "endian": "le",
+        "comp": "fixture",
+        "legacy_fixture": "v3ns-le",
+        "legacy_handler": "squashfs_v3_nonstandard",
+        "body_v4": 0,
+        "two_chunk": false,
+        "damage_endian": "le",
+        "redraw": 0,
+        "decisions": [
+          "container wrap",
+          "residue",
+          "legacy chunk",
+          "damage"
+        ]
+      },
+      "decisions": [
+        "container wrap",
+        "residue",
+        "legacy chunk",
+        "damage"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "le",
+      "compression": "fixture",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": "fixture-damage",
+      "damage": {
+        "recipe": "fixture-damage",
+        "fixture": "v3ns-le",
+        "offset": 132,
+        "length": 4,
+        "chunk": 1
+      },
+      "layout": "tar(single-fixture)+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v3ns-le",
+          "handler": "squashfs_v3_nonstandard",
+          "endian": "le",
+          "sha256": "58c3a0bc08b4ecbb530d691ecd185acecc2d204d6a7baea931a1b4e8c6e105dc"
+        }
+      ],
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 4096,
+        "sha256": "d6b37a33ac8573b51529a5143867233c5bde2b97a622131f30802b0dcf437f09"
+      },
+      "residue": {
+        "offset": 12288,
+        "length": 64,
+        "sha256": "ec68e8f2beda79f10d2cf4b9a02de7369a5913a515bed58952c788edffda4fc6"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C15/carrier.sqsh",
+      "sha256": "99c9856cb09cec4cf1a7a3f8a7c2bd5e8c66ed610e19372071682a578d7294a2",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3_nonstandard",
+          "tar"
+        ],
+        "gap_kinds": [
+          "extractor-failure",
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C16",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 16,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 1,
+        "links": "both",
+        "residue": 0,
+        "wrap": 0,
+        "damage": 0,
+        "dep": 1,
+        "max_depth": 1,
+        "endian": "be",
+        "comp": "gzip",
+        "legacy_fixture": "v3bc-le",
+        "legacy_handler": "squashfs_v3_broadcom",
+        "body_v4": 1,
+        "two_chunk": true,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "max_depth 1",
+          "legacy chunk",
+          "second v4 chunk",
+          "links",
+          "dependency"
+        ]
+      },
+      "decisions": [
+        "max_depth 1",
+        "legacy chunk",
+        "second v4 chunk",
+        "links",
+        "dependency"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "before",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "b",
+        "o",
+        "t",
+        "h"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "legacy+v4",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v3bc-le",
+          "handler": "squashfs_v3_broadcom",
+          "endian": "le",
+          "sha256": "6baad4387dd51c8010de694420a35b6709706a268f7ba9e96e6417fb969f37d3"
+        },
+        {
+          "offset": 4096,
+          "length": 34074,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "be",
+          "compression": "gzip",
+          "handler": "squashfs_v4_be",
+          "sha256": "636802bb7f5a3e0e8177e98472dfb027fc58f787fb266dcefef2b6bab2562094"
+        }
+      ],
+      "container": null,
+      "residue": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "C16/carrier.sqsh",
+      "sha256": "65f874a413bd20d69ab218cb413dae5a48e31cc8784b214ec8856c69bfa7fb88",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v3_broadcom",
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency"
+        ],
+        "gap_dependencies": [
+          "sasquatch",
+          "sasquatch-v4be"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 1
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C17",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 17,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 1,
+        "links": "none",
+        "residue": 0,
+        "wrap": 0,
+        "damage": 1,
+        "dep": 0,
+        "max_depth": 1,
+        "endian": "be",
+        "comp": "gzip",
+        "legacy_fixture": "v1-le",
+        "legacy_handler": "squashfs_v1",
+        "body_v4": 1,
+        "two_chunk": true,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "max_depth 1",
+          "legacy chunk",
+          "second v4 chunk",
+          "damage"
+        ]
+      },
+      "decisions": [
+        "max_depth 1",
+        "legacy chunk",
+        "second v4 chunk",
+        "damage"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 6,
+        "blocks": [
+          {
+            "path": "nv2ef0rh/my1w5k82r",
+            "offset": 853,
+            "length": 68
+          },
+          {
+            "path": "o-3qm",
+            "offset": 189,
+            "length": 95
+          },
+          {
+            "path": "o-3qm",
+            "offset": 284,
+            "length": 33
+          },
+          {
+            "path": "r5e",
+            "offset": 317,
+            "length": 95
+          },
+          {
+            "path": "r5e",
+            "offset": 412,
+            "length": 38
+          },
+          {
+            "path": "uf75kspd",
+            "offset": 450,
+            "length": 94
+          },
+          {
+            "path": "uf75kspd",
+            "offset": 544,
+            "length": 37
+          },
+          {
+            "path": "uf75kspd",
+            "offset": 581,
+            "length": 37
+          },
+          {
+            "path": "uf75kspd",
+            "offset": 618,
+            "length": 37
+          },
+          {
+            "path": "uf75kspd",
+            "offset": 655,
+            "length": 30
+          },
+          {
+            "path": "uii",
+            "offset": 685,
+            "length": 95
+          },
+          {
+            "path": "uii",
+            "offset": 780,
+            "length": 37
+          },
+          {
+            "path": "uii",
+            "offset": 817,
+            "length": 36
+          }
+        ],
+        "blocks_damaged": 13,
+        "bytes_damaged": 732,
+        "paths": [
+          "nv2ef0rh/my1w5k82r",
+          "o-3qm",
+          "r5e",
+          "uf75kspd",
+          "uii"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "ivp17src",
+        "chunk": 2
+      },
+      "layout": "legacy+v4",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v1-le",
+          "handler": "squashfs_v1",
+          "endian": "le",
+          "sha256": "b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71"
+        },
+        {
+          "offset": 4096,
+          "length": 1375,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "be",
+          "compression": "gzip",
+          "handler": "squashfs_v4_be",
+          "sha256": "a06623bc1bd5313d5b55e40bf39ecf8f4d25190993a3554dac44a4dfc0fa10b1"
+        }
+      ],
+      "container": null,
+      "residue": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "C17/carrier.sqsh",
+      "sha256": "54ebabce01d7ec114cf1a6dc8da1c0820f5da1ac257b36201a516b4184f68cfd",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v1",
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "extractor-failure"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 1
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C18",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 18,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 1,
+        "links": "both",
+        "residue": 1,
+        "wrap": 0,
+        "damage": 0,
+        "dep": 0,
+        "max_depth": 1,
+        "endian": "be",
+        "comp": "gzip",
+        "legacy_fixture": "v2-be",
+        "legacy_handler": "squashfs_v2",
+        "body_v4": 1,
+        "two_chunk": true,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "max_depth 1",
+          "residue",
+          "legacy chunk",
+          "second v4 chunk",
+          "links"
+        ]
+      },
+      "decisions": [
+        "max_depth 1",
+        "residue",
+        "legacy chunk",
+        "second v4 chunk",
+        "links"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "be",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "b",
+        "o",
+        "t",
+        "h"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "legacy+v4+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v2-be",
+          "handler": "squashfs_v2",
+          "endian": "be",
+          "sha256": "79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0"
+        },
+        {
+          "offset": 4096,
+          "length": 6356,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "be",
+          "compression": "gzip",
+          "handler": "squashfs_v4_be",
+          "sha256": "123e29dc1d123bda15647482c04bbd166f8d2c206058a2197ff8b878ad881e37"
+        }
+      ],
+      "container": null,
+      "residue": {
+        "offset": 12288,
+        "length": 64,
+        "sha256": "baeb10bf77e3a701b3b05f4a763ab8ffd83d4663d792d9adbf48d4f5cf8bce45"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "C18/carrier.sqsh",
+      "sha256": "49272c3cb20a15586661c823e044c80220e65d48b707c4e8f65553279394fb84",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v2",
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "unknown-chunk-handler",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C19",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 19,
+      "factors": {
+        "base": "v4",
+        "second_v4": 0,
+        "links": "in-tree",
+        "residue": 1,
+        "wrap": 0,
+        "damage": 0,
+        "dep": 0,
+        "max_depth": 3,
+        "endian": "be",
+        "comp": "xz",
+        "legacy_fixture": "v3-le",
+        "legacy_handler": "squashfs_v3",
+        "body_v4": true,
+        "two_chunk": false,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "residue",
+          "links"
+        ]
+      },
+      "decisions": [
+        "residue",
+        "links"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "be",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "i",
+        "n",
+        "-",
+        "t",
+        "r",
+        "e",
+        "e"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "single-image+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 50697,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "be",
+          "compression": "xz",
+          "handler": "squashfs_v4_be",
+          "sha256": "1acd13f255bbaebbe37859fd4948e0688bcd29c05d3e69da3b85578070b25db6"
+        }
+      ],
+      "container": null,
+      "residue": {
+        "offset": 53248,
+        "length": 64,
+        "sha256": "bdd674504c34bb16659bdb24c79605387a59805d7de035f19ab989f8838a5b27"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C19/carrier.sqsh",
+      "sha256": "478719335587cedc4b00d94f2bcfe2a50865346584fcf81156b6525962fc4376",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_be"
+        ],
+        "gap_kinds": [
+          "unknown-chunk-handler",
+          "unpublished-entry"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C20",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 20,
+      "factors": {
+        "base": "v4",
+        "second_v4": 0,
+        "links": "both",
+        "residue": 1,
+        "wrap": 1,
+        "damage": 0,
+        "dep": 1,
+        "max_depth": 3,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v2ns-le",
+        "legacy_handler": "squashfs_v2_nonstandard",
+        "body_v4": true,
+        "two_chunk": false,
+        "damage_endian": "le",
+        "redraw": 0,
+        "decisions": [
+          "container wrap",
+          "residue",
+          "links",
+          "dependency"
+        ]
+      },
+      "decisions": [
+        "container wrap",
+        "residue",
+        "links",
+        "dependency"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "before",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [
+        "b",
+        "o",
+        "t",
+        "h"
+      ],
+      "corruption": null,
+      "damage": null,
+      "layout": "tar(single-image)+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 50055,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "3f158a63f1337254ec24056a32f31bfd453cf3e253e3f19060f5dd5d3071a27b"
+        }
+      ],
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 50055,
+        "sha256": "02753de6c7e7636adf77e05c33f24ccaba07a0e4ad4aeb159eb13d297c1ca409"
+      },
+      "residue": {
+        "offset": 61440,
+        "length": 64,
+        "sha256": "b376dfb86c154d9969dea1f4a23d0087859f74893f0f9610eb1a9bb0e293415b"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C20/carrier.sqsh",
+      "sha256": "f6846fc09dea6807b25b6b4c294f506c36b716a70ebebed8266a4567e8e9a99c",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le",
+          "tar"
+        ],
+        "gap_kinds": [
+          "missing-extractor-dependency",
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [
+          "sasquatch"
+        ],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C21",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 21,
+      "factors": {
+        "base": "v4",
+        "second_v4": 0,
+        "links": "escaping",
+        "residue": 1,
+        "wrap": 0,
+        "damage": 1,
+        "dep": 0,
+        "max_depth": 1,
+        "endian": "le",
+        "comp": "gzip",
+        "legacy_fixture": "v3adapt-be",
+        "legacy_handler": "squashfs_v3",
+        "body_v4": true,
+        "two_chunk": false,
+        "damage_endian": "le",
+        "redraw": 0,
+        "decisions": [
+          "max_depth 1",
+          "residue",
+          "links",
+          "damage"
+        ]
+      },
+      "decisions": [
+        "max_depth 1",
+        "residue",
+        "links",
+        "damage"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "le",
+      "compression": "gzip",
+      "tree": "random",
+      "content": "pattern",
+      "symlinks": [
+        "e",
+        "s",
+        "c",
+        "a",
+        "p",
+        "i",
+        "n",
+        "g"
+      ],
+      "corruption": "partial",
+      "damage": {
+        "recipe": "partial",
+        "files": 5,
+        "blocks": [
+          {
+            "path": "13ol_cj/y8fex9/ndb2m/vhbwlkw",
+            "offset": 683,
+            "length": 69
+          },
+          {
+            "path": "13ol_cj/y8fex9/rxmmsp",
+            "offset": 419,
+            "length": 73
+          },
+          {
+            "path": "13ol_cj/y8fex9/z_3",
+            "offset": 492,
+            "length": 95
+          },
+          {
+            "path": "13ol_cj/y8fex9/z_3",
+            "offset": 587,
+            "length": 37
+          },
+          {
+            "path": "13ol_cj/y8fex9/z_3",
+            "offset": 624,
+            "length": 37
+          },
+          {
+            "path": "13ol_cj/y8fex9/z_3",
+            "offset": 661,
+            "length": 22
+          },
+          {
+            "path": "mzuh",
+            "offset": 96,
+            "length": 95
+          },
+          {
+            "path": "mzuh",
+            "offset": 191,
+            "length": 37
+          },
+          {
+            "path": "mzuh",
+            "offset": 228,
+            "length": 37
+          },
+          {
+            "path": "mzuh",
+            "offset": 265,
+            "length": 23
+          }
+        ],
+        "blocks_damaged": 10,
+        "bytes_damaged": 525,
+        "paths": [
+          "13ol_cj/y8fex9/ndb2m/vhbwlkw",
+          "13ol_cj/y8fex9/rxmmsp",
+          "13ol_cj/y8fex9/z_3",
+          "mzuh"
+        ],
+        "fill": "00",
+        "pin": "compressed-length",
+        "pin_max_block_length": 136,
+        "pin_measured_fail_range": [
+          22,
+          136
+        ],
+        "pin_measured_absorbed_from": 1730,
+        "first_file": "13ol_cj/1lpz",
+        "chunk": 1
+      },
+      "layout": "single-image+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 1303,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "le",
+          "compression": "gzip",
+          "handler": "squashfs_v4_le",
+          "sha256": "d2f86330248f74bc933ca2a793e8de809f19a0bbefb55223faeaf1261d28e7db"
+        }
+      ],
+      "container": null,
+      "residue": {
+        "offset": 4096,
+        "length": 64,
+        "sha256": "4eecac28d3e3c98dff5ec933e19d6bde504d423a9de89675353074997d30ae11"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "C21/carrier.sqsh",
+      "sha256": "532f33b2c4242471f201ffe626d6dce6a456220a3eab03787b6b25087812773d",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v4_le"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "extractor-failure",
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "no",
+        "symlink_removed": true,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 1
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C22",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 22,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 1,
+        "links": "none",
+        "residue": 1,
+        "wrap": 1,
+        "damage": 0,
+        "dep": 1,
+        "max_depth": 1,
+        "endian": "be",
+        "comp": "xz",
+        "legacy_fixture": "v1-le",
+        "legacy_handler": "squashfs_v1",
+        "body_v4": 1,
+        "two_chunk": true,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "container wrap",
+          "max_depth 1",
+          "residue"
+        ]
+      },
+      "decisions": [
+        "container wrap",
+        "max_depth 1",
+        "residue"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "before",
+      "endian": "be",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "tar(legacy+v4)+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v1-le",
+          "handler": "squashfs_v1",
+          "endian": "le",
+          "sha256": "b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71"
+        },
+        {
+          "offset": 4096,
+          "length": 63098,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "be",
+          "compression": "xz",
+          "handler": "squashfs_v4_be",
+          "sha256": "436b8441edca23bac9a20c971598e9d99b1fd91d80a9fdef5ae25d31b47a566e"
+        }
+      ],
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 67194,
+        "sha256": "b4677a752363a9a8b3401b1fc3457448902637e9d52faf03c62fac5b997fd940"
+      },
+      "residue": {
+        "offset": 73728,
+        "length": 64,
+        "sha256": "ca9f919a2c56053ac123369d33339803595c81bf61bc7d36daa9902e9c732368"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "C22/carrier.sqsh",
+      "sha256": "9a30c306c077dcc9db6b5502d3f59e4bef271cdd2c712e8d96528546a80e02df",
+      "declared_features": {
+        "handler_set": [
+          "tar"
+        ],
+        "gap_kinds": [
+          "depth-limited",
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C23",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 23,
+      "factors": {
+        "base": "legacy",
+        "second_v4": 0,
+        "links": "none",
+        "residue": 1,
+        "wrap": 1,
+        "damage": 1,
+        "dep": 0,
+        "max_depth": 3,
+        "endian": "be",
+        "comp": "fixture",
+        "legacy_fixture": "v2-be",
+        "legacy_handler": "squashfs_v2",
+        "body_v4": 0,
+        "two_chunk": false,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "container wrap",
+          "residue",
+          "legacy chunk",
+          "damage"
+        ]
+      },
+      "decisions": [
+        "container wrap",
+        "residue",
+        "legacy chunk",
+        "damage"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "be",
+      "compression": "fixture",
+      "tree": "fixture",
+      "content": "fixture",
+      "symlinks": [],
+      "corruption": "fixture-damage",
+      "damage": {
+        "recipe": "fixture-damage",
+        "fixture": "v2-be",
+        "offset": 88,
+        "length": 4,
+        "chunk": 1
+      },
+      "layout": "tar(single-fixture)+residue",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 4096,
+          "fixture": "v2-be",
+          "handler": "squashfs_v2",
+          "endian": "be",
+          "sha256": "4f1ef6139bc813b8826f74e4515591c2ce3dde25c2fa5eea9cd1c2563b2d0446"
+        }
+      ],
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 4096,
+        "sha256": "4abadc3fcb55304d4c317cc0ce26962d778419c2703fd42d345f200b46849e49"
+      },
+      "residue": {
+        "offset": 12288,
+        "length": 64,
+        "sha256": "1e9e0cb1b3812114b61127080267a67f514417d2075afafc1ca0cd079869225f"
+      },
+      "nested": null,
+      "rea": {
+        "max_depth": 3
+      },
+      "operation": "extract_firmware",
+      "carrier": "C23/carrier.sqsh",
+      "sha256": "545073a4f47afe277956ee8a532b2c6fe11ec2a0c6054688aac2e5e517a2a684",
+      "declared_features": {
+        "handler_set": [
+          "squashfs_v2",
+          "tar"
+        ],
+        "gap_kinds": [
+          "extractor-failure",
+          "unknown-chunk-handler"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "yes",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": true,
+        "max_depth": 3
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": true
+    },
+    {
+      "id": "C24",
+      "class": "combo",
+      "family": "combo",
+      "combo_index": 24,
+      "factors": {
+        "base": "v4",
+        "second_v4": 0,
+        "links": "none",
+        "residue": 0,
+        "wrap": 1,
+        "damage": 0,
+        "dep": 0,
+        "max_depth": 1,
+        "endian": "be",
+        "comp": "xz",
+        "legacy_fixture": "v3bc-le",
+        "legacy_handler": "squashfs_v3_broadcom",
+        "body_v4": true,
+        "two_chunk": false,
+        "damage_endian": "be",
+        "redraw": 0,
+        "decisions": [
+          "container wrap",
+          "max_depth 1"
+        ]
+      },
+      "decisions": [
+        "container wrap",
+        "max_depth 1"
+      ],
+      "label": null,
+      "action": null,
+      "arm": "after",
+      "endian": "be",
+      "compression": "xz",
+      "tree": "random",
+      "content": "stream",
+      "symlinks": [],
+      "corruption": null,
+      "damage": null,
+      "layout": "tar(single-image)",
+      "chunks": [
+        {
+          "offset": 0,
+          "length": 59900,
+          "role": "generated SquashFS 4.0 image",
+          "endian": "be",
+          "compression": "xz",
+          "handler": "squashfs_v4_be",
+          "sha256": "598fa3ee15f9148413177a1a03562763f5a406c851d3c0f6163221edc437501d"
+        }
+      ],
+      "container": {
+        "format": "ustar",
+        "member": "rootfs.sqsh",
+        "member_size": 59900,
+        "sha256": "4f3daf272b37f9c28280428a246b74c8b76df47f8a16717de76087f07c5f5c43"
+      },
+      "residue": null,
+      "nested": null,
+      "rea": {
+        "max_depth": 1
+      },
+      "operation": "extract_firmware",
+      "carrier": "C24/carrier.sqsh",
+      "sha256": "4f3daf272b37f9c28280428a246b74c8b76df47f8a16717de76087f07c5f5c43",
+      "declared_features": {
+        "handler_set": [
+          "tar"
+        ],
+        "gap_kinds": [
+          "depth-limited"
+        ],
+        "gap_dependencies": [],
+        "be_argv": "n/a",
+        "symlink_removed": false,
+        "published": "nonzero"
+      },
+      "declared_extras": {
+        "extraction_failed": false,
+        "max_depth": 1
+      },
+      "class_expected": null,
+      "seed_dependent": true,
+      "outside_named_union_declared": false
+    }
+  ]
+}

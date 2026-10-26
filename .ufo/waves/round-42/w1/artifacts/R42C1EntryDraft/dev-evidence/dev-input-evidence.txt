@@ -1,0 +1,67 @@
+# R42C1EntryDraft dev-input evidence (unblob 26.6.4 SquashFS test fixtures, MIT; development inputs, never C1 carriers)
+# fetched 2026-10-26; sha256 and sizes below; all runs in scratch `/fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft` (removed at end of seat)
+
+## Fixture pins
+file                                       size     sha256
+squashfs_v3_le.bin                         4096     0161351caec8e9da6e3e5ac7b046fd11d832efb18eb09e33011e6d19d50cd1f7
+squashfs_v3_be.bin                         4096     4e9493d9c6f868005dea8f11992129c3399e0bcb8f3a966c750cb925989ca97c
+squashfs_v3.le.1kpad.bin                   1024     5109f62ffdee08cf862b258c41804d9a523479706a2bc2fc520ded78affe4723
+squashfs_v3.le.4kpad.bin                   4096     5afb4387d027baa3948d88f22db1d905beea10dfd83cf0cbaa489e5f242b6dda
+squashfs_v3.le.nopad.bin                   320      314d4bbe07b83f491e9987d7db39d8560945b2ae273ed23ead7e9d92250deb3c
+squashfs_v3_le.lzma.bin                    4096     2ac15e5c993f330854497b2fd032d2e87873a288fab6da2fe72106bb40b43124
+
+## Fetch (URL shape: the media host serves refs/tags/26.6.4; a bare 26.6.4 tag path 404s)
+curl -fsSL "https://media.githubusercontent.com/media/onekey-sec/unblob/refs/tags/26.6.4/tests/integration/filesystem/squashfs/<handler>/<endian_or_flat>/__input__/<file>" -o <file>
+
+## unblob argv per endianness (grep 'Running extract command' from unblob.log; cwd = scratch, -e <out>)
+# squashfs_v3_le.bin  exit=0  published=2
+command='sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/o_le/squashfs_v3_le.bin_extract /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/squashfs_v3_le.bin'
+# squashfs_v3_be.bin  exit=0  published=2
+command='sasquatch -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/o_be/squashfs_v3_be.bin_extract /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/squashfs_v3_be.bin'
+# squashfs_v3_le.lzma.bin  exit=0  published=2
+command='sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/o_lzma/squashfs_v3_le.lzma.bin_extract /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/squashfs_v3_le.lzma.bin'
+# squashfs_v3.le.nopad.bin  exit=0  published=4
+command='sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/o_nopad/squashfs_v3.le.nopad.bin_extract /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/squashfs_v3.le.nopad.bin'
+# squashfs_v3.le.1kpad.bin  exit=0  published=4
+command='sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/o_1kpad/squashfs_v3.le.1kpad.bin_extract /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/squashfs_v3.le.1kpad.bin'
+# squashfs_v3.le.4kpad.bin  exit=0  published=4
+command='sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/o_4kpad/squashfs_v3.le.4kpad.bin_extract /fast/scratch/hyaku/kaidoku-r42/R42C1EntryDraft/squashfs_v3.le.4kpad.bin'
+
+## Oracle pair on the v3 fixtures (unsquashfs 4.7.5, 7-Zip 26.04)
+### squashfs_v3_le.bin
+unsquashfs exit=0
+7z exit=0
+unsquashfs -s:
+  Found a valid little endian SQUASHFS 3:0 superblock on squashfs_v3_le.bin.
+  Creation or last append time Tue Nov 23 07:22:45 2021
+  Filesystem size 258 bytes (0.25 Kbytes / 0.00 Mbytes)
+digests (unsquashfs, then 7z):
+  u 303980bcb9e9e6cdec515230791af8b0ab1aaa244b58a8d99152673aa22197d0  ./apple.txt
+  u 86baf3529da550a44b0681ffa031b6b676e620e9e06dc5ac1119d0cd21cbcf55  ./cherry.txt
+  z 303980bcb9e9e6cdec515230791af8b0ab1aaa244b58a8d99152673aa22197d0  ./apple.txt
+  z 86baf3529da550a44b0681ffa031b6b676e620e9e06dc5ac1119d0cd21cbcf55  ./cherry.txt
+
+### squashfs_v3_be.bin
+unsquashfs exit=0
+7z exit=0
+unsquashfs -s:
+  Reading a different endian SQUASHFS filesystem on squashfs_v3_be.bin
+  Found a valid big endian SQUASHFS 3:0 superblock on squashfs_v3_be.bin.
+  Creation or last append time Tue Nov 23 07:22:40 2021
+digests (unsquashfs, then 7z):
+  u 303980bcb9e9e6cdec515230791af8b0ab1aaa244b58a8d99152673aa22197d0  ./apple.txt
+  u 86baf3529da550a44b0681ffa031b6b676e620e9e06dc5ac1119d0cd21cbcf55  ./cherry.txt
+  z 303980bcb9e9e6cdec515230791af8b0ab1aaa244b58a8d99152673aa22197d0  ./apple.txt
+  z 86baf3529da550a44b0681ffa031b6b676e620e9e06dc5ac1119d0cd21cbcf55  ./cherry.txt
+
+### squashfs_v3_le.lzma.bin
+unsquashfs exit=1
+7z exit=0
+unsquashfs -s:
+  Found a valid little endian SQUASHFS 3:0 superblock on squashfs_v3_le.lzma.bin.
+  Creation or last append time Fri Apr  7 07:26:09 2023
+  Filesystem size 257 bytes (0.25 Kbytes / 0.00 Mbytes)
+digests (unsquashfs, then 7z):
+  z 303980bcb9e9e6cdec515230791af8b0ab1aaa244b58a8d99152673aa22197d0  ./apple.txt
+  z be6fe11876282442bead98e8b24aca07f8972a763cd366c56b4b5f7bcdd23eac  ./orange.txt
+

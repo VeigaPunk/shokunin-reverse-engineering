@@ -1,0 +1,47 @@
+# R42Simplify inputs — read-only extraction, no lane writes
+
+lane: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+base commit: c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c (verified: `git log -1 c4a38ea2`)
+lane HEAD at review time: ae5dc3f39c3374cb683fa05eb5fd069dda10d376
+
+## extraction (every command read-only)
+
+    git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show \
+        c4a38ea2:tools/round-41/c1-counter.py    > $S/src/c1-counter.py
+    ... c2-counter.py ... heldout-gen-v3.py
+
+## identities
+
+    bbabbfecb229e8992fb07149cad0cf9171a2bf31513bd5db77ddb3c4f8845cfc  c1-counter.py     3413 lines
+    c6c1ea64f07884a3b160a7e52268d295d54c8ef3bc2005704d5fae3398720af8  c2-counter.py     2499 lines
+    652d71afe464856caf04286fb653cbc3914373f76f9f5cae9fb22cd577d97e00  heldout-gen-v3.py 2130 lines
+
+(`wc -l` at the base commit; sha256 over `git show` bytes.)
+
+## oracle-readiness spot check (no third-party image copied)
+
+mit-licensed unblob 26.6.4 fixture, fetched and discarded from scratch:
+
+    URL  https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3/little_endian/__input__/squashfs_v3_le.bin
+    sha256 0161351caec8e9da6e3e5ac7b046fd11d832efb18eb09e33011e6d19d50cd1f7
+    size 4096
+
+    $ unsquashfs -version
+    unsquashfs version 4.7.5 (2026/03/01)
+    $ unsquashfs -s v3le.bin
+    Found a valid little endian SQUASHFS 3:0 superblock on v3le.bin.
+    $ unsquashfs -lls v3le.bin
+    -rw-rw-r-- 6  squashfs-root/apple.txt
+    -rw-rw-r-- 7  squashfs-root/cherry.txt
+    $ 7z l v3le.bin
+      apple.txt   6   13
+      cherry.txt  7    0
+      2 files
+
+Conclusion: both non-sasquatch readers read a v3 image and agree (6 B / 7 B), so
+the counter's oracle input (a TSV of rel, sha256[, size]) needs no new dialect
+handling; the two-reader machinery stays outside the three files under review.
+
+## probe
+
+    $ python3 -I -B probe-c1.py ./c1-base.py    # exit 0, output in probe-c1.out

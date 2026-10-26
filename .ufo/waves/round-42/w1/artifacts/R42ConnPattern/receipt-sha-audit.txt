@@ -1,0 +1,32 @@
+Score-receipt digest audit (round-41 L1 receipts).
+
+Files:
+  .ufo/waves/round-41/l1/scores/c1-at-e9a24d07.json
+  .ufo/waves/round-41/l1/scores/c1-at-042b8769.json
+  .ufo/waves/round-41/l1/scores/c1-extra-at-e9a24d07.json
+  .ufo/waves/round-41/l1/scores/c2-at-e9a24d07.json
+
+Open: 'counter_sha256' in receipt keys -> False for ALL four.
+C1 receipt top-level keys:
+  argv bindings carrier_ids carriers carriers_matched carriers_spec_problems
+  carriers_unchanged exit_code freeze frozen_path_changed frozen_tables_valid
+  gap_rule_problems gap_rule_unchanged met_target predicate prior_pin_sources
+  prior_pins projection_profile revision target
+  -> NO counter digest anywhere in the C1 receipt (writer:
+     c1-counter.py:1789-1797 dumps res + argv + exit_code only).
+C1-extra receipt keys:
+  argv base bindings detail exit_code freeze met revision
+  -> no counter digest.
+C2 receipt: contains frozen_units.COUNTER (the c2-counter digest) but under
+  a different key; no top-level counter_sha256.
+
+Closure D4 (round-41-verifier-spotcheck.md) recorded counter_sha256 null;
+  the C1 side is actually a complete absence, not a JSON null.
+
+Precedent (earlier rounds DID record it):
+  .ufo/waves/round-32/controls/c2-negative/receipt.json: counter_sha256
+  .ufo/waves/round-34/w1/CtlDoNothing-files/run-receipt.json: counter_sha256
+  .ufo/waves/round-23/verify/...: counter_sha256
+  .ufo/waves/round-22/verify/...: counter_sha256
+The round-41 L1 score wrapper (l1/score.sh) is a 9-line shell script that
+  calls the counters with --json-out; it computes no counter digest either.

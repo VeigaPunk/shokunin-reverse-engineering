@@ -1,0 +1,40 @@
+== installed unblob 26.6.4 handlers/filesystem/squashfs.py ==
+2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287  /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py
+
+== NAME / EXTRACTOR / v4-magic line pins (grep -n, installed copy) ==
+24:class SquashFSExtractor(Extractor):
+72:class _SquashFSBase(StructHandler):
+75:    EXTRACTOR = SquashFSExtractor(3, 0x73_71_73_68)
+101:class SquashFSv1Handler(_SquashFSBase):
+102:    NAME = "squashfs_v1"
+158:class SquashFSv2Handler(SquashFSv1Handler):
+159:    NAME = "squashfs_v2"
+199:class SquashFSv2NonStandardHandler(SquashFSv2Handler):
+200:    NAME = "squashfs_v2_nonstandard"
+204:    EXTRACTOR = SquashFSExtractor(2, 0x73_71_6C_7A)
+244:class SquashFSv3Handler(_SquashFSBase):
+245:    NAME = "squashfs_v3"
+318:class SquashFSv3DDWRTHandler(SquashFSv3Handler):
+319:    NAME = "squashfs_v3_ddwrt"
+323:    EXTRACTOR = SquashFSExtractor(3, 0x74_71_73_68)
+363:class SquashFSv3BroadcomHandler(SquashFSv3Handler):
+364:    NAME = "squashfs_v3_broadcom"
+368:    EXTRACTOR = SquashFSExtractor(3, 0x71_73_68_73)
+409:class SquashFSv3NSHandler(SquashFSv3Handler):
+410:    NAME = "squashfs_v3_nonstandard"
+414:    EXTRACTOR = SquashFSExtractor(3, 0x73_71_6C_7A)
+454:class SquashFSv4LEHandler(_SquashFSBase):
+455:    NAME = "squashfs_v4_le"
+463:            68 73 71 73 [24] 04 00
+513:class SquashFSv4BEHandler(SquashFSv4LEHandler):
+514:    NAME = "squashfs_v4_be"
+522:            73 71 73 68 [24] 00 04
+527:    EXTRACTOR = SquashFSExtractor(4, 0x73_71_73_68)
+548:class SquashFSv4BroadcomHandler(SquashFSv4LEHandler):
+549:    NAME = "squashfs_v4_broadcom"
+553:    EXTRACTOR = SquashFSExtractor(4, 0x71_73_68_73)
+561:            71 73 68 73 [24] 00 04
+569:            73 68 73 71 [24] 04 00
+
+== SOURCES.md S112 row at c4a38ea (:118) ==
+| S112 | unblob SquashFS handler at tag 26.6.4 — https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py | code | A | v4 BE extractor dependency and argv for unblob 26.6.4 only; not the binaries themselves, not other versions | tag 26.6.4 = commit 1fcc7a0a584a70a96c31f5a276c20944d199a089; `SquashFSExtractor` lines 24-70: "case Endian.BIG, 4: executable = self.V4BE_EXECUTABLE" and `get_dependencies()` returns `sasquatch` + `sasquatch-v4be` | Name the external sasquatch-v4be dependency as structural for standard BE v4 before diagnosing image properties | mined | 2026-10-26 | 180d | corpus/knowledge/2026-10-26-r38-sasquatch-be-squashfs-recursion.md, corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md, corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md, corpus/knowledge/2026-10-26-r40-sqfs-triage-v2.md |

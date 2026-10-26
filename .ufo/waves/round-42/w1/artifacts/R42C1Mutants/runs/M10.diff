@@ -1,0 +1,11 @@
+--- pristine
++++ M10
+@@ -1085,7 +1085,7 @@
+         if len(hits) != 1:
+             return False, 'gap path %r matches %d non-regular entries' % (rp, len(hits))
+         entry_kind = by_rel[hits[0]][0]
+-        if kind not in allowed.get(entry_kind, []):
++        if not allowed.get(entry_kind):
+             return False, 'gap kind %r not allowed for %r entry %r (allowed %r)' % (
+                 kind, entry_kind, hits[0], allowed.get(entry_kind, []))
+         gapped.setdefault(hits[0], []).append(kind)

@@ -1,0 +1,12 @@
+--- pristine
++++ M11
+@@ -1600,7 +1600,8 @@
+                 prov = env.get('provider') or {}
+                 d['operation_ok'] = (env.get('operation') == 'extract_firmware'
+                                      and isinstance(prov, dict) and prov.get('id') == 'unblob')
+-                d['handler_ok'] = HANDLER in chunk_handlers(env)
++                d['handler_ok'] = any(h and str(h).startswith('squashfs_v4')
++                                      for h in chunk_handlers(env))
+                 d['chunks_ok'] = not chunk_failed(env)
+                 root_value, root_how = subject_root(
+                     env, (c.get('oracle_root')

@@ -1,0 +1,2499 @@
+#!/usr/bin/env python3
+"""R41-C2 counter (depth: SquashFS extract-firmware outcome-triage table v3,
+scored against labels written independently of the generator).
+
+Predicate P41-C2 as amended (plans/round-41-claims.md, `## Amendments after
+wave-1 recon` supersedes the draft bullet list):
+
+  At the measured revision, the frozen v3 interpreter
+  `tools/round-41/sqfs-triage-v3.py` — materialised from the *freeze* commit —
+  reading `SKILL.md` at the measured revision and therefore only the
+  `<!-- sqfs-triage-table v3 -->` rule block, gives every held-out envelope the
+  (label, action) pair that the frozen INDEPENDENT evaluator
+  `tools/round-41/indep-eval-v3.py` gives it, for all held-out envelopes (two
+  per class over the twenty planned classes, plus the seeded twelve-carrier
+  `combo` family); the expected pair is the evaluator's alone; every envelope's
+  observed (H, G, D, BE, SR, P) equals the tuple its carrier or class declares
+  (`observed_features_match_declared`); the four committed round-40 C1
+  after-receipts get `depth-limited` from the interpreter and agree with the
+  evaluator (`real_receipts_depth_limited`); the seed is the freeze commit
+  hash; every carrier regenerates byte-identically from that seed with the
+  frozen `tools/round-41/heldout-gen-v3.py`; every envelope's subject digest
+  equals its carrier's sha256; the held-out manifest is first added in a commit
+  descending from the freeze and no later than its envelopes; and the v3 block
+  bytes at the measured revision equal the freeze bytes.
+
+  `class_expected` is REPORTED (`class_map_agreement`), never a veto: the
+  generator's class map is a cross-check on the evaluator and a disagreement is
+  a finding, not a claim failure.  Matched counts are reported separately for
+  class carriers and combo carriers, plus the total.
+
+Target: matched == N and every binding true.
+
+Freeze integrity (R40-CL3, both directions)
+  A score at REV is admissible only if no commit in FREEZE..REV touches a
+  frozen path; a later restore does not un-block.  Both failures the round-40
+  sentinel measured are blocked (exit 2 `frozen_path_changed`):
+    F2 — the generator's writer (`tools/round-40/gen-squashfs.py`,
+         `tools/round-39/gen-squashfs.py`) is frozen whenever the frozen
+         generator's source names it, or the manifest declares it;
+    F3 — the SKILL v3 block (marker line -> next rule block, so the
+         `sqfs-triage-actions` line is inside it) is compared at EVERY commit
+         in FREEZE..REV that touches `SKILL.md`, not only at REV.
+  Frozen paths: `plans/round-41-claims.md`, `tools/round-41` (whole subtree),
+  `corpus/evidence/round-41/c2/heldout` (whole subtree), the writers in scope,
+  and the SKILL v3 block region.  A creation is not a touch (the held-out
+  evidence is necessarily first added after the freeze; its ordering is bound
+  by `manifest_after_freeze`), a modification, deletion, rename or typechange
+  is.  A delete + re-add inside one commit is byte-invisible and is not
+  claimed to be caught (commit granularity).
+
+Usage
+  c2-counter.py --root LANE --rev REV --freeze FREEZE [--json-out PATH]
+  c2-counter.py --selftest
+Exit
+  0  target met (met_target true)
+  1  not met (a pair miss or a binding false), receipt still written
+  2  unevaluable: freeze integrity or a structural prerequisite —
+     `frozen_path_changed`, `freeze_not_ancestor_of_rev`, `unknown_revision`,
+     `no_manifest_at_rev`, `manifest_unparsable`, `manifest_not_an_object`,
+     `generator_absent_at_freeze`, `generator_failed`,
+     `generator_wrote_no_manifest`, `regenerated_manifest_unparsable`,
+     `evaluator_absent_at_freeze`, `evaluator_failed`,
+     `evaluator_output_unparsable`, `interpreter_absent_at_freeze`,
+     `interpreter_failed`, `met_target_inconsistent`
+The JSON receipt always records the counter's own exit code (`exit_code`), so
+a re-minted receipt cannot claim a result the run did not produce (R39-CL6).
+
+Frozen tool interfaces (contract this counter relies on)
+  interpreter `python3 -I -B sqfs-triage-v3.py --skill SKILL.md [--json]
+              [--table-only] ENV...`  (v2-compatible: `--json` ->
+              `results: [{path, label, action, rule|row_index, row}]`, else
+              `path<TAB>label<TAB>action[<TAB>row]`); also probed with
+              `--envelopes DIR`.
+  evaluator   `python3 -I -B indep-eval-v3.py --envelopes DIR`
+              -> JSON keyed by envelope id, value `{label, action}` (the
+              round-41 form is `{"labels": {"H01": {label, action, ...}}}`);
+              also probed with `--json`, `--format json`, `--json-out FILE`
+              and `--out FILE`, and the shapes `{"results": [{id, ...}]}` and a
+              bare list are accepted.
+  generator   `python3 -I -B heldout-gen-v3.py --seed FREEZE --out DIR`
+              -> `manifest.json` with `classes` and `carriers[]` {id, class,
+              arm, class_expected (label, action, features) or `features`,
+              carrier, sha256}.
+  Every attempt's exit code and the interface that answered are recorded in
+  the receipt (`interpreter_interface`, `evaluator_interface`,
+  `interface_attempts`, `real_receipts.attempts`).
+
+Reads git objects only (`git show`/`log`/`ls-tree`/`merge-base`/`rev-list`);
+everything is materialised into a private scratch directory under
+$HYAKU_SCRATCH/kaidoku-r41 (or the system temp dir) and removed at exit.
+"""
+import argparse
+import hashlib
+import json
+import os
+import re
+import shlex
+import shutil
+import subprocess
+import sys
+import tempfile
+
+# ------------------------------------------------------------------ claim paths
+MANIFEST = 'corpus/evidence/round-41/c2/heldout/manifest.json'
+MANIFEST_DIR = MANIFEST.rsplit('/', 1)[0]
+SKILL = 'SKILL.md'
+CLAIMS = 'plans/round-41-claims.md'
+EVAL = 'tools/round-41/indep-eval-v3.py'
+INTERP = 'tools/round-41/sqfs-triage-v3.py'
+GEN = 'tools/round-41/heldout-gen-v3.py'
+COUNTER = 'tools/round-41/c2-counter.py'
+
+# A frozen path may be a file or a directory subtree (git log -- <dir> covers
+# every path below it, including deletes).
+FROZEN_PATHS = (CLAIMS, 'tools/round-41', MANIFEST_DIR)
+WRITER_CANDIDATES = ('tools/round-40/gen-squashfs.py',
+                     'tools/round-39/gen-squashfs.py')
+GEN_TREE_PREFIXES = ('tools/round-41', 'tools/round-40', 'tools/round-39')
+WRITER_ENV = 'KAIDOKU_GEN_SQUASHFS'
+
+MARKER_V3 = '<!-- sqfs-triage-table v3 -->'
+MARKER_V2 = '<!-- sqfs-triage-table v2 -->'
+ACTIONS_RE = re.compile(r'<!--\s*sqfs-triage-actions:\s*(.*?)\s*-->')
+CRAFT = '## Queue-drain craft'
+
+# The twelve v3 columns minus the two prose-only ones (`cause`, `source`):
+# without these ten the interpreter cannot decide anything.
+COLUMNS = ('label', 'operation', 'provider', 'handler', 'gap kinds',
+           'dependencies', '-be in child argv', 'symlink removed',
+           'published files', 'action')
+
+# v2's thirteen classes, the five combined classes and the two the wave-1
+# amendments add (plans/round-41-claims.md `## Amendments after wave-1 recon`).
+PLANNED_CLASSES = (
+    'clean-be', 'clean-le', 'clean-empty', 'escaping-symlink-removed',
+    'in-tree-symlink-metadata', 'mixed-symlinks', 'dep-missing-be',
+    'dep-missing-le', 'avm-marker-be-dropped', 'body-extractor-failure',
+    'body-extractor-failure-le', 'partial-body-failure', 'no-squashfs-chunk',
+    'out-of-domain', 'partial-in-tree', 'partial-mixed',
+    'depth-limited-alone', 'depth-limited-in-tree', 'depth-limited-mixed',
+    'failure-depth-limited',
+)
+
+# The four committed round-40 C1 after-receipts the amended claim scores as
+# real (not generated) depth-limited envelopes.
+REAL_RECEIPTS = ('corpus/evidence/round-40/c1/V1/after.json',
+                 'corpus/evidence/round-40/c1/V2/after.json',
+                 'corpus/evidence/round-40/c1/L1/after.json',
+                 'corpus/evidence/round-40/c1/L2/after.json')
+REAL_LABEL = 'depth-limited'
+COMBO_CLASS = 'combo'
+COMBO_COUNT = 12
+
+# The (H, G, D, BE, SR, P) tuple the amended claim binds, in the generator
+# manifest's own feature names plus `extraction_failed` (observable).
+FEATURE_KEYS = ('handler_set', 'gap_kinds', 'gap_dependencies', 'be_argv',
+                'symlink_removed', 'published', 'extraction_failed')
+REQUIRED_FEATURES = ('handler_set', 'gap_kinds', 'gap_dependencies', 'be_argv',
+                     'symlink_removed', 'published')
+FEATURE_ALIASES = {
+    'h': 'handler_set', 'handlers': 'handler_set', 'handler': 'handler_set',
+    'handler_set': 'handler_set',
+    'g': 'gap_kinds', 'gaps': 'gap_kinds', 'gap_kinds': 'gap_kinds',
+    'gap kinds': 'gap_kinds',
+    'd': 'gap_dependencies', 'deps': 'gap_dependencies',
+    'dependencies': 'gap_dependencies', 'gap_dependencies': 'gap_dependencies',
+    'be': 'be_argv', 'be_argv': 'be_argv', '-be in child argv': 'be_argv',
+    'sr': 'symlink_removed', 'symlink_removed': 'symlink_removed',
+    'symlink removed': 'symlink_removed',
+    'p': 'published', 'published': 'published', 'published files': 'published',
+    'files': 'published',
+    'extraction_failed': 'extraction_failed', 'failed': 'extraction_failed',
+}
+SYMLINK_TYPENAME = 'MaliciousSymlinkRemoved'
+OPERATION_TOKEN = 'extract_firmware'
+# Classes whose envelopes need REA at --max-depth 1 (advisory only: the frozen
+# predicate text does not bind on the recorded REA parameters).
+DEPTH_CLASS_PREFIX = 'depth-limited'
+
+NOMATCH_PAIR = ('unclassified', 'none')
+
+# Bindings the frozen predicate sentence names.
+CLAIM_BINDINGS = (
+    'seed_matches_freeze', 'manifest_generator_path',
+    'generator_sha_matches_freeze', 'writer_matches_manifest',
+    'regenerated_seed_matches_freeze',
+    'carriers_regenerated', 'carriers_committed', 'envelopes_valid',
+    'manifest_after_freeze', 'manifest_before_envelopes',
+    'v3_block_present', 'v3_block_identical',
+    'evaluator_covers_all', 'observed_features_match_declared',
+    'real_receipts_depth_limited',
+)
+# Bindings that guard the instrument itself (calibration): each is a property
+# every correct (interpreter, table, manifest) must have, so a false one means
+# the score is not trustworthy rather than that the table is wrong.
+INSTRUMENT_BINDINGS = (
+    'classes_unique', 'classes_two_each', 'n_equals_twice_classes',
+    'combo_family_wellformed', 'classes_cover_planned', 'ids_unique', 'arms_valid',
+    'carrier_paths_unique', 'envelope_paths_unique',
+    'v3_block_columns', 'v3_actions_declared', 'observed_actions_declared',
+    'decisions_reported', 'row_decisions_consistent',
+)
+
+
+class Unevaluable(Exception):
+    def __init__(self, reason, receipt=None):
+        super().__init__(reason)
+        self.reason = reason
+        self.receipt = receipt or {}
+
+
+# ------------------------------------------------------------------ git
+def show(root, rev, path):
+    """Blob bytes at `rev`, or None when absent/unreadable."""
+    if not rev:
+        return None
+    p = subprocess.run(['git', '-C', root, 'show', '%s:%s' % (rev, path)],
+                       capture_output=True)
+    return p.stdout if p.returncode == 0 else None
+
+
+def present(root, rev, path):
+    if not rev:
+        return False
+    return subprocess.run(['git', '-C', root, 'cat-file', '-e', '%s:%s' % (rev, path)],
+                          capture_output=True).returncode == 0
+
+
+def full_rev(root, rev):
+    p = subprocess.run(['git', '-C', root, 'rev-parse', '--verify', '%s^{commit}' % rev],
+                       capture_output=True, text=True)
+    if p.returncode:
+        raise Unevaluable('unknown_revision:%s' % rev)
+    return p.stdout.strip()
+
+
+def is_ancestor(root, a, b):
+    if not a or not b:
+        return False
+    return subprocess.run(['git', '-C', root, 'merge-base', '--is-ancestor', a, b],
+                          capture_output=True).returncode == 0
+
+
+def first_add(root, rev, path):
+    p = subprocess.run(['git', '-C', root, 'log', '--format=%H', '--diff-filter=A',
+                        '--no-renames', '--reverse', rev, '--', path],
+                       capture_output=True, text=True)
+    if p.returncode:
+        return None
+    lines = [l for l in p.stdout.split() if l]
+    return lines[0] if lines else None
+
+
+def commits_touching(root, rev, path):
+    """Commits reachable from `rev` (a rev or a RANGE) that touched `path`."""
+    p = subprocess.run(['git', '-C', root, 'log', '--format=%H', '--no-renames',
+                        rev, '--', path],
+                       capture_output=True, text=True)
+    if p.returncode:
+        return []
+    return [l for l in p.stdout.split() if l]
+
+
+def frozen_drift(root, freeze, rev, paths):
+    """{path: [commit, ...]} for frozen paths MODIFIED in FREEZE..REV.
+
+    A frozen path may be a file or a subtree.  One `git log --name-status` per
+    path: a modification, deletion, rename or typechange of anything the freeze
+    already carried is a touch; a plain creation (`A`) is not, because the
+    held-out evidence the claim is scored on is necessarily first added after
+    the freeze (its ordering is a binding, `manifest_after_freeze`).  A file
+    created and later rewritten therefore shows up as `M`, and a delete shows
+    as `D` — neither can be undone by a later restore.
+    """
+    out = {}
+    rng = '%s..%s' % (freeze, rev)
+    for p in paths:
+        q = subprocess.run(['git', '-C', root, 'log', '--format=@@%H', '--name-status',
+                            '--no-renames', rng, '--', p],
+                           capture_output=True, text=True)
+        cur = None
+        hits = set()
+        for line in q.stdout.splitlines():
+            if line.startswith('@@'):
+                cur = line[2:].strip()
+                continue
+            if not line.strip() or cur is None:
+                continue
+            st = line.split('\t')[0].strip()[:1]
+            if st in ('M', 'D', 'R', 'T', 'U'):
+                hits.add(cur)
+        if hits:
+            out[p] = sorted(hits)
+    return out
+
+
+# ------------------------------------------------------------------ skill block
+def craft_span(text):
+    """(lines, first, last) of the `## Queue-drain craft` section."""
+    if text is None:
+        return None
+    lines = text.splitlines()
+    start = next((i for i, l in enumerate(lines)
+                  if l.lower().startswith(CRAFT.lower())), None)
+    if start is None:
+        return None
+    end = len(lines)
+    for i in range(start + 1, len(lines)):
+        if lines[i].startswith('## '):
+            end = i
+            break
+    return lines, start, end
+
+
+def rule_block(text, marker):
+    """The rule block a table marker owns: marker line -> next rule block.
+
+    Inside `## Queue-drain craft` the region runs from the marker line up to
+    the next heading, the next `- **...**` rule bullet, or the next table
+    marker (exclusive), trailing blank lines trimmed.  That span contains the
+    `sqfs-triage-actions` line and the table, which is exactly the unit the
+    claims freeze.
+    """
+    span = craft_span(text)
+    if span is None:
+        return None
+    lines, start, end = span
+    # The marker owns the block only where it *is* the line: rule prose may
+    # quote it inline (`reads only SKILL table v3 (<!-- ... -->)`), so an
+    # inline mention never starts a block and never ends one.
+    mi = next((i for i in range(start + 1, end)
+               if lines[i].strip().startswith(marker)), None)
+    if mi is None:
+        mi = next((i for i in range(start + 1, end) if marker in lines[i]), None)
+    if mi is None:
+        return None
+    stop = end
+    for i in range(mi + 1, end):
+        l = lines[i]
+        if re.match(r'^#{1,4} ', l) or re.match(r'^\s*-\s+\*\*', l) \
+                or l.strip().startswith('<!-- sqfs-triage-table'):
+            stop = i
+            break
+    block = '\n'.join(lines[mi:stop]).rstrip('\n')
+    return block or None
+
+
+def parse_rows(block):
+    """(header cells lowercased, body rows) of a table block, or (None, [])."""
+    if not block:
+        return None, []
+    rows = [[c.strip().strip('`').strip() for c in l.strip().strip('|').split('|')]
+            for l in block.splitlines() if l.lstrip().startswith('|')]
+    if len(rows) < 2:
+        return None, []
+    return [c.lower() for c in rows[0]], rows[2:]
+
+
+def declared_actions(block):
+    if not block:
+        return None
+    m = ACTIONS_RE.search(block)
+    if not m:
+        return None
+    toks = m.group(1).split()
+    return [t.strip('`') for t in toks if t.strip('`')] or None
+
+
+def columns_ok(block):
+    header, _ = parse_rows(block)
+    if not header:
+        return False, []
+    missing = [c for c in COLUMNS if c not in header]
+    return (not missing), missing
+
+
+def block_at(root, rev):
+    return rule_block(as_text(show(root, rev, SKILL)), MARKER_V3)
+
+
+def skill_block_drift(root, freeze, rev, freeze_block):
+    """Commits in FREEZE..REV whose SKILL v3 block differs from the freeze's.
+
+    Only commits that touch SKILL.md can change the block, so those are the
+    ones scanned (`git log freeze..rev -- SKILL.md`), newest first.  A mutation
+    that a later commit restores is still listed — restore does not un-block.
+    """
+    scanned = commits_touching(root, '%s..%s' % (freeze, rev), SKILL)
+    bad = []
+    for c in scanned:
+        if block_at(root, c) != freeze_block:
+            bad.append(c)
+    return scanned, bad
+
+
+# ------------------------------------------------------------------ writer scope
+def writer_scope(root, freeze, gen_text, declared_path=None):
+    """Frozen writer paths: the ones the frozen generator names or imports.
+
+    The round-40 defect (F2) was a writer that the generator imported but that
+    the counter never froze.  Detection is textual (`gen-squashfs` next to
+    `round-39`/`round-40`, or the full path) because the generator's import
+    style is not this counter's to fix; the manifest's declared writer path is
+    always in scope too.
+    """
+    scope = {}
+    for p in WRITER_CANDIDATES:
+        hit = False
+        why = []
+        if gen_text:
+            if p in gen_text:
+                hit, why = True, why + ['path-literal']
+            else:
+                m = re.search(r'(round[-_]?%s)[^\n]{0,120}gen[-_]squashfs'
+                              % p.split('/')[1].split('-')[1], gen_text)
+                m2 = re.search(r'gen[-_]squashfs[^\n]{0,120}(round[-_]?%s)'
+                               % p.split('/')[1].split('-')[1], gen_text)
+                if m or m2:
+                    hit, why = True, why + ['import-shape']
+        if declared_path and declared_path == p:
+            hit, why = True, why + ['manifest-declared']
+        if hit:
+            scope[p] = {'why': why,
+                        'present_at_freeze': present(root, freeze, p),
+                        'sha256': sha256_bytes(show(root, freeze, p))
+                        if present(root, freeze, p) else None}
+    return scope
+
+
+# ------------------------------------------------------------------ scratch
+def scratch_root():
+    base = os.environ.get('HYAKU_SCRATCH') or tempfile.gettempdir()
+    root = os.path.join(base, 'kaidoku-r41')
+    os.makedirs(root, exist_ok=True)
+    return root
+
+
+def scratch_dir():
+    return tempfile.mkdtemp(prefix='c2-counter.', dir=scratch_root())
+
+
+def sha256_bytes(b):
+    return hashlib.sha256(b).hexdigest() if b is not None else None
+
+
+def as_text(b):
+    return b.decode('utf-8', 'replace') if b is not None else None
+
+
+# ------------------------------------------------------------------ envelopes
+def envelope_data(obj):
+    if isinstance(obj, dict) and 'subject' not in obj and isinstance(obj.get('data'), dict):
+        return obj['data']
+    return obj
+
+
+def subject_sha(obj):
+    try:
+        return str(obj['subject']['digest']['sha256']).lower()
+    except Exception:
+        return None
+
+
+def norm_id(key):
+    """Envelope id from an id, a path, or a file name."""
+    if not isinstance(key, str):
+        return None
+    k = key.strip().replace('\\', '/').rstrip('/')
+    k = k.rsplit('/', 1)[-1]
+    if k.endswith('.json'):
+        k = k[:-5]
+    return k or None
+
+
+# ------------------------------------------------------------------ features
+# Observed-feature extraction, ported from the frozen round-40 interpreter
+# (`tools/round-40/sqfs-triage-v2.py:424-580`) so the counter reads an envelope
+# exactly the way the scored interpreter does; the amended claim binds those
+# observations against the tuple the generator declares per class.
+def _as_list(value):
+    return value if isinstance(value, list) else []
+
+
+def _iter_dicts(obj):
+    stack = [obj]
+    while stack:
+        cur = stack.pop()
+        if isinstance(cur, dict):
+            yield cur
+            stack.extend(cur.values())
+        elif isinstance(cur, list):
+            stack.extend(cur)
+
+
+def command_tokens(cmd):
+    if isinstance(cmd, str):
+        try:
+            return shlex.split(cmd)
+        except ValueError:
+            return cmd.split()
+    if isinstance(cmd, (list, tuple)):
+        return [t for t in cmd if isinstance(t, str)]
+    return None
+
+
+def names_sasquatch(tokens):
+    for token in tokens:
+        if token.rsplit('/', 1)[-1].startswith('sasquatch'):
+            return True
+    return False
+
+
+def extractor_commands(data):
+    """Every recorded command that names a sasquatch binary, in first-seen order."""
+    commands = []
+
+    def take(cmd):
+        tokens = command_tokens(cmd)
+        if tokens and names_sasquatch(tokens) and cmd not in commands:
+            commands.append(cmd)
+
+    nr = data.get('normalized_result')
+    nr = nr if isinstance(nr, dict) else {}
+    for source in (nr.get('diagnostics'), data.get('diagnostics')):
+        for diag in _as_list(source):
+            report = diag.get('report') if isinstance(diag, dict) else None
+            if isinstance(report, dict) and 'command' in report:
+                take(report['command'])
+    for found in _iter_dicts(data.get('raw_result')):
+        if 'command' in found:
+            take(found['command'])
+    return commands
+
+
+def _tokens(value):
+    if isinstance(value, str):
+        return sorted(t.strip() for t in re.split(r'[,+]', value)
+                      if t.strip() and t.strip().lower() != 'none')
+    if isinstance(value, (list, tuple, set)):
+        return sorted(str(t) for t in value if str(t).strip())
+    return []
+
+
+def _tri(value, allow_na=True):
+    """yes / no / n-a out of the shapes a manifest or an envelope may use."""
+    if value is None:
+        return 'n/a' if allow_na else 'no'
+    if isinstance(value, bool):
+        return 'yes' if value else 'no'
+    if isinstance(value, str):
+        v = value.strip().lower()
+        if v in ('yes', 'true', 'y', 'removed', '1'):
+            return 'yes'
+        if v in ('no', 'false', 'n', 'kept', '0'):
+            return 'no'
+        if v in ('n/a', 'na', 'n-a', 'none', '-', ''):
+            return 'n/a' if allow_na else 'no'
+    return 'n/a'
+
+
+def _pub(value):
+    """0 / >0 class out of an int, a bool or a manifest token."""
+    if isinstance(value, bool):
+        return 'nonzero' if value else 'zero'
+    if isinstance(value, int):
+        return 'nonzero' if value > 0 else 'zero'
+    if isinstance(value, str):
+        v = value.strip().lower()
+        if v in ('>0', 'nonzero', 'non-zero', 'some', 'positive', 'yes', 'true'):
+            return 'nonzero'
+        if v in ('0', 'zero', 'none', 'empty', 'no', 'false'):
+            return 'zero'
+    return 'zero'
+
+
+def observed_features(data):
+    """(H, G, D, BE, SR, P, extraction_failed) of one envelope."""
+    if not isinstance(data, dict):
+        return None
+    nr = data.get('normalized_result')
+    nr = nr if isinstance(nr, dict) else {}
+    handlers = set()
+    failed = False
+    for chunk in _as_list(nr.get('chunks')):
+        if not isinstance(chunk, dict):
+            continue
+        handler = chunk.get('handler')
+        if isinstance(handler, str) and handler.startswith('squashfs'):
+            handlers.add(handler)
+        if chunk.get('extraction_failed') is True:
+            failed = True
+    gap_kinds = set()
+    dependencies = set()
+    for gap in _as_list(nr.get('extraction_gaps')):
+        if not isinstance(gap, dict):
+            continue
+        kind = gap.get('kind')
+        if isinstance(kind, str):
+            gap_kinds.add(kind)
+            if kind == 'extractor-failure':
+                failed = True
+        for dep in _as_list(gap.get('dependencies')):
+            if isinstance(dep, str):
+                dependencies.add(dep)
+    commands = extractor_commands(data)
+    if not commands:
+        be = 'n/a'
+    else:
+        be = 'no'
+        for cmd in commands:
+            if '-be' in (command_tokens(cmd) or []):
+                be = 'yes'
+                break
+    symlink = 'no'
+    for diag in _as_list(nr.get('diagnostics')):
+        report = diag.get('report') if isinstance(diag, dict) else None
+        if isinstance(report, dict) and report.get('__typename__') == SYMLINK_TYPENAME:
+            symlink = 'yes'
+            break
+    if symlink == 'no':
+        for found in _iter_dicts(data.get('raw_result')):
+            if found.get('__typename__') == SYMLINK_TYPENAME:
+                symlink = 'yes'
+                break
+    return {'handler_set': sorted(handlers), 'gap_kinds': sorted(gap_kinds),
+            'gap_dependencies': sorted(dependencies), 'be_argv': be,
+            'symlink_removed': symlink == 'yes',
+            'published': 'nonzero' if _as_list(nr.get('files')) else 'zero',
+            'extraction_failed': failed}
+
+
+def canon_features(obj):
+    """A declared feature tuple in the counter's canonical vocabulary."""
+    if not isinstance(obj, dict):
+        return None
+    out = {}
+    for key, value in obj.items():
+        k = FEATURE_ALIASES.get(str(key).strip().lower())
+        if k is None:
+            continue
+        if k in ('handler_set', 'gap_kinds', 'gap_dependencies'):
+            out[k] = _tokens(value)
+        elif k == 'be_argv':
+            out[k] = _tri(value)
+        elif k == 'symlink_removed':
+            out[k] = _tri(value) == 'yes'
+        elif k == 'published':
+            out[k] = _pub(value)
+        elif k == 'extraction_failed':
+            out[k] = _tri(value) == 'yes'
+    return out or None
+
+
+# ------------------------------------------------------------------ frozen tools
+
+def run_tool(exe, args, timeout=1800):
+    return subprocess.run([sys.executable, '-I', '-B', exe] + list(args),
+                          capture_output=True, text=True, timeout=timeout)
+
+
+def _row_of(entry):
+    for key in ('rule', 'row_index', 'index'):
+        v = entry.get(key)
+        if isinstance(v, bool):
+            continue
+        if isinstance(v, int):
+            return v
+        if isinstance(v, str) and v.strip().lstrip('-').isdigit():
+            return int(v)
+    row = entry.get('row')
+    if isinstance(row, dict):
+        return _row_of(row)
+    return None
+
+
+def parse_json_results(stdout):
+    """{key: {label, action, row, cells}} from the interpreter's `--json`."""
+    doc = json.loads(stdout)
+    results = doc.get('results') if isinstance(doc, dict) else doc
+    if not isinstance(results, list):
+        return None
+    out = {}
+    for r in results:
+        if not isinstance(r, dict):
+            return None
+        key = None
+        for k in ('path', 'id', 'envelope', 'file'):
+            if isinstance(r.get(k), str):
+                key = r[k]
+                break
+        if key is None:
+            return None
+        action = r.get('action')
+        for k in ('row_action', 'decision_action'):
+            if action is None:
+                action = r.get(k)
+        cells = r.get('cells') if isinstance(r.get('cells'), list) else None
+        if cells is None and isinstance(r.get('row'), list):
+            cells = r['row']
+        out[key] = {'label': r.get('label'), 'action': action,
+                    'row': _row_of(r), 'cells': cells}
+    return out
+
+
+def parse_tab_results(stdout):
+    out = {}
+    for line in stdout.splitlines():
+        if '\t' not in line:
+            continue
+        f = line.split('\t')
+        path = f[0].strip()
+        row = None
+        if len(f) > 3 and f[3].strip().lstrip('-').isdigit():
+            row = int(f[3].strip())
+        out[path] = {'label': (f[1].strip() or None) if len(f) > 1 else None,
+                     'action': (f[2].strip() or None) if len(f) > 2 else None,
+                     'row': row, 'cells': None}
+    return out
+
+
+TABLE_ONLY_LINE = re.compile(r'^\s*(\d+)\.\s+`?([^`\s]+)`?\s*$')
+
+
+def parse_table_only(stdout):
+    """{label: row} from the interpreter's `--table-only` output."""
+    try:
+        doc = json.loads(stdout)
+        rules = doc.get('rules') if isinstance(doc, dict) else None
+        if isinstance(rules, list):
+            out = {}
+            for r in rules:
+                if isinstance(r, dict) and r.get('label') is not None:
+                    out[str(r['label'])] = _row_of(r)
+            return out or None
+    except Exception:
+        pass
+    out = {}
+    for line in stdout.splitlines():
+        m = TABLE_ONLY_LINE.match(line)
+        if m:
+            out[m.group(2)] = int(m.group(1))
+    return out or None
+
+
+def infer_index_base(entries, tpos, label_rows):
+    """0 or 1: how the interpreter numbers the rows it reports."""
+    votes = []
+    for val in entries:
+        lab, row = val.get('label'), val.get('row')
+        if lab in tpos and isinstance(row, int):
+            votes.append(row - tpos[lab])
+    for lab, idx in (label_rows or {}).items():
+        if lab in tpos and isinstance(idx, int):
+            votes.append(idx - tpos[lab])
+    if not votes:
+        return 0
+    return max(set(votes), key=votes.count)
+
+
+def _pair(v):
+    """(label, action) out of the shapes a tool may emit, else None."""
+    if isinstance(v, dict):
+        lab = v.get('label')
+        act = v.get('action')
+        if lab is None:
+            for k in ('expected_label', 'class_label'):
+                if isinstance(v.get(k), str):
+                    lab = v[k]
+                    break
+        if act is None:
+            for k in ('expected_action', 'class_action'):
+                if isinstance(v.get(k), str):
+                    act = v[k]
+                    break
+        if isinstance(lab, str) and isinstance(act, str):
+            return (lab, act)
+        return None
+    if isinstance(v, (list, tuple)) and len(v) >= 2 \
+            and isinstance(v[0], str) and isinstance(v[1], str):
+        return (v[0], v[1])
+    if isinstance(v, str):
+        for sep in ('/', '->', '\t', ':'):
+            if sep in v:
+                a, b = v.split(sep, 1)
+                if a.strip() and b.strip():
+                    return (a.strip(), b.strip())
+    return None
+
+
+def parse_eval_pairs(doc, ids):
+    """{envelope id: (label, action)} from any of the evaluator's JSON shapes."""
+    want = set(ids)
+    out = {}
+
+    def put(key, val):
+        nid = norm_id(key)
+        p = _pair(val)
+        if nid in want and p is not None and nid not in out:
+            out[nid] = p
+
+    def scan(obj, depth=0):
+        if depth > 4:
+            return
+        if isinstance(obj, list):
+            for e in obj:
+                if isinstance(e, dict):
+                    for k in ('id', 'envelope', 'path', 'file', 'name'):
+                        if isinstance(e.get(k), str):
+                            put(e[k], e)
+                            break
+                else:
+                    scan(e, depth + 1)
+            return
+        if not isinstance(obj, dict):
+            return
+        for k, v in obj.items():
+            if isinstance(k, str) and norm_id(k) in want and _pair(v) is not None:
+                put(k, v)
+            elif isinstance(v, (dict, list)):
+                scan(v, depth + 1)
+
+    scan(doc)
+    return out
+
+
+def run_interpreter(ipath, spath, paths, edir, header, trows, attempts=None):
+    """Frozen interpreter over `paths` -> ({id: {label, action, row, cells}}, meta).
+
+    Interfaces are probed in order (v2-compatible positional arguments first);
+    the first answer that covers every requested envelope wins, and a partial
+    answer is kept only while nothing longer appears.  Rows the interpreter does
+    not name are read off its own `--table-only`, and a row index or a row's
+    cells is turned into the (label, action) that row carries: the row the
+    interpreter chose is the decision, not a re-derivation from scratch.
+    """
+    args = sorted(paths)
+    want = {norm_id(p) for p in paths if norm_id(p)}
+    got = {}
+    meta = {'how': None, 'table_only_exit': None, 'base': None, 'derived': 0,
+            'stdout_tail': '', 'stderr_tail': ''}
+
+    def collect(parsed):
+        out = {}
+        for path, val in (parsed or {}).items():
+            cid = norm_id(path)
+            if cid:
+                out[cid] = val
+        return out
+
+    last = None
+    for name, targs in (
+            ('json', ['--skill', spath, '--json'] + args),
+            ('tab', ['--skill', spath] + args),
+            ('envelopes-json', ['--skill', spath, '--envelopes', edir, '--json']),
+            ('envelopes', ['--skill', spath, '--envelopes', edir])):
+        pr = run_tool(ipath, targs)
+        last = pr
+        if attempts is not None:
+            attempts.append({'tool': 'interpreter', 'interface': name,
+                             'exit': pr.returncode})
+        if pr.returncode != 0:
+            continue
+        parsed = None
+        try:
+            parsed = parse_json_results(pr.stdout)
+        except Exception:
+            parsed = None
+        if parsed is not None:
+            how = name + '/json'
+        else:
+            parsed = parse_tab_results(pr.stdout) or None
+            how = (name + '/tab') if parsed else None
+        if not parsed:
+            continue
+        cand = {k: v for k, v in collect(parsed).items() if k in want}
+        if not cand:
+            continue
+        if not got or len(cand) > len(got):
+            got, meta['how'] = cand, how
+        if want <= set(cand):
+            got, meta['how'] = cand, how
+            break
+    if last is not None:
+        meta['stdout_tail'] = (last.stdout or '')[-1000:]
+        meta['stderr_tail'] = (last.stderr or '')[-1000:]
+    if not got:
+        return got, meta
+
+    if any(v.get('row') is None for v in got.values()):
+        pt = run_tool(ipath, ['--skill', spath, '--table-only'])
+        meta['table_only_exit'] = pt.returncode
+        label_rows = parse_table_only(pt.stdout) if pt.returncode == 0 else None
+        if label_rows:
+            for val in got.values():
+                if val.get('row') is None:
+                    val['row'] = label_rows.get(val.get('label'))
+            if all(v.get('row') is not None for v in got.values()) and meta['how']:
+                meta['how'] += '+table_only'
+
+    if header is not None:
+        lidx = header.index('label') if 'label' in header else None
+        aidx = header.index('action') if 'action' in header else None
+        tpos = {}
+        if lidx is not None:
+            for i, cells in enumerate(trows):
+                if lidx < len(cells) and cells[lidx] not in tpos:
+                    tpos[cells[lidx]] = i
+        need = [v for v in got.values()
+                if (v.get('label') is None or v.get('action') is None)
+                and v.get('cells') is None and isinstance(v.get('row'), int)]
+        label_rows = None
+        if need and tpos:
+            pt = run_tool(ipath, ['--skill', spath, '--table-only'])
+            meta['table_only_exit'] = pt.returncode
+            if pt.returncode == 0:
+                label_rows = parse_table_only(pt.stdout)
+        base = infer_index_base(list(got.values()), tpos, label_rows)
+        meta['base'] = base
+        for val in got.values():
+            cells = val.get('cells')
+            if cells is None and isinstance(val.get('row'), int):
+                pos = val['row'] - base
+                if 0 <= pos < len(trows):
+                    cells = trows[pos]
+            if cells is None:
+                continue
+            if val.get('label') is None and lidx is not None and lidx < len(cells):
+                val['label'] = cells[lidx]
+                meta['derived'] += 1
+            if val.get('action') is None and aidx is not None and aidx < len(cells):
+                val['action'] = cells[aidx]
+                meta['derived'] += 1
+    return got, meta
+
+
+def run_evaluator(exe, edir, want_ids, scratch, tag='main', attempts=None):
+    """Frozen independent evaluator over an envelope directory.
+
+    Returns ({id: (label, action)}, interface, saw_a_zero_exit, meta).  The
+    interface is probed because the frozen evaluator's writer chose it: stdout
+    JSON (`--envelopes`), `--json`, `--format json`, and the two file-output
+    forms its round-40 ancestor used (`--json-out`, `--out`).
+    """
+    fout = os.path.join(scratch, 'eval-labels-%s.json' % tag)
+    meta = {'stdout_tail': '', 'stderr_tail': ''}
+    any_zero = False
+    for name, args, ofile in (
+            ('envelopes', ['--envelopes', edir], None),
+            ('envelopes-json', ['--envelopes', edir, '--json'], None),
+            ('envelopes-format', ['--envelopes', edir, '--format', 'json'], None),
+            ('envelopes-json-out', ['--envelopes', edir, '--json-out', fout], fout),
+            ('envelopes-out', ['--envelopes', edir, '--out', fout], fout)):
+        if ofile and os.path.exists(ofile):
+            os.unlink(ofile)
+        pr = run_tool(exe, args)
+        if attempts is not None:
+            attempts.append({'tool': 'evaluator', 'interface': name,
+                             'exit': pr.returncode})
+        meta['stdout_tail'] = (pr.stdout or '')[-1000:]
+        meta['stderr_tail'] = (pr.stderr or '')[-1000:]
+        if pr.returncode != 0:
+            continue
+        any_zero = True
+        text = pr.stdout
+        if ofile and os.path.exists(ofile):
+            try:
+                text = open(ofile).read()
+            except Exception:
+                pass
+        try:
+            doc = json.loads(text)
+        except Exception:
+            continue
+        got = parse_eval_pairs(doc, want_ids)
+        if got:
+            return got, name, any_zero, meta
+    return {}, None, any_zero, meta
+
+
+
+# ------------------------------------------------------------------ measure
+def measure(root, rev_arg, freeze_arg):
+    rev = full_rev(root, rev_arg)
+    freeze = full_rev(root, freeze_arg)
+    res = {'predicate': 'P41-C2', 'revision': rev, 'freeze': freeze,
+           'freeze_arg': freeze_arg, 'revision_arg': rev_arg,
+           'manifest_path': MANIFEST, 'argv': sys.argv, 'bindings': {},
+           'bindings_false': [], 'carriers': [], 'frozen_paths_changed': [],
+           'claim_bindings': list(CLAIM_BINDINGS),
+           'instrument_bindings': list(INSTRUMENT_BINDINGS),
+           'planned_classes': list(PLANNED_CLASSES)}
+    if not is_ancestor(root, freeze, rev):
+        raise Unevaluable('freeze_not_ancestor_of_rev', res)
+
+    # ---- frozen units at FREEZE
+    gen_b = show(root, freeze, GEN)
+    eval_b = show(root, freeze, EVAL)
+    interp_b = show(root, freeze, INTERP)
+    claims_b = show(root, freeze, CLAIMS)
+    counter_b = show(root, freeze, COUNTER)
+    skill_fz_b = show(root, freeze, SKILL)
+    skill_fz = rule_block(as_text(skill_fz_b), MARKER_V3)
+    res['frozen_units'] = {
+        GEN: sha256_bytes(gen_b), EVAL: sha256_bytes(eval_b),
+        INTERP: sha256_bytes(interp_b), COUNTER: sha256_bytes(counter_b),
+        CLAIMS: sha256_bytes(claims_b),
+        SKILL + ' [' + MARKER_V3 + ']': sha256_bytes(skill_fz.encode())
+        if skill_fz is not None else None,
+    }
+
+    # ---- freeze integrity (R40-CL3): paths, writers, and the SKILL block
+    man_b = show(root, rev, MANIFEST)
+    declared = None
+    if man_b is not None:
+        try:
+            _m = json.loads(man_b.decode())
+            g = _m.get('generator') if isinstance(_m, dict) else None
+            w = g.get('writer') if isinstance(g, dict) else None
+            if isinstance(w, dict) and isinstance(w.get('path'), str):
+                declared = w['path']
+            elif isinstance(w, str):
+                declared = w
+        except Exception:
+            declared = None
+    scope = writer_scope(root, freeze, as_text(gen_b), declared)
+    res['writer_scope'] = scope
+    paths = list(FROZEN_PATHS) + sorted(scope)
+    bad_paths = frozen_drift(root, freeze, rev, paths)
+    scanned, drift = skill_block_drift(root, freeze, rev, skill_fz)
+    res['skill_block_commits_scanned'] = len(scanned)
+    if bad_paths or drift:
+        res['frozen_paths_changed'] = sorted(bad_paths) if bad_paths else [SKILL]
+        res['frozen_commits'] = bad_paths
+        res['skill_block_drift_commits'] = drift
+        raise Unevaluable('frozen_path_changed', res)
+
+    if man_b is None:
+        raise Unevaluable('no_manifest_at_rev', res)
+    try:
+        man = json.loads(man_b.decode())
+    except Exception:
+        raise Unevaluable('manifest_unparsable', res)
+    if not isinstance(man, dict):
+        raise Unevaluable('manifest_not_an_object', res)
+
+    classes = man.get('classes') if isinstance(man.get('classes'), list) else []
+    carriers = [c for c in (man.get('carriers') or []) if isinstance(c, dict)] \
+        if isinstance(man.get('carriers'), list) else []
+    N = len(carriers)
+    ids = [str(c.get('id', '')) for c in carriers]
+    combos = [c for c in carriers if str(c.get('class')) == COMBO_CLASS]
+    class_carriers = [c for c in carriers if str(c.get('class')) != COMBO_CLASS]
+    class_names = [c for c in classes if c != COMBO_CLASS]
+    per = {}
+    for c in class_carriers:
+        per[c.get('class')] = per.get(c.get('class'), 0) + 1
+
+    b = res['bindings']
+    b['seed_matches_freeze'] = str(man.get('seed', '')).lower() == freeze
+
+    gen_sha = sha256_bytes(gen_b)
+    g = man.get('generator')
+    declared_gen_sha = None
+    if isinstance(g, dict):
+        b['manifest_generator_path'] = str(g.get('name', '')).lower() in (
+            'heldout-gen-v3.py', GEN)
+        declared_gen_sha = g.get('sha256')
+        b['generator_sha_matches_freeze'] = declared_gen_sha is None \
+            or declared_gen_sha == gen_sha
+    else:
+        b['manifest_generator_path'] = str(g) == GEN
+        b['generator_sha_matches_freeze'] = True
+    res['generator'] = {'declared': g, 'declared_sha256': declared_gen_sha,
+                        'freeze_sha256': gen_sha, 'path': GEN,
+                        'present_at_freeze': gen_b is not None}
+
+    # writer binding: every writer in scope must be the one the manifest names,
+    # at the freeze bytes.
+    gw = g.get('writer') if isinstance(g, dict) else None
+    wpath = gw.get('path') if isinstance(gw, dict) else (gw if isinstance(gw, str) else None)
+    wsha = gw.get('sha256') if isinstance(gw, dict) else None
+    if wpath is None:
+        # Nothing declared, nothing to contradict: the imported writer is still
+        # frozen by the drift scan (`scope`).
+        b['writer_matches_manifest'] = True
+    else:
+        ok = wpath in scope and scope[wpath]['present_at_freeze'] \
+            and (wsha is None or wsha == scope[wpath]['sha256'])
+        b['writer_matches_manifest'] = bool(ok)
+    res['writer'] = {'declared_path': wpath, 'declared_sha256': wsha,
+                     'scope': sorted(scope)}
+
+    b['classes_unique'] = bool(classes) and len(classes) == len(set(classes)) \
+        and all(isinstance(x, str) and x for x in classes)
+    b['classes_two_each'] = bool(class_names) and all(per.get(k) == 2 for k in class_names) \
+        and set(per) <= set(class_names)
+    b['n_equals_twice_classes'] = N > 0 and N == 2 * len(class_names) + len(combos)
+    b['combo_family_wellformed'] = len(combos) == COMBO_COUNT and \
+        sorted(str(c.get('id')) for c in combos) == \
+        ['C%02d' % i for i in range(1, COMBO_COUNT + 1)]
+    b['classes_cover_planned'] = set(PLANNED_CLASSES) <= set(class_names)
+    res['classes_missing_planned'] = sorted(set(PLANNED_CLASSES) - set(class_names))
+    res['classes_extra'] = sorted(set(class_names) - set(PLANNED_CLASSES))
+    res['combos'] = {'count': len(combos),
+                     'ids': sorted(str(c.get('id')) for c in combos),
+                     'class_expected_null': all(c.get('class_expected') is None
+                                                for c in combos)}
+    b['ids_unique'] = bool(ids) and len(set(ids)) == len(ids) and all(ids)
+    b['arms_valid'] = bool(carriers) and all(c.get('arm') in ('after', 'before', 'ood')
+                                             for c in carriers)
+
+    # the manifest's own class expectation (a cross-check, never the score)
+    ce = {}
+    ce_bad = []
+    for c in carriers:
+        cid = str(c.get('id', ''))
+        p = _pair(c.get('class_expected')) if c.get('class_expected') is not None else None
+        if p is None:
+            p = _pair({'label': c.get('expected_label'), 'action': c.get('expected_action')}) \
+                if c.get('expected_label') is not None else None
+        if p is None:
+            ce_bad.append(cid)
+        else:
+            ce[cid] = p
+    res['class_expected_missing'] = ce_bad
+
+    # ---- the v3 rule block at REV
+    skill_rev = show(root, rev, SKILL)
+    v3_rev = rule_block(as_text(skill_rev), MARKER_V3)
+    verbs = declared_actions(v3_rev)
+    cols_ok, cols_missing = columns_ok(v3_rev)
+    b['v3_block_present'] = v3_rev is not None
+    b['v3_block_identical'] = v3_rev is not None and skill_fz is not None \
+        and v3_rev == skill_fz
+    b['v3_block_columns'] = bool(v3_rev) and cols_ok
+    b['v3_actions_declared'] = bool(verbs)
+    res['table'] = {'v3': {'present_at_rev': v3_rev is not None,
+                           'present_at_freeze': skill_fz is not None,
+                           'identical': b['v3_block_identical'],
+                           'columns_ok': cols_ok,
+                           'columns_missing': cols_missing,
+                           'declared_actions': verbs,
+                           'bytes_rev': len(v3_rev.encode()) if v3_rev is not None else 0,
+                           'bytes_freeze': len(skill_fz.encode()) if skill_fz is not None else 0},
+                   'v2_marker_at_rev': bool(skill_rev and MARKER_V2 in as_text(skill_rev)),
+                   'v2_marker_at_freeze': bool(skill_fz_b and MARKER_V2 in as_text(skill_fz_b))}
+
+    mdir = MANIFEST_DIR
+
+    def resolve(p):
+        if not isinstance(p, str) or not p or p.startswith('/') or '..' in p.split('/'):
+            return None
+        for cand in (p, mdir.rstrip('/') + '/' + p):
+            if cand.startswith('./'):
+                cand = cand[2:]
+            if present(root, rev, cand):
+                return cand
+        return None
+
+    if eval_b is None:
+        raise Unevaluable('evaluator_absent_at_freeze', res)
+    if interp_b is None:
+        raise Unevaluable('interpreter_absent_at_freeze', res)
+
+    scratch = scratch_dir()
+    try:
+        # ---- regeneration from the frozen generator
+        if gen_b is None:
+            raise Unevaluable('generator_absent_at_freeze', res)
+        regen = {}
+        tree = os.path.join(scratch, 'lane')
+        os.makedirs(tree)
+        p = subprocess.run(['git', '-C', root, 'ls-tree', '-r', '--name-only', freeze,
+                            '--', *GEN_TREE_PREFIXES], capture_output=True, text=True)
+        materialised = []
+        for rel in [l for l in p.stdout.split() if l]:
+            blob = show(root, freeze, rel)
+            if blob is None:
+                continue
+            dest = os.path.join(tree, rel)
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            with open(dest, 'wb') as fh:
+                fh.write(blob)
+            materialised.append(rel)
+        gpath = os.path.join(tree, GEN)
+        if not os.path.isfile(gpath):
+            raise Unevaluable('generator_absent_at_freeze', res)
+        res['materialised_files'] = len(materialised)
+        env = dict(os.environ)
+        env['TMPDIR'] = os.path.join(scratch, 'tmp')
+        os.makedirs(env['TMPDIR'], exist_ok=True)
+        wpick = wpath if wpath in scope else (sorted(scope)[0] if scope else None)
+        wlocal = os.path.join(tree, wpick) if wpick else None
+        if wlocal and os.path.isfile(wlocal):
+            env[WRITER_ENV] = wlocal
+        res['writer']['materialised'] = bool(wlocal and os.path.isfile(wlocal))
+        outdir = os.path.join(scratch, 'regen')
+        pr = subprocess.run([sys.executable, '-I', '-B', gpath, '--seed', freeze,
+                             '--out', outdir],
+                            cwd=tree, capture_output=True, text=True, timeout=3600, env=env)
+        if pr.returncode != 0:
+            res['generator_stderr'] = (pr.stderr or '')[-2000:]
+            raise Unevaluable('generator_failed', res)
+        rman_path = os.path.join(outdir, 'manifest.json')
+        if not os.path.exists(rman_path):
+            raise Unevaluable('generator_wrote_no_manifest', res)
+        try:
+            with open(rman_path) as fh:
+                rman = json.load(fh)
+        except Exception:
+            raise Unevaluable('regenerated_manifest_unparsable', res)
+        for rc in (rman.get('carriers') or []):
+            if not isinstance(rc, dict):
+                continue
+            rel = rc.get('carrier')
+            fp = os.path.join(outdir, rel) if isinstance(rel, str) else None
+            data = open(fp, 'rb').read() if fp and os.path.isfile(fp) else None
+            regen[str(rc.get('id', ''))] = {
+                'sha256': sha256_bytes(data), 'class': rc.get('class'),
+                'arm': rc.get('arm'), 'carrier': rel,
+                'class_expected': _pair(rc.get('class_expected'))
+                if rc.get('class_expected') is not None else None}
+        b['regenerated_seed_matches_freeze'] = str(rman.get('seed', '')).lower() == freeze
+
+        # ---- per-carrier: bytes, envelope digest, expectation
+        env_rows = []
+        env_objs = {}
+        for c in carriers:
+            cid = str(c.get('id', ''))
+            msha = str(c.get('sha256', '')).lower()
+            cpath = resolve(c.get('carrier'))
+            cbytes = show(root, rev, cpath) if cpath else None
+            committed_sha = sha256_bytes(cbytes)
+            r = regen.get(cid) or {}
+            regen_sha = r.get('sha256')
+            # class_expected is reported (class_map_agreement), so it does not
+            # gate regeneration: bytes, class and arm do.
+            ce_ok = (r.get('class_expected') is None or ce.get(cid) is None
+                     or r.get('class_expected') == ce.get(cid))
+            regen_ok = bool(regen_sha) and regen_sha == msha \
+                and r.get('class') == c.get('class') and r.get('arm') == c.get('arm')
+            commit_ok = committed_sha is not None and committed_sha == msha
+            epath = c.get('envelope')
+            inferred = False
+            if not isinstance(epath, str) or not epath:
+                car = c.get('carrier')
+                if isinstance(car, str) and '/' in car:
+                    epath = car.rsplit('/', 1)[0] + '/envelope.json'
+                    inferred = True
+                else:
+                    epath = None
+            epath = resolve(epath) if epath else None
+            ebytes = show(root, rev, epath) if epath else None
+            digest_ok = False
+            if ebytes is not None:
+                try:
+                    eo = envelope_data(json.loads(ebytes.decode()))
+                    digest_ok = bool(msha) and subject_sha(eo) == msha
+                    env_rows.append({'id': cid, 'path': epath, 'bytes': ebytes})
+                    env_objs[cid] = eo
+                except Exception:
+                    digest_ok = False
+            res['carriers'].append({
+                'id': cid, 'class': c.get('class'), 'arm': c.get('arm'),
+                'class_expected': list(ce[cid]) if cid in ce else None,
+                '_carrier_path': cpath,
+                'manifest_sha256': msha, 'committed_sha256': committed_sha,
+                'regenerated_sha256': regen_sha, 'regen_ok': regen_ok,
+                'regen_class_expected': list(r['class_expected'])
+                if r.get('class_expected') else None,
+                'regen_class_expected_matches': ce_ok,
+                'commit_ok': commit_ok, 'envelope': epath,
+                'envelope_inferred': inferred, 'digest_ok': digest_ok})
+        cp = [r.get('_carrier_path') for r in res['carriers']]
+        ep = [r.get('envelope') for r in res['carriers']]
+        b['carrier_paths_unique'] = N > 0 and all(cp) and len(set(cp)) == len(cp)
+        b['envelope_paths_unique'] = N > 0 and all(ep) and len(set(ep)) == len(ep)
+        for r in res['carriers']:
+            r.pop('_carrier_path', None)
+        b['carriers_regenerated'] = N > 0 and all(r['regen_ok'] for r in res['carriers'])
+        b['carriers_committed'] = N > 0 and all(r['commit_ok'] for r in res['carriers'])
+        b['envelopes_valid'] = N > 0 and all(r['digest_ok'] for r in res['carriers'])
+
+        # ---- first-add ordering
+        ma = first_add(root, rev, MANIFEST)
+        b['manifest_after_freeze'] = bool(ma) and ma != freeze and is_ancestor(root, freeze, ma)
+        env_firsts = []
+        for row in res['carriers']:
+            fa = first_add(root, rev, row['envelope']) if row['envelope'] else None
+            row['envelope_first_add'] = fa
+            env_firsts.append(fa)
+        b['manifest_before_envelopes'] = bool(ma) and bool(env_firsts) \
+            and all(fa is not None and is_ancestor(root, ma, fa) for fa in env_firsts)
+        res['manifest_first_add'] = ma
+
+        # ---- INDEPENDENT evaluator (frozen bytes) on the REV envelopes
+        edir = os.path.join(scratch, 'eval-env')
+        os.makedirs(edir)
+        argmap = {}
+        for row in env_rows:
+            fp = os.path.join(edir, row['id'] + '.json')
+            with open(fp, 'wb') as fh:
+                fh.write(row['bytes'])
+            argmap[row['id']] = fp
+        exe = os.path.join(scratch, 'indep-eval-v3.py')
+        with open(exe, 'wb') as fh:
+            fh.write(eval_b)
+        attempts = []
+        want_ids = [r['id'] for r in env_rows]
+        exp, used, any_zero, emeta = run_evaluator(exe, edir, want_ids, scratch,
+                                                   tag='main', attempts=attempts)
+        res['evaluator_interface'] = used
+        res['evaluator_attempts'] = attempts
+        res['expected_source'] = ('the frozen independent evaluator, %s @ freeze, '
+                                  'envelopes @ rev' % EVAL) if used else None
+        if used is None:
+            reason = 'evaluator_output_unparsable' if any_zero else 'evaluator_failed'
+            res['evaluator_stdout_tail'] = emeta['stdout_tail']
+            res['evaluator_stderr_tail'] = emeta['stderr_tail']
+            raise Unevaluable(reason, res)
+        b['evaluator_covers_all'] = set(want_ids) <= set(exp)
+        res['evaluator_missing'] = sorted(set(want_ids) - set(exp))
+        res['evaluator_extra'] = sorted(set(exp) - set(want_ids))
+
+        # ---- the frozen interpreter on SKILL.md at REV
+        idir = os.path.join(scratch, 'triage')
+        os.makedirs(idir)
+        ipath = os.path.join(idir, 'sqfs-triage-v3.py')
+        with open(ipath, 'wb') as fh:
+            fh.write(interp_b)
+        spath = os.path.join(idir, 'SKILL.md')
+        with open(spath, 'wb') as fh:
+            fh.write(skill_rev if skill_rev is not None else b'')
+        header, trows = parse_rows(v3_rev)
+        interp_attempts = []
+        got = {}
+        imeta = {'how': None, 'table_only_exit': None, 'base': None, 'derived': 0,
+                 'stdout_tail': '', 'stderr_tail': ''}
+        if v3_rev is not None:
+            got, imeta = run_interpreter(ipath, spath, sorted(argmap.values()), edir,
+                                         header, trows, interp_attempts)
+        res['interpreter_interface'] = imeta['how']
+        res['interpreter_attempts'] = interp_attempts
+        res['row_source'] = imeta['how']
+        res['interpreter_table_only_exit'] = imeta['table_only_exit']
+        res['row_index_base'] = imeta['base']
+        res['pair_fields_derived_from_row'] = imeta['derived']
+        if v3_rev is not None and not got:
+            res['interpreter_stderr_tail'] = imeta['stderr_tail']
+            res['interpreter_stdout_tail'] = imeta['stdout_tail']
+            tail = (imeta['stderr_tail'] or '').strip().splitlines()
+            res['interpreter_refusal'] = tail[-1] if tail else None
+            raise Unevaluable('interpreter_failed', res)
+
+        # ---- score: observed (interpreter) vs expected (evaluator)
+        agree, disagree, missing_ce = [], [], []
+        for row in res['carriers']:
+            cid = row['id']
+            v = got.get(cid) or {}
+            row['combo'] = str(row.get('class')) == COMBO_CLASS
+            row['label'] = v.get('label')
+            row['action'] = v.get('action')
+            row['row'] = v.get('row')
+            e = exp.get(cid)
+            row['expected_label'], row['expected_action'] = (e if e else (None, None))
+            row['pair_match'] = e is not None and row['label'] == e[0] \
+                and row['action'] == e[1]
+            row['class_expected_match'] = (cid in ce and e is not None and ce[cid] == e)
+            if row['combo']:
+                continue
+            if cid not in ce:
+                missing_ce.append(cid)
+            elif row['class_expected_match']:
+                agree.append(cid)
+            else:
+                disagree.append(cid)
+        # REPORTED, not a veto (wave-1 amendment): the generator's class map is
+        # a cross-check on the evaluator, and a disagreement is a finding.
+        res['class_map_agreement'] = {
+            'binding': False, 'agree': len(agree), 'disagree': disagree,
+            'missing': missing_ce,
+            'note': 'class_expected is reported, not bound (round-41 amendment)'}
+
+        observed_actions = sorted({r['action'] for r in res['carriers']
+                                   if isinstance(r['action'], str)})
+        b['observed_actions_declared'] = bool(verbs) and all(a in verbs
+                                                            for a in observed_actions)
+        res['observed_actions'] = observed_actions
+        res['actions_undeclared'] = sorted(a for a in observed_actions
+                                           if not verbs or a not in verbs)
+
+        matched = sum(1 for row in res['carriers'] if row['pair_match'])
+        res['matched_classes'] = sum(1 for row in res['carriers']
+                                     if row['pair_match'] and not row['combo'])
+        res['matched_combos'] = sum(1 for row in res['carriers']
+                                    if row['pair_match'] and row['combo'])
+        res['n_classes'] = len(class_carriers)
+        res['n_combos'] = len(combos)
+        matched_rows = [row['row'] for row in res['carriers'] if row['pair_match']]
+        reported = bool(got) and all(
+            r.get('row') is not None
+            or (r.get('expected_label'), r.get('expected_action')) == NOMATCH_PAIR
+            for r in res['carriers'])
+        b['decisions_reported'] = reported
+        # v2 numbering: the no-match fall-through is itself a decision.
+        res['distinct_decisions'] = len(set(matched_rows))
+        res['distinct_rows'] = len({r for r in matched_rows if r is not None})
+        res['distinct_row_list'] = sorted(set(matched_rows),
+                                          key=lambda x: (x is None, str(x)))
+
+        pairs = {}
+        for row in res['carriers']:
+            pairs.setdefault((row['expected_label'], row['expected_action']),
+                             set()).add(row['row'])
+        ok_rows = True
+        for k, v in pairs.items():
+            if k == NOMATCH_PAIR:
+                if v != {None}:
+                    ok_rows = False
+            elif len(v) != 1 or None in v:
+                ok_rows = False
+        if ok_rows:
+            seen = {}
+            for k, v in pairs.items():
+                if k == NOMATCH_PAIR:
+                    continue
+                r = next(iter(v))
+                if r in seen and seen[r] != k:
+                    ok_rows = False
+                seen[r] = k
+        b['row_decisions_consistent'] = bool(reported and ok_rows)
+        res['decision_pairs'] = {'%s/%s' % k: sorted(v, key=lambda x: (x is None, str(x)))
+                                 for k, v in pairs.items()}
+
+        # ---- shape of the held-out set (reported, plus the advisory REA params)
+        per_class = {}
+        for row in res['carriers']:
+            per_class.setdefault(str(row['class']), []).append({
+                'id': row['id'], 'carrier_sha256': row['manifest_sha256'],
+                'expected_label': row['expected_label'],
+                'expected_action': row['expected_action'],
+                'class_expected': row['class_expected'],
+                'class_expected_match': row['class_expected_match'],
+                'label': row['label'], 'action': row['action'], 'row': row['row'],
+                'pair_match': row['pair_match']})
+        res['per_class'] = {k: sorted(v, key=lambda r: r['id'])
+                            for k, v in sorted(per_class.items())}
+        res['replicates_identical_in_class'] = sorted(
+            k for k, v in per_class.items()
+            if len({r['carrier_sha256'] for r in v}) != len(v))
+        res['label_action_vocabulary'] = sorted(
+            {'%s/%s' % (r['expected_label'], r['expected_action'])
+             for r in res['carriers'] if r['expected_label'] is not None})
+        res['unclassified_expected'] = sum(
+            1 for r in res['carriers'] if r['expected_label'] == 'unclassified')
+        res['unclassified_observed'] = sum(
+            1 for r in res['carriers'] if r['label'] == 'unclassified')
+
+        params = man.get('rea_params') if isinstance(man.get('rea_params'), dict) else {}
+        depth = {}
+        for c in carriers:
+            cls = c.get('class')
+            if not isinstance(cls, str):
+                continue
+            md = None
+            if isinstance(params.get(cls), dict):
+                md = params[cls].get('max_depth')
+            elif isinstance(params.get(cls), int):
+                md = params[cls]
+            if md is None:
+                md = c.get('max_depth')
+            depth.setdefault(cls, []).append(md)
+        res['advisory_rea_params'] = {
+            'declared': params,
+            'per_class_max_depth': {k: v[0] for k, v in depth.items()},
+            'depth_classes_at_depth1': sorted(
+                k for k, v in depth.items()
+                if k.startswith(DEPTH_CLASS_PREFIX) and v and v[0] == 1),
+            'depth_classes_missing': sorted(
+                k for k, v in depth.items()
+                if k.startswith(DEPTH_CLASS_PREFIX) and (not v or v[0] != 1)),
+            'binding': False,
+        }
+
+        # ---- observed features vs the tuple the manifest declares per class
+        decl_key = None
+        for key in ('class_features', 'classes_features', 'feature_tuples',
+                    'features_by_class', 'class_tuples'):
+            if isinstance(man.get(key), dict):
+                decl_key = key
+                break
+        by_id = {r['id']: r for r in res['carriers']}
+        feat_missing, feat_bad, feat_classes = [], [], {}
+        for c in carriers:
+            cid = str(c.get('id', ''))
+            decl = None
+            cex = c.get('class_expected')
+            if isinstance(cex, dict) and isinstance(cex.get('features'), dict):
+                decl = cex['features']
+            elif isinstance(c.get('features'), dict):
+                decl = c['features']
+            elif isinstance(c.get('declared_features'), dict):
+                decl = c['declared_features']
+            elif decl_key:
+                d = man[decl_key].get(c.get('class'))
+                decl = d if isinstance(d, dict) else None
+            canon = canon_features(decl)
+            if canon is None or any(k not in canon for k in REQUIRED_FEATURES):
+                feat_missing.append(cid)
+                feat_classes[str(c.get('class'))] = 'declared-tuple-incomplete'
+                continue
+            obs = observed_features(env_objs.get(cid))
+            if obs is None:
+                feat_missing.append(cid)
+                feat_classes[str(c.get('class'))] = 'envelope-unreadable'
+                continue
+            shared = [k for k in canon if k in obs]
+            bad = [k for k in shared if canon[k] != obs[k]]
+            row = by_id.get(cid)
+            if row is not None:
+                row['features_checked'] = shared
+                row['features_match'] = not bad
+            if bad:
+                feat_bad.append({'id': cid, 'class': c.get('class'), 'differ': bad,
+                                 'declared': {k: canon[k] for k in shared},
+                                 'observed': {k: obs[k] for k in shared}})
+                feat_classes[str(c.get('class'))] = 'mismatch'
+            else:
+                feat_classes.setdefault(str(c.get('class')), 'match')
+        b['observed_features_match_declared'] = N > 0 and not feat_missing \
+            and not feat_bad
+        res['declared_features'] = {'source': decl_key or 'class_expected.features',
+                                    'keys': list(FEATURE_KEYS),
+                                    'required': list(REQUIRED_FEATURES),
+                                    'by_class': feat_classes,
+                                    'missing': feat_missing,
+                                    'mismatch': feat_bad}
+
+        # ---- the four committed round-40 C1 receipts (wave-1 amendment)
+        rdir = os.path.join(scratch, 'real')
+        os.makedirs(rdir)
+        rpaths, rsha, rmissing = {}, {}, []
+        for rp in REAL_RECEIPTS:
+            blob = show(root, rev, rp)
+            if blob is None:
+                rmissing.append(rp)
+                continue
+            name = rp.split('/')[-2]
+            fp = os.path.join(rdir, name + '.json')
+            with open(fp, 'wb') as fh:
+                fh.write(blob)
+            rpaths[name] = fp
+            rsha[rp] = sha256_bytes(blob)
+        rnames = sorted(rpaths)
+        rgot, rmeta, rexp = {}, {'how': None}, {}
+        rused = None
+        rattempts = {'interpreter': [], 'evaluator': []}
+        if rpaths:
+            rgot, rmeta = run_interpreter(ipath, spath, sorted(rpaths.values()), rdir,
+                                          header, trows, rattempts['interpreter'])
+            rexp, rused, _rzero, _rmeta = run_evaluator(
+                exe, rdir, rnames, scratch, tag='real',
+                attempts=rattempts['evaluator'])
+        rows = {}
+        real_ok = bool(rpaths) and len(rpaths) == len(REAL_RECEIPTS)
+        for name in rnames:
+            ip_ = rgot.get(name) or {}
+            i_pair = [ip_.get('label'), ip_.get('action')]
+            e_pair = list(rexp[name]) if name in rexp else None
+            ok = i_pair[0] == REAL_LABEL and e_pair is not None and i_pair == e_pair
+            real_ok = real_ok and ok
+            rows[name] = {'interpreter': i_pair, 'evaluator': e_pair, 'ok': ok}
+        b['real_receipts_depth_limited'] = bool(real_ok)
+        res['real_receipts'] = {
+            'expected_label': REAL_LABEL,
+            'sha256': {p: rsha.get(p) for p in REAL_RECEIPTS},
+            'missing': rmissing, 'rows': rows,
+            'interpreter_interface': rmeta.get('how'),
+            'evaluator_interface': rused,
+            'attempts': rattempts}
+
+        # ---- target
+        res['bindings_undeclared'] = sorted(set(b) - set(CLAIM_BINDINGS)
+                                           - set(INSTRUMENT_BINDINGS))
+        res['bindings_declared_unset'] = sorted((set(CLAIM_BINDINGS)
+                                                 | set(INSTRUMENT_BINDINGS)) - set(b))
+        bindings_ok = all(v is True for v in b.values())
+        met = bool(matched == N and bindings_ok)
+        recomputed = bool(matched == N and all(v is True for k, v in b.items()))
+        res.update({'n': N, 'matched': matched, 'bindings_ok': bindings_ok,
+                    'bindings_false': sorted(k for k, v in b.items() if v is not True),
+                    'met_target': met,
+                    'met_target_formula': {'matched_equals_n': matched == N,
+                                           'all_bindings_true': bindings_ok},
+                    'met_target_consistent': met == recomputed})
+        if not res['met_target_consistent']:
+            raise Unevaluable('met_target_inconsistent', res)
+        res['exit_code'] = 0 if met else 1
+        return res
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
+
+
+# ------------------------------------------------------------------ CLI
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--root')
+    ap.add_argument('--rev')
+    ap.add_argument('--freeze')
+    ap.add_argument('--json-out')
+    ap.add_argument('--selftest', action='store_true')
+    a = ap.parse_args(argv)
+    if a.selftest:
+        return selftest()
+    if not (a.root and a.rev and a.freeze):
+        print('usage: --root --rev --freeze required (or --selftest)', file=sys.stderr)
+        return 2
+    try:
+        res = measure(a.root, a.rev, a.freeze)
+    except Unevaluable as e:
+        out = dict(e.receipt)
+        out['unevaluable'] = e.reason
+        out['exit_code'] = 2
+        out['argv'] = sys.argv
+        print(json.dumps({'unevaluable': e.reason,
+                          'revision': out.get('revision'),
+                          'freeze': out.get('freeze'),
+                          'frozen_paths_changed': out.get('frozen_paths_changed', []),
+                          'exit_code': 2}, sort_keys=True))
+        if a.json_out:
+            d = os.path.dirname(os.path.abspath(a.json_out))
+            os.makedirs(d, exist_ok=True)
+            with open(a.json_out, 'w') as f:
+                json.dump(out, f, indent=1, sort_keys=True)
+        return 2
+    print(json.dumps({'revision': res['revision'], 'freeze': res['freeze'], 'n': res['n'],
+                      'matched': res['matched'],
+                      'matched_classes': res.get('matched_classes'),
+                      'matched_combos': res.get('matched_combos'),
+                      'distinct_decisions': res['distinct_decisions'],
+                      'bindings_false': res['bindings_false'],
+                      'met_target': res['met_target'],
+                      'met_target_consistent': res['met_target_consistent'],
+                      'exit_code': res['exit_code']}, sort_keys=True))
+    if a.json_out:
+        d = os.path.dirname(os.path.abspath(a.json_out))
+        os.makedirs(d, exist_ok=True)
+        with open(a.json_out, 'w') as f:
+            json.dump(res, f, indent=1, sort_keys=True)
+    return res['exit_code']
+
+
+# ---------------------------------------------------------------- selftest stubs
+STUB_GEN = r'''#!/usr/bin/env python3
+import argparse, hashlib, json, os
+DEC = {
+    'clean-be': ('clean', 'none'), 'clean-le': ('clean', 'none'),
+    'clean-empty': ('clean-empty', 'confirm-empty'),
+    'escaping-symlink-removed': ('escaping-symlink-removed', 'expect-link-absent'),
+    'in-tree-symlink-metadata': ('in-tree-symlink-metadata', 'count-gap'),
+    'mixed-symlinks': ('mixed-symlinks', 'audit-symlinks'),
+    'dep-missing-be': ('dep-missing-be', 'install-extractor-be'),
+    'dep-missing-le': ('dep-missing-le', 'install-extractor-le'),
+    'avm-marker-be-dropped': ('avm-marker-be-dropped', 'wrap-extractor-be'),
+    'body-extractor-failure': ('body-extractor-failure', 'preserve-failure'),
+    'partial-body-failure': ('partial-body-failure', 'salvage-partial'),
+    'no-squashfs-chunk': ('no-squashfs-chunk', 'inspect-input'),
+    'out-of-domain': ('unclassified', 'none'),
+    'partial-in-tree': ('partial-body-failure', 'salvage-partial'),
+    'partial-mixed': ('partial-body-failure', 'salvage-partial'),
+    'depth-limited-alone': ('depth-limited', 'raise-depth'),
+    'depth-limited-in-tree': ('depth-limited', 'raise-depth'),
+    'depth-limited-mixed': ('depth-limited', 'raise-depth'),
+    'body-extractor-failure-le': ('body-extractor-failure', 'preserve-failure'),
+    'failure-depth-limited': ('body-extractor-failure', 'preserve-failure'),
+}
+FEATURES = {'handler_set': ['squashfs_v4_be'], 'gap_kinds': [],
+            'gap_dependencies': [], 'be_argv': 'n/a',
+            'symlink_removed': False, 'published': '>0',
+            'extraction_failed': False}
+ap = argparse.ArgumentParser()
+ap.add_argument('--seed', required=True)
+ap.add_argument('--out', required=True)
+ap.add_argument('--classes')
+ap.add_argument('--combos', type=int, default=12)
+ap.add_argument('--run', action='store_true')
+ap.add_argument('--selftest', action='store_true')
+a = ap.parse_args()
+classes = [c for c in a.classes.split(',') if c] if a.classes else list(DEC)
+os.makedirs(a.out, exist_ok=True)
+out = []
+for ci, c in enumerate(classes):
+    lab, act = DEC.get(c, ('unclassified', 'none'))
+    for k in range(2):
+        h = hashlib.sha256(('%s:%s:%d' % (a.seed, c, k)).encode()).hexdigest()
+        ident = 'H%02d' % (ci * 2 + k + 1)
+        dpath = os.path.join(a.out, ident)
+        os.makedirs(dpath, exist_ok=True)
+        body = h.encode() + b':' + c.encode() + b'\n' + bytes.fromhex(h) * 8
+        with open(os.path.join(dpath, 'carrier.sqsh'), 'wb') as fh:
+            fh.write(body)
+        out.append({'id': ident, 'class': c,
+                    'arm': 'ood' if lab == 'unclassified' else 'after',
+                    'class_expected': {'label': lab, 'action': act,
+                                       'features': dict(FEATURES)},
+                    'rea': {'max_depth': 1 if c.startswith('depth-') else 3},
+                    'carrier': ident + '/carrier.sqsh',
+                    'sha256': hashlib.sha256(body).hexdigest()})
+for j in range(0, a.combos):
+    ident = 'C%02d' % (j + 1)
+    h = hashlib.sha256(('%s:combo:%d' % (a.seed, j)).encode()).hexdigest()
+    dpath = os.path.join(a.out, ident)
+    os.makedirs(dpath, exist_ok=True)
+    body = h.encode() + b':combo:\n' + bytes.fromhex(h) * 8
+    with open(os.path.join(dpath, 'carrier.sqsh'), 'wb') as fh:
+        fh.write(body)
+    out.append({'id': ident, 'class': 'combo', 'arm': 'after',
+                'class_expected': None, 'features': dict(FEATURES),
+                'rea': {'max_depth': 3},
+                'carrier': ident + '/carrier.sqsh',
+                'sha256': hashlib.sha256(body).hexdigest()})
+man = {'seed': a.seed,
+       'classes': classes + (['combo'] if a.combos else []), 'carriers': out,
+       'rea': {'default_max_depth': 3,
+               'per_class': {c: (1 if c.startswith('depth-') else 3)
+                             for c in classes}},
+       'generator': {'name': 'heldout-gen-v3.py', 'version': 'r41-c2-stub',
+                     'sha256': hashlib.sha256(open(os.path.abspath(__file__), 'rb').read()).hexdigest()}}
+@@WRITER@@
+with open(os.path.join(a.out, 'manifest.json'), 'w') as fh:
+    json.dump(man, fh, indent=1, sort_keys=True)
+'''
+
+STUB_EVAL = r'''#!/usr/bin/env python3
+import argparse, json, os, sys
+MODE = '@@EMODE@@'
+DEC = {
+    'clean-be': ('clean', 'none'), 'clean-le': ('clean', 'none'),
+    'clean-empty': ('clean-empty', 'confirm-empty'),
+    'escaping-symlink-removed': ('escaping-symlink-removed', 'expect-link-absent'),
+    'in-tree-symlink-metadata': ('in-tree-symlink-metadata', 'count-gap'),
+    'mixed-symlinks': ('mixed-symlinks', 'audit-symlinks'),
+    'dep-missing-be': ('dep-missing-be', 'install-extractor-be'),
+    'dep-missing-le': ('dep-missing-le', 'install-extractor-le'),
+    'avm-marker-be-dropped': ('avm-marker-be-dropped', 'wrap-extractor-be'),
+    'body-extractor-failure': ('body-extractor-failure', 'preserve-failure'),
+    'partial-body-failure': ('partial-body-failure', 'salvage-partial'),
+    'no-squashfs-chunk': ('no-squashfs-chunk', 'inspect-input'),
+    'out-of-domain': ('unclassified', 'none'),
+    'partial-in-tree': ('partial-body-failure', 'salvage-partial'),
+    'partial-mixed': ('partial-body-failure', 'salvage-partial'),
+    'depth-limited-alone': ('depth-limited', 'raise-depth'),
+    'depth-limited-in-tree': ('depth-limited', 'raise-depth'),
+    'depth-limited-mixed': ('depth-limited', 'raise-depth'),
+    'body-extractor-failure-le': ('body-extractor-failure', 'preserve-failure'),
+    'failure-depth-limited': ('body-extractor-failure', 'preserve-failure'),
+}
+ap = argparse.ArgumentParser()
+ap.add_argument('--envelopes')
+ap.add_argument('--json', action='store_true')
+ap.add_argument('--format')
+ap.add_argument('--json-out')
+ap.add_argument('--out')
+ap.add_argument('--selftest', action='store_true')
+a = ap.parse_args()
+OUT = a.json_out or a.out
+if MODE == 'fail':
+    sys.stderr.write('boom\n')
+    sys.exit(3)
+out = {}
+for n in sorted(os.listdir(a.envelopes or '.')):
+    if not n.endswith('.json'):
+        continue
+    ident = n[:-5]
+    d = json.load(open(os.path.join(a.envelopes, n)))
+    if isinstance(d, dict) and 'subject' not in d and isinstance(d.get('data'), dict):
+        d = d['data']
+    lab, act = DEC.get(d.get('stub_class'), ('unclassified', 'none'))
+    if MODE == 'disagree_action' and ident == 'H01':
+        act = 'confirm-empty'
+    if MODE == 'disagree_label' and ident == 'H01':
+        lab, act = 'unclassified', 'none'
+    if MODE == 'omit' and ident == 'H02':
+        continue
+    if MODE == 'real_disagree' and ident == 'V1':
+        lab, act = 'clean', 'none'
+    out[ident] = {'label': lab, 'action': act}
+if MODE == 'garbage':
+    print('not json at all')
+    sys.exit(0)
+if MODE == 'list':
+    doc = [{'envelope': k, 'label': v['label'], 'action': v['action']}
+           for k, v in sorted(out.items())]
+elif MODE == 'wrapped':
+    doc = {'labels': out}
+else:
+    doc = out
+if MODE == 'file':
+    for k, v in sorted(out.items()):
+        print('%s\t%s\t%s' % (k, v['label'], v['action']))
+    if OUT:
+        with open(OUT, 'w') as fh:
+            json.dump(out, fh, indent=1, sort_keys=True)
+    sys.exit(0)
+print(json.dumps(doc, indent=1, sort_keys=True))
+'''
+
+STUB_INTERP = r'''#!/usr/bin/env python3
+import argparse, fnmatch, json, sys
+MODE = '@@MODE@@'
+ap = argparse.ArgumentParser()
+ap.add_argument('--skill')
+ap.add_argument('--json', action='store_true')
+ap.add_argument('--table-only', action='store_true')
+ap.add_argument('--envelopes')
+ap.add_argument('envs', nargs='*')
+a = ap.parse_args()
+if MODE == 'fail':
+    sys.exit(1)
+if MODE == 'dir' and a.envs:
+    sys.exit(9)
+lines = open(a.skill).read().splitlines()
+start = next((i for i, l in enumerate(lines) if l.startswith('## Queue-drain craft')), None)
+if start is None:
+    sys.exit(2)
+end = len(lines)
+for i in range(start + 1, len(lines)):
+    if lines[i].startswith('## '):
+        end = i
+        break
+sec = lines[start + 1:end]
+mi = next((i for i, l in enumerate(sec) if '<!-- sqfs-triage-table v3 -->' in l), None)
+if mi is None:
+    sys.exit(2)
+ti = next((i for i in range(mi + 1, len(sec)) if sec[i].lstrip().startswith('|')), None)
+if ti is None:
+    sys.exit(2)
+rows = []
+for l in sec[ti:]:
+    if not l.lstrip().startswith('|'):
+        break
+    rows.append([c.strip().strip('`').strip() for c in l.strip().strip('|').split('|')])
+if len(rows) < 2:
+    sys.exit(2)
+head = [c.strip().strip('`').strip().lower() for c in rows[0]]
+def idx(name):
+    return head.index(name) if name in head else None
+CY, CA, CM = idx('label'), idx('action'), idx('cause')
+if CY is None or CM is None:
+    sys.exit(2)
+body = rows[2:]
+if a.table_only:
+    if MODE == 'blind':
+        sys.exit(2)
+    off = 1 if MODE == 'rowonly1' else 0
+    for i, cells in enumerate(body):
+        print('%d. %s' % (i + off, cells[CY]))
+    sys.exit(0)
+envs = list(a.envs)
+if not envs and a.envelopes:
+    import os
+    envs = [os.path.join(a.envelopes, n) for n in sorted(os.listdir(a.envelopes))
+            if n.endswith('.json')]
+res = []
+for p in envs:
+    d = json.load(open(p))
+    if isinstance(d, dict) and 'subject' not in d and isinstance(d.get('data'), dict):
+        d = d['data']
+    cls = d.get('stub_class')
+    hit = None
+    for i, cells in enumerate(body):
+        pat = cells[CM] if CM < len(cells) else '*'
+        pats = [x.strip() for x in pat.split(',') if x.strip()]
+        if '*' in pats or (cls is not None
+                           and any(fnmatch.fnmatchcase(cls, x) for x in pats)):
+            hit = i
+            break
+    cells = body[hit] if hit is not None else None
+    res.append({'path': p,
+                'label': cells[CY] if cells else 'unclassified',
+                'action': (cells[CA] if CA is not None and CA < len(cells) else 'none')
+                if cells else 'none',
+                'rule': hit, 'row': cells})
+if MODE == 'rowonly':
+    for r in res:
+        if r['rule'] is not None:
+            r.pop('label', None)
+            r.pop('action', None)
+    json.dump({'results': res}, sys.stdout, indent=1, sort_keys=True)
+    sys.stdout.write('\n')
+    sys.exit(0)
+if MODE == 'rowonly1':
+    for r in res:
+        if r['rule'] is not None:
+            r.pop('label', None)
+            r.pop('action', None)
+        r.pop('row', None)
+        r['rule'] = None if r['rule'] is None else r['rule'] + 1
+    json.dump({'results': res}, sys.stdout, indent=1, sort_keys=True)
+    sys.stdout.write('\n')
+    sys.exit(0)
+if MODE == 'blind':
+    for r in res:
+        for k in ('rule', 'row', 'label', 'action'):
+            r.pop(k, None)
+    json.dump({'results': res}, sys.stdout, indent=1, sort_keys=True)
+    sys.stdout.write('\n')
+    sys.exit(0)
+if MODE == 'norow':
+    for r in res:
+        r.pop('rule', None)
+        r.pop('row', None)
+    json.dump({'results': res}, sys.stdout, indent=1, sort_keys=True)
+    sys.stdout.write('\n')
+    sys.exit(0)
+if a.json or MODE == 'json':
+    json.dump({'results': res}, sys.stdout, indent=1, sort_keys=True)
+    sys.stdout.write('\n')
+    sys.exit(0)
+for r in res:
+    if MODE == 'tab3':
+        print('%s\t%s\t%s' % (r['path'], r['label'], r['action']))
+    else:
+        print('%s\t%s\t%s\t%s' % (r['path'], r['label'], r['action'], r['rule']))
+'''
+
+
+# ---------------------------------------------------------------- selftest
+def selftest():
+    sroot = os.path.join(os.environ.get('HYAKU_SCRATCH') or tempfile.gettempdir(),
+                         'kaidoku-r41')
+    os.makedirs(sroot, exist_ok=True)
+    fails = []
+
+    HEADER = ['label', 'operation', 'provider', 'handler', 'gap kinds',
+              'dependencies', '-be in child argv', 'symlink removed',
+              'published files', 'action', 'cause', 'source']
+    ACTIONS = ['none', 'inspect-input', 'install-extractor-be', 'install-extractor-le',
+               'wrap-extractor-be', 'preserve-failure', 'salvage-partial',
+               'audit-symlinks', 'expect-link-absent', 'count-gap', 'confirm-empty',
+               'raise-depth']
+
+    def row(label, action, match, source='`corpus/k.md:1-1`'):
+        return ['`%s`' % label, '`extract_firmware`', '`unblob`', '`squashfs_v4_*`',
+                '`*`', '`*`', '`*`', '`*`', '`*`', '`%s`' % action, match, source]
+
+    ROWS = [
+        row('clean-empty', 'confirm-empty', 'clean-empty'),
+        row('clean', 'none', 'clean-*'),
+        row('dep-missing-be', 'install-extractor-be', 'dep-missing-be'),
+        row('dep-missing-le', 'install-extractor-le', 'dep-missing-le'),
+        row('escaping-symlink-removed', 'expect-link-absent', 'escaping-*'),
+        row('in-tree-symlink-metadata', 'count-gap', 'in-tree-*'),
+        row('mixed-symlinks', 'audit-symlinks', 'mixed-*'),
+        row('avm-marker-be-dropped', 'wrap-extractor-be', 'avm-*'),
+        row('body-extractor-failure', 'preserve-failure', 'body-*,failure-*'),
+        row('partial-body-failure', 'salvage-partial', 'partial-*'),
+        row('no-squashfs-chunk', 'inspect-input', 'no-squashfs-*'),
+        row('depth-limited', 'raise-depth', 'depth-*'),
+    ]
+
+    FEAT = {'handler_set': ['squashfs_v4_be'], 'gap_kinds': [],
+            'gap_dependencies': [], 'be_argv': 'n/a',
+            'symlink_removed': False, 'published': '>0',
+            'extraction_failed': False}
+
+    def table_text(rows, header=None):
+        header = header or HEADER
+        sep = '|' + '---|' * len(header)
+        return '\n'.join(['| ' + ' | '.join(header) + ' |', sep]
+                         + ['| ' + ' | '.join(r) + ' |' for r in rows])
+
+    def block(rows, actions=ACTIONS, header=None, marker='<!-- sqfs-triage-table v3 -->'):
+        acts = '  <!-- sqfs-triage-actions: %s -->' % ' '.join(actions) \
+            if actions is not None else ''
+        return '\n'.join([x for x in [marker, acts,
+                                      '  ' + table_text(rows, header).replace('\n', '\n  ')]
+                          if x])
+
+    def skill_doc(block_text, prose='- **SquashFS outcome triage v3 (round 41).** text'):
+        s = '# K\n\n## Queue-drain craft (x)\n\n- **rule** text\n\n'
+        if block_text is not None:
+            s += prose + '\n\n'
+            if QUOTES:
+                s += ('- **triage v3 (round 41).** reads only the '
+                      '`<!-- sqfs-triage-table v3 -->` block\n\n')
+            s += block_text + '\n\n'
+        return s + '## Next\n\n- other\n'
+
+    QUOTES = False
+
+    def write_tree(d, tree):
+        for p, c in tree.items():
+            fp = os.path.join(d, p)
+            os.makedirs(os.path.dirname(fp) or d, exist_ok=True)
+            with open(fp, 'wb') as f:
+                f.write(c if isinstance(c, bytes) else c.encode())
+
+    def commit(d, tree, msg='x'):
+        write_tree(d, tree)
+        subprocess.run(['git', '-C', d, 'add', '-A'], check=True)
+        subprocess.run(['git', '-C', d, '-c', 'user.name=fx', '-c', 'user.email=fx@fx',
+                        'commit', '-qm', msg, '--allow-empty'], check=True)
+        return subprocess.run(['git', '-C', d, 'rev-parse', 'HEAD'],
+                              capture_output=True, text=True).stdout.strip()
+
+    CLASSES = list(PLANNED_CLASSES)
+
+    def build(params):
+        d = tempfile.mkdtemp(prefix='c2v3.', dir=sroot)
+        subprocess.run(['git', '-C', d, 'init', '-q'], check=True)
+        top = subprocess.run(['git', '-C', d, 'rev-parse', '--show-toplevel'],
+                             capture_output=True, text=True).stdout.strip()
+        if os.path.realpath(top) != os.path.realpath(d):
+            raise SystemExit('fixture toplevel mismatch')
+        commit(d, {SKILL: skill_doc(None), CLAIMS: '# claims (draft)\n'}, 'base')
+        global QUOTES
+        QUOTES = bool(params.get('marker_quoted'))
+        imode = params.get('mode', 'json')
+        emode = params.get('emode', 'ok')
+        btext = params.get('block') if 'block' in params else block(
+            params.get('rows', ROWS), params.get('actions', ACTIONS),
+            params.get('header'))
+        if params.get('skill_mode') == 'v2':
+            btext = block(params.get('rows', ROWS), params.get('actions', ACTIONS),
+                          params.get('header'),
+                          marker='<!-- sqfs-triage-table v2 -->')
+        writer_decl = params.get('writer_decl', '')
+        gen_src = STUB_GEN.replace('@@WRITER@@', writer_decl)
+        tool_tree = {
+            SKILL: skill_doc(btext, params.get('prose',
+                                              '- **SquashFS outcome triage v3 (round 41).** text')),
+            INTERP: STUB_INTERP.replace('@@MODE@@', imode),
+            EVAL: STUB_EVAL.replace('@@EMODE@@', emode),
+            GEN: gen_src,
+            COUNTER: '# counter\n',
+            CLAIMS: '# claims (frozen)\n',
+            'tools/round-40/gen-squashfs.py': '# round-40 writer\n',
+            'tools/round-39/gen-squashfs.py': '# round-39 writer\n',
+        }
+        claim = params.get('claim', 'after')
+        muts = params.get('muts', set())
+        freeze = commit(d, tool_tree, 'freeze')
+        if claim == 'none':
+            return d, freeze, freeze
+        seed = '0' * 64 if params.get('seed') == 'zero' else freeze
+        gdir = tempfile.mkdtemp(prefix='gen.', dir=sroot)
+        gpath = os.path.join(d, GEN)
+        gargs = [sys.executable, '-I', '-B', gpath, '--seed', seed, '--out', gdir]
+        if 'combos' in params:
+            gargs += ['--combos', str(params['combos'])]
+        pr = subprocess.run(gargs, capture_output=True, text=True)
+        if pr.returncode != 0:
+            raise SystemExit('stub generator failed: ' + pr.stderr)
+        with open(os.path.join(gdir, 'manifest.json')) as fh:
+            rman = json.load(fh)
+        classes = params.get('classes', CLASSES)
+        man = {'seed': seed, 'generator': GEN,
+               'classes': [c for c in rman['classes']
+                           if c in classes or c == 'combo'],
+               'carriers': []}
+        if params.get('gen_obj'):
+            man['generator'] = {
+                'name': 'heldout-gen-v3.py', 'version': 'r41-c2-stub',
+                'sha256': hashlib.sha256(gen_src.encode()).hexdigest()
+                if params.get('gen_obj') == 'good' else 'f' * 64}
+            if params.get('writer_path') is not None:
+                man['generator']['writer'] = {
+                    'name': 'gen-squashfs.py',
+                    'path': params['writer_path'],
+                    'sha256': params.get('writer_sha')}
+        claim_files = {}
+        sha_by_id = {c['id']: c['sha256'] for c in rman['carriers']}
+        for c in rman['carriers']:
+            if c['class'] not in classes and c['class'] != 'combo':
+                continue
+            cid = c['id']
+            body = open(os.path.join(gdir, cid, 'carrier.sqsh'), 'rb').read()
+            if 'carrier_corrupt' in muts and cid == 'H01':
+                body += b'X'
+            base = MANIFEST_DIR + '/' + cid
+            claim_files[base + '/carrier.sqsh'] = body
+            digest = c['sha256']
+            if 'digest_mismatch' in muts and cid == 'H01':
+                digest = '0' * 64
+            if 'swap_digest' in muts and cid == 'H01':
+                digest = sha_by_id.get('H02', c['sha256'])
+            env = {'subject': {'name': 'carrier.sqsh',
+                               'digest': {'sha256': digest},
+                               'format': 'file', 'architecture': None,
+                               'local_path': '/fast/scratch/x'},
+                   'operation': 'analyze' if ('envelope_op' in muts and cid == 'H03')
+                   else 'extract_firmware',
+                   'provider': {'id': 'unblob'},
+                   'normalized_result': {
+                       'extraction_gaps': ([{'kind': 'unpublished-entry',
+                                             'dependencies': []}]
+                                           if ('feat_env' in muts and cid == 'H01')
+                                           else []),
+                       'files': [{'path': 'a'}, {'path': 'b'}],
+                       'chunks': [{'handler': 'squashfs_v4_be',
+                                   'extraction_failed': False}],
+                       'diagnostics': []},
+                   'stub_class': ('partial-body-failure' if c['class'] == 'combo'
+                                  else c['class'])}
+            if 'missing_envelope' in muts and cid == 'H02':
+                pass
+            else:
+                blob = {'ok': True, 'data': env, 'meta': {'cli': 'rea-agents@6.5.0'}} \
+                    if 'full_envelope' in muts else env
+                claim_files[base + '/envelope.json'] = json.dumps(
+                    blob, indent=1, sort_keys=True)
+            entry = dict(c)
+            if 'lane_relative_paths' in muts:
+                entry['carrier'] = base + '/carrier.sqsh'
+            if 'omit_envelope' not in muts:
+                entry['envelope'] = (base + '/envelope.json') \
+                    if 'lane_relative_paths' in muts else (cid + '/envelope.json')
+            # the amended claim reports the class map but still binds the
+            # declared feature tuple, so these keep `features` and move only the
+            # pair (or move the tuple to the carrier for the absent case).
+            if 'ce_mismatch' in muts and cid == 'H01':
+                entry['class_expected'] = {'label': 'dep-missing-be',
+                                           'action': 'install-extractor-be',
+                                           'features': dict(FEAT)}
+            if 'ce_absent' in muts and cid == 'H01':
+                entry.pop('class_expected', None)
+                entry['features'] = dict(FEAT)
+            if 'ce_shape' in muts and cid == 'H01':
+                entry['class_expected'] = {'label': 'clean', 'features': dict(FEAT)}
+            if 'combo_feat_mismatch' in muts and cid == 'C01':
+                entry['features']['gap_kinds'] = ['depth-limited']
+            if 'feat_mismatch' in muts and cid == 'H01':
+                entry['class_expected'] = {'label': entry['class_expected']['label'],
+                                           'action': entry['class_expected']['action'],
+                                           'features': dict(FEAT,
+                                                            gap_kinds=['depth-limited'])}
+            if 'feat_absent' in muts and cid == 'H01':
+                entry['class_expected'] = {'label': entry['class_expected']['label'],
+                                           'action': entry['class_expected']['action']}
+            if 'share_carrier_path' in muts and cid == 'H02':
+                entry['carrier'] = 'H01/carrier.sqsh'
+            man['carriers'].append(entry)
+        for rname in ('V1', 'V2', 'L1', 'L2'):
+            if 'receipt_missing' in muts and rname == 'V2':
+                continue
+            rcls = 'clean-be' if ('receipt_wrong_class' in muts
+                                  and rname == 'L1') else 'depth-limited-alone'
+            claim_files['corpus/evidence/round-40/c1/%s/after.json' % rname] = \
+                json.dumps({'ok': True,
+                            'data': {'subject': {'name': 'chunk_extract',
+                                                 'digest': {'sha256': '0' * 64},
+                                                 'format': 'dir',
+                                                 'architecture': None,
+                                                 'local_path': '/fast/scratch/x'},
+                                     'operation': 'extract_firmware',
+                                     'provider': {'id': 'unblob'},
+                                     'normalized_result': {
+                                         'extraction_gaps': [{'kind': 'depth-limited',
+                                                              'dependencies': []}],
+                                         'files': [{'path': 'a'}],
+                                         'chunks': [{'handler': 'squashfs_v4_be',
+                                                     'extraction_failed': False}],
+                                         'diagnostics': []},
+                                     'stub_class': rcls},
+                            'meta': {'cli': 'rea-agents@6.5.0'}},
+                           indent=1, sort_keys=True)
+        if 'class_count3' in muts:
+            body = claim_files[MANIFEST_DIR + '/H01/carrier.sqsh']
+            claim_files[MANIFEST_DIR + '/H99/carrier.sqsh'] = body
+            claim_files[MANIFEST_DIR + '/H99/envelope.json'] = \
+                claim_files[MANIFEST_DIR + '/H01/envelope.json']
+            man['carriers'].append({'id': 'H99', 'class': 'clean-be',
+                                    'arm': 'after',
+                                    'class_expected': {'label': 'clean', 'action': 'none'},
+                                    'carrier': 'H99/carrier.sqsh',
+                                    'sha256': hashlib.sha256(body).hexdigest(),
+                                    'envelope': 'H99/envelope.json'})
+        man_text = json.dumps(man, indent=1, sort_keys=True)
+        if 'bad_manifest' in muts:
+            man_text = man_text.rstrip()[:-3]
+        post = {}
+        if 'edit_skill' in muts:
+            post[SKILL] = skill_doc(block(ROWS + [row('extra', 'none', 'extra')]))
+        if 'edit_actions' in muts:
+            post[SKILL] = skill_doc(block(ROWS, ACTIONS[:-1]))
+        if 'edit_prose' in muts:
+            post[SKILL] = skill_doc(btext, '- **SquashFS outcome triage v3 (round 41). EDITED**')
+        if 'edit_evidence' in muts:
+            post[MANIFEST] = man_text.replace('"seed"', '"seed_extra": 1, "seed"')
+        for m, p in (('edit_interp', INTERP), ('edit_gen', GEN), ('edit_eval', EVAL),
+                     ('edit_claims', CLAIMS), ('edit_counter', COUNTER),
+                     ('edit_writer40', 'tools/round-40/gen-squashfs.py'),
+                     ('edit_writer39', 'tools/round-39/gen-squashfs.py')):
+            if m in muts:
+                cur = tool_tree[p]
+                post[p] = cur + ('\n# edited after freeze\n' if isinstance(cur, str)
+                                 else b'#x\n')
+        if claim == 'after':
+            tree = dict(claim_files)
+            tree[MANIFEST] = man_text
+            tree.update(post)
+            rev = commit(d, tree, 'claim data')
+        elif claim == 'split':
+            commit(d, dict(claim_files), 'carriers and envelopes')
+            tree = {MANIFEST: man_text}
+            tree.update(post)
+            rev = commit(d, tree, 'manifest')
+        elif claim in ('restore', 'mutate_restore'):
+            tree = dict(claim_files)
+            tree[MANIFEST] = man_text
+            tree[SKILL] = skill_doc(block(ROWS + [row('extra', 'none', 'extra')]))
+            commit(d, tree, 'claim data + mutated block')
+            rev = commit(d, {SKILL: tool_tree[SKILL]}, 'restore the block')
+        elif claim == 'evidence_rewrite':
+            tree = dict(claim_files)
+            tree[MANIFEST] = man_text
+            commit(d, tree, 'claim data')
+            rev = commit(d, {MANIFEST: man_text.replace(
+                '"seed"', '"seed_rewritten": 1, "seed"')}, 'rewrite evidence')
+        elif claim == 'befreeze':
+            commit(d, dict(claim_files), 'claim data before freeze')
+            tree = {MANIFEST: man_text, 'plans/round-41-freeze.txt': 'freeze\n'}
+            tree.update(post)
+            rev = commit(d, tree, 'freeze marker')
+            freeze = rev
+        else:
+            raise SystemExit('unknown claim mode ' + claim)
+        return d, freeze, rev
+
+    def run_counter(d, rev, freeze, extra=()):
+        jout = os.path.join(d, '..', os.path.basename(d) + '.receipt.json')
+        cmd = [sys.executable, '-I', '-B', os.path.abspath(__file__),
+               '--root', d, '--rev', rev, '--freeze', freeze,
+               '--json-out', jout] + list(extra)
+        pr = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
+        rec = None
+        if os.path.exists(jout):
+            try:
+                with open(jout) as fh:
+                    rec = json.load(fh)
+            finally:
+                os.unlink(jout)
+        return pr, rec
+
+    NP = len(CLASSES) * 2 + 12
+
+    def GREEN_CHECK(rec):
+        if rec.get('matched') != rec.get('n'):
+            return 'matched %r of %r' % (rec.get('matched'), rec.get('n'))
+        if rec.get('matched_classes') != len(CLASSES) * 2:
+            return 'matched_classes %r' % rec.get('matched_classes')
+        if rec.get('matched_combos') != 12:
+            return 'matched_combos %r' % rec.get('matched_combos')
+        cm = rec.get('class_map_agreement') or {}
+        if cm.get('disagree') or cm.get('missing'):
+            return 'class_map_agreement %r' % cm
+        rr = rec.get('real_receipts') or {}
+        rows = rr.get('rows') or {}
+        if len(rows) != 4 or not all(r.get('ok') for r in rows.values()):
+            return 'real receipts %r' % rows
+        if rr.get('missing'):
+            return 'real receipts missing %r' % rr.get('missing')
+        return None
+
+    def CE_DISAGREE(rec):
+        cm = rec.get('class_map_agreement') or {}
+        return None if cm.get('disagree') else 'class_map_agreement.disagree empty'
+
+    def CE_MISSING(rec):
+        cm = rec.get('class_map_agreement') or {}
+        return None if cm.get('missing') else 'class_map_agreement.missing empty'
+
+    cases = [
+        # ---- green and interface variants
+        ('green: 20 classes x 2 + 12 combos, evaluator == interpreter',
+         dict(), 0, [], [], (), GREEN_CHECK),
+        ('green: full CLI envelope ok/data/meta', dict(muts={'full_envelope'}), 0, [], []),
+        ('green: lane-relative carrier and envelope paths',
+         dict(muts={'lane_relative_paths'}), 0, [], []),
+        ('green: envelope path omitted, sibling inferred',
+         dict(muts={'omit_envelope'}), 0, [], []),
+        ('green: interpreter answers through --envelopes', dict(mode='dir'), 0, [], []),
+        ('green: interpreter emits tab rows', dict(mode='tab3'), 0, [], []),
+        ('green: interpreter names rows only, pair read off the block cells',
+         dict(mode='rowonly'), 0, [], []),
+        ('green: interpreter numbers rows from 1', dict(mode='rowonly1'), 0, [], []),
+        ('green: evaluator emits a wrapped labels map', dict(emode='wrapped'), 0, [], []),
+        ('green: evaluator emits a result list', dict(emode='list'), 0, [], []),
+        ('green: evaluator prints a table and writes labels to --json-out',
+         dict(emode='file'), 0, [], []),
+        ('green: generator object with matching sha', dict(gen_obj='good'), 0, [],
+         ['generator_sha_matches_freeze']),
+        ('green: prose bullet before the marker edited, block untouched',
+         dict(muts={'edit_prose'}), 0, [], ['v3_block_identical']),
+        ('green: a rule bullet quotes the marker inline, block still found',
+         dict(marker_quoted=True), 0, [], ['v3_block_identical', 'v3_block_columns']),
+        ('green: json results without a row index, rows recovered from --table-only',
+         dict(mode='norow'), 0, [], ['decisions_reported']),
+        ('green: writer declared and present at the freeze',
+         dict(gen_obj='good', writer_path='tools/round-40/gen-squashfs.py'), 0, [],
+         ['writer_matches_manifest']),
+        # ---- freeze integrity (exit 2)
+        ('frozen: interpreter edited after freeze', dict(muts={'edit_interp'}), 2, [], []),
+        ('frozen: generator edited after freeze', dict(muts={'edit_gen'}), 2, [], []),
+        ('frozen: evaluator edited after freeze', dict(muts={'edit_eval'}), 2, [], []),
+        ('frozen: counter edited after freeze', dict(muts={'edit_counter'}), 2, [], []),
+        ('frozen: claims edited after freeze', dict(muts={'edit_claims'}), 2, [], []),
+        ('frozen: evidence rewritten by a later commit',
+         dict(claim='evidence_rewrite'), 2, [], []),
+        ('frozen: v3 block edited after freeze', dict(muts={'edit_skill'}), 2, [], []),
+        ('frozen: v3 block mutated then restored (restore does not un-block)',
+         dict(claim='restore'), 2, [], []),
+        ('frozen: only the actions line edited (it is inside the block)',
+         dict(muts={'edit_actions'}), 2, [], []),
+        ('frozen: writer touched, generator names it (R40-CL3 F2)',
+         dict(writer_decl='man["generator"]["writer"] = {"name": "gen-squashfs.py", '
+                          '"path": "tools/round-40/gen-squashfs.py", "sha256": None}',
+              muts={'edit_writer40'}), 2, [], []),
+        ('frozen: round-39 writer touched, generator names it',
+         dict(writer_decl='man["generator"]["writer"] = {"name": "gen-squashfs.py", '
+                          '"path": "tools/round-39/gen-squashfs.py", "sha256": None}',
+              muts={'edit_writer39'}), 2, [], []),
+        # ---- not met (exit 1)
+        ('red: writer touched but the generator never names it -> not frozen',
+         dict(muts={'edit_writer40'}), 0, [], []),
+        ('red: v2 marker only (no v3 block)', dict(skill_mode='v2'), 1,
+         ['v3_block_present', 'v3_block_identical'], []),
+        ('red: seed != freeze', dict(seed='zero'), 1, ['seed_matches_freeze'], []),
+        ('red: manifest added before the freeze', dict(claim='befreeze'), 1,
+         ['manifest_after_freeze', 'seed_matches_freeze'], []),
+        ('red: envelopes before manifest', dict(claim='split'), 1,
+         ['manifest_before_envelopes'], []),
+        ('red: carrier not committed as pinned', dict(muts={'carrier_corrupt'}), 1,
+         ['carriers_committed'], []),
+        ('red: subject digest mismatch', dict(muts={'digest_mismatch'}), 1,
+         ['envelopes_valid'], []),
+        ('red: missing envelope', dict(muts={'missing_envelope'}), 1,
+         ['envelopes_valid'], []),
+        ('red: envelope digest swapped between carriers', dict(muts={'swap_digest'}), 1,
+         ['envelopes_valid'], []),
+        ('red: three carriers in one class', dict(muts={'class_count3'}), 1,
+         ['classes_two_each', 'n_equals_twice_classes'], []),
+        ('red: a combined class missing from the manifest',
+         dict(classes=CLASSES[:-1]), 1, ['classes_cover_planned'], []),
+        ('red: evaluator disagrees with the table on the action', dict(emode='disagree_action'),
+         1, [], ['evaluator_covers_all']),
+        ('red: evaluator disagrees with the table on the label', dict(emode='disagree_label'),
+         1, [], []),
+        ('red: evaluator omits one envelope', dict(emode='omit'), 1,
+         ['evaluator_covers_all'], []),
+        ('report: class_expected disagrees with the evaluator, still met',
+         dict(muts={'ce_mismatch'}), 0, [], [], (), CE_DISAGREE),
+        ('report: class_expected absent on one carrier, still met',
+         dict(muts={'ce_absent'}), 0, [], [], (), CE_MISSING),
+        ('report: class_expected unparsable shape, still met',
+         dict(muts={'ce_shape'}), 0, [], [], (), CE_MISSING),
+        ('red: a class declares a tuple the envelope does not carry',
+         dict(muts={'feat_mismatch'}), 1, ['observed_features_match_declared'], []),
+        ('red: a class declares no tuple', dict(muts={'feat_absent'}), 1,
+         ['observed_features_match_declared'], []),
+        ('red: one envelope does not carry its declared tuple',
+         dict(muts={'feat_env'}), 1, ['observed_features_match_declared'], []),
+        ('red: a combo carrier declares the wrong tuple',
+         dict(muts={'combo_feat_mismatch'}), 1,
+         ['observed_features_match_declared'], []),
+        ('red: the combo family is short of twelve', dict(combos=11), 1,
+         ['combo_family_wellformed'], []),
+        ('red: a real receipt is missing', dict(muts={'receipt_missing'}), 1,
+         ['real_receipts_depth_limited'], []),
+        ('red: a real receipt is labelled otherwise',
+         dict(muts={'receipt_wrong_class'}), 1, ['real_receipts_depth_limited'], []),
+        ('red: the evaluator disagrees on a real receipt',
+         dict(emode='real_disagree'), 1, ['real_receipts_depth_limited'], []),
+        ('red: truncated table (fall-through to unclassified)',
+         dict(rows=ROWS[:1]), 1, [], []),
+        ('red: catch-all table', dict(rows=[row('clean', 'none', '*')]), 1, [], []),
+        ('red: correct rows plus a final `*` unclassified row (the round-40 D2 shortcut)',
+         dict(rows=ROWS + [row('unclassified', 'none', '*')]), 1,
+         ['row_decisions_consistent'], []),
+        ('red: block without the action column',
+         dict(header=[h for h in HEADER if h != 'action']), 1,
+         ['v3_block_columns'], []),
+        ('red: actions line missing', dict(actions=None), 1,
+         ['v3_actions_declared', 'observed_actions_declared'], []),
+        ('red: raise-depth not declared on the actions line',
+         dict(actions=[a for a in ACTIONS if a != 'raise-depth']), 1,
+         ['observed_actions_declared'], []),
+        ('red: interpreter reports neither a pair nor a row nor a table listing',
+         dict(mode='blind'), 1, ['decisions_reported', 'row_decisions_consistent'], []),
+        ('red: two carriers share one carrier path', dict(muts={'share_carrier_path'}), 1,
+         ['carrier_paths_unique'], []),
+        ('red: generator object with a wrong sha', dict(gen_obj='bad'), 1,
+         ['generator_sha_matches_freeze'], []),
+        ('red: writer declared but not in the freeze tree',
+         dict(gen_obj='good', writer_path='tools/round-38/gen-squashfs.py'), 1,
+         ['writer_matches_manifest'], []),
+        ('red: writer sha declared wrong',
+         dict(gen_obj='good', writer_path='tools/round-40/gen-squashfs.py',
+              writer_sha='f' * 64), 1, ['writer_matches_manifest'], []),
+        # ---- unevaluable (exit 2)
+        ('unevaluable: do-nothing at the freeze (no manifest)', dict(claim='none'), 2, [], []),
+        ('unevaluable: evaluator fails outright', dict(emode='fail'), 2, [], []),
+        ('unevaluable: evaluator emits non-JSON', dict(emode='garbage'), 2, [], []),
+        ('unevaluable: interpreter fails outright', dict(mode='fail'), 2, [], []),
+        ('unevaluable: manifest unparsable', dict(muts={'bad_manifest'}), 2, [], []),
+        ('unevaluable: unknown revision', dict(), 2, [], [], ('--rev', 'deadbeef' * 5)),
+        ('unevaluable: freeze not an ancestor of rev', dict(), 2, [], [], ('NONANCESTOR',)),
+    ]
+    green = red = 0
+    for name, params, want, want_false, want_true, *rest in cases:
+        extra = rest[0] if rest else ()
+        check = rest[1] if len(rest) > 1 else None
+        d = None
+        try:
+            d, freeze, rev = build(params)
+            extra_args = []
+            if extra == ('NONANCESTOR',):
+                extra_args = ['--rev', freeze, '--freeze', rev]
+            elif extra:
+                extra_args = list(extra)
+            pr, rec = run_counter(d, rev, freeze, extra_args)
+            got = pr.returncode
+            want_n = 2 * len(params.get('classes', CLASSES)) \
+                + params.get('combos', 12) \
+                + (1 if 'class_count3' in params.get('muts', set()) else 0)
+            ok = got == want
+            if rec is None:
+                ok = False
+                fails.append('%s: no receipt written (stderr=%r)' % (name, pr.stderr[-400:]))
+            else:
+                if rec.get('exit_code') != got:
+                    ok = False
+                    fails.append('%s: receipt exit_code %r != process exit %d'
+                                 % (name, rec.get('exit_code'), got))
+                if got in (0, 1):
+                    if rec.get('n') != want_n:
+                        ok = False
+                        fails.append('%s: n=%r, want %d' % (name, rec.get('n'), want_n))
+                    if rec.get('met_target_consistent') is not True:
+                        ok = False
+                        fails.append('%s: met_target_consistent false' % name)
+                    for k in want_false:
+                        if rec.get('bindings', {}).get(k) is not False:
+                            ok = False
+                            fails.append('%s: binding %s not false (got %r)'
+                                         % (name, k, rec.get('bindings', {}).get(k)))
+                    for k in want_true:
+                        if rec.get('bindings', {}).get(k) is not True:
+                            ok = False
+                            fails.append('%s: binding %s not true (got %r)'
+                                         % (name, k, rec.get('bindings', {}).get(k)))
+                    if got == 0 and not rec.get('met_target'):
+                        ok = False
+                        fails.append('%s: exit 0 without met_target' % name)
+                    if got == 0 and rec.get('matched') != NP:
+                        ok = False
+                        fails.append('%s: exit 0 with matched %r' % (name, rec.get('matched')))
+                    if got == 0 and rec.get('bindings_false'):
+                        ok = False
+                        fails.append('%s: exit 0 with bindings_false %r'
+                                     % (name, rec.get('bindings_false')))
+                    if check is not None:
+                        msg = check(rec)
+                        if msg:
+                            ok = False
+                            fails.append('%s: %s' % (name, msg))
+            if ok:
+                st = subprocess.run(['git', '-C', d, 'status', '--porcelain'],
+                                    capture_output=True, text=True).stdout.strip()
+                if st:
+                    ok = False
+                    fails.append('%s: counter dirtied the measured repo: %r'
+                                 % (name, st[:300]))
+            if ok:
+                if want == 0:
+                    green += 1
+                else:
+                    red += 1
+            elif got != want:
+                fails.append('%s: want exit %d got %d (stdout=%r)'
+                             % (name, want, got, pr.stdout[-400:]))
+        except SystemExit as e:
+            fails.append('%s: fixture error %s' % (name, e))
+        finally:
+            if d:
+                shutil.rmtree(d, ignore_errors=True)
+
+    total = len(cases)
+    passed = total - len(fails)
+    print(json.dumps({'selftest': 'c2-counter r41 (v3)', 'cases': total, 'green': green,
+                      'red': red, 'pass': passed, 'fail': len(fails),
+                      'failures': fails}))
+    print('SELFTEST cases=%d pass=%d fail=%d' % (total, passed, len(fails)))
+    return 0 if not fails else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

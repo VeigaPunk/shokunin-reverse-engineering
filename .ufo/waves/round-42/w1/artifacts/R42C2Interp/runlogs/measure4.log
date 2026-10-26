@@ -1,0 +1,38 @@
+== 1. selftest
+SELFTEST cases=123 pass=123 fail=0
+selftest exit=0
+== 2. probe table
+skill: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/probe-table-v4.md
+marker line: 18  actions line: 19  table line: 20  rules: 15
+table-only exit=0
+== control interpreter from c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c
+6ad2b4e1638a2b5f883d7bed14f8863ad5396dbc1af64b7cd521720ea42b6aa4  /fast/scratch/hyaku/kaidoku-r42/R42C2Interp/measure4/sqfs-triage-v3.py
+== 3. real legacy REA envelopes (evidence/envelopes/*)
+v3 exit=0
+v4 exit=0
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-container.json v3=no-squashfs-chunk/inspect-input v4=container-depth-limited/raise-depth
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-ddwrt-le-nopad.json v3=unclassified/none      v4=depth-limited/raise-depth
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-ff-120.json v3=unclassified/none      v4=legacy-body-failure/cross-read-legacy
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-ff-200.json v3=unclassified/none      v4=legacy-body-failure/cross-read-legacy
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-nodep-v3-le-nopad.json v3=unclassified/none      v4=dep-missing-le/install-extractor-le
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-nodep-v4-be.json v3=dep-missing-be/install-extractor-be v4=dep-missing-be/install-extractor-be
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-nodep-v4-le-nopad.json v3=dep-missing-le/install-extractor-le v4=dep-missing-le/install-extractor-le
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-residue.json v3=unclassified/none      v4=unknown-residue/isolate-residue
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-squashfs_v3_be-squashfs_v3.json v3=unclassified/none      v4=depth-limited/raise-depth
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-trunc-180.json v3=no-squashfs-chunk/inspect-input v4=no-squashfs-chunk/inspect-input
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-trunc-300.json v3=no-squashfs-chunk/inspect-input v4=no-squashfs-chunk/inspect-input
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/envelopes/rea-v3-le-nopad.json v3=unclassified/none      v4=depth-limited/raise-depth
+== 4. round-41 held-out envelopes
+v3 exit=0 envelopes=52
+v4 exit=0
+heldout compared=52 identical=52
+== 5. round-41 C1 carriers (after.json receipts)
+v3 exit=0
+v4 exit=0
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/L3/after.json v3=depth-limited/raise-depth v4=depth-limited/raise-depth
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/L4/after.json v3=depth-limited/raise-depth v4=depth-limited/raise-depth
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/V3/after.json v3=depth-limited/raise-depth v4=depth-limited/raise-depth
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/V4/after.json v3=depth-limited/raise-depth v4=depth-limited/raise-depth
+== 6. the base SKILL.md must be refused by the v4 interpreter
+sqfs-triage-v4: line 434: refused marker '<!-- sqfs-triage-table v3 -->'; this interpreter reads only '<!-- sqfs-triage-table v4 -->' in the craft section (a superseded table is never evaluated as v4)
+base-skill exit=2 (expect 2 + a refused v3 marker)

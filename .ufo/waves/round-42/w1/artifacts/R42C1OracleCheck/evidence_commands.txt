@@ -1,0 +1,82 @@
+R42C1OracleCheck — evidence log (exact commands, outputs, exit codes)
+
+All runs from S=/fast/scratch/hyaku/kaidoku-r42/R42C1OracleCheck
+(scratch removed at EXIT; only cited data copied to artifacts).
+
+## 0. Tool versions (checked 2026-10-26)
+- unsquashfs 4.7.5 (2026/03/01)
+- 7-Zip 26.04 (x64), 2026-10-05
+- sasquatch / sasquatch-v4be 4.5.1 (2022/03/17)
+- unblob 26.6.4
+- unsquashfs-backhand 0.25.5-v3 (L1-built; help lists kinds le_v3_0,
+  be_v3_0, le_v3_0_lzma, be_v3_0_lzma, plus v4/AVM kinds)
+- No tools installed this round.
+
+## 1. Superblock facts (unsquashfs -s)
+atheros-root.squashfs: BE SQUASHFS 3:0, 353 inodes, block size 65536,
+fragments 13, 1 uid/0 gid, creation 2007-09-30 15:16:25.
+brcm.squashfs (carve): LE 3:0, 363 inodes, 65536, fragments 14, mkfs
+2007-09-30 15:38:56.
+x86.squashfs (carve): LE 3:0, 332 inodes, 65536, fragments 9.
+
+## 2. LZMA-adaptive detection
+sasquatch -lls img/atheros-root.squashfs (stderr):
+  "SquashFS version [768.0] / inode count [1627455488] suggests a SquashFS
+   image of a different endianess"
+  "Reading a different endian SQUASHFS filesystem ..."
+  "Trying to decompress using default gzip decompressor..." ... 
+  "Detected lzma-adaptive compression"
+7z l -slt img/atheros-root.squashfs: "File System = SquashFS 3.0",
+  "Method = LZMA Spec", "Big-endian = +", "Tail Size = 180224".
+
+## 3. unsquashfs failure on lzma-adaptive (rc 1)
+unsquashfs -lls img/atheros-root.squashfs
+  "Reading a different endian SQUASHFS filesystem ..."
+  "gzip uncompress failed with error code -3"
+  "read_block: failed to read block @0xf320f"
+  "read_fragment_table: failed to read fragment table block"
+  "FATAL ERROR: File system corruption detected"
+Same pattern on brcm.squashfs, x86.squashfs, and both adaptive fixtures.
+
+## 4. unsquashfs vs Broadcom shsq magic (rc 1)
+unsquashfs -s fx/squashfs_v3_broadcom_little_endian___input___squashfs_v3_le.bin
+  "FATAL ERROR: Can't find a valid SQUASHFS superblock ..."
+7z: "Method = LZMA ZLIB" (lists apple.txt/cherry.txt).
+sasquatch -lls: rc 0, 3 entries.
+
+## 5. 7z extraction divergence on Kamikaze (rc 2)
+7z x -y -o w7b ../img/atheros-root.squashfs
+  WARNINGS: ... "ERROR: Dangerous link path was ignored : sbin/halt :
+  ../bin/busybox" (and 79 more; full list in log file)
+  "Sub items Errors: 80", "Archives with Errors: 1", rc 2
+find w7b -type f -size 0 | wc -l   -> 80
+Identical 80 dropped links on brcm and x86.
+
+## 6. Symlink-class probe (Sentinel fixture, reproduced)
+7z x on 4 KiB image containing abs->/etc/passwd, up->../outside,
+same->hello.txt:
+  abs: symlink -> <outdir>/etc/passwd (rewritten)
+  up : "Dangerous link path was ignored" -> 0-byte regular file
+  same: symlink preserved
+  rc != 0.
+
+## 7. Pairwise agreement (final matrix, run 2026-10-26)
+See matrix_final.json (path sets + per-image rc + backhand tree counts).
+
+## 8. Carving commands
+dd if=brcm.trx of=brcm.squashfs bs=1 skip=753664 status=none
+dd if=x86.image of=x86.squashfs bs=1 skip=4677120 status=none
+Magic scan: hsqs at 753664 (brcm.trx), hsqs at 4677120 (x86.image),
+sqsh at 0 (atheros-root.squashfs).
+
+## 9. Structural facts recovered for v3 (from squashfs-tools 4.7.5
+source + fixture byte-decoding)
+- superblock PACKED 119 bytes; mkfs_time at byte 39 (unaligned)
+- root_inode = (rel_byte_offset << 16) | offset (verified from
+  unsquash-3.c read_inode: start = inode_table_start + start_block)
+- dir header 12 bytes: {unsigned count:8; unsigned start_block; unsigned
+  inode_number}; entry 6+name: {offset:13 type:3 size:8; int
+  inode_number:16; name[]}
+- validation: guid_start==0 when no_guids==0; uid_start < table_start;
+  fragments==0 => fragment_table_start == uid_start; lookup_table_start
+  == -1 skips exports; 3.x is gzip-only in unsquashfs.

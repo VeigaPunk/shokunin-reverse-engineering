@@ -1,0 +1,18 @@
+$ git -C CLONE rev-parse --short HEAD
+74064474
+$ git -C CLONE status --porcelain  (empty)
+$ prefile-gate.py --root CLONE --round 41
+prefile-gate: root=/fast/scratch/hyaku/kaidoku-r42/R42PrefileGate/fx.NPYs/lane round=41 head=74064474
+(a) waves settled                                        FAIL
+    FAIL  wave w2 is still running: .ufo/waves/round-41/ has no w2.ready.dispatched
+    FAIL  wave w2 has no results file (looked for w2-results.json and r41-w2-results.json)
+    note  wave w1 settled: .ufo/waves/round-41/r41-w1-results.json (252545 bytes)
+(b) tree clean under round scopes                        PASS
+    PASS  git status clean under .ufo/waves/round-41, corpus/evidence/round-41, plans, tools/round-41
+(c) no stray .err in lane root                           WARN
+    PASS  no *.err in lane root
+    WARN  2 tracked + 0 untracked .err under round evidence/wave dirs (outside the lane-root rule; e.g. .ufo/waves/round-41/w1/artifacts/R41C2ControlTables.step.err)
+(d) lesson wave-report pointers resolve in HEAD          FAIL
+    FAIL  cited wave report missing from HEAD: w2/R41W2C2Table.md (.ufo/waves/round-41/w2/R41W2C2Table.md)
+GATE RED — failing: a, d  (exit 1)
+EXIT=1

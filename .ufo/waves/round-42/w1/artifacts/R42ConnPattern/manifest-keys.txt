@@ -1,0 +1,43 @@
+Census of the FROZEN round-41 held-out manifest:
+corpus/evidence/round-41/c2/heldout/manifest.json
+
+Top-level keys:
+  action_set action_source action_vocabulary carriers claim classes
+  declared_schema families generator label_actions new_label_tokens_binding
+  new_labels out_of_domain rea replicate_variation round seed
+
+Per-carrier keys (52 carriers; named classes AND combos):
+  action arm carrier chunks class class_expected compression corruption damage
+  declared declared_extras endian id label layout nested operation rea sha256
+  symlinks tree          (combos add: combo_index factors family)
+
+Key of interest:
+  'declared'       present on ALL 52 carriers (named classes and combos)
+  'features'       present on NONE
+  'declared_features' present on NONE
+  'class_expected' dict on the 40 named-class carriers; None on the 12 combos
+
+The frozen c2-counter reads only (c2-counter.py:1496-1503):
+  1. c['class_expected']['features']   (named classes: present -> ok)
+  2. c['features']                     (absent for all)
+  3. c['declared_features']            (absent for all)
+  4. manifest[decl_key][class]         (decl_key = one of class_features /
+     classes_features / feature_tuples / features_by_class / class_tuples -
+     none present in the manifest)
+
+=> every combo carrier (C01..C12) fails observed_features_match_declared;
+   feat_classes[combo] = 'declared-tuple-incomplete'.
+
+Manifest generator block (heldout-gen-v3.py:1775-1784 writes):
+  generator.name = heldout-gen-v3.py
+  generator.sha256 = ...
+  generator.writer = {name: gen-squashfs.py, path: tools/round-39/gen-squashfs.py,
+                      sha256: ...}
+The counter reads generator.writer.path (c2-counter.py:1080) - writer writes
+BOTH name and path, so writer_matches_manifest is functional (not vacuous).
+
+Cross-port coupling:
+  tools/round-41/c2-controls.py:84 builds CTL-C2-7 lookup rows from
+  c['declared']  - the OLD key. If the v4 generator switches to a single
+  'declared_features' key, the controls builder MUST switch too, or the
+  lookup control reads a key that no longer carries the tuple.

@@ -1,0 +1,30 @@
+doc	lines	symbol	quote	note
+python/unblob/handlers/filesystem/squashfs.py	24	class	SquashFSExtractor(Extractor)	extractor class
+python/unblob/handlers/filesystem/squashfs.py	25	EXECUTABLE	EXECUTABLE = "sasquatch"	plain binary for v1-v4 LE and v1-v3 BE
+python/unblob/handlers/filesystem/squashfs.py	26	V4BE_EXECUTABLE	V4BE_EXECUTABLE = "sasquatch-v4be"	only selected in the version 4 BIG branch
+python/unblob/handlers/filesystem/squashfs.py	32	extract	def extract(self, inpath: Path, outdir: Path)	entry point
+python/unblob/handlers/filesystem/squashfs.py	34	endian	get_endian(file, self.big_endian_magic)	handler-family magic decides endianness
+python/unblob/handlers/filesystem/squashfs.py	39-41	version branch	match endian, self.version and case Endian.BIG, 4 then executable = self.V4BE_EXECUTABLE	the only sasquatch-v4be selection
+python/unblob/handlers/filesystem/squashfs.py	48-50	AVM pre-check	is_avm = header.bytes_used == header.mkfs_time then if not is_avm: commands_args.append("-be")	v4 BE AVM images get no -be flag
+python/unblob/handlers/filesystem/squashfs.py	51-52	BE branch	case Endian.BIG, _: commands_args.append("-be")	applies to v1-v3 BE and v4 BE fallthrough
+python/unblob/handlers/filesystem/squashfs.py	53-54	LE branch	case Endian.LITTLE, _: commands_args.append("-le")	all LE handlers including v3
+python/unblob/handlers/filesystem/squashfs.py	56-64	argv tail	-no-exit-code, -f, -d {outdir}, {inpath}	completes the sasquatch argv
+python/unblob/handlers/filesystem/squashfs.py	68-69	get_dependencies	return [self.EXECUTABLE, self.V4BE_EXECUTABLE]	handler-level list names both binaries for every squashfs handler
+python/unblob/handlers/filesystem/squashfs.py	73	_SquashFSBase.BIG_ENDIAN_MAGIC	BIG_ENDIAN_MAGIC = 0x73_71_73_68	standard family magic
+python/unblob/handlers/filesystem/squashfs.py	75	_SquashFSBase.EXTRACTOR	EXTRACTOR = SquashFSExtractor(3, 0x73_71_73_68)	v1 and v2 handlers inherit version 3
+python/unblob/handlers/filesystem/squashfs.py	101-102	SquashFSv1Handler	class SquashFSv1Handler(_SquashFSBase): NAME = "squashfs_v1"	handler NAME
+python/unblob/handlers/filesystem/squashfs.py	104-121	SquashFSv1Handler.PATTERNS	73 71 73 68 [24] 00 01 and 68 73 71 73 [24] 01 00	magic plus fixed 24-byte gap then major/minor
+python/unblob/handlers/filesystem/squashfs.py	158-159	SquashFSv2Handler	class SquashFSv2Handler(SquashFSv1Handler): NAME = "squashfs_v2"	handler NAME
+python/unblob/handlers/filesystem/squashfs.py	161-178	SquashFSv2Handler.PATTERNS	73 71 73 68 [24] 00 02 and 68 73 71 73 [24] 02 00	major 2 discrimination
+python/unblob/handlers/filesystem/squashfs.py	199-204	SquashFSv2NonStandardHandler	NAME = "squashfs_v2_nonstandard" and EXTRACTOR = SquashFSExtractor(2, 0x73_71_6C_7A)	own magic sqlz/zlqs
+python/unblob/handlers/filesystem/squashfs.py	244-245	SquashFSv3Handler	class SquashFSv3Handler(_SquashFSBase): NAME = "squashfs_v3"	the C1 handler family base
+python/unblob/handlers/filesystem/squashfs.py	247-264	SquashFSv3Handler.PATTERNS	73 71 73 68 [24] 00 03 and 68 73 71 73 [24] 03 00	v3 standard magic
+python/unblob/handlers/filesystem/squashfs.py	284-315	SquashFSv3Handler superblock	squashfs3_super_block_t with bytes_used_2 and trailing uint64 bytes_used	fields calculate_chunk reads
+python/unblob/handlers/filesystem/squashfs.py	318-323	SquashFSv3DDWRTHandler	NAME = "squashfs_v3_ddwrt", BIG_ENDIAN_MAGIC = 0x74_71_73_68, EXTRACTOR = SquashFSExtractor(3, 0x74_71_73_68)	DD-WRT family magic
+python/unblob/handlers/filesystem/squashfs.py	325-342	SquashFSv3DDWRTHandler.PATTERNS	68 73 71 74 [24] 03 00 and 74 71 73 68 [24] 00 03	hsqt and tqsh
+python/unblob/handlers/filesystem/squashfs.py	363-368	SquashFSv3BroadcomHandler	NAME = "squashfs_v3_broadcom", BIG_ENDIAN_MAGIC = 0x71_73_68_73, EXTRACTOR = SquashFSExtractor(3, 0x71_73_68_73)	Broadcom family magic
+python/unblob/handlers/filesystem/squashfs.py	370-388	SquashFSv3BroadcomHandler.PATTERNS	73 68 73 71 [24] 03 00 and 71 73 68 73 [24] 00 03	shsq and qshs
+python/unblob/handlers/filesystem/squashfs.py	409-414	SquashFSv3NSHandler	NAME = "squashfs_v3_nonstandard", BIG_ENDIAN_MAGIC = 0x73_71_6C_7A, EXTRACTOR = SquashFSExtractor(3, 0x73_71_6C_7A)	nonstandard family magic
+python/unblob/handlers/filesystem/squashfs.py	416-433	SquashFSv3NSHandler.PATTERNS	7A 6c 71 73 [24] 03 00 and 73 71 6c 7A [24] 00 03	zlqs and sqlz
+python/unblob/handlers/filesystem/squashfs.py	454-455	SquashFSv4LEHandler	class SquashFSv4LEHandler(_SquashFSBase): NAME = "squashfs_v4_le"	v4 LE
+python/unblob/handlers/filesystem/squashfs.py	457-466	SquashFSv4LEHandler.PATTERNS	68 73 71 73 [24] 04 00	v4 major 4

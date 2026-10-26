@@ -1,0 +1,51 @@
+Probes: verbatim extraction of the named functions from
+tools/round-41/c1-counter.py (line ranges as noted) run in a single namespace.
+
+Functions extracted:
+  path_parts      lines 780-791
+  strip_output    lines 829-840
+  diagnostic_rel  lines 899-919
+  extract_rel     lines 932-948
+  strip_rel       lines 951-959
+  same_rel        lines 962-966
+
+==========================================================================
+== 1a decoy-segment removal diagnostic (R41W2C1PathRule scenario 05b) ==
+root (CR) = 'firmware.bin_extract'
+
+  diagnostic_rel({'report': {'link':
+      '/fast/scratch/hyaku/kaidoku-r41/decoy/firmware.bin_extract/bin/link'}}, CR)
+    -> 'bin/link'        (decoy directory; NOT under the trusted output dir)
+  diagnostic_rel({'report': {'link':
+      '/fast/scratch/hyaku/kaidoku-r41/fx/V4-after/firmware.bin_extract/bin/link'}}, CR)
+    -> 'bin/link'        (honest path under the trusted output dir)
+
+Both resolve to the same removal entry; the removal obligation is satisfied by
+a diagnostic from a foreign directory. The root segment run is matched at any
+position in the absolute link (c1-counter.py:916-918), never anchored to the
+receipt's parameters.output_directory prefix.
+
+==========================================================================
+== 1b trailing-slash / dot-segment canonicalization asymmetry ==
+root = 'firmware.bin_extract'
+
+  extract_rel(root + '/var/info.txt/', root) -> 'var/info.txt'
+  same_rel(root + '/var/info.txt/', 'var/info.txt', root) -> True
+  same_rel(root + '/bin/link/', 'bin/link', root) -> True
+
+path_parts drops '' and '.' segments (c1-counter.py:791), so a candidate with
+a trailing slash (a directory-like file spelling) equals the oracle row. The
+table-row side (strip_rel) strips only leading './' and '/', never a trailing
+slash (c1-counter.py:956-959) - normalization is asymmetric.
+
+==========================================================================
+== 1c $output/ duplication asymmetry (scenarios 04a vs 04b) ==
+  strip_output('$output/$output/x') -> '$output/x'   (strips ONCE)
+  path_parts('$output/$output/x')   -> ['x']         (strips repeatedly)
+  strip_rel('a/')                    -> 'a/'
+  strip_rel('./a')                   -> 'a'
+
+Same receipt string normalizes differently depending on which helper answers:
+derivation child_path uses strip_output (rejects on duplicate sigil), while
+file/gap/unpublished paths use path_parts (accept). One counter, two
+normalization semantics for the same namespace.

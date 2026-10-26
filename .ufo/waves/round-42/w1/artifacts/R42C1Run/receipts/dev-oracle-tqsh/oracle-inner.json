@@ -1,0 +1,155 @@
+{
+  "schema": "kaidoku-r42-sqfs3-oracle-v1",
+  "input": {
+    "path": "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/fx/ddwrt-be.bin",
+    "sha256": "daa8e72d355db1067a36bacd4b15853fb49ce7bb4fa6d6efafc0e7f09be8c9e1",
+    "size_bytes": 320
+  },
+  "offsets": {
+    "superblock": 0
+  },
+  "layout": {
+    "magic": "tqsh",
+    "byte_order": "big",
+    "standard_magic": "sqsh",
+    "version": "3.1",
+    "superblock_offset": 0,
+    "image_size": 320,
+    "image_sha256": "daa8e72d355db1067a36bacd4b15853fb49ce7bb4fa6d6efafc0e7f09be8c9e1"
+  },
+  "magic_normalization": {
+    "original_magic": "tqsh",
+    "normalized_magic": "sqsh",
+    "path": "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle-work/normalized-magic.sqfs",
+    "sha256": "c1eb3ac360e453701bf080c7a6dd7486afbf1d218bc3193944292dd8f88392f0",
+    "size": 320,
+    "transform": "4 identifier bytes at the superblock offset only"
+  },
+  "tools": {
+    "python": "3.14.8",
+    "unsquashfs": {
+      "path": "/usr/bin/unsquashfs",
+      "version_line": "unsquashfs version 4.7.5 (2026/03/01)",
+      "sha256": "461e1fd9eac39c12e673042807459985636030d5557319343fc3a6ed4ba1677c"
+    },
+    "7z": {
+      "path": "/usr/bin/7z",
+      "version_line": "7-Zip 26.04 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-10-05",
+      "squashfs_format_listed": true,
+      "squashfs_signature_line": "0  ....M.................  SquashFS squashfs      h s q s  ||  s q s h  ||  s h s q  ||  q s h s",
+      "sha256": "f802383f13b8331aabaf779def00a356c8d2b8148255170b75b03028f4d23ad4"
+    }
+  },
+  "producers": {
+    "unsquashfs": {
+      "list_argv": [
+        "unsquashfs",
+        "-lls",
+        "-no-progress",
+        "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle-work/normalized-magic.sqfs"
+      ],
+      "list_exit": 0,
+      "list_error": null,
+      "extract_argv": [
+        "unsquashfs",
+        "-d",
+        "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle-work/root-unsquashfs",
+        "-no-xattrs",
+        "-f",
+        "-no-progress",
+        "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle-work/normalized-magic.sqfs"
+      ],
+      "extract_exit": 0,
+      "extract_stderr_tail": "Reading a different endian SQUASHFS filesystem on /fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle-work/normalized-magic.sqfs\n",
+      "extract_root": "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle-work/root-unsquashfs",
+      "complete": true,
+      "missing_regular": [],
+      "counts": {
+        "total": 4,
+        "regular": 4,
+        "dir": 0,
+        "symlink": 0,
+        "char-device": 0,
+        "block-device": 0,
+        "fifo": 0,
+        "socket": 0
+      }
+    },
+    "7z": {
+      "list_argv": [
+        "7z",
+        "l",
+        "-tSquashFS",
+        "-slt",
+        "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle-work/normalized-magic.sqfs"
+      ],
+      "list_exit": 0,
+      "list_error": null,
+      "extract_argv": [
+        "7z",
+        "x",
+        "-tSquashFS",
+        "-y",
+        "-bso0",
+        "-bsp0",
+        "-o/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle-work/root-7z",
+        "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle-work/normalized-magic.sqfs"
+      ],
+      "extract_exit": 0,
+      "extract_stderr_tail": "",
+      "extract_root": "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle-work/root-7z",
+      "complete": true,
+      "missing_regular": [],
+      "counts": {
+        "total": 4,
+        "regular": 4,
+        "dir": 0,
+        "symlink": 0,
+        "char-device": 0,
+        "block-device": 0,
+        "fifo": 0,
+        "socket": 0
+      }
+    }
+  },
+  "counts": {
+    "unsquashfs": {
+      "total": 4,
+      "regular": 4,
+      "dir": 0,
+      "symlink": 0,
+      "char-device": 0,
+      "block-device": 0,
+      "fifo": 0,
+      "socket": 0
+    },
+    "7z": {
+      "total": 4,
+      "regular": 4,
+      "dir": 0,
+      "symlink": 0,
+      "char-device": 0,
+      "block-device": 0,
+      "fifo": 0,
+      "socket": 0
+    }
+  },
+  "cross_check": {
+    "detail_source": "unsquashfs",
+    "detail_cross_check": "kind only: 7z 26.04 -slt reports no symlink target and no device numbers, and 7z x rewrites absolute link targets and refuses relative '..' targets",
+    "verdict": "agree",
+    "mismatch_count": 0,
+    "first_20": [],
+    "mismatches_truncated": false
+  },
+  "tables": {
+    "files": "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/oracle.tsv",
+    "regular_rows": 4,
+    "nonregular": "/fast/scratch/hyaku/kaidoku-r42/R42C1Run/kaidoku-r42/Dtqsh/nonregular.tsv",
+    "nonregular_rows": 0
+  },
+  "probe": false,
+  "dev_allow_v4": false,
+  "exit": 0,
+  "reason": null
+}

@@ -1,0 +1,37 @@
+fetch() redirect behaviour, tools/round-41/fetch-vendor.py (imported unchanged),
+probe 2026-10-26 by R42C1Sentinel. Two loopback HTTP servers; the second is reached
+through the hostname `localhost` on a different port, i.e. a different origin than
+the pinned URL.
+
+`fetch(url, image_cache, want)` body, unchanged from round 41:
+
+    with urllib.request.urlopen(url, timeout=300) as r:
+        status = getattr(r, 'status', None)
+        b = r.read()
+    if image_cache and sha256(b) == want:
+        ... write image_cache/<want>.image ...
+
+Observed (python3 3.14, both runs exit normally, bytes match the pin):
+
+  same-host redirect  -> bytes_ok= True how= http 200 requests= [(33431, '/start'), (33431, '/final')]
+  cross-host redirect -> bytes_ok= True how= http 200 hosts hit= [(42297, '/start', '127.0.0.1:42297'),
+                                                                  (58995, '/final', {'Host': 'localhost:58995', ...})]
+  cache files: ['fbcbf7a7a1d03d43d14dc18a71014a5fdaf7c5e0c3a3e17001202ae335f1c555.image']
+
+What this shows:
+
+1. urllib follows redirects to another host/origin; `fetch` records only the final
+   hop's status (`200`) and never the redirect chain or the final URL. Neither the
+   cache file name, the returned `how` string, nor anything written to disk says
+   which host actually served the bytes.
+2. The bytes are authenticated *only* by the `image_sha256` pin from the spec. If the
+   pin is honest the redirect is harmless for integrity; if the pin was fixed at
+   freeze time from bytes an origin chose to serve, no later step can tell.
+3. No scheme restriction: `url` may be `http://`, `file://`, or any redirect target;
+   the counter never re-fetches (see report F4), so the URL is never exercised at
+   score time.
+4. `r.read()` has no size cap: a redirect to an unbounded stream is an unbounded
+   allocation in the fetcher process.
+
+Rebuild: see report §9 (`artifacts/redirect-demo.py` reproduces the two servers; it
+uses only the stdlib and writes nothing outside TMPDIR).
