@@ -1,0 +1,57 @@
+{
+ "id": "V4",
+ "chain": {
+  "url": "https://download.avm.de/fritzbox/fritzbox-5491/other/fritz.os/FRITZ.Box_5491-07.31.image",
+  "image_sha256": "a5a3a763a615c2dab226d15463bc05fbc74e844736687fa5cc87a91d2f35f661",
+  "image_size": 36392960,
+  "member": "./var/tmp/filesystem.image",
+  "member_sha256": "4cfc3016d84cccf4982d6a4c50935f1771ad350994f569496e91e42be3d92f6c",
+  "member_size": 33361928,
+  "nested": {
+   "path": "filesystem_core.squashfs",
+   "sha256": "4d5de25c7bee7ae9206ae1882a66abe6c694ce19bcb4d568fa235fb30c7ad947",
+   "size": 32722944
+  },
+  "length": 32720860,
+  "carrier_sha256": "ce27ebca903a1574465ddfa0626943339ce6bc8155f31f88d04049afb570087f",
+  "product": "FRITZ!Box 5491, FRITZ!OS 07.31",
+  "release_date": "09/04/2023",
+  "build": "107858",
+  "releasecycle": "PSQ19P2NL4",
+  "hardware": "Fritz_Box_HW243"
+ },
+ "source_identity": {
+  "info_en.txt": {
+   "url": "https://download.avm.de/fritzbox/fritzbox-5491/other/fritz.os/info_en.txt",
+   "http_status": 200,
+   "bytes": 53166,
+   "sha256": "ec2528eb91f16d35c9245c8f7c276a57edd7fb58344a649fa1add451051970b4",
+   "last_modified": "Mon, 18 Nov 2024 14:01:04 GMT",
+   "identity_lines": [
+    "Product:\tFRITZ!Box 5491",
+    "Version:        FRITZ!OS 7.31",
+    "Language:       English, French, German, Italian, Polish, Spanish",
+    "Release date:   09/04/2023"
+   ]
+  },
+  "image_var_content": [
+   "Product=Fritz_Box_HW243 (FRITZ!Box 5491)",
+   "Type=Release",
+   "Releasecycle=PSQ19P2NL4",
+   "Version=07.31",
+   "Build=107858"
+  ],
+  "image_var_version": "FIRMWAREVERSION=171.07.31,,107858,",
+  "image_var_info_txt": "bilingual AVM licence notice only; it names no product or version"
+ },
+ "decision": {
+  "rule": "nested filesystem_core.squashfs IF it is AVM-BE (sqsh, mkfs_time == bytes_used, little-endian metadata headers) AND its rootfs entry count fits REA 6.5.0's staged-entry budget at --max-depth 1; else the wrapper member",
+  "nested_layout": "avm (big-endian structural fields, little-endian metadata headers)",
+  "nested_avm_marker": true,
+  "nested_staging_entries": 7367,
+  "nested_entry_budget": 10000,
+  "nested_fits": true,
+  "chosen": "nested filesystem_core.squashfs carved to bytes_used"
+ },
+ "note": "vendor bytes are not committed (AVM licence: no redistribution). Rebuild with tools/round-40/fetch-vendor.py (round-41 port must add the nested step: tar member -> filesystem_core.squashfs -> carve [0, bytes_used)); the pins above are the only committed form."
+}

@@ -1,0 +1,68 @@
+R41Simplify — measured evidence for the YAGNI removal list
+=======================================================================
+
+Inputs (read-only git, base 49096c7e6f226af0c750c4b003be58883cb6049f of the lane)
+  git -C LANE show 49096c7e:tools/round-40/c1-counter.py
+      2217 lines  105417 B  sha256 8d288e4cf203d74557aa81df556d6a95c1bcde99acabf189638c4142b6f17e81
+  git -C LANE show 49096c7e:tools/round-40/c2-counter.py
+      1364 lines   62703 B  sha256 9bd792494ca042d840371e525ed6ea6a1f841f68415e4c405c41c13057183dd1
+  git -C LANE show 49096c7e:tools/round-40/c1-extra.py
+       262 lines (separate supplementary gate, not scored by either counter)
+
+Host
+  python3 --version            -> Python 3.14.8
+  node --version               -> v24.21.0
+  REA 6.5.0 package root       -> /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents
+                                  (package.json version 6.5.0; the seat ticket's path
+                                   ad9a3dbcad992c6 does not exist -- missing 'f')
+  xpin                          -> LANE/tools/round-27/xpin-attribute.mjs (copied into scratch
+                                   so find_xpin() resolves it; the copy is byte-identical)
+
+Selftest driver (offline; simulated REA runner only, no REA/unblob/sasquatch process)
+  S=/fast/scratch/hyaku/kaidoku-r41/R41Simplify
+  HYAKU_SCRATCH="$S/hs" TMPDIR="$S/tmp" python3 -I -B <counter> --selftest \
+      --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents
+  c2-counter needs no --pkg65.
+
+BASELINE (unmodified base blobs)
+  c1-counter.py --selftest
+    {"selftest": "c1-counter", "cases": 70, "green_ok": 5, "red_ok": 65, "failures": []}
+    exit 0, wall 12.16 s
+  c2-counter.py --selftest
+    {"selftest": "c2-counter r40", "cases": 42, "green": 11, "red": 31, "pass": 42, "fail": 0}
+    exit 0, wall 11.74 s
+
+VARIANT c1 (patch: artifacts/c1-yagni.diff, +157/-330, 2217 -> 2044 lines, sha 8995a21b...)
+  incremental runs, each with the deletion tier it proves:
+   tier 1 (duplicate unchanged checks, frozen_tables_valid, --no-rerun,
+           receipt key, compression_coverage)
+     {"selftest": "c1-counter", "cases": 70, "green_ok": 6, "red_ok": 64, "failures": []}
+   tier 1 + exact path matching (extract_rel) + 5 collision cases
+     {"selftest": "c1-counter", "cases": 75, "green_ok": 8, "red_ok": 67, "failures": []}
+   tier 1 + exact match + single projection profile
+     {"selftest": "c1-counter", "cases": 74, "green_ok": 7, "red_ok": 67, "failures": []}
+   + selftest_rea / DEV_AVM_IMAGE / --selftest-rea removed (final state)
+     {"selftest": "c1-counter", "cases": 74, "green_ok": 7, "red_ok": 67, "failures": []}
+
+VARIANT c2 (patch: artifacts/c2-yagni.diff, +8/-84, 1364 -> 1288 lines, sha 2d9c1161...)
+  deleted: MARKER_V1, derive_base, commits_touching, --base, v1_table_present,
+           v1_table_identical, res['table']['v1'], arms_valid,
+           manifest_before_envelopes + envelope_first_add, envelope inference,
+           writer_matches_manifest; 3 cases deleted, 1 inverted
+     {"selftest": "c2-counter r40", "cases": 38, "green": 9, "red": 29, "pass": 38, "fail": 0}
+     exit 0, wall 6.49 s
+
+Callsite scan (ast; artifacts/callsite-scan.txt) says every candidate is reachable from
+exactly one caller chain, and no top-level def in either file has zero Load references:
+  c1: 45 top-level defs, 0 unreferenced;  c2: 30 top-level defs, 0 unreferenced.
+  The dead weight is branch/option/field level, not function level.
+
+lsp availability: there is no `lsp` device mounted in this session (`read xd://lsp`
+returns "No such tool: xd://lsp"), so deletion candidates were proved by an ast Load-reference
+scan plus the patched-variant selftests above. No empty cold-start exclusion was recorded.
+
+Not exercised / not run
+  no REA, no unblob, no sasquatch, no extraction on any carrier (reserved or development);
+  no network fetch; no VCS mutation (git show/log only); no install or upgrade;
+  no pacman transaction. Scratch $S removed at exit; every number above is reproduced by the
+  two commands in §Selftest driver against the two base blobs and the two patches.

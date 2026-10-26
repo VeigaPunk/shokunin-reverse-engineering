@@ -1,0 +1,434 @@
+{
+ "probe": "REA 6.5.0 extract-firmware staged-entry budget (measured)",
+ "rea": "rea-agents@6.5.0 via npx -y",
+ "unblob": "26.6.4",
+ "sasquatch": "4.5.1",
+ "fixtures": {
+  "fx.squashfs": "sha256 616b9e789d1644d3943d9e5656e243dd16584b66dbac65523d1cbb3d7c3f19bd; 7 names (dirs d1,d1/sub; files a,d1/b,d1/sub/c; symlinks l1->a,d1/l2->b); LE gzip",
+  "fx2.squashfs": "sha256 121a3116899558c43d8006f09be3652748e7b9c9370fc562b65303b82b4ec3b2; 3 names (dir nested; files nested/inner.squashfs, x); inner.squashfs has 3 names (f1,f2,s1)",
+  "big.squashfs": "sha256 df57bc6139f675fe771242ba6b675b9f4ae1c95f6800aa10cb028430d8048f20; 7365 names (401 dirs, 6349 files, 615 symlinks); LE gzip; V4-shaped census minus its char device",
+  "inv": "9 names: 4 dirs, 1 regular, 1 symlink, 1 fifo, 1 unix socket, 1 char device (mknod c 1 3)",
+  "fx-avm.squashfs": "sha256 aedc3228056e13768fec21bfb66da6f32949528d163ea81966a95d21534a38c3; same tree as fx but --endian avm-genuine --comp xz (AVM-BE layout: BE structural fields, LE metadata headers, mkfs_time==bytes_used)"
+ },
+ "runs": [
+  {
+   "file": "r100.json",
+   "ok": true,
+   "evidence_id": "ev_1df8d1256b9df962d8ebd7aedb3d1ecac58fef6969381bd0960d46d35332ee07",
+   "parameters": {
+    "max_depth": 1,
+    "max_output_files": 100,
+    "max_output_bytes": 268435456
+   },
+   "files": 3,
+   "unpublished": 2,
+   "gap_kinds": [
+    "depth-limited",
+    "unpublished-entry"
+   ],
+   "gap_count": 3,
+   "depth_limited_paths": [
+    "$output/firmware.bin_extract"
+   ],
+   "coverage": "partial",
+   "chunks": [
+    [
+     "squashfs_v4_le",
+     false
+    ]
+   ],
+   "duration": "1345ms"
+  },
+  {
+   "file": "r8.json",
+   "ok": true,
+   "evidence_id": "ev_ea129e00cf5252fcd551f6330ba1f4d62c48ba3d6f9f4e44e61b146252f799fa",
+   "parameters": {
+    "max_depth": 1,
+    "max_output_files": 8,
+    "max_output_bytes": 268435456
+   },
+   "files": 3,
+   "unpublished": 2,
+   "gap_kinds": [
+    "depth-limited",
+    "unpublished-entry"
+   ],
+   "gap_count": 3,
+   "depth_limited_paths": [
+    "$output/firmware.bin_extract"
+   ],
+   "coverage": "partial",
+   "chunks": [
+    [
+     "squashfs_v4_le",
+     false
+    ]
+   ],
+   "duration": "1378ms"
+  },
+  {
+   "file": "r7.json",
+   "ok": false,
+   "error": {
+    "code": "unreadable_output",
+    "category": "execution_failure",
+    "message": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.",
+    "retryable": false,
+    "remediation": {
+     "action": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."
+    },
+    "details": {
+     "operation": "extract_firmware",
+     "reason": "Staging entry budget exceeded (7)"
+    }
+   },
+   "duration": "1328ms"
+  },
+  {
+   "file": "r-d1-n4.json",
+   "ok": true,
+   "evidence_id": "ev_7a0eccbd04488ffbf0c72097e194d2b0370746d39238432562db053521304eb8",
+   "parameters": {
+    "max_depth": 1,
+    "max_output_files": 4,
+    "max_output_bytes": 268435456
+   },
+   "files": 2,
+   "unpublished": 0,
+   "gap_kinds": [
+    "depth-limited"
+   ],
+   "gap_count": 1,
+   "depth_limited_paths": [
+    "$output/firmware.bin_extract"
+   ],
+   "coverage": "partial",
+   "chunks": [
+    [
+     "squashfs_v4_le",
+     false
+    ]
+   ],
+   "duration": "1928ms"
+  },
+  {
+   "file": "r-d1-n3.json",
+   "ok": false,
+   "error": {
+    "code": "unreadable_output",
+    "category": "execution_failure",
+    "message": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.",
+    "retryable": false,
+    "remediation": {
+     "action": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."
+    },
+    "details": {
+     "operation": "extract_firmware",
+     "reason": "Staging entry budget exceeded (3)"
+    }
+   },
+   "duration": "1571ms"
+  },
+  {
+   "file": "r-d2-n8.json",
+   "ok": true,
+   "evidence_id": "ev_a2e6e4811f344bf322304379a9eb35b25502736fbab7bad3bbc9f40cd095c176",
+   "parameters": {
+    "max_depth": 2,
+    "max_output_files": 8,
+    "max_output_bytes": 268435456
+   },
+   "files": 4,
+   "unpublished": 1,
+   "gap_kinds": [
+    "depth-limited",
+    "unpublished-entry"
+   ],
+   "gap_count": 2,
+   "depth_limited_paths": [
+    "$output/firmware.bin_extract/nested/inner.squashfs_extract"
+   ],
+   "coverage": "partial",
+   "chunks": [
+    [
+     "squashfs_v4_le",
+     false
+    ],
+    [
+     "squashfs_v4_le",
+     false
+    ]
+   ],
+   "duration": "1585ms"
+  },
+  {
+   "file": "r-d2-n7.json",
+   "ok": false,
+   "error": {
+    "code": "unreadable_output",
+    "category": "execution_failure",
+    "message": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.",
+    "retryable": false,
+    "remediation": {
+     "action": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."
+    },
+    "details": {
+     "operation": "extract_firmware",
+     "reason": "Staging entry budget exceeded (7)"
+    }
+   },
+   "duration": "1579ms"
+  },
+  {
+   "file": "big-default.json",
+   "ok": true,
+   "evidence_id": "ev_95c6d99716542d76cbdbcf1308b6ae1f8792b7af4a90c8e67ff3ce41e8f07b4a",
+   "parameters": {
+    "max_depth": 1,
+    "max_output_files": 10000,
+    "max_output_bytes": 268435456
+   },
+   "files": 6349,
+   "unpublished": 615,
+   "gap_kinds": [
+    "depth-limited",
+    "unpublished-entry"
+   ],
+   "gap_count": 616,
+   "depth_limited_paths": [
+    "$output/firmware.bin_extract"
+   ],
+   "coverage": "partial",
+   "chunks": [
+    [
+     "squashfs_v4_le",
+     false
+    ]
+   ],
+   "duration": "33759ms"
+  },
+  {
+   "file": "big-7366.json",
+   "ok": true,
+   "evidence_id": "ev_2bd38443728eecc517d72fdda694efdb4259e706d7f9a5e1de6dc48e19f79de1",
+   "parameters": {
+    "max_depth": 1,
+    "max_output_files": 7366,
+    "max_output_bytes": 268435456
+   },
+   "files": 6349,
+   "unpublished": 615,
+   "gap_kinds": [
+    "depth-limited",
+    "unpublished-entry"
+   ],
+   "gap_count": 616,
+   "depth_limited_paths": [
+    "$output/firmware.bin_extract"
+   ],
+   "coverage": "partial",
+   "chunks": [
+    [
+     "squashfs_v4_le",
+     false
+    ]
+   ],
+   "duration": "12552ms"
+  },
+  {
+   "file": "big-7365.json",
+   "ok": false,
+   "error": {
+    "code": "unreadable_output",
+    "category": "execution_failure",
+    "message": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.",
+    "retryable": false,
+    "remediation": {
+     "action": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."
+    },
+    "details": {
+     "operation": "extract_firmware",
+     "reason": "Staging entry budget exceeded (7365)"
+    }
+   },
+   "duration": "1493ms"
+  },
+  {
+   "file": "x-d2.json",
+   "ok": true,
+   "evidence_id": "ev_b65f70c08b7dddf1fc6624fcd7521fdb9d62910c988ab0efae85b386f1951ea4",
+   "parameters": {
+    "max_depth": 2,
+    "max_output_files": 100,
+    "max_output_bytes": 268435456
+   },
+   "files": 3,
+   "unpublished": 2,
+   "gap_kinds": [
+    "unpublished-entry"
+   ],
+   "gap_count": 2,
+   "depth_limited_paths": [],
+   "coverage": "partial",
+   "chunks": [
+    [
+     "squashfs_v4_le",
+     false
+    ]
+   ],
+   "duration": "1512ms"
+  },
+  {
+   "file": "x2-d3.json",
+   "ok": true,
+   "evidence_id": "ev_03f2ba168c25f61feff49b9d37afa53249a93ba3603383e0b596db1491759020",
+   "parameters": {
+    "max_depth": 3,
+    "max_output_files": 100,
+    "max_output_bytes": 268435456
+   },
+   "files": 4,
+   "unpublished": 1,
+   "gap_kinds": [
+    "unpublished-entry"
+   ],
+   "gap_count": 1,
+   "depth_limited_paths": [],
+   "coverage": "partial",
+   "chunks": [
+    [
+     "squashfs_v4_le",
+     false
+    ],
+    [
+     "squashfs_v4_le",
+     false
+    ]
+   ],
+   "duration": "1593ms"
+  },
+  {
+   "file": "x-b32.json",
+   "ok": false,
+   "error": {
+    "code": "unreadable_output",
+    "category": "execution_failure",
+    "message": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.",
+    "retryable": false,
+    "remediation": {
+     "action": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."
+    },
+    "details": {
+     "operation": "extract_firmware",
+     "reason": "Staging byte budget exceeded (32)"
+    }
+   },
+   "duration": "1477ms"
+  },
+  {
+   "file": "x-b33.json",
+   "ok": false,
+   "error": {
+    "code": "unreadable_output",
+    "category": "execution_failure",
+    "message": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.",
+    "retryable": false,
+    "remediation": {
+     "action": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."
+    },
+    "details": {
+     "operation": "extract_firmware",
+     "reason": "Tool report is not valid complete JSON; stdout (1436 bytes): \n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 unblob (26.6.4) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Output path: None                                                            \u2502\n\u2502 Extracted files: 1                                                           \u2502\n\u2502 Extracted directories: 1                                                     \u2502\n\u2502 Extracted links: 0                                                           \u2502\n\u2502 Extraction directory size: 496.00 B                                          \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Summary \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n          Chunks distribution          \n\u250f\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2513\n\u2503 Chunk type     \u2503   Size   \u2503  Ratio  \u2503\n\u2521\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2547\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2547\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2529\n\u2502 SQUASHFS_V4_LE \u2502 496.00 B \u2502 100.00% \u2502\n\u2502 UNKNOWN        \u2502  0.00 B  \u2502  0.00%  \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\nChunk identification ratio: 100.00%\n\u001b[?25h; stderr (34596 bytes): --- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob\", line 10, in <module>\n    sys.exit(main())\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/cli.py\", line 642, in main\n    reports = cli.invoke(ctx)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/click/core.py\", line 1415, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/click/core.py\", line 910, in invoke\n    return callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/cli_options.py\", line 15, in decorator\n    return func(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/cli.py\", line 405, in cli\n    configure_logger(verbose, extract_root, log_path)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/logging.py\", line 164, in configure_logger\n    structlog.get_logger().debug(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'vebosity_level': 0, 'extract_root': '.', 'event': 'Logging configured', 'level': 'debug', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob\", line 10, in <module>\n    sys.exit(main())\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/cli.py\", line 642, in main\n    reports = cli.invoke(ctx)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/click/core.py\", line 1415, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/click/core.py\", line 910, in invoke\n    return callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/cli_options.py\", line 15, in decorator\n    return func(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/cli.py\", line 443, in cli\n    logger.info(\"Creating extraction directory\", extract_root=extract_root)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'extract_root': '.', 'event': 'Creating extraction directory', 'level': 'info', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob\", line 10, in <module>\n    sys.exit(main())\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/cli.py\", line 642, in main\n    reports = cli.invoke(ctx)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/click/core.py\", line 1415, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/click/core.py\", line 910, in invoke\n    return callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/cli_options.py\", line 15, in decorator\n    return func(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/cli.py\", line 445, in cli\n    logger.info(\"Start processing file\", file=file)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'file': '/fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5/firmware.bin', 'event': 'Start processing file', 'level': 'info', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1015, in _bootstrap\n    self._bootstrap_inner()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 67, in _run_in_thread\n    self._try_enter_sandbox()\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 88, in _try_enter_sandbox\n    restrict_access(*self.passthrough)\nMessage: 'Activated FS access restrictions; rules=[Read(\"/\"), ReadWrite(\"/dev/shm\"), ReadWrite(\"/fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5/extracted\"), RemoveDir(\"/fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5/extracted\"), RemoveFile(\"/fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5/extracted\"), MakeDir(\"/fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5\"), ReadWrite(\"/fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5/unblob.log\"), ReadWrite(\"/fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5\")], status=FullyEnforced'\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1015, in _bootstrap\n    self._bootstrap_inner()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 69, in _run_in_thread\n    result = callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 160, in process_file\n    process_result = _process_task(config, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 188, in _process_task\n    pool.submit(task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/pool.py\", line 258, in submit\n    result = self._handler(args)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 259, in process_task\n    self._process_task(result, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 294, in _process_task\n    logger.debug(\"Detected file-magic\", magic=magic, path=task.path, _verbosity=2)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'magic': 'Squashfs filesystem, little endian, version 4.0, zlib compressed, 496 bytes, 8 inodes, blocksize: 4096 bytes, created: Tue Nov 14 22:13:20 2023\\\\012- data', 'path': '/fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5/firmware.bin', 'event': 'Detected file-magic', 'level': 'debug', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1015, in _bootstrap\n    self._bootstrap_inner()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 69, in _run_in_thread\n    result = callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 160, in process_file\n    process_result = _process_task(config, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 188, in _process_task\n    pool.submit(task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/pool.py\", line 258, in submit\n    result = self._handler(args)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 259, in process_task\n    self._process_task(result, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 323, in _process_task\n    _FileTask(self._config, task, stat_report.size, result).process()\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 524, in process\n    logger.debug(\"Processing file\", path=self.task.path, size=self.size)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'path': '/fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5/firmware.bin', 'size': '0x1f0', 'event': 'Processing file', 'level': 'debug', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1015, in _bootstrap\n    self._bootstrap_inner()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 69, in _run_in_thread\n    result = callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 160, in process_file\n    process_result = _process_task(config, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 188, in _process_task\n    pool.submit(task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/pool.py\", line 258, in submit\n    result = self._handler(args)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 259, in process_task\n    self._process_task(result, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 323, in _process_task\n    _FileTask(self._config, task, stat_report.size, result).process()\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 527, in process\n    all_chunks = search_chunks(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py\", line 158, in search_chunks\n    stream_scan_chunks(scanner, file, hyperscan_context)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py\", line 123, in stream_scan_chunks\n    if scanner.scan(data[i : i + DEFAULT_BUFSIZE]) == Scan.Terminate:\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py\", line 92, in _hyperscan_match\n    logger.debug(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'start_offset': '0x0', 'real_offset': '0x0', 'handler': 'squashfs_v4_le', 'event': 'Calculating chunk for pattern match', 'level': 'debug', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1015, in _bootstrap\n    self._bootstrap_inner()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 69, in _run_in_thread\n    result = callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 160, in process_file\n    process_result = _process_task(config, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 188, in _process_task\n    pool.submit(task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/pool.py\", line 258, in submit\n    result = self._handler(args)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 259, in process_task\n    self._process_task(result, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 323, in _process_task\n    _FileTask(self._config, task, stat_report.size, result).process()\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 527, in process\n    all_chunks = search_chunks(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py\", line 158, in search_chunks\n    stream_scan_chunks(scanner, file, hyperscan_context)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py\", line 123, in stream_scan_chunks\n    if scanner.scan(data[i : i + DEFAULT_BUFSIZE]) == Scan.Terminate:\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py\", line 111, in _hyperscan_match\n    logger.debug(\"Found valid chunk\", chunk=chunk, handler=handler.NAME, _verbosity=1)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'chunk': 0x0-0x1f0, 'handler': 'squashfs_v4_le', 'event': 'Found valid chunk', 'level': 'debug', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1015, in _bootstrap\n    self._bootstrap_inner()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 69, in _run_in_thread\n    result = callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 160, in process_file\n    process_result = _process_task(config, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 188, in _process_task\n    pool.submit(task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/pool.py\", line 258, in submit\n    result = self._handler(args)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 259, in process_task\n    self._process_task(result, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 323, in _process_task\n    _FileTask(self._config, task, stat_report.size, result).process()\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 527, in process\n    all_chunks = search_chunks(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py\", line 165, in search_chunks\n    logger.debug(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'all_chunks': [0x0-0x1f0], 'event': 'Ended searching for chunks', 'level': 'debug', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1015, in _bootstrap\n    self._bootstrap_inner()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 69, in _run_in_thread\n    result = callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 160, in process_file\n    process_result = _process_task(config, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 188, in _process_task\n    pool.submit(task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/pool.py\", line 258, in submit\n    result = self._handler(args)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 259, in process_task\n    self._process_task(result, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 323, in _process_task\n    _FileTask(self._config, task, stat_report.size, result).process()\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 530, in process\n    outer_chunks = remove_inner_chunks(all_chunks)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 764, in remove_inner_chunks\n    logger.debug(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'outer_chunk_count': 1, 'removed_inner_chunk_count': 0, 'event': 'Removed inner chunks', 'level': 'debug', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1015, in _bootstrap\n    self._bootstrap_inner()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 69, in _run_in_thread\n    result = callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 160, in process_file\n    process_result = _process_task(config, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 188, in _process_task\n    pool.submit(task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/pool.py\", line 258, in submit\n    result = self._handler(args)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 259, in process_task\n    self._process_task(result, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 323, in _process_task\n    _FileTask(self._config, task, stat_report.size, result).process()\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 537, in process\n    self._process_chunks(file, outer_chunks, unknown_chunks)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 566, in _process_chunks\n    extraction_successful = self._extract_chunk(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 659, in _extract_chunk\n    if result := chunk.extract(carved_path, extract_dir):\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/models.py\", line 194, in extract\n    return self.handler.extract(inpath, outdir)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/models.py\", line 552, in extract\n    return self.EXTRACTOR.extract(inpath, outdir)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py\", line 66, in extract\n    extractor.extract(inpath, outdir)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/extractors/command.py\", line 39, in extract\n    logger.debug(\"Running extract command\", command=command)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'command': 'sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5/extracted/firmware.bin_extract /fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5/firmware.bin', 'event': 'Running extract command', 'level': 'debug', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1015, in _bootstrap\n    self._bootstrap_inner()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 69, in _run_in_thread\n    result = callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 160, in process_file\n    process_result = _process_task(config, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 188, in _process_task\n    pool.submit(task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/pool.py\", line 259, in submit\n    self._result_callback(self, result)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 178, in process_result\n    pool.submit(new_task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/pool.py\", line 258, in submit\n    result = self._handler(args)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 259, in process_task\n    self._process_task(result, task)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 276, in _process_task\n    log.debug(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'path': 'firmware.bin_extract', 'depth': '0x1', 'event': 'Reached maximum depth, stop further processing', 'level': 'debug', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n--- Logging error ---\nOSError: [Errno 27] File too large\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 233, in write_json_report\n    report_file.write_text(process_result.to_json())\n    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py\", line 555, in write_text\n    return PathBase.write_text(self, data, encoding, errors, newline)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/pathlib/_abc.py\", line 651, in write_text\n    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:\n         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nOSError: [Errno 27] File too large\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1155, in emit\n    self.flush()\n    ~~~~~~~~~~^^\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/logging/__init__.py\", line 1137, in flush\n    self.stream.flush()\n    ~~~~~~~~~~~~~~~~~^^\nOSError: [Errno 27] File too large\nCall stack:\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1015, in _bootstrap\n    self._bootstrap_inner()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n  File \"/home/vgpnk/.local/share/uv/python/cpython-3.13.16-linux-x86_64-gnu/lib/python3.13/threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/sandbox.py\", line 69, in _run_in_thread\n    result = callback(*args, **kwargs)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 163, in process_file\n    write_json_report(report_file, process_result)\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/processing.py\", line 235, in write_json_report\n    logger.error(\"Can not write JSON report\", path=report_file, msg=str(e))\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_native.py\", line 172, in meth\n    return self._proxy_to_logger(\n  File \"/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/structlog/_base.py\", line 224, in _proxy_to_logger\n    return getattr(self._logger, method_name)(*args, **kw)\nMessage: {'path': '/fast/scratch/hyaku/kaidoku-r41/R41RevBudget/rea-firmware-wsQAv5/report.json', 'msg': '[Errno 27] File too large', 'event': 'Can not write JSON report', 'level': 'error', 'timestamp': '2026-10-26 20:32.23', 'pid': 927288}\nArguments: ()\n"
+    }
+   },
+   "duration": "1596ms"
+  },
+  {
+   "file": "tmpdir.json",
+   "ok": true,
+   "evidence_id": "ev_bd2818f63ef8210eb2541d322d30fee9ec2afb4088c8c0e23c9286c7566cc766",
+   "parameters": {
+    "max_depth": 1,
+    "max_output_files": 100,
+    "max_output_bytes": 268435456
+   },
+   "files": 3,
+   "unpublished": 2,
+   "gap_kinds": [
+    "depth-limited",
+    "unpublished-entry"
+   ],
+   "gap_count": 3,
+   "depth_limited_paths": [
+    "$output/firmware.bin_extract"
+   ],
+   "coverage": "partial",
+   "chunks": [
+    [
+     "squashfs_v4_le",
+     false
+    ]
+   ],
+   "duration": "1285ms"
+  },
+  {
+   "file": "avm-8.json",
+   "ok": true,
+   "evidence_id": "ev_60db4e9c3df2f2ec556f397793efda9b8533d4f411e24818fdb2600de781efba",
+   "parameters": {
+    "max_depth": 1,
+    "max_output_files": 8,
+    "max_output_bytes": 268435456
+   },
+   "files": 3,
+   "unpublished": 2,
+   "gap_kinds": [
+    "depth-limited",
+    "unpublished-entry"
+   ],
+   "gap_count": 3,
+   "depth_limited_paths": [
+    "$output/firmware.bin_extract"
+   ],
+   "coverage": "partial",
+   "chunks": [
+    [
+     "squashfs_v4_be",
+     false
+    ]
+   ],
+   "duration": "1553ms"
+  },
+  {
+   "file": "avm-7.json",
+   "ok": false,
+   "error": {
+    "code": "unreadable_output",
+    "category": "execution_failure",
+    "message": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.",
+    "retryable": false,
+    "remediation": {
+     "action": "Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."
+    },
+    "details": {
+     "operation": "extract_firmware",
+     "reason": "Staging entry budget exceeded (7)"
+    }
+   },
+   "duration": "1668ms"
+  }
+ ],
+ "mechanism_measurements": {
+  "inventory_walk_ms_at_7366_names": [
+   140,
+   101,
+   80
+  ],
+  "inventory_returns_entries_excluding_directories": "6964 = 6349 files + 615 symlinks on the big tree (dirs counted against the budget but not returned)",
+  "midrun_abort_proof": "big.squashfs: budget 7365 fails in 1493ms; budget 7366 succeeds in 12552ms (same fixture, same depth) -> the failure is raised by the 100 ms poll, not after unblob completes",
+  "tmpdir_follows_invoking_shell": "with TMPDIR=/fast/scratch/.../R41RevBudget the staging root reported in raw_result was /fast/scratch/.../R41RevBudget/rea-firmware-viOxmQ/",
+  "budget_validation": "1..100000 (inclusive); 0 and 100001 are refused by the option schema with code VALIDATION_ERROR before any extraction",
+  "successful_envelope_exit_codes": "0 on success, 1 on any projected analysis error (cliLogging.js:68/72/79)"
+ }
+}

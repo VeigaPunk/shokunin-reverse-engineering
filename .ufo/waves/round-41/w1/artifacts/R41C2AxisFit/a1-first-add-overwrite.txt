@@ -1,0 +1,19 @@
+# A1 — 'first added in a commit descending from the freeze' is satisfied by a post-add overwrite
+# fixture (reproducible; no lane path is written): mktemp repo, three commits
+$ git init; git commit --allow-empty -m freeze
+freeze                = 0a9f21c8dc09e08678459d3e7b1b8a3b495385b3
+first add of the path = 5736ffc7b7d2151a3eb06ae12b0ac21ed91c4e0f
+measured revision     = 2d3595448ea0e6176cfc4ac40fc7ca44f1801cac
+
+$ git log --diff-filter=A --format=%H 2d3595448ea0e6176cfc4ac40fc7ca44f1801cac -- corpus/evidence/round-41/c1/V3/after.json   # newest first; counter takes lines[-1]
+5736ffc7b7d2151a3eb06ae12b0ac21ed91c4e0f
+
+receipt_fresh = (add != freeze) and is_ancestor(freeze, add):
+  add != freeze           : true
+  is_ancestor(freeze, add): true
+  => receipt_fresh = true, although the blob the counter reads is the SECOND write
+
+blob at rev              : b7aa70c6568bd9ffe5cf83b1970d2621652d1d7b
+blob at the first add    : 12e038785cdc232786cdd067fe8d7d0e2f992859
+  (different blobs; no counter clause compares them —
+   tools/round-40/c1-counter.py:706-713 first_add() + :1067-1071 receipt_fresh)

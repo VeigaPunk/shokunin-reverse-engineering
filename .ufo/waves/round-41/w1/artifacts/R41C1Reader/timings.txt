@@ -1,0 +1,10 @@
+# timings (host, resource.getrusage(RUSAGE_CHILDREN) per fresh wrapper process)
+reader core.squashfs --layout avm  run1: ELAPSED=3.24s MAXRSS=55820KB exit=0
+reader core.squashfs --layout avm  run2: ELAPSED=3.29s MAXRSS=55692KB exit=0
+reader core.squashfs --layout avm --inspect: ELAPSED=3.31s MAXRSS=55744KB exit=0
+reader core.squashfs --layout auto: ELAPSED=3.26s exit=0 (TSV byte-identical to --layout avm)
+reader core.squashfs --layout be: exit=2 'metadata offset 7698 beyond block 25102662 (len 6)'
+sasquatch-v4be -d core-sasq core.squashfs: ELAPSED=0.70s MAXRSS=94332KB exit=2 (mknod dev/led denied as non-root)
+sasquatch-v4be -d fs-extract var/tmp/filesystem.image: ELAPSED=0.03s MAXRSS=31580KB exit=2 (same mknod)
+reader var/tmp/filesystem.image --layout avm: exit=0
+reader --selftest: 13/13 passed

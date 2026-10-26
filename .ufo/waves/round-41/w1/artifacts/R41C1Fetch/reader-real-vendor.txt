@@ -1,0 +1,49 @@
+# round-41 R41C1Fetch — the extract-one-file reader on a REAL vendor AVM carrier
+# carrier: round-40 V1 (6490 Cable 07.57), carved by fetch-vendor.py in this wave
+# sha256(carrier)=$ (sha256sum below)
+ac4098bd11a76f8ad001faac0f1a5e018708d9b03943dfebb2b18a24e0038e95  carrier.bin
+
+### python3 -I -B sqfs-list.py --layout auto --files v1-files.tsv --nonregular v1-nonreg.tsv --inspect carrier.bin
+{
+ "avm_marker": true,
+ "block_length_signal": "plausibility",
+ "compression": "xz",
+ "decode_paths": {
+  "compressed_data_blocks": 277,
+  "compressed_metadata_blocks": 9,
+  "fragment_slices": 622,
+  "fragments_used": 622,
+  "raw_data_blocks": 0,
+  "raw_metadata_blocks": 0,
+  "sparse_blocks": 1
+ },
+ "directories": 117,
+ "endian": "big",
+ "escaping_symlinks": 0,
+ "header_endian": "little",
+ "in_tree_symlinks": 263,
+ "layout": "avm",
+ "regular_files": 697,
+ "symlinks": 263,
+ "warnings": []
+}
+exit=0
+  697 /fast/scratch/hyaku/kaidoku-r41/R41C1Fetch/v1-files.tsv
+  381 /fast/scratch/hyaku/kaidoku-r41/R41C1Fetch/v1-nonreg.tsv
+ 1078 total
+
+### python3 -I -B sqfs-list.py --layout avm --extract bin/allcfgconv --inspect --out /dev/null carrier.bin  (timing)
+rc=0 wall=0.05s bytes=7580 sha256=17981448c3e29b8d5133978424e06e01b52a442790da8dd91ff8a62477220e10
+equals the --files row for bin/allcfgconv: True
+
+### symlink refusal: --extract bin/ash (a symlink in this carrier)
+sqfs-list: 'bin/ash' is a symlink, not a regular file
+exit=2
+ash.bin': No such file or directory
+
+### both-direction path-suffix collisions between a regular file and a symlink (V1)
+regular whose path ends with a symlink path : 0
+symlink whose path ends with a regular path : 0
+
+### V2 (6820v1 LTE 07.30, 26 MB carrier) reader cost: walk + extract one file
+full walk+hash: rc=0 wall=0.08s files=8 dirs=9 links=85 layout=avm marker=True

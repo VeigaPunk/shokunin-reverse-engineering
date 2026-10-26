@@ -1,0 +1,34 @@
+## 1. Sibling lanes reserved-carrier / AVM-reference scan (2026-10-26, read-only)
+Command: grep -rlE "5490|5491|7560|3490|6490|6820|7430|6590|FRITZ|fritzbox" <each sibling lane> -r
+Result: NO sibling lane file references any AVM carrier model, FRITZ!Box image, or download.avm.de URL.
+All grep hits were false positives inside git object hashes, e.g.:
+  FP: revenger-shokunin/corpus/lessons/round-68.md:4:`f165908aaffcf14798de53405fe788986bd33ff9`, counter `reports/round-68/measure.py` sha256
+  FP: chousa-shokunin/corpus/knowledge/audit-r11.md:307:| ledger `hardening-r10.md` (71 rows / queue 30) | `3845709bae62603aa67b8fc56e15c55b20dd0673b0c9f83d160806196a5018d5` (superseded round 12 by `46534902…`, §6 erratum: 71 / 38·23·7·0·3 / queue 26) |
+  FP: chousa-shokunin/corpus/knowledge/audit-r11.md:311:| control shas | `5dedb73b…`(+`0edb78ee…`) · `e3490cf4…` · `b0d488aa…` · `69b7b08f…` · `b24be0f0…` · `21d77e6c…`; controls README `23f47722…` |
+  FP: chousa-shokunin/corpus/knowledge/audit-r11.md:326:| :8-9, :307 | ledger sha `3845709b…` | superseded by `46534902…` (hardening-r10 §6) |
+  FP: mado-shokunin/corpus/knowledge/waybar-walker-semantics.md:444:| `~/.config/waybar/style.css` | `8316c08ceaa7e3f0624e1b82b1e03523096820fbf775362a930d7f831b0c4e8f` (136 L / 1,887 B) |
+  FP: tsukuroi-shokunin/corpus/knowledge/adjacency-handoffs-fleet-r1.md:206:Swap:    36779188224 19483697152 17295491072
+  FP: kotodama-shokunin/corpus/lessons/round-55-verifier-spotcheck.md:5:Lane-round: kotodama round 55 (hyaku phase 4, L1 KotodamaR55, attempt 1). Base `89973ba74c4bb0efa7fac1eb60766820c6bd6625`, lane tip `2935c47011049527842b6d3f08691d9629c3b983`. Report `.ufo/reports/round-55/kotodama.md` (fleet `39360c0`). Closure run 2026-10-22, 20:44Z–20:56Z. Seven read-only seats (six reviewers, one critic) ran the source re-opens, the claim-O set re-derivation and the separability ruling. This closure ran the conformance checks, the claim-C counts and the census itself.
+  FP: tameshi-shokunin/corpus/knowledge/repeated-control-precondition.md:58:- [O] `tools/repeat-control.py` exists: 30,557 B, sha256 `29d8025490f349c106bc8132da7bfecc2ae4f8fb00720b43636e52335d27467a`, `VERSION` `repeat-control.py r12 (tameshi-shokunin, 2026-10-20)`. The finding map is `:115-123`, the precedence `:191-205`, the snapshot validator `:337-435`, the selftest `:545`. Read by this note's writer at 2026-10-20T03:45Z; not executed by it.
+
+## 2. AVM download/member-name scan outside kaidoku
+Command: grep -rn "download.avm.de|avm.de|filesystem.image|filesystem_core" */ (excluding kaidoku-shokunin/, .git/)
+Result: zero hits.
+
+## 3. SquashFS tool scan across sibling tools/ dirs
+Command: grep -rln "squashfs|sasquatch|sqfs|unsquashfs" <20 sibling lanes>/tools
+Result: zero hits. kaidoku tools/round-3x|40 remain the only SquashFS readers/writers in the fleet.
+
+## 4. Decision-table inventory across sibling SKILL.md (grep -c "decision table")
+game-dev-3d-shokunin/SKILL.md:1
+kagi-shokunin/SKILL.md:3
+kasegi-shokunin/SKILL.md:2
+kengaku-shokunin/SKILL.md:1
+kumitate-shokunin/SKILL.md:1
+lore-shokunin/SKILL.md:1
+mado-shokunin/SKILL.md:2
+mori-shokunin/SKILL.md:4
+revenger-shokunin/SKILL.md:1
+tabi-shokunin/SKILL.md:10
+tameshi-shokunin/SKILL.md:1
+tsukuroi-shokunin/SKILL.md:12

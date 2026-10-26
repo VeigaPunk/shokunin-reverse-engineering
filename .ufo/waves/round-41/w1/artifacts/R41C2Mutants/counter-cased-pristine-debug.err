@@ -1,0 +1,48 @@
+CASE green: all bindings, labels and actions                 exit=0 bindings_false=[] matched=8
+CASE do-nothing: no manifest at rev                          exit=2 bindings_false=[] matched=None
+CASE v2 block removed after freeze                           exit=1 bindings_false=['decisions_reported', 'row_decisions_consistent', 'v2_table_columns', 'v2_table_identical', 'v2_table_present'] matched=0
+CASE v2 table edited after freeze                            exit=1 bindings_false=['v2_table_identical'] matched=8
+CASE v1 table edited after freeze                            exit=1 bindings_false=['v1_table_identical'] matched=8
+CASE v1 block removed at rev                                 exit=1 bindings_false=['v1_table_identical'] matched=8
+CASE seed != freeze                                          exit=1 bindings_false=['carriers_regenerated', 'seed_matches_freeze'] matched=8
+CASE manifest added before freeze                            exit=1 bindings_false=['carriers_regenerated', 'manifest_after_freeze', 'manifest_before_envelopes', 'seed_matches_freeze'] matched=8
+CASE envelope before manifest                                exit=1 bindings_false=['manifest_before_envelopes'] matched=8
+CASE interpreter edited after freeze                         exit=2 bindings_false=[] matched=None
+CASE generator edited after freeze                           exit=2 bindings_false=[] matched=None
+CASE claims edited after freeze                              exit=2 bindings_false=[] matched=None
+CASE counter edited after freeze                             exit=2 bindings_false=[] matched=None
+CASE carrier not committed as pinned                         exit=1 bindings_false=['carriers_committed'] matched=8
+CASE subject digest mismatch                                 exit=1 bindings_false=['envelopes_valid'] matched=8
+CASE missing envelope                                        exit=1 bindings_false=['decisions_reported', 'envelope_paths_unique', 'envelopes_valid', 'manifest_before_envelopes', 'row_decisions_consistent'] matched=7
+CASE 3 carriers in one class                                 exit=1 bindings_false=['carrier_paths_unique', 'carriers_committed', 'carriers_regenerated', 'classes_two_each', 'envelope_paths_unique', 'envelopes_valid', 'ids_unique', 'n_equals_twice_classes', 'row_decisions_consistent'] matched=8
+CASE one wrong expected label                                exit=1 bindings_false=['carriers_regenerated', 'row_decisions_consistent'] matched=7
+CASE label right, action wrong                               exit=1 bindings_false=['carriers_regenerated', 'row_decisions_consistent'] matched=7
+CASE envelopes swapped between carriers                      exit=1 bindings_false=['envelopes_valid'] matched=8
+CASE best table plus a `*` default row instead of the domain exit=1 bindings_false=[] matched=6
+CASE catch-all table                                         exit=1 bindings_false=['row_decisions_consistent'] matched=4
+CASE truncated table (unclassified fallthrough)              exit=1 bindings_false=['row_decisions_consistent'] matched=6
+CASE generator object with matching sha                      exit=0 bindings_false=[] matched=8
+CASE generator object with wrong sha                         exit=1 bindings_false=['generator_sha_matches_freeze'] matched=8
+CASE envelope path omitted, sibling inferred                 exit=0 bindings_false=[] matched=8
+CASE two carriers share one carrier path                     exit=1 bindings_false=['carrier_paths_unique', 'carriers_committed'] matched=8
+CASE full CLI envelope ok/data/meta                          exit=0 bindings_false=[] matched=8
+CASE lane-root-relative carrier and envelope paths           exit=0 bindings_false=[] matched=8
+CASE tab interface with row column                           exit=0 bindings_false=[] matched=8
+CASE tab interface, rows from --table-only                   exit=0 bindings_false=[] matched=8
+CASE tab interface, no row and no --table-only               exit=1 bindings_false=['decisions_reported', 'row_decisions_consistent'] matched=8
+CASE json results without row index                          exit=0 bindings_false=[] matched=8
+CASE interpreter reports rows only, pair read off the v2 tab exit=0 bindings_false=[] matched=8
+CASE interpreter numbers rows from 1, pair read off the v2 t exit=0 bindings_false=[] matched=8
+CASE interpreter reports rows only and v2 header lacks actio exit=1 bindings_false=['v2_table_columns'] matched=0
+CASE interpreter fails outright                              exit=2 bindings_false=[] matched=None
+CASE v2 header without action column                         exit=1 bindings_false=['row_decisions_consistent', 'v2_table_columns'] matched=2
+CASE manifest unparsable                                     exit=2 bindings_false=[] matched=None
+CASE unknown revision                                        exit=2 bindings_false=None matched=None
+CASE freeze not ancestor of rev                              exit=2 bindings_false=[] matched=None
+CASE explicit --base equal to derived base                   exit=0 bindings_false=[] matched=8
+CASE regenerated manifest seed is foreign                    exit=1 bindings_false=['regenerated_seed_matches_freeze'] matched=8
+CASE committed carrier and pin tampered together             exit=1 bindings_false=['carriers_regenerated'] matched=8
+CASE manifest arm flipped against regeneration               exit=1 bindings_false=['carriers_regenerated'] matched=8
+CASE wrong expected action on both carriers of one class     exit=1 bindings_false=['carriers_regenerated', 'row_decisions_consistent'] matched=6
+CASE declared writer sha does not match the freeze blob      exit=1 bindings_false=['writer_matches_manifest'] matched=8
+CASE frozen path edited then restored before rev             exit=2 bindings_false=[] matched=None

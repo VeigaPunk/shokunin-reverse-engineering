@@ -1,0 +1,19 @@
+case	clause	gap_kinds	sr	published	label	action	row	expected	agree
+partial + mixed symlinks	4	extractor-failure+unpublished-entry	yes	5	unclassified	none	None	partial-body-failure/salvage-partial	NO
+partial + in-tree link	4	extractor-failure+unpublished-entry	no	8	unclassified	none	None	partial-body-failure/salvage-partial	NO
+partial + escaping link	4	extractor-failure	yes	3	partial-body-failure	salvage-partial	4	partial-body-failure/salvage-partial	yes
+depth + mixed symlinks	7	depth-limited+unpublished-entry	yes	5	unclassified	none	None	depth-limited-nested/raise-depth	NO
+depth + in-tree link	7	depth-limited+unpublished-entry	no	8	unclassified	none	None	depth-limited-nested/raise-depth	NO
+depth alone on a clean tree	7	depth-limited	no	5	depth-limited-nested	raise-depth	7	depth-limited-nested/raise-depth	yes
+depth beside a dep gap	3	depth-limited+missing-extractor-dependency	no	0	unclassified	none	None	dep-missing-be/install-extractor-be	NO
+partial above depth	4	depth-limited+extractor-failure+unpublished-entry	yes	5	unclassified	none	None	partial-body-failure/salvage-partial	NO
+body above depth	6	depth-limited+extractor-failure+unpublished-entry	yes	0	unclassified	none	None	body-extractor-failure/preserve-failure	NO
+body + in-tree link	6	extractor-failure+unpublished-entry	no	0	unclassified	none	None	body-extractor-failure/preserve-failure	NO
+dep + partial	3	extractor-failure+missing-extractor-dependency	no	2	unclassified	none	None	dep-missing-le/install-extractor-le	NO
+dep(be) + mixed symlink gaps	3	missing-extractor-dependency+unpublished-entry	yes	5	unclassified	none	None	dep-missing-be/install-extractor-be	NO
+unnamed dep falls through to mixed	8	missing-extractor-dependency+unpublished-entry	yes	5	unclassified	none	None	mixed-symlinks/audit-symlinks	NO
+no chunk above depth	2	depth-limited	no	0	no-squashfs-chunk	inspect-input	1	no-squashfs-chunk/inspect-input	yes
+mixed (row order)	8	unpublished-entry	no	5	in-tree-symlink-metadata	count-gap	10	in-tree-symlink-metadata/count-gap	yes
+unknown kind stays unclassified	12	unknown-chunk-handler	no	5	unclassified	none	None	unclassified/none	yes
+two in-tree gap kinds	12	unknown-chunk-handler+unpublished-entry	no	8	unclassified	none	None	unclassified/none	yes
+mixed: in-tree gaps + removal report	8	unpublished-entry	yes	5	mixed-symlinks	audit-symlinks	8	mixed-symlinks/audit-symlinks	yes

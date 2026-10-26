@@ -1,0 +1,231 @@
+--- /fast/scratch/hyaku/kaidoku-r41/R41C1Fetch/sqfs-list-r40.py	2026-10-26 17:23:12.602959586 -0300
++++ /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w1/artifacts/R41C1Fetch/sqfs-list.py	2026-10-26 17:19:52.829259493 -0300
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""sqfs-list.py -- independent SquashFS 4.0 oracle reader (stdlib only), round 40.
++"""sqfs-list.py -- independent SquashFS 4.0 oracle reader (stdlib only), round 41.
+ 
+ Derived from tools/round-39/sqfs-list.py (lane bytes, 688 lines, sha256
+ 1808c3f54205448761e27ffe8a82de59fe87300eb4c49ec406324800d148be7f).  It remains
+@@ -47,10 +47,22 @@
+    files go to ``--files`` as ``relpath TAB sha256 TAB size`` (round-39
+    grammar).  Root directory is not listed; every other directory is.
+ 
++Round-41 additions
++------------------
++6. Extract one file (the fetch chain's nested-carrier step, R41-C1).  The
++   reader can now be constructed over bytes in memory (``data=``; ``path`` is
++   then a label only), ``SquashFS.lookup(rel)`` resolves one POSIX path
++   relative to the image root, and ``extract_file(img, rel)`` returns that
++   regular file's bytes.  The path is literal: no symlink resolution, so a
++   chain can never be redirected by a link inside the member.  A path that is
++   absent or not a regular file is an ``SqfsError`` (exit 2), never an empty
++   read.  CLI: ``--extract REL --out FILE``.
++
+ CLI
+ ---
+   sqfs-list.py --layout {auto,le,be,avm} --files OUT.tsv [--nonregular OUT.tsv]
+                [--inspect] IMAGE
++  sqfs-list.py --layout {auto,le,be,avm} --extract REL --out FILE IMAGE
+   sqfs-list.py --selftest
+ 
+ Exit 0 on success, 2 on an unreadable or unsupported image.
+@@ -171,12 +183,17 @@
+ 
+ 
+ class SquashFS:
+-    def __init__(self, path, layout='auto'):
+-        try:
+-            with open(path, 'rb') as fh:
+-                self.buf = fh.read()
+-        except OSError as exc:
+-            raise SqfsError('cannot read %s: %s' % (path, exc))
++    def __init__(self, path=None, layout='auto', data=None):
++        if data is None:
++            try:
++                with open(path, 'rb') as fh:
++                    self.buf = fh.read()
++            except OSError as exc:
++                raise SqfsError('cannot read %s: %s' % (path, exc))
++        else:
++            # In-memory image (round 41: a member of a member); ``path`` is
++            # then only the label reported in --inspect.
++            self.buf = bytes(data)
+         self.path = path
+         self.warnings = []
+         self._meta_cache = {}
+@@ -670,6 +687,53 @@
+                     specials.append((child_path, child))
+         return dirs, files, links, specials
+ 
++    def lookup(self, rel):
++        """Resolve one POSIX path relative to the image root.
++
++        Return ``(kind, payload)``: ``kind`` is ``dir``, ``file``, ``symlink``
++        or a special kind (``char-device`` …); ``payload`` is the inode node
++        for directories, regular and special files and the target string for
++        symlinks.  The path is taken literally -- a component that is a
++        symlink is NOT followed (round 41: no link inside a member can
++        redirect the fetch chain).  An absent path raises ``SqfsError``.
++        """
++        want = rel
++        while want.startswith('./'):
++            want = want[2:]
++        want = want.lstrip('/')
++        if want in ('', '.'):
++            return 'dir', self.inode(self.root_inode)
++        dirs, files, links, specials = self.walk()
++        if want in files:
++            return 'file', files[want]
++        if want in dirs:
++            return 'dir', dirs[want]
++        if want in links:
++            return 'symlink', links[want]
++        for path, node in specials:
++            if path == want:
++                return node['kind'], node
++        raise SqfsError('%r is not in the image' % (rel,))
++
++
++def extract_file(img, rel):
++    """Return the bytes of the regular file ``rel`` in ``img``.
++
++    Fails closed: an absent path, or one that is not a regular file, raises
++    ``SqfsError`` instead of returning empty or partial data; the byte count
++    is checked against the inode's ``file_size``.
++    """
++    kind, node = img.lookup(rel)
++    if kind != 'file':
++        raise SqfsError('%r is a %s, not a regular file' % (rel, kind))
++    out = bytearray()
++    for chunk in img.iter_file_data(node):
++        out.extend(chunk)
++    if len(out) != node['file_size']:
++        raise SqfsError('%r: read %d bytes, inode declares %d'
++                        % (rel, len(out), node['file_size']))
++    return bytes(out)
++
+ 
+ def classify_link(link_path, target, kinds, links):
+     """Resolve ``target`` POSIX-style; return (class, reason)."""
+@@ -1357,6 +1421,73 @@
+                 return
+             raise AssertionError('truncated image accepted')
+ 
++    def c_extract_avm():
++        tree = _selftest_tree() + [
++            {'path': 'var/tmp/nested.sqsh', 'type': 'file',
++             'data': b'INNER-BYTES' * 900, 'fragment': True},
++        ]
++        raw = _build_image(tree, endian='be', comp='xz', header_endian='<',
++                           marker=True)
++        img = SquashFS('mem', layout='avm', data=raw)
++        assert img.avm_marker is True
++        want = b'INNER-BYTES' * 900
++        for rel in ('var/tmp/nested.sqsh', './var/tmp/nested.sqsh',
++                    '/var/tmp/nested.sqsh'):
++            got = extract_file(img, rel)
++            if got != want:
++                raise AssertionError('%r extracted %d bytes, want %d'
++                                     % (rel, len(got), len(want)))
++        # fragment tail and a full metadata-block file both come out whole
++        assert extract_file(img, 'etc/conf') == b'k=v\n' * 20
++        assert extract_file(img, 'bin/tool') == bytes(range(256)) * 20
++        for rel in ('var/tmp/absent', 'docs/link', 'docs/deep', ''):
++            if rel == '':
++                continue
++            try:
++                extract_file(img, rel)
++            except SqfsError:
++                continue
++            raise AssertionError('%r was extracted but is not a file' % rel)
++
++    def c_extract_literal_collisions():
++        tree = [
++            # direction A: the regular path ends with the symlink's path
++            {'path': 'usr/bin/busy', 'type': 'file', 'data': b'BUSY-REGULAR'},
++            {'path': 'bin/busy', 'type': 'symlink',
++             'target': '../../usr/bin/busy'},
++            # direction B: the symlink's path ends with the regular path
++            {'path': 'sbin/reboot', 'type': 'file', 'data': b'REBOOT'},
++            {'path': 'usr/sbin/reboot', 'type': 'symlink',
++             'target': '../../../sbin/reboot'},
++        ]
++        raw = _build_image(tree, endian='be', comp='gzip', header_endian='<',
++                           marker=True)
++        img = SquashFS('mem', layout='avm', data=raw)
++        assert extract_file(img, 'usr/bin/busy') == b'BUSY-REGULAR'
++        assert extract_file(img, 'sbin/reboot') == b'REBOOT'
++        for rel in ('bin/busy', 'usr/sbin/reboot'):
++            try:
++                extract_file(img, rel)
++            except SqfsError:
++                continue
++            raise AssertionError('%r is a symlink but was extracted' % rel)
++
++    def c_extract_cli():
++        with tempfile.TemporaryDirectory(prefix='sqfs-selftest-') as td:
++            p = os.path.join(td, 'i.sqsh')
++            out = os.path.join(td, 'out.bin')
++            open(p, 'wb').write(_build_image(_selftest_tree(), endian='be',
++                                             comp='xz', header_endian='<',
++                                             marker=True))
++            rc = main(['--layout', 'avm', '--extract', 'etc/conf',
++                       '--out', out, p])
++            assert rc == 0, rc
++            assert open(out, 'rb').read() == b'k=v\n' * 20
++            rc = main(['--layout', 'avm', '--extract', 'docs/abs',
++                       '--out', out + '2', p])
++            assert rc == 2, rc
++            assert not os.path.exists(out + '2')
++
+     case('le-gzip-basic', c_le_gzip)
+     case('be-gzip-basic', c_be_gzip)
+     case('avm-gzip-marker', c_avm_gzip)
+@@ -1370,6 +1501,9 @@
+     case('bad-magic', c_bad_magic)
+     case('unsupported-compression', c_unsupported_compression)
+     case('truncated', c_truncated)
++    case('extract-one-avm-inmemory', c_extract_avm)
++    case('extract-literal-collisions', c_extract_literal_collisions)
++    case('extract-cli', c_extract_cli)
+ 
+     bad = 0
+     for i, (name, ok, detail) in enumerate(results, start=1):
+@@ -1395,6 +1529,10 @@
+                     help='regular-file TSV (relpath, sha256, size)')
+     ap.add_argument('--nonregular', metavar='OUT.tsv',
+                     help='non-regular TSV (relpath, kind, detail)')
++    ap.add_argument('--extract', metavar='REL',
++                    help='write one regular file (literal path from the '
++                         'image root) to --out')
++    ap.add_argument('--out', metavar='FILE', help='output file for --extract')
+     ap.add_argument('--inspect', action='store_true',
+                     help='print a JSON superblock/layout/coverage summary')
+     ap.add_argument('--selftest', action='store_true',
+@@ -1404,6 +1542,25 @@
+ 
+     if args.selftest:
+         return run_selftest()
++    if args.extract is not None:
++        if not args.image or not args.out:
++            ap.error('--extract needs IMAGE and --out FILE')
++        try:
++            img = SquashFS(args.image, layout=args.layout)
++            body = extract_file(img, args.extract)
++        except SqfsError as exc:
++            print('sqfs-list: %s' % exc, file=sys.stderr)
++            return 2
++        with open(args.out, 'wb') as fh:
++            fh.write(body)
++        if args.inspect:
++            json.dump({'extract': args.extract, 'bytes': len(body),
++                       'sha256': hashlib.sha256(body).hexdigest(),
++                       'layout': img.layout, 'avm_marker': img.avm_marker,
++                       'bytes_used': img.bytes_used},
++                      sys.stdout, indent=1, sort_keys=True)
++            sys.stdout.write('\n')
++        return 0
+     if not args.image or not args.files:
+         ap.error('IMAGE and --files are required (or --selftest)')
+ 

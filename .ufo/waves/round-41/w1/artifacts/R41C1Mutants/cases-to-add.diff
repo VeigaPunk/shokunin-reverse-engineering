@@ -1,0 +1,82 @@
+--- c1-counter.py (prototype 8e19a016)
++++ c1-counter.py + 11 R41C1Mutants cases
+@@ -1906,4 +1906,79 @@
+         runner=same_run(wrong_gap_recs))
+ 
++    # ---- R41C1Mutants verification block: cases that kill the surviving mutants
++    def raw_pub(e, rel, h, size=5):
++        e['normalized_result']['files'].append({
++            'relative_path': rel, 'path': '/x/' + rel, 'size': size, 'sha256': h})
++
++    nested_file, nested_recs = build(
++        env_over={'V2': lambda e: pub(e, 'core_extract/usr/bin/tool', fsha(11))},
++        oracle_over={'V2': oracle_rows([('core_extract/usr/bin/tool', fsha(11), 5)])})
++    add('nested extract root keeps the components after the first root',
++        [nested_file, nested_recs], 0, 0, runner=same_run(nested_recs))
++    m02_file, m02_recs = build(
++        env_over={'V2': lambda e: [f.__setitem__('relative_path',
++                                                  'carrier.out/var/info.txt')
++                                   for f in e['normalized_result']['files']]})
++    add('chunk dir without the _extract suffix does not resolve to the oracle row',
++        [m02_file, m02_recs], 0, 1, want_fail='oracle_hits_ok',
++        runner=same_run(m02_recs))
++    m03_file, m03_recs = build(
++        env_over={'V2': lambda e: e['normalized_result']['files'][0].__setitem__(
++            'relative_path', '$output/firmware.bin_extract/var/info.txt')})
++    add('the $output prefix is stripped before the chunk extract root',
++        [m03_file, m03_recs], 0, 0, runner=same_run(m03_recs))
++    def m04_env(e):
++        raw_pub(e, 'var/old_extract/link', fsha(12))
++        entry(e, 'var/old_extract/link')
++    m04_file, m04_recs = build(env_over={'V2': m04_env},
++                               nonreg_over={'V2': 'var/old_extract/link\tsymlink\n'})
++    add('a mid-path _extract component is not an extract root',
++        [m04_file, m04_recs], 0, 1, want_fail='nonregular_unpublished_ok',
++        runner=same_run(m04_recs))
++    m05_file, m05_recs = build(
++        env_over={'V2': lambda e: raw_pub(e, 'core_extract/tool.bin', fsha(13))},
++        oracle_over={'V2': oracle_rows([('core_extract/tool.bin', fsha(13), 5)])})
++    add('receipt path without the chunk extract root does not satisfy the oracle row',
++        [m05_file, m05_recs], 0, 1, want_fail='oracle_hits_ok',
++        runner=same_run(m05_recs))
++    m09_file, m09_recs = build(
++        env_over={'V2': lambda e: e['normalized_result']['files'].append(
++            dict(e['normalized_result']['files'][0]))})
++    add('duplicate published row still satisfies the oracle row once',
++        [m09_file, m09_recs], 0, 0, runner=same_run(m09_recs))
++    m11_file, m11_recs = build(
++        env_over={'L2': lambda e: e['normalized_result']['files'].append({
++            'relative_path': 'firmware.bin_extract/dev/console',
++            'path': '/x/dev/console', 'size': 3, 'sha256': fsha(14)})})
++    add('regular file at the device entry path is a materialised entry',
++        [m11_file, m11_recs], 0, 1, want_fail='nonregular_unpublished_ok',
++        runner=same_run(m11_recs, 'L2'))
++    def m15_env(e):
++        e['normalized_result']['extraction_gaps'].append({
++            'kind': 'unpublished-entry', 'handler': HANDLER,
++            'relative_path': 'firmware.bin_extract/var/extra',
++            'dependencies': []})
++    m15_file, m15_recs = build(env_over={'V2': m15_env},
++                               nonreg_over={'V2': 'var/extra\tsymlink\n'
++                                            'var/extra\tdevice\n'})
++    add('same path listed with two non-regular kinds resolves to no single entry',
++        [m15_file, m15_recs], 0, 1, want_fail='gaps_ok',
++        runner=same_run(m15_recs))
++    m17_file, m17_recs = build(
++        env_over={'L1': lambda e: e['normalized_result']['chunks'][0].__setitem__(
++            'handler', 'xsquashfs_v4_be')})
++    add('chunk handler matching is exact, not a substring test',
++        [m17_file, m17_recs], 0, 1, want_fail='handler_ok',
++        runner=same_run(m17_recs, 'L1'))
++    m20_frozen, m20_recs = build()
++    m20_forged = json.loads(m20_recs[receipt_path('L2')])
++    m20_forged['evidence_id'] = m20_forged['evidence_id'][:24] + '0' * 40
++    add('evidence id differing only after char 24 is stale',
++        [m20_frozen, {**m20_recs, receipt_path('L2'): json.dumps(m20_forged)}],
++        0, 1, want_fail='evidence_id_ok')
++    v41 = bytearray(sb_carrier(GZIP_ID, b'V1-v41'))
++    v41[30:32] = (1).to_bytes(2, 'big')
++    add('superblock version 4.1 is not the AVM v4.0 layout',
++        build(blob_over={'V1': bytes(v41)}), 0, 1, want_fail='layout_ok')
+     # ---- freeze integrity
+     add('carrier bytes changed after freeze',

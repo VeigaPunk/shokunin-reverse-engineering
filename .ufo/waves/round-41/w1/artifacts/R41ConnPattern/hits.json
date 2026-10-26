@@ -1,0 +1,71 @@
+{
+  "seat": "R41ConnPattern",
+  "base": "49096c7e6f226af0c750c4b003be58883cb6049f",
+  "scope": "tools/round-38, tools/round-39, tools/round-40 at base; round-41 drafts in .ufo/waves/round-41/w1/artifacts",
+  "classes": {
+    "A_suffix_endswith_on_paths": [
+      {"id": "A1", "hit": "tools/round-40/c1-counter.py:606-607 same_rel (uses at 638, 647, 682)",
+       "status": "frozen defect R40-CL1",
+       "r41": "FIXED in artifacts/R41C1Counter/c1-counter.py:769-803 (extract_rel component-exact against subject_root; legacy_same_rel kept at :810 for selftest discrimination); both collision directions self-tested at :2064-2071"},
+      {"id": "A2", "hit": "tools/round-39/c1-counter.py:229-230, uses 279-281, 294-297, 307-310", "status": "origin of A1", "r41": "superseded, not ported"},
+      {"id": "A3", "hit": "tools/round-38/c1-counter.py:137-140 matched()", "status": "earlier lineage", "r41": "superseded, not ported"},
+      {"id": "A4", "hit": "tools/round-37/c1-counter.py:116 (lineage note, out of scope)", "status": "earliest", "r41": "superseded"},
+      {"id": "A5", "hit": "tools/round-38/c2-counter.py:222-231 pointer-repair suffix (p2.endswith('/' + path))",
+       "status": "latent false-repaired (a new pointer merely ending with the base path counts as the repair)",
+       "r41": "NOT inherited: r39/r40/r41 c2-counters drop the repair arm (0 endswith in r40 c2-counter)"},
+      {"id": "A6", "hit": "tools/round-39/heldout-gen.py:141-147 writer_logical_path resolved.endswith(marker[:-1]); tools/round-40/heldout-gen-v2.py:272-279 identical",
+       "status": "suffix canonicalisation erases true writer location",
+       "r41": "INHERITED VERBATIM at artifacts/R41C2Gen/heldout-gen-v3.py:487-490; see evidence-E1-writer-logical-path.txt",
+       "failing_input": "any writer copy whose path ends with tools/round-39/gen-squashfs.py (scratch/fleet mirror) is recorded as the lane-relative logical path"},
+      {"id": "A7", "hit": "tools/round-40/c1-counter.py:597-604 provenance_ok PROV_SEGMENT `in` output_directory",
+       "status": "substring semantics on path; no false pass found given absolute+no-'..' guards (segment carries trailing slash)",
+       "r41": "segment updated to '/kaidoku-r41/' at artifacts/R41C1Counter/c1-counter.py:232,:635; semantics unchanged"},
+      {"id": "A8", "hit": "artifacts/R41C1DevCore/devcore-probe.py:166 diagnostic tail bucket",
+       "status": "suffix classifies 'published under another extract root' only when no exact candidate exists; probe, not a gate; can mislabel the R40-CL1 collision shape as depth_mismatch"},
+      {"id": "A9", "hit": "artifacts/R41C2Counter/c2-counter.py:408-415 norm_id basename join",
+       "status": "basename class; safe only while envelope basenames are unique ids",
+       "r41": "live in draft; see evidence-E4-norm-id.txt",
+       "failing_input": "norm_id('.../H05/envelope.json') -> 'envelope'; two distinct envelopes sharing a basename collide silently in the join"}
+    ],
+    "B_cross_root_path_comparisons": [
+      {"id": "B1", "hit": "tools/round-40/sqfs-triage-v2.py:137-140 HELDOUT_DIR/C1_DIR point at corpus/evidence/round-39/{c2/heldout,c1} while HELDOUT_EXPECT (:840-877) and the R40-C2 claim target the round-40 heldout set",
+       "status": "selftest validates round-39 bytes against round-40 expectations; never routed (observed by R40W2Sentinel/R40C2Interp as 'selftest-only')",
+       "r41": "FIXED by design: artifacts/R41C2Interp/sqfs-triage-v3.py carries no evidence fixtures/expectation tables",
+       "failing_input": "swap HELDOUT_DIR to the round-40 set -> c_committed_heldout and c_heldout_manifest_agrees both FAIL on H05; see evidence-E3-heldout-swap.txt"},
+      {"id": "B2", "hit": "tools/round-39/c2-counter.py:373-385 and tools/round-40/c2-counter.py:641-647 argmap os.path.normpath join",
+       "status": "cross-form comparison (normalisation-only equality of echoed paths)",
+       "r41": "replaced by norm_id basename join (A9) - hazard shape changed, not eliminated"},
+      {"id": "B3", "hit": "tools/round-40/c1-run.sh oracle-vs-check relpath equality (:332-364) and table overlap set-intersection (:267-287)",
+       "status": "CLEAN: exact component-wise relpath equality on both roots",
+       "r41": "artifacts/R41C1Fetch/sqfs-list.py exact component handling (clean)"},
+      {"id": "B4", "hit": "tools/round-40/fetch-vendor.py:79-83 member lookup names.get(member) or names.get('./'+member.lstrip('./'))",
+       "status": "name-equality with ./ fallback; ambiguous only if both spellings exist as distinct members, and the chain is sha-pinned anyway",
+       "r41": "inherited at artifacts/R41C1Fetch/fetch-vendor.py:117-118 (low risk)"}
+    ],
+    "C_embedded_stale_copies_R40_CL5_M1_class": [
+      {"id": "C1", "hit": "tools/round-40/sqfs-triage-v2.py:171 TABLE_BLOCK vs frozen SKILL.md v2 block",
+       "status": "STALE (routed R40-CL5 M1); diverges in exactly the avm-marker-be-dropped cause+source cells; see evidence-M1-table-divergence.diff",
+       "r41": "FIXED by design: v3 interpreter embeds NO table and selftest-guards against any TABLE_BLOCK assignment (artifacts/R41C2Interp/sqfs-triage-v3.py:45,:1355-1357)"},
+      {"id": "C2", "hit": "tools/round-39/sqfs-triage.py:130 TABLE_BLOCK (v1 interpreter)",
+       "status": "same class one round earlier (historical evidence the pattern predates round 40)", "r41": "v1 interpreter not ported"},
+      {"id": "C3", "hit": "tools/round-40/sqfs-triage-v2.py:838-877 HELDOUT_EXPECT/C1_EXPECT keyed to round-40 ids, cross-checked against the round-39 manifest (:911-926)",
+       "status": "STALE cross-round (B1 is the path face; this is the data face); never routed",
+       "r41": "FIXED by design (no expectation tables in v3 interpreter)"},
+      {"id": "C4", "hit": "tools/round-40/c1-counter.py:188-220 constants (CARRIERS/GAPRULE/AFTERDIR/ENTRY/STEM/CORE_HEADING/IDS/PROV_SEGMENT/FROZEN_PATHS) + P40-C1 docstring",
+       "status": "stale-constant class for any port",
+       "r41": "all updated to round-41 values (artifacts/R41C1Counter/c1-counter.py:223-232); c1-extra likewise (ENTRY/STEM/HEADING at :42-44)"},
+      {"id": "C5", "hit": "tools/round-40/c2-counter.py:56-84 FROZEN/MANIFEST/INTERP/GEN/MARKER_V1/V2 constants",
+       "status": "stale-constant class", "r41": "updated (artifacts/R41C2Counter/c2-counter.py:103-105 WRITER_CANDIDATES, marker v3)"},
+      {"id": "C6", "hit": "SKILL.md v2 rows partial-body-failure and clean advise 'match files to the oracle by relative-path suffix and sha256'",
+       "status": "the R40-CL1 advice survives inside the live frozen table prose; v3 must drop the phrase",
+       "r41": "owned by the v3 table draft seat; flagged for its review"},
+      {"id": "C7", "hit": "tools/round-40/heldout-gen-v2.py RECIPES/ACTIONS class map -> manifest expected_label (:1258,:1311)",
+       "status": "D3: labels must not come from the generator's map alone",
+       "r41": "addressed by design: independent evaluator is the label source; generator expectation demoted to a cross-check (evaluator_covers_all/evaluator_pairs bindings in r41 c2-counter)"}
+    ],
+    "D_adjacent_verified_in_passing": [
+      {"id": "D1", "hit": "R40-CL6 fetch chain lacks member_sha256", "status": "CONFIRMED: r40 fetch-vendor passes a deliberately wrong pinned member_sha256 (ok=True); r41 draft fails closed (link=member_sha256); see evidence-E2-member-sha256.txt"},
+      {"id": "D2", "hit": "artifacts/R41C2Interp/sqfs-triage-v3.py:178 host-local LANE constant (DEFAULT_SKILL)", "status": "durability wart (round-40 D1 class), selftest-only; not a scoring path"}
+    ]
+  }
+}

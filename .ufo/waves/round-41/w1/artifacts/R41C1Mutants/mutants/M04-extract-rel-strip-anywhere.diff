@@ -1,0 +1,13 @@
+--- c1-counter.py.prototype
++++ c1-counter.py.M04-extract-rel-strip-anywhere
+@@ -623,6 +623,8 @@
+         p = p[len('$output/'):]
+     parts = [x for x in p.split('/') if x not in ('', '.')]
+-    if parts and parts[0].endswith('_extract'):
+-        parts = parts[1:]
++    for _i, _x in enumerate(parts):
++        if _x.endswith('_extract'):
++            parts = parts[:_i] + parts[_i + 1:]
++            break
+     return '/'.join(parts)
+ 

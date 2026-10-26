@@ -1,0 +1,94 @@
+note: the table vocabulary lacks these oracle actions: ['raise-depth']
+table: /fast/scratch/hyaku/kaidoku-r41/R41C2Interp/ctl-v2-le.md
+interpreter: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w1/artifacts/R41C2Interp/sqfs-triage-v3.py
+tuples: 5040
+oracle label->action pairs (round-40 committed map + the claimed new action):
+  avm-marker-be-dropped      wrap-extractor-be
+  body-extractor-failure     preserve-failure
+  clean                      none
+  clean-empty                confirm-empty
+  dep-missing-be             install-extractor-be
+  dep-missing-le             install-extractor-le
+  depth-limited-nested       raise-depth
+  escaping-symlink-removed   expect-link-absent
+  in-tree-symlink-metadata   count-gap
+  mixed-symlinks             audit-symlinks
+  no-squashfs-chunk          inspect-input
+  partial-body-failure       salvage-partial
+  unclassified               none
+precedence steps exercised:
+  step 1  t01260  unclassified/none  table unclassified/none  agree
+          tuple OP=extract_firmware PV=binwalk H=() G=() D=() BE=yes SR=yes P=0
+  step 2  t00000  no-squashfs-chunk/inspect-input  table no-squashfs-chunk/inspect-input  agree
+          tuple OP=extract_firmware PV=unblob H=() G=() D=() BE=yes SR=yes P=0
+  step 3  t00312  dep-missing-le/install-extractor-le  table escaping-symlink-removed/expect-link-absent  DIVERGE
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('missing-extractor-dependency',) D=('sasquatch',) BE=yes SR=yes P=0
+  step 4  t00265  partial-body-failure/salvage-partial  table partial-body-failure/salvage-partial  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('extractor-failure',) D=() BE=yes SR=yes P=3
+  step 5  t00520  avm-marker-be-dropped/wrap-extractor-be  table avm-marker-be-dropped/wrap-extractor-be  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_be',) G=('extractor-failure',) D=() BE=no SR=yes P=0
+  step 6  t00264  body-extractor-failure/preserve-failure  table body-extractor-failure/preserve-failure  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('extractor-failure',) D=() BE=yes SR=yes P=0
+  step 7  t00288  depth-limited-nested/raise-depth  table escaping-symlink-removed/expect-link-absent  DIVERGE
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('depth-limited',) D=() BE=yes SR=yes P=0
+  step 8  t00276  mixed-symlinks/audit-symlinks  table mixed-symlinks/audit-symlinks  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('unpublished-entry',) D=() BE=yes SR=yes P=0
+  step 9  t00252  escaping-symlink-removed/expect-link-absent  table escaping-symlink-removed/expect-link-absent  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=() D=() BE=yes SR=yes P=0
+  step 10 t00278  in-tree-symlink-metadata/count-gap  table in-tree-symlink-metadata/count-gap  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('unpublished-entry',) D=() BE=yes SR=no P=0
+  step 11 t00254  clean-empty/confirm-empty  table clean-empty/confirm-empty  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=() D=() BE=yes SR=no P=0
+  step 12 t00300  unclassified/none  table escaping-symlink-removed/expect-link-absent  DIVERGE
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('missing-extractor-dependency',) D=() BE=yes SR=yes P=0
+agreement: 4198/5040 tuples match on (label, action)
+known divergence K1-non-v4-handler: 252 tuples
+  t00756 OP=extract_firmware PV=unblob H=('squashfs_v3',) G=() D=() BE=yes SR=yes P=0  oracle no-squashfs-chunk/inspect-input  table unclassified/none
+  t00757 OP=extract_firmware PV=unblob H=('squashfs_v3',) G=() D=() BE=yes SR=yes P=3  oracle no-squashfs-chunk/inspect-input  table unclassified/none
+  t00758 OP=extract_firmware PV=unblob H=('squashfs_v3',) G=() D=() BE=yes SR=no P=0  oracle no-squashfs-chunk/inspect-input  table unclassified/none
+known divergence K2-dependency-names-both: 108 tuples
+  t00336 OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('missing-extractor-dependency',) D=('sasquatch', 'sasquatch-v4be') BE=yes SR=yes P=0  oracle dep-missing-be/install-extractor-be  table escaping-symlink-removed/expect-link-absent
+  t00337 OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('missing-extractor-dependency',) D=('sasquatch', 'sasquatch-v4be') BE=yes SR=yes P=3  oracle dep-missing-be/install-extractor-be  table escaping-symlink-removed/expect-link-absent
+  t00338 OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('missing-extractor-dependency',) D=('sasquatch', 'sasquatch-v4be') BE=yes SR=no P=0  oracle dep-missing-be/install-extractor-be  table unclassified/none
+ledger: /fast/scratch/hyaku/kaidoku-r41/R41C2Interp/lc.tsv (5040 lines)
+PROBLEMS:
+  tuple t00288 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'yes', 'SR': 'yes', 'P': 0}: oracle 'depth-limited-nested'/'raise-depth', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00289 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'yes', 'SR': 'yes', 'P': 3}: oracle 'depth-limited-nested'/'raise-depth', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00290 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'yes', 'SR': 'no', 'P': 0}: oracle 'depth-limited-nested'/'raise-depth', table 'unclassified'/'none'
+  tuple t00291 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'yes', 'SR': 'no', 'P': 3}: oracle 'depth-limited-nested'/'raise-depth', table 'unclassified'/'none'
+  tuple t00292 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'no', 'SR': 'yes', 'P': 0}: oracle 'depth-limited-nested'/'raise-depth', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00293 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'no', 'SR': 'yes', 'P': 3}: oracle 'depth-limited-nested'/'raise-depth', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00294 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'no', 'SR': 'no', 'P': 0}: oracle 'depth-limited-nested'/'raise-depth', table 'unclassified'/'none'
+  tuple t00295 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'no', 'SR': 'no', 'P': 3}: oracle 'depth-limited-nested'/'raise-depth', table 'unclassified'/'none'
+  tuple t00296 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'n/a', 'SR': 'yes', 'P': 0}: oracle 'depth-limited-nested'/'raise-depth', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00297 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'n/a', 'SR': 'yes', 'P': 3}: oracle 'depth-limited-nested'/'raise-depth', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00298 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'n/a', 'SR': 'no', 'P': 0}: oracle 'depth-limited-nested'/'raise-depth', table 'unclassified'/'none'
+  tuple t00299 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('depth-limited',), 'D': (), 'BE': 'n/a', 'SR': 'no', 'P': 3}: oracle 'depth-limited-nested'/'raise-depth', table 'unclassified'/'none'
+  tuple t00300 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': (), 'BE': 'yes', 'SR': 'yes', 'P': 0}: oracle 'unclassified'/'none', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00301 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': (), 'BE': 'yes', 'SR': 'yes', 'P': 3}: oracle 'unclassified'/'none', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00304 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': (), 'BE': 'no', 'SR': 'yes', 'P': 0}: oracle 'unclassified'/'none', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00305 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': (), 'BE': 'no', 'SR': 'yes', 'P': 3}: oracle 'unclassified'/'none', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00308 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': (), 'BE': 'n/a', 'SR': 'yes', 'P': 0}: oracle 'unclassified'/'none', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00309 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': (), 'BE': 'n/a', 'SR': 'yes', 'P': 3}: oracle 'unclassified'/'none', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00312 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch',), 'BE': 'yes', 'SR': 'yes', 'P': 0}: oracle 'dep-missing-le'/'install-extractor-le', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00313 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch',), 'BE': 'yes', 'SR': 'yes', 'P': 3}: oracle 'dep-missing-le'/'install-extractor-le', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00314 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch',), 'BE': 'yes', 'SR': 'no', 'P': 0}: oracle 'dep-missing-le'/'install-extractor-le', table 'unclassified'/'none'
+  tuple t00315 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch',), 'BE': 'yes', 'SR': 'no', 'P': 3}: oracle 'dep-missing-le'/'install-extractor-le', table 'unclassified'/'none'
+  tuple t00316 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch',), 'BE': 'no', 'SR': 'yes', 'P': 0}: oracle 'dep-missing-le'/'install-extractor-le', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00317 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch',), 'BE': 'no', 'SR': 'yes', 'P': 3}: oracle 'dep-missing-le'/'install-extractor-le', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00318 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch',), 'BE': 'no', 'SR': 'no', 'P': 0}: oracle 'dep-missing-le'/'install-extractor-le', table 'unclassified'/'none'
+  tuple t00319 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch',), 'BE': 'no', 'SR': 'no', 'P': 3}: oracle 'dep-missing-le'/'install-extractor-le', table 'unclassified'/'none'
+  tuple t00320 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch',), 'BE': 'n/a', 'SR': 'yes', 'P': 0}: oracle 'dep-missing-le'/'install-extractor-le', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00321 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch',), 'BE': 'n/a', 'SR': 'yes', 'P': 3}: oracle 'dep-missing-le'/'install-extractor-le', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00324 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'yes', 'SR': 'yes', 'P': 0}: oracle 'dep-missing-be'/'install-extractor-be', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00325 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'yes', 'SR': 'yes', 'P': 3}: oracle 'dep-missing-be'/'install-extractor-be', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00326 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'yes', 'SR': 'no', 'P': 0}: oracle 'dep-missing-be'/'install-extractor-be', table 'unclassified'/'none'
+  tuple t00327 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'yes', 'SR': 'no', 'P': 3}: oracle 'dep-missing-be'/'install-extractor-be', table 'unclassified'/'none'
+  tuple t00328 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'no', 'SR': 'yes', 'P': 0}: oracle 'dep-missing-be'/'install-extractor-be', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00329 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'no', 'SR': 'yes', 'P': 3}: oracle 'dep-missing-be'/'install-extractor-be', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00330 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'no', 'SR': 'no', 'P': 0}: oracle 'dep-missing-be'/'install-extractor-be', table 'unclassified'/'none'
+  tuple t00331 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'no', 'SR': 'no', 'P': 3}: oracle 'dep-missing-be'/'install-extractor-be', table 'unclassified'/'none'
+  tuple t00332 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'n/a', 'SR': 'yes', 'P': 0}: oracle 'dep-missing-be'/'install-extractor-be', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00333 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'n/a', 'SR': 'yes', 'P': 3}: oracle 'dep-missing-be'/'install-extractor-be', table 'escaping-symlink-removed'/'expect-link-absent'
+  tuple t00334 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'n/a', 'SR': 'no', 'P': 0}: oracle 'dep-missing-be'/'install-extractor-be', table 'unclassified'/'none'
+  tuple t00335 {'OP': 'extract_firmware', 'PV': 'unblob', 'H': ('squashfs_v4_le',), 'G': ('missing-extractor-dependency',), 'D': ('sasquatch-v4be',), 'BE': 'n/a', 'SR': 'no', 'P': 3}: oracle 'dep-missing-be'/'install-extractor-be', table 'unclassified'/'none'

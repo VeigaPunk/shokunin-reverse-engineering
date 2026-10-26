@@ -1,0 +1,779 @@
+--- a/tools/round-40/c1-counter.py
++++ b/tools/round-40/c1-counter.py
+@@ -6,8 +6,9 @@
+   REA 6.5.0 `extract-firmware` after-receipt (unblob 26.6.4, sasquatch-v4be 4.5.1
+   reachable on the child PATH), first added in a commit that descends from the
+   freeze, names the `squashfs_v4_be` handler with no failed chunk, publishes every
+-  regular file of the frozen independent oracle (same relative-path suffix, same
+-  sha256), carries only the extraction gaps the frozen gap rule allows, has a
++  regular file of the frozen independent oracle (exact path relative to the
++  chunk extract root, same sha256), carries only the extraction gaps the frozen
++  gap rule allows, has a
+   subject digest equal to the carrier pin and recomputes to its evidence id; the
+   carrier bytes hash to the frozen pin and its superblock is the genuine AVM
+   layout (big-endian `sqsh`, v4.0, `mkfs_time == bytes_used`, first metadata block
+@@ -45,8 +46,8 @@
+   operation_ok             operation == extract_firmware and provider.id == unblob
+   handler_ok               a chunk names squashfs_v4_be
+   chunks_ok                no chunk carries extraction_failed: true
+-  oracle_hits_ok           every oracle regular file is published (same
+-                           relative-path suffix, same sha256)
++  oracle_hits_ok           every oracle regular file is published (exact path
++                           relative to the chunk extract root, same sha256)
+   gaps_ok                  every extraction gap lands on exactly one non-regular
+                            entry and its kind is allowed for that entry's kind by
+                            the frozen gap rule, and every entry the rule marks
+@@ -78,11 +79,6 @@
+                            required?: {kind: bool}}; every non-regular kind that
+                            appears in any frozen nonregular.tsv is a key of
+                            `allowed`
+-  compression_coverage     >= 1 carrier with the gzip compression id and >= 1 with
+-                           an xz id (2 = squashfs-tools XZ, 4 = the lane writer's
+-                           xz), so both decompressor legs are bound
+-  frozen_tables_valid      carriers.json and gap-rule.json parse at the freeze
+-                           commit itself (routed R39-CL4)
+ 
+ Documentation bindings:
+   province_core_section    PROVINCE.md has the `## Round-40 additions to Core`
+@@ -133,13 +129,11 @@
+   `carrier.bin`, so a suffix-normalising projection is what makes a real rerun
+   comparable at all.
+ 
+-  The comparison profile is frozen data: the optional `projection` key of
+-  carriers.json, default `plus-extractor` (the L1's ruling for this round).
+-  `core` is the draft's six fields and is oracle-closed - a forger holding the
+-  oracle and non-regular tables can reproduce it without running - while
+-  `plus-extractor` adds the extractor-determined fields (`derivations`, engine,
+-  published_bytes, coverage). All four profiles were measured stable across
+-  repeated real runs (artifacts: projection-profiles.json, depth-replay.json).
++  The projection is one frozen field set, chosen in code: the freeze cannot
++  select a weaker one (`core` alone is oracle-closed - a forger holding the
++  oracle and non-regular tables could reproduce it without running). The
++  extractor-determined fields (`derivations`, engine, published_bytes,
++  coverage, mime, content hashes) are always compared.
+ 
+   The rerun also replays the extraction parameters recorded in the committed
+   receipt (`parameters.max_depth`, `max_output_bytes`, `max_output_files`). A
+@@ -151,29 +145,21 @@
+   and is reported with the differing projection keys (`projection_diff`); a
+   rerun that cannot run at all (no npx/node/unblob, unusable REA output) is
+   unevaluable (exit 2 `rerun_env_error`), never met.
+-  `--no-rerun` is not a mode of the predicate: it exits 2 (`rerun_disabled`) and
+-  never reports met.
+ 
+ Usage:
+   c1-counter.py --root LANE --rev REV --freeze FREEZE --pkg65 REA650_PKG_ROOT
+                 [--json-out PATH] [--unblob PATH] [--rea-timeout SECONDS]
+   c1-counter.py --selftest  --pkg65 REA650_PKG_ROOT
+-  c1-counter.py --selftest-rea --pkg65 REA650_PKG_ROOT [--unblob PATH]
+-                [--rea-timeout SECONDS]
+ Exit: 0 target met, 1 target not met, 2 unevaluable (bad args, git/node failure,
+-frozen path changed, rerun environment error, --no-rerun). Reads lane bytes only
++frozen path changed, rerun environment error). Reads lane bytes only
+ through git objects (`git show REV:path`); writes only a private scratch dir
+ under $HYAKU_SCRATCH (default /fast/scratch/hyaku)/kaidoku-r40/counter and
+ --json-out.
+ 
+ `--selftest` is offline and deterministic: it drives measure() in-process with a
+ simulated REA runner (the simulator only exists inside selftest(); main() never
+-passes anything but the real runner). `--selftest-rea` is the real-path check:
+-it runs REA 6.5.0 on the retained development AVM image
+-/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs
+-(sha256 c7f74691...; NOT a C1 carrier), builds a one-carrier fixture lane around
+-two real runs and asserts a green verdict, then relabels an oracle-only
+-fabrication and asserts it red.
++passes anything but the real runner). The real-path check of the same code is
++the round's pre-freeze dry run against the four committed development carriers.
+ """
+ import argparse
+ import hashlib
+@@ -201,10 +187,6 @@
+ REA_PIN = 'rea-agents@6.5.0'
+ METADATA_MAX = 8192
+ UNCOMPRESSED_FLAG = 0x8000
+-GZIP_ID = 1
+-XZ_IDS = (2, 4)
+-DEV_AVM_IMAGE = ('/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/'
+-                 'avm-be.squashfs')
+ FROZEN_PATHS = (
+     'plans/round-40-claims.md',
+     'tools/round-40/c1-counter.py',
+@@ -223,7 +205,7 @@
+ SHA_RE = re.compile(r'^[0-9a-f]{64}$')
+ BINDINGS = ('province_core_section', 'province_core_row', 'frontier_note',
+             'entry_present', 'sourced', 'coverage_map_row', 'carriers_spec_ok',
+-            'gap_rule_ok', 'compression_coverage', 'frozen_tables_valid')
++            'gap_rule_ok')
+ CLAUSES = ('carrier_present', 'carrier_pin_ok', 'layout_ok', 'oracle_ok',
+            'nonregular_ok', 'receipt_present', 'receipt_fresh', 'subject_pin_ok',
+            'operation_ok', 'handler_ok', 'chunks_ok', 'oracle_hits_ok',
+@@ -456,9 +438,8 @@
+         return [], probs + ['carriers is not a list']
+     if 'target' in spec and spec.get('target') != target:
+         probs.append('frozen target %r != counter target %d' % (spec.get('target'), target))
+-    prof = spec.get('projection', DEFAULT_PROFILE)
+-    if prof not in PROFILES:
+-        probs.append('projection profile %r not in %r' % (prof, list(PROFILES)))
++    if 'projection' in spec:
++        probs.append('carriers.json must not choose a projection profile')
+     ids = [c.get('id') for c in cs if isinstance(c, dict)]
+     if len(ids) != target:
+         probs.append('carriers has %d entries, want %d' % (len(ids), target))
+@@ -499,9 +480,6 @@
+         sha = c.get('sha256')
+         if isinstance(sha, str) and not SHA_RE.match(sha.lower()):
+             probs.append('carrier %r sha256 is not 64 hex' % (c.get('id'),))
+-        receipt = c.get('receipt')
+-        if receipt is not None and not isinstance(receipt, str):
+-            probs.append('carrier %r receipt is not a string' % (c.get('id'),))
+     return ids, probs
+ 
+ 
+@@ -603,8 +581,22 @@
+     return '..' not in output_directory.split('/')
+ 
+ 
++def extract_rel(path):
++    """A receipt path relative to its chunk extract root."""
++    if not isinstance(path, str):
++        return None
++    p = path
++    while p.startswith('$output/'):
++        p = p[len('$output/'):]
++    parts = [x for x in p.split('/') if x not in ('', '.')]
++    if parts and parts[0].endswith('_extract'):
++        parts = parts[1:]
++    return '/'.join(parts)
++
++
+ def same_rel(candidate, rel):
+-    return bool(candidate) and bool(rel) and (candidate == rel or candidate.endswith('/' + rel))
++    """Exact match of a receipt path against a filesystem-relative path."""
++    return bool(rel) and bool(candidate) and extract_rel(candidate) == rel
+ 
+ 
+ def published(env):
+@@ -763,53 +755,35 @@
+     return '/'.join(parts)
+ 
+ 
+-def projection(env, profile='core'):
++def projection(env):
+     """Semantic projection compared between a committed receipt and a fresh run.
+ 
+-    `profile` is frozen data (the optional `projection` key of carriers.json,
+-    default `core`), so the freeze chooses how much of the run is compared
+-    without editing this file:
+-      core            the six fields of the P40-C1 draft (R40C1Projection's item
+-                      text): subject digest, files (suffix, sha256, size), chunks
+-                      (handler, start, end, failed), gaps (kind, suffix, deps),
+-                      unpublished entries, diagnostics typenames.
+-      plus-mime       core + files[].mime_type (libmagic output, not in the oracle)
+-      plus-content    plus-mime + files[].md5/sha1 from the run's HashReport
+-      plus-extractor  plus-mime + combinations + engine name/version +
+-                      published_bytes + coverage (extractor-determined)
+-    All four were measured stable across three real runs of one carrier
+-    (artifacts/R40C1Counter/projection-profiles.json). The fields are inlined
+-    here on purpose: scores must read frozen in-repo bytes, never a wave
+-    artifact. Everything that varies between two runs of the same bytes is
+-    excluded: evidence id, absolute paths, output directory, staged input name,
+-    provider/blob ids, continuation ids, timestamps, selection and analysis
+-    fields."""
+-    if profile not in PROFILES:
+-        raise Unevaluable('unknown projection profile %r' % (profile,))
++    The field list is frozen (round-41: one projection, no profile choice, so the
++    freeze cannot downgrade to an oracle-closed field set). Everything that
++    varies between two runs of the same bytes is excluded: evidence id, absolute
++    paths, output directory, staged input name, provider/blob ids, continuation
++    ids, timestamps, selection and analysis fields."""
+     nr = env.get('normalized_result') or {}
+     subject = ((env.get('subject') or {}).get('digest') or {}).get('sha256')
+ 
+     hashes = {}
+-    if profile in ('plus-content', 'plus-extractor'):
+-        for task in (env.get('raw_result') or {}).get('report') or []:
+-            if not isinstance(task, dict):
+-                continue
+-            key = rel_suffix((task.get('task') or {}).get('path'))
+-            if key is None:
+-                continue
+-            for report in task.get('reports') or []:
+-                if isinstance(report, dict) and report.get('__typename__') == 'HashReport':
+-                    hashes[key] = [report.get('md5'), report.get('sha1')]
++    for task in (env.get('raw_result') or {}).get('report') or []:
++        if not isinstance(task, dict):
++            continue
++        key = rel_suffix((task.get('task') or {}).get('path'))
++        if key is None:
++            continue
++        for report in task.get('reports') or []:
++            if isinstance(report, dict) and report.get('__typename__') == 'HashReport':
++                hashes[key] = [report.get('md5'), report.get('sha1')]
+ 
+     files = []
+     for e in nr.get('files') or []:
+         if not isinstance(e, dict):
+             continue
+-        row = [rel_suffix(e.get('relative_path')), e.get('sha256'), e.get('size')]
+-        if profile != 'core':
+-            row.append(e.get('mime_type'))
+-        if profile in ('plus-content', 'plus-extractor'):
+-            row += hashes.get(rel_suffix(e.get('relative_path')) or '', [None, None])
++        row = [rel_suffix(e.get('relative_path')), e.get('sha256'), e.get('size'),
++               e.get('mime_type')]
++        row += hashes.get(rel_suffix(e.get('relative_path')) or '', [None, None])
+         files.append(row)
+     files.sort(key=lambda r: (r[0] if r[0] is not None else '', canonical(r[1:])))
+ 
+@@ -853,41 +827,32 @@
+         'unpublished_entries': unpub,
+         'diagnostics': diags,
+     }
+-    if profile == 'plus-extractor':
+-        edges = []
+-        for deriv in nr.get('derivations') or []:
+-            if not isinstance(deriv, dict):
+-                continue
+-            edges.append([rel_suffix(deriv.get('parent_path')),
+-                          rel_suffix(deriv.get('child_path')),
+-                          deriv.get('handler')])
+-        edges.sort(key=canonical)
+-        engine = nr.get('engine') or {}
+-        out['derivations'] = edges
+-        out['engine'] = [engine.get('name'), engine.get('version')]
+-        out['published_bytes'] = nr.get('published_bytes')
+-        out['coverage'] = nr.get('coverage')
++    edges = []
++    for deriv in nr.get('derivations') or []:
++        if not isinstance(deriv, dict):
++            continue
++        edges.append([rel_suffix(deriv.get('parent_path')),
++                      rel_suffix(deriv.get('child_path')),
++                      deriv.get('handler')])
++    edges.sort(key=canonical)
++    engine = nr.get('engine') or {}
++    out['derivations'] = edges
++    out['engine'] = [engine.get('name'), engine.get('version')]
++    out['published_bytes'] = nr.get('published_bytes')
++    out['coverage'] = nr.get('coverage')
+     return out
+ 
+ 
+-PROFILES = ('core', 'plus-mime', 'plus-content', 'plus-extractor')
+-DEFAULT_PROFILE = 'plus-extractor'      # L1 ruling, round 40 wave 1: every carrier
+ PROJECTION_KEYS = ('subject_sha256', 'files', 'chunks', 'extraction_gaps',
+-                   'unpublished_entries', 'diagnostics')
+-PROJECTION_KEYS_BY_PROFILE = {
+-    'core': PROJECTION_KEYS,
+-    'plus-mime': PROJECTION_KEYS,
+-    'plus-content': PROJECTION_KEYS,
+-    'plus-extractor': PROJECTION_KEYS + ('derivations', 'engine',
+-                                        'published_bytes', 'coverage'),
+-}
+-
+-
+-def projection_diff(a, b, profile='core'):
++                   'unpublished_entries', 'diagnostics', 'derivations', 'engine',
++                   'published_bytes', 'coverage')
++
++
++def projection_diff(a, b):
+     """(equal, differing keys, short detail) between two projections."""
+     keys = []
+     detail = {}
+-    for k in PROJECTION_KEYS_BY_PROFILE[profile]:
++    for k in PROJECTION_KEYS:
+         if a.get(k) == b.get(k):
+             continue
+         keys.append(k)
+@@ -989,12 +954,6 @@
+         plan_doc = json.loads(plan_raw)
+     except json.JSONDecodeError as e:
+         raise Unevaluable('gap-rule.json at freeze is not JSON: %s' % e)
+-    res['frozen_tables_valid'] = isinstance(plan_doc, dict)
+-
+-    cur = show(root, rev, CARRIERS)
+-    res['carriers_unchanged'] = cur == frozen
+-    res['gap_rule_unchanged'] = show(root, rev, GAPRULE) == plan_raw
+-
+     drift = frozen_drift(root, freeze, rev, spec)
+     res['frozen_path_changed'] = drift
+     if drift:
+@@ -1002,10 +961,6 @@
+ 
+     ids, spec_probs = carriers_spec(spec, target, expected_ids)
+     res['carriers_spec_problems'] = spec_probs
+-    profile = spec.get('projection', DEFAULT_PROFILE)
+-    if profile not in PROFILES:
+-        profile = DEFAULT_PROFILE             # spec_probs already records the fault
+-    res['projection_profile'] = profile
+     model, plan_probs = gap_rule_model(plan_raw)
+     res['gap_rule_problems'] = plan_probs
+ 
+@@ -1023,7 +978,7 @@
+             cpath = c.get('path')
+             opath = c.get('oracle')
+             npath = c.get('nonregular')
+-            rpath = c.get('receipt') or '%s/%s/after.json' % (AFTERDIR, k)
++            rpath = '%s/%s/after.json' % (AFTERDIR, k)
+ 
+             if cpath:
+                 raw = show(root, rev, cpath)
+@@ -1040,7 +995,6 @@
+                                    and hashlib.sha256(raw).hexdigest() == pin)
+             d['layout'] = layout_probe(raw)
+             d['layout_ok'] = bool(d['layout'].get('ok'))
+-            d['compression'] = d['layout'].get('compression')
+ 
+             oracle, oerr = parse_oracle(show(root, rev, opath) if opath else None)
+             d['oracle_path'] = opath
+@@ -1103,8 +1057,7 @@
+                         d['projection_error'] = payload
+                     else:
+                         eq, keys, detail = projection_diff(
+-                            projection(env, profile), projection(payload, profile),
+-                            profile)
++                            projection(env), projection(payload))
+                         d['projection_ok'] = eq
+                         d['projection_diff'] = keys
+                         if not eq:
+@@ -1179,14 +1132,8 @@
+     uncovered = sorted(kinds_seen - set(model.get('allowed') or {}))
+     b['gap_rule_ok'] = not plan_probs and not uncovered
+     b['gap_rule_uncovered_kinds'] = uncovered
+-    comps = [d.get('compression') for d in (res.get('carriers') or {}).values()]
+-    b['compression_coverage'] = (any(c == GZIP_ID for c in comps)
+-                                 and any(c in XZ_IDS for c in comps))
+-    b['compression_detail'] = comps
+-    b['frozen_tables_valid'] = bool(res.get('frozen_tables_valid'))
+     res['bindings'] = b
+-    res['met_target'] = bool(res['carriers_unchanged'] and res['gap_rule_unchanged']
+-                             and res['carriers_matched'] == target
++    res['met_target'] = bool(res['carriers_matched'] == target
+                              and all(b[x] is True for x in BINDINGS))
+     return res
+ 
+@@ -1203,23 +1150,10 @@
+                     help='directory holding <sha256>.bin for external vendor carriers '
+                          '(filled by tools/round-40/fetch-vendor.py)')
+     ap.add_argument('--rea-timeout', type=int, default=900)
+-    ap.add_argument('--no-rerun', action='store_true')
+     ap.add_argument('--selftest', action='store_true')
+-    ap.add_argument('--selftest-rea', action='store_true')
+     a = ap.parse_args(argv)
+     if a.selftest:
+         return selftest(a.pkg65)
+-    if a.selftest_rea:
+-        return selftest_rea(a.pkg65, a.unblob, a.rea_timeout)
+-    if a.no_rerun:
+-        out = {'reason': 'rerun_disabled',
+-               'detail': 'P40-C1 binds a fresh REA run of each carrier; '
+-                         '--no-rerun cannot be scored',
+-               'argv': sys.argv, 'exit_code': 2}
+-        print(json.dumps({k: out[k] for k in ('reason', 'detail')}, sort_keys=True))
+-        if a.json_out:
+-            json.dump(out, open(a.json_out, 'w'), indent=1, sort_keys=True)
+-        return 2
+     if not (a.root and a.rev and a.freeze and a.pkg65):
+         print('usage: --root --rev --freeze --pkg65 required', file=sys.stderr)
+         return 2
+@@ -1240,8 +1174,7 @@
+     res['argv'] = sys.argv
+     res['exit_code'] = 0 if res['met_target'] else 1
+     print(json.dumps({k: res[k] for k in ('revision', 'freeze', 'carriers_matched',
+-                                          'target', 'carriers_unchanged',
+-                                          'gap_rule_unchanged', 'frozen_path_changed',
++                                          'target', 'frozen_path_changed',
+                                           'bindings', 'met_target', 'exit_code')},
+                      sort_keys=True))
+     if a.json_out:
+@@ -1469,9 +1402,9 @@
+ 
+     # fixture carriers: AVM layout, gzip and xz legs
+     carriers = {
+-        'V1': sb_carrier(GZIP_ID, b'V1-avm'),
++        'V1': sb_carrier(1, b'V1-avm'),
+         'V2': sb_carrier(4, b'V2-avm'),
+-        'L1': sb_carrier(GZIP_ID, b'L1-avm'),
++        'L1': sb_carrier(1, b'L1-avm'),
+         'L2': sb_carrier(2, b'L2-avm'),
+     }
+     pins = {k: sha(v) for k, v in carriers.items()}
+@@ -1527,7 +1460,7 @@
+                        'allowed': {'symlink': ['unpublished-entry'],
+                                    'device': ['unpublished-entry']}}, indent=1)
+ 
+-    def spec_json(pin_map=None, drop=None, target=None, receipt_override=None,
++    def spec_json(pin_map=None, drop=None, target=None,
+                   projection=None):
+         pm = pin_map or pins
+         cs = []
+@@ -1539,8 +1472,6 @@
+                  'sha256': pm[k],
+                  'oracle': f'{AFTERDIR}/{k}/oracle.tsv',
+                  'nonregular': f'{AFTERDIR}/{k}/nonregular.tsv'}
+-            if receipt_override and k in receipt_override:
+-                c['receipt'] = receipt_override[k]
+             cs.append(c)
+         spec = {'claim': 'R40-C1', 'carriers': cs}
+         if target is not None:
+@@ -1553,12 +1484,13 @@
+         rows = ''.join(f'{rel}\t{h}\t{size}\n' for rel, h, size in spec_data[k]['files'])
+         return rows.encode()
+ 
+-    def frozen_files(blob_map=None, pin_map=None, nonreg_map=None, rule_text=None,
+-                     **over):
++    def frozen_files(blob_map=None, pin_map=None, nonreg_map=None,
++                     oracle_map=None, rule_text=None, **over):
+         bm = blob_map or carriers
+         pm = pin_map or pins
+         nm = nonreg_map if nonreg_map is not None else {
+             k: spec_data[k]['nonreg'] for k in ids}
++        om = oracle_map if oracle_map is not None else {k: oracle_tsv(k) for k in ids}
+         f = {XPIN: xpin,
+              CARRIERS: spec_json(pin_map=pm),
+              GAPRULE: (rule_text if rule_text is not None else rule).encode(),
+@@ -1570,19 +1502,21 @@
+              'corpus/README.md': _readme()}
+         for k in ids:
+             f[f'{AFTERDIR}/{k}/carrier.sqsh'] = bm[k]
+-            f[f'{AFTERDIR}/{k}/oracle.tsv'] = oracle_tsv(k)
++            f[f'{AFTERDIR}/{k}/oracle.tsv'] = om[k]
+             f[f'{AFTERDIR}/{k}/nonregular.tsv'] = nm[k].encode()
+         f.update(over)
+         return f
+ 
+     def build(blob_over=None, env_over=None, receipt_over=None, nonreg_over=None,
+-              rule_text=None, spec_text=None):
++              oracle_over=None, rule_text=None, spec_text=None):
+         """A pin-consistent (frozen files, receipts) pair for one variant."""
+         bm = dict(carriers)
+         bm.update(blob_over or {})
+         pm = {k: sha(bm[k]) for k in ids}
+         nm = {k: spec_data[k]['nonreg'] for k in ids}
+         nm.update(nonreg_over or {})
++        om = {k: oracle_tsv(k) for k in ids}
++        om.update(oracle_over or {})
+         envs = receipt_envs(over=env_over)   # applies env_over exactly once
+         for k in ids:
+             if bm[k] != carriers[k]:
+@@ -1598,7 +1532,8 @@
+             else:
+                 r[p] = content
+         frozen_map = frozen_files(blob_map=bm, pin_map=pm, nonreg_map=nm,
+-                                  rule_text=rule_text, **(over_spec(spec_text)))
++                                  oracle_map=om, rule_text=rule_text,
++                                  **(over_spec(spec_text)))
+         return frozen_map, r
+ 
+     def over_spec(spec_text):
+@@ -1717,15 +1652,15 @@
+     add('marker-stripped genuine-LE-lengths carrier', [s_frozen, s_receipts], 0, 1,
+         want_fail='layout_ok')
+     add('standard-BE carrier (BE block lengths)',
+-        [build(blob_over={'V1': sb_carrier(GZIP_ID, b'V1-be', meta_le=False)})[0],
+-         build(blob_over={'V1': sb_carrier(GZIP_ID, b'V1-be', meta_le=False)})[1]],
++        [build(blob_over={'V1': sb_carrier(1, b'V1-be', meta_le=False)})[0],
++         build(blob_over={'V1': sb_carrier(1, b'V1-be', meta_le=False)})[1]],
+         0, 1, want_fail='layout_ok')
+     # 8c00: LE length 140, BE length 3072 - plausible both ways, asymmetric
+-    ambiguous = sb_carrier(GZIP_ID, b'V1-amb', meta_header=b'\x8c\x00', pad=200)
++    ambiguous = sb_carrier(1, b'V1-amb', meta_header=b'\x8c\x00', pad=200)
+     add('metadata length plausible both ways (no identity)',
+         [build(blob_over={'V1': ambiguous})[0], build(blob_over={'V1': ambiguous})[1]],
+         0, 1, want_fail='layout_ok')
+-    amb_id = sb_carrier(GZIP_ID, b'V1-ambid', meta_header=b'\x8c\x00', pad=200,
++    amb_id = sb_carrier(1, b'V1-ambid', meta_header=b'\x8c\x00', pad=200,
+                         identity_le=True)
+     add('ambiguous length settled by the single-block identity',
+         [build(blob_over={'V1': amb_id})[0], build(blob_over={'V1': amb_id})[1]], 0, 0)
+@@ -1734,7 +1669,7 @@
+     add('little-endian superblock magic', [build(blob_over={'V1': lx})[0],
+                                           build(blob_over={'V1': lx})[1]], 0, 1,
+         want_fail='layout_ok')
+-    big_used = sb_carrier(GZIP_ID, b'V1-used', marker_value=0xFFFFFFF0)
++    big_used = sb_carrier(1, b'V1-used', marker_value=0xFFFFFFF0)
+     add('bytes_used beyond the file', [build(blob_over={'V1': big_used})[0],
+                                       build(blob_over={'V1': big_used})[1]], 0, 1,
+         want_fail='layout_ok')
+@@ -1802,6 +1737,67 @@
+             'size': 1, 'sha256': 'd' * 64}), remint=False)], 0, 1,
+         want_fail='evidence_id_ok')
+ 
++    # ---- path collision: `usr/bin/busy` is a different file from `bin/busy`
++    def pub(e, rel, h, size=5):
++        e['normalized_result']['files'].append({
++            'relative_path': 'firmware.bin_extract/' + rel,
++            'path': '/x/' + rel, 'size': size, 'sha256': h})
++
++    def entry(e, rel, gap=True, target='../sbin/busy'):
++        e['normalized_result']['unpublished_entries'].append({
++            'relative_path': 'firmware.bin_extract/' + rel, 'kind': 'symlink',
++            'link_target': target})
++        if gap:
++            e['normalized_result']['extraction_gaps'].append({
++                'kind': 'unpublished-entry', 'handler': HANDLER,
++                'relative_path': 'firmware.bin_extract/' + rel,
++                'dependencies': []})
++
++    def oracle_rows(rows):
++        return ''.join(f'{rel}\t{h}\t{size}\n' for rel, h, size in rows).encode()
++
++    def same_run(recs, k='V2'):
++        return mk_same_runner({**green_envs, k: json.loads(recs[receipt_path(k)])})
++
++    deep_file, deep_recs = build(
++        env_over={'V2': lambda e: (pub(e, 'usr/bin/busy', fsha(7)),
++                                   entry(e, 'bin/busy'))},
++        nonreg_over={'V2': 'bin/busy\tsymlink\n'})
++    add('regular usr/bin/busy is not the symlink entry bin/busy',
++        [deep_file, deep_recs], 0, 0, runner=same_run(deep_recs))
++    shallow_file, shallow_recs = build(
++        env_over={'V2': lambda e: (pub(e, 'bin/busy', fsha(8)),
++                                   entry(e, 'usr/bin/busy'))},
++        nonreg_over={'V2': 'usr/bin/busy\tsymlink\n'})
++    add('regular bin/busy is not the symlink entry usr/bin/busy (reverse)',
++        [shallow_file, shallow_recs], 0, 0, runner=same_run(shallow_recs))
++    materialised, materialised_recs = build(
++        env_over={'V2': lambda e: (pub(e, 'bin/busy', fsha(9)),
++                                   entry(e, 'bin/busy', gap=False))},
++        nonreg_over={'V2': 'bin/busy\tsymlink\n'})
++    add('regular file at the entry path itself is a materialised symlink',
++        [materialised, materialised_recs], 0, 1,
++        want_fail='nonregular_unpublished_ok', runner=same_run(materialised_recs))
++    oracle_shadow, oracle_shadow_recs = build(
++        env_over={'V2': lambda e: pub(e, 'usr/bin/busy', fsha(7))},
++        oracle_over={'V2': oracle_rows([('var/info.txt', fsha(3), 40),
++                                        ('bin/busy', fsha(7), 5)])})
++    add('deeper file with the oracle row sha256 does not publish oracle bin/busy',
++        [oracle_shadow, oracle_shadow_recs], 0, 1,
++        want_fail='oracle_hits_ok', runner=same_run(oracle_shadow_recs))
++    wrong_gap, wrong_gap_recs = build(
++        env_over={'V2': lambda e: (entry(e, 'bin/busy', gap=False),
++                                   e['normalized_result']['extraction_gaps'].append({
++                                       'kind': 'unpublished-entry',
++                                       'handler': HANDLER,
++                                       'relative_path':
++                                           'firmware.bin_extract/usr/bin/busy',
++                                       'dependencies': []}))},
++        nonreg_over={'V2': 'bin/busy\tsymlink\n'})
++    add('gap on usr/bin/busy does not resolve to the symlink entry bin/busy',
++        [wrong_gap, wrong_gap_recs], 0, 1, want_fail='gaps_ok',
++        runner=same_run(wrong_gap_recs))
++
+     # ---- freeze integrity
+     add('carrier bytes changed after freeze',
+         [frozen, {**good, f'{AFTERDIR}/V1/carrier.sqsh': b'changed carrier\n'}],
+@@ -1842,15 +1838,15 @@
+     add('carriers.json drops a carrier at the freeze (target 4)',
+         [{**frozen, CARRIERS: spec_json(drop=('V2',))}, good], 0, 1,
+         want_fail='b:carriers_spec_ok')
+-    one_leg = {k: sb_carrier(GZIP_ID, ('%s-gzip' % k).encode()) for k in ids}
++    one_leg = {k: sb_carrier(2, ('%s-xz' % k).encode()) for k in ids}
+     f1, r1 = build(blob_over=one_leg)
+-    add('no xz carrier (compression coverage)', [f1, r1], 0, 1,
+-        want_fail='b:compression_coverage')
++    add('every carrier on the xz leg still scores (no compression binding)',
++        [f1, r1], 0, 0)
+     thin = json.dumps({'claim': 'R40-C1', 'allowed': {'symlink': ['unpublished-entry']}})
+     f2, r2 = build(rule_text=thin)
+     add('gap rule omits the device kind', [f2, r2], 0, 1, want_fail='b:gap_rule_ok')
+     add('gap rule is JSON but not an object at the freeze',
+-        list(build(rule_text='[]')), 0, 1, want_fail='b:frozen_tables_valid')
++        list(build(rule_text='[]')), 0, 1, want_fail='b:gap_rule_ok')
+     add('gap rule names another claim',
+         list(build(rule_text=json.dumps({'claim': 'R39-C1', 'allowed': {
+             'symlink': ['unpublished-entry'], 'device': ['unpublished-entry']}}))),
+@@ -1890,17 +1886,13 @@
+     add('structural gap kind that carries a path', [st4_frozen, st4_receipts], 0, 1,
+         want_fail='gaps_ok')
+ 
+-    # ---- projection profile: the measured calibration limit of the core fields
++    # ---- projection: one frozen field set, chosen in code, not by the spec
+     def bump_bytes(e):
+         e['normalized_result']['published_bytes'] += 1
+-    core_frozen, core_receipts = build(
+-        env_over={'V1': bump_bytes}, spec_text=spec_json(projection='core'))
+-    add('explicit core profile accepts a projection-identical (oracle-closed) fabrication',
+-        [core_frozen, core_receipts], 0, 0)
+     ext_frozen, ext_receipts = build(env_over={'V1': bump_bytes})
+-    add('default profile (plus-extractor) refuses the same fabrication',
++    add('the frozen profile refuses a projection-identical (oracle-closed) fabrication',
+         [ext_frozen, ext_receipts], 0, 1, want_fail='projection_ok')
+-    add('unknown projection profile in carriers.json',
++    add('carriers.json that chooses a projection profile is a spec problem',
+         [{**frozen, CARRIERS: spec_json(projection='plus-everything')}, good], 0, 1,
+         want_fail='b:carriers_spec_ok')
+ 
+@@ -2046,171 +2038,6 @@
+     print(json.dumps({'selftest': 'c1-counter', 'cases': len(cases),
+                       'green_ok': green, 'red_ok': red, 'failures': fails}))
+     return 0 if not fails else 1
+-
+-
+-def selftest_rea(pkg65, unblob, timeout):
+-    """Real-REA end-to-end: two runs of the retained development AVM image.
+-
+-    Builds a one-carrier fixture lane (target 1) whose committed receipt is the
+-    first real run, then measures it with the counter's real runner (second run)
+-    and expects met_target. Then replaces the receipt with an oracle-only
+-    fabrication and expects a projection mismatch."""
+-    here = os.path.dirname(os.path.abspath(__file__))
+-    xpin_path = find_xpin(here)
+-    xpin = open(xpin_path, 'rb').read()
+-    if not os.path.isfile(DEV_AVM_IMAGE):
+-        raise SystemExit('development AVM image absent: ' + DEV_AVM_IMAGE)
+-    image = open(DEV_AVM_IMAGE, 'rb').read()
+-    pin = hashlib.sha256(image).hexdigest()
+-
+-    sroot = scratch_root()
+-    work = tempfile.mkdtemp(prefix='c1-selftest-rea.', dir=sroot)
+-    runner = make_real_runner(work, unblob, timeout)
+-    out = {'image': DEV_AVM_IMAGE, 'image_sha256': pin, 'bytes': len(image)}
+-
+-    # oracle from the independent extractor (sasquatch-v4be, no -be)
+-    sq = shutil.which('sasquatch-v4be')
+-    if sq is None:
+-        raise SystemExit('sasquatch-v4be not on PATH')
+-    root = os.path.join(work, 'oracle')
+-    os.makedirs(root)
+-    carrier = os.path.join(work, 'carrier.sqsh')
+-    with open(carrier, 'wb') as fh:
+-        fh.write(image)
+-    p = subprocess.run([sq, '-f', '-d', root, carrier], capture_output=True)
+-    oracle_rows = []
+-    for dirpath, _dirs, names in os.walk(root):
+-        for name in sorted(names):
+-            full = os.path.join(dirpath, name)
+-            if not os.path.isfile(full) or os.path.islink(full):
+-                continue
+-            rel = os.path.relpath(full, root).replace(os.sep, '/')
+-            data = open(full, 'rb').read()
+-            oracle_rows.append((rel, hashlib.sha256(data).hexdigest(), len(data)))
+-    oracle_rows.sort()
+-    oracle_tsv = ''.join('%s\t%s\t%d\n' % r for r in oracle_rows)
+-    out['sasquatch_rc'] = p.returncode
+-    out['oracle_files'] = len(oracle_rows)
+-
+-    # first real run -> committed receipt
+-    status, env = runner(image, 'V1-committed')
+-    if status != 'ok':
+-        raise SystemExit('first REA run produced no evidence object: %r' % (env,))
+-    out['committed_evidence_id'] = env.get('evidence_id')
+-    out['committed_handlers'] = [c.get('handler')
+-                                 for c in env['normalized_result'].get('chunks') or []]
+-
+-    d = tempfile.mkdtemp(prefix='c1-selftest-rea-repo.', dir=sroot)
+-    try:
+-        subprocess.run(['git', '-C', d, 'init', '-q'], check=True)
+-        top = subprocess.run(['git', '-C', d, 'rev-parse', '--show-toplevel'],
+-                             capture_output=True, text=True).stdout.strip()
+-        if os.path.realpath(top) != os.path.realpath(d):
+-            raise SystemExit('fixture toplevel mismatch')
+-        ident = ['-c', 'user.name=fx', '-c', 'user.email=fx@fx']
+-        entry = 'corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md'
+-        stem = '2026-10-26-r40-avm-be-squashfs-core'
+-        frozen = {
+-            XPIN: xpin,
+-            '.ufo/waves/round-40/c1/carriers.json': json.dumps({
+-                'claim': 'R40-C1', 'target': 1,
+-                'carriers': [{'id': 'V1',
+-                              'path': 'corpus/evidence/round-40/c1/V1/carrier.sqsh',
+-                              'sha256': pin,
+-                              'oracle': 'corpus/evidence/round-40/c1/V1/oracle.tsv',
+-                              'nonregular': 'corpus/evidence/round-40/c1/V1/nonregular.tsv'}]},
+-                indent=1),
+-            '.ufo/waves/round-40/c1/gap-rule.json': json.dumps(
+-                {'claim': 'R40-C1', 'allowed': {'symlink': ['unpublished-entry']}},
+-                indent=1),
+-            'plans/round-40-claims.md': '# plan\n',
+-            'tools/round-40/c1-counter.py': open(os.path.abspath(__file__), 'rb').read(),
+-            'PROVINCE.md': _province(),
+-            entry: _entry('S240'),
+-            'corpus/SOURCES.md': _registry('S240', used=entry),
+-            'corpus/README.md': _readme(stem),
+-            'corpus/evidence/round-40/c1/V1/carrier.sqsh': image,
+-            'corpus/evidence/round-40/c1/V1/oracle.tsv': oracle_tsv.encode(),
+-            'corpus/evidence/round-40/c1/V1/nonregular.tsv': b'',
+-        }
+-        revs = []
+-
+-        def commit(files):
+-            for pth, content in files.items():
+-                full = os.path.join(d, pth)
+-                if content is None:
+-                    if os.path.exists(full):
+-                        os.remove(full)
+-                    continue
+-                os.makedirs(os.path.dirname(full) or d, exist_ok=True)
+-                data = content if isinstance(content, bytes) else content.encode()
+-                with open(full, 'wb') as fh:
+-                    fh.write(data)
+-            subprocess.run(['git', '-C', d, 'add', '-A'], check=True)
+-            subprocess.run(['git', '-C', d] + ident
+-                           + ['commit', '-qm', 'step%d' % len(revs), '--allow-empty'],
+-                           check=True)
+-            revs.append(subprocess.run(['git', '-C', d, 'rev-parse', 'HEAD'],
+-                                       capture_output=True, text=True).stdout.strip())
+-
+-        commit(frozen)
+-        commit({'corpus/evidence/round-40/c1/V1/after.json': json.dumps(env)})
+-        freeze, rev = revs[0], revs[-1]
+-
+-        try:
+-            res = measure(d, rev, freeze, pkg65, rerun=None, target=1,
+-                          expected_ids=('V1',), unblob=unblob, rea_timeout=timeout)
+-            got = 0 if res['met_target'] else 1
+-            out['green'] = {'exit': got, 'met_target': res['met_target'],
+-                            'carriers_matched': res['carriers_matched'],
+-                            'failing': sorted({x for x in CLAUSES
+-                                               if res['carriers']['V1'].get(x) is not True}),
+-                            'bindings_false': sorted(x for x in BINDINGS
+-                                                     if res['bindings'][x] is not True),
+-                            'projection_diff': res['carriers']['V1'].get('projection_diff'),
+-                            'layout': res['carriers']['V1'].get('layout')}
+-        except Unevaluable as e:
+-            out['green'] = {'exit': 2, 'reason': e.reason, 'detail': str(e)}
+-
+-        # oracle-only fabrication: publish exactly the oracle, no chunk geometry
+-        # and no diagnostics (what a receipt built from oracle.tsv alone holds;
+-        # the projection is a coarsening, so a fabrication that reproduced the
+-        # chunk geometry too would be semantically equal to a real run - that is
+-        # the documented limit of this binding, not a hole in it)
+-        fab = mk_env('carrier.sqsh', pin,
+-                     files=[(rel, h, size) for rel, h, size in oracle_rows],
+-                     chunks=[], diags=[],
+-                     outdir='/fast/scratch/hyaku/kaidoku-r40/selftest-rea/fab')
+-        fab['evidence_id'] = mint_many(work, xpin_path, pkg65, {'m': fab})['m']
+-        commit({'corpus/evidence/round-40/c1/V1/after.json': json.dumps(fab)})
+-        rev = revs[-1]
+-        try:
+-            res = measure(d, rev, freeze, pkg65, rerun=None, target=1,
+-                          expected_ids=('V1',), unblob=unblob, rea_timeout=timeout)
+-            v = res['carriers']['V1']
+-            out['fabrication'] = {'exit': 0 if res['met_target'] else 1,
+-                                  'met_target': res['met_target'],
+-                                  'failing': sorted({x for x in CLAUSES
+-                                                     if v.get(x) is not True}),
+-                                  'projection_diff': v.get('projection_diff'),
+-                                  'evidence_id_ok': v.get('evidence_id_ok')}
+-        except Unevaluable as e:
+-            out['fabrication'] = {'exit': 2, 'reason': e.reason, 'detail': str(e)}
+-
+-        # the one-carrier fixture lane cannot satisfy the two-leg compression
+-        # binding (the retained development image is xz only), so that binding
+-        # is excluded from the assertion and reported as measured
+-        g = out.get('green', {})
+-        ok = (g.get('carriers_matched') == 1 and g.get('failing') == []
+-              and set(g.get('bindings_false') or []) <= {'compression_coverage'}
+-              and out.get('fabrication', {}).get('met_target') is False
+-              and 'projection_ok' in out.get('fabrication', {}).get('failing', []))
+-        out['selftest_rea'] = 'ok' if ok else 'FAILED'
+-        print(json.dumps(out, indent=1, sort_keys=True))
+-        return 0 if ok else 1
+-    finally:
+-        shutil.rmtree(d, ignore_errors=True)
+-        shutil.rmtree(work, ignore_errors=True)
+ 
+ 
+ if __name__ == '__main__':

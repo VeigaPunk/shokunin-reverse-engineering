@@ -1,0 +1,52 @@
+# A4 — do-nothing control shape: why neither target is reachable with no work
+
+## 4.1 C1: measured round-40 do-nothing receipt (same counter family, one revision earlier)
+{
+ "target": 4,
+ "carriers_matched": 0,
+ "exit_code": 1,
+ "met_target": false,
+ "revision": "7fce308631a8b457d6b7c5a4b39a923c4e9a49de",
+ "projection_profile": "plus-extractor"
+}
+
+  code path (tools/round-40/c1-counter.py):
+   41:  receipt_present          corpus/evidence/round-40/c1/<id>/after.json parses
+   227:CLAUSES = ('carrier_present', 'carrier_pin_ok', 'layout_ok', 'oracle_ok',
+   228:           'nonregular_ok', 'receipt_present', 'receipt_fresh', 'subject_pin_ok',
+   1066:            d['receipt_present'] = env is not None
+   1126:            d['matched'] = bool(ok)
+   1130:        res['carriers_matched'] = matched
+   1188:    res['met_target'] = bool(res['carriers_unchanged'] and res['gap_rule_unchanged']
+   1663:    add('do-nothing (freeze files only)', [frozen], 0, 1, want_fail='receipt_present')
+   1666:        want_fail='receipt_present')
+  => with no receipt present, receipt_present is false; `matched` is the conjunction over
+     CLAUSES so it can never be true; carriers_matched == 0 != 4 and met_target is false.
+     The counter self-test already pins this as a case (see the two do-nothing lines above).
+
+## 4.2 C1: the oracle clause is one-directional (extra published regular files are not refused)
+   635:def oracle_hits(oracle, files):
+   636-    hits = 0
+   637-    for rel, sha in oracle:
+   638-        if any(sha == fs and same_rel(fp, rel) for fp, fs, _ in files):
+   639-            hits += 1
+   640-    return hits
+   641-
+   1085:                d['oracle_hits_ok'] = (d['oracle_ok']
+  => 'hits == oracle_files' closes 'every oracle row is published'. No clause compares
+     len(published regular files) with len(oracle rows), so a superset passes.
+
+## 4.3 C2: the analogous before-value needs the v3 instrument (see A3 3.2)
+   29:     `frozen_path_changed`, `freeze_not_ancestor_of_rev`, `unknown_revision`,
+   30:     `no_manifest_at_rev`, `manifest_unparsable`, `manifest_not_an_object`,
+   75:FROZEN = (INTERP, GEN, COUNTER, CLAIMS)
+   387:        raise Unevaluable('frozen_path_changed', res)
+   400:        raise Unevaluable('no_manifest_at_rev', res)
+  => at a freeze with no held-out manifest the counter exits 2 (unevaluable), never 0.
+
+## 4.4 C2: FROZEN does not name the writer (R40-CL3 half-open)
+   75:FROZEN = (INTERP, GEN, COUNTER, CLAIMS)
+   80:GEN_TREE_PREFIXES = ('tools/round-40', 'tools/round-39')  # L1 freeze fix: the generator's writer is round-39's
+   82:DEFAULT_WRITER = 'tools/round-39/gen-squashfs.py'
+  => tools/round-39/gen-squashfs.py (the writer the generator loads) is not in FROZEN,
+     so a post-freeze writer edit does not trip frozen_path_changed.

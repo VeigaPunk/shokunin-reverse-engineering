@@ -1,0 +1,33 @@
+# round-41 R41C1Fetch — chain evidence on REAL vendor bytes (round-40 dev inputs)
+# caches are scratch; the evidence is the hashes against the round-40 carrier pins.
+
+### git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 49096c7e6f226af0c750c4b003be58883cb6049f:.ufo/waves/round-40/c1/carriers.json > r40-carriers.json
+exit=0
+
+### python3 -I -B fetch-vendor.py --spec r40-carriers.json --cache $S/cache-r40e --image-cache $S/images-r40 --json-out $S/r40-fetch.rec.json
+exit=0
+V1  ok=True  image_sha256=f518ce6baa05b30d84264d9349cca9bf0b9402986d4112bda8ad73a04f9ede6d
+    member_sha256 =334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a3015ad3f3d4
+    carrier_sha256=ac4098bd11a76f8ad001faac0f1a5e018708d9b03943dfebb2b18a24e0038e95  bytes=5442392  fetch=cache
+V2  ok=True  image_sha256=3948449d89708589cde05e8495a34cb7ed1efeb880d1ed4539b07d4594069450
+    member_sha256 =cacc6461ba491b3ef73fba9cd7e402adeabad4abba10c738b5bc9b17c15b4b19
+    carrier_sha256=5ccc7614263e4b4b392025e1561e071a744b6464a4c88548633e87f71f3d089b  bytes=26013550  fetch=cache
+exit_code=0
+
+### the same spec with every member_sha256 replaced by 'd'*64 (R40-CL6 red path on the same real bytes)
+exit=1
+V1  ok=False link=member_sha256  member_sha256=334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a3015ad3f3d4
+V2  ok=False link=member_sha256  member_sha256=cacc6461ba491b3ef73fba9cd7e402adeabad4abba10c738b5bc9b17c15b4b19
+cache dir created: False
+
+### python3 -I -B fetch-vendor.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 49096c7e... --cache $S/cache-root2   (round-41 carriers.json does not exist at that rev)
+exit=2
+
+### cold: python3 -I -B fetch-vendor.py --spec r40-carriers.json --cache $S/cache-fresh --image-cache $S/images-fresh  (fresh image cache: real download)
+V1  ok=True  fetch=http 200 image_sha256=f518ce6baa05b30d84264d9349cca9bf0b9402986d4112bda8ad73a04f9ede6d
+    member_sha256 =334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a3015ad3f3d4
+    carrier_sha256=ac4098bd11a76f8ad001faac0f1a5e018708d9b03943dfebb2b18a24e0038e95  bytes=5442392
+V2  ok=True  fetch=http 200 image_sha256=3948449d89708589cde05e8495a34cb7ed1efeb880d1ed4539b07d4594069450
+    member_sha256 =cacc6461ba491b3ef73fba9cd7e402adeabad4abba10c738b5bc9b17c15b4b19
+    carrier_sha256=5ccc7614263e4b4b392025e1561e071a744b6464a4c88548633e87f71f3d089b  bytes=26013550
+exit_code=0

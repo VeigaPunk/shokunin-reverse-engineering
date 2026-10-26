@@ -1,0 +1,96 @@
+{
+  "seed": "c9e30c103fab83c4a703aec5927cb26187cf67f18f6bc6ec29352f09097fe31b",
+  "class": "failure-depth-limited",
+  "id": "H40",
+  "endian": "le",
+  "compression": "xz",
+  "label": "partial-body-failure",
+  "action": "salvage-partial",
+  "declared": {
+    "handler_set": [
+      "squashfs_v4_le"
+    ],
+    "gap_kinds": [
+      "depth-limited",
+      "extractor-failure"
+    ],
+    "gap_dependencies": [],
+    "be_argv": "no",
+    "symlink_removed": false,
+    "published": "nonzero"
+  },
+  "declared_extras": {
+    "extraction_failed": true,
+    "max_depth": 1
+  },
+  "class_expected": {
+    "label": "partial-body-failure",
+    "action": "salvage-partial",
+    "reported_only": true,
+    "features": {
+      "handler_set": [
+        "squashfs_v4_le"
+      ],
+      "gap_kinds": [
+        "depth-limited",
+        "extractor-failure"
+      ],
+      "gap_dependencies": [],
+      "symlink_removed": false,
+      "extraction_failed": true,
+      "published": "nonzero",
+      "be_argv": "no",
+      "max_depth": 1
+    }
+  },
+  "nested": null,
+  "chunks": [
+    {
+      "offset": 0,
+      "length": 207,
+      "sha256": "a924ffe03222024d3e7e18d3e94b3ba6a367eb31cce6e038dbd4852439716ee1",
+      "role": "valid image, zero regular files (depth ceiling, publishes nothing)",
+      "endian": "le",
+      "compression": "xz"
+    },
+    {
+      "offset": 4096,
+      "length": 582,
+      "sha256": "22ab4e49f619182371d6a7c12ce9c180836cdb38db79c910b26f8941a72ea598",
+      "role": "id-table metadata block zeroed (extraction fails)",
+      "endian": "le",
+      "compression": "xz"
+    }
+  ],
+  "oracle": {
+    "kind": "two-chunk",
+    "layout": "two-chunk",
+    "pad": 4096,
+    "parts": [
+      {
+        "offset": 0,
+        "length": 207,
+        "sha256": "a924ffe03222024d3e7e18d3e94b3ba6a367eb31cce6e038dbd4852439716ee1",
+        "role": "valid image, zero regular files (depth ceiling, publishes nothing)",
+        "endian": "le",
+        "compression": "xz"
+      },
+      {
+        "offset": 4096,
+        "length": 582,
+        "sha256": "22ab4e49f619182371d6a7c12ce9c180836cdb38db79c910b26f8941a72ea598",
+        "role": "id-table metadata block zeroed (extraction fails)",
+        "endian": "le",
+        "compression": "xz"
+      }
+    ],
+    "expected_published": [
+      "4096-4678.squashfs_v4_le"
+    ],
+    "corruption": {
+      "recipe": "zero-id-table",
+      "chunk": 2,
+      "chunk_offset": 4096
+    }
+  }
+}

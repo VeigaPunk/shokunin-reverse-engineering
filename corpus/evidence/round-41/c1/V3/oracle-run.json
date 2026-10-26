@@ -1,0 +1,118 @@
+{
+  "schema": "kaidoku-r41-c1-run-v1",
+  "mode": "oracle",
+  "claim": "R41-C1",
+  "carrier": {
+    "id": "V3",
+    "path_in_scratch": "v3-carve.sqfs",
+    "sha256": "c4f74f54a65e861e22f5d6a47977cdbb3b5345819174f33bc86c63d3d10f872a",
+    "size_bytes": 30233394
+  },
+  "lane_outdir_intended": "corpus/evidence/round-41/c1/V3",
+  "scratch_outdir": "/fast/scratch/hyaku/kaidoku-r41/R41C1VendorV3",
+  "scratch_root": "/fast/scratch/hyaku/kaidoku-r41",
+  "layout": "avm",
+  "magic": "sqsh",
+  "squashfs_offset": 0,
+  "run_provenance_segment_ok": true,
+  "reader": {
+    "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-40/sqfs-list.py",
+    "sha256": "1079fa9b36a87e62b2de8ca594cfc0820e52b3450199076d9d7cc2e870353cd9",
+    "version_note": "round-40 reader, unchanged; selftest 13/13 pass, exit 0",
+    "selftest": {"command": "python3 -I -B tools/round-40/sqfs-list.py --selftest", "exit": 0, "cases": 13, "passed": 13},
+    "argv": [
+      "python3", "-I", "-B",
+      "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-40/sqfs-list.py",
+      "--layout", "avm",
+      "--files", "oracle.tsv",
+      "--nonregular", "nonregular.tsv",
+      "--inspect",
+      "v3-carve.sqfs"
+    ],
+    "start_utc": "2026-10-26T20:21:26Z",
+    "end_utc": "2026-10-26T20:21:27Z",
+    "duration_ms": 78,
+    "exit": 0,
+    "stderr_head": "",
+    "reproduction": {
+      "ran_twice": true,
+      "oracle_tsv_byte_identical": true,
+      "nonregular_tsv_byte_identical": true,
+      "inspect_stdout_byte_identical": true
+    }
+  },
+  "extractor": "sasquatch-v4be -no-exit-code -f -d (NO -be: the argv unblob 26.6.4 squashfs_v4_be builds when the AVM marker holds)",
+  "sasquatch_v4be": {
+    "path": "/home/vgpnk/.local/bin/sasquatch-v4be",
+    "sha256": "fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6",
+    "version": "4.5.1",
+    "version_line": "unsquashfs version 4.5.1 (2022/03/17)",
+    "argv": ["/home/vgpnk/.local/bin/sasquatch-v4be", "-no-exit-code", "-f", "-d", "rerun/sq", "v3-carve.sqfs"],
+    "start_utc": "2026-10-26T20:21:27Z",
+    "end_utc": "2026-10-26T20:21:27Z",
+    "duration_ms": 21,
+    "exit": 0,
+    "log_head": "SquashFS version [1024.0] / inode count [1744830464] suggests a SquashFS image of a different endianess\nTrying to decompress using default xz decompressor...\nSuccessfully decompressed with default xz decompressor\ncreate_inode: could not create character device rerun/sq/dev/led, because you're not superuser!\nParallel unsquashfs: Using 1 processor\n94 inodes (481 blocks) to write\n\n\n[==============================================================| ] 574/575  99%\n\ncreated 8 files\ncreated 10 directories\ncreated 85 symlinks\ncreated 0 devices\ncreated 0 fifos\ncreated 0 sockets\ncreated 0 hardlinks"
+  },
+  "tables": {
+    "oracle_files": 8,
+    "nonregular_entries": 95,
+    "nonregular_by_kind": {"dir": 9, "symlink": 85, "char-device": 1},
+    "inode_identity": "8 + 9 + 85 + 1 + root = 104 == superblock inodes"
+  },
+  "outputs": {
+    "oracle_tsv": {"path": "oracle.tsv", "sha256": "782953dcba14e1cd55e93636c13090322078483cf937879a5ae021ecfcd10a94", "bytes": 700},
+    "nonregular_tsv": {"path": "nonregular.tsv", "sha256": "3e9b3e5196eeb3ef1b8566e4452bc687ec03392bda9a84e6cac28d6c8b05f7b7", "bytes": 2595}
+  },
+  "crosscheck": {
+    "method": "os.walk over the sasquatch-v4be tree, sha256 every non-symlink file, compare rel path + sha256 + size to oracle.tsv; os.readlink compare to nonregular.tsv symlink targets",
+    "extractions_compared": ["sq-sh-out (plain -d)", "sq2 (-f -no-exit-code -n -d)", "rerun/sq (-no-exit-code -f -d)"],
+    "files_equal": true,
+    "check_files": 8,
+    "check_symlinks": 85,
+    "mismatch_count": 0,
+    "file_mismatches": [],
+    "symlink_target_mismatches": 0,
+    "directories_created": 10,
+    "char_devices_created": 0,
+    "char_device_note": "dev/led (247:0) cannot be created unprivileged; -no-exit-code keeps the run at exit 0. The oracle still lists it in nonregular.tsv, so the REA projection is compared against the full non-regular set, not against the creatable subset."
+  },
+  "collision_census": {
+    "symlink_path_suffix_of_regular_file": 0,
+    "regular_file_path_suffix_of_symlink_path": 0,
+    "exact_path_collisions": 0,
+    "shared_basenames_regular_vs_symlink": {"mtab": ["tmp/mtab (regular, 0 bytes)", "etc/mtab (symlink -> /tmp/mtab)"]},
+    "conclusion": "V3 carries 85 symlinks but exercises no both-direction path collision; the R40-CL1 exact-matching defect must be demonstrated on L3/L4/fixtures, not on V3"
+  },
+  "layout_proofs": {
+    "inode_chain_little_endian_headers": "one block at 30231260: header 724, decompressed 5320, chain end 30231260+2+724 = 30231986 == directory_table_start (exact identity)",
+    "inode_chain_big_endian_headers": "first header would read 54274 with only 2132 bytes left in the carve -> truncated; a big-endian header walk fails",
+    "reader_layout_auto": {"exit": 0, "layout": "avm", "header_endian": "little", "block_length_signal": "exact", "tables_identical_to_avm": true},
+    "reader_layout_be": {"exit": 2, "stderr": "sqfs-list: metadata body out of bounds: offset 30231262 length 21506, image 30233394 bytes", "meaning": "an all-big-endian reader (standard BE, headers included) cannot read V3"}
+  },
+  "unblob_handler_binding": {
+    "file": "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py",
+    "sha256": "2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287",
+    "lines": "24-64, 513-528",
+    "quote": "is_avm = header.bytes_used == header.mkfs_time / if not is_avm: commands_args.append(\"-be\")",
+    "effective_child_argv": "/home/vgpnk/.local/bin/sasquatch-v4be -no-exit-code -f -d {outdir} {inpath}",
+    "pattern_match": "V3 bytes[0:4] == 'sqsh' and bytes[28:30] == 00 04 (s_major big-endian 4) -> squashfs_v4_be claims the chunk"
+  },
+  "rea_budget": {
+    "source": "/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/cli-runtime/cutterToolContracts-TZH9EHr5.js:1761-1763 (extract_firmware schema)",
+    "max_depth": {"default": 3, "min": 1, "max": 10, "frozen_run_uses": 1},
+    "max_output_files": {"default": 10000, "min": 1, "max": 100000, "unit": "staging entry budget, including directories and links"},
+    "max_output_bytes": {"default": 268435456, "min": 1, "max": 536870912, "unit": "staging file-byte budget, checked during extraction; transient overshoot possible"},
+    "v3_depth1_published_entries_unprivileged": 103,
+    "v3_depth1_published_entries_privileged": 104,
+    "v3_depth1_published_entries_detail": "measured 103 = root + 9 dirs + 85 symlinks + 8 regular files (dev/led char device is not creatable unprivileged, as the sasquatch log shows); 104 if the char device is created. REA's entry budget counts directories and links",
+    "v3_staged_bytes": 30233394,
+    "headroom_entries": "104 / 10000 = 1.04%",
+    "headroom_bytes": "30233394 / 268435456 = 11.3%",
+    "superseded": "the round-40 draft claim text carried `bytes_used = 30233394`, 104 inodes and `mkfs_time == bytes_used`, all three re-measured true here"
+  },
+  "observations_for_l1": [
+    "The V3 wrapper itself contains a nested full core: filesystem_core.squashfs, 29597696 bytes, sha256 cc6c19250c5a2df8260ad664b1fd82d5a6b14ce4da3b766249c21f5ed9dfbe43, magic sqsh, mkfs_time == bytes_used == 29596276, 7361 inodes, xz. [INFERENCE] it is a genuine AVM-BE full rootfs and would be a candidate V4 body, but V4 is the 5491 carrier and is not this seat's item; no extraction of it was attempted.",
+    "At max_depth 1 the nested core is published as one 29.6 MB regular file and is not recursed into, so V3's staged-entry count stays at 104."
+  ]
+}

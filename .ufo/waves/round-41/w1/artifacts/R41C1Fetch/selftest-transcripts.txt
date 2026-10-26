@@ -1,0 +1,65 @@
+# round-41 R41C1Fetch — selftest transcript (regenerated after the final edit)
+# host Linux 7.2.11-arch1-1; Python 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]
+# TMPDIR=/fast/scratch/hyaku/kaidoku-r41/R41C1Fetch
+
+### python3 -I -B sqfs-list.py --selftest
+sqfs-list: 'docs/abs' is a symlink, not a regular file
+ok 1 - le-gzip-basic
+ok 2 - be-gzip-basic
+ok 3 - avm-gzip-marker
+ok 4 - avm-xz
+ok 5 - avm-raw-lzma2-id2
+ok 6 - auto-standard-be
+ok 7 - auto-avm
+ok 8 - extended-inodes
+ok 9 - fragments-offsets
+ok 10 - escaping-links
+ok 11 - bad-magic
+ok 12 - unsupported-compression
+ok 13 - truncated
+ok 14 - extract-one-avm-inmemory
+ok 15 - extract-literal-collisions
+ok 16 - extract-cli
+16/16 passed
+exit=0
+
+### python3 -I -B fetch-vendor.py --selftest
+PASS	nested-green	rc=0	link=None	cache=d202b92df042686f170851b5604d0b7cf66eda67ebd1f4a83e062866ce080bdb.bin
+PASS	nested-writes-carved-bytes	rc=0	link=None	cache=d202b92df042686f170851b5604d0b7cf66eda67ebd1f4a83e062866ce080bdb
+PASS	plain-green	rc=0	link=None	cache=fb8c842cf6dd4edea95e221c7fbebbb7a144a5e07d8b89efe524c4f110f5f5eb.bin
+PASS	bad-url	rc=1	link=url	cache=
+PASS	image-sha	rc=1	link=image_sha256	cache=
+PASS	member-sha-mismatch	rc=1	link=member_sha256	cache=
+PASS	member-sha-omitted	rc=1	link=member_sha256	cache=
+PASS	member-absent	rc=1	link=member	cache=
+PASS	nested-sha-mismatch	rc=1	link=nested_sha256	cache=
+PASS	nested-path-absent	rc=1	link=nested	cache=
+PASS	nested-path-is-symlink	rc=1	link=nested	cache=
+PASS	nested-on-nonsquashfs-member	rc=1	link=nested	cache=
+PASS	pin-mismatch-whole-member	rc=1	link=carrier_sha256	cache=
+PASS	length-overrun	rc=1	link=length	cache=
+PASS	nested-pin-mismatch	rc=1	link=carrier_sha256	cache=
+PASS	spec-missing-image-sha	rc=1	link=spec	cache=
+SELFTEST cases=16 pass=16 fail=0
+exit=0
+
+### python3 -I -B selftest-genuine-avm.py --gen tools/round-40/gen-squashfs.py --sqfs sqfs-list.py --fetch fetch-vendor.py --work $S/work
+PASS	green-exit	rc=0 
+PASS	green-cache-carved-to-bytes_used	cache=True sha=cf2ff1cc4cff110d0c5c2d989fa3f25d346466ac587eafa27114fa340904d9dc
+PASS	green-carve-length	carved 945, inner 945
+PASS	green-member-sha-recorded	b8e287738229801f5dd71485da8141ccb1951a42ba8ed8a19279a8f966889c95
+PASS	green-nested-layout-avm	{"bytes": 1161, "carrier_avm_marker": true, "carrier_bytes_used": 945, "carrier_layout": "avm", "carrier_probe_layout": "auto", "member_layout": "avm", "member_probe_layout": "auto", "path": "var/tmp/filesystem_core.squashfs", "sha256": "c82d43fed00a78cf5525eab6726cbb388f57bcfc50cb2fe38226be543754ba1b"}
+PASS	green-nested-marker	
+PASS	green-member-layout-avm	avm
+PASS	reader-extract-byte-identical	rc=0 
+PASS	green-image-cache	first=read second=cache
+PASS	red-member-sha	rc=1 link=member_sha256 cache=False
+PASS	red-image-sha	rc=1 link=image_sha256
+PASS	red-nested-sha	rc=1 link=nested_sha256
+PASS	red-carrier-pin	rc=1 link=carrier_sha256
+INTEGRATION cases=13 pass=13 fail=0
+exit=0
+
+### no .part residue in a successful cache
+cf2ff1cc4cff110d0c5c2d989fa3f25d346466ac587eafa27114fa340904d9dc.bin
+exit=0

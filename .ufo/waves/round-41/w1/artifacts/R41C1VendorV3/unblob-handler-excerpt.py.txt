@@ -1,0 +1,70 @@
+# unblob 26.6.4 squashfs_v4_be extractor decision, quoted from the installed package
+# file: /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py
+# sha256: 2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287 (591 lines)
+# lines 24-64 (SquashFSExtractor) and 513-528 (SquashFSv4BEHandler)
+
+class SquashFSExtractor(Extractor):
+    EXECUTABLE = "sasquatch"
+    V4BE_EXECUTABLE = "sasquatch-v4be"
+
+    def __init__(self, version: int, big_endian_magic: int):
+        self.version = version
+        self.big_endian_magic = big_endian_magic
+
+    def extract(self, inpath: Path, outdir: Path):
+        with File.from_path(inpath) as file:
+            endian = get_endian(file, self.big_endian_magic)
+
+        commands_args = []
+        executable = self.EXECUTABLE
+
+        match endian, self.version:
+            case Endian.BIG, 4:
+                executable = self.V4BE_EXECUTABLE
+                struct_parser = StructParser(SquashFSv4LEHandler.C_DEFINITIONS)
+                with File.from_path(inpath) as f:
+                    header = struct_parser.parse(
+                        SquashFSv4LEHandler.HEADER_STRUCT, f, Endian.BIG
+                    )
+                    # see https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt
+                    is_avm = header.bytes_used == header.mkfs_time
+                    if not is_avm:
+                        commands_args.append("-be")
+            case Endian.BIG, _:
+                commands_args.append("-be")
+            case Endian.LITTLE, _:
+                commands_args.append("-le")
+
+        commands_args.extend(
+            [
+                "-no-exit-code",
+                "-f",
+                "-d",
+                "{outdir}",
+                "{inpath}",
+            ]
+        )
+
+class SquashFSv4BEHandler(SquashFSv4LEHandler):
+    NAME = "squashfs_v4_be"
+
+    PATTERNS = [
+        HexString(
+            """
+            // 00000000  73 71 73 68 03 00 00 00  00 c1 9c 61 00 00 02 00  |sqsh.......a....|
+            // 00000010  01 00 00 00 01 00 11 00  c0 00 01 00 04 00 00 00  |................|
+            // squashfs_v4_magic_be
+            73 71 73 68 [24] 00 04
+        """
+        ),
+    ]
+
+    EXTRACTOR = SquashFSExtractor(4, 0x73_71_73_68)
+
+# Measurement on the V3 carve [0,32):
+#   73 71 73 68 00 00 00 68 01 cd 53 32 00 01 00 00
+#   00 00 00 01 00 04 00 10 02 c0 00 01 00 04 00 00
+#   (mkfs_time/big-endian = 0x01cd5332 = 30233394, block_size = 0x00010000)
+# pattern test: bytes[0:4] == 73 71 73 68 and bytes[28:30] == 00 04 -> MATCH
+# so squashfs_v4_be claims the chunk; bytes_used == mkfs_time (30233394) -> is_avm -> NO "-be"
+# effective child argv for V3: sasquatch-v4be -no-exit-code -f -d {outdir} {inpath}

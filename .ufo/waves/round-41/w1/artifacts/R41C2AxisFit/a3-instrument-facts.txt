@@ -1,0 +1,46 @@
+# A3 — instrument facts the round-41 draft's C2 text leans on
+# lane base read: 49096c7e6f226af0c750c4b003be58883cb6049f
+
+## 3.1 marker counting is section-scoped, not global
+raw substring '<!-- sqfs-triage-table ' in SKILL.md : 4
+  ... of which real comment lines inside '## Queue-drain craft': 2 (v1 :336, v2 :361)
+  ... the other 2 are backticked quotations in the instrument-registry table (:1383, :1401)
+  336:  <!-- sqfs-triage-table v1 -->
+  361:  <!-- sqfs-triage-table v2 -->
+  1383:| `tools/round-39/sqfs-triage.py` | gate (interpreter) — reads only the SKILL craft triage table and labels REA envelopes | `0` labelled; `2` table missing/malformed or envelope unreadable; `1` only for a failed `--selftest` | `--selftest` — 35 cases | the table block after `<!-- sqfs-triage-table v1 -->` in `SKILL.md` | stdout | kaidoku |
+  1401:| `sqfs-triage-v2.py` | gate (interpreter) — reads only SKILL table v2 (`<!-- sqfs-triage-table v2 -->` + action line), answers (label, action) | `0` labelled; `2` table missing/malformed (incl. duplicate label, unknown action) or envelope unreadable | `--selftest` — 45 cases | SKILL rule block 19 | stdout | kaidoku |
+  c2-counter.py:167-186 table_block() searches only inside craft_span() and takes the FIRST
+  match, so a v3 block is found by its own marker; a gate written as a GLOBAL count would read 5.
+
+## 3.2 the 'unmoved' command is instrument-specific (measured)
+the round-40 v2 interpreter at the round-41 BASE (49096c7e), where the v2 table already exists:
+  base SKILL v2 markers: 2  v3 markers: 0
+  $ python3 -I tools/round-40/sqfs-triage-v2.py --skill <base SKILL> H13/envelope.json -> exit 0
+  stdout: corpus/evidence/round-40/c2/heldout/H13/envelope.json	dep-missing-be	install-extractor-be
+  => a closure that runs the v2 interpreter reads 'moved' (exit 0) at the base; the draft's
+     before-value holds only for the v3 interpreter, which does not exist yet.
+
+## 3.3 the three depth-limited classes need generator capability that does not exist
+  901:    cmd = ['npx', '-y', REA_PACKAGE, 'extract-firmware', '--format', 'json',
+  902-           '--full-output', carrier, outdir]
+  903-    env = rea_env(entry['arm'])
+  904-    proc = subprocess.run(cmd, cwd=work, env=env, capture_output=True, text=True)
+  --
+  953:    cmd = ['npx', '-y', REA_PACKAGE, operation, '--format', 'json',
+  954-           '--full-output', carrier]
+  955-    env = rea_env('after')
+  956-    proc = subprocess.run(cmd, cwd=work, env=env, capture_output=True, text=True)
+  (no --max-depth in run_rea; v2's 13 RECIPES carry no depth knob — grep:
+   hits for max.depth in heldout-gen-v2.py: 0
+  and no nested-image writer: the generator writes one squashfs per carrier.)
+
+  measured: every round-40 C1 carrier run at --max-depth 1 carries a depth-limited gap,
+  so the depth knob — not nesting — is the determinant:
+   V1  max_depth=1 coverage=partial files=697 first gap=('depth-limited', None)
+   V2  max_depth=1 coverage=partial files=  8 first gap=('depth-limited', None)
+   L1  max_depth=1 coverage=partial files=  7 first gap=('depth-limited', None)
+   L2  max_depth=1 coverage=partial files=  6 first gap=('depth-limited', None)
+
+  => 'depth-limited alone' / '+in-tree' / '+mixed' are producible only by giving the
+     generator a per-class max_depth (carried classes keep the default). That is new code,
+     and the five combined classes have never been produced: no dry run is required by the draft.

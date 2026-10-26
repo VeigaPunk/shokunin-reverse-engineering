@@ -1,0 +1,70 @@
+{
+ "claim": "R41-C1",
+ "fragment_for": ".ufo/waves/round-41/c1/carriers.json (L1 merges these two entries)",
+ "seat": "R41C1LCarriers",
+ "base": "49096c7e6f226af0c750c4b003be58883cb6049f",
+ "writer": {
+  "path": "tools/round-40/gen-squashfs.py",
+  "sha256": "309c502d21dfeef9b7b2a5a9a62bfa875270fdf79eec671461070996d291042e",
+  "argv": ["--endian", "avm-genuine", "--comp", "<comp>"]
+ },
+ "reader": {
+  "path": "tools/round-40/sqfs-list.py",
+  "sha256": "1079fa9b36a87e62b2de8ca594cfc0820e52b3450199076d9d7cc2e870353cd9",
+  "argv": ["--layout", "avm", "--files", "<oracle.tsv>", "--nonregular", "<nonregular.tsv>"]
+ },
+ "build_source": ".ufo/waves/round-41/w1/artifacts/R41C1LCarriers/mk-l-carriers.py (sha256 417528b40f459960fd43201d4b3f42897f83350dde072e1bfd6c97ba626853a0); L1 copies it to tools/round-41/mk-l-carriers.py",
+ "build_command": "python3 -I -B tools/round-41/mk-l-carriers.py OUT --builds 2   # writes OUT/L3/carrier.sqsh and OUT/L4/carrier.sqsh, prints id<TAB>comp<TAB>sha256<TAB>size<TAB>files<TAB>links<TAB>dirs<TAB>path, exits 4 if the two builds differ",
+ "carriers": [
+  {
+   "id": "L3",
+   "path": "corpus/evidence/round-41/c1/L3/carrier.sqsh",
+   "sha256": "04cfb4cd6189742eaba94d0022d242d4194726a6f0684fd8381b39bc4e6c45a3",
+   "size": 187892,
+   "kind": "lane-built",
+   "compression": "xz",
+   "layout": "avm-genuine: sqsh big-endian superblock/inode/directory/lookup fields, little-endian 2-byte metadata block-length headers, mkfs_time == bytes_used",
+   "build": "python3 -I -B tools/round-41/mk-l-carriers.py OUT --builds 2 (L3, xz)",
+   "oracle": "corpus/evidence/round-41/c1/L3/oracle.tsv",
+   "nonregular": "corpus/evidence/round-41/c1/L3/nonregular.tsv",
+   "counts": {"inodes": 37, "regular_files": 13, "symlinks": 3, "dirs": 20},
+   "oracle_sha256": "c79c19d4b8ff51bc06d3ecba3e4ec3cdd5451c5cfba88007195b0c9e78b2d606",
+   "nonregular_sha256": "f49075887cb564924ef7733f1faf05e0a29f50b91e1b2adc15f779bfa8b20706",
+   "features": {
+    "collision_regular_ends_with_symlink": ["usr/bin/busy", "bin/busy"],
+    "collision_symlink_ends_with_regular": ["usr/sbin/tool", "sbin/tool"],
+    "deep_tail_regular_pair": ["opt/x/etc/conf", "etc/conf"],
+    "relative_in_tree_symlinks": ["bin/busy -> ../usr/bin/busy", "usr/share/web/current -> index.html"],
+    "absolute_in_tree_symlink": "usr/sbin/tool -> /sbin/tool",
+    "escaping_symlinks": 0,
+    "empty_regular_file": "var/tmp/empty"
+   },
+   "expected_gaps_note": "[INFERENCE, not measured here: REA/unblob runs on lane-built carriers are outside this seat] with --max-depth 1 and the round-40 gap rule, expect 1 depth-limited + 3 unpublished-entry (one per retained symlink), 0 unknown-chunk-handler, 0 special files"
+  },
+  {
+   "id": "L4",
+   "path": "corpus/evidence/round-41/c1/L4/carrier.sqsh",
+   "sha256": "4c0e545975d2993f5b3417d55990a5df5ad67fa2f21164b831119f6e85cbcfbc",
+   "size": 169545,
+   "kind": "lane-built",
+   "compression": "gzip",
+   "layout": "avm-genuine: sqsh big-endian superblock/inode/directory/lookup fields, little-endian 2-byte metadata block-length headers, mkfs_time == bytes_used",
+   "build": "python3 -I -B tools/round-41/mk-l-carriers.py OUT --builds 2 (L4, gzip)",
+   "oracle": "corpus/evidence/round-41/c1/L4/oracle.tsv",
+   "nonregular": "corpus/evidence/round-41/c1/L4/nonregular.tsv",
+   "counts": {"inodes": 35, "regular_files": 14, "symlinks": 3, "dirs": 17},
+   "oracle_sha256": "e39a4d1361dd99532cf376100c2fd582900edcea4f5c57092eca46cd072709dc",
+   "nonregular_sha256": "9bdcacde409a9bcce02d0d29d8b9c3814d8ce5214f921b54fcb1d225451b8849",
+   "features": {
+    "collision_regular_ends_with_symlink": ["usr/bin/busy", "bin/busy"],
+    "collision_symlink_ends_with_regular": ["usr/sbin/tool", "sbin/tool"],
+    "deep_tail_regular_pair": ["opt/x/etc/conf", "etc/conf"],
+    "relative_in_tree_symlinks": ["bin/busy -> ../usr/bin/busy", "var/log/current -> messages"],
+    "absolute_in_tree_symlink": "usr/sbin/tool -> /sbin/tool",
+    "escaping_symlinks": 0,
+    "empty_regular_file": "var/tmp/empty"
+   },
+   "expected_gaps_note": "[INFERENCE, not measured here: REA/unblob runs on lane-built carriers are outside this seat] with --max-depth 1 and the round-40 gap rule, expect 1 depth-limited + 3 unpublished-entry (one per retained symlink), 0 unknown-chunk-handler, 0 special files"
+  }
+ ]
+}

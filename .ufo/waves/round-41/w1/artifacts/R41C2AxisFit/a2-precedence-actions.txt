@@ -1,0 +1,25 @@
+# A2 — the precedence text derives a LABEL for every class and an ACTION for one
+# rebuild: see the python here in the report's artifact index (reads only the two files named below)
+
+round-40 action vocabulary (11 tokens, SKILL.md sqfs-triage-actions line):
+  none inspect-input install-extractor-be install-extractor-le wrap-extractor-be preserve-failure salvage-partial audit-symlinks expect-link-absent count-gap confirm-empty
+
+labels the precedence text names (13): unclassified no-squashfs-chunk dep-missing-be dep-missing-le partial-body-failure avm-marker-be-dropped body-extractor-failure depth-limited-nested mixed-symlinks escaping-symlink-removed in-tree-symlink-metadata clean clean-empty
+
+action tokens occurring anywhere in the precedence block: ['none']
+every occurrence: rule 1 and rule 12 both write (`unclassified`, `none`).
+labels with no action derivation in the text (12): avm-marker-be-dropped body-extractor-failure clean clean-empty dep-missing-be dep-missing-le depth-limited-nested escaping-symlink-removed in-tree-symlink-metadata mixed-symlinks no-squashfs-chunk partial-body-failure
+
+=> a predicate that asks the text-derived evaluator for a (label, ACTION) pair asks for
+   11 actions the text never defines; only `unclassified` -> `none` is derivable.
+
+## rule 3 (`dependencies`) ambiguity — measured D values in the committed round-40 set
+  H13  D=['sasquatch-v4be']
+  H14  D=['sasquatch-v4be']
+  H15  D=['sasquatch']
+  H16  D=['sasquatch']
+
+  'sasquatch' is a substring of 'sasquatch-v4be'. An implementation that reads `names` as
+  contains/substring satisfies BOTH branches on H13/H14; an exact-token implementation
+  satisfies one. The text states no order and does not define `names`, so table and
+  evaluator can diverge on those envelopes before any new data exists.

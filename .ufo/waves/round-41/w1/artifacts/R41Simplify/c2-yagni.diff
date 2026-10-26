@@ -1,0 +1,234 @@
+--- a/tools/round-40/c2-counter.py
++++ b/tools/round-40/c2-counter.py
+@@ -73,7 +73,6 @@
+ COUNTER = 'tools/round-40/c2-counter.py'
+ CLAIMS = 'plans/round-40-claims.md'
+ FROZEN = (INTERP, GEN, COUNTER, CLAIMS)
+-MARKER_V1 = '<!-- sqfs-triage-table v1 -->'
+ MARKER_V2 = '<!-- sqfs-triage-table v2 -->'
+ CRAFT = '## Queue-drain craft'
+ V2_COLUMNS = ('label', 'operation', 'provider', 'action')
+@@ -138,14 +137,6 @@
+     return [l for l in p.stdout.split() if l]
+ 
+ 
+-def commits_touching(root, rev, path):
+-    p = subprocess.run(['git', '-C', root, 'log', '--format=%H', rev, '--', path],
+-                       capture_output=True, text=True)
+-    if p.returncode:
+-        return []
+-    return [l for l in p.stdout.split() if l]
+-
+-
+ # ------------------------------------------------------------------ tables
+ def craft_span(text):
+     """(first, last) line indices of the `## Queue-drain craft` section body."""
+@@ -199,24 +190,6 @@
+     return bool(cells) and all(c in cells for c in V2_COLUMNS)
+ 
+ 
+-def derive_base(root, freeze):
+-    """Newest commit at or below FREEZE whose SKILL.md predates the v2 marker."""
+-    commits = commits_touching(root, freeze, SKILL)
+-    first_without = None
+-    for c in commits:                       # newest first
+-        b = show(root, c, SKILL)
+-        if b is None:
+-            continue
+-        text = b.decode('utf-8', 'replace')
+-        if MARKER_V2 in text:
+-            continue
+-        if first_without is None:
+-            first_without = c
+-        if MARKER_V1 in text:
+-            return c, 'derived'
+-    return first_without, 'derived'
+-
+-
+ # ------------------------------------------------------------------ scratch
+ def scratch_root():
+     base = os.environ.get('HYAKU_SCRATCH') or tempfile.gettempdir()
+@@ -371,11 +344,11 @@
+ 
+ 
+ # ------------------------------------------------------------------ measure
+-def measure(root, rev_arg, freeze_arg, base_arg=None):
++def measure(root, rev_arg, freeze_arg):
+     rev = full_rev(root, rev_arg)
+     freeze = full_rev(root, freeze_arg)
+     res = {'predicate': 'P40-C2', 'revision': rev, 'freeze': freeze,
+-           'freeze_arg': freeze_arg, 'revision_arg': rev_arg, 'base_arg': base_arg,
++           'freeze_arg': freeze_arg, 'revision_arg': rev_arg,
+            'manifest_path': MANIFEST, 'argv': sys.argv,
+            'bindings': {}, 'bindings_false': [], 'carriers': [],
+            'frozen_paths_changed': []}
+@@ -386,15 +359,6 @@
+         res['frozen_paths_changed'] = changed
+         raise Unevaluable('frozen_path_changed', res)
+ 
+-    # ---- base (rule block 18 / table v1 invariance)
+-    if base_arg:
+-        base = full_rev(root, base_arg)
+-        base_src = 'arg'
+-    else:
+-        base, base_src = derive_base(root, freeze)
+-    res['base_commit'] = base
+-    res['base_source'] = base_src
+-
+     man_b = show(root, rev, MANIFEST)
+     if man_b is None:
+         raise Unevaluable('no_manifest_at_rev', res)
+@@ -439,30 +403,19 @@
+         and set(per) <= set(classes)
+     b['n_equals_twice_classes'] = N > 0 and N == 2 * len(classes)
+     b['ids_unique'] = bool(ids) and len(set(ids)) == len(ids) and all(ids)
+-    b['arms_valid'] = bool(carriers) and all(c.get('arm') in ('after', 'before', 'ood')
+-                                             for c in carriers)
+ 
+     # ---- tables
+     skill_rev = show(root, rev, SKILL)
+     skill_fz = show(root, freeze, SKILL)
+-    skill_base = show(root, base, SKILL) if base else None
+     v2_rev = table_block(as_text(skill_rev), MARKER_V2)
+     v2_fz = table_block(as_text(skill_fz), MARKER_V2)
+-    v1_rev = table_block(as_text(skill_rev), MARKER_V1)
+-    v1_base = table_block(as_text(skill_base), MARKER_V1)
+     b['v2_table_present'] = v2_rev is not None
+     b['v2_table_identical'] = v2_rev is not None and v2_fz is not None and v2_rev == v2_fz
+     b['v2_table_columns'] = v2_columns_ok(v2_rev)
+-    b['v1_table_present'] = v1_base is not None
+-    b['v1_table_identical'] = v1_base is not None and v1_rev is not None and v1_base == v1_rev
+     res['table'] = {
+         'v2': {'present_at_rev': v2_rev is not None, 'present_at_freeze': v2_fz is not None,
+                'identical': b['v2_table_identical'], 'columns_ok': b['v2_table_columns'],
+                'bytes': len(v2_rev.encode()) if v2_rev is not None else 0},
+-        'v1': {'present_at_base': v1_base is not None, 'present_at_rev': v1_rev is not None,
+-               'identical': b['v1_table_identical'],
+-               'bytes_base': len(v1_base.encode()) if v1_base is not None else 0,
+-               'bytes_rev': len(v1_rev.encode()) if v1_rev is not None else 0},
+     }
+ 
+     interp_b = show(root, freeze, INTERP)
+@@ -510,7 +463,6 @@
+         w_sha = sha256_bytes(wb) if wb is not None else None
+         gw = g.get('writer') if isinstance(g, dict) else None
+         declared_w_sha = gw.get('sha256') if isinstance(gw, dict) else None
+-        b['writer_matches_manifest'] = declared_w_sha is None or declared_w_sha == w_sha
+         res['writer'] = {'path': DEFAULT_WRITER, 'materialised': os.path.isfile(wlocal),
+                          'sha256': w_sha, 'declared_sha256': declared_w_sha,
+                          'declared_path': gw.get('path') if isinstance(gw, dict) else None,
+@@ -567,15 +519,7 @@
+                 and r.get('expected_action') == exp_action
+             commit_ok = committed_sha is not None and committed_sha == msha
+             epath = c.get('envelope')
+-            inferred = False
+-            if not isinstance(epath, str) or not epath:
+-                car = c.get('carrier')
+-                if isinstance(car, str) and '/' in car:
+-                    epath = car.rsplit('/', 1)[0] + '/envelope.json'
+-                    inferred = True
+-                else:
+-                    epath = None
+-            epath = resolve(epath) if epath else None
++            epath = resolve(epath) if isinstance(epath, str) and epath else None
+             ebytes = show(root, rev, epath) if epath else None
+             digest_ok = False
+             op = prov = None
+@@ -595,7 +539,7 @@
+                 'manifest_sha256': msha, 'committed_sha256': committed_sha,
+                 'regenerated_sha256': regen_sha, 'regen_ok': regen_ok,
+                 'commit_ok': commit_ok, 'envelope': epath,
+-                'envelope_inferred': inferred, 'digest_ok': digest_ok,
++                'digest_ok': digest_ok,
+                 'operation': op, 'provider': prov})
+         cp = [r.get('_carrier_path') for r in res['carriers']]
+         ep = [r.get('envelope') for r in res['carriers']]
+@@ -610,13 +554,6 @@
+         # ---- first-add ordering
+         ma = first_add(root, rev, MANIFEST)
+         b['manifest_after_freeze'] = bool(ma) and ma != freeze and is_ancestor(root, freeze, ma)
+-        env_firsts = []
+-        for row in res['carriers']:
+-            fa = first_add(root, rev, row['envelope']) if row['envelope'] else None
+-            row['envelope_first_add'] = fa
+-            env_firsts.append(fa)
+-        b['manifest_before_envelopes'] = bool(ma) and bool(env_firsts) \
+-            and all(fa is not None and is_ancestor(root, ma, fa) for fa in env_firsts)
+         res['manifest_first_add'] = ma
+ 
+         # ---- (label, action, row) from the frozen interpreter on SKILL.md at REV
+@@ -804,7 +741,6 @@
+     ap.add_argument('--root')
+     ap.add_argument('--rev')
+     ap.add_argument('--freeze')
+-    ap.add_argument('--base')
+     ap.add_argument('--json-out')
+     ap.add_argument('--selftest', action='store_true')
+     a = ap.parse_args(argv)
+@@ -814,7 +750,7 @@
+         print('usage: --root --rev --freeze required (or --selftest)', file=sys.stderr)
+         return 2
+     try:
+-        res = measure(a.root, a.rev, a.freeze, a.base)
++        res = measure(a.root, a.rev, a.freeze)
+     except Unevaluable as e:
+         out = dict(e.receipt)
+         out['unevaluable'] = e.reason
+@@ -1207,7 +1143,7 @@
+     cases = [
+         # name, params, want_exit, want_false bindings, want_true bindings, extra args
+         ('green: all bindings, labels and actions', dict(), 0, [], ['v2_table_present',
+-         'v2_table_identical', 'v2_table_columns', 'v1_table_present', 'v1_table_identical',
++         'v2_table_identical', 'v2_table_columns',
+          'decisions_reported', 'row_decisions_consistent'], ()),
+         ('do-nothing: no manifest at rev', dict(claim='none', v2_freeze=ABSENT), 2, [], [], ()),
+         ('v2 block removed after freeze', dict(v2_rev=ABSENT), 1,
+@@ -1215,15 +1151,9 @@
+         ('v2 table edited after freeze', dict(v2_rev=V2_ROWS + [
+             ['`extra`', '`*`', '`*`', 'extra', '`report-only`', '`corpus/k.md:9-9`']]), 1,
+          ['v2_table_identical'], [], ()),
+-        ('v1 table edited after freeze', dict(v1_rev=V1_ROWS + [
+-            ['`x`', '`*`', '`*`', '`*`', '`*`', '`*`', '`*`', 'other -> x', '`corpus/k.md:9-9`']]),
+-         1, ['v1_table_identical'], [], ()),
+-        ('v1 block removed at rev', dict(v1_rev=ABSENT), 1,
+-         ['v1_table_identical'], ['v1_table_present'], ()),
+         ('seed != freeze', dict(seed='zero'), 1, ['seed_matches_freeze'], [], ()),
+         ('manifest added before freeze', dict(claim='befreeze'), 1,
+          ['manifest_after_freeze', 'seed_matches_freeze'], [], ()),
+-        ('envelope before manifest', dict(claim='split'), 1, ['manifest_before_envelopes'], [], ()),
+         ('interpreter edited after freeze', dict(muts={'edit_interp'}), 2, [], [], ()),
+         ('generator edited after freeze', dict(muts={'edit_gen'}), 2, [], [], ()),
+         ('claims edited after freeze', dict(muts={'edit_claims'}), 2, [], [], ()),
+@@ -1249,7 +1179,8 @@
+          [], ['generator_sha_matches_freeze'], ()),
+         ('generator object with wrong sha', dict(gen_obj='bad'), 1,
+          ['generator_sha_matches_freeze'], [], ()),
+-        ('envelope path omitted, sibling inferred', dict(muts={'omit_envelope'}), 0, [], [], ()),
++        ('manifest entry without an envelope path cannot be scored',
++         dict(muts={'omit_envelope'}), 1, ['envelopes_valid'], [], ()),
+         ('two carriers share one carrier path', dict(muts={'share_carrier_path'}), 1,
+          ['carrier_paths_unique'], [], ()),
+         ('full CLI envelope ok/data/meta', dict(muts={'full_envelope'}), 0, [], [], ()),
+@@ -1281,7 +1212,6 @@
+         ('manifest unparsable', dict(muts={'bad_manifest'}), 2, [], [], ()),
+         ('unknown revision', dict(), 2, [], [], ('--rev', 'deadbeef' * 5)),
+         ('freeze not ancestor of rev', dict(), 2, [], [], ('NONANCESTOR',)),
+-        ('explicit --base equal to derived base', dict(), 0, [], ['v1_table_identical'], ('BASE',)),
+     ]
+     green = red = 0
+     for name, params, want, want_false, want_true, extra in cases:
+@@ -1289,14 +1219,8 @@
+         try:
+             d, freeze, rev = build(params)
+             extra_args = []
+-            base_commit = None
+             if extra == ('NONANCESTOR',):
+                 extra_args = ['--rev', freeze, '--freeze', rev]
+-            elif extra == ('BASE',):
+-                base_commit = subprocess.run(
+-                    ['git', '-C', d, 'rev-list', '--max-parents=0', 'HEAD'],
+-                    capture_output=True, text=True).stdout.split()[0]
+-                extra_args = ['--base', base_commit]
+             elif extra:
+                 extra_args = list(extra)
+             pr, rec = run_counter(d, rev, freeze, extra_args)

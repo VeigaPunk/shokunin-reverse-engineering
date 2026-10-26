@@ -1,0 +1,10 @@
+--- c1-counter.py.prototype
++++ c1-counter.py.M25-drift-endpoints-only
+@@ -763,6 +763,5 @@
+             if isinstance(v, str) and v:
+                 frozen.add(v)
+-    p = git(root, 'log', '--pretty=format:', '--name-only', '--no-renames',
+-            f'{freeze}..{rev}', check=False)
++    p = git(root, 'diff', '--name-only', freeze, rev, check=False)
+     if p.returncode != 0:
+         raise Unevaluable('git log freeze..rev failed')

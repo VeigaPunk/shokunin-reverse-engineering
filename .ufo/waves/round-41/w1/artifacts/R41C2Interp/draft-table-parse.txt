@@ -1,0 +1,63 @@
+skill: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w1/artifacts/R41C2Interp/sqfs-triage-v3-table.md
+marker line: 40  actions line: 41  table line: 42  rules: 12
+actions: none inspect-input install-extractor-be install-extractor-le wrap-extractor-be preserve-failure salvage-partial audit-symlinks expect-link-absent count-gap confirm-empty raise-depth
+1. no-squashfs-chunk
+   operation='extract_firmware' provider='unblob' handler=('none', None) gap_kinds=any dependencies=any
+   be='*' symlink_removed='*' files='*' action='inspect-input'
+   cause: no chunk in the envelope carries a squashfs handler at all, so neither sasquatch flavour ran and there is no extractor argv to read: unblob's finder dropped a truncated image, a bytes_used past the end or a non-4 s_major without a report -> check the magic, s_major and bytes_used before rerunning, because an empty envelope is not an empty filesystem -> inspect-input
+   source: S112 finder v4 patterns; S120 report.py :91-98; R39-CL3
+2. dep-missing-be
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_*') gap_kinds=contains{missing-extractor-dependency} dependencies=exact{sasquatch-v4be}
+   be='*' symlink_removed='*' files='*' action='install-extractor-be'
+   cause: the gap set contains missing-extractor-dependency and its dependency names sasquatch-v4be, which was absent from the unblob child PATH, so no command ran and no argv exists; further gaps may accompany it and none of them changes the install -> install the onekey-sec sasquatch-v4be 4.5.1 binary on that PATH and rerun into a fresh output directory, the image is unmeasured and not unreadable -> install-extractor-be
+   source: S112 :68-69; S120 command.py :69-77,101-102; round-36 K3/before.json
+3. dep-missing-le
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_*') gap_kinds=contains{missing-extractor-dependency} dependencies=exact{sasquatch}
+   be='*' symlink_removed='*' files='*' action='install-extractor-le'
+   cause: the gap set contains missing-extractor-dependency and its dependency names plain sasquatch, which was absent from the unblob child PATH, so no command ran; sasquatch-v4be alone does not satisfy this gap and other accompanying gaps do not change that -> install the little-endian sasquatch 4.5.1 binary on that PATH and rerun into a fresh output directory -> install-extractor-le
+   source: S112 :25,37,68-69; S120 command.py :101-102; round-36 K3/before.json
+4. partial-body-failure
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_*') gap_kinds=contains{extractor-failure} dependencies=any
+   be='*' symlink_removed='*' files='>0' action='salvage-partial'
+   cause: the gap set contains extractor-failure and at least one regular file was published, so the envelope is a partial read; whatever else the set holds (unpublished-entry for kept links, depth-limited for a stopped descent, a removed escaping link) the body was only partly walked and a zero-file failure row would hide it -> keep the published files and the failing command, match files to the frozen oracle by exact relative path and sha256, and mark the run incomplete rather than clean -> salvage-partial
+   source: R39-CL3 D1 (full-be1-xz P>0); S119 firmwareAnalysis.js :137-141; round-40 c2 H21,H22
+5. avm-marker-be-dropped
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_be') gap_kinds=contains{extractor-failure} dependencies=any
+   be='no' symlink_removed='*' files='0' action='wrap-extractor-be'
+   cause: the gap set contains extractor-failure, nothing was published, the recorded sasquatch-v4be argv carries no standalone -be token and the handler is squashfs_v4_be: mkfs_time equals bytes_used, so unblob read the AVM marker and deliberately omitted -be and the extractor read a standard-BE body in the wrong byte order; an accompanying gap does not change the cause -> rerun through a PATH wrapper named sasquatch-v4be that appends -be (REA has no flag passthrough) and remove the wrapper afterwards -> wrap-extractor-be
+   source: S112 :44-50; S121 -DFIX_BE build; knowledge 2026-10-26-r39-sqfs-outcome-triage.md :29-40
+6. body-extractor-failure
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_*') gap_kinds=contains{extractor-failure} dependencies=any
+   be='*' symlink_removed='*' files='0' action='preserve-failure'
+   cause: the gap set contains extractor-failure and nothing was published, with no marker-stripped BE story beside it: the handler is not squashfs_v4_be, or the argv does carry -be, or no sasquatch argv was recorded at all, so the fault is in the image body or the extractor build rather than the endianness handshake -> keep the failing command and stderr from diagnostics, diff the carrier against a known-good arm, and never patch the envelope into a success -> preserve-failure
+   source: S120 report.py :91-98; knowledge 2026-10-26-r39-sqfs-outcome-triage.md :29-40; R39-CL3 D1
+7. depth-limited-nested
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_*') gap_kinds=contains{depth-limited} dependencies=any
+   be='*' symlink_removed='*' files='*' action='raise-depth'
+   cause: the gap set contains depth-limited: REA recorded a path whose descent stopped at max_depth and emitted the depth-limited kind with its own continuation, with or without unpublished-entry symlink gaps beside it, so the published tree is shallow rather than wrong and no extractor failed -> rerun with a larger max_depth (REA caps it at 10) or, at the ceiling, restart the budget from one eligible published child, always into a fresh output directory; score the deeper tree and never report the shallow one as clean -> raise-depth
+   source: REA 6.5.0 cli.js :14069 (continuation text), :14073 (MAX_EXTRACTION_DEPTH = 10), :14271-14276 (kind mint); S120 report.py :91-98; round-40 c1/V1 after.json (depth-limited beside unpublished-entry); round-41 claims R41-C2 precedence 7
+8. mixed-symlinks
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_*') gap_kinds=contains{unpublished-entry} dependencies=any
+   be='*' symlink_removed='yes' files='*' action='audit-symlinks'
+   cause: the gap set contains unpublished-entry and at least one symlink was removed with a MaliciousSymlinkRemoved report, so both link kinds live in one image: the escaped links are gone and the in-tree ones are unpublished metadata -> expect the escaped paths absent, count exactly one gap per kept in-tree link or special file, never materialise a removed link, and never read this as permission to ignore the in-tree gaps -> audit-symlinks
+   source: S118 extractor.py :50-92; S119 firmwareAnalysis.js :137-141, FirmwarePublication.js :68-75; R39-CL2; round-40 c2 H11,H12
+9. escaping-symlink-removed
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_*') gap_kinds=none dependencies=any
+   be='*' symlink_removed='yes' files='*' action='expect-link-absent'
+   cause: no gap was recorded and at least one symlink was removed, so every removal was an escaping or looping link and the removal itself is the only record: unblob keeps a link only while it resolves inside the extraction root -> expect those paths absent, never materialise the link, and never match a symlink against the regular-file oracle, because the file count is unaffected (R40-CL5 L6: the silent removal is the point) -> expect-link-absent
+   source: S118 extractor.py :50-92 (loop branch :58-65); round-40 c2 H07,H08
+10. in-tree-symlink-metadata
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_*') gap_kinds=exact{unpublished-entry} dependencies=any
+   be='*' symlink_removed='no' files='*' action='count-gap'
+   cause: the whole gap-kind set is exactly one unpublished-entry kind and no link was removed: every non-file entry resolved inside the extraction root, so it is kept as metadata and recorded as one unpublished-entry gap per entry while only regular files are published -> expected outcome, not a sasquatch failure: count one gap per in-tree link or special file and install nothing; an extra gap kind beside it is a different row, not this one -> count-gap
+   source: S119 firmwareAnalysis.js :137-141, FirmwarePublication.js :68-75,301-308; round-40 c2 H09,H10
+11. clean
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_*') gap_kinds=none dependencies=any
+   be='*' symlink_removed='no' files='>0' action='none'
+   cause: every regular file was published, no gap kind was recorded and no symlink was removed -> nothing to install or fix; match files to the frozen oracle by exact relative path and sha256 (no suffix matching, R40-CL1) and ignore nested carves -> none
+   source: round-40 c2 H01..H04; S114 AVM layout
+12. clean-empty
+   operation='extract_firmware' provider='unblob' handler=('pattern', 'squashfs_v4_*') gap_kinds=none dependencies=any
+   be='*' symlink_removed='no' files='0' action='confirm-empty'
+   cause: the extractor completed with no gap kind and published zero regular files because the image tree holds no regular file, which is a fact about this image and not a silent failure -> confirm the frozen independent oracle tree is empty before calling it clean, and never confuse it with the no-chunk row -> confirm-empty
+   source: R39-CL3 D2 (full-be-dirempty-gzip clean P=0); round-40 c2 H05,H06

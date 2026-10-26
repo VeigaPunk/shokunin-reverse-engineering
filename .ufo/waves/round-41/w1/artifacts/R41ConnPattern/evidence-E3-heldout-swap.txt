@@ -1,0 +1,15 @@
+$ v2 interpreter (frozen, tools/round-40/sqfs-triage-v2.py) on H05 from BOTH evidence roots
+== corpus/evidence/round-39/c2/heldout/H05/envelope.json
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-39/c2/heldout/H05/envelope.json	escaping-symlink-removed	expect-link-absent
+exit=0
+== corpus/evidence/round-40/c2/heldout/H05/envelope.json
+/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-40/c2/heldout/H05/envelope.json	clean-empty	confirm-empty
+exit=0
+
+$ same id H05, two roots, two different envelopes:
+r39 manifest H05: ['escaping-symlink-removed']
+r40 manifest H05: [(None, None)]
+
+$ selftest fixture cases with HELDOUT_DIR swapped to the round-40 set:
+c_committed_heldout: FAIL -> committed-heldout: H05 -> ('clean-empty', 'confirm-empty'), expected ('escaping-symlink-removed', 'expect-link-absent')
+c_heldout_manifest_agrees: FAIL -> heldout-manifest: H05 manifest label 'clean-empty', selftest expects 'escaping-symlink-removed'

@@ -1,0 +1,10 @@
+--- c1-counter.py.prototype
++++ c1-counter.py.M17-handler-substring
+@@ -1113,5 +1113,6 @@
+                 d['operation_ok'] = (env.get('operation') == 'extract_firmware'
+                                      and isinstance(prov, dict) and prov.get('id') == 'unblob')
+-                d['handler_ok'] = HANDLER in chunk_handlers(env)
++                d['handler_ok'] = any(isinstance(h, str) and HANDLER in h
++                                      for h in chunk_handlers(env))
+                 d['chunks_ok'] = not chunk_failed(env)
+                 files = published(env)

@@ -1,0 +1,22 @@
+{
+  "schema": "kaidoku-r41-c1-provenance-v1",
+  "id": "V3",
+  "chain": {
+    "url": "https://download.avm.de/fritzbox/fritzbox-5490/other/fritz.os/FRITZ.Box_5490-07.31.image",
+    "image_sha256": "770efb4e368a58104bf362c990114db8b70a5060932ce8bcec7ef1bc75045ab7",
+    "member": "./var/tmp/filesystem.image",
+    "member_sha256": "87cc5d6b3ad105221114a86f6a4d4d868f731b868ff875979e7f0cb47bcea0f8",
+    "length": 30233394,
+    "product": "FRITZ!Box 5490, FRITZ!OS 07.31"
+  },
+  "href_order_checked": [
+    "image_sha256 == 770efb4e368a58104bf362c990114db8b70a5060932ce8bcec7ef1bc75045ab7 (assigned pin)",
+    "member ./var/tmp/filesystem.image sha256 == 87cc5d6b3ad105221114a86f6a4d4d868f731b868ff875979e7f0cb47bcea0f8",
+    "carrier = member[0:30233394] sha256 == c4f74f54a65e861e22f5d6a47977cdbb3b5345819174f33bc86c63d3d10f872a",
+    "superblock bytes_used == 30233394 == carve length; mkfs_time == bytes_used (AVM marker)"
+  ],
+  "fetch_command": "curl -sS -o 5490.image 'https://download.avm.de/fritzbox/fritzbox-5490/other/fritz.os/FRITZ.Box_5490-07.31.image'",
+  "member_command": "tar -xf 5490.image -C m ./var/tmp/filesystem.image",
+  "carve_command": "python3 -c \"open('v3-carve.sqfs','wb').write(open('m/var/tmp/filesystem.image','rb').read(30233394))\"",
+  "note": "vendor bytes are not committed (AVM licence: no redistribution); the lane rebuilds them from the URL and the three commands above, then checks the three sha256 values in href_order_checked"
+}

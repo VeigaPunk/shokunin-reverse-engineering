@@ -1,0 +1,1532 @@
+{
+  "schema": "kaidoku-r41-c2-grammar-vectors-v1",
+  "title": "R41-C2 table v3 — feature-tuple test vectors with precedence-derived expected (label, action)",
+  "label_source": "plans/round-41-claims.md **Label precedence** steps 1-12 (draft, lines 72-88 at base 49096c7e6f226af0c750c4b003be58883cb6049f, file uncommitted). Expected labels were derived ONLY from that text and re-checked mechanically by validate-vectors.py against a direct transcription of the 12 steps; no generator class map, no table and no interpreter was used to derive them.",
+  "action_source": "The (label -> action) map fixed by the wave design (R41C2Eval item prompt; for the 11 labels shared with v2 it equals the frozen v2 table's action column, SKILL.md:363-375). The claims text does not state the map yet - see report finding F11.",
+  "action_map": {
+    "no-squashfs-chunk": "inspect-input",
+    "dep-missing-be": "install-extractor-be",
+    "dep-missing-le": "install-extractor-le",
+    "partial-body-failure": "salvage-partial",
+    "avm-marker-be-dropped": "wrap-extractor-be",
+    "body-extractor-failure": "preserve-failure",
+    "depth-limited-nested": "raise-depth",
+    "mixed-symlinks": "audit-symlinks",
+    "escaping-symlink-removed": "expect-link-absent",
+    "in-tree-symlink-metadata": "count-gap",
+    "clean": "none",
+    "clean-empty": "confirm-empty",
+    "unclassified": "none"
+  },
+  "action_vocabulary": [
+    "none",
+    "inspect-input",
+    "install-extractor-be",
+    "install-extractor-le",
+    "wrap-extractor-be",
+    "preserve-failure",
+    "salvage-partial",
+    "audit-symlinks",
+    "expect-link-absent",
+    "count-gap",
+    "confirm-empty",
+    "raise-depth"
+  ],
+  "feature_fields": {
+    "OP": "data.operation string; '' when absent",
+    "PR": "data.provider.id string (provider object form; '' when absent)",
+    "H": "sorted set of chunk handler names as collected by the v2 features() rule (normalized_result.chunks[].handler startswith 'squashfs'). Report finding F1 recommends pinning the collection to startswith 'squashfs_v4_' in the claims text; under that amendment a vector whose H holds only non-v4 squashfs names is no longer representable (H becomes []).",
+    "G": "sorted set of normalized_result.extraction_gaps[].kind; the REA 6.5.0 enum is closed: missing-extractor-dependency, unknown-chunk-handler, encrypted-chunk, depth-limited, extractor-failure, unpublished-entry (rea-agents dist/domain/firmware/firmwareAnalysis.js:79-99)",
+    "D": "sorted union of normalized_result.extraction_gaps[].dependencies strings",
+    "BE": "'yes' iff some recorded command whose basename starts with 'sasquatch' carries a standalone '-be' token; 'no' iff such a command is recorded and none carries '-be'; 'n/a' iff no such command is recorded (successful extractions record no command, so every clean/escaping/in-tree/mixed/dep tuple observed so far has BE=n/a)",
+    "SR": "'yes' iff a report with __typename__ 'MaliciousSymlinkRemoved' is recorded under normalized_result.diagnostics, data.diagnostics or anywhere in raw_result; else 'no'. An empty-target symlink removal is silent (no report).",
+    "P": "len(normalized_result.files) - REA publishes only entries with kind === 'file', so this is exactly the published regular files (rea-agents dist/firmware/FirmwarePublication.js:57-88)"
+  },
+  "envelope_recipe": "To realize a tuple as a synthetic envelope for an interpreter selftest: data = {operation: OP, provider: {id: PR}, normalized_result: {chunks: H.map(h => ({handler: h})), extraction_gaps: G.map(k => ({kind: k, dependencies: (k === 'missing-extractor-dependency' ? D : [])})), files: Array(P).fill({}), diagnostics: []}}; then for BE 'yes' push {report: {command: 'sasquatch-v4be -be -no-exit-code -f -d OUT IN'}} and for BE 'no' the same command without '-be' into normalized_result.diagnostics; for SR 'yes' push {report: {__typename__: 'MaliciousSymlinkRemoved'}}. This mirrors tools/round-40/sqfs-triage-v2.py features() (lines 516-597). Escape hatch for G44 only: features() reads gap.kind and gap.dependencies independently, so a kindless gap {'dependencies': ['sasquatch']} with no 'kind' key realizes G=[] with D nonempty; REA never mints such a gap (unreachable-by-construction).",
+  "resolutions": {
+    "step-2-glob": "Step 2 is read literally: the condition is 'no member of H matches the glob squashfs_v4_*'. Under the draft grammar (handler cell forms *, none, pattern only) this is encodable only as handler `none` (H = []), which diverges for H holding non-v4 squashfs names (vector G07). Report finding F1 recommends pinning H's membership to squashfs_v4_* handlers in the claims features sentence, which makes step 2 equivalent to H = [] and the divergence disappear.",
+    "step-3-both-named": "When D contains both sasquatch-v4be and sasquatch the precedence text names both branches; the vectors use the first-listed branch (dep-missing-be), which is also what a be-row-first first-match table produces once the dependencies cell supports membership (finding F2). 'names' is exact element equality, never a prefix test ('sasquatch' is a prefix of 'sasquatch-v4be').",
+    "step-3-neither-named": "When missing-extractor-dependency is in G but D names neither executable, the step's condition is true and neither branch matches; the vectors use fall-through to step 4 (the natural first-match reading: the two dep rows' deps cells simply do not match). The claims text should state this (finding F2)."
+  },
+  "vectors": [
+    {
+      "id": "G01",
+      "features": {
+        "OP": "inspect_firmware_regions",
+        "PR": "binwalk",
+        "H": [],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "unclassified",
+        "action": "none"
+      },
+      "decided_by_step": 1,
+      "order_pins": [],
+      "boundary": "domain guard: operation and provider wrong together",
+      "origin": "rea-observed (round-40 held-out H25/H26)",
+      "draft_grammar": "encodable",
+      "note": "No row matches; the interpreter default is the step-1 outcome. The OOD pair and the no-match pair coincide (round-40 L7, disclosed)."
+    },
+    {
+      "id": "G02",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "binwalk",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 1
+      },
+      "expected": {
+        "label": "unclassified",
+        "action": "none"
+      },
+      "decided_by_step": 1,
+      "order_pins": [],
+      "boundary": "domain guard: provider tested alone",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": "Round-40 disclosed that operation and provider always move together in the held-out set; this tuple tests the provider cell on its own."
+    },
+    {
+      "id": "G03",
+      "features": {
+        "OP": "inspect_firmware_regions",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "no",
+        "P": 2
+      },
+      "expected": {
+        "label": "unclassified",
+        "action": "none"
+      },
+      "decided_by_step": 1,
+      "order_pins": [
+        "1<4",
+        "1<5",
+        "1<6"
+      ],
+      "boundary": "domain guard precedes every gap step even when failure features are present",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": "Every v3 row must pin operation/provider so this falls through to the default."
+    },
+    {
+      "id": "G55",
+      "features": {
+        "OP": "",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 1
+      },
+      "expected": {
+        "label": "unclassified",
+        "action": "none"
+      },
+      "decided_by_step": 1,
+      "order_pins": [],
+      "boundary": "domain guard: empty operation string",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": "An envelope without an operation string must not match any row."
+    },
+    {
+      "id": "G04",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "no-squashfs-chunk",
+        "action": "inspect-input"
+      },
+      "decided_by_step": 2,
+      "order_pins": [
+        "2<11b (H=[] P=0 G=[] is no-chunk, never clean-empty)"
+      ],
+      "boundary": "no-chunk vs clean-empty at P=0, G=[]",
+      "origin": "rea-observed (round-40 held-out H23/H24)",
+      "draft_grammar": "encodable",
+      "note": "The no-chunk row must sit above the clean rows; its handler cell is `none` (H = [])."
+    },
+    {
+      "id": "G05",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "yes",
+        "P": 2
+      },
+      "expected": {
+        "label": "no-squashfs-chunk",
+        "action": "inspect-input"
+      },
+      "decided_by_step": 2,
+      "order_pins": [
+        "2<9"
+      ],
+      "boundary": "no-chunk row above the escaping row: SR=yes does not rescue an H=[] envelope",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": "The no-chunk row's symlink-removed cell must be *."
+    },
+    {
+      "id": "G06",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [],
+        "G": [
+          "missing-extractor-dependency"
+        ],
+        "D": [
+          "sasquatch-v4be"
+        ],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "no-squashfs-chunk",
+        "action": "inspect-input"
+      },
+      "decided_by_step": 2,
+      "order_pins": [
+        "2<3"
+      ],
+      "boundary": "no-chunk row above the dep rows: a dep gap without a squashfs v4 chunk is still no-chunk",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": "Reachable in spirit via a non-squashfs handler's dependency gap; the tuple is constructible."
+    },
+    {
+      "id": "G47",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [],
+        "G": [
+          "unknown-chunk-handler"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "no-squashfs-chunk",
+        "action": "inspect-input"
+      },
+      "decided_by_step": 2,
+      "order_pins": [],
+      "boundary": "no-chunk row's gap-kinds cell is * (a nonempty G does not block it)",
+      "origin": "rea-reachable (a carrier whose only chunks are unrecognized)",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G07",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v3_le"
+        ],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 4
+      },
+      "expected": {
+        "label": "no-squashfs-chunk",
+        "action": "inspect-input"
+      },
+      "decided_by_step": 2,
+      "order_pins": [],
+      "boundary": "step 2 read literally: a non-v4 squashfs handler does not satisfy 'squashfs_v4_* handler in H'",
+      "origin": "synthetic-only (unblob 26.6.4 also ships squashfs_v1/v2/v3 family handlers, which the v2 features() filter collects)",
+      "draft_grammar": "needs-amendment",
+      "note": "Finding F1: the draft grammar's handler cell has no negated form, so the table (handler `none`) answers unclassified or clean here, never no-squashfs-chunk. Recommended amendment: pin H's membership to squashfs_v4_* handlers in the claims features sentence (then this tuple is not representable and the vector is withdrawn); alternative: add a negated handler cell form."
+    },
+    {
+      "id": "G08",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_broadcom"
+        ],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 2
+      },
+      "expected": {
+        "label": "clean",
+        "action": "none"
+      },
+      "decided_by_step": 11,
+      "order_pins": [],
+      "boundary": "the squashfs_v4_* glob includes squashfs_v4_broadcom, so step 2 does not fire",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": "Valid under both readings of H; the clean row's handler cell must match broadcom (pattern squashfs_v4_* or *)."
+    },
+    {
+      "id": "G09",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "missing-extractor-dependency"
+        ],
+        "D": [
+          "sasquatch-v4be"
+        ],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "dep-missing-be",
+        "action": "install-extractor-be"
+      },
+      "decided_by_step": 3,
+      "order_pins": [],
+      "boundary": "canonical BE dependency gap",
+      "origin": "rea-observed (round-40 held-out H13/H14)",
+      "draft_grammar": "encodable",
+      "note": "Row: gaps contains `missing-extractor-dependency+`, deps exact `sasquatch-v4be`."
+    },
+    {
+      "id": "G10",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "missing-extractor-dependency"
+        ],
+        "D": [
+          "sasquatch"
+        ],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "dep-missing-le",
+        "action": "install-extractor-le"
+      },
+      "decided_by_step": 3,
+      "order_pins": [],
+      "boundary": "canonical LE dependency gap; 'names' is element equality, never a prefix test ('sasquatch' is a prefix of 'sasquatch-v4be')",
+      "origin": "rea-observed (round-40 held-out H15/H16)",
+      "draft_grammar": "encodable",
+      "note": "A prefix-matching implementation mislabels this dep-missing-be; the vector catches it."
+    },
+    {
+      "id": "G11",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "missing-extractor-dependency"
+        ],
+        "D": [
+          "sasquatch-v4be"
+        ],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 2
+      },
+      "expected": {
+        "label": "dep-missing-be",
+        "action": "install-extractor-be"
+      },
+      "decided_by_step": 3,
+      "order_pins": [],
+      "boundary": "dep rows' published-files cell is * (AppImage before-arm publishes its ELF prefix beside the gap)",
+      "origin": "rea-observed (round-36 K3/before.json, cited by the v2 dep row)",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G12",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "missing-extractor-dependency"
+        ],
+        "D": [
+          "sasquatch",
+          "sasquatch-v4be"
+        ],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "dep-missing-be",
+        "action": "install-extractor-be"
+      },
+      "decided_by_step": 3,
+      "order_pins": [
+        "3be<3le (both named: first-listed branch wins)"
+      ],
+      "boundary": "D names BOTH executables",
+      "origin": "rea-reachable (unblob SquashFSExtractor.get_dependencies() returns [sasquatch, sasquatch-v4be] - squashfs.py:67-69, models.py:496-499 - so a host with neither flavor reports both missing)",
+      "draft_grammar": "needs-amendment",
+      "note": "Finding F2: the deps cell has no contains form, so exact cells answer unclassified here while a precedence-literal evaluator answers dep-missing-be. Recommended amendment: extend the contains form to the dependencies cell (`sasquatch-v4be+`) with the be row first; alternative: pin the both-named resolution in the claims text and accept the fall-through."
+    },
+    {
+      "id": "G13",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "missing-extractor-dependency"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "unclassified",
+        "action": "none"
+      },
+      "decided_by_step": 12,
+      "order_pins": [
+        "3 falls through when D names neither"
+      ],
+      "boundary": "dependency gap with no named executable: step 3's condition is true, neither branch matches, later steps see no ef/dl/ue and G is nonempty",
+      "origin": "synthetic-only ([INFERENCE] on reachability: FirmwareReports.js dependencyRows can emit dependencies [] for an unnamed producer report, but the accepted-report schema demands min(1) nonempty names, so 6.5.0 looks unreachable here)",
+      "draft_grammar": "encodable",
+      "note": "The claims text should state the fall-through explicitly (finding F2); the exact deps cells produce it naturally."
+    },
+    {
+      "id": "G14",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_broadcom"
+        ],
+        "G": [
+          "missing-extractor-dependency"
+        ],
+        "D": [
+          "sasquatch-v4be"
+        ],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "dep-missing-be",
+        "action": "install-extractor-be"
+      },
+      "decided_by_step": 3,
+      "order_pins": [],
+      "boundary": "the dep label is keyed on D, not on the handler (the R40-CL5 'dependencies decides' repair)",
+      "origin": "synthetic-only (broadcom BE-magic resolves the same sasquatch-v4be extractor)",
+      "draft_grammar": "needs-amendment",
+      "note": "Finding F3: a v3 dep row that keeps v2's handler pin `squashfs_v4_be` misses this and falls to unclassified; the v3 dep rows must carry handler `*`."
+    },
+    {
+      "id": "G15",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "missing-extractor-dependency"
+        ],
+        "D": [
+          "sasquatch-v4be"
+        ],
+        "BE": "yes",
+        "SR": "yes",
+        "P": 1
+      },
+      "expected": {
+        "label": "dep-missing-be",
+        "action": "install-extractor-be"
+      },
+      "decided_by_step": 3,
+      "order_pins": [],
+      "boundary": "dep rows must not pin BE=n/a or SR=no (v2 habit): a second chunk can have run sasquatch and a link can have been removed beside the dep gap",
+      "origin": "rea-reachable (two-chunk image: one chunk's extractor missing, another chunk's sasquatch ran; the escaping removal records no gap so G stays {missing-extractor-dependency})",
+      "draft_grammar": "encodable",
+      "note": "Finding F3: the v3 dep rows need BE `*` and SR `*`."
+    },
+    {
+      "id": "G51",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "extractor-failure",
+          "missing-extractor-dependency"
+        ],
+        "D": [
+          "sasquatch-v4be"
+        ],
+        "BE": "yes",
+        "SR": "no",
+        "P": 3
+      },
+      "expected": {
+        "label": "dep-missing-be",
+        "action": "install-extractor-be"
+      },
+      "decided_by_step": 3,
+      "order_pins": [
+        "3<4 (dep beats partial)"
+      ],
+      "boundary": "combined dep + partial failure",
+      "origin": "synthetic-only (two chunks: one dep-blocked, one failed after publishing)",
+      "draft_grammar": "encodable",
+      "note": "The published files are real; the dep row's cause prose should tell the reader to keep them (prose note, unscored)."
+    },
+    {
+      "id": "G52",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "depth-limited",
+          "missing-extractor-dependency"
+        ],
+        "D": [
+          "sasquatch"
+        ],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 2
+      },
+      "expected": {
+        "label": "dep-missing-le",
+        "action": "install-extractor-le"
+      },
+      "decided_by_step": 3,
+      "order_pins": [
+        "3<7 (dep beats depth)"
+      ],
+      "boundary": "combined dep + depth-limited",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G16",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "yes",
+        "SR": "no",
+        "P": 5
+      },
+      "expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial"
+      },
+      "decided_by_step": 4,
+      "order_pins": [],
+      "boundary": "canonical partial body failure",
+      "origin": "rea-observed (round-40 held-out H21/H22)",
+      "draft_grammar": "encodable",
+      "note": "Row: gaps contains `extractor-failure+`, files `>0`, everything else *."
+    },
+    {
+      "id": "G17",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "extractor-failure",
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "no",
+        "P": 2
+      },
+      "expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial"
+      },
+      "decided_by_step": 4,
+      "order_pins": [],
+      "boundary": "combined partial + in-tree symlink: the contains form is REQUIRED (v2's exact gap cell answered unclassified)",
+      "origin": "rea-reachable (planned class partial-in-tree; R41C2ReconCombined hypothesis G={extractor-failure, unpublished-entry}, SR=no, P>0)",
+      "draft_grammar": "encodable",
+      "note": "This is one of the two combined families v3 exists for."
+    },
+    {
+      "id": "G18",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "extractor-failure",
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "yes",
+        "P": 2
+      },
+      "expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial"
+      },
+      "decided_by_step": 4,
+      "order_pins": [
+        "4<8 (partial beats mixed even with SR=yes)"
+      ],
+      "boundary": "combined partial + mixed symlinks",
+      "origin": "rea-reachable (planned class partial-mixed)",
+      "draft_grammar": "encodable",
+      "note": "Step 4's text explicitly absorbs removed links."
+    },
+    {
+      "id": "G19",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "depth-limited",
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "no",
+        "P": 1
+      },
+      "expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial"
+      },
+      "decided_by_step": 4,
+      "order_pins": [
+        "4<7 (partial beats depth)"
+      ],
+      "boundary": "combined partial + depth-limited",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G20",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "no",
+        "P": 1
+      },
+      "expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial"
+      },
+      "decided_by_step": 4,
+      "order_pins": [
+        "4<5 (P>0 blocks the avm row despite BE=no and the be handler)"
+      ],
+      "boundary": "the P gate between partial and avm",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G21",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "avm-marker-be-dropped",
+        "action": "wrap-extractor-be"
+      },
+      "decided_by_step": 5,
+      "order_pins": [],
+      "boundary": "canonical AVM-marker handshake failure",
+      "origin": "rea-observed (round-40 held-out H17/H18)",
+      "draft_grammar": "encodable",
+      "note": "Row: handler `squashfs_v4_be` (membership), gaps contains `extractor-failure+`, BE `no`, files `0`."
+    },
+    {
+      "id": "G22",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "yes",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "body-extractor-failure",
+        "action": "preserve-failure"
+      },
+      "decided_by_step": 6,
+      "order_pins": [
+        "5<6 via BE=yes"
+      ],
+      "boundary": "BE=yes sends the same tuple to body instead of avm",
+      "origin": "rea-observed (round-40 held-out H19/H20)",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G23",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "body-extractor-failure",
+        "action": "preserve-failure"
+      },
+      "decided_by_step": 6,
+      "order_pins": [
+        "5<6 via BE=n/a"
+      ],
+      "boundary": "BE n/a vs no: the avm row requires exactly BE=no; n/a (no recorded sasquatch argv, e.g. a timed-out run whose report records cmd not command) must not take it",
+      "origin": "rea-reachable ([INFERENCE] carried from R40W2C2TableReview: ExtractorTimedOut records cmd, not command, so BE reads n/a; whether a timeout mints extractor-failure was not verified by a run)",
+      "draft_grammar": "encodable",
+      "note": "A 'BE != yes means no' implementation mislabels this avm-marker-be-dropped; the vector catches it."
+    },
+    {
+      "id": "G24",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be",
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "avm-marker-be-dropped",
+        "action": "wrap-extractor-be"
+      },
+      "decided_by_step": 5,
+      "order_pins": [],
+      "boundary": "step 5's 'handler squashfs_v4_be' is membership (H contains it), not equality; the le chunk's failure is subsumed until the rerun",
+      "origin": "synthetic-only (two squashfs chunks in one image)",
+      "draft_grammar": "encodable",
+      "note": "The v2 handler cell already matches any member (fnmatch over H); the precedence text should say 'H contains squashfs_v4_be' to pin the evaluator's reading."
+    },
+    {
+      "id": "G25",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "body-extractor-failure",
+        "action": "preserve-failure"
+      },
+      "decided_by_step": 6,
+      "order_pins": [
+        "5<6 via handler"
+      ],
+      "boundary": "BE=no is the NORMAL le state: without the be-handler gate every le failure would be misread as the AVM handshake",
+      "origin": "rea-reachable (a plain le image whose sasquatch run failed)",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G26",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "extractor-failure",
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "avm-marker-be-dropped",
+        "action": "wrap-extractor-be"
+      },
+      "decided_by_step": 5,
+      "order_pins": [],
+      "boundary": "combined failure + in-tree gap on the avm row (contains required; v2's exact gap cell answered unclassified)",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G53",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "yes",
+        "P": 0
+      },
+      "expected": {
+        "label": "avm-marker-be-dropped",
+        "action": "wrap-extractor-be"
+      },
+      "decided_by_step": 5,
+      "order_pins": [
+        "5<9 (the avm row precedes the escaping row)"
+      ],
+      "boundary": "avm row's symlink-removed cell is *",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G50",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_broadcom"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "no",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "body-extractor-failure",
+        "action": "preserve-failure"
+      },
+      "decided_by_step": 6,
+      "order_pins": [
+        "5<6 via handler"
+      ],
+      "boundary": "the avm row's handler cell is the exact name squashfs_v4_be, not the v4_* glob: a broadcom-marker image (same extractor, same marker branch in unblob) is told preserve-failure",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": "Granularity limit of the precedence text; disclose in the entry's Limits rather than widen the row (finding F10)."
+    },
+    {
+      "id": "G27",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "depth-limited",
+          "extractor-failure"
+        ],
+        "D": [],
+        "BE": "yes",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "body-extractor-failure",
+        "action": "preserve-failure"
+      },
+      "decided_by_step": 6,
+      "order_pins": [
+        "6<7 at P=0 (failure beats depth when nothing was published)"
+      ],
+      "boundary": "combined failure + depth at P=0",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G28",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "depth-limited"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 3
+      },
+      "expected": {
+        "label": "depth-limited-nested",
+        "action": "raise-depth"
+      },
+      "decided_by_step": 7,
+      "order_pins": [],
+      "boundary": "canonical depth-limited alone (new label + new action token raise-depth)",
+      "origin": "rea-reachable (planned class depth-limited-alone; R41C2ReconDepth hypothesis: exactly one depth-limited gap, outer files published)",
+      "draft_grammar": "encodable",
+      "note": "Row: gaps contains `depth-limited+`, everything else *."
+    },
+    {
+      "id": "G29",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "depth-limited",
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 6
+      },
+      "expected": {
+        "label": "depth-limited-nested",
+        "action": "raise-depth"
+      },
+      "decided_by_step": 7,
+      "order_pins": [],
+      "boundary": "combined depth + in-tree symlink: contains required",
+      "origin": "rea-observed (this is carrier L2's exact tuple: round-40 c1 L2/after.json reads H=[squashfs_v4_be], G=[depth-limited, unpublished-entry], D=[], SR=no, P=6; V1/V2/L1 carry the same shape with P=697/8/7 - v2 answered unclassified on all four)",
+      "draft_grammar": "encodable",
+      "note": "v3 makes the round-40 C1 carriers triable; cite this in the entry's Scoring paragraph as the concrete depth delta."
+    },
+    {
+      "id": "G30",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "depth-limited",
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "yes",
+        "P": 4
+      },
+      "expected": {
+        "label": "depth-limited-nested",
+        "action": "raise-depth"
+      },
+      "decided_by_step": 7,
+      "order_pins": [
+        "7<8 (depth beats mixed)"
+      ],
+      "boundary": "combined depth + mixed symlinks",
+      "origin": "rea-reachable (planned class depth-limited-mixed)",
+      "draft_grammar": "encodable",
+      "note": "The depth row's cause prose should tell the reader to still count the symlink gaps."
+    },
+    {
+      "id": "G31",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "depth-limited"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "yes",
+        "P": 2
+      },
+      "expected": {
+        "label": "depth-limited-nested",
+        "action": "raise-depth"
+      },
+      "decided_by_step": 7,
+      "order_pins": [
+        "7<9 (depth beats escaping; v2's escaping row with gaps `*` answered expect-link-absent here)"
+      ],
+      "boundary": "depth + removed escaping link",
+      "origin": "rea-reachable",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G32",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "depth-limited"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "depth-limited-nested",
+        "action": "raise-depth"
+      },
+      "decided_by_step": 7,
+      "order_pins": [],
+      "boundary": "depth row's published-files cell is * (the precedence does not constrain P on step 7)",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G33",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "yes",
+        "P": 5
+      },
+      "expected": {
+        "label": "mixed-symlinks",
+        "action": "audit-symlinks"
+      },
+      "decided_by_step": 8,
+      "order_pins": [
+        "8<9"
+      ],
+      "boundary": "canonical mixed symlinks",
+      "origin": "rea-observed (round-40 held-out H11/H12)",
+      "draft_grammar": "encodable",
+      "note": "Row: SR `yes`, gaps contains `unpublished-entry+`."
+    },
+    {
+      "id": "G34",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "yes",
+        "P": 0
+      },
+      "expected": {
+        "label": "mixed-symlinks",
+        "action": "audit-symlinks"
+      },
+      "decided_by_step": 8,
+      "order_pins": [],
+      "boundary": "mixed row's published-files cell is *",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G35",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "encrypted-chunk",
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "yes",
+        "P": 1
+      },
+      "expected": {
+        "label": "mixed-symlinks",
+        "action": "audit-symlinks"
+      },
+      "decided_by_step": 8,
+      "order_pins": [],
+      "boundary": "contains on step 8: ue with another non-failure kind still labels mixed; the encrypted gap is subsumed (granularity note for the cause prose)",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G36",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "yes",
+        "P": 3
+      },
+      "expected": {
+        "label": "escaping-symlink-removed",
+        "action": "expect-link-absent"
+      },
+      "decided_by_step": 9,
+      "order_pins": [],
+      "boundary": "canonical escaping symlink",
+      "origin": "rea-observed (round-40 held-out H07/H08)",
+      "draft_grammar": "encodable",
+      "note": "Row: SR `yes`, gaps `none` - NOT v2's gaps `*` (the AxisFit L5 repair; vector G38 pins the difference)."
+    },
+    {
+      "id": "G37",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "yes",
+        "P": 0
+      },
+      "expected": {
+        "label": "escaping-symlink-removed",
+        "action": "expect-link-absent"
+      },
+      "decided_by_step": 9,
+      "order_pins": [],
+      "boundary": "escaping row's published-files cell is *",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G38",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "unknown-chunk-handler"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "yes",
+        "P": 1
+      },
+      "expected": {
+        "label": "unclassified",
+        "action": "none"
+      },
+      "decided_by_step": 12,
+      "order_pins": [
+        "9 requires G=[] (SR=yes with a nonempty G that lacks unpublished-entry falls through)"
+      ],
+      "boundary": "the v2 escaping row (gaps `*`) answered expect-link-absent here; v3 tightens to G=[] per the precedence text",
+      "origin": "rea-reachable (a squashfs image that also contains an unrecognized chunk, plus a removed escaping link)",
+      "draft_grammar": "encodable",
+      "note": "The drafted escaping row must pin gaps `none`; carrying v2's `*` habit flips this to expect-link-absent and fails the evaluator."
+    },
+    {
+      "id": "G39",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 8
+      },
+      "expected": {
+        "label": "in-tree-symlink-metadata",
+        "action": "count-gap"
+      },
+      "decided_by_step": 10,
+      "order_pins": [],
+      "boundary": "canonical in-tree symlink metadata",
+      "origin": "rea-observed (round-40 held-out H09/H10)",
+      "draft_grammar": "encodable",
+      "note": "Row: gaps exact `unpublished-entry` (singleton), SR `no`."
+    },
+    {
+      "id": "G40",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "in-tree-symlink-metadata",
+        "action": "count-gap"
+      },
+      "decided_by_step": 10,
+      "order_pins": [],
+      "boundary": "in-tree row's published-files cell is *",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G46",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "unknown-chunk-handler",
+          "unpublished-entry"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 1
+      },
+      "expected": {
+        "label": "unclassified",
+        "action": "none"
+      },
+      "decided_by_step": 12,
+      "order_pins": [
+        "10 is exact singleton while 8 is contains - the asymmetry is faithful to the text"
+      ],
+      "boundary": "ue plus another non-failure kind with SR=no falls through (a 'uniformized' contains step 10 would wrongly answer in-tree-symlink-metadata)",
+      "origin": "rea-reachable",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G41",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 5
+      },
+      "expected": {
+        "label": "clean",
+        "action": "none"
+      },
+      "decided_by_step": 11,
+      "order_pins": [],
+      "boundary": "canonical clean",
+      "origin": "rea-observed (this is carrier H04's exact tuple: round-40 held-out H04 reads H=[squashfs_v4_le], G=[], D=[], BE=n/a, SR=no, P=5; H01-H03 carry the same shape with the be handler or P=3/8)",
+      "draft_grammar": "encodable",
+      "note": "Row: gaps `none`, files `>0`, SR `no` (or * - order-equivalent because step 9 sits above; keep `no` for readability)."
+    },
+    {
+      "id": "G42",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [],
+        "D": [],
+        "BE": "yes",
+        "SR": "no",
+        "P": 2
+      },
+      "expected": {
+        "label": "clean",
+        "action": "none"
+      },
+      "decided_by_step": 11,
+      "order_pins": [],
+      "boundary": "clean row's -be cell is * (a recorded command must not block clean)",
+      "origin": "synthetic-only",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G43",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_be"
+        ],
+        "G": [],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 0
+      },
+      "expected": {
+        "label": "clean-empty",
+        "action": "confirm-empty"
+      },
+      "decided_by_step": 11,
+      "order_pins": [
+        "11b after 2 (H nonempty here, so the no-chunk row does not fire)"
+      ],
+      "boundary": "canonical clean-empty",
+      "origin": "rea-observed (round-40 held-out H05/H06)",
+      "draft_grammar": "encodable",
+      "note": ""
+    },
+    {
+      "id": "G44",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [],
+        "D": [
+          "sasquatch"
+        ],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 1
+      },
+      "expected": {
+        "label": "clean",
+        "action": "none"
+      },
+      "decided_by_step": 11,
+      "order_pins": [],
+      "boundary": "the precedence never reads D outside step 3: a clean row with deps `none` (v2 habit) would reject this tuple",
+      "origin": "unreachable-by-construction (D is the union of gap dependencies and every non-dep gap carries [], so G=[] forces D=[]; constructible as a synthetic envelope, never emitted by REA)",
+      "draft_grammar": "encodable",
+      "note": "Consistency vector: it pins that the v3 rows carry deps `*` wherever the precedence is silent. Under the D-invariant deps `none` and `*` are equivalent on REA-reachable tuples, so this vector is a form check, not a behavior check."
+    },
+    {
+      "id": "G45",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "encrypted-chunk"
+        ],
+        "D": [],
+        "BE": "n/a",
+        "SR": "no",
+        "P": 2
+      },
+      "expected": {
+        "label": "unclassified",
+        "action": "none"
+      },
+      "decided_by_step": 12,
+      "order_pins": [],
+      "boundary": "a real REA gap kind with no precedence step lands on the default",
+      "origin": "rea-reachable (encrypted squashfs; the v2 entry's Limits already disclose encrypted-chunk as not covered)",
+      "draft_grammar": "encodable",
+      "note": "The v3 entry's Limits should carry the same disclosure plus unknown-chunk-handler."
+    },
+    {
+      "id": "G56",
+      "features": {
+        "OP": "extract_firmware",
+        "PR": "unblob",
+        "H": [
+          "squashfs_v4_le"
+        ],
+        "G": [
+          "extractor-failure",
+          "missing-extractor-dependency"
+        ],
+        "D": [],
+        "BE": "yes",
+        "SR": "no",
+        "P": 2
+      },
+      "expected": {
+        "label": "partial-body-failure",
+        "action": "salvage-partial"
+      },
+      "decided_by_step": 4,
+      "order_pins": [
+        "3 falls through when D names neither, then 4 fires"
+      ],
+      "boundary": "discriminates the step-3 neither-named reading: fall-through (documented resolution) reaches step 4 and answers partial-body-failure; an immediate-unclassified reading of step 3 would answer unclassified - G13 cannot discriminate the two (both give unclassified there), this vector can",
+      "origin": "synthetic-only (needs a dep gap whose producer named no executable beside a failed chunk)",
+      "draft_grammar": "encodable",
+      "note": "Pins the fall-through resolution the claims text must state (finding F2); added after R41C2Interp's three-way run pointed out that the ambiguity was real but undiscriminated."
+    }
+  ]
+}

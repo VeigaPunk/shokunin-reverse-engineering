@@ -1,0 +1,73 @@
+{
+  "schema": "kaidoku-r41-c1-superblock-v1",
+  "carrier_id": "V3",
+  "carved_from": "./var/tmp/filesystem.image",
+  "carve_length": 30233394,
+  "member_length": 30236680,
+  "member_tail_after_bytes_used": {
+    "length": 3286,
+    "non_zero_bytes": 8,
+    "non_zero_offsets": [3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285],
+    "last8_hex": "23de53c4563d0573",
+    "note": "member carries 3286 bytes after bytes_used; the carve is [0, bytes_used) only"
+  },
+  "magic_raw": "73 71 73 68",
+  "magic_ascii": "sqsh",
+  "structural_byte_order": "big",
+  "metadata_block_length_header_byte_order": "little",
+  "known_identity_not_a_layout_test": {
+    "expression": "mkfs_time == bytes_used",
+    "mkfs_time": 30233394,
+    "bytes_used": 30233394,
+    "holds": true,
+    "note": "AVM marker; unblob 26.6.4 squashfs_v4_be reads it to decide whether to pass -be, not to decide endianness"
+  },
+  "fields_big_endian": {
+    "inodes": 104,
+    "mkfs_time": 30233394,
+    "block_size": 65536,
+    "fragments": 1,
+    "compression": 4,
+    "compression_name": "xz",
+    "block_log": 16,
+    "flags": 704,
+    "no_ids": 1,
+    "s_major": 4,
+    "s_minor": 0,
+    "root_inode": 5288,
+    "bytes_used": 30233394,
+    "id_table_start": 30233386,
+    "xattr_id_table_start": 18446744073709551615,
+    "inode_table_start": 30231260,
+    "directory_table_start": 30231986,
+    "fragment_table_start": 30233062,
+    "lookup_table_start": 30233372
+  },
+  "fields_little_endian_decode_of_same_bytes": {
+    "inodes": 1744830464,
+    "mkfs_time": 844352769,
+    "block_size": 256,
+    "compression": 1024,
+    "s_major": 1024,
+    "bytes_used": 3626467529142042624,
+    "note": "LE decode of the structural fields is nonsense (s_major 1024, block_size 256); sasquatch-v4be says 'SquashFS version [1024.0] / inode count [1744830464] suggests a SquashFS image of a different endianess'"
+  },
+  "inode_table_metadata_chain": {
+    "start": 30231260,
+    "directory_table_start": 30231986,
+    "little_endian_headers": {
+      "blocks": 1,
+      "block": {"offset": 30231260, "header_len": 724, "decompressed_len": 5320},
+      "chain_end": 30231986,
+      "chain_end_equals_directory_table_start": true,
+      "identity": "2 + 724 + 30231260 == 30231986",
+      "outcome": "clean walk"
+    },
+    "big_endian_headers": {
+      "first_header_value": 54274,
+      "bytes_available_after_header": 2132,
+      "outcome": "truncated: declared block length 54274 exceeds the 2132 bytes left in the image; on the full member it would run past bytes_used",
+      "clean_walk": false
+    }
+  }
+}

@@ -1,0 +1,141 @@
+--- tools/round-40/c1-run.sh
++++ round-41-c1-run.sh
+@@ -1,5 +1,6 @@
+ #!/usr/bin/env bash
+-# R40-C1 run harness (kaidoku round 40). Two arms, one carrier each.
++# R41-C1 run harness (kaidoku round 41; ported from tools/round-40/c1-run.sh).
++# Two arms, one carrier each; output goes to corpus/evidence/round-41/c1/<id>/.
+ #
+ #   c1-run.sh after  CARRIER OUTDIR [SCRATCH]
+ #     REA extract-firmware (rea-agents@6.5.0, --format json --full-output) via
+@@ -22,10 +23,10 @@
+ #
+ #   c1-run.sh oracle CARRIER OUTDIR [SCRATCH]
+ #     AVM-layout oracle arm. Two independent producers, one frozen grammar:
+-#       1. the round-40 independent reader (stdlib only; --layout avm = BE
++#       1. the independent reader (carried from round 40; stdlib only; --layout avm = BE
+ #          superblock/inode fields with LITTLE-endian metadata block-length
+ #          headers). Default path: sqfs-list.py in this script's directory
+-#          (tools/round-40/sqfs-list.py once frozen); C1_READER overrides.
++#          (tools/round-41/sqfs-list.py once frozen); C1_READER overrides.
+ #          The harness requires the reader's --help to advertise --layout,
+ #          --files and --nonregular, and runs exactly
+ #            python3 -I sqfs-list.py --layout avm --files … --nonregular …
+@@ -54,15 +55,15 @@
+ #   An `hsqs` carrier is rejected with exit 2: LE images are out of this arm's
+ #   scope and `-layout avm` semantics do not apply to them.
+ #
+-# A non-default SCRATCH must contain a /kaidoku-r40/ path segment: the
++# A non-default SCRATCH must contain a /kaidoku-r41/ path segment: the
+ # extraction root recorded in the receipt (parameters.output_directory) is what
+ # proves the run happened this round, so the harness refuses (exit 2) a
+-# scratch that cannot carry the round-40 provenance marker.
++# scratch that cannot carry the round-41 provenance marker.
+ # C1_ALLOW_FOREIGN_SCRATCH=1 downgrades that refusal to a warning and records
+ # run_provenance_segment_ok:false (development runs only).
+ #
+ # Scratch lives under $HYAKU_SCRATCH (default /fast/scratch/hyaku) in
+-# kaidoku-r40/, or at the explicit SCRATCH argument; either way it is removed
++# kaidoku-r41/, or at the explicit SCRATCH argument; either way it is removed
+ # on exit. TMPDIR points into it so REA staging and unblob.log land there.
+ #
+ # Exit: 0 ok, 2 usage/environment error, 3 tool failure.
+@@ -77,13 +78,13 @@
+        c1-run.sh oracle CARRIER OUTDIR [SCRATCH]
+   after   REA extract-firmware (rea-agents@6.5.0 + unblob 26.6.4, sasquatch-v4be
+           on PATH) -> OUTDIR/after.json (the `data` object) + OUTDIR/run.json
+-  oracle  AVM-layout independent oracle (round-40 sqfs-list.py --layout avm)
++  oracle  AVM-layout independent oracle (round-41 sqfs-list.py --layout avm)
+           + sasquatch-v4be -f (NO -be) cross-check -> OUTDIR/oracle.tsv,
+           OUTDIR/nonregular.tsv, OUTDIR/oracle-check.tsv, OUTDIR/oracle-run.json
+   env     HYAKU_SCRATCH (default /fast/scratch/hyaku), REA_UNBLOB_COMMAND
+           (default $HOME/.local/bin/unblob), C1_READER (default
+           <script dir>/sqfs-list.py), C1_KEEP_ENVELOPE=1 (after arm only),
+-          C1_ALLOW_FOREIGN_SCRATCH=1 (permit a SCRATCH without a /kaidoku-r40/
++          C1_ALLOW_FOREIGN_SCRATCH=1 (permit a SCRATCH without a /kaidoku-r41/
+           segment)
+ EOF
+   exit 2
+@@ -113,21 +114,21 @@
+ mkdir -p "$outdir_in" || err "cannot create OUTDIR: $outdir_in"
+ outdir=$(realpath -- "$outdir_in")
+ 
+-scratch_root=${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kaidoku-r40
++scratch_root=${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kaidoku-r41
+ mkdir -p "$scratch_root" || err "cannot create scratch root: $scratch_root"
+ prov_segment_ok=true
+ if [[ -n $scratch_arg ]]; then
+   scratch=$(realpath -m -- "$scratch_arg")
+   case "$scratch/" in
+-    */kaidoku-r40/*) ;;
++    */kaidoku-r41/*) ;;
+     *)
+       if [[ ${C1_ALLOW_FOREIGN_SCRATCH:-0} == 1 ]]; then
+         prov_segment_ok=false
+-        echo "$PROG: warning: SCRATCH $scratch lacks a /kaidoku-r40/ segment; the R40-C1"\
++        echo "$PROG: warning: SCRATCH $scratch lacks a /kaidoku-r41/ segment; the R41-C1"\
+              "run-provenance clause (receipt parameters.output_directory) will not match" >&2
+       else
+-        err "SCRATCH $scratch lacks a /kaidoku-r40/ segment: a receipt written from it fails"\
+-            "the R40-C1 run-provenance clause (parameters.output_directory is hashed into the"\
++        err "SCRATCH $scratch lacks a /kaidoku-r41/ segment: a receipt written from it fails"\
++            "the R41-C1 run-provenance clause (parameters.output_directory is hashed into the"\
+             "evidence id). Use the default scratch, or set C1_ALLOW_FOREIGN_SCRATCH=1 for a dev run."
+       fi ;;
+   esac
+@@ -172,8 +173,8 @@
+ # ---------------------------------------------------------------- oracle arm
+ if [[ $mode == oracle ]]; then
+   reader_in=${C1_READER:-$SCRIPT_DIR/sqfs-list.py}
+-  [[ -f $reader_in ]] || err "round-40 reader not found: $reader_in (set C1_READER)"
+-  [[ -r $reader_in ]] || err "round-40 reader is not readable: $reader_in"
++  [[ -f $reader_in ]] || err "round-41 reader not found: $reader_in (set C1_READER)"
++  [[ -r $reader_in ]] || err "round-41 reader is not readable: $reader_in"
+   reader=$(realpath -- "$reader_in")
+   reader_sha=$(sha256sum "$reader" | cut -d' ' -f1)
+   py_bin=python3
+@@ -207,7 +208,7 @@
+   reader_err_head=$(sed -n '1,20p' "$scratch/reader.err" 2>/dev/null | cut -c1-400 || true)
+ 
+   if [[ $reader_rc -ne 0 ]]; then
+-    jq -n --arg schema kaidoku-r40-c1-run-v1 --arg mode oracle --arg claim R40-C1 \
++    jq -n --arg schema kaidoku-r41-c1-run-v1 --arg mode oracle --arg claim R41-C1 \
+       --arg carrier "$carrier" --arg carrier_sha "$carrier_sha" --argjson carrier_size "$carrier_size" \
+       --arg outdir "$outdir" --argjson prov_segment "$prov_segment_ok" \
+       --arg reader "$reader" --arg reader_sha "$reader_sha" --argjson reader_argv "$reader_argv_json" \
+@@ -384,9 +385,9 @@
+   cross_ok=$(jq -r '.files_equal' <<<"$cross")
+ 
+   jq -n \
+-    --arg schema kaidoku-r40-c1-run-v1 \
++    --arg schema kaidoku-r41-c1-run-v1 \
+     --arg mode oracle \
+-    --arg claim R40-C1 \
++    --arg claim R41-C1 \
+     --arg carrier "$carrier" --arg carrier_sha "$carrier_sha" --argjson carrier_size "$carrier_size" \
+     --arg outdir "$outdir" --argjson prov_segment "$prov_segment_ok" \
+     --arg scratch_root "$scratch_root" \
+@@ -481,8 +482,9 @@
+ [[ -f $outdir/after.json ]] && prev_after_sha=$(sha256sum "$outdir/after.json" | cut -d' ' -f1)
+ 
+ extract_root=$scratch/extract
+-# Frozen round-40 parameter (R40C1ReconGaps §6): vendor AVM members exceed the 10000 staged-entry
+-# budget at the default depth (nested filesystem_core.squashfs), so every C1 carrier runs at depth 1.
++# Frozen round-41 parameter (carried from round 40, R40C1ReconGaps §6): vendor AVM members exceed
++# the 10000 staged-entry budget at the default depth (nested filesystem_core.squashfs), so every
++# C1 carrier runs at depth 1.
+ argv=(npx -y "$rea_pin" extract-firmware --format json --full-output --max-depth 1 "$carrier" "$extract_root")
+ argv_json=$(arr_json "${argv[@]}")
+ 
+@@ -552,9 +554,9 @@
+ stderr_head=$({ grep -v 'npm warn' "$scratch/rea.err" 2>/dev/null || true; } | sed -n '1,20p' | cut -c1-400)
+ 
+ jq -n \
+-  --arg schema kaidoku-r40-c1-run-v1 \
++  --arg schema kaidoku-r41-c1-run-v1 \
+   --arg mode after \
+-  --arg claim R40-C1 \
++  --arg claim R41-C1 \
+   --arg carrier "$carrier" --arg carrier_sha "$carrier_sha" --argjson carrier_size "$carrier_size" \
+   --arg outdir "$outdir" --arg extract_root "$extract_root" --arg cwd "$scratch" \
+   --argjson prov_segment "$prov_segment_ok" \

@@ -1,0 +1,86 @@
+# fixture clone: /fast/scratch/hyaku/kaidoku-r41/R41MistakeHunt/fx.receipt/lane
+# base: 49096c7e6f226af0c750c4b003be58883cb6049f
+
+## 1. base state (unmodified lane at the round-41 base)
+rows=126 pointers=66 lane=39 tool=24 scratch=0 external=3 rev=49096c7e6f22
+FATAL external-body  corpus/SOURCES.md:132 S126                 sha=f205807de801 /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/lead1-avm-image.tsv
+FATAL external-body  corpus/SOURCES.md:132 S126                 sha=c7f74691b3e8 /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs
+FATAL external-body  corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md:5 S126 sha=- /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/lead1-avm-image.tsv
+findings=3
+exit=1
+
+## 2. repair: three own-work bodies into corpus/evidence/round-11/avm-be/, row and knowledge lineage repointed
+repair: bodies copied to corpus/evidence/round-11/avm-be; S126 rows rewritten=1
+repair: lead1-avm-image.tsv  f205807de8016ead8732d77f14acf5e99e6527e02d6281566f6070b7c8539eb0
+repair: avm-be.squashfs      c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32
+repair: unblob.log           352e0d794143df9cc4fa6113d72ee5a620ea0aa201a930e00e91590518aed5d7
+exit=0
+repair commit: acba3532501283d7786ca7e881f9e23a124d4d00
+rows=126 pointers=67 lane=43 tool=24 scratch=0 external=0 rev=acba35325012
+findings=0
+exit=0
+
+## 3. control: same name, wrong bytes (4096 zero bytes at the repaired path)
+rows=126 pointers=67 lane=43 tool=24 scratch=0 external=0 rev=25fcbcc4d492
+FATAL pin-mismatch   corpus/SOURCES.md:132 S126                 sha=c7f74691b3e8 corpus/evidence/round-11/avm-be/avm-be.squashfs
+findings=1
+exit=1
+restored image; check:
+rows=126 pointers=67 lane=43 tool=24 scratch=0 external=0 rev=39c6a1056abf
+findings=0
+exit=0
+
+## 3b. control: the lane-root unblob.log (a different body, same basename) substituted for the round-11 log
+substituted bytes: 2d651a4aa6ea3937872a249f7ed3509c4da5a5ca6dfab2d017f8767f69f16299
+row pin:           352e0d794143df9cc4fa6113d72ee5a620ea0aa201a930e00e91590518aed5d7
+rows=126 pointers=67 lane=43 tool=24 scratch=0 external=0 rev=f392a690963a
+FATAL pin-mismatch   corpus/SOURCES.md:132 S126                 sha=352e0d794143 corpus/evidence/round-11/avm-be/unblob.log
+findings=1
+exit=1
+restored log; check:
+rows=126 pointers=67 lane=43 tool=24 scratch=0 external=0 rev=273d521da2ea
+findings=0
+exit=0
+
+## 4. final state of the repaired fixture
+273d521da2eab6908183223a3a5df06d4ee893d7
+rows=126 pointers=67 lane=43 tool=24 scratch=0 external=0 rev=273d521da2ea
+findings=0
+exit=0
+
+## 5. selftest of the check
+ok   want=1 got=1 external sibling body is fatal                findings=1
+ok   want=0 got=0 tracked lane copy with matching pin is clean  findings=0
+ok   want=1 got=1 stub with the right name stays red            findings=1
+ok   want=1 got=1 lane path absent from the revision is fatal   findings=1
+ok   want=1 got=1 scratch body is fatal                         findings=1
+ok   want=0 got=0 installed tool path is not a finding          findings=0
+ok   want=0 got=0 URL-only row is clean                         findings=0
+ok   want=1 got=1 knowledge lineage pointer is scored           findings=1
+ok   want=2 got=2 rowless surface is could-not-evaluate         crr: rowless surface corpus/SOURCES.md
+ok   want=0 got=0 tracked lane directory citation is clean      findings=0
+selftest cases=10 failed=0
+exit=0
+
+## 6. the repair commit itself
+commit acba3532 fixture: S126 bodies in lane
+
+ corpus/SOURCES.md                                  |   2 +-
+ corpus/evidence/round-11/avm-be/avm-be.squashfs    | Bin 0 -> 4096 bytes
+ .../evidence/round-11/avm-be/lead1-avm-image.tsv   |  21 +++++++++++++++++++++
+ corpus/evidence/round-11/avm-be/unblob.log         |  17 +++++++++++++++++
+ .../2026-10-26-r40-avm-be-squashfs-core.md         |   2 +-
+ 5 files changed, 40 insertions(+), 2 deletions(-)
+-- changed lines (SOURCES.md, knowledge doc):
+-| S126 | A real AVM-BE image built by the lane and extracted by unblob — /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/lead1-avm-image.tsv (sha256 f205807de8016ead8732d77f14acf5e99e6527e02d6281566f6070b7c8539eb0) | own-work | A | the end-to-end extraction observation on the retained 4 096-byte genuine AVM-BE image, and that image's own superblock fields — never an inference from a detector, and nothing about vendor firmware or about the layout test the round-40 entry adds | file rows `image_path`, `image_magic`, `image_compression_id`, `image_mkfs_time`, `image_bytes_used`, `image_is_avm`, `unblob_handler`, `unblob_be_flag`, `extracted_files`; image `/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs` 4 096 bytes sha256 c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32; run log `unblob.log` sha256 352e0d794143df9cc4fa6113d72ee5a620ea0aa201a930e00e91590518aed5d7 (re-opened 2026-10-26) | that a genuine AVM-BE image extracts through unblob 26.6.4 with no `-be` on the argv, publishing four files with their exact contents, while the retained log carries no exit status and an earlier attempt in the same directory failed to run its extractor | mined | 2026-10-26 | 180d | corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md |
++| S126 | A real AVM-BE image built by the lane and extracted by unblob — corpus/evidence/round-11/avm-be/lead1-avm-image.tsv (sha256 f205807de8016ead8732d77f14acf5e99e6527e02d6281566f6070b7c8539eb0) | own-work | A | the end-to-end extraction observation on the retained 4 096-byte genuine AVM-BE image, and that image's own superblock fields — never an inference from a detector, and nothing about vendor firmware or about the layout test the round-40 entry adds | file rows `image_path`, `image_magic`, `image_compression_id`, `image_mkfs_time`, `image_bytes_used`, `image_is_avm`, `unblob_handler`, `unblob_be_flag`, `extracted_files`; image `corpus/evidence/round-11/avm-be/avm-be.squashfs` 4 096 bytes sha256 c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32; run log `corpus/evidence/round-11/avm-be/unblob.log` sha256 352e0d794143df9cc4fa6113d72ee5a620ea0aa201a930e00e91590518aed5d7 (re-opened 2026-10-26) | that a genuine AVM-BE image extracts through unblob 26.6.4 with no `-be` on the argv, publishing four files with their exact contents, while the retained log carries no exit status and an earlier attempt in the same directory failed to run its extractor | mined | 2026-10-26 | 180d | corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md |
+-source: S126 — /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/lead1-avm-image.tsv — the retained round-11 AVM-BE image observation, re-opened 2026-10-26 (assimilated from `merge/kaidoku` `avm-image-extraction`, `.ufo/waves/round-40/w1/R40AssimE3.md`)
++source: S126 — corpus/evidence/round-11/avm-be/lead1-avm-image.tsv — the retained round-11 AVM-BE image observation, re-opened 2026-10-26 (assimilated from `merge/kaidoku` `avm-image-extraction`, `.ufo/waves/round-40/w1/R40AssimE3.md`)
+
+## 7. production run against the lane itself (read-only, git objects)
+rows=126 pointers=66 lane=39 tool=24 scratch=0 external=3 rev=49096c7e6f22
+FATAL external-body  corpus/SOURCES.md:132 S126                 sha=f205807de801 /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/lead1-avm-image.tsv
+FATAL external-body  corpus/SOURCES.md:132 S126                 sha=c7f74691b3e8 /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs
+FATAL external-body  corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md:5 S126 sha=- /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/lead1-avm-image.tsv
+findings=3
+exit=1

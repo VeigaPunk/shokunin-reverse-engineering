@@ -1,0 +1,23 @@
+# v2 -> v3 carrier byte identity, same seed (sha256("dev41")), same writer
+# (tools/round-40/gen-squashfs.py sha256 309c502d21dfeef9b7b2a5a9a62bfa875270fdf79eec671461070996d291042e)
+#
+# built: round-40 tools/round-40/heldout-gen-v2.py @ 49096c7e  -> v2-manifest.json (26 carriers)
+#        round-41 artifacts/R41C2Gen/heldout-gen-v3.py        -> dev-seed-c9e30c10/manifest.json (H01..H26)
+#
+# RESULT: 21 of 26 carriers are byte-identical.  The five that differ:
+#   H04 clean-le (xz)              tree had a directory with no children -> v3 fills it
+#   H07 escaping-symlink-removed   same cause
+#   H09 in-tree-symlink-metadata   same cause
+#   H24 no-squashfs-chunk (xz)     same cause
+#   H22 partial-body-failure (xz)  v2 pinned gzip for both replicates; v3 restores
+#                                  comp='k' (gzip/xz) and pins the damaged block's
+#                                  COMPRESSED length instead (R40-CL4).  H21, the gzip
+#                                  replicate, is byte-identical.
+#
+# Why the fill: the lane writer emits no directory record for a directory with no
+# children, so that directory and the next one share one record (measured: seed
+# b13ef790, k=8, combo C08: 78hgf8qhm and the empty 78hgf8qhm/_2bjv9low both at
+# dir-table offset 0).  sqfs-list still parses such an image, sasquatch silently
+# skips the empty directory, and a reader that follows the shared record loops.
+# fill_empty_dirs() gives every directory one child, so v3 images carry no
+# collapsed record; `clean-empty` is exempt (its empty directory is the class).

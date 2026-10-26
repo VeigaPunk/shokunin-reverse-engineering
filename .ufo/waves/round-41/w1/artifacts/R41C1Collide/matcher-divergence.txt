@@ -1,0 +1,44 @@
+== A-xz: published regular usr/bin/busy vs symlink entry bin/busy
+  nonregular_unpublished_ok input
+  same_rel('firmware.bin_extract/usr/bin/busy', 'bin/busy')            -> True
+  extract_rel('firmware.bin_extract/usr/bin/busy')             -> 'usr/bin/busy'
+  same_rel_exact('firmware.bin_extract/usr/bin/busy', 'bin/busy') -> False
+  carrier_root(env)           -> ('firmware.bin_extract', None)
+  same_rel_anchored(..., 'bin/busy')  -> False
+
+== D-xz: gap on the deeper symlink usr/sbin/tool, entries sbin/tool + usr/sbin/tool
+  gap_check input (entry 'usr/sbin/tool')
+  same_rel('firmware.bin_extract/usr/sbin/tool', 'usr/sbin/tool')            -> True
+  extract_rel('firmware.bin_extract/usr/sbin/tool')             -> 'usr/sbin/tool'
+  same_rel_exact('firmware.bin_extract/usr/sbin/tool', 'usr/sbin/tool') -> True
+
+  gap_check input (entry 'sbin/tool')
+  same_rel('firmware.bin_extract/usr/sbin/tool', 'sbin/tool')            -> True
+  extract_rel('firmware.bin_extract/usr/sbin/tool')             -> 'usr/sbin/tool'
+  same_rel_exact('firmware.bin_extract/usr/sbin/tool', 'sbin/tool') -> False
+
+  same_rel on the shallower symlink entry, same candidate: True
+== C-shadow: oracle row etc/conf, published only opt/x/etc/conf (same sha)
+  oracle_hits input
+  same_rel('firmware.bin_extract/opt/x/etc/conf', 'etc/conf')            -> True
+  extract_rel('firmware.bin_extract/opt/x/etc/conf')             -> 'opt/x/etc/conf'
+  same_rel_exact('firmware.bin_extract/opt/x/etc/conf', 'etc/conf') -> False
+  carrier_root(env)           -> ('firmware.bin_extract', None)
+  same_rel_anchored(..., 'etc/conf')  -> False
+
+== E-d2: nested publication vs a top-level oracle row inner/only.txt
+  oracle_hits input
+  same_rel('firmware.bin_extract/var/filesystem_core.squashfs_extract/inner/only.txt', 'inner/only.txt')            -> True
+  extract_rel('firmware.bin_extract/var/filesystem_core.squashfs_extract/inner/only.txt')             -> 'var/filesystem_core.squashfs_extract/inner/only.txt'
+  same_rel_exact('firmware.bin_extract/var/filesystem_core.squashfs_extract/inner/only.txt', 'inner/only.txt') -> False
+  carrier_root(env)           -> ('firmware.bin_extract', None)
+  same_rel_anchored(..., 'inner/only.txt')  -> False
+
+== wrap-d2: wrapper carrier, published under <tar>_extract/<member>_extract/
+  oracle_hits input
+  same_rel('firmware.bin_extract/var/tmp/filesystem.image_extract/etc/version', 'etc/version')            -> True
+  extract_rel('firmware.bin_extract/var/tmp/filesystem.image_extract/etc/version')             -> 'var/tmp/filesystem.image_extract/etc/version'
+  same_rel_exact('firmware.bin_extract/var/tmp/filesystem.image_extract/etc/version', 'etc/version') -> False
+  carrier_root(env)           -> (None, 'no squashfs_v4_* chunk at input_path $input (wrapper carrier: the published filesystem is a member)')
+  same_rel_anchored(..., 'etc/version')  -> False
+

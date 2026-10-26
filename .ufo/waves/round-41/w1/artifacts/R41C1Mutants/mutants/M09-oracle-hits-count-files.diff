@@ -1,0 +1,11 @@
+--- c1-counter.py.prototype
++++ c1-counter.py.M09-oracle-hits-count-files
+@@ -670,6 +670,6 @@
+     hits = 0
+     for rel, sha in oracle:
+-        if any(sha == fs and same_rel(fp, rel) for fp, fs, _ in files):
+-            hits += 1
++        hits += sum(1 for fp, fs, _ in files
++                    if sha == fs and same_rel(fp, rel))
+     return hits
+ 

@@ -1,0 +1,360 @@
+# round-41 L3/L4 lane-built carrier build log -- seat R41C1LCarriers
+# lane: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+# base: 49096c7e6f226af0c750c4b003be58883cb6049f (worktree tool bytes equal to base, section 0)
+# scratch root for these runs: /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers (removed when the seat finishes)
+
+## 0. tool identities (sha256 of the bytes actually invoked)
+$ sha256sum tools/round-40/gen-squashfs.py tools/round-40/sqfs-list.py
+309c502d21dfeef9b7b2a5a9a62bfa875270fdf79eec671461070996d291042e  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-40/gen-squashfs.py
+1079fa9b36a87e62b2de8ca594cfc0820e52b3450199076d9d7cc2e870353cd9  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-40/sqfs-list.py
+$ git show 49096c7e6f226af0c750c4b003be58883cb6049f:tools/round-40/gen-squashfs.py | sha256sum ; git show 49096c7e6f226af0c750c4b003be58883cb6049f:tools/round-40/sqfs-list.py | sha256sum
+309c502d21dfeef9b7b2a5a9a62bfa875270fdf79eec671461070996d291042e  -
+1079fa9b36a87e62b2de8ca594cfc0820e52b3450199076d9d7cc2e870353cd9  -
+$ sasquatch-v4be -version
+unsquashfs version 4.5.1 (2022/03/17)
+copyright (C) 2022 Phillip Lougher <phillip@squashfs.org.uk>
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2,
+or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+$ python3 -V
+Python 3.14.8
+
+## 1. build 1 and build 2 into two fresh empty dirs
+$ rm -rf /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1 /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b2
+[exit 0]
+$ python3 -I -B mk-l-carriers.py b1 --builds 1
+L3	xz	04cfb4cd6189742eaba94d0022d242d4194726a6f0684fd8381b39bc4e6c45a3	187892	13	3	20	/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L3/carrier.sqsh
+L4	gzip	4c0e545975d2993f5b3417d55990a5df5ad67fa2f21164b831119f6e85cbcfbc	169545	14	3	17	/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L4/carrier.sqsh
+[exit 0]
+$ python3 -I -B mk-l-carriers.py b2 --builds 1
+L3	xz	04cfb4cd6189742eaba94d0022d242d4194726a6f0684fd8381b39bc4e6c45a3	187892	13	3	20	/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b2/L3/carrier.sqsh
+L4	gzip	4c0e545975d2993f5b3417d55990a5df5ad67fa2f21164b831119f6e85cbcfbc	169545	14	3	17	/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b2/L4/carrier.sqsh
+[exit 0]
+
+## 2. byte identity of the two independent builds
+$ cmp b1/L3/carrier.sqsh b2/L3/carrier.sqsh
+[exit 0]
+$ cmp b1/L4/carrier.sqsh b2/L4/carrier.sqsh
+[exit 0]
+$ sha256sum b1/*/carrier.sqsh b2/*/carrier.sqsh
+04cfb4cd6189742eaba94d0022d242d4194726a6f0684fd8381b39bc4e6c45a3  /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L3/carrier.sqsh
+4c0e545975d2993f5b3417d55990a5df5ad67fa2f21164b831119f6e85cbcfbc  /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L4/carrier.sqsh
+04cfb4cd6189742eaba94d0022d242d4194726a6f0684fd8381b39bc4e6c45a3  /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b2/L3/carrier.sqsh
+4c0e545975d2993f5b3417d55990a5df5ad67fa2f21164b831119f6e85cbcfbc  /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b2/L4/carrier.sqsh
+
+## 3. in-tool determinism check (--builds 2, third fresh dir)
+$ rm -rf /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b3
+[exit 0]
+$ python3 -I -B mk-l-carriers.py b3 --builds 2
+L3	build2-equal	sha256=04cfb4cd6189742eaba94d0022d242d4194726a6f0684fd8381b39bc4e6c45a3
+L4	build2-equal	sha256=4c0e545975d2993f5b3417d55990a5df5ad67fa2f21164b831119f6e85cbcfbc
+L3	xz	04cfb4cd6189742eaba94d0022d242d4194726a6f0684fd8381b39bc4e6c45a3	187892	13	3	20	/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b3/L3/carrier.sqsh
+L4	gzip	4c0e545975d2993f5b3417d55990a5df5ad67fa2f21164b831119f6e85cbcfbc	169545	14	3	17	/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b3/L4/carrier.sqsh
+[exit 0]
+
+## 3b. determinism does not depend on mtimes or the clock
+$ rm -rf /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b4
+[exit 0]
+$ python3 - (walk b4/src, os.utime every entry to 2001-02-03T04:05:06)
+utime applied to every entry
+[exit 0]
+$ python3 -I -B tools/round-40/gen-squashfs.py b4/src b4/L3-rebuild.sqsh --endian avm-genuine --comp xz
+wrote /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b4/L3-rebuild.sqsh 187892 bytes, inodes 37 mode avm-genuine
+[exit 0]
+$ cmp b4/L3-rebuild.sqsh b1/L3/carrier.sqsh
+[exit 0]
+$ sha256sum b4/L3-rebuild.sqsh
+04cfb4cd6189742eaba94d0022d242d4194726a6f0684fd8381b39bc4e6c45a3  /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b4/L3-rebuild.sqsh
+
+## 4. oracle + non-regular tables and inspect (tools/round-40/sqfs-list.py --layout avm)
+$ mkdir -p /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L3
+[exit 0]
+$ python3 -I -B tools/round-40/sqfs-list.py --layout avm --files ev/L3/oracle.tsv --nonregular ev/L3/nonregular.tsv --inspect b1/L3/carrier.sqsh
+[exit 0]
+  inspect: layout=avm header_endian=little avm_marker=True regular_files=13 symlinks=3 dirs=20 escaping_symlinks=0 in_tree_symlinks=3 block_length_signal=layout-avm
+$ mkdir -p /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L4
+[exit 0]
+$ python3 -I -B tools/round-40/sqfs-list.py --layout avm --files ev/L4/oracle.tsv --nonregular ev/L4/nonregular.tsv --inspect b1/L4/carrier.sqsh
+[exit 0]
+  inspect: layout=avm header_endian=little avm_marker=True regular_files=14 symlinks=3 dirs=17 escaping_symlinks=0 in_tree_symlinks=3 block_length_signal=layout-avm
+
+## 5. oracle byte-reproducibility (second reader run, compare)
+$ python3 -I -B tools/round-40/sqfs-list.py --layout avm --files ev/L3/oracle2.tsv --nonregular ev/L3/nonregular2.tsv b1/L3/carrier.sqsh
+[exit 0]
+$ cmp ev/L3/oracle.tsv ev/L3/oracle2.tsv
+[exit 0]
+$ cmp ev/L3/nonregular.tsv ev/L3/nonregular2.tsv
+[exit 0]
+$ python3 -I -B tools/round-40/sqfs-list.py --layout avm --files ev/L4/oracle2.tsv --nonregular ev/L4/nonregular2.tsv b1/L4/carrier.sqsh
+[exit 0]
+$ cmp ev/L4/oracle.tsv ev/L4/oracle2.tsv
+[exit 0]
+$ cmp ev/L4/nonregular.tsv ev/L4/nonregular2.tsv
+[exit 0]
+
+## 6. --layout auto agrees (the reader's independent endianness signal)
+$ python3 -I -B tools/round-40/sqfs-list.py --layout auto --files ev/L3/auto.tsv --inspect b1/L3/carrier.sqsh
+[exit 0]
+  inspect(auto): layout=avm block_length_signal=exact header_endian=little
+$ cmp ev/L3/oracle.tsv ev/L3/auto.tsv
+[exit 0]
+$ python3 -I -B tools/round-40/sqfs-list.py --layout auto --files ev/L4/auto.tsv --inspect b1/L4/carrier.sqsh
+[exit 0]
+  inspect(auto): layout=avm block_length_signal=exact header_endian=little
+$ cmp ev/L4/oracle.tsv ev/L4/auto.tsv
+[exit 0]
+
+## 7. independent AVM proof (probe-avm-chain.py, stdlib only, no reader/sasquatch code)
+$ python3 -I -B probe-avm-chain.py b1/L3/carrier.sqsh b1/L4/carrier.sqsh --json probe.json
+== /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L3/carrier.sqsh  sha256=04cfb4cd6189742eaba94d0022d242d4194726a6f0684fd8381b39bc4e6c45a3  size=187892
+  PASS  magic sqsh (big-endian body)                   sqsh
+  PASS  version 4.0                                    4.0
+  PASS  AVM marker mkfs_time == bytes_used             187892 == 187892
+  PASS  bytes_used == file size                        187892 == 187892
+  PASS  block_size power of two                        4096
+  PASS  compression id in {1,4}                        4
+  PASS  root inode decodes big-endian as a directory   type=1 mode=0o40755
+  PASS  inode_table headers little-endian, chain exact blocks=1 decoded=1411
+  PASS  inode_table headers big-endian do NOT fit      BE first size=901
+  PASS  dir_table headers little-endian, chain exact   blocks=1 decoded=710
+  PASS  dir_table headers big-endian do NOT fit        BE first size=n/a
+  PASS  id_table headers little-endian, chain exact    blocks=1 decoded=4
+  PASS  id_table headers big-endian do NOT fit         BE first size=n/a
+  superblock(big-endian) {"block_log": 12, "block_size": 4096, "bytes_used": 187892, "compression": 4, "dir_table_start": 187166, "endian": "big", "export_table_start": 18446744073709551615, "flags": 0, "frag_count": 0, "frag_table_start": 18446744073709551615, "id_table_start": 187884, "inode_table_start": 185753, "inodes": 37, "magic": "sqsh", "major": 4, "minor": 0, "mkfs_time": 187892, "no_ids": 1, "root_inode": 1379, "xattr_table_start": 18446744073709551615}
+== /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L4/carrier.sqsh  sha256=4c0e545975d2993f5b3417d55990a5df5ad67fa2f21164b831119f6e85cbcfbc  size=169545
+  PASS  magic sqsh (big-endian body)                   sqsh
+  PASS  version 4.0                                    4.0
+  PASS  AVM marker mkfs_time == bytes_used             169545 == 169545
+  PASS  bytes_used == file size                        169545 == 169545
+  PASS  block_size power of two                        4096
+  PASS  compression id in {1,4}                        1
+  PASS  root inode decodes big-endian as a directory   type=1 mode=0o40755
+  PASS  inode_table headers little-endian, chain exact blocks=1 decoded=1337
+  PASS  inode_table headers big-endian do NOT fit      BE first size=n/a
+  PASS  dir_table headers little-endian, chain exact   blocks=1 decoded=637
+  PASS  dir_table headers big-endian do NOT fit        BE first size=n/a
+  PASS  id_table headers little-endian, chain exact    blocks=1 decoded=4
+  PASS  id_table headers big-endian do NOT fit         BE first size=n/a
+  superblock(big-endian) {"block_log": 12, "block_size": 4096, "bytes_used": 169545, "compression": 1, "dir_table_start": 168892, "endian": "big", "export_table_start": 18446744073709551615, "flags": 0, "frag_count": 0, "frag_table_start": 18446744073709551615, "id_table_start": 169537, "inode_table_start": 167553, "inodes": 35, "magic": "sqsh", "major": 4, "minor": 0, "mkfs_time": 169545, "no_ids": 1, "root_inode": 1305, "xattr_table_start": 18446744073709551615}
+== overall PASS
+[exit 0]
+
+## 8. sasquatch-v4be WITHOUT -be (the unblob 26.6.4 squashfs_v4_be argv) + exact cross-check
+$ rm -rf /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/x/L3
+[exit 0]
+$ sasquatch-v4be -f -n -d x/L3/root b1/L3/carrier.sqsh
+[exit 0]
+SquashFS version [1024.0] / inode count [620756992] suggests a SquashFS image of a different endianess
+Trying to decompress using default xz decompressor...
+Successfully decompressed with default xz decompressor
+Parallel unsquashfs: Using 1 processor
+16 inodes (54 blocks) to write
+
+
+created 13 files
+created 21 directories
+created 3 symlinks
+created 0 devices
+created 0 fifos
+created 0 sockets
+created 0 hardlinks
+$ python3 -I -B xcheck.py --label L3 --root x/L3/root --oracle ev/L3/oracle.tsv --nonregular ev/L3/nonregular.tsv
+L3 files=13 symlinks=3 dirs=20 oracle=13 nonregular=23 mismatches=0
+[exit 0]
+$ rm -rf /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/x/L4
+[exit 0]
+$ sasquatch-v4be -f -n -d x/L4/root b1/L4/carrier.sqsh
+[exit 0]
+SquashFS version [1024.0] / inode count [587202560] suggests a SquashFS image of a different endianess
+Trying to decompress using default gzip decompressor...
+Successfully decompressed with default gzip decompressor
+Trying to decompress using default gzip decompressor...
+Successfully decompressed with default gzip decompressor
+Trying to decompress using default gzip decompressor...
+Successfully decompressed with default gzip decompressor
+Trying to decompress using default gzip decompressor...
+Successfully decompressed with default gzip decompressor
+Parallel unsquashfs: Using 1 processor
+17 inodes (52 blocks) to write
+
+
+created 14 files
+created 18 directories
+created 3 symlinks
+created 0 devices
+created 0 fifos
+created 0 sockets
+created 0 hardlinks
+$ python3 -I -B xcheck.py --label L4 --root x/L4/root --oracle ev/L4/oracle.tsv --nonregular ev/L4/nonregular.tsv
+L4 files=14 symlinks=3 dirs=17 oracle=14 nonregular=20 mismatches=0
+[exit 0]
+
+## 9. control: all-BE argv (-be) must fail on the same bytes
+$ sasquatch-v4be -be -f -n -d x/L3-be/root b1/L3/carrier.sqsh
+[exit 1]
+Reading a different endian SQUASHFS filesystem on /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L3/carrier.sqsh
+read_id_table: failed to read id table block
+FATAL ERROR: File system corruption detected
+  top-level entries in the failed extract root: 0
+$ sasquatch-v4be -be -f -n -d x/L4-be/root b1/L4/carrier.sqsh
+[exit 1]
+Reading a different endian SQUASHFS filesystem on /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L4/carrier.sqsh
+read_id_table: failed to read id table block
+FATAL ERROR: File system corruption detected
+  top-level entries in the failed extract root: 0
+
+## 10. nesting-collision witnesses (exact paths in the fixture)
+L3: 13 regular files: etc/conf, etc/init.d/rc.S, etc/version, lib/modules/kmod.ko, opt/app/config.json, opt/x/etc/conf, sbin/tool, usr/bin/busy, usr/lib/libcore.so, usr/share/doc/LICENSE, usr/share/web/index.html, var/lib/state.dat, var/tmp/empty
+L3: 3 symlinks: {"bin/busy": "../usr/bin/busy", "usr/sbin/tool": "/sbin/tool", "usr/share/web/current": "index.html"}
+  R40-CL1 shape A (regular path ends with symlink path): 'usr/bin/busy' endswith 'bin/busy' -> True
+  mirror shape B (symlink path ends with regular path): 'usr/sbin/tool' endswith 'sbin/tool' -> True
+  deep-tail regular pair: 'opt/x/etc/conf' endswith 'etc/conf' (two distinct oracle rows)
+L4: 14 regular files: etc/conf, etc/fstab, etc/hosts, opt/x/data.bin, opt/x/etc/conf, root/.profile, sbin/tool, usr/bin/busy, usr/lib/libssl.so, usr/sbin/init, usr/share/doc/README, var/lib/db.bin, var/log/messages, var/tmp/empty
+L4: 3 symlinks: {"bin/busy": "../usr/bin/busy", "usr/sbin/tool": "/sbin/tool", "var/log/current": "messages"}
+  R40-CL1 shape A (regular path ends with symlink path): 'usr/bin/busy' endswith 'bin/busy' -> True
+  mirror shape B (symlink path ends with regular path): 'usr/sbin/tool' endswith 'sbin/tool' -> True
+  deep-tail regular pair: 'opt/x/etc/conf' endswith 'etc/conf' (two distinct oracle rows)
+[exit 0]
+
+## 11. sizes and digests of the deliverables
+$ stat -c %n %s bytes /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L3/carrier.sqsh /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L4/carrier.sqsh /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L3/oracle.tsv /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L3/nonregular.tsv /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L4/oracle.tsv /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L4/nonregular.tsv
+/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L3/carrier.sqsh 187892 bytes
+/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/b1/L4/carrier.sqsh 169545 bytes
+/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L3/oracle.tsv 1116 bytes
+/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L3/nonregular.tsv 362 bytes
+/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L4/oracle.tsv 1165 bytes
+/fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L4/nonregular.tsv 303 bytes
+[exit 0]
+$ sha256sum ev/*/oracle.tsv ev/*/nonregular.tsv probe.json
+c79c19d4b8ff51bc06d3ecba3e4ec3cdd5451c5cfba88007195b0c9e78b2d606  /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L3/oracle.tsv
+f49075887cb564924ef7733f1faf05e0a29f50b91e1b2adc15f779bfa8b20706  /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L3/nonregular.tsv
+e39a4d1361dd99532cf376100c2fd582900edcea4f5c57092eca46cd072709dc  /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L4/oracle.tsv
+9bdcacde409a9bcce02d0d29d8b9c3814d8ce5214f921b54fcb1d225451b8849  /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/ev/L4/nonregular.tsv
+cd685b44cb8f413a087cad0f87ed85c35e1823b8f5572c76ee87ca949e91ceca  /fast/scratch/hyaku/kaidoku-r41/R41C1LCarriers/probe.json
+
+## 12. reader forced all-BE (--layout be) must reject the same bytes
+$ python3 -I -B tools/round-40/sqfs-list.py --layout be --files ev/L3/be.tsv b1/L3/carrier.sqsh
+sqfs-list: metadata offset 1379 beyond block 185753 (len 901)
+[exit 2]
+$ python3 -I -B tools/round-40/sqfs-list.py --layout be --files ev/L4/be.tsv b1/L4/carrier.sqsh
+sqfs-list: metadata body out of bounds: offset 167555 length 14725, image 169545 bytes
+[exit 2]
+
+## 13. deep-tail pair: two oracle rows, different bytes
+L3 opt/x/etc/conf  6b5abc69f45f74932b9e550844275c860ae5406c35af2ababf8fbc5494498e89 96 bytes
+L3 etc/conf         afc09b9d1ab564ea49e0db2e698caa6c2222c44e86d4ca4a98ffcc811462aab9 47 bytes
+L3 distinct sha256: True   path tail equal: True
+L4 opt/x/etc/conf  728c0d7e27d5598d86df3ce2bf962bfe14123e145471c7f04ca95351218f2bf5 120 bytes
+L4 etc/conf         3de5066c9e4144ef56500053555259de5e2497374eaaeaf7f8edb7c4d635bc41 47 bytes
+L4 distinct sha256: True   path tail equal: True
+[exit 0]
+
+## 14. usage guard
+$ python3 -I -B mk-l-carriers.py   (no outdir -> argparse usage, exit 2)
+usage: mk-l-carriers.py [-h] [--writer WRITER] [--lane LANE] [--builds {1,2}]
+                        [--json JSON]
+                        outdir
+mk-l-carriers.py: error: the following arguments are required: outdir
+[exit 2]
+
+
+## 15. symlink resolution and the empty file, measured on the EXTRACTED tree
+$ python3 - (for every symlink row: resolve as a consumer would; print the resolved path, whether it stays inside the extraction root, and whether the target exists; then the empty files)
+L3 bin/busy                 -> '../usr/bin/busy'    resolves=/usr/bin/busy inside_tree=True target_exists=True
+L3 usr/sbin/tool            -> '/sbin/tool'         resolves=/sbin/tool inside_tree=True target_exists=True
+L3 usr/share/web/current    -> 'index.html'         resolves=/usr/share/web/index.html inside_tree=True target_exists=True
+L3 var/tmp/empty            size=0 regular=True
+L4 bin/busy                 -> '../usr/bin/busy'    resolves=/usr/bin/busy inside_tree=True target_exists=True
+L4 usr/sbin/tool            -> '/sbin/tool'         resolves=/sbin/tool inside_tree=True target_exists=True
+L4 var/log/current          -> 'messages'           resolves=/var/log/messages inside_tree=True target_exists=True
+L4 var/tmp/empty            size=0 regular=True
+[exit 0]
+
+## 16. exact table rows (the four collision/deep-tail paths), as committed
+# L3 oracle.tsv (regular files)
+etc/conf	afc09b9d1ab564ea49e0db2e698caa6c2222c44e86d4ca4a98ffcc811462aab9	47
+etc/init.d/rc.S	1da1d7ec00d5d9b497c45b63f7e289cdc4fe7206570ce8698dca7a5b4eb89c32	1380
+etc/version	83fb96645a8b58a5b358c1c5bd527cdd62ae08dbd4fcbf4111d64e2312587e71	30
+lib/modules/kmod.ko	e260ffbf98b984d0e5a4f791c771eeb4589dc5a153297752c5b88e6601c571bd	12000
+opt/app/config.json	e100f23140815730dc35c0a5a853b2971089dab81d95a2c0326e1baa2e68d503	56
+opt/x/etc/conf	6b5abc69f45f74932b9e550844275c860ae5406c35af2ababf8fbc5494498e89	96
+sbin/tool	9ba4c7e11b43e4cf09ec8e2b9e9dbcce707d31feeac6631487c955acfd2322b1	32000
+usr/bin/busy	c2a5bd87882a7b8faa32f6147bfd2c55cae52158458865dab0dd323ac33f6b4c	48000
+usr/lib/libcore.so	b9144862dcd41fbdad184bd371b65b2be798ab19e7c6fcf327bf23b86e113344	90000
+usr/share/doc/LICENSE	4dfd4970a5ef2b1c6c86d5dcfb8fec4764b6ca5d2ee8a66330e51246e51ed5c5	1640
+usr/share/web/index.html	f15dc1bb842880027716a70740e8121c27812d5e3b3c8b596f9f2715cf4fc56b	5800
+var/lib/state.dat	b159b629ff3de04f5ddd38eee072d552b3f695fad7fc900359c8348f7dabb2f2	3000
+var/tmp/empty	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	0
+# L3 nonregular.tsv (dirs + symlinks)
+bin	dir	
+bin/busy	symlink	../usr/bin/busy
+etc	dir	
+etc/init.d	dir	
+lib	dir	
+lib/modules	dir	
+opt	dir	
+opt/app	dir	
+opt/x	dir	
+opt/x/etc	dir	
+sbin	dir	
+usr	dir	
+usr/bin	dir	
+usr/lib	dir	
+usr/sbin	dir	
+usr/sbin/tool	symlink	/sbin/tool
+usr/share	dir	
+usr/share/doc	dir	
+usr/share/web	dir	
+usr/share/web/current	symlink	index.html
+var	dir	
+var/lib	dir	
+var/tmp	dir	
+# L4 oracle.tsv (regular files)
+etc/conf	3de5066c9e4144ef56500053555259de5e2497374eaaeaf7f8edb7c4d635bc41	47
+etc/fstab	3406502a15479d38a9f2ce8947147fac35abe607a7beca4ec952f314e2e0e162	28
+etc/hosts	6e96b7df5ea22acec27d9f72ea096590ab986b23c9141d2bea62c9899f37f349	23
+opt/x/data.bin	345ba60eae2f8cd939894be7b81234d7db8067eb3b8a52e5592e722a54afee6e	8000
+opt/x/etc/conf	728c0d7e27d5598d86df3ce2bf962bfe14123e145471c7f04ca95351218f2bf5	120
+root/.profile	8c356d2b0344324ec9011717ad6bd0328534c7ddd19e94e96076a6a4b755a7a9	32
+sbin/tool	25392f8386f6baab9c802da1d409fcfe005842fd7a51fbafa31dc70486db15b0	28000
+usr/bin/busy	6acef71eeb1737d6c934e9bae2ea6f52fd437e5dc9079f4c3f4e953ac614d7bb	56000
+usr/lib/libssl.so	a5bc3d6d222f4774e0d7bc6098cee65017102e800c444ccf0d4d1b19ef9d5fd6	70000
+usr/sbin/init	c2b33b8f40a94823d6faa89bdfda9d7dc55b4c77fcf0eacaba73d8092d5f2bf8	780
+usr/share/doc/README	874ed79112255a91d5771d3c08bd83fab33852b7c9f64bdfe0e441d5a92736fd	2700
+var/lib/db.bin	70362c47a25977afa7ace8938030fb0a737b81bcb2cdd263c616ab04a1c3a357	5000
+var/log/messages	164c43a06e81aaadf5033cfc9f26f515e179bcf35c5d724e19c672c8838375e4	4200
+var/tmp/empty	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	0
+# L4 nonregular.tsv (dirs + symlinks)
+bin	dir	
+bin/busy	symlink	../usr/bin/busy
+etc	dir	
+opt	dir	
+opt/x	dir	
+opt/x/etc	dir	
+root	dir	
+sbin	dir	
+usr	dir	
+usr/bin	dir	
+usr/lib	dir	
+usr/sbin	dir	
+usr/sbin/tool	symlink	/sbin/tool
+usr/share	dir	
+usr/share/doc	dir	
+var	dir	
+var/lib	dir	
+var/log	dir	
+var/log/current	symlink	messages
+var/tmp	dir	
+
+## 17. fixture hygiene for an EXACT path test (no suffix matching needed or tolerated)
+$ python3 - (path grammar, disjointness of the two tables, and the suffix hazards that a non-exact matcher would trip on)
+L3 rows=13/23 overlap=0 suffix_hazards=2 problems=0
+L4 rows=14/20 overlap=0 suffix_hazards=2 problems=0
+[exit 0]

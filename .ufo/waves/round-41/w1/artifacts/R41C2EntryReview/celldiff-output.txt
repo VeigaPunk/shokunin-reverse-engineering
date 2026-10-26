@@ -1,0 +1,39 @@
+sha256 SKILL.md                 926dac301cf0281e2b35b6736b6f6ee869a0a1b415fd5207f9de3959c4ca0054
+sha256 tools/round-40/sqfs-triage-v2.py 336c621c46e78ca528d08597e7ed652c89fe95e31dbfe339fbfd86381c6b8617
+sha256 tools/round-39/sqfs-triage.py     ef4a8a8b7428cf7221dd3aa16bc587507d308b1eacf01074def276e744beacf2
+
+== v2 SKILL table vs v2 TABLE_BLOCK ==
+skill rows: ['avm-marker-be-dropped', 'body-extractor-failure', 'clean', 'clean-empty', 'dep-missing-be', 'dep-missing-le', 'escaping-symlink-removed', 'in-tree-symlink-metadata', 'mixed-symlinks', 'no-squashfs-chunk', 'partial-body-failure'] 
+table_block rows: ['avm-marker-be-dropped', 'body-extractor-failure', 'clean', 'clean-empty', 'dep-missing-be', 'dep-missing-le', 'escaping-symlink-removed', 'in-tree-symlink-metadata', 'mixed-symlinks', 'no-squashfs-chunk', 'partial-body-failure']
+header equal: True 12 cells
+DIVERGENT row=avm-marker-be-dropped col=cause
+  SKILL  : mkfs_time equals bytes_used, so unblob omitted -be and sasquatch-v4be failed; on a standard-BE body with a doctored marker that is the byte-order handshake, not damage, while a genuine AVM-layout body (little-endian metadata block lengths) extracts without -be and never reaches this row -> walk the inode-table metadata headers little-endian first: if they land on directory_table_start the image is AVM layout and its failure is damage (keep it); otherwise rerun through a PATH wrapper named sasquatch-v4be that appends -be (REA has no flag passthrough) and remove the wrapper afterwards
+  TABLE  : mkfs_time equals bytes_used, unblob read the AVM marker and deliberately omitted -be, so sasquatch-v4be read a standard-BE body with the wrong byte order and failed; the removal of -be, not damage, decides this row -> rerun through a PATH wrapper named sasquatch-v4be that appends -be (REA has no flag passthrough) and remove the wrapper afterwards
+DIVERGENT row=avm-marker-be-dropped col=source
+  SKILL  : S112 :44-50; S121 -DFIX_BE build; knowledge 2026-10-26-r40-sqfs-triage-v2.md :37-45
+  TABLE  : S112 :44-50; S121 -DFIX_BE build; knowledge 2026-10-26-r39-sqfs-outcome-triage.md :29-40
+
+== v1 SKILL table vs round-39 TABLE_BLOCK ==
+skill rows: ['avm-marker-be-dropped', 'body-extractor-failure', 'clean', 'dep-missing-be', 'dep-missing-le', 'escaping-symlink-removed', 'in-tree-symlink-metadata', 'no-squashfs-chunk'] 
+table_block rows: ['avm-marker-be-dropped', 'body-extractor-failure', 'clean', 'dep-missing-be', 'dep-missing-le', 'escaping-symlink-removed', 'in-tree-symlink-metadata', 'no-squashfs-chunk']
+header equal: True 9 cells
+DIVERGENT(decision) row=clean col=handler
+  SKILL  : `squashfs_v4_*`
+  TABLE  : `squashfs_v4_be`
+DIVERGENT(decision) row=dep-missing-be col=published files
+  SKILL  : `*`
+  TABLE  : `0`
+DIVERGENT(decision) row=dep-missing-le col=published files
+  SKILL  : `*`
+  TABLE  : `0`
+DIVERGENT(decision) row=escaping-symlink-removed col=handler
+  SKILL  : `squashfs_v4_*`
+  TABLE  : `squashfs_v4_be`
+DIVERGENT(decision) row=in-tree-symlink-metadata col=handler
+  SKILL  : `squashfs_v4_*`
+  TABLE  : `squashfs_v4_be`
+
+escaping row (SKILL:372) decision cells: ['escaping-symlink-removed', '`extract_firmware`', '`unblob`', '`squashfs_v4_*`', '`*`', '`*`', '`*`', '`yes`', '`*`']
+_skel(TABLE_BLOCK) uses in v2 selftest: 19
+_skel(TABLE_BLOCK) uses in v1 selftest: 16
+contains-operator present in v2 py: False

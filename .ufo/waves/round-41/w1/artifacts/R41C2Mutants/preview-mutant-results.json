@@ -1,0 +1,169 @@
+{
+ "N04-contains-parsed-as-exact": {
+  "desc": "contains cell matched as an exact set (operator silently dropped)",
+  "mutant_sha256": "06ebede8a0e79330ce7807d4f5d02f5bb93be167265293210814028525e1badb",
+  "own_cases": [
+   "partial+in-tree"
+  ],
+  "selftest": {
+   "exit": 1,
+   "fails": [
+    "partial+in-tree: pair ['unclassified', 'none'], expected ['partial-body-failure', 'salvage-partial']",
+    "partial+mixed: pair ['unclassified', 'none'], expected ['partial-body-failure', 'salvage-partial']",
+    "depth+in-tree: pair ['unclassified', 'none'], expected ['depth-limited-nested', 'audit-depth']",
+    "depth+mixed: pair ['unclassified', 'none'], expected ['depth-limited-nested', 'audit-depth']"
+   ]
+  },
+  "src": "v3-interp-preview.py",
+  "verdict": "KILLED"
+ },
+ "N05-contains-accepted-in-deps-column": {
+  "desc": "the \u2287 operator accepted in the dependencies column too (grammar scope widened)",
+  "mutant_sha256": "f3cb88b935b801f604ac038e03d8f0074107eac157e25a1702783c4aad0948c5",
+  "own_cases": [
+   "deps-contains"
+  ],
+  "selftest": {
+   "exit": 1,
+   "fails": [
+    "deps-contains: exit 0, expected 2"
+   ]
+  },
+  "src": "v3-interp-preview.py",
+  "verdict": "KILLED"
+ },
+ "N06-contains-repeated-member-accepted": {
+  "desc": "repeated-member check disabled for contains cells",
+  "mutant_sha256": "25135e4cd85528e3ea514d9c24a614f8be15f1038d88a82e0cfaa9ac1b30d823",
+  "own_cases": [
+   "contains-dup"
+  ],
+  "selftest": {
+   "exit": 1,
+   "fails": [
+    "contains-dup: exit 0, expected 2",
+    "repeated-member: exit 0, expected 2"
+   ]
+  },
+  "src": "v3-interp-preview.py",
+  "verdict": "KILLED"
+ },
+ "N07-rules-reversed": {
+  "desc": "classify iterates reversed(rules) (last match wins; precedence rows reordered)",
+  "mutant_sha256": "805cfb52781330d56df56601cdac8caaef0967bda5e34fab8bbfbde843c6bf97",
+  "own_cases": [
+   "partial+mixed"
+  ],
+  "selftest": {
+   "exit": 1,
+   "fails": [
+    "partial+mixed: pair ['mixed-symlinks', 'audit-symlinks'], expected ['partial-body-failure', 'salvage-partial']",
+    "depth+mixed: pair ['mixed-symlinks', 'audit-symlinks'], expected ['depth-limited-nested', 'audit-depth']"
+   ]
+  },
+  "src": "v3-interp-preview.py",
+  "verdict": "KILLED"
+ },
+ "N08-evaluator-compare-label-only": {
+  "desc": "evaluator-vs-table comparison drops the action half",
+  "mutant_sha256": "2e20dcae3f7db0692b5f38a9c6e95fe09e0acad209be8512f8453c695dbbbc2a",
+  "own_cases": [
+   "eval-action-dev"
+  ],
+  "selftest": {
+   "exit": 1,
+   "fails": [
+    "eval-action-dev: want exit 1 got 0",
+    "eval-dev-second-replicate: want exit 1 got 0",
+    "gen-dev-second-replicate: want exit 1 got 0"
+   ]
+  },
+  "src": "v3-counter-preview.py",
+  "verdict": "KILLED"
+ },
+ "N09-evaluator-crash-backfilled": {
+  "desc": "a crashed evaluator is backfilled from the table answer (scored against itself)",
+  "mutant_sha256": "63c8b060dfd8ec2d6f320d10c7d4417e969c58c44f423679b9527058a878494e",
+  "own_cases": [
+   "eval-crash"
+  ],
+  "selftest": {
+   "exit": 1,
+   "fails": [
+    "eval-crash: want exit 1 got 0"
+   ]
+  },
+  "src": "v3-counter-preview.py",
+  "verdict": "KILLED"
+ },
+ "N10-evaluator-first-replicate-only": {
+  "desc": "evaluator-vs-table comparison samples only the first replicate per class",
+  "mutant_sha256": "ab3ee6b68c732ab82b2c59539b82fa44041115109ae4ce565e2df9027bdffb76",
+  "own_cases": [
+   "eval-dev-second-replicate"
+  ],
+  "selftest": {
+   "exit": 1,
+   "fails": [
+    "eval-dev-second-replicate: want exit 1 got 0"
+   ]
+  },
+  "src": "v3-counter-preview.py",
+  "verdict": "KILLED"
+ },
+ "N11-class-expected-dropped": {
+  "desc": "class_expected binding vacuated (disagreement no longer computed)",
+  "mutant_sha256": "5cf910f5293aaebe8054481acac1badc8dcdf85c5b1a51908ddbb6dd7aaf3cba",
+  "own_cases": [
+   "gen-label-disagrees"
+  ],
+  "selftest": {
+   "exit": 1,
+   "fails": [
+    "gen-label-disagrees: want exit 1 got 0",
+    "gen-dev-second-replicate: want exit 1 got 0"
+   ]
+  },
+  "src": "v3-counter-preview.py",
+  "verdict": "KILLED"
+ },
+ "N12-class-expected-not-gating": {
+  "desc": "class_expected recorded but excluded from bindings_ok (reported, not failed)",
+  "mutant_sha256": "7d0e01693b8a0b16262e366e3393c5fb035fab85b1adcdc8a239eeecaebf0a86",
+  "own_cases": [
+   "gen-label-disagrees"
+  ],
+  "selftest": {
+   "exit": 1,
+   "fails": [
+    "gen-label-disagrees: want exit 1 got 0",
+    "gen-dev-second-replicate: want exit 1 got 0"
+   ]
+  },
+  "src": "v3-counter-preview.py",
+  "verdict": "KILLED"
+ },
+ "N13-class-expected-first-replicate-only": {
+  "desc": "class_expected binding samples only the first replicate per class",
+  "mutant_sha256": "4e8769c39796fce89325d2928f3fb3c826ab37a38cf48ee8bdecae04c2cbf07e",
+  "own_cases": [
+   "gen-dev-second-replicate"
+  ],
+  "selftest": {
+   "exit": 1,
+   "fails": [
+    "gen-dev-second-replicate: want exit 1 got 0"
+   ]
+  },
+  "src": "v3-counter-preview.py",
+  "verdict": "KILLED"
+ },
+ "pristine_counter": {
+  "exit": 0,
+  "fails": []
+ },
+ "pristine_interp": {
+  "exit": 0,
+  "fails": []
+ }
+}

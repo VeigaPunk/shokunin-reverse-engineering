@@ -1,0 +1,113 @@
+## A. how many registry rows cite the sibling tree (corpus/SOURCES.md)
+$ git -C LANE grep -c shokuknow -- corpus
+corpus/QUALITY.md:1
+corpus/README.md:4
+corpus/SOURCES.md:1
+corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md:1
+corpus/knowledge/2026-10-26-unblob-format-matrix.md:1
+corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md:1
+corpus/lessons/round-36.md:1
+corpus/lessons/round-38-verifier-spotcheck.md:3
+corpus/lessons/round-38.md:1
+corpus/lessons/round-39-verifier-spotcheck.md:2
+corpus/lessons/round-39.md:3
+corpus/lessons/round-40-verifier-spotcheck.md:1
+corpus/lessons/round-40.md:2
+
+## B. the same sweep outside corpus/ (plans, PROVINCE, SKILL, SCORECARD, SHONEN)
+$ git -C LANE grep -n shokuknow -- plans PROVINCE.md SKILL.md SCORECARD.md SHONEN.md
+grep exit=1 (1 = no match anywhere on these surfaces)
+
+## C. no registry row cites a host scratch body (the only /tmp hits are paths INSIDE the vendor image)
+$ git -C LANE grep -o -n -e '/fast/scratch[^ ]*' -e '/tmp/[^ ]*' -- corpus/SOURCES.md
+corpus/SOURCES.md:131:/tmp/filesystem.image`
+corpus/SOURCES.md:131:/tmp/x86/filesystem.image`
+note: those two are the member paths var/tmp/filesystem.image and var/tmp/x86/filesystem.image inside the vendor image (S125 row),
+      not host scratch; the classifier anchors at ^/tmp, so they are not scored.
+scope: numbered 'source: SNNN' lineage lines only; free-form '- source:' bullets in older knowledge entries are out of scope
+       (many name deleted /tmp scratch and declare it in their own '## Scratch' section).
+
+## D. the three S126 bodies still hash to the pins the row carries (integrity holds; reach does not)
+f205807de8016ead8732d77f14acf5e99e6527e02d6281566f6070b7c8539eb0  /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/lead1-avm-image.tsv
+c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32  /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs
+352e0d794143df9cc4fa6113d72ee5a620ea0aa201a930e00e91590518aed5d7  /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/unblob.log
+row pins: f205807de8016ead8732d77f14acf5e99e6527e02d6281566f6070b7c8539eb0 (tsv)
+          c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32 (image)
+          352e0d794143df9cc4fa6113d72ee5a620ea0aa201a930e00e91590518aed5d7 (log)
+
+## E. durability is partial: the bodies are committed in the SIBLING repo at an unpinned revision
+$ git -C /home/vgpnk/Projects/shokuknow log -1 --format='%H %cI'
+8b94c5c12c0521e4cd9ed8e5b6939afd8518c715 2026-10-24T11:02:02-03:00
+lead1-avm-image.tsv f205807de8016ead8732d77f14acf5e99e6527e02d6281566f6070b7c8539eb0  -
+avm-be.squashfs c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32  -
+unblob.log 352e0d794143df9cc4fa6113d72ee5a620ea0aa201a930e00e91590518aed5d7  -
+
+## F. a fresh checkout of the LANE cannot reach those bodies (clone of the base)
+$ git -C /fast/scratch/hyaku/kaidoku-r41/R41MistakeHunt/fx.sweep/lane ls-tree -r --name-only 49096c7e6f226af0c750c4b003be58883cb6049f | grep -i 'avm-be'
+.ufo/waves/round-38/w2/artifacts/R38W2AvmProbe/sasquatch-k1-avm-beflag.exit.txt
+.ufo/waves/round-38/w2/artifacts/R38W2AvmProbe/sasquatch-k1-avm-beflag.stderr.txt
+.ufo/waves/round-38/w2/artifacts/R38W2AvmProbe/sasquatch-k1-avm-beflag.stdout.txt
+.ufo/waves/round-38/w2/artifacts/R38W2AvmProbe/sasquatch-k4-avm-beflag.exit.txt
+.ufo/waves/round-38/w2/artifacts/R38W2AvmProbe/sasquatch-k4-avm-beflag.stderr.txt
+.ufo/waves/round-38/w2/artifacts/R38W2AvmProbe/sasquatch-k4-avm-beflag.stdout.txt
+.ufo/waves/round-39/w1/artifacts/R39AssimAvmCritic/avm-be-markerstripped.sqsh
+.ufo/waves/round-39/w1/artifacts/R39AssimAvmCritic/unblob-u2-avm-be.log
+.ufo/waves/round-39/w1/artifacts/R39AssimAvmScout/fetch/S192-freetz-AVM-BE-format.txt
+.ufo/waves/round-39/w1/artifacts/R39AssimAvmScout/fetch/sasquatch-v4be-beflag-genuine-avm-be.stderr.txt
+.ufo/waves/round-39/w1/artifacts/R39AssimAvmScout/fetch/sasquatch-v4be-noflag-genuine-avm-be.stderr.txt
+.ufo/waves/round-39/w1/artifacts/R39C2Triage/dev-carriers/C-avm-be.sqsh
+.ufo/waves/round-39/w2/artifacts/R39W2AssimAdjudicate/S114-AVM-BE-format.txt
+.ufo/waves/round-39/w2/artifacts/R39W2AssimAdjudicate/rea-avm-be-control.txt
+.ufo/waves/round-40/w1/artifacts/R40C1AvmWriter/probe-round11-avm-be.txt
+.ufo/waves/round-40/w1/artifacts/R40C1AxisFit/evidence/freetz-avm-be-format.txt
+.ufo/waves/round-40/w1/artifacts/R40C1Controls/CTL-C1-17/corpus/knowledge/2026-10-26-r40-avm-be-squashfs-v4-core.md
+.ufo/waves/round-40/w1/artifacts/R40C1Counter/dev-avm-be-4096.squashfs
+.ufo/waves/round-40/w1/artifacts/R40C1MarkerBoundary/envelopes/avm-be.envelope.json
+.ufo/waves/round-40/w1/artifacts/R40C1MarkerBoundary/fixtures/avm-be.squashfs
+.ufo/waves/round-40/w1/artifacts/R40C1MarkerBoundary/logs/sasquatch/avm-be-be.stderr.txt
+.ufo/waves/round-40/w1/artifacts/R40C1MarkerBoundary/logs/sasquatch/avm-be-noflag.stderr.txt
+.ufo/waves/round-40/w1/artifacts/R40C1MarkerBoundary/logs/unblob/avm-be.log
+.ufo/waves/round-40/w1/artifacts/R40C1Revenger/round11-avm-be.squashfs
+.ufo/waves/round-40/w1/artifacts/R40Quarantine/avm-be-r11-header-check.txt
+.ufo/waves/round-40/w1/artifacts/R40Quarantine/avm-be-r11.squashfs
+.ufo/waves/round-40/w1/artifacts/R40Quarantine/freetz-AVM-BE-format.txt
+.ufo/waves/round-40/w1/artifacts/R40SrcFreetz/AVM-BE-format.txt.fetched-2026-10-26
+.ufo/waves/round-40/w1/artifacts/R40SrcFreetz/AVM-BE-format.txt.headers
+corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md
+$ ls /fast/scratch/hyaku/kaidoku-r41/R41MistakeHunt/fx.sweep/lane/corpus/evidence/round-11
+ls: cannot access '/fast/scratch/hyaku/kaidoku-r41/R41MistakeHunt/fx.sweep/lane/corpus/evidence/round-11': No such file or directory
+note: corpus/evidence/round-40/c1/L1/carrier.sqsh is committed in the same lane (lane-built carrier, in-lane) --
+230884
+
+## G. the two surfaces the finding names, at the base revision
+$ git -C LANE show REV:corpus/SOURCES.md | awk 'NR==132' | cut -c1-160
+| S126 | A real AVM-BE image built by the lane and extracted by unblob — /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/lead1-avm-image.tsv (sha256 f
+$ git -C LANE show REV:corpus/knowledge/2026-10-26-r40-avm-be-squashfs-core.md | sed -n '5p' | cut -c1-160
+source: S126 — /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/lead1-avm-image.tsv — the retained round-11 AVM-BE image observation, re-opened 2026-10
+
+## H. the closure already filed this, status-neutral
+$ git -C LANE show REV:corpus/lessons/round-40-verifier-spotcheck.md | sed -n '87p'
+- D1 — S126 and the AVM entry's lineage point at `/home/vgpnk/Projects/shokuknow/…` outside the lane repo; resolvable on this host today (digest matches) but not durable for a fresh checkout. Commit a copy or a digest-pinned extract under `corpus/evidence/`, or mark the row host-local.
+
+## I. two of the three cited bodies ARE in the lane already (as round-40 wave artifacts); the third is not
+.ufo/waves/round-40/w1/artifacts/R40C1Revenger/round11-avm-be.squashfs c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32  -
+.ufo/waves/round-40/w1/artifacts/R40Quarantine/avm-be-r11.squashfs c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32  -
+.ufo/waves/round-40/w1/artifacts/R40C1Counter/dev-avm-be-4096.squashfs c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32  -
+.ufo/waves/round-40/w1/artifacts/R40C1MarkerBoundary/fixtures/avm-be.squashfs c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32  -
+.ufo/waves/round-40/w1/artifacts/R40Quarantine/lead1-avm-image.tsv f205807de8016ead8732d77f14acf5e99e6527e02d6281566f6070b7c8539eb0  -
+row pins: image c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32
+          tsv   f205807de8016ead8732d77f14acf5e99e6527e02d6281566f6070b7c8539eb0
+
+tracked files named lead1-avm-image.tsv or unblob.log in the whole lane at REV:
+.ufo/waves/round-39/w2/artifacts/R39W2C1Fabricate/unblob-K1/unblob.log
+.ufo/waves/round-40/w1/artifacts/R40Quarantine/lead1-avm-image.tsv
+unblob.log
+
+## J. same basename, different body: the lane-root unblob.log is NOT the round-11 extraction log
+unblob.log (lane root, REV) 2d651a4aa6ea3937872a249f7ed3509c4da5a5ca6dfab2d017f8767f69f16299  -
+row pin for the round-11 log: 352e0d794143df9cc4fa6113d72ee5a620ea0aa201a930e00e91590518aed5d7
+the lane-root file shares M38-7's recorded prefix (2d651a4a) but not its tail (…9299 vs …f16299): attribution withheld.
+a repair that points S126 at 'unblob.log' substitutes a different observation either way.
+
+and none of the in-lane copies is named by any registry row or knowledge entry:
+grep exit=1 (1 = none)

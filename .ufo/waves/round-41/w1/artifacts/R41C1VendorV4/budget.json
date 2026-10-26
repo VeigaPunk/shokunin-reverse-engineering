@@ -1,0 +1,76 @@
+{
+  "claim": "R41-C1",
+  "carrier_candidate": "V4",
+  "rea": {
+    "pin": "rea-agents@6.5.0",
+    "package_version": "6.5.0",
+    "max_depth": 1,
+    "unblob": "26.6.4"
+  },
+  "budget_constants": {
+    "max_output_files": {
+      "default": 10000,
+      "allowed": "1..100000",
+      "source": "rea-agents@6.5.0 dist/domain/firmware/firmwareAnalysis.js:42-46 -- z.number().int().min(1).max(100_000).default(10_000).describe(\"Staging entry budget, including directories and links\")",
+      "duplicate_contract": "dist/cli-runtime/cutterToolContracts-TZH9EHr5.js:1763 (same default and description)",
+      "counts": "inventoryFirmwareOutput (dist/firmware/FirmwareFiles.js:121-180) walks REA's staging root recursively without following symlinks; each directory entry name counts once (throw at count > maxEntries, line 151-153) whether it is a file, symlink, directory or special file; directories are descended into as well, so a directory contributes one entry per name it holds",
+      "not_counted": "the staging root itself; nothing outside REA's staging root"
+    },
+    "max_output_bytes": {
+      "default": 268435456,
+      "allowed": "1..536870912",
+      "source": "rea-agents@6.5.0 dist/domain/firmware/firmwareAnalysis.js:35-41 -- default(256*1024*1024).describe(\"Staging file-byte budget, checked during extraction; transient overshoot is possible\")",
+      "counts": "sum of regular-file sizes only (dist/firmware/FirmwareFiles.js:172-174, bytes += stat.size for regular files; links and specials add 0)"
+    }
+  },
+  "chosen": {
+    "subject": "nested filesystem_core.squashfs (carved to bytes_used)",
+    "advanced_layout": "avm",
+    "avm_marker": true,
+    "staging_entry_model": {
+      "chunk_directory": 1,
+      "rootfs_directories": 401,
+      "rootfs_regular_files": 6349,
+      "rootfs_symlinks": 615,
+      "rootfs_special": 1,
+      "total": 7367
+    },
+    "entry_budget": 10000,
+    "entry_headroom": 2633,
+    "regular_file_bytes": 110187475,
+    "byte_budget": 268435456,
+    "byte_headroom": 158247981,
+    "fits_at_max_depth_1": true
+  },
+  "fallback": {
+    "subject": "wrapper member ./var/tmp/filesystem.image",
+    "advanced_layout": "avm",
+    "avm_marker": true,
+    "staging_entry_model": {
+      "chunk_directory": 1,
+      "wrapper_directories": 9,
+      "wrapper_regular_files": 8,
+      "wrapper_symlinks": 85,
+      "wrapper_special": 1,
+      "total": 104
+    },
+    "entry_budget": 10000,
+    "entry_headroom": 9896,
+    "regular_file_bytes": 34352352,
+    "byte_budget": 268435456,
+    "byte_headroom": 234083104,
+    "fits_at_max_depth_1": true
+  },
+  "decision": {
+    "rule": "nested core IF AVM-BE and its entry count fits the staged-entry budget at --max-depth 1; else the wrapper member",
+    "nested_is_avm_be": true,
+    "nested_fits": true,
+    "result": "nested filesystem_core.squashfs of FRITZ.Box_5491-07.31.image, carved [0, 32720860)",
+    "carrier_sha256": "ce27ebca903a1574465ddfa0626943339ce6bc8155f31f88d04049afb570087f"
+  },
+  "measurement_notes": [
+    "Entry and byte counts are the oracle's own name census, cross-checked by a sasquatch-v4be -f -no-exit-code extraction of the same bytes: 6349 regular files, 615 symlinks, 401 directories, 1 char device (dev/led 247:0); the root directory is not a staging name.",
+    "REA adds one directory per chunk under its staging root (round-40 V1 receipt: chunk input `$output/firmware.bin_extract`), counted as the single `chunk_directory` entry.",
+    "The staging byte budget sees 110187475 bytes of regular-file data (105.08 MiB) against 256 MiB, and the entry budget 7367 against 10000; both hold with margin."
+  ]
+}

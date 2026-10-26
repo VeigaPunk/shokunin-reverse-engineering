@@ -1,0 +1,53 @@
+table: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w1/artifacts/R41C2Interp/sqfs-triage-v3-table.md
+interpreter: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w1/artifacts/R41C2Interp/sqfs-triage-v3.py
+tuples: 11520
+oracle label->action pairs (round-40 committed map + the claimed new action):
+  avm-marker-be-dropped      wrap-extractor-be
+  body-extractor-failure     preserve-failure
+  clean                      none
+  clean-empty                confirm-empty
+  dep-missing-be             install-extractor-be
+  dep-missing-le             install-extractor-le
+  depth-limited-nested       raise-depth
+  escaping-symlink-removed   expect-link-absent
+  in-tree-symlink-metadata   count-gap
+  mixed-symlinks             audit-symlinks
+  no-squashfs-chunk          inspect-input
+  partial-body-failure       salvage-partial
+  unclassified               none
+precedence steps exercised:
+  step 1  t02880  unclassified/none  table unclassified/none  agree
+          tuple OP=extract_firmware PV=binwalk H=() G=() D=() BE=yes SR=yes P=0
+  step 2  t00000  no-squashfs-chunk/inspect-input  table no-squashfs-chunk/inspect-input  agree
+          tuple OP=extract_firmware PV=unblob H=() G=() D=() BE=yes SR=yes P=0
+  step 3  t00780  dep-missing-le/install-extractor-le  table dep-missing-le/install-extractor-le  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('missing-extractor-dependency',) D=('sasquatch',) BE=yes SR=yes P=0
+  step 4  t00625  partial-body-failure/salvage-partial  table partial-body-failure/salvage-partial  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('extractor-failure',) D=() BE=yes SR=yes P=3
+  step 5  t01204  avm-marker-be-dropped/wrap-extractor-be  table avm-marker-be-dropped/wrap-extractor-be  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_be',) G=('extractor-failure',) D=() BE=no SR=yes P=0
+  step 6  t00624  body-extractor-failure/preserve-failure  table body-extractor-failure/preserve-failure  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('extractor-failure',) D=() BE=yes SR=yes P=0
+  step 7  t00720  depth-limited-nested/raise-depth  table depth-limited-nested/raise-depth  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('depth-limited',) D=() BE=yes SR=yes P=0
+  step 8  t00672  mixed-symlinks/audit-symlinks  table mixed-symlinks/audit-symlinks  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('unpublished-entry',) D=() BE=yes SR=yes P=0
+  step 9  t00576  escaping-symlink-removed/expect-link-absent  table escaping-symlink-removed/expect-link-absent  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=() D=() BE=yes SR=yes P=0
+  step 10 t00674  in-tree-symlink-metadata/count-gap  table in-tree-symlink-metadata/count-gap  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('unpublished-entry',) D=() BE=yes SR=no P=0
+  step 11 t00578  clean-empty/confirm-empty  table clean-empty/confirm-empty  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=() D=() BE=yes SR=no P=0
+  step 12 t00768  unclassified/none  table unclassified/none  agree
+          tuple OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('missing-extractor-dependency',) D=() BE=yes SR=yes P=0
+agreement: 10836/11520 tuples match on (label, action)
+known divergence K1-non-v4-handler: 576 tuples
+  t01728 OP=extract_firmware PV=unblob H=('squashfs_v3',) G=() D=() BE=yes SR=yes P=0  oracle no-squashfs-chunk/inspect-input  table unclassified/none
+  t01729 OP=extract_firmware PV=unblob H=('squashfs_v3',) G=() D=() BE=yes SR=yes P=3  oracle no-squashfs-chunk/inspect-input  table unclassified/none
+  t01730 OP=extract_firmware PV=unblob H=('squashfs_v3',) G=() D=() BE=yes SR=no P=0  oracle no-squashfs-chunk/inspect-input  table unclassified/none
+known divergence K2-dependency-names-both: 108 tuples
+  t00804 OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('missing-extractor-dependency',) D=('sasquatch', 'sasquatch-v4be') BE=yes SR=yes P=0  oracle dep-missing-be/install-extractor-be  table unclassified/none
+  t00805 OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('missing-extractor-dependency',) D=('sasquatch', 'sasquatch-v4be') BE=yes SR=yes P=3  oracle dep-missing-be/install-extractor-be  table unclassified/none
+  t00806 OP=extract_firmware PV=unblob H=('squashfs_v4_le',) G=('missing-extractor-dependency',) D=('sasquatch', 'sasquatch-v4be') BE=yes SR=no P=0  oracle dep-missing-be/install-extractor-be  table unclassified/none
+ledger: /fast/scratch/hyaku/kaidoku-r41/R41C2Interp/lf.tsv (11520 lines)
+RESULT: agree on every tuple outside the two documented grammar limits
