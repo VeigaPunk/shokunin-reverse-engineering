@@ -154,7 +154,7 @@ absorbed.
 - **`.jsc` → source mapping** — Ignition disassembly held; a View8/jsc2js-style
   bytecode-to-source mapper is the next frontier for typora's real app.
 - **sasquatch** — unblob's squashfs recursion extractor (AUR-only); 7z fallback
-  covers the carved-image path today.
+  covers the carved-image path today. [2026-10-26: superseded for LE SquashFS v4 — see `## Round-36 additions to Core`; big-endian/AVM stays here.]
 - **adb device surface** — 22/24 verbs need a live device/emulator;
   `collect-adb-bugreport` blocks ~10min on dead serial.
 - **Signal/1Password-scale asar analysis** — 1Password's 40.7MB asar + 188MB
