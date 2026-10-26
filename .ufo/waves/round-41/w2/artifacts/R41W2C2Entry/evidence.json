@@ -1,0 +1,59 @@
+{
+  "seat": "R41W2C2Entry",
+  "verdict": "DEFECTS FOUND",
+  "attacked": "corpus/knowledge/2026-10-26-r41-sqfs-triage-v3.md vs frozen interpreter, SKILL block 20 citations, committed evidence, R41-C2 honest stop",
+  "confirmed": {
+    "grammar_contains_only_gap_kinds": "sqfs-triage-v3.py:406-407 (contains=True only for gap kinds; contains=False for dependencies); match_set 650-658; docstring; selftest cases",
+    "grammar_none_empty_set": "match_set 'none' -> not values",
+    "grammar_deps_exact_by_name": "contains=False; equality on frozenset; fnmatch only for handler patterns",
+    "grammar_no_embedded_copy": "selftest c_no_embedded_table, c_print_table_removed; docstring 3",
+    "handler_none_semantics": "rule_matches none-branch requires H empty; H built from chunks startswith('squashfs')",
+    "v1_v3_divergence": "v1-v3 handler in H => row 1 (handler none) fails, other rows need squashfs_v4_* => unclassified",
+    "twelve_rows_labels_actions": "SKILL block 20 12 rows; actions line 12 tokens; --table-only: rules 12, exit 0",
+    "recheck_command": "python3 -I -B tools/round-41/sqfs-triage-v3.py --skill SKILL.md --table-only -> exit 0, rules: 12 (marker 434, actions 435, table 436)",
+    "citation": "SKILL.md line 401 -> entry :11-25; only citation into entry in SKILL.md (grep stem = 1 hit); range contains the cited grammar statements",
+    "measured_26_26": ".ufo/waves/round-41/w1/artifacts/R41C2TableDraft/a-heldout-26.tsv (26 rows, all yes)",
+    "measured_18_18": "c-combined.tsv (18 rows, all yes)",
+    "measured_7_18": "ctl-exact-c-combined.tsv (7 yes)",
+    "measured_0_4": "ctl-exact-b-c1-4.tsv (4 NO)",
+    "round40_c1_carriers": "after.json V1/V2/L1/L2: kinds=[depth-limited, unpublished-entry], handlers=[squashfs_v4_be], deps=[], files 697/8/7/6",
+    "mh6": "avm-measurements.txt: markerstripped noflag exit=0 files=4; -be exit=1 files=0",
+    "indep_eval_s6": "R40W2C2IndepEval.md:188-189 H21 5 files, 4 match, 5th 16384-byte truncation of 19873-byte file",
+    "f6": "R40W2C2AxisFit.md F6 H11+injected extractor-failure -> escaping-symlink-removed/expect-link-absent",
+    "l2_wrapper": "l2-wrapper-measurement.md: run 2 wrapper appending -be -> G=∅, P=4 (3 tree-identical files + marker)",
+    "controls_prefreeze": "dev-scores-prefreeze.json: 0,4,34,2,38,31,42,44 + SKILL.md 52/52; dev_seed = sha256('dev41') = c9e30c10...",
+    "heldout_seed_freeze": "manifest seed = d764389e9cbe61b9d1b07538ff3bff02d50bb34f = freeze; generator sha256 652d71af... matches git show freeze:tools/round-41/heldout-gen-v3.py",
+    "s112_lines": "24-70 class; AVM branch 44-50 (48 is_avm, 49-50 -be omitted); magics 102/159/245/463/522",
+    "s118_lines": "is_recursive_link 42-47; fix_symlink 50-92; loop 58-65; empty target 67-69 (removal at 70-71); containment 79-91",
+    "s119_lines": "MAX_EXTRACTION_DEPTH=10 @23; depth continuation 24-29; emptyGap 39-46; dep gaps 161-201; extractor-failure 288-293; depth-limited 294-300; unpublished-entry 301-308; firmwareAnalysis.js kind enum 85-90, symlink/special @139; FirmwareRelease.js limits 27-32",
+    "s120_lines": "ExtractCommandFailedReport 91-98 (command @95); ExtractorDependencyNotFoundReport 118-122; ExtractorTimedOut 125-131 (cmd @129); command.py raise sites 60-77"
+  },
+  "findings": [
+    {
+      "severity": "moderate",
+      "id": "heldout-composition-stale",
+      "claim": "Entry Scoring section enumerates 18 named classes (13 v2 + 5 combined/depth), two replicates each => 36 + 12 combos = 48, not 52",
+      "evidence": "heldout-gen-v3.py lines 359-378 RECIPES includes body-extractor-failure-le and failure-depth-limited; DEFAULT_CLASSES tuple of 20; receipt planned_classes length 20; n=52; claims Changes: two classes added (w1/R41C2Shortcuts.md §6)",
+      "impact": "SKILL citation :11-25 unaffected; entry is the block's reference document and misdescribes the frozen held-out set"
+    },
+    {
+      "severity": "low",
+      "id": "h-definition-mismatch",
+      "claim": "Entry defines H as 'the squashfs* chunk handlers' (v2 inherited); frozen claim text defines H = chunks[].handler ∪ extraction_gaps[].handler (nulls dropped); evaluator implements the union + raw fallback",
+      "evidence": "sqfs-triage-v3.py features() chunks-only; indep-eval-v3.py:35-37,230-251 union; plans/round-41-claims.md label precedence H definition",
+      "impact": "Inert on scored set (52/52 match; class declared tuples all 'match'); documentation/authority inconsistency only"
+    },
+    {
+      "severity": "info",
+      "id": "honest-stop-key-contract",
+      "claim": "Honest stop failure is observed_features_match_declared=false for C01..C12; generator writes declared tuple under key 'declared' (combos class_expected null) while counter reads class_expected.features/features/declared_features/family maps",
+      "evidence": "manifest C01 keys include 'declared' + 'class_expected': null; c2-counter.py ~1493-1506 reads; receipt declared_features.missing C01..C12, source 'class_expected.features'; spot checks C01/C07/C12 interpreter features equal their declared tuples",
+      "impact": "Stop contradicts nothing the entry tests; the entry never mentions the declared-tuple binding (added post-entry). Entry Scoring sentence 'a disagreement ... fails the claim' predates 'reported, not scored' amendment"
+    }
+  ],
+  "residual_risk": [
+    "checks.py not re-run; committed TSVs cross-checked against claimed numbers",
+    "H-equivalence on scored set taken from receipt 52/52 (external measurement)",
+    "no carrier regeneration performed by this seat (receipt bindings cover it)"
+  ]
+}

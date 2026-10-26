@@ -1,0 +1,211 @@
+{
+  "seat": "R41W2Simplify",
+  "target_revision": "7a24ff74736e84b1903db7ba01891c406a6e32a2",
+  "file_sha256_at_review": {
+    "tools/round-41/c1-counter.py": "bbabbfecb229e8992fb07149cad0cf9171a2bf31513bd5db77ddb3c4f8845cfc",
+    "tools/round-41/c2-counter.py": "c6c1ea64f07884a3b160a7e52268d295d54c8ef3bc2005704d5fae3398720af8"
+  },
+  "file_sha256_note": "Measured with sha256sum at HEAD e1c83313 (which does not touch tools/). The C2 score receipt at e9a24d07 records frozen_units['tools/round-41/c2-counter.py'] = c6c1ea64..., identical to the working file, so the file under review is the frozen one. The C1 score records no per-file sha list (frozen_tables_valid true, frozen_path_changed []), so the c1-counter.py hash is a measurement, not a freeze comparison.",
+  "line_buckets": {
+    "c1-counter.py": {
+      "total": 3414,
+      "scored_plus_main": 1574,
+      "selftest": 1173,
+      "selftest_rea": 172,
+      "unattributed_prose_consts": 495
+    },
+    "c2-counter.py": {
+      "total": 2500,
+      "scored_plus_main": 1335,
+      "selftest": 567,
+      "stub_tool_sources": 270,
+      "unattributed_prose_consts": 328
+    }
+  },
+  "unreachable_symbols": {
+    "method": "ast reachability from measure/selftest/selftest_rea roots, plus load-name counting",
+    "c1_counter": {
+      "unused_functions": [],
+      "unused_module_constants": []
+    },
+    "c2_counter": {
+      "unused_functions": [],
+      "unused_module_constants": [
+        "OPERATION_TOKEN (line 175)"
+      ]
+    },
+    "conclusion": "No unreachable functions. Dead weight is unreachable BRANCHES (probe lists, alias maps, dialect parsers) and selftest-only scaffolding, not dead symbols."
+  },
+  "items": [
+    {
+      "id": "C2-1",
+      "file": "tools/round-41/c2-counter.py",
+      "span": "1486-1505",
+      "category": "manifest-key probing",
+      "what": "decl_key loops over 5 top-level manifest keys (class_features, classes_features, feature_tuples, features_by_class, class_tuples); none exists in the frozen manifest. The per-carrier chain reads class_expected.features / features / declared_features; the manifest's own declared_schema.location key is carriers[].declared, which the chain never reads.",
+      "status": "The scored cause of the R41-C2 NOT MET. 40 named carriers fall through class_expected.features (a tuple the claim marks reported-not-scored); the 12 combo carriers have class_expected: null and no other probed key, so binding observed_features_match_declared is false.",
+      "risk_if_kept": "highest: every C2 score stays red for a reader defect, and the declared source varies per carrier id (two different documents scored in one run)",
+      "recommendation": "drop the 5-key loop and the 3-key fallback; read c.get('declared') only",
+      "evidence": "w2/artifacts/R41W2Simplify/patch-onekey.diff + c2-onekey-at-e9a24d07.json (exit 0, 52/52, bindings_false []) vs c2-unpatched-at-e9a24d07.json (exit 1, bindings_false [observed_features_match_declared])"
+    },
+    {
+      "id": "C2-2",
+      "file": "tools/round-41/c2-counter.py",
+      "span": "115",
+      "category": "frozen-path breadth",
+      "what": "FROZEN_PATHS includes the whole directory 'tools/round-41' (13 tools), while plans/round-41-claims.md freezes only {sqfs-triage-v3.py, indep-eval-v3.py, heldout-gen-v3.py, c2-counter.py} and the writer. The other 9 round-41 tools (c1-counter, c1-extra, c1-run.sh, fetch-vendor, sqfs-list, mk-l-carriers, c2-controls, local-source-gate, gen-squashfs) are never read by C2.",
+      "status": "counter stricter than its own frozen-path sentence; also couples C2 to C1's tools, contradicting '## Separability' ('Neither reads the other's round-41 data')",
+      "risk_if_kept": "high (over-blocking): any legitimate edit to an unrelated round-41 tool makes a correct C2 score exit 2 frozen_path_changed",
+      "recommendation": "freeze the 4 C2 units + writer scope + manifest dir; the counter already computes frozen_units by sha256, so nothing is loosened"
+    },
+    {
+      "id": "C2-3",
+      "file": "tools/round-41/c2-counter.py",
+      "span": "946-951 (evaluator), 851-855 (interpreter)",
+      "category": "second convention / dead dialects",
+      "what": "run_evaluator probes 5 CLI interfaces; run_interpreter probes 4. The frozen tools' argparse rejects most: indep-eval-v3.py accepts --envelopes/--out/--full/--selftest only (so --json, --format json, --json-out all exit 2), and sqfs-triage-v3.py accepts --skill/--json/--table-only plus positionals (so --envelopes exits 2).",
+      "status": "3 of 5 evaluator forms and 2 of 4 interpreter forms cannot succeed against the frozen tools. Observed at scoring time: interpreter_attempts=[{interface: json, exit: 0}], evaluator_attempts=[{interface: envelopes, exit: 0}] - the dead forms never ran.",
+      "risk_if_kept": "medium-high: the probe list would silently accept a tool whose interface changed, defeating the sha pin's purpose; each miss also records a spurious attempt"
+    },
+    {
+      "id": "C2-4",
+      "file": "tools/round-41/c2-counter.py",
+      "span": "676-702, 705-718, 724-742, 745-757, 760-787, 790-823",
+      "category": "dialect parsing substrate",
+      "what": "parse_json_results (3 key names + 2 action key names), parse_tab_results, parse_table_only (JSON branch + regex branch), infer_index_base (index-base voting), _pair (dict/list/str x 4 separators), parse_eval_pairs (depth-4 recursive scan x 5 key names). ~150 lines serving the C2-3 dialects.",
+      "status": "dead once the frozen tools have one documented interface; parse_table_only's regex branch and infer_index_base exist to repair the positional/--table-only form the counter no longer needs",
+      "risk_if_kept": "medium: alternate shapes are ways for the counter to read a decision the tool never emitted"
+    },
+    {
+      "id": "C2-5",
+      "file": "tools/round-41/c2-counter.py",
+      "span": "160-172",
+      "category": "alias map",
+      "what": "FEATURE_ALIASES maps 23 spellings onto 7 canonical keys. Measured reachability against every key anywhere in the frozen manifest: 16 spellings never appear ('h','handlers','handler','g','gaps','gap kinds','d','deps','dependencies','be','-be in child argv','sr','symlink removed','p','published files','failed'). The one live non-identity alias, 'files' -> 'published', collides by name with carriers[].damage.files (a damage descriptor). max_depth is silently dropped by the map.",
+      "status": "dead except identity entries; canonicalization hides key drift instead of failing on it",
+      "risk_if_kept": "medium: a renamed or extra key is read as a scored dimension instead of raising the missing-tuple error the binding exists to raise"
+    },
+    {
+      "id": "C2-6",
+      "file": "tools/round-41/c2-counter.py",
+      "span": "1654-1925 (stub sources), 1929-2495 (selftest)",
+      "category": "selftest scaffolding",
+      "what": "STUB_GEN (79 lines), STUB_EVAL (73), STUB_INTERP (118) simulate the three frozen tools through '@@MODE@@'/'@@EMODE@@' switchboards; selftest is 567 lines with 70 cases (20 green / 50 red). 839 lines = 34% of the file.",
+      "status": "the kill-rule evidence (claims name the dev-score controls and CTL-C2-*), so it must survive a refreeze; it should not live inside a frozen scored artifact",
+      "risk_if_kept": "medium: a harness bug cannot be fixed without a refreeze, and the harness re-implements contracts the frozen tools already own"
+    },
+    {
+      "id": "C2-7",
+      "file": "tools/round-41/c2-counter.py",
+      "span": "175",
+      "category": "dead constant",
+      "what": "OPERATION_TOKEN = 'extract_firmware' has zero loads (AST). The operation test lives in the frozen interpreter's step 1, which is the right place.",
+      "risk_if_kept": "low"
+    },
+    {
+      "id": "C2-8",
+      "file": "tools/round-41/c2-counter.py",
+      "span": "1473-1485",
+      "category": "advisory block",
+      "what": "advisory_rea_params reports per-class max_depth and hardcodes 'binding': False. Never gates met_target; only consumer of DEPTH_CLASS_PREFIX.",
+      "risk_if_kept": "low; keep if the claims want the advisory (the claim text says the predicate does not bind on REA parameters), drop if not"
+    },
+    {
+      "id": "C1-1",
+      "file": "tools/round-41/c1-counter.py",
+      "span": "969-973 (legacy_same_rel), 2439-2444 (probe()), 3118-3127 (assertions + discriminating>=3 guard)",
+      "category": "legacy-matcher scaffolding kept only for selftest demonstration",
+      "what": "legacy_same_rel is a 5-line verbatim replica of the round-40 suffix matcher. Its only caller is the selftest probe table, which asserts it mis-scores what same_rel scores right, and the selftest hard-fails unless at least 3 of 6 probes discriminate new from legacy (measured: 3 of 6).",
+      "status": "inert on the scored path; its authority is one clause of plans/round-41-claims.md kill rule ('the counter's red selftest cases, which include both collision directions under the round-40 suffix matcher'), so deletion requires rewording that clause to the fixture cases (which already pin both directions through the scored pipeline: cases at 2486-2529)"
+    },
+    {
+      "id": "C1-2",
+      "file": "tools/round-41/c1-counter.py",
+      "span": "1370-1382 (PROFILES / PROJECTION_KEYS_BY_PROFILE), 1235 (projection default), 1383 (projection_diff default)",
+      "category": "second convention / scoring-strength hole",
+      "what": "PROFILES names four profiles; 'core', 'plus-mime' and 'plus-content' map to the identical 6-key tuple and only 'plus-extractor' adds derivations/engine/published_bytes/coverage. carriers.json uses plus-extractor, and both function defaults ('core') are never taken (the only projection() caller at 1655 passes the spec profile).",
+      "status": "three of four profile names are dead vocabulary, and a spec value of 'core' passes carriers_spec validation (595 only rejects names outside PROFILES) while scoring the rerun over 6 keys instead of 10",
+      "risk_if_kept": "high: a frozen-table typo silently weakens the rerun-equality binding that the claim rests on",
+      "recommendation": "keep one profile name with its key tuple, or make each profile a distinct key tuple validated against the claim"
+    },
+    {
+      "id": "C1-3",
+      "file": "tools/round-41/c1-counter.py",
+      "span": "1755, 1763-1771",
+      "category": "dead CLI path",
+      "what": "--no-rerun is accepted and always returns exit 2 with a fixed message ('P41-C1 binds a fresh REA run'). No scoring value, and the predicate cannot be met with it.",
+      "risk_if_kept": "low; it documents refusal as a mode"
+    },
+    {
+      "id": "C1-4",
+      "file": "tools/round-41/c1-counter.py",
+      "span": "300-301 (DEV_AVM_IMAGE), 3238-3409 (selftest_rea)",
+      "category": "environment-bound scaffolding",
+      "what": "selftest_rea (172 lines) reruns REA+unblob twice on a development AVM image read from the absolute path /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs, and raises SystemExit if it is absent. Neither the claim's counting commands nor its kill rule name --selftest-rea.",
+      "status": "reachable only through --selftest-rea; hard-fails on any checkout that lacks that absolute path",
+      "risk_if_kept": "medium (false red / portability); a test that cannot run where the counter runs is not a control"
+    },
+    {
+      "id": "C1-5",
+      "file": "tools/round-41/c1-counter.py",
+      "span": "2063-3235 (selftest, 1173 lines) + 1814-1850 sb_carrier, 1853-1946 mk_env, 1949-2014 rehost, 2017-2034 mint_many, 1803-1811 find_xpin, 2037-2060 document fixtures",
+      "category": "selftest scaffolding",
+      "what": "1415 lines (41% of the file) build fixtures: sb_carrier is a second model of the AVM superblock layout_probe reads, mk_env/rehost a second model of the REA receipt, and find_xpin hunts 20 candidate paths across 10 directories instead of reading the frozen blob the scored path already reads with show(root, freeze, XPIN) at line 394.",
+      "status": "the kill-rule evidence (97 cases, 12 green / 85 red, 0 failures at tip), so it must survive; find_xpin is the one outright second convention",
+      "recommendation": "move the harness to a non-frozen tests/ file in the round-42 refreeze; replace find_xpin with show(root, freeze, XPIN)"
+    },
+    {
+      "id": "C1-6",
+      "file": "tools/round-41/c1-counter.py vs c1-extra.py",
+      "span": "1695 (frontier_note) vs c1-extra.py:142-155 (frontier_content)",
+      "category": "duplicate authority",
+      "what": "c1-counter binds that one PROVINCE line carries the mark and the entry stem; c1-extra parses the same line's verdict (heading, stem, supersedes). The counter's check is a strict subset of the second tool's.",
+      "status": "two authorities for one sentence; both must be edited when the note wording changes",
+      "risk_if_kept": "low"
+    }
+  ],
+  "do_not_drop": [
+    "c1-counter scored path: the exact-path/derivation-root matcher (same_rel/extract_rel/subject_root) and the disposition_check three-family rule - the round-40 defect repair the claim exists for",
+    "c2-counter: observed_features (the envelope reader that mirrors the frozen interpreter) and canon_features' REQUIRED_FEATURES gate - both are the binding's teeth",
+    "c2-counter: bindings_undeclared / bindings_declared_unset agreement checks (they catch a claim/ counter binding-list drift)",
+    "both selftests ('--selftest'): measured green at tip and named by the kill rules"
+  ],
+  "measured_at_tip": {
+    "c1 selftest": {
+      "exit": 0,
+      "cases": 97,
+      "green_ok": 12,
+      "red_ok": 85,
+      "path_probes": 6,
+      "path_probes_discriminating": 3,
+      "root_probes": 8,
+      "spec_probes": 7,
+      "failures": []
+    },
+    "c2 selftest": {
+      "exit": 0,
+      "cases": 70,
+      "green": 20,
+      "red": 50,
+      "pass": 70,
+      "fail": 0
+    },
+    "c2 unpatched at e9a24d07": {
+      "exit": 1,
+      "matched": 52,
+      "n": 52,
+      "bindings_false": [
+        "observed_features_match_declared"
+      ]
+    },
+    "c2 one-key at e9a24d07": {
+      "exit": 0,
+      "matched": 52,
+      "n": 52,
+      "bindings_false": [],
+      "met_target": true,
+      "declared_features.source": "declared"
+    },
+    "declared-vs-observed on all 52 carriers": "52/52 match; class_expected.features matches declared on every shared key (0 diffs on 40 carriers)"
+  }
+}

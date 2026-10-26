@@ -1,0 +1,120 @@
+# R41W2ReproV4 — exact commands, exit codes, pins
+
+Seat scratch (removed at the end of the seat; `$S` below):
+`S=/fast/scratch/hyaku/kaidoku-r41/R41W2ReproV4`
+Lane: `L=/home/vgpnk/Projects/shokunin/kaidoku-shokunin`
+Revisions: freeze `d764389e9cbe61b9d1b07538ff3bff02d50bb34f`,
+measured `e9a24d07256d1606f01aa4d2d65f74e649c5f3d4`, dispatch tip `7a24ff74736e84b1903db7ba01891c406a6e32a2`.
+
+## Toolchain pins (host-measured)
+
+| tool | version | sha256 |
+|---|---|---|
+| rea-agents (`npx -y rea-agents@6.5.0`, root `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents`) | 6.5.0 | — |
+| node | v24.21.0 | — |
+| unblob (`~/.local/bin/unblob`; receipt engine path `/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob`) | 26.6.4 | `0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09` |
+| sasquatch-v4be | 4.5.1 (2022/03/17) | `fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6` |
+| sasquatch | 4.5.1 | `ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754` |
+| python | 3.14.8 | — |
+| host kernel | 7.2.11-arch1-1, PAGE_SIZE 4096, `MAX_ARG_STRLEN` 131072 | — |
+
+No tool was installed or upgraded by this seat.
+
+## 1. Rebuild the V4 carrier at the freeze (nested chain)
+
+```
+python3 -I -B $L/tools/round-41/fetch-vendor.py --root $L --rev d764389e9cbe61b9d1b07538ff3bff02d50bb34f --cache $S/cache
+```
+exit 0, 8.3 s. Both pins verified by the tool and re-checked here:
+* V4 carrier `<cache>/ce27ebca903a1574465ddfa0626943339ce6bc8155f31f88d04049afb570087f.bin`,
+  32,720,860 bytes, sha256 `ce27ebca903a1574465ddfa0626943339ce6bc8155f31f88d04049afb570087f` == pin;
+* image sha256 `a5a3a763a615c2dab226d15463bc05fbc74e844736687fa5cc87a91d2f35f661` (`http 200`);
+* member `./var/tmp/filesystem.image` sha256 `4cfc3016d84cccf4982d6a4c50935f1771ad350994f569496e91e42be3d92f6c` (33,361,928 B);
+* nested `filesystem_core.squashfs` sha256 `4d5de25c7bee7ae9206ae1882a66abe6c694ce19bcb4d568fa235fb30c7ad947` (32,722,944 B);
+  carrier slice `[0, 32,720,860)` = `bytes_used`.
+
+## 2. Five independent REA runs (fresh outdir each)
+
+```
+cd $S && export TMPDIR=$S
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware \
+  --format json --full-output --max-depth 1 \
+  $S/cache/ce27ebca….bin $S/repro/run<N>/extract > $S/repro/run<N>/envelope.json
+```
+
+| run | exit | REA duration | envelope bytes | envelope sha256 | data sha256 |
+|---|---|---|---|---|---|
+| 1 | 0 | 10648 ms | 2,960,452 | `90b55e8063946bb46fd31796c3cf18c5c453e7b92f881b2e55f5f551ef88a586` | `9e4b18be993ecdcb5f5645d7d16334a9f639ae84cb049aad9a95848d35672931` |
+| 2 | 0 | 9376 ms | 2,960,451 | `e3ecea880bb115fbe0a0336bc1339169c6058d101b13390e718757953b24fac3` | `b8b31b7a5a2ad21b5afc7981cc4d2ad45d1f5143931a3b816ce6c5e56b49e98b` |
+| 3 | 0 | 12751 ms | — | `a66611145c3f07e1054469c080802d399493da7aec4882c2633b7ba1ce634828` | `c9ba94fd80b8642b5c6c2c008c6488daa2bfd83246a50232918f63ddb825ae16` |
+| 4 | 0 | 12637 ms | — | `f99010209ad91326e3ac90f257e150845bcb3b3839805c4ae9ef8f2aa34e8598` | `58fcb1c15a2e6c0680114bee96a3aa1a962e38dd414bc6d1e13312fd2ac08685` |
+| 5 | 0 | 12516 ms | — | `4c3fd43f8d0a6d7cc5b68fabc143e0b1b64883ef22abca3f739cb34c13d10819` | `e70716c153b93d7b6211b7de1a3d9af68d3f09029423f6fad9af0e196e6558c5` |
+
+The 1-byte envelope-size difference run1↔run2 is `meta.duration` (`"10648ms"` vs
+`"9376ms"`). Envelope byte sizes for runs 3-5 were not recorded (their data objects were
+dumped and compared, see the `data sha256` column).
+Committed receipt: `corpus/evidence/round-41/c1/V4/after.json`,
+2,852,279 B, sha256 `1efa815f5cf2412e979b85b3e20842606239858efb67a3e195ed1fc32b20d60e`
+— identical at `e9a24d07`, at tip `7a24ff74` and in the worktree.
+
+Each run's `after.json` is `json.dump(envelope["data"], indent=1)`; the `data sha256`
+column hashes those dumps (so the hashes are reproducible only with that same dump).
+
+## 3. Comparisons (scripts are in this directory)
+
+```
+python3 -I cmp.py <committed> repro/run1/after.json repro/run2/after.json > cmp-v4.json
+python3 -I stability.py <committed> repro/run{1..5}/after.json          > stability-v4.json
+python3 -I verify.py $L ce27ebca… $L/corpus/evidence/round-41/c1/V4/oracle.tsv \
+        $L/corpus/evidence/round-41/c1/V4/nonregular.tsv <6 receipts>   > verify-v4.json
+python3 -I canon.py <a> <b>                                             > canon-*.txt
+```
+`cmp.py`/`verify.py` implement only the claim's exact-path rule (one `$output/` strip, CR =
+the `squashfs_v4*` derivation child path, `rel = P[len(CR)+1:]`, whole-segment match for
+absolute diagnostic links); neither reads `c1-counter.py`.
+
+## 4. Oracle re-derivation with the frozen reader and a second producer
+
+```
+python3 -I $L/tools/round-41/sqfs-list.py --layout avm --files oracle41/oracle.tsv \
+        --nonregular oracle41/nonregular.tsv --inspect <carrier>      # exit 0
+cmp oracle41/oracle.tsv $L/corpus/evidence/round-41/c1/V4/oracle.tsv        # identical (0)
+cmp oracle41/nonregular.tsv $L/corpus/evidence/round-41/c1/V4/nonregular.tsv # identical (0)
+~/.local/bin/sasquatch-v4be -f -no-exit-code -n -d $S/xcheck/root <carrier>  # exit 0
+```
+`sasquatch-v4be` extraction agrees with `oracle.tsv` 6349/6349 (rel, sha256, size;
+`xcheck.json`). Non-root: `create_inode: could not create character device …/dev/led`
+(non-fatal with `-no-exit-code`, the device is invisible to both producers).
+
+## 5. Frozen counter against an independently produced V4 receipt (sandbox)
+
+```
+D=$(mktemp -d $S/fx.XXXX)
+git clone -q --shared $L $D/lane
+git -C $D/lane rev-parse --show-toplevel        # $D/lane  (asserted)
+git -C $D/lane checkout -q --detach e9a24d07256d1606f01aa4d2d65f74e649c5f3d4
+cp repro/run1/after.json $D/lane/corpus/evidence/round-41/c1/V4/after.json
+git -C $D/lane add corpus/evidence/round-41/c1/V4/after.json
+git -C $D/lane -c user.name=fx -c user.email=fx@fx commit -q -m "fx: independent V4 receipt"
+# fixture rev 85bfe86d24ba710e247efbed4f27f93c532d6ffb
+python3 -I -B $D/lane/tools/round-41/c1-counter.py --root $D/lane \
+  --rev 85bfe86d24ba710e247efbed4f27f93c532d6ffb \
+  --freeze d764389e9cbe61b9d1b07538ff3bff02d50bb34f \
+  --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents \
+  --carrier-cache $S/cache --json-out $S/score-myreceipt.json
+```
+exit 0, 21 s wall: `met_target: true`, `carriers_matched: 4`, `exit_code: 0`,
+`frozen_path_changed: []`, V4 `matched: true` with `projection_diff: []`,
+`oracle_hits 6349/6349`, `gaps_note "612 gaps (1 structural), 4 removals, 0 silent, on 1017
+non-regular entries"`, `output_directory` = *my* run1 extraction root (`.ufo/…/score-myreceipt.json`).
+No commit was made outside the fixture; the lane's VCS was only read.
+
+## 6. Freeze-integrity spot check (read-only git)
+
+```
+git diff --name-only d764389e…e9a24d07 -- plans/round-41-claims.md \
+  tools/round-41/{c1-counter.py,c1-extra.py,c1-run.sh,fetch-vendor.py,sqfs-list.py,mk-l-carriers.py} \
+  tools/round-40/gen-squashfs.py .ufo/waves/round-41/c1/{carriers.json,gap-rule.json}
+```
+empty (no frozen C1 path changed). Frozen harness hash at the freeze and at the measured
+revision is the same: `c1-run.sh bdb97632d21bac71d603b73f13372264efb89c84baaf07d902ead6f33149cc7f`.

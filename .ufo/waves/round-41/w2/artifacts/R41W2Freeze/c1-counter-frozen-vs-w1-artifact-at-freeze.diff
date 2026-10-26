@@ -1,0 +1,43 @@
+--- c3w/counter-artifact-at-freeze.py	2026-10-26 18:24:26.620941369 -0300
++++ c3w/counter-frozen.py	2026-10-26 18:24:26.625641056 -0300
+@@ -1610,40 +1610,6 @@
+                 d['chunk_roots'] = chunk_roots(
+                     env, (c.get('oracle_root')
+                           if isinstance(c.get('oracle_root'), str) else None))
+-                # Geometry cross-check, recorded not scored (R41CritC1Draft 2):
+-                # the extraction directory unblob would use for each AVM chunk,
+-                # from chunks[].range+handler, next to the derivation root. A
+-                # disagreement is visible per carrier without adding a clause
+-                # that no reserved carrier can be measured against yet.
+-                sel = (env.get('normalized_result') or {}).get('selection') or {}
+-                staged = sel.get('length') if isinstance(sel.get('length'), int) else None
+-                lead = None
+-                for pth in receipt_paths(env):
+-                    parts = path_parts(pth)
+-                    if parts and parts[0].endswith('_extract'):
+-                        lead = parts[0]
+-                        break
+-                geo = []
+-                for ch in (env.get('normalized_result') or {}).get('chunks') or []:
+-                    if not isinstance(ch, dict) or ch.get('handler') != HANDLER:
+-                        continue
+-                    rng = ch.get('range') or {}
+-                    off, ln = rng.get('offset'), rng.get('length')
+-                    whole = (off == 0 and staged is not None and ln == staged)
+-                    if not (isinstance(off, int) and isinstance(ln, int)):
+-                        exp = None
+-                    elif whole:
+-                        exp = lead
+-                    else:
+-                        exp = ('%s/%d-%d.%s_extract' % (lead, off, off + ln,
+-                                                        HANDLER)
+-                               if lead else None)
+-                    geo.append({'handler': ch.get('handler'), 'offset': off,
+-                                'length': ln, 'whole_input': whole,
+-                                'geometry_root': exp,
+-                                'agrees': exp == root_value})
+-                d['chunk_summary'] = geo
+-                d['geometry_agrees'] = bool(geo) and all(x['agrees'] for x in geo)
+                 if root_value:
+                     rp = root_value.split('/')
+                     d['extract_root_confirmed'] = any(

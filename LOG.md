@@ -3160,3 +3160,13 @@ No source/gate/fixture/candidate execution, F or code permission is claimed.
 - **Re-verification (freshness):** both vendor URLs re-fetched and re-hashed by wave 2 (`w2/R40W2C1Chain.md`); unblob 26.6.4 handler AVM branch and sasquatch 4.5.1 `read_block` re-read (`w1/R40C1Revenger.md`); REA 6.5.0 package unchanged (S123).
 - **Wave 2** (38 seats): neither verdict overturned; defects routed as R40-CL1..CL7 (`corpus/lessons/round-40.md`). AVM package texts committed in the freeze removed from the tree (`.ufo/waves/round-40/w1/vendor-files-removed.sha256`).
 - **Frontier step:** SOURCES 122 → 126 (S123–S126); assimilation admit `avm-image-extraction` (into the C1 entry), rejects in the lesson Gate; QUALITY 83; SKILL `### Round-40 instrument registry`.
+
+## 2026-10-26 — round 41: genuine AVM-layout BE SquashFS v4 to Core on four fresh carriers (R41-C1 met, 4/4); triage table v3 52/52 vs evaluator but stopped on a declared-tuple key (R41-C2 honest stop)
+
+- **Freeze** (`d764389e`): claims, `tools/round-41/*` (exact-path C1 counter with removal dispositions, `member_sha256`/nested fetch chain, v3 interpreter, independent evaluator, v3 generator with 12 seeded combos, C2 counter, control builder, local-source gate), C1 carriers V3 (5490 07.31 wrapper member), V4 (5491 07.31 nested rootfs), L3/L4 (lane-built, both-direction path collisions), SKILL rule block 20, wave-1 evidence (41 seats).
+- **Controls before data** (`9a8fb260`): C1 do-nothing 0/4 and relabelled round-40 receipts 0/4; C2 counter exit 2 at the freeze; C2 dev controls best 44/52, SKILL 52/52.
+- **Data:** C1 REA `--max-depth 1` receipts (`5ca6941b` + V4 at `e9a24d07`): V3 8 files / 85 symlink gaps; V4 6349 files / 611 gaps + 4 removals; L3 13 / 3; L4 14 / 3; each + 1 `depth-limited`. C2 held-out seed = freeze (`8a1f4c73`), 52 carriers, 52/52 declared tuples observed by the generator.
+- **Scores at `e9a24d07`** (`.ufo/waves/round-41/l1/scores/`): C1 4/4 exit 0, `c1-extra` met; C2 52/52 pairs, exit 1 on `observed_features_match_declared` (key mismatch).
+- **Re-verification (freshness):** both AVM vendor chains re-fetched and re-hashed at the freeze (`fetch-vendor.py` exit 0) and again by wave 2 (`w2/R41W2C1Chain.md`, `w2/R41W2ReproV3.md`); the binwalk README re-opened by the L1 (sha256 `87b8277e…`).
+- **Wave 2** (33 seats): C1 reproduced; C2 stop confirmed and its cause exact; defects routed R41-CL1..CL6 (`corpus/lessons/round-41.md`).
+- **Frontier step:** SOURCES 126 → 129 (S127, S128, S129); assimilation admit `firmware-region-vocabulary` (→ `2026-10-26-binwalk-v3-unit-of-work`), reject `unblob-sasquatch-dependency`; QUALITY 84; S126 made durable (round-40 closure D1).

@@ -1,0 +1,58 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/c1-run.sh	2026-10-26 17:28:31.357412886 -0300
++++ c1-run-fixed.sh	2026-10-26 18:26:13.952264233 -0300
+@@ -514,7 +514,7 @@
+ receipt=null
+ if [[ $have_data == true ]]; then
+   jq -c '.data' "$scratch/envelope.json" > "$scratch/after.json"
+-  summary=$(jq -c '
++  jq -c '
+     {
+       evidence_id: .evidence_id,
+       operation: .operation,
+@@ -533,18 +533,22 @@
+       selection_sha256: (.normalized_result.selection.sha256 // null),
+       subject_sha256: (.subject.digest.sha256 // null),
+       output_directory: (.normalized_result.output_directory // null)
+-    }' "$scratch/after.json")
++    }' "$scratch/after.json" > "$scratch/summary.json"
++else
++  printf 'null\n' > "$scratch/summary.json"
+ fi
++printf 'null\n' > "$scratch/receipt.json"
+ 
+ receipt_written=false
+ if [[ $rc -eq 0 && $envelope_ok == true && $have_data == true ]]; then
+   mv -f "$scratch/after.json" "$outdir/after.json"
+   receipt_written=true
+-  receipt=$(jq -n \
++  jq -n \
+     --arg sha "$(sha256sum "$outdir/after.json" | cut -d' ' -f1)" \
+     --argjson bytes "$(stat -c%s "$outdir/after.json")" \
+-    --argjson summary "$summary" \
+-    '{path: "after.json", sha256: $sha, bytes: $bytes} + $summary')
++    --slurpfile summary "$scratch/summary.json" \
++    '{path: "after.json", sha256: $sha, bytes: $bytes} + $summary[0]' \
++    > "$scratch/receipt.json"
+ fi
+ 
+ if [[ ${C1_KEEP_ENVELOPE:-0} == 1 ]]; then
+@@ -573,7 +577,7 @@
+   --arg env_sha "$(sha256sum "$scratch/envelope.json" | cut -d' ' -f1)" \
+   --argjson env_bytes "$(stat -c%s "$scratch/envelope.json")" \
+   --argjson have_data "$have_data" --argjson receipt_written "$receipt_written" \
+-  --argjson receipt "$receipt" --argjson summary "$summary" \
++  --slurpfile receipt "$scratch/receipt.json" --slurpfile summary "$scratch/summary.json" \
+   --arg prev_after "$prev_after_sha" \
+   --arg stderr_head "$stderr_head" \
+   '{
+@@ -593,8 +597,8 @@
+                error: $env_error},
+     data_extracted: $have_data,
+     receipt_written: $receipt_written,
+-    receipt: $receipt,
+-    envelope_data_summary: $summary,
++    receipt: $receipt[0],
++    envelope_data_summary: $summary[0],
+     previous_after_json_sha256: (if $prev_after == "" then null else $prev_after end),
+     stderr_head: $stderr_head
+   }' > "$outdir/run.json"

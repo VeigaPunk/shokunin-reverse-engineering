@@ -1,0 +1,74 @@
+{
+  "seat": "R41W2Sibling",
+  "round": 41, "wave": 2,
+  "check": "cross-lane pattern check: do sibling lanes' counters share the two round-41 defect classes (1) generator/counter declared-key mismatch (silent false binding), (2) commit helper skipping large evidence files — and which guard?",
+  "lanes": [
+    {"lane": "kaidoku", "tools_round_dirs": ["round-25..round-41"],
+     "class1": {
+       "instance": true,
+       "where": "tools/round-41/c2-counter.py:1486-1506 (reads class_expected.features | features | declared_features | manifest-level maps) vs tools/round-41/heldout-gen-v3.py:1372,1464 (writes declared; combos class_expected=null), 1467-1475",
+       "outcome": "manifest first-add 8a1f4c73; score c2-at-e9a24d07.json declared_features.missing = 12 combos; observed_features_match_declared false; counter selftest combo_feat_mismatch (c2-counter.py:2364-2366) mutates the reader's own keys, never the generator's actual shape",
+       "guard": "l1/mistakes/declared-keys.py (M41-1): exits 1 on carriers whose declared tuple sits under no key the frozen counter reads — ad hoc planner check, not wired into the counter; honest stop preserved"},
+     "class2": {
+       "instance": true,
+       "where": "commit 5ca6941b skipped corpus/evidence/round-41/c1/V4/after.json (2852279 B) via directory commit; fixed e9a24d07 by naming the file",
+       "guard": "l1/mistakes/evidence-tracked.py (M41-3): disk-vs-`git ls-tree -r REV` over evidence dirs; red at 5ca6941b (m41-3-red.txt), green at e9a24d07; counters read only committed blobs (c1-counter.py:353-355,1581) so absence flips bindings"}},
+    {"lane": "kama", "tools_round_dirs": "flat tools/ (round-34..round-47 counters)",
+     "class1": {
+       "instance": false,
+       "note": "no class_expected/declared_features/declared key family; round-38 coverage-audit repair note documents a past key/path-lookup defect (looked up knowledge/... as root instead of corpus/knowledge/)",
+       "guard": "instrument-agreement.py:15-26 (undeclared volatile field = disagreement by design); round43-registry-audit.py:17-21 (counter-declared flags must exist in source); gates fail closed on missing/undeclared contract rows"},
+     "class2": {
+       "instance": true,
+       "where": "corpus/lessons/round-26.md:89-91 (1.4 MB log over 1 MiB new-file limit skipped by directory commit; committed by name at 7e5ff9b5); round-35-verifier-spotcheck.md:37-41 (two 1066624-byte files skipped by helper); round-36.md:27",
+       "guard": "counters read only committed blobs via git ls-tree/cat-file (append-only-audit.py:106,145-162; hexrun-census.py:124-193; gate-registry-check.py:108-141; release-recheck.py:197-213; pin-trigger-consumed.py:35; citation-provenance.py:41-44) — a skipped evidence file falsifies them"}},
+    {"lane": "mori", "tools_round_dirs": "flat tools/",
+     "class1": {"instance": false, "note": "no key-family match; fail-closed auditors",
+                "guard": "mori-source-drift.py / mori-retention-gate.py / mori-freeze-order.py"},
+     "class2": {"instance": false, "note": "no direct incident found in lane docs",
+                "guard": "mori-unlanded-check.py (round 48 fix: reports filed while evidence sat untracked; scans git status --porcelain for uncommitted round work under waves/corpus/tools); mori-evidence-loss.py audits retained copies vs recorded sha256 and named commit"}},
+    {"lane": "tameshi", "tools_round_dirs": "flat tools/",
+     "class1": {
+       "instance": true,
+       "where": "round-12 producer wrote/recorded declaration.kind from the nonexistent nested path declaration[\"declared\"][\"kind\"]; frozen kind lives at declaration.json top level; summary.json therefore recorded declaration.kind=null (witness-metadata.py docstring lines 5-14; historical state pinned as historical-null-preserved)",
+       "guard": "witness-metadata.py digest-pins all three declaration inputs, requires the literal frozen top-level kind, never reuses the null as authority; bash-witness-study.py selftest asserts 'summary preserves top-level exposed declaration kind' (lines 1680-1682); command-binding.py digest-pins bundles"},
+     "class2": {"instance": false, "note": "no incident found",
+                "guard": "command-binding.py/witness-metadata.py pin input digests; missing/untracked inputs surface as input_unavailable"}},
+    {"lane": "chousa", "tools_round_dirs": "flat tools/",
+     "class1": {"instance": false, "note": "no generator/counter key family",
+                "guard": "research-gate.sh drift baseline: re-runs byte-identical normalized captures vs declared volatile contract; any undeclared drift = GATE_DRIFT finding (research-gate.sh:761-766,249-251); undeclared source ids refused"},
+     "class2": {"instance": false, "note": "no incident found",
+                "guard": "research-gate.sh reads only committed spans/captures (absent-split.py:18; inference-ground.py:6-9)"}},
+    {"lane": "souji", "tools_round_dirs": "flat tools/",
+     "class1": {"instance": false, "note": "declared/observed vocabulary but strict schemas",
+                "guard": "souji-cert-evidence.py:822-891 refuses missing artifacts/declared digests (snapshot_tampered); souji-evidence-cache.py:29-32 refuses undeclared required dependencies; souji-registry-agreement.py declared-vs-observed over committed bytes"},
+     "class2": {"instance": false, "note": "no incident found",
+                "guard": "declared-evidence gates require exact committed digests; missing path = finding/refusal"}},
+    {"lane": "kotodama", "tools_round_dirs": "flat tools/",
+     "class1": {"instance": false, "note": "packet/component keys with fail-closed validation",
+                "guard": "assemble-culture-d4.py:23-33,296-314 fails closed on absent/undeclared blocks, duplicate ids, collisions; check-gate-battery.py:22-28 validates declared input digests against snapshot bytes"},
+     "class2": {"instance": false, "note": "no incident found",
+                "guard": "check-gate-battery.py/assemble checks operate on committed bytes; absent inputs fail closed"}},
+    {"lane": "mado", "tools_round_dirs": "flat tools/",
+     "class1": {"instance": false, "note": "no key-family match",
+                "guard": "mado-evidence-audit.py (artifact arithmetic + explicit evidence labels; malformed/missing = 2)"},
+     "class2": {"instance": true,
+                "where": "fleet .ufo/l0-questions.md:151 (mado round-34 L0): round-33 K2 receipts could not be committed — 'the helper skips files over 1 MiB inside a named directory' — kept out-of-lane with ORIGIN.md; 473 MiB clones",
+                "guard": "refused silent sweep; documented ORIGIN.md; closure-named hygiene defect"}},
+    {"lane": "tsukuroi", "tools_round_dirs": "flat tools/",
+     "class1": {"instance": false, "note": "check-* auditors; not deeply inspected [INFERENCE]",
+                "guard": "unknown [INFERENCE]"},
+     "class2": {"instance": false, "note": "not inspected [INFERENCE]",
+                "guard": "unknown [INFERENCE]"}}
+  ],
+  "fleet_source": {
+    "commit_helper": "scripts/hyaku/jj-lane.sh (the only writer; jj colocated)",
+    "dir_commit_skip": "jj-lane.sh:654-656 (named dir tracked like `git add <dir>`; --include-ignored admits over-size files only for named FILES), 718-722 (post-commit stderr warning only)",
+    "hard_error_only_for_named_files": "jj-lane.sh:638-639 (named file > 10 MiB needs --allow-large, exit 1)",
+    "documented": "scripts/hyaku/lane-addendum.md:272-276; every per-round prompt e.g. chousa-round-41.md:304-307"
+  },
+  "conclusion": {
+    "class1": "sibling lanes do not share kaidoku's exact key family (grep zero hits outside kaidoku); pattern-level instance documented+guarded in tameshi; strongest mechanical guards: kama instrument-agreement (undeclared volatility = disagreement), chousa drift baseline, kotodama/souji fail-closed schemas",
+    "class2": "fleet-wide hazard: every lane commits through jj-lane.sh, so any lane committing an evidence directory containing >1 MiB new files silently drops them unless files are named; incidents confirmed in kaidoku, kama, mado; detection-only guards exist (kaidoku evidence-tracked.py M41-3, mori-unlanded-check.py); no lane prevents it in the helper itself"
+  }
+}

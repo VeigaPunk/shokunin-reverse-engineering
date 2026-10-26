@@ -1,0 +1,341 @@
+--- c3w/counter-artifact-at-freeze.py	2026-10-26 18:24:26.620941369 -0300
++++ c3w/counter-postfreeze.py	2026-10-26 18:24:26.624103705 -0300
+@@ -72,11 +72,14 @@
+                         must resolve at its exact path to a non-regular entry
+                         whose kind is in `removed.kinds`, and no entry may be
+                         both gapped and removed
+-    silent              an entry whose kind and oracle detail are listed under
++    silent              an entry whose kind and FROZEN detail are listed under
+                         `removed.silent` may carry no record at all; the check is
+                         per row (stricter than the count rule the routing text
+                         states, which the freeze should re-word to match), so
+-                        nothing else can hide behind the allowance
++                        nothing else can hide behind the allowance. The detail is
++                        the frozen `nonregular.tsv` third column - the oracle's
++                        own record - never a value the scored run writes, so the
++                        admission token cannot be minted by the run
+   A diagnostic's path is its `report.link`, an absolute path inside REA's private
+   extraction root; it is mapped by locating the subject root as whole segments and
+   taking the remainder. With no `removed` block the clause behaves exactly as in
+@@ -88,12 +91,14 @@
+ Per-carrier clauses (all must hold; `matched` = conjunction):
+   carrier_present          the carrier blob exists at REV
+   carrier_pin_ok           sha256(bytes at REV) == the frozen pin
+-  carrier_fresh_ok         the pin is not one a previous C1 freeze already scored
+-                           (carriers.json `prior_pins` plus the previous round's
+-                           carrier table, both read at the freeze commit). The
+-                           claim's kill rule names relabelled round-40 receipts
+-                           as a control that must stop C1; without this clause a
+-                           rename is indistinguishable from new coverage
++  carrier_fresh_ok         the pin is not one a previous C1 freeze already scored:
++                           every committed `.ufo/waves/round-*/c1/carriers.json`
++                           pin, every committed `corpus/evidence/**/after.json`
++                           subject digest and carriers.json `prior_pins`, all read
++                           at the freeze commit. The claim's kill rule names
++                           relabelled round-40 receipts as a control that must
++                           stop C1; without this clause a rename is
++                           indistinguishable from new coverage
+   layout_ok                genuine AVM layout (see layout_probe): BE `sqsh` magic,
+                            v4.0, mkfs_time == bytes_used (the AVM marker),
+                            0 < bytes_used <= file size, and the 2-byte metadata
+@@ -118,8 +123,17 @@
+                            --freeze (not the freeze commit itself)
+   subject_pin_ok           subject.digest.sha256 == the frozen pin
+   operation_ok             operation == extract_firmware and provider.id == unblob
+-  handler_ok               a chunk names squashfs_v4_be
++  handler_ok               exactly one chunk names squashfs_v4_be (two AVM
++                           filesystems in one receipt cannot be told apart)
+   chunks_ok                no chunk carries extraction_failed: true
++  geometry_agrees          the derivation root equals the root implied by the
++                           receipt's own chunk geometry (`chunks[].range` +
++                           handler + the leading extract directory): a whole-file
++                           chunk -> the leading directory, a carve ->
++                           `<leading>/<start>-<end>.<handler>_extract`. A
++                           disagreement means the root and the chunk tell
++                           different stories about which directory holds the
++                           filesystem
+   oracle_hits_ok           every oracle regular file is published at its exact
+                            path under the chunk extract root (rel ==, sha256 ==
+                            and size ==), the root taken from the receipt's
+@@ -243,6 +257,12 @@
+   and is reported with the differing projection keys (`projection_diff`); a
+   rerun that cannot run at all (no npx/node/unblob, unusable REA output) is
+   unevaluable (exit 2 `rerun_env_error`), never met.
++  REA's inventory races unblob's symlink fix-up (`ENOENT ... readlink <link>`
++  inside the extraction), measured twice on the round-40 V1 carrier in this wave,
++  so a rerun is retried up to 3 times on exactly that failure - each attempt a
++  fresh outdir and a real run - and the count is recorded
++  (`projection_attempts`). No other failure is retried, and a retry never
++  weakens the comparison: the projection still has to match.
+   `--no-rerun` is not a mode of the predicate: it exits 2 (`rerun_disabled`) and
+   never reports met.
+ 
+@@ -287,7 +307,7 @@
+ HANDLER = 'squashfs_v4_be'
+ SQUASHFS_PREFIX = 'squashfs_v4'         # derivation handlers of a SquashFS chunk
+ XPIN = 'tools/round-27/xpin-attribute.mjs'
+-PRIOR_CARRIERS = '.ufo/waves/round-40/c1/carriers.json'   # pins round 40 already scored
++PRIOR_TABLE_RE = re.compile(r'^\.ufo/waves/round-[^/]+/c1/carriers\.json$')
+ OPENED = '2026-10-26'
+ TARGET = 4
+ IDS = ('V3', 'V4', 'L3', 'L4')
+@@ -321,7 +341,7 @@
+ CLAUSES = ('carrier_present', 'carrier_pin_ok', 'carrier_fresh_ok', 'layout_ok',
+            'carve_ok', 'oracle_ok', 'nonregular_ok', 'receipt_present',
+            'receipt_fresh', 'subject_pin_ok', 'operation_ok', 'handler_ok',
+-           'chunks_ok', 'oracle_hits_ok', 'gaps_ok',
++           'chunks_ok', 'geometry_agrees', 'oracle_hits_ok', 'gaps_ok',
+            'nonregular_unpublished_ok', 'run_provenance_ok', 'evidence_id_ok',
+            'projection_ok')
+ 
+@@ -1155,14 +1175,22 @@
+ 
+ 
+ def prior_pins(root, freeze, spec):
+-    """(pins, sources) a previous C1 freeze already scored.
++    """(pins, sources) a previous C1 freeze already scored, read at the freeze.
+ 
+     The claim's kill rule names "relabelled round-40 receipts" as a control that
+-    must stop C1, so a carrier whose bytes are a pin round 40 scored cannot be
+-    counted as new coverage however the table names it. Two frozen sources, both
+-    read at the FREEZE commit (a table added later cannot bless an old pin):
+-      carriers.json `prior_pins`   an explicit list of 64-hex pins
+-      PRIOR_CARRIERS               the previous round's carrier table, if present
++    must stop C1, so a carrier whose bytes (or whose receipt subject) a previous
++    freeze already scored cannot count as new coverage however the table names
++    it. The forbidden set is derived from the tree, not from one round's table,
++    because a narrow set would let a future AVM-layout carrier from an older
++    round through (today `layout_ok` happens to reject the older LE/standard-BE
++    carriers, which is identity work the layout clause should not be doing):
++
++      every committed `.ufo/waves/round-<r>/c1/carriers.json` pin (any round)
++      every committed `corpus/evidence/**/after.json` subject digest
++      carriers.json `prior_pins` - an explicit list, the belt
++    All three are read from the FREEZE commit, so a table added later cannot
++    bless an old pin, and this claim's own carriers.json / evidence directory are
++    excluded (a freeze that somehow contained them would otherwise flag itself).
+     """
+     pins, sources = set(), []
+     listed = spec.get('prior_pins')
+@@ -1172,17 +1200,47 @@
+                 pins.add(p.lower())
+         if listed:
+             sources.append('prior_pins')
+-    raw = show(root, freeze, PRIOR_CARRIERS)
+-    if raw is not None:
++    p = git(root, 'ls-tree', '-r', '--name-only', freeze, '--', '.ufo/waves',
++            'corpus/evidence', check=False)
++    if p.returncode != 0:
++        raise Unevaluable('git ls-tree failed at the freeze commit')
++    names = [l for l in p.stdout.decode(errors='replace').splitlines() if l]
++    tables = sorted(n for n in names
++                    if PRIOR_TABLE_RE.match(n) and n != CARRIERS)
++    receipts = sorted(n for n in names
++                      if n.startswith('corpus/evidence/') and n.endswith('/after.json')
++                      and not n.startswith(AFTERDIR + '/'))
++    from_table = 0
++    for n in tables:
++        raw = show(root, freeze, n)
+         try:
+-            doc = json.loads(raw)
++            doc = json.loads(raw) if raw else None
+         except json.JSONDecodeError:
+             doc = None
+-        if isinstance(doc, dict):
+-            for c in doc.get('carriers') or []:
+-                if isinstance(c, dict) and isinstance(c.get('sha256'), str):
+-                    pins.add(c['sha256'].lower())
+-            sources.append(PRIOR_CARRIERS)
++        if not isinstance(doc, dict):
++            continue
++        for c in doc.get('carriers') or []:
++            if isinstance(c, dict) and isinstance(c.get('sha256'), str) \
++                    and SHA_RE.match(c['sha256'].lower()):
++                pins.add(c['sha256'].lower())
++                from_table += 1
++    from_receipt = 0
++    for n in receipts:
++        raw = show(root, freeze, n)
++        try:
++            doc = json.loads(raw) if raw else None
++        except json.JSONDecodeError:
++            doc = None
++        if not isinstance(doc, dict):
++            continue
++        sha = ((doc.get('subject') or {}).get('digest') or {}).get('sha256')
++        if isinstance(sha, str) and SHA_RE.match(sha.lower()):
++            pins.add(sha.lower())
++            from_receipt += 1
++    if tables:
++        sources.append('%d prior c1/carriers.json (%d pins)' % (len(tables), from_table))
++    if receipts:
++        sources.append('%d prior after.json (%d digests)' % (len(receipts), from_receipt))
+     return pins, sources
+ 
+ 
+@@ -1367,6 +1425,8 @@
+     return out
+ 
+ 
++RETRY_ATTEMPTS = 3          # bounded retry for REA's inventory/symlink race only
++
+ PROFILES = ('core', 'plus-mime', 'plus-content', 'plus-extractor')
+ DEFAULT_PROFILE = 'plus-extractor'      # carried from round 40 (L1 ruling, w1)
+ PROJECTION_KEYS = ('subject_sha256', 'files', 'chunks', 'extraction_gaps',
+@@ -1405,20 +1465,49 @@
+                  ('--max-output-files', 'max_output_files'))
+ 
+ 
+-def make_real_runner(work, unblob, timeout):
++def rea_inventory_race(payload):
++    """Is this failed REA run the inventory/symlink race (retryable by us)?
++
++    Measured payload (round-40 V1, this wave): `error.details.diagnostics.reason`
++    = "ENOENT: no such file or directory, readlink '<extraction>/<link>'" with
++    `category: execution_failure`. Only that shape is retried; anything else is
++    reported as it happened."""
++    err = payload.get('error') if isinstance(payload, dict) else None
++    if not isinstance(err, dict):
++        return False
++    reason = ''
++    details = err.get('details')
++    if isinstance(details, dict):
++        diag = details.get('diagnostics')
++        if isinstance(diag, dict) and isinstance(diag.get('reason'), str):
++            reason = diag['reason']
++    text = ' '.join([reason, str(err.get('message') or '')])
++    return 'readlink' in text and 'ENOENT' in text
++
++
++def make_real_runner(work, unblob, timeout, attempts=RETRY_ATTEMPTS):
+     """REA 6.5.0 extract-firmware on the given carrier bytes, fresh outdir.
+ 
+     The run replays the committed receipt's recorded extraction parameters
+     (`parameters.max_depth`, `max_output_bytes`, `max_output_files`). A receipt
+     produced at `--max-depth 1` is `partial` with a truncated published set, so a
+     rerun at REA's default depth 3 could never match it under a profile that
+-    compares `coverage` or `published_bytes`."""
++    compares `coverage` or `published_bytes`.
++
++    REA's own inventory races unblob's symlink fix-up: `inventoryFirmwareOutput`
++    walks the extraction while `fix_extracted_directory` rewrites/removes links,
++    so a run of a carrier with many symlinks can die with
++    `ENOENT ... readlink '<...>/<link>'` (`execution_failure`, non-retryable in its
++    own words). Measured on the round-40 V1 carrier twice in this wave. A bounded
++    retry on exactly that failure is a measurement-stability fix, not a weakening:
++    every attempt is a fresh outdir and a real run of the same bytes, the
++    projection is still compared, and the attempts are recorded
++    (`projection_attempts`). Any other failure is reported as it happened."""
+     unblob_path = unblob or os.path.expanduser('~/.local/bin/unblob')
+ 
+-    def run(carrier_bytes, cid, params=None):
+-        if shutil.which('npx') is None:
+-            raise RerunEnvError('npx not on PATH')
+-        d = os.path.join(work, 'rerun-' + re.sub(r'[^A-Za-z0-9_.-]', '_', str(cid)))
++    def attempt(carrier_bytes, cid, params, n):
++        d = os.path.join(work, 'rerun-%s-%d'
++                         % (re.sub(r'[^A-Za-z0-9_.-]', '_', str(cid)), n))
+         inp = os.path.join(d, 'carrier.bin')
+         outdir = os.path.join(d, 'out')
+         os.makedirs(d, exist_ok=False)
+@@ -1453,15 +1542,29 @@
+             raise RerunEnvError('rea stdout JSON is not an object')
+         data = envl.get('data')
+         if envl.get('ok') is not True or not isinstance(data, dict):
+-            # keep REA's own error object: a rerun that fails is unevaluable-only
+-            # when the environment is broken, and the reason must be in the record
++            # keep REA's own error object: the reason must be in the record
+             return 'no_data', {'ok': envl.get('ok'), 'exit': p.returncode,
+-                               'replayed': replayed,
++                               'attempt': n, 'replayed': replayed,
+                                'error': envl.get('error'),
+                                'stdout_head': text[:300],
+                                'stderr': p.stderr.decode('utf-8', 'replace')[:300]}
+         return 'ok', data
+ 
++    def run(carrier_bytes, cid, params=None):
++        if shutil.which('npx') is None:
++            raise RerunEnvError('npx not on PATH')
++        tried = []
++        for n in range(1, attempts + 1):
++            status, payload = attempt(carrier_bytes, cid, params, n)
++            if status == 'ok':
++                if isinstance(payload, dict):
++                    payload['attempts'] = len(tried) + 1
++                return 'ok', payload
++            tried.append(payload)
++            if not rea_inventory_race(payload):
++                break
++        return 'no_data', {'attempts': tried}
++
+     return run
+ 
+ 
+@@ -1600,7 +1703,10 @@
+                 prov = env.get('provider') or {}
+                 d['operation_ok'] = (env.get('operation') == 'extract_firmware'
+                                      and isinstance(prov, dict) and prov.get('id') == 'unblob')
+-                d['handler_ok'] = HANDLER in chunk_handlers(env)
++                # exactly one AVM chunk: two filesystems in one receipt cannot be
++                # told apart (no clause may pick between them), so a legal carrier
++                # extracts one; R41CritC1Draft asked for this explicitly
++                d['handler_ok'] = chunk_handlers(env).count(HANDLER) == 1
+                 d['chunks_ok'] = not chunk_failed(env)
+                 root_value, root_how = subject_root(
+                     env, (c.get('oracle_root')
+@@ -1685,6 +1791,7 @@
+                         d['projection_ok'] = False
+                         d['projection_error'] = payload
+                     else:
++                        d['projection_attempts'] = payload.get('attempts')
+                         eq, keys, detail = projection_diff(
+                             projection(env, profile), projection(payload, profile),
+                             profile)
+@@ -2933,6 +3040,22 @@
+         [proj_frozen, proj_recs], 0, 1, want_fail='projection_ok',
+         runner=other_removal_runner)
+ 
++    # ---- the rerun retry only covers REA's own inventory race
++    path_probes.append({
++        'desc': 'REA inventory race is retryable',
++        'new': rea_inventory_race({'error': {
++            'category': 'execution_failure',
++            'message': 'Analysis could not complete.',
++            'details': {'diagnostics': {'reason':
++                "ENOENT: no such file or directory, readlink "
++                "'/x/extracted/firmware.bin_extract/sbin/lsmod'"}}}}),
++        'legacy': rea_inventory_race({'error': {
++            'category': 'output_limit',
++            'message': 'Staging entry budget exceeded (10000)',
++            'details': {'diagnostics': {'reason': 'too many entries'}}}}),
++        'want_new': True, 'want_legacy': False, 'candidate': 'inventory-race',
++        'rel': None})
++
+     # ---- freshness: a relabelled previous-round carrier is not coverage
+     add('relabelled previous-round pins (prior_pins)',
+         [{**frozen, CARRIERS: spec_json(prior_pins=[pins[k] for k in ids])}, good],
+@@ -2947,6 +3070,24 @@
+         [{**frozen, CARRIERS: spec_json(prior_pins=['not-a-pin'])}, good], 0, 1,
+         want_fail='b:carriers_spec_ok')
+ 
++    # ---- geometry cross-check and the receipt half of the freshness set
++    def portion_geometry(e):
++        """Chunk says "carved at 4096", derivation says "the whole input"."""
++        e['normalized_result']['selection']['length'] = 4500
++        e['locations'] = [{'kind': 'file-offset-range', 'start': 0, 'end': 4500}]
++        e['normalized_result']['chunks'][0]['range'] = {'offset': 4096, 'length': 404}
++
++    geom_frozen, geom_recs = build(env_over={'V4': portion_geometry})
++    add('chunk geometry and derivation root disagree',
++        [geom_frozen, geom_recs], 0, 1, want_fail='geometry_agrees',
++        runner=same_run(geom_recs))
++    prior_receipt = json.dumps({'subject': {'digest': {'sha256': pins['V3']}},
++                                'normalized_result': {}})
++    add('a committed prior receipt names the frozen carrier pin',
++        [{**frozen,
++          'corpus/evidence/round-40/c1/V1/after.json': prior_receipt}, good], 0, 1,
++        want_fail='carrier_fresh_ok')
++
+     # ---- vendor spec chain and carve exactness (R41C1DevCore 7.4, routed R40-CL6)
+     # The spec is checked directly: a vendor carrier cannot be loaded here (its
+     # bytes live in --carrier-cache by licence), so an end-to-end case would fail

@@ -1,0 +1,32 @@
+--- tools/round-41/c2-counter.py (frozen c6c1ea64)
++++ c2-counter.onekey.py (probe)
+@@ -1483,27 +1483,12 @@
+         }
+ 
+         # ---- observed features vs the tuple the manifest declares per class
+-        decl_key = None
+-        for key in ('class_features', 'classes_features', 'feature_tuples',
+-                    'features_by_class', 'class_tuples'):
+-            if isinstance(man.get(key), dict):
+-                decl_key = key
+-                break
++        decl_key = 'declared'
+         by_id = {r['id']: r for r in res['carriers']}
+         feat_missing, feat_bad, feat_classes = [], [], {}
+         for c in carriers:
+             cid = str(c.get('id', ''))
+-            decl = None
+-            cex = c.get('class_expected')
+-            if isinstance(cex, dict) and isinstance(cex.get('features'), dict):
+-                decl = cex['features']
+-            elif isinstance(c.get('features'), dict):
+-                decl = c['features']
+-            elif isinstance(c.get('declared_features'), dict):
+-                decl = c['declared_features']
+-            elif decl_key:
+-                d = man[decl_key].get(c.get('class'))
+-                decl = d if isinstance(d, dict) else None
++            decl = c.get('declared')
+             canon = canon_features(decl)
+             if canon is None or any(k not in canon for k in REQUIRED_FEATURES):
+                 feat_missing.append(cid)

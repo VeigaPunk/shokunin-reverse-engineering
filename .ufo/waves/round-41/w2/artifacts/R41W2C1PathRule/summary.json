@@ -1,0 +1,395 @@
+{
+ "scenarios": [
+  {
+   "scenario": "00-baseline-green",
+   "met_target": true,
+   "carriers_matched": 4,
+   "exit_code": 0,
+   "failing": [],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "1 gaps (0 structural), 0 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "01a-two-roots-no-hint",
+   "met_target": false,
+   "carriers_matched": 3,
+   "exit_code": 1,
+   "failing": [
+    "gaps_ok",
+    "nonregular_unpublished_ok",
+    "oracle_hits_ok"
+   ],
+   "V4_extract_root": null,
+   "V4_extract_root_source": "ambiguous: 2 squashfs_v4 roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)",
+   "V4_oracle_hits": 0,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": false,
+   "V4_gaps_note": "no extract root: paths cannot be resolved",
+   "V4_nonregular_unpublished_ok": false,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "01b-two-roots-correct-hint",
+   "met_target": true,
+   "carriers_matched": 4,
+   "exit_code": 0,
+   "failing": [],
+   "V4_extract_root": "firmware.bin_extract/core.sqsh_extract",
+   "V4_extract_root_source": "oracle_root from carriers.json",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "1 gaps (0 structural), 0 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "01c-two-roots-wrong-hint",
+   "met_target": false,
+   "carriers_matched": 3,
+   "exit_code": 1,
+   "failing": [
+    "gaps_ok",
+    "oracle_hits_ok"
+   ],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "oracle_root from carriers.json",
+   "V4_oracle_hits": 0,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": false,
+   "V4_gaps_note": "gap path 'firmware.bin_extract/core.sqsh_extract/bin/link' matches 0 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "02a-carve-nonzero-offset-deep",
+   "met_target": true,
+   "carriers_matched": 4,
+   "exit_code": 0,
+   "failing": [],
+   "V4_extract_root": "firmware.bin_extract/4096-6513.squashfs_v4_be_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "1 gaps (0 structural), 0 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "02b-carve-shallow-publish",
+   "met_target": false,
+   "carriers_matched": 3,
+   "exit_code": 1,
+   "failing": [
+    "gaps_ok",
+    "oracle_hits_ok"
+   ],
+   "V4_extract_root": "firmware.bin_extract/4096-6513.squashfs_v4_be_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 0,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": false,
+   "V4_gaps_note": "gap path 'firmware.bin_extract/bin/link' matches 0 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "03a-path-equals-CR-file",
+   "met_target": true,
+   "carriers_matched": 4,
+   "exit_code": 0,
+   "failing": [],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "1 gaps (0 structural), 0 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 2
+  },
+  {
+   "scenario": "03b-path-equals-CR-gap",
+   "met_target": false,
+   "carriers_matched": 3,
+   "exit_code": 1,
+   "failing": [
+    "gaps_ok"
+   ],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": false,
+   "V4_gaps_note": "gap path 'firmware.bin_extract' matches 0 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "04a-double-dollaroutput-child",
+   "met_target": false,
+   "carriers_matched": 3,
+   "exit_code": 1,
+   "failing": [
+    "gaps_ok",
+    "oracle_hits_ok",
+    "projection_ok"
+   ],
+   "V4_extract_root": "$output/firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 0,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": false,
+   "V4_gaps_note": "gap path 'firmware.bin_extract/bin/link' matches 0 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": false,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "04b-double-dollaroutput-file",
+   "met_target": true,
+   "carriers_matched": 4,
+   "exit_code": 0,
+   "failing": [],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "1 gaps (0 structural), 0 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "05a-removal-outside-no-root-run",
+   "met_target": false,
+   "carriers_matched": 3,
+   "exit_code": 1,
+   "failing": [
+    "gaps_ok"
+   ],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": false,
+   "V4_gaps_note": "removal diagnostic without a path under the root: '$output/firmware.bin_extract'",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "05b-removal-decoy-segment-run",
+   "met_target": true,
+   "carriers_matched": 4,
+   "exit_code": 0,
+   "failing": [],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "0 gaps (0 structural), 1 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "06a-file-trailing-slash",
+   "met_target": true,
+   "carriers_matched": 4,
+   "exit_code": 0,
+   "failing": [],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "1 gaps (0 structural), 0 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "06b-file-leading-dotslash",
+   "met_target": true,
+   "carriers_matched": 4,
+   "exit_code": 0,
+   "failing": [],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "1 gaps (0 structural), 0 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "06c-file-interior-dot",
+   "met_target": true,
+   "carriers_matched": 4,
+   "exit_code": 0,
+   "failing": [],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "1 gaps (0 structural), 0 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  },
+  {
+   "scenario": "06d-dir-as-file-trailing-slash",
+   "met_target": false,
+   "carriers_matched": 3,
+   "exit_code": 1,
+   "failing": [
+    "nonregular_unpublished_ok"
+   ],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "1 gaps (0 structural), 0 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": false,
+   "V4_nonregular_published": [
+    "firmware.bin_extract/bin/link/"
+   ],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 2
+  },
+  {
+   "scenario": "06e-gap-trailing-slash",
+   "met_target": true,
+   "carriers_matched": 4,
+   "exit_code": 0,
+   "failing": [],
+   "V4_extract_root": "firmware.bin_extract",
+   "V4_extract_root_source": "single squashfs_v4 derivation root",
+   "V4_oracle_hits": 1,
+   "V4_oracle_files": 1,
+   "V4_gaps_ok": true,
+   "V4_gaps_note": "1 gaps (0 structural), 0 removals, 0 silent, on 1 non-regular entries",
+   "V4_nonregular_unpublished_ok": true,
+   "V4_nonregular_published": [],
+   "V4_projection_ok": true,
+   "V4_evidence_id_ok": true,
+   "V4_published_files": 1
+  }
+ ],
+ "probes": [
+  [
+   "P1 root eq: extract_rel(root, root) == \"\"",
+   true
+  ],
+  [
+   "P2 root-eq path does not satisfy a non-empty row",
+   true
+  ],
+  [
+   "P3 double slash inside candidate normalizes",
+   true
+  ],
+  [
+   "P4 ./ inside candidate normalizes",
+   true
+  ],
+  [
+   "P5 trailing slash on candidate matches row",
+   true
+  ],
+  [
+   "P6 trailing slash on table row does NOT match plain candidate",
+   true
+  ],
+  [
+   "P7 table row ./ prefix strips",
+   true
+  ],
+  [
+   "P8 table row leading / strips",
+   true
+  ],
+  [
+   "P9 suffix is never a match",
+   true
+  ],
+  [
+   "P10 prefix-segment mismatch is not a match",
+   true
+  ],
+  [
+   "P11 deeper file is not a match",
+   true
+  ],
+  [
+   "P12 materialised symlink at its own path matches",
+   true
+  ],
+  [
+   "P13 decoy removal resolves to rel inside CR: 'bin/evil'",
+   true
+  ],
+  [
+   "P14 removal link with no root run is None",
+   true
+  ],
+  [
+   "P15 trailing-slash candidate equals root -> \"\"",
+   true
+  ]
+ ],
+ "probe_fail": []
+}

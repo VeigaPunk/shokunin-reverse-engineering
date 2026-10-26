@@ -1,0 +1,66 @@
+# Freeze-time interface evidence for R41-C2 (read-only git show at d764389e9cbe61b9d1b07538ff3bff02d50bb34f)
+# Finding: the frozen counter and the frozen generator disagree on the carrier record key that carries the declared tuple.
+
+## 1) counter @ freeze, docstring "Frozen tool interfaces" — the manifest schema it says it relies on
+              -> `manifest.json` with `classes` and `carriers[]` {id, class,
+              arm, class_expected (label, action, features) or `features`,
+              carrier, sha256}.
+  Every attempt's exit code and the interface that answered are recorded in
+
+## 2) counter @ freeze, read chain (the only code that resolves the declared tuple)
+            decl = None
+            cex = c.get('class_expected')
+            if isinstance(cex, dict) and isinstance(cex.get('features'), dict):
+                decl = cex['features']
+            elif isinstance(c.get('features'), dict):
+                decl = c['features']
+            elif isinstance(c.get('declared_features'), dict):
+                decl = c['declared_features']
+            elif decl_key:
+                d = man[decl_key].get(c.get('class'))
+                decl = d if isinstance(d, dict) else None
+
+## 3) heldout-gen-v3.py @ freeze — what it actually writes on every carrier
+        # The BINDING half: the counter checks observed_features_match_declared
+        # against these six fields (L1 amendment).
+        'declared': declared_tuple(features),
+        'declared_extras': {'extraction_failed': features['extraction_failed'],
+                            'max_depth': features['max_depth']},
+
+## 4) counter selftest stub generator (counter line 1717-1719) — combo record shape the fixture uses
+        fh.write(body)
+    out.append({'id': ident, 'class': 'combo', 'arm': 'after',
+                'class_expected': None, 'features': dict(FEATURES),
+                'rea': {'max_depth': 3},
+                'carrier': ident + '/carrier.sqsh',
+
+## 5) counter selftest red case + mutation that encodes the fixture shape (lines 2364-2366, 2131-2132)
+            if 'combo_feat_mismatch' in muts and cid == 'C01':
+                entry['features']['gap_kinds'] = ['depth-limited']
+        ('red: a combo carrier declares the wrong tuple',
+         dict(muts={'combo_feat_mismatch'}), 1,
+         ['observed_features_match_declared'], []),
+
+## 6) real generator named-class record (class_expected.features present -> those 40 pass)
+        # The generator's own class expectation, REPORTED only (the scored
+        # labels come from the frozen evaluator).
+        'class_expected': {
+            'label': recipe['label'],
+            'action': ACTIONS[recipe['label']],
+            'reported_only': True,
+            'features': features,
+        },
+
+## 7) real generator combo record (class_expected: null -> no features key)
+        'nested': None,
+        'rea': {'max_depth': factors['max_depth']},
+        'operation': 'extract_firmware',
+        'carrier': f'{carrier_id}/carrier.sqsh',
+        'sha256': sha256_file(os.path.join(dest, 'carrier.sqsh')),
+        'declared': declared,
+        'declared_extras': {'extraction_failed': bool(factors['partial']),
+                            'max_depth': factors['max_depth']},
+        # A combo has no class label: the evaluator alone supplies the expected
+        # pair, so this field is null by design (L1 amendment).
+        'class_expected': None,
+    }

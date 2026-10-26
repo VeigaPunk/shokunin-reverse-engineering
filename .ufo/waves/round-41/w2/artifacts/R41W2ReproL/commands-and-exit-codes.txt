@@ -1,0 +1,85 @@
+# R41W2ReproL — commands actually run, with exit codes (chronological, trimmed)
+
+## 0. Scratch + tree at the measured revision (read-only git)
+S=/fast/scratch/hyaku/kaidoku-r41/R41W2ReproL ; mkdir -p "$S"
+git -C kaidoku-shokunin archive e9a24d07256d1606f01aa4d2d65f74e649c5f3d4 \
+    tools/round-41 tools/round-40 .ufo/waves/round-41/c1/carriers.json | tar -x -C "$S/tree"    exit 0
+sha256sum $S/tree/tools/round-41/gen-squashfs.py $S/tree/tools/round-40/gen-squashfs.py
+    both 309c502d21dfeef9b7b2a5a9a62bfa875270fdf79eec671461070996d291042e ; cmp -> identical, exit 0
+git -C kaidoku-shokunin rev-parse --short HEAD            -> e1c83313 (lane tip at dispatch, untouched)
+carriers.json at e9a24d07: L3 04cfb4cd…45a3, L4 4c0e5459…cfbc (same as at HEAD)
+
+## 1. Rebuild L3/L4 twice from the e9a24d07 tree
+python3 -I -B $S/tree/tools/round-41/mk-l-carriers.py $S/out --builds 2 --lane $S/tree \
+    --json $S/build.json                                                                    exit 0
+stdout: L3 build2-equal sha256=04cfb4cd…45a3 / L4 build2-equal sha256=4c0e5459…cfbc
+        L3 xz   04cfb4cd…45a3  187892  13 files  3 links  20 dirs
+        L4 gzip 4c0e5459…cfbc  169545  14 files  3 links  17 dirs
+cmp $S/out/L3/carrier.sqsh corpus/evidence/round-41/c1/L3/carrier.sqsh                     exit 0
+cmp $S/out/L4/carrier.sqsh corpus/evidence/round-41/c1/L4/carrier.sqsh                     exit 0
+
+## 2. REA 6.5.0 --max-depth 1, two independent runs per carrier (fresh outdirs)
+cd "$S" && REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware \
+    --format json --full-output --max-depth 1 $S/out/L3/carrier.sqsh $S/run-L3/extract      exit 0
+same for run-L4                                                                             exit 0
+repeat into $S/run2-L3, $S/run2-L4                                                          exit 0 / exit 0
+stderr empty in all four runs; envelope.json 13812/14085/… bytes
+
+## 3. Frozen harness `after` arm (the path the committed receipts were written by)
+cd "$S" && HYAKU_SCRATCH=/fast/scratch/hyaku C1_READER=<lane>/tools/round-41/sqfs-list.py \
+  bash <lane>/tools/round-41/c1-run.sh after $S/out/L3/carrier.sqsh $S/harness-L3 $S/work-L3  exit 0
+same for L4                                                                                  exit 0
+run.json of both: exit 0, data_extracted true, receipt_written true, run_provenance_segment_ok true,
+unblob 26.6.4 sha 0ce7b624…1d09, sasquatch-v4be 4.5.1 sha fac88740…14c6, rea-agents@6.5.0
+
+## 4. Comparison with corpus/evidence/round-41/c1/{L3,L4}/after.json
+python3 -I -B $S/compare.py $S/tree <lane>/corpus/evidence/round-41/c1 $S > $S/compare.json   exit 0
+frozen projection(profile='plus-extractor') imported read-only from
+$S/tree/tools/round-41/c1-counter.py:
+    L3 committed vs run1 vs run2 vs harness : projection_equal true (0 differing keys) x6 pairs
+    L4 idem
+    oracle.tsv rows missing 0, sha/size mismatches 0, published-not-in-oracle 0
+    non-regular rows unaccounted 0 (L3 23 rows, L4 20 rows)
+extract dir on disk vs oracle.tsv: L3 13/13 identical, L4 14/14 identical, 0 symlinks on disk
+
+## 5. Independent oracle re-derivation + direct sasquatch-v4be extraction
+python3 -I -B $S/tree/tools/round-41/sqfs-list.py $S/out/L3/carrier.sqsh --layout avm \
+    --files $S/oracle/L3.files.tsv --nonregular $S/oracle/L3.nonregular.tsv --inspect        exit 0
+same for L4                                                                                  exit 0
+cmp $S/oracle/L3.files.tsv <lane>/corpus/evidence/round-41/c1/L3/oracle.tsv                 exit 0
+cmp $S/oracle/L3.nonregular.tsv …L3/nonregular.tsv ; same for L4                            exit 0
+$HOME/.local/bin/sasquatch-v4be -f -no-exit-code -n -d $S/sq/L3/root $S/out/L3/carrier.sqsh exit 0
+same for L4                                                                                  exit 0
+cross-check vs oracle.tsv: L3 13 files / 20 dirs / 3 symlinks / 0 mismatches ; L4 14/17/3/0
+
+## 6. Hand parse of the AVM layout (stdlib struct only)
+python3 (avm-parse.json): magic 'sqsh', s_major 4, s_minor 0, big-endian superblock,
+    L3 mkfs_time == bytes_used == 187892 == len(image), inodes 37 = 13+20+3+1
+    L4 mkfs_time == bytes_used == 169545 == len(image), inodes 35 = 14+17+3+1
+    metadata header at inode_table_start: L3 raw 8385 -> LE 1411 (0x8000 uncompressed flag),
+        2+1411 lands exactly on directory_table_start 187166 ; BE 901 does not
+    L4 raw 3985 -> LE 1337, 2+1337 = 168892 = directory_table_start ; BE 14725 does not
+
+## 7. Frozen counter selftest (lane path, scratch isolated)
+HYAKU_SCRATCH=$S python3 -I -B <lane>/tools/round-41/c1-counter.py --selftest \
+    --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents          exit 0
+{"cases": 97, "green_ok": 12, "red_ok": 85, "path_probes": 6,
+ "path_probes_discriminating": 3, "root_probes": 8, "spec_probes": 7, "failures": []}
+
+## 8. evidence_id recomputation under the package rule
+node <lane>/tools/round-27/xpin-attribute.mjs --pkg65 <pkg> --pkg67 <pkg> wrapped-L3.json wrapped-L4.json
+    exit 0 ; L3 -> ev_cfe678f3…1b1 (== stored) ; L4 -> ev_34143817…327 (== stored)
+
+## 9. Read-only provenance of the committed receipts
+git log --oneline d764389e..e9a24d07 -- corpus/evidence/round-41/c1/L3/after.json
+    5ca6941b round-41: R41-C1 REA receipts V3, V4, L3, L4 (…)
+git merge-base --is-ancestor d764389e 5ca6941b                                             exit 0 (YES)
+git log d764389e..e9a24d07 -- corpus/evidence/round-41/c1/L3/oracle.tsv    -> no commits
+git ls-tree -r --name-only e9a24d07 corpus/evidence/round-41/c1
+    L3/{after.json,carrier.sqsh,nonregular.tsv,oracle.tsv,run.json}          (no oracle-run.json)
+    L4/{after.json,carrier.sqsh,nonregular.tsv,oracle.tsv,run.json}          (no oracle-run.json)
+    V3/{after.json,nonregular.tsv,oracle-run.json,oracle.tsv,run.json}
+    V4/{after.json,nonregular.tsv,oracle-run.json,oracle.tsv,run-harness-failure.log}
+
+No VCS mutation was performed anywhere (only show/log/ls-tree/rev-parse/merge-base/archive).
+No tool was installed or upgraded. Nothing written outside this seat's artifacts dir and $S.

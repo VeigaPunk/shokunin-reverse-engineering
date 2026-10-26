@@ -1,0 +1,71 @@
+R41W2C2Controls — exact commands (all run with cwd inside scratch S=/fast/scratch/hyaku/kaidoku-r41/R41W2C2Controls)
+Lane L=/home/vgpnk/Projects/shokunin/kaidoku-shokunin
+Python 3.14.8; npx 11.19.0; no tool install/upgrade performed; no REA/unblob run needed for this seat.
+
+# 1. scratch + committed control copies (never edited in the lane)
+mkdir -p "$S/ctl" && cp "$L"/.ufo/waves/round-41/controls/c2/CTL-*.md "$S/ctl/"
+
+# 2. held-out re-score (the seat's required command), exit 0
+python3 -I -B "$L/tools/round-41/c2-controls.py" --root "$L" \
+  --dev "$L/corpus/evidence/round-41/c2/heldout" --out "$S/ctl" \
+  --json-out "$S/scores-heldout.json" --build
+# -> SKILL.md 52/52; CTL-0 0/52 (exit 2); CTL-1 4; CTL-2 30; CTL-3 2; CTL-4 35;
+#    CTL-5 30; CTL-6 40; CTL-7 42; kill_rule_fires False; EXIT=0
+
+# 3. determinism rerun, no rebuild, second out dir, exit 0
+mkdir -p "$S/ctl2" && cp "$L"/.ufo/waves/round-41/controls/c2/CTL-*.md "$S/ctl2/"
+python3 -I -B "$L/tools/round-41/c2-controls.py" --root "$L" \
+  --dev "$L/corpus/evidence/round-41/c2/heldout" --out "$S/ctl2" \
+  --json-out "$S/scores-heldout-2.json"
+# -> matched/exit identical for all 9 tables
+
+# 4. dev re-score with the same tool (apples-to-apples), exit 0
+mkdir -p "$S/ctldev" && cp "$L"/.ufo/waves/round-41/controls/c2/CTL-*.md "$S/ctldev/"
+python3 -I -B "$L/tools/round-41/c2-controls.py" --root "$L" \
+  --dev "$L/.ufo/waves/round-41/controls/c2/dev" --out "$S/ctldev" \
+  --json-out "$S/scores-dev.json"
+# -> 0,4,34,2,38,31,42,44 and SKILL 52 — exactly .ufo/waves/round-41/controls/c2/dev-scores-prefreeze.json
+
+# 5. rebuilt control fidelity
+cmp rebuilt CTL-C2-{3,5,7} vs committed -> identical (sha256 2ab3e8ae…, 73c9d5f9…, 14e4a896…)
+
+# 6. evaluator labels on the held-out set (independent of the controls runner's zip)
+python3 -I -B "$L/tools/round-41/indep-eval-v3.py" \
+  --envelopes "$L/corpus/evidence/round-41/c2/heldout" --out "$S/eval-heldout.json"
+# -> 52 labels, 13 distinct (label, action) pairs
+
+# 7. c2-counter at the measured rev (anchors the claim's numbers for this seat)
+HYAKU_SCRATCH=/fast/scratch/hyaku python3 -I -B "$L/tools/round-41/c2-counter.py" \
+  --root "$L" --rev e9a24d07256d1606f01aa4d2d65f74e649c5f3d4 \
+  --freeze d764389e9cbe61b9d1b07538ff3bff02d50bb34f \
+  --json-out "$S/c2-counter-at-e9a24d07.json"
+# -> exit 1; matched 52; distinct_decisions 13; matched_classes 40; matched_combos 12;
+#    bindings_false ["observed_features_match_declared"]
+
+# 8. declared-key resolution + combo cross-check (imports c2-counter, read-only)
+#    -> 40 carriers declare under class_expected.features, 12 combos under top-level `declared`;
+#       with `declared` used, 12/12 combos match observed on both seeds
+
+# 9. row-wise sensitivity: flip the action cell of each of the 12 v3 rows in a scratch copy of
+#    SKILL.md, score with sqfs-triage-v3.py over the 52 held-out envelopes (keyed by envelope path)
+#    -> every row is load-bearing; each flip loses exactly that row's label carriers (elsewhere=0)
+
+# 10. integrity reads (read-only git)
+git -C "$L" log --format='%H %ci %s' --diff-filter=A -- corpus/evidence/round-41/c2/heldout/manifest.json
+#  8a1f4c73057405a4b470af11d1d351a0f03f6c34 2026-10-26 18:12:47 -0300 (descends from freeze)
+git -C "$L" log --format='%H %ci %s' --diff-filter=A -- .ufo/waves/round-41/controls/c2/
+#  d764389e9cbe61b9d1b07538ff3bff02d50bb34f 2026-10-26 18:08:13 -0300 freeze commit
+git -C "$L" log --oneline d764389e..e9a24d07 -- SKILL.md tools/round-41/{sqfs-triage-v3,indep-eval-v3,heldout-gen-v3,c2-counter}.py plans/round-41-claims.md
+#  (empty)
+git -C "$L" diff --stat e9a24d07 HEAD -- SKILL.md tools/round-41 corpus/evidence/round-41/c2 plans/round-41-claims.md
+#  (empty)
+git -C "$L" status --porcelain SKILL.md tools/round-41 corpus/evidence/round-41/c2 .ufo/waves/round-41/controls/c2
+#  (empty)
+
+# scored input hashes (working tree == measured rev for these paths)
+94d13b445701609f110ca6512e99f87afbdc00ccee3123b817853107f3cd725c  SKILL.md
+6ad2b4e1638a2b5f883d7bed14f8863ad5396dbc1af64b7cd521720ea42b6aa4  tools/round-41/sqfs-triage-v3.py
+26178d71c0f7634c3f1371ad5c4c7de3b59c49636cdf1b61bf8b2e461c75dce1  tools/round-41/indep-eval-v3.py
+e68a057e266e37195b59590e0ca7fbc409429d2a0ccfa125617c11b8c6b00ff4  tools/round-41/c2-controls.py
+c6c1ea64f07884a3b160a7e52268d295d54c8ef3bc2005704d5fae3398720af8  tools/round-41/c2-counter.py
+7717df938128bab093b6e6817c032d18e9f351934f441639317702cf2114d91d  corpus/evidence/round-41/c2/heldout/manifest.json

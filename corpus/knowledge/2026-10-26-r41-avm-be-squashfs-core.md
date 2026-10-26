@@ -125,5 +125,5 @@ SquashFS variants are not covered. REA records no extractor argv on success, so 
 installed handler source (S112) and direct `sasquatch-v4be` logs, not on the receipt. The counter's rerun
 binding shows the carriers extract through the pinned toolchain at scoring time; it cannot prove which
 process wrote a committed receipt. Vendor bytes are not committed and not redistributable: the digests
-plus `tools/round-41/fetch-vendor.py` are the provenance [S127 licence lines 665-670 / 688-693 restrict
+plus `tools/round-41/fetch-vendor.py` are the provenance [S127 licence lines 663-670 / S128 686-693 restrict
 redistribution and reverse engineering; the lane publishes derived metadata only].

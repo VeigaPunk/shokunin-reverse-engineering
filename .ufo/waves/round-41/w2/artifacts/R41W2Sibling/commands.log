@@ -1,0 +1,49 @@
+R41W2Sibling — commands run (all read-only; git only in read mode; no installs)
+
+1. lane inventory
+   ls -1d /home/vgpnk/Projects/shokunin/*/ | xargs -n1 basename
+   for d in /home/vgpnk/Projects/shokunin/*-shokunin; do n=$(basename "$d");
+      c=$(find "$d/tools" -maxdepth 2 -name '*.py' | wc -l);
+      s=$(find "$d/tools" -maxdepth 2 -name '*.sh' | wc -l); echo "$n py=$c sh=$s"; done
+   -> lanes with tools: chousa(7py/2sh), kaidoku(93/10), kama(54/2), kotodama(46/0),
+      mado(13/1), mori(31/4), souji(19/121), tameshi(28/1), tsukuroi(64/2); others empty.
+
+2. reads (selective, read tool)
+   - kaidoku-shokunin/plans/round-41-claims.md (full)
+   - kaidoku-shokunin/.ufo/waves/round-41/l1/scores/c2-at-e9a24d07.json
+   - kaidoku-shokunin/tools/round-41/c2-counter.py:1485-1548
+   - kaidoku-shokunin/tools/round-41/heldout-gen-v3.py (grep declared; lines 1372, 1464, 1467-1475, 1992-1996)
+   - kaidoku-shokunin/.ufo/waves/round-41/l1/mistakes/evidence-tracked.py (full)
+   - kaidoku-shokunin/.ufo/waves/round-41/l1/mistakes/declared-keys.py (full)
+   - kaidoku-shokunin/.ufo/waves/round-41/l1/mistakes/m41-3-red.txt, m41-3-green.txt
+   - kaidoku-shokunin/.ufo/waves/round-41/w2/R41W2C2IndepEval.md, R41W2C1AxisFit.md, R41W2Harm.md
+   - tameshi-shokunin/tools/bash-witness-study.py:770-800, grep "declared"
+   - tameshi-shokunin/tools/witness-metadata.py:1-120
+   - mori-shokunin/tools/mori-evidence-loss.py:1-60, mori-unlanded-check.py:1-50
+   - mado-shokunin/tools/mado-evidence-audit.py:1-45
+
+3. greps (grep tool)
+   - "1 MiB|1048576|skip" in kaidoku tools -> only unrelated magic-scan/1MiB offsets
+   - "MiB|1048576|1 MB" in kaidoku .ufo/gates|rounds|receipts -> only c1-census-v10.py:308 (32 MiB PROVINCE row)
+   - "declared|class_expected|declared_features|\"features\"" over all lane tools
+       (chousa,kama,kotodama,mado,mori,souji,tameshi,tsukuroi) -> no class_expected/declared_features hits; kaidoku excluded (known)
+   - "ls-tree|cat-file|first_add|committed|tracked|absent from" over all lane tools -> kama git-object based counters; chousa research-gate; mori unlanded; kaidoku evidence-tracked.py
+   - "git add" in *-shokunin/tools -> zero matches (no lane-local commit helper)
+   - "1 MiB|--allow-large|MiB rule" in fleet root -> scripts/hyaku/lane-addendum.md:272-276; per-round prompts (e.g. chousa-round-41.md:304-307); fleet .ufo/l0-questions.md:151 (mado L0)
+   - "helper-skipped|1 MiB|1066624" in kama-shokunin/corpus/lessons -> round-26.md:89-91; round-35-verifier-spotcheck.md:37-41; round-36.md:27
+
+4. git (read-only; -C explicit)
+   - git -C kaidoku log --oneline --follow -- corpus/evidence/round-41/c1/V4/after.json
+       -> e9a24d07 "round-41: R41-C1 V4 receipt after.json (2.8 MB; skipped by the
+          directory commit's 1 MiB rule at 5ca6941b, named as a file here)"
+   - git -C kaidoku cat-file -s e9a24d07:corpus/evidence/round-41/c1/V4/after.json -> 2852279
+   - git -C kaidoku ls-tree -r --name-only e9a24d07 -- corpus/evidence/round-41/c1/
+       -> V4/after.json present at measured rev; L3/L4/V3 receipts present
+   - git -C kaidoku config --list (aliases only; no commit helper alias)
+
+5. helper source (sed, read-only)
+   - scripts/hyaku/jj-lane.sh:600-745 (commit cmd): 638-639 named-file 10MiB error;
+     654-656 dir-vs-file tracking comment; 718-722 post-commit warn
+   - scripts/hyaku/lane-addendum.md:272-276 canonical rule text
+
+No tools installed (none needed); no VCS mutation; no REA/unblob/network use; no vendor bytes.
