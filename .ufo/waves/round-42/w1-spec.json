@@ -1,0 +1,438 @@
+{
+ "wave": "r42-w1",
+ "milestone": "Round 42 wave 1: pre-freeze build, recon, sources, attack of the draft",
+ "reportDir": ".ufo/waves/round-42/w1",
+ "context": "# Target\nkaidoku-shokunin round 42, wave 1 = PRE-FREEZE build, recon, source opening and attack of the draft. Lane root (absolute): /home/vgpnk/Projects/shokunin/kaidoku-shokunin. L1 = KaidokuR42 (integration owner, planner seat). Base c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c (lane main). Read the DRAFT claims first: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md.\n- R42-C1 coverage: SquashFS v3 (unblob 26.6.4 `squashfs_v3*` handlers; extractor `sasquatch -be|-le`, never sasquatch-v4be) through REA 6.5.0 `extract-firmware --max-depth 1` moves Frontier -> Core on four FRESH frozen PUBLISHED third-party images (real distribution/vendor rootfs, e.g. DD-WRT `tqsh`, OpenWrt Kamikaze squashfs-3.0, vendor firmware with a major-3 rootfs), scored by a round-42 port of the round-41 C1 counter (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/c1-counter.py) against an oracle from two non-sasquatch readers (`unsquashfs` 4.7.5 and 7-Zip 7z, both on PATH and both read v3).\n- R42-C2 depth: SquashFS triage table v4 (new SKILL rule block 21, `<!-- sqfs-triage-table v4 -->`) extends the round-41 v3 table (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/sqfs-triage-v3.py, SKILL.md rule block 20 `<!-- sqfs-triage-table v3 -->`) to the whole SquashFS handler family (routed defect R41-CL4: v3 sends every v1-v3 chunk to `no-squashfs-chunk`), adds a legacy-failure row, fixes R41-CL1 (the generator wrote combos' declared tuple under `declared`, the counter read other keys -> ONE key `declared_features`), and widens combos so a named-class lookup control fails on them. Expected labels come from a frozen INDEPENDENT evaluator written only from the draft's precedence text.\nRound-41 closure and routed defects: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-41-verifier-spotcheck.md \u00a75 (D1-D5); /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-41.md `## Routed defects into round 42` (R41-CL1..CL4) and `## Mistakes`. Round-41 wave reports /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w1/ and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w2/. Nothing is frozen yet; your output feeds the freeze. The L1 integrates and commits; you never do.\nKey inputs: round-41 tools /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/ (c1-counter.py, c1-extra.py, c1-run.sh, fetch-vendor.py, sqfs-list.py, gen-squashfs.py, sqfs-triage-v3.py, indep-eval-v3.py, heldout-gen-v3.py, c2-counter.py, c2-controls.py, local-source-gate.py); round-41 data /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/c1/ and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/{V3,V4,L3,L4}/ (oracle.tsv, nonregular.tsv, after.json) and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c2/heldout/; round-41 controls /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/controls/; REA 6.5.0 package root /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents; unblob 26.6.4 (commit 1fcc7a0a584a70a96c31f5a276c20944d199a089) install /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob; sasquatch / sasquatch-v4be 4.5.1 in ~/.local/bin; unblob test fixtures (git LFS, MIT) at https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/<handler>/<endian>/__input__/<file> (list the tree with `curl -s https://api.github.com/repos/onekey-sec/unblob/git/trees/1fcc7a0a584a70a96c31f5a276c20944d199a089?recursive=1`).\n\n# Reserved carriers (binding for every seat)\nC1 carriers are PUBLISHED third-party images. Never run REA, unblob, sasquatch or any extractor on a published image that an R42C1Img* seat names as a candidate, or on anything carved from it \u2014 except that the R42C1Img* seats and R42C1Oracle may read candidates with `unsquashfs` (-s, -lls, -d into scratch), `7z` (l, x) and pure readers. Development inputs anyone MAY run REA/unblob on: every unblob 26.6.4 SquashFS test fixture (they belong to C2 and are never C1 carriers), the OpenWrt Kamikaze 7.09 release images under https://archive.openwrt.org/kamikaze/7.09/ (designated DEVELOPMENT, never a C1 carrier), the round-41 carriers and your own fresh trees.\n\n# Bounds (binding)\n- Write ONLY your report file and artifacts under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/<your seat name>/. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kaidoku-shokunin \u2014 write it at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/<that path> (absolute; never under /home/vgpnk/Projects/shokunin/.ufo/...). Never write elsewhere in the lane (NOT corpus/, tools/, plans/, PROVINCE.md, SCORECARD.md, SHONEN.md, SKILL.md, LOG.md \u2014 tool code you author goes into your artifacts dir; the L1 integrates), never into the fleet repo /home/vgpnk/Projects/shokunin outside the lane, never into sibling lanes, never into /home/vgpnk/Projects/shokuknow (read-only; run no campaign tool there).\n- Never mutate VCS: no git add/commit/checkout/reset/stash/pull/push and no mutating jj in the lane or fleet. Read-only git (show, log, diff, ls-files, ls-tree, rev-parse, cat-file, merge-base) is fine. Sandbox clone for runs on a modified tree: D=$(mktemp -d \"$S/fx.XXXX\") && git clone -q --shared /home/vgpnk/Projects/shokunin/kaidoku-shokunin \"$D/lane\"; verify `git -C \"$D/lane\" rev-parse --show-toplevel` equals \"$D/lane\" before any commit there; fixture identity only via -c user.name=fx -c user.email=fx@fx inside it; every git call names -C explicitly.\n- Scratch: S=/fast/scratch/hyaku/kaidoku-r42/<your seat name>; mkdir -p \"$S\"; cd \"$S\"; export TMPDIR=\"$S\" HYAKU_SCRATCH=/fast/scratch/hyaku; trap 'rm -rf -- \"$S\"' EXIT. Clones, downloads, REA output dirs, caches and fixtures live there; /tmp only for files <50 MB; no `find`/`du` sweeps under /fast/scratch. Remove your scratch before you finish; copy what you cite into your artifacts dir (scratch and /tmp paths are not evidence). NEVER copy third-party firmware images or files extracted from them into the lane \u2014 cite URL + sha256 + the rebuild command (unblob test fixtures are MIT and small: you MAY copy those). Artifacts > 5 MB: cite sha256 + rebuild command instead. unblob writes unblob.log into its cwd: always `cd \"$S\"` before running unblob or REA. Tools you write must honour TMPDIR / a --work argument and never hardcode /tmp.\n- REA only via the CLI: `cd \"$S\" && REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output [--max-depth 1] <input> <fresh outdir>` (never xd://mcp__rea_* devices; REA refuses a pre-existing outdir). To make sasquatch unreachable strip $HOME/.local/bin from the child PATH and keep REA_UNBLOB_COMMAND absolute.\n- Tooling authorization (operator, 2026-10-19): you may install/upgrade tools that help the task \u2014 first read /home/vgpnk/.omp/agent/RULES.md (official channels, update-safety gate) and record tool/version/channel/reason in your report. pacman guard: ALL pacman transactions are PAUSED host-wide \u2014 use uv tool / npx / an official release binary in ~/.local/bin; never -Sy/-Syu/-U/-R, never restart a host service. Never reinstall, move or remove sasquatch, sasquatch-v4be, unblob, unsquashfs or 7z; never write into ~/.local/bin or any PATH directory.\n- Leaf seat: no subagents (an executor may spawn at most one read-only labrat probe), no background jobs, never message agent://all. Finish all edits to your report and artifacts BEFORE you yield; never touch them afterwards (the L1 freezes them). Report evidence (exact commands, outputs, exit codes, limits); mark inference [INFERENCE]. Open your report with a one-line verdict (DONE / CONFIRMED / FALSIFIED / DEFECTS FOUND) for your item.\n",
+ "items": [
+  {
+   "name": "R42C1ImgDdwrt",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nC1 candidate carriers from DD-WRT (https://download1.dd-wrt.com/dd-wrtv2/downloads/ \u2014 v24 era Broadcom/Atheros builds whose rootfs is SquashFS 3.x, often the `tqsh`-family or LZMA variant). Find 2-4 candidates. For every candidate: URL, HTTP status, access time UTC, bytes, sha256; the container chain to the SquashFS (TRX/uImage/vendor header/plain; offset of the superblock; how to carve it: [offset, offset+bytes_used)); superblock fields (magic, s_major/s_minor, endianness, compression id or `sqlz`/`tqsh`/`qshs` variant, inodes, bytes_used, block size); which unblob 26.6.4 handler's PATTERNS match (read /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py \u2014 pattern match by reading bytes only); `unsquashfs -s` and `unsquashfs -lls` (exit, entry count, regular/symlink/dir/device counts) and `7z l -slt` counts on the carve; whether the two readers agree on the regular-file path set. NO REA, NO unblob, NO sasquatch on candidates. Rank them for a 4-carrier C1 set: prefer full rootfs (hundreds+ entries, symlinks, devices), both endiannesses, gzip and LZMA variants, two or more publishers, and images whose download page states product/version (a SOURCES row needs a located quote). Give a carriers.json-ready record per candidate (url, sha256, carve offset, bytes_used, carve sha256, handler). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1ImgDdwrt.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1ImgDdwrt/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1ImgOpenwrt",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nC1 candidate carriers from OpenWrt releases whose squashfs images are SquashFS 3.x: https://archive.openwrt.org/kamikaze/8.09/, 8.09.1, 8.09.2 and older whiterussian (NOT 7.09: that release is designated DEVELOPMENT). Find 2-4 candidates across targets (e.g. brcm47xx, ar71xx, atheros, x86 `-squashfs` images) and endiannesses. For every candidate: URL, HTTP status, access time UTC, bytes, sha256; the container chain to the SquashFS (TRX/uImage/vendor header/plain; offset of the superblock; how to carve it: [offset, offset+bytes_used)); superblock fields (magic, s_major/s_minor, endianness, compression id or `sqlz`/`tqsh`/`qshs` variant, inodes, bytes_used, block size); which unblob 26.6.4 handler's PATTERNS match (read /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py \u2014 pattern match by reading bytes only); `unsquashfs -s` and `unsquashfs -lls` (exit, entry count, regular/symlink/dir/device counts) and `7z l -slt` counts on the carve; whether the two readers agree on the regular-file path set. NO REA, NO unblob, NO sasquatch on candidates. Rank them for a 4-carrier C1 set: prefer full rootfs (hundreds+ entries, symlinks, devices), both endiannesses, gzip and LZMA variants, two or more publishers, and images whose download page states product/version (a SOURCES row needs a located quote). Give a carriers.json-ready record per candidate (url, sha256, carve offset, bytes_used, carve sha256, handler). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1ImgOpenwrt.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1ImgOpenwrt/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1ImgVendor",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nC1 candidate carriers from vendor firmware (not DD-WRT/OpenWrt): an official vendor download of a consumer device firmware whose rootfs is SquashFS major 3 (e.g. older TP-Link, Netgear, Linksys, D-Link GPL-era images; search the vendors' download/GPL pages and archive.org copies of them only if the vendor URL is dead \u2014 say which). Find 1-3 candidates with a stable URL. For every candidate: URL, HTTP status, access time UTC, bytes, sha256; the container chain to the SquashFS (TRX/uImage/vendor header/plain; offset of the superblock; how to carve it: [offset, offset+bytes_used)); superblock fields (magic, s_major/s_minor, endianness, compression id or `sqlz`/`tqsh`/`qshs` variant, inodes, bytes_used, block size); which unblob 26.6.4 handler's PATTERNS match (read /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py \u2014 pattern match by reading bytes only); `unsquashfs -s` and `unsquashfs -lls` (exit, entry count, regular/symlink/dir/device counts) and `7z l -slt` counts on the carve; whether the two readers agree on the regular-file path set. NO REA, NO unblob, NO sasquatch on candidates. Rank them for a 4-carrier C1 set: prefer full rootfs (hundreds+ entries, symlinks, devices), both endiannesses, gzip and LZMA variants, two or more publishers, and images whose download page states product/version (a SOURCES row needs a located quote). Give a carriers.json-ready record per candidate (url, sha256, carve offset, bytes_used, carve sha256, handler). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1ImgVendor.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1ImgVendor/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1Oracle",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nWrite the C1 oracle tool `sqfs3-oracle.py` (stdlib Python + subprocess) in your artifacts dir: input one carved SquashFS v1-v3 image; producer 1 = `unsquashfs` 4.7.5 (`-lls -no-progress` listing for kinds/targets/devices and `-d <scratch>/root -no-xattrs -f` extraction for regular-file sha256/size, honour TMPDIR/--work); producer 2 = 7-Zip `7z l -slt` + `7z x` into a second scratch root. Output the round-41 oracle formats (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/L3/oracle.tsv: relpath TAB sha256 TAB size; /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/L3/nonregular.tsv: relpath TAB kind TAB detail, kinds dir|symlink|char-device|block-device|fifo|socket), plus `oracle-run.json` (argv, tool versions, both exit codes, counts, cross-check verdict, first 20 mismatches). A disagreement between the two producers on any regular relpath/sha256/size exits 3; an unreadable image exits 2. Paths are bytewise-sorted unique relpaths relative to the image root, no leading `./` or `squashfs-root/`. Validate on DEV inputs: every unblob 26.6.4 v3-family fixture (https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v3/{big_endian,little_endian}/__input__/*, squashfs_v3_ddwrt, squashfs_v3_broadcom, squashfs_v3_nonstandard, squashfs_v3_adaptive) and one OpenWrt 7.09 squashfs image. Report per input: both producers' counts, agreement, and which variants 7z or unsquashfs cannot read (then the oracle must name another producer for that variant: propose it). `--selftest` with inline fixtures (red: disagreement, unreadable, duplicate path). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1Oracle.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Oracle/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1OracleCheck",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nHypothesis: on real SquashFS 3.x rootfs images, `unsquashfs` 4.7.5 and 7-Zip agree file-for-file (relpath, sha256, size) AND agree with a direct `sasquatch` extraction (sasquatch is what unblob runs, so it may only cross-check, never be the oracle). Test on DEVELOPMENT inputs only: two OpenWrt Kamikaze 7.09 squashfs images (different targets/endianness if available) and the unblob v3 fixtures. Report counts, every mismatch, how each tool presents symlinks, hard links, devices, empty files and LZMA variants, and any path normalisation trap (leading ./, squashfs-root/, trailing slashes, UTF-8). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1OracleCheck.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1OracleCheck/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1Revenger",
+   "role": "revenger",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nReverse-engineer from REA 6.5.0 (/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist, esp. dist/firmware/*.js and dist/domain/firmware/*) and unblob 26.6.4 (commit 1fcc7a0a584a70a96c31f5a276c20944d199a089) (/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob) what changes for a SquashFS v1-v3 chunk versus v4: handler names emitted (`squashfs_v3`, `_ddwrt`, `_broadcom`, `_nonstandard`, v1/v2), the extractor argv (`sasquatch -be|-le -no-exit-code -f -d`), dependency names recorded when sasquatch is missing (`get_dependencies` returns both executables \u2014 what does the REA gap's `dependencies` list then hold?), the chunk extract-root directory name and `derivations[]` edge for a carved v3 chunk, and every place REA or unblob tests a handler name or the string `squashfs` (grep -n). Output: (1) the exact rule the round-41 exact-path matcher (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/c1-counter.py; find where it selects the edge whose handler starts `squashfs_v4`) must use for v3; (2) the predicted (H, G, D, BE, SR, P) features of a clean v3 run, a dependency-missing v3 run, a damaged v3 run; file:line citations throughout. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1Revenger.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Revenger/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1DevRun",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nHypothesis: REA 6.5.0 `extract-firmware --max-depth 1` on a SquashFS 3.x ROOTFS publishes every regular file the `unsquashfs` oracle lists, records one `unpublished-entry` gap per in-tree symlink/special and one `depth-limited` gap, keeps devices invisible, and removes escaping symlinks with a `MaliciousSymlinkRemoved` diagnostic. Test on DEVELOPMENT input only: one OpenWrt Kamikaze 7.09 squashfs image (https://archive.openwrt.org/kamikaze/7.09/ \u2014 pick a target, record URL+sha256; carve the squashfs as needed). Run REA once with sasquatch on PATH and once without (strip ~/.local/bin from the child PATH). Report: exit, runtime, handler(s), chunks, derivations, file count vs `unsquashfs -lls` regular count, gap kinds histogram with `dependencies`, diagnostics kinds, symlink dispositions, depth-limited fields, and the exact published path prefix (extract root). Copy the two envelopes (if < 5 MB, else their jq summaries) into your artifacts. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1DevRun.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1DevRun/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1Counter",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nPort the round-41 C1 counter to round 42 as `c1-counter.py` in your artifacts dir (the L1 installs it at tools/round-42/c1-counter.py). Start from `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/c1-counter.py`. Changes: (1) carriers are SquashFS v3-family images: replace the AVM-layout probes (marker, little-endian chain) with a superblock check from carriers.json (magic bytes, s_major == 3, endianness, compression/variant) and a carve-length == bytes_used check; (2) handler binding: each carrier's frozen handler (e.g. `squashfs_v3`, `squashfs_v3_ddwrt`) must be the chunk's handler; the extract-root edge is the `derivations[]` edge whose handler equals it (no `squashfs_v4` prefix test); (3) the exact-path rule stays, and the prefix test is SEGMENT-BOUNDED (round-41 closure D5: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w2/R41W2C1PathRule.md \u2014 `P.startswith(CR + '/')`, never `P.startswith(CR)`); (4) the oracle tables come from `tools/round-42/sqfs3-oracle.py` (format the round-41 oracle formats (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/L3/oracle.tsv: relpath TAB sha256 TAB size; /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/L3/nonregular.tsv: relpath TAB kind TAB detail, kinds dir|symlink|char-device|block-device|fifo|socket)); (5) every receipt the counter writes carries `counter_sha256` = sha256 of its own file (closure D4); (6) constants: carriers `.ufo/waves/round-42/c1/carriers.json`, gap rule `.ufo/waves/round-42/c1/gap-rule.json`, receipts `corpus/evidence/round-42/c1/<id>/after.json`, round-42 entry stem `2026-10-26-r42-squashfs-v3-core`, PROVINCE heading `## Round-42 additions to Core`, `--carrier-cache` filled by `tools/round-42/fetch-carrier.py`; the rerun projection and freeze-integrity rule unchanged. `--selftest`: keep the round-41 cases that still apply and add red cases for: a v4 handler on a v3 carrier, a non-segment-bounded root (`CR` = `x_extract` vs path `x_extract2/...`), a missing `counter_sha256`, a carve whose length != bytes_used. Report selftest counts and the diff summary. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1Counter.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Counter/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1Extra",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nPort `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/c1-extra.py` to round 42 as `c1-extra.py` in your artifacts dir: base `c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c`, entry stem `2026-10-26-r42-squashfs-v3-core`, `Round-42 frontier note`, carriers/oracle paths under `.ufo/waves/round-42/c1/` and `corpus/evidence/round-42/c1/`; oracle re-derivation by `tools/round-42/sqfs3-oracle.py`; a cited SOURCES id absent at the base (S129 is the highest at base); the frontier note must name the `squashfs_v3` family and say what stays Frontier (v1/v2, v4 Broadcom). Receipts carry `counter_sha256`. Selftest: keep applicable cases, add red cases for an S-id present at base and a note naming v4 only. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1Extra.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Extra/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1Run",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nPort `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/c1-run.sh` to round 42 as `c1-run.sh` in your artifacts dir: scratch segment `/kaidoku-r42/`, output under `corpus/evidence/round-42/c1/<id>`, REA `--max-depth 1` (6.5.0, absolute REA_UNBLOB_COMMAND), precondition = plain `sasquatch` resolvable on the child PATH (not sasquatch-v4be); the oracle arm calls `sqfs3-oracle.py` (path via C1_ORACLE; default tools/round-42/sqfs3-oracle.py) and accepts `hsqs` and `sqsh` and the v3 vendor magics. Fix round-41 routed defect R41-CL2: the JSON summary must not go through `jq --argjson` (ARG_MAX on a rootfs receipt) \u2014 use `--slurpfile` or a file. run.json keeps argv, UTC timing, exit codes, sasquatch path/sha256/version, REA+unblob versions, carrier pin, superblock summary, envelope and receipt digests. Prove it on a DEVELOPMENT input only (an unblob v3 fixture, and an OpenWrt 7.09 squashfs if it fits your time) into a scratch copy of the evidence layout; `bash -n` and shellcheck if available. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1Run.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Run/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1Fetch",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nWrite `fetch-carrier.py` in your artifacts dir from `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/fetch-vendor.py`: a carriers.json record gives url, image sha256, an optional container step (tar member path + member_sha256, or a byte range) and the carve (offset, bytes_used) + carve sha256; fail closed (non-zero exit, nothing cached) on every digest mismatch, before the next step. Fix round-41 closure D5 / /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w2/R41W2C1Chain.md: never write through a symlink (open with O_NOFOLLOW / O_EXCL into a fresh temp file, then rename; refuse a cache path whose parent is a symlink). Honour TMPDIR and `--cache`. `--selftest` (offline, inline fixtures): image digest mismatch, member mismatch, carve mismatch, symlinked cache entry, partial download. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1Fetch.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Fetch/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1EntryDraft",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft the C1 landing documents (text only; the L1 fills measured numbers after data, mark each `<<L1:...>>`): `corpus/knowledge/2026-10-26-r42-squashfs-v3-core.md` (shape: `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:corpus/knowledge/2026-10-26-r41-avm-be-squashfs-core.md`; the v3 handler family from unblob 26.6.4 (commit 1fcc7a0a584a70a96c31f5a276c20944d199a089) squashfs.py (S112, cite the v3 class lines), extractor argv, the oracle pair, the carrier list, the gap rule, limits: v1/v2, v4 Broadcom, extracted programs), the PROVINCE `## Round-42 additions to Core` row and `Round-42 frontier note` (append after `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:PROVINCE.md` :396-409), the README coverage-map row (after `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:corpus/README.md` :99) and a `## Frontier` line, and the round-42 LOG entry skeleton. Also state which round-41 text (`2026-10-26-unblob-format-matrix` 'coverage claim only', the v3 table's no-squashfs-chunk cause) the entry supersedes and how (dated pointer, never an edit of old text). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1EntryDraft.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1EntryDraft/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42CritC1Draft",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the DRAFT R42-C1 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md: (a) is SquashFS v3 through REA really ground the lane does not hold (grep corpus/ at c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c for v3 runs: `squashfs_v3`, `s_major 3`, `version 3`), so that a Core row is a coverage move and not a re-score (prompt rule \u00a79: /home/vgpnk/Projects/shokunin/.ufo/prompts/kaidoku-round-42.md); (b) can a do-nothing control, the round-41 receipts relabelled, or an oracle-only fabricated receipt reach 4/4 under the draft predicate; (c) is a two-reader oracle (unsquashfs + 7z) independent of sasquatch, and what if they disagree on one variant; (d) what changes to the gap rule a real v3 rootfs needs (hard links, devices, `.` entries, empty dirs); (e) missing kill rule or binding. Concrete predicate text changes. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42CritC1Draft.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42CritC1Draft/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1Sentinel",
+   "role": "sentinel",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAdversarial review of the C1 carrier chain and freeze design: (1) fetch-carrier cache poisoning / TOCTOU between hash and carve, write-through-symlink (round-41 closure D5), HTTP redirects to other hosts; (2) licence: third-party images are never committed \u2014 scan `git ls-tree -r c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c` for any blob > 1 MB under corpus/evidence and .ufo/waves and report what it is; (3) the frozen-path list in the draft \u2014 what must be added (oracle tool, fetch tool, carriers.json, gap-rule.json, oracle tables); (4) PATH hygiene of the counter's REA rerun (which sasquatch it runs; can a PATH entry shadow it); (5) whether a seat could pre-run REA on a candidate unnoticed and how the round would detect it (REA output dirs, unblob.log in cwd, npx cache timestamps). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1Sentinel.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Sentinel/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C1Mutants",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMutation-test the round-41 C1 counter clauses round 42 keeps: in a sandbox clone at c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c, generate >= 15 single-logic mutants of tools/round-41/c1-counter.py on: exact-path matcher and extract-root derivation (incl. a non-segment-bounded prefix mutant), oracle hit-set equality, non-regular unpublished, gap-rule counts, handler binding, evidence id recompute, rerun projection, frozen-path drift, receipt exit codes. Run each mutant's `--selftest`; list survivors and, for each, the selftest case (exact fixture shape) the round-42 port must add to kill it. Table: mutant | killed? | by which case | case to add. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C1Mutants.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Mutants/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2ReconLegacy",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nReal REA envelopes for SquashFS v1-v3 chunks (DEVELOPMENT inputs: unblob 26.6.4 (commit 1fcc7a0a584a70a96c31f5a276c20944d199a089) fixtures from https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/<handler>/...; list them via the git trees API in the wave context). For each fixture family (squashfs_v1, squashfs_v2, squashfs_v2_nonstandard, squashfs_v3 be/le, squashfs_v3_ddwrt, squashfs_v3_broadcom, squashfs_v3_nonstandard, squashfs_v3_adaptive) run REA `extract-firmware` (default depth and `--max-depth 1`) and record (OP, PR, H, G, D, BE, SR, P) exactly as the round-41 precedence defines them (`git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:plans/round-41-claims.md` lines 109-115). Then the arms: (a) sasquatch unreachable (strip ~/.local/bin from the child PATH): what `dependencies` does the gap list for a BE and an LE v3 chunk; (b) zero-file damage (truncate or zero the inode table) and (c) partial damage (zero one late data block: find the recipe that fails with P > 0 \u2014 read how `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/heldout-gen-v3.py` pins `MAX_DAMAGED_BLOCK`); (d) a v3 image concatenated after a v4 image (two chunks). For every envelope also run the round-41 interpreter `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/sqfs-triage-v3.py --skill <(git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:SKILL.md) --json <env>` and say where v3 is wrong. Copy every envelope (small) into your artifacts with a manifest (fixture URL, sha256, arm, features). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2ReconLegacy.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2ReconCombo",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nHypothesis: the round-41 combo factors (endianness, in-tree link, escaping link, partial damage, max_depth) combine with a legacy-family factor only where a writer exists: v1-v3 fixtures cannot gain symlinks (no v3 writer in the lane), so a legacy combo can vary only damage, dependency reachability, max_depth and a second (v4) chunk. Verify on DEVELOPMENT inputs (unblob v3 fixtures; `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/gen-squashfs.py` v4 images): build 6 such combos (e.g. v3 damaged + v4 with in-tree link in one carrier; v3 clean nested as a file inside a v4 image at max_depth 1 vs 3), run REA, report each envelope's features and the precedence label (draft the draft label precedence (numbered steps 1-13 under `## R42-C2`) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md); list which combinations are reachable and which feature tuples no named class produces. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2ReconCombo.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2ReconCombo/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2Interp",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nWrite the v4 triage interpreter `sqfs-triage-v4.py` in your artifacts dir from `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/sqfs-triage-v3.py`. Grammar change: marker `<!-- sqfs-triage-table v4 -->` + `<!-- sqfs-triage-actions: ... -->` inside `## Queue-drain craft`; same twelve columns; the `handler` cell is a glob over the SquashFS handler names in H (`squashfs_*` = any, `squashfs_v4_*`, `squashfs_v4_be`, `squashfs_v[123]*` = legacy family, `none` = no squashfs handler) \u2014 define match semantics exactly (any handler in H matches the glob? the failing chunk's handler?) and make them implement the draft label precedence (numbered steps 1-13 under `## R42-C2`) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md; keep the round-41 contains form `kind+`. Refuse a v3 marker (exit 2), duplicate labels, actions outside the vocabulary. No embedded copy of the table (selftests build tables inline). `--selftest` covering every step boundary of the precedence incl. legacy chunks, mixed v3+v4 chunk sets, and the round-41 cases. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2Interp.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Interp/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2Eval",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nWrite the INDEPENDENT evaluator `indep-eval-v4.py` in your artifacts dir from ONLY these inputs: the draft label precedence (numbered steps 1-13 under `## R42-C2`) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md, and REA 6.5.0 envelope structure (committed envelopes under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c2/heldout/ and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/*/after.json; REA sources at /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents). You must NOT open SKILL.md's triage blocks, any tools/round-39..41 interpreter/generator/evaluator, or other seats' artifacts. It reads one envelope (bare data object or CLI envelope), extracts OP, PR, H, F, G, D, BE, SR, P as the precedence defines them (document each extraction with the envelope field), returns (label, action); `--envelopes DIR --out JSON` batch mode as round 41's evaluator CLI (read only its `--help` text via `python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/indep-eval-v3.py --help`, never its source). `--selftest` with hand-written envelopes for every step incl. legacy handlers and step 6. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2Eval.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Eval/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2Gen",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nWrite the v4 held-out generator `heldout-gen-v4.py` in your artifacts dir from `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/heldout-gen-v3.py`. Keep its v4 classes and seed semantics. Add LEGACY classes built from pinned unblob 26.6.4 (commit 1fcc7a0a584a70a96c31f5a276c20944d199a089) fixtures (a `fixtures.json` pin list: URL under https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs, sha256, handler; the generator fetches into its cache or reads a committed copy \u2014 fixtures are MIT and small, propose committing them under corpus/evidence/round-42/c2/fixtures/): `legacy-clean` (per seeded fixture), `legacy-dep-missing-be`, `legacy-dep-missing-le` (sasquatch unreachable), `legacy-body-failure` (zero-file damage), `legacy-partial` (partial damage with P > 0) \u2014 recipes from R42C2ReconLegacy when present (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/; read it if it exists when you start, else derive and say so). Widen `combo` to 24 carriers with a family factor (v4 only / legacy only / legacy+v4 two-chunk), drawn from the seed. Fix R41-CL1: the manifest writes each envelope's declared feature tuple under exactly ONE key `declared_features` (no `declared`, no `class_expected.features`), for every class including combos. Two replicates per named class. `--verify` regenerates byte-identically. Dev arm: `--seed $(printf dev42 | sha256sum | cut -c1-40)`; run it end to end (REA) and copy the dev manifest + envelopes (small) into your artifacts. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2Gen.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Gen/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2Counter",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nWrite the v4 C2 counter `c2-counter.py` in your artifacts dir from `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/c2-counter.py`. Changes: expected (label, action) per envelope = frozen `tools/round-42/indep-eval-v4.py`; observed = frozen `tools/round-42/sqfs-triage-v4.py` on the SKILL v4 table at REV; `observed_features_match_declared` reads ONLY manifest key `declared_features` (R41-CL1) and fails closed (binding false, listed) when the key is absent on any envelope; new binding `lookup_combo_below_half`: the frozen lookup control table `.ufo/waves/round-42/controls/c2/CTL-C2-7-lookup.md` run through the frozen interpreter scores < half of the held-out `combo` envelopes; real-receipt binding over /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c1/{V3,V4,L3,L4}/after.json and the committed round-42 legacy dev envelopes; the receipt carries `counter_sha256` (closure D4) and the exit code; freeze-integrity as round 41. QUALITY 84: dry-run the counter END TO END on a sandbox clone with a freeze-like commit holding your interpreter/evaluator/generator drafts (or the other seats' artifacts when present under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/), the dev arm generated by the generator draft, and report the dry-run receipt showing EVERY binding evaluated. `--selftest` incl. red cases: key `declared` only, a table changed after the freeze, a lookup table scoring >= half. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2Counter.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Counter/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2ControlTables",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nWrite the C2 control tables in the DRAFT v4 grammar (see R42C2Interp's item in this wave) as files + a generator `c2-controls.py` ported from `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/c2-controls.py`: CTL-C2-0 base SKILL (document only), CTL-C2-0b the round-41 v3 table bytes under the v4 marker (the do-nothing state of the surface), CTL-C2-1 catch-all, CTL-C2-3 actions rotated, CTL-C2-4 exact gap sets only, CTL-C2-7 a lookup table enumerating the named classes' observed DEV tuples exactly, CTL-C2-8 v4 without the legacy-failure row, CTL-C2-9 v4 with every handler cell `squashfs_v4_*`. For each, state which precedence steps of the draft label precedence (numbered steps 1-13 under `## R42-C2`) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md it misses and on which planned classes; score them on DEV envelopes when R42C2Gen's dev arm exists under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Gen/ (else on round-41 dev envelopes /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/controls/c2/dev/ plus R42C2ReconLegacy envelopes) with the draft interpreter, and report the score table. None may reach full score. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2ControlTables.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2ControlTables/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2TableDraft",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft SKILL rule block 21 (prose bullet + `<!-- sqfs-triage-table v4 -->` + actions line + table in the v4 grammar) implementing the draft label precedence (numbered steps 1-13 under `## R42-C2`) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md, a one-sentence supersession appended to block 20's bullet, and `corpus/knowledge/2026-10-26-r42-sqfs-triage-v4.md` (frontmatter like `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:corpus/knowledge/2026-10-26-r41-sqfs-triage-v3.md`). Every row's `cause`/`source` cells cite S-rows with file:line (S112 for the v1-v3 handler classes, S118, S119, S120) \u2014 re-open each cited line yourself. Repair R41-CL4 in prose (why a v1-v3 chunk is not `no-squashfs-chunk`), justify the legacy-failure row's action from sources (unsquashfs reads v1-v3; the AVM layout pre-check does not apply), and keep block-20 prose repairs. Placement: `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:SKILL.md` block 20 ends before `## Config custody`. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2TableDraft.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2TableDraft/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2Grammar",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nReview the v4 grammar and precedence before freeze: can the draft label precedence (numbered steps 1-13 under `## R42-C2`) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md be encoded as a first-match table with a handler glob; which steps need order; how mixed chunk sets (a v3 and a v4 chunk in one envelope; a failing v3 chunk beside a clean v4 chunk) resolve under the precedence and under a handler-glob table \u2014 find every case where they diverge. Produce >= 30 feature-tuple test vectors (JSON: features -> expected label/action, the step that decides) covering each step boundary incl. legacy handlers, as a file the interpreter and evaluator seats' selftests can both use. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2Grammar.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Grammar/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2KeyAudit",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nQUALITY 83/84 static audit of the generator->manifest->counter interface (round-41 mistake M41-1: generator wrote `declared`, counter read `class_expected.features`/`features`/`declared_features`): at c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c, list every manifest/receipt key `tools/round-41/heldout-gen-v3.py` WRITES and every key `tools/round-41/c2-counter.py` and `c1-counter.py` READ (file:line), mark each read with no writer and each written key no reader uses; then do the same over the round-42 drafts when present under /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Gen/, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Counter/, /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Counter/ (read them at the end of your work). Deliver the key table and a stdlib checker script `key-audit.py` (red on the round-41 pair, green on a fixed pair). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2KeyAudit.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2KeyAudit/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42CritC2Draft",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the DRAFT R42-C2 in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md: is a table extended to v1-v3 handlers a depth move (AXES.md /home/vgpnk/Projects/shokunin/AXES.md: decision tables with real thresholds) or a re-score of v3 (prompt \u00a79); is step 6 (`legacy-body-failure`, `cross-read-legacy`) a real decision with a source behind it or a renamed body-failure; is step 3's `dep-missing-le` label right for a BIG-endian v3 chunk that also resolves plain sasquatch; does the `lookup_combo_below_half` target bind something a do-nothing or lookup control cannot reach; can the legacy classes, built from a few fixtures, be enumerated by a lookup. Concrete predicate changes. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42CritC2Draft.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42CritC2Draft/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2Shortcuts",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFind shortcut tables that would reach the C2 target without encoding the draft label precedence (numbered steps 1-13 under `## R42-C2`) in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md: from the planned classes' feature tuples (round-41 committed envelopes /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-41/c2/heldout; predicted legacy tuples from the draft and from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/ if present), construct the smallest first-match table (v4 grammar) scoring every planned class and every combo factor draw you can predict, and tables scoring all but one class. Report which held-out class or combo draw exposes each; recommend combo factors or replicates no shortcut satisfies. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2Shortcuts.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Shortcuts/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2Mutants",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMutation sweep on the round-41 C2 tooling round 42 keeps: the survivors listed in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w2/R41W2C2CounterMut.md and /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w2/R41W2C2InterpMut.md (and their artifacts dirs) \u2014 re-derive them on `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/{c2-counter.py,sqfs-triage-v3.py}` in scratch, run each `--selftest`, and write for each survivor the exact selftest case (inputs + expected) the v4 interpreter/counter must add. Add >= 10 new mutants on what v4 adds (handler glob parsing, legacy family test, single declared key read, lookup-combo binding, counter_sha256). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2Mutants.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2Mutants/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42AxisFit",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAxis-fit attack before freeze: by AXES.md (/home/vgpnk/Projects/shokunin/AXES.md) and the prompt's claim-sizing rules (/home/vgpnk/Projects/shokunin/.ufo/prompts/kaidoku-round-42.md \u00a76 item 9), is R42-C1 a coverage move and R42-C2 a depth move; are they causally separable (C2 must not read C1 data); can a do-nothing control reach either target; is each after-state one concrete value one command re-derives over committed bytes; which universal words in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md the counting commands do not enumerate. Verdict per claim + text fixes. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42AxisFit.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42AxisFit/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42SrcUnblob",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nOpen live (this round) and record URL, HTTP status, access time UTC, sha256 and <=25-word located quotes with line numbers: (1) https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py \u2014 the v1-v3 handler classes (NAME, PATTERNS, EXTRACTOR lines) and `SquashFSExtractor.extract`/`get_dependencies` (S112 already covers this document: give the new anchors for S112, no new row); (2) the unblob 26.6.4 test-fixture tree for SquashFS (git trees API at commit 1fcc7a0a584a70a96c31f5a276c20944d199a089, path tests/integration/filesystem/squashfs) and its LFS media URLs \u2014 draft ONE new SOURCES row (lane schema: read `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:corpus/SOURCES.md` header and rows S127-S129; 11 columns, no literal `|` in any cell; id S130 provisional), scope: fixture bytes the C2 generator pins; (3) the unblob LICENSE at the tag (MIT?) \u2014 quote it, since fixture bytes may be committed. Deliver rows + quotes + digests. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42SrcUnblob.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42SrcUnblob/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42Assim",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAssimilation review (read-only package /home/vgpnk/Projects/shokuknow/merge/kaidoku; run NO campaign tool; never write there; read its MERGE-REPORT.md). Candidates: `/home/vgpnk/Projects/shokuknow/merge/kaidoku/knowledge/corpus/knowledge/avm-le-image-genuine-marker.md`, `avm-le-variant-reachability.md`, `sasquatch-unblob-compatibility.md`, `sasquatch-prebuilt-package-inventory.md`, and any staged entry naming SquashFS v3, DD-WRT or OpenWrt. For each: PROVINCE scope check (`git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:PROVINCE.md`), QUALITY bar (`git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:corpus/QUALITY.md`), overlap with held entries (`git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:corpus/README.md` `## Coverage map`; round-36/38 already admitted `unblob-sasquatch-dependency`, `unblob-format-matrix` and refused `sasquatch-unblob-compatibility-precondition`, `sasquatch-unblob-avm-branch`: `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:corpus/lessons/round-36.md`, `round-38.md` `## Gate`), and re-open EVERY cited source yourself today (URL, access time, <=25-word located quote; a source that is a shokuknow lane work file is host-local \u2014 say whether its bytes can be copied in-lane). Verdict admit/reject with reason + flip condition; at least one admit and one reject if the material allows; draft the admitted entry re-grounded (lane frontmatter) and its SOURCES rows normalized to lane schema. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42Assim.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42Assim/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42AssimIds",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRun the assimilation id-collision and quarantine checks of the round prompt (/home/vgpnk/Projects/shokunin/.ufo/prompts/kaidoku-round-42.md \u00a76 item 10) with A=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42AssimIds/assimilation instead of the wave dir path: (1) reg-ids from `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:corpus/SOURCES.md` (write it to scratch first), staged-ids from /home/vgpnk/Projects/shokuknow/merge/kaidoku/SOURCES.append.md with the 0-3-space pattern, comm -> collisions; prove the guard on a scratch registry with an INDENTED colliding row (`  | S002 |`) -> nonempty collisions; (2) the quarantine slice awk over /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md for lane kaidoku; sha256 of the slice; compare with round 41's (`git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:corpus/lessons/round-41.md` Gate: 5 rows, sha256 7383a90e\u2026). Paste every command and output. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42AssimIds.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42AssimIds/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42LocalSrc",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRound-41 routed defect R41-CL3: `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/local-source-gate.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c` (read its --help/selftest first) exits 1 on SOURCES rows whose URL cell names a host-local path outside the lane without an in-lane copy. For each such row: does the file exist now; its sha256; does the row pin a digest and does it match; size. Prepare in your artifacts dir the byte copies the lane would add under `corpus/evidence/round-42/local-sources/<S-id>/<basename>` (skip any file > 5 MB or any third-party firmware: list it instead) and the updated `corpus/evidence/local-sources.json` map in the format the gate reads; then run the gate on a sandbox clone with those copies placed and report its exit and per-row verdicts. Rows whose host file is gone or drifted: say so with evidence (they become `unreachable`/drift dispositions, never fabricated copies). Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42LocalSrc.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42LocalSrc/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42MistakeHunt",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMine one mistake for the round-42 lesson `## Mistakes` not already mined in corpus/lessons/round-39.md, round-40.md, round-41.md `## Mistakes` (read them at c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c): candidates from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-41-verifier-spotcheck.md \u00a75 \u2014 D1 report filed before wave 2's WAVE-DONE leaving late seat reports uncommitted, D2 a lesson pointer to an uncommitted wave report, D4 receipts without counter_sha256, D5 non-segment-bounded path prefix. Give: class \u00b7 evidence pointer \u00b7 captured-by (QUALITY criterion number or `none`; `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:corpus/QUALITY.md`) \u00b7 fix, and a small stdlib check shown RED on the mistaken state (reconstruct it in a sandbox clone at the round-41 report commit's lane state 740644747865c1c331bfacaf4daf46ea218762c3 plus the uncommitted files listed in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-41-verifier-spotcheck.md line 25) and GREEN on a repaired fixture. If none is new, paste the sweep that found none. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42MistakeHunt.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42MistakeHunt/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42PrefileGate",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nWrite `prefile-gate.py` (stdlib) in your artifacts dir: `--root LANE --round N` exits 0 only if (a) every `.ufo/waves/round-N/<wave>.ready` has a `<wave>.ready.dispatched` marker AND a results file (`<wave>-results.json` or `r<N>-<wave>-results.json` beside the dispatch json) \u2014 i.e. no wave is still running; (b) `git status --porcelain` lists nothing under `.ufo/waves/round-N/`, `corpus/evidence/round-N/`, `plans/`, `tools/round-N/` (untracked or modified); (c) no stray `*.err` file in the lane root; (d) every `w*/<Name>.md` path cited in `corpus/lessons/round-N.md` exists in the committed tree (round-41 closure D2). Selftest with sandbox git fixtures (D=$(mktemp -d \"$S/fx.XXXX\"); git -C \"$D\" init -q; verify toplevel): red for each condition, green for a clean fixture. Then run it read-only on the real lane for round 41 (`--round 41`) and report the red findings. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42PrefileGate.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42PrefileGate/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42Late41",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nInherited round-41 state (closure /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-41-verifier-spotcheck.md D1/D2): `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin status --porcelain` lists modified/untracked files under .ufo/waves/round-41/w2/ and stray green.err/red.err in the lane root and corpus/evidence/round-41/c1/V4/. For each path: who wrote it (seat name, mtime vs round-41 report commit 4c87e06d 18:29:41 -03 and closure), whether it is a final seat report or a partial, whether its content is consistent with the committed round-41 record, and a disposition: commit as round-41 evidence under the round-42 entry, or delete (stray). Check that w2/R41W2C2Table.md (cited by corpus/lessons/round-41.md R40-CL5 row, closure D2) now exists and whether it supports the citing sentence. Also list which round-41 w2 seats from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w2-dispatch.json have no report file at all. Read-only; do not modify any file. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42Late41.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42Late41/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42ConnSibling",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nSibling-overlap scan: do sibling lanes under /home/vgpnk/Projects/shokunin/*-shokunin (read-only) hold ground on SquashFS v1-v3, DD-WRT/OpenWrt images, unblob/sasquatch, REA extract-firmware, triage tables, or a generator/counter key-mismatch defect class? grep their PROVINCE.md, SKILL.md, corpus/README.md and recent corpus/lessons. Report overlaps (lane, path:line, what), contested scope, and any defect pattern a sibling recorded that this round's tools could repeat. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42ConnSibling.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42ConnSibling/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42ConnRouted",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRouted-defect ledger for round 42: R41-CL1..CL4 (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-41.md `## Routed defects into round 42`), closure D1-D5 (/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-41-verifier-spotcheck.md \u00a75), and the still-open carried items in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-41.md `## Round-40 spot-check disposition` (R40-CL2, R40-CL7, D2, R36-CL5): current state at c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c, which wave-1 item of this round addresses it (names in this wave: R42C1Counter, R42C1Fetch, R42C1Run, R42C2Gen, R42C2Counter, R42C2Interp, R42C2TableDraft, R42LocalSrc, R42PrefileGate, R42Late41, R42MistakeHunt, R42C2KeyAudit \u2026) or `open \u2014 reason`, and the observable that would show it fixed. One table; flag any defect no item covers. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42ConnRouted.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42ConnRouted/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42ConnPattern",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nCross-tool pattern finder over tools/round-38..41 at c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c: (1) path prefix tests that are not segment-bounded (`startswith(x)` where x is a directory without a trailing `/`) \u2014 round-41 closure D5; (2) writer/reader key mismatches between a generator's manifest and a counter (round-41 M41-1); (3) receipts written without the scorer's own digest (closure D4); (4) hardcoded `/tmp` or TMPDIR-ignoring scratch (prompt \u00a77.4). For each hit: file:line, whether the round-42 ports inherit it (c1-counter, c1-extra, fetch-carrier, c2-counter, triage interpreter, generator, evaluator), a failing input. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42ConnPattern.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42ConnPattern/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42ScoutSkill",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nPlacement recon at c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c: where rule block 21 goes in SKILL.md `## Queue-drain craft` (block 20 at about :387-449, before `## Config custody`), what SCORECARD command A (SCORECARD.md `## Measurement recipes` A) counts as a rule block and which citation patterns it resolves, so block 21's citations resolve; where PROVINCE's `## Round-42 additions to Core` + frontier note append (after :396-409); README coverage-map row format (:99) and `## Frontier` lines (:253-258); the SCORECARD `## Capabilities` row format and the latest round section format (`## Round 41`); LOG entry format (tail of LOG.md); SHONEN line format. Exact line numbers and copyable templates. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42ScoutSkill.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42ScoutSkill/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42ScoutCalib",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nCalibration pre-check (so the landing harms no axis): at c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c, list every statement in SHONEN.md and in SCORECARD.md `## Owned axes`, `## Capabilities` and the `## Round 41` section that names a file:line range, a count (N/N), a commit hash or a selftest count, and check each against the repo (`git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:<path>`, `git cat-file -t`, command A from SCORECARD `## Measurement recipes`). Table: location | asserted | observed | match? Mismatches are debt the round-42 landing must not grow. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42ScoutCalib.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42ScoutCalib/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42Simplify",
+   "role": "simplifier",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYAGNI review of what round 42 ports: `git show c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c:tools/round-41/c1-counter.py` and `c2-counter.py` and `heldout-gen-v3.py`. List clauses/options/code no round-42 claim needs (AVM-only probes that a v3 carrier never reaches, dead profiles, unused CLI options, duplicated checks) and the selftest cases that only test removed code \u2014 with the risk of each removal (which draft predicate clause in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-42-claims.md it would weaken). Output a removal list ranked by safety; edit nothing in the lane. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42Simplify.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42Simplify/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "R42C2EntryReview",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nBefore v4 is drafted, verify at c4a38ea2fcd7a7da096358f9bf462c9a4be3c33c what the round-41 v3 surfaces say that v4 must supersede or keep: SKILL.md block 20 (:387-449) row by row (handler cells, the no-squashfs-chunk cause naming v1-v3 chunks, step texts), `corpus/knowledge/2026-10-26-r41-sqfs-triage-v3.md` (esp. :22-25, R41-CL4), and the round-41 wave-2 table review /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-41/w2/R41W2C2Table.md if present. For each statement: keep / supersede / wrong, with the exact replacement v4 needs. Re-open S112 lines :102,:159,:245 (unblob squashfs.py at 26.6.4) and check that the cited lines are the v1/v2/v3 handler NAME lines. Deliver your report at /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/R42C2EntryReview.md and artifacts in /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2EntryReview/.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  }
+ ]
+}
