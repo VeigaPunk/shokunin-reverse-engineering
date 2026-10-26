@@ -6,7 +6,8 @@ size, 611 `unpublished-entry` gaps, 4 `MaliciousSymlinkRemoved` diagnostics at t
 paths, 1 `depth-limited`, same subject digest — and the removal set was **stable across one
 committed and five independent REA runs (6/6 identical)**, so the plan's disclosed
 iteration-order dependence did not manifest on this carrier. One non-scoring defect found:
-`c1-run.sh` cannot write `run.json` for V4 (EPIPE of `MAX_ARG_STRLEN`), leaving the
+`c1-run.sh` cannot write `run.json` for V4 (E2BIG: a 146,561-byte `--argjson summary`
+over `MAX_ARG_STRLEN` = 131,072), leaving the
 flagship carrier's only evidence as `after.json` plus a raw shell error line.
 
 Seat: R41W2ReproV4 (leaf). Lane `kaidoku-shokunin`; freeze `d764389e…`, measured

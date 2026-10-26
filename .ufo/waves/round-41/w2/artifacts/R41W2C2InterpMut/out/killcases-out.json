@@ -1,0 +1,242 @@
+[
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K1-be-substring-token.json",
+  "id": "K1-be-substring-token",
+  "runs": {
+   "eval-E01": [
+    "body-extractor-failure",
+    "preserve-failure"
+   ],
+   "eval-pristine": [
+    "avm-marker-be-dropped",
+    "wrap-extractor-be"
+   ],
+   "interp-I06": [
+    "body-extractor-failure",
+    "preserve-failure"
+   ],
+   "interp-pristine": [
+    "avm-marker-be-dropped",
+    "wrap-extractor-be"
+   ]
+  },
+  "why": "argv token `-be=1` contains -be as a substring but is not the token; token equality says BE=no (avm-marker-be-dropped), substring says BE=yes (body-extractor-failure)"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K2-files-absent.json",
+  "id": "K2-files-absent",
+  "runs": {
+   "eval-E06": [
+    "clean",
+    "none"
+   ],
+   "eval-pristine": [
+    "clean-empty",
+    "confirm-empty"
+   ],
+   "interp-I11": [
+    "clean",
+    "none"
+   ],
+   "interp-pristine": [
+    "clean-empty",
+    "confirm-empty"
+   ]
+  },
+  "why": "normalized_result carries no `files` key at all; the text reads absent as P=0 (clean-empty), the mutants read absent as P=1 (clean)"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K3-non-squashfs-handler.json",
+  "id": "K3-non-squashfs-handler",
+  "runs": {
+   "eval-pristine": [
+    "no-squashfs-chunk",
+    "inspect-input"
+   ],
+   "interp-I14": [
+    "unclassified",
+    "none"
+   ],
+   "interp-pristine": [
+    "no-squashfs-chunk",
+    "inspect-input"
+   ]
+  },
+  "why": "chunks[].handler=gzip only: the interpreter filters H to squashfs* so the `none` handler row matches (no-squashfs-chunk); accepting every handler string makes H nonempty and the envelope falls off the table (unclassified)"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K4-no-argv-na.json",
+  "id": "K4-no-argv-na",
+  "runs": {
+   "eval-E02": [
+    "avm-marker-be-dropped",
+    "wrap-extractor-be"
+   ],
+   "eval-pristine": [
+    "body-extractor-failure",
+    "preserve-failure"
+   ],
+   "interp-I19": [
+    "avm-marker-be-dropped",
+    "wrap-extractor-be"
+   ],
+   "interp-pristine": [
+    "body-extractor-failure",
+    "preserve-failure"
+   ]
+  },
+  "why": "extractor-failure, P=0, handler squashfs_v4_be, but no child argv recorded: BE=n/a never satisfies step 5 (body-extractor-failure); n/a read as no reaches step 5 (avm-marker-be-dropped)"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K5-dep-plus-failure.json",
+  "id": "K5-dep-plus-failure",
+  "runs": {
+   "eval-E08": [
+    "partial-body-failure",
+    "salvage-partial"
+   ],
+   "eval-pristine": [
+    "dep-missing-be",
+    "install-extractor-be"
+   ],
+   "interp-pristine": [
+    "dep-missing-be",
+    "install-extractor-be"
+   ]
+  },
+  "why": "missing-extractor-dependency AND extractor-failure with P>0: step 3 runs before step 4, so the pair is dep-missing-be; the swapped order gives partial-body-failure"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K6-both-dependencies.json",
+  "id": "K6-both-dependencies",
+  "runs": {
+   "eval-E13": [
+    "dep-missing-le",
+    "install-extractor-le"
+   ],
+   "eval-pristine": [
+    "dep-missing-be",
+    "install-extractor-be"
+   ],
+   "interp-pristine": [
+    "unclassified",
+    "none"
+   ]
+  },
+  "why": "dependency list names both executables: BE is tested first (dep-missing-be); LE-first order gives dep-missing-le"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K7-superset-D-at-exact-row.json",
+  "id": "K7-superset-D-at-exact-row",
+  "runs": {
+   "eval-E13b": [
+    "dep-missing-le",
+    "install-extractor-le"
+   ],
+   "eval-pristine": [
+    "dep-missing-be",
+    "install-extractor-be"
+   ],
+   "interp-I02": [
+    "dep-missing-be",
+    "install-extractor-be"
+   ],
+   "interp-pristine": [
+    "unclassified",
+    "none"
+   ]
+  },
+  "why": "D is a superset of sasquatch-v4be: the exact dependency cell rejects it (falls through to unclassified); contains-form dependency matching or a substring LE test accepts it (dep-missing-be / dep-missing-le)"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K8-stdout-only-sr.json",
+  "id": "K8-stdout-only-sr",
+  "runs": {
+   "eval-E04": [
+    "clean",
+    "none"
+   ],
+   "eval-pristine": [
+    "escaping-symlink-removed",
+    "expect-link-absent"
+   ],
+   "interp-pristine": [
+    "clean",
+    "none"
+   ]
+  },
+  "why": "the removal token appears only in raw_result.execution.stdout.text: the evaluator's stdout defence decides SR=yes (escaping-symlink-removed); without it SR=no (clean)"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K9-diag-level-typename.json",
+  "id": "K9-diag-level-typename",
+  "runs": {
+   "eval-E05": [
+    "clean",
+    "none"
+   ],
+   "eval-pristine": [
+    "escaping-symlink-removed",
+    "expect-link-absent"
+   ],
+   "interp-pristine": [
+    "clean",
+    "none"
+   ]
+  },
+  "why": "the removal typename sits directly on diagnostics[] with no nested report object: the diag-level holder sees it (escaping-symlink-removed); report-only holders do not (clean)"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K10-rawdict-typename.json",
+  "id": "K10-rawdict-typename",
+  "runs": {
+   "eval-pristine": [
+    "clean",
+    "none"
+   ],
+   "interp-I09": [
+    "clean",
+    "none"
+   ],
+   "interp-pristine": [
+    "escaping-symlink-removed",
+    "expect-link-absent"
+   ]
+  },
+  "why": "the removal typename sits in a raw_result dict: the interpreter's raw_result dict scan decides SR=yes (escaping-symlink-removed); without that scan SR=no (clean).  NOTE: the pristine evaluator does NOT scan raw_result dicts, so pristine interp and pristine eval DISAGREE here"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K12-diagnostics-only-sr.json",
+  "id": "K12-diagnostics-only-sr",
+  "runs": {
+   "eval-pristine": [
+    "escaping-symlink-removed",
+    "expect-link-absent"
+   ],
+   "interp-I08": [
+    "clean",
+    "none"
+   ],
+   "interp-pristine": [
+    "escaping-symlink-removed",
+    "expect-link-absent"
+   ]
+  },
+  "why": "the removal typename is recorded ONLY in normalized_result.diagnostics[].report and the envelope carries no raw_result at all (a trimmed envelope): the diagnostics-report path decides SR=yes (escaping-symlink-removed); a mutant that misses the __typename__ key falls back on nothing (clean).  All 52 held-out envelopes carry raw_result with the same token, which is why the held-out kill check cannot see this path alone"
+ },
+ {
+  "envelope": "/fast/scratch/hyaku/kaidoku-r41/R41W2C2InterpMut/kill/K11-p-collapse-demo.json",
+  "id": "K11-p-collapse-demo",
+  "runs": {
+   "eval-pristine": [
+    "clean",
+    "none"
+   ],
+   "interp-pristine": [
+    "clean",
+    "none"
+   ]
+  },
+  "why": "P magnitude demo: I10/E07 collapse P to 0/1; the table grammar and the counter's declared `published` (nonzero/zero) cannot see the difference, so no pair flips -- unkillable by the frozen kill check"
+ }
+]

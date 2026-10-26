@@ -1,0 +1,11 @@
+--- pristine/sqfs-triage-v3.py
++++ mutant/I11
+@@ -627,7 +627,7 @@
+         'D': sorted(dependencies),
+         'BE': be,
+         'SR': symlink,
+-        'P': len(_as_list(nr.get('files'))),
++        'P': len(nr['files']) if isinstance(nr.get('files'), list) else 1,
+         'commands': [cmd if isinstance(cmd, str) else list(cmd) for cmd in commands],
+     }
+ 

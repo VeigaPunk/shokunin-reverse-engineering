@@ -1,0 +1,111 @@
+{
+ "scoring": [
+  {
+   "run": "patched, real lane history, patch uncommitted in the sandbox worktree",
+   "root": "sandbox clone @42c10a58 (git rev-parse --show-toplevel verified)",
+   "rev": "42c10a58cb2cae3a4a0122af35a0cf95ac718043",
+   "freeze": "7fce308631a8b457d6b7c5a4b39a923c4e9a49de",
+   "carriers_matched": 4,
+   "met_target": true,
+   "exit_code": 0,
+   "all_bindings_true": true,
+   "frozen_path_changed": [],
+   "projection_ok": {
+    "V1": true,
+    "V2": true,
+    "L1": true,
+    "L2": true
+   },
+   "artifact": "score-1-exact-wt.json"
+  },
+  {
+   "run": "patched, reconstructed freeze-clean history (patch inside the freeze commit; receipts added after)",
+   "rev": "2053b953d5a8b787c03f99f6e6dd3941d81799ff",
+   "freeze": "c7457af1a80a394eb3fb2991308e23f1fe181609",
+   "range_touches": [
+    "corpus/evidence/round-40/c1/{V1,V2,L1,L2}/after.json"
+   ],
+   "carriers_matched": 4,
+   "met_target": true,
+   "exit_code": 0,
+   "frozen_path_changed": [],
+   "artifact": "score-2-exact-recon.json"
+  },
+  {
+   "run": "round-40 frozen counter, same reconstructed history (control)",
+   "rev": "2053b953d5a8b787c03f99f6e6dd3941d81799ff",
+   "freeze": "c7457af1a80a394eb3fb2991308e23f1fe181609",
+   "carriers_matched": 3,
+   "met_target": false,
+   "exit_code": 1,
+   "L2_nonregular_published": [
+    "firmware.bin_extract/usr/bin/busy"
+   ],
+   "artifact": "score-3-orig-recon.json"
+  },
+  {
+   "run": "patched, demotion tip (documents-only demotion commit)",
+   "rev": "4d62ee5a86b4692a13f682b29ed7975e8d7e5326",
+   "freeze": "7fce308631a8b457d6b7c5a4b39a923c4e9a49de",
+   "carriers_matched": 4,
+   "met_target": false,
+   "exit_code": 1,
+   "frozen_path_changed": [],
+   "false_bindings": [
+    "province_core_section",
+    "province_core_row"
+   ],
+   "note": "the demotion commit removed the `## Round-40 additions to Core` heading, so the fix alone does not make the tip score: the Core row must be restored and the counter re-frozen",
+   "artifact": "score-4-exact-tip.json"
+  }
+ ],
+ "selftest": {
+  "round40_frozen_counter": {
+   "cases": 70,
+   "green_ok": 5,
+   "red_ok": 65,
+   "failures": [],
+   "exit": 0,
+   "artifact": "selftest-orig-round40.txt"
+  },
+  "patched_counter": {
+   "cases": 75,
+   "green_ok": 7,
+   "red_ok": 68,
+   "failures": [],
+   "exit": 0,
+   "artifact": "selftest-exact.txt"
+  },
+  "suffix_mutant_exact_plus_suffix": {
+   "cases": 75,
+   "green_ok": 6,
+   "red_ok": 66,
+   "exit": 1,
+   "failures": [
+    "regular usr/bin/busy is not the symlink entry bin/busy: want 0 got 1",
+    "deeper file with the oracle row sha256 does not publish oracle bin/busy: want 1 got 0",
+    "gap on usr/bin/busy does not resolve to the symlink entry bin/busy: want 1 got 0"
+   ],
+   "artifact": "selftest-suffixmut.txt",
+   "diff": "mutant-suffix-matcher.diff",
+   "mutant_diff_sha256": "0a1cb6fcca5316ad1a7b7f201a4e81bc05441fdb4e83f60d69175c2a5ae2d8e4"
+  },
+  "new_cases": [
+   "regular usr/bin/busy is not the symlink entry bin/busy (expect met)",
+   "regular bin/busy is not the symlink entry usr/bin/busy (reverse, expect met)",
+   "regular file at the entry path itself is a materialised symlink (expect nonregular_unpublished_ok red)",
+   "deeper file with the oracle row sha256 does not publish oracle bin/busy (expect oracle_hits_ok red)",
+   "gap on usr/bin/busy does not resolve to the symlink entry bin/busy (expect gaps_ok red)"
+  ]
+ },
+ "patch": {
+  "diff": "c1-counter-exact-match.diff",
+  "diff_sha256": "8fa0a813297eb5ca4f20ed449bcac61c1d3d053ef6793664c22a15e83779c0a8",
+  "clauses_tightened": [
+   "oracle_hits_ok",
+   "nonregular_unpublished_ok",
+   "gaps_ok"
+  ],
+  "clauses_relaxed": []
+ }
+}

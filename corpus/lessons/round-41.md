@@ -93,3 +93,23 @@ No `considerthese/` directory exists in this lane.
 ## Criteria added
 
 - QUALITY 84 (M41-1, M41-3).
+
+## Wave 2 (33 seats, all settled)
+
+Neither author verdict was overturned. R41-C1 was re-scored met at `e9a24d07` and `e1c83313` (`w2/R41W2C1Rescore.md`). V3 and the oracles reproduce (`R41W2ReproV3.md`, `R41W2C1Oracle.md`). The reservation scan found zero REA/unblob runs on reserved carriers before the freeze (`R41W2Reservation.md`). All 8 removal mutations were refused (`R41W2C1Removal.md`). C1 is a coverage move (`R41W2C1AxisFit.md`).
+
+Open C1 limits:
+
+- Oracle-only fabrications pass the rerun projection on 3 of 4 carriers, though none reaches the target (`R41W2C1Fabricate.md`; R40-CL2).
+- `fetch-vendor.py` follows symlinks on write (`R41W2C1Chain.md`).
+- The path rule accepts a non-segment-bounded diagnostic root (`R41W2C1PathRule.md`).
+- 12 of 29 counter mutants survive (`R41W2C1Mutants.md`).
+
+R41-C2 stop confirmed (`R41W2C2Rescore.md`, `R41W2C2AxisFit.md`). A one-line mutant that reads `declared` flips the claim to met while the counter's 70-case selftest still passes (`R41W2C2CounterMut.md`). That is the rule changed after scoring, so it is not this claim's rule; it is routed as R41-CL1. Further C2 findings:
+
+- 9 of 41 interpreter/evaluator mutants survive.
+- The interpreter and the evaluator disagree on 5 envelope shapes that the held-out set never exercises (`R41W2C2InterpMut.md`).
+- The lookup control scores 8 of the 12 combos (`R41W2C2Combos.md`).
+- The `dep-missing-le` cause cell overclaims what the grammar can do (`R41W2C2Table.md`, MEDIUM).
+
+All of these are routed into round 42 with R41-CL1..CL4.

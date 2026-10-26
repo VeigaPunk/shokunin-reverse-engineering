@@ -1,0 +1,649 @@
+[
+ {
+  "id": "M01",
+  "desc": "extract_rel: exact prefix -> suffix matcher (R40-CL1 defect reintroduced)",
+  "pred_ss": true,
+  "pred_real": "kills real (oracle_hits -> 0 per carrier, matched 0/4)",
+  "ss_exit": 1,
+  "ss_green": 0,
+  "ss_red": 83,
+  "ss_fails_head": [
+   "probe 'materialised symlink at its own entry path': exact matcher False, want True",
+   "probe 'plain oracle row': exact matcher False, want True",
+   "green (4 AVM carriers, fresh receipts, docs): want 0 got 1",
+   "ambiguous length settled by the single-block identity: want 0 got 1"
+  ],
+  "real_exit": 1,
+  "real_met": false,
+  "real_matched": 0,
+  "real_carrier_fails": [
+   [
+    "L3",
+    [
+     "oracle_hits_ok",
+     "gaps_ok"
+    ],
+    "gap path 'firmware.bin_extract/bin/busy' matches 0 non-regular entries",
+    0,
+    13,
+    null
+   ],
+   [
+    "L4",
+    [
+     "oracle_hits_ok",
+     "gaps_ok"
+    ],
+    "gap path 'firmware.bin_extract/bin/busy' matches 0 non-regular entries",
+    0,
+    14,
+    null
+   ],
+   [
+    "V3",
+    [
+     "oracle_hits_ok",
+     "gaps_ok"
+    ],
+    "gap path 'firmware.bin_extract/bin/ash' matches 0 non-regular entries",
+    0,
+    8,
+    null
+   ],
+   [
+    "V4",
+    [
+     "oracle_hits_ok",
+     "gaps_ok"
+    ],
+    "gap path 'firmware.bin_extract/bin/ash' matches 0 non-regular entries",
+    0,
+    6349,
+    null
+   ]
+  ],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M02",
+  "desc": "strip_rel: keep leading '/' (only './' peeled)",
+  "pred_ss": false,
+  "pred_real": "survives (no '/'-prefixed table rows in oracle tables)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M03",
+  "desc": "same_rel: compare without strip_rel normalization",
+  "pred_ss": false,
+  "pred_real": "survives (rows have no ./ or / prefixes)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M05",
+  "desc": "receipt_paths: drop chunks[].input_path take",
+  "pred_ss": false,
+  "pred_real": "survives (root confirmation still reached via files)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M06",
+  "desc": "squashfs_roots: handler prefix match -> exact HANDLER",
+  "pred_ss": true,
+  "pred_real": "survives (real receipts have only squashfs_v4_be edges)",
+  "ss_exit": 1,
+  "ss_green": 12,
+  "ss_red": 84,
+  "ss_fails_head": [
+   "root probe 'two roots without a hint': ('firmware.bin_extract', 'single squashfs_v4 derivation root'), want (None, 'ambiguous')",
+   "two squashfs roots without oracle_root fail closed: want 1 got 0"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M07",
+  "desc": "subject_root: ambiguity ignored (>=1 roots returns first)",
+  "pred_ss": true,
+  "pred_real": "survives (every receipt has exactly one root)",
+  "ss_exit": 1,
+  "ss_green": 11,
+  "ss_red": 84,
+  "ss_fails_head": [
+   "root probe 'two roots without a hint': ('firmware.bin_extract/core.sqsh_extract', 'single squashfs_v4 derivation root'), want (None, 'ambiguous')",
+   "root probe 'two portion chunk roots': ('firmware.bin_extract/2500-5000.squashfs_v4_be_extract', 'single squashfs_v4 derivation root'), want (None, '')",
+   "root probe 'ambiguous handler chunks': ('firmware.bin_extract/a.sqsh_extract', 'single squashfs_v4 derivation root'), want (None, '')",
+   "two chunks with oracle_root: the nested file is another namespace: want 0 got 1"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M08",
+  "desc": "subject_root: hint membership check dropped",
+  "pred_ss": true,
+  "pred_real": "survives (carriers.json has no oracle_root hint)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M09",
+  "desc": "disposition: structural over-allowance > -> >=",
+  "pred_ss": true,
+  "pred_real": "kills real (each carrier sits exactly at depth-limited allowance 1)",
+  "ss_exit": 1,
+  "ss_green": 10,
+  "ss_red": 85,
+  "ss_fails_head": [
+   "padded carrier: the oracle resolves under the portion chunk directory: want 0 got 1",
+   "structural gap within its frozen allowance: want 0 got 1"
+  ],
+  "real_exit": 1,
+  "real_met": false,
+  "real_matched": 0,
+  "real_carrier_fails": [
+   [
+    "L3",
+    [
+     "gaps_ok"
+    ],
+    "structural gaps over allowance {'depth-limited': [1, 1]}",
+    13,
+    13,
+    null
+   ],
+   [
+    "L4",
+    [
+     "gaps_ok"
+    ],
+    "structural gaps over allowance {'depth-limited': [1, 1]}",
+    14,
+    14,
+    null
+   ],
+   [
+    "V3",
+    [
+     "gaps_ok"
+    ],
+    "structural gaps over allowance {'depth-limited': [1, 1]}",
+    8,
+    8,
+    null
+   ],
+   [
+    "V4",
+    [
+     "gaps_ok"
+    ],
+    "structural gaps over allowance {'depth-limited': [1, 1]}",
+    6349,
+    6349,
+    null
+   ]
+  ],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M10",
+  "desc": "disposition: gap path multiplicity 1 -> at least 1",
+  "pred_ss": false,
+  "pred_real": "survives (all gap paths resolve uniquely)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M11",
+  "desc": "disposition: structural gap count increment dropped (off-by-one)",
+  "pred_ss": false,
+  "pred_real": "survives (count becomes 0 <= allowance 1)",
+  "ss_exit": 1,
+  "ss_green": 12,
+  "ss_red": 84,
+  "ss_fails_head": [
+   "structural gaps over the allowance: want failing clause 'gaps_ok', failing=['projection_ok']",
+   "structural gaps over the allowance: want 1 got 1"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M12",
+  "desc": "disposition: required default allowed-based -> False",
+  "pred_ss": false,
+  "pred_real": "survives (only symlink is required; fifo/socket absent)",
+  "ss_exit": 1,
+  "ss_green": 12,
+  "ss_red": 84,
+  "ss_fails_head": [
+   "required gap missing (symlink materialised): want failing clause 'gaps_ok', failing=['nonregular_unpublished_ok', 'projection_ok']",
+   "required gap missing (symlink materialised): want 1 got 1"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M13",
+  "desc": "disposition: removal kinds check inverted",
+  "pred_ss": true,
+  "pred_real": "kills real (V4's 4 removals are symlink entries, now banned)",
+  "ss_exit": 1,
+  "ss_green": 11,
+  "ss_red": 84,
+  "ss_fails_head": [
+   "a removal diagnostic is an admitted disposition for a symlink row: want 0 got 1",
+   "a removal naming a row of an unlisted kind fails: want 1 got 0"
+  ],
+  "real_exit": 1,
+  "real_met": false,
+  "real_matched": 3,
+  "real_carrier_fails": [
+   [
+    "V4",
+    [
+     "gaps_ok"
+    ],
+    "removal at 'lib/libbroadbandcfg.so' names a 'symlink' entry; removed.kinds is ['symlink']",
+    6349,
+    6349,
+    null
+   ]
+  ],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M14",
+  "desc": "disposition: gap+removal exclusivity dropped",
+  "pred_ss": false,
+  "pred_real": "survives (no entry carries both a gap and a removal)",
+  "ss_exit": 1,
+  "ss_green": 12,
+  "ss_red": 84,
+  "ss_fails_head": [
+   "an entry cannot be both gapped and removed: want 1 got 0"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M15",
+  "desc": "disposition: unresolvable removal skipped instead of failing closed",
+  "pred_ss": false,
+  "pred_real": "survives (all removals resolve)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M16",
+  "desc": "diagnostic_rel: deepest-first -> shallowest-first root run match",
+  "pred_ss": false,
+  "pred_real": "survives (single root run in every link)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 1,
+  "real_met": false,
+  "real_matched": 3,
+  "real_carrier_fails": [
+   [
+    "V3",
+    [
+     "projection_ok"
+    ],
+    "86 gaps (1 structural), 0 removals, 0 silent, on 95 non-regular entries",
+    8,
+    8,
+    {
+     "error": {
+      "category": "execution_failure",
+      "code": "execution_failure",
+      "details": {
+       "diagnostics": {
+        "reason": "ENOENT: no such file or directory, readlink '/fast/scratch/hyaku/kaidoku-r41/counter/c1-counter.0u25w0e9/rerun-V3/rea-firmware-lZ7vJk/extracted/firmware.bin_extract/bin/ping6'"
+       },
+       "operation": "extract_firmware",
+       "provider_id": "unblob"
+      },
+      "message": "Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.",
+      "remediation": {
+       "action": "Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."
+      },
+      "retryable": false
+     },
+     "exit": 1,
+     "ok": false,
+     "replayed": {
+      "max_depth": 1,
+      "max_output_bytes": 268435456,
+      "max_output_files": 10000
+     },
+     "stderr": "",
+     "stdout_head": "{\"ok\":false,\"error\":{\"code\":\"execution_failure\",\"category\":\"execution_failure\",\"message\":\"Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.\",\"retryable\":false,\"remediation\":{\"action\":\"Analysis could not complete"
+    }
+   ]
+  ],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M17",
+  "desc": "projection diagnostics: input_path fallback dropped",
+  "pred_ss": false,
+  "pred_real": "survives (projection equality is symmetric)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M18",
+  "desc": "rel_suffix: trailing _extract dir kept when last segment",
+  "pred_ss": false,
+  "pred_real": "survives (real paths always have content after the extract dir)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M19",
+  "desc": "projection norm: root mapping always bypassed (suffix only)",
+  "pred_ss": false,
+  "pred_real": "survives (first _extract dir == the single root for every real path)",
+  "ss_exit": 1,
+  "ss_green": 11,
+  "ss_red": 85,
+  "ss_fails_head": [
+   "padded carrier: the oracle resolves under the portion chunk directory: want 0 got 1"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M20",
+  "desc": "carriers_spec: member_sha256 removed from frozen-key requirement",
+  "pred_ss": true,
+  "pred_real": "survives (specs carry the key; counter never verifies member digest at run time)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [
+   "spec probe 'external carrier without member_sha256': no problem mentions 'lacks member_sha256' (problems [\"carrier 'V3' external member_sha256 is not 64 hex\"])"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M21",
+  "desc": "carriers_spec: nested.sha256 relaxed to any string",
+  "pred_ss": true,
+  "pred_real": "survives (V4 nested sha is well-formed)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M22",
+  "desc": "carve: length==bytes_used only, size equality dropped",
+  "pred_ss": false,
+  "pred_real": "survives (bytes_used == len(raw) on every carrier)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 1,
+  "real_met": false,
+  "real_matched": 3,
+  "real_carrier_fails": [
+   [
+    "V3",
+    [
+     "projection_ok"
+    ],
+    "86 gaps (1 structural), 0 removals, 0 silent, on 95 non-regular entries",
+    8,
+    8,
+    {
+     "error": {
+      "category": "execution_failure",
+      "code": "execution_failure",
+      "details": {
+       "diagnostics": {
+        "reason": "ENOENT: no such file or directory, readlink '/fast/scratch/hyaku/kaidoku-r41/counter/c1-counter.jdqff31l/rerun-V3/rea-firmware-ZbosH3/extracted/firmware.bin_extract/bin/gzip'"
+       },
+       "operation": "extract_firmware",
+       "provider_id": "unblob"
+      },
+      "message": "Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.",
+      "remediation": {
+       "action": "Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed."
+      },
+      "retryable": false
+     },
+     "exit": 1,
+     "ok": false,
+     "replayed": {
+      "max_depth": 1,
+      "max_output_bytes": 268435456,
+      "max_output_files": 10000
+     },
+     "stderr": "",
+     "stdout_head": "{\"ok\":false,\"error\":{\"code\":\"execution_failure\",\"category\":\"execution_failure\",\"message\":\"Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.\",\"retryable\":false,\"remediation\":{\"action\":\"Analysis could not complete"
+    }
+   ]
+  ],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M24",
+  "desc": "layout_probe: AVM marker (mkfs_time==bytes_used) clause dropped",
+  "pred_ss": true,
+  "pred_real": "survives (all four carriers carry the marker)",
+  "ss_exit": 1,
+  "ss_green": 12,
+  "ss_red": 84,
+  "ss_fails_head": [
+   "marker-stripped genuine-LE-lengths carrier: want 1 got 0"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M25",
+  "desc": "frozen_drift: nonregular path dropped from frozen-path watch",
+  "pred_ss": false,
+  "pred_real": "survives (no frozen path changed post-freeze)",
+  "ss_exit": 1,
+  "ss_green": 12,
+  "ss_red": 84,
+  "ss_fails_head": [
+   "nonregular table changed after freeze: want 2 got 1"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M26",
+  "desc": "fresh: prior-pin guard dropped (pin not in prior)",
+  "pred_ss": false,
+  "pred_real": "survives (V3/V4 pins are not round-40 pins)",
+  "ss_exit": 1,
+  "ss_green": 12,
+  "ss_red": 83,
+  "ss_fails_head": [
+   "relabelled previous-round pins (prior_pins): want 1 got 0",
+   "previous round table in the lane names two frozen pins: want 1 got 0"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M27",
+  "desc": "evidence id: ev_ prefix check dropped",
+  "pred_ss": false,
+  "pred_real": "survives (recomputed ids are ev_-prefixed)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M28",
+  "desc": "bindings: carriers_unchanged forced True",
+  "pred_ss": false,
+  "pred_real": "survives (carriers.json unchanged since freeze)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M29",
+  "desc": "bindings: gap_rule_ok uncovered-kinds check dropped",
+  "pred_ss": false,
+  "pred_real": "survives (no uncovered kinds in real data)",
+  "ss_exit": 1,
+  "ss_green": 12,
+  "ss_red": 84,
+  "ss_fails_head": [
+   "gap rule omits the device kind: want failing clause 'b:gap_rule_ok', failing=['gaps_ok']",
+   "gap rule omits the device kind: want 1 got 1"
+  ],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M31",
+  "desc": "oracle_hits: digest equality dropped (path-only hits)",
+  "pred_ss": false,
+  "pred_real": "survives (every published path carries the oracle digest)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ },
+ {
+  "id": "M32",
+  "desc": "oracle_hits_ok: == -> >=",
+  "pred_ss": false,
+  "pred_real": "survives (hits == files exactly)",
+  "ss_exit": 0,
+  "ss_green": 12,
+  "ss_red": 85,
+  "ss_fails_head": [],
+  "real_exit": 0,
+  "real_met": true,
+  "real_matched": 4,
+  "real_carrier_fails": [],
+  "real_unevaluable": null
+ }
+]

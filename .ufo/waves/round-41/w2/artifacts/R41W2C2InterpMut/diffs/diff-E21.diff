@@ -1,0 +1,23 @@
+--- pristine/indep-eval-v3.py
++++ mutant/E21
+@@ -347,9 +347,7 @@
+     # 1
+     if op != "extract_firmware" or pr != "unblob":
+         return _done("unclassified", 1)
+-    # 2
+-    if not squashfs:
+-        return _done("no-squashfs-chunk", 2)
++
+     # 3  D "names" a dependency: exact membership, never substring --
+     #    "sasquatch" is a substring of "sasquatch-v4be", so substring matching
+     #    would relabel every BE dependency as LE.  be is tested first because
+@@ -387,6 +385,9 @@
+     # 11
+     if not g:
+         return _done("clean" if p > 0 else "clean-empty", 11)
++    # 2 (moved last by mutant E21)
++    if not squashfs:
++        return _done("no-squashfs-chunk", 2)
+     # 12
+     return _done("unclassified", 12)
+ 

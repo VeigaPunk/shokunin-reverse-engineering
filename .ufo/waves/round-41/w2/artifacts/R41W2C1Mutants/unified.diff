@@ -1,0 +1,296 @@
+@@ -942,7 +942,7 @@
+     if parts is None:
+         return None
+     pret = root.split('/')
+-    if parts[:len(pret)] != pret:
++    if parts[-len(pret):] != pret:
+         return None
+     rest = parts[len(pret):]
+     return '/'.join(rest) if rest else ''
+### M01
+@@ -956,7 +956,7 @@
+     r = rel
+     while r.startswith('./'):
+         r = r[2:]
+-    return r.lstrip('/')
++    return r
+ 
+ 
+ def same_rel(candidate, rel, root):
+### M02
+@@ -963,7 +963,7 @@
+     """Exact match of a receipt path against a filesystem-relative table row."""
+     if not rel:
+         return False
+-    return extract_rel(candidate, root) == strip_rel(rel)
++    return extract_rel(candidate, root) == rel
+ 
+ 
+ def legacy_same_rel(candidate, rel):
+### M03
+@@ -820,9 +820,6 @@
+         if isinstance(d, dict):
+             take(d.get('parent_path'))
+             take(d.get('child_path'))
+-    for c in nr.get('chunks') or []:
+-        if isinstance(c, dict):
+-            take(c.get('input_path'))
+     return out
+ 
+ 
+### M05
+@@ -860,7 +860,7 @@
+         if not isinstance(d, dict):
+             continue
+         h = d.get('handler')
+-        if not (isinstance(h, str) and h.startswith(SQUASHFS_PREFIX)):
++        if not (isinstance(h, str) and h == HANDLER):
+             continue
+         child = strip_output(d.get('child_path'))
+         if isinstance(child, str) and child:
+### M06
+@@ -884,7 +884,7 @@
+         if hint not in roots:
+             return None, 'oracle_root %r not among %r' % (hint, roots)
+         return hint, 'oracle_root from carriers.json'
+-    if len(roots) == 1:
++    if roots:
+         return roots[0], 'single squashfs_v4 derivation root'
+     return None, 'ambiguous: %d squashfs_v4 roots %r (freeze oracle_root)' % (
+         len(roots), roots)
+### M07
+@@ -881,8 +881,6 @@
+     if not roots:
+         return None, 'no squashfs_v4 derivation edge'
+     if hint is not None:
+-        if hint not in roots:
+-            return None, 'oracle_root %r not among %r' % (hint, roots)
+         return hint, 'oracle_root from carriers.json'
+     if len(roots) == 1:
+         return roots[0], 'single squashfs_v4 derivation root'
+### M08
+@@ -1090,7 +1090,7 @@
+                 kind, entry_kind, hits[0], allowed.get(entry_kind, []))
+         gapped.setdefault(hits[0], []).append(kind)
+     over = {k: [n, structural[k]] for k, n in struct_count.items()
+-            if n > structural[k]}
++            if n >= structural[k]}
+     if over:
+         return False, 'structural gaps over allowance %r' % (over,)
+ 
+### M09
+@@ -1082,7 +1082,7 @@
+         if kind in structural:
+             return False, 'structural gap kind %r carries a path %r' % (kind, rp)
+         hits = [r for r, _k, _d in nonreg if same_rel(rp, r, root)]
+-        if len(hits) != 1:
++        if len(hits) < 1:
+             return False, 'gap path %r matches %d non-regular entries' % (rp, len(hits))
+         entry_kind = by_rel[hits[0]][0]
+         if kind not in allowed.get(entry_kind, []):
+### M10
+@@ -1077,7 +1077,7 @@
+         if rp is None:
+             if kind not in structural:
+                 return False, 'gap kind %r has no path and no structural allowance' % (kind,)
+-            struct_count[kind] = struct_count.get(kind, 0) + 1
++            struct_count[kind] = struct_count.get(kind, 0)
+             continue
+         if kind in structural:
+             return False, 'structural gap kind %r carries a path %r' % (kind, rp)
+### M11
+@@ -1121,7 +1121,7 @@
+     missing = []
+     silent_admitted = []
+     for rel, kind, detail in nonreg:
+-        need = required.get(kind, bool(allowed.get(kind)))
++        need = required.get(kind, False)
+         if not need:
+             continue
+         if gapped.get(rel) or removed_rels.get(rel):
+### M12
+@@ -1110,7 +1110,7 @@
+                 return False, ('removal resolves to %d non-regular entries at %r'
+                                % (len(hits), rel))
+             entry_kind = by_rel[hits[0]][0]
+-            if entry_kind not in removal_kinds:
++            if entry_kind in removal_kinds:
+                 return False, ('removal at %r names a %r entry; removed.kinds is %r'
+                                % (rel, entry_kind, removal_kinds))
+             if gapped.get(hits[0]):
+### M13
+@@ -1113,8 +1113,6 @@
+             if entry_kind not in removal_kinds:
+                 return False, ('removal at %r names a %r entry; removed.kinds is %r'
+                                % (rel, entry_kind, removal_kinds))
+-            if gapped.get(hits[0]):
+-                return False, 'entry %r is both gapped and removed' % (hits[0],)
+             removed_rels.setdefault(hits[0], 0)
+             removed_rels[hits[0]] += 1
+ 
+### M14
+@@ -1103,8 +1103,7 @@
+                 continue
+             rel = diagnostic_rel(d, root)
+             if rel is None:
+-                return False, ('removal diagnostic without a path under the root: %r'
+-                               % (d.get('input_path'),))
++                continue
+             hits = [r for r, _k, _d in nonreg if r == rel]
+             if len(hits) != 1:
+                 return False, ('removal resolves to %d non-regular entries at %r'
+### M15
+@@ -913,7 +913,7 @@
+         return None
+     segs = [x for x in link.split('/') if x not in ('', '.')]
+     rsegs = root.split('/')
+-    for i in range(len(segs) - len(rsegs), -1, -1):
++    for i in range(0, len(segs) - len(rsegs) + 1):
+         if segs[i:i + len(rsegs)] == rsegs:
+             return '/'.join(segs[i + len(rsegs):])
+     return None
+### M16
+@@ -1337,8 +1337,6 @@
+             continue
+         typename = diagnostic_typename(d) or '<none>'
+         rel = diagnostic_rel(d, proj_root) if proj_root else None
+-        if rel is None:
+-            rel = norm(d.get('input_path'))
+         diags.append([typename, rel])
+     diags.sort(key=canonical)
+ 
+### M17
+@@ -1227,7 +1227,7 @@
+         path = path[len('$output/'):]
+     parts = [p for p in path.split('/') if p not in ('', '.')]
+     for i, part in enumerate(parts):
+-        if part.endswith('_extract') and i + 1 < len(parts):
++        if part.endswith('_extract'):
+             return '/'.join(parts[i + 1:])
+     return '/'.join(parts)
+ 
+### M18
+@@ -1266,10 +1266,6 @@
+         only exists in one of the two runs does not leak into the projection; a
+         path outside that root falls back to the round-40 suffix normalisation so
+         carve artifacts still project (and still have to match)."""
+-        if proj_root is not None:
+-            rel = extract_rel(path, proj_root)
+-            if rel is not None:
+-                return rel
+         return rel_suffix(path)
+ 
+     hashes = {}
+### M19
+@@ -633,7 +633,7 @@
+                 # table, not in the fetcher - url, image sha256, tar member, the
+                 # member's own sha256, the carve length and the carrier pin, so a
+                 # changed image or member cannot pass unnoticed (routed R40-CL6).
+-                for key in ('url', 'image_sha256', 'member', 'member_sha256',
++                for key in ('url', 'image_sha256', 'member',
+                             'length'):
+                     if key not in ext:
+                         probs.append('carrier %r external lacks %s' % (c.get('id'), key))
+### M20
+@@ -656,7 +656,7 @@
+                                      % (c.get('id'),))
+                     else:
+                         nsha = nested.get('sha256')
+-                        if not (isinstance(nsha, str) and SHA_RE.match(nsha.lower())):
++                        if not isinstance(nsha, str):
+                             probs.append('carrier %r nested.sha256 is not 64 hex'
+                                          % (c.get('id'),))
+             if c.get('path') is not None:
+### M21
+@@ -1560,7 +1560,7 @@
+                 d['carve'] = {'length': carve_len, 'bytes_used': bu, 'size': size}
+                 d['carve_ok'] = (isinstance(carve_len, int)
+                                  and isinstance(bu, int)
+-                                 and carve_len == bu == size)
++                                 and carve_len == bu)
+             else:
+                 d['carve'] = {'bytes_used': bu, 'size': size}
+                 d['carve_ok'] = isinstance(bu, int) and bu == size
+### M22
+@@ -751,9 +751,6 @@
+         reason = 'magic %r is not big-endian sqsh' % (d['magic'],)
+     elif not d['version_v4']:
+         reason = 'version %d.%d is not 4.0' % (d['major'], d['minor'])
+-    elif not d['marker']:
+-        reason = 'AVM marker absent (mkfs_time %d != bytes_used %d)' % (
+-            d['mkfs_time'], d['bytes_used'])
+     elif not d['bytes_used_sane']:
+         reason = 'bytes_used %d outside 1..%d' % (d['bytes_used'], len(raw))
+     elif not d['layout_le']:
+### M24
+@@ -1192,7 +1192,7 @@
+     for c in spec.get('carriers') or []:
+         if not isinstance(c, dict):
+             continue
+-        for key in ('path', 'oracle', 'nonregular'):
++        for key in ('path', 'oracle'):
+             v = c.get(key)
+             if isinstance(v, str) and v:
+                 frozen.add(v)
+### M25
+@@ -1542,7 +1542,7 @@
+             d['carrier_present'] = raw is not None
+             d['carrier_pin_ok'] = (raw is not None and pin is not None
+                                    and hashlib.sha256(raw).hexdigest() == pin)
+-            d['carrier_fresh_ok'] = (pin is not None and pin not in prior)
++            d['carrier_fresh_ok'] = pin is not None
+             d['carrier_fresh_against'] = prior_sources
+             d['layout'] = layout_probe(raw)
+             d['layout_ok'] = bool(d['layout'].get('ok'))
+### M26
+@@ -1669,8 +1669,7 @@
+         matched = 0
+         for k, d in per.items():
+             key = f'{k}/after'
+-            d['evidence_id_ok'] = (key in ev and ev[key][0] == ev[key][1]
+-                                   and ev[key][0].startswith('ev_'))
++            d['evidence_id_ok'] = (key in ev and ev[key][0] == ev[key][1])
+             ok = all(d.get(x) is True for x in CLAUSES)
+             d['matched'] = bool(ok)
+             matched += bool(ok)
+### M27
+@@ -1493,7 +1493,7 @@
+     res['frozen_tables_valid'] = isinstance(plan_doc, dict)
+ 
+     cur = show(root, rev, CARRIERS)
+-    res['carriers_unchanged'] = cur == frozen
++    res['carriers_unchanged'] = True
+     res['gap_rule_unchanged'] = show(root, rev, GAPRULE) == plan_raw
+ 
+     drift = frozen_drift(root, freeze, rev, spec)
+### M28
+@@ -1726,7 +1726,7 @@
+     for d in (res.get('carriers') or {}).values():
+         kinds_seen |= set(d.get('nonregular_kinds') or [])
+     uncovered = sorted(kinds_seen - set(model.get('allowed') or {}))
+-    b['gap_rule_ok'] = not plan_probs and not uncovered
++    b['gap_rule_ok'] = not plan_probs
+     b['gap_rule_uncovered_kinds'] = uncovered
+     comps = [d.get('compression') for d in (res.get('carriers') or {}).values()]
+     b['compression_coverage'] = (any(c == GZIP_ID for c in comps)
+### M29
+@@ -1003,7 +1003,7 @@
+         return 0
+     hits = 0
+     for rel, sha in oracle:
+-        if any(sha == fs and same_rel(fp, rel, root) for fp, fs, _ in files):
++        if any(same_rel(fp, rel, root) for fp, fs, _ in files):
+             hits += 1
+     return hits
+ 
+### M31
+@@ -1622,7 +1622,7 @@
+                 d['oracle_hits'] = oracle_hits(oracle, files, root_value)
+                 d['oracle_hits_ok'] = (d['oracle_ok']
+                                        and root_value is not None
+-                                       and d['oracle_hits'] == d['oracle_files'])
++                                       and d['oracle_hits'] >= d['oracle_files'])
+                 diags = diagnostics(env)
+                 d['diagnostics'] = len(diags)
+                 d['removals'] = sorted(
+### M32

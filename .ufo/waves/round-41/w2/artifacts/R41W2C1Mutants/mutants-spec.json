@@ -1,0 +1,176 @@
+[
+ {
+  "id": "M01",
+  "desc": "extract_rel: exact prefix -> suffix matcher (R40-CL1 defect reintroduced)",
+  "pred_selftest_kill": true,
+  "pred_real": "kills real (oracle_hits -> 0 per carrier, matched 0/4)"
+ },
+ {
+  "id": "M02",
+  "desc": "strip_rel: keep leading '/' (only './' peeled)",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (no '/'-prefixed table rows in oracle tables)"
+ },
+ {
+  "id": "M03",
+  "desc": "same_rel: compare without strip_rel normalization",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (rows have no ./ or / prefixes)"
+ },
+ {
+  "id": "M05",
+  "desc": "receipt_paths: drop chunks[].input_path take",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (root confirmation still reached via files)"
+ },
+ {
+  "id": "M06",
+  "desc": "squashfs_roots: handler prefix match -> exact HANDLER",
+  "pred_selftest_kill": true,
+  "pred_real": "survives (real receipts have only squashfs_v4_be edges)"
+ },
+ {
+  "id": "M07",
+  "desc": "subject_root: ambiguity ignored (>=1 roots returns first)",
+  "pred_selftest_kill": true,
+  "pred_real": "survives (every receipt has exactly one root)"
+ },
+ {
+  "id": "M08",
+  "desc": "subject_root: hint membership check dropped",
+  "pred_selftest_kill": true,
+  "pred_real": "survives (carriers.json has no oracle_root hint)"
+ },
+ {
+  "id": "M09",
+  "desc": "disposition: structural over-allowance > -> >=",
+  "pred_selftest_kill": true,
+  "pred_real": "kills real (each carrier sits exactly at depth-limited allowance 1)"
+ },
+ {
+  "id": "M10",
+  "desc": "disposition: gap path multiplicity 1 -> at least 1",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (all gap paths resolve uniquely)"
+ },
+ {
+  "id": "M11",
+  "desc": "disposition: structural gap count increment dropped (off-by-one)",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (count becomes 0 <= allowance 1)"
+ },
+ {
+  "id": "M12",
+  "desc": "disposition: required default allowed-based -> False",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (only symlink is required; fifo/socket absent)"
+ },
+ {
+  "id": "M13",
+  "desc": "disposition: removal kinds check inverted",
+  "pred_selftest_kill": true,
+  "pred_real": "kills real (V4's 4 removals are symlink entries, now banned)"
+ },
+ {
+  "id": "M14",
+  "desc": "disposition: gap+removal exclusivity dropped",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (no entry carries both a gap and a removal)"
+ },
+ {
+  "id": "M15",
+  "desc": "disposition: unresolvable removal skipped instead of failing closed",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (all removals resolve)"
+ },
+ {
+  "id": "M16",
+  "desc": "diagnostic_rel: deepest-first -> shallowest-first root run match",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (single root run in every link)"
+ },
+ {
+  "id": "M17",
+  "desc": "projection diagnostics: input_path fallback dropped",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (projection equality is symmetric)"
+ },
+ {
+  "id": "M18",
+  "desc": "rel_suffix: trailing _extract dir kept when last segment",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (real paths always have content after the extract dir)"
+ },
+ {
+  "id": "M19",
+  "desc": "projection norm: root mapping always bypassed (suffix only)",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (first _extract dir == the single root for every real path)"
+ },
+ {
+  "id": "M20",
+  "desc": "carriers_spec: member_sha256 removed from frozen-key requirement",
+  "pred_selftest_kill": true,
+  "pred_real": "survives (specs carry the key; counter never verifies member digest at run time)"
+ },
+ {
+  "id": "M21",
+  "desc": "carriers_spec: nested.sha256 relaxed to any string",
+  "pred_selftest_kill": true,
+  "pred_real": "survives (V4 nested sha is well-formed)"
+ },
+ {
+  "id": "M22",
+  "desc": "carve: length==bytes_used only, size equality dropped",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (bytes_used == len(raw) on every carrier)"
+ },
+ {
+  "id": "M24",
+  "desc": "layout_probe: AVM marker (mkfs_time==bytes_used) clause dropped",
+  "pred_selftest_kill": true,
+  "pred_real": "survives (all four carriers carry the marker)"
+ },
+ {
+  "id": "M25",
+  "desc": "frozen_drift: nonregular path dropped from frozen-path watch",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (no frozen path changed post-freeze)"
+ },
+ {
+  "id": "M26",
+  "desc": "fresh: prior-pin guard dropped (pin not in prior)",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (V3/V4 pins are not round-40 pins)"
+ },
+ {
+  "id": "M27",
+  "desc": "evidence id: ev_ prefix check dropped",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (recomputed ids are ev_-prefixed)"
+ },
+ {
+  "id": "M28",
+  "desc": "bindings: carriers_unchanged forced True",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (carriers.json unchanged since freeze)"
+ },
+ {
+  "id": "M29",
+  "desc": "bindings: gap_rule_ok uncovered-kinds check dropped",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (no uncovered kinds in real data)"
+ },
+ {
+  "id": "M31",
+  "desc": "oracle_hits: digest equality dropped (path-only hits)",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (every published path carries the oracle digest)"
+ },
+ {
+  "id": "M32",
+  "desc": "oracle_hits_ok: == -> >=",
+  "pred_selftest_kill": false,
+  "pred_real": "survives (hits == files exactly)"
+ }
+]
