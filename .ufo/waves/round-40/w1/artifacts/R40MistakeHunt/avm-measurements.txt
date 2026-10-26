@@ -1,0 +1,42 @@
+### genuine AVM-BE probe fixture (round-11 lane artifact, read-only source)
+-rw-r--r-- 1 vgpnk vgpnk 4096 Oct 24 09:01 /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs
+c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32  /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs
+c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32  /fast/scratch/hyaku/kaidoku-r40/R40MistakeHunt/avm-measure/genuine.squashfs
+
+### superblock fields (big-endian header) and metadata block-length decode
+genuine          : magic=b'sqsh' mkfs_time=365 bytes_used=365 comp_id=4 inode_table_start=121 hdr=7400 len_LE=116 len_BE=29696
+marker stripped  : magic=b'sqsh' mkfs_time=1700000000 bytes_used=365 comp_id=4 inode_table_start=121 hdr=7400 len_LE=116 len_BE=29696
+abfd7ec90445f6cffc9920410823a9ae2dad750d859ad93c3b77459ea94512ac  /fast/scratch/hyaku/kaidoku-r40/R40MistakeHunt/avm-measure/markerstripped.squashfs
+
+### sasquatch-v4be 4.5.1 matrix (the two directions of the marker)
+genuine          noflag exit=0 files=4 first_stderr=SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a differen
+genuine          -be    exit=1 files=0 first_stderr=Reading a different endian SQUASHFS filesystem on /fast/scratch/hyaku/kaidoku-r40/R40Mista
+markerstripped   noflag exit=0 files=4 first_stderr=SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a differen
+markerstripped   -be    exit=1 files=0 first_stderr=Reading a different endian SQUASHFS filesystem on /fast/scratch/hyaku/kaidoku-r40/R40Mista
+
+### the writer the round-40 carrier plan needs (MH-5 green artifact)
+wrote /fast/scratch/hyaku/kaidoku-r40/R40MistakeHunt/avm-measure/stock-gzip.sqsh 392 bytes, inodes 5
+wrote /fast/scratch/hyaku/kaidoku-r40/R40MistakeHunt/avm-measure/fixed-gzip.sqsh 392 bytes, inodes 5
+  stock-gzip.sqsh: mkfs=392 bytes_used=392 comp_id=1 hdr=80a8 len_LE=10368 len_BE=168
+  stock gzip noflag exit=1 files=0
+  stock gzip -be    exit=0 files=2
+  fixed-gzip.sqsh: mkfs=392 bytes_used=392 comp_id=1 hdr=a880 len_LE=168 len_BE=10368
+  fixed gzip noflag exit=0 files=2
+  fixed gzip -be    exit=1 files=0
+wrote /fast/scratch/hyaku/kaidoku-r40/R40MistakeHunt/avm-measure/stock-xz.sqsh 392 bytes, inodes 5
+wrote /fast/scratch/hyaku/kaidoku-r40/R40MistakeHunt/avm-measure/fixed-xz.sqsh 392 bytes, inodes 5
+  stock-xz.sqsh: mkfs=392 bytes_used=392 comp_id=4 hdr=80a8 len_LE=10368 len_BE=168
+  stock xz   noflag exit=1 files=0
+  stock xz   -be    exit=0 files=2
+  fixed-xz.sqsh: mkfs=392 bytes_used=392 comp_id=4 hdr=a880 len_LE=168 len_BE=10368
+  fixed xz   noflag exit=0 files=2
+  fixed xz   -be    exit=1 files=0
+38712794ad328109de4295b5b23c471ab81a1823f2d75c02ecd7182d0890c88e  /fast/scratch/hyaku/kaidoku-r40/R40MistakeHunt/avm-measure/fixed-gzip.sqsh
+a8e461aba9de70157780dbcfe8da1eb92a629300096593c6c10da6ac5bd0ed3d  /fast/scratch/hyaku/kaidoku-r40/R40MistakeHunt/avm-measure/fixed-xz.sqsh
+
+### frozen interpreter labels for the three shapes the v1 table must separate
+H13: label= avm-marker-be-dropped rule= 4 | cause: mkfs_time equals bytes_used, unblob read the AVM marker and omitted -be, so sasquatch-v4be read a standard-BE 
+H15: label= body-extractor-failure rule= 5 | cause: the extractor ran with -be and still failed, so the image body or header is damaged -> keep the failing comman
+H01: label= clean rule= 8 | cause: every regular file was published, no gap was recorded and no symlink was removed -> nothing to fix; match file
+
+### end

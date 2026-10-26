@@ -1,0 +1,23 @@
+# Two divergent copies of 'the v1 triage table' at one revision
+# (a) SKILL.md block 18 table rows  (what the interpreter parses and the r39 counter measured)
+# (b) tools/round-39/sqfs-triage.py TABLE_BLOCK (emitted by --print-table; the selftest's own constant)
+$ git -C kaidoku-shokunin rev-parse HEAD  ->  fa6a8a3f85ec65946b3a54d37c0ddd1d6748664f
+sha256 SKILL block rows : d15cdcd51fd5b99e53b2fcba031ca700535374b64a5d6f9547f06b8dc27e06b8  (3055 B)
+sha256 --print-table    : 0f14537c076f50cb4959edcb728d501bc3bfd9e0c40533c19684df0adfc84021  (4194 B)
+cmp: differ
+
+# per-row decision cells, SKILL block vs --print-table (stripped of indent and marker)
+label                      SKILL (handler,gaps,deps,be,symlink,files)     TABLE_BLOCK
+no-squashfs-chunk          ('none', '*', '*', 'n/a', '*', '*')            ('none', '*', '*', 'n/a', '*', '*')
+dep-missing-be             ('squashfs_v4_be', 'missing-extractor-dependency', 'sasquatch-v4be', 'n/a', 'no', '*') ('squashfs_v4_be', 'missing-extractor-dependency', 'sasquatch-v4be', 'n/a', 'no', '0')
+   ^ DIFFERS: ['files']
+dep-missing-le             ('squashfs_v4_le', 'missing-extractor-dependency', 'sasquatch', 'n/a', 'no', '*') ('squashfs_v4_le', 'missing-extractor-dependency', 'sasquatch', 'n/a', 'no', '0')
+   ^ DIFFERS: ['files']
+avm-marker-be-dropped      ('squashfs_v4_be', 'extractor-failure', 'none', 'no', 'no', '0') ('squashfs_v4_be', 'extractor-failure', 'none', 'no', 'no', '0')
+body-extractor-failure     ('squashfs_v4_be', 'extractor-failure', 'none', 'yes', 'no', '0') ('squashfs_v4_be', 'extractor-failure', 'none', 'yes', 'no', '0')
+escaping-symlink-removed   ('squashfs_v4_*', '*', '*', 'n/a', 'yes', '>0') ('squashfs_v4_be', '*', '*', 'n/a', 'yes', '>0')
+   ^ DIFFERS: ['handler']
+in-tree-symlink-metadata   ('squashfs_v4_*', 'unpublished-entry', 'none', 'n/a', 'no', '>0') ('squashfs_v4_be', 'unpublished-entry', 'none', 'n/a', 'no', '>0')
+   ^ DIFFERS: ['handler']
+clean                      ('squashfs_v4_*', 'none', 'none', 'n/a', 'no', '>0') ('squashfs_v4_be', 'none', 'none', 'n/a', 'no', '>0')
+   ^ DIFFERS: ['handler']

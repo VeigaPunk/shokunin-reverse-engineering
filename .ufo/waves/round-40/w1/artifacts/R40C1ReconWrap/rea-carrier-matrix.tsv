@@ -1,0 +1,17 @@
+form	input	input_bytes	rea_exit	report_bytes	ok	fail_reason_or_dash	coverage	files_published	chunks	gap_kinds	published_bytes	wall_ms	note
+whole .image (tar)	dev6590.image	39290880	1	589	False	Staging entry budget exceeded (10000)	-	-	-	-	-	13085	default budgets
+whole .image (tar)	dev7590.image	42393600	1	588	False	Staging entry budget exceeded (10000)	-	-	-	-	-	2128	single LE-member image
+whole .image + --max-output-files 40000	dev6590.image	39290880	1	2901	False	Report exceeded 8388608 bytes; stdout (2245 bytes): ╭────────────────────────────── unblob (26.6.4) ────────────────────	-	-	-	-	-	17000	entry budget lifted; unblob reached both members; report cap hit
+whole .image + 40000 files + --filter-output normalized_result	dev6590.image	39290880	1	2901	False	Report exceeded 8388608 bytes; stdout (2245 bytes): ╭────────────────────────────── unblob (26.6.4) ────────────────────	-	-	-	-	-	13000	filter does not relieve the cap
+raw tar member as shipped	carves/member-astric.ttl	5443592	0	8299343	True	-	partial	2943	404	{"unknown-chunk-handler": 1, "unpublished-entry": 263}	24054885	20216	8-byte AVM trailer kept -> unknown chunk
+member carved to bytes_used	carves/member-exact.sqsh	5441468	0	7364889	True	-	partial	2942	403	{"unpublished-entry": 263}	24054877	18115	
+member carved to align_up(bytes_used,4096)	carves/member-span4096.sqsh	5443584	0	7345487	True	-	partial	2942	403	{"unpublished-entry": 263}	24054877	11927	RECOMMENDED file form
+same span, second run (determinism)	carves/member-span4096.sqsh	5443584	0	7344290	True	-	partial	2942	403	{"unpublished-entry": 263}	24054877	13950	only provider ids/paths/evidence_id differ
+span carve == 2116 B zero padding past bytes_used	carves/member-pad4096.sqsh	5443584	0	7370783	True	-	partial	2942	403	{"unpublished-entry": 263}	24054877	21428	sha256 equals the span carve
+span + 65536 zero bytes	carves/member-pad64k_sqsh	5507004	0	8301691	True	-	partial	2943	404	{"unpublished-entry": 263}	24118297	20490	zeros become a padding chunk, published as a file
+selection inside the .image (--offset 31575552 --length 5443584)	dev6590.image	39290880	0	7324911	True	-	partial	2942	403	{"unpublished-entry": 263}	24054877	12610	RECOMMENDED no-carve form; selection.sha256 checkable
+marker stripped (mkfs_time := 0x01020304)	carves/member-nomarker2.sqsh	5443584	0	9007	True	-	partial	0	1	{"extractor-failure": 1}	0	2690	unblob appends -be; extractor failure; ok:true and 0 files
+AVM main kernel.image (0xfeed9112)	dev6590/var/remote/var/tmp/kernel.image	1932808	0	5423	True	-	complete	0	0	{}	0	1781	silent: coverage complete, no chunk, no gap
+AVM x86 kernel.image	dev6590/var/remote/var/tmp/x86/kernel.image	3552264	0	19771	True	-	partial	5	6	{"unknown-chunk-handler": 3, "depth-limited": 1}	7828556	1450	gzip at 14958 + 2 unknown top chunks
+AVM x86 filesystem.image (LE member)	dev6590/var/remote/var/tmp/x86/filesystem.image	27750408	1	2804	False	Report exceeded 8388608 bytes; stdout (2150 bytes): ╭────────────────────────────── unblob (26.6.4) ────────────────────	-	-	-	-	-	11085	default file budget
+AVM-BE member, 6890 LTE 07.57	d6890/var/tmp/filesystem.image	44072968	1	3112	False	Report exceeded 8388608 bytes; stdout (2452 bytes): ╭────────────────────────────── unblob (26.6.4) ────────────────────	-	-	-	-	-	40000	file budget 40000; 7667 oracle files

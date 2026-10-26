@@ -1,0 +1,29 @@
+# R40-C2 heldout-gen-v2.py determinism transcript
+# host: Linux 7.2.11-arch1-1 x86_64   python3: Python 3.14.8
+# unblob: 26.6.4
+# sasquatch-v4be: fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6  (/home/vgpnk/.local/bin/sasquatch-v4be)
+# sasquatch:      ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754  (/home/vgpnk/.local/bin/sasquatch)
+# rea-agents: 6.5.0 via npx
+# binwalk (out-of-domain provider, /usr/bin/binwalk): 5fc19aac1f357a66a47e8b20a8038a84cb93971cb5d331bd4503b02fcc0a40d6
+# writer: tools/round-39/gen-squashfs.py sha256 f535e60ee15222a7b0809cf53858e72a82040a519450c562e369224d4fe41188
+# generator: heldout-gen-v2.py sha256 ffa6492eb7d22f6b8c75994373181382a621ec64a0b2f3b8c63fbf5e7e176a34
+# bound action table: bound-table-v2-block.md sha256 5122a03ef25145b30e9886dfc9550ed68cf9071729d40f38d56236ab82deda6c (--actions-set interp)
+# seed DEV = sha256('dev40') = 96832afb56e05fa09325c6ea5d5bb44b97e92deec674673a02a70b6379341715
+# The selftest builds all 13 classes (26 carriers) three times: twice with seed DEV
+#   (manifest bytes and every carrier sha256 must match) and once with DEV reversed
+#   (manifest and all 26 carriers must differ).  Action tokens do not reach carrier
+#   bytes: the same seed under --actions-set tabledraft/interp/actionreview yields
+#   identical carrier sha256 lists (checked by hand, see the report).
+
+$ python3 -I -B heldout-gen-v2.py --seed 96832afb56e05fa09325c6ea5d5bb44b97e92deec674673a02a70b6379341715 --actions-set interp --selftest
+PASS  same seed: manifest bytes identical  62104b933d9ca90f vs 62104b933d9ca90f
+PASS  same seed: every carrier sha256 identical  26 carriers
+PASS  same seed: carrier ids identical  H01..H26
+PASS  different seed: manifest differs  62104b933d9ca90f vs 743bdbda9d7cd552
+PASS  different seed: every carrier differs  26/26 differ
+PASS  replicate variation: no class has two identical carriers  26 distinct of 26
+all 6 selftest checks passed
+
+# delivered dev-run: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C2HeldoutGen/dev-run
+# manifest sha256: 62104b933d9ca90f4304e44931f0080d8d7f9e6db5bd9f270f99383aa7928846
+# carriers: 26 (2 per class, 13 classes), labels: 12, distinct (label, action) pairs: 12

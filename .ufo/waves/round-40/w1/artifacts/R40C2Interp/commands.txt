@@ -1,0 +1,34 @@
+# R40C2Interp evidence commands (all run in /fast/scratch/hyaku/kaidoku-r40/R40C2Interp
+# with TMPDIR=$PWD; lane root L=/home/vgpnk/Projects/shokunin/kaidoku-shokunin;
+# interpreter F=$L/.ufo/waves/round-40/w1/artifacts/R40C2Interp/sqfs-triage-v2.py)
+
+python3 -I -B "$F" --selftest                     # exit 0, 45/45 cases   -> selftest.txt
+python3 -I -B "$F" --print-table > v2-block.md    # exit 0, the block to integrate
+python3 -I -B "$F" --skill skill-standalone.md --table-only
+                                                  # exit 0, rules: 11      -> table-only.txt
+python3 -I -B "$F" --skill skill-integrated.md --table-only
+                                                  # exit 0, rules: 11      -> integrated-table-only.txt
+python3 -I -B "$F" --skill skill-integrated.md $(find $L/corpus/evidence/round-39/c2/heldout \
+    -name envelope.json | sort) $(ls -d $L/corpus/evidence/round-39/c1/K*/after.json)
+                                                  # exit 0, 26 lines       -> integrated-run.txt
+python3 -I -B "$F" --skill skill-integrated.md env-oood.json env-partial.json env-empty.json \
+    $L/corpus/evidence/round-39/c1/K5/after.json  # exit 0, 4 lines        -> v2-new-shapes.txt
+python3 -I -B "$F" --skill skill-integrated.md --json $L/corpus/evidence/round-39/c1/K5/after.json
+                                                  # exit 0                 -> json-mixed.json
+python3 -I -B "$F" --skill "$L/SKILL.md" $L/corpus/evidence/round-39/c2/heldout/H01/envelope.json
+                                                  # exit 2 (marker v2 absent at this base)
+                                                                          -> real-skill.txt
+
+# skill-standalone.md and skill-integrated.md are scratch-only wrappers:
+#   standalone  = "# SKILL / ## Queue-drain craft / <v2-block.md> / ## Later"
+#   integrated  = the real SKILL.md with v2-block.md inserted right after the
+#                 "## Queue-drain craft" heading line (the shape the L1 will commit).
+# Both live in scratch, not evidence; the block they embed is v2-block.md, whose
+# bytes are TABLE_BLOCK in the interpreter (`--print-table` reproduces them exactly).
+
+sha256(sqfs-triage-v2.py) = 336c621c46e78ca528d08597e7ed652c89fe95e31dbfe339fbfd86381c6b8617
+sha256(v2-block.md)       = 5122a03ef25145b30e9886dfc9550ed68cf9071729d40f38d56236ab82deda6c
+
+python3 = 3.14.8 (/usr/bin/python3).  No tool installed, upgraded or removed.
+No REA/unblob/sasquatch run; no carrier read beyond JSON envelopes already in the lane;
+no VCS mutation.

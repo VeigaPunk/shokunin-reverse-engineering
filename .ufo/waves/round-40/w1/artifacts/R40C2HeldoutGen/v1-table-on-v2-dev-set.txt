@@ -1,0 +1,42 @@
+# round-39 v1 triage table (SKILL.md block 18, marker <!-- sqfs-triage-table v1 -->)
+# over the 26 round-40 dev envelopes (seed sha256("dev40"))
+# command: python3 -I -B tools/round-39/sqfs-triage.py --skill SKILL.md --json <decompressed envelopes>
+# feature re-derivation from the same envelopes: dev-run/features.json, dev-run/feature-table.md
+
+carrier class                      expected_label             v1_label                   v1_rule verdict
+H01    clean-be                   clean                      clean                      8       same
+H02    clean-be                   clean                      clean                      8       same
+H03    clean-le                   clean                      clean                      8       same
+H04    clean-le                   clean                      clean                      8       same
+H05    clean-empty                clean-empty                unclassified               None    DIFF
+H06    clean-empty                clean-empty                unclassified               None    DIFF
+H07    escaping-symlink-removed   escaping-symlink-removed   escaping-symlink-removed   6       same
+H08    escaping-symlink-removed   escaping-symlink-removed   escaping-symlink-removed   6       same
+H09    in-tree-symlink-metadata   in-tree-symlink-metadata   in-tree-symlink-metadata   7       same
+H10    in-tree-symlink-metadata   in-tree-symlink-metadata   in-tree-symlink-metadata   7       same
+H11    mixed-symlinks             mixed-symlinks             escaping-symlink-removed   6       DIFF
+H12    mixed-symlinks             mixed-symlinks             escaping-symlink-removed   6       DIFF
+H13    dep-missing-be             dep-missing-be             dep-missing-be             2       same
+H14    dep-missing-be             dep-missing-be             dep-missing-be             2       same
+H15    dep-missing-le             dep-missing-le             dep-missing-le             3       same
+H16    dep-missing-le             dep-missing-le             dep-missing-le             3       same
+H17    avm-marker-be-dropped      avm-marker-be-dropped      avm-marker-be-dropped      4       same
+H18    avm-marker-be-dropped      avm-marker-be-dropped      avm-marker-be-dropped      4       same
+H19    body-extractor-failure     body-extractor-failure     body-extractor-failure     5       same
+H20    body-extractor-failure     body-extractor-failure     body-extractor-failure     5       same
+H21    partial-body-failure       partial-body-failure       unclassified               None    DIFF
+H22    partial-body-failure       partial-body-failure       unclassified               None    DIFF
+H23    no-squashfs-chunk          no-squashfs-chunk          no-squashfs-chunk          1       same
+H24    no-squashfs-chunk          no-squashfs-chunk          no-squashfs-chunk          1       same
+H25    out-of-domain              unclassified               no-squashfs-chunk          1       DIFF
+H26    out-of-domain              unclassified               no-squashfs-chunk          1       DIFF
+
+v1 labels on the v2 set: 18/26 agree with the frozen generator class
+distinct v1 rows used: 9 over 26 envelopes
+distinct (label, action) decisions of the v2 design: 12 over 26 envelopes
+
+each mismatch is one routed defect:
+  clean-empty           -> unclassified                 R39-CL3 D2 (v1 has no zero-file clean row)
+  mixed-symlinks        -> escaping-symlink-removed     R39-CL2 (escaping row matches on SR alone)
+  partial-body-failure  -> unclassified                 R39-CL3 D1 (v1 body row requires published files = 0)
+  out-of-domain         -> no-squashfs-chunk            R39-CL1 (no operation/provider domain guard)

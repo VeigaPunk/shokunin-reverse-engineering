@@ -1,0 +1,32 @@
+file v1-be.squashfs
+size 5443592 sha256 334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a3015ad3f3d4
+magic b'sqsh'
+sane superblock endianness be; marker mkfs_time==bytes_used True (5442392 vs 5442392); block_size 65536 compression 4 inodes 1079 frags 112 root_inode 0x1c48130a
+  inode_table 5421468 dir_table 5430042 frag_table(index) 5440850 id_table(index) 5442384 lookup(export index) 5442362
+
+2-byte metadata block headers (first block of each table):
+  inode_table  @5421468: raw=6405 LE_len=1380c BE_len=25605c plausible_LE=True plausible_BE=False
+  dir_table    @5430042: raw=900c LE_len=3216c BE_len=4108U plausible_LE=True plausible_BE=True
+
+walked 118 directories, 697 regular files, 263 symlinks, 1 specials
+files with a data-block size list (nblk>=2): 69
+  usr/sbin/FwUpstreamDocsis2_D.bin size=81920 nblk=2 frag=4294967295 type=reg
+    block[0] raw=00000190 BE=0x00000190 (size 400, plausible=True) | LE=0x90010000 (size 65536, plausible=True)
+    block[1] raw=000008fc BE=0x000008fc (size 2300, plausible=True) | LE=0xfc080000 (size 524288, plausible=False)
+  usr/sbin/FwUpstreamDocsis3_D.bin size=81920 nblk=2 frag=4294967295 type=reg
+    block[0] raw=00000190 BE=0x00000190 (size 400, plausible=True) | LE=0x90010000 (size 65536, plausible=True)
+    block[1] raw=00000928 BE=0x00000928 (size 2344, plausible=True) | LE=0x28090000 (size 589824, plausible=False)
+  usr/sbin/dispatcher size=145480 nblk=3 frag=4294967295 type=reg
+    block[0] raw=00005268 BE=0x00005268 (size 21096, plausible=True) | LE=0x68520000 (size 5373952, plausible=False)
+    block[1] raw=00005054 BE=0x00005054 (size 20564, plausible=True) | LE=0x54500000 (size 5242880, plausible=False)
+    block[2] raw=00000e90 BE=0x00000e90 (size 3728, plausible=True) | LE=0x900e0000 (size 917504, plausible=False)
+
+fragment index @5440850: first u64 BE=5440192 LE=13835712264700690432 (image 5443592 B; only BE is a plausible block offset)
+  fragment block @5440192 header raw=9002 LE_len=656 first entry BE start=0x60 size=0x3be4 (15332 B, raw=False, plausible=True) | LE start=0x6000000000000000 size=0xe43b0000 plausible=False
+
+export index @5442362: first u64 BE=5440858 LE=6486682097762172928 (only BE is a plausible block offset)
+  export block @5440858 header raw=3405 LE_len=1332c first refs BE=['0xdcd', '0x0', '0x20'] plausible=True
+id index @5442384: first u64 BE=5442378 LE=5335449443015589888
+  id block @5442378 header raw=0480 LE_len=4U first ids BE=[0] plausible=True
+
+RESULT: AVM layout consistent: BE fields, LE 2-byte block headers

@@ -1,0 +1,35 @@
+# sasquatch 4.5.1 on the round-11 AVM fixture (sha256 c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32)
+# binaries: ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754  /home/vgpnk/.local/bin/sasquatch fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6  /home/vgpnk/.local/bin/sasquatch-v4be 
+
+## $ sasquatch-v4be  -d out-sasquatch-v4be avm-be.squashfs
+exit=0
+--- stderr (first 6 lines)
+SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess
+Trying to decompress using default xz decompressor...
+Successfully decompressed with default xz decompressor
+--- extracted files
+  apple1.txt
+  apple2.txt
+  apple3.txt
+  apple4.txt
+  apple1.txt: 6170706c650a
+  apple2.txt: 62616e616e610a
+  apple3.txt: 6368657272790a
+  apple4.txt: 646174650a
+
+## $ sasquatch-v4be -be -d out-sasquatch-v4be-be avm-be.squashfs
+exit=1
+--- stderr (first 6 lines)
+Reading a different endian SQUASHFS filesystem on avm-be.squashfs
+read_id_table: failed to read id table block
+FATAL ERROR: File system corruption detected
+--- extracted files
+
+## $ sasquatch  -d out-sasquatch avm-be.squashfs
+exit=1
+--- stderr (first 6 lines)
+SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess
+Reading a different endian SQUASHFS filesystem on avm-be.squashfs
+FATAL ERROR: Block size too small.  File system is corrupt.
+--- extracted files
+

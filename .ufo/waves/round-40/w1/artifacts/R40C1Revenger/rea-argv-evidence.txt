@@ -1,0 +1,21 @@
+# REA 6.5.0 envelope: is the sasquatch child argv recorded? (answer: no, for successful runs)
+
+## 1. Successful run: round-39 C1 K1 receipt (corpus/evidence/round-39/c1/K1/after.json)
+raw_result keys: ['report', 'execution', 'version_execution']
+execution keys: ['stdout', 'stderr', 'exit_code', 'signal', 'command', 'args', 'resource_limiter']
+execution.command = /home/vgpnk/.local/share/uv/tools/unblob/bin/unblob
+execution.args    = ['--process-num', '1', '--depth', '3', '--randomness-depth', '0', '--report', '/fast/scratch/hyaku/kaidoku-r39/l1/c1runs/K1-scratch/rea-firmware-MSincj/report.json', '--log', '/fast/scratch/hyaku/kaidoku-r39/l1/c1runs/K1-scratch/rea-firmware-MSincj/unblob.log', '--extract-dir', '/fast/scratch/hyaku/kaidoku-r39/l1/c1runs/K1-scratch/rea-firmware-MSincj/extracted', '/fast/scratch/hyaku/kaidoku-r39/l1/c1runs/K1-scratch/rea-firmware-MSincj/firmware.bin']
+chunk handler_name = squashfs_v4_be | extraction_reports = []
+occurrences in the whole receipt: 'sasquatch' = 0 | '-be' = 0
+
+## 2. Failure run records the sasquatch argv (round-39 C2 held-out envelopes)
+H13 command= sasquatch-v4be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/rea-firmware-WEO0vr/extracted/firmware.bin_extract /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/rea-firmware-WEO0vr/firmware.bin | exit= 1
+H13 command= /home/vgpnk/.local/share/uv/tools/unblob/bin/unblob | exit= 0
+H13 command= /home/vgpnk/.local/share/uv/tools/unblob/bin/unblob | exit= 0
+H15 command= sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/rea-firmware-OfEMmp/extracted/firmware.bin_extract /fast/scratch/hyaku/kaidoku-r39/l1/c1runs/rea-firmware-OfEMmp/firmware.bin | exit= 1
+H15 command= /home/vgpnk/.local/share/uv/tools/unblob/bin/unblob | exit= 0
+H15 command= /home/vgpnk/.local/share/uv/tools/unblob/bin/unblob | exit= 0
+
+## 3. Independent round-11 log: unblob argv on the genuine AVM fixture (no -be)
+6:2026-10-24 12:01.54 [debug    ] Found valid chunk              chunk=0x0-0x1000 handler=squashfs_v4_be pid=54569
+8:2026-10-24 12:01.54 [debug    ] Running extract command        command='sasquatch-v4be -no-exit-code -f -d /tmp/r11-avm3/avm-be.squashfs_extract /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs' pid=54569

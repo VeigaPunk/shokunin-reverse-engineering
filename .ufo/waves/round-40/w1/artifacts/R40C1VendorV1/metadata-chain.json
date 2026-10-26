@@ -1,0 +1,127 @@
+{
+  "carrier": {
+    "little": {
+      "dir_headers": 5,
+      "dir_sizes": [
+        1380,
+        1872,
+        2204,
+        1776,
+        1332
+      ],
+      "dir_landed_exact": true
+    },
+    "big": {
+      "dir_headers": 1,
+      "dir_sizes": [
+        25605
+      ],
+      "dir_landed_exact": false
+    },
+    "directory_table_le": {
+      "headers": 4,
+      "sizes": [
+        3216,
+        3612,
+        3316,
+        656
+      ],
+      "landed_exactly_on_fragment_table_start": true
+    },
+    "first_inode_block_xz": {
+      "declared_le_length": 1380,
+      "decompressed_bytes": 8192
+    },
+    "first_inode_block_xz_as_be_length": {
+      "declared_be_length": 25605,
+      "decompressed_bytes": 8192,
+      "note": "an OVER-long slice still yields a valid xz stream (decoder stops at the stream end), so bytes_used/decompression alone is not discriminating; the chain landing test is"
+    }
+  },
+  "le_member": {
+    "little": {
+      "dir_headers": 24,
+      "dir_sizes": [
+        1916,
+        868,
+        1712,
+        2176,
+        1952,
+        1992,
+        2068,
+        2312,
+        2320,
+        2136,
+        1864,
+        1036,
+        1324,
+        1512,
+        1640,
+        1828,
+        1852,
+        1912,
+        1924,
+        1828,
+        1508,
+        1832,
+        1504,
+        908
+      ],
+      "dir_landed_exact": true
+    },
+    "big": {
+      "dir_headers": 3,
+      "dir_sizes": [
+        31751,
+        2865,
+        28231
+      ],
+      "dir_landed_exact": false
+    },
+    "directory_table_le": {
+      "headers": 18,
+      "sizes": [
+        2740,
+        2412,
+        3728,
+        3324,
+        3028,
+        4128,
+        2688,
+        2536,
+        2900,
+        2948,
+        3488,
+        3680,
+        3320,
+        3316,
+        2872,
+        2740,
+        1844,
+        1992
+      ],
+      "landed_exactly_on_fragment_table_start": true
+    },
+    "first_inode_block_xz": {
+      "declared_le_length": 1916,
+      "decompressed_bytes": 8192
+    },
+    "first_inode_block_xz_as_be_length": {
+      "declared_be_length": 31751,
+      "decompressed_bytes": 8192,
+      "note": "an OVER-long slice still yields a valid xz stream (decoder stops at the stream end), so bytes_used/decompression alone is not discriminating; the chain landing test is"
+    }
+  },
+  "dev_control": {
+    "file": "dev-be.sqsh (gen-squashfs.py --endian be --comp gzip, fresh tree)",
+    "sha256": "240375b9f6b85b4fd23c9e4239d23ac8bc9145dd3452a0ec40ad3c9bb1b25df1",
+    "little_landed_exact": false,
+    "big_landed_exact": true,
+    "note": "standard BE body: BE lengths land exactly, LE do not (the inverse of the carrier)"
+  },
+  "verdict": {
+    "carrier_block_lengths": "little-endian",
+    "carrier_superblock": "big-endian",
+    "discriminating_evidence": "inode-table AND directory-table header chains both land exactly on the next table start only under LE (5 headers / 8574 B and 4 headers / 10808 B respectively)"
+  }
+}

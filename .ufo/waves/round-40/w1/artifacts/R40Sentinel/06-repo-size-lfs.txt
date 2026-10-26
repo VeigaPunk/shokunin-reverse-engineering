@@ -1,0 +1,69 @@
+# item 6 - what the vendor carriers would add, and the LFS state
+
+--- tracked blobs, largest first
+10709414 .ufo/waves/round-20/w1/patches/WasmCompareLeg-2.patch
+8703728 .ufo/waves/round-20/w1/patches/WasmInspectLeg-2.patch
+6522661 .ufo/waves/round-20/w1/patches/WasmCompareLeg-2b.patch
+6212446 .ufo/waves/arc3-loop1-round12/claims/c1/EX-7/evidence/function-copy.json
+6212425 .ufo/waves/arc3-loop1-round12/claims/c1/EX-7/evidence/function-base-1.json
+6212425 .ufo/waves/arc3-loop1-round12/claims/c1/EX-7/evidence/function-base-2.json
+
+--- repo shape
+tracked files   = 26472
+tracked bytes   = 372523119
+loose objects   = 10540
+packs           = 4
+du -sh .git     = 143M ; .git/objects = 136M
+
+--- round-39 reference weights (what a scored round costs the repo)
+r39 wave tree   = 12537967 B
+r39 evidence    = 2133040 B
+r39 carriers    = 1204162 B across 22 files
+round-40 tree (untracked, at 18:24:37Z) = 10250303 B
+
+--- the C1 carriers in question
+V1 carved carrier (R40C1VendorV1/carrier-v1-be.sqsh) = 5442392 B sha256 ac4098bd11a76f8ad001faac0f1a5e018708d9b03943dfebb2b18a24e0038e95
+V1 tar member ./var/remote/var/tmp/filesystem.image   = 5443592 B (per the seat's provenance.json)
+V1 vendor image FRITZ.Box_6490_Cable-07.57.image       = 39741440 B (HTTP Content-Length, live HEAD)
+
+--- V2 candidates measured by R40C1VendorScout (candidates.tsv): model, image B, member path, member B, marker
+  fritzbox-3490                                                            image=32020480 member=./var/tmp/filesystem.image B=28987400 marker=marker=YES
+  fritzbox-6590-cable                                                      image=39290880 member=./var/remote/var/tmp/x86/filesystem.image B=27750408 marker=marker=YES
+  fritzbox-6590-cable                                                      image=39290880 member=./var/remote/var/tmp/filesystem.image B=5443592 marker=marker=YES
+  fritzbox-7430                                                            image=28856320 member=./var/tmp/filesystem.image B=25825288 marker=marker=YES
+  fritzbox-7490                                                            image=38092800 member=./var/tmp/filesystem.image B=35012616 marker=marker=YES
+  fritzbox-7560                                                            image=33095680 member=./var/tmp/filesystem.image B=26697736 marker=marker=YES
+  fritzbox-7581                                                            image=32010240 member=./var/tmp/filesystem.image B=28368904 marker=marker=YES
+  fritzbox-7582                                                            image=32256000 member=./var/tmp/filesystem.image B=28610568 marker=marker=YES
+  fritzbox-7590                                                            image=42393600 member=./var/tmp/filesystem.image B=35835912 marker=marker=YES
+  fritzbox-6490-cable                                                      image=39741440 member=./var/remote/var/tmp/x86/filesystem.image B=28200968 marker=marker=YES
+  fritzbox-6490-cable                                                      image=39741440 member=./var/remote/var/tmp/filesystem.image B=5443592 marker=marker=YES
+  fritzbox-3272                                                            image=23736320 member=./var/tmp/filesystem.image B=21159944 marker=-
+  fritzbox-5490                                                            image=33269760 member=./var/tmp/filesystem.image B=30236680 marker=marker=YES
+  fritzbox-5491                                                            image=36392960 member=./var/tmp/filesystem.image B=33361928 marker=marker=YES
+  fritzbox-6820-lte                                                        image=28334080 member=./var/tmp/filesystem.image B=26013704 marker=marker=YES
+  fritzbox-7272                                                            image=26019840 member=./var/tmp/filesystem.image B=23441416 marker=-
+
+--- .gitattributes / LFS state
+lane .gitattributes: ls: cannot access '.gitattributes': No such file or directory
+fleet .gitattributes: ls: cannot access '/home/vgpnk/Projects/shokunin/.gitattributes': No such file or directory
+tracked paths matching gitattributes: 0
+git lfs version: git-lfs/3.8.0 (GitHub; linux amd64; go 1.27.0-X:nodwarf5)
+lfs pointer files: 0
+git lfs install state: .git/hooks/pre-push=absent ; .git/lfs=absent
+
+--- remote
+origin	https://github.com/VeigaPunk/shokunin-reverse-engineering.git (fetch)
+origin	https://github.com/VeigaPunk/shokunin-reverse-engineering.git (push)
+
+--- jj store type (a second VCS beside git in the lane root)
+git
+total 4
+drwxr-xr-x 1 vgpnk vgpnk 130 Oct 26 15:19 .
+drwxr-xr-x 1 vgpnk vgpnk  52 Oct 20 11:51 ..
+-rw------- 1 vgpnk vgpnk  20 Oct 20 11:51 config-id
+drwxr-xr-x 1 vgpnk vgpnk  66 Oct 20 11:51 index
+drwxr-xr-x 1 vgpnk vgpnk  18 Oct 20 11:51 op_heads
+drwxr-xr-x 1 vgpnk vgpnk  38 Oct 20 11:51 op_store
+drwxr-xr-x 1 vgpnk vgpnk  38 Oct 20 11:51 store
+du -sh .jj = 26M

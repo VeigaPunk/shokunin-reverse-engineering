@@ -1,0 +1,42 @@
+# R40C1AxisFit — exact commands behind the evidence (scratch: /fast/scratch/hyaku/kaidoku-r40/R40C1AxisFit)
+
+## 1. REA projection determinism (development inputs: round-39 K1/K5 carrier copies)
+cp <lane>/corpus/evidence/round-37/c1/K1/carrier.sqsh $S/in/K1.sqsh
+cp <lane>/corpus/evidence/round-39/c1/K5/carrier.sqsh $S/in/K5.sqsh
+cd "$S"; export REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob
+for i in 1 2; do for k in K1 K5; do
+  npx -y rea-agents@6.5.0 extract-firmware --format json --full-output "$S/in/$k.sqsh" "$S/runs/$k-run$i/extract" > "$S/runs/$k-run$i/raw.json"
+done; done
+# each run: rc=0, 2-3 s
+python3 artifacts/R40C1AxisFit/projection-diff.py runs/K1-run1/raw.json runs/K1-run2/raw.json
+python3 artifacts/R40C1AxisFit/projection-diff.py corpus/evidence/round-39/c1/K5/after.json runs/K5-run1/raw.json
+
+## 2. unblob handler bytes (pinned)
+sha256sum ~/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py
+sed -n '30,80p'  <same>
+
+## 3. Metadata-header chain test (pure stdlib, read-only)
+python3 artifacts/R40C1AxisFit/meta-chain.py in/K5.sqsh sw-20.sqsh sw-80.sqsh markeronly-80.sqsh \
+  avm-80-gzip.sqsh avm-200-xz.sqsh <shokuknow>/lanes/kaidoku/round11/work/avm-be.squashfs \
+  fw7490-x/var/tmp/filesystem.image
+
+## 4. AVM-layout synthetic construction (header byte swap, no offset moves)
+python3 artifacts/R40C1AxisFit/avmize.py sw-80.sqsh avm-80-gzip.sqsh --marker            # swapped 3 headers
+python3 artifacts/R40C1AxisFit/avmize.py sw-80.sqsh avm-80-gzip-nomarker.sqsh --no-marker
+python3 artifacts/R40C1AxisFit/avmize.py mb-200-xz.sqsh avm-200-xz.sqsh --marker
+python3 <lane>/tools/round-39/gen-squashfs.py tree-s80 markeronly-80.sqsh --endian avm --comp gzip
+
+## 5. Extraction matrix
+~/.local/bin/sasquatch-v4be [-be] -f -d OUT IMAGE
+~/.local/bin/unblob -e OUT/extract IMAGE      # writes unblob.log into cwd
+
+## 6. Generator validity / first-length ambiguity sweep
+python3 <lane>/tools/round-39/gen-squashfs.py tree-sN sw-N.sqsh --endian be --comp gzip
+~/.local/bin/sasquatch-v4be -be -f -d x-sw-N sw-N.sqsh
+
+## 7. Candidate V2 (development vendor image, no extraction run)
+curl -o fw7490.image https://download.avm.de/fritzbox/fritzbox-7490/other/fritz.os/FRITZ.Box_7490-07.62.image
+tar -xf fw7490.image -C fw7490-x ./var/tmp/filesystem.image
+
+## 8. Freetz AVM-BE format note (source the layout sentence)
+curl -o avm-be-format.txt https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt

@@ -1,0 +1,25 @@
+# 10 - lane-root unblob.log (a committed misroot, round-38 quarantine)
+$ git ls-files --error-unmatch unblob.log
+unblob.log
+$ stat unblob.log
+unblob.log 2652 644 vgpnk:vgpnk 2026-10-26 03:56:04.213854461 -0300
+$ sha256sum unblob.log
+2d651a4aa6ea3937872a249f7ed3509c4da5a5ca6dfab2d017f8767f69f16299  unblob.log
+$ git log -1 --format=... -- unblob.log
+7a1ac7fe39410a3c9df13d97c14ba17f4d036ab6 Mon Oct 26 04:13:36 2026 -0300 round-38 (attempt 2): wave-2 corrections — first-freeze bytes restored at counter/claims paths, S110 in-place edit reverted + S117, format-matrix vendor count and symlink wording fixed, PROVINCE round-38 note, QUALITY 81 + intended-doc gate, registry-immutable check, freeze-drift ships_freeze_bytes + git-failure handling, lesson M38-1..9, SCORECARD/LOG, C2 receipt at 0fc61133, w1 results ledger, misroot unblob.log
+$ head -n 4 unblob.log
+2026-10-26 06:56.04 [debug    ] Logging configured             extract_root=. pid=2896387 vebosity_level=0
+2026-10-26 06:56.04 [info     ] Creating extraction directory  extract_root=. pid=2896387
+2026-10-26 06:56.04 [info     ] Start processing file          file=/fast/scratch/hyaku/kaidoku-r38/R38W2SymlinkUnblob/P5.sqsh pid=2896387
+2026-10-26 06:56.04 [info     ] Activated FS access restrictions; rules=[Read("/"), ReadWrite("/dev/shm"), ReadWrite("/fast/scratch/hyaku/kaidoku-r38/R38W2SymlinkUnblob/direct/P5"), RemoveDir("/fast/scratch/hyaku/kaidoku-r38/R38W2SymlinkUnblob/direct/P5"), RemoveFile("/fast/scratch/hyaku/kaidoku-r38/R38W2SymlinkUnblob/direct/P5"), MakeDir("/fast/scratch/hyaku/kaidoku-r38/R38W2SymlinkUnblob/direct"), ReadWrite("unblob.log")], status=FullyEnforced pid=2896387
+
+documented as a quarantine, not an accident:
+corpus/lessons/round-38.md:38:| M38-7 | misroot — unblob writes `./unblob.log` in its working directory, so seats running it from the fleet root or the lane root left logs there; this repeats a wave-1 finding | `/home/vgpnk/Projects/shokunin/unblob.log` (265
+corpus/lessons/round-38.md:150:prompt's misroot sweep already state M38-8 and M38-7.
+
+why it matters this round:
+  - unblob writes ./unblob.log into its CWD; every round-40 seat runs unblob from $TMPDIR.
+  - if any seat runs unblob with CWD=<lane root>, THIS tracked file is overwritten and the
+    L1 git-adds a 2.6 KB debug log with fresh scratch paths into the round-40 commit.
+  - the current bytes are frozen evidence of round 38; overwriting them silently destroys it.
+  - working tree is clean now: 0 local modifications.

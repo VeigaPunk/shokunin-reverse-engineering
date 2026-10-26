@@ -1,0 +1,24 @@
+# Why an unblob process exit code cannot witness extraction success (unblob 26.6.4)
+# report.py:91-98 — the failed-extract report is a WARNING, not an ERROR
+91:class ExtractCommandFailedReport(ErrorReport):
+92:    """Describes an error when failed to run the extraction command."""
+93:
+94:    severity: Severity = Severity.WARNING
+95:    command: str
+96:    stdout: Annotated[bytes, BeforeValidator(ensure_bytes)]
+97:    stderr: Annotated[bytes, BeforeValidator(ensure_bytes)]
+98:    exit_code: int
+# cli.py:464-475 — WARNING maps to exit code 0
+464:def get_exit_code_from_reports(reports: ProcessResult) -> int:
+465:    severity_to_exit_code = [
+466:        (Severity.ERROR, 1),
+467:        (Severity.WARNING, 0),
+468:    ]
+469:    severities = {error.severity for error in reports.errors}
+470:
+471:    for severity, exit_code in severity_to_exit_code:
+472:        if severity in severities:
+473:            return exit_code
+474:
+475:    return 0
+# measured: runB (total extraction failure, 0 files, sasquatch exit 1) -> unblob process exit 0

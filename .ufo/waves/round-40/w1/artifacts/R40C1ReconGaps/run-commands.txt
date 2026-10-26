@@ -1,0 +1,43 @@
+# R40C1ReconGaps — exact commands (all runs on DEVELOPMENT inputs, cwd = scratch $S)
+# REA pin: rea-agents@6.5.0 (npx, cached at ~/.npm/_npx/ad9a3fdbcad992c6); unblob 26.6.4; sasquatch-v4be 4.5.1; python 3.14.8
+
+# --- vendor images (dev, never V1) -------------------------------------------
+curl -sS -m 600 -o fw7490.image https://download.avm.de/fritzbox/fritzbox-7490/deutschland/fritz.os/FRITZ.Box_7490-07.62.image
+curl -sS -m 600 -o fw7430.image https://download.avm.de/fritzbox/fritzbox-7430/deutschland/fritz.os/FRITZ.Box_7430-07.31.image
+tar -xf fw7490.image -C carved ./var/tmp/filesystem.image      # 35012616 B, sha256 58d73b2f…
+tar -xf fw7430.image -C carved-7430 ./var/tmp/filesystem.image # 25825288 B, sha256 b919a6a2…
+
+# --- REA extract-firmware (context command), envelope = full JSON ------------
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output carved/filesystem-7490.image out-member
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 1 carved/filesystem-7490.image out-member-d1
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 2 carved/filesystem-7490.image out-member-d2
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-output-files 100000 carved/filesystem-7490.image out-member-hi
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output fw7490.image out-whole
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 1 fw7490.image out-whole-d1
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 2 fw7490.image out-whole-d2
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 1 carved-7430/var/tmp/filesystem.image out-7430-d1
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 3 carved-7430/var/tmp/filesystem.image out-7430-d3
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 1 carved/filesystem-7590.image out-7590le-d1
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output t1-be-gzip.sqsh out-t1-be-gzip
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output t2-be-xz.sqsh out-t2-be-xz
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output t2b-be-xz.sqsh out-t2b
+
+# --- lane-built standard-BE trees -------------------------------------------
+python3 tools/round-39/gen-squashfs.py t1 --endian be --comp gzip t1-be-gzip.sqsh   # sha256 f64b29fe…
+python3 tools/round-39/gen-squashfs.py t2 --endian be --comp xz   t2-be-xz.sqsh     # sha256 f4609aa1…
+python3 tools/round-39/gen-squashfs.py t2b --endian be --comp xz  t2b-be-xz.sqsh    # sha256 60d0e87c…
+
+# --- direct provider reads (dev inputs only; carriers never touched) ----------
+~/.local/bin/sasquatch-v4be -ll carved/filesystem-7490.image        # NO -be -> exit 0, 105 entries
+~/.local/bin/sasquatch-v4be -ll carved-7430/var/tmp/filesystem.image # NO -be -> exit 0, 109 entries
+~/.local/bin/unblob -v -e ub-member carved/filesystem-7490.image
+~/.local/bin/unblob -v -e ub-7430 carved-7430/var/tmp/filesystem.image
+~/.local/bin/sasquatch -le -ll carved/filesystem-7590.image
+
+# --- independent oracle (round-39 reader, unmodified) fails on AVM layout -----
+python3 -I -B tools/round-39/sqfs-list.py carved/filesystem-7490.image --files f.tsv --symlinks l.tsv --inspect
+#   -> exit 2: "sqfs-list: metadata body out of bounds: offset 35006422 length 9219, image 35012616 bytes"
+
+# --- AVM-mode prototype oracle (this seat's artifact) ------------------------
+python3 -I -B artifacts/R40C1ReconGaps/sqfs-list-avm.py carved/filesystem-7490.image --files oracle-7490-files.tsv --symlinks oracle-7490-links.tsv --inspect
+python3 -I -B artifacts/R40C1ReconGaps/sqfs-list-avm.py carved-7430/var/tmp/filesystem.image --files oracle-7430-files.tsv --symlinks oracle-7430-links.tsv --inspect

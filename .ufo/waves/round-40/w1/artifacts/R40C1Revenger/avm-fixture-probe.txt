@@ -1,0 +1,31 @@
+file=/fast/scratch/hyaku/kaidoku-r40/R40C1Revenger/fx/avm-be.squashfs size=4096
+superblock (decoded big-endian):
+  s_magic = b'sqsh'
+  inodes = 5
+  mkfs_time = 365
+  block_size = 65536
+  fragments = 1
+  compression = 4
+  block_log = 16
+  flags = 832
+  no_ids = 1
+  s_major = 4
+  s_minor = 0
+  root_inode = 128
+  bytes_used = 365
+  id_table_start = 357
+  xattr_id_table_start = 18446744073709551615
+  inode_table_start = 121
+  directory_table_start = 239
+  fragment_table_start = 343
+  lookup_table_start = 18446744073709551615
+S1 BE superblock + marker: magic=b'sqsh' major=4 mkfs_time=365 bytes_used=365 -> True
+fragment index @343 -> 325; id index @357 -> 351
+  inode table              hdr@121 bytes=7400 LE=0x0074 size=  116 xz     raw=160 next=239 boundary=239 lands=True decode=ok | BE=0x7400 be_size=29696 be_stored=False
+  directory table          hdr@239 bytes=5480 LE=0x8054 size=   84 stored raw=84 next=325 boundary=325 lands=True decode=ok | BE=0x5480 be_size=21632 be_stored=False
+  fragment table           hdr@325 bytes=1080 LE=0x8010 size=   16 stored raw=16 next=343 boundary=343 lands=True decode=ok | BE=0x1080 be_size=4224 be_stored=False
+  id table                 hdr@351 bytes=0480 LE=0x8004 size=    4 stored raw=4 next=357 boundary=357 lands=True decode=ok | BE=0x0480 be_size=1152 be_stored=False
+S2 LE metadata headers land on every boundary: 4/4 -> True
+S3 unblob _SquashFSBase.calculate_chunk arithmetic:
+  pad=4096 round_up=4096 pad_len=3731 zero_tail=True
+  chunk=0x0-0x1000 bytes_used=0x16d; no block-length validation in the handler

@@ -1,0 +1,22 @@
+# Two live triage tables in one craft section (draft R40-C2: block 18 byte-identical + new block 19)
+# Variants built in scratch from commits fa6a8a3f (SKILL.md) by splicing; see splice lines below.
+## sk-two-tables.md: block 18 unchanged, block 19 (v2 marker) inserted before '## Config custody'
+$ python3 tools/round-39/sqfs-triage.py --skill sk-two-tables.md --table-only
+skill: /fast/scratch/hyaku/kaidoku-r40/R40C2AxisFit/sk-two-tables.md
+marker line: 333  table line: 334  rules: 8
+1. no-squashfs-chunk
+two_exit=0
+
+## v1 interpreter on committed round-39 C1 envelopes under the two-table SKILL
+K5  label=escaping-symlink-removed   row=6 G=['unpublished-entry'] SR=yes
+K2  label=in-tree-symlink-metadata   row=7 G=['unpublished-entry'] SR=no
+  -> v1 still decides by the v1 table; v2's 'mixed-symlinks' row (draft :77, ahead of the escaping row)
+     matches the same K5 vector (SR=yes AND unpublished-entry), so the two live tables disagree on K5/K6,
+     whose round-39 receipts are committed Core evidence labelled escaping-symlink-removed.
+
+## single-table variant: block 18's table bytes replaced by a pointer to the round-39 knowledge entry
+$ python3 tools/round-39/sqfs-triage.py --skill sk-single-table.md --table-only
+sqfs-triage: marker '<!-- sqfs-triage-table v1 -->' absent from the craft section
+single_exit=2
+  -> exit 2 is the v1 registry row's own 'table missing' verdict (SKILL.md:1351), so a single live table
+     is mechanizable without changing v1's tool or its frozen --print-table bytes.

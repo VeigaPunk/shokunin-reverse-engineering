@@ -1,0 +1,54 @@
+{
+ "question": "which parts of a REA 6.5.0 extract-firmware envelope are reproducible across two runs of the identical carrier?",
+ "method": "two runs, same 5443584-byte carrier (sha256 767124f0...), fresh output directories, default flags",
+ "envelope": {
+  "evidence_id": "DIFFERS (ev_ebd91141... vs ev_e8e13257...)",
+  "subject": "equal",
+  "provider": "equal",
+  "operation": "equal",
+  "parameters": "equal except output_directory",
+  "raw_result": "DIFFERS (temp extraction dir name rea-firmware-XXXXXX and blob provider ids)",
+  "limitations": "equal"
+ },
+ "normalized_result": {
+  "stable": [
+   "engine",
+   "selection",
+   "coverage",
+   "unpublished_entries",
+   "depth_limited_paths",
+   "diagnostics",
+   "extraction_gaps",
+   "extraction_continuations",
+   "published_bytes"
+  ],
+  "unstable": [
+   "output_directory",
+   "files[].path (absolute output dir prefix)",
+   "chunks[].provider_id (blob-id:index)",
+   "derivations[].provider_blob_id"
+  ],
+  "stable_after_stripping": [
+   "files (relative_path,size,sha256,analysis_depth,mime_type) - values AND order equal",
+   "chunks (input_path,range.offset,range.length,handler,extraction_failed) - values AND order equal",
+   "derivations (parent_path,child_path,handler,parent_file_range) - set equal"
+  ],
+  "counts": {
+   "files": 2942,
+   "chunks": 403,
+   "unpublished_entries": 263,
+   "extraction_gaps": 263,
+   "derivations": 4239
+  },
+  "report_bytes": {
+   "run_a": 7345487,
+   "run_b": 7344290,
+   "delta": 1197
+  }
+ },
+ "consequence_for_P40-C1": [
+  "the clause 'recomputes to its evidence id' cannot hold: evidence_id hashes the run report including temp paths and blob ids",
+  "a semantic projection must drop: evidence_id, raw_result, parameters.output_directory, normalized_result.output_directory, files[].path, chunks[].provider_id, derivations[].provider_blob_id",
+  "everything else in normalized_result reproduced exactly on this carrier, including list order"
+ ]
+}

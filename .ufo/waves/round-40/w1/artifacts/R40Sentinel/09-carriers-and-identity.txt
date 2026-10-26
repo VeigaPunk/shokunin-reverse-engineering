@@ -1,0 +1,48 @@
+# 09 - the C1 carriers at freeze time, and the byte-identity hazard for the rerun binding
+
+## round-39 carrier pins (the bytes that already have a genuine REA receipt in the lane)
+  K1  1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e      9780 B  corpus/evidence/round-37/c1/K1/carrier.sqsh
+  K2  403cb0a827966bbe17a70e08af7d39b43260da8201d1b9001bbc4228cbc99154      1606 B  corpus/evidence/round-37/c1/K2/carrier.sqsh
+  K3  9c7c523c5d1d1cafc0b679af9092ce0289d9656f6a24bc3bd0009f95b69397c0      4096 B  corpus/evidence/round-37/c1/K3/carrier.bin
+  K4  a29ddc15f5a6abcabf28b7161837eb56b34111e48420e7392e648f2fdfe956ed       307 B  corpus/evidence/round-37/c1/K4/carrier.bin
+  K5  5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228     26813 B  corpus/evidence/round-39/c1/K5/carrier.sqsh
+  K6  00152518a3902a1a13892ec4bfd280a258f162d8fdf77260ea2b41f4f482b25b     15867 B  corpus/evidence/round-39/c1/K6/carrier.sqsh
+
+## V1 as carved by seat R40C1VendorV1 (artifacts/R40C1VendorV1/provenance.json)
+  url           https://download.avm.de/fritzbox/fritzbox-6490-cable/other/fritz.os/FRITZ.Box_6490_Cable-07.57.image
+  image         39741440 B sha256 f518ce6baa05b30d84264d9349cca9bf0b9402986d4112bda8ad73a04f9ede6d
+  tar member    ./var/remote/var/tmp/filesystem.image 5443592 B sha256 334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a3015ad3f3d4
+  range==member True
+  4_byte_range  {'start': 0, 'end_exclusive': 5442392, 'basis': 'superblock bytes_used (BE at offset 40..48)', 'extent_bytes': 5442392}
+  carrier       carrier-v1-be.sqsh 5442392 B sha256 ac4098bd11a76f8ad001faac0f1a5e018708d9b03943dfebb2b18a24e0038e95
+  carve         head -c 5442392 fw-member > carrier-v1-be.sqsh | equals_member_prefix: True
+
+## measured: the committed carrier is a bytes_used prefix, NOT the tar member
+  member bytes 5443592 - carrier bytes 5442392 = 1200 B of tail dropped
+
+## the hazard, stated as a run I did NOT perform (design consequence only)
+  A fresh REA run of carrier bytes X always yields the same restricted projection as any
+  earlier genuine run of the same bytes X (measured: 3-way invariant, artifacts/R40Sentinel/
+  07-projection-invariance/projection-invariance.txt). Therefore, for a carrier that is
+  byte-identical to a round-39 carrier K*, a seat can take the committed K* receipt, edit only
+  parameters.output_directory to this round's scratch segment, store the recomputed evidence
+  id, and satisfy every content binding plus the rerun binding without running REA at all
+  (measured: 08-xpin-forgery/xpin.txt stage 2 - the re-minted id verifies as `both`).
+  => the freeze must prove that no round-40 carrier is byte-identical to K1..K6, and the
+     vendor carriers (V1/V2) are new bytes by construction. Check to run at the freeze:
+
+  want = {1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e,
+          403cb0a827966bbe17a70e08af7d39b43260da8201d1b9001bbc4228cbc99154,
+          9c7c523c5d1d1cafc0b679af9092ce0289d9656f6a24bc3bd0009f95b69397c0,
+          a29ddc15f5a6abcabf28b7161837eb56b34111e48420e7392e648f2fdfe956ed,
+          5999eafc0fb6a8bc3cd8a363d14f4c3f0ffe00e947e155cf8f1bb3278d00b228,
+          00152518a3902a1a13892ec4bfd280a258f162d8fdf77260ea2b41f4f482b25b}
+  for f in <L1> <L2>; do sha256sum "$f"; done   # neither may appear in want
+
+## writer determinism (tools/round-39/gen-squashfs.py) - why lane-built bytes are reproducible
+MKFS_TIME = 1700000000
+UID = 1000
+    mkfs = bytes_used if e == 'avm' else MKFS_TIME
+  [INFERENCE] with MKFS_TIME fixed and mkfs = bytes_used in avm mode, and no source mtime
+  read anywhere in the writer, the same tree/endian/comp rebuilds the same bytes; so a
+  reused tree is a reproducible carrier and the collision check above is not vacuous.

@@ -1,0 +1,23 @@
+counterfactual: mkfs_time 365 -> 1792847340, bytes_used 365
+A unblob_exit=0
+B unblob_exit=0
+C unblob_exit=0
+--- runA
+2026-10-26 18:22.46 [debug    ] Found valid chunk              chunk=0x0-0x1000 handler=squashfs_v4_be pid=524145
+debug ] Running extract command        command='sasquatch-v4be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r40/R40AssimReject/reprotest/runA/dev-avm-be.squashfs_extract /fast/scratch/hyaku/kaidoku-r40/R40AssimReject/reprotest/dev-avm-be.squashfs' pid=524145
+    files=4
+--- runB
+2026-10-26 18:22.47 [debug    ] Found valid chunk              chunk=0x0-0x1000 handler=squashfs_v4_be pid=540597
+debug ] Running extract command        command='sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r40/R40AssimReject/reprotest/runB/dev-avm-be-nomarker.squashfs_extract /fast/scratch/hyaku/kaidoku-r40/R40AssimReject/reprotest/dev-avm-be-nomarker.squashfs' pid=540597
+error ] Extract command failed         __typename__=ExtractCommandFailedReport command='sasquatch-v4be -be -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r40/R40AssimReject/reprotest/runB/dev-avm-be-nomarker.squashfs_extract /fast/scratch/hyaku/kaidoku-r40/R40AssimReject/reprotest/dev-avm-be-nomarker.squashfs' exit_code=0x1 pid=540597 severity=<Severity.WARNING: 'WARNING'> stderr='UmVhZGluZyBhIGRpZmZlcmVudCBlbmRpYW4gU1FVQVNIRlMgZmlsZXN5c3RlbSBvbiAvZmFzdC9zY3JhdGNoL2h5YWt1L2thaWRva3UtcjQwL1I0MEFzc2ltUmVqZWN0L3JlcHJvdGVzdC9kZXYtYXZtLWJlLW5vbWFya2VyLnNxdWFzaGZzCnJlYWRfaWRfdGFibGU6IGZhaWxlZCB0byByZWFkIGlkIHRhYmxlIGJsb2NrCkZBVEFMIEVSUk9SOiBGaWxlIHN5c3RlbSBjb3JydXB0aW9uIGRldGVjdGVkCg==' stdout=
+    files=0
+--- runC
+2026-10-26 18:22.48 [debug    ] Found valid chunk              chunk=0x0-0x1000 handler=squashfs_v4_le pid=555255
+debug ] Running extract command        command='sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r40/R40AssimReject/reprotest/runC/dev-avm-le-genuine.squashfs_extract /fast/scratch/hyaku/kaidoku-r40/R40AssimReject/reprotest/dev-avm-le-genuine.squashfs' pid=555255
+    files=4
+v4be noflag on AVM-BE exit=0 files=4
+v4be -be    on no-marker exit=1 files=0
+v4be noflag on LE       exit=1 files=0
+x2.err: Reading a different endian SQUASHFS filesystem on /fast/scratch/hyaku/kaidoku-r40/R40AssimReject/reprotest/dev-avm-be-nomarker.squashfs
+x3.err: FATAL ERROR: Block size too small.  File system is corrupt.
+scratch: /fast/scratch/hyaku/kaidoku-r40/R40AssimReject/reprotest

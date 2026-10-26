@@ -1,0 +1,53 @@
+# Pinned evidence: unblob 26.6.4 SquashFS extractor, marker branch at :48-50
+# file: /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py
+# sha256: 2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287
+# unblob --version: 26.6.4
+# sasquatch-v4be: unsquashfs version 4.5.1 (2022/03/17)
+
+24:class SquashFSExtractor(Extractor):
+25:    EXECUTABLE = "sasquatch"
+26:    V4BE_EXECUTABLE = "sasquatch-v4be"
+27:
+28:    def __init__(self, version: int, big_endian_magic: int):
+29:        self.version = version
+30:        self.big_endian_magic = big_endian_magic
+31:
+32:    def extract(self, inpath: Path, outdir: Path):
+33:        with File.from_path(inpath) as file:
+34:            endian = get_endian(file, self.big_endian_magic)
+35:
+36:        commands_args = []
+37:        executable = self.EXECUTABLE
+38:
+39:        match endian, self.version:
+40:            case Endian.BIG, 4:
+41:                executable = self.V4BE_EXECUTABLE
+42:                struct_parser = StructParser(SquashFSv4LEHandler.C_DEFINITIONS)
+43:                with File.from_path(inpath) as f:
+44:                    header = struct_parser.parse(
+45:                        SquashFSv4LEHandler.HEADER_STRUCT, f, Endian.BIG
+46:                    )
+47:                    # see https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt
+48:                    is_avm = header.bytes_used == header.mkfs_time
+49:                    if not is_avm:
+50:                        commands_args.append("-be")
+51:            case Endian.BIG, _:
+52:                commands_args.append("-be")
+53:            case Endian.LITTLE, _:
+54:                commands_args.append("-le")
+55:
+56:        commands_args.extend(
+57:            [
+58:                "-no-exit-code",
+59:                "-f",
+60:                "-d",
+61:                "{outdir}",
+62:                "{inpath}",
+63:            ]
+64:        )
+65:        extractor = Command(executable, *commands_args)
+66:        extractor.extract(inpath, outdir)
+67:
+68:    def get_dependencies(self) -> list[str]:
+69:        return [self.EXECUTABLE, self.V4BE_EXECUTABLE]
+70:

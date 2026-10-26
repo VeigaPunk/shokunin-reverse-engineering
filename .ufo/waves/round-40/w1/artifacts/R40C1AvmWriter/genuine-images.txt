@@ -1,0 +1,45 @@
+genuine AVM images measured by seat R40C1AvmWriter (round-40 wave 1)
+====================================================================
+No REA and no unblob run was made on any image below: the measurements are
+pure-Python reads (probe-v1-member.py) plus, for the 4096-byte lane fixture
+only, direct sasquatch-v4be extraction.  Carrier bytes were not copied into
+this artifact directory; re-fetch/carve with the commands recorded here.
+
+V1 vendor image
+  URL    https://download.avm.de/fritzbox/fritzbox-6490-cable/other/fritz.os/FRITZ.Box_6490_Cable-07.57.image
+  HTTP   200, 39741440 bytes
+  sha256 f518ce6baa05b30d84264d9349cca9bf0b9402986d4112bda8ad73a04f9ede6d
+         (equal to the claims' pin and to the round-39 critic's row)
+  fetch  curl -sS -m 240 -o fw.image <URL>            # scratch only
+  members (tar)
+    ./var/remote/var/tmp/filesystem.image       5443592 B  sha256 334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a3015ad3f3d4
+    ./var/remote/var/tmp/x86/filesystem.image  28200968 B  sha256 7ea4c628def17c25dc05f6103f8563884022dd1a5baf0c4fba38a85b546a0419
+  carve  tar -xOf fw.image ./var/remote/var/tmp/filesystem.image     > v1-be.squashfs
+         tar -xOf fw.image ./var/remote/var/tmp/x86/filesystem.image > v1-le.squashfs
+  Only the BE member was measured further (probe-v1-be.txt).  The LE member
+  (`hsqs`, AVM_LE) is outside R40-C1's claim and was carved for its digest only.
+
+Lane genuine fixture (read-only, shokuknow)
+  /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs
+  4096 B  sha256 c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32
+  probe-round11-avm-be.txt; direct sasquatch-v4be noflag: exit 0, 4 files
+  (apple1..4.txt); sasquatch-v4be -be: exit 1 "read_id_table: failed to read id
+  table block", 0 files.
+
+Measured field-class endianness (both genuine images agree; details in the two
+probe-*.txt transcripts)
+  superblock                     BE      V1: mkfs_time 5442392 == bytes_used 5442392 (marker)
+  inode fields                   BE      V1: 697 reg + 263 symlink + 118 dir + 1 char device = 1079 inodes = superblock count
+  directory header + entries     BE      V1: header start_block values are inode-table byte offsets; walk completes
+  data-block size list           BE      V1 dispatch: 0x00005268/0x00005054/0x00000e90 (BE) vs implausible LE
+  fragment entry {u64,u32,u32}   BE      fixture: start 96, size 0x01000019 (25 B, stored-uncompressed bit)
+  fragment/export/id index u64   BE      fixture 343->325, 357->351; V1 fragment index -> 5440192
+  2-byte metadata block header   LE      fixture inode 0x0074=116 (BE would be 29696);
+                                         V1 inode 0x0564=1380 (BE 25605); dir 0x0c90=3216;
+                                         fragment block 0x0290=656; id block 0x8004=4 (stored)
+
+Tool pins used
+  sasquatch-v4be 4.5.1 (2022/03/17) at ~/.local/bin/sasquatch-v4be
+  sasquatch 4.5.1 (not invoked on a carrier)
+  unblob 26.6.4; handlers/filesystem/squashfs.py sha256 2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287
+  python3 3.14.8

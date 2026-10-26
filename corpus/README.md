@@ -92,6 +92,7 @@ A row is written when its file exists, never before.
 | unblob's format matrix (round 38, assimilated) | `2026-10-26-unblob-format-matrix` | held as producer coverage statement — unblob.org lists 97 handler sections including `SquashFS (v4-BE)` and the vendor-mangled SquashFS variants; its meta description's "more than 30" conflicts with the README's "78+"; coverage claim only, never an extraction outcome; re-grounded from the shokuknow package with one correction |
 | Standard big-endian SquashFS v4 through REA (round 39) | `2026-10-26-r39-be-squashfs-v4-core` | **Core** — `extract-firmware` with `sasquatch-v4be` 4.5.1 publishes every oracle regular file on six frozen BE v4 carriers (gzip and xz, two unblob fixtures), gaps exactly one `unpublished-entry` per in-tree symlink, escaping symlinks removed; supersedes the round-38 Frontier status for standard BE; AVM-BE and vendor-mangled stay Frontier |
 | SquashFS `extract-firmware` outcome triage (round 39) | `2026-10-26-r39-sqfs-outcome-triage` | held as an executable SKILL craft table (eight labels: no chunk, BE/LE dependency miss, AVM-marker `-be` drop, damage with `-be`, escaping symlink removed, in-tree symlink kept, clean), backed by development envelopes; R39-C2 scores it on a held-out set generated after the freeze |
+| SquashFS `extract-firmware` outcome triage v2 (round 40) | `2026-10-26-r40-sqfs-triage-v2` | held as SKILL rule block 19: table v2 adds an `operation`/`provider` domain guard, rows for mixed symlinks, partial body failure and empty trees, and a scored action token per label; R40-C2 scores it on a held-out set seeded by the round-40 freeze |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -202,6 +203,7 @@ A row is written when its file exists, never before.
 | `2026-10-26-unblob-format-matrix` | unblob's producer coverage matrix: 97 handler sections, ten SquashFS variants incl. `v4-BE`, ZIP limitation, "more than 30" vs "78+" count conflict (assimilated from shokuknow `merge/kaidoku`, re-grounded) | S116, S117 | 2026-10-26 |
 | `2026-10-26-r39-be-squashfs-v4-core` | standard big-endian SquashFS v4 via REA, Core: six carriers incl. xz and UTF-8 names, symlink rule stated before data (escape removed, in-tree kept as one gap) | S122; receipts `corpus/evidence/round-39/c1/` | 2026-10-26 |
 | `2026-10-26-r39-sqfs-outcome-triage` | SquashFS `extract-firmware` outcome triage: handler, gap kind, dependency name, recorded `-be` token, `MaliciousSymlinkRemoved` and file count separate eight outcome labels; backs the round-39 SKILL craft triage table | S112, S118, S119, S120, S121 | 2026-10-26 |
+| `2026-10-26-r40-sqfs-triage-v2` | SquashFS triage table v2: domain guard (`extract_firmware`/`unblob`), mixed-symlinks, partial-body-failure and clean-empty rows, closed action vocabulary scored with the label; the AVM-marker row stated against the genuine AVM layout | S112, S118, S119, S120, S123 | 2026-10-26 |
 
 ## Lessons
 | entry | round | gist |

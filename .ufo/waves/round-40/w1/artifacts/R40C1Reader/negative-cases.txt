@@ -1,0 +1,29 @@
+== sqfs-list.py --help
+usage: sqfs-list.py [-h] [--layout {auto,le,be,avm}] [--files OUT.tsv]
+                    [--nonregular OUT.tsv] [--inspect] [--selftest]
+                    [image]
+
+Independent SquashFS 4.0 oracle reader (LE, standard BE and AVM layout).
+
+positional arguments:
+  image                 SquashFS image
+
+options:
+  -h, --help            show this help message and exit
+  --layout {auto,le,be,avm}
+                        field layout; auto decides big-endian metadata header
+                        endianness (default: auto)
+  --files OUT.tsv       regular-file TSV (relpath, sha256, size)
+  --nonregular OUT.tsv  non-regular TSV (relpath, kind, detail)
+  --inspect             print a JSON superblock/layout/coverage summary
+  --selftest            build and read self-contained images; no external tool
+
+== forced-layout negatives (exit 2 expected; message proves the layout test bites)
+be_on_genuine_AVM_round11 (--layout be): exit 2: sqfs-list: metadata body out of bounds: offset 123 length 29696, image 4096 bytes
+avm_on_standard_BE_K1 (--layout avm): exit 2: sqfs-list: metadata body out of bounds: offset 9180 length 31873, image 9780 bytes
+avm_on_marker_only_standard_BE (--layout avm): exit 2: sqfs-list: metadata body out of bounds: offset 5122 length 14209, image 5610 bytes
+
+== auto on format-vs-marker discriminators (exit 0)
+marker-only: exit 0 {"layout":"be","header_endian":"big","block_length_signal":"exact","avm_marker":true,"header_length_candidates":{"be":311,"le":14209}}
+standard-be-fresh: exit 0 {"layout":"be","header_endian":"big","block_length_signal":"exact","avm_marker":false,"header_length_candidates":{"be":311,"le":14209}}
+avm-markerstripped: exit 0 {"layout":"avm","header_endian":"little","block_length_signal":"exact","avm_marker":false,"header_length_candidates":{"be":29696,"le":116}}

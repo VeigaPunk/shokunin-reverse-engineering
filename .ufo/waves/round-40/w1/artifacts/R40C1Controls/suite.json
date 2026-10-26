@@ -1,0 +1,390 @@
+{
+ "_contract": {
+  "base": "fa6a8a3f85ec65946b3a54d37c0ddd1d6748664f",
+  "driver": "run-controls.sh",
+  "materializer": "ctl-lib.py",
+  "honest_tree": "the round-40 tree at its scored revision; the driver clones it once per control so no overlay can leak into another",
+  "score_at": "the control's tip commit, with --freeze naming the commit that control treats as its freeze",
+  "refusal_class": {
+   "bytes": "refusable from committed bytes at the scored revision (git show, sha256, stdlib decode of carrier bytes, doc text)",
+   "rerun": "not refusable from committed bytes; only the counter's own fresh REA run separates it",
+   "audit": "not refusable by any control: the counter itself is the trust root; only re-executing the counter constrains it"
+  },
+  "binding_names": [
+   "carriers_spec_ok",
+   "carrier_present",
+   "carrier_pin_ok",
+   "carrier_marker_ok",
+   "carrier_blocklen_le_ok",
+   "oracle_ok",
+   "oracle_shape_ok",
+   "publication_ok",
+   "failed_chunk_ok",
+   "gaps_ok",
+   "subject_ok",
+   "evidence_id_ok",
+   "receipt_descends_freeze_ok",
+   "run_provenance_ok",
+   "rerun_projection_ok",
+   "projection_schema_ok",
+   "distinct_carriers_ok",
+   "doc_core_row",
+   "doc_frontier_note",
+   "doc_frontier_note_consistent",
+   "doc_entry",
+   "doc_sources_opened_this_round",
+   "doc_coverage_map",
+   "doc_control_table_frozen",
+   "frozen_paths_clean",
+   "oracle_rederived_ok"
+  ],
+  "binding_note": "oracle_rederived_ok is the clause that refuses CTL-C1-18: the counter re-derives the regular-file set from the frozen carrier with the frozen reader and requires set equality with the committed oracle.tsv (set equality, not a count, because a trimmed oracle keeps any count consistent). stub-counter.py reports it as oracle_ok."
+ },
+ "controls": [
+  {
+   "id": "CTL-C1-0",
+   "name": "do-nothing",
+   "intent": "the claim is unmoved: base revision, no receipts, no Core row",
+   "overlay": null,
+   "commit_stage": "base",
+   "commit_order": "score the base commit itself; --rev = --freeze = fa6a8a3f",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "doc_core_row",
+     "doc_entry",
+     "doc_frontier_note",
+     "carriers_spec_ok"
+    ],
+    "carriers_matched": 0
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-1",
+   "name": "round-39 receipts copied onto round-40 receipt paths",
+   "intent": "reuse the round-39 evidence (K1..K6) under the round-40 ids with the honest docs present",
+   "overlay": "ctl-lib.py --control CTL-C1-1",
+   "commit_stage": "post-freeze",
+   "commit_order": "one commit after the freeze; docs stay as committed post-freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "subject_ok",
+     "run_provenance_ok",
+     "publication_ok"
+    ],
+    "note": "round-39 subject digests/paths and /kaidoku-r39/ output directories do not name the round-40 carriers"
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-2",
+   "name": "receipts fabricated from the oracle with re-minted evidence ids",
+   "intent": "the R39-CL5 class: every field a committed-bytes counter can read is made true, ids re-minted consistently",
+   "overlay": "ctl-lib.py --control CTL-C1-2",
+   "commit_stage": "post-freeze",
+   "commit_order": "one commit after the freeze; docs and carriers untouched",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "rerun_projection_ok"
+    ],
+    "must_pass": [
+     "subject_ok",
+     "evidence_id_ok",
+     "publication_ok",
+     "failed_chunk_ok",
+     "gaps_ok",
+     "carrier_marker_ok",
+     "carrier_blocklen_le_ok"
+    ],
+    "measured": "draft projection 4/4 equal to a real run (projection-compare.txt); the class is invisible to every byte clause, and control-run-dev.txt shows a byte-only counter returning met_target true"
+   },
+   "refusal_class": "rerun",
+   "expected_byte_only": {
+    "exit": 0,
+    "met_target": true
+   }
+  },
+  {
+   "id": "CTL-C1-3",
+   "name": "marker-only standard-BE carrier relabelled as a carrier",
+   "intent": "gen-squashfs.py --endian avm body (marker true, block lengths BE) on every carrier id, with a receipt claiming success",
+   "overlay": "ctl-lib.py --control CTL-C1-3",
+   "commit_stage": "pre-freeze",
+   "commit_order": "carrier+oracle+spec in the freeze commit (frozen paths), receipts one commit after it - so only the carrier clauses fail",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "carrier_blocklen_le_ok"
+    ],
+    "must_pass": [
+     "carrier_marker_ok"
+    ],
+    "measured": "classify-dev.tsv: marker=yes, len_LE=13441 implausible, len_BE=308 exact; REA on the same body gives extraction_failed=true, 0 files (receipt-markeronly-dev.json)"
+   },
+   "refusal_class": "bytes",
+   "rerun_also_refuses": [
+    "rerun_projection_ok"
+   ]
+  },
+  {
+   "id": "CTL-C1-4",
+   "name": "genuine AVM body with the marker stripped",
+   "intent": "the mirror control: mkfs_time normalised, block lengths still LE; unblob then adds -be and extraction fails",
+   "overlay": "ctl-lib.py --control CTL-C1-4 (spec key GENUINE_AVM names the body)",
+   "commit_stage": "pre-freeze",
+   "commit_order": "carrier+oracle+spec in the freeze commit (frozen paths), receipts one commit after it - so only the carrier clauses fail",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "carrier_marker_ok"
+    ],
+    "must_pass": [
+     "carrier_blocklen_le_ok"
+    ],
+    "measured": "classify-dev.tsv: marker=no, len_LE=116 exact (121+2+116=239); the format test alone accepts it"
+   },
+   "refusal_class": "bytes",
+   "rerun_also_refuses": [
+    "rerun_projection_ok"
+   ]
+  },
+  {
+   "id": "CTL-C1-5",
+   "name": "receipts added in the freeze commit itself",
+   "intent": "receipts land with the carriers instead of after them",
+   "overlay": null,
+   "commit_stage": "in-freeze",
+   "commit_order": "rewrite the freeze commit: its tree = honest freeze tree + the receipt paths; score at a post-freeze tip",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "receipt_descends_freeze_ok"
+    ],
+    "note": "first-added commit must be a strict descendant of the freeze, not the freeze"
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-6",
+   "name": "right carriers, receipts from a PATH wrapper that forces -be",
+   "intent": "the marker decision inverted at run time; the receipt is what that run really produces",
+   "overlay": "ctl-lib.py --control CTL-C1-6",
+   "commit_stage": "post-freeze",
+   "commit_order": "one commit after the freeze (the shim is control scaffolding under .ctl-bin/)",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "failed_chunk_ok",
+     "publication_ok"
+    ],
+    "note": "extraction_failed=true, 0 published, one extractor-failure gap: identical shape to the measured marker-only receipt. gaps_ok stays true - extractor-failure is an allowed gap kind, so only the failure and publication clauses refuse this control (measured: control-run-dev.txt)"
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-6b",
+   "name": "toolchain laundering (disclosed limit)",
+   "intent": "receipts are honest, but the recorded run used a different sasquatch-v4be earlier on PATH",
+   "overlay": null,
+   "commit_stage": "post-freeze",
+   "commit_order": "not materializable: the mutated state is the child PATH at run time, which REA does not record (no sasquatch string in the envelope, measured)",
+   "expected": {
+    "exit": 0,
+    "met_target": true,
+    "note": "CANNOT be refused by committed bytes or by the rerun; disclosed, see report \u00a74.3"
+   },
+   "refusal_class": "audit"
+  },
+  {
+   "id": "CTL-C1-8",
+   "name": "four carrier ids, two distinct byte strings",
+   "intent": "carriers_matched == 4 met by aliasing V2=V1 and L2=L1, provenance chain copied",
+   "overlay": "ctl-lib.py --control CTL-C1-8",
+   "commit_stage": "pre-freeze",
+   "commit_order": "in the freeze commit (a carrier alias is a frozen-path content change)",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "distinct_carriers_ok"
+    ],
+    "note": "the draft counts matches; it never states distinct carrier digests or that V2's provenance names a different vendor image",
+    "must_pass": [
+     "carrier_pin_ok",
+     "publication_ok"
+    ]
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-9",
+   "name": "carrier and oracle swapped after the freeze",
+   "intent": "freeze a marker-only body, then replace carrier+oracle+receipts post-freeze so the receipts agree with the swapped bytes",
+   "overlay": "ctl-lib.py --control CTL-C1-3 applied in a post-freeze commit",
+   "commit_stage": "post-freeze",
+   "commit_order": "honest freeze, then one commit replacing carriers/oracles/receipts",
+   "expected": {
+    "exit": 2,
+    "met_target": false,
+    "must_fail": [
+     "frozen_paths_clean"
+    ],
+    "reason": "frozen_path_changed"
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-14",
+   "name": "suffix-matched publication under a wrong extract root",
+   "intent": "the draft matches oracle rows by path suffix; publish the same files under a mangled tree",
+   "overlay": "ctl-lib.py --control CTL-C1-14",
+   "commit_stage": "post-freeze",
+   "commit_order": "one commit after the freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "publication_ok"
+    ],
+    "note": "clause requires publication to be <recorded extract_root>/<relpath>, and the published count to equal oracle rows + recorded extras"
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-16",
+   "name": "control table lands after the freeze",
+   "intent": "R39-CL4: kill-control inputs committed late, so the controls could not be evaluated at the freeze",
+   "overlay": null,
+   "commit_stage": "in-freeze",
+   "commit_order": "remove .ufo/waves/round-40/c1/controls.json + control receipts from the freeze tree; add them one commit later",
+   "expected": {
+    "exit": 2,
+    "met_target": false,
+    "must_fail": [
+     "doc_control_table_frozen"
+    ],
+    "reason": "control_table_not_frozen"
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-17",
+   "name": "cites a round-39 SOURCES row (same calendar date)",
+   "intent": "the round-39 counter tested row date == 2026-10-26; every round in this lane is on that date, so the test cannot separate rounds",
+   "overlay": "ctl-lib.py --control CTL-C1-17",
+   "commit_stage": "post-freeze",
+   "commit_order": "one commit after the freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "doc_sources_opened_this_round"
+    ],
+    "note": "opened-this-round must be the diff property: the row id first appears in FREEZE..REV, never a date string"
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-18",
+   "name": "self-fulfilling oracle",
+   "intent": "the oracle keeps only the rows the receipt publishes, so publication_ok is true by construction",
+   "overlay": "ctl-lib.py --control CTL-C1-18",
+   "commit_stage": "pre-freeze",
+   "commit_order": "in the freeze commit; score at a post-freeze tip",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "oracle_shape_ok"
+    ],
+    "note": "needs a frozen completeness floor: rows > 0 per carrier and the recorded oracle_files equal the row count; a post-freeze oracle is CTL-C1-9 instead"
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-21",
+   "name": "docs complete except the superseding frontier note",
+   "intent": "Core row, entry, SOURCES and README all present; the Frontier text that must be superseded is untouched",
+   "overlay": "ctl-lib.py --control CTL-C1-21",
+   "commit_stage": "post-freeze",
+   "commit_order": "one commit after the freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "doc_frontier_note"
+    ]
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-22",
+   "name": "frontier note present but contradicts the claim",
+   "intent": "false provenance in prose: a note that reads as a supersession but says AVM stays Frontier",
+   "overlay": "ctl-lib.py --control CTL-C1-22",
+   "commit_stage": "post-freeze",
+   "commit_order": "one commit after the freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "doc_frontier_note_consistent"
+    ],
+    "note": "the note must name the AVM layout, the entry stem and the Core heading, and must not contain a stay-Frontier assertion for AVM"
+   },
+   "refusal_class": "bytes"
+  },
+  {
+   "id": "CTL-C1-N1",
+   "name": "anti-control: honest tree",
+   "intent": "the suite must not turn a correct tree red",
+   "overlay": "ctl-lib.py --control CTL-C1-N1",
+   "commit_stage": "post-freeze",
+   "commit_order": "no change; score the honest tip",
+   "expected": {
+    "exit": 0,
+    "met_target": true,
+    "carriers_matched": 4
+   },
+   "refusal_class": "none"
+  },
+  {
+   "id": "CTL-C1-N2",
+   "name": "anti-control: honest tree, different scratch and REA temp names",
+   "intent": "the rerun projection must be stable across honest runs; the two runs here have different ids, provider_ids and rea-firmware-* temp names (measured)",
+   "overlay": null,
+   "commit_stage": "post-freeze",
+   "commit_order": "score the honest tip twice with different TMPDIR/HYAKU_SCRATCH; both runs must agree bit-for-bit on the projection",
+   "expected": {
+    "exit": 0,
+    "met_target": true,
+    "must_pass": []
+   },
+   "refusal_class": "none"
+  },
+  {
+   "id": "CTL-C1-19",
+   "name": "counter that computes the rerun projection instead of running REA",
+   "intent": "the trust root is the counter; a counter that derives the expected projection from the oracle satisfies its own rerun binding without any run",
+   "overlay": null,
+   "commit_stage": "n/a",
+   "commit_order": "n/a",
+   "expected": {
+    "exit": 0,
+    "met_target": true,
+    "note": "not a claim control: audit obligation. The score receipt must embed the fresh envelope's sha256, its mkdtemp nonce, and the child REA argv, and the L1 must re-execute the counter once"
+   },
+   "refusal_class": "audit"
+  }
+ ]
+}

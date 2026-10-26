@@ -1,0 +1,283 @@
+{
+ "controls": [
+  {
+   "commit_stage": "base",
+   "expected": {
+    "carriers_matched": 0,
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "doc_core_row",
+     "doc_entry",
+     "doc_frontier_note",
+     "carriers_spec_ok"
+    ]
+   },
+   "id": "CTL-C1-0",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "subject_ok",
+     "run_provenance_ok",
+     "publication_ok"
+    ],
+    "note": "round-39 subject digests/paths and /kaidoku-r39/ output directories do not name the round-40 carriers"
+   },
+   "id": "CTL-C1-1",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "exit": 1,
+    "measured": "draft projection 4/4 equal to a real run (projection-compare.txt); the class is invisible to every byte clause, and control-run-dev.txt shows a byte-only counter returning met_target true",
+    "met_target": false,
+    "must_fail": [
+     "rerun_projection_ok"
+    ],
+    "must_pass": [
+     "subject_ok",
+     "evidence_id_ok",
+     "publication_ok",
+     "failed_chunk_ok",
+     "gaps_ok",
+     "carrier_marker_ok",
+     "carrier_blocklen_le_ok"
+    ]
+   },
+   "id": "CTL-C1-2",
+   "observed": "PASS",
+   "refusal_class": "rerun"
+  },
+  {
+   "commit_stage": "pre-freeze",
+   "expected": {
+    "exit": 1,
+    "measured": "classify-dev.tsv: marker=yes, len_LE=13441 implausible, len_BE=308 exact; REA on the same body gives extraction_failed=true, 0 files (receipt-markeronly-dev.json)",
+    "met_target": false,
+    "must_fail": [
+     "carrier_blocklen_le_ok"
+    ],
+    "must_pass": [
+     "carrier_marker_ok"
+    ]
+   },
+   "id": "CTL-C1-3",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "pre-freeze",
+   "expected": {
+    "exit": 1,
+    "measured": "classify-dev.tsv: marker=no, len_LE=116 exact (121+2+116=239); the format test alone accepts it",
+    "met_target": false,
+    "must_fail": [
+     "carrier_marker_ok"
+    ],
+    "must_pass": [
+     "carrier_blocklen_le_ok"
+    ]
+   },
+   "id": "CTL-C1-4",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "in-freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "receipt_descends_freeze_ok"
+    ],
+    "note": "first-added commit must be a strict descendant of the freeze, not the freeze"
+   },
+   "id": "CTL-C1-5",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "failed_chunk_ok",
+     "publication_ok"
+    ],
+    "note": "extraction_failed=true, 0 published, one extractor-failure gap: identical shape to the measured marker-only receipt. gaps_ok stays true - extractor-failure is an allowed gap kind, so only the failure and publication clauses refuse this control (measured: control-run-dev.txt)"
+   },
+   "id": "CTL-C1-6",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "exit": 0,
+    "met_target": true,
+    "note": "CANNOT be refused by committed bytes or by the rerun; disclosed, see report \u00a74.3"
+   },
+   "id": "CTL-C1-6b",
+   "observed": "SKIP",
+   "refusal_class": "audit"
+  },
+  {
+   "commit_stage": "pre-freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "distinct_carriers_ok"
+    ],
+    "must_pass": [
+     "carrier_pin_ok",
+     "publication_ok"
+    ],
+    "note": "the draft counts matches; it never states distinct carrier digests or that V2's provenance names a different vendor image"
+   },
+   "id": "CTL-C1-8",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "exit": 2,
+    "met_target": false,
+    "must_fail": [
+     "frozen_paths_clean"
+    ],
+    "reason": "frozen_path_changed"
+   },
+   "id": "CTL-C1-9",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "publication_ok"
+    ],
+    "note": "clause requires publication to be <recorded extract_root>/<relpath>, and the published count to equal oracle rows + recorded extras"
+   },
+   "id": "CTL-C1-14",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "in-freeze",
+   "expected": {
+    "exit": 2,
+    "met_target": false,
+    "must_fail": [
+     "doc_control_table_frozen"
+    ],
+    "reason": "control_table_not_frozen"
+   },
+   "id": "CTL-C1-16",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "doc_sources_opened_this_round"
+    ],
+    "note": "opened-this-round must be the diff property: the row id first appears in FREEZE..REV, never a date string"
+   },
+   "id": "CTL-C1-17",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "pre-freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "oracle_shape_ok"
+    ],
+    "note": "needs a frozen completeness floor: rows > 0 per carrier and the recorded oracle_files equal the row count; a post-freeze oracle is CTL-C1-9 instead"
+   },
+   "id": "CTL-C1-18",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "doc_frontier_note"
+    ]
+   },
+   "id": "CTL-C1-21",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "exit": 1,
+    "met_target": false,
+    "must_fail": [
+     "doc_frontier_note_consistent"
+    ],
+    "note": "the note must name the AVM layout, the entry stem and the Core heading, and must not contain a stay-Frontier assertion for AVM"
+   },
+   "id": "CTL-C1-22",
+   "observed": "PASS",
+   "refusal_class": "bytes"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "carriers_matched": 4,
+    "exit": 0,
+    "met_target": true
+   },
+   "id": "CTL-C1-N1",
+   "observed": "PASS",
+   "refusal_class": "none"
+  },
+  {
+   "commit_stage": "post-freeze",
+   "expected": {
+    "exit": 0,
+    "met_target": true,
+    "must_pass": []
+   },
+   "id": "CTL-C1-N2",
+   "observed": "PASS",
+   "refusal_class": "none"
+  },
+  {
+   "commit_stage": "n/a",
+   "expected": {
+    "exit": 0,
+    "met_target": true,
+    "note": "not a claim control: audit obligation. The score receipt must embed the fresh envelope's sha256, its mkdtemp nonce, and the child REA argv, and the L1 must re-execute the counter once"
+   },
+   "id": "CTL-C1-19",
+   "observed": "SKIP",
+   "refusal_class": "audit"
+  }
+ ],
+ "suite": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-40/w1/artifacts/R40C1Controls/suite.json"
+}

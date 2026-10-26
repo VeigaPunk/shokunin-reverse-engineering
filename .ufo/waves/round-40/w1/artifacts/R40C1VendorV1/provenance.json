@@ -1,0 +1,93 @@
+{
+  "seat": "R40C1VendorV1",
+  "claim": "R40-C1 carrier V1 (AVM-layout big-endian SquashFS v4)",
+  "chain": {
+    "1_url": {
+      "url": "https://download.avm.de/fritzbox/fritzbox-6490-cable/other/fritz.os/FRITZ.Box_6490_Cable-07.57.image",
+      "http_status": 200,
+      "response_headers": [
+        "HTTP/1.1 200 OK",
+        "Server: nginx",
+        "Date: Mon, 26 Oct 2026 18:17:31 GMT",
+        "Content-Type: application/octet-stream",
+        "Content-Length: 39741440",
+        "Last-Modified: Mon, 04 Sep 2023 17:08:03 GMT",
+        "Connection: keep-alive",
+        "ETag: \"64f60ef3-25e6800\"",
+        "Accept-Ranges: bytes",
+        ""
+      ],
+      "fetched_utc": "2026-10-26T18:17:31Z (server Date header)"
+    },
+    "2_image": {
+      "bytes": 39741440,
+      "sha256": "f518ce6baa05b30d84264d9349cca9bf0b9402986d4112bda8ad73a04f9ede6d",
+      "pinned_sha256": "f518ce6baa05b30d84264d9349cca9bf0b9402986d4112bda8ad73a04f9ede6d",
+      "pin_matches": true,
+      "container": "POSIX tar (ustar, no compression; 21 entries)"
+    },
+    "3_tar_member": {
+      "path": "./var/remote/var/tmp/filesystem.image",
+      "size": 5443592,
+      "tar_header_offset": 32025600,
+      "tar_data_offset": 32026112,
+      "tar_data_end_exclusive": 37469704,
+      "sha256": "334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a3015ad3f3d4",
+      "sha256_of_image_byte_range": "334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a3015ad3f3d4",
+      "range_equals_member": true,
+      "role": "AVM-BE SquashFS v4 member (the C1 carrier source)"
+    },
+    "3b_tar_member_le_reference": {
+      "path": "./var/remote/var/tmp/x86/filesystem.image",
+      "size": 28200968,
+      "sha256": "7ea4c628def17c25dc05f6103f8563884022dd1a5baf0c4fba38a85b546a0419",
+      "role": "LE sibling (hsqs) - NOT a C1 carrier; recorded for provenance only"
+    },
+    "4_byte_range": {
+      "start": 0,
+      "end_exclusive": 5442392,
+      "basis": "superblock bytes_used (BE at offset 40..48)",
+      "extent_bytes": 5442392
+    },
+    "5_carrier": {
+      "path": "carrier-v1-be.sqsh",
+      "bytes": 5442392,
+      "sha256": "ac4098bd11a76f8ad001faac0f1a5e018708d9b03943dfebb2b18a24e0038e95",
+      "carve": "head -c 5442392 fw-member > carrier-v1-be.sqsh",
+      "equals_member_prefix": true
+    }
+  },
+  "member_shape": {
+    "file_bytes": 5443592,
+    "bytes_used": 5442392,
+    "zero_pad_bytes_to_next_4096": 1192,
+    "trailer_offset": 5443584,
+    "trailer_bytes": 8,
+    "trailer_hex": "23de53c42a99c551",
+    "pad_is_all_zero": true,
+    "same_shape_in_le_member": {
+      "le_file_bytes": 28200968,
+      "le_bytes_used": 28200029,
+      "le_zero_pad": 931,
+      "le_trailer_hex": "23de53c48e844de8"
+    }
+  },
+  "carrier_choice": {
+    "chosen": "member[0:bytes_used] (5442392 bytes)",
+    "rejected": [
+      "whole member (5443592 bytes: 1192 zero pad + 8-byte vendor trailer)",
+      "member[0:5443584] (bytes_used zero-padded to 4096)"
+    ],
+    "reason": "unblob _SquashFSBase.calculate_chunk rounds bytes_used up to 4096 ONLY if the read at bytes_used starts with that many zero bytes; on the whole member that holds, so the chunk ends at 5443584 and the trailing 8 bytes become an UnknownChunkReport (measured on a dev fixture of the same shape, rep-C). Truncating to bytes_used makes the read short, the padding test fail, and the chunk equal the whole carrier (measured, rep-A): one chunk, zero unknown-chunk noise.",
+    "tools_never_run_on_carrier": [
+      "REA extract-firmware",
+      "unblob"
+    ],
+    "allowed_reads_performed": [
+      "python3 sb-parse.py",
+      "python3 sb-walk.py",
+      "sasquatch-v4be -ll (no -be)",
+      "sasquatch-v4be -be -ll"
+    ]
+  }
+}

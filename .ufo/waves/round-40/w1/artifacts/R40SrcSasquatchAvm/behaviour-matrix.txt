@@ -1,0 +1,12 @@
+# dev inputs only: fresh tree (a.txt,d/b.txt,l->a.txt), gen-squashfs --endian be --comp gzip; mkavm.py rewrites metadata headers LE + mkfs_time=bytes_used
+tree sha:
+a10a343abc8e7cdda214cd37530123881011c31ce90e032b6e6b8d48c2236e52  be.sqfs
+69eeeed3813999f74a722f584e74dd16234a11f7c116fc235d263861509c9f37  avm.sqfs
+sasquatch-v4be flags='' be.sqfs rc=1 extracted_top_entries=0 | SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess/read_id_table: failed to read id table block/
+sasquatch-v4be flags='-be' be.sqfs rc=0 extracted_top_entries=3 | Reading a different endian SQUASHFS filesystem on be.sqfs/Parallel unsquashfs: Using 1 processor/
+sasquatch flags='' be.sqfs rc=1 extracted_top_entries=0 | SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess/Reading a different endian SQUASHFS filesystem on be.sqfs/
+sasquatch flags='-be' be.sqfs rc=1 extracted_top_entries=0 | Reading a different endian SQUASHFS filesystem on be.sqfs/FATAL ERROR: Block size too small.  File system is corrupt./
+sasquatch-v4be flags='' avm.sqfs rc=0 extracted_top_entries=3 | SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess/Parallel unsquashfs: Using 1 processor/
+sasquatch-v4be flags='-be' avm.sqfs rc=1 extracted_top_entries=0 | Reading a different endian SQUASHFS filesystem on avm.sqfs/read_id_table: failed to read id table block/
+sasquatch flags='' avm.sqfs rc=1 extracted_top_entries=0 | SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess/Reading a different endian SQUASHFS filesystem on avm.sqfs/
+sasquatch flags='-be' avm.sqfs rc=1 extracted_top_entries=0 | Reading a different endian SQUASHFS filesystem on avm.sqfs/FATAL ERROR: Block size too small.  File system is corrupt./

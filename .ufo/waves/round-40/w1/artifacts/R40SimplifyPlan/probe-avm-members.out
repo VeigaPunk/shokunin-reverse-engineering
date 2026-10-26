@@ -1,0 +1,22 @@
+# round-40 R40SimplifyPlan AVM vendor-image probe
+# run 2026-10-26T18:30:06Z on Linux 7.2.11-arch1-1; no REA, no unblob, no sasquatch: tar member bytes only
+# command: python3 -I -B probe-avm-members.py <image>...
+
+image fw6590.image sha256 0c539499044a807c2dfa3ffdf5eafe6016096912fa6e13374f48afa46cd0abae
+  tar members 16
+  ./var/remote/var/tmp/x86/filesystem.image size=27750408 magic=b'hsqs' comp=1024 v1024.0 mkfs=3949373185 bytes_used=16962428669274357760 marker=False inode_count=4212457472 frag_count=2533425152 inode_table=7339078491490484224 dir_table=3277958627020767232 sha256=57552a6dd81b6a43032b761bfbd10090442dbbcce88609bdb731af1242932786
+  ./var/remote/var/tmp/filesystem.image size=5443592 magic=b'sqsh' comp=4 v4.0 mkfs=5441468 bytes_used=5441468 marker=True inode_count=1079 frag_count=112 inode_table=5420540 dir_table=5429114 sha256=65e85647f0199f9dcbb3f06674557bfda2fc9a4412378448b572478d2bff832a
+image fritzbox-6591-cable.image sha256 fab055fb484462aa1cbc94dcc3abfd642da5d607e9b27545612c9af0ea3a32d7
+  tar members 6
+  no filesystem.image member; top-level: ['var']
+image fritzbox-6660-cable.image sha256 4d96c365787e220f3b27c624a41cbe1b1dead65abcdf18411d08d5485899fd82
+  tar members 6
+  no filesystem.image member; top-level: ['var']
+probe exit=0
+
+listing probes (curl -sS -o /dev/null -w '%{http_code}'):
+  fritzbox-6590-cable/other/fritz.os/ -> 200, images: FRITZ.Box_6590_Cable-07.57.image
+  fritzbox-6591-cable/other/fritz.os/ -> 200, images: FRITZ.Box_6591_Cable-08.25.image
+  fritzbox-6660-cable/other/fritz.os/ -> 200, images: FRITZ.Box_6660_Cable-08.25.image
+  fritzbox-6430-cable/other/fritz.os/ -> 404 (no such path)
+  fritzbox/ index -> 200, 8990 B (model list captured in avm-model-index.out)

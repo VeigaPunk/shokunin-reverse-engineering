@@ -1,0 +1,32 @@
+{
+  "build_argv": [
+    "python3",
+    "-I",
+    "-B",
+    "tools/round-39/gen-squashfs.py",
+    "TREE",
+    "carrier.sqsh",
+    "--endian",
+    "be",
+    "--comp",
+    "gzip"
+  ],
+  "compression": "gzip",
+  "dirs": [
+    "d1"
+  ],
+  "endian": "be",
+  "files": [
+    "a.txt"
+  ],
+  "generator_stdout": "wrote carrier.sqsh 255 bytes, inodes 3",
+  "name": "dirlink",
+  "note": "the tree holds a symlink to a directory; the image has 3 inodes (root + d1 + a.txt), 0 symlinks: os.walk puts a directory symlink in dirnames and gen-squashfs.py only serialises fnames, so the link is dropped silently (no warning).",
+  "symlinks": [
+    {
+      "path": "inlink",
+      "target": "d1",
+      "target_kind": "directory"
+    }
+  ]
+}

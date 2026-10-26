@@ -1,0 +1,44 @@
+== K5.sqsh  magic=sqsh comp=1 block_size=4096 marker=no bytes_used=26813
+  inode_table_start      -> directory_table_start    LE: blocks=2 landed_exactly=None first_len=20099 (comp)
+  inode_table_start      -> directory_table_start    BE: blocks=1 landed_exactly=True first_len=846 (uncomp)
+  first inode-table length: LE=20099 impossible | BE=846 plausible -> first-length-only verdict: BE
+  chain decisive: LE lands on every table=False | BE lands on every table=True
+== sw-20.sqsh  magic=sqsh comp=1 block_size=4096 marker=no bytes_used=1339
+  inode_table_start      -> directory_table_start    LE: blocks=1 landed_exactly=False first_len=4227 (comp)
+  inode_table_start      -> directory_table_start    BE: blocks=1 landed_exactly=True first_len=784 (uncomp)
+  first inode-table length: LE=4227 plausible | BE=784 plausible -> first-length-only verdict: AMBIGUOUS(both plausible)
+  chain decisive: LE lands on every table=False | BE lands on every table=True
+== sw-80.sqsh  magic=sqsh comp=1 block_size=4096 marker=no bytes_used=4738
+  inode_table_start      -> directory_table_start    LE: blocks=4 landed_exactly=None first_len=139 (uncomp)
+  inode_table_start      -> directory_table_start    BE: blocks=1 landed_exactly=True first_len=2944 (uncomp)
+  first inode-table length: LE=139 plausible | BE=2944 plausible -> first-length-only verdict: AMBIGUOUS(both plausible)
+  chain decisive: LE lands on every table=False | BE lands on every table=True
+== markeronly-80.sqsh  magic=sqsh comp=1 block_size=4096 marker=YES bytes_used=4738
+  inode_table_start      -> directory_table_start    LE: blocks=4 landed_exactly=None first_len=139 (uncomp)
+  inode_table_start      -> directory_table_start    BE: blocks=1 landed_exactly=True first_len=2944 (uncomp)
+  first inode-table length: LE=139 plausible | BE=2944 plausible -> first-length-only verdict: AMBIGUOUS(both plausible)
+  chain decisive: LE lands on every table=False | BE lands on every table=True
+== avm-80-gzip.sqsh  magic=sqsh comp=1 block_size=4096 marker=YES bytes_used=4738
+  inode_table_start      -> directory_table_start    LE: blocks=1 landed_exactly=True first_len=2944 (uncomp)
+  inode_table_start      -> directory_table_start    BE: blocks=4 landed_exactly=None first_len=139 (uncomp)
+  first inode-table length: LE=2944 plausible | BE=139 plausible -> first-length-only verdict: AMBIGUOUS(both plausible)
+  chain decisive: LE lands on every table=True | BE lands on every table=False
+== avm-200-xz.sqsh  magic=sqsh comp=4 block_size=4096 marker=YES bytes_used=20891
+  inode_table_start      -> directory_table_start    LE: blocks=1 landed_exactly=True first_len=7328 (uncomp)
+  inode_table_start      -> directory_table_start    BE: blocks=2 landed_exactly=None first_len=8348 (uncomp)
+  first inode-table length: LE=7328 plausible | BE=8348 impossible -> first-length-only verdict: LE
+  chain decisive: LE lands on every table=True | BE lands on every table=False
+== avm-be.squashfs  magic=sqsh comp=4 block_size=65536 marker=YES bytes_used=365
+  inode_table_start      -> directory_table_start    LE: blocks=1 landed_exactly=True first_len=116 (comp)
+  inode_table_start      -> directory_table_start    BE: blocks=2 landed_exactly=None first_len=29696 (comp)
+  directory_table_start  -> fragment_table_start     LE: blocks=2 landed_exactly=True first_len=84 (uncomp)
+  directory_table_start  -> fragment_table_start     BE: blocks=2 landed_exactly=None first_len=21632 (comp)
+  first inode-table length: LE=116 plausible | BE=29696 impossible -> first-length-only verdict: LE
+  chain decisive: LE lands on every table=True | BE lands on every table=False
+== filesystem.image  magic=sqsh comp=4 block_size=65536 marker=YES bytes_used=35008578
+  inode_table_start      -> directory_table_start    LE: blocks=1 landed_exactly=True first_len=804 (comp)
+  inode_table_start      -> directory_table_start    BE: blocks=2 landed_exactly=None first_len=9219 (comp)
+  directory_table_start  -> fragment_table_start     LE: blocks=2 landed_exactly=True first_len=1060 (comp)
+  directory_table_start  -> fragment_table_start     BE: blocks=2 landed_exactly=None first_len=9220 (comp)
+  first inode-table length: LE=804 plausible | BE=9219 impossible -> first-length-only verdict: LE
+  chain decisive: LE lands on every table=True | BE lands on every table=False

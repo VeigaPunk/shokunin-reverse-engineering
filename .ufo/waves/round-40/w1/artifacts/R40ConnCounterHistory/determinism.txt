@@ -1,0 +1,6 @@
+# REA determinism probe (K1 dev copy, two genuine runs)
+input: k1.sqsh = corpus/evidence/round-37/c1/K1/carrier.sqsh, sha256 1cfb6c33f915aa64255465fba9f2074bb0f294a192f3e3058cb34bea8286117e
+cmd: cd $S && REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output k1.sqsh outN (N=1,2), exit 0 both
+envelope sizes: env1 19278 B / env2 19278 B; sha256 differ (05043666... vs c23fc750...)
+field diffs (diffenv.py): data.evidence_id, data.normalized_result.output_directory, data.parameters.output_directory, meta.duration ONLY
+semantic projection (proj2.py): {operation, provider, chunks[(handler,failed)], gaps[(kind,relpath)], files[(relpath,sha256,size)], diag[__typename__], coverage, published_bytes} -> EQUAL across run1/run2 and EQUAL to committed r39 K1 after.json

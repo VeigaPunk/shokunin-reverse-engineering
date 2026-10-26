@@ -1,0 +1,24 @@
+# control: lane-built standard-BE v4 (superblock BE *and* BE block-length headers)
+# generator: tools/round-39/gen-squashfs.py tree stdbe.squashfs --endian be --comp gzip
+# sha256 5b7dcfe3f1a5cdf145e0b2b3dc449e3eaed22cbbce06d27d9f9bb0c4e775ee8d size 812
+# marker: mkfs_time=1700000000 bytes_used=812 equal=False
+# inode_table_start=540 hdr=80a8 BE_size=168 LE_size=10368
+
+## $ sasquatch-v4be  -d out-stdbe stdbe.squashfs
+exit=1
+SquashFS version [1024.0] / inode count [83886080] suggests a SquashFS image of a different endianess
+read_id_table: failed to read id table block
+FATAL ERROR: File system corruption detected
+--- files
+
+## $ sasquatch-v4be -be -d out-stdbe-be stdbe.squashfs
+exit=0
+Reading a different endian SQUASHFS filesystem on stdbe.squashfs
+
+Trying to decompress using default gzip decompressor...
+
+Successfully decompressed with default gzip decompressor
+--- files
+  out-stdbe-be/bin/run
+  out-stdbe-be/docs/data.txt
+

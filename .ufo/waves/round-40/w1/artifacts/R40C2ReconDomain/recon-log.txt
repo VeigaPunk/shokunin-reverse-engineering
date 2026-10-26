@@ -1,0 +1,68 @@
+# recon transcript — seat R40C2ReconDomain (round 40 wave 1)
+# host: Linux 7.2.11-arch1-1 | date: 2026-10-26T18:25:49Z
+
+## versions
+6.5.0
+26.6.4
+binwalk: binwalk 3.1.0 sha256=5fc19aac1f357a66a47e8b20a8038a84cb93971cb5d331bd4503b02fcc0a40d6 pkg=binwalk 3.1.0-1
+gen-squashfs.py: ok
+
+## v1 interpreter (tools/round-39/sqfs-triage.py + SKILL.md block 18)
+env/ef-be.json                               label=clean                      rule=8 H=['squashfs_v4_be'] G=[] BE=n/a SR=no P=3
+env/ef-le.json                               label=clean                      rule=8 H=['squashfs_v4_le'] G=[] BE=n/a SR=no P=3
+env/ef-avm.json                              label=avm-marker-be-dropped      rule=4 H=['squashfs_v4_be'] G=['extractor-failure'] BE=no SR=no P=0
+env/ef-none.json                             label=no-squashfs-chunk          rule=1 H=[] G=[] BE=n/a SR=no P=0
+env/ifr-be.json                              label=no-squashfs-chunk          rule=1 H=[] G=[] BE=n/a SR=no P=0
+env/ifr-le.json                              label=no-squashfs-chunk          rule=1 H=[] G=[] BE=n/a SR=no P=0
+env/ia-zip.json                              label=no-squashfs-chunk          rule=1 H=[] G=[] BE=n/a SR=no P=0
+env/det/ifr-1-be.json                        label=no-squashfs-chunk          rule=1 H=[] G=[] BE=n/a SR=no P=0
+env/det/ifr-2-le.json                        label=no-squashfs-chunk          rule=1 H=[] G=[] BE=n/a SR=no P=0
+env/det/ifr-3-be.json                        label=no-squashfs-chunk          rule=1 H=[] G=[] BE=n/a SR=no P=0
+LANE/corpus/evidence/round-39/c1/K1/after.json label=escaping-symlink-removed   rule=6 H=['squashfs_v4_be'] G=[] BE=n/a SR=yes P=5
+LANE/corpus/evidence/round-39/c1/K2/after.json label=in-tree-symlink-metadata   rule=7 H=['squashfs_v4_be'] G=['unpublished-entry'] BE=n/a SR=no P=3
+
+## v2 prototype (artifacts/sqfs-triage-v2-proto.py + skill-proto.md from v2-table-proto.md)
+env/ef-be.json                               label=clean                      action=compare-oracle
+env/ef-le.json                               label=clean                      action=compare-oracle
+env/ef-avm.json                              label=avm-marker-be-dropped      action=rerun-with-be
+env/ef-none.json                             label=no-squashfs-chunk          action=check-superblock
+env/ifr-be.json                              label=unclassified               action=none
+env/ifr-le.json                              label=unclassified               action=none
+env/ia-zip.json                              label=unclassified               action=none
+env/det/ifr-1-be.json                        label=unclassified               action=none
+env/det/ifr-2-le.json                        label=unclassified               action=none
+env/det/ifr-3-be.json                        label=unclassified               action=none
+LANE/corpus/evidence/round-39/c1/K1/after.json label=escaping-symlink-removed   action=expect-absent
+LANE/corpus/evidence/round-39/c1/K2/after.json label=in-tree-symlink-metadata   action=expect-absent
+
+## selftest
+ok   c_reserved_label
+ok   c_print_table
+13 cases, 0 failed
+
+## kill control: every domain cell replaced by * (the "v1 transcribed into v2" control)
+env/ef-be.json           label=clean                      action=compare-oracle
+env/ifr-be.json          label=no-squashfs-chunk          action=check-superblock
+env/ifr-le.json          label=no-squashfs-chunk          action=check-superblock
+env/ia-zip.json          label=no-squashfs-chunk          action=check-superblock
+
+## synthetic single-cell controls (op swapped / provider swapped, no real envelope has this shape)
+op->extract_firmware     /tmp/synth-op-extract_firmware.json	unclassified	none
+provider->unblob         /tmp/synth-provider-unblob.json	unclassified	none
+
+## determinism: decision features over 3 trees x 2 endians (inspect-firmware-regions)
+env/det/ifr-1-be.json    op=inspect_firmware_regions   pv=binwalk  H=0 G=0 D=0 P=0 regions=1 engine=3.1.0
+env/det/ifr-1-le.json    op=inspect_firmware_regions   pv=binwalk  H=0 G=0 D=0 P=0 regions=1 engine=3.1.0
+env/det/ifr-2-be.json    op=inspect_firmware_regions   pv=binwalk  H=0 G=0 D=0 P=0 regions=1 engine=3.1.0
+env/det/ifr-2-le.json    op=inspect_firmware_regions   pv=binwalk  H=0 G=0 D=0 P=0 regions=1 engine=3.1.0
+env/det/ifr-3-be.json    op=inspect_firmware_regions   pv=binwalk  H=0 G=0 D=0 P=0 regions=1 engine=3.1.0
+env/det/ifr-3-le.json    op=inspect_firmware_regions   pv=binwalk  H=0 G=0 D=0 P=0 regions=1 engine=3.1.0
+
+## one carrier, two runs: fields that move (must not be digested)
+  /data/evidence_id => 'ev_b156fe2f04b712f53695b140a3595400f4e851f57775ea0f49bc9e7a124c1487' vs 'ev_f950c9001524395c9f3cdbac1f9ff5c15ff98be4d540946917f0ad108be18d55'
+  /data/normalized_result/regions[0]/provider_id => '59b234e9-6214-4352-b87a-19c3ec304543' vs 'c9955f16-85eb-40dc-b35a-5928fcb57443'
+  /data/raw_result/execution/args[5] => '/tmp/rea-firmware-NgEyOs/report.json' vs '/tmp/rea-firmware-VnYK4s/report.json'
+  /data/raw_result/execution/args[6] => '/tmp/rea-firmware-NgEyOs/firmware.bin' vs '/tmp/rea-firmware-VnYK4s/firmware.bin'
+  /data/raw_result/report[0]/Analysis/file_map[0]/id => '59b234e9-6214-4352-b87a-19c3ec304543' vs 'c9955f16-85eb-40dc-b35a-5928fcb57443'
+  /data/raw_result/report[0]/Analysis/file_path => '/tmp/rea-firmware-NgEyOs/firmware.bin' vs '/tmp/rea-firmware-VnYK4s/firmware.bin'
+  /meta/duration => '398ms' vs '362ms'

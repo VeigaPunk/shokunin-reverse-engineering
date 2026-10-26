@@ -1,0 +1,111 @@
+# Exact commands (seat R40C1Reader, round 40 wave 1)
+
+All scratch work lived in `/fast/scratch/hyaku/kaidoku-r40/R40C1Reader` (removed at exit).
+`S` below is that directory.  `A` is
+`.ufo/waves/round-40/w1/artifacts/R40C1Reader` in the lane.
+
+## Tool identity
+
+```
+python3 -V                     # 3.14.8
+sha256sum $A/sqfs-list.py $A/compare.py
+sasquatch -version              # unsquashfs version 4.5.1 (2022/03/17)
+sasquatch-v4be -version         # unsquashfs version 4.5.1 (2022/03/17)
+sha256sum ~/.local/bin/sasquatch ~/.local/bin/sasquatch-v4be
+# ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754  sasquatch
+# fac88740f49b3460db6a67be93aa21e7390e2845b1e2f348265a95419b7214c6  sasquatch-v4be
+```
+
+## Self test
+
+```
+python3 -I -B $A/sqfs-list.py --selftest        # 13/13, exit 0
+```
+
+## V1 acquisition and carving (stdlib only)
+
+```
+cd "$S"
+curl -sS -m 300 -o fw.image \
+  https://download.avm.de/fritzbox/fritzbox-6490-cable/other/fritz.os/FRITZ.Box_6490_Cable-07.57.image
+sha256sum fw.image
+# f518ce6baa05b30d84264d9349cca9bf0b9402986d4112bda8ad73a04f9ede6d  39741440 bytes
+
+python3 - <<'PY'   # tarfile, no external tool
+import tarfile, hashlib
+tf = tarfile.open('fw.image', 'r:')
+for member, out in (('./var/remote/var/tmp/filesystem.image', 'avm-be-member.sqfs'),
+                    ('./var/remote/var/tmp/x86/filesystem.image', 'avm-le-member.sqfs')):
+    data = tf.extractfile(member).read()
+    open(out, 'wb').write(data)
+    print(out, len(data), hashlib.sha256(data).hexdigest())
+PY
+# avm-be-member.sqfs 5443592 334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a301ad3f3d4
+# avm-le-member.sqfs 28200968 7ea4c628def17c25dc05f6103f8563884022dd1a5baf0c4fba38a85b546a0419
+```
+
+K carriers (byte copies from the lane corpus; no mutation):
+
+```
+E=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence
+cp $E/round-37/c1/K1/carrier.sqsh k1.sqsh      # 1cfb6c33f915aa64...
+cp $E/round-37/c1/K2/carrier.sqsh k2.sqsh      # 403cb0a827966bbe...
+cp $E/round-37/c1/K3/carrier.bin  k3.sqsh      # 9c7c523c5d1d1caf...
+cp $E/round-37/c1/K4/carrier.bin  k4.sqsh      # a29ddc15f5a6abca...
+cp $E/round-39/c1/K5/carrier.sqsh k5.sqsh      # 5999eafc0fb6a8bc...
+cp $E/round-39/c1/K6/carrier.sqsh k6.sqsh      # 00152518a3902a1a...
+cp /home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs avm-be.squashfs
+# c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32
+```
+
+## Direct extractor (ground truth; no unblob, no REA)
+
+```
+mkdir x-vendor && sasquatch-v4be -f -d x-vendor avm-be-member.sqfs
+# exit 2: "could not create character device x-vendor/dev/led, because you're not superuser!"
+#         (all regular files, dirs and symlinks were still created)
+mkdir x-vendor-le && sasquatch -f -d x-vendor-le avm-le-member.sqfs
+# exit 2: same single device-node reason
+mkdir x-round11 && sasquatch-v4be -f -d x-round11 avm-be.squashfs     # exit 0
+for k in 1 2 3 4 5 6; do mkdir x-k$k; sasquatch-v4be -be -f -d x-k$k k$k.sqsh; done  # exit 0 each
+```
+
+## Oracle
+
+```
+for spec in "vendor-be avm avm-be-member.sqfs" "vendor-le le avm-le-member.sqfs" \
+            "r11 avm avm-be.squashfs" "k1 be k1.sqsh" ... "k6 be k6.sqsh"; do
+  set -- $spec
+  python3 -I -B $A/sqfs-list.py --layout $2 --files out/$1.files.tsv \
+      --nonregular out/$1.nonregular.tsv --inspect $3 > out/$1.inspect.json
+  python3 -I -B $A/sqfs-list.py --layout auto --files out/$1.auto.files.tsv \
+      --inspect $3 > out/$1.auto.json
+  cmp out/$1.files.tsv out/$1.auto.files.tsv        # identical on all nine
+done
+```
+
+## Comparison
+
+```
+python3 -I -B $A/compare.py --files out/vendor-be.files.tsv \
+    --nonregular out/vendor-be.nonregular.tsv --extract x-vendor \
+    --sasquatch-log vendor.err --json out/vendor-be.compare.json
+python3 -I -B $A/compare.py --files out/vendor-le.files.tsv \
+    --nonregular out/vendor-le.nonregular.tsv --extract x-vendor-le \
+    --sasquatch-log le.err --json out/vendor-le.compare.json
+python3 -I -B $A/compare.py --files out/r11.files.tsv \
+    --nonregular out/r11.nonregular.tsv --extract x-round11 --json out/r11.compare.json
+for k in 1 2 3 4 5 6; do python3 -I -B $A/compare.py --files out/k$k.files.tsv \
+    --nonregular out/k$k.nonregular.tsv --extract x-k$k --json out/k$k.compare.json; done
+```
+
+## Committed oracle TSVs (additional anchor)
+
+```
+cmp out/k1.files.tsv $E/round-37/c1/K1/oracle.tsv   # identical
+cmp out/k2.files.tsv $E/round-37/c1/K2/oracle.tsv   # identical
+cmp out/k3.files.tsv $E/round-37/c1/K3/oracle.tsv   # identical
+cmp out/k4.files.tsv $E/round-37/c1/K4/oracle.tsv   # identical
+cmp out/k5.files.tsv $E/round-39/c1/K5/oracle.tsv   # identical
+cmp out/k6.files.tsv $E/round-39/c1/K6/oracle.tsv   # identical
+```

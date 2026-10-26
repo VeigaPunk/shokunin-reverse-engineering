@@ -1,0 +1,70 @@
+# R40C1ReconWrap -- commands actually run (2026-10-26), with exit code and wall time.
+# S = /fast/scratch/hyaku/kaidoku-r40/R40C1ReconWrap ; TMPDIR=$S for every REA/unblob call
+# (unblob writes unblob.log into its cwd, so cwd was always $S).
+# REA was invoked only through the CLI; REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob (absolute);
+# the child PATH still contained $HOME/.local/bin, so sasquatch-v4be was reachable (required).
+
+## inputs (download.avm.de; none of them is V1 = 6490 Cable 07.57)
+curl -sS -m 300 -o dev7590.image https://download.avm.de/fritzbox/fritzbox-7590/deutschland/fritz.os/FRITZ.Box_7590-08.25.image
+  42393600 B  sha256 267ef427337d2141736ad6ed5d9389722a6a1234dd590bb7d4ebf11a00616c0d
+curl -sS -m 300 -o dev6590.image https://download.avm.de/fritzbox/fritzbox-6590-cable/other/fritz.os/FRITZ.Box_6590_Cable-07.57.image
+  39290880 B  sha256 0c539499044a807c2dfa3ffdf5eafe6016096912fa6e13374f48afa46cd0abae
+curl -sS -m 300 -o dev6591.image https://download.avm.de/fritzbox/fritzbox-6591-cable/other/fritz.os/FRITZ.Box_6591_Cable-08.25.image
+  61460480 B  sha256 fab055fb484462aa1cbc94dcc3abfd642da5d607e9b27545612c9af0ea3a32d7
+curl -sS -m 300 -o d6660.image  https://download.avm.de/fritzbox/fritzbox-6660-cable/other/fritz.os/FRITZ.Box_6660_Cable-08.25.image
+  61132800 B  sha256 4d96c365787e220f3b27c624a41cbe1b1dead65abcdf18411d08d5485899fd82
+curl -sS -m 300 -o d5530.image  https://download.avm.de/fritzbox/fritzbox-5530-fiber/deutschland/fritz.os/FRITZ.Box_5530_Fiber-08.25.image
+  40151040 B  sha256 43817d5e4400083e5fe9cb66c8e8cfee5d9cc97a6c38b37dc1b5e64f0901d943
+curl -sS -m 300 -o d6890.image  https://download.avm.de/fritzbox/fritzbox-6890-lte/other/fritz.os/FRITZ.Box_6890_LTE-07.57.image
+  51384320 B  sha256 8363cbbeb15f35f5a6342b98d267423a74fe0d2573650205eb14dfdc32d99424
+curl -sS -m 300 -o d7560.image  https://download.avm.de/fritzbox/fritzbox-7560/deutschland/fritz.os/FRITZ.Box_7560-07.30.image
+  33095680 B  sha256 69b4ed39b7fce9ab0f66acf371370ecb1c35b655bf0ffc4d2062bf7a9e239f49
+curl -sS -m 300 -o d7490.image  https://download.avm.de/fritzbox/fritzbox-7490/deutschland/fritz.os/FRITZ.Box_7490-07.62.image
+  38092800 B  sha256 2ab05656563abe7fabdbbf62b3305123098b798e6f79c678f00baefc553f8ee9
+tar -xf <image> -C <dir>            # members extracted byte-exact; offsets re-derived from the tar headers
+
+## carves of the development AVM-BE member (dev6590 ./var/remote/var/tmp/filesystem.image)
+# bytes_used 5441468 ; member 5443592 ; align_up(bytes_used,4096) 5443584 ; residual 8
+head -c 5443592 member  -> carves/member-astric.ttl      sha256 65e85647f0199f9dcbb3f06674557bfda2fc9a4412378448b572478d2bff832a
+head -c 5441468 member  -> carves/member-exact.sqsh     sha256 a90f5d834c0ed662b84fe70a1759028def05f7ca6d3e8c96ad3da1af96cb8880
+head -c 5443584 member  -> carves/member-span4096.sqsh  sha256 767124f04015df3a1d6e1ae47141fe9a9d062acb9d385904c5c84ccfbdb4a7c0
+head -c 5441468 + 2116 zero bytes -> carves/member-pad4096.sqsh  sha256 767124f0...  (IDENTICAL to the span carve)
+head -c 5441468 + 65536 zero bytes -> carves/member-pad64k.sqsh   sha256 53d8708af97b03c78741435ba31d26c90b2e7c760a07047b88156ff4c748e460
+span carve + mkfs_time:=0x01020304 (offset 8 only) -> carves/member-nomarker2.sqsh
+
+## REA runs (each ~10-40 s; outdir always fresh)
+REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware \
+    --format json --full-output <input> <fresh outdir>
+  dev6590.image                                    exit 1  13.1 s  "Staging entry budget exceeded (10000)"
+  dev7590.image                                    exit 1   2.1 s  "Staging entry budget exceeded (10000)"
+  dev6590.image --max-output-files 40000           exit 1  17   s  "Report exceeded 8388608 bytes"; unblob summary: 5427 files, 875 links, SQUASHFS_V4_BE 5.19 MB + SQUASHFS_V4_LE 26.46 MB
+  dev6590.image --max-output-files 40000 --filter-output normalized_result
+                                                   exit 1  13   s  same report cap (filter does not relieve it)
+  carves/member-astric.ttl                         exit 0  20.2 s  8299343 B report; 2943 files; 404 chunks; 264 gaps
+  carves/member-exact.sqsh                         exit 0  18.1 s  7364889 B; 2942 files; 403 chunks; 263 gaps
+  carves/member-span4096.sqsh                      exit 0  11.9 s  7345487 B; 2942 files; 403 chunks; 263 gaps
+  carves/member-span4096.sqsh (second run)         exit 0  14.0 s  7344290 B; same projection, different evidence_id
+  carves/member-pad4096.sqsh                       exit 0  21.4 s  7370783 B; 2942 files; 403 chunks; 263 gaps
+  carves/member-pad64k.sqsh                        exit 0  20.5 s  8301691 B; 2943 files (extra *.padding); 404 chunks; 263 gaps
+  dev6590.image --offset 31575552 --length 5443584 exit 0 12.6 s  7324911 B; selection.sha256 = 767124f0...
+  carves/member-nomarker2.sqsh                     exit 0   2.7 s  9007 B; 0 files; 1 chunk extraction_failed=true; gap extractor-failure
+  dev6590/var/remote/var/tmp/kernel.image          exit 0   1.8 s  5423 B; coverage complete; 0 chunks; 0 gaps
+  dev6590/var/remote/var/tmp/x86/kernel.image      exit 0   1.5 s  19771 B; 5 files; 6 chunks; 3 unknown-chunk-handler + 1 depth-limited
+  dev6590/var/remote/var/tmp/x86/filesystem.image  exit 1  11.1 s  "Report exceeded 8388608 bytes" (LE member alone)
+  d6890/var/tmp/filesystem.image --max-output-files 40000
+                                                   exit 1  40   s  "Report exceeded 8388608 bytes"
+
+## pure-Python oracle work (no unblob/sasquatch import)
+python3 -I -B tools/round-39/sqfs-list.py carves/member-span4096.sqsh ...      exit 2
+   "sqfs-list: metadata body out of bounds: offset 5435948 length 29708, image 5443584 bytes"
+python3 -I -B artifacts/.../sqfs-list-avm.py carves/member-span4096.sqsh --files ... --symlinks ... --inspect
+   exit 0 ; layout avm-be ; metadata_header_endian little ; 697 regular files ; 263 symlinks (29 absolute-inside, 234 inside) ; 1 special
+python3 -I -B artifacts/.../sqfs-list-avm.py <round-39 K5 carrier> ...            exit 0  (standard BE regression, unchanged path)
+python3 -I -B artifacts/.../sqfs-list-avm.py <round-39 marker-only carrier-avm.sqsh>
+   exit 0 ; layout standard ; warning "marker holds but the metadata length header reads BE"
+python3 -I -B artifacts/.../probe-sqfs.py <members>  -> probe-sqfs-out.tsv (all residual == 8, trailer tag 23de53c4)
+
+## oracle regression on the committed round-39 carriers (pure Python read, no REA/unblob)
+python3 -I -B sqfs-list-avm.py corpus/evidence/round-39/c1/K5/carrier.sqsh ...   exit 0  10 files, 3 symlinks (2 inside / 1 above-root)
+python3 -I -B sqfs-list-avm.py corpus/evidence/round-39/c1/K6/carrier.sqsh ...   exit 0  3 symlinks (1 inside / 2 above-root)
+python3 -I -B sqfs-list-avm.py <round-39 marker-only carrier-avm.sqsh> ...        exit 0  layout standard + marker-vs-header warning

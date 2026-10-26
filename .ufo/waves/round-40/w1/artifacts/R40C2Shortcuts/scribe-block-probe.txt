@@ -1,0 +1,80 @@
+# R40C2Shortcuts — scribe-block probe
+
+Measured 2026-10-26T18:29Z (second measurement; the block moved during the wave — see A.0).
+R40C2TableDraft/block.md      sha256 14ea1d7345c11d7fe970d8fbb2e9f9b86591d5f6aa49e09662aedcf23561b800
+R40C2Interp/sqfs-triage-v2.py sha256 336c621c46e78ca528d08597e7ed652c89fe95e31dbfe339fbfd86381c6b8617
+
+## A.0 Earlier measurement (same wave, earlier bytes)
+block.md sha256 68000e0c22535fbff5fd88b75b7db1132e73cf1d7810a1b294f507e0c8e77732:
+  sqfs-triage-v2: line 34: cause -> action cell has no "->" separator
+  exit=2
+
+## A. The current draft block, as written, under the seat interpreter
+
+$ { echo '# SKILL'; echo; echo '## Queue-drain craft'; echo; cat R40C2TableDraft/block.md; echo; echo '## After'; } > draft-block-skill2.md
+$ python3 -I -B R40C2Interp/sqfs-triage-v2.py --skill draft-block-skill2.md --table-only
+sqfs-triage-v2: line 37: cause -> action cell has no "->" separator
+exit=2
+grep -c ' -> ' block.md  ->  0
+
+## B. Same block, only the v1 `->` check removed from a scratch interpreter copy
+patch applied to the scratch copy (nothing in the lane is edited):
+  -        if '->' not in cause:
+  -            raise TableError('line %d: cause -> action cell has no "->" separator' % line_no)
+
+$ python3 -I -B interp-nofossil.py --skill draft-block-skill2.md --table-only
+skill: draft-block-skill2.md
+marker line: 33  actions line: 34  table line: 35  rules: 11
+actions: accept resolve-unpublished expect-removed expect-removed-and-unpublished install-sasquatch-v4be install-sasquatch rerun-with-be-wrapper keep-failure-evidence accept-partial-published check-superblock
+
+## C. Decisions on the 26 synthetic class envelopes (labels compared; the scribe's
+   action vocabulary differs from this seat's by design)
+
+ok    avm-marker-be-dropped-r1           avm-marker-be-dropped      rerun-with-be-wrapper
+ok    avm-marker-be-dropped-r2           avm-marker-be-dropped      rerun-with-be-wrapper
+ok    body-extractor-failure-r1          body-extractor-failure     keep-failure-evidence
+WRONG body-extractor-failure-r2          unclassified               none
+ok    clean-be-r1                        clean                      accept
+ok    clean-be-r2                        clean                      accept
+ok    clean-empty-r1                     clean-empty                accept
+ok    clean-empty-r2                     clean-empty                accept
+ok    clean-le-r1                        clean                      accept
+ok    clean-le-r2                        clean                      accept
+ok    dep-missing-be-r1                  dep-missing-be             install-sasquatch-v4be
+ok    dep-missing-be-r2                  dep-missing-be             install-sasquatch-v4be
+ok    dep-missing-le-r1                  dep-missing-le             install-sasquatch
+ok    dep-missing-le-r2                  dep-missing-le             install-sasquatch
+ok    escaping-symlink-removed-r1        escaping-symlink-removed   expect-removed
+ok    escaping-symlink-removed-r2        escaping-symlink-removed   expect-removed
+ok    in-tree-symlink-metadata-r1        in-tree-symlink-metadata   resolve-unpublished
+ok    in-tree-symlink-metadata-r2        in-tree-symlink-metadata   resolve-unpublished
+ok    mixed-symlinks-r1                  mixed-symlinks             expect-removed-and-unpublished
+ok    mixed-symlinks-r2                  mixed-symlinks             expect-removed-and-unpublished
+ok    no-squashfs-chunk-r1               no-squashfs-chunk          check-superblock
+ok    no-squashfs-chunk-r2               no-squashfs-chunk          check-superblock
+ok    out-of-domain-r1                   unclassified               none
+ok    out-of-domain-r2                   unclassified               none
+ok    partial-body-failure-r1            partial-body-failure       accept-partial-published
+WRONG partial-body-failure-r2            unclassified               none
+wrong 2/26
+
+## D. Decisions on the 17 committed round-39 envelopes
+
+  K1/after.json              escaping-symlink-removed   expect-removed
+  K2/after.json              in-tree-symlink-metadata   resolve-unpublished
+  K3/after.json              clean                      accept
+  K4/after.json              clean                      accept
+  K5/after.json              mixed-symlinks             expect-removed-and-unpublished
+  K6/after.json              mixed-symlinks             expect-removed-and-unpublished
+  R39C2AxisFit/env-avm.json  avm-marker-be-dropped      rerun-with-be-wrapper
+  R39C2AxisFit/env-bodyflip.json clean                      accept
+  R39C2AxisFit/env-bytesused.json no-squashfs-chunk          check-superblock
+  R39C2AxisFit/env-clean.json clean                      accept
+  R39C2AxisFit/env-depbe.json dep-missing-be             install-sasquatch-v4be
+  R39C2AxisFit/env-deple.json clean                      accept
+  R39C2AxisFit/env-inodeptr.json body-extractor-failure     keep-failure-evidence
+  R39C2AxisFit/env-magic.json no-squashfs-chunk          check-superblock
+  R39C2AxisFit/env-rootino.json body-extractor-failure     keep-failure-evidence
+  R39C2AxisFit/env-sym.json  mixed-symlinks             expect-removed-and-unpublished
+  R39C2AxisFit/env-trunc.json no-squashfs-chunk          check-superblock
+  R39C2AxisFit/env-zeroed.json clean                      accept

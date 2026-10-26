@@ -1,0 +1,151 @@
+# R40C1Controls — measurements (commands, outputs, exit codes)
+
+Scratch `S=/fast/scratch/hyaku/kaidoku-r40/R40C1Controls`, `export TMPDIR=$S`, `cd $S` for every
+unblob/REA run. No REA, unblob or sasquatch run touched a frozen carrier, a V1/V2 member, or any
+AVM-layout body: the REA runs below are on a fresh tree and on a round-37 K1 copy, both named dev
+inputs in the bounds. Pure-Python reads of the retained AVM-layout body are copies in scratch.
+
+## 1. Carrier-side tests (no extractor)
+
+```
+$ python3 -I -B classify-carrier.py fx/carrier-be.sqsh fx/carrier-avm.sqsh \
+      fx/genuine-avm.squashfs fx/genuine-avm-markerstripped.squashfs
+image                          magic comp mkfs_time  bytes_used marker len_LE len_BE F_le F_be le_exact be_exact
+carrier-be.sqsh                sqsh  1    1700000000 599        no     13441  308    N    Y    N        Y
+carrier-avm.sqsh               sqsh  1    599        599        yes    13441  308    N    Y    N        Y
+genuine-avm.squashfs           sqsh  4    365        365        yes    116    29696  Y    N    Y        N
+genuine-avm-markerstripped...  sqsh  4    1700000000 365        no     116    29696  Y    N    Y        N
+exit=0
+```
+
+`fx/genuine-avm.squashfs` is a copy of `/home/vgpnk/Projects/shokuknow/lanes/kaidoku/round11/work/avm-be.squashfs`,
+sha256 `c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32`, 4096 B (read-only source,
+copied; nothing written under shokuknow). The marker-stripped body is that file with bytes 8..12
+set to `1700000000` (`0x6553f100`), sha256
+`abfd7ec90445f6cffc9920410823a9ae2dad750d859ad93c3b77459ea94512ac`.
+
+## 2. Reader-mode 2x2 (`oracle-mode-matrix.txt`)
+
+The round-39 reader with a 3-line `--avm` patch in the dev mirror (metadata header read LE while
+the superblock keeps the magic endianness):
+
+```
+$ python3 -I -B mirror/tools/round-40/sqfs-list.py [--avm] IMG --files ot.tsv --symlinks ou.tsv
+genuine AVM-layout                        standard exit 2  0 rows  "metadata body out of bounds: offset 123 length 29696, image 4096 bytes"
+genuine AVM-layout                        --avm    exit 0  4 rows
+genuine AVM-layout, marker stripped       standard exit 2  0 rows  (same message)
+genuine AVM-layout, marker stripped       --avm    exit 0  4 rows
+marker-only standard-BE (--endian avm)    standard exit 0  3 rows
+marker-only standard-BE (--endian avm)    --avm    exit 2  0 rows  "metadata body out of bounds: offset 123 length 27776, image 498 bytes"
+standard-BE (--endian be)                 standard exit 0  3 rows
+standard-BE (--endian be)                 --avm    exit 2  0 rows  "metadata body out of bounds: offset 123 length 13441, image 599 bytes"
+```
+
+Consequence: `tools/round-39/sqfs-list.py` as shipped cannot read a genuine AVM-BE body (exit 2);
+R40 must ship an AVM mode, and the exit-code pair is the cheapest LE-block-length proof.
+
+## 3. unblob on fresh dev trees (measurer's own trees, not carriers)
+
+```
+$ cd $S && TMPDIR=$S ~/.local/bin/unblob -v -e ub-carrier-be fx/carrier-be.sqsh
+Running extract command command='sasquatch-v4be -be -no-exit-code -f -d …/ub-carrier-be/carrier-be.sqsh_extract …'
+unblob exit 0, 3 files published
+
+$ cd $S && TMPDIR=$S ~/.local/bin/unblob -v -e ub-carrier-avm fx/carrier-avm.sqsh
+Running extract command command='sasquatch-v4be -no-exit-code -f -d …/ub-carrier-avm/carrier-avm.sqsh_extract …'
+unblob exit 0, 0 files published, ExtractCommandFailedReport present
+```
+
+## 4. REA on dev inputs (two honest runs of one carrier)
+
+```
+$ cd $S && REA_UNBLOB_COMMAND=$HOME/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware \
+      --format json --full-output $S/dev/carrier.sqsh $S/dev/out1 > $S/dev/rea1.json   # exit 0, 18905 B
+$ ... $S/dev/out2 > $S/dev/rea2.json                                                   # exit 0, 18905 B
+```
+
+`carrier.sqsh` = `corpus/evidence/round-37/c1/K1/carrier.sqsh` (sha256 `1cfb6c33…6117e`), a
+development input.
+
+| field | run 1 | run 2 | stable? |
+|---|---|---|---|
+| `evidence_id` | `ev_687d77d557b0fe17…` | `ev_bb86a37f9ecd6b84…` | **no** |
+| `parameters.output_directory` | `…/dev/out1` | `…/dev/out2` | no (recorded) |
+| `chunks[0].provider_id` | `240183:1` | `260765:1` | **no** |
+| `normalized_result.published_bytes` | 9656 | 9656 | yes |
+| `files[].mime_type`, `analysis_depth` | same | same | yes |
+| `derivations` count | 10 | 10 | yes |
+
+`'sasquatch' in envelope == False`; `'extract command' in envelope.lower() == False`.
+`raw_result.execution.args` contains `--log /fast/scratch/…/rea-firmware-AOizkG/unblob.log`, and
+that directory is gone after the run (only `firmware.bin_extract` survives in the output dir). The
+extractor argv and the extractor's identity are therefore **not in the scored evidence**.
+
+REA on the marker-only body (fresh dev tree, `fx/carrier-avm.sqsh`):
+
+```
+handler ['squashfs_v4_be']  extraction_failed [True]  files 0  published_bytes 0
+gaps [{'kind': 'extractor-failure', 'handler': 'squashfs_v4_be', …}]
+diagnostics ['ExtractCommandFailedReport']            REA exit 0
+```
+
+## 5. Projection: draft vs run, against the CTL-C1-2 forgery
+
+```
+$ python3 -I -B projection.py --envelope dev/rea1.json --synthesize dev/oracle.tsv \
+      --symlinks dev/symlinks.tsv --compare
+=== draft projection, real vs CTL-C1-2 synthesis
+projection fields equal (4): extraction_failed, handlers, publication, subject_sha256
+projection fields differing (0):
+=== run projection, real vs CTL-C1-2 synthesis
+projection fields equal (10): confidence, coverage, diagnostics, extraction_failed, gaps, handlers,
+                              publication, published_bytes, subject_sha256, unpublished
+projection fields differing (3): chunks, derivations, files
+  files: real mime_type 'text/x-shellscript' / 'application/octet-stream' / 'text/plain' / 'inode/x-empty'
+         synthesized mime_type None for every row
+exit=0
+```
+
+K1 facts behind it: 5 oracle rows, 5 published files, suffix match 5/5,
+`published_bytes 9656 == Σ oracle sizes 9656`, one `MaliciousSymlinkRemoved` diagnostic, 10
+derivations, no gaps.
+
+## 6. Control suite run (dev fixture)
+
+```
+$ sh build-fixture.sh $S/fx-repo $S/fx/genuine-avm.squashfs $S/mirror/tools/round-40/sqfs-list.py \
+      tools/round-39/gen-squashfs.py corpus/evidence/round-39/c1
+BASE=0fe33412… FREEZE=3e68d3ca… TIP=83251dd5…
+$ sh run-controls.sh --honest $S/fx-repo --base $BASE --freeze $FREEZE \
+      --counter stub-counter.py --work $S/ctlwork --json-out control-results-dev.json
+17 PASS, 2 SKIP (refusal_class=audit), 0 FAIL  (19 controls)   (full lines in control-run-dev.txt)
+```
+
+Overlay content spot-checks (materialized under `CTL-C1-*/`):
+
+| check | command | result |
+|---|---|---|
+| C1-3 bodies are marker-only, BE lengths | `classify-carrier.py CTL-C1-3/…/V1/carrier.sqsh` | marker yes, mkfs 498 == bytes_used 498, len_LE 27776 implausible, len_BE 236 exact |
+| C1-4 bodies keep the AVM layout | `classify-carrier.py CTL-C1-4/…/V1/carrier.sqsh` | marker no (1700000000 vs 365), len_LE 116 exact |
+| C1-2 receipts match their oracles by construction | receipt `relative_path` minus `extract_root` vs `oracle.tsv` | V1/V2/L1/L2: 4 rows, 4 published, equal, `output_directory /fast/scratch/hyaku/kaidoku-r40/<ID>/extract`, ids `ev_66ae0d…`, `ev_6cc68a…`, `ev_677da5…`, `ev_f61a32…` |
+| C1-8 keeps every pin consistent while aliasing | spec pin vs bytes per carrier | V1 `c7f74691` = bytes; V2 `db57348a` = bytes; L1 pin `c7f74691` (bytes changed from `8f27ba2c`); L2 pin `db57348a` (from `676d3865`); **2 distinct pins** |
+| C1-14 publishes under a wrong root | first two `relative_path` | `nested/wrong-root/carrier.sqsh_extract/apple1.txt`, `…apple2.txt` |
+| C1-18 oracle trimmed with the receipt | row/file counts | oracle 3 rows, receipt 3 files (carrier has 4) |
+
+## 7. What was not run, and why
+
+* **No REA/unblob on any C1 carrier** (V1/V2 members, lane-built AVM carriers, the round-11 body):
+  bounds. The carrier controls are evaluated with committed-bytes and pure-Python reads, and the
+  failure shapes they need were measured on dev inputs (marker-only body, K1 copy).
+* **The rerun clause is not executed** by this seat: it needs the frozen carriers. Its mechanism is
+  measured with two honest REA runs of a dev carrier plus the projection comparison; the suite run
+  reports `rerun_projection_ok: null` for that reason, and CTL-C1-2's `expected_byte_only` records
+  the measured byte-only verdict (`met_target true`).
+* **The honest round-40 tree does not exist yet**, so the suite is validated on a dev fixture. The
+  freeze must re-run `run-controls.sh` against the real tree and paste the 18 lines into the score
+  receipt.
+
+No tool was installed or upgraded (no pacman transaction; no uv/npx install beyond the pinned
+`npx -y rea-agents@6.5.0` the bounds prescribe for REA). `sasquatch`, `sasquatch-v4be` and `unblob`
+were read and executed as installed, never reinstalled or moved. Read-only git only in the lane;
+the fixture repo lives entirely under scratch.

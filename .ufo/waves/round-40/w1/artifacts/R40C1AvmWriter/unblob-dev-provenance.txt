@@ -1,0 +1,27 @@
+unblob 26.6.4 development-tree checks (round-40 wave 1, seat R40C1AvmWriter)
+=========================================================================
+Scope: two DEVELOPMENT images built by gen-squashfs.py --endian avm-genuine.
+No C1 carrier (V1 AVM-BE member, V1 LE member, the second vendor member, or any
+lane-built carrier named for C1) was passed to unblob or REA.
+
+The images are byte-identical copies of artifacts in this directory:
+  dev1.sqsh = small-gzip-avm-genuine.sqsh
+    sha256 bfc446ffec3fe737d0db41b3a883c34a17afa30f67ba9b4320383f18dfd9dc2e  7690 B
+  dev2.sqsh = multiblock-xz-avm-genuine.sqsh
+    sha256 25dba8ccb8ab84d25e3084b824afecc0d6e66a5df9b2a44a0ee900525dacb3e4 25975 B
+
+Commands (cwd = scratch, so unblob.log lands there; TMPDIR = scratch):
+  unblob -v -e ub1 dev1.sqsh      -> exit 0
+  unblob -v -e ub2 dev2.sqsh      -> exit 0
+Tool pins: unblob 26.6.4; handler
+  ~/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py
+  sha256 2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287
+  sasquatch-v4be 4.5.1 (2022/03/17)
+
+Observed (logs: unblob-dev1.log, unblob-dev2.log):
+  Found valid chunk chunk=0x0-0x1e0a handler=squashfs_v4_be
+  Running extract command command='sasquatch-v4be -no-exit-code -f -d .../dev1.sqsh_extract .../dev1.sqsh'
+  (dev2 identical with chunk=0x0-0x6577)
+=> the handler was chosen and the extractor was invoked WITHOUT -be, because
+   mkfs_time == bytes_used holds, and every extracted regular file matched the
+   source tree by sha256 (5/5 and 3/3).

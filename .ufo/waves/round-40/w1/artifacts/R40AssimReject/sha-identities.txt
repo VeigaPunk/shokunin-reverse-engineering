@@ -1,0 +1,10 @@
+item	value
+round11_avm_be	sha256 c7f74691b3e8d76777322f568cea640e08b7d52c994b6bc53a01388faed32d32 4096B mkfs_time 365 bytes_used 365 MARKER
+round13_avm_le_genuine	sha256 18d3ad0563cce852a438fe414d881909a6097fc30a38ca523372931cfcafaee4 4096B mkfs_time 361 bytes_used 361 MARKER
+round13_avm_le_plain550	sha256 18d3ad0563cce852a438fe414d881909a6097fc30a38ca523372931cfcafaee4 4096B mkfs_time 361 bytes_used 361 MARKER
+identity	avm-le-genuine.squashfs and avm-le-plain550.squashfs are BYTE-IDENTICAL (0 differing bytes; cmp -s exit 0)
+recipe_genuine	build-avmle.sh:22-36 CLEAN make EXTRA_CFLAGS=-DTARGET_FORMAT=AVM_LE -DAVM_FORMAT_AS_OPTION ; mksquashfs -comp xz -no-mkfs-time
+recipe_plain550	build-avmle2.sh:32-37 make clean; -DTARGET_FORMAT=AVM_LE ONLY (no AVM_FORMAT_AS_OPTION) ; mksquashfs -comp xz ALL_ROOT_NO_MKFS_TIME_ABSENT
+round13_avm_le_standard_time	sha256 6d7874056bbde672d6f19cf60c163007c5e61dd7e37ef16103acae745dd1c322 mkfs_time 1792871460 bytes_used 361 NO MARKER (option build, flag absent)
+round12_avm_le	sha256 afeb55a4b7667ff0ce7ccc909a15f624286a8dd861de44c3c0e7478d103a5299 mkfs_time 1792847340 bytes_used 365 NO MARKER (stale binary; mkfs matches avm-le-variant-reachability.md:23 verbatim)
+unblob_handler_source	sha256 2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287 unblob 26.6.4 site-packages unblob/handlers/filesystem/squashfs.py

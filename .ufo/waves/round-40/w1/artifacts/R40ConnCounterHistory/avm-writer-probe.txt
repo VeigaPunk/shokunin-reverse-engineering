@@ -1,0 +1,6 @@
+# AVM writer probe (draft R40C1AvmWriter/gen-squashfs.py, dev tree)
+tree: bin/run (missing; mkdir error), etc/a.txt, docs/deep/blob.bin, docs/deep/link-ok
+cmds: python3 .../R40C1AvmWriter/gen-squashfs.py tree dev-avm.sqsh --endian avm --comp gzip; same --endian be
+superblock: dev-avm mkfs=4469 bytes_used=4469 marker=True inode_table_start=4192 first-meta-hdr 80a8: lenLE=10368 (> remaining 277 B, implausible) lenBE=168 -> BE headers, i.e. marker-only standard-BE body, NOT the AVM layout
+unblob -v -e ub-avm-dev dev-avm.sqsh: rc=0, handler=squashfs_v4_be, argv WITHOUT -be (marker holds), ExtractCommandFailedReport exit_code=1, find files = 0
+unblob -v -e ub-be-dev dev-be.sqsh: rc=0, handler=squashfs_v4_be, argv WITH -be, find files = 1 (tree partially built)

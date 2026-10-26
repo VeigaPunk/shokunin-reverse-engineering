@@ -1,0 +1,414 @@
+# R40C1Revenger — source anchors (file:line, exact)
+
+## A. unblob 26.6.4 installed handler
+file: /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py
+sha256: 2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287
+    21	PAD_SIZES = [4_096, 1_024]
+    22	
+    23	
+    24	class SquashFSExtractor(Extractor):
+    25	    EXECUTABLE = "sasquatch"
+    26	    V4BE_EXECUTABLE = "sasquatch-v4be"
+    33	        with File.from_path(inpath) as file:
+    34	            endian = get_endian(file, self.big_endian_magic)
+    35	
+    36	        commands_args = []
+    37	        executable = self.EXECUTABLE
+    38	
+    39	        match endian, self.version:
+    40	            case Endian.BIG, 4:
+    41	                executable = self.V4BE_EXECUTABLE
+    42	                struct_parser = StructParser(SquashFSv4LEHandler.C_DEFINITIONS)
+    43	                with File.from_path(inpath) as f:
+    44	                    header = struct_parser.parse(
+    45	                        SquashFSv4LEHandler.HEADER_STRUCT, f, Endian.BIG
+    46	                    )
+    47	                    # see https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt
+    48	                    is_avm = header.bytes_used == header.mkfs_time
+    49	                    if not is_avm:
+    50	                        commands_args.append("-be")
+    51	            case Endian.BIG, _:
+    52	                commands_args.append("-be")
+    53	            case Endian.LITTLE, _:
+    54	                commands_args.append("-le")
+    55	
+    56	        commands_args.extend(
+    57	            [
+    58	                "-no-exit-code",
+    59	                "-f",
+    60	                "-d",
+    61	                "{outdir}",
+    62	                "{inpath}",
+    63	            ]
+    68	    def get_dependencies(self) -> list[str]:
+    69	        return [self.EXECUTABLE, self.V4BE_EXECUTABLE]
+    77	    def calculate_chunk(self, file: File, start_offset: int) -> ValidChunk | None:
+    78	        file.seek(start_offset)
+    79	        endian = get_endian(file, self.BIG_ENDIAN_MAGIC)
+    80	        header = self.parse_header(file, endian)
+    81	
+    82	        end_of_data_offset = (start_offset + header.bytes_used) & 0xFF_FF_FF_FF
+    83	        file.seek(end_of_data_offset)
+    84	        padding = file.read(
+    85	            round_up(header.bytes_used, max(PAD_SIZES)) - header.bytes_used
+    86	        )
+    87	
+    88	        for pad_size in sorted(PAD_SIZES, reverse=True):
+    89	            size = round_up(header.bytes_used, pad_size)
+    90	            padding_length = size - header.bytes_used
+    91	
+    92	            if padding.startswith(b"\00" * padding_length):
+    93	                end_offset = start_offset + size
+    94	                return ValidChunk(start_offset=start_offset, end_offset=end_offset)
+    95	
+    96	        return ValidChunk(
+    97	            start_offset=start_offset, end_offset=start_offset + header.bytes_used
+    98	        )
+    99	
+   513	class SquashFSv4BEHandler(SquashFSv4LEHandler):
+   514	    NAME = "squashfs_v4_be"
+   515	
+   516	    PATTERNS = [
+   517	        HexString(
+   518	            """
+   519	            // 00000000  73 71 73 68 03 00 00 00  00 c1 9c 61 00 00 02 00  |sqsh.......a....|
+   520	            // 00000010  01 00 00 00 01 00 11 00  c0 00 01 00 04 00 00 00  |................|
+   521	            // squashfs_v4_magic_be
+   522	            73 71 73 68 [24] 00 04
+   523	        """
+   524	        ),
+   525	    ]
+   526	
+   527	    EXTRACTOR = SquashFSExtractor(4, 0x73_71_73_68)
+   528	
+
+## B. sasquatch 4.5.1 (tag sasquatch-v4.5.1-6)
+file: squashfs_swap.h  sha256: 997c221dce59067528c5867173b2927c7bb1519d55bdfe6b80bf80da16cdb0e4
+file: swap.c  sha256: 832143441689e7a3743a85eb5a54be26d1f3298b193c52fd585433f12da77c03
+file: unsquashfs.c  sha256: ece42b66f37ba67707c2c51b47b643c027232153705f59d238da79958a54cb40
+file: Makefile  sha256: 207c722978c1f9105e9f93efad0d11e48583c08708a3d6ccf969f92682757126
+file: debian/rules  sha256: b49d25e9f17ca3806c8ea83d52c4807509f6ad333c63b38385a2485f80f6d885
+--- debian/rules:9-18
+     9	override_dh_auto_build:
+    10		
+    11	
+    12	override_dh_auto_install:
+    13		dh_auto_clean
+    14		dh_auto_build
+    15		dh_auto_install -- INSTALL_DIR=$(CURDIR)/debian/sasquatch/usr/bin
+    16		dh_auto_clean
+    17		CFLAGS=-DFIX_BE dh_auto_build
+    18		cp $(CURDIR)/squashfs-tools/sasquatch $(CURDIR)/debian/sasquatch/usr/bin/sasquatch-v4be
+--- squashfs_swap.h:30-46
+    30	#include "endian_compat.h"
+    31	
+    32	#if __BYTE_ORDER == __BIG_ENDIAN || defined FIX_BE
+    33	#include <stddef.h>
+    34	extern void swap_le16(void *, void *);
+    35	extern void swap_le32(void *, void *);
+    36	extern void swap_le64(void *, void *);
+    37	extern void swap_le16_num(void *, void *, int);
+    38	extern void swap_le32_num(void *, void *, int);
+    39	extern void swap_le64_num(void *, void *, int);
+    40	extern unsigned short inswap_le16(unsigned short);
+    41	extern unsigned int inswap_le32(unsigned int);
+    42	extern long long inswap_le64(long long);
+    43	extern void inswap_le16_num(unsigned short *, int);
+    44	extern void inswap_le32_num(unsigned int *, int);
+    45	extern void inswap_le64_num(long long *, int);
+    46	
+--- squashfs_swap.h:336-345
+   336				(s)->field = (short) inswap_le##bits((unsigned short) \
+   337					(s)->field)
+   338	#define SQUASHFS_INSWAP_INODE_T(s) s = inswap_le64(s)
+   339	#define SQUASHFS_INSWAP_FRAGMENT_INDEXES(s, n) inswap_le64_num(s, n)
+   340	#define SQUASHFS_INSWAP_LOOKUP_BLOCKS(s, n) inswap_le64_num(s, n)
+   341	#define SQUASHFS_INSWAP_ID_BLOCKS(s, n) inswap_le64_num(s, n)
+   342	#define SQUASHFS_INSWAP_SHORTS(s, n) inswap_le16_num(s, n)
+   343	#define SQUASHFS_INSWAP_INTS(s, n) inswap_le32_num(s, n)
+   344	#define SQUASHFS_INSWAP_LONG_LONGS(s, n) inswap_le64_num(s, n)
+   345	#else
+--- swap.c:22-32,63-67,106,114
+    22	#include "endian_compat.h"
+    23	
+    24	#if __BYTE_ORDER == __BIG_ENDIAN || defined FIX_BE
+    25	void swap_le16(void *src, void *dest)
+    26	{
+    27		unsigned char *s = src;
+    28		unsigned char *d = dest;
+    29	
+    30		d[0] = s[1];
+    31		d[1] = s[0];
+    32	}
+    63	unsigned short inswap_le16(unsigned short num)
+    64	{
+    65		return (num >> 8) |
+    66			((num & 0xff) << 8);
+    67	}
+   106	#define INSWAP_LE_NUM(BITS, TYPE) \
+   107	void inswap_le##BITS##_num(TYPE *s, int n) \
+   108	{\
+   109		int i;\
+   110		for(i = 0; i < n; i++)\
+   111			s[i] = inswap_le##BITS(s[i]);\
+   112	}
+   113	
+   114	INSWAP_LE_NUM(16, unsigned short)
+   115	INSWAP_LE_NUM(32, unsigned int)
+   116	INSWAP_LE_NUM(64, long long)
+--- Makefile:181-186,409-411
+   181	MKSQUASHFS_OBJS = mksquashfs.o read_fs.o action.o swap.o pseudo.o compressor.o \
+   182		sort.o progressbar.o info.o restore.o process_fragments.o \
+   183		caches-queues-lists.o reader.o tar.o
+   184	
+   185	UNSQUASHFS_OBJS = unsquashfs.o unsquash-1.o unsquash-2.o unsquash-3.o \
+   186		unsquash-4.o unsquash-123.o unsquash-34.o unsquash-1234.o unsquash-12.o \
+   409	sasquatch: $(UNSQUASHFS_OBJS)
+   410		$(CXX) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LZMA_EXTRA_OBJS) $(UNSQUASHFS_OBJS) $(LIBS) -o $@
+   411	
+--- unsquashfs.c:653-671 (read_block; runtime swap of the 2-byte header)
+   653	int read_block(int fd, long long start, long long *next, int expected,
+   654									void *block)
+   655	{
+   656		unsigned short c_byte;
+   657		int offset = 2, res, compressed;
+   658		int outlen = expected ? expected : SQUASHFS_METADATA_SIZE;
+   659		static char *buffer = NULL;
+   660	
+   661		if(outlen > SQUASHFS_METADATA_SIZE)
+   662			return FALSE;
+   663	
+   664		if(swap) {
+   665			if(read_fs_bytes(fd, start, 2, &c_byte) == FALSE)
+   666				goto failed;
+   667			c_byte = (c_byte >> 8) | ((c_byte & 0xff) << 8);
+   668		} else 
+   669			if(read_fs_bytes(fd, start, 2, &c_byte) == FALSE)
+   670				goto failed;
+   671	
+--- unsquashfs.c:2248-2297 (read_super endian heuristic; FIX_BE inversion)
+  2248	    struct squashfs_generic_super_block generic = { 0 };
+  2249	
+  2250		read_fs_bytes(fd, SQUASHFS_START, sizeof(struct squashfs_generic_super_block),
+  2251			&generic);
+  2252	    if(swap == -1)
+  2253	    {
+  2254	        /*
+  2255	         * If the major version is greater than or less than the min/max version numbers
+  2256	         * or if the least significant bytes of the inode count field is 0, then the
+  2257	         * image endianess is probably opposite of the host system.
+  2258	         *
+  2259	         * Note that these are the only fields besides s_magic that are common among 
+  2260	         * all versions of the SquashFS super block structures, and s_magic cannot
+  2261	         * be relied on as it is commonly mucked with by vendors.
+  2262	         */
+  2263	        if(generic.s_major < SQUASHFS_MIN_VERSION ||
+  2264	           generic.s_major > SQUASHFS_MAX_VERSION ||
+  2265	           (generic.inodes & 0xFF) == 0)
+  2266	        {
+  2267	            ERROR("SquashFS version [%d.%d] / inode count [%d] suggests a SquashFS image "
+  2268	                  "of a different endianess\n", generic.s_major, generic.s_minor, generic.inodes);
+  2269	#ifdef FIX_BE
+  2270	            swap = 0;
+  2271	#else
+  2272				swap = 1;
+  2273	#endif
+  2274	        }
+  2275	        else
+  2276	        {
+  2277	            ERROR("SquashFS version [%d.%d] / inode count [%d] suggests a SquashFS image "
+  2278	                  "of the same endianess\n", generic.s_major, generic.s_minor, generic.inodes);
+  2279	#ifdef FIX_BE
+  2280	            swap = 1;
+  2281	#else
+  2282				swap = 0;
+  2283	#endif
+  2284	        }
+  2285	    }
+  2286	
+  2287	    // CJH: Warn if SquashFS magic doesn't look correct
+  2288	    if(generic.s_magic != SQUASHFS_MAGIC && generic.s_magic != SQUASHFS_MAGIC_SWAP)
+  2289	    {
+  2290	        ERROR("Non-standard SquashFS Magic: '%.4s'\n", (char *) &generic.s_magic);
+  2291	    }
+  2292	
+  2293	    // CJH: Notify if endianess is different
+  2294	    if(swap) {
+  2295	        ERROR("Reading a different endian SQUASHFS filesystem on %s\n", source);
+  2296		}
+  2297	
+--- unsquashfs.c:4386-4401 (-be/-le set swap on an LE host)
+  4386	            }
+  4387	            override.offset.value = atoi(argv[i]);
+  4388	            override.offset.set = TRUE;
+  4389	        } else if(strcmp(argv[i], "-be") == 0) {
+  4390	#if __BYTE_ORDER == __BIG_ENDIAN
+  4391	            swap = 0;
+  4392	#else
+  4393	            swap = 1;
+  4394	#endif
+  4395			} else if(strcmp(argv[i], "-le") == 0) {
+  4396	#if __BYTE_ORDER == __LITTLE_ENDIAN
+  4397	            swap = 0;
+  4398	#else
+  4399	            swap = 1;
+  4400	#endif
+  4401			} else {
+
+## C. REA 6.5.0
+file: /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/firmware/FirmwareCommand.js  sha256: 20ac4a2742e98666276ad7201ecfba86d181c65977209cdf7626d47b72de5ca7
+   155	    return {
+   156	        stdout: snapshot.stdout,
+   157	        stderr: snapshot.stderr,
+   158	        exit_code: snapshot.exitCode,
+   159	        signal: snapshot.signal ?? null,
+   160	        command: context.command,
+   161	        args: [...context.args],
+   162	        resource_limiter: context.limiter,
+   163	    };
+file: /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/firmware/FirmwareProvider.js  sha256: 3c1e929b01be5fc21da6c47e05666d06a08faf9fdbf514c5db8a8517bed81654
+   182	            const engine = {
+   183	                name: engineName,
+   184	                version: admitted.version,
+   185	                executable_path: command.command,
+   186	                executable_sha256: command.sha256,
+   187	                source_revision: null,
+   188	                worker_count: 1,
+   189	            };
+   207	                    execution: processRun,
+   208	                });
+   215	                raw = { report, execution: processRun, version_execution: versionRun };
+   227	                const processRun = await run([
+   228	                    "--process-num",
+   229	                    "1",
+   230	                    "--depth",
+   231	                    String(request.input.max_depth),
+   232	                    "--randomness-depth",
+   233	                    "0",
+   234	                    "--report",
+   235	                    reportPath,
+   236	                    "--log",
+   237	                    join(root.path, "unblob.log"),
+   238	                    "--extract-dir",
+   239	                    outputRoot,
+   240	                    target.inputPath,
+   241	                ], {
+   242	                    root: outputRoot,
+   243	                    bytes: request.input.max_output_bytes,
+   244	                    entries: request.input.max_output_files,
+   250	                    execution: processRun,
+   251	                });
+   279	                raw = { report, execution: processRun, version_execution: versionRun };
+   280	            }
+file: /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/extractors/command.py  sha256: 8ae7d2a3980b80b25274d2351a724631be40c79bc8a2da3be14dae2bf09f85af
+    36	    def extract(self, inpath: Path, outdir: Path):
+    37	        cmd = self._make_extract_command(inpath, outdir)
+    38	        command = shlex.join(cmd)
+    39	        logger.debug("Running extract command", command=command)
+    40	        stdout_file: int | io.FileIO = subprocess.PIPE
+    41	
+    42	        def no_op():
+    43	            pass
+    44	
+    45	        cleanup = no_op
+    46	
+    47	        try:
+    48	            if self._stdout:
+    49	                stdout_file = (outdir / self._stdout).open(mode="wb", buffering=0)
+    50	                cleanup = stdout_file.close
+    51	
+    52	            res = subprocess.run(
+    53	                cmd,
+    54	                stdout=stdout_file,
+    55	                stderr=subprocess.PIPE,
+    56	                timeout=COMMAND_TIMEOUT,
+    57	                check=False,
+    58	            )
+    59	            if res.returncode != 0:
+    60	                error_report = ExtractCommandFailedReport(
+    61	                    command=command,
+    62	                    stdout=res.stdout,
+    63	                    stderr=res.stderr,
+    64	                    exit_code=res.returncode,
+    65	                )
+    66	
+    67	                logger.error("Extract command failed", **error_report.model_dump())
+    68	                raise ExtractError(error_report)
+file: /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/report.py  sha256: 2329783fc645de8aae94b82443277bceb6ceac968549ff65917c7b2d454cc9ee
+    91	class ExtractCommandFailedReport(ErrorReport):
+    92	    """Describes an error when failed to run the extraction command."""
+    93	
+    94	    severity: Severity = Severity.WARNING
+    95	    command: str
+    96	    stdout: Annotated[bytes, BeforeValidator(ensure_bytes)]
+    97	    stderr: Annotated[bytes, BeforeValidator(ensure_bytes)]
+   225	class ChunkReport(Report):
+   226	    id: str
+   227	    handler_name: str
+   228	    start_offset: int
+   229	    end_offset: int
+   230	    size: int
+   231	    is_encrypted: bool
+   232	    extraction_reports: list[Report]
+   233	
+   234	    @field_validator("extraction_reports", mode="before")
+   235	    @classmethod
+   236	    def validate_extraction_reports(cls, value: Any) -> list[Report]:
+   237	        return validate_report_list(value)
+   238	
+   239	
+
+## D. Freetz AVM-BE format note
+file: AVM-BE-format.txt  sha256: c1c43f6f97d7477dcdab15203d11e43b49beb12e3a43a3b52bdd71b672a9a5d5
+     1	This document summarizes all (so far known) technical details about a non-standard SquashFS format
+     2	(called AVM-BE below) used by AVM since Fritz!OS Labor 6.35.
+     3	
+     4	 - AVM-BE format is a SquashFS4 based SquashFS format
+     5	 - instead of the little-endian data layout (the only layout supported by the original/unmodified
+     6	   code since SquashFS4) it uses the big-endian layout for most of the data stored in the SquashFS
+     7	   image (to be more precise for all file system related data)
+     8	 - the only data field stored in the little-endian format is the block length value at the beginning
+     9	   of each block
+    10	 - compression method is hardcoded to be XZ (aka LZMA2)
+    11	 - it is unknown if any compressor specific option could be set - all original AVM images seen so far
+    12	   have COMP_OPT flag unset
+    13	 - super-block field 'mkfs_time' contains (instead of the filesystem creation time) the same value
+    14	   as the super-block field 'bytes_used'
+
+## B2. where the compile-time swap is applied in unsquashfs
+--- squashfs_swap.h:294-296 (FIX_BE branch: superblock swap is unconditional)
+   294	/* big endian architecture swap in-place macros */
+   295	#define SQUASHFS_INSWAP_SUPER_BLOCK(s) \
+   296				_SQUASHFS_SWAP_SUPER_BLOCK(s, s, INSWAP_LE)
+--- squashfs_swap.h:345-348 (the LE-host #else: plain memcpy/no-op; NOT compiled with FIX_BE)
+   345	#else
+   346	/* little endian architecture, just copy */
+   347	#define SQUASHFS_SWAP_SUPER_BLOCK(s, d)	\
+   348			SQUASHFS_MEMCPY(s, d, sizeof(struct squashfs_super_block))
+--- unsquash-4.c:34-47 (inode block-list sizes: compile-time INTS swap)
+    34	static void read_block_list(unsigned int *block_list, long long start,
+    35						unsigned int offset, int blocks)
+    36	{
+    37		int res;
+    38	
+    39		TRACE("read_block_list: blocks %d\n", blocks);
+    40	
+    41		res = read_inode_data(block_list, &start, &offset, blocks * sizeof(unsigned int));
+    42		if(res == FALSE)
+    43			EXIT_UNSQUASH("read_block_list: failed to read "
+    44				"inode index %lld:%d\n", start, offset);
+    45	
+    46		SQUASHFS_INSWAP_INTS(block_list, blocks);
+    47	}
+--- unsquash-4.c:697 (superblock: compile-time INSWAP_SUPER_BLOCK)
+   690		 */
+   691		int res = read_fs_bytes(fd, SQUASHFS_START,
+   692				sizeof(struct squashfs_super_block), &sBlk_4);
+   693	
+   694		if(res == FALSE)
+   695			return res;
+   696	
+   697		SQUASHFS_INSWAP_SUPER_BLOCK(&sBlk_4);
+   698	
+   699		if(sBlk_4.s_major == 4 && sBlk_4.s_minor == 0) {
+   700	

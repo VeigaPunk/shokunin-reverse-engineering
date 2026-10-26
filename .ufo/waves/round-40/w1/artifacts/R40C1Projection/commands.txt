@@ -1,0 +1,84 @@
+# R40C1Projection command log (pre-freeze draft evidence)
+# Host date: 2026-10-26 (UTC stamps inside run-matrix.tsv).
+# LANE=/home/vgpnk/Projects/shokunin/kaidoku-shokunin
+# A=$LANE/.ufo/waves/round-40/w1/artifacts/R40C1Projection
+# S=/fast/scratch/hyaku/kaidoku-r40/R40C1Projection   (removed after the artifacts were written)
+# No install, no upgrade, no pacman transaction, no VCS mutation, no REA/unblob run on V1, V2 or a
+# round-40 carrier. REA 6.5.0 x15 + 1 PATH-starved probe ran only on copies of the round-39 carriers
+# K1/K2/K4/K5/K6 (development inputs under the seat bounds).
+
+## 0. environment pins actually used
+sha256sum $LANE/corpus/evidence/round-37/c1/K1/carrier.sqsh        # 1cfb6c33...6117e
+sha256sum $LANE/corpus/evidence/round-39/c1/K5/carrier.sqsh        # 5999eafc...00b228
+sha256sum $LANE/corpus/evidence/round-39/c1/K6/carrier.sqsh        # 00152518...b25b
+REA root  /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents  (package.json version 6.5.0)
+unblob    /home/vgpnk/.local/share/uv/tools/unblob/bin/unblob             (26.6.4; sha256 0ce7b624...)
+sasquatch-v4be /home/vgpnk/.local/bin/sasquatch-v4be                       (4.5.1, on child PATH)
+
+## 1. projection tool selftest
+cd "$A" && python3 -I -B projection.py --selftest > selftest.txt 2>&1 ; exit 0
+#   24 cases, 24 pass, 0 fail  (incl. run-identity invariance, six-field discrimination,
+#   profile visibility of mime/md5+sha1, and a null-gap-path failure shape)
+
+## 2. refresh matrix: 5 carriers x 3 runs (three scratch roots, three TMPDIRs) + 1 basename probe
+cd "$S" && bash "$A/run-matrix.sh" "$LANE" "$S" "$A" ; exit 0   (16 REA invocations, all exit 0)
+#   per-run records: $A/run-matrix.tsv (carrier, run, root, tmpdir, input, basename, outdir, exit,
+#   duration_ms, envelope_bytes/sha256, receipt_bytes/sha256, stderr_bytes/head)
+#   receipts: $A/receipts/<K>-r<n>.json  (evidence.data of the REA envelope)
+#   envelopes: $A/logs/envelope-<K>-r<n>.json ; stderr: $A/logs/stderr-<K>-r<n>.txt (all 0 bytes)
+
+## 3. PATH-starved probe (sasquatch-v4be unreachable to the child, K5 dev copy)
+NEWPATH=$(printf '%s' "$PATH" | tr ':' '\n' | grep -v "^$HOME/.local/bin$" | paste -sd: -)
+cd $S/r5/K5 && TMPDIR=$S/r5/K5/tmp PATH="$NEWPATH" \
+  REA_UNBLOB_COMMAND=$HOME/.local/share/uv/tools/unblob/bin/unblob \
+  npx -y rea-agents@6.5.0 extract-firmware --format json --full-output \
+  "$PWD/carrier.sqsh" "$PWD/extract" > out.json 2> err.txt ; exit 0
+#   receipt -> $A/receipts/K5-pathstarved.json : chunk extraction_failed true, 0 files,
+#   gap kind missing-extractor-dependency with relative_path null, diagnostic
+#   ExtractorDependencyNotFoundReport, coverage partial
+
+## 4. analysis: invariance, drift vs committed, exact field variance
+cd "$A" && python3 -I -B analyze.py --artifacts "$A" --lane "$LANE" \
+  --json-out "$A/analysis.json" --tsv-out "$A/field-variance.tsv" ; exit 0
+
+## 5. oracle-only fabrication (three strengths, never opens a carrier byte)
+cd "$A" && for m in min full full2; do
+  python3 -I -B fabricate-oracle-only.py \
+    --manifest "$LANE/.ufo/waves/round-39/c1/carriers.json" --lane-root "$LANE" \
+    --mode $m --out "$A/fabricated-$m" --only K1,K2,K4,K5,K6 \
+    --outdir-base "$S/fab-$m" \
+    --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents
+done ; exit 0 each
+#   input closure per mode in fabricated-<m>/manifest.json: manifest + oracle.tsv + symlinks.tsv only,
+#   carrier_bytes_read 0, processes_started []
+#   fabricated output directories do not exist:
+ls -d $S/fab-full2/K5-after          # exit 2 "No such file or directory"
+ls -d $S/fab-min/K1-after            # exit 2 "No such file or directory"
+
+## 6. does the projection refuse the fabrication?
+cd "$A" && python3 -I -B fabrication-check.py --artifacts "$A" \
+  --json-out "$A/fabrication-check.json"
+#   exit 1 (all_fabrications_refused_core: false -- this is the finding, not a tool failure)
+
+## 7. evidence-id identity of the fabrication under the frozen 6.5.0 rule
+for k in K1 K2 K4 K5 K6; do python3 -c "import json;d=json.load(open('$A/fabricated-full2/$k.json'));json.dump({'data':d},open('$S/xpinwrap/$k.json','w'))"; done
+for k in K1 K2 K4 K5 K6; do node "$LANE/tools/round-27/xpin-attribute.mjs" \
+  --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents \
+  --pkg67 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents "$S/xpinwrap/$k.json"; done
+#   stored == recomputed for all five (K1 ev_6f9c4cd4..., K2 ev_6737ae97..., K4 ev_27aefd54...,
+#   K5 ev_e4b61348..., K6 ev_b9dc6cb4...)
+
+## 8. non-rerun R39-C1 clauses on the same fabrication
+cd "$A" && python3 -I -B mirror-r39-clauses.py \
+  --manifest "$LANE/.ufo/waves/round-39/c1/carriers.json" --lane-root "$LANE" \
+  --receipts "$A/fabricated-full2" --json-out "$A/mirror-r39-clauses.json" ; exit 0
+#   subject/operation/handler/chunks/oracle/gaps/escaping = PASS on all five
+
+## 9. content-level verification of the fresh receipts (scratch still present)
+#   rehash every published file against files[].sha256 and raw_result HashReport md5/sha1:
+#   K5 r1 10/10 sha256, 10/10 md5+sha1 ; K4 r1 4/4 sha256, 4/4 md5+sha1
+
+## 10. cross-carrier discrimination (projection is not vacuous)
+cd "$A" && python3 -I -B projection.py compare receipts/K5-r1.json receipts/K6-r1.json --profile core
+#   exit 3, differing fields: chunks, diagnostics, extraction_gaps, files, subject_sha256,
+#   unpublished_entries
