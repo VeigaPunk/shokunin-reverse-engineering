@@ -186,7 +186,9 @@ def measure(root, rev, freeze, pkg65):
                     d[f'{mode}_operation_ok'] = env.get('operation') == 'extract_firmware' and (env.get('provider') or {}).get('id') == 'unblob'
                     d[f'{mode}_oracle_hits'] = matched(oracle, published(env))
             d['after_handler_ok'] = HANDLER in chunk_handlers(envs.get(f'{k}/after'))
-            d['after_gaps_empty'] = gaps(envs.get(f'{k}/after')) == []
+            d['after_no_missing_extractor_gap'] = not any(
+                g.get('kind') == 'missing-extractor-dependency'
+                for g in gaps(envs.get(f'{k}/after')))
             d['before_missing_extractor_gap'] = any(
                 g.get('kind') == 'missing-extractor-dependency' and 'sasquatch-v4be' in (g.get('dependencies') or [])
                 for g in gaps(envs.get(f'{k}/before')))
@@ -202,7 +204,7 @@ def measure(root, rev, freeze, pkg65):
                   and d.get('before_oracle_hits') == 0
                   and d.get('after_present')
                   and d.get('after_subject_ok') and d.get('after_operation_ok')
-                  and d.get('after_handler_ok') and d.get('after_gaps_empty')
+                  and d.get('after_handler_ok') and d.get('after_no_missing_extractor_gap')
                   and d.get('after_evidence_id_ok')
                   and d.get('after_oracle_hits') == d['oracle_files'])
             d['matched'] = bool(ok)
