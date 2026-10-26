@@ -95,7 +95,7 @@ nothing (§9 last bullet). Selftest: `{"cases": 13, "green_ok": 1, "red_ok": 12,
 
 `git diff cab59f22 01a44dbf -- SCORECARD.md SHONEN.md` is the scored change: SCORECARD `+`1 capability
 row (`:627`), 3 rewritten Owned-axes cells (`:23` coverage, and its evidence/last-change cells), the
-`receipts-B/` capability pointer, and SHONEN box 4 (`:11-12`); plus a new `## Round 36` section
+`receipts-B/` capability pointer, and SHONEN box 4's assertion line (`:12`, title at `:11` unchanged); plus a new `## Round 36` section
 (`:3385-3397`) appended by the tip commit. SHONEN is 12 lines; there is no second surface.
 
 | shape | how I tested it | result |
@@ -127,7 +127,7 @@ extracted by my own parser; counts from the documented recipes run verbatim, not
 Observed state, computed without the counter:
 
 ```
-$ documented recipe A verbatim at tip (SCORECARD.md:86-125)
+$ documented recipe A verbatim at tip (SCORECARD.md:86-124)
 {"citation_resolved_rules": 17, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0,
  "knowledge_files": 124, "mapped": 124, "missing": [], "revision": "01a44dbf…", "rule_blocks": 17}
 

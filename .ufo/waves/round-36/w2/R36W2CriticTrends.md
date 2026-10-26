@@ -96,9 +96,11 @@ one inline pointer.
 
 ### Checked and not found
 
-No admitted entry fails the bar it was admitted under on the measured surface: the C1 entry's own
-`recheck:` command runs green (see §2, evidence Q-3), and the dependency entry's recheck digests
-match live bytes (Q-2). I did **not** find a coverage-map row that contradicts the Core row.
+The two new entries' rechecks pass: the C1 entry's own `recheck:` command runs green (see §2,
+evidence Q-3), and the dependency entry's recheck digests match live bytes (Q-2). What fails is not
+a recheck but a claim-vs-source check — entry line 30's attribution and the title's route scope
+(C-c). I did **not** find a coverage-map row that contradicts the Core row, and I did not find a
+second unmarked stale entry beyond r4u-03 (§2).
 
 ---
 
@@ -213,6 +215,14 @@ admit (e.g. S107 or the assimilated entry) and one reject (the AppImageSpec row,
   → `M r34b`, `A` the two r36 entries.
 - **Q-7 capacity/quality rows** — `corpus/QUALITY.md:85-86` cite lesson M36-3/M36-4 and
   `w1/R36CriticC2Shortcut.md` classes A1-A6 / `w1/R36CriticC1Shortcut.md` F1/F5.
+- **Q-8 C-c, independently reproduced** — `curl -fsSL -o $S/unblob-readme.md
+  https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/README.md` → sha256 `6544d60f…3716`;
+  `sed -n '62,80p'` → "### Docker (batteries included)" / "The Docker image bundles all extractors —
+  no extra setup needed" (line 64) and "### Kali Linux" / `sudo apt install unblob` (lines 77-79).
+  `git show 01a44dbf:corpus/knowledge/2026-10-26-unblob-sasquatch-dependency.md | sed -n '30,31p;41p'`
+  → line 30 "Because the producer calls its own extractor \"Very beta\"" and line 41 "…or that the
+  onekey-sec package is a fork of devttys0 (neither README says so)". Wave-2 `R36W2ScoutS110.md`
+  D1-D3 reports the same independently.
 
 Scratch: `S=/fast/scratch/hyaku/kaidoku-r36/R36W2CriticTrends`, created and removed at exit; no
 `find`/`du` under `/fast/scratch`. No VCS mutation: read-only `git show`/`diff`/`log`/`grep` only.
@@ -220,9 +230,24 @@ No tool installed or upgraded this seat. No carrier, counter, oracle, receipt or
 
 ## Impacted axes
 
-- **coverage** (expansion): verdict stands, but the round's expansion statement should drop
-  "sources 106→111" as an observable and count one province move, not two.
+- **coverage** (expansion): `improved` on the observables, `harmed` as landed at `01a44dbf` until
+  the C-c corrections commit (the assimilated entry's attribution and route scope fail a
+  claim-vs-source check); the round's expansion statement should also drop "sources 106→111" as an
+  observable and count one province move, not two.
 - **depth / freshness** (quality): `harmed` until the r4u-03 mark lands — the entry that the round
   calls superseded still recommends the route the round proved stale, and carries no trio.
 - **calibration** (discernment): `unchanged`; the calibration score move (C2 3 → 0) is a separate
   claim, not discernment, and cannot substitute for the missing outside spot-check.
+
+## Smallest safe corrections, in order
+
+1. Commit the in-flight C-c corrections to `2026-10-26-unblob-sasquatch-dependency.md` (+ S110/S111
+   cells) — that clears the expansion harm leg; no instrument changes.
+2. Append the dated supersession block to `2026-10-13-r4u-03-unblob-extract.md` and add one inline
+   pointer on `corpus/README.md:44` — that clears the quality harm leg to `improved`.
+3. Add the rejected AppImageSpec row (`S112`, `REJECTED: …; flip: …`) and a 2026-10-26 search-log
+   note — that makes the round's reject side auditable.
+4. Obtain the non-author spot-check (operator or fresh reviewer, not a lane seat) with
+   `agree`/`disagree` + reasons on ≥1 admit and ≥1 reject, and record it in the lesson's
+   `## Gate`; only then may the round file `discernment: unprovable-but-better`. Filed without it,
+   the honest verdict is `unchanged`.

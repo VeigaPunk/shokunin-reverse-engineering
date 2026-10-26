@@ -78,7 +78,10 @@ The C1 entry landed in the same commit adds the handler declaration and the meas
 The admitted entry's H1 (blob `aa476af8`, line 6) and its "Consequence 1" (lines 26-29) restate this.
 Neither the lesson's Gate nor `w1/R36ScribeAssimilationGate.md` records a corpus sweep for the spelling
 variants, although `corpus/QUALITY.md:67` (row 57) requires exactly that for a novelty claim
-("every spelling … in PROVINCE.md, SKILL.md, corpus/README.md and corpus/knowledge contents").
+("every spelling … in PROVINCE.md, SKILL.md, corpus/README.md and corpus/knowledge contents"). The
+connector seat did open that file (`w1/R36ConnAssimilationTheme.md:21`, "the lane's only existing unblob
+knowledge entry") but compared scope and receipt overlap only; no seat compared the entry's headline
+claim against it.
 
 Impacted axes: **coverage** (what the admission is credited with adding), **calibration** (the Gate's
 novelty judgment). Smallest safe correction: one clause in the lesson's Decision 1 (or the entry's
@@ -235,8 +238,9 @@ entry as new coverage-map ground.
   12/17/26 are exactly as the entries quote.
 - **Decision 2's two stated reasons** (F3) and **Decision 4's premise** (F5) reproduce.
 - **Decision 3's reason 1** reproduces.
-- **Four corrections' targets** are present in the landed text (pins/commit for S110; labelled
-  inference; re-scoped host-state; "fork" dropped) — except the S111 pin wording (F2).
+- **Decision 1's three corrections' targets** are present in the landed text (pins/commit for S110; labelled
+  inference; re-scoped host-state; "fork" dropped; the S111 locator moved to line numbers) — except the
+  S111 pin wording and the unscoped route claim (F2).
 - Nothing in the two refusal records smuggles a row append: `S130`, `S165`, `S183`–`S186`, `S189`–`S223`
   are absent from `corpus/SOURCES.md` (rows stop at S111 plus the pre-existing registry).
 

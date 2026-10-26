@@ -298,8 +298,8 @@ The same three surface readings are false at the tip, so this is not a mid-round
 1. **Receipt integrity is not provenance.** A fabricated `after` receipt re-sealed with the 6.5.0
    package's own digest code passes every `R` condition (control 9). The committed receipts are
    corroborated by four independent wave-1 reproductions and the run records; inside the envelopes
-   themselves nothing names sasquatch (verified by scanning `normalized_result` and the captured
-   stdout/stderr for K1/K3 in both modes).
+   themselves `normalized_result` names sasquatch nowhere (all four carriers, `R5` evidence), and the
+   captured stdout/stderr were spot-checked for K1/K3 in both modes.
 2. **K3/K4 oracle is not independently re-derived here.** Those carriers are not committed (remote
    neovim release assets); I verified their oracle's internal consistency (`regular_files` == row
    count, offset == receipt chunk offset, carrier digest == `carriers.json`, 2116 distinct digests over
@@ -340,8 +340,9 @@ c7166510360f57f8822e4a8c196ee76fba831c0f682d3bffb87f504874226b12  strict-c1.py
 b6b03ce8cb1e685b8bc316d8c3b96219b1a296b856cf256447425d8d332045cd  selftest-strict.py
 ```
 
-Tool installs: none. Scratch removed on exit (`trap 'rm -rf -- "$S"' EXIT`); everything cited here is
-copied into this report because scratch paths are not evidence.
+Tool installs: none. The scratch tree was removed before this seat finished; everything cited here
+(including the four instrument sources above and the two JSON receipts in appendices E and F) is copied
+into this report because scratch paths are not evidence.
 
 ---
 

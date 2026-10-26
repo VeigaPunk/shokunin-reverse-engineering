@@ -182,3 +182,15 @@ carved while unblob preserved the chunk). Caveats for downstream lanes:
 output dirs must be absent before each run; evidence_ids are per-run,
 not per-content; `--max-output-bytes` tops out at 512 MiB so >256 MiB
 extractions need the flag explicitly.
+
+## Supersession appended — round 36 (2026-10-26; the text above is kept as the 2026-10-13 record)
+
+The "sasquatch missing" statements above (lines 11, 18-19, 25, 30-31) describe the 2026-10-13 host.
+From 2026-10-26 sasquatch 4.5.1 (official onekey-sec `sasquatch_1.0_amd64.deb`, `~/.local/bin/sasquatch`
+sha256 `ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754`) is installed, and
+`extract-firmware` recurses into little-endian SquashFS v4, including the AppImage payload case this
+entry left "identified but unextracted": measured on four frozen carriers in
+`corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md` (receipts `corpus/evidence/round-36/c1/`).
+Re-verified 2026-10-26 for the sasquatch clause only: `~/.local/bin/unblob --show-external-dependencies`
+now lists `sasquatch ✓` and `sasquatch-v4be ✓` (wave-1 `.ufo/waves/round-36/w1/R36ScoutUnblobHandler.md`);
+the other extractor rows were not re-checked. Big-endian/AVM SquashFS remains unmeasured.
