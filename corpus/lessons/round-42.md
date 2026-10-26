@@ -62,7 +62,7 @@ No `considerthese/` directory exists in this lane.
 | R41-CL3 | prepared, not landed | `w1/R42LocalSrc.md`: 18 rows resolvable with in-lane copies (gate exit 0 in a clone) |
 | R41-CL4 | fixed in the table | block 21 handler-family cells; legacy chunks never `no-squashfs-chunk` (dev arm) |
 | D1 | resolved | round-41 L1 commit `ae5dc3f3`; `tools/round-42/prefile-gate.py` (12/12 selftest) |
-| D2 | resolved | `w2/R41W2C2Table.md` committed (`w1/R42Late41.md`) |
+| D2 | resolved | `.ufo/waves/round-41/w2/R41W2C2Table.md` committed (`w1/R42Late41.md`) |
 | D3 | addressed | report carries a cross-domain line |
 | D4 | fixed | every round-42 score receipt carries `counter_sha256` |
 | D5 | fixed | segment-bounded paths; fetch tool never writes through a symlink |
