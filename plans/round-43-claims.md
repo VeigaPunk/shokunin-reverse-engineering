@@ -94,19 +94,21 @@ S081 S082 S083 S090 S092) whose URL cell names a host-local path outside the lan
 `rows_failed` (`local-source-gate.py --help`: a sidecar map `corpus/evidence/local-sources.json` binds each
 out-of-lane path to an in-lane copy digest). After the move the gate exits 0 at the measured revision with
 `rows_failed` empty and 17 in-lane copies plus the preserved S126 entry committed under
-`corpus/evidence/round-43/local-sources/` (byte copies, one lossless `gzip -9 -n`, deterministic member/directory
-tars — the exact dispositions the round-42 wave-1 `R42LocalSrc` seat proved green in a sandbox clone, this round
-re-verified against the live host objects). Command that shows it unmoved: the gate at the freeze revision exits 1
+`corpus/evidence/round-42/local-sources/` (the destination the prepared map pins; byte copies, one lossless
+`gzip -9 -n`, deterministic member/directory tars — the exact dispositions the round-42 wave-1 `R42LocalSrc` seat
+proved green in a sandbox clone, this round re-verified against the live host objects). Command that shows it unmoved: the gate at the freeze revision exits 1
 with `rows_failed` length 18.
 
 **Predicate P43-C2.** At the measured revision: `corpus/evidence/local-sources.json` binds every out-of-lane path
 named by a `corpus/SOURCES.md` URL cell to exactly one in-lane regular-file copy under
-`corpus/evidence/round-43/local-sources/`, each entry digest equals its copy's sha256, each row-pinned digest (where
-the URL cell pins one) equals the entry or its source digest, and `local-source-gate.py --root <LANE> --rev <REV>`
-exits 0; the gate tool itself is byte-identical to the round-41 committed bytes; no committed copy exceeds the
-5 MiB bound and no third-party firmware image is among them; every copy's digest re-verifies against the live host
-object it copies (fresh row-pin audit, this round); the `corpus/SOURCES.md` table itself is byte-identical to the
-base except nothing — the rows keep their host paths (the map, not the registry, carries the resolution).
+`corpus/evidence/round-42/local-sources/` (the destination the round-42 wave-1 prepared pack's map already pins —
+17 copies there plus the preserved S126 entry under `corpus/evidence/round-41/s126/`), each entry digest equals its
+copy's sha256, each row-pinned digest (where the URL cell pins one) equals the entry or its source digest, and
+`local-source-gate.py --root <LANE> --rev <REV>` exits 0; the gate tool itself is byte-identical to the round-41
+committed bytes; no committed copy exceeds the 5 MiB bound and no third-party firmware image is among them; every
+copy's digest re-verifies against the live host object it copies (fresh row-pin audit, this round, by two
+independent seats); the `corpus/SOURCES.md` table itself is byte-identical to the base except nothing — the rows
+keep their host paths (the map, not the registry, carries the resolution).
 
 - Target: gate exit 0, `rows_failed` empty, `rows_total` ≥ 129, receipt committed at the measured revision.
 - Counting command: `python3 -I -B tools/round-41/local-source-gate.py --root <LANE> --rev <REV>` (exit 0, and
@@ -144,7 +146,7 @@ C1: this file; `tools/round-43/{c1-counter.py,heldout-gen-v4r43.py,c2-controls-r
 `corpus/evidence/round-42/c2/fixtures/`; the round-42 dev arm `corpus/evidence/round-42/c2/dev/`; the round-41 C1
 receipts `corpus/evidence/round-41/c1/{V3,V4,L3,L4}/after.json`. C2: this file;
 `tools/round-41/local-source-gate.py`; `corpus/evidence/local-sources.json`; the copies under
-`corpus/evidence/round-43/local-sources/` (added after the freeze — landing paths, not pre-landing bytes).
+`corpus/evidence/round-42/local-sources/` (added after the freeze — landing paths, not pre-landing bytes).
 
 ## Changes from the draft
 
