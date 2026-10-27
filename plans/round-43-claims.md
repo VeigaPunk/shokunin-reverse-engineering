@@ -164,23 +164,22 @@ the 23-member pack to add the five previously missing anchor-pinned members `dom
 `bridge/ghidra/ReaGhidraBridge.java` (four dist-relative plus the package-root Java member). S082's package digests
 remain textual pins in copied `desc`/`mtree`; absent-host S035/S081 are checked against upstream Go tag/API bytes
 and the pinned 6.7.0 tarball, not a live path.
-- Target: gate exit 0, `rows_failed` empty, `rows_checked == 19`, `rows_total` = the post-append row count
-  (137 with S135–S137), receipt committed at the measured revision.
-- Counting command: in a clean `--shared` clone at REV,
-  `python3 -I -B tools/round-41/local-source-gate.py --root <CLONE> --rev <REV> --json` piped through the
-  committed receipt wrapper `tools/round-43/receipt-wrap.py` (argv, tool sha256, resolved revision, exit code,
-  stdout payload) into `.ufo/waves/round-43/l1/scores/c2-gate-at-<REV>.json` — exit 0, and
-  `jq '.payload.rows_failed | length'` on that receipt prints 0; the receipt also records
-  `sha256sum corpus/SOURCES.md` and `sha256sum corpus/evidence/local-sources.json` at REV plus the numstat and
-  S126 checks named in the landing-paths section. Freeze-time control receipts:
-  `.ufo/waves/round-43/controls/c2/ctl-c2-0-do-nothing.json` and `ctl-c2-1-sandbox-digest-mismatch.json`.
-- Controls scored at the freeze (before the copies land): CTL-C2-0 the do-nothing gate run at the freeze revision
-  (exit 1, 18 rows failed — committed receipt); CTL-C2-1 a sandbox-clone control proving a map entry whose copy is
-  absent or digest-mismatched keeps the gate red (the round-38 lesson); CTL-C2-2 a symlink copy replacing a real
-  one keeps the claim's structural check red (the frozen gate greens it — measured T2, so the wrapper's
-  `find -type l` clause is what catches it); CTL-C2-3 a worktree-shadow (copies present uncommitted or absent at
-  REV) is caught by the clean-clone form. Gate receipts carry argv, the gate tool's sha256, the resolved
-  revision and the exit code (R43SentProv receipt shape).
+- Target: `tools/round-43/c2-score-r43.py` exits 0, gate `rows_failed []`, `rows_checked == 19`,
+  `rows_total == 137`, and the copy/provenance verifier reports 136 checks / 0 failures; its committed receipt
+  binds both child receipts, the resolved REV, map/SOURCES digests, BASE→REV numstat and S126 preservation.
+- Counting command (one invocation, internally scores the gate and the content verifier in a clean `--shared` clone):
+  `python3 -I -B tools/round-43/c2-score-r43.py --root <LANE> --rev <REV> --freeze <FREEZE> --scratch <S> --upstream-dir <GO-TREES> --tarball-67 <rea-agents-6.7.0.tgz> --tarball-65 <rea-agents-6.5.0.tgz> --json-out <OUT>`
+  (exit 0; `<OUT>` is `.ufo/waves/round-43/l1/scores/c2-at-<REV>.json`). The gate invocation has no
+  `--sources`/`--map` overrides. Upstream inputs are digest-pinned (Go tags; npm tarballs S081/S090/S092)
+  and live in scratch, never the repository. The verifier binds the imported EXPECT table at FREEZE and REV;
+  that source is `.ufo/waves/round-42/w1/artifacts/R42LocalSrc/build/verify-copies.py`.
+- Controls scored at the freeze (before the copies land): CTL-C2-0 the do-nothing gate run at FREEZE
+  (exit 1, 18 rows failed); CTL-C2-1 a sandbox-clone control proving a map entry whose copy is absent or
+  digest-mismatched keeps the gate red; CTL-C2-2 the symlink attack is the deliberate gate false-green
+  (gate exit 0) but `verify-copies-r43.py` `copy-regular` red; CTL-C2-3 a worktree-shadow (copies present
+  uncommitted or absent at REV) is caught by the clean-clone receipt (`git status --porcelain` must be empty).
+  Gate and copy-audit receipts carry argv, tool sha256, resolved revision, tool-at-REV digest and exit code;
+  the copy-audit receipt additionally records the imported EXPECT-table digest at FREEZE and REV.
 - Kill rule: a control reaching exit 0 while satisfying every P43-C2 clause stops C2 before the copies land.
 - Disclosed limits: the copies bind this checkout's row pins; they do not re-verify the upstream sources' content
   claims (that is each row's own recheck cell); a `source_sha256` entry where the host object still exists
@@ -257,7 +256,7 @@ C2's evidence cites existing rows.
 ## Frozen paths and landing paths
 
 Byte-frozen (the counter's `frozen_path_changed`/`skill_block_drift` watch them): this file;
-`tools/round-43/{c1-counter.py,heldout-gen-v4r43.py,c2-controls-r43.py,receipt-wrap.py,verify-copies-r43.py,build-copies-r43.py}`; the round-42 frozen tools
+`tools/round-43/{c1-counter.py,heldout-gen-v4r43.py,c2-controls-r43.py,c2-score-r43.py,receipt-wrap.py,verify-copies-r43.py,build-copies-r43.py}`; the round-42 frozen tools
 `tools/round-42/{sqfs-triage-v4.py,indep-eval-v4.py,fixtures.json}` plus the SquashFS writer the manifest names
 `tools/round-39/gen-squashfs.py`; the lookup control `.ufo/waves/round-42/controls/c2/CTL-C2-7-lookup.md` and the
 other round-42 CTL files the CTL-C1-3 driver re-scores under `.ufo/waves/round-42/controls/c2/` including its
@@ -271,6 +270,7 @@ read a top-level manifest key the generator never wrote and was vacuous); the ro
 `.ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json`; the round-41 C1 receipts
 `corpus/SOURCES.md` as a whole (S135/S136/S137 are appended before the freeze; the whole file is byte-identical
 from FREEZE to REV, while BASE→REV numstat is exactly 3 insertions and 0 deletions); `tools/round-41/local-source-gate.py`;
+`.ufo/waves/round-42/w1/artifacts/R42LocalSrc/build/verify-copies.py` (the EXPECT table the hardened verifier imports);
 `corpus/evidence/round-41/s126/` (the preserved S126 copy). No round-43 tool imports a `tools/round-42` module
 at runtime (ports vendor, not import).
 
@@ -300,3 +300,6 @@ round-42 C1 `projection_ok` clause cannot be re-run by a seat (reserved inputs);
 control step. 13. **R43ConnPattern hits adopted** — `combo_count`/`fixtures` read-unwritten keys fixed in the
 port spec (the real keys are bound); `c1-counter.py` records `counter_sha256_at_freeze` on every exit path;
 the counter honours `TMPDIR`/`--scratch` and never hardcodes `kaidoku-r42`.
+14. **C2 one-command closure** (R43CritC2 / R43RevLocalsrc): `tools/round-43/c2-score-r43.py` is the single count
+    command that runs the gate and the 136-check content verifier on the same clean clone/revision, records gate,
+    linter, map/SOURCES digests and S126/numstat bindings, and refuses on any failed clause.

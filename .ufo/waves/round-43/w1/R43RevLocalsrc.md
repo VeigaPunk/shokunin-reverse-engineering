@@ -158,3 +158,19 @@ right pack; the claim needs the two wording/procedure fixes so the freeze means 
   verifies; if it ever rolls, that row re-rends red *advisory* only (gate exit unaffected — disclosed limit).
 - Installs this round: none (curl/npx/git/python3 already present; tarball fetched per channel rules into
   scratch only). Tooling directive read at `~/.omp/agent/RULES.md`.
+
+## Addendum (L1-directed post-yield update)
+
+After the initial review, L1 extended S048's cited-members tar from 23 to 28 members, adding the five
+row-pinned members identified by R43C2Pin (four dist-relative paths and package-root
+`bridge/ghidra/ReaGhidraBridge.java`). The verifier artifact
+`.ufo/waves/round-43/w1/artifacts/R43RevLocalsrc/verify-copies-r43.py` was updated to expect
+`rea-agents-6.5.0-cited-members.tar`, include all five pins, compare the Java member at package root, and
+use `--tarball-650` if the volatile host package disappears.
+
+L1 also added `--freeze` and an `expect-source-frozen` check binding the imported R42 verifier bytes at
+freeze, measured revision, and working file. The artifact mirror now includes the same binding and
+requires `--freeze`. Expected check count is **136**: 130 original checks + five S048 member-pin checks
++ one freeze-binding check. This post-yield update was parse-checked only; the verifier was not run, per
+L1 instruction. The earlier 130-check receipt in `receipts/verify-r43.tsv` predates the five-member and
+freeze-binding additions and is not a receipt for the updated verifier.

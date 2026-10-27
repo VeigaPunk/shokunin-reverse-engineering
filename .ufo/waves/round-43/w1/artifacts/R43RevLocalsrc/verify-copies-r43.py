@@ -48,19 +48,23 @@ What it checks, per map entry (`corpus/evidence/local-sources.json` under
                    rea-agents-6.7.0.tgz (--tarball); S048 members byte-equal
                    the published rea-agents-6.5.0.tgz (--tarball-650) when the
                    volatile npx cache is absent
+  expect-source-frozen
+                   imported R42 verify-copies.py bytes equal the freeze blob,
+                   revision blob, and working file (requires --freeze)
   digest-fresh     (with --rev) none of this depends on the gate's exit: the
                    gate is exit-0-compatible with stub copies on unpinned
                    rows, symlink copies, aliases and duplicate keys — see
                    .ufo/waves/round-43/w1/R43RevLocalsrc.md
 
 Round-43 update (post-yield, L1-directed): expects the extended S048 tar
-`rea-agents-6.5.0-cited-members.tar` (28 members, map sha dca1b4ed… per the
-L1; the old 23-member dist tar remains an accepted fallback name) and verifies
-the five R43C2Pin member pins.  Check count grows 130 → 135 (five new
-member-pin emits; the S048 host-identity emit is unchanged in number).
+`rea-agents-6.5.0-cited-members.tar` (28 members; the old 23-member dist tar
+remains an accepted fallback name) and verifies the five R43C2Pin member pins.
+The freeze-binding linter adds `expect-source-frozen`; expected count grows
+130 → 136 (five member-pin emits plus one freeze-binding emit).
 
 Exit 0 only when every emitted check is OK.  Stdlib only, TMPDIR-honouring,
 no network of its own (upstream files are read from --upstream-dir).
+
 """
 
 from __future__ import annotations
@@ -150,10 +154,11 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--root", required=True,
                     help="tree holding corpus/ + the map (attack clone or lane after landing)")
     ap.add_argument("--map", default="corpus/evidence/local-sources.json")
-    ap.add_argument("--rev", default=None, help="read SOURCES.md at this rev via git show")
-    ap.add_argument("--gate", default="/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/local-source-gate.py")
-    ap.add_argument("--pack-build", default="/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42LocalSrc/build",
-                    help="dir holding the round-42 verify-copies.py (for its EXPECT table)")
+    ap.add_argument("--rev", required=True, help="read SOURCES.md at this revision")
+    ap.add_argument("--freeze", required=True, help="freeze revision of the EXPECT source")
+    ap.add_argument("--gate", default=None)
+    ap.add_argument("--pack-build", default=None,
+                    help="dir holding round-42 verify-copies.py (default: inside --root)")
     ap.add_argument("--upstream-dir", default=None,
                     help="dir with go1.25.0/ and go1.24.6/ upstream abi trees")
     ap.add_argument("--tarball", default=None, help="rea-agents-6.7.0.tgz for S081")
@@ -161,6 +166,9 @@ def main(argv: list[str]) -> int:
                     help="rea-agents-6.5.0.tgz fallback for the S048 host-identity check")
     args = ap.parse_args(argv)
     root = os.path.abspath(args.root)
+    args.gate = args.gate or os.path.join(root, "tools/round-41/local-source-gate.py")
+    args.pack_build = args.pack_build or os.path.join(
+        root, ".ufo/waves/round-42/w1/artifacts/R42LocalSrc/build")
 
     out = ["check\tsubject\tresult\tdetail"]
     failures = 0
@@ -171,6 +179,28 @@ def main(argv: list[str]) -> int:
         if not ok:
             failures += 1
 
+    expect_path = os.path.abspath(os.path.join(args.pack_build, "verify-copies.py"))
+    expect_rel = os.path.relpath(expect_path, root)
+    inside = not os.path.isabs(expect_rel) and not expect_rel.startswith("..")
+
+    def git_blob(rev: str, path: str):
+        if not inside:
+            return None
+        proc = subprocess.run(["git", "-C", root, "show", "%s:%s" % (rev, path)],
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                              check=False)
+        return proc.stdout if proc.returncode == 0 else None
+
+    expect_disk = open(expect_path, "rb").read() if os.path.isfile(expect_path) else None
+    expect_freeze = git_blob(args.freeze, expect_rel)
+    expect_rev = git_blob(args.rev, expect_rel)
+    source_fixed = bool(expect_disk and expect_freeze and expect_rev
+                        and expect_disk == expect_freeze == expect_rev)
+    emit("expect-source-frozen", expect_rel, source_fixed,
+         "work=%s freeze=%s rev=%s" % (
+             sha256_bytes(expect_disk) if expect_disk else "missing",
+             sha256_bytes(expect_freeze) if expect_freeze else "missing",
+             sha256_bytes(expect_rev) if expect_rev else "missing"))
     # ---- map shape ---------------------------------------------------------
     map_path = os.path.join(root, args.map)
     raw = open(map_path, encoding="utf-8").read()
