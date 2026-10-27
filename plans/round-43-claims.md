@@ -114,33 +114,49 @@ out-of-lane path to an in-lane copy digest). After the move the gate exits 0 at 
 proved green in a sandbox clone, this round re-verified against the live host objects). Command that shows it unmoved: the gate at the freeze revision exits 1
 with `rows_failed` length 18.
 
-**Predicate P43-C2.** At the measured revision: `corpus/evidence/local-sources.json` binds every out-of-lane path
-named by a `corpus/SOURCES.md` URL cell to exactly one in-lane regular-file copy under
-`corpus/evidence/round-42/local-sources/` (the destination the round-42 wave-1 prepared pack's map already pins —
-17 copies there plus the preserved S126 entry under `corpus/evidence/round-41/s126/`), each entry digest equals its
-copy's sha256, each row-pinned digest (where the URL cell pins one) equals the entry or its source digest, and
-`local-source-gate.py --root <LANE> --rev <REV>` exits 0; the gate tool itself is byte-identical to the round-41
-committed bytes; no committed copy exceeds the 5 MiB bound and no third-party firmware image is among them; every
-copy's digest re-verifies against the live host object where it still exists (fresh row-pin audit, this round, by
-two independent seats — 15 of 18 live-equal; the three host-absent entries S035×2 `go-1.2{4.6,5.0}/src/internal/abi`
-and S081 `rea-agents` 6.7.0 npx cache no longer exist on the host, so for those the prepared copy IS the surviving
-record and binds to the round-42 build receipts' digests); the `corpus/SOURCES.md` registry keeps its host-path
-rows byte-identical to the base plus exactly the appended round-43 rows (S135, S136, S137 — the map, not the
-registry, carries the resolution).
+**Predicate P43-C2.** At the measured revision, in a clean `--shared` clone checked out at REV (worktree
+`git status --porcelain` empty — the gate reads the map and the copies from the worktree, not from REV, so the
+clean-clone form is part of the predicate): `corpus/evidence/local-sources.json` binds every out-of-lane path
+named by a `corpus/SOURCES.md` URL cell to exactly one in-lane copy that is a regular file — not a symlink at
+its own path or at any component above it (the frozen gate's `isfile` follows links, so the scoring wrapper adds
+a `find -type l`/lstat check over `corpus/evidence/round-42/local-sources/` and
+`corpus/evidence/round-41/s126/`); each entry's copy sha256 field equals its copy's sha256; each row-pinned
+digest (where the URL cell pins one) equals the entry or its source digest; `python3 -I -B
+tools/round-41/local-source-gate.py --root <CLONE> --rev <REV> --json` exits 0 with `rows_failed` empty and no
+`--sources`/`--map` overrides; the gate tool itself is byte-identical to the round-41 committed bytes
+(`cafe232a…` since `d764389e`); no committed copy exceeds the 5 MiB bound and none of the 18 mapped copy paths
+carries third-party firmware bytes; and the copies are re-derived byte-exactly from the objects they stand for,
+per their dispositions (byte copy ⇒ copy digest == host digest; `gzip -9 -n` ⇒ decompressed digest == host
+digest; member/directory tars ⇒ every cited member digest == the host object's member digest), checked by
+`verify-copies-r43.py` (the hardened port in `.ufo/waves/round-43/w1/artifacts/R43RevLocalsrc/` — the pack's own
+`verify-copies.py` crashes on absent hosts and is not re-used) run by two independent seats this round against
+the exact committed bytes at REV: 15 of 18 entries re-verify against the live host object, and the three
+host-absent entries (S035 `go-1.24.6`/`go-1.25.0` `src/internal/abi`, S081 `rea-agents` 6.7.0 npx cache) are
+proven against upstream bytes (the Go tarballs' members byte-equal `raw.githubusercontent.com/golang/go@…`
+fetches; S081's members byte-equal the pinned `rea-agents-6.7.0.tgz`, sha256 `20958a66…`). The
+`corpus/SOURCES.md` registry keeps its host-path rows byte-identical to the base plus exactly the appended
+round-43 rows (S135, S136, S137) — the map, not the registry, carries the resolution.
 
-- Target: gate exit 0, `rows_failed` empty, `rows_total` ≥ 129, receipt committed at the measured revision.
-- Counting command: `python3 -I -B tools/round-41/local-source-gate.py --root <LANE> --rev <REV>` (exit 0, and
-  `jq '.rows_failed | length' <receipt>` prints 0).
+- Target: gate exit 0, `rows_failed` empty, `rows_checked == 19`, `rows_total` = the post-append row count
+  (136 with S135–S137), receipt committed at the measured revision.
+- Counting command: in a clean `--shared` clone at REV,
+  `python3 -I -B tools/round-41/local-source-gate.py --root <CLONE> --rev <REV> --json` (exit 0, and
+  `jq '.rows_failed | length' <receipt>` prints 0); the receipt additionally records `counter_sha256`,
+  `map_sha256`, the resolved REV and the worktree cleanliness line.
 - Controls scored at the freeze (before the copies land): CTL-C2-0 the do-nothing gate run at the freeze revision
   (exit 1, 18 rows failed — committed receipt); CTL-C2-1 a sandbox-clone control proving a map entry whose copy is
-  absent or digest-mismatched keeps the gate red (the round-38 lesson: a counter must not green on a stub at the
-  old path — the gate's vocabulary binds copies under the map, and the receipt names the map version). Gate
-  receipts carry argv, the gate tool's sha256, the resolved revision and the exit code (R43SentProv receipt shape).
-- Kill rule: a control reaching exit 0 stops C2 before the copies land.
+  absent or digest-mismatched keeps the gate red (the round-38 lesson); CTL-C2-2 a symlink copy replacing a real
+  one keeps the claim's structural check red (the frozen gate greens it — measured T2, so the wrapper's
+  `find -type l` clause is what catches it); CTL-C2-3 a worktree-shadow (copies present uncommitted or absent at
+  REV) is caught by the clean-clone form. Gate receipts carry argv, the gate tool's sha256, the resolved
+  revision and the exit code (R43SentProv receipt shape).
+- Kill rule: a control reaching exit 0 while satisfying every P43-C2 clause stops C2 before the copies land.
 - Disclosed limits: the copies bind this checkout's row pins; they do not re-verify the upstream sources' content
-  claims (that is each row's own recheck cell); host paths that drift later re-red the row in the gate's advisory
-  output without changing its exit while the copy stands — three of the eighteen already have no live host object
-  (two `~/.local/opt/go-*` trees, one npx cache), which is exactly the class this claim retires.
+  claims (that is each row's own recheck cell); a `source_sha256` entry where the host object still exists
+  hard-fails the gate on drift (the drifted path re-reds the row AND flips the exit on hosts that hold it —
+  deliberate property); a duplicate map key is last-wins under `json.load` (non-binding footnote — the landing
+  lint rejects duplicates outright); the gate's consistency check does not prove provenance for URL-unpinned
+  rows, which is why the landing carries the `verify-copies-r43.py` audit in the predicate.
 
 ## Separability
 
@@ -189,15 +205,34 @@ C2's evidence cites existing rows.
   its cited staged rows appended in fleet schema with the scratch collision/quarantine checks; ≥1 reject stays on
   record. Quarantine slice (5 rows) hand-checked. `considerthese/`: no such directory — report line.
 
-## Frozen paths
+## Frozen paths and landing paths
 
-C1: this file; `tools/round-43/{c1-counter.py,heldout-gen-v4r43.py,c2-controls-r43.py}`; the round-42 frozen tools
+Byte-frozen (the counter's `frozen_path_changed`/`skill_block_drift` watch them): this file;
+`tools/round-43/{c1-counter.py,heldout-gen-v4r43.py,c1-controls-r43.py}`; the round-42 frozen tools
 `tools/round-42/{sqfs-triage-v4.py,indep-eval-v4.py,fixtures.json}` and the lookup control
-`.ufo/waves/round-42/controls/c2/CTL-C2-7-lookup.md`; the SKILL v4 table region; the fixtures under
-`corpus/evidence/round-42/c2/fixtures/`; the round-42 dev arm `corpus/evidence/round-42/c2/dev/`; the round-41 C1
-receipts `corpus/evidence/round-41/c1/{V3,V4,L3,L4}/after.json`. C2: this file;
-`tools/round-41/local-source-gate.py`; `corpus/evidence/local-sources.json`; the copies under
-`corpus/evidence/round-42/local-sources/` (added after the freeze — landing paths, not pre-landing bytes).
+`.ufo/waves/round-42/controls/c2/CTL-C2-7-lookup.md`; the SKILL v4 table region (the `rule_block` span —
+status text appends to the prose line above the marker, never inside a region); the fixtures under
+`corpus/evidence/round-42/c2/fixtures/` (a real `FROZEN_PATHS` entry this round — the round-42 `fixture_scope`
+read a top-level manifest key the generator never wrote and was vacuous); the round-42 dev arm
+`corpus/evidence/round-42/c2/dev/`; the round-41 C1 receipts
+`corpus/evidence/round-41/c1/{V3,V4,L3,L4}/after.json`; `tools/round-41/local-source-gate.py`;
+`corpus/evidence/round-41/s126/` (the preserved S126 copy).
+
+First-added after the freeze, digest-pinned here (exempt from the no-touch rule, exactly like the heldout dir):
+`corpus/evidence/local-sources.json` — the prepared pack's map verbatim, sha256
+`2671850b5d57748557def5b8a67592bb656793e2a0143429b23c5097ff3ec49a`; the 17 copies under
+`corpus/evidence/round-42/local-sources/` — the prepared pack's tree verbatim, sorted-paths sha256-manifest hash
+`72768b7b03917f784636833a2b3fd0445ec8194c077b3532cd03f359bc9d2ea0`; the held-out set
+`corpus/evidence/round-43/c1/heldout/` plus controls, data and score receipts under `.ufo/waves/round-43/`.
 
 ## Changes from the draft
 (recorded in `## Wave-1 amendments` above — ten items folded back before the freeze)
+Updates since item 1–10 (folded before the freeze): 11. **C2 predicate hardened per R43CritC2 P-1..P-10** —
+regular-file/no-symlink clause, clean-clone counting form (the gate reads the worktree, not REV), receipt
+`counter_sha256`/`map_sha256` fields, symlink/worktree-shadow controls, kill rule conditioned on every clause,
+`verify-copies-r43.py` adopted as the landing lint (the pack's own verifier crashes on absent hosts), upstream
+fallback proofs for the three host-absent entries named verbatim. 12. **R43C1Regress routing note** — the
+round-42 C1 `projection_ok` clause cannot be re-run by a seat (reserved inputs); its re-derivation is an L1
+control step. 13. **R43ConnPattern hits adopted** — `combo_count`/`fixtures` read-unwritten keys fixed in the
+port spec (the real keys are bound); `c1-counter.py` records `counter_sha256_at_freeze` on every exit path;
+the counter honours `TMPDIR`/`--scratch` and never hardcodes `kaidoku-r42`.
