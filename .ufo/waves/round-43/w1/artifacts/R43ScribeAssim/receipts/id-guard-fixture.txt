@@ -1,0 +1,22 @@
+# receipt: id-collision pattern exercised on a deliberately INDENTED fixture (AG3)
+$ printf '| S001 | a |\n  | S002 | b |\n   | S777 | c |\n| S003 | d |\n' > id-fixture.md; cat -A id-fixture.md
+| S001 | a |$
+  | S002 | b |$
+   | S777 | c |$
+| S003 | d |$
+
+$ grep -oE '^\| S[0-9]+ ' id-fixture.md | tr -d '| ' | sort        # column-zero pattern (as used in the guard)
+S001
+S003
+$ grep -oE '^ *\| S[0-9]+ ' id-fixture.md | tr -d '| ' | sort        # 0-3 space tolerant pattern
+S001
+S002
+S003
+S777
+$ grep -c '^\| S[0-9]' id-fixture.md; grep -c '^ *\| S[0-9]' id-fixture.md
+2
+4
+
+# reading: the column-zero pattern MISSES the indented rows (S002, S777); the 0-3-space pattern catches them.
+# the equal-count test (col0 == indented) is therefore what licenses the narrower pattern on a given file:
+# on corpus/SOURCES.md at base 6b9e64fe both counts are 134, so no row is indented there.

@@ -1,0 +1,30 @@
+# Network-syscall audit of the inherited round-42 C1 chain (c2-counter.py) at scoring time
+# host: linux 7.2.11-arch1-1, python3 3.14.8, strace 7.2, git 2.56.0
+# lane root: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+# counter bytes: tools/round-42/c2-counter.py sha256 f108916713b38d860acdd60d78dd1d1a541b9feccb1bd1979742dd8dd952cb59
+
+cmd (run in scratch, HYAKU_SCRATCH/TMPDIR = scratch):
+  strace -f -e trace=network -qq -o net.log python3 -I -B c2-counter.py \
+    --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin \
+    --rev 6b9e64fe7e0de202d9383baad5792fbfe039a743 \
+    --freeze d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b \
+    --json-out netless.json
+
+result: counter exit 1 (the round-42 stop binding), receipt n=78 matched=78
+        bindings_false ["observed_features_match_declared"]
+net.log: 820 traced lines, ALL of them `--- SIGCHLD ---` child-exit records
+        grep -c 'connect(' net.log -> 0
+        no socket(), no sendto(), no connect() from the counter or any child
+        (children: git, sys.executable running the frozen generator/evaluator/interpreter)
+
+`unshare -n` was attempted first and refused by the host ("Operation not permitted"),
+so the network namespace proof is replaced by this syscall audit.
+
+The generator's only URL call site is urllib.request.urlopen inside fixture_bytes(),
+reached only when its `fetch` argument is true; the counter invokes the generator as
+  python -I -B <materialised heldout-gen-v4.py> --seed <FREEZE> --out <outdir>
+(no --fetch, no --run), so both the URL path and every `npx -y rea-agents@6.5.0`
+path (run_rea / out_of_domain_run, reached only with --run) are unreachable at scoring.
+fail-closed check: fixture_bytes(entry, None, <empty cache dir>, fetch=False) raises
+  FixturePinError: fixture 'v1-be' found in neither (no --fixtures-dir) nor <cache>.
+  Pass --fetch to download ...

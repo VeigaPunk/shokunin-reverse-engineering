@@ -1,0 +1,29 @@
+C2 LOCAL-SOURCE PATH AUDIT: STAGED PACK VS PLAN CONTRACT
+
+1. PLANS/ROUND-43-CLAIMS.MD CONTRACT:
+Line 96-97:
+  "with rows_failed empty and 17 in-lane copies plus the preserved S126 entry committed under
+   corpus/evidence/round-43/local-sources/"
+Line 103:
+  "corpus/evidence/local-sources.json binds every out-of-lane path named by a corpus/SOURCES.md URL cell
+   to exactly one in-lane regular-file copy under corpus/evidence/round-43/local-sources/"
+Line 147:
+  "the copies under corpus/evidence/round-43/local-sources/ (added after the freeze — landing paths, not pre-landing bytes)."
+
+2. R43C2LAND STAGED PACK (as of 2026-10-27 in wave 1 artifacts):
+Directory structure:
+  .ufo/waves/round-43/w1/artifacts/R43C2Land/pack/corpus/evidence/round-42/local-sources/
+Map entries in .ufo/waves/round-43/w1/artifacts/R43C2Land/pack/corpus/evidence/local-sources.json:
+  "copy": "corpus/evidence/round-42/local-sources/S001/SKILL.md"
+  "copy": "corpus/evidence/round-42/local-sources/S002/native-and-artifacts.md"
+  "copy": "corpus/evidence/round-42/local-sources/S023/go1.25.0.json.gz"
+  ... (all 18 rows specify round-42 instead of round-43)
+
+3. IMPACT ON GATE AND VERIFICATION:
+- tools/round-41/local-source-gate.py validates whatever path is in local-sources.json, but Predicate P43-C2
+  explicitly tests for paths matching 'corpus/evidence/round-43/local-sources/'.
+- tools/round-42/prefile-gate.py condition (b) checks git status under corpus/evidence/round-N/ (where N=43).
+  Leaving copies under round-42 circumvents round-43 tree cleanliness verification.
+
+4. REQUIRED ACTION FOR L1 INTEGRATION:
+- When landing C2 pack, rename directory round-42 -> round-43 and substitute all occurrences in local-sources.json.

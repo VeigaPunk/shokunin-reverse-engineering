@@ -1,0 +1,85 @@
+R43AssimGround — independent fetch receipt (seat-local, 2026-10-27 UTC)
+
+Source re-opened myself (not the sibling seat's receipt):
+  A  REST endpoint  https://api.github.com/repos/onekey-sec/sasquatch/releases?per_page=100
+     access time UTC   2026-10-27T08:18:09Z
+     HTTP status       200
+     bytes             107313
+     sha256            cb42cd61728f994dc18e4937d2d173b543c6a976bea25fa922e50f7213a105d0
+     retained as       receipts/rel-r43-assimground.json
+     second fetch      HTTP 200, 107313 B, no separate clock reading (sequenced in this session
+                       between the 08:18:09Z and 08:19:46Z readings above),
+                       sha256 d15543541ba46be0fc26a59441fccbcb8257238f31fe3fb530393f7989feda72
+                       (same content, different serialisation of the same 8-release payload;
+                        the two fetches differ only in JSON pretty-print/field order)
+
+  B  rendered page   https://github.com/onekey-sec/sasquatch/releases
+     access time UTC   2026-10-27T08:19:46Z
+     HTTP status       200
+     bytes             349255
+     sha256            150c7584282394a4c68c5b93587ac5f9ffd167badb04349d522e584045f7d3d0
+     retained as       receipts/sasq-releases-r43-assimground.html
+     fetch 2           HTTP 200, 349255 B, no separate clock reading (the two extra page fetches
+                       ran back-to-back in one command, later in this session),
+                       sha256 3957c55163b34c97b937e19c8d043c5ee95d0e830ac452f7c3675d9970d8f9f0
+     fetch 3           HTTP 200, 349251 B, same command as fetch 2,
+                       sha256 e5f85ce0ded2678f56039ec7034c796cea0afe3cdf06142894383a49eebc7eda
+                       (page bytes vary per fetch: 349255 / 349255 / 349251)
+
+Content assertions taken from the API response (all re-derived here):
+  releases ............................ 8
+  per-release asset counts ............ [6,6,6,6,6,6,6,2]
+  total assets ........................ 44
+  assets carrying a sha256 digest ..... 6  (all on sasquatch-v4.5.1-6)
+  per-release digest counts ........... [6,0,0,0,0,0,0,0]
+  tags carrying an arm64 asset ........ 7  (every tag except sasquatch-v1.0)
+  tags carrying an armhf asset ........ 7  (every tag except sasquatch-v1.0)
+  sasquatch-v1.0 asset set ............ sasquatch-dbgsym_1.0_amd64.deb, sasquatch_1.0_amd64.deb
+                                        (no 'arm' substring in either name)
+  release body lengths ................ 645, 560, 0, 0, 0, 38, 0, 0
+  bodies containing a standalone '1.0' token .. 0 of 8
+  body naming an upstream version .... sasquatch-v4.5.1-1: "Rebased on top of squashfs-tools 4.5.1"
+
+Pagination / negative checks:
+  ?page=2 ............................. HTTP 200, 0 items  (no ninth release)
+  /tags?per_page=100 .................. HTTP 200, 19 tags; the 8 sasquatch-v* release tags
+                                       match the 8 releases; the other 11 are non-release tags
+                                           (v1.0, squashfs-tools-v4.6.1, squashfs-tools-v4.5.1,
+                                            squashfs-tools-v4.5, ...)
+  grep -c 'sasquatch_1.0_amd64.deb' on the page bytes ..... 0
+  grep -c 'sasquatch_1.0_arm64.deb' on the page bytes ..... 0
+  distinct release tags in the page bytes .................. 8
+
+Recheck command reproduced verbatim (staged entry's own command):
+  curl -fsSL https://api.github.com/repos/onekey-sec/sasquatch/releases | grep -c 'sasquatch-v4.5.1-6'
+    -> 12   (ran 2026-10-27T08:48:41Z, exit 0)  == round-42 receipt value
+
+Projection recheck (the pin that is stable across fetches):
+  curl -fsSL .../releases | jq -c '[length, (map(.assets|length)), (map([.assets[]|select(.digest)]|length))]'
+    -> [8,[6,6,6,6,6,6,6,2],[6,0,0,0,0,0,0,0]]
+    (ran 2026-10-27T08:19:46Z and again 2026-10-27T08:48:41Z, identical both times, exit 0)
+
+Cross-check against the round-42 receipt (byte-level, not eyeballed):
+  round-42 receipt receipts/rel.json ....... 87700 B, sha256 57a19513ca266c10a310504fc33fa16f15e04f92f0be6840c2eb4e6c56a499db
+  this round, canonical re-serialisation
+  (json.dumps separators=(',',':')) ........ 87700 B  (same length)
+  every release-level and asset-level field identical EXCEPT download_count on 7 assets:
+    sasquatch-v4.5.1-6/sasquatch-dbgsym_1.0_amd64.deb   160 -> 161
+    sasquatch-v4.5.1-6/sasquatch_1.0_amd64.deb      23694 -> 23773
+    sasquatch-v4.5.1-6/sasquatch_1.0_arm64.deb       2404 -> 2411
+    sasquatch-v4.5.1-5/sasquatch_1.0_amd64.deb      34473 -> 34483
+    sasquatch-v4.5.1-5/sasquatch_1.0_arm64.deb       2334 -> 2337
+    sasquatch-v4.5.1-4/sasquatch_1.0_amd64.deb      51254 -> 51262
+    sasquatch-v4.5.1-4/sasquatch_1.0_arm64.deb       2748 -> 2749
+  with download_count removed, both sides hash to
+    sha256 8246d29baabeae5e99f6a295c08e2844e539ee2e61ce4880771d87bff42032ff
+  => the release inventory (tags, published_at, bodies, asset names, sizes, digests) is
+     UNCHANGED since round 42; only the mutable download counters moved.
+
+Binary provenance re-check (the entry's "Not claimed" sentence depends on it):
+  sha256sum ~/.local/bin/sasquatch
+    ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754  (re-hashed 2026-10-27,
+    equal to the round-36 receipt corpus/evidence/round-36/c1/K1/after-run.json and to the
+    round-42 draft's stated value)
+  strings -a ~/.local/bin/sasquatch | grep 'unsquashfs version'
+    unsquashfs version 4.5.1 (2022/03/17)

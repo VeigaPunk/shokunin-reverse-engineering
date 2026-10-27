@@ -1,0 +1,43 @@
+# receipt: AG1 — the 87700 vs 107313 B difference is SERIALIZATION, not drift
+$ wc -c <round-42 receipt rel.json> <round-43 receipt rel-r43.json>
+ 87700 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42Assim/receipts/rel.json
+107313 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43ScribeAssim/receipts/rel-r43.json
+195013 total
+$ wc -l <same>   # round 42's receipt is jq-compact (single line), round 43's is the pretty HTTP body
+     0 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42Assim/receipts/rel.json
+  1944 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43ScribeAssim/receipts/rel-r43.json
+  1944 total
+$ jq -c . <each> | wc -c    # both canonicalize to the same compact length (87701 B incl. trailing newline)
+87701
+87701
+$ jq -S -c . <each> | wc -c    # key-sorted canonical form, same length
+87701
+87701
+$ diff <(jq -S -c 'del(.[].assets[].download_count)' OLD) <(same NEW) | wc -l
+0
+# ^ 0 diff lines: with download_count removed the two captures are identical payloads.
+$ diff of download_count fields only:
+14
+# ^ 14 changed lines = 7 counters (one < and one > per counter):
+1c1
+< sasquatch-v4.5.1-6 sasquatch-dbgsym_1.0_amd64.deb 160
+---
+> sasquatch-v4.5.1-6 sasquatch-dbgsym_1.0_amd64.deb 161
+4,5c4,5
+< sasquatch-v4.5.1-6 sasquatch_1.0_amd64.deb 23694
+< sasquatch-v4.5.1-6 sasquatch_1.0_arm64.deb 2404
+---
+> sasquatch-v4.5.1-6 sasquatch_1.0_amd64.deb 23773
+> sasquatch-v4.5.1-6 sasquatch_1.0_arm64.deb 2411
+10,11c10,11
+< sasquatch-v4.5.1-5 sasquatch_1.0_amd64.deb 34473
+< sasquatch-v4.5.1-5 sasquatch_1.0_arm64.deb 2334
+---
+> sasquatch-v4.5.1-5 sasquatch_1.0_amd64.deb 34483
+> sasquatch-v4.5.1-5 sasquatch_1.0_arm64.deb 2337
+16,17c16,17
+< sasquatch-v4.5.1-4 sasquatch_1.0_amd64.deb 51254
+< sasquatch-v4.5.1-4 sasquatch_1.0_arm64.deb 2748
+---
+> sasquatch-v4.5.1-4 sasquatch_1.0_amd64.deb 51262
+> sasquatch-v4.5.1-4 sasquatch_1.0_arm64.deb 2749

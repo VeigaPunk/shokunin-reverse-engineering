@@ -1,0 +1,67 @@
+usage: heldout-gen-v4r43.py [-h] [--seed SEED] [--out OUT] [--classes CLASSES]
+                            [--run] [--carriers-only]
+                            [--tuple-check TUPLE_CHECK] [--verify]
+                            [--ood-op OOD_OP]
+                            [--actions-set {actionreview,draft42,interp,tabledraft}]
+                            [--actions-file ACTIONS_FILE] [--gen GEN]
+                            [--scratch SCRATCH] [--fixture-pins FIXTURE_PINS]
+                            [--fixtures-dir FIXTURES_DIR] [--fetch]
+                            [--allow-unseen-minority] [--gzip]
+                            [--keep-extraction] [--selftest]
+                            [--selftest-tuple]
+
+Deterministic R43-C1 held-out SquashFS carrier generator (table-v4 classes;
+the manifest is FINALIZED from a measurement, QUALITY 85 / R42-CL1).
+
+options:
+  -h, --help            show this help message and exit
+  --seed SEED           hex seed (the freeze commit hash); required except
+                        with --tuple-check (a read-only check reads no seed)
+  --out OUT             output directory (required unless --selftest or
+                        --tuple-check)
+  --classes CLASSES     comma-separated recipe names (default: all classes)
+  --run                 run REA per carrier in its arm
+  --carriers-only       build the carriers and their per-carrier files but
+                        write NO manifest (the measured finalization is
+                        skipped): use it to regenerate carriers for a byte-
+                        identity check without producing a manifest
+  --tuple-check TUPLE_CHECK
+                        read-only: run ONLY the declared-vs-observed tuple
+                        check against an existing held-out directory (needs no
+                        --seed/--out); exits 3 declared_tuple_unobserved on
+                        any difference
+  --verify              with --run: re-run the tuple check over the envelopes
+                        on disk, compare every envelope to its declared tuple,
+                        score combo_unseen_majority, regenerate the seed-
+                        determined set byte-identically; exit 1 on any failure
+  --ood-op OOD_OP       non-extract-firmware REA operation for the out-of-
+                        domain class (default: inspect-firmware-regions)
+  --actions-set {actionreview,draft42,interp,tabledraft}
+                        action tokens for the (label, action) pairs (default:
+                        draft42)
+  --actions-file ACTIONS_FILE
+                        file holding the frozen `<!-- sqfs-triage-actions: ...
+                        -->` line; the selected set must equal its tokens
+  --gen GEN             path to the SquashFS image writer (round-39 gen-
+                        squashfs.py)
+  --scratch SCRATCH     scratch parent for trees, fixture cache, REA output
+                        dirs and the selftest
+  --fixture-pins FIXTURE_PINS
+                        the fixtures.json pin list (default: beside this
+                        script)
+  --fixtures-dir FIXTURES_DIR
+                        directory holding the COMMITTED pinned fixture copies
+                        (e.g. corpus/evidence/round-42/c2/fixtures); every
+                        file is sha256-checked against the pin
+  --fetch               download a missing pinned fixture from its pinned URL
+                        into the cache under --scratch (sha256-checked)
+  --allow-unseen-minority
+                        build even when fewer than half of the combos are
+                        outside the named declared-tuple union (inspection
+                        only: the claim binds combo_unseen_majority)
+  --gzip                write envelope.json.gz / rea-full.json.gz (mtime 0)
+  --keep-extraction     keep REA output dirs in scratch (debug only)
+  --selftest            determinism selftest (no --out needed)
+  --selftest-tuple      OFFLINE selftest of the measured finalization (inline
+                        fixtures, no REA, no writer, no fixtures): green write
+                        + every refusal red case

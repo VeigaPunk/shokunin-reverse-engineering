@@ -1,0 +1,118 @@
+
+== G0 preflight
+  [ok]   lane /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+  [ok]   generator /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43C1Gen/heldout-gen-v4r43.py 5432b96bf7e1fb12aa78166dd3d52dd44964c5e103cafe7b809ef8302bdcef40
+  [ok]   counter   /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43C1Counter/c1-counter.py ed4909e36b2c34f77a503aaf120313e71bd41f03694f0542bec8d17df63d59f9
+  [ok]   lane HEAD ece55864c9bad5caac03b95cc95f2372346f80a0
+  [ok]   counter evidence root (probed from the counter source): corpus/evidence/round-43/c1/heldout
+  [ok]   counter regenerates with GEN=tools/round-43/heldout-gen-v4r43.py
+dry-run-r43.sh: WARN the counter's GEN path is absent from the lane: tools/round-43/heldout-gen-v4r43.py
+  [ok]   generator flags: --actions-file --actions-set --allow-unseen-minority --carriers-only --classes --fetch --fixture-pins --fixtures-dir --gen --gzip --help --keep-extraction --ood-op --out --run --scratch --seed --selftest --selftest-tuple --tuple-check --verify 
+
+== G1 scratch clone + freeze-like commit
+  [ok]   clone /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/clone (toplevel verified)
+  [ok]   generator installed into the clone at tools/round-43/heldout-gen-v4r43.py
+  [ok]   counter installed into the clone at tools/round-43/c1-counter.py
+  [ok]   pre-freeze material copied; evidence root purged from the freeze-like tree: false
+  [ok]   fixture copies: corpus/evidence/round-42/c2/fixtures   pins: tools/round-42/fixtures.json
+  [ok]   freeze-like commit F=01b78708315dbeb650759552c813287abf50b30e
+  [ok]   generator blob at F sha256=5432b96bf7e1fb12aa78166dd3d52dd44964c5e103cafe7b809ef8302bdcef40
+
+== G4 region hash (SKILL.md v4 table region vs d1681696)
+  [ok]   region sha256 99cd54d7fe8847486175db9fbf06fa4da3c891a17dd74ffc00eacd64c8ddd6da equals the region at d1681696
+
+== G2 dev-arm generation (frozen generator, --run)
+dry-run-r43.sh: argv: (cd /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/gen-run && python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43C1Gen/heldout-gen-v4r43.py --seed 01b78708315dbeb650759552c813287abf50b30e --out /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/clone/corpus/evidence/round-43/c1/heldout --run --classes clean-be\,clean-le\,clean-empty\,escaping-symlink-removed\,in-tree-symlink-metadata\,mixed-symlinks\,combo --scratch /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/gen-scratch --gen /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/clone/tools/round-39/gen-squashfs.py --fixture-pins /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/clone/tools/round-42/fixtures.json --fixtures-dir /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/clone/corpus/evidence/round-42/c2/fixtures )
+  [ok]   generator exit 0 (log logs/gen-devarm.log)
+
+== G3 manifest contract: single-key + generator.tuple_check
+{"key":"declared_features","fields":["handler_set","gap_kinds","gap_dependencies","be_argv","symlink_removed","published"],"carriers":36,"key_matches_counter":true,"fields_match_counter":true,"single_key_ok":true,"single_key_problems":[],"tuple_check_key":"tuple_check","tuple_check_rows":36,"tuple_check_unaligned":[],"tuple_check_all_equal_flag":true,"tuple_check_ok":true}
+  [ok]   single-key contract holds (one declared key, no stray spellings)
+  [ok]   generator.tuple_check present: 36 carriers, all equal
+
+== G2b commit the dev arm as REV
+  [ok]   REV=0dbf930204ab4a9d230cc756b8c135dbcbb391fd (dev arm: 36 carriers; seed=01b78708315dbeb650759552c813287abf50b30e)
+
+== G5 frozen counter against the dev arm
+dry-run-r43.sh: argv: python3 -I -B /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/clone/tools/round-43/c1-counter.py --root /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/clone --rev 0dbf930204ab4a9d230cc756b8c135dbcbb391fd --freeze 01b78708315dbeb650759552c813287abf50b30e --json-out /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/receipts/counter-devarm.json
+  [ok]   counter exit 1 (log logs/counter-devarm.log)
+  [ok]   every declared binding is evaluated: 45 bindings
+  --- binding table (name = value) ---
+  arms_valid = true
+  bindings_complete = true
+  carrier_paths_unique = true
+  carriers_committed = true
+  carriers_regenerated = true
+  classes_two_each = true
+  classes_unique = true
+  combo_family_wellformed = true
+  combo_unseen_majority = true
+  decisions_reported = true
+  declared_extras_match = true
+  envelope_paths_unique = true
+  envelopes_valid = true
+  evaluator_covers_all = true
+  evaluator_pinned_at_anchor = true
+  fixtures_pinned = true
+  generator_sha_matches_freeze = true
+  generator_tuple_check_all_equal = true
+  generator_tuple_check_consistent = true
+  handler_families_exercised = false
+  ids_unique = true
+  interpreter_pinned_at_anchor = true
+  legacy_chunks_not_no_squashfs = true
+  legacy_dev_envelopes = true
+  lookup_control_identical = true
+  manifest_after_freeze = true
+  manifest_before_envelopes = true
+  manifest_generator_path = true
+  n_equals_twice_classes = true
+  new_legacy_label_exercised = false
+  observed_actions_declared = true
+  observed_features_match_declared = true
+  r42_control_reference_full = true
+  r42_controls_reproduced = true
+  real_receipts_depth_limited = true
+  regenerated_seed_matches_freeze = true
+  row_decisions_consistent = true
+  runjson_digests = false
+  seed_matches_freeze = true
+  v4_actions_declared = true
+  v4_block_columns = true
+  v4_block_identical = true
+  v4_block_present = true
+  v4_table_region_at_anchor = true
+  writer_matches_manifest = true
+  --- false bindings on this dev arm (expected for a subset arm; each is still evaluated) ---
+["handler_families_exercised","new_legacy_label_exercised","runjson_digests"]
+  --- target ---
+{"n":36,"matched":36,"met_target":false}
+
+== G6 refusal red (wrong declared tuple must make the generator exit 3)
+  [ok]   fixture manifest with a deliberately wrong declared tuple: [{"id":"H01","declared_gap_kinds":["synthetic-unobserved-gap"],"observed_dropped":null}]
+dry-run-r43.sh: candidate manifest-check flags: --selftest-tuple --tuple-check --check-manifest --verify-manifest --check-tuple --tuple-check --check --manifest-check --declared-check
+  [ok]   REFUSAL RED exercised: exit 3 and the fixture manifest was not rewritten (python3 -I -B tools/round-43/heldout-gen-v4r43.py --tuple-check /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/fixture-red)
+  [ok]   GREEN control: the untampered manifest is not refused (exit 0)
+
+== G7 counter-level red (the counter must catch the wrong declared tuple)
+  [ok]   counter on the tampered manifest: exit 1
+  declared_extras_match = true
+  generator_tuple_check_all_equal = true
+  generator_tuple_check_consistent = false
+  observed_actions_declared = true
+  observed_features_match_declared = false
+  v4_actions_declared = true
+  [ok]   counter flags the wrong declared tuple (2 binding(s) false)
+
+== SUMMARY
+  verdict=PASS  exit=0
+  gates:
+    G1_clone = true
+    G2_generator_green = true
+    G3_manifest_contract = true
+    G4_region_hash = true
+    G5_counter_coverage = true
+    G6_refusal_red = true
+    G7_counter_level_red = true
+dry-run-r43.sh: receipt: /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/dry-run-receipt.json
+dry-run-r43.sh: logs:    /fast/scratch/hyaku/kaidoku-r43/w1-R43DryRun/dry-r43real2/logs/

@@ -1,0 +1,1110 @@
+--- /fast/scratch/hyaku/kaidoku-r43/w1-R43C1Gen/r42.py	2026-10-27 06:47:36.473935326 -0300
++++ /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43C1Gen/heldout-gen-v4r43.py	2026-10-27 06:50:28.100479499 -0300
+@@ -1,5 +1,45 @@
+ #!/usr/bin/env python3
+-"""R42-C2 held-out SquashFS carrier generator, table-v4 classes (round 42).
++"""R43-C1 held-out SquashFS carrier generator, table-v4 classes (round 43).
++
++ROUND 43 (v4r43) is a PORT of ``tools/round-42/heldout-gen-v4.py``.  Every
++class, every seed semantic, the ``--run`` envelope production, the
++``declared_features`` single-key contract (R41-CL1) and the ``--verify``
++byte-regeneration check are carried over EXACTLY.  The ONE functional change
++is the one QUALITY 85 names (routed defect R42-CL1): the manifest is now
++FINALIZED from a MEASUREMENT, not from a prediction.
++
++  * The DECLARED tuple is still computed as a pure function of the class and
++    its factors, exactly as in round 42 -- it is never taken from the run.
++    What changed is WHEN the manifest may be written.
++  * After ``--run`` produces the envelopes, the generator MEASURES the
++    six-field tuple of every carrier with its own ``observed_features()``
++    (the same extraction the round-42 dev proof uses) and compares it with
++    the tuple the manifest would declare.  On ANY difference the generator
++    refuses: it prints the per-carrier diff list, writes NO manifest, and
++    exits 3 with the reason ``declared_tuple_unobserved``.
++  * On agreement the manifest is written WITH a ``generator.tuple_check``
++    block: per carrier ``{observed, declared, equal: true}`` plus the rule
++    text, so a reader can see the measurement that authorised the manifest.
++  * ``--verify`` RE-RUNS the tuple check (over the envelopes already on
++    disk) and fails on any mismatch.
++
++  This is the guard QUALITY 85 asks for: the round-42 defect (M42-2) was a
++  generator that DECLARED a tuple its own ``--run`` never observed (combo
++  C02: the declared gap-kind set lacked ``depth-limited``).  With the guard,
++  that mismatch can no longer reach a manifest: the manifest is written only
++  after the measurement agrees with the declaration.
++
++  The round-42 predictor clause that produced the C02 mismatch is FIXED here
++  (see ``combo_declared``).  The round-42 rule predicted ``depth-limited``
++  only when the extractor was NOT the thing that failed; the measured
++  invariant is narrower and sharper -- REA mints ``depth-limited`` where the
++  depth ceiling stops it descending into a RECURSIVE EXTRACTION OUTPUT
++  DIRECTORY that exists.  So a damaged v4 chunk still mints it (its
++  damage-partial output directory is published), while a damaged legacy chunk
++  beside a residue carve does not (that carve is a FILE, not an extraction
++  directory).  The rule is measured, not inferred: see the ``ROUND 43`` note
++  on ``combo_declared`` and the ``depth-limited`` rule text there, and the
++  C02/C05 regression cases in ``run_tuple_selftest``.
+ 
+ ROUND 42 (v4) adds, over the frozen round-41 v3 generator:
+   * LEGACY classes built from PINNED unblob 26.6.4 test fixtures (MIT; commit
+@@ -143,7 +183,7 @@
+ # A run without -B must not drop tools/round-39/__pycache__ into the lane.
+ sys.dont_write_bytecode = True
+ 
+-VERSION = 'r42-c2-v4'
++VERSION = 'r43-c1-v4'
+ ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789_-'
+ CARRIERS_PER_CLASS = 2
+ REA_PACKAGE = 'rea-agents@6.5.0'
+@@ -530,8 +570,36 @@
+ 
+ 
+ def default_fixture_pins():
+-    return os.path.join(os.path.dirname(os.path.abspath(__file__)),
+-                        FIXTURE_PINS_NAME)
++    """Locate fixtures.json: env, beside this script, then the frozen round-42 pins.
++
++    ROUND 43: the pinned unblob 26.6.4 fixtures stay the round-42 file
++    (``tools/round-42/fixtures.json``, a frozen path), because the round-42
++    fixture set is what the round-43 carriers must embed; a copy beside this
++    script (or ``KAIDOKU_FIXTURE_PINS``) still wins when one is present.
++    """
++    here = os.path.dirname(os.path.abspath(__file__))
++    candidates = [os.environ.get('KAIDOKU_FIXTURE_PINS'),
++                  os.path.join(here, FIXTURE_PINS_NAME),
++                  os.path.join(here, '..', 'round-42', FIXTURE_PINS_NAME),
++                  os.path.join(here, '..', '..', 'tools', 'round-42',
++                               FIXTURE_PINS_NAME)]
++    for candidate in candidates:
++        if candidate and os.path.isfile(candidate):
++            return os.path.normpath(candidate)
++    return os.path.normpath(candidates[1])
++
++
++def pins_logical_path(pins_path):
++    """The stable, lane-relative name the manifest records for the pin list."""
++    here = os.path.dirname(os.path.abspath(__file__))
++    pins = os.path.abspath(pins_path)
++    if os.path.dirname(pins) == here:
++        return FIXTURE_PINS_NAME
++    parent = os.path.dirname(pins)
++    if (os.path.basename(parent) == 'round-42'
++            and os.path.basename(os.path.dirname(parent)) == 'tools'):
++        return 'tools/round-42/fixtures.json'
++    return pins
+ 
+ 
+ # Set by main(): the pin file actually read, and the value the manifest reports
+@@ -931,21 +999,6 @@
+         gaps.add('extractor-failure')
+     if links_active and factors['links'] in ('in-tree', 'both'):
+         gaps.add('unpublished-entry')
+-    if factors['max_depth'] == 1:
+-        if factors['wrap']:
+-            reached = True            # the tar itself is extracted at the ceiling
+-        elif dep_effective:
+-            reached = False           # nothing was ever written to descend into
+-        else:
+-            # A damaged chunk still reaches the ceiling when it is carved (a
+-            # residue or a sibling chunk makes it a non-root chunk), which is why
+-            # a damaged root chunk alone mints nothing but damage + residue does.
+-            reached = ((not damage_effective) or bool(factors['residue'])
+-                       or bool(factors['two_chunk']))
+-        if reached:
+-            gaps.add('depth-limited')
+-    if factors['residue']:
+-        gaps.add('unknown-chunk-handler')
+     carved = (bool(factors['residue']) or bool(factors['wrap'])
+               or bool(factors['two_chunk']))
+     if not damage_effective and not dep_effective:
+@@ -964,6 +1017,41 @@
+     else:
+         # A pinned legacy fixture's damage lands in its metadata, before any file.
+         published = 'zero'
++    if factors['max_depth'] == 1:
++        # ROUND 43 FIX (the round-42 M42-2 defect, MEASURED).  Round 42 predicted
++        # `depth-limited` only when the extractor was NOT the thing that failed,
++        # so a FAILING root chunk minted nothing.  That is wrong in one direction
++        # and right in another, and the discriminator is NOT "was anything
++        # published" -- it is "does a RECURSIVE EXTRACTION OUTPUT DIRECTORY
++        # exist".  unblob adds a descent task only for an extraction directory
++        # that exists (processing.py: `if extract_dir.exists(): add_subtask(...)`),
++        # and REA then mints `depth-limited` where the ceiling stops that descent
++        # (processing.py: `if task.depth >= config.max_depth: return`).
++        #
++        # MEASURED on fresh trees at --max-depth 1 (REA 6.5.0 / unblob 26.6.4,
++        # round-43 seat R43C1Gen, six shapes + the two committed arms):
++        #   v4 chunk, clean or damage-partial  -> PRESENT (the v4 damage recipe
++        #       zeroes a LATE block, so earlier files -- and the extraction output
++        #       directory -- are published)
++        #   legacy chunk, clean                -> PRESENT (its extract dir exists)
++        #   legacy chunk, fixture damage       -> ABSENT  (the damage lands in the
++        #       fixture's metadata, so no extraction output is produced)
++        #   container (wrap/tar) member        -> PRESENT (the tar's extract dir)
++        #   legacy + v4 sibling (two_chunk)    -> PRESENT (the v4 chunk extracts)
++        #   any dependency failure             -> ABSENT  (the extractor never ran)
++        #   residue-only publication           -> does NOT count: the `.unknown`
++        #       carve of a residue tail is a FILE, not an extraction directory, so
++        #       a damaged legacy chunk + residue (the round-43 dry-run's C05:
++        #       base=legacy, no second v4, damage, residue) stays ABSENT even
++        #       though `published` is 'nonzero'.
++        extraction_output = (capped                       # the tar member's dir
++                             or bool(factors['body_v4'])  # any v4 chunk extracts
++                             or not damage_effective)     # a clean legacy chunk extracts
++        reached = (not dep_effective) and extraction_output
++        if reached:
++            gaps.add('depth-limited')
++    if factors['residue']:
++        gaps.add('unknown-chunk-handler')
+     if dep_effective or not damage_effective:
+         be = 'n/a'
+     else:
+@@ -2536,15 +2624,17 @@
+     return 'no' if seen else 'n/a'
+ 
+ 
+-def _envelope_parts(full):
+-    """(data object or None, subject sha256, shape summary) from a CLI envelope."""
+-    if not isinstance(full, dict) or not isinstance(full.get('data'), dict):
+-        return None, None, {}
+-    data = full['data']
++def shape_of_data(data):
++    """The shape summary of one envelope's `data` object (round-42 extraction).
++
++    Split out of ``_envelope_parts`` in round 43 so the finalize step can MEASURE
++    a produced envelope from the artifact on disk with exactly the same code the
++    run itself used.
++    """
+     normalized = data.get('normalized_result') or {}
+     reports = [diag.get('report') or {}
+                for diag in normalized.get('diagnostics') or []]
+-    shape = {
++    return {
+         'operation': data.get('operation'),
+         'provider': (data.get('provider') or {}).get('id'),
+         'handlers': sorted({chunk.get('handler')
+@@ -2574,10 +2664,19 @@
+         'files': len(normalized.get('files') or []),
+         'coverage': normalized.get('coverage'),
+     }
++
++
++def _envelope_parts(full):
++    """(data object or None, subject sha256, shape summary) from a CLI envelope."""
++    if not isinstance(full, dict) or not isinstance(full.get('data'), dict):
++        return None, None, {}
++    data = full['data']
++    shape = shape_of_data(data)
+     subject = (data.get('subject') or {}).get('digest') or {}
+     return data, subject.get('sha256'), shape
+ 
+ 
++
+ def _write_envelope(entry, full, gz):
+     dest = os.path.join(OUT_DIR, entry['id'])
+     payloads = {'envelope': full.get('data'),
+@@ -2768,8 +2867,13 @@
+ 
+ 
+ def build_set(seed, classes, writer, out_dir, scratch, pins, fixtures_dir,
+-              cache_dir, fetch):
+-    """Build every carrier and the manifest into ``out_dir``."""
++              cache_dir, fetch, write_manifest=True):
++    """Build every carrier and the manifest into ``out_dir``.
++
++    ROUND 43: ``write_manifest=False`` defers the manifest to the finalize step
++    (see ``finalize_manifest``), because the manifest may only be written once
++    the measurement agrees with the declaration.  Everything else is round 42.
++    """
+     os.makedirs(out_dir, exist_ok=True)
+     carriers, details, seq, used_fixtures = [], {}, 0, set()
+     for name in classes:
+@@ -2809,12 +2913,14 @@
+             f'Re-run with --allow-unseen-minority only to inspect the set.')
+     manifest = {
+         'seed': seed,
+-        'round': 42,
+-        'claim': 'R42-C2',
++        'round': 43,
++        'claim': 'R43-C1',
+         'generator': {
+-            'name': 'heldout-gen-v4.py',
++            'name': 'heldout-gen-v4r43.py',
++            'path': 'tools/round-43/heldout-gen-v4r43.py',
+             'version': VERSION,
+             'sha256': sha256_file(os.path.abspath(__file__)),
++            'port_of': 'tools/round-42/heldout-gen-v4.py',
+             'carriers_per_class': CARRIERS_PER_CLASS,
+             'writer': {
+                 'name': 'gen-squashfs.py',
+@@ -2902,6 +3008,17 @@
+                          'and no `class_expected.features` key; declared_extras '
+                          'carries extraction_failed and max_depth, which are NOT '
+                          'part of the binding'),
++            'finalization': ('ROUND 43 (QUALITY 85 / R42-CL1): the manifest is '
++                             'written ONLY after the generator measured every '
++                             'carrier\'s six-field tuple in the envelope its own '
++                             '--run produced and found it equal to the declared '
++                             'tuple; on any difference it writes NO manifest and '
++                             'exits 3 (declared_tuple_unobserved).  On agreement '
++                             'it records the measurement under '
++                             'generator.tuple_check (per carrier {observed, '
++                             'declared, equal: true} + the rule text).  The '
++                             'declaration itself stays a pure function of the '
++                             'class/factors and is never copied from a run.'),
+         },
+         'families': {name: {'count': count, 'id_prefix': COMBO_ID_PREFIX,
+                             'factors': list(COMBO_FACTORS),
+@@ -2939,9 +3056,8 @@
+         'classes': list(classes),
+         'carriers': carriers,
+     }
+-    with open(os.path.join(out_dir, 'manifest.json'), 'w', encoding='utf-8') as handle:
+-        json.dump(manifest, handle, indent=2)
+-        handle.write('\n')
++    if write_manifest:
++        write_manifest_file(out_dir, manifest)
+     for entry in carriers:
+         extra = details[entry['id']]
+         corruption = extra['corruption'] or {}
+@@ -2995,6 +3111,257 @@
+     return expected
+ 
+ 
++# ---------------------------------------------------------------------------
++# ROUND 43: measured manifest finalization (QUALITY 85 / routed R42-CL1)
++#
++# Round 42 declared a feature tuple from the class/factors and wrote the manifest
++# without ever comparing that declaration with what its own --run observed.  The
++# round-42 held-out arm then shipped a manifest whose combo C02 declaration
++# lacked `depth-limited` (observed: depth-limited + extractor-failure +
++# unpublished-entry), and the round stopped on that binding -- the M42-2 defect.
++#
++# Round 43 keeps the declaration a PURE FUNCTION of the class and its factors (it
++# is never copied out of a run) and makes the FINALIZATION measured instead:
++#
++#   * after --run the generator measures each carrier's six-field tuple in the
++#     envelope its own run produced (its own observed_features(), over the
++#     artifact on disk) and compares it with the tuple the manifest declares;
++#   * ANY difference -> print the per-carrier diff list, write NO manifest, and
++#     exit 3 with the reason `declared_tuple_unobserved`;
++#   * full agreement -> write the manifest, recording the measurement under
++#     `generator.tuple_check` (per carrier {observed, declared, equal: true} plus
++#     the rule text).
++#
++# `--verify` re-runs the same check over the envelopes on disk and fails on a
++# mismatch; `--tuple-check DIR` runs ONLY the check against an existing directory
++# (read-only), which is what the claim's red/green control needs.
++# ---------------------------------------------------------------------------
++TUPLE_CHECK_KEY = 'tuple_check'
++EXIT_DECLARED_TUPLE_UNOBSERVED = 3
++REASON_DECLARED_TUPLE_UNOBSERVED = 'declared_tuple_unobserved'
++TUPLE_CHECK_RULE = (
++    'R42-CL1 (QUALITY 85): a declared feature tuple is written into the manifest '
++    'only after this generator MEASURED the same six fields in the envelope its '
++    'own --run produced for that carrier (observed_features, over the artifact '
++    'on disk) and found them EQUAL; on any difference it writes NO manifest and '
++    'exits 3 (declared_tuple_unobserved).')
++
++
++def write_manifest_file(out_dir, manifest):
++    """The ONE writer of manifest.json: round 42's bytes (indent=2 + newline)."""
++    with open(os.path.join(out_dir, 'manifest.json'), 'w', encoding='utf-8') as handle:
++        json.dump(manifest, handle, indent=2)
++        handle.write('\n')
++
++
++def manifest_projection(manifest):
++    """The manifest WITHOUT the finalize-only measurement block.
++
++    ``generator.tuple_check`` records a measurement of a --run, so a rebuild that
++    runs no REA cannot reproduce it.  Every other manifest byte is a function of
++    the seed, and `--verify`'s byte-regeneration check compares exactly those
++    bytes; the measurement block is checked separately against the envelopes.
++    """
++    projection = json.loads(json.dumps(manifest))
++    generator_block = projection.get('generator')
++    if isinstance(generator_block, dict):
++        generator_block.pop(TUPLE_CHECK_KEY, None)
++    return projection
++
++
++def _read_json_any(path):
++    """Parse a .json or .json.gz file, or None when absent/unreadable."""
++    if not os.path.isfile(path):
++        return None
++    if path.endswith('.gz'):
++        with gzip.open(path, 'rb') as handle:
++            return json.loads(handle.read().decode('utf-8'))
++    with open(path, encoding='utf-8') as handle:
++        return json.load(handle)
++
++
++def envelope_shape_on_disk(carrier_dir):
++    """The shape summary of one PRODUCED envelope, re-derived from the artifact.
++
++    Reads ``envelope.json`` (REA's `data` object) or ``rea-full.json`` (the whole
++    {ok,data,meta} envelope), plain or gzip, and runs the SAME extraction the run
++    itself used -- so the measurement is taken from the committed artifact, not
++    from the generator's own bookkeeping.
++    """
++    for name in ('envelope.json', 'envelope.json.gz',
++                 'rea-full.json', 'rea-full.json.gz'):
++        payload = _read_json_any(os.path.join(carrier_dir, name))
++        if payload is None:
++            continue
++        data = payload
++        if name.startswith('rea-full') and isinstance(payload, dict):
++            data = payload.get('data')
++        if isinstance(data, dict):
++            return shape_of_data(data)
++    return None
++
++
++def canonical_tuple(values):
++    """A tuple's six fields, with list fields sorted (order-free comparison)."""
++    out = {}
++    for key in DECLARED_FIELDS:
++        value = values.get(key) if isinstance(values, dict) else None
++        out[key] = sorted(value) if isinstance(value, list) else value
++    return out
++
++
++def declared_tuple_of(entry):
++    """The six fields a carrier entry declares, or None.
++
++    R41-CL1: the binding tuple is read from EXACTLY ONE key, ``declared_features``.
++    A tuple written under ``declared`` or ``class_expected.features`` is
++    INVISIBLE, so a manifest using another spelling FAILS the check instead of
++    passing on a second key.
++    """
++    if not isinstance(entry, dict):
++        return None
++    value = entry.get(DECLARED_KEY)
++    if not isinstance(value, dict):
++        return None
++    if any(key not in value for key in DECLARED_FIELDS):
++        return None
++    return canonical_tuple(value)
++
++
++def observed_tuple(shape):
++    """The six binding fields, as observed in one envelope."""
++    features = observed_features(shape or {})
++    return {key: features.get(key) for key in DECLARED_FIELDS}
++
++
++def diff_tuple(declared, observed):
++    """Field-by-field difference; empty means the observed tuple WAS declared."""
++    return {key: {'declared': declared.get(key), 'observed': observed.get(key)}
++            for key in DECLARED_FIELDS if declared.get(key) != observed.get(key)}
++
++
++def tuple_check(carriers, observed_by_id):
++    """Per-carrier differences between the DECLARED and the MEASURED tuple.
++
++    Returns one record per disagreeing carrier:
++    {'id', 'class', 'reason', 'differ': {field: {'declared', 'observed'}}}.
++    An empty list means every carrier observed exactly what it declared.
++    """
++    diffs = []
++    for entry in carriers:
++        cid = entry.get('id')
++        declared = declared_tuple_of(entry)
++        observed = observed_by_id.get(cid)
++        if declared is None:
++            diffs.append({'id': cid, 'class': entry.get('class'),
++                          'reason': 'declared_features_absent', 'differ': {}})
++            continue
++        if observed is None:
++            diffs.append({'id': cid, 'class': entry.get('class'),
++                          'reason': 'no_envelope_measured', 'differ': {}})
++            continue
++        differ = diff_tuple(declared, observed)
++        if differ:
++            diffs.append({'id': cid, 'class': entry.get('class'),
++                          'reason': 'declared_tuple_unobserved',
++                          'differ': differ})
++    return diffs
++
++
++def measure_out_dir(out_dir, carriers):
++    """{carrier id: observed six-field tuple} from the envelopes on disk."""
++    observed = {}
++    for entry in carriers:
++        cid = entry.get('id')
++        if not isinstance(cid, str) or not cid:
++            continue
++        shape = envelope_shape_on_disk(os.path.join(out_dir, cid))
++        if shape is not None:
++            observed[cid] = observed_tuple(shape)
++    return observed
++
++
++def print_tuple_diffs(diffs):
++    """The per-carrier diff list on stdout."""
++    for record in diffs:
++        head = f"{record['id']}  {record['class']}"
++        if record['reason'] == 'declared_features_absent':
++            print(f"{head}  DECLARED-FEATURES-ABSENT  the tuple is read from "
++                  f"`{DECLARED_KEY}` only (R41-CL1)")
++            continue
++        if record['reason'] == 'no_envelope_measured':
++            print(f"{head}  NO-ENVELOPE  nothing was measured for this carrier")
++            continue
++        for key in DECLARED_FIELDS:
++            if key in record['differ']:
++                field = record['differ'][key]
++                print(f"{head}  {key}: declared {field['declared']!r} != "
++                      f"observed {field['observed']!r}")
++
++
++def tuple_check_block(carriers, observed_by_id):
++    """The manifest's record of the check that authorised it."""
++    records = {}
++    for entry in carriers:
++        cid = entry.get('id')
++        declared = declared_tuple_of(entry)
++        observed = observed_by_id.get(cid)
++        records[cid] = {
++            'observed': observed,
++            'declared': declared,
++            'equal': bool(declared is not None and observed is not None
++                          and not diff_tuple(declared, observed)),
++        }
++    return {'rule': TUPLE_CHECK_RULE,
++            'fields': list(DECLARED_FIELDS),
++            'measured': True,
++            'all_equal': all(record['equal'] for record in records.values()),
++            'carriers': records}
++
++
++def finalize_manifest(out_dir, manifest, carriers):
++    """Measure, compare, and only then write the manifest (QUALITY 85).
++
++    Returns 0 when the manifest was written and 3 when it was refused.  On a
++    refusal NO manifest is written: the caller must not have written one earlier.
++    """
++    observed_by_id = measure_out_dir(out_dir, carriers)
++    diffs = tuple_check(carriers, observed_by_id)
++    if diffs:
++        print(f"{REASON_DECLARED_TUPLE_UNOBSERVED}: {len(diffs)} of "
++              f"{len(carriers)} carrier(s) observed a tuple the manifest would "
++              f"not have declared -- writing NO manifest")
++        print_tuple_diffs(diffs)
++        return EXIT_DECLARED_TUPLE_UNOBSERVED
++    manifest['generator'][TUPLE_CHECK_KEY] = tuple_check_block(carriers,
++                                                               observed_by_id)
++    write_manifest_file(out_dir, manifest)
++    print(f"tuple_check: measured {len(observed_by_id)}/{len(carriers)} "
++          f"carrier(s); every observed tuple equals its declared tuple.  Manifest "
++          f"written with generator.{TUPLE_CHECK_KEY}.")
++    return 0
++
++
++def run_tuple_check_dir(dir_path):
++    """Run ONLY the tuple check against an existing held-out directory (read-only)."""
++    manifest = _read_json_any(os.path.join(dir_path, 'manifest.json'))
++    if not isinstance(manifest, dict):
++        print(f"tuple_check: no manifest.json under {dir_path}")
++        return 2
++    carriers = [c for c in (manifest.get('carriers') or []) if isinstance(c, dict)]
++    observed_by_id = measure_out_dir(dir_path, carriers)
++    diffs = tuple_check(carriers, observed_by_id)
++    if diffs:
++        print(f"{REASON_DECLARED_TUPLE_UNOBSERVED}: {len(diffs)} of "
++              f"{len(carriers)} carrier(s) observed a tuple the manifest does "
++              f"not declare")
++        print_tuple_diffs(diffs)
++        return EXIT_DECLARED_TUPLE_UNOBSERVED
++    print(f"tuple_check: {len(carriers)} carrier(s); every observed tuple equals "
++          f"its declared tuple")
++    return 0
++
++
+ def verify(manifest, carriers):
+     """Print carrier -> observed tuple and judge it against the declared tuple.
+ 
+@@ -3044,6 +3411,21 @@
+           f"{'PASS' if majority else 'FAIL'}")
+     if unseen_observed:
+         print(f"  unseen (observed): {', '.join(unseen_observed)}")
++    # ---- ROUND 43: --verify RE-RUNS the tuple check over the envelopes on disk.
++    # A manifest written from a good run must still fail here if an envelope was
++    # mutated afterwards (the committed artifact is what the counter reads).
++    print('\n== tuple check re-run (declared vs measured, from the envelopes on '
++          'disk) ==')
++    tuple_observed = measure_out_dir(OUT_DIR, carriers)
++    tuple_diffs = tuple_check(carriers, tuple_observed)
++    if tuple_diffs:
++        print(f"{REASON_DECLARED_TUPLE_UNOBSERVED}: {len(tuple_diffs)} of "
++              f"{len(carriers)} carrier(s) no longer match their declared tuple")
++        print_tuple_diffs(tuple_diffs)
++        bad += len(tuple_diffs)
++    else:
++        print(f"PASS  {len(tuple_observed)}/{len(carriers)} carrier(s) observed "
++              f"exactly their declared tuple")
+     return 1 if (bad or not majority) else 0
+ 
+ 
+@@ -3067,10 +3449,22 @@
+         finally:
+             shutil.rmtree(local, ignore_errors=True)
+         checks = []
+-        original = sha256_file(os.path.join(OUT_DIR, 'manifest.json'))
+-        rebuilt = sha256_file(os.path.join(out, 'manifest.json'))
+-        checks.append(('manifest bytes identical', original == rebuilt,
+-                       f'{original[:16]} vs {rebuilt[:16]}'))
++        # ROUND 43: the committed manifest also records the measured
++        # `generator.tuple_check` block, which a rebuild that runs no REA cannot
++        # reproduce.  The byte comparison is therefore over the seed-determined
++        # projection of both manifests; the measurement block is validated
++        # separately (finalize_manifest, and --verify's tuple check).
++        original_manifest = _read_json_any(os.path.join(OUT_DIR, 'manifest.json'))
++        rebuilt_manifest = _read_json_any(os.path.join(out, 'manifest.json'))
++        original = hashlib.sha256(
++            json.dumps(manifest_projection(original_manifest), indent=2)
++            .encode('utf-8')).hexdigest()
++        rebuilt = hashlib.sha256(
++            json.dumps(manifest_projection(rebuilt_manifest), indent=2)
++            .encode('utf-8')).hexdigest()
++        checks.append(('manifest bytes identical (seed-determined projection; '
++                       'the measured tuple_check block is checked separately)',
++                       original == rebuilt, f'{original[:16]} vs {rebuilt[:16]}'))
+         differ = [a['id'] for a, b in zip(carriers, fresh_carriers)
+                   if a['sha256'] != b['sha256']]
+         checks.append(('every carrier byte-identical', not differ,
+@@ -3097,6 +3491,333 @@
+ ALLOW_UNSEEN_MINORITY = False
+ 
+ 
++# ---------------------------------------------------------------------------
++# ROUND 43 offline selftest of the measured finalization (inline fixtures)
++# ---------------------------------------------------------------------------
++def synth_envelope(gap_kinds, handler='squashfs_v4_be', files=6,
++                   symlink_removed=False, be='yes', failed=True, max_depth=1,
++                   unpublished=1):
++    """An inline REA-shaped envelope `data` object (no REA is ever run)."""
++    reports = []
++    if be != 'n/a':
++        reports.append({'report': {
++            '__typename__': 'ExtractCommandFailedReport',
++            'command': ('sasquatch-v4be -be -no-exit-code -f -d /tmp/o/'
++                        'firmware.bin_extract /tmp/o/firmware.bin')}})
++    if symlink_removed:
++        reports.append({'report': {'__typename__': 'MaliciousSymlinkRemoved',
++                                   'command': None}})
++    return {
++        'operation': 'extract_firmware',
++        'provider': {'id': 'unblob'},
++        'subject': {'name': 'carrier.sqsh', 'digest': {'sha256': '0' * 64}},
++        'parameters': {'max_depth': max_depth},
++        'normalized_result': {
++            'engine': 'unblob',
++            'coverage': 'partial' if failed else 'full',
++            'chunks': [{'handler': handler, 'encrypted': False,
++                        'extraction_failed': bool(failed)}],
++            'files': [{'path': 'f%d' % index} for index in range(files)],
++            'unpublished_entries': ([{'relative_path': 'firmware.bin_extract/x'}]
++                                    if unpublished else []),
++            'depth_limited_paths': (['$output/firmware.bin_extract']
++                                    if 'depth-limited' in gap_kinds else []),
++            'diagnostics': reports,
++            'extraction_gaps': [{'kind': kind, 'dependencies': []}
++                                for kind in gap_kinds],
++        },
++    }
++
++
++C02_DECLARED = {
++    'handler_set': ['squashfs_v4_be'],
++    'gap_kinds': ['depth-limited', 'extractor-failure', 'unpublished-entry'],
++    'gap_dependencies': [],
++    'be_argv': 'yes',
++    'symlink_removed': False,
++    'published': 'nonzero',
++}
++
++
++def run_tuple_selftest(scratch_root):
++    """OFFLINE selftest of the refusal gate, with inline fixtures only.
++
++    green: a manifest whose declared tuple equals the observed one is WRITTEN,
++           with the generator.tuple_check block all-equal.
++    red:   a declared gap-kind set missing `depth-limited` beside a failing chunk
++           at the depth ceiling (the round-42 C02 shape), an extra declared kind,
++           a wrong handler family, and a tuple read back under the key `declared`
++           (R41-CL1) or `class_expected.features` -- each must be REFUSED with
++           exit 3 (declared_tuple_unobserved) and write NO manifest.
++    red:   `--verify` reports red on a mutated envelope (the check re-runs over
++           the artifact on disk, so a mutated envelope fails even when run.json
++           still agrees).
++    """
++    global OUT_DIR
++    os.makedirs(os.path.abspath(scratch_root), exist_ok=True)
++    work = tempfile.mkdtemp(prefix='r43-tuple-selftest-',
++                            dir=os.path.abspath(scratch_root))
++    checks = []
++
++    def check(name, ok, detail=''):
++        checks.append((name, ok, detail))
++        print(f"{'PASS' if ok else 'FAIL'}  {name}"
++              + (f'  {detail}' if detail else ''))
++
++    def make_case(tag, declared, envelope, entry_key=DECLARED_KEY, runs=1):
++        """One synthetic held-out directory: carrier entry + envelope (+ run.json)."""
++        out = os.path.join(work, tag)
++        cid = 'C02'
++        os.makedirs(os.path.join(out, cid), exist_ok=True)
++        with open(os.path.join(out, cid, 'envelope.json'), 'w',
++                  encoding='utf-8') as handle:
++            json.dump(envelope, handle, indent=2)
++        if runs:
++            shape = shape_of_data(envelope)
++            record = {'id': cid, 'class': 'combo', 'files': shape['files'],
++                      'handlers': shape['handlers'],
++                      'failed_chunks': shape['failed_chunks'],
++                      'gap_kinds': shape['gap_kinds'],
++                      'gap_dependencies': shape['gap_dependencies'],
++                      'be_argv': shape['be_argv'],
++                      'symlink_removed': shape['symlink_removed'],
++                      'parameters': shape['parameters'],
++                      'operation': shape['operation']}
++            with open(os.path.join(out, cid, 'run.json'), 'w',
++                      encoding='utf-8') as handle:
++                json.dump(record, handle, indent=2)
++        entry = {'id': cid, 'class': 'combo', 'carrier': f'{cid}/carrier.sqsh'}
++        if entry_key:
++            entry[entry_key] = declared
++        manifest = {'seed': 'f' * 40, 'round': 43, 'claim': 'R43-C1',
++                    'generator': {'name': 'heldout-gen-v4r43.py'},
++                    'carriers': [entry]}
++        return out, manifest, [entry]
++
++    def run_finalize(out, manifest, carriers):
++        """finalize_manifest with stdout captured: (status, captured text)."""
++        stream = io.StringIO()
++        with contextlib.redirect_stdout(stream):
++            status = finalize_manifest(out, manifest, carriers)
++        return status, stream.getvalue()
++
++    # ---- GREEN ------------------------------------------------------------
++    out, manifest, carriers = make_case('green', dict(C02_DECLARED),
++                                       synth_envelope(
++                                           ['depth-limited', 'extractor-failure',
++                                            'unpublished-entry']))
++    status, text = run_finalize(out, manifest, carriers)
++    written = os.path.join(out, 'manifest.json')
++    block = {}
++    if os.path.isfile(written):
++        with open(written, encoding='utf-8') as handle:
++            block = ((json.load(handle).get('generator') or {})
++                     .get(TUPLE_CHECK_KEY) or {})
++    check('green: declared == observed -> manifest written, exit 0',
++          status == 0 and os.path.isfile(written), f'exit={status}')
++    check('green: generator.tuple_check present, all_equal, per-carrier equal',
++          block.get('all_equal') is True
++          and (block.get('carriers') or {}).get('C02', {}).get('equal') is True
++          and block.get('rule') == TUPLE_CHECK_RULE,
++          f"all_equal={block.get('all_equal')}")
++
++    # ---- RED: the round-42 C02 shape (declared set missing depth-limited) --
++    c02_wrong = dict(C02_DECLARED,
++                     gap_kinds=['extractor-failure', 'unpublished-entry'])
++    out, manifest, carriers = make_case(
++        'red-c02', c02_wrong,
++        synth_envelope(['depth-limited', 'extractor-failure', 'unpublished-entry']))
++    status, text = run_finalize(out, manifest, carriers)
++    check('red: C02 shape with depth-limited missing -> refused, no manifest',
++          status == EXIT_DECLARED_TUPLE_UNOBSERVED
++          and not os.path.isfile(os.path.join(out, 'manifest.json'))
++          and REASON_DECLARED_TUPLE_UNOBSERVED in text
++          and 'depth-limited' in text,
++          f'exit={status}')
++
++    # ---- RED: an extra declared kind -------------------------------------
++    extra = dict(C02_DECLARED,
++                 gap_kinds=['depth-limited', 'extractor-failure',
++                            'unpublished-entry', 'unknown-chunk-handler'])
++    out, manifest, carriers = make_case(
++        'red-extra', extra,
++        synth_envelope(['depth-limited', 'extractor-failure', 'unpublished-entry']))
++    status, text = run_finalize(out, manifest, carriers)
++    check('red: an extra declared gap kind -> refused, no manifest',
++          status == EXIT_DECLARED_TUPLE_UNOBSERVED
++          and not os.path.isfile(os.path.join(out, 'manifest.json'))
++          and 'unknown-chunk-handler' in text,
++          f'exit={status}')
++
++    # ---- RED: a wrong handler family -------------------------------------
++    wrong_handler = dict(C02_DECLARED, handler_set=['squashfs_v3'])
++    out, manifest, carriers = make_case(
++        'red-handler', wrong_handler,
++        synth_envelope(['depth-limited', 'extractor-failure', 'unpublished-entry']))
++    status, text = run_finalize(out, manifest, carriers)
++    check('red: a wrong handler family -> refused, no manifest',
++          status == EXIT_DECLARED_TUPLE_UNOBSERVED
++          and not os.path.isfile(os.path.join(out, 'manifest.json'))
++          and 'handler_set' in text,
++          f'exit={status}')
++
++    # ---- RED: the tuple under `declared` (R41-CL1) ------------------------
++    out, manifest, carriers = make_case(
++        'red-key-declared', dict(C02_DECLARED), synth_envelope(
++            ['depth-limited', 'extractor-failure', 'unpublished-entry']),
++        entry_key='declared')
++    status, text = run_finalize(out, manifest, carriers)
++    check('red: tuple under `declared` only (R41-CL1) -> refused, no manifest',
++          status == EXIT_DECLARED_TUPLE_UNOBSERVED
++          and not os.path.isfile(os.path.join(out, 'manifest.json'))
++          and 'DECLARED-FEATURES-ABSENT' in text,
++          f'exit={status}')
++
++    # ---- RED: the tuple under `class_expected.features` -------------------
++    out = os.path.join(work, 'red-key-class-expected')
++    cid = 'C02'
++    os.makedirs(os.path.join(out, cid), exist_ok=True)
++    with open(os.path.join(out, cid, 'envelope.json'), 'w', encoding='utf-8') as h:
++        json.dump(synth_envelope(['depth-limited', 'extractor-failure',
++                                  'unpublished-entry']), h, indent=2)
++    carriers = [{'id': cid, 'class': 'combo',
++                 'class_expected': {'label': None, 'action': None,
++                                    'reported_only': True,
++                                    'features': dict(C02_DECLARED)}}]
++    manifest = {'seed': 'f' * 40, 'generator': {}, 'carriers': carriers}
++    status, text = run_finalize(out, manifest, carriers)
++    check('red: tuple under `class_expected.features` only (R41-CL1) -> refused',
++          status == EXIT_DECLARED_TUPLE_UNOBSERVED
++          and not os.path.isfile(os.path.join(out, 'manifest.json')),
++          f'exit={status}')
++
++    # ---- RED: --verify on a MUTATED envelope -----------------------------
++    out, manifest, carriers = make_case(
++        'red-mutated', dict(C02_DECLARED),
++        synth_envelope(['depth-limited', 'extractor-failure', 'unpublished-entry']))
++    state = {'combo_unseen': {'declared_outside': 0, 'combos': 1}}
++    manifest.update(state)
++    saved = OUT_DIR
++    OUT_DIR = out
++    try:
++        stream = io.StringIO()
++        with contextlib.redirect_stdout(stream):
++            before = verify(manifest, carriers)
++        # mutate the produced envelope only (run.json keeps the original shape)
++        mutated = synth_envelope(['depth-limited', 'extractor-failure',
++                                  'unpublished-entry', 'unknown-chunk-handler'])
++        with open(os.path.join(out, 'C02', 'envelope.json'), 'w',
++                  encoding='utf-8') as handle:
++            json.dump(mutated, handle, indent=2)
++        stream = io.StringIO()
++        with contextlib.redirect_stdout(stream):
++            after = verify(manifest, carriers)
++    finally:
++        OUT_DIR = saved
++    check('verify green before the mutation, red after it (envelope on disk)',
++          before == 0 and after != 0, f'before={before} after={after}')
++
++    # ---- PREDICTOR regression: the depth-limited rule, against MEASURED tuples
++    # Every expected tuple below was measured with REA 6.5.0 / unblob 26.6.4 at
++    # --max-depth 1 on a freshly built carrier (round-43 seat R43C1Gen), not
++    # inferred.  The C05 shape is the round-43 dry-run's counterexample: a
++    # damaged LEGACY chunk beside a residue carve publishes a FILE but no
++    # extraction output directory, so it must NOT declare `depth-limited`.
++    def combo_factors(**over):
++        base = dict(base='v4', second_v4=0, links='none', residue=0, wrap=0,
++                    damage=0, dep=0, max_depth=1, endian='be', comp='gzip',
++                    legacy_fixture='pin', legacy_handler='squashfs_v3',
++                    body_v4=True, two_chunk=False, damage_endian='be')
++        base.update(over)
++        return base
++
++    def declared_six(**over):
++        return canonical_tuple(combo_declared(combo_factors(**over)))
++
++    c02_measured = {'handler_set': ['squashfs_v4_be'],
++                    'gap_kinds': ['depth-limited', 'extractor-failure',
++                                  'unpublished-entry'],
++                    'gap_dependencies': [], 'be_argv': 'yes',
++                    'symlink_removed': False, 'published': 'nonzero'}
++    c05_measured = {'handler_set': ['squashfs_v3'],
++                    'gap_kinds': ['extractor-failure', 'unknown-chunk-handler'],
++                    'gap_dependencies': [], 'be_argv': 'yes',
++                    'symlink_removed': False, 'published': 'nonzero'}
++    cases = [
++        ('C02 shape: v4 damage at depth 1 (failing chunk, published tree)',
++         dict(damage=1, links='in-tree'), c02_measured),
++        ('C05 shape: legacy damage + residue at depth 1 (carve is not an '
++         'extraction directory)',
++         dict(base='legacy', body_v4=False, damage=1, residue=1), c05_measured),
++        ('legacy clean + residue at depth 1',
++         dict(base='legacy', body_v4=False, residue=1),
++         {'handler_set': ['squashfs_v3'],
++          'gap_kinds': ['depth-limited', 'unknown-chunk-handler'],
++          'gap_dependencies': [], 'be_argv': 'n/a',
++          'symlink_removed': False, 'published': 'nonzero'}),
++        ('legacy + v4 sibling, damage + residue at depth 1',
++         dict(base='legacy', second_v4=1, body_v4=True, two_chunk=True,
++              damage=1, residue=1),
++         {'handler_set': ['squashfs_v3', 'squashfs_v4_be'],
++          'gap_kinds': ['depth-limited', 'extractor-failure',
++                        'unknown-chunk-handler'],
++          'gap_dependencies': [], 'be_argv': 'yes',
++          'symlink_removed': False, 'published': 'nonzero'}),
++        ('v4 damage + residue at depth 1',
++         dict(damage=1, residue=1),
++         {'handler_set': ['squashfs_v4_be'],
++          'gap_kinds': ['depth-limited', 'extractor-failure',
++                        'unknown-chunk-handler'],
++          'gap_dependencies': [], 'be_argv': 'yes',
++          'symlink_removed': False, 'published': 'nonzero'}),
++    ]
++    for name, factors_over, measured in cases:
++        declared = declared_six(**factors_over)
++        check(f'predictor: {name}', declared == canonical_tuple(measured),
++              '' if declared == canonical_tuple(measured)
++              else f'declared {declared} != measured {canonical_tuple(measured)}')
++    # the same C05 flags with a dependency failure must not declare it either
++    dep_declared = declared_six(base='legacy', body_v4=False, damage=1,
++                                dep=1, residue=1)
++    check('predictor: legacy damage + residue + dependency failure at depth 1',
++          'depth-limited' not in dep_declared['gap_kinds'],
++          f"gaps={dep_declared['gap_kinds']}")
++    # the depth ceiling only exists at max_depth == 1
++    deep = declared_six(base='legacy', body_v4=False, damage=1, residue=1,
++                        max_depth=3)
++    check('predictor: the C05 shape at max_depth 3 declares no depth-limited',
++          'depth-limited' not in deep['gap_kinds'], f"gaps={deep['gap_kinds']}")
++
++    # ---- GATE: the C05 shape, green when declared right and red when the
++    # declaration adds `depth-limited` (the exact over-prediction the round-43
++    # dry-run caught).  Inline envelope = the measured C05 tuple above.
++    c05_envelope = synth_envelope(['extractor-failure', 'unknown-chunk-handler'],
++                                  handler='squashfs_v3', files=2, be='yes')
++    out, manifest, carriers = make_case('c05-green', dict(c05_measured),
++                                       c05_envelope)
++    status, text = run_finalize(out, manifest, carriers)
++    check('C05 green: declared == observed (no depth-limited) -> manifest written',
++          status == 0 and os.path.isfile(os.path.join(out, 'manifest.json')),
++          f'exit={status}')
++    c05_over = dict(c05_measured,
++                    gap_kinds=['depth-limited', 'extractor-failure',
++                               'unknown-chunk-handler'])
++    out, manifest, carriers = make_case('c05-red', c05_over, c05_envelope)
++    status, text = run_finalize(out, manifest, carriers)
++    check('C05 red: a declaration that ADDS depth-limited -> refused, no manifest',
++          status == EXIT_DECLARED_TUPLE_UNOBSERVED
++          and not os.path.isfile(os.path.join(out, 'manifest.json'))
++          and 'depth-limited' in text,
++          f'exit={status}')
++
++    failed = [name for name, ok, _ in checks if not ok]
++    print(f"\ntuple-check selftest: {len(checks) - len(failed)}/{len(checks)} passed")
++    if failed:
++        print(f"failed: {', '.join(failed)}")
++        return 1
++    return 0
++
++
+ def run_selftest(seed, writer, scratch_root, pins, fixtures_dir, cache_dir,
+                  fetch):
+     """Same seed twice -> identical manifest and carriers; other seed -> different."""
+@@ -3255,7 +3976,9 @@
+             print(f'\n{len(failed)} selftest check(s) failed: {", ".join(failed)}')
+             return 1
+         print(f'\nall {len(checks)} selftest checks passed')
+-        return 0
++        # ROUND 43: the measured-finalization suite (offline, inline fixtures).
++        print('\n-- measured finalization (QUALITY 85 / R42-CL1) --')
++        return run_tuple_selftest(scratch_root)
+     finally:
+         shutil.rmtree(work, ignore_errors=True)
+ 
+@@ -3264,19 +3987,33 @@
+     global OUT_DIR, WRITER_PATH, OOD_OP, ACTIONS, ACTION_SET_NAME, ACTION_SOURCE
+     global FIXTURE_PINS_PATH, FIXTURE_PINS_LOGICAL, ALLOW_UNSEEN_MINORITY
+     parser = argparse.ArgumentParser(
+-        description='Deterministic R42-C2 held-out SquashFS carrier generator '
+-                    '(table-v4 classes, amendment A1).')
+-    parser.add_argument('--seed', required=True,
+-                        help='hex seed (the freeze commit hash)')
+-    parser.add_argument('--out', help='output directory (required unless --selftest)')
++        description='Deterministic R43-C1 held-out SquashFS carrier generator '
++                    '(table-v4 classes; the manifest is FINALIZED from a '
++                    'measurement, QUALITY 85 / R42-CL1).')
++    parser.add_argument('--seed',
++                        help='hex seed (the freeze commit hash); required except '
++                             'with --tuple-check (a read-only check reads no seed)')
++    parser.add_argument('--out', help='output directory (required unless --selftest '
++                                      'or --tuple-check)')
+     parser.add_argument('--classes', default=','.join(DEFAULT_CLASSES),
+                         help='comma-separated recipe names (default: all classes)')
+     parser.add_argument('--run', action='store_true',
+                         help='run REA per carrier in its arm')
++    parser.add_argument('--carriers-only', action='store_true',
++                        help='build the carriers and their per-carrier files but '
++                             'write NO manifest (the measured finalization is '
++                             'skipped): use it to regenerate carriers for a '
++                             'byte-identity check without producing a manifest')
++    parser.add_argument('--tuple-check',
++                        help='read-only: run ONLY the declared-vs-observed tuple '
++                             'check against an existing held-out directory (needs '
++                             'no --seed/--out); exits 3 declared_tuple_unobserved '
++                             'on any difference')
+     parser.add_argument('--verify', action='store_true',
+-                        help='with --run: compare every envelope to its declared '
+-                             'tuple, score combo_unseen_majority, regenerate the '
+-                             'whole set byte-identically; exit 1 on any failure')
++                        help='with --run: re-run the tuple check over the envelopes '
++                             'on disk, compare every envelope to its declared tuple, '
++                             'score combo_unseen_majority, regenerate the seed-'
++                             'determined set byte-identically; exit 1 on any failure')
+     parser.add_argument('--ood-op', default=DEFAULT_OOD_OP,
+                         help='non-extract-firmware REA operation for the '
+                              'out-of-domain class (default: %(default)s)')
+@@ -3324,9 +4061,18 @@
+                         help='keep REA output dirs in scratch (debug only)')
+     parser.add_argument('--selftest', action='store_true',
+                         help='determinism selftest (no --out needed)')
++    parser.add_argument('--selftest-tuple', action='store_true',
++                        help='OFFLINE selftest of the measured finalization '
++                             '(inline fixtures, no REA, no writer, no fixtures): '
++                             'green write + every refusal red case')
+     args = parser.parse_args(argv)
+ 
+-    seed = args.seed.strip()
++    seed = (args.seed or '').strip()
++    if args.tuple_check:
++        return run_tuple_check_dir(os.path.abspath(args.tuple_check))
++    if args.selftest_tuple:
++        # Fully offline: it needs neither the writer, the pins, nor REA.
++        return run_tuple_selftest(args.scratch)
+     if len(seed) < 16 or any(ch not in '0123456789abcdefABCDEF' for ch in seed):
+         raise SystemExit(f'--seed must be at least 16 hex characters, got {seed!r}')
+ 
+@@ -3347,9 +4093,7 @@
+                          'sha256': sha256_file(args.actions_file),
+                          'tokens': tokens}
+     FIXTURE_PINS_PATH = os.path.abspath(args.fixture_pins)
+-    FIXTURE_PINS_LOGICAL = (
+-        FIXTURE_PINS_NAME if os.path.dirname(FIXTURE_PINS_PATH)
+-        == os.path.dirname(os.path.abspath(__file__)) else FIXTURE_PINS_PATH)
++    FIXTURE_PINS_LOGICAL = pins_logical_path(FIXTURE_PINS_PATH)
+     ALLOW_UNSEEN_MINORITY = args.allow_unseen_minority
+     pins = load_fixture_pins(FIXTURE_PINS_PATH)
+     writer = load_writer(WRITER_PATH)
+@@ -3363,53 +4107,75 @@
+                             cache_dir, args.fetch)
+ 
+     if not args.out:
+-        raise SystemExit('--out is required unless --selftest')
++        raise SystemExit('--out is required unless --selftest/--tuple-check')
+     selected = parse_classes(args.classes)
+     OUT_DIR = os.path.abspath(args.out)
+     if os.path.exists(os.path.join(OUT_DIR, 'manifest.json')):
+         raise SystemExit(f'{OUT_DIR} already holds a manifest.json; use a fresh --out')
+-    scratch = tempfile.mkdtemp(prefix='r42-heldout-',
++    scratch = tempfile.mkdtemp(prefix='r43-heldout-',
+                                dir=os.path.abspath(args.scratch))
+     try:
+-        manifest, carriers = build_set(seed, selected, writer, OUT_DIR, scratch,
+-                                       pins, fixtures_dir, cache_dir, args.fetch)
+-        print(f"manifest {os.path.join(OUT_DIR, 'manifest.json')} "
+-              f"{len(carriers)} carriers, {len({c['label'] for c in carriers})} labels, "
+-              f"{len({(c['label'], c['action']) for c in carriers})} decisions")
+-        if args.run:
+-            failures = 0
+-            for entry in carriers:
+-                recipe = RECIPES.get(entry['class']) or {}
+-                if recipe.get('ood'):
+-                    record = out_of_domain_run(entry, scratch, args.keep_extraction,
+-                                               args.gzip, OOD_OP)
+-                else:
+-                    record = run_rea(entry, scratch, args.keep_extraction, args.gzip)
+-                if 'error' in record:
+-                    failures += 1
+-                    print(f"run {entry['id']} {entry['class']:<26} ERROR "
+-                          f"{record.get('error')} exit={record['exit_code']}")
+-                    continue
+-                print(f"run {entry['id']} {entry['class']:<26} exit={record['exit_code']} "
+-                      f"depth={record.get('max_depth')} "
+-                      f"op={record.get('operation')} prov={record.get('provider')} "
+-                      f"handlers={','.join(record.get('handlers') or []) or '-'} "
+-                      f"failed={','.join(record.get('failed_chunks') or []) or '-'} "
+-                      f"gaps={','.join(record.get('gap_kinds') or []) or '-'} "
+-                      f"deps={','.join(record.get('gap_dependencies') or []) or '-'} "
+-                      f"sr={record.get('symlink_removed')} be={record.get('be_argv')} "
+-                      f"files={record.get('files')} "
+-                      f"{'digest-ok' if record.get('digest_matches_carrier') else 'DIGEST-MISMATCH'}")
+-            if failures:
+-                return 1
++        # ROUND 43: in --run mode the manifest is written ONLY by the finalize
++        # step below, after the measurement agrees with the declaration, so a
++        # refusal leaves no manifest behind.  With --carriers-only nothing is
++        # written at all; without --run the seed-determined manifest is written
++        # as in round 42 (a regeneration has nothing to measure).
++        manifest, carriers = build_set(
++            seed, selected, writer, OUT_DIR, scratch, pins, fixtures_dir,
++            cache_dir, args.fetch,
++            write_manifest=not (args.run or args.carriers_only))
++        summary = (f"{len(carriers)} carriers, "
++                   f"{len({c['label'] for c in carriers})} labels, "
++                   f"{len({(c['label'], c['action']) for c in carriers})} decisions")
++        if not args.run:
++            if args.carriers_only:
++                print(f"carriers-only: {len(carriers)} carriers built, NO manifest "
++                      f"written")
++            else:
++                print(f"manifest {os.path.join(OUT_DIR, 'manifest.json')} {summary}")
+             if args.verify:
+-                status = verify(manifest, carriers)
+-                regen = regen_check(manifest, carriers, seed, selected, writer,
+-                                    pins, fixtures_dir, cache_dir, args.fetch,
+-                                    scratch)
+-                return 1 if (status or regen) else 0
+-        elif args.verify:
+-            raise SystemExit('--verify needs --run (there is no envelope to check)')
++                raise SystemExit('--verify needs --run (there is no envelope to check)')
++            return 0
++        failures = 0
++        for entry in carriers:
++            recipe = RECIPES.get(entry['class']) or {}
++            if recipe.get('ood'):
++                record = out_of_domain_run(entry, scratch, args.keep_extraction,
++                                           args.gzip, OOD_OP)
++            else:
++                record = run_rea(entry, scratch, args.keep_extraction, args.gzip)
++            if 'error' in record:
++                failures += 1
++                print(f"run {entry['id']} {entry['class']:<26} ERROR "
++                      f"{record.get('error')} exit={record['exit_code']}")
++                continue
++            print(f"run {entry['id']} {entry['class']:<26} exit={record['exit_code']} "
++                  f"depth={record.get('max_depth')} "
++                  f"op={record.get('operation')} prov={record.get('provider')} "
++                  f"handlers={','.join(record.get('handlers') or []) or '-'} "
++                  f"failed={','.join(record.get('failed_chunks') or []) or '-'} "
++                  f"gaps={','.join(record.get('gap_kinds') or []) or '-'} "
++                  f"deps={','.join(record.get('gap_dependencies') or []) or '-'} "
++                  f"sr={record.get('symlink_removed')} be={record.get('be_argv')} "
++                  f"files={record.get('files')} "
++                  f"{'digest-ok' if record.get('digest_matches_carrier') else 'DIGEST-MISMATCH'}")
++        if failures:
++            return 1
++        if args.carriers_only:
++            print(f"carriers-only: {len(carriers)} carriers built and run, NO "
++                  f"manifest written (measured finalization skipped)")
++            return 0
++        # ---- ROUND 43: the measured finalization (QUALITY 85 / R42-CL1) ------
++        status = finalize_manifest(OUT_DIR, manifest, carriers)
++        if status:
++            return status
++        print(f"manifest {os.path.join(OUT_DIR, 'manifest.json')} {summary}")
++        if args.verify:
++            status = verify(manifest, carriers)
++            regen = regen_check(manifest, carriers, seed, selected, writer,
++                                pins, fixtures_dir, cache_dir, args.fetch,
++                                scratch)
++            return 1 if (status or regen) else 0
+         return 0
+     finally:
+         shutil.rmtree(scratch, ignore_errors=True)

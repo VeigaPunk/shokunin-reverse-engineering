@@ -1,0 +1,73 @@
+# R43Mistake — evidence verification transcript (re-run 2026-10-27, seat R43Mistake)
+
+All commands run from the lane root /home/vgpnk/Projects/shokunin/kaidoku-shokunin unless noted.
+Lane base for reads: 6b9e64fe7e0de202d9383baad5792fbfe039a743 (lane main at round start).
+
+## 1. Round-42 wave size (candidate 2 evidence)
+
+$ jq '.results|length' .ufo/waves/round-42/r42-w1-results.json
+43
+
+Matches corpus/lessons/round-42-verifier-spotcheck.md §1 D1 ("One v1 wave of 43 seats ... below the run-9 floor of 64").
+
+## 2. Uncommitted pre-file gate citation (candidate 1 evidence)
+
+$ grep -n -i 'gate green' /home/vgpnk/Projects/shokunin/.ufo/reports/round-42/kaidoku.md
+65:- Pre-file gate: `tools/round-42/prefile-gate.py --round 42` GATE GREEN at `af50af81`.
+
+$ grep -rn 'GATE GREEN' .ufo/waves/round-42/ LOG.md SHONEN.md
+.ufo/waves/round-42/w1/artifacts/R42PrefileGate/prefile-gate.py:561:    ("green-clean", None, True, None, 0, ["GATE GREEN"]),
+.ufo/waves/round-42/w1/artifacts/R42PrefileGate/prefile-gate.py:651:    (..., "GATE GREEN"),
+.ufo/waves/round-42/w1/artifacts/R42PrefileGate/prefile-gate.py:666:    (..., "GATE GREEN"),
+.ufo/waves/round-42/w1/artifacts/R42PrefileGate/round-41-real.txt:15:GATE GREEN  (exit 0)
+.ufo/waves/round-42/w1/R42PrefileGate.md:97:GATE GREEN  (exit 0)
+
+Reading: the only non-selftest occurrences are the round-41 live run (round-41-real.txt, R42PrefileGate.md §).
+No committed receipt names a round-42 pre-file gate run at af50af81751bbb02316c9bc9a0459ca96707b0c0.
+=> The report line 65 citation has no committed output, exactly as spot-check §1 D2 states.
+
+## 3. Round-41 file-before-WAVE-DONE (candidate 3 evidence)
+
+$ grep -n 'green.err\|red.err' corpus/lessons/round-41-verifier-spotcheck.md
+25:| nothing uncommitted | git status --porcelain | 2 tracked (M w2/R41W2ReproV4.md, D w2/artifacts/R41W2Reservation/tx-exec-calls.json) + 16 untracked lines (late wave-2 reports ..., stray green.err/red.err in the lane root and in corpus/evidence/round-41/c1/V4/) | defect D1 (disclosed by the L1) |
+92:- D1 — report filed before wave 2's WAVE-DONE; at closure 2 tracked edits + 16 untracked lane paths are uncommitted round work, incl. stray green.err/red.err ...
+
+## 4. QUALITY row numbers at the base (captured-by citations)
+
+$ git show 6b9e64fe7e0de202d9383baad5792fbfe039a743:corpus/QUALITY.md | sed -n '52p;91p'
+(observed rows; row 47 = prefile/settled/clean-tree row; row 52 = cited-runs row)
+
+Row 47, Admission criteria table: "A round is filed only after its last seat has settled, and
+tools/round-29/prefile-check.sh <LANE> exits 0 immediately before the report commit, with its output in
+the report: the lane tree is clean (git status --porcelain empty) and both freeze gates pass with
+--disclosures. ... Fails when the check exits non-zero at filing, is skipped, or its output is absent
+from the report."
+
+Row 52: "A report cites a gate result only when a committed receipt shows that result; otherwise it
+cites only committed runs. For round 31, the cited-runs gate is tools/round-31/cited-runs-gate.py."
+
+QUALITY 72 (referenced inside candidate 4's fix): a gate that reads a counter's receipt cross-checks the
+counter's own numbers; trusting a self-reported flag lets a no-op gate satisfy every clause.
+
+QUALITY 22 (referenced as adjacent to candidate 4): seat-status statements must be reproducible from a
+retained per-seat record.
+
+## 5. Prompt §6 lines (kaidoku-round-43.md, read range 141–253)
+
+- Run-10 paragraph: supersedes run-9 routing/fresh-start/goal-file lines; every other run-9 rule stays binding,
+  including "the 64-128 band, the 256 ceiling".
+- Run-9 'File only after WAVE-DONE' (9 incidents): "an L1 that files before every launched wave settles gets
+  woken by late seat results after its closure. Wait for WAVE-DONE and the <wave>-results.json handoff".
+- Run-9 'Counters that bind seat votes': "parse the seat's final text; seats wrap output unpredictably
+  (run-9 mori r55: JSON-wrapped vote lines failed a counter that bound plain lines). Freeze a parser that
+  accepts both, or bind on files the seat writes."
+- Run-9 'Round size': "64–128 seats in total, every round; 256 is the hard ceiling ... 64 is the floor".
+- Run-8 'Fresh-start rounds': read the last three rejected closures and declare only claims a do-nothing
+  control cannot reach (§9). Round-43 claims doc complies (controls scored at the freeze).
+
+## 6. Exclusion check — M42 rows not re-mined
+
+corpus/lessons/round-42.md ## Mistakes:
+- M42-1 probe frozen on fixtures of one writer (raw-LZMA1 header gap) — not re-mined.
+- M42-2 generator declared tuple it did not observe (C02) — not re-mined; R42-V4 routes to the same defect.
+- M42-3 tool seams found only by end-to-end dry run — not re-mined.

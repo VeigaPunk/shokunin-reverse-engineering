@@ -1,0 +1,22 @@
+### 0. the lane's gate is untouched (sha256 before/after the experiment)
+cafe232a196dd8446bd9b0420b32bf696cba427770eb79edda2be15a45a4ece7  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/local-source-gate.py
+### 1. apply the extension to the sandbox copy only
+patched /fast/scratch/hyaku/kaidoku-r43/w1-R43C2Land/fx.itsh/lane/tools/round-41/local-source-gate.py
+patch exit=0
+### 2. the extended gate still passes its own selftest
+selftest exit=0
+selftest: 23/23 cases
+### 3. the extended gate still greens the round-43 pack
+gate exit=0
+rows_failed [] rows_total 134
+### 4. control: kind compressed WITHOUT encoding must be red
+kind-compressed exit=1
+### 5. control: encoding gzip WITH kind compressed must be green
+encoding-green exit=0
+### 6. control: a bogus encoding must be red
+bad-encoding exit=1
+### 7. control: a members list naming an absent member must be red
+bad-members exit=1
+### 8. the lane's gate is still untouched (sha256 after)
+cafe232a196dd8446bd9b0420b32bf696cba427770eb79edda2be15a45a4ece7  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/local-source-gate.py
+lane-gate-UNCHANGED

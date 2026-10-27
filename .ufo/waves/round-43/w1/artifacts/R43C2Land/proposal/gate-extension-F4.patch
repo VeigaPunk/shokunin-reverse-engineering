@@ -1,0 +1,124 @@
+# Gate vocabulary extension — round-42 finding F4 (calibration defect)
+
+This is a PROPOSAL, not part of the R43-C2 landing pack.  The R43-C2 predicate
+(P43-C2) requires `tools/round-41/local-source-gate.py` to be **byte-identical**
+to the round-41 committed bytes, so this patch MUST NOT be applied to the gate
+before the C2 claim is measured.  It is offered for the next round (or for a
+L1 decision to re-scope P43-C2).
+
+## The defect, measured
+
+The gate's map entry vocabulary is closed (`ENTRY_KEYS`) and its `kind` is a
+closed enum.  A map entry therefore cannot say whether its copy is the source
+bytes, a reversible encoding, or a named member excerpt.  Measured on the
+round-43 pack (receipts/p1-encoding-keys.err, p1b-new-kind.json):
+
+```
+P1  entry gains "encoding": "gzip"        -> exit 2 (map parse error)
+    local-source-gate: map .../local-sources.json: entry for
+    '.../go1.25.0.json' has unknown key(s) encoding
+    (allowed: copy, kind, note, rebuild, sha256, sha256_file, source_sha256)
+P1b entry gains "kind": "compressed"      -> exit 1
+    S023 map-kind-invalid compressed
+```
+
+A green row therefore does not tell a machine reviewer what the copy is; the
+semantics live only in prose `note` fields.  Two of the seventeen copies are
+gzip-encoded (S023) or member excerpts (S003, S082/extra.db), so the class of
+copies that cannot be distinguished mechanically is not empty.
+
+## The patch (three additive changes, no behaviour change for existing maps)
+
+1. `ENTRY_KEYS` gains two optional keys:
+
+```python
+ENTRY_KEYS = {"copy", "sha256", "sha256_file", "kind", "note", "source_sha256",
+              "rebuild", "encoding", "members"}
+```
+
+2. `kind` gains two values, and `encoding` is constrained to a closed set:
+
+```python
+ENTRY_KINDS = ("file", "tree-archive", "compressed", "member-excerpt")
+ENTRY_ENCODINGS = ("gzip",)          # only reversible encodings are admitted
+```
+
+   in `check_path`, replace
+
+```python
+    kind = entry.get("kind")
+    if kind is not None and kind not in ("file", "tree-archive"):
+        return fail("map-kind-invalid", copy=copy, kind=kind)
+```
+
+   with
+
+```python
+    kind = entry.get("kind")
+    if kind is not None and kind not in ENTRY_KINDS:
+        return fail("map-kind-invalid", copy=copy, kind=kind)
+    encoding = entry.get("encoding")
+    if encoding is not None and encoding not in ENTRY_ENCODINGS:
+        return fail("map-encoding-invalid", copy=copy, encoding=encoding)
+    members = entry.get("members")
+    if members is not None:
+        if not isinstance(members, list) or not all(isinstance(m, str) for m in members):
+            return fail("map-members-invalid", copy=copy)
+    # a shape claim must be self-consistent: a compressed copy names its
+    # encoding, and a member excerpt names its members
+    if kind == "compressed" and not encoding:
+        return fail("map-kind-encoding-mismatch", copy=copy, kind=kind)
+    if kind == "member-excerpt" and not members:
+        return fail("map-kind-members-mismatch", copy=copy, kind=kind)
+    # a named member must actually be present in the copy
+    if members and kind in ("tree-archive", "member-excerpt"):
+        import tarfile
+        try:
+            with tarfile.open(copy_abs, "r:") as tar:
+                present = {m.name for m in tar.getmembers()}
+        except tarfile.TarError:
+            present = None
+        if present is not None:
+            absent = [m for m in members if m not in present]
+            if absent:
+                return fail("map-member-absent", copy=copy, absent=absent)
+```
+
+3. A new advisory, reported next to the existing `src[...]` annotation, so a
+   reviewer sees the copy's shape without opening the tar:
+
+```python
+    # Optional shape annotation (advisory only; never changes the exit status).
+    shape = []
+    if encoding:
+        shape.append("encoding=%s" % encoding)
+    if members:
+        shape.append("members=%d" % len(members))
+    if kind in ("compressed", "member-excerpt"):
+        shape.append("kind=%s" % kind)
+```
+
+## What the extension would let the round-43 map say
+
+```json
+"/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/data/typeinfo/golang/go1.25.0.json": {
+  "copy": "corpus/evidence/round-42/local-sources/S023/go1.25.0.json.gz",
+  "sha256": "ad405f00949215aa32de7314ae7fc3fc60303c599c62841afb943dc9a9cb7e05",
+  "kind": "compressed",
+  "encoding": "gzip",
+  "source_sha256": "54d10162f4f55e5a94444f2602f12ef54561326370aa5868ffb325f0c3f16252",
+  ...
+}
+```
+
+## Acceptance for the extension (whenever it is taken up)
+
+* the existing `--selftest` still reports 23/23 (no behaviour change);
+* the round-43 pack still gates green (exit 0, `rows_failed` empty);
+* a map entry with `kind: "compressed"` and no `encoding` is red
+  (`map-encoding-invalid` or a new `map-kind-encoding-mismatch`);
+* a map entry with `members` naming a path the archive does not contain is red.
+
+`build/r43-reverify.py` in this seat's artifacts already checks the member
+lists member-by-member against the live/pinned substrate, which is what the
+`members` key would make the gate do on its own.

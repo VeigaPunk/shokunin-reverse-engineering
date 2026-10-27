@@ -1,0 +1,160 @@
+== generator identity ==
+c2b1641ad6beec0d8eead002520174fb596c574efe44220c4a440917be03a5e1  gen.py
+996c16a0cbb1f3d476f7a2009066a896c83685256617954646d4de2db2fcaa6c  gen-r43.py
+f535e60ee15222a7b0809cf53858e72a82040a519450c562e369224d4fe41188  writer.py
+9f957663c1f21940ec17e32f98485425145b6c4e7eb265a7b12327b629c3da9b  fixtures.json
+
+== (a) FROZEN v4: --out with NO --run writes a manifest with zero envelopes ==
+
+$ python3 -I -B gen.py --seed d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b --out /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-a --classes clean-le --gen /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/writer.py --fixture-pins /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/fixtures.json --scratch /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-tmp-a --fixtures-dir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures
+H01  clean-le                   le/gzip after  clean                      none                             f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  files=6 links=0 depth=3
+H02  clean-le                   le/xz   after  clean                      none                             9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  files=6 links=0 depth=3
+manifest /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-a/manifest.json 2 carriers, 1 labels, 1 decisions
+EXIT=0
+manifest present: yes
+envelopes written: 0
+ee41d057536a99e7c7e7965b360a5f06288428823af38bbcc0600461df84046e  demo-a/manifest.json
+
+== (b) PATCHED: --out with no --run refuses before building (exit 4) ==
+
+$ python3 -I -B gen-r43.py --seed d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b --out /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-b --classes clean-le --gen /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/writer.py --fixture-pins /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/fixtures.json --scratch /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-tmp-a --fixtures-dir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures
+refused: --run is required to write a manifest (--carriers-only builds carriers and never a manifest)
+EXIT=4
+out dir created: no
+
+== (c) PATCHED: --carriers-only builds carriers, never a manifest (exit 0) ==
+
+$ python3 -I -B gen-r43.py --seed d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b --out /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-c --classes clean-le --carriers-only --gen /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/writer.py --fixture-pins /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/fixtures.json --scratch /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-tmp-a --fixtures-dir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures
+H01  clean-le                   le/gzip after  clean                      none                             f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  files=6 links=0 depth=3
+H02  clean-le                   le/xz   after  clean                      none                             9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  files=6 links=0 depth=3
+built 2 carriers into /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-c (1 labels, 1 decisions); no manifest yet
+EXIT=0
+manifest present: no
+f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  demo-c/H01/carrier.sqsh
+9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  demo-c/H02/carrier.sqsh
+
+== (d) PATCHED: full --run, refusal passes, manifest written LAST ==
+
+$ python3 -I -B gen-r43.py --seed d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b --out /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-d --classes clean-le --run --gen /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/writer.py --fixture-pins /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/fixtures.json --scratch /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-tmp-d --fixtures-dir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures
+H01  clean-le                   le/gzip after  clean                      none                             f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  files=6 links=0 depth=3
+H02  clean-le                   le/xz   after  clean                      none                             9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  files=6 links=0 depth=3
+built 2 carriers into /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-d (1 labels, 1 decisions); no manifest yet
+run H01 clean-le                   exit=0 depth=3 op=extract_firmware prov=unblob handlers=squashfs_v4_le failed=- gaps=- deps=- sr=False be=n/a files=6 digest-ok
+run H02 clean-le                   exit=0 depth=3 op=extract_firmware prov=unblob handlers=squashfs_v4_le failed=- gaps=- deps=- sr=False be=n/a files=6 digest-ok
+manifest /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-d/manifest.json written; tuple check PASS 2/2 (all_equal=True)
+EXIT=0
+tuple_check.all_equal True checked 2
+
+== (e) MUTATION: one declared gap added for clean-le -> REFUSE, no manifest (exit 3) ==
+
+$ python3 -I -B demo-lie.py --seed d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b --out /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-e --classes clean-le --run --gen /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/writer.py --fixture-pins /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/fixtures.json --scratch /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-tmp-e --fixtures-dir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures
+H01  clean-le                   le/gzip after  clean                      none                             f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  files=6 links=0 depth=3
+H02  clean-le                   le/xz   after  clean                      none                             9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  files=6 links=0 depth=3
+built 2 carriers into /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-e (1 labels, 1 decisions); no manifest yet
+run H01 clean-le                   exit=0 depth=3 op=extract_firmware prov=unblob handlers=squashfs_v4_le failed=- gaps=- deps=- sr=False be=n/a files=6 digest-ok
+run H02 clean-le                   exit=0 depth=3 op=extract_firmware prov=unblob handlers=squashfs_v4_le failed=- gaps=- deps=- sr=False be=n/a files=6 digest-ok
+REFUSE H01  clean-le  gap_kinds: declared ['extractor-failure'] observed []
+REFUSE H02  clean-le  gap_kinds: declared ['extractor-failure'] observed []
+declared_tuple_unobserved: 2/2 carriers declared a tuple their own envelope does not show; no manifest written
+EXIT=3
+manifest present: no
+
+== (f) CTL-C1-2 RED: the patched generator's --tuple-check on the round-42 held-out set ==
+
+$ python3 -I -B gen-r43.py --tuple-check /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/heldout
+REFUSE C02  combo  gap_kinds: declared ['extractor-failure', 'unpublished-entry'] observed ['depth-limited', 'extractor-failure', 'unpublished-entry']
+tuple check over 78 carriers (77 declare what their envelope shows) -> REFUSE
+EXIT=3
+
+== (g) GREEN on the same 78 envelopes: C02's declared set to what its envelope shows ==
+    (control only, via the standalone prototype's --declared-from; a claim never uses it.
+     The generator-level green is step (d): the real run's own tuple check PASS.)
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43RevRevenger/tuple-check-proto.py --dir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/heldout --declared-from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43RevRevenger/ctl-c1-2-green-declared.json --json-out /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43RevRevenger/ctl-c1-2-green.json
+
+tuple check: 78/78 carriers declare what their own envelope shows  -> PASS
+EXIT=0
+
+== (h) manifest delta: frozen v4 no-run manifest vs patched run manifest ==
+
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43RevRevenger/manifest-delta.py /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-a/manifest.json /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-d/manifest.json
+intended   claim
+           A="R42-C2"
+           B="R43-C1"
+intended   generator.name
+           A="heldout-gen-v4.py"
+           B="heldout-gen-v4r43.py"
+intended   generator.replaces
+           A="<absent>"
+           B={"name": "heldout-gen-v4.py", "version": "r42-c2-v4", "sha256": "c2b1641ad6beec0d8eead0025
+intended   generator.sha256
+           A="c2b1641ad6beec0d8eead002520174fb596c574efe44220c4a440917be03a5e1"
+           B="996c16a0cbb1f3d476f7a2009066a896c83685256617954646d4de2db2fcaa6c"
+intended   generator.version
+           A="r42-c2-v4"
+           B="r43-c1-v4"
+intended   round
+           A=42
+           B=43
+
+6 differing paths, 0 unintended -> PASS
+EXIT=0
+
+== (i) patched --run --verify on the subset (pre-existing combo_unseen FAIL) ==
+
+$ python3 -I -B gen-r43.py --seed d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b --out /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-i --classes clean-le --run --verify --gen /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/writer.py --fixture-pins /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/fixtures.json --scratch /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-tmp-i --fixtures-dir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures
+H01  clean-le                   le/gzip after  clean                      none                             f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  files=6 links=0 depth=3
+H02  clean-le                   le/xz   after  clean                      none                             9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  files=6 links=0 depth=3
+built 2 carriers into /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-i (1 labels, 1 decisions); no manifest yet
+run H01 clean-le                   exit=0 depth=3 op=extract_firmware prov=unblob handlers=squashfs_v4_le failed=- gaps=- deps=- sr=False be=n/a files=6 digest-ok
+run H02 clean-le                   exit=0 depth=3 op=extract_firmware prov=unblob handlers=squashfs_v4_le failed=- gaps=- deps=- sr=False be=n/a files=6 digest-ok
+manifest /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-i/manifest.json written; tuple check PASS 2/2 (all_equal=True)
+
+== dev feature table (observed vs DECLARED_FEATURES; labels are the evaluator's) ==
+H01  clean-le                   MATCH {"be_argv": "n/a", "extraction_failed": false, "gap_dependencies": [], "gap_kinds": [], "handler_set": ["squashfs_v4_le"], "max_depth": 3, "published": "nonzero", "symlink_removed": false}
+H02  clean-le                   MATCH {"be_argv": "n/a", "extraction_failed": false, "gap_dependencies": [], "gap_kinds": [], "handler_set": ["squashfs_v4_le"], "max_depth": 3, "published": "nonzero", "symlink_removed": false}
+
+2/2 carriers reached their declared tuple
+combo_unseen_majority: observed 0/0 combos outside the named declared-tuple union (declared prediction 0/0) FAIL
+H01  clean-le                   le/gzip after  clean                      none                             f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  files=6 links=0 depth=3
+H02  clean-le                   le/xz   after  clean                      none                             9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  files=6 links=0 depth=3
+PASS  regen: manifest bytes identical (generator.tuple_check excluded)  c31e7379b4b32701 vs c31e7379b4b32701
+PASS  regen: every carrier byte-identical  2/2
+PASS  regen: every tree.json byte-identical  2/2
+EXIT=1
+
+== (j) frozen v4 --run --verify on the same subset: regen manifest == the no-run manifest ==
+
+$ python3 -I -B gen.py --seed d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b --out /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-j --classes clean-le --run --verify --gen /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/writer.py --fixture-pins /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/fixtures.json --scratch /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-tmp-j --fixtures-dir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures
+H01  clean-le                   le/gzip after  clean                      none                             f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  files=6 links=0 depth=3
+H02  clean-le                   le/xz   after  clean                      none                             9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  files=6 links=0 depth=3
+manifest /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-j/manifest.json 2 carriers, 1 labels, 1 decisions
+run H01 clean-le                   exit=0 depth=3 op=extract_firmware prov=unblob handlers=squashfs_v4_le failed=- gaps=- deps=- sr=False be=n/a files=6 digest-ok
+run H02 clean-le                   exit=0 depth=3 op=extract_firmware prov=unblob handlers=squashfs_v4_le failed=- gaps=- deps=- sr=False be=n/a files=6 digest-ok
+
+== dev feature table (observed vs DECLARED_FEATURES; labels are the evaluator's) ==
+H01  clean-le                   MATCH {"be_argv": "n/a", "extraction_failed": false, "gap_dependencies": [], "gap_kinds": [], "handler_set": ["squashfs_v4_le"], "max_depth": 3, "published": "nonzero", "symlink_removed": false}
+H02  clean-le                   MATCH {"be_argv": "n/a", "extraction_failed": false, "gap_dependencies": [], "gap_kinds": [], "handler_set": ["squashfs_v4_le"], "max_depth": 3, "published": "nonzero", "symlink_removed": false}
+
+2/2 carriers reached their declared tuple
+combo_unseen_majority: observed 0/0 combos outside the named declared-tuple union (declared prediction 0/0) FAIL
+H01  clean-le                   le/gzip after  clean                      none                             f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  files=6 links=0 depth=3
+H02  clean-le                   le/xz   after  clean                      none                             9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  files=6 links=0 depth=3
+PASS  regen: manifest bytes identical  ee41d057536a99e7 vs ee41d057536a99e7
+PASS  regen: every carrier byte-identical  2/2
+PASS  regen: every tree.json byte-identical  2/2
+EXIT=1
+ee41d057536a99e7c7e7965b360a5f06288428823af38bbcc0600461df84046e  demo-a/manifest.json
+ee41d057536a99e7c7e7965b360a5f06288428823af38bbcc0600461df84046e  demo-j/manifest.json
+
+== (k) C02-shape incidence over 500 seeds (frozen combo_draw/combo_factors) ==
+{
+ "seeds": 500,
+ "seeds_with_at_least_one_c02_shape": 211,
+ "rate": 0.422,
+ "c02_shapes_per_24_combos": 0.578,
+ "max_per_seed": 4
+}
+example: seed 3f2fc272966f2ff0a691eb09037fff0deed65ceb combo C10 factors {"base": "v4", "body_v4": true, "damage": 1, "dep": 0, "links": "none", "max_depth": 1, "residue": 0, "second_v4": 0, "wrap": 0}
+  frozen combo_declared -> {"be_argv": "no", "gap_dependencies": [], "gap_kinds": ["extractor-failure"], "handler_set": ["squashfs_v4_le"], "published": "nonzero", "symlink_removed": false}
+  observed on the round-42 C02 carrier -> {"be_argv":"yes","gap_dependencies":[],"gap_kinds":["depth-limited","extractor-failure","unpublished-entry"],"handler_set":["squashfs_v4_be"],"published":"nonzero","symlink_removed":false}

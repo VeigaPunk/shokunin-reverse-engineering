@@ -1,0 +1,37 @@
+# interpreter / command-A / patch-apply evidence — round 43 seat R43SkillMark (R42-V3)
+# edited SKILL sha256 = 32fb1a265da04c07c958cf04a4f4552bdec94fb527ef863cf1e08e313c03b724
+# base   SKILL sha256 = 2288e088bf611985b4c9397220837c7e6008ca97fbd5003a1610d0072fc1b3f0
+# patch        sha256 = 7378eccbf5b45317bb94d528f3fb5bf4c7f818b7fbfc21a5c4e74055b9f7377f
+
+## frozen interpreter identity (git show copy of tools/round-42/sqfs-triage-v4.py)
+497bab6766a0b0c6d6f36cb58cadc531bddf9dd3231f6100bf46cf6ff552a2e9  /fast/scratch/hyaku/kaidoku-r43/w1-R43SkillMark/sqfs-triage-v4.py
+git blob base=79265904ff0234ed505d9daedf4cfe570c5cf12f freeze=79265904ff0234ed505d9daedf4cfe570c5cf12f (equal)
+
+## patch applies to a pristine clone at base 6b9e64fe
+git apply --check -p1 <patch> -> exit 0
+git apply -p1 <patch>         -> exit 0; result cmp-equal to SKILL.edited.md
+fixture commit rev = affcac31d0d9e62b7d5da8d0e4ceb635f8686402
+
+## --table-only on the edited SKILL
+marker line: 521  actions line: 522  table line: 523  rules: 15
+marker line: 525  actions line: 526  table line: 527  rules: 15
+rules parsed = 15; rule text + actions identical to base
+
+## labels, 3 required committed dev envelopes (frozen interpreter CLI)
+corpus/evidence/round-42/c2/dev/C02/envelope.json	partial-body-failure	salvage-partial
+corpus/evidence/round-42/c2/dev/H11/envelope.json	mixed-symlinks	audit-symlinks
+corpus/evidence/round-42/c2/dev/H23/envelope.json	no-squashfs-chunk	inspect-input
+diff base vs edited: identical (empty)
+
+## labels, all 78 committed dev envelopes (superset)
+diff base vs edited: identical (78 lines)
+914bf9c457d93e29c51c95175d20fa52a008a87a617f2005f7104484b6102af3  labels-cli.base.txt
+914bf9c457d93e29c51c95175d20fa52a008a87a617f2005f7104484b6102af3  labels-cli.edited.txt
+
+## SCORECARD.md command A (recipe A verbatim, run with cwd = the fixture clone)
+base   6b9e64fe: {"citation_resolved_rules": 21, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 135, "mapped": 135, "missing": [], "revision": "6b9e64fe7e0de202d9383baad5792fbfe039a743", "rule_blocks": 21}
+edited affcac31d0d9e62b7d5da8d0e4ceb635f8686402: {"citation_resolved_rules": 21, "coverage_score": 10.0, "dangling": [], "depth_score": 10.0, "knowledge_files": 135, "mapped": 135, "missing": [], "revision": "affcac31d0d9e62b7d5da8d0e4ceb635f8686402", "rule_blocks": 21}
+
+## citation-drift probe (same probe, two revisions)
+findings: 11 -> 11
+full-output diff differs only in CITATION_DRIFT_REV_REQUESTED/RESOLVED

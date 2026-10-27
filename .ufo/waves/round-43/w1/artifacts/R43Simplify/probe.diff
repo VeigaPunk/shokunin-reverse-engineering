@@ -1,0 +1,281 @@
+--- c2-counter.py	2026-10-27 05:17:59.214296644 -0300
++++ /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43Simplify/yagni-probe/c2-counter.py	2026-10-27 05:24:28.961393876 -0300
+@@ -112,9 +112,9 @@
+ GEN = 'tools/round-42/heldout-gen-v4.py'
+ COUNTER = 'tools/round-42/c2-counter.py'
+ LOOKUP = '.ufo/waves/round-42/controls/c2/CTL-C2-7-lookup.md'
+-LOOKUP_7B = '.ufo/waves/round-42/controls/c2/CTL-C2-7b-lookup-fallback.md'
++FIXTURES_DIR = 'corpus/evidence/round-42/c2/fixtures'
+ 
+-FROZEN_PATHS = (CLAIMS, 'tools/round-42', MANIFEST_DIR, LOOKUP, LOOKUP_7B)
++FROZEN_PATHS = (CLAIMS, 'tools/round-42', MANIFEST_DIR, LOOKUP, FIXTURES_DIR)
+ WRITER_CANDIDATES = ('tools/round-41/gen-squashfs.py',
+                      'tools/round-40/gen-squashfs.py',
+                      'tools/round-39/gen-squashfs.py')
+@@ -153,9 +153,7 @@
+ DEV_DIRS = ('corpus/evidence/round-42/c2/dev',
+             '.ufo/waves/round-42/controls/c2/dev')
+ DEV_MIN = 4
+-LEGACY_LABEL = 'legacy-body-failure'
+ LEGACY_HANDLER_PREFIXES = ('squashfs_v1', 'squashfs_v2', 'squashfs_v3')
+-V4_HANDLER_PREFIX = 'squashfs_v4'
+ 
+ # (H, G, D, BE, SR, P) as the round-41 features, plus `extraction_failed`.
+ FEATURE_KEYS = ('handler_set', 'gap_kinds', 'gap_dependencies', 'be_argv',
+@@ -172,8 +170,6 @@
+     'carriers_committed', 'envelopes_valid', 'manifest_after_freeze',
+     'manifest_before_envelopes', 'v4_block_present', 'v4_block_identical',
+     'evaluator_covers_all', 'observed_features_match_declared',
+-    'legacy_chunks_not_no_squashfs', 'new_legacy_label_exercised',
+-    'handler_families_exercised',
+     'lookup_control_identical', 'combo_unseen_majority',
+     'real_receipts_depth_limited', 'legacy_dev_envelopes',
+ )
+@@ -339,17 +335,6 @@
+     return [r[i] for r in rows if i < len(r)]
+ 
+ 
+-def row_cells(block, label):
+-    header, rows = parse_rows(block)
+-    if not header or 'label' not in header:
+-        return None, None
+-    i = header.index('label')
+-    for r in rows:
+-        if i < len(r) and r[i] == label:
+-            return header, r
+-    return header, None
+-
+-
+ def declared_actions(block):
+     if not block:
+         return None
+@@ -410,31 +395,6 @@
+     return scope
+ 
+ 
+-def fixture_scope(root, freeze, man):
+-    """Lane-relative fixture files the manifest pins: frozen like writers."""
+-    out = {}
+-    fx = man.get('fixtures') if isinstance(man, dict) else None
+-    items = []
+-    if isinstance(fx, list):
+-        items = fx
+-    elif isinstance(fx, dict):
+-        items = [dict(v, **({'name': k} if isinstance(v, dict) else {}))
+-                 for k, v in fx.items()]
+-    for it in items:
+-        if not isinstance(it, dict):
+-            continue
+-        p = it.get('path')
+-        if not isinstance(p, str) or not p or p.startswith('/') \
+-                or '..' in p.split('/'):
+-            continue
+-        has = present(root, freeze, p)
+-        out[p] = {'declared_sha256': it.get('sha256'),
+-                  'present_at_freeze': has,
+-                  'sha256_at_freeze': sha256_bytes(show(root, freeze, p))
+-                  if has else None}
+-    return out
+-
+-
+ # ------------------------------------------------------------------ scratch
+ def scratch_root():
+     base = os.environ.get('HYAKU_SCRATCH') or tempfile.gettempdir()
+@@ -1058,7 +1018,6 @@
+     skill_fz = rule_block(as_text(skill_fz_b), MARKER_V4)
+     lookup_fz_b = show(root, freeze, LOOKUP)
+     lookup_fz = rule_block(as_text(lookup_fz_b), MARKER_V4)
+-    lookup_7b_fz = rule_block(as_text(show(root, freeze, LOOKUP_7B)), MARKER_V4)
+     res['frozen_units'] = {
+         GEN: sha256_bytes(gen_b), EVAL: sha256_bytes(eval_b),
+         INTERP: sha256_bytes(interp_b), COUNTER: sha256_bytes(counter_b),
+@@ -1067,8 +1026,6 @@
+         if skill_fz is not None else None,
+         LOOKUP + ' [' + MARKER_V4 + ']': sha256_bytes(lookup_fz.encode())
+         if lookup_fz is not None else None,
+-        LOOKUP_7B + ' [' + MARKER_V4 + ']': sha256_bytes(lookup_7b_fz.encode())
+-        if lookup_7b_fz is not None else None,
+     }
+ 
+     # ---- freeze integrity: paths, writers, fixtures, and the SKILL block
+@@ -1089,10 +1046,8 @@
+         elif isinstance(w, str):
+             declared = w
+     scope = writer_scope(root, freeze, as_text(gen_b), declared)
+-    fixtures = fixture_scope(root, freeze, man_any or {})
+     res['writer_scope'] = scope
+-    res['fixture_scope'] = fixtures
+-    paths = list(FROZEN_PATHS) + sorted(scope) + sorted(fixtures)
++    paths = list(FROZEN_PATHS) + sorted(scope)
+     bad_paths = frozen_drift(root, freeze, rev, paths)
+     scanned, drift = skill_block_drift(root, freeze, rev, skill_fz)
+     res['skill_block_commits_scanned'] = len(scanned)
+@@ -1463,7 +1418,6 @@
+         # ---- observed features vs the ONE declared key (R41-CL1)
+         by_id = {r['id']: r for r in res['carriers']}
+         feat_missing, feat_bad, feat_classes = [], [], {}
+-        class_families = set()
+         for c in carriers:
+             cid = str(c.get('id', ''))
+             canon = declared_features(c)
+@@ -1483,8 +1437,6 @@
+                 row['features_checked'] = shared
+                 row['features_match'] = not bad
+                 row['declared_features'] = canon
+-            if str(c.get('class')) != COMBO_CLASS:
+-                class_families |= set(canon['handler_set'])
+             if bad:
+                 feat_bad.append({'id': cid, 'class': c.get('class'), 'differ': bad,
+                                  'declared': {k: canon[k] for k in shared},
+@@ -1501,62 +1453,6 @@
+                              'missing': feat_missing,
+                              'mismatch': feat_bad}
+ 
+-        # ---- R41-CL4: a v1-v3 chunk is never `no-squashfs-chunk`
+-        legacy_rows = []
+-        legacy_ok = True
+-        for row in res['carriers']:
+-            hs = (row.get('declared_features') or {}).get('handler_set') or []
+-            if not any(h.startswith(LEGACY_HANDLER_PREFIXES) for h in hs):
+-                continue
+-            bad_side = []
+-            if row.get('expected_label') == 'no-squashfs-chunk':
+-                bad_side.append('evaluator')
+-            if row.get('label') == 'no-squashfs-chunk':
+-                bad_side.append('interpreter')
+-            if bad_side:
+-                legacy_ok = False
+-            legacy_rows.append({'id': row['id'], 'class': row.get('class'),
+-                                'handler_set': hs,
+-                                'expected': [row.get('expected_label'),
+-                                             row.get('expected_action')],
+-                                'observed': [row.get('label'), row.get('action')],
+-                                'no_squashfs_side': bad_side})
+-        ns_header, ns_row = row_cells(v4_rev, 'no-squashfs-chunk')
+-        ns_cell = None
+-        if ns_header is not None and ns_row is not None and 'handler' in ns_header:
+-            i = ns_header.index('handler')
+-            if i < len(ns_row):
+-                ns_cell = ns_row[i]
+-        b['legacy_chunks_not_no_squashfs'] = bool(legacy_rows) and legacy_ok \
+-            and ns_cell == 'none'
+-        res['legacy_chunks'] = {'n': len(legacy_rows), 'rows': legacy_rows[:40],
+-                                'no_squashfs_handler_cell': ns_cell,
+-                                'binding': 'no v1-v3 envelope is no-squashfs-chunk '
+-                                           'on either side, and the row handler cell is `none`'}
+-
+-        # ---- the legacy-failure row is present and exercised
+-        expected_labels = {r['expected_label'] for r in res['carriers']
+-                           if not r['combo'] and r['expected_label']}
+-        b['new_legacy_label_exercised'] = LEGACY_LABEL in v4_labels \
+-            and LEGACY_LABEL in expected_labels
+-        res['legacy_label'] = {'label': LEGACY_LABEL,
+-                               'in_table': LEGACY_LABEL in v4_labels,
+-                               'exercised_by_evaluator': LEGACY_LABEL in expected_labels,
+-                               'classes_with_label': sorted(
+-                                   {r.get('class') for r in res['carriers']
+-                                    if r['expected_label'] == LEGACY_LABEL})}
+-
+-        # ---- the whole handler family is exercised by the class envelopes
+-        need_legacy = {'squashfs_v1', 'squashfs_v2', 'squashfs_v3'}
+-        families = sorted(h for h in class_families if h.startswith('squashfs_'))
+-        b['handler_families_exercised'] = need_legacy <= class_families \
+-            and any(f.startswith(V4_HANDLER_PREFIX) for f in class_families)
+-        res['handler_families'] = {'present': families,
+-                                   'present_all': sorted(class_families),
+-                                   'required_legacy': sorted(need_legacy),
+-                                   'v4_present': sorted(f for f in families
+-                                                        if f.startswith(V4_HANDLER_PREFIX))}
+-
+         # ---- the frozen lookup control on the held-out combos
+         lookup_rev_b = show(root, rev, LOOKUP)
+         lookup_rev = rule_block(as_text(lookup_rev_b), MARKER_V4)
+@@ -1758,38 +1654,6 @@
+             'n_combos': len(combos), 'unseen': unseen, 'seen_in_dev': seen_ids,
+             'need': majority_need, 'binding': 'len(unseen) >= ceil(n_combos/2)'}
+ 
+-        # ---- A1: CTL-C2-7b (lookup + majority fallback) — REPORTED, not bound
+-        l7b_b = show(root, rev, LOOKUP_7B)
+-        l7b_rev = rule_block(as_text(l7b_b), MARKER_V4)
+-        l7b_header, l7b_rows = parse_rows(l7b_rev)
+-        l7b_got, l7b_meta, l7b_attempts = {}, {'how': None}, []
+-        l7b_score, l7b_scored = 0, []
+-        if l7b_rev is not None and combos:
+-            l7b_path = os.path.join(idir, 'CTL-C2-7b-lookup-fallback.md')
+-            with open(l7b_path, 'wb') as fh:
+-                fh.write(l7b_b)
+-            combo_paths = [argmap[c['id']] for c in combos if c['id'] in argmap]
+-            l7b_got, l7b_meta = run_interpreter(ipath, l7b_path,
+-                                                sorted(combo_paths), edir,
+-                                                l7b_header, l7b_rows,
+-                                                l7b_attempts)
+-            for c in combos:
+-                v = l7b_got.get(c['id']) or {}
+-                e = exp.get(c['id'])
+-                if e is not None and v.get('label') == e[0] \
+-                        and v.get('action') == e[1]:
+-                    l7b_score += 1
+-                    l7b_scored.append(c['id'])
+-        res['lookup_7b'] = {
+-            'path': LOOKUP_7B, 'present_at_rev': l7b_rev is not None,
+-            'interpreter_interface': l7b_meta.get('how'),
+-            'attempts': l7b_attempts, 'n_combos': n_combos,
+-            'score': l7b_score, 'half': n_combos / 2.0,
+-            'scored_ids': l7b_scored,
+-            'below_half': n_combos > 0 and l7b_score * 2 < n_combos,
+-            'binding': False,
+-            'note': 'A1: scored and reported; CTL-C2-7b is never bound'}
+-
+         # ---- closure D4: the receipt carries the counter digest and exit code
+         counter_rev = show(root, rev, COUNTER)
+         res['counter_sha256'] = sha256_bytes(counter_rev)
+@@ -2174,14 +2038,10 @@
+         act = 'confirm-empty'
+     if MODE == 'disagree_label' and ident == 'H01':
+         lab, act = 'unclassified', 'none'
+-    if MODE == 'legacy_lost' and cls == 'legacy-clean-v1':
+-        lab, act = 'no-squashfs-chunk', 'inspect-input'
+     if MODE == 'omit' and ident == 'H02':
+         continue
+     if MODE == 'real_disagree' and ident == 'V3':
+         lab, act = 'clean', 'none'
+-    if MODE == 'legacy_label_missing' and cls == 'legacy-body-failure-v3':
+-        lab, act = 'body-extractor-failure', 'preserve-failure'
+     out[ident] = {'label': lab, 'action': act}
+ if MODE == 'garbage':
+     print('not json at all')
+@@ -2748,9 +2608,6 @@
+         cu = rec.get('combo_unseen_majority') or {}
+         if not cu.get('unseen') or len(cu.get('unseen')) < cu.get('need', 1):
+             return 'combo_unseen_majority %r' % cu
+-        l7b = rec.get('lookup_7b') or {}
+-        if l7b.get('binding') is not False:
+-            return 'lookup_7b bound'
+         dv = rec.get('dev_envelopes') or {}
+         if dv.get('n', 0) < 4 or not all(r.get('ok') for r in dv.get('rows', [])):
+             return 'dev envelopes %r' % dv
+@@ -2856,24 +2713,6 @@
+         ('red: a combo carrier declares the wrong tuple',
+          dict(muts={'combo_feat_mismatch'}), 1,
+          ['observed_features_match_declared'], []),
+-        # ---- R41-CL4 and the legacy family
+-        ('red: a v1-v3 class labelled no-squashfs-chunk by the evaluator',
+-         dict(emode='legacy_lost'), 1,
+-         ['legacy_chunks_not_no_squashfs'], []),
+-        ('red: the no-squashfs-chunk row carries a non-`none` handler cell',
+-         dict(rows=[r if i else row('no-squashfs-chunk', 'inspect-input',
+-                                    'no-squashfs-*', handler='`*`')
+-                    for i, r in enumerate(ROWS)]), 1,
+-         ['legacy_chunks_not_no_squashfs'], []),
+-        ('red: the legacy-failure row is missing from the v4 table',
+-         dict(rows=[r for r in ROWS if 'legacy-body-failure' not in r[0]]), 1,
+-         ['new_legacy_label_exercised'], []),
+-        ('red: the evaluator never exercises legacy-body-failure',
+-         dict(emode='legacy_label_missing'), 1, ['new_legacy_label_exercised'], []),
+-        ('red: v1/v2 handlers missing from the class envelopes',
+-         dict(classes=[c for c in CLASSES
+-                       if c not in ('legacy-clean-v1', 'legacy-clean-v2')]), 1,
+-         ['handler_families_exercised'], []),
+         # ---- the lookup control
+         ('green: a lookup scoring every combo is reported, not bound',
+          dict(lookup_rows=LOOKUP_FULL), 0, [], [],

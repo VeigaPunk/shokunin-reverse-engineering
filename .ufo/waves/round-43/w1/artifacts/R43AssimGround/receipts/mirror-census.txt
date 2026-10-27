@@ -1,0 +1,64 @@
+R43AssimGround — scratch mirror-lane census (run BEFORE any append, 2026-10-27)
+
+WHAT WAS MIRRORED (scratch only; the lane tree was not touched)
+  S=/fast/scratch/hyaku/kaidoku-r43/w1-R43AssimGround
+  $S/mirror/  <-  git -C <lane> archive 6b9e64fe7e0de202d9383baad5792fbfe039a743 \
+                     corpus SKILL.md tools/round-27/xpin-attribute.mjs | tar -x -C $S/mirror
+                (3247 files, 66 MB; SKILL.md and tools/round-27/xpin-attribute.mjs are copied
+                 because base registry rows S001/S036/S081 cite them as used-by targets)
+  + corpus/SOURCES.md  <- base registry with THIS SEAT'S TWO NORMALIZED ROWS appended inside
+                          the ## Registry section, immediately after the S134 row
+  + corpus/knowledge/2026-10-27-sasquatch-release-matrix.md  <- the admitted entry file
+                        (the entry whose used-by the two rows name)
+
+COMMAND AND EXIT
+  /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate \
+      --file $S/mirror/corpus/SOURCES.md
+  EXIT = 0
+  E-lines (E01..E12) ....... 0
+  W04 warnings .............. 13   (the base registry's own pre-existing duplicate-URL warnings,
+                                  byte-identical to .ufo/waves/round-43/census-start.txt)
+  final line ................. file  ok  $S/mirror/corpus/SOURCES.md
+  (receipts/mirror-census-validate.out)
+
+CENSUS MODE ON THE SAME MIRROR
+  sources-census.sh census --file $S/mirror/corpus/SOURCES.md   -> EXIT 0
+  rows 136 | tier.A 128 | tier.B 7 | tier.C 1 | tier.invalid 0
+  status.mined 131 | status.rejected 5 | status.queued 0 | status.invalid 0
+  FLEET.missing 0
+  (base registry alone: rows 134 -> 136 after the two new rows; the tallies move by exactly
+   the two added rows, so no base row was swapped — the round-34 M34-12 shape is excluded)
+
+WHY THE MIRROR, AND WHAT IT DOES NOT PROVE
+  The census is a fleet-repo instrument; it resolves each mined row's used-by path on disk
+  relative to the registry's directory. Running it against the LIVE lane tree at the base would
+  report E11 for the two new rows, because the entry file does not exist in the lane yet. The
+  scratch mirror carries the base tree plus the three things that would be landed (two rows +
+  the entry), which is the state the freeze will measure. The mirror proves the rows' FIELD
+  SHAPE, id uniqueness, enum compliance, URL/scope uniqueness and used-by resolution; it does
+  not prove the final tree state, which the L1's own post-landing validate must.
+
+CONTROLS — the mirror harness is shown able to fail (all receipts under receipts/)
+
+  CTL-D  baseline (mirror + 2 rows + entry) .............................. exit 0,  0 E-lines
+  CTL-A  used-by target file removed ......... exit 1, E11 x2
+         "E11 S136 missing used-by corpus/knowledge/2026-10-27-sasquatch-release-matrix.md"
+         "E11 S137 missing used-by corpus/knowledge/2026-10-27-sasquatch-release-matrix.md"
+  CTL-B  S136 row duplicated in place ........ exit 1, E03 "duplicate id" + E04 "duplicate url
+         api.github.com/repos/onekey-sec/sasquatch/releases within scope ..."
+  CTL-C  a literal pipe inserted inside the
+         S136 scope cell ...................... exit 1, E01 "S136 fields=12"
+  CTL-E  S136 kind changed to `license` ....... exit 1, E05 "kind=license"
+         (the census kind enum is spec|docs|paper|code|tool|dataset|talk|book|community|own-work;
+          `license` is not in it — independently confirmed by seat R43SrcLicense for the S135 row)
+  CTL-F  S136 row appended AFTER the ## Registry section .................. exit 1, E12
+         "row outside Registry section"
+  CTL-H  the 132 staged rows appended VERBATIM into the mirror ........... exit 1, 266 E-lines:
+         44 x E01 (fields=12 — 44 staged rows carry a literal escaped pipe inside a cell and
+                    therefore split into 14 fields), 88 x E09 (recheck cell is a sentence, not an
+                    ISO date / Nd / symbolic cadence), 2 x E03 (S136, S137 duplicate id),
+         132 x E11 (every staged used-by path is absent from the mirror tree).
+         => the staged file cannot be appended as-is; it must be re-grounded row by row, which
+            is what the two normalized rows do.
+
+  Controls and their receipts: receipts/census-controls.log, receipts/ctl-*.out

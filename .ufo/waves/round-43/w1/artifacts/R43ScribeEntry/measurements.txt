@@ -1,0 +1,66 @@
+## 1. frozen interpreter --table-only (cwd: $S, TMPDIR: $S)
+skill: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/SKILL.md
+marker line: 521  actions line: 522  table line: 523  rules: 15
+actions: none inspect-input install-extractor-be install-extractor-le wrap-extractor-be cross-read-legacy isolate-residue preserve-failure salvage-partial raise-depth audit-symlinks expect-link-absent count-gap confirm-empty
+handler semantics: handler globs over F = the squashfs-prefixed handler names in H (none = F empty); failing handler globs over HF = the handler of every extractor-failure gap row, falling back to F when none records one (A1); * matches an empty set
+exit=0 (interpreter's own exit, not a pipeline's)
+
+## 2. v4 region hash at FREEZE / BASE / HEAD
+d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b  bytes=13856  rows=15  sha256=92540586b8c03dcde511652c0d76ba93cbde8e5f4e79e0b94509192c19b101f2
+6b9e64fe7e0de202d9383baad5792fbfe039a743  bytes=13856  rows=15  sha256=92540586b8c03dcde511652c0d76ba93cbde8e5f4e79e0b94509192c19b101f2
+HEAD  bytes=13856  rows=15  sha256=92540586b8c03dcde511652c0d76ba93cbde8e5f4e79e0b94509192c19b101f2
+
+## 3. frozen tools: sha256 at FREEZE vs BASE vs HEAD
+tools/round-42/sqfs-triage-v4.py d1681696 497bab6766a0b0c6d6f36cb58cadc531bddf9dd3231f6100bf46cf6ff552a2e9
+tools/round-42/sqfs-triage-v4.py 6b9e64fe 497bab6766a0b0c6d6f36cb58cadc531bddf9dd3231f6100bf46cf6ff552a2e9
+tools/round-42/sqfs-triage-v4.py HEAD 497bab6766a0b0c6d6f36cb58cadc531bddf9dd3231f6100bf46cf6ff552a2e9
+tools/round-42/indep-eval-v4.py d1681696 7a135dd36b3cab29d4dfa5b5d6dcf2199c026989549683933f4e6c1fa64dd301
+tools/round-42/indep-eval-v4.py 6b9e64fe 7a135dd36b3cab29d4dfa5b5d6dcf2199c026989549683933f4e6c1fa64dd301
+tools/round-42/indep-eval-v4.py HEAD 7a135dd36b3cab29d4dfa5b5d6dcf2199c026989549683933f4e6c1fa64dd301
+tools/round-42/fixtures.json d1681696 9f957663c1f21940ec17e32f98485425145b6c4e7eb265a7b12327b629c3da9b
+tools/round-42/fixtures.json 6b9e64fe 9f957663c1f21940ec17e32f98485425145b6c4e7eb265a7b12327b629c3da9b
+tools/round-42/fixtures.json HEAD 9f957663c1f21940ec17e32f98485425145b6c4e7eb265a7b12327b629c3da9b
+tools/round-42/heldout-gen-v4.py d1681696 c2b1641ad6beec0d8eead002520174fb596c574efe44220c4a440917be03a5e1
+tools/round-42/heldout-gen-v4.py 6b9e64fe c2b1641ad6beec0d8eead002520174fb596c574efe44220c4a440917be03a5e1
+tools/round-42/heldout-gen-v4.py HEAD c2b1641ad6beec0d8eead002520174fb596c574efe44220c4a440917be03a5e1
+
+## 4. SKILL.md edits since the freeze
+$ git -C $L diff --stat d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b..6b9e64fe7e0de202d9383baad5792fbfe039a743 -- SKILL.md
+ SKILL.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+$ git -C $L diff --stat 6b9e64fe7e0de202d9383baad5792fbfe039a743..HEAD -- SKILL.md
+$ git -C $L log --oneline d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b..HEAD -- SKILL.md
+46486e7a round-42: lesson, QUALITY 85, SCORECARD Round 42 + capability row, LOG, SHONEN, block-21 citation (command A), end census
+
+## 5. S135: unblob 26.6.4 license in the installed distribution
+1068 bytes  /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob-26.6.4.dist-info/licenses/LICENSE
+67303bbde385e13f69e8019f6f8bc77d4ebfce58c2a409952645e3fe4f4d922e  /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob-26.6.4.dist-info/licenses/LICENSE
+
+## 6. S112/S118 installed-file pins
+2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287  /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/filesystem/squashfs.py
+1bb498119429ed80ae29caf9772d2b6210c22b6a8a2c8beb6cfea94550bcd23a  /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/extractor.py
+
+## 7. S119: re-fetched 6.5.0 tarball in $S/rea65 (scratch), never installed, never on PATH
+531717a06e92ca651aab52691190f916fac044272c01f875e22c5e293218e699  /fast/scratch/hyaku/kaidoku-r43/w1-R43ScribeEntry/rea65/rea-agents-6.5.0.tgz
+bb4f3246bee70a5b32b048e5ef956e649626b6449b1d457454440739a8d51029  /fast/scratch/hyaku/kaidoku-r43/w1-R43ScribeEntry/rea65/package/dist/firmware/FirmwarePublication.js
+version 6.5.0
+
+## 8. round-42 stop receipt: facts, and where its bytes are committed
+argv        : tools/round-42/c2-counter.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev eb8215ac87860f0e52745a4f842485bf8a6fe3b8 --freeze d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b --json-out .ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json
+exit_code   : 1
+freeze      : d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b
+matched/n   : 78 / 78 (pair_match true: 78 )
+features ok : 77 of 78
+bindings_false: ['observed_features_match_declared']
+mismatch    : [{"class": "combo", "declared": {"be_argv": "yes", "gap_dependencies": [], "gap_kinds": ["extractor-failure", "unpublished-entry"], "handler_set": ["squashfs_v4_be"], "published": "nonzero", "symlink_removed": false}, "differ": ["gap_kinds"], "id": "C02", "observed": {"be_argv": "yes", "gap_dependencies": [], "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"], "handler_set": ["squashfs_v4_be"], "published": "nonzero", "symlink_removed": false}}]
+classes     : 28 distinct, combo=24, named=27 all two-each={2}
+rows/decisions: 15 rows, 16 decision pairs
+combo unseen : 19 need 12
+lookup score : 19 of 24
+receipt at HEAD blob: 9989e1c41d0fd393a03647ee128c04c8cdf1d1ee
+commits touching it: d4b4b4fb
+fatal: path '.ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json' exists on disk, but not in 'eb8215ac87860f0e52745a4f842485bf8a6fe3b8'
+present at stop rev: False
+
+## 9. what round-43 tool code exists at the base
+  ls: cannot access '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-43': No such file or directory

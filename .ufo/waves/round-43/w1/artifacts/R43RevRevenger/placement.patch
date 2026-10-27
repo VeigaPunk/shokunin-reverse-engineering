@@ -1,0 +1,423 @@
+--- gen.py	2026-10-27 05:17:35.154254976 -0300
++++ gen-r43.py	2026-10-27 05:22:55.615968789 -0300
+@@ -143,7 +143,16 @@
+ # A run without -B must not drop tools/round-39/__pycache__ into the lane.
+ sys.dont_write_bytecode = True
+ 
+-VERSION = 'r42-c2-v4'
++VERSION = 'r43-c1-v4'
++# R43 exit codes.  3 is the claim's own token for the refusal the round-42
++# generator lacked (`declared_tuple_unobserved`); 4 is the no-run refusal, kept
++# distinct so a control can tell "ran and mismatched" from "never observed".
++REFUSAL_UNOBSERVED = 3
++REFUSAL_NO_RUN = 4
++# The frozen round-42 bytes this file is a port of (provenance, recorded in the
++# manifest under generator.replaces).
++REPLACES = {'name': 'heldout-gen-v4.py', 'version': 'r42-c2-v4',
++            'sha256': 'c2b1641ad6beec0d8eead002520174fb596c574efe44220c4a440917be03a5e1'}
+ ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789_-'
+ CARRIERS_PER_CLASS = 2
+ REA_PACKAGE = 'rea-agents@6.5.0'
+@@ -2809,11 +2818,12 @@
+             f'Re-run with --allow-unseen-minority only to inspect the set.')
+     manifest = {
+         'seed': seed,
+-        'round': 42,
+-        'claim': 'R42-C2',
++        'round': 43,
++        'claim': 'R43-C1',
+         'generator': {
+-            'name': 'heldout-gen-v4.py',
++            'name': 'heldout-gen-v4r43.py',
+             'version': VERSION,
++            'replaces': dict(REPLACES),
+             'sha256': sha256_file(os.path.abspath(__file__)),
+             'carriers_per_class': CARRIERS_PER_CLASS,
+             'writer': {
+@@ -2939,9 +2949,6 @@
+         'classes': list(classes),
+         'carriers': carriers,
+     }
+-    with open(os.path.join(out_dir, 'manifest.json'), 'w', encoding='utf-8') as handle:
+-        json.dump(manifest, handle, indent=2)
+-        handle.write('\n')
+     for entry in carriers:
+         extra = details[entry['id']]
+         corruption = extra['corruption'] or {}
+@@ -2958,6 +2965,28 @@
+     return manifest, carriers
+ 
+ 
++def serialize_manifest(manifest, drop_tuple_check=False):
++    """The manifest's bytes, exactly as `write_manifest` emits them.
++
++    R43 (QUALITY 85): `build_set` no longer writes the manifest -- the only write
++    is `write_manifest`, reached from `main` AFTER a full `--run` pass and a
++    passing refusal check.  `--verify`'s regen arm and `--selftest` compare this
++    serialization in memory, so neither has to create an unobserved manifest file
++    to compare bytes.
++    """
++    obj = manifest
++    if drop_tuple_check:
++        obj = json.loads(json.dumps(manifest))
++        (obj.get('generator') or {}).pop('tuple_check', None)
++    return (json.dumps(obj, indent=2) + '\n').encode('utf-8')
++
++
++def write_manifest(manifest, out_dir):
++    """The ONLY manifest write in this program (callers must have observed)."""
++    with open(os.path.join(out_dir, 'manifest.json'), 'wb') as handle:
++        handle.write(serialize_manifest(manifest))
++
++
+ # ---------------------------------------------------------------------------
+ # dev proof: observed feature tuple vs the generator's own expectation
+ # ---------------------------------------------------------------------------
+@@ -2975,6 +3004,144 @@
+     }
+ 
+ 
++def read_envelope(out_dir, carrier_id):
++    """The full `{ok, data, meta}` envelope for one carrier, or None."""
++    dest = os.path.join(out_dir, carrier_id)
++    plain = os.path.join(dest, 'rea-full.json')
++    if os.path.isfile(plain):
++        with open(plain, encoding='utf-8') as handle:
++            return json.load(handle)
++    packed = plain + '.gz'
++    if os.path.isfile(packed):
++        with gzip.open(packed, 'rt', encoding='utf-8') as handle:
++            return json.load(handle)
++    return None
++
++
++def collect_observed(out_dir, carriers):
++    """id -> observed tuple, RE-DERIVED from each emitted envelope.
++
++    R43 (QUALITY 85): the round-42 `--verify` read `run.json`, which is the
++    generator's own summary of the same in-memory shape.  The refusal reads the
++    envelope itself (`rea-full.json`), so the observation is made from the bytes
++    the run emitted, and the check can be re-run by a counter on a committed
++    directory with no generator state at all.
++    """
++    observed, missing, unparsable = {}, [], []
++    for entry in carriers:
++        cid = str(entry['id'])
++        try:
++            full = read_envelope(out_dir, cid)
++        except Exception as exc:
++            unparsable.append(f'{cid}: {exc!r}'.replace('\n', ' ')[:160])
++            continue
++        if full is None:
++            missing.append(cid)
++            continue
++        data, _sha, shape = _envelope_parts(full)
++        if data is None:
++            unparsable.append(f'{cid}: no data object')
++            continue
++        observed[cid] = observed_features(shape)
++    return observed, missing, unparsable
++
++
++def refusal_check(out_dir, carriers):
++    """R43 refusal: every carrier's observed six-field tuple == its declared one.
++
++    Returns a verdict dict; it never writes and never mutates a carrier.  `ok`
++    is false when any carrier mismatches, carries no declared tuple, or has no
++    usable envelope -- a missing observation is a refusal, never a pass.
++    """
++    observed, missing, unparsable = collect_observed(out_dir, carriers)
++    rows, mismatched = [], []
++    for entry in carriers:
++        cid = str(entry['id'])
++        declared = entry.get(DECLARED_KEY)
++        got = observed.get(cid)
++        if not isinstance(declared, dict):
++            rows.append({'id': cid, 'class': entry.get('class'),
++                         'verdict': 'no_declared_tuple', 'diff': []})
++            mismatched.append(cid)
++            continue
++        declared6 = {key: declared.get(key) for key in DECLARED_FIELDS}
++        if got is None:
++            rows.append({'id': cid, 'class': entry.get('class'),
++                         'verdict': 'no_envelope', 'diff': []})
++            mismatched.append(cid)
++            continue
++        observed6 = {key: got[key] for key in DECLARED_FIELDS}
++        diff = [{'field': key, 'declared': declared6[key], 'observed': observed6[key]}
++                for key in DECLARED_FIELDS if declared6[key] != observed6[key]]
++        rows.append({'id': cid, 'class': entry.get('class'),
++                     'verdict': 'match' if not diff else 'mismatch',
++                     'declared': declared6, 'observed': observed6,
++                     'diff': diff})
++        if diff:
++            mismatched.append(cid)
++    summary = {
++        'rule': 'every observed six-field tuple equals its declared tuple '
++                '(R43-C1; routed defect R42-CL1 / M42-2)',
++        'observation': ('rea-full.json per carrier, through _envelope_parts + '
++                        'observed_features -- not run.json'),
++        'fields': list(DECLARED_FIELDS),
++        'carriers_checked': len(rows),
++        'mismatched': mismatched,
++        'all_equal': not mismatched,
++        'carriers': {row['id']: {'verdict': row['verdict'],
++                                 'declared': row.get('declared'),
++                                 'observed': row.get('observed')}
++                     for row in rows},
++    }
++    return {'ok': not mismatched, 'rows': rows, 'mismatched': mismatched,
++            'carriers_checked': len(rows), 'missing': missing,
++            'unparsable': unparsable, 'summary': summary}
++
++
++def run_tuple_check(dir_, quiet=False):
++    """`--tuple-check DIR`: the refusal, run over a COMMITTED held-out directory.
++
++    Exists so the refusal is demonstrable on frozen bytes with no REA and no
++    generator state (round-43 control CTL-C1-2): point it at any manifest +
++    envelope set and it answers with the same exit code the inline gate would
++    have produced.  It writes nothing.
++    """
++    path = os.path.join(dir_, 'manifest.json')
++    if not os.path.isfile(path):
++        print(f'no manifest at {path}', file=sys.stderr)
++        return 2
++    with open(path, encoding='utf-8') as handle:
++        manifest = json.load(handle)
++    carriers = manifest.get('carriers') or []
++    if not carriers:
++        print(f'{path}: manifest holds no carriers', file=sys.stderr)
++        return 2
++    verdict = refusal_check(dir_, carriers)
++    for row in verdict['rows']:
++        if row['verdict'] == 'match':
++            continue
++        if row['verdict'] == 'no_declared_tuple':
++            print(f"REFUSE {row['id']}  {row['class']}  no declared tuple")
++        elif row['verdict'] == 'no_envelope':
++            print(f"REFUSE {row['id']}  {row['class']}  no usable envelope")
++        else:
++            for diff in row['diff']:
++                print(f"REFUSE {row['id']}  {row['class']}  {diff['field']}: "
++                      f"declared {diff['declared']!r} observed {diff['observed']!r}")
++    for note in verdict['missing']:
++        print(f"REFUSE {note}  envelope file missing")
++    for note in verdict['unparsable']:
++        print(f"REFUSE {note}  envelope unparsable")
++    if not quiet:
++        print(f"tuple check over {verdict['carriers_checked']} carriers "
++              f"({verdict['carriers_checked'] - len(verdict['mismatched'])} declare "
++              f"what their envelope shows) -> "
++              f"{'PASS' if verdict['ok'] else 'REFUSE'}")
++    if verdict['missing'] or verdict['unparsable']:
++        return 2
++    return 0 if verdict['ok'] else REFUSAL_UNOBSERVED
++
++
+ def feature_diff(expected, observed):
+     """Field-by-field difference; empty list means the tuple was reached."""
+     return [f'{key}: want {want!r} got {observed.get(key)!r}'
+@@ -3067,9 +3234,15 @@
+         finally:
+             shutil.rmtree(local, ignore_errors=True)
+         checks = []
+-        original = sha256_file(os.path.join(OUT_DIR, 'manifest.json'))
+-        rebuilt = sha256_file(os.path.join(out, 'manifest.json'))
+-        checks.append(('manifest bytes identical', original == rebuilt,
++        # R43: neither manifest is a file any more (a manifest may only exist
++        # after a full --run + refusal), so compare the serialization the write
++        # path would emit -- minus the tuple_check, which a rebuild cannot have.
++        original = hashlib.sha256(
++            serialize_manifest(manifest, drop_tuple_check=True)).hexdigest()
++        rebuilt = hashlib.sha256(
++            serialize_manifest(fresh, drop_tuple_check=True)).hexdigest()
++        checks.append(('manifest bytes identical (generator.tuple_check excluded)',
++                       original == rebuilt,
+                        f'{original[:16]} vs {rebuilt[:16]}'))
+         differ = [a['id'] for a, b in zip(carriers, fresh_carriers)
+                   if a['sha256'] != b['sha256']]
+@@ -3115,7 +3288,8 @@
+             finally:
+                 shutil.rmtree(local_scratch, ignore_errors=True)
+             results[tag] = {
+-                'manifest': sha256_file(os.path.join(out, 'manifest.json')),
++                'manifest': hashlib.sha256(
++                    serialize_manifest(manifest, drop_tuple_check=True)).hexdigest(),
+                 'manifest_obj': manifest,
+                 'carriers': [c['sha256'] for c in carriers],
+                 'ids': [c['id'] for c in carriers],
+@@ -3266,13 +3440,25 @@
+     parser = argparse.ArgumentParser(
+         description='Deterministic R42-C2 held-out SquashFS carrier generator '
+                     '(table-v4 classes, amendment A1).')
+-    parser.add_argument('--seed', required=True,
+-                        help='hex seed (the freeze commit hash)')
++    parser.add_argument('--seed',
++                        help='hex seed (the freeze commit hash); required unless '
++                             '--tuple-check')
+     parser.add_argument('--out', help='output directory (required unless --selftest)')
+     parser.add_argument('--classes', default=','.join(DEFAULT_CLASSES),
+                         help='comma-separated recipe names (default: all classes)')
+     parser.add_argument('--run', action='store_true',
+-                        help='run REA per carrier in its arm')
++                        help='run REA per carrier in its arm; REQUIRED to write '
++                             'a manifest (R43: a manifest may only exist with '
++                             'observed envelopes)')
++    parser.add_argument('--carriers-only', action='store_true',
++                        help='build carriers + tree.json and no manifest (the '
++                             'seed-regeneration arm a counter uses; a manifest '
++                             'is never written in this mode)')
++    parser.add_argument('--tuple-check', metavar='DIR',
++                        help='run the R43 refusal over an existing held-out '
++                             'directory (manifest.json + <id>/rea-full.json); '
++                             'writes nothing, exit 3 on any mismatch.  Needs no '
++                             '--seed and no --out (control CTL-C1-2)')
+     parser.add_argument('--verify', action='store_true',
+                         help='with --run: compare every envelope to its declared '
+                              'tuple, score combo_unseen_majority, regenerate the '
+@@ -3326,6 +3512,11 @@
+                         help='determinism selftest (no --out needed)')
+     args = parser.parse_args(argv)
+ 
++    if args.tuple_check:
++        return run_tuple_check(os.path.abspath(args.tuple_check))
++    if not args.seed:
++        raise SystemExit('--seed is required unless --tuple-check')
++
+     seed = args.seed.strip()
+     if len(seed) < 16 or any(ch not in '0123456789abcdefABCDEF' for ch in seed):
+         raise SystemExit(f'--seed must be at least 16 hex characters, got {seed!r}')
+@@ -3364,6 +3555,19 @@
+ 
+     if not args.out:
+         raise SystemExit('--out is required unless --selftest')
++    if args.verify and not args.run:
++        raise SystemExit('--verify needs --run (there is no envelope to check)')
++    if args.carriers_only and args.run:
++        raise SystemExit('--carriers-only and --run are exclusive: a manifest '
++                         'is written only by a full run, and --carriers-only '
++                         'writes none')
++    if not args.run and not args.carriers_only:
++        # R43 (QUALITY 85 / R42-CL1): a manifest may only exist with observed
++        # envelopes, so the no-run path is refused BEFORE anything is built --
++        # no manifest, and no half-built directory to mistake for a delivery.
++        print('refused: --run is required to write a manifest '
++              '(--carriers-only builds carriers and never a manifest)')
++        return REFUSAL_NO_RUN
+     selected = parse_classes(args.classes)
+     OUT_DIR = os.path.abspath(args.out)
+     if os.path.exists(os.path.join(OUT_DIR, 'manifest.json')):
+@@ -3373,43 +3577,76 @@
+     try:
+         manifest, carriers = build_set(seed, selected, writer, OUT_DIR, scratch,
+                                        pins, fixtures_dir, cache_dir, args.fetch)
+-        print(f"manifest {os.path.join(OUT_DIR, 'manifest.json')} "
+-              f"{len(carriers)} carriers, {len({c['label'] for c in carriers})} labels, "
+-              f"{len({(c['label'], c['action']) for c in carriers})} decisions")
+-        if args.run:
+-            failures = 0
+-            for entry in carriers:
+-                recipe = RECIPES.get(entry['class']) or {}
+-                if recipe.get('ood'):
+-                    record = out_of_domain_run(entry, scratch, args.keep_extraction,
+-                                               args.gzip, OOD_OP)
++        print(f"built {len(carriers)} carriers into {OUT_DIR} "
++              f"({len({c['label'] for c in carriers})} labels, "
++              f"{len({(c['label'], c['action']) for c in carriers})} decisions); "
++              f"no manifest yet")
++        if not args.run:
++            # --carriers-only: carriers + tree.json, never a manifest.
++            return 0
++        failures = 0
++        for entry in carriers:
++            recipe = RECIPES.get(entry['class']) or {}
++            if recipe.get('ood'):
++                record = out_of_domain_run(entry, scratch, args.keep_extraction,
++                                           args.gzip, OOD_OP)
++            else:
++                record = run_rea(entry, scratch, args.keep_extraction, args.gzip)
++            if 'error' in record:
++                failures += 1
++                print(f"run {entry['id']} {entry['class']:<26} ERROR "
++                      f"{record.get('error')} exit={record['exit_code']}")
++                continue
++            print(f"run {entry['id']} {entry['class']:<26} exit={record['exit_code']} "
++                  f"depth={record.get('max_depth')} "
++                  f"op={record.get('operation')} prov={record.get('provider')} "
++                  f"handlers={','.join(record.get('handlers') or []) or '-'} "
++                  f"failed={','.join(record.get('failed_chunks') or []) or '-'} "
++                  f"gaps={','.join(record.get('gap_kinds') or []) or '-'} "
++                  f"deps={','.join(record.get('gap_dependencies') or []) or '-'} "
++                  f"sr={record.get('symlink_removed')} be={record.get('be_argv')} "
++                  f"files={record.get('files')} "
++                  f"{'digest-ok' if record.get('digest_matches_carrier') else 'DIGEST-MISMATCH'}")
++        if failures:
++            # No manifest: the carriers exist, the observation does not.
++            print(f'refused: {failures} carri(er)s produced no envelope; '
++                  f'no manifest written')
++            return 1
++        # ---- R43 REFUSAL: placed between the END of the run loop and the ONLY
++        # manifest write.  Order matters: (1) every carrier ran, (2) every
++        # envelope is on disk, (3) the observed tuple is re-derived from those
++        # envelope files, (4) on any mismatch the process exits 3 and writes no
++        # manifest, (5) on success the verdict is recorded and only then is the
++        # manifest created.
++        refusal = refusal_check(OUT_DIR, carriers)
++        if not refusal['ok']:
++            for row in refusal['rows']:
++                if row['verdict'] == 'no_declared_tuple':
++                    print(f"REFUSE {row['id']}  {row['class']}  no declared tuple")
++                elif row['verdict'] == 'no_envelope':
++                    print(f"REFUSE {row['id']}  {row['class']}  no usable envelope "
++                          f"({', '.join(refusal['missing'] + refusal['unparsable'])})")
+                 else:
+-                    record = run_rea(entry, scratch, args.keep_extraction, args.gzip)
+-                if 'error' in record:
+-                    failures += 1
+-                    print(f"run {entry['id']} {entry['class']:<26} ERROR "
+-                          f"{record.get('error')} exit={record['exit_code']}")
+-                    continue
+-                print(f"run {entry['id']} {entry['class']:<26} exit={record['exit_code']} "
+-                      f"depth={record.get('max_depth')} "
+-                      f"op={record.get('operation')} prov={record.get('provider')} "
+-                      f"handlers={','.join(record.get('handlers') or []) or '-'} "
+-                      f"failed={','.join(record.get('failed_chunks') or []) or '-'} "
+-                      f"gaps={','.join(record.get('gap_kinds') or []) or '-'} "
+-                      f"deps={','.join(record.get('gap_dependencies') or []) or '-'} "
+-                      f"sr={record.get('symlink_removed')} be={record.get('be_argv')} "
+-                      f"files={record.get('files')} "
+-                      f"{'digest-ok' if record.get('digest_matches_carrier') else 'DIGEST-MISMATCH'}")
+-            if failures:
+-                return 1
+-            if args.verify:
+-                status = verify(manifest, carriers)
+-                regen = regen_check(manifest, carriers, seed, selected, writer,
+-                                    pins, fixtures_dir, cache_dir, args.fetch,
+-                                    scratch)
+-                return 1 if (status or regen) else 0
+-        elif args.verify:
+-            raise SystemExit('--verify needs --run (there is no envelope to check)')
++                    for diff in row['diff']:
++                        print(f"REFUSE {row['id']}  {row['class']}  "
++                              f"{diff['field']}: declared {diff['declared']!r} "
++                              f"observed {diff['observed']!r}")
++            print(f"declared_tuple_unobserved: "
++                  f"{len(refusal['mismatched'])}/{refusal['carriers_checked']} "
++                  f"carriers declared a tuple their own envelope does not show; "
++                  f"no manifest written")
++            return REFUSAL_UNOBSERVED
++        manifest['generator']['tuple_check'] = refusal['summary']
++        write_manifest(manifest, OUT_DIR)
++        print(f"manifest {os.path.join(OUT_DIR, 'manifest.json')} written; "
++              f"tuple check PASS {refusal['carriers_checked']}/"
++              f"{refusal['carriers_checked']} (all_equal={refusal['summary']['all_equal']})")
++        if args.verify:
++            status = verify(manifest, carriers)
++            regen = regen_check(manifest, carriers, seed, selected, writer,
++                                pins, fixtures_dir, cache_dir, args.fetch,
++                                scratch)
++            return 1 if (status or regen) else 0
+         return 0
+     finally:
+         shutil.rmtree(scratch, ignore_errors=True)

@@ -1,0 +1,128 @@
+[
+  {
+    "id": "HIT-1.1",
+    "category": "1. Key mismatch (M41-1 class)",
+    "file_line": "tools/round-42/c2-counter.py:1166",
+    "description": "Counter reads man.get('combo_count'), but generator never writes top-level 'combo_count'.",
+    "inherited_in_r43": true,
+    "failing_input": "Manifest with len(combos)==24 and families.combo.count==24, but lacking 'combo_count'. If an attacker or corrupt generator injects 12 combos, combo_count validation does not fire.",
+    "fix": "Read man.get('families', {}).get('combo', {}).get('count') in c1-counter.py."
+  },
+  {
+    "id": "HIT-1.2",
+    "category": "1. Key mismatch (M41-1 class)",
+    "file_line": "tools/round-42/c2-counter.py:416",
+    "description": "Counter fixture_scope reads man.get('fixtures'), but generator nests fixture metadata under generator.fixtures.",
+    "inherited_in_r43": true,
+    "failing_input": "Mutating a committed fixture under corpus/evidence/round-42/c2/fixtures/ during FREEZE..REV. fixture_scope returns {} so the mutation is un-checked by frozen_drift() for that key.",
+    "fix": "Inspect man.get('generator', {}).get('fixtures') or load pinned fixture list from tools/round-42/fixtures.json."
+  },
+  {
+    "id": "HIT-1.3",
+    "category": "1. Key mismatch (M41-1 class)",
+    "file_line": "tools/round-42/c2-counter.py:1290",
+    "description": "Counter reads c.get('envelope'), but generator never writes 'envelope' in carriers[].",
+    "inherited_in_r43": true,
+    "failing_input": "Carrier directory renamed or structured with non-standard envelope location; counter falls back to inferred path or marks envelope unreadable.",
+    "fix": "Explicitly write 'envelope' in generator build_carrier/build_combo_carrier or formalize inference contract."
+  },
+  {
+    "id": "HIT-2.1",
+    "category": "2. Receipt without scorer digest (closure D4 class)",
+    "file_line": "tools/round-42/c2-counter.py:1856-1867",
+    "description": "On Unevaluable exit 2 (e.g. freeze control CTL-C1-0), c2-counter sets counter_sha256 but omits counter_sha256_at_freeze.",
+    "inherited_in_r43": true,
+    "failing_input": "python3 tools/round-43/c1-counter.py --root . --rev <FREEZE> --freeze <FREEZE> --json-out ctl-c1-0.json. Receipt has counter_sha256 but counter_sha256_at_freeze is missing, violating plan l.24-25.",
+    "fix": "Set out['counter_sha256_at_freeze'] in Unevaluable handler in c1-counter.py."
+  },
+  {
+    "id": "HIT-2.2",
+    "category": "2. Receipt without scorer digest (closure D4 class)",
+    "file_line": "tools/round-42/c2-controls.py:581-595",
+    "description": "c2-controls.py json output contains no counter_sha256, no scorer sha256, and no top-level exit_code.",
+    "inherited_in_r43": true,
+    "failing_input": "Running c2-controls-r43.py produces dev-scores-prefreeze.json where jq '.counter_sha256' is null and jq '.exit_code' is null.",
+    "fix": "Add counter_sha256, counter_sha256_at_freeze, and exit_code to the output JSON."
+  },
+  {
+    "id": "HIT-2.3",
+    "category": "2. Receipt without scorer digest (closure D4 class)",
+    "file_line": "tools/round-41/local-source-gate.py:372, 433-442",
+    "description": "local-source-gate.py --json emits 'exit' instead of 'exit_code', and omits counter_sha256 and counter_sha256_at_freeze.",
+    "inherited_in_r43": true,
+    "failing_input": "Running tools/round-41/local-source-gate.py --root . --rev <REV> --json > receipt.json produces receipt lacking counter_sha256 and exit_code.",
+    "fix": "Amend plan counting command or wrap invocation with runner that captures exit code and stamps counter_sha256."
+  },
+  {
+    "id": "HIT-3.1",
+    "category": "3. Unsegmented path-prefix test (closure D5 class)",
+    "file_line": "tools/round-42/prefile-gate.py:131-132",
+    "description": "def _under(path, scope): return path == scope or path.startswith(scope) allows unsegmented matching.",
+    "inherited_in_r43": true,
+    "failing_input": "scope='plans', path='plans_backup/file.txt' matches _under; scope='tools/round-4', path='tools/round-42/c1-counter.py' matches _under.",
+    "fix": "return path == scope or path.startswith(scope.rstrip('/') + '/')."
+  },
+  {
+    "id": "HIT-3.2",
+    "category": "3. Unsegmented path-prefix test (closure D5 class)",
+    "file_line": "tools/round-42/c2-controls.py:582-585",
+    "description": "Checks interp/evaluator path prefix with startswith(abspath(root)) without directory segment boundary.",
+    "inherited_in_r43": true,
+    "failing_input": "root='/home/vgpnk/Projects/shokunin/kaidoku-shokunin', interp='/home/vgpnk/Projects/shokunin/kaidoku-shokunin-fork/tool.py' matches startswith; os.path.relpath produces '../kaidoku-shokunin-fork/tool.py'.",
+    "fix": "Check os.path.abspath(interp).startswith(os.path.abspath(a.root).rstrip('/') + '/')."
+  },
+  {
+    "id": "HIT-3.3",
+    "category": "3. Unsegmented path-prefix test (closure D5 class)",
+    "file_line": "tools/round-42/c2-counter.py:1202",
+    "description": "Single cand.startswith('./') strip only removes one './', leaving cand with leading './' on '././path'.",
+    "inherited_in_r43": true,
+    "failing_input": "Carrier path '././carrier.sqsh' leaves './carrier.sqsh', which present(root, rev, cand) fails to find in git tree.",
+    "fix": "while cand.startswith('./'): cand = cand[2:]."
+  },
+  {
+    "id": "HIT-4.1",
+    "category": "4. Hardcoded /tmp or TMPDIR-ignoring scratch (prompt section 7 class)",
+    "file_line": "tools/round-42/c2-controls.py:609",
+    "description": "Calls tempfile.TemporaryDirectory() with no dir argument and provides no --scratch or --work argument.",
+    "inherited_in_r43": true,
+    "failing_input": "Running c2-controls.py when TMPDIR is unset defaults to /tmp/, writing evaluator output outside designated scratch.",
+    "fix": "Add --scratch CLI argument and pass dir=scratch to TemporaryDirectory."
+  },
+  {
+    "id": "HIT-4.2",
+    "category": "4. Hardcoded /tmp or TMPDIR-ignoring scratch (prompt section 7 class)",
+    "file_line": "tools/round-42/c2-counter.py:440, 2328",
+    "description": "scratch_root() hardcodes 'kaidoku-r42' subdirectory, ignores TMPDIR when HYAKU_SCRATCH is set, and provides no --scratch CLI flag.",
+    "inherited_in_r43": true,
+    "failing_input": "Running c1-counter.py in round 43 creates scratch under /fast/scratch/hyaku/kaidoku-r42/ instead of kaidoku-r43.",
+    "fix": "Replace hardcoded 'kaidoku-r42' with 'kaidoku-r43' (or pass via --scratch CLI flag) and honor TMPDIR."
+  },
+  {
+    "id": "HIT-4.3",
+    "category": "4. Hardcoded /tmp or TMPDIR-ignoring scratch (prompt section 7 class)",
+    "file_line": "tools/round-42/fetch-carrier.py:553",
+    "description": "selftest() calls tempfile.mkdtemp(prefix='fetch-carrier-selftest-') with no dir= parameter.",
+    "inherited_in_r43": true,
+    "failing_input": "Running fetch-carrier.py --selftest writes to system /tmp if TMPDIR is unset.",
+    "fix": "Pass dir=scratch_root() or TMPDIR to tempfile.mkdtemp."
+  },
+  {
+    "id": "HIT-5.1",
+    "category": "5. grep -c occurrence counts (QUALITY 13)",
+    "file_line": "corpus/knowledge/2026-10-26-unblob-format-matrix.md:4",
+    "description": "Recheck command uses `grep -c 'more than 30 different'` -> 3 instead of grep -o | wc -l.",
+    "inherited_in_r43": false,
+    "failing_input": "If the HTML page from unblob.org/formats/ is minified onto a single line, grep -c returns 1 while the string appears 3 times. grep -o | wc -l returns 3.",
+    "fix": "Update recheck command to `curl -fsSL https://unblob.org/formats/ | grep -o 'more than 30 different' | wc -l`."
+  },
+  {
+    "id": "HIT-5.2",
+    "category": "5. grep -c occurrence counts (QUALITY 13)",
+    "file_line": "SKILL.md:561-564",
+    "description": "Uses grep -cE to count occurrences of sha256 and timestamps.",
+    "inherited_in_r43": false,
+    "failing_input": "If lines are concatenated or formatted into a single line, grep -c undercounts.",
+    "fix": "Use grep -o ... | wc -l or python parser."
+  }
+]

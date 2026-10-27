@@ -1,0 +1,449 @@
+{
+  "meta": {
+    "seat": "R43MutGen",
+    "round": 43,
+    "wave": 1,
+    "task": "design-time mutation test of the QUALITY-85 six-field tuple refusal (heldout-gen-v4r43.py tuple check), BEFORE it is coded",
+    "generated": "2026-10-27",
+    "consumer": "R43C1Gen integrator (selftest suite for tools/round-43/heldout-gen-v4r43.py)",
+    "golden_semantics": "for every carrier: observed = observed_features(envelope) restricted to the six REQUIRED fields; declared = carriers[].declared_features (the single R41-CL1 key, exactly six fields); any field inequality refuses the manifest: exit 3 declared_tuple_unobserved, NO manifest write, per-carrier diff list on stdout",
+    "six_fields": ["handler_set", "gap_kinds", "gap_dependencies", "be_argv", "symlink_removed", "published"],
+    "sources": {
+      "c02_declared": "corpus/evidence/round-42/c2/heldout/manifest.json carriers[C02].declared_features",
+      "c02_observed": "corpus/evidence/round-42/c2/heldout/C02/envelope.json normalized_result (via observed_features, tools/round-42/c2-counter.py:581) and run.json summary",
+      "c02_mismatch_record": ".ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json declared_features.mismatch[0] (the only mismatch, field gap_kinds)",
+      "predictor_equals_declared": "tools/round-42/heldout-gen-v4.py: carriers[].declared_features = declared_tuple(predictor(factors)); the predictor output and the declared key are identical by construction for every carrier",
+      "class_expected_has_no_features": "manifest declared_schema: 'There is no `declared` key and no `class_expected.features` key'; named-class class_expected = {label, action, reported_only}; combo class_expected = null"
+    }
+  },
+  "subject_c02": {
+    "id": "C02",
+    "class": "combo",
+    "factors_digest": "v4 base, in-tree links, damage=1, max_depth=1, be, gzip; REA invoked with --max-depth 1 (run.json rea_argv)",
+    "declared": {
+      "handler_set": ["squashfs_v4_be"],
+      "gap_kinds": ["extractor-failure", "unpublished-entry"],
+      "gap_dependencies": [],
+      "be_argv": "yes",
+      "symlink_removed": false,
+      "published": "nonzero"
+    },
+    "observed": {
+      "handler_set": ["squashfs_v4_be"],
+      "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"],
+      "gap_dependencies": [],
+      "be_argv": "yes",
+      "symlink_removed": false,
+      "published": "nonzero"
+    },
+    "differing_fields": ["gap_kinds"],
+    "root_cause": "M42-2: the declared-tuple predictor under-declared gap_kinds for C02 (omitted depth-limited, which REA minted at the depth ceiling beside the failing chunk). Routed defect R42-CL1 = QUALITY 85."
+  },
+  "mutants": [
+    {
+      "id": "M01",
+      "title": "drop handler_set from the compared fields",
+      "fault_class": "field-drop",
+      "fault": "the check iterates only {gap_kinds, gap_dependencies, be_argv, symlink_removed, published}; handler_set is never compared",
+      "c02_passes_mutant": true,
+      "c02_detail": "handler_set is equal on both sides ([squashfs_v4_be]); the mutant sees no difference and writes the manifest",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-HFLIP",
+        "fixture": "synthetic-envelope (or any single-carrier class run whose endianness factor is wired opposite to the predictor)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_le"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["handler_set"],
+        "expected_correct": "exit 3 declared_tuple_unobserved, no manifest, diff lists handler_set",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "a manifest whose only lie is the handler family must be refused"
+      }
+    },
+    {
+      "id": "M02",
+      "title": "compare only gap_kinds (drop the other five fields)",
+      "fault_class": "field-drop",
+      "fault": "the check reduces the tuple to its gap-kind set; handler_set, gap_dependencies, be_argv, symlink_removed, published are never compared",
+      "c02_passes_mutant": false,
+      "c02_detail": "C02's gap_kinds differ, so the mutant refuses C02; the hole is every non-gap field",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-DEPS",
+        "fixture": "synthetic-envelope over a dep-missing-class carrier (declared predicts the dependency-free tuple; observed gap carries a dependency)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure"], "gap_dependencies": ["libdeflate"], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_dependencies"],
+        "expected_correct": "exit 3, no manifest, diff lists gap_dependencies",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "any non-gap field must also bind; ST-BEARGV, ST-SYMREMOVED, ST-PUBZERO, ST-HFLIP each independently kill this mutant too"
+      }
+    },
+    {
+      "id": "M03",
+      "title": "drop gap_dependencies",
+      "fault_class": "field-drop",
+      "fault": "gap_dependencies is not compared",
+      "c02_passes_mutant": true,
+      "c02_detail": "gap_dependencies is [] on both sides for C02; mutant writes the manifest",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-DEPS",
+        "fixture": "same fixture as M02",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure"], "gap_dependencies": ["libdeflate"], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_dependencies"],
+        "expected_correct": "exit 3, no manifest, diff lists gap_dependencies",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "a dependency observed in the envelope but absent from the declaration must refuse"
+      }
+    },
+    {
+      "id": "M04",
+      "title": "drop be_argv",
+      "fault_class": "field-drop",
+      "fault": "the -be child-argv signal is not compared",
+      "c02_passes_mutant": true,
+      "c02_detail": "be_argv is 'yes' on both sides for C02; mutant writes the manifest",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-BEARGV",
+        "fixture": "synthetic-envelope over a clean-be-class carrier whose recorded child argv lost the -be token (or the extraction was serviced without a -be argv)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "no", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["be_argv"],
+        "expected_correct": "exit 3, no manifest, diff lists be_argv",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "the endianness-argv signal is part of the six-field binding"
+      }
+    },
+    {
+      "id": "M05",
+      "title": "drop symlink_removed",
+      "fault_class": "field-drop",
+      "fault": "the MaliciousSymlinkRemoved diagnostic signal is not compared",
+      "c02_passes_mutant": true,
+      "c02_detail": "symlink_removed is false on both sides for C02; mutant writes the manifest",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-SYMREMOVED",
+        "fixture": "synthetic-envelope over an escaping-symlink-removed-class carrier (declared predicts removal; observed envelope has no MaliciousSymlinkRemoved diagnostic)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": true, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["symlink_removed"],
+        "expected_correct": "exit 3, no manifest, diff lists symlink_removed",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "the symlink-removal signal is part of the six-field binding"
+      }
+    },
+    {
+      "id": "M06",
+      "title": "drop published",
+      "fault_class": "field-drop",
+      "fault": "the published (files > 0) signal is not compared",
+      "c02_passes_mutant": true,
+      "c02_detail": "published is 'nonzero' on both sides for C02; mutant writes the manifest",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-PUBZERO",
+        "fixture": "synthetic-envelope over a clean-empty-class carrier (declared predicts zero published files; observed envelope published 6)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "zero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["published"],
+        "expected_correct": "exit 3, no manifest, diff lists published",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "the published signal is part of the six-field binding"
+      }
+    },
+    {
+      "id": "M07",
+      "title": "drop gap_kinds (the M42-2 blind spot, exact recurrence)",
+      "fault_class": "field-drop",
+      "fault": "the check compares the five non-gap-kind fields and never gap_kinds",
+      "c02_passes_mutant": true,
+      "c02_detail": "C02's only defect lives in gap_kinds; the mutant accepts the round-42 manifest verbatim -- this mutant IS routed defect R42-CL1 reborn inside the refusal",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-C02-REAL",
+        "fixture": "real round-42 C02 manifest row + its committed envelope (corpus/evidence/round-42/c2/heldout/C02/)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3, no manifest, diff lists gap_kinds",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "the exact round-42 M42-2 input must be refused; this is the claim's core regression"
+      }
+    },
+    {
+      "id": "M08",
+      "title": "accept on subset (declared gap_kinds subset of observed is OK)",
+      "fault_class": "set-semantics",
+      "fault": "gap_kinds comparison becomes declared.issubset(observed); an under-declared gap set passes",
+      "c02_passes_mutant": true,
+      "c02_detail": "{extractor-failure, unpublished-entry} is a proper subset of the observed set (which adds depth-limited); the mutant writes the manifest",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-C02-REAL",
+        "fixture": "real round-42 C02 manifest row + envelope",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3, no manifest",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "set equality, not inclusion, is the contract; the C02 under-declaration is exactly a subset relation"
+      }
+    },
+    {
+      "id": "M09",
+      "title": "accept on superset (observed gap_kinds subset of declared is OK)",
+      "fault_class": "set-semantics",
+      "fault": "gap_kinds comparison becomes observed.issubset(declared); an over-declared gap set passes",
+      "c02_passes_mutant": false,
+      "c02_detail": "the observed C02 set is not a subset of the declared set (it adds depth-limited), so the mutant refuses C02; the hole is over-declaration",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-OVERDECL",
+        "fixture": "synthetic-envelope over a depth-limited-in-tree-class carrier (declared predicts {depth-limited, unpublished-entry}; observed envelope minted only unpublished-entry)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["depth-limited", "unpublished-entry"], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["unpublished-entry"], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3, no manifest, diff lists gap_kinds",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "over-declared gap sets (claiming a gap REA never minted) must refuse just as under-declared ones"
+      }
+    },
+    {
+      "id": "M10",
+      "title": "reduce gap_kinds to a presence boolean",
+      "fault_class": "set-semantics",
+      "fault": "gap_kinds comparison becomes bool(declared_gaps) == bool(observed_gaps); the kinds themselves are never examined",
+      "c02_passes_mutant": true,
+      "c02_detail": "both sides have non-empty gap sets; the mutant writes the manifest",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-KINDSWAP",
+        "fixture": "synthetic-envelope over an in-tree-symlink-metadata-class carrier (declared predicts unpublished-entry; observed envelope minted extractor-failure instead)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["unpublished-entry"], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure"], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3, no manifest, diff lists gap_kinds",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "presence-equal-but-kind-different gap sets must refuse"
+      }
+    },
+    {
+      "id": "M11",
+      "title": "filter 'depth-limited' out of gap_kinds before comparing",
+      "fault_class": "set-semantics",
+      "fault": "both sets have {'depth-limited'} removed prior to comparison (plausible-sounding normalization: 'the depth ceiling is expected'); every other kind still binds",
+      "c02_passes_mutant": true,
+      "c02_detail": "after filtering, declared {extractor-failure, unpublished-entry} == observed {extractor-failure, unpublished-entry}; the mutant writes the manifest -- it hides the M42-2 defect while appearing to check everything else",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-C02-REAL",
+        "fixture": "real round-42 C02 manifest row + envelope",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3, no manifest",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "no gap kind may be privileged out of the binding; depth-limited is the exact M42-2 token"
+      }
+    },
+    {
+      "id": "M12",
+      "title": "read the tuple from class_expected.features instead of the declared key",
+      "fault_class": "data-source",
+      "fault": "the check binds carriers[].class_expected.features (the round-41 key the declared_schema explicitly says does not exist); for every carrier it reads None and a defensive `if expected is None: continue` skips the carrier",
+      "c02_passes_mutant": true,
+      "c02_detail": "C02's class_expected is null, so the mutant skips every combo and writes the manifest; named classes carry {label, action, reported_only} -- also no .features, so they are skipped too and the check degenerates to a no-op",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-C02-REAL",
+        "fixture": "real round-42 C02 manifest row + envelope",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3, no manifest",
+        "expected_mutant": "manifest written, exit 0 (check skipped every carrier)",
+        "kill_assertion": "the check must bind carriers[].declared_features -- the single R41-CL1 key -- and a missing/None tuple source must be a loud refusal, not a skip"
+      }
+    },
+    {
+      "id": "M13",
+      "title": "'observed' side read from the manifest predictor, not the envelope (compare pre-run predictions)",
+      "fault_class": "data-source",
+      "fault": "the check's 'observed' tuple is recomputed from the generator's own predictor(factors) (or read from an expected/expected_features manifest field) instead of observed_features(envelope); both sides of every comparison are manifest-derived, so the check is a tautology that no envelope can fail",
+      "c02_passes_mutant": true,
+      "c02_detail": "the predictor output and declared_features are identical by construction for every carrier (declared = declared_tuple(predictor(factors))), so observed==declared always; the mutant writes the manifest even though the envelope disagrees",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-C02-REAL",
+        "fixture": "real round-42 C02 manifest row + envelope",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3, no manifest",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "the observed side must come from the REA envelope on disk; a self-consistent manifest with an unobserved declaration must refuse"
+      }
+    },
+    {
+      "id": "M14",
+      "title": "skip combos entirely (named classes only)",
+      "fault_class": "data-source",
+      "fault": "the tuple check iterates only carriers whose class != 'combo'; the 24 combo carriers are never compared",
+      "c02_passes_mutant": true,
+      "c02_detail": "C02 is a combo; the mutant never looks at it and writes the manifest",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-C02-REAL",
+        "fixture": "real round-42 C02 manifest row + envelope",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3, no manifest",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "combos are exactly where the M42-2 defect lived; the check must cover all 78 carriers including 24 combos"
+      }
+    },
+    {
+      "id": "M15",
+      "title": "incomplete declared tuple treated as vacuous pass",
+      "fault_class": "data-source",
+      "fault": "when carriers[].declared_features is missing a required field (or the key), the check records nothing and continues instead of refusing; only present fields are compared",
+      "c02_passes_mutant": false,
+      "c02_detail": "C02's declared tuple is complete, so the mutant behaves like the correct check on C02 and refuses; the hole is schema-tolerance for incomplete tuples",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-INCOMPLETE",
+        "fixture": "synthetic manifest whose single carrier's declared_features has only five fields (published omitted)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["published (absent from declared)"],
+        "expected_correct": "exit 3 (or a loud schema error), no manifest -- the declared tuple must carry exactly the six fields",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "a manifest that cannot state the full six-field tuple must not be writable"
+      }
+    },
+    {
+      "id": "M16",
+      "title": "diff computed and printed but refusal not enforced (exit 0, manifest still written)",
+      "fault_class": "enforcement",
+      "fault": "the per-carrier diff list is assembled and printed exactly as specified, but the exit-3/no-write branch is missing or inverted; the manifest is finalized regardless",
+      "c02_passes_mutant": true,
+      "c02_detail": "the mutant prints C02's gap_kinds diff to stdout and then writes the manifest and exits 0",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-C02-REAL",
+        "fixture": "real round-42 C02 manifest row + envelope",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3 AND no manifest file on disk AND diff on stdout",
+        "expected_mutant": "diff on stdout but manifest written, exit 0",
+        "kill_assertion": "the selftest must assert all three: exit code 3, absence of the manifest path, and the per-carrier diff content"
+      }
+    },
+    {
+      "id": "M17",
+      "title": "refuse only if ALL fields differ (any/all inversion)",
+      "fault_class": "enforcement",
+      "fault": "the refusal condition is `all(observed[f] != declared[f] for f in fields)` instead of any(); a carrier differing in exactly one field (the realistic case) passes",
+      "c02_passes_mutant": true,
+      "c02_detail": "C02 differs in exactly one field (gap_kinds); the mutant writes the manifest",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-C02-REAL",
+        "fixture": "real round-42 C02 manifest row + envelope (single-field difference)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3, no manifest",
+        "expected_mutant": "manifest written, exit 0",
+        "kill_assertion": "a one-field lie must refuse; any-single-field difference is the canonical defect shape"
+      }
+    },
+    {
+      "id": "M18",
+      "title": "checker REA invocation drops the per-class --max-depth",
+      "fault_class": "enforcement",
+      "fault": "the tuple check re-runs REA itself (or re-observes) with the default depth (3) for every carrier instead of the carrier's recorded per-class max_depth (C02: --max-depth 1); the observation procedure is no longer the one the declared tuple was measured under",
+      "c02_passes_mutant": true,
+      "c02_detail": "C02's envelope was produced at --max-depth 1 (run.json rea_argv) which minted depth-limited; under the mutant's uncapped observation the depth ceiling is never hit at the same point, so the observed tuple is measured under a different procedure and the check cannot bind the declared tuple (whether the resulting tuple textually matches is seed-dependent; the procedure is wrong regardless)",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-C02-REAL",
+        "fixture": "real round-42 C02 manifest row + envelope; plus a spec-level assertion on the checker's REA argv",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["gap_kinds"],
+        "expected_correct": "exit 3, no manifest; and the checker's REA argv for C02 must carry --max-depth 1 (matching run.json parameters.max_depth)",
+        "expected_mutant": "observation at default depth; manifest written, exit 0",
+        "kill_assertion": "the check must observe each carrier under its declared max_depth; assert the REA argv, not only the resulting tuple"
+      },
+      "notes": "[INFERENCE] whether an uncapped re-run of C02 textually drops depth-limited depends on the seed's nesting depth; the mutant is killed by the argv assertion either way"
+    },
+    {
+      "id": "M19",
+      "title": "order-sensitive list compare (no set canonicalization)",
+      "fault_class": "comparison",
+      "fault": "the check compares the lists elementwise in their recorded order instead of as sets; identical sets in different order are refused",
+      "c02_passes_mutant": false,
+      "c02_detail": "C02's difference is membership, not order, so the mutant refuses C02 exactly like the correct check; the fault is over-strictness against benign order differences",
+      "kill_direction": "over-strict",
+      "selftest": {
+        "id": "ST-ORDER",
+        "fixture": "comparator unit input (no REA run): declared gap_kinds ['extractor-failure', 'unpublished-entry'] vs observed ['unpublished-entry', 'extractor-failure']; identical for handler_set",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["extractor-failure", "unpublished-entry"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": ["unpublished-entry", "extractor-failure"], "gap_dependencies": [], "be_argv": "yes", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": [],
+        "expected_correct": "set-equal: comparison passes, no diff emitted for these fields",
+        "expected_mutant": "diff emitted, manifest refused",
+        "kill_assertion": "the comparison must canonicalize (sorted-set) before equality; observed_features already returns sorted lists, so this is a unit test of the compare step"
+      }
+    },
+    {
+      "id": "M20",
+      "title": "published / be_argv compared by truthiness ('zero' is truthy)",
+      "fault_class": "comparison",
+      "fault": "the string comparison for published (and be_argv) is replaced by boolean coercion: any non-empty string is truthy, so 'zero' == 'nonzero' and 'no' == 'yes' always compare equal",
+      "c02_passes_mutant": true,
+      "c02_detail": "published and be_argv are equal on both sides for C02 anyway, but even a lie in these fields would pass; C02's manifest is written",
+      "kill_direction": "under-strict",
+      "selftest": {
+        "id": "ST-PUBZERO",
+        "fixture": "same fixture as M06 (clean-empty-class carrier)",
+        "declared": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "zero"},
+        "observed": {"handler_set": ["squashfs_v4_be"], "gap_kinds": [], "gap_dependencies": [], "be_argv": "n/a", "symlink_removed": false, "published": "nonzero"},
+        "differing_fields": ["published"],
+        "expected_correct": "exit 3, no manifest, diff lists published",
+        "expected_mutant": "manifest written, exit 0 ('zero' and 'nonzero' both truthy)",
+        "kill_assertion": "token-valued fields must compare as tokens, not booleans"
+      }
+    }
+  ],
+  "selftest_suite": {
+    "note": "minimal discriminating suite; every one of the 20 mutants is killed by at least one member. expected_correct for all: generator refuses with exit 3 declared_tuple_unobserved, writes no manifest, prints the per-carrier diff (the sole exception is ST-ORDER, where the correct behavior is acceptance).",
+    "cases": [
+      {"id": "ST-C02-REAL", "kills": ["M07", "M08", "M10", "M11", "M12", "M13", "M14", "M16", "M17", "M18"], "fixture": "committed round-42 C02 row: declared gap_kinds [extractor-failure, unpublished-entry]; observed adds depth-limited; all other five fields equal", "priority": 0},
+      {"id": "ST-HFLIP", "kills": ["M01", "M02"], "fixture": "synthetic envelope; only handler_set differs ([squashfs_v4_be] declared vs [squashfs_v4_le] observed)", "priority": 1},
+      {"id": "ST-DEPS", "kills": ["M02", "M03"], "fixture": "synthetic envelope; only gap_dependencies differs ([] declared vs [libdeflate] observed)", "priority": 1},
+      {"id": "ST-BEARGV", "kills": ["M02", "M04"], "fixture": "synthetic envelope; only be_argv differs (yes declared vs no observed)", "priority": 1},
+      {"id": "ST-SYMREMOVED", "kills": ["M02", "M05"], "fixture": "synthetic envelope; only symlink_removed differs (true declared vs false observed)", "priority": 1},
+      {"id": "ST-PUBZERO", "kills": ["M02", "M06", "M20"], "fixture": "synthetic envelope; only published differs (zero declared vs nonzero observed)", "priority": 1},
+      {"id": "ST-OVERDECL", "kills": ["M09"], "fixture": "synthetic envelope; declared gap_kinds [depth-limited, unpublished-entry] vs observed [unpublished-entry] (over-declaration)", "priority": 1},
+      {"id": "ST-KINDSWAP", "kills": ["M10"], "fixture": "synthetic envelope; declared [unpublished-entry] vs observed [extractor-failure] (presence-equal, kind-different)", "priority": 1},
+      {"id": "ST-INCOMPLETE", "kills": ["M15"], "fixture": "synthetic manifest; declared_features carries only five fields (published omitted); observed tuple complete and matching on the five", "priority": 1},
+      {"id": "ST-ORDER", "kills": ["M19"], "fixture": "comparator unit input; same sets, different list order on gap_kinds and handler_set; correct behavior is acceptance, not refusal", "priority": 2}
+    ]
+  },
+  "aggregate": {
+    "n_mutants": 20,
+    "c02_blind_mutants": ["M01", "M03", "M04", "M05", "M06", "M07", "M08", "M10", "M11", "M12", "M13", "M14", "M16", "M17", "M18", "M20"],
+    "n_c02_blind": 16,
+    "c02_catching_mutants": ["M02", "M09", "M15", "M19"],
+    "n_selftests": 10,
+    "selftests_killing_c02_blind_set": ["ST-C02-REAL"],
+    "design_rule_for_R43C1Gen": "the tuple check must (1) bind carriers[].declared_features as the single declared source, (2) extract observed_features from the REA envelope produced under the carrier's recorded max_depth, (3) compare all six fields by set-canonicalized equality, (4) treat any missing/None tuple source as a loud refusal, (5) on any difference exit 3 and write no manifest. ST-C02-REAL alone kills 10 of the 16 C02-blind mutants; the remaining 6 (M01, M03, M04, M05, M06, M20) each need exactly one single-field selftest, all already enumerated."
+  }
+}

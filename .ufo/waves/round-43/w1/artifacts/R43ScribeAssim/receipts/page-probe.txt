@@ -1,0 +1,26 @@
+# receipt: rendered releases page — tag list present, asset filenames absent (2026-10-27)
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-10-27T08:20:30Z
+$ curl -fsSL -o sasq-releases-r43.html -w 'HTTP %{http_code} bytes %{size_download}\n' https://github.com/onekey-sec/sasquatch/releases
+HTTP 200 bytes 349255
+curl_exit=0
+$ sha256sum sasq-releases-r43.html
+89e7377d92132bfa1bf1a004bf38a6f105dfe85ea99a753cccde49af29227a67  sasq-releases-r43.html
+$ grep -oE 'sasquatch-v4\.5\.1-[1-6]|sasquatch-v1\.0\.1|sasquatch-v1\.0' sasq-releases-r43.html | sort -u
+sasquatch-v1.0
+sasquatch-v1.0.1
+sasquatch-v4.5.1-1
+sasquatch-v4.5.1-2
+sasquatch-v4.5.1-3
+sasquatch-v4.5.1-4
+sasquatch-v4.5.1-5
+sasquatch-v4.5.1-6
+$ grep -oE 'sasquatch-v4\.5\.1-[1-6]|sasquatch-v1\.0\.1|sasquatch-v1\.0' sasq-releases-r43.html | sort -u | wc -l
+8
+$ for n in sasquatch_1.0_amd64.deb sasquatch_1.0_arm64.deb sasquatch_1.0_armhf.deb sasquatch-dbgsym_1.0_amd64.deb; do printf '%s %s\n' "$(grep -c "$n" sasq-releases-r43.html)" "$n"; done
+0 sasquatch_1.0_amd64.deb
+0 sasquatch_1.0_arm64.deb
+0 sasquatch_1.0_armhf.deb
+0 sasquatch-dbgsym_1.0_amd64.deb
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-10-27T08:20:30Z

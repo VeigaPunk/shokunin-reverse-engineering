@@ -1,0 +1,283 @@
+{
+  "seed": "d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b",
+  "round": 42,
+  "claim": "R42-C2",
+  "classes": [
+    "clean-be",
+    "clean-le",
+    "clean-empty",
+    "escaping-symlink-removed",
+    "in-tree-symlink-metadata",
+    "mixed-symlinks",
+    "dep-missing-be",
+    "dep-missing-le",
+    "avm-marker-be-dropped",
+    "body-extractor-failure",
+    "partial-body-failure",
+    "no-squashfs-chunk",
+    "out-of-domain",
+    "partial-in-tree",
+    "partial-mixed",
+    "depth-limited-alone",
+    "depth-limited-in-tree",
+    "depth-limited-mixed",
+    "body-extractor-failure-le",
+    "failure-depth-limited",
+    "legacy-clean",
+    "legacy-dep-missing-be",
+    "legacy-dep-missing-le",
+    "legacy-body-failure",
+    "legacy-partial",
+    "container-depth-limited",
+    "unknown-residue",
+    "combo"
+  ],
+  "action_set": "draft42",
+  "action_vocabulary": [
+    "audit-symlinks",
+    "confirm-empty",
+    "count-gap",
+    "cross-read-legacy",
+    "expect-link-absent",
+    "inspect-input",
+    "install-extractor-be",
+    "install-extractor-le",
+    "isolate-residue",
+    "none",
+    "preserve-failure",
+    "raise-depth",
+    "salvage-partial",
+    "wrap-extractor-be"
+  ],
+  "new_labels": [
+    "depth-limited",
+    "legacy-body-failure"
+  ],
+  "combo_unseen": {
+    "binding": "combo_unseen_majority",
+    "definition": "a combo is UNSEEN when its observed feature tuple is outside the union of the NAMED classes' declared tuples; the union is the dev arm's, so the only way to carry this at the freeze is a lookup control's own key set",
+    "named_tuple_union_size": 39,
+    "named_tuple_union_sha256": "8fa8d3629f338325c0306d2d94341c0c62a27349e97d141e46d836dfc9a01fd6",
+    "combos": 24,
+    "declared_outside": 18,
+    "declared_outside_ids": [
+      "C01",
+      "C04",
+      "C05",
+      "C06",
+      "C08",
+      "C09",
+      "C10",
+      "C11",
+      "C14",
+      "C15",
+      "C17",
+      "C18",
+      "C19",
+      "C20",
+      "C21",
+      "C22",
+      "C23",
+      "C24"
+    ],
+    "decisions_per_combo": {
+      "C01": 3,
+      "C02": 3,
+      "C03": 3,
+      "C04": 3,
+      "C05": 3,
+      "C06": 6,
+      "C07": 2,
+      "C08": 2,
+      "C09": 3,
+      "C10": 3,
+      "C11": 3,
+      "C12": 2,
+      "C13": 2,
+      "C14": 3,
+      "C15": 4,
+      "C16": 2,
+      "C17": 4,
+      "C18": 3,
+      "C19": 4,
+      "C20": 4,
+      "C21": 3,
+      "C22": 4,
+      "C23": 3,
+      "C24": 4
+    },
+    "min_decisions": 2,
+    "note": "declared_outside is the prediction from the declared tuples; --verify recomputes it from the OBSERVED tuples and prints both.  The two agree whenever the binding observed_features_match_declared holds."
+  },
+  "declared_schema": {
+    "binding": "observed_features_match_declared",
+    "key": "declared_features",
+    "fields": [
+      "handler_set",
+      "gap_kinds",
+      "gap_dependencies",
+      "be_argv",
+      "symlink_removed",
+      "published"
+    ],
+    "types": {
+      "handler_set": "sorted list of handler names (empty = no chunk)",
+      "gap_kinds": "sorted list of extraction_gaps[].kind",
+      "gap_dependencies": "sorted union of extraction_gaps[].dependencies",
+      "be_argv": "'yes' | 'no' | 'n/a' -- whether a recorded extractor child argv carries -be; 'n/a' when no argv is recorded (a successful run records none)",
+      "symlink_removed": "bool -- a MaliciousSymlinkRemoved diagnostic",
+      "published": "'nonzero' (P > 0) | 'zero' (P == 0)"
+    },
+    "location": "carriers[].declared_features -- ONE key for every class, combos included (R41-CL1).  There is no `declared` key and no `class_expected.features` key; declared_extras carries extraction_failed and max_depth, which are NOT part of the binding"
+  },
+  "families": {
+    "combo": {
+      "count": 24,
+      "id_prefix": "C",
+      "factors": [
+        "base",
+        "second_v4",
+        "links",
+        "residue",
+        "wrap",
+        "damage",
+        "dep",
+        "max_depth",
+        "endian",
+        "comp",
+        "legacy_fixture"
+      ],
+      "combo_bases": [
+        "v4",
+        "legacy"
+      ],
+      "links_values": [
+        "none",
+        "in-tree",
+        "escaping",
+        "both"
+      ],
+      "min_decisions": 2,
+      "class_expected": null,
+      "note": "factorial: expected tuple computed from the drawn factors, label given by the evaluator only"
+    }
+  },
+  "out_of_domain": {
+    "operation": "inspect-firmware-regions",
+    "label": "unclassified",
+    "action": "none"
+  },
+  "precedence_observations": [
+    {
+      "rule": 3,
+      "claim": "every v1-v3 chunk resolves plain `sasquatch` [TBC]",
+      "measured": "CONFIRMED: unblob SquashFSExtractor runs `sasquatch -be` for a v1-v3 BIG-endian chunk (handler version != 4), and the failing Command reports its own executable (unblob/extractors/command.py:68-73), so D = ['sasquatch'] and rule 3 answers (dep-missing-le, install-extractor-le) for a big-endian legacy chunk.",
+      "carriers": [
+        "legacy-dep-missing-be"
+      ]
+    },
+    {
+      "rule": 6,
+      "claim": "a v1-v3 body failure lands legacy-body-failure",
+      "measured": "CONFIRMED on all 14 pinned fixtures x both endianness strata: G={extractor-failure}, P=0, argv -be/-le recorded, handler from the v1-v3 family."
+    },
+    {
+      "rule": 8,
+      "claim": "depth-limited is minted whenever max_depth == 1",
+      "measured": "REFINED: only when an extraction actually reached the ceiling.  A clean chunk at --max-depth 1 mints it; a FAILING root chunk mints nothing (G={extractor-failure} only). A failing non-root chunk does not suppress it, because the sibling chunk still hits the ceiling."
+    }
+  ],
+  "rea": {
+    "default_max_depth": 3,
+    "per_class": {
+      "clean-be": 3,
+      "clean-le": 3,
+      "clean-empty": 3,
+      "escaping-symlink-removed": 3,
+      "in-tree-symlink-metadata": 3,
+      "mixed-symlinks": 3,
+      "dep-missing-be": 3,
+      "dep-missing-le": 3,
+      "avm-marker-be-dropped": 3,
+      "body-extractor-failure": 3,
+      "partial-body-failure": 3,
+      "no-squashfs-chunk": 3,
+      "out-of-domain": null,
+      "partial-in-tree": 3,
+      "partial-mixed": 3,
+      "depth-limited-alone": 1,
+      "depth-limited-in-tree": 1,
+      "depth-limited-mixed": 1,
+      "body-extractor-failure-le": 3,
+      "failure-depth-limited": 1,
+      "legacy-clean": 3,
+      "legacy-dep-missing-be": 3,
+      "legacy-dep-missing-le": 3,
+      "legacy-body-failure": 3,
+      "legacy-partial": 3,
+      "container-depth-limited": 1,
+      "unknown-residue": 3,
+      "combo": null
+    }
+  },
+  "replicate_variation": [
+    "compression",
+    "tree-shape",
+    "endianness-where-the-class-allows"
+  ],
+  "generator": {
+    "name": "heldout-gen-v4.py",
+    "version": "r42-c2-v4",
+    "sha256": "c2b1641ad6beec0d8eead002520174fb596c574efe44220c4a440917be03a5e1",
+    "carriers_per_class": 2,
+    "writer": {
+      "name": "gen-squashfs.py",
+      "path": "tools/round-39/gen-squashfs.py",
+      "sha256": "f535e60ee15222a7b0809cf53858e72a82040a519450c562e369224d4fe41188",
+      "block_encoder": "gzip=zlib level 9, comp_id 1; xz=.xz container/CRC32, comp_id 4 (replaces stock raw-LZMA2 and comp_id 2)"
+    },
+    "partial_pin": {
+      "rule": "R40-CL4",
+      "pinned_by": "compressed-length",
+      "fill": "00",
+      "max_damaged_block": 136,
+      "measured_fail_range": [
+        26,
+        136
+      ],
+      "measured_absorbed_from": 1730,
+      "measured_by": "round-40 w2 R40W2MistakeHunt MH-4 \u00a73"
+    },
+    "fixtures": {
+      "pins": "fixtures.json",
+      "pins_sha256": "9f957663c1f21940ec17e32f98485425145b6c4e7eb265a7b12327b629c3da9b",
+      "project": "onekey-sec/unblob",
+      "commit": "1fcc7a0a584a70a96c31f5a276c20944d199a089",
+      "url_base": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs",
+      "license": "MIT",
+      "count": 14,
+      "resolution": "committed copy under --fixtures-dir, else the cache under --scratch, else the pinned URL with --fetch; each candidate is sha256-checked",
+      "damage_recipe": "pinned 4-byte zero window at damage_offset; pre-verified with sasquatch 4.5.1 + REA 6.5.0, never probed at run time"
+    }
+  },
+  "label_actions": {
+    "unclassified": "none",
+    "container-depth-limited": "raise-depth",
+    "no-squashfs-chunk": "inspect-input",
+    "dep-missing-be": "install-extractor-be",
+    "dep-missing-le": "install-extractor-le",
+    "partial-body-failure": "salvage-partial",
+    "avm-marker-be-dropped": "wrap-extractor-be",
+    "legacy-body-failure": "cross-read-legacy",
+    "body-extractor-failure": "preserve-failure",
+    "unknown-residue": "isolate-residue",
+    "depth-limited": "raise-depth",
+    "mixed-symlinks": "audit-symlinks",
+    "escaping-symlink-removed": "expect-link-absent",
+    "in-tree-symlink-metadata": "count-gap",
+    "clean": "none",
+    "clean-empty": "confirm-empty"
+  },
+  "action_source": null,
+  "new_label_tokens_binding": "draft42 tokens are the round-42 precedence text verbatim (rule 1-13); the frozen SKILL v4 action line decides, and a mismatch is a loud exit (--actions-set/--actions-file; carriers do not change)"
+}

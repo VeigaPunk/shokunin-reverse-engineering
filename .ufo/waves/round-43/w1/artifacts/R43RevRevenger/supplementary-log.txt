@@ -1,0 +1,270 @@
+== (l) PATCHED full 78-carrier --selftest (determinism paths after the restructure) ==
+$ python3 -I -B gen-r43.py --seed d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b --selftest --gen writer.py --fixture-pins fixtures.json --scratch tmpS --fixtures-dir corpus/evidence/round-42/c2/fixtures
+H01  clean-be                   be/gzip after  clean                      none                             d6a5c67fbe54840795b1a13d8600fe37c16d463b10d5fc9da67cc1049738af66  files=5 links=0 depth=3
+H02  clean-be                   be/xz   after  clean                      none                             6c86cc20bac67336f81cbd44c401360c958b08fc9862ba5194aba77bdbdf4525  files=8 links=0 depth=3
+H03  clean-le                   le/gzip after  clean                      none                             f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  files=6 links=0 depth=3
+H04  clean-le                   le/xz   after  clean                      none                             9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  files=6 links=0 depth=3
+H05  clean-empty                be/gzip after  clean-empty                confirm-empty                    c59a0ae6536364cf4435c8d88960ad023953d8e316c94a34d1c9da6d4db48f2b  files=0 links=0 depth=3
+H06  clean-empty                le/xz   after  clean-empty                confirm-empty                    ef1a0534ee8c4a7df14a45bed4c04c5f46539950be382c5602155613af98ba50  files=0 links=0 depth=3
+H07  escaping-symlink-removed   be/gzip after  escaping-symlink-removed   expect-link-absent               614725900e57b97603832cc2d676c88a21c0715ecaf73b21f600417af6ac4af3  files=4 links=1 depth=3
+H08  escaping-symlink-removed   le/xz   after  escaping-symlink-removed   expect-link-absent               fc468de4eb4fbc4e529dcaa2cd1d09222a4d268fd2077c76ef8f14882231ebfe  files=6 links=1 depth=3
+H09  in-tree-symlink-metadata   be/gzip after  in-tree-symlink-metadata   count-gap                        9239329480b905d3de8d391b71148e0b6fdac2289bf01d29b2b5a680be5e48e2  files=6 links=1 depth=3
+H10  in-tree-symlink-metadata   le/xz   after  in-tree-symlink-metadata   count-gap                        630303ea98982cf3d0d3b75684a762c7342371202d912ad7cc2b1d7ab2fda053  files=7 links=1 depth=3
+H11  mixed-symlinks             be/gzip after  mixed-symlinks             audit-symlinks                   7b006f50ffaef066122e545c4e57e0cffc282f66f26ea0fbfc9ca23bfc72b51f  files=8 links=2 depth=3
+H12  mixed-symlinks             le/xz   after  mixed-symlinks             audit-symlinks                   c04c905c98469c7484f896f0147016d1e1fa363aa2b984f8fb25122439d4e8da  files=4 links=2 depth=3
+H13  dep-missing-be             be/gzip before dep-missing-be             install-extractor-be             c27751c5dd95b990cba264f8c8c890a86767658ccb2adbd17df35a96a4205ee0  files=4 links=0 depth=3
+H14  dep-missing-be             be/xz   before dep-missing-be             install-extractor-be             412ac5601a4038e5793d8c48305d1615cf13dff50d9b98d440d6fb7ab7507a74  files=8 links=0 depth=3
+H15  dep-missing-le             le/gzip before dep-missing-le             install-extractor-le             e3188ceddc6dcf2b2103c86d4a89daebb1c1ec9e7b871ad99d3760862b87894e  files=8 links=0 depth=3
+H16  dep-missing-le             le/xz   before dep-missing-le             install-extractor-le             c0fa8abb99dba03acbfefa8682661314f3376f1e98075418cf22954c72243876  files=7 links=0 depth=3
+H17  avm-marker-be-dropped      avm/gzip after  avm-marker-be-dropped      wrap-extractor-be                c0c010aabff89cf22b4e43524b5dba8975695f4df0d7fe7ad417c6f721ceef17  files=4 links=0 depth=3
+H18  avm-marker-be-dropped      avm/xz   after  avm-marker-be-dropped      wrap-extractor-be                9f83141dcd38d49e07f17545533ca169b78b2c90796d9d25477687e420c5f4bb  files=8 links=0 depth=3
+H19  body-extractor-failure     be/gzip after  body-extractor-failure     preserve-failure                 7651dcb02147fddf2f6cd4b10c2588670b4b72570ba5d5b4e3d89d9de3c1a8dd  files=7 links=0 depth=3
+H20  body-extractor-failure     be/xz   after  body-extractor-failure     preserve-failure                 8c2e7e9d4e82b7732293ee68aec445f9d5fa3d63a4721722bba63514d6eec1cb  files=7 links=0 depth=3
+H21  partial-body-failure       be/gzip after  partial-body-failure       salvage-partial                  47067d59111a18683cfc77b99814201948039ee1c3e1cabc135ab26fde54f85a  files=7 links=0 damage=10blk/688B depth=3
+H22  partial-body-failure       be/xz   after  partial-body-failure       salvage-partial                  eb6762ec735032ce05cce5363e1329b4bd56fa27538d0d5de5ee4f2a3093ab35  files=4 links=0 damage=5blk/512B depth=3
+H23  no-squashfs-chunk          be/gzip after  no-squashfs-chunk          inspect-input                    8744a9bf72d4cacf23f5922350aabcab4eb97d5d0a4b108d7041d93b69fb05c5  files=6 links=0 depth=3
+H24  no-squashfs-chunk          le/xz   after  no-squashfs-chunk          inspect-input                    d685cd85f9f37a11bb34e11453ea53a85499c7538f87f5047af6208fc4095a7f  files=4 links=0 depth=3
+H25  out-of-domain              be/gzip ood    unclassified               none                             d5ee69da67edb917a69670cfbad335e4f05aab2d1cf0e779c84423f83e3dd7f7  files=5 links=0 depth=None
+H26  out-of-domain              le/xz   ood    unclassified               none                             eed423095c5db1796c7078777961cfe225e7e55f03bcbedcc98ddb538c5b06b3  files=6 links=0 depth=None
+H27  partial-in-tree            be/gzip after  partial-body-failure       salvage-partial                  f60b826aee96f290e7edde2b5f7cceb49082804e94e4549a5b6623850a59a575  files=5 links=1 damage=11blk/632B depth=3
+H28  partial-in-tree            be/xz   after  partial-body-failure       salvage-partial                  23494423ee8b90a1bbff4cba9e0163b1387b608a6c8b1392ee700a1f5fc589db  files=5 links=1 damage=7blk/616B depth=3
+H29  partial-mixed              be/gzip after  partial-body-failure       salvage-partial                  19490c7f39ebb25f00fda8fb010611ec4a5fadd1758d2b5788f42af3cae680b5  files=5 links=2 damage=14blk/748B depth=3
+H30  partial-mixed              be/xz   after  partial-body-failure       salvage-partial                  d4dfd73e90b581014d91c64a6789fcdf302fec538a077b9a62571c6b4e9805c4  files=7 links=2 damage=14blk/1348B depth=3
+H31  depth-limited-alone        be/gzip after  depth-limited              raise-depth                      5b15dd6a48440e9b6d5efec44f34b81c75ee8d98d1e3d713eb9d1c5231e9f2b0  files=5 links=0 nested=pwii/cjw0j7.sqsh depth=1
+H32  depth-limited-alone        le/xz   after  depth-limited              raise-depth                      eb4015a49debeabb34ab61e661b486eb026df42e3e24e4830c6cc7498ca4e283  files=6 links=0 nested=zyevs5.sqsh depth=1
+H33  depth-limited-in-tree      be/gzip after  depth-limited              raise-depth                      115cb41fd8cbef4519501fc29bf96605913be7bff26203b140521139cbf8882f  files=4 links=1 nested=zdh0/wt27.sqsh depth=1
+H34  depth-limited-in-tree      le/xz   after  depth-limited              raise-depth                      798d5349e482306037fe8018a8b8f0abd4c1825b7d5267a003be05c991d1e380  files=4 links=1 nested=cv3hosr/eoa2ptqr4/yd0.sqsh depth=1
+H35  depth-limited-mixed        be/gzip after  depth-limited              raise-depth                      40cec685afe83a768ff0f8c394c657ae97114b8689db6ed8f93a56fb6483372d  files=5 links=2 nested=4xnw.sqsh depth=1
+H36  depth-limited-mixed        le/xz   after  depth-limited              raise-depth                      aabe37e0346a917a353699811cea591f76feaa772f0b6029c96f2c7642ca72ab  files=9 links=2 nested=eccfxxfjg/4yh09ms.sqsh depth=1
+H37  body-extractor-failure-le  le/gzip after  body-extractor-failure     preserve-failure                 8118702e49ffb6242bc67ed853d53751f5fea0367673020253e21e08ca0b5669  files=4 links=0 depth=3
+H38  body-extractor-failure-le  le/xz   after  body-extractor-failure     preserve-failure                 625fe9019b5ef2d3c7dc06156f8f2f7af73977c0538a3ccfac4178c79ec4a51c  files=7 links=0 depth=3
+H39  failure-depth-limited      be/gzip after  partial-body-failure       salvage-partial                  7d1921a839005ae8246e89e235855d391d63c02ab2a31d944566af6669977154  files=2 links=0 depth=1
+H40  failure-depth-limited      le/xz   after  partial-body-failure       salvage-partial                  1ba7cf731b34dceab8be832b9f90c854ad034baf66de510d550f66565559531e  files=2 links=0 depth=1
+H41  legacy-clean               le/gzip after  clean                      none                             b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71  files=0 links=0 depth=3
+H42  legacy-clean               be/gzip after  clean                      none                             4e9493d9c6f868005dea8f11992129c3399e0bcb8f3a966c750cb925989ca97c  files=0 links=0 depth=3
+H43  legacy-dep-missing-be      be/gzip before dep-missing-le             install-extractor-le             529e10775cc152e6c5df0c6c63316811004cc73ce99f03989c86ffd396d631e6  files=0 links=0 depth=3
+H44  legacy-dep-missing-be      be/gzip before dep-missing-le             install-extractor-le             79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0  files=0 links=0 depth=3
+H45  legacy-dep-missing-le      le/gzip before dep-missing-le             install-extractor-le             7c62dbe388b972119f5d17a12836a016737d58276184f4caa2a90dafd924f124  files=0 links=0 depth=3
+H46  legacy-dep-missing-le      le/lzma before dep-missing-le             install-extractor-le             2ac15e5c993f330854497b2fd032d2e87873a288fab6da2fe72106bb40b43124  files=0 links=0 depth=3
+H47  legacy-body-failure        le/gzip after  legacy-body-failure        cross-read-legacy                4ae02dbd0fd6eb452a5284f556eaf389d643ffb49b2b4c110e8229aeb8765c11  files=0 links=0 depth=3
+H48  legacy-body-failure        be/lzma after  legacy-body-failure        cross-read-legacy                c261b0520976f6591bd465c5879f3406e4888a284359db50f2feb2bd8a1e0d4c  files=0 links=0 depth=3
+H49  legacy-partial             le/gzip after  partial-body-failure       salvage-partial                  cc6f43a80db91ccfd613e7f43ad64650023826a1c140ee8c93ebc0d56c11d255  files=0 links=0 depth=3
+H50  legacy-partial             be/gzip after  partial-body-failure       salvage-partial                  f5bd8ec77c377108d253b8d5d21014b530622a798e7d871728cd2671c4521e37  files=0 links=0 depth=3
+H51  container-depth-limited    le/gzip after  container-depth-limited    raise-depth                      abe72bc3db6d7e203748104ac00f9b00abc57dbc7552888a8ce6c2c4a2ae09fe  files=0 links=0 depth=1
+H52  container-depth-limited    be/gzip after  container-depth-limited    raise-depth                      1a522b799b3edb1851722f4bd0d1a79937f892ad6a3296fc13b6f91ef48c0c4d  files=0 links=0 depth=1
+H53  unknown-residue            le/gzip after  unknown-residue            isolate-residue                  416009c09418896f69a7e53e773c86ed33aa4b311d3299232f128472d4ed4809  files=0 links=0 depth=3
+H54  unknown-residue            be/gzip after  unknown-residue            isolate-residue                  45613946eb45419786410f15c6922bc284d72c463a75ee45634f46863dec33a4  files=0 links=0 depth=3
+C01  combo                      le/xz   before -                          -                                52f404b798f830470fff2d031b31aa059f71c46210b777a7cf3867a05fe19d50  files=6 links=1 depth=1
+C02  combo                      be/gzip after  -                          -                                44e0f713e9ee94e7b43a2bf769571bb2d4cd43975a169506b4d8a856d7065905  files=6 links=1 damage=16blk/843B depth=1
+C03  combo                      le/fixture before -                          -                                0161351caec8e9da6e3e5ac7b046fd11d832efb18eb09e33011e6d19d50cd1f7  files=0 links=0 depth=1
+C04  combo                      be/gzip after  -                          -                                9765e83756e5eed7bdd5710f58ecba2ad4e56931cf39a608786703c708209698  files=4 links=1 depth=1
+C05  combo                      le/gzip before -                          -                                f74f265e6d5279068403c8556e5521e4f35ede1528b3b1448895c2e9385bcec4  files=5 links=1 depth=1
+C06  combo                      be/gzip before -                          -                                8b942115a2f125db0caff4630073cfcfc40761bbd1f48409e397886f9eed3bf3  files=5 links=1 depth=1
+C07  combo                      le/xz   before -                          -                                c581ee9755a00f1985927e0b4620d73d5910744c43d7482921d2bf56b35bda1b  files=7 links=1 depth=3
+C08  combo                      le/fixture after  -                          -                                f8e69e7e374710256d5cdd3fd528fe2aff6c70294a381af69050c74749dfbe66  files=0 links=0 depth=3
+C09  combo                      be/xz   after  -                          -                                957ace7b01817d733d953db11db96e05dd1479b3bc90cf50944cab19a5c403c8  files=5 links=2 depth=1
+C10  combo                      le/fixture after  -                          -                                9d01dc048d5fac1f208bfd7b6e3b3abd3e5c297c2f94103f0033ce13b0184a54  files=0 links=0 depth=3
+C11  combo                      le/gzip after  -                          -                                f519aa85f91889789de94da2d5d462844a1a8d74d7b040dea97afc4285fdc8e1  files=5 links=0 damage=17blk/822B depth=1
+C12  combo                      be/fixture after  -                          -                                b27ba1436c731d68601e63f69414eb2cb1fb6a23fb0a8a1ea201639ab1198d7c  files=0 links=0 depth=1
+C13  combo                      be/gzip after  -                          -                                36923f22323c546e54023d088319d0582afce0e427578d732b3f1956dc2fce8a  files=5 links=1 damage=8blk/465B depth=1
+C14  combo                      be/gzip before -                          -                                d5dd70ac499d2c52e007b75b8488634755145641e1ecca6c5821a15f0b6eee9b  files=3 links=0 depth=1
+C15  combo                      be/xz   after  -                          -                                5d1a4afc4bde41073ce4e0efda3574e5f31e806f019395e3d8331c2c8fa678d5  files=5 links=0 depth=1
+C16  combo                      le/xz   after  -                          -                                ac5cbeda1cdd2a2d86475a6a6ea56b7227d6c8f7182b0245c3cd9895953e9284  files=6 links=2 depth=1
+C17  combo                      le/gzip before -                          -                                254ade9ccabd1a358d11ac708db67d7583f5e72a9bee2c94cd746c439f4ed2e6  files=5 links=1 depth=3
+C18  combo                      le/gzip before -                          -                                5f20baf7e34602c011e7d29a66ce9ea51b57397d1969666b20744fb62da84ef0  files=4 links=0 depth=1
+C19  combo                      le/gzip before -                          -                                c4bf8328442cfa001687d43340ceb9dbf2f868c204eab7d9d004212233802d7e  files=6 links=1 depth=3
+C20  combo                      le/xz   before -                          -                                2abb8c222e4a4b507740588007dc6e893252fd6ef838aaac24f7bdb97e19d933  files=7 links=1 depth=3
+C21  combo                      be/gzip before -                          -                                92f676a82343735afb2f418c488c2eb0525b3d61d68aa3ceccdd6585f03fa6a5  files=4 links=1 depth=1
+C22  combo                      be/gzip after  -                          -                                975219a4c39280dbc2a420b7ce22f3e8a03e5a1091041601c4d2ba460d79b343  files=6 links=0 damage=12blk/666B depth=1
+C23  combo                      be/gzip after  -                          -                                72d1b33dc2906cba5d3f1c6803f8aa2817c947afce3a918dc9b767702b217302  files=5 links=1 damage=12blk/648B depth=3
+C24  combo                      be/gzip after  -                          -                                8cc0dd22f29268bdcaf25c05ef22d305a52fb890e10b17150f3953d2e8186bd0  files=5 links=1 damage=10blk/560B depth=3
+H01  clean-be                   be/gzip after  clean                      none                             d6a5c67fbe54840795b1a13d8600fe37c16d463b10d5fc9da67cc1049738af66  files=5 links=0 depth=3
+H02  clean-be                   be/xz   after  clean                      none                             6c86cc20bac67336f81cbd44c401360c958b08fc9862ba5194aba77bdbdf4525  files=8 links=0 depth=3
+H03  clean-le                   le/gzip after  clean                      none                             f3fc89a6f3581e3b1fb6e57e2962179b58d83259e45fccfd4d335774e122321e  files=6 links=0 depth=3
+H04  clean-le                   le/xz   after  clean                      none                             9f305d3616168267621395546ad3dbfec2dcc6f3d08d530f7af4ab69025dd51c  files=6 links=0 depth=3
+H05  clean-empty                be/gzip after  clean-empty                confirm-empty                    c59a0ae6536364cf4435c8d88960ad023953d8e316c94a34d1c9da6d4db48f2b  files=0 links=0 depth=3
+H06  clean-empty                le/xz   after  clean-empty                confirm-empty                    ef1a0534ee8c4a7df14a45bed4c04c5f46539950be382c5602155613af98ba50  files=0 links=0 depth=3
+H07  escaping-symlink-removed   be/gzip after  escaping-symlink-removed   expect-link-absent               614725900e57b97603832cc2d676c88a21c0715ecaf73b21f600417af6ac4af3  files=4 links=1 depth=3
+H08  escaping-symlink-removed   le/xz   after  escaping-symlink-removed   expect-link-absent               fc468de4eb4fbc4e529dcaa2cd1d09222a4d268fd2077c76ef8f14882231ebfe  files=6 links=1 depth=3
+H09  in-tree-symlink-metadata   be/gzip after  in-tree-symlink-metadata   count-gap                        9239329480b905d3de8d391b71148e0b6fdac2289bf01d29b2b5a680be5e48e2  files=6 links=1 depth=3
+H10  in-tree-symlink-metadata   le/xz   after  in-tree-symlink-metadata   count-gap                        630303ea98982cf3d0d3b75684a762c7342371202d912ad7cc2b1d7ab2fda053  files=7 links=1 depth=3
+H11  mixed-symlinks             be/gzip after  mixed-symlinks             audit-symlinks                   7b006f50ffaef066122e545c4e57e0cffc282f66f26ea0fbfc9ca23bfc72b51f  files=8 links=2 depth=3
+H12  mixed-symlinks             le/xz   after  mixed-symlinks             audit-symlinks                   c04c905c98469c7484f896f0147016d1e1fa363aa2b984f8fb25122439d4e8da  files=4 links=2 depth=3
+H13  dep-missing-be             be/gzip before dep-missing-be             install-extractor-be             c27751c5dd95b990cba264f8c8c890a86767658ccb2adbd17df35a96a4205ee0  files=4 links=0 depth=3
+H14  dep-missing-be             be/xz   before dep-missing-be             install-extractor-be             412ac5601a4038e5793d8c48305d1615cf13dff50d9b98d440d6fb7ab7507a74  files=8 links=0 depth=3
+H15  dep-missing-le             le/gzip before dep-missing-le             install-extractor-le             e3188ceddc6dcf2b2103c86d4a89daebb1c1ec9e7b871ad99d3760862b87894e  files=8 links=0 depth=3
+H16  dep-missing-le             le/xz   before dep-missing-le             install-extractor-le             c0fa8abb99dba03acbfefa8682661314f3376f1e98075418cf22954c72243876  files=7 links=0 depth=3
+H17  avm-marker-be-dropped      avm/gzip after  avm-marker-be-dropped      wrap-extractor-be                c0c010aabff89cf22b4e43524b5dba8975695f4df0d7fe7ad417c6f721ceef17  files=4 links=0 depth=3
+H18  avm-marker-be-dropped      avm/xz   after  avm-marker-be-dropped      wrap-extractor-be                9f83141dcd38d49e07f17545533ca169b78b2c90796d9d25477687e420c5f4bb  files=8 links=0 depth=3
+H19  body-extractor-failure     be/gzip after  body-extractor-failure     preserve-failure                 7651dcb02147fddf2f6cd4b10c2588670b4b72570ba5d5b4e3d89d9de3c1a8dd  files=7 links=0 depth=3
+H20  body-extractor-failure     be/xz   after  body-extractor-failure     preserve-failure                 8c2e7e9d4e82b7732293ee68aec445f9d5fa3d63a4721722bba63514d6eec1cb  files=7 links=0 depth=3
+H21  partial-body-failure       be/gzip after  partial-body-failure       salvage-partial                  47067d59111a18683cfc77b99814201948039ee1c3e1cabc135ab26fde54f85a  files=7 links=0 damage=10blk/688B depth=3
+H22  partial-body-failure       be/xz   after  partial-body-failure       salvage-partial                  eb6762ec735032ce05cce5363e1329b4bd56fa27538d0d5de5ee4f2a3093ab35  files=4 links=0 damage=5blk/512B depth=3
+H23  no-squashfs-chunk          be/gzip after  no-squashfs-chunk          inspect-input                    8744a9bf72d4cacf23f5922350aabcab4eb97d5d0a4b108d7041d93b69fb05c5  files=6 links=0 depth=3
+H24  no-squashfs-chunk          le/xz   after  no-squashfs-chunk          inspect-input                    d685cd85f9f37a11bb34e11453ea53a85499c7538f87f5047af6208fc4095a7f  files=4 links=0 depth=3
+H25  out-of-domain              be/gzip ood    unclassified               none                             d5ee69da67edb917a69670cfbad335e4f05aab2d1cf0e779c84423f83e3dd7f7  files=5 links=0 depth=None
+H26  out-of-domain              le/xz   ood    unclassified               none                             eed423095c5db1796c7078777961cfe225e7e55f03bcbedcc98ddb538c5b06b3  files=6 links=0 depth=None
+H27  partial-in-tree            be/gzip after  partial-body-failure       salvage-partial                  f60b826aee96f290e7edde2b5f7cceb49082804e94e4549a5b6623850a59a575  files=5 links=1 damage=11blk/632B depth=3
+H28  partial-in-tree            be/xz   after  partial-body-failure       salvage-partial                  23494423ee8b90a1bbff4cba9e0163b1387b608a6c8b1392ee700a1f5fc589db  files=5 links=1 damage=7blk/616B depth=3
+H29  partial-mixed              be/gzip after  partial-body-failure       salvage-partial                  19490c7f39ebb25f00fda8fb010611ec4a5fadd1758d2b5788f42af3cae680b5  files=5 links=2 damage=14blk/748B depth=3
+H30  partial-mixed              be/xz   after  partial-body-failure       salvage-partial                  d4dfd73e90b581014d91c64a6789fcdf302fec538a077b9a62571c6b4e9805c4  files=7 links=2 damage=14blk/1348B depth=3
+H31  depth-limited-alone        be/gzip after  depth-limited              raise-depth                      5b15dd6a48440e9b6d5efec44f34b81c75ee8d98d1e3d713eb9d1c5231e9f2b0  files=5 links=0 nested=pwii/cjw0j7.sqsh depth=1
+H32  depth-limited-alone        le/xz   after  depth-limited              raise-depth                      eb4015a49debeabb34ab61e661b486eb026df42e3e24e4830c6cc7498ca4e283  files=6 links=0 nested=zyevs5.sqsh depth=1
+H33  depth-limited-in-tree      be/gzip after  depth-limited              raise-depth                      115cb41fd8cbef4519501fc29bf96605913be7bff26203b140521139cbf8882f  files=4 links=1 nested=zdh0/wt27.sqsh depth=1
+H34  depth-limited-in-tree      le/xz   after  depth-limited              raise-depth                      798d5349e482306037fe8018a8b8f0abd4c1825b7d5267a003be05c991d1e380  files=4 links=1 nested=cv3hosr/eoa2ptqr4/yd0.sqsh depth=1
+H35  depth-limited-mixed        be/gzip after  depth-limited              raise-depth                      40cec685afe83a768ff0f8c394c657ae97114b8689db6ed8f93a56fb6483372d  files=5 links=2 nested=4xnw.sqsh depth=1
+H36  depth-limited-mixed        le/xz   after  depth-limited              raise-depth                      aabe37e0346a917a353699811cea591f76feaa772f0b6029c96f2c7642ca72ab  files=9 links=2 nested=eccfxxfjg/4yh09ms.sqsh depth=1
+H37  body-extractor-failure-le  le/gzip after  body-extractor-failure     preserve-failure                 8118702e49ffb6242bc67ed853d53751f5fea0367673020253e21e08ca0b5669  files=4 links=0 depth=3
+H38  body-extractor-failure-le  le/xz   after  body-extractor-failure     preserve-failure                 625fe9019b5ef2d3c7dc06156f8f2f7af73977c0538a3ccfac4178c79ec4a51c  files=7 links=0 depth=3
+H39  failure-depth-limited      be/gzip after  partial-body-failure       salvage-partial                  7d1921a839005ae8246e89e235855d391d63c02ab2a31d944566af6669977154  files=2 links=0 depth=1
+H40  failure-depth-limited      le/xz   after  partial-body-failure       salvage-partial                  1ba7cf731b34dceab8be832b9f90c854ad034baf66de510d550f66565559531e  files=2 links=0 depth=1
+H41  legacy-clean               le/gzip after  clean                      none                             b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71  files=0 links=0 depth=3
+H42  legacy-clean               be/gzip after  clean                      none                             4e9493d9c6f868005dea8f11992129c3399e0bcb8f3a966c750cb925989ca97c  files=0 links=0 depth=3
+H43  legacy-dep-missing-be      be/gzip before dep-missing-le             install-extractor-le             529e10775cc152e6c5df0c6c63316811004cc73ce99f03989c86ffd396d631e6  files=0 links=0 depth=3
+H44  legacy-dep-missing-be      be/gzip before dep-missing-le             install-extractor-le             79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0  files=0 links=0 depth=3
+H45  legacy-dep-missing-le      le/gzip before dep-missing-le             install-extractor-le             7c62dbe388b972119f5d17a12836a016737d58276184f4caa2a90dafd924f124  files=0 links=0 depth=3
+H46  legacy-dep-missing-le      le/lzma before dep-missing-le             install-extractor-le             2ac15e5c993f330854497b2fd032d2e87873a288fab6da2fe72106bb40b43124  files=0 links=0 depth=3
+H47  legacy-body-failure        le/gzip after  legacy-body-failure        cross-read-legacy                4ae02dbd0fd6eb452a5284f556eaf389d643ffb49b2b4c110e8229aeb8765c11  files=0 links=0 depth=3
+H48  legacy-body-failure        be/lzma after  legacy-body-failure        cross-read-legacy                c261b0520976f6591bd465c5879f3406e4888a284359db50f2feb2bd8a1e0d4c  files=0 links=0 depth=3
+H49  legacy-partial             le/gzip after  partial-body-failure       salvage-partial                  cc6f43a80db91ccfd613e7f43ad64650023826a1c140ee8c93ebc0d56c11d255  files=0 links=0 depth=3
+H50  legacy-partial             be/gzip after  partial-body-failure       salvage-partial                  f5bd8ec77c377108d253b8d5d21014b530622a798e7d871728cd2671c4521e37  files=0 links=0 depth=3
+H51  container-depth-limited    le/gzip after  container-depth-limited    raise-depth                      abe72bc3db6d7e203748104ac00f9b00abc57dbc7552888a8ce6c2c4a2ae09fe  files=0 links=0 depth=1
+H52  container-depth-limited    be/gzip after  container-depth-limited    raise-depth                      1a522b799b3edb1851722f4bd0d1a79937f892ad6a3296fc13b6f91ef48c0c4d  files=0 links=0 depth=1
+H53  unknown-residue            le/gzip after  unknown-residue            isolate-residue                  416009c09418896f69a7e53e773c86ed33aa4b311d3299232f128472d4ed4809  files=0 links=0 depth=3
+H54  unknown-residue            be/gzip after  unknown-residue            isolate-residue                  45613946eb45419786410f15c6922bc284d72c463a75ee45634f46863dec33a4  files=0 links=0 depth=3
+C01  combo                      le/xz   before -                          -                                52f404b798f830470fff2d031b31aa059f71c46210b777a7cf3867a05fe19d50  files=6 links=1 depth=1
+C02  combo                      be/gzip after  -                          -                                44e0f713e9ee94e7b43a2bf769571bb2d4cd43975a169506b4d8a856d7065905  files=6 links=1 damage=16blk/843B depth=1
+C03  combo                      le/fixture before -                          -                                0161351caec8e9da6e3e5ac7b046fd11d832efb18eb09e33011e6d19d50cd1f7  files=0 links=0 depth=1
+C04  combo                      be/gzip after  -                          -                                9765e83756e5eed7bdd5710f58ecba2ad4e56931cf39a608786703c708209698  files=4 links=1 depth=1
+C05  combo                      le/gzip before -                          -                                f74f265e6d5279068403c8556e5521e4f35ede1528b3b1448895c2e9385bcec4  files=5 links=1 depth=1
+C06  combo                      be/gzip before -                          -                                8b942115a2f125db0caff4630073cfcfc40761bbd1f48409e397886f9eed3bf3  files=5 links=1 depth=1
+C07  combo                      le/xz   before -                          -                                c581ee9755a00f1985927e0b4620d73d5910744c43d7482921d2bf56b35bda1b  files=7 links=1 depth=3
+C08  combo                      le/fixture after  -                          -                                f8e69e7e374710256d5cdd3fd528fe2aff6c70294a381af69050c74749dfbe66  files=0 links=0 depth=3
+C09  combo                      be/xz   after  -                          -                                957ace7b01817d733d953db11db96e05dd1479b3bc90cf50944cab19a5c403c8  files=5 links=2 depth=1
+C10  combo                      le/fixture after  -                          -                                9d01dc048d5fac1f208bfd7b6e3b3abd3e5c297c2f94103f0033ce13b0184a54  files=0 links=0 depth=3
+C11  combo                      le/gzip after  -                          -                                f519aa85f91889789de94da2d5d462844a1a8d74d7b040dea97afc4285fdc8e1  files=5 links=0 damage=17blk/822B depth=1
+C12  combo                      be/fixture after  -                          -                                b27ba1436c731d68601e63f69414eb2cb1fb6a23fb0a8a1ea201639ab1198d7c  files=0 links=0 depth=1
+C13  combo                      be/gzip after  -                          -                                36923f22323c546e54023d088319d0582afce0e427578d732b3f1956dc2fce8a  files=5 links=1 damage=8blk/465B depth=1
+C14  combo                      be/gzip before -                          -                                d5dd70ac499d2c52e007b75b8488634755145641e1ecca6c5821a15f0b6eee9b  files=3 links=0 depth=1
+C15  combo                      be/xz   after  -                          -                                5d1a4afc4bde41073ce4e0efda3574e5f31e806f019395e3d8331c2c8fa678d5  files=5 links=0 depth=1
+C16  combo                      le/xz   after  -                          -                                ac5cbeda1cdd2a2d86475a6a6ea56b7227d6c8f7182b0245c3cd9895953e9284  files=6 links=2 depth=1
+C17  combo                      le/gzip before -                          -                                254ade9ccabd1a358d11ac708db67d7583f5e72a9bee2c94cd746c439f4ed2e6  files=5 links=1 depth=3
+C18  combo                      le/gzip before -                          -                                5f20baf7e34602c011e7d29a66ce9ea51b57397d1969666b20744fb62da84ef0  files=4 links=0 depth=1
+C19  combo                      le/gzip before -                          -                                c4bf8328442cfa001687d43340ceb9dbf2f868c204eab7d9d004212233802d7e  files=6 links=1 depth=3
+C20  combo                      le/xz   before -                          -                                2abb8c222e4a4b507740588007dc6e893252fd6ef838aaac24f7bdb97e19d933  files=7 links=1 depth=3
+C21  combo                      be/gzip before -                          -                                92f676a82343735afb2f418c488c2eb0525b3d61d68aa3ceccdd6585f03fa6a5  files=4 links=1 depth=1
+C22  combo                      be/gzip after  -                          -                                975219a4c39280dbc2a420b7ce22f3e8a03e5a1091041601c4d2ba460d79b343  files=6 links=0 damage=12blk/666B depth=1
+C23  combo                      be/gzip after  -                          -                                72d1b33dc2906cba5d3f1c6803f8aa2817c947afce3a918dc9b767702b217302  files=5 links=1 damage=12blk/648B depth=3
+C24  combo                      be/gzip after  -                          -                                8cc0dd22f29268bdcaf25c05ef22d305a52fb890e10b17150f3953d2e8186bd0  files=5 links=1 damage=10blk/560B depth=3
+H01  clean-be                   be/gzip after  clean                      none                             f70bacd1584717f587f4acea0fe6934ef91365df3f0afa2c49feedf794d5b129  files=5 links=0 depth=3
+H02  clean-be                   be/xz   after  clean                      none                             d44db7653f94d148472a1e00dbe7bc7582f5b404d9e1c41ac270a8d1a546f362  files=4 links=0 depth=3
+H03  clean-le                   le/gzip after  clean                      none                             f328641548755fd092d773fffa24452b0c950de6c6f049c7c559949a7bedcb95  files=5 links=0 depth=3
+H04  clean-le                   le/xz   after  clean                      none                             5eeba46471fd5521c71c96fa27da0451161fd8183bb577ff77701b92cde00a58  files=5 links=0 depth=3
+H05  clean-empty                be/gzip after  clean-empty                confirm-empty                    55a13d11f2867973b06f765e77064bedd2408e5a4e2eae28b4dc44ed7f076d7d  files=0 links=0 depth=3
+H06  clean-empty                le/xz   after  clean-empty                confirm-empty                    ffbf0daa4c7a708772c716a0fe79555215c4886b84fd4955ed629a82c5e0da56  files=0 links=0 depth=3
+H07  escaping-symlink-removed   be/gzip after  escaping-symlink-removed   expect-link-absent               d3321a1f38ca14dcefa18e7d64a8717cadacaa6b1de6de3ebd811bd16fd6f21c  files=8 links=1 depth=3
+H08  escaping-symlink-removed   le/xz   after  escaping-symlink-removed   expect-link-absent               d7f34c32286e860f2f29eb7655de4e2e76c9ae6d50a0092db860f952afe0e7be  files=7 links=1 depth=3
+H09  in-tree-symlink-metadata   be/gzip after  in-tree-symlink-metadata   count-gap                        5ea3f07167dec7c7d0d89f1c739c781a6930050967ae3d0bae38ff1ca931c715  files=6 links=1 depth=3
+H10  in-tree-symlink-metadata   le/xz   after  in-tree-symlink-metadata   count-gap                        9bb5813a7eb1e7de8e168093394141b2a0318e0ae4f15e79da1b4a251c93e9e3  files=8 links=1 depth=3
+H11  mixed-symlinks             be/gzip after  mixed-symlinks             audit-symlinks                   5ee1fb24351cc7208cc6422870b8843665980a272fd34f62e483c13d9d87263b  files=5 links=2 depth=3
+H12  mixed-symlinks             le/xz   after  mixed-symlinks             audit-symlinks                   24d27b6920f93993ff88865575df1e108a880b03bb8dfe6c40072f92ffca10b3  files=4 links=2 depth=3
+H13  dep-missing-be             be/gzip before dep-missing-be             install-extractor-be             39a85d4ab481dab2ecfede1856298d748cfb8ce4f919bc5531fa7bba872e22be  files=7 links=0 depth=3
+H14  dep-missing-be             be/xz   before dep-missing-be             install-extractor-be             f69dd823bff7f8f7fe1377f4a7318d118c29999eb2ebc4ac9245400b44813081  files=8 links=0 depth=3
+H15  dep-missing-le             le/gzip before dep-missing-le             install-extractor-le             843d823a88f3098a85877bf43fc9d019654eadb06bd1b0f51ac436ae6a443a37  files=5 links=0 depth=3
+H16  dep-missing-le             le/xz   before dep-missing-le             install-extractor-le             c6645f55aa1e4b76d46933fda38c6e9e5a013a9791b9c620e19088e3a2b93dab  files=4 links=0 depth=3
+H17  avm-marker-be-dropped      avm/gzip after  avm-marker-be-dropped      wrap-extractor-be                49a19a22fd6cbe9670690bfb122769251c4f07ee5461ccfd8a9491cfcc83e3de  files=7 links=0 depth=3
+H18  avm-marker-be-dropped      avm/xz   after  avm-marker-be-dropped      wrap-extractor-be                ea4bf64afdc4862edea123f387e16e8567053991837a5aed183560f97517fa01  files=5 links=0 depth=3
+H19  body-extractor-failure     be/gzip after  body-extractor-failure     preserve-failure                 ff0582873ddbc71338d3e0a58fb1a4232c8cfacefdfcdbcc5a5a931a77dc60a8  files=4 links=0 depth=3
+H20  body-extractor-failure     be/xz   after  body-extractor-failure     preserve-failure                 8bced029f87e03a6a8cf6a35452fb46a60668c1462790a9a0b58385ca7e8988f  files=3 links=0 depth=3
+H21  partial-body-failure       be/gzip after  partial-body-failure       salvage-partial                  fa61a69104750f6abd46c9e1357a0c631d1d1cb9f70b897c5494354595f43e24  files=6 links=0 damage=15blk/803B depth=3
+H22  partial-body-failure       be/xz   after  partial-body-failure       salvage-partial                  bb3c9dd4a47e89af8ca5de1f8ced8be2d1ebf11cf31e3fbbee6b47e6cf53de8b  files=4 links=0 damage=8blk/736B depth=3
+H23  no-squashfs-chunk          be/gzip after  no-squashfs-chunk          inspect-input                    63f8ba476826bafddfd62ecbf2f69e1d6863b1e571b66433b6a7d2b7290c1b17  files=5 links=0 depth=3
+H24  no-squashfs-chunk          le/xz   after  no-squashfs-chunk          inspect-input                    306eae39300a85d0a50788185c6ce0aaaf392e01aeb9302f28accd4fc210edc2  files=6 links=0 depth=3
+H25  out-of-domain              be/gzip ood    unclassified               none                             a32fc417490b3e8136386db1e932f7d582455830b16a34783297aa3149f6a3ba  files=4 links=0 depth=None
+H26  out-of-domain              le/xz   ood    unclassified               none                             ecf3240dacf22a75320a6966b0078ea54e99fa566eb84cfc0f76fb53385535f8  files=8 links=0 depth=None
+H27  partial-in-tree            be/gzip after  partial-body-failure       salvage-partial                  31ece2441637f790bf0d3563b7c183a4fe75d90b0d7e90a9d058d07254d9c3bc  files=8 links=1 damage=14blk/811B depth=3
+H28  partial-in-tree            be/xz   after  partial-body-failure       salvage-partial                  d50bb6f7e5646535ff37f9b40eff9e62f85918b66f2be9fff6df76a8fe3a71b6  files=6 links=1 damage=5blk/576B depth=3
+H29  partial-mixed              be/gzip after  partial-body-failure       salvage-partial                  c8c08dc6343c4ca389de93cb92e5e5c75ea1465903e7bf90307774c00bb09c4b  files=5 links=2 damage=12blk/652B depth=3
+H30  partial-mixed              be/xz   after  partial-body-failure       salvage-partial                  7ffb6e8c230739756fb856844796ff9a66dac975881c7a9481b94db034494cf1  files=3 links=2 damage=3blk/276B depth=3
+H31  depth-limited-alone        be/gzip after  depth-limited              raise-depth                      698583e6a3aa9f56357a62eb5413a8d80923ec7e2572bd109a7ee1e8c3f520af  files=9 links=0 nested=gcffo3.sqsh depth=1
+H32  depth-limited-alone        le/xz   after  depth-limited              raise-depth                      4b8e5949dd9667324f517c09522bf2355775df462448b092c0e4ade6104ef5d1  files=6 links=0 nested=nrn43j3la.sqsh depth=1
+H33  depth-limited-in-tree      be/gzip after  depth-limited              raise-depth                      cfde40c715390f4bcc19f305515eea297dd832dc7ceeb1d1386416169aa341b7  files=5 links=1 nested=vyr_2/mhx.sqsh depth=1
+H34  depth-limited-in-tree      le/xz   after  depth-limited              raise-depth                      84de9da6495ca200c7f6470b98425e23a0aecb151f4700d39d69f00dee4a28f9  files=9 links=1 nested=heqwi-vx/jwc8n.sqsh depth=1
+H35  depth-limited-mixed        be/gzip after  depth-limited              raise-depth                      b7d5f5f19beb0c8d3cbee414539f72b1863aec157ddd37d4ec819720b2a3df2f  files=5 links=2 nested=ghlzl/e1m.sqsh depth=1
+H36  depth-limited-mixed        le/xz   after  depth-limited              raise-depth                      18e4e216142d72c47088afef006cb9a5c7db21a1a28ec2b16f84af037278a56e  files=9 links=2 nested=-4cmpmbei.sqsh depth=1
+H37  body-extractor-failure-le  le/gzip after  body-extractor-failure     preserve-failure                 2da349403cdc3a6c77b59e2afe61a105c3c452ab275fb4c183312033bb0fe631  files=6 links=0 depth=3
+H38  body-extractor-failure-le  le/xz   after  body-extractor-failure     preserve-failure                 fa5bc70fb0923d33bfab988cde95f2e0ef7d00a71b9e377c4a3f1fe9ce8ec081  files=7 links=0 depth=3
+H39  failure-depth-limited      be/gzip after  partial-body-failure       salvage-partial                  367ff62223166042a4e210df5dab83c8b8f33ffe0e4fbfc0685d5a659c0a6b90  files=2 links=0 depth=1
+H40  failure-depth-limited      le/xz   after  partial-body-failure       salvage-partial                  7c95095d1e13ff943b1df464a7e970f2c48776895801dda70a4e6ac9d8f95091  files=2 links=0 depth=1
+H41  legacy-clean               le/lzma after  clean                      none                             2ac15e5c993f330854497b2fd032d2e87873a288fab6da2fe72106bb40b43124  files=0 links=0 depth=3
+H42  legacy-clean               be/gzip after  clean                      none                             529e10775cc152e6c5df0c6c63316811004cc73ce99f03989c86ffd396d631e6  files=0 links=0 depth=3
+H43  legacy-dep-missing-be      be/lzma before dep-missing-le             install-extractor-le             71971c7a05d2d0b44bc976bc168f7b9134af8dc9fec83553889a9b5473469495  files=0 links=0 depth=3
+H44  legacy-dep-missing-be      be/gzip before dep-missing-le             install-extractor-le             79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0  files=0 links=0 depth=3
+H45  legacy-dep-missing-le      le/gzip before dep-missing-le             install-extractor-le             b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71  files=0 links=0 depth=3
+H46  legacy-dep-missing-le      le/gzip before dep-missing-le             install-extractor-le             3bce6ae378319fd2ac08c73ede9b3890a6d0f78c16392f09117cc3ffd70d1acb  files=0 links=0 depth=3
+H47  legacy-body-failure        le/lzma after  legacy-body-failure        cross-read-legacy                a86e42a3c50bebcf3bc98b05bf00541179631b069b6ec0f84b578062209a0d96  files=0 links=0 depth=3
+H48  legacy-body-failure        be/gzip after  legacy-body-failure        cross-read-legacy                71b63de30064c3c530f3c5631769f73a823e660f18151d2f1fbca8cdd11ed540  files=0 links=0 depth=3
+H49  legacy-partial             le/gzip after  partial-body-failure       salvage-partial                  992bda411cf1ea099c871e7164b9ef5c474649432c629ed7f5a92c615234be3f  files=0 links=0 depth=3
+H50  legacy-partial             be/gzip after  partial-body-failure       salvage-partial                  f5bd8ec77c377108d253b8d5d21014b530622a798e7d871728cd2671c4521e37  files=0 links=0 depth=3
+H51  container-depth-limited    le/gzip after  container-depth-limited    raise-depth                      62644f46c5f99e76c8e57a365f7055aa3b70cd6b0fafb235b8037ffd1c460dda  files=0 links=0 depth=1
+H52  container-depth-limited    be/gzip after  container-depth-limited    raise-depth                      1a522b799b3edb1851722f4bd0d1a79937f892ad6a3296fc13b6f91ef48c0c4d  files=0 links=0 depth=1
+H53  unknown-residue            le/gzip after  unknown-residue            isolate-residue                  a916bb7006e1561624b719508ac8474ae82c528409d17187ab6863d721b29b59  files=0 links=0 depth=3
+H54  unknown-residue            be/gzip after  unknown-residue            isolate-residue                  fad85587f46c0659efd8a6f5b767c0ce754e34e0245f283993b646ef4e4e79a1  files=0 links=0 depth=3
+C01  combo                      le/gzip before -                          -                                db3179457e8afa8b3939a2459b1f3740625ea572075ad20f40c9ba01525dd21c  files=3 links=2 depth=1
+C02  combo                      le/gzip after  -                          -                                2069276dc95862a37639f59e4abfdde54243fca2b78ce35b154396bb7073c8ae  files=7 links=0 depth=3
+C03  combo                      le/gzip before -                          -                                d8a0f7850e18038ffc414d544c4487a4225811231f60ac682377ca5058fcc8ef  files=5 links=2 depth=1
+C04  combo                      be/gzip after  -                          -                                3914f76f39b3547d6b4754d8a135f5670a01499dae20a5816df4f0ca87927268  files=3 links=2 damage=4blk/256B depth=1
+C05  combo                      le/gzip after  -                          -                                544479a6dd23267aeec4da7f9226b8e3722973ab9a89f1e656bc57ec00d0d7b1  files=6 links=1 damage=14blk/753B depth=1
+C06  combo                      be/gzip after  -                          -                                e53922406615315ef4c16a8d0550eed725e4c9bb05d94f9d63257ebfbc344169  files=5 links=1 damage=12blk/622B depth=1
+C07  combo                      be/gzip after  -                          -                                3d91396550537017f99b0d98eae4f31ac0fa0a5b8872649c982520e7546b7b8f  files=5 links=1 depth=1
+C08  combo                      be/gzip after  -                          -                                77d84dc0a45081bdc2f093c1ef980902a77708acc0ef2565e8ed1e254d2cdcb1  files=5 links=1 depth=1
+C09  combo                      be/xz   after  -                          -                                fd4f39975a58540321a22d208229bf013877fd18187a5d52363d7162f0175520  files=5 links=1 depth=3
+C10  combo                      le/fixture after  -                          -                                b6d31343d4e12dbb3967ceee21cdf887d86787ff9c22b2b65e0c49993d49f2cd  files=0 links=0 depth=1
+C11  combo                      be/fixture before -                          -                                a9849c13bcfa20e872f84a661ac81d1408a3146587f3313cfdff37566609f510  files=0 links=0 depth=3
+C12  combo                      be/xz   after  -                          -                                0a22b680e86b9ed1d1850cd7e196e3d948fcb16403ad9babef81919e3653b186  files=5 links=2 depth=1
+C13  combo                      le/fixture after  -                          -                                a86e42a3c50bebcf3bc98b05bf00541179631b069b6ec0f84b578062209a0d96  files=0 links=0 depth=1
+C14  combo                      be/fixture after  -                          -                                719acdbcca8c284692c5e355c19506d636a0d01c677f47198081e11f7fd84634  files=0 links=0 depth=3
+C15  combo                      be/gzip before -                          -                                18eab2a42270bdd9414618de705088a45e09c076943ced325c3fa76d386538d6  files=6 links=1 depth=3
+C16  combo                      be/gzip after  -                          -                                281832eacc483b073fc7366e79a29eaa6dbddfda53e76563a2883d689a77c1fb  files=7 links=1 damage=17blk/894B depth=3
+C17  combo                      be/gzip after  -                          -                                1fdbe08c34172000583d34d8be5b53a789f6c4c82eeb7467387d13788bf0d23b  files=7 links=0 damage=18blk/980B depth=3
+C18  combo                      be/xz   before -                          -                                5fe8f2a4b76bfaa70593e5eace3a4733e557b6b246640464186d3b52fc2be0bc  files=7 links=0 depth=1
+C19  combo                      be/gzip before -                          -                                4673e7ddd2160f79a5e915d4d5c6fe7a518850dbe52f50e8007cba7a42bf5cc2  files=5 links=0 depth=3
+C20  combo                      be/gzip before -                          -                                114fca05834c3915140ace30cc9deeb1d03120b31fb2fe80bad686286d65f4ee  files=8 links=2 depth=1
+C21  combo                      le/fixture before -                          -                                3bce6ae378319fd2ac08c73ede9b3890a6d0f78c16392f09117cc3ffd70d1acb  files=0 links=0 depth=1
+C22  combo                      le/fixture before -                          -                                812ae1fc3818a48a91d1f2ba9161504534121410d36b0c5380d995acb0d37ce1  files=0 links=0 depth=3
+C23  combo                      le/fixture after  -                          -                                f2c53a284ecacd44545d760e924ce12aedbd8243783750f7f726fc7d565a8c1e  files=0 links=0 depth=3
+C24  combo                      be/fixture after  -                          -                                97a7759abdf55bed5581b0a2685f7d740ab0f03fbc6967c33e1861b57c457c2b  files=0 links=0 depth=3
+PASS  same seed: manifest bytes identical  9542738c34b32abc vs 9542738c34b32abc
+PASS  same seed: every carrier sha256 identical  78 carriers
+PASS  same seed: carrier ids identical  H01..C24
+PASS  different seed: manifest differs  9542738c34b32abc vs b62608b04f95dd49
+PASS  different seed: every SEED-DEPENDENT carrier differs  64/64 differ; 14 carriers are pinned third-party bytes and cannot follow the seed
+PASS  replicate variation: every class/family has distinct carriers  28 classes, each with its own distinct carriers
+PASS  R40-CL4: partial damage pinned by compressed length (multi-block)  12 partial carriers, [5, 7, 8, 10, 11, 12, 14, 16, 17] blocks damaged each, every block <= 136 B, first file untouched
+PASS  depth-limited classes run at max_depth 1 with a nested image  6 carriers, depths [1]
+PASS  combined classes reach the precedence trap they exist for  10 carriers; partial-* -> extractor-failure+unpublished-entry, depth-* -> depth-limited[+unpublished-entry]; gap sets [('depth-limited',), ('depth-limited', 'unpublished-entry'), ('extractor-failure', 'unpublished-entry')]
+PASS  every carrier declares the six binding fields under ONE key  78 carriers, key 'declared_features'
+PASS  R41-CL1: no second spelling of the tuple  no `declared` key, no `class_expected.features` key
+PASS  named carriers keep a label/action cross-check; combos null  54 named, 24 combos
+PASS  every combo draws >= 2 decision factors  min 2 decisions, max 6; factors seen ['container wrap', 'damage', 'dependency', 'legacy chunk', 'links', 'max_depth 1', 'residue', 'second v4 chunk']
+PASS  legacy classes carry a pinned fixture record and a v1-v3 handler  10 legacy carriers, handlers ['squashfs_v1', 'squashfs_v2', 'squashfs_v2_nonstandard', 'squashfs_v3', 'squashfs_v3_broadcom']
+PASS  legacy damage uses the pinned window only  4 damaged legacy carriers
+PASS  every legacy carrier is a pinned image or a pinned image + window  ['single-fixture', 'two-fixture']
+PASS  two-chunk carriers put the second chunk at 4096  9 multi-chunk carriers
+
+all 17 selftest checks passed
+EXIT=0
+
+== (m) --gzip envelopes: refusal reads .json.gz too ==
+$ python3 -I -B gen-r43.py --seed ... --out demo-gz --classes clean-le --run --gzip ...
+run H02 clean-le                   exit=0 depth=3 op=extract_firmware prov=unblob handlers=squashfs_v4_le failed=- gaps=- deps=- sr=False be=n/a files=6 digest-ok
+manifest /fast/scratch/hyaku/kaidoku-r43/w1-R43RevRevenger/demo-gz/manifest.json written; tuple check PASS 2/2 (all_equal=True)
+EXIT=0
+carrier.sqsh
+envelope.json.gz
+rea-full.json.gz
+run.json
+tree.json
+$ python3 -I -B gen-r43.py --tuple-check demo-gz
+tuple check over 2 carriers (2 declare what their envelope shows) -> PASS
+EXIT=0

@@ -1,0 +1,70 @@
+R43CritC1 probe log — attack of DRAFT P43-C1
+Lane: /home/vgpnk/Projects/shokunin/kaidoku-shokunin (base 6b9e64fe7e0de202d9383baad5792fbfe039a743)
+All probes read-only over committed bytes (git show / jq / sha256sum). No REA/unblob/sasquatch run.
+No tools installed or upgraded this seat.
+
+=== 1. SKILL v4 table region hash at the two relevant commits ===
+$ git show d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b:SKILL.md \
+    | awk '/<!-- sqfs-triage-table v4 -->/{f=1} f{print} f&&/^\|[ ]*clean-empty/{exit}' | sha256sum
+ac85bdc16607159aa4d628ecf2521dd6a57e7ef48beeab62a437976b7e6328af  -
+$ git show 6b9e64fe7e0de202d9383baad5792fbfe039a743:SKILL.md \
+    | awk '/<!-- sqfs-triage-table v4 -->/{f=1} f{print} f&&/^\|[ ]*clean-empty/{exit}' | sha256sum
+ac85bdc16607159aa4d628ecf2521dd6a57e7ef48beeab62a437976b7e6328af  -
+=> the region is ALREADY byte-identical between the round-42 freeze and the round-43 base;
+   the claim keeps it that way (no table byte moves).
+
+=== 2. Round-42 receipt: the frozen lookup control on round-42 held-out combos ===
+$ jq '.lookup' .ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json
+  n_combos: 24   score: 19   half: 12.0   below_half: false   binding: false
+  note: "reported, not bound (L1 freeze decision)"
+  scored_ids: C01 C02 C05 C08 C09 C10 C11 C12 C13 C14 C16 C17 C18 C19 C20 C21 C22 C23 C24
+$ jq '.combo_unseen_majority' .ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json
+  need: 12   unseen: 19 ids   seen_in_dev: [C03 C07 C12 C13 C16]
+  source: corpus/evidence/round-42/c2/dev/manifest.json (carriers[].declared_features)
+  binding: "len(unseen) >= ceil(n_combos/2)"
+=> The DRAFT P43-C1 binds the frozen CTL-C2-7 lookup to "strictly fewer than half" of the
+   held-out combos; on the committed round-42 held-out set that control scores 19/24.
+   The lookup's dev-union "seen" statistic (5/24) does NOT predict its score, because its
+   rows are precedence patterns (e.g. the depth-limited row matches any squashfs_v4_* P>0
+   envelope regardless of gap set). A <half binding is unreachable on identical class
+   structure; round 42 left it REPORTED, not bound, for exactly this reason.
+
+=== 3. C02 declared vs observed (M42-2, the round-42 stop) ===
+$ jq '[.carriers[] | select(.id=="C02")][0].declared_features.gap_kinds' \
+    corpus/evidence/round-42/c2/heldout/manifest.json
+["extractor-failure", "unpublished-entry"]
+$ python3 -c "… envelope.data.normalized_result.extraction_gaps …"
+["depth-limited", "extractor-failure", "unpublished-entry"]
+($ grep -o '"kind": "[a-z-]*"' corpus/evidence/round-42/c2/heldout/C02/rea-full.json confirms)
+
+=== 4. Round-42 held-out manifest shape (what a relabelled copy carries) ===
+$ jq '{seed, classes: (.classes|length), carriers: (.carriers|length)}' \
+    corpus/evidence/round-42/c2/heldout/manifest.json
+{ "seed": "d1681696dd63ca4f9b8a09ffa8fa3e2de5e2b51b", "n_classes": 28, "carriers": 78 }
+=> a round-42 manifest relabelled to the round-43 path declares seed=d1681696…, which can
+   never equal the round-43 freeze hash (a different commit); the regen binding would also
+   fail because carriers are a pure function of the seed.
+
+=== 5. Frozen counter binding set (the clause set the port must keep) ===
+CLAIM_BINDINGS from tools/round-42/c2-counter.py:160-181:
+  seed_matches_freeze, manifest_generator_path, generator_sha_matches_freeze,
+  writer_matches_manifest, regenerated_seed_matches_freeze, carriers_regenerated,
+  carriers_committed, envelopes_valid, manifest_after_freeze, manifest_before_envelopes,
+  v4_block_present, v4_block_identical, evaluator_covers_all,
+  observed_features_match_declared, legacy_chunks_not_no_squashfs,
+  new_legacy_label_exercised, handler_families_exercised, lookup_control_identical,
+  combo_unseen_majority, real_receipts_depth_limited, legacy_dev_envelopes
+Note: lookup_control_identical is bound (byte-identity of the control file); the lookup's
+SCORE was reported-not-bound ('binding: False' in the receipt).
+
+=== 6. QUALITY.md row 85 (the routed defect's own classification) ===
+$ sed -n '93p' corpus/QUALITY.md
+| 85 | Extends rows 83-84. A probe that classifies carrier bytes … and a generator writes a
+  declared feature tuple only after comparing it with the tuple its own `--run` observed,
+  refusing the manifest on any difference. | … M42-2 … | sharpens 83, 84 |
+=> The refusal-generator change is classified by the lane's own quality registry as a
+   QUALITY row, not a depth surface.
+
+=== 7. S135 at base ===
+$ git show 6b9e64fe…:corpus/SOURCES.md | grep -c S135  ->  0
+=> S135 is opened this round, consistent with the plan; the counter needs a concrete check.

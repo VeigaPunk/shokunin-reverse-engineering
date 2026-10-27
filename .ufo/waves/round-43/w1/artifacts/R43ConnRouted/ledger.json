@@ -1,0 +1,159 @@
+{
+  "round": 43,
+  "wave": 1,
+  "base_commit": "6b9e64fe7e0de202d9383baad5792fbfe039a743",
+  "defects": [
+    {
+      "id": "R42-CL1",
+      "origin": "corpus/lessons/round-42.md ## Routed defects into round 43; mistake M42-2 (generator predicted tuple without measuring; combo C02 declared {extractor-failure, unpublished-entry} while REA observed {depth-limited, extractor-failure, unpublished-entry})",
+      "state_at_base": "unfixed in frozen tools \u2014 tools/round-42/heldout-gen-v4.py predicts declared tuple from factors; C02 in round-42 held-out set lacks depth-limited; stop receipt .ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json binds observed_features_match_declared=false, exit 1",
+      "round_43_home": "R43C1Gen, R43MutGen, R43LabTuple, R43RevRevenger, R43C1Controls (wave 1); the L1 itself (heldout data run after freeze)",
+      "status": "covered (in progress)",
+      "covering_seats": [
+        "R43C1Gen",
+        "R43MutGen",
+        "R43LabTuple",
+        "R43RevRevenger",
+        "R43C1Controls",
+        "KaidokuR43 (L1)"
+      ],
+      "observable_fixed": "heldout-gen-v4r43.py exits 3 (declared_tuple_unobserved) on tuple mismatch and writes no manifest (CTL-C1-2 red receipt); round-43 held-out manifest has generator.tuple_check all equal; tools/round-43/c1-counter.py binding observed_features_match_declared is true at revision, exit 0"
+    },
+    {
+      "id": "R42-CL2",
+      "origin": "corpus/lessons/round-42.md ## Routed defects into round 43 (no wave 2 attacked the round-42 landing; mirrors round-42 verifier spot-check D1/R42-V1)",
+      "state_at_base": "open from round 42 \u2014 round 42 concluded with only wave 1 (43 seats), below run-9 floor of 64; no wave 2 falsification wave dispatched",
+      "round_43_home": "wave 2 (falsification wave attacking R43-C1 and R43-C2 landings; rerun of round-42 C1 counter against fresh carrier cache); managed by the L1 itself; wave-1 preparation by R43Mistake and plans/round-43-claims.md:17-18",
+      "status": "covered (scheduled for wave 2)",
+      "covering_seats": [
+        "wave 2",
+        "KaidokuR43 (L1)",
+        "R43Mistake"
+      ],
+      "observable_fixed": ".ufo/waves/round-43/r43-w2-results.json committed with settling reports; wave 2 reports include adversarial/falsification checks against C1/C2 landings; total round seats across w1 and w2 >= 64"
+    },
+    {
+      "id": "R42-CL3",
+      "origin": "corpus/lessons/round-42.md ## Routed defects into round 43; carries R41-CL3 (18 host-local SOURCES rows resolvable with in-lane copies prepared by R42LocalSrc but never landed)",
+      "state_at_base": "unfixed at base \u2014 tools/round-41/local-source-gate.py at 6b9e64fe exits 1 with 18 failed rows (S001, S002, S003, S006, S007, S023, S035, S040, S048, S056, S066, S070, S079, S081, S082, S083, S090, S092); only S126 resolved",
+      "round_43_home": "R43C2Land, R43C2Pin, R43RevLocalsrc, R43CritC2 (wave 1); the L1 itself (commits landing under corpus/evidence/round-43/local-sources/ and corpus/evidence/local-sources.json)",
+      "status": "covered (in progress)",
+      "covering_seats": [
+        "R43C2Land",
+        "R43C2Pin",
+        "R43RevLocalsrc",
+        "R43CritC2",
+        "KaidokuR43 (L1)"
+      ],
+      "observable_fixed": "python3 -I -B tools/round-41/local-source-gate.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev <REV> exits 0 with rows_failed [] and rows_total >= 129"
+    },
+    {
+      "id": "R42-V1",
+      "origin": "corpus/lessons/round-42-verifier-spotcheck.md section 5 R42-V1 and section 1 D1 (round total 43 < run-9 floor 64; no wave 2 attacked the C1 landing; mirrors R42-CL2)",
+      "state_at_base": "carried from round-42 closure \u2014 base 6b9e64fe is the spot-check commit concluding round 42",
+      "round_43_home": "wave 2 (and the L1 itself for sizing wave 2 with >= 32 seats so total seats >= 64)",
+      "status": "covered (scheduled for wave 2)",
+      "covering_seats": [
+        "wave 2",
+        "KaidokuR43 (L1)"
+      ],
+      "observable_fixed": ".ufo/waves/round-43/r43-w2-results.json committed; total seats in round-43 >= 64; wave 2 reports include falsification runs against C1/C2 landings"
+    },
+    {
+      "id": "R42-V2",
+      "origin": "corpus/lessons/round-42-verifier-spotcheck.md section 1 D2 and section 5 R42-V2 (pre-file gate GREEN at af50af81 asserted without committed output in git tree)",
+      "state_at_base": "unfixed in tree \u2014 no committed gate run output for af50af81 exists in git ls-tree 6b9e64fe",
+      "round_43_home": "the L1 itself [FLAG: NO WAVE-1 ITEM COVERS IT] (filing responsibility: L1 must run prefile-gate and commit receipt before filing)",
+      "status": "uncovered in wave 1 (L1 action required)",
+      "covering_seats": [
+        "KaidokuR43 (L1)"
+      ],
+      "observable_fixed": "committed file .ufo/waves/round-43/l1/prefile-gate.log or .json at measured tip revision showing exit 0, command line, timestamp, and conditions (a)-(d) passing"
+    },
+    {
+      "id": "R42-V3",
+      "origin": "corpus/lessons/round-42-verifier-spotcheck.md section 5 R42-V3 (SKILL.md rule blocks 20 and 21 carry no in-SKILL claim status, while block 20 reads Superseded and both claims stopped)",
+      "state_at_base": "unfixed at base \u2014 SKILL.md:438 (block 20) and SKILL.md:521 (block 21) have no claim status marker or stop notice",
+      "round_43_home": "R43SkillMark (authors status sentence diffs), R43ScoutTable (verifies placement outside frozen table byte region); landed by the L1 itself",
+      "status": "covered (in progress)",
+      "covering_seats": [
+        "R43SkillMark",
+        "R43ScoutTable",
+        "KaidokuR43 (L1)"
+      ],
+      "observable_fixed": "SKILL.md block 20 carries explicit status line (v3 stopped, superseded by v4) and block 21 carries explicit status line (matched evaluator 78/78, R42-C2 stopped on observed_features_match_declared, re-scored under P43-C1); table bytes between <!-- sqfs-triage-table v4 --> and markdown table end remain byte-identical to d1681696"
+    },
+    {
+      "id": "R42-V4",
+      "origin": "corpus/lessons/round-42-verifier-spotcheck.md section 5 R42-V4 (generator declares tuples it did not observe; combo C02; mirrors R42-CL1 / QUALITY 85)",
+      "state_at_base": "unfixed in frozen tools at base",
+      "round_43_home": "R43C1Gen, R43MutGen, R43LabTuple, R43C1Controls, R43RevRevenger (wave 1); the L1 itself (post-freeze data run)",
+      "status": "covered (in progress)",
+      "covering_seats": [
+        "R43C1Gen",
+        "R43MutGen",
+        "R43LabTuple",
+        "R43C1Controls",
+        "R43RevRevenger",
+        "KaidokuR43 (L1)"
+      ],
+      "observable_fixed": "heldout-gen-v4r43.py refuses to emit manifest if declared != observed (exit 3); fresh held-out set manifests declare observed tuple including depth-limited; observed_features_match_declared evaluates true in tools/round-43/c1-counter.py"
+    },
+    {
+      "id": "R42-V5",
+      "origin": "corpus/lessons/round-42-verifier-spotcheck.md section 5 R42-V5 (2026-10-26-r42-squashfs-v3-core.md opens with status: before provenance trio source:/verified-at:/recheck:, violating CORPUS additional rules)",
+      "state_at_base": "present at base \u2014 2026-10-26-r42-squashfs-v3-core.md line 3 has status: before source: at line 5",
+      "round_43_home": "R43RevEntry (verifies schema ordering), R43ScribeEntry (drafts 2026-10-27-r43-sqfs-triage-v4-scored.md with correct order), R43ScribeAssim (drafts 2026-10-27-sasquatch-release-matrix.md with correct order); landed by the L1 itself",
+      "status": "covered (in progress)",
+      "covering_seats": [
+        "R43RevEntry",
+        "R43ScribeEntry",
+        "R43ScribeAssim",
+        "KaidokuR43 (L1)"
+      ],
+      "observable_fixed": "all newly committed corpus/knowledge/2026-10-27-*.md files have source:, verified-at:, recheck: occurring before status: in front matter (verified by grep -n)"
+    },
+    {
+      "id": "R40-CL2",
+      "origin": "corpus/lessons/round-40.md ## Routed defects (rerun binding proves carrier consistency through pinned toolchain, not receipt provenance; oracle-only fabrication passes); carried in round-41 and round-42",
+      "state_at_base": "open (disclosed limit) \u2014 inherent limitation of carrier rerun binding; disclosed in round-41, round-42, and round-43 claims",
+      "round_43_home": "open \u2014 reason: inherent provenance limit (disclosed in plans/round-43-claims.md ## R43-C1 Disclosed limits; defended by CTL-C1-2 and R43C1Counter / R43SentProv, but cannot be closed without cryptographic provenance infrastructure)",
+      "status": "open (disclosed limit)",
+      "covering_seats": [
+        "R43C1Counter",
+        "R43SentProv",
+        "KaidokuR43 (L1)"
+      ],
+      "observable_fixed": "disclosed in plans/round-43-claims.md and round-43 report; CTL-C1 controls verify fabricated/relabeled manifests are rejected (exit non-zero)"
+    },
+    {
+      "id": "R36-CL5",
+      "origin": "corpus/lessons/round-36-verifier-spotcheck.md:209-210 (instruments fail QUALITY rows 33, 39, 45, 58, 60, 68); carried in round-38, round-39, round-40, round-41, round-42",
+      "state_at_base": "open \u2014 instruments lack machine-readable pin map (Q33), per-call package.json-sha logging (Q39), row IDs named in claims (Q45), predicates read directly from claims file (Q68)",
+      "round_43_home": "open \u2014 reason: out of round-43 claim scope (round-43 claims focus on R43-C1 depth and R43-C2 coverage; none of the 32 wave-1 seats binds QUALITY 33/39/45/58/60/68 into counter predicates)",
+      "status": "open (out of scope)",
+      "covering_seats": [],
+      "observable_fixed": "machine-readable instruments map in claims file, per-call sha logged in receipts, and counter dynamically parsing predicate clauses from plans/round-N-claims.md"
+    },
+    {
+      "id": "R40-CL7",
+      "origin": "corpus/lessons/round-40.md (vendor terms purport to forbid analysis; round publishes derived metadata only)",
+      "state_at_base": "open (operator) \u2014 operator directed RE training on public firmware; lane publishes derived metadata only",
+      "round_43_home": "open \u2014 reason: operator-owned policy (hygiene maintained by R43SentProv licence sweep)",
+      "status": "open (operator-owned)",
+      "covering_seats": [
+        "R43SentProv"
+      ],
+      "observable_fixed": "no third-party image bytes committed in lane; carrier rows cite URL + sha256 + rebuild command only"
+    },
+    {
+      "id": "D2-R40",
+      "origin": "corpus/lessons/round-40.md (seven AVM vendor texts remain reachable in git history at 7fce3086)",
+      "state_at_base": "open (operator) \u2014 history not rewritten",
+      "round_43_home": "open \u2014 reason: operator-owned policy (no lane history rewrite)",
+      "status": "open (operator-owned)",
+      "covering_seats": [],
+      "observable_fixed": "operator ruling / historical branch retirement"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+token	occurrences	must	pointer
+<<L1:measured-revision>>	4	the commit whose score the status line states: 40 lowercase hex, descendant of the round-43 freeze, and the same revision the counter receipt's `argv --rev` names	`tools/round-43/c1-counter.py --rev`; receipt `argv`
+<<L1:freeze-commit>>	2	the round-43 freeze commit: 40 lowercase hex; also the generator seed (`--seed`), so the held-out manifest's `seed` field must print it	manifest `seed`; counter binding `seed_matches_freeze`
+<<L1:region-sha256>>	1	sha256 of the SKILL.md v4 region at the measured revision; MUST equal the literal `92540586b8c03dcde511652c0d76ba93cbde8e5f4e79e0b94509192c19b101f2` already in the draft (a different value means the table moved and the entry is not admissible)	counter `frozen_units['SKILL.md [<!-- sqfs-triage-table v4 -->]']`; independent `git show <rev>:SKILL.md` region read
+<<L1:matched>>	2	carriers on which the frozen interpreter's (label, action) pair equals the frozen evaluator's; target 78	counter receipt top-level `matched`
+<<L1:n>>	2	held-out carrier count: 78 (27 named classes x 2 + 24 combos)	manifest `carriers` length; counter binding `n_equals_twice_classes`
+<<L1:counter-exit>>	3	counter exit at the measured revision: 0 only when `matched == n` and every binding is true; the draft's own sentence is false for 2 (`no_manifest_at_rev`) and for any `bindings_false` list	counter process exit + `bindings_false`
+<<L1:score-artifact>>	2	the committed receipt path for this score, e.g. `.ufo/waves/round-43/l1/scores/c1-at-<rev8>.json`	L1's score run
+<<L1:heldout-dir-commit>>	1	the commit that first added `corpus/evidence/round-43/c1/heldout/`; must descend from the freeze (counter binding `manifest_after_freeze`)	`git log --diff-filter=A -- corpus/evidence/round-43/c1/heldout/manifest.json`
+<<L1:tuple-check-verdicts>>	2	the generator's own declared-vs-observed verdict count, e.g. `78/78 carriers observed == declared`; must agree with `observed_features_match_declared`	manifest `generator.tuple_check`
+<<L1:combo-unseen-count>>	1	combos whose declared tuple is absent from the round-42 dev arm; binding needs at least 12 of 24	counter receipt `combo_unseen_majority.unseen`
+<<L1:lookup-score>>	1	the CTL-C2-7 lookup control's combo score through the frozen interpreter, n of 24; below half (under 12) is the shortcut control's expected shape	counter receipt `lookup.score`, `lookup.n_combos`
+<<L1:ctl-c1-0-exit>>	1	do-nothing arm at the freeze: 2 (`no_manifest_at_rev`) with no score written	`.ufo/waves/round-43/controls/c1/`
+<<L1:ctl-c1-0-receipt>>	1	committed receipt path for the do-nothing arm	`.ufo/waves/round-43/controls/c1/`
+<<L1:ctl-c1-1-exit>>	1	non-zero: the round-42 held-out manifest planted at the round-43 path (seed is the round-42 freeze; not first added after this freeze)	`.ufo/waves/round-43/controls/c1/`
+<<L1:ctl-c1-1-receipt>>	1	committed receipt path for the planted-prior-manifest arm	`.ufo/waves/round-43/controls/c1/`
+<<L1:ctl-c1-2-exit>>	1	red arm: the frozen generator's tuple check on the round-42 C02 declaration exits 3 (`declared_tuple_unobserved`) and writes no manifest	`.ufo/waves/round-43/controls/c1/`
+<<L1:ctl-c1-2-receipt>>	1	committed receipt path for the refusal red/green arm	`.ufo/waves/round-43/controls/c1/`
+<<L1:ctl-c1-3-summary>>	1	one clause naming the re-scored round-42 shortcuts and the best score each reached, all strictly below 78	`.ufo/waves/round-43/controls/c1/`
+<<L1:ctl-c1-3-receipt>>	1	committed receipt path for the shortcut re-score arm	`.ufo/waves/round-43/controls/c1/`

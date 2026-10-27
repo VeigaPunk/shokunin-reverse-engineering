@@ -1,0 +1,21 @@
+{
+  "source": "tools/round-42/heldout-gen-v4.py run_rea() lines 2613-2661 + out_of_domain_run() lines 2664-2715; verified against committed run.json files under corpus/evidence/round-42/c2/heldout/",
+  "schema_variants": {
+    "extract_firmware": "76 of 78 runs (arms after=57, before=19)",
+    "out_of_domain": "2 of 78 runs (H25, H26, inspect_firmware_regions; no max_depth, no home_bin_on_path)"
+  },
+  "fields": {
+    "generator_written": ["id", "class", "arm", "operation", "max_depth", "expected_label", "expected_action", "class_expected", "declared", "declared_extras", "factors", "exit_code", "rea_argv", "unblob_command", "home_bin_on_path"],
+    "envelope_derived": ["ok", "subject_sha256", "duration (meta.duration)", "provider", "handlers (chunk handlers only)", "failed_chunks", "gap_kinds", "gap_dependencies", "diagnostics", "be_argv", "symlink_removed", "depth_limited_paths", "parameters.max_depth", "files", "coverage"],
+    "mixed": {"digest_matches_carrier": "envelope subject sha256 == manifest carrier sha256 (envelope+manifest)"},
+    "error_only": ["error", "stdout_head", "stderr_head"],
+    "null_tombstone": {"declared": "always null at r42 (R41-CL1: the binding lives only in manifest carriers[].declared_features)"}
+  },
+  "derivation_detail": {
+    "handlers": "sorted chunk handlers only; counter observed_features ALSO unions extraction_gaps[].handler -- gap-only handlers would differ (none occurred in r42: verified 78/78 identical)",
+    "be_argv": "'yes' if any recorded extractor argv carries -be; 'no' if argv recorded without -be; 'n/a' when no argv recorded (clean runs)",
+    "symlink_removed": "MaliciousSymlinkRemoved diagnostic __typename__ present",
+    "published_equiv": "not stored directly; 'nonzero' iff files>0 (verified same as manifest declared for all 78)",
+    "duration": "non-deterministic wall clock (full.meta.duration)"
+  }
+}

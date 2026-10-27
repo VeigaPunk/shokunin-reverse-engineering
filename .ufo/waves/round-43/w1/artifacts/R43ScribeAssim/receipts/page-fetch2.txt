@@ -1,0 +1,19 @@
+# receipt: second retained page fetch (AG2) — page bytes are not a pinnable document
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-10-27T09:05:48Z
+$ curl -fsSL -o sasq-releases-r43-f2.html -w 'HTTP %{http_code} bytes %{size_download}\n' https://github.com/onekey-sec/sasquatch/releases
+HTTP 200 bytes 349255
+curl_exit=0
+$ sha256sum sasq-releases-r43-f2.html
+56632d0f19d7e7e81776e9a48e04f7ce4b89d32f9c79670617e5f2c888cb1cea  sasq-releases-r43-f2.html
+$ sha256sum <retained fetch 1, 2026-10-27T08:20:30Z> <retained fetch, round 42, 2026-10-26T21:52:15Z>
+89e7377d92132bfa1bf1a004bf38a6f105dfe85ea99a753cccde49af29227a67  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43ScribeAssim/receipts/sasq-releases-r43.html
+71ebf1600a0a9764f62298976d0d2bd0e0700694e3e2ed5612386c7c370b734a  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42Assim/receipts/sasq-releases.html
+$ wc -c <retained fetch 1> <round-42 retained fetch>
+349255 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-43/w1/artifacts/R43ScribeAssim/receipts/sasq-releases-r43.html
+349266 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42Assim/receipts/sasq-releases.html
+698521 total
+$ grep -oE 'sasquatch-v4\.5\.1-[1-6]|sasquatch-v1\.0\.1|sasquatch-v1\.0' sasq-releases-r43-f2.html | sort -u | wc -l
+8
+$ grep -c 'sasquatch_1.0_amd64.deb' sasq-releases-r43-f2.html
+0

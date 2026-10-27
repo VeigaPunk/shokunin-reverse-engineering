@@ -435,6 +435,8 @@ bullet is bounded by the lines it cites.
   and the firmware input limit is 128 MiB with a 120 s timeout per run (S119
   `FirmwareRelease.js:27-32`).
 
+  **Status — unscored claim.** Table v3 carries no scored claim: R41-C2 stopped at the round-41 scoring on a counter key mismatch, not on the table — the C2 counter took the combo carriers' declared tuple under `class_expected.features`/`features`/`declared_features` while the generator wrote it under `declared` (M41-1, R41-CL1), so R41-C2 exited 1 with `observed_features_match_declared` false (receipt `.ufo/waves/round-41/l1/scores/c2-at-e9a24d07.json`, `matched 52` of `n 52`) — and v3 is superseded for routing and for the action column by rule block 21 (table v4).
+
   <!-- sqfs-triage-table v3 -->
   <!-- sqfs-triage-actions: none inspect-input install-extractor-be install-extractor-le wrap-extractor-be preserve-failure salvage-partial raise-depth audit-symlinks expect-link-absent count-gap confirm-empty -->
   | label | operation | provider | handler | gap kinds | dependencies | -be in child argv | symlink removed | published files | action | cause | source |
@@ -517,6 +519,8 @@ bullet is bounded by the lines it cites.
   all (both dev-arm legacy envelopes measured this wave carry no sasquatch command, so
   `-be` reads `n/a`), which is why no row below requires `yes`. The firmware input limit is
   128 MiB with a 120 s timeout per run (S119 `FirmwareRelease.js:27-32`).
+
+  **Status — unscored claim.** Table v4 matched its independent evaluator 78 of 78 at `eb8215ac` (receipt `.ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json`, `pair_mismatches []`, `evaluator_missing []`, `evaluator_extra []`), but R42-C2 stopped on `observed_features_match_declared` — combo C02 declared the gap set {`extractor-failure`, `unpublished-entry`} while its own extraction run also observed `depth-limited` (M42-2, R42-CL1) — so the table is unscored as a claim and round 43 re-scores it under P43-C1.
 
   <!-- sqfs-triage-table v4 -->
   <!-- sqfs-triage-actions: none inspect-input install-extractor-be install-extractor-le wrap-extractor-be cross-read-legacy isolate-residue preserve-failure salvage-partial raise-depth audit-symlinks expect-link-absent count-gap confirm-empty -->

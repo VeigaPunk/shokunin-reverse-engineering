@@ -1,0 +1,29 @@
+FALSIFIES the DRAFT P43-C1 line:
+  "the frozen lookup control `.ufo/waves/round-42/controls/c2/CTL-C2-7-lookup.md` run
+   through the frozen interpreter scores strictly fewer than half of the held-out
+   `combo` envelopes (`combo_unseen_majority` ≥ 12 of 24)"
+
+Evidence — committed receipt .ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json:
+  lookup.n_combos = 24
+  lookup.score    = 19        (scored_ids: C01 C02 C05 C08 C09 C10 C11 C12 C13 C14 C16
+                               C17 C18 C19 C20 C21 C22 C23 C24)
+  lookup.half     = 12.0
+  lookup.below_half = false
+  lookup.binding  = false     ("reported, not bound (L1 freeze decision)")
+
+Why: CTL-C2-7's rows are per-label precedence patterns, not exact-tuple keys. Its
+`depth-limited` row (handler `squashfs_v4_*`, gap kinds `*`, published `>0`) matches
+any v4 envelope with files regardless of gaps; `unknown-residue`/`partial-body-failure`
+rows do the same for other shapes. So the lookup is correct on 19/24 held-out combos
+even though only 5/24 combos have observed tuples inside the dev named-class union
+(combo_unseen_majority.seen_in_dev = [C03 C07 C12 C13 C16]). "lookup score on combos"
+is NOT monotone in the unseen statistic; a `strictly fewer than half` binding on a new
+seed with the same class structure is expected to fail the same way (score ~19/24).
+
+Consequence: as written, P43-C1's target (matched == 78 with EVERY binding true) is
+unreachable — the lookup binding would be false on data statistically like round 42's.
+The bound anti-lookup witness stays `combo_unseen_majority >= 12 of 24` (ceil(24/2),
+as the frozen round-42 counter computes it: len(unseen) >= ceil(n_combos/2), union =
+declared tuples of the named classes in corpus/evidence/round-42/c2/dev/manifest.json,
+canonicalized). The lookup control remains byte-identical (lookup_control_identical)
+and its score REPORTED, exactly as round 42 froze it.

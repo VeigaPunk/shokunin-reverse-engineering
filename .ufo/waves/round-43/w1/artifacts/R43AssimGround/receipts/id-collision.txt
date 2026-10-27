@@ -1,0 +1,70 @@
+R43AssimGround — id-collision check (run BEFORE any append, 2026-10-27)
+
+Inputs (read-only):
+  lane registry   git show 6b9e64fe7e0de202d9383baad5792fbfe039a743:corpus/SOURCES.md
+  staged package  /home/vgpnk/Projects/shokuknow/merge/kaidoku/SOURCES.append.md  (read-only)
+
+Extractor (0-3-space guard, the pattern the seat spec binds):
+  PAT='^ {0,3}\| S[0-9]+ '
+  git -C <lane> show 6b9e64fe...:corpus/SOURCES.md | grep -oE "$PAT" | grep -oE 'S[0-9]+' | sort -V > reg-ids
+  grep -oE "$PAT" /home/vgpnk/Projects/shokuknow/merge/kaidoku/SOURCES.append.md | grep -oE 'S[0-9]+' | sort -V > staged-ids
+  comm -12 <(sort reg-ids) <(sort staged-ids)
+
+Results:
+  reg-ids ............................ 134   (S001..S134, contiguous)
+  staged-ids .......................... 132   (S106..S237)
+  collisions ........................... 29   (S106 S107 S108 S109 S110 S111 S112 S113 S114
+                                             S115 S116 S117 S118 S119 S120 S121 S122 S123
+                                             S124 S125 S126 S127 S128 S129 S130 S131 S132
+                                             S133 S134)
+  first free lane id ................... S135
+
+  Wait — S135 is spoken for in this round: plans/round-43-claims.md "## Frontier step" assigns
+  S135 to the unblob 26.6.4 LICENSE row (opened by the L1, delivered by seat R43SrcLicense as
+  artifacts/R43SrcLicense/row-S135-docs.md). So the first free id for the assimilated entry's rows
+  is S136, and the two rows this seat normalizes are S136 (API) and S137 (rendered page).
+  The sibling scribe seat (R43ScribeAssim) independently reached the same two ids from the same
+  base; this seat's rows are renumbered by document, never appended from the staged file.
+
+  Every staged id in S106..S129 collides with a live lane row; the staged file's own S130..S134
+  also collide (the lane landed its own S130..S134 in round 42). A verbatim append would
+  overwrite 29 live rows — the round-34 M34-12 failure mode.
+
+GUARD PROOF on an indented scratch fixture (the round-40 caveat, closed here)
+
+  Fixture (scratch file, 4 lines):
+      | S002 | x |
+        | S002 | y |
+         | S777 | z |
+      | S003 | w |
+
+    narrow column-zero pattern  '^\| S[0-9]+ '   -> 2 matches (lines 1 and 4)
+    0-3-space pattern           '^ {0,3}\| S[0-9]+ ' -> 4 matches (lines 1, 2, 3 and 4)
+    matched lines (0-3-space): 1:| S002 | x |
+                                2:  | S002 | y |
+                                3:   | S777 | z |
+                                4:| S003 | w |
+
+  => the 0-3-space extractor SEES the indented `  | S002 |` row (line 2) and the 3-space
+     `   | S777 |` row (line 3) that the column-zero pattern misses. The narrow pattern would
+     have under-counted the registry by 2 ids on an indented fixture. The 0-3-space pattern is
+     the one used for both sides of the comparison above.
+
+  Cross-check that the 0-3-space vs column-zero difference is NIL on the real inputs:
+    base registry   grep -cE '^ *\| S[0-9]' = 134  and  grep -cE '^\| S[0-9]' = 134   (equal)
+    staged package  grep -cE '^ {1,3}\| S[0-9]+ ' = 0  (no indented staged rows)
+  So on today's two files the two patterns agree numerically, and the 0-3-space pattern is the
+  one that stays correct if either file ever gains an indented row.
+
+Re-runnable (read-only; scratch outside the lane; nothing written into the lane):
+
+  S=$(mktemp -d /fast/scratch/hyaku/r43-ids.XXXX) && cd "$S"
+  L=/home/vgpnk/Projects/shokunin/kaidoku-shokunin
+  PAT='^ {0,3}\| S[0-9]+ '
+  git -C "$L" show 6b9e64fe7e0de202d9383baad5792fbfe039a743:corpus/SOURCES.md \
+      | grep -oE "$PAT" | grep -oE 'S[0-9]+' | sort -V > reg-ids
+  grep -oE "$PAT" /home/vgpnk/Projects/shokuknow/merge/kaidoku/SOURCES.append.md \
+      | grep -oE 'S[0-9]+' | sort -V > staged-ids
+  wc -l < reg-ids; wc -l < staged-ids
+  comm -12 <(sort reg-ids) <(sort staged-ids) | tr '\n' ' '; echo
+  cd /; rm -rf "$S"

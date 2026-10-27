@@ -1,0 +1,24 @@
+# R43C1Gen selftest receipt - offline suite: refusal gate, C02/C05 predictor regression, C05 red/green
+# tool: heldout-gen-v4r43.py sha256 6ab0114d555a09a93ab61459c7adb76a45957a35dc69671b64e7733225aca97a
+# command: python3 -I -B heldout-gen-v4r43.py --selftest-tuple --scratch <scratch>
+
+PASS  green: declared == observed -> manifest written, exit 0  exit=0
+PASS  green: generator.tuple_check present, all_equal, per-carrier equal  all_equal=True
+PASS  red: C02 shape with depth-limited missing -> refused, no manifest  exit=3
+PASS  red: an extra declared gap kind -> refused, no manifest  exit=3
+PASS  red: a wrong handler family -> refused, no manifest  exit=3
+PASS  red: tuple under `declared` only (R41-CL1) -> refused, no manifest  exit=3
+PASS  red: tuple under `class_expected.features` only (R41-CL1) -> refused  exit=3
+PASS  verify green before the mutation, red after it (envelope on disk)  before=0 after=1
+PASS  predictor: C02 shape: v4 damage at depth 1 (failing chunk, published tree)
+PASS  predictor: C05 shape: legacy damage + residue at depth 1 (carve is not an extraction directory)
+PASS  predictor: legacy clean + residue at depth 1
+PASS  predictor: legacy + v4 sibling, damage + residue at depth 1
+PASS  predictor: v4 damage + residue at depth 1
+PASS  predictor: legacy damage + residue + dependency failure at depth 1  gaps=['missing-extractor-dependency', 'unknown-chunk-handler']
+PASS  predictor: the C05 shape at max_depth 3 declares no depth-limited  gaps=['extractor-failure', 'unknown-chunk-handler']
+PASS  C05 green: declared == observed (no depth-limited) -> manifest written  exit=0
+PASS  C05 red: a declaration that ADDS depth-limited -> refused, no manifest  exit=3
+
+tuple-check selftest: 17/17 passed
+exit=0

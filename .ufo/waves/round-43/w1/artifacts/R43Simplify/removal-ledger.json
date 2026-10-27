@@ -1,0 +1,138 @@
+{
+  "seat": "R43Simplify",
+  "round": 43,
+  "wave": 1,
+  "base": "6b9e64fe7e0de202d9383baad5792fbfe039a743",
+  "reviewed_subjects": {
+    "counter": {
+      "path_at_base": "tools/round-42/c2-counter.py",
+      "sha256": "f108916713b38d860acdd60d78dd1d1a541b9feccb1bd1979742dd8dd952cb59",
+      "lines": 3026,
+      "note": "the round-42 DEPTH counter; the round-43 draft calls its port tools/round-43/c1-counter.py"
+    },
+    "generator": {
+      "path_at_base": "tools/round-42/heldout-gen-v4.py",
+      "sha256": "c2b1641ad6beec0d8eead002520174fb596c574efe44220c4a440917be03a5e1",
+      "lines": 3419
+    }
+  },
+  "removals": [
+    {
+      "id": "A1",
+      "what": "fixture_scope() replaced by one FROZEN_PATHS entry for corpus/evidence/round-42/c2/fixtures",
+      "file": "counter",
+      "lines_removed": 25,
+      "lines_added": 2,
+      "r43_c1_clause_needed": null,
+      "weakened": "none; P43-C1 clause 'no frozen C1 path changed after the freeze' is STRENGTHENED (currently the fixture dir is unfrozen)",
+      "proof": "round-42 manifest carries generator.fixtures (a metadata dict with no per-file paths), not top-level fixtures, so fixture_scope always returns {}; a post-freeze fixture edit leaves the base counter at exit 1 with frozen_paths_changed == []; the probe exits 2 frozen_path_changed",
+      "risk": "none observed"
+    },
+    {
+      "id": "A2",
+      "what": "CTL-C2-7b lookup-fallback block, LOOKUP_7B const, its frozen-unit entry and the GREEN_CHECK assertion",
+      "file": "counter",
+      "lines_removed": 44,
+      "r43_c1_clause_needed": null,
+      "weakened": "removes a second anti-enumeration witness that was never bound (binding:false) and that P43-C1 does not name",
+      "proof": "P43-C1 names only CTL-C2-7-lookup.md; probe receipt has no lookup_7b key and identical scored pairs",
+      "risk": "none observed"
+    },
+    {
+      "id": "A3",
+      "what": "legacy_chunks_not_no_squashfs, new_legacy_label_exercised, handler_families_exercised (round-42 C1-carrier family), their blocks, 5 selftest cases, 2 stub-eval modes, LEGACY_LABEL/V4_HANDLER_PREFIX, class_families accumulator",
+      "file": "counter",
+      "lines_removed": 87,
+      "r43_c1_clause_needed": null,
+      "weakened": "the v4 table is byte-frozen at d1681696, so content assertions about its rows (no-squashfs handler cell, legacy-failure row) cannot change; the pair-equality binding already covers interpreter labelling",
+      "proof": "probe selftest 74/74 pass; round-42 scoring identical (n 78, matched 78, same binding false, same decision_pairs)",
+      "risk": "low: if the L1 ever re-points the table at a region other than d1681696 these would be the only table-content guards"
+    },
+    {
+      "id": "A4",
+      "what": "res['table']['v3_marker_at_rev'|'v3_marker_at_freeze'] report fields",
+      "file": "counter",
+      "lines_removed": 2,
+      "r43_c1_clause_needed": null,
+      "weakened": "none; MARKER_V3 itself stays (the selftest's v3 refusal fixture uses it)",
+      "proof": "reported-only fields, no binding reads them",
+      "risk": "none"
+    },
+    {
+      "id": "B1",
+      "what": "the three non-default ACTION_SETS (tabledraft, interp, actionreview) and the --actions-set choice list",
+      "file": "generator",
+      "lines_removed": 48,
+      "r43_c1_clause_needed": null,
+      "weakened": "none; P43-C1 says nothing about the action vocabulary, and observed_actions_declared (counter, instrument) is satisfied by the default draft42 set",
+      "proof": "imported module: 16 recipe labels; the three alternative sets have 13 rows each and each is missing container-depth-limited, legacy-body-failure and unknown-residue, so main() exits at the missing-label check before building anything",
+      "risk": "none: unreachable, not merely unused"
+    },
+    {
+      "id": "B2",
+      "what": "--fetch and the urllib plumbing in fixture_bytes()",
+      "file": "generator",
+      "lines_removed": 24,
+      "r43_c1_clause_needed": null,
+      "weakened": "none; removes the only network call site in the whole scoring chain",
+      "proof": "tools/round-42/fixtures.json pins 14 fixtures and all 14 committed copies exist under corpus/evidence/round-42/c2/fixtures/; the counter never passes --fetch; fixture_bytes(..., fetch=False) raises FixturePinError naming the URL",
+      "risk": "none for round 43; a pin added without a committed copy would fail loudly (desired)"
+    },
+    {
+      "id": "B3",
+      "what": "--allow-unseen-minority flag, ALLOW_UNSEEN_MINORITY global and the build-time gate override",
+      "file": "generator",
+      "lines_removed": 10,
+      "r43_c1_clause_needed": null,
+      "weakened": "none; it is an escape hatch around the very quantity P43-C1 binds (combo_unseen_majority)",
+      "proof": "heldout-gen-v4.py:2802-2809 bypasses the exit when set",
+      "risk": "none; removing it makes the generator fail closed at build time"
+    },
+    {
+      "id": "B4",
+      "what": "--ood-op, --gzip, --keep-extraction and their plumbing",
+      "file": "generator",
+      "lines_removed": 18,
+      "r43_c1_clause_needed": null,
+      "weakened": "none; the round-43 data command passes --seed --out --run --scratch only",
+      "proof": "no *.gz exists anywhere under corpus/evidence/round-42/c2/heldout (the round-42 data run never used --gzip); the out-of-domain operation is fixed by the manifest oracle",
+      "risk": "low: --gzip is the only size lever if the L1 decides to commit gzipped envelopes in round 43"
+    },
+    {
+      "id": "B5",
+      "what": "verify(), regen_check(), feature_diff(), expected_for(), generator-side observed_features() and the --verify flag",
+      "file": "generator",
+      "lines_removed": 132,
+      "r43_c1_clause_needed": null,
+      "weakened": "none of P43-C1: the counter's carriers_regenerated + envelopes_valid + observed_features_match_declared already re-run the generator from the freeze and compare bytes/digests/tuples; --verify only duplicates that inside the data run (a second 78-carrier rebuild)",
+      "proof": "counter receipt: 68 materialised freeze files, 78/78 regen_ok and commit_ok on the round-42 data in 1.6 s",
+      "risk": "low: QUALITY 84's dry run uses the counter, not --verify; the generator-side check is the only place tree.json byte-identity is compared"
+    },
+    {
+      "id": "C1",
+      "what": "stub-only generator options (--arm, --combos) in the counter's STUB_GEN",
+      "file": "counter",
+      "r43_c1_clause_needed": null,
+      "weakened": "none while the round-43 manifest keeps the same carrier records; the selftest's dev arm is the only caller",
+      "proof": "the real generator's argparse has no --arm/--combos; STUB_GEN implements both and selftest passes --arm dev",
+      "risk": "none now; re-check if the manifest drops arm"
+    }
+  ],
+  "not_removable_repairs": [
+    {"id": "R1", "what": "GEN/MANIFEST/CLAIMS/COUNTER/LOOKUP paths, FROZEN_PATHS, and the generator identity bindings", "why": "the round-43 generator does not exist at the freeze, so show(root, freeze, GEN) is None and the inherited counter raises Unevaluable('generator_absent_at_freeze') at every revision; generator_sha_matches_freeze and manifest_generator_path must be re-pointed at the data commit, not deleted-and-forgotten"},
+    {"id": "R2", "what": "an explicit d1681696 anchor binding", "why": "P43-C1 requires the table region AND the interpreter/evaluator to be byte-identical at d1681696, at the freeze and at REV; the inherited binding anchors only freeze..REV"},
+    {"id": "R3", "what": "a generator.tuple_check binding", "why": "P43-C1 clause 'the manifest records the generator's own tuple check' has no inherited counterpart; it must be READ from the manifest, never recomputed by re-running REA at scoring time"},
+    {"id": "R4", "what": "a SOURCES S135 binding for the fixture license basis", "why": "P43-C1 cites S135; nothing in the inherited counter reads corpus/SOURCES.md"},
+    {"id": "R5", "what": "binding the CTL-C2-7 lookup score (inherited: reported, binding:false)", "why": "P43-C1 lists it inside the predicate; the round-42 measurement is 19/24, so binding it literally is a kill risk (see report section 8)"}
+  ],
+  "network_or_rea_at_scoring": {
+    "needed": false,
+    "evidence": [
+      "counter imports: json os re shlex shutil subprocess sys tempfile (no urllib/requests/socket)",
+      "every subprocess target is git or sys.executable on a local file",
+      "generator invoked as --seed <FREEZE> --out <dir> only (no --fetch, no --run)",
+      "strace -f -e trace=network: 820 lines, all SIGCHLD; grep -c 'connect(' == 0",
+      "fixture_bytes(..., fetch=False) on an empty cache raises FixturePinError naming the URL"
+    ]
+  }
+}

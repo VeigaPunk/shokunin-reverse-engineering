@@ -1,0 +1,33 @@
+R43AssimGround — quarantine slice re-derivation (round-43 wave 1, frontier step, 5 rows)
+
+Source (read-only, not in the lane):
+  /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/absent-defect-register.md
+  sha256 5afe1810a6c3d62f37987b575a954f5b1197daa23005d4bb2f1d982f64bad833
+
+Derivation command (round-38 method, unchanged):
+  awk -F'|' -v l='kaidoku' '$2 ~ ("`" l "`") && $3 ~ /round[0-9]+/ && $4 ~ /S[0-9]+/ {print $4, $5}' "$R"
+
+Output — count = 5 (retained verbatim as receipts/quarantine-slice.derived):
+   S150   `payload-absent`
+   S113`   the cited source could not be fetched, so no quote was checked
+   S117`   the cited source could not be fetched, so no quote was checked
+   S136`   the gate block named no locator, so no quote was checked
+   S147`   the gate block named no locator, so no quote was checked
+
+  register lines 82 (S150), 315 (S113), 316 (S117), 317 (S136), 318 (S147);
+  line 254 (`| `kaidoku` | 1 |`, the per-lane total) is excluded by the `round[0-9]+` predicate.
+
+sha256 of the derived slice:
+  7383a90e7c04c7238dfa3d19d2f9e857852bd24288c5ff9e9873bce697c28e6a
+Expected (rounds 38, 39, 41, 42 all recorded the same digest): 7383a90e…28e6a
+=> BYTE-IDENTICAL to rounds 38-42. The slice did not drift.
+
+Note on the slice's id namespace (this is a slice over the STAGED package's ids, not the lane's):
+  S113, S117, S136 and S147 are staged-package ids; S150 is a staged-package id too. After the
+  round-43 renumbering the lane registry has no S150 (the lane registry runs S001..S134 at the
+  base) and the staged S136/S137 are renumbered to the lane's S136/S137 for THIS entry only.
+  The slice therefore touches no row this seat proposes, and no row of it is appended.
+
+The hand-check of the 5 rows' cited sources is NOT performed by this seat (it is the separate
+quarantine hand-check item of the wave, R43Quarantine); this seat delivers the derivation and
+the digest equality only, and says so rather than implying a verdict it did not produce.
