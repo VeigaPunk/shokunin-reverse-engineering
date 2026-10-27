@@ -102,8 +102,10 @@ including `depth-limited`; the unconditional demonstration is the CTL-C1-2 red a
 `observed_features_match_declared` true, exit 0.
 - Counting command: `python3 -I -B tools/round-43/c1-counter.py --root <LANE> --rev <REV> --freeze <FREEZE> --json-out <OUT>`.
 - Data procedure (after the freeze, never before): the generator command above, run by the L1; seats never run it.
-- Kill rule: a control meeting the target stops C1 before held-out generation. Controls scored at the freeze
-  (`.ufo/waves/round-43/controls/c1/`):
+- Kill rule: any counterfactual baseline that omits the claimed work (do-nothing, stale-manifest, shortcut, or
+  hand-edited-manifest; CTL-C1-0/1/3/4) reaching the full target stops C1 before held-out generation. The
+  explicit reference witness and CTL-C1-2's tuple-check green arm are not counterfactual table-score controls.
+  Controls scored at the freeze (`.ufo/waves/round-43/controls/c1/`):
   - CTL-C1-0 do-nothing: counter at the freeze exits 2 `no_manifest_at_rev`;
   - CTL-C1-1 the round-42 held-out manifest copied to the round-43 path: the counter exits non-zero
     (`seed_matches_freeze` false — the copy declares the round-42 freeze seed — plus
@@ -180,7 +182,9 @@ and the pinned 6.7.0 tarball, not a live path.
   uncommitted or absent at REV) is caught by the clean-clone receipt (`git status --porcelain` must be empty).
   Gate and copy-audit receipts carry argv, tool sha256, resolved revision, tool-at-REV digest and exit code;
   the copy-audit receipt additionally records the imported EXPECT-table digest at FREEZE and REV.
-- Kill rule: a control reaching exit 0 while satisfying every P43-C2 clause stops C2 before the copies land.
+- Kill rule: any counterfactual no-copy/invalid/worktree-shadow control (CTL-C2-0/1/2/3) that satisfies the clean-clone,
+  content/provenance, map, and gate clauses at exit 0 stops C2. The valid prepared-pack baseline in the CTL-C2-2
+  symlink test is a positive witness for the verifier, not a kill arm.
 - Disclosed limits: the copies bind this checkout's row pins; they do not re-verify the upstream sources' content
   claims (that is each row's own recheck cell); a `source_sha256` entry where the host object still exists
   hard-fails the gate on drift (the drifted path re-reds the row AND flips the exit on hosts that hold it —
