@@ -100,6 +100,7 @@ A row is written when its file exists, never before.
 | SquashFS `extract-firmware` outcome triage v4 (round 42) | `2026-10-26-r42-sqfs-triage-v4` | held as SKILL rule block 21: table v4 covers the whole SquashFS handler family (seven v1–v3 names beside the v4 ones), adds `container-depth-limited` (no SquashFS handler but a depth ceiling), `unknown-residue` (unclaimed bytes beside the chunk) and `legacy-body-failure` (cross-read, never the `-be` wrapper), and a `failing handler` column; R42-C2 scores it against an evaluator written from the claim's precedence text on a held-out set seeded by the round-42 freeze |
 | SquashFS v3 through REA (round 42) | `2026-10-26-r42-squashfs-v3-core` | **Core** — `extract-firmware --max-depth 1` publishes every oracle regular file at its exact path on four published LZMA v3 rootfs images (OpenWrt Kamikaze 8.09/8.09.2, DD-WRT v24; `squashfs_v3` and `squashfs_v3_ddwrt`, both byte orders); plain `sasquatch -le`/`-be` logged; oracle backhand-cli + 7-Zip; v1/v2, broadcom/nonstandard and gzip v3 stay Frontier |
 | Sasquatch published release matrix (round 43) | `2026-10-27-sasquatch-release-matrix` | **Frontier** — official package inventory only: 8 release tags, three Debian architectures from v1.0.1, v1.0 amd64-only; no unblob compatibility or extraction claim |
+| SquashFS triage v4 score (round 43) | `2026-10-27-r43-sqfs-triage-v4-scored` | calibration of the existing table on 78 fresh held-out carriers; R43-C1 met 78/78, no new table or Core claim |
 
 ## Knowledge
 | entry | topic | source | verified-at |

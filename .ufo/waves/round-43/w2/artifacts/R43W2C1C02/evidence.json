@@ -1,0 +1,83 @@
+{
+  "measured_revision": "5856614ac4bf7f2363bbcd1956644474a82108e5",
+  "freeze_revision": "f3f8db389416d094b1ddeb1215ddcf914bfc0d1c",
+  "receipt_commit": "681360e6be40ffbc47fb7aadaa5eac0cd39cf22e round-43: record final-freeze C1/C2 control receipts",
+  "read_paths_sha256": {
+    "plans/round-43-claims.md": "0326dff974d48df575486256dbd5a0b36593dbc84155d0d40560b64d3c20d83e",
+    ".ufo/waves/round-43/controls/c1/receipts/CTL-C1-2.json": "84a6d0dd8333028fcb0da29b8e33fbe814309257a5a0f264789a29e62a78706c",
+    "corpus/evidence/round-42/c2/heldout/manifest.json": "656c22d52ef038f28d77391324f23223d4b893ad2b4775f4a147d50734fde557",
+    "corpus/evidence/round-42/c2/heldout/C02/envelope.json": "f478097c1c4b8f642d73a19c7bfc763200b81f9652ee5e99c78b5703b4b39bda",
+    "corpus/evidence/round-42/c2/heldout/C02/rea-full.json": "209c0b1db57365064b1a284d7cc66d948df42610ab80bce91d2cc874fa53df52",
+    "corpus/evidence/round-42/c2/heldout/C02/carrier.sqsh": "44e0f713e9ee94e7b43a2bf769571bb2d4cd43975a169506b4d8a856d7065905",
+    "corpus/evidence/round-42/c2/heldout/C02/run.json": "4507b77887971508a9c7bff5ba305435006634c4c16c8c32791f917b6b57d334",
+    "tools/round-43/heldout-gen-v4r43.py": "6ab0114d555a09a93ab61459c7adb76a45957a35dc69671b64e7733225aca97a",
+    "tools/round-42/heldout-gen-v4.py": "c2b1641ad6beec0d8eead002520174fb596c574efe44220c4a440917be03a5e1",
+    "tools/round-42/c2-counter.py": "f108916713b38d860acdd60d78dd1d1a541b9feccb1bd1979742dd8dd952cb59"
+  },
+  "c02_declared_six_fields": {
+    "handler_set": ["squashfs_v4_be"],
+    "gap_kinds": ["extractor-failure", "unpublished-entry"],
+    "gap_dependencies": [],
+    "be_argv": "yes",
+    "symlink_removed": false,
+    "published": "nonzero"
+  },
+  "c02_observed_six_fields_independently_computed_from_envelope_and_rea_full": {
+    "handler_set": ["squashfs_v4_be"],
+    "gap_kinds": ["depth-limited", "extractor-failure", "unpublished-entry"],
+    "gap_dependencies": [],
+    "be_argv": "yes",
+    "symlink_removed": false,
+    "published": "nonzero"
+  },
+  "tuple_diff": {
+    "gap_kinds": {
+      "declared": ["extractor-failure", "unpublished-entry"],
+      "observed": ["depth-limited", "extractor-failure", "unpublished-entry"]
+    }
+  },
+  "rea_full_data_equals_envelope": true,
+  "manifest_c02_carrier_sha256_matches_carrier_file": true,
+  "ctl_c1_2_receipt": {
+    "red": {
+      "argv": ["/usr/bin/python3", "-I", "-B", "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-43/heldout-gen-v4r43.py", "--tuple-check", "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/heldout"],
+      "exit": 3,
+      "stdout_tail": "declared_tuple_unobserved: 1 of 78 carrier(s) observed a tuple the manifest does not declare\nC02  combo  gap_kinds: declared ['extractor-failure', 'unpublished-entry'] != observed ['depth-limited', 'extractor-failure', 'unpublished-entry']\n",
+      "manifest_present_before_after": true,
+      "manifest_sha256_before_after": "656c22d52ef038f28d77391324f23223d4b893ad2b4775f4a147d50734fde557",
+      "manifest_unchanged": true
+    },
+    "green": {
+      "argv": ["/usr/bin/python3", "-I", "-B", "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-43/heldout-gen-v4r43.py", "--tuple-check", "/fast/scratch/hyaku/kaidoku-r43/l1-c1-controls-f3/ctl-c1-2-green"],
+      "exit": 0,
+      "declared_tuples_corrected": ["C02.gap_kinds"],
+      "correction_source": "re-derived from the emitted envelope",
+      "manifest_sha256": "79b9204a7a4ecf16529ed00594cd9432e4c8a83d0b47db7f0866db395f433a65"
+    }
+  },
+  "independent_scratch_reproduction": {
+    "red_command": "python3 -I -B tools/round-43/heldout-gen-v4r43.py --tuple-check <scratch>/red",
+    "red_exit": 3,
+    "red_stdout": "declared_tuple_unobserved: 1 of 78 carrier(s) observed a tuple the manifest does not declare\nC02  combo  gap_kinds: declared ['extractor-failure', 'unpublished-entry'] != observed ['depth-limited', 'extractor-failure', 'unpublished-entry']",
+    "red_manifest_sha256_after": "656c22d52ef038f28d77391324f23223d4b893ad2b4775f4a147d50734fde557",
+    "red_tree_equal_to_committed_copy_after_run": true,
+    "green_command": "python3 -I -B tools/round-43/heldout-gen-v4r43.py --tuple-check <scratch>/green",
+    "green_exit": 0,
+    "green_stdout": "tuple_check: 78 carrier(s); every observed tuple equals its declared tuple",
+    "green_manifest_sha256": "79b9204a7a4ecf16529ed00594cd9432e4c8a83d0b47db7f0866db395f433a65",
+    "green_nonmanifest_files_equal_committed": true,
+    "green_manifest_structural_diff": ["carriers[C02].declared_features.gap_kinds only; gained depth-limited, list sorted"]
+  },
+  "commands_and_exit_codes": [
+    {"command": "git -C <lane> rev-parse HEAD", "exit": 0, "stdout": "5856614ac4bf7f2363bbcd1956644474a82108e5"},
+    {"command": "python3 -I -B tools/round-43/heldout-gen-v4r43.py --tuple-check <scratch>/red", "exit": 3},
+    {"command": "python3 -I -B tools/round-43/heldout-gen-v4r43.py --tuple-check <scratch>/green", "exit": 0},
+    {"command": "sha256sum committed manifest and C02 records/tools", "exit": 0},
+    {"command": "scratch red tree hash-map comparison against committed heldout tree", "exit": 0, "result": "391/391 files identical; no added or changed files"},
+    {"command": "scratch green manifest structural comparison against committed manifest", "exit": 0, "result": "only C02.declared_features.gap_kinds changed to the independently observed sorted tuple"}
+  ],
+  "limitations": [
+    "No REA/extractor was run; committed REA outputs were inspected only.",
+    "The CTL-C1-2 --tuple-check red uses an existing manifest. It verifies exit 3 and no mutation (existing manifest is present and byte-identical), not an absent manifest in a fresh --run output directory. The fresh-run no-manifest behavior is asserted by the plan/source but was not executed in this seat."
+  ]
+}

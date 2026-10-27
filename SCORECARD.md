@@ -3497,3 +3497,11 @@ Owned scores remain saturated: coverage `10 → 10` (R43-C2 not met under the fr
 
 - **planned (round 43, after a steer):** depth — refreeze R42-C2 with the generator refusing any manifest whose declared tuple differs from its own observed run (QUALITY 85, R42-CL1), table v4 bytes kept; and a wave 2 that attacks the round-42 C1 landing (R42-CL2). Second choice: land R41-CL3's prepared in-lane copies (`w1/R42LocalSrc.md`). R40-CL2 remains open.
 - **retired:** none.
+
+### Round-43 closure corrections (append-only)
+
+- **C2 verdict wording:** the frozen scorer is not overstrict relative to its frozen plan. Both require `git diff --numstat BASE..REV -- corpus/SOURCES.md` to equal `3\t0`; the committed append is `4\t0` (S135–S137 plus one blank separator). The scorer correctly exits 1, so R43-C2 is not met; no frozen counter or target was changed.
+- **Coverage-map proxy:** after the R43 scored-entry coverage-map row lands, re-run command A at the recorded final lane commit. Keep the proxy distinct from R43-C2: a complete knowledge index does not turn the host-local-source claim green.
+- **C1 limits from wave 2:** the C1 receipt meets the frozen target, but it does not bind S135 row content; `run.json` is not an out-of-band REA provenance record, a self-consistent authored envelope can score green, and manifest-supplied carrier IDs need path validation. These are routed instrument limitations, not post-freeze amendments.
+- **C2 limits from wave 2:** although the gate and 136-check audit are green on the committed pack, the scorer stops on the frozen 3-vs-4 insertion mismatch. The linter also accepts a parent-directory symlink and an escaping `copy` path under tested controls; source/tarball input pins are not retained by the score receipt. No C2 green or capability is credited.
+- **planned (round 44, after steer):** re-evaluate the lowest owned axis under the next prompt; do not reuse or alter the frozen R43 predicates. Carry the C2 target mismatch and C1/C2 instrument findings as explicit candidate fixes.

@@ -1,0 +1,63 @@
+== revisions
+lane tip            5856614ac4bf7f2363bbcd1956644474a82108e5
+round freeze        f3f8db389416d094b1ddeb1215ddcf914bfc0d1c
+C2 counted rev      77d196c66f4fea00d7d543728b190ebdfaf6d0f0
+C2 earlier rev      09ab56b8fdc2efcc3b58b203644537d84dd5ac9e
+base                6b9e64fe7e0de202d9383baad5792fbfe039a743
+
+== tool blobs at 77d196c6 (identical at 5856614a: git diff --stat empty)
+tools/round-41/local-source-gate.py                  cafe232a196dd8446bd9b0420b32bf696cba427770eb79edda2be15a45a4ece7
+tools/round-43/c2-score-r43.py                       459cbccbb2bf172376357b7e72549add1d99c5d9ed70fecc8acec1ea93432faa
+tools/round-43/verify-copies-r43.py                  00b3f7a4c7a2ee7f5a6654f12211cbf2a12e0fe10e9de7fc35ff088ce8f3b020
+tools/round-43/receipt-wrap.py                       b5f01904fc20b4cc014f43c3b1e4f120dd3d8e60c942bb5bc11c21bd260d0211
+corpus/evidence/local-sources.json                   3158cdc982fc07d263198ab0eaeee2adb9ca9d8cf4ebb662ea640c1c0491148e
+corpus/SOURCES.md                                    251ec4a72ee3dcf1f0f5e45debc001be2333c0340b661e616ebceaaedb62c68c
+
+== numstat BASE..REV for SOURCES.md
+09ab56b8  4^I0^Icorpus/SOURCES.md$
+77d196c6  4^I0^Icorpus/SOURCES.md$
+5856614a  4^I0^Icorpus/SOURCES.md$
+committed receipts record: '4\t0\tcorpus/SOURCES.md'
+
+== gate blob identity
+d764389e  cafe232a196dd844
+f3f8db38  cafe232a196dd844
+77d196c6  cafe232a196dd844
+5856614a  cafe232a196dd844
+plan-pinned prefix: cafe232a
+
+== committed copy-audit at 77d196c6 (embedded in the score receipt)
+checks 136 failures 0
+names {'expect-source-frozen': 1, 'map-no-duplicate-keys': 1, 'map-version': 1, 'map-sources-object': 1, 'key-set-equals-rows': 1, 'copy-unique': 1, 'copy-regular': 18, 'copy-in-stated-dir': 18, 'copy-size': 18, 'map-digest': 18, 'byte-identical': 11, 'host-sha256': 4, 'gz-digest': 1, 'member-pin': 32, 'member-present': 4, 'host-identity': 3, 'upstream-identity': 3}
+host-state lines (vacuous-OK class): 0
+parent-component / find-type-l style check present: False
+
+== E1 dir-symlink (clone at 77d196c6, S048 -> out-of-lane dir)
+gate: exit 0, rows_failed []
+verifier: exit 0, checks 136 failures 0  (e1-audit.tsv)
+frozen scorer on committed fixture 0f8a7a5a: exit 1, 12/13 clauses true, only sources_numstat false  (score1-symlink-fixture-receipt.json)
+
+== E2 map copy traversal (map rewritten, copy=.../local-sources/../../../../tools/round-41/local-source-gate.py)
+gate: exit 0, rows_failed []  (e2-gate2.json)
+verifier: exit 0, checks 136 failures 0 -- copy-in-stated-dir OK on the escaping path (e2-audit.tsv)
+
+== E3 final-component symlink (S001/SKILL.md -> host SKILL.md)
+gate: exit 0; verifier: exit 1, 1 failure: copy-regular ... FAIL symlink (e3-audit.tsv)
+
+== E4a tar member name = absolute host path (S035), verifier host read
+upstream-identity	S035 internal-abi-go1.25.0.tar vs golang/go@go1.25.0	FAIL	29 members DIFF /fast/scratch/hyaku/kaidoku-r43/w2/R43W2SentC2/canary.txt
+3937157 openat(AT_FDCWD, "/fast/scratch/hyaku/kaidoku-r43/w2/R43W2SentC2/canary.txt", O_RDONLY|O_CLOEXEC) = 3
+second run with canary bytes equal: upstream-identity OK 29 members (e4a-audit2.tsv)
+
+== E4b gzip expansion (S023 replaced with 256 MiB-of-zeros gz, 260934 B on disk)
+verifier exit 1 (map-digest reds, expected), maxrss_children = 534.84 MiB for a 255 KiB committed file
+
+== E5 tampered gate fixture (check_path always ok)
+{"checks": {"clone_at_rev_clean": true, "copy_audit_136_checks": true, "copy_audit_exit_zero": false, "copy_audit_no_failures": false, "freeze_ancestor": true, "gate_exit_zero": true, "map_digest_pinned": true, "rows_checked_19": true, "rows_failed_empty": true, "rows_total_137": true, "s126_preserved": true, "score_tool_frozen": true, "sources_numstat_three_additions": false}, "exit_code": 1}
+gate tool_digest_at_rev d5959beea52e8b5246e9d59509873de5bd4ccb0962b516dfc86b2cbcab50fc33 (pinned prefix cafe232a)
+no check binds it: ['gate_exit_zero']
+note: that run's single audit failure is host-state S081 -- the sibling tarball dir vanished mid-run (see limitations)
+
+== host-path leakage
+tools: c2-score-r43.py 1 hardcoded host path; verify-copies-r43.py 5
+committed c2 score receipts: 16 distinct /home/vgpnk paths each; zero tarball/upstream digest fields

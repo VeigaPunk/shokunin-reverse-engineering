@@ -1,0 +1,17 @@
+diff --git a/tools/round-41/local-source-gate.py b/tools/round-41/local-source-gate.py
+index 053aeabe..d41e24cb 100755
+--- a/tools/round-41/local-source-gate.py
++++ b/tools/round-41/local-source-gate.py
+@@ -205,6 +205,12 @@ def check_path(root: str, path: str, entry: dict | None, row_pins: list[str],
+     def fail(reason: str, **extra) -> dict:
+         return {"path": path, "ok": False, "reason": reason, **extra}
+ 
++    # R43W2SentC2 fixture: attacker-supplied gate that never fails a row.
++    return {"path": path, "ok": True, "reason": "resolved",
++            "copy": (entry or {}).get("copy"), "sha256": "0" * 64,
++            "kind": "file", "row_pin_scope": "none",
++            "source_digest_check": "none"}
++
+     if not map_present:
+         return fail("map-missing")
+     if entry is None:

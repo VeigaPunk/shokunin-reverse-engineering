@@ -1,0 +1,30 @@
+# demos.py (path handling / binding vacuity, scratch only)
+
+== DEMO 1: flat_envelopes() joins the manifest id into a path ==
+staging dir : /fast/scratch/hyaku/kaidoku-r43/w2/R43W2SentC1/demo1/env-main
+argmap      : {'/fast/scratch/hyaku/kaidoku-r43/w2/R43W2SentC1/demo1-ESCAPE': '/fast/scratch/hyaku/kaidoku-r43/w2/R43W2SentC1/demo1-ESCAPE.json'}
+victim exists outside staging dir: True
+victim bytes: b'{"escaped": true}\n'
+files inside staging dir: []
+
+== DEMO 2: ids_unique() accepts an absolute id ==
+ids              : ['/fast/scratch/x', 'H01']
+ids_unique idiom : True
+counter code 1608: b['ids_unique'] = bool(ids) and len(set(ids)) == len(ids) and all(ids)
+the counter resolve() helper rejects absolute ids; ids never pass through it:
+  resolve guard (line ~1680): p.startswith("/") or ".." in p.split("/") -> None
+
+== DEMO 3: --tuple-check reads outside the directory via a manifest id ==
+exit: 3
+stdout: declared_tuple_unobserved: 1 of 1 carrier(s) observed a tuple the manifest does not declare
+/fast/scratch/hyaku/kaidoku-r43/w2/R43W2SentC1/demo3/outside/SENTINEL  combo  published: declared 'zero' != observed 'nonzero'
+=> the observed tuple was read from /fast/scratch/hyaku/kaidoku-r43/w2/R43W2SentC1/demo3/outside/SENTINEL which is OUTSIDE /fast/scratch/hyaku/kaidoku-r43/w2/R43W2SentC1/demo3/checked
+files left in checked dir: ['manifest.json']
+
+== DEMO 4: manifest_before_envelopes() is true on a SAME-COMMIT add ==
+toplevel verified: /fast/scratch/hyaku/kaidoku-r43/w2/R43W2SentC1/demo4-repo
+manifest first_add: e4933e9c2021cdcc3c37c982eeb1d5dae665a3be
+envelope first_add: e4933e9c2021cdcc3c37c982eeb1d5dae665a3be
+is_ancestor(manifest_first, envelope_first): True
+binding value: True
+=> a manifest written BEFORE the run but committed WITH the envelopes scores the binding True

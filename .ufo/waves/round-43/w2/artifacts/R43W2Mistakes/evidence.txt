@@ -1,0 +1,30 @@
+R43W2Mistakes read-only evidence
+Measured lane tip at inspection: 5856614ac4bf7f2363bbcd1956644474a82108e5
+Frozen plan hash/revision: plan read from lane worktree; freeze f3f8db389416d094b1ddeb1215ddcf914bfc0d1c is ancestor of tip (git merge-base --is-ancestor exit 0).
+
+Commands and observations (inspection was read-only; no install, scratch, REA, unblob, sasquatch, tests, or VCS mutation):
+- `git -C <lane> log --oneline -15; git -C <lane> rev-parse HEAD` -> tip 5856614ac4bf7f2363bbcd1956644474a82108e5; commits include C1 landing 77d196c6 and C2 landing 09ab56b8.
+- `jq '.results|length' .ufo/waves/round-42/r42-w1-results.json` -> 43, exit 0.
+- `grep -n -i 'gate green' /home/vgpnk/Projects/shokunin/.ufo/reports/round-42/kaidoku.md` -> line 65 claims prefile gate GREEN at af50af81.
+- `grep -rn 'GATE GREEN' .ufo/waves/round-42/ LOG.md SHONEN.md` -> only selftest strings in R42PrefileGate tool, round-41 run output at `round-41-real.txt:15`, and R42PrefileGate report line 97; no round-42 gate run output found, consistent with round-42 verifier spot-check §1 D2.
+- `sed -n '/## 6/,/^## [0-9]/p' /home/vgpnk/Projects/shokunin/.ufo/prompts/kaidoku-round-43.md` -> run-10 explicitly preserves run-9 64–128 size band; WAVE-DONE rule, counters-bind-seat-votes rule, and round-size floor are present.
+- `grep -n 'green.err\|red.err\|WAVE-DONE\|before' corpus/lessons/round-41-verifier-spotcheck.md` -> §1 records 2 tracked + 16 untracked incl. stray green.err/red.err; §5 D1 says report filed before wave-2 WAVE-DONE.
+- `awk ... corpus/QUALITY.md` -> row 52: report gate result requires committed receipt; row 47: filing after last seat, prefile-check, clean lane; row 85 is M42-1/M42-2 rule (generator compares declared tuple to own --run observed tuple). `grep -in 'round size|64.*floor|floor.*64|seat count|below.*floor' corpus/QUALITY.md` -> no match, exit 0 due `||`/pipeline wrapper, no QUALITY rule found for round size.
+- `find .ufo/waves/round-43/w1 -maxdepth 1 -type f -name 'R43*.md' | wc -l` -> 32. `jq '.members|length' .ufo/waves/round-43/w2/swarm-registry.json` -> 32. Thus wave-1 + wave-2 = 64 dispatched seats (registry evidence only; w2 has not settled at inspection).
+- `git cat-file -e HEAD:corpus/lessons/round-43.md` -> fatal path absent, exit 128: adopted M43 rows cannot yet be verified in a round-43 lesson.
+- `git status --porcelain` at inspection showed existing user/orchestrator changes (`M .ufo/waves/round-43/w2.ready`, `M SCORECARD.md`, `M SHONEN.md`, untracked `.ufo/waves/round-43/w2.ready.dispatched`, `.ufo/waves/round-43/w2/`); not modified by this seat.
+
+Read-byte SHA-256s (sha256sum):
+`tools/round-43/heldout-gen-v4r43.py` 6ab0114d555a09a93ab61459c7adb76a45957a35dc69671b64e7733225aca97a
+`tools/round-43/c1-counter.py` 3a23e93ee95f4b0d69a2f4d03ed2592c9f0b81dbb6188cb6818a18a8f4f33c79
+`tools/round-43/c2-score-r43.py` 459cbccbb2bf172376357b7e72549add1d99c5d9ed70fecc8acec1ea93432faa
+`tools/round-43/verify-copies-r43.py` 00b3f7a4c7a2ee7f5a6654f12211cbf2a12e0fe10e9de7fc35ff088ce8f3b020
+`.ufo/waves/round-43/l1/scores/c1-at-77d196c6.json` 13a495dbb6862d6cfbdd1f41e4a09460740f86bf93e8bb08e313b06d92b8a55c
+`.ufo/waves/round-43/l1/scores/c2-at-77d196c6.json` 42f592aec7d6ffe082a257dba1142b1790857c53ddaab17b1bae1c8db09b76e6
+`.ufo/waves/round-43/l1/scores/c2-at-09ab56b8.json` 126b529eb5c3b0d61eaceb5f2e026eb3de9b0a9c2256239eabd86a23eaad9f4e
+
+Receipt re-read:
+`jq '{revision,exit_code,met_target,matched,n,bindings_false,observed_features_match_declared}' .../c1-at-77d196c6.json` -> rev 77d196c66f4fea00d7d543728b190ebdfaf6d0f0, exit 0, met_target true, matched=n=78, bindings_false []; confirms C1 claimed tuple-fix landed/scored at that measured revision (not current tip).
+`jq '{revision,exit_code,checks,rows_failed,rows_checked,rows_total,copy_audit_checks,copy_audit_failures}' .../c2-at-77d196c6.json` and same for c2-at-09ab56b8.json -> both exit 1. rows_failed=[], rows_checked=19, rows_total=137, copy_audit_checks=136, copy_audit_failures=0, but `checks.sources_numstat_three_additions=false`. Therefore C2 copies/gate/content checks pass but the frozen aggregate predicate does not; do not describe R41-CL3/R42-CL3 as fully closed on this receipt. The score target required exit 0.
+
+Limitations: no round-43 lesson or final closure exists at current inspected tip, so no M43 candidate is confirmed adopted. W2 is still running and this report judges only observed committed/worktree bytes; no claim made about later results. Current C2 score's `sources_numstat_three_additions` false is reported as an observed failed binding, not inferred cause.

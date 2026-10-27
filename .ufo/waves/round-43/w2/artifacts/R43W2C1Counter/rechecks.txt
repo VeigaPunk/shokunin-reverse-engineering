@@ -1,0 +1,41 @@
+R43W2C1Counter — targeted read-only rechecks
+
+Measured revision: 77d196c66f4fea00d7d543728b190ebdfaf6d0f0
+Freeze: f3f8db389416d094b1ddeb1215ddcf914bfc0d1c
+Lane tip observed: 5856614ac4bf7f2363bbcd1956644474a82108e5
+
+C02 observed-vs-declared (committed blobs only)
+Inputs: manifest.json and C02/envelope.json read with `git show <REV>:<path>`; loaded tools/round-43/c1-counter.py and called observed_features(envelope) plus declared_features(carrier), comparing REQUIRED_FEATURES.
+Envelope SHA-256: 9ada75f5082fa6ebe8a6b3e440de5fb19607872c2bc26beb8190bb796577a18b
+handler_set: ['squashfs_v4_le'] == ['squashfs_v4_le']
+gap_kinds: ['depth-limited', 'extractor-failure'] == ['depth-limited', 'extractor-failure']
+gap_dependencies: [] == []
+be_argv: no == no
+symlink_removed: true == true
+published: nonzero == nonzero
+Six-field result: equal (true).
+All corresponding `git show` operations returned 0; Python evaluation completed successfully.
+
+Freeze-drift recheck from Git objects
+For each of SKILL.md and tools/round-43/c1-counter.py, ran:
+`git -C <LANE> log --format=@@%H --name-status --no-renames -m --diff-merges=first-parent <FREEZE>..<REV> -- <path>`
+Exit 0; output empty for both paths.
+Compared `git rev-parse <FREEZE>:<path>` with `git rev-parse <REV>:<path>`; all returned 0 and blob IDs matched:
+SKILL.md: 3268fe77d27272b89d75b8f88f75c24c24158407
+c1-counter.py: e9335c03c6ad5bb7487be7197c0e6ce31c9c9803
+The counter's SHA-256 at freeze and REV is 3a23e93ee95f4b0d69a2f4d03ed2592c9f0b81dbb6188cb6818a18a8f4f33c79.
+
+H01 run.json digest/summary recheck from Git blobs
+Inputs read with `git show <REV>:<path>`: H01/carrier.sqsh, H01/run.json, H01/envelope.json. All `git show` operations returned 0.
+Carrier SHA-256: 0d8ba23bed1a882343495375022be98e6e6b2b7e4cf4baea8f03b9638950cc1c; equals manifest `sha256` and run.json `subject_sha256`.
+run.json `digest_matches_carrier`: true.
+run.json `gap_kinds` equals counter extraction from H01 envelope; `handlers` equals extracted `chunk_handlers`: true.
+Raw H01/run.json SHA-256 computed for this review: 14f518ec034b559f613b4cd3d2d1e30fce17a02359173f151ecc92ade2424a51. This raw-file digest is not recorded in the score receipt.
+
+Other observations
+- c1 score receipt reports revision 77d196c66f4fea00d7d543728b190ebdfaf6d0f0, exit 0, matched/n 78/78, bindings_false [], lookup 19/24 with below_half=false and binding=false.
+- C1 controls summary reports ok=true, controls_at_target=[], kill_rule_fires=false. CTL-C1-2 red output is exit 3 for C02 mismatch; green output is exit 0. CTL-C1-4 hand-edit arm reports observed_features_match_declared=false and exit 1.
+- C2 score receipt at the same measured revision is exit 1/checks_ok=false, while gate and copy audit exits are 0; C2 is outside this seat's assessed code path.
+- No LSP device/status interface was exposed in this session's tool inventory. Static location/search calls were fallback only, not semantic proof.
+- No REA, unblob, sasquatch, or extractor was run; no third-party firmware or fixture bytes were opened. No scratch was created. No tests, formatters, linters, installs, or VCS mutations were run.
+- Exploratory Python probe initially exited 1 on KeyError `envelope` because manifest carrier records have no `envelope` key; rerun used the counter's committed path inference / known `C02/envelope.json` path and succeeded. No files were changed by either probe.
