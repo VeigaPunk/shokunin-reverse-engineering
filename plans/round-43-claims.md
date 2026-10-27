@@ -26,38 +26,48 @@ sha256 of the counter file it ran) plus `counter_sha256_at_freeze` (round-41 clo
 are dry-run end to end, as frozen, with data produced by the frozen generators in a dev arm, before the freeze, and
 the dry-run receipts show every binding evaluated.
 
-## R43-C1 — depth: the v4 SquashFS triage table scored on a fresh held-out set under a generator that refuses unobserved declarations
+## R43-C1 — calibration: the v4 SquashFS triage table scored on a fresh held-out set under a generator that refuses unobserved declarations
 
 Surface moved: `SKILL.md` `## Queue-drain craft` rule block 21 (`<!-- sqfs-triage-table v4 -->`) stopped unscored
 at round 42 — it matched its independent evaluator 78/78 but the round stopped on `observed_features_match_declared`
 because the generator declared a gap set for combo C02 that its own REA run did not observe. This claim does not
 change one table byte: it re-freezes the frozen table (bytes proven equal to the round-42 freeze `d1681696` at the
 table region), regenerates the held-out set from a NEW seed, and replaces the generator's declared-tuple predictor
-with a measured one (QUALITY 85): the generator runs REA on every carrier, extracts the observed six-field feature
-tuple from each envelope it produced, and REFUSES to write the manifest unless every observed tuple equals the tuple
-the manifest would declare; on refusal it exits non-zero and writes no manifest. The counter additionally binds the
+with a measured one (QUALITY 85): the generator's declared tuple stays the predictor's tuple — a pure pre-run
+function of (class, drawn factors, fixture pins) — with its predictor amended to model REA 6.5.0's
+depth-limited minting beside a failing chunk at the depth ceiling (the C02 fix); after the `--run` it extracts
+the observed six-field tuple from each envelope it produced (the same extraction algorithm as the frozen
+counter's `observed_features`) and REFUSES to write the manifest unless every observed tuple equals the
+predictor's tuple (exit 3 `declared_tuple_unobserved`, per-carrier diff list, no manifest write). The counter
 manifest's own record of that check. Command that shows it unmoved: the round-43 C1 counter at the freeze exits 2
 (`no_manifest_at_rev`), and the round-42 stop receipt stays byte-committed at
 `.ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json`.
 
 **Predicate P43-C1** (implemented by `tools/round-43/c1-counter.py`; its docstring's clause list is the full text).
 At the measured revision: the v4 table region of `SKILL.md` (from the line containing `<!-- sqfs-triage-table v4 -->`
-through the end of the first markdown table after it) is byte-identical to the same region at `d1681696`; the
+through the end of the first markdown table after it) is byte-identical to the same region at `d1681696`, at the
+freeze and at the measured revision (sha256 `92540586b8c03dcde511652c0d76ba93cbde8e5f4e79e0b94509192c19b101f2`
+under the counter's `rule_block` extraction — 13 851 bytes, equal at `d1681696` and the base);
+`corpus/SOURCES.md` carries row S135 naming the unblob 26.6.4 LICENSE at its pinned URL with its committed
+digest; the
 frozen interpreter `tools/round-42/sqfs-triage-v4.py` and the frozen evaluator `tools/round-42/indep-eval-v4.py`
 are byte-identical at `d1681696`, at the freeze, and at the measured revision (no commit in
 `d1681696..REV` touches them); the held-out set is `corpus/evidence/round-43/c1/heldout/` produced by
 `python3 -I -B tools/round-43/heldout-gen-v4r43.py --seed <FREEZE> --out corpus/evidence/round-43/c1/heldout --run --scratch <scratch under /fast/scratch/hyaku/kaidoku-r43/>`, first added in a commit descending from the freeze,
 with the same class structure as round 42 (27 named classes × 2 plus 24 combo carriers, n = 78) and the same
+`declared_features` single-key contract (R41-CL1); every envelope's observed six-field tuple equals its declared
 tuple (the round-42 stop binding, now expected true); the manifest records the generator's own tuple check
 (`generator.tuple_check`: per-carrier observed/declared verdicts, all equal) and the refusal rule is demonstrated
 red/green in the committed controls; the frozen interpreter gives every held-out envelope the same (label, action)
-pair as the frozen evaluator; the combo-unseen-majority binding scores at least half of the held-out `combo`
-envelopes outside the union of the named classes' declared tuples (`combo_unseen_majority` ≥ 12 of 24 — the
-round-42 binding kept verbatim; the frozen lookup control
-`.ufo/waves/round-42/controls/c2/CTL-C2-7-lookup.md` is run through the frozen interpreter and its score
-reported, not bound — round 42 measured 19/24 on the same generator family, so a literal
-"strictly fewer than half" threshold would hand the kill to the factor draw); the round-41 C1 receipts and the
-evaluator's pair; every carrier regenerates byte-identically from the seed; the seed equals the freeze commit hash;
+pair as the frozen evaluator; `combo_unseen_majority` binds exactly as the frozen round-42 counter computes it
+(`len(unseen) >= ceil(n_combos/2)` where UNSEEN = the combo's observed six-field tuple outside the union of the
+named-class declared tuples in the frozen round-42 dev-arm manifest `corpus/evidence/round-42/c2/dev/manifest.json`,
+canonicalized — the round-43 set's own named tuples are NOT the union); the frozen lookup control
+`.ufo/waves/round-42/controls/c2/CTL-C2-7-lookup.md` is byte-identical to its frozen bytes
+(`lookup_control_identical`) and its held-out combo score is reported, not bound — round 42 measured it 19/24
+with `below_half: false` on identical class structure, so a `< half` binding is unreachable on this family; the
+round-41 C1 receipts and the round-42 dev-arm envelopes get the evaluator's pair; every carrier regenerates
+byte-identically from the seed; the seed equals the freeze commit hash;
 every envelope's subject digest equals its carrier's sha256; the fixtures the carriers embed are the pinned unblob
 26.6.4 MIT fixtures (`tools/round-42/fixtures.json`), whose license basis is cited by the new SOURCES row S135
 opened this round; no frozen C1 path changed after the freeze.
@@ -85,13 +95,18 @@ the CTL-C1-2 red arm on the committed round-42 set.
 - Kill rule: a control meeting the target stops C1 before held-out generation. Controls scored at the freeze
   (`.ufo/waves/round-43/controls/c1/`):
   - CTL-C1-0 do-nothing: counter at the freeze exits 2 `no_manifest_at_rev`;
-  - CTL-C1-1 the round-42 held-out manifest copied to the round-43 path: the counter exits non-zero (seed ≠ freeze;
-    manifest not first-added after the freeze);
+  - CTL-C1-1 the round-42 held-out manifest copied to the round-43 path: the counter exits non-zero
+    (`seed_matches_freeze` false — the copy declares the round-42 freeze seed — plus
+    `manifest_after_freeze`/`carriers_regenerated` false);
   - CTL-C1-2 red/green of the refusal: `heldout-gen-v4r43.py --tuple-check corpus/evidence/round-42/c2/heldout`
     on the committed round-42 set exits 3 and writes nothing (red receipt: `REFUSE C02 … depth-limited`);
     a green arm — the same check on a directory whose manifest declares the observed tuples — exits 0;
   - CTL-C1-3 the round-42 shortcut controls re-scored by the frozen round-43 counter on the frozen dev arm stay
-    below the target (the r42 control receipts are reproduced, none reaches 78).
+    below the target (the r42 control receipts are reproduced, none reaches 78);
+  - CTL-C1-4 counter-side hand-edit rejection: a dev-arm manifest with one carrier's `declared_features`
+    edited to a value its committed envelope does not observe, scored by the frozen round-43 counter, exits
+    non-zero with `observed_features_match_declared` false — the counter computes the observed tuple from
+    envelope bytes, never from the manifest's `generator.tuple_check` record.
 - Disclosed limits: as round 42 — agreement with an independent evaluator cannot tell this table from any other
   table labelling the same envelopes the same way; the claim measures that the frozen table implements the frozen
   precedence on real REA envelopes under a generator that cannot declare the unobserved, not that the precedence is
@@ -128,7 +143,7 @@ tools/round-41/local-source-gate.py --root <CLONE> --rev <REV> --json` exits 0 w
 carries third-party firmware bytes; and the copies are re-derived byte-exactly from the objects they stand for,
 per their dispositions (byte copy ⇒ copy digest == host digest; `gzip -9 -n` ⇒ decompressed digest == host
 digest; member/directory tars ⇒ every cited member digest == the host object's member digest), checked by
-`verify-copies-r43.py` (the hardened port in `.ufo/waves/round-43/w1/artifacts/R43RevLocalsrc/` — the pack's own
+`tools/round-43/verify-copies-r43.py` (the hardened port committed from `.ufo/waves/round-43/w1/artifacts/R43RevLocalsrc/` — the pack's own
 `verify-copies.py` crashes on absent hosts and is not re-used) run by two independent seats this round against
 the exact committed bytes at REV: 15 of 18 entries re-verify against the live host object, and the three
 host-absent entries (S035 `go-1.24.6`/`go-1.25.0` `src/internal/abi`, S081 `rea-agents` 6.7.0 npx cache) are
@@ -140,9 +155,13 @@ round-43 rows (S135, S136, S137) — the map, not the registry, carries the reso
 - Target: gate exit 0, `rows_failed` empty, `rows_checked == 19`, `rows_total` = the post-append row count
   (136 with S135–S137), receipt committed at the measured revision.
 - Counting command: in a clean `--shared` clone at REV,
-  `python3 -I -B tools/round-41/local-source-gate.py --root <CLONE> --rev <REV> --json` (exit 0, and
-  `jq '.rows_failed | length' <receipt>` prints 0); the receipt additionally records `counter_sha256`,
-  `map_sha256`, the resolved REV and the worktree cleanliness line.
+  `python3 -I -B tools/round-41/local-source-gate.py --root <CLONE> --rev <REV> --json` piped through the
+  committed receipt wrapper `tools/round-43/receipt-wrap.py` (argv, tool sha256, resolved revision, exit code,
+  stdout payload) into `.ufo/waves/round-43/l1/scores/c2-gate-at-<REV>.json` — exit 0, and
+  `jq '.payload.rows_failed | length'` on that receipt prints 0; the receipt also records
+  `sha256sum corpus/SOURCES.md` and `sha256sum corpus/evidence/local-sources.json` at REV plus the numstat and
+  S126 checks named in the landing-paths section. Freeze-time control receipts:
+  `.ufo/waves/round-43/controls/c2/ctl-c2-0-do-nothing.json` and `ctl-c2-1-sandbox-digest-mismatch.json`.
 - Controls scored at the freeze (before the copies land): CTL-C2-0 the do-nothing gate run at the freeze revision
   (exit 1, 18 rows failed — committed receipt); CTL-C2-1 a sandbox-clone control proving a map entry whose copy is
   absent or digest-mismatched keeps the gate red (the round-38 lesson); CTL-C2-2 a symlink copy replacing a real
@@ -199,31 +218,49 @@ C2's evidence cites existing rows.
 ## Frontier step (this round, inside the claim cap)
 
 - Sources: S135 (unblob 26.6.4 LICENSE, opened by the L1 at 2026-10-27T08:08Z, HTTP 200, 1068 B, sha256
-  `67303bbd…`) is appended as the round's one new registry row, cited by P43-C1's fixtures clause and by the round's
-  v4-scored knowledge entry. Assimilation (§10): one theme, one admitted entry
-  (`sasquatch-prebuilt-package-inventory`, re-grounded in-round per the round-42 `R42Assim` review's ADMIT verdict),
-  its cited staged rows appended in fleet schema with the scratch collision/quarantine checks; ≥1 reject stays on
-  record. Quarantine slice (5 rows) hand-checked. `considerthese/`: no such directory — report line.
+  `67303bbd…`), S136 (the onekey-sec/sasquatch releases API endpoint
+  `api.github.com/repos/onekey-sec/sasquatch/releases`, `dataset` — the release matrix's machine-readable source)
+  and S137 (the rendered releases page, `docs`, cited for the negative: it carries no asset filename) are appended
+  as the round's three new registry rows; S135 is cited by P43-C1's fixtures clause and the v4-scored knowledge
+  entry, S136/S137 by the admitted assimilation entry. Assimilation (§10): one theme, one admitted entry
+  (`sasquatch-prebuilt-package-inventory`, re-grounded in-round per the round-42 `R42Assim` review's ADMIT verdict
+  as `corpus/knowledge/2026-10-27-sasquatch-release-matrix.md`), its cited rows appended in fleet schema with the
+  scratch collision/quarantine checks; ≥1 reject stays on record (the r42 `sasquatch-unblob-compatibility` REJECT).
+  Quarantine slice (5 rows) hand-checked. `considerthese/`: no such directory — report line.
 
 ## Frozen paths and landing paths
 
 Byte-frozen (the counter's `frozen_path_changed`/`skill_block_drift` watch them): this file;
-`tools/round-43/{c1-counter.py,heldout-gen-v4r43.py,c1-controls-r43.py}`; the round-42 frozen tools
-`tools/round-42/{sqfs-triage-v4.py,indep-eval-v4.py,fixtures.json}` and the lookup control
-`.ufo/waves/round-42/controls/c2/CTL-C2-7-lookup.md`; the SKILL v4 table region (the `rule_block` span —
-status text appends to the prose line above the marker, never inside a region); the fixtures under
+`tools/round-43/{c1-counter.py,heldout-gen-v4r43.py,c1-controls-r43.py,receipt-wrap.py,verify-copies-r43.py}`; the round-42 frozen tools
+`tools/round-42/{sqfs-triage-v4.py,indep-eval-v4.py,fixtures.json}` plus the SquashFS writer the manifest names
+`tools/round-39/gen-squashfs.py`; the lookup control `.ufo/waves/round-42/controls/c2/CTL-C2-7-lookup.md` and the
+other round-42 CTL files the CTL-C1-3 driver re-scores under `.ufo/waves/round-42/controls/c2/` including its
+receipts `c2-counter-at-freeze.json`/`dev-scores-prefreeze.json`; the SKILL v4 table region (the `rule_block`
+span — status text appends to the prose line above the marker, never inside a region); the fixtures under
 `corpus/evidence/round-42/c2/fixtures/` (a real `FROZEN_PATHS` entry this round — the round-42 `fixture_scope`
 read a top-level manifest key the generator never wrote and was vacuous); the round-42 dev arm
-`corpus/evidence/round-42/c2/dev/`; the round-41 C1 receipts
-`corpus/evidence/round-41/c1/{V3,V4,L3,L4}/after.json`; `tools/round-41/local-source-gate.py`;
-`corpus/evidence/round-41/s126/` (the preserved S126 copy).
+`corpus/evidence/round-42/c2/dev/` and the round-42 held-out manifest
+`corpus/evidence/round-42/c2/heldout/manifest.json` plus the C02 envelope files the CTL-C1-2 arm reads
+(`corpus/evidence/round-42/c2/heldout/C02/{envelope.json,rea-full.json}`); the stop receipt
+`.ufo/waves/round-42/l1/scores/c2-at-eb8215ac.json`; the round-41 C1 receipts
+`corpus/evidence/round-41/c1/{V3,V4,L3,L4}/after.json`; the S135 row cells of `corpus/SOURCES.md` (byte-identical
+between freeze and measured rev — it is appended pre-freeze); `tools/round-41/local-source-gate.py`;
+`corpus/evidence/round-41/s126/` (the preserved S126 copy). No round-43 tool imports a `tools/round-42` module
+at runtime (ports vendor, not import).
 
 First-added after the freeze, digest-pinned here (exempt from the no-touch rule, exactly like the heldout dir):
-`corpus/evidence/local-sources.json` — the prepared pack's map verbatim, sha256
-`2671850b5d57748557def5b8a67592bb656793e2a0143429b23c5097ff3ec49a`; the 17 copies under
+`corpus/evidence/local-sources.json` (a landing path — its 17 new entries land in the landing commits; its final
+bytes equal the prepared pack's map verbatim, sha256
+`2671850b5d57748557def5b8a67592bb656793e2a0143429b23c5097ff3ec49a`; the pre-existing S126 entry is preserved
+JSON-value-equal to the base entry); the 17 copies under
 `corpus/evidence/round-42/local-sources/` — the prepared pack's tree verbatim, sorted-paths sha256-manifest hash
 `72768b7b03917f784636833a2b3fd0445ec8194c077b3532cd03f359bc9d2ea0`; the held-out set
 `corpus/evidence/round-43/c1/heldout/` plus controls, data and score receipts under `.ufo/waves/round-43/`.
+For C2 the landing commits may add map entries and copies and change nothing else: the gate tool, this file, the
+S126 entry, and `corpus/SOURCES.md` rows other than the appended round-43 rows are untouched in FREEZE..REV — the
+C2 receipt additionally records `git diff --numstat <BASE>..<REV> -- corpus/SOURCES.md` (exactly the appended
+round-43 rows, zero deletions) and the S126-preservation check (`jq -cS` on the map's `sources` object at BASE
+vs REV).
 
 ## Changes from the draft
 (recorded in `## Wave-1 amendments` above — ten items folded back before the freeze)
