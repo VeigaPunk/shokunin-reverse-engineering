@@ -1,9 +1,11 @@
 **Verdict: DONE** — the round-43 v4-scored knowledge entry is drafted as text with all 19 round-43 fill tokens
 declared in an explicit ledger, and the draft is green on a six-check gate with a 6-of-6 red selftest. No
-round-43 number is asserted: the score, the controls and the generator verdicts are `<<L1:...>>` tokens because
-`tools/round-43/` does not exist at the base (finding F3). The entry's *frozen-side* claims are measured this
-round and independently re-derived: the v4 region hash, the interpreter/evaluator/fixture pins, the S135 license,
-the S119 6.5.0 package pins, and the round-42 stop receipt's own bytes.
+round-43 number is asserted: the score, the controls' exits and scores, and the generator verdicts are
+`<<L1:...>>` tokens because `tools/round-43/` does not exist at the base (finding F3); the one control whose
+outcomes are booleans (CTL-C1-4, added at L1 integration) carries no token and cites its receipt instead. The
+entry's *frozen-side* claims are measured this round and independently re-derived: the v4 region hash, the
+interpreter/evaluator/fixture pins, the S135 license, the S119 6.5.0 package pins, and the round-42 stop
+receipt's own bytes.
 
 Seat `R43ScribeEntry`, round 43 wave 1 (pre-freeze). Lane root `/home/vgpnk/Projects/shokunin/kaidoku-shokunin`,
 base `6b9e64fe7e0de202d9383baad5792fbfe039a743` (`HEAD` at read time `d22686e198c775b44d4e74fac4c53ebed0ebb740`).
@@ -18,17 +20,24 @@ deleted with the scratch).
 
 | file | bytes | lines | sha256 |
 |---|---|---|---|
-| `artifacts/R43ScribeEntry/entry-corpus-knowledge-2026-10-27-r43-sqfs-triage-v4-scored.md` (the draft) | 15 252 | 107 | `61ba6662185efed7a706a9303bdd487e41f8ea44f8e1c5158d3d22e635c0f7c6` |
+| `artifacts/R43ScribeEntry/entry-corpus-knowledge-2026-10-27-r43-sqfs-triage-v4-scored.md` (the draft) | 16 261 | 116 | `8f98bfe0d85e088dccdc8e8ff51b629a179e20d8bb6b15162b65bdf7cbf2bf56` |
 | `artifacts/R43ScribeEntry/fill-ledger.tsv` (19 tokens, what each must be, where it comes from) | 3 556 | 20 | `1e2f76d75c9bf0730bc2026c818e0ea3d91e52339e138c275cb1bd6562c4c058` |
 | `artifacts/R43ScribeEntry/check-draft.py` (E1–E6 gate + selftest) | 10 912 | 296 | `d9fee5bd76c8879d0677602002b847eaa50168bd6c61df55e8c5e17cbfcdc0a1` |
 | `artifacts/R43ScribeEntry/measure.sh` (read-only measurement sweep) | 5 511 | 108 | `7070611b37070a91d9ea33e78223c079ef7135f2f689656404ae77f3254dcedc` |
 | `artifacts/R43ScribeEntry/measurements.txt` (its output, 9 sections) | 5 682 | 66 | `5715a5e5ea4043cc0c91c41ace8e3e789729ac9b1f6ef9bb358e5da7ef1c96d0` |
 | `artifacts/R43ScribeEntry/gate-real-6b9e64fe.txt` | 142 | 1 | `3805f70057f50b816c153a53ed14971c886fdd3f3b458c63c172b5a32b5579b4` |
 | `artifacts/R43ScribeEntry/gate-real-d1681696.txt` | 142 | 1 | `cfb05398aad8effa68eff91d71efe7f99aada4659a2f54f7ed78828dea5bcf51` |
-| `artifacts/R43ScribeEntry/gate-selftest.txt` | 360 | 7 | `c5e54cac19eb1cc4ed54809b2632afdf975ef724f0763ff2a7aaaddc4070172b` |
+| `artifacts/R43ScribeEntry/gate-selftest.txt` | 360 | 7 | `eeffc7627097cb360be06fc69b638f0184dda33fd7b039b3503827e1d3e786c7` |
 
 The file to install is the first row, at the path the seat spec names:
 `corpus/knowledge/2026-10-27-r43-sqfs-triage-v4-scored.md`. I did not write it, or anything else, into the lane.
+
+The draft's first row now carries the CTL-C1-4 hand-edit sentence that the L1 added at integration (finding F7):
+I mirrored it into this artifact from the L1's description and the committed receipt
+`.ufo/waves/round-43/controls/c1/receipts/CTL-C1-4.json`, with no new placeholder (the control's two outcomes are
+booleans). At report time the installed path `corpus/knowledge/2026-10-27-r43-sqfs-triage-v4-scored.md` is **not
+present in this worktree**, so byte-identity between this artifact and the L1's integrated copy is the L1's to
+confirm — the hash above is this artifact's.
 
 ## 2. The draft, paragraph by paragraph, and the pointer each claim carries (coverage)
 
@@ -69,9 +78,12 @@ stated with the commands that show it (`measurements.txt` §4).
 
 **"The new held-out score"** and **"The controls"** are freeze-time contracts whose numbers are all tokens:
 `<<L1:matched>>/<<L1:n>>` with `<<L1:counter-exit>>`, `<<L1:combo-unseen-count>>`, `<<L1:lookup-score>>`, and
-`<<L1:ctl-c1-0…>>` … `<<L1:ctl-c1-3…>>` exits, summaries and receipts. The controls paragraph opens by saying
-that each sentence describes what the control is built to show, so a divergence lands in the installed entry
-instead of being absorbed into prose.
+`<<L1:ctl-c1-0…>>` … `<<L1:ctl-c1-3…>>` exits, summaries and receipts; CTL-C1-4 (the L1's integration addition,
+F7) is the one control with no token, because its outcomes are the two booleans its receipt carries — the binding
+is true on the unedited planted arm and false after flipping `H01`'s declared `published` from `nonzero` to
+`zero` with every envelope byte unchanged. The controls paragraph opens by saying that each sentence describes
+what the control is built to show, so a divergence lands in the installed entry instead of being absorbed into
+prose.
 
 **"Limits."** Five items: the round-42 agreement-with-evaluator blindness (unchanged); the C02 shape is REA
 6.5.0's gap minting, not a table choice, and the observed tuple is authoritative; one seed, n = 78, is one draw —
@@ -153,6 +165,22 @@ re-read: the "new held-out score" paragraph would then describe a stop, and the 
 observed tuple is authoritative, but the lead sentence of that paragraph ("the frozen interpreter assigned every
 one of the 78 fresh envelopes the same pair") is a met-case sentence that a non-met score would falsify. The L1
 must not fill `<<L1:matched>>` with a number it did not measure, and must replace that sentence on a stop.
+
+**F7 (integration addition, disclosed).** CTL-C1-4 is the L1's addition at integration, not this seat's. It scores
+the same planted arm twice, the second time with one manifest field flipped — `H01`'s declared `published`,
+`nonzero` → `zero` — with every envelope byte unchanged, and `observed_features_match_declared` is `true` on the
+baseline and `false` after the edit, so the binding is computed from the envelope and cannot be satisfied by the
+declaration alone. Two receipts exist for it: the seat's artifact copy
+(`.ufo/waves/round-43/w1/artifacts/R43C1Controls/receipts/CTL-C1-4.json`, sha256 `4a94a3e3…`, argv rooted in that
+seat's scratch) and the committed `.ufo/waves/round-43/controls/c1/receipts/CTL-C1-4.json` (sha256 `ed41a5e1…`,
+argv rooted at the lane, and a larger binding set from the frozen counter). They agree on the verdict pair
+(`baseline_observed_features_match_declared` `true`, `hand_edit_observed_features_match_declared` `false`,
+`envelopes_untouched` `true`, `edit_target` `H01`/`published`); the draft cites the committed copy, and the artifact
+copy is superseded. Both record `counter_exit 1` on the planted arm for reasons that are the planted-manifest
+bindings (`seed_matches_freeze`, `manifest_after_freeze`, …), not this binding, so the draft states the boolean
+flip and nothing else. The paragraph is mirrored into this seat's draft from the L1's description plus the
+committed receipt; the installed entry was not visible in this worktree at report time, so the L1 owns the final
+byte comparison.
 
 ## 5. Out of scope, and not claimed
 

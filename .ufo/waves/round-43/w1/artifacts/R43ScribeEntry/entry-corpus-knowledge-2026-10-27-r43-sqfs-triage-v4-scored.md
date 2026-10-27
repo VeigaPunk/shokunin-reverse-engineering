@@ -8,7 +8,7 @@ source: S121 — https://raw.githubusercontent.com/onekey-sec/sasquatch/sasquatc
 source: S130 — https://github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs (LFS payload base `https://media.githubusercontent.com/media/onekey-sec/unblob/refs/tags/26.6.4/tests/integration/filesystem/squashfs/`) — the MIT-licensed unblob 26.6.4 SquashFS test fixtures the held-out generator embeds, pinned by `tools/round-42/fixtures.json` (sha256 `9f957663c1f21940ec17e32f98485425145b6c4e7eb265a7b12327b629c3da9b`, 14 pins, tag commit `1fcc7a0a584a70a96c31f5a276c20944d199a089`) with committed copies under `corpus/evidence/round-42/c2/fixtures/` — opened 2026-10-26 (`.ufo/waves/round-42/w1/R42SrcUnblob.md`), re-verified this round only as the pin file's sha256 above
 source: S135 — unblob 26.6.4 license text, the basis on which the carriers may embed S130's fixtures — read this round from the installed distribution's metadata (`~/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob-26.6.4.dist-info/licenses/LICENSE`): 1068 B, sha256 `67303bbde385e13f69e8019f6f8bc77d4ebfce58c2a409952645e3fe4f4d922e`, MIT text; the row is opened by the round-43 L1 at 2026-10-27T08:08Z (HTTP 200, same 1068 B, same sha256 `67303bbd…`). Scope: the license grant only, never a statement about fixture content
 verified-at: 2026-10-27
-recheck: 180d — `python3 -I -B tools/round-42/sqfs-triage-v4.py --skill SKILL.md --table-only` -> `marker line: 521  actions line: 522  table line: 523  rules: 15`, exit 0 (run at the base `6b9e64fe` this round; the frozen interpreter's own sha256 `497bab6766a0b0c6d6f36cb58cadc531bddf9dd3231f6100bf46cf6ff552a2e9` is unchanged at `d1681696` and at the round-43 base); the score recheck is `python3 -I -B tools/round-43/c1-counter.py --root <LANE> --rev <<L1:measured-revision>> --freeze <<L1:freeze-commit>> --json-out <OUT>` -> exit `<<L1:counter-exit>>`, and a re-fetch of the S119 tarball that lands bytes other than `531717a0…` means the gap-clause anchors in this entry are re-read
+recheck: 180d — `python3 -I -B tools/round-42/sqfs-triage-v4.py --skill SKILL.md --table-only` -> `marker line: 525  actions line: 526  table line: 527  rules: 15`, exit 0 (run at the base `6b9e64fe` this round; the frozen interpreter's own sha256 `497bab6766a0b0c6d6f36cb58cadc531bddf9dd3231f6100bf46cf6ff552a2e9` is unchanged at `d1681696` and at the round-43 base; status paragraphs before both markers are outside the table regions); the score recheck is `python3 -I -B tools/round-43/c1-counter.py --root <LANE> --rev <<L1:measured-revision>> --freeze <<L1:freeze-commit>> --json-out <OUT>` -> exit `<<L1:counter-exit>>`, and a re-fetch of the S119 tarball that lands bytes other than `531717a0…` means the gap-clause anchors in this entry are re-read
 status: R43-C1 (R42-V5 ordering kept: provenance trio first) — scored on the fresh round-43 held-out set by `tools/round-43/c1-counter.py` at `<<L1:measured-revision>>`, `matched <<L1:matched>>/<<L1:n>>`, exit `<<L1:counter-exit>>` (`<<L1:score-artifact>>`); this line states the score that the freeze's own counter run produced, never a target, and if that exit is not 0 it is replaced by the honest stop — exit code, `bindings_false` list, receipt — and the PROVINCE row with it, exactly as round 42's `C02` stop replaced its row
 
 **What stopped at round 42, in one paragraph.** Round 42 froze the v4 table and generated a held-out set of 78
@@ -42,10 +42,9 @@ after that check") and `:81`. The manifest additionally records the check's own 
 refusal rather than trusting the generator's silence. The set's class structure is round 42's: 27 named classes at
 two carriers each plus 24 combo carriers, n = 78, each carrier declaring the single-key `declared_features`
 contract (R41-CL1), seeded by the round-43 freeze commit `<<L1:freeze-commit>>` and committed first in a commit
-descending from that freeze (`<<L1:heldout-dir-commit>>`). Combo `C02`'s round-42 shape — a failing chunk beside
-a sibling extraction at the depth ceiling — is required to appear among the new seed's combos with the manifest
-declaring what was observed, `depth-limited` included; whether it did is a property of the seed the generator
-used, not of this entry.
+descending from that freeze (`<<L1:heldout-dir-commit>>`). If the new seed draws C02's round-42 shape — a failing
+chunk beside a sibling extraction at the depth ceiling — the manifest must declare what was observed, including
+`depth-limited`; whether that shape was drawn is a property of the freeze seed, not a requirement of this entry.
 
 **The table is unmoved, and the claim does not touch it.** The region `SKILL.md` gives the v4 marker — from the
 line containing `<!-- sqfs-triage-table v4 -->` through the end of the first markdown table after it, 15 rule
@@ -57,11 +56,10 @@ round-43 base `6b9e64fe7e0de202d9383baad5792fbfe039a743` and at the measured rev
 `497bab6766a0b0c6d6f36cb58cadc531bddf9dd3231f6100bf46cf6ff552a2e9` and `tools/round-42/indep-eval-v4.py`
 (evaluator) sha256 `7a135dd36b3cab29d4dfa5b5d6dcf2199c026989549683933f4e6c1fa64dd301` are identical at `d1681696`,
 at the base and at the measured revision, and `tools/round-42/fixtures.json` still hashes
-`9f957663c1f21940ec17e32f98485425145b6c4e7eb265a7b12327b629c3da9b`. The only `SKILL.md` edit between the freeze
-and the base is one prose line above the block, made at `46486e7a` (the round-42 bullet now names
-`corpus/knowledge/2026-10-26-r42-sqfs-triage-v4.md` as its pointer), and `6b9e64fe..HEAD` touches no
-`SKILL.md` at all; the line lies outside the region, which is why the region hash does not move while the file's
-blob does.
+`9f957663c1f21940ec17e32f98485425145b6c4e7eb265a7b12327b629c3da9b`. The whole `SKILL.md` file at the freeze
+and at the measured revision is byte-identical (the counter freezes its blob): the two status paragraphs for v3/v4
+were added before the markers in the freeze commit, outside the byte regions checked by the table and rule-block
+bindings; they do not move or amend either decision table.
 
 **The new held-out score.** At `<<L1:measured-revision>>` the frozen interpreter assigned every one of the 78
 fresh envelopes the same (label, action) pair as the frozen evaluator: `<<L1:matched>>` of `<<L1:n>>`, counter
@@ -74,9 +72,10 @@ because its bytes did not change; which of them this seed's 78 carriers reach is
 the table.
 
 **The controls, scored at the freeze, before any claim data.** Each control's committed receipt is the pointer;
-the sentences below state what the control is built to show, and every exit code and score is a fill token so a
-divergence between the expectation and the measured arm is visible in the installed entry rather than absorbed
-into prose. CTL-C1-0 is the do-nothing arm: the round-43
+the sentences below state what the control is built to show, and where a control's outcome is an exit code or a
+score it is a fill token, so a divergence between the expectation and the measured arm is visible in the installed
+entry rather than absorbed into prose (CTL-C1-4's two outcomes are booleans its receipt carries, so it has no
+token). CTL-C1-0 is the do-nothing arm: the round-43
 counter run at the freeze revision exits 2 with `no_manifest_at_rev` and writes no score, because no manifest
 exists yet at that revision (`<<L1:ctl-c1-0-exit>>`, `<<L1:ctl-c1-0-receipt>>`). CTL-C1-1 plants the round-42
 held-out manifest at the round-43 path and shows the counter goes non-zero on it — the seed is the round-42 freeze,
@@ -88,7 +87,17 @@ data run must produce after the same check (`<<L1:ctl-c1-2-exit>>`, `<<L1:ctl-c1
 re-scores the round-42 shortcut controls with the frozen round-43 counter on the frozen dev arm and shows none of
 them reaches 78 (`<<L1:ctl-c1-3-summary>>`, `<<L1:ctl-c1-3-receipt>>`): the lookup table, the catch-all and the
 rotated-action controls that round 42 scored below target stay below it, so a table that merely memorized the dev
-arm cannot pass this counter.
+arm cannot pass this counter. CTL-C1-4 is the counter-side hand-edit arm: the same planted arm is scored twice,
+the second time with one manifest field flipped — `H01`'s declared `published` from `nonzero` to `zero`, every
+envelope byte unchanged — and `observed_features_match_declared` is true on the unedited baseline and false after
+the edit, so the binding is computed from the envelope rather than read off the declaration
+(`.ufo/waves/round-43/controls/c1/receipts/CTL-C1-4.json`).
+
+CTL-C1-4 is the counter-side hand-edit control: the unedited dev manifest's `observed_features_match_declared` is
+true; flipping H01's `declared_features.published` from `nonzero` to `zero` while all 78 envelope bytes remain
+unchanged makes that binding false and the counter exits 1. The receipt is
+`.ufo/waves/round-43/controls/c1/receipts/CTL-C1-4.json` (baseline and mutated declaration, envelope digests 78/78
+unchanged).
 
 **Limits.** (1) The blindness round 42 disclosed is unchanged: agreement between the frozen interpreter and the
 frozen evaluator cannot tell this table from any other table that labels the same envelopes the same way; the

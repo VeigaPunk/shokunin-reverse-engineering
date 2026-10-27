@@ -414,3 +414,9 @@ Round-41 frontier note, 2026-10-26: for the genuine AVM layout the block `## Rou
 | `squashfs_v3` and `squashfs_v3_ddwrt` (SquashFS v3, LZMA bodies, both byte orders) | no new REA key — unblob 26.6.4 runs plain `sasquatch -le`/`-be` for every v3 chunk (S112 :39-54; logged on each carrier); `REA_UNBLOB_COMMAND` = unblob 26.6.4 through `tools/round-42/unblob-logtee.sh`; `extract-firmware --max-depth 1` | `tools/round-42/c1-counter.py` against the freeze `d1681696`; oracle backhand-cli 0.25.5 (v3_lzma) + 7-Zip 26.04 | four published images (OpenWrt 8.09.2 atheros BE, OpenWrt 8.09 x86 LE, DD-WRT v24 mega LE, DD-WRT v24 Fonera BE): every oracle regular file published at its exact path, one `unpublished-entry` per symlink, one `depth-limited`; entry `corpus/knowledge/2026-10-26-r42-squashfs-v3-core.md` (SquashFS v3) |
 
 Round-42 frontier note, 2026-10-26: SquashFS v3 (`squashfs_v3`, `squashfs_v3_ddwrt`) moved Frontier → Core with `2026-10-26-r42-squashfs-v3-core`; the producer statement `2026-10-26-unblob-format-matrix` stays as written. Still Frontier: SquashFS v1/v2, `squashfs_v3_broadcom`, `squashfs_v3_nonstandard`, gzip v3 bodies, v4 Broadcom, LE AVM members, AVM kernels, nested sub-images below depth 1.
+
+Round-43 frontier note, 2026-10-27: the published sasquatch package inventory is now grounded in
+`2026-10-27-sasquatch-release-matrix` (8 tags, three Debian architectures from `v1.0.1`; `v1.0` is
+amd64-only). This is packaging availability, not an extraction/compatibility result; no sasquatch release asset was
+downloaded or run this round. The round-36 "AUR-only" route wording remains superseded by the round-36 note above,
+and vendor-mangled packages/images remain Frontier.
