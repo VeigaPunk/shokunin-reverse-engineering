@@ -1,0 +1,33 @@
+# receipt: receipt-instrument-binding.txt
+utc_start: 2026-10-28T15:41:04Z
+utc_end: 2026-10-28T15:41:04Z
+cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+command: cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && echo '== S140 citation in instrument header =='; sed -n '25,35p' tools/round-45/frozen-path-preflight.py; echo '== dirty arm =='; awk 'NR>=133 && NR<=141 {printf "%d| %s\n", NR, $0}' tools/round-45/frozen-path-preflight.py; echo '== porcelain consumers across frozen tools =='; grep -rn -- '--porcelain' tools/round-45/ | sed 's/^/  /'
+exit: 0
+stdout_bytes: 1235
+stdout_sha256: bd04429b4f74d0035d5518b1ca9dbc4fcd7b290de217a23173b7caea1d8c49ea
+--- stdout ---
+== S140 citation in instrument header ==
+The gate is read-only. `--selftest` builds private git fixtures under
+$HYAKU_SCRATCH or $TMPDIR (never a bare /tmp root), runs every case, prints
+`PREFLIGHT_SELFTEST: cases=<n> failures=<m>`, and exits 0 iff no case failed.
+
+Sources for the machine-readable parsers used here (opened 2026-10-28):
+  S140 https://git-scm.com/docs/git-status — porcelain v1 is guaranteed not to change
+       backwards-incompatibly; `-z` is recommended for machine parsing.
+  S141 https://git-scm.com/docs/git-diff-tree — with --name-status, `-z` terminates
+       fields with NUL instead of munging pathnames.
+"""
+import argparse
+== dirty arm ==
+133|     dirty = []
+134|     if check_dirty:
+135|         scope_paths = dirty_pathspecs or pathspecs
+136|         dscope = ["--"] + scope_paths if scope_paths else []
+137|         st = git(root, "status", "--porcelain", "-z", *dscope)
+138|         if st.returncode != 0:
+139|             return 2, {"reason": "git status failed"}
+140|         dirty = [e for e in st.stdout.split("\x00") if e.strip()]
+141| 
+== porcelain consumers across frozen tools ==
+  tools/round-45/frozen-path-preflight.py:137:        st = git(root, "status", "--porcelain", "-z", *dscope)

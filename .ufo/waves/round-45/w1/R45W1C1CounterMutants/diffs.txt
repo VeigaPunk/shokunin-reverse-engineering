@@ -1,0 +1,72 @@
+### m1-rule-blocks-ge
+--- pristine.py	2026-10-28 12:39:10.341663382 -0300
++++ m1-rule-blocks-ge.py	2026-10-28 12:39:22.638900149 -0300
+@@ -160,7 +160,7 @@
+ 
+     header_ok = all(any(k in h for h in header) for k in ("trigger", "arm", "exit", "receipt"))
+     reasons = []
+-    if rule_blocks != 22:
++    if rule_blocks < 22:
+         reasons.append(f"rule_blocks {rule_blocks} != 22")
+     if block22_present != 1:
+         reasons.append(f"block22_present {block22_present} != 1")
+### m2-skip-marker-check
+--- pristine.py	2026-10-28 12:39:10.341663382 -0300
++++ m2-skip-marker-check.py	2026-10-28 12:39:22.638957179 -0300
+@@ -162,8 +162,6 @@
+     reasons = []
+     if rule_blocks != 22:
+         reasons.append(f"rule_blocks {rule_blocks} != 22")
+-    if block22_present != 1:
+-        reasons.append(f"block22_present {block22_present} != 1")
+     if rows < 8:
+         reasons.append(f"block22_rows {rows} < 8")
+     if not header_ok:
+### m3-any-exit-cell
+--- pristine.py	2026-10-28 12:39:10.341663382 -0300
++++ m3-any-exit-cell.py	2026-10-28 12:39:22.639030979 -0300
+@@ -143,7 +143,7 @@
+         rows = len(table_rows)
+         exit_col = next((i for i, h in enumerate(header) if "exit" in h), None)
+         for row in table_rows:
+-            if exit_col is None or exit_col >= len(row) or row[exit_col].strip("` ") not in {"0", "1", "2"}:
++            if False:
+                 bad_exit.append(row)
+         refs, unresolved = unresolved_refs(root, tip, block, {})
+         cites["S140"] = bool(re.search(r"\bS140\b", block))
+### m4-ignore-unresolved
+--- pristine.py	2026-10-28 12:39:10.341663382 -0300
++++ m4-ignore-unresolved.py	2026-10-28 12:39:22.639073819 -0300
+@@ -170,8 +170,6 @@
+         reasons.append("block22 table header lacks trigger/arm/exit/receipt")
+     if bad_exit:
+         reasons.append(f"block22 exit cells outside {{0,1,2}}: {len(bad_exit)}")
+-    if unresolved:
+-        reasons.append(f"unresolved citations: {unresolved}")
+     if refs < 4:
+         reasons.append(f"block22_refs {refs} < 4")
+     for key in ("S140", "interpreter"):
+### m5-skip-selftest
+--- pristine.py	2026-10-28 12:39:10.341663382 -0300
++++ m5-skip-selftest.py	2026-10-28 12:39:22.639109939 -0300
+@@ -151,7 +151,7 @@
+     interpreter_present = git(root, "cat-file", "-e", f"{tip}:{PREFLIGHT}").returncode == 0
+ 
+     selftest = {"ok": False, "skipped": True}
+-    if run_selftest and block22_present == 1:
++    if False:
+         work = scratch_dir()
+         try:
+             selftest = run_preflight(root, tip, work)
+### m6-drop-frozen-arm
+--- pristine.py	2026-10-28 12:39:10.341663382 -0300
++++ m6-drop-frozen-arm.py	2026-10-28 12:39:22.639136479 -0300
+@@ -123,8 +123,6 @@
+     changed = frozen_path_changed(root, base, tip)
+     if changed is None:
+         return 2, {"reason": "git log failed"}
+-    if changed:
+-        return 2, {"reason": "frozen_path_changed", "frozen_path_changed": changed}
+ 
+     skill = show(root, tip, "SKILL.md")
+     if skill is None:

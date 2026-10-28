@@ -1,0 +1,29 @@
+# receipt: receipt-schema.txt
+utc_start: 2026-10-28T15:41:04Z
+utc_end: 2026-10-28T15:41:04Z
+cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+command: cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && echo '== header =='; sed -n '5,6p' corpus/SOURCES.md; echo '== S140 column count =='; awk -F'|' '/^\| S140 /{print NF-2" columns (11 expected)"}' corpus/SOURCES.md; echo '== S140 cell lengths =='; awk -F'|' '/^\| S140 /{for(i=2;i<=12;i++){gsub(/^ +| +$/,"",$i); printf "col%d=%d chars\n", i-1, length($i)}}' corpus/SOURCES.md; echo '== S140 presence at freeze e715263 ancestor-of-freeze? =='; git merge-base --is-ancestor e715263cb51b713c342ab992d527fe9d61d6f8ff f762b7273e3f6ca3c710bb37d5de92a4a4417aec; echo "exit=$? (1 = landing is after the freeze)"; git show f762b7273e3f6ca3c710bb37d5de92a4a4417aec:corpus/SOURCES.md | grep -c 'S140' | sed 's/^/S140 rows at freeze: /'
+exit: 0
+stdout_bytes: 503
+stdout_sha256: b31bf0f4b53bc2ec6571690d16c1a4ac1be886ae37622e5bca81e8056d0c1014
+--- stdout ---
+== header ==
+| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
+|---|---|---|---|---|---|---|---|---|---|---|
+== S140 column count ==
+11 columns (11 expected)
+== S140 cell lengths ==
+col1=4 chars
+col2=62 chars
+col3=4 chars
+col4=1 chars
+col5=92 chars
+col6=200 chars
+col7=186 chars
+col8=5 chars
+col9=10 chars
+col10=10 chars
+col11=26 chars
+== S140 presence at freeze e715263 ancestor-of-freeze? ==
+exit=1 (1 = landing is after the freeze)
+S140 rows at freeze: 0

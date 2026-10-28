@@ -1,0 +1,155 @@
+RECEIPT R1-validate-root
+  cmd: bash scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+  exit: 0
+  utc: 2026-10-28T15:40:59Z
+  stdout_sha256: 9f32a8a84ef13933a0539a92a4475534aeb2ae858a407d35b176aa26662acf19
+  stdout_bytes: 1518
+RECEIPT R2-immutable-base-freeze
+  cmd: bash tools/round-38/registry-immutable.sh . 149133d4  f762b72
+  exit: 0
+  utc: 2026-10-28T15:40:59Z
+  stdout_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  stdout_bytes: 0
+RECEIPT R3-rowcount
+  cmd: grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' corpus/SOURCES.md
+  exit: 0
+  utc: 2026-10-28T15:40:59Z
+  stdout_sha256: 85a0e6eb5530a682fa88345a5e7a144248f49e5b71b3eb587a9db5cd2957495a
+  stdout_bytes: 4
+RECEIPT R4-census-mode
+  cmd: bash scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin kaidoku
+  exit: 0
+  utc: 2026-10-28T15:40:59Z
+  stdout_sha256: 01eb62a20aebb739a171fe8547f4f25ecb3423174b2861251bcba45c07e7964d
+  stdout_bytes: 312
+RECEIPT R5-guard-selftest
+  cmd: bash tools/round-38/registry-immutable.sh --selftest
+  exit: 0
+  utc: 2026-10-28T15:40:59Z
+  stdout_sha256: e08d3d03b35982b244ea342273b747079fc23b1cab3a8fb5a23b8f25795ea2d1
+  stdout_bytes: 251
+RECEIPT R6a-immutable-base-HEAD
+  cmd: bash tools/round-38/registry-immutable.sh . 149133d4 HEAD
+  exit: 0
+  utc: 2026-10-28T15:40:59Z
+  stdout_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  stdout_bytes: 0
+RECEIPT R6b-immutable-freeze-HEAD
+  cmd: bash tools/round-38/registry-immutable.sh . f762b72 HEAD
+  exit: 0
+  utc: 2026-10-28T15:40:59Z
+  stdout_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  stdout_bytes: 0
+RECEIPT R7a-freeze-copy-filemode
+  cmd: bash scripts/sources-census.sh validate --file $S/SOURCES.at-freeze.md
+  exit: 1
+  utc: 2026-10-28T15:40:59Z
+  stdout_sha256: b8bb159d94179639535d9bea4a15ce2c880462cee5a31cf270802243b0d617cd
+  stdout_bytes: 18776
+RECEIPT R7b-head-bytes-filemode
+  cmd: bash scripts/sources-census.sh validate --file $S/S.head.md  (bytes == HEAD:corpus/SOURCES.md)
+  exit: 1
+  utc: 2026-10-28T15:41:00Z
+  stdout_sha256: ef326043e545090488ae886274b42014eacb22ec796b090b9aa4c7ddc161e017
+  stdout_bytes: 18890
+RECEIPT R8-E12-relocation
+  cmd: bash scripts/sources-census.sh validate --file $S/S.leads.md  (S141 row moved under '## Leads')
+  exit: 1
+  utc: 2026-10-28T15:41:00Z
+  stdout_sha256: 844d2539996aee873fa9c41ebe93b32cca82ce3c83ca23d0fd1da5b57e6d2283
+  stdout_bytes: 18876
+RECEIPT R8b-E12-line
+  cmd: grep E12 $S/R8.out
+  exit: 0
+  utc: 2026-10-28T15:41:00Z
+  stdout_sha256: 2bde4845090c8e2c61094ac21924f489b467f023d75466df3d3872033a4e67a8
+  stdout_bytes: 43
+RECEIPT R9a-guard-row-outside-registry
+  cmd: bash tools/round-38/registry-immutable.sh $D 7b4b73c648f0c09b8095982870ac8f530f558412 ac2c38184a6b4da9defce0e149a4e6552a8e7272  (fixture: one row appended under '## Leads')
+  exit: 0
+  utc: 2026-10-28T15:41:00Z
+  stdout_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  stdout_bytes: 0
+RECEIPT R9b-census-row-outside-registry
+  cmd: bash scripts/sources-census.sh validate --file $S/p2.tip.md  (same fixture tip)
+  exit: 1
+  utc: 2026-10-28T15:41:00Z
+  stdout_sha256: 31f74089b7816facf6b35e10f3b3fb33f16c9e013ec0d7370ab8ae422e74975a
+  stdout_bytes: 193
+RECEIPT R10-frozen-bytes-intact
+  cmd: git diff --stat <freeze>..HEAD -- plans/round-45-claims.md tools/round-45/ ; git diff --stat <freeze> -- same ; git log -- same
+  exit: 0
+  utc: 2026-10-28T15:41:00Z
+  stdout_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  stdout_bytes: 0
+RECEIPT R11-rowcounts
+  cmd: git show <rev>:corpus/SOURCES.md | grep -cE ... ; | sha256sum
+  exit: 0
+  utc: 2026-10-28T15:41:00Z
+  stdout_sha256: f6fa4fe5a52ea9f9703e82dbf375f981dcf0b341fab8da314d0021b4998f6b55
+  stdout_bytes: 257
+RECEIPT R12-backtick-url-normalization
+  cmd: bash scripts/sources-census.sh validate --file $D/corpus/SOURCES.md  (two rows, same URL, one backticked one bare)
+  exit: 1
+  utc: 2026-10-28T15:42:09Z
+  stdout_sha256: 8f1c9004a507363155f20a55d7923f352d6f9015e0df8c5264f43e246d92a533
+  stdout_bytes: 100
+  E04: 0  W04: 0  E11(expected, --file artifact): 2
+RECEIPT R13-c2-scope-paths
+  cmd: for p in the six tools/round-4{4,5} paths: git cat-file -e HEAD:$p ; git cat-file -e f762b727:$p
+  exit: 0
+  utc: 2026-10-28T15:44:08Z
+  stdout_sha256: b9a4a0f9deac73e14078c7b354feb2a768f00d0a7999baa1b9b1b2ea17cbf36a
+  stdout_bytes: 277
+  stdout_lines: 6
+  reading: all six present at HEAD and at the freeze (HEAD=y freeze=y x6)
+RECEIPT R14-frozen-dir-ignored-files
+  cmd: git status --porcelain --ignored --untracked-files=all -- tools/round-45/
+  exit: 0
+  utc: 2026-10-28T15:44:08Z
+  stdout_sha256: c7bd73b81bf15f2ff873fe5f721d0d0647535a3442b5e788cca420b91338db64
+  stdout_bytes: 114
+  stdout_lines: 2
+  reading: 2 ignored pyc inside the frozen directory; committed tree untouched (see R10)
+RECEIPT R15a-bad-rev
+  cmd: bash tools/round-38/registry-immutable.sh . 149133d4 deadbeef…(nonexistent)
+  exit: 1
+  utc: 2026-10-28T15:43:09Z
+  stdout_sha256: 7b6e71c9609f479762ea0c08dbf1a3c6f996650823085143c9bbf22dcc55ebc5
+  stdout_bytes: 4309
+  stdout_lines: 139
+RECEIPT R15b-bad-base-rev-at-freeze
+  cmd: bash tools/round-38/registry-immutable.sh . deadbeef…(nonexistent) f762b72
+  exit: 1
+  utc: 2026-10-28T15:43:09Z
+  stdout_sha256: 7b6e71c9609f479762ea0c08dbf1a3c6f996650823085143c9bbf22dcc55ebc5
+  stdout_bytes: 4309
+  stdout_lines: 139
+RECEIPT R15c-bad-base-rev-at-HEAD
+  cmd: bash tools/round-38/registry-immutable.sh . deadbeef…(nonexistent) HEAD
+  exit: 1
+  utc: 2026-10-28T15:43:09Z
+  stdout_sha256: dbdf08d7ab0652cfae4dda816659263b8fc205fca90c98132e5585a2760021a3
+  stdout_bytes: 4371
+  stdout_lines: 141
+RECEIPT R15d-nonexistent-lane
+  cmd: bash tools/round-38/registry-immutable.sh /nonexistent-lane 149133d4 HEAD
+  exit: 0
+  utc: 2026-10-28T15:43:09Z
+  stdout_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  stdout_bytes: 0
+  stdout_lines: 0
+RECEIPT R17-reverse-interval-positive-control
+  cmd: bash tools/round-38/registry-immutable.sh . HEAD f762b72  (reverse interval: prints the two post-freeze rows)
+  exit: 1
+  utc: 2026-10-28T15:43:09Z
+  stdout_sha256: 2af9dc94a3121a3b56ffe5c265a8ec2a7bc272565b2e13fdb65eb860900d6ef4
+  stdout_bytes: 62
+  stdout_lines: 2
+RECEIPT R18-nonrepo-lane
+  cmd: bash tools/round-38/registry-immutable.sh $S/notarepo 149133d4 HEAD
+  exit: 0
+  utc: 2026-10-28T15:43:09Z
+  stdout_sha256: 79ff9997eb1ed3eb2adc36b29e2c59b2c1645eeaeb0753d30d62f040cac8fcc3
+  stdout_bytes: 278
+  stdout_lines: 4

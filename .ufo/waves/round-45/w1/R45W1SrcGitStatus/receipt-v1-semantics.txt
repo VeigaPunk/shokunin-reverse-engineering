@@ -1,0 +1,51 @@
+# receipt: receipt-v1-semantics.txt
+utc_start: 2026-10-28T15:41:04Z
+utc_end: 2026-10-28T15:41:04Z
+cwd: /fast/scratch/hyaku/kaidoku-r45/R45W1SrcGitStatus
+command: git --version; S=$PWD; D=$(mktemp -d -p "$S"); git -C "$D" init -q -b main; git -C "$D" config user.email r45@example.invalid; git -C "$D" config user.name r45
+printf 'a\n' > "$D/plain.txt"; printf 'b\n' > "$D/with space.txt"; mkdir -p "$D/sub"; printf 'c\n' > "$D/sub/nested.txt"
+git -C "$D" add -A; git -C "$D" commit -qm base
+git -C "$D" mv plain.txt renamed.txt; printf 'd\n' > "$D/new.txt"; printf 'e\n' >> "$D/with space.txt"; git -C "$D" add -A; printf 'f\n' >> "$D/sub/nested.txt"
+echo '== v1 non-z =='; git -C "$D" status --porcelain | od -c
+echo '== v1 -z =='; git -C "$D" status --porcelain -z | od -c
+echo "== v1 -z stats: bytes=$(git -C "$D" status --porcelain -z | wc -c) nul=$(git -C "$D" status --porcelain -z | tr -cd '\0' | wc -c) =="
+echo "== v1 -z entries split-on-NUL: $(git -C "$D" status --porcelain -z | python3 -c 'import sys;print(len([e for e in sys.stdin.buffer.read().split(b"\x00") if e.strip()]))') =="
+echo '== from subdir, relativePaths=true, color.status=always =='
+git -C "$D/sub" -c status.relativePaths=true -c color.status=always status --porcelain | od -c
+echo "== ESC bytes in porcelain: $(git -C "$D" -c color.status=always status --porcelain | tr -cd '\033' | wc -c) =="
+echo '== v2 -z first 8 fields =='; git -C "$D" status --porcelain=v2 -z | od -c | head -4
+rm -rf "$D"
+exit: 0
+stdout_bytes: 1500
+stdout_sha256: fa7150af5ffeae4b15a72873ee9653ba23cbf9af5f9413572b4cbbeaabe352ab
+--- stdout ---
+git version 2.56.0
+== v1 non-z ==
+0000000   A           n   e   w   .   t   x   t  \n   R           p   l
+0000020   a   i   n   .   t   x   t       -   >       r   e   n   a   m
+0000040   e   d   .   t   x   t  \n       M       s   u   b   /   n   e
+0000060   s   t   e   d   .   t   x   t  \n   M           "   w   i   t
+0000100   h       s   p   a   c   e   .   t   x   t   "  \n
+0000115
+== v1 -z ==
+0000000   A           n   e   w   .   t   x   t  \0   R           r   e
+0000020   n   a   m   e   d   .   t   x   t  \0   p   l   a   i   n   .
+0000040   t   x   t  \0       M       s   u   b   /   n   e   s   t   e
+0000060   d   .   t   x   t  \0   M           w   i   t   h       s   p
+0000100   a   c   e   .   t   x   t  \0
+0000110
+== v1 -z stats: bytes=72 nul=5 ==
+== v1 -z entries split-on-NUL: 5 ==
+== from subdir, relativePaths=true, color.status=always ==
+0000000   A           n   e   w   .   t   x   t  \n   R           p   l
+0000020   a   i   n   .   t   x   t       -   >       r   e   n   a   m
+0000040   e   d   .   t   x   t  \n       M       s   u   b   /   n   e
+0000060   s   t   e   d   .   t   x   t  \n   M           "   w   i   t
+0000100   h       s   p   a   c   e   .   t   x   t   "  \n
+0000115
+== ESC bytes in porcelain: 0 ==
+== v2 -z first 8 fields ==
+0000000   1       A   .       N   .   .   .       0   0   0   0   0   0
+0000020       1   0   0   6   4   4       1   0   0   6   4   4       0
+0000040   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+*

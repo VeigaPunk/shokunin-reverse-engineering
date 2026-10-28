@@ -1,0 +1,37 @@
+# receipt: receipt-quote-presence.txt
+utc_start: 2026-10-28T15:41:04Z
+utc_end: 2026-10-28T15:41:04Z
+cwd: /fast/scratch/hyaku/kaidoku-r45/R45W1SrcGitStatus
+command: python3 - "$PWD/git-status.html" <<'EOF'
+import re,html,hashlib,sys
+raw=open(sys.argv[1],encoding='utf-8').read()
+def ptext(p): return re.sub(r'\s+',' ',html.unescape(re.sub(r'(?s)<[^>]+>','',p))).strip()
+paras=[ptext(p) for p in re.findall(r'(?s)<p>.*?</p>',raw)]
+flat=re.sub(r'\s+',' ',raw)
+Q={
+ 'Q1_porcelain_v1_stability':"guaranteed not to change in a backwards-incompatible way between Git versions or based on user configuration. This makes it ideal for parsing by scripts.",
+ 'Q2_alternate_z_machine':"There is also an alternate -z format recommended for machine parsing.",
+ 'Q3_z_nul_fields':"Second, a NUL (ASCII 0) follows each filename, replacing space as a field separator and the terminating newline",
+ 'Q4_pathname_z_section':"When the -z option is given, pathnames are printed as is and without any quoting and lines are terminated with a NUL (ASCII 0x00) byte.",
+}
+bad=0
+for k,q in Q.items():
+    idx=[i for i,p in enumerate(paras) if q in p]
+    print(f"{k}\twords={len(q.split())}\tparagraph_hits={idx}\traw_html_whitespace_collapsed_hits={flat.count(q)}\tquote_sha256={hashlib.sha256(q.encode()).hexdigest()}")
+    if len(idx)!=1: bad=1
+print("anchors:", ", ".join(sorted(set(re.findall(r'id="(_[a-z0-9_]*porcelain[a-z0-9_]*|_pathname_format_notes_and_z)"',raw)))))
+print("anchor_offsets:", [(a,raw.find('id="%s"'%a)) for a in ["_porcelain_format_version_1","_pathname_format_notes_and_z"]])
+print("RESULT:", "PASS" if bad==0 else "FAIL")
+sys.exit(bad)
+EOF
+exit: 0
+stdout_bytes: 871
+stdout_sha256: 86d9dc50727e8afd5c0863448efbab1e2d473725ab3d06663d6687e88acd6df0
+--- stdout ---
+Q1_porcelain_v1_stability	words=24	paragraph_hits=[62]	raw_html_whitespace_collapsed_hits=1	quote_sha256=d1d0a42a48373f4f8ee9a9a237c33b3b5b4840c422cf4d51054274b4fa1daaa9
+Q2_alternate_z_machine	words=11	paragraph_hits=[65]	raw_html_whitespace_collapsed_hits=0	quote_sha256=b7b16ce1c525232f19934237051a93f81e3e2225cb7cbf9303797077add946d8
+Q3_z_nul_fields	words=18	paragraph_hits=[65]	raw_html_whitespace_collapsed_hits=0	quote_sha256=cf2d909d78270443ad4cdeaf5664a1714f84d0ec8f4735332ed56ca87a9f8b6c
+Q4_pathname_z_section	words=25	paragraph_hits=[102]	raw_html_whitespace_collapsed_hits=0	quote_sha256=5d4a71db8a6686dda4892937717fd7f694344438767cca690e1bad48e4c3895c
+anchors: _pathname_format_notes_and_z, _porcelain_format_version_1, _porcelain_format_version_2
+anchor_offsets: [('_porcelain_format_version_1', 76125), ('_pathname_format_notes_and_z', 90511)]
+RESULT: PASS

@@ -1,0 +1,48 @@
+usage: c1-run.py [-h] [--lane-root LANE_ROOT] [--carriers CARRIERS]
+                 [--evidence-root EVIDENCE_ROOT] [--scratch SCRATCH]
+                 [--carrier CARRIER] [--include-exploratory]
+                 [--timeout TIMEOUT] [--freeze FREEZE] [--dry-run]
+                 [--data-run] [--keep-scratch] [--force] [--no-unblob-log-tee]
+                 [--rea-outdir-mode {scratch,evidence}] [--fake-rea FAKE_REA]
+
+kaidoku round 44 R44-C1 after-freeze data procedure.
+
+options:
+  -h, --help            show this help message and exit
+  --lane-root LANE_ROOT
+                        lane root (default: nearest ancestor with
+                        corpus/evidence and plans/)
+  --carriers CARRIERS   carriers.json (default:
+                        <lane>/tools/round-44/carriers.json)
+  --evidence-root EVIDENCE_ROOT
+                        evidence root (default:
+                        <lane>/corpus/evidence/round-44/c1)
+  --scratch SCRATCH     scratch base (default: $HYAKU_SCRATCH or
+                        /fast/scratch/hyaku; the runner appends /kaidoku-r44)
+  --carrier CARRIER     run only this carrier id (repeatable)
+  --include-exploratory
+                        also run carriers.json ids listed under
+                        scope.exploratory_ids (the claim does not score them)
+  --timeout TIMEOUT     per-carrier REA timeout in seconds (default 900)
+  --freeze FREEZE       freeze revision recorded in the receipts
+  --dry-run             print the commands that would run; write nothing
+  --data-run            assert that the freeze is in place (required to write
+                        into the default evidence root)
+  --keep-scratch        keep the per-carrier scratch directory
+  --force               replace an existing evidence directory (REA refuses an
+                        existing output root, so a re-run must replace it)
+  --no-unblob-log-tee   run unblob directly (no log tee): the extract command
+                        line is then not captured
+  --rea-outdir-mode {scratch,evidence}
+                        where REA's output_directory points (default scratch =
+                        this round's /kaidoku-r44/ scratch segment, the
+                        binding the frozen claims text states: the produced
+                        tree is copied verbatim into the evidence dir and
+                        provenance.json binds the two; evidence = REA writes
+                        into the evidence dir itself, so the receipt names
+                        that path)
+  --fake-rea FAKE_REA   DEVELOPMENT ONLY: replace the REA command with this
+                        argv prefix (a stand-in that prints a synthetic
+                        envelope). The receipt records the override, and a
+                        synthetic receipt fails the counter's evidence-id and
+                        rerun-projection bindings.

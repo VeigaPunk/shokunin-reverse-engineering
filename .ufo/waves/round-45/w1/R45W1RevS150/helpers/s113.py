@@ -1,0 +1,10 @@
+import re
+t = open("s113-adb.html", encoding="utf-8", errors="replace").read()
+h = re.findall(r'hreflang="([^"]*)"', t)
+uniq = sorted(set(h))
+narrow = sorted(set(re.findall(r'hreflang="([a-z-]*)"', t)))
+print("hreflang occurrences", len(h), "unique", len(uniq))
+print("unique:", uniq)
+print("narrow-pattern unique", len(narrow))
+print("locales excluding x-default", len([x for x in uniq if x != "x-default"]))
+print("tools/adb?hl=ja occurrences", t.count("tools/adb?hl=ja"))

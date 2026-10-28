@@ -1,0 +1,15 @@
+--- tools/round-45/c2-counter.py (frozen)
++++ m2_any_cell.py
+@@ -98,7 +98,11 @@
+         by_tool.setdefault(row["tool"], row)
+     unregistered, thin, registered = [], [], []
+     for path in scope:
+-        row = by_tool.get(path)
++        row = None  # MUTANT m2: any cell containing the path satisfies it
++        for cand in rows:
++            if any(path in c for c in cand["cells"]):
++                row = cand
++                break
+         if row is None:
+             unregistered.append(path)
+             continue

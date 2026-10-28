@@ -1,0 +1,19 @@
+utc=2026-10-28T15:42:34Z
+fixture=/fast/scratch/hyaku/kaidoku-r45/R45W1RevFreezeCommit/tmp.vfiN5IRSaF
+FREEZE=171d23c530b0d5b4a32f3bc24ffea4830a09a0b9
+HEAD=c4d64c6f066834b9c857ab9993735e174db4f0fb (merge: parents=2)
+frozen/target.txt at freeze = 'v0'  blob=13ceda207b642cbbbdc409ae0bc8eefd1c2bd573
+frozen/target.txt at HEAD   = 'EVIL'  blob=b2f3ae2a7251310b2009633215d8413cd294f682
+
+--- arm 1: preflight (git log -m --diff-merges=first-parent + blob arm) ---
+{"blob_changed": ["frozen", "frozen/target.txt"], "dirty": [], "freeze": "171d23c530b0d5b4a32f3bc24ffea4830a09a0b9", "freeze_paths": ["frozen"], "gate": "frozen-path-preflight", "pathspec": ["frozen/"], "restored": [], "rev": "c4d64c6f066834b9c857ab9993735e174db4f0fb", "touched": [{"commit": "c4d64c6f066834b9c857ab9993735e174db4f0fb", "path": "frozen/target.txt", "status": "M"}], "verdict": "frozen_path_changed"}
+PREFLIGHT_EXIT=1
+
+--- arm 2: both counters' frozen_path_changed (git log --name-only, no -m) ---
+c1-counter.py -> []
+c2-counter.py -> []
+
+--- raw git, same range, same pathspec ---
+log --name-only (counter form): (none above = invisible)
+log -m --name-status (preflight form): frozen/target.txt 
+PROBE_EXIT=0

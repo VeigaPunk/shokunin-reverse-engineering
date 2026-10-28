@@ -1,0 +1,19 @@
+--- tools/round-45/c2-counter.py (frozen)
++++ m1_endswith.py
+@@ -96,9 +96,15 @@
+     by_tool = {}
+     for row in rows:
+         by_tool.setdefault(row["tool"], row)
++
++    def lookup(path):  # MUTANT m1: suffix match, not exact path equality
++        for row in rows:
++            if row["tool"].endswith(path) or path.endswith(row["tool"]):
++                return row
++        return None
+     unregistered, thin, registered = [], [], []
+     for path in scope:
+-        row = by_tool.get(path)
++        row = lookup(path)
+         if row is None:
+             unregistered.append(path)
+             continue
