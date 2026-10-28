@@ -170,6 +170,27 @@ already equals the census). A3 compares `derived["paths"]` and nothing else. **T
 declared freeze is the commit that carries this paragraph.** No seat had scored a claim
 and no landing had been measured when A3 was made.
 
+## Freeze amendment A4 (disclosed; two fixes of one class, declared before any claim data)
+
+Two wave-1 attacks on the frozen bytes found checks that accept what they should reject,
+both measured by the seats that found them:
+
+- **C1Gold**: the exit-0 classifier matched `\bmet\b`, which also matches inside
+  `not met`, so the map `0=not met; 1=violation; 2=usage` scored as success / not-met /
+  unevaluable — a direct opposite-polarity false green. A4 requires the exit-0 segment to
+  carry no `not met` / `no verdict` phrase.
+- **CritAxis / CritSeparability**: `registry_rows()` recognised only rows whose stripped
+  form starts `| \``, so a row written `|  \`path\`` was skipped by the path-set and
+  meaning checks — the 0–3 leading-space class the census clause already rules out for
+  ids. A4 parses any row whose pipe is followed by optional whitespace and fails closed
+  on a row that does not have seven cells.
+
+Two selftest cases are added (`red-opposite-polarity`, `red-hidden-row`); the predicate's
+four forgeries, every clause, threshold and kill rule are unchanged. Red-before:
+`w1/C1Gold.md` (the classifier counterexample, with the exact map) and `w1/CritAxis.md`
+(the skipped-row counterexample). **The declared freeze is the commit that carries this
+paragraph.**
+
 ## Controls (not frozen; committed as wave evidence)
 
 - `ctl-c1-0-do-nothing.json` — the counter at the freeze revision: block absent, registry

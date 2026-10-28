@@ -59,6 +59,7 @@ SUCCESS = re.compile(r"\b(met|clean|ok|green|pass|passed|verified|succeeded|wrot
 NOTMET = re.compile(r"(not met|violation|red|fail|failed|no verdict|refusal|refused|unresolved)")
 UNEVAL = re.compile(r"(could-not-evaluate|unevaluable|could not evaluate|\busage\b|"
                     r"\berror\b|absent|unreadable|refus)")
+NEGATED = re.compile(r"\bnot\s+met\b|\bno\s+verdict\b")
 BANANA = re.compile(r"\b(banana|nope|whatever)\b")
 
 
@@ -187,7 +188,7 @@ def registry_rows(skill):
     body = skill.split(REG_OPEN, 1)[1].split(REG_CLOSE, 1)[0]
     rows = []
     for line in body.splitlines():
-        if line.strip().startswith("| `"):
+        if ROW_START.match(line.strip()):
             cells = _cells(line)
             if len(cells) != 7:
                 raise Malformed(f"registry row has {len(cells)} cells, not 7: {line[:60]}")
@@ -197,12 +198,15 @@ def registry_rows(skill):
     return rows
 
 
+ROW_START = re.compile(r"^\|\s*`")
+
+
 def _rewrite_registry(skill, fn):
     head, rest = skill.split(REG_OPEN, 1)
     body, tail = rest.split(REG_CLOSE, 1)
     out = []
     for line in body.splitlines():
-        if line.strip().startswith("| `"):
+        if ROW_START.match(line.strip()):
             cells = _cells(line)
             if len(cells) == 7:
                 cells = fn(cells)
@@ -233,7 +237,9 @@ def meaning_classes(cell):
     if BANANA.search(" ".join(low.values())):
         return {"error": "verdict map names no meaning class (placeholder text)"}
     cls = {}
-    cls["0"] = "success" if SUCCESS.search(low["0"]) else None
+    # A success class may not be negated in the same segment: `0=not met` is the
+    # opposite polarity, and `\bmet\b` matches inside it (wave-1 C1Gold).
+    cls["0"] = "success" if SUCCESS.search(low["0"]) and not NEGATED.search(low["0"]) else None
     cls["1"] = "not-met" if NOTMET.search(low["1"]) else None
     cls["2"] = "unevaluable" if UNEVAL.search(low["2"]) else None
     if cls["0"] is None:
@@ -638,7 +644,7 @@ def selftest():
                       "knowledge line\n" * 240,
                   CENSUS: json.dumps(census),
                   CENSUS_TOOL: ("def census_text(read):\n"
-                                "    return %r\n" % (paths,)),
+                                "    return {'paths': %r}\n" % (paths,)),
                   SELF: open(__file__).read()}
     cases = []
 
@@ -676,6 +682,13 @@ def selftest():
     run("red-swapped-meaning", 1, skill_text(
         good_block(), good_registry(paths, GOOD_VERDICT.replace("0=met,", "0=zzz,")
                                     .replace("2=could-not-evaluate,", "2=could-not-evaluate,"))))
+    run("red-opposite-polarity", 1, skill_text(
+        good_block(), good_registry(paths, "0=not met; 1=violation; 2=usage")))
+    hidden = ("|  `" + paths[0] + "` | gate — hidden | " + GOOD_VERDICT +
+              " | none | none | none | kaidoku |\n")
+    run("red-hidden-row", 1, skill_text(
+        good_block(), good_registry(paths).replace(
+            "| `" + paths[0] + "`", hidden + "| `" + paths[0] + "`", 1)))
     run("red-registry-missing-row", 1, skill_text(good_block(), good_registry(paths[:1])))
     run("red-registry-extra-row", 1, skill_text(
         good_block(), good_registry(paths + ["tools/round-40/ghost.py"])))
