@@ -627,7 +627,7 @@ bullet is bounded by the lines it cites.
 | R45-CL23 a newline or tab in a pathname is recorded C-quoted, killing the restored arm | `touched` compared quoted strings with real paths | commit: the history arm reads `--name-status -z`, so pathnames are not munged and the comparison is byte-exact | 1 |
 | R45-CL24 the record drifted from the instrument it described | nothing bound the prose to the code | pin: the block carries the interpreter's sha256, so a prose claim and the bytes it describes cannot diverge silently | 1 |
 
-  Refs: `corpus/lessons/round-45.md:142-176` (R45-CL13/CL14, the C1 and C2 defects), `corpus/lessons/round-45.md:90-101` (R45-CL6/CL7), `corpus/lessons/round-45.md:197-217` (R45-CL18/CL19), `corpus/lessons/round-45.md:212-231` (R45-CL20/CL22), `corpus/lessons/round-46.md:18-19` (M46-1/M46-2), `plans/round-46-claims.md:37-166` (the two predicates and the frozen set). S142 grounds the `--diff-merges=first-parent` arm (`corpus/lessons/round-46.md:27-31`).
+  Refs: `corpus/lessons/round-45.md:142-176` (R45-CL13/CL14, the C1 and C2 defects), `corpus/lessons/round-45.md:90-101` (R45-CL6/CL7), `corpus/lessons/round-45.md:197-217` (R45-CL18/CL19), `corpus/lessons/round-45.md:212-231` (R45-CL20/CL22), `corpus/lessons/round-46.md:18-19` (M46-1/M46-2), `plans/round-46-claims.md:37-166` (the two predicates and the frozen set), `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md:40-66` (a registered class set can hold while the surface is still shortcut-reachable — the reason a measure needs its own forgeries). S142 grounds the `--diff-merges=first-parent` arm (`corpus/lessons/round-46.md:27-31`).
 
 ## Config custody for live-probe rounds (SOP)
 
