@@ -3515,3 +3515,55 @@ c2-correction-value: 137/137
 c2-correction-value: 21/21
 <!-- c2-correction: C2-a4-owned-depth-craft-range -->
 c2-correction-value: 81-543
+
+## Round 45 — the freeze rule becomes an instrument with four red arms; the registry names the six claim-carrying instruments
+
+Base `149133d47aa7e90796f96047afe6d251a3e65b2c`; freeze `f762b7273e3f6ca3c710bb37d5de92a4a4417aec`
+(`plans/round-45-claims.md` + `tools/round-45/` as a directory pathspec); landing
+`e715263cb51b713c342ab992d527fe9d61d6f8ff`; amendment A1 `1f4b27f82353d6544dc0c8048b3cfdadd8525d12`
+(block 22 cites `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md`, because
+command A counts only `corpus/knowledge/` references and without one the new block would have
+scored the depth proxy 21/22 — the round measured that and repaired it before claiming);
+measured revision `1f4b27f8`. Wave 1: 40 seats; wave 2: 32 seats (counts from
+`.ufo/waves/round-45/{r45-w1,r45-w2}-results.json`).
+
+| claim | axis / surface | before | after | counting command | measured at | verdict (author) |
+|---|---|---|---|---|---|---|
+| R45-C1 | depth — `SKILL.md` `## Queue-drain craft` rule block 22 (`<!-- freeze-integrity-table v1 -->`, 10 rows, interpreter `tools/round-45/frozen-path-preflight.py` with arms commit/restored/blob/dirty/pathspec) | at the freeze exit 1: `rule_blocks 21 != 22`, `block22_present 0`, `block22_rows 0`, `block22_refs 0` (`.ufo/waves/round-45/controls/ctl-c1-0-do-nothing.json`) | `rule_blocks 22`, `block22_present 1`, `block22_rows 10`, `block22_refs 7`, `block22_unresolved_citations []`, `block22_cites {S140, interpreter} true`, `preflight_selftest cases 11 failures 0`, `frozen_path_changed []`, `met_target true`, exit 0 (`.ufo/waves/round-45/l1/scores/c1-at-1f4b27f8.json`) | `python3 -I -B tools/round-45/c1-counter.py --root <LANE> --freeze f762b727 --rev <REV> --json-out <OUT>` | `1f4b27f8` | **met** |
+| R45-C2 | calibration — `SKILL.md` instrument registry vs the six instruments the round-44 and round-45 frozen claim files name (`tools/round-45/registry-scope.json`) | at the freeze exit 1 with `unregistered` = all six paths, `registered []`, `scope_size 6` (`.ufo/waves/round-45/controls/ctl-c2-0-do-nothing.json`); at the base exit 2 `scope file absent at rev` (`.ufo/waves/round-45/controls/ctl-c2-0-base-unevaluable.json`) | `registered` = all six, `unregistered []`, `thin []`, `scope_size 6`, `frozen_path_changed []`, `met_target true`, exit 0 (`.ufo/waves/round-45/l1/scores/c2-at-1f4b27f8.json`); the four r44/r45 counters' exit maps were read from source by one seat each | `python3 -I -B tools/round-45/c2-counter.py --root <LANE> --freeze f762b727 --rev <REV> --json-out <OUT>` | `1f4b27f8` | **met** |
+
+Owned scores: coverage `10 → 10` (command A at `1f4b27f8`: `knowledge_files=138`, `mapped=138`,
+`missing []`, `dangling []`, `coverage_score 10.0`; this round adds no domain surface — the two
+new source rows document an instrument, not a reverse-engineering surface); depth `10 → 10`
+(rule blocks `21 → 22` with `citation_resolved_rules 22/22`, `depth_score 10.0`; the move is the
+block and its red-case instrument, not a number above the ceiling); calibration `10 → 10`
+(unregistered `6 → 0`, thin `0`; the numeric axis cannot rise above 10).
+
+Learning trends: expansion **unchanged** (no new domain ground; S140/S141 are instrument
+documentation and the round adds no knowledge entry); quality **improved** (a decision table with
+named thresholds and four red arms, an instrument registry that now covers every claim-carrying
+tool of the last two rounds, and the depth proxy held at 22/22); discernment **improved** (the
+round-44 routed defects are adjudicated rather than restated: the sweep-contamination class is
+fixed and shown red, the S138 `opened` over-claim is corrected append-only with a live fetch, and
+amendment A1 was caught by running command A instead of assuming the proxy stayed green).
+
+No capability row enters: the four-arm gate is an instrument cited by R45-C1, not a
+reverse-engineering capability, and this round demonstrates no new domain ground.
+
+**Freeze-integrity disclosure.** Both round-45 counters enforce the freeze by commit history, so a
+later restore cannot un-block them by construction; only the preflight carries an explicit
+`red-restored` test case. The counters hard-code their frozen set
+(`plans/round-45-claims.md`, `tools/round-45`) and it happens to equal the claim's `## Frozen paths`
+— derivation from the claim file is routed (R45-CL6). Appending this section to `SCORECARD.md`
+also adds that path to the round-44 counters' `frozen_path_changed` list at any post-round-45 tip:
+round 44's rubric binds a file every round must edit, which is a limit of that rubric, not an
+edit of this round's claims.
+
+- **planned (round 46):** calibration or depth from the routed list — (a) make the counters derive
+  their frozen set from the claim file's `## Frozen paths` and add a restore case to each counter
+  selftest (R45-CL6, R45-CL7); (b) widen the registry scope to the rounds 41–43 instruments with a
+  committed census (R45-CL3) and bind `tool_present_at_rev` (R45-CL2). Second choice: coverage —
+  resume the SquashFS v1/v2 promotion with a single, mutually consistent provenance clause
+  (R44-CL2). R36-CL5, R40-CL2, R41-CL3 remain open.
+- **retired:** none. Coverage, depth and calibration stay tied at 10; no finite proxy saturates an
+  axis, and the last capability entries are rounds 42–43.
