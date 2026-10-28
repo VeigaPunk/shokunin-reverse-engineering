@@ -609,7 +609,7 @@ bullet is bounded by the lines it cites.
   the claims file and the whole `tools/round-45/` directory, the latter a directory
   pathspec that must be passed explicitly.
 
-- **23. Freeze-integrity evidence is only evidence when its own forgeries fail.** <!-- freeze-integrity-table v2 --> The round-45 table (block 22) stated the arms; this one states what makes the statement checkable — each row is a defect the round-45 closure routed (R45-CL13 a–f, R45-CL14 a–f), the v1 clause that let it pass, and the arm of the round-46 gate, attestation and registry tools that now fails it. Interpreter pin: `tools/round-46/attest.py` `sha256:eba599582bb32eab3c47d7c15cbd53852e257070ae756136e3cee059e37311fd`. Source S142.
+- **23. Freeze-integrity evidence is only evidence when its own forgeries fail.** <!-- freeze-integrity-table v2 --> The round-45 table (block 22) stated the arms; this one states what makes the statement checkable — each row is a defect the round-45 closure routed (R45-CL13 a–f, R45-CL14 a–f), the v1 clause that let it pass, and the arm of the round-46 gate, attestation and registry tools that now fails it. Interpreter pin: `tools/round-46/attest.py` `sha256:e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346`. Source S142.
 
 | trigger | v1 hole | v2 arm | exit |
 |---|---|---|---|
