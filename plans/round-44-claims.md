@@ -134,9 +134,11 @@ frozen magic/s_major/s_minor/endianness values in carriers.json (the v1/v2 layou
 no `compression` field; `compression_family == zlib(gzip)` is bound to the frozen expectation
 plus `flags`-NOD-clear, never to `file` text); **and** a counter-time REA rerun of the same
 bytes has the same semantic projection as the committed receipt (a receipt fabricated from the
-oracle cannot equal a real run); the receipt's `parameters.output_directory` names a
-`corpus/evidence/round-44/c1/` path and its evidence id is minted over that provenance, and the
-receipt bytes are not identical to any pre-freeze committed envelope (D1 relabel refusal);
+oracle cannot equal a real run); the receipt's `parameters.output_directory` names this round's
+`/kaidoku-r44/` scratch segment and the evidence id is minted over that provenance; the runner
+binds the scratch-produced tree to the verbatim committed copy under `corpus/evidence/round-44/c1/`.
+A pre-freeze envelope relabelled into a round-44 receipt path is rejected by provenance and
+evidence-id bindings (the counter does not claim a separate byte-identity comparison);
 `PROVINCE.md` holds the `## Round-44 additions to Core` row appended after the last line naming
 `squashfs_v1` + `squashfs_v2` and citing the entry, with PROVINCE bytes `1..<last_line_at_base>`
 unchanged at REV (prefix-preserved, so SHONEN's `PROVINCE.md` line pointers do not drift); a
@@ -156,28 +158,29 @@ changed after the freeze.
   `met_target true`, exit 0.
 - Counting command: `python3 -I -B tools/round-44/c1-counter.py --root <LANE> --rev <REV>
   --freeze <FREEZE> --pkg65 <rea-agents 6.5.0 package root> --work <SCRATCH> --json-out <OUT>`
-- Data procedure (after the freeze, never before): the L1 runs `tools/round-44/c1-run.sh`
-  (REA 6.5.0 `extract-firmware --format json --full-output` on each frozen carrier into fresh
-  outdirs under `corpus/evidence/round-44/c1/`, plus `run.json` receipts); seats never run it.
+- Data procedure (after the freeze, never before): the L1 runs
+  `tools/round-44/c1-run.sh --data-run --rea-outdir-mode scratch`; REA's output directory is in
+  the private `/kaidoku-r44/` scratch segment, and the runner records the receipt/provenance and
+  copies the produced tree verbatim into `corpus/evidence/round-44/c1/<id>/`; seats never run it.
 - Controls scored at the freeze (before data):
   - CTL-C1-0 do-nothing: counter at the freeze exits 1, `carriers_matched 0`, every doc binding
     false;
-  - CTL-C1-1 round-42 C1 (v3) after-receipts copied to `.ufo/waves/round-44/controls/c1-1/` and
-    scored → non-zero (subject.digest/handler/superblock fail: v3 receipts cannot pass a v1/v2
-    predicate);
-  - CTL-C1-2 fabricated "oracle-only" envelope (published-file claims computed from
-    carriers.json oracle, no real REA run) → non-zero on the counter-time rerun-projection
-    binding;
-  - CTL-C1-3 sasquatch-absent: receipt captured pre-freeze with sasquatch stripped from the
-    child PATH → non-zero with `missing-extractor-dependency`, not a clean match;
-  - CTL-C1-4 relabelled-envelope (D1): committed pre-freeze envelopes of the same bytes
-    (round-42 c2/heldout H41/H43/H44/H45, round-43 c1/heldout H41) copied into
-    `.ufo/waves/round-44/controls/c1-4/` under round-44 receipt names and scored → non-zero
-    (the counter refuses bytes/projection identical to a pre-freeze committed envelope and any
-    `output_directory` not under `corpus/evidence/round-44/c1/`);
-  - CTL-C1-5 mutated-superbytes (debt D-11): each carrier's superbytes mutated (bad magic,
-    swapped s_major, compression outside the frozen set) → superblock probe reds each mutation;
-- Kill rule: any counterfactual control reaching `carriers_matched == 4` with every binding
+  - CTL-C1-1 round-42 C1 (v3) receipts planted under
+    `tools/round-44/control-fixtures/c1/` and scored → non-zero (subject/handler/superblock fail);
+  - CTL-C1-2 fabricated oracle-only envelopes under `tools/round-44/control-fixtures/c2/`
+    (oracle-published files, no REA run) → non-zero on counter-time rerun projection;
+  - CTL-C1-3 sasquatch-absent capture under `tools/round-44/control-fixtures/c3/` → non-zero
+    with `missing-extractor-dependency`, not a clean match;
+  - CTL-C1-4 prior-round envelopes planted under `tools/round-44/control-fixtures/c4/` → non-zero
+    because the frozen provenance/evidence-id bindings reject their `/kaidoku-r42/` paths;
+  - CTL-C1-5 mutated superbytes (bad magic, swapped `s_major`, swapped `s_minor`) → the
+    counter's `--selftest` reds each mutation (the public score path cannot mutate pinned bytes);
+- CTL-C1-POS positive scratch dev arm: plants the C1 landing docs and four real REA scratch
+  receipts in a clone, with the receipt output_directory under `/kaidoku-r44/`; the full counter
+  reaches `carriers_matched == 4`, every carrier and documentation binding true, exit 0. It never
+  runs `c1-run.sh` or writes to the lane evidence tree. This positive arm is not a counterfactual
+  and is excluded from the kill rule.
+- Kill rule: any counterfactual red control reaching `carriers_matched == 4` with every binding
   true stops C1 before data.
 - Disclosed limits: four 4 KiB fixtures with 3–4 ≤7-byte regular files each is a thin carrier
   set — the claim promotes the *handler family through REA on the frozen carriers*, not every
@@ -305,9 +308,10 @@ Byte-frozen (change ⇒ `frozen_path_changed`, exit 2):
 `tools/round-42/c1-counter.py` and `tools/round-43/c1-counter.py` (audit-only port sources);
 the four C1 carrier bins under `corpus/evidence/round-42/c2/fixtures/`;
 the four target oracle trees under `corpus/evidence/round-44/oracle/` (v2.1 trees are unbound);
-`.ufo/waves/round-44/controls/**`; the round-42 v3 C1 receipt inputs; round-42/43 heldout
-receipts used by CTL-C1-4; `SKILL.md`; `corpus/SOURCES.md` after S138/S139 are added in FREEZE;
-all historical score receipts explicitly pinned by path and digest in C2's rubric.
+`tools/round-44/control-fixtures/**` (committed red/positive control inputs); the round-42 v3 C1
+receipt inputs; round-42/43 heldout receipts used by CTL-C1-4; `SKILL.md`; `corpus/SOURCES.md`
+after S138/S139 are added in FREEZE; all historical score receipts explicitly pinned by path and
+digest in C2's rubric.
 
 NOT frozen — BASE-pinned in the C2 rubric (entries read `git show <BASE>:<file>`; cited lines
 bound by `line_sha256`; append-only at REV):
