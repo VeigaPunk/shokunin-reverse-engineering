@@ -478,6 +478,15 @@ def _fixture_files(root, rev):
         body = gate.show(root, rev, p)
         if body is not None:
             files[p] = body
+    # The census rule reads every claims file it names; a fixture without them
+    # re-derives a shorter census and scores the genuine block red (A5).
+    try:
+        for path in json.loads(files.get(CENSUS, "{}")).get("per_claims_file", {}):
+            body = gate.show(root, rev, path)
+            if body is not None:
+                files[path] = body
+    except ValueError:
+        pass
     skill = gate.show(root, rev, "SKILL.md")
     if skill is not None:
         files["SKILL.md"] = skill

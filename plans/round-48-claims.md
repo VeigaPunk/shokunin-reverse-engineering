@@ -191,6 +191,24 @@ four forgeries, every clause, threshold and kill rule are unchanged. Red-before:
 (the skipped-row counterexample). **The declared freeze is the commit that carries this
 paragraph.**
 
+## Freeze amendment A5 (disclosed; the instruments' own inputs, declared before any claim data)
+
+The landing pre-flight on a scratch clone (not a claim measurement) found two ways an
+instrument's *inputs* made a correct artefact red:
+
+- **R48-C1 battery**: `_fixture_files` copied the claims file, the census and the block's
+  citations but not the `plans/round-41..48-claims.md` files the census rule reads, so the
+  battery's genuine score re-derived a shorter census and reported `genuine_green 0` on a
+  landing that satisfies every clause. A5 adds the census's own input files to the fixture.
+- **R48-C2 corrections**: the heading was matched with a substring split, and the round-48
+  section quotes the heading in its claim table, so `corrections_section()` returned `[]`
+  on a card that carries two correction lines. A5 anchors the heading to a whole line.
+
+Red-before: the pre-flight receipts (`.ufo/waves/round-48/l1/scores/` preflight runs,
+`battery genuine_green 0` and `no ## Record corrections — round 48 line re-derived` on a
+card that carries both). **The declared freeze is the commit that carries this paragraph.**
+No seat had scored a claim and no landing had been measured when A5 was made.
+
 ## Controls (not frozen; committed as wave evidence)
 
 - `ctl-c1-0-do-nothing.json` — the counter at the freeze revision: block absent, registry

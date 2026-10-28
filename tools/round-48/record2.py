@@ -40,7 +40,9 @@ SELF = "tools/round-48/record2.py"
 CLAIMS = "plans/round-48-claims.md"
 ORACLE = "tools/round-47/record.py"
 CARD = "SCORECARD.md"
-CORR_HEAD = "## Record corrections — round 48"
+# The heading is matched as a whole line: the round section quotes it in prose, and a
+# substring split took that quote for the section (A5).
+CORR_HEAD = re.compile(r"(?m)^## Record corrections — round 48[ \t]*$")
 CORR = re.compile(r"^- corrects (seats|window|path|rev|axes|quote) (\S+):\s*(.+)$")
 CLAIM_ID = re.compile(r"\bR\d\d-C\d\b")
 QUOTE = re.compile(r"\b(atoms|exempted|corrections|mismatches)\s+(\d+)\b")
@@ -96,9 +98,10 @@ def section_bodies(card):
 
 
 def corrections_section(card):
-    if CORR_HEAD not in card:
+    m = CORR_HEAD.search(card)
+    if not m:
         return []
-    body = card.split(CORR_HEAD, 1)[1].split("\n## ", 1)[0]
+    body = card[m.end():].split("\n## ", 1)[0]
     out = []
     for line in body.splitlines():
         m = CORR.match(line.strip())
