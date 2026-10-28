@@ -1,0 +1,20 @@
+# R44W2C1CmpHazard byte-comparison audit of every round-44 instrument
+# columns: tool	site(s)	mechanism	class
+tools/round-44/c1-counter.py	2036	hashlib.sha256(raw).hexdigest() == pin (carrier_pin_ok)	safe-digest
+tools/round-44/c1-counter.py	1970	d['subject_sha256'] == pin (subject_pin_ok)	safe-digest
+tools/round-44/c1-counter.py	1681	git rev-parse <rev>:<path> blob OID compare (tree backstop)	safe-content-addressed
+tools/round-44/c1-counter.py	2270-2273	sha256 over sorted '<path>\t<sha256>\n' member lines (output_tree digest)	safe-digest
+tools/round-44/c1-counter.py	2723-2724	evidence_id = sha256(json.dumps(sort_keys=True))	safe-digest
+tools/round-44/c1-counter.py	1404,1431,1745	(relative_path, sha256, size) tuple equality	safe-digest
+tools/round-44/c1-oracle.py	692	sha256_file(image) != carrier['sha256']	safe-digest
+tools/round-44/c1-oracle.py	830,867	a["sha256"] != b["sha256"] (unsquashfs vs __output__, unsquashfs vs 7z)	safe-digest
+tools/round-44/c1-run.py	358	digest == pin (fixture_pin)	safe-digest
+tools/round-44/c2-counter.py	525	sha256(bare cited line) == anchor_digest	safe-digest
+tools/round-44/c2-counter.py	929	sha256_bytes(blob) != pin.lower() (check script pin)	safe-digest
+tools/round-44/c2-counter.py	880-881	sha256 at FREEZE vs sha256 at REV (frozen path compare)	safe-digest
+tools/round-44/c2-controls.py	1384-1386	sha256 of counter/rubric bytes	safe-digest
+tools/round-44/c1-controls.py	130,481	sha256_bytes(raw) != meta['sha256'] / carrier pin	safe-digest
+tools/round-44/c1-run.sh	-	no comparison; execs c1-run.py	absent
+tools/round-44/control-fixtures/c1/corpus/evidence/round-44/c1/*/after.json	data only	literal path string "extract/usr/bin/cmp" (a symlink target inside fixture data)	not-a-call
+tools/round-45/frozen-path-preflight.py	-	no cmp reference	absent
+# result: 0 unsafe, 0 raw-byte shell comparisons; every scored byte decision is a sha256 digest or a git blob OID

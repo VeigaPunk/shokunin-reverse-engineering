@@ -1,0 +1,9 @@
+clean-at-freeze                    exit=0 verdict=clean                touched=0 expect=exit=0 clean
+modify-frozen-tool                 exit=1 verdict=frozen_path_changed  touched=1 expect=exit=1 violation
+add-under-frozen-dir               exit=1 verdict=frozen_path_changed  touched=1 expect=exit=1 violation
+delete-frozen-tool                 exit=1 verdict=frozen_path_changed  touched=1 expect=exit=1 violation
+restore-endpoints-equal            exit=1 verdict=frozen_path_changed  touched=2 expect=exit=1 violation (log, not endpoints)
+claims-only-narrow-pathspec        exit=0 verdict=clean                touched=0 expect=exit=0 = FALSE GREEN as recorded
+claims-only-right-pathspec         exit=1 verdict=frozen_path_changed  touched=1 expect=exit=1 violation
+oracle-only-narrow-pathspec        exit=0 verdict=clean                touched=0 expect=exit=0 = FALSE GREEN as recorded
+oracle-only-right-pathspec         exit=1 verdict=frozen_path_changed  touched=1 expect=exit=1 violation

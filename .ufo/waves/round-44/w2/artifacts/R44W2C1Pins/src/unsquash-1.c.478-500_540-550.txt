@@ -1,0 +1,34 @@
+{
+	squashfs_super_block_3 *sBlk_3 = s;
+
+	if(sBlk_3->s_magic != SQUASHFS_MAGIC || sBlk_3->s_major != 1 ||
+							sBlk_3->s_minor != 0)
+		return -1;
+
+	sBlk.s.s_magic = sBlk_3->s_magic;
+	sBlk.s.inodes = sBlk_3->inodes;
+	sBlk.s.mkfs_time = sBlk_3->mkfs_time;
+	sBlk.s.block_size = sBlk_3->block_size_1;
+	sBlk.s.fragments = 0;
+	sBlk.s.block_log = sBlk_3->block_log;
+	sBlk.s.flags = sBlk_3->flags;
+	sBlk.s.s_major = sBlk_3->s_major;
+	sBlk.s.s_minor = sBlk_3->s_minor;
+	sBlk.s.root_inode = sBlk_3->root_inode;
+	sBlk.s.bytes_used = sBlk_3->bytes_used_2;
+	sBlk.s.inode_table_start = sBlk_3->inode_table_start_2;
+	sBlk.s.directory_table_start = sBlk_3->directory_table_start_2;
+	sBlk.s.fragment_table_start = SQUASHFS_INVALID_BLK;
+	sBlk.s.lookup_table_start = sBlk_3->lookup_table_start;
+	sBlk.no_uids = sBlk_3->no_uids;
+		SQUASHFS_EXPORTABLE(sBlk.s.flags) ? "" : "not ");
+	printf("Inodes are %scompressed\n",
+		SQUASHFS_UNCOMPRESSED_INODES(sBlk.s.flags) ? "un" : "");
+	printf("Data is %scompressed\n",
+		SQUASHFS_UNCOMPRESSED_DATA(sBlk.s.flags) ? "un" : "");
+	printf("Check data is %spresent in the filesystem\n",
+		SQUASHFS_CHECK_DATA(sBlk.s.flags) ? "" : "not ");
+	printf("Duplicates are removed\n");
+	printf("Number of inodes %d\n", sBlk.s.inodes);
+	printf("Number of uids %d\n", sBlk.no_uids);
+	printf("Number of gids %d\n", sBlk.no_guids);

@@ -1,0 +1,80 @@
+{
+  "seat": "R44W2C1Pins",
+  "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "measured_rev": "55bcce69c2f4854958d054bcab6d5f0c6fb8a6ac",
+  "freeze": "c48f8a4bfd449300c975668e59aae5b5538b6a84",
+  "date": "2026-10-28",
+  "scope": "frozen C1 carrier pins + v1/v2 superblock re-derivation; no claim, counter, rubric, frozen byte or production doc changed",
+  "commands": [
+    {
+      "cmd": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin rev-parse 55bcce69:tools/round-44/carriers.json",
+      "exit": 0,
+      "stdout": "5f20d073b488f62b7ff501905621a7b6ba44b502",
+      "note": "same blob as the worktree file (sha256 3b90b9993c3af818110630ee30e83fcff8493d80e74509cfaffc3e299e7868e9)"
+    },
+    {
+      "cmd": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin rev-parse 55bcce69:tools/round-44/c1-counter.py",
+      "exit": 0,
+      "stdout": "9695d586b3b1a792f1ad15e8dc4b4f54b8fe1569",
+      "note": "identical blob to HEAD's counter"
+    },
+    {
+      "cmd": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 55bcce69:<each of the four fixture paths> | sha256sum",
+      "exit": 0,
+      "stdout_sha256": [
+        "b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71",
+        "529e10775cc152e6c5df0c6c63316811004cc73ce99f03989c86ffd396d631e6",
+        "7c62dbe388b972119f5d17a12836a016737d58276184f4caa2a90dafd924f124",
+        "79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0"
+      ],
+      "note": "all four equal carriers.json pins and equal the worktree bytes; size 4096 each"
+    },
+    {
+      "cmd": "python3 -I -B /fast/scratch/hyaku/kaidoku-r44/w2-R44W2C1Pins/pin_probe.py",
+      "exit": 0,
+      "stdout_sha256": "1d32ea96c77cdfc8b524376d255400c76d8a821b8c6330ac10ad05ce7b377459",
+      "wall_s": 0.024
+    },
+    {
+      "cmd": "python3 -I -B /fast/scratch/hyaku/kaidoku-r44/w2-R44W2C1Pins/evidence.py",
+      "exit": 0,
+      "stdout_sha256": "37dcdd8444f500c0f00c08f5ac524738516e9ba18223e76d1df1071516df683a",
+      "wall_s": 0.0328
+    },
+    {
+      "cmd": "/usr/bin/unsquashfs -s corpus/evidence/round-42/c2/fixtures/<each fixture>",
+      "exit": 0,
+      "note": "4/4 exit 0; superblock report used for corroboration only"
+    },
+    {
+      "cmd": "/usr/bin/file -b corpus/evidence/round-42/c2/fixtures/<each fixture>",
+      "exit": 0,
+      "note": "4/4 exit 0; LE says compressed, BE says uncompressed (offset-20 artefact)"
+    },
+    {
+      "cmd": "grep -c flags tools/round-44/c1-counter.py",
+      "exit": 1,
+      "stdout": "0",
+      "note": "exit 1 is grep's no-match status; the counter contains zero occurrences of the flags field"
+    }
+  ],
+  "artifacts": {
+    "evidence.py": "sha256 recorded in report",
+    "evidence.json": "37dcdd8444f500c0f00c08f5ac524738516e9ba18223e76d1df1071516df683a",
+    "pin_probe.py": "sha256 recorded in report",
+    "pins.json": "1d32ea96c77cdfc8b524376d255400c76d8a821b8c6330ac10ad05ce7b377459",
+    "src/unblob-squashfs-26.6.4.py.101-137.txt": "5c517b3ef8f787d35ea19b0f13fee1a1ef7d6b6b1986a86b607e2877054f47bc",
+    "src/squashfs_compat.h.38-65.txt": "d09f2581185af4b2b17e6ca9fb60b2bf10cb4c9e81e83128d40428d88b276089",
+    "src/unsquash-1.c.478-500_540-550.txt": "35460b0584fd02553204137f82b6820f6944190ace294818be4928b50a4ec9b1"
+  },
+  "source_hashes": {
+    "unblob 26.6.4 python/unblob/handlers/filesystem/squashfs.py": "2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287",
+    "onekey-sec/sasquatch sasquatch-v4.5.1-6 squashfs-tools/squashfs_compat.h": "b9ebb818ef0e58554d2e5ffe0b720e3a0260e5ef51fc3233607361a6a363f2fa",
+    "onekey-sec/sasquatch sasquatch-v4.5.1-6 squashfs-tools/unsquash-1.c": "c341593108e13efe1defb2e34cf94be219da90b1cdf50a9204baf1be31dc80fe"
+  },
+  "tool_installs": [],
+  "mutating_git_jj": "none",
+  "lane_writes": [".ufo/waves/round-44/w2/R44W2C1Pins.md", ".ufo/waves/round-44/w2/artifacts/R44W2C1Pins/**"],
+  "scratch": "/fast/scratch/hyaku/kaidoku-r44/w2-R44W2C1Pins",
+  "scratch_removed": true
+}

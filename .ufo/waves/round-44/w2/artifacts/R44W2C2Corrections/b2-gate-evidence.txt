@@ -1,0 +1,26 @@
+# B2 gate evidence (claims: 'asserted must be a byte substring of the BASE blob line_at_base, else exit 2 asserted_not_in_base_line')
+
+## 1. grep for the gate in the frozen tools (exit code shown)
+$ grep -rn "asserted_not_in_base_line" tools/
+grep exit=1 (1 = no match anywhere under tools/)
+
+## 2. rubric binds line_sha256 of the BASE row lines
+C2-a1-owned-coverage-count line_at_base=23 line_sha256=81e06b81b26a7afa6cfbed1de0ca97c19a9809f41e2e9733f1244b2cc79a9287 asserted=137/137
+C2-a2-owned-depth-count line_at_base=24 line_sha256=b99cc56d17622b1aba155bdba3f9bb4ee662d143d05329228419c3c3ee4a0692 asserted=21/21
+C2-a4-owned-depth-craft-range line_at_base=24 line_sha256=b99cc56d17622b1aba155bdba3f9bb4ee662d143d05329228419c3c3ee4a0692 asserted=81-543
+
+## 3. sha256 of the base lines and substring tests
+line 23: sha256=81e06b81b26a7afa6cfbed1de0ca97c19a9809f41e2e9733f1244b2cc79a9287  '137/137' in line -> False
+line 24: sha256=b99cc56d17622b1aba155bdba3f9bb4ee662d143d05329228419c3c3ee4a0692  '21/21' in line -> False
+line 24: sha256=b99cc56d17622b1aba155bdba3f9bb4ee662d143d05329228419c3c3ee4a0692  '81-543' in line -> False
+
+## 4. the correction values ARE in the appended lines (REV 55bcce69), which is the only place they appear
+3508: - **Command A, final indexed tree:** at `8de80f1daec68260eb256eb68375e2c33af759a9`, the frozen comma
+3509: - **Text erratum:** the Round 43 heading's “overstrict” wording is superseded by the correction abov
+3511: - **Round-44 calibration correction (2026-10-28):** the `## Owned axes` current observables are re-d
+3512: <!-- c2-correction: C2-a1-owned-coverage-count -->
+3513: c2-correction-value: 137/137
+3514: <!-- c2-correction: C2-a2-owned-depth-count -->
+3515: c2-correction-value: 21/21
+3516: <!-- c2-correction: C2-a4-owned-depth-craft-range -->
+3517: c2-correction-value: 81-543

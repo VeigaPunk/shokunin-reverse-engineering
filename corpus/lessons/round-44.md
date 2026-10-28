@@ -85,6 +85,13 @@ their own ids and are not renumbered here.
   `55bcce69`: the counter-time REA rerun is live in the scored path and stops a census-only authored
   envelope, but not one whose semantic projection matches (`w2/R44W2C1PosArm.md`; carried from
   R43, still open).
+- **R44-CL9 (wave-2 R45-07).** The three corrected `## Owned axes` values are **freeze-tree-scoped**
+  (`137/137`, `21/21`, `81-543`). At `55bcce69` command A derives `138/138` because the C1 entry
+  landed, and the lane's older `tools/round-38/c2-counter.py`, which evaluates at REV, exits 1 with
+  five mismatches there. The frozen R44-C2 rubric evaluates that surface at the freeze tree by
+  design, so the score stands; the defect is the record's silence about the scope. Every future
+  `## Owned axes` cell states the revision its value holds at
+  (`.ufo/waves/round-44/w2/R44W2ConnDefects.md` R45-07).
 - **R44-CL8 (wave-2 D-2).** The claim's runner-binding clause ("the runner binds the scratch-produced
   tree to the verbatim committed copy under `corpus/evidence/round-44/c1/`",
   `plans/round-44-claims.md:139`) is unimplemented: the counter reads only `after.json`, so mutating

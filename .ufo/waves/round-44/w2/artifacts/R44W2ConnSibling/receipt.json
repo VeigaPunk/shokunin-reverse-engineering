@@ -1,0 +1,210 @@
+{
+ "seat": "R44W2ConnSibling",
+ "role": "connector",
+ "wave": "r44-w2",
+ "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "axes": [
+  "coverage",
+  "depth",
+  "calibration"
+ ],
+ "revisions": {
+  "BASE": "c29360e3ba5381a5ab69e372d0d9577970f85018",
+  "FREEZE": "c48f8a4bfd449300c975668e59aae5b5538b6a84",
+  "REV": "55bcce69c2f4854958d054bcab6d5f0c6fb8a6ac",
+  "TIP": "8bb1090af3fef64477c4337855e4347472db2701"
+ },
+ "generated_utc": "2026-10-28T14:25:01Z",
+ "commands": [
+  {
+   "receipt": "R01-province-scan",
+   "command": "for f in */PROVINCE.md; do printf '%s %s\\n' \"$(grep -c 'squashfs_v1\\|squashfs_v2' \"$f\" 2>/dev/null || echo 0)\" \"$f\"; done",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "89848abef0a93edbae87307a26d514276503f93d432390cbfc9367be5814752d",
+   "stdout_bytes": 675,
+   "wall_s": 0.015,
+   "note": "per-lane PROVINCE.md squashfs_v1/v2 token count"
+  },
+  {
+   "receipt": "R02-fleet-token-scan",
+   "command": "grep -rn 'squashfs_v1\\|squashfs_v2' --include='*.md' --include='*.json' --include='*.txt' . 2>/dev/null | grep -v '^./kaidoku-shokunin' | grep -v '^./templates'",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "e7d3bca6ee137d90da8e6edf6b8a6928928d89204e3909fcea5ddc68c05cbc3e",
+   "stdout_bytes": 861,
+   "wall_s": 3.215,
+   "note": "fleet-wide exact tokens outside kaidoku"
+  },
+  {
+   "receipt": "R03-sibling-prose",
+   "command": "grep -rin 'squashfs' */SCORECARD.md */PROVINCE.md */SHONEN.md 2>/dev/null | grep -v '^kaidoku'",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 1,
+   "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stdout_bytes": 0,
+   "wall_s": 0.006,
+   "note": "sibling PROVINCE/SCORECARD/SHONEN prose"
+  },
+  {
+   "receipt": "R04-sibling-corpus",
+   "command": "grep -rn 'squashfs' */corpus 2>/dev/null | grep -v '^kaidoku-shokunin'",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "1a9050629c42b32fd7b0422c41739a9558c3ae6815e73b2f99afe1546eb30ae7",
+   "stdout_bytes": 708,
+   "wall_s": 6.864,
+   "note": "sibling corpus prose"
+  },
+  {
+   "receipt": "R05-round45-dirs",
+   "command": "for d in */tools/round-45; do [ -d \"$d\" ] && ls -1 \"$d\"; done; echo '--- lanes with any tools/'; for d in */; do [ -d \"$d/tools\" ] && echo \"$d\"; done",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "9371303e8ab9e181b142b2e2f5fedf16ee7ad8fef060d8aeddfa34f4eba9b03d",
+   "stdout_bytes": 203,
+   "wall_s": 0.001,
+   "note": "tools/round-45 ownership fleet-wide"
+  },
+  {
+   "receipt": "R06-preflight-owners",
+   "command": "find . -name 'frozen-path-preflight.py' -not -path './kaidoku-shokunin/*' 2>/dev/null; echo '--- fleet refs to tools/round-45'; grep -rn 'tools/round-45' --include='*.md' --include='*.json' --include='*.py' . 2>/dev/null | grep -v '^./kaidoku-shokunin' | grep -v '^./templates'",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "868d7fd53a142896c04a4db773bd196ae9fc269d960f243564c6ea4fb432be80",
+   "stdout_bytes": 603,
+   "wall_s": 2.879,
+   "note": "other copies / refs of the round-45 tool"
+  },
+  {
+   "receipt": "R07-sibling-r44-cites",
+   "command": "grep -rn 'kaidoku[^ ]*\\(tools/round-44\\|corpus/evidence/round-44\\)\\|kaidoku-r44' --include='*.md' --include='*.json' --include='*.txt' */ 2>/dev/null | grep -v '^kaidoku-shokunin' | cut -c1-400",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "28b130403eee28f9d4fe555af856db42fd81c8aa5e85313679ad42f1c2d50ce0",
+   "stdout_bytes": 1894,
+   "wall_s": 2.501,
+   "note": "sibling artifacts citing kaidoku round-44 paths or scratch"
+  },
+  {
+   "receipt": "R08-fleet-r44-reports",
+   "command": "grep -rn 'kaidoku' .ufo/reports/round-44/*.md 2>/dev/null | grep -v 'round-44/kaidoku.md'; echo '--- files'; ls -1 .ufo/reports/round-44/",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "fe1c2103f27de5b19a330bb00136580049e6ad9472c25c42b4e51b32a6dac701",
+   "stdout_bytes": 121,
+   "wall_s": 0.002,
+   "note": "fleet round-44 reports mentioning kaidoku"
+  },
+  {
+   "receipt": "R09-adjacency-registry",
+   "command": "grep -n '| kaidoku |' kotoba-shokunin/PROVINCE.md; echo '--- kaidoku commit pinned in that row'; git -C kaidoku-shokunin log -1 --format='%h %s' 3b1ab3c9d248b7afbf7fc5e5507d76cd87e26c3c; git -C kaidoku-shokunin rev-parse 3b1ab3c9d248b7afbf7fc5e5507d76cd87e26c3c:PROVINCE.md",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "c29280a7e5ab5a09b2d12af8170fecc22110940e6bb0289c0de9c12e61b1dc0d",
+   "stdout_bytes": 453,
+   "wall_s": 0.002,
+   "note": "fleet adjacency registry row for kaidoku"
+  },
+  {
+   "receipt": "R10-preflight-red-tip",
+   "command": "python3 -I -B tools/round-45/frozen-path-preflight.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze c48f8a4bfd449300c975668e59aae5b5538b6a84 --rev 8bb1090af3fef64477c4337855e4347472db2701 --pathspec tools/round-44/",
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit_code": 1,
+   "stdout_sha256": "dae13b0acb4810b6e15e35a814011964bfb52d48f979171400ab81dcd696bb15",
+   "stdout_bytes": 2093,
+   "wall_s": 0.088,
+   "note": "red arm at tip with the frozen pathspec"
+  },
+  {
+   "receipt": "R11-preflight-green-rev",
+   "command": "python3 -I -B tools/round-45/frozen-path-preflight.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze c48f8a4bfd449300c975668e59aae5b5538b6a84 --rev 55bcce69c2f4854958d054bcab6d5f0c6fb8a6ac --pathspec tools/round-44/",
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "7f8df9e366a40cb84eea03f418f803be85ec4327e18ee38aa8858b9be2f427b6",
+   "stdout_bytes": 227,
+   "wall_s": 0.088,
+   "note": "green arm at measured revision"
+  },
+  {
+   "receipt": "R12-preflight-nospec",
+   "command": "python3 -I -B tools/round-45/frozen-path-preflight.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze c48f8a4bfd449300c975668e59aae5b5538b6a84 --rev 8bb1090af3fef64477c4337855e4347472db2701",
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit_code": 1,
+   "stdout_sha256": "ea8cfe7638b88ed0319ac7c987e6f288b186ea2b98b590d846eb6f2a771e0b08",
+   "stdout_bytes": 84351,
+   "wall_s": 0.032,
+   "note": "no-pathspec call: gate has no default frozen spec"
+  },
+  {
+   "receipt": "R13-province-prefix",
+   "command": "python3 -c \"import subprocess;s=lambda r:subprocess.run(['git','show',r+':PROVINCE.md'],capture_output=True).stdout;b=s('c48f8a4bfd449300c975668e59aae5b5538b6a84');v=s('55bcce69c2f4854958d054bcab6d5f0c6fb8a6ac');print('base',len(b),'rev',len(v),'prefix_ok',v.startswith(b))\"",
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "c0ab00f7fb45a33c9713b4cc53fbd4b209dacc8d14319eb5bf86b0e09be8367a",
+   "stdout_bytes": 36,
+   "wall_s": 0.016,
+   "note": "PROVINCE prefix preservation at measured rev"
+  },
+  {
+   "receipt": "R14-counter-digest",
+   "command": "git show c48f8a4bfd449300c975668e59aae5b5538b6a84:tools/round-44/c2-counter.py | sha256sum; git show 55bcce69c2f4854958d054bcab6d5f0c6fb8a6ac:tools/round-44/c2-counter.py | sha256sum",
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "aa42b5d2787c158c30fb50b1b6670eb79b3bb462ea3316db334f07741b0010cb",
+   "stdout_bytes": 136,
+   "wall_s": 0.002,
+   "note": "c2-counter.py digest at FREEZE and REV (sibling cites its lines)"
+  },
+  {
+   "receipt": "R15-cited-receipt-tracked",
+   "command": "for f in .ufo/waves/round-44/l1/sources-census-end.txt .ufo/waves/round-44/l1/preflight-c86ea508.json .ufo/waves/round-44/l1/c1-score-at-55bcce69.json .ufo/waves/round-44/l1/c2-score-at-55bcce69.json; do printf '%s  ' \"$(git ls-files --error-unmatch \"$f\" >/dev/null 2>&1 && echo TRACKED || echo UNTRACKED)\"; echo \"$f\"; done",
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "f58fe63ab40085ce5078ff9c366b843df23032e0182fc72d1e627edaa6ebc6d4",
+   "stdout_bytes": 229,
+   "wall_s": 0.01,
+   "note": "tracked status of receipts the lesson cites"
+  },
+  {
+   "receipt": "R16-tmp-residue",
+   "command": "ls -ld /tmp/kaidoku-r44 /tmp/kaidoku-r43 2>&1; stat -c '%n %s %y' /tmp/squashfs_v2.1_be.bin /tmp/squashfs_v2.1_le.bin 2>&1; ls -d /tmp/sqfs-v2-* 2>&1",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "bc83ff6c54365e9b6687289e5f78952c5486506cfca0c0d8951eff4b8becad3b",
+   "stdout_bytes": 336,
+   "wall_s": 0.005,
+   "note": "kaidoku-named residue in /tmp visible to other lanes"
+  },
+  {
+   "receipt": "R17-committed-preflight-match",
+   "command": "python3 -c \"import json,sys;a=json.load(open('.ufo/waves/round-44/l1/preflight-c86ea508.json'));print('verdict',a['verdict'],'touched',len(a['touched']),'blob_changed',len(a['blob_changed']),'statuses',sorted({t['status'] for t in a['touched']}),'rev',a['rev'])\"",
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "7f1ee4c445a0959092993ddef735731503565fe6180aa471b2de2b74ed368c51",
+   "stdout_bytes": 113,
+   "wall_s": 0.012,
+   "note": "committed M44-2 receipt re-read"
+  },
+  {
+   "receipt": "R18-provable-negative-witness",
+   "command": "for d in /home/vgpnk/Projects/shokunin/*/; do\n  [ -f \"$d/PROVINCE.md\" ] || continue\n  n=$(basename \"$d\")\n  h=$(git -C \"$d\" rev-parse HEAD 2>/dev/null)\n  b=$(git -C \"$d\" rev-parse \"HEAD:PROVINCE.md\" 2>/dev/null)\n  c=$(git -C \"$d\" show \"HEAD:PROVINCE.md\" 2>/dev/null | grep -c 'squashfs_v1\\|squashfs_v2')\n  printf '%s %s %s %s\\n' \"$c\" \"${h:-NOHEAD}\" \"${b:-NOBLOB}\" \"$n\"\ndone",
+   "cwd": "/home/vgpnk/Projects/shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "7353c789a04f7f093c44e8f1838c8cd9085fda65a1c37e71a817835a299282e3",
+   "stdout_bytes": 2105,
+   "wall_s": 0.088,
+   "note": "per-lane committed HEAD + PROVINCE.md blob + squashfs_v1/v2 token count (commit-bound negative witness)"
+  },
+  {
+   "receipt": "R19-hooks-wiring",
+   "command": "ls -1 .git/hooks | grep -v sample; echo 'hooks_non_sample_exit='$?; git config --get core.hooksPath; echo 'hookspath_exit='$?; git worktree list; ls -1 .git/worktrees 2>&1; grep -c 'W04' .ufo/waves/round-44/l1/sources-census-end.txt",
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit_code": 0,
+   "stdout_sha256": "28bb8e5cc65427216a4fff560450dbb2aa1b53b84e798c1c3c3249ab918c5edd",
+   "stdout_bytes": 178,
+   "wall_s": 0.003,
+   "note": "commit-time wiring of the round-45 gate; worktree registration; cited census line count"
+  }
+ ]
+}

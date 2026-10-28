@@ -1,0 +1,28 @@
+# NOTE (R44W2Quality77): the fixture repositories below lived under
+# /fast/scratch/hyaku/kaidoku-r44/R44W2Quality77/ and were deleted before yield.
+# The retained evidence is each run's own JSON output (freeze, rev, pathspec, touched);
+# the commit ids are fixture-local and no longer resolvable.
+
+# cross-instrument: preflight vs c1-counter.frozen_drift
+# fixture: /fast/scratch/hyaku/kaidoku-r44/R44W2Quality77/arms.r86QQ3 (deleted before yield), freeze=b4689517a2101171a5dd5ecfb42020c4e352e5f6, rev=e193b590e384884075166301bb6c0f61739c437d (first commit after freeze adds tools/round-44/new.txt)
+
+## preflight --pathspec tools/round-44
+{"blob_changed": [], "freeze": "b4689517a2101171a5dd5ecfb42020c4e352e5f6", "gate": "frozen-path-preflight", "pathspec": ["tools/round-44"], "rev": "e193b590e384884075166301bb6c0f61739c437d", "touched": [{"commit": "e193b590e384884075166301bb6c0f61739c437d", "path": "tools/round-44/new.txt", "status": "A"}], "verdict": "frozen_path_changed"}
+exit=1
+
+## preflight --pathspec plans/round-44-claims.md (change in tools/round-44 not covered)
+{"blob_changed": [], "freeze": "b4689517a2101171a5dd5ecfb42020c4e352e5f6", "gate": "frozen-path-preflight", "pathspec": ["plans/round-44-claims.md"], "rev": "e193b590e384884075166301bb6c0f61739c437d", "touched": [], "verdict": "clean"}
+exit=0
+
+## c1-counter.frozen_drift(root, freeze, rev, {'carriers': []}) at the same rev
+[]
+
+## second fixture (claim-only change): /fast/scratch/hyaku/kaidoku-r44/R44W2Quality77/iso.0iKIbN
+## freeze=69560bff3904619eb6d5182def41107a16e03290 rev=f9c87652eac6933afd0fcc5c3a16dbad2875c69a (single post-freeze commit edits plans/round-44-claims.md; the later added-file commit is excluded)
+
+preflight --pathspec tools/round-44:
+{"blob_changed": [], "freeze": "69560bff3904619eb6d5182def41107a16e03290", "gate": "frozen-path-preflight", "pathspec": ["tools/round-44"], "rev": "f9c87652eac6933afd0fcc5c3a16dbad2875c69a", "touched": [], "verdict": "clean"}
+exit=0
+
+c1-counter.frozen_drift:
+['plans/round-44-claims.md']

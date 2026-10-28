@@ -1,0 +1,158 @@
+{
+ "seat": "R44W2RevAttempt1",
+ "lane": "kaidoku",
+ "round": 44,
+ "wave": "r44-w2",
+ "role": "revenger: attempt-1 stop-point reconstruction",
+ "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "commands": [
+  {
+   "name": "commit-table",
+   "command": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin log --format='%h|%ad|%cd|%s' --date=iso c29360e3..c86ea508",
+   "exit": 0,
+   "stdout_sha256": "d2ce438dc8d643d64c671efc10aa788294cacb1f57075a66cbd3cf8455a7e7de",
+   "stdout_bytes": 1999,
+   "wall_seconds": 0.002,
+   "stderr_tail": ""
+  },
+  {
+   "name": "author-vs-committer",
+   "command": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show -s --format='%h author=%ad committer=%cd' --date=iso c86ea508 55bcce69 75a5cb42",
+   "exit": 0,
+   "stdout_sha256": "e5199765e198d25256c88f6f5e008ae75592f098288ba8d65f258c08b0588a0c",
+   "stdout_bytes": 234,
+   "wall_seconds": 0.002,
+   "stderr_tail": ""
+  },
+  {
+   "name": "w1-drift",
+   "command": "bash -c \"git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff --name-status 55bcce69 c86ea508 -- .ufo/waves/round-44/w1 | awk '{print \\$1}' | sort | uniq -c\"",
+   "exit": 0,
+   "stdout_sha256": "3fe4a3778cef750c7df8c62d6cc8b4f233b1ed46bada6a01de25cef661f1c8d9",
+   "stdout_bytes": 20,
+   "wall_seconds": 0.003,
+   "stderr_tail": ""
+  },
+  {
+   "name": "w1-md-counts",
+   "command": "bash -c \"git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin ls-tree -r --name-only 55bcce69 .ufo/waves/round-44/w1 | grep -Ec '^\\\\.ufo/waves/round-44/w1/[^/]+\\\\.md$'; git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin ls-tree -r --name-only c86ea508 .ufo/waves/round-44/w1 | grep -Ec '^\\\\.ufo/waves/round-44/w1/[^/]+\\\\.md$'\"",
+   "exit": 0,
+   "stdout_sha256": "a51f5b5944ba13568c9ea4743ce09c25e8662a421150c503fc657c3a77515bf0",
+   "stdout_bytes": 6,
+   "wall_seconds": 0.004,
+   "stderr_tail": ""
+  },
+  {
+   "name": "measured-top-level",
+   "command": "bash -c \"git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin ls-tree -r --name-only 55bcce69 .ufo/waves/round-44 | grep -v '/w1/'\"",
+   "exit": 0,
+   "stdout_sha256": "ec3359cb328f1e2d5a07b181a90e4268c39e2e033ab34020abe7909be0978478",
+   "stdout_bytes": 214,
+   "wall_seconds": 0.002,
+   "stderr_tail": ""
+  },
+  {
+   "name": "counter-digests",
+   "command": "bash -c \"git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show c48f8a4b:tools/round-44/c1-counter.py | sha256sum; sha256sum /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/c1-counter.py; git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show c48f8a4b:tools/round-44/c2-counter.py | sha256sum; sha256sum /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/c2-counter.py\"",
+   "exit": 0,
+   "stdout_sha256": "8d19c4fe22bedea4462bccdea3ebd2c611d4af3d195b52b590d9d05f89065540",
+   "stdout_bytes": 420,
+   "wall_seconds": 0.005,
+   "stderr_tail": ""
+  },
+  {
+   "name": "fixture-mtimes",
+   "command": "ls -la --time-style=full-iso /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/control-fixtures/c3/manifest.json /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/control-fixtures/pos/manifest.json /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/control-fixtures/pos/corpus/evidence/round-44/c1/v1le/after.json /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/control-fixtures/c3/corpus/evidence/round-44/c1/v1le/after.json",
+   "exit": 0,
+   "stdout_sha256": "bf598175a73109f8f3b05f2b59ffe7b9d8a265f55c27311f2460850187c7e9c3",
+   "stdout_bytes": 714,
+   "wall_seconds": 0.002,
+   "stderr_tail": ""
+  },
+  {
+   "name": "prov-binding",
+   "command": "bash -c \"sed -n '1176,1183p' /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/c1-counter.py; grep -n 'PROV_SEGMENT' /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/c1-counter.py\"",
+   "exit": 0,
+   "stdout_sha256": "4d5277f2f6b69f805303defbaeefd1535002501cb22f4dcc134fe73b3b59f2a8",
+   "stdout_bytes": 427,
+   "wall_seconds": 0.003,
+   "stderr_tail": ""
+  },
+  {
+   "name": "score-commit",
+   "command": "bash -c \"git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show --name-only --format='' 75a5cb42; git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin log --diff-filter=A --format='%h|%ad|%s' --date=iso -- .ufo/waves/round-44/l1/c1-score-4cc1.json .ufo/waves/round-44/l1/c1-score-at-55bcce69.json\"",
+   "exit": 0,
+   "stdout_sha256": "c1b26158994dafdb2bb010d77946c1907d2e248a26c2ae7eaf0cbcf6c2b133c1",
+   "stdout_bytes": 285,
+   "wall_seconds": 0.005,
+   "stderr_tail": ""
+  },
+  {
+   "name": "recipe-python",
+   "command": "python3 -c \"import json;a=json.load(open('/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/l1/c1-score-4cc1.json'));b=json.load(open('/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/l1/c1-score-at-55bcce69.json'));print(a['revision'],a['exit_code'],a['met_target']);print(b['revision'],b['exit_code'],b['met_target']);print([k for k in a['bindings'] if a['bindings'][k]!=b['bindings'][k]])\"",
+   "exit": 0,
+   "stdout_sha256": "9bdcfcb86a253fca7efb1dc57eb206aa406896f6625c9e1e860aa856d8247acd",
+   "stdout_bytes": 188,
+   "wall_seconds": 0.012,
+   "stderr_tail": ""
+  },
+  {
+   "name": "committer-histogram",
+   "command": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin log --format='%cd' --date=format:'%H:%M:%S' c29360e3..c86ea508 | sort | uniq -c",
+   "exit": 0,
+   "stdout_sha256": "70e4ca26d4c2ce947a47a08283773e6b3a068d102286718c06b1ad28b2e732c6",
+   "stdout_bytes": 170,
+   "wall_seconds": 0.002,
+   "stdout": "6 08:59:08\n      1 08:59:37\n      1 09:35:19\n      1 09:37:35\n      1 09:42:48\n      1 09:46:41\n      1 09:49:16\n      1 09:50:44\n      1 09:57:16\n      1 10:43:43",
+   "stderr_tail": ""
+  },
+  {
+   "name": "identity-repair-evidence",
+   "command": "grep -o 'push range contains a foreign author email[^\"]*' /home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-27T07-52-07-309Z_01a17c58-598d-7507-a58f-62bb501eed98.jsonl | sort -u; grep -o 'landed 7ed97668[a-f0-9]*' /home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-27T07-52-07-309Z_01a17c58-598d-7507-a58f-62bb501eed98.jsonl | sort -u",
+   "exit": 0,
+   "stdout_sha256": "7f2e80016a8ea7e10996657ae0ba00ede19107c4220ab045f17a7c14c2a2c368",
+   "stdout_bytes": 596,
+   "wall_seconds": 0.152,
+   "stdout": "push range contains a foreign author email: $an <$ae>\\\npush range contains a foreign author email: kaidoku-shokunin <kaidoku-shokunin@shokunin.local>\\nrc=3\\nc29360e3ba5381a5ab69e372d0d9577970f85018\\trefs/heads/main\\n\npush range contains a foreign author email: kaidoku-shokunin <kaidoku-shokunin@shokunin.local>\\nrc=3\\nstate branch=main local=1e9c4a430a46d5fde5f9cd1294fb04400199fe1b remote=c29360e3ba5381a5ab69e372d0d9577970f85018 ahead=6 behind=0 head=detached tracked=25 untracked=36\\nc29360e3ba5381a5ab69e372d0d9577970f85018\\trefs/heads/main\\n\nlanded 7ed97668cc8e17eb013c53e9ea950ed4f320a4da",
+   "stderr_tail": ""
+  },
+  {
+   "name": "sweep-transcript",
+   "command": "grep -c 'landed c86ea508188c50e2645b1f9bba65df4177cda6b1' /home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-10-27T07-52-07-309Z_01a17c58-598d-7507-a58f-62bb501eed98.jsonl",
+   "exit": 0,
+   "stdout_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+   "stdout_bytes": 2,
+   "wall_seconds": 0.053,
+   "stdout": "1",
+   "stderr_tail": ""
+  },
+  {
+   "name": "preflight-loop",
+   "command": "for rev in 55bcce69 c86ea508 8bb1090a: frozen-path-preflight.py --root . --freeze c48f8a4b --rev $rev --pathspec tools/round-44",
+   "runs": [
+    {
+     "rev": "55bcce69",
+     "exit": 0,
+     "stdout_sha256": "c8a03c2673a9bfd52b23077a604e48288e44c70ff5cedd5782bc4fa6430a870f",
+     "stdout_bytes": 226,
+     "wall_seconds": 0.128
+    },
+    {
+     "rev": "c86ea508",
+     "exit": 1,
+     "stdout_sha256": "20a87d4d81eedaa79defea6c0fcbbe248bd415e35460b48dd6b66fffe0a28896",
+     "stdout_bytes": 2092,
+     "wall_seconds": 0.124
+    },
+    {
+     "rev": "8bb1090a",
+     "exit": 1,
+     "stdout_sha256": "c302813c8069f581e4674d3f5335f9a8f4db903015df772eaa509ee08a1cdf99",
+     "stdout_bytes": 2092,
+     "wall_seconds": 0.122
+    }
+   ],
+   "total_wall_seconds": 0.374
+  }
+ ]
+}

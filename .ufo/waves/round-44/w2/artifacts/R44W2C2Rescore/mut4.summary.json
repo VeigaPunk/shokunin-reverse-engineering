@@ -1,0 +1,107 @@
+{
+ "ancestor_ok": true,
+ "claim_gate": {
+  "claim_score": true,
+  "counter_sha256_at_freeze": "085192ea6c3f3f4d67c58ce459ef06e1febd0b668dc367ccfbdd12661736c277",
+  "entries_evaluated": 80,
+  "exit_code": 1,
+  "frozen_path_changed": [],
+  "met_target": false,
+  "mismatches_count": 3,
+  "rubric_sha256_at_freeze": "e8cc0dedd6b4bbfb323983018806de4b6ad59b80b1aeee111aa2d8ebf55e755e",
+  "rubric_source": "freeze",
+  "unevaluable_count": 0,
+  "usable_as_claim_score": false
+ },
+ "claim_score": true,
+ "counter_path": "tools/round-44/c2-counter.py",
+ "counter_sha256": "085192ea6c3f3f4d67c58ce459ef06e1febd0b668dc367ccfbdd12661736c277",
+ "counter_sha256_at_freeze": "085192ea6c3f3f4d67c58ce459ef06e1febd0b668dc367ccfbdd12661736c277",
+ "declared_freeze": null,
+ "entries_count": 80,
+ "entries_evaluated": 80,
+ "exit_code": 1,
+ "export_mode": "auto",
+ "exported_path_count": 3204,
+ "freeze": "0024b5a94f8e845238127bc2a7396a1752358050",
+ "frozen_dirs": [
+  "tools/round-44"
+ ],
+ "frozen_path_changed": [],
+ "frozen_path_changed_count": 0,
+ "met_target": false,
+ "mismatch_details": [
+  {
+   "asserted": "137/137",
+   "check": "json",
+   "command": [
+    "python3",
+    "-I",
+    "-B",
+    "-c",
+    "import json,os,re,subprocess,sys\nREV=sys.argv[1]; FREEZE=sys.argv[2]; REPO=sys.argv[3]\nEID='C2-a1-owned-coverage-count'\ndef show(path,rev=None):\n    r=subprocess.run([\"git\",\"-C\",REPO,\"show\",f\"{rev or REV}:{path}\"],capture_output=True,text=True)\n    return r.stdout if r.returncode==0 else None\ndef exists(path,rev=None):\n    return subprocess.run([\"git\",\"-C\",REPO,\"cat-file\",\"-e\",f\"{rev or REV}:{path}\"],capture_output=True).returncode==0\ndef correction(txt,eid):\n    ls=(txt or \"\").splitlines()\n    for i,l in enumerate(ls):\n        if (\"<!-- c2-correction: \"+eid+\" -->\") in l:\n            for j in range(i+1,min(i+10,len(ls))):\n                m=re.match(r\"\\s*c2-correction-value:\\s*(.+?)\\s*$\",ls[j])\n                if m: return m.group(1)\n    return None\ndef section(text,prefix):\n    ls=(text or \"\").splitlines()\n    for i,l in enumerate(ls):\n        if l.startswith(prefix):\n            out=[l]\n            for k in range(i+1,len(ls)):\n                if ls[k].startswith(\"## \"): break\n                out.append(ls[k])\n            return \"\\n\".join(out)\n    return None\ndef find_row(text,prefix,key):\n    ls=(text or \"\").splitlines()\n    start=0\n    if prefix:\n        for i,l in enumerate(ls):\n            if l.startswith(prefix): start=i+1; break\n        else: return None\n    k=start\n    while k<len(ls) and not ls[k].startswith(\"## \"):\n        l=ls[k]\n        if l.startswith(\"|\"):\n            c=[x.strip() for x in l.strip().strip(\"|\").split(\"|\")]\n            if c and c[0]==key: return l\n        k+=1\n    return None\ndef find_box(text,key):\n    ls=(text or \"\").splitlines()\n    for i,l in enumerate(ls):\n        m=re.match(r\"^- \\[[ x~]\\] (.*)$\",l)\n        if m and m.group(1).strip().startswith(key):\n            out=[l]\n            for k in range(i+1,len(ls)):\n                if ls[k].startswith(\"  \"): out.append(ls[k])\n                else: break\n            return \"\\n\".join(out)\n    return None\ndef find_line(text,needle):\n    for l in (text or \"\").splitlines():\n        if needle in l: return l\n    return None\ndef heading_range(path,prefix,rev,stop):\n    t=show(path,rev); ls=(t or \"\").splitlines()\n    st=next((k for k,l in enumerate(ls) if l.startswith(prefix)),None)\n    if st is None: return None\n    last=st\n    for k in range(st+1,len(ls)):\n        if stop(ls[k]): break\n        if ls[k].strip(): last=k\n    return \"%d-%d\"%(st+1,last+1)\ndef command_a(rev):\n    out=subprocess.check_output([\"git\",\"-C\",REPO,\"ls-tree\",\"-r\",\"--name-only\",rev,\"--\",\"corpus/knowledge\"],text=True).splitlines()\n    files={p.rsplit(\"/\",1)[-1][:-3] for p in out if p.endswith(\".md\")}\n    readme=show(\"corpus/README.md\",rev) or \"\"\n    sec=readme.split(\"## Coverage map\\n\",1)[1].split(\"\\n## \",1)[0] if \"## Coverage map\\n\" in readme else \"\"\n    mapped=set(re.findall(r\"2026-10-\\d{2}-[a-z0-9-]+\",sec))\n    skill=show(\"SKILL.md\",rev) or \"\"\n    craft=skill.split(\"## Queue-drain craft \",1)[1].split(\"\\n## \",1)[0] if \"## Queue-drain craft \" in skill else \"\"\n    rules=re.split(r\"(?m)^- \\*\\*\",craft)[1:]\n    pat=r\"corpus/knowledge/([a-z0-9-]+\\.md)(?::(\\d+)(?:-(\\d+))?)?\"\n    resolved=0\n    for rule in rules:\n        refs=re.findall(pat,rule); ok=bool(refs)\n        for name,f,l in refs:\n            t=show(\"corpus/knowledge/\"+name,rev)\n            if t is None: ok=False; continue\n            s,e=int(f or 1),int(l or f or 1)\n            ok=ok and 1<=s<=e<=len(t.splitlines())\n        resolved+=ok\n    return {\"mapped\":len(files&mapped),\"files\":len(files),\"missing\":sorted(files-mapped),\n            \"dangling\":sorted(mapped-files),\"rules\":len(rules),\"resolved\":resolved,\n            \"coverage_score\":round(10*len(files&mapped)/len(files),2) if files else 0.0,\n            \"depth_score\":round(10*resolved/len(rules),2) if rules else 0.0}\ndef triage_table(rev,marker):\n    sk=show(\"SKILL.md\",rev) or \"\"; ls=sk.splitlines()\n    idx=[i for i,l in enumerate(ls) if marker in l]\n    if not idx: return None\n    i=idx[0]; tbl=[]; j=i+1\n    while j<len(ls):\n        if ls[j].strip().startswith(\"|\"): tbl.append(ls[j])\n        elif tbl: break\n        j+=1\n    if not tbl: return None\n    cols=len(tbl[0].strip().strip(\"|\").split(\"|\"))\n    rows=[l for l in tbl[1:] if not re.fullmatch(r\"[|\\s:\\-]*\",l)]\n    return {\"cols\":cols,\"rows\":len(rows)}\ndef emit(observed,derived,detail=\"\"):\n    print(json.dumps({\"id\":EID,\"observed\":observed,\"derived\":derived,\"detail\":detail}))\n\n\nSTMT=show('SCORECARD.md',REV)\nline=None\nif '':\n    line=find_box(STMT,'')\nelif 'coverage':\n    line=find_row(STMT,'## Owned axes','coverage')\nelse:\n    line=find_line(STMT,'craft section')\nif line is None:\n    emit(\"UNSUPPORTED:statement-not-found\",None,\"statement not located at REV\"); raise SystemExit(0)\nms=list(re.finditer('(\\\\d+)/(\\\\d+) knowledge files mapped',line))\nif not ms:\n    emit(\"UNSUPPORTED:pattern-not-found\",None,\"stated pattern absent from the statement\"); raise SystemExit(0)\nm=ms[min(1,len(ms))-1]\nstated=(m.group(1)+'/'+m.group(2))\neff=correction(STMT,EID)\nif eff is not None: stated=eff\nREV2='FREEZE_TREE'\nif REV2==\"FREEZE_TREE\": REV2=os.environ.get(\"HYAKU_FREEZE\") or FREEZE\nA=command_a(REV2); derived=\"%d/%d\"%(A[\"mapped\"],A[\"files\"])\nobserved=stated if (stated is not None and derived is not None and stated==derived) else (\"UNSUPPORTED:\"+str(stated))\nemit(observed,derived,\"'owned-axes current observable vs the freeze tree'\")\n",
+    "0024b5a94f8e845238127bc2a7396a1752358050",
+    "0024b5a94f8e845238127bc2a7396a1752358050",
+    "/tmp/c2-counter.hzz4te6a/repo"
+   ],
+   "compare": "eq",
+   "file": "SCORECARD.md",
+   "id": "C2-a1-owned-coverage-count",
+   "observed": "UNSUPPORTED:137/137"
+  },
+  {
+   "asserted": "resolved",
+   "check": "json",
+   "command": [
+    "python3",
+    "-I",
+    "-B",
+    "-c",
+    "import json,os,re,subprocess,sys\nREV=sys.argv[1]; FREEZE=sys.argv[2]; REPO=sys.argv[3]\nEID='C2-c01-cap-pointer'\ndef show(path,rev=None):\n    r=subprocess.run([\"git\",\"-C\",REPO,\"show\",f\"{rev or REV}:{path}\"],capture_output=True,text=True)\n    return r.stdout if r.returncode==0 else None\ndef exists(path,rev=None):\n    return subprocess.run([\"git\",\"-C\",REPO,\"cat-file\",\"-e\",f\"{rev or REV}:{path}\"],capture_output=True).returncode==0\ndef correction(txt,eid):\n    ls=(txt or \"\").splitlines()\n    for i,l in enumerate(ls):\n        if (\"<!-- c2-correction: \"+eid+\" -->\") in l:\n            for j in range(i+1,min(i+10,len(ls))):\n                m=re.match(r\"\\s*c2-correction-value:\\s*(.+?)\\s*$\",ls[j])\n                if m: return m.group(1)\n    return None\ndef section(text,prefix):\n    ls=(text or \"\").splitlines()\n    for i,l in enumerate(ls):\n        if l.startswith(prefix):\n            out=[l]\n            for k in range(i+1,len(ls)):\n                if ls[k].startswith(\"## \"): break\n                out.append(ls[k])\n            return \"\\n\".join(out)\n    return None\ndef find_row(text,prefix,key):\n    ls=(text or \"\").splitlines()\n    start=0\n    if prefix:\n        for i,l in enumerate(ls):\n            if l.startswith(prefix): start=i+1; break\n        else: return None\n    k=start\n    while k<len(ls) and not ls[k].startswith(\"## \"):\n        l=ls[k]\n        if l.startswith(\"|\"):\n            c=[x.strip() for x in l.strip().strip(\"|\").split(\"|\")]\n            if c and c[0]==key: return l\n        k+=1\n    return None\ndef find_box(text,key):\n    ls=(text or \"\").splitlines()\n    for i,l in enumerate(ls):\n        m=re.match(r\"^- \\[[ x~]\\] (.*)$\",l)\n        if m and m.group(1).strip().startswith(key):\n            out=[l]\n            for k in range(i+1,len(ls)):\n                if ls[k].startswith(\"  \"): out.append(ls[k])\n                else: break\n            return \"\\n\".join(out)\n    return None\ndef find_line(text,needle):\n    for l in (text or \"\").splitlines():\n        if needle in l: return l\n    return None\ndef heading_range(path,prefix,rev,stop):\n    t=show(path,rev); ls=(t or \"\").splitlines()\n    st=next((k for k,l in enumerate(ls) if l.startswith(prefix)),None)\n    if st is None: return None\n    last=st\n    for k in range(st+1,len(ls)):\n        if stop(ls[k]): break\n        if ls[k].strip(): last=k\n    return \"%d-%d\"%(st+1,last+1)\ndef command_a(rev):\n    out=subprocess.check_output([\"git\",\"-C\",REPO,\"ls-tree\",\"-r\",\"--name-only\",rev,\"--\",\"corpus/knowledge\"],text=True).splitlines()\n    files={p.rsplit(\"/\",1)[-1][:-3] for p in out if p.endswith(\".md\")}\n    readme=show(\"corpus/README.md\",rev) or \"\"\n    sec=readme.split(\"## Coverage map\\n\",1)[1].split(\"\\n## \",1)[0] if \"## Coverage map\\n\" in readme else \"\"\n    mapped=set(re.findall(r\"2026-10-\\d{2}-[a-z0-9-]+\",sec))\n    skill=show(\"SKILL.md\",rev) or \"\"\n    craft=skill.split(\"## Queue-drain craft \",1)[1].split(\"\\n## \",1)[0] if \"## Queue-drain craft \" in skill else \"\"\n    rules=re.split(r\"(?m)^- \\*\\*\",craft)[1:]\n    pat=r\"corpus/knowledge/([a-z0-9-]+\\.md)(?::(\\d+)(?:-(\\d+))?)?\"\n    resolved=0\n    for rule in rules:\n        refs=re.findall(pat,rule); ok=bool(refs)\n        for name,f,l in refs:\n            t=show(\"corpus/knowledge/\"+name,rev)\n            if t is None: ok=False; continue\n            s,e=int(f or 1),int(l or f or 1)\n            ok=ok and 1<=s<=e<=len(t.splitlines())\n        resolved+=ok\n    return {\"mapped\":len(files&mapped),\"files\":len(files),\"missing\":sorted(files-mapped),\n            \"dangling\":sorted(mapped-files),\"rules\":len(rules),\"resolved\":resolved,\n            \"coverage_score\":round(10*len(files&mapped)/len(files),2) if files else 0.0,\n            \"depth_score\":round(10*resolved/len(rules),2) if rules else 0.0}\ndef triage_table(rev,marker):\n    sk=show(\"SKILL.md\",rev) or \"\"; ls=sk.splitlines()\n    idx=[i for i,l in enumerate(ls) if marker in l]\n    if not idx: return None\n    i=idx[0]; tbl=[]; j=i+1\n    while j<len(ls):\n        if ls[j].strip().startswith(\"|\"): tbl.append(ls[j])\n        elif tbl: break\n        j+=1\n    if not tbl: return None\n    cols=len(tbl[0].strip().strip(\"|\").split(\"|\"))\n    rows=[l for l in tbl[1:] if not re.fullmatch(r\"[|\\s:\\-]*\",l)]\n    return {\"cols\":cols,\"rows\":len(rows)}\ndef emit(observed,derived,detail=\"\"):\n    print(json.dumps({\"id\":EID,\"observed\":observed,\"derived\":derived,\"detail\":detail}))\n\n\nimport fnmatch\nSTMT=show('SCORECARD.md',REV)\nrow=find_row(STMT,'## Capabilities','pre-registered two-lane live battery on REA 6.5.0')\nif row is None:\n    emit(\"UNSUPPORTED:row-not-found\",None,\"statement row not located\"); raise SystemExit(0)\nPTR=re.compile(r\"^([A-Za-z0-9_.][A-Za-z0-9_./+*-]*?)(?::(\\d+)(?:-(\\d+))?)?$\")\nLANEP=re.compile(r\"^(corpus/|tools/|\\.ufo/|plans/|evidence/|scripts/|considerthese/|SCORECARD\\.md|SHONEN\\.md|SKILL\\.md|PROVINCE\\.md|LOG\\.md)\")\nTREE=subprocess.check_output([\"git\",\"-C\",REPO,\"ls-tree\",\"-r\",\"--name-only\",REV],text=True).splitlines()\nTREE_BASE=subprocess.check_output([\"git\",\"-C\",REPO,\"ls-tree\",\"-r\",\"--name-only\",'c29360e3ba5381a5ab69e372d0d9577970f85018'],text=True).splitlines()\nbad=[]; total=0; fabricated=[]\nfor tok in re.findall(r\"`([^`]+)`\",row):\n    for word in tok.split():\n        m=PTR.match(word)\n        if not m or word.startswith((\"/\", \"~\")): continue\n        path=m.group(1)\n        if not LANEP.match(path): continue\n        total+=1\n        if \"*\" in path:\n            ok=any(fnmatch.fnmatch(p,path) for p in TREE)\n            base_ok=any(fnmatch.fnmatch(p,path) for p in TREE_BASE)\n        else:\n            p=path.rstrip(\"/\")\n            ok=exists(p)\n            base_ok=exists(p,'c29360e3ba5381a5ab69e372d0d9577970f85018')\n            if ok and m.group(2):\n                t=show(p); n=0 if t is None else len(t.splitlines())\n                lo=int(m.group(2)); hi=int(m.group(3) or m.group(2))\n                ok=1<=lo<=hi<=n\n        if ok and not base_ok: fabricated.append(path)\n        if not ok: bad.append(word)\nif fabricated: derived=\"fabricated_pointer:\"+\",\".join(fabricated)\nelif bad: derived=\"unresolved:\"+\",\".join(bad)\nelse: derived=\"resolved\"\nobserved=\"resolved\" if (not bad and not fabricated) else \"UNSUPPORTED:\"+derived\nemit(observed,derived,\"evidence pointers of the statement row resolve at REV (a glob pointer must match at least one committed file)\")\n",
+    "0024b5a94f8e845238127bc2a7396a1752358050",
+    "0024b5a94f8e845238127bc2a7396a1752358050",
+    "/tmp/c2-counter.hzz4te6a/repo"
+   ],
+   "compare": "eq",
+   "file": "SCORECARD.md",
+   "id": "C2-c01-cap-pointer",
+   "observed": "UNSUPPORTED:unresolved:.ufo/waves/luna-round-6/receipts-Z/"
+  },
+  {
+   "asserted": "137/137; missing=[]; dangling=[]",
+   "check": "json",
+   "command": [
+    "python3",
+    "-I",
+    "-B",
+    "-c",
+    "import json,os,re,subprocess,sys\nREV=sys.argv[1]; FREEZE=sys.argv[2]; REPO=sys.argv[3]\nEID='C2-h1-readme-coverage-map-complete'\ndef show(path,rev=None):\n    r=subprocess.run([\"git\",\"-C\",REPO,\"show\",f\"{rev or REV}:{path}\"],capture_output=True,text=True)\n    return r.stdout if r.returncode==0 else None\ndef exists(path,rev=None):\n    return subprocess.run([\"git\",\"-C\",REPO,\"cat-file\",\"-e\",f\"{rev or REV}:{path}\"],capture_output=True).returncode==0\ndef correction(txt,eid):\n    ls=(txt or \"\").splitlines()\n    for i,l in enumerate(ls):\n        if (\"<!-- c2-correction: \"+eid+\" -->\") in l:\n            for j in range(i+1,min(i+10,len(ls))):\n                m=re.match(r\"\\s*c2-correction-value:\\s*(.+?)\\s*$\",ls[j])\n                if m: return m.group(1)\n    return None\ndef section(text,prefix):\n    ls=(text or \"\").splitlines()\n    for i,l in enumerate(ls):\n        if l.startswith(prefix):\n            out=[l]\n            for k in range(i+1,len(ls)):\n                if ls[k].startswith(\"## \"): break\n                out.append(ls[k])\n            return \"\\n\".join(out)\n    return None\ndef find_row(text,prefix,key):\n    ls=(text or \"\").splitlines()\n    start=0\n    if prefix:\n        for i,l in enumerate(ls):\n            if l.startswith(prefix): start=i+1; break\n        else: return None\n    k=start\n    while k<len(ls) and not ls[k].startswith(\"## \"):\n        l=ls[k]\n        if l.startswith(\"|\"):\n            c=[x.strip() for x in l.strip().strip(\"|\").split(\"|\")]\n            if c and c[0]==key: return l\n        k+=1\n    return None\ndef find_box(text,key):\n    ls=(text or \"\").splitlines()\n    for i,l in enumerate(ls):\n        m=re.match(r\"^- \\[[ x~]\\] (.*)$\",l)\n        if m and m.group(1).strip().startswith(key):\n            out=[l]\n            for k in range(i+1,len(ls)):\n                if ls[k].startswith(\"  \"): out.append(ls[k])\n                else: break\n            return \"\\n\".join(out)\n    return None\ndef find_line(text,needle):\n    for l in (text or \"\").splitlines():\n        if needle in l: return l\n    return None\ndef heading_range(path,prefix,rev,stop):\n    t=show(path,rev); ls=(t or \"\").splitlines()\n    st=next((k for k,l in enumerate(ls) if l.startswith(prefix)),None)\n    if st is None: return None\n    last=st\n    for k in range(st+1,len(ls)):\n        if stop(ls[k]): break\n        if ls[k].strip(): last=k\n    return \"%d-%d\"%(st+1,last+1)\ndef command_a(rev):\n    out=subprocess.check_output([\"git\",\"-C\",REPO,\"ls-tree\",\"-r\",\"--name-only\",rev,\"--\",\"corpus/knowledge\"],text=True).splitlines()\n    files={p.rsplit(\"/\",1)[-1][:-3] for p in out if p.endswith(\".md\")}\n    readme=show(\"corpus/README.md\",rev) or \"\"\n    sec=readme.split(\"## Coverage map\\n\",1)[1].split(\"\\n## \",1)[0] if \"## Coverage map\\n\" in readme else \"\"\n    mapped=set(re.findall(r\"2026-10-\\d{2}-[a-z0-9-]+\",sec))\n    skill=show(\"SKILL.md\",rev) or \"\"\n    craft=skill.split(\"## Queue-drain craft \",1)[1].split(\"\\n## \",1)[0] if \"## Queue-drain craft \" in skill else \"\"\n    rules=re.split(r\"(?m)^- \\*\\*\",craft)[1:]\n    pat=r\"corpus/knowledge/([a-z0-9-]+\\.md)(?::(\\d+)(?:-(\\d+))?)?\"\n    resolved=0\n    for rule in rules:\n        refs=re.findall(pat,rule); ok=bool(refs)\n        for name,f,l in refs:\n            t=show(\"corpus/knowledge/\"+name,rev)\n            if t is None: ok=False; continue\n            s,e=int(f or 1),int(l or f or 1)\n            ok=ok and 1<=s<=e<=len(t.splitlines())\n        resolved+=ok\n    return {\"mapped\":len(files&mapped),\"files\":len(files),\"missing\":sorted(files-mapped),\n            \"dangling\":sorted(mapped-files),\"rules\":len(rules),\"resolved\":resolved,\n            \"coverage_score\":round(10*len(files&mapped)/len(files),2) if files else 0.0,\n            \"depth_score\":round(10*resolved/len(rules),2) if rules else 0.0}\ndef triage_table(rev,marker):\n    sk=show(\"SKILL.md\",rev) or \"\"; ls=sk.splitlines()\n    idx=[i for i,l in enumerate(ls) if marker in l]\n    if not idx: return None\n    i=idx[0]; tbl=[]; j=i+1\n    while j<len(ls):\n        if ls[j].strip().startswith(\"|\"): tbl.append(ls[j])\n        elif tbl: break\n        j+=1\n    if not tbl: return None\n    cols=len(tbl[0].strip().strip(\"|\").split(\"|\"))\n    rows=[l for l in tbl[1:] if not re.fullmatch(r\"[|\\s:\\-]*\",l)]\n    return {\"cols\":cols,\"rows\":len(rows)}\ndef emit(observed,derived,detail=\"\"):\n    print(json.dumps({\"id\":EID,\"observed\":observed,\"derived\":derived,\"detail\":detail}))\n\n\nREV2='FREEZE_TREE'\nif REV2==\"FREEZE_TREE\": REV2=os.environ.get(\"HYAKU_FREEZE\") or FREEZE\nA=command_a(REV2)\nderived=\"%d/%d; missing=%s; dangling=%s\"%(A[\"mapped\"],A[\"files\"],A[\"missing\"],A[\"dangling\"])\nemit(derived,derived,\"'README coverage map completeness under command A'\")\n",
+    "0024b5a94f8e845238127bc2a7396a1752358050",
+    "0024b5a94f8e845238127bc2a7396a1752358050",
+    "/tmp/c2-counter.hzz4te6a/repo"
+   ],
+   "compare": "eq",
+   "file": "corpus/README.md",
+   "id": "C2-h1-readme-coverage-map-complete",
+   "observed": "138/138; missing=[]; dangling=[]"
+  }
+ ],
+ "mismatches": [
+  "C2-a1-owned-coverage-count",
+  "C2-c01-cap-pointer",
+  "C2-h1-readme-coverage-map-complete"
+ ],
+ "mismatches_count": 3,
+ "pre_freeze": false,
+ "predicate": "P44-C2",
+ "revision": "0024b5a94f8e845238127bc2a7396a1752358050",
+ "root": "/fast/scratch/hyaku/kaidoku-r44/w2-R44W2C2Rescore/mut4",
+ "rubric_path": "tools/round-44/c2-rubric.json",
+ "rubric_sha256": "e8cc0dedd6b4bbfb323983018806de4b6ad59b80b1aeee111aa2d8ebf55e755e",
+ "rubric_sha256_at_freeze": "e8cc0dedd6b4bbfb323983018806de4b6ad59b80b1aeee111aa2d8ebf55e755e",
+ "rubric_sha256_at_rev": "e8cc0dedd6b4bbfb323983018806de4b6ad59b80b1aeee111aa2d8ebf55e755e",
+ "rubric_source": "freeze",
+ "seat": "R44C2Counter",
+ "unevaluable_count": 0,
+ "wall_seconds": 4.765583
+}

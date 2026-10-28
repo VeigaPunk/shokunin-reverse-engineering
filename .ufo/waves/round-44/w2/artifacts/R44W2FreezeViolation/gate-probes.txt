@@ -1,0 +1,16 @@
+case A: change then restore to the freeze bytes
+  blobs_equal=yes
+  gate exit=1
+case B: frozen file edited only on the merged branch (merge-only violation)
+  a.txt at merge = side-mutated
+  gate exit=1
+case C: new file added under the frozen dir after the freeze
+  gate exit=1
+case D: frozen path edited OUTSIDE the pathspec supplied to the gate
+  gate --pathspec tools/round-44 (file is outside it) exit=0
+  gate --pathspec plans/claims.md exit=1
+  gate --pathspec both exit=1
+case E: rev == freeze
+  gate exit=0
+case F: no --pathspec at all, real lane, clean revision 55bcce69
+  gate exit=1
