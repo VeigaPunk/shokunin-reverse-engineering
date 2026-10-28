@@ -557,9 +557,18 @@ bullet is bounded by the lines it cites.
   `2` is never a pass. Two parsers are load-bearing and both are pinned by a source
   opened this round: the dirty arm reads `git status --porcelain -z`, whose v1 format
   S140 guarantees stable for scripts and whose `-z` form is the machine one; the commit
-  arm reads `git log --name-status` records, and S141 states that with `-z` the fields
-  are NUL-terminated and pathnames are not munged. History, not tip equality, is the
-  evidence: a path that was edited post-freeze and then restored to its exact bytes is
+  arm reads plain tab-separated `git log --name-status` records, and S141 states the
+  separator rule that makes that parsing safe — with `-z` the fields are NUL-terminated and
+  pathnames are not munged; the `-z` form is the machine-safe variant this arm does not use
+  yet (routed R45-CL11). The exit column is the gate's; a scoring counter reports the same
+  condition as `2` could-not-evaluate, never as a pass. The `commit` arm is ancestor-linear
+  except for the `-m --diff-merges=first-parent` form it uses, which is what makes a merge's
+  own resolution edit visible — a plain `git log --name-only` scan misses it, and both
+  round-45 counters have exactly that blindness (HIGH, routed R45-CL6). An invocation must
+  name every frozen path: this round's freeze has two, so the gate is called with
+  `--pathspec tools/round-45/ --pathspec plans/round-45-claims.md` and the matching two
+  `--freeze-path` values; one pathspec certifies four of the five frozen files (routed
+  R45-CL10). History, not tip equality, is the evidence: a path that was edited post-freeze and then restored to its exact bytes is
   still a violation (`corpus/lessons/round-44.md:88-92`,
   `corpus/lessons/round-44-verifier-spotcheck.md:89-92`), which is why the `restored`
   list is reported separately from `blob_changed` instead of collapsing into it.
@@ -569,7 +578,7 @@ bullet is bounded by the lines it cites.
   | --- | --- | --- | --- |
   | any commit in FREEZE..REV touches a frozen path | commit (git log --name-status, S141) | 1 | `touched[]`, one record per path with commit and status |
   | a frozen path was touched and later restored to its FREEZE bytes | restored (commit history, never tip equality) | 1 | `restored[]`, disjoint from `blob_changed[]` |
-  | a frozen path's blob at REV differs from its blob at FREEZE | blob (ls-tree plus rev-parse on both revisions) | 1 | `blob_changed[]` |
+  | a frozen path's blob at REV differs from its blob at FREEZE | blob or frozen subtree oid (ls-tree plus rev-parse on both revisions) | 1 | `blob_changed[]`; a directory entry is its tree oid, not a file |
   | the worktree is dirty under the frozen pathspec | dirty (git status --porcelain -z, S140) | 1 | `dirty[]` from `--check-dirty` |
   | a frozen path is a directory at FREEZE and no pathspec covers it | pathspec (`--require-pathspec`) | 2 | `uncovered_frozen_dirs[]`; a whole-tree scan is refused |
   | one bulk commit sweeps N frozen paths beside unrelated paths | commit plus dirty (the M45-1 shape) | 1 | `touched[]` count and the frozen subset |

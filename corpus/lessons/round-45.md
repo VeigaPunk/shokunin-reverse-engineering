@@ -22,8 +22,8 @@ name). The measured revision and verdicts are recorded in the fleet report and i
 
 | row | URL | opened | located quote (≤25 words) |
 |---|---|---|---|
-| S140 | https://git-scm.com/docs/git-status | 2026-10-28T15:31Z, HTTP 200, 99,934 bytes, page sha256 `903e31c527d443ab4051f7b4e0225058efd96a45d0400538f6ba19b5c9c59ad9`; anchors `Porcelain Format Version 1` and the `-z` machine-parsing paragraph | "guaranteed not to change in a backwards-incompatible way between Git versions or based on user configuration … ideal for parsing by scripts" (21 words) |
-| S141 | https://git-scm.com/docs/git-diff-tree | 2026-10-28T15:31Z, HTTP 200, 256,810 bytes, page sha256 `f81c1e3141b2e8e2cfc5790b8923881862f964ae5e3f85c157299b71f80c9640`; anchors `-z` and the raw output format | "When --raw, --numstat, --name-only or --name-status has been given, do not munge pathnames and use NULs as output field terminators." (23 words) |
+| S140 | https://git-scm.com/docs/git-status | 2026-10-28T15:31Z, HTTP 200, 99,934 bytes, page sha256 `903e31c527d443ab4051f7b4e0225058efd96a45d0400538f6ba19b5c9c59ad9`; anchors `Porcelain Format Version 1` and the `-z` machine-parsing paragraph | "guaranteed not to change in a backwards-incompatible way between Git versions or based on user configuration … ideal for parsing by scripts" (21 words, excluding the elision marker) |
+| S141 | https://git-scm.com/docs/git-diff-tree | 2026-10-28T15:31Z, HTTP 200, 256,810 bytes, page sha256 `f81c1e3141b2e8e2cfc5790b8923881862f964ae5e3f85c157299b71f80c9640`; anchors `-z` and the raw output format | "When --raw, --numstat, --name-only or --name-status has been given, do not munge pathnames and use NULs as output field terminators." (20 words) |
 
 Both rows are cited by the round's R45-C1 landing: block 22's dirty arm parses
 `git status --porcelain -z` (S140 says the v1 porcelain format is stable for scripts and
@@ -56,10 +56,13 @@ is added because no round-45 claim cites S138.
   (`grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' corpus/SOURCES.md`). Round-start census:
   `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku`
   → `kaidoku ok`, exit 0, 14 W04 duplicate-URL warnings. Round end: same command, exit 0,
-  16 W04 warnings (S140 and S141 are new URLs; the two added warnings are the within-scope
-  URL repeats class recorded by `R45W1CensusDupClass`). No `status` / `recheck` / `used-by`
-  cell of an existing row changed except the `used-by` values that name
-  `corpus/lessons/round-45.md` on the two new rows.
+  14 W04 warnings — S140 and S141 add no new duplicate-URL warning, and the class counts
+  were classified by `R45W1CensusDupClass` (every current W04 is a same-URL scope variant,
+  four of them deliberate CORPUS-rule-2 supersession rows). An earlier draft of this
+  paragraph said 16; the measured number is 14 at both ends (corrected after wave-1 seat
+  `R45W1SrcGitDiffTree` F5). No `status` / `recheck` / `used-by` cell of an existing row
+  changed except the `used-by` values that name `corpus/lessons/round-45.md` on the two new
+  rows.
 
 ## Routed defects (for round 46)
 
@@ -83,6 +86,52 @@ is added because no round-45 claim cites S138.
 - **R45-CL5.** The r44 counters still exit 2 at the lane tip on the eight sweep-committed
   control-fixture paths. That is a *correct* report of a real post-freeze touch whose author
   was external; the lane does not rewrite the r44 record to make them green.
+- **R45-CL6 (HIGH; wave-1 `R45W1RevFreezeCommit` F1).** Both round-45 counters enforce the
+  freeze with `git log --name-only <freeze>..<rev> -- <paths>`, which prints **no diff for a
+  merge commit**: an edit made by the merge's own resolution is invisible, so a tampered
+  frozen path can still be scored `met_target`. The probe is
+  `.ufo/waves/round-45/w1/R45W1RevFreezeCommit/fixtures/evil_merge_probe.sh` (preflight 1,
+  both counters 0 on the same fixture). The measured range `f762b727..1f4b27f8` contains no
+  merge, so the score stands; the fix (`-m --diff-merges=first-parent` plus a tip-blob arm)
+  cannot land this round because the counters are frozen.
+- **R45-CL7 (wave-1 `R45W1C1CounterMutants`).** Two c1-counter selftest selftest holes:
+  `rule_blocks >= 22` and a deleted `block22_present != 1` reason both survive the 9-case
+  selftest (clause 1 is exercised only from below, clause 2 by no case). The code is
+  correct; the case set must add a 23-block fixture and a two-marker fixture.
+- **R45-CL8 (wave-1 `R45W1C2CounterMutants`).** Two c2-counter selftest holes: an
+  `endswith` lookup and an "any cell contains the path" lookup both survive the 7-case
+  selftest (the wrong-path fixture uses paths that are no suffix of a scope path). Add a
+  fixture whose row names `c1-counter.py` (a suffix) and one whose cell contains the path
+  beside other text.
+- **R45-CL9 (wave-1 `R45W1C1SelftestFromFreeze` §4; six landed mutants).** The counters'
+  checks are narrower than the claim sentences they implement: (A1) `craft_blocks` splits on
+  `^- \*\*` anywhere in the section, so a top-level `- **…**` line inside a rule body
+  manufactures a block; (A2) the citation regex validates only `corpus/knowledge/**`,
+  `corpus/lessons/**` and `plans/**`, so `SKILL.md:99999`, `LOG.md:9999`,
+  `corpus/SOURCES.md:9999` and `tools/…:7` are invisible to both the `>= 4` count and the
+  resolution arm; (A3) `parse_rows` accepts a row under any heading, not only a registry
+  table; (A4) it uses `re.search` on the first cell, so extra text beside the backticked
+  path still matches; (A5) `scope_size` counts list entries without de-duplication; (A6)
+  `\b0\b`/`\b1\b`/`\b2\b` anywhere in the exit cell passes. None was exploited by the
+  landed bytes (all six landed rows carry the exact path as the whole first cell, the
+  landed refs are all of the validated forms, and the scope file has six distinct paths);
+  the landing was also verified against the claim text directly, not only through the
+  counter.
+- **R45-CL10 (wave-1 `R45W1RevFreezeCommit` F2/F3/F4).** The published gate invocation
+  covered only `tools/round-45/` and missed `plans/round-45-claims.md` (one of the two
+  frozen paths); the gate's exit is `1` where a counter reports the same condition as `2`;
+  and `blob_changed` can name a frozen subtree oid, not only blobs. The corrected
+  invocation names both pathspecs and both `--freeze-path` values
+  (`.ufo/waves/round-45/l1/preflight-round45-frozen-both.json`).
+- **R45-CL11 (wave-1 `R45W1SrcGitDiffTree` F3).** The preflight docstring says the commit
+  arm reads NUL-terminated `--name-status` output, but the code invokes plain
+  `git log --name-status` and splits on tabs; S141 still grounds the field-separator
+  statement, not a `-z` usage this arm does not have. The docstring is frozen; block 22 now
+  states the plain form.
+- **R45-CL12 (wave-1 `R45W1SrcS138Fix` F1).** A `github.com` HTML page's sha256 is not a
+  page identity: two fetches of the S138 top URL differ in 667 bytes (per-request nonce and
+  request-id), so a future row must cite the located quote and the paths it lists, not an
+  HTML digest. The round-45 Gate cites no HTML digest for S138.
 
 ## Inherited state
 
