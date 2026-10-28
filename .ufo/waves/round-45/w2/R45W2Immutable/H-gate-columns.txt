@@ -1,0 +1,34 @@
+# registry-immutable.sh — column naming and rule-2 allowlist, REAL captured output
+utc: 2026-10-28T16:26:07Z
+gate sha256: b3ea8fc7e36fa8be0e9dfb98e540b95c3919db65c82d134dc1c7c2973817b669   fixture: /fast/scratch/hyaku/kaidoku-r45/R45W2Immutable/fx9.hKcMFD
+base=e3fa9508e63465ec1ed67c8a29b9176bacbe81bf
+
+control base-vs-base                   exit=0 stdout=[]
+M col3 source edited                   exit=1 stdout=[S001 changed columns: 3]
+M col5 tier edited                     exit=1 stdout=[S003 changed columns: 5]
+M col6 scope widened                   exit=1 stdout=[S001 changed columns: 6]
+M col8 teaches edited                  exit=1 stdout=[S001 changed columns: 8]
+M col10 opened edited                  exit=1 stdout=[S002 changed columns: 10]
+allowed: col9 status + col11 recheck + col12 used-by exit=0 stdout=[]
+row deleted                            exit=1 stdout=[S003 row deleted (append-only)]
+two surviving rows swapped             exit=1 stdout=[S003 row deleted (append-only)
+S001 / S002 row reordered (append-only)]
+append a duplicate id                  exit=1 stdout=[S003 changed columns: 3 6 7 8
+ / S003 row reordered (append-only)]
+renumber id S001 -> S0011              exit=1 stdout=[S001 row deleted (append-only)]
+append a 12th cell after used-by (NF=14) exit=0 stdout=[]
+
+## the extra-cell row as awk sees it
+NF=14  col12=[ corpus/lessons/c.md ]  col13=[ XCELL ]
+## CORPUS census on the same bytes (fleet script, --file mode)
+## NOTE: the fixture table has no `## Registry` heading, so the census reports E12
+## "row outside Registry section" for every row. That is a fixture artifact, not a finding;
+## the meaningful census comparison is at the end of this file, on the real registry bytes.
+file	E12	S001 row outside Registry section
+file	E12	S002 row outside Registry section
+file	E12	S003 row outside Registry section
+
+## CORPUS census on the REAL registry with S139 given a 12th cell (clone cl3 commit 0d29ba1d)
+file	E01	S139 fields=12
+gate on the same clone revision:
+  exit=0 stdout=[]

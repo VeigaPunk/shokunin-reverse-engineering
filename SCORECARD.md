@@ -3590,6 +3590,8 @@ arm-covering but not arm-isolating and that `--dirty-pathspec` replaces the dirt
 (a false-clean, routed), and routes R45-CL15/CL16. Re-measured at A3: R45-C1 exit 0, `rule_blocks 22`,
 `block22_rows 10`, `block22_refs 8`, `unresolved []`, `met_target true`
 (`.ufo/waves/round-45/l1/scores/c1-at-A3.json`); R45-C2 exit 0, `unregistered []`, `thin []`,
-`met_target true` (`…/c2-at-A3.json`). **The measured revision for the round is A3**; the values are
-identical at `e715263c`, `1f4b27f8`, `fedd11bf` and A3, and both counters are shown
-non-discriminating by wave 1 (R45-CL13/C14) — the verdicts are `met (instrument non-discriminating)`.
+`met_target true` (`…/c2-at-A3.json`). **The measured revision for the round is A3**; `rule_blocks`, `rows`, `unresolved` and
+`met_target` are identical at `e715263c`, `1f4b27f8`, `fedd11bf` and A3, while `block22_refs` reads
+6 / 7 / 8 / 8 as citations were added (wave-2 `R45W2Immutable` R-1 caught the earlier "the values are
+identical" sentence; corrected here), and both counters are shown non-discriminating by wave 1
+(R45-CL13/C14) — the verdicts are `met (instrument non-discriminating)`.

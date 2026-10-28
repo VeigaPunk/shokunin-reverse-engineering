@@ -1,0 +1,50 @@
+# preflight --require-pathspec: shipped vs patched, REAL captured output (scratch copies only)
+utc: 2026-10-28T16:25:26Z
+frozen preflight: sha256 633ebc058f0ea5a7c6dec4a9d6287e062eecf497fb6da674a3898c7c7130523b bytes 11987
+orig-preflight.py   sha256 633ebc058f0ea5a7c6dec4a9d6287e062eecf497fb6da674a3898c7c7130523b
+fixed-preflight.py  sha256 5a2c54d8d0b5358d90a7f26b018f9f9b96ed49db983b5b934b1b9dc449cfcfda
+fixture: /fast/scratch/hyaku/kaidoku-r45/R45W2Immutable/pf2.0HOd5U  (frozen dir tools/round-45, files tool.py + other.py)
+  MOD   = commit where other.py is modified after the freeze
+  REST  = commit where other.py is restored to its freeze bytes (blob identical to freeze)
+
+## covers() as shipped
+def covers(pathspecs, frozen_path):
+    """True when some pathspec equals or lies under the frozen path."""
+    fp = frozen_path.rstrip("/")
+    return any(p.rstrip("/") == fp or p.rstrip("/").startswith(fp + "/") for p in pathspecs)
+
+
+
+## covers() as patched in the scratch copy
+def covers(pathspecs, frozen_path):
+    """True when some pathspec equals or lies under the frozen path."""
+    fp = frozen_path.rstrip("/")
+    # FIX: the pathspec must be the frozen path or an ANCESTOR of it (a wider
+    # scope). The shipped test had it backwards: it accepted a narrower pathspec.
+    return any(p.rstrip("/") == fp or fp.startswith(p.rstrip("/") + "/") or p.rstrip("/") in (".", "")
+               for p in pathspecs)
+
+
+## real runs — other.py MODIFIED (blob differs from freeze)
+rev=MOD pathspec=tools/round-45/tool.py orig-preflight   exit=1 verdict=frozen_path_changed reason=None uncovered=None blob=['tools/round-45']
+rev=MOD pathspec=tools/round-45/tool.py fixed-preflight  exit=2 verdict=could_not_evaluate reason=pathspec_required uncovered=['tools/round-45'] blob=None
+rev=MOD pathspec=tools/round-45         orig-preflight   exit=1 verdict=frozen_path_changed reason=None uncovered=None blob=['tools/round-45', 'tools/round-45/other.py']
+rev=MOD pathspec=tools/round-45         fixed-preflight  exit=1 verdict=frozen_path_changed reason=None uncovered=None blob=['tools/round-45', 'tools/round-45/other.py']
+rev=MOD pathspec=tools                  orig-preflight   exit=2 verdict=could_not_evaluate reason=pathspec_required uncovered=['tools/round-45'] blob=None
+rev=MOD pathspec=tools                  fixed-preflight  exit=1 verdict=frozen_path_changed reason=None uncovered=None blob=['tools/round-45', 'tools/round-45/other.py']
+rev=MOD pathspec=.                      orig-preflight   exit=2 verdict=could_not_evaluate reason=pathspec_required uncovered=['tools/round-45'] blob=None
+rev=MOD pathspec=.                      fixed-preflight  exit=1 verdict=frozen_path_changed reason=None uncovered=None blob=['tools/round-45', 'tools/round-45/other.py']
+
+## real runs — other.py TAMPERED THEN RESTORED (the R44-CL10 defect shape)
+rev=REST pathspec=tools/round-45/tool.py orig-preflight   exit=0 verdict=clean reason=None uncovered=None restored=[]
+rev=REST pathspec=tools/round-45/tool.py fixed-preflight  exit=2 verdict=could_not_evaluate reason=pathspec_required uncovered=['tools/round-45'] restored=None
+rev=REST pathspec=tools/round-45        orig-preflight   exit=1 verdict=frozen_path_changed reason=None uncovered=None restored=['tools/round-45/other.py']
+rev=REST pathspec=tools/round-45        fixed-preflight  exit=1 verdict=frozen_path_changed reason=None uncovered=None restored=['tools/round-45/other.py']
+rev=REST pathspec=tools                 orig-preflight   exit=2 verdict=could_not_evaluate reason=pathspec_required uncovered=['tools/round-45'] restored=None
+rev=REST pathspec=tools                 fixed-preflight  exit=1 verdict=frozen_path_changed reason=None uncovered=None restored=['tools/round-45/other.py']
+rev=REST pathspec=.                     orig-preflight   exit=2 verdict=could_not_evaluate reason=pathspec_required uncovered=['tools/round-45'] restored=None
+rev=REST pathspec=.                     fixed-preflight  exit=1 verdict=frozen_path_changed reason=None uncovered=None restored=['tools/round-45/other.py']
+
+## selftests
+orig-preflight   exit=0 PREFLIGHT_SELFTEST: cases=11 failures=0
+fixed-preflight  exit=0 PREFLIGHT_SELFTEST: cases=11 failures=0

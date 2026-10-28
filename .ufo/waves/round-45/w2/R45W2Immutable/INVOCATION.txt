@@ -1,0 +1,33 @@
+# R45W2Immutable — exact invocations (all UTC, all exit codes recorded)
+
+## Primary (the assigned attack)
+bash /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-38/registry-immutable.sh \
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin \
+  149133d47aa7e90796f96047afe6d251a3e65b2c \
+  f59565b782c18b0eb691bec12f52d2f80d9f5032
+# exit 0, empty stdout, stdout sha256 e3b0c442...b855 (sha256 of the empty string)
+
+## Range extremes and per-segment controls (same script, lane root)
+base-vs-base            149133d4..149133d4   exit 0
+freeze-vs-landing       f762b727..e715263c   exit 0
+landing-vs-A1           e715263c..1f4b27f8   exit 0
+A1-vs-A3                1f4b27f8..f59565b7   exit 0
+A3-vs-tip               f59565b7..0ee50aaf   exit 0
+base-vs-tip             149133d4..0ee50aaf   exit 0
+
+## Selftest of the gate
+bash tools/round-38/registry-immutable.sh --selftest
+# exit 0, SELFTEST cases=5 pass=5 fail=0
+
+## Independent verification (different parser, same question)
+python3 <strict-parser>   # no indent anchor, regex '\| *(S\d{3,}) *\|'
+# rows 139 -> 141, added [S140,S141], removed [], order preserved True, changed_cells 0
+
+## Counters at the measured revision
+python3 -I -B tools/round-45/c1-counter.py --root <LANE> --freeze f762b727 --rev 1f4b27f8
+python3 -I -B tools/round-45/c2-counter.py --root <LANE> --freeze f762b727 --rev 1f4b27f8
+# both exit 0, met_target true
+
+## Preflight selftest
+python3 -I -B tools/round-45/frozen-path-preflight.py --selftest
+# exit 0, PREFLIGHT_SELFTEST: cases=11 failures=0

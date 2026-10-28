@@ -232,3 +232,16 @@ inherited uncommitted lane work was reused or discarded.
   path and the `restored` arm is dead for such paths (the verdict is still right through the blob
   arm). A `U+2028` path truncates the recorded path. Nothing in this lane's surfaces has such a
   name; routed for completeness.
+- **R45-CL24 (LOW/MEDIUM; wave-2 `R45W2Immutable` R-1/R-5/R-10 and §4.2).** Four record/wording
+  defects, one fixed and three routed: (a) fixed — `SCORECARD.md`'s A3 paragraph still said "the
+  values are identical at … A3" although `block22_refs` reads 6/7/8/8 (now qualified like the A2
+  paragraph); (b) routed — block 22's empty-range row says "all arms" although `--check-dirty` on a
+  dirty frozen file makes `--freeze B --rev B` exit 1 (the row's trigger already reads "no dirty
+  file", so the literal trigger is consistent, the arm cell is ambiguous); (c) routed — S140/S141's
+  `anchor` cells name sections plus a fetch stamp but no **revision** token, and `CORPUS.md:99-100`
+  asks for "exact section / heading / page / line plus revision (version, commit, or publication
+  date)": the pages carry no version marker, are byte-stable across five fetches (so a page sha256
+  *is* usable identity here, unlike S138's `github.com` page), and the cells should say so; (d)
+  routed — the `tools/round-44/c1-counter.py` registry row documents `--selftest --pkg65 <root>`,
+  the host has no rea-agents 6.5.0 root installed, and the plain `--selftest` runs 47 cases green,
+  so the row's command form is untested as written.
