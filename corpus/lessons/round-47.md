@@ -49,6 +49,22 @@ command it owned read the artefact, none read the claim.
   the freeze in the artefact the counter does not freeze, or the plan should declare the series as
   open-ended.
 
+| M47-8 | `separability-asserted-not-measured` — the claims file asserts that R47-C2 "never reads the craft section", but `record.py`'s `axes` class derives the `depth` head from `SKILL.md`'s craft section, so removing block 24 flips C2 from exit 0 to exit 1 (`depth 24/24 -> 23/23`) | wave-1 `ConnSeparability/report.md` and its 10-state grid; the receipt pair `receipts/S00_both.c2.json` | `none` — separability was argued in prose and never tested with a revert | reported as falsified in one direction; C1 is independent (`SCORECARD.md` deleted → C1 exit 0). Round 48 must either drop the `axes` class from C2's predicate or state that C2 shares C1's surface |
+| M47-9 | `record-misquotes-its-own-receipt` — the round section and the calibration row said "over 50 atoms", `atoms 50`, `exempted 2` while the cited receipt reads `atoms 42`, `exempted 1`; no counter of this round can catch a prose number that disagrees with the receipt it cites | wave-1 `ConnSeparability` message; `l1/scores/c2-at-A7.json` | `none` — the C2 predicate checks atoms against the repo, never the record's prose against its own receipt | the cells now read 42 and 1; routed as R47-CL13 (bind each quoted receipt number to the receipt) |
+
+- **R47-CL12 (wave-1 `ConnSeparability`).** `record.py` has no freeze arm: C1 refuses a changed
+  frozen byte (`frozen_path_changed`) while C2 grades a `SCORECARD.md` that A3/A5 rewrote, so the two
+  instruments have different custody. Closing it means giving `record.py` the same `gate.freeze_state`
+  call over its own frozen set — which then couples it to the freeze series the way block 24's pin
+  already is (R47-CL8).
+- **R47-CL13 (wave-1 `ConnSeparability`).** A number the record quotes from its own receipt is
+  unchecked: the round section said `atoms 50` / `exempted 2` while the receipt read `atoms 42` /
+  `exempted 1`. A `receipt` atom class that reads the JSON the sentence cites and compares the named
+  field would close it.
+- **R47-CL14 (wave-1 `ConnSeparability`).** An `axes` correction line is silently inert: `CORR`
+  excludes the class, so a reader who writes one believes the atom repaired. The correction grammar
+  should refuse a class it cannot apply rather than ignore it.
+
 ## Gate
 
 ### Sources opened this round (2026-10-28)
