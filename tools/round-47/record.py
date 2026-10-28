@@ -546,7 +546,9 @@ def selftest():
                  ".ufo/waves/round-9/w1-dispatch.json":
                      json.dumps({"counts": {"spawn": 1}}),
                  ".ufo/waves/round-9/w2-dispatch.json":
-                     json.dumps({"counts": {"spawn": 1}})}
+                     json.dumps({"counts": {"spawn": 1}}),
+                 ".ufo/waves/round-3/w1-dispatch.json":
+                     json.dumps({"counts": {"spawn": 2}})}
 
         def run(name, expect, card, with_battery=False):
             got, rec = evaluate_text(card, lambda p: files.get(p), d, tip,
