@@ -609,6 +609,26 @@ bullet is bounded by the lines it cites.
   the claims file and the whole `tools/round-45/` directory, the latter a directory
   pathspec that must be passed explicitly.
 
+- **23. Freeze-integrity evidence is only evidence when its own forgeries fail.** <!-- freeze-integrity-table v2 --> The round-45 table (block 22) stated the arms; this one states what makes the statement checkable — each row is a defect the round-45 closure routed (R45-CL13 a–f, R45-CL14 a–f), the v1 clause that let it pass, and the arm of `tools/round-46/{gate,attest,registry}.py` that now fails it. Interpreter pin: `tools/round-46/attest.py` `sha256:eba599582bb32eab3c47d7c15cbd53852e257070ae756136e3cee059e37311fd`. Source S142.
+
+| trigger | v1 hole | v2 arm | exit |
+|---|---|---|---|
+| R45-CL2 a registry row names a tool that exists at no revision | no presence check, so a ghost row registers | presence: `absent_at_rev` is computed from the census, never from the row | 1 |
+| R45-CL6 a merge's own resolution edit touches a frozen path | `git log --name-only` prints no diff for a merge | merge: `--diff-merges=first-parent` plus an independent blob arm; the two must agree | 2 |
+| R45-CL7 `rule_blocks >= 22` survives the counter's selftest | the clause is exercised from below only | rows: the selftest carries one red case per clause, and the mutation list is named in the claim | 1 |
+| R45-CL9 a citation resolves but names nothing about the defect | the regex validated only `corpus/knowledge`, `corpus/lessons` and `plans`, and accepted a reference with no selector | refs: every citation carries a line selector and a path inside the validated set; the interpreter is identified by its sha pin instead | 1 |
+| R45-CL13 a 44-line artefact with garbage rows scores met | row count and exit cells are structural tests | rows: every row names a routed id and an arm from the fixed vocabulary, so a garbage row fails | 1 |
+| R45-CL14 six fenced rows anywhere in SKILL.md register | the parser was fence-blind, comment-blind and heading-blind | marker: rows register only between the two registry markers and outside fences and comments | 1 |
+| R45-CL15 `--dirty-pathspec` replaced the dirty scope instead of adding to it | the arm is arm-covering but not arm-isolating | dirty: the dirty scope is the union of the pathspecs, and each arm has a red case that names it | 1 |
+| R45-CL18 a path named only by `--freeze-path` never entered `touched`, so tamper-then-restore read clean | the log scope and the freeze scope were different sets | restored: one frozen set derived from the claims file feeds both arms, so the sets cannot differ | 1 |
+| R45-CL19 a tamper-then-restore folded away by `git merge --squash` | the surviving history names nothing | blob: the blob arm still compares the two revisions; the limit is stated in the table, not claimed away | 2 |
+| R45-CL20 the scratch root fell back to `/tmp` | `tempfile.gettempdir()` was an accepted root | output: `scratch()` refuses a temporary partition and returns could-not-evaluate instead of degrading | 2 |
+| R45-CL22 `--json-out ../../SKILL.md` overwrote the graded surface | the output path was trusted and written before the verdict | output: `out_path()` refuses any target inside the graded or frozen set and any path outside the lane root | 2 |
+| R45-CL23 a newline or tab in a pathname is recorded C-quoted, killing the restored arm | `touched` compared quoted strings with real paths | commit: the history arm reads `--name-status -z`, so pathnames are not munged and the comparison is byte-exact | 1 |
+| R45-CL24 the record drifted from the instrument it described | nothing bound the prose to the code | pin: the block carries the interpreter's sha256, so a prose claim and the bytes it describes cannot diverge silently | 1 |
+
+  Refs: `corpus/lessons/round-45.md:142-176` (R45-CL13/CL14, the C1 and C2 defects), `corpus/lessons/round-45.md:90-101` (R45-CL6/CL7), `corpus/lessons/round-45.md:197-217` (R45-CL18/CL19), `corpus/lessons/round-45.md:212-231` (R45-CL20/CL22), `corpus/lessons/round-46.md:18-19` (M46-1/M46-2), `plans/round-46-claims.md:37-166` (the two predicates and the frozen set). S142 grounds the `--diff-merges=first-parent` arm (`corpus/lessons/round-46.md:27-31`).
+
 ## Config custody for live-probe rounds (SOP)
 
 Binding for every future live-probe round. A zero-drift claim without its own
