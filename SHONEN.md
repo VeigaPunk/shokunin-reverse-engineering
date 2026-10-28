@@ -16,3 +16,5 @@ Promotion to shokunin requires all of:
   Round 43: the new sasquatch matrix is Frontier packaging inventory only; no compatibility/Core claim was added. The C2 copy gate and 136-check audit pass, but the frozen C2 score tool stops on an overstrict raw line-count check; no cross-domain promotion is claimed.
 
 Round-43 correction: the C2 stop is not an overstrict-counter false negative. The frozen plan and scorer both require a `3\t0` SOURCES numstat, while the committed BASE→REV diff is `4\t0` (S135–S137 plus a blank separator); C2 is not met. Wave-2 review also recorded C1 envelope-provenance and ID-path limits and C2 copy-containment gaps; no cross-domain promotion follows.
+
+Round 49 (non-author verifier: none; no box moves to `[x]`): box 2 — REA 6.5.0 `extract-firmware` re-run on the four round-44 v1/v2 fixtures (not new data), receipts `corpus/evidence/round-49/c1/`, score `.ufo/waves/round-49/l1/scores/c1-final.json`; box 4 — `PROVINCE.md` `## Round-49 additions to Core` row and frontier note appended, Adjacent unchanged; boxes 1 and 3 unchanged.

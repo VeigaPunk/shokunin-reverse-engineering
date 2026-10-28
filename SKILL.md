@@ -55,6 +55,7 @@ a catalog-listed tool is available, not held.
 | Runtime targets | self-launch `chromium --remote-debugging-port=9222` / `xvfb-run electron …:9223` → `list-*-targets` → `inspect-*-page` | held |
 | `.jsc` V8 bytecode | `ELECTRON_RUN_AS_NODE=1` + version-matched electron (V8 map in corpus) → `--print-bytecode` | held r4 (typora→electron42.2.0) |
 | Firmware blob | `inspect-firmware-regions` (binwalk 3.1.0), `extract-firmware` (unblob 26.6.4) | held r4u; RISC-V `target_unavailable` bypassed via e_machine patch + language override (r5-01) |
+| SquashFS v1.0/v2.0 (standard, gzip) | `extract-firmware` with `sasquatch` 4.5.1 on the child PATH; expect handler `squashfs_v1`/`squashfs_v2`, `extraction_gaps == []`, members equal `unsquashfs -lls`; without sasquatch a `missing-extractor-dependency` gap | held r49 on four fixtures (`corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md`); `squashfs_v2_nonstandard` (no second reader), v2.1, v3 Broadcom/non-standard stay frontier — the v4 triage table (block 21) does not apply to them |
 | Android APK | `inspect-android-package`/`decode-android-resources`/`inspect-android-method` (jadx-mcp 0.7.1, apktool 3.0.3) | held r4u; real Java decompile |
 | Managed DLL `0x14c` | `inspect-managed-artifact`/`inspect-managed-members` <64MiB; else dnfile+dncil | held r4/r4u; `0xfd1d` class → dnfile only |
 | JS minified source | `recover-javascript-sources <FILE> <outdir>` (file arg; wakaru ELF binding) | held r4u |

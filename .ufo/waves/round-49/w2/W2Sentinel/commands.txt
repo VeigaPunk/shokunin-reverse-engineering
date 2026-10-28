@@ -1,0 +1,12 @@
+# W2Sentinel sweep: exact commands run (lane L=/home/vgpnk/Projects/shokunin/kaidoku-shokunin, E=e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9, R=29883d4ec35a31a8393c4ffb220888c44c0bb022); all with GIT_NO_REPLACE_OBJECTS=1, TMPDIR=S
+git -C $L diff --name-only $E $R                     # exit 0; 2231 paths
+git -C $L diff --raw -z --no-renames $E $R           # exit 0; 2176 A 100644, 49 A 100755, 6 M 100644; 0 symlinks, 0 gitlinks
+git -C $L diff --numstat -z $E $R                    # 512683 insertions, 2 deletions
+git -C $L cat-file -s $R:<path>                      # size pass over 2231 blobs; 1 over 1 MiB
+python3 -I -B scan.py                                # exit 0; 2231 blobs scanned, 0 unreadable; hits in hit-counts.txt
+python3 -I -B selftest.py                            # 11/12 positive fixtures; jwt fixture re-tested with jwt-selftest (positive True, negative False)
+git -C $L diff --no-color --no-ext-diff -U0 --no-renames $E $R > added.diff   # exit 0; 28880208 bytes; 512593 added lines
+git -C $L show $R:.ufo/waves/round-49/w1/C1CarrierPins/receipts/tree.hdr      # cookie lines 15-17 (values redacted in copies)
+git -C $L show $R:.ufo/waves/round-49/w1/C1S138Reopen/receipts/top.hdr        # cookie lines 15-17 (values redacted in copies)
+git -C $L show $R:.ufo/waves/round-49/w1/C1RunReview/logs/strace-f-dev-run.txt.gz | gzip -dc   # 25376186 bytes, 421812 lines, 0 execve lines
+git -C $L log --all --oneline -- CORPUS.md           # empty: no CORPUS.md in any commit reachable from the lane

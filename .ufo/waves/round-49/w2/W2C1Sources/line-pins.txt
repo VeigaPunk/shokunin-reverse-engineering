@@ -1,0 +1,192 @@
+
+===== 24-70 =====
+  24|class SquashFSExtractor(Extractor):
+  25|    EXECUTABLE = "sasquatch"
+  26|    V4BE_EXECUTABLE = "sasquatch-v4be"
+  27|
+  28|    def __init__(self, version: int, big_endian_magic: int):
+  29|        self.version = version
+  30|        self.big_endian_magic = big_endian_magic
+  31|
+  32|    def extract(self, inpath: Path, outdir: Path):
+  33|        with File.from_path(inpath) as file:
+  34|            endian = get_endian(file, self.big_endian_magic)
+  35|
+  36|        commands_args = []
+  37|        executable = self.EXECUTABLE
+  38|
+  39|        match endian, self.version:
+  40|            case Endian.BIG, 4:
+  41|                executable = self.V4BE_EXECUTABLE
+  42|                struct_parser = StructParser(SquashFSv4LEHandler.C_DEFINITIONS)
+  43|                with File.from_path(inpath) as f:
+  44|                    header = struct_parser.parse(
+  45|                        SquashFSv4LEHandler.HEADER_STRUCT, f, Endian.BIG
+  46|                    )
+  47|                    # see https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt
+  48|                    is_avm = header.bytes_used == header.mkfs_time
+  49|                    if not is_avm:
+  50|                        commands_args.append("-be")
+  51|            case Endian.BIG, _:
+  52|                commands_args.append("-be")
+  53|            case Endian.LITTLE, _:
+  54|                commands_args.append("-le")
+  55|
+  56|        commands_args.extend(
+  57|            [
+  58|                "-no-exit-code",
+  59|                "-f",
+  60|                "-d",
+  61|                "{outdir}",
+  62|                "{inpath}",
+  63|            ]
+  64|        )
+  65|        extractor = Command(executable, *commands_args)
+  66|        extractor.extract(inpath, outdir)
+  67|
+  68|    def get_dependencies(self) -> list[str]:
+  69|        return [self.EXECUTABLE, self.V4BE_EXECUTABLE]
+  70|
+
+===== 37-69 =====
+  37|        executable = self.EXECUTABLE
+  38|
+  39|        match endian, self.version:
+  40|            case Endian.BIG, 4:
+  41|                executable = self.V4BE_EXECUTABLE
+  42|                struct_parser = StructParser(SquashFSv4LEHandler.C_DEFINITIONS)
+  43|                with File.from_path(inpath) as f:
+  44|                    header = struct_parser.parse(
+  45|                        SquashFSv4LEHandler.HEADER_STRUCT, f, Endian.BIG
+  46|                    )
+  47|                    # see https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt
+  48|                    is_avm = header.bytes_used == header.mkfs_time
+  49|                    if not is_avm:
+  50|                        commands_args.append("-be")
+  51|            case Endian.BIG, _:
+  52|                commands_args.append("-be")
+  53|            case Endian.LITTLE, _:
+  54|                commands_args.append("-le")
+  55|
+  56|        commands_args.extend(
+  57|            [
+  58|                "-no-exit-code",
+  59|                "-f",
+  60|                "-d",
+  61|                "{outdir}",
+  62|                "{inpath}",
+  63|            ]
+  64|        )
+  65|        extractor = Command(executable, *commands_args)
+  66|        extractor.extract(inpath, outdir)
+  67|
+  68|    def get_dependencies(self) -> list[str]:
+  69|        return [self.EXECUTABLE, self.V4BE_EXECUTABLE]
+
+===== 72-75 =====
+  72|class _SquashFSBase(StructHandler):
+  73|    BIG_ENDIAN_MAGIC = 0x73_71_73_68
+  74|
+  75|    EXTRACTOR = SquashFSExtractor(3, 0x73_71_73_68)
+
+===== 101-121 =====
+ 101|class SquashFSv1Handler(_SquashFSBase):
+ 102|    NAME = "squashfs_v1"
+ 103|
+ 104|    PATTERNS = [
+ 105|        HexString(
+ 106|            """
+ 107|            // 00000000  73 71 73 68 00 00 00 03  00 00 00 00 00 00 00 00  |sqsh............|
+ 108|            // 00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 01 00 00  |................|
+ 109|            // squashfs_v1_magic_be
+ 110|            73 71 73 68 [24] 00 01
+ 111|        """
+ 112|        ),
+ 113|        HexString(
+ 114|            """
+ 115|            // 00000000  68 73 71 73 03 00 00 00  00 00 00 00 00 00 00 00  |hsqs............|
+ 116|            // 00000010  00 00 00 00 00 00 00 00  00 00 00 00 01 00 00 00  |................|
+ 117|            // squashfs_v1_magic_le
+ 118|            68 73 71 73 [24] 01 00
+ 119|        """
+ 120|        ),
+ 121|    ]
+
+===== 123-137 =====
+ 123|    C_DEFINITIONS = r"""
+ 124|        typedef struct squashfs_super_block
+ 125|        {
+ 126|            char   s_magic[4];
+ 127|            uint32 inodes;
+ 128|            uint32 bytes_used;
+ 129|            uint32 uid_start;
+ 130|            uint32 guid_start;
+ 131|            uint32 inode_table_start;
+ 132|            uint32 directory_table_start;
+ 133|            uint16 s_major;
+ 134|            uint16 s_minor;
+ 135|        } squashfs_super_block_t;
+ 136|    """
+ 137|    HEADER_STRUCT = "squashfs_super_block_t"
+
+===== 158-178 =====
+ 158|class SquashFSv2Handler(SquashFSv1Handler):
+ 159|    NAME = "squashfs_v2"
+ 160|
+ 161|    PATTERNS = [
+ 162|        HexString(
+ 163|            """
+ 164|            // 00000000  73 71 73 68 00 00 00 03  00 00 00 00 00 00 00 00  |sqsh............|
+ 165|            // 00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 02 00 00  |................|
+ 166|            // squashfs_v2_magic_be
+ 167|            73 71 73 68 [24] 00 02
+ 168|        """
+ 169|        ),
+ 170|        HexString(
+ 171|            """
+ 172|            // 00000000  68 73 71 73 03 00 00 00  00 00 00 00 00 00 00 00  |hsqs............|
+ 173|            // 00000010  00 00 00 00 00 00 00 00  00 00 00 00 02 00 00 00  |................|
+ 174|            // squashfs_v2_magic_le
+ 175|            68 73 71 73 [24] 02 00
+ 176|        """
+ 177|        ),
+ 178|    ]
+
+===== 180-196 =====
+ 180|    DOC = HandlerDoc(
+ 181|        name="SquashFS (v2)",
+ 182|        description="SquashFS version 2 is a compressed, read-only file system format designed for minimal storage usage. It builds upon version 1 with additional features and improvements for embedded systems and Linux distributions.",
+ 183|        handler_type=HandlerType.FILESYSTEM,
+ 184|        vendor=None,
+ 185|        references=[
+ 186|            Reference(
+ 187|                title="SquashFS Documentation",
+ 188|                url="https://dr-emann.github.io/squashfs/",
+ 189|            ),
+ 190|            Reference(
+ 191|                title="SquashFS Wikipedia",
+ 192|                url="https://en.wikipedia.org/wiki/SquashFS",
+ 193|            ),
+ 194|        ],
+ 195|        limitations=[],
+ 196|    )
+
+===== 199-204 =====
+ 199|class SquashFSv2NonStandardHandler(SquashFSv2Handler):
+ 200|    NAME = "squashfs_v2_nonstandard"
+ 201|
+ 202|    BIG_ENDIAN_MAGIC = 0x73_71_6C_7A
+ 203|
+ 204|    EXTRACTOR = SquashFSExtractor(2, 0x73_71_6C_7A)
+
+===== 244-245 =====
+ 244|class SquashFSv3Handler(_SquashFSBase):
+ 245|    NAME = "squashfs_v3"
+
+===== 363-364 =====
+ 363|class SquashFSv3BroadcomHandler(SquashFSv3Handler):
+ 364|    NAME = "squashfs_v3_broadcom"
+
+===== 409-410 =====
+ 409|class SquashFSv3NSHandler(SquashFSv3Handler):
+ 410|    NAME = "squashfs_v3_nonstandard"

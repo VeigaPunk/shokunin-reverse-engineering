@@ -1,0 +1,60 @@
+label	expect_by_analysis	frozen_plain_exit	mismatches	red_atoms	battery_exit	battery_failing	forgery_commit_scratch	stdout_sha256	description
+N01	green (last-wins hides the first token)	0	0		1	A3 one pointer line number moved -> red [] noop []	657368f5440d	3693be2a3788e1529064a5a8cb994f22c7b36d2bba3eb3dd5bfd7c2746318d39	A3 duplicate key within one line: wrong log_2e785632 first, correct last
+N02	green (last-wins)	0	0		0		3837533bb548	790e20e56821a2f83057ca9b1666fd9ef2c1bcebfed3de4a67da059e27ef6f14	A4 duplicate key within one line: seats=9 first, seats=75 last
+N03	green (last-wins)	0	0		1	mutation set incomplete: 15 of 16	bf6fcef30dee	28e82fadf456a9a3eb7db5a9dddd728b0157a79f586e57e264177e63fcf8d9f7	A1 duplicate key within one line: wrong declared first, correct last
+N04	red (exact-line compare)	1	1	A9			be6ff18cf5d3	f788def8e3dd322e3143d4a1cfbf522b18632bb272c1d956965d8eac4876fbb8	A9 SCORECARD line with duplicate verdict key
+N05	green (only late-marked entries are counted)	0	0		0		5b624d541ba4	d41ea5b3eecabe8cf7b87c2af4cb154e6c8570852d335bbd7e511c90ed9cc09d	second round-48 search-log entry without the late marker, contradicting the first
+N06	green (regex needs single space)	0	0		0		0f36584af1ba	7f6b9c0b3cb2682d033e617ea97a115c8a56e7c17054dfd7b9c5575a88cf6e48	S148 teaches adds "EX_USAGE  is 2" (double space)
+N07	green (regex only matches "is")	0	0		0		82ed60d8c81f	2ba5b6bcebd7c23fb6aa6fcc0ce3e069c9c5dd0101a9233968568878d62cd862	S148 teaches adds "EX_USAGE: 2"
+N08	green (regex only matches "is")	0	0		0		db5bafb16d7b	77d511629a7a205ec5adb8b03f3fdf55d8e65371a198c5de46d6871b30df77c9	S148 teaches adds "EX_USAGE means 2"
+N09	green (first match wins)	0	0		0		8fbf8f99c1d1	d25f36e4ddb89f7b880a3536a92ff42f344637f96ed969df3508439347332271	round-49 search log appends a contradicting restatement after the first numbers
+N10	green (isdigit filter drops it silently)	0	0		0		b57e4fa964d6	3b8b95aeacda908eeb2e4e6085d21c9e059289d8051fa4abf296794cd83a0b9c	A3 pointer list with a non-numeric token
+N11	red (exclusion: required when excluded > 0)	1	1	A8			b55c1f39576d	3462e2371428fc125b6ed6ceac5257a6409a5b8c3c4e417aabe9ff8adbb9ee2e	round-49 entry: Exclusion: token removed (excluded 1)
+N12	red	1	1	A8			964a11012233	c8947912cc8ce501e3251e144c7b8bc25b3288b4a1c4f0224418ecbc06df9026	round-49 entry: where searched token removed
+N13	red (used-by must list the lesson)	1	1	A6			1d8f0cace2a0	bd3e727887ae669a37715b1080c28446182ba7a285122f2abea4435bcf72ccac	S147 used-by lesson path removed
+N14	green (status cell is the derivation input; prose not judged)	0	0		0		809bed1a6bdb	d23d32e345b19b71cdc25a65e97da3aaa612c1a73e5016425074b8d6b5d906cf	S149 status flipped to mined; round-49 counts restated to 3/0 (teaches still says REJECTED)
+N15	red A6 (pin)	1	1	A6			2d23e1dc5457	a94e1b1f2653aa915b05685958dc9122ee02682774b934245cef0f60e4c883aa	popper.html edited, S147 pin NOT updated
+N16	red A2	1	1	A2			9076b8e02340	34da4c7da64dcc1cef08838f28ca13ba429423cd25102124a22360af49608d4d	A2 actual replaced by base commit (same prefix absent)
+N17	red A6	1	1	A6			715c16cfc7a8	755bbbd0e67733614f4252f28608016d155c17bbfab513781130337f5ebcd0e8	S147 stated word count wrong (21 -> 20)
+N18	red A9	1	1	A9			4752841388f0	6049b9ea9d25438a0b4de326d0d92fda6820825f94b87ca819208aadb5a069c5	A9 SCORECARD line without calibration=harmed
+N19	red A8	1	1	A8			4771b88535a0	5df53cc980e42985285c0badc1656e2e08d52c7a816d2201c7294bc4a0dd33dd	round-48 late entry: included 1 excluded 1 restated as 2/0
+N20	red A8	1	1	A8			9793e9a97a8f	97735615bcfdfb89caccc500466ca50984972acfd796c5afdecc0d603093db84	round-49 entry identified 3 -> 2 (below screened)
+N21	red A8	1	1	A8			3ba621404930	4315a1b4d0e360628d6b99260bf671169023e2e2c5c3368d7a9d95ee016db62e	round-48 late entry: rows 144 -> 146 restated 144 -> 147
+N22	red A8	1	1	A8			f02be696cd82	56417f7a022ab91725ad810671103c705592e3bfad524c6c55cc20911920780d	round-48 late marker removed from its only entry
+N23	red A3	1	1	A3			3e37ba31b13c	6f53c3dcef8cbb1cb945b53485e683dc89fc387199ea3fb45f0f3041514308cb	LOG.md edited mid-file at REV (not append-only)
+N24	red A6	1	1	A6			3258fe4506ef	4cdba0762cef82ae1bfcdec2d614dae2dda9e4d378503f43055a44228fa68b20	S145 row edited at REV (append-only)
+N25	red A7	1	1	A7			374ad4198d1c	17282f55dd6602ccbd7cbe17189f5e9729e04f6b32d912ab6f015dfe3b9b92ce	S146 row edited at REV (append-only)
+N26	red A6 (quote not in snapshot)	1	1	A6			10d50b5ea9d1	b31a6f56c15cccf608871e6da06ed2dfcb5b88c4574d0dcc5ec74b5dbe685883	S147 quote fabricated with the same word count; pin unchanged
+N27	red A6 (duplicate id)	1	1	A6			6c63745fde18	bcb3d4141a41b98dfc7103b7091d70effc26ab7ec72c9e91a5dd7d1220f2cc5c	duplicate S147 row appended
+N28	red A6	1	1	A6			31e08ce95c62	a42ff3043ebf694bdfd0c2b3dc6397ef201dc59f272dcb9a281884819ba9ed39	lesson A6 line names S999
+N29	red A1	1	1	A1			5776f9114a88	74d8edbe9644d7a4512c64582611c5a6084eaa8f74e9622a8e60afbe2ae7ba71	A1 stale= names a commit that is not the lesson header
+N31	red A4	1	1	A4			0cfaae34a372	08c09f0a9c3dbe4e1eb05fea17c3eea901d1699e9c06608e86caa61f501a7764	A4 seats=74
+N32	red A4	1	1	A4			8d4c20e09253	e9780f45a6e3c885219b9b4745932c163b6760aa5fc84584a1cbf07c2335c009	A4 missing list drops one seat
+N33	red A5	1	1	A5			7824870d32f7	438fb7ba6f86ad91819080a23fd40820516d47e76e867c00aaf90e1128ac3cea	A5 report_c1 = raw digest prefix
+N34	red A6 (over 25 words)	1	1	A6			c093fbcef7ef	ccc021242eaa36f41fef503556c2d1f549a4aed68d582ee6b740228ab5ae600d	A6 S147 quote is a 26-word window of the snapshot (counted as 26)
+N34b	red A6 (over 25)	1	1	A6			5c2f799a258d	f93913a22cf9228bae21afae2ec3da1438910add060a98a3e21379f042325188	A6 S147 quote is a 26-word window under the Backdrop heading (heading check passes)
+N35	red A6	1	1	A6			bfb51974786a	cd5338bda47d76e5cf6c62b0a3c4b93e0f5b4be5e2bce2c4ab7489780f25de3d	A6 S147 anchor names a different heading
+N36	red A7	1	1	A7			5064c54bc201	dc5f5d2be2f1f9766a304176a9e1039b99e4f805aea230b42eecfcea263492af	A7 S148 teaches adds a second status "EX_USAGE is 2" (no double space)
+N37	red A8	1	1	A8			8b43e62ce054	f7cf554cd3119e61c9ad1f9b56ddd660e57e56ed674a5a4009f9173bae1f7cd2	A8 round-48 late entry duplicated
+N39	red A8	1	1	A8			8fd4cc9dab80	176942e0fd4d9b2e73ebf2be67898e7199788228ca6364c6d3bd64697c917385	A8 round-49 entry: Stop: renamed Halt:
+N40	red A9	1	1	A9			86475278ab73	286702c85df08ad4444ca66822c575ba817557e1690b157972a917ef68eaa3e2	A9 SCORECARD verdict changed to admitted
+N43	red A2	1	1	A2			b25c80700b3c	7330b893dd4a4cd2d3a559a1a8848fb75aa23c4e9a48834272d25b4283b1a863	A2 actual == dead (same hash)
+N44	red A1 (not byte-identical)	1	1	A1			33dffec7401e	d9b7de4378b6dc3aef94a83ff83b26db95cebefa0b799007217909f5177211ec	round-48 lesson gains one sentence at REV (header unchanged)
+N45	red A1	1	1	A1			b042b6db4514	1162c5d4f533867bd0c73a72293350a821b12bfb0abe995a36a8bc057195698a	A1 declared= names a commit but SCORECARD base freeze unchanged
+N46	red A6 (quote not in snapshot)	1	1	A6			27d66d7454f6	58e81bbfc813be0da80330ba39320c68020df66173313a739d4b3334f61e27d9	S147 quote altered by one word, count kept at 21 (quote not in snapshot)
+N47	red A3	1	1	A3			a724d012c0d5	c949a46cbaf26b8e8f98824e6f594d69dcd8e1fd90d9a982652daf66eea16035	A3 line carries an extra log_ key not in the required set
+W01	green (record unchanged; base-bound)	0	0		0		955b1f447480	24335cefa879b68218c899143ccde90489f9628337c75f2ca57b58a48bf4c260	three zero-byte .md stubs under round-48 w1; record unchanged
+W02	red A4	1	1	A4			c87092cdc7a7	5e6d911b5403f077fcace4aa4b0eacba4dd7e79271557b1a31f79db858e7cfdd	stubs + lesson A4 restated reports=75 missing=
+W03	red A4 (base results)	1	1	A4			6c2f14028695	57d671ecd36465f3a0aae6e14fdbf3791df2e2e97283dfced8fe7fd50c61aafc	results.json at REV drops 3 seats; A4 restated seats=72
+W04	red A1 (base SCORECARD)	1	1	A1			011a1f37bf6a	c0fe7abf63dbfcfedbfd0b26f05281cf89c06877e3db91fefd34135f0c15bb0b	SCORECARD round-48 declared freeze re-pointed at REV; A1 restated
+W05	red A5 (base receipt)	1	1	A5			b95c8d616be3	af3c1e7bae4ec8326a313b74e72bafeb0419752acad9d2cd668bccdea8d88772	round-48 c1 receipt rewritten at REV; A5 digests restated
+W06	red A3	1	1	A3			ac15610f84ee	5dfd21831e524af8faf512ad0d6f1edf4be07382ed5f2bf92e61305734bc41cf	A3 drops log_33f65a91 pointer
+W07	green (disclosed: snapshot self-attested)	0	0		0		80e3ce58e3cd	4494b0b2aebe5f83730ad78ee02a1dd3fadfaa5f8a03c79be13174ab769a55c1	popper.html self-authored (fabricated paragraph) + S147 pin re-written
+W08	green (disclosed: identified asserted)	0	0		0		54e260ab2dd4	15896c90feae3b884fd709017afce73b7c24beab98e97b65c580470ac8347230	round-49 search log identified 3 -> 300
+W09	green (counter reads closure at base; by design)	0	0		0		3f5b7000c195	de5295cfa3c508734d916748fcb5fc6d9ae96d3bef6a1b165166c32ab7b25ba4	round-48 closure rewritten at REV (Admission flipped)
+W10	red (duplicate atom line)	1	1	A4			1ab3217de008	2fbc90267617da75331de8873729911c2b5d4c01ed80716b4e819f4a7ba88058	duplicate A4 line inserted above the real one
+W11	red A2	1	1	A2			229067bba532	8775fba03f9e9255bc058939d800ae575d28ab55f543743fc834bcf2d5cf6e96	A2 dead hash replaced by 663f30ee + 32 zeros
+W12	red A3	1	1	A3			b858438bf410	b8f250b303921ea29d051ffec6a92d32f77542dfd6e0c86b6fe5e1f44ffd900f	A3 unnamed list drops 8847042a
+W13	red A7	1	1	A7			087fd848fa8f	a421798655bde09e878934d4469a1dd45dc139cbabd5cff7a3056e936e6e8ad2	S148 teaches inverted to EX_USAGE is 2
+W15	green (no atom reads the round-49 header)	0	0		0		5ec9affadd67	56d7ee3ce4a10d6610c19605eadf7e40445b902b701b80c3b3d3aa7c8c66a25c	round-49 lesson header Declared freeze -> 0f06251b (round-48 header defect recurring)
+W16	green (prose not judged)	0	0		0		6da5bbccd753	d7f2454ba0de9130ef9ef470656884e9effddb6fc98d2d233db1b5bea6201c71	prose line in round-49 lesson restating 0f06251b

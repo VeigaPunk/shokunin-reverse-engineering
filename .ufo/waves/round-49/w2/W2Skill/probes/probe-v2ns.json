@@ -1,0 +1,107 @@
+{
+  "actions": [
+    "none",
+    "inspect-input",
+    "install-extractor-be",
+    "install-extractor-le",
+    "wrap-extractor-be",
+    "cross-read-legacy",
+    "isolate-residue",
+    "preserve-failure",
+    "salvage-partial",
+    "raise-depth",
+    "audit-symlinks",
+    "expect-link-absent",
+    "count-gap",
+    "confirm-empty"
+  ],
+  "actions_line": 526,
+  "marker_line": 525,
+  "results": [
+    {
+      "action": "cross-read-legacy",
+      "features": {
+        "BE": "n/a",
+        "D": [],
+        "F": [
+          "squashfs_v2_nonstandard"
+        ],
+        "G": [
+          "extractor-failure"
+        ],
+        "H": [
+          "squashfs_v2_nonstandard"
+        ],
+        "HF": [
+          "squashfs_v2_nonstandard"
+        ],
+        "OP": "extract_firmware",
+        "P": 0,
+        "PV": "unblob",
+        "SR": "no",
+        "commands": []
+      },
+      "label": "legacy-body-failure",
+      "path": "synthetic-v2ns-body-failure.json",
+      "row": [
+        "legacy-body-failure",
+        "extract_firmware",
+        "unblob",
+        "squashfs_*",
+        "squashfs_v[123]*",
+        "extractor-failure+",
+        "*",
+        "*",
+        "*",
+        "0",
+        "cross-read-legacy",
+        "the handler that failed is a v1-v3 one and it published zero files; a v1-v3 chunk always runs plain `sasquatch` with an explicit `-be` or `-le` and no header is parsed (S112 :40-54), so no byte-order handshake or AVM pre-check applies and this envelope cannot separate a damaged body from a broken extractor build -> cross-read the same chunk with `unsquashfs`, which reads 1:0-3:0 (measured on the v1, v2 and v3 fixtures this wave), and with 7-Zip: if the independent readers fail where sasquatch failed the body is damaged and the failure stands; if either lists the tree the fault is the sasquatch build or its argv, so reinstall the extractor and rerun before touching the image",
+        "S112 :37,:40-54,:102,:159,:200,:245,:319,:364,:410; S120 `report.py:91-98`; `.ufo/waves/round-42/w1/artifacts/R42C2TableDraft/measurements.md` (v1/v2/v3 fixtures read by unsquashfs 4.7.5 and 7-Zip 26.04; a body-damaged v3 fails in both with sasquatch's own message); round-41 `w1/R42C1DevRun.md` (v3 dev-arm envelopes fail with `dependencies: [\"sasquatch\"]`, not a byte-order report)"
+      ],
+      "rule": 7
+    },
+    {
+      "action": "none",
+      "features": {
+        "BE": "n/a",
+        "D": [],
+        "F": [
+          "squashfs_v2_nonstandard"
+        ],
+        "G": [],
+        "H": [
+          "squashfs_v2_nonstandard"
+        ],
+        "HF": [
+          "squashfs_v2_nonstandard"
+        ],
+        "OP": "extract_firmware",
+        "P": 4,
+        "PV": "unblob",
+        "SR": "no",
+        "commands": []
+      },
+      "label": "clean",
+      "path": "control-v2ns-clean.json",
+      "row": [
+        "clean",
+        "extract_firmware",
+        "unblob",
+        "squashfs_*",
+        "*",
+        "none",
+        "*",
+        "*",
+        "*",
+        ">0",
+        "none",
+        "every regular file was published and the gap set is empty, and a `MaliciousSymlinkRemoved` report would have hit the escaping row above -> nothing to install or fix; match files to the oracle by exact relative path and sha256, and ignore nested carves; the envelope cannot rule out a link unblob removed with no report at all (the empty-target branch, S118 :67-69), so a link present in the oracle tree and absent from the output is that case, not a missed symlink gap; measured on a real `squashfs_v3` envelope at `--max-depth 3`",
+        "S118 :67-69; S119 `FirmwarePublication.js:301-307`; c1/K3,K4 after.json; c2/H01,H02,H03,H04; `.ufo/waves/round-42/w1/artifacts/R42C2TableDraft/measurements.md`; [INFERENCE] no committed envelope carries an empty-target link"
+      ],
+      "rule": 14
+    }
+  ],
+  "rules": 15,
+  "skill": "SKILL.md",
+  "table_line": 527
+}

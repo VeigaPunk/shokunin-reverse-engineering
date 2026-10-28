@@ -1,0 +1,65 @@
+[
+  {
+    "cmd": "sasquatch -v 2>&1 | head -1; sha256sum $(command -v sasquatch) | cut -c1-64",
+    "shell": true,
+    "exit": 0,
+    "started_utc": "2026-10-28T22:40:33Z",
+    "ended_utc": "2026-10-28T22:40:33Z",
+    "stdout_sha256": "923b821159b4a32d623d02f3b401ddfbdd72e7396f80e5e52645afc6520d6085",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "unsquashfs version 4.5.1 (2022/03/17)\nad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754\n",
+    "stderr": ""
+  },
+  {
+    "cmd": "command -v sasquatch; command -v sasquatch-v4be; sasquatch --version 2>&1 | head -2; true",
+    "shell": true,
+    "exit": 0,
+    "started_utc": "2026-10-28T22:40:33Z",
+    "ended_utc": "2026-10-28T22:40:33Z",
+    "stdout_sha256": "58c6c99c0adfb032bdb0582beaf782693ff35496b325ff2fac58eaaf9e52fc8f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "/home/vgpnk/.local/bin/sasquatch\n/home/vgpnk/.local/bin/sasquatch-v4be\nSYNTAX: sasquatch [OPTIONS] FILESYSTEM [files to extract or exclude (with -excludes) or cat (with -cat )]\n\t-v[ersion]\t\tprint version, licence and copyright information\n",
+    "stderr": ""
+  },
+  {
+    "cmd": [
+      "sasquatch",
+      "--version"
+    ],
+    "shell": false,
+    "exit": 1,
+    "started_utc": "2026-10-28T22:40:33Z",
+    "ended_utc": "2026-10-28T22:40:33Z",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "04ead1e28d1a83ab39704c702216777dc449bcd6fe13480a8d812a560d230c54",
+    "stdout": "",
+    "stderr": "SYNTAX: sasquatch [OPTIONS] FILESYSTEM [files to extract or exclude (with -excludes) or cat (with -cat )]\n\t-v[ersion]\t\tprint version, licence and copyright information\n\t-cat\t\t\tcat the files on the command line to stdout\n\t-d[est] <pathname>\textract to <pathname>, default \"squashfs-root\"\n\t-max[-depth] <levels>\tdescend at most <levels> of directories when\n\t\t\t\textracting or listing\n\t-excludes\t\ttreat files on command line as exclude files\n\t-ex[clude-list]\t\tlist of files to be excluded, terminated\n\t\t\t\twith ; e.g. file1 file2 ;\n\t-follow[-symlinks]\tfollow symlinks in extract files, and add all\n\t\t\t\tfiles/symlinks needed to resolve extract file.\n\t\t\t\tImplies -no-wildcards\n\t-missing[-symlinks]\tUnsquashfs will abort if any symlink can't be\n\t\t\t\tresolved in -follow-symlinks\n\t-q[uiet]\t\tno verbose output\n\t-n[o-progress]\t\tdon't display the progress bar\n\t-no[-xattrs]\t\tdon't extract xattrs in file system\n\t-x[attrs]\t\textract xattrs in file system (default)\n\t-u[ser-xattrs]\t\tonly extract user xattrs in file system.\n\t\t\t\tEnables extracting xattrs\n\t-p[rocessors] <number>\tuse <number> processors.  By default will use\n\t\t\t\tthe number of processors available\n\t-i[nfo]\t\t\tprint files as they are extracted\n\t-li[nfo]\t\tprint files as they are extracted with file\n\t\t\t\tattributes (like ls -l output)\n\t-l[s]\t\t\tlist filesystem, but don't extract files\n\t-ll[s]\t\t\tlist filesystem with file attributes (like\n\t\t\t\tls -l output), but don't extract files\n\t-lln[umeric]\t\tsame as -lls but with numeric uids and gids\n\t-lc\t\t\tlist filesystem concisely, displaying only files\n\t\t\t\tand empty directories.  Don't extract files\n\t-llc\t\t\tlist filesystem concisely with file attributes,\n\t\t\t\tdisplaying only files and empty directories.\n\t\t\t\tDon't extract files\n\t-o[ffset] <bytes>\tskip <bytes> at start of FILESYSTEM.  Optionally\n\t\t\t\ta suffix of K, M or G can be given to specify\n\t\t\t\tKbytes, Mbytes or Gbytes respectively (default\n\t\t\t\t0 bytes).\n\t-f[orce]\t\tif file already exists then overwrite\n\t-ig[nore-errors]\ttreat errors writing files to output as\n\t\t\t\tnon-fatal\n\t-st[rict-errors]\ttreat all errors as fatal\n\t-no-exit[-code]\t\tdon't set exit code (to nonzero) on non-fatal\n\t\t\t\terrors\n\t-s[tat]\t\t\tdisplay filesystem superblock information\n\t-UTC\t\t\tuse UTC rather than local time zone when\n\t\t\t\tdisplaying time\n\t-mkfs-time\t\tdisplay filesystem superblock time, which is an\n\t\t\t\tunsigned 32-bit int representing the time in\n\t\t\t\tseconds since the epoch (1970-01-01)\n\t-fstime\t\t\tsynonym for -mkfs-time\n\t-extract-file <file>\tlist of directories or files to extract.\n\t\t\t\tOne per line\n\t-exclude-file <file>\tlist of directories or files to exclude.\n\t\t\t\tOne per line\n\t-pf <file>\t\toutput a pseudo file equivalent of the input\n\t\t\t\tSquashfs filesystem\n\t-pseudo-file <file>\talternative name for -pf\n\t-e[f] <extract file>\tsynonym for -extract-file\n\t-exc[f] <exclude file>\tsynonym for -exclude-file\n\t-da[ta-queue] <size>\tset data queue to <size> Mbytes.  Default 256\n\t\t\t\tMbytes\n\t-fr[ag-queue] <size>\tset fragment queue to <size> Mbytes.  Default\n\t\t\t\t256 Mbytes\n\t-no-wild[cards]\t\tdo not use wildcard matching in extract names\n\t-r[egex]\t\ttreat extract names as POSIX regular expressions\n\t\t\t\trather than use the default shell wildcard\n\t\t\t\texpansion (globbing)\n\t-L\t\t\tsynonym for -follow-symlinks\n\t-h[elp]\t\t\toutput this options text to stdout\n\n\t-LC <value>\t\tSet the lzma-adaptive lc parameter [0-4]\n\t-LP <value>\t\tSet the lzma-adaptive lp parameter [0-4]\n\t-PB <value>\t\tSet the lzma-adaptive pb parameter [0-8]\n\t-dict <value>\t\tSet the lzma-adaptive dictionary size\n\t-lzma-offset <value>\tSet the lzma-adaptive LZMA data offset\n\t-major <version>\tManually set the SquashFS major version number\n\t-minor <version>\tManually set the SquashFS minor version number\n\t-be\t\t\tTreat the filesystem as big endian\n\t-le\t\t\tTreat the filesystem as little endian\n\t-C[OMP] <decompressor>\tSpecify the decompressor to use\n\nDecompressors available:\n\tgzip\n\tlzo\n\tlz4\n\txz\n\tzstd\n\tlzma\n\tlzma-adaptive\n\tlzma-alt\n\tlzma-ddwrt\n\nExit status:\n  0\tThe filesystem listed or extracted OK.\n  1\tFATAL errors occurred, e.g. filesystem corruption, I/O errors.\n\tUnsquashfs did not continue and aborted.\n  2\tNon-fatal errors occurred, e.g. no support for XATTRs, Symbolic links\n\tin output filesystem or couldn't write permissions to output filesystem.\n\tUnsquashfs continued and did not abort.\n\nSee -ignore-errors, -strict-errors and -no-exit-code options for how they affect\nthe exit status.\n\nSee also:\nThe README for the Squash-tools 4.5.1 release, describing the new features can be\nread here https://github.com/plougher/squashfs-tools/blob/master/README-4.5.1\n\nThe Squashfs-tools USAGE guide can be read here\nhttps://github.com/plougher/squashfs-tools/blob/master/USAGE\n"
+  },
+  {
+    "cmd": "cat /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d[\"name\"],d[\"version\"])'",
+    "shell": true,
+    "exit": 0,
+    "started_utc": "2026-10-28T22:40:33Z",
+    "ended_utc": "2026-10-28T22:40:33Z",
+    "stdout_sha256": "9e681be12a221796bc47f74df982ae2ec767e65db9055552708115bb65731515",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "rea-agents 6.5.0\n",
+    "stderr": ""
+  },
+  {
+    "cmd": [
+      "npx",
+      "-y",
+      "rea-agents@6.5.0",
+      "--version"
+    ],
+    "shell": false,
+    "exit": 0,
+    "started_utc": "2026-10-28T22:40:33Z",
+    "ended_utc": "2026-10-28T22:40:35Z",
+    "stdout_sha256": "3eb8e06ca1e02f0a30b0e3eebd289494b35d4fd1466ed907b9148e03b2459b00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "6.5.0\n",
+    "stderr": ""
+  }
+]

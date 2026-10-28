@@ -1,0 +1,93 @@
+# wave-1 mutant base vs FROZEN c1-counter.py (sha256 ac83715b...)
+# each mutant = attacked draft + one mutation; the non-mutation hunks are the pre-freeze amendments
+== M36-provenance-substring-only.py sha256=150601451606822d2264643c7c88a6b6730318d1e674a0b4073a37da7a65ad37 diff-changed-lines-vs-frozen=67
+== M50-freeze-walk-empty.py sha256=37327f914bc2e0d3d5feb2b0e84e10d33906830b4ab7a2cde0c5017abc624d68 diff-changed-lines-vs-frozen=67
+== D-oracle_ok.py sha256=bccfa3b73362f57f192de9d98358940aef6c9d079347629d91a95486828c87fe diff-changed-lines-vs-frozen=68
+== full diff M36 -> frozen (amendment hunks)
+153c153,156
+<                            non-regular row path
+---
+>                            non-regular row path; and, for a carrier whose
+>                            oracle holds no non-regular member (all four
+>                            frozen carriers), `gaps == []` and
+>                            `unpublished_entries == []`
+156,157c159,164
+<   run_provenance_ok        parameters.output_directory names this round's
+<                            scratch segment (/kaidoku-r49/)
+---
+>   run_provenance_ok        parameters.output_directory is an absolute path
+>                            that STARTS WITH `/fast/scratch/hyaku/kaidoku-r49/`
+>                            (a prefix test; no `..`; never the committed
+>                            evidence path). It authenticates neither the
+>                            writer nor the round: a relabelled genuine replay
+>                            passes (plan: disclosed limit)
+258a266
+> PROV_BASE = '/fast/scratch/hyaku/kaidoku-r49/'
+1177,1178c1185,1187
+<     """A receipt run by this round: absolute, inside the kaidoku-r49 segment."""
+<     if not isinstance(output_directory, str):
+---
+>     """A receipt run by this round: an absolute path under the round's scratch
+>     segment `PROV_BASE` (a prefix, not a substring; no `..`; never /tmp)."""
+>     if not isinstance(output_directory, str) or not os.path.isabs(output_directory):
+1180c1189
+<     if PROV_SEGMENT not in output_directory:
+---
+>     if '..' in output_directory.split('/'):
+1182c1191
+<     return '..' not in output_directory.split('/')
+---
+>     return output_directory.startswith(PROV_BASE)
+1643,1644c1652,1653
+<     p = git(root, 'log', '-m', '--diff-merges=first-parent', '--name-status',
+<             '--pretty=format:', f'{freeze}..{rev}', check=False)
+---
+>     p = git(root, '-c', 'core.quotePath=false', 'log', '-m', '--diff-merges=first-parent',
+>             '--name-status', '--pretty=format:', f'{freeze}..{rev}', check=False)
+1663,1665c1672,1675
+<                 if path not in existed_cache:
+<                     existed_cache[path] = show(root, freeze, path) is not None
+<                 if existed_cache[path]:
+---
+>                 # an ADDED path under a frozen prefix is drift (the plan: "no commit
+>                 # touches tools/round-49"); an added explicit frozen path is drift only
+>                 # if it existed at FREEZE (a re-add is not a restore)
+>                 if any(path.startswith(pfx) for pfx in prefixes):
+1666a1677,1681
+>                 else:
+>                     if path not in existed_cache:
+>                         existed_cache[path] = show(root, freeze, path) is not None
+>                     if existed_cache[path]:
+>                         touched.add(path)
+1962c1977,1981
+<     d['nonregular_unpublished_ok'] = root_value is not None and not esc
+---
+>     # P49-C1: a carrier whose oracle holds no non-regular member (all four frozen
+>     # carriers) carries `gaps == []` and `unpublished_entries == []`.
+>     unpub = (env.get('normalized_result') or {}).get('unpublished_entries') or []
+>     quiet_ok = not (not nonreg and (unpub or gaps(env)))
+>     d['nonregular_unpublished_ok'] = root_value is not None and not esc and quiet_ok
+3117a3137,3155
+>     add('an unpublished-entries row on a carrier with no non-regular member (P49-C1)',
+>         [frozen, mutant('v1le', lambda e: e['normalized_result'].__setitem__(
+>             'unpublished_entries', [{'kind': 'symlink', 'relative_path': 'x'}]))], 0, 1,
+>         want_fail='v1le:nonregular_unpublished_ok')
+>     add('a gap on a carrier with no non-regular member trips the quiet rule',
+>         [frozen, mutant('v2be', lambda e: e['normalized_result']['extraction_gaps']
+>                         .append({'kind': 'depth-limited', 'input_path': '$output/'
+>                                  'firmware.bin_extract', 'relative_path': None,
+>                                  'handler': None, 'dependencies': [],
+>                                  'continuation_id': 'c'}))], 0, 1,
+>         want_fail='v2be:nonregular_unpublished_ok')
+>     add('provenance under /tmp is refused (prefix, not substring)',
+>         [frozen, mutant('v2le', lambda e: e['parameters'].__setitem__(
+>             'output_directory', '/tmp/kaidoku-r49/x'))], 0, 1,
+>         want_fail='v2le:run_provenance_ok')
+>     add('provenance with the segment inside a lane path is refused',
+>         [frozen, mutant('v1be', lambda e: e['parameters'].__setitem__(
+>             'output_directory', '/home/u/lane/corpus/evidence/round-49/c1/v1be/kaidoku-r49/x'))],
+>         0, 1, want_fail='v1be:run_provenance_ok')
+3188a3227,3229
+>     add('a NEW file added under tools/round-49/ after the freeze (plan: no commit touches the directory)',
+>         [frozen, {**good, 'tools/round-49/zz-new-helper.py': b'print(1)\n'}], 0, 2,
+>         'frozen_path_changed')

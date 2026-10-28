@@ -1,0 +1,131 @@
+# W2Gate receipts (UTC 2026-10-28T22:44:45Z); every command run from scratch /fast/scratch/hyaku/kaidoku-r49/W2Gate unless noted
+## snapshot popper
+cmd: sh -c git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 29883d4ec35a31a8393c4ffb220888c44c0bb022:corpus/evidence/round-49/c2/popper.html | sha256sum
+exit: 0
+stdout_sha256: 0de72f8937571c9106efaa16dc84fa01f2fa2827717b6bb1dbfb3ab549ee6e91
+stdout:
+2c2d48c6891418c46c372a780ce2e76c00bcc9716bb7603f169976d61b6ec207  -
+
+## live popper (HTTP 200)
+cmd: sh -c curl -sS -L --max-time 60 -o live/popper.bin -w '%{http_code} %{size_download}\n' https://plato.stanford.edu/entries/popper/ && sha256sum live/popper.bin
+exit: 0
+stdout_sha256: f41a57e44793a9d03b71a345c7e6b9cb39ed8b4b81fd94d7d051fac9fdd6ed0d
+stdout:
+200 118135
+2c2d48c6891418c46c372a780ce2e76c00bcc9716bb7603f169976d61b6ec207  live/popper.bin
+
+## live sysexits.h.3head
+cmd: sh -c curl -sS -L --max-time 60 -o live/sysexits.bin -w '%{http_code} %{size_download}\n' https://man7.org/linux/man-pages/man3/sysexits.h.3head.html && sha256sum live/sysexits.bin
+exit: 0
+stdout_sha256: 7d1cd64a82b51999c6c33a16a3ba15e2b7dc16fcfb3edd33317b9f7e597066a3
+stdout:
+200 12725
+d9db4b96fded98e35ec7d9e98f4c229ac57b8083593b57e2381c047aee20b340  live/sysexits.bin
+
+## live freebsd sysexits
+cmd: sh -c curl -sS -L --max-time 60 -o live/freebsd.bin -w '%{http_code} %{size_download}\n' 'https://man.freebsd.org/cgi/man.cgi?query=sysexits&sektion=3' && sha256sum live/freebsd.bin
+exit: 0
+stdout_sha256: c143af36823bef8c074d652e414268d12215f447fa2ae096861ad8e4d4829bbd
+stdout:
+200 59251
+1fc793a298a937d7a22b8724fdd8e26cdb5f1c155a70c0c403f00d26a7b45dbf  live/freebsd.bin
+
+## live S146 URL (expect 404)
+cmd: sh -c curl -sS -L --max-time 60 -o live/s146.bin -w '%{http_code} %{size_download}\n' https://man7.org/linux/man-pages/man3/sysexits.h.3.html && sha256sum live/s146.bin
+exit: 0
+stdout_sha256: f9812b90535d5550e47b156c7430a5f7ffc9ba8df4ceb9926b1bba187ebd6a01
+stdout:
+404 196
+80c3fe2ae1062abf56456f52518bd670f9ec3917b7f85e152b347ac6b6faf880  live/s146.bin
+
+## live S139 release API
+cmd: sh -c curl -sS -L --max-time 60 -o live/s139api.bin -w '%{http_code} %{size_download}\n' https://api.github.com/repos/plougher/squashfs-tools/releases/tags/4.7.5 && sha256sum live/s139api.bin
+exit: 0
+stdout_sha256: 4194ca29a564e35addcd83b6c2ea01473428af6ccd2567748f2ac5e44b7306c5
+stdout:
+200 5873
+6fd01ef3ad83a1572bb7879ad3f98a188d918e5ca25efd00a5ffb9bf13261b53  live/s139api.bin
+
+## live S138 contents API
+cmd: sh -c curl -sS -L --max-time 60 -o live/s138api.bin -w '%{http_code} %{size_download}\n' 'https://api.github.com/repos/onekey-sec/unblob/contents/tests/integration/filesystem/squashfs/squashfs_v1/big_endian/__output__?ref=26.6.4' && sha256sum live/s138api.bin
+exit: 0
+stdout_sha256: cb6ff667e5b3c47e7059920a72585b2b166a710a4f4b602933dedeae26ed3055
+stdout:
+200 1241
+8a59dc516ae92910c0a2c0a1a645590cfb82795567586839ea27a892022aad58  live/s138api.bin
+
+## quote-check (S147/S148/S149 vs snapshots)
+cmd: python3 -I -B quote-check.py
+exit: 0
+stdout_sha256: 66a853e35afe8787193e2e727e50e21337fd8f7ca61dd51d9751d746cbed826c
+stdout:
+S147: words=21 (<=25: True) present=True offset=12281
+S147b: words=9 (<=25: True) present=True offset=12667
+S145: words=22 (<=25: True) present=True offset=12355
+S148: words=9 (<=25: True) present=True offset=495
+S149: words=7 (<=25: True) present=True offset=11047
+S147 location: heading2@8870 quote@12281 heading3@12983 -> quote under section 2: True
+S145 locator literal '2. The Problem of Demarcation' present in body: False
+
+## unsquashfs version line (S139)
+cmd: sh -c /usr/bin/unsquashfs --version | head -1
+exit: 0
+stdout_sha256: 62ba9d7d3d554aea68ef0e259283da5bd8e3f6378f91800d7e2acf478683adba
+stdout:
+unsquashfs version 4.7.5 (2026/03/01)
+
+## SOURCES diff base..REV (rows touched)
+cmd: sh -c git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9 29883d4ec35a31a8393c4ffb220888c44c0bb022 -- corpus/SOURCES.md | grep -E '^[-+]\| S' | cut -c1-12
+exit: 0
+stdout_sha256: 17c1eb491d8bef65245369089279b32b468f5d702bc4f44131a45423bc82db4b
+stdout:
+-| S138 | un
+-| S139 | sq
++| S138 | un
++| S139 | sq
++| S147 | St
++| S148 | sy
++| S149 | sy
+
+## row count base
+cmd: sh -c git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9:corpus/SOURCES.md | grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}'
+exit: 0
+stdout_sha256: 0a5b046d07f6f971b7776de682f57c5b9cdc8fa060db7ef59de82e721c8098f4
+stdout:
+146
+
+## row count REV
+cmd: sh -c git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 29883d4ec35a31a8393c4ffb220888c44c0bb022:corpus/SOURCES.md | grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}'
+exit: 0
+stdout_sha256: 05ada863a4cf9660fd8c68e2295f1d35b2264815f5b605003d6625bd9e0492cf
+stdout:
+149
+
+## S145 row sha base
+cmd: sh -c git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9:corpus/SOURCES.md | grep -E '^\| S145 ' | sha256sum
+exit: 0
+stdout_sha256: 533c5ca44cdb6ee65aa258339559fa2fb76d41dcb5c6847d3eac1f3e83c86532
+stdout:
+a41d8a522b39f6a3a10a0de69b563e072b606a4ef66a2fd9c9820425e750f954  -
+
+## S145 row sha REV
+cmd: sh -c git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 29883d4ec35a31a8393c4ffb220888c44c0bb022:corpus/SOURCES.md | grep -E '^\| S145 ' | sha256sum
+exit: 0
+stdout_sha256: 533c5ca44cdb6ee65aa258339559fa2fb76d41dcb5c6847d3eac1f3e83c86532
+stdout:
+a41d8a522b39f6a3a10a0de69b563e072b606a4ef66a2fd9c9820425e750f954  -
+
+## considerthese at REV (expect no entries)
+cmd: sh -c git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin ls-tree 29883d4ec35a31a8393c4ffb220888c44c0bb022 -- considerthese/ | wc -l
+exit: 0
+stdout_sha256: 5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9
+stdout:
+0
+
+## shokuknow staged package present (read-only)
+cmd: sh -c ls /home/vgpnk/Projects/shokuknow/merge/kaidoku | wc -l
+exit: 0
+stdout_sha256: 4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a
+stdout:
+4
+
