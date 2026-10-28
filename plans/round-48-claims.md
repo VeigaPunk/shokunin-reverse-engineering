@@ -209,6 +209,18 @@ Red-before: the pre-flight receipts (`.ufo/waves/round-48/l1/scores/` preflight 
 card that carries both). **The declared freeze is the commit that carries this paragraph.**
 No seat had scored a claim and no landing had been measured when A5 was made.
 
+## Freeze amendment A6 (disclosed; one more fixture input, declared before any claim data)
+
+A5 added the census's claims files to the C1 battery fixture but not the 42 tool paths the
+census rule checks for presence, so the fixture still re-derived a shorter census and the
+genuine block scored red inside the battery (`battery genuine_green 0`). A6 adds every
+`paths` entry of the committed census to the fixture. Every forgery then fails only for the
+clause it names, which is the property the battery exists to show. Red-before: the
+pre-flight receipt in `.ufo/waves/round-48/l1/scores/` (`genuine_exit 1`, failing
+`committed census2.json does not equal a fresh derivation`). **The declared freeze is the
+commit that carries this paragraph.** No seat had scored a claim and no landing had been
+measured when A6 was made.
+
 ## Controls (not frozen; committed as wave evidence)
 
 - `ctl-c1-0-do-nothing.json` — the counter at the freeze revision: block absent, registry
