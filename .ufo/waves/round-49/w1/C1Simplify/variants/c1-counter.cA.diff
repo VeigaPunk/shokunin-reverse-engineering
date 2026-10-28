@@ -1,0 +1,61 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-counter.py	2026-10-28 17:54:34.278430601 -0300
++++ /fast/scratch/hyaku/kaidoku-r49/C1Simplify/clone/tools/round-49/var-cA.py	2026-10-28 18:22:00.716277866 -0300
+@@ -323,7 +323,6 @@
+ METADATA_MAX = 4096                    # v1/v2 metadata block length is 12-bit
+ UNCOMPRESSED_FLAG = 0x8000
+ SQUASHFS_HANDLER_RE = re.compile(r'^squashfs_v[1-4](_[a-z]+)?$')
+-HANDLER_RE = re.compile(r'(?<![A-Za-z0-9_-])squashfs_v[12](?![A-Za-z0-9_-])')
+ SQFS12_TEXT_RE = re.compile(r'squashfs[ _-]?v?1(\.0)?|squashfs[ _-]?v?2(\.0)?'
+                             r'|squashfs\s+[12]', re.IGNORECASE)
+ SID_RE = re.compile(r'(?<![0-9A-Za-z])(S\d{3,})(?![0-9A-Za-z])')
+@@ -1390,10 +1389,6 @@
+     return extract_rel(candidate, root) == strip_rel(rel)
+ 
+ 
+-def legacy_same_rel(candidate, rel):
+-    """The round-40 matcher, verbatim (defect R40-CL1). Selftest only."""
+-    return bool(candidate) and bool(rel) and (candidate == rel
+-                                              or candidate.endswith('/' + rel))
+ 
+ 
+ def published(env):
+@@ -2917,16 +2912,6 @@
+             spec['superblock_layout'] = layout_block
+         return json.dumps(spec, indent=1)
+ 
+-    def spec_plants(spec_text):
+-        """Repo files the frozen table names: carriers.json + carrier bytes."""
+-        doc = json.loads(spec_text)
+-        out = {}
+-        for c in doc['carriers']:
+-            k = c['id']
+-            if k in carriers:
+-                out[c['path']] = carriers[k]
+-            out[c['output_tree']['root']] = None
+-        return out
+ 
+     def frozen_files(blob_over=None, spec_text=None, carrier_plant=True, **over):
+         bm = dict(carriers)
+@@ -3004,13 +2989,6 @@
+     def env_boom_runner(carrier_bytes, cid, params=None):
+         raise RerunEnvError('npx not on PATH')
+ 
+-    def mk_same_runner(envs):
+-        def run(carrier_bytes, cid, params=None):
+-            e = json.loads(json.dumps(envs[cid]))
+-            e['subject']['digest']['sha256'] = sha(carrier_bytes)
+-            e['normalized_result']['selection']['sha256'] = sha(carrier_bytes)
+-            return 'ok', rehost(e, 'selftest-same-' + str(cid))
+-        return run
+ 
+     cases = []
+ 
+@@ -3280,8 +3258,6 @@
+     if not _ok:
+         fails.append('stamped receipt failed its own identity check: %s' % _why)
+ 
+-    def runner_for(case, steps):
+-        return case['runner']
+ 
+     for c in cases:
+         d = tempfile.mkdtemp(prefix='c1-selftest.', dir=sroot)

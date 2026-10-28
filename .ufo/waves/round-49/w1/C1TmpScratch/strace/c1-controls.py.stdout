@@ -1,0 +1,41 @@
+usage: c1-controls.py [-h] [--root ROOT] [--freeze FREEZE] [--counter COUNTER]
+                      [--pkg65 PKG65] [--work WORK] [--out OUT]
+                      [--controls CONTROLS] [--carriers CARRIERS]
+                      [--dev-arm-carriers DEV_ARM_CARRIERS]
+                      [--doc-dir DOC_DIR] [--fixtures-root FIXTURES_ROOT]
+                      [--from-fixtures] [--rehearsal-table-freeze PATH]
+                      [--json-out JSON_OUT] [--selftest] [--build-only]
+                      [--capture-only]
+
+options:
+  -h, --help            show this help message and exit
+  --root ROOT
+  --freeze FREEZE
+  --counter COUNTER
+  --pkg65 PKG65
+  --work WORK
+  --out OUT
+  --controls CONTROLS
+  --carriers CARRIERS   read this worktree carriers.json instead of the frozen
+                        blob (build/capture only)
+  --dev-arm-carriers DEV_ARM_CARRIERS
+                        read this worktree carriers.json when BUILDING control
+                        trees (the counter still reads the frozen blob itself)
+  --doc-dir DOC_DIR     where the R49C1Doc blocks and the R49EntryDraft entry
+                        live (CTL-C1-POS plants them as control fixtures)
+  --fixtures-root FIXTURES_ROOT
+                        committable root for content-addressed control inputs
+                        (default tools/round-49/control-fixtures)
+  --from-fixtures       plant the trees read from --fixtures-root instead of
+                        rebuilding them (what the freeze score does)
+  --rehearsal-table-freeze PATH
+                        pre-freeze dev arm only: build a rehearsal freeze
+                        commit in a scratch clone that carries this
+                        carriers.json, and score against it. Every receipt is
+                        stamped `rehearsal: true`. The counter reads the table
+                        from the freeze tree, so this is the only way to show
+                        what a corrected frozen table would score
+  --json-out JSON_OUT
+  --selftest
+  --build-only          build the control input trees, do not score
+  --capture-only        capture the REA dev arm only (no counter)

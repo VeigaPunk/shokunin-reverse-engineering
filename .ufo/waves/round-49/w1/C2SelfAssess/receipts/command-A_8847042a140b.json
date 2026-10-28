@@ -1,0 +1,18 @@
+{
+  "label": "command-A 8847042a140b",
+  "argv": [
+    "python3",
+    "-I",
+    "-c",
+    "\nimport json, pathlib, re, subprocess, sys\nrev = sys.argv[1]\ndef get(path):\n    return subprocess.check_output([\"git\",\"-C\",sys.argv[2],\"show\",f\"{rev}:{path}\"], text=True)\npaths = subprocess.check_output([\"git\",\"-C\",sys.argv[2],\"ls-tree\",\"-r\",\"--name-only\",rev,\"--\",\"corpus/knowledge\"], text=True).splitlines()\nfiles = {pathlib.PurePosixPath(p).stem for p in paths if p.endswith(\".md\")}\nsection = get(\"corpus/README.md\").split(\"## Coverage map\\n\", 1)[1].split(\"\\n## \", 1)[0]\nmapped = set(re.findall(r\"2026-10-\\d{2}-[a-z0-9-]+\", section))\ncraft = get(\"SKILL.md\").split(\"## Queue-drain craft \", 1)[1].split(\"\\n## \", 1)[0]\nrules = re.split(r\"(?m)^- \\*\\*\", craft)[1:]\npattern = r\"corpus/knowledge/([a-z0-9-]+\\.md)(?::(\\d+)(?:-(\\d+))?)?\"\nresolved = 0\nunresolved = []\nfor i, rule in enumerate(rules, 1):\n    refs = re.findall(pattern, rule)\n    valid = bool(refs)\n    why = \"no knowledge ref\" if not refs else \"\"\n    for name, first, last in refs:\n        try:\n            count = len(get(\"corpus/knowledge/\" + name).splitlines())\n            start, end = int(first or 1), int(last or first or 1)\n            if not (1 <= start <= end <= count):\n                valid = False\n                why = f\"{name}:{start}-{end} lines={count}\"\n        except subprocess.CalledProcessError:\n            valid = False\n            why = \"missing \" + name\n    resolved += valid\n    if not valid:\n        title = rule.split(\"\\n\", 1)[0][:80]\n        unresolved.append({\"n\": i, \"why\": why, \"title\": title})\ncraft_lines = craft.count(\"\\n\") + (0 if craft.endswith(\"\\n\") else 1)\nprint(json.dumps({\"revision\": rev, \"mapped\": len(files & mapped),\n \"knowledge_files\": len(files), \"missing\": sorted(files - mapped),\n \"dangling\": sorted(mapped - files), \"citation_resolved_rules\": resolved,\n \"rule_blocks\": len(rules), \"unresolved\": unresolved,\n \"craft_chars\": len(craft), \"coverage_score\": round(10*len(files & mapped)/len(files), 2) if files else None,\n \"depth_score\": round(10*resolved/len(rules), 2) if rules else None}, sort_keys=True))\n",
+    "8847042a140b044dbf335210c965bf7b06b09b4f",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin"
+  ],
+  "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "exit": 0,
+  "utc": "2026-10-28T21:16:56Z",
+  "stdout_sha256": "bd8223fd14f92899fa4af699528619d9810c7e6e81c1a206323f4dc0d866e6fe",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 262,
+  "stderr_bytes": 0
+}

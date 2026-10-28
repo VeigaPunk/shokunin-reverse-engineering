@@ -1,0 +1,127 @@
+--- /fast/scratch/hyaku/kaidoku-r49/C1PortAudit/m/c1-counter.py.mech	2026-10-28 18:03:21.082897760 -0300
++++ .ufo/waves/round-49/draft/tools/round-49/c1-counter.py	2026-10-28 17:54:34.278430601 -0300
+@@ -24,7 +24,7 @@
+   frozen census rows and its frozen digest; **and** a counter-time REA rerun of
+   the same bytes has the same semantic projection as the committed receipt (a
+   receipt fabricated from the oracle, however its evidence id is minted, cannot
+-  equal a real run); `PROVINCE.md` holds the `## Round-44 additions to Core` row
++  equal a real run); `PROVINCE.md` holds the `## Round-49 additions to Core` row
+   naming `squashfs_v1` and `squashfs_v2` and citing the round-49 knowledge
+   entry, which cites SOURCES rows S138 and S139 (both opened this round and
+   listing the entry in used-by); a round-49 frontier note supersedes the
+@@ -54,7 +54,7 @@
+                            to every squashfs image, so its compressed/
+                            uncompressed word is read from byte 20 (=
+                            inode_table_start) and flips with byte order on
+-                           these very fixtures (R49C1Oracle / R49ConnRouted
++                           these very fixtures (R49C1Oracle / R44ConnRouted
+                            measured it; unsquashfs reports data compressed on
+                            all carriers).  Endianness comes from the magic
+                            order: `hsqs` = little, `sqsh` = big.  The v2
+@@ -177,12 +177,12 @@
+                            table pins them, its sha256/version match
+ 
+ Documentation bindings:
+-  province_core_section    PROVINCE.md has the `## Round-44 additions to Core`
++  province_core_section    PROVINCE.md has the `## Round-49 additions to Core`
+                            heading
+   province_core_row        a row in that section names `squashfs_v1` and
+                            `squashfs_v2`, names SquashFS v1/v2, and cites the
+                            entry path
+-  frontier_note            one line carries `Round-44 frontier note`, the entry
++  frontier_note            one line carries `Round-49 frontier note`, the entry
+                            stem and a SquashFS v1/v2 token
+   entry_present            the knowledge entry exists at REV
+   sourced                  the entry's `source:` lines cite S138 and S139; both
+@@ -225,7 +225,7 @@
+ carrier (red), (iii) a fabricated oracle-only envelope (red on the rerun
+ projection), (iv) the do-nothing lane (red).
+ 
+-`--dev-arm` is the positive development control (R49RevKill K3): it scores
++`--dev-arm` is the positive development control (R44RevKill K3): it scores
+ REAL REA 6.5.0 envelopes for the frozen carriers into scratch -- either the
+ envelopes it runs itself (`--run-rea`) or a directory of already captured ones
+ (`--arm-dir <id>/after.json`) -- and never writes corpus/evidence/round-49/c1.
+@@ -246,8 +246,8 @@
+ AFTERDIR = 'corpus/evidence/round-49/c1'
+ ENTRY = 'corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md'
+ STEM = '2026-10-28-r49-squashfs-v1v2-core'
+-CORE_HEADING = '## Round-44 additions to Core'
+-FRONTIER_MARK = 'Round-44 frontier note'
++CORE_HEADING = '## Round-49 additions to Core'
++FRONTIER_MARK = 'Round-49 frontier note'
+ OPENED = '2026-10-28'
+ TARGET = 4
+ # The four preregistered carriers of plans/round-49-claims.md §R49-C1, in the
+@@ -283,7 +283,7 @@
+ )
+ # `tools/round-49/*` and the committed S138 oracle trees are frozen path
+ # families: a new round-49 tool or an edited expected tree is drift.
+-FROZEN_PREFIXES = ('tools/round-49/', 'corpus/evidence/round-49/oracle/')
++FROZEN_PREFIXES = ('tools/round-49/', 'corpus/evidence/round-44/oracle/')
+ # SquashFS v1/v2 packed superblock (unblob 26.6.4 SquashFSv1Handler
+ # C_DEFINITIONS, S119). v1 and v2 share these bytes; s_major discriminates.
+ SB_SIZE = 32
+@@ -453,7 +453,7 @@
+     """Private scratch directory; --work > $HYAKU_SCRATCH > /fast/scratch/hyaku.
+ 
+     Deliberately never `tempfile.gettempdir()`: with TMPDIR and HYAKU_SCRATCH
+-    unset that resolves to /tmp (R49-SCR-TMP)."""
++    unset that resolves to /tmp (R44-SCR-TMP)."""
+     if WORK_OVERRIDE:
+         os.makedirs(WORK_OVERRIDE, exist_ok=True)
+         return WORK_OVERRIDE
+@@ -2408,7 +2408,7 @@
+ def dev_arm(a):
+     """Positive development control: score REAL REA envelopes for the carriers.
+ 
+-    R49RevKill K3: a counter that always exits 1 passes every red arm, so the
++    R44RevKill K3: a counter that always exits 1 passes every red arm, so the
+     claim needs a positive control driven by real REA 6.5.0 envelopes. This mode
+     never writes `corpus/evidence/round-49/c1` and never claims anything: it
+     either scores envelopes already captured under --arm-dir (`<id>/after.json`)
+@@ -2819,7 +2819,7 @@
+     nonreg = {k: [] for k in ids}
+ 
+     def tree_root(k):
+-        return ('corpus/evidence/round-49/oracle/selftest/%s_extract' % k)
++        return ('corpus/evidence/round-44/oracle/selftest/%s_extract' % k)
+ 
+     def tree_digest(mem):
+         return sha(''.join('%s\t%s\n' % (p, h)
+@@ -2893,7 +2893,7 @@
+                 'compression': 'gzip',
+                 'sha256': pm[k],
+                 'size': len(cm[k]),
+-                'path': 'corpus/evidence/round-49/carriers/%s.bin' % k,
++                'path': 'corpus/evidence/round-44/carriers/%s.bin' % k,
+                 'expected_regular': len(rows),
+                 'oracle': {
+                     'tool': '/usr/bin/unsquashfs',
+@@ -2947,7 +2947,7 @@
+         }
+         if carrier_plant:
+             for k in ids:
+-                f['corpus/evidence/round-49/carriers/%s.bin' % k] = bm[k]
++                f['corpus/evidence/round-44/carriers/%s.bin' % k] = bm[k]
+             for k in ids:
+                 for p, content in tree_files(k).items():
+                     f[p] = content
+@@ -3190,7 +3190,7 @@
+         [frozen, {**good, CARRIERS: spec_json(drop=('v2be',))}], 0, 2,
+         'frozen_path_changed')
+     add('carrier bytes changed after the freeze',
+-        [frozen, {**good, 'corpus/evidence/round-49/carriers/v1le.bin': b'x' * 10}],
++        [frozen, {**good, 'corpus/evidence/round-44/carriers/v1le.bin': b'x' * 10}],
+         0, 2, 'frozen_path_changed')
+     add('committed oracle tree edited after the freeze',
+         [frozen, {**good, tree_root('v1be') + '/apple.txt': b'edited'}], 0, 2,
+@@ -3201,7 +3201,7 @@
+         'frozen_path_changed')
+ 
+     # documentation bindings
+-    add('province has no Round-44 Core section',
++    add('province has no Round-49 Core section',
+         [{**frozen, 'PROVINCE.md': '# P\n\n## Next\n- x\n'}, good], 0, 1,
+         want_fail='b:province_core_section')
+     add('province row names only squashfs_v1',

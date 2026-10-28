@@ -1,0 +1,17 @@
+diff --git a/PROVINCE.md b/PROVINCE.md
+index 36aeb740..d0553353 100644
+--- a/PROVINCE.md
++++ b/PROVINCE.md
+@@ -429,10 +429,12 @@ and vendor-mangled packages/images remain Frontier.
+ 
+ Round-44 frontier note, 2026-10-28: SquashFS v1/v2 were measured on four standard fixtures (`squashfs_v1`, `squashfs_v2`; counter 4/4), but R44-C1 is not promoted: the frozen claim's output-directory clause disagreed with the counter's `/kaidoku-r44/` provenance binding. SquashFS v1/v2 remain Frontier pending a new pre-data freeze that aligns the predicate and instrument. Still Frontier: `squashfs_v2_nonstandard` (`v2ns-*`; no independent reader), `squashfs_v3_broadcom`, `squashfs_v3_nonstandard`, gzip v3 bodies, v4 Broadcom, LE AVM members (`hsqs`), AVM kernels and nested sub-images below depth 1.
+ 
++```
+ ## Round-49 additions to Core
+ 
+ | Surface | Ports / keys | Probe | Verified evidence |
+ |---|---|---|---|
+ | `squashfs_v1` and `squashfs_v2` (SquashFS v1 and v2, gzip bodies, both byte orders) | no new REA key — unblob 26.6.4 names the `squashfs_v1`/`squashfs_v2` handlers (S108 :101-102, :158-159) and runs `sasquatch -le`/`-be` from the child `PATH` per superblock endianness (S108 :24-26, :51-54, :68-69; dependency contract S110); `REA_UNBLOB_COMMAND` = unblob 26.6.4; `extract-firmware` (rea-agents 6.5.0) | `tools/round-49/c1-counter.py` at the round-49 freeze; independent oracle `/usr/bin/unsquashfs` (squashfs-tools 4.7.5) `-lls` member census + extracted member digests, cross-checked against the unblob 26.6.4 `__output__` expected trees committed under `corpus/evidence/round-44/oracle/` (S138; S139 grounds the squashfs-tools oracle identity) | four committed MIT unblob 26.6.4 fixtures, 4 KiB each, frozen in `tools/round-49/carriers.json` (V1LE `b45925fa…`, V1BE `529e1077…`, V2LE `7c62dbe3…`, V2BE `79c0f388…`; 3/3/4/4 expected regular files): POS control fixture — four real REA 6.5.0 `extract-firmware` receipts captured in scratch, `carriers_matched 4`, exact `squashfs_v1`/`squashfs_v2` handlers, `gaps []`, oracle members published at their exact relative paths; not the after-side data run; entry `corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md` (SquashFS v1/v2) |
++```
+ 
+ Round-49 frontier note, 2026-10-28: SquashFS v1/v2 moved Frontier → Core with `2026-10-28-r49-squashfs-v1v2-core` (`squashfs_v1` and `squashfs_v2`, both byte orders, through rea-agents 6.5.0 `extract-firmware` on four committed unblob 26.6.4 fixtures, oracle `/usr/bin/unsquashfs` 4.7.5 plus the unblob `__output__` expected trees). This note supersedes the `SquashFS v1/v2` clause of the round-42 frontier note above and nothing else: `squashfs_v2_nonstandard` (`v2ns-*`; no independent reader), `squashfs_v3_broadcom`, `squashfs_v3_nonstandard`, gzip v3 bodies, v4 Broadcom, LE AVM members (`hsqs`), AVM kernels and nested sub-images below depth 1 stay Frontier.

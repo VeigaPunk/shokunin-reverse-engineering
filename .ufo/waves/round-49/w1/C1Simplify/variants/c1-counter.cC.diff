@@ -1,0 +1,51 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-counter.py	2026-10-28 17:54:34.278430601 -0300
++++ /fast/scratch/hyaku/kaidoku-r49/C1Simplify/clone/tools/round-49/var-cC.py	2026-10-28 18:22:00.718128722 -0300
+@@ -2323,7 +2323,6 @@
+     ap.add_argument('--work', help='scratch directory (default '
+                     '$HYAKU_SCRATCH/kaidoku-r49/counter)')
+     ap.add_argument('--rea-timeout', type=int, default=900)
+-    ap.add_argument('--no-rerun', action='store_true')
+     ap.add_argument('--selftest', action='store_true')
+     ap.add_argument('--dev-arm', action='store_true')
+     ap.add_argument('--arm-dir', help='directory of captured REA envelopes: '
+@@ -2332,40 +2331,14 @@
+     ap.add_argument('--run-rea', action='store_true',
+                     help='dev arm: run REA 6.5.0 on the carrier bytes into '
+                          'scratch (never writes corpus/evidence/round-49/c1)')
+-    ap.add_argument('--verify-receipt', help='exit 0 if the receipt at PATH carries '
+-                    'a counter_sha256 that describes the counter file it names')
+     a = ap.parse_args(argv)
+     if a.work:
+         WORK_OVERRIDE = os.path.abspath(a.work)
+         os.makedirs(WORK_OVERRIDE, exist_ok=True)
+-    if a.verify_receipt:
+-        try:
+-            with open(a.verify_receipt) as fh:
+-                doc = json.load(fh)
+-        except (OSError, json.JSONDecodeError) as e:
+-            print(json.dumps({'verify': a.verify_receipt, 'reason': str(e),
+-                              'ok': False}, sort_keys=True))
+-            return 2
+-        ok, why = receipt_identity_ok(doc)
+-        print(json.dumps({'verify': a.verify_receipt, 'ok': ok,
+-                          'counter': doc.get('counter') if isinstance(doc, dict) else None,
+-                          'counter_sha256': (doc.get('counter_sha256')
+-                                             if isinstance(doc, dict) else None),
+-                          'detail': why}, sort_keys=True))
+-        return 0 if ok else 1
+     if a.selftest:
+         return selftest(a.pkg65)
+     if a.dev_arm:
+         return dev_arm(a)
+-    if a.no_rerun:
+-        out = {'reason': 'rerun_disabled',
+-               'detail': 'R49-C1 binds a fresh REA run of each carrier; '
+-                         '--no-rerun cannot be scored',
+-               'argv': sys.argv, 'exit_code': 2}
+-        print(json.dumps({k: out[k] for k in ('reason', 'detail')}, sort_keys=True))
+-        if a.json_out:
+-            write_receipt(out, a.json_out)
+-        return 2
+     if not (a.root and a.rev and a.freeze and a.pkg65):
+         print('usage: --root --rev --freeze --pkg65 required', file=sys.stderr)
+         return 2

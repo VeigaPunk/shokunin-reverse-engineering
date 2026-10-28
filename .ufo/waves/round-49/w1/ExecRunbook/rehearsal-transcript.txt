@@ -1,0 +1,160 @@
+== pre: read-only gates ==
+ok    rehearsal clone toplevel == /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone
+ok    FREEZE is a commit
+ok    BASE is an ancestor of FREEZE
+ok    FREEZE != BASE
+ok    FREEZE is an ancestor of HEAD
+ok    FREEZE is an ancestor of HEAD
+ok    BASE..FREEZE touches only tools/round-49, the plan, .ufo/waves/round-49
+ok    frozen file at FREEZE: tools/round-49/c1-counter.py
+ok    frozen file at FREEZE: tools/round-49/c1-run.sh
+ok    frozen file at FREEZE: tools/round-49/c1-run.py
+ok    frozen file at FREEZE: tools/round-49/c1-controls.py
+ok    frozen file at FREEZE: tools/round-49/c1-oracle.py
+ok    frozen file at FREEZE: tools/round-49/carriers.json
+ok    frozen file at FREEZE: tools/round-49/c2-mismatch.py
+ok    frozen file at FREEZE: plans/round-49-claims.md
+FAIL  tools/round-49/control-fixtures absent at FREEZE (plan: every control fixture exists in the freeze)
+ok    frozen blobs at FREEZE == HEAD (37 entries)
+ok    worktree == FREEZE for the frozen set
+ok    no untracked file under tools/round-49 or plans/ (no __pycache__)
+ok    no commit in FREEZE..HEAD touches a frozen path (merge-aware walk over the whole frozen set)
+ok    env C1_RUN_PY unset
+ok    env C1_REAL_UNBLOB unset
+ok    env C1_LOG_COPY unset
+ok    env KAIDOKU_C1_DATA_RUN unset
+ok    env PYTHONPATH unset
+ok    env REA_UNBLOB_COMMAND /home/vgpnk/.local/bin/unblob (runner and counter override it with the same binary)
+ok    env C1_UNBLOB_LOG_TEE is 1/unset (log tee on)
+ok    child PATH resolves unblob -> /home/vgpnk/.local/bin/unblob
+ok    child PATH resolves sasquatch -> /home/vgpnk/.local/bin/sasquatch
+ok    child PATH resolves npx -> /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/npx
+ok    child PATH resolves node -> /usr/bin/node
+ok    unblob 26.6.4
+ok    sasquatch 4.5.1
+ok    REA package root /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents is 6.5.0
+ok    evidence root absent: /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-evidence/c1
+ok    scratch filesystem has 409 GiB free (>= 20)
+== census before ==
+STEP  census-before-validate (expect exit 0): '/home/vgpnk/Projects/shokunin/scripts/sources-census.sh' 'validate' '--root' '/home/vgpnk/Projects/shokunin' 'kaidoku'
+      exit 0 stdout_sha256 065a45eb8e760d65d76e55e35e49efc44ee47466c1ffa147205757ea2589a2ea
+STEP  census-before-counts (expect exit 0): '/home/vgpnk/Projects/shokunin/scripts/sources-census.sh' 'census' '--root' '/home/vgpnk/Projects/shokunin' 'kaidoku'
+      exit 0 stdout_sha256 7eb55d1014d465e6a8ba58fc7dbeaefba4721363cfc6a93ad9d8c85d2b38677d
+      registry rows at e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9: 146
+== misroot before ==
+FAIL  [before] fleet status names this round/lane NOW (23 path(s); first: ?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1be/after.json;?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1le/after.json;) - judge and remove BEFORE the freeze (never in a seat)
+FAIL  [before] /home/vgpnk/Projects/shokunin/tools/round-49 exists at the fleet root (23 files)
+      fleet status exit 0 lines 69 sha256 669243f11c4c2d10
+      lane status (excluding .ufo) lines 0
+      ambient env recorded: 13 vars, sha256 66b7c575d6b0ff64
+== score-before (counted at --rev FREEZE) ==
+STEP  c1-before (expect exit 1): 'python3' '-I' '-B' 'tools/round-49/c1-counter.py' '--root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--rev' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--pkg65' '/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents' '--work' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/counter-c1-before' '--json-out' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/scores/c1-before.json'
+      exit 1 stdout_sha256 b4c6de6b41708d077dfb747daf9802dafc0b1298aa78c636a74ecd9d63e6e1b9
+ok    C1 before: carriers_matched 0
+ok    C1 before: all six documentation bindings false
+STEP  c2-before (expect exit 1): 'python3' '-I' '-B' 'tools/round-49/c2-mismatch.py' '--root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--rev' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--json-out' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/scores/c2-before.json'
+      exit 1 stdout_sha256 18c229129b3a7f1eaba12497ca3c1c1adf4512ae8defd53d6601616334a905b0
+ok    C2 before: atoms_total 9 mismatches 9
+== data: c1-run.sh (the only writer of the lane evidence root) ==
+STEP  c1-run-guard (expect exit 2): '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone/tools/round-49/c1-run.sh' '--lane-root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--scratch' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d'
+      exit 2 stdout_sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+STEP  c1-run-data (expect exit 0): 'env' 'TMPDIR=/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/tmp' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone/tools/round-49/c1-run.sh' '--lane-root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--evidence-root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-evidence/c1' '--scratch' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--timeout' '900'
+      exit 0 stdout_sha256 ab0cc21dd892fdd65cc3ba6fd07bbc91b3f93fd710ddc2170e3f2c48b1331e85
+ok    manifest: 4 carriers ok, none failed
+ok    every carrier exit 0, receipt written, output_directory in /kaidoku-r49/ scratch
+ok    manifest names exactly v1le v1be v2le v2be
+ok    v1le provenance.json binds the scratch output_directory
+ok    v1le/after.json present
+ok    v1be provenance.json binds the scratch output_directory
+ok    v1be/after.json present
+ok    v2le provenance.json binds the scratch output_directory
+ok    v2le/after.json present
+ok    v2be provenance.json binds the scratch output_directory
+ok    v2be/after.json present
+ok    no symlink in the evidence tree
+ok    no evidence file > 10 MiB
+ok    the data run left tools/ and plans/ untouched (no __pycache__)
+      evidence tree: 51 files, 384 KiB
+== land-evidence: commit corpus/evidence/round-49/c1 only ==
+ok    rehearsal evidence committed in the clone: e5aa10cf0ead987be4284c6f873bf568fdc35e5a
+== gate-landed ==
+      REV = e5aa10cf0ead987be4284c6f873bf568fdc35e5a
+ok    ambient REA_*/npm_config_* env identical to the pre snapshot (data run and counters saw the same env)
+ok    REV == HEAD
+ok    FREEZE is an ancestor of REV
+ok    frozen blobs at FREEZE == e5aa10cf0ead (37 entries)
+ok    worktree == FREEZE for the frozen set
+ok    no untracked file under tools/round-49 or plans/ (no __pycache__)
+ok    no commit in FREEZE..e5aa10cf0ead touches a frozen path (merge-aware walk over the whole frozen set)
+ok    no tracked change outside .ufo (REV == worktree for the counters' file reads)
+ok    no uncommitted new file under corpus/tools/plans (every landing file is at REV)
+ok    v1le after.json first added in e5aa10cf0ead987be4284c6f873bf568fdc35e5a (a strict descendant of FREEZE)
+ok    v1be after.json first added in e5aa10cf0ead987be4284c6f873bf568fdc35e5a (a strict descendant of FREEZE)
+ok    v2le after.json first added in e5aa10cf0ead987be4284c6f873bf568fdc35e5a (a strict descendant of FREEZE)
+ok    v2be after.json first added in e5aa10cf0ead987be4284c6f873bf568fdc35e5a (a strict descendant of FREEZE)
+FAIL  absent at REV: corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md
+FAIL  absent at REV: corpus/lessons/round-49.md
+FAIL  PROVINCE.md lacks the round-49 Core heading
+FAIL  SCORECARD.md lacks '## Record corrections — round 49'
+FAIL  SOURCES lacks S148
+FAIL  snapshot absent at REV: corpus/evidence/round-49/c2/popper.html
+FAIL  snapshot absent at REV: corpus/evidence/round-49/c2/sysexits.html
+== score-after (counted at --rev REV) ==
+STEP  c1-after (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c1-counter.py' '--root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--rev' 'e5aa10cf0ead987be4284c6f873bf568fdc35e5a' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--pkg65' '/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents' '--work' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/counter-c1-after' '--json-out' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/scores/c1-after.json'
+      exit 1 stdout_sha256 b795cab58bb3285997191980a984b6e72eb63eface093210e57e815866bb3822
+FAIL  step c1-after exit 1 != expected 0 (see /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/after-freeze/c1-after.stderr)
+FAIL  C1 after: carriers_matched 4, no false binding, frozen_path_changed [], met_target (d['carriers_matched']==4 and d['bindings_false']==[] and d['frozen_path_changed']==[] and d['met_target'] is True and d['exit_code']==0 and d['failing']==[] on /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/scores/c1-after.json)
+STEP  c1-after-verify-receipt (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c1-counter.py' '--verify-receipt' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/scores/c1-after.json'
+      exit 0 stdout_sha256 3b3b67a5922802590224770d7c09c636003f55b98aaaf901cf94b9a191d5f1b1
+STEP  c2-after (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c2-mismatch.py' '--root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--rev' 'e5aa10cf0ead987be4284c6f873bf568fdc35e5a' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--battery' '--json-out' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/scores/c2-after.json'
+      exit 1 stdout_sha256 41a095d64aba1e8070bdca27119b5f3ba3960c7701f585dfb2098a7a4466fc7e
+FAIL  step c2-after exit 1 != expected 0 (see /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/after-freeze/c2-after.stderr)
+FAIL  C2 after: atoms_total 9, mismatches 0, battery.failing [], eleven mutations ok, do-nothing red x9 (d['atoms_total']==9 and d['mismatches']==0 and d['battery']['failing']==[] and len(d['battery']['mutations'])==11 and all(m['ok'] for m in d['battery']['mutations']) and len(d['battery']['do_nothing_red'])==9 and d['exit_code']==0 on /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/scores/c2-after.json)
+STEP  c2-after-nobattery (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c2-mismatch.py' '--root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--rev' 'e5aa10cf0ead987be4284c6f873bf568fdc35e5a' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--json-out' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/scores/c2-after-nobattery.json'
+      exit 1 stdout_sha256 1516e6891afbfcba1f6575011d1d098263b39ab26ce4503e4101f29992aece66
+FAIL  step c2-after-nobattery exit 1 != expected 0 (see /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/after-freeze/c2-after-nobattery.stderr)
+== census after ==
+STEP  census-after-validate (expect exit 0): '/home/vgpnk/Projects/shokunin/scripts/sources-census.sh' 'validate' '--root' '/home/vgpnk/Projects/shokunin' 'kaidoku'
+      exit 0 stdout_sha256 065a45eb8e760d65d76e55e35e49efc44ee47466c1ffa147205757ea2589a2ea
+STEP  census-after-counts (expect exit 0): '/home/vgpnk/Projects/shokunin/scripts/sources-census.sh' 'census' '--root' '/home/vgpnk/Projects/shokunin' 'kaidoku'
+      exit 0 stdout_sha256 7eb55d1014d465e6a8ba58fc7dbeaefba4721363cfc6a93ad9d8c85d2b38677d
+      registry rows at e5aa10cf0ead987be4284c6f873bf568fdc35e5a: 146
+      ids added BASE..REV: 
+STEP  census-after-immutable (expect exit 0): 'bash' 'tools/round-38/registry-immutable.sh' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' 'e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9' 'e5aa10cf0ead987be4284c6f873bf568fdc35e5a'
+      exit 0 stdout_sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      A8 arithmetic: rows 146 -> 146 (compare with the search-log entry for round 49)
+      validate final line: kaidoku	ok	/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+== misroot after ==
+FAIL  [after] fleet status names this round/lane NOW (23 path(s); first: ?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1be/after.json;?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1le/after.json;) - judge and remove BEFORE the freeze (never in a seat)
+FAIL  [after] /home/vgpnk/Projects/shokunin/tools/round-49 exists at the fleet root (23 files)
+      fleet status exit 0 lines 69 sha256 669243f11c4c2d10
+      lane status (excluding .ufo) lines 0
+      fleet status lines new since before: 0 (sibling lanes also write the fleet; judged by name+content below)
+ok    no new fleet status path names kaidoku/round-49/r49/squashfs/unblob
+ok    no new untracked fleet file names kaidoku-r49/round-49/kaidoku-shokunin in its content
+ok    no unblob.log / *r49* / *.bin newer than the marker at the fleet root
+ok    no new lane-root stray (unblob.log, *.json, dirs) since the marker
+ok    tracked lane-root strays unblob.log / glibc-tag-object.json unmodified
+ok    no .ufo/waves/round-49* at the fleet root (the lane's wave dir is /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave)
+ok    no rea-firmware-*/c1-*/unblob* under /tmp newer than the marker
+ok    lane status (excluding .ufo) shows only landing-set paths or nothing
+== verdict ==
+VERDICT 17 deviation(s):
+  - tools/round-49/control-fixtures absent at FREEZE (plan: every control fixture exists in the freeze)
+  - [before] fleet status names this round/lane NOW (23 path(s); first: ?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1be/after.json;?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1le/after.json;) - judge and remove BEFORE the freeze (never in a seat)
+  - [before] /home/vgpnk/Projects/shokunin/tools/round-49 exists at the fleet root (23 files)
+  - absent at REV: corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md
+  - absent at REV: corpus/lessons/round-49.md
+  - PROVINCE.md lacks the round-49 Core heading
+  - SCORECARD.md lacks '## Record corrections — round 49'
+  - SOURCES lacks S148
+  - snapshot absent at REV: corpus/evidence/round-49/c2/popper.html
+  - snapshot absent at REV: corpus/evidence/round-49/c2/sysexits.html
+  - step c1-after exit 1 != expected 0 (see /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/after-freeze/c1-after.stderr)
+  - C1 after: carriers_matched 4, no false binding, frozen_path_changed [], met_target (d['carriers_matched']==4 and d['bindings_false']==[] and d['frozen_path_changed']==[] and d['met_target'] is True and d['exit_code']==0 and d['failing']==[] on /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/scores/c1-after.json)
+  - step c2-after exit 1 != expected 0 (see /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/after-freeze/c2-after.stderr)
+  - C2 after: atoms_total 9, mismatches 0, battery.failing [], eleven mutations ok, do-nothing red x9 (d['atoms_total']==9 and d['mismatches']==0 and d['battery']['failing']==[] and len(d['battery']['mutations'])==11 and all(m['ok'] for m in d['battery']['mutations']) and len(d['battery']['do_nothing_red'])==9 and d['exit_code']==0 on /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/scores/c2-after.json)
+  - step c2-after-nobattery exit 1 != expected 0 (see /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r4/rehearsal-wave/l1/after-freeze/c2-after-nobattery.stderr)
+  - [after] fleet status names this round/lane NOW (23 path(s); first: ?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1be/after.json;?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1le/after.json;) - judge and remove BEFORE the freeze (never in a seat)
+  - [after] /home/vgpnk/Projects/shokunin/tools/round-49 exists at the fleet root (23 files)
+exit=1

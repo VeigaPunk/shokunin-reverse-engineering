@@ -1,0 +1,128 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-controls.py	2026-10-28 17:54:46.716467933 -0300
++++ /fast/scratch/hyaku/kaidoku-r49/C1Simplify/clone/tools/round-49/var-ctl.py	2026-10-28 18:24:59.024845699 -0300
+@@ -1148,106 +1148,8 @@
+ '''
+ 
+ 
+-def selftest(work):
+-    """Exercise the driver's own machinery against a stub counter.
+-
+-    Nothing here says anything about the real counter; it proves that a control
+-    tree is built byte-exactly, that a sandbox commit is a strict descendant of
+-    the freeze, that the counter is invoked with the frozen argv, that the
+-    receipt carries seat/command/exit/stdout-sha256/wall, and that the judging
+-    path passes a correct control and rejects a wrong one."""
+-    checks = []
+-
+-    def add(name, ok, detail):
+-        checks.append({'check': name, 'ok': bool(ok), 'detail': detail})
+-
+-    bindir = os.path.join(work, 'stubbin')
+-    os.makedirs(bindir, exist_ok=True)
+-    stub = os.path.join(bindir, 'stub-counter.py')
+-    with open(stub, 'w') as fh:
+-        fh.write(STUB)
+-    os.chmod(stub, 0o755)
+-
+-    # a two-commit fixture repo so the sandbox/commit machinery is real
+-    repo = os.path.join(work, 'fixture-lane')
+-    os.makedirs(repo, exist_ok=True)
+-    git(repo, 'init', '--quiet')
+-    for key, val in (('user.name', 'fx'), ('user.email', 'fx@fx')):
+-        git(repo, 'config', key, val)
+-    base = os.path.join(repo, 'base.txt')
+-    with open(base, 'w') as fh:
+-        fh.write('base\n')
+-    git(repo, 'add', 'base.txt')
+-    git(repo, 'commit', '--quiet', '-m', 'base')
+-    freeze = git(repo, 'rev-parse', 'HEAD').stdout.decode().strip()
+ 
+-    sb = make_sandbox(repo, freeze, work, 'selftest')
+-    add('sandbox is its own git repo', True, sb)
+-    planted = {'corpus/evidence/round-49/c1/X/after.json': b'{"planted": true}\n'}
+-    rev = plant_and_commit(sb, planted, 'selftest plant')
+-    add('plant byte-exact', open(os.path.join(
+-        sb, 'corpus/evidence/round-49/c1/X/after.json'), 'rb').read()
+-        == planted['corpus/evidence/round-49/c1/X/after.json'],
+-        'sha256=%s' % sha256_bytes(planted['corpus/evidence/round-49/c1/X/after.json']))
+-    # ancestry is asked of the sandbox: the planted commit exists only there
+-    anc = git(sb, 'merge-base', '--is-ancestor', freeze, rev, check=False).returncode
+-    add('planted commit descends from the freeze', anc == 0,
+-        'freeze=%s rev=%s (asked in the sandbox)' % (freeze[:8], rev[:8]))
+ 
+-    # red mode: expect a red control to pass and a green expectation to fail
+-    jout = os.path.join(work, 'stub-red.json')
+-    m = run_counter(stub, sb, rev, freeze, work, work, jout)
+-    add('counter argv carries the frozen flags',
+-        all(f in m['argv'] for f in ('--root', '--rev', '--freeze', '--pkg65',
+-                                     '--work', '--json-out')),
+-        ' '.join(m['argv'][2:]))
+-    add('receipt records exit/stdout-sha/wall',
+-        isinstance(m['exit_code'], int) and isinstance(m['stdout_sha256'], str)
+-        and len(m['stdout_sha256']) == 64 and isinstance(m['wall_s'], float),
+-        'exit=%r sha=%s wall=%r' % (m['exit_code'], m['stdout_sha256'][:12], m['wall_s']))
+-    ok, why = judge('CTL-C1-X', {'exit': 'exit1', 'carriers_matched': 0}, m)
+-    add('a red stub satisfies a red expectation', ok, why)
+-    ok, why = judge('CTL-C1-X', {'exit': 'exit0'}, m)
+-    add('a red stub fails a green expectation', not ok, why)
+-
+-    # green mode: the positive path
+-    os.environ['STUB_MODE'] = 'green'
+-    os.environ['STUB_N'] = '4'
+-    jout2 = os.path.join(work, 'stub-green.json')
+-    m2 = run_counter(stub, sb, rev, freeze, work, work, jout2)
+-    ok, why = judge('CTL-C1-POS', {'exit': 'exit0', 'carriers_matched': 4,
+-                                   'all_bindings_true': True}, m2)
+-    add('a green stub satisfies the positive control', ok, why)
+-    ok, why = judge('CTL-C1-POS', {'exit': 'exit0', 'carriers_matched': 5}, m2)
+-    add('a wrong carrier count fails closed', not ok, why)
+-    del os.environ['STUB_MODE']
+-    del os.environ['STUB_N']
+-
+-    # unevaluable mode never counts as a pass
+-    os.environ['STUB_MODE'] = 'unevaluable'
+-    m3 = run_counter(stub, sb, rev, freeze, work, work,
+-                     os.path.join(work, 'stub-u.json'))
+-    ok, why = judge('CTL-C1-X', {'exit': 'non-zero'}, m3)
+-    add('exit 2 from the counter never passes a red control', not ok, why)
+-    del os.environ['STUB_MODE']
+-
+-    # the judge must not read an absent binding as true
+-    ok, why = judge('CTL-C1-X',
+-                    {'exit': 'non-zero', 'failing_includes': ['projection_ok']},
+-                    {'exit_code': 1, 'receipt': None, 'stdout_sha256': 'x',
+-                     'wall_s': 0.0, 'argv': [], 'stdout_tail': [], 'stderr_tail': []})
+-    add('a missing receipt is reported, not assumed', ok is True and 'no readable' in why, why)
+-
+-    doc = {'schema': 'kaidoku-r49-c1-controls-selftest-v1', 'seat': SEAT,
+-           'cases': len(checks), 'passed': sum(1 for c in checks if c['ok']),
+-           'checks': checks}
+-    print(json.dumps({'selftest': 'c1-controls', 'cases': doc['cases'],
+-                      'passed': doc['passed'],
+-                      'failed': [c['check'] for c in checks if not c['ok']]},
+-                     sort_keys=True))
+-    return 0 if doc['passed'] == doc['cases'] else 1, doc
+-
+-
+ # ------------------------------------------------------------------ main
+ 
+ def main(argv=None):
+@@ -1281,7 +1183,6 @@
+                          'counter reads the table from the freeze tree, so this is the '
+                          'only way to show what a corrected frozen table would score')
+     ap.add_argument('--json-out')
+-    ap.add_argument('--selftest', action='store_true')
+     ap.add_argument('--build-only', action='store_true',
+                     help='build the control input trees, do not score')
+     ap.add_argument('--capture-only', action='store_true',
+@@ -1296,10 +1197,6 @@
+     out = a.out or os.path.join(base, 'out')
+     os.makedirs(out, exist_ok=True)
+ 
+-    if a.selftest:
+-        code, doc = selftest(work)
+-        write_json(os.path.join(out, 'selftest.json'), doc)
+-        return code
+ 
+     if not a.root:
+         print('--root is required', file=sys.stderr)

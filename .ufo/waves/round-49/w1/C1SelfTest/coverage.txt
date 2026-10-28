@@ -1,0 +1,82 @@
+0 green (four v1/v2 carriers, receipts, docs) | [] |  |  |bind_false= []
+1 do-nothing (frozen table only) | 56 failing |  |  |bind_false= []
+1 receipt missing (v2be) | 14 failing |  |  |bind_false= []
+1 v3 receipt fed to a v1 carrier | ['v1le:gaps_ok', 'v1le:handler_ok', 'v1le:nonregular_unpublished_ok', 'v1le:oracle_hits_ok', 'v1le:projection_ok'] |  |  |bind_false= []
+1 v2 receipt fed to a v1 carrier (family mismatch) | ['v1le:handler_ok', 'v1le:projection_ok'] |  |  |bind_false= []
+1 fabricated oracle-only envelope (rerun projection mismatch) | ['v1be:projection_ok'] |  |  |bind_false= []
+1 rerun yields no evidence object | ['v1be:projection_ok', 'v1le:projection_ok', 'v2be:projection_ok', 'v2le:projection_ok'] |  |  |bind_false= []
+2 rerun environment error is unevaluable | [] | rerun_env_error |  |bind_false= None
+1 v2 nonstandard magic (zlqs) under a squashfs_v2 binding | ['v2le:carve_ok', 'v2le:layout_ok', 'v2le:projection_ok', 'v2le:subject_pin_ok'] |  |  |bind_false= []
+1 truncated superblock (shorter than 32 bytes) | ['v1le:carve_ok', 'v1le:layout_ok', 'v1le:projection_ok', 'v1le:subject_pin_ok'] |  |  |bind_false= []
+1 bytes_used beyond the file | ['v2be:carve_ok', 'v2be:layout_ok', 'v2be:projection_ok', 'v2be:subject_pin_ok'] |  |  |bind_false= []
+1 s_major contradicts the frozen handler | ['b:carriers_spec_ok', 'v1le:layout_ok'] |  |  |bind_false= ['carriers_spec_ok']
+1 metadata block stored uncompressed leaves compression undetermined | ['v1be:layout_ok', 'v1be:projection_ok', 'v1be:subject_pin_ok'] |  |  |bind_false= []
+1 metadata length that does not land on the directory table | ['v2le:layout_ok', 'v2le:projection_ok', 'v2le:subject_pin_ok'] |  |  |bind_false= []
+1 big-endian magic on a little-endian frozen carrier | ['b:carriers_spec_ok', 'v1le:layout_ok', 'v1le:projection_ok', 'v1le:subject_pin_ok'] |  |  |bind_false= ['carriers_spec_ok']
+1 carrier padded past its chunk end (sloppy carve) | ['v2le:carve_ok', 'v2le:projection_ok', 'v2le:subject_pin_ok'] |  |  |bind_false= []
+1 oracle census row sha flipped in the frozen table | ['v1le:oracle_hits_ok', 'v1le:tree_ok'] |  |  |bind_false= []
+1 receipt publishes a regular file the census does not list | ['v2be:oracle_hits_ok', 'v2be:projection_ok'] |  |  |bind_false= []
+1 symlink census row published as a regular file | ['v2le:oracle_hits_ok', 'v2le:projection_ok'] |  |  |bind_false= []
+1 committed output_tree digest does not match the frozen value | ['v1be:tree_ok'] |  |  |bind_false= []
+1 a depth-limited gap is a divergence (zero-gap rule) | ['v1le:gaps_ok', 'v1le:projection_ok'] |  |  |bind_false= []
+1 missing-extractor-dependency gap (sasquatch stripped) | ['v1be:gaps_ok', 'v1be:projection_ok'] |  |  |bind_false= []
+1 receipt path climbing out of the run (.. provenance) | ['v2le:run_provenance_ok'] |  |  |bind_false= []
+1 provenance of another round (/kaidoku-r42/) | ['v2be:run_provenance_ok'] |  |  |bind_false= []
+1 published file with a trailing slash | ['v1le:path_shape_ok'] |  |  |bind_false= []
+1 a path under x_extract2 cannot publish a row of root x_extract | ['v1be:oracle_hits_ok', 'v1be:projection_ok'] |  |  |bind_false= []
+1 receipt added at the freeze is not fresh | ['v1be:receipt_fresh', 'v1le:receipt_fresh', 'v2be:receipt_fresh', 'v2le:receipt_fresh'] |  |  |bind_false= []
+1 score receipt relabelled as REA evidence | ['v2be:evidence_envelope_ok'] |  |  |bind_false= []
+1 stale evidence id after an edit | ['v2le:evidence_id_ok', 'v2le:oracle_hits_ok', 'v2le:projection_ok'] |  |  |bind_false= []
+1 subject digest names another carrier | ['v1le:projection_ok', 'v1le:subject_pin_ok'] |  |  |bind_false= []
+1 carriers.json names a fifth (v2.1) carrier | 15 failing |  |  |bind_false= ['carriers_spec_ok']
+1 carriers.json drops a preregistered carrier | ['b:carriers_spec_ok'] |  |  |bind_false= ['carriers_spec_ok']
+1 carrier handler disagrees with s_major | ['b:carriers_spec_ok', 'v1le:gaps_ok', 'v1le:handler_ok', 'v1le:layout_ok', 'v1le:nonregular_unpublished_ok', 'v1le:oracle_hits_ok'] |  |  |bind_false= ['carriers_spec_ok']
+1 all carriers little-endian (endianness coverage) | ['b:carriers_spec_ok', 'b:endianness_coverage', 'v1be:projection_ok', 'v1be:subject_pin_ok', 'v2be:projection_ok', 'v2be:subject_pin_ok'] |  |  |bind_false= ['carriers_spec_ok', 'endianness_coverage']
+2 carriers.json changed after the freeze | [] | frozen_path_changed |  |bind_false= None
+2 carrier bytes changed after the freeze | [] | frozen_path_changed |  |bind_false= None
+2 committed oracle tree edited after the freeze | [] | frozen_path_changed |  |bind_false= None
+2 frozen path touched then restored | [] | frozen_path_changed |  |bind_false= None
+1 province has no Round-49 Core section | ['b:frontier_note', 'b:province_core_row', 'b:province_core_section'] |  |  |bind_false= ['frontier_note', 'province_core_row', 'province_core_section']
+1 province row names only squashfs_v1 | ['b:province_core_row'] |  |  |bind_false= ['province_core_row']
+1 province row cites another entry | ['b:province_core_row'] |  |  |bind_false= ['province_core_row']
+1 frontier note absent | ['b:frontier_note'] |  |  |bind_false= ['frontier_note']
+1 entry absent | ['b:entry_present', 'b:sourced'] |  |  |bind_false= ['entry_present', 'sourced']
+1 entry cites only one S-id | ['b:sourced'] |  |  |bind_false= ['sourced']
+1 S139 row opened earlier | ['b:sourced'] |  |  |bind_false= ['sourced']
+1 S138 row missing | ['b:sourced'] |  |  |bind_false= ['sourced']
+1 coverage map lacks the stem | ['b:coverage_map_row'] |  |  |bind_false= ['coverage_map_row']
+
+carrier_present 0   <-- NONE (excluding mass-fail cases)
+carrier_pin_ok 0   <-- NONE (excluding mass-fail cases)
+carrier_size_ok 0   <-- NONE (excluding mass-fail cases)
+carrier_fresh_ok 0   <-- NONE (excluding mass-fail cases)
+layout_ok 8 ['v2 nonstandard magic (zlqs) under a squa', 'truncated superblock (shorter than 32 by', 'bytes_used beyond the file']
+carve_ok 4 ['v2 nonstandard magic (zlqs) under a squa', 'truncated superblock (shorter than 32 by', 'bytes_used beyond the file']
+oracle_ok 0   <-- NONE (excluding mass-fail cases)
+tree_ok 2 ['oracle census row sha flipped in the fro', 'committed output_tree digest does not ma']
+receipt_present 0   <-- NONE (excluding mass-fail cases)
+receipt_fresh 4 ['receipt added at the freeze is not fresh', 'receipt added at the freeze is not fresh', 'receipt added at the freeze is not fresh']
+evidence_envelope_ok 1 ['score receipt relabelled as REA evidence']
+subject_pin_ok 10 ['v2 nonstandard magic (zlqs) under a squa', 'truncated superblock (shorter than 32 by', 'bytes_used beyond the file']
+operation_ok 0   <-- NONE (excluding mass-fail cases)
+handler_ok 3 ['v3 receipt fed to a v1 carrier', 'v2 receipt fed to a v1 carrier (family m', 'carrier handler disagrees with s_major']
+chunks_ok 0   <-- NONE (excluding mass-fail cases)
+oracle_hits_ok 7 ['v3 receipt fed to a v1 carrier', 'oracle census row sha flipped in the fro', 'receipt publishes a regular file the cen']
+gaps_ok 4 ['v3 receipt fed to a v1 carrier', 'a depth-limited gap is a divergence (zer', 'missing-extractor-dependency gap (sasqua']
+nonregular_unpublished_ok 2 ['v3 receipt fed to a v1 carrier', 'carrier handler disagrees with s_major']
+path_shape_ok 1 ['published file with a trailing slash']
+run_provenance_ok 2 ['receipt path climbing out of the run (..', 'provenance of another round (/kaidoku-r4']
+evidence_id_ok 1 ['stale evidence id after an edit']
+projection_ok 23 ['v3 receipt fed to a v1 carrier', 'v2 receipt fed to a v1 carrier (family m', 'fabricated oracle-only envelope (rerun p']
+province_core_section 1 ['province has no Round-49 Core section']
+province_core_row 3 ['province has no Round-49 Core section', 'province row names only squashfs_v1', 'province row cites another entry']
+frontier_note 2 ['province has no Round-49 Core section', 'frontier note absent']
+entry_present 1 ['entry absent']
+sourced 4 ['entry absent', 'entry cites only one S-id', 'S139 row opened earlier']
+coverage_map_row 1 ['coverage map lacks the stem']
+carriers_spec_ok 5 ['s_major contradicts the frozen handler', 'big-endian magic on a little-endian froz', 'carriers.json drops a preregistered carr']
+gap_rule_ok 0   <-- NONE (excluding mass-fail cases)
+endianness_coverage 1 ['all carriers little-endian (endianness c']
+family_coverage 0   <-- NONE (excluding mass-fail cases)
+frozen_tables_valid 0   <-- NONE (excluding mass-fail cases)
+oracle_tool_ok 0   <-- NONE (excluding mass-fail cases)

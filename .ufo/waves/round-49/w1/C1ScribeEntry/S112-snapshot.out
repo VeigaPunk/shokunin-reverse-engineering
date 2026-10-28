@@ -1,0 +1,46 @@
+2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287  squashfs-26.6.4.py
+590 squashfs-26.6.4.py
+24:class SquashFSExtractor(Extractor):
+26:    V4BE_EXECUTABLE = "sasquatch-v4be"
+37:        executable = self.EXECUTABLE
+40:            case Endian.BIG, 4:
+41:                executable = self.V4BE_EXECUTABLE
+51:            case Endian.BIG, _:
+53:            case Endian.LITTLE, _:
+58:                "-no-exit-code",
+69:        return [self.EXECUTABLE, self.V4BE_EXECUTABLE]
+72:class _SquashFSBase(StructHandler):
+73:    BIG_ENDIAN_MAGIC = 0x73_71_73_68
+75:    EXTRACTOR = SquashFSExtractor(3, 0x73_71_73_68)
+79:        endian = get_endian(file, self.BIG_ENDIAN_MAGIC)
+101:class SquashFSv1Handler(_SquashFSBase):
+102:    NAME = "squashfs_v1"
+158:class SquashFSv2Handler(SquashFSv1Handler):
+159:    NAME = "squashfs_v2"
+199:class SquashFSv2NonStandardHandler(SquashFSv2Handler):
+200:    NAME = "squashfs_v2_nonstandard"
+202:    BIG_ENDIAN_MAGIC = 0x73_71_6C_7A
+204:    EXTRACTOR = SquashFSExtractor(2, 0x73_71_6C_7A)
+244:class SquashFSv3Handler(_SquashFSBase):
+245:    NAME = "squashfs_v3"
+318:class SquashFSv3DDWRTHandler(SquashFSv3Handler):
+319:    NAME = "squashfs_v3_ddwrt"
+321:    BIG_ENDIAN_MAGIC = 0x74_71_73_68
+323:    EXTRACTOR = SquashFSExtractor(3, 0x74_71_73_68)
+363:class SquashFSv3BroadcomHandler(SquashFSv3Handler):
+364:    NAME = "squashfs_v3_broadcom"
+366:    BIG_ENDIAN_MAGIC = 0x71_73_68_73
+368:    EXTRACTOR = SquashFSExtractor(3, 0x71_73_68_73)
+409:class SquashFSv3NSHandler(SquashFSv3Handler):
+410:    NAME = "squashfs_v3_nonstandard"
+412:    BIG_ENDIAN_MAGIC = 0x73_71_6C_7A
+414:    EXTRACTOR = SquashFSExtractor(3, 0x73_71_6C_7A)
+454:class SquashFSv4LEHandler(_SquashFSBase):
+455:    NAME = "squashfs_v4_le"
+513:class SquashFSv4BEHandler(SquashFSv4LEHandler):
+514:    NAME = "squashfs_v4_be"
+527:    EXTRACTOR = SquashFSExtractor(4, 0x73_71_73_68)
+548:class SquashFSv4BroadcomHandler(SquashFSv4LEHandler):
+549:    NAME = "squashfs_v4_broadcom"
+551:    BIG_ENDIAN_MAGIC = 0x71_73_68_73
+553:    EXTRACTOR = SquashFSExtractor(4, 0x71_73_68_73)

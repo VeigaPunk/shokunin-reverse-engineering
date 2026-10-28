@@ -1,0 +1,31 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-counter.py	2026-10-28 17:54:34.278430601 -0300
++++ /fast/scratch/hyaku/kaidoku-r49/C1Simplify/clone/tools/round-49/var-cD.py	2026-10-28 18:22:00.718417562 -0300
+@@ -1474,17 +1474,6 @@
+     return hits
+ 
+ 
+-def silent_detail_matches(detail, allowed):
+-    """Does an oracle row's detail name one of the rule's silent details?"""
+-    if detail is None:
+-        return False
+-    for label in allowed:
+-        if label == 'empty-target':
+-            if detail == '':
+-                return True
+-        elif detail == label:
+-            return True
+-    return False
+ 
+ 
+ def disposition_check(gaps_list, diags, nonreg, model, root, output_directory=None):
+@@ -1553,10 +1542,6 @@
+         if not need:
+             continue
+         if gapped.get(rel) or removed_rels.get(rel):
+-            continue
+-        allowed_details = (removed.get('silent') or {}).get(kind)
+-        if allowed_details and silent_detail_matches(detail, allowed_details):
+-            silent_admitted.append(rel)
+             continue
+         missing.append(rel)
+     if missing:

@@ -1,0 +1,4 @@
+#!/bin/sh
+# read-set tracer: logs every git invocation the counter makes, then execs the real git
+{ printf 'git'; for a in "$@"; do printf '\t%s' "$a"; done; printf '\n'; } >> "$TRACE_LOG"
+exec /usr/bin/git "$@"

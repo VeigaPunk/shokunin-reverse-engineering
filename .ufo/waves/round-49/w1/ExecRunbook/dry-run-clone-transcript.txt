@@ -1,0 +1,106 @@
+after-freeze.sh: DRY RUN - read-only gates execute, nothing is written; FREEZE=f2e3be0683d0842c0893aa69b042b306d30d3e2d LANE=/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone SCRATCH=/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r
+== pre: read-only gates ==
+ok    rehearsal clone toplevel == /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone
+ok    FREEZE is a commit
+ok    BASE is an ancestor of FREEZE
+ok    FREEZE != BASE
+ok    FREEZE is an ancestor of HEAD
+ok    FREEZE is an ancestor of HEAD
+ok    BASE..FREEZE touches only tools/round-49, the plan, .ufo/waves/round-49
+ok    frozen file at FREEZE: tools/round-49/c1-counter.py
+ok    frozen file at FREEZE: tools/round-49/c1-run.sh
+ok    frozen file at FREEZE: tools/round-49/c1-run.py
+ok    frozen file at FREEZE: tools/round-49/c1-controls.py
+ok    frozen file at FREEZE: tools/round-49/c1-oracle.py
+ok    frozen file at FREEZE: tools/round-49/carriers.json
+ok    frozen file at FREEZE: tools/round-49/c2-mismatch.py
+ok    frozen file at FREEZE: plans/round-49-claims.md
+FAIL  tools/round-49/control-fixtures absent at FREEZE (plan: every control fixture exists in the freeze)
+ok    frozen blobs at FREEZE == HEAD (37 entries)
+ok    worktree == FREEZE for the frozen set
+ok    no untracked file under tools/round-49 or plans/ (no __pycache__)
+ok    no commit in FREEZE..HEAD touches tools/round-49 or the plan (merge-aware walk)
+ok    child PATH resolves unblob -> /home/vgpnk/.local/bin/unblob
+ok    child PATH resolves sasquatch -> /home/vgpnk/.local/bin/sasquatch
+ok    child PATH resolves npx -> /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/npx
+ok    child PATH resolves node -> /usr/bin/node
+ok    unblob 26.6.4
+ok    sasquatch 4.5.1
+ok    REA package root /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents is 6.5.0
+ok    evidence root absent: /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-evidence/c1
+      disk: root                             use%     free
+      disk: /tmp                              21%   101.9G
+      disk: /var/tmp                          38%   555.9G
+      disk: /fast/scratch/hyaku               47%   431.0G
+== census before ==
+STEP  census-before-validate (expect exit 0): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+STEP  census-before-counts   (expect exit 0): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin kaidoku
+STEP  census-before-rowcount: git show e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9:corpus/SOURCES.md | grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'
+== misroot before ==
+STEP  misroot-before: git -C /home/vgpnk/Projects/shokunin status --porcelain -uall > /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-wave/l1/misroot/fleet-before.txt ; git -C /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone status --porcelain -uall -- . ':!.ufo' > /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-wave/l1/misroot/lane-before.txt
+STEP  marker: touch /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/misroot.marker
+== score-before (counted at --rev FREEZE) ==
+STEP  c1-before (expect exit 1): 'python3' '-I' '-B' 'tools/round-49/c1-counter.py' '--root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--rev' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--pkg65' '/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents' '--work' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/counter-c1-before' '--json-out' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-wave/l1/scores/c1-before.json'
+      [dry-run] not executed
+CHECK C1 before: carriers_matched 0: [dry-run] d['carriers_matched']==0 and d['exit_code']==1
+CHECK C1 before: all six documentation bindings false: [dry-run] all(b in d['bindings_false'] for b in ('province_core_section','province_core_row','frontier_note','entry_present','sourced','coverage_map_row'))
+STEP  c2-before (expect exit 1): 'python3' '-I' '-B' 'tools/round-49/c2-mismatch.py' '--root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--rev' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--json-out' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-wave/l1/scores/c2-before.json'
+      [dry-run] not executed
+CHECK C2 before: atoms_total 9 mismatches 9: [dry-run] d['atoms_total']==9 and d['mismatches']==9 and d['exit_code']==1
+== data: c1-run.sh (the only writer of the lane evidence root) ==
+STEP  c1-run-guard (expect exit 2): '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone/tools/round-49/c1-run.sh' '--lane-root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--scratch' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d'
+      [dry-run] not executed
+STEP  c1-run-data (expect exit 0): 'env' 'TMPDIR=/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/tmp' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone/tools/round-49/c1-run.sh' '--lane-root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--evidence-root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-evidence/c1' '--scratch' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--timeout' '900'
+      [dry-run] not executed
+== land-evidence: commit corpus/evidence/round-49/c1 only ==
+cp: cannot stat '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-evidence/c1': No such file or directory
+fatal: pathspec 'corpus/evidence/round-49/c1' did not match any files
+== gate-landed ==
+      REV = f2e3be0683d0842c0893aa69b042b306d30d3e2d
+ok    REV == HEAD
+ok    FREEZE is an ancestor of REV
+ok    no tracked change outside .ufo (REV == worktree for the counters' file reads)
+ok    no uncommitted new file under corpus/tools/plans (every landing file is at REV)
+FAIL  v1le after.json first-add '' is not a strict descendant of FREEZE
+FAIL  v1be after.json first-add '' is not a strict descendant of FREEZE
+FAIL  v2le after.json first-add '' is not a strict descendant of FREEZE
+FAIL  v2be after.json first-add '' is not a strict descendant of FREEZE
+FAIL  absent at REV: corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md
+FAIL  absent at REV: corpus/lessons/round-49.md
+FAIL  PROVINCE.md lacks the round-49 Core heading
+FAIL  SCORECARD.md lacks '## Record corrections — round 49'
+FAIL  SOURCES lacks S148
+FAIL  snapshot absent at REV: corpus/evidence/round-49/c2/popper.html
+FAIL  snapshot absent at REV: corpus/evidence/round-49/c2/sysexits.html
+== score-after (counted at --rev REV) ==
+STEP  c1-after (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c1-counter.py' '--root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--rev' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--pkg65' '/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents' '--work' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/counter-c1-after' '--json-out' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-wave/l1/scores/c1-after.json'
+      [dry-run] not executed
+CHECK C1 after: carriers_matched 4, no false binding, frozen_path_changed [], met_target: [dry-run] d['carriers_matched']==4 and d['bindings_false']==[] and d['frozen_path_changed']==[] and d['met_target'] is True and d['exit_code']==0 and d['failing']==[]
+STEP  c1-after-verify-receipt (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c1-counter.py' '--verify-receipt' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-wave/l1/scores/c1-after.json'
+      [dry-run] not executed
+STEP  c2-after (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c2-mismatch.py' '--root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--rev' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--battery' '--json-out' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-wave/l1/scores/c2-after.json'
+      [dry-run] not executed
+CHECK C2 after: atoms_total 9, mismatches 0, battery.failing [], eleven mutations ok, do-nothing red x9: [dry-run] d['atoms_total']==9 and d['mismatches']==0 and d['battery']['failing']==[] and len(d['battery']['mutations'])==11 and all(m['ok'] for m in d['battery']['mutations']) and len(d['battery']['do_nothing_red'])==9 and d['exit_code']==0
+STEP  c2-after-nobattery (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c2-mismatch.py' '--root' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone' '--rev' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--freeze' 'f2e3be0683d0842c0893aa69b042b306d30d3e2d' '--json-out' '/fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-wave/l1/scores/c2-after-nobattery.json'
+      [dry-run] not executed
+== census after ==
+STEP  census-after-validate (expect exit 0): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+STEP  census-after-counts   (expect exit 0): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin kaidoku
+STEP  census-after-rowcount: git show <REV>:corpus/SOURCES.md | grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'
+STEP  census-after-immutable (expect exit 0): bash tools/round-38/registry-immutable.sh /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9 <REV>
+== misroot after ==
+STEP  misroot-after: git -C /home/vgpnk/Projects/shokunin status --porcelain -uall > /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-wave/l1/misroot/fleet-after.txt ; git -C /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/clone status --porcelain -uall -- . ':!.ufo' > /fast/scratch/hyaku/kaidoku-r49/ExecRunbook/l1r/rehearsal-wave/l1/misroot/lane-after.txt
+== verdict ==
+VERDICT 12 deviation(s):
+  - tools/round-49/control-fixtures absent at FREEZE (plan: every control fixture exists in the freeze)
+  - v1le after.json first-add '' is not a strict descendant of FREEZE
+  - v1be after.json first-add '' is not a strict descendant of FREEZE
+  - v2le after.json first-add '' is not a strict descendant of FREEZE
+  - v2be after.json first-add '' is not a strict descendant of FREEZE
+  - absent at REV: corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md
+  - absent at REV: corpus/lessons/round-49.md
+  - PROVINCE.md lacks the round-49 Core heading
+  - SCORECARD.md lacks '## Record corrections — round 49'
+  - SOURCES lacks S148
+  - snapshot absent at REV: corpus/evidence/round-49/c2/popper.html
+  - snapshot absent at REV: corpus/evidence/round-49/c2/sysexits.html

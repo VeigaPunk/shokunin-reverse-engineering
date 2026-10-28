@@ -1,0 +1,9 @@
+# command (run from the w1 seat dir; python3 -I -B; read-only git via the counter's Git.show; overlay sentinel REVX):
+#   importlib-load c2-mismatch.py (draft, read-only), ov = Overlay(Git(LANE), 'REVX', {'corpus/SOURCES.md': <candidate bytes>})
+#   print(m._derived(ov, m.LANE_BASE, 'REVX'))   # returns (rows_base, rows_rev, included, excluded)
+# exit: 0 for both runs
+# variant rows S147+S148 only (scratch root/corpus/SOURCES.md, sha256 807f0d42dc01c02817630d8937f65adecd997402c0077ed4105f0e32ecca7db7):
+(146, 148, 2, 0)
+# variant rows S147+S148+S149 (rejected candidate, scratch withS149/corpus/SOURCES.md):
+(146, 149, 2, 1)
+# census --file for the S149 variant: rows 149, tier.A 139, status.mined 141, status.rejected 8 (receipts/val-withS149.tsv has its validate output; its E11 lines are scratch-root noise, because that scratch tree did not copy the lane's full lessons)

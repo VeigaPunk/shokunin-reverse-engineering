@@ -1,0 +1,488 @@
+{
+ "wave": "r49-w1",
+ "milestone": "Round 49 wave 1 (pre-freeze): attack and verify the DRAFT claim instruments and plan, re-open sources, draft landing text; findings are folded in before the single freeze",
+ "reportDir": ".ufo/waves/round-49/w1",
+ "context": "# Target\nkaidoku-shokunin round 49, wave 1 of 2 = the PRE-FREEZE attack: verify, attack and falsify the DRAFTS of the round's two claim instruments and plan, re-open sources, and draft landing text, BEFORE the single freeze and before any data run. Lane root (absolute): /home/vgpnk/Projects/shokunin/kaidoku-shokunin. L1 = KaidokuR49 (integration owner; it holds the section-3 planner seat \u2014 the validator rejects `planner` as a swarm role, so planning data-walks ride scout/connector/revenger seats). Base revision `e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9`.\n\n# The two claims (the plan is the rule \u2014 read it, not this prompt)\n- **R49-C1 coverage**: SquashFS v1/v2 (`squashfs_v1`, `squashfs_v2`, four frozen standard fixtures, both byte orders) Frontier -> Core through REA 6.5.0 `extract-firmware`, scored by `c1-counter.py` (the round-44 counter ported; round 44's claim stopped because plan text and counter disagreed about receipt provenance \u2014 this round states it once).\n- **R49-C2 calibration**: nine round-48 self-assessment mismatches (atoms A1-A9, from the round-48 closure `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-48-verifier-spotcheck.md` \"Routed defects\"), counted by `c2-mismatch.py`; target `mismatches 0` with an in-counter mutation battery; at the freeze it reads 9.\nPlan draft: **`/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/plans/round-49-claims.md`**. Counter/tool drafts: **`/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/`** (`c1-counter.py`, `c1-run.py`, `c1-run.sh`, `c1-controls.py`, `c1-oracle.py`, `carriers.json`, `c2-mismatch.py`). C1 landing-text drafts: `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/artifacts/R49C1Doc/` and `.../R49EntryDraft/`. Helpers: `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/mkclone.sh <dest>` builds a scratch clone at the base with the draft tools committed as a throwaway \"dev freeze\" (prints `DEV_FREEZE=<hash>`); `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/c2-after.py <clone>` builds the GREEN C2 fixture in it (prints `DEV_AFTER=<hash>`); `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/run-ctl.sh <clone> <workdir>` runs the C1 controls driver. Source snapshots: `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/snapshots/`. REA 6.5.0 package root: `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents`. Read the plan in full before your first command.\n\n# Contract (binding on every seat)\n- **Read-only on the lane tree.** Write ONLY inside `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/<YourSeatName>/` (create it) and your report file `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/<YourSeatName>.md`. Never edit the draft tools/plan/docs, `SKILL.md`, `corpus/`, `LOG.md`, `SCORECARD.md`, `SHONEN.md`, `PROVINCE.md`, `plans/`, `tools/`, or the fleet repo. Never commit, push, stage, stash, or run any mutating git/jj command in the lane or fleet repo. Read-only git (`log`, `show`, `diff`, `ls-tree`, `rev-parse`, `cat-file`, `merge-base`) is fine.\n- **Drafts are read-only.** To mutate, copy to scratch (use `mkclone.sh`). A finding that a draft clause is vacuous, satisfiable by a forgery, or disagrees with its plan sentence is the most valuable thing you can return: give the exact command, the differing value, and a fixture path.\n- **Fixture repos**: `mkclone.sh` does it for you. Any other fixture repo: `D=$(mktemp -d -p \"$S\") && git -C \"$D\" init -q`, every later git call names `-C \"$D\"`, verify `git -C \"$D\" rev-parse --show-toplevel` equals `$D` before the first commit; set `user.name`/`user.email` in that clone only. Never run `git commit` with a throwaway identity anywhere else (run-6 incident: a seat's fixture commit landed on the FLEET repo and deleted 4,606 paths).\n- **Scratch**: `S=/fast/scratch/hyaku/kaidoku-r49/<YourSeatName>`; `mkdir -p \"$S\"`, `export TMPDIR=\"$S\" HYAKU_SCRATCH=/fast/scratch/hyaku`. Remove `$S` before you yield AFTER copying receipts into `.ufo/waves/round-49/w1/<YourSeatName>/`. Never write under `/tmp`; nothing under `/tmp` is citable. Check `/home/vgpnk/Projects/shokunin/scripts/hyaku/disk-guard.sh status` before a heavy pass.\n- **Honest capture beats a pass.** Every receipt carries the exact command, exit code, stdout sha256 and UTC time. A check you did not run is not passed \u2014 say \"not run\". Never fabricate output.\n- **Exit codes are semantic**: 0 met/clean, 1 not met/violation, 2 could-not-evaluate. A 2 never counts toward a target.\n- **Absolute paths**: your tools start at the fleet root, not the lane. The `Report:` trailer path in your prompt is relative to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin` \u2014 write it at `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/<that path>` (that is `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/<YourSeatName>.md`). A file written at a relative path lands in the FLEET repo and is a defect.\n- **Tooling authorization (operator, 2026-10-19)**: you may install/upgrade tools that help the task; first read `/home/vgpnk/.omp/agent/RULES.md` (official channels, update-safety gate; record tool/version/channel/reason in your report). **pacman guard**: all pacman transactions are PAUSED host-wide \u2014 install only via `uv tool`/`npx`/an official binary in `~/.local/bin`, or nothing. Never `-Sy`, `-Syu`, `-U`, `-R`, downgrade, or restart a host service.\n- Never message `agent://all`; never touch a sibling lane, `.ufo/state/`, `.ufo/watchdog.log`, `/home/vgpnk/Projects/shokunin/.scratch/`, or the fleet repo. Never run `c1-run.sh --data-run` (the L1 runs data after the freeze).\n- Return a final message of at most 8 lines: your verdict, the 1-3 most important findings, your report path.\n\n# What the L1 does with your output\nIt reads every report, folds real defects into the drafts, then commits the ONE freeze (plan + tools + control fixtures), runs the data procedure, lands the evidence and docs, and dispatches wave 2 against the FROZEN bytes. Do not try to \"fix\" the drafts; report.\n",
+ "items": [
+  {
+   "name": "C1PortAudit",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nR49-C1 port audit. Diff `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/{c1-counter.py,c1-run.py,c1-run.sh,c1-controls.py,c1-oracle.py,carriers.json}` against `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/` of the same names. List EVERY delta and classify it mechanical (round 44 -> 49 token) or non-mechanical. Then find every remaining `44`/`r44`/`R44` token and decide whether it is an intended round-44 reference (oracle trees, carrier custody, history) or a stale one that would make a round-49 run read round-44 state. A stale one is a defect.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1PortAudit.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1PortAudit/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1ProvCritic",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the receipt-provenance clause of R49-C1 (the clause round 44 stated two ways). Read the plan's P49-C1 sentence and the counter code that implements `parameters.output_directory` / evidence-id minting / `/kaidoku-r49/` segment / `provenance.json`. Questions: (1) does the plan sentence say exactly what the code checks? (2) can a receipt whose output_directory is inside `/kaidoku-r49/` but was produced by a fake REA satisfy it? (3) can the committed round-44 receipts, re-minted over a `/kaidoku-r49/` path, pass without a real run? Build the fixture for each in a scratch clone and score it with the draft counter.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ProvCritic.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ProvCritic/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1CtlDoNothing",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRun the do-nothing controls for R49-C1 on a scratch clone (`mkclone.sh`): (a) the counter at the dev freeze with no receipts (`--rev` = DEV_FREEZE): expect exit 1, `carriers_matched 0`; (b) the cheapest shortcut: copy the committed round-44 after-receipts `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/c1/<id>/after.json` to `corpus/evidence/round-49/c1/<id>/after.json` in the clone, commit it, score it: expect non-zero. Record both receipts with the failing clause names. If (b) reaches `carriers_matched 4`, that is the kill rule: say so loudly with the exact command. Use `python3 -I -B tools/round-49/c1-counter.py --root <clone> --rev <rev> --freeze <DEV_FREEZE> --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents --work $S/work --json-out $S/out.json`.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1CtlDoNothing.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1CtlDoNothing/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1SelfTest",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRun `python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-counter.py --selftest --work $S/self` (offline). Record case count, failures, exit code, wall time. Then run `--selftest` three more times and show the output JSON is stable (digest equal modulo wall time). Then list the selftest cases by name and tell the L1 which frozen CLAUSES (the counter's `CLAUSES` and `BINDINGS` tuples) have NO selftest case that reds when that clause is false. Return that gap list.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1SelfTest.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1SelfTest/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1DevArmRepeat",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRun the positive development arm three times on a fresh `mkclone.sh` clone: `python3 -I -B tools/round-49/c1-counter.py --dev-arm --root <clone> --run-rea --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents --work $S/devarm<N> --json-out $S/devarm<N>.json` (real REA 6.5.0 `extract-firmware` on the four carriers, scratch only). Compare the three runs: dev_matched, per-carrier handler, published files, gap kinds, evidence ids. Report any run-to-run difference (that would make the counter-time rerun-projection clause flaky). Record wall times. Never write outside `$S`.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1DevArmRepeat.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1DevArmRepeat/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1OracleIndep",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nIndependent oracle re-derivation. For the four carriers named in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/carriers.json` (files under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/`): extract each with `/usr/bin/unsquashfs` and, if it reads them, `/usr/bin/7z`, into `$S`; compute member sha256/size/relative path; compare with the `oracle.census` in carriers.json and with the unblob `__output__` trees under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/oracle/`. Report every disagreement and whether `7z` agrees with `unsquashfs` (the counter treats unsquashfs as the oracle; say if 7z refuses and why).\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1OracleIndep.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1OracleIndep/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1CarrierPins",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nCarrier custody sweep. For each of the four carriers: sha256 of the committed fixture file, the pin in carriers.json, the pin in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-42/fixtures.json` (if present), the committed copy under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/`, and the unblob 26.6.4 upstream fixture name. Open `https://github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs` (and the raw input blob URL for one carrier) and record the HTTP status and whether the committed bytes equal the upstream `__input__` bytes (sha256). Report mismatches only with evidence.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1CarrierPins.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1CarrierPins/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1S138Reopen",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRe-open source row S138 (`/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md`) for the round-49 gate. Open its URL(s) today, record access date (UTC), HTTP status, and a <=25-word located quote from the page that grounds the row's `teaches`. Check the row's pinned sha256/manifest still describes what the committed oracle trees hold (`/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/oracle/manifest.json`). Give the exact text the lesson `## Gate` should carry for S138 (URL, date, quote with location). Do not edit the registry.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1S138Reopen.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1S138Reopen/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1S139Reopen",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRe-open source row S139 (`/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md`): the squashfs-tools release page. Open it today, record access date (UTC), HTTP status, the `4.7.5` tag evidence with a <=25-word located quote, and `/usr/bin/unsquashfs` self-report (`unsquashfs -version` exits 1: parse stdout) plus its sha256 against the row/carriers.json pin. Give the exact text the lesson `## Gate` should carry for S139. Do not edit the registry.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1S139Reopen.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1S139Reopen/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1CounterMut",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMutation-test the DRAFT `c1-counter.py` offline. In a `mkclone.sh` clone, mutate the counter source one clause at a time (at least 15 mutations: drop a clause from `CLAUSES`, make a comparison always true, widen a segment test, accept a gap, skip the rerun projection, ignore handler, skip superblock probe, drop the freeze-walk, etc.) and run `--selftest` for each. Report which mutations SURVIVE (selftest still exit 0). For each survivor say whether a red control (CTL-C1-0..5) would still catch it by running `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/run-ctl.sh` against a clone with the mutated counter committed as its dev freeze. A survivor no control catches is a finding.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1CounterMut.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1CounterMut/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1GoldForgery",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nGold-forgery attack on R49-C1: construct, in a scratch clone, the CHEAPEST input tree that makes the draft counter report `carriers_matched 4` with every binding true WITHOUT a genuine REA run (fabricated envelope re-minted by the package's own digest code, a copied round-44 receipt with the path rewritten, hollow PROVINCE/README/entry text, a scratch segment that is a directory name only). Score each attempt. If any reaches 4/4 + every binding true it is the kill rule: report the fixture and the exact command. Otherwise report which clause stopped each attempt (this is the evidence the claim cannot be met by a do-nothing).\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1GoldForgery.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1GoldForgery/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1DocBindings",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the five documentation bindings (`province_core_section`, `province_core_row`, `frontier_note`, `entry_present`, `sourced`, `coverage_map_row`). For each, write the hollowest text that satisfies it (e.g. a PROVINCE row that names the two handlers and cites the entry path but says nothing true). Score with the draft counter in a clone that carries genuine scratch receipts (`--dev-arm` receipts planted via `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/run-ctl.sh`'s POS pipeline, or your own). Report which bindings are satisfiable by hollow text; the L1 will state that limit in the plan rather than claim it is closed.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1DocBindings.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1DocBindings/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1TmpScratch",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nScratch-discipline audit (operator directive 2026-10-25, section 7 of the round prompt). grep every file in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/` for `/tmp`, `tempfile`, `mkdtemp`, `gettempdir`, `TMPDIR`, `HYAKU_SCRATCH`, `/fast/scratch`. For each hit decide: honours `TMPDIR`/`--work`? hardcodes a path? writes outside the lane evidence root and the scratch segment? A tool that writes under `/tmp` regardless of TMPDIR is a routed defect. Also run each tool's `--help` (not `--data-run`) and confirm it makes no write.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1TmpScratch.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1TmpScratch/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1RunReview",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nReview `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-run.py` and `c1-run.sh`. Run `c1-run.sh --dry-run` from a clone (use `--lane-root <clone>` and `--evidence-root $S/ev` so nothing is written into the lane) and show the four carrier ids, the output_directory it would use (must be inside `/kaidoku-r49/`), the evidence paths (`corpus/evidence/round-49/c1/<id>/`), the data-run guard (refuses without `--data-run`/`KAIDOKU_C1_DATA_RUN=1`), and `--force` semantics. List every way the data run could write outside `corpus/evidence/round-49/c1/` or the scratch segment. Do NOT run `--data-run`.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1RunReview.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1RunReview/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1ControlsReview",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nReview `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-controls.py` and run `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/run-ctl.sh` on a fresh clone (work dir under your scratch). Confirm all seven controls print the expected verdict (CTL-C1-0..5 `as_expected` with exit 1, CTL-C1-POS exit 0). Then check: is CTL-C1-4 really the committed round-44 receipts of the same bytes relabelled (compare sha256 of the planted files with `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/c1/<id>/after.json`)? Is each control's planted tree committed in the sandbox only? Does any control leave anything in the lane tree? (`git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin status --porcelain` must show nothing you caused.)\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ControlsReview.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ControlsReview/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1RunMut",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMutation-test the provenance part of `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-run.py` and the counter's provenance clause together. In a clone, apply 8+ single mutations to the RUNNER (use `--rea-outdir-mode evidence` so the receipt names the evidence path; drop `provenance.json`; copy a tree that is not byte-identical; record a wrong `rev_at_run`; point the scratch segment at `/kaidoku-r44/`) using the runner's `--fake-rea` option if present or its dry-run output, and score what the counter does with each resulting tree. Report mutations the counter ACCEPTS (a receipt produced the wrong way that still scores 4/4).\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1RunMut.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1RunMut/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1Sentinel",
+   "role": "sentinel",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nSecurity review of `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-run.py`/`c1-run.sh` and the unblob tee it generates: path traversal or symlink escape when it copies REA's produced tree verbatim into the evidence root (a symlink in an extracted tree pointing outside), privilege/exec surfaces (`REA_UNBLOB_COMMAND` tee, `npx -y rea-agents@6.5.0`), anything that could write outside the evidence root or scratch, anything that executes content from an extracted tree. Reproduce any finding on a fixture in scratch; do not run the data procedure.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1Sentinel.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1Sentinel/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1R44Revenge",
+   "role": "revenger",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nReverse-engineer why round 44's R44-C1 stopped, from bytes. Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-44-claims.md` R44-C1, `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-44.md`, `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/c1-counter.py` and `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-44-verifier-spotcheck.md` (if present). Build a clause-by-clause table: plan sentence fragment -> counter code (function, line) -> agrees / disagrees / unchecked. Do the same for `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/plans/round-49-claims.md` P49-C1 against the draft counter. Any fragment that is `disagrees` or `unchecked` in the round-49 table is a defect that would repeat round 44: list each.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1R44Revenge.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1R44Revenge/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1ScribeEntry",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft the round-49 knowledge entry text. Start from `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/artifacts/R49EntryDraft/corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md` (the round-44 pre-stop draft, mechanically ported). Write `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeEntry/entry.md`: the full entry with `status:` stating the round-44 stop in one sentence (cite `corpus/knowledge/2026-10-28-r44-squashfs-v1v2-core.md`), `source:` lines for S138/S139 (+S112), `verified-at:`, `recheck:`, and measured values left as `<MEASURED: name>` markers ONLY where they depend on the after-freeze data run. Every number must carry its command. List every marker at the end. Do not touch the repo entry path.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeEntry.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeEntry/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1ScribeProvince",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft the three landing blocks and verify them against the draft counter's regexes: `## Round-49 additions to Core` section with one row naming `squashfs_v1` and `squashfs_v2` and citing `corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md` (counter: `province_core_row`, `SQFS12_TEXT_RE`); the one-line `Round-49 frontier note, 2026-10-28:` that carries the entry stem and a SquashFS v1/v2 token and says it supersedes the round-44 `measured, not promoted` note; the README `## Coverage map` row. Start from `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/artifacts/R49C1Doc/`. Write `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeProvince/block-a.md`, `block-b.md`, `block-c.md`; leave `<AFTER-DATA: ...>` markers only where the headline is the after-data receipt. Run the counter's own regex against each block in a scratch Python session and paste the match evidence.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeProvince.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeProvince/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1ScribeSources",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft the SOURCES.md registry edits for C1 without touching the registry: for rows S138 and S139, the exact new `used-by` cell (append `corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md` to the existing cell; show old -> new), and confirm `opened` stays `2026-10-28` (the counter's `OPENED`). Draft the lesson `## Gate` rows for S138/S139 (URL, access date, <=25-word quote with location) from the re-open seats' reports if they exist at `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1S138Reopen.md` and `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1S139Reopen.md` (wait for them by reading; if absent, read the sources yourself). Run the census-shaped awk from `/home/vgpnk/Projects/shokunin/CORPUS.md` section SOURCES on a scratch copy with your edited rows and show NF=13 and no missing used-by path.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeSources.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeSources/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1DocCheck",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDoc-binding dry run. Build a clone (`mkclone.sh`), run `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/run-ctl.sh <clone> $S/w` and confirm CTL-C1-POS exits 0 with every documentation binding true (it plants the R49C1Doc blocks, the R49EntryDraft entry and the S138/S139 used-by append). Then mutate ONE doc at a time in your own copy of the doc dir (point `--doc-dir`... via the run-ctl.sh extra args): remove the heading, drop `squashfs_v2` from the row, drop the entry path, drop the frontier-note stem, drop S139 from the entry's `source:`, drop the README row; show each flips exactly its own binding red and exit non-zero.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1DocCheck.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1DocCheck/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2RederiveA",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nIndependent re-derivation of atoms A1-A3 (do NOT import the counter). From read-only git objects of `/home/vgpnk/Projects/shokunin/kaidoku-shokunin` (`git show e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9:<path>`): A1 the freeze the SCORECARD `## Round 48` declares vs the one `corpus/lessons/round-48.md` names in its header (and the A1-A8 rows the lesson itself lists); A2 whether `663f30ee7516942a0120e7de68fe88356e680822` is a commit and which commit shares its 8-hex prefix; A3 the full set of LOG.md line numbers (at base) naming `2e785632`, `33f65a91`, `577a02a5`, `8847042a`. Write your own derivation script and compare its numbers with the draft lesson lines produced by `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/c2-after.py` (read that script). Report every disagreement.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2RederiveA.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2RederiveA/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2RederiveB",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nIndependent re-derivation of atoms A4-A6 (do NOT import the counter). A4 from `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-48/r48-w1-results.json` and the committed `.ufo/waves/round-48/w1/` tree at base: seats, seats with a report artifact (a `.md` at `w1/<seat>.md` or under `w1/<seat>/`), the seats without. Cross-check against the closure's own count (72/75; missing C1Meaning, C1Battery, ScribeReportNumbers) in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-48-verifier-spotcheck.md`. A5 raw and newline-stripped sha256 of `.ufo/waves/round-48/l1/scores/c1-final-33f65a91.json` and `c2-final-33f65a91.json`, and which digests the round-48 fleet report quoted (`/home/vgpnk/Projects/shokunin/.ufo/reports/round-48/kaidoku.md`, read-only). A6 open the committed snapshot `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/snapshots/popper.html` and locate the quote \"falsifiability as his criterion for demarcating science from non-science: if a theory is incompatible with possible empirical observations it is scientific\" and the h2/h3 heading above it. Report disagreements with the draft.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2RederiveB.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2RederiveB/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2RederiveC",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nIndependent re-derivation of atoms A7-A9 (do NOT import the counter). A7 open `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/snapshots/sysexits.html`, confirm `EX_USAGE 64` and the 22-word quote \"The command was used incorrectly, e.g., with the wrong number of arguments, a bad flag, bad syntax in a parameter, or whatever.\" are present after tag stripping, and fetch `https://man7.org/linux/man-pages/man3/sysexits.h.3head.html` today to compare sha256 with the snapshot. A8 derive, from `git show` of `corpus/SOURCES.md` at `61b87d742032e65fca9c38267d7d6ed7e555edad`, `8847042a140b044dbf335210c965bf7b06b09b4f` and `e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9`, the registry row counts and the new-id included/excluded split. A9 confirm `corpus/lessons/round-48-verifier-spotcheck.md` states `rejected-harmed` and a `| calibration | harmed |` axis row. Report disagreements with `c2-after.py`.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2RederiveC.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2RederiveC/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2CounterMut",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMutation-test `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c2-mismatch.py` beyond its built-in battery. Build the green fixture (`mkclone.sh` + `c2-after.py`). Apply at least 20 mutations to the COUNTER source (delete a check inside an atom, weaken a comparison, swap `and`/`or`, skip the append-only blob compare, drop the freeze walk, accept an absent lesson line) and run the counter with `--battery` against the green fixture for each. A mutation is KILLED when the genuine run or the battery goes red; report every SURVIVOR with the exact diff. Also try 10 fixture-side forgeries (right strings, wrong facts) and report which atoms accept them.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2CounterMut.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2CounterMut/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2GoldForgery",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nGold-forgery attack on R49-C2: find the cheapest repository state that makes the draft counter report `mismatches 0` and `battery.failing []` while the underlying facts are wrong (e.g. a correction line whose numbers are re-derived from a file the forger also edited, an overlay-based do-nothing that is vacuous, snapshots whose bytes were edited and re-pinned, search-log entries that match derived counts of a different range). Build each on a scratch clone and score it. Anything green is a finding with the fixture and command.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2GoldForgery.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2GoldForgery/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2PlanMatch",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nR49-C2 plan <-> counter match (the round-44 failure class: claim text and counter disagreeing). Table each sentence of P49-C2 and of the atom list in the plan against the docstring and the code of `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c2-mismatch.py` (function, line): agrees / disagrees / unchecked. Include the numbers (9 atoms, 11 mutations, `mismatches 9` at the freeze). Run the counter at DEV_FREEZE from a clone and show the observed `mismatches` and exit code. Every `disagrees`/`unchecked` is a defect to fix before the freeze.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2PlanMatch.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2PlanMatch/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1PlanMatch",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nR49-C1 plan <-> counter match (the round-44 failure class). Table each clause of P49-C1 and each control/target sentence in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/plans/round-49-claims.md` against `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-counter.py` (function, line, the `CLAUSES`/`BINDINGS` name it maps to): agrees / disagrees / unchecked. Especially: the provenance sentence, the `Round-49 frontier note` mark, `opened 2026-10-28`, `used-by`, the controls list vs `c1-controls.py`. Every `disagrees`/`unchecked` is a defect to fix before the freeze.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1PlanMatch.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1PlanMatch/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2LogPtr",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nReview atoms A3 and A4 against the closure's text. Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-48-verifier-spotcheck.md` \"Step-1 conformance\" and \"Routed defects\" 7 and 8. For each statement the closure makes about LOG.md pointers and the 72/75 wave accounting, re-derive it from git at base. Then check the draft counter encodes the SAME definition (report artifact = `.md` at `w1/<seat>.md` or under `w1/<seat>/`; LOG line sets from the base blob). Find any definition under which the closure and the counter would disagree, and any lines the closure cited that the counter does not cover.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2LogPtr.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2LogPtr/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2SourcesReopen",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRe-open the two sources behind rows S147/S148 independently. Fetch `https://plato.stanford.edu/entries/popper/` and `https://man7.org/linux/man-pages/man3/sysexits.h.3head.html` today; record HTTP status, byte count, sha256 (compare with `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/snapshots/*.html`: equal or different, and if different diff the quoted passages), the section heading above the Popper quote, and the `EX_USAGE` definition lines. Also search the Popper page for the text after the quote (the clause that says the criterion's verdict, `is unscientific`) and tell the L1 whether a <=25-word quote can carry it. Return exact locator strings for the registry rows.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2SourcesReopen.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2SourcesReopen/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2FleetSweep",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRead-only sweep of the round-48 fleet report `/home/vgpnk/Projects/shokunin/.ufo/reports/round-48/kaidoku.md`: extract every 40-hex hash, every LOG.md line pointer, every file path, every sha256; resolve each against `/home/vgpnk/Projects/shokunin/kaidoku-shokunin` at `8847042a140b044dbf335210c965bf7b06b09b4f` (`git cat-file -e`, `git show`, line grep). Table: citation | resolves? | note. The closure found 15/16 hashes resolving; confirm, and list any further defect the closure did not name. This is a sweep with its command and output, not an opinion.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2FleetSweep.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2FleetSweep/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2SelfAssess",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nSelf-assessment sweep (routing only, no fixes). Compare what `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/SCORECARD.md` (Owned axes table and the Round 48 section), `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/SHONEN.md` and `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/LOG.md` (round 48 entry) SAY about round 48 against observed state: the closure verdict (rejected-harmed), the calibration score cell, wave counts, 'dead seats 0', SHONEN pointers. List up to 12 additional mismatches beyond atoms A1-A9, each with both quotes (file:line) and the command that shows the disagreement. These are candidates for next round; do not rank them as claims.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2SelfAssess.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2SelfAssess/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2SearchLog",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nReview atom A8 (search log). Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md` `## Search log` entries (format; last entry round 33) and the contract in `/home/vgpnk/Projects/shokunin/CORPUS.md` rule 5. Check the draft entries produced by `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/c2-after.py` for rounds 48 (late) and 49 meet the contract (question, where searched, date, identified/screened/included/excluded, exclusion reasons, stop rationale), and that the counter derives `rows B -> A` and included/excluded from git. Check the derived numbers for round 48 yourself: rows at `61b87d74` vs `8847042a`. List contract elements the counter does not check and the L1 must write by hand.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2SearchLog.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2SearchLog/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2ScribeCorrections",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft the C2 landing text in full, real values, no markers: `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2ScribeCorrections/lesson-corrections.md` (the `## Corrections to round 48` section with lines A1-A7 in the exact `- A<n> key=value` format the counter parses; read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/c2-after.py` for the shape and re-derive every value from git yourself), `scorecard-section.md` (the `## Record corrections \u2014 round 49` section with the A9 line plus 3 sentences of honest prose: calibration was harmed at round 48 per the closure, what the corrections repair, what stays routed), and `search-log.md` (the two search-log entries, contract-complete). Run `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/c2-after.py`-style verification: build a clone, apply your text, run the draft counter with `--battery` and paste the result.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2ScribeCorrections.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2ScribeCorrections/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2ScribeSources",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft registry rows S147 and S148 (supersedes S145 / S146) to the house schema (11 cells, no `|` inside a cell), with sha256-pinned snapshots under `corpus/evidence/round-49/c2/`, from `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/snapshots/` and the exact locators the re-open seats find (`/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2SourcesReopen.md` if present; else open the pages yourself). The quote must be <=25 words and present in the snapshot after tag stripping; the anchor names the heading above it. S148 `teaches` must state EX_USAGE is 64 and that the lane's 0/1/2 meanings are its own convention. Also draft the lesson `## Gate` block (S147 admit, S148 admit, S145/S146 left untouched; the round-48 closure's spot-check disagreements recorded; at least one reject from this round's candidates with reason and flip). Write `rows.md` and `gate.md`. Verify with a scratch registry copy and the census awk lines.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2ScribeSources.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2ScribeSources/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ConnSibling",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nSibling-overlap scan. Does another shokunin lane's PROVINCE/knowledge hold SquashFS, unblob, sasquatch, firmware-extraction or REA material that overlaps R49-C1, or source-curation / self-assessment-calibration tooling that overlaps R49-C2? Search `/home/vgpnk/Projects/shokunin/*-shokunin/PROVINCE.md` and `corpus/knowledge/` read-only (grep SquashFS|unblob|sasquatch|firmware). Table: lane | path:line | overlap | verdict (adjacent: report, not absorb / none). Also name the one place this lane's C2 counter and another lane's instrument do the same job, if any.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ConnSibling.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ConnSibling/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ConnSeparability",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nProve or break causal separability of R49-C1 and R49-C2. Build two scratch clones: X carries ONLY the C1 landing (POS tree from `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/run-ctl.sh`'s pos output + docs) and Y carries ONLY the C2 landing (`c2-after.py`). Score C1 on X and on Y, C2 on X and on Y (each at its own dev freeze). C1 must be green on X only, C2 green on Y only, and neither counter may read a path the other claim's landing writes (list each counter's read set by tracing its `show`/`git show` paths). Report any shared path (SOURCES.md is expected: confirm which rows each reads).\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ConnSeparability.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ConnSeparability/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritFreeze",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the freeze-integrity rule. The freeze commit will contain `plans/round-49-claims.md` and `tools/round-49/**`. After it, the L1 runs `c1-run.sh --data-run` (writes `corpus/evidence/round-49/c1/**`), lands docs and runs both counters. In a clone, try: touching a tools file after the freeze and restoring it (merge-aware walk must still refuse), adding a new file under `tools/round-49/`, editing `carriers.json` in a merge commit, a rename. Score both counters on each (C1 walk vs C2 walk). Report any manoeuvre one counter refuses and the other accepts, or any that neither catches.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/CritFreeze.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/CritFreeze/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScoutPriorClosures",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRead the last three closures (`/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-46-verifier-spotcheck.md`, `round-47-...`, `round-48-...`). For every routed defect/recommendation in each, decide against the repo at `e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9`: fixed / still open / declined, with the evidence pointer. Output a table: closure | defect id | status | evidence. The L1 needs the list of still-open ones to decide what round 49 repairs and what it routes (the plan already repairs round-48 defects 1-4, 7, 8 and routes 5-6).\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ScoutPriorClosures.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ScoutPriorClosures/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScoutAssimilation",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRead-only look at the assimilation package for this lane: `/home/vgpnk/Projects/shokuknow/merge/kaidoku/` (`MERGE-REPORT.md`, `SOURCES.append.md`, knowledge entries) and `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/considerthese/` (expected absent). Never run any campaign tool there. Report: is there a theme/entry that matches the lane's PROVINCE and could be adopted in a round that is not an assimilation round? List the staged entries, their target paths and whether any overlaps SquashFS/firmware. The L1 plans `Assimilation: none` unless you find an entry that is cheap, in-province, and not already held.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ScoutAssimilation.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ScoutAssimilation/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ReviewerQuality",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nQUALITY-bar review. Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md` (rows 70-79 especially) and apply the rows that bind a new knowledge entry, a SOURCES row and a lesson to the round-49 drafts (`R49EntryDraft`, the S147/S148 rows `c2-after.py` writes). List each applicable criterion, whether the draft meets it, and propose the exact text of ONE new QUALITY row for the round-49 mined mistake M49-1 (reference-drift: the round-48 lesson header named an amended-away freeze; captured-by none; the fix is atom A1 + its mutation).\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ReviewerQuality.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ReviewerQuality/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ExecFreezeDry",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFull freeze dry run. Build a clone (`mkclone.sh`), then: (1) score C1 and C2 at DEV_FREEZE (expect C1 exit 1 `carriers_matched 0`; C2 exit 1 `mismatches 9`); (2) `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/run-ctl.sh` (expect 7/7 as expected); (3) `c2-after.py` then C2 with `--battery` (expect exit 0, 11 mutations killed, do-nothing red x9); (4) `c1-run.sh --dry-run` against the clone. Record every command, exit code, stdout sha256 in a table. Anything that differs from the expectation is a defect; list the L1 steps that would be needed to commit the freeze (which paths must be in the freeze commit: tools, plan, control-fixtures, controls receipts).\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ExecFreezeDry.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ExecFreezeDry/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ExecRunbook",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nWrite the L1 runbook for the after-freeze phase as an EXECUTABLE script `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ExecRunbook/after-freeze.sh` (not run by you, except with `--dry-run` where supported): (a) pre-checks (`jj-lane.sh state`, freeze is ancestor of HEAD, tools frozen blobs unchanged); (b) `tools/round-49/c1-run.sh --data-run` with scratch under `/fast/scratch/hyaku/kaidoku-r49/l1`; (c) the exact counting commands for C1 and C2 with `--json-out` into `.ufo/waves/round-49/l1/scores/`; (d) the census command before/after; (e) the misroot sweep. Verify the C1 commands by running each with `--dry-run`/`--help` or on a clone; paste the resolved argv. Flag any step that would write outside the lane evidence root, the wave dir or scratch.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ExecRunbook.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/ExecRunbook/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1ScribeLesson",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft the round-49 lesson skeleton `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeLesson/lesson-skeleton.md` for `corpus/lessons/round-49.md`: header (base, FREEZE placeholder `<FREEZE>` to be filled by the L1 after the freeze commit exists, stating the freeze is ONE commit and there is no amendment series), `## Mistakes` with M49-1 (class `reference-drift`; evidence `corpus/lessons/round-48.md:4` vs `SCORECARD.md` Round 48 declared freeze; captured-by none; fix atom A1 with mutation `A1 swap declared/stale` shown red) and a second row for any further mistake the seats' reports surface (leave a marker), `## Gate` (assimilation none with the sweep command; considerthese absent), `## Corrections to round 48` placeholder pointing at `C2ScribeCorrections`, `## Census before -> after` with the round-start census output already recorded at `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/sources-census-start.txt` (read it and paste exit code and the final line), `## Routed defects` (round-48 defects 5 and 6 declined with reasons: round-48 claims stay frozen).\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeLesson.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1ScribeLesson/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1Simplify",
+   "role": "simplifier",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYAGNI check on the round-49 instrument set. Is every file in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/` needed by a claim, a control or the data run? Is `c1-oracle.py` needed at score time or only to build carriers.json (then it is evidence, not an instrument)? Is any dead code path in `c2-mismatch.py` (e.g. the `Overlay.ls` branch, unused helpers) unexercised by the battery? List removals that would NOT change any verdict (prove by running both counters on the green fixture with the removal) and anything that is unreachable. Do not edit the drafts.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1Simplify.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1Simplify/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2MutAtoms",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFixture-side mutation test of the nine atoms on the GREEN fixture (`mkclone.sh` + `c2-after.py`). For each atom write 3 distinct fixture mutations of the committed bytes (not the counter): change a number, move a pointer, swap two ids, truncate a quote, rewrite a hash by one hex digit, re-pin a snapshot, delete a row, reorder sections. Score each with the draft counter. Report every mutation that stays green (an undetected change to the record) with the exact diff. Target: 27 mutations.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2MutAtoms.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C2MutAtoms/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1Frontier",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFrontier read for the round-49 report: from `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/PROVINCE.md` Frontier and `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/README.md` `## Frontier`, list the sasquatch/SquashFS items still Frontier AFTER this round's promotion (`squashfs_v2_nonstandard`, `squashfs_v3_broadcom`, `squashfs_v3_nonstandard`, gzip v3, v4 Broadcom, LE AVM, AVM kernels, nested sub-images below depth 1) with the one cheapest next probe for each (a tool/fixture that exists on this host or upstream under unblob 26.6.4 `tests/integration/filesystem/squashfs`). Verify each named fixture exists upstream by opening the listing; do not run extractions.\n\nWrite your findings to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1Frontier.md` (verdict first, then a findings table with exact commands, exit codes, sha256s); extra artifacts under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/w1/C1Frontier/`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  }
+ ]
+}

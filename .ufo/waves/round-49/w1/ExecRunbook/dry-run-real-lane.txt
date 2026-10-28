@@ -1,0 +1,95 @@
+after-freeze.sh: DRY RUN - read-only gates execute, nothing is written; FREEZE=<FREEZE> LANE=/home/vgpnk/Projects/shokunin/kaidoku-shokunin SCRATCH=/fast/scratch/hyaku/kaidoku-r49/l1
+== pre: read-only gates ==
+      jj-lane.sh state /home/vgpnk/Projects/shokunin/kaidoku-shokunin -> exit 0: state branch=main local=e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9 remote=e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9 ahead=0 behind=0 head=detached tracked=0 untracked=1
+ok    jj-lane state exit 0
+ok    behind=0
+ok    no tracked-file change in the lane worktree
+ok    main tip == HEAD (e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9)
+      [dry-run] FREEZE unset; ancestry / blob gates skipped
+== census before ==
+STEP  census-before-validate (expect exit 0): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+STEP  census-before-counts   (expect exit 0): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin kaidoku
+STEP  census-before-rowcount: git show e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9:corpus/SOURCES.md | grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'
+== misroot before ==
+FAIL  [before] fleet status names this round/lane NOW (23 path(s); first: ?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1be/after.json;?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1le/after.json;) - judge and remove BEFORE the freeze (never in a seat)
+FAIL  [before] /home/vgpnk/Projects/shokunin/tools/round-49 exists at the fleet root (23 files)
+STEP  misroot-before: git -C /home/vgpnk/Projects/shokunin status --porcelain -uall > /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/misroot/fleet-before.txt ; git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin status --porcelain -uall -- . ':!.ufo' > /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/misroot/lane-before.txt
+STEP  marker: touch /fast/scratch/hyaku/kaidoku-r49/l1/misroot.marker
+== score-before (counted at --rev FREEZE) ==
+STEP  c1-before (expect exit 1): 'python3' '-I' '-B' 'tools/round-49/c1-counter.py' '--root' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' '--rev' '<FREEZE>' '--freeze' '<FREEZE>' '--pkg65' '/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents' '--work' '/fast/scratch/hyaku/kaidoku-r49/l1/counter-c1-before' '--json-out' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/scores/c1-before.json'
+      [dry-run] not executed
+CHECK C1 before: carriers_matched 0: [dry-run] d['carriers_matched']==0 and d['exit_code']==1
+CHECK C1 before: all six documentation bindings false: [dry-run] all(b in d['bindings_false'] for b in ('province_core_section','province_core_row','frontier_note','entry_present','sourced','coverage_map_row'))
+STEP  c2-before (expect exit 1): 'python3' '-I' '-B' 'tools/round-49/c2-mismatch.py' '--root' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' '--rev' '<FREEZE>' '--freeze' '<FREEZE>' '--json-out' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/scores/c2-before.json'
+      [dry-run] not executed
+CHECK C2 before: atoms_total 9 mismatches 9: [dry-run] d['atoms_total']==9 and d['mismatches']==9 and d['exit_code']==1
+== data: c1-run.sh (the only writer of the lane evidence root) ==
+STEP  c1-run-plan (live --dry-run of the runner; writes nothing)
+      tools/round-49/c1-run.sh not present in /home/vgpnk/Projects/shokunin/kaidoku-shokunin yet (pre-freeze)
+STEP  c1-run-data (expect exit 0): cd /fast/scratch/hyaku/kaidoku-r49/l1 && TMPDIR=/fast/scratch/hyaku/kaidoku-r49/l1/tmp /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-49/c1-run.sh --lane-root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --scratch /fast/scratch/hyaku/kaidoku-r49/l1 --freeze <FREEZE> --data-run --timeout 900
+== land-evidence: commit corpus/evidence/round-49/c1 only ==
+STEP  land-evidence: /home/vgpnk/Projects/shokunin/scripts/hyaku/jj-lane.sh commit /home/vgpnk/Projects/shokunin/kaidoku-shokunin --as kaidoku -m '...' -- corpus/evidence/round-49/c1
+== gate-landed ==
+      REV = e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9
+ok    REV == HEAD
+fatal: Not a valid object name <FREEZE>
+FAIL  FREEZE is not an ancestor of REV
+fatal: Not a valid object name <FREEZE>
+FAIL  frozen blobs differ between FREEZE and e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9 (a later restore does not un-block: counter exit 2 frozen_path_changed)
+fatal: bad revision '<FREEZE>'
+ok    worktree == FREEZE for the frozen set
+ok    no untracked file under tools/round-49 or plans/ (no __pycache__)
+fatal: bad revision '<FREEZE>..e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9'
+ok    no commit in FREEZE..e4f2cfa5ebff touches a frozen path (merge-aware walk over the whole frozen set)
+ok    no tracked change outside .ufo (REV == worktree for the counters' file reads)
+ok    no uncommitted new file under corpus/tools/plans (every landing file is at REV)
+FAIL  v1le after.json first-add '' is not a strict descendant of FREEZE
+FAIL  v1be after.json first-add '' is not a strict descendant of FREEZE
+FAIL  v2le after.json first-add '' is not a strict descendant of FREEZE
+FAIL  v2be after.json first-add '' is not a strict descendant of FREEZE
+FAIL  absent at REV: corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md
+FAIL  absent at REV: corpus/lessons/round-49.md
+FAIL  PROVINCE.md lacks the round-49 Core heading
+FAIL  SCORECARD.md lacks '## Record corrections — round 49'
+FAIL  SOURCES lacks S148
+FAIL  snapshot absent at REV: corpus/evidence/round-49/c2/popper.html
+FAIL  snapshot absent at REV: corpus/evidence/round-49/c2/sysexits.html
+== score-after (counted at --rev REV) ==
+STEP  c1-after (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c1-counter.py' '--root' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' '--rev' 'e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9' '--freeze' '<FREEZE>' '--pkg65' '/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents' '--work' '/fast/scratch/hyaku/kaidoku-r49/l1/counter-c1-after' '--json-out' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/scores/c1-after.json'
+      [dry-run] not executed
+CHECK C1 after: carriers_matched 4, no false binding, frozen_path_changed [], met_target: [dry-run] d['carriers_matched']==4 and d['bindings_false']==[] and d['frozen_path_changed']==[] and d['met_target'] is True and d['exit_code']==0 and d['failing']==[]
+STEP  c1-after-verify-receipt (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c1-counter.py' '--verify-receipt' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/scores/c1-after.json'
+      [dry-run] not executed
+STEP  c2-after (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c2-mismatch.py' '--root' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' '--rev' 'e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9' '--freeze' '<FREEZE>' '--battery' '--json-out' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/scores/c2-after.json'
+      [dry-run] not executed
+CHECK C2 after: atoms_total 9, mismatches 0, battery.failing [], eleven mutations ok, do-nothing red x9: [dry-run] d['atoms_total']==9 and d['mismatches']==0 and d['battery']['failing']==[] and len(d['battery']['mutations'])==11 and all(m['ok'] for m in d['battery']['mutations']) and len(d['battery']['do_nothing_red'])==9 and d['exit_code']==0
+STEP  c2-after-nobattery (expect exit 0): 'python3' '-I' '-B' 'tools/round-49/c2-mismatch.py' '--root' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' '--rev' 'e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9' '--freeze' '<FREEZE>' '--json-out' '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/scores/c2-after-nobattery.json'
+      [dry-run] not executed
+== census after ==
+STEP  census-after-validate (expect exit 0): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+STEP  census-after-counts   (expect exit 0): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin kaidoku
+STEP  census-after-rowcount: git show <REV>:corpus/SOURCES.md | grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'
+STEP  census-after-immutable (expect exit 0): bash tools/round-38/registry-immutable.sh /home/vgpnk/Projects/shokunin/kaidoku-shokunin e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9 <REV>
+== misroot after ==
+FAIL  [after] fleet status names this round/lane NOW (23 path(s); first: ?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1be/after.json;?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1le/after.json;) - judge and remove BEFORE the freeze (never in a seat)
+FAIL  [after] /home/vgpnk/Projects/shokunin/tools/round-49 exists at the fleet root (23 files)
+STEP  misroot-after: git -C /home/vgpnk/Projects/shokunin status --porcelain -uall > /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/misroot/fleet-after.txt ; git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin status --porcelain -uall -- . ':!.ufo' > /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/l1/misroot/lane-after.txt
+== verdict ==
+VERDICT 17 deviation(s):
+  - [before] fleet status names this round/lane NOW (23 path(s); first: ?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1be/after.json;?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1le/after.json;) - judge and remove BEFORE the freeze (never in a seat)
+  - [before] /home/vgpnk/Projects/shokunin/tools/round-49 exists at the fleet root (23 files)
+  - FREEZE is not an ancestor of REV
+  - frozen blobs differ between FREEZE and e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9 (a later restore does not un-block: counter exit 2 frozen_path_changed)
+  - v1le after.json first-add '' is not a strict descendant of FREEZE
+  - v1be after.json first-add '' is not a strict descendant of FREEZE
+  - v2le after.json first-add '' is not a strict descendant of FREEZE
+  - v2be after.json first-add '' is not a strict descendant of FREEZE
+  - absent at REV: corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md
+  - absent at REV: corpus/lessons/round-49.md
+  - PROVINCE.md lacks the round-49 Core heading
+  - SCORECARD.md lacks '## Record corrections — round 49'
+  - SOURCES lacks S148
+  - snapshot absent at REV: corpus/evidence/round-49/c2/popper.html
+  - snapshot absent at REV: corpus/evidence/round-49/c2/sysexits.html
+  - [after] fleet status names this round/lane NOW (23 path(s); first: ?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1be/after.json;?? tools/round-49/control-fixtures/c1/corpus/evidence/round-49/c1/v1le/after.json;) - judge and remove BEFORE the freeze (never in a seat)
+  - [after] /home/vgpnk/Projects/shokunin/tools/round-49 exists at the fleet root (23 files)

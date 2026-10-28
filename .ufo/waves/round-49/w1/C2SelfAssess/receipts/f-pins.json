@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-I",
+    "-c",
+    "\nimport json\np=\"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-48/r48-w1-results.json\"\nd=json.load(open(p))\nprefs=(\"ac02a79f\",\"f3a7afc4\",\"0f06251b\",\"04f9d4b7\",\"24b4e5cb\",\"c8d7da55\",\"b6f7ca2a\")\nlater=[]\nfor x in d[\"results\"]:\n    t=x.get(\"output\") or \"\"\n    hit=[h for h in prefs if h in t]\n    if hit:\n        later.append((x[\"name\"], hit))\nprint(\"seats_mentioning_post_A1\", len(later))\nfor n,h in later:\n    print(n, \",\".join(h))\nfor x in d[\"results\"]:\n    if x[\"name\"]==\"C1Pins\":\n        t=x[\"output\"]\n        i=t.find(\"2026-10-28\")\n        print(\"C1PINS_WINDOW\", t[max(0,i-80):i+40].replace(\"\\n\",\" \"))\n    if x[\"name\"]==\"ConnAxes\":\n        t=x[\"output\"]\n        i=t.find(\"0f06251b\")\n        print(\"CONNAXES_WINDOW\", t[max(0,i-120):i+80].replace(\"\\n\",\" \"))\n"
+  ],
+  "exit": 0,
+  "utc": "2026-10-28T21:18:45Z",
+  "stdout_sha256": "d1039bb7832ba60279da402ab53c525b6ba2fd37c964f3267e2381188daa101d",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 924
+}

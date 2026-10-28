@@ -1,0 +1,25 @@
+--- /fast/scratch/hyaku/kaidoku-r49/C1PortAudit/m/c1-controls.py.mech	2026-10-28 18:03:21.096712959 -0300
++++ .ufo/waves/round-49/draft/tools/round-49/c1-controls.py	2026-10-28 17:54:46.716467933 -0300
+@@ -917,8 +917,22 @@
+     new_lines = lines[:j] + [got['readme_row'].rstrip('\n')] + lines[j:]
+     readme_new = '\n'.join(new_lines) + '\n'
+     entry_rel = 'corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md'
++    # S138/S139 must list the new entry in used-by at the measured revision (the
++    # counter's `sourced` binding); the landing appends it, so the POS plants the
++    # same append on the registry bytes at the freeze.
++    reg = show(ctx['root'], ctx['freeze'], 'corpus/SOURCES.md')
++    if reg is None:
++        raise Uneval('corpus/SOURCES.md absent at the freeze')
++    out_lines = []
++    for line in reg.decode().split('\n'):
++        m = re.match(r'^ {0,3}\|\s*(S138|S139)\s*\|', line)
++        if m and entry_rel not in line:
++            cells_ = line.rstrip().rstrip('|').rstrip()
++            line = cells_ + ', ' + entry_rel + ' |'
++        out_lines.append(line)
+     return {'PROVINCE.md': prov_new.encode(),
+             'corpus/README.md': readme_new.encode(),
++            'corpus/SOURCES.md': '\n'.join(out_lines).encode(),
+             entry_rel: got['entry'].encode()}, {k: len(v) for k, v in want.items()}
+ 
+ 

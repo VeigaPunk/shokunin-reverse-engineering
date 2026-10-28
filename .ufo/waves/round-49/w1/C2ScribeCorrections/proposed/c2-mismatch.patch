@@ -1,0 +1,84 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c2-mismatch.py	2026-10-28 17:49:42.761906844 -0300
++++ proposed/c2-mismatch.py	2026-10-28 18:18:53.487307361 -0300
+@@ -81,6 +81,8 @@
+ RECEIPTS = {'c1': '.ufo/waves/round-48/l1/scores/c1-final-33f65a91.json',
+             'c2': '.ufo/waves/round-48/l1/scores/c2-final-33f65a91.json'}
+ ATOM_IDS = ('A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9')
++CLOSURE = 'corpus/lessons/round-48-verifier-spotcheck.md'
++LOG_KEYS = ('2e785632', '33f65a91')
+ 
+ 
+ class Git:
+@@ -190,7 +192,7 @@
+                 if '=' in tok:
+                     k, v = tok.split('=', 1)
+                     kv[k] = v
+-            out[m.group(1)] = kv
++            out[m.group(1)] = kv if m.group(1) not in out else {'__dup__': '1'}
+     return out
+ 
+ 
+@@ -262,6 +264,8 @@
+         return ['lesson line A2 absent']
+     dead, real = d.get('dead', ''), d.get('actual', '')
+     out = []
++    if dead not in text(r.show(LANE_BASE, CLOSURE)):
++        out.append('A2 dead hash is not the one the round-48 closure quotes')
+     if not (HEX40.fullmatch(dead) and HEX40.fullmatch(real)):
+         return ['A2 hashes are not 40-hex']
+     if r.is_commit(dead):
+@@ -285,8 +289,8 @@
+     if base is None or now is None or not now.startswith(base):
+         out.append('LOG.md at REV does not begin with the base blob (not append-only)')
+     keys = [k for k in d if k.startswith('log_')]
+-    if not keys:
+-        out.append('A3 states no log_<hash> pointer')
++    if sorted(k[4:] for k in keys) != sorted(LOG_KEYS):
++        out.append('A3 log pointer keys %s, want %s' % (sorted(k[4:] for k in keys), sorted(LOG_KEYS)))
+     for k in keys:
+         h = k[4:]
+         want = [int(x) for x in d[k].split(',') if x.isdigit()]
+@@ -306,12 +310,12 @@
+     d = L.get('A4') if L is not None else None
+     if not d:
+         return ['lesson line A4 absent']
+-    res = r.show(rev, RESULTS48)
++    res = r.show(LANE_BASE, RESULTS48)
+     try:
+         names = [x['name'] for x in json.loads(res)['results']]
+     except (TypeError, ValueError, KeyError):
+         return ['round-48 results.json unreadable']
+-    tree = [p for p in r.ls(rev, W1) if p]
++    tree = [p for p in r.ls(LANE_BASE, W1) if p]
+     missing = []
+     for n in names:
+         has = ('%s/%s.md' % (W1, n)) in tree or any(
+@@ -334,7 +338,7 @@
+         return ['lesson line A5 absent']
+     out = []
+     for k, path in RECEIPTS.items():
+-        b = r.show(rev, path)
++        b = r.show(LANE_BASE, path)
+         if b is None:
+             out.append('receipt %s absent at REV' % path)
+             continue
+@@ -425,8 +429,8 @@
+             out.append('quote not in the committed snapshot: %s' % qn[:60])
+     if 'EX_USAGE 64' not in norm:
+         out.append('snapshot does not carry `EX_USAGE 64`')
+-    if 'EX_USAGE' not in c[6] or not re.search(r'\b64\b', c[6]):
+-        out.append('S148 teaches does not name EX_USAGE and 64')
++    if not re.search(r'EX_USAGE is 64\b', c[6]):
++        out.append('S148 teaches does not state EX_USAGE is 64')
+     return out
+ 
+ 
+@@ -460,7 +464,7 @@
+         idn, scr, inc, exc = map(int, m.groups())
+         if (int(n.group(1)), int(n.group(2))) != want[:2]:
+             out.append('%s: rows %s -> %s, derived %d -> %d' % (tag, n.group(1), n.group(2), want[0], want[1]))
+-        if (inc, exc) != want[2:] or scr != inc + exc or idn < scr:
++        if (inc, exc) != want[2:] or scr != inc + exc or idn != want[2] + want[3]:
+             out.append('%s: included/excluded %d/%d (screened %d, identified %d), derived %d/%d' % (
+                 tag, inc, exc, scr, idn, want[2], want[3]))
+     return out

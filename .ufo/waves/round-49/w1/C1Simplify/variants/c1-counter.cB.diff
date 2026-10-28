@@ -1,0 +1,139 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-49/draft/tools/round-49/c1-counter.py	2026-10-28 17:54:34.278430601 -0300
++++ /fast/scratch/hyaku/kaidoku-r49/C1Simplify/clone/tools/round-49/var-cB.py	2026-10-28 18:22:00.717712813 -0300
+@@ -2325,13 +2325,6 @@
+     ap.add_argument('--rea-timeout', type=int, default=900)
+     ap.add_argument('--no-rerun', action='store_true')
+     ap.add_argument('--selftest', action='store_true')
+-    ap.add_argument('--dev-arm', action='store_true')
+-    ap.add_argument('--arm-dir', help='directory of captured REA envelopes: '
+-                    '<id>/after.json (dev arm)')
+-    ap.add_argument('--arm-ids', help='comma-separated carrier ids (dev arm)')
+-    ap.add_argument('--run-rea', action='store_true',
+-                    help='dev arm: run REA 6.5.0 on the carrier bytes into '
+-                         'scratch (never writes corpus/evidence/round-49/c1)')
+     ap.add_argument('--verify-receipt', help='exit 0 if the receipt at PATH carries '
+                     'a counter_sha256 that describes the counter file it names')
+     a = ap.parse_args(argv)
+@@ -2355,8 +2348,6 @@
+         return 0 if ok else 1
+     if a.selftest:
+         return selftest(a.pkg65)
+-    if a.dev_arm:
+-        return dev_arm(a)
+     if a.no_rerun:
+         out = {'reason': 'rerun_disabled',
+                'detail': 'R49-C1 binds a fresh REA run of each carrier; '
+@@ -2405,113 +2396,6 @@
+ 
+ # ------------------------------------------------------------- dev arm (K3)
+ 
+-def dev_arm(a):
+-    """Positive development control: score REAL REA envelopes for the carriers.
+-
+-    R44RevKill K3: a counter that always exits 1 passes every red arm, so the
+-    claim needs a positive control driven by real REA 6.5.0 envelopes. This mode
+-    never writes `corpus/evidence/round-49/c1` and never claims anything: it
+-    either scores envelopes already captured under --arm-dir (`<id>/after.json`)
+-    or runs REA 6.5.0 itself into scratch (--run-rea). Exit 0 only when every
+-    requested carrier maps clean under the R49-C1 carrier clauses (the
+-    freeze-only clauses `receipt_fresh` and the rerun `projection_ok` have no
+-    committed endpoint here and are exempt; they are exercised by --selftest)."""
+-    root = a.root
+-    if not root:
+-        print('usage: --dev-arm needs --root', file=sys.stderr)
+-        return 2
+-    rev = a.rev or 'HEAD'
+-    pkg65 = a.pkg65 or find_rea_pkg()
+-    if not pkg65:
+-        print(json.dumps({'reason': 'no rea-agents package found for --pkg65',
+-                          'seat': 'R49C1Counter'}, sort_keys=True))
+-        return 2
+-    raw_spec = show(root, rev, CARRIERS)
+-    if raw_spec is None:
+-        print(json.dumps({'reason': 'carriers.json absent at %s' % rev},
+-                         sort_keys=True))
+-        return 2
+-    spec = json.loads(raw_spec)
+-    carriers = [c for c in spec.get('carriers') or [] if isinstance(c, dict)]
+-    wanted = ([x.strip().lower() for x in a.arm_ids.split(',') if x.strip()]
+-              if a.arm_ids else None)
+-    work = tempfile.mkdtemp(prefix='c1-devarm.', dir=scratch_root())
+-    envs, notes = {}, {}
+-    try:
+-        if a.arm_dir:
+-            for c in carriers:
+-                cid = c.get('id')
+-                if wanted and str(cid).lower() not in wanted:
+-                    continue
+-                for name in ('after.json', 'envelope.json', 'env.json'):
+-                    p = os.path.join(a.arm_dir, str(cid), name)
+-                    if os.path.isfile(p):
+-                        try:
+-                            with open(p) as fh:
+-                                doc = json.load(fh)
+-                        except (OSError, json.JSONDecodeError) as e:
+-                            notes[cid] = 'unreadable envelope: %s' % e
+-                            continue
+-                        if isinstance(doc, dict) and 'data' in doc \
+-                                and isinstance(doc['data'], dict):
+-                            doc = doc['data']
+-                        if isinstance(doc, dict):
+-                            envs[cid] = doc
+-                        else:
+-                            notes[cid] = 'envelope is not an object'
+-                        break
+-                else:
+-                    notes[cid] = 'no envelope under %r' % (a.arm_dir,)
+-        elif a.run_rea:
+-            runner = make_real_runner(work, a.unblob, a.rea_timeout)
+-            for c in carriers:
+-                cid = c.get('id')
+-                if wanted and str(cid).lower() not in wanted:
+-                    continue
+-                raw = show(root, rev, c.get('path'))
+-                if raw is None:
+-                    notes[cid] = 'carrier bytes absent at %s' % rev
+-                    continue
+-                status, payload = runner(raw, cid, {'max_depth': 3})
+-                if status == 'ok':
+-                    envs[cid] = payload
+-                else:
+-                    notes[cid] = 'REA run failed: %r' % (
+-                        {k: payload.get(k) for k in ('ok', 'exit', 'error')},)
+-        else:
+-            print(json.dumps({'reason': 'dev arm needs --arm-dir DIR or --run-rea',
+-                              'seat': 'R49C1Counter'}, sort_keys=True))
+-            return 2
+-        res = measure(root, rev, rev, pkg65, receipt_overrides=envs, dev_arm=True,
+-                      unblob=a.unblob, rea_timeout=a.rea_timeout)
+-    except Unevaluable as e:
+-        print(json.dumps({'reason': e.reason, 'detail': str(e),
+-                          'seat': 'R49C1Counter'}, sort_keys=True))
+-        return 2
+-    finally:
+-        shutil.rmtree(work, ignore_errors=True)
+-    fails, binds = failing_lists(res)
+-    scored = [k for k in (res.get('carriers') or {})
+-              if not wanted or str(k).lower() in wanted]
+-    per = {k: {'dev_matched': (res['carriers'][k] or {}).get('dev_matched'),
+-               'handler': (res['carriers'][k] or {}).get('handler'),
+-               'layout_ok': (res['carriers'][k] or {}).get('layout_ok'),
+-               'oracle_hits': (res['carriers'][k] or {}).get('oracle_hits'),
+-               'oracle_files': (res['carriers'][k] or {}).get('oracle_files'),
+-               'tree_ok': (res['carriers'][k] or {}).get('tree_ok'),
+-               'gaps_ok': (res['carriers'][k] or {}).get('gaps_ok'),
+-               'evidence_id_ok': (res['carriers'][k] or {}).get('evidence_id_ok')}
+-           for k in scored}
+-    clean = sum(1 for v in per.values() if v['dev_matched'])
+-    out = {'seat': 'R49C1Counter', 'mode': 'dev-arm', 'rev': rev,
+-           'scored': len(scored), 'dev_matched': clean,
+-           'per_carrier': per, 'notes': notes,
+-           'failing': fails, 'bindings_false': binds,
+-           'exit_code': 0 if (scored and clean == len(scored)) else 1}
+-    print(json.dumps(out, sort_keys=True))
+-    if a.json_out:
+-        write_receipt(out, a.json_out)
+-    return out['exit_code']
+ 
+ 
+ # ---------------------------------------------------------------- selftest

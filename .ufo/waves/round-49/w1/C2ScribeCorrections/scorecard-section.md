@@ -1,0 +1,5 @@
+## Record corrections — round 49
+
+- A9 verdict=rejected-harmed source=corpus/lessons/round-48-verifier-spotcheck.md calibration=harmed
+
+The round-48 entry above records calibration `10 → 10`, and its lesson header named a freeze that was amended away; the non-author closure therefore rejected round 48 because calibration was harmed by that false declaration (quality was also harmed, by the S145/S146 record errors). This line records that verdict beside the unchanged round-48 entry, append-only, and claims no new score; the round-49 counter re-derives the nine atoms behind it (lesson lines A1–A7, the search-log entries and this line) from committed bytes. Still routed: closure defects 5 and 6 (the stale `tools/round-48/census2.json` map and the worktree-sourced `gate.py` import), the census before→after line of defect 4, the wave-accounting and cross-domain-evidence prose of defects 7 and 8 beyond A4, and any judgment of prose; rows S145 and S146 stay as written and are recorded only as superseded.

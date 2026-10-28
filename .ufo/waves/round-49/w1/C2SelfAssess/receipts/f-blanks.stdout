@@ -1,0 +1,14 @@
+340|'  | body-extractor-failure | `squashfs_v4_be` | `extractor-failure` | `none` | `yes` | `no` | `0` | the extractor ran with -be and still failed, so the image body or header is damaged -> keep the failing command and stderr from diagnostics, compare against a known-good carrier, never patch the envelope into a success | S120 report.py:91-98; knowledge entry :29-40 |'
+341|'  | escaping-symlink-removed | `squashfs_v4_*` | `*` | `*` | `n/a` | `yes` | `>0` | a symlink target resolved outside the extraction root; unblob removed it and reported MaliciousSymlinkRemoved, and REA records no gap for it -> expect the path to be absent; never materialise the link or match it against the regular-file oracle | S118 extractor.py:79-91 |'
+342|'  | in-tree-symlink-metadata | `squashfs_v4_*` | `unpublished-entry` | `none` | `n/a` | `no` | `>0` | a symlink target resolved inside the extraction root; it is kept as metadata and recorded as one unpublished-entry gap per link -> expected, not a failure; count one gap per in-tree link and publish nothing for it | S119 FirmwarePublication.js:68-75,301-308 |'
+343|'  | clean | `squashfs_v4_*` | `none` | `none` | `n/a` | `no` | `>0` | every regular file was published, no gap was recorded and no symlink was removed -> nothing to fix; match files to an oracle by relative-path suffix and sha256 | S119; knowledge entry :11-19 |'
+344|''
+345|''
+346|''
+347|''
+348|'## Config custody for live-probe rounds (SOP)'
+349|''
+LINE157_HAS_ROUND39 True
+LINE157_LEN 517
+LINE157_IDX 369
+op, K2's in-tree symlink leaves an `unpublished-entry` gap. Round 39: standard BE v4 is Core — see `## Round-39 additions to Core` (`2026-10

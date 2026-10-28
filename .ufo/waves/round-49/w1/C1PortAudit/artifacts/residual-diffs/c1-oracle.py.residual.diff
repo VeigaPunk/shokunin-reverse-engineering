@@ -1,0 +1,56 @@
+--- /fast/scratch/hyaku/kaidoku-r49/C1PortAudit/m/c1-oracle.py.mech	2026-10-28 18:03:21.100500470 -0300
++++ .ufo/waves/round-49/draft/tools/round-49/c1-oracle.py	2026-10-28 17:54:34.283087476 -0300
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""c1-oracle.py - the frozen oracle builder for R49-C1 (round 44).
++"""c1-oracle.py - the frozen oracle builder for R49-C1 (round 49).
+ 
+ It builds, for each frozen carrier, the *independent* oracle that the
+ round-49 C1 counter binds the REA `extract-firmware` receipts against, and
+@@ -17,8 +17,8 @@
+   The oracle is never derived from a REA/sasquatch receipt.
+ 
+ Oracle B - the unblob `__output__` expected trees (second reading)
+-  The committed tree under `corpus/evidence/round-49/oracle/` (fetched
+-  pre-freeze by seat R49SrcOracle, dataset S138) is walked and its member
++  The committed tree under `corpus/evidence/round-44/oracle/` (fetched
++  pre-freeze by seat R44SrcOracle, dataset S138) is walked and its member
+   digests recorded.  This tree is unblob's OWN expectation for the same
+   fixtures, produced by unblob's sasquatch-backed handler: it is a second
+   reading of the same bytes, NOT an independent producer, and it must not be
+@@ -498,7 +498,7 @@
+     """The carrier's committed `__output__` tree path RELATIVE to the oracle root.
+ 
+     The frozen carriers.json names the tree lane-relative
+-    (`corpus/evidence/round-49/oracle/...`).  Stripping the default oracle
++    (`corpus/evidence/round-44/oracle/...`).  Stripping the default oracle
+     root leaves the part that identifies the tree inside whatever
+     `--oracle-root` is given, so an explicit override is honoured instead of
+     being shadowed by the lane-relative path.
+@@ -508,7 +508,7 @@
+         return None
+     if os.path.isabs(rel):
+         return None
+-    default_root = os.path.join(root or "", "corpus/evidence/round-49/oracle")
++    default_root = os.path.join(root or "", "corpus/evidence/round-44/oracle")
+     full = os.path.join(root or "", rel)
+     try:
+         inside = os.path.relpath(full, default_root)
+@@ -1169,7 +1169,7 @@
+                                            "fixture bytes")
+     ap.add_argument("--oracle-root",
+                     help="committed __output__ tree root (default: "
+-                         "<root>/corpus/evidence/round-49/oracle)")
++                         "<root>/corpus/evidence/round-44/oracle)")
+     ap.add_argument("--json-out", help="where to write the oracle blocks")
+     ap.add_argument("--merge-carriers",
+                     help="write the oracle blocks into this carriers.json "
+@@ -1208,7 +1208,7 @@
+         return EXIT_CANNOT_EVALUATE
+ 
+     oracle_root = os.path.abspath(args.oracle_root or os.path.join(
+-        root, "corpus/evidence/round-49/oracle"))
++        root, "corpus/evidence/round-44/oracle"))
+ 
+     carriers_file = args.carriers
+     if carriers_file is None:
