@@ -356,8 +356,15 @@ def evaluate_text(card, files, root, rev, battery=None):
         if not ok:
             corrections_bad.append({"line": entry["text"], "detail": detail})
         if (entry["class"], str(entry["key"])) not in known_keys:
-            corrections_bad.append({"line": entry["text"],
-                                    "detail": "exempts an atom that does not exist"})
+            # A correction stays valid evidence after its atom scrolls out of the window:
+            # a seats/window correction for a round older than the last two is historical.
+            key = str(entry["key"])
+            oldest = min(int(r) for r, _ in secs)
+            historical = (entry["class"] in ("seats", "window") and key.isdigit()
+                          and int(key) < oldest)
+            if not historical:
+                corrections_bad.append({"line": entry["text"],
+                                        "detail": "exempts an atom that does not exist"})
         # A window correction legitimately introduces the concrete pair that replaces an
         # unverifiable `<tip>` claim, so its pair need not already appear in the card; the
         # class/key existence check above is what binds it to a real atom.
@@ -560,6 +567,8 @@ def selftest():
         run("red-correction-total-false", 1, _card(total=9, **kw))
         run("red-one-correction", 1, _card(corrections=1, **kw))
         run("green", 0, _card(**kw))
+        run("green-historical-correction", 0, _card(**kw) +
+            "\n- corrects seats round-3: 1 waves, 2 seats total\n")
 
         # the empty window on our own base..tip is a real, reproducible non-empty window
         real = _card(window=f"`git log {base[:8]}..{tip[:8]} -- tools/x/` is empty",
