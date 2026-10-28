@@ -3679,20 +3679,23 @@ atom it names and is itself re-derived by the counter at the measured revision.
 
 ## Round 47 — an equality, not a containment; and the record re-derived against the repo
 
-Base `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5`. The freeze is a disclosed series of five
+Base `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5`. The freeze is a disclosed series of six
 commits, all before any claim verdict: `5017e1f7` (plan + both counters), `9018c53b` (A1: drop the
 unreachable window-pair clause), `62e33f7d` (A2: make the window forgery a real forgery; block 24's
 arm cells carry only the token), `2e4ae43` (A3: a correction for a round older than the window stays
 valid evidence), `1e2c310295` (A4: the historical-correction selftest fixture gets its round-3
-dispatch). **The declared freeze is A4 `1e2c3102952dc636650095643c1963c833859019`** — the first
-commit whose bytes score the landing. A1 and A2 are defects the round found by measuring its own
-instrument before the landing; A3 was forced by the record section this round appends; A4 was a
-selftest fixture typo. All four are disclosed rather than folded, per the round-46 M46-3 finding.
-
+dispatch), `07d2894e` (A5: the ghost-atom forgery lands inside the corrections section). **The
+declared freeze is A5 `07d2894eabe88c326e9036262f20ad02662c860d`** — the first commit whose bytes
+score the landing, and the measured revision of both claims below. A1, A2 and A5 are defects the
+round found by measuring its own instrument: A1 an unreachable clause, A2 and A5 forgeries that were
+no-ops (a window empty by construction, a `corrects` line that landed outside the section the parser
+reads) — the same defect class twice, which is why `QUALITY.md` row 78 carries its (b) half. A3 was
+forced by the record section this round appends; A4 was a selftest fixture typo. All five are
+disclosed rather than folded, per the round-46 M46-3 finding.
 | claim | axis / surface | before | after | counting command | measured at |
 |---|---|---|---|---|---|
-| R47-C1 | depth — craft rule block 24 (marker `<!-- exactness-table v3 -->`, four rows, one per R46-CL2/CL3/CL4/CL6) and `tools/round-47/exact.py` | at the freeze exit 1, `block_present 0`, `rule_blocks 23`, `marker_occurrences 0` (`.ufo/waves/round-47/controls/ctl-c1-0-do-nothing.json`); the battery cannot be built before a block exists (`ctl-c1-2-freeze-battery-absent.json`); the ported round-46 profile accepts all four forgeries (`battery.v2_green 4`) | exit 0, `rule_blocks 24`, `rows 4`, `refs 8`, `unresolved_citations []`, both pins equal to the bytes at rev, battery `forgeries_total 4 / v2_green 4 / v3_green 0 / genuine_green 1 / crash 0` (`.ufo/waves/round-47/l1/scores/c1-at-A4.json`) | `python3 -I -B tools/round-47/exact.py --root . --freeze 1e2c3103 --rev <REV>` | `1e2c310295` |
-| R47-C2 | calibration — `tools/round-47/record.py` over 50 atoms: the last two `## Round N` sections (`seats`, `window`, `path`, `rev`) and the current `## Owned axes` head fractions (`axes`) | at the base exit 1, 4 mismatches: the round-45 seat atom (claimed `wave 2: 32`, dispatched `36`), the round-46 window atom naming a `<tip>` placeholder, coverage `133/133` against `138/138`, depth `20/20` against `23/23` (`.ufo/waves/round-47/controls/ctl-c2-0-do-nothing.json`) | exit 0, `atoms 50`, `mismatches []`, `corrections 2` both re-derived, `exempted 2 <= 3`, battery `correction_forgeries 3 / forgeries_green 0` (`.ufo/waves/round-47/l1/scores/c2-at-A4.json`) | `python3 -I -B tools/round-47/record.py --root . --rev <REV>` | `1e2c310295` |
+| R47-C1 | depth — craft rule block 24 (marker `<!-- exactness-table v3 -->`, four rows, one per R46-CL2/CL3/CL4/CL6) and `tools/round-47/exact.py` | at the freeze exit 1, `block_present 0`, `rule_blocks 23`, `marker_occurrences 0` (`.ufo/waves/round-47/controls/ctl-c1-0-do-nothing.json`); the battery cannot be built before a block exists (`ctl-c1-2-freeze-battery-absent.json`); the ported round-46 profile accepts all four forgeries (`battery.v2_green 4`) | exit 0, `rule_blocks 24`, `rows 4`, `refs 8`, `unresolved_citations []`, both pins equal to the bytes at rev, battery `forgeries_total 4 / v2_green 4 / v3_green 0 / genuine_green 1 / crash 0` (`.ufo/waves/round-47/l1/scores/c1-at-A5.json`) | `python3 -I -B tools/round-47/exact.py --root . --freeze 07d2894e --rev <REV>` | `1e2c310295` |
+| R47-C2 | calibration — `tools/round-47/record.py` over 50 atoms: the last two `## Round N` sections (`seats`, `window`, `path`, `rev`) and the current `## Owned axes` head fractions (`axes`) | at the base exit 1, 4 mismatches: the round-45 seat atom (claimed `wave 2: 32`, dispatched `36`), the round-46 window atom naming a `<tip>` placeholder, coverage `133/133` against `138/138`, depth `20/20` against `23/23` (`.ufo/waves/round-47/controls/ctl-c2-0-do-nothing.json`) | exit 0, `atoms 50`, `mismatches []`, `corrections 2` both re-derived, `exempted 2 <= 3`, battery `correction_forgeries 3 / forgeries_green 0` (`.ufo/waves/round-47/l1/scores/c2-at-A5.json`) | `python3 -I -B tools/round-47/record.py --root . --rev <REV>` | `1e2c310295` |
 
 Owned scores: coverage `10 → 10` (command A at `1e2c310295`: `knowledge_files 138`, `mapped 138`,
 `missing []`, `dangling []`; this round adds no domain surface — S143 is instrument documentation
