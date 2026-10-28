@@ -3270,9 +3270,9 @@ Owned scores: coverage `10 → 10` (command A at `c86ea508`: `knowledge_files=13
   exit 0 at round start and end. Assimilation `none` (no staged row is cited by an admitted
   round-45 entry; the round-44 quarantine refusals stand). `considerthese/` absent. Lesson
   `corpus/lessons/round-45.md` (M45-1 `sweep-contamination`, M45-2 `unopened-descendant-credit`).
-- **Waves:** wave 1 40 seats and wave 2 32 seats under `.ufo/waves/round-45/`; role mix, dead
-  seats and per-seat outputs are read from `{r45-w1,r45-w2}-results.json` and recorded in the
-  fleet report. Tools installed this round: none.
+- **Waves:** wave 1 40 seats (25 produced artefacts, 15 job-cap losses) and wave 2 36 seats under
+  `.ufo/waves/round-45/`; per-seat outputs are in `r45-w1-results.json` and the seat directories,
+  and the role mix and losses are recorded in the fleet report. Tools installed this round: none.
 
 ### Round 45 claim ledger
 
@@ -3312,5 +3312,6 @@ A3 `f59565b782c18b0eb691bec12f52d2f80d9f5032` corrects the `c1-run.sh` registry 
 `--dry-run` exits 0), records the preflight's arm-isolation limit and its `--dirty-pathspec`
 false-clean in block 22, and routes R45-CL15/CL16. Both counters re-measured at A3: R45-C1 exit 0
 (`rule_blocks 22`, `block22_rows 10`, `block22_refs 8`, `unresolved []`), R45-C2 exit 0
-(`unregistered []`, `thin []`). A3 is the round's measured revision; every earlier measurement
-(`e715263c`, `1f4b27f8`, `fedd11bf`) reports the same values.
+(`unregistered []`, `thin []`). A3 is the round's measured revision; `rule_blocks`, `rows`,
+`unresolved` and `met_target` hold at `e715263c`, `1f4b27f8` and `fedd11bf`, while `block22_refs`
+grew 6 (landing) → 7 (A1) → 8 (A2/A3) as citations were added.
