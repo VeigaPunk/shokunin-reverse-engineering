@@ -1,11 +1,12 @@
-# SquashFS v1 and v2 through REA: `squashfs_v1` and `squashfs_v2` run plain `sasquatch -be`/`-le`, and all four frozen gzip carriers publish every independent-oracle regular file (round 44, Core)
+# SquashFS v1 and v2 measured through REA on four frozen fixtures; R44-C1 not promoted (round 44)
 
-status: R44-C1 — scored by `tools/round-44/c1-counter.py` (counter sha256
-`9f2cc140e1fa7875bcd9dc80ce2ff5a1006e8ee73c7e1207580f88a97ffea993`) at revision
+status: R44-C1 honest stop. The counter returned `carriers_matched 4/4`, exit 0 at revision
 `4cc1ac11657590c25b6565d6ab220f53372a94d3` against freeze
-`c48f8a4bfd449300c975668e59aae5b5538b6a84`: `carriers_matched 4/4`, `met_target true`, exit 0,
-all boolean bindings true, `failing []`, `frozen_path_changed []`. Score receipt:
-`corpus/evidence/round-44/c1/counter-at-4cc1.json`.
+`c48f8a4bfd449300c975668e59aae5b5538b6a84` (receipt
+`corpus/evidence/round-44/c1/counter-at-4cc1.json`). However, the frozen claim required
+`parameters.output_directory` under `corpus/evidence/round-44/c1/`, while the frozen counter
+requires the `/kaidoku-r44/` scratch provenance segment. The run therefore does not satisfy the
+frozen predicate; no Frontier→Core promotion is claimed.
 
 
 source: S138 — https://github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs — the unblob 26.6.4 `__output__` expected member trees for `squashfs_v1` and `squashfs_v2` in both byte orders (MIT; the round-44 listings were fetched through `https://api.github.com/repos/onekey-sec/unblob/contents/tests/integration/filesystem/squashfs/<v>/<endian>/__output__?ref=26.6.4` — 10 listings, HTTP 200, 2026-10-28T11:10:29Z–11:10:43Z — and 22 members, HTTP 200, 2026-10-28T11:12:37Z; manifest `corpus/evidence/round-44/oracle/manifest.json`, sha256 `4bc53dbba8beee0fbf912771efc0a55fd47a197cca1f56d2aaed790f817c1a13`, `failures: []`)
@@ -14,20 +15,18 @@ source: S112 — https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/pyth
 verified-at: 2026-10-28
 recheck: 180d — re-run the frozen counter at the measured revision (`python3 -I -B tools/round-44/c1-counter.py --root . --rev <measured> --freeze c48f8a4bfd449300c975668e59aae5b5538b6a84 --pkg65 <rea-agents 6.5.0 root> --work <SCRATCH> --json-out <OUT>`) and the oracle census below (`unsquashfs -lls`, `unsquashfs -s`, extraction + member digests, `sb.py`, the 0x78da stream scan); a carrier whose sha256 differs from the pins below, a member digest that differs from the census table, or `unsquashfs -version` no longer reading 4.7.5 means this entry is re-read.
 
-## What moved Frontier → Core
+## What was measured
 
 Before this round `PROVINCE.md` carried `SquashFS v1/v2` as still-Frontier (round-42 frontier
-note, line 416: "Still Frontier: SquashFS v1/v2, …"). Round 44 adds the
-`## Round-44 additions to Core` row `squashfs_v1` and `squashfs_v2` (SquashFS v1 and v2, gzip
-bodies, both byte orders), and this entry is its evidence: the two handler families, in both byte
-orders, through REA 6.5.0 `extract-firmware` (unblob 26.6.4, child PATH carrying sasquatch 4.5.1),
-on four frozen MIT fixtures.
+note, line 416). Four frozen standard fixtures (v1.0 and v2.0, both byte orders) were measured
+through REA 6.5.0 `extract-firmware` against the independent `unsquashfs` 4.7.5 oracle. The
+counter's per-carrier result was 4/4 with exact handler binding, complete file publication and
+zero gaps, but the frozen claim/counter output-directory provenance mismatch prevents admission.
 
-Scope of the promotion, in one sentence: it promotes the *handler family through REA on the four
-frozen carriers*, not "every SquashFS v1/v2 image on the internet". Published v1/v2 rootfs
-images were probed and were not fetchable (`archive.openwrt.org/whiterussian/rc6/openwrt-brcm-2.4-squashfs.trx`
-404 on 2026-10-28; the DD-WRT beta listing was empty), so no published carrier enters this
-round; the fixtures are the whole carrier set.
+The observed result is limited to these four fixtures, not every SquashFS v1/v2 image. Published
+v1/v2 rootfs images were probed and were not fetchable (`archive.openwrt.org/whiterussian/rc6/
+openwrt-brcm-2.4-squashfs.trx` returned 404 on 2026-10-28; the DD-WRT beta listing was empty);
+no published carrier entered the measurement.
 
 ## The handler family, from the handler source
 
@@ -63,7 +62,7 @@ inadmissible, and this is not pedantry: `squashfs_v2` is a strict prefix of
 `squashfs_v3_broadcom` (:363) and `squashfs_v3_nonstandard` (:409). A prefix-keyed comparator
 would let a v2-nonstandard receipt satisfy a v2 carrier, or a broadcom receipt satisfy a v3
 carrier, without any byte being wrong. Exact equality also keeps a v1 receipt from satisfying a
-v2 carrier and vice versa, which is the point of promoting two versions rather than one.
+v2 carrier and vice versa, which is the point of distinguishing the two measured versions.
 
 ## The superblock, read from the bytes
 
@@ -154,15 +153,17 @@ census outputs are equal: v1 `908d3f2427a4a77e…`, v2 `df84669fe894a903…`), e
 container bytes differ (`bytes_used` 177 vs 176 and 201 vs 196). The v1 image carries three data
 files plus the root directory — 4 inodes; v2 carries four files plus the root — 5 inodes.
 
-## What the four receipts show
+## What the four receipts show — measured, not admitted as Core
 
-The per-carrier projection below is the frozen counter's over the committed round-44 receipts
-(`corpus/evidence/round-44/c1/<id>/after.json`), as exercised in the positive control; it is not a
-lane score. For each frozen carrier the round-44 `extract-firmware` receipt names exactly that
-carrier's frozen handler (`handler_detail` v1, v1, v2, v2; per-carrier `handler_ok true`), publishes
-the census's regular files at their exact relative paths under `firmware.bin_extract/` with the
-oracle's sha256 and size, publishes nothing else (`extra_published []`), and reports no gap of any
-kind (`gap_kinds []`, `coverage complete`, `gap_rule_uncovered_kinds []`):
+The lane counter ran on revision `4cc1ac11657590c25b6565d6ab220f53372a94d3` and reported 4/4
+carriers with all carrier clauses true, no gaps, and exit 0. It does **not** meet the frozen claim:
+the plan required `parameters.output_directory` under the committed evidence path, while the
+counter's `run_provenance_ok` requires the `/kaidoku-r44/` scratch segment. The measurement is
+recorded, but the v1/v2 families remain Frontier pending a new pre-data freeze that aligns that
+contract. Per-carrier published results below are observations, not a Core admission.
+The receipt's per-carrier observations: each frozen handler is exact (`handler_detail` v1, v1,
+v2, v2), all census files publish at exact paths with matching sha256/size, no extras, and no
+gaps (`gap_kinds []`, `coverage complete`, `gap_rule_uncovered_kinds []`):
 
 | carrier | published files | published bytes | gaps | coverage |
 |---|---|---|---|---|
@@ -207,8 +208,8 @@ and its subject digest equals the fixture pin (`carrier_pin_ok`).
   Frontier because the round-42 Core row covers LZMA v3 bodies on published images only, and the
   gzip v3 fixtures are round-42 C2 held-out *inputs* with no C1 after-receipt. (For contrast the
   LZMA v3 fixture is refused by `unsquashfs`: `gzip uncompress failed with error code -3` —
-  round-42's v3 oracle was backhand-cli 0.25.5 plus 7-Zip.) This is a v3 statement: the v1/v2 row
-  promoted here is gzip-only because v1/v2 store gzip and nothing else.
+  round-42's v3 oracle was backhand-cli 0.25.5 plus 7-Zip.) The v1/v2 measurements above are
+  gzip-only; these families remain Frontier under the R44-C1 honest stop.
 - `squashfs_v4_broadcom`, LE AVM members (`hsqs`), AVM kernel images and nested sub-images below
   depth 1: unchanged from the round-41/42 notes; nothing was measured for them this round, and
   this entry says nothing new about them.
@@ -220,10 +221,7 @@ digest and size in the census; the equality of the two byte orders' member censu
 `unsquashfs -s` lines; the `file` labels; `7z l` listing all four carriers; the 0x78da stream
 offsets; the v2ns refusals from both external readers and its two-byte magic diff; the `7z`
 listing of the LE broadcom fixture; the handler classes, patterns, `EXTRACTOR` and the argv
-decision at the cited lines; the committed receipts' per-carrier rows quoted above (`gap_kinds []`,
-`coverage complete`, published files/bytes); and the positive control's counter fields
-(`carriers_matched 4/4`, `met_target true`, `failing []`, `per_carrier_failing` empty — control
-scope, not a lane score).
+decision at the cited lines; and the lane counter output at revision `4cc1ac11657590c25b6565d6ab220f53372a94d3` (`carriers_matched 4/4`, instrument `met_target true`, `failing []`, `gap_kinds []`). The L1's R44-C1 claim verdict is nevertheless **not met / honest stop** because the frozen claim's provenance path differs from the frozen counter's provenance path.
 
 **Inferred** (derived, not measured): the v2 `block_size_1` of 0 is the 16-bit truncation of
 65536 (arithmetic, cross-checked against the reader's printed block size); the `file` word is a
@@ -238,15 +236,12 @@ run (R40-CL2).
 
 ## Limits
 
-Four 4 KiB fixtures carrying 3–4 regular files each are a thin carrier set: the entry says the
-handler family works through REA on these bytes, not that every v1/v2 image extracts. No symlink,
-no device node, no hard link, no sparse file and no fragment-bearing large file occurs in the set,
-so none of those paths is exercised; the v2 images do carry one fragment block, which is spent on
-the four 7-byte members. The independent-oracle claim rests on producer separation
-(`unsquashfs`/squashfs-tools vs sasquatch), not on a third producer: the unblob `__output__` tree
-is same-lineage and is used only as the producer's own expectation. The counter's rerun shows the
-carriers extract the same way at scoring time; it cannot prove which process wrote a committed
-receipt (R40-CL2). Nothing is claimed about the contents of the extracted text files. The oracle
-census commands, their exit codes and their stdout digests are in
-`.ufo/waves/round-44/w1/artifacts/R44EntryDraft/receipt.json`; the byte-level provenance of the
-fixtures is `tools/round-42/fixtures.json` (unblob 26.6.4, commit `1fcc7a0a…`, MIT).
+Four 4 KiB fixtures carrying 3–4 regular files each are a thin carrier set. No symlink, device
+node, hard link, sparse file or large fragment-bearing file occurs, so those paths are not
+exercised; the v2 images do carry one fragment block for the four 7-byte members. The independent
+oracle is `unsquashfs`/squashfs-tools; the unblob `__output__` tree is same-lineage and used only
+as the producer's own expectation. The counter rerun shows matching extraction projections but
+cannot attest which process wrote the origin receipt (R40-CL2). Nothing is claimed about extracted
+text-file contents. Oracle command receipts are in
+`.ufo/waves/round-44/w1/artifacts/R44EntryDraft/receipt.json`; fixture byte provenance is
+`tools/round-42/fixtures.json` (unblob 26.6.4, commit `1fcc7a0a…`, MIT).
