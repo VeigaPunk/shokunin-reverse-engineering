@@ -1,0 +1,30 @@
+UTC 2026-10-28T17:56:15Z
+TOP /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+EXACT_BLOB fb21a16686633fc3b2d0f6d82910bf9e5eb8b0ac
+--- marker and craft prefix counts ---
+marker_grep_exit=1
+5017e1f7299c3a812e87e7950148f54313dd279e:SKILL.md:81:## Queue-drain craft (rounds 5-12, distilled in round 13)
+craft_prefix_grep_exit=0
+--- exact.py block split and block_is_last ---
+101:def craft_section(skill):
+102:    if CRAFT not in skill:
+103:        if MALFORMED in skill:
+104:            raise Malformed("craft heading lacks its trailing space")
+105:        raise Malformed("no `## Queue-drain craft ` section")
+106:    return skill.split(CRAFT, 1)[1].split("\n## ", 1)[0]
+107:
+108:
+109:def blocks_of(skill):
+110:    return re.split(r"(?m)^- \*\*", craft_section(skill))[1:]
+111:
+188:        return 1, receipt
+189:    block = marked[0]
+190:    header, rows = table(block)
+191:    receipt.update({"block_is_last": blocks[-1] is block,
+192:                    "block_title": block.split("**", 1)[0][:24],
+193:                    "header": header, "rows": len(rows)})
+194:    if hard and not receipt["block_is_last"]:
+195:        failing.append("marker block is not the last craft block")
+196:    if hard and not block.startswith("24. "):
+197:        failing.append("marker block title does not start with '24. '")
+awk_pipe_exit=0

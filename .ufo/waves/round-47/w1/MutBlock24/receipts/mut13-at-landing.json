@@ -1,0 +1,575 @@
+{
+ "block_sha256": "a1018174547c94e55db218692ea54d7af803577db62fc5557c569f24e6d6e879",
+ "block_title": "24. An instrument's binding is an equality, not a containment, and its denominator is pinned.",
+ "core": [
+  {
+   "category": "token",
+   "description": "every v3-arm cell -> `order-ish` (a superstring of `order`)",
+   "mutation_sha256": "64ddcb98fbace3edae0548cc9f8eff9cf51f2444d651d97cb9ac161ffc2e5e06",
+   "name": "token-substring",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "arm cells not exact vocabulary tokens: ['order-ish', 'order-ish', 'order-ish', 'order-ish']"
+   ],
+   "v3_receipt_sha256": "58fe35f2e21472346fb974c83aeaffbbd2ad1cf07fe0826aac6001307c680c1b"
+  },
+  {
+   "category": "token",
+   "description": "row 1 v3-arm cell -> `symbolic` (a superstring of `symbol`)",
+   "mutation_sha256": "eb968abb4fe0b4b6c790cf2def25ce7cc2dda461491571b7c37e8ec71d56c21c",
+   "name": "token-synonym",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "arm cells not exact vocabulary tokens: ['symbolic', 'once', 'digest', 'order']"
+   ],
+   "v3_receipt_sha256": "d9b8fb30ae6d051e6dcd81478cba9192a3312267345f7837e50c01a22fd0f484"
+  },
+  {
+   "category": "id",
+   "description": "a fifth row claims R46-CL2 a second time",
+   "mutation_sha256": "dab7197c9a09ee2279f2373ab86872ddfdaceddf94143da727e70bd7272fcadb",
+   "name": "id-duplicate-row",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "rows 5 != 4",
+    "routed cardinality {'R46-CL2': 2, 'R46-CL3': 1, 'R46-CL4': 1, 'R46-CL6': 1} != each of ['R46-CL2', 'R46-CL3', 'R46-CL4', 'R46-CL6'] exactly once"
+   ],
+   "v3_receipt_sha256": "09b918b6ac4b8f87f3b13104bcfb213cd87dc9807d0ccf1490c336b178cde09e"
+  },
+  {
+   "category": "id",
+   "description": "row 1 trigger cell names R46-CL2 and R46-CL3",
+   "mutation_sha256": "77fb048b6fe3bda043a604a4783e487dd25dae57ca442045edaf57e1015464fe",
+   "name": "id-two-per-cell",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "rows naming != 1 routed id: [0]",
+    "routed cardinality {'R46-CL2': 1, 'R46-CL3': 2, 'R46-CL4': 1, 'R46-CL6': 1} != each of ['R46-CL2', 'R46-CL3', 'R46-CL4', 'R46-CL6'] exactly once"
+   ],
+   "v3_receipt_sha256": "7f3d018deee66be8c56001cabe1e9dc9f782d43274443a43135d094997378b38"
+  },
+  {
+   "category": "cells",
+   "description": "row 2 carries a fifth cell",
+   "mutation_sha256": "1461daa3257bc8ff15825759a734051c2010068c2188bd06cd18e374076c0450",
+   "name": "cells-five",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "a row does not have exactly 4 cells"
+   ],
+   "v3_receipt_sha256": "af5b54e7f7a42e73eb987f1265be639fd358b2e3c3f88b2c27dfe194d5a57a1f"
+  },
+  {
+   "category": "exit",
+   "description": "row 1 exit cell -> `3`",
+   "mutation_sha256": "11940fee4b2424eb32e3d343bff69067009efbbbb50a320cdb9d11fc5de10b62",
+   "name": "exit-out-of-range",
+   "v2_exit": 1,
+   "v2_failing": [
+    "exit cells outside {0,1,2}: 1"
+   ],
+   "v3_exit": 1,
+   "v3_failing": [
+    "exit cells outside {0,1,2}: 1"
+   ],
+   "v3_receipt_sha256": "ad1c2ab765f0f275fe3c1f82b1b479eb739b8fcf57effa5db6c8a3e4b22bb584"
+  },
+  {
+   "category": "title",
+   "description": "title loses its `24. ` number",
+   "mutation_sha256": "eb97cc21874b99c33842b696c26a5243a02e5fa23e7c90204ef012dc23480fd6",
+   "name": "title-unnumbered",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "marker block title does not start with '24. '"
+   ],
+   "v3_receipt_sha256": "c7dbc1d1e912631f56a16dc38187bc4c548ec92900fe1941195dbc8b6977ed69"
+  },
+  {
+   "category": "marker",
+   "description": "the marker occurs twice inside the block",
+   "mutation_sha256": "593eceb21a23cbb812b93cc66465b435f885e3a1af9e99c752b58a61213bc74e",
+   "name": "marker-duplicated",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "marker_occurrences 2 != 1"
+   ],
+   "v3_receipt_sha256": "4a4a9725cf17472b0dfac0e24aa931af70b880a8f25b5b4aab8379f178ab9917"
+  },
+  {
+   "category": "header",
+   "description": "header cells permuted, rows left positional",
+   "mutation_sha256": "2c82334ccdf5b4572375b54121dcd4fd46781d4827d2a164bcaf51e80519dd07",
+   "name": "header-reordered",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "header ['exit', 'v3 arm', 'v2 hole', 'trigger'] != ['trigger', 'v2 hole', 'v3 arm', 'exit']"
+   ],
+   "v3_receipt_sha256": "133d69c781ac2d3ef4d3f98bc1227593362807f65f403eedb9ad7c5ca2ad9573"
+  },
+  {
+   "category": "digest",
+   "description": "mutations_sha256 recomputed over three of the four mutations",
+   "mutation_sha256": "b24bac3608aff0d12b8944d68874823a618a4f045e5c9b9744fa0ac6b5a2304a",
+   "name": "digest-stale",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "mutations_sha256 does not match the counter's own mutation list"
+   ],
+   "v3_receipt_sha256": "49a70d648a431323565c89d6ebd3f6eb2b92046de77c842b580a227138739f84"
+  },
+  {
+   "category": "pin",
+   "description": "interpreter_sha256 -> 64 zeros",
+   "mutation_sha256": "c969bd5978d452b6adb7b92ee8d8ad79d6645f8a614e61fd2de155081a6a0f23",
+   "name": "pin-mismatch",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "interpreter sha256 pin does not match the bytes at rev"
+   ],
+   "v3_receipt_sha256": "b269d9086eca886bd4a5133b64b46ae2b2612cd42e7ddabe96e6804cf5d2ba63"
+  },
+  {
+   "category": "refs",
+   "description": "first citation loses its line selector",
+   "mutation_sha256": "0b853a2f87c613d56d92c579780f5a72c7282600c2b46c2af208deb540ef5b83",
+   "name": "refs-no-selector",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "unresolved or unvalidated citations: 1"
+   ],
+   "v3_receipt_sha256": "8c923bc48ba397a02eabe1a41fd1d1a1e25a29f48eaf3b80eed703d773b82ff0"
+  },
+  {
+   "category": "refs",
+   "description": "every round-46.md citation retargeted to round-45.md (MUST_CITE gone)",
+   "mutation_sha256": "5bd651b6902e19052ed08c02b006241e10520e160d94864c6d5584b9dfdca3bb",
+   "name": "refs-must-cite-missing",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "does not cite corpus/lessons/round-46.md"
+   ],
+   "v3_receipt_sha256": "67188e627d59d6217cd890934ffd9b2c1ed3059e406f25230b6f19732f3fdab6"
+  }
+ ],
+ "core_exit2": [],
+ "core_survived_v3": [],
+ "core_v2_green": 12,
+ "core_v3_killed": 13,
+ "extra": [
+  {
+   "category": "exit",
+   "description": "row 1 exit cell -> `0` (in-range digit, wrong meaning)",
+   "mutation_sha256": "bdcf68d27c4bdca2a6042f96cc6fc6c361c81903e906ce52a2beed829353b26a",
+   "name": "exit-semantics-0",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "04c43267a8b514e5e25e3b2c63977a7346614e5fbb662dbc1619357af14f7595"
+  },
+  {
+   "category": "cells",
+   "description": "row 2 v2-hole cell emptied",
+   "mutation_sha256": "9c0d94f3fb939eca912dfaea6871c6fcba740ab09066d59a7a3f51fa10926e1e",
+   "name": "hole-cell-empty",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "874957c81ecfbf067dda6692e5e9a452d12e11b4a310c52686c09f9c47792258"
+  },
+  {
+   "category": "token",
+   "description": "arm tokens of rows 1 and 4 swapped (still exact vocabulary)",
+   "mutation_sha256": "688d2d24dc4e23148bf84dbd1b0bf9247ac55e8fa0587a7ea04083df2ff3d4c5",
+   "name": "arm-permuted",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "fa6e94ac9d1f21d700cafa62600cfdfc55b388d9e5c7e2bf8b7f70f74c245a69"
+  },
+  {
+   "category": "id",
+   "description": "trigger ids of rows 1 and 3 swapped (each id still exactly once)",
+   "mutation_sha256": "eaf7b4ce4fd5744f3e3ab5b7c68e50f5ae2150b1bf0061d2ef61e1764a30e421",
+   "name": "id-permuted",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "c0a4417864397aa692e7a6ed23c89c9f6f49c7abfa0570ab09d10fe864ddda32"
+  },
+  {
+   "category": "id",
+   "description": "row 4 trigger -> R46-CL7 (an unrouted id)",
+   "mutation_sha256": "960235e6357c5c555256d4eb68fe51138ae9bf7690262036b49b55defdbb49e7",
+   "name": "id-substituted-unrouted",
+   "v2_exit": 1,
+   "v2_failing": [
+    "routed ids not named by any row: ['R46-CL6']"
+   ],
+   "v3_exit": 1,
+   "v3_failing": [
+    "routed cardinality {'R46-CL2': 1, 'R46-CL3': 1, 'R46-CL4': 1, 'R46-CL7': 1} != each of ['R46-CL2', 'R46-CL3', 'R46-CL4', 'R46-CL6'] exactly once"
+   ],
+   "v3_receipt_sha256": "0d15e3e34141458fa9f86f0042402465c74d51ceb364651c17d80139dea6aa99"
+  },
+  {
+   "category": "cells",
+   "description": "row 3 drops its v2-hole cell (3 cells, exit moves to index 2)",
+   "mutation_sha256": "fac733ff75dd660480ebd6f795da74faaf73f594962f48e5f07102f31dce1da3",
+   "name": "cells-three",
+   "v2_exit": 1,
+   "v2_failing": [
+    "exit cells outside {0,1,2}: 1",
+    "arm cells outside the vocabulary"
+   ],
+   "v3_exit": 1,
+   "v3_failing": [
+    "a row does not have exactly 4 cells",
+    "exit cells outside {0,1,2}: 1",
+    "arm cells not exact vocabulary tokens: ['symbol', 'once', '1', 'order']"
+   ],
+   "v3_receipt_sha256": "0608828cc579736ea071b5c6b06a7c6fce666235ba25b06428384da9e89a033f"
+  },
+  {
+   "category": "marker",
+   "description": "marker removed",
+   "mutation_sha256": "18b5fedf2169943d726ab8f74cfcdcc43c9d43902082f5fc7d7ab5c9334c7d20",
+   "name": "marker-missing",
+   "v2_exit": 1,
+   "v2_failing": [
+    "marker_block_count 0"
+   ],
+   "v3_exit": 1,
+   "v3_failing": [
+    "marker_occurrences 0 != 1",
+    "marker_block_count 0 != 1"
+   ],
+   "v3_receipt_sha256": "c3e6ec1dccab725828a6bcd301fbdc7cdedf53c03b3da346f5579574aa357942"
+  },
+  {
+   "category": "header",
+   "description": "header cell `v3 arm` -> `arm`",
+   "mutation_sha256": "83d98f91da1c1e8600c1684573d8499e8bd377035fe8b7042128a2615ad3822d",
+   "name": "header-renamed",
+   "v2_exit": 1,
+   "v2_failing": [
+    "header ['trigger', 'v2 hole', 'arm', 'exit'] != ['trigger', 'v2 hole', 'v3 arm', 'exit']"
+   ],
+   "v3_exit": 1,
+   "v3_failing": [
+    "header ['trigger', 'v2 hole', 'arm', 'exit'] != ['trigger', 'v2 hole', 'v3 arm', 'exit']"
+   ],
+   "v3_receipt_sha256": "c7338f88777d3980a5223816f85dabd4ac7f3710f48ea2f936725832b2759c80"
+  },
+  {
+   "category": "digest",
+   "description": "mutations_sha256 pin removed",
+   "mutation_sha256": "528ce5aa7430b67e893f6152f22a5c5ee30ccc577df5358d7c4c8b93ef913f61",
+   "name": "digest-absent",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "mutations_sha256 does not match the counter's own mutation list"
+   ],
+   "v3_receipt_sha256": "3f5324a4686af3b4ec63b144b99fb2d9713d054b63a92a9a62934db4b7300f3b"
+  },
+  {
+   "category": "pin",
+   "description": "interpreter_sha256 pin removed",
+   "mutation_sha256": "ec24770c7186a8e825f6392bffd63b79273b2ffa7b0a5133406aa5438a248c16",
+   "name": "pin-absent",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "interpreter sha256 pin does not match the bytes at rev"
+   ],
+   "v3_receipt_sha256": "28f496cd3c701831394c5fd04bade7cda939567c594497e930ab4139be705b70"
+  },
+  {
+   "category": "title",
+   "description": "title renumbered `25. `",
+   "mutation_sha256": "22c65412ce4ce106f89a97bfab5a11ba61a0e8d361af2c384bac493b9ffd1285",
+   "name": "title-renumbered",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "marker block title does not start with '24. '"
+   ],
+   "v3_receipt_sha256": "7d54489a42b639a79f8934570b10e3d317a15102a877022de8345b634ad84c08"
+  },
+  {
+   "category": "digest",
+   "description": "a fifth mutation name added to the pinned list prose",
+   "mutation_sha256": "aa5abe63f2b4c78265e6c694683b971ad0f6bf622280a843b7d14e7c643fc2ef",
+   "name": "mutation-name-extra",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "ae4fad3c4f17e361ce62758d58d7187cc133269104b679763ff439f9df8a860f"
+  },
+  {
+   "category": "refs",
+   "description": "first claims citation retargeted outside the validated path set",
+   "mutation_sha256": "7bd3986b5ffcbbe588d1aa95fa0a3f04d3cd205188f89914ec0c420f96f92f58",
+   "name": "refs-outside-allowlist",
+   "v2_exit": 1,
+   "v2_failing": [
+    "unresolved or unvalidated citations: 1"
+   ],
+   "v3_exit": 1,
+   "v3_failing": [
+    "unresolved or unvalidated citations: 1"
+   ],
+   "v3_receipt_sha256": "63ba1d5bf3e740f42901f4c4594a0e983fe0e3509d4033068506e533600c84a0"
+  },
+  {
+   "category": "refs",
+   "description": "first citation line range past EOF",
+   "mutation_sha256": "5bdf1c1011854b89704a77a8819c697a2df08c2ada0f8f0fe535e2f8e3d400bc",
+   "name": "refs-unresolvable-line",
+   "v2_exit": 1,
+   "v2_failing": [
+    "unresolved or unvalidated citations: 1"
+   ],
+   "v3_exit": 1,
+   "v3_failing": [
+    "unresolved or unvalidated citations: 1"
+   ],
+   "v3_receipt_sha256": "f0361cc5046991ef4fc199bed76ac75be0963e0a59aa3edfcb0343b5c67128aa"
+  },
+  {
+   "category": "refs",
+   "description": "citations cut to two",
+   "mutation_sha256": "a9e4c0c6a3f73310b327b2cb5e6cafca560fdb7ebde0f2421e4fd3c9d26df81c",
+   "name": "refs-two",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "ffd414271b97d4548d170ffb5108b4decc1f47f695772a6e6ffe6094f3fdc997"
+  },
+  {
+   "category": "digest",
+   "description": "mutations_sha256 computed over the same names in reversed order",
+   "mutation_sha256": "30da68710820f92479893feeae86ad8e356166c5f7a541b231ad5703b7c78b44",
+   "name": "digest-reordered",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "mutations_sha256 does not match the counter's own mutation list"
+   ],
+   "v3_receipt_sha256": "4cdbf906f33d01b407adf1fc3344a28e128fcc51f77c32dc2796554562be514f"
+  },
+  {
+   "category": "digest",
+   "description": "one mutation name removed from the prose, digest left correct",
+   "mutation_sha256": "5142eca69269b594956cc708cc6d340ed6d89cc1dc2aaf7c0e8a13f3af5d806b",
+   "name": "mutation-name-dropped",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "mutation names not stated in the block: ['stale-mutations-digest']"
+   ],
+   "v3_receipt_sha256": "2985f58303bb228554f0b784ecdaa66d442cabe65495bb322b1e8bac74ff63dc"
+  },
+  {
+   "category": "digest",
+   "description": "the fixture's gate.py carries the reversed flag pair",
+   "mutation_sha256": "a1018174547c94e55db218692ea54d7af803577db62fc5557c569f24e6d6e879",
+   "name": "flag-order-swapped",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "gate.py flag order: 0 correct, 1 reversed"
+   ],
+   "v3_receipt_sha256": "6e181a7d7656532945e9859646e9dc77d36d21252b77dac0d2f950805585023b"
+  },
+  {
+   "category": "header",
+   "description": "header carries a fifth cell",
+   "mutation_sha256": "1297e5cb03b83545e345f34e737764a6aaca86f6db0ed43f85059292b9f5e891",
+   "name": "header-extra-cell",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "header ['trigger', 'v2 hole', 'v3 arm', 'exit', 'note'] != ['trigger', 'v2 hole', 'v3 arm', 'exit']"
+   ],
+   "v3_receipt_sha256": "f4e15877680412d30931d209814c47b135c691676520ba2307d6c6536df0c3d5"
+  },
+  {
+   "category": "token",
+   "description": "row 1 v3-arm cell -> `Symbol` (case differs)",
+   "mutation_sha256": "abdf26859972fcd812259f90107b36895e0a95bc6778c52834a610e76d390d2d",
+   "name": "arm-token-case",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 1,
+   "v3_failing": [
+    "arm cells not exact vocabulary tokens: ['Symbol', 'once', 'digest', 'order']"
+   ],
+   "v3_receipt_sha256": "42f47f743fd544d3c46d8c0f0f8ca451785e40eb627116676ab81852d825ca59"
+  },
+  {
+   "category": "refs",
+   "description": "a citation to the interpreter with a line selector past EOF",
+   "mutation_sha256": "d17a523449cd22f9d6d555f09b4bbbc84a7e8610cc5996c22fc8a53bd313f333",
+   "name": "self-ref-line-past-eof",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "3e07162be1ed0e630674bc1f21fa41be680e522f18d0ccfb88ec7ef337e6d02e"
+  },
+  {
+   "category": "refs",
+   "description": "all three citations point at the interpreter itself",
+   "mutation_sha256": "fd609d33f21c4b52154f3410cdcb2054cc9dcf553274481aa69467dc9787d0c8",
+   "name": "refs-only-self",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "41488442da1e424db474bd8562d3185c0f69b047b70a6e3d9a7c912f6bc29ca6"
+  },
+  {
+   "category": "composite",
+   "description": "block 23's text relabelled `24. ` with the marker attached",
+   "mutation_sha256": "a57cacfa53a0a9548a59afa48463cb62f7e3b7a5596b7f3be11b4fb5a31c8293",
+   "name": "composite-block23-relabelled",
+   "v2_exit": 1,
+   "v2_failing": [
+    "header ['trigger', 'v1 hole', 'v2 arm', 'exit'] != ['trigger', 'v2 hole', 'v3 arm', 'exit']",
+    "routed ids not named by any row: ['R46-CL2', 'R46-CL3', 'R46-CL4', 'R46-CL6']",
+    "arm cells outside the vocabulary",
+    "unresolved or unvalidated citations: 2"
+   ],
+   "v3_exit": 1,
+   "v3_failing": [
+    "header ['trigger', 'v1 hole', 'v2 arm', 'exit'] != ['trigger', 'v2 hole', 'v3 arm', 'exit']",
+    "rows 13 != 4",
+    "rows naming != 1 routed id: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]",
+    "routed cardinality {} != each of ['R46-CL2', 'R46-CL3', 'R46-CL4', 'R46-CL6'] exactly once",
+    "arm cells not exact vocabulary tokens: ['presence: `absent_at_rev` is computed from the census, never from the row', 'merge: `--diff-merges=first-parent` plus an independent blob arm; the two must agree', 'rows: the selftest carries one red case per clause, and the mutation list is named in the claim', 'refs: every citation carries a line selector and a path inside the validated set; the interpreter is identified by its sha pin instead', 'rows: every row names a routed id and an arm from the fixed vocabulary, so a garbage row fails', 'marker: rows register only between the two registry markers and outside fences and comments', 'dirty: the dirty scope is the union of the pathspecs, and each arm has a red case that names it', 'restored: one frozen set derived from the claims file feeds both arms, so the sets cannot differ', 'none: the blob arm compares the two revisions and a squash leaves both trees identical, so the gate returns 0 and this row states the limit instead of pretending to see it', 'output: `scratch()` refuses a temporary partition and returns could-not-evaluate instead of degrading', 'output: `out_path()` refuses any target inside the graded or frozen set and any path outside the lane root', 'commit: the history arm reads `--name-status -z`, so pathnames are not munged and the comparison is byte-exact', \"pin: the block carries the interpreter's sha256, so a prose claim and the bytes it describes cannot diverge silently\"]",
+    "mutations_sha256 does not match the counter's own mutation list",
+    "mutation names not stated in the block: ['substring-arm', 'duplicate-routed-id', 'stale-mutations-digest', 'flag-order-drift']",
+    "unresolved or unvalidated citations: 2",
+    "interpreter sha256 pin does not match the bytes at rev"
+   ],
+   "v3_receipt_sha256": "9b76be6d9d63a3c8fe7adc4a1ef40f1397acc6c1d4967b5311457a8e44e0cc31"
+  },
+  {
+   "category": "cells",
+   "description": "one data row deleted (3 rows)",
+   "mutation_sha256": "704f4876ecd9cb79d1989d1e227cc95a720812f5a5fe34e843e6cac1b2e59aea",
+   "name": "rows-three",
+   "v2_exit": 1,
+   "v2_failing": [
+    "rows 3 < 4",
+    "routed ids not named by any row: ['R46-CL6']"
+   ],
+   "v3_exit": 1,
+   "v3_failing": [
+    "rows 3 != 4",
+    "routed cardinality {'R46-CL2': 1, 'R46-CL3': 1, 'R46-CL4': 1} != each of ['R46-CL2', 'R46-CL3', 'R46-CL4', 'R46-CL6'] exactly once"
+   ],
+   "v3_receipt_sha256": "e9295211cbb37d1c89444127e9e834f9accbe340d7e918bcbf4789df31824f15"
+  },
+  {
+   "category": "token",
+   "description": "every v3-arm cell -> `order` (membership, not bijection)",
+   "mutation_sha256": "a813df0bc9a8fbc2a70fef27bca74cf8d45b9d06f611a3e6c3c8f0e6e1b4889a",
+   "name": "arm-all-order",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "9acbf7e66f079e96f2fceee177ff4d076cfdec38eba69c4c6a457db256c6c4ee"
+  },
+  {
+   "category": "token",
+   "description": "arm tokens [symbol, symbol, once, order] \u2014 `digest` absent, duplicate `symbol`",
+   "mutation_sha256": "be88b624db6eeb0e66e169edf159b1d25555dd74a1e1106d06ae3b634dd8b5ca",
+   "name": "arm-duplicate-symbol",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "fa019924970c54d3e87640572eace0909b66511de9ca12dfe16882e5a817499d"
+  },
+  {
+   "category": "exit",
+   "description": "every exit cell -> `2` (could-not-evaluate)",
+   "mutation_sha256": "345195d76e79a9d29d829446581c52bf5d7410a92197dfafbec95f802f7c18f6",
+   "name": "exit-all-two",
+   "v2_exit": 0,
+   "v2_failing": [],
+   "v3_exit": 0,
+   "v3_failing": [],
+   "v3_receipt_sha256": "f86dfe0651b0924cb27e13995a786edef92f15edd41d1770f284249fae294455"
+  }
+ ],
+ "extra_survived_v3": [
+  "exit-semantics-0",
+  "hole-cell-empty",
+  "arm-permuted",
+  "id-permuted",
+  "mutation-name-extra",
+  "refs-two",
+  "self-ref-line-past-eof",
+  "refs-only-self",
+  "arm-all-order",
+  "arm-duplicate-symbol",
+  "exit-all-two"
+ ],
+ "genuine": {
+  "v2": {
+   "exit": 0,
+   "failing": [],
+   "met_target": true
+  },
+  "v3": {
+   "exit": 0,
+   "failing": [],
+   "met_target": true
+  }
+ },
+ "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "rev": "31b092d17e77f5064c919383a9bc1e6cbfd2d1ff",
+ "skill_sha256": "894e2864e5de8232fc0efe67c8b70169a0d858c6b36050ce9c275fce0ebffafd"
+}

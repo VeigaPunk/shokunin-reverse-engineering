@@ -1,0 +1,88 @@
+{
+ "rev": "f54b3b6de9085d3db449ed5d0916296cb29c1f6d",
+ "card_sha256": "6b1b55c112000f656728f5d0865a96e462f91d0e36fa57ac3a66c3e6bbb0aaad",
+ "corrections_parsed": 2,
+ "every_corrects_line": [
+  "- corrects seats round-45: 2 waves, 76 seats total \u2014 `w1-dispatch.json` reports `counts.spawn 40`",
+  "- corrects window round-46: empty in 332f4884..58eb04b6 -- tools/round-46 plans/round-46-claims.md",
+  "- corrects axes coverage: 138/138 \u2014 `git ls-tree -r --name-only <rev> corpus/knowledge | grep -c",
+  "- corrects axes depth: 24/24 \u2014 command A at the round-47 landing \u2192 `rule_blocks 24`,"
+ ],
+ "lines_matching_CORR": 2,
+ "unparsed_lines": [
+  "- corrects axes coverage: 138/138 \u2014 `git ls-tree -r --name-only <rev> corpus/knowledge | grep -c",
+  "- corrects axes depth: 24/24 \u2014 command A at the round-47 landing \u2192 `rule_blocks 24`,"
+ ],
+ "cases": [
+  {
+   "case": "landed-as-committed",
+   "note": "the card exactly as committed at this rev",
+   "exit": 0,
+   "corrections": 2,
+   "corrections_bad": [],
+   "mismatches": [],
+   "exempted": [
+    "46"
+   ]
+  },
+  {
+   "case": "fabricated-axes-depth",
+   "note": "an axes correction line is unparseable, so a false one costs nothing",
+   "exit": 0,
+   "corrections": 2,
+   "corrections_bad": [],
+   "mismatches": [],
+   "exempted": [
+    "46"
+   ]
+  },
+  {
+   "case": "fabricated-axes-coverage",
+   "note": "same for coverage",
+   "exit": 0,
+   "corrections": 2,
+   "corrections_bad": [],
+   "mismatches": [],
+   "exempted": [
+    "46"
+   ]
+  },
+  {
+   "case": "fabricated-path-statement",
+   "note": "the path branch ignores the statement, so any text passes",
+   "exit": 0,
+   "corrections": 3,
+   "corrections_bad": [],
+   "mismatches": [],
+   "exempted": [
+    "46"
+   ]
+  },
+  {
+   "case": "fabricated-seats-total",
+   "note": "the seats branch is real: a false total is red",
+   "exit": 1,
+   "corrections": 3,
+   "corrections_bad": [
+    {
+     "claimed": [
+      9,
+      999
+     ],
+     "derived": [
+      1,
+      75
+     ],
+     "dispatch": [
+      75
+     ]
+    },
+    "exempts an atom that does not exist"
+   ],
+   "mismatches": [],
+   "exempted": [
+    "46"
+   ]
+  }
+ ]
+}

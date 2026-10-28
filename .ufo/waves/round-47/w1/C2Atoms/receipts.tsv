@@ -1,0 +1,34 @@
+label	command	exit	stdout_sha256	stdout
+seats-r45-w1	python3 -c import json;print(json.load(open('/dev/stdin'))['counts']['spawn'])	0	d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103	40
+seats-r45-w2	python3 -c import json;print(json.load(open('/dev/stdin'))['counts']['spawn'])	0	76a50887d8f1c2e9301755428990ad81479ee21c25b43215cf524541e0503269	36
+seats-r46-w1	python3 -c import json;print(json.load(open('/dev/stdin'))['counts']['spawn'])	0	d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103	40
+seats-r46-w2	python3 -c import json;print(json.load(open('/dev/stdin'))['counts']['spawn'])	0	d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103	40
+window-claims-in-scope	grep -c is empty	0	6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b	1
+window-real-range-nonempty	git log --name-status --format= 0425224..13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5 -- tools/round-46 plans/round-46-claims.md	0	23b39bb9cf1aa25766c31542b7e284a81e860a94fb53cd3cae1f3b264f7542c0	M	tools/round-46/attest.py|M	tools/round-46/gate.py
+window-claim-as-written-nonempty	git log --name-status --format= 0425224..e856beb552080c03ede6000b96f1b58bde44c421 -- tools/round-46 plans/round-46-claims.md	0	23b39bb9cf1aa25766c31542b7e284a81e860a94fb53cd3cae1f3b264f7542c0	M	tools/round-46/attest.py|M	tools/round-46/gate.py
+window-correction-range-empty	git log --name-status --format= 332f4884..58eb04b6 -- tools/round-46 plans/round-46-claims.md	0	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	
+path-dir-tree	git cat-file -t 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5:.ufo/waves/round-45/	0	dc9c5edb8b2d479e697b4b0b8ab874f32b325138598ce9e7b759eb8292110622	tree
+path-file	git cat-file -e 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5:.ufo/waves/round-46/controls/ctl-c2-1-v1-scope.json	0	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	
+rev-5382acc8	git rev-parse --verify 5382acc85f9d8617fe242fc116819b8055dfc4c7^{commit}	0	bab28a226e66a48bda4ef28467e619533919230ddb7775a7c83770866ff08a07	5382acc85f9d8617fe242fc116819b8055dfc4c7
+rev-5382acc8-ancestor	git merge-base --is-ancestor 5382acc85f9d8617fe242fc116819b8055dfc4c7 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5	0	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	
+rev-50862e4a	git rev-parse --verify 50862e4a^{commit}	0	6d08192dbc6a62418b8fa76764ea6a24a6cef7a8b3becd94abbea43cc1ee2a44	50862e4a041499dd2ce0da68d10301b765bb9997
+rev-50862e4a-ancestor	git merge-base --is-ancestor 50862e4a 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5	0	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	
+rev-landing-not-ancestor-of-base	git merge-base --is-ancestor e856beb552080c03ede6000b96f1b58bde44c421 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5	1	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	
+coverage-total-base	git ls-tree -r --name-only 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5 -- corpus/knowledge	0	02ddec90e2b24599fb3b1d35433d9878730dae55801713795ac9231387dacb05	corpus/knowledge/.gitkeep|corpus/knowledge/2026-10-13-asar-surface.md|corpus/knowledge/2026-10-13-crash-evidence.md|corpus/knowledge/2026-10-13-doctor-taxonomy.md|corpus/knowledge/2026-10-13-elf-observation-jq.md|corpus/knowledge/2026-10-13-ghidra-install.md|corpus/knowledge/2026-10-13-java-runtime.
+coverage-total-landing	git ls-tree -r --name-only e856beb552080c03ede6000b96f1b58bde44c421 -- corpus/knowledge	0	02ddec90e2b24599fb3b1d35433d9878730dae55801713795ac9231387dacb05	corpus/knowledge/.gitkeep|corpus/knowledge/2026-10-13-asar-surface.md|corpus/knowledge/2026-10-13-crash-evidence.md|corpus/knowledge/2026-10-13-doctor-taxonomy.md|corpus/knowledge/2026-10-13-elf-observation-jq.md|corpus/knowledge/2026-10-13-ghidra-install.md|corpus/knowledge/2026-10-13-java-runtime.
+depth-blocks-base	python3 -c 
+import re,subprocess
+s=subprocess.run(['git','show','13a9e9e1:SKILL.md'],capture_output=True,text=True).stdout
+c=s.split('## Queue-drain craft ',1)[1].split('\n## ',1)[0]
+print(len(re.split(r'(?m)^- \*\*',c)[1:]))	0	535fa30d7e25dd8a49f1536779734ec8286108d115da5045d77f3b4185d8f790	23
+depth-blocks-landing	python3 -c 
+import re,subprocess
+s=subprocess.run(['git','show','e856beb5:SKILL.md'],capture_output=True,text=True).stdout
+c=s.split('## Queue-drain craft ',1)[1].split('\n## ',1)[0]
+print(len(re.split(r'(?m)^- \*\*',c)[1:]))	0	c2356069e9d1e79ca924378153cfbbfb4d4416b1f99d41a2940bfdb66c5319db	24
+counter-at-base	python3 -I -B tools/round-47/record.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5 --no-battery	1	83ff46b799e27363975425da661a695ba9e5b75024af18f494ab9d8457cf9477	{| "atoms": 50,| "atoms_by_class": {|  "axes": 2,|  "path": 12,|  "rev": 33,|  "seats": 2,|  "window": 1| },| "corrections": 0,| "corrections_bad": [],| "counter": "round-47-c2",| "exempted": [],| "failing": [|  "mismatches 4 != 0",|  "corrections 0 < 2"| ],| "met_target": false,| "mismatches": [|  
+counter-at-landing	python3 -I -B tools/round-47/record.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev e856beb552080c03ede6000b96f1b58bde44c421	0	493100b039c55bf4d610494cc46e65beac53102a4a6602fbb848db900f8e5a93	{| "atoms": 50,| "atoms_by_class": {|  "axes": 2,|  "path": 12,|  "rev": 33,|  "seats": 2,|  "window": 1| },| "battery": {|  "correction_forgeries": 3,|  "fixtures": [|   {|    "exit": 1,|    "failing": [|     "corrections that do not re-derive: 1"|    ],|    "name": "correction-wrong-seat-total"|  
+counter-record-sha-at-freeze	sh -c git show 5017e1f:tools/round-47/record.py | sha256sum	0	c2531999a92d1b59bada50d097c5ae49d119b24e68979d5b474d16fe20c6ff2f	af666ce26c72e209e165779958489ed53182a1e68270aa9353da32ca2c8abe9d  -
+counter-record-sha-at-head	sh -c git show HEAD:tools/round-47/record.py | sha256sum	0	79d1eda7323cfdc12494d63fdae69eac6a6f133da99cdcdd94bb0f014bdeecae	abf352573d156ed1388683c882e40cab9897f426b9448356993bf41bf37779e7  -
+counter-frozen-check-shape	grep -c frozen_path_changed tools/round-47/record.py	1	5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9	0
+2026-10-28T18:00:31Z

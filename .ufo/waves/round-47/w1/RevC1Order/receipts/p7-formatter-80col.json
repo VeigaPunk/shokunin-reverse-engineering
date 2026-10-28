@@ -1,0 +1,41 @@
+{
+ "command": "ruff format --line-length 80 gate.py",
+ "utc_start": "2026-10-28T17:58:25Z",
+ "utc_end": "2026-10-28T17:58:25Z",
+ "ruff_exit": 0,
+ "ruff_stdout": "1 file reformatted",
+ "ruff_stderr": "",
+ "ruff_version": "ruff 0.17.2",
+ "bytes_changed": true,
+ "literal_forward_before": 1,
+ "literal_forward_after": 0,
+ "literal_reversed_before": 0,
+ "literal_reversed_after": 0,
+ "clause7_would_reject": true,
+ "embedded_digest_unchanged": "3512cb24d01e0e1808955fca2e917c52f5924efc",
+ "fixture_path": "/fast/scratch/hyaku/kaidoku-r47/RevC1Order/fmt80/gate.py"
+}
+def history_touched(root, base, tip, paths):
+    """Every path under `paths` that any commit in base..tip touched, merges included.
+
+    `--diff-merges=first-parent` makes a merge show the diff it introduced on the
+    first-parent side, which is exactly the resolution edit R45-CL6 could not see.
+    """
+    if not paths:
+        return [], None
+    r = git(
+        root,
+        "log",
+        "-m",
+        "--diff-merges=first-parent",
+        "--name-status",
+        "-z",
+        "--format=",
+        f"{base}..{tip}",
+        "--",
+        *paths,
+        binary=True,
+    )
+    if r.returncode != 0:
+        return None, "git log failed"
+    tokens = r.stdout.decode("utf-8", "surrogateesc

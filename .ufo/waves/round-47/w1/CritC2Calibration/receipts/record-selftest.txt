@@ -1,0 +1,167 @@
+RECORD_SELFTEST: cases=10 failures=0
+{
+ "cases": [
+  {
+   "case": "red-seats-false-no-correction",
+   "expect": 1,
+   "got": 1,
+   "ok": true,
+   "failing": [
+    "mismatches 1 != 0",
+    "corrections 0 < 2"
+   ],
+   "mismatches": [
+    {
+     "class": "seats",
+     "key": "9",
+     "atom": "Waves: 1 + 1 = 3 seats",
+     "derived": {
+      "claimed": [
+       1,
+       1,
+       3
+      ],
+      "derived": [
+       1,
+       1,
+       2
+      ],
+      "dispatch": [
+       1,
+       1
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "case": "green-seats-false-superseded",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "failing": [],
+   "mismatches": []
+  },
+  {
+   "case": "red-unverifiable-window-uncorrected",
+   "expect": 1,
+   "got": 1,
+   "ok": true,
+   "failing": [
+    "mismatches 1 != 0",
+    "corrections 1 < 2"
+   ],
+   "mismatches": [
+    {
+     "class": "window",
+     "key": "9",
+     "atom": "Base `7a5673b6`. Waves: 1 + 1 = 2 seats. `git log 0425224..<tip> -- x` is empty. See `.ufo/waves/round-9/w1-dispatch.json`.",
+     "derived": {
+      "reason": "unverifiable",
+      "detail": "the claimed window names no concrete A..B revisions"
+     }
+    }
+   ]
+  },
+  {
+   "case": "red-ghost-exemption",
+   "expect": 1,
+   "got": 1,
+   "ok": true,
+   "failing": [
+    "corrections that do not re-derive: 2"
+   ],
+   "mismatches": []
+  },
+  {
+   "case": "red-correction-total-false",
+   "expect": 1,
+   "got": 1,
+   "ok": true,
+   "failing": [
+    "corrections that do not re-derive: 1"
+   ],
+   "mismatches": []
+  },
+  {
+   "case": "red-one-correction",
+   "expect": 1,
+   "got": 1,
+   "ok": true,
+   "failing": [
+    "corrections 1 < 2"
+   ],
+   "mismatches": []
+  },
+  {
+   "case": "green",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "failing": [],
+   "mismatches": []
+  },
+  {
+   "case": "green-historical-correction",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "failing": [],
+   "mismatches": []
+  },
+  {
+   "case": "red-non-empty-window",
+   "expect": 1,
+   "got": 1,
+   "ok": true,
+   "mismatches": [
+    {
+     "class": "window",
+     "key": "9",
+     "atom": "Base `7a5673b6`. Waves: 1 + 1 = 2 seats. `git log 9fbcde94..7a5673b6 -- tools/x/` is empty. See `.ufo/waves/round-9/w1-dispatch.json`.",
+     "derived": {
+      "window": "9fbcde94..7a5673b6",
+      "pathspec": [
+       "tools/x/"
+      ],
+      "empty": false
+     }
+    }
+   ]
+  },
+  {
+   "case": "battery-discriminates",
+   "expect": true,
+   "got": true,
+   "ok": true,
+   "battery": {
+    "correction_forgeries": 3,
+    "forgeries_green": 0,
+    "fixtures": [
+     {
+      "name": "correction-wrong-seat-total",
+      "exit": 1,
+      "failing": [
+       "corrections that do not re-derive: 1"
+      ]
+     },
+     {
+      "name": "correction-window-not-empty",
+      "exit": 1,
+      "failing": [
+       "corrections that do not re-derive: 1"
+      ]
+     },
+     {
+      "name": "correction-ghost-atom",
+      "exit": 1,
+      "failing": [
+       "corrections that do not re-derive: 2"
+      ]
+     }
+    ]
+   }
+  }
+ ],
+ "failures": 0
+}

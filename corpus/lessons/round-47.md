@@ -65,6 +65,12 @@ command it owned read the artefact, none read the claim.
   excludes the class, so a reader who writes one believes the atom repaired. The correction grammar
   should refuse a class it cannot apply rather than ignore it.
 
+- **R47-CL15 (wave-1 `RevC1Refs`).** `_fixture_files` (A6) writes a *directory* citation as a file
+  path: a block citing `plans/:1-2` makes the battery exit 2 with `unhandled IsADirectoryError`,
+  while the same citation without the battery is accepted (a line selector over `git show rev:plans/`
+  resolves over a tree listing). A citation whose path is a tree must be refused as a clause failure,
+  not crash the fixture builder.
+
 ## Gate
 
 ### Sources opened this round (2026-10-28)

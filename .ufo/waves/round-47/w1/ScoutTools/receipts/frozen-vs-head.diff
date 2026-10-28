@@ -1,0 +1,103 @@
+diff --git a/plans/round-47-claims.md b/plans/round-47-claims.md
+index 81aeb65e..15725e24 100644
+--- a/plans/round-47-claims.md
++++ b/plans/round-47-claims.md
+@@ -20,6 +20,27 @@ adds no domain surface.
+ | R47-C1 | depth | `SKILL.md` `## Queue-drain craft` rule block 24 — the **exactness** matrix over the four round-46 routed instrument defects — and its interpreter `tools/round-47/exact.py` |
+ | R47-C2 | calibration | the lane's **current self-assessment** (the last two `## Round N` sections of `SCORECARD.md`) re-derived atom by atom against committed repo state by `tools/round-47/record.py` |
+ 
++**Freeze amendment A1 (declared before any claim data; the freeze is a series of two, disclosed).**
++The first freeze `5017e1f7299c3a812e87e7950148f54313dd279e` carried a `record.py` clause no reachable
++correction could satisfy: it required a `window` correction's `A..B` pair to already appear in the
++card, while the only window atom in scope names a `<tip>` placeholder — so R47-C2's target was
++unreachable by construction. A1 deletes that clause and nothing else; the **declared freeze is the
++commit that carries this paragraph**, i.e. the first commit whose `tools/round-47/record.py` scores
++the landing's own corrections section. Red-before at the first freeze: the landing corrections
++scored `corrections_bad: [window pair names no atom in scope]`, exit 1
++(`.ufo/waves/round-47/controls/ctl-c2-2-freeze-amendment.json`). No seat had scored a claim and no
++landing had been measured when A1 was made; the two-commit series is disclosed here rather than
++folded, per the round-46 M46-3 finding.
++
++**Freeze amendment A2 (disclosed; changes a battery fixture's window choice, not a clause).**
++The first after-data run of R47-C2 at the landing `e856beb5` failed clause 6 with
++`forgeries_green 1`: the `correction-window-not-empty` forgery replaced the correction's window
++with `<A>..<tip>`, and because the real correction's `<A>..<tip>` window is empty by construction,
++the forged window was empty too — the "forgery" was a no-op. A2 computes the forged window as
++root..tip (non-empty over these paths) and nothing else. Every clause, threshold and kill rule is
++byte-identical to A1; the measured revision is taken after A2. Red-before:
++`.ufo/waves/round-47/l1/scores/c2-at-L1.json` (`battery.forgeries_green 1`, exit 1).
++
+ **Causal separability.** R47-C1's counter reads `SKILL.md`, this file's frozen paths,
+ `tools/round-47/exact.py` and `tools/round-46/gate.py`; it never reads `SCORECARD.md`.
+ R47-C2's counter reads `SCORECARD.md` and the `.ufo/waves/round-*/` dispatch and receipt
+diff --git a/tools/round-47/record.py b/tools/round-47/record.py
+index 1f8e7928..ace4f6df 100755
+--- a/tools/round-47/record.py
++++ b/tools/round-47/record.py
+@@ -356,13 +356,18 @@ def evaluate_text(card, files, root, rev, battery=None):
+         if not ok:
+             corrections_bad.append({"line": entry["text"], "detail": detail})
+         if (entry["class"], str(entry["key"])) not in known_keys:
+-            corrections_bad.append({"line": entry["text"],
+-                                    "detail": "exempts an atom that does not exist"})
+-        if entry["class"] == "window":
+-            cm = CORR_WINDOW.search(entry["statement"])
+-            if cm and ("window", (cm.group(1), cm.group(2))) not in known_pairs:
++            # A correction stays valid evidence after its atom scrolls out of the window:
++            # a seats/window correction for a round older than the last two is historical.
++            key = str(entry["key"])
++            oldest = min(int(r) for r, _ in secs)
++            historical = (entry["class"] in ("seats", "window") and key.isdigit()
++                          and int(key) < oldest)
++            if not historical:
+                 corrections_bad.append({"line": entry["text"],
+-                                        "detail": "window pair names no atom in scope"})
++                                        "detail": "exempts an atom that does not exist"})
++        # A window correction legitimately introduces the concrete pair that replaces an
++        # unverifiable `<tip>` claim, so its pair need not already appear in the card; the
++        # class/key existence check above is what binds it to a real atom.
+ 
+     receipt.update({"atoms": len(atoms), "verified": len(verified),
+                     "exempted": exempted, "mismatches": mismatches,
+@@ -392,7 +397,8 @@ def evaluate_text(card, files, root, rev, battery=None):
+ 
+ # --- battery: three forged corrections, each must keep the counter red ------------
+ 
+-def run_battery(card, files, root, rev):
++def run_battery(card, files, root, rev, root_repo=None):
++    root_repo = root_repo or root
+     out = {"correction_forgeries": 0, "forgeries_green": 0, "fixtures": []}
+     ok_card = CORR_HEAD in card
+ 
+@@ -426,8 +432,9 @@ def run_battery(card, files, root, rev):
+         m = re.search(r"empty in ([0-9a-f]{7,40})\.\.([0-9a-f]{7,40})", text)
+         if not m:
+             return text
+-        # the base..tip window of the round itself is never empty
+-        return text.replace(m.group(0), f"empty in {m.group(1)}..{rev}", 1)
++        # Root..tip over these paths is never empty: every round-4x tool landed in it.
++        root = git(root_repo, "rev-list", "--max-parents=0", rev).stdout.split()[0]
++        return text.replace(m.group(0), f"empty in {root[:8]}..{rev}", 1)
+ 
+     def ghost_atom(text):
+         return text + "\n- corrects path does/not/exist/at/any/revision.md: never\n"
+@@ -539,7 +546,9 @@ def selftest():
+                  ".ufo/waves/round-9/w1-dispatch.json":
+                      json.dumps({"counts": {"spawn": 1}}),
+                  ".ufo/waves/round-9/w2-dispatch.json":
+-                     json.dumps({"counts": {"spawn": 1}})}
++                     json.dumps({"counts": {"spawn": 1}}),
++                 ".ufo/waves/round-3/w1-dispatch.json":
++                     json.dumps({"counts": {"spawn": 2}})}
+ 
+         def run(name, expect, card, with_battery=False):
+             got, rec = evaluate_text(card, lambda p: files.get(p), d, tip,
+@@ -560,6 +569,8 @@ def selftest():
+         run("red-correction-total-false", 1, _card(total=9, **kw))
+         run("red-one-correction", 1, _card(corrections=1, **kw))
+         run("green", 0, _card(**kw))
++        run("green-historical-correction", 0, _card(**kw) +
++            "\n- corrects seats round-3: 1 waves, 2 seats total\n")
+ 
+         # the empty window on our own base..tip is a real, reproducible non-empty window
+         real = _card(window=f"`git log {base[:8]}..{tip[:8]} -- tools/x/` is empty",

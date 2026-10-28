@@ -1,0 +1,10 @@
+- **24. An instrument's binding is an equality, not a containment, and its denominator is pinned.** <!-- exactness-table v3 --> Block 23 stated what makes a freeze claim checkable; this one states what makes a *check* exact — each row is a defect the round-46 non-author spot-check routed (`corpus/lessons/round-46.md:57-66`), the loose binding that let a forgery pass it, and the clause of `tools/round-47/exact.py` that now fails the forgery. Interpreter pin: `tools/round-47/exact.py` `interpreter_sha256:dcef54f1b14326c33b89a4c55e766832c2a938241968c1d3db1389f9b26c412c`; the counter's own mutation list is pinned as `mutations_sha256:b7d3e477e2f6bf3d7967a55c17dfe2d5d314c968b61e88ac4ea75e41251ac61a` over `substring-arm`, `duplicate-routed-id`, `stale-mutations-digest`, `flag-order-drift`. Source S143.
+
+| trigger | v2 hole | v3 arm | exit |
+|---|---|---|---|
+| R46-CL2 `blobberish` satisfies `blob` in the arm-vocabulary test | containment over a lowercased cell, so any superstring passes | `symbol` | 1 |
+| R46-CL3 a row claims a routed id another row already addresses | the id check asks whether the id appears in *some* row | `once` | 1 |
+| R46-CL4 deleting a mutation changes the denominator the claim is judged on | `forgeries_total` is compared with a number the code computes, and nothing pins the list | `digest` | 1 |
+| R46-CL6 one flag reorder (`--diff-merges=first-parent -m`) prints a merge twice and blinds the arm | the argument order is a convention no clause reads | `order` | 1 |
+
+  Refs: `corpus/lessons/round-46.md:57-66` (the four routed instrument defects this matrix closes), `corpus/lessons/round-46.md:21` (M46-2: a denominator the code computes is not a pinned denominator), `plans/round-47-claims.md:45-113` (the R47-C1 predicate and its nine clauses), `plans/round-47-claims.md:141-176` (the R47-C2 predicate and its result), `corpus/lessons/round-46.md:89-95` (R46-CL7: binding digits rather than meanings — routed again, because a verdict map is a registry concern and this block does not reach it). S143 grounds the equality (`https://docs.python.org/3/library/re.html` `re.fullmatch`).

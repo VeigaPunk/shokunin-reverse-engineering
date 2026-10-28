@@ -1,0 +1,12 @@
+ORDER = '"-m", "--diff-merges=first-parent"'
+REVERSED = '"--diff-merges=first-parent", "-m"'
+        gtext = files(GATE46)
+        if gtext is None:
+            failing.append("gate.py absent at rev")
+        else:
+            n_ok, n_bad = gtext.count(ORDER), gtext.count(REVERSED)
+            receipt["gate_order_literal"] = n_ok
+            receipt["gate_order_reversed"] = n_bad
+            if n_ok != 1 or n_bad != 0:
+                failing.append(f"gate.py flag order: {n_ok} correct, {n_bad} reversed")
+

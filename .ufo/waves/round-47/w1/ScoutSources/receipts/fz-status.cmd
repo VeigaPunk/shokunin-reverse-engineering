@@ -1,0 +1,1 @@
+cd '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' && awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {s=$9; gsub(/[[:space:]]/,"",s); n[s]++} END{for(k in n) printf "%s=%d ", k, n[k]; print ""}' '/fast/scratch/hyaku/kaidoku-r47/ScoutSources/SOURCES.freeze.md'

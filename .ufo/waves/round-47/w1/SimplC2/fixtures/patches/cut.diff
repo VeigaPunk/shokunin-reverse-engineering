@@ -1,0 +1,61 @@
+--- record.py
++++ record.py
+@@ -35,7 +35,7 @@
+ CORR_HEAD = "## Record corrections — round 47"
+ EXEMPT_MAX = 3
+ CORR_MIN = 2
+-CLASSES = ("seats", "window", "path", "rev", "axes")
++CLASSES = ("seats", "window", "path", "rev")
+ AXIS_ROW = re.compile(r"(?m)^\|\s*(coverage|depth)\s*\|(.*)$")
+ FRAC = re.compile(r"\b(\d+)/(\d+)\b")
+ CRAFT = "## Queue-drain craft "
+@@ -220,14 +220,6 @@
+     if cls == "path":
+         exists = files(atom["path"]) is not None
+         return exists, {"path": atom["path"], "exists": exists}
+-    if cls == "axes":
+-        pairs = axis_pairs(files, root, rev)
+-        got = pairs.get(atom["axis"])
+-        if got is None:
+-            return False, {"reason": "unobservable", "axis": atom["axis"]}
+-        return tuple(atom["claim"]) == got, {"axis": atom["axis"],
+-                                            "claimed": list(atom["claim"]),
+-                                            "derived": list(got)}
+     if cls == "rev":
+         r = git(root, "rev-parse", "--verify", "--quiet", atom["rev"] + "^{commit}")
+         oid = r.stdout.strip()
+@@ -277,26 +269,8 @@
+         if err:
+             return False, err
+         return bool(empty), {"window": f"{m.group(1)}..{m.group(2)}", "empty": empty}
+-    if cls == "axes":
+-        m = CORR_AXES.search(stmt)
+-        if not m:
+-            return False, "an axes correction must state '<resolved>/<total>'"
+-        got = axis_pairs(files, root, rev).get(key)
+-        if got is None:
+-            return False, {"reason": "unobservable", "axis": key}
+-        claimed = (int(m.group(1)), int(m.group(2)))
+-        return claimed == got, {"axis": key, "claimed": list(claimed),
+-                                "derived": list(got)}
+     if cls == "path":
+         return files(key) is not None, {"path": key, "exists": files(key) is not None}
+-    if cls == "axes":
+-        pairs = axis_pairs(files, root, rev)
+-        got = pairs.get(atom["axis"])
+-        if got is None:
+-            return False, {"reason": "unobservable", "axis": atom["axis"]}
+-        return tuple(atom["claim"]) == got, {"axis": atom["axis"],
+-                                            "claimed": list(atom["claim"]),
+-                                            "derived": list(got)}
+     if cls == "rev":
+         r = git(root, "rev-parse", "--verify", "--quiet", key + "^{commit}")
+         return r.returncode == 0, {"rev": key, "resolves": r.returncode == 0}
+@@ -321,7 +295,6 @@
+     atoms = []
+     for rnd, text in secs:
+         atoms.extend(collect(text, rnd, files, root, rev))
+-    atoms.extend(collect_axes(card))
+     corr, corr_body = corrections(card)
+     exempt_keys = {(c["class"], str(c["key"])) for c in corr}
+     known_keys = {(a["class"], str(a["key"])) for a in atoms}

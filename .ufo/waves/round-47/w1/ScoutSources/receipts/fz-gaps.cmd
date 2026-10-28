@@ -1,0 +1,1 @@
+awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {id=$2; gsub(/[[:space:]]/,"",id); print substr(id,2)+0}' '/fast/scratch/hyaku/kaidoku-r47/ScoutSources/SOURCES.freeze.md' | sort -n | awk 'BEGIN{expect=1} {while(expect<$1){print expect; expect++} if($1==expect) expect++; else if($1<expect) print "dup", $1} END{print "next", expect}'

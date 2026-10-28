@@ -1,0 +1,314 @@
+{
+ "fixture_repo": "/fast/scratch/hyaku/kaidoku-r47/CritC2Calibration/c2attack-n18qy27k",
+ "base": "145f93a40140e14cc2a233aad0d304b4a7c84f70",
+ "tip": "43c49471eab1436490ee4b47b481f0884a5b33c4",
+ "side": "394d10b7d948d822adeb32210bb58cf031b5f030",
+ "cases": [
+  {
+   "case": "control-honest-card",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "defect": null,
+   "failing": [],
+   "mismatches": [],
+   "exempted": [],
+   "corrections": 2,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   },
+   "extra": {
+    "record_depth_pair": [
+     1,
+     1
+    ],
+    "command_a_depth_pair": [
+     0,
+     1
+    ],
+    "same_predicate": false
+   }
+  },
+  {
+   "case": "seats-split-false-totals-true",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "defect": "corrects() binds (n_waves, sum) only; the exempted atom's per-wave numbers (claimed 20/20, dispatched 30/10) are never re-derived",
+   "failing": [],
+   "mismatches": [],
+   "exempted": [
+    "seats:9"
+   ],
+   "corrections": 3,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   }
+  },
+  {
+   "case": "seats-spec-not-dispatched",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "defect": "dispatch_counts() reads counts.spawn from w<N>-dispatch.json alone; the fixture has no *.ready, no *.ready.dispatched and no *-results.json -- the round-46 wave-2 shape routed as R46-V1",
+   "failing": [],
+   "mismatches": [],
+   "exempted": [],
+   "corrections": 2,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   },
+   "extra": {
+    "round9_dir": [
+     "w1-dispatch.json",
+     "w2-dispatch.json"
+    ],
+    "ready_anywhere": []
+   }
+  },
+  {
+   "case": "window-placeholder-exempted-degenerately",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "defect": "exempt() returns True for any window atom whose pair is None; the correction then only has to be empty itself and A..A is empty by construction, so the sentence's own window is never tested",
+   "failing": [],
+   "mismatches": [],
+   "exempted": [
+    "window:9"
+   ],
+   "corrections": 3,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   }
+  },
+  {
+   "case": "window-placeholder-honest-pair-rejected",
+   "expect": 1,
+   "got": 1,
+   "ok": true,
+   "defect": "base..tip touches tools/x, so the true window is non-empty; the predicate prefers the vacuous correction to the honest one",
+   "failing": [
+    "corrections that do not re-derive: 1"
+   ],
+   "mismatches": [],
+   "exempted": [
+    "window:9"
+   ],
+   "corrections": 3,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   }
+  },
+  {
+   "case": "rev-non-ancestor-exempted",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "defect": "derive() requires resolve AND merge-base --is-ancestor; corrects() for rev checks rev-parse only, so the exemption is strictly weaker than the atom it exempts",
+   "failing": [],
+   "mismatches": [],
+   "exempted": [
+    "rev:394d10b7"
+   ],
+   "corrections": 3,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 2,
+    "axes": 2
+   },
+   "extra": {
+    "side_is_ancestor_of_tip": false
+   }
+  },
+  {
+   "case": "path-citation-outside-wave-dir-ignored",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "defect": "WAVE_DIR matches only .ufo/waves/round-<N>/...; every other cited path in the sections is not an atom, so R46-V7's four missing receipt paths cannot fail this counter",
+   "failing": [],
+   "mismatches": [],
+   "exempted": [],
+   "corrections": 2,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   },
+   "extra": {
+    "exist": {
+     "controls/ctl-c1-1-v1-profile.json": false,
+     "plans/nope.md": false,
+     "corpus/lessons/nope.md": false
+    }
+   }
+  },
+  {
+   "case": "log-and-report-claims-not-atoms",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "defect": "no class reads LOG.md, PROVINCE.md, a round report or a self-test count; only SCORECARD's last two round sections and two axis rows are in scope (R46-V1's LOG half, V4, V5, V6 are all outside)",
+   "failing": [],
+   "mismatches": [],
+   "exempted": [],
+   "corrections": 2,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   }
+  },
+  {
+   "case": "corrections-can-be-exemption-free",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "defect": "A3's `historical` escape accepts a seats/window correction for any round older than the window; it exempts nothing (exempted is empty) yet counts toward CORR_MIN, so 'at least two re-derived corrections' does not mean 'two defects repaired'",
+   "failing": [],
+   "mismatches": [],
+   "exempted": [],
+   "corrections": 3,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   }
+  },
+  {
+   "case": "doctored-dispatch-dropped-correction",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "defect": "seats ground truth is an unfrozen .ufo/waves/*-dispatch.json the same round may commit; with the correction dropped the false split is verified against the edited file (the claims file's kill rule covers only the retained-correction case)",
+   "failing": [],
+   "mismatches": [],
+   "exempted": [],
+   "corrections": 2,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   },
+   "extra": {
+    "dispatch_diff": ".ufo/waves/round-9/w1-dispatch.json | 2 +-\n .ufo/waves/round-9/w2-dispatch.json | 2 +-\n 2 files changed, 2 insertions(+), 2 deletions(-)"
+   }
+  },
+  {
+   "case": "control-false-split-uncorrected",
+   "expect": 1,
+   "got": 1,
+   "ok": true,
+   "defect": null,
+   "failing": [
+    "mismatches 1 != 0"
+   ],
+   "mismatches": [
+    "seats:9"
+   ],
+   "exempted": [],
+   "corrections": 2,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   }
+  },
+  {
+   "case": "control-honest-card-no-corrections",
+   "expect": 1,
+   "got": 1,
+   "ok": true,
+   "defect": null,
+   "failing": [
+    "corrections 0 < 2"
+   ],
+   "mismatches": [],
+   "exempted": [],
+   "corrections": 0,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   }
+  },
+  {
+   "case": "axes-correction-false-line-ignored",
+   "expect": 0,
+   "got": 0,
+   "ok": true,
+   "defect": "CORR's class alternation omits `axes`, so the line is neither counted, re-derived, nor flagged: a false axes correction passes silently and the frozen clause 3 axes arm is unreachable",
+   "failing": [],
+   "mismatches": [],
+   "exempted": [],
+   "corrections": 2,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   }
+  },
+  {
+   "case": "axes-head-false-unrepairable",
+   "expect": 1,
+   "got": 1,
+   "ok": true,
+   "defect": "the counter's only path for a wrong axis head is an exemption that cannot be parsed, so the documented repair mechanism is dead; the landed card fixes the heads by editing them instead",
+   "failing": [
+    "mismatches 1 != 0"
+   ],
+   "mismatches": [
+    "axes:coverage"
+   ],
+   "exempted": [],
+   "corrections": 2,
+   "atoms_by_class": {
+    "seats": 1,
+    "window": 1,
+    "path": 1,
+    "rev": 1,
+    "axes": 2
+   }
+  }
+ ],
+ "reproduced": 14,
+ "total": 14,
+ "green_by_defect": 9
+}

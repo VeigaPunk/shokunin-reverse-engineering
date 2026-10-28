@@ -1,0 +1,742 @@
+{
+ "panel": "P0-landed-card",
+ "expect_exit": 0,
+ "exit": 0,
+ "ok": true,
+ "note": "instrument agrees with the lane's own landing",
+ "failing": [],
+ "mismatches": [],
+ "exempted": [
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 40 seats; wave 2: 32 seats"
+  },
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  }
+ ],
+ "corrections": 2,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 0,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "ce40695ac0d81384b80a4362c2b3022c7873f537b0ffbe030861af2287f5bb0d"
+}
+{
+ "panel": "P1-three-exemptions-three-false-atoms",
+ "expect_exit": 0,
+ "exit": 0,
+ "ok": true,
+ "note": "round-45 still says 'wave 2: 32 seats', round-46 now says '41 + 40 = 81', round-46 window still names <tip>: counter green",
+ "failing": [],
+ "mismatches": [],
+ "exempted": [
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 40 seats; wave 2: 32 seats"
+  },
+  {
+   "class": "seats",
+   "key": "46",
+   "atom": "Waves: 41 + 40 = 81 seats"
+  },
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  }
+ ],
+ "corrections": 3,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 0,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "c0c48d55a82afa23432cc47060ea9e79e49b72f04f552e159168067d350c6957"
+}
+{
+ "panel": "P1b-fourth-false-atom-beyond-cap",
+ "expect_exit": 1,
+ "exit": 1,
+ "ok": true,
+ "note": "three exemptions spent, the fourth false atom must stay red",
+ "failing": [
+  "mismatches 1 != 0"
+ ],
+ "mismatches": [
+  {
+   "class": "path",
+   "key": ".ufo/waves/round-46/w9/ghost.json",
+   "atom": ".ufo/waves/round-46/w9/ghost.json"
+  }
+ ],
+ "exempted": [
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 40 seats; wave 2: 32 seats"
+  },
+  {
+   "class": "seats",
+   "key": "46",
+   "atom": "Waves: 41 + 40 = 81 seats"
+  },
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  }
+ ],
+ "corrections": 3,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 0,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "mismatches 1 != 0",
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 1,
+    "failing": [
+     "mismatches 1 != 0",
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "mismatches 1 != 0",
+     "corrections that do not re-derive: 2"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "ac2f2cc8cd0094f319198e0850323a00206bb0f3057d5f0bd85975eb7157a8f3"
+}
+{
+ "panel": "P2-round47-heading-retains-seats45-correction",
+ "expect_exit": 1,
+ "exit": 1,
+ "ok": true,
+ "note": "the landed seats-45 correction becomes a ghost the moment the round's own section lands",
+ "failing": [
+  "corrections that do not re-derive: 1"
+ ],
+ "mismatches": [],
+ "exempted": [
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  }
+ ],
+ "corrections": 3,
+ "corrections_bad": [
+  {
+   "line": "- corrects seats round-45: 2 waves, 76 seats total \u2014 `w2-dispatch.json` reports `counts.spawn 36`.",
+   "detail": "exempts an atom that does not exist"
+  }
+ ],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 0,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "1bcf80dd14862ace64a9de626ea4ae71ce96b585c0fcd67b685a85a9db38d005"
+}
+{
+ "panel": "P2b-round47-heading-drops-seats45-correction",
+ "expect_exit": 0,
+ "exit": 1,
+ "ok": false,
+ "note": "round-45 'wave 2: 32 seats' is now outside the last-two window and is never examined: no correction of it exists",
+ "failing": [
+  "corrections that do not re-derive: 1",
+  "battery forgeries_green 1 != 0"
+ ],
+ "mismatches": [],
+ "exempted": [
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  }
+ ],
+ "corrections": 2,
+ "corrections_bad": [
+  {
+   "line": "- corrects path .ufo/waves/round-46/w1/R46W1CritC1: landed",
+   "detail": "exempts an atom that does not exist"
+  }
+ ],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 1,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "error": "mutation was a no-op"
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "34a91c27b08f05e9814217a46e2a8c6a3e85f68749d46778a940efb86b33c763"
+}
+{
+ "panel": "P3-vacuous-window-pathspec",
+ "expect_exit": 0,
+ "exit": 1,
+ "ok": false,
+ "note": "a pathspec matching no file re-derives 'empty' and exempts the <tip> atom",
+ "failing": [
+  "battery forgeries_green 1 != 0"
+ ],
+ "mismatches": [],
+ "exempted": [
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 40 seats; wave 2: 32 seats"
+  },
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  }
+ ],
+ "corrections": 3,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 1,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 0,
+    "failing": []
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "a4f69ac6feebab996b3f0418206e20b7c0ae3e60bbb8561bcb3f5c2e587f3b85"
+}
+{
+ "panel": "P3b-real-pathspec-nonempty-window",
+ "expect_exit": 1,
+ "exit": 0,
+ "ok": false,
+ "note": "control: the same window over a real pathspec is not empty",
+ "failing": [],
+ "mismatches": [],
+ "exempted": [
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 40 seats; wave 2: 32 seats"
+  },
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  }
+ ],
+ "corrections": 3,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 0,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "3d95709655564bf411679df983a2dedd62d0c0d3640e2d114b44a9cc24f61398"
+}
+{
+ "panel": "P3c-trailing-dot-pathspec",
+ "expect_exit": 0,
+ "exit": 1,
+ "ok": false,
+ "note": "a trailing period in the pathspec selects nothing -> 'empty' again",
+ "failing": [
+  "battery forgeries_green 1 != 0"
+ ],
+ "mismatches": [],
+ "exempted": [
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 40 seats; wave 2: 32 seats"
+  },
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  }
+ ],
+ "corrections": 3,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 1,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 0,
+    "failing": []
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "976ab7226402ed3eab7c670777b2408800a1b2da09e0e6fb3990e018854e6b4a"
+}
+{
+ "panel": "P4-one-line-hides-three-false-seat-atoms",
+ "expect_exit": 0,
+ "exit": 0,
+ "ok": true,
+ "note": "pair + sum atoms in round 45 share key '45': one line exempts both; exempted counts atoms, the clause text says 'more atoms than the record defects it names'",
+ "failing": [],
+ "mismatches": [],
+ "exempted": [
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Waves: 40 + 32 = 72 seats"
+  },
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 40 seats; wave 2: 32 seats"
+  },
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  }
+ ],
+ "corrections": 3,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 0,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "6396683f3a364c8732a33563012632cfefc44d70570185973a30f3cbed36f03b"
+}
+{
+ "panel": "P4b-four-false-seat-atoms",
+ "expect_exit": 1,
+ "exit": 1,
+ "ok": true,
+ "note": "cap holds: exempted 4 > 3",
+ "failing": [
+  "exempted 4 > 3"
+ ],
+ "mismatches": [],
+ "exempted": [
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Waves: 40 + 32 = 72 seats"
+  },
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 40 seats; wave 2: 32 seats"
+  },
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 39 seats; wave 2: 36 seats"
+  },
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  }
+ ],
+ "corrections": 3,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 0,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1",
+     "exempted 4 > 3"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1",
+     "exempted 4 > 3"
+    ]
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2",
+     "exempted 4 > 3"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "ac7255cb94e098ca7d7c2fdfa293242e5a5bbdbefb8a943a979aa884a4ef16db"
+}
+{
+ "panel": "P5-noop-corrections-after-in-place-repair",
+ "expect_exit": 0,
+ "exit": 0,
+ "ok": true,
+ "note": "record edited in place, corrections exempt nothing, clause 3 satisfied",
+ "failing": [],
+ "mismatches": [],
+ "exempted": [],
+ "corrections": 2,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 0,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "f26f39e277c41c93d8ee7acbb424cebee0bd5452575501058dbbe7e530a07277"
+}
+{
+ "panel": "P5b-repaired-record-no-corrections",
+ "expect_exit": 1,
+ "exit": 1,
+ "ok": true,
+ "note": "a CLEAN record cannot pass: corrections 0 < 2",
+ "failing": [
+  "corrections 0 < 2"
+ ],
+ "mismatches": [],
+ "exempted": [],
+ "corrections": 0,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 0,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "error": "no corrections section"
+   },
+   {
+    "name": "correction-window-not-empty",
+    "error": "no corrections section"
+   },
+   {
+    "name": "correction-ghost-atom",
+    "error": "no corrections section"
+   }
+  ]
+ },
+ "card_sha256": "a63457ebb1b7cc7f9f63ad6c2a858fdfc4e1c91ab54692f78bc9278bef47b4f0"
+}
+{
+ "panel": "P6-base-card-no-corrections-section",
+ "expect_exit": 1,
+ "exit": 1,
+ "ok": true,
+ "note": "battery reports 3 forgeries with error 'no corrections section' and forgeries_green 0: the battery clause is satisfied without scoring any",
+ "failing": [
+  "mismatches 4 != 0",
+  "corrections 0 < 2"
+ ],
+ "mismatches": [
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 40 seats; wave 2: 32 seats"
+  },
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above."
+  },
+  {
+   "class": "axes",
+   "key": "coverage",
+   "atom": "coverage 133/133 at the head of its Owned-axes row"
+  },
+  {
+   "class": "axes",
+   "key": "depth",
+   "atom": "depth 20/20 at the head of its Owned-axes row"
+  }
+ ],
+ "exempted": [],
+ "corrections": 0,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 0,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "error": "no corrections section"
+   },
+   {
+    "name": "correction-window-not-empty",
+    "error": "no corrections section"
+   },
+   {
+    "name": "correction-ghost-atom",
+    "error": "no corrections section"
+   }
+  ]
+ },
+ "card_sha256": "e1fbea5d48b383a50415d5f7161c47d07a56013e3affb7910dfb79d4ac53ff52"
+}
+{
+ "panel": "P7-one-window-line-exempts-every-placeholder",
+ "expect_exit": 0,
+ "exit": 1,
+ "ok": false,
+ "note": "a placeholder atom with NO concrete pair is exempted by any window correction, whatever its pathspec",
+ "failing": [
+  "battery forgeries_green 1 != 0"
+ ],
+ "mismatches": [],
+ "exempted": [
+  {
+   "class": "seats",
+   "key": "45",
+   "atom": "Wave 1: 40 seats; wave 2: 32 seats"
+  },
+  {
+   "class": "window",
+   "key": "46",
+   "atom": "0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty. `git log 13a9e9e1..<tip> -- corpus/knowledge/` is e"
+  }
+ ],
+ "corrections": 3,
+ "corrections_bad": [],
+ "battery": {
+  "correction_forgeries": 3,
+  "forgeries_green": 1,
+  "fixtures": [
+   {
+    "name": "correction-wrong-seat-total",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 1"
+    ]
+   },
+   {
+    "name": "correction-window-not-empty",
+    "exit": 0,
+    "failing": []
+   },
+   {
+    "name": "correction-ghost-atom",
+    "exit": 1,
+    "failing": [
+     "corrections that do not re-derive: 2"
+    ]
+   }
+  ]
+ },
+ "card_sha256": "9d3b397285eb9b1aa6cf534ad2900f54de473c85c211b1b9c22cd76af1be5457"
+}
+{
+ "panels": 14,
+ "unexpected": [
+  "P2b-round47-heading-drops-seats45-correction",
+  "P3-vacuous-window-pathspec",
+  "P3b-real-pathspec-nonempty-window",
+  "P3c-trailing-dot-pathspec",
+  "P7-one-window-line-exempts-every-placeholder"
+ ]
+}

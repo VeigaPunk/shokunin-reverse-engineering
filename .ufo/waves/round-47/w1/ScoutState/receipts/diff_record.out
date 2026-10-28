@@ -1,0 +1,19 @@
+diff --git i/tools/round-47/record.py w/tools/round-47/record.py
+index 1f8e7928..79fb27a8 100755
+--- i/tools/round-47/record.py
++++ w/tools/round-47/record.py
+@@ -358,11 +358,9 @@ def evaluate_text(card, files, root, rev, battery=None):
+         if (entry["class"], str(entry["key"])) not in known_keys:
+             corrections_bad.append({"line": entry["text"],
+                                     "detail": "exempts an atom that does not exist"})
+-        if entry["class"] == "window":
+-            cm = CORR_WINDOW.search(entry["statement"])
+-            if cm and ("window", (cm.group(1), cm.group(2))) not in known_pairs:
+-                corrections_bad.append({"line": entry["text"],
+-                                        "detail": "window pair names no atom in scope"})
++        # A window correction legitimately introduces the concrete pair that replaces an
++        # unverifiable `<tip>` claim, so its pair need not already appear in the card; the
++        # class/key existence check above is what binds it to a real atom.
+ 
+     receipt.update({"atoms": len(atoms), "verified": len(verified),
+                     "exempted": exempted, "mismatches": mismatches,

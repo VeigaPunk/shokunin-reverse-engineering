@@ -1,0 +1,66 @@
+
+=== V0 committed card (control): exit 1
+  failing: ['mismatches 4 != 0', 'corrections 0 < 2']
+  mismatches: [('seats', '45'), ('window', '46'), ('axes', 'coverage'), ('axes', 'depth')]
+  exempted: []
+  corrections: 0 bad: []
+
+=== V1 placeholder kept + concrete window correction (claims-file shape): exit 1
+  failing: ['corrections that do not re-derive: 1', 'battery forgeries_green 1 != 0']
+  mismatches: []
+  exempted: [('seats', '45'), ('window', '46')]
+  corrections: 2 bad: ["a window correction must state 'empty in A..B -- paths'"]
+  battery: 3 forgeries_green 1
+     correction-wrong-seat-total -> 1 ['corrections that do not re-derive: 2']
+     correction-window-not-empty -> None mutation was a no-op
+     correction-ghost-atom -> 1 ['corrections that do not re-derive: 3']
+
+=== V2 in-place window = 332f4884..3186f69b (tip == rev): exit 1
+  failing: ['battery forgeries_green 1 != 0']
+  mismatches: []
+  exempted: [('seats', '45')]
+  corrections: 2 bad: []
+  battery: 3 forgeries_green 1
+     correction-wrong-seat-total -> 1 ['corrections that do not re-derive: 1']
+     correction-window-not-empty -> 0 []
+     correction-ghost-atom -> 1 ['corrections that do not re-derive: 2']
+
+=== V3 in-place window = 0425224..3ffbe0f8 (tip < F5): exit 0
+  failing: []
+  mismatches: []
+  exempted: [('seats', '45')]
+  corrections: 2 bad: []
+  battery: 3 forgeries_green 0
+     correction-wrong-seat-total -> 1 ['corrections that do not re-derive: 1']
+     correction-window-not-empty -> 1 ['corrections that do not re-derive: 1']
+     correction-ghost-atom -> 1 ['corrections that do not re-derive: 2']
+
+=== V4 axes rows left stale + '- corrects axes coverage: 138/138' line: exit 1
+  failing: ['mismatches 2 != 0']
+  mismatches: [('axes', 'coverage'), ('axes', 'depth')]
+  exempted: [('seats', '45')]
+  corrections: 2 bad: []
+  battery: 3 forgeries_green 0
+     correction-wrong-seat-total -> 1 ['mismatches 2 != 0', 'corrections that do not re-derive: 1']
+     correction-window-not-empty -> 1 ['mismatches 2 != 0', 'corrections that do not re-derive: 1']
+     correction-ghost-atom -> 1 ['mismatches 2 != 0', 'corrections that do not re-derive: 2']
+
+=== V5 V3 minus the window correction line (corrections=1): exit 1
+  failing: ['corrections 1 < 2', 'battery forgeries_green 1 != 0']
+  mismatches: []
+  exempted: [('seats', '45')]
+  corrections: 1 bad: []
+  battery: 3 forgeries_green 1
+     correction-wrong-seat-total -> 1 ['corrections 1 < 2', 'corrections that do not re-derive: 1']
+     correction-window-not-empty -> None mutation was a no-op
+     correction-ghost-atom -> 1 ['corrections that do not re-derive: 2']
+
+=== V6 V3 with depth row at 24/24 while the rev has 23 blocks: exit 1
+  failing: ['mismatches 1 != 0']
+  mismatches: [('axes', 'depth')]
+  exempted: [('seats', '45')]
+  corrections: 2 bad: []
+  battery: 3 forgeries_green 0
+     correction-wrong-seat-total -> 1 ['mismatches 1 != 0', 'corrections that do not re-derive: 1']
+     correction-window-not-empty -> 1 ['mismatches 1 != 0', 'corrections that do not re-derive: 1']
+     correction-ghost-atom -> 1 ['mismatches 1 != 0', 'corrections that do not re-derive: 2']

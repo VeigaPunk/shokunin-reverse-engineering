@@ -1,0 +1,46 @@
+diff --git a/plans/round-47-claims.md b/plans/round-47-claims.md
+index 74a3cce6..15725e24 100644
+--- a/plans/round-47-claims.md
++++ b/plans/round-47-claims.md
+@@ -32,6 +32,15 @@ scored `corrections_bad: [window pair names no atom in scope]`, exit 1
+ landing had been measured when A1 was made; the two-commit series is disclosed here rather than
+ folded, per the round-46 M46-3 finding.
+ 
++**Freeze amendment A2 (disclosed; changes a battery fixture's window choice, not a clause).**
++The first after-data run of R47-C2 at the landing `e856beb5` failed clause 6 with
++`forgeries_green 1`: the `correction-window-not-empty` forgery replaced the correction's window
++with `<A>..<tip>`, and because the real correction's `<A>..<tip>` window is empty by construction,
++the forged window was empty too — the "forgery" was a no-op. A2 computes the forged window as
++root..tip (non-empty over these paths) and nothing else. Every clause, threshold and kill rule is
++byte-identical to A1; the measured revision is taken after A2. Red-before:
++`.ufo/waves/round-47/l1/scores/c2-at-L1.json` (`battery.forgeries_green 1`, exit 1).
++
+ **Causal separability.** R47-C1's counter reads `SKILL.md`, this file's frozen paths,
+ `tools/round-47/exact.py` and `tools/round-46/gate.py`; it never reads `SCORECARD.md`.
+ R47-C2's counter reads `SCORECARD.md` and the `.ufo/waves/round-*/` dispatch and receipt
+diff --git a/tools/round-47/record.py b/tools/round-47/record.py
+index 79fb27a8..1888605e 100755
+--- a/tools/round-47/record.py
++++ b/tools/round-47/record.py
+@@ -390,7 +390,8 @@ def evaluate_text(card, files, root, rev, battery=None):
+ 
+ # --- battery: three forged corrections, each must keep the counter red ------------
+ 
+-def run_battery(card, files, root, rev):
++def run_battery(card, files, root, rev, root_repo=None):
++    root_repo = root_repo or root
+     out = {"correction_forgeries": 0, "forgeries_green": 0, "fixtures": []}
+     ok_card = CORR_HEAD in card
+ 
+@@ -424,8 +425,9 @@ def run_battery(card, files, root, rev):
+         m = re.search(r"empty in ([0-9a-f]{7,40})\.\.([0-9a-f]{7,40})", text)
+         if not m:
+             return text
+-        # the base..tip window of the round itself is never empty
+-        return text.replace(m.group(0), f"empty in {m.group(1)}..{rev}", 1)
++        # Root..tip over these paths is never empty: every round-4x tool landed in it.
++        root = git(root_repo, "rev-list", "--max-parents=0", rev).stdout.split()[0]
++        return text.replace(m.group(0), f"empty in {root[:8]}..{rev}", 1)
+ 
+     def ghost_atom(text):
+         return text + "\n- corrects path does/not/exist/at/any/revision.md: never\n"

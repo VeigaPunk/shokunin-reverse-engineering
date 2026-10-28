@@ -1,0 +1,252 @@
+{
+ "source": "git show 1e2c3102:tools/round-47/record.py",
+ "source_sha256": "c704c3d407325264f8e2d990a8873524b0c5bbbf52d5dcc10ee8df411c9d6fa7",
+ "mutations": {
+  "M01": {
+   "clause": "clause 5: len(secs)!=2 -> exit 2",
+   "kind": "delete",
+   "mutated_sha256": "04a4e8b925771bb9968d4fd636d88b2b706995cb6aead8eb0bca0544b702fe84",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -307,8 +307,6 @@\n     secs = sections(card)\n     receipt = {\"counter\": \"round-47-c2\", \"rev\": rev,\n                \"sections\": [f\"round-{rnd}\" for rnd, _ in secs]}\n-    if len(secs) != 2:\n-        return 2, dict(receipt, reason=\"fewer than two `## Round N` sections\")\n     failing = []\n     cache = {}\n \n"
+  },
+  "M02": {
+   "clause": "clause 2: missing_classes check",
+   "kind": "delete",
+   "mutated_sha256": "e35afa97847dc1972bede8f8733470fae47063750a98c77d44f4314f4adb5499",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -374,9 +374,6 @@\n                     \"corrections\": len(corr), \"corrections_bad\": corrections_bad,\n                     \"atoms_by_class\": {c: sum(1 for a in atoms if a[\"class\"] == c)\n                                        for c in CLASSES}})\n-    missing_classes = [c for c in CLASSES if receipt[\"atoms_by_class\"][c] == 0]\n-    if missing_classes:\n-        failing.append(f\"no atoms of class(es) {missing_classes}\")\n     if mismatches:\n         failing.append(f\"mismatches {len(mismatches)} != 0\")\n     if len(corr) < CORR_MIN:\n"
+  },
+  "M03": {
+   "clause": "clause 1: mismatches != 0",
+   "kind": "delete",
+   "mutated_sha256": "d74e55b4cc393eed1a371a526fe4c7d84b004921f9b9226733a916419f923555",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -377,8 +377,6 @@\n     missing_classes = [c for c in CLASSES if receipt[\"atoms_by_class\"][c] == 0]\n     if missing_classes:\n         failing.append(f\"no atoms of class(es) {missing_classes}\")\n-    if mismatches:\n-        failing.append(f\"mismatches {len(mismatches)} != 0\")\n     if len(corr) < CORR_MIN:\n         failing.append(f\"corrections {len(corr)} < {CORR_MIN}\")\n     if corrections_bad:\n"
+  },
+  "M04": {
+   "clause": "clause 3: corrections >= CORR_MIN",
+   "kind": "delete",
+   "mutated_sha256": "530716063897c3d361df258f0d629e2f9eb052b35271ff2f72ae92d401973c2b",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -379,8 +379,6 @@\n         failing.append(f\"no atoms of class(es) {missing_classes}\")\n     if mismatches:\n         failing.append(f\"mismatches {len(mismatches)} != 0\")\n-    if len(corr) < CORR_MIN:\n-        failing.append(f\"corrections {len(corr)} < {CORR_MIN}\")\n     if corrections_bad:\n         failing.append(f\"corrections that do not re-derive: {len(corrections_bad)}\")\n     if len(exempted) > EXEMPT_MAX:\n"
+  },
+  "M05": {
+   "clause": "clause 3: corrections_bad empty",
+   "kind": "delete",
+   "mutated_sha256": "8b626611ce1a71b981062a970c91429868cf821980cecf0f373ff7152bf0a536",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -381,8 +381,6 @@\n         failing.append(f\"mismatches {len(mismatches)} != 0\")\n     if len(corr) < CORR_MIN:\n         failing.append(f\"corrections {len(corr)} < {CORR_MIN}\")\n-    if corrections_bad:\n-        failing.append(f\"corrections that do not re-derive: {len(corrections_bad)}\")\n     if len(exempted) > EXEMPT_MAX:\n         failing.append(f\"exempted {len(exempted)} > {EXEMPT_MAX}\")\n     if battery is not None:\n"
+  },
+  "M06": {
+   "clause": "clause 4: exempted <= EXEMPT_MAX",
+   "kind": "delete",
+   "mutated_sha256": "fcb441637ab1cdf0482195fb56a472c89bb8395814b6fd9f69ddf176be545acf",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -383,8 +383,6 @@\n         failing.append(f\"corrections {len(corr)} < {CORR_MIN}\")\n     if corrections_bad:\n         failing.append(f\"corrections that do not re-derive: {len(corrections_bad)}\")\n-    if len(exempted) > EXEMPT_MAX:\n-        failing.append(f\"exempted {len(exempted)} > {EXEMPT_MAX}\")\n     if battery is not None:\n         receipt[\"battery\"] = battery\n         for key, want in ((\"correction_forgeries\", 3), (\"forgeries_green\", 0)):\n"
+  },
+  "M07": {
+   "clause": "clause 6: battery keys 3/0",
+   "kind": "delete",
+   "mutated_sha256": "eeee3d7a9e6949ee3683159da04e2a571916f1c96c559c6adc1c72207205650a",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -385,11 +385,6 @@\n         failing.append(f\"corrections that do not re-derive: {len(corrections_bad)}\")\n     if len(exempted) > EXEMPT_MAX:\n         failing.append(f\"exempted {len(exempted)} > {EXEMPT_MAX}\")\n-    if battery is not None:\n-        receipt[\"battery\"] = battery\n-        for key, want in ((\"correction_forgeries\", 3), (\"forgeries_green\", 0)):\n-            if battery.get(key) != want:\n-                failing.append(f\"battery {key} {battery.get(key)} != {want}\")\n     receipt[\"met_target\"] = not failing\n     receipt[\"failing\"] = failing\n     return (0 if not failing else 1), receipt\n"
+  },
+  "M08": {
+   "clause": "collect: seats sum form",
+   "kind": "delete",
+   "mutated_sha256": "78ee247b743a9c425cd91606f308cb8659d8d18b7500a70595d525f7588713a7",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -145,9 +145,6 @@\n def collect(section_text, rnd, files, root, rev):\n     atoms = []\n \n-    for m in SEATS_SUM.finditer(section_text):\n-        atoms.append({\"class\": \"seats\", \"key\": rnd, \"atom\": m.group(0),\n-                      \"shape\": \"sum\", \"claim\": tuple(int(x) for x in m.groups())})\n     for m in SEATS_PAIR.finditer(section_text):\n         atoms.append({\"class\": \"seats\", \"key\": rnd, \"atom\": m.group(0),\n                       \"shape\": \"pair\", \"claim\": (int(m.group(1)), int(m.group(2)))})\n"
+  },
+  "M09": {
+   "clause": "collect: seats pair form",
+   "kind": "delete",
+   "mutated_sha256": "5d7962f3c41a9d3ac7c39be9f2d5689b3555c2db31455a2ab0791283c63045ba",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -148,9 +148,6 @@\n     for m in SEATS_SUM.finditer(section_text):\n         atoms.append({\"class\": \"seats\", \"key\": rnd, \"atom\": m.group(0),\n                       \"shape\": \"sum\", \"claim\": tuple(int(x) for x in m.groups())})\n-    for m in SEATS_PAIR.finditer(section_text):\n-        atoms.append({\"class\": \"seats\", \"key\": rnd, \"atom\": m.group(0),\n-                      \"shape\": \"pair\", \"claim\": (int(m.group(1)), int(m.group(2)))})\n \n     for line in section_text.splitlines():\n         if \"is empty\" not in line:\n"
+  },
+  "M10": {
+   "clause": "collect: window atoms",
+   "kind": "delete",
+   "mutated_sha256": "6a0f24605a5e4286cf8b978c68cb3fb8749cddeb5dc2727a7982162d25a20059",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -152,13 +152,6 @@\n         atoms.append({\"class\": \"seats\", \"key\": rnd, \"atom\": m.group(0),\n                       \"shape\": \"pair\", \"claim\": (int(m.group(1)), int(m.group(2)))})\n \n-    for line in section_text.splitlines():\n-        if \"is empty\" not in line:\n-            continue\n-        m = WINDOW.search(line)\n-        atoms.append({\"class\": \"window\", \"key\": rnd, \"atom\": line.strip()[:160],\n-                      \"line\": line.strip(),\n-                      \"pair\": (m.group(1), m.group(2)) if m else None})\n \n     for m in WAVE_DIR.finditer(section_text):\n         token = m.group(0).rstrip(\".,;:)`\")\n"
+  },
+  "M11": {
+   "clause": "collect: window 'is empty' filter",
+   "kind": "delete",
+   "mutated_sha256": "0628676e468e51b6e62d34684e720090bd2700a5cc9623580caf90531f13653e",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -153,8 +153,6 @@\n                       \"shape\": \"pair\", \"claim\": (int(m.group(1)), int(m.group(2)))})\n \n     for line in section_text.splitlines():\n-        if \"is empty\" not in line:\n-            continue\n         m = WINDOW.search(line)\n         atoms.append({\"class\": \"window\", \"key\": rnd, \"atom\": line.strip()[:160],\n                       \"line\": line.strip(),\n"
+  },
+  "M12": {
+   "clause": "collect: path atoms",
+   "kind": "delete",
+   "mutated_sha256": "85d9e83a5f77ca8f2ed3734dcee9a237370d763bd6e0f67d2ab0ccbf78b1fbf9",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -160,9 +160,6 @@\n                       \"line\": line.strip(),\n                       \"pair\": (m.group(1), m.group(2)) if m else None})\n \n-    for m in WAVE_DIR.finditer(section_text):\n-        token = m.group(0).rstrip(\".,;:)`\")\n-        atoms.append({\"class\": \"path\", \"key\": token, \"atom\": token, \"path\": token})\n \n     for m in REV_TOKEN.finditer(section_text):\n         atoms.append({\"class\": \"rev\", \"key\": m.group(1), \"atom\": f\"`{m.group(1)}`\",\n"
+  },
+  "M13": {
+   "clause": "collect: rev atoms",
+   "kind": "delete",
+   "mutated_sha256": "f9fc2b8b61a82cc3586fadfd28fb35907bfb27b20ea3f8ce4ef8e8c0666cc71a",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -164,9 +164,6 @@\n         token = m.group(0).rstrip(\".,;:)`\")\n         atoms.append({\"class\": \"path\", \"key\": token, \"atom\": token, \"path\": token})\n \n-    for m in REV_TOKEN.finditer(section_text):\n-        atoms.append({\"class\": \"rev\", \"key\": m.group(1), \"atom\": f\"`{m.group(1)}`\",\n-                      \"rev\": m.group(1)})\n     return atoms\n \n \n"
+  },
+  "M14": {
+   "clause": "collect: axes atoms",
+   "kind": "delete",
+   "mutated_sha256": "7831184f9bc8c3014b9c1185f8fa7302ce10a36a59782ff6a4857ebe7f6024b9",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -321,7 +321,6 @@\n     atoms = []\n     for rnd, text in secs:\n         atoms.extend(collect(text, rnd, files, root, rev))\n-    atoms.extend(collect_axes(card))\n     corr, corr_body = corrections(card)\n     exempt_keys = {(c[\"class\"], str(c[\"key\"])) for c in corr}\n     known_keys = {(a[\"class\"], str(a[\"key\"])) for a in atoms}\n"
+  },
+  "M15": {
+   "clause": "derive: seats-sum equality",
+   "kind": "neuter",
+   "mutated_sha256": "a28c4fd21da475b4e348fd577e5e4c2c263b99d7c72780db1931538af79af951",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -196,7 +196,7 @@\n             a, b, c = atom[\"claim\"]\n             got = (spawns[0] if len(spawns) > 0 else 0,\n                    spawns[1] if len(spawns) > 1 else 0, sum(spawns))\n-            return (a, b, c) == got, {\"claimed\": [a, b, c], \"derived\": list(got),\n+            return True, {\"claimed\": [a, b, c], \"derived\": list(got),\n                                      \"dispatch\": spawns}\n         a, b = atom[\"claim\"]\n         got = (spawns[0] if len(spawns) > 0 else 0,\n"
+  },
+  "M16": {
+   "clause": "derive: seats-pair equality",
+   "kind": "neuter",
+   "mutated_sha256": "4f48d805fa36dd9b57a94630fc7be31d1009cda1cb47577317c4135729e25b37",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -201,7 +201,7 @@\n         a, b = atom[\"claim\"]\n         got = (spawns[0] if len(spawns) > 0 else 0,\n                spawns[1] if len(spawns) > 1 else 0)\n-        return (a, b) == got, {\"claimed\": [a, b], \"derived\": list(got),\n+        return True, {\"claimed\": [a, b], \"derived\": list(got),\n                                \"dispatch\": spawns}\n     if cls == \"window\":\n         line = atom[\"line\"]\n"
+  },
+  "M17": {
+   "clause": "derive: window emptiness",
+   "kind": "neuter",
+   "mutated_sha256": "1c6737b5437dc74ce01f1501172e4db9b072f1143d5007dd59a3351e8844dbee",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -215,8 +215,8 @@\n         empty, err = window_empty(root, rev, m.group(1), m.group(2), pathspec)\n         if err:\n             return False, {\"reason\": err}\n-        return bool(empty), {\"window\": f\"{m.group(1)}..{m.group(2)}\",\n-                             \"pathspec\": pathspec, \"empty\": empty}\n+        return True, {\"window\": f\"{m.group(1)}..{m.group(2)}\",\n+                       \"pathspec\": pathspec, \"empty\": empty}\n     if cls == \"path\":\n         exists = files(atom[\"path\"]) is not None\n         return exists, {\"path\": atom[\"path\"], \"exists\": exists}\n"
+  },
+  "M18": {
+   "clause": "derive: window pathspec extraction",
+   "kind": "neuter",
+   "mutated_sha256": "a76808e49b23fa1adef39a196046bef3da1c909215bc4310c141839a896b7ace",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -211,7 +211,7 @@\n                            \"the claimed window names no concrete A..B revisions\"}\n         tail = line[m.end():]\n         paths = re.findall(r\"--\\s+([A-Za-z0-9._/ -]+)\", tail)\n-        pathspec = paths[0].split() if paths else []\n+        pathspec = []\n         empty, err = window_empty(root, rev, m.group(1), m.group(2), pathspec)\n         if err:\n             return False, {\"reason\": err}\n"
+  },
+  "M19": {
+   "clause": "derive: path existence",
+   "kind": "neuter",
+   "mutated_sha256": "a32ad2e054af1bdffd8ec509613448c895e818301c9551f36c8f267a107b1c4b",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -218,7 +218,7 @@\n         return bool(empty), {\"window\": f\"{m.group(1)}..{m.group(2)}\",\n                              \"pathspec\": pathspec, \"empty\": empty}\n     if cls == \"path\":\n-        exists = files(atom[\"path\"]) is not None\n+        exists = True\n         return exists, {\"path\": atom[\"path\"], \"exists\": exists}\n     if cls == \"axes\":\n         pairs = axis_pairs(files, root, rev)\n"
+  },
+  "M20": {
+   "clause": "derive: axes equality",
+   "kind": "neuter",
+   "mutated_sha256": "15827f1d64d14c7a877ca6dd1cbda45b674954bb76804a95ae3eb9ec2da54d42",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -225,9 +225,9 @@\n         got = pairs.get(atom[\"axis\"])\n         if got is None:\n             return False, {\"reason\": \"unobservable\", \"axis\": atom[\"axis\"]}\n-        return tuple(atom[\"claim\"]) == got, {\"axis\": atom[\"axis\"],\n-                                            \"claimed\": list(atom[\"claim\"]),\n-                                            \"derived\": list(got)}\n+        return True, {\"axis\": atom[\"axis\"],\n+                    \"claimed\": list(atom[\"claim\"]),\n+                    \"derived\": list(got)}\n     if cls == \"rev\":\n         r = git(root, \"rev-parse\", \"--verify\", \"--quiet\", atom[\"rev\"] + \"^{commit}\")\n         oid = r.stdout.strip()\n"
+  },
+  "M21": {
+   "clause": "derive: rev ancestor-of-rev",
+   "kind": "neuter",
+   "mutated_sha256": "f49176002654de5e6b0ea760d1bfd892211c25cb1e2331ab5bf873afbe8d2bf6",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -233,9 +233,7 @@\n         oid = r.stdout.strip()\n         if r.returncode != 0:\n             return False, {\"rev\": atom[\"rev\"], \"resolves\": False}\n-        a = git(root, \"merge-base\", \"--is-ancestor\", oid, rev)\n-        return a.returncode == 0, {\"rev\": atom[\"rev\"], \"oid\": oid,\n-                                   \"ancestor\": a.returncode == 0}\n+        return True, {\"rev\": atom[\"rev\"], \"oid\": oid, \"ancestor\": True}\n     return False, {\"reason\": f\"unknown class {cls}\"}\n \n \n"
+  },
+  "M22": {
+   "clause": "derive: unreadable dispatch -> error",
+   "kind": "delete",
+   "mutated_sha256": "22901f53142dde063a4a47647e9e7338823dd131f86e975ffe561dd830ba1724",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -71,11 +71,6 @@\n         body = files(path)\n         if body is None:\n             break\n-        try:\n-            payload = json.loads(body)\n-            spawns.append(int(payload[\"counts\"][\"spawn\"]))\n-        except (ValueError, KeyError, TypeError):\n-            return None, f\"{path}: unreadable counts\"\n         i += 1\n     if not spawns:\n         return None, f\"no dispatch file for round {rnd}\"\n"
+  },
+  "M23": {
+   "clause": "exempt: placeholder window atom",
+   "kind": "delete",
+   "mutated_sha256": "4b7ae330c642ed16673134a6ea75ca1ef18f711a460fee89ff665a193b704567",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -331,8 +331,6 @@\n         if atom[\"class\"] != entry[\"class\"]:\n             return False\n         if atom[\"class\"] == \"window\":\n-            if atom.get(\"pair\") is None:\n-                return True  # a placeholder claim is replaced by a concrete window\n             cm = CORR_WINDOW.search(entry[\"statement\"])\n             return bool(cm) and (cm.group(1), cm.group(2)) == atom[\"pair\"]\n         return str(atom[\"key\"]) == str(entry[\"key\"])\n"
+  },
+  "M24": {
+   "clause": "exempt: window pair equality",
+   "kind": "neuter",
+   "mutated_sha256": "43bf65dbb5804e1bd033b6825b96b107633a93628599d009574e4113b6c3cab4",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -334,7 +334,7 @@\n             if atom.get(\"pair\") is None:\n                 return True  # a placeholder claim is replaced by a concrete window\n             cm = CORR_WINDOW.search(entry[\"statement\"])\n-            return bool(cm) and (cm.group(1), cm.group(2)) == atom[\"pair\"]\n+            return bool(cm)\n         return str(atom[\"key\"]) == str(entry[\"key\"])\n \n \n"
+  },
+  "M25": {
+   "clause": "exempt: class+key equality",
+   "kind": "neuter",
+   "mutated_sha256": "e88ff77882bfc94136b5535afccb3281e8095fb05ab80b109fccc851848edc44",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -335,7 +335,7 @@\n                 return True  # a placeholder claim is replaced by a concrete window\n             cm = CORR_WINDOW.search(entry[\"statement\"])\n             return bool(cm) and (cm.group(1), cm.group(2)) == atom[\"pair\"]\n-        return str(atom[\"key\"]) == str(entry[\"key\"])\n+        return True\n \n \n     mismatches, verified, exempted = [], [], []\n"
+  },
+  "M26": {
+   "clause": "corrections: ghost-atom existence",
+   "kind": "delete",
+   "mutated_sha256": "e21e960d0c8d9c65a1a5eafc5c1489de0dd1cd4b9da2fd342b9e95b3cc7f7be0",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -355,16 +355,6 @@\n         ok, detail = corrects(entry, files, root, rev, spawns_cache)\n         if not ok:\n             corrections_bad.append({\"line\": entry[\"text\"], \"detail\": detail})\n-        if (entry[\"class\"], str(entry[\"key\"])) not in known_keys:\n-            # A correction stays valid evidence after its atom scrolls out of the window:\n-            # a seats/window correction for a round older than the last two is historical.\n-            key = str(entry[\"key\"])\n-            oldest = min(int(r) for r, _ in secs)\n-            historical = (entry[\"class\"] in (\"seats\", \"window\") and key.isdigit()\n-                          and int(key) < oldest)\n-            if not historical:\n-                corrections_bad.append({\"line\": entry[\"text\"],\n-                                        \"detail\": \"exempts an atom that does not exist\"})\n         # A window correction legitimately introduces the concrete pair that replaces an\n         # unverifiable `<tip>` claim, so its pair need not already appear in the card; the\n         # class/key existence check above is what binds it to a real atom.\n"
+  },
+  "M27": {
+   "clause": "corrections: A3 historical exemption",
+   "kind": "neuter",
+   "mutated_sha256": "28207bf735bb76576a9f433fe35c4d792cff87c40ea1b57d2813082728ccf83d",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -360,8 +360,7 @@\n             # a seats/window correction for a round older than the last two is historical.\n             key = str(entry[\"key\"])\n             oldest = min(int(r) for r, _ in secs)\n-            historical = (entry[\"class\"] in (\"seats\", \"window\") and key.isdigit()\n-                          and int(key) < oldest)\n+            historical = False\n             if not historical:\n                 corrections_bad.append({\"line\": entry[\"text\"],\n                                         \"detail\": \"exempts an atom that does not exist\"})\n"
+  },
+  "M28": {
+   "clause": "corrections: seats total re-derived",
+   "kind": "neuter",
+   "mutated_sha256": "ff349059e4f86034507ff2fdaf7bd6e94cb59ce996b3090f104ea56377c4ea00",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -266,8 +266,8 @@\n             return False, err\n         claimed = (int(m.group(1)), int(m.group(2)))\n         got = (len(spawns), sum(spawns))\n-        return claimed == got, {\"claimed\": list(claimed), \"derived\": list(got),\n-                                \"dispatch\": spawns}\n+        return True, {\"claimed\": list(claimed), \"derived\": list(got),\n+                      \"dispatch\": spawns}\n     if cls == \"window\":\n         m = CORR_WINDOW.search(stmt)\n         if not m:\n"
+  },
+  "M29": {
+   "clause": "corrections: window emptiness re-derived",
+   "kind": "neuter",
+   "mutated_sha256": "1387f4f33b3985adaf6152c34b645ee50c43749ea47b5202b742e85f4231df0b",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -276,7 +276,7 @@\n         empty, err = window_empty(root, rev, m.group(1), m.group(2), pathspec)\n         if err:\n             return False, err\n-        return bool(empty), {\"window\": f\"{m.group(1)}..{m.group(2)}\", \"empty\": empty}\n+        return True, {\"window\": f\"{m.group(1)}..{m.group(2)}\", \"empty\": empty}\n     if cls == \"axes\":\n         m = CORR_AXES.search(stmt)\n         if not m:\n"
+  },
+  "M30": {
+   "clause": "corrections: axes arm (dead code)",
+   "kind": "delete",
+   "mutated_sha256": "4ec4ed70c06ca519450d1d68289488d88d03d7743fbbd7d88fba37deff02bb99",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -277,16 +277,6 @@\n         if err:\n             return False, err\n         return bool(empty), {\"window\": f\"{m.group(1)}..{m.group(2)}\", \"empty\": empty}\n-    if cls == \"axes\":\n-        m = CORR_AXES.search(stmt)\n-        if not m:\n-            return False, \"an axes correction must state '<resolved>/<total>'\"\n-        got = axis_pairs(files, root, rev).get(key)\n-        if got is None:\n-            return False, {\"reason\": \"unobservable\", \"axis\": key}\n-        claimed = (int(m.group(1)), int(m.group(2)))\n-        return claimed == got, {\"axis\": key, \"claimed\": list(claimed),\n-                                \"derived\": list(got)}\n     if cls == \"path\":\n         return files(key) is not None, {\"path\": key, \"exists\": files(key) is not None}\n     if cls == \"axes\":\n"
+  },
+  "M31": {
+   "clause": "corrections: 'round-' key normalization",
+   "kind": "delete",
+   "mutated_sha256": "dd84fab749c94081882767af7e0539e69ca42b8fda52187036ae301b1e5e0bf9",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -249,7 +249,6 @@\n         m = CORR.match(line.strip())\n         if m:\n             key = m.group(2)\n-            key = key[6:] if key.startswith(\"round-\") else key\n             out.append({\"class\": m.group(1), \"key\": key, \"text\": line.strip(),\n                         \"statement\": m.group(3)})\n     return out, body\n"
+  },
+  "M32": {
+   "clause": "sections: last two headings only",
+   "kind": "neuter",
+   "mutated_sha256": "09da9d58503660598fc8f657f4584359e7721426a537c196d74eac987a474301",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -56,7 +56,7 @@\n     \"\"\"The last two `## Round N` sections, in file order, with their round numbers.\"\"\"\n     heads = [(m.start(), m.group(1)) for m in re.finditer(r\"(?m)^## Round (\\d+)\", card)]\n     out = []\n-    for pos, rnd in heads[-2:]:\n+    for pos, rnd in heads:\n         end = card.find(\"\\n## \", pos + 1)\n         out.append((rnd, card[pos:end if end >= 0 else len(card)]))\n     return out\n"
+  },
+  "M33": {
+   "clause": "battery: missing-corrections-section branch",
+   "kind": "delete",
+   "mutated_sha256": "2308fb584e598308ac254133f11017921dd929172befd503fdd140ed82e1ab11",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -403,11 +403,6 @@\n     ok_card = CORR_HEAD in card\n \n     def forged(name, mutate):\n-        if not ok_card:\n-            out[\"fixtures\"].append({\"name\": name, \"error\": \"no corrections section\"})\n-            out[\"correction_forgeries\"] += 1\n-            out[\"forgeries_green\"] += 0\n-            return\n         text = mutate(card)\n         if text == card:\n             out[\"fixtures\"].append({\"name\": name, \"error\": \"mutation was a no-op\"})\n"
+  },
+  "M34": {
+   "clause": "battery: no-op mutation counted green",
+   "kind": "neuter",
+   "mutated_sha256": "56cc0d6c301c95f6d86cb0af2931091a99cbc1668b46018645f46aafe6435d6c",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -412,7 +412,7 @@\n         if text == card:\n             out[\"fixtures\"].append({\"name\": name, \"error\": \"mutation was a no-op\"})\n             out[\"correction_forgeries\"] += 1\n-            out[\"forgeries_green\"] += 1\n+            out[\"forgeries_green\"] += 0\n             return\n         code, rec = evaluate_text(text, files, root, rev, battery=None)\n         out[\"correction_forgeries\"] += 1\n"
+  },
+  "M35": {
+   "clause": "battery fixture: wrong-seat-total mutation",
+   "kind": "neuter",
+   "mutated_sha256": "830973748758c5c83d6256c44f5f01ea6482ec590ffc29438486812e4e8d6d7f",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -424,7 +424,7 @@\n         m = re.search(r\"- corrects seats round-[0-9]+: .*?(\\d+) seats total\", text)\n         if not m:\n             return text\n-        n = int(m.group(1)) + 1\n+        return text\n         return text[:m.start()] + m.group(0).replace(m.group(1), str(n), 1) + \\\n             text[m.end():]\n \n"
+  },
+  "M36": {
+   "clause": "battery fixture: non-empty-window mutation",
+   "kind": "neuter",
+   "mutated_sha256": "aba09309b76671ca38a5db28637134a475a193cd3d9093ff92e0683a52a4edb7",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -432,8 +432,7 @@\n         m = re.search(r\"empty in ([0-9a-f]{7,40})\\.\\.([0-9a-f]{7,40})\", text)\n         if not m:\n             return text\n-        # Root..tip over these paths is never empty: every round-4x tool landed in it.\n-        root = git(root_repo, \"rev-list\", \"--max-parents=0\", rev).stdout.split()[0]\n+        return text\n         return text.replace(m.group(0), f\"empty in {root[:8]}..{rev}\", 1)\n \n     def ghost_atom(text):\n"
+  },
+  "M37": {
+   "clause": "evaluate: battery wiring",
+   "kind": "neuter",
+   "mutated_sha256": "8daffd61ba32ea904f474929bd50db706b3697dcc62248c05fa38d1d14a3c8d8",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -456,7 +456,7 @@\n         return 2, {\"counter\": \"round-47-c2\", \"reason\": \"SCORECARD.md absent at rev\"}\n     files = lambda p: gate.show(root, tip, p)  # noqa: E731\n     code, receipt = evaluate_text(card, files, root, tip, battery=None)\n-    if with_battery and code in (0, 1):\n+    if False:\n         battery = run_battery(card, files, root, tip)\n         code, receipt = evaluate_text(card, files, root, tip, battery=battery)\n     receipt[\"rev\"] = tip\n"
+  },
+  "M38": {
+   "clause": "evaluate: unknown-revision guard",
+   "kind": "delete",
+   "mutated_sha256": "8546d4ce71bd7a29a75844fb69225dfb1ab80511cc40bdf59b711b983c7b3806",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -448,9 +448,6 @@\n # --- CLI --------------------------------------------------------------------------\n \n def evaluate(root, rev, with_battery=True):\n-    tip = gate.resolve(root, rev)\n-    if tip is None:\n-        return 2, {\"counter\": \"round-47-c2\", \"reason\": \"unknown revision\"}\n     card = gate.show(root, tip, CARD)\n     if card is None:\n         return 2, {\"counter\": \"round-47-c2\", \"reason\": \"SCORECARD.md absent at rev\"}\n"
+  },
+  "M39": {
+   "clause": "main: --json-out guard",
+   "kind": "delete",
+   "mutated_sha256": "1d0adcddd1ec976eaf28ef12f4230ca6e8d941759f0e47fa82f81c89872ec58d",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -473,10 +473,6 @@\n     args = ap.parse_args(argv)\n     if args.selftest:\n         return selftest()\n-    out, err = gate.out_path(args.root, args.json_out)\n-    if err:\n-        print(json.dumps({\"reason\": err}))\n-        return 2\n     code, receipt = gate.main_guard(lambda: evaluate(args.root, args.rev,\n                                                      not args.no_battery))\n     gate.emit(receipt, out)\n"
+  },
+  "M40": {
+   "clause": "corrections: duplicated axes block (unreachable)",
+   "kind": "delete",
+   "mutated_sha256": "83d46e7ee52870667451d787f21e477f04b73c1a96860695c80ea580923ff6ee",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -289,14 +289,6 @@\n                                 \"derived\": list(got)}\n     if cls == \"path\":\n         return files(key) is not None, {\"path\": key, \"exists\": files(key) is not None}\n-    if cls == \"axes\":\n-        pairs = axis_pairs(files, root, rev)\n-        got = pairs.get(atom[\"axis\"])\n-        if got is None:\n-            return False, {\"reason\": \"unobservable\", \"axis\": atom[\"axis\"]}\n-        return tuple(atom[\"claim\"]) == got, {\"axis\": atom[\"axis\"],\n-                                            \"claimed\": list(atom[\"claim\"]),\n-                                            \"derived\": list(got)}\n     if cls == \"rev\":\n         r = git(root, \"rev-parse\", \"--verify\", \"--quiet\", key + \"^{commit}\")\n         return r.returncode == 0, {\"rev\": key, \"resolves\": r.returncode == 0}\n"
+  },
+  "M41": {
+   "clause": "derive: depth_pair always None",
+   "kind": "neuter",
+   "mutated_sha256": "594fab9fd9f697c7267dd5675cf3c2088c8981cf872be07f0abc1573d467e012",
+   "diff": "--- tools/round-47/record.py\n+++ tools/round-47/record.py\n@@ -114,27 +114,7 @@\n \n def depth_pair(files):\n     \"\"\"Resolved craft rule blocks over the total, exactly as command A reads them.\"\"\"\n-    skill = files(\"SKILL.md\")\n-    if skill is None or CRAFT not in skill:\n-        return None\n-    craft = skill.split(CRAFT, 1)[1].split(\"\\n## \", 1)[0]\n-    rules = re.split(r\"(?m)^- \\*\\*\", craft)[1:]\n-    resolved = 0\n-    for rule in rules:\n-        refs = HARD_REF.findall(rule)\n-        valid = bool(refs)\n-        for name, first, last in refs:\n-            body = files(name)\n-            if body is None:\n-                valid = False\n-                break\n-            count = len(body.splitlines())\n-            start, end = int(first or 1), int(last or first or 1)\n-            if not (1 <= start <= end <= count):\n-                valid = False\n-                break\n-        resolved += valid\n-    return (resolved, len(rules))\n+    return None\n \n \n def axis_pairs(files, root, rev):\n"
+  }
+ }
+}

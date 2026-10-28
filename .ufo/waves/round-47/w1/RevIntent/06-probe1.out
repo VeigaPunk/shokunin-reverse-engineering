@@ -1,0 +1,48 @@
+== clause-7 literal counts (exact.py's own test) ==
+genuine              order=1 reversed=0
+reversed             order=0 reversed=1
+fp_only              order=0 reversed=0
+fp_one               order=0 reversed=0
+forge_comment_var    order=1 reversed=0
+forge_slice          order=1 reversed=0
+doc_quoted           order=2 reversed=0
+
+== exact.py score(profile=v3) per gate.py variant ==
+genuine              exit=0 literal=1 reversed=0 failing=[]
+reversed             exit=1 literal=0 reversed=1 failing=['gate.py flag order: 0 correct, 1 reversed']
+fp_only              exit=1 literal=0 reversed=0 failing=['gate.py flag order: 0 correct, 0 reversed']
+fp_one               exit=1 literal=0 reversed=0 failing=['gate.py flag order: 0 correct, 0 reversed']
+forge_comment_var    exit=0 literal=1 reversed=0 failing=[]
+forge_slice          exit=0 literal=1 reversed=0 failing=[]
+doc_quoted           exit=1 literal=2 reversed=0 failing=['gate.py flag order: 2 correct, 0 reversed']
+
+== history_touched under each variant ==
+
+-- fx-evil base=ff250ef9 tip=c27b0f7d
+   commits in base..tip: ['merge', 'with', 'resolution', 'side']
+   genuine              touched=['frozen.txt'] err=None
+   reversed             touched=['frozen.txt'] err=None
+   fp_only              touched=['frozen.txt'] err=None
+   forge_comment_var    touched=['frozen.txt'] err=None
+   forge_slice          touched=['frozen.txt'] err=None
+
+-- fx-oldbranch base=770e59de tip=d919ff1d
+   commits in base..tip: ['merge', 'post-freeze', 'unfrozen', 'edit', 'side', 'add']
+   genuine              touched=['other.txt'] err=None
+   reversed             touched=['frozen.txt', 'other.txt'] err=None
+   fp_only              touched=['other.txt'] err=None
+   forge_comment_var    touched=['frozen.txt', 'other.txt'] err=None
+   forge_slice          touched=['frozen.txt', 'other.txt'] err=None
+
+-- log.diffMerges=combined on fx-evil
+   genuine              touched=['frozen.txt'] err=None
+   reversed             touched=['frozen.txt'] err=None
+
+== raw git-log entries per merge, fx-evil ==
+gate order   exit=0 tokens=4 sha256=fa3d14ebf94c1c221cf56297e5c26fbc74136b4c38e98170cd113c3d03b4afb2
+reversed     exit=0 tokens=6 sha256=33a406abc6cc8cfcf2afe9ebf646318bde57840efee3f1058ce02886f0847604
+fp only      exit=0 tokens=4 sha256=fa3d14ebf94c1c221cf56297e5c26fbc74136b4c38e98170cd113c3d03b4afb2
+
+wrote /fast/scratch/hyaku/kaidoku-r47/RevIntent/probe.json
+
+--stderr--

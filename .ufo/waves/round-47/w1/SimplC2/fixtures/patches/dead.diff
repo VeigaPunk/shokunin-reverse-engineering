@@ -1,0 +1,17 @@
+--- record.py
++++ record.py
+@@ -289,14 +289,6 @@
+                                 "derived": list(got)}
+     if cls == "path":
+         return files(key) is not None, {"path": key, "exists": files(key) is not None}
+-    if cls == "axes":
+-        pairs = axis_pairs(files, root, rev)
+-        got = pairs.get(atom["axis"])
+-        if got is None:
+-            return False, {"reason": "unobservable", "axis": atom["axis"]}
+-        return tuple(atom["claim"]) == got, {"axis": atom["axis"],
+-                                            "claimed": list(atom["claim"]),
+-                                            "derived": list(got)}
+     if cls == "rev":
+         r = git(root, "rev-parse", "--verify", "--quiet", key + "^{commit}")
+         return r.returncode == 0, {"rev": key, "resolves": r.returncode == 0}

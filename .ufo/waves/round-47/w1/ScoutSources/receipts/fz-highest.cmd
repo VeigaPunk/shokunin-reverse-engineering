@@ -1,0 +1,1 @@
+awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {id=$2; gsub(/[[:space:]]/,"",id); n=substr(id,2)+0; if (n>max){max=n; best=id}} END{print best, max}' '/fast/scratch/hyaku/kaidoku-r47/ScoutSources/SOURCES.freeze.md'

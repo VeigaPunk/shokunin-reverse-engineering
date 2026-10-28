@@ -1,0 +1,122 @@
+[
+ {
+  "receipt": "01-git-version",
+  "utc": "2026-10-28T18:00:52Z",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r47/RevIntent",
+  "command": "git --version",
+  "exit": 0,
+  "stdout_sha256": "c9e40977101870d17ec3a0ac1e444ceb5e268d1c0a37d6edd8a5ed477734a53c",
+  "stdout_bytes": 19,
+  "stdout_file": "/fast/scratch/hyaku/kaidoku-r47/RevIntent/receipts/01-git-version.out"
+ },
+ {
+  "receipt": "02-gate-hashes",
+  "utc": "2026-10-28T18:00:52Z",
+  "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "command": "cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && for r in 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5 5017e1f7299c3a812e87e7950148f54313dd279e; do echo -n \"$r \"; git show $r:tools/round-46/gate.py | sha256sum; done; echo -n 'worktree '; sha256sum tools/round-46/gate.py",
+  "exit": 0,
+  "stdout_sha256": "e0578242f405591c25bdd52f6bb905c04893c22b9d1f69c39cde2074de60bed5",
+  "stdout_bytes": 316,
+  "stdout_file": "/fast/scratch/hyaku/kaidoku-r47/RevIntent/receipts/02-gate-hashes.out"
+ },
+ {
+  "receipt": "03-doc-m-sentence",
+  "utc": "2026-10-28T18:01:04Z",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r47/RevIntent",
+  "command": "python3: extract the `-m` entry from `col -b`-rendered git-log(1) 2.56.0",
+  "exit": 0,
+  "stdout_sha256": "e20994b1663ac031cbf6dd1f670150244926b7077802028c94c1d86e95e8fa55",
+  "stdout_bytes": 163,
+  "stdout_file": "/fast/scratch/hyaku/kaidoku-r47/RevIntent/receipts/03-doc-m-sentence.out"
+ },
+ {
+  "receipt": "04-doc-diffmerges",
+  "utc": "2026-10-28T18:01:04Z",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r47/RevIntent",
+  "command": "python3: extract the `--diff-merges=<format>` entry from rendered git-log(1) 2.56.0",
+  "exit": 0,
+  "stdout_sha256": "99a4369b6d65301a4f02785feff7d3f113c8e1422536083d3208d0121a23446a",
+  "stdout_bytes": 862,
+  "stdout_file": "/fast/scratch/hyaku/kaidoku-r47/RevIntent/receipts/04-doc-diffmerges.out"
+ },
+ {
+  "receipt": "05-raw-arm-table",
+  "utc": "2026-10-28T18:00:52Z",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r47/RevIntent",
+  "command": "\nD=/fast/scratch/hyaku/kaidoku-r47/RevIntent/fx-evil-ftez; M=$(git -C \"$D\" rev-parse HEAD); B=$(git -C \"$D\" rev-parse HEAD^1)\nfor a in \"-m --diff-merges=first-parent\" \"--diff-merges=first-parent -m\" \"--diff-merges=first-parent\" \"-m\" \"--diff-merges=separate\"; do\n  echo \"### $a\"\n  git -C \"$D\" log $a --name-status -z --format= \"$B..$M\" -- | od -An -c | head -4\n  echo \"exit=$?\"\ndone",
+  "exit": 0,
+  "stdout_sha256": "3c2a85e0516872546c56c657b509c428d367d9b7ea6e597a4703d6b657202142",
+  "stdout_bytes": 857,
+  "stdout_file": "/fast/scratch/hyaku/kaidoku-r47/RevIntent/receipts/05-raw-arm-table.out"
+ },
+ {
+  "receipt": "06-probe1",
+  "utc": "2026-10-28T18:00:52Z",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r47/RevIntent",
+  "command": "cd /fast/scratch/hyaku/kaidoku-r47/RevIntent && S=/fast/scratch/hyaku/kaidoku-r47/RevIntent TMPDIR=/fast/scratch/hyaku/kaidoku-r47/RevIntent HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/RevIntent python3 -B probe.py",
+  "exit": 0,
+  "stdout_sha256": "744ff009db5f25e50b5ad1ae3bbd84e3a749fa6b01a7e97f5d2f09569d3ee79d",
+  "stdout_bytes": 2410,
+  "stdout_file": "/fast/scratch/hyaku/kaidoku-r47/RevIntent/receipts/06-probe1.out"
+ },
+ {
+  "receipt": "07-probe2",
+  "utc": "2026-10-28T18:00:52Z",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r47/RevIntent",
+  "command": "cd /fast/scratch/hyaku/kaidoku-r47/RevIntent && S=/fast/scratch/hyaku/kaidoku-r47/RevIntent TMPDIR=/fast/scratch/hyaku/kaidoku-r47/RevIntent HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/RevIntent python3 -B probe2.py",
+  "exit": 0,
+  "stdout_sha256": "8065c4083f615d63d934d961a2906c22016af9847e8674066413a9eef21f0494",
+  "stdout_bytes": 1057,
+  "stdout_file": "/fast/scratch/hyaku/kaidoku-r47/RevIntent/receipts/07-probe2.out"
+ },
+ {
+  "receipt": "08-exact-selftest",
+  "utc": "2026-10-28T18:00:53Z",
+  "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "command": "cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && S=/fast/scratch/hyaku/kaidoku-r47/RevIntent TMPDIR=/fast/scratch/hyaku/kaidoku-r47/RevIntent HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/RevIntent python3 -I -B tools/round-47/exact.py --root . --freeze 5017e1f7299c3a812e87e7950148f54313dd279e --rev 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5 --selftest",
+  "exit": 0,
+  "stdout_sha256": "0249b80f58085f0d52cca3f7ae3f731d88d38dd4daaca6f84cefa023e3028aaa",
+  "stdout_bytes": 2840,
+  "stdout_file": "/fast/scratch/hyaku/kaidoku-r47/RevIntent/receipts/08-exact-selftest.out"
+ },
+ {
+  "receipt": "09-frozen-set",
+  "utc": "2026-10-28T18:00:53Z",
+  "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "command": "cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 -I -B -c \"import sys;sys.path.insert(0,'tools/round-46');import gate;print(gate.frozen_set('.', '5017e1f7299c3a812e87e7950148f54313dd279e','plans/round-47-claims.md'))\"",
+  "exit": 0,
+  "stdout_sha256": "5d8dd1edfa43c9c7e52beca4972b4ecea84ecdeb938d9df6bc878ec043e33589",
+  "stdout_bytes": 72,
+  "stdout_file": "/fast/scratch/hyaku/kaidoku-r47/RevIntent/receipts/09-frozen-set.out"
+ },
+ {
+  "receipt": "10-worktree-dirty-gate",
+  "utc": "2026-10-28T18:01:44Z",
+  "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "command": "fixture: committed gate.py correct, worktree copy reversed; gate.freeze_state(rev,rev) + exact.score(profile=v3)",
+  "exit": 0,
+  "stdout_sha256": "face97008c666a32c82f017af37c82cc9c67d0c3a6306acc2cc9768fd2e9f5dd",
+  "stdout_bytes": 274,
+  "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-47/w1/RevIntent/10-worktree-dirty-gate.out"
+ },
+ {
+  "receipt": "03b-doc-m-clean",
+  "utc": "2026-10-28T18:03:02Z",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r47/RevIntent",
+  "command": "MANWIDTH=96 man git-log | col -b | sed -n '/^ *-m$/,/^ *-c$/p'",
+  "exit": 0,
+  "stdout_sha256": "36fcd116c7e04bca37466a18b22178ee83bdace52ad2edd2a305d9d7735db102",
+  "stdout_bytes": 181,
+  "stdout_file": ".ufo/waves/round-47/w1/RevIntent/03b-doc-m-clean.out"
+ },
+ {
+  "receipt": "04b-doc-diffmerges-clean",
+  "utc": "2026-10-28T18:03:02Z",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r47/RevIntent",
+  "command": "MANWIDTH=96 man git-log | col -b | sed -n '/^ *--diff-merges=<format>$/,/^ *--combined-all-paths$/p'",
+  "exit": 0,
+  "stdout_sha256": "37dcc40cf40fb1d24d7ce5dfd41c5cb9ada5493faa1f7c29298af2b7760572e5",
+  "stdout_bytes": 1750,
+  "stdout_file": ".ufo/waves/round-47/w1/RevIntent/04b-doc-diffmerges-clean.out"
+ }
+]

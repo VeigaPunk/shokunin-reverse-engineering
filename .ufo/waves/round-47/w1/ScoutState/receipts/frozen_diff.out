@@ -1,0 +1,42 @@
+diff --git a/plans/round-47-claims.md b/plans/round-47-claims.md
+index 81aeb65e..74a3cce6 100644
+--- a/plans/round-47-claims.md
++++ b/plans/round-47-claims.md
+@@ -20,6 +20,18 @@ adds no domain surface.
+ | R47-C1 | depth | `SKILL.md` `## Queue-drain craft` rule block 24 — the **exactness** matrix over the four round-46 routed instrument defects — and its interpreter `tools/round-47/exact.py` |
+ | R47-C2 | calibration | the lane's **current self-assessment** (the last two `## Round N` sections of `SCORECARD.md`) re-derived atom by atom against committed repo state by `tools/round-47/record.py` |
+ 
++**Freeze amendment A1 (declared before any claim data; the freeze is a series of two, disclosed).**
++The first freeze `5017e1f7299c3a812e87e7950148f54313dd279e` carried a `record.py` clause no reachable
++correction could satisfy: it required a `window` correction's `A..B` pair to already appear in the
++card, while the only window atom in scope names a `<tip>` placeholder — so R47-C2's target was
++unreachable by construction. A1 deletes that clause and nothing else; the **declared freeze is the
++commit that carries this paragraph**, i.e. the first commit whose `tools/round-47/record.py` scores
++the landing's own corrections section. Red-before at the first freeze: the landing corrections
++scored `corrections_bad: [window pair names no atom in scope]`, exit 1
++(`.ufo/waves/round-47/controls/ctl-c2-2-freeze-amendment.json`). No seat had scored a claim and no
++landing had been measured when A1 was made; the two-commit series is disclosed here rather than
++folded, per the round-46 M46-3 finding.
++
+ **Causal separability.** R47-C1's counter reads `SKILL.md`, this file's frozen paths,
+ `tools/round-47/exact.py` and `tools/round-46/gate.py`; it never reads `SCORECARD.md`.
+ R47-C2's counter reads `SCORECARD.md` and the `.ufo/waves/round-*/` dispatch and receipt
+diff --git a/tools/round-47/record.py b/tools/round-47/record.py
+index 1f8e7928..79fb27a8 100755
+--- a/tools/round-47/record.py
++++ b/tools/round-47/record.py
+@@ -358,11 +358,9 @@ def evaluate_text(card, files, root, rev, battery=None):
+         if (entry["class"], str(entry["key"])) not in known_keys:
+             corrections_bad.append({"line": entry["text"],
+                                     "detail": "exempts an atom that does not exist"})
+-        if entry["class"] == "window":
+-            cm = CORR_WINDOW.search(entry["statement"])
+-            if cm and ("window", (cm.group(1), cm.group(2))) not in known_pairs:
+-                corrections_bad.append({"line": entry["text"],
+-                                        "detail": "window pair names no atom in scope"})
++        # A window correction legitimately introduces the concrete pair that replaces an
++        # unverifiable `<tip>` claim, so its pair need not already appear in the card; the
++        # class/key existence check above is what binds it to a real atom.
+ 
+     receipt.update({"atoms": len(atoms), "verified": len(verified),
+                     "exempted": exempted, "mismatches": mismatches,
