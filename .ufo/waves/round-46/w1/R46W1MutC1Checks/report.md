@@ -8,9 +8,16 @@ read of git objects plus copies under `HYAKU_SCRATCH`. No installs (nothing need
 
 **Deliverable.** This report (also at `.ufo/waves/round-46/w1/R46W1MutC1Checks/report.md`) and
 `receipts/` beside it: `mutation-matrix.md` (26 selftest runs with command, exit, stdout sha256,
-UTC), `probes.jsonl` (36 probe runs, same fields), `summary.json` (machine matrix),
-`mutants/*.diff` (24 single-hunk diffs), `manifest.txt` (sha256 of every receipt), plus the
+UTC), `probes.jsonl` (36 probe runs, same fields), `summary.json` + `summary-cur.json` (machine
+matrix for the two frozen byte-sets and the live one), `mutants/*.diff` (24 single-hunk diffs),
+`artefact-arm-prefix.json`, `curreal-*.json`, `manifest.txt` (sha256 of every receipt), plus the
 counter/control/battery receipts cited below.
+
+**The lane is live.** `SKILL.md` block 23 and `tools/round-46/attest.py` changed *during* this
+seat: at 17:03Z the instrument was `e6c44d2d…` (16 cases, the pin the block carried at
+`0425224`); at 17:11Z it was `c4056131…` (18 cases) with the block re-pinned to match. The
+campaign was run against both, plus the freeze-named bytes; the survivor set is identical in all
+three. Every statement below names the byte-set it was measured on.
 
 **Headline.** 12 one-change mutants of `tools/round-46/attest.py`, each aimed at one named
 check, run against both byte-sets the lane calls frozen:
@@ -18,7 +25,12 @@ check, run against both byte-sets the lane calls frozen:
 | byte-set | selftest | killed | survived | mutation score | required eight (m1–m8) |
 |---|---|---|---|---|---|
 | A — `31820472` (the freeze this seat names) | `cases=15` | 5 | **7** | 5/12 = 41.7% | 5/8 |
-| B — `65678df` = `0425224` = HEAD (the pin in block 23) | `cases=16` | 8 | **4** | 8/12 = 66.7% | 6/8 |
+| B — `65678df` = `0425224` (the pin block 23 carried) | `cases=16` | 8 | **4** | 8/12 = 66.7% | 6/8 |
+| C — `c8de6c47` = live at 17:11Z (pin `c4056131`) | `cases=18` | 8 | **4** | 8/12 = 66.7% | 6/8 |
+
+The four survivors are the same set in B and C (`m4`, `m7`, `m9`, `m10`); the two new C cases
+(`red-frozen-section-shrink-is-exit-2`, `red-dirty-frozen-tool-is-exit-2`) cover neither clause.
+Score C = `6aa73c612069…`, UTC 2026-10-28T17:11:32Z (`receipts/summary-cur.json`).
 
 Four weakening mutants of the **pinned** instrument still score the real landed block 23
 `met_target: true` with `battery 9/9/0/1/0` (`receipts/real-m*.json`). Of the eight required

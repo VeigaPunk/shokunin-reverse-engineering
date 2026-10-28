@@ -17,8 +17,8 @@ The **battery mechanics are sound and fail closed**: no mutation I could force p
 false *pass* (every degenerate shape I built either stays red or makes the counter exit 1 on
 `battery v2_green`/`battery v1_green`), and the no-op branch is unreachable in the scored
 path. The **predicates the battery defends are not sound**: I built two artefacts that are
-empty of content and still score `met_target: true`, with receipts byte-for-byte identical
-in every *value* to the genuine landing — `F1` for C1 (13 rows of `| R45-CLn | x | commit | 1 |`)
+empty of content and still score `met_target: true`, with receipts identical in every clause
+value to the genuine landing (only `rev`/`freeze` differ: the fixture's own commit) — `F1` for C1 (13 rows of `| R45-CLn | x | commit | 1 |`)
 and `F4` for C2 (38 rows of `| \`path\` | x | 0= 1= 2= | x | x | x | x |`). The round's
 novelty — "the battery cannot drift from the artefact it defends" — is true, and is also the
 limit: the battery defends *syntax*, so an artefact that has the syntax and no content is
@@ -27,7 +27,7 @@ narrowed to forgeries that omit the required tokens.
 
 Second, independent of the battery: **both claims are unscoreable at the declared freeze**
 (receipts R3/R4: exit 2 `frozen_path_changed` at `--freeze 3182047`), and **the frozen bytes
-themselves cannot run the battery at all** (R14-R16). Those are recorded in §1 and §5.
+themselves cannot run the battery at all** (R14-R16). Those are recorded in §1.
 
 ---
 
@@ -57,9 +57,11 @@ artefact can be scored at:
   `frozen_path_changed: ["tools/round-46/", "tools/round-46/attest.py", "tools/round-46/gate.py", "tools/round-46/registry.py"]`,
   `restored: [attest.py, gate.py, registry.py]`.
 * **R4** `registry.py` same arguments → **exit 2**, identical reason.
-* **R5/R7** the recorded `met` is reproduced only by passing `--freeze 0425224…`, i.e. the
-  F4 commit itself → empty `FREEZE..REV` range. The counter accepts **any** `--freeze` the
-  caller supplies and never compares it with the derivation the claims file names.
+* **R5/R7** the recorded `met` is reproduced by passing `--freeze 0425224…` — the F4 commit,
+  i.e. a freeze **later than** the one the claims file defines — whose range to the tip is
+  clean only because it starts after the last frozen touch. The counter accepts **any**
+  `--freeze` the caller supplies and never compares it with the derivation the claims file
+  names (`git log -1 -- plans/round-46-claims.md` → 3182047).
 
 That is not a battery defect; it is the admissibility frame both claims sit in, and it means
 the sentence "both claims met at 0425224" (commit `1e32827`) is true of the *instrument as a
@@ -151,16 +153,19 @@ claim fail closed.
   fixture instead of the mutation's defect class — i.e. the forgery goes red **for the wrong
   reason**. It cannot mask a pass, because a genuine artefact must resolve every citation
   (clause 5) or `evaluate` skips the battery.
-* **R19/R20 (probe-gitdir)** — the registry fixture driver is **not** the guarded one.
+* **R19/R20/R23 (probe-gitdir)** — the registry fixture driver is **not** the guarded one.
   `--show-toplevel` appears once in `attest.py`, **zero times in `registry.py` and `gate.py`**;
   `registry.run_battery` issues `init / config / config / add -A / commit -q -m fixture` with
-  no toplevel assertion. Replaying **exactly that command sequence** under
-  `GIT_DIR=$S/decoy2wt/.git GIT_WORK_TREE=$S/decoy2wt`:
-  `git -C d rev-parse --show-toplevel` → `…/decoy2wt`, and the decoy's log gains a `fixture`
-  commit tracking `sc/fx-es873zpx/SKILL.md`. The same environment makes
-  `attest.fixture_repo` raise `RuntimeError: fixture toplevel mismatch` (R20, attested). The
-  contract's fixture rule is implemented on one side of the battery only; a polluted
-  environment can therefore land a forged fixture commit in a caller-selected repo.
+  no toplevel assertion. Under `GIT_DIR=$S/decoy_wt/.git GIT_WORK_TREE=$S/decoy_wt`, R20
+  shows the polluted env already bends the battery's first probe: `registry_error:
+  "SKILL.md absent at rev"` (the `git show` resolves inside the decoy), and R19 is the clean
+  control (battery `7/7/0/1`). R23 replays **exactly the five fixture commands** under
+  `GIT_DIR=$S/decoy3wt/.git GIT_WORK_TREE=$S/decoy3wt`: every command rc 0,
+  `git -C d rev-parse --show-toplevel` → `…/decoy3wt` (≠ `d`), the decoy log gains a
+  `fixture` commit, and the decoy tracks `sc/fx-j5kp37t7/SKILL.md` — a forged fixture commit
+  landed in a caller-selected repo. The same environment makes `attest.fixture_repo` raise
+  `RuntimeError: fixture toplevel mismatch` (attested in the same batch). The contract's
+  fixture rule is implemented on one side of the battery only.
 
 Smallest correction: have `registry.run_battery` call `attest.fixture_repo` (or repeat its
 three-line assertion) before the first commit.
@@ -192,7 +197,8 @@ Block 23 kept verbatim except the 13 data rows, each reduced to a token triple:
 
 Receipt values: `rule_blocks 23, marker_occurrences 1, block_present 1, block_is_last true,
 header_ok true, rows 13, refs 9, cites {"S142": true, "tools/round-46/attest.py": true},
-battery 9/9/0/1/0` — **identical in every reported field to the genuine landing (R5)**.
+battery 9/9/0/1/0` — **identical in every clause value to the genuine landing (R5)**;
+only `rev`/`freeze` differ, being the fixture's own single commit.
 Clause 4 is a *token census*: `re.finditer(r"R45-CL\d+", r[0])` for the ids and
 `any(t in r[arm_col].lower() for t in ARMS)` for the arm. Nothing binds a row's id to its arm,
 its exit, or its content; cell 1 is unconstrained. The kill rule's claim — "A 44-line artefact
@@ -307,15 +313,17 @@ during the wave, receipts pin the resolved SHA), `Z=31820472784284727546808acc31
 | R11 | same, `--root fx/F3 --freeze 35357d35202e58b3e8261474a68332ab903bff16 --rev …` | 1 | `34349ddad960b03dc66ece110478311375025e8fe86f17cf060a0836c4ff561b` | 17:07:09Z |
 | R12 | `cd $S && python3 -I -B tools/round-46/registry.py --root fx/F4 --freeze 4263a332614ee6efb37cfb813232c247efc87aed --rev 4263a332614ee6efb37cfb813232c247efc87aed` | **0** | `e4b0eadfc700d367055e57b7097dcdacdb48d18601b4dc574ae82850841a6a74` | 17:07:11Z |
 | R13 | same attest, `--root fx/F5 --freeze c1554bfdb2e8bafddf0d7becfbaed8c9b6fc2211 --rev …` | 1 | `ea8203541a63c91d00b780e253c7edc1abeaee0f8d9690e584306b31d05ca4c1` | 17:09:32Z |
-| R14 | `cd $S && python3 -I -B frozen/attest.py --selftest --root frozen --freeze HEAD --rev HEAD` (blobs from `git show $Z:…`) | 0 | `ac22e9c7acb4bb6fc66b98bdb203190dc64f18bb7121e686f02fa195810e8ddb` | 17:08:2xZ |
-| R15 | `cd $S && python3 -I -B frozen/attest.py --root fx/F1 --freeze 7a9af680… --rev 7a9af680… 2>&1` | 1 | `221b186f5abc89cfdcaad25c0d3cb4b5f953df1d80378fc5dfca7371bf93f8cb` | 17:08:2xZ |
-| R16 | `cd $S && python3 -I -B frozen/registry.py --root fx/F4 --freeze 4263a332… --rev 4263a332…` | 1 | `b47cd0c92e1e3c4f71212b7e922a61de996b91f1088127ada600dfe8fd2d657d` | 17:08:2xZ |
+| R14 | `cd $S && python3 -I -B frozen/attest.py --selftest --root frozen --freeze HEAD --rev HEAD` (blobs from `git show $Z:…`) | 0 | `ac22e9c7acb4bb6fc66b98bdb203190dc64f18bb7121e686f02fa195810e8ddb` | 17:08:46Z |
+| R15 | `cd $S && python3 -I -B frozen/attest.py --root fx/F1 --freeze 7a9af680… --rev 7a9af680… 2>&1` | 1 | `221b186f5abc89cfdcaad25c0d3cb4b5f953df1d80378fc5dfca7371bf93f8cb` | 17:08:46Z |
+| R16 | `cd $S && python3 -I -B frozen/registry.py --root fx/F4 --freeze 4263a332… --rev 4263a332…` | 1 | `b47cd0c92e1e3c4f71212b7e922a61de996b91f1088127ada600dfe8fd2d657d` | 17:08:46Z |
 | R17 | `cd $S && python3 -I -B probe_noop.py` | 0 | `6f3d263e9515d9530d648eb89a9c79584a9a682a61b0c50f3a78a6cf991bfbaf` | 17:07:53Z |
 | R18 | `cd $S && python3 -I -B probe_fixture.py` | 0 | `ebbd422da306164f34e7ca64785706329e0aab6cde28428420724b607518daf5` | 17:08:03Z |
-| R19 | `cd $S && python3 -I -B probe_gitdir.py` (no `GIT_DIR`) | 0 | `c3a4312aa1e359a4daf1b05b1c4bac27e05db35cfe66ccda578708596d514812` | 17:08:38Z |
-| R20 | `cd $S && GIT_DIR=$S/decoy_wt/.git GIT_WORK_TREE=$S/decoy_wt GIT_REPO_FOR_TEST=$S/decoy_wt python3 -I -B probe_gitdir.py` | 0 | `1b35297ff79d56f201442b3b3a8e21897f008a871c923127525e18348396e514` | 17:08:38Z |
-| R21 | `cd $S && HYAKU_SCRATCH=/tmp TMPDIR=/tmp python3 -I -B tools/round-46/attest.py --root $L --freeze $F --rev $REV` | 2 | `ac933f17baee4849e88ff7f0a24e231116e5f697550822907710354b49c77756` | 17:08:3xZ |
-| R22 | `cd $S && env -u HYAKU_SCRATCH -u TMPDIR -u TMP python3 -I -B tools/round-46/attest.py --root $L --freeze $F --rev $REV` | 2 | `ef924935c38575054567f5f29b2c1b4a929567330d8e338489150e5093a5fa36` | 17:08:3xZ |
+| R19 | `cd $S && python3 -I -B probe_gitdir.py` (no `GIT_DIR`) | 0 | `c3a4312aa1e359a4daf1b05b1c4bac27e05db35cfe66ccda578708596d514812` | 17:08:17Z |
+| R20 | `cd $S && GIT_DIR=$S/decoy_wt/.git GIT_WORK_TREE=$S/decoy_wt GIT_REPO_FOR_TEST=$S/decoy_wt python3 -I -B probe_gitdir.py` | 0 | `1b35297ff79d56f201442b3b3a8e21897f008a871c923127525e18348396e514` | 17:08:17Z |
+| R21 | `cd $S && HYAKU_SCRATCH=/tmp TMPDIR=/tmp python3 -I -B tools/round-46/attest.py --root $L --freeze $F --rev $REV` | 2 | `ac933f17baee4849e88ff7f0a24e231116e5f697550822907710354b49c77756` | 17:08:42Z |
+| R22 | `cd $S && env -u HYAKU_SCRATCH -u TMPDIR -u TMP python3 -I -B tools/round-46/attest.py --root $L --freeze $F --rev $REV` | 2 | `ef924935c38575054567f5f29b2c1b4a929567330d8e338489150e5093a5fa36` | 17:08:42Z |
+
+| R23 | `cd $S && GIT_DIR=$S/decoy3wt/.git GIT_WORK_TREE=$S/decoy3wt python3 -I -B` replay of `registry.run_battery`'s exact fixture sequence (`init/config/add -A/commit`, then `rev-parse --show-toplevel`) | 0 | `1b3de86aa37861b4ce57e022b60d05d7c106a208f62d4d418be5b3c13fa2e6ce` | 17:11:06Z |
 
 Probe sources, receipts and the fixture hooks are copied beside this report (`probes/`,
 `receipts/`), including `c1-head.json`, `c2-head.json`, `c1-v2-0425224.json`,
