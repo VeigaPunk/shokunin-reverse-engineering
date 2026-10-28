@@ -221,3 +221,14 @@ inherited uncommitted lane work was reused or discarded.
   36), and "no fleet-root file edited" (`.ufo/l0-questions.md` carries the permitted two-line
   append). The wave-2 spec/dispatch committed at `faa875bc` still carries the pre-A2 "16 W04"
   phrase; it is frozen evidence and is not rewritten, so the discrepancy is recorded here.
+- **R45-CL22 (MEDIUM; wave-2 `R45W2SecShell` B1/B2).** All three round-45 tools trust `--json-out`:
+  `--json-out ../../SKILL.md` overwrites the graded surface, and a `--json-out` onto a frozen path
+  writes even on an exit-2 path. No shell injection exists (four `subprocess.run` sites, all list
+  argv; no token can start with `-`), and the write scope of a *normal* run holds — but the output
+  path is unchecked. Round 46: refuse an output path inside the lane tree's graded/frozen surfaces
+  or require it under the caller's scratch.
+- **R45-CL23 (LOW; wave-2 `R45W2SentPreflight` (c)).** A pathname containing a newline or tab is
+  recorded C-quoted in `touched`/`restored`, so the receipt's path string never equals the real
+  path and the `restored` arm is dead for such paths (the verdict is still right through the blob
+  arm). A `U+2028` path truncates the recorded path. Nothing in this lane's surfaces has such a
+  name; routed for completeness.
