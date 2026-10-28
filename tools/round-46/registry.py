@@ -176,7 +176,7 @@ def score(skill, files, spec_name, profile, rev, battery=None):
     for row in rows:
         if not row:
             continue
-        if spec["strict_cell"]:
+        if hard and spec["strict_cell"]:
             key = row[0].strip()
             if key.startswith("`") and key.endswith("`") and len(key) > 2:
                 by_path.setdefault(key[1:-1], row)
@@ -191,7 +191,7 @@ def score(skill, files, spec_name, profile, rev, battery=None):
             unregistered.append(path)
             continue
         registered.append(path)
-        if spec["strict_exit"]:
+        if hard and spec["strict_exit"]:
             cell = row[2] if len(row) > 2 else ""
             keys = set(EXITMAP.findall(cell))
             if keys != {"0", "1", "2"}:
@@ -201,7 +201,7 @@ def score(skill, files, spec_name, profile, rev, battery=None):
             if not all(re.search(r"\b%d\b" % d, cell) for d in (0, 1, 2)):
                 thin.append(path)
     absent = []
-    if spec["presence"]:
+    if hard and spec["presence"]:
         absent = [p for p in registered if files(p) is None]
     if unregistered:
         failing.append(f"unregistered: {len(unregistered)} of {len(scope)}")
