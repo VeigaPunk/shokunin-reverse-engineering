@@ -68,6 +68,17 @@ round-46 counters cite S141's `-z` statement only indirectly (the history arm us
   about. The order is correct today and nothing in the code enforces it; one argument reorder
   silently undoes the arm. Wave-1 seat `R46W1ScribeSource` measured this on a deterministic
   merge fixture. Round 47: assert the flag order in a selftest case.
+- **R46-CL7 (HIGH; wave-1 `R46W1RegL`).** The C2 clause that was supposed to close
+  R45-CL14 (d) binds the DIGITS 0/1/2, not their meanings: a row whose `purpose`, `self-test`,
+  `pinned-value` and `write-scope` cells are empty and whose verdict map reads
+  `0=banana; 1=nope; 2=whatever` scores `met_target: true`, exit 0, with the seven-forgery battery
+  still green — reproduced by the L1 on a fixture repo at `47b5e265`. Sixteen forgery classes are
+  caught; a contentless row is not one of them. Round 47: require the verdict cell to match the
+  tool's own exit constants, or make the purpose cell a value the counter derives.
+- **R46-CL8 (LOW; wave-1 `R46W1RegL`).** The claims file records
+  `registry.py --selftest prints cases=11`; the runnable form needs `--root/--freeze/--rev` (a bare
+  `--selftest` exits 2 from argparse) and prints `cases=12`. The count in the plan is stale by one
+  and the invocation in the plan is not runnable as written.
 - **R46-CL5.** The registry row's `purpose` cell is not validated at all: a row can satisfy
   the census path with a false description. Only presence, exact cell 0 and the verdict map
   are checked.
