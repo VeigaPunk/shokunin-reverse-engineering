@@ -428,7 +428,7 @@ def score(skill, files, profile, rev, battery=None):
             return 1, receipt
         paths = [r["path"] for r in rows_reg]
         receipt.update({"registry_rows": len(paths), "census_paths": len(doc["paths"]),
-                        "census_rederived_equal": derived == doc["paths"]})
+                        "census_rederived_equal": derived.get("paths") == doc["paths"]})
         dup = sorted({p for p in paths if paths.count(p) > 1})
         missing = sorted(set(doc["paths"]) - set(paths))
         extra = sorted(set(paths) - set(doc["paths"]))

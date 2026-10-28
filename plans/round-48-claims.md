@@ -157,6 +157,19 @@ segment then carries the exit-2 text and no success token. **The declared freeze
 commit that carries this paragraph.** No seat had scored a claim and no landing had been
 measured when A2 was made.
 
+## Freeze amendment A3 (disclosed; declared before any claim data)
+
+The census clause compared the freshly derived census **object** with the committed
+`paths` **list**, so `census_rederived_equal` could never be true: a clause that fails by
+construction on a correct artefact. It is unreachable while block 25 is absent (the
+counter returns before the registry clauses), so no do-nothing control could show it; the
+red-before is the pre-landing simulation at the A2 bytes
+(`.ufo/waves/round-48/controls/ctl-c1-a3-simulation.json`, `failing` names
+`committed census2.json does not equal a fresh derivation` on a registry whose path set
+already equals the census). A3 compares `derived["paths"]` and nothing else. **The
+declared freeze is the commit that carries this paragraph.** No seat had scored a claim
+and no landing had been measured when A3 was made.
+
 ## Controls (not frozen; committed as wave evidence)
 
 - `ctl-c1-0-do-nothing.json` — the counter at the freeze revision: block absent, registry
