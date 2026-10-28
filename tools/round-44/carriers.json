@@ -1,0 +1,92 @@
+{
+ "claim": "R44-C1",
+ "round": 44,
+ "schema": "kaidoku-r44-carriers-v1",
+ "note": "Frozen carriers for R44-C1: squashfs_v1 + squashfs_v2 (both byte orders) through REA 6.5.0 extract-firmware -> Core. Bytes are the committed MIT unblob 26.6.4 fixtures (tools/round-42/fixtures.json); they were round-42 C2 held-out INPUTS, never a C1 carrier. The oracle is independent: /usr/bin/unsquashfs (squashfs-tools 4.7.5) -lls member census + extracted member digests, plus the unblob __output__ expected tree (S138, second oracle). v2ns stays Frontier (no independent reader).",
+ "superblock_layout": {
+  "magic_offset": 0,
+  "magic_len": 4,
+  "compression_offset": 20,
+  "compression_len": 2,
+  "s_major_offset": 28,
+  "s_major_len": 2,
+  "s_minor_offset": 30,
+  "s_minor_len": 2,
+  "bytes_used_offset": 40,
+  "bytes_used_len": 8,
+  "note": "v1/v2 superblock field offsets per unblob squashfs.py v1/v2 classes; verify against file output"
+ },
+ "oracle": {
+  "tool": "/usr/bin/unsquashfs",
+  "pkg": "squashfs-tools",
+  "version": "4.7.5",
+  "member_command": [
+   "/usr/bin/unsquashfs",
+   "-lls"
+  ],
+  "independence": "squashfs-tools upstream, a different producer than sasquatch (squashfs-tools 4.3 patchset)",
+  "expected_tree_source": "S138 = unblob 26.6.4 __output__ trees, committed under corpus/evidence/round-44/oracle/"
+ },
+ "carriers": [
+  {
+   "id": "v1le",
+   "fixture_id": "v1-le",
+   "handler": "squashfs_v1",
+   "endian": "le",
+   "s_major": 1,
+   "compression": "gzip",
+   "path": "corpus/evidence/round-42/c2/fixtures/v1-le--squashfs_v1.0_le.bin",
+   "file": "v1-le--squashfs_v1.0_le.bin",
+   "sha256": "b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71",
+   "size": 4096,
+   "expected_regular": 3,
+   "output_tree": "corpus/evidence/round-44/oracle/squashfs_v1/little_endian/__output__/squashfs_v1.0_le.bin_extract",
+   "source_pin": "tools/round-42/fixtures.json fixtures[].id == v1-le"
+  },
+  {
+   "id": "v1be",
+   "fixture_id": "v1-be",
+   "handler": "squashfs_v1",
+   "endian": "be",
+   "s_major": 1,
+   "compression": "gzip",
+   "path": "corpus/evidence/round-42/c2/fixtures/v1-be--squashfs_v1.0_be.bin",
+   "file": "v1-be--squashfs_v1.0_be.bin",
+   "sha256": "529e10775cc152e6c5df0c6c63316811004cc73ce99f03989c86ffd396d631e6",
+   "size": 4096,
+   "expected_regular": 3,
+   "output_tree": "corpus/evidence/round-44/oracle/squashfs_v1/big_endian/__output__/squashfs_v1.0_be.bin_extract",
+   "source_pin": "tools/round-42/fixtures.json fixtures[].id == v1-be"
+  },
+  {
+   "id": "v2le",
+   "fixture_id": "v2-le",
+   "handler": "squashfs_v2",
+   "endian": "le",
+   "s_major": 2,
+   "compression": "gzip",
+   "path": "corpus/evidence/round-42/c2/fixtures/v2-le--squashfs_v2.0_le.bin",
+   "file": "v2-le--squashfs_v2.0_le.bin",
+   "sha256": "7c62dbe388b972119f5d17a12836a016737d58276184f4caa2a90dafd924f124",
+   "size": 4096,
+   "expected_regular": 4,
+   "output_tree": "corpus/evidence/round-44/oracle/squashfs_v2/little_endian/__output__/squashfs_v2.0_le.bin_extract",
+   "source_pin": "tools/round-42/fixtures.json fixtures[].id == v2-le"
+  },
+  {
+   "id": "v2be",
+   "fixture_id": "v2-be",
+   "handler": "squashfs_v2",
+   "endian": "be",
+   "s_major": 2,
+   "compression": "gzip",
+   "path": "corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_be.bin",
+   "file": "v2-be--squashfs_v2.0_be.bin",
+   "sha256": "79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0",
+   "size": 4096,
+   "expected_regular": 4,
+   "output_tree": "corpus/evidence/round-44/oracle/squashfs_v2/big_endian/__output__/squashfs_v2.0_be.bin_extract",
+   "source_pin": "tools/round-42/fixtures.json fixtures[].id == v2-be"
+  }
+ ]
+}
