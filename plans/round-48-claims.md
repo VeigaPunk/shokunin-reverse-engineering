@@ -130,6 +130,20 @@ frozen infrastructure from round 46, not a claimed surface.
   `seats` correction for round 47, a re-derived `quote` correction for round 47's
   `exempted` cell) and the Owned-axes head updates for this round.
 
+## Freeze amendment A1 (disclosed; declared before any claim data)
+
+The first freeze `7fe11332781356ec3d5b0b314698de27dd25b50d` carried a vacuous clause:
+`record2.axis_scores()` read the *evidence* cell where it meant the *score* cell, so
+clause 5 scored nothing — `axis_score_cells {}` with `axis_score_bad []` on the freeze
+card, which is a green clause over zero rows (the same "measures consistency, never
+completeness" class this claim exists to close). Red-before:
+`.ufo/waves/round-48/controls/ctl-c2-0-do-nothing.json` (`axis_score_cells {}`).
+A1 changes that parser to `cell[0]` and nothing else; every clause, threshold, kill rule
+and mutation is byte-identical to the first freeze. **The declared freeze is the commit
+that carries this paragraph**, i.e. the first commit whose `record2.py` scores the two
+Owned-axes score cells. No seat had scored a claim and no landing had been measured when
+A1 was made.
+
 ## Controls (not frozen; committed as wave evidence)
 
 - `ctl-c1-0-do-nothing.json` — the counter at the freeze revision: block absent, registry

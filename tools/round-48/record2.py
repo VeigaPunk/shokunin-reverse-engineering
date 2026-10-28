@@ -148,7 +148,7 @@ def axis_scores(files):
         cell = rest.split("|")
         if len(cell) < 2:
             continue
-        score = SCORE_CELL.search(cell[1])
+        score = SCORE_CELL.search(cell[0])
         frac = FRAC.search("|".join(cell[1:]))
         if score and frac:
             out[axis] = {"score": (float(score.group(1)), float(score.group(2))),
