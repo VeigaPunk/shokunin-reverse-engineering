@@ -544,6 +544,49 @@ bullet is bounded by the lines it cites.
 
 
 
+- **22. Freeze integrity is an instrument, and every arm has a red case.** A freeze is
+  worth what the gate that guards it can refuse, and round 44 proved the enforcement
+  order wrong: the rule lived in claim files and in counters that only ran at scoring
+  time, so eight files could sit dirty under a frozen directory pathspec and a
+  non-author sweep could commit them inside a 432-path bulk commit
+  (`corpus/lessons/round-44.md:18-19`, routed `corpus/lessons/round-44.md:63-69`). The
+  rule is now executable: `tools/round-45/frozen-path-preflight.py` runs against a
+  candidate revision and its worktree before the commit is treated as landed, and its
+  `--selftest` carries one red case per arm (11 cases at the round-45 freeze). Read the
+  table as an ordered decision list: the first row whose trigger holds decides, and a
+  `2` is never a pass. Two parsers are load-bearing and both are pinned by a source
+  opened this round: the dirty arm reads `git status --porcelain -z`, whose v1 format
+  S140 guarantees stable for scripts and whose `-z` form is the machine one; the commit
+  arm reads `git log --name-status` records, and S141 states that with `-z` the fields
+  are NUL-terminated and pathnames are not munged. History, not tip equality, is the
+  evidence: a path that was edited post-freeze and then restored to its exact bytes is
+  still a violation (`corpus/lessons/round-44.md:88-92`,
+  `corpus/lessons/round-44-verifier-spotcheck.md:89-92`), which is why the `restored`
+  list is reported separately from `blob_changed` instead of collapsing into it.
+
+  <!-- freeze-integrity-table v1 -->
+  | trigger | arm | exit | receipt |
+  | --- | --- | --- | --- |
+  | any commit in FREEZE..REV touches a frozen path | commit (git log --name-status, S141) | 1 | `touched[]`, one record per path with commit and status |
+  | a frozen path was touched and later restored to its FREEZE bytes | restored (commit history, never tip equality) | 1 | `restored[]`, disjoint from `blob_changed[]` |
+  | a frozen path's blob at REV differs from its blob at FREEZE | blob (ls-tree plus rev-parse on both revisions) | 1 | `blob_changed[]` |
+  | the worktree is dirty under the frozen pathspec | dirty (git status --porcelain -z, S140) | 1 | `dirty[]` from `--check-dirty` |
+  | a frozen path is a directory at FREEZE and no pathspec covers it | pathspec (`--require-pathspec`) | 2 | `uncovered_frozen_dirs[]`; a whole-tree scan is refused |
+  | one bulk commit sweeps N frozen paths beside unrelated paths | commit plus dirty (the M45-1 shape) | 1 | `touched[]` count and the frozen subset |
+  | FREEZE is not an ancestor of REV | revision guard | 2 | `reason` |
+  | an unknown freeze or rev is named | revision guard | 2 | `reason` |
+  | no touch, no dirty file and every frozen blob equal | all arms | 0 | `verdict clean` |
+  | FREEZE equals REV (empty range) | all arms | 0 | `verdict clean` |
+
+  The gate reports; it does not prevent. It runs where the lane can put it (the L1's
+  commit sequence) and the arm that matters most, `--check-dirty`, catches the
+  precursor before any sweep exists. Placement inside the fleet's own sweep path is not
+  a lane edit — the fleet scripts are read-only for a lane — so it stays an
+  operator/integrator request and the report says so (`corpus/lessons/round-45.md:12-17`).
+  Claim clauses that name a frozen path are frozen at `plans/round-45-claims.md:132-147`:
+  the claims file and the whole `tools/round-45/` directory, the latter a directory
+  pathspec that must be passed explicitly.
+
 ## Config custody for live-probe rounds (SOP)
 
 Binding for every future live-probe round. A zero-drift claim without its own
@@ -1570,3 +1613,27 @@ Added round 40. Every tool lives in `tools/round-40/`, honours `TMPDIR`/`$HYAKU_
 | `c2-counter.py` | gate — R40-C2 depth, triage v2 on the held-out set | `0` met; `1` not met; `2` unevaluable (`no_manifest`, `frozen_path_changed`) | `--selftest` — 42 cases | `corpus/evidence/round-40/c2/heldout/manifest.json` | `--json-out`, scratch | kaidoku |
 | `score-receipt.sh` | probe — wraps a counter run, records argv, exit code, UTC, counter sha256 | the wrapped exit code | `--selftest` — 51 cases | — | OUT.json | kaidoku |
 | `ledger-status.py` | probe — fills per-seat status (ok/no-report/empty-report) into a copy of a wave results ledger | `0`; non-zero on unreadable input | `--selftest` — 43 checks | — | output copy | kaidoku |
+
+### Round-44/45 instrument registry
+
+Added round 45. The round-44 closure routed the missing registry rows for
+`tools/round-44/{c1,c2}-counter.py`; this section registers the whole
+claim-carrying instrument set of the two most recent frozen claim files, and
+`tools/round-45/registry-scope.json` is the machine-readable scope that
+`tools/round-45/c2-counter.py` scores (a row satisfies a scope path only when
+its first cell is that exact backticked path). Every row was read from source
+and its self-test run at the round-45 freeze `f762b727`; receipts
+`.ufo/waves/round-45/w1/R45W1Reg*/`.
+
+| tool | gate or probe | verdict map (exit codes) | self-test command | pinned-value path | write scope | owner |
+|---|---|---|---|---|---|---|
+| `tools/round-44/c1-counter.py` | gate — R44-C1 coverage on four committed unblob v1/v2 fixtures; reruns REA on every carrier and compares the plus-extractor projection | `0` met; `1` not met; `2` could-not-evaluate, including `frozen_path_changed` and a failed caller-supplied rerun input | `python3 -I -B tools/round-44/c1-counter.py --selftest --pkg65 <rea-agents 6.5.0 root>` — 47 cases, green 2026-10-28 | `tools/round-44/carriers.json` and `corpus/evidence/round-44/c1/` at the freeze | `--json-out`, `--work` scratch | kaidoku |
+| `tools/round-44/c1-run.sh` | probe — the after-freeze data procedure: one REA `extract-firmware` run per carrier plus the independent oracle arm | `0` every carrier produced a receipt; `1` at least one carrier failed; `2` usage or environment refusal (`err()` in the script header) | none in the script — a bad-argument probe only, no self-test | `corpus/evidence/round-44/c1/carriers.json` pins; `HYAKU_SCRATCH` scratch base | the evidence root it is given, plus scratch | kaidoku |
+| `tools/round-44/c2-counter.py` | gate — R44-C2 calibration: re-derives every frozen rubric statement at `--rev` | `0` met; `1` not met; `2` could-not-evaluate, including `frozen_path_changed` | `python3 -I -B tools/round-44/c2-counter.py --selftest` — green 2026-10-28 | `tools/round-44/c2-rubric.json` (frozen) and `plans/round-44-claims.md` | `--work`, `--json-out` | kaidoku |
+| `tools/round-45/frozen-path-preflight.py` | gate — freeze integrity at commit time (M45-1 fix): arms `commit`, `restored`, `blob`, `dirty`, `pathspec` | `0` clean; `1` a frozen path changed, a restored touch, or a dirty worktree; `2` could-not-evaluate, including `pathspec_required` and an unknown or non-ancestor revision | `python3 -I -B tools/round-45/frozen-path-preflight.py --selftest` — 11 cases, green at the freeze | the caller's `--freeze`, `--pathspec` and `--freeze-path`; `plans/round-45-claims.md:132-147` names this round's frozen paths | `--json-out` only; selftest fixtures under `$HYAKU_SCRATCH` or `$TMPDIR` | kaidoku |
+| `tools/round-45/c1-counter.py` | gate — R45-C1 depth: rule block 22 in `## Queue-drain craft`, its citations, and the interpreter's own selftest | `0` met; `1` not met (each false clause named in `failing`); `2` could-not-evaluate, including `frozen_path_changed` | `python3 -I -B tools/round-45/c1-counter.py --selftest` — 9 cases, green at the freeze | `SKILL.md` craft section, `tools/round-45/frozen-path-preflight.py`, `plans/round-45-claims.md` | `--json-out`; scratch under `$HYAKU_SCRATCH` or `$TMPDIR` | kaidoku |
+| `tools/round-45/c2-counter.py` | gate — R45-C2 calibration: every scope instrument has a registry row with a real exit map | `0` met; `1` not met (`unregistered`, `thin` or `scope_size`); `2` could-not-evaluate, including `frozen_path_changed` | `python3 -I -B tools/round-45/c2-counter.py --selftest` — 7 cases, green at the freeze | `tools/round-45/registry-scope.json` and the `SKILL.md` registry rows | `--json-out`; scratch under `$HYAKU_SCRATCH` or `$TMPDIR` | kaidoku |
+
+Limit: `c2-counter.py` checks that a row names the path, not that the tool exists at
+`--rev` (routed R45-CL2). The scope is these six instruments only; rounds 41–43 tools stay
+unregistered until a round censuses them (R45-CL3).
