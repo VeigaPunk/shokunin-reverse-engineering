@@ -1,0 +1,278 @@
+{
+  "seat": "R44C2Readme",
+  "surface": "corpus/README.md",
+  "rev": "c29360e3ba5381a5ab69e372d0d9577970f85018",
+  "rev_note": "worktree HEAD f5fb8d59 is two commits ahead (claims draft + w1 dispatch); `git diff c29360e3..HEAD -- corpus/README.md corpus/knowledge PROVINCE.md` is empty, corpus/knowledge/PROVINCE/SCORECARD clean at HEAD",
+  "census_result": "mismatches_found",
+  "mismatch_count_confirmed": 4,
+  "checks": [
+    {
+      "id": "r44readme-01",
+      "line": "13-103",
+      "asserted": "coverage-map `entries` tokens all resolve to corpus/knowledge/<stem>.md (missing []/dangling []) under command A",
+      "check_command": "command A (SCORECARD.md:92-123): `git ls-tree -r --name-only $REV -- corpus/knowledge` stems vs `re.findall(r'2026-10-\\d{2}-[a-z0-9-]+', section)`",
+      "observed": "knowledge_files 137, mapped 137, missing [], dangling [], coverage 10.0",
+      "mismatch": false,
+      "receipt": ".ufo/waves/round-44/w1/artifacts/R44C2Readme/command-a.json"
+    },
+    {
+      "id": "r44readme-02",
+      "line": "13-103",
+      "asserted": "coverage-map raw table-body row count equals corpus/knowledge/*.md count",
+      "check_command": "count `^|` rows in `## Coverage map` body (line 87 blank line splits the section into two tables: 72 + 16 body rows)",
+      "observed": "88 body rows vs 137 files (per-row `entries` cells carry 1-8 stems each)",
+      "mismatch": null,
+      "note": "RUBRIC AMBIGUITY: if 'row count' means pipe-rows this fails 88!=137; if it means distinct mapped stems it is exactly the r44readme-01 check (137). Rubric must define the observable, or drop this as a duplicate of r44readme-01."
+    },
+    {
+      "id": "r44readme-03",
+      "line": "9",
+      "asserted": "A row is written when its file exists, never before. (coverage-map direction: row implies file)",
+      "check_command": "command A `dangling` field",
+      "observed": "dangling []",
+      "mismatch": false
+    },
+    {
+      "id": "r44readme-04",
+      "line": "13",
+      "asserted": "Coverage-map header | section | entries | state |; all rows carry 3 cells",
+      "check_command": "per-row `|` cell count under the section",
+      "observed": "all 90 `|` lines have 3 cells",
+      "mismatch": false,
+      "note": "non-shape defect: ~10 rows place `knowledge/<stem>` in the section column and prose in entries, inverting the intended columns"
+    },
+    {
+      "id": "r44readme-05",
+      "line": "106",
+      "asserted": "Knowledge header | entry | topic | source | verified-at |; all rows carry 4 cells",
+      "check_command": "per-row `|` cell count",
+      "observed": "all 117 `|` lines have 4 cells",
+      "mismatch": false
+    },
+    {
+      "id": "r44readme-06",
+      "line": "172",
+      "asserted": "`lessons/round-13-distillation` is an entry in the Knowledge index (entry column name resolves like its siblings)",
+      "check_command": "git ls-tree corpus/lessons/round-13-distillation*",
+      "observed": "MISSING — no such file; the row itself says it is a SKILL.md `## Queue-drain craft` section, not a corpus note (SKILL.md:81-449 does resolve at 370 lines)",
+      "mismatch": true,
+      "note": "deliberate pseudo-entry in practice but its first cell syntactically claims a lessons/ path that does not exist"
+    },
+    {
+      "id": "r44readme-07",
+      "line": "183",
+      "asserted": "row `2026-10-16-l7-03-inspect-electron-fuses` verified-at = `2026-10-16-l7-03`",
+      "check_command": "verify-at cell matches a date or a known rev",
+      "observed": "`2026-10-16-l7-03` is a malformed date that mints a phantom knowledge stem `2026-10-16-l7-03` under the canonical token regex (would add a dangling token if it appeared in the coverage-map section)",
+      "mismatch": true
+    },
+    {
+      "id": "r44readme-08",
+      "line": "106-222",
+      "asserted": "every corpus/knowledge/*.md is named in the Knowledge index (index completeness)",
+      "check_command": "set of `2026-10-\\d{2}-[a-z0-9-]+` tokens anywhere in `## Knowledge` vs file stems",
+      "observed": "117 tokens vs 137 files; 20 files never indexed (arc2/arc3/r14-r20/r25-r28 era files are indexed only in the coverage map)",
+      "mismatch": null,
+      "note": "index does not assert completeness; include only if rubric asserts it"
+    },
+    {
+      "id": "r44readme-09",
+      "line": "225",
+      "asserted": "Lessons header | entry | round | gist |; all rows carry 3 cells",
+      "check_command": "per-row `|` cell count",
+      "observed": "row 230 has 4 cells: unescaped `|` inside `grep -o|wc -l`",
+      "mismatch": true
+    },
+    {
+      "id": "r44readme-10",
+      "line": "227-253",
+      "asserted": "every Lessons-table entry resolves to corpus/lessons/<entry>.md",
+      "check_command": "git ls-tree corpus/lessions per first cell",
+      "observed": "all 26 rows resolve",
+      "mismatch": false
+    },
+    {
+      "id": "r44readme-11",
+      "line": "224-253",
+      "asserted": "every corpus/lessons/*.md has a Lessons-table row (index completeness)",
+      "check_command": "git ls-tree corpus/lessons stems vs first cells",
+      "observed": "70 files vs 26 rows; 44 unindexed (round-12..round-43 incl. all *-verifier-spotcheck files)",
+      "mismatch": null,
+      "note": "index does not assert completeness"
+    },
+    {
+      "id": "r44readme-12",
+      "line": "156",
+      "asserted": "source pointer `.ufo/waves/kaidoku-r5/05-riscv-deep.md` exists",
+      "check_command": "git ls-tree c29360e3 -- .ufo/waves/kaidoku-r5",
+      "observed": "MISSING — 0 objects under .ufo/waves/kaidoku-r5 in every tree of --all history; correct wave is luna-round-5. Dangling source pointer.",
+      "mismatch": true
+    },
+    {
+      "id": "r44readme-13",
+      "line": "whole file",
+      "asserted": "all other in-repo `path`/`path:line` pointers resolve at REV",
+      "check_command": "extract backticked path-ish tokens; git cat-file -e + line-range bounds check",
+      "observed": "86 unique refs: all resolve except r44readme-12 (incl. all corpus/knowledge/*.md:NN-NN, SCORECARD.md:1216, PROVINCE.md:114-116 x2, tools/round-*/counters, corpus/evidence dirs, .ufo/waves/round-16/17/18/19/27/31/34/43, luna-round-6/8 legs and CB6/SC1-3/MANIFEST, arc2 E2.md:23-45)",
+      "mismatch": false,
+      "note": "out-of-repo refs (binaryTarget.js:105, GhidraClient.js:607) not evaluable — could-not-evaluate for any rubric row asserting them"
+    },
+    {
+      "id": "r44readme-14",
+      "line": "255-272",
+      "asserted": "README `## Frontier` bullet items are consistent with PROVINCE.md `## Frontier`",
+      "check_command": "compare bullets: README 17 items; PROVINCE.md:82-119 10 bold bullets",
+      "observed": "each README item maps to a PROVINCE bullet or dated note (crashes>32MiB, RISC-V, .jsc, PE>90MB-CLOSED, electron-scenario, adb 22/24, PE-hybrid, runtime-obs, IDA/Hopper/JEB, sasquatch chain). PROVINCE additionally lists EVM-bytecode residuals, malware triage, non-REA dynamic, reconstruction, engine-installs, quality-verdicts, tooling-2026-10-26 — not in README. Latest sasquatch frontier sets match (README:267 {v1/v2, v3_broadcom, v3_nonstandard, gzip v3} + README:266 {hsqs, AVM kernels, nested<depth1, vendor-mangled} vs PROVINCE:416 {v1/v2, v3_broadcom, v3_nonstandard, gzip v3 bodies, v4 Broadcom, LE AVM, AVM kernels, nested<depth1, other vendor-mangled}).",
+      "mismatch": false,
+      "note": "borderline: PROVINCE names `v4 Broadcom` explicitly; README has only generic `other vendor-mangled images`. Claim text (line 116) uses the PROVINCE superset. Not strictly equal — candidate check if rubric demands equality."
+    },
+    {
+      "id": "n-m-r25",
+      "line": "74",
+      "asserted": "six lane-compiled carriers (69 selector rows)",
+      "check_command": "git show corpus/evidence/round-25/a2/c2/carriers.tsv row count; git ls-tree ... | grep -c 'db/openchain-'",
+      "observed": "6 carrier rows; 69 openchain + 69 4byte saved lookups",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r26",
+      "line": "75",
+      "asserted": "24 committed REA 6.5.0 envelopes (knowledge row text)",
+      "check_command": "git ls-tree corpus/evidence/round-26/c1 | grep -c '.json$'",
+      "observed": "24 json of 27 files (runs.tsv, table.tsv, recompute-ids.txt)",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r27",
+      "line": "76,195",
+      "asserted": "48 committed REA 6.5.0 envelopes",
+      "check_command": "git ls-tree corpus/evidence/round-27/c1 | grep -c '.json$'",
+      "observed": "48 json of 50 (runs.tsv, table.tsv)",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r28",
+      "line": "77,196",
+      "asserted": "187 held-out selectors from 61 carriers; 61 envelopes + 374 saved lookups; 230 openchain responses (row 78/197)",
+      "check_command": "wc -l heldout.tsv/carriers.tsv; ls db dirs; ls c2/db openchain-*",
+      "observed": "heldout.tsv 187 rows; carriers.tsv 61 rows; c1/envelopes 61; c1/db 375 files = 187 4byte + 187 openchain + manifest (README '374' counts data rows); c2/db 231 = 230 openchain + manifest",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r29",
+      "line": "79,198",
+      "asserted": "152 held-out selectors from 16 carriers; 16 envelopes + 304 saved lookups; 178 saved responses (row 80/199)",
+      "check_command": "wc -l carriers.tsv; ls envelopes, db, c2/db",
+      "observed": "carriers.tsv 16 rows; envelopes 16 json; db 305 = 152 4byte + 152 openchain + manifest (README '304' counts data rows); c2/db 179 = 178 openchain + manifest",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r30",
+      "line": "81,200;82,201",
+      "asserted": "16 uv carriers / 16 envelopes (c1); 19 of 19 outcomes / 19 envelopes (c2)",
+      "check_command": "wc -l carriers.tsv; ls envelopes | grep -c '.json$'",
+      "observed": "carriers.tsv 16 rows; c1/envelopes 16 json; c2/envelopes 19 json",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r31",
+      "line": "83,202;84,203",
+      "asserted": "12 published SQLite files / 12 envelopes (c1); 23 outcomes / 23 envelopes (c2)",
+      "check_command": "wc -l carriers.tsv; ls envelopes | grep -c '.json$'",
+      "observed": "carriers.tsv 12 rows; c1/envelopes 12 json; c2/envelopes 23 json",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r36",
+      "line": "89",
+      "asserted": "four frozen carriers, member parity K1 3/3, K2 4/4, K3 2130/2130, K4 2130/2130",
+      "check_command": "git ls-tree corpus/evidence/round-36/c1 dirs; wc -l */oracle.tsv",
+      "observed": "4 dirs K1-K4; oracle.tsv rows 3/4/2130/2130",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r38",
+      "line": "91",
+      "asserted": "four frozen carriers (K1 5/5, K2 3/3, K3 4/4, K4 4/4)",
+      "check_command": "git ls-tree corpus/evidence/round-38/c1 dirs",
+      "observed": "4 dirs K1-K4; per-member counts inside after.json envelopes (not independently recounted — deep-parse deferred to rubric)",
+      "mismatch": null
+    },
+    {
+      "id": "n-m-r39",
+      "line": "93",
+      "asserted": "six frozen BE v4 carriers",
+      "check_command": "git ls-tree corpus/evidence/round-39/c1 dirs",
+      "observed": "6 dirs K1-K6",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r40",
+      "line": "96",
+      "asserted": "four carriers (2 vendor + 2 lane-built)",
+      "check_command": "git ls-tree corpus/evidence/round-40/c1 dirs",
+      "observed": "4 dirs V1/V2/L1/L2",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r41",
+      "line": "97",
+      "asserted": "four frozen carriers (V3, V4, L3, L4)",
+      "check_command": "git ls-tree corpus/evidence/round-41/c1 dirs",
+      "observed": "4 dirs V3/V4/L3/L4",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r42",
+      "line": "101",
+      "asserted": "four published LZMA v3 rootfs images",
+      "check_command": "git ls-tree corpus/evidence/round-42/c1 dirs",
+      "observed": "4 dirs OW-A8092, OW-X86FS, DW-MEGA, DW-FONERA",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r43a",
+      "line": "102",
+      "asserted": "8 release tags, three Debian architectures from v1.0.1, v1.0 amd64-only",
+      "check_command": "git show corpus/knowledge/2026-10-27-sasquatch-release-matrix.md:16-25 tag rows",
+      "observed": "8 tag rows; v1.0.1+ rows carry three .deb columns; v1.0 amd64-only",
+      "mismatch": false
+    },
+    {
+      "id": "n-m-r43b",
+      "line": "103",
+      "asserted": "78 fresh held-out carriers; R43-C1 met 78/78",
+      "check_command": "git ls-tree corpus/evidence/round-43/c1/heldout top dirs",
+      "observed": "78 carrier dirs (C01-C24 dev cohort + H01-H54 held-out) + manifest.json; 'fresh held-out' strictly = 54 H* dirs, 78 = scored cohort",
+      "mismatch": false,
+      "note": "wording '78 fresh held-out carriers' vs 54 H* + 24 C* is loose; 78/78 is the scored set per manifest"
+    },
+    {
+      "id": "n-m-ufm97",
+      "line": "92",
+      "asserted": "unblob.org lists 97 handler sections (README coverage-map text; entry states the conflict)",
+      "check_command": "git show .ufo/waves/round-38/w2/artifacts/R38W2AssimAdmit/formats.html | grep -o '<h2 id=' | wc -l",
+      "observed": "97",
+      "mismatch": false
+    },
+    {
+      "id": "not-included",
+      "line": "various",
+      "asserted": "numbers not mechanically re-derivable from committed repo objects",
+      "observed": "DEFERRED (out of rubric reach): '127 commands' (CLI-era count; host re-run possible but is a live-tool check), '3/7 supported native surfaces', '18 ops/8 available' provider matrix, '97 handler sections' live recheck (committed copy verified instead), '8 clients' doctor registry, '6 surfaces', '283 of 286 cataloged jq sites', '33,060→11,595 procs', '97 vs 78+ conflict verdicts', per-envelope member counts in after.json envelopes for r38 (5/5,3/3,4/4,4/4), 'one ipcMain ops 45', '170-node graph', '8 release tags API re-fetch'",
+      "note": "any rubric row asserting these must carry a committed-receipt check (parse the envelope/json) or be refused at freeze"
+    }
+  ],
+  "controls": {
+    "do_nothing": "a do-nothing round leaves 4 confirmed mismatches standing → CTL-C2-0 exits non-zero, claim does NOT stop",
+    "seeded": "each mismatch row is a text/repairable defect (pointer fix, escape fix, verified-at fix, entry wording) — text-only append/edit repairs per C2 landing mechanics"
+  },
+  "receipt": {
+    "command_a": {
+      "cmd": "python3 - <<PY (SCORECARD.md:93-123 verbatim) REV=c29360e3",
+      "exit": 0,
+      "stdout_sha256": "66a78f754537aa209babee60da641e38959e1f7f04bd6fd88ee5397b69338529",
+      "artifact": ".ufo/waves/round-44/w1/artifacts/R44C2Readme/command-a.json"
+    }
+  }
+}

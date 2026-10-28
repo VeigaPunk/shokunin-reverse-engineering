@@ -1,6 +1,6 @@
 {
   "carriers": {
-    "v1-be": {
+    "v1be": {
       "census": [
         {
           "mode": "drwxrwxrwx",
@@ -44,7 +44,7 @@
         "argv": [
           "/usr/bin/unsquashfs",
           "-d",
-          "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Oracle/work/extract/v1-be",
+          "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Oracle/work/extract/v1be",
           "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v1-be--squashfs_v1.0_be.bin"
         ],
         "exit": 0,
@@ -69,7 +69,7 @@
         "root_prefix": "squashfs-root/",
         "stderr_sha256": "ac56b9959e6cddce302a37586ee08632650bd4768e1b4e4bd86bdcbaddb03bff",
         "stdout_sha256": "14fda1998d07a4af3e814a507c27681a1ecd15e8544db8c6e4e97ff2f6fea493",
-        "wall_s": 0.002
+        "wall_s": 0.001
       },
       "members": [
         {
@@ -123,7 +123,7 @@
         "mismatches": [],
         "output_tree_digest": "8faae7739b14315c10683db41d63b92f511ec8e73ec94e6cc74bc414894f2a48",
         "producer_lineage": "unblob 26.6.4 integration expectation (S138); produced by unblob's own squashfs handler (sasquatch 4.5.1 lineage), so it cross-checks the member set but is NOT an independent producer - the independent oracle is `unsquashfs` 4.7.5",
-        "root": "corpus/evidence/round-44/oracle/squashfs_v1/big_endian/__output__"
+        "root": "corpus/evidence/round-44/oracle/squashfs_v1/big_endian/__output__/squashfs_v1.0_be.bin_extract"
       },
       "output_tree_digest": "8faae7739b14315c10683db41d63b92f511ec8e73ec94e6cc74bc414894f2a48",
       "output_tree_digest_def": "sha256 over the concatenation of '<path>\\t<sha256>\\n' lines of `members`, sorted bytewise by path",
@@ -134,7 +134,37 @@
           "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v1-be--squashfs_v1.0_be.bin"
         ],
         "exit": 0,
+        "file_verdict": {
+          "argv": [
+            "/usr/bin/file",
+            "-b",
+            "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v1-be--squashfs_v1.0_be.bin"
+          ],
+          "exit": 0,
+          "note": "file(1) applies the squashfs v4 superblock layout to every squashfs image, so for a v1/v2 image its 'compressed'/'uncompressed' word is read from offset 20 (inode_table_start), NOT from a compression field - the v1/v2 superblock has none.  Do not bind the counter to this word.",
+          "stdout": "Squashfs filesystem, big endian, version 1.0, uncompressed, 177 bytes, 4 inodes, blocksize: -32768 bytes, created: Mon Aug  5 07:18:58 2024"
+        },
         "note": "informational only - the counter owns the binding v1/v2 superblock probe; this is the oracle tool's own report",
+        "probe_v1v2": {
+          "bytes_used": 177,
+          "compression": "gzip",
+          "directory_table_start": 129,
+          "endianness": "be",
+          "guid_start": 0,
+          "inode_table_start": 71,
+          "inodes": 4,
+          "magic": "sqsh",
+          "major": 1,
+          "meta_chain_lands": true,
+          "meta_header_hex": "0038",
+          "meta_len": 56,
+          "meta_uncompressed": false,
+          "minor": 0,
+          "starts_sane": true,
+          "superblock_size": 32,
+          "uid_start": 173
+        },
+        "probe_v1v2_error": null,
         "stdout_lines": [
           "Found a valid big endian SQUASHFS 1:0 superblock on /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v1-be--squashfs_v1.0_be.bin.",
           "Creation or last append time Mon Aug  5 04:18:58 2024",
@@ -152,7 +182,7 @@
         "stdout_sha256": "890c069da47e6fd7f76012cd404035d98e97ac8bd04f7c3e966c10c40632b5e6"
       }
     },
-    "v1-le": {
+    "v1le": {
       "census": [
         {
           "mode": "drwxrwxrwx",
@@ -196,14 +226,14 @@
         "argv": [
           "/usr/bin/unsquashfs",
           "-d",
-          "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Oracle/work/extract/v1-le",
+          "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Oracle/work/extract/v1le",
           "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v1-le--squashfs_v1.0_le.bin"
         ],
         "exit": 0,
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "stderr_tail": "",
         "stdout_sha256": "7d9a733a4e55c5ce5b0f293f2763a8c63ceaa0ae0c11033057be54130a5b63cf",
-        "wall_s": 0.002
+        "wall_s": 0.001
       },
       "handler": "squashfs_v1",
       "image": {
@@ -275,7 +305,7 @@
         "mismatches": [],
         "output_tree_digest": "8faae7739b14315c10683db41d63b92f511ec8e73ec94e6cc74bc414894f2a48",
         "producer_lineage": "unblob 26.6.4 integration expectation (S138); produced by unblob's own squashfs handler (sasquatch 4.5.1 lineage), so it cross-checks the member set but is NOT an independent producer - the independent oracle is `unsquashfs` 4.7.5",
-        "root": "corpus/evidence/round-44/oracle/squashfs_v1/little_endian/__output__"
+        "root": "corpus/evidence/round-44/oracle/squashfs_v1/little_endian/__output__/squashfs_v1.0_le.bin_extract"
       },
       "output_tree_digest": "8faae7739b14315c10683db41d63b92f511ec8e73ec94e6cc74bc414894f2a48",
       "output_tree_digest_def": "sha256 over the concatenation of '<path>\\t<sha256>\\n' lines of `members`, sorted bytewise by path",
@@ -286,7 +316,37 @@
           "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v1-le--squashfs_v1.0_le.bin"
         ],
         "exit": 0,
+        "file_verdict": {
+          "argv": [
+            "/usr/bin/file",
+            "-b",
+            "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v1-le--squashfs_v1.0_le.bin"
+          ],
+          "exit": 0,
+          "note": "file(1) applies the squashfs v4 superblock layout to every squashfs image, so for a v1/v2 image its 'compressed'/'uncompressed' word is read from offset 20 (inode_table_start), NOT from a compression field - the v1/v2 superblock has none.  Do not bind the counter to this word.",
+          "stdout": "Squashfs filesystem, little endian, version 1.0, compressed, 176 bytes, 4 inodes, blocksize: -32768 bytes, created: Mon Aug  5 07:18:51 2024"
+        },
         "note": "informational only - the counter owns the binding v1/v2 superblock probe; this is the oracle tool's own report",
+        "probe_v1v2": {
+          "bytes_used": 176,
+          "compression": "gzip",
+          "directory_table_start": 128,
+          "endianness": "le",
+          "guid_start": 0,
+          "inode_table_start": 71,
+          "inodes": 4,
+          "magic": "hsqs",
+          "major": 1,
+          "meta_chain_lands": true,
+          "meta_header_hex": "3700",
+          "meta_len": 55,
+          "meta_uncompressed": false,
+          "minor": 0,
+          "starts_sane": true,
+          "superblock_size": 32,
+          "uid_start": 172
+        },
+        "probe_v1v2_error": null,
         "stdout_lines": [
           "Found a valid little endian SQUASHFS 1:0 superblock on /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v1-le--squashfs_v1.0_le.bin.",
           "Creation or last append time Mon Aug  5 04:18:51 2024",
@@ -304,7 +364,7 @@
         "stdout_sha256": "d04c69f359f8866dd2a4245be0a4040aa70b68d5842aee1c591e5336fd21db51"
       }
     },
-    "v2-be": {
+    "v21be": {
       "census": [
         {
           "mode": "drwxrwxr-x",
@@ -357,7 +417,419 @@
         "argv": [
           "/usr/bin/unsquashfs",
           "-d",
-          "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Oracle/work/extract/v2-be",
+          "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Oracle/work/extract/v21be",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_be.bin"
+        ],
+        "exit": 0,
+        "stderr_sha256": "9ad2ab9e71a40a2fce81791de6586de3e508e0de74e3d820a3dabca8e5eb2498",
+        "stderr_tail": "Reading a different endian SQUASHFS filesystem on /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_be.bin\n",
+        "stdout_sha256": "8b767ff6aabd41f4344d4d2e80e98eeb58df764a18b266494566fc81087ae69a",
+        "wall_s": 0.002
+      },
+      "handler": "squashfs_v2",
+      "image": {
+        "path": "corpus/evidence/round-44/carriers/squashfs_v2.1_be.bin",
+        "sha256": "c0140bac22d92df7d6c63fdf6de2d3e75a8fad6b30e6f9eeeb9ef533134f35db",
+        "size": 4096
+      },
+      "listing": {
+        "argv": [
+          "/usr/bin/unsquashfs",
+          "-lls",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_be.bin"
+        ],
+        "exit": 0,
+        "root_prefix": "squashfs-root/",
+        "stderr_sha256": "9ad2ab9e71a40a2fce81791de6586de3e508e0de74e3d820a3dabca8e5eb2498",
+        "stdout_sha256": "55a68d07b65d9a07599c23b995b04c77d1a627d2f959e3dcdb4cf53361298c91",
+        "wall_s": 0.001
+      },
+      "members": [
+        {
+          "path": "apple1.txt",
+          "sha256": "6181259c6b2ca629a56920b422e9a8f212a4d0bcead923df92dbd66fbb7e1c30",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "path": "apple2.txt",
+          "sha256": "919fc82d6f1031d305dbce2fc5a74a6df5ddf2da472ee4d137c681cef28d4aff",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "path": "apple3.txt",
+          "sha256": "2d95014ed3f24e86ce5fc3a4529f057d7b2318d9b24b54f2e9476b154bd21ec6",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "path": "apple4.txt",
+          "sha256": "08d9b05b15b998f2dbc741399fef4350c7863cc85df2305d7da4e83e8c8a959d",
+          "size": 7,
+          "type": "regular"
+        }
+      ],
+      "nonregular": [],
+      "oracle_tool": "unsquashfs",
+      "oracle_tool_path": "/usr/bin/unsquashfs",
+      "oracle_tool_sha256": "461e1fd9eac39c12e673042807459985636030d5557319343fc3a6ed4ba1677c",
+      "oracle_ver": "4.7.5",
+      "output_tree": {
+        "agrees_with_unsquashfs": true,
+        "extract_dir": "squashfs_v2.1_be.bin_extract",
+        "extract_root": "corpus/evidence/round-44/oracle/squashfs_v2/big_endian/__output__/squashfs_v2.1_be.bin_extract",
+        "members": [
+          {
+            "path": "apple1.txt",
+            "sha256": "6181259c6b2ca629a56920b422e9a8f212a4d0bcead923df92dbd66fbb7e1c30",
+            "size": 7,
+            "type": "regular"
+          },
+          {
+            "path": "apple2.txt",
+            "sha256": "919fc82d6f1031d305dbce2fc5a74a6df5ddf2da472ee4d137c681cef28d4aff",
+            "size": 7,
+            "type": "regular"
+          },
+          {
+            "path": "apple3.txt",
+            "sha256": "2d95014ed3f24e86ce5fc3a4529f057d7b2318d9b24b54f2e9476b154bd21ec6",
+            "size": 7,
+            "type": "regular"
+          },
+          {
+            "path": "apple4.txt",
+            "sha256": "08d9b05b15b998f2dbc741399fef4350c7863cc85df2305d7da4e83e8c8a959d",
+            "size": 7,
+            "type": "regular"
+          }
+        ],
+        "mismatches": [],
+        "output_tree_digest": "4178bb8379de3e5573eb448010d1c309fcda4dcb6bb4fd16ab11b4ab0535f947",
+        "producer_lineage": "unblob 26.6.4 integration expectation (S138); produced by unblob's own squashfs handler (sasquatch 4.5.1 lineage), so it cross-checks the member set but is NOT an independent producer - the independent oracle is `unsquashfs` 4.7.5",
+        "root": "corpus/evidence/round-44/oracle/squashfs_v2/big_endian/__output__/squashfs_v2.1_be.bin_extract"
+      },
+      "output_tree_digest": "4178bb8379de3e5573eb448010d1c309fcda4dcb6bb4fd16ab11b4ab0535f947",
+      "output_tree_digest_def": "sha256 over the concatenation of '<path>\\t<sha256>\\n' lines of `members`, sorted bytewise by path",
+      "superblock_info": {
+        "argv": [
+          "/usr/bin/unsquashfs",
+          "-s",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_be.bin"
+        ],
+        "exit": 0,
+        "file_verdict": {
+          "argv": [
+            "/usr/bin/file",
+            "-b",
+            "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_be.bin"
+          ],
+          "exit": 0,
+          "note": "file(1) applies the squashfs v4 superblock layout to every squashfs image, so for a v1/v2 image its 'compressed'/'uncompressed' word is read from offset 20 (inode_table_start), NOT from a compression field - the v1/v2 superblock has none.  Do not bind the counter to this word.",
+          "stdout": "Squashfs filesystem, big endian, version 2.1, uncompressed, 201 bytes, 5 inodes, blocksize: 65536 bytes, created: Thu Mar  9 17:06:37 2023"
+        },
+        "note": "informational only - the counter owns the binding v1/v2 superblock probe; this is the oracle tool's own report",
+        "probe_v1v2": {
+          "bytes_used": 201,
+          "compression": "gzip",
+          "directory_table_start": 138,
+          "endianness": "be",
+          "guid_start": 0,
+          "inode_table_start": 88,
+          "inodes": 5,
+          "magic": "sqsh",
+          "major": 2,
+          "meta_chain_lands": true,
+          "meta_header_hex": "0030",
+          "meta_len": 48,
+          "meta_uncompressed": false,
+          "minor": 1,
+          "starts_sane": true,
+          "superblock_size": 32,
+          "uid_start": 197
+        },
+        "probe_v1v2_error": null,
+        "stdout_lines": [
+          "Found a valid big endian SQUASHFS 2:1 superblock on /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_be.bin.",
+          "Creation or last append time Thu Mar  9 14:06:37 2023",
+          "Filesystem size 201 bytes (0.20 Kbytes / 0.00 Mbytes)",
+          "Block size 65536",
+          "Filesystem is not exportable via NFS",
+          "Inodes are compressed",
+          "Data is compressed",
+          "Fragments are compressed",
+          "Always-use-fragments option is not specified",
+          "Check data is not present in the filesystem",
+          "Duplicates are removed",
+          "Number of fragments 1",
+          "Number of inodes 5",
+          "Number of uids 1",
+          "Number of gids 0"
+        ],
+        "stdout_sha256": "a2c7d4c673310f9764fe0cdee0657c5c03f3a7f7401a19bcec5ace191a687680"
+      }
+    },
+    "v21le": {
+      "census": [
+        {
+          "mode": "drwxrwxr-x",
+          "mtime": "2022-04-06 08:20",
+          "owner": "vgpnk/vgpnk",
+          "path": "squashfs-root",
+          "rel": "",
+          "size": null,
+          "type": "dir"
+        },
+        {
+          "mode": "-rw-rw-r--",
+          "mtime": "2022-04-06 08:44",
+          "owner": "vgpnk/vgpnk",
+          "path": "squashfs-root/apple1.txt",
+          "rel": "apple1.txt",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "mode": "-rw-rw-r--",
+          "mtime": "2022-04-06 08:44",
+          "owner": "vgpnk/vgpnk",
+          "path": "squashfs-root/apple2.txt",
+          "rel": "apple2.txt",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "mode": "-rw-rw-r--",
+          "mtime": "2022-04-06 08:44",
+          "owner": "vgpnk/vgpnk",
+          "path": "squashfs-root/apple3.txt",
+          "rel": "apple3.txt",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "mode": "-rw-rw-r--",
+          "mtime": "2022-04-06 08:44",
+          "owner": "vgpnk/vgpnk",
+          "path": "squashfs-root/apple4.txt",
+          "rel": "apple4.txt",
+          "size": 7,
+          "type": "regular"
+        }
+      ],
+      "endian": "le",
+      "extraction": {
+        "argv": [
+          "/usr/bin/unsquashfs",
+          "-d",
+          "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Oracle/work/extract/v21le",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_le.bin"
+        ],
+        "exit": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_tail": "",
+        "stdout_sha256": "8b767ff6aabd41f4344d4d2e80e98eeb58df764a18b266494566fc81087ae69a",
+        "wall_s": 0.001
+      },
+      "handler": "squashfs_v2",
+      "image": {
+        "path": "corpus/evidence/round-44/carriers/squashfs_v2.1_le.bin",
+        "sha256": "6b6cd2fd63e17a499861d2d89d617bd836b169601e46cb2f5a5c66bea8ef253a",
+        "size": 4096
+      },
+      "listing": {
+        "argv": [
+          "/usr/bin/unsquashfs",
+          "-lls",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_le.bin"
+        ],
+        "exit": 0,
+        "root_prefix": "squashfs-root/",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "55a68d07b65d9a07599c23b995b04c77d1a627d2f959e3dcdb4cf53361298c91",
+        "wall_s": 0.001
+      },
+      "members": [
+        {
+          "path": "apple1.txt",
+          "sha256": "6181259c6b2ca629a56920b422e9a8f212a4d0bcead923df92dbd66fbb7e1c30",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "path": "apple2.txt",
+          "sha256": "919fc82d6f1031d305dbce2fc5a74a6df5ddf2da472ee4d137c681cef28d4aff",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "path": "apple3.txt",
+          "sha256": "2d95014ed3f24e86ce5fc3a4529f057d7b2318d9b24b54f2e9476b154bd21ec6",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "path": "apple4.txt",
+          "sha256": "08d9b05b15b998f2dbc741399fef4350c7863cc85df2305d7da4e83e8c8a959d",
+          "size": 7,
+          "type": "regular"
+        }
+      ],
+      "nonregular": [],
+      "oracle_tool": "unsquashfs",
+      "oracle_tool_path": "/usr/bin/unsquashfs",
+      "oracle_tool_sha256": "461e1fd9eac39c12e673042807459985636030d5557319343fc3a6ed4ba1677c",
+      "oracle_ver": "4.7.5",
+      "output_tree": {
+        "agrees_with_unsquashfs": true,
+        "extract_dir": "squashfs_v2.1_le.bin_extract",
+        "extract_root": "corpus/evidence/round-44/oracle/squashfs_v2/little_endian/__output__/squashfs_v2.1_le.bin_extract",
+        "members": [
+          {
+            "path": "apple1.txt",
+            "sha256": "6181259c6b2ca629a56920b422e9a8f212a4d0bcead923df92dbd66fbb7e1c30",
+            "size": 7,
+            "type": "regular"
+          },
+          {
+            "path": "apple2.txt",
+            "sha256": "919fc82d6f1031d305dbce2fc5a74a6df5ddf2da472ee4d137c681cef28d4aff",
+            "size": 7,
+            "type": "regular"
+          },
+          {
+            "path": "apple3.txt",
+            "sha256": "2d95014ed3f24e86ce5fc3a4529f057d7b2318d9b24b54f2e9476b154bd21ec6",
+            "size": 7,
+            "type": "regular"
+          },
+          {
+            "path": "apple4.txt",
+            "sha256": "08d9b05b15b998f2dbc741399fef4350c7863cc85df2305d7da4e83e8c8a959d",
+            "size": 7,
+            "type": "regular"
+          }
+        ],
+        "mismatches": [],
+        "output_tree_digest": "4178bb8379de3e5573eb448010d1c309fcda4dcb6bb4fd16ab11b4ab0535f947",
+        "producer_lineage": "unblob 26.6.4 integration expectation (S138); produced by unblob's own squashfs handler (sasquatch 4.5.1 lineage), so it cross-checks the member set but is NOT an independent producer - the independent oracle is `unsquashfs` 4.7.5",
+        "root": "corpus/evidence/round-44/oracle/squashfs_v2/little_endian/__output__/squashfs_v2.1_le.bin_extract"
+      },
+      "output_tree_digest": "4178bb8379de3e5573eb448010d1c309fcda4dcb6bb4fd16ab11b4ab0535f947",
+      "output_tree_digest_def": "sha256 over the concatenation of '<path>\\t<sha256>\\n' lines of `members`, sorted bytewise by path",
+      "superblock_info": {
+        "argv": [
+          "/usr/bin/unsquashfs",
+          "-s",
+          "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_le.bin"
+        ],
+        "exit": 0,
+        "file_verdict": {
+          "argv": [
+            "/usr/bin/file",
+            "-b",
+            "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_le.bin"
+          ],
+          "exit": 0,
+          "note": "file(1) applies the squashfs v4 superblock layout to every squashfs image, so for a v1/v2 image its 'compressed'/'uncompressed' word is read from offset 20 (inode_table_start), NOT from a compression field - the v1/v2 superblock has none.  Do not bind the counter to this word.",
+          "stdout": "Squashfs filesystem, little endian, version 2.1, compressed, 196 bytes, 5 inodes, blocksize: 65536 bytes, created: Thu Mar  9 17:05:04 2023"
+        },
+        "note": "informational only - the counter owns the binding v1/v2 superblock probe; this is the oracle tool's own report",
+        "probe_v1v2": {
+          "bytes_used": 196,
+          "compression": "gzip",
+          "directory_table_start": 136,
+          "endianness": "le",
+          "guid_start": 0,
+          "inode_table_start": 88,
+          "inodes": 5,
+          "magic": "hsqs",
+          "major": 2,
+          "meta_chain_lands": true,
+          "meta_header_hex": "2e00",
+          "meta_len": 46,
+          "meta_uncompressed": false,
+          "minor": 1,
+          "starts_sane": true,
+          "superblock_size": 32,
+          "uid_start": 192
+        },
+        "probe_v1v2_error": null,
+        "stdout_lines": [
+          "Found a valid little endian SQUASHFS 2:1 superblock on /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/carriers/squashfs_v2.1_le.bin.",
+          "Creation or last append time Thu Mar  9 14:05:04 2023",
+          "Filesystem size 196 bytes (0.19 Kbytes / 0.00 Mbytes)",
+          "Block size 65536",
+          "Filesystem is not exportable via NFS",
+          "Inodes are compressed",
+          "Data is compressed",
+          "Fragments are compressed",
+          "Always-use-fragments option is not specified",
+          "Check data is not present in the filesystem",
+          "Duplicates are removed",
+          "Number of fragments 1",
+          "Number of inodes 5",
+          "Number of uids 1",
+          "Number of gids 0"
+        ],
+        "stdout_sha256": "8fb37cfece04c8d6830753b187355836d5e229c1bede9d5a59e88c24a6014b01"
+      }
+    },
+    "v2be": {
+      "census": [
+        {
+          "mode": "drwxrwxr-x",
+          "mtime": "2022-04-06 08:20",
+          "owner": "vgpnk/vgpnk",
+          "path": "squashfs-root",
+          "rel": "",
+          "size": null,
+          "type": "dir"
+        },
+        {
+          "mode": "-rw-rw-r--",
+          "mtime": "2022-04-06 08:44",
+          "owner": "vgpnk/vgpnk",
+          "path": "squashfs-root/apple1.txt",
+          "rel": "apple1.txt",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "mode": "-rw-rw-r--",
+          "mtime": "2022-04-06 08:44",
+          "owner": "vgpnk/vgpnk",
+          "path": "squashfs-root/apple2.txt",
+          "rel": "apple2.txt",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "mode": "-rw-rw-r--",
+          "mtime": "2022-04-06 08:44",
+          "owner": "vgpnk/vgpnk",
+          "path": "squashfs-root/apple3.txt",
+          "rel": "apple3.txt",
+          "size": 7,
+          "type": "regular"
+        },
+        {
+          "mode": "-rw-rw-r--",
+          "mtime": "2022-04-06 08:44",
+          "owner": "vgpnk/vgpnk",
+          "path": "squashfs-root/apple4.txt",
+          "rel": "apple4.txt",
+          "size": 7,
+          "type": "regular"
+        }
+      ],
+      "endian": "be",
+      "extraction": {
+        "argv": [
+          "/usr/bin/unsquashfs",
+          "-d",
+          "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Oracle/work/extract/v2be",
           "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_be.bin"
         ],
         "exit": 0,
@@ -382,7 +854,7 @@
         "root_prefix": "squashfs-root/",
         "stderr_sha256": "dabe40299993dbe9034836d23b2af53835095084a943ba8c09ee3b0284278fa2",
         "stdout_sha256": "55a68d07b65d9a07599c23b995b04c77d1a627d2f959e3dcdb4cf53361298c91",
-        "wall_s": 0.002
+        "wall_s": 0.001
       },
       "members": [
         {
@@ -448,7 +920,7 @@
         "mismatches": [],
         "output_tree_digest": "4178bb8379de3e5573eb448010d1c309fcda4dcb6bb4fd16ab11b4ab0535f947",
         "producer_lineage": "unblob 26.6.4 integration expectation (S138); produced by unblob's own squashfs handler (sasquatch 4.5.1 lineage), so it cross-checks the member set but is NOT an independent producer - the independent oracle is `unsquashfs` 4.7.5",
-        "root": "corpus/evidence/round-44/oracle/squashfs_v2/big_endian/__output__"
+        "root": "corpus/evidence/round-44/oracle/squashfs_v2/big_endian/__output__/squashfs_v2.0_be.bin_extract"
       },
       "output_tree_digest": "4178bb8379de3e5573eb448010d1c309fcda4dcb6bb4fd16ab11b4ab0535f947",
       "output_tree_digest_def": "sha256 over the concatenation of '<path>\\t<sha256>\\n' lines of `members`, sorted bytewise by path",
@@ -459,7 +931,37 @@
           "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_be.bin"
         ],
         "exit": 0,
+        "file_verdict": {
+          "argv": [
+            "/usr/bin/file",
+            "-b",
+            "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_be.bin"
+          ],
+          "exit": 0,
+          "note": "file(1) applies the squashfs v4 superblock layout to every squashfs image, so for a v1/v2 image its 'compressed'/'uncompressed' word is read from offset 20 (inode_table_start), NOT from a compression field - the v1/v2 superblock has none.  Do not bind the counter to this word.",
+          "stdout": "Squashfs filesystem, big endian, version 2.0, uncompressed, 201 bytes, 5 inodes, blocksize: 65536 bytes, created: Thu Mar  9 17:06:30 2023"
+        },
         "note": "informational only - the counter owns the binding v1/v2 superblock probe; this is the oracle tool's own report",
+        "probe_v1v2": {
+          "bytes_used": 201,
+          "compression": "gzip",
+          "directory_table_start": 138,
+          "endianness": "be",
+          "guid_start": 0,
+          "inode_table_start": 88,
+          "inodes": 5,
+          "magic": "sqsh",
+          "major": 2,
+          "meta_chain_lands": true,
+          "meta_header_hex": "0030",
+          "meta_len": 48,
+          "meta_uncompressed": false,
+          "minor": 0,
+          "starts_sane": true,
+          "superblock_size": 32,
+          "uid_start": 197
+        },
+        "probe_v1v2_error": null,
         "stdout_lines": [
           "Found a valid big endian SQUASHFS 2:0 superblock on /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_be.bin.",
           "Creation or last append time Thu Mar  9 14:06:30 2023",
@@ -480,7 +982,7 @@
         "stdout_sha256": "479d7299d6eaeea3af455823e9129dac61df051542294e8f29c03480dcfd3300"
       }
     },
-    "v2-le": {
+    "v2le": {
       "census": [
         {
           "mode": "drwxrwxr-x",
@@ -533,14 +1035,14 @@
         "argv": [
           "/usr/bin/unsquashfs",
           "-d",
-          "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Oracle/work/extract/v2-le",
+          "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Oracle/work/extract/v2le",
           "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v2-le--squashfs_v2.0_le.bin"
         ],
         "exit": 0,
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "stderr_tail": "",
         "stdout_sha256": "8b767ff6aabd41f4344d4d2e80e98eeb58df764a18b266494566fc81087ae69a",
-        "wall_s": 0.002
+        "wall_s": 0.001
       },
       "handler": "squashfs_v2",
       "image": {
@@ -624,7 +1126,7 @@
         "mismatches": [],
         "output_tree_digest": "4178bb8379de3e5573eb448010d1c309fcda4dcb6bb4fd16ab11b4ab0535f947",
         "producer_lineage": "unblob 26.6.4 integration expectation (S138); produced by unblob's own squashfs handler (sasquatch 4.5.1 lineage), so it cross-checks the member set but is NOT an independent producer - the independent oracle is `unsquashfs` 4.7.5",
-        "root": "corpus/evidence/round-44/oracle/squashfs_v2/little_endian/__output__"
+        "root": "corpus/evidence/round-44/oracle/squashfs_v2/little_endian/__output__/squashfs_v2.0_le.bin_extract"
       },
       "output_tree_digest": "4178bb8379de3e5573eb448010d1c309fcda4dcb6bb4fd16ab11b4ab0535f947",
       "output_tree_digest_def": "sha256 over the concatenation of '<path>\\t<sha256>\\n' lines of `members`, sorted bytewise by path",
@@ -635,7 +1137,37 @@
           "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v2-le--squashfs_v2.0_le.bin"
         ],
         "exit": 0,
+        "file_verdict": {
+          "argv": [
+            "/usr/bin/file",
+            "-b",
+            "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v2-le--squashfs_v2.0_le.bin"
+          ],
+          "exit": 0,
+          "note": "file(1) applies the squashfs v4 superblock layout to every squashfs image, so for a v1/v2 image its 'compressed'/'uncompressed' word is read from offset 20 (inode_table_start), NOT from a compression field - the v1/v2 superblock has none.  Do not bind the counter to this word.",
+          "stdout": "Squashfs filesystem, little endian, version 2.0, compressed, 196 bytes, 5 inodes, blocksize: 65536 bytes, created: Thu Mar  9 17:05:52 2023"
+        },
         "note": "informational only - the counter owns the binding v1/v2 superblock probe; this is the oracle tool's own report",
+        "probe_v1v2": {
+          "bytes_used": 196,
+          "compression": "gzip",
+          "directory_table_start": 136,
+          "endianness": "le",
+          "guid_start": 0,
+          "inode_table_start": 88,
+          "inodes": 5,
+          "magic": "hsqs",
+          "major": 2,
+          "meta_chain_lands": true,
+          "meta_header_hex": "2e00",
+          "meta_len": 46,
+          "meta_uncompressed": false,
+          "minor": 0,
+          "starts_sane": true,
+          "superblock_size": 32,
+          "uid_start": 192
+        },
+        "probe_v1v2_error": null,
         "stdout_lines": [
           "Found a valid little endian SQUASHFS 2:0 superblock on /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v2-le--squashfs_v2.0_le.bin.",
           "Creation or last append time Thu Mar  9 14:05:52 2023",
@@ -657,7 +1189,7 @@
       }
     }
   },
-  "carriers_source": "frozen-table",
+  "carriers_source": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/carriers.json",
   "oracle_root": "corpus/evidence/round-44/oracle",
   "oracle_tool": "unsquashfs",
   "oracle_tool_path": "/usr/bin/unsquashfs",

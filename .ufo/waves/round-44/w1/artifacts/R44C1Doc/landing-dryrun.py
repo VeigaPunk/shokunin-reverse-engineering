@@ -78,7 +78,7 @@ def main(argv=None):
                               (last_frontier_row, comp_frontier)):
         i = index_of(prefix)
         lines[i + 1:i + 1] = new_lines
-        lines.insert(i + 1, '')  # keep a blank separator before the next appended block
+        lines.insert(i + 1 + len(new_lines), '')  # keep a blank separator before what follows
     rendered_readme = '\n'.join(lines) + '\n'
 
     (work / 'PROVINCE.rendered.md').write_text(rendered_province)
@@ -87,7 +87,7 @@ def main(argv=None):
     checks = {}
     pa = rendered_province
     checks['province_heading_round44'] = pa.count('## Round-44 additions to Core') == 1
-    row = [ln for ln in pa.splitlines() if '`squashfs_v1` and `squashfs_v2`' in ln]
+    row = [ln for ln in pa.splitlines() if ln.startswith('| `squashfs_v1`')]
     checks['province_row_names_both_handlers'] = len(row) == 1 and \
         'squashfs_v1' in row[0] and 'squashfs_v2' in row[0]
     checks['province_row_cites_entry'] = len(row) == 1 and args.stem in row[0]
@@ -105,15 +105,17 @@ def main(argv=None):
     checks['readme_missing_empty'] = not (stems - mapped)
     checks['readme_dangling_empty'] = not (mapped - stems)
     checks['readme_mapped_equals_knowledge'] = len(stems & mapped) == len(stems)
-    checks['readme_after_data_markers'] = rb.count('AFTER-DATA')
+    markers = rb.count('AFTER-DATA')
+    checks['readme_after_data_markers_at_most_one'] = markers <= 1
 
     report = {'revision': args.rev, 'stem': args.stem,
               'knowledge_files': len(stems), 'mapped': len(stems & mapped),
               'missing': sorted(stems - mapped), 'dangling': sorted(mapped - stems),
               'map_rows': len([ln for ln in section.splitlines()
                                if ln.startswith('|') and not set(ln) <= set('|-: ')]),
+              'after_data_markers': markers,
               'checks': checks,
-              'ok': all(v is True or v == 1 for v in checks.values())}
+              'ok': all(v is True for v in checks.values())}
     text = json.dumps(report, indent=1, sort_keys=True)
     print(text)
     if args.json_out:

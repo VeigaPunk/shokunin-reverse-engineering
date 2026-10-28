@@ -440,7 +440,9 @@ def parse_rubric(raw):
     add_frozen(RUBRIC_PATH)
     add_frozen(COUNTER_PATH)
 
-    # every expected_edit must name a rubric-named path
+    # every expected_edit must name a rubric-named path AND bind content:
+    # `append_text` (byte-for-byte) or a non-empty `append` (line identity).
+    # `marker` and `preserve` are additional, never sufficient on their own.
     for path, edit in list(frozen_spec.items()):
         if edit is None:
             continue
@@ -448,6 +450,12 @@ def parse_rubric(raw):
             return None, None, None, None, None, 'expected_edit_not_an_object:%s' % path
         if 'append' in edit and not isinstance(edit['append'], list):
             return None, None, None, None, None, 'expected_edit_append_not_a_list:%s' % path
+        has_text = isinstance(edit.get('append_text'), str) and edit['append_text']
+        has_append = (isinstance(edit.get('append'), list)
+                      and any(str(w).strip() for w in edit['append']))
+        if not (has_text or has_append):
+            return None, None, None, None, None, \
+                'expected_edit_binds_no_content:%s' % path
     frozen_dirs = []
     for item in doc.get('frozen_dirs') or []:
         if isinstance(item, str) and item.strip():
@@ -519,6 +527,7 @@ def freeze_integrity(root, freeze, rev, frozen_spec, declared=(), frozen_dirs=()
             freeze_bytes = show(root, freeze, path)
             rev_bytes = show(root, rev, path)
             if freeze_bytes is None:
+                changed.append(path)
                 notes.append({'path': path, 'state': 'added_under_frozen_dir'})
                 continue
             if rev_bytes is None or freeze_bytes != rev_bytes:
@@ -532,7 +541,10 @@ def freeze_integrity(root, freeze, rev, frozen_spec, declared=(), frozen_dirs=()
         freeze_bytes = show(root, freeze, path)
         rev_bytes = show(root, rev, path)
         if freeze_bytes is None:
-            if path in declared:
+            if rev_bytes is not None and path in (RUBRIC_PATH, COUNTER_PATH):
+                changed.append(path)
+                notes.append({'path': path, 'state': 'added_after_freeze'})
+            elif path in declared:
                 changed.append(path)
                 notes.append({'path': path, 'state': 'absent_frozen_file'})
             else:
@@ -557,6 +569,10 @@ def freeze_integrity(root, freeze, rev, frozen_spec, declared=(), frozen_dirs=()
                 notes.append({'path': path, 'state': 'unchanged'})
             continue
         # relaxed arm: an appended, bound repair only
+        if rev_bytes == freeze_bytes:
+            notes.append({'path': path, 'state': 'unchanged',
+                          'bound_edit_declared': True})
+            continue
         ok, reason, lines = verify_expected_edit(freeze_bytes, rev_bytes, edit)
         if not ok:
             changed.append(path)
@@ -870,12 +886,13 @@ def score(root, rev_arg, freeze_arg, work, rubric_path, export_mode, seat,
         raise Unevaluable('rubric_malformed: %s' % malformed)
 
     declared_freeze = rubric.get('freeze') if isinstance(rubric, dict) else None
+    declared_rev = None
     if isinstance(declared_freeze, str) and declared_freeze.strip():
         try:
             declared_rev = full_rev(root, declared_freeze.strip())
         except Unevaluable:
             declared_rev = declared_freeze.strip()
-        if declared_rev != freeze:
+        if not pre_freeze and declared_rev != freeze:
             raise Unevaluable('rubric_freeze_mismatch: %s != %s' % (declared_rev, freeze))
 
     result = {
@@ -892,13 +909,15 @@ def score(root, rev_arg, freeze_arg, work, rubric_path, export_mode, seat,
         'counter_sha256_at_freeze': None,
         'ancestor_ok': False,
         'pre_freeze': bool(pre_freeze),
-        'claim_score': not pre_freeze,
+        'claim_score': bool((not pre_freeze) and rubric_source == 'freeze'),
+        'declared_freeze': declared_rev,
         'frozen_dirs': sorted(frozen_dirs),
         'frozen_paths': sorted(frozen_spec),
         'frozen_path_changed': [],
         'freeze_notes': [],
         'entries': [],
         'entries_count': len(entries),
+        'entries_evaluated': 0,
         'mismatches': [],
         'mismatches_count': 0,
         'mismatch_details': [],
@@ -1135,6 +1154,7 @@ def selftest():
 
     def run_arm(name, rubric_text, expect, rev=None, use_repo_rubric=False,
                 pre_freeze=False):
+        # (the rubric text may name the repo's own base commit)
         rubric_file = None
         if not use_repo_rubric:
             rubric_file = os.path.join(work, 'rubric-%s.json' % name)
@@ -1213,10 +1233,13 @@ def selftest():
     run_arm('unbound_append', _selftest_rubric([entry]), EXIT_CANT, rev=repaired)
 
     # arm 8: a note alone never repairs -> 1 (the mismatch stands)
+    with open(os.path.join(repo, 'stale.md'), 'a') as handle:
+        handle.write('claim: 3\n')
+    noted = git_commit('appended correction note')
     stale = dict(_SELFTEST_STALE_ENTRY)
     run_arm('note_alone_does_not_repair', _selftest_rubric([stale], frozen=[
         {'path': 'stale.md', 'expected_edit': {'append': ['claim: 3']}}]),
-        EXIT_FAIL, rev=repaired)
+        EXIT_FAIL, rev=noted)
 
     # arm 9: a note plus an independent re-derivation -> 0 (repaired)
     stale_repair = dict(_SELFTEST_STALE_ENTRY)
@@ -1224,7 +1247,7 @@ def selftest():
                                       'last']
     run_arm('note_with_rederived_value', _selftest_rubric([stale_repair], frozen=[
         {'path': 'stale.md', 'expected_edit': {'append': ['claim: 3']}}]),
-        EXIT_MET, rev=repaired)
+        EXIT_MET, rev=noted)
 
     # arm 10: an empty rubric -> 2 (no entry was evaluable)
     run_arm('empty_rubric', _selftest_rubric([]), EXIT_CANT)
@@ -1236,6 +1259,28 @@ def selftest():
     run_arm('frozen_dir_changed', _selftest_rubric([entry], frozen_dirs=[
         'tools/round-44']), EXIT_CANT, rev=dir_changed)
     reset()
+
+    # arm 11b: a file ADDED under a frozen directory pathspec -> 2
+    with open(os.path.join(repo, 'tools', 'round-44', 'added.py'), 'w') as handle:
+        handle.write('# added after the freeze\n')
+    subprocess.run(['git', '-C', repo, 'add', '-A'], capture_output=True, text=True)
+    dir_added = git_commit('round-44 tool added')
+    run_arm('frozen_dir_added', _selftest_rubric([entry], frozen_dirs=[
+        'tools/round-44']), EXIT_CANT, rev=dir_added)
+    reset()
+
+    # arm 13: a weak expected_edit (marker only) -> 2 (malformed rubric)
+    weak = dict(_SELFTEST_STALE_ENTRY)
+    weak['expected_edit'] = {'marker': 'claim: 3'}
+    run_arm('weak_expected_edit', _selftest_rubric([weak], frozen=[
+        {'path': 'stale.md', 'expected_edit': {'marker': 'claim: 3'}}]),
+        EXIT_CANT)
+
+    # arm 14: the pre-freeze census of a rubric that declares the freeze -> 1
+    census = json.dumps({
+        'predicate': 'P44-C2', 'freeze': freeze,
+        'frozen_paths': [], 'entries': [_SELFTEST_STALE_ENTRY]})
+    run_arm('pre_freeze_with_declared_freeze', census, EXIT_FAIL, pre_freeze=True)
 
     # arm 12: the pre-freeze census at the base -> the mismatch is reported
     run_arm('pre_freeze_census', _selftest_rubric([_SELFTEST_STALE_ENTRY]),

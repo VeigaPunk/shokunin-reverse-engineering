@@ -93,11 +93,18 @@ SEAT = "R44C1Oracle"
 # --------------------------------------------------------------------------
 # The frozen carrier table.
 #
-# Ids follow the seat spec (v1-le, v1-be, v2-le, v2-be).  The draft claims
-# file spells the same four carriers V1LE/V1BE/V2LE/V2BE; ids are matched
-# case- and separator-insensitively so either spelling resolves to one
-# carrier.  Pins are copied from `tools/round-42/fixtures.json` (MIT unblob
-# 26.6.4 fixtures, committed under corpus/evidence/round-42/c2/fixtures/).
+# The authoritative list is `tools/round-44/carriers.json` (frozen by the
+# L1): every carrier entry names its own `path` (lane-relative image bytes),
+# `sha256` pin, `handler`, `endian`, `expected_regular` and `output_tree`
+# (lane-relative path of the committed unblob `__output__` extract tree).
+# This table is only the FALLBACK used when no `--carriers` file is given,
+# and it carries the four carriers of the seat spec (v1-le, v1-be, v2-le,
+# v2-be) with the pins copied from `tools/round-42/fixtures.json` (MIT
+# unblob 26.6.4 fixtures under corpus/evidence/round-42/c2/fixtures/).
+#
+# Ids are matched case- and separator-insensitively, so the seat spec's
+# `v1-le`, the draft claims' `V1LE` and the frozen file's `v1le` all
+# resolve to one carrier.
 # --------------------------------------------------------------------------
 
 CARRIERS = (
@@ -326,37 +333,178 @@ def walk_tree(root):
     return regular, nonregular, None
 
 
+# --------------------------------------------------- v1/v2 superblock probe
+
+# The SquashFS v1/v2 superblock is 32 bytes (packed), per unblob 26.6.4's
+# `SquashFSv1Handler.C_DEFINITIONS` (S119):
+#
+#   char   s_magic[4];              //  0:4
+#   uint32 inodes;                  //  4:8
+#   uint32 bytes_used;              //  8:12
+#   uint32 uid_start;               // 12:16
+#   uint32 guid_start;              // 16:20
+#   uint32 inode_table_start;       // 20:24
+#   uint32 directory_table_start;   // 24:28
+#   uint16 s_major;                 // 28:30
+#   uint16 s_minor;                 // 30:32
+#
+# THERE IS NO COMPRESSION FIELD IN THE v1/v2 SUPERBLOCK.  The compression
+# id lives in the v4 layout (u16 at offset 20), which is why `file(1)` -
+# which applies the v4 layout to every squashfs image - prints a
+# meaningless "compressed"/"uncompressed" verdict for a v1/v2 image: it
+# reads offset 20 (inode_table_start) as if it were the v4 compression id.
+# The real compression class of a v1/v2 image is observed from the
+# compression of its inode-table metadata block (zlib header 78 xx =>
+# gzip), which is what `superblock_info` records below.
+
+SB_V1V2_SIZE = 32
+SB_MAGICS = {
+    b"hsqs": "le",   # squashfs 1-3 little endian
+    b"sqsh": "be",   # squashfs 1-3 big endian
+}
+
+
+def sb_u(raw, off, size, endian):
+    """An unsigned superblock field, read with the filesystem's endianness."""
+    return int.from_bytes(raw[off:off + size],
+                          "big" if endian == "be" else "little")
+
+
+def probe_v1v2_superblock(raw):
+    """(fields, error) for a v1/v2 superblock.
+
+    `fields` holds magic, endianness, major, minor, bytes_used, inodes,
+    uid_start, guid_start, inode_table_start, directory_table_start, the
+    metadata block header and the compression class observed from the
+    inode table's metadata block.  It never invents a compression field:
+    the v1/v2 superblock has none.
+    """
+    if raw is None or len(raw) < SB_V1V2_SIZE:
+        return None, "shorter than the 32-byte v1/v2 superblock"
+    magic = raw[0:4]
+    endian = SB_MAGICS.get(magic)
+    if endian is None:
+        return None, "magic %r is not a squashfs 1-3 magic" % magic
+    d = {
+        "magic": magic.decode("latin1"),
+        "endianness": endian,
+        "major": sb_u(raw, 28, 2, endian),
+        "minor": sb_u(raw, 30, 2, endian),
+        "inodes": sb_u(raw, 4, 4, endian),
+        "bytes_used": sb_u(raw, 8, 4, endian),
+        "uid_start": sb_u(raw, 12, 4, endian),
+        "guid_start": sb_u(raw, 16, 4, endian),
+        "inode_table_start": sb_u(raw, 20, 4, endian),
+        "directory_table_start": sb_u(raw, 24, 4, endian),
+        "superblock_size": SB_V1V2_SIZE,
+    }
+    its, dts = d["inode_table_start"], d["directory_table_start"]
+    d["starts_sane"] = bool(SB_V1V2_SIZE <= its < dts <= d["bytes_used"])
+    # the inode table's metadata block: a 2-byte header whose top bit is the
+    # "stored uncompressed" flag and whose low 12 bits are the length
+    d["meta_header_hex"] = None
+    d["meta_len"] = None
+    d["meta_uncompressed"] = None
+    d["compression"] = None
+    d["meta_chain_lands"] = None
+    if d["starts_sane"]:
+        hdr = raw[its:its + 2]
+        d["meta_header_hex"] = hdr.hex()
+        value = sb_u(raw, its, 2, endian)
+        d["meta_uncompressed"] = bool(value & 0x8000)
+        length = value & 0x7FFF
+        d["meta_len"] = length
+        d["meta_chain_lands"] = bool(its + 2 + length == dts)
+        if not d["meta_uncompressed"]:
+            body = raw[its + 2:its + 2 + length]
+            if len(body) >= 2 and body[0] == 0x78 and body[1] in (0x01, 0x5E,
+                                                                    0x9C, 0xDA):
+                d["compression"] = "gzip"
+    return d, None
+
+
 # ------------------------------------------------------------ oracle B tree
 
-def resolve_output_tree(oracle_root, carrier):
+def output_tree_rel(carrier, root):
+    """The carrier's committed `__output__` tree path RELATIVE to the oracle root.
+
+    The frozen carriers.json names the tree lane-relative
+    (`corpus/evidence/round-44/oracle/...`).  Stripping the default oracle
+    root leaves the part that identifies the tree inside whatever
+    `--oracle-root` is given, so an explicit override is honoured instead of
+    being shadowed by the lane-relative path.
+    """
+    rel = carrier.get("output_tree")
+    if not isinstance(rel, str) or not rel:
+        return None
+    if os.path.isabs(rel):
+        return None
+    default_root = os.path.join(root or "", "corpus/evidence/round-44/oracle")
+    full = os.path.join(root or "", rel)
+    try:
+        inside = os.path.relpath(full, default_root)
+    except ValueError:
+        return None
+    if inside.startswith(".."):
+        return None
+    return inside
+
+
+def resolve_output_tree(oracle_root, carrier, root=None, strict=False):
     """The committed `__output__` tree of a carrier, or (None, None, reason).
 
-    Candidate layouts, in order:
-      1. <oracle_root>/<id>__output__/                 (seat-spec layout)
-      2. <oracle_root>/<handler>/<little|big>_endian/__output__/
+    Order:
+      1. the frozen carriers.json `output_tree`, re-rooted at `--oracle-root`;
+      2. <oracle_root>/<id>__output__/                 (seat-spec layout)
+      3. <oracle_root>/<handler>/<little|big>_endian/__output__/
          (the upstream-path layout the fetcher used)
-      3. <oracle_root>/<upstream>/__output__/           (upstream path)
+      4. <oracle_root>/<upstream>/__output__/           (upstream path)
+
+    `strict` (an EXPLICIT `--oracle-root`) drops the lane-relative fallback,
+    so the override is authoritative: a tree that is only present in the
+    lane must not silently satisfy an override that points elsewhere.
     """
-    cands = [
-        os.path.join(oracle_root, carrier["id"] + "__output__"),
-        os.path.join(oracle_root, carrier["handler"],
-                     "little_endian" if carrier["endian"] == "le"
-                     else "big_endian", "__output__"),
-        os.path.join(oracle_root, carrier["upstream"], "__output__"),
-    ]
-    for cand in cands:
+    cands = []
+    inside = output_tree_rel(carrier, root)
+    if inside:
+        cands.append(os.path.join(oracle_root, inside))
+    rel = carrier.get("output_tree")
+    if isinstance(rel, str) and rel and root and not strict:
+        cands.append(os.path.join(root, rel))
+    cands.append(os.path.join(oracle_root, carrier["id"] + "__output__"))
+    if carrier.get("handler"):
+        cands.append(os.path.join(
+            oracle_root, carrier["handler"],
+            "little_endian" if carrier.get("endian") == "le" else "big_endian",
+            "__output__"))
+    if carrier.get("upstream"):
+        cands.append(os.path.join(oracle_root, carrier["upstream"],
+                                  "__output__"))
+    seen, uniq = set(), []
+    for c in cands:
+        if c not in seen:
+            seen.add(c)
+            uniq.append(c)
+    for cand in uniq:
         if os.path.isdir(cand):
             return cand, None, None
-    return None, cands, ("no committed __output__ tree for carrier %r "
-                          "(tried %s)" % (carrier["id"],
-                                          ", ".join(cands)))
+    return None, uniq, ("no committed __output__ tree for carrier %r "
+                         "(tried %s)" % (carrier["id"], ", ".join(uniq)))
 
 
 def extract_root_of(tree_root, carrier):
-    """The '*_extract' directory inside the `__output__` tree, if any."""
-    want = carrier["extract_dir"]
+    """The '*_extract' directory inside the `__output__` tree, if any.
+
+    The frozen carriers.json `output_tree` may already name the extract
+    tree itself; in that case it is used as-is.
+    """
+    want = carrier.get("extract_dir")
+    base = os.path.basename(tree_root.rstrip("/"))
+    if base.endswith("_extract"):
+        return tree_root, base
     entries = sorted(os.listdir(tree_root))
-    if want in entries and os.path.isdir(os.path.join(tree_root, want)):
+    if want and want in entries and os.path.isdir(os.path.join(tree_root,
+                                                               want)):
         return os.path.join(tree_root, want), want
     for name in entries:
         if name.endswith("_extract") and os.path.isdir(os.path.join(tree_root,
@@ -368,7 +516,13 @@ def extract_root_of(tree_root, carrier):
 # ------------------------------------------------------------------ carriers
 
 def load_carriers(path):
-    """The carrier list: from `--carriers` when given, else the frozen table."""
+    """The carrier list: from `--carriers` when given, else the frozen table.
+
+    A carriers.json entry supplies its own `path` (lane-relative image
+    bytes), `sha256` pin, `handler`, `endian`, `expected_regular` and
+    `output_tree` (lane-relative `__output__` extract tree).  A carrier
+    that omits `path` falls back to the built-in table's fixture location.
+    """
     if not path:
         return [dict(c) for c in CARRIERS], "frozen-table"
     if not os.path.isfile(path):
@@ -391,34 +545,48 @@ def load_carriers(path):
             raise OracleError(EXIT_CANNOT_EVALUATE, "carrier entry without id",
                               repr(entry)[:200])
         base = by_id.get(norm_id(entry["id"]))
-        if base is None:
-            raise OracleError(EXIT_CANNOT_EVALUATE,
-                              "carrier id is not one of the frozen four",
-                              entry["id"])
-        merged = dict(base)
-        merged.update({k: v for k, v in entry.items()
-                       if k in ("sha256", "handler", "endian", "fixture",
-                                "expected_files", "upstream", "extract_dir")})
+        merged = dict(base) if base else {}
+        # the frozen file's own fields win over the built-in table
+        for key in ("id", "sha256", "handler", "endian", "fixture", "path",
+                    "upstream", "extract_dir", "expected_files",
+                    "expected_regular", "output_tree", "file", "s_major",
+                    "s_minor", "compression"):
+            if key in entry:
+                merged[key] = entry[key]
+        if "expected_regular" in merged and "expected_files" not in merged:
+            merged["expected_files"] = merged["expected_regular"]
         out.append(merged)
     return out, path
 
 
 def fixture_path(root, carrier, fixtures_dir):
-    """Absolute path of the carrier's committed fixture bytes."""
+    """Absolute path of the carrier's committed fixture bytes.
+
+    Order: the frozen carriers.json `path` (lane-relative), then an explicit
+    `--fixtures-dir`, then the built-in table's fixture location.
+    """
+    cands = []
+    rel = carrier.get("path")
+    if isinstance(rel, str) and rel:
+        cands.append(rel if os.path.isabs(rel) else os.path.join(root, rel))
     if fixtures_dir:
-        cand = os.path.join(fixtures_dir, carrier["fixture"])
+        name = carrier.get("file") or carrier.get("fixture")
+        if name:
+            cands.append(os.path.join(fixtures_dir, name))
+    name = carrier.get("fixture")
+    if name:
+        cands.append(os.path.join(root, "corpus/evidence/round-42/c2/fixtures",
+                                  name))
+    for cand in cands:
         if os.path.isfile(cand):
             return cand
-    cand = os.path.join(root, "corpus/evidence/round-42/c2/fixtures",
-                        carrier["fixture"])
-    if os.path.isfile(cand):
-        return cand
     return None
 
 
 # --------------------------------------------------------------- one carrier
 
-def build_carrier(carrier, root, work, fixtures_dir, oracle_root, tool_sha):
+def build_carrier(carrier, root, work, fixtures_dir, oracle_root, tool_sha,
+                  strict_tree=False):
     """The oracle block of one carrier, or raise OracleError."""
     cid = carrier["id"]
     image = fixture_path(root, carrier, fixtures_dir)
@@ -449,6 +617,10 @@ def build_carrier(carrier, root, work, fixtures_dir, oracle_root, tool_sha):
     # so the two never silently diverge.
     sb = run([UNSQUASHFS, "-s", image])
     sb_lines = [ln.strip() for ln in sb["stdout"].splitlines() if ln.strip()]
+    with open(image, "rb") as fh:
+        image_raw = fh.read()
+    sb_fields, sb_err = probe_v1v2_superblock(image_raw)
+    file_out = run(["/usr/bin/file", "-b", image])
     sb_summary = {
         "argv": sb["argv"],
         "exit": sb["exit"],
@@ -456,6 +628,19 @@ def build_carrier(carrier, root, work, fixtures_dir, oracle_root, tool_sha):
         "stdout_lines": sb_lines,
         "note": "informational only - the counter owns the binding v1/v2 "
                 "superblock probe; this is the oracle tool's own report",
+        "probe_v1v2": sb_fields,
+        "probe_v1v2_error": sb_err,
+        "file_verdict": {
+            "argv": file_out["argv"],
+            "exit": file_out["exit"],
+            "stdout": file_out["stdout"].strip(),
+            "note": "file(1) applies the squashfs v4 superblock layout to "
+                    "every squashfs image, so for a v1/v2 image its "
+                    "'compressed'/'uncompressed' word is read from offset 20 "
+                    "(inode_table_start), NOT from a compression field - the "
+                    "v1/v2 superblock has none.  Do not bind the counter to "
+                    "this word.",
+        },
     }
 
     # (b) extract into a fresh scratch directory
@@ -522,7 +707,8 @@ def build_carrier(carrier, root, work, fixtures_dir, oracle_root, tool_sha):
     nonregular.sort(key=lambda r: (r["path"], r["type"]))
 
     # (d) oracle B - the committed unblob `__output__` expected tree
-    tree_root, cands, reason = resolve_output_tree(oracle_root, carrier)
+    tree_root, cands, reason = resolve_output_tree(oracle_root, carrier, root,
+                                                   strict_tree)
     if tree_root is None:
         raise OracleError(EXIT_CANNOT_EVALUATE,
                           "committed __output__ tree missing for %r" % cid,
@@ -670,7 +856,38 @@ def selftest():
     if norm_id("V1LE") != norm_id("v1-le") or norm_id("v1_be") != norm_id("V1BE"):
         failures.append("norm_id does not unify the two id spellings")
 
-    report = {"cases": 12, "failures": failures}
+    # the v1/v2 superblock probe: field offsets and the absence of a
+    # compression field (the v1/v2 superblock is 32 bytes)
+    sb_le = bytearray(32)
+    sb_le[0:4] = b"hsqs"
+    sb_le[4:8] = (4).to_bytes(4, "little")
+    sb_le[8:12] = (176).to_bytes(4, "little")
+    sb_le[20:24] = (71).to_bytes(4, "little")
+    sb_le[24:28] = (128).to_bytes(4, "little")
+    sb_le[28:30] = (1).to_bytes(2, "little")
+    sb_le[30:32] = (0).to_bytes(2, "little")
+    d, err = probe_v1v2_superblock(bytes(sb_le))
+    if err:
+        failures.append("probe_v1v2_superblock: %s" % err)
+    else:
+        if d["endianness"] != "le" or d["major"] != 1 or d["minor"] != 0:
+            failures.append("v1/v2 probe endian/major/minor wrong: %r" % d)
+        if d["bytes_used"] != 176:
+            failures.append("v1/v2 bytes_used wrong: %r" % d["bytes_used"])
+        if d["inode_table_start"] != 71:
+            failures.append("v1/v2 inode_table_start wrong: %r"
+                            % d["inode_table_start"])
+        if d["directory_table_start"] != 128:
+            failures.append("v1/v2 directory_table_start wrong: %r"
+                            % d["directory_table_start"])
+        if "compression" not in d:
+            failures.append("v1/v2 probe does not report a compression field")
+    if probe_v1v2_superblock(b"hsqs" + bytes(27))[0] is not None:
+        failures.append("v1/v2 probe accepted a truncated superblock")
+    if probe_v1v2_superblock(b"XXXX" + bytes(28))[0] is not None:
+        failures.append("v1/v2 probe accepted a foreign magic")
+
+    report = {"cases": 20, "failures": failures}
     return (not failures), report
 
 
@@ -696,7 +913,8 @@ def main(argv=None):
                          "(the 'oracle' key of every carrier entry is "
                          "replaced); the file is rewritten in place")
     ap.add_argument("--receipt", help="where to write the run receipt")
-    ap.add_argument("--only", help="restrict to one carrier id (repeatable)")
+    ap.add_argument("--only", action="append",
+                    help="restrict to one carrier id (repeatable)")
     ap.add_argument("--selftest", action="store_true",
                     help="run the built-in self test and exit")
     ap.add_argument("--seat", default=SEAT, help="seat name for the receipt")
@@ -729,8 +947,13 @@ def main(argv=None):
     oracle_root = os.path.abspath(args.oracle_root or os.path.join(
         root, "corpus/evidence/round-44/oracle"))
 
+    carriers_file = args.carriers
+    if carriers_file is None:
+        default_carriers = os.path.join(root, "tools/round-44/carriers.json")
+        carriers_file = default_carriers if os.path.isfile(default_carriers) \
+            else None
     try:
-        carriers, carriers_src = load_carriers(args.carriers)
+        carriers, carriers_src = load_carriers(carriers_file)
     except OracleError as exc:
         sys.stderr.write("c1-oracle.py: %s: %s\n" % (exc.reason, exc.detail))
         return exc.code
@@ -756,7 +979,8 @@ def main(argv=None):
         try:
             blocks[carrier["id"]] = build_carrier(carrier, root, work,
                                                   args.fixtures_dir,
-                                                  oracle_root, tool_sha)
+                                                  oracle_root, tool_sha,
+                                                  args.oracle_root is not None)
         except OracleError as exc:
             problems.append({"carrier": carrier["id"], "reason": exc.reason,
                              "detail": exc.detail, "exit": exc.code})

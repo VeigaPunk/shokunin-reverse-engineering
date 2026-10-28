@@ -1,13 +1,28 @@
 {
- "schema": "kaidoku-r44-c1-revenger-probes-v1",
+ "schema": "kaidoku-r44-c1-revenger-probes-v2",
  "seat": "R44C1Revenger",
  "round": 44,
  "claim": "R44-C1",
  "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
  "base_commit_at_dispatch": "c29360e3ba5381a5ab69e372d0d9577970f85018",
- "head_when_probed": "3b0fcaa9e03bda6059d247bcb99a3d5d9fde94f7",
+ "head_when_probed": "9a8de923053978342fdba6ce047e1cca4eda9dd2",
  "scratch": "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Revenger",
- "note": "Probes are read-only against the lane; extraction targets are scratch only. No REA extract-firmware run was performed (the after-side data procedure belongs to the L1).",
+ "note": "Read-only probes of the lane; extraction targets are scratch only. No REA extract-firmware run and no tools/round-44/c1-run.sh run by this seat.",
+ "carriers_json_count": 6,
+ "claim_text_target": 4,
+ "carriers_json_superblock_layout": {
+  "magic_offset": 0,
+  "magic_len": 4,
+  "compression_offset": 20,
+  "compression_len": 2,
+  "s_major_offset": 28,
+  "s_major_len": 2,
+  "s_minor_offset": 30,
+  "s_minor_len": 2,
+  "bytes_used_offset": 40,
+  "bytes_used_len": 8,
+  "note": "v1/v2 superblock field offsets per unblob squashfs.py v1/v2 classes; verify against file output"
+ },
  "sources": [
   {
    "name": "unblob 26.6.4 handlers/filesystem/squashfs.py (S108)",
@@ -21,12 +36,25 @@
    "url": "https://raw.githubusercontent.com/onekey-sec/sasquatch/sasquatch-v4.5.1-6/squashfs-tools/unsquashfs.c",
    "sha256": "ece42b66f37ba67707c2c51b47b643c027232153705f59d238da79958a54cb40",
    "bytes": 120167
+  },
+  {
+   "name": "upstream v2.1 le input (media LFS, S138 tree)",
+   "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v2/little_endian/__input__/squashfs_v2.1_le.bin",
+   "sha256": "6b6cd2fd63e17a499861d2d89d617bd836b169601e46cb2f5a5c66bea8ef253a",
+   "bytes": 4096
+  },
+  {
+   "name": "upstream v2.1 be input (media LFS, S138 tree)",
+   "url": "https://media.githubusercontent.com/media/onekey-sec/unblob/26.6.4/tests/integration/filesystem/squashfs/squashfs_v2/big_endian/__input__/squashfs_v2.1_be.bin",
+   "sha256": "c0140bac22d92df7d6c63fdf6de2d3e75a8fad6b30e6f9eeeb9ef533134f35db",
+   "bytes": 4096
   }
  ],
  "carriers": [
   {
    "id": "v1le",
-   "fixture": "v1-le--squashfs_v1.0_le.bin",
+   "frozen_handler": "squashfs_v1",
+   "fixture_id": "v1-le",
    "endian": "le",
    "magic": "hsqs",
    "s_major": 1,
@@ -36,6 +64,7 @@
    "directory_table_start": 128,
    "sha256": "b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71",
    "size": 4096,
+   "frozen_sha256": "b45925fa779eae0293635ce0e6dc8760308f25227dd88645d677ba3ffce23e71",
    "unblob_chunks": [
     {
      "handler_name": "squashfs_v1",
@@ -67,7 +96,7 @@
     "-f",
     "-d",
     "<outdir>",
-    "<fixture>"
+    "<carrier>"
    ],
    "sasquatch_exit_code": 0,
    "sasquatch_files": [
@@ -92,7 +121,7 @@
     "-no-progress",
     "-d",
     "<outdir>",
-    "<fixture>"
+    "<carrier>"
    ],
    "unsquashfs_exit_code": 0,
    "unsquashfs_files": [
@@ -115,7 +144,8 @@
   },
   {
    "id": "v1be",
-   "fixture": "v1-be--squashfs_v1.0_be.bin",
+   "frozen_handler": "squashfs_v1",
+   "fixture_id": "v1-be",
    "endian": "be",
    "magic": "sqsh",
    "s_major": 1,
@@ -125,6 +155,7 @@
    "directory_table_start": 129,
    "sha256": "529e10775cc152e6c5df0c6c63316811004cc73ce99f03989c86ffd396d631e6",
    "size": 4096,
+   "frozen_sha256": "529e10775cc152e6c5df0c6c63316811004cc73ce99f03989c86ffd396d631e6",
    "unblob_chunks": [
     {
      "handler_name": "squashfs_v1",
@@ -156,7 +187,7 @@
     "-f",
     "-d",
     "<outdir>",
-    "<fixture>"
+    "<carrier>"
    ],
    "sasquatch_exit_code": 0,
    "sasquatch_files": [
@@ -181,7 +212,7 @@
     "-no-progress",
     "-d",
     "<outdir>",
-    "<fixture>"
+    "<carrier>"
    ],
    "unsquashfs_exit_code": 0,
    "unsquashfs_files": [
@@ -204,7 +235,8 @@
   },
   {
    "id": "v2le",
-   "fixture": "v2-le--squashfs_v2.0_le.bin",
+   "frozen_handler": "squashfs_v2",
+   "fixture_id": "v2-le",
    "endian": "le",
    "magic": "hsqs",
    "s_major": 2,
@@ -214,6 +246,7 @@
    "directory_table_start": 136,
    "sha256": "7c62dbe388b972119f5d17a12836a016737d58276184f4caa2a90dafd924f124",
    "size": 4096,
+   "frozen_sha256": "7c62dbe388b972119f5d17a12836a016737d58276184f4caa2a90dafd924f124",
    "unblob_chunks": [
     {
      "handler_name": "squashfs_v2",
@@ -245,7 +278,7 @@
     "-f",
     "-d",
     "<outdir>",
-    "<fixture>"
+    "<carrier>"
    ],
    "sasquatch_exit_code": 0,
    "sasquatch_files": [
@@ -275,7 +308,7 @@
     "-no-progress",
     "-d",
     "<outdir>",
-    "<fixture>"
+    "<carrier>"
    ],
    "unsquashfs_exit_code": 0,
    "unsquashfs_files": [
@@ -303,7 +336,8 @@
   },
   {
    "id": "v2be",
-   "fixture": "v2-be--squashfs_v2.0_be.bin",
+   "frozen_handler": "squashfs_v2",
+   "fixture_id": "v2-be",
    "endian": "be",
    "magic": "sqsh",
    "s_major": 2,
@@ -313,6 +347,7 @@
    "directory_table_start": 138,
    "sha256": "79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0",
    "size": 4096,
+   "frozen_sha256": "79c0f3886291f4abcc656acd49932446cf16afaa67e6ffb0c5258e3c2e2dfcc0",
    "unblob_chunks": [
     {
      "handler_name": "squashfs_v2",
@@ -344,7 +379,7 @@
     "-f",
     "-d",
     "<outdir>",
-    "<fixture>"
+    "<carrier>"
    ],
    "sasquatch_exit_code": 0,
    "sasquatch_files": [
@@ -374,7 +409,209 @@
     "-no-progress",
     "-d",
     "<outdir>",
-    "<fixture>"
+    "<carrier>"
+   ],
+   "unsquashfs_exit_code": 0,
+   "unsquashfs_files": [
+    {
+     "rel": "apple1.txt",
+     "size": 7,
+     "sha256": "6181259c6b2ca629a56920b422e9a8f212a4d0bcead923df92dbd66fbb7e1c30"
+    },
+    {
+     "rel": "apple2.txt",
+     "size": 7,
+     "sha256": "919fc82d6f1031d305dbce2fc5a74a6df5ddf2da472ee4d137c681cef28d4aff"
+    },
+    {
+     "rel": "apple3.txt",
+     "size": 7,
+     "sha256": "2d95014ed3f24e86ce5fc3a4529f057d7b2318d9b24b54f2e9476b154bd21ec6"
+    },
+    {
+     "rel": "apple4.txt",
+     "size": 7,
+     "sha256": "08d9b05b15b998f2dbc741399fef4350c7863cc85df2305d7da4e83e8c8a959d"
+    }
+   ]
+  },
+  {
+   "id": "v21le",
+   "frozen_handler": "squashfs_v2",
+   "fixture_id": "v2.1-le",
+   "endian": "le",
+   "magic": "hsqs",
+   "s_major": 2,
+   "s_minor": 1,
+   "bytes_used": 196,
+   "inode_table_start": 88,
+   "directory_table_start": 136,
+   "sha256": "6b6cd2fd63e17a499861d2d89d617bd836b169601e46cb2f5a5c66bea8ef253a",
+   "size": 4096,
+   "frozen_sha256": "6b6cd2fd63e17a499861d2d89d617bd836b169601e46cb2f5a5c66bea8ef253a",
+   "unblob_chunks": [
+    {
+     "handler_name": "squashfs_v2",
+     "start_offset": 0,
+     "end_offset": 4096,
+     "size": 4096,
+     "is_encrypted": false
+    }
+   ],
+   "unblob_report_sha256": "0b744b44f36b6b8248b3853ad9540dba45381cabbad3d44dfd2805ca88c53be5",
+   "unblob_argv": [
+    "/home/vgpnk/.local/bin/unblob",
+    "-s",
+    "-p",
+    "1",
+    "-e",
+    "<out>/extract",
+    "--report",
+    "<out>/report.json",
+    "--log",
+    "<out>/unblob.log",
+    "<out>/firmware.bin"
+   ],
+   "unblob_exit_code": 0,
+   "sasquatch_argv": [
+    "/home/vgpnk/.local/bin/sasquatch",
+    "-le",
+    "-no-exit-code",
+    "-f",
+    "-d",
+    "<outdir>",
+    "<carrier>"
+   ],
+   "sasquatch_exit_code": 0,
+   "sasquatch_files": [
+    {
+     "rel": "apple1.txt",
+     "size": 7,
+     "sha256": "6181259c6b2ca629a56920b422e9a8f212a4d0bcead923df92dbd66fbb7e1c30"
+    },
+    {
+     "rel": "apple2.txt",
+     "size": 7,
+     "sha256": "919fc82d6f1031d305dbce2fc5a74a6df5ddf2da472ee4d137c681cef28d4aff"
+    },
+    {
+     "rel": "apple3.txt",
+     "size": 7,
+     "sha256": "2d95014ed3f24e86ce5fc3a4529f057d7b2318d9b24b54f2e9476b154bd21ec6"
+    },
+    {
+     "rel": "apple4.txt",
+     "size": 7,
+     "sha256": "08d9b05b15b998f2dbc741399fef4350c7863cc85df2305d7da4e83e8c8a959d"
+    }
+   ],
+   "unsquashfs_argv": [
+    "/usr/bin/unsquashfs",
+    "-no-progress",
+    "-d",
+    "<outdir>",
+    "<carrier>"
+   ],
+   "unsquashfs_exit_code": 0,
+   "unsquashfs_files": [
+    {
+     "rel": "apple1.txt",
+     "size": 7,
+     "sha256": "6181259c6b2ca629a56920b422e9a8f212a4d0bcead923df92dbd66fbb7e1c30"
+    },
+    {
+     "rel": "apple2.txt",
+     "size": 7,
+     "sha256": "919fc82d6f1031d305dbce2fc5a74a6df5ddf2da472ee4d137c681cef28d4aff"
+    },
+    {
+     "rel": "apple3.txt",
+     "size": 7,
+     "sha256": "2d95014ed3f24e86ce5fc3a4529f057d7b2318d9b24b54f2e9476b154bd21ec6"
+    },
+    {
+     "rel": "apple4.txt",
+     "size": 7,
+     "sha256": "08d9b05b15b998f2dbc741399fef4350c7863cc85df2305d7da4e83e8c8a959d"
+    }
+   ]
+  },
+  {
+   "id": "v21be",
+   "frozen_handler": "squashfs_v2",
+   "fixture_id": "v2.1-be",
+   "endian": "be",
+   "magic": "sqsh",
+   "s_major": 2,
+   "s_minor": 1,
+   "bytes_used": 201,
+   "inode_table_start": 88,
+   "directory_table_start": 138,
+   "sha256": "c0140bac22d92df7d6c63fdf6de2d3e75a8fad6b30e6f9eeeb9ef533134f35db",
+   "size": 4096,
+   "frozen_sha256": "c0140bac22d92df7d6c63fdf6de2d3e75a8fad6b30e6f9eeeb9ef533134f35db",
+   "unblob_chunks": [
+    {
+     "handler_name": "squashfs_v2",
+     "start_offset": 0,
+     "end_offset": 4096,
+     "size": 4096,
+     "is_encrypted": false
+    }
+   ],
+   "unblob_report_sha256": "9c2f1ec35b6ab0122953966b0d77bcf0c9401c3448e2d39dde2b7d3777c38bda",
+   "unblob_argv": [
+    "/home/vgpnk/.local/bin/unblob",
+    "-s",
+    "-p",
+    "1",
+    "-e",
+    "<out>/extract",
+    "--report",
+    "<out>/report.json",
+    "--log",
+    "<out>/unblob.log",
+    "<out>/firmware.bin"
+   ],
+   "unblob_exit_code": 0,
+   "sasquatch_argv": [
+    "/home/vgpnk/.local/bin/sasquatch",
+    "-be",
+    "-no-exit-code",
+    "-f",
+    "-d",
+    "<outdir>",
+    "<carrier>"
+   ],
+   "sasquatch_exit_code": 0,
+   "sasquatch_files": [
+    {
+     "rel": "apple1.txt",
+     "size": 7,
+     "sha256": "6181259c6b2ca629a56920b422e9a8f212a4d0bcead923df92dbd66fbb7e1c30"
+    },
+    {
+     "rel": "apple2.txt",
+     "size": 7,
+     "sha256": "919fc82d6f1031d305dbce2fc5a74a6df5ddf2da472ee4d137c681cef28d4aff"
+    },
+    {
+     "rel": "apple3.txt",
+     "size": 7,
+     "sha256": "2d95014ed3f24e86ce5fc3a4529f057d7b2318d9b24b54f2e9476b154bd21ec6"
+    },
+    {
+     "rel": "apple4.txt",
+     "size": 7,
+     "sha256": "08d9b05b15b998f2dbc741399fef4350c7863cc85df2305d7da4e83e8c8a959d"
+    }
+   ],
+   "unsquashfs_argv": [
+    "/usr/bin/unsquashfs",
+    "-no-progress",
+    "-d",
+    "<outdir>",
+    "<carrier>"
    ],
    "unsquashfs_exit_code": 0,
    "unsquashfs_files": [

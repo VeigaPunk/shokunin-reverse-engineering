@@ -146,6 +146,11 @@ def main():
                      os.path.join(fx, "v2-le--squashfs_v2.0_le.bin"),
                      os.path.join(fx, "v2ns-le--squashfs_v2.0_le.bin")], scr,
                     "byte diff standard v2 LE vs v2ns LE (0-based offsets)"))
+    runs.append(run("cmpprobe",
+                    ["python3", "-I", "-B",
+                     os.path.join(os.path.dirname(os.path.abspath(__file__)), "cmpprobe.py"),
+                     os.path.join(fx, "v2-le--squashfs_v2.0_le.bin")], scr,
+                    "instrument hazard: `cmp -l` exit status vs file size"))
 
     # 7. the families that stay Frontier: reader availability measured
     for rid, f, note in [

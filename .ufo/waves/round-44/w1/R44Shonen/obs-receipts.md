@@ -149,3 +149,11 @@ carrier ids: ['v1le', 'v1be', 'v2le', 'v2be', 'v21le', 'v21be']  (draft froze 4;
 - v2be squashfs_v2 be pin_match=True comp_declared=gzip regular_files=4 expected_regular=4 unsquashfs_s_exit=0 lls_exit=0 verdict=Found a valid big endian SQUASHFS 2:0 superblock on corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_
 - v21le squashfs_v2 le pin_match=True comp_declared=gzip regular_files=4 expected_regular=4 unsquashfs_s_exit=0 lls_exit=0 verdict=Found a valid little endian SQUASHFS 2:1 superblock on corpus/evidence/round-44/carriers/squashfs_v2.1_le.bin.
 - v21be squashfs_v2 be pin_match=True comp_declared=gzip regular_files=4 expected_regular=4 unsquashfs_s_exit=0 lls_exit=0 verdict=Found a valid big endian SQUASHFS 2:1 superblock on corpus/evidence/round-44/carriers/squashfs_v2.1_be.bin.; I
+
+
+## mined-mistake red receipt (observed at 08:16, 9a8de923053978342fdba6ce047e1cca4eda9dd2)
+- path `.ufo/waves/round-44/l1/probe-fixture-404.txt`
+- size 14 bytes, mtime 2026-10-28T11:16:47Z
+- sha256 d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed
+- content (repr) b'404: Not Found'
+- attributes recorded: none (no URL, status line, timestamp or command in the file)
