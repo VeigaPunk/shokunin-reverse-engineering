@@ -217,8 +217,7 @@ def main_guard(fn):
     try:
         return fn()
     except Exception as exc:  # noqa: BLE001 - a crash is a could-not-evaluate, not a verdict
-        print('{"reason": "unhandled %s: %s"}' % (type(exc).__name__, str(exc)[:300]))
-        return 2
+        return 2, {"reason": "unhandled %s: %s" % (type(exc).__name__, str(exc)[:300])}
 
 
 if __name__ == "__main__":

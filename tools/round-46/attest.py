@@ -437,8 +437,9 @@ def evaluate(root, freeze, rev, spec_name="r46", profile="v2", with_battery=True
     skill = gate.show(root, rev, "SKILL.md")
     if skill is None:
         return 2, {"reason": "SKILL.md absent at rev", "counter": "round-46-c1"}
-    battery = None
-    if with_battery:
+    files = lambda p: gate.show(root, fs["rev"], p)  # noqa: E731
+    structural, receipt = score(skill, files, spec_name, profile, fs["rev"], battery=None)
+    if with_battery and structural == 0:
         scratch_root, err = gate.scratch("kaidoku-r46-battery-")
         if err:
             return 2, {"reason": err, "counter": "round-46-c1"}
@@ -448,8 +449,11 @@ def evaluate(root, freeze, rev, spec_name="r46", profile="v2", with_battery=True
             shutil.rmtree(scratch_root, ignore_errors=True)
         if "error" in battery:
             return 2, {"reason": "battery: " + battery["error"], "counter": "round-46-c1"}
-    code, receipt = score(skill, lambda p: gate.show(root, fs["rev"], p), spec_name,
-                          profile, fs["rev"], battery=battery)
+        structural, receipt = score(skill, files, spec_name, profile, fs["rev"],
+                                    battery=battery)
+    elif with_battery:
+        receipt["battery"] = {"skipped": "artefact fails a structural clause first"}
+    code = structural
     receipt.update({"freeze": fs["freeze"], "frozen_derived": fs["frozen_derived"],
                     "frozen_path_changed": fs["frozen_path_changed"],
                     "touched": len(fs["touched"]), "restored": fs["restored"]})
