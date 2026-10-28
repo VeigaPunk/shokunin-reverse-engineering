@@ -5,9 +5,10 @@ Seat: leaf attack seat, round 45 wave 2. Lane root
 (`tools/round-38/registry-immutable.sh`) over base `149133d47aa7e90796f96047afe6d251a3e65b2c`
 → head `f59565b782c18b0eb691bec12f52d2f80d9f5032`.
 
-The lane moved three times while I attacked it (tip `0ee50aaf` → `84cb9da5`). Every claim below
-names the revision it was measured at; the two ranges I was given are reported separately from the
-extra ranges I checked afterwards. Frozen paths were verified untouched at every step:
+The lane tip advanced while I attacked it — `0ee50aaf` at my first measurement, `84cb9da5` at the
+penultimate, `99fdb9e4` at the last (`git log --oneline 0ee50aaf..99fdb9e4` = 6 commits: `e00b9f6b`,
+`b142b76b`, `17ce00f0`, `ef3edf4b`, `84cb9da5`, `99fdb9e4`, the last being the L1's repair of my own R-1). Every claim below names the revision it was measured at; the range I was given
+(`149133d4..f59565b7`) is reported separately from the extra ranges I checked afterwards. Frozen paths were verified untouched at every step:
 `git log f762b727..84cb9da5 -- tools/round-45 plans/round-45-claims.md` prints nothing and
 `git status --porcelain` over the same paths is empty, so no receipt here is contaminated by a
 post-freeze touch (including none of mine — I wrote only under
@@ -75,7 +76,7 @@ Captured verbatim in `H-gate-columns.txt` (`utc: 2026-10-28T16:26:07Z`, one fixt
 | scope cell (col 6) widened in place | **1** | `S001 changed columns: 6` | not allowed → correctly red (the M38-8 shape) |
 | teaches cell (col 8) edited | **1** | `S001 changed columns: 8` | not allowed → correctly red |
 | opened cell (col 10) edited | **1** | `S002 changed columns: 10` | not allowed → correctly red |
-| trailing space only, inside a guarded cell | **1** | `S001 changed columns: 3` | not allowed → red (byte-strict: a cosmetic reflow of an old row is a false positive, never a false clean) |
+| trailing space only, inside a guarded cell | **1** | `S001 changed columns: 3` (`I-supplementary.txt`) | not allowed → red (byte-strict: a cosmetic reflow of an old row is a false positive, never a false clean) |
 | status + recheck + used-by changed together | **0** | — | **allowed** → correctly green |
 | a new row appended | **0** | — | **allowed** → correctly green |
 | row deleted | **1** | `S003 row deleted (append-only)` | correctly red |
@@ -98,7 +99,7 @@ synthetic fixture.
 | # | shape | gate | independent instrument | live exposure |
 |---|---|---|---|---|
 | F-1 | a **12th cell** appended after `used-by` on an existing row (`NF` 13 → 14) | **exit 0** | `sources-census.sh validate` prints `E01 S139 fields=12` | none: head has 0 malformed rows |
-| F-2 | an existing row **indented 4+ spaces** edited in place (both sides invisible to `^ {0,3}\|`) | **exit 0** | census uses `^\|…` (no leading space) — also blind | none: `grep -nE '^ +\|' corpus/SOURCES.md` is empty |
+| F-2 | an existing row **indented 4+ spaces** edited in place (both sides invisible to `^ {0,3}\|`) | **exit 0** | census row test is `/^\|[ \t]*S[0-9]{3,}[ \t]*\|/` (`sources-census.sh:619`) — no leading space allowed, so also blind | none: `grep -nE '^ +\|' corpus/SOURCES.md` is empty |
 | F-3 | a **new row re-registering an existing row's URL+scope** (the M38-8 duplicate-row half) | **exit 0** | `sources-census.sh validate` → `W04 duplicate url … across scopes` (and `E04` when the scope is identical) | none: S140/S141 add **no** new W04 (14 before, 14 after) |
 
 F-1 reproducer (clone of the lane at `HEAD`, S139 given a genuine 12th cell; its `used-by` cell
@@ -139,8 +140,8 @@ trim), against the blob bytes at each revision:
 
 So: **no existing row changed at all** — not merely none outside status/recheck/used-by
 (a strictly stronger result than the assignment asked me to confirm), and **the only additions are
-S140 and S141**. The strict parser also finds **0** rows that the gate's `^ {0,3}` anchor would miss,
-so F-2 is latent, not present in this corpus.
+S140 and S141**. The strict parser also finds **0** rows that the gate's `^ {0,3}` anchor would miss
+(`I-supplementary.txt`), so F-2 is latent, not present in this corpus.
 
 Two further independent confirmations:
 
@@ -299,20 +300,20 @@ Receipt: `D-sources-fetch.txt`. No sibling report names the revision gap (grep o
 
 ---
 
-## 5. Record checks — one live defect, rest holds
+## 5. Record checks — one defect (repaired at HEAD), one still live, the rest hold
 
 | # | record statement | measurement | verdict |
 |---|---|---|---|
-| R-1 | `SCORECARD.md` A3 paragraph: "the values are **identical** at `e715263c`, `1f4b27f8`, `fedd11bf` and A3" (`:3593-3594` at HEAD `84cb9da5`) | `block22_refs` = **6 / 7 / 8 / 8** at those four revisions (`c1-counter.py` run four times; the four committed receipts agree: `c1-at-e715263c.json` 6, `…1f4b27f8` 7, `…A2` 8, `…A3` 8) | **falsified** — "the values" is false for `block22_refs`. The *preceding* A2 sentence (`:3583-3584`) was already repaired by `e00b9f6b` to name the four identical fields and parenthesise the growth; the A3 sentence was not. Fix: same qualifier, "`rule_blocks`, `rows`, `unresolved` and `met_target` are identical at all four; `block22_refs` reads 6/7/8/8 as citations were added". |
+| R-1 | `SCORECARD.md` A3 paragraph: "the values are **identical** at `e715263c`, `1f4b27f8`, `fedd11bf` and A3" (was `:3593-3594` at `84cb9da5`) | `block22_refs` = **6 / 7 / 8 / 8** at those four revisions (`c1-counter.py` run four times; the four committed receipts agree: `c1-at-e715263c.json` 6, `…1f4b27f8` 7, `…A2` 8, `…A3` 8) | **falsified, then FIXED** — "the values" was false for `block22_refs`. The *preceding* A2 sentence (`:3583-3584`) had already been repaired by `e00b9f6b`; the A3 sentence had not. **At HEAD `99fdb9e4` it is repaired** and the repair is accurate: `rule_blocks`, `rows`, `unresolved` and `met_target` are identical at all four and `block22_refs` reads 6/7/8/8, credited to R45W2Immutable R-1. Exact fix I proposed and the one landed agree. |
 | R-2 | `LOG.md` claim ledger: "refs **7/7** resolved" at `1f4b27f8` | `block22_refs 7`, `block22_unresolved_citations []` | **holds** |
 | R-3 | `SCORECARD.md`: rows `139 → 141`; `W04` 14 at round start and end | strict parser 139/141; census `W04` = 14 both | **holds** |
 | R-4 | `SCORECARD.md`: "14 W04 warnings" at round end | census prints 14 | **holds** |
-| R-5 | block 22 row "FREEZE equals REV (empty range) \| **all arms** \| 0 \| verdict clean" | with `--check-dirty` and a dirty frozen file, `--freeze B --rev B` exits **1** (`dirty [' M tools/round-45/tool.py']`); exits 0 only without the dirty arm armed | **falsified as written (LOW)** — "all arms" is false. Fix: "no touch, every frozen blob equal, **and a clean worktree** → 0". |
+| R-5 | block 22 row "FREEZE equals REV (empty range) \| **all arms** \| 0 \| verdict clean" | with `--check-dirty` and a dirty frozen file, `--freeze B --rev B` exits **1** (`dirty [' M tools/round-45/tool.py']`); exits 0 only without the dirty arm armed | **falsified as written (LOW)**; routed as R45-CL24(b) at `99fdb9e4`, but that item attributes the `no dirty file` clause to **this** row — the clause belongs to the other row (`no touch, no dirty file and every frozen blob equal …`, `SKILL.md:594` at HEAD), and `SKILL.md:595` reads only `FREEZE equals REV (empty range) \| all arms`. See §8. |
 | R-6 | block 22 table exit column says `1` for a touched frozen path; the counters report `2` | preflight 1, both counters 2 on the same condition | **holds as disclosed** — block 22 (A2) states "The exit column is the gate's; a scoring counter reports the same condition as `2`" |
 | R-7 | block 22 names a located citation set (`block22_refs 8`) | 8 matches, **7 line-located + 1 bare** (`plans/round-45-claims.md` with no `:line`); the claim's `>= 4` counts the bare one | **holds** against the claim (`>=4`, and the bare path does resolve); the count's shape is R45-CL13(b), already routed |
 | R-8 | registry row for `tools/round-44/c1-run.sh` (corrected by A3): does not run the oracle, `--dry-run` exits 0 writing nothing | `grep -c oracle tools/round-44/c1-run.py` = 0; `--dry-run` exit 0, "DRY RUN: nothing was written.", `git status --porcelain corpus/evidence/` empty; bad flag → exit 2 | **holds at A3** |
 | R-9 | the six registry rows' exit cells name `0`, `1`, `2`; c2-counter green | six rows, exact first cell, all exit cells carry the three codes; `c2-counter` exit 0 with `scope_size 6`, `unregistered []`, `thin []` at `1f4b27f8` and A3 | **holds** |
-| R-10 | registry row for `tools/round-44/c1-counter.py`: `--selftest --pkg65 <rea-agents 6.5.0 root>` — 47 cases, green 2026-10-28 | plain `--selftest` (no `--pkg65`) → exit 0, `cases 47`, `failures []`; **`--pkg65` variant NOT RUN** — no rea-agents 6.5.0 package root is installed on this host (`find / -maxdepth 6 -path '*rea*' -name 6.5.0` empty), and a bogus root correctly exits 1 | **holds for the case count; the documented command's exact form is `not run` here**, reason: the pinned package root is absent on this host |
+| R-10 | registry row for `tools/round-44/c1-counter.py`: `--selftest --pkg65 <rea-agents 6.5.0 root>` — 47 cases, green 2026-10-28 | plain `--selftest` (no `--pkg65`) → exit 0, `cases 47`, `failures []`; **`--pkg65` variant NOT RUN** — no rea-agents 6.5.0 package root is installed on this host (`find / -maxdepth 6 -path '*rea*' -name 6.5.0` empty), and a bogus root correctly exits 1 | **holds for the case count; the documented command's exact form is `not run` here** (`I-supplementary.txt`), reason: the pinned package root is absent on this host |
 | R-11 | c2-counter detects a registered instrument that does not exist at `--rev` | deleted `tools/round-44/c2-counter.py` at a clone's head; SKILL row still names it; `c2-counter` → **exit 0, `met_target true`, `registered` all six** | **holds as routed R45-CL2** (the counter checks the row, not the tool), corroborated |
 
 Receipts: `A4`, `A5`, `A6`, `A10`, `C-strict-parser.txt`, `F-gate-rowcount.txt`.
@@ -324,7 +325,7 @@ Receipts: `A4`, `A5`, `A6`, `A10`, `C-strict-parser.txt`, `F-gate-rowcount.txt`.
 | id | attack | expected by the record | measured | verdict |
 |---|---|---|---|---|
 | A-1 | `registry-immutable.sh` base→head, the assigned run | 0, silent | 0, empty stdout, sha256 `e3b0c442…` | **holds** |
-| A-2 | same, base→tip `84cb9da5` | 0 | 0, and SOURCES bytes at tip are identical to `f59565b7` | **holds** |
+| A-2 | same, base→tip (`0ee50aaf`, `84cb9da5`, `99fdb9e4`) | 0 | 0 at every tip; `corpus/SOURCES.md` sha256 `70be416d…` identical at `f59565b7`, `84cb9da5` and `99fdb9e4` | **holds** |
 | A-3 | the gate's `1` column naming (fixtures) | names the changed column | 3/5/6/8/10 named correctly; 9/11/12 exempt | **holds** |
 | A-4 | no surviving row changed outside status/recheck/used-by | true | 0 changed cells at all, 139 survivors | **holds (stronger than claimed)** |
 | A-5 | only additions are S140/S141 | true | added `['S140','S141']`, removed none, order preserved | **holds** |
@@ -333,8 +334,8 @@ Receipts: `A4`, `A5`, `A6`, `A10`, `C-strict-parser.txt`, `F-gate-rowcount.txt`.
 | B-2 | counters' freeze arm vs a merge resolution | 2 `frozen_path_changed` | **0 `met_target true`** | **falsified** (routed CL6; measured range has no merge, so no score is affected) |
 | C-1 | S140/S141 page identity, quote, word counts, anchors | all hold | all hold, 5/5 fetches byte-identical | **holds** |
 | C-2 | S140/S141 `anchor` carries a revision | CORPUS requires one | absent in both; available on the page (`2.53.0` / `2.56.0`) | **falsified** (LOW, row-shape) |
-| D-1 | SCORECARD A3 "the values are identical at four revisions" | true | `block22_refs` 6/7/8/8 | **falsified** (LOW) |
-| D-2 | block 22 empty-range row "all arms → 0" | 0 | 1 with `--check-dirty` on a dirty worktree | **falsified as written** (LOW) |
+| D-1 | SCORECARD A3 "the values are identical at four revisions" | true | `block22_refs` 6/7/8/8 | **falsified** (LOW), repaired at `99fdb9e4` |
+| D-2 | block 22 empty-range row "all arms → 0" | 0 | 1 with `--check-dirty` on a dirty worktree | **falsified as written** (LOW); routed as R45-CL24(b), but against the neighbouring row (§8) |
 | D-3 | LOC/SCORECARD/census counts (7/7, 139→141, 14 W04) | true | true | **holds** |
 | D-4 | `c1-run.sh` semantics (A3-corrected row) | as written | as written | **holds** |
 | D-5 | round-44 `c1-counter.py` selftest command with `--pkg65` | 47 cases green | 47 green *without* the flag; the flag's form is not runnable here (no package root) | **holds in substance; `not run` for the documented form** |
@@ -358,16 +359,58 @@ source rows themselves name.
 4. **A registry-schema line belongs beside the append-only gate**: the gate is a cell differ for
    columns 2–12; the census is the schema instrument (F-1). Say so in the SKILL row so a future seat
    does not read the `0` as stronger than it is.
-5. **Record discipline**: two LIVE low-severity false sentences (D-1 at `SCORECARD.md:3593-3594`,
-   D-2 the block-22 empty-range row). Both are one-line amendments; both are of the same class as
-   the A2 sentence that `e00b9f6b` already repaired, so the repair pass missed siblings. A grep for
-   "identical at" across the record before closing would have caught D-1.
+5. **Record discipline**: D-1 (`SCORECARD.md` A3 "identical values") was repaired at
+   `99fdb9e4` exactly as proposed; D-2 (the block-22 empty-range row) is routed as R45-CL24(b) but
+   against the wrong row (`SKILL.md:595`, not the `:594` row whose trigger names `no dirty file`).
+   A grep for "identical at" and for "all arms" across the record before closing would have caught
+   both without a wave-2 seat.
 6. **S140/S141 `anchor` revision** (§4.2): record `last updated 2.53.0` / `2.56.0` in the lesson Gate
    now; a `supersedes S140/S141` row pair only if the registry itself must comply.
 
 ---
 
-## 8. Receipts in this directory
+## 8. Reconciling with the L1's dispositions at HEAD `99fdb9e4`
+
+While I was writing, the L1 landed `99fdb9e4` = "correct the SCORECARD A3 'identical values'
+sentence (block22_refs 6/7/8/8) after wave-2 R-1, and route R45-CL24". Three of my findings are
+dispositioned there; two of the dispositions carry their own factual errors, which I record because
+this wave exists to disagree with the record when the bytes disagree.
+
+**(a) R-1 is fixed, and the landed fix is accurate.** The sentence now reads "`rule_blocks`, `rows`,
+`unresolved` and `met_target` are identical at `e715263c`, `1f4b27f8`, `fedd11bf` and A3, while
+`block22_refs` reads 6 / 7 / 8 / 8 as citations were added" (`SCORECARD.md:3593-3595`). That matches
+my measurement exactly, and the credit line names this seat. Nothing further needed.
+
+**(b) R45-CL24(b) misdescribes which row it fixes.** It says "the row's trigger already reads 'no
+dirty file', so the literal trigger is consistent, the arm cell is ambiguous". But the phrase
+`no dirty file` belongs to the *other* zero-row of the table — `SKILL.md:594` reads
+`| no touch, no dirty file and every frozen blob equal | all arms | 0 | verdict clean |` — while the
+row my R-5 attacked is `SKILL.md:595`, `| FREEZE equals REV (empty range) | all arms | 0 | verdict
+clean |`, whose trigger names no worktree condition at all. Measured on a fixture at `99fdb9e4`'s
+predecessor: `--freeze B --rev B` on a clean tree → 0; with one dirty frozen file → **1**,
+`dirty [' M tools/round-45/tool.py']`. So the empty-range row is false as written, not merely
+ambiguous, and the fix belongs to `:595` (qualify the arm as "all arms, given a clean worktree" or
+drop the row and keep `:594`).
+
+**(c) R45-CL24(c) states a page fact that is false.** It says "the pages carry no version marker".
+Both pages do: their own header line is `Latest version ▾ git-status last updated in 2.53.0` and
+`Latest version ▾ git-diff-tree last updated in 2.56.0` (receipt `D-sources-fetch.txt`, line
+`page revision markers:`). That matters to the disposition: if no marker existed, the honest fix
+would be a fetch stamp plus the note the item gives; because a marker exists, the `anchor` cells can
+and should carry `last updated 2.53.0` / `2.56.0` — which is also what the sibling rows on the same
+host (S073/S074) already do. The routed fix is therefore weaker than the defect requires, not wrong
+in direction.
+
+**(d) R45-CL24(d) matches my R-10 and needs no correction**: the plain `--selftest` is 47 cases green
+and the `--pkg65` form cannot run here because no rea-agents 6.5.0 root is installed.
+
+**Still unrouted at `99fdb9e4`: F-1, F-2 and F-3** — `grep -n "registry-immutable\|extra cell\|indented row\|NF!=13"
+corpus/lessons/round-45.md` returns nothing. These are the append-only gate's scope limits (a 12th
+cell, a 4-space-indented row, a duplicate-document append all exit 0), and they are the one part of
+this seat's attack that no CL item covers. They do not falsify a claim; they mean a reader must not
+treat the gate's `0` as stronger than a cell differ for columns 2–12.
+
+## 9. Receipts in this directory
 
 The single-run receipts (`A*`, `B-gate-legal-append`, `B-gate-extra-cell`, `G`) each carry a
 `cmd:`, `exit:`, `stdout_sha256:` and `utc:` line, and their stdout is truncated to 2,000 bytes.
@@ -394,3 +437,4 @@ command/exit records and are not presented as such.
 | `F-gate-rowcount.txt` | rows the gate sees at four revisions + the gate blob at base and tip |
 | `G-final-tip.txt` | the final run at `84cb9da5`, exit 0, plus the SOURCES byte comparison |
 | `H-gate-columns.txt` | the 13-mutation column/allow-list capture (real stdout) + the real-corpus `E01` vs gate-0 pair |
+| `I-supplementary.txt` | round-44 c1-counter 47-case selftest plus the `--pkg65` form's failure and the absent package root; the strict-parser-vs-indent-anchor check; the whitespace-only mutation |

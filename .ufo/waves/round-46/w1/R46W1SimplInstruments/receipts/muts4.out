@@ -1,0 +1,155 @@
+BASE {'attest': 'cases=18 failures=0', 'registry': 'cases=12 failures=0', 'attest_counter_exit': 0, 'registry_counter_exit': 0}
+M23-gate-frozen_from-field                   green=True  att=cases=18 failures=0    reg=cases=12 failures=0    counters=0/0
+M24-gate-receipt-dirty-field                 green=True  att=cases=18 failures=0    reg=cases=12 failures=0    counters=0/0
+M25-registry-r45-house-key                   green=True  att=cases=18 failures=0    reg=cases=12 failures=0    counters=0/0
+M26-attest-craft_section-MALFORMED-reason    green=True  att=cases=18 failures=0    reg=cases=12 failures=0    counters=0/0
+{
+ "base": {
+  "attest": "cases=18 failures=0",
+  "registry": "cases=12 failures=0",
+  "attest_counter_exit": 0,
+  "registry_counter_exit": 0
+ },
+ "results": [
+  {
+   "mutation": "M23-gate-frozen_from-field",
+   "files": {
+    "gate.py": {
+     "sha256": "7ee88e7cd2b975238bb1e71408d12dda3dd24c4d21974b47230f50b5218dcb8b",
+     "removed_lines": 2,
+     "added_lines": 0,
+     "diff": "--- base/gate.py\n+++ mut/gate.py\n@@ -176,8 +176,6 @@\n     receipt = {\n         \"freeze\": base, \"rev\": tip,\n         \"frozen_derived\": paths,\n-        \"frozen_from\": {\"freeze\": [p for p, _ in base_entries],\n-                        \"rev\": [p for p, _ in tip_entries]},\n         \"frozen_path_changed\": sorted(set(changed) | set(touched)),\n         \"blob_changed\": changed,\n         \"touched\": touched,\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M24-gate-receipt-dirty-field",
+   "files": {
+    "gate.py": {
+     "sha256": "96c0466f693b8edc2a931b791ddad2fe1654e8c2e4d61fb2076c11832a2cb031",
+     "removed_lines": 1,
+     "added_lines": 0,
+     "diff": "--- base/gate.py\n+++ mut/gate.py\n@@ -182,7 +182,6 @@\n         \"blob_changed\": changed,\n         \"touched\": touched,\n         \"restored\": restored,\n-        \"dirty\": dirty_paths,\n     }\n     if dirty_paths:\n         # The counters grade committed bytes, but they EXECUTE from the worktree: an\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M25-registry-r45-house-key",
+   "files": {
+    "registry.py": {
+     "sha256": "42da4a1391ff4fc9199421226fddb8ca384974023d280007b610142b9fc936a0",
+     "removed_lines": 1,
+     "added_lines": 1,
+     "diff": "--- base/registry.py\n+++ mut/registry.py\n@@ -51,7 +51,7 @@\n             \"strict_exit\": True, \"presence\": True,\n             \"claims\": \"plans/round-46-claims.md\"},\n     \"r45\": {\"census\": \"tools/round-45/registry-scope.json\", \"markers\": None,\n-            \"house\": [\"tool\"], \"scope_size\": 6, \"strict_cell\": False,\n+            \"scope_size\": 6, \"strict_cell\": False,\n             \"strict_header\": False, \"strict_exit\": False, \"presence\": False,\n             \"claims\": \"plans/round-45-claims.md\"},\n }\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M26-attest-craft_section-MALFORMED-reason",
+   "files": {
+    "attest.py": {
+     "sha256": "e46e7b47277fb38e0e9b99e7e034ddbdaa5d269cc94ee7d4753248da67459a2b",
+     "removed_lines": 2,
+     "added_lines": 0,
+     "diff": "--- base/attest.py\n+++ mut/attest.py\n@@ -87,8 +87,6 @@\n \n def craft_section(skill):\n     if CRAFT not in skill:\n-        if MALFORMED in skill:\n-            raise Malformed(\"craft heading lacks its trailing space\")\n         raise Malformed(\"no `## Queue-drain craft ` section\")\n     return skill.split(CRAFT, 1)[1].split(\"\\n## \", 1)[0]\n \n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  }
+ ]
+}

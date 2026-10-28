@@ -1,8 +1,15 @@
 # R47 w1 — SentScope: security & scope review of the two frozen counters
 
 Seat `SentScope`, leaf member (no subagent dispatch). Lane root
-`/home/vgpnk/Projects/shokunin/kaidoku-shokunin`, measured rev
-`a631bba01633d2b5353306a569be4ce2e683d364`, base `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5`.
+`/home/vgpnk/Projects/shokunin/kaidoku-shokunin`, base `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5`.
+Measured at `a631bba01633d2b5353306a569be4ce2e683d364`; the lane then advanced **while this seat
+ran** and every fact the advance could change was re-measured at tip
+`b1a058f32c6908a6b92248052f151d0b0e2c76b1` (receipts `receipts/receipts-tip.jsonl`, counters
+`SentScope/tip-c1-*.json`, `tip-c2.json`). The `--json-out` results were not re-run at the tip
+because they cannot differ: the guard is `gate.out_path` in `tools/round-46/gate.py`
+(`git diff a631bba HEAD -- tools/round-46/gate.py` is empty) called from a `main()` that the
+tip's A6 does not touch (its diff is confined to `_fixture_files`). Both revisions are quoted
+wherever they differ.
 
 Scope is the assignment's: **can either counter write outside the lane?** — `--json-out` handling,
 fixture-repo creation (toplevel assertion), scratch-root refusal, symlink handling in `gate.show`,
@@ -29,7 +36,7 @@ themselves: `SentScope/c1-a5.json`, `c1-declared.json`, `c1-prompt-freeze.json`,
 | 8 | symlinks in `gate.show` cannot read out of tree | **PASS** | `symlink_blobs` (0) |
 | 9 | crafted `SKILL.md`/`SCORECARD.md` cannot execute | **PASS** | `crafted_inputs_no_exec` (0), `argv_rev_help`, `argv_freeze_help`, `argv_record_output` |
 | 10 | bytecode writes into the lane when `-B` is omitted | **FAIL (enforcement gap)** — invisible to the freeze gate | `pycache_clone_without_B` (0), `lane_pycache_preexisting` |
-| 11 | freeze binding of the graded measurement | **FAIL for C2**, **stale for C1** | `record_freeze_calls`, `freeze_chain`, `c1_declared_freeze_lane` (2) vs `c1_a5_freeze_lane` (0) |
+| 11 | freeze binding of the graded measurement | **FAIL for C2**, **stale for C1** | `record_freeze_calls`, `freeze_chain_tip`, `c1_declared_freeze_tip` (2) vs `c1_a6_freeze_tip` (0) |
 | 12 | selftests runnable | **FAIL** as invoked bare, pass with dummy args | `exact_selftest_bare` (2), `record_selftest_bare` (2), `*_selftest_dummy` (0) |
 
 Headline: **neither counter writes outside the lane root, and neither can be made to execute
@@ -40,38 +47,45 @@ binding at all** and **C1 is only green under an undisclosed third-to-fifth free
 
 ## Findings
 
-### F1 — HIGH — three undisclosed post-freeze amendments to a frozen counter
+### F1 — HIGH — four undisclosed post-freeze amendments to a frozen counter
 `plans/round-47-claims.md` discloses a series of **two** (A1 `9018c53`, A2 `62e33f7`, "the freeze
-is a series of two, disclosed"). The chain at the measured rev has **five**:
+is a series of two, disclosed"). The chain is **six**, and it grew twice while this seat ran:
 
 ```
-$ git -C <lane> log --format='%H %s' 62e33f7..a631bba -- plans/round-47-claims.md tools/round-47/
-07d2894eabe88c326e9036262f20ad02662c860d round-47: A5 - the ghost-atom forgery lands inside the corrections section
-1e2c3102952dc636650095643c1963c833859019 round-47: A4 - the historical-correction selftest fixture gets its round-3 dispatch
-2e4ae43463aabdae707f8c8a4daa41441ad67a71 round-47: A3 - a seats/window correction for a round older than the window stays valid evidence
-$ git -C <lane> diff --stat 62e33f7 a631bba -- plans/round-47-claims.md     # empty
+$ git -C <lane> log --format='%H %s' 62e33f7..b1a058f3 -- plans/round-47-claims.md tools/round-47/
+f54b3b6d round-47: A6 - the battery fixture carries every citation the landed block names
+07d2894e round-47: A5 - the ghost-atom forgery lands inside the corrections section
+1e2c3102 round-47: A4 - the historical-correction selftest fixture gets its round-3 dispatch
+2e4ae434 round-47: A3 - a seats/window correction for a round older than the window stays valid evidence
+$ git -C <lane> diff --stat 62e33f7 HEAD -- plans/round-47-claims.md     # empty
 ```
 
-The claims file is byte-identical to A2 (`claims_unchanged_since_A2`, stdout sha256
-`e3b0c442…` = the empty string), so A3/A4/A5 have **no disclosure paragraph anywhere**. The
-consequence is measured, not argued:
+The claims file is byte-identical to A2 at both revisions (`claims_unchanged_since_A2` and
+`claims_unchanged_tip`, both stdout sha256 `e3b0c442…` = the empty string), so **A3–A6 have no
+disclosure paragraph anywhere** — their only trace is the commit subject line. The consequence is
+measured, not argued:
 
 ```
+at a631bba
 $ python3 -I -B tools/round-47/exact.py --root <lane> --freeze 62e33f7 --rev a631bba --json-out …
 exit 2   reason=frozen_path_changed  frozen_path_changed=['tools/round-47/', 'tools/round-47/record.py']   (bdb58e730c76)
-$ python3 -I -B tools/round-47/exact.py --root <lane> --freeze 5017e1f --rev a631bba --json-out …
-exit 2   frozen_path_changed=['plans/round-47-claims.md', 'tools/round-47/', 'tools/round-47/record.py']  (37c6258495)
-$ python3 -I -B tools/round-47/exact.py --root <lane> --freeze 07d2894e --rev a631bba --json-out …
-exit 0   failing=[] rule_blocks=24 refs=8  battery={forgeries_total 4, v2_green 4, v3_green 0, genuine_green 1, crash 0}   (af195f2cb0)
+$ … --freeze 5017e1f --rev a631bba   →  exit 2, frozen_path_changed=['plans/round-47-claims.md', 'tools/round-47/', 'tools/round-47/record.py']  (37c6258495)
+$ … --freeze 07d2894e --rev a631bba  →  exit 0, failing=[], rule_blocks 24, refs 8, battery 4/4/0/1/0   (af195f2cb0)
+
+at b1a058f3
+$ … --freeze 62e33f7 --rev b1a058f3   →  exit 2, frozen_path_changed  (04d240e90c76)
+$ … --freeze f54b3b6d --rev b1a058f3  →  exit 0, failing=[], battery 4/4/0/1/0  (a9b4756a4104)
 ```
 
 **Impact.** R47-C1's target is reachable only under a freeze commit that the claims file does
-not name. A report citing `plans/round-47-claims.md@62e33f7` next to a green C1 is citing an
-impossible measurement; citing `@07d2894e` cites a freeze nobody declared. This is the
-round-46 M46-3 defect (undisclosed freeze series) recurring in a stricter form.
+not name, and the reachable one changes as the round proceeds (`07d2894e` → `f54b3b6d` within
+this seat's run). A report citing `plans/round-47-claims.md@62e33f7` next to a green C1 is citing
+an impossible measurement; citing the latest amendment cites a freeze nobody declared. This is
+the round-46 M46-3 defect (undisclosed freeze series) recurring in a stricter form, and the
+number in "a series of two" is now wrong by four.
 **Smallest remediation.** The L1 states the freeze series' real length in the landing evidence
-(A3–A5, with the reason for each) and cites `@07d2894e` for the measured numbers — or reverts
-A3–A5 and re-measures. Do not re-measure at `62e33f7` and call it green.
+(A3–A6, with the reason for each) and cites the *last* amendment for the measured numbers — or
+reverts A3–A6 and re-measures. Do not re-measure at `62e33f7` and call it green.
 
 ### F2 — HIGH — R47-C2 has no freeze binding: `record.py` never reads a freeze
 ```
@@ -87,6 +101,8 @@ failing …`). Yet it scored:
 $ python3 -I -B tools/round-47/record.py --root <lane> --rev a631bba --json-out …
 exit 0   met_target=true atoms=42 verified=41 exempted=1 corrections=2
          battery={correction_forgeries 3, forgeries_green 0}          (cedd96ed1c36be48)
+$ python3 -I -B tools/round-47/record.py --root <lane> --rev b1a058f3 --json-out …
+exit 0   atoms=44 corrections=2 battery={correction_forgeries 3, forgeries_green 0}, no freeze key   (3092e068b13f)
 ```
 
 — at a rev where `record.py` itself had changed **three times after the declared freeze**. The
@@ -234,6 +250,26 @@ overstates what the counter enforces.
 **Smallest remediation.** Disclose A3 in the landing evidence and state the narrowing in the
 correction rows; do not read `corrections == 2` as "two record defects were repaired".
 
+### F11 — PASS (with an implicit bound) — A6 gives the fixture an artefact-derived write path
+A6 (`f54b3b6d`) makes `_fixture_files` add a fixture file for **every** `HARD_REF` name in the
+landed block, and `_repo` writes each key with `open(os.path.join(d, p), "w")` — so artefact
+content now chooses paths inside a repo the counter commits to. The only thing standing between
+a crafted block and a write outside that fixture is `gate.show` returning `None` for a name git
+cannot resolve. Attacked with a block citing
+`tools/round-47/../../../../../../<scratch>/PWNED-outside.md:1-2`:
+```
+$ python3 -B probe_a6.py
+ show_escape_path : null                     # git refuses `..`; the name is never added to `out`
+ check_refs       : "…PWNED-outside.md: absent at rev"
+ PWNED_outside_exists: false                 (a6_write_escape_probe, sha 2ee995655cc4)
+```
+`HARD_REF` admits `..` but cannot produce a leading `/`; git refuses `..` and absolute paths, so
+the write set stays inside the fixture. No symlink can be planted either: `_repo` only ever
+creates regular files. **Bound to state in the landing evidence:** A6's safety rests on a
+property of `git show`, not on a check in `exact.py` — `_fixture_files` re-uses the names without
+re-applying the `ALLOW` filter or a `..` test. It is reachable only from a green block (clause 8
+already rejected every unvalidated name), so the direction is fail-closed today.
+
 ### F10 — LOW — `--selftest` is unreachable as a bare flag
 `argparse` marks `--root`/`--rev` (and `--freeze` for `exact.py`) `required=True`, and
 `selftest()` is only reached after `parse_args`:
@@ -316,9 +352,12 @@ reach git only after `--`; card-derived correction keys reach `git rev-parse --v
 and an option-shaped key returns rc 1 (`corrects_rev_help: [false, {"resolves": false}]`).
 
 ## Not run / not claimed
-- No re-measurement of C1/C2 at a *landing* revision: there is no landing commit yet
-  (`a631bba` is the measured rev; the L1 lands `SKILL.md` block 24, which is already present at
-  `a631bba` with `rule_blocks 24`, `marker_occurrences 1`, `refs 8`).
+- Both counters were re-measured at the tip that existed when this seat finished
+  (`b1a058f3`): C1 exit 0 only under the A6 freeze (`f54b3b6d`), C2 exit 0 with no freeze key.
+  No measurement was taken at a *later* landing revision — the lane was still moving, so treat
+  every number here as `@b1a058f3` and re-run the two counting commands after the landing.
+  `SKILL.md` block 24 is already present at both revisions (`rule_blocks 24`,
+  `marker_occurrences 1`, `refs 8`).
 - No semantic attack on C1's clauses 2–7 or C2's clause 6 batteries: other seats own that; this
   seat attacked only the scope/security surface named in the assignment. F7–F9 are reported
   because they are reachable *through* crafted `SCORECARD.md` content, not as a full
@@ -326,5 +365,8 @@ and an option-shaped key returns rc 1 (`corrects_rev_help: [false, {"resolves": 
 - The concurrent TOCTOU variant of F4 is `[INFERENCE]`: the check-then-use gap is visible in the
   source (realpath at `gate.out_path`, `open` at `gate.emit`) but was not raced.
 - No tool installs, no package manager transactions, no commits/stages; nothing was written
-  outside `.ufo/waves/round-47/w1/SentScope{,.md}` and `/fast/scratch/hyaku/kaidoku-r47/SentScope`
-  (scratch removed after the receipts were copied here).
+  outside `.ufo/waves/round-47/w1/SentScope{,.md}` and `/fast/scratch/hyaku/kaidoku-r47/SentScope{,2}`
+  (both scratch roots removed after the receipts were copied here).
+- Receipt inventory: `receipts/receipts.jsonl` (37 checks at `a631bba`),
+  `receipts/receipts-tip.jsonl` (7 checks at `b1a058f3`), 54 files in `receipts/` including the
+  raw stdout of every check and the six probe drivers.

@@ -1,0 +1,25 @@
+# supplementary captures (each line: command, exit, UTC)
+utc: 2026-10-28T16:27:08Z
+
+## round-44 c1-counter.py --selftest (registry row claims 47 cases, green)
+cmd: python3 -I -B tools/round-44/c1-counter.py --selftest
+exit: 0
+utc: 2026-10-28T16:27:14Z
+cases_line: "cases": 47
+failures_line: "failures": []
+
+## same with a bogus --pkg65 (documented command form is not runnable: no rea-agents 6.5.0 root on this host)
+exit: 1
+first_line: xpin mint failed: xpin-attribute: 6.5.0: cannot read package files under /nonexistent/pkg: Cannot find module '/nonexistent/pkg/dist/domain/canonicalDigest.js' imported from /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-27/xpin-attribute.mjs
+search: find / -maxdepth 6 -path '*rea*' -name 6.5.0 -> 
+
+## strict parser vs the gate's indent anchor (the F-2 latent check)
+base.SOURCES.md: rows_strict=139 rows_missed_by_gate_anchor=0
+head.SOURCES.md: rows_strict=141 rows_missed_by_gate_anchor=0
+
+## trailing-space-only change inside a guarded cell (col 3), fixture
+fixture: /fast/scratch/hyaku/kaidoku-r45/R45W2Immutable/fx5.Ao9LSg
+
+## trailing-space-only change in a guarded cell, then a teaches-cell edit (fixture /fast/scratch/hyaku/kaidoku-r45/R45W2Immutable/fx5.Ao9LSg)
+whitespace-only col3: exit=1 stdout=[S001 changed columns: 3] utc=2026-10-28T16:27:21Z
+teaches col8 edit:    exit=1 stdout=[S001 changed columns: 8]

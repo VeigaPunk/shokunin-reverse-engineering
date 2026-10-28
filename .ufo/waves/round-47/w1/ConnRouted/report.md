@@ -6,14 +6,18 @@ Lane `kaidoku-shokunin`, round 47. Base `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a
 my first pass), S2 `b1a058f32c6908a6b92248052f151d0b0e2c76b1` (tip at yield, 15:07:14). The round
 declared freeze is now A6 `f54b3b6de9085d3db449ed5d0916296cb29c1f6d` and the claims are measured at
 A7 `a07537869cf37963dff559fc75271dfa8fbb2542`. Every table row below is anchored to S2; the five
-attacks were re-run at A7 after A5/A6 landed, and all five still pass.
+attacks were re-run at A7 after A5/A6 landed, and all five still pass. The lane advanced again
+while I wrote (`242e8b97`, the wave-1 seat-report commit); both counters re-measure **identically**
+there — `exact-TIP2.json` (`met_target true`, `failing []`, `refs 9`) and `rec-TIP2.json`
+(`atoms 44`, `mismatches []`), both commands exiting 0.
 
 I authored no round-47 byte. Receipts: `receipts.jsonl` (41 commands, each with exit code, stdout
 sha256, UTC time), `exact-TIP.json`, `rec-TIP.json`, `exact-HEAD.json`, `rec-HEAD.json`,
 `ctl-c1-5017-before.json`, `ctl-c1-A4-before.json`, `ctl-c1-A6-before.json`, `fz-5017e1f7.json`,
-`probe*.py`, `probe*-results.json`, `probe3-results.txt`.
+`probe*.py`, `probe*-results-A7.json` / `probe3-results-A7.txt` (the A7 re-runs cited below),
+`probe-results.json` / `probe2-results.json` / `probe3-results.txt` (the S1 runs).
 
-**Both counters at S2, re-measured by me:**
+**Both counters at S2, re-measured by me (identical at `242e8b97`):**
 
 | counter | command | exit | key values |
 |---|---|---|---|
@@ -131,7 +135,7 @@ Fixture (`probe3-results.txt`): `order` moved onto `R46-CL2`, `symbol` onto `R46
 - **C2.** `SCORECARD.md:3685` ("all before any claim verdict") and `LOG.md:3419` ("Four amendments
   before verdict") vs the claims' own A2 paragraph (`plans/round-47-claims.md:36`: "The first
   **after-data run** … at the landing `e856beb5` failed clause 6") and vs the timestamps: landing
-  `e856beb5` 14:51:02 → A2 14:51:50 → A3 14:52:38 → A4 14:53:05 → A5 14:56 → A6 14:58. A2–A6 are
+  `e856beb5` 14:51:02 → A2 14:51:50 → A3 14:52:38 → A4 14:53:05 → A5 14:56:04 → A6 14:58:27. A2–A6 are
   post-data by the round's own account. (The A1-vs-A6 freeze contradiction is separately routed as
   R47-CL11.)
 - **C3.** Before cell (`SCORECARD.md:3702`, claims `:121`) vs the declared freeze A6, where the

@@ -1,0 +1,954 @@
+{
+ "A1_freeze_failopen_ab": {
+  "attest.py honest-tamper": {
+   "cmd": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/attest.py --root /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/ab-ghrp7t5u --freeze 752b0c1b82aed6f95161e2618fcb7e37e9982502 --rev b53bdcc779b5d947375f2e5096cf0fea094fd114",
+   "exit": 2,
+   "failing": "frozen_path_changed",
+   "met_target": null,
+   "sha256": "716ea4a009b5c86205ef547b110a264fc4ac2842cdabb879e0106e39c3dd4430"
+  },
+  "attest.py tamper+shrink": {
+   "cmd": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/attest.py --root /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/ab-ghrp7t5u --freeze 752b0c1b82aed6f95161e2618fcb7e37e9982502 --rev d31242f988cbda9382dce1bee40f88b02d297dc6",
+   "exit": 0,
+   "failing": [],
+   "frozen_derived": [
+    "corpus/unused.txt"
+   ],
+   "frozen_path_changed": [],
+   "met_target": true,
+   "sha256": "710b09e77d2c15f9014477e5d6d6d0180a8747047c1450f30c52f596955d690f",
+   "touched": 0
+  },
+  "registry.py honest-tamper": {
+   "cmd": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/registry.py --root /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/ab-ghrp7t5u --freeze 752b0c1b82aed6f95161e2618fcb7e37e9982502 --rev b53bdcc779b5d947375f2e5096cf0fea094fd114",
+   "exit": 2,
+   "failing": "frozen_path_changed",
+   "met_target": null,
+   "sha256": "faa26eec6373838da73355060dacbf3ba1b24d4015b5f070191db82193c40c4f"
+  },
+  "registry.py tamper+shrink": {
+   "cmd": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/registry.py --root /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/ab-ghrp7t5u --freeze 752b0c1b82aed6f95161e2618fcb7e37e9982502 --rev d31242f988cbda9382dce1bee40f88b02d297dc6",
+   "exit": 2,
+   "failing": null,
+   "frozen_derived": [
+    "corpus/unused.txt"
+   ],
+   "frozen_path_changed": [],
+   "met_target": null,
+   "sha256": "c9533db508c43f00bf190690c79bbf024c3ec7afdc0f1b0fdbe636ff3aecc8fa",
+   "touched": 0
+  }
+ },
+ "A2_selftest_shape": {
+  "attest_selftest_bare_exit": 2,
+  "attest_selftest_bare_stderr": [
+   "attest.py: error: the following arguments are required: --root, --freeze, --rev"
+  ],
+  "attest_selftest_with_dummy_revs": {
+   "exit": 0,
+   "line": "ATTEST_SELFTEST: cases=16 failures=0",
+   "sha256": "0bf8f4c6ae0e46a0c4f00b9eb8b573afd7c10b0bbb6bf7e2ce58e7c2c5296dd8"
+  },
+  "claims_record_says": "attest cases=15 / registry cases=11",
+  "registry_selftest_with_dummy_revs": {
+   "exit": 0,
+   "line": "REGISTRY_SELFTEST: cases=12 failures=0",
+   "sha256": "0fa8c31a6419905fcb1971cb32631862be682014339a9e390634d360fd11872e"
+  }
+ },
+ "A3_traversal_negatives": {
+  "csrc": "registry.run_battery `full = os.path.join(d, p)` (registry.py:364) is reached only when gate.show returned a body, and git refuses '..' and leading '/' in <rev>:<path>; './x' normalises inside d",
+  "git_show_rev_dotdot_probe": {
+   "..": {
+    "err_head": [],
+    "out_head": "commit dc2a7db9fd0dfef020ef1355ff370ff427ae56e5\nAuthor: r46 ",
+    "rc": 0
+   },
+   "../../x": {
+    "err_head": [
+     "fatal: '../../x' is outside repository at '/fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/trav-z46qk41p'"
+    ],
+    "out_head": "",
+    "rc": 128
+   },
+   "../x": {
+    "err_head": [
+     "fatal: '../x' is outside repository at '/fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/trav-z46qk41p'"
+    ],
+    "out_head": "",
+    "rc": 128
+   },
+   "./tools/round-46/a.py": {
+    "err_head": [],
+    "out_head": "#!/bin/sh\n",
+    "rc": 0
+   },
+   "/tmp/pwn": {
+    "err_head": [
+     "fatal: path '/tmp/pwn' does not exist in 'dc2a7db9fd0dfef020ef1355ff370ff427ae56e5'"
+    ],
+    "out_head": "",
+    "rc": 128
+   }
+  },
+  "python_join_absolute": "/tmp/pwn"
+ },
+ "A4_census_out_unguarded": {
+  "clobber_frozen_tool": {
+   "a_py_now_json": true,
+   "exit": 0
+  },
+  "counter_guard_for_comparison": [
+   null,
+   "--json-out inside a graded or frozen surface: tools/round-46/a.py"
+  ],
+  "outside_lane": {
+   "cmd": "census.py --root <fixture> --rev ddfb0b46ee65ca00b7e7654199df07ea56075734 --out /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/census-guard-out.json",
+   "exit": 0,
+   "file_written": true
+  }
+ },
+ "_meta": {
+  "git": "git version 2.56.0",
+  "lane_head": "47b5e2651dbef2fc032da511b2b49daeb451d4f5",
+  "python": "3.14.8",
+  "tool_sha256": {
+   "attest.py": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "census.py": "960c516d3b5cb1bb0306bf7f44f848a76b9c795c5319328954b5021b234c1fd5",
+   "gate.py": "847aa33baf545131bed14b90af0425aef12bdc5ed8fb375d8ddb172e5c853223",
+   "registry.py": "5e16e4af69ebf714f0ee48b5a714aa682592f0ce5e32cdeec699b963d3f2da73"
+  },
+  "utc": "2026-10-28T17:07:47Z"
+ },
+ "e11_git_config": {
+  "core_fsmonitor": {
+   "dirty": [
+    "SKILL.md"
+   ],
+   "executed": true,
+   "note": "gate.dirty is the only caller of git status"
+  },
+  "showSignature": {
+   "err": null,
+   "touched": []
+  },
+  "utc": "2026-10-28T17:07:46Z"
+ },
+ "e12_cleanup": {
+  "exit": 0,
+  "leftover_fx_dirs": [],
+  "new_entries_in_scratch": [],
+  "note": "run_battery's scratch root is rmtree'd in evaluate()'s finally",
+  "utc": "2026-10-28T17:07:47Z"
+ },
+ "e2_out_path": {
+  "../escape.json": {
+   "accepted": false,
+   "reason": "--json-out outside the lane root: /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/e2-3x2fepsz/../escape.json",
+   "resolved": null
+  },
+  ".git/hooks/pre-commit": {
+   "accepted": true,
+   "reason": null,
+   "resolved": "/fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/e2-3x2fepsz/.git/hooks/pre-commit"
+  },
+  ".ufo/state/wave.json": {
+   "accepted": true,
+   "reason": null,
+   "resolved": "/fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/e2-3x2fepsz/.ufo/state/wave.json"
+  },
+  "/fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/outside.json": {
+   "accepted": false,
+   "reason": "--json-out outside the lane root: /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/outside.json",
+   "resolved": null
+  },
+  "SKILL.md": {
+   "accepted": false,
+   "reason": "--json-out inside a graded or frozen surface: SKILL.md",
+   "resolved": null
+  },
+  "_hook_mode": "0o644",
+  "_write_landed": true,
+  "out.json": {
+   "accepted": true,
+   "reason": null,
+   "resolved": "/fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/e2-3x2fepsz/out.json"
+  },
+  "plans/round-46-claims.md": {
+   "accepted": false,
+   "reason": "--json-out inside a graded or frozen surface: plans/round-46-claims.md",
+   "resolved": null
+  },
+  "utc": "2026-10-28T17:07:46Z"
+ },
+ "e4_dash_refs": {
+  "--all": {
+   "resolve": null
+  },
+  "--branches": {
+   "resolve": null
+  },
+  "--end-of-options": {
+   "resolve": null
+  },
+  "--glob=*": {
+   "resolve": null
+  },
+  "--help": {
+   "resolve": null
+  },
+  "--not": {
+   "resolve": null
+  },
+  "--output=/fast/scratch/hyaku/x": {
+   "resolve": null
+  },
+  "--revs-only": {
+   "resolve": null
+  },
+  "-h": {
+   "resolve": null
+  },
+  "freeze_state(--all,da9ecddeadc29aac865418d1eb2cadad743bc92a)": {
+   "exit": 2,
+   "reason": "unknown freeze revision"
+  },
+  "freeze_state(-h,-h)": {
+   "exit": 2,
+   "reason": "unknown freeze revision"
+  },
+  "freeze_state(da9ecddeadc29aac865418d1eb2cadad743bc92a,--all)": {
+   "exit": 2,
+   "reason": "unknown rev revision"
+  },
+  "utc": "2026-10-28T17:07:46Z"
+ },
+ "e5_c1_vacuous_placeholder": {
+  "cmd": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/attest.py --root /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/e5-20kqdl0_ --freeze de0e65813bb39a62084d58e888ac21bfea464e9e --rev de0e65813bb39a62084d58e888ac21bfea464e9e",
+  "exit": 0,
+  "failing": [],
+  "met_target": true,
+  "reason": null,
+  "receipt": {
+   "battery": {
+    "fixtures": [
+     {
+      "name": "garbage-rows",
+      "v1_exit": 0,
+      "v1_failing": [],
+      "v2_exit": 1,
+      "v2_failing": [
+       "routed ids not named by any row: ['R45-CL2', 'R45-CL6', 'R45-CL7', 'R45-CL9', 'R45-CL13', 'R45-CL14', 'R45-CL15', 'R45-CL18', 'R45-CL19', 'R45-CL20', 'R45-CL22', 'R45-CL23', 'R45-CL24']",
+       "arm cells outside the vocabulary: 13"
+      ]
+     },
+     {
+      "name": "thin-rows",
+      "v1_exit": 0,
+      "v1_failing": [],
+      "v2_exit": 1,
+      "v2_failing": [
+       "rows 8 < 13",
+       "routed ids not named by any row: ['R45-CL19', 'R45-CL20', 'R45-CL22', 'R45-CL23', 'R45-CL24']"
+      ]
+     },
+     {
+      "name": "lineless-refs",
+      "v1_exit": 0,
+      "v1_failing": [],
+      "v2_exit": 1,
+      "v2_failing": [
+       "unresolved or unvalidated citations: 6"
+      ]
+     },
+     {
+      "name": "header-substring",
+      "v1_exit": 0,
+      "v1_failing": [],
+      "v2_exit": 1,
+      "v2_failing": [
+       "header ['trigger', 'v1 hole', 'v2 arm', 'exitcode'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+      ]
+     },
+     {
+      "name": "two-markers",
+      "v1_exit": 0,
+      "v1_failing": [],
+      "v2_exit": 1,
+      "v2_failing": [
+       "marker_occurrences 2 != 1"
+      ]
+     },
+     {
+      "name": "stub-pin",
+      "v1_exit": 0,
+      "v1_failing": [],
+      "v2_exit": 1,
+      "v2_failing": [
+       "interpreter sha256 pin does not match the bytes at rev"
+      ]
+     },
+     {
+      "name": "self-refs",
+      "v1_exit": 0,
+      "v1_failing": [],
+      "v2_exit": 1,
+      "v2_failing": [
+       "does not cite corpus/lessons/round-45.md"
+      ]
+     },
+     {
+      "name": "missing-routed-id",
+      "v1_exit": 0,
+      "v1_failing": [],
+      "v2_exit": 1,
+      "v2_failing": [
+       "rows 12 < 13",
+       "routed ids not named by any row: ['R45-CL18']"
+      ]
+     },
+     {
+      "name": "no-vocab-arm",
+      "v1_exit": 0,
+      "v1_failing": [],
+      "v2_exit": 1,
+      "v2_failing": [
+       "arm cells outside the vocabulary: 13"
+      ]
+     }
+    ],
+    "forgeries_total": 9,
+    "genuine_exit": 0,
+    "genuine_green": 1,
+    "v1_green": 9,
+    "v2_crash": 0,
+    "v2_green": 0
+   },
+   "block_is_last": true,
+   "block_present": 1,
+   "block_title": "23. Placeholder.",
+   "cited": [
+    "corpus/lessons/round-45.md",
+    "plans/round-46-claims.md",
+    "tools/round-46/attest.py"
+   ],
+   "cites": {
+    "S142": true,
+    "tools/round-46/attest.py": true
+   },
+   "counter": "round-46-c1",
+   "failing": [],
+   "freeze": "de0e65813bb39a62084d58e888ac21bfea464e9e",
+   "frozen_derived": [
+    "tools/round-46/",
+    "plans/round-46-claims.md"
+   ],
+   "frozen_path_changed": [],
+   "header": [
+    "trigger",
+    "v1 hole",
+    "v2 arm",
+    "exit"
+   ],
+   "header_ok": true,
+   "marker_occurrences": 1,
+   "met_target": true,
+   "pin": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "pin_expected": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "profile": "v2",
+   "refs": 7,
+   "restored": [],
+   "rev": "de0e65813bb39a62084d58e888ac21bfea464e9e",
+   "routed_ids": [
+    "R45-CL13",
+    "R45-CL14",
+    "R45-CL15",
+    "R45-CL18",
+    "R45-CL19",
+    "R45-CL2",
+    "R45-CL20",
+    "R45-CL22",
+    "R45-CL23",
+    "R45-CL24",
+    "R45-CL6",
+    "R45-CL7",
+    "R45-CL9"
+   ],
+   "rows": 13,
+   "rule_blocks": 23,
+   "spec": "r46",
+   "touched": 0,
+   "unresolved_citations": []
+  },
+  "sha256": "fe2b9349c167723de304833967f4914c457b99f0a93a1f3d7e0caf0e47ba0fd1",
+  "stderr": "",
+  "stdout_head": "{\n \"battery\": {\n  \"fixtures\": [\n   {\n    \"name\": \"garbage-rows\",\n    \"v1_exit\": 0,\n    \"v1_failing\": [],\n    \"v2_exit\": 1,\n    \"v2_failing\": [\n     \"routed ids not named by any row: ['R45-CL2', 'R45-CL6', 'R45-CL7', 'R45-CL9', 'R45-CL13', 'R45-CL14', 'R45-CL15', 'R45-CL18', 'R45-CL19', 'R45-CL20', '",
+  "utc": "2026-10-28T17:07:43Z"
+ },
+ "e7_c2_fabricated_census": {
+  "census_py_derived_paths": 3,
+  "checked_in_census_paths": [
+   "tools/round-46/a.py"
+  ],
+  "registry": {
+   "cmd": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/registry.py --root /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/e7-uwyt3e0t --freeze 92bfa234d293ab29ad1c88354115ded49860b215 --rev 92bfa234d293ab29ad1c88354115ded49860b215",
+   "exit": 0,
+   "failing": [],
+   "met_target": true,
+   "reason": null,
+   "receipt": {
+    "absent_at_rev": [],
+    "battery": {
+     "fixtures": [
+      {
+       "name": "fenced",
+       "v1_exit": 0,
+       "v2_exit": 1,
+       "v2_failing": [
+        "header != house schema (7 cells)",
+        "unregistered: 1 of 1"
+       ]
+      },
+      {
+       "name": "off-section",
+       "v1_exit": 0,
+       "v2_exit": 1,
+       "v2_failing": [
+        "header != house schema (7 cells)",
+        "unregistered: 1 of 1"
+       ]
+      },
+      {
+       "name": "substring-cell",
+       "v1_exit": 0,
+       "v2_exit": 1,
+       "v2_failing": [
+        "unregistered: 1 of 1"
+       ]
+      },
+      {
+       "name": "prose-exit",
+       "v1_exit": 0,
+       "v2_exit": 1,
+       "v2_failing": [
+        "thin verdict-map cells: 1"
+       ]
+      },
+      {
+       "name": "html-comment",
+       "v1_exit": 0,
+       "v2_exit": 1,
+       "v2_failing": [
+        "header != house schema (7 cells)",
+        "unregistered: 1 of 1"
+       ]
+      },
+      {
+       "name": "first-wins-shadow",
+       "v1_exit": 0,
+       "v2_exit": 1,
+       "v2_failing": [
+        "thin verdict-map cells: 1"
+       ]
+      },
+      {
+       "name": "no-header",
+       "v1_exit": 0,
+       "v2_exit": 1,
+       "v2_failing": [
+        "header != house schema (7 cells)"
+       ]
+      }
+     ],
+     "forgeries_total": 7,
+     "genuine_exit": 0,
+     "genuine_green": 1,
+     "v1_green": 7,
+     "v2_green": 0
+    },
+    "counter": "round-46-c2",
+    "failing": [],
+    "freeze": "92bfa234d293ab29ad1c88354115ded49860b215",
+    "frozen_derived": [
+     "tools/round-46/",
+     "plans/round-46-claims.md"
+    ],
+    "frozen_path_changed": [],
+    "header": [
+     "tool",
+     "gate or probe - purpose",
+     "verdict map (exit codes)",
+     "self-test command",
+     "pinned-value path",
+     "write scope",
+     "owner"
+    ],
+    "met_target": true,
+    "profile": "v2",
+    "registered": [
+     "tools/round-46/a.py"
+    ],
+    "registry_rows": 1,
+    "restored": [],
+    "rev": "92bfa234d293ab29ad1c88354115ded49860b215",
+    "scope_size": 1,
+    "spec": "r46",
+    "thin": [],
+    "touched": 0,
+    "unregistered": []
+   },
+   "sha256": "2e6c5433adaede1e4b8cf65f976ed8dd18f2f66cc14c5f8b8e2f19968092373a",
+   "stderr": "",
+   "stdout_head": "{\n \"absent_at_rev\": [],\n \"battery\": {\n  \"fixtures\": [\n   {\n    \"name\": \"fenced\",\n    \"v1_exit\": 0,\n    \"v2_exit\": 1,\n    \"v2_failing\": [\n     \"header != house schema (7 cells)\",\n     \"unregistered: 1 of 1\"\n    ]\n   },\n   {\n    \"name\": \"off-section\",\n    \"v1_exit\": 0,\n    \"v2_exit\": 1,\n    \"v2_failin"
+  },
+  "utc": "2026-10-28T17:07:45Z"
+ },
+ "e8_c2_empty_meaning_columns": {
+  "cmd": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/registry.py --root /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/e8-40rnqspf --freeze 16f2e64c7b1779e429b96a5b9f7def40b61a2868 --rev 16f2e64c7b1779e429b96a5b9f7def40b61a2868",
+  "exit": 0,
+  "failing": [],
+  "met_target": true,
+  "reason": null,
+  "receipt": {
+   "absent_at_rev": [],
+   "battery": {
+    "fixtures": [
+     {
+      "name": "fenced",
+      "v1_exit": 0,
+      "v2_exit": 1,
+      "v2_failing": [
+       "header != house schema (7 cells)",
+       "unregistered: 3 of 3"
+      ]
+     },
+     {
+      "name": "off-section",
+      "v1_exit": 0,
+      "v2_exit": 1,
+      "v2_failing": [
+       "header != house schema (7 cells)",
+       "unregistered: 3 of 3"
+      ]
+     },
+     {
+      "name": "substring-cell",
+      "v1_exit": 0,
+      "v2_exit": 1,
+      "v2_failing": [
+       "unregistered: 3 of 3"
+      ]
+     },
+     {
+      "name": "prose-exit",
+      "v1_exit": 0,
+      "v2_exit": 1,
+      "v2_failing": [
+       "thin verdict-map cells: 1"
+      ]
+     },
+     {
+      "name": "html-comment",
+      "v1_exit": 0,
+      "v2_exit": 1,
+      "v2_failing": [
+       "header != house schema (7 cells)",
+       "unregistered: 3 of 3"
+      ]
+     },
+     {
+      "name": "first-wins-shadow",
+      "v1_exit": 0,
+      "v2_exit": 1,
+      "v2_failing": [
+       "thin verdict-map cells: 1"
+      ]
+     },
+     {
+      "name": "no-header",
+      "v1_exit": 0,
+      "v2_exit": 1,
+      "v2_failing": [
+       "header != house schema (7 cells)"
+      ]
+     }
+    ],
+    "forgeries_total": 7,
+    "genuine_exit": 0,
+    "genuine_green": 1,
+    "v1_green": 7,
+    "v2_green": 0
+   },
+   "counter": "round-46-c2",
+   "failing": [],
+   "freeze": "16f2e64c7b1779e429b96a5b9f7def40b61a2868",
+   "frozen_derived": [
+    "tools/round-46/",
+    "plans/round-46-claims.md"
+   ],
+   "frozen_path_changed": [],
+   "header": [
+    "tool",
+    "gate or probe - purpose",
+    "verdict map (exit codes)",
+    "self-test command",
+    "pinned-value path",
+    "write scope",
+    "owner"
+   ],
+   "met_target": true,
+   "profile": "v2",
+   "registered": [
+    "tools/round-46/a.py",
+    "tools/round-46/b.py",
+    "tools/round-46/c.py"
+   ],
+   "registry_rows": 3,
+   "restored": [],
+   "rev": "16f2e64c7b1779e429b96a5b9f7def40b61a2868",
+   "scope_size": 3,
+   "spec": "r46",
+   "thin": [],
+   "touched": 0,
+   "unregistered": []
+  },
+  "sha256": "bfccb14b29a17ee879b49d5d9abdd092440bac5bfc66858c213203989ff64b4b",
+  "stderr": "",
+  "stdout_head": "{\n \"absent_at_rev\": [],\n \"battery\": {\n  \"fixtures\": [\n   {\n    \"name\": \"fenced\",\n    \"v1_exit\": 0,\n    \"v2_exit\": 1,\n    \"v2_failing\": [\n     \"header != house schema (7 cells)\",\n     \"unregistered: 3 of 3\"\n    ]\n   },\n   {\n    \"name\": \"off-section\",\n    \"v1_exit\": 0,\n    \"v2_exit\": 1,\n    \"v2_failin",
+  "utc": "2026-10-28T17:07:46Z"
+ },
+ "e9_c2_midline_comment": {
+  "cmd": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/registry.py --root /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/e9-4k8zjnqt --freeze c34c3987427236e5a247fdb6c4e8bf69b1144f34 --rev c34c3987427236e5a247fdb6c4e8bf69b1144f34 --no-battery",
+  "exit": 0,
+  "failing": [],
+  "met_target": true,
+  "reason": null,
+  "receipt": {
+   "absent_at_rev": [],
+   "counter": "round-46-c2",
+   "failing": [],
+   "freeze": "c34c3987427236e5a247fdb6c4e8bf69b1144f34",
+   "frozen_derived": [
+    "tools/round-46/",
+    "plans/round-46-claims.md"
+   ],
+   "frozen_path_changed": [],
+   "header": [
+    "tool",
+    "gate or probe - purpose",
+    "verdict map (exit codes)",
+    "self-test command",
+    "pinned-value path",
+    "write scope",
+    "owner"
+   ],
+   "met_target": true,
+   "profile": "v2",
+   "registered": [
+    "tools/round-46/a.py",
+    "tools/round-46/b.py",
+    "tools/round-46/c.py"
+   ],
+   "registry_rows": 3,
+   "restored": [],
+   "rev": "c34c3987427236e5a247fdb6c4e8bf69b1144f34",
+   "scope_size": 3,
+   "spec": "r46",
+   "thin": [],
+   "touched": 0,
+   "unregistered": []
+  },
+  "sha256": "ac166e6217e4899abd1c8c51215230f8211f63a4ee6fcf63d80cbefe5799b075",
+  "stderr": "",
+  "stdout_head": "{\n \"absent_at_rev\": [],\n \"counter\": \"round-46-c2\",\n \"failing\": [],\n \"freeze\": \"c34c3987427236e5a247fdb6c4e8bf69b1144f34\",\n \"frozen_derived\": [\n  \"tools/round-46/\",\n  \"plans/round-46-claims.md\"\n ],\n \"frozen_path_changed\": [],\n \"header\": [\n  \"tool\",\n  \"gate or probe - purpose\",\n  \"verdict map (exit co",
+  "utc": "2026-10-28T17:07:46Z"
+ },
+ "p1_fence_swap_ok": {
+  "cmd": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/registry.py --root /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/p1-124r707u --freeze c93398f47e2718f3aec0a1cd0bc998ad44307834 --rev c93398f47e2718f3aec0a1cd0bc998ad44307834 --no-battery",
+  "exit": 0,
+  "failing": [],
+  "met_target": true,
+  "parsed_rows": [
+   [
+    "tool",
+    "gate or probe - purpose",
+    "verdict map (exit codes)",
+    "self-test command",
+    "pinned-value path",
+    "write scope",
+    "owner"
+   ],
+   [
+    "---",
+    "---",
+    "---",
+    "---",
+    "---",
+    "---",
+    "---"
+   ],
+   [
+    "`tools/round-46/a.py`",
+    "gate",
+    "0=met; 1=not met; 2=could-not-evaluate",
+    "`--selftest`",
+    "none",
+    "repo",
+    "kaidoku"
+   ],
+   [
+    "`tools/round-46/b.py`",
+    "gate",
+    "0=met; 1=not met; 2=could-not-evaluate",
+    "`--selftest`",
+    "none",
+    "repo",
+    "kaidoku"
+   ],
+   [
+    "`tools/round-46/c.py`",
+    "gate",
+    "0=met; 1=not met; 2=could-not-evaluate",
+    "`--selftest`",
+    "none",
+    "repo",
+    "kaidoku"
+   ]
+  ],
+  "reason": null,
+  "receipt": {
+   "absent_at_rev": [],
+   "counter": "round-46-c2",
+   "failing": [],
+   "freeze": "c93398f47e2718f3aec0a1cd0bc998ad44307834",
+   "frozen_derived": [
+    "tools/round-46/",
+    "plans/round-46-claims.md"
+   ],
+   "frozen_path_changed": [],
+   "header": [
+    "tool",
+    "gate or probe - purpose",
+    "verdict map (exit codes)",
+    "self-test command",
+    "pinned-value path",
+    "write scope",
+    "owner"
+   ],
+   "met_target": true,
+   "profile": "v2",
+   "registered": [
+    "tools/round-46/a.py",
+    "tools/round-46/b.py",
+    "tools/round-46/c.py"
+   ],
+   "registry_rows": 3,
+   "restored": [],
+   "rev": "c93398f47e2718f3aec0a1cd0bc998ad44307834",
+   "scope_size": 3,
+   "spec": "r46",
+   "thin": [],
+   "touched": 0,
+   "unregistered": []
+  },
+  "sha256": "03b9e361ff04f8685fa4169a9272ec8c65c38620f69bb5874d97c03834130117",
+  "stderr": "",
+  "stdout_head": "{\n \"absent_at_rev\": [],\n \"counter\": \"round-46-c2\",\n \"failing\": [],\n \"freeze\": \"c93398f47e2718f3aec0a1cd0bc998ad44307834\",\n \"frozen_derived\": [\n  \"tools/round-46/\",\n  \"plans/round-46-claims.md\"\n ],\n \"frozen_path_changed\": [],\n \"header\": [\n  \"tool\",\n  \"gate or probe - purpose\",\n  \"verdict map (exit co",
+  "utc": "2026-10-28T17:07:46Z"
+ },
+ "p2_decoy_section": {
+  "cmd": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/attest.py --root /fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/p2-o_5og1y3 --freeze 3278d74e36c4abdb44afb902d6b621e1b3cf9825 --rev 3278d74e36c4abdb44afb902d6b621e1b3cf9825 --no-battery",
+  "exit": 0,
+  "failing": [],
+  "measured_section_is_fenced_decoy": [
+   "(example) ",
+   ""
+  ],
+  "met_target": true,
+  "real_craft_block_count": 1,
+  "reason": null,
+  "receipt": {
+   "block_is_last": true,
+   "block_present": 1,
+   "block_title": "23. Placeholder.",
+   "cited": [
+    "corpus/lessons/round-45.md",
+    "plans/round-46-claims.md",
+    "tools/round-46/attest.py"
+   ],
+   "cites": {
+    "S142": true,
+    "tools/round-46/attest.py": true
+   },
+   "counter": "round-46-c1",
+   "failing": [],
+   "freeze": "3278d74e36c4abdb44afb902d6b621e1b3cf9825",
+   "frozen_derived": [
+    "tools/round-46/",
+    "plans/round-46-claims.md"
+   ],
+   "frozen_path_changed": [],
+   "header": [
+    "trigger",
+    "v1 hole",
+    "v2 arm",
+    "exit"
+   ],
+   "header_ok": true,
+   "marker_occurrences": 1,
+   "met_target": true,
+   "pin": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "pin_expected": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "profile": "v2",
+   "refs": 7,
+   "restored": [],
+   "rev": "3278d74e36c4abdb44afb902d6b621e1b3cf9825",
+   "routed_ids": [
+    "R45-CL13",
+    "R45-CL14",
+    "R45-CL15",
+    "R45-CL18",
+    "R45-CL19",
+    "R45-CL2",
+    "R45-CL20",
+    "R45-CL22",
+    "R45-CL23",
+    "R45-CL24",
+    "R45-CL6",
+    "R45-CL7",
+    "R45-CL9"
+   ],
+   "rows": 13,
+   "rule_blocks": 1,
+   "spec": "r46",
+   "touched": 0,
+   "unresolved_citations": []
+  },
+  "sha256": "c2f3ac52989f88e0c3100f807782c6170ed639411dcc408f0402f5bf037a6be5",
+  "stderr": "",
+  "stdout_head": "{\n \"block_is_last\": true,\n \"block_present\": 1,\n \"block_title\": \"23. Placeholder.\",\n \"cited\": [\n  \"corpus/lessons/round-45.md\",\n  \"plans/round-46-claims.md\",\n  \"tools/round-46/attest.py\"\n ],\n \"cites\": {\n  \"S142\": true,\n  \"tools/round-46/attest.py\": true\n },\n \"counter\": \"round-46-c1\",\n \"failing\": [],\n",
+  "utc": "2026-10-28T17:07:44Z"
+ },
+ "p4_out_path_git": {
+  ".git/HEAD": {
+   "accepted": true,
+   "reason": null
+  },
+  ".git/config": {
+   "accepted": true,
+   "reason": null
+  },
+  ".git/objects/info/alternates": {
+   "accepted": true,
+   "reason": null
+  },
+  "utc": "2026-10-28T17:07:46Z"
+ },
+ "p5_scratch_inside_graded": {
+  "accepted": true,
+  "created_inside_frozen_dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/p5-adx13dga/tools/round-46/probe-7ndkq8qg",
+  "reason": null,
+  "rel": "tools/round-46/probe-7ndkq8qg",
+  "root": "/fast/scratch/hyaku/kaidoku-r46/R46W1SentTools/p5-adx13dga/tools/round-46",
+  "utc": "2026-10-28T17:07:46Z"
+ },
+ "p6_vacuous_battery": {
+  "battery": {
+   "fixtures": [
+    {
+     "name": "garbage-rows",
+     "v1_exit": 0,
+     "v1_failing": [],
+     "v2_exit": 1,
+     "v2_failing": [
+      "routed ids not named by any row: ['R45-CL2', 'R45-CL6', 'R45-CL7', 'R45-CL9', 'R45-CL13', 'R45-CL14', 'R45-CL15', 'R45-CL18', 'R45-CL19', 'R45-CL20', 'R45-CL22', 'R45-CL23', 'R45-CL24']",
+      "arm cells outside the vocabulary: 13"
+     ]
+    },
+    {
+     "name": "thin-rows",
+     "v1_exit": 0,
+     "v1_failing": [],
+     "v2_exit": 1,
+     "v2_failing": [
+      "rows 8 < 13",
+      "routed ids not named by any row: ['R45-CL19', 'R45-CL20', 'R45-CL22', 'R45-CL23', 'R45-CL24']"
+     ]
+    },
+    {
+     "name": "lineless-refs",
+     "v1_exit": 0,
+     "v1_failing": [],
+     "v2_exit": 1,
+     "v2_failing": [
+      "unresolved or unvalidated citations: 6"
+     ]
+    },
+    {
+     "name": "header-substring",
+     "v1_exit": 0,
+     "v1_failing": [],
+     "v2_exit": 1,
+     "v2_failing": [
+      "header ['trigger', 'v1 hole', 'v2 arm', 'exitcode'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ]
+    },
+    {
+     "name": "two-markers",
+     "v1_exit": 0,
+     "v1_failing": [],
+     "v2_exit": 1,
+     "v2_failing": [
+      "marker_occurrences 2 != 1"
+     ]
+    },
+    {
+     "name": "stub-pin",
+     "v1_exit": 0,
+     "v1_failing": [],
+     "v2_exit": 1,
+     "v2_failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ]
+    },
+    {
+     "name": "self-refs",
+     "v1_exit": 0,
+     "v1_failing": [],
+     "v2_exit": 1,
+     "v2_failing": [
+      "does not cite corpus/lessons/round-45.md"
+     ]
+    },
+    {
+     "name": "missing-routed-id",
+     "v1_exit": 0,
+     "v1_failing": [],
+     "v2_exit": 1,
+     "v2_failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL18']"
+     ]
+    },
+    {
+     "name": "no-vocab-arm",
+     "v1_exit": 0,
+     "v1_failing": [],
+     "v2_exit": 1,
+     "v2_failing": [
+      "arm cells outside the vocabulary: 13"
+     ]
+    }
+   ],
+   "forgeries_total": 9,
+   "genuine_exit": 0,
+   "genuine_green": 1,
+   "v1_green": 9,
+   "v2_crash": 0,
+   "v2_green": 0
+  },
+  "exit": 0,
+  "utc": "2026-10-28T17:07:44Z"
+ },
+ "p7_dirty_callers": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-46/gate.py:132:def dirty(root, pathspecs):\n"
+}

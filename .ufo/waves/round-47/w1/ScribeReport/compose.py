@@ -206,8 +206,10 @@ def main():
 
     if gaps:
         L.append("### Gaps (no report at draft time)\n")
-        L.append("These seats have directories (and in most cases artifacts) but no `report.md`, "
-                 "so nothing they produced is stated as a result above:\n")
+        L.append("These seats have directories (and in most cases artifacts) but no `report.md`. "
+                 "A seat can return through the swarm without writing one, so a gap here is "
+                 "**not** a claim that the seat did nothing — it is the absence of a file this "
+                 "draft may quote. Nothing they produced is stated as a result above:\n")
         L.append(", ".join(f"`{g}`" for g in gaps) + "\n")
 
     # ---------------- Landed changes ----------------
@@ -229,15 +231,20 @@ def main():
                  if l.startswith("??")]
     L.append("### Draft notes for the L1 (not part of the report)\n")
     L.append(f"- Wave tree at generation: **{len(tracked)} paths tracked** at `{head[:8]}`, "
-             f"**{len(untracked)} untracked**. Seat evidence cited above does not resolve at a "
-             f"rev until the wave tree is committed; `record.py`'s `path` atom class checks exactly that.")
+             f"**{len(untracked)} untracked**. A bullet whose evidence is still untracked does not "
+             f"resolve at a rev, which is exactly what `record.py`'s `path` atom class checks; "
+             f"commit the remainder before citing these bullets at a rev.")
     L.append("- C1's counter is green only at `--freeze == --rev` (task freeze `5017e1f7` and every "
              "declared amendment A1–A6 exit 2 `frozen_path_changed`). Cite the freeze as the literal "
              "measured rev and disclose the degenerate pairing — see `ScribeReport.md` F1.")
     L.append("- `record.py` has no freeze guard and its `CORR` regex cannot parse `axes` corrections "
              "(F3/F4): `corrections: 2` is two of the four lines the card carries.")
     L.append("- Every bullet above is a quote from the named seat's own `report.md`; a bullet is "
-             "absent, not softened, where the seat had not reported at generation time.\n")
+             "absent, not softened, where the seat had not written one at generation time.")
+    L.append(f"- **Count reconciliation:** this draft counts **{n_rep} `report.md` files** "
+             f"({len(gaps)} gaps). The L1's landing commit for the wave tree reports a different "
+             f"measure (seats that returned). The two are not comparable; use this draft's gap "
+             f"list as 'no quotable file', not as 'no work'.\n")
     open(OUT, "w", encoding="utf-8").write("\n".join(L) + "\n")
     print(f"wrote {OUT}: {n_rep}/{len(spec)} reported, {len(gaps)} gaps")
 

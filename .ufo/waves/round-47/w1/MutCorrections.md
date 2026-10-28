@@ -12,8 +12,9 @@ Read-only on the lane tree; every mutation ran in a fixture clone under
 |---|---|
 | detector | `tools/round-47/record.py` at the measured rev (sha256 `abf352573d156ed1388683c882e40cab9897f426b9448356993bf41bf37779e7`; identical at `07d2894e` and at the tip `f7d6e58d`) |
 | fixture | `git clone --no-hardlinks <lane> <scratch>/clone`, then `git fetch origin main && git reset --hard origin/main`; `git rev-parse --show-toplevel` asserted equal to the clone before every commit |
-| measured rev | `f7d6e58d6e7f4e664bf443137c55ee08821de244` (lane tip at measurement; `SCORECARD.md` sha256 `de955ec7d9378f0ab3c0b3577c4a0a7330b44ef79f35a1403b5497fdcbfdff0b`, byte-equal to the lane worktree) |
-| also measured | `07d2894eabe8…` (A5) and `1e2c310295…` (A4) — the same matrix reproduces at both (`matrix-at-07d2894.tsv`) |
+| measured rev | `f7d6e58d6e7f4e664bf443137c55ee08821de244` (lane tip at first measurement; `SCORECARD.md` sha256 `de955ec7d9378f0ab3c0b3577c4a0a7330b44ef79f35a1403b5497fdcbfdff0b`, byte-equal to the lane worktree) |
+| landing tip re-run | `b1a058f32c6908a6b92248052f151d0b0e2c76b1` ("final receipts at the tip"; `SCORECARD.md` sha256 `1e3afadb80f27c54e108e3bb8f9ad27bef721ae249253782996407ba24662861`, `atoms 44`, `exempted 1`, `corrections 2`, exit 0) — the survivors and controls were re-run here (§1b) |
+| also measured | `07d2894eabe8…` (A5), `1e2c310295…` (A4), `a0753786…` (A7), `6f9fd7f8…` — same matrix, same exits (`matrix-at-07d2894.tsv`, `receipts/at-*.json`, `receipts/own-6f9fd7f8.json`) |
 
 Counting command, every row below (both modes run from the clone so the detector and the bytes are the
 same revision):
@@ -28,8 +29,8 @@ python3 -I -B tools/round-47/record.py --root "$PWD" --rev <MUTANT_REV> [--no-ba
 
 | run | exit | failing | atoms | exempted | corrections | corrections_bad |
 |---|---|---|---|---|---|---|
-| `tip-base` (2026-10-28T18:01Z) | 0 | `[]` | 44 | 1 | 2 | 0 |
-| `restored-1`, `restored-2` (after restore, twice) | 0, 0 | `[]` | 44 | 1 | 2 | 0 |
+| `tip-base` @ `f7d6e58d` (2026-10-28T18:01Z) | 0 | `[]` | 44 | 1 | 2 | 0 |
+| `restored-1`, `restored-2` @ `07d2894e`, after restore, twice | 0, 0 | `[]` | 41 | 1 | 2 | 0 |
 
 Both restored runs printed byte-identical stdout (sha256 `d366b080e0112a5750edc6d169f760643867d03e9258c260d8e6fc956df4e4c2`), so the detector is deterministic on
 these bytes and a later red is attributable to the mutation, not to run-to-run noise.
@@ -67,6 +68,34 @@ Score: **6 killed, 6 survived, 1 honest repair rejected, 1 inert control.** Ever
 14 is a genuine clause kill (the receipt names the failing clause). Rows 5 and 14 are also killed in
 full mode, but by the battery, not by the clause — see W1.
 
+## 1b. Re-run at the landing tip `b1a058f3` (card sha `1e3afadb`)
+
+The card at the landing tip carries **two** `- corrects` lines — the two `axes` lines were replaced by
+prose that repairs the two `## Owned axes` heads in place — and the counter reports `atoms 44`,
+`exempted 1`, `corrections 2`, `failing []`, exit 0. Seven mutations were re-applied to that card
+(one commit each on top of `b1a058f3`; receipts `receipts/<name>.*.json`):
+
+| mutation | commit | clause | full | verdict |
+|---|---|---|---|---|
+| `cross-round-total` (`round-45: 2 waves, 80 seats total`) | `2ee8064f` | 1 | 1 | killed (`corrections_bad 1`) |
+| `wrong-round-historical-true` (`round-43: 2 waves, 64 seats total`) | `9054e527` | **0** | **0** | **survived** |
+| `window-pair-out-of-scope` (`332f4884..332f4884`) | `a6994162` | **0** | **0** | **survived** |
+| `window-pair-real-other-commits` (`1e2c310295..07d2894eab -- tools/round-47/exact.py`) | `6f2b21ac` | **0** | **0** | **survived** |
+| `duplicate-correction` (seats line twice) | `e17adb7c` | **0** | **0** | **survived** (`corrections 3`) |
+| `false-axes-correction` (inserts `- corrects axes coverage: 1/2`) | `9c02880b` | **0** | **0** | **survived** |
+| `window-pair-atom-range` (`0425224..58eb04b6`, the atom's own range) | `99bf4f33` | 1 | 1 | honest repair rejected |
+
+Every exit matches the matrix at `f7d6e58d`. The landing edit that removed the inert `axes` lines
+changed nothing the counter reads: `corrections` stays 2, and a *false* axes correction inserted into
+the landed section is still green (row 6).
+
+Receipt naming: the seven names in this table were re-run here, so
+`.ufo/waves/round-47/w1/MutCorrections/receipts/<name>.*.json` holds the **landing-tip** run (revs
+`2ee8064f`, `9054e527`, `a6994162`, `6f2b21ac`, `e17adb7c`, `9c02880b`, `99bf4f33`); the `f7d6e58d`
+run of those same names is recorded by exit and stdout sha256 in `matrix.tsv`. The other receipts
+(`wrong-round-in-window`, `ghost-path-*`, `duplicate-replaces-repair`, `false-axes-bogus-axis`,
+`axes-corrections-deleted`) are the `f7d6e58d` run.
+
 ## 2. Findings
 
 ### F1 — `axes` corrections are never parsed, so clause 3's axes requirement is unenforceable (HIGH, vacuity)
@@ -86,6 +115,13 @@ ever reached). Consequences, all measured:
 The claims file's clause 3 — "an `axes` correction must state `<resolved>/<total>`" — binds nothing.
 `known_pairs` (`record.py:328`) is likewise computed and never read, which is the residue of A1's
 deleted window-pair clause.
+
+At the landing tip `b1a058f3` the card has already conceded this seam in prose — "the counter's
+correction grammar parses `seats`, `window`, `path` and `rev` only, and an `axes` correction would be
+silently inert (wave-1 `ConnSeparability`)" — and repaired both heads in place, so the section now has
+2 `- corrects` lines and `corrections 2`. The frozen clause still requires the axes correction it
+describes; a false one inserted into the landed section is green (§1b row 6). The claim's landed
+surface therefore does not implement its own clause 3.
 
 ### F2 — the window exemption for a placeholder atom is unconditional (HIGH, satisfiable by any empty window)
 
@@ -153,23 +189,35 @@ correction whose key is a round number older than the window. Measured:
 The landed card is already in this shape: its `round-45` seats correction exempts nothing
 (`tip-base.json`: `exempted` holds only the window atom), so "at least two re-derived corrections"
 is met by **one** in-scope repair plus one historical no-op. A duplicate alone would also satisfy it.
+At the landing tip the same line could name round 43 instead of round 45 with no change in verdict
+(§1b `wrong-round-historical-true` → exit 0, `corrections 2`), which is what makes the exemption's
+scope unenforceable: the counter cannot tell a repair from a true statement about a round the card
+never mentions.
 
-### F6 — the round's own repair leaves a stale count the instrument cannot collect (MEDIUM, calibration)
+### F6 — the card's own atom counts contradict the receipts they cite, and no clause can see it (MEDIUM, calibration)
 
-The `## Owned axes` calibration row now reads: "re-derives **50 atoms** … `exempted 1 <= 3` …
-(`.ufo/waves/round-47/l1/scores/c2-at-A7.json`)". That receipt records `atoms 42`, exemptions 1
-(my re-run at `a0753786` reproduces `atoms 42`, `exempted 1`); the `50` / `2` pair belongs to
-`c2-at-A4.json` at `1e2c310295`. The R47-C2 landing row states `atoms 50 … exempted 2 <= 3` at
-`1e2c310295`, which is correct. So within one card, one row cites a receipt it contradicts on the
-atom count. The counter is silent because `atoms`/`exempted` are prose integers: `axes` atoms collect
-only `<n>/<n>` fractions (`record.py:44`) and `rev` atoms only backticked hex (`record.py:47`).
-The same seam lets any quantitative sentence in the round sections go stale under `mismatches []`.
+Two rows of the landed card state numbers about the counter, and both are wrong against the receipt
+they cite:
 
-Reproduction:
+| row | claim | cited receipt | receipt says | my re-run |
+|---|---|---|---|---|
+| `## Owned axes` calibration | "re-derives **42 atoms** … `exempted 1 <= 3`" | `c2-at-A7.json` (`a0753786`) | `atoms 42`, exemptions 1 | `atoms 42`, exemptions 1 ✔ |
+| `## Round 47` R47-C2 | "`atoms 42` … `exempted 2 <= 3`" | `c2-at-A7.json` (`a0753786`) | `atoms 42`, exemptions **1** | ✘ on `exempted` |
+| (the landing's own receipt) | — | `c2-at-FINAL.json` (`6f9fd7f8`) | `atoms 44`, exemptions 1 | `atoms 44`, exemptions 1 |
+
+So the landing row's `exempted 2` contradicts its own cited receipt, and its `atoms 42` is stale at the
+landing revision (`44`). Earlier in the round the same rows said `50 atoms` / `exempted 2`, true only at
+`1e2c310295`. The counter is silent because these are prose integers: `axes` atoms collect
+only `<n>/<n>` fractions (`record.py:44`) and `rev` atoms only backticked hex (`record.py:47`), so a
+sentence *about the instrument* is outside every atom class. `mismatches []` therefore coexists with a
+row that misstates its own receipt — the same failure shape the round exists to remove, one level up.
+
+Reproduction (clone at the landing tip):
 
 ```sh
-python3 -I -B tools/round-47/record.py --root <clone> --rev 1e2c310295… --json-out r-a4.json   # atoms 50, exempted 2
-python3 -I -B tools/round-47/record.py --root <clone> --rev a0753786      --json-out r-a7.json   # atoms 42, exempted 1
+python3 -I -B tools/round-47/record.py --root <clone> --rev 1e2c310295… --json-out r-a4.json  # atoms 50, exempted 2
+python3 -I -B tools/round-47/record.py --root <clone> --rev a0753786…   --json-out r-a7.json  # atoms 42, exempted 1
+python3 -I -B tools/round-47/record.py --root <clone> --rev 6f9fd7f8…   --json-out r-final.json # atoms 44, exempted 1
 ```
 
 ### W1 — the battery's red is not evidence the clause works (battery coupling)
@@ -204,9 +252,10 @@ score `mutation == no-op` as its own named failure, so a no-op can never be repo
   `01a4bca7a60bb598…`) and `record.py` (`abf352573d156ed1…`) are byte-identical at every rev, so the
   A6 reading of the freeze is self-consistent — the churn is between the claims file's own text
   (freeze = the commit carrying its A1 paragraph, `9018c53b`) and A6.
-- The lane tip moved twice during this seat's run (`07d2894e` → `f7d6e58d` → `09a9f912`); every
-  mutation was re-run at the first two, with identical exits, and `SCORECARD.md` / `record.py` /
-  `exact.py` are unchanged at `09a9f912` (card sha256 still `de955ec7…`).
+- The lane tip moved four times during this seat's run (`07d2894e` → `f7d6e58d` → `09a9f912` →
+  `b1a058f3`); the matrix was re-run at `f7d6e58d` and the surviving/control subset at `b1a058f3`,
+  with identical exits. `record.py` and `exact.py` are byte-identical at every rev from A6 to
+  `b1a058f3`; only `SCORECARD.md` changed (`de955ec7…` → `1e3afadb…`, another seat's landing edit).
 
 ## 4. What I did not test
 
@@ -225,7 +274,8 @@ score `mutation == no-op` as its own named failure, so a no-op can never be repo
 | `tools/round-47/record.py` sha256 (clone) | `abf352573d156ed1388683c882e40cab9897f426b9448356993bf41bf37779e7` | same (never edited) |
 | `git status --porcelain` (clone) | – | `?? receipts/` only (this seat's own receipt dir) |
 | pristine counter after restore, twice | – | exit 0 both, stdout sha256 `d366b080e011…4e4c2` identical |
-| lane worktree `SCORECARD.md` sha256 | `de955ec7d937…` | re-checked unchanged before yield; no lane file written |
+| lane worktree `SCORECARD.md` sha256 | `de955ec7d937…` at my first measurement | `1e3afadb80f2…` at yield — changed by **another seat** (`6f9fd7f8`, "axes repaired in place"), not by this one; this seat wrote only `.ufo/waves/round-47/w1/MutCorrections*` |
+| second snapshot (landing tip) | – | clone `reset --hard b1a058f3`, card sha256 back to `1e3afadb80f2…`, `git status --porcelain` = `?? receipts/` only, `record.py` still `abf35257…` |
 
 Scratch `/fast/scratch/hyaku/kaidoku-r47/MutCorrections` removed after the receipts and scripts were
 copied here (`.ufo/waves/round-47/w1/MutCorrections/`: `receipts/`,
@@ -238,5 +288,7 @@ ghost path — those four arms are real. It does **not** bind a correction to th
 repair: the class/key check is satisfied by any empty window (F2), by any historical round (F5), or by
 no line at all for `axes` (F1); and the landed card's own window correction is an evasion of a false
 atom rather than a repair (F3). The claim's target (`failing == []`, exit 0) is met at the tip — this
-seat reproduces exit 0 — but it is met by an instrument whose "two re-derived corrections" reduces to
-one repair plus one no-op, with a third of the card's correction lines unparsed.
+seat reproduces exit 0 at `f7d6e58d` and at the landing `b1a058f3` — but it is met by an instrument
+whose "two re-derived corrections" reduces to one repair plus one no-op (F5), whose window repair is an
+evasion of the atom it names (F3), and whose axes clause has no implementation at all (F1). The card's
+own counts about the counter are wrong at the landing and no clause can see them (F6).

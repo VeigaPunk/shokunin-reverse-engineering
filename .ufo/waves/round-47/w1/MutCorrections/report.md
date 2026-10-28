@@ -29,8 +29,8 @@ python3 -I -B tools/round-47/record.py --root "$PWD" --rev <MUTANT_REV> [--no-ba
 
 | run | exit | failing | atoms | exempted | corrections | corrections_bad |
 |---|---|---|---|---|---|---|
-| `tip-base` (2026-10-28T18:01Z) | 0 | `[]` | 44 | 1 | 2 | 0 |
-| `restored-1`, `restored-2` (after restore, twice) | 0, 0 | `[]` | 44 | 1 | 2 | 0 |
+| `tip-base` @ `f7d6e58d` (2026-10-28T18:01Z) | 0 | `[]` | 44 | 1 | 2 | 0 |
+| `restored-1`, `restored-2` @ `07d2894e`, after restore, twice | 0, 0 | `[]` | 41 | 1 | 2 | 0 |
 
 Both restored runs printed byte-identical stdout (sha256 `d366b080e0112a5750edc6d169f760643867d03e9258c260d8e6fc956df4e4c2`), so the detector is deterministic on
 these bytes and a later red is attributable to the mutation, not to run-to-run noise.
@@ -88,6 +88,13 @@ prose that repairs the two `## Owned axes` heads in place — and the counter re
 Every exit matches the matrix at `f7d6e58d`. The landing edit that removed the inert `axes` lines
 changed nothing the counter reads: `corrections` stays 2, and a *false* axes correction inserted into
 the landed section is still green (row 6).
+
+Receipt naming: the seven names in this table were re-run here, so
+`.ufo/waves/round-47/w1/MutCorrections/receipts/<name>.*.json` holds the **landing-tip** run (revs
+`2ee8064f`, `9054e527`, `a6994162`, `6f2b21ac`, `e17adb7c`, `9c02880b`, `99bf4f33`); the `f7d6e58d`
+run of those same names is recorded by exit and stdout sha256 in `matrix.tsv`. The other receipts
+(`wrong-round-in-window`, `ghost-path-*`, `duplicate-replaces-repair`, `false-axes-bogus-axis`,
+`axes-corrections-deleted`) are the `f7d6e58d` run.
 
 ## 2. Findings
 
@@ -182,6 +189,10 @@ correction whose key is a round number older than the window. Measured:
 The landed card is already in this shape: its `round-45` seats correction exempts nothing
 (`tip-base.json`: `exempted` holds only the window atom), so "at least two re-derived corrections"
 is met by **one** in-scope repair plus one historical no-op. A duplicate alone would also satisfy it.
+At the landing tip the same line could name round 43 instead of round 45 with no change in verdict
+(§1b `wrong-round-historical-true` → exit 0, `corrections 2`), which is what makes the exemption's
+scope unenforceable: the counter cannot tell a repair from a true statement about a round the card
+never mentions.
 
 ### F6 — the card's own atom counts contradict the receipts they cite, and no clause can see it (MEDIUM, calibration)
 
@@ -241,9 +252,10 @@ score `mutation == no-op` as its own named failure, so a no-op can never be repo
   `01a4bca7a60bb598…`) and `record.py` (`abf352573d156ed1…`) are byte-identical at every rev, so the
   A6 reading of the freeze is self-consistent — the churn is between the claims file's own text
   (freeze = the commit carrying its A1 paragraph, `9018c53b`) and A6.
-- The lane tip moved twice during this seat's run (`07d2894e` → `f7d6e58d` → `09a9f912`); every
-  mutation was re-run at the first two, with identical exits, and `SCORECARD.md` / `record.py` /
-  `exact.py` are unchanged at `09a9f912` (card sha256 still `de955ec7…`).
+- The lane tip moved four times during this seat's run (`07d2894e` → `f7d6e58d` → `09a9f912` →
+  `b1a058f3`); the matrix was re-run at `f7d6e58d` and the surviving/control subset at `b1a058f3`,
+  with identical exits. `record.py` and `exact.py` are byte-identical at every rev from A6 to
+  `b1a058f3`; only `SCORECARD.md` changed (`de955ec7…` → `1e3afadb…`, another seat's landing edit).
 
 ## 4. What I did not test
 
@@ -262,7 +274,8 @@ score `mutation == no-op` as its own named failure, so a no-op can never be repo
 | `tools/round-47/record.py` sha256 (clone) | `abf352573d156ed1388683c882e40cab9897f426b9448356993bf41bf37779e7` | same (never edited) |
 | `git status --porcelain` (clone) | – | `?? receipts/` only (this seat's own receipt dir) |
 | pristine counter after restore, twice | – | exit 0 both, stdout sha256 `d366b080e011…4e4c2` identical |
-| lane worktree `SCORECARD.md` sha256 | `de955ec7d937…` | re-checked unchanged before yield; no lane file written |
+| lane worktree `SCORECARD.md` sha256 | `de955ec7d937…` at my first measurement | `1e3afadb80f2…` at yield — changed by **another seat** (`6f9fd7f8`, "axes repaired in place"), not by this one; this seat wrote only `.ufo/waves/round-47/w1/MutCorrections*` |
+| second snapshot (landing tip) | – | clone `reset --hard b1a058f3`, card sha256 back to `1e3afadb80f2…`, `git status --porcelain` = `?? receipts/` only, `record.py` still `abf35257…` |
 
 Scratch `/fast/scratch/hyaku/kaidoku-r47/MutCorrections` removed after the receipts and scripts were
 copied here (`.ufo/waves/round-47/w1/MutCorrections/`: `receipts/`,
@@ -275,5 +288,7 @@ ghost path — those four arms are real. It does **not** bind a correction to th
 repair: the class/key check is satisfied by any empty window (F2), by any historical round (F5), or by
 no line at all for `axes` (F1); and the landed card's own window correction is an evasion of a false
 atom rather than a repair (F3). The claim's target (`failing == []`, exit 0) is met at the tip — this
-seat reproduces exit 0 — but it is met by an instrument whose "two re-derived corrections" reduces to
-one repair plus one no-op, with a third of the card's correction lines unparsed.
+seat reproduces exit 0 at `f7d6e58d` and at the landing `b1a058f3` — but it is met by an instrument
+whose "two re-derived corrections" reduces to one repair plus one no-op (F5), whose window repair is an
+evasion of the atom it names (F3), and whose axes clause has no implementation at all (F1). The card's
+own counts about the counter are wrong at the landing and no clause can see them (F6).

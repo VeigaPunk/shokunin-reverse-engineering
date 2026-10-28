@@ -1,0 +1,785 @@
+BASE {'attest': 'cases=18 failures=0', 'registry': 'cases=12 failures=0', 'attest_counter_exit': 0, 'registry_counter_exit': 0}
+M01-gate-dirty                         selftests_green=False att=cases=18 failures=18   reg=cases=12 failures=12   verdict_unchanged=False counters=2/2
+M02-attest-_rows_lines                 selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M03-attest-vocab-key                   selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M04-attest-receipt-info                selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M05-registry-SCOPE6                    selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M06-registry-MUTATIONS-field           selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M07-registry-inner-fix                 selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M08-registry-m_fenced-head             selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M09-registry-receipt-rows              selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M10-census-per-claims-file             selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M11-census-import-subprocess           selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M12-trap-out_path                      selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M13-attest-r45-spec                    selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M15-attest-table_indexes_lines         selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M16-census-WORKTREE                    selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M17-gate-TEMP_PARTITIONS               selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M18-gate-merge-flag                    selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M19-gate-name_status-z                 selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M20-attest-MALFORMED-branch            selftests_green=True  att=cases=18 failures=0    reg=cases=12 failures=0    verdict_unchanged=True  counters=0/0
+M21-registry-presence                  selftests_green=False att=cases=18 failures=0    reg=cases=12 failures=1    verdict_unchanged=True  counters=0/0
+M22-registry-strict-cell               selftests_green=False att=cases=18 failures=0    reg=cases=12 failures=1    verdict_unchanged=True  counters=0/0
+{
+ "base": {
+  "attest": "cases=18 failures=0",
+  "registry": "cases=12 failures=0",
+  "attest_counter_exit": 0,
+  "registry_counter_exit": 0
+ },
+ "file_sha256": {
+  "gate.py": "c3ba6b93ef414e3795d2142d1d9a643a465a312593cdb9f3d8027553fd38897c",
+  "attest.py": "c405613170f0581661b9e2afb4bf278da8ac1f936eeb00eb4b456a9e70ad8e5c",
+  "registry.py": "5e16e4af69ebf714f0ee48b5a714aa682592f0ce5e32cdeec699b963d3f2da73",
+  "census.py": "960c516d3b5cb1bb0306bf7f44f848a76b9c795c5319328954b5021b234c1fd5"
+ },
+ "results": [
+  {
+   "mutation": "M01-gate-dirty",
+   "files": {
+    "gate.py": {
+     "sha256": "482b523054682ea5dfeaab4cd0f66b82fefe3a4cf18ed9e9e77117b67bb36e0a",
+     "removed_lines": 12,
+     "added_lines": 0,
+     "diff": "--- base/gate.py\n+++ mut/gate.py\n@@ -129,18 +129,6 @@\n     return changed\n \n \n-def dirty(root, pathspecs):\n-    \"\"\"Uncommitted paths under the union of the given pathspecs (R45-CL15: union, not replace).\"\"\"\n-    args = [\"status\", \"--porcelain\", \"-z\", \"--no-renames\"]\n-    if pathspecs:\n-        args += [\"--\", *pathspecs]\n-    r = git(root, *args, binary=True)\n-    if r.returncode != 0:\n-        return None\n-    out = r.stdout.decode(\"utf-8\", \"surrogateescape\").split(\"\\0\")\n-    return sorted({t[3:] for t in out if len(t) > 3 and t[2] == \" \"})\n-\n-\n def freeze_state(root, freeze, rev, claims=CLAIMS):\n     \"\"\"The full freeze verdict. Returns (exit_code, receipt).\"\"\"\n     base, tip = resolve(root, freeze), resolve(root, rev)\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 1,
+    "line": "cases=18 failures=18",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 1,
+    "line": "cases=12 failures=12",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 2,
+    "met_target": null,
+    "reason": "unhandled NameError: name 'dirty' is not defined",
+    "failing": null
+   },
+   "registry_counter": {
+    "exit": 2,
+    "met_target": null,
+    "reason": "unhandled NameError: name 'dirty' is not defined",
+    "failing": null
+   },
+   "verdict_unchanged": false,
+   "selftests_green": false
+  },
+  {
+   "mutation": "M02-attest-_rows_lines",
+   "files": {
+    "attest.py": {
+     "sha256": "35caace8cefd1ea30ee8ff4b72fd7b39a43058da730a9dc282b5f79d2161fe63",
+     "removed_lines": 7,
+     "added_lines": 0,
+     "diff": "--- base/attest.py\n+++ mut/attest.py\n@@ -263,13 +263,6 @@\n \n # --- battery: mutate this file's own block, one defect class per forgery ----------\n \n-def _rows_lines(block):\n-    out = []\n-    for line in block.splitlines():\n-        out.append(line)\n-    return out\n-\n-\n def _table_line_indexes(block):\n     lines = block.splitlines()\n     idx = [i for i, l in enumerate(lines) if l.strip().startswith(\"|\")]\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M03-attest-vocab-key",
+   "files": {
+    "attest.py": {
+     "sha256": "67f07a3979678bfcf954c92b4b4d18075371bd78f07504ff5f848fbcd0ce1050",
+     "removed_lines": 2,
+     "added_lines": 2,
+     "diff": "--- base/attest.py\n+++ mut/attest.py\n@@ -66,7 +66,7 @@\n         \"refs_min\": 6, \"require_line\": True, \"allow\": ALLOW,\n         \"must_cite\": [(\"literal\", \"S142\"), (\"path\", SELF)],\n         \"must_cite_refs\": [\"corpus/lessons/round-45.md\"],\n-        \"pin\": SELF, \"routed\": True, \"vocab\": True, \"v1_blocks\": \"ge\",\n+        \"pin\": SELF, \"routed\": True, \"v1_blocks\": \"ge\",\n         \"v1_min_rows\": 8, \"claims\": CLAIMS,\n     },\n     \"r45\": {\n@@ -75,7 +75,7 @@\n         \"refs_min\": 4, \"require_line\": False,\n         \"allow\": (\"corpus/lessons/\", \"corpus/knowledge/\", \"plans/\"),\n         \"must_cite\": [(\"literal\", \"S140\"), (\"path\", \"tools/round-45/frozen-path-preflight.py\")],\n-        \"must_cite_refs\": [], \"pin\": None, \"routed\": False, \"vocab\": False,\n+        \"must_cite_refs\": [], \"pin\": None, \"routed\": False,\n         \"v1_blocks\": \"eq\", \"v1_min_rows\": 8, \"claims\": \"plans/round-45-claims.md\",\n     },\n }\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M04-attest-receipt-info",
+   "files": {
+    "attest.py": {
+     "sha256": "fd30e29bae9ce71b878135d7c4d8d9cd2315a351bd5a6f1f4c3002cd3e728d90",
+     "removed_lines": 5,
+     "added_lines": 0,
+     "diff": "--- base/attest.py\n+++ mut/attest.py\n@@ -180,7 +180,6 @@\n     if marked:\n         block = marked[0]\n         receipt[\"block_is_last\"] = blocks[-1] is block\n-        receipt[\"block_title\"] = block.split(\"**\", 1)[0][:24]\n         header, rows = table(block)\n         receipt[\"header\"] = header\n         receipt[\"rows\"] = len(rows)\n@@ -194,7 +193,6 @@\n             # The v1 hole: substring containment, over the spec's own tokens.\n             header_ok = all(any(t in h.lower() for h in header)\n                             for t in (x.lower() for x in spec[\"header\"]))\n-        receipt[\"header_ok\"] = header_ok\n         if not header_ok:\n             failing.append(f\"header {header} != {spec['header']}\")\n         floor = spec[\"min_rows\"] if hard else spec.get(\"v1_min_rows\", spec[\"min_rows\"])\n@@ -221,7 +219,6 @@\n                 failing.append(f\"arm cells outside the vocabulary: {len(novocab)}\")\n         refs, cited, bad_refs = check_refs(block, files, spec, hard)\n         receipt[\"refs\"] = len(refs)\n-        receipt[\"cited\"] = sorted(cited)\n         receipt[\"unresolved_citations\"] = bad_refs\n         if len(refs) < spec[\"refs_min\"]:\n             failing.append(f\"refs {len(refs)} < {spec['refs_min']}\")\n@@ -236,7 +233,6 @@\n             cites[token] = token in block\n             if not cites[token]:\n                 failing.append(f\"does not cite {token}\")\n-        receipt[\"cites\"] = cites\n         if spec[\"pin\"] and hard:\n             body = files(spec[\"pin\"])\n             if body is None:\n@@ -246,7 +242,6 @@\n                 got = m.group(1) if m else None\n                 want = hashlib.sha256(body.encode()).hexdigest()\n                 receipt[\"pin\"] = got\n-                receipt[\"pin_expected\"] = want\n                 if got != want:\n                     failing.append(\"interpreter sha256 pin does not match the bytes at rev\")\n     if battery is not None:\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M05-registry-SCOPE6",
+   "files": {
+    "registry.py": {
+     "sha256": "e073fbd7046e160224d93d0f74c4c3d64faf2562616a23afdd2e3de9da4c43a2",
+     "removed_lines": 4,
+     "added_lines": 0,
+     "diff": "--- base/registry.py\n+++ mut/registry.py\n@@ -442,10 +442,6 @@\n \n # --- selftest ----------------------------------------------------------------------\n \n-SCOPE6 = [\"tools/round-44/a.py\", \"tools/round-44/b.sh\", \"tools/round-44/c.py\",\n-          \"tools/round-45/x.py\", \"tools/round-45/y.py\", \"tools/round-45/z.py\"]\n-\n-\n def house_row(path, exits=\"0=met; 1=not met; 2=could-not-evaluate\"):\n     return (f\"| `{path}` | gate | {exits} | `--selftest` | none | repo | kaidoku |\")\n \n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M06-registry-MUTATIONS-field",
+   "files": {
+    "registry.py": {
+     "sha256": "2b3c7a89422c1167ff8ee82295d214d8b91551d2953ffd3f4908bea92ba78372",
+     "removed_lines": 7,
+     "added_lines": 5,
+     "diff": "--- base/registry.py\n+++ mut/registry.py\n@@ -316,12 +316,10 @@\n     return skill.replace(mid, \"\\n\".join(lines) + \"\\n\", 1)\n \n \n-MUTATIONS = [(\"fenced\", \"skill\", m_fenced), (\"off-section\", \"skill\", m_off_section),\n-             (\"substring-cell\", \"skill\", m_substring_cell),\n-             (\"prose-exit\", \"skill\", m_prose_exit),\n-             (\"html-comment\", \"skill\", m_html_comment),\n-             (\"first-wins-shadow\", \"skill\", m_thin_shadow),\n-             (\"no-header\", \"skill\", m_no_header)]\n+MUTATIONS = [(\"fenced\", m_fenced), (\"off-section\", m_off_section),\n+             (\"substring-cell\", m_substring_cell), (\"prose-exit\", m_prose_exit),\n+             (\"html-comment\", m_html_comment), (\"first-wins-shadow\", m_thin_shadow),\n+             (\"no-header\", m_no_header)]\n \n \n def run_battery(root, rev, spec_name, scratch_root):\n@@ -339,7 +337,7 @@\n     out[\"genuine_green\"] = 1 if code == 0 else 0\n     out[\"genuine_exit\"] = code\n     need = [\"SKILL.md\", spec[\"census\"]] + scope\n-    for name, _, fn in MUTATIONS:\n+    for name, fn in MUTATIONS:\n         try:\n             text = fn(skill, spec) if name != \"fenced\" else skill.replace(\n                 split_section(skill, spec)[0], m_fenced(split_section(skill, spec)[0]), 1)\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M07-registry-inner-fix",
+   "files": {
+    "registry.py": {
+     "sha256": "4f9e33b3369462da083f9a6d6a1c7dd98ab06fbf9e06017382f0522138b338ba",
+     "removed_lines": 2,
+     "added_lines": 0,
+     "diff": "--- base/registry.py\n+++ mut/registry.py\n@@ -250,8 +250,6 @@\n \n \n def m_substring_cell(skill, spec):\n-    def fix(m):\n-        return \"see \" + m.group(0) + \" (wrapper)\"\n     mid, err = split_section(skill, spec)\n     if err:\n         raise ValueError(err)\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M08-registry-m_fenced-head",
+   "files": {
+    "registry.py": {
+     "sha256": "33cd43928538a34025ee8ccbb5238cbbcfaa510e2d954357d1baeb8749283cef",
+     "removed_lines": 1,
+     "added_lines": 0,
+     "diff": "--- base/registry.py\n+++ mut/registry.py\n@@ -233,7 +233,6 @@\n     body = [l for l in mid.splitlines() if l.strip().startswith(\"|\")]\n     if not body:\n         raise ValueError(\"no table rows\")\n-    head = mid.splitlines()[0] if mid.splitlines() else \"\"\n     rest = [l for l in mid.splitlines() if not l.strip().startswith(\"|\")]\n     return \"\\n```\\n\" + \"\\n\".join(body) + \"\\n```\\n\" + \"\\n\".join(rest) + \"\\n\"\n \n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M09-registry-receipt-rows",
+   "files": {
+    "registry.py": {
+     "sha256": "6d4aaeed16447a3b6405f763c4f65e5b35f7cfb668cb4407d01efef0d72ffa68",
+     "removed_lines": 2,
+     "added_lines": 1,
+     "diff": "--- base/registry.py\n+++ mut/registry.py\n@@ -164,8 +164,7 @@\n         # Round-45 parse fidelity: every table line is a candidate row; there is no\n         # header concept, so a fenced \"good\" row can shadow an honest thin one.\n         rows, header = cells, None\n-    receipt.update({\"scope_size\": len(scope), \"registry_rows\": len(rows),\n-                    \"header\": header})\n+    receipt.update({\"scope_size\": len(scope), \"header\": header})\n     if hard and spec[\"strict_header\"]:\n         if header != spec[\"house\"]:\n             failing.append(f\"header != house schema ({len(spec['house'])} cells)\")\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M10-census-per-claims-file",
+   "files": {
+    "census.py": {
+     "sha256": "e227b5671ade46cce093e8daaf10c8509db0c9e94ab5372607ff5b0790627cd9",
+     "removed_lines": 9,
+     "added_lines": 4,
+     "diff": "--- base/census.py\n+++ mut/census.py\n@@ -35,15 +35,12 @@\n \n \n def census(root, rev):\n-    named, per_file = set(), {}\n+    named = set()\n     for path in CLAIMS:\n         body = _read(root, rev, path)\n         if body is None:\n-            per_file[path] = {\"present\": False, \"named\": []}\n             continue\n-        found = sorted({m.group(0) for m in TOOL.finditer(body)})\n-        per_file[path] = {\"present\": True, \"named\": found}\n-        named |= set(found)\n+        named |= {m.group(0) for m in TOOL.finditer(body)}\n     if rev == \"WORKTREE\":\n         present = sorted(p for p in named if os.path.exists(os.path.join(root, p)))\n     else:\n@@ -54,7 +51,6 @@\n                  \"plans/round-4[1-6]-claims.md at --rev, restricted to paths present there\"),\n         \"paths\": present,\n         \"named_but_absent\": absent,\n-        \"per_claims_file\": per_file,\n     }\n \n \n@@ -69,9 +65,8 @@\n     if args.out:\n         with open(args.out, \"w\") as fh:\n             fh.write(text)\n-    print(json.dumps({\"paths\": len(doc[\"paths\"]), \"named_but_absent\": doc[\"named_but_absent\"],\n-                      \"per_file\": {k: len(v[\"named\"]) for k, v in doc[\"per_claims_file\"].items()}},\n-                     indent=1))\n+    print(json.dumps({\"paths\": len(doc[\"paths\"]),\n+                      \"named_but_absent\": doc[\"named_but_absent\"]}, indent=1))\n     return 0\n \n \n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M11-census-import-subprocess",
+   "files": {
+    "census.py": {
+     "sha256": "b202263cc7f6bcb767655b729875c2bd7d42af0befdacb831398255d604387ea",
+     "removed_lines": 1,
+     "added_lines": 0,
+     "diff": "--- base/census.py\n+++ mut/census.py\n@@ -17,7 +17,6 @@\n import json\n import os\n import re\n-import subprocess\n import sys\n \n sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M12-trap-out_path",
+   "files": {
+    "gate.py": {
+     "sha256": "81216b76dccd32a802b65a4fab04392056bbbc8995b0d1eb4ba234e838e8be90",
+     "removed_lines": 17,
+     "added_lines": 0,
+     "diff": "--- base/gate.py\n+++ mut/gate.py\n@@ -32,8 +32,6 @@\n \n CLAIMS = \"plans/round-46-claims.md\"\n FROZEN_HEADING = \"## Frozen paths (exact)\"\n-GRADED = (\"SKILL.md\", \"LOG.md\", \"SCORECARD.md\", \"PROVINCE.md\", \"SHONEN.md\",\n-          \"plans\", \"tools\", \"corpus\", \"evidence\")\n STATUS = re.compile(r\"^[ACDMRTUXB][0-9]*$\")\n # Any real partition works; only the shared temporary partitions are refused, because\n # the driver reaps them after 45 idle minutes and nothing there is citable evidence.\n@@ -195,21 +193,6 @@\n     return 0, receipt\n \n \n-def out_path(root, path):\n-    \"\"\"Resolve a `--json-out` target, or return (None, reason) when it is refused.\"\"\"\n-    if not path:\n-        return None, None\n-    full = os.path.realpath(path)\n-    lane = os.path.realpath(root)\n-    if os.path.commonpath([full, lane]) != lane:\n-        return None, f\"--json-out outside the lane root: {path}\"\n-    rel = os.path.relpath(full, lane).replace(os.sep, \"/\")\n-    head = rel.split(\"/\", 1)[0]\n-    if rel in GRADED or head in GRADED:\n-        return None, f\"--json-out inside a graded or frozen surface: {rel}\"\n-    return full, None\n-\n-\n def scratch(prefix):\n     \"\"\"A scratch dir under an explicit non-/tmp root (R45-CL20: never a bare /tmp).\"\"\"\n     base = os.environ.get(\"HYAKU_SCRATCH\") or os.environ.get(\"TMPDIR\")\n"
+    },
+    "attest.py": {
+     "sha256": "11ab3e4dcc79e2e58c466800dccf27be17e3dfdf334951a4845497609efc605e",
+     "removed_lines": 4,
+     "added_lines": 1,
+     "diff": "--- base/attest.py\n+++ mut/attest.py\n@@ -481,10 +481,7 @@\n     args = ap.parse_args(argv)\n     if args.selftest:\n         return selftest()\n-    out, err = gate.out_path(args.root, args.json_out)\n-    if err:\n-        print(json.dumps({\"reason\": err}))\n-        return 2\n+    out = args.json_out\n     code, receipt = gate.main_guard(\n         lambda: evaluate(args.root, args.freeze, args.rev, args.spec, args.profile,\n                          not args.no_battery))\n"
+    },
+    "registry.py": {
+     "sha256": "bd821954530ae94fe8a50c714e800240540581254578df6d7d2d335c109da0a4",
+     "removed_lines": 4,
+     "added_lines": 1,
+     "diff": "--- base/registry.py\n+++ mut/registry.py\n@@ -429,10 +429,7 @@\n     args = ap.parse_args(argv)\n     if args.selftest:\n         return selftest()\n-    out, err = gate.out_path(args.root, args.json_out)\n-    if err:\n-        print(json.dumps({\"reason\": err}))\n-        return 2\n+    out = args.json_out\n     code, receipt = gate.main_guard(\n         lambda: evaluate(args.root, args.freeze, args.rev, args.spec, args.profile,\n                          not args.no_battery))\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M13-attest-r45-spec",
+   "files": {
+    "attest.py": {
+     "sha256": "5303e6668e758350e44eb4295e4c73edd50529c510b059f04a57a94f9c8a63a3",
+     "removed_lines": 9,
+     "added_lines": 0,
+     "diff": "--- base/attest.py\n+++ mut/attest.py\n@@ -69,15 +69,6 @@\n         \"pin\": SELF, \"routed\": True, \"vocab\": True, \"v1_blocks\": \"ge\",\n         \"v1_min_rows\": 8, \"claims\": CLAIMS,\n     },\n-    \"r45\": {\n-        \"marker\": \"<!-- freeze-integrity-table v1 -->\", \"block\": 22,\n-        \"header\": [\"trigger\", \"arm\", \"exit\", \"receipt\"], \"min_rows\": 8,\n-        \"refs_min\": 4, \"require_line\": False,\n-        \"allow\": (\"corpus/lessons/\", \"corpus/knowledge/\", \"plans/\"),\n-        \"must_cite\": [(\"literal\", \"S140\"), (\"path\", \"tools/round-45/frozen-path-preflight.py\")],\n-        \"must_cite_refs\": [], \"pin\": None, \"routed\": False, \"vocab\": False,\n-        \"v1_blocks\": \"eq\", \"v1_min_rows\": 8, \"claims\": \"plans/round-45-claims.md\",\n-    },\n }\n \n \n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M15-attest-table_indexes_lines",
+   "files": {
+    "attest.py": {
+     "sha256": "d7313c732a6a13d3fd46e92f31ca744d11bc3939046c47615a40ddf086bc065a",
+     "removed_lines": 1,
+     "added_lines": 1,
+     "diff": "--- base/attest.py\n+++ mut/attest.py\n@@ -301,7 +301,7 @@\n \n def m_header_substring(block, spec):\n     \"\"\"Last header cell `exit` -> `exit-code`: a substring test still passes, equality fails.\"\"\"\n-    lines, data = _table_indexes_lines(block)\n+    lines = _table_indexes_lines(block)[0]\n     hdr = [i for i, l in enumerate(lines) if l.strip().startswith(\"|\")][0]\n     lines[hdr] = lines[hdr].rstrip().rstrip(\"|\").rstrip() + \"code |\"\n     return \"\\n\".join(lines) + \"\\n\"\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M16-census-WORKTREE",
+   "files": {
+    "census.py": {
+     "sha256": "fb699a6fe2c89bd0839ffcb998b478dfd1eb71b2f2bca3a2bc46b60c0acac0ab",
+     "removed_lines": 3,
+     "added_lines": 0,
+     "diff": "--- base/census.py\n+++ mut/census.py\n@@ -28,9 +28,6 @@\n \n \n def _read(root, rev, path):\n-    if rev == \"WORKTREE\":\n-        full = os.path.join(root, path)\n-        return open(full).read() if os.path.exists(full) else None\n     return gate.show(root, rev, path)\n \n \n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M17-gate-TEMP_PARTITIONS",
+   "files": {
+    "gate.py": {
+     "sha256": "9e5983ed5497abb1d6d26fa6e44fb270751d596c344be04d0e47f7fe8a753cd6",
+     "removed_lines": 2,
+     "added_lines": 0,
+     "diff": "--- base/gate.py\n+++ mut/gate.py\n@@ -216,8 +216,6 @@\n     if not base:\n         return None, \"no HYAKU_SCRATCH/TMPDIR root set\"\n     base = os.path.realpath(base)\n-    if any(base == t or base.startswith(t + \"/\") for t in TEMP_PARTITIONS):\n-        return None, f\"scratch root is a temporary partition: {base}\"\n     try:\n         os.makedirs(base, exist_ok=True)\n         return tempfile.mkdtemp(dir=base, prefix=prefix), None\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M18-gate-merge-flag",
+   "files": {
+    "gate.py": {
+     "sha256": "abc1d860f066b2b58d53a7dc895c57fd74b12f227248d765ff23e7b214fc7648",
+     "removed_lines": 1,
+     "added_lines": 1,
+     "diff": "--- base/gate.py\n+++ mut/gate.py\n@@ -96,7 +96,7 @@\n     \"\"\"\n     if not paths:\n         return [], None\n-    r = git(root, \"log\", \"-m\", \"--diff-merges=first-parent\", \"--name-status\", \"-z\",\n+    r = git(root, \"log\", \"--name-status\", \"-z\",\n             \"--format=\", f\"{base}..{tip}\", \"--\", *paths, binary=True)\n     if r.returncode != 0:\n         return None, \"git log failed\"\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M19-gate-name_status-z",
+   "files": {
+    "gate.py": {
+     "sha256": "3920682ed11eab25ce9956d91078b3bfbe6d4da126b360e2ab3042af879d325e",
+     "removed_lines": 1,
+     "added_lines": 1,
+     "diff": "--- base/gate.py\n+++ mut/gate.py\n@@ -96,7 +96,7 @@\n     \"\"\"\n     if not paths:\n         return [], None\n-    r = git(root, \"log\", \"-m\", \"--diff-merges=first-parent\", \"--name-status\", \"-z\",\n+    r = git(root, \"log\", \"-m\", \"--diff-merges=first-parent\", \"--name-status\",\n             \"--format=\", f\"{base}..{tip}\", \"--\", *paths, binary=True)\n     if r.returncode != 0:\n         return None, \"git log failed\"\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M20-attest-MALFORMED-branch",
+   "files": {
+    "attest.py": {
+     "sha256": "e46e7b47277fb38e0e9b99e7e034ddbdaa5d269cc94ee7d4753248da67459a2b",
+     "removed_lines": 2,
+     "added_lines": 0,
+     "diff": "--- base/attest.py\n+++ mut/attest.py\n@@ -87,8 +87,6 @@\n \n def craft_section(skill):\n     if CRAFT not in skill:\n-        if MALFORMED in skill:\n-            raise Malformed(\"craft heading lacks its trailing space\")\n         raise Malformed(\"no `## Queue-drain craft ` section\")\n     return skill.split(CRAFT, 1)[1].split(\"\\n## \", 1)[0]\n \n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 0,
+    "line": "cases=12 failures=0",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": true
+  },
+  {
+   "mutation": "M21-registry-presence",
+   "files": {
+    "registry.py": {
+     "sha256": "cd0e46c260939c897724dd588d9a75500fd16682eca2ef7f7539bfe4bde2e214",
+     "removed_lines": 2,
+     "added_lines": 0,
+     "diff": "--- base/registry.py\n+++ mut/registry.py\n@@ -201,8 +201,6 @@\n             if not all(re.search(r\"\\b%d\\b\" % d, cell) for d in (0, 1, 2)):\n                 thin.append(path)\n     absent = []\n-    if hard and spec[\"presence\"]:\n-        absent = [p for p in registered if files(p) is None]\n     if unregistered:\n         failing.append(f\"unregistered: {len(unregistered)} of {len(scope)}\")\n     if thin:\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 1,
+    "line": "cases=12 failures=1",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": false
+  },
+  {
+   "mutation": "M22-registry-strict-cell",
+   "files": {
+    "registry.py": {
+     "sha256": "c0885ee5f117a9eed4980676f3ecf7439a201af83e6a3bc5b0c3f1a9ac74169b",
+     "removed_lines": 4,
+     "added_lines": 2,
+     "diff": "--- base/registry.py\n+++ mut/registry.py\n@@ -176,10 +176,8 @@\n     for row in rows:\n         if not row:\n             continue\n-        if hard and spec[\"strict_cell\"]:\n-            key = row[0].strip()\n-            if key.startswith(\"`\") and key.endswith(\"`\") and len(key) > 2:\n-                by_path.setdefault(key[1:-1], row)\n+        if False:\n+            pass\n         else:\n             m = PATHCELL.search(row[0]) if row else None\n             if m:\n"
+    }
+   },
+   "attest_selftest": {
+    "exit": 0,
+    "line": "cases=18 failures=0",
+    "stderr": ""
+   },
+   "registry_selftest": {
+    "exit": 1,
+    "line": "cases=12 failures=1",
+    "stderr": ""
+   },
+   "attest_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "registry_counter": {
+    "exit": 0,
+    "met_target": true,
+    "reason": null,
+    "failing": []
+   },
+   "verdict_unchanged": true,
+   "selftests_green": false
+  }
+ ]
+}

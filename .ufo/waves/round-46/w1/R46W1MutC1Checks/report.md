@@ -10,8 +10,10 @@ read of git objects plus copies under `HYAKU_SCRATCH`. No installs (nothing need
 `receipts/` beside it: `mutation-matrix.md` (26 selftest runs with command, exit, stdout sha256,
 UTC), `probes.jsonl` (36 probe runs, same fields), `summary.json` + `summary-cur.json` (machine
 matrix for the two frozen byte-sets and the live one), `mutants/*.diff` (24 single-hunk diffs),
-`artefact-arm-prefix.json`, `curreal-*.json`, `manifest.txt` (sha256 of every receipt), plus the
-counter/control/battery receipts cited below.
+`artefact-arm-prefix.json`, `curreal-*.json`, `manifest.txt` (sha256 of every receipt), and
+`harness/` (`driver.py`, `driver_c.py`, `probe.py`, `capture.py`, `analyse.py` — the exact code
+that produced the matrix and the probes; their absolute scratch paths point at the removed
+scratch root), plus the counter/control/battery receipts cited below.
 
 **The lane is live.** `SKILL.md` block 23 and `tools/round-46/attest.py` changed *during* this
 seat: at 17:03Z the instrument was `e6c44d2d…` (16 cases, the pin the block carried at
@@ -33,17 +35,20 @@ The four survivors are the same set in B and C (`m4`, `m7`, `m9`, `m10`); the tw
 Score C = `6aa73c612069…`, UTC 2026-10-28T17:11:32Z (`receipts/summary-cur.json`).
 
 Four weakening mutants of the **pinned** instrument still score the real landed block 23
-`met_target: true` with `battery 9/9/0/1/0` (`receipts/real-m*.json`). Of the eight required
+`met_target: true` with `battery 9/9/0/1/0` (`receipts/real-m*.json`, rev `0425224`), and the
+same four still do so against the **live** artefact and instrument (`receipts/curreal-*.json`,
+rev `c8de6c47`: pristine and all four mutants exit 0, `failing []`, battery `9/9/0/1/0`). Of the
+eight required
 mutations, **three survive at the named freeze** (`m3`, `m4`, `m7`) and **two survive at the
 pinned bytes** (`m4`, `m7`) — and those two keep the battery green while scoring the landed
 block green, so this is not only a selftest gap but a scoring gap.
 
 ---
 
-## 0. Which bytes are "the frozen instrument" — a finding before the campaign
+## 0. F1 — which bytes are "the frozen instrument" (a finding before the campaign)
 
 The seat names freeze `31820472784284727546808acc31b3ea1e73919b`. The bytes that block 23 pins
-and that the lane scores are **not** those bytes. Two later commits rewrote the frozen
+and that the lane scores are **not** those bytes. Later commits rewrote the frozen
 directory; the lane's own commit messages say so ("the first freeze commit did not carry the
 final bytes", `50862e4a`; "the freeze is the instrument that can actually be scored",
 `65678df0`).
@@ -52,12 +57,18 @@ final bytes", `50862e4a`; "the freeze is the instrument that can actually be sco
 |---|---|---|---|
 | `31820472` (freeze named by this seat) | `25883520b425…` | `dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb` | 15 |
 | `50862e4a` | `2f3d595c45efee9ecea8374b2af26d3d0a083549` | `eba599582bb32eab3c47d7c15cbd53852e257070ae756136e3cee059e37311fd` | 15 |
-| `65678df0`, `0425224`, HEAD | `936910fe60b2…` | `e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346` | 16 |
+| `65678df0`, `0425224` | `936910fe60b2…` | `e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346` | 16 |
+| `c8de6c47` = live worktree at 17:11Z | `…` | `c405613170f0581661b9e2afb4bf278da8ac1f936eeb00eb4b456a9e70ad8e5c` | 18 |
 
-`attest.py` has been byte-identical since `65678df0`, so byte-set B is both "the F3 repair" and
-"the current pinned instrument". `gate.py` differs too: A `d7cd9aac…` /
+`attest.py` was byte-identical from `65678df0` to at least `0425224`; then it changed again in the
+live landing (`c4056131…`, two new freeze cases: a rewritten `## Frozen paths` section and a
+dirty frozen tool). `gate.py` differs between A and B: A `d7cd9aac…` /
 `sha256:64626cca85b2de25d495155318493b3b9eab73c6f31ad7b78f4e76c4344d772e`, B `9ab7e2a3…` /
-`sha256:847aa33baf545131bed14b90af0425aef12bdc5ed8fb375d8ddb172e5c853223`.
+`sha256:847aa33baf545131bed14b90af0425aef12bdc5ed8fb375d8ddb172e5c853223`; the live worktree
+`gate.py` is `sha256:c3ba6b93ef414e3795d2142d1d9a643a465a312593cdb9f3d8027553fd38897c`.
+
+The pin in block 23 matches its own revision in both cases I checked
+(`receipts/artefact-arm-prefix.json`): `e6c44d2d…` at `0425224`, `c4056131…` at `c8de6c47`.
 
 The freeze arm says the same thing from the other side (all runs read-only, `--no-battery`):
 
@@ -143,6 +154,21 @@ that went red relative to that byte-set's baseline.
 "stdout byte-identical" means the mutant's entire `--selftest` output hashes to the baseline
 `sha256` — the selftest cannot even see the change, which is a stronger statement than
 "no case flipped".
+
+### Byte-set C (live, 18 cases) — same verdicts
+
+Baseline exit 0, `cases=18 failures=0`, stdout
+`sha256:6aa73c612069dd72988df7484fb76e4fbc3581d0e69916672589b5949f46dfa6`, UTC
+2026-10-28T17:11:32Z (`receipts/summary-cur.json`). Verdicts, in the same order as the table:
+
+| m1 | m2 | m3 | m4 | m5 | m6 | m7 | m8 | m9 | m10 | m11 | m12 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| K | K | K† | **S** | K | K | **S** | K | **S**† | **S**† | K† | K† |
+
+K† = killed only by `green-with-battery`; S† = mutant stdout byte-identical to the baseline (so
+m9 and m10 are invisible to all 18 cases, including the two new freeze cases). C kills exactly
+the set B kills, with the same reliance on the battery, so the two extra cases widen the freeze
+surface without closing any clause hole found here.
 
 ---
 
@@ -346,8 +372,9 @@ no battery case at all, and four mutants (m3, m9, m10, m12) produce byte-identic
 
 See §4.2: arm cells `unpinned` (contains `pin`) score green on both byte-sets
 (`p-arm-substring`, exit 0, `failing []`). The claim says "names a token from the fixed
-vocabulary"; containment is not naming. `rows`/`narrows`, `refs`/`prefs`, `pin`/`spinner` are
-all open.
+vocabulary"; containment is not naming. The same `in` operator accepts `narrows` for `rows`,
+`prefs` for `refs`, `spinner` for `pin`. Landing consequence and the `R45-CL19` `none:` row are
+in §6.3 (`receipts/artefact-arm-prefix.json`).
 
 ### F4 — the claims' preflight command, as written, exits 2
 
@@ -393,8 +420,13 @@ it. Concretely, for the L1:
 2. **The battery, not the discrete cases, is what kills m3/m11/m12 at B.** Any repair that drops
    the `green-with-battery` case re-opens three clauses silently.
 3. **Clause 4's substring vocabulary is a live hole in the frozen check** (F3), independent of
-   any mutant; a repaired check should split-and-equate, and the repair should be scored against
-   the existing block 23 before landing (it stays green: every landed arm cell is a bare token).
+   any mutant. A repair must equate the leading token of the arm cell (the word before `:`),
+   not merely require containment. Two measured consequences: at `0425224` all thirteen rows
+   pass that stricter reading (`prefix_outside_vocab: []`), but at the live `c8de6c47` **one
+   row fails it** — `R45-CL19`, whose arm cell begins `none:` and passes today only because the
+   words "blob arm" appear later in the same cell (`receipts/artefact-arm-prefix.json`). So a
+   tightened check turns the current artefact red on one row, and the landing must either add
+   `none` to the vocabulary or reword that row.
 4. **The claims' preflight command needs its three flags** (F4); the landed registry row is
    already correct and its case-count history verified.
 
@@ -419,5 +451,10 @@ strip; a no-`round-45.md` citation case.
 - Every `--selftest` run used `--root /nonexistent`; the selftest returns before `evaluate`, so
   the lane repo is never read by those runs. Fixture repos for probes are one-commit repos under
   `HYAKU_SCRATCH`, each asserted to be its own toplevel.
+- **Live drift.** Byte-set B was the worktree instrument at 17:03Z (`e6c44d2d…`); by 17:11Z the
+  worktree was `c4056131…` (18 cases) and `SKILL.md` block 23 had been re-edited (new pin,
+  `R45-CL19` arm cell now begins `none:`). Byte-set C and the `curreal-*` receipts are measured
+  at `c8de6c47`; if the lane moves again they describe that commit, not `HEAD`. The two
+  byte-sets I was told are frozen are unaffected by that drift — they are read from git objects.
 - Installs: none. No mutating git outside scratch fixtures; scratch removed after the receipts
   were copied.
