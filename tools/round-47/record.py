@@ -437,7 +437,13 @@ def run_battery(card, files, root, rev, root_repo=None):
         return text.replace(m.group(0), f"empty in {root[:8]}..{rev}", 1)
 
     def ghost_atom(text):
-        return text + "\n- corrects path does/not/exist/at/any/revision.md: never\n"
+        # The forgery must land inside the corrections section: a `- corrects` line anywhere
+        # else is not parsed at all, which would make the forgery a no-op (QUALITY 78b).
+        head = CORR_HEAD
+        if head not in text:
+            return text
+        i = text.index(head) + len(head)
+        return text[:i] + "\n\n- corrects path does/not/exist/at/any/revision.md: never" + text[i:]
 
     forged("correction-wrong-seat-total", wrong_total)
     forged("correction-window-not-empty", non_empty)
