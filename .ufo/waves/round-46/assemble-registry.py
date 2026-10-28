@@ -39,6 +39,15 @@ def candidates():
                 cells = [c.strip() for c in s.strip().strip("|").split("|")]
                 rows.append({"seat": seat, "file": name, "cells": cells, "line": s})
             break
+    extra = os.path.join(ROOT, ".ufo/waves/round-46/l1/registry-extra.md")
+    if os.path.exists(extra):
+        for line in open(extra):
+            t = line.strip()
+            if not t.startswith("| `tools/"):
+                continue
+            rows.append({"seat": "L1-extra", "file": "registry-extra.md",
+                         "cells": [c.strip() for c in t.strip().strip("|").split("|")],
+                         "line": t})
     return rows
 
 
