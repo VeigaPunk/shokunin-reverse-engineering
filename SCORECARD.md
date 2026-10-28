@@ -3507,3 +3507,11 @@ Owned scores remain saturated: coverage `10 → 10` (R43-C2 not met under the fr
 - **planned (round 44, after steer):** re-evaluate the lowest owned axis under the next prompt; do not reuse or alter the frozen R43 predicates. Carry the C2 target mismatch and C1/C2 instrument findings as explicit candidate fixes.
 - **Command A, final indexed tree:** at `8de80f1daec68260eb256eb68375e2c33af759a9`, the frozen command-A recipe prints `knowledge_files=137`, `mapped=137`, `missing=[]`, `dangling=[]`, `coverage_score=10.0`, `citation_resolved_rules=21/21`, `depth_score=10.0`. Base `6b9e64fe` was 135/135. The proxy is unchanged at saturation; it does not override the unmet R43-C2 score.
 - **Text erratum:** the Round 43 heading's “overstrict” wording is superseded by the correction above: counter and plan agree on 3 insertions; the committed delta is 4 because of the blank separator. The `planned (round 43)` line is historical; the explicit round-44 planned item above is current.
+
+- **Round-44 calibration correction (2026-10-28):** the `## Owned axes` current observables are re-derived from the round-44 freeze tree: command A reports 137/137 knowledge files mapped (`missing []`, `dangling []`), 21/21 rule blocks with resolvable file/range citations, and the `## Queue-drain craft` section spans `SKILL.md:81-543`. The round-41 pins quoted above (`e1c83313`, `52b0eb29`) remain true at their own revisions.
+<!-- c2-correction: C2-a1-owned-coverage-count -->
+c2-correction-value: 137/137
+<!-- c2-correction: C2-a2-owned-depth-count -->
+c2-correction-value: 21/21
+<!-- c2-correction: C2-a4-owned-depth-craft-range -->
+c2-correction-value: 81-543

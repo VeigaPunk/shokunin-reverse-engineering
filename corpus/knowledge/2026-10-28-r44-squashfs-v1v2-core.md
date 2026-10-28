@@ -1,17 +1,12 @@
-# SquashFS v1 and v2 through REA: `squashfs_v1` and `squashfs_v2` run plain `sasquatch -be`/`-le`, and all four frozen gzip carriers publish every oracle regular file (round 44, Core candidate)
+# SquashFS v1 and v2 through REA: `squashfs_v1` and `squashfs_v2` run plain `sasquatch -be`/`-le`, and all four frozen gzip carriers publish every independent-oracle regular file (round 44, Core)
 
-status: R44-C1 — **lane score unmeasured.** The frozen counter `tools/round-44/c1-counter.py`
-(sha256 `9f2cc140e1fa7875bcd9dc80ce2ff5a1006e8ee73c7e1207580f88a97ffea993`) has not been run on
-the lane at a post-landing revision, so this entry reports no lane `carriers_matched` and does not
-call the claim met. Recorded at this writing: the round-44 freeze
-`c48f8a4bfd449300c975668e59aae5b5538b6a84`; six counterfactual controls, each behaving as the
-claim states, with `kill_rule_fires: false`
-(`.ufo/waves/round-44/controls/summary.json`); and the positive control CTL-C1-POS — a **control
-clone** at revision `6b58a898…` in which the four real receipts and this entry's landing blocks
-were planted — scoring exit 0 with `carriers_matched 4/4`, `failing []`
-(`.ufo/waves/round-44/controls/pos/counter.json`). A control clone is not a lane score. The claim
-is met only when a lane run at the post-landing revision exits 0 with `carriers_matched 4/4`; that
-run is not recorded here.
+status: R44-C1 — scored by `tools/round-44/c1-counter.py` (counter sha256
+`9f2cc140e1fa7875bcd9dc80ce2ff5a1006e8ee73c7e1207580f88a97ffea993`) at revision
+`4cc1ac11657590c25b6565d6ab220f53372a94d3` against freeze
+`c48f8a4bfd449300c975668e59aae5b5538b6a84`: `carriers_matched 4/4`, `met_target true`, exit 0,
+all boolean bindings true, `failing []`, `frozen_path_changed []`. Score receipt:
+`corpus/evidence/round-44/c1/counter-at-4cc1.json`.
+
 
 source: S138 — https://github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs — the unblob 26.6.4 `__output__` expected member trees for `squashfs_v1` and `squashfs_v2` in both byte orders (MIT; the round-44 listings were fetched through `https://api.github.com/repos/onekey-sec/unblob/contents/tests/integration/filesystem/squashfs/<v>/<endian>/__output__?ref=26.6.4` — 10 listings, HTTP 200, 2026-10-28T11:10:29Z–11:10:43Z — and 22 members, HTTP 200, 2026-10-28T11:12:37Z; manifest `corpus/evidence/round-44/oracle/manifest.json`, sha256 `4bc53dbba8beee0fbf912771efc0a55fd47a197cca1f56d2aaed790f817c1a13`, `failures: []`)
 source: S139 — https://github.com/plougher/squashfs-tools/releases — the upstream release page that grounds the independent reader's identity, `/usr/bin/unsquashfs` (`unsquashfs version 4.7.5 (2026/03/01)`, sha256 `461e1fd9eac39c12e673042807459985636030d5557319343fc3a6ed4ba1677c`; Arch package `squashfs-tools 4.7.5-1`); page opened 2026-10-28, HTTP 200, `4.7.5` tag present
