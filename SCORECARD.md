@@ -3540,13 +3540,15 @@ block and its red-case instrument, not a number above the ceiling); calibration 
 (unregistered `6 → 0`, thin `0`; the numeric axis cannot rise above 10).
 
 Learning trends: expansion **unchanged** (no new domain ground; S140/S141 are instrument
-documentation and the round adds no knowledge entry); quality **improved** (a decision table with
-named thresholds and four red arms, an instrument registry that now covers every claim-carrying
-tool of the last two rounds, and the depth proxy held at 22/22); discernment **improved** (the
-round-44 routed defects are adjudicated rather than restated: the sweep-contamination class is
-fixed and shown red, the S138 `opened` over-claim is corrected append-only with a live fetch, and
-amendment A1 was caught by running command A instead of assuming the proxy stayed green).
-
+documentation and the round adds no knowledge entry); quality **improved on the artefact only**
+(rule block 22's ten-row table and its interpreter are red on real history — the `c86ea508`
+sweep, eight paths — and green on this round's frozen range, with an 11-case selftest; the
+wave-2 distiller struck the earlier wording's registry credit (that is calibration) and its
+"depth proxy held" clause (a hold, not an improvement)); discernment **improved** (wave 1
+attacked both measures before data and found the discrimination defects and the merge-blindness;
+the record was corrected from seat measurements three times — A1's proxy harm, A2's quote/`W04`
+counts, wave 2's refs/size/l0 sentences — and the round mined the counterexample to its own
+control set as M45-3; R44-CL10 is only partly closed and is stated as such).
 No capability row enters: the four-arm gate is an instrument cited by R45-C1, not a
 reverse-engineering capability, and this round demonstrates no new domain ground.
 
