@@ -185,3 +185,12 @@ inherited uncommitted lane work was reused or discarded.
   registry row first said the script "plus the independent oracle arm"; the script does not run
   the oracle (`c1-oracle.py` belongs to the counter) and `--dry-run` exits 0 without writing.
   Corrected in amendment A3; the other five rows matched their seat-derived source reads.
+- **R45-CL17 (LOW; wave-1 `R45W1RegScopeAudit`).** The frozen scope file's sentence "the
+  instruments named as instruments by the round-44 and round-45 frozen claim files"
+  over-attributes the word: round-44 calls its three programs a carrier harness/counter and a
+  data procedure, never "instrument", and it also names `tools/round-42/c1-counter.py` and
+  `tools/round-43/c1-counter.py` as audit-only port sources, which are outside the six. The
+  six-path list itself is the round-45 claim's own enumeration; the honest wording is "the six
+  instruments this round's claim enumerates, three of them from round 44". `tools/round-44/c1-run.py`
+  is the wrapper's unnamed body (the scope names the `.sh`). The file is frozen, so the wording
+  is corrected here and the scope widening is R45-CL3.
