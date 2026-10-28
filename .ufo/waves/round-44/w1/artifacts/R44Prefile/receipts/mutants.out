@@ -1,0 +1,18 @@
+BASE selftest_overall=0
+BASE replay_41=1
+BASE replay_41_failkeys=report_filed_before_wave_done,
+BASE replay_42=0
+BASE replay_42_failkeys=
+BASE replay_43=0
+BASE replay_43_failkeys=
+BASE replay_44=1
+BASE replay_44_failkeys=no_wave_done_ledger,waves_settled,
+BASE replay_nowavedir=1
+BASE replay_nowavedir_failkeys=wave_dir_missing,
+MUTANT m1_no_order_check            CAUGHT   selftest_overall:0->1 replay_41:1->0 replay_41_failkeys:report_filed_before_wave_done,-> 
+MUTANT m2_ledger_fail_to_warn       CAUGHT   replay_44_failkeys:no_wave_done_ledger,waves_settled,->waves_settled, 
+MUTANT m3_frozen_fail_to_warn       CAUGHT   selftest_overall:0->1 
+MUTANT m4_force_exit_zero           CAUGHT   selftest_overall:0->1 replay_41:1->0 replay_44:1->0 replay_nowavedir:1->0 
+MUTANT m5_wave_dir_ignored          CAUGHT   replay_nowavedir_failkeys:wave_dir_missing,->no_launched_wave, 
+MUTANT m6_report_presence_ignored   CAUGHT   selftest_overall:0->1 replay_41:1->0 replay_41_failkeys:report_filed_before_wave_done,-> 
+MUTANTS caught=6 survived=0

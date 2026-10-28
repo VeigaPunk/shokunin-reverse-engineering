@@ -1,0 +1,91 @@
+{
+ "argv": [
+  "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/w1/artifacts/R44C2Controls/c2-controls.py",
+  "--counter",
+  "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/w1/artifacts/R44C2Counter/c2-counter.py",
+  "--mode",
+  "dev",
+  "--dev-variant",
+  "consistent",
+  "--work",
+  "final3/dev-work2",
+  "--out",
+  "final3/dev-out2",
+  "--json-out",
+  "final3/dev-out2/summary.json"
+ ],
+ "claim_stops": true,
+ "controls": [
+  {
+   "control": "CTL-C2-0",
+   "exit_code": 0,
+   "expected": "exit 1 iff the frozen rubric shows mismatches > 0 at the base; exit 0 iff 0 mismatches (then R44-C2 STOPS); exit 2 = could-not-evaluate",
+   "receipt": "/fast/scratch/hyaku/kaidoku-r44/probe-R44C2Controls/final3/dev-out2/CTL-C2-0.json",
+   "stdout_sha256": "f8fb61e7639ea166354b893a3c344cf6cdd460362562b0bccec0ed9e6352442e",
+   "verdict": "ok",
+   "wall_seconds": 0.124205
+  },
+  {
+   "control": "CTL-C2-1",
+   "exit_code": 1,
+   "expected": "the counter must report the seeded mismatch by id and exit non-zero (1) at the seeded revision",
+   "receipt": "/fast/scratch/hyaku/kaidoku-r44/probe-R44C2Controls/final3/dev-out2/CTL-C2-1.json",
+   "stdout_sha256": "f7b0aafea9fdc66415b49b3d3a66199527f616f69bcaa38719a9db4cb91e8cd5",
+   "verdict": "ok",
+   "wall_seconds": 0.131376
+  },
+  {
+   "control": "CTL-C2-2",
+   "exit_code": 2,
+   "expected": "a rubric with a dropped check command must be refused: exit 2 (rubric_malformed), never a score",
+   "receipt": "/fast/scratch/hyaku/kaidoku-r44/probe-R44C2Controls/final3/dev-out2/CTL-C2-2.json",
+   "stdout_sha256": "c3ce7439937677a80e5000836395daaa63ac1675033555084903711ae29d83eb",
+   "verdict": "ok",
+   "wall_seconds": 0.061688
+  },
+  {
+   "control": "CTL-C2-3",
+   "exit_code": 2,
+   "expected": "a mid-round edit of the frozen rubric must re-red: exit 2 with frozen_path_changed naming tools/round-44/c2-rubric.json",
+   "receipt": "/fast/scratch/hyaku/kaidoku-r44/probe-R44C2Controls/final3/dev-out2/CTL-C2-3.json",
+   "stdout_sha256": "b5c3b6bf5d1f31a58ae8ca1ffa5a38c4335e72073a5aa86f99266c000bd780bd",
+   "verdict": "ok",
+   "wall_seconds": 0.077383
+  },
+  {
+   "control": "CTL-C2-4",
+   "exit_code": 2,
+   "expected": "a correction note carrying a wrong value must never pass: the counter refuses it (enforced arm) and the entry stays a mismatch (scored arm, note_value_disagrees)",
+   "receipt": "/fast/scratch/hyaku/kaidoku-r44/probe-R44C2Controls/final3/dev-out2/CTL-C2-4.json",
+   "stdout_sha256": "c9dc3354375e0ca8bf51e29fca2c64c89867f31a90cc331307375dd2f594a81e",
+   "verdict": "ok",
+   "wall_seconds": 0.088272
+  }
+ ],
+ "counter": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/w1/artifacts/R44C2Counter/c2-counter.py",
+ "counter_sha256": "085192ea6c3f3f4d67c58ce459ef06e1febd0b668dc367ccfbdd12661736c277",
+ "exit_code": 1,
+ "freeze": null,
+ "kill_rule_fired": [
+  "CTL-C2-0"
+ ],
+ "mode": "dev",
+ "rev": "c29360e3ba5381a5ab69e372d0d9577970f85018",
+ "root": null,
+ "rubric": null,
+ "rubric_sha256": null,
+ "schema": "kaidoku-r44-c2-controls-v1",
+ "seat": "R44C2Controls",
+ "stdout": "{\"exit_code\": 1, \"mode\": \"dev\", \"verdicts\": {\"CTL-C2-0\": \"ok\", \"CTL-C2-1\": \"ok\", \"CTL-C2-2\": \"ok\", \"CTL-C2-3\": \"ok\", \"CTL-C2-4\": \"ok\"}}",
+ "stdout_sha256": "309673eabeb7ccfa0707c493838ccec94ca8fbdb56e8ebfca92f6d168e8143dd",
+ "tool_command": "/usr/bin/python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/w1/artifacts/R44C2Controls/c2-controls.py --counter /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/w1/artifacts/R44C2Counter/c2-counter.py --mode dev --dev-variant consistent --work final3/dev-work2 --out final3/dev-out2 --json-out final3/dev-out2/summary.json",
+ "verdicts": {
+  "CTL-C2-0": "ok",
+  "CTL-C2-1": "ok",
+  "CTL-C2-2": "ok",
+  "CTL-C2-3": "ok",
+  "CTL-C2-4": "ok"
+ },
+ "wall_seconds": 0.956351,
+ "work": "/fast/scratch/hyaku/kaidoku-r44/probe-R44C2Controls/final3/dev-work2"
+}

@@ -1,0 +1,21 @@
+`$output/firmware.bin_extract/<start>-<end>.<handler>_extract` (observed in the round-42 dev arm,
+`C17`/`C18`/`H54`), and `carriers.json` would need `oracle_root` (stored **without** the
+`$output/` prefix — `subject_root` compares against `strip_output(child_path)`,
+`tools/round-42/c1-counter.py:1495-1520`). For all six, do **not** freeze `oracle_root`: the
+single-root rule is the stronger check.
+
+## 3. Observed handler detection (unblob 26.6.4, chunk-only pass)
+
+Method: `unblob -s -p 1` (`--skip-extraction`) on a scratch copy named `firmware.bin`, report to
+JSON. Exit 0 for all six. Each report contains exactly one `ChunkReport`:
+
+| carrier | chunk | report sha256 |
+|---|---|---|
+| `v1le` | `squashfs_v1` 0–4096, encrypted=false | `33c8f2d82a4fbf5c8cd2d2cd14b79d8d88503393c1c09207bb4a6dc900b87747` |
+| `v1be` | `squashfs_v1` 0–4096, encrypted=false | `37f1f01f6103304d13dbab5e438d79fb88528bebf02f15179091552954965bde` |
+| `v2le` | `squashfs_v2` 0–4096, encrypted=false | `c10bd1ac1e73ed97b15b163e5edb27f86748a0587f23fddf268c004d351f3a91` |
+| `v2be` | `squashfs_v2` 0–4096, encrypted=false | `7558a33e0a98a9a10dc5c36ff118b6f4b265c7c14526570342b71441f0769aa8` |
+| `v21le` | `squashfs_v2` 0–4096, encrypted=false | `0b744b44f36b6b8248b3853ad9540dba45381cabbad3d44dfd2805ca88c53be5` |
+| `v21be` | `squashfs_v2` 0–4096, encrypted=false | `9c2f1ec35b6ab0122953966b0d77bcf0c9401c3448e2d39dde2b7d3777c38bda` |
+
+No `UnknownChunkReport`, no padding chunk, no second chunk — so `is_whole_file_chunk` is true for

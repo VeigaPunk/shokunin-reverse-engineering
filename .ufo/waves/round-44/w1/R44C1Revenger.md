@@ -12,6 +12,15 @@ this seat's brief — the two additions are covered below. Machine-readable prob
 `claim_text_target: 4`). Scratch:
 `/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Revenger/`.
 
+**Toolchain measured** (all three match the round-42 frozen toolchain):
+`unblob 26.6.4` = `/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob`
+sha256 `0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09`;
+`sasquatch 4.5.1` = `/home/vgpnk/.local/bin/sasquatch`
+sha256 `ad02d27a3d8424b2f67ae88d479dba57334974527943e5f1e305423c4c774754`;
+`unsquashfs 4.7.5` = `/usr/bin/unsquashfs`
+sha256 `461e1fd9eac39c12e673042807459985636030d5557319343fc3a6ed4ba1677c`.
+(`rea-agents 6.5.0` read from the round-42 `rea-pkg.json` package root; not executed here.)
+
 ## Verdict (up front)
 
 1. **The handler binding is exact and unambiguous.** For each of the **six** frozen carriers, unblob
@@ -41,19 +50,35 @@ this seat's brief — the two additions are covered below. Machine-readable prob
      (`…/squashfs_v2/{little,big}_endian/__input__/squashfs_v2.1_{le,be}.bin`,
      sha256 `6b6cd2fd…f253a` / `c0140bac…f35db`) — but the freeze must either amend the claim to
      six carriers (and `carriers_matched == 6`) or drop the two rows, and should pin the input
-     URL+sha in a receipt. A reader of the claim as written scores 4; the frozen table offers 6.
-   - `superblock_layout.bytes_used_offset = 40, len 8` and
-     `compression_offset = 20, len 2` are **v3 offsets**. The v1/v2 superblock is a 32-byte
-     packed struct with `bytes_used` a u32 at offset **8** and **no compression field at all**.
-     A counter written to the frozen layout reads `inode_table_start_2` as "compression" and data
-     bytes as `bytes_used`.
-   - R44-C1's predicate text says the superblock probe checks "…/endianness/**compression**".
-     v1/v2 store no compression id (zlib is the only v1/v2 codec; the format cannot express a
-     choice). `file`'s "compressed/uncompressed" word is a libmagic rendering, not a format
-     field: it prints `uncompressed` for **both** BE carriers and `compressed` for **both** LE
-     carriers, i.e. it flips with byte order on these very fixtures. Freezing it as a
-     superblock read is unfalsifiable; freeze it as the format constant `gzip` and verify it by
-     extraction (the oracle + rerun already do), or drop the term.
+     URL+sha in a receipt: the rows' `source_pin` is prose only ("fetched 2026-10-28, MIT (S135)").
+     A reader of the claim as written scores 4; the frozen table offers 6.
+   - **`superblock_layout` (partly fixed mid-seat; the fix must land before the freeze).** At HEAD
+     (`3b0fcaa9`/`f18bdfb9`) the block still carries v3 offsets (`bytes_used_offset 40/8`,
+     `compression_offset 20/2`). The working tree now has the corrected legacy layout
+     (`bytes_used@8..4`, `inode_table_start@20`, `directory_table_start@24`, `s_major@28`,
+     `s_minor@30`, `block_size_1@32`, `block_log@34`, `flags@36`, `no_uids@37`, `no_guids@38`,
+     `mkfs_time@39`); that edit is uncommitted and must be in the freeze. The measured header is
+     larger still: the legacy superblock is **51 B (v1) / 63 B (v2)** — it ends at
+     `root_inode@43..50` in both, and for v2 after `block_size@51`, `fragments@55`,
+     `fragment_table_start_2@59` — with v1 data beginning at byte 51 (the literal
+     `apple\nbanana\ncherry\n`) and v2 at 63 (inode table at 88). The layout block stops at
+     `mkfs_time`, so it omits the v2 tail; harmless for what the counter needs, but the note is
+     only half-right: unblob's `C_DEFINITIONS` (`squashfs.py:123-137`) parses just the 32-byte
+     prefix through `s_minor`, while the on-disk order is `squashfs_super_block_3`
+     (`squashfs_compat.h:38-63`).
+   - **Compression (corrected).** There is no compressor-id field (zlib is the only v1/v2 codec),
+     but `flags@36` is a real superblock byte carrying the per-component bits
+     `SQUASHFS_NOI`/`NOD`/`NOF` = uncompressed inodes/data/fragments
+     (`squashfs_fs.h:65-78,80-95`). All six carriers have those bits clear (v1 `flags 0x00`,
+     v2/v2.1 `flags 0x40` = DUPLICATE only), so "zlib(gzip) for every component" is measurable at
+     `flags@36`, and the table's `compression_evidence` is sound — provided the counter reads
+     `flags@36`, never `compression@20` (offset 20 is `inode_table_start`). `file`'s
+     "compressed/uncompressed" word must not be the check: it prints `uncompressed` for **both**
+     BE carriers and `compressed` for **both** LE ones on these fixtures (it flips with byte
+     order; the table's byte-20 explanation is consistent with `inode_table_start` living there,
+     though I did not verify libmagic's internals). If the claim's "superblock reads …
+     compression" means "`flags@36` UNCOMPRESSED_* bits clear", say so; if it means a
+     compressor-id read, drop the term.
 
 Nothing here widens R44-C1. Items 1–3 confirm the claim's binding premise; item 4 is the set of
 corrections the freeze must absorb before the L1 freezes bytes.
@@ -147,23 +172,25 @@ each carrier (`processing.py:561`) and the root is `<name>_extract`.
 
 **Pattern-disjointness scan** (all ten unblob squashfs patterns transcribed from
 `squashfs.py:104-198,247-597`, scanned at every byte offset of every fixture): each fixture matched
-exactly one handler at offset 0 and nothing else anywhere. Verified superblock fields
-(endianness-aware):
+exactly one handler at offset 0 and nothing else anywhere. Legacy superblock decoded with the
+`squashfs_super_block_3` order (`squashfs_compat.h:38-63`, `unsquash-fs` readers
+`unsquash-1.c:477`, `unsquash-2.c:589`) and cross-checked against `unsquashfs -s`:
 
-| carrier | magic | s_major | s_minor | bytes_used (u32@8) | inode_table (u32@20) | dir_table (u32@24) |
-|---|---|---|---|---|---|---|
-| `v1le` | `hsqs` | 1 | 0 | 176 | 71 | 128 |
-| `v1be` | `sqsh` | 1 | 0 | 177 | 71 | 129 |
-| `v2le` | `hsqs` | 2 | 0 | 196 | 88 | 136 |
-| `v2be` | `sqsh` | 2 | 0 | 201 | 88 | 138 |
-| `v21le` | `hsqs` | 2 | **1** | 196 | 88 | 136 |
-| `v21be` | `sqsh` | 2 | **1** | 201 | 88 | 138 |
+| carrier | magic | ver | hdr B | block size | `flags@36` | inode@20 | dir@24 | bytes_used@8 | mkfs_time@39 (UTC) |
+|---|---|---|---|---|---|---|---|---|---|
+| `v1le` | `hsqs` | 1.0 | 51 | 32768 (`block_size_1@32`) | `0x00` | 71 | 128 | 176 | 2024-08-05T07:18:51 |
+| `v1be` | `sqsh` | 1.0 | 51 | 32768 | `0x00` | 71 | 129 | 177 | 2024-08-05T07:18:58 |
+| `v2le` | `hsqs` | 2.0 | 63 | 65536 (`block_size@51`) | `0x40` (DUPLICATE) | 88 | 136 | 196 | 2023-03-09T17:05:52 |
+| `v2be` | `sqsh` | 2.0 | 63 | 65536 | `0x40` | 88 | 138 | 201 | 2023-03-09T17:06:30 |
+| `v21le` | `hsqs` | 2.1 | 63 | 65536 | `0x40` | 88 | 136 | 196 | 2023-03-09T17:05:04 |
+| `v21be` | `sqsh` | 2.1 | 63 | 65536 | `0x40` | 88 | 138 | 201 | 2023-03-09T17:06:37 |
 
-`bytes_used ≤ 4096`, `32 ≤ inode_table < dir_table ≤ bytes_used` holds for all six (the counter's
-sanity clause is satisfiable and true here). v2.0 and v2.1 differ in exactly **two bytes** —
-`s_minor` (0→1) and one body byte at image index 39 (LE) / 42 (BE) — and extract to the same
-member set; the unblob v2 pattern does not read `s_minor`, so the handler string cannot
-distinguish v2.0 from v2.1.
+`hdr ≤ inode_table < dir_table ≤ bytes_used ≤ 4096` holds for all six (measured; the counter's
+sanity clause is satisfiable and true here). The `flags@36` NOD/NOI/NOF bits are clear everywhere,
+so every component is zlib-compressed; there is no compressor-id field in v1/v2. v2.0 and v2.1
+differ in exactly **two bytes** — `s_minor` (0→1) and one body byte at image index 39 (LE) / 42
+(BE) — and extract to the same member set; the unblob v2 pattern does not read `s_minor`, so the
+handler string cannot distinguish v2.0 from v2.1.
 
 ## 4. Collision analysis under per-carrier EXACT equality
 
@@ -257,8 +284,9 @@ oracle premise of R44-C1 holds. For the two L1-added carriers the **inputs** wer
 upstream media-LFS objects at
 `…/squashfs_v2/{little,big}_endian/__input__/squashfs_v2.1_{le,be}.bin`
 (`6b6cd2fd…f253a` / `c0140bac…f35db`), so the added bytes are the real S138 dataset, not a lane
-artifact — though the S138 manifest records only `__output__` (no `__input__` fetch), so that URL
-belongs in a fetch receipt. Note the trees are named by the *fixture* filename
+artifact — though the S138 manifest records only `__output__` (no `__input__` entry) and the row's
+`source_pin` is prose (dated fetch, no URL+sha), so a fetch receipt would complete the chain.
+Note the trees are named by the *fixture* filename
 (`squashfs_v1.0_le.bin_extract`); under REA the input is renamed `firmware.bin`, so the after-root
 is `firmware.bin_extract` — the counter must compare members **relative to the root**, not the
 tree directory name.
@@ -302,13 +330,15 @@ REA-side prior is the same source-read contract, corroborated by the v2.0 twin r
 
 Port source is frozen at `tools/round-42/c1-counter.py`; these v3-specific parts do not carry over:
 
-1. **`carriers.json` layout (blocker, see Verdict-4).** Correct v1/v2 offsets:
-   `magic@0..4`, `s_major@28..2`, `s_minor@30..2`, `bytes_used@8..4` (u32),
-   `inode_table_start@20..4`, `directory_table_start@24..4`; superblock size 32 B; **no**
-   `compression` field. The frozen JSON's `bytes_used_offset 40 / len 8` and
-   `compression_offset 20 / len 2` are v3 offsets and contradict its own cited source
-   (unblob `squashfs.py:123-137` lists exactly `s_magic,inodes,bytes_used,uid_start,guid_start,
-   inode_table_start,directory_table_start,s_major,s_minor`; `uint32 bytes_used` is at `:128`).
+1. **`carriers.json` layout (partly stale at HEAD; the working-tree fix must land).** Correct
+   legacy offsets: `magic@0..4`, `inodes@4`, `bytes_used@8..4` (u32), `uid_start@12`,
+   `guid_start@16`, `inode_table_start@20..4`, `directory_table_start@24..4`, `s_major@28..2`,
+   `s_minor@30..2`, `block_size_1@32..2`, `block_log@34..2`, `flags@36`, `no_uids@37`,
+   `no_guids@38`, `mkfs_time@39..4`, `root_inode@43..8`; v2 adds `block_size@51..4`,
+   `fragments@55..4`, `fragment_table_start_2@59..4`. Header sizes: **51 B v1, 63 B v2**. HEAD's
+   `superblock_layout` still says `bytes_used@40..8` / `compression@20..2` (v3) — the working
+   tree already replaces it; commit that. `uint32 bytes_used` is at `:128` of the unblob
+   `C_DEFINITIONS`, and unblob parses only the 32-byte prefix (`squashfs.py:123-137`).
 2. **Tables.** `MAGIC_BY_VARIANT`/`HANDLER_BY_VARIANT`/`VARIANT_BY_HANDLER`
    (`c1-counter.py:438-450`) model v3's "magic chooses the variant". For v1/v2 the magic is
    **shared** (`hsqs`/`sqsh`) and the discriminator is `s_major == 1|2`; a magic→variant map
@@ -316,12 +346,15 @@ Port source is frozen at `tools/round-42/c1-counter.py`; these v3-specific parts
    `handler == carrier.handler` by exact string equality.
 3. **`layout_probe()`** (`c1-counter.py:1173-1225`) reads the 119-byte v3 struct at offsets
    63/87/95/103/111 and walks compressed chunks; drop it. The v1/v2 probe only needs
-   magic/major/minor/endianness and `32 ≤ inode_table < dir_table ≤ bytes_used ≤ len`.
+   magic/major/minor/endianness, `hdr ≤ inode_table < dir_table ≤ bytes_used ≤ len`
+   (`hdr` = 51 v1 / 63 v2), `flags@36`, and `s_minor`.
 4. **`HANDLER_RE`/`SQFS3_TEXT_RE`** (`c1-counter.py:454-455`) are v3 text bindings for the
    PROVINCE/README checks; the round-44 analogues must accept `squashfs_v1` and `squashfs_v2`
    (tolerating `_nonstandard`/v3/v4 text as *unrelated* text, not as matches).
-5. **`COMPRESSIONS = ('gzip','lzma')`** (`:452`) has no v1/v2 analogue; v1/v2 are zlib-only.
-   Do not read a compression field; freeze `"gzip"` as a declared format property.
+5. **Compression.** `COMPRESSIONS = ('gzip','lzma')` (`:452`) is a v3 idea. v1/v2 have no
+   compressor id; check `flags@36` (NOD=bit1, NOI=bit0, NOF=bit3 clear → zlib/gzip on all
+   components; `squashfs_fs.h:65-78,80-95`) and never `file`'s word or the v3
+   `compression@20`. Freezing `"zlib(gzip)"` is correct for these six.
 6. **Oracle root/rows.** `same_rel()` compares extract-root-relative paths exactly
    (`:1591-1599,1602-1608`); the S138 trees are rooted at `<fixture>_extract/` and the
    `unsquashfs -lls` census is rooted at `squashfs-root/`. Both prefixes must be stripped when
@@ -334,9 +367,10 @@ Port source is frozen at `tools/round-42/c1-counter.py`; these v3-specific parts
    already freezes `s_major` — it must also check `s_minor` (0 vs 1) in the probe if the two v2.1
    rows stay, and no rule may reject a carrier for `s_minor != 0`.
 9. **Provenance pin for the two added carriers.** `v21le`/`v21be` have no
-   `tools/round-42/fixtures.json` row and the S138 manifest has no `__input__` fetch. Their bytes
-   are upstream-identical (verified), but add a fetch receipt (URL + sha256) so the freeze's
-   provenance chain is as strong as the four v2.0-era carriers'.
+   `tools/round-42/fixtures.json` row, the S138 manifest has no `__input__` entry, and their
+   `source_pin` is prose only. Their bytes are upstream-identical (verified against the media-LFS
+   objects), so add a fetch receipt (URL + sha256) to make the chain as strong as the four
+   v2.0-era carriers'.
 
 ## 9. Confidence and limits
 
@@ -355,7 +389,8 @@ Port source is frozen at `tools/round-42/c1-counter.py`; these v3-specific parts
   procedure), the counter's own score, and any v1/v2 carrier beyond these six fixtures. R44-C1's
   disclosed limit stands: six 4 KiB fixtures with 3–4 members promote the handler family, not
   every v1/v2 image.
-- **Corrected premises:** `-da` is `-data-queue` and is not emitted; "compression" is not a v1/v2
-  superblock field and `file`'s compressed/uncompressed word flips with byte order here; the
-  frozen `superblock_layout` block's `bytes_used`/`compression` offsets are v3 offsets; the
-  frozen carrier set is six while the claim text still says four.
+- **Corrected premises:** `-da` is `-data-queue` and is not emitted; the legacy superblock is
+  51 B (v1) / 63 B (v2) with `bytes_used` u32@8 and a real `flags@36` (no compressor id, but
+  NOD/NOI/NOF compression bits); `file`'s compressed/uncompressed word flips with byte order and
+  must not be the check; HEAD's `superblock_layout` still has v3 offsets (the working tree fixes
+  them); the frozen carrier set is six while the claim text still says four.

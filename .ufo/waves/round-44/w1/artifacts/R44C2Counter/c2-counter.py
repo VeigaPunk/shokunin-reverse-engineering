@@ -131,7 +131,11 @@ COUNTER_PATH = 'tools/round-44/c2-counter.py'
 # SKILL.md, whose instrument-registry rows the rubric cites.  corpus/SOURCES.md
 # is NOT here: C1 appends its S138/S139 rows there, and the claim states C2's
 # rubric pins no SOURCES row count.
-C2_DEFAULT_FROZEN = ('SCORECARD.md', 'SHONEN.md', 'corpus/README.md', 'SKILL.md')
+C2_DEFAULT_FROZEN = ('SCORECARD.md', 'SHONEN.md', 'SKILL.md')
+# corpus/README.md is NOT auto-frozen: C1 inserts a coverage-map row into it
+# after the freeze, which would make every C2 score exit 2.  A rubric that
+# really pins README must declare it in `frozen_paths` and bind the insertion
+# with an `expected_edit` insert clause (row identity + preserved digests).
 # The self-assessment surface a calibration check may read at run time.  A check
 # that discovers paths while it runs cannot declare them, so the default export
 # covers the surfaces the R44-C2 claim names (plus the map and the lessons).
@@ -345,6 +349,11 @@ def parse_rubric(raw):
     if raw_entries is None:
         return None, None, None, None, None, 'rubric_has_no_entry_list'
 
+    allowed_dirs = doc.get('allowed_script_dirs')
+    allowed_script_dirs = [d.rstrip('/') for d in allowed_dirs
+                           if isinstance(d, str) and d.strip()] \
+        if isinstance(allowed_dirs, list) else []
+    require_declared_script = bool(doc.get('require_declared_script'))
     entries = []
     seen = set()
     for index, raw_entry in enumerate(raw_entries):
@@ -398,6 +407,12 @@ def parse_rubric(raw):
             'timeout': int(timeout),
             'expected_edit': pick(raw_entry, EDIT_KEYS),
             'repair_command': repair_argv,
+            'script': pick(raw_entry, ('script', 'script_pin', 'script_binding')),
+            'check_script_sha256': pick(raw_entry, ('check_script_sha256',
+                                                    'inline_script_sha256',
+                                                    'script_text_sha256')),
+            'allowed_script_dirs': allowed_script_dirs,
+            'require_declared_script': bool(require_declared_script),
         }
         if not isinstance(entry['file'], str) or not entry['file'].strip():
             entry['file'] = None
@@ -453,7 +468,12 @@ def parse_rubric(raw):
         has_text = isinstance(edit.get('append_text'), str) and edit['append_text']
         has_append = (isinstance(edit.get('append'), list)
                       and any(str(w).strip() for w in edit['append']))
-        if not (has_text or has_append):
+        has_insert = (isinstance(edit.get('insert'), dict)
+                      and bool(edit['insert'].get('lines')))
+        if has_insert and (has_text or has_append):
+            return None, None, None, None, None, \
+                'expected_edit_mixes_insert_and_append:%s' % path
+        if not (has_text or has_append or has_insert):
             return None, None, None, None, None, \
                 'expected_edit_binds_no_content:%s' % path
     frozen_dirs = []
@@ -476,14 +496,70 @@ def appended_text(freeze_bytes, rev_bytes):
     return rev_bytes[len(freeze_bytes):].decode('utf-8', 'replace')
 
 
-def verify_expected_edit(freeze_bytes, rev_bytes, edit):
-    """(ok, reason, appended_lines).  Line identity, never a raw numstat.
+def insert_lines_of(spec):
+    """The exact lines an insert clause adds (each terminated)."""
+    out = []
+    for line in spec.get('lines') or []:
+        text = str(line)
+        out.append(text if text.endswith('\n') else text + '\n')
+    return out
 
-    The appended block's non-blank lines must equal the bound lines exactly, in
-    order; blank separator lines (a markdown block is usually appended after an
-    empty line) are ignored.  Nothing else may be appended and nothing may be
-    edited in place — the blob must be the freeze blob plus the bound block.
+
+def verify_insertion(freeze_bytes, rev_bytes, spec):
+    """(ok, reason) for an exact mid-file insertion bound by the rubric.
+
+    The REV blob must be the FREEZE blob with exactly the declared lines
+    inserted after the declared anchor line — every original line is preserved
+    in order, byte for byte.  Nothing else may change.
     """
+    freeze_lines = freeze_bytes.decode('utf-8', 'replace').splitlines(keepends=True)
+    rev_lines = rev_bytes.decode('utf-8', 'replace').splitlines(keepends=True)
+    anchor = spec.get('after')
+    anchor_digest = spec.get('after_sha256')
+    indexes = []
+    for index, line in enumerate(freeze_lines):
+        bare = line.rstrip('\r\n')
+        if isinstance(anchor, str) and anchor and bare == anchor:
+            indexes.append(index)
+        elif isinstance(anchor_digest, str) and anchor_digest:
+            if hashlib.sha256(bare.encode('utf-8')).hexdigest() == anchor_digest.lower():
+                indexes.append(index)
+    if not indexes:
+        return False, 'insertion_anchor_not_found'
+    if len(indexes) > 1:
+        return False, 'insertion_anchor_not_unique'
+    at = indexes[0]
+    expected = freeze_lines[:at + 1] + insert_lines_of(spec) + freeze_lines[at + 1:]
+    if rev_lines != expected:
+        return False, 'insertion_differs_from_expected_edit'
+    return True, 'bound_insert'
+
+
+def verify_expected_edit(freeze_bytes, rev_bytes, edit):
+    """(ok, reason, lines).  Line identity, never a raw numstat.
+
+    Two disjoint binding modes:
+      * insert  — the REV blob is the FREEZE blob with exactly the declared
+        lines inserted after the declared anchor line (every original line is
+        preserved in order, byte for byte);
+      * append  — the REV blob is the FREEZE blob plus the declared block
+        (byte-for-byte via `append_text`, or line identity via `append`; blank
+        separator lines are ignored).
+    Nothing else may change and nothing may be edited in place.
+    """
+    insert = edit.get('insert')
+    if isinstance(insert, dict):
+        ok, reason = verify_insertion(freeze_bytes, rev_bytes, insert)
+        if not ok:
+            return False, reason, None
+        preserve = edit.get('preserve')
+        if isinstance(preserve, list) and preserve:
+            rev_lines = rev_bytes.decode('utf-8', 'replace').splitlines()
+            digests = {hashlib.sha256(l.encode('utf-8')).hexdigest() for l in rev_lines}
+            for want_digest in preserve:
+                if str(want_digest).lower() not in digests:
+                    return False, 'cited_line_digest_absent', rev_lines
+        return True, 'bound_insert', rev_bytes.decode('utf-8', 'replace').splitlines()
     appended = appended_text(freeze_bytes, rev_bytes)
     if appended is None:
         return False, 'not_append_only', None
@@ -510,7 +586,8 @@ def verify_expected_edit(freeze_bytes, rev_bytes, edit):
         for want_digest in preserve:
             if str(want_digest).lower() not in digests:
                 return False, 'cited_line_digest_absent', lines
-    if want is None and want_text is None and marker is None and not preserve:
+    if (want is None and want_text is None and marker is None and not preserve
+            and not isinstance(insert, dict)):
         return False, 'expected_edit_binds_nothing', lines
     return True, 'bound_edit', lines
 
@@ -726,15 +803,18 @@ def export_tree(root, rev, paths, tree_dir):
 
 
 # --------------------------------------------------------------- check runs
-PLACEHOLDER_RE = re.compile(r'\{(rev|freeze|root|tree|repo|work|rubric|seat)\}')
+PLACEHOLDER_RE = re.compile(
+    r'\{(rev|freeze|root|tree|repo|work|rubric|seat)\}', re.IGNORECASE)
 
 
 def substitute(argv, subst):
-    """Expand only the known placeholders; other braces are left alone."""
+    """Expand only the known placeholders (case-insensitive); other braces are
+    left alone, so an inline script payload is never mangled."""
+    lowered = {k.lower(): v for k, v in subst.items()}
     out = []
     for token in argv:
-        out.append(PLACEHOLDER_RE.sub(lambda m: str(subst.get(m.group(1), m.group(0))),
-                                      token))
+        out.append(PLACEHOLDER_RE.sub(
+            lambda m: str(lowered.get(m.group(1).lower(), m.group(0))), token))
     return out
 
 
@@ -766,6 +846,42 @@ def extract_observation(stdout, kind, observed_key):
     return doc, 'json_scalar', None
 
 
+RUBRIC_BASENAME = os.path.basename(RUBRIC_PATH)
+
+
+def self_referential(entry):
+    """True when the check argv reads the rubric it is supposed to verify.
+
+    A check that reads the rubric's own asserted value is circular: its
+    observation proves nothing.  The counter refuses such an entry as evidence
+    (could-not-evaluate), it does not score it as a pass.
+    """
+    for token in entry['argv']:
+        if RUBRIC_BASENAME in token or RUBRIC_PATH in token or '{rubric}' in token:
+            return True
+    return False
+
+
+def check_script_paths(entry, root, rev, freeze, frozen_paths, frozen_dirs):
+    """The repo paths a check command names, with their freeze state."""
+    out = []
+    for token in entry['argv']:
+        if token.startswith('-') or '/' not in token:
+            continue
+        if not re.search(r'\.(md|py|json|sh|txt|yaml|yml|toml|tsv|csv)$', token):
+            continue
+        path = token.lstrip('./')
+        if path in frozen_paths or any(path.startswith(d.rstrip('/') + '/')
+                                       for d in (frozen_dirs or ())):
+            scope = 'frozen'
+        else:
+            scope = 'unfrozen'
+        out.append({'path': path, 'scope': scope,
+                    'sha256_at_freeze': sha256_bytes(show(root, freeze, path)),
+                    'sha256_at_rev': sha256_bytes(show(root, rev, path))})
+    return out
+
+
 def run_entry(entry, tree, repo, env, root, rev, freeze):
     """(record, error).  `error` means the check could not be evaluated."""
     check_env = dict(env)
@@ -787,6 +903,76 @@ def run_entry(entry, tree, repo, env, root, rev, freeze):
     }
     argv = substitute(entry['argv'], subst)
     started = time.time()
+    record_extra = {
+        'argv_digests': [{'index': i, 'sha256': sha256_text(t), 'bytes': len(t)}
+                         for i, t in enumerate(argv)],
+        'inline_payload': '-c' in argv,
+    }
+    subject = entry.get('file')
+    if subject:
+        record_extra['reads_subject'] = any(subject in t for t in argv)
+        record_extra['subject_sha256_at_freeze'] = sha256_bytes(
+            show(root, freeze, subject))
+        record_extra['subject_sha256_at_rev'] = sha256_bytes(show(root, rev, subject))
+    # fitness gate: a declared script must exist at REV with the pinned digest
+    # and must be the script the command runs.
+    script = entry.get('script')
+    if isinstance(script, dict) and script.get('path'):
+        spath = str(script['path'])
+        blob = show(root, rev, spath)
+        pin = script.get('sha256')
+        if blob is None:
+            return ({'id': entry['id'], 'command': argv, 'exit_code': None,
+                     'stdout_sha256': None, 'stderr_sha256': None,
+                     'wall_seconds': 0.0, 'error': 'script_absent_at_rev',
+                     **record_extra}, 'script_absent_at_rev')
+        if isinstance(pin, str) and pin and sha256_bytes(blob) != pin.lower():
+            return ({'id': entry['id'], 'command': argv, 'exit_code': None,
+                     'stdout_sha256': None, 'stderr_sha256': None,
+                     'wall_seconds': 0.0, 'error': 'script_pin_mismatch',
+                     'script_sha256': sha256_bytes(blob), **record_extra},
+                    'script_pin_mismatch')
+        if not any(spath in t for t in argv):
+            return ({'id': entry['id'], 'command': argv, 'exit_code': None,
+                     'stdout_sha256': None, 'stderr_sha256': None,
+                     'wall_seconds': 0.0, 'error': 'script_not_invoked',
+                     **record_extra}, 'script_not_invoked')
+    inline_pin = entry.get('check_script_sha256')
+    if isinstance(inline_pin, str) and inline_pin.strip():
+        if '-c' not in argv:
+            return ({'id': entry['id'], 'command': argv, 'exit_code': None,
+                     'stdout_sha256': None, 'stderr_sha256': None,
+                     'wall_seconds': 0.0, 'error': 'script_pin_unresolved',
+                     **record_extra}, 'script_pin_unresolved')
+        payload = argv[argv.index('-c') + 1]
+        digest = sha256_text(payload)
+        if digest != inline_pin.strip().lower():
+            return ({'id': entry['id'], 'command': argv, 'exit_code': None,
+                     'stdout_sha256': None, 'stderr_sha256': None,
+                     'wall_seconds': 0.0, 'error': 'script_pin_mismatch',
+                     'payload_sha256': digest, **record_extra},
+                    'script_pin_mismatch')
+        record_extra['payload_sha256'] = digest
+    if entry.get('require_declared_script') and record_extra['inline_payload'] \
+            and not isinstance(script, dict):
+        return ({'id': entry['id'], 'command': argv, 'exit_code': None,
+                 'stdout_sha256': None, 'stderr_sha256': None,
+                 'wall_seconds': 0.0, 'error': 'undeclared_inline_script',
+                 **record_extra}, 'undeclared_inline_script')
+    if entry.get('allowed_script_dirs'):
+        for token in argv:
+            if token.startswith('-') or '/' not in token:
+                continue
+            if not re.search(r'\.(py|sh)$', token):
+                continue
+            if show(root, rev, token.lstrip('./')) is None:
+                continue
+            if not any(token.lstrip('./').startswith(d + '/') for d in
+                       entry['allowed_script_dirs']):
+                return ({'id': entry['id'], 'command': argv, 'exit_code': None,
+                         'stdout_sha256': None, 'stderr_sha256': None,
+                         'wall_seconds': 0.0, 'error': 'script_not_allowlisted',
+                         **record_extra}, 'script_not_allowlisted')
     try:
         proc = subprocess.run(argv, cwd=tree, env=check_env, capture_output=True,
                               text=True, timeout=entry['timeout'])
@@ -819,6 +1005,7 @@ def run_entry(entry, tree, repo, env, root, rev, freeze):
         'id': entry['id'],
         'check': entry['check'],
         'command': argv,
+        **record_extra,
         'exit_code': proc.returncode,
         'stdout_sha256': sha256_text(proc.stdout),
         'stderr_sha256': sha256_text(proc.stderr),
@@ -845,6 +1032,46 @@ def run_entry(entry, tree, repo, env, root, rev, freeze):
 
 
 # -------------------------------------------------------------------- score
+def finalize(result, exit_code, started, enforce_freeze=True):
+    """Complete the receipt: the claim gate, met_target and the exit code.
+
+    The gate is a conjunction over the whole measurement, so it can never be
+    true on a run that failed or that touched a frozen path.
+    """
+    result['mismatches_count'] = len(result['mismatches'])
+    result['unevaluable_count'] = len(result['unevaluable'])
+    result['entries_evaluated'] = sum(1 for e in result['entries']
+                                      if e.get('observed') is not None
+                                      and not e.get('error'))
+    result['met_target'] = bool(
+        not result['mismatches'] and not result['unevaluable']
+        and (not result['frozen_path_changed'] or not enforce_freeze)
+        and result['entries_evaluated'] > 0)
+    result['exit_code'] = exit_code
+    gate = result['claim_gate']
+    gate['claim_score'] = bool(result['claim_score'])
+    gate['rubric_source'] = result['rubric_source']
+    gate['counter_sha256_at_freeze'] = result['counter_sha256_at_freeze']
+    gate['rubric_sha256_at_freeze'] = result['rubric_sha256_at_freeze']
+    gate['exit_code'] = exit_code
+    gate['met_target'] = result['met_target']
+    gate['mismatches_count'] = result['mismatches_count']
+    gate['entries_evaluated'] = result['entries_evaluated']
+    gate['unevaluable_count'] = result['unevaluable_count']
+    gate['frozen_path_changed'] = list(result['frozen_path_changed'])
+    gate['usable_as_claim_score'] = bool(
+        gate['claim_score']
+        and gate['rubric_source'] == 'freeze'
+        and gate['counter_sha256_at_freeze']
+        and gate['rubric_sha256_at_freeze']
+        and exit_code == EXIT_MET
+        and result['met_target']
+        and not result['frozen_path_changed']
+        and not result['unevaluable'])
+    result['wall_seconds'] = round(time.time() - started, 6)
+    return result
+
+
 def score(root, rev_arg, freeze_arg, work, rubric_path, export_mode, seat,
           keep_work=False, pre_freeze=False):
     started = time.time()
@@ -904,6 +1131,8 @@ def score(root, rev_arg, freeze_arg, work, rubric_path, export_mode, seat,
         'rubric_path': rubric_path or RUBRIC_PATH,
         'rubric_source': rubric_source,
         'rubric_sha256': sha256_bytes(raw),
+        'rubric_sha256_at_freeze': sha256_bytes(show(root, freeze, RUBRIC_PATH)),
+        'rubric_sha256_at_rev': sha256_bytes(show(root, rev, RUBRIC_PATH)),
         'counter_path': COUNTER_PATH,
         'counter_sha256': None,
         'counter_sha256_at_freeze': None,
@@ -925,6 +1154,13 @@ def score(root, rev_arg, freeze_arg, work, rubric_path, export_mode, seat,
         'unevaluable_count': 0,
         'exported_paths': [],
         'export_mode': export_mode,
+        'claim_gate': {
+            'claim_score': bool((not pre_freeze) and rubric_source == 'freeze'),
+            'rubric_source': rubric_source,
+            'counter_sha256_at_freeze': None,
+            'rubric_sha256_at_freeze': sha256_bytes(show(root, freeze, RUBRIC_PATH)),
+            'usable_as_claim_score': False,
+        },
         'met_target': False,
         'exit_code': EXIT_CANT,
     }
@@ -942,9 +1178,7 @@ def score(root, rev_arg, freeze_arg, work, rubric_path, export_mode, seat,
     elif not is_ancestor(root, freeze, rev):
         result['freeze_notes'].append({'state': 'freeze_not_ancestor'})
         result['unevaluable'].append({'id': None, 'reason': 'freeze_not_ancestor'})
-        result['exit_code'] = EXIT_CANT
-        result['wall_seconds'] = round(time.time() - started, 6)
-        return result
+        return finalize(result, EXIT_CANT, started)
     else:
         result['ancestor_ok'] = True
 
@@ -956,9 +1190,7 @@ def score(root, rev_arg, freeze_arg, work, rubric_path, export_mode, seat,
             result['frozen_path_changed'].append(RUBRIC_PATH)
             result['freeze_notes'].append({'path': RUBRIC_PATH, 'state': 'rubric_changed'})
             result['unevaluable'].append({'id': None, 'reason': 'frozen_path_changed'})
-            result['exit_code'] = EXIT_CANT
-            result['wall_seconds'] = round(time.time() - started, 6)
-            return result
+            return finalize(result, EXIT_CANT, started)
 
     changed, notes = freeze_integrity(root, freeze, rev, frozen_spec, declared,
                                       frozen_dirs)
@@ -967,9 +1199,7 @@ def score(root, rev_arg, freeze_arg, work, rubric_path, export_mode, seat,
     if changed and not pre_freeze:
         result['unevaluable'].append({'id': None, 'reason': 'frozen_path_changed',
                                        'paths': changed})
-        result['exit_code'] = EXIT_CANT
-        result['wall_seconds'] = round(time.time() - started, 6)
-        return result
+        return finalize(result, EXIT_CANT, started)
 
     # scratch clone + export ------------------------------------------------
     base = work or os.environ.get('HYAKU_SCRATCH') or tempfile.gettempdir()
@@ -996,7 +1226,22 @@ def score(root, rev_arg, freeze_arg, work, rubric_path, export_mode, seat,
             raise Unevaluable('export_empty')
 
         for entry in entries:
+            if self_referential(entry):
+                result['entries'].append({
+                    'id': entry['id'], 'check': entry['check'],
+                    'command': entry['argv'], 'exit_code': None,
+                    'stdout_sha256': None, 'stderr_sha256': None,
+                    'wall_seconds': 0.0, 'match': None,
+                    'error': 'self_referential_check',
+                    'asserted': entry['asserted'], 'compare': entry['compare'],
+                    'file': entry['file'],
+                })
+                result['unevaluable'].append({'id': entry['id'],
+                                              'reason': 'self_referential_check'})
+                continue
             record, error = run_entry(entry, tree_dir, repo_dir, env, root, rev, freeze)
+            record['check_scripts'] = check_script_paths(
+                entry, root, rev, freeze, frozen_spec, frozen_dirs)
             record['asserted'] = entry['asserted']
             record['compare'] = entry['compare']
             record['file'] = entry['file']
@@ -1048,23 +1293,19 @@ def score(root, rev_arg, freeze_arg, work, rubric_path, export_mode, seat,
         if not keep_work:
             shutil.rmtree(workdir, ignore_errors=True)
 
-    result['mismatches_count'] = len(result['mismatches'])
-    result['unevaluable_count'] = len(result['unevaluable'])
     result['entries_count'] = len(entries)
     result['entries_evaluated'] = sum(1 for e in result['entries']
                                       if e.get('observed') is not None
                                       and not e.get('error'))
     if result['entries_evaluated'] == 0:
         result['unevaluable'].append({'id': None, 'reason': 'no_evaluable_entries'})
-        result['unevaluable_count'] = len(result['unevaluable'])
-    result['met_target'] = (not result['mismatches'] and not result['unevaluable']
-                             and not (result['frozen_path_changed']
-                                      and not pre_freeze)
-                             and result['entries_evaluated'] > 0)
-    result['exit_code'] = EXIT_MET if result['met_target'] else (
-        EXIT_FAIL if result['mismatches'] and not result['unevaluable'] else EXIT_CANT)
-    result['wall_seconds'] = round(time.time() - started, 6)
-    return result
+    code = EXIT_MET if (
+        not result['mismatches'] and not result['unevaluable']
+        and (not result['frozen_path_changed'] or pre_freeze)
+        and result['entries_evaluated'] > 0) else (
+        EXIT_FAIL if result['mismatches'] and not result['unevaluable']
+        else EXIT_CANT)
+    return finalize(result, code, started, enforce_freeze=not pre_freeze)
 
 
 # ----------------------------------------------------------------- selftest
@@ -1114,6 +1355,8 @@ def _selftest_repo(base):
         handle.write('claim: 2\n')
     with open(os.path.join(repo, 'real.txt'), 'w') as handle:
         handle.write('a\nb\nc\n')
+    with open(os.path.join(repo, 'table.md'), 'w') as handle:
+        handle.write('| section | entries |\n|---|---|\n| a | 1 |\n')
     with open(os.path.join(repo, 'check.py'), 'w') as handle:
         handle.write(SELFTEST_CHECK)
     os.makedirs(os.path.join(repo, 'tools', 'round-44'), exist_ok=True)
@@ -1121,6 +1364,11 @@ def _selftest_repo(base):
         handle.write('# a frozen round-44 tool\n')
     with open(os.path.join(repo, 'tools', 'round-44', 'c2-rubric.json'), 'w') as handle:
         handle.write(_selftest_rubric([_SELFTEST_ENTRY]))
+    try:
+        shutil.copyfile(os.path.abspath(__file__),
+                        os.path.join(repo, 'tools', 'round-44', 'c2-counter.py'))
+    except OSError:
+        pass
     run('git', 'add', '-A')
     run('git', 'commit', '-q', '-m', 'base')
     freeze = run('git', 'rev-parse', 'HEAD').stdout.strip()
@@ -1153,7 +1401,7 @@ def selftest():
     entry = dict(_SELFTEST_ENTRY)
 
     def run_arm(name, rubric_text, expect, rev=None, use_repo_rubric=False,
-                pre_freeze=False):
+                pre_freeze=False, expect_gate=None):
         # (the rubric text may name the repo's own base commit)
         rubric_file = None
         if not use_repo_rubric:
@@ -1171,10 +1419,18 @@ def selftest():
                       'frozen_path_changed': res['frozen_path_changed'],
                       'met_target': res['met_target'],
                       'pre_freeze': res['pre_freeze'],
-                      'claim_score': res['claim_score']}
+                      'claim_score': res['claim_score'],
+                      'claim_gate': res['claim_gate']}
         except Unevaluable as exc:
             code = EXIT_CANT
             detail = {'unevaluable': exc.reason}
+        if expect_gate is not None:
+            got_gate = bool(detail.get('claim_gate', {}).get(
+                'usable_as_claim_score'))
+            detail['expected_gate'] = expect_gate
+            detail['usable_as_claim_score'] = got_gate
+            if got_gate != expect_gate:
+                code = -1
         record(name, expect, code, detail)
         return code
 
@@ -1210,6 +1466,19 @@ def selftest():
     broken = dict(entry)
     broken.pop('command')
     run_arm('missing_command', _selftest_rubric([broken]), EXIT_CANT)
+
+    # arm 4b: a clean claim run (counter + rubric in the freeze commit) -> 0,
+    # and the claim gate is usable
+    run_arm('claim_run_clean', None, EXIT_MET, use_repo_rubric=True,
+            expect_gate=True)
+
+    # arm 4c: a claim run with a mismatch -> 1 and the gate is NOT usable
+    with open(os.path.join(repo, 'real.txt'), 'w') as handle:
+        handle.write('a\nb\n')
+    claim_mismatch = git_commit('seeded reality')
+    run_arm('claim_run_mismatch_gate', None, EXIT_FAIL, rev=claim_mismatch,
+            use_repo_rubric=True, expect_gate=False)
+    reset()
 
     # arm 5: the committed rubric edited after the freeze -> 2 (frozen_path_changed)
     rubric_in_repo = os.path.join(repo, 'tools', 'round-44', 'c2-rubric.json')
@@ -1275,6 +1544,65 @@ def selftest():
     run_arm('weak_expected_edit', _selftest_rubric([weak], frozen=[
         {'path': 'stale.md', 'expected_edit': {'marker': 'claim: 3'}}]),
         EXIT_CANT)
+
+    # arm 15b: a C1-style mid-table row insertion bound by an insert clause -> 0
+    with open(os.path.join(repo, 'table.md'), 'w') as handle:
+        handle.write('| section | entries |\n| b | 2 |\n|---|---|\n| a | 1 |\n')
+    inserted = git_commit('insert a map row')
+    table_entry = {'id': 'table-rows', 'check': 'json',
+                   'command': ['python3', '-I', '-B', '-c',
+                               'import json,sys,pathlib;'
+                               'rows=[l for l in pathlib.Path("table.md")'
+                               '.read_text().splitlines() if l.startswith("| ")'
+                               ' and not l.startswith("|---")];'
+                               'json.dump({"observed": len(rows) == 3}, sys.stdout)'],
+                   'asserted': True, 'file': 'table.md', 'files': ['table.md']}
+    run_arm('bound_row_insertion', _selftest_rubric([table_entry], frozen=[
+        {'path': 'table.md',
+         'expected_edit': {'insert': {'after': '| section | entries |',
+                                      'lines': ['| b | 2 |']}}}]),
+        EXIT_MET, rev=inserted)
+
+    # arm 15c: the same row insertion without a bound insert clause -> 2
+    run_arm('unbound_row_insertion', _selftest_rubric([table_entry], frozen=[
+        'table.md']), EXIT_CANT, rev=inserted)
+
+    # arm 15d: uppercase placeholders resolve
+    upper = {'id': 'upper-placeholders', 'check': 'json',
+             'command': ['python3', '-I', '-B', '-c',
+                         'import json,os,sys;'
+                         'json.dump({"observed": os.path.isdir("{REV}")}, sys.stdout)'],
+             'asserted': False, 'files': []}
+    run_arm('uppercase_placeholders', _selftest_rubric([upper]), EXIT_MET)
+
+    # arm 15e: a script pin that does not match the blob -> 2
+    pinned = {'id': 'pinned-script', 'check': 'json',
+              'command': ['python3', '-I', '-B', 'check.py'],
+              'asserted': True, 'files': ['real.txt'],
+              'script': {'path': 'check.py', 'sha256': '0' * 64}}
+    run_arm('script_pin_mismatch', _selftest_rubric([pinned]), EXIT_CANT)
+
+    # arm 15f: an inline payload pinned by digest -> 0, and a wrong pin -> 2
+    import hashlib as _hashlib
+    payload = ('import json,pathlib,sys;'
+               'json.dump({"observed": True}, sys.stdout)')
+    pinned_inline = {'id': 'pinned-inline', 'check': 'json',
+                     'command': ['python3', '-I', '-B', '-c', payload],
+                     'asserted': True,
+                     'check_script_sha256': _hashlib.sha256(
+                         payload.encode()).hexdigest()}
+    run_arm('inline_pin_match', _selftest_rubric([pinned_inline]), EXIT_MET)
+    wrong_inline = dict(pinned_inline)
+    wrong_inline['check_script_sha256'] = '0' * 64
+    run_arm('inline_pin_mismatch', _selftest_rubric([wrong_inline]), EXIT_CANT)
+
+    # arm 13b: a self-referential check (it reads the rubric) is refused -> 2
+    circular = dict(entry)
+    circular['command'] = ['python3', '-I', '-B', '-c',
+                           'import json,sys;'
+                           'json.dump({"observed": True}, sys.stdout)  # reads '
+                           'tools/round-44/c2-rubric.json']
+    run_arm('self_referential_check', _selftest_rubric([circular]), EXIT_CANT)
 
     # arm 14: the pre-freeze census of a rubric that declares the freeze -> 1
     census = json.dumps({
@@ -1362,6 +1690,19 @@ def main(argv=None):
         'met_target': result['met_target'],
         'counter_sha256': result['counter_sha256'],
         'counter_sha256_at_freeze': result['counter_sha256_at_freeze'],
+        'rubric_sha256_at_freeze': result['rubric_sha256_at_freeze'],
+        'rubric_sha256_at_rev': result['rubric_sha256_at_rev'],
+        'claim_gate': {
+            'claim_score': result['claim_score'],
+            'rubric_source': result['rubric_source'],
+            'counter_sha256_at_freeze': result['counter_sha256_at_freeze'],
+            'rubric_sha256_at_freeze': result['rubric_sha256_at_freeze'],
+            'usable_as_claim_score': bool(
+                result['claim_score']
+                and result['rubric_source'] == 'freeze'
+                and result['counter_sha256_at_freeze']
+                and result['rubric_sha256_at_freeze']),
+        },
         'exit_code': result['exit_code'],
     }
     print(json.dumps(summary, sort_keys=True))

@@ -16,12 +16,20 @@ Oracle A - squashfs-tools (primary, independent of the REA side)
         socket) as a non-regular row.
   The oracle is never derived from a REA/sasquatch receipt.
 
-Oracle B - the unblob `__output__` expected trees (second, cross-checking)
+Oracle B - the unblob `__output__` expected trees (second reading)
   The committed tree under `corpus/evidence/round-44/oracle/` (fetched
   pre-freeze by seat R44SrcOracle, dataset S138) is walked and its member
-  digests recorded.  This tree is unblob's own expectation for the same
-  fixtures; it is a second reading of the same bytes, NOT an independent
-  producer lineage (see `producer_lineage` in the emitted block).
+  digests recorded.  This tree is unblob's OWN expectation for the same
+  fixtures, produced by unblob's sasquatch-backed handler: it is a second
+  reading of the same bytes, NOT an independent producer, and it must not be
+  described as one (see `producer_lineage` in the emitted block).
+
+Oracle C - 7-Zip (third producer, corroboration only)
+  `7z` 26.04 reads the same images and must agree with oracle A on the
+  member set and every content digest.  It is distinct from both
+  `unsquashfs` and sasquatch, so it is a genuine third reading, but it
+  CORROBORATES oracle A - it does not replace the independent oracle, which
+  remains `unsquashfs`.
 
 Emitted `oracle` block, per carrier id:
 
@@ -86,6 +94,17 @@ UNSQUASHFS = "/usr/bin/unsquashfs"
 ORACLE_TOOL = "unsquashfs"
 ORACLE_VER = "4.7.5"
 
+SEVENZIP = "/usr/bin/7z"
+SEVENZIP_VER = "26.04"
+
+# The digest rule string, byte-identical to the one the R44-C1 counter states
+# in `TREE_DIGEST_RULE` and validates against
+# `TREE_DIGEST_RULE_TOKENS = ('sha256', '<path>', '<sha256>',
+# 'bytewise by path')`.  Emitting the same literal keeps the two sides from
+# drifting; every token the counter requires is present here.
+TREE_DIGEST_RULE = ("sha256 over the concatenation of '<path>\\t<sha256>\\n' "
+                    "lines of `members`, sorted bytewise by path")
+
 EXIT_OK, EXIT_FAILED, EXIT_CANNOT_EVALUATE = 0, 1, 2
 
 SEAT = "R44C1Oracle"
@@ -117,6 +136,7 @@ CARRIERS = (
         "upstream": "squashfs_v1/little_endian",
         "extract_dir": "squashfs_v1.0_le.bin_extract",
         "expected_files": 3,
+        "scope": "target",
     },
     {
         "id": "v1-be",
@@ -127,6 +147,7 @@ CARRIERS = (
         "upstream": "squashfs_v1/big_endian",
         "extract_dir": "squashfs_v1.0_be.bin_extract",
         "expected_files": 3,
+        "scope": "target",
     },
     {
         "id": "v2-le",
@@ -137,6 +158,7 @@ CARRIERS = (
         "upstream": "squashfs_v2/little_endian",
         "extract_dir": "squashfs_v2.0_le.bin_extract",
         "expected_files": 4,
+        "scope": "target",
     },
     {
         "id": "v2-be",
@@ -147,8 +169,22 @@ CARRIERS = (
         "upstream": "squashfs_v2/big_endian",
         "extract_dir": "squashfs_v2.0_be.bin_extract",
         "expected_files": 4,
+        "scope": "target",
     },
 )
+
+# The four PREREGISTERED target carriers of R44-C1 (the ids frozen in the
+# draft claims' carrier table).  The L1's 2026-10-28 amendment reverts the
+# C1 target to exactly these four: the `squashfs_v2` 2.1 pair
+# (`v21le`/`v21be`) was added mid-wave but its REA probe was exploratory and
+# unretained, so it is UNBOUND exploratory data, NOT scored.  The tool
+# therefore emits the v2.1 oracle blocks under `exploratory` (kept, because
+# the measurements are real and cost nothing to retain) and NEVER under
+# `carriers`, which is the scored set.
+TARGET_IDS = ("v1-le", "v1-be", "v2-le", "v2-be")
+
+# Carriers that are measured and retained but explicitly NOT scored.
+EXPLORATORY_IDS = ("v21le", "v21be")
 
 KIND_NAMES = {
     "-": "regular",
@@ -333,6 +369,39 @@ def walk_tree(root):
     return regular, nonregular, None
 
 
+# ------------------------------------------------------- 7-Zip corroboration
+
+def sevenzip_members(image, work):
+    """(members, header, error) - 7-Zip's own reading of a squashfs image.
+
+    7-Zip is a THIRD producer, distinct from both `unsquashfs` (squashfs-
+    tools) and sasquatch (the unblob 26.6.4 extractor).  It corroborates the
+    member set and the content digests; it does not replace the independent
+    oracle, which stays `unsquashfs`.
+
+    `header` carries the archive-level facts 7-Zip reports (file system
+    version, compression method, endianness), which is a second, independent
+    reading of the superblock.
+    """
+    dest = os.path.join(work, "sevenzip", os.path.basename(image))
+    if os.path.exists(dest):
+        shutil.rmtree(dest)
+    os.makedirs(dest)
+    run([SEVENZIP, "x", "-tSquashFS", "-y", "-o" + dest, image])
+    regular, _nonreg, _err = walk_tree(dest)
+    listing = run([SEVENZIP, "l", "-tSquashFS", "-slt", image])
+    header = {}
+    for line in listing["stdout"].splitlines():
+        if " = " not in line:
+            continue
+        key, _, value = line.partition(" = ")
+        key = key.strip()
+        if key in ("File System", "Method", "Big-endian", "Cluster Size",
+                   "Created", "Physical Size", "Headers Size"):
+            header.setdefault(key, value.strip())
+    return regular, header, None
+
+
 # --------------------------------------------------- v1/v2 superblock probe
 
 # The SquashFS v1/v2 superblock is 32 bytes (packed), per unblob 26.6.4's
@@ -513,6 +582,19 @@ def extract_root_of(tree_root, carrier):
     return tree_root, ""
 
 
+def scope_ids(carriers):
+    """(target_ids, exploratory_ids) as the carriers' own `id` values.
+
+    NEVER a spec-spelling constant: the frozen carriers.json spells the same
+    four carriers `v1le` while this module's TARGET_IDS spells them `v1-le`,
+    so emitting the constant would hand a consumer a name that matches no
+    carrier entry.  The split therefore comes from the loaded list.
+    """
+    targets = [c["id"] for c in carriers if c.get("scope") == "target"]
+    exploratory = [c["id"] for c in carriers if c.get("scope") != "target"]
+    return targets, exploratory
+
+
 # ------------------------------------------------------------------ carriers
 
 def load_carriers(path):
@@ -555,6 +637,18 @@ def load_carriers(path):
                 merged[key] = entry[key]
         if "expected_regular" in merged and "expected_files" not in merged:
             merged["expected_files"] = merged["expected_regular"]
+        # scope: a carrier is `target` only if its id is one of the four
+        # preregistered C1 targets.  Anything else in the frozen file is
+        # measured and retained as `exploratory` but is NEVER scored.
+        merged["scope"] = "target" if norm_id(entry["id"]) in {
+            norm_id(t) for t in TARGET_IDS} else "exploratory"
+        # A carrier the tool knows nothing about cannot be built: it has no
+        # fixture location and no handler binding.  Refuse it as
+        # could-not-evaluate rather than crashing later.
+        if not merged.get("path") and not merged.get("fixture"):
+            raise OracleError(EXIT_CANNOT_EVALUATE,
+                              "carrier %r names no image bytes" % entry["id"],
+                              "expected a lane-relative `path` or a `fixture`")
         out.append(merged)
     return out, path
 
@@ -747,6 +841,42 @@ def build_carrier(carrier, root, work, fixtures_dir, oracle_root, tool_sha,
                           "%d mismatch(es): %r" % (len(mismatches),
                                                   mismatches[:5]))
 
+    # (e) oracle C - 7-Zip, a THIRD producer, used as corroboration.
+    # It is distinct from `unsquashfs` (squashfs-tools) and from sasquatch
+    # (the unblob 26.6.4 extractor).  It does NOT replace the independent
+    # oracle; it is a third reading that must agree with the other two.
+    sz_members = []
+    sz_header = {}
+    sz_err = None
+    sz_digest = None
+    sz_mismatches = []
+    if os.path.isfile(SEVENZIP) and os.access(SEVENZIP, os.X_OK):
+        sz_members, sz_header, sz_err = sevenzip_members(image, work)
+        if sz_err is None:
+            sz_digest = digest_of(sz_members)
+            a_by_sz = {m["path"]: m for m in regular}
+            sz_by = {m["path"]: m for m in sz_members}
+            for path in sorted(set(a_by_sz) | set(sz_by)):
+                a = a_by_sz.get(path)
+                z = sz_by.get(path)
+                if a is None:
+                    sz_mismatches.append({"path": path, "reason": "only in 7z"})
+                elif z is None:
+                    sz_mismatches.append({"path": path,
+                                          "reason": "only in unsquashfs"})
+                elif a["sha256"] != z["sha256"]:
+                    sz_mismatches.append({"path": path,
+                                          "reason": "sha256 differs",
+                                          "unsquashfs": a["sha256"],
+                                          "sevenzip": z["sha256"]})
+            if sz_mismatches:
+                raise OracleError(EXIT_FAILED,
+                                  "7-Zip disagrees with unsquashfs for %r" % cid,
+                                  "%d mismatch(es): %r" % (len(sz_mismatches),
+                                                          sz_mismatches[:5]))
+    else:
+        sz_err = "7-Zip (%s) is missing or not executable" % SEVENZIP
+
     block = {
         "members": [{"path": m["path"], "size": m["size"],
                      "sha256": m["sha256"], "type": m["type"]}
@@ -757,9 +887,25 @@ def build_carrier(carrier, root, work, fixtures_dir, oracle_root, tool_sha,
         "oracle_tool_path": UNSQUASHFS,
         "oracle_tool_sha256": tool_sha,
         "output_tree_digest": a_digest,
-        "output_tree_digest_def":
-            "sha256 over the concatenation of '<path>\\t<sha256>\\n' lines "
-            "of `members`, sorted bytewise by path",
+        "output_tree_digest_def": TREE_DIGEST_RULE,
+        "digest_rule": TREE_DIGEST_RULE,
+        "sevenzip": {
+            "role": "third producer, corroboration only - it does not "
+                    "replace the independent oracle (unsquashfs)",
+            "tool": SEVENZIP,
+            "version": SEVENZIP_VER,
+            "tool_sha256": sha256_file(SEVENZIP) if os.path.isfile(SEVENZIP)
+                           else None,
+            "command": [SEVENZIP, "x", "-tSquashFS"],
+            "members": [{"path": m["path"], "size": m["size"],
+                         "sha256": m["sha256"], "type": m["type"]}
+                        for m in sz_members],
+            "output_tree_digest": sz_digest,
+            "agrees_with_unsquashfs": True if sz_err is None else None,
+            "mismatches": sz_mismatches,
+            "error": sz_err,
+            "header": sz_header,
+        },
         "output_tree": {
             "root": rel_posix(tree_root, root),
             "extract_root": rel_posix(ex_root, root),
@@ -767,14 +913,22 @@ def build_carrier(carrier, root, work, fixtures_dir, oracle_root, tool_sha,
             "members": [{"path": m["path"], "size": m["size"],
                          "sha256": m["sha256"], "type": m["type"]}
                         for m in b_reg],
+            # `digest` and `digest_rule` are the names the R44-C1 counter's
+            # `output_tree_binding()` reads first; `output_tree_digest` and
+            # `output_tree_digest_def` are kept as the historical aliases.
+            # Same values, so a consumer may read either pair.
+            "digest": b_digest,
+            "digest_rule": TREE_DIGEST_RULE,
             "output_tree_digest": b_digest,
+            "output_tree_digest_def": TREE_DIGEST_RULE,
             "agrees_with_unsquashfs": True,
             "mismatches": [],
             "producer_lineage":
                 "unblob 26.6.4 integration expectation (S138); produced by "
                 "unblob's own squashfs handler (sasquatch 4.5.1 lineage), so "
-                "it cross-checks the member set but is NOT an independent "
-                "producer - the independent oracle is `unsquashfs` 4.7.5",
+                "it is a SECOND READING of the same bytes, not an "
+                "independent producer - the independent oracle is "
+                "`unsquashfs` 4.7.5",
         },
         "census": [{k: row[k] for k in ("type", "mode", "owner", "size",
                                         "mtime", "path", "rel")}
@@ -887,8 +1041,117 @@ def selftest():
     if probe_v1v2_superblock(b"XXXX" + bytes(28))[0] is not None:
         failures.append("v1/v2 probe accepted a foreign magic")
 
-    report = {"cases": 20, "failures": failures}
+    # scope ids must be the CARRIERS' own ids, never the TARGET_IDS spelling.
+    # This is the defect the L1 caught: carriers.json says `v1le` while
+    # TARGET_IDS says `v1-le`, so emitting the constant named no carrier.
+    for probe_table in (
+        [{"id": "v1le", "scope": "target"}, {"id": "v21le",
+                                             "scope": "exploratory"}],
+        [{"id": "v1-le", "scope": "target"}, {"id": "v2.1-le",
+                                              "scope": "exploratory"}],
+    ):
+        t, e = scope_ids(probe_table)
+        if t != [probe_table[0]["id"]] or e != [probe_table[1]["id"]]:
+            failures.append("scope_ids did not mirror the carrier ids: %r"
+                            % ((t, e),))
+    # and the fallback table's own ids must round-trip through TARGET_IDS
+    fallback_targets, _fallback_exploratory = scope_ids(
+        [dict(c, scope="target") for c in CARRIERS])
+    if fallback_targets != [c["id"] for c in CARRIERS]:
+        failures.append("scope_ids lost a fallback carrier id: %r"
+                        % (fallback_targets,))
+    if len(fallback_targets) != len(TARGET_IDS):
+        failures.append("fallback table / TARGET_IDS length mismatch: %d vs %d"
+                        % (len(fallback_targets), len(TARGET_IDS)))
+
+    report = {"cases": 24, "failures": failures}
     return (not failures), report
+
+
+# ----------------------------------------------------------------- toolchain
+
+TOOLCHAIN = (
+    {
+        "name": "unsquashfs",
+        "path": "/usr/bin/unsquashfs",
+        "version": "4.7.5",
+        "version_argv": ["/usr/bin/unsquashfs", "-version"],
+        "role": "THE independent oracle (squashfs-tools upstream; a different "
+                "producer from sasquatch)",
+    },
+    {
+        "name": "sasquatch",
+        "path": "/home/vgpnk/.local/bin/sasquatch",
+        "version": "4.5.1",
+        "version_argv": ["/home/vgpnk/.local/bin/sasquatch", "-version"],
+        "role": "the extractor unblob 26.6.4 drives - NOT an oracle for this "
+                "claim; it is the producer the REA receipts come from",
+    },
+    {
+        "name": "sasquatch-v4be",
+        "path": "/home/vgpnk/.local/bin/sasquatch-v4be",
+        "version": "4.5.1",
+        "version_argv": ["/home/vgpnk/.local/bin/sasquatch-v4be", "-version"],
+        "role": "the squashfs v4 big-endian sasquatch variant (same extractor "
+                "family; not used by the v1/v2 carriers)",
+    },
+    {
+        "name": "unblob",
+        "path": "/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob",
+        "version": "26.6.4",
+        "version_argv": ["/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob",
+                         "--version"],
+        "role": "the extractor under REA 6.5.0; the committed __output__ trees "
+                "are ITS expectation, so it is not an independent oracle",
+    },
+    {
+        "name": "7z",
+        "path": "/usr/bin/7z",
+        "version": "26.04",
+        "version_argv": ["/usr/bin/7z"],
+        "role": "third producer, corroboration only (distinct from both "
+                "unsquashfs and sasquatch)",
+    },
+)
+
+
+def toolchain_block():
+    """The toolchain paths, versions and digests, measured now.
+
+    Every digest is the sha256 of the binary as it exists on this host at
+    build time; the counter may re-derive any of them.
+    """
+    out = {}
+    for entry in TOOLCHAIN:
+        path = entry["path"]
+        rec = {
+            "path": path,
+            "version": entry["version"],
+            "role": entry["role"],
+            "version_argv": entry["version_argv"],
+        }
+        if os.path.isfile(path):
+            rec["sha256"] = sha256_file(path)
+            rec["size"] = os.path.getsize(path)
+            res = run(entry["version_argv"])
+            rec["version_argv_exit"] = res["exit"]
+            rec["version_argv_stdout_sha256"] = res["stdout_sha256"]
+            first = [ln.strip() for ln in res["stdout"].splitlines()
+                     if ln.strip()]
+            rec["version_line"] = first[0] if first else ""
+            # `unsquashfs -version` (and therefore sasquatch, which is a
+            # patched unsquashfs) prints its version and then exits 1 - the
+            # tools' own convention, not a failure.  Record it so the
+            # counter does not read a non-zero exit as a broken toolchain.
+            rec["version_argv_exit_note"] = (
+                "the unsquashfs family exits 1 after printing its version; "
+                "a non-zero exit here is NOT a toolchain failure"
+                if res["exit"] != 0 else "clean exit")
+        else:
+            rec["sha256"] = None
+            rec["present"] = False
+        out[entry["name"]] = rec
+    return out
 
 
 # ---------------------------------------------------------------------- main
@@ -974,20 +1237,34 @@ def main(argv=None):
         work = tempfile.mkdtemp(prefix="r44-c1-oracle-")
 
     blocks = {}
+    exploratory = {}
     problems = []
     for carrier in carriers:
         try:
-            blocks[carrier["id"]] = build_carrier(carrier, root, work,
-                                                  args.fixtures_dir,
-                                                  oracle_root, tool_sha,
-                                                  args.oracle_root is not None)
+            built = build_carrier(carrier, root, work, args.fixtures_dir,
+                                  oracle_root, tool_sha,
+                                  args.oracle_root is not None)
         except OracleError as exc:
             problems.append({"carrier": carrier["id"], "reason": exc.reason,
                              "detail": exc.detail, "exit": exc.code})
+            continue
         except OSError as exc:
             problems.append({"carrier": carrier["id"],
                              "reason": "filesystem error",
                              "detail": str(exc), "exit": EXIT_FAILED})
+            continue
+        if carrier.get("scope") == "target":
+            blocks[carrier["id"]] = built
+        else:
+            built["scope"] = "exploratory"
+            built["scope_note"] = (
+                "measured and retained, but NOT a scored C1 carrier: the "
+                "squashfs_v2 2.1 pair was added mid-wave and its REA probe "
+                "was exploratory and unretained, so the C1 target is "
+                "reverted to the four preregistered v1.0/v2.0 carriers")
+            exploratory[carrier["id"]] = built
+
+    scope_targets, scope_exploratory = scope_ids(carriers)
 
     doc = {
         "schema": SCHEMA,
@@ -999,7 +1276,28 @@ def main(argv=None):
         "oracle_tool_sha256": tool_sha,
         "oracle_tool_version_line": tool_ver_line,
         "oracle_root": rel_posix(oracle_root, root),
+        "toolchain": toolchain_block(),
+        "scope": {
+            "target_ids": scope_targets,
+            "target_note": "the four PREREGISTERED C1 carriers (v1.0/v2.0, "
+                           "both byte orders); the scored set",
+            "exploratory_ids": scope_exploratory,
+            "exploratory_note": (
+                "the squashfs_v2 2.1 pair: measured and retained, but "
+                "UNBOUND exploratory data, NOT scored (its REA probe was "
+                "exploratory and unretained, so the C1 target was reverted "
+                "to the four preregistered carriers)"
+                if scope_exploratory else
+                "no exploratory carrier is present in this carrier file: "
+                "the squashfs_v2 2.1 pair was excluded from the carrier "
+                "list entirely rather than merely left unscored"),
+            "id_matching": "these are the carriers' own `id` values; all id "
+                           "comparisons in this tool are case- and "
+                           "separator-insensitive (v1le == v1-le == V1LE), "
+                           "so a consumer must not depend on the spelling",
+        },
         "carriers": blocks,
+        "exploratory": exploratory,
         "problems": problems,
     }
 
@@ -1022,7 +1320,8 @@ def main(argv=None):
         if not isinstance(entries, list):
             sys.stderr.write("c1-oracle.py: merge target has no carrier list\n")
             return EXIT_CANNOT_EVALUATE
-        merged, missing = 0, []
+        merged, missing, stripped = 0, [], []
+        exploratory_keys = {norm_id(e) for e in exploratory}
         for entry in entries:
             key = norm_id(entry.get("id"))
             block = blocks.get(entry.get("id"))
@@ -1032,6 +1331,15 @@ def main(argv=None):
                         block = blk
                         break
             if block is None:
+                # an exploratory (unscored) carrier must carry NO `oracle`
+                # block: it is not a scored C1 carrier.  Strip a stale one
+                # left by an earlier merge rather than leaving a block the
+                # counter could bind.
+                if key in exploratory_keys:
+                    if "oracle" in entry:
+                        del entry["oracle"]
+                        stripped.append(entry.get("id"))
+                    continue
                 missing.append(entry.get("id"))
                 continue
             entry["oracle"] = block
@@ -1040,11 +1348,21 @@ def main(argv=None):
             sys.stderr.write("c1-oracle.py: no oracle block for %r\n"
                              % (missing,))
             return EXIT_CANNOT_EVALUATE
+        # top-level `scope` and `toolchain` are written into the merge
+        # target too, so the frozen file carries the target/exploratory
+        # split statement and the verified tool digests.  A pre-existing
+        # `superblock_layout` is left untouched (it is the counter's to own).
+        if isinstance(mdoc, dict):
+            mdoc["scope"] = doc["scope"]
+            mdoc["toolchain"] = doc["toolchain"]
         with open(mpath, "w", encoding="utf-8") as fh:
             json.dump(mdoc, fh, indent=2, sort_keys=True)
             fh.write("\n")
         doc["merged_into"] = rel_posix(mpath, root)
         doc["merged_carriers"] = merged
+        doc["merged_stripped_exploratory"] = stripped
+        doc["merged_wrote_scope"] = True
+        doc["merged_wrote_toolchain"] = True
 
     if args.json_out:
         os.makedirs(os.path.dirname(os.path.abspath(args.json_out)),
@@ -1068,6 +1386,8 @@ def main(argv=None):
                                                          "surrogateescape")),
             "wall_s": round(time.monotonic() - t0, 3),
             "carriers": sorted(blocks),
+            "exploratory": sorted(exploratory),
+            "scope": doc["scope"],
             "problems": problems,
             "oracle_tool": ORACLE_TOOL,
             "oracle_ver": ORACLE_VER,

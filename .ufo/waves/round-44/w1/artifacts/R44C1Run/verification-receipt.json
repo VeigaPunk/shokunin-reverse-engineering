@@ -1,0 +1,139 @@
+{
+  "artifacts": {
+    "tools/round-44/c1-run.py": "55e2692a3085537c2a1dc40f987c3ad8b3d7478519ddbc8a4543926fa4b061a7",
+    "tools/round-44/c1-run.sh": "c35d4b9bca6cd12e7ff1a89717da033841797dde5cf3f8bd3b262d3e9860b263"
+  },
+  "checks": [
+    {
+      "command": "sha256sum tools/round-44/c1-run.sh tools/round-44/c1-run.py",
+      "exit_code": 0,
+      "id": "V1-digests",
+      "stderr_head": "",
+      "stdout_bytes": 182,
+      "stdout_sha256": "50d89300eeb4230936f1a7d8b8aff10450a6346807f9ce3687be1bc3d95d3e19",
+      "wall_s": 0.002
+    },
+    {
+      "command": "bash tools/round-44/c1-run.sh --data-run --rea-outdir-mode scratch --dry-run",
+      "exit_code": 0,
+      "id": "V2-documented-command-dryrun",
+      "stderr_head": "",
+      "stdout_bytes": 3567,
+      "stdout_sha256": "fa4981f3b1a059958ac905fe72686707bb4005cc17b6c64d083242ac0931b025",
+      "wall_s": 0.054
+    },
+    {
+      "command": "bash tools/round-44/c1-run.sh --dry-run",
+      "exit_code": 0,
+      "id": "V3-default-mode-is-scratch",
+      "stderr_head": "",
+      "stdout_bytes": 3567,
+      "stdout_sha256": "77a06ff4dcaa9be975a4e6905fac5e77f593a40903ed8b470b5397e5f546ac54",
+      "wall_s": 0.048
+    },
+    {
+      "command": "bash tools/round-44/c1-run.sh --dry-run --rea-outdir-mode evidence",
+      "exit_code": 0,
+      "id": "V4-evidence-mode-dryrun",
+      "stderr_head": "",
+      "stdout_bytes": 3143,
+      "stdout_sha256": "83bd3e3270ad2c4767d5982a51b56377967c43c71d9e3ac55a1a59f8aea09598",
+      "wall_s": 0.039
+    },
+    {
+      "command": "bash tools/round-44/c1-run.sh",
+      "exit_code": 2,
+      "id": "V5-guard-without-data-run",
+      "stderr_head": "c1-run: refusing to write into the committed evidence root /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/c1.\n        This procedure runs AFTER the freeze: a pre-freeze receipt\n        breaks the counter's receipt_fresh binding. Run it with\n          KAIDOKU_C1_DATA_RUN=1 c1-run.sh\n        or --data-run, or use --dry-run / --evidence-root <other>.\n",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_s": 0.034
+    },
+    {
+      "command": "find corpus/evidence/round-44/c1 -type f | wc -l",
+      "exit_code": 0,
+      "id": "V6-evidence-dir-files",
+      "stderr_head": "",
+      "stdout_bytes": 2,
+      "stdout_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "wall_s": 0.001
+    },
+    {
+      "command": "grep -n \"scratch segment\" plans/round-44-claims.md",
+      "exit_code": 0,
+      "id": "V7-claims-provenance-rule",
+      "stderr_head": "",
+      "stdout_bytes": 291,
+      "stdout_sha256": "3c10ff293030026ee90634f60a5c9e4f98a3c7257e9e95c1e06c3515c7685e31",
+      "wall_s": 0.001
+    },
+    {
+      "command": "grep -n \"PROV_SEGMENT = \" tools/round-44/c1-counter.py",
+      "exit_code": 0,
+      "id": "V8-counter-provenance-rule",
+      "stderr_head": "",
+      "stdout_bytes": 35,
+      "stdout_sha256": "8f8c4c13f96a30348eeb7af64e396ece970c0fa7b8aecd75f788027ae5477e3b",
+      "wall_s": 0.001
+    }
+  ],
+  "claim": "R44-C1",
+  "date": "2026-10-28",
+  "dev_arm": {
+    "carriers": 4,
+    "command": "tools/round-44/c1-run.sh --data-run --rea-outdir-mode scratch --lane-root <LANE> --evidence-root <SCRATCH>/final2 --scratch <SCRATCH>",
+    "evidence_ids": "recompute under both rea-agents 6.5.0 and 6.7.0 rules (xpin: both)",
+    "evidence_root": "/fast/scratch/hyaku/kaidoku-r44/probe-R44C1Run/final2",
+    "exit_code": 0,
+    "per_carrier": {
+      "v1be": {
+        "counter_provenance_ok": true,
+        "diagnostics": 0,
+        "gaps": 0,
+        "handler": [
+          "squashfs_v1"
+        ],
+        "oracle_match": true,
+        "sasquatch_flag": "-be",
+        "unpublished": 0
+      },
+      "v1le": {
+        "counter_provenance_ok": true,
+        "diagnostics": 0,
+        "gaps": 0,
+        "handler": [
+          "squashfs_v1"
+        ],
+        "oracle_match": true,
+        "sasquatch_flag": "-le",
+        "unpublished": 0
+      },
+      "v2be": {
+        "counter_provenance_ok": true,
+        "diagnostics": 0,
+        "gaps": 0,
+        "handler": [
+          "squashfs_v2"
+        ],
+        "oracle_match": true,
+        "sasquatch_flag": "-be",
+        "unpublished": 0
+      },
+      "v2le": {
+        "counter_provenance_ok": true,
+        "diagnostics": 0,
+        "gaps": 0,
+        "handler": [
+          "squashfs_v2"
+        ],
+        "oracle_match": true,
+        "sasquatch_flag": "-le",
+        "unpublished": 0
+      }
+    }
+  },
+  "evidence_dir_files_written": 0,
+  "rev_at_verification": "b2a1bd91f5dffabd6b3d75cfdd19154d85b1d635",
+  "schema": "kaidoku-r44-c1-run-verification-v1",
+  "seat": "R44C1Run"
+}
