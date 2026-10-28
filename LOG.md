@@ -3401,3 +3401,34 @@ of them HIGH:
   battery `7/7/0/1`); receipts `l1/scores/{c1,c2}-at-A4.json`. The freeze series is now five
   commits (`3182047`, `50862e4a`, `65678df0`, `04252247`, `332f4884`), all before any verdict, and
   that is the round's own M46-3 finding rather than a footnote to it.
+
+### Round 47 — an instrument's binding is an equality, and the record is re-derived
+
+Round 47 declared two claims on two tied-lowest axes and landed both, each with its own counter.
+`tools/round-47/exact.py` (R47-C1, depth) scores craft rule block 24 by exact arm tokens, exactly-
+once routed ids, a `mutations_sha256` pin over its own mutation list and a flag-order clause over
+`tools/round-46/gate.py`, then runs a four-forgery battery that the ported round-46 profile accepts
+and the v3 profile rejects. `tools/round-47/record.py` (R47-C2, calibration) re-derives 50 atoms of
+the lane's current self-assessment — last two `## Round N` sections plus the `## Owned axes` head
+fractions — and requires zero mismatches with at least two corrections that each re-derive.
+
+- **Freeze series, disclosed.** `5017e1f7` (plan + counters) → A1 `9018c53b` (a window clause no
+  conforming correction could satisfy) → A2 `62e33f7d` (a forgery that was a no-op in this history;
+  block 24's arm cells reduced to the token the clause binds) → A3 `2e4ae43` (a correction for a
+  round older than the window stays valid evidence) → A4 `1e2c310295` (a selftest fixture typo).
+  **The declared freeze is A4.** Four amendments before verdict is the round-46 M46-3 defect class
+  showing up as a process cost, and it is recorded in `corpus/lessons/round-47.md` `## Mistakes`
+  rather than smoothed over.
+- **Before → after, measured.** C1: at the freeze exit 1 with `block_present 0`, `rule_blocks 23`
+  (`controls/ctl-c1-0-do-nothing.json`); after exit 0 with `rule_blocks 24`, `rows 4`, `refs 8`,
+  battery `4/4/0/1/0` (`l1/scores/c1-at-A4.json`). C2: at the base exit 1 with 4 mismatches
+  (`ctl-c2-0-do-nothing.json`); after exit 0 with `atoms 50`, `mismatches []`, `corrections 2`,
+  battery `3/0` (`l1/scores/c2-at-A4.json`).
+- **The record repaired, append-only.** `## Record corrections — round 47` names the round-45 seat
+  atom (claimed `wave 2: 32`, dispatched `36`) and the round-46 window that named a `<tip>`
+  placeholder, and states the window the counter itself reproduces as empty
+  (`332f4884..58eb04b6 -- tools/round-46 plans/round-46-claims.md`). The `## Owned axes` coverage
+  and depth heads now read `138/138` and `24/24`.
+- **Source.** S143 (`re.fullmatch` in the Python library reference) grounds the equality the arm
+  clause needs; S144 (the Regular Expression HOWTO) was opened and rejected — it never defines
+  `fullmatch`.

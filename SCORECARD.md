@@ -3676,3 +3676,43 @@ atom it names and is itself re-derived by the counter at the measured revision.
   '\.md$'` → 138 and command A → `mapped 138`, so the row's head now reads 138/138.
 - corrects axes depth: 24/24 — command A at the round-47 landing → `rule_blocks 24`,
   `citation_resolved_rules 24`, so the row's head now reads 24/24.
+
+## Round 47 — an equality, not a containment; and the record re-derived against the repo
+
+Base `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5`. The freeze is a disclosed series of five
+commits, all before any claim verdict: `5017e1f7` (plan + both counters), `9018c53b` (A1: drop the
+unreachable window-pair clause), `62e33f7d` (A2: make the window forgery a real forgery; block 24's
+arm cells carry only the token), `2e4ae43` (A3: a correction for a round older than the window stays
+valid evidence), `1e2c310295` (A4: the historical-correction selftest fixture gets its round-3
+dispatch). **The declared freeze is A4 `1e2c3102952dc636650095643c1963c833859019`** — the first
+commit whose bytes score the landing. A1 and A2 are defects the round found by measuring its own
+instrument before the landing; A3 was forced by the record section this round appends; A4 was a
+selftest fixture typo. All four are disclosed rather than folded, per the round-46 M46-3 finding.
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R47-C1 | depth — craft rule block 24 (marker `<!-- exactness-table v3 -->`, four rows, one per R46-CL2/CL3/CL4/CL6) and `tools/round-47/exact.py` | at the freeze exit 1, `block_present 0`, `rule_blocks 23`, `marker_occurrences 0` (`.ufo/waves/round-47/controls/ctl-c1-0-do-nothing.json`); the battery cannot be built before a block exists (`ctl-c1-2-freeze-battery-absent.json`); the ported round-46 profile accepts all four forgeries (`battery.v2_green 4`) | exit 0, `rule_blocks 24`, `rows 4`, `refs 8`, `unresolved_citations []`, both pins equal to the bytes at rev, battery `forgeries_total 4 / v2_green 4 / v3_green 0 / genuine_green 1 / crash 0` (`.ufo/waves/round-47/l1/scores/c1-at-A4.json`) | `python3 -I -B tools/round-47/exact.py --root . --freeze 1e2c3103 --rev <REV>` | `1e2c310295` |
+| R47-C2 | calibration — `tools/round-47/record.py` over 50 atoms: the last two `## Round N` sections (`seats`, `window`, `path`, `rev`) and the current `## Owned axes` head fractions (`axes`) | at the base exit 1, 4 mismatches: the round-45 seat atom (claimed `wave 2: 32`, dispatched `36`), the round-46 window atom naming a `<tip>` placeholder, coverage `133/133` against `138/138`, depth `20/20` against `23/23` (`.ufo/waves/round-47/controls/ctl-c2-0-do-nothing.json`) | exit 0, `atoms 50`, `mismatches []`, `corrections 2` both re-derived, `exempted 2 <= 3`, battery `correction_forgeries 3 / forgeries_green 0` (`.ufo/waves/round-47/l1/scores/c2-at-A4.json`) | `python3 -I -B tools/round-47/record.py --root . --rev <REV>` | `1e2c310295` |
+
+Owned scores: coverage `10 → 10` (command A at `1e2c310295`: `knowledge_files 138`, `mapped 138`,
+`missing []`, `dangling []`; this round adds no domain surface — S143 is instrument documentation
+and S144 is a rejection); depth `10 → 10` (`rule_blocks 23 → 24`, `citation_resolved_rules
+24/24`; the move is the exact binding and its forgeries, not a number above the proxy); calibration
+`10 → 10` (the record's self-assessment now re-derives: 4 → 0 mismatches over 50 atoms, with two
+corrections that each re-derive and a three-forgery battery the counter scores red).
+
+Learning trends: expansion **unchanged** (no admitted knowledge entry, no coverage-map row; the round's `git log --name-status --format= e856beb5..1e2c310295 -- corpus/knowledge PROVINCE.md` is empty, so no domain surface moved); quality **improved on the instruments** (the exactness counter scores its own four
+forgeries v2-green/v3-red, the record counter scores its own three forged corrections red, and
+both reproduce the round's before-states from committed receipts); discernment **improved**
+(four of the round's own defects were found before the operator: A1 an unreachable clause, A2 a
+no-op forgery, A3 a scope rule the record section would have broken, A4 a fixture typo — the bound
+is that all four are instrument-level, and the round's own record was still wrong twice on the way
+in: the round-45 seat atom and the round-46 placeholder window).
+
+**Routed to round 48.** `R46-CL5` and `R46-CL7` stay open (the registry row's `purpose` cell and
+the verdict map's meanings are still unchecked); `R46-CL1` (a `git merge --squash` tamper is
+invisible to both arms) stays open and is stated in block 23; `R46-CL8` (the claims file's
+`cases=11` / non-runnable `--selftest` form) stays open. New from this round: the counters execute
+from the worktree while grading committed bytes (inherited from round 46's `gate.dirty` defence,
+which covers only frozen paths); the `axes` class reads only the leading fraction, not the 0–10
+score cell next to it; and `CORR_MIN 2` is a floor on corrections, not on their importance.
