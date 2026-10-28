@@ -21,6 +21,18 @@ command it owned read the artefact, none read the claim.
 
 | M47-6 | `proxy-harm-recurrence` — block 24 first landed citing lessons and plans only, so command A read `citation_resolved_rules 23/24`, `depth_score 9.58`: a depth claim that lowers the depth proxy. This is round-46's M46-4 exactly, one round after `QUALITY.md` row 77 required a new craft block to cite a knowledge entry | the worktree re-derivation (`rule_blocks 24 resolved 23`) against the record's `24/24` cell | `QUALITY.md` row 77 — it existed and was not applied, so the rule's *enforcement* is what failed, not its content | the block now cites `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md:40-66`; the worktree re-derivation reads 24/24 before the landing commit |
 | M47-7 | `pin-couples-the-landing-to-the-freeze` — block 24 pins `exact.py`'s sha256, so every counter amendment invalidates the landed pin: after A6 the claim failed on `interpreter sha256 pin does not match the bytes at rev` and needed a second landing edit | `l1/scores/c1-at-A6.json` (exit 1, pin mismatch) | `none` — the pin is the point, and nothing told the author that its cost is one landing edit per amendment | the pin now reads A6's bytes (`01a4bca7…`); `c1-at-A7.json` exits 0; routed as R47-CL8 |
+- **R47-CL6 (wave-1 `C1Battery`).** Clause 5 binds *membership*, not row→arm: a permutation of
+  the four tokens across the four rows passes with every routed id intact, so the matrix can state
+  the wrong arm for a defect and still score met. Closing it needs a per-row expected token keyed by
+  routed id, which the block would have to carry.
+- **R47-CL7 (wave-1 `C1Battery`).** Clause 8 counts resolved references, not distinct ones: six
+  copies of `corpus/lessons/round-46.md:1-2` satisfy `refs >= 3` while grounding nothing. The block
+  as landed cites five distinct paths, but the clause does not require that.
+- **R47-CL9 (wave-1 `C1Battery`, F4).** The `--profile` switch also moves the battery gate, so
+  `--profile v2` alone exits 1 on a genuine block (`battery genuine_green 0 != 1`); the ported-profile
+  control must be `--profile v2 --no-battery`, which is what `controls/ctl-c1-1-v2-profile.json` runs.
+  A profile is not a pure selector while the battery result is applied in both profiles.
+
 ## Gate
 
 ### Sources opened this round (2026-10-28)
