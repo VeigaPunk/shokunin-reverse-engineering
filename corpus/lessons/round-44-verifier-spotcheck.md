@@ -182,3 +182,52 @@ reports (`R44W2Record.md`, `R44W2Distill.md`) and the final `R44W2LessonGate.md`
 - R44-C2: **met at `55bcce69`** (80/80, reproduced), inadmissible at tip under its own freeze rule;
   instrument limits disclosed by falsifiers and routed.
 - Round verdict: **rejected-honest-stop**, admitted=false; no axis harmed; status ok.
+
+## 8. Second-pass erratum — fresh non-author session, 2026-10-28T15:18Z
+
+Filed bytes above are unchanged. Two statements in them are false at the commit that ships them
+(`e1724c32`, `refs/heads/main`); both were true at the judging revision `4503fb78`, and the lane's
+next commit `1eab9950` (11:54:33 -03) superseded them before this file landed (11:54:42 -03):
+
+- §1 **worktree defect**: at `e1724c32` the lane is clean —
+  `git -C kaidoku-shokunin status --porcelain` → empty; `scripts/hyaku/jj-lane.sh state <lane>` →
+  `branch=main local=e1724c32… remote=e1724c32… ahead=0 behind=0 tracked=0 untracked=0`.
+  `1eab9950` landed `w2/R44W2Record.md`, `w2/R44W2Distill.md`, the final `R44W2LessonGate.md`
+  text and its artifacts (`git show --stat 1eab9950`). The defect was real at judging; it is not
+  debt at the shipped tree.
+- §6 item 1 **QUALITY 86/87 and the S138 digest**: at `e1724c32`, `corpus/QUALITY.md` carries
+  table rows `| 86 |` and `| 87 |` (`git show e1724c32:corpus/QUALITY.md | grep -nE '^\| *(86|87)'`),
+  and `corpus/lessons/round-44.md` (blob `7ba94844…`) cites the oracle manifest digest
+  `06a72dd5…f5fe` only — `4bc53dbb` survives nowhere but this file and wave artifacts. The
+  "max row id is 85" and "digest false at the committed lesson blob" statements are stale.
+
+Everything else above is re-verified by me this session, independently and from committed bytes:
+
+| check | command (abridged) | observed |
+|---|---|---|
+| C1 at measured revision | `python3 -I -B tools/round-44/c1-counter.py --rev 55bcce69… --freeze c48f8a4b… --pkg65 <rea-agents 6.5.0>` | exit 1; `carriers_matched 4`, `met_target false`, `failing []`, `frozen_path_changed []`, `bindings_false [province_core_section, province_core_row, frontier_note]`; counter-time REA rerun `projection_ok` true on all four carriers |
+| C2 at measured revision | `python3 -I -B tools/round-44/c2-counter.py --rev 55bcce69… --freeze c48f8a4b…` | exit 0; `entries_evaluated 80`, `mismatches []`, `frozen_path_changed []`, `met_target true` |
+| C1/C2 at tip | same, `--rev e1724c32…` | exit 2 each; 8 `frozen_path_changed` control-fixture paths; C2 evaluates 0 entries |
+| owned-axis command A | `SCORECARD.md` `## Measurement recipes` A, at `c29360e3` and `e1724c32` | 137→138 files, 137→138 mapped, `rule_blocks 21`, `citation_resolved_rules 21`, coverage/depth `10.0` |
+| SOURCES row count | `grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' corpus/SOURCES.md` | 137 / 139 / 139 at start / `55bcce69` / tip |
+| SCORECARD reversion | `git rev-parse <rev>:SCORECARD.md` | `af5a3f1a…` at both `55bcce69` and tip |
+| census | `scripts/sources-census.sh validate --root <fleet> kaidoku` | `kaidoku ok`, exit 0, 14 W04 |
+| claims freeze integrity | sha256 of `c48f8a4b:plans/round-44-claims.md` | `369a6201…c654`, equals worktree |
+| S138 admit | `api.github.com/repos/onekey-sec/unblob/contents/…/squashfs?ref=26.6.4`; `…/squashfs_v2/big_endian/__output__?ref=26.6.4` | v1/v2 trees live; member `squashfs_v2.0_be.bin_extract` present — **agree** (decision and corrected digest) |
+| S139 admit | `api.github.com/repos/plougher/squashfs-tools/releases/tags/4.7.5` | `tag_name 4.7.5`, `name "Squashfs tools 4.7.5"`, `published_at 2026-03-01T23:05:47Z` — **agree** |
+| assimilation reject | `.ufo/waves/round-44/assimilation/` empty; `considerthese/` absent | **agree** — no round-44 entry to adopt |
+| contamination | `git log --format='%an|%cn|%ai|%ci' c29360e3..e1724c32` | 21 commits: 20 `kaidoku-shokunin`, 1 `protocol-shokunin` (this spot-check); committer ≥ author on every row; all inside the 07:42:04–12:13:09 dispatch window; `c86ea508` = 432 paths (400 A / 32 M), 8 under `tools/round-44/control-fixtures/`, author 09:57:16 / committer 10:43:43 |
+| preflight pair | `.ufo/waves/round-44/l1/preflight-{c86ea508,55bcce69}.json` | red at `c86ea508` (8 touched), clean at `55bcce69` (0 touched) |
+
+Verdicts above stand unchanged: R44-C1 not met (honest stop), R44-C2 met at `55bcce69`,
+coverage/depth unchanged, calibration improved, round **rejected-honest-stop** (`admitted=false`).
+The manifest closure row appended at `rounds[870]` carried a `closed_at` three hours ahead of the
+commit that shipped it (`17:55:00Z` vs `b1cf525d` at `14:55:46Z`) — a future-dated-evidence defect;
+a `closure-correction` row records the corrected timestamp and the note corrections above.
+
+Open routed defects for round 45 (unchanged from §6, minus the three items resolved by `1eab9950`):
+sweep contamination (`c86ea508` class), S138's top URL never fetched by the lane
+(descendant-listing replay only), `opened_source_rows` over-claim, the instrument gaps (B2
+substring gate, restore arm, preflight D-1..D-3/C-6/D13, C2 freeze-set, freeze-tree-scoped
+observables, runner tree binding), and the missing `SKILL.md` registry rows for the round-44
+counters (`grep -c round-44 SKILL.md` → 0).
