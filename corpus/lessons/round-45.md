@@ -15,6 +15,7 @@ name). The measured revision and verdicts are recorded in the fleet report and i
 |---|---|---|---|---|
 | M45-1 | `sweep-contamination` — a writer that is not the lane left eight files dirty under the frozen directory pathspec `tools/round-44/control-fixtures/`, and a non-author lane sweep then committed them inside a 432-path bulk commit. No commit-time gate saw the dirty tree and no gate saw the sweep, so the loss surfaced only when the round's counters were re-run at the tip and exited 2 `frozen_path_changed`. | `corpus/lessons/round-44.md:18` (the M44-2 row with the author/committer stamp pair), `corpus/lessons/round-44.md:63` (R44-CL1), and the re-derived audit of commit `c86ea508` (path count, the eight `control-fixtures` paths, author 09:57:16 vs committer 10:43:43) in `.ufo/waves/round-45/w1/R45W1InhSweepEvidence/` | `none` at round 44: the freeze rule was enforced only when a counter scored, and the lane's own commit helper never looked at the worktree | `tools/round-45/frozen-path-preflight.py` gains the `--check-dirty` worktree arm, the `--require-pathspec` rule for a directory freeze, the `restored` classifier (history, not tip equality) and an `--selftest` whose red cases are exactly this shape: `red-dirty`, `red-dirfreeze-no-pathspec`, `red-restored`, and `red-bulk-sweep` (eight frozen fixtures plus one unrelated path in one commit). Shown able to fail: deleting the dirty arm makes `red-dirty` return 0 and the selftest fails 1 of 11; deleting the pathspec check makes `red-dirfreeze-no-pathspec` return 0. |
 | M45-2 | `unopened-descendant-credit` — an S-row `opened` cell credited a listing replay of descendant paths while the row's own top URL was never fetched; the registry said "opened this round" for a document this lane had not opened. | round-44 closure routing item 4; the row is `corpus/SOURCES.md` S138 and the claim is in `corpus/lessons/round-44.md` `## Gate` (the contents-API listings are descendants of the row URL, not the URL) | `none` in the instrument: `tools/sources-census.sh` validates schema and duplicate URLs, never whether the opened endpoint is the row's own URL | the append-only correction below (CORPUS rule 2 forbids editing the `opened` column): the top URL is fetched live this round with its HTTP status, bytes and sha256, the located quote is recorded, and the Gate states which endpoints were actually opened. Honest limit: this fix cannot fail mechanically — it is a receipt discipline, and the only thing an instrument could check is that a Gate block exists per new row. Recorded here rather than claimed. |
+| M45-3 | `proxy-only-target` — the freeze controlled for a do-nothing surface and for structural red cases, but not for the *cheapest forgery that satisfies the structural proxy*. Wave 1 built both: a 44-line C1 artefact (garbage rows, four line-less citations, a stub interpreter) and a C2 artefact (six fenced table rows anywhere in SKILL.md) each score `met_target: true` under the frozen counters. The landed artefacts are genuine and were read independently; the measure is the weak link. | `.ufo/waves/round-45/w1/R45W1CritC1/report.md` §"Cheapest artefact that scores green" (receipt sha256 `34336cf7…`); `.ufo/waves/round-45/w1/R45W1CritC2/report.md` §3; the same gap in `R45W1C1SelftestFromFreeze` §4 (A1–A6) | prompt §9 requires "the cheapest control that skips the claimed work"; this round read that as a do-nothing control only and did not build the green-shortcut control before freezing | routed as R45-CL13 (C1) and R45-CL14 (C2) with the exact hardening each needs; shown able to fail: the critic's `fx-a6-cheapest-green` scores 0 today and would score 1 under the pinned-interpreter-sha256 rule, because its interpreter is a 4-line stub with a different hash (the critic's fixtures are committed under its seat dir) |
 
 ## Gate
 
@@ -138,3 +139,34 @@ is added because no round-45 claim cites S138.
 Nothing from an earlier attempt of round 45 (the round launched once). The round-44
 worktree was clean at `149133d4` (`jj-lane.sh state` `ahead=0`, worktree clean), so no
 inherited uncommitted lane work was reused or discarded.
+- **R45-CL13 (HIGH; wave-1 `R45W1CritC1`, ten forgery fixtures).** The frozen R45-C1 predicate is
+  a structural proxy and **not a discriminator**: a 44-line artefact with garbage rows, four
+  line-less or off-topic citations and a 4-line stub interpreter scores `met_target: true`
+  (`fx-a6-cheapest-green`, receipt sha256 `34336cf7…`). Named defects: (a) the interpreter
+  selftest binding proves only that *some* script prints `PREFLIGHT_SELFTEST: cases=11
+  failures=0` — no sha256 pin, so a stub passes; (b) a bare/off-topic/self-citation resolves and
+  counts (the regex validates path+line, not topicality, and accepts refs with no line
+  selector); (c) header cells are substring tests (`"exit" in "no-exit-code"` passes); (d) the
+  marker is counted once per block, so two markers in one block pass; (e) `rule_blocks` counts a
+  top-level `- **…**` line inside a rule body, so 19 real rules + two scratch bullets + a marker
+  block reach 22 while 22 real rules + an extra bullet fail (false negative); (f) a
+  `## Queue-drain craft` heading without the trailing space raises `IndexError` and exits 1 with
+  empty stdout instead of exit 2. The landed artefact is genuine and was read independently
+  (ten real rows whose arms match the interpreter's five arms; the interpreter's 11 fixtures are
+  real) — the defect is the measure, not the landing. Round 46 re-freeze: pin the interpreter's
+  sha256, require line selectors inside the validated path set, require exact header cell
+  equality and an exact marker count, count blocks by a marker-adjacent identity rather than a
+  bullet proxy, and exit 2 on a malformed heading.
+- **R45-CL14 (HIGH; wave-1 `R45W1CritC2`, cheapest bypass named).** The frozen R45-C2 predicate
+  is likewise not a discriminator: **six fenced table rows with embedded paths and a junk exit
+  cell, anywhere in `SKILL.md`, score green**. Named defects: (a) rows inside a fenced block, an
+  HTML comment, or under no registry heading register; (b) `re.search` on cell 0 lets
+  ``see `path` (wrapper)`` register; (c) first-wins dedupe means a fenced good row shadows an
+  honest thin row when it comes first (order-dependent); (d) no header validation, and any cell
+  containing `0`, `1` and `2` passes (`0 rows, 1 column, 2 bytes`); (e) a scope path that exists
+  at no revision registers if a row names it (the `tool_present_at_rev` gap, R45-CL2); (f) the
+  freeze arm prints `met_target: true` for a merge-introduced touch (same root cause as
+  R45-CL6). The landed six rows are genuine and were read independently (exact first cells, real
+  verdict maps) — the defect is the measure. Round 46 re-freeze: require an explicit registry
+  section bound by marker, exact cell-0 equality, a header row with the exit column named, row
+  presence at `--rev`, and the `-m --diff-merges=first-parent` freeze arm.
