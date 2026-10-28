@@ -1,0 +1,169 @@
+{
+ "repairs": {
+  "tools/round-41/c1-extra.py": {
+   "cell": "0=met, all three bindings true, or a selftest in which every case passes; 1=a binding false, or at least one selftest case fails; 2=unevaluable, from a non-commit --rev/--freeze/--base, carriers.json or the reader absent at --freeze, a missing --root/--rev/--freeze/--base, or a selftest whose tools dir lacks gen-squashfs.py and sqfs-list.py",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-41/c2-controls.py": {
+   "cell": "0=green, no control reaches n/n so the kill rule does not fire; 1=not met, a control reaches n/n so the kill rule fires, or an uncaught crash; 2=argparse usage error, nothing evaluated",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-41/fetch-vendor.py": {
+   "cell": "0=met, every external carrier materialised and every chain hash matched; 1=a chain link failed, so nothing was written for that carrier; 2=usage refusal (no --cache, or neither --spec nor --root with --rev)",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-41/local-source-gate.py": {
+   "cell": "0=green, every out-of-lane row resolved; 1=at least one row unresolved (map-missing, no-copy-named, copy-digest-mismatch, row-pin-conflict, sidecar or kind finding); 2=usage or parse error (root not a directory, unreadable --rev, malformed map, unknown map key, wrong table arity)",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-41/mk-l-carriers.py": {
+   "cell": "0=ok, both carriers built and, with --builds 2, each second build byte-identical to the first; 1=not met, never a designed verdict: no explicit path returns it and only an uncaught exception does, e.g. a writer that exits 0 without writing the image raises FileNotFoundError at the sha256 read; 2=usage or verification refusal before any build, argparse error, missing or non-empty outdir, or writer not found",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-42/c1-run.sh": {
+   "cell": "0=ok, the arm wrote its receipt and tables; 1=not met, no designed verdict: an unguarded command under set -e aborts with that command's status, which may be 1; 2=usage or environment refusal (bad argv, missing python3 or jq, carrier not a regular file, OUTDIR outside the round-42 evidence root, SCRATCH without a /kaidoku-r42/ segment, plain sasquatch not resolvable)",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-42/c2-controls.py": {
+   "cell": "0=green, no control reaches full score, the kill rule stays silent; 1=a control reaches full score so the kill rule fires, and by defect the same status also carries its own unevaluable SystemExit diagnostics (no DEV envelopes, failed feature extraction, failed evaluator); 2=argparse usage error or an unhandled IO failure",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-42/heldout-gen-v4.py": {
+   "cell": "0=the selected set was generated, or under --run --verify every envelope matched its declared tuple and the byte-identical regeneration passed; 1=an aggregate check failed (a REA run errored, or an envelope or regeneration mismatched) and also every refusal the script raises itself as SystemExit text, which Python exits as 1; 2=could-not-evaluate, argparse rejected the argv, so nothing was evaluated",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-42/indep-eval-v4.py": {
+   "cell": "0=ok, one record printed or written for the single envelope, or the batch payload emitted for a directory; 1=at least one selftest case failed; 2=usage or I/O error (no envelope and no --envelopes, unreadable or non-object JSON, or a --envelopes path that is not a directory)",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-42/sqfs3-oracle.py": {
+   "cell": "0=met, producers agree and oracle.tsv plus nonregular.tsv are written; 1=the inline selftest failed (never a verdict on an image); 2=image unreadable, wrong magic or unsupported major, or a required producer missing or incomplete",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-42/unblob-logtee.sh": {
+   "cell": "0=ok, the wrapped unblob returned 0, log copied when C1_LOG_COPY names an existing destination; 1=not met, the wrapped unblob's own non-zero code propagated unchanged and no verdict of its own is made; 2=refusal before any run, C1_REAL_UNBLOB is not an absolute path",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-43/c1-counter.py": {
+   "cell": "0=met, met_target true, every held-out pair matched and every binding true; 1=not met: at least one pair miss or one binding false, the receipt still written; 2=could-not-evaluate: frozen_path_changed, freeze not an ancestor of rev, unknown revision, absent or unparsable manifest, or a frozen tool failing to run",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-43/c2-score-r43.py": {
+   "cell": "0=met, all 13 checks true; 1=not met, at least one check false, including a gate or audit sub-receipt that could not be produced at all; 2=could-not-evaluate: the clone cannot be made, or a usage/argument error",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-44/c1-run.sh": {
+   "cell": "0=met, every carrier ran and produced a receipt; 1=at least one carrier failed, by REA exit, no receipt, or a pin mismatch; 2=could not evaluate, usage, environment, missing sibling tool, or an occupied evidence dir",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-46/census.py": {
+   "cell": "0=ok, census computed and printed, and written when --out is given; 1=not met, an unhandled exception such as an unwritable --out: a traceback, not a designed verdict; 2=usage error from argparse (missing --root or an unknown flag)",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-46/gate.py": {
+   "cell": "0=clean, both arms agree that no frozen path changed in FREEZE..REV and the freeze is an ancestor of rev; 1=refusal, not a verdict: running gate.py as a program exits 1 printing \"gate.py is a library\" and evaluates nothing; no library entry point returns 1; 2=could-not-evaluate, unknown or non-ancestor revision, absent claims file or Frozen paths section, failed git call, refused --json-out target, missing non-temporary scratch root, or any unhandled exception caught by main_guard",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  }
+ },
+ "new_rows": {
+  "tools/round-48/meanings.py": {
+   "cell": "0=met with failing empty and the four-forgery battery on target; 1=not met, each false clause named in failing; 2=could-not-evaluate: frozen_path_changed, SKILL.md absent at rev, malformed claims file, craft section, registry or census, a battery error, a refused --json-out, an unknown revision, or an unhandled exception",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  },
+  "tools/round-48/record2.py": {
+   "cell": "0=met with failing empty and the five-forgery battery on target; 1=not met, each false clause named in failing; 2=could-not-evaluate: frozen_path_changed, SCORECARD.md absent at rev, an oracle import or exec failure, a malformed card, a refused --json-out, an unknown revision, or an unhandled exception",
+   "classes": {
+    "0": "success",
+    "1": "not-met",
+    "2": "unevaluable"
+   },
+   "ok": true
+  }
+ },
+ "all_pass": true
+}

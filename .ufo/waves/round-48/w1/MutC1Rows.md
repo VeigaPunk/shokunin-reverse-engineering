@@ -1,0 +1,8 @@
+# MutC1Rows — R48-C1 verdict-map attack
+
+- **Mutant:** Registry verdict-map exit-0 segment prefixed with `0=met` while the same segment says: `actual exit 0 means the command failed`. This is a purely cosmetic lexical pass but contradicts the tool's semantics.
+- **Cheapest counter-accepted cell:** `0=met; actual exit 0 means the command failed; 1=not met, clause false; 2=could-not-evaluate, revision unavailable`.
+- **Expected detector:** `meaning_classes()` should reject the exit-0 segment as not genuinely describing success. It instead returns `{'0': 'success', '1': 'not-met', '2': 'unevaluable'}` (exit 0 from probe), because clause 8 tests for any success-token regex in each segment; it does not establish that the meaning phrase agrees with the named instrument's actual exit contract. Detector is therefore bypassed; mutant survives.
+- **Clause that should catch it:** R48-C1 predicate clause 8, registry meaning binding (and its instrument-registry requirement that each digit claim its meaning). Current implementation at `meanings.py:227-247` classifies independently with token-presence regex, not semantic contradiction / binding to source tool behavior.
+- **Evidence:** Exact frozen counter hash `75fa4026cf6d7b2e580353707cbfdb97db79affab58d52ba18e6c9aae2e27079`; scratch copy roundtrip pristine → probe → restored returned the same hash at all three states, with exact-byte restoration true. The attempted import without round-46 gate on `sys.path` exited 1 (not a detector result); rerun with the dependency path succeeded. Probe receipt is `probe.json`.
+- **Scope / verdict:** coverage finding, surviving mutant (counter lacks contradiction detection); no frozen lane bytes changed. Full C1 CLI score and C2 were not run. No tools installed.

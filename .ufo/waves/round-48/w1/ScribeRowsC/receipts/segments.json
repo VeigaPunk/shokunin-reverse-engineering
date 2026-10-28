@@ -1,0 +1,386 @@
+[
+ {
+  "path": "tools/round-41/c1-extra.py",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "all three bindings true, or a selftest in which every case passes",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "a binding false, or at least one selftest case fails",
+    "success": false,
+    "notmet": true,
+    "uneval": false
+   },
+   "2": {
+    "text": "unevaluable, from a non-commit --rev/--freeze/--base, carriers.json or the reader absent at --freeze, a missing --root/--rev/--freeze/--base, or a selftest whose tools dir lacks gen-squashfs.py and sqfs-list.py",
+    "success": false,
+    "notmet": false,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-41/c2-controls.py",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "no control reaches n/n so the kill rule does not fire",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "a control reaches n/n so the kill rule fires, or an uncaught crash",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "2": {
+    "text": "argparse usage error, nothing evaluated",
+    "success": false,
+    "notmet": false,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-41/fetch-vendor.py",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "every external carrier materialised and every chain hash matched",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "a chain link failed, so nothing was written for that carrier",
+    "success": false,
+    "notmet": true,
+    "uneval": false
+   },
+   "2": {
+    "text": "usage refusal (no --cache, or neither --spec nor --root with --rev)",
+    "success": false,
+    "notmet": true,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-41/local-source-gate.py",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "every out-of-lane row resolved",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "at least one row unresolved (map-missing, no-copy-named, copy-digest-mismatch, row-pin-conflict, sidecar or kind finding)",
+    "success": false,
+    "notmet": true,
+    "uneval": false
+   },
+   "2": {
+    "text": "usage or parse error (root not a directory, unreadable --rev, malformed map, unknown map key, wrong table arity)",
+    "success": false,
+    "notmet": false,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-41/mk-l-carriers.py",
+  "error": "exit 1 segment names no not-met meaning",
+  "segs": {
+   "0": {
+    "text": "ok, both carriers built and, with --builds 2, each second build byte-identical to the first",
+    "success": true,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "never a verdict, no explicit path returns it and only an uncaught exception does, e.g. a writer that exits 0 without writing the image raises FileNotFoundError at the sha256 read",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "2": {
+    "text": "usage or verification refusal before any build, argparse error, missing or non-empty outdir, or writer not found",
+    "success": false,
+    "notmet": true,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-42/c1-run.sh",
+  "error": "exit 1 segment names no not-met meaning",
+  "segs": {
+   "0": {
+    "text": "ok, the arm wrote its receipt and tables",
+    "success": true,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "no designed verdict, an unguarded command under set -e aborts with that command's status, which may be 1",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "2": {
+    "text": "usage or environment refusal (bad argv, missing python3 or jq, carrier not a regular file, OUTDIR outside the round-42 evidence root, SCRATCH without a /kaidoku-r42/ segment, plain sasquatch not resolvable)",
+    "success": false,
+    "notmet": true,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-42/c2-controls.py",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "no control reaches full score, the kill rule stays silent",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "a control reaches full score so the kill rule fires, and by defect the same status also carries its own unevaluable SystemExit diagnostics (no DEV envelopes, failed feature extraction, failed evaluator)",
+    "success": false,
+    "notmet": true,
+    "uneval": true
+   },
+   "2": {
+    "text": "argparse usage error or an unhandled IO failure",
+    "success": false,
+    "notmet": true,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-42/heldout-gen-v4.py",
+  "error": "exit 2 segment names no unevaluable meaning",
+  "segs": {
+   "0": {
+    "text": "the selected set was generated, or under --run --verify every envelope matched its declared tuple and the byte-identical regeneration passed",
+    "success": true,
+    "notmet": true,
+    "uneval": false
+   },
+   "1": {
+    "text": "an aggregate check failed (a REA run errored, or an envelope or regeneration mismatched) and also every refusal the script raises itself as SystemExit text, which Python exits as 1",
+    "success": false,
+    "notmet": true,
+    "uneval": true
+   },
+   "2": {
+    "text": "argparse rejected the argv, so nothing was evaluated",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   }
+  }
+ },
+ {
+  "path": "tools/round-42/indep-eval-v4.py",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "one record printed or written for the single envelope, or the batch payload emitted for a directory",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "at least one selftest case failed",
+    "success": false,
+    "notmet": true,
+    "uneval": false
+   },
+   "2": {
+    "text": "usage or I/O error (no envelope and no --envelopes, unreadable or non-object JSON, or a --envelopes path that is not a directory)",
+    "success": false,
+    "notmet": false,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-42/sqfs3-oracle.py",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "producers agree and oracle.tsv plus nonregular.tsv are written",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "the inline selftest failed (never a verdict on an image)",
+    "success": false,
+    "notmet": true,
+    "uneval": false
+   },
+   "2": {
+    "text": "image unreadable, wrong magic or unsupported major, or a required producer missing or incomplete",
+    "success": false,
+    "notmet": true,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-42/unblob-logtee.sh",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "the wrapped unblob returned 0, log copied when C1_LOG_COPY names an existing destination",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "not met, the wrapped unblob's own non-zero code propagated unchanged and no verdict of its own is made",
+    "success": true,
+    "notmet": true,
+    "uneval": false
+   },
+   "2": {
+    "text": "refusal before any run, C1_REAL_UNBLOB is not an absolute path",
+    "success": false,
+    "notmet": true,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-43/c1-counter.py",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "met_target true, every held-out pair matched and every binding true",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "not met: at least one pair miss or one binding false, the receipt still written",
+    "success": true,
+    "notmet": true,
+    "uneval": false
+   },
+   "2": {
+    "text": "could-not-evaluate: frozen_path_changed, freeze not an ancestor of rev, unknown revision, absent or unparsable manifest, or a frozen tool failing to run",
+    "success": false,
+    "notmet": true,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-43/c2-score-r43.py",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "all 13 checks true",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "at least one check false, including a gate or audit sub-receipt that could not be produced at all",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "2": {
+    "text": "could-not-evaluate: the clone cannot be made, or a usage/argument error",
+    "success": false,
+    "notmet": false,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-44/c1-run.sh",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "every carrier ran and produced a receipt",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "at least one carrier failed, by REA exit, no receipt, or a pin mismatch",
+    "success": false,
+    "notmet": true,
+    "uneval": false
+   },
+   "2": {
+    "text": "could not evaluate, usage, environment, missing sibling tool, or an occupied evidence dir",
+    "success": false,
+    "notmet": false,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-46/census.py",
+  "error": "exit 0 segment names no success meaning",
+  "segs": {
+   "0": {
+    "text": "census computed and printed, and written when --out is given",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "unhandled exception such as an unwritable --out, a traceback and not a verdict",
+    "success": false,
+    "notmet": false,
+    "uneval": false
+   },
+   "2": {
+    "text": "usage error from argparse (missing --root or an unknown flag)",
+    "success": false,
+    "notmet": false,
+    "uneval": true
+   }
+  }
+ },
+ {
+  "path": "tools/round-46/gate.py",
+  "error": "exit 1 segment names no not-met meaning",
+  "segs": {
+   "0": {
+    "text": "clean, both arms agree that no frozen path changed in FREEZE..REV and the freeze is an ancestor of rev",
+    "success": true,
+    "notmet": false,
+    "uneval": false
+   },
+   "1": {
+    "text": "not a verdict, running gate.py as a program refuses with \"gate.py is a library\" and evaluates nothing, and no library entry point returns 1",
+    "success": false,
+    "notmet": false,
+    "uneval": true
+   },
+   "2": {
+    "text": "could-not-evaluate, unknown or non-ancestor revision, absent claims file or Frozen paths section, failed git call, refused --json-out target, missing non-temporary scratch root, or any unhandled exception caught by main_guard",
+    "success": false,
+    "notmet": true,
+    "uneval": true
+   }
+  }
+ }
+]
