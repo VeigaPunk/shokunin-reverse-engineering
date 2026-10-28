@@ -221,6 +221,28 @@ pre-flight receipt in `.ufo/waves/round-48/l1/scores/` (`genuine_exit 1`, failin
 commit that carries this paragraph.** No seat had scored a claim and no landing had been
 measured when A6 was made.
 
+## Freeze amendment A7 (disclosed; the forgeries and one clause, declared before any claim data)
+
+The pre-flight on a simulated landing (a scratch clone carrying block 25, the registry
+repairs, the round-48 section and the corrections — not a claim measurement) found that
+three of the five C2 forgeries were **no-ops on a green card**, and one clause read the
+wrong card:
+
+- the axis-score clause called `axis_scores(files)`, i.e. the *committed* card, so a
+  decremented score cell in the card under test was invisible;
+- `quote-off-by-one` incremented the first quoted number in the whole card, which sits in a
+  section outside the two-section window, so the clause never saw it;
+- `axes-correction-forged` appended a **second** corrections heading, and the parser reads
+  the first, so the forged line was never read;
+- `gold-tautology` kept seat lines by a single-line pattern and dropped the round-48 seat
+  sentence, which is wrapped across two lines, so the round-47 oracle — not the new floor —
+  rejected it.
+
+A7 fixes the clause to read the card under test and each forgery to differ where it claims
+to. Red-before: `.ufo/waves/round-48/controls/ctl-c2-a7-before.json` (`v2_green 4 != 5`,
+`v3_green 3 != 0`). **The declared freeze is the commit that carries this paragraph.** No
+seat had scored a claim and no landing had been measured when A7 was made.
+
 ## Controls (not frozen; committed as wave evidence)
 
 - `ctl-c1-0-do-nothing.json` — the counter at the freeze revision: block absent, registry

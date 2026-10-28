@@ -140,8 +140,7 @@ def quote_value(receipt, key):
     return None
 
 
-def axis_scores(files):
-    card = files(CARD)
+def axis_scores(card):
     if card is None or "## Owned axes" not in card:
         return {}
     body = card.split("## Owned axes", 1)[1].split("\n## ", 1)[0]
@@ -304,7 +303,7 @@ def score(card, files, root, rev, profile, battery=None):
         failing.append(f"quoted numbers with no backing receipt: {len(quote_bad)}")
 
     # clause: the Owned-axes score cell follows its own fraction (R47-CL2) --------
-    scores = axis_scores(files)
+    scores = axis_scores(card)
     cell_bad = []
     for axis, val in scores.items():
         n, d = val["fraction"]
@@ -330,8 +329,7 @@ def score(card, files, root, rev, profile, battery=None):
 
 # --- battery ----------------------------------------------------------------------
 
-SEATS_LINE = re.compile(r"(?m)^.*(?:Waves?:\s*\d+\s*\+\s*\d+\s*=\s*\d+\s*seats"
-                         r"|Wave 1:\s*\d+\s*seats).*$")
+SEATS_LINE = re.compile(r"(?m)^.*(?:Waves?:\s*\d+\s*\+|Wave 1:\s*\d+\s*seats).*$")
 WINDOW_LINE = re.compile(r"(?m)^.*\bis empty\b.*$")
 
 
@@ -397,7 +395,16 @@ def _m_seats_moved(card, ctx):
 
 
 def _m_quote_off(card, ctx):
-    return QUOTE.sub(lambda m: f"{m.group(1)} {int(m.group(2)) + 1}", card, count=1), {}
+    spans = _round_sections(card)
+    if not spans:
+        return card, {}
+    rnd, start, end = spans[-1]
+    body = card[start:end]
+    m = QUOTE.search(body)
+    if not m:
+        return card, {}
+    fixed = body[:m.start()] + f"{m.group(1)} {int(m.group(2)) + 1}" + body[m.end():]
+    return card[:start] + fixed + card[end:], {}
 
 
 def _m_axes_cell_off(card, ctx):
@@ -416,10 +423,16 @@ def _m_axes_cell_off(card, ctx):
 
 
 def _m_axes_correction_forged(card, ctx):
-    line = ("\n## Record corrections — round 48\n\n"
-            "- corrects axes depth: 999/999 — a forged axes correction the round-47 "
+    line = ("- corrects axes depth: 999/999 — a forged axes correction the round-47 "
             "grammar ignores\n")
-    return card.rstrip() + "\n" + line, {}
+    m = CORR_HEAD.search(card)
+    if not m:
+        return card, {}
+    body = card[m.end():]
+    nl = body.find("\n## ")
+    tail = body if nl < 0 else body[:nl]
+    rest = "" if nl < 0 else body[nl:]
+    return card[:m.end()] + tail.rstrip("\n") + "\n" + line + rest, {}
 
 
 MUTATIONS = [("gold-tautology", _m_gold_tautology),
