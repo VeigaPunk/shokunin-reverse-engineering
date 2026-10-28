@@ -1,0 +1,202 @@
+#!/usr/bin/env python3
+"""Generate round-45 wave-1 spec, validated dispatch and ready file (L1 artifact)."""
+import collections
+import json
+import os
+import subprocess
+
+ROOT = "/home/vgpnk/Projects/shokunin/kaidoku-shokunin"
+WAVE_DIR = os.path.join(ROOT, ".ufo/waves/round-45")
+FREEZE = "f762b7273e3f6ca3c710bb37d5de92a4a4417aec"
+GODSPEED = """/skill:godspeed
+
+You are a Godspeed-enabled subagent.
+
+1. **Name the axes.**
+2. **Iterate cheap, in parallel.**
+3. **Keep moves that improve any axis and harm none.**
+4. **Don't aim — let the frontier walk itself.**
+
+## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.
+
+"""
+AXES = ["coverage", "depth", "calibration"]
+MILE = ("Round 45 wave 1: verify the frozen instruments, draft the landing evidence, "
+        "open the round's sources and attack both claim predicates before data")
+REPORT = ".ufo/waves/round-45/w1"
+W = REPORT + "/"
+
+CTX = f"""# Target
+kaidoku-shokunin round 45, wave 1 = verification of the FROZEN instruments, evidence drafted for the landing, source opening, and attack of both claim predicates BEFORE data. Lane root (absolute): {ROOT}. L1 = KaidokuR45 (integration owner; it holds the canonical section-3 planner seat — the wave validator rejects `planner` as a swarm role, so bounded planning data-walks ride scout/connector/revenger seats; recorded in the round report). Freeze commit `{FREEZE}`; the frozen bytes are `plans/round-45-claims.md` and `tools/round-45/` (directory pathspec).
+
+# Read first
+`{ROOT}/plans/round-45-claims.md` (the two frozen claims and their exact predicates), then the instrument you are asked about. Do not re-derive the claims from this prompt: the claims file is the rule.
+
+# Contract (binding on every seat)
+- **You are read-only on the lane tree.** Write ONLY inside `{ROOT}/.ufo/waves/round-45/w1/<YourSeatName>/` (create it). Never edit `SKILL.md`, `plans/`, `tools/`, `corpus/`, `LOG.md`, `SCORECARD.md`, or the fleet repo. Never commit, push, stage, stash, or run any mutating git/jj command (no `git add/commit/checkout/reset/switch/pull/push`, no `jj commit/new/describe/squash/rebase/abandon/bookmark`). Read-only git is fine: `log`, `show`, `diff`, `diff-tree`, `ls-tree`, `cat-file`, `rev-parse`, `status --porcelain`.
+- **Frozen means read-only.** `tools/round-45/` and `plans/round-45-claims.md` are byte-frozen at `{FREEZE}`. You may COPY them to scratch and mutate the copy; never mutate the originals.
+- **Fixture repos**: `D=$(mktemp -d -p "$S") && git -C "$D" init -q`, and every later git call names `-C "$D"`. Verify `git -C "$D" rev-parse --show-toplevel` equals `$D` before the first commit. Never run `git commit` with a throwaway identity anywhere else.
+- **Scratch**: `S=/fast/scratch/hyaku/kaidoku-r45/<YourSeatName>`; `mkdir -p "$S"`, `export TMPDIR="$S"`, pass explicit `--work`/`-p` dirs. Remove `$S` before you yield (`trap 'rm -rf -- \"$S\"' EXIT` in shell, `finally: shutil.rmtree` in Python) AFTER copying receipts into your report dir. Never write under `/tmp`. Nothing under `/tmp` is citable evidence.
+- **Honest capture beats a pass.** Every receipt you write carries: the exact command, exit code, stdout sha256, UTC time. A check you did not run is not passed — say "not run".
+- **Exit codes are semantic**: 0 met/clean, 1 not met/violation, 2 could-not-evaluate. A 2 never counts toward a target.
+- **`Report:` trailer**: every `Report: .ufo/waves/...` path in your prompt is relative to `{ROOT}` — write it at `{ROOT}/<that path>`.
+- **Tooling**: read `/home/vgpnk/.omp/agent/RULES.md` before installing anything. pacman transactions are PAUSED host-wide; use `uv tool`/`npx`/an official binary in `~/.local/bin`, or file nothing. Record any install (tool, version, channel, reason) in your report.
+- Never message `agent://all`; never touch a sibling lane, `.ufo/state/`, `.ufo/watchdog.log`, or `.scratch/`.
+
+# What the L1 does with your output
+It reads your report, reconciles disagreements, lands the SKILL.md rows/block, the SOURCES rows and the lesson, and cites your path as evidence. A finding that the frozen instrument is wrong is valuable: report it with the exact command and the differing value; do not "fix" it.
+"""
+
+
+def T(name, agent, task):
+    task = task.replace("<ROOT>", ROOT).replace("<FREEZE>", FREEZE).replace("<W>", W)
+    return {"name": name, "agent": agent, "task": GODSPEED + task}
+
+
+TASKS = [
+    # ---- A. instrument verification: preflight ----
+    T("R45W1PreflightArms", "mutation-tester",
+      "Mutation-test the frozen freeze-integrity preflight `<ROOT>/tools/round-45/frozen-path-preflight.py` (freeze `<FREEZE>`). Copy it to scratch, then produce FOUR mutants, one per arm: (m1) delete the `--check-dirty` block; (m2) make the `restored` list never populate; (m3) make `--require-pathspec` return 0 without checking; (m4) drop the commit-log arm (keep only blob comparison). Run each mutant's `--selftest` under `TMPDIR` in scratch and record which selftest case goes red for each. Pass = every mutant is caught by at least one named case; a surviving mutant is a hole. Also run the unmutated `--selftest` and record `cases=`, `failures=`, exit. Write `<W>R45W1PreflightArms/report.md` with the mutation table and the receipt JSONs."),
+    T("R45W1PreflightReplay", "executor",
+      "Replay the round-44 sweep defect against REAL lane history with the frozen preflight. From `<ROOT>` run: `python3 -I -B tools/round-45/frozen-path-preflight.py --root . --freeze c48f8a4bfd449300c975668e59aae5b5538b6a84 --rev c86ea508 --pathspec tools/round-44/control-fixtures/ --freeze-path tools/round-44/control-fixtures --require-pathspec --json-out <OUT>`. Record the exit code, the count of `touched`, the subset under `control-fixtures/` (expect the eight), and the verdict. Then run the same gate WITHOUT `--pathspec` and record what it reports (it must not silently pass). Then run it at `--freeze <FREEZE> --rev <FREEZE>` for this round's own frozen paths and record `clean`/exit 0. Write `<W>R45W1PreflightReplay/report.md` plus the three receipts. If a revision is unknown or not an ancestor, say so — do not substitute another revision."),
+    T("R45W1PreflightDirtyReplay", "executor",
+      "In a private fixture repo under `$TMPDIR` reproduce the M44-2 worktree shape and score the dirty arm. Build a repo with `frozen/control-fixtures/c0..c7.json`; commit; then (a) leave the eight files modified uncommitted and run the frozen preflight with `--check-dirty --pathspec frozen/` → expect exit 1 and 8 `dirty` entries; (b) without `--check-dirty` → expect exit 0 (the arm is what catches it); (c) add an unrelated outside path and commit all nine as one sweep → expect exit 1 with 9 `touched`. Record each exit and receipt. Note the exact `git status --porcelain -z` entries the arm saw. Write `<W>R45W1PreflightDirtyReplay/report.md`."),
+    # ---- B. instrument verification: counters ----
+    T("R45W1C1CounterMutants", "mutation-tester",
+      "Mutate the frozen `<ROOT>/tools/round-45/c1-counter.py` and check its `--selftest` catches each mutation. Copy to scratch; six mutants: (m1) compare `rule_blocks` with `>=` instead of `==`; (m2) skip the marker-presence check; (m3) accept exit cells outside {{0,1,2}}; (m4) ignore unresolved citations; (m5) skip the interpreter selftest run; (m6) drop the `frozen_path_changed` arm. Each mutant must produce a red selftest case; name it. Report survivors as holes with the exact case that should have caught them. Also record the unmutated selftest line. Write `<W>R45W1C1CounterMutants/report.md`."),
+    T("R45W1C2CounterMutants", "mutation-tester",
+      "Mutate the frozen `<ROOT>/tools/round-45/c2-counter.py` and check its `--selftest` catches each mutation. Copy to scratch; five mutants: (m1) match a row by `endswith` instead of exact path equality; (m2) treat a row as satisfying a path if ANY cell contains the path; (m3) drop the exit-code-cell check; (m4) read the scope from a hard-coded six instead of the file; (m5) drop the frozen-path arm. Each mutant must produce a red selftest case; name it. A survivor is a hole: report the exact bypass it enables. Record the unmutated selftest line. Write `<W>R45W1C2CounterMutants/report.md`."),
+    T("R45W1C1Satisfy", "executor",
+      "Satisfiability preflight for R45-C1 (round 44 lost a claim to a clause its instrument could not compute — corpus/lessons/round-44.md:63,88). In scratch, build a fixture repo with a candidate `SKILL.md` whose `## Queue-drain craft` section holds 21 plain `- **N. ...**` blocks plus one block 22 containing: the marker `<!-- freeze-integrity-table v1 -->`, a markdown table with header cells containing `trigger`, `arm`, `exit`, `receipt`, eight rows with exit cells `0`/`1`/`2`, four `path:line` citations that exist, the token `S140` and the path `tools/round-45/frozen-path-preflight.py`; include a copy of the real preflight so the selftest runs. Score it with the frozen c1-counter and record exit + every receipt field. Then vary the syntax (indented table, table split by a paragraph, a cell containing a pipe-free `` `0` ``) and report exactly which forms the parser accepts. Deliver a short list: 'the exact bytes my landing must contain so every clause computes'. Write `<W>R45W1C1Satisfy/report.md`."),
+    T("R45W1C1HeaderBoundary", "executor",
+      "Find the parse boundaries of the frozen c1-counter's block-22 checks. In scratch fixtures, test: (a) the marker appearing twice in the section (expect `block22_present 2` → not met); (b) the table header in different column order (does it still accept?); (c) a row whose exit cell is `0/1` (two values) — accepted or not; (d) a citation of the form `corpus/lessons/round-45.md:1` where the file exists but has 0 lines; (e) a citation with no line number. Record each outcome as {fixture, expected-by-claim-text, observed, exit}. Flag any place the instrument is LOOSER or STRICTER than `plans/round-45-claims.md` words it. Write `<W>R45W1C1HeaderBoundary/report.md`."),
+    T("R45W1C1SelftestFromFreeze", "executor",
+      "Independently run all three instruments FROM THE FREEZE BYTES (not the worktree): for each of `tools/round-45/frozen-path-preflight.py`, `c1-counter.py`, `c2-counter.py` extract `git show <FREEZE>:<path>` into scratch and run `python3 -I -B <copy> --selftest` with `TMPDIR` set to your scratch. Record exit code, the final `*_SELFTEST: cases=N failures=M` line, stdout sha256, wall time, and whether the worktree bytes are identical (`git show <rev>:<path> | sha256sum` vs `sha256sum <path>`). Also confirm `git diff --stat <FREEZE>..HEAD -- tools/round-45/ plans/round-45-claims.md` is empty at your run time. Write `<W>R45W1C1SelftestFromFreeze/report.md`."),
+    # ---- C. registry audit (one seat per instrument for source-accurate rows) ----
+    T("R45W1RegR44C1Counter", "executor",
+      "Read `<ROOT>/tools/round-44/c1-counter.py` from source at `<FREEZE>` and produce a READY-TO-PASTE SKILL.md instrument-registry row (7 columns: `| tool | gate or probe — purpose | verdict map (exit codes) | self-test command | pinned-value path | write scope | owner |`). The first cell must be exactly `` `tools/round-44/c1-counter.py` `` (backticked full repo-relative path — the R45-C2 counter requires exact first-cell equality). The verdict-map cell must name 0, 1 and 2 as separate exit codes with their meanings (bare 'non-zero' is thin). Verify every claim in your row by a command you ran (e.g. `--selftest` exit, `--help`, a grep of the exit paths) and record the command + exit. Note any exit path the tool takes that is NOT in {{0,1,2}}. Write `<W>R45W1RegR44C1Counter/row.md` + `receipt.md`."),
+    T("R45W1RegR44C1Run", "executor",
+      "Same task for `<ROOT>/tools/round-44/c1-run.sh` at `<FREEZE>`: produce the exact 7-column registry row whose first cell is `` `tools/round-44/c1-run.sh` `` and whose exit-code cell names 0/1/2 with meanings. Read the script for its exit paths (`set -e` aborts included — r37's `c1-run.sh` had an UNDECLARED 1, so check this one). Do not execute a data run (it needs REA); a `--help`/usage probe and a bad-argument probe are allowed and must be recorded with their exit codes. Write `<W>R45W1RegR44C1Run/row.md` + `receipt.md`."),
+    T("R45W1RegR44C2Counter", "executor",
+      "Same task for `<ROOT>/tools/round-44/c2-counter.py` at `<FREEZE>`: exact 7-column row, first cell `` `tools/round-44/c2-counter.py` ``, exit cell naming 0/1/2. Read the source for the `frozen_path_changed` path and the rubric binding; verify with `--selftest` (record exit and cases) and by naming the pinned files it reads. Write `<W>R45W1RegR44C2Counter/row.md` + `receipt.md`."),
+    T("R45W1RegR45Preflight", "executor",
+      "Same task for `<ROOT>/tools/round-45/frozen-path-preflight.py` at `<FREEZE>`: exact 7-column row, first cell `` `tools/round-45/frozen-path-preflight.py` ``, exit cell naming 0 (clean), 1 (violation), 2 (could-not-evaluate). State the four arms and the selftest case count you measured. Write `<W>R45W1RegR45Preflight/row.md` + `receipt.md`."),
+    T("R45W1RegR45C1", "executor",
+      "Same task for `<ROOT>/tools/round-45/c1-counter.py` at `<FREEZE>`: exact 7-column row, first cell `` `tools/round-45/c1-counter.py` ``, exit cell naming 0/1/2 (2 includes `frozen_path_changed`). Name its pinned inputs (claims file, preflight path, SKILL craft section) and the selftest case count you measured. Write `<W>R45W1RegR45C1/row.md` + `receipt.md`."),
+    T("R45W1RegR45C2", "executor",
+      "Same task for `<ROOT>/tools/round-45/c2-counter.py` at `<FREEZE>`: exact 7-column row, first cell `` `tools/round-45/c2-counter.py` ``, exit cell naming 0/1/2. Name its pinned inputs (`tools/round-45/registry-scope.json`, SKILL registry rows) and the selftest case count. Write `<W>R45W1RegR45C2/row.md` + `receipt.md`."),
+    T("R45W1RegScopeAudit", "scout",
+      "Audit the frozen scope file `<ROOT>/tools/round-45/registry-scope.json` against what the two claim files actually name as instruments. Read `plans/round-44-claims.md` and `plans/round-45-claims.md` at `<FREEZE>`; list every `tools/round-N/...` path each names and classify: instrument (executable, carries a verdict) vs data/fixture. Then report: (a) every instrument named by either claim file that the scope file omits; (b) every scope path NOT named by a claim file; (c) whether the six-path scope is honestly described as 'the instruments the two frozen claim files name'. Do NOT propose changing the frozen file — report, the L1 routes it. Write `<W>R45W1RegScopeAudit/report.md`."),
+    T("R45W1RegRowFormat", "scout",
+      "Determine the exact SKILL.md registry-row format the frozen R45-C2 counter accepts, and whether ANY existing row in `<ROOT>/SKILL.md` already matches a scope path. Read the counter's `parse_rows()`/`ROW_TOOL`. Then scan SKILL.md and report: (a) how many existing registry rows use a bare filename first cell (e.g. `| `c1-counter.py` |`) vs a full `tools/round-NN/...` path; (b) the exact place in SKILL.md where a new `### Round-44/45 instrument registry` section can be appended without disturbing an existing section's byte range (give the line number and the preceding heading); (c) whether appending a second table directly under an existing `### Round-40 instrument registry` heading would be parsed as part of that table by the counter (does it care about headings?). Write `<W>R45W1RegRowFormat/report.md`."),
+    # ---- D. sources ----
+    T("R45W1SrcGitStatus", "scribe",
+      "Open SOURCES row candidate S140 live and produce the row plus its Gate block. Fetch `https://git-scm.com/docs/git-status` (record HTTP status, byte size, sha256, UTC access time) and locate TWO things: the `Porcelain Format Version 1` paragraph stating the format is guaranteed not to change backwards-incompatibly and is ideal for script parsing, and the `-z` alternative recommended for machine parsing (NUL-terminated fields). Record a located quote of at most 25 words for the first, plus the anchor names. Then write the registry row in the lane schema (11 columns: id, source, kind, tier, scope, anchor, teaches, status, opened, recheck, used-by) with `used-by` naming `corpus/lessons/round-45.md` only, and a 3-line Gate block (URL, access date, quote). Verify the quote is byte-present on the page by grepping your saved copy. Write `<W>R45W1SrcGitStatus/row.md` + your saved page path + sha256."),
+    T("R45W1SrcGitDiffTree", "scribe",
+      "Open SOURCES row candidate S141 live: `https://git-scm.com/docs/git-diff-tree` (HTTP status, bytes, sha256, UTC). Locate the `--name-status` + `-z` statement that fields are NUL-terminated and pathnames are not munged, and the raw-diff format paragraph that says a tab or NUL separates fields when `-z` is used. Located quote ≤25 words, anchor names. Write the 11-column registry row (used-by `corpus/lessons/round-45.md`) + Gate block and prove the quote is present in your saved copy. Write `<W>R45W1SrcGitDiffTree/row.md`."),
+    T("R45W1SrcS138Fix", "reviewer",
+      "The round-44 closure routed this defect: `S138`'s `opened` cell credits a descendant-listing replay, but the row's own top URL was never fetched (routing item 4). Read `<ROOT>/corpus/SOURCES.md` row S138 and `corpus/lessons/round-44.md` `## Gate`. Then FETCH the row's top URL `https://github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs` yourself (record HTTP status, bytes, sha256, UTC) and report: (a) whether the page loads and what it lists; (b) a located quote, if any, from the TOP page that supports the row's scope; (c) whether the row's stated quote lives on the top page or only in descendant listings; (d) the exact corrected `opened`-cell wording you would accept, given CORPUS rule 2 forbids editing that column (so the correction must be append-only in the lesson). Do not edit SOURCES.md. Write `<W>R45W1SrcS138Fix/report.md`."),
+    T("R45W1SrcCensus", "executor",
+      "Run the SOURCES census and the append-only guard at the freeze and record both. (1) `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` — record stdout, exit code, and the count of `W04` lines. (2) `bash <ROOT>/tools/round-38/registry-immutable.sh --base 149133d47aa7e90796f96047afe6d251a3e65b2c --head <FREEZE>` (read its usage; if the flags differ, use its documented form and say so) — record whether any row changed outside status/recheck/used-by. (3) `grep -cE '^ {{0,3}}\\|[[:space:]]*S[0-9]{{3,}}' corpus/SOURCES.md` — the row count. Write `<W>R45W1SrcCensus/report.md` with all three receipts."),
+    T("R45W1CensusDupClass", "scout",
+      "Classify the census's `W04` duplicate-URL warnings (the round-44 receipt recorded 14). From the census output, extract every duplicate URL and, for each, open the two rows and decide: (a) same URL in a genuinely different scope (legitimate; explain why), (b) same URL repeated as the same claim (a real duplicate that CORPUS rule 2 says must be superseded, not appended), or (c) a within-row evidence pointer that the census mis-parses (a census limitation). Report the class counts and the two strongest real-duplicate candidates with row ids and line numbers. Read-only; do not edit SOURCES.md. Write `<W>R45W1CensusDupClass/report.md`."),
+    # ---- E. claim-predicate attack ----
+    T("R45W1CritC1", "critic",
+      "Falsify R45-C1 before data. Read `plans/round-45-claims.md` R45-C1 and the frozen `tools/round-45/c1-counter.py`. Attack with at least FIVE distinct attempts and report each as {attack, expected if the claim is sound, observed}: (1) a do-nothing SKILL.md — does the counter really exit 1? (2) can a block satisfy every clause while carrying no actionable decision table (e.g. eight dataframe rows of garbage with valid exit cells)? (3) is `rule_blocks == 22` a real denominator or can an unrelated `- **` bullet anywhere in the craft section inflate it? (4) does the citation clause accept a citation to a file whose line range exists but has nothing to do with freeze integrity? (5) does the interpreter selftest binding prove the ARMS exist, or only that some script prints the right line (try a stub that prints `PREFLIGHT_SELFTEST: cases=11 failures=0`)? Name the cheapest artefact that scores green without doing the work, if one exists. Write `<W>R45W1CritC1/report.md`."),
+    T("R45W1CritC2", "critic",
+      "Falsify R45-C2 before data. Read `plans/round-45-claims.md` R45-C2 and the frozen `tools/round-45/c2-counter.py`. At least FIVE attacks: (1) do the six scope paths really lack rows at the freeze (run the counter and count)? (2) can a row in a code fence / HTML comment satisfy the parser? (3) does the counter verify the tool EXISTS at the revision, and if not, can a row for a deleted path pass? (4) can a single row satisfy two scope paths? (5) is the exit-cell rule satisfiable by prose that names 0/1/2 without a verdict map ('0 rows, 1 column, 2 bytes')? Report each {attack, expected, observed} and name the cheapest bypass. Write `<W>R45W1CritC2/report.md`."),
+    T("R45W1CritSweepClass", "critic",
+      "Attack the sweep-contamination fix from the other side. The round-44 defect was a non-author lane sweep (`c86ea508`) committing 432 paths, eight under a frozen directory. Read `corpus/lessons/round-44.md:18,63` and `tools/round-45/frozen-path-preflight.py`. Answer with evidence: (1) does the preflight prevent the sweep, or only report it after the fact? (2) the fix is supposed to run 'in the fleet sweep/pre-push path' — is that placement possible from this lane at all (the fleet scripts are read-only), and if not, what is the honest claim? (3) does the dirty arm catch the sweep's precursor (eight uncommitted files) even when the commit itself is made by a writer that does not run the gate? (4) what single change would make the arm useless (e.g. a `--no-check-dirty` default)? Write `<W>R45W1CritSweepClass/report.md`."),
+    T("R45W1RevControls", "reviewer",
+      "Independently re-score both do-nothing controls and testify whether the targets are unreachable without the landing work. Run from `<ROOT>`: (1) `python3 -I -B tools/round-45/c1-counter.py --root . --freeze <FREEZE> --rev <FREEZE>`; (2) `python3 -I -B tools/round-45/c2-counter.py --root . --freeze <FREEZE> --rev <FREEZE>`; (3) the preflight on the round's own frozen paths with `--pathspec tools/round-45/ --freeze-path tools/round-45 --require-pathspec --check-dirty`. Record exit codes and the receipt fields. Then compare your values with `<ROOT>/.ufo/waves/round-45/controls/ctl-c1-0-do-nothing.json` and `ctl-c2-0-do-nothing.json` — report any divergence. State plainly: at the freeze, does either counter print `met_target true`? Write `<W>R45W1RevControls/report.md`."),
+    T("R45W1RevFreezeCommit", "reviewer",
+      "Audit the freeze commit's own scope — the r44 defect was a 432-path bulk commit. Run `git -C <ROOT> diff-tree --no-commit-id --name-status -r <FREEZE>` and report: the full path list (should be exactly the ten declared paths), any path outside `plans/round-45-claims.md`, `tools/round-45/*`, `.ufo/waves/round-45/controls/*`; the author and committer identities and timestamps; and whether `git -C <ROOT> status --porcelain` at your run time is empty. Then compute what the frozen preflight reports for `--freeze <parent-of-freeze> --rev <FREEZE> --pathspec tools/round-45/ --freeze-path tools/round-45 --require-pathspec` (the freeze commit names its own paths, so state whether this is a legitimate touch or an artefact of freezing). Write `<W>R45W1RevFreezeCommit/report.md`."),
+    T("R45W1RevS150", "reviewer",
+      "Re-verify the round-44 quarantine refusal that gates this round's assimilation line. Read `<ROOT>/corpus/lessons/round-44.md` `## Gate` (S150 fabrication-class, S113/S136/S147 present-with-caveat, S117 unverifiable) and `<ROOT>/.ufo/waves/round-44/w1/R44Quarantine.md` if present. Re-fetch the S150 target URL named there and check the quoted Japanese heading against the live page (record HTTP status, bytes, sha256, and whether the claimed quote is byte-present). Report agree/disagree with the round-44 refusal. Read-only; do not edit any campaign or lane file. Write `<W>R45W1RevS150/report.md`."),
+    T("R45W1SentDeepRead", "sentinel",
+      "Adversarial security review of the frozen instruments: `tools/round-45/frozen-path-preflight.py`, `c1-counter.py`, `c2-counter.py`. Hunt (a) a path-traversal or write-outside-lane in any `--json-out`, `--work`, scratch or fixture path; (b) a command-injection sink (any shell string built from git output or a claim file); (c) a way a hostile `SKILL.md`/scope file makes the counter report `met_target true` without the work; (d) a way the counter mutates the repo it measures; (e) whether `--selftest` can be made to spawn something outside the scratch root. For each: the exact input, the code line, and whether it is exploitable. Write `<W>R45W1SentDeepRead/report.md`."),
+    T("R45W1ProbeTmp", "executor",
+      "Bounded probe: do the frozen instruments honour `TMPDIR`/`HYAKU_SCRATCH`, or do they write under `/tmp`? (a) `grep -n '/tmp' tools/round-45/*.py` and any absolute scratch root — report hits. (b) Set `TMPDIR=/fast/scratch/hyaku/kaidoku-r45/R45W1LabratTmp` and run each `--selftest`; record where fixture dirs actually appeared (`ls` the scratch root before/after, and `ls /tmp | grep -i -E 'kaidoku|preflight|c1-|c2-'`). (c) With `TMPDIR` unset and `HYAKU_SCRATCH=/fast/scratch/hyaku`, repeat once. Report any leak into `/tmp`. Write `<W>R45W1LabratTmp/report.md`."),
+    # ---- F. inherited-state verification ----
+    T("R45W1InhSweepEvidence", "scout",
+      "Independently re-derive the round-44 sweep evidence so the lesson's `## Mistakes` row rests on your run, not on the earlier report. From `<ROOT>`: `git show -s --format='%H%n%an <%ae>%n%ad%n%cn <%ce>%n%cd' --date=iso c86ea508`; `git diff-tree --no-commit-id --name-only -r c86ea508 | wc -l`; `git diff-tree --no-commit-id --name-only -r c86ea508 -- tools/round-44/control-fixtures/`; and whether `c86ea508` is an ancestor of `main`. Report the path count, the eight fixture paths, the author-vs-committer timestamp gap, and the class name you would give it. Write `<W>R45W1InhSweepEvidence/report.md`."),
+    T("R45W1InhTipCounters", "executor",
+      "Re-run the two ROUND-44 frozen counters at the current lane tip and record why they exit 2 (the routed C2-brittleness item). Run `python3 -I -B tools/round-44/c1-counter.py --help` first to learn its flags, then invoke it at `--rev <lane tip>` (get it with `git -C <ROOT> rev-parse main`) with its required flags/receipt paths if available; if a required input is absent, record `could_not_evaluate` with the reason rather than a pass. Then run `tools/round-44/c2-counter.py` the same way. Report exit codes, the `frozen_path_changed` lists (expect the eight fixture paths), and whether either prints `met_target`. Do NOT modify or re-land anything. Write `<W>R45W1InhTipCounters/report.md`."),
+    T("R45W1InhQualityRows", "executor",
+      "Verify two round-44 closure corrections at the tip, mechanically. (1) `corpus/QUALITY.md` rows 86 and 87: do they exist AS TABLE ROWS (not as prose) at `<FREEZE>`? Give the line numbers, the row ids and the max row id in the file. (2) The S138 manifest digest: `corpus/lessons/round-44.md` now states `06a72dd5...f5fe`; confirm the committed manifest at `corpus/evidence/round-44/oracle/manifest.json` hashes to that (`sha256sum`), and that the string `4bc53dbb` no longer appears in the lesson (`git grep`). (3) SCORECARD.md: confirm the file's blob at `<FREEZE>` equals its blob at `55bcce69c2f4854958d054bcab6d5f0c6fb8a6ac` (`git rev-parse <rev>:SCORECARD.md` both sides) and that no `## Round 44` heading exists in it. Write `<W>R45W1InhQualityRows/report.md`."),
+    T("R45W1InhCommandA", "executor",
+      "Run command A (the SCORECARD measurement recipe at `<ROOT>/SCORECARD.md` `## Measurement recipes`) against `<FREEZE>` and record the exact JSON. Use a scratch clone or the recipe's `git show` form; the recipe is in the SCORECARD and reads Git objects at `$REV`. Report `knowledge_files`, `mapped`, `missing`, `dangling`, `rule_blocks`, `citation_resolved_rules`, `coverage_score`, `depth_score`. This is the report's before value for both axes; state the denominator. Write `<W>R45W1InhCommandA/report.md` plus the JSON."),
+    T("R45W1InhBlockCount", "executor",
+      "Independently count the `## Queue-drain craft` rule blocks at `<FREEZE>` so R45-C1's denominator is grounded. Use `git show <FREEZE>:SKILL.md`, split at `## Queue-drain craft ` and the next `\\n## `, then count `^- \\*\\*` matches (report both the raw match count and the split count the frozen counter uses — `re.split(r'(?m)^- \\*\\*', section)[1:]`). Also record the craft section's line span and the byte offset where block 22 must be inserted (after the last block, before the next `## `). Write `<W>R45W1InhBlockCount/report.md`."),
+    T("R45W1InhSkillTail", "scout",
+      "Map the tail of `<ROOT>/SKILL.md` at `<FREEZE>` for the registry landing. Report: total lines; the last `## ` heading and its line; the last table row and its line; whether the file ends with a table (no trailing newline issues); the nearest existing `### Round-40 instrument registry` heading and its table's column headers (exact text) so a new section matches the house format; and whether any existing instrument-registry row's first cell is a backticked FULL `tools/round-NN/...` path (quote one if so). Write `<W>R45W1InhSkillTail/report.md`."),
+    # ---- G. coordination ----
+    T("R45W1ConnFleetOwnership", "connector",
+      "Sibling-overlap scan for the round's two surfaces. (1) Freeze-integrity tooling: grep the fleet's `<ROOT>/../scripts/hyaku/` (read-only) for freeze/dirty-path guards (`jj-lane.sh`, `fleet-commit.sh`, `inline.sh`) and report what they already enforce and what they do NOT (does either check a dirty tree before a commit? does either require a pathspec?). (2) Instrument registries: grep sibling lanes' `SKILL.md` for an `instrument registry` section and report the house row format other lanes use (one example) — this lane's format should match it. (3) Report whether any sibling lane owns a tool named like `frozen-path-preflight.py`. Do not edit anything outside your report dir. Write `<W>R45W1ConnFleetOwnership/report.md`."),
+    T("R45W1SimplDedupe", "simplifier",
+      "YAGNI review of the round's additions before they land. Read `plans/round-45-claims.md`, `tools/round-45/frozen-path-preflight.py`, `c1-counter.py`, `c2-counter.py`. For each of these, name code or clauses that no claim needs and whose removal keeps every selftest green: (a) in the preflight, is any arm not required by a claim or a routed defect? (b) in `c1-counter.py`, is any receipt field unused by the target? (c) is `c2-counter.py`'s `why` key in the scope file load-bearing? Test each proposed deletion in a scratch copy and report whether the selftest stays green (a deletion that breaks a red case is not dead weight). Findings feed the L1; do not edit the frozen files. Write `<W>R45W1SimplDedupe/report.md`."),
+    T("R45W1RevengerSweepPath", "revenger",
+      "Reverse-engineer what the fleet actually does when it 'sweeps' a lane, so the report states the honest fix boundary. Read (read-only) `<ROOT>/../scripts/hyaku/jj-lane.sh` and `<ROOT>/../scripts/hyaku/inline.sh` and find: does any code path commit an entire lane worktree (a sweep)? Which function, which git/jj invocation, and what does it pass (paths, `-A`, none)? Does it consult any lane-side gate? Then state: from this lane alone, is 'placement in the fleet sweep path' achievable without editing fleet scripts (which this lane may not), and what is the achievable substitute (a lane-side preflight run before each of the L1's own commits, plus a documented operator/integrator request)? Write `<W>R45W1RevengerSweepPath/report.md` with file:line citations."),
+    T("R45W1ScribeLessonDraft", "scribe",
+      "Draft the round-45 lesson's two prose sections so the L1 can land them. Read `<ROOT>/corpus/lessons/round-44.md` (its `## Mistakes` table shape, its `## Gate` table shape, the `## Routed defects` list) and `corpus/lessons/round-44-verifier-spotcheck.md`. Produce in your report dir: (1) `Mistakes` table rows for the round-45 mistake classes: (M45-1) `sweep-contamination` — the r44 non-author sweep of eight frozen fixtures, evidence pointers `corpus/lessons/round-44.md:18` and the c86ea508 audit, captured-by 'none at r44 (no commit-time gate)', fix 'the preflight dirty arm + mandatory pathspec, red selftest cases red-dirty/red-dirfreeze-no-pathspec/red-bulk-sweep'; (M45-2) `unopened-descendant-credit` — S138's `opened` cell credited a descendant replay, fix 'append-only Gate correction naming the endpoints actually opened this round, with a live top-URL receipt'. Write the fix column only if you can name the artefact that can FAIL; otherwise write what is procedurally unenforceable and say so. (2) A `## Gate` template with the two rows (S140, S141) and their quote cells, plus an admission/rejection paragraph stub referencing the census and the S150 refusal. Do NOT write into `corpus/`. Write `<W>R45W1ScribeLessonDraft/draft.md`."),
+    T("R45W1DistillPredicates", "critic",
+      "Compress the two claim predicates into the one sentence each that the closure can re-derive with one command, and list every clause that is NOT in the counter's code. Read `plans/round-45-claims.md` + both counters. Deliver: (a) R45-C1 one-sentence predicate + the exact `failing` strings that would falsify it; (b) R45-C2 one-sentence predicate + the same; (c) a table of claim-text clauses with no corresponding counter check (these are report disclosures, not counters) — be exact, e.g. 'the table rows are actionable' is prose, not a check. (d) Any clause that reads as universal ('all', 'complete') and must be narrowed. Write `<W>R45W1DistillPredicates/report.md`."),
+]
+
+
+def main():
+    os.makedirs(WAVE_DIR, exist_ok=True)
+    items = [{"name": t["name"], "role": t["agent"], "prompt": t["task"], "axes": AXES}
+             for t in TASKS]
+    spec = {"wave": "r45-w1", "milestone": MILE, "reportDir": REPORT,
+            "context": CTX, "items": items}
+    spec_path = os.path.join(WAVE_DIR, "w1-spec.json")
+    with open(spec_path, "w") as f:
+        json.dump(spec, f, indent=1)
+    env = dict(os.environ, UFO_FLEET_ALLOW_EXTERNAL_TOOLS="1",
+               UFO_CONFIG_PATH="/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy.json",
+               UFO_PROJECT_ROOT=ROOT)
+    proc = subprocess.run(["node", os.path.expanduser("~/Projects/ufo-fsd-alpha/scripts/ufo-swarm-wave.mjs"),
+                           "plan", "--spec", spec_path],
+                          capture_output=True, text=True, env=env, cwd=ROOT)
+    if proc.returncode != 0 or not proc.stdout.strip().startswith("{"):
+        raise SystemExit("validator failed: rc=%s %s %s" % (proc.returncode, proc.stdout[:400], proc.stderr[:400]))
+    plan = json.loads(proc.stdout)
+    tasks = plan["tasks"]
+    members = {}
+    for t in tasks:
+        members[t["name"]] = {"kind": "spawn", "agentId": None, "role": t["agent"],
+                              "item": None, "axes": AXES, "milestone": MILE}
+    dispatch = {
+        "schema": "ufo-swarm-wave-dispatch-v1",
+        "wave": "r45-w1",
+        "policy": plan["policy"],
+        "counts": plan["counts"],
+        "registry": {"schema": "ufo-swarm-registry-v1",
+                     "path": ".ufo/waves/round-45/w1/swarm-registry.json",
+                     "reportDir": REPORT, "members": members},
+        "compaction": plan.get("compaction", {"applied": False, "mechanism": None,
+                                              "reason": None, "savedBytes": 0,
+                                              "payloadBytesBefore": 0, "payloadBytesAfter": 0}),
+        "taskCall": {"context": plan["context"], "tasks": tasks},
+        "resumeSends": [],
+        "note": ("Issue exactly one batched task call with taskCall ({context, tasks}); "
+                 "never split a wave into multiple task calls (one-swarm-per-wave)."),
+    }
+    with open(os.path.join(WAVE_DIR, "w1-dispatch.json"), "w") as f:
+        json.dump(dispatch, f, indent=1)
+    os.makedirs(os.path.join(WAVE_DIR, "w1"), exist_ok=True)
+    with open(os.path.join(WAVE_DIR, "w1/swarm-registry.json"), "w") as f:
+        json.dump({"schema": "ufo-swarm-registry-v1", "wave": "r45-w1",
+                   "reportDir": REPORT, "members": members}, f, indent=1)
+    ready = {"lane": "kaidoku", "round": 45, "wave": "r45-w1",
+             "dispatch": os.path.join(WAVE_DIR, "w1-dispatch.json"),
+             "l1": "KaidokuR45"}
+    with open(os.path.join(WAVE_DIR, "w1.ready"), "w") as f:
+        json.dump(ready, f)
+    print("wrote", len(tasks), "seats;", dict(collections.Counter(t["agent"] for t in tasks)))
+    print("counts", plan["counts"])
+
+
+if __name__ == "__main__":
+    main()
