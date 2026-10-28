@@ -609,7 +609,7 @@ bullet is bounded by the lines it cites.
   the claims file and the whole `tools/round-45/` directory, the latter a directory
   pathspec that must be passed explicitly.
 
-- **23. Freeze-integrity evidence is only evidence when its own forgeries fail.** <!-- freeze-integrity-table v2 --> The round-45 table (block 22) stated the arms; this one states what makes the statement checkable — each row is a defect the round-45 closure routed (R45-CL13 a–f, R45-CL14 a–f), the v1 clause that let it pass, and the arm of the round-46 gate, attestation and registry tools that now fails it. Interpreter pin: `tools/round-46/attest.py` `sha256:e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346`. Source S142.
+- **23. Freeze-integrity evidence is only evidence when its own forgeries fail.** <!-- freeze-integrity-table v2 --> The round-45 table (block 22) stated the arms; this one states what makes the statement checkable — each row is a defect the round-45 closure routed (R45-CL13 a–f, R45-CL14 a–f), the v1 clause that let it pass, and the arm of the round-46 gate, attestation and registry tools that now fails it. Interpreter pin: `tools/round-46/attest.py` `sha256:c405613170f0581661b9e2afb4bf278da8ac1f936eeb00eb4b456a9e70ad8e5c`. Source S142.
 
 | trigger | v1 hole | v2 arm | exit |
 |---|---|---|---|
@@ -621,7 +621,7 @@ bullet is bounded by the lines it cites.
 | R45-CL14 six fenced rows anywhere in SKILL.md register | the parser was fence-blind, comment-blind and heading-blind | marker: rows register only between the two registry markers and outside fences and comments | 1 |
 | R45-CL15 `--dirty-pathspec` replaced the dirty scope instead of adding to it | the arm is arm-covering but not arm-isolating | dirty: the dirty scope is the union of the pathspecs, and each arm has a red case that names it | 1 |
 | R45-CL18 a path named only by `--freeze-path` never entered `touched`, so tamper-then-restore read clean | the log scope and the freeze scope were different sets | restored: one frozen set derived from the claims file feeds both arms, so the sets cannot differ | 1 |
-| R45-CL19 a tamper-then-restore folded away by `git merge --squash` | the surviving history names nothing | blob: the blob arm still compares the two revisions; the limit is stated in the table, not claimed away | 2 |
+| R45-CL19 a tamper-then-restore folded away by `git merge --squash` | the surviving history names nothing | none: the blob arm compares the two revisions and a squash leaves both trees identical, so the gate returns 0 and this row states the limit instead of pretending to see it | 0 |
 | R45-CL20 the scratch root fell back to `/tmp` | `tempfile.gettempdir()` was an accepted root | output: `scratch()` refuses a temporary partition and returns could-not-evaluate instead of degrading | 2 |
 | R45-CL22 `--json-out ../../SKILL.md` overwrote the graded surface | the output path was trusted and written before the verdict | output: `out_path()` refuses any target inside the graded or frozen set and any path outside the lane root | 2 |
 | R45-CL23 a newline or tab in a pathname is recorded C-quoted, killing the restored arm | `touched` compared quoted strings with real paths | commit: the history arm reads `--name-status -z`, so pathnames are not munged and the comparison is byte-exact | 1 |
