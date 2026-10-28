@@ -320,13 +320,27 @@ def _repo(files, scratch_root, prefix="fx-"):
 
 
 def _fixture_files(root, rev):
-    """The real repo's bytes for every file a block-24 fixture needs."""
+    """The real repo's bytes for every file a block-24 fixture needs.
+
+    Every citation the landed block carries must exist in the fixture, otherwise the
+    fixture scores an unresolved reference that the artefact does not have (A6).
+    """
     skill = gate.show(root, rev, "SKILL.md")
     out = {"SKILL.md": skill}
     for p in (CLAIMS, SELF, GATE46, MUST_CITE, "corpus/lessons/round-45.md"):
         body = gate.show(root, rev, p)
         if body is not None:
             out[p] = body
+    try:
+        marked = [b for b in blocks_of(skill or "") if MARKER in b]
+    except Malformed:
+        marked = []
+    if marked:
+        for name, _, _ in HARD_REF.findall(marked[0]):
+            if name not in out:
+                body = gate.show(root, rev, name)
+                if body is not None:
+                    out[name] = body
     return out
 
 
