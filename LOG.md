@@ -3291,3 +3291,17 @@ calibration `10 → 10` (unregistered 6 → 0). No capability row enters. No axi
   SquashFS v1/v2 promotion with one consistent provenance clause (R44-CL2). R36-CL5, R40-CL2,
   R41-CL3 remain open.
 - **retired:** none.
+
+### Amendment A2 and the wave-1 falsification record
+
+A2 `fedd11bf5ff9fe42d061169f78d77df59af4eca1` (append-only) corrected two record numbers a wave-1 seat
+refuted with its own measurement (the S141 quote is 20 words, not 23; the round-end census prints 14
+`W04` warnings, not 16), routed the wave-1 instrument findings as R45-CL6..R45-CL12, and made block 22
+state the gate's plain-form commit arm, its exit-code scope, its tree-oid arm and the two-pathspec
+invocation. Re-measured at A2: R45-C1 exit 0 with `rule_blocks 22`, `block22_rows 10`, `block22_refs 8`,
+`unresolved []`; R45-C2 exit 0 with `unregistered []`, `thin []`. The gate from the freeze to A2 over
+both frozen pathspecs is `clean` (exit 0). The highest-severity routed item is R45-CL6: both counters'
+freeze arm uses `git log --name-only`, which prints no diff for a merge commit, so a merge's own
+resolution edit on a frozen path is invisible to them (the preflight's `-m --diff-merges=first-parent`
+and blob arms do catch it); the measured range contains no merge, so the score stands, and the fix
+cannot land this round because the counters are frozen.

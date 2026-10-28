@@ -3567,3 +3567,15 @@ edit of this round's claims.
   (R44-CL2). R36-CL5, R40-CL2, R41-CL3 remain open.
 - **retired:** none. Coverage, depth and calibration stay tied at 10; no finite proxy saturates an
   axis, and the last capability entries are rounds 42–43.
+
+**Amendment A2 and final measurement (append-only).** A2 `fedd11bf5ff9fe42d061169f78d77df59af4eca1`
+corrects the lesson's S141 quote word count (23 → 20) and its round-end `W04` count (16 → 14, the
+measured value), routes the wave-1 instrument findings as R45-CL6..R45-CL12, and states in block 22
+that the gate's commit arm uses the plain tab-separated `--name-status` form, that its exit column is
+the gate's (a scorer reports the same condition as `2`), that a directory freeze reports a subtree
+oid in `blob_changed`, and that an invocation must name both frozen pathspecs. Re-measured at A2:
+R45-C1 exit 0, `rule_blocks 22`, `block22_rows 10`, `block22_refs 8`, `block22_unresolved_citations []`,
+`met_target true` (`.ufo/waves/round-45/l1/scores/c1-at-A2.json`); R45-C2 exit 0, `registered` all six,
+`unregistered []`, `thin []` (`…/c2-at-A2.json`). The gate over both frozen pathspecs from the freeze to
+A2 is `clean`, exit 0 (`…/l1/preflight-round45-frozen-both.json`). The measured revision for the round
+is therefore A2; `1f4b27f8` is the first met measurement, and every value is identical at both.
