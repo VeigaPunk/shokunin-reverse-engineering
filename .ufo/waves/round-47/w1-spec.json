@@ -1,0 +1,758 @@
+{
+ "wave": "r47-w1",
+ "milestone": "Round 47: verify, attack and falsify the two frozen counters (exactness over craft block 24; the self-assessment re-derivation) and draft the landing evidence before data",
+ "reportDir": ".ufo/waves/round-47/w1",
+ "context": "# Target\nkaidoku-shokunin round 47, one v2 wave = verification, drafting and attack of the round's two FROZEN claim instruments, BEFORE any landing. Lane root (absolute): /home/vgpnk/Projects/shokunin/kaidoku-shokunin. L1 = KaidokuR47 (integration owner; it holds the canonical section-3 planner seat \u2014 the validator rejects `planner` as a swarm role, so bounded planning data-walks ride scout/connector/revenger seats; recorded in the round report). Freeze commit `5017e1f7299c3a812e87e7950148f54313dd279e` (`plans/round-47-claims.md` + `tools/round-47/`, directory pathspec); base `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5`.\n\n# The two claims (read the claims file, not this prompt)\n- R47-C1 depth: `SKILL.md` `## Queue-drain craft` rule block 24, marker `<!-- exactness-table v3 -->`, header `trigger | v2 hole | v3 arm | exit`, exactly four rows (one per R46-CL2, R46-CL3, R46-CL4, R46-CL6), exact arm tokens (`symbol`, `once`, `digest`, `order`), a `mutations_sha256` pin over the counter's own mutation list, a `interpreter_sha256` pin, and a flag-order clause over `tools/round-46/gate.py`. Counter: `tools/round-47/exact.py`.\n- R47-C2 calibration: `tools/round-47/record.py` re-derives every machine-checkable atom of the last two `## Round N` sections of `SCORECARD.md` plus the current `## Owned axes` leading fractions, and requires zero mismatches with at least two re-derived corrections.\nThe claims file is the rule: **`/home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-47-claims.md`**. Read it in full before your first command.\n\n# Contract (binding on every seat)\n- **Read-only on the lane tree.** Write ONLY inside `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-47/w1/<YourSeatName>/` (create it). Never edit `SKILL.md`, `plans/`, `tools/`, `corpus/`, `LOG.md`, `SCORECARD.md`, or the fleet repo. Never commit, push, stage, stash, or run any mutating git/jj command (`add/commit/checkout/reset/switch/pull/push`, `jj commit/new/describe/squash/rebase/abandon/bookmark`). Read-only git is fine: `log`, `show`, `diff`, `diff-tree`, `ls-tree`, `cat-file`, `rev-parse`, `status --porcelain`.\n- **Frozen means read-only.** `tools/round-47/` and `plans/round-47-claims.md` are byte-frozen at `5017e1f7299c3a812e87e7950148f54313dd279e`. Copy to scratch to mutate the copy; never mutate the originals.\n- **Fixture repos**: `D=$(mktemp -d -p \"$S\") && git -C \"$D\" init -q`, and every later git call names `-C \"$D\"`. Verify `git -C \"$D\" rev-parse --show-toplevel` equals `$D` before the first commit. Never run `git commit` with a throwaway identity anywhere else.\n- **Scratch**: `S=/fast/scratch/hyaku/kaidoku-r47/<YourSeatName>`; `mkdir -p \"$S\"`, `export TMPDIR=\"$S\" HYAKU_SCRATCH=\"$S\"`. Remove `$S` before you yield AFTER copying receipts into your report dir. Never write under `/tmp`; nothing under `/tmp` is citable evidence.\n- **Honest capture beats a pass.** Every receipt carries the exact command, exit code, stdout sha256 and UTC time. A check you did not run is not passed \u2014 say \"not run\".\n- **Exit codes are semantic**: 0 met/clean, 1 not met/violation, 2 could-not-evaluate. A 2 never counts toward a target.\n- **`Report:` trailer**: the `Report: .ufo/waves/...` path in your prompt is relative to `/home/vgpnk/Projects/shokunin/kaidoku-shokunin` \u2014 write it at `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/<that path>`.\n- **Tooling**: read `/home/vgpnk/.omp/agent/RULES.md` before installing anything. **All pacman transactions are PAUSED host-wide** \u2014 install via `uv tool`/`npx`/an official binary in `~/.local/bin`, or nothing. Record any install (tool, version, channel, reason) in your report.\n- Never message `agent://all`; never touch a sibling lane, `.ufo/state/`, `.ufo/watchdog.log`, `.scratch/`, or the fleet repo.\n\n# What the L1 does with your output\nIt reads your report, reconciles disagreements, lands `SKILL.md` block 24, the `SCORECARD.md` corrections and the record updates, then re-measures both counters at the landing revision. A finding that a FROZEN clause is wrong, vacuous, or satisfiable by a forgery is the most valuable thing you can return: give the exact command, the differing value, and a fixture path that shows it. Do not \"fix\" frozen bytes.\n",
+ "items": [
+  {
+   "name": "C1Struct",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nVerify R47-C1 clauses 1-3 on the frozen counter `tools/round-47/exact.py` at freeze `5017e1f7299c3a812e87e7950148f54313dd279e`, then draft the block-24 row(s) that satisfy it.\n\nWhat the clause says: marker_occurrences == 1, block_present == 1, block is last and titled `24. `, header exactly `trigger | v2 hole | v3 arm | exit`, rows == 4, 4 cells, exit cells in {0,1,2}.\n\n1. Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-47-claims.md` R47-C1 and the clause in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py` that computes it; quote both.\n2. At the freeze the counter exits 1 with `block_present 0` \u2014 record that, then build a CANDIDATE block 24 in scratch (a copy of `SKILL.md` in a fixture repo) that satisfies your clause, and show the counter's failing list shrinking to only the other clauses. Say exactly which clauses remain red and why.\n3. Draft the ready-to-paste table row(s) for block 24 that your clause governs into `.ufo/waves/round-47/w1/<SEAT>/rows.md`, with the citation line selectors and sha256 values you actually computed.\n\nRun `HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/<SEAT> python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py \\\n  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 5017e1f7299c3a812e87e7950148f54313dd279e --rev 5017e1f7299c3a812e87e7950148f54313dd279e --json-out .ufo/waves/round-47/w1/<SEAT>/receipt.json` and record the exit code, the `failing` list and every value you quote. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1Ids",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nVerify R47-C1 clause 4 on the frozen counter `tools/round-47/exact.py` at freeze `5017e1f7299c3a812e87e7950148f54313dd279e`, then draft the block-24 row(s) that satisfy it.\n\nWhat the clause says: every row's trigger cell names exactly one `R46-CL<n>` id and the multiset over the rows is exactly the four ids once each.\n\n1. Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-47-claims.md` R47-C1 and the clause in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py` that computes it; quote both.\n2. At the freeze the counter exits 1 with `block_present 0` \u2014 record that, then build a CANDIDATE block 24 in scratch (a copy of `SKILL.md` in a fixture repo) that satisfies your clause, and show the counter's failing list shrinking to only the other clauses. Say exactly which clauses remain red and why.\n3. Draft the ready-to-paste table row(s) for block 24 that your clause governs into `.ufo/waves/round-47/w1/<SEAT>/rows.md`, with the citation line selectors and sha256 values you actually computed.\n\nRun `HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/<SEAT> python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py \\\n  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 5017e1f7299c3a812e87e7950148f54313dd279e --rev 5017e1f7299c3a812e87e7950148f54313dd279e --json-out .ufo/waves/round-47/w1/<SEAT>/receipt.json` and record the exit code, the `failing` list and every value you quote. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1Tokens",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nVerify R47-C1 clause 5 on the frozen counter `tools/round-47/exact.py` at freeze `5017e1f7299c3a812e87e7950148f54313dd279e`, then draft the block-24 row(s) that satisfy it.\n\nWhat the clause says: every v3-arm cell is exactly one of `symbol`, `once`, `digest`, `order` \u2014 equality, not containment; the round-46 counter's substring hole is closed.\n\n1. Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-47-claims.md` R47-C1 and the clause in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py` that computes it; quote both.\n2. At the freeze the counter exits 1 with `block_present 0` \u2014 record that, then build a CANDIDATE block 24 in scratch (a copy of `SKILL.md` in a fixture repo) that satisfies your clause, and show the counter's failing list shrinking to only the other clauses. Say exactly which clauses remain red and why.\n3. Draft the ready-to-paste table row(s) for block 24 that your clause governs into `.ufo/waves/round-47/w1/<SEAT>/rows.md`, with the citation line selectors and sha256 values you actually computed.\n\nRun `HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/<SEAT> python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py \\\n  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 5017e1f7299c3a812e87e7950148f54313dd279e --rev 5017e1f7299c3a812e87e7950148f54313dd279e --json-out .ufo/waves/round-47/w1/<SEAT>/receipt.json` and record the exit code, the `failing` list and every value you quote. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1Digest",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nVerify R47-C1 clause 6 on the frozen counter `tools/round-47/exact.py` at freeze `5017e1f7299c3a812e87e7950148f54313dd279e`, then draft the block-24 row(s) that satisfy it.\n\nWhat the clause says: `mutations_sha256` equals sha256 over \"\\n\".join(name for name, _ in the counter's MUTATIONS) and all four mutation names appear in the block.\n\n1. Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-47-claims.md` R47-C1 and the clause in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py` that computes it; quote both.\n2. At the freeze the counter exits 1 with `block_present 0` \u2014 record that, then build a CANDIDATE block 24 in scratch (a copy of `SKILL.md` in a fixture repo) that satisfies your clause, and show the counter's failing list shrinking to only the other clauses. Say exactly which clauses remain red and why.\n3. Draft the ready-to-paste table row(s) for block 24 that your clause governs into `.ufo/waves/round-47/w1/<SEAT>/rows.md`, with the citation line selectors and sha256 values you actually computed.\n\nRun `HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/<SEAT> python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py \\\n  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 5017e1f7299c3a812e87e7950148f54313dd279e --rev 5017e1f7299c3a812e87e7950148f54313dd279e --json-out .ufo/waves/round-47/w1/<SEAT>/receipt.json` and record the exit code, the `failing` list and every value you quote. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1Order",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nVerify R47-C1 clause 7 on the frozen counter `tools/round-47/exact.py` at freeze `5017e1f7299c3a812e87e7950148f54313dd279e`, then draft the block-24 row(s) that satisfy it.\n\nWhat the clause says: `tools/round-46/gate.py` at the measured revision contains \"-m\", \"--diff-merges=first-parent\" exactly once and the reversed pair zero times.\n\n1. Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-47-claims.md` R47-C1 and the clause in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py` that computes it; quote both.\n2. At the freeze the counter exits 1 with `block_present 0` \u2014 record that, then build a CANDIDATE block 24 in scratch (a copy of `SKILL.md` in a fixture repo) that satisfies your clause, and show the counter's failing list shrinking to only the other clauses. Say exactly which clauses remain red and why.\n3. Draft the ready-to-paste table row(s) for block 24 that your clause governs into `.ufo/waves/round-47/w1/<SEAT>/rows.md`, with the citation line selectors and sha256 values you actually computed.\n\nRun `HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/<SEAT> python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py \\\n  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 5017e1f7299c3a812e87e7950148f54313dd279e --rev 5017e1f7299c3a812e87e7950148f54313dd279e --json-out .ufo/waves/round-47/w1/<SEAT>/receipt.json` and record the exit code, the `failing` list and every value you quote. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1Refs",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nVerify R47-C1 clause 8 on the frozen counter `tools/round-47/exact.py` at freeze `5017e1f7299c3a812e87e7950148f54313dd279e`, then draft the block-24 row(s) that satisfy it.\n\nWhat the clause says: refs >= 3 with line selectors that resolve at --rev, `corpus/lessons/round-46.md` cited, and both sha256 pins matching the bytes at rev.\n\n1. Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/plans/round-47-claims.md` R47-C1 and the clause in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py` that computes it; quote both.\n2. At the freeze the counter exits 1 with `block_present 0` \u2014 record that, then build a CANDIDATE block 24 in scratch (a copy of `SKILL.md` in a fixture repo) that satisfies your clause, and show the counter's failing list shrinking to only the other clauses. Say exactly which clauses remain red and why.\n3. Draft the ready-to-paste table row(s) for block 24 that your clause governs into `.ufo/waves/round-47/w1/<SEAT>/rows.md`, with the citation line selectors and sha256 values you actually computed.\n\nRun `HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/<SEAT> python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py \\\n  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 5017e1f7299c3a812e87e7950148f54313dd279e --rev 5017e1f7299c3a812e87e7950148f54313dd279e --json-out .ufo/waves/round-47/w1/<SEAT>/receipt.json` and record the exit code, the `failing` list and every value you quote. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1Battery",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nBuild and score the four R47-C1 battery forgeries independently, one row each, and prove the discrimination claim is not an artefact of the counter's own self-report.\n\nThe four classes: `substring-arm` (a v3-arm cell containing but not equal to a vocabulary token), `duplicate-routed-id` (five rows, one id twice, all four ids still present), `stale-mutations-digest` (a digest computed over three of the four mutation names), `flag-order-drift` (the fixture's `gate.py` copy carries the reversed flag pair).\n\nFor each: build a one-commit fixture repo in scratch from the landed block (copy of `SKILL.md` + the files its refs name), mutate only that class, and score the fixture with `--profile v2` and `--profile v3`. Expected: v2 exit 0 (the hole), v3 exit 1 (the fix). If a class scores differently, that is the finding: give the command and both receipts.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a 4-row table: class | v2 exit | v3 exit | failing clause.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1SelfTest",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAudit `tools/round-47/exact.py --selftest`: run it, count the cases the code registers (`case(`/`run(` invocations), and check every case is honest \u2014 does the named red case actually exercise the clause its name claims, and would it stay green if the clause were deleted? Copy the counter to scratch, delete ONE clause (your choice, name it), and show the selftest going red for the case that names it. A clause whose deletion no case notices is a finding.\n\nRecord the banner (`EXACT_SELFTEST: cases=N failures=M`), the registered count, and the deleted-clause matrix in `.ufo/waves/round-47/w1/<SEAT>/report.md`.\n\nMenu: `HYAKU_SCRATCH=... python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/exact.py --selftest --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 5017e1f7299c3a812e87e7950148f54313dd279e --rev 5017e1f7299c3a812e87e7950148f54313dd279e`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C1FreezeWindow",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nProve the frozen window is empty for the round's own paths: run `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin log --name-status --format= -m --diff-merges=first-parent 5017e1f7299c3a812e87e7950148f54313dd279e..5017e1f7299c3a812e87e7950148f54313dd279e -- tools/round-47 plans/round-47-claims.md` and, separately, `5017e1f7299c3a812e87e7950148f54313dd279e..<tip>` at the current tip; report both outputs and the argument ORDER you used. Then reorder the flags the other way and report what changes on a two-parent merge fixture you build in scratch (that is R46-CL6's defect, measured). Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with the four commands, their exit codes and their byte counts.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2Atoms",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nR47-C2 verification: enumerate and independently re-derive every atom.\n\nEnumerate all atoms `record.py` extracts at `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5` (`--json-out` gives `atoms`, `atoms_by_class`). For each class pick two atoms and re-derive its value with a command you write yourself (not the counter's code): dispatch `counts.spawn`, the round-46 window, a `.ufo/waves/` path, a backticked commit, the coverage map count and command A's citation count. Report disagreements only; then confirm the counter's four mismatches.\n\nRun `HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/<SEAT> python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/record.py \\\n  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5 --json-out .ufo/waves/round-47/w1/<SEAT>/receipt.json` and record the exit code, the `failing` list and every value you quote. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2Mismatch",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nR47-C2 verification: verify the four before-mismatches are real.\n\nFor each of the four mismatches the counter reports at `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5` (round-45 seat atom, round-46 window atom, coverage row, depth row) re-derive the truth with your own commands and say whether the counter is right. A false mismatch is a finding: name the command and the value.\n\nRun `HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/<SEAT> python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/record.py \\\n  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5 --json-out .ufo/waves/round-47/w1/<SEAT>/receipt.json` and record the exit code, the `failing` list and every value you quote. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2Corrections",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nR47-C2 verification: draft the correction lines.\n\nDraft the `## Record corrections \u2014 round 47` section text: a `seats` correction stating the correct wave count and seat total for round 45, a `window` correction stating a concrete window you have run yourself and found empty for the round-46 paths, plus the one-line statement for each of the coverage and depth rows' current values (those rows are updated in place, so state them as facts with their counting command). Imitate the exact grammar the counter parses (`- corrects seats <round>: <n> waves, <total> seats total`; `- corrects window <round>: empty in <a>..<b> -- <paths>`) and prove each line re-derives by building a scratch copy of `SCORECARD.md` with your section appended and running the counter on it.\n\nRun `HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/<SEAT> python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/record.py \\\n  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5 --json-out .ufo/waves/round-47/w1/<SEAT>/receipt.json` and record the exit code, the `failing` list and every value you quote. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2Vacuity",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nR47-C2 verification: prove the exemption mechanism cannot be abused.\n\nTry to reach `met_target: true` without doing the work: exempt every atom, then correct nothing; exempt an atom that does not exist; state a seats total the dispatch files contradict; state a window that is not empty; exempt a window atom with a correction naming a different window. Run each on a scratch copy of `SCORECARD.md` and report the counter's exit and failing list. Any attempt that reaches exit 0 is a HIGH finding.\n\nRun `HYAKU_SCRATCH=/fast/scratch/hyaku/kaidoku-r47/<SEAT> python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-47/record.py \\\n  --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5 --json-out .ufo/waves/round-47/w1/<SEAT>/receipt.json` and record the exit code, the `failing` list and every value you quote. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2CorrGrammar",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nCheck the counter/correction grammar agreement end to end: write a scratch `SCORECARD.md` copy whose corrections section is written by somebody else's wording (the round-46 appendix style: 'Wave 1: 40 seats; wave 2: not dispatched'), run `record.py` on it, and report what it refuses and why. Then write the minimal correct line for each class and show it accepted. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with both texts and both receipts; this tells the L1 exactly which wording to paste.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "C2SelfTest",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAudit `tools/round-47/record.py --selftest`: run it, count registered cases, and delete ONE clause at a time in a scratch copy to show which case goes red. Name any clause whose deletion no case notices. Also verify the battery (`correction_forgeries == 3`, `forgeries_green == 0`) by running it on a scratch copy with a deliberately truthful section and a deliberately forged one. Receipt in `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScribeBlock24",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft the final prose for craft rule block 24 in `.ufo/waves/round-47/w1/<SEAT>/block24.md`: the lead sentence (what the round-46 block left only as substrings, counts and conventions), the four-row table in the frozen house shape, the citation line with 3+ line-selected refs including `corpus/lessons/round-46.md`, the `interpreter_sha256:` value you compute from `tools/round-47/exact.py` at the freeze, and the `mutations_sha256:` value. Do not invent a citation: run `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 5017e1f7299c3a812e87e7950148f54313dd279e:<path> | wc -l` for every line range you cite. Mark every value you could not compute as `NOT COMPUTED` rather than guessing.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScribeCorrections",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft the `## Record corrections \u2014 round 47` section for `SCORECARD.md` in `.ufo/waves/round-47/w1/<SEAT>/corrections.md`, in the exact grammar `tools/round-47/record.py` parses. Each line carries: the class and key, the corrected statement, and the evidence pointer (path or command). Cover: round-45 seat counts, the round-46 empty window, and a note that the `## Owned axes` coverage and depth rows are updated in place to their current observables. Keep it append-only in tone: the original text is quoted, the correction supersedes it, nothing is rewritten.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScribeAxesRow",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft the replacement text for the `coverage` and `depth` cells of the `## Owned axes` table so their leading fraction equals the observable at the landing revision (coverage: mapped / knowledge files; depth: resolved / total craft rule blocks, with block 24 counted). Keep the historical chain of values in the cell (append the new value at the head, do not delete the old ones) and give each value its counting command and revision. Write `.ufo/waves/round-47/w1/<SEAT>/axes.md` with the exact cell text.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScribeLesson",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft `corpus/lessons/round-47.md` in `.ufo/waves/round-47/w1/<SEAT>/lesson.md`: the `## Mistakes` table (class, evidence pointer, captured-by, fix-shown-able-to-fail) mining at least one mistake from this round or an earlier one \u2014 start from `corpus/lessons/round-46.md` `## Routed defects` and the round-46 non-author spot-check's V1\u2013V10, and say which of them this round closes, which it routes again, and why; the `## Gate` section recording every source row opened this round (URL, access date, \u226425-word located quote), at least one admit and at least one reject with flip condition; and the census before\u2192after line. Do not invent quotes: open every URL you cite and record its byte count and sha256.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScribeQuality",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft up to two new `corpus/QUALITY.md` criteria from this round's findings in `.ufo/waves/round-47/w1/<SEAT>/quality.md`: each as a numbered row in the file's own shape, each with a red-before demonstration the criterion would have caught (name the round and the receipt). Read `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/QUALITY.md` first; do not duplicate an existing row \u2014 quote the row numbers you checked.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScribeSources",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDraft `.ufo/waves/round-47/w1/<SEAT>/sources.md`: candidate `corpus/SOURCES.md` rows opened this round, in the contract's 11-column shape. Candidates: the Python `re` documentation anchored on `re.fullmatch` (for the exact-token clause) and the git-log documentation's `--diff-merges` entry (already S142: do not duplicate \u2014 check the registry first). Open each URL yourself, record HTTP status, byte count and sha256, and a \u226425-word located quote. Write the row in the lane's own id sequence (next free id after the current registry maximum) and say what it teaches. One reject with reason and flip condition if you find a candidate that does not earn a row.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScribeReport",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRead `.ufo/waves/round-47/{w1}-results.json` when it exists and draft the round report's **Work performed** and **Landed changes** bullets in `.ufo/waves/round-47/w1/<SEAT>/report-draft.md` from the seat reports in `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-47/w1/*/report.md` \u2014 one bullet per work item with its evidence pointer. Never state a result a seat did not report; mark gaps. This is drafting for the L1, not the report.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScribeShonen",
+   "role": "scribe",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nRead `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/SHONEN.md` and draft one line per box for the round report's **SHONEN** section in `.ufo/waves/round-47/w1/<SEAT>/shonen.md`: the box text, the evidence pointer that would justify `[~]`, and whether a named non-author verifier exists for `[x]` (do not award `[x]`). Check each `stated:` cell you lean on against the repo and flag stale counts.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScoutCraftTail",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMap `SKILL.md` at `5017e1f7299c3a812e87e7950148f54313dd279e`: total lines, the `## Queue-drain craft ` heading line, every `^- \\*\\*` block start with its first 60 characters, the last block's line range, the next `## ` heading, and the exact insertion point for block 24 (line number plus the two neighbouring lines). Also give the registry markers `<!-- instrument-registry v2 -->` / `<!-- /instrument-registry -->` line numbers.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table of every measurement and the command that produced it.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScoutSources",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMap `corpus/SOURCES.md` at `5017e1f7299c3a812e87e7950148f54313dd279e`: row count, highest id, tier and status histograms, every row whose `used-by` names `corpus/lessons/round-46.md`, and the lines the next row must be appended after. Run the census command from `CORPUS.md` and record its exit code.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table of every measurement and the command that produced it.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScoutAxes",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMap the `## Owned axes` table of `SCORECARD.md` at `5017e1f7299c3a812e87e7950148f54313dd279e`: the exact text of the coverage and depth rows, the leading fractions, and every historical fraction the cells carry. Independently compute the coverage observable (mapped/knowledge files) and command A's citation count at the freeze.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table of every measurement and the command that produced it.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScoutRounds",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMap the last two `## Round N` sections of `SCORECARD.md` at `5017e1f7299c3a812e87e7950148f54313dd279e`: every `Wave`/`Waves` sentence with its dispatch files' `counts.spawn`, every `is empty` sentence, every `.ufo/waves/` path token, and every backticked commit. Say which are verifiable and which are not, with the command.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table of every measurement and the command that produced it.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScoutDispatch",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nInventory `.ufo/waves/round-4[3-7]/`: every `*-dispatch.json` with its `counts`, every `*-results.json`, every `.ready`/`.ready.dispatched`, and which of them are tracked at `5017e1f7299c3a812e87e7950148f54313dd279e` (`git cat-file -e`). This is the ground truth for the seats atoms.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table of every measurement and the command that produced it.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScoutCraftBlocks",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nEnumerate every craft rule block in `SKILL.md` at `5017e1f7299c3a812e87e7950148f54313dd279e`: number, title, whether it carries a marker, and whether every citation resolves (write the resolver yourself). Report which blocks would break block 24's `block_is_last` clause and where `## Config custody` begins.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table of every measurement and the command that produced it.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScoutTools",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nInventory `tools/round-47/`: both counters' CLI surface (`--help`), their exit constants, their selftest case counts from source, and the digests of their bytes at `5017e1f7299c3a812e87e7950148f54313dd279e`. Compare with what `plans/round-47-claims.md` says and list discrepancies.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table of every measurement and the command that produced it.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ScoutState",
+   "role": "scout",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDescribe the lane's working state: `jj-lane.sh state`, `git status --porcelain` counts by path prefix, and whether `tools/round-47/__pycache__` is ignored. Name every inherited uncommitted path that belongs to this round versus an earlier one. Do not delete anything.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a table of every measurement and the command that produced it.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC1Before",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the C1 before-state: re-run the do-nothing control at `5017e1f7299c3a812e87e7950148f54313dd279e` yourself and check that `block_present 0` is true for the right reason (block 24 absent, not a parser accident). Try a `## Queue-drain craft ` heading variant and a block with a column-zero `- **24. ` line inside a body; report whether the parser could be fooled.\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC1Ids",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack clause 4: build fixtures where a row names two ids, none, an id not in the frozen set, the same id twice across two rows, and an id in the v2-hole column instead of the trigger column. Which reach exit 0?\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC1Tokens",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack clause 5: `order`, `order-ish`, ` order `, `` `order` ``, `order,once`, `ORDER`, an empty cell. Which reach exit 0 under `--profile v3`? Then the same six under `--profile v2` \u2014 the difference is the claim.\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC1Digest",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack clause 6: is the digest over the *names* sufficient? Reorder the `MUTATIONS` list in a scratch copy and re-run: what happens to the block's pin and to the battery denominators? Is a reorder detectable, and does the claim depend on it?\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC1Order",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack clause 7: does the literal check survive a reformatted `gate.py` that keeps the order (line break inside the tuple, double spaces, a kwarg)? Does it catch the reversed pair written across lines? Report the exact rewrites you tried and the exit.\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC1Refs",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack clause 8: citations that resolve but are off-topic, a path prefix that is a prefix of the allowlist (`corpus/lessons-evil/`), a line range that ends exactly at the last line, a pin computed over a *copy* of the counter. Which reach exit 0?\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC1Last",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the `block_is_last` and title clauses: a block 24 followed by a comment-only `^- **` line, a block 25 that is really block 24's text, `24.` without the space, `24. ` inside a fenced code block. Report the exit for each.\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC1Battery",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the battery's honesty: are the four forgeries built from the LANDED block (not a hand-written one)? Mutate `MUTATIONS` in a copy so the battery's own list shrinks and show what the claim would then report. Is `forgeries_total == 4` a real denominator?\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC2Before",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the C2 before-state: re-run `record.py` at `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5` and independently verify each of the four mismatches with a command of your own. Then check the verifier's blind spots: an atom class with zero atoms, a section with no atoms, a `Waves:` sentence inside a fenced code block, a `## Round` heading in a code fence.\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC2Scope",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the section scoping: which `## Round N` headings does the counter select (last two in file order) and can an amendment appended AFTER the last section hide a false atom? Build a scratch card where an appended `## Round 47` section carries no atoms and shows the previous two rounds dropping out of scope \u2014 is that a real hole for the claim's own landing?\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC2Exempt",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the exemption path: with `<= 3` exemptions allowed, can a round exempt the atoms it falsified without ever correcting them? Try a corrections section that exempts the two seat atoms and one window atom with true statements but leaves a fourth false atom. Report the exit and the failing list.\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC2Window",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the window class: a window with abbreviated hashes, a window on a path that does not exist, a window whose `--` pathspec is empty, a window claimed empty for a range that contains only a rename. Which are detected and which pass?\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC2Axes",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the axes class: are the two fractions the *headline* of the row (they must be the current claim, not history)? What happens when the row is reflowed across lines, or when the coverage map is stale but the file count matches? Re-derive both observables yourself at `5017e1f7299c3a812e87e7950148f54313dd279e`.\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevC2Dispatch",
+   "role": "reviewer",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the seats derivation: a round with no dispatch file, a dispatch with `counts.spawn` absent, a `w1`/`w2` gap (w1 and w3), a results file that contradicts the dispatch. Report what the counter does for each (exit 1 vs 2) and whether a `2` could be mistaken for a pass.\n\nEvery finding needs: the fixture path, the command, the exit code, and what the claim would have to say. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritC1Predicate",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFalsify R47-C1's predicate as written: is `exactness` the right axis and the right surface for depth? Could the same clauses be satisfied by a block that teaches nothing (four rows of filler with the right tokens and pins)? Construct that block and score it. If it reaches exit 0, say so plainly \u2014 that is the claim's sharpest limit.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md`: the fixture, the command, the exit, and a one-line verdict (`predicate holds` / `predicate too weak, here is what closes it`).",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritC1Sizing",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFalsify the C1 target: `failing == []` with the battery. Is `rows == 4` large enough to be a matrix or is it four restatements? Compare against the round-46 block's 13 rows and say what the claim buys. Attack the `mutations_sha256` clause for self-reference: does the pin prove anything beyond 'the file I ran is the file I cite'?\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md`: the fixture, the command, the exit, and a one-line verdict (`predicate holds` / `predicate too weak, here is what closes it`).",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritC1Order",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFalsify the flag-order clause: what exactly does it protect, and what does it NOT protect (a `git log` call added elsewhere, a wrapper that reorders at runtime, the `--format=` position)? Build the case that the clause is decorative if it can be satisfied without the arm working, and say what would close it.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md`: the fixture, the command, the exit, and a one-line verdict (`predicate holds` / `predicate too weak, here is what closes it`).",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritC2Calibration",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFalsify R47-C2 as calibration: does zero mismatches across 50 atoms measure self-assessment quality or just bookkeeping? Name the atom classes an honest lane would need and are missing (e.g. the report's own claims, PROVINCE.md, LOG.md). Then test whether the counter can be satisfied while a routed record defect (R46-V4, V5, V6, V7) stays open \u2014 list which stay open.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md`: the fixture, the command, the exit, and a one-line verdict (`predicate holds` / `predicate too weak, here is what closes it`).",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritC2Corrections",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFalsify the correction mechanism: the sanctioned repair route is to append an exemption. Show the cheapest false-but-passing card (e.g. append a correction that restates a claim already true, exempt the false one) and say whether the `corrections >= 2` and `exempted <= 3` floors stop it. Give the exact text and the exit.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md`: the fixture, the command, the exit, and a one-line verdict (`predicate holds` / `predicate too weak, here is what closes it`).",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritC2Axes",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFalsify the axes atoms: the coverage row's headline is a *fraction*, but the axis score is the 0\u201310 number. Can the counter read `138/138` while the score column still says `9.72 \u2192 10.0`? Say whether the calibration claim overstates what it verifies, and what the SCORECARD contract would require instead.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md`: the fixture, the command, the exit, and a one-line verdict (`predicate holds` / `predicate too weak, here is what closes it`).",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritC2Scope",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFalsify the scope claim: 'the last two round sections plus the Owned axes table'. Compute how much of `SCORECARD.md` (in lines and atoms) that covers, and what the rest contains. Is `sections == 2` a boundary the round can move to dodge an atom?\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md`: the fixture, the command, the exit, and a one-line verdict (`predicate holds` / `predicate too weak, here is what closes it`).",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritBattery",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFalsify both batteries: for each of the 7 forgeries (4 C1 + 3 C2) decide whether it is 'the artefact with one defect' or 'a different artefact'. For any that is merely different, propose the mutation that keeps the class honest, and score your proposal against the frozen counter.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md`: the fixture, the command, the exit, and a one-line verdict (`predicate holds` / `predicate too weak, here is what closes it`).",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritDigest",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nAttack the mutation digest's stability: the digest is over names only. Show a mutation-list change that keeps the digest identical but changes behaviour, and a name edit that changes the digest without changing behaviour. Say what the clause should have hashed.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md`: the fixture, the command, the exit, and a one-line verdict (`predicate holds` / `predicate too weak, here is what closes it`).",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "CritGold",
+   "role": "critic",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nConstruct the gold-plated forgery: the cheapest artefact that reaches `met_target: true` for BOTH claims without any of the round's real work \u2014 e.g. four marker rows with correct tokens and a truthful corrections section that exempts the mismatches it created. Score it. If it passes, that is the round's honest-stop evidence.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md`: the fixture, the command, the exit, and a one-line verdict (`predicate holds` / `predicate too weak, here is what closes it`).",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "MutExactClauses",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDelete one clause at a time from a scratch copy of `tools/round-47/exact.py` (clauses 1\u20139) and report which selftest cases and which battery forgeries go red for each deletion. A clause whose deletion changes nothing is dead weight.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a mutation table (mutation | exit | detected by) and the command you ran.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "MutRecordClauses",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nDelete one clause at a time from a scratch copy of `tools/round-47/record.py` (each `failing.append` guard) and report which selftest case catches it. Name any unguarded clause.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a mutation table (mutation | exit | detected by) and the command you ran.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "MutBlock24",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMutate a candidate block 24 row by row (13 mutations: token, id, cells, exit, title, marker, header, digest, pin, refs) and report the exit for each under v3 and v2. This is the landing's own discrimination table.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a mutation table (mutation | exit | detected by) and the command you ran.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "MutRecordAtoms",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMutate a scratch `SCORECARD.md`: change one digit in each of four atoms (seat count, window hash, path segment, commit hash) and report whether `record.py` catches each. A silent digit is a finding.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a mutation table (mutation | exit | detected by) and the command you ran.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "MutCorrections",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMutate corrections: correct the wrong round, state a total that matches a different round, exempt a non-existent path, name a window pair that exists but is not in scope, add a duplicate correction. Report the exit for each.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a mutation table (mutation | exit | detected by) and the command you ran.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "MutGate",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMutate a scratch copy of `tools/round-46/gate.py` in ten ways (flag order, `--format=`, `-z`, `--name-status`, `-m`, the `--` separator, the pathspec join, the status regex, the decode, the return) and report which mutation `exact.py` clause 7 catches and which it does not.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a mutation table (mutation | exit | detected by) and the command you ran.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "MutScratch",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nProbe the scratch discipline of both counters: run them with `TMPDIR=/tmp`, with no `HYAKU_SCRATCH`, with a relative `--json-out`, with `--json-out` pointing at a graded surface (`SKILL.md`). Report each exit and reason. A counter that writes under `/tmp` is a routed defect.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a mutation table (mutation | exit | detected by) and the command you ran.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "MutExitCodes",
+   "role": "mutation-tester",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nProbe exit-code semantics: run both counters with unknown revisions, a non-ancestor freeze, a malformed claims file (scratch copy), an unreadable SCORECARD, and a crash injected into a scratch copy. Every one must be exit 2 and never 0. Report the matrix.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with a mutation table (mutation | exit | detected by) and the command you ran.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ConnSeparability",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nTest causal separability between the two claims: revert each landing surface in a scratch clone (block 24 out; corrections out) and score BOTH counters at each state. Report the 2\u00d72 matrix of exits \u2014 each claim must score without the other.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with the matrix/table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ConnRouted",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMap the round-46 routed defects (R46-CL1..CL11 plus the spot-check's V1\u2013V10) onto what this round actually closes. For each: closed, routed again, or not addressed, with the file/line that closes it. This is the round's coverage-of-routing table.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with the matrix/table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ConnSiblings",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nLook for overlap with sibling lanes' surfaces: does any other shokunin repo carry an `exactness`/`record-consistency` counter or a `corrects <class>` grammar this lane would be duplicating? Search read-only under `/home/vgpnk/Projects/shokunin/*-shokunin/` (`grep -rn 'corrects .*seats\\|mutations_sha256\\|exactness-table'`). Report hits and whether the lane should cite rather than reinvent.\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with the matrix/table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "ConnCraft",
+   "role": "connector",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nTrace the craft-block lineage: block 22 (round 45) \u2192 block 23 (round 46) \u2192 block 24 (this round). For each routed defect, name the block that first stated it and the block that made it checkable. Say whether block 24 repeats a lesson already stated (dead weight) or closes a hole (real move).\n\nWrite `.ufo/waves/round-47/w1/<SEAT>/report.md` with the matrix/table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "SentScope",
+   "role": "sentinel",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nSecurity and scope review of the frozen instruments: can either counter write outside the lane? Check `--json-out` handling, the fixture-repo creation (does it verify the toplevel?), the scratch-root refusal, symlink handling in `gate.show`, and whether a crafted `SCORECARD.md` or `SKILL.md` could make the counter execute something. Report each as pass/fail with the command. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "SentFixtures",
+   "role": "sentinel",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFixture hygiene: build five fixtures (merge with conflict resolution, rename, symlink, submodule, bare repo) and report whether either counter can be pointed at one and whether the fixture's identity lands anywhere outside scratch. Confirm no `git commit` runs with a throwaway identity in the lane tree. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevIntent",
+   "role": "revenger",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nReconstruct the original intent of R46-CL6: read the round-46 lesson, the gate source at the freeze, and the git-log documentation, then decide whether clause 7 protects the arm the lesson describes, or only its spelling. Give the historical evidence (quoted lines) and a verdict. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "RevHistory",
+   "role": "revenger",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nReconstruct why the round-46 record claimed 40 + 40 seats and an empty window: read the dispatches, the ready files' timestamps, the results file, and the SCORECARD amendments. Decide which claim was true when written and which became false later, so the correction says the right thing. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "LabOrderProbe",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFalsifiable probe: on a deterministic two-parent merge fixture, run `git log -m --diff-merges=first-parent --name-status -z --format= A..B` and the same with the two flags swapped; report the exact byte counts and whether the merge appears once or twice. That is the single fact clause 7 rests on. Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with both outputs' sha256.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "LabWindowProbe",
+   "role": "executor",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFalsifiable probe: at the freeze, is there ANY concrete A..B window over the round-46 paths that is empty and plausibly the one the round-46 record meant? Test `332f4884..58eb04b6`, `0425224..58eb04b6`, `58eb04b6..58eb04b6` and `332f4884..332f4884`, with and without `--diff-merges`. Report each byte count; the correction must name a window that is really empty. Write `.ufo/waves/round-47/w1/<SEAT>/report.md`.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "SimplC1",
+   "role": "simplifier",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYAGNI pass on `tools/round-47/exact.py`: which checks are load-bearing for the claim and which are decoration? For each function/flag, name the claim clause it serves or argue for its deletion. Do not edit; write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a keep/cut table and the selftest case that would catch each cut.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  },
+  {
+   "name": "SimplC2",
+   "role": "simplifier",
+   "prompt": "/skill:godspeed\n\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nYAGNI pass on `tools/round-47/record.py`: same treatment. Specifically: is the `axes` class necessary for the calibration claim, and is `CORR_MIN = 2` a real floor or a formality? Write `.ufo/waves/round-47/w1/<SEAT>/report.md` with a keep/cut table.",
+   "axes": [
+    "coverage",
+    "depth",
+    "calibration"
+   ]
+  }
+ ]
+}
