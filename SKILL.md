@@ -580,7 +580,13 @@ bullet is bounded by the lines it cites.
 
   The gate reports; it does not prevent. It runs where the lane can put it (the L1's
   commit sequence) and the arm that matters most, `--check-dirty`, catches the
-  precursor before any sweep exists. Placement inside the fleet's own sweep path is not
+  precursor before any sweep exists. Its own selftest is the red-case set, which is the
+  one thing round 34 proved about gates of this family: a registered class set can hold
+  while the surface is still shortcut-reachable, so the cases — not the registration —
+  are the evidence (`corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md:40-66`).
+  The transferable limit is stated instead of hidden: this instrument's "actionable
+  table" test is structural (header cells, row count, exit cells, resolving citations),
+  and a table of structurally valid but empty rows would pass it. Placement inside the fleet's own sweep path is not
   a lane edit — the fleet scripts are read-only for a lane — so it stays an
   operator/integrator request and the report says so (`corpus/lessons/round-45.md:12-17`).
   Claim clauses that name a frozen path are frozen at `plans/round-45-claims.md:132-147`:
