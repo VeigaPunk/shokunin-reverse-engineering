@@ -630,6 +630,32 @@ def selftest():
     case("red-malformed-heading-is-exit-2", 2,
          plain(skill_text(good_block(), heading="## Queue-drain craft")))
     case("red-frozen-touched-is-exit-2", 2, touched)
+
+    def shrunk():
+        """A tip that rewrites its own `## Frozen paths` and edits a frozen tool."""
+        d, freeze = _case_repo(root, skill_text(good_block()))
+        path = os.path.join(d, "plans/round-46-claims.md")
+        body = open(path).read()
+        body = body.replace("- `plans/round-46-claims.md`", "- `corpus/`")
+        body = body.replace("- `tools/round-46/`", "- `does/not/exist/`")
+        with open(path, "w") as fh:
+            fh.write(body)
+        with open(os.path.join(d, "tools/round-46/gate.py"), "a") as fh:
+            fh.write("# tamper\n")
+        subprocess.run(["git", "-C", d, "add", "-A"], check=True)
+        subprocess.run(["git", "-C", d, "commit", "-q", "-m", "shrink"], check=True)
+        rev = subprocess.run(["git", "-C", d, "rev-parse", "HEAD"],
+                             capture_output=True, text=True).stdout.strip()
+        return d, freeze, rev
+
+    def dirty_tool():
+        d, rev = _case_repo(root, skill_text(good_block()))
+        with open(os.path.join(d, "tools/round-46/gate.py"), "a") as fh:
+            fh.write("# uncommitted\n")
+        return d, rev, rev
+
+    case("red-frozen-section-shrink-is-exit-2", 2, shrunk)
+    case("red-dirty-frozen-tool-is-exit-2", 2, dirty_tool)
     case("green-with-battery", 0, plain(skill_text(good_block())), battery=True)
 
     failures = [c for c in cases if not c["ok"]]

@@ -149,23 +149,46 @@ def freeze_state(root, freeze, rev, claims=CLAIMS):
             return 2, {"reason": f"unknown {label} revision"}
     if git(root, "merge-base", "--is-ancestor", base, tip).returncode != 0:
         return 2, {"reason": "freeze is not an ancestor of rev"}
-    entries, err = frozen_set(root, tip, claims)
+    # The set is derived at BOTH ends and unioned: a measured revision that rewrites its own
+    # `## Frozen paths` section cannot shrink the scope of the arms that check it (wave-1
+    # R46W1RevRestoredUnion F2: a tip-only derivation let one commit erase the real entries,
+    # add a decoy, and score the tampered tool clean).
+    base_entries, err = frozen_set(root, base, claims)
     if err:
-        return 2, {"reason": err}
+        return 2, {"reason": "at freeze: " + err}
+    tip_entries, err = frozen_set(root, tip, claims)
+    if err:
+        return 2, {"reason": "at rev: " + err}
+    entries, seen = [], set()
+    for entry in base_entries + tip_entries:
+        if entry[0] not in seen:
+            seen.add(entry[0])
+            entries.append(entry)
     paths = [p + "/" for p, d in entries if d] + [p for p, d in entries if not d]
     touched, err = history_touched(root, base, tip, paths)
     if err:
         return 2, {"reason": err}
     changed = blob_changed(root, base, tip, entries)
     restored = [p for p in touched if p.rstrip("/") not in {c.rstrip("/") for c in changed}]
+    dirty_paths = dirty(root, paths)
+    if dirty_paths is None:
+        return 2, {"reason": "git status failed"}
     receipt = {
         "freeze": base, "rev": tip,
         "frozen_derived": paths,
+        "frozen_from": {"freeze": [p for p, _ in base_entries],
+                        "rev": [p for p, _ in tip_entries]},
         "frozen_path_changed": sorted(set(changed) | set(touched)),
         "blob_changed": changed,
         "touched": touched,
         "restored": restored,
+        "dirty": dirty_paths,
     }
+    if dirty_paths:
+        # The counters grade committed bytes, but they EXECUTE from the worktree: an
+        # uncommitted change to a frozen tool is a different instrument (F3).
+        receipt["reason"] = "frozen_worktree_dirty"
+        return 2, receipt
     if receipt["frozen_path_changed"]:
         receipt["reason"] = "frozen_path_changed"
         return 2, receipt
