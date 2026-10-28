@@ -102,6 +102,7 @@ A row is written when its file exists, never before.
 | Sasquatch published release matrix (round 43) | `2026-10-27-sasquatch-release-matrix` | **Frontier** — official package inventory only: 8 release tags, three Debian architectures from v1.0.1, v1.0 amd64-only; no unblob compatibility or extraction claim |
 | SquashFS triage v4 score (round 43) | `2026-10-27-r43-sqfs-triage-v4-scored` | calibration of the existing table on 78 fresh held-out carriers; R43-C1 met 78/78, no new table or Core claim |
 | SquashFS v1/v2 through REA (round 44) | `2026-10-28-r44-squashfs-v1v2-core` | **Measured, not promoted** — REA 6.5.0 `extract-firmware` matched 4/4 standard v1.0/v2.0 fixtures against the independent `unsquashfs` 4.7.5 oracle, but R44-C1's frozen claim required an evidence-tree `parameters.output_directory` while its counter requires `/kaidoku-r44/` scratch provenance; the score is not admitted and v1/v2 remain Frontier |
+| SquashFS v1/v2 through REA (round 49) | `2026-10-28-r49-squashfs-v1v2-core` | **Core** — rea-agents 6.5.0 `extract-firmware` (unblob 26.6.4, `sasquatch` 4.5.1 on the child `PATH`) resolves the `squashfs_v1` and `squashfs_v2` handlers on four committed MIT unblob 26.6.4 fixtures, both byte orders (v1.0 le/be, v2.0 le/be; 4 KiB each, 3/3/4/4 expected regular files); oracle `/usr/bin/unsquashfs` (squashfs-tools 4.7.5) `-lls` member census + extracted member digests, cross-checked against the unblob `__output__` expected trees (S138); REA 6.5.0 `extract-firmware` on the four frozen carriers matched 4/4 at the data commit `4aabb0b4` (`carriers_matched 4`, `failing []`, `gaps []`, every oracle member published: 3/3/4/4; receipt `.ufo/waves/round-49/l1/scores/c1-at-data-4aabb0b4.json`); the final score at the landing revision is `.ufo/waves/round-49/l1/scores/c1-final.json`; `squashfs_v2_nonstandard` stays Frontier (no independent reader) |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -222,6 +223,7 @@ A row is written when its file exists, never before.
 | `2026-10-27-r43-sqfs-triage-v4-scored` | SquashFS triage table v4 scored on a fresh 78-carrier held-out set; generator refuses unobserved declarations; R43-C1 matched 78/78 | S112, S118, S119, S120, S121, S130, S135; receipts `corpus/evidence/round-43/c1/heldout/`; counter `tools/round-43/c1-counter.py` | 2026-10-27 |
 | `2026-10-27-sasquatch-release-matrix` | Official sasquatch Debian release/architecture matrix; route and extraction compatibility explicitly not claimed | S136, S137; receipts `.ufo/waves/round-43/w1/artifacts/R43AssimGround/` | 2026-10-27 |
 | `2026-10-28-r44-squashfs-v1v2-core` | SquashFS v1/v2 measured through REA on four standard fixtures (4/4 counter result); not promoted because the frozen R44-C1 claim and counter disagree on output-directory provenance; no Core claim | S112, S138, S139; receipts `corpus/evidence/round-44/c1/`; counter `tools/round-44/c1-counter.py` | 2026-10-28 |
+| `2026-10-28-r49-squashfs-v1v2-core` | SquashFS v1/v2 through REA on four frozen fixtures, Core (R49-C1 under a predicate stated once; supersedes the round-44 not-promoted entry) | S112, S138, S139; receipts `corpus/evidence/round-49/c1/`; counter `tools/round-49/c1-counter.py` | 2026-10-28 |
 
 ## Lessons
 | entry | round | gist |
@@ -273,6 +275,7 @@ A row is written when its file exists, never before.
 - Runtime-obs depth — call-target resolution, managed `verify`/`project`, and the process-capture pair are held, not frontier (r5-02, r9-02, r11-01); the census's Queue A is drained (r4-16 erratum :913-915), so the "~26 self-provisionable" driver is spent. Residual depth only: 283 of 286 cataloged jq GOT-indirect sites unprobed (2 `jmp *` untested, r5-02:152-155); managed `inferred` variant has no observed example (r9-02:82-84); managed↔managed compare grades all-`unknown` (r12-02:65).
 - Blocked-on-operator: IDA (`REA_IDA_MCP_CONFIG`), Hopper (`HOPPER_LAUNCHER_PATH`), JEB — all absent.
 - sasquatch — 2026-10-28 round 44: SquashFS v1/v2 was measured on four standard fixtures but **remains Frontier** (R44-C1 honest stop: frozen-claim/counter output-directory provenance mismatch; `2026-10-28-r44-squashfs-v1v2-core`). Still frontier: `squashfs_v2_nonstandard`, `squashfs_v3_broadcom`/`_nonstandard`, gzip v3, v4 Broadcom, LE AVM members, AVM kernels and nested sub-images below depth 1.
+- sasquatch — 2026-10-28 round 49: SquashFS v1/v2 (`squashfs_v1`, `squashfs_v2`, four standard fixtures) is **Core** (`2026-10-28-r49-squashfs-v1v2-core`), superseding the round-44 line above. Still frontier: `squashfs_v2_nonstandard`, `squashfs_v3_broadcom`/`_nonstandard`, gzip v3, v4 Broadcom, LE AVM members (`hsqs`), AVM kernels and nested sub-images below depth 1.
 
 ## Known gaps
 

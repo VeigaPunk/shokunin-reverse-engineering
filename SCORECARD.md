@@ -3747,3 +3747,9 @@ Limits: the C2 oracle code is loaded from `--rev`, but its `gate.py` helper rema
 
 - corrects seats round-47: 1 wave, 75 seats total — the round-47 section states no seat total; `.ufo/waves/round-47/w1-dispatch.json` reports `counts.spawn 75`.
 - corrects quote round-47: exempted 1 — the round-47 section quotes `exempted 2 <= 3`, while the cited `c2-at-A7` receipt reads `exempted 1`.
+
+## Record corrections — round 49
+
+- A9 verdict=rejected-harmed source=corpus/lessons/round-48-verifier-spotcheck.md calibration=harmed
+
+The round-48 entry above records calibration `10 → 10`; its lesson header named a freeze that the round had amended away, and the non-author closure rejected round 48 because calibration was harmed by that false declaration (quality was also harmed, by the S145/S146 record errors). The line above records that verdict beside the unchanged round-48 entry, append-only; it claims no new score. The round-49 counter re-derives the nine atoms behind it (`corpus/lessons/round-49.md` `## Corrections to round 48`, the search-log entries in `corpus/SOURCES.md`, and this line) from committed bytes. Still routed, not repaired: closure defects 5 and 6 (`tools/round-48/census2.json`, the worktree-sourced `gate.py` import).
