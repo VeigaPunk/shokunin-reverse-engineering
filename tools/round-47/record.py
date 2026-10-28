@@ -390,7 +390,8 @@ def evaluate_text(card, files, root, rev, battery=None):
 
 # --- battery: three forged corrections, each must keep the counter red ------------
 
-def run_battery(card, files, root, rev):
+def run_battery(card, files, root, rev, root_repo=None):
+    root_repo = root_repo or root
     out = {"correction_forgeries": 0, "forgeries_green": 0, "fixtures": []}
     ok_card = CORR_HEAD in card
 
@@ -424,8 +425,9 @@ def run_battery(card, files, root, rev):
         m = re.search(r"empty in ([0-9a-f]{7,40})\.\.([0-9a-f]{7,40})", text)
         if not m:
             return text
-        # the base..tip window of the round itself is never empty
-        return text.replace(m.group(0), f"empty in {m.group(1)}..{rev}", 1)
+        # Root..tip over these paths is never empty: every round-4x tool landed in it.
+        root = git(root_repo, "rev-list", "--max-parents=0", rev).stdout.split()[0]
+        return text.replace(m.group(0), f"empty in {root[:8]}..{rev}", 1)
 
     def ghost_atom(text):
         return text + "\n- corrects path does/not/exist/at/any/revision.md: never\n"

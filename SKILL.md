@@ -633,10 +633,10 @@ bullet is bounded by the lines it cites.
 
 | trigger | v2 hole | v3 arm | exit |
 |---|---|---|---|
-| R46-CL2 `blobberish` satisfies `blob` in the arm-vocabulary test | containment over a lowercased cell, so any superstring passes | symbol: the arm cell must equal one token of the fixed vocabulary, the equality `re.fullmatch` gives and `re.search` does not | 1 |
-| R46-CL3 a row claims a routed id another row already addresses | the id check asks whether the id appears in *some* row | once: every row names exactly one routed id and each of the four ids appears exactly once across the table | 1 |
-| R46-CL4 deleting a mutation changes the denominator the claim is judged on | `forgeries_total` is compared with a number the code computes, and nothing pins the list | digest: `mutations_sha256` is sha256 over the counter's own mutation names in order, so any edit to the list breaks the block's pin | 1 |
-| R46-CL6 one flag reorder (`--diff-merges=first-parent -m`) prints a merge twice and blinds the arm | the argument order is a convention no clause reads | order: the gate's argv literal is required exactly once and its reversed pair exactly zero times | 1 |
+| R46-CL2 `blobberish` satisfies `blob` in the arm-vocabulary test | containment over a lowercased cell, so any superstring passes | `symbol` | 1 |
+| R46-CL3 a row claims a routed id another row already addresses | the id check asks whether the id appears in *some* row | `once` | 1 |
+| R46-CL4 deleting a mutation changes the denominator the claim is judged on | `forgeries_total` is compared with a number the code computes, and nothing pins the list | `digest` | 1 |
+| R46-CL6 one flag reorder (`--diff-merges=first-parent -m`) prints a merge twice and blinds the arm | the argument order is a convention no clause reads | `order` | 1 |
 
   Refs: `corpus/lessons/round-46.md:57-66` (the four routed instrument defects this matrix closes), `corpus/lessons/round-46.md:21` (M46-2: a denominator the code computes is not a pinned denominator), `plans/round-47-claims.md:45-113` (the R47-C1 predicate and its nine clauses), `plans/round-47-claims.md:141-176` (the R47-C2 predicate and its result), `corpus/lessons/round-46.md:89-95` (R46-CL7: binding digits rather than meanings — routed again, because a verdict map is a registry concern and this block does not reach it). S143 grounds the equality (`https://docs.python.org/3/library/re.html` `re.fullmatch`).
 

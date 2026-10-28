@@ -32,6 +32,15 @@ scored `corrections_bad: [window pair names no atom in scope]`, exit 1
 landing had been measured when A1 was made; the two-commit series is disclosed here rather than
 folded, per the round-46 M46-3 finding.
 
+**Freeze amendment A2 (disclosed; changes a battery fixture's window choice, not a clause).**
+The first after-data run of R47-C2 at the landing `e856beb5` failed clause 6 with
+`forgeries_green 1`: the `correction-window-not-empty` forgery replaced the correction's window
+with `<A>..<tip>`, and because the real correction's `<A>..<tip>` window is empty by construction,
+the forged window was empty too — the "forgery" was a no-op. A2 computes the forged window as
+root..tip (non-empty over these paths) and nothing else. Every clause, threshold and kill rule is
+byte-identical to A1; the measured revision is taken after A2. Red-before:
+`.ufo/waves/round-47/l1/scores/c2-at-L1.json` (`battery.forgeries_green 1`, exit 1).
+
 **Causal separability.** R47-C1's counter reads `SKILL.md`, this file's frozen paths,
 `tools/round-47/exact.py` and `tools/round-46/gate.py`; it never reads `SCORECARD.md`.
 R47-C2's counter reads `SCORECARD.md` and the `.ufo/waves/round-*/` dispatch and receipt
