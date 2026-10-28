@@ -67,7 +67,7 @@ SPECS = {
         "must_cite": [("literal", "S142"), ("path", SELF)],
         "must_cite_refs": ["corpus/lessons/round-45.md"],
         "pin": SELF, "routed": True, "vocab": True, "v1_blocks": "ge",
-        "claims": CLAIMS,
+        "v1_min_rows": 8, "claims": CLAIMS,
     },
     "r45": {
         "marker": "<!-- freeze-integrity-table v1 -->", "block": 22,
@@ -76,7 +76,7 @@ SPECS = {
         "allow": ("corpus/lessons/", "corpus/knowledge/", "plans/"),
         "must_cite": [("literal", "S140"), ("path", "tools/round-45/frozen-path-preflight.py")],
         "must_cite_refs": [], "pin": None, "routed": False, "vocab": False,
-        "v1_blocks": "eq", "claims": "plans/round-45-claims.md",
+        "v1_blocks": "eq", "v1_min_rows": 8, "claims": "plans/round-45-claims.md",
     },
 }
 
@@ -134,7 +134,7 @@ def check_refs(block, files, spec, hard=True):
         if spec["pin"] and name == spec["pin"]:
             # The interpreter carries its own identity (sha256 pin), not a line selector.
             continue
-        if spec["require_line"] and not first:
+        if hard and spec["require_line"] and not first:
             bad.append(f"{name}: no line selector")
             continue
         count = line_count(files, name)
@@ -191,13 +191,15 @@ def score(skill, files, spec_name, profile, rev, battery=None):
         if hard:
             header_ok = header == spec["header"]
         else:
-            header_ok = all(any(k in h.lower() for h in header)
-                            for k in ("trigger", "arm", "exit", "receipt"))
+            # The v1 hole: substring containment, over the spec's own tokens.
+            header_ok = all(any(t in h.lower() for h in header)
+                            for t in (x.lower() for x in spec["header"]))
         receipt["header_ok"] = header_ok
         if not header_ok:
             failing.append(f"header {header} != {spec['header']}")
-        if len(rows) < spec["min_rows"]:
-            failing.append(f"rows {len(rows)} < {spec['min_rows']}")
+        floor = spec["min_rows"] if hard else spec.get("v1_min_rows", spec["min_rows"])
+        if len(rows) < floor:
+            failing.append(f"rows {len(rows)} < {floor}")
         width = len(spec["header"])
         exit_col = next((i for i, h in enumerate(header) if "exit" in h), None)
         bad_exit = [r for r in rows if exit_col is None or exit_col >= len(r)
@@ -225,9 +227,10 @@ def score(skill, files, spec_name, profile, rev, battery=None):
             failing.append(f"refs {len(refs)} < {spec['refs_min']}")
         if bad_refs:
             failing.append(f"unresolved or unvalidated citations: {len(bad_refs)}")
-        for name in spec["must_cite_refs"]:
-            if name not in cited:
-                failing.append(f"does not cite {name}")
+        if hard:
+            for name in spec["must_cite_refs"]:
+                if name not in cited:
+                    failing.append(f"does not cite {name}")
         cites = {}
         for kind, token in spec["must_cite"]:
             cites[token] = token in block
@@ -297,13 +300,17 @@ def m_lineless(block, spec):
 
 
 def m_header_substring(block, spec):
-    lines, data = _table_line_indexes(block)
+    """Last header cell `exit` -> `exit-code`: a substring test still passes, equality fails."""
+    lines, data = _table_indexes_lines(block)
     hdr = [i for i, l in enumerate(lines) if l.strip().startswith("|")][0]
-    lines[hdr] = "| trigger | arm-ish | no-exit-code | receipt |"
-    for i in data:
-        c = _cells(lines[i])
-        lines[i] = "| " + " | ".join([c[0], c[1], c[3], c[2]]) + " |"
+    lines[hdr] = lines[hdr].rstrip().rstrip("|").rstrip() + "code |"
     return "\n".join(lines) + "\n"
+
+
+def _table_indexes_lines(block):
+    lines = block.splitlines()
+    _, data = _table_line_indexes(block)
+    return lines, data
 
 
 def m_two_markers(block, spec):
@@ -319,7 +326,7 @@ def m_stub_pin(block, spec):
 
 def m_self_refs(block, spec):
     lines, data = _table_line_indexes(block)
-    tail = [i for i in range(len(lines)) if REF.search(lines[i]) and not lines[i].strip().startswith("|")]
+    tail = [i for i in range(len(lines)) if lines[i].strip().startswith("Refs:")]
     if not tail:
         raise ValueError("no reference paragraph found")
     for i in tail:
@@ -415,7 +422,7 @@ def run_battery(root, rev, spec_name, scratch_root):
         d, frev = fixture_repo(root, rev, skill.replace(block, text), need, scratch_root)
         try:
             f = lambda p, d=d: gate.show(d, frev, p)  # noqa: E731
-            c1, _ = score(skill.replace(block, text), f, spec_name, "v1", frev, battery=None)
+            c1, r1 = score(skill.replace(block, text), f, spec_name, "v1", frev, battery=None)
             c2, r2 = score(skill.replace(block, text), f, spec_name, "v2", frev, battery=None)
         finally:
             shutil.rmtree(d, ignore_errors=True)
@@ -424,6 +431,7 @@ def run_battery(root, rev, spec_name, scratch_root):
         out["v2_green"] += 1 if c2 == 0 else 0
         out["v2_crash"] += 1 if c2 == 2 else 0
         out["fixtures"].append({"name": name, "v1_exit": c1, "v2_exit": c2,
+                                "v1_failing": r1.get("failing", r1.get("reason")),
                                 "v2_failing": r2.get("failing", r2.get("reason"))})
     return out
 
@@ -561,11 +569,11 @@ def selftest():
         return 2
     cases = []
 
-    def case(name, expect, maker):
+    def case(name, expect, maker, battery=False):
         d = None
         try:
             d, freeze, rev = maker()
-            code, rec = evaluate(d, freeze, rev, "r46", "v2", with_battery=False)
+            code, rec = evaluate(d, freeze, rev, "r46", "v2", with_battery=battery)
         except Exception as exc:  # noqa: BLE001
             code, rec = "crash", {"error": f"{type(exc).__name__}: {exc}"}
         finally:
@@ -622,6 +630,7 @@ def selftest():
     case("red-malformed-heading-is-exit-2", 2,
          plain(skill_text(good_block(), heading="## Queue-drain craft")))
     case("red-frozen-touched-is-exit-2", 2, touched)
+    case("green-with-battery", 0, plain(skill_text(good_block())), battery=True)
 
     failures = [c for c in cases if not c["ok"]]
     print("ATTEST_SELFTEST: cases=%d failures=%d" % (len(cases), len(failures)))
