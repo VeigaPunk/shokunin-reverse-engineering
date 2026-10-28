@@ -568,7 +568,14 @@ bullet is bounded by the lines it cites.
   name every frozen path: this round's freeze has two, so the gate is called with
   `--pathspec tools/round-45/ --pathspec plans/round-45-claims.md` and the matching two
   `--freeze-path` values; one pathspec certifies four of the five frozen files (routed
-  R45-CL10). History, not tip equality, is the evidence: a path that was edited post-freeze and then restored to its exact bytes is
+  R45-CL10). Two limits are stated rather than hidden: the red cases are *arm-covering but
+  not arm-isolating* — deleting the `restored` classification or the `blob` arm alone still
+  reads 11/0 because `touched` absorbs the kill, so the arm-coverage matrix is the evidence
+  for those two arms (routed R45-CL15); and `--dirty-pathspec` *replaces* the dirty arm's
+  scope instead of adding to it, so a caller who narrows it loses the frozen pathspec and
+  the gate reads clean on a dirty frozen file (a false-clean, reproduced and routed
+  R45-CL15; this round's invocation never passes that flag). History, not tip equality, is
+  the evidence: a path that was edited post-freeze and then restored to its exact bytes is
   still a violation (`corpus/lessons/round-44.md:88-92`,
   `corpus/lessons/round-44-verifier-spotcheck.md:89-92`), which is why the `restored`
   list is reported separately from `blob_changed` instead of collapsing into it.
@@ -1643,7 +1650,7 @@ and its self-test run at the round-45 freeze `f762b727`; receipts
 | tool | gate or probe | verdict map (exit codes) | self-test command | pinned-value path | write scope | owner |
 |---|---|---|---|---|---|---|
 | `tools/round-44/c1-counter.py` | gate — R44-C1 coverage on four committed unblob v1/v2 fixtures; reruns REA on every carrier and compares the plus-extractor projection | `0` met; `1` not met; `2` could-not-evaluate, including `frozen_path_changed` and a failed caller-supplied rerun input | `python3 -I -B tools/round-44/c1-counter.py --selftest --pkg65 <rea-agents 6.5.0 root>` — 47 cases, green 2026-10-28 | `tools/round-44/carriers.json` and `corpus/evidence/round-44/c1/` at the freeze | `--json-out`, `--work` scratch | kaidoku |
-| `tools/round-44/c1-run.sh` | probe — the after-freeze data procedure: one REA `extract-firmware` run per carrier plus the independent oracle arm | `0` every carrier produced a receipt; `1` at least one carrier failed; `2` usage or environment refusal (`err()` in the script header) | none in the script — a bad-argument probe only, no self-test | `corpus/evidence/round-44/c1/carriers.json` pins; `HYAKU_SCRATCH` scratch base | the evidence root it is given, plus scratch | kaidoku |
+| `tools/round-44/c1-run.sh` | probe — the after-freeze data procedure: one REA `extract-firmware` run per carrier, each written as a receipt tree; it does not run the oracle (`c1-oracle.py` is the counter's) | `0` every carrier produced a receipt, or `--dry-run` printed the plan and wrote nothing; `1` at least one carrier failed; `2` usage or environment refusal (`err()` in the script header) | none in the script — a bad-argument probe only, no self-test | `corpus/evidence/round-44/c1/carriers.json` pins; `HYAKU_SCRATCH` scratch base | the evidence root it is given, plus scratch | kaidoku |
 | `tools/round-44/c2-counter.py` | gate — R44-C2 calibration: re-derives every frozen rubric statement at `--rev` | `0` met; `1` not met; `2` could-not-evaluate, including `frozen_path_changed` | `python3 -I -B tools/round-44/c2-counter.py --selftest` — green 2026-10-28 | `tools/round-44/c2-rubric.json` (frozen) and `plans/round-44-claims.md` | `--work`, `--json-out` | kaidoku |
 | `tools/round-45/frozen-path-preflight.py` | gate — freeze integrity at commit time (M45-1 fix): arms `commit`, `restored`, `blob`, `dirty`, `pathspec` | `0` clean; `1` a frozen path changed, a restored touch, or a dirty worktree; `2` could-not-evaluate, including `pathspec_required` and an unknown or non-ancestor revision | `python3 -I -B tools/round-45/frozen-path-preflight.py --selftest` — 11 cases, green at the freeze | the caller's `--freeze`, `--pathspec` and `--freeze-path`; `plans/round-45-claims.md:132-147` names this round's frozen paths | `--json-out` only; selftest fixtures under `$HYAKU_SCRATCH` or `$TMPDIR` | kaidoku |
 | `tools/round-45/c1-counter.py` | gate — R45-C1 depth: rule block 22 in `## Queue-drain craft`, its citations, and the interpreter's own selftest | `0` met; `1` not met (each false clause named in `failing`); `2` could-not-evaluate, including `frozen_path_changed` | `python3 -I -B tools/round-45/c1-counter.py --selftest` — 9 cases, green at the freeze | `SKILL.md` craft section, `tools/round-45/frozen-path-preflight.py`, `plans/round-45-claims.md` | `--json-out`; scratch under `$HYAKU_SCRATCH` or `$TMPDIR` | kaidoku |

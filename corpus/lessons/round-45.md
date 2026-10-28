@@ -170,3 +170,18 @@ inherited uncommitted lane work was reused or discarded.
   verdict maps) — the defect is the measure. Round 46 re-freeze: require an explicit registry
   section bound by marker, exact cell-0 equality, a header row with the exit column named, row
   presence at `--rev`, and the `-m --diff-merges=first-parent` freeze arm.
+- **R45-CL15 (HIGH; wave-1 `R45W1PreflightArms`).** The preflight's eleven cases are
+  **arm-covering but not arm-isolating**: deleting the `restored` branch (`m2`) or the blob arm
+  (`x4`) alone leaves `cases=11 failures=0`, because `touched` absorbs the kill; `restored` and
+  `blob` have **zero unique detection** and their evidence is the arm-coverage matrix, not the
+  selftest. Worse, the pristine instrument has a **false-clean** under `--dirty-pathspec` (`x2`):
+  the flag *replaces* the dirty arm's scope (`scope_paths = dirty_pathspecs or pathspecs`) instead
+  of adding to it, so `--dirty-pathspec other.txt` with a dirty `frozen/b.txt` exits 0 `clean`
+  (reproducer `receipts/x2b.json`). Two more untested shapes: untracked entries (`??`, which the
+  arm does handle — `x3`) and a log scope narrower than the frozen path, where the blob arm is
+  the only defence (`x4b`). Round 46: make the dirty scope the union, add per-arm isolation
+  cases, pin `covers()`'s direction, and state the arm matrix in the block.
+- **R45-CL16 (MEDIUM; wave-1 `R45W1RegR44C1Run`).** The round's `tools/round-44/c1-run.sh`
+  registry row first said the script "plus the independent oracle arm"; the script does not run
+  the oracle (`c1-oracle.py` belongs to the counter) and `--dry-run` exits 0 without writing.
+  Corrected in amendment A3; the other five rows matched their seat-derived source reads.
