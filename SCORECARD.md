@@ -3595,3 +3595,53 @@ arm-covering but not arm-isolating and that `--dirty-pathspec` replaces the dirt
 6 / 7 / 8 / 8 as citations were added (wave-2 `R45W2Immutable` R-1 caught the earlier "the values are
 identical" sentence; corrected here), and both counters are shown non-discriminating by wave 1
 (R45-CL13/C14) — the verdicts are `met (instrument non-discriminating)`.
+
+## Round 46 — the freeze-integrity matrix and its discriminating counter; the registry names the 38-instrument census
+
+Base `5382acc85f9d8617fe242fc116819b8055dfc4c7`. Frozen claims `plans/round-46-claims.md` +
+`tools/round-46/` first landed at `31820472784284727546808acc31b3ea1e73919b` and were corrected at
+`50862e4a`, `65678df0` and `0425224756791b414454df28a9abf93dcdf154ce` — the **declared freeze is
+`0425224`**, and the four-commit series is a recorded defect (M46-3), not a single commit as the
+plan defines it. Landings: block 23 `227d6982`, A1 `87578656`, A2 `6e018068`, A3 `7bf33e31`;
+registry section `781e19ae`; measurements `1e32827b`. Waves: 40 + 40 = 80 seats.
+
+| claim | axis / surface | before | after | counting command | measured at | verdict (author) |
+|---|---|---|---|---|---|---|
+| R46-C1 | depth — `SKILL.md` `## Queue-drain craft` rule block 23, the freeze-integrity discrimination matrix (13 rows, one per routed v1 defect, `trigger` naming the id, `v2 arm` naming the check, exit in {0,1,2}), 9 line-selected citations, the interpreter's sha256 pin, and the nine-mutation battery | at the freeze exit 1: `marker_occurrences 0`, `block_present 0`, `rows 0`, `rule_blocks 22` (`.ufo/waves/round-46/controls/ctl-c1-0-do-nothing.json`); the round-45 clause set accepts all nine forgeries (`v1_green 9`) | exit 0, `rule_blocks 23`, `rows 13`, `refs 9`, `unresolved_citations []`, `pin` equal to the bytes at rev, battery `forgeries_total 9 / v1_green 9 / v2_green 0 / genuine_green 1`, `met_target true` (`.ufo/waves/round-46/l1/scores/c1-at-F4.json`) | `python3 -I -B tools/round-46/attest.py --root . --freeze 0425224 --rev 0425224` | `0425224` | met |
+| R46-C2 | calibration — the marker-bound `<!-- instrument-registry v2 -->` section over the 38-path census `tools/round-46/census.json`, exact cell-0 equality, verdict maps binding 0/1/2, presence at the revision, and the seven-mutation battery | at the freeze the round-45 counter covers 6 of the 38 census instruments (`registered` six, `scope_size 6`; `.ufo/waves/round-46/controls/ctl-c2-1-v1-scope.json`); the v1 clause set accepts all seven forgery classes | exit 0, `scope_size 38`, `registry_rows 38`, `registered` 38, `unregistered []`, `thin []`, `absent_at_rev []`, battery `7 / 7 / 0 / 1`, `met_target true` (`.ufo/waves/round-46/l1/scores/c2-at-F4.json`) | `python3 -I -B tools/round-46/registry.py --root . --freeze 0425224 --rev 0425224` | `0425224` | met |
+
+Owned scores: coverage `10 → 10` (command A at `7bf33e31`: `knowledge_files 138`, `mapped 138`,
+`missing []`, `dangling []`, `coverage_score 10.0`; this round adds no domain surface — S142 is
+instrument documentation); depth `10 → 10` (rule blocks `22 → 23` with `citation_resolved_rules
+23/23`, `depth_score 10.0`; the move is the discriminating block and its counter, not a number above
+the ceiling); calibration `10 → 10` (registered `6 → 38` of the census with `thin []`,
+`absent_at_rev []`, and 0 of 7 forgery classes accepted; the numeric axis cannot rise above 10).
+
+Learning trends: expansion **unchanged** (no new domain ground, no admitted knowledge entry, the
+coverage map and `## Frontier` byte-unchanged); quality **improved on the instruments** (both
+counters score their own 9 and 7 forgery classes red while the genuine artefacts stay green, and both
+reproduce round 45's verdicts on the round-45 artefact — `22/10/8` and `45/6`; the bound is that this
+is measure quality, not new reverse-engineering ground); discernment **improved** (four of the
+round's own defects were found before the operator did — M46-1 a control naming a measurement that
+could not exist at the freeze, M46-2 a frozen denominator no digest pins, M46-3 the four-commit
+freeze, M46-4 the depth-proxy harm — and two became `QUALITY.md` row 77). No capability row enters:
+both artefacts are instruments cited by their own claims, and this round demonstrates no new domain
+ground.
+
+**Freeze-integrity disclosure.** The frozen set is derived from this round's claims file
+(`plans/round-46-claims.md`, `tools/round-46/`) and feeds the history arm
+(`-m --diff-merges=first-parent`), an independent blob arm, the restored classifier and the dirty
+scope, so R45-CL18 cannot re-enter by construction. `git log --name-status
+0425224..<tip> -- tools/round-46 plans/round-46-claims.md` is empty at every measurement above.
+The arm's correctness depends on the two flags' order (R46-CL6), the mutation list is a fixed count
+no digest pins (R46-CL4), and the registry validates shape rather than truth (R46-CL5).
+
+- **planned (round 47):** calibration or depth from the routed list — (a) pin the mutation list with
+  a `mutations_sha256` and make the routed-id and arm-vocabulary checks exact rather than
+  substring/one-of (R46-CL2, R46-CL3, R46-CL4); (b) bind the registry's `purpose` cell to a value
+  the counter derives, so a false description fails (R46-CL5); (c) assert the `-m
+  --diff-merges=first-parent` flag order in a selftest case (R46-CL6). Second choice: coverage —
+  resume the SquashFS v1/v2 promotion with a single, mutually consistent provenance clause
+  (R44-CL2). R36-CL5, R40-CL2, R41-CL3 remain open.
+- **retired:** none. Coverage, depth and calibration stay tied at 10; no finite proxy saturates an
+  axis, and the last capability entries are rounds 42–43.

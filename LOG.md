@@ -3315,3 +3315,59 @@ false-clean in block 22, and routes R45-CL15/CL16. Both counters re-measured at 
 (`unregistered []`, `thin []`). A3 is the round's measured revision; `rule_blocks`, `rows`,
 `unresolved` and `met_target` hold at `e715263c`, `1f4b27f8` and `fedd11bf`, while `block22_refs`
 grew 6 (landing) → 7 (A1) → 8 (A2/A3) as citations were added.
+
+### Round 46 — the measure becomes a discriminator: block 23 scores its own forgeries red and the registry names the 38-instrument census
+
+Lane `kaidoku`, round 46, attempt 1. Base `5382acc85f9d8617fe242fc116819b8055dfc4c7`.
+Frozen claims (`plans/round-46-claims.md` + `tools/round-46/` as a directory pathspec) landed at
+`3182047` and corrected three times before any score existed — `50862e4a` (a guard returned an int
+where the caller unpacked a tuple), `65678df0` (the battery referenced a renamed regex and could
+only fail; the v1 port's header, row-floor and selector clauses; a battery selftest case) and
+`0425224756791b414454df28a9abf93dcdf154ce` (the v1 registry profile applied the v2 strict
+cell/exit/presence checks). **The declared freeze is `0425224`**; the plan's own definition named
+`3182047`, so the record states the series rather than pretending a single commit
+(`corpus/lessons/round-46.md` M46-3).
+
+- **C1 — depth, met.** `python3 -I -B tools/round-46/attest.py --root . --freeze 0425224 --rev
+  0425224` → `rule_blocks 23`, `marker_occurrences 1`, `block_present 1`, `rows 13`, `refs 9`,
+  `unresolved_citations []`, the interpreter pin matching the bytes at the revision, and the battery
+  `forgeries_total 9`, `v1_green 9`, `v2_green 0`, `genuine_green 1`; `met_target true`, exit 0
+  (`.ufo/waves/round-46/l1/scores/c1-at-F4.json`). Before, at the freeze: exit 1 with
+  `marker_occurrences 0`, `block_present 0`, `rule_blocks 22`
+  (`…/controls/ctl-c1-0-do-nothing.json`). Landing `227d6982`, then A1 `87578656` (two path-like
+  prose tokens removed), A2 `6e018068` (re-pin), A3 `7bf33e31` (knowledge citation).
+- **C2 — calibration, met.** The same `registry.py` invocation → `scope_size 38`, `registry_rows
+  38`, `registered` all 38, `unregistered []`, `thin []`, `absent_at_rev []`, battery
+  `forgeries_total 7`, `v1_green 7`, `v2_green 0`, `genuine_green 1`; exit 0
+  (`…/l1/scores/c2-at-F4.json`). Before, at the freeze, the round-45 counter covers six of the 38
+  census instruments (`…/controls/ctl-c2-1-v1-scope.json`) and the v1 clause set accepts all seven
+  forgery classes. Landing `781e19ae`.
+- **The claim.** Round 45 reported `met (instrument non-discriminating)`: a 44-line forged C1
+  artefact and a six-fenced-row C2 artefact each scored `met_target: true`. Round 46's counters are
+  required to score their own mutated copies red — nine C1 classes and seven C2 classes, each built
+  by mutating the landed bytes — while the genuine artefact stays green, and the round-45 clause set
+  is ported alongside so the same battery is scored both ways (fidelity receipts reproduce round 45
+  exactly: `22/10/8` and `45/6`).
+- **Amendment A3 and the proxy harm.** Block 23 landed citing lessons and plans only, so command A
+  read `citation_resolved_rules 22/23`, `depth_score 9.57` — a depth claim that lowered the depth
+  proxy. A3 `7bf33e31` cites
+  `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md:40-66` and the proxy
+  returns `23/23`, `depth_score 10.0`. This is the round-45 A1 defect one round later; no
+  `QUALITY.md` row carried it, so `QUALITY.md` row 77 now does (M46-4).
+- **Frontier step:** `corpus/SOURCES.md` 141 → 142 (S142 `git-log` `--diff-merges=first-parent`,
+  docs, tier A, opened twice with a stable page sha256 and a located 19-word quote, cited by block
+  23's merge arm). Census exit 0 at round end (15 `W04`, one of them S142's deliberate same-URL
+  different-scope row). Assimilation `none`. Lesson `corpus/lessons/round-46.md` (M46-1 a control
+  that named a measurement that could not exist at the freeze; M46-2 a frozen denominator no digest
+  pins; M46-3 the freeze series; M46-4 the proxy-harm recurrence), routed R46-CL1..CL6.
+- **Waves:** wave 1 = 40 seats (build and verify the frozen instruments, draft block 23, the 38
+  registry rows and the source, attack both predicates before data); wave 2 = 40 seats (falsify the
+  landing after data). Round total 80, inside the 64–128 band; per-seat output in
+  `.ufo/waves/round-46/{w1,w2}-results.json`. Tools installed this round: none.
+
+### Round 46 claim ledger
+
+| claim | axis / surface | before | after | counting command | measured at | verdict (author) |
+|---|---|---|---|---|---|---|
+| R46-C1 | depth — `SKILL.md` craft rule block 23 (13 routed rows, 9 line-selected citations, interpreter sha256 pin) and its discriminating counter | freeze exit 1, `marker_occurrences 0`, `block_present 0`, `rule_blocks 22`; v1 accepts all nine forgeries | exit 0, `rows 13`, `refs 9`, `unresolved []`, pin matches; battery `9 / 9 / 0 / 1` | `python3 -I -B tools/round-46/attest.py --root . --freeze 0425224 --rev 0425224` | `0425224` | met |
+| R46-C2 | calibration — the `<!-- instrument-registry v2 -->` section over the 38-instrument census, bound to presence at the revision | six of 38 instruments registered; v1 accepts all seven forgery classes | 38 of 38, `thin []`, `absent_at_rev []`; battery `7 / 7 / 0 / 1` | `python3 -I -B tools/round-46/registry.py --root . --freeze 0425224 --rev 0425224` | `0425224` | met |
