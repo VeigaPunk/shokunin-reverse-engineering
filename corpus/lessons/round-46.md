@@ -26,7 +26,7 @@ the round-45 clause set ported alongside so the same battery is scored both ways
 
 | row | URL | opened | located quote (≤25 words) |
 |---|---|---|---|
-| S142 | https://git-scm.com/docs/git-log | 2026-10-28T16:49Z, HTTP 200, 375,834 bytes, page sha256 `0a73e33b235368af3021b6dc7dbca11ca4b513157ac651acf548d94e1a5c4a1a`; anchor `--diff-merges=<format>`, value `first-parent` | "Show full diff with respect to first parent. This is the same format as --patch produces for non-merge commits." (21 words) |
+| S142 | https://git-scm.com/docs/git-log | 2026-10-28T16:49Z, HTTP 200, 375,834 bytes, page sha256 `0a73e33b235368af3021b6dc7dbca11ca4b513157ac651acf548d94e1a5c4a1a`; anchor `--diff-merges=<format>`, value `first-parent` | "Show full diff with respect to first parent. This is the same format as --patch produces for non-merge commits." (19 words) |
 
 S142 is cited by the round's R46-C1 landing: `tools/round-46/gate.py`'s history arm passes
 `--diff-merges=first-parent` so a merge's own resolution edit is visible, which is the arm
@@ -62,6 +62,12 @@ round-46 counters cite S141's `-z` statement only indirectly (the history arm us
   group. A row may claim a group it does not really address.
 - **R46-CL4.** The mutation list is not pinned: `forgeries_total` is checked but the list
   itself has no digest, so a deletion changes the denominator without failing a clause.
+- **R46-CL6.** `gate.history_touched` passes `-m --diff-merges=first-parent`, and the arm is
+  **order-sensitive**: `git log --diff-merges=first-parent -m` prints a merge twice (one entry
+  per parent) because the later flag wins, which restores the very blindness `R45-CL6` was
+  about. The order is correct today and nothing in the code enforces it; one argument reorder
+  silently undoes the arm. Wave-1 seat `R46W1ScribeSource` measured this on a deterministic
+  merge fixture. Round 47: assert the flag order in a selftest case.
 - **R46-CL5.** The registry row's `purpose` cell is not validated at all: a row can satisfy
   the census path with a false description. Only presence, exact cell 0 and the verdict map
   are checked.
