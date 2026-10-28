@@ -1,0 +1,60 @@
+===== resort diff and cat-file =====
+utc: 2026-10-28T16:58:04Z
+exit: 0
+stdout_sha256: 5ac58e077ec448c2b6bb8a4872e8d36c5d1ef1456405503217769c8ec8bb0494
+----- stdout -----
+utc: 2026-10-28T16:58:02Z
+command: LC_ALL=C sort both lists; diff -u; comm -23/-13; git cat-file -e loop (negative control does not abort)
+LC_ALL=C
+derived_n 42
+json_n 38
+literal_n 38
+--- diff derived vs json (exit follows) ---
+--- /fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus/json-paths.txt	2026-10-28 13:58:02.024927647 -0300
++++ /fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus/derived.txt	2026-10-28 13:58:02.023066198 -0300
+@@ -12,6 +12,7 @@
+ tools/round-41/sqfs-list.py
+ tools/round-41/sqfs-triage-v3.py
+ tools/round-42/c1-counter.py
++tools/round-42/c1-extra.py
+ tools/round-42/c1-run.sh
+ tools/round-42/c2-controls.py
+ tools/round-42/c2-counter.py
+@@ -22,9 +23,12 @@
+ tools/round-42/sqfs-triage-v4.py
+ tools/round-42/sqfs3-oracle.py
+ tools/round-42/unblob-logtee.sh
++tools/round-43/build-copies-r43.py
+ tools/round-43/c1-counter.py
++tools/round-43/c2-controls-r43.py
+ tools/round-43/c2-score-r43.py
+ tools/round-43/heldout-gen-v4r43.py
++tools/round-43/receipt-wrap.py
+ tools/round-43/verify-copies-r43.py
+ tools/round-44/c1-counter.py
+ tools/round-44/c1-run.sh
+diff_exit 1
+--- derived only ---
+tools/round-42/c1-extra.py
+tools/round-43/build-copies-r43.py
+tools/round-43/c2-controls-r43.py
+tools/round-43/receipt-wrap.py
+--- json only ---
+--- literal vs json ---
+literal_json_diff_exit 0
+NEGATIVE_CONTROL
+neg_exit 128
+DIFF_AND_CENSUS cat-file -e
+census_n 38 census_fail 0
+DIFF_PATHS
+diffpath_exit 0 type blob tools/round-42/c1-extra.py
+diffpath_exit 0 type blob tools/round-43/build-copies-r43.py
+diffpath_exit 0 type blob tools/round-43/c2-controls-r43.py
+diffpath_exit 0 type blob tools/round-43/receipt-wrap.py
+UNNAMED_TRACKED_PY_SH (exist at rev, not in derived, not a census difference)
+tracked_py_sh 46
+--- tracked but not named (not in derived) ---
+tools/round-44/c1-controls.py
+tools/round-44/c1-oracle.py
+tools/round-44/c1-run.py
+tools/round-44/c2-controls.py

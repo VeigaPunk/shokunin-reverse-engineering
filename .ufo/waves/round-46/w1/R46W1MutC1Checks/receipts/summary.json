@@ -1,0 +1,3968 @@
+{
+ "meta": {
+  "base-m1-marker-count": {
+   "desc": "clause 1: marker_occurrences != 1 -> < 1 (a doubled marker passes)",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -167,3 +167,3 @@\n     if hard:\n-        if occurrences != 1:\n+        if occurrences < 1:\n             failing.append(f\"marker_occurrences {occurrences} != 1\")\n",
+   "mutant": "m1-marker-count",
+   "sha_mutant": "c54da92a263d7850a18bc7814003b2fe7bf2d0f8acb821654893e1b6d78e9785",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m10-drop-refs-min": {
+   "desc": "clause 5: refs_min floor dropped",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -223,3 +223,3 @@\n         receipt[\"unresolved_citations\"] = bad_refs\n-        if len(refs) < spec[\"refs_min\"]:\n+        if False:\n             failing.append(f\"refs {len(refs)} < {spec['refs_min']}\")\n",
+   "mutant": "m10-drop-refs-min",
+   "sha_mutant": "75223bee8b9b72a304b7ec66f7a8a91004c40a488d0162b73673fd288c5e8716",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m11-no-line-selector": {
+   "desc": "clause 5: hard profile stops requiring a line selector",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -136,3 +136,3 @@\n             continue\n-        if spec[\"require_line\"] and not first:\n+        if False and spec[\"require_line\"] and not first:\n             bad.append(f\"{name}: no line selector\")\n",
+   "mutant": "m11-no-line-selector",
+   "sha_mutant": "4cff258ed80ca4e0097cb7946caf2da842146bc8a23681efee69f99946b02e37",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m12-must-cite-refs": {
+   "desc": "clause 5: does not cite round-45.md accepted",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -227,3 +227,3 @@\n             failing.append(f\"unresolved or unvalidated citations: {len(bad_refs)}\")\n-        for name in spec[\"must_cite_refs\"]:\n+        for name in []:\n             if name not in cited:\n",
+   "mutant": "m12-must-cite-refs",
+   "sha_mutant": "b7915d0b85d7d741eb47c0f14245c2dbc0cf40cd5403b7f6f6c576f4681d0b26",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m2-not-last": {
+   "desc": "clause 1: drop the is-last-craft-block check",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -186,4 +186,2 @@\n         receipt[\"rows\"] = len(rows)\n-        if hard and not receipt[\"block_is_last\"]:\n-            failing.append(\"marker block is not the last craft block\")\n         if hard and not block.startswith(f\"{spec['block']}. \"):\n",
+   "mutant": "m2-not-last",
+   "sha_mutant": "131348f255b2ae6988e47ccac8f828fb4a08d49e5a8cd0650fdea74255db5e08",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m3-header-prefix": {
+   "desc": "clause 2: header cells matched by prefix instead of equality",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -191,3 +191,5 @@\n         if hard:\n-            header_ok = header == spec[\"header\"]\n+            header_ok = (len(header) == len(spec[\"header\"]) and\n+                         all(h.startswith(s) for h, s in\n+                             zip(header, spec[\"header\"])))\n         else:\n",
+   "mutant": "m3-header-prefix",
+   "sha_mutant": "bb128dd086469e683165ed5b92ef4ac975cba3794c4d1f1c4eb62532f304895f",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m4-rows-floor-8": {
+   "desc": "clause 3: r46 min_rows 13 -> 8",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -64,3 +64,3 @@\n         \"marker\": \"<!-- freeze-integrity-table v2 -->\", \"block\": 23,\n-        \"header\": [\"trigger\", \"v1 hole\", \"v2 arm\", \"exit\"], \"min_rows\": 13,\n+        \"header\": [\"trigger\", \"v1 hole\", \"v2 arm\", \"exit\"], \"min_rows\": 8,\n         \"refs_min\": 6, \"require_line\": True, \"allow\": ALLOW,\n",
+   "mutant": "m4-rows-floor-8",
+   "sha_mutant": "1993776aefb4cef54d4fd44405e0dbae92797ec2a60cc9b7ba2ed75b921dfb9d",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m5-drop-exit-cell": {
+   "desc": "clause 3: drop the exit-cell membership check",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -202,6 +202,3 @@\n         exit_col = next((i for i, h in enumerate(header) if \"exit\" in h), None)\n-        bad_exit = [r for r in rows if exit_col is None or exit_col >= len(r)\n-                    or r[exit_col].strip(\"` \") not in {\"0\", \"1\", \"2\"}]\n-        if bad_exit:\n-            failing.append(f\"exit cells outside {{0,1,2}}: {len(bad_exit)}\")\n+        bad_exit = []\n         if hard and any(len(r) != width for r in rows):\n",
+   "mutant": "m5-drop-exit-cell",
+   "sha_mutant": "5a58a6b99b7d9517de52a01b58687365dfc5337859f6e28335ebf93c74679eb0",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m6-drop-routed": {
+   "desc": "clause 4: drop the routed-id check",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -210,3 +210,3 @@\n             found = {m.group(0) for r in rows for m in re.finditer(r\"R45-CL\\d+\", r[0])}\n-            missing = [i for i in ROUTED if i not in found]\n+            missing = []\n             receipt[\"routed_ids\"] = sorted(found)\n",
+   "mutant": "m6-drop-routed",
+   "sha_mutant": "f364c8befe563c39c7de0a94c80d87122271d6985a521e23b195cce9b83a26cd",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m7-vocab-whole-row": {
+   "desc": "clause 4: vocabulary matched by substring over the whole row, not the arm cell",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -215,4 +215,4 @@\n             arm_col = 2\n-            novocab = [r for r in rows if len(r) > arm_col\n-                       and not any(t in r[arm_col].lower() for t in ARMS)]\n+            novocab = [r for r in rows\n+                       if not any(t in \" \".join(r).lower() for t in ARMS)]\n             if novocab:\n",
+   "mutant": "m7-vocab-whole-row",
+   "sha_mutant": "eee9e170a60affff8986403d34dab93ebe3716d0e817809d43a0f286ed5e2eb3",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m8-pin-by-length": {
+   "desc": "clause 6: sha256 pin compared by length only",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -246,3 +246,3 @@\n                 receipt[\"pin_expected\"] = want\n-                if got != want:\n+                if len(got or \"\") != len(want):\n                     failing.append(\"interpreter sha256 pin does not match the bytes at rev\")\n",
+   "mutant": "m8-pin-by-length",
+   "sha_mutant": "b4022fd09c810dd551afb50ff0d7884e0e12feeae5c59cd54aa4c714b659f6f7",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "base-m9-drop-allowlist": {
+   "desc": "clause 5: citations outside the validated path set accepted",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -128,3 +128,3 @@\n     for name, first, last in refs:\n-        if not name.startswith(spec[\"allow\"]):\n+        if False and not name.startswith(spec[\"allow\"]):\n             bad.append(f\"{name}: outside the validated path set\")\n",
+   "mutant": "m9-drop-allowlist",
+   "sha_mutant": "f4260ad2054517dd9737d2ae74daa3e423efde581b838142dc65457b1cc5ab13",
+   "sha_orig": "dd1e7df1682c5b63ed9f5f75a3aff26c7914e6d41885e5e2da717aa91165d0fb",
+   "ver": "base"
+  },
+  "head-m1-marker-count": {
+   "desc": "clause 1: marker_occurrences != 1 -> < 1 (a doubled marker passes)",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -167,3 +167,3 @@\n     if hard:\n-        if occurrences != 1:\n+        if occurrences < 1:\n             failing.append(f\"marker_occurrences {occurrences} != 1\")\n",
+   "mutant": "m1-marker-count",
+   "sha_mutant": "67a2a716f3a452e65cdd7cf91a20f4f867af25c6e32c3dbf16fdf8a7a2e49c55",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m10-drop-refs-min": {
+   "desc": "clause 5: refs_min floor dropped",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -225,3 +225,3 @@\n         receipt[\"unresolved_citations\"] = bad_refs\n-        if len(refs) < spec[\"refs_min\"]:\n+        if False:\n             failing.append(f\"refs {len(refs)} < {spec['refs_min']}\")\n",
+   "mutant": "m10-drop-refs-min",
+   "sha_mutant": "01fed6b1a13cf59cc5a3834b28c732dd7e99779940e2345aecce59cc46775919",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m11-no-line-selector": {
+   "desc": "clause 5: hard profile stops requiring a line selector",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -136,3 +136,3 @@\n             continue\n-        if hard and spec[\"require_line\"] and not first:\n+        if False and hard and spec[\"require_line\"] and not first:\n             bad.append(f\"{name}: no line selector\")\n",
+   "mutant": "m11-no-line-selector",
+   "sha_mutant": "c9356e8a8577a4182202b8c93104ce26d82c7a8a1716928ac0bf630f797b3e64",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m12-must-cite-refs": {
+   "desc": "clause 5: does not cite round-45.md accepted",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -230,3 +230,3 @@\n         if hard:\n-            for name in spec[\"must_cite_refs\"]:\n+            for name in []:\n                 if name not in cited:\n",
+   "mutant": "m12-must-cite-refs",
+   "sha_mutant": "cdef3cfc37650f0940716752a7de1c483c6f354e7e62a7b58234b784d1cb1032",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m2-not-last": {
+   "desc": "clause 1: drop the is-last-craft-block check",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -186,4 +186,2 @@\n         receipt[\"rows\"] = len(rows)\n-        if hard and not receipt[\"block_is_last\"]:\n-            failing.append(\"marker block is not the last craft block\")\n         if hard and not block.startswith(f\"{spec['block']}. \"):\n",
+   "mutant": "m2-not-last",
+   "sha_mutant": "e7b4678dccaf0d13ac1237582735c95d31476c3ee6e1d31468d2fbfdc2ae0e10",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m3-header-prefix": {
+   "desc": "clause 2: header cells matched by prefix instead of equality",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -191,3 +191,5 @@\n         if hard:\n-            header_ok = header == spec[\"header\"]\n+            header_ok = (len(header) == len(spec[\"header\"]) and\n+                         all(h.startswith(s) for h, s in\n+                             zip(header, spec[\"header\"])))\n         else:\n",
+   "mutant": "m3-header-prefix",
+   "sha_mutant": "2d36efc2a0549f9e504331ffca8670b363a3c727865251e242a42bbe8a70b0d8",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m4-rows-floor-8": {
+   "desc": "clause 3: r46 min_rows 13 -> 8",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -64,3 +64,3 @@\n         \"marker\": \"<!-- freeze-integrity-table v2 -->\", \"block\": 23,\n-        \"header\": [\"trigger\", \"v1 hole\", \"v2 arm\", \"exit\"], \"min_rows\": 13,\n+        \"header\": [\"trigger\", \"v1 hole\", \"v2 arm\", \"exit\"], \"min_rows\": 8,\n         \"refs_min\": 6, \"require_line\": True, \"allow\": ALLOW,\n",
+   "mutant": "m4-rows-floor-8",
+   "sha_mutant": "b1c83ecc8deccd7bedc09ba3305facb28ed53afb4810b8f3d1dfcf503a37e449",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m5-drop-exit-cell": {
+   "desc": "clause 3: drop the exit-cell membership check",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -204,6 +204,3 @@\n         exit_col = next((i for i, h in enumerate(header) if \"exit\" in h), None)\n-        bad_exit = [r for r in rows if exit_col is None or exit_col >= len(r)\n-                    or r[exit_col].strip(\"` \") not in {\"0\", \"1\", \"2\"}]\n-        if bad_exit:\n-            failing.append(f\"exit cells outside {{0,1,2}}: {len(bad_exit)}\")\n+        bad_exit = []\n         if hard and any(len(r) != width for r in rows):\n",
+   "mutant": "m5-drop-exit-cell",
+   "sha_mutant": "bf917a6481fcbd56ded489cf180b5e2428ac166e029bf961c4c8f8123d16cfa4",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m6-drop-routed": {
+   "desc": "clause 4: drop the routed-id check",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -212,3 +212,3 @@\n             found = {m.group(0) for r in rows for m in re.finditer(r\"R45-CL\\d+\", r[0])}\n-            missing = [i for i in ROUTED if i not in found]\n+            missing = []\n             receipt[\"routed_ids\"] = sorted(found)\n",
+   "mutant": "m6-drop-routed",
+   "sha_mutant": "efea57acab3e7c284622ccca7a74d8d9841059f8f63754e87fdab47d8d9ea084",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m7-vocab-whole-row": {
+   "desc": "clause 4: vocabulary matched by substring over the whole row, not the arm cell",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -217,4 +217,4 @@\n             arm_col = 2\n-            novocab = [r for r in rows if len(r) > arm_col\n-                       and not any(t in r[arm_col].lower() for t in ARMS)]\n+            novocab = [r for r in rows\n+                       if not any(t in \" \".join(r).lower() for t in ARMS)]\n             if novocab:\n",
+   "mutant": "m7-vocab-whole-row",
+   "sha_mutant": "f42c8199365e12f355da520fd59ae24bfcc0ae9079079655b83b41698ccbe388",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m8-pin-by-length": {
+   "desc": "clause 6: sha256 pin compared by length only",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -249,3 +249,3 @@\n                 receipt[\"pin_expected\"] = want\n-                if got != want:\n+                if len(got or \"\") != len(want):\n                     failing.append(\"interpreter sha256 pin does not match the bytes at rev\")\n",
+   "mutant": "m8-pin-by-length",
+   "sha_mutant": "33662c27f9b8705eb562b6fdb5e832de76279ec68ba4c070febf92938f910e74",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  },
+  "head-m9-drop-allowlist": {
+   "desc": "clause 5: citations outside the validated path set accepted",
+   "diff": "--- attest.orig.py\n+++ attest.mut.py\n@@ -128,3 +128,3 @@\n     for name, first, last in refs:\n-        if not name.startswith(spec[\"allow\"]):\n+        if False and not name.startswith(spec[\"allow\"]):\n             bad.append(f\"{name}: outside the validated path set\")\n",
+   "mutant": "m9-drop-allowlist",
+   "sha_mutant": "ae2d2406c88cfcfbc97dcde344adc22cbcbbe2eeae45a2dbae72662ea4701fae",
+   "sha_orig": "e6c44d2d57dbbc65ed8d14b642a6101eea264b05faf68c25606525b8fe532346",
+   "ver": "head"
+  }
+ },
+ "runs": {
+  "base-baseline": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-baseline",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=0",
+   "stdout_sha256": "ac22e9c7acb4bb6fc66b98bdb203190dc64f18bb7121e686f02fa195810e8ddb",
+   "utc": "2026-10-28T17:04:25Z"
+  },
+  "base-m1-marker-count": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": null,
+     "got": 0,
+     "ok": false
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m1-marker-count",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=1",
+   "stdout_sha256": "1bdea82adf3440b3b914c15efcf31f277493257d2d9ae95e6b92ed1b59b56456",
+   "utc": "2026-10-28T17:04:25Z"
+  },
+  "base-m10-drop-refs-min": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m10-drop-refs-min",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=0",
+   "stdout_sha256": "ac22e9c7acb4bb6fc66b98bdb203190dc64f18bb7121e686f02fa195810e8ddb",
+   "utc": "2026-10-28T17:04:29Z"
+  },
+  "base-m11-no-line-selector": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m11-no-line-selector",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=0",
+   "stdout_sha256": "552819abd02d365261c1e20c1e361fa1b09217677072597aeafab22d2e207e82",
+   "utc": "2026-10-28T17:04:30Z"
+  },
+  "base-m12-must-cite-refs": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m12-must-cite-refs",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=0",
+   "stdout_sha256": "ac22e9c7acb4bb6fc66b98bdb203190dc64f18bb7121e686f02fa195810e8ddb",
+   "utc": "2026-10-28T17:04:31Z"
+  },
+  "base-m2-not-last": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": null,
+     "got": 0,
+     "ok": false
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m2-not-last",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=1",
+   "stdout_sha256": "bd0df8de544f6f6938aabde71d8f9bb8548f594704697d621f1fd3d34282f03f",
+   "utc": "2026-10-28T17:04:25Z"
+  },
+  "base-m3-header-prefix": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m3-header-prefix",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=0",
+   "stdout_sha256": "ac22e9c7acb4bb6fc66b98bdb203190dc64f18bb7121e686f02fa195810e8ddb",
+   "utc": "2026-10-28T17:04:25Z"
+  },
+  "base-m4-rows-floor-8": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m4-rows-floor-8",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=0",
+   "stdout_sha256": "2079b3c2bb009e7620c13ea6daa1b97e3373266912ba55633c461ec2e986d531",
+   "utc": "2026-10-28T17:04:27Z"
+  },
+  "base-m5-drop-exit-cell": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": null,
+     "got": 0,
+     "ok": false
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m5-drop-exit-cell",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=1",
+   "stdout_sha256": "2f253d614e27f99f5bc88921ee73d098b2c1ad3c99e9cce742233a8cecbb5d7f",
+   "utc": "2026-10-28T17:04:27Z"
+  },
+  "base-m6-drop-routed": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": null,
+     "got": 0,
+     "ok": false
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m6-drop-routed",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=1",
+   "stdout_sha256": "baf196488be9eb2f8ae2b49e8aa900b6a56e37ac218aefed4fa088858d0abd6f",
+   "utc": "2026-10-28T17:04:28Z"
+  },
+  "base-m7-vocab-whole-row": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 8"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m7-vocab-whole-row",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=0",
+   "stdout_sha256": "a603098cc3c6d0434cfa63d7d84ef0959e43b46e45682ac8b3e09f7d070764ea",
+   "utc": "2026-10-28T17:04:28Z"
+  },
+  "base-m8-pin-by-length": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": null,
+     "got": 0,
+     "ok": false
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m8-pin-by-length",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=1",
+   "stdout_sha256": "f7f3f60524b8b871989eb152c8fa59ad412865777844a46051c019026907ecd0",
+   "utc": "2026-10-28T17:04:28Z"
+  },
+  "base-m9-drop-allowlist": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    }
+   ],
+   "cases": 15,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/base-m9-drop-allowlist",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=15 failures=0",
+   "stdout_sha256": "ac22e9c7acb4bb6fc66b98bdb203190dc64f18bb7121e686f02fa195810e8ddb",
+   "utc": "2026-10-28T17:04:29Z"
+  },
+  "head-baseline": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-baseline",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=0",
+   "stdout_sha256": "0bf8f4c6ae0e46a0c4f00b9eb8b573afd7c10b0bbb6bf7e2ce58e7c2c5296dd8",
+   "utc": "2026-10-28T17:04:25Z"
+  },
+  "head-m1-marker-count": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": null,
+     "got": 0,
+     "ok": false
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": [
+      "battery v2_green 1 != 0"
+     ],
+     "got": 1,
+     "ok": false
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m1-marker-count",
+   "exit": 1,
+   "failures": 2,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=2",
+   "stdout_sha256": "9826f2f3149bd6231b5c2ce603a5430fc73271b867cf7bd9a0b5976dfd0165fa",
+   "utc": "2026-10-28T17:04:25Z"
+  },
+  "head-m10-drop-refs-min": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m10-drop-refs-min",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=0",
+   "stdout_sha256": "0bf8f4c6ae0e46a0c4f00b9eb8b573afd7c10b0bbb6bf7e2ce58e7c2c5296dd8",
+   "utc": "2026-10-28T17:04:29Z"
+  },
+  "head-m11-no-line-selector": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": [
+      "battery v2_green 1 != 0"
+     ],
+     "got": 1,
+     "ok": false
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m11-no-line-selector",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=1",
+   "stdout_sha256": "4ddd80fdc4005723265955ca68280415d590bd92c955698a199055eb5287065b",
+   "utc": "2026-10-28T17:04:31Z"
+  },
+  "head-m12-must-cite-refs": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": [
+      "battery v2_green 1 != 0"
+     ],
+     "got": 1,
+     "ok": false
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m12-must-cite-refs",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=1",
+   "stdout_sha256": "53cde3bc55f46b9dfb7f5527d0b44832ad1cfef0545160673c8e6e02a7bb8281",
+   "utc": "2026-10-28T17:04:31Z"
+  },
+  "head-m2-not-last": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": null,
+     "got": 0,
+     "ok": false
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m2-not-last",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=1",
+   "stdout_sha256": "a37ebfd0f504474c47bf0986f04c3dca583b9f3b2692e32d2b6409d4960e08ac",
+   "utc": "2026-10-28T17:04:25Z"
+  },
+  "head-m3-header-prefix": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": [
+      "battery v2_green 1 != 0"
+     ],
+     "got": 1,
+     "ok": false
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m3-header-prefix",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=1",
+   "stdout_sha256": "53cde3bc55f46b9dfb7f5527d0b44832ad1cfef0545160673c8e6e02a7bb8281",
+   "utc": "2026-10-28T17:04:25Z"
+  },
+  "head-m4-rows-floor-8": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m4-rows-floor-8",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=0",
+   "stdout_sha256": "ebffd25210395f26bf4302e7b40f2fbcc6e719eb743bc9a9fa26fc104adc9654",
+   "utc": "2026-10-28T17:04:27Z"
+  },
+  "head-m5-drop-exit-cell": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": null,
+     "got": 0,
+     "ok": false
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m5-drop-exit-cell",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=1",
+   "stdout_sha256": "9d88d9ee2ff5e3b1fc7b86752452e9a5f7edbea9b1d3944b7e31c0c96142c724",
+   "utc": "2026-10-28T17:04:27Z"
+  },
+  "head-m6-drop-routed": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": null,
+     "got": 0,
+     "ok": false
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m6-drop-routed",
+   "exit": 1,
+   "failures": 1,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=1",
+   "stdout_sha256": "04ba0d90b3796cf89a4eb114385b2396947a91b9c1ba6c75ae73d78f79e83a92",
+   "utc": "2026-10-28T17:04:28Z"
+  },
+  "head-m7-vocab-whole-row": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 8"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m7-vocab-whole-row",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=0",
+   "stdout_sha256": "2ab82b91ec73ab3b7215d11b1cd30face3776126f019bb28a31d342e68663ea8",
+   "utc": "2026-10-28T17:04:28Z"
+  },
+  "head-m8-pin-by-length": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": null,
+     "got": 0,
+     "ok": false
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": [
+      "battery v2_green 1 != 0"
+     ],
+     "got": 1,
+     "ok": false
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m8-pin-by-length",
+   "exit": 1,
+   "failures": 2,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=2",
+   "stdout_sha256": "85e0eb2b00be002646065be35cabc1d108afb3b968f1b9dfbad85cd7be288b66",
+   "utc": "2026-10-28T17:04:28Z"
+  },
+  "head-m9-drop-allowlist": {
+   "case_rows": [
+    {
+     "case": "green",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    },
+    {
+     "case": "red-no-marker",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 0 != 1",
+      "marker_block_count 0 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-two-markers",
+     "expect": 1,
+     "failing": [
+      "marker_occurrences 2 != 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-marker-not-last",
+     "expect": 1,
+     "failing": [
+      "marker block is not the last craft block"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-title-unnumbered",
+     "expect": 1,
+     "failing": [
+      "marker block title does not start with '23. '"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-header-inexact",
+     "expect": 1,
+     "failing": [
+      "header ['trigger', 'v1 hole', 'arm', 'exit'] != ['trigger', 'v1 hole', 'v2 arm', 'exit']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-rows-thin",
+     "expect": 1,
+     "failing": [
+      "rows 12 < 13",
+      "routed ids not named by any row: ['R45-CL24']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-exit-cell",
+     "expect": 1,
+     "failing": [
+      "exit cells outside {0,1,2}: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-routed-id-missing",
+     "expect": 1,
+     "failing": [
+      "routed ids not named by any row: ['R45-CL18']"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-arm-vocabulary",
+     "expect": 1,
+     "failing": [
+      "arm cells outside the vocabulary: 13"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-no-selector",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 3"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-ref-outside-allowlist",
+     "expect": 1,
+     "failing": [
+      "unresolved or unvalidated citations: 1"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-pin-mismatch",
+     "expect": 1,
+     "failing": [
+      "interpreter sha256 pin does not match the bytes at rev"
+     ],
+     "got": 1,
+     "ok": true
+    },
+    {
+     "case": "red-malformed-heading-is-exit-2",
+     "expect": 2,
+     "failing": "craft heading lacks its trailing space",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "red-frozen-touched-is-exit-2",
+     "expect": 2,
+     "failing": "frozen_path_changed",
+     "got": 2,
+     "ok": true
+    },
+    {
+     "case": "green-with-battery",
+     "expect": 0,
+     "failing": null,
+     "got": 0,
+     "ok": true
+    }
+   ],
+   "cases": 16,
+   "dir": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC1Checks/mutants/head-m9-drop-allowlist",
+   "exit": 0,
+   "failures": 0,
+   "stdout_head": "ATTEST_SELFTEST: cases=16 failures=0",
+   "stdout_sha256": "0bf8f4c6ae0e46a0c4f00b9eb8b573afd7c10b0bbb6bf7e2ce58e7c2c5296dd8",
+   "utc": "2026-10-28T17:04:29Z"
+  }
+ },
+ "utc": "2026-10-28T17:04:33Z"
+}

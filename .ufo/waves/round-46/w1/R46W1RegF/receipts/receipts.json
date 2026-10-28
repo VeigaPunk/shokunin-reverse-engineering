@@ -1,0 +1,287 @@
+[
+ {
+  "case": "fetch-vendor --selftest",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/fetch-vendor.py",
+   "--selftest"
+  ],
+  "start_utc": "2026-10-28T16:55:05Z",
+  "end_utc": "2026-10-28T16:55:05Z",
+  "exit": 0,
+  "stdout_sha256": "828a9add44cff9e88dc7751bd290d981ba040eff20bb25a09666d9dad34804ec",
+  "stdout_bytes": 1027,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": []
+ },
+ {
+  "case": "fetch-vendor no args",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/fetch-vendor.py"
+  ],
+  "start_utc": "2026-10-28T16:55:05Z",
+  "end_utc": "2026-10-28T16:55:05Z",
+  "exit": 2,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stderr_sha256": "2fcd25a5b599f4cb25047391f9e9b80fd87c2485a117c88f8648fdca60fbc646",
+  "stderr_tail": [
+   "usage: --cache DIR and --spec FILE or --root LANE --rev REV"
+  ]
+ },
+ {
+  "case": "fetch-vendor --cache only",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/fetch-vendor.py",
+   "--cache",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/fv/cache2"
+  ],
+  "start_utc": "2026-10-28T16:55:05Z",
+  "end_utc": "2026-10-28T16:55:05Z",
+  "exit": 2,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stderr_sha256": "2fcd25a5b599f4cb25047391f9e9b80fd87c2485a117c88f8648fdca60fbc646",
+  "stderr_tail": [
+   "usage: --cache DIR and --spec FILE or --root LANE --rev REV"
+  ]
+ },
+ {
+  "case": "fetch-vendor broken chain link",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/fetch-vendor.py",
+   "--spec",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/fv/bad.json",
+   "--cache",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/fv/cache3b"
+  ],
+  "start_utc": "2026-10-28T16:55:05Z",
+  "end_utc": "2026-10-28T16:55:05Z",
+  "exit": 1,
+  "stdout_sha256": "c5c66795163a36ad8ba9d8c6696f892213b7d58064694ba8a8c15ab398ed6181",
+  "stdout_bytes": 302,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": []
+ },
+ {
+  "case": "fetch-vendor invalid JSON spec",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/fetch-vendor.py",
+   "--spec",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/fv/broken.json",
+   "--cache",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/fv/cache4b"
+  ],
+  "start_utc": "2026-10-28T16:55:05Z",
+  "end_utc": "2026-10-28T16:55:05Z",
+  "exit": 1,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stderr_sha256": "bb10fa4a8fe48489498114c6e773c15f815018fcbcb62bd05ab71675258ee060",
+  "stderr_tail": [
+   "json.decoder.JSONDecodeError: Expecting value: line 2 column 1 (char 15)"
+  ]
+ },
+ {
+  "case": "fetch-vendor nonexistent spec",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/fetch-vendor.py",
+   "--spec",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/fv/nope.json",
+   "--cache",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/fv/cache5b"
+  ],
+  "start_utc": "2026-10-28T16:55:05Z",
+  "end_utc": "2026-10-28T16:55:05Z",
+  "exit": 1,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stderr_sha256": "c51cf581054a2cd47096e52d82f921bb8b7b2d4ee283c628ae04c1e9631f6183",
+  "stderr_tail": [
+   "FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/fv/nope.json'"
+  ]
+ },
+ {
+  "case": "fetch-vendor --help",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/fetch-vendor.py",
+   "--help"
+  ],
+  "start_utc": "2026-10-28T16:55:05Z",
+  "end_utc": "2026-10-28T16:55:05Z",
+  "exit": 0,
+  "stdout_sha256": "892d731f42879dd65ee19c6bffa2ce3a30df8e13809bd67419a62e5dff988729",
+  "stdout_bytes": 378,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": []
+ },
+ {
+  "case": "c1-counter --selftest",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/c1-counter.py",
+   "--selftest"
+  ],
+  "start_utc": "2026-10-28T16:55:05Z",
+  "end_utc": "2026-10-28T16:55:06Z",
+  "exit": 0,
+  "stdout_sha256": "296734f224877a86e8d216bcde5382bbe0f18ff1dadddb1d18099f3754fdac6d",
+  "stdout_bytes": 650,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": []
+ },
+ {
+  "case": "c1-counter no args",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/c1-counter.py"
+  ],
+  "start_utc": "2026-10-28T16:55:06Z",
+  "end_utc": "2026-10-28T16:55:06Z",
+  "exit": 2,
+  "stdout_sha256": "ceadf6938045a1df52a6ff56ffc4797e7a6788eec4c5b40b3c0dc79b5764bf9b",
+  "stdout_bytes": 118,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": []
+ },
+ {
+  "case": "c1-counter unknown rev",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/c1-counter.py",
+   "--root",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "--freeze",
+   "31820472784284727546808acc31b3ea1e73919b",
+   "--rev",
+   "0000000000000000000000000000000000000000"
+  ],
+  "start_utc": "2026-10-28T16:55:06Z",
+  "end_utc": "2026-10-28T16:55:06Z",
+  "exit": 2,
+  "stdout_sha256": "260f72034176c55d342d21ef4e92066d7b5f006e7c7edcf9ddfd048f8d4b7b9a",
+  "stdout_bytes": 94,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": []
+ },
+ {
+  "case": "c1-counter score at freeze",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/c1-counter.py",
+   "--root",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "--freeze",
+   "31820472784284727546808acc31b3ea1e73919b",
+   "--rev",
+   "31820472784284727546808acc31b3ea1e73919b",
+   "--json-out",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/c1/at-freeze.json"
+  ],
+  "start_utc": "2026-10-28T16:55:06Z",
+  "end_utc": "2026-10-28T16:55:07Z",
+  "exit": 0,
+  "stdout_sha256": "fab5652fe8eef3aaefe0578b59a9ad105fe843de5e243b27d65bf2b6a77febb6",
+  "stdout_bytes": 495,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": []
+ },
+ {
+  "case": "heldout-gen-v4 --selftest",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-42/heldout-gen-v4.py",
+   "--seed",
+   "31820472784284727546808acc31b3ea1e73919b",
+   "--selftest",
+   "--scratch",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/hg/work"
+  ],
+  "start_utc": "2026-10-28T16:55:07Z",
+  "end_utc": "2026-10-28T16:55:08Z",
+  "exit": 0,
+  "stdout_sha256": "906b9e6f2fb135290a9b2633bc55913036250ca905a27fb1ebb4ab1d39298432",
+  "stdout_bytes": 49369,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": []
+ },
+ {
+  "case": "heldout-gen-v4 no --seed",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-42/heldout-gen-v4.py",
+   "--selftest"
+  ],
+  "start_utc": "2026-10-28T16:55:08Z",
+  "end_utc": "2026-10-28T16:55:08Z",
+  "exit": 2,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stderr_sha256": "bf1e1e09a12d04108d99a8c9fd57651548fdbaf94e3760fa84d7770d9e12d3dc",
+  "stderr_tail": [
+   "heldout-gen-v4.py: error: the following arguments are required: --seed"
+  ]
+ },
+ {
+  "case": "heldout-gen-v4 short seed",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-42/heldout-gen-v4.py",
+   "--seed",
+   "zz",
+   "--selftest"
+  ],
+  "start_utc": "2026-10-28T16:55:08Z",
+  "end_utc": "2026-10-28T16:55:08Z",
+  "exit": 1,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stderr_sha256": "48f1fa6621d52e2897530f66c90e6f938ac7fd284eb353c9cc7c774f8794dc31",
+  "stderr_tail": [
+   "--seed must be at least 16 hex characters, got 'zz'"
+  ]
+ },
+ {
+  "case": "heldout-gen-v4 unknown class",
+  "argv": [
+   "-B",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-42/heldout-gen-v4.py",
+   "--seed",
+   "31820472784284727546808acc31b3ea1e73919b",
+   "--out",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/hg/out-h3b",
+   "--classes",
+   "nope"
+  ],
+  "start_utc": "2026-10-28T16:55:08Z",
+  "end_utc": "2026-10-28T16:55:09Z",
+  "exit": 1,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stderr_sha256": "5c812e795a0ade3cf22e58e6b605550e62f37def9384d82406b1e442f796d075",
+  "stderr_tail": [
+   "unknown class(es): nope; known: clean-be, clean-le, clean-empty, escaping-symlink-removed, in-tree-symlink-metadata, mixed-symlinks, dep-missing-be, dep-missing-le, avm-marker-be-dropped, body-extractor-failure, partial-body-failure, no-squashfs-chunk, out-of-domain, partial-in-tree, partial-mixed, depth-limited-alone, depth-limited-in-tree, depth-limited-mixed, body-extractor-failure-le, failure-depth-limited, legacy-clean, legacy-dep-missing-be, legacy-dep-missing-le, legacy-body-failure, legacy-partial, container-depth-limited, unknown-residue, combo"
+  ]
+ },
+ {
+  "case": "frozen C2 scorer over rows.md",
+  "argv": [
+   "-B",
+   "/fast/scratch/hyaku/kaidoku-r46/R46W1RegF/check_rows.py",
+   "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-46/w1/R46W1RegF/rows.md"
+  ],
+  "start_utc": "2026-10-28T16:55:09Z",
+  "end_utc": "2026-10-28T16:55:09Z",
+  "exit": 0,
+  "stdout_sha256": "c7beba1b03bf9116dfb41be8e04813514ef99379c592439a036109eb582ae73f",
+  "stdout_bytes": 1173,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": []
+ }
+]

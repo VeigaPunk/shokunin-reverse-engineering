@@ -1,0 +1,10 @@
+--- attest.orig.py
++++ attest.mut.py
+@@ -202,6 +202,3 @@
+         exit_col = next((i for i, h in enumerate(header) if "exit" in h), None)
+-        bad_exit = [r for r in rows if exit_col is None or exit_col >= len(r)
+-                    or r[exit_col].strip("` ") not in {"0", "1", "2"}]
+-        if bad_exit:
+-            failing.append(f"exit cells outside {{0,1,2}}: {len(bad_exit)}")
++        bad_exit = []
+         if hard and any(len(r) != width for r in rows):

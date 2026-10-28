@@ -1,0 +1,530 @@
+{
+ "label": "frozen",
+ "base": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/frozen",
+ "baseline": {
+  "exit": 0,
+  "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=0",
+  "stdout_sha256": "0fa8c31a6419905fcb1971cb32631862be682014339a9e390634d360fd11872e",
+  "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+  "registry_sha256": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+  "gate_sha256": "64626cca85b2de25d495155318493b3b9eab73c6f31ad7b78f4e76c4344d772e",
+  "cases": {
+   "green": {
+    "expect": 0,
+    "got": 0,
+    "ok": true,
+    "failing": null
+   },
+   "red-unregistered": {
+    "expect": 1,
+    "got": 1,
+    "ok": true,
+    "failing": [
+     "unregistered: 1 of 2"
+    ]
+   },
+   "red-thin-exit": {
+    "expect": 1,
+    "got": 1,
+    "ok": true,
+    "failing": [
+     "thin verdict-map cells: 1"
+    ]
+   },
+   "red-prose-exit": {
+    "expect": 1,
+    "got": 1,
+    "ok": true,
+    "failing": [
+     "thin verdict-map cells: 1"
+    ]
+   },
+   "red-absent-at-rev": {
+    "expect": 1,
+    "got": 1,
+    "ok": true,
+    "failing": [
+     "registered but absent at rev: ['tools/round-46/ghost.py']"
+    ]
+   },
+   "red-fenced": {
+    "expect": 1,
+    "got": 1,
+    "ok": true,
+    "failing": [
+     "header != house schema (7 cells)",
+     "unregistered: 2 of 2"
+    ]
+   },
+   "red-html-comment": {
+    "expect": 1,
+    "got": 1,
+    "ok": true,
+    "failing": [
+     "header != house schema (7 cells)",
+     "unregistered: 2 of 2"
+    ]
+   },
+   "red-no-markers": {
+    "expect": 1,
+    "got": 1,
+    "ok": true,
+    "failing": [
+     "markers: 0 open, 0 close",
+     "header != house schema (7 cells)",
+     "unregistered: 2 of 2"
+    ]
+   },
+   "red-header-not-house": {
+    "expect": 1,
+    "got": 1,
+    "ok": true,
+    "failing": [
+     "header != house schema (7 cells)"
+    ]
+   },
+   "red-outside-section": {
+    "expect": 1,
+    "got": 1,
+    "ok": true,
+    "failing": [
+     "header != house schema (7 cells)",
+     "unregistered: 2 of 2"
+    ]
+   },
+   "red-substring-cell": {
+    "expect": 1,
+    "got": 1,
+    "ok": true,
+    "failing": [
+     "unregistered: 1 of 2"
+    ]
+   },
+   "red-v1-accepts-fenced": {
+    "expect": 0,
+    "got": 0,
+    "ok": true,
+    "failing": null
+   }
+  }
+ },
+ "mutants": [
+  {
+   "name": "m1-cell-substring-search",
+   "defect": "cell 0 matched by re.search instead of exact backtick equality (R45-CL14 b)",
+   "applied": true,
+   "mutant_sha256": "17dc082c65f403645812ecbb8001bff19674326393e43bd46223c730bbf0384d",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "            key = row[0].strip()\n            if key.startswith(\"`\") and key.endswith(\"`\") and len(key) > 2:\n                by_path.setdefault(key[1:-1], row)",
+   "anchor_new": "            m = PATHCELL.search(row[0])\n            if m:\n                by_path.setdefault(m.group(1), row)",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m1-cell-substring-search",
+   "utc": "2026-10-28T17:06:34Z",
+   "exit": 1,
+   "stdout_sha256": "df01f1f85faea8e01fcd73e2b316db1a9d2dda0f8560f2abb7fa04a35f626c8c",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=1",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {
+    "red-substring-cell": {
+     "baseline_got": 1,
+     "got": 0,
+     "expect": 1
+    }
+   },
+   "verdict": "KILLED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m2-fence-blind-parse",
+   "defect": "rows_in_section loses fence and HTML-comment awareness (R45-CL14 a/c)",
+   "applied": true,
+   "mutant_sha256": "50898dc7a2e446a9456a2bcfb4dd529a699f59c0cd37ddd52891bd93374f03ea",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "    \"\"\"Fence-aware and HTML-comment-aware parse of the bound section.\"\"\"\n    out, fence, comment = [], False, False\n    for line in mid.splitlines():\n        s = line.strip()\n        if s.startswith(\"```\") or s.startswith(\"~~~\"):\n            fence = not fence\n            continue\n        if fence:\n            continue\n        if comment:\n            if \"-->\" in s:\n                comment = False\n            continue\n        if s.startswith(\"<!--\"):\n            if \"-->\" not in s:\n                comment = True\n            continue\n        if not s.startswith(\"|\"):\n            continue\n        out.append([c.strip() for c in s.strip(\"|\").split(\"|\")])\n    return out",
+   "anchor_new": "    \"\"\"MUTANT m2: fence- and comment-blind parse of the bound section.\"\"\"\n    return [[c.strip() for c in line.strip().strip(\"|\").split(\"|\")]\n            for line in mid.splitlines() if line.strip().startswith(\"|\")]",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m2-fence-blind-parse",
+   "utc": "2026-10-28T17:06:35Z",
+   "exit": 0,
+   "stdout_sha256": "353ce77ac272a138d00191b97779e5d821ffcd11032e96e72a2e99049705bd27",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=0",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {},
+   "verdict": "SURVIVED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m3-drop-header-check",
+   "defect": "house-schema header equality dropped (R45-CL14 d)",
+   "applied": true,
+   "mutant_sha256": "ca29df2ca844207611b6f865776f8efd3d20ef741ba4217a64406eff59fe23e6",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "    if hard and spec[\"strict_header\"]:",
+   "anchor_new": "    if False and spec[\"strict_header\"]:",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m3-drop-header-check",
+   "utc": "2026-10-28T17:06:36Z",
+   "exit": 1,
+   "stdout_sha256": "a17e981b8d0d38397de552badbfdc3db9fc83172dfd1c7609592175c3e4feed8",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=1",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {
+    "red-header-not-house": {
+     "baseline_got": 1,
+     "got": 0,
+     "expect": 1
+    }
+   },
+   "verdict": "KILLED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m4-drop-absent-at-rev",
+   "defect": "presence arm dropped: a registered path need not exist at --rev (R45-CL2)",
+   "applied": false,
+   "error": "anchor count 0"
+  },
+  {
+   "name": "m5-exitmap-digit-only",
+   "defect": "EXITMAP reverted to \\\\b[012]\\\\b: any cell mentioning the digits binds them",
+   "applied": true,
+   "mutant_sha256": "805b54a251ac655f0f6686c3a13b508538dff864919fa8257c1deaea746a00c2",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "EXITMAP = re.compile(r\"\\b([012])\\s*[=:]\")",
+   "anchor_new": "EXITMAP = re.compile(r\"\\b([012])\\b\")",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m5-exitmap-digit-only",
+   "utc": "2026-10-28T17:06:37Z",
+   "exit": 1,
+   "stdout_sha256": "e49eb7baab4d8915f91784f7870acce80646b0f1f7cd56ace9f8544be9e8b6bf",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=1",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {
+    "red-prose-exit": {
+     "baseline_got": 1,
+     "got": 0,
+     "expect": 1
+    }
+   },
+   "verdict": "KILLED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m6-rows-outside-section",
+   "defect": "section bounds dropped: fence-aware rows from the whole SKILL.md register",
+   "applied": true,
+   "mutant_sha256": "ff2bf2db92a7bfe9469399fae55280ced3d4fa34fd3268fc9a00e45a816dc772",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "        cells = rows_in_section(mid)",
+   "anchor_new": "        cells = rows_in_section(skill)",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m6-rows-outside-section",
+   "utc": "2026-10-28T17:06:38Z",
+   "exit": 0,
+   "stdout_sha256": "a7d6c4a05387d5734e88e4e2370498fad5b6b1b98be73e6bd2e9f2b8cfdfe77f",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=0",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {},
+   "verdict": "SURVIVED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m7-close-before-open-allowed",
+   "defect": "split_section accepts a close marker that precedes the open marker",
+   "applied": true,
+   "mutant_sha256": "760458323946c893218708c09c97fbf0d3955d1ef4064e0636fb808bccad9e18",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "    if j < i:\n        return None, \"close marker precedes open marker\"\n",
+   "anchor_new": "",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m7-close-before-open-allowed",
+   "utc": "2026-10-28T17:06:39Z",
+   "exit": 0,
+   "stdout_sha256": "0fa8c31a6419905fcb1971cb32631862be682014339a9e390634d360fd11872e",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=0",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {},
+   "verdict": "SURVIVED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m8-last-row-wins",
+   "defect": "first-wins shadowing replaced by last-wins (duplicate cell 0)",
+   "applied": true,
+   "mutant_sha256": "6777701f3d7e81ff32c047c03386e5b77e5c40cf6f528af30f07808ef459c6f3",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "                by_path.setdefault(key[1:-1], row)",
+   "anchor_new": "                by_path[key[1:-1]] = row",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m8-last-row-wins",
+   "utc": "2026-10-28T17:06:40Z",
+   "exit": 0,
+   "stdout_sha256": "0fa8c31a6419905fcb1971cb32631862be682014339a9e390634d360fd11872e",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=0",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {},
+   "verdict": "SURVIVED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m9-battery-v2-green-requirement",
+   "defect": "battery acceptance changed from v2_green==0 to v2_green==7",
+   "applied": true,
+   "mutant_sha256": "dd3861840f1b2b26eae4ab150118a9826f243b78fee01493b7544a7f503b24f6",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "        for key, want in ((\"forgeries_total\", 7), (\"v1_green\", 7), (\"v2_green\", 0),\n                          (\"genuine_green\", 1)):",
+   "anchor_new": "        for key, want in ((\"forgeries_total\", 7), (\"v1_green\", 7), (\"v2_green\", 7),\n                          (\"genuine_green\", 1)):",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m9-battery-v2-green-requirement",
+   "utc": "2026-10-28T17:06:41Z",
+   "exit": 0,
+   "stdout_sha256": "0fa8c31a6419905fcb1971cb32631862be682014339a9e390634d360fd11872e",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=0",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {},
+   "verdict": "SURVIVED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m10-duplicate-markers-allowed",
+   "defect": "marker uniqueness relaxed to at-least-one, so two opens register",
+   "applied": true,
+   "mutant_sha256": "219ac550a3aa400b11c67d49235b1a9f7dddb1c1a9c051113c0f221479051ec6",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "    if skill.count(head) != 1 or skill.count(tail) != 1:",
+   "anchor_new": "    if skill.count(head) < 1 or skill.count(tail) < 1:",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m10-duplicate-markers-allowed",
+   "utc": "2026-10-28T17:06:42Z",
+   "exit": 0,
+   "stdout_sha256": "0fa8c31a6419905fcb1971cb32631862be682014339a9e390634d360fd11872e",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=0",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {},
+   "verdict": "SURVIVED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m9b-battery-check-neutered",
+   "defect": "battery acceptance loop emptied: a battery that accepts all forgeries still scores green",
+   "applied": true,
+   "mutant_sha256": "c0930b49bc27d00487c843951b8d7e2a5b052eb9ef61f744c9774afd2951e34a",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "        for key, want in ((\"forgeries_total\", 7), (\"v1_green\", 7), (\"v2_green\", 0),\n                          (\"genuine_green\", 1)):",
+   "anchor_new": "        for key, want in ():",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m9b-battery-check-neutered",
+   "utc": "2026-10-28T17:06:43Z",
+   "exit": 0,
+   "stdout_sha256": "0fa8c31a6419905fcb1971cb32631862be682014339a9e390634d360fd11872e",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=0",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {},
+   "verdict": "SURVIVED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m12-frozen-arm-ignored",
+   "defect": "the exit-2 frozen-touch verdict is dropped, so a tampered freeze is scored as met",
+   "applied": true,
+   "mutant_sha256": "327225e566aae6c79ffcca93e4063355af38428ce793ca0921797d597caae73c",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "    flat, fs = gate.freeze_state(root, freeze, rev, SPECS[spec_name][\"claims\"])\n    if flat == 2:",
+   "anchor_new": "    flat, fs = gate.freeze_state(root, freeze, rev, SPECS[spec_name][\"claims\"])\n    if False:",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m12-frozen-arm-ignored",
+   "utc": "2026-10-28T17:06:44Z",
+   "exit": 0,
+   "stdout_sha256": "0fa8c31a6419905fcb1971cb32631862be682014339a9e390634d360fd11872e",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=0",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {},
+   "verdict": "SURVIVED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  },
+  {
+   "name": "m11-empty-scope-accepted",
+   "defect": "load_scope accepts an empty path list, so a census naming nothing scores green",
+   "applied": true,
+   "mutant_sha256": "84df2fcccae7fe6c0aac12d363948da3fbeb741ced8c421b029f450c2acf3b9e",
+   "registry_sha256_before": "307506d51f04bb1212aedc34619b675adc378ec8cfeb1ea5d15ac53582b7a449",
+   "anchor_old": "    if not isinstance(paths, list) or not paths:",
+   "anchor_new": "    if not isinstance(paths, list):",
+   "cmd": "python3 -I -B registry.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --freeze 31820472784284727546808acc31b3ea1e73919b --rev 1e32827bd05328ee3b1e439d116008f40f078049 --selftest",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r46/R46W1MutC2Checks/mut-frozen-m11-empty-scope-accepted",
+   "utc": "2026-10-28T17:06:45Z",
+   "exit": 0,
+   "stdout_sha256": "0fa8c31a6419905fcb1971cb32631862be682014339a9e390634d360fd11872e",
+   "stdout_head": "REGISTRY_SELFTEST: cases=12 failures=0",
+   "stderr_head": "",
+   "selftest_cases": 12,
+   "flipped_cases": {},
+   "verdict": "SURVIVED",
+   "surviving_case_hits": [
+    "green",
+    "red-absent-at-rev",
+    "red-fenced",
+    "red-header-not-house",
+    "red-html-comment",
+    "red-no-markers",
+    "red-outside-section",
+    "red-prose-exit",
+    "red-substring-cell",
+    "red-thin-exit",
+    "red-unregistered",
+    "red-v1-accepts-fenced"
+   ]
+  }
+ ]
+}

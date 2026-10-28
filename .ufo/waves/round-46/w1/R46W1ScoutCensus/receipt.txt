@@ -1,0 +1,225 @@
+===== contiguous grep -oE =====
+utc: 2026-10-28T16:57:45Z
+command: bash -c ''$'\n''set -euo pipefail'$'\n''LANE=/home/vgpnk/Projects/shokunin/kaidoku-shokunin'$'\n''REV=31820472784284727546808acc31b3ea1e73919b'$'\n''S=/fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus'$'\n'': > "$S/literal.txt"'$'\n''for n in 41 42 43 44 45 46; do'$'\n''  git -C "$LANE" show "$REV:plans/round-$n-claims.md" \'$'\n''    | grep -oE "tools/round-4[1-6]/[A-Za-z0-9._/-]+\.(py|sh)" || true'$'\n''done | sort -u > "$S/literal.txt"'$'\n''wc -l "$S/literal.txt"'$'\n''echo "---"'$'\n''cat "$S/literal.txt"'$'\n' 
+exit: 0
+stdout_sha256: d24ab2b14e07c817cc92bb78f02ede72c57c5c4a6703528e58e508486064ccde
+stdout_bytes: 1214
+----- stdout -----
+38 /fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus/literal.txt
+---
+tools/round-41/c1-counter.py
+tools/round-41/c1-extra.py
+tools/round-41/c1-run.sh
+tools/round-41/c2-controls.py
+tools/round-41/c2-counter.py
+tools/round-41/fetch-vendor.py
+tools/round-41/gen-squashfs.py
+tools/round-41/heldout-gen-v3.py
+tools/round-41/indep-eval-v3.py
+tools/round-41/local-source-gate.py
+tools/round-41/mk-l-carriers.py
+tools/round-41/sqfs-list.py
+tools/round-41/sqfs-triage-v3.py
+tools/round-42/c1-counter.py
+tools/round-42/c1-run.sh
+tools/round-42/c2-controls.py
+tools/round-42/c2-counter.py
+tools/round-42/fetch-carrier.py
+tools/round-42/heldout-gen-v4.py
+tools/round-42/indep-eval-v4.py
+tools/round-42/prefile-gate.py
+tools/round-42/sqfs3-oracle.py
+tools/round-42/sqfs-triage-v4.py
+tools/round-42/unblob-logtee.sh
+tools/round-43/c1-counter.py
+tools/round-43/c2-score-r43.py
+tools/round-43/heldout-gen-v4r43.py
+tools/round-43/verify-copies-r43.py
+tools/round-44/c1-counter.py
+tools/round-44/c1-run.sh
+tools/round-44/c2-counter.py
+tools/round-45/c1-counter.py
+tools/round-45/c2-counter.py
+tools/round-45/frozen-path-preflight.py
+tools/round-46/attest.py
+tools/round-46/census.py
+tools/round-46/gate.py
+tools/round-46/registry.py
+
+
+===== brace-union present set =====
+utc: 2026-10-28T16:57:45Z
+command: python3 -c ''$'\n''import re, subprocess'$'\n''from pathlib import Path'$'\n''LANE="/home/vgpnk/Projects/shokunin/kaidoku-shokunin"'$'\n''REV="31820472784284727546808acc31b3ea1e73919b"'$'\n''S=Path("/fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus")'$'\n''literal=set((S/"literal.txt").read_text().split())'$'\n''BRACE=re.compile(r"(tools/round-4[1-6]/(?:[A-Za-z0-9._-]+/)*)\{([^{}]+)\}")'$'\n''brace=set()'$'\n''for n in range(41,47):'$'\n''    body=subprocess.check_output(["git","-C",LANE,"show",f"{REV}:plans/round-{n}-claims.md"], text=True)'$'\n''    for m in BRACE.finditer(body):'$'\n''        prefix, inner = m.group(1), m.group(2)'$'\n''        # the scope glob itself is tools/round-4[1-6]/**.{py,sh}; [1-6] is not a single round digit, so it does not match this regex'$'\n''        for part in inner.split(","):'$'\n''            part=part.strip()'$'\n''            if part.endswith(".py") or part.endswith(".sh"):'$'\n''                brace.add(prefix+part)'$'\n''named=sorted(literal|brace)'$'\n''present=[]; absent=[]'$'\n''for p in named:'$'\n''    ec=subprocess.run(["git","-C",LANE,"cat-file","-e",f"{REV}:{p}"]).returncode'$'\n''    (present if ec==0 else absent).append((p, ec))'$'\n''Path(S/"derived.txt").write_text("".join(p+"\n" for p,_ in present))'$'\n''print("named", len(named))'$'\n''print("present", len(present))'$'\n''print("absent", len(absent))'$'\n''print("--- present ---")'$'\n''for p,_ in present:'$'\n''    print(p)'$'\n''print("--- absent ---")'$'\n''for p,ec in absent:'$'\n''    print(f"{ec} {p}")'$'\n''print("--- brace not in literal ---")'$'\n''for p in sorted(brace-literal):'$'\n''    print(p)'$'\n' 
+exit: 0
+stdout_sha256: e6a160165c34de15523d2de955010c0bc75f928964ac9e42b626d0a680102f0e
+stdout_bytes: 1489
+----- stdout -----
+named 42
+present 42
+absent 0
+--- present ---
+tools/round-41/c1-counter.py
+tools/round-41/c1-extra.py
+tools/round-41/c1-run.sh
+tools/round-41/c2-controls.py
+tools/round-41/c2-counter.py
+tools/round-41/fetch-vendor.py
+tools/round-41/gen-squashfs.py
+tools/round-41/heldout-gen-v3.py
+tools/round-41/indep-eval-v3.py
+tools/round-41/local-source-gate.py
+tools/round-41/mk-l-carriers.py
+tools/round-41/sqfs-list.py
+tools/round-41/sqfs-triage-v3.py
+tools/round-42/c1-counter.py
+tools/round-42/c1-extra.py
+tools/round-42/c1-run.sh
+tools/round-42/c2-controls.py
+tools/round-42/c2-counter.py
+tools/round-42/fetch-carrier.py
+tools/round-42/heldout-gen-v4.py
+tools/round-42/indep-eval-v4.py
+tools/round-42/prefile-gate.py
+tools/round-42/sqfs-triage-v4.py
+tools/round-42/sqfs3-oracle.py
+tools/round-42/unblob-logtee.sh
+tools/round-43/build-copies-r43.py
+tools/round-43/c1-counter.py
+tools/round-43/c2-controls-r43.py
+tools/round-43/c2-score-r43.py
+tools/round-43/heldout-gen-v4r43.py
+tools/round-43/receipt-wrap.py
+tools/round-43/verify-copies-r43.py
+tools/round-44/c1-counter.py
+tools/round-44/c1-run.sh
+tools/round-44/c2-counter.py
+tools/round-45/c1-counter.py
+tools/round-45/c2-counter.py
+tools/round-45/frozen-path-preflight.py
+tools/round-46/attest.py
+tools/round-46/census.py
+tools/round-46/gate.py
+tools/round-46/registry.py
+--- absent ---
+--- brace not in literal ---
+tools/round-42/c1-extra.py
+tools/round-43/build-copies-r43.py
+tools/round-43/c2-controls-r43.py
+tools/round-43/receipt-wrap.py
+
+
+===== jq census paths =====
+utc: 2026-10-28T16:57:45Z
+command: bash -c ''$'\n''set -euo pipefail'$'\n''LANE=/home/vgpnk/Projects/shokunin/kaidoku-shokunin'$'\n''REV=31820472784284727546808acc31b3ea1e73919b'$'\n''S=/fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus'$'\n''git -C "$LANE" show "$REV:tools/round-46/census.json" > "$S/census.json"'$'\n''jq -r ".paths[]" "$S/census.json" | sort > "$S/json-paths.txt"'$'\n''echo "json_paths $(wc -l < "$S/json-paths.txt")"'$'\n''echo "named_but_absent $(jq -r ".named_but_absent | length" "$S/census.json")"'$'\n''echo "rule $(jq -r ".rule" "$S/census.json")"'$'\n' 
+exit: 0
+stdout_sha256: 06a332be67d166d8da109b744b85998e9c3c5527541fc6864ec7375e3a218537
+stdout_bytes: 172
+----- stdout -----
+json_paths 38
+named_but_absent 0
+rule every path matching tools/round-4[1-6]/**.{py,sh} named in a plans/round-4[1-6]-claims.md at --rev, restricted to paths present there
+
+
+===== diff literal vs json =====
+utc: 2026-10-28T16:57:45Z
+command: bash -c ''$'\n''set -euo pipefail'$'\n''S=/fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus'$'\n''echo "literal $(wc -l < "$S/literal.txt") json $(wc -l < "$S/json-paths.txt")"'$'\n''diff -u "$S/json-paths.txt" "$S/literal.txt" && echo "SYMMETRIC_DIFFERENCE_EMPTY"'$'\n''echo "--- comm literal-only / both / json-only ---"'$'\n''comm "$S/literal.txt" "$S/json-paths.txt"'$'\n' 
+exit: 0
+stdout_sha256: 42de239a00761e8983e1c33feb2c138ab0b5c80770e904879896b2b898a6534b
+stdout_bytes: 1313
+----- stdout -----
+literal 38 json 38
+SYMMETRIC_DIFFERENCE_EMPTY
+--- comm literal-only / both / json-only ---
+		tools/round-41/c1-counter.py
+		tools/round-41/c1-extra.py
+		tools/round-41/c1-run.sh
+		tools/round-41/c2-controls.py
+		tools/round-41/c2-counter.py
+		tools/round-41/fetch-vendor.py
+		tools/round-41/gen-squashfs.py
+		tools/round-41/heldout-gen-v3.py
+		tools/round-41/indep-eval-v3.py
+		tools/round-41/local-source-gate.py
+		tools/round-41/mk-l-carriers.py
+		tools/round-41/sqfs-list.py
+		tools/round-41/sqfs-triage-v3.py
+		tools/round-42/c1-counter.py
+		tools/round-42/c1-run.sh
+		tools/round-42/c2-controls.py
+		tools/round-42/c2-counter.py
+		tools/round-42/fetch-carrier.py
+		tools/round-42/heldout-gen-v4.py
+		tools/round-42/indep-eval-v4.py
+		tools/round-42/prefile-gate.py
+		tools/round-42/sqfs3-oracle.py
+		tools/round-42/sqfs-triage-v4.py
+		tools/round-42/unblob-logtee.sh
+		tools/round-43/c1-counter.py
+		tools/round-43/c2-score-r43.py
+		tools/round-43/heldout-gen-v4r43.py
+		tools/round-43/verify-copies-r43.py
+		tools/round-44/c1-counter.py
+		tools/round-44/c1-run.sh
+		tools/round-44/c2-counter.py
+		tools/round-45/c1-counter.py
+		tools/round-45/c2-counter.py
+		tools/round-45/frozen-path-preflight.py
+		tools/round-46/attest.py
+		tools/round-46/census.py
+		tools/round-46/gate.py
+		tools/round-46/registry.py
+
+
+===== diff derived vs json =====
+utc: 2026-10-28T16:57:45Z
+command: bash -c ''$'\n''set -euo pipefail'$'\n''S=/fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus'$'\n''echo "derived $(wc -l < "$S/derived.txt") json $(wc -l < "$S/json-paths.txt")"'$'\n''diff -u "$S/json-paths.txt" "$S/derived.txt" || true'$'\n''echo "--- derived only ---"'$'\n''comm -23 "$S/derived.txt" "$S/json-paths.txt"'$'\n''echo "--- json only ---"'$'\n''comm -13 "$S/derived.txt" "$S/json-paths.txt"'$'\n' 
+exit: 1
+stdout_sha256: 3a068a374c9d58cfdd73c51b4f5acc9d200c36a87f0071bb89987e9947cb2f9b
+stdout_bytes: 1174
+----- stdout -----
+derived 42 json 38
+--- /fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus/json-paths.txt	2026-10-28 13:57:45.739192051 -0300
++++ /fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus/derived.txt	2026-10-28 13:57:45.713526756 -0300
+@@ -12,6 +12,7 @@
+ tools/round-41/sqfs-list.py
+ tools/round-41/sqfs-triage-v3.py
+ tools/round-42/c1-counter.py
++tools/round-42/c1-extra.py
+ tools/round-42/c1-run.sh
+ tools/round-42/c2-controls.py
+ tools/round-42/c2-counter.py
+@@ -19,12 +20,15 @@
+ tools/round-42/heldout-gen-v4.py
+ tools/round-42/indep-eval-v4.py
+ tools/round-42/prefile-gate.py
+-tools/round-42/sqfs3-oracle.py
+ tools/round-42/sqfs-triage-v4.py
++tools/round-42/sqfs3-oracle.py
+ tools/round-42/unblob-logtee.sh
++tools/round-43/build-copies-r43.py
+ tools/round-43/c1-counter.py
++tools/round-43/c2-controls-r43.py
+ tools/round-43/c2-score-r43.py
+ tools/round-43/heldout-gen-v4r43.py
++tools/round-43/receipt-wrap.py
+ tools/round-43/verify-copies-r43.py
+ tools/round-44/c1-counter.py
+ tools/round-44/c1-run.sh
+--- derived only ---
+tools/round-42/c1-extra.py
+tools/round-42/sqfs3-oracle.py
+tools/round-43/build-copies-r43.py
+tools/round-43/c2-controls-r43.py
+tools/round-43/receipt-wrap.py
+
+
+===== cat-file difference and census =====
+utc: 2026-10-28T16:57:45Z
+command: bash -c ''$'\n''set -euo pipefail'$'\n''LANE=/home/vgpnk/Projects/shokunin/kaidoku-shokunin'$'\n''REV=31820472784284727546808acc31b3ea1e73919b'$'\n''S=/fast/scratch/hyaku/kaidoku-r46/R46W1ScoutCensus'$'\n''echo "NEGATIVE_CONTROL tools/round-46/does-not-exist.py"'$'\n''git -C "$LANE" cat-file -e "$REV:tools/round-46/does-not-exist.py"; echo "neg_exit $?"'$'\n''echo "DIFF_PATHS"'$'\n''while IFS= read -r p; do'$'\n''  if git -C "$LANE" cat-file -e "$REV:$p"; then ec=0; else ec=$?; fi'$'\n''  typ=$(git -C "$LANE" cat-file -t "$REV:$p" 2>/dev/null || echo MISSING)'$'\n''  echo "$ec $typ $p"'$'\n''done < <(comm -3 "$S/derived.txt" "$S/json-paths.txt" | sed "s/^\t//")'$'\n''echo "CENSUS_PATHS"'$'\n''fail=0'$'\n''n=0'$'\n''while IFS= read -r p; do'$'\n''  n=$((n+1))'$'\n''  if git -C "$LANE" cat-file -e "$REV:$p"; then ec=0; else ec=$?; fi'$'\n''  if [ "$ec" -ne 0 ]; then fail=$((fail+1)); echo "FAIL $ec $p"; fi'$'\n''done < "$S/json-paths.txt"'$'\n''echo "census_n $n census_cat_file_fail $fail"'$'\n' 
+exit: 128
+stdout_sha256: 24b7ee6709415d96e2f0c666cb8345e371c35c3b1d9d4b32b2c9d0c4379cd2ad
+stdout_bytes: 50
+----- stdout -----
+NEGATIVE_CONTROL tools/round-46/does-not-exist.py
+
+

@@ -1,0 +1,9 @@
+--- attest.orig.py
++++ attest.mut.py
+@@ -191,3 +191,5 @@
+         if hard:
+-            header_ok = header == spec["header"]
++            header_ok = (len(header) == len(spec["header"]) and
++                         all(h.startswith(s) for h, s in
++                             zip(header, spec["header"])))
+         else:

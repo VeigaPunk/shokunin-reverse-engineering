@@ -1,0 +1,102 @@
+P44-C2 — calibration counter: re-derive a frozen rubric's asserted values at REV.
+
+Implements `plans/round-44-claims.md` R44-C2 (calibration: a frozen rubric of
+self-assessment statements).  The counter
+
+  1. walks the freeze integrity (FREEZE must be an ancestor of REV; every frozen
+     path of the rubric — the rubric file itself included — must be untouched in
+     FREEZE..REV, except rubric-named paths whose repair is bound by the
+     rubric's `expected_edit` clause: the blob at REV must be the blob at FREEZE
+     plus the bound block, byte for byte (or line-identity over the appended
+     lines), never a suffix containment and never a raw numstat);
+  2. exports the measured revision's tree into a scratch clone (`--work`,
+     read-only) and runs every rubric entry's check argv there;
+  3. compares each check's observation with the rubric's asserted value.  A NOTE
+     IS NEVER EVIDENCE: an appended note can never make an entry pass.  A
+     repaired entry must re-derive its value from REV state through the
+     entry's `repair_command`; the re-derived value is compared with the
+     asserted value like any other observation;
+  4. exits 0 iff `mismatches == 0`, every entry was evaluable and at least one
+     entry was evaluated, 1 on a mismatch, 2 when the rubric is malformed, a
+     frozen file is absent, a frozen path changed, no entry was evaluable, or a
+     check cannot run.  Exit 2 means COULD-NOT-EVALUATE, never "not a pass":
+     it never counts toward the target.
+
+Usage
+-----
+    python3 -I -B c2-counter.py --root <LANE> --rev <REV> --freeze <FREEZE>         --work <SCRATCH> --json-out <OUT> [--rubric <FILE>]         [--export auto|full|<glob,glob>] [--seat <NAME>]
+
+    python3 -I -B c2-counter.py --root <LANE> --rev <BASE> --work <SCRATCH>         --json-out <OUT> --rubric <FILE> --pre-freeze
+
+    python3 -I -B c2-counter.py --selftest
+
+Exit codes: 0 = met/clean, 1 = failed (mismatch), 2 = could-not-evaluate.
+
+`--pre-freeze` runs the base census (CTL-C2-0's honest-stop gate): the freeze
+walk is reported but not enforced, because at the base the freeze is not yet an
+ancestor of the measured revision.  The receipt always carries `pre_freeze`,
+`entries_evaluated` and `mismatches`; a pre-freeze receipt is a census, never
+a claim score (`claim_score` is false in it).
+
+Rubric schema (frozen at `tools/round-44/c2-rubric.json`)
+---------------------------------------------------------
+Top level (object):
+
+    {
+      "predicate": "P44-C2",
+      "freeze": "<commit>",
+      "frozen_paths": ["SCORECARD.md", ...],        # or [{"path": ..., "expected_edit": {...}}]
+      "expected_edits": {"SCORECARD.md": {...}},    # optional map form
+      "frozen_dirs": ["tools/round-44"],            # directory pathspecs: every
+                                                    #   file under them that
+                                                    #   existed at FREEZE is frozen
+      "export_paths": ["corpus/knowledge"],          # optional globs
+      "entries": [ <entry>, ... ]
+    }
+
+Entry (object) — `check` and `command` are REQUIRED, `asserted` is REQUIRED:
+
+    {
+      "id": "<stable id>",
+      "check": "<check label: json | text | exit | descriptive label>",
+      "command": ["python3", "-I", "-B", "tools/round-44/c2-checks.py", "<kind>"],
+      "asserted": <value>,                          # the expected observation
+      "compare": "eq" | "set_eq" | "numeric_eq" | "subset" | "ge" | "le",
+      "observed_key": "observed",                   # JSON key holding the observation
+      "file": "SCORECARD.md",                       # rubric-named file (frozen subject)
+      "files": ["corpus/knowledge"],                # extra paths the check reads
+      "timeout": 300,
+      "repair_command": ["python3", "-I", "-B", "...", "<kind>"],  # optional
+      "expected_edit": {
+          "append": ["<line>", ...],       # line-identity binding (order matters)
+          "append_text": "<exact bytes>",  # byte-for-byte binding
+          "preserve": ["<sha256 of a cited line>"],  # cited-line digests
+          "marker": "<text>"               # a marker line must be present
+      }
+    }
+
+`expected_edit` binds a repair; it is never evidence.  The file's blob at REV
+must be the blob at FREEZE plus the bound block: `append_text` demands byte
+equality of the appended bytes, `append` demands line identity of the appended
+lines (blank separator lines ignored), and `preserve` demands that every cited
+line digest still occurs in the REV blob.  Nothing may be edited in place and
+nothing may be deleted (the freeze blob must be a prefix of the REV blob).  The
+bound file must be rubric-named.  A file that changed without a bound
+`expected_edit` is `frozen_path_changed` — exit 2, never a pass.
+
+Check-command contract: the command runs with the exported tree as its working
+directory and must print the observation on stdout.  `check: "json"` parses
+stdout as JSON and reads `observed_key` (default `observed`, then `value`,
+`result`, `match`, `ok`) from the object; `check: "text"` takes stdout verbatim
+(stripped); `check: "exit"` maps the exit status to a boolean.  A descriptive
+label behaves like `json` with a text fallback.  A command that cannot start
+(missing binary), times out, or exits non-zero with empty stdout cannot be
+evaluated — the whole score is then exit 2, never a pass.
+
+A NOTE IS NEVER EVIDENCE.  When an entry's check fails at REV, the counter
+does not accept an appended note as a repair.  The entry may declare a
+`repair_command`: a second argv that re-derives the repaired value from REV
+state (the note is read as text; the VALUE is re-derived independently).  Only
+when the re-derived value equals the asserted value is the entry repaired.
+Without a `repair_command` an appended note leaves the entry a mismatch.
+
