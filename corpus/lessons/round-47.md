@@ -1,7 +1,7 @@
 # Round 47 — an equality, not a containment; and the record re-derived against the repo
 
 Lane `kaidoku`, round 47, attempt 1. Base `13a9e9e1f7ca3b95f2cc11f24f69d0d92a21a8a5`. Freeze series
-`5017e1f7` → A1 `9018c53b` → A2 `62e33f7d` → A3 `2e4ae43` → A4 `1e2c310295` → A5 `07d2894e` (declared freeze).
+`5017e1f7` → A1 `9018c53b` → A2 `62e33f7d` → A3 `2e4ae43` → A4 `1e2c310295` → A5 `07d2894e` → A6 `f54b3b6d` (declared freeze).
 Instruments `tools/round-47/{exact,record}.py`; landing `SKILL.md` craft block 24, the SCORECARD
 corrections section and the two axis heads, S143/S144.
 
@@ -20,6 +20,7 @@ command it owned read the artefact, none read the claim.
 | M47-5 | `claim-that-failed-its-own-clause` — the first landed block 24 carried prose in the arm cells (`symbol: the arm cell must equal …`) while clause 5 binds the cell to exactly one token | `l1/scores/c1-at-L1.json` (exit 1, `arm cells not exact vocabulary tokens`) | clause 5, the exactness binding the round added — the defect was caught by measuring the landing against the freeze, not by prose review | block 24's arm cells now read `symbol`, `once`, `digest`, `order`; `c1-at-A2.json` and `c1-at-A4.json` read exit 0 |
 
 | M47-6 | `proxy-harm-recurrence` — block 24 first landed citing lessons and plans only, so command A read `citation_resolved_rules 23/24`, `depth_score 9.58`: a depth claim that lowers the depth proxy. This is round-46's M46-4 exactly, one round after `QUALITY.md` row 77 required a new craft block to cite a knowledge entry | the worktree re-derivation (`rule_blocks 24 resolved 23`) against the record's `24/24` cell | `QUALITY.md` row 77 — it existed and was not applied, so the rule's *enforcement* is what failed, not its content | the block now cites `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md:40-66`; the worktree re-derivation reads 24/24 before the landing commit |
+| M47-7 | `pin-couples-the-landing-to-the-freeze` — block 24 pins `exact.py`'s sha256, so every counter amendment invalidates the landed pin: after A6 the claim failed on `interpreter sha256 pin does not match the bytes at rev` and needed a second landing edit | `l1/scores/c1-at-A6.json` (exit 1, pin mismatch) | `none` — the pin is the point, and nothing told the author that its cost is one landing edit per amendment | the pin now reads A6's bytes (`01a4bca7…`); `c1-at-A7.json` exits 0; routed as R47-CL8 |
 ## Gate
 
 ### Sources opened this round (2026-10-28)
@@ -60,6 +61,7 @@ Status / recheck / used-by changes to existing rows this round: none. No row was
   claims matter; a round could correct two trivial atoms and exempt a serious one (bounded by
   `exempted <= 3`).
 - **R47-CL5.** The freeze is a series whenever the instrument is authored in the same round as the artefact it scores: five amendments before verdict here. A counter amendable after the landing cannot be told apart from one tuned to it, so the only defence is the red-before receipt per amendment, which this round commits.
+- **R47-CL8.** A self-pinning artefact couples the freeze series to the landing: each counter amendment forces a pin update in the artefact, so a round that amends its counter also rewrites the thing it grades. The alternative (pin the *interpretation*, not the bytes) loses the anti-stub guarantee.
 - **R47-CL4.** `mutations_sha256` is over the mutation *names* in order; a behaviour change that
   keeps the names (a mutation body edited to return the block unchanged) is invisible to the pin,
   though the battery's `v2_green` count would move.
