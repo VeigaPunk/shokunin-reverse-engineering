@@ -144,6 +144,19 @@ that carries this paragraph**, i.e. the first commit whose `record2.py` scores t
 Owned-axes score cells. No seat had scored a claim and no landing had been measured when
 A1 was made.
 
+## Freeze amendment A2 (disclosed; declared before any claim data)
+
+A1's counter still carried a false-red: the exit-0 classifier required a success token
+**and** the absence of any not-met token, so the legitimate row
+`tools/round-47/exact.py` (`0=met with failing empty; …`) was scored as naming no
+success meaning — the word `failing` in the prose tripped the guard. Requiring an edit
+there would force dishonest prose, which is the opposite of the claim. Red-before: the
+row list above (16 rows at the A1 bytes; that row is among them only because of the
+guard). A2 drops the guard and nothing else: a swap is still caught because the exit-0
+segment then carries the exit-2 text and no success token. **The declared freeze is the
+commit that carries this paragraph.** No seat had scored a claim and no landing had been
+measured when A2 was made.
+
 ## Controls (not frozen; committed as wave evidence)
 
 - `ctl-c1-0-do-nothing.json` — the counter at the freeze revision: block absent, registry

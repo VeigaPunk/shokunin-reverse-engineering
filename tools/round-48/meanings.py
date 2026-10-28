@@ -233,7 +233,7 @@ def meaning_classes(cell):
     if BANANA.search(" ".join(low.values())):
         return {"error": "verdict map names no meaning class (placeholder text)"}
     cls = {}
-    cls["0"] = "success" if SUCCESS.search(low["0"]) and not NOTMET.search(low["0"]) else None
+    cls["0"] = "success" if SUCCESS.search(low["0"]) else None
     cls["1"] = "not-met" if NOTMET.search(low["1"]) else None
     cls["2"] = "unevaluable" if UNEVAL.search(low["2"]) else None
     if cls["0"] is None:
