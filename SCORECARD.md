@@ -3645,3 +3645,17 @@ no digest pins (R46-CL4), and the registry validates shape rather than truth (R4
   (R44-CL2). R36-CL5, R40-CL2, R41-CL3 remain open.
 - **retired:** none. Coverage, depth and calibration stay tied at 10; no finite proxy saturates an
   axis, and the last capability entries are rounds 42–43.
+
+**Amendment F5/A4/B1 (append-only).** The measured freeze is `332f4884` (not `0425224`) and the
+measured revision is `58eb04b6`; both claims re-measure identically there
+(`l1/scores/{c1,c2}-at-A4.json`: `rule_blocks 23`, `rows 13`, `refs 9`, battery `9/9/0/1`;
+`scope_size 38`, `registered` 38, `thin []`, `absent_at_rev []`, battery `7/7/0/1`). Wave 1 found
+two HIGH instrument defects that the round closed: the frozen set was derived at the measured
+revision and could be shrunk by the revision it checked (R46-CL9), and the counters executed from
+the worktree with no dirty arm although the claims file promised one (R46-CL10) — F5 unions the set
+at both ends and refuses a dirty frozen path, with `cases=18 failures=0`. The R45-CL19 row's exit
+cell was wrong and is corrected (R46-CL11), and the L1's three fallback registry rows were replaced
+by the seat's source-derived rows (B1). **Open, and the round's sharpest limit:** the C2
+verdict-map clause binds the digits 0/1/2 rather than their meanings, so a contentless row with
+`0=banana; 1=nope; 2=whatever` still scores met (R46-CL7) — sixteen forgery classes caught, row
+content not checked.

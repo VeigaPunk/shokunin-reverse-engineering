@@ -3371,3 +3371,33 @@ cell/exit/presence checks). **The declared freeze is `0425224`**; the plan's own
 |---|---|---|---|---|---|---|
 | R46-C1 | depth — `SKILL.md` craft rule block 23 (13 routed rows, 9 line-selected citations, interpreter sha256 pin) and its discriminating counter | freeze exit 1, `marker_occurrences 0`, `block_present 0`, `rule_blocks 22`; v1 accepts all nine forgeries | exit 0, `rows 13`, `refs 9`, `unresolved []`, pin matches; battery `9 / 9 / 0 / 1` | `python3 -I -B tools/round-46/attest.py --root . --freeze 0425224 --rev 0425224` | `0425224` | met |
 | R46-C2 | calibration — the `<!-- instrument-registry v2 -->` section over the 38-instrument census, bound to presence at the revision | six of 38 instruments registered; v1 accepts all seven forgery classes | 38 of 38, `thin []`, `absent_at_rev []`; battery `7 / 7 / 0 / 1` | `python3 -I -B tools/round-46/registry.py --root . --freeze 0425224 --rev 0425224` | `0425224` | met |
+
+### Round 46 amendment (append-only) — what wave 1 found, and the instrument it forced
+
+The measured freeze is `332f48849966073e2f165c13f952eb4c8e165e39` (F5), not the `0425224` cited
+above; the rows and the pin are at `58eb04b6e5e886078121bb5e13fb95c687fe41bc` (A4) and the
+registry rows at `47b5e265`. Wave-1 falsification produced four changes the round then made, three
+of them HIGH:
+
+- **F2/F3 → F5 `332f4884`.** `gate.freeze_state` derived the frozen set at the measured revision, so
+  one commit rewriting its own `## Frozen paths` section to a decoy and editing a frozen tool scored
+  `exit 0 met_target true` (R46-CL9); and the counters execute from the worktree while reading
+  objects, with `gate.dirty()` written but never called although the claims file promised the dirty
+  scope (R46-CL10 — a replaced worktree `gate.py` flipped red to green with zero commits). F5
+  derives the set at both ends and unions it, and refuses a dirty frozen path; two selftest cases
+  (`red-frozen-section-shrink-is-exit-2`, `red-dirty-frozen-tool-is-exit-2`) take the attestation
+  count to `cases=18 failures=0`.
+- **A4 `58eb04b6`.** Block 23's R45-CL19 row advertised exit 2 for the `--squash` class while the
+  gate returns 0 (R46-CL11): the exit cell and arm cell now state the limit.
+- **B1 `47b5e265`.** The three registry rows the L1 wrote as a fallback were replaced by
+  `R46W1RegL`'s source-derived rows; the L1's own `tools/round-43/c1-counter.py` row carried two
+  errors (exit 1 also covers a pair miss with all bindings true; the key is `bindings_false`).
+- **R46-CL7 (HIGH, open).** The C2 verdict-map clause binds the DIGITS 0/1/2, not their meanings: a
+  row with empty purpose/self-test/pin/scope cells and `0=banana; 1=nope; 2=whatever` scores
+  `met_target true` with the battery green (reproduced by the L1 at `47b5e265`). Sixteen forgery
+  classes are caught; a contentless row is not one of them.
+- Re-measured at A4 with F5: R46-C1 exit 0 (`rule_blocks 23`, `rows 13`, `refs 9`, battery
+  `9/9/0/1`) and R46-C2 exit 0 (`scope_size 38`, `registered` 38, `thin []`, `absent_at_rev []`,
+  battery `7/7/0/1`); receipts `l1/scores/{c1,c2}-at-A4.json`. The freeze series is now five
+  commits (`3182047`, `50862e4a`, `65678df0`, `04252247`, `332f4884`), all before any verdict, and
+  that is the round's own M46-3 finding rather than a footnote to it.
