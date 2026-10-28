@@ -10,7 +10,8 @@ WAVE_DIR = os.path.join(ROOT, ".ufo/waves/round-45")
 FREEZE = "f762b7273e3f6ca3c710bb37d5de92a4a4417aec"
 LANDING = "e715263cb51b713c342ab992d527fe9d61d6f8ff"
 A1 = "1f4b27f82353d6544dc0c8048b3cfdadd8525d12"
-MEASURED = A1
+A2 = "fedd11bf5ff9fe42d061169f78d77df59af4eca1"
+MEASURED = "f59565b782c18b0eb691bec12f52d2f80d9f5032"  # amendment A3
 GODSPEED = """/skill:godspeed
 
 You are a Godspeed-enabled subagent.
@@ -56,7 +57,7 @@ A verdict per attack: `holds` (the artefact survives, with the command that show
 
 def T(name, agent, task):
     task = (task.replace("<ROOT>", ROOT).replace("<FREEZE>", FREEZE)
-            .replace("<LANDING>", LANDING).replace("<A1>", A1)
+            .replace("<LANDING>", LANDING).replace("<A1>", A1).replace("<A2>", A2)
             .replace("<MEASURED>", MEASURED).replace("<W>", W))
     return {"name": name, "agent": agent, "task": GODSPEED + task}
 

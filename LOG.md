@@ -3305,3 +3305,12 @@ freeze arm uses `git log --name-only`, which prints no diff for a merge commit, 
 resolution edit on a frozen path is invisible to them (the preflight's `-m --diff-merges=first-parent`
 and blob arms do catch it); the measured range contains no merge, so the score stands, and the fix
 cannot land this round because the counters are frozen.
+
+### Amendment A3 — the final measured revision
+
+A3 `f59565b782c18b0eb691bec12f52d2f80d9f5032` corrects the `c1-run.sh` registry row (no oracle arm;
+`--dry-run` exits 0), records the preflight's arm-isolation limit and its `--dirty-pathspec`
+false-clean in block 22, and routes R45-CL15/CL16. Both counters re-measured at A3: R45-C1 exit 0
+(`rule_blocks 22`, `block22_rows 10`, `block22_refs 8`, `unresolved []`), R45-C2 exit 0
+(`unregistered []`, `thin []`). A3 is the round's measured revision; every earlier measurement
+(`e715263c`, `1f4b27f8`, `fedd11bf`) reports the same values.

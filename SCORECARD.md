@@ -3579,3 +3579,14 @@ R45-C1 exit 0, `rule_blocks 22`, `block22_rows 10`, `block22_refs 8`, `block22_u
 `unregistered []`, `thin []` (`…/c2-at-A2.json`). The gate over both frozen pathspecs from the freeze to
 A2 is `clean`, exit 0 (`…/l1/preflight-round45-frozen-both.json`). The measured revision for the round
 is therefore A2; `1f4b27f8` is the first met measurement, and every value is identical at both.
+
+**Amendment A3 and the final measured revision (append-only).** A3 `f59565b782c18b0eb691bec12f52d2f80d9f5032`
+corrects the `tools/round-44/c1-run.sh` registry row (the script does not run the oracle, and
+`--dry-run` exits 0 without writing), states in block 22 that the preflight's red cases are
+arm-covering but not arm-isolating and that `--dirty-pathspec` replaces the dirty arm's scope
+(a false-clean, routed), and routes R45-CL15/CL16. Re-measured at A3: R45-C1 exit 0, `rule_blocks 22`,
+`block22_rows 10`, `block22_refs 8`, `unresolved []`, `met_target true`
+(`.ufo/waves/round-45/l1/scores/c1-at-A3.json`); R45-C2 exit 0, `unregistered []`, `thin []`,
+`met_target true` (`…/c2-at-A3.json`). **The measured revision for the round is A3**; the values are
+identical at `e715263c`, `1f4b27f8`, `fedd11bf` and A3, and both counters are shown
+non-discriminating by wave 1 (R45-CL13/C14) — the verdicts are `met (instrument non-discriminating)`.
