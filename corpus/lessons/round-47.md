@@ -33,6 +33,22 @@ command it owned read the artefact, none read the claim.
   control must be `--profile v2 --no-battery`, which is what `controls/ctl-c1-1-v2-profile.json` runs.
   A profile is not a pure selector while the battery result is applied in both profiles.
 
+- **R47-CL10 (HIGH; wave-1 `CritGold`).** Both frozen predicates are satisfiable by an artefact
+  that does no work. The C1 side: four rows naming the *wrong* arm for every routed defect, `n/a`
+  holes and `0` exits pass, because clause 5 binds membership and clause 3 binds only `{0,1,2}`.
+  The C2 side: replacing the last two round sections with tautologies (seats read off the dispatch
+  files, `git log X..X` "is empty", one existing path, one backticked tip) leaves `mismatches []`
+  with `atoms 10` — the counter measures *consistency*, never *completeness*, so a record that
+  omits its claims scores clean. Both scored exit 0 at the fixture (`CritGold/receipts/`). Round 48
+  must bind a minimum atom count per class and a per-row expected arm keyed by routed id, or say
+  plainly that the counter grades form only.
+- **R47-CL11 (MEDIUM; wave-1 `CritC1Predicate`).** The frozen plan names A1 as the declared freeze
+  and every later amendment touched `tools/round-47/`, so the plan's own documented command exits 2
+  `frozen_path_changed` at the tip. `SCORECARD.md` and `LOG.md` name A6 `f54b3b6d` as authoritative;
+  the plan cannot be corrected because it is frozen. A round whose freeze is a series should name
+  the freeze in the artefact the counter does not freeze, or the plan should declare the series as
+  open-ended.
+
 ## Gate
 
 ### Sources opened this round (2026-10-28)
