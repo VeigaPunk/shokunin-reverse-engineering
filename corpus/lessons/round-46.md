@@ -68,6 +68,24 @@ round-46 counters cite S141's `-z` statement only indirectly (the history arm us
   about. The order is correct today and nothing in the code enforces it; one argument reorder
   silently undoes the arm. Wave-1 seat `R46W1ScribeSource` measured this on a deterministic
   merge fixture. Round 47: assert the flag order in a selftest case.
+- **R46-CL9 (HIGH; wave-1 `R46W1RevRestoredUnion` F2, closed the same round).** `gate.freeze_state`
+  derived the frozen set at the MEASURED revision, so one commit that rewrote its own
+  `## Frozen paths` section to a decoy and edited a frozen tool read `exit 0 met_target true`
+  (`frozen_derived ["does/not/exist/"]`). This is R45-CL18 re-entering through a different door:
+  the scope the arms read was controlled by the bytes they check. **Closed in F5** `332f4884`:
+  derive at both ends and union, so a tip cannot shrink its own scope; selftest case
+  `red-frozen-section-shrink-is-exit-2`.
+- **R46-CL10 (HIGH; wave-1 `R46W1RevRestoredUnion` F3, closed the same round).** The counters read
+  Git objects but EXECUTE from the worktree, and `gate.dirty()` had no caller although the claims
+  file asserted the frozen set feeds "the dirty scope". A replaced worktree `gate.py` flipped a
+  red verdict to green with zero commits. **Closed in F5**: `freeze_state` now refuses a dirty
+  frozen path (`reason: frozen_worktree_dirty`); selftest case
+  `red-dirty-frozen-tool-is-exit-2`. The residual is stated: the executing bytes are not pinned,
+  only the examined ones.
+- **R46-CL11 (MEDIUM; wave-1 `R46W1RevGateMerge` F1, corrected the same round).** Block 23's
+  R45-CL19 row advertised exit 2 for the `--squash` class while the gate returns 0 (both trees
+  identical, nothing to read). Amendment A4 `58eb04b6` changes the row's exit cell to 0 and its
+  arm cell to `none`, stating the limit instead of implying detection.
 - **R46-CL7 (HIGH; wave-1 `R46W1RegL`).** The C2 clause that was supposed to close
   R45-CL14 (d) binds the DIGITS 0/1/2, not their meanings: a row whose `purpose`, `self-test`,
   `pinned-value` and `write-scope` cells are empty and whose verdict map reads
