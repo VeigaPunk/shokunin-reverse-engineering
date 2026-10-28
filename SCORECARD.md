@@ -3749,12 +3749,6 @@ Limits: the C2 oracle code is loaded from `--rev`, but its `gate.py` helper rema
 - corrects seats round-47: 1 wave, 75 seats total — the round-47 section states no seat total; `.ufo/waves/round-47/w1-dispatch.json` reports `counts.spawn 75`.
 - corrects quote round-47: exempted 1 — the round-47 section quotes `exempted 2 <= 3`, while the cited `c2-at-A7` receipt reads `exempted 1`.
 
-## Record corrections — round 49
-
-- A9 verdict=rejected-harmed source=corpus/lessons/round-48-verifier-spotcheck.md calibration=harmed
-
-The round-48 entry above records calibration `10 → 10`; its lesson header named a freeze that the round had amended away, and the non-author closure rejected round 48 because calibration was harmed by that false declaration (quality was also harmed, by the S145/S146 record errors). The line above records that verdict beside the unchanged round-48 entry, append-only; it claims no new score. The round-49 counter re-derives the nine atoms behind it (`corpus/lessons/round-49.md` `## Corrections to round 48`, the search-log entries in `corpus/SOURCES.md`, and this line) from committed bytes. Still routed, not repaired: closure defects 5 and 6 (`tools/round-48/census2.json`, the worktree-sourced `gate.py` import).
-
 ## Round 49 — one freeze, SquashFS v1/v2 to Core, nine record atoms re-derived (met under the frozen counters; counter misses reported)
 
 Base `e4f2cfa5ebff863a4d5d13c040cb0c41be6a40f9`. **Declared freeze:** `decc5697bfd4ec1e9de4a762ad199d9bd9c4230d` (one commit, no amendment series). Waves: 48 + 40 = 88 seats (`.ufo/waves/round-49/w1/`, `w2/`); one seat (`C2SourcesReopen`) returned a progress line only.
@@ -3770,3 +3764,9 @@ Limits: the committed C1 receipt does not authenticate writer or round (relabell
 
 - **planned (round 50):** repair-first on the wave-2 counter misses (C2 A7/A8 quantifiers, duplicate keys, the lesson's own freeze header; C1 freeze walk for quoted names/copy status), the ten further round-48 mismatches (`w2/W2C2Scorecard.md`, `w1/C2SelfAssess.md`), and one new-data v1/v2 carrier if a published image becomes fetchable.
 - **retired:** none.
+
+## Record corrections — round 49
+
+- A9 verdict=rejected-harmed source=corpus/lessons/round-48-verifier-spotcheck.md calibration=harmed
+
+The round-48 entry above records calibration `10 → 10`; its lesson header named a freeze that the round had amended away, and the non-author closure rejected round 48 because calibration was harmed by that false declaration (quality was also harmed, by the S145/S146 record errors). The line above records that verdict beside the unchanged round-48 entry, append-only; it claims no new score. The round-49 counter re-derives the nine atoms behind it (`corpus/lessons/round-49.md` `## Corrections to round 48`, the search-log entries in `corpus/SOURCES.md`, and this line) from committed bytes. Still routed, not repaired: closure defects 5 and 6 (`tools/round-48/census2.json`, the worktree-sourced `gate.py` import).
