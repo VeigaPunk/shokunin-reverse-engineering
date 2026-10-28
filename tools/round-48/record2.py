@@ -395,16 +395,13 @@ def _m_seats_moved(card, ctx):
 
 
 def _m_quote_off(card, ctx):
-    spans = _round_sections(card)
-    if not spans:
-        return card, {}
-    rnd, start, end = spans[-1]
-    body = card[start:end]
-    m = QUOTE.search(body)
-    if not m:
-        return card, {}
-    fixed = body[:m.start()] + f"{m.group(1)} {int(m.group(2)) + 1}" + body[m.end():]
-    return card[:start] + fixed + card[end:], {}
+    for rnd, start, end in reversed(_round_sections(card)):
+        body = card[start:end]
+        m = QUOTE.search(body)
+        if m:
+            fixed = body[:m.start()] + f"{m.group(1)} {int(m.group(2)) + 1}" + body[m.end():]
+            return card[:start] + fixed + card[end:], {}
+    return card, {}
 
 
 def _m_axes_cell_off(card, ctx):

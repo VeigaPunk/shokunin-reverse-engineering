@@ -243,6 +243,19 @@ to. Red-before: `.ufo/waves/round-48/controls/ctl-c2-a7-before.json` (`v2_green 
 `v3_green 3 != 0`). **The declared freeze is the commit that carries this paragraph.** No
 seat had scored a claim and no landing had been measured when A7 was made.
 
+## Freeze amendment A8 (disclosed; two battery fixtures, declared before any claim data)
+
+The A7 pre-flight exposed two remaining fixture no-ops on a green record: (a) the
+round-48 seat sentence was split across a newline, so `gold-tautology` retained only the
+`Waves: 75 + 0 = 75` half and the round-47 oracle rejected it for **no seats atom** before
+the R48 floor ran; (b) `quote-off-by-one` searched only the newest round section, which has
+no quoted receipt number, and therefore changed nothing. A8 keeps the whole seat token on
+one line in the round-48 record and makes the forgery choose the newest in-scope round
+section that actually quotes a receipt number. Red-before: `.ufo/waves/round-48/l1/pf2/`
+pre-flight (`gold-tautology` oracle exit 1 with `atoms_by_class.seats 0`; quote mutation
+was byte-identical). **The declared freeze is the commit that carries this paragraph.**
+No seat had scored a claim and no landing had been measured when A8 was made.
+
 ## Controls (not frozen; committed as wave evidence)
 
 - `ctl-c1-0-do-nothing.json` — the counter at the freeze revision: block absent, registry
