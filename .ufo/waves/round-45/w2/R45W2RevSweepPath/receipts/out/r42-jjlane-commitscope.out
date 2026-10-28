@@ -1,0 +1,39 @@
+    case $status in
+      A|M|D|T) ;;
+      *) err "unexpected Git tree status in diff for $hash"; rc=1; break ;;
+    esac
+    seen=1
+    repo_path_allowed "$cpath" || { rc=1; break; }
+    matched=0
+    for rp in "${req[@]}"; do
+      case $cpath in "$rp"|"$rp"/*) matched=1; break ;; esac
+    done
+    if [ "$matched" -eq 0 ]; then
+      err "commit changed a path outside the request: $cpath"
+      rc=1
+      break
+    fi
+    if [ "$status" = D ] && { [ -e "$cpath" ] || [ -L "$cpath" ]; }; then
+  # Stamp the working-copy author first: `jj commit <paths>` splits @ and keeps
+  # @'s existing author, so a bare --config would only fix the committer.
+  "$JJ_BIN" --config "$AUTOTRACK_OFF" \
+    --config "user.name=${id}-shokunin" --config "user.email=${id}@shokunin.local" \
+    metaedit --update-author 2>"$LOCKBASE.err" || {
+      err "metaedit failed: $(head -3 "$LOCKBASE.err" | tr '\n' ' ')"; exit 1; }
+  "$JJ_BIN" --config "$AUTOTRACK_OFF" \
+    --config "user.name=${id}-shokunin" --config "user.email=${id}@shokunin.local" \
+    commit -m "$msg" -- "${fs_req[@]}" 2>"$LOCKBASE.err" || {
+      err "jj commit failed: $(head -3 "$LOCKBASE.err" | tr '\n' ' ')"; exit 1; }
+  hash=$(jj_ids '@-' commit_id | head -1)
+  [ -n "$hash" ] || { err "cannot read committed hash"; exit 1; }
+
+  # Sweep guards (the bookmark stays put on any violation):
+  # Validate the exact candidate before advancing the bookmark: direct parent,
+  # conflict-free status, and every NUL-delimited Git tree path are checked.
+  candidate_is_child_of "$hash" "$tip" || exit 1
+  candidate_is_conflict_free "$hash" || exit 1
+  validate_change_scope "$tip" "$hash" || exit 1
+
+  "$JJ_BIN" --ignore-working-copy bookmark set "$branch" -r "$hash" >/dev/null 2>&1 \
+    || { err "bookmark set failed"; exit 1; }
+  own=$hash

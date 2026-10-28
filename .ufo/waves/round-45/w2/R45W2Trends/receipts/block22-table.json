@@ -1,0 +1,10 @@
+{
+ "tag": "block22-table",
+ "utc": "2026-10-28T16:03:49Z",
+ "cmd": "git show A3:SKILL.md, table rows 3-13",
+ "exit": 0,
+ "stdout_sha256": "0ac03176d744fd32aeac6b84dfe2640e615d53de2537a426e10dea72cafe91fd",
+ "stdout": "  | --- | --- | --- | --- |\n  | any commit in FREEZE..REV touches a frozen path | commit (git log --name-status, S141) | 1 | `touched[]`, one record per path with commit and status |\n  | a frozen path was touched and later restored to its FREEZE bytes | restored (commit history, never tip equality) | 1 | `restored[]`, disjoint from `blob_changed[]` |\n  | a frozen path's blob at REV differs from its blob at FREEZE | blob or frozen subtree oid (ls-tree plus rev-parse on both revisions) | 1 | `blob_changed[]`; a directory entry is its tree oid, not a file |\n  | the worktree is dirty under the frozen pathspec | dirty (git status --porcelain -z, S140) | 1 | `dirty[]` from `--check-dirty` |\n  | a frozen path is a directory at FREEZE and no pathspec covers it | pathspec (`--require-pathspec`) | 2 | `uncovered_frozen_dirs[]`; a whole-tree scan is refused |\n  | one bulk commit sweeps N frozen paths beside unrelated paths | commit plus dirty (the M45-1 shape) | 1 | `touched[]` count and the frozen subset |\n  | FREEZE is not an ancestor of REV | revision guard | 2 | `reason` |\n  | an unknown freeze or rev is named | revision guard | 2 | `reason` |\n  | no touch, no dirty file and every frozen blob equal | all arms | 0 | `verdict clean` |\n  | FREEZE equals REV (empty range) | all arms | 0 | `verdict clean` |\n",
+ "stderr": "",
+ "attack": "quality improved"
+}

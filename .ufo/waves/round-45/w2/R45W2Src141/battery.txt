@@ -1,0 +1,43 @@
+### A-ascii-touched  utc=2026-10-28T16:04:24Z
+{"blob_changed": ["frozen", "frozen/a.txt"], "dirty": [], "freeze": "93981d58830cee7ec143636b6395f4c24a11f33a", "freeze_paths": ["frozen"], "gate": "frozen-path-preflight", "pathspec": ["frozen/"], "restored": [], "rev": "95fe287bf9dd7931aafb0ae992c48b6f437d2405", "touched": [{"commit": "95fe287bf9dd7931aafb0ae992c48b6f437d2405", "path": "frozen/a.txt", "status": "M"}], "verdict": "frozen_path_changed"}
+exit=1
+### B-ascii-clean  utc=2026-10-28T16:04:24Z
+{"blob_changed": [], "dirty": [], "freeze": "93981d58830cee7ec143636b6395f4c24a11f33a", "freeze_paths": ["frozen"], "gate": "frozen-path-preflight", "pathspec": ["frozen/"], "restored": [], "rev": "4e5afa54abfec5dc14cb2bf7b63ad6cf297a3ac7", "touched": [], "verdict": "clean"}
+exit=0
+### C-quoted frozen name, utc=2026-10-28T16:04:24Z
+-- plain git log --name-status (bytes) --
+0000000  \0   0   9   e   1   c   5   8   c   0   6   0   5   0   f   1
+0000020   0   7   e   8   3   5   f   a   a   3   6   2   e   b   d   2
+0000040   5   9   2   4   f   4   4   c   6  \n  \n   M  \t   "   f   r
+0000060   o   z   e   n   /   \   3   0   3   \   2   7   4   .   t   x
+0000100   t   "  \n
+0000103
+-- status of rev-parse on the receipt's own path --
+rev-parse-quoted-exit=128
+rev-parse-raw-exit=0
+### C-quoted-touched  utc=2026-10-28T16:04:24Z
+{"blob_changed": ["frozen"], "dirty": [], "freeze": "65be162fa9bed7eb1ac13dc217695c1903a4a219", "freeze_paths": ["frozen"], "gate": "frozen-path-preflight", "pathspec": ["frozen/"], "restored": [], "rev": "09e1c58c06050f107e835faa362ebd25924f44c6", "touched": [{"commit": "09e1c58c06050f107e835faa362ebd25924f44c6", "path": "\"frozen/\\303\\274.txt\"", "status": "M"}], "verdict": "frozen_path_changed"}
+exit=1
+### D -z output, utc=2026-10-28T16:04:24Z
+0000000  \0   0   9   e   1   c   5   8   c   0   6   0   5   0   f   1
+0000020   0   7   e   8   3   5   f   a   a   3   6   2   e   b   d   2
+0000040   5   9   2   4   f   4   4   c   6  \0  \n   M  \0   f   r   o
+0000060   z   e   n   / 303 274   .   t   x   t  \0
+0000073
+exit=0
+### E newline name, plain name-status, utc=2026-10-28T16:04:24Z
+^@a5570c48da4558f78a7325d8394b7dc926febe43$
+$
+M^I"frozen/a\nb.txt"$
+-- -z --
+0000000  \0   a   5   5   7   0   c   4   8   d   a   4   5   5   8   f
+0000020   7   8   a   7   3   2   5   d   8   3   9   4   b   7   d   c
+0000040   9   2   6   f   e   b   e   4   3  \0  \n   M  \0   f   r   o
+0000060   z   e   n   /   a  \n   b   .   t   x   t  \0
+0000074
+### E-newline-touched  utc=2026-10-28T16:04:24Z
+{"blob_changed": ["frozen"], "dirty": [], "freeze": "5e9a4ca42ed888c97e1a76d71f45afe490b8208d", "freeze_paths": ["frozen"], "gate": "frozen-path-preflight", "pathspec": ["frozen/"], "restored": [], "rev": "a5570c48da4558f78a7325d8394b7dc926febe43", "touched": [{"commit": "a5570c48da4558f78a7325d8394b7dc926febe43", "path": "\"frozen/a\\nb.txt\"", "status": "M"}], "verdict": "frozen_path_changed"}
+exit=1
+### F-quoted-restored  utc=2026-10-28T16:04:24Z
+{"blob_changed": [], "dirty": [], "freeze": "65be162fa9bed7eb1ac13dc217695c1903a4a219", "freeze_paths": ["frozen"], "gate": "frozen-path-preflight", "pathspec": ["frozen/"], "restored": [], "rev": "a5826b4c9396eebdafe77735b85ca411a40c71fb", "touched": [{"commit": "a5826b4c9396eebdafe77735b85ca411a40c71fb", "path": "\"frozen/\\303\\274.txt\"", "status": "M"}, {"commit": "c290d24a74e16dbca7d232f7a1ee2bc7992b2b32", "path": "\"frozen/\\303\\274.txt\"", "status": "M"}], "verdict": "frozen_path_changed"}
+exit=1

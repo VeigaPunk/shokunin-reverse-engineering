@@ -1,0 +1,26 @@
+verify)
+  lane=${1:?lane}; n=$(claim "$lane" round) || die "$lane not claimed"
+  rep=".ufo/reports/round-$n/$lane.md"; cwd=${LANE_CWD[$lane]}
+  report_of "$lane" "$n" || { echo "FAIL report_of (missing, unchanged, no SHONEN heading, or < ${MIN_REPORT_BYTES}B): $rep"; exit 1; }
+  if [ -n "$(git -C "$FLEET" status --porcelain -- "$rep")" ] || [ -z "$(git -C "$FLEET" log -1 --format=%H -- "$rep")" ]; then
+    ev "sweep lane=$lane round=$n :: report uncommitted at return (attribution defect)"
+    "$H/fleet-commit.sh" --as "$lane" -m "round-$n: $lane report (hyaku sweep: L1 returned without committing; attribution defect)" -- "$rep" \
+      || { echo "FAIL sweep commit"; exit 1; }
+    echo "SWEPT report (attribution defect recorded)"
+  fi
+  # One captured state line (pure git). A lane the L1 left unpushed gets a
+  # fast-forward push only: a rebase here would orphan the hash the report cites.
+  st=$(jjl state "$cwd" 2>&1) || { echo "FAIL lane state: $st"; exit 1; }
+  ahead=$(st_field "$st" ahead)
+  if [ "$ahead" != 0 ]; then
+    if [ -d "$cwd/.jj" ]; then pushcmd=(jjl push --no-rebase "$cwd"); else pushcmd=(git -C "$cwd" push -q); fi
+    if "${pushcmd[@]}" >/dev/null; then ev "durability-push lane=$lane round=$n"; echo "PUSHED lane repo (L1 left it unpushed)"
+    else ev "push-failed lane=$lane round=$n"; echo "FAIL lane has $ahead unpushed commit(s) and a fast-forward push failed: not landed"; exit 1; fi
+  fi
+  [ -n "$(git -C "$cwd" status --porcelain)" ] && echo "WARN lane repo has uncommitted changes: $(git -C "$cwd" status --porcelain | wc -l) paths"
+  if [ "$(git -C "$FLEET" rev-list --count origin/master..HEAD 2>/dev/null || echo 0)" != 0 ]; then
+    "$H/fleet-commit.sh" --as "$lane" -m unused -- "$rep" >/dev/null 2>&1 || ev "fleet-push-pending"
+  fi
+  log "complete $lane round=$n; hyaku-inline attempt=$(claim "$lane" attempt)"
+  ev "complete lane=$lane round=$n attempt=$(claim "$lane" attempt)"
+  echo "OK $lane r$n landed: report $(git -C "$FLEET" log -1 --format=%h -- "$rep") lane tip $(lane_tip "$cwd" | cut -c1-9)"

@@ -1,0 +1,55 @@
+
+### fx3-control: a real git pre-push hook blocks git push
+toplevel_ok
+$ git push -q origin HEAD:refs/heads/ctl
+error: failed to push some refs to '/fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/origin3.git'
+rc=1
+hooks3push.log: 1
+
+### fx4: the REAL fleet-commit.sh, lane-side blocking pre-commit hook present
+toplevel_ok
+jj_rc=0 .jj=yes
+bm_master=0
+bm_main=1
+$ env SHOKUNIN_ROOT=/fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/fx4-fleet HYAKU_STATE=/fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/state4 FLEET_REMOTE=origin FLEET_BRANCH=master FLEET_MIRROR=main FLEET_PUSH_BACKOFF=0 bash /home/vgpnk/Projects/shokunin/scripts/hyaku/fleet-commit.sh --as kaidoku -m round-99: kaidoku report (hyaku sweep) -- fleet-report.md
+committed 0a9452ec303366bdfe1f42cc771431c0716c9c9f
+rc=0
+hooks4.log: none
+fleet tip:
+0a9452e round-99: kaidoku report (hyaku sweep)
+c65f56d base
+committed paths:
+fleet-report.md
+
+### fx5: the REAL jj-lane.sh commit, hook present, bulk DIRECTORY pathspec
+toplevel_ok
+branch=main
+$ bash /home/vgpnk/Projects/shokunin/scripts/hyaku/jj-lane.sh init /fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/fx5-lane fxlane
+Done importing changes from the underlying Git repo.
+Hint: The following remote bookmarks aren't associated with the existing local bookmarks:
+  main@origin
+Hint: Run the following command to keep local bookmarks updated on future pulls:
+  jj bookmark track main@origin
+Initialized repo in "."
+Warning: This setting will only impact future commits.
+The author of the working copy will stay "CritC3 <critc3@scratch.local>".
+To change the working copy author, use "jj metaedit --update-author".
+Warning: This setting will only impact future commits.
+The author of the working copy will stay "CritC3 <critc3@scratch.local>".
+To change the working copy author, use "jj metaedit --update-author".
+state branch=main local=dd75c2ccd27c2792872d2aac9b7f28319c6fa5ef remote=dd75c2ccd27c2792872d2aac9b7f28319c6fa5ef ahead=0 behind=0 head=attached tracked=0 untracked=0
+rc=0
+
+### fx5a: a bare '.' pathspec
+$ bash /home/vgpnk/Projects/shokunin/scripts/hyaku/jj-lane.sh commit /fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/fx5-lane --as fxlane -m bulk -- .
+jj-lane: path escapes the lane root: .
+rc=1
+
+### fx5b: directory pathspecs covering a frozen tools dir (the M45-1 shape)
+$ bash /home/vgpnk/Projects/shokunin/scripts/hyaku/jj-lane.sh commit /fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/fx5-lane --as fxlane -m bulk dirs -- .ufo/waves/round-44 tools/round-44
+landed 239f25c1b5cff79e4131bc31e07ebaa685d7d684
+rc=0
+hooks5.log: none
+lanetip paths:
+M	.ufo/waves/round-44/a.json
+M	tools/round-44/control-fixtures/touch.json

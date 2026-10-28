@@ -1,0 +1,38 @@
+init 0
+toplevel /fast/scratch/hyaku/kaidoku-r45/R45W2Src140/utf8fix3
+created b'/fast/scratch/hyaku/kaidoku-r45/R45W2Src140/utf8fix3/bad\xffname'
+git_status_exit 0
+git_status_stdout_hex 3f3f20626164ff6e616d6500
+preflight_exit 1
+preflight_stdout_hex 
+preflight_stderr_text:
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/frozen-path-preflight.py", line 315, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/frozen-path-preflight.py", line 306, in main
+    code, receipt = evaluate(root, args.freeze, args.rev, args.pathspec,
+                    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             args.freeze_path, args.check_dirty,
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             args.dirty_pathspec, args.require_pathspec)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/frozen-path-preflight.py", line 137, in evaluate
+    st = git(root, "status", "--porcelain", "-z", *dscope)
+  File "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/frozen-path-preflight.py", line 47, in git
+    return subprocess.run(["git", "-C", root, *args], capture_output=True, text=True)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 557, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1221, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 2194, in _communicate
+    stdout = self._translate_newlines(stdout,
+                                      self.stdout.encoding,
+                                      self.stdout.errors)
+  File "/usr/lib/python3.14/subprocess.py", line 1099, in _translate_newlines
+    data = data.decode(encoding, errors)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 6: invalid start byte
+

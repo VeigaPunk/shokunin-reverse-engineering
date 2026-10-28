@@ -1,0 +1,23 @@
+existing=() track=()
+for p in "$@"; do
+  if [ -e "$p" ]; then existing+=("$(fileset "$p")"); track+=("$(fileset "$p")")
+  elif [ -n "$("$JJ_BIN" --ignore-working-copy file list -r @- -- "$(fileset "$p")" 2>/dev/null)" ]; then
+    existing+=("$(fileset "$p")")
+  else echo "warn: skipping missing path $p" >&2; fi
+done
+[ ${#existing[@]} -gt 0 ] || { echo "nothing to commit (no such paths)"; exit 0; }
+
+if [ ${#track[@]} -gt 0 ]; then
+  jw file track -- "${track[@]}" >/dev/null 2>"$ERR" || { echo "jj file track failed: $(jerr)" >&2; exit 1; }
+fi
+changes=$(jw diff --summary -- "${existing[@]}" 2>"$ERR") || { echo "jj diff failed: $(jerr)" >&2; exit 1; }
+committed=0
+if [ -z "$changes" ]; then
+  echo "nothing to commit"
+else
+  # `jj commit <paths>` keeps @'s author: stamp it first so author == committer.
+  jw metaedit --update-author >/dev/null 2>"$ERR" || { echo "jj metaedit failed: $(jerr)" >&2; exit 1; }
+  jw commit -m "$msg" -- "${existing[@]}" >/dev/null 2>"$ERR" || { echo "jj commit failed: $(jerr)" >&2; exit 1; }
+  echo "committed $(jr @- commit_id)"
+  committed=1
+fi

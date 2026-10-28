@@ -1,0 +1,8 @@
+  rep=".ufo/reports/round-$n/$lane.md"; cwd=${LANE_CWD[$lane]}
+  report_of "$lane" "$n" || { echo "FAIL report_of (missing, unchanged, no SHONEN heading, or < ${MIN_REPORT_BYTES}B): $rep"; exit 1; }
+  if [ -n "$(git -C "$FLEET" status --porcelain -- "$rep")" ] || [ -z "$(git -C "$FLEET" log -1 --format=%H -- "$rep")" ]; then
+    ev "sweep lane=$lane round=$n :: report uncommitted at return (attribution defect)"
+    "$H/fleet-commit.sh" --as "$lane" -m "round-$n: $lane report (hyaku sweep: L1 returned without committing; attribution defect)" -- "$rep" \
+      || { echo "FAIL sweep commit"; exit 1; }
+    echo "SWEPT report (attribution defect recorded)"
+  fi

@@ -1,0 +1,21 @@
+toplevel_ok
+freeze=3b0f775ad734a589908efd874b361944bd0bf02a
+rev=6f2dd34b1dc2cbd442631a38085d49de8351a9b6
+
+### fx6a: dirty INSIDE the named frozen pathspec
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/frozen-path-preflight.py --root /fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/fx6-scope --freeze 3b0f775ad734a589908efd874b361944bd0bf02a --rev 6f2dd34b1dc2cbd442631a38085d49de8351a9b6 --pathspec tools/round-45/ --freeze-path tools/round-45 --check-dirty
+{"blob_changed": [], "dirty": [" M tools/round-45/frozen.txt"], "freeze": "3b0f775ad734a589908efd874b361944bd0bf02a", "freeze_paths": ["tools/round-45"], "gate": "frozen-path-preflight", "pathspec": ["tools/round-45/"], "restored": [], "rev": "6f2dd34b1dc2cbd442631a38085d49de8351a9b6", "touched": [], "verdict": "frozen_path_changed"}
+rc=1
+
+### fx6b: dirty OUTSIDE the named frozen pathspec (round-44 fixtures dirty while round 45 scores)
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/frozen-path-preflight.py --root /fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/fx6-scope --freeze 3b0f775ad734a589908efd874b361944bd0bf02a --rev 6f2dd34b1dc2cbd442631a38085d49de8351a9b6 --pathspec tools/round-45/ --freeze-path tools/round-45 --check-dirty
+{"blob_changed": [], "dirty": [], "freeze": "3b0f775ad734a589908efd874b361944bd0bf02a", "freeze_paths": ["tools/round-45"], "gate": "frozen-path-preflight", "pathspec": ["tools/round-45/"], "restored": [], "rev": "6f2dd34b1dc2cbd442631a38085d49de8351a9b6", "touched": [], "verdict": "clean"}
+rc=0
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/frozen-path-preflight.py --root /fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/fx6-scope --freeze 3b0f775ad734a589908efd874b361944bd0bf02a --rev 6f2dd34b1dc2cbd442631a38085d49de8351a9b6 --pathspec tools/round-45/ --freeze-path tools/round-45 --check-dirty --dirty-pathspec other/
+{"blob_changed": [], "dirty": ["?? other/uncommitted.txt"], "freeze": "3b0f775ad734a589908efd874b361944bd0bf02a", "freeze_paths": ["tools/round-45"], "gate": "frozen-path-preflight", "pathspec": ["tools/round-45/"], "restored": [], "rev": "6f2dd34b1dc2cbd442631a38085d49de8351a9b6", "touched": [], "verdict": "frozen_path_changed"}
+rc=1
+
+### fx6c: the same tree, no --check-dirty
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-45/frozen-path-preflight.py --root /fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/fx6-scope --freeze 3b0f775ad734a589908efd874b361944bd0bf02a --rev 6f2dd34b1dc2cbd442631a38085d49de8351a9b6 --pathspec tools/round-45/ --freeze-path tools/round-45
+{"blob_changed": [], "dirty": [], "freeze": "3b0f775ad734a589908efd874b361944bd0bf02a", "freeze_paths": ["tools/round-45"], "gate": "frozen-path-preflight", "pathspec": ["tools/round-45/"], "restored": [], "rev": "6f2dd34b1dc2cbd442631a38085d49de8351a9b6", "touched": [], "verdict": "clean"}
+rc=0

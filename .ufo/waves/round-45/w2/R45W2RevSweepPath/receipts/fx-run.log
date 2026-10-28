@@ -1,0 +1,61 @@
+
+### fx1 control: a lane-side .git/hooks/pre-commit DOES run under git commit
+toplevel_ok=/fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/fx1-git
+$ git -c user.name=u -c user.email=u@x commit -m one
+rc=1
+hooks1.log exists: 1
+commits: 0
+
+### fx2 jj: the same hook, the exact fleet-commit.sh jj sequence
+toplevel_ok=/fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/fx2-jj
+jj_init_rc=0 .jj=yes
+$ jj --config snapshot.auto-track="none()" --config user.name=k --config user.email=k@y file track -- root:"b.txt"
+rc=0
+$ jj --config snapshot.auto-track="none()" --config user.name=k --config user.email=k@y diff --summary -- root:"b.txt"
+A b.txt
+rc=0
+$ jj --config snapshot.auto-track="none()" --config user.name=k --config user.email=k@y metaedit --update-author
+Modified 1 commits:
+  qvpksnsp a172839e (no description set)
+Working copy  (@) now at: qvpksnsp a172839e (no description set)
+Parent commit (@-)      : twllusmp 02acb8f8 main | (empty) initial
+rc=0
+$ jj --config snapshot.auto-track="none()" --config user.name=k --config user.email=k@y commit -m fleet-seq -- root:"b.txt"
+Working copy  (@) now at: nsouolpp 9ff9dfed (empty) (no description set)
+Parent commit (@-)      : qvpksnsp 8c8e1350 fleet-seq
+rc=0
+hooks2.log exists: none
+jj log:
+8c8e135096b9 fleet-seq
+02acb8f82304 initial
+000000000000 
+
+### fx2b: one directory pathspec commits every nested file (the M45-1 shape)
+$ jj --config snapshot.auto-track="none()" --config user.name=k --config user.email=k@y file track -- root:"dir"
+rc=0
+$ jj --config snapshot.auto-track="none()" --config user.name=k --config user.email=k@y metaedit --update-author
+Nothing changed.
+rc=0
+$ jj --config snapshot.auto-track="none()" --config user.name=k --config user.email=k@y commit -m dirsweep -- root:"dir"
+Working copy  (@) now at: uuknmxvn 9127ec07 (empty) (no description set)
+Parent commit (@-)      : nsouolpp 3e9429d3 dirsweep
+rc=0
+committed paths:
+dir/a.json
+dir/sub/b.json
+
+### fx3: pre-push hook — git push runs it (control); jj git push must not
+$ git -c user.name=u -c user.email=u@x commit -qm two --allow-empty
+rc=1
+$ git push -q origin HEAD:refs/heads/ctl
+error: src refspec HEAD does not match any
+error: failed to push some refs to '/fast/scratch/hyaku/kaidoku-r45/R45W2RevSweepPath/origin1.git'
+rc=1
+hooks1push.log exists: none
+bm_master_rc=0
+bm_main_rc=1
+$ jj --ignore-working-copy git push --remote origin --bookmark master
+Changes to push to origin:
+  bookmark: master [add to 3e9429d31fcd]
+rc=0
+hooks2push.log exists: none

@@ -1,0 +1,109 @@
+[
+ {
+  "label": "R1-base-selftest",
+  "cmd": "python3 -I -B /fast/scratch/hyaku/kaidoku-r45/R45W2Lesson/pf.py --selftest",
+  "exit": 0,
+  "stdout_sha256": "9f03df6538de49b733ecc71415bbb192a30aa428b82953f4ea064342389ec06c",
+  "stdout_tail": [
+   "{\"expect\": 1, \"got\": 1, \"ok\": true, \"selftest\": \"red-bulk-sweep\"}",
+   "{\"expect\": 0, \"got\": 0, \"ok\": true, \"selftest\": \"green-empty-range\"}",
+   "PREFLIGHT_SELFTEST: cases=11 failures=0"
+  ],
+  "stderr_tail": [],
+  "utc": "2026-10-28T16:04:48Z..2026-10-28T16:04:48Z"
+ },
+ {
+  "label": "R2-mut-no-dirty-arm",
+  "cmd": "python3 -I -B /fast/scratch/hyaku/kaidoku-r45/R45W2Lesson/pf_nodirty.py --selftest",
+  "exit": 1,
+  "stdout_sha256": "cc07ca8a2129088f866af8c2f53c1349de92febe3942f96606ccf426938ea33e",
+  "stdout_tail": [
+   "{\"expect\": 1, \"got\": 1, \"ok\": true, \"selftest\": \"red-bulk-sweep\"}",
+   "{\"expect\": 0, \"got\": 0, \"ok\": true, \"selftest\": \"green-empty-range\"}",
+   "PREFLIGHT_SELFTEST: cases=11 failures=1"
+  ],
+  "stderr_tail": [],
+  "utc": "2026-10-28T16:04:48Z..2026-10-28T16:04:48Z"
+ },
+ {
+  "label": "R3-mut-no-pathspec-arm",
+  "cmd": "python3 -I -B /fast/scratch/hyaku/kaidoku-r45/R45W2Lesson/pf_nopathspec.py --selftest",
+  "exit": 1,
+  "stdout_sha256": "0c12452781ff284dba51edfe79693f4bf1dacae34a4c04a3d7cd5345d1ddd6a4",
+  "stdout_tail": [
+   "{\"expect\": 1, \"got\": 1, \"ok\": true, \"selftest\": \"red-bulk-sweep\"}",
+   "{\"expect\": 0, \"got\": 0, \"ok\": true, \"selftest\": \"green-empty-range\"}",
+   "PREFLIGHT_SELFTEST: cases=11 failures=1"
+  ],
+  "stderr_tail": [],
+  "utc": "2026-10-28T16:04:48Z..2026-10-28T16:04:48Z"
+ },
+ {
+  "label": "R4-fetch-S140",
+  "cmd": "curl -sS -o /fast/scratch/hyaku/kaidoku-r45/R45W2Lesson/s140.html -w %{http_code} %{size_download} https://git-scm.com/docs/git-status",
+  "exit": 0,
+  "stdout_sha256": "d29bf41f445e3e88ac294e802a4b6d7d898386e3ba3d1f2f71faee64af04d10a",
+  "stdout_tail": [
+   "200 99934"
+  ],
+  "stderr_tail": [],
+  "utc": "2026-10-28T16:04:48Z..2026-10-28T16:04:48Z"
+ },
+ {
+  "label": "R5-fetch-S141",
+  "cmd": "curl -sS -o /fast/scratch/hyaku/kaidoku-r45/R45W2Lesson/s141.html -w %{http_code} %{size_download} https://git-scm.com/docs/git-diff-tree",
+  "exit": 0,
+  "stdout_sha256": "72ab5b35b22f0c231f9b5216092f64d8adcd2b3237b7ca33e4063f2d38b2721e",
+  "stdout_tail": [
+   "200 256810"
+  ],
+  "stderr_tail": [],
+  "utc": "2026-10-28T16:04:48Z..2026-10-28T16:04:49Z"
+ },
+ {
+  "label": "R6-census-validate",
+  "cmd": "bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku",
+  "exit": 0,
+  "stdout_sha256": "9f32a8a84ef13933a0539a92a4475534aeb2ae858a407d35b176aa26662acf19",
+  "stdout_tail": [
+   "kaidoku\tW04\tS123 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes",
+   "kaidoku\tW04\tS138 duplicate url github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs across scopes",
+   "kaidoku\tok\t/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md"
+  ],
+  "stderr_tail": [],
+  "utc": "2026-10-28T16:04:49Z..2026-10-28T16:04:49Z"
+ },
+ {
+  "label": "R7-c86ea508-paths",
+  "cmd": "git show --name-only --format= c86ea508",
+  "exit": 0,
+  "stdout_sha256": "3194620b4c78477947e81f78a6cc962e5bacb08bddf361e6c784aa7c124f4850",
+  "stdout_tail": [
+   "tools/round-44/control-fixtures/pos/corpus/evidence/round-44/c1/v2le/after.json",
+   "tools/round-44/control-fixtures/pos/corpus/knowledge/2026-10-28-r44-squashfs-v1v2-core.md",
+   "tools/round-44/control-fixtures/pos/manifest.json"
+  ],
+  "stderr_tail": [],
+  "utc": "2026-10-28T16:04:49Z..2026-10-28T16:04:49Z"
+ },
+ {
+  "label": "R8-c86ea508-stamps",
+  "cmd": "git show -s --format=%ad | %cd --date=iso c86ea508",
+  "exit": 0,
+  "stdout_sha256": "c8824574b93350bf918db1faa1aa827536a8d6166831f76c4a9a7500b117c53b",
+  "stdout_tail": [
+   "2026-10-28 09:57:16 -0300 | 2026-10-28 10:43:43 -0300"
+  ],
+  "stderr_tail": [],
+  "utc": "2026-10-28T16:04:49Z..2026-10-28T16:04:49Z"
+ },
+ {
+  "label": "R9-quote-check",
+  "s140_q1": true,
+  "s140_q2": true,
+  "s141_exact": true,
+  "words_s140": 21,
+  "words_s141": 20,
+  "utc": "2026-10-28T16:04:49Z"
+ }
+]
