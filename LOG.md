@@ -3447,3 +3447,9 @@ fractions — and requires zero mismatches with at least two corrections that ea
 - **Routed to round 49 (not closed):** C2 `gate.py` remains worktree-sourced (C2OracleLimit); lexical meaning class can contradict tool behavior (MutC1Rows); possible cross-round quote-receipt laundering is source-level only, not behaviorally measured (MutC2Corr); the structural floor is bounded, not proof of complete reporting (CritClaims); the battery skips mutants when the genuine card is red (C2Battery).
 
 - **Inherited late writes reconciled.** Round-45/46/47 seat artifacts discovered by the round-47 spot-check were landed under round 48 rather than left dirty: `0d76deed` carries the directory-pathspec batch, and `663f30ee` carries its one >1 MiB receipt as an explicit file. This is evidence custody, not new round-45/46/47 work.
+
+## 2026-10-28 — round 49 (KaidokuR49): one freeze, controls scored, data not yet run
+
+- **Freeze:** `decc5697bfd4ec1e9de4a762ad199d9bd9c4230d` (one commit: `plans/round-49-claims.md`, `tools/round-49/**` incl. `control-fixtures/`), recorded in `.ufo/waves/round-49/l1/FREEZE` before any data run; no amendment series. Wave 1 (48 seats, `.ufo/waves/round-49/w1/`, committed at `14936cb9`) attacked the drafts first; its defects and their dispositions are the plan's "Wave-1 amendment record".
+- **Claims:** R49-C1 coverage — SquashFS v1/v2 Frontier → Core, predicate restated once (receipt provenance is a prefix test; the counter's own rerun is the measurement; relabelled replays are a disclosed limit); R49-C2 calibration — nine round-48 self-assessment atoms, counter `c2-mismatch.py` with a 16-mutation battery.
+- **Controls at the freeze** (`.ufo/waves/round-49/controls/summary.json`): CTL-C1-0..4 as expected (exit 1), CTL-C1-POS exit 0, `kill_rule_fires false`; C2 do-nothing `mismatches 9`, exit 1 (`ctl-c2-0-do-nothing.json`).
