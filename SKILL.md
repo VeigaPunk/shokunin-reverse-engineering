@@ -609,14 +609,14 @@ bullet is bounded by the lines it cites.
   the claims file and the whole `tools/round-45/` directory, the latter a directory
   pathspec that must be passed explicitly.
 
-- **23. Freeze-integrity evidence is only evidence when its own forgeries fail.** <!-- freeze-integrity-table v2 --> The round-45 table (block 22) stated the arms; this one states what makes the statement checkable — each row is a defect the round-45 closure routed (R45-CL13 a–f, R45-CL14 a–f), the v1 clause that let it pass, and the arm of `tools/round-46/{gate,attest,registry}.py` that now fails it. Interpreter pin: `tools/round-46/attest.py` `sha256:eba599582bb32eab3c47d7c15cbd53852e257070ae756136e3cee059e37311fd`. Source S142.
+- **23. Freeze-integrity evidence is only evidence when its own forgeries fail.** <!-- freeze-integrity-table v2 --> The round-45 table (block 22) stated the arms; this one states what makes the statement checkable — each row is a defect the round-45 closure routed (R45-CL13 a–f, R45-CL14 a–f), the v1 clause that let it pass, and the arm of the round-46 gate, attestation and registry tools that now fails it. Interpreter pin: `tools/round-46/attest.py` `sha256:eba599582bb32eab3c47d7c15cbd53852e257070ae756136e3cee059e37311fd`. Source S142.
 
 | trigger | v1 hole | v2 arm | exit |
 |---|---|---|---|
 | R45-CL2 a registry row names a tool that exists at no revision | no presence check, so a ghost row registers | presence: `absent_at_rev` is computed from the census, never from the row | 1 |
 | R45-CL6 a merge's own resolution edit touches a frozen path | `git log --name-only` prints no diff for a merge | merge: `--diff-merges=first-parent` plus an independent blob arm; the two must agree | 2 |
 | R45-CL7 `rule_blocks >= 22` survives the counter's selftest | the clause is exercised from below only | rows: the selftest carries one red case per clause, and the mutation list is named in the claim | 1 |
-| R45-CL9 a citation resolves but names nothing about the defect | the regex validated only `corpus/knowledge`, `corpus/lessons` and `plans`, and accepted a reference with no selector | refs: every citation carries a line selector and a path inside the validated set; the interpreter is identified by its sha pin instead | 1 |
+| R45-CL9 a citation resolves but names nothing about the defect | the citation regex saw only the knowledge, lesson and plan trees, and accepted a reference with no selector | refs: every citation carries a line selector and a path inside the validated set; the interpreter is identified by its sha pin instead | 1 |
 | R45-CL13 a 44-line artefact with garbage rows scores met | row count and exit cells are structural tests | rows: every row names a routed id and an arm from the fixed vocabulary, so a garbage row fails | 1 |
 | R45-CL14 six fenced rows anywhere in SKILL.md register | the parser was fence-blind, comment-blind and heading-blind | marker: rows register only between the two registry markers and outside fences and comments | 1 |
 | R45-CL15 `--dirty-pathspec` replaced the dirty scope instead of adding to it | the arm is arm-covering but not arm-isolating | dirty: the dirty scope is the union of the pathspecs, and each arm has a red case that names it | 1 |
