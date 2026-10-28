@@ -24,7 +24,7 @@ provenance, and the wave-1 registry/results — see `## Inherited state`).
 
 | row | URL | opened | located quote (≤25 words) |
 |---|---|---|---|
-| S138 | https://github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs | 2026-10-28T11:10:29Z–11:12:37Z (contents API, 10 listings + 22 members, HTTP 200; `w1/R44SrcOracle/listings/`, manifest `corpus/evidence/round-44/oracle/manifest.json` sha256 `4bc53dbb…c1a13`, `failures: []`) | listing member `squashfs_v2.0_be.bin_extract` under `squashfs_v2/big_endian/__output__` — 1 token; the tree is the expected member set, "NOT handler code, NOT extractor behaviour, NOT a C1 carrier" (manifest `source.grounds`, 12 words) |
+| S138 | https://github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs | 2026-10-28T11:10:29Z–11:12:37Z (contents API, 10 listings + 22 members, HTTP 200; `w1/R44SrcOracle/listings/`, manifest `corpus/evidence/round-44/oracle/manifest.json` sha256 `06a72dd5…f5fe`, `failures: []`) | listing member `squashfs_v2.0_be.bin_extract` under `squashfs_v2/big_endian/__output__` — 1 token; the tree is the expected member set, "NOT handler code, NOT extractor behaviour, NOT a C1 carrier" (manifest `source.grounds`, 12 words) |
 | S139 | https://github.com/plougher/squashfs-tools/releases | 2026-10-28 (page HTTP 200) | tag `4.7.5` present; `/usr/bin/unsquashfs` self-reports `unsquashfs version 4.7.5 (2026/03/01)` (sha256 `461e1fd9…b1677c`) |
 
 ### Admission and rejection
@@ -47,7 +47,7 @@ provenance, and the wave-1 registry/results — see `## Inherited state`).
 - Census before → after: `corpus/SOURCES.md` **137 → 139 rows**
   (`grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' corpus/SOURCES.md`); round-start
   `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku`
-  → `kaidoku ok`, exit 0, 14 W04 duplicate-URL warnings (pre-existing; S138 is the 14th, a
+  → `kaidoku ok`, exit 0, 13 W04 duplicate-URL warnings (S138 is the 14th at the round end, a
   within-scope URL also present at another row's evidence pointer — not a duplicate id); round-end
   receipt `.ufo/waves/round-44/l1/sources-census-end.txt`. No `status`/`recheck`/`used-by` cell of an
   existing row was changed.
@@ -85,6 +85,11 @@ their own ids and are not renumbered here.
   `55bcce69`: the counter-time REA rerun is live in the scored path and stops a census-only authored
   envelope, but not one whose semantic projection matches (`w2/R44W2C1PosArm.md`; carried from
   R43, still open).
+- **R44-CL10 (wave-2 Distill C-3).** C2's bound-edit freeze arm appends the exact 8-line
+  corrections block but does not implement the claim's "a later restore does not un-block": a
+  revision that appends a wrong value and later restores the block to its exact bytes is not
+  distinguished from one that never left it. Same defect class as R44-CL2; the next rubric binds a
+  restore-detecting arm (append history, not tip equality).
 - **R44-CL9 (wave-2 R45-07).** The three corrected `## Owned axes` values are **freeze-tree-scoped**
   (`137/137`, `21/21`, `81-543`). At `55bcce69` command A derives `138/138` because the C1 entry
   landed, and the lane's older `tools/round-38/c2-counter.py`, which evaluates at REV, exits 1 with

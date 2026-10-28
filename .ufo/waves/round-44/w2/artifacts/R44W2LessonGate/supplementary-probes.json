@@ -1,0 +1,81 @@
+{
+ "seat": "R44W2LessonGate",
+ "purpose": "supplementary read-only probes (mtimes, replay flags, bindings)",
+ "probes": [
+  {
+   "name": "stat 8 control-fixture files (worktree mtimes)",
+   "argv": [
+    "bash",
+    "-c",
+    "stat -c '%y %n' tools/round-44/control-fixtures/c3/corpus/evidence/round-44/c1/v1le/after.json tools/round-44/control-fixtures/c3/manifest.json tools/round-44/control-fixtures/pos/corpus/evidence/round-44/c1/v1be/after.json tools/round-44/control-fixtures/pos/corpus/evidence/round-44/c1/v1le/after.json tools/round-44/control-fixtures/pos/corpus/evidence/round-44/c1/v2be/after.json tools/round-44/control-fixtures/pos/corpus/evidence/round-44/c1/v2le/after.json tools/round-44/control-fixtures/pos/corpus/knowledge/2026-10-28-r44-squashfs-v1v2-core.md tools/round-44/control-fixtures/pos/manifest.json"
+   ],
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit": 0,
+   "wall_s": 0.001,
+   "stdout_bytes": 876,
+   "stdout_sha256": "b1079779cfe06ef4f94cf94eff269c147762e4fda7b5306d04a7fffd2ae27e24",
+   "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stdout": "2026-10-28 09:50:09.711747429 -0300 tools/round-44/control-fixtures/c3/corpus/evidence/round-44/c1/v1le/after.json\n2026-10-28 09:50:09.711963479 -0300 tools/round-44/control-fixtures/c3/manifest.json\n2026-10-28 09:50:30.361486621 -0300 tools/round-44/control-fixtures/pos/corpus/evidence/round-44/c1/v1be/after.json\n2026-10-28 09:50:30.361577291 -0300 tools/round-44/control-fixtures/pos/corpus/evidence/round-44/c1/v1le/after.json\n2026-10-28 09:50:30.361654141 -0300 tools/round-44/control-fixtures/pos/corpus/evidence/round-44/c1/v2be/after.json\n2026-10-28 09:50:30.361766501 -0300 tools/round-44/control-fixtures/pos/corpus/evidence/round-44/c1/v2le/after.json\n2026-10-28 09:50:30.361875491 -0300 tools/round-44/control-fixtures/pos/corpus/knowledge/2026-10-28-r44-squashfs-v1v2-core.md\n2026-10-28 09:50:30.362234721 -0300 tools/round-44/control-fixtures/pos/manifest.json\n"
+  },
+  {
+   "name": "c1-score-at-55bcce69 bindings_false",
+   "argv": [
+    "python3",
+    "-c",
+    "import json;d=json.load(open('.ufo/waves/round-44/l1/c1-score-at-55bcce69.json'));print(d['exit_code'],d['carriers_matched'],d['met_target'],d['bindings_false'])"
+   ],
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit": 0,
+   "wall_s": 0.018,
+   "stdout_bytes": 74,
+   "stdout_sha256": "22a9d99abe40231589e5b77476646f26b7090d541d5140e34df7ed95b1805126",
+   "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stdout": "1 4 False ['province_core_section', 'province_core_row', 'frontier_note']\n"
+  },
+  {
+   "name": "manifest replay flags",
+   "argv": [
+    "python3",
+    "-c",
+    "import json;m=json.load(open('corpus/evidence/round-44/oracle/manifest.json'));print(m['started_at'],m['finished_at']);print(all(l['replayed_from_saved_receipt'] for l in m['listings']));print(sorted({l['fetched_at'] for l in m['listings']})[0], sorted({l['fetched_at'] for l in m['listings']})[-1])"
+   ],
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit": 0,
+   "wall_s": 0.019,
+   "stdout_bytes": 89,
+   "stdout_sha256": "8856bfd713de9a5bc0bd52a16a9af9fec995e1800a265626b3e77613ab87228a",
+   "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stdout": "2026-10-28T11:12:37Z 2026-10-28T11:12:37Z\nTrue\n2026-10-28T11:10:29Z 2026-10-28T11:10:43Z\n"
+  },
+  {
+   "name": "no listing equals the S138 URL directory",
+   "argv": [
+    "python3",
+    "-c",
+    "import json,glob;t='tests/integration/filesystem/squashfs';print([json.load(open(f))['repo_path'] for f in glob.glob('.ufo/waves/round-44/w1/R44SrcOracle/listings/*.json') if json.load(open(f))['repo_path'].rstrip('/')==t])"
+   ],
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit": 0,
+   "wall_s": 0.019,
+   "stdout_bytes": 3,
+   "stdout_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+   "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stdout": "[]\n"
+  },
+  {
+   "name": "c2 55bcce69 80/80",
+   "argv": [
+    "python3",
+    "-c",
+    "import json;d=json.load(open('.ufo/waves/round-44/l1/c2-score-at-55bcce69.json'));print(d['entries_evaluated'],d['mismatches'],d['met_target'],d['exit_code'],d['frozen_path_changed'])"
+   ],
+   "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+   "exit": 0,
+   "wall_s": 0.021,
+   "stdout_bytes": 16,
+   "stdout_sha256": "f62e725394e5d5df007dccb09588908e53cf6d0ced738f282ba3669aa9ff294e",
+   "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "stdout": "80 [] True 0 []\n"
+  }
+ ]
+}
