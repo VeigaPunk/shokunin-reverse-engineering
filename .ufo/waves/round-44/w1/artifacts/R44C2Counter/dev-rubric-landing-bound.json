@@ -1,0 +1,31 @@
+{
+ "predicate": "P44-C2",
+ "frozen_paths": [
+  {
+   "path": "SCORECARD.md",
+   "expected_edit": {
+    "append": [
+     "Round-44 C2 correction (2026-10-28): the coverage-map headline is re-measured at REV."
+    ]
+   }
+  }
+ ],
+ "entries": [
+  {
+   "id": "dev-landing-repair",
+   "check": "json",
+   "command": [
+    "python3",
+    "-I",
+    "-B",
+    "-c",
+    "\nimport json,sys,pathlib\ntext=pathlib.Path('SCORECARD.md').read_text()\nappended=text.split('Round-44 C2 correction (2026-10-28)')[-1]\njson.dump({'observed': 'Round-44 C2 correction (2026-10-28)' in text,\n           'appended': appended.strip()[:80]}, sys.stdout)\n"
+   ],
+   "asserted": true,
+   "file": "SCORECARD.md",
+   "files": [
+    "SCORECARD.md"
+   ]
+  }
+ ]
+}

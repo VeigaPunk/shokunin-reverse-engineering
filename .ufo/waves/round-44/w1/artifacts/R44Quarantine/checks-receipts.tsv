@@ -1,0 +1,12 @@
+R44Quarantine	Q01	0	7383a90e7c04c7238dfa3d19d2f9e857852bd24288c5ff9e9873bce697c28e6a	1	awk -F'|' -v l=kaidoku '$2 ~ l && $3 ~ /round[0-9]+/ && $4 ~ /S[0-9]+/ {print $4,$5}' REG > quarantine-slice
+R44Quarantine	Q02	0	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	1	diff quarantine-slice R43/quarantine-slice (0 = byte-identical)
+R44Quarantine	Q03	0	d277a02b6acdcfdafaaebe0fb5e7d459d803a55c50288240650b3e35424ace02	1	sha256sum REG (staged register unchanged since r43)
+R44Quarantine	Q04	0	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	1	git -C LANE log --oneline c29360e3..HEAD -- corpus/ PROVINCE.md
+R44Quarantine	Q05	0	e3c057e989115f0bb77eaa0d6866091d33934860e697ef5f3cf05d7089ef6ad8	11	git -C LANE status --porcelain -- corpus/ PROVINCE.md SCORECARD.md SHONEN.md
+R44Quarantine	Q06	1	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	3	grep -rlE '7370bd5d414ec4|9833799|developer.android.com/tools/adb|207 tools|hreflang' LANE/corpus/knowledge/
+R44Quarantine	Q07	0	1f53039da78fa65e91e64d4ac8d7776605a2786aa574c908493562b26c033842	2	ls -t LANE/corpus/knowledge/*.md (newest first)
+R44Quarantine	Q08	0	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	7	find lane + sibling campaign -maxdepth 4 -name considerthese*
+R44Quarantine	Q09	0	f1c044df0eb899fae91d490652b47b87efe43a580a8da60cc04e44ff068b2778	2	ls -la LANE/.ufo/waves/round-44/assimilation
+R44Quarantine	Q10	1	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	0	test -d LANE/.ufo/quarantine
+R44Quarantine	Q11	0	654adb4698a11d65521c6f4f0e91b480b9b6fdc1fc0d52168871e7cfce0e487d	3	git -C LANE log --diff-filter=A --name-only -20 -- corpus/knowledge/
+R44Quarantine	Q12	0	5a435c6a3976426b80fe39b198bbd78d77d7acb2163544637952d336d86a391a	2	grep staged subjects in SOURCES/PROVINCE/SCORECARD/SHONEN/README

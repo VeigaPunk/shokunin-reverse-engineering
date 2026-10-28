@@ -1,0 +1,23 @@
+{
+ "seat": "R44SrcOracle",
+ "name": "oracle-tree-inventory",
+ "argv": [
+  "bash",
+  "-c",
+  "set -u; O=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/oracle; cd \"$O\"; find . -path \"./*/__output__/*\" -type f | sort | while read -r f; do printf \"%s  %s\\n\" \"$(sha256sum \"$f\" | cut -d\" \" -f1)\" \"${f#./}\"; done > /tmp/probe-R44SrcOracle-tree.tsv; cat /tmp/probe-R44SrcOracle-tree.tsv; echo \"-- counts --\"; awk \"{n++; s+=\\$0}\" /tmp/probe-R44SrcOracle-tree.tsv >/dev/null; mem=$(wc -l < /tmp/probe-R44SrcOracle-tree.tsv); tot=0; while read -r _ p; do b=$(stat -c%s \"$p\"); tot=$((tot+b)); done < /tmp/probe-R44SrcOracle-tree.tsv; dis=$(cut -d\" \" -f1 /tmp/probe-R44SrcOracle-tree.tsv | sort -u | wc -l); printf \"member_files=%s total_bytes=%s distinct_sha256=%s\\n\" \"$mem\" \"$tot\" \"$dis\"; echo \"-- tree digest --\"; sha256sum /tmp/probe-R44SrcOracle-tree.tsv; echo \"-- non-member files at oracle root --\"; find . -maxdepth 1 -type f | sort"
+ ],
+ "argv_shell": "bash -c 'set -u; O=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-44/oracle; cd \"$O\"; find . -path \"./*/__output__/*\" -type f | sort | while read -r f; do printf \"%s  %s\\n\" \"$(sha256sum \"$f\" | cut -d\" \" -f1)\" \"${f#./}\"; done > /tmp/probe-R44SrcOracle-tree.tsv; cat /tmp/probe-R44SrcOracle-tree.tsv; echo \"-- counts --\"; awk \"{n++; s+=\\$0}\" /tmp/probe-R44SrcOracle-tree.tsv >/dev/null; mem=$(wc -l < /tmp/probe-R44SrcOracle-tree.tsv); tot=0; while read -r _ p; do b=$(stat -c%s \"$p\"); tot=$((tot+b)); done < /tmp/probe-R44SrcOracle-tree.tsv; dis=$(cut -d\" \" -f1 /tmp/probe-R44SrcOracle-tree.tsv | sort -u | wc -l); printf \"member_files=%s total_bytes=%s distinct_sha256=%s\\n\" \"$mem\" \"$tot\" \"$dis\"; echo \"-- tree digest --\"; sha256sum /tmp/probe-R44SrcOracle-tree.tsv; echo \"-- non-member files at oracle root --\"; find . -maxdepth 1 -type f | sort'",
+ "cwd": "/fast/scratch/hyaku/kaidoku-r44/probe-R44SrcOracle",
+ "started_at": "2026-10-28T11:16:49Z",
+ "finished_at": "2026-10-28T11:16:49Z",
+ "wall_s": 0.042,
+ "exit": 0,
+ "stdout_bytes": 3345,
+ "stdout_sha256": "b953109425d97259200dd768940871f5fd70191c3e74ecc2ccb983457c2860ba",
+ "stderr_bytes": 0,
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout_path": "../../../../../home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/w1/R44SrcOracle/receipts/oracle-tree-inventory.stdout.txt",
+ "stderr_path": "../../../../../home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/w1/R44SrcOracle/receipts/oracle-tree-inventory.stderr.txt",
+ "note": "inventory of the pre-freeze oracle tree: member files only (manifest.json excluded), per-file sha256, totals, and the sorted tree digest that content-addresses the frozen set; oracle-tree.tsv beside the receipts is byte-identical input to the digest",
+ "exit_semantics": "met/clean"
+}

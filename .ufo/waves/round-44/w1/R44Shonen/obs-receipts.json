@@ -1,0 +1,332 @@
+[
+ {
+  "seat": "R44Shonen",
+  "name": "unsquashfs-s:v1-le--squashfs_v1.0_le",
+  "lane_head": "f5fb8d590f0dd6afc0847e1a63e8a3953bef8717",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-42/c2/fixtures/v1-le--squashfs_v1.0_le.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "eb50a21a0978be5ceae71818bfe69d355561ab7478b4baf5c213e77c54f5c8b4",
+  "stdout_bytes": 444,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "name": "unsquashfs-s:v1-be--squashfs_v1.0_be",
+  "lane_head": "f5fb8d590f0dd6afc0847e1a63e8a3953bef8717",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-42/c2/fixtures/v1-be--squashfs_v1.0_be.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "8a1f5952abe9d3670f947641b3a50cafcbf6d9818c6e934961f8d1ffb2812162",
+  "stdout_bytes": 441,
+  "stderr_sha256": "757cc74234b005849a707cbf55c4fd3ffd1ad1cc3e3c4f587298a13efa42e2ce"
+ },
+ {
+  "seat": "R44Shonen",
+  "name": "unsquashfs-s:v2-le--squashfs_v2.0_le",
+  "lane_head": "f5fb8d590f0dd6afc0847e1a63e8a3953bef8717",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-42/c2/fixtures/v2-le--squashfs_v2.0_le.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "f4c8a99c53081b07aee8523e0360c0c616237a16cbaea29ef7ab1ccdc003715a",
+  "stdout_bytes": 536,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "name": "unsquashfs-s:v2-be--squashfs_v2.0_be",
+  "lane_head": "f5fb8d590f0dd6afc0847e1a63e8a3953bef8717",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_be.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "e077bb2ab17d7368b5ba3dedffb5122142391c1b051e37716aa08937eb8e0496",
+  "stdout_bytes": 533,
+  "stderr_sha256": "097c2350ce6c345faa5d3db83095fa73538e15d7f2984a2f5d04f0f9482c3744"
+ },
+ {
+  "seat": "R44Shonen",
+  "name": "superblock-v1v2-decode",
+  "lane_head": "f5fb8d590f0dd6afc0847e1a63e8a3953bef8717",
+  "command": [
+   "python3",
+   "-I",
+   "-B",
+   "-c",
+   "\nimport struct,sys,json\nout={}\nfor f,e in [(\"v1-le--squashfs_v1.0_le\",\"<\"),(\"v1-be--squashfs_v1.0_be\",\">\"),(\"v2-le--squashfs_v2.0_le\",\"<\"),(\"v2-be--squashfs_v2.0_be\",\">\")]:\n    b=open(\"corpus/evidence/round-42/c2/fixtures/%s.bin\"%f,\"rb\").read()\n    out[f]={\"magic\":b[:4].decode(\"latin-1\"),\"inodes@4\":struct.unpack(e+\"I\",b[4:8])[0],\n            \"bytes_used@8\":struct.unpack(e+\"I\",b[8:12])[0],\n            \"inode_table_start@20\":struct.unpack(e+\"I\",b[20:24])[0],\n            \"s_major@28\":struct.unpack(e+\"H\",b[28:30])[0],\"s_minor@30\":struct.unpack(e+\"H\",b[30:32])[0],\n            \"file_size\":len(b)}\nprint(json.dumps(out,indent=1))\n"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.016,
+  "stdout_sha256": "7fbd78de7d61579bba012513ddfe4fde84cbb5a5695073666d311f3242e79e2b",
+  "stdout_bytes": 727,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "name": "carrier-pins",
+  "lane_head": "f5fb8d590f0dd6afc0847e1a63e8a3953bef8717",
+  "command": [
+   "python3",
+   "-I",
+   "-B",
+   "-c",
+   "\nimport json,hashlib\nd=json.load(open(\"tools/round-44/carriers.json\"))\nfor c in d[\"carriers\"]:\n    h=hashlib.sha256(open(c[\"path\"],\"rb\").read()).hexdigest()\n    print(c[\"id\"], c[\"handler\"], c[\"endian\"], \"declared_compression=\"+c[\"compression\"],\n          \"pin_match=\"+str(h==c[\"sha256\"]).lower(), h)\n"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.018,
+  "stdout_sha256": "d46013df19ed04b2092495a269811ba60d2a156a3f41b5acba6c891831e17218",
+  "stdout_bytes": 504,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-42/c2/fixtures/v2ns-le--squashfs_v2.0_le.bin"
+  ],
+  "exit_code": 1,
+  "wall_s": 0.001,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stderr_sha256": "ba8da87cc967241d6f20966315de7138654f9522064541f7b49eb661f661da09"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "7z",
+   "l",
+   "corpus/evidence/round-42/c2/fixtures/v2ns-le--squashfs_v2.0_le.bin"
+  ],
+  "exit_code": 2,
+  "wall_s": 0.002,
+  "stdout_sha256": "4326f46701576d235d30e66c6110c817dca8fec351321ce46f31159ebb7e3fad",
+  "stdout_bytes": 287,
+  "stderr_sha256": "26a54f49f0b6a317c27f036311eff3b5c645917c1f9b1351afd2034f5dd52f02"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-42/c2/fixtures/v2ns-be--squashfs_v2.0_be.bin"
+  ],
+  "exit_code": 1,
+  "wall_s": 0.001,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stderr_sha256": "72ab4931b2bccc8386cbb0b8a1866d1d85a6d2f76021d8f21430dd59a6630151"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "7z",
+   "l",
+   "corpus/evidence/round-42/c2/fixtures/v2ns-be--squashfs_v2.0_be.bin"
+  ],
+  "exit_code": 2,
+  "wall_s": 0.003,
+  "stdout_sha256": "160b059c55372630b6db33f69581e8dfe2e2c220ce118f680bdc0a82fb1bd9b8",
+  "stdout_bytes": 287,
+  "stderr_sha256": "16afa8b43588c021a141b85569130185ad50a6cb4ac7adba14862bfc97ed2f8e"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "7z"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "1fc75706498ddeea4ae822a1d9d6561bdca640cbbc06db4e3a5cb1e3f8a80c8d",
+  "stdout_bytes": 2909,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-42/c2/fixtures/v1-le--squashfs_v1.0_le.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "eb50a21a0978be5ceae71818bfe69d355561ab7478b4baf5c213e77c54f5c8b4",
+  "stdout_bytes": 444,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-lls",
+   "corpus/evidence/round-42/c2/fixtures/v1-le--squashfs_v1.0_le.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.002,
+  "stdout_sha256": "14fda1998d07a4af3e814a507c27681a1ecd15e8544db8c6e4e97ff2f6fea493",
+  "stdout_bytes": 312,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-42/c2/fixtures/v1-be--squashfs_v1.0_be.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "8a1f5952abe9d3670f947641b3a50cafcbf6d9818c6e934961f8d1ffb2812162",
+  "stdout_bytes": 441,
+  "stderr_sha256": "757cc74234b005849a707cbf55c4fd3ffd1ad1cc3e3c4f587298a13efa42e2ce"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-lls",
+   "corpus/evidence/round-42/c2/fixtures/v1-be--squashfs_v1.0_be.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "14fda1998d07a4af3e814a507c27681a1ecd15e8544db8c6e4e97ff2f6fea493",
+  "stdout_bytes": 312,
+  "stderr_sha256": "757cc74234b005849a707cbf55c4fd3ffd1ad1cc3e3c4f587298a13efa42e2ce"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-42/c2/fixtures/v2-le--squashfs_v2.0_le.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "f4c8a99c53081b07aee8523e0360c0c616237a16cbaea29ef7ab1ccdc003715a",
+  "stdout_bytes": 536,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-lls",
+   "corpus/evidence/round-42/c2/fixtures/v2-le--squashfs_v2.0_le.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.002,
+  "stdout_sha256": "55a68d07b65d9a07599c23b995b04c77d1a627d2f959e3dcdb4cf53361298c91",
+  "stdout_bytes": 394,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_be.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "e077bb2ab17d7368b5ba3dedffb5122142391c1b051e37716aa08937eb8e0496",
+  "stdout_bytes": 533,
+  "stderr_sha256": "097c2350ce6c345faa5d3db83095fa73538e15d7f2984a2f5d04f0f9482c3744"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-lls",
+   "corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_be.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.002,
+  "stdout_sha256": "55a68d07b65d9a07599c23b995b04c77d1a627d2f959e3dcdb4cf53361298c91",
+  "stdout_bytes": 394,
+  "stderr_sha256": "097c2350ce6c345faa5d3db83095fa73538e15d7f2984a2f5d04f0f9482c3744"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-44/carriers/squashfs_v2.1_le.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "9833b12352a6365941903afb5fa8755bf5b7d1a6c6c7f50d11cabfd2aab5f496",
+  "stdout_bytes": 526,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-lls",
+   "corpus/evidence/round-44/carriers/squashfs_v2.1_le.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.002,
+  "stdout_sha256": "55a68d07b65d9a07599c23b995b04c77d1a627d2f959e3dcdb4cf53361298c91",
+  "stdout_bytes": 394,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-s",
+   "corpus/evidence/round-44/carriers/squashfs_v2.1_be.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.0,
+  "stdout_sha256": "5d0016521b86f616082209b26012302cff1099642b2c85c4129056f50c28f691",
+  "stdout_bytes": 523,
+  "stderr_sha256": "3b32350d9a228a3627cc0a9b2722bd109b616a7a6e921102d119b548e88a01d3"
+ },
+ {
+  "seat": "R44Shonen",
+  "lane_head": "f18bdfb9fc8bb451ebab826c058049254d508483",
+  "command": [
+   "/usr/bin/unsquashfs",
+   "-lls",
+   "corpus/evidence/round-44/carriers/squashfs_v2.1_be.bin"
+  ],
+  "exit_code": 0,
+  "wall_s": 0.001,
+  "stdout_sha256": "55a68d07b65d9a07599c23b995b04c77d1a627d2f959e3dcdb4cf53361298c91",
+  "stdout_bytes": 394,
+  "stderr_sha256": "3b32350d9a228a3627cc0a9b2722bd109b616a7a6e921102d119b548e88a01d3"
+ }
+]

@@ -1,0 +1,84 @@
+{
+ "predicate": "P44-C2",
+ "dev_arm": true,
+ "note": "development-arm rubric (not the frozen rubric): proves the counter runs on the real lane",
+ "frozen_paths": [],
+ "entries": [
+  {
+   "id": "dev-scorecard-map-count",
+   "check": "json",
+   "command": [
+    "python3",
+    "-I",
+    "-B",
+    "-c",
+    "\nimport json,sys,re,pathlib\nsc=pathlib.Path('SCORECARD.md').read_text()\nactual=len(list(pathlib.Path('corpus/knowledge').glob('*.md')))\nm=re.search(r'(\\d+)/\\d+ knowledge files mapped', sc)\nclaimed=int(m.group(1)) if m else None\njson.dump({'observed': claimed==actual,'claimed':claimed,'actual':actual}, sys.stdout)\n"
+   ],
+   "asserted": true,
+   "file": "SCORECARD.md",
+   "files": [
+    "SCORECARD.md",
+    "SHONEN.md",
+    "corpus/README.md",
+    "corpus/knowledge"
+   ]
+  },
+  {
+   "id": "dev-readme-map-coverage",
+   "check": "json",
+   "command": [
+    "python3",
+    "-I",
+    "-B",
+    "-c",
+    "\nimport json,sys,re,pathlib\nactual={p.stem for p in pathlib.Path('corpus/knowledge').glob('*.md')}\ntext=pathlib.Path('corpus/README.md').read_text()\nmentioned=set(re.findall(r'2026-\\d\\d-\\d\\d-[A-Za-z0-9\\-_]+', text))\nmissing=sorted(s for s in actual if s not in mentioned)\ndangling=sorted(s for s in mentioned if s not in actual)\njson.dump({'observed': not missing and not dangling,'missing':missing,'dangling':dangling}, sys.stdout)\n"
+   ],
+   "asserted": true,
+   "file": "corpus/README.md",
+   "files": [
+    "SCORECARD.md",
+    "SHONEN.md",
+    "corpus/README.md",
+    "corpus/knowledge"
+   ]
+  },
+  {
+   "id": "dev-shonen-path-line",
+   "check": "json",
+   "command": [
+    "python3",
+    "-I",
+    "-B",
+    "-c",
+    "\nimport json,sys,re,pathlib\ntext=pathlib.Path('SHONEN.md').read_text()\nrefs=sorted(set(re.findall(r'`([A-Za-z0-9_./\\-]+\\.(?:md|py|json|sh)):(\\d+)', text)))\nbad=[]\nfor path,line in refs:\n    p=pathlib.Path(path)\n    if not p.exists():\n        bad.append(path+':missing'); continue\n    n=len(p.read_text(errors='replace').splitlines())\n    if int(line)>n: bad.append(path+':line>'+str(n))\njson.dump({'observed': not bad,'bad':bad,'refs':len(refs)}, sys.stdout)\n"
+   ],
+   "asserted": true,
+   "file": "SHONEN.md",
+   "files": [
+    "SCORECARD.md",
+    "SHONEN.md",
+    "corpus/README.md",
+    "corpus/knowledge"
+   ]
+  },
+  {
+   "id": "dev-scorecard-evidence-pointer",
+   "check": "json",
+   "command": [
+    "python3",
+    "-I",
+    "-B",
+    "-c",
+    "\nimport json,sys,re,pathlib\ntext=pathlib.Path('SCORECARD.md').read_text()\npaths=sorted(set(re.findall(r'corpus/knowledge/[A-Za-z0-9_.\\-]+\\.md', text)))\nmissing=[p for p in paths if not pathlib.Path(p).exists()]\njson.dump({'observed': not missing,'missing':missing,'count':len(paths)}, sys.stdout)\n"
+   ],
+   "asserted": true,
+   "file": "SCORECARD.md",
+   "files": [
+    "SCORECARD.md",
+    "SHONEN.md",
+    "corpus/README.md",
+    "corpus/knowledge"
+   ]
+  }
+ ]
+}

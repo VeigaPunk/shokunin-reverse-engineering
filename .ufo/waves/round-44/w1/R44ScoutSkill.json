@@ -1,0 +1,99 @@
+{
+  "seat": "R44ScoutSkill",
+  "wave": "round-44/w1",
+  "base": "c29360e3ba5381a5ab69e372d0d9577970f85018",
+  "head_at_check": "fc5eb54a2b79faee82866a27b40c8c2f1767b1eb",
+  "scope": "SKILL.md / PROVINCE.md drift check for R44-C1 and R44-C2; read-only",
+  "files_identical_at_base_and_head": true,
+  "receipts": {
+    "file": ".ufo/waves/round-44/w1/R44ScoutSkill/receipts.jsonl",
+    "check_script": ".ufo/waves/round-44/w1/artifacts/R44ScoutSkill/checks.sh",
+    "stdout_dir": ".ufo/waves/round-44/w1/R44ScoutSkill/",
+    "all_checks_exit_0": true
+  },
+  "a_skill_v4_table": {
+    "marker": "<!-- sqfs-triage-table v4 --> at SKILL.md:525",
+    "data_rows": 15,
+    "columns": 13,
+    "labels": ["container-depth-limited","no-squashfs-chunk","dep-missing-be","dep-missing-le","partial-body-failure","avm-marker-be-dropped","legacy-body-failure","body-extractor-failure","unknown-residue","depth-limited","mixed-symlinks","escaping-symlink-removed","in-tree-symlink-metadata","clean","clean-empty"],
+    "legacy_handler_cells_present": true,
+    "legacy_handler_names_enumerated": ["squashfs_v1","squashfs_v2","squashfs_v2_nonstandard","squashfs_v3","squashfs_v3_ddwrt","squashfs_v3_broadcom","squashfs_v3_nonstandard"],
+    "legacy_glob": "squashfs_v[123]* (failing-handler cell, row legacy-body-failure, SKILL.md:535)",
+    "c1_oracle_is_skill_endorsed": "cross-read-legacy action prescribes unsquashfs reading 1:0-3:0, measured on v1/v2/v3 fixtures (SKILL.md:535); unsquashfs 4.7.5 at /usr/bin/unsquashfs observed",
+    "consistent_with_c1_exact_binding": "mechanical extractor claims only; no frontier-status conflict"
+  },
+  "a_drift_findings": [
+    {
+      "id": "D1-v4-status-stale",
+      "file": "SKILL.md",
+      "line": 523,
+      "asserted": "table v4 is unscored as a claim; 'round 43 re-scores it under P43-C1' (future tense)",
+      "observed": ".ufo/waves/round-43/l1/scores/c1-at-77d196c6.json: met_target true, exit 0, matched 78/78; SCORECARD.md:3487-3494 records R43-C1 met on the calibration axis; claim named R43-C1 not P43-C1",
+      "verdict": "mismatch (stale supersession/status text)",
+      "confidence": "high — committed receipt fields read directly"
+    },
+    {
+      "id": "D2-registry-ends-at-r40",
+      "file": "SKILL.md",
+      "line": 1555,
+      "asserted": "instrument registry's last section is '### Round-40 instrument registry'",
+      "observed": "tools/round-41/ (13 files), tools/round-42/ (14 files incl. scored interpreter sqfs-triage-v4.py and evaluator indep-eval-v4.py), tools/round-43/ (7 files incl. c1-counter.py and heldout-gen-v4r43.py cited by SCORECARD.md:3485 capability row) — all unregistered",
+      "verdict": "registry coverage gap (lazy-registry precedent exists: round-36 §8, discharged round-39)",
+      "confidence": "high — file listings verified"
+    },
+    {
+      "id": "D3-dangling-selftest-pointer",
+      "file": "SKILL.md",
+      "line": 1002,
+      "asserted": "round24-C1 self-invocation 'post-hoc L1 tools/selftest.py'",
+      "observed": "tools/selftest.py is not a blob at base and never existed in this lane's history; row text mitigates ('not a frozen independent oracle')",
+      "verdict": "dangling pointer (historic record — rubric-worthy only under an existence rule)",
+      "confidence": "high — git log/cat-file checked"
+    },
+    {
+      "id": "D4-external-checkout-path",
+      "file": "SKILL.md",
+      "line": 1100,
+      "asserted": "cites .ufo/waves/hyaku/kaidoku25-prerequisite/parent-after-process.json",
+      "observed": "no .ufo/waves/hyaku/ directory in this lane; path is from a different checkout",
+      "verdict": "unresolvable in-lane pointer",
+      "confidence": "high"
+    }
+  ],
+  "b_province_frontier": {
+    "inside_heading_squashfs_surfaces": 0,
+    "note": "## Frontier (PROVINCE.md:73-95) names NO SquashFS surface; operative frontier text lives in the Adjacent-nested '### Round-4 frontier' sasquatch bullet (:156-157) and the frontier notes :374,:376,:384,:394,:408,:416,:422",
+    "still_frontier_at_base": [
+      {"surface": "squashfs_v1, squashfs_v2 (SquashFS v1/v2)", "named_at": "PROVINCE.md:416", "c1_moves": true},
+      {"surface": "squashfs_v2_nonstandard (v2ns)", "named_at": "never in PROVINCE; only plans/round-44-claims.md:54", "c1_moves": false},
+      {"surface": "squashfs_v3_broadcom", "named_at": "PROVINCE.md:416", "c1_moves": false},
+      {"surface": "squashfs_v3_nonstandard", "named_at": "PROVINCE.md:416", "c1_moves": false},
+      {"surface": "gzip v3 bodies", "named_at": "PROVINCE.md:416", "c1_moves": false},
+      {"surface": "v4 Broadcom", "named_at": "PROVINCE.md:416", "c1_moves": false},
+      {"surface": "LE AVM members (hsqs)", "named_at": "PROVINCE.md:416,:408", "c1_moves": false},
+      {"surface": "AVM kernel images", "named_at": "PROVINCE.md:416,:408", "c1_moves": false},
+      {"surface": "nested filesystem_core / sub-images below depth 1", "named_at": "PROVINCE.md:416,:408", "c1_moves": false},
+      {"surface": "other vendor-mangled images and vendor-mangled sasquatch packages", "named_at": "PROVINCE.md:408,:157,:422", "c1_moves": false}
+    ],
+    "c1_scope_confirmed": "move is squashfs_v1 + squashfs_v2 only; all other surfaces stay Frontier — matches draft disclosed limits",
+    "landing_advice": [
+      "round-44 frontier note should name squashfs_v2_nonstandard explicitly; PROVINCE currently folds it under 'SquashFS v1/v2' residue",
+      "claims file calls :416 a 'frontier bullet'; it is a note paragraph (cosmetic wording)"
+    ],
+    "no_v1v2_hold_contradiction": true
+  },
+  "c_registry_selftest": {
+    "counts_parse": "all registry selftest cells numeric or explicit 'none'; spot: tools/round-40/sqfs-triage-v2.py defines 45 case fns vs declared 45",
+    "tool_files_exist_at_base": "all round-36..40 registered entry-command tool files verified as blobs at c29360e3; exceptions D3/D4 are pointer cells, not entry commands",
+    "selftests_executed": "none — read-only seat; [unverified] beyond static count spot-check"
+  },
+  "carriers_at_base": {
+    "v1_le": "present", "v1_be": "present", "v2_le": "present", "v2_be": "present",
+    "v2ns_also_present_but_heldout_only": true
+  },
+  "oracle_identity": {"binary": "/usr/bin/unsquashfs", "version": "4.7.5"},
+  "remaining_unknowns": [
+    "actual selftest case counts vs declared counts beyond the two spot-checks (execution is dev-arm work, out of scope)",
+    "whether the rubric enumerates registry-row-per-scored-round or pointer-existence for self-invocation cells — C2 census decision"
+  ]
+}

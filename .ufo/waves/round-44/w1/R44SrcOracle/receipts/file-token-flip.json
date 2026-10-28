@@ -1,0 +1,23 @@
+{
+ "seat": "R44SrcOracle",
+ "name": "file-token-flip",
+ "argv": [
+  "bash",
+  "-c",
+  "set -u; S=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_be.bin; T=$(mktemp -d /tmp/probe-R44SrcOracle-flip.XXXX); for spec in orig:0:0 flag36_42:36:42 flags36_00:36:00 c20_01:20:01 c20_00:20:00; do n=${spec%%:*}; rest=${spec#*:}; off=${rest%%:*}; val=${rest#*:}; cp \"$S\" \"$T/$n.bin\"; if [ \"$n\" != orig ]; then printf \"\\\\x$val\" | dd of=\"$T/$n.bin\" bs=1 seek=$off conv=notrunc status=none; fi; printf \"%-11s byte20=0x%02x \" \"$n\" \"$(od -An -tu1 -j20 -N1 \"$T/$n.bin\" | tr -d \" \")\"; file -b \"$T/$n.bin\" | sed \"s/Squashfs filesystem, //\"; done; rm -rf \"$T\""
+ ],
+ "argv_shell": "bash -c 'set -u; S=/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-42/c2/fixtures/v2-be--squashfs_v2.0_be.bin; T=$(mktemp -d /tmp/probe-R44SrcOracle-flip.XXXX); for spec in orig:0:0 flag36_42:36:42 flags36_00:36:00 c20_01:20:01 c20_00:20:00; do n=${spec%%:*}; rest=${spec#*:}; off=${rest%%:*}; val=${rest#*:}; cp \"$S\" \"$T/$n.bin\"; if [ \"$n\" != orig ]; then printf \"\\\\x$val\" | dd of=\"$T/$n.bin\" bs=1 seek=$off conv=notrunc status=none; fi; printf \"%-11s byte20=0x%02x \" \"$n\" \"$(od -An -tu1 -j20 -N1 \"$T/$n.bin\" | tr -d \" \")\"; file -b \"$T/$n.bin\" | sed \"s/Squashfs filesystem, //\"; done; rm -rf \"$T\"'",
+ "cwd": "/fast/scratch/hyaku/kaidoku-r44/probe-R44SrcOracle",
+ "started_at": "2026-10-28T11:16:33Z",
+ "finished_at": "2026-10-28T11:16:33Z",
+ "wall_s": 0.019,
+ "exit": 0,
+ "stdout_bytes": 708,
+ "stdout_sha256": "38a5d57726ce72d99fad13000943fea72213b72e4ab0afd7d0fcf902e8f40626",
+ "stderr_bytes": 0,
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout_path": "../../../../../home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/w1/R44SrcOracle/receipts/file-token-flip.stdout.txt",
+ "stderr_path": "../../../../../home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-44/w1/R44SrcOracle/receipts/file-token-flip.stderr.txt",
+ "note": "controlled flip of candidate bytes in copies of v2be shows file(1)'s compressed/uncompressed token is driven by byte 20 (legacy inode_table_start_2 low byte, the v4 compression slot), not by the legacy flags word at byte 36",
+ "exit_semantics": "met/clean"
+}
