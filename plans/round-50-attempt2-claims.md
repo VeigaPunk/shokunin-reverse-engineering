@@ -76,8 +76,38 @@ instrument `tools/round-50-c3/sqfs-triage-v5.py`, such that:
   --envelopes <DIR> --json-out <OUT>` exits 0 with `pair_mismatches 0`, `evaluator_missing 0`,
   `table_labels == evaluator_labels` on every envelope of the frozen held-out dir, `selftest`
   green (every committed mutation flips ≥1 pair, none a no-op or cross-flip, do-nothing red);
-  and at the base REV the same command exits 1 with the four `v2ns *_ddefault` rows among the
+  and at the base REV the same command exits 1 with the no-reader `*_ddefault` rows among the
   mismatches.
+- **Frozen rule details (wave-3 attack amendments, folded BEFORE the C3 freeze; CritC3Design
+  C3-1/4/5/6, RevTriageV4 H1/H2, ExecRegistryRow 5b):**
+  - before-run `--rev` is the exact declared base `f890bbea…` (SKILL, the v4 evaluator and the
+    held-out envelopes are byte-identical to `8ccc05e6…` — seat-measured empty diff — but the
+    declared base is what the receipt names).
+  - the `legacy-body-failure` `failing handler` cell becomes the comma-separated alternation
+    `squashfs_v1,squashfs_v2,squashfs_v3,squashfs_v3_ddwrt`, matched as ANY-of-exact-alternatives
+    (per-alternative `fnmatch`, so plain names are exact): positive matcher tests for all four,
+    negative for `squashfs_v2_nonstandard`, `squashfs_v3_broadcom`, `squashfs_v3_nonstandard`
+    (H2: no single glob expresses this set; a silent `squashfs_v[123]` swap is the mutation to
+    catch).
+  - the no-reader set is handler-level and frozen: {`squashfs_v2_nonstandard`,
+    `squashfs_v3_broadcom`, `squashfs_v3_nonstandard`} — worded "no validated complete
+    independent oracle" (broadcom has a partial 7-Zip listing; a no-reader FAILURE label never
+    suppresses a successful partial cross-read). `squashfs_v3_ddwrt` stays reader-backed (R42
+    Core, backhand-cli oracle); its two no-pad `_ddefault` envelopes keep `clean` under table AND
+    evaluator (v5 changes nothing for ddwrt) — their known v4 residue (reader-refused no-pad
+    bodies) is unchanged by this claim and needs a body-variant discriminator that does not
+    exist in the scored features; disclosed, not fixed, here.
+  - expected before-state: the seat-measured **19** no-reader `clean/none` `_ddefault` rows
+    (4 v2ns + 7 v3_broadcom + 8 v3_nonstandard; ExecRegistryRow 5b), not just the four v2ns.
+  - v5 implements the duplicate-handler-glob table refusal its docstring claims (H1: v4's
+    docstring over-claims it; v4:455-459 refuses only duplicate labels), with a selftest case.
+  - controls are SEMANTIC reds: the junk table stays syntactically valid (unique labels, a
+    catch-all clean pair) and must exit 1 with `pair_mismatches > 0`, never exit 2; the guard row
+    named by the guard-deleted control is `clean-unverified`; the corpus has ZERO no-reader
+    extractor-failure envelopes (38 no-reader rows = 19 clean + 19 depth-limited), so the
+    `no-reader-failure` row/action is witnessed by a committed SYNTHETIC zero-file
+    extractor-failure envelope in the selftest fixtures, and deleting or swapping that exact
+    row/action flips its synthetic pair.
 - **Evaluator**: ported from `tools/round-42/sqfs-triage-v4.py` (the lane's scored evaluator
   pattern, R41-C2/R42-C2/R43-C1), written from this claim's precedence text: (1) a handler
   family with no independent reader (v2ns, v3_broadcom, v3_nonstandard per the round-49 entry's
@@ -86,7 +116,8 @@ instrument `tools/round-50-c3/sqfs-triage-v5.py`, such that:
   failed, 0 files → action `preserve-unresolved`: the failure stands unresolved — reader absence
   forbids both the damaged-body verdict and the broken-extractor verdict); (2) the reader-backed
   v1/v2/v3/v3_ddwrt/v4 families keep the v4 rows exactly, with `legacy-body-failure`'s
-  `failing handler` cell narrowed to the reader-backed v1–v3 families.
+  `failing handler` cell replaced by the frozen comma-list alternation above (the reader-backed
+  v1/v2/v3/v3_ddwrt families).
 - **Held-out dir**: the round-42 recon envelope corpus
   `.ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/envelopes/` (126 envelopes, committed since
   round 42). **Disclosed limit:** these are not fresh data — v4 scored 78 of them at R43-C1 and
