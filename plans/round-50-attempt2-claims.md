@@ -20,7 +20,7 @@ frozen oracle/gap tables and controls under `tools/round-50/`, its REA receipts 
 `corpus/evidence/round-50/c1/`, and the documentation bindings (entry, `PROVINCE.md` round-50
 section, `corpus/README.md` coverage map, SOURCES rows S243/S244/S245/S249, SCORECARD capability
 row). C3 reads `SKILL.md`, the round-42 recon envelope corpus, and its own new instrument; its
-only landing surfaces are `SKILL.md` (new rule block 22), the new instrument file, its registry
+only landing surfaces are `SKILL.md` (new rule block 26), the new instrument file, its registry
 row, and the SCORECARD/LOG record. The two claims share no write surface except `SCORECARD.md`
 and `LOG.md` record sections (separate sections, landing order C3 then C1) — each is verifiable
 without the other having landed.
@@ -58,7 +58,8 @@ routed and unfixed at this base; the round-49 landing fixed F3/F4/F5 only):
   `clean`/`none` today, contradicting the Frontier status those families hold in
   `PROVINCE.md`/the round-49 entry.
 
-Claim: land **triage table v5** as `SKILL.md` rule block 22 (dated supersession of block 21's
+Claim: land **triage table v5** as `SKILL.md` rule block 26 (the next free craft-block number;
+blocks 22-25 are the freeze-integrity/meaning blocks; dated supersession of block 21's
 routing/action columns for the no-reader families; block 21 stays as history) plus the scoring
 instrument `tools/round-50-c3/sqfs-triage-v5.py`, such that:
 
@@ -141,7 +142,7 @@ instrument `tools/round-50-c3/sqfs-triage-v5.py`, such that:
 ## Landing order and shared-file rules
 
 1. C3 freeze (instrument + registry row), C3 controls + before-run receipts.
-2. C3 table (rule block 22) lands in `SKILL.md`; C3 after-run.
+2. C3 table (rule block 26) lands in `SKILL.md`; C3 after-run.
 3. C1: controls-attempt2 receipts, data run, entry `corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md`
    (the stem the FROZEN counter pins — `tools/round-50/c1-counter.py` constants `entry`/`stem`
    `2026-10-28-r50-avm-le-squashfs-core`, `core_heading` `## Round-50 additions to Core`, `frontier_mark`
