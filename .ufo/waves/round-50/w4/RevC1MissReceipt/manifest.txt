@@ -1,0 +1,25 @@
+# RevC1MissReceipt artifact manifest (UTC: 2026-10-29T21:48:40Z)
+
+## rederive-c1.py (offline field-by-field re-derivation; no REA)
+command: python3 rederive-c1.py  (cwd=/fast/scratch/hyaku/kaidoku-r50/w4-RevC1MissReceipt, TMPDIR set there)
+exit_code: 0  (0 DIFF / 209 matched fields; see rederive-out.txt)
+391c581fb21b225d09a60b8e7d02b82eefc67f94fbbcff5db9a3835b9ce502fe  rederive-out.txt
+f1a22364bda910f7d53f3319f67939f01225326f72803d643decb2ea8fea5c6c  rederive-c1.py
+
+## bindings re-derivation heredoc
+exit_code: 0  (ALL BINDINGS EQUAL)
+16f7b816948738341b187346fe79b16c10ab59c9b8114b3db8398910f099cad2  bindings-rederive.txt
+
+## counter sha256 checks
+exit_code: 0
+cb3ca97aef988da1ca970c512f2626dac52bdcc48891c470ce4a4a7b3bbf380f  counter-sha-checks.txt
+
+## receipt identity + --verify-receipt
+command: python3 tools/round-50/c1-counter.py --verify-receipt .ufo/waves/round-50/l1/scores/c1-after-attempt2.json
+exit_code: 0
+45ffa14766e001985934faa0fd24abc4f2e86960ff705d9e0a775f8b8c9bd13c  receipt-identity.txt
+
+## frozen counter offline --selftest
+command: python3 tools/round-50/c1-counter.py --selftest --work /fast/scratch/hyaku/kaidoku-r50/w4-RevC1MissReceipt/selftest-work (run from lane worktree; writes only under --work)
+exit_code: 0  (169 cases: green_ok 17, red_ok 152)
+5dcbf088449659c7f65d6b6a2357d2543cef2d9601f42c093ee7a4d72b5a2017  selftest-out.txt
