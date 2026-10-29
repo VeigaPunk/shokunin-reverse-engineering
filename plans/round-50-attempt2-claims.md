@@ -60,11 +60,19 @@ routed and unfixed at this base; the round-49 landing fixed F3/F4/F5 only):
 
 Claim: land **triage table v5** as `SKILL.md` rule block 22 (dated supersession of block 21's
 routing/action columns for the no-reader families; block 21 stays as history) plus the scoring
-instrument `tools/round-50/sqfs-triage-v5.py`, such that:
+instrument `tools/round-50-c3/sqfs-triage-v5.py`, such that:
+
+- **Path rule (measured, not assumed):** both frozen round-50 counters freeze the WHOLE
+  `tools/round-50/` tree — seat-measured on a fixture clone (wave-3 `ExecFetchDry`:
+  `c1-counter.py` `frozen_drift = ['tools/round-50/sqfs-triage-v5.py']` → C1 exit 2;
+  `c2-record.py` `freeze_check = frozen_path_changed`) — so the C3 instrument lands at
+  `tools/round-50-c3/` (outside every frozen walk; B9's census covers `tools/round-49/**` +
+  `tools/round-50/**` only, so the outside path needs no row for B9, and the lane registry
+  still gets one as a gate-registration duty).
 
 - **Predicate** (the same sentence in the counter docstring, this file, and the receipt label):
   at the measured revision REV, with FREEZE an ancestor of REV, frozen paths untouched, running
-  `python3 -I -B tools/round-50/sqfs-triage-v5.py --root <LANE> --rev <REV> --freeze <FREEZE>
+  `python3 -I -B tools/round-50-c3/sqfs-triage-v5.py --root <LANE> --rev <REV> --freeze <FREEZE>
   --envelopes <DIR> --json-out <OUT>` exits 0 with `pair_mismatches 0`, `evaluator_missing 0`,
   `table_labels == evaluator_labels` on every envelope of the frozen held-out dir, `selftest`
   green (every committed mutation flips ≥1 pair, none a no-op or cross-flip, do-nothing red);
@@ -88,7 +96,7 @@ instrument `tools/round-50/sqfs-triage-v5.py`, such that:
   8ccc05e6…` (exit 1, ≥4 mismatches incl. the four v2ns `_ddefault` rows) and after at the
   landing REV (exit 0). Receipts under `.ufo/waves/round-50/l1/scores/c3-{before,after}.json`.
 - **C3 freeze (before any C3 data)**: one commit adding this file's C3 section (already),
-  `tools/round-50/sqfs-triage-v5.py` (instrument + evaluator + selftest + committed mutation
+  `tools/round-50-c3/sqfs-triage-v5.py` (instrument + evaluator + selftest + committed mutation
   battery) and its `instrument-registry v2` row. Controls scored with the frozen instrument
   BEFORE the table lands, receipts committed: do-nothing (v4 table at base → red), junk table
   (every row `clean` → red), guard-row-deleted mutant → red, swapped-action mutant → red. If the
