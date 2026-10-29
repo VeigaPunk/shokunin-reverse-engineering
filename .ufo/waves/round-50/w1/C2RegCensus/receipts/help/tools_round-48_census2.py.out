@@ -1,0 +1,20 @@
+usage: census2.py [-h] --root ROOT [--rev REV] [--out OUT]
+
+Generate `tools/round-48/census2.json`: the instrument census R48-C1 scores
+against. Rule (mechanical, re-derivable, never a hand-kept list): scope =
+every path matching `tools/round-4[1-8]/**.{py,sh}` that is named in a
+round-41..48 claim file at `--rev`, restricted to paths that exist there The
+round-46 census stopped at round 46, so the registry section grew two rows
+(`tools/round-47/exact.py`, `tools/round-47/record.py`) that its own census
+could not name; this generator extends the rule through round 48 so the
+registry and the census are the same set again. `census_text(read)` is the
+pure form the counters re-run: `read(path)` returns the file's text at the
+measured revision, or None. It imports nothing, so a counter can exec it from
+committed bytes. python3 -I -B tools/round-48/census2.py --root . --rev <rev>
+--out tools/round-48/census2.json
+
+options:
+  -h, --help   show this help message and exit
+  --root ROOT
+  --rev REV    a revision, or WORKTREE
+  --out OUT

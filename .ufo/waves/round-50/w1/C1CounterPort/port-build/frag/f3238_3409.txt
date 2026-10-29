@@ -1,0 +1,236 @@
+def lane_le_avm_image(work):
+    """A lane-built little-endian AVM-marker SquashFS member, or an error string.
+
+    mksquashfs (squashfs-tools 4.7.x, xz) writes a standard little-endian v4
+    image; patching `mkfs_time` to `bytes_used` and truncating to `bytes_used`
+    gives the frozen layout without any vendor bytes (unblob and sasquatch never
+    read mkfs_time for a little-endian image)."""
+    mk = shutil.which('mksquashfs')
+    if mk is None:
+        return None, 'mksquashfs not on PATH (pass --dev-image)'
+    src = os.path.join(work, 'src')
+    for rel, body in (('README.txt', b'dev tree readme\n' * 9),
+                      ('etc/app.conf', b'k=v\n' * 40),
+                      ('usr/share/doc/blob.bin', bytes(range(256)) * 17),
+                      ('var/info.txt', b'info\n')):
+        full = os.path.join(src, rel)
+        os.makedirs(os.path.dirname(full), exist_ok=True)
+        with open(full, 'wb') as fh:
+            fh.write(body)
+    os.symlink('app.conf', os.path.join(src, 'etc', 'app.link'))
+    img = os.path.join(work, 'lane.sqsh')
+    p = subprocess.run([mk, src, img, '-comp', 'xz', '-noappend', '-no-progress',
+                        '-all-root', '-no-xattrs', '-quiet'], capture_output=True)
+    if p.returncode != 0:
+        return None, 'mksquashfs failed: %s' % p.stderr.decode(errors='replace')[:200]
+    raw = bytearray(open(img, 'rb').read())
+    used = int.from_bytes(raw[40:48], 'little')
+    if not (0 < used <= len(raw)):
+        return None, 'lane image has no usable bytes_used'
+    raw[8:12] = (used & 0xFFFFFFFF).to_bytes(4, 'little')
+    return bytes(raw[:used]), None
+
+
+def selftest_rea(pkg65, unblob, timeout, dev_image=None):
+    """Real-REA end-to-end: two runs of a little-endian AVM-marker member.
+
+    The member is `--dev-image` (a real LE AVM member the caller supplies, NOT a
+    C1 carrier unless the caller says so) or, when absent, a lane-built image
+    (`lane_le_avm_image`). Builds a one-carrier fixture lane (target 1) whose
+    committed receipt is the first real run, then measures it with the counter's
+    real runner (second run) and expects met_target. Then replaces the receipt with
+    an oracle-only fabrication and expects a projection mismatch. The run needs
+    scratch under /fast/scratch/hyaku/kaidoku-r50/ (`run_provenance_ok`).
+    Not exercised by the porting seat."""
+    if not pkg65:
+        raise SystemExit('--selftest-rea needs --pkg65')
+    here = os.path.dirname(os.path.abspath(__file__))
+    xpin_path = find_xpin(here)
+    xpin = open(xpin_path, 'rb').read()
+    sroot = scratch_root()
+    work = tempfile.mkdtemp(prefix='c1-selftest-rea.', dir=sroot)
+    out = {}
+    if dev_image:
+        if not os.path.isfile(dev_image):
+            raise SystemExit('dev image absent: ' + dev_image)
+        image = open(dev_image, 'rb').read()
+        used = int.from_bytes(image[40:48], 'little')
+        if not (0 < used <= len(image)):
+            raise SystemExit('dev image has no usable bytes_used')
+        image = image[:used]
+        out['image'] = dev_image
+    else:
+        image, why = lane_le_avm_image(work)
+        if image is None:
+            raise SystemExit(why)
+        out['image'] = 'lane-built (mksquashfs xz, mkfs_time patched to bytes_used)'
+    pin = hashlib.sha256(image).hexdigest()
+    out.update(image_sha256=pin, bytes=len(image), layout=layout_probe(image))
+    if not out['layout'].get('ok'):
+        raise SystemExit('the image does not read the frozen layout: %r'
+                         % (out['layout'].get('reason'),))
+    runner = make_real_runner(work, unblob, timeout, pkg65)
+
+    # oracle from the independent extractor (unsquashfs; sasquatch is the
+    # extractor under test, so it is not its own oracle)
+    uq = shutil.which('unsquashfs')
+    if uq is None:
+        raise SystemExit('unsquashfs not on PATH')
+    carrier = os.path.join(work, 'carrier.sqsh')
+    with open(carrier, 'wb') as fh:
+        fh.write(image)
+    oroot = os.path.join(work, 'oracle')
+    p = subprocess.run([uq, '-no-xattrs', '-f', '-d', oroot, carrier],
+                       capture_output=True)
+    oracle_rows, nonreg_rows = [], []
+    for dirpath, dirs, names in os.walk(oroot):
+        for name in sorted(names + dirs):
+            full = os.path.join(dirpath, name)
+            rel = os.path.relpath(full, oroot).replace(os.sep, '/')
+            if os.path.islink(full):
+                nonreg_rows.append((rel, 'symlink', os.readlink(full)))
+            elif os.path.isfile(full):
+                data = open(full, 'rb').read()
+                oracle_rows.append((rel, hashlib.sha256(data).hexdigest(), len(data)))
+    oracle_rows.sort()
+    nonreg_rows.sort()
+    oracle_tsv = ''.join('%s\t%s\t%d\n' % r for r in oracle_rows)
+    nonreg_tsv = ''.join('%s\t%s\t%s\n' % r for r in nonreg_rows)
+    out['unsquashfs_rc'] = p.returncode
+    out['oracle_files'] = len(oracle_rows)
+    out['nonregular_entries'] = len(nonreg_rows)
+
+    # first real run -> committed receipt (the frozen parameters, as the data run uses)
+    status, env = runner(image, 'a7530-committed', dict(FIXTURE_REA_PARAMETERS))
+    if status != 'ok':
+        raise SystemExit('first REA run produced no evidence object: %r' % (env,))
+    out['committed_evidence_id'] = env.get('evidence_id')
+    out['committed_handlers'] = [c.get('handler')
+                                 for c in env['normalized_result'].get('chunks') or []]
+
+    pkg_root = os.path.abspath(pkg65)
+    lock = next((q for q in (
+        os.path.join(os.path.dirname(pkg_root), 'package-lock.json'),
+        os.path.join(os.path.dirname(os.path.dirname(pkg_root)), 'package-lock.json'))
+        if os.path.isfile(q)), None)
+    rea_doc = json.dumps({
+        'schema': 'selftest', 'name': 'rea-agents', 'version': REA_VERSION,
+        'package_json_sha256': file_sha256(os.path.join(pkg_root, 'package.json')),
+        'package_lock_sha256': file_sha256(lock) if lock else None})
+    gap_rule = json.dumps({
+        'claim': 'R50-C1',
+        'allowed': {'symlink': ['unpublished-entry'], 'char-device': [],
+                    'block-device': [], 'fifo': ['unpublished-entry'],
+                    'socket': ['unpublished-entry'], 'dir': []},
+        'required': {'symlink': True, 'char-device': False, 'block-device': False,
+                     'fifo': False, 'socket': False, 'dir': False},
+        'removed': {'diagnostic': 'MaliciousSymlinkRemoved', 'kinds': ['symlink'],
+                    'disposition': 'exclusive', 'silent': {}},
+        'structural': {'depth-limited': 1, 'unknown-chunk-handler': 0}}, indent=1)
+    cid = IDS[0]
+    d = tempfile.mkdtemp(prefix='c1-selftest-rea-repo.', dir=sroot)
+    try:
+        subprocess.run(['git', '-C', d, 'init', '-q'], check=True)
+        top = subprocess.run(['git', '-C', d, 'rev-parse', '--show-toplevel'],
+                             capture_output=True, text=True).stdout.strip()
+        if os.path.realpath(top) != os.path.realpath(d):
+            raise SystemExit('fixture toplevel mismatch')
+        ident = ['-c', 'user.name=fx', '-c', 'user.email=fx@fx']
+        frozen = {
+            XPIN: xpin,
+            CARRIERS: json.dumps({
+                'claim': 'R50-C1', 'target': 1,
+                'rea_parameters': dict(FIXTURE_REA_PARAMETERS),
+                'carriers': [{'id': cid, 'path': '%s/%s/carrier.sqsh' % (AFTERDIR, cid),
+                              'sha256': pin,
+                              'oracle': '%s/%s/oracle.tsv' % (AFTERDIR, cid),
+                              'nonregular': '%s/%s/nonregular.tsv' % (AFTERDIR, cid)}]},
+                indent=1),
+            GAPRULE: gap_rule,
+            'plans/round-50-claims.md': '# plan\n',
+            'tools/round-50/c1-counter.py': open(os.path.abspath(__file__), 'rb').read(),
+            'tools/round-50/rea-pkg.json': rea_doc,
+            'PROVINCE.md': _province(),
+            ENTRY: _entry('S240'),
+            'corpus/SOURCES.md': _registry('S240', used=ENTRY),
+            'corpus/README.md': _readme(STEM),
+            '%s/%s/carrier.sqsh' % (AFTERDIR, cid): image,
+            '%s/%s/oracle.tsv' % (AFTERDIR, cid): oracle_tsv.encode(),
+            '%s/%s/nonregular.tsv' % (AFTERDIR, cid): nonreg_tsv.encode(),
+        }
+        revs = []
+
+        def commit(files):
+            for pth, content in files.items():
+                full = os.path.join(d, pth)
+                if content is None:
+                    if os.path.exists(full):
+                        os.remove(full)
+                    continue
+                os.makedirs(os.path.dirname(full) or d, exist_ok=True)
+                data = content if isinstance(content, bytes) else content.encode()
+                with open(full, 'wb') as fh:
+                    fh.write(data)
+            subprocess.run(['git', '-C', d, 'add', '-A'], check=True)
+            subprocess.run(['git', '-C', d] + ident
+                           + ['commit', '-qm', 'step%d' % len(revs), '--allow-empty'],
+                           check=True)
+            revs.append(subprocess.run(['git', '-C', d, 'rev-parse', 'HEAD'],
+                                       capture_output=True, text=True).stdout.strip())
+
+        commit(frozen)
+        commit({'%s/%s/after.json' % (AFTERDIR, cid): json.dumps(env)})
+        freeze, rev = revs[0], revs[-1]
+
+        try:
+            res = measure(d, rev, freeze, pkg65, rerun=None, target=1,
+                          expected_ids=(cid,), unblob=unblob, rea_timeout=timeout)
+            got = 0 if res['met_target'] else 1
+            out['green'] = {'exit': got, 'met_target': res['met_target'],
+                            'carriers_matched': res['carriers_matched'],
+                            'failing': sorted({x for x in CLAUSES
+                                               if res['carriers'][cid].get(x) is not True}),
+                            'bindings_false': sorted(x for x in BINDINGS
+                                                     if res['bindings'][x] is not True),
+                            'projection_diff': res['carriers'][cid].get('projection_diff'),
+                            'gaps_note': res['carriers'][cid].get('gaps_note'),
+                            'layout': res['carriers'][cid].get('layout')}
+        except Unevaluable as e:
+            out['green'] = {'exit': 2, 'reason': e.reason, 'detail': str(e)}
+
+        # oracle-only fabrication: publish exactly the oracle, no chunk geometry
+        # and no diagnostics (what a receipt built from the oracle tables alone
+        # holds; the projection is a coarsening, so a fabrication that reproduced
+        # the chunk geometry too would be semantically equal to a real run - that
+        # is the documented limit of this binding, not a hole in it)
+        fab = mk_env('carrier.sqsh', pin,
+                     files=[(rel, h, size) for rel, h, size in oracle_rows],
+                     chunks=[], diags=[],
+                     outdir='/fast/scratch/hyaku/kaidoku-r50/selftest-rea/fab')
+        fab['evidence_id'] = mint_many(work, xpin_path, pkg65, {'m': fab})['m']
+        commit({'%s/%s/after.json' % (AFTERDIR, cid): json.dumps(fab)})
+        rev = revs[-1]
+        try:
+            res = measure(d, rev, freeze, pkg65, rerun=None, target=1,
+                          expected_ids=(cid,), unblob=unblob, rea_timeout=timeout)
+            v = res['carriers'][cid]
+            out['fabrication'] = {'exit': 0 if res['met_target'] else 1,
+                                  'met_target': res['met_target'],
+                                  'failing': sorted({x for x in CLAUSES
+                                                     if v.get(x) is not True}),
+                                  'projection_diff': v.get('projection_diff'),
+                                  'evidence_id_ok': v.get('evidence_id_ok')}
+        except Unevaluable as e:
+            out['fabrication'] = {'exit': 2, 'reason': e.reason, 'detail': str(e)}
+
+        g = out.get('green', {})
+        ok = (g.get('carriers_matched') == 1 and g.get('failing') == []
+              and g.get('bindings_false') == []
+              and out.get('fabrication', {}).get('met_target') is False
+              and 'projection_ok' in out.get('fabrication', {}).get('failing', []))
+        out['selftest_rea'] = 'ok' if ok else 'FAILED'
+        print(json.dumps(out, indent=1, sort_keys=True))
+        return 0 if ok else 1
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+        shutil.rmtree(work, ignore_errors=True)

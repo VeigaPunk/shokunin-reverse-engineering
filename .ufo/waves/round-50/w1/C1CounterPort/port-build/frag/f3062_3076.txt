@@ -1,0 +1,24 @@
+    # ---- rerun replays the FROZEN extraction parameters (not the receipt's own)
+    def depth_runner(expected):
+        def run(carrier_bytes, cid, params=None):
+            got = (params or {}).get('max_depth')
+            if got != expected:
+                return 'no_data', {'ok': False, 'reason': 'depth %r != %r'
+                                   % (got, expected)}
+            return sim_runner(carrier_bytes, cid, params)
+        return run
+
+    def budget_runner(carrier_bytes, cid, params=None):
+        want = FIXTURE_REA_PARAMETERS
+        if {k: (params or {}).get(k) for k in want} != want:
+            return 'no_data', {'ok': False, 'reason': 'params %r != %r'
+                               % (params, want)}
+        return sim_runner(carrier_bytes, cid, params)
+
+    add('rerun passes the frozen max_depth (1) to REA', [frozen, good], 0, 0,
+        runner=depth_runner(1))
+    add('rerun passes the frozen output budgets to REA', [frozen, good], 0, 0,
+        runner=budget_runner)
+    add('rerun takes the parameters from the frozen table, not from the receipt',
+        [frozen, mutant('a7530', lambda e: e['parameters'].__setitem__('max_depth', 3))],
+        0, 1, want_fail='parameters_ok', runner=depth_runner(1))

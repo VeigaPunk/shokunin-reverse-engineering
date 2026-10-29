@@ -1,0 +1,355 @@
+def measure(root, rev, freeze, pkg65, rerun=None, target=TARGET,
+            expected_ids=IDS, unblob=None, rea_timeout=900, carrier_cache=None,
+            rederive=None):
+    res = {'revision': rev, 'freeze': freeze, 'predicate': 'P50-C1',
+           'target': target}
+    git(root, 'cat-file', '-e', f'{rev}^{{commit}}')
+    git(root, 'cat-file', '-e', f'{freeze}^{{commit}}')
+
+    # the counter that is running IS the counter frozen at FREEZE (round 50, S3)
+    own_sha = file_sha256(os.path.abspath(__file__))
+    frozen_counter = show(root, freeze, COUNTER_PATH)
+    res['counter_sha256'] = own_sha
+    res['counter_frozen_sha256'] = sha256_bytes(frozen_counter)
+    if frozen_counter is None or sha256_bytes(frozen_counter) != own_sha:
+        raise CounterNotFrozen(
+            'the running counter (%s) is not %s at the freeze (%s)'
+            % (own_sha, COUNTER_PATH, res['counter_frozen_sha256']))
+
+    frozen = show(root, freeze, CARRIERS)
+    if frozen is None:
+        raise Unevaluable('carriers.json absent at freeze')
+    try:
+        spec = json.loads(frozen)
+    except json.JSONDecodeError as e:
+        raise Unevaluable('carriers.json at freeze is not JSON: %s' % e)
+    if not isinstance(spec, dict):
+        raise Unevaluable('carriers.json at freeze is not an object')
+    plan_raw = show(root, freeze, GAPRULE)
+    if plan_raw is None:
+        raise Unevaluable('gap-rule.json absent at freeze')
+    try:
+        plan_doc = json.loads(plan_raw)
+    except json.JSONDecodeError as e:
+        raise Unevaluable('gap-rule.json at freeze is not JSON: %s' % e)
+    # frozen tables valid at the freeze commit itself: both parse, and every
+    # oracle / non-regular table carriers.json lists already exists there
+    # (round 50: a table first committed after the freeze is an unfrozen oracle)
+    unfrozen = []
+    for c in spec.get('carriers') or []:
+        if not isinstance(c, dict):
+            continue
+        for key in ('oracle', 'nonregular'):
+            v = c.get(key)
+            if isinstance(v, str) and v and show(root, freeze, v) is None:
+                unfrozen.append(v)
+    res['tables_absent_at_freeze'] = sorted(unfrozen)
+    res['frozen_tables_valid'] = isinstance(plan_doc, dict) and not unfrozen
+
+    cur = show(root, rev, CARRIERS)
+    res['carriers_unchanged'] = cur == frozen
+    res['gap_rule_unchanged'] = show(root, rev, GAPRULE) == plan_raw
+
+    drift = frozen_drift(root, freeze, rev, spec)
+    res['frozen_path_changed'] = drift
+    if drift:
+        raise FrozenPathChanged(drift)
+
+    ids, spec_probs = carriers_spec(spec, target, expected_ids)
+    res['carriers_spec_problems'] = spec_probs
+    profile = spec.get('projection', DEFAULT_PROFILE)
+    if profile not in PROFILES:
+        profile = DEFAULT_PROFILE             # spec_probs already records the fault
+    res['projection_profile'] = profile
+    rea_params = spec.get('rea_parameters') if isinstance(
+        spec.get('rea_parameters'), dict) else {}
+    res['rea_parameters'] = {kk: rea_params.get(kk) for kk in
+                             ('max_depth', 'max_output_bytes', 'max_output_files')}
+    model, plan_probs = gap_rule_model(plan_raw)
+    res['gap_rule_problems'] = plan_probs
+    prior, prior_sources = prior_pins(root, freeze, spec)
+    res['prior_pins'] = sorted(prior)
+    res['prior_pin_sources'] = prior_sources
+
+    work = tempfile.mkdtemp(prefix='c1-counter.', dir=scratch_root())
+    try:
+        runner = rerun or make_real_runner(work, unblob, rea_timeout, pkg65)
+        derive = rederive or (lambda raw, cid: rederive_oracle(raw, work, cid))
+        per = {}
+        envs = {}
+        for c in spec.get('carriers') or []:
+            if not isinstance(c, dict):
+                continue
+            k = c.get('id')
+            d = {'id': k}
+            pin = (c.get('sha256') or '').lower() or None
+            cpath = c.get('path')
+            opath = c.get('oracle')
+            npath = c.get('nonregular')
+            rpath = c.get('receipt') or '%s/%s/after.json' % (AFTERDIR, k)
+
+            if cpath:
+                raw = show(root, rev, cpath)
+            elif isinstance(c.get('external'), dict) and carrier_cache and pin:
+                # external vendor carrier: bytes fetched by fetch-vendor.py; the pin
+                # (frozen in carriers.json) is still checked below on these bytes.
+                fp = os.path.join(carrier_cache, pin + '.bin')
+                raw = open(fp, 'rb').read() if os.path.isfile(fp) else None
+            else:
+                raw = None
+            d['carrier_path'] = cpath
+            d['carrier_present'] = raw is not None
+            d['carrier_pin_ok'] = (raw is not None and pin is not None
+                                   and hashlib.sha256(raw).hexdigest() == pin)
+            d['carrier_fresh_ok'] = (pin is not None and pin not in prior)
+            d['carrier_fresh_against'] = prior_sources
+            d['layout'] = layout_probe(raw)
+            d['layout_ok'] = bool(d['layout'].get('ok'))
+            d['compression'] = d['layout'].get('compression')
+            # carve_ok: the carrier is exactly the filesystem it claims. A carve
+            # that runs past bytes_used leaves trailing bytes, unblob then stops
+            # the chunk at bytes_used, the chunk is no longer the whole input and
+            # the oracle root moves one `<start>-<end>.<handler>_extract` deeper
+            # (measured: R41C1Counter artifacts/chunk-naming.json, 'trailing-512').
+            ext = c.get('external') if isinstance(c.get('external'), dict) else None
+            bu = d['layout'].get('bytes_used')
+            size = d['layout'].get('size')
+            if ext is not None:
+                carve_len = ext.get('length')
+                d['carve'] = {'length': carve_len, 'bytes_used': bu, 'size': size}
+                d['carve_ok'] = (isinstance(carve_len, int)
+                                 and isinstance(bu, int)
+                                 and carve_len == bu == size)
+            else:
+                d['carve'] = {'bytes_used': bu, 'size': size}
+                d['carve_ok'] = isinstance(bu, int) and bu == size
+
+            oracle, oerr = parse_oracle(show(root, rev, opath) if opath else None)
+            d['oracle_path'] = opath
+            d['oracle_error'] = oerr
+            d['oracle_files'] = len(oracle)
+            d['oracle_ok'] = oerr is None and len(oracle) > 0
+            # scoring-time oracle re-derivation: the frozen table must equal what
+            # unsquashfs extracts from these bytes, in both directions
+            if raw is not None and d['carrier_pin_ok'] and d['oracle_ok']:
+                derived = derive(raw, k)
+                want_set, got_set = set(oracle), set(derived)
+                d['oracle_derived_files'] = len(derived)
+                d['oracle_rederived_ok'] = want_set == got_set
+                if want_set != got_set:
+                    d['oracle_rederived_diff'] = {
+                        'frozen_only': sorted(want_set - got_set)[:3],
+                        'derived_only': sorted(got_set - want_set)[:3]}
+            else:
+                d['oracle_rederived_ok'] = False
+                d['oracle_rederived_skipped'] = ('carrier_pin_ok' if not d.get(
+                    'carrier_pin_ok') else 'oracle_ok' if not d['oracle_ok']
+                    else 'carrier_absent')
+
+            nonreg, nerr = parse_nonregular(show(root, rev, npath) if npath else None)
+            d['nonregular_path'] = npath
+            d['nonregular_error'] = nerr
+            d['nonregular_entries'] = len(nonreg)
+            d['nonregular_kinds'] = sorted({kind for _, kind, _d in nonreg})
+            d['nonregular_ok'] = nerr is None
+
+            raw_receipt = show(root, rev, rpath)
+            try:
+                env = json.loads(raw_receipt) if raw_receipt else None
+            except json.JSONDecodeError:
+                env = None
+            if not isinstance(env, dict):
+                env = None
+            d['receipt_path'] = rpath
+            d['receipt_digest'] = sha256_bytes(raw_receipt)
+            d['receipt_present'] = env is not None
+
+            adds = all_adds(root, rev, rpath) if raw_receipt is not None else None
+            d['receipt_adds'] = adds
+            d['receipt_first_add'] = adds[-1] if adds else None
+            d['receipt_fresh'] = bool(adds) and all(
+                a != freeze and is_ancestor(root, freeze, a) for a in adds)
+
+            if env is not None:
+                envs[f'{k}/after'] = env
+                d['evidence_envelope_ok'] = not ({'counter_sha256', 'exit_code'}
+                                                 & set(env))
+                subj = env.get('subject') or {}
+                d['subject_pin_ok'] = ((subj.get('digest') or {}).get('sha256')
+                                       if isinstance(subj, dict) else None) == pin
+                prov = env.get('provider') or {}
+                d['operation_ok'] = (env.get('operation') == 'extract_firmware'
+                                     and isinstance(prov, dict) and prov.get('id') == 'unblob')
+                d['chunk_handlers'] = chunk_handlers(env)
+                d['squashfs_handlers'] = squashfs_chunk_handlers(env)
+                # every squashfs-family chunk handler is EXACTLY the frozen one (no
+                # prefix test, no default): `squashfs_v4_be`, `squashfs_v3`, ... fail
+                d['handler_ok'] = bool(d['squashfs_handlers']) and all(
+                    h == HANDLER for h in d['squashfs_handlers'])
+                d['chunks_ok'] = not chunk_failed(env)
+                root_hint = (c.get('oracle_root')
+                             if isinstance(c.get('oracle_root'), str) else None)
+                root_value, root_how = subject_root(env, root_hint)
+                d['extract_root'] = root_value
+                d['extract_root_source'] = root_how
+                d['chunk_roots'] = chunk_roots(env, root_hint)
+                d['extract_root_confirmed'] = bool(
+                    root_value and any(under_root(p, root_value)
+                                       for p in receipt_paths(env)))
+                files = published(env)
+                d['published_files'] = len(files)
+                nested = nested_roots(env, root_value)
+                d['nested_roots'] = nested
+                d['oracle_hits'] = oracle_hits(oracle, files, root_value, nested)
+                d['published_rels'] = len(published_rels(files, root_value, nested))
+                extra = extra_published(oracle, files, root_value, nested)
+                d['extra_published'] = extra[:5]
+                d['oracle_hits_ok'] = (d['oracle_ok']
+                                       and root_value is not None
+                                       and d['oracle_hits'] == d['oracle_files']
+                                       and not extra)
+                params = env.get('parameters') or {}
+                od = params.get('output_directory') if isinstance(params, dict) else None
+                d['output_directory'] = od
+                diags = diagnostics(env)
+                d['diagnostics'] = len(diags)
+                d['removals'] = sorted(
+                    rel for rel, diag in
+                    ((diagnostic_rel(x, root_value, od), x) for x in diags)
+                    if rel is not None
+                    and diagnostic_typename(diag) == (model.get('removed') or {}
+                                                      ).get('diagnostic'))
+                ok, why = disposition_check(gaps(env), diags, nonreg, model,
+                                            root_value, od)
+                d['gaps_ok'] = ok
+                d['gaps_note'] = why
+                esc = nonregular_published(files, nonreg, root_value)
+                d['nonregular_published'] = esc[:5]
+                d['nonregular_unpublished_ok'] = (root_value is not None
+                                                  and not esc)
+                shape_ok, shape_why = path_shape_ok(env)
+                d['path_shape_ok'] = shape_ok
+                d['path_shape_note'] = shape_why
+                d['run_provenance_ok'] = provenance_ok(od)
+                # the receipt was made with the frozen extraction parameters
+                want_p = {kk: rea_params.get(kk) for kk in
+                          ('max_depth', 'max_output_bytes', 'max_output_files')}
+                got_p = {kk: (params.get(kk) if isinstance(params, dict) else None)
+                         for kk in want_p}
+                d['parameters'] = got_p
+                d['parameters_ok'] = (all(isinstance(v, int)
+                                          and not isinstance(v, bool)
+                                          for v in want_p.values())
+                                      and got_p == want_p)
+
+                # rerun clause: fresh REA run of the REV carrier bytes, replaying
+                # the FROZEN parameters
+                if raw is not None and d['carrier_pin_ok']:
+                    status, payload = runner(raw, k, want_p)
+                    if status != 'ok':
+                        d['projection_ok'] = False
+                        d['projection_error'] = payload
+                    else:
+                        eq, keys, detail = projection_diff(
+                            projection(env, profile), projection(payload, profile),
+                            profile)
+                        d['projection_ok'] = eq
+                        d['projection_diff'] = keys
+                        if not eq:
+                            d['projection_detail'] = detail
+                else:
+                    d['projection_ok'] = False
+                    d['projection_skipped'] = ('carrier_pin_ok'
+                                               if not d.get('carrier_pin_ok')
+                                               else 'carrier_absent')
+            per[k] = d
+
+        ev = evidence_ids(root, freeze, pkg65, envs, work)
+        matched = 0
+        for k, d in per.items():
+            key = f'{k}/after'
+            d['evidence_id_ok'] = (key in ev and ev[key][0] == ev[key][1]
+                                   and ev[key][0].startswith('ev_'))
+            ok = all(d.get(x) is True for x in CLAUSES)
+            d['matched'] = bool(ok)
+            matched += bool(ok)
+        res['rerun_toolchain'] = getattr(runner, 'toolchain', None)
+        res['carrier_ids'] = ids
+        res['carriers'] = per
+        res['carriers_matched'] = matched
+        res['evidence_digests'] = {
+            k: {'path': v.get('receipt_path'), 'sha256': v.get('receipt_digest')}
+            for k, v in per.items() if v.get('receipt_digest')}
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+    # ---------------------------------------------------------- bindings
+    b = {}
+    prov = show(root, rev, 'PROVINCE.md')
+    prov_text = prov.decode(errors='replace') if prov else ''
+    sec = section(prov_text, CORE_HEADING) if prov else None
+    b['province_core_section'] = sec is not None
+    rows = [l for l in (sec or []) if l.lstrip().startswith('|')]
+    b['province_core_row'] = any(
+        HANDLER_RE.search(cells(r)[0]) and AVM_MARKER_RE.search(r.replace(ENTRY, ''))
+        and ENTRY in r
+        for r in rows)
+    b['province_core_rows_seen'] = [
+        cells(r)[0] for r in rows if HANDLER_RE.search(cells(r)[0])]
+    # the token is searched with the stem removed: the stem itself spells
+    # `avm-le` and would satisfy the token on its own
+    b['frontier_note'] = any(FRONTIER_MARK in l and STEM in l
+                             and LE_AVM_RE.search(l.replace(STEM, ''))
+                             for l in prov_text.splitlines())
+    ent = show(root, rev, ENTRY)
+    b['entry_present'] = ent is not None
+    src_ids = set()
+    if ent:
+        for line in ent.decode(errors='replace').splitlines():
+            if line.startswith('source:'):
+                src_ids |= sid_tokens(line)
+    b['entry_source_ids'] = sorted(src_ids)
+    reg = show(root, rev, 'corpus/SOURCES.md')
+    ok_ids = []
+    if reg:
+        for line in reg.decode(errors='replace').splitlines():
+            if not re.match(r'^ {0,3}\|\s*S\d{3,}\s*\|', line):
+                continue
+            c = cells(line)
+            if len(c) != 11:
+                continue
+            used = c[10]
+            if c[0] in src_ids and c[8] in OPENED_DATES and (ENTRY in used or STEM in used):
+                ok_ids.append(c[0])
+    b['opened_source_rows'] = sorted(ok_ids)
+    b['sourced'] = bool(ok_ids)
+    readme = show(root, rev, 'corpus/README.md')
+    cm = section(readme.decode(errors='replace'), '## Coverage map') if readme else None
+    b['coverage_map_row'] = bool(cm) and any(
+        STEM in l for l in cm if l.lstrip().startswith('|'))
+    b['carriers_spec_ok'] = not spec_probs
+    kinds_seen = set()
+    for d in (res.get('carriers') or {}).values():
+        kinds_seen |= set(d.get('nonregular_kinds') or [])
+    uncovered = sorted(kinds_seen - set(model.get('allowed') or {}))
+    b['gap_rule_ok'] = not plan_probs and not uncovered
+    b['gap_rule_uncovered_kinds'] = uncovered
+    b['compression_detail'] = [d.get('compression')
+                               for d in (res.get('carriers') or {}).values()]
+    b['frozen_tables_valid'] = bool(res.get('frozen_tables_valid'))
+    res['bindings'] = b
+    res['met_target'] = bool(res['carriers_unchanged'] and res['gap_rule_unchanged']
+                             and res['carriers_matched'] == target
+                             and all(b[x] is True for x in BINDINGS))
+    return res
+
+
+def failing_lists(res):
+    """(per-carrier failing clause names, false binding names) for the receipt."""
+    fails = []
+    for k, v in (res.get('carriers') or {}).items():
+        for x in CLAUSES:
+            if v.get(x) is not True:
+                fails.append('%s:%s' % (k, x))
+    binds = [x for x in BINDINGS if (res.get('bindings') or {}).get(x) is not True]
+    return sorted(fails), binds

@@ -1,0 +1,33 @@
+274	        ...dependencyGaps,
+275	        ...normalized.failed_extraction_stages
+276	            .filter(({ kind }) => kind === "extractor-failure")
+277	            .map(({ input_path, provider_id, handler }) => ({
+278	            kind: "extractor-failure",
+279	            input_path,
+280	            ...emptyGap,
+281	            handler,
+282	            provider_id,
+283	            dependencies: [],
+284	            continuation_id: continuation("The producer retained this extraction stage's failure in diagnostics. Review the stage report and correct the reported cause before rerunning extract_firmware on the same immutable input with a fresh output_directory; this report establishes no byte-region ownership."),
+285	        })),
+286	        ...chunkGaps("unknown-chunk-handler", (chunk) => chunk.handler === null),
+287	        ...chunkGaps("encrypted-chunk", (chunk) => chunk.encrypted === true),
+288	        ...chunkGaps("extractor-failure", (chunk) => chunk.extraction_failed === true &&
+289	            chunk.handler !== null &&
+290	            chunk.encrypted !== true &&
+291	            // The chunk's own dependency row already carries its recovery; a
+292	            // task-wide dependency names no region and replaces nothing.
+293	            !dependencyChunkKeys.has(JSON.stringify([chunk.input_path, chunk.provider_id]))),
+294	        ...normalized.depth_limited_paths.map((input_path) => ({
+295	            kind: "depth-limited",
+296	            input_path,
+297	            ...emptyGap,
+298	            dependencies: [],
+299	            continuation_id: depthContinuationId(input_path),
+300	        })),
+301	        ...unpublished.map((entry) => ({
+302	            kind: "unpublished-entry",
+303	            input_path: `$output/${entry.relative_path}`,
+304	            ...emptyGap,
+305	            relative_path: entry.relative_path,
+306	            dependencies: [],

@@ -1,0 +1,96 @@
+WORK_OVERRIDE = None
+
+
+def scratch_root():
+    """Private scratch directory; --work > $HYAKU_SCRATCH > /fast/scratch/hyaku.
+
+    Deliberately never `tempfile.gettempdir()`: with TMPDIR and HYAKU_SCRATCH
+    unset that resolves to /tmp (R44-SCR-TMP, carried from round 49)."""
+    if WORK_OVERRIDE:
+        os.makedirs(WORK_OVERRIDE, exist_ok=True)
+        return WORK_OVERRIDE
+    d = os.path.join(os.environ.get('HYAKU_SCRATCH', '/fast/scratch/hyaku'),
+                     'kaidoku-r50', 'counter')
+    os.makedirs(d, exist_ok=True)
+    return d
+
+
+def which_fixed(name):
+    """Absolute path of `name` under FIXED_PATH, or None."""
+    for d in FIXED_PATH.split(':'):
+        if not d:
+            continue
+        p = os.path.join(d, name)
+        if os.path.isfile(p) and os.access(p, os.X_OK):
+            return p
+    return None
+
+
+def file_sha256(path):
+    """sha256 of a file's bytes following symlinks (a tool's real content)."""
+    try:
+        real = os.path.realpath(path)
+        with open(real, 'rb') as fh:
+            return hashlib.sha256(fh.read()).hexdigest()
+    except OSError:
+        return None
+
+
+def sha256_bytes(raw):
+    return hashlib.sha256(raw).hexdigest() if raw is not None else None
+
+
+# ------------------------------------------------------------- receipt identity
+
+def counter_identity(path=None):
+    """(counter path, sha256 of its bytes) for the counter that writes a receipt."""
+    p = path or os.path.abspath(__file__)
+    try:
+        with open(p, 'rb') as fh:
+            digest = hashlib.sha256(fh.read()).hexdigest()
+    except OSError:
+        return {'counter': p, 'counter_sha256': None}
+    return {'counter': p, 'counter_sha256': digest}
+
+
+def stamp_receipt(doc, path=None):
+    doc.update(counter_identity(path))
+    return doc
+
+
+def receipt_identity_ok(doc):
+    """(ok, why) for a receipt this counter wrote: key present and honest."""
+    if not isinstance(doc, dict):
+        return False, 'not an object'
+    if 'counter_sha256' not in doc:
+        return False, 'missing counter_sha256'
+    digest = doc.get('counter_sha256')
+    if digest is None:
+        return False, 'counter_sha256 is null'
+    if not isinstance(digest, str) or not SHA_RE.match(digest.lower()):
+        return False, 'counter_sha256 is not 64 hex'
+    path = doc.get('counter')
+    if not isinstance(path, str) or not path:
+        return False, 'missing counter path'
+    try:
+        with open(path, 'rb') as fh:
+            actual = hashlib.sha256(fh.read()).hexdigest()
+    except OSError as e:
+        return False, 'counter file unreadable: %s' % e
+    if actual != digest.lower():
+        return False, 'counter_sha256 does not describe %s' % path
+    return True, 'ok'
+
+
+def write_receipt(doc, path):
+    """Write a score receipt and prove its own identity on the way out."""
+    stamped = stamp_receipt(dict(doc))
+    with open(path, 'w') as fh:
+        json.dump(stamped, fh, indent=1, sort_keys=True)
+    try:
+        with open(path) as fh:
+            written = json.load(fh)
+    except (OSError, json.JSONDecodeError) as e:
+        return stamped, False, 'receipt unreadable after write: %s' % e
+    ok, why = receipt_identity_ok(written)
+    return stamped, ok, why

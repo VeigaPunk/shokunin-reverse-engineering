@@ -1,0 +1,73 @@
+def published_index(files, root, nested=()):
+    """{rel: [(sha256, size), ...]} for the published files under the extract root.
+
+    One pass over the receipt (round 50): a rootfs carrier publishes ~13k
+    regular files, and the round-41 per-row scan was O(rows x files). The index
+    is keyed by the exact path relative to the root (`extract_rel`), so the
+    exactness of the match is unchanged. Files under a `nested` extract root (the
+    `<root>/<image>_extract` directory of another chunk) belong to that chunk's
+    namespace and are not indexed."""
+    idx = {}
+    if root is None:
+        return idx
+    for fp, fsha, fsize in files:
+        if any(under_root(fp, n) for n in nested):
+            continue
+        rel = extract_rel(fp, root)
+        if rel:
+            idx.setdefault(rel, []).append((fsha, fsize))
+    return idx
+
+
+def nested_roots(env, root):
+    """Extract roots of OTHER chunks that lie inside `root` (a nested image's
+    `<root>/<path>_extract`), from the receipt's own derivation edges."""
+    if root is None:
+        return []
+    nr = env.get('normalized_result') or {}
+    out = set()
+    for d in nr.get('derivations') or []:
+        if not isinstance(d, dict):
+            continue
+        child = strip_output(d.get('child_path'))
+        if isinstance(child, str) and child.rstrip('/').startswith(root + '/'):
+            out.add(child.rstrip('/'))
+    return sorted(out)
+
+
+def oracle_hits(rows, files, root, nested=()):
+    """Oracle rows published exactly: rel, sha256 and size (round 49 added size)."""
+    if root is None:
+        return 0
+    idx = published_index(files, root, nested)
+    hits = 0
+    for rel, sha, want_size in rows:
+        if any(s == sha and z == want_size for s, z in idx.get(strip_rel(rel), [])):
+            hits += 1
+    return hits
+
+
+def published_rels(files, root, nested=()):
+    """The distinct relative paths of published regular files under the root."""
+    return sorted(published_index(files, root, nested))
+
+
+def extra_published(rows, files, root, nested=()):
+    """Published regular files under the root that the oracle does not list."""
+    if root is None:
+        return []
+    want = {strip_rel(row[0]) for row in rows}
+    return [rel for rel in published_rels(files, root, nested) if rel not in want]
+
+
+def nonregular_published(files, nonreg, root):
+    """Published file paths that equal a non-regular entry's path under the root."""
+    hits = []
+    if root is None:
+        return hits
+    entries = {strip_rel(rel) for rel, _kind, _detail in nonreg}
+    for fp, _, _ in files:
+        rel = extract_rel(fp, root)
+        if rel and rel in entries:
+            hits.append(fp)
+    return hits

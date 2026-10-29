@@ -1,0 +1,16 @@
+# a7530 REA 6.5.0 probe (C1ControlsBuild, 2026-10-28 UTC ~20:36), observations as printed in the session
+image   FRITZ.Box_7530-08.25.image  41850880 B  sha256 b17fe5cd0bd3faa713dd92513cb3a65c23e61f5f23366c343b78674955d35e9c
+member  ./var/tmp/filesystem.image  34005000 B  sha256 df6c22ddd009870404375aff606853c9d5171580437b6aae193114d2040c6e56  (hsqs, bytes_used 34003969 == mkfs_time, comp 4)
+carrier carve to bytes_used         34003969 B  sha256 e822655ac51cad32842e02e3eb31ff93d0b7e0d5620f88a9c86c07a7deda199e
+unsquashfs: 15150 inodes; types - 13366, d 927, l 857; regular bytes 172089096
+
+run 1  REA_UNBLOB_COMMAND=~/.local/bin/unblob npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 1 carrier.bin out
+       exit 1  3.2 s  error.code unreadable_output, details.reason "Staging entry budget exceeded (10000)"
+run 2  ... --max-output-files 100000 --max-output-bytes 4294967296
+       exit 1  VALIDATION_ERROR  maxOutputBytes <= 536870912 (schema max); maxOutputFiles schema max 100000
+run 3  ... --max-depth 1 --max-output-files 100000 --max-output-bytes 536870912
+       exit 0  48.05 s real, user 7m12.5s, sys 2m3.6s; receipt 6065003 B (sha256 of the stdout file 931180f90e0efac903cd74a56c101a96f9ffcc7759611eb55f578dff359257c2)
+       handler squashfs_v4_le; 13366 files; coverage partial; gaps: depth-limited + 852 unpublished-entry; published_bytes 172089096;
+       diagnostics MaliciousSymlinkRemoved x5; out dir 198 MB
+REA FIRMWARE_LIMITS (dist/firmware/FirmwareRelease.js:27-33): inputBytes 128 MiB, reportBytes 8 MiB, addressSpaceBytes 1 GiB, timeoutMs 120000
+host load average during the later gen/score passes: 48-72 (uptime 20:49 / 20:52 / 21:07 / 21:39 / 21:57 local); pos gen on a7530: 5 attempts 126.4,129.3,127.7,126.4,126.2 s, all provider_timeout

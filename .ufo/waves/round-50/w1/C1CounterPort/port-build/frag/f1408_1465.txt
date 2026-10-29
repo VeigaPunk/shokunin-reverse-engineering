@@ -1,0 +1,200 @@
+class CounterNotFrozen(Unevaluable):
+    reason = 'counter_not_frozen'
+
+
+class OracleEnvError(Unevaluable):
+    reason = 'oracle_env_error'
+
+
+def rea_entry(pkg65):
+    """(CLI entry path, version, package.json sha256, problem) of the REA package.
+
+    The entry is the `rea-agents` (or bare string) `bin` of the package at
+    `--pkg65`; node runs it directly (round 50: no npx)."""
+    pj = os.path.join(os.path.abspath(pkg65), 'package.json')
+    try:
+        with open(pj) as fh:
+            doc = json.load(fh)
+    except (OSError, json.JSONDecodeError) as e:
+        return None, None, None, 'package.json unreadable: %s' % e
+    bins = doc.get('bin')
+    entry = bins.get('rea-agents') if isinstance(bins, dict) else bins
+    if not isinstance(entry, str) or not entry:
+        return None, doc.get('version'), None, 'package.json has no rea-agents bin'
+    full = os.path.join(os.path.abspath(pkg65), entry)
+    if not os.path.isfile(full):
+        return None, doc.get('version'), None, 'bin entry %r is not a file' % (entry,)
+    return full, doc.get('version'), file_sha256(pj), None
+
+
+def _first_line(argv, timeout=60):
+    try:
+        p = subprocess.run(argv, capture_output=True, text=True, timeout=timeout,
+                           env=dict(os.environ, PATH=FIXED_PATH))
+    except (OSError, subprocess.SubprocessError):
+        return None
+    text = (p.stdout or p.stderr or '').strip()
+    return text.splitlines()[0].strip() if text else ''
+
+
+def toolchain_record(unblob_path, pkg65):
+    """The bound toolchain of the rerun, or a RerunEnvError.
+
+    Round 50 (shortcut critique S1): the unblob that REA is told to run must report
+    the frozen version (`unblob --version` == 26.6.4), `sasquatch` must resolve on
+    FIXED_PATH (never on the caller's PATH), node must resolve on FIXED_PATH, and the
+    REA package at --pkg65 must be version 6.5.0. Paths, sha256 and versions go
+    into the counter receipt."""
+    rec = {}
+    ver = _first_line([unblob_path, '--version'])
+    rec['unblob'] = {'path': unblob_path, 'realpath': os.path.realpath(unblob_path),
+                     'sha256': file_sha256(unblob_path), 'version': ver}
+    if ver != UNBLOB_VERSION:
+        raise RerunEnvError('unblob version %r != frozen %r (%s)'
+                            % (ver, UNBLOB_VERSION, unblob_path))
+    sas = which_fixed('sasquatch')
+    if sas is None:
+        raise RerunEnvError('missing-extractor-dependency: sasquatch is not '
+                            'on the fixed child PATH %r' % (FIXED_PATH,))
+    rec['sasquatch'] = {'path': sas, 'realpath': os.path.realpath(sas),
+                        'sha256': file_sha256(sas),
+                        'version_line': _first_line([sas, '-version'])}
+    node = which_fixed('node')
+    if node is None:
+        raise RerunEnvError('node is not on the fixed child PATH %r' % (FIXED_PATH,))
+    rec['node'] = {'path': node, 'realpath': os.path.realpath(node),
+                   'version': _first_line([node, '--version'])}
+    entry, version, pj_sha, why = rea_entry(pkg65)
+    if entry is None:
+        raise RerunEnvError('REA package at --pkg65: %s' % (why,))
+    if version != REA_VERSION:
+        raise RerunEnvError('REA package version %r != %r' % (version, REA_VERSION))
+    rec['rea'] = {'package': os.path.abspath(pkg65), 'entry': entry,
+                  'version': version, 'package_json_sha256': pj_sha}
+    return rec
+
+
+def make_real_runner(work, unblob, timeout, pkg65):
+    """REA 6.5.0 extract-firmware on the given carrier bytes, fresh outdir.
+
+    Executed as `node <pkg65>/<bin> extract-firmware ...` (round 50: the package
+    the evidence-id recompute is bound to, not whatever `npx` resolves). The run
+    replays the FROZEN extraction parameters (`rea_parameters` of carriers.json:
+    `max_depth`, `max_output_bytes`, `max_output_files`; round 41 replayed the
+    committed receipt's own parameters). A receipt produced at `--max-depth 1` is
+    `partial` with a truncated published set, so a rerun at REA's default depth 3
+    could never match it under a profile that compares `coverage` or
+    `published_bytes`; and a rootfs carrier (~13k files) needs the raised budgets
+    or REA fails with a staging-entry budget error.
+
+    The child PATH is FIXED_PATH and must resolve `sasquatch` (the extractor for
+    every little-endian v4 image: unblob runs `sasquatch -le ...`);
+    `sasquatch-v4be` is not required. A PATH that does not resolve it, an unblob
+    that is not 26.6.4 or a package that is not 6.5.0 is an unevaluable
+    environment (`rerun_env_error`), never a green run and never a silent
+    downgrade. The bound toolchain is exposed as `run.toolchain` after the first
+    run."""
+    unblob_path = unblob or os.path.expanduser('~/.local/bin/unblob')
+
+    def run(carrier_bytes, cid, params=None):
+        run.toolchain = toolchain_record(unblob_path, pkg65)
+        node = run.toolchain['node']['path']
+        entry = run.toolchain['rea']['entry']
+        d = os.path.join(work, 'rerun-' + re.sub(r'[^A-Za-z0-9_.-]', '_', str(cid)))
+        inp = os.path.join(d, 'carrier.bin')
+        outdir = os.path.join(d, 'out')
+        os.makedirs(d, exist_ok=False)
+        with open(inp, 'wb') as fh:
+            fh.write(carrier_bytes)
+        env = dict(os.environ)
+        env['REA_UNBLOB_COMMAND'] = unblob_path
+        env['TMPDIR'] = d
+        env['PATH'] = FIXED_PATH
+        argv = [node, entry, 'extract-firmware', '--format', 'json',
+                '--full-output']
+        replayed = {}
+        if isinstance(params, dict):
+            for flag, key in REPLAY_PARAMS:
+                value = params.get(key)
+                if isinstance(value, int) and not isinstance(value, bool):
+                    argv += [flag, str(value)]
+                    replayed[key] = value
+        argv += [inp, outdir]
+        try:
+            p = subprocess.run(argv, cwd=d, capture_output=True, env=env, timeout=timeout)
+        except FileNotFoundError as e:
+            raise RerunEnvError('rea could not start: %s' % e)
+        except subprocess.TimeoutExpired:
+            raise RerunEnvError('rea timed out after %ss' % timeout)
+        text = p.stdout.decode('utf-8', 'replace')
+        try:
+            envl = json.loads(text)
+        except json.JSONDecodeError:
+            raise RerunEnvError('rea stdout is not JSON (exit %d): %r'
+                                % (p.returncode, text[:200]))
+        if not isinstance(envl, dict):
+            raise RerunEnvError('rea stdout JSON is not an object')
+        data = envl.get('data')
+        if envl.get('ok') is not True or not isinstance(data, dict):
+            # keep REA's own error object: a rerun that fails is unevaluable-only
+            # when the environment is broken, and the reason must be in the record
+            return 'no_data', {'ok': envl.get('ok'), 'exit': p.returncode,
+                               'replayed': replayed,
+                               'error': envl.get('error'),
+                               'stdout_head': text[:300],
+                               'stderr': p.stderr.decode('utf-8', 'replace')[:300]}
+        return 'ok', data
+
+    run.toolchain = None
+    return run
+
+
+def rederive_oracle(raw, work, tag='carrier'):
+    """The regular-file set [(rel, sha256, size)] `unsquashfs` extracts from the bytes.
+
+    Round 50 (shortcut critique S5/S6): the frozen oracle table is re-derived at
+    scoring time from the carrier bytes themselves, so a shrunk, extended or
+    lane-built table cannot pass. `/usr/bin/unsquashfs` (fixed path, version 4.7.5)
+    extracts into a fresh scratch directory (`ORACLE_FLAGS`); symlinks, directories
+    and device nodes are not regular files and are left out; the directory is
+    removed afterwards. A tool that is missing, is another version, or extracts
+    nothing from bytes that parsed is an OracleEnvError (exit 2)."""
+    if not (os.path.isfile(UNSQUASHFS) and os.access(UNSQUASHFS, os.X_OK)):
+        raise OracleEnvError('%s is not executable' % UNSQUASHFS)
+    ver = _first_line([UNSQUASHFS, '-version'])
+    if not (isinstance(ver, str) and UNSQUASHFS_VERSION in ver):
+        raise OracleEnvError('unsquashfs version line %r lacks %s'
+                             % (ver, UNSQUASHFS_VERSION))
+    base = tempfile.mkdtemp(prefix='oracle-' + re.sub(r'[^A-Za-z0-9_.-]', '_', str(tag))
+                            + '.', dir=work)
+    try:
+        img = os.path.join(base, 'carrier.bin')
+        with open(img, 'wb') as fh:
+            fh.write(raw)
+        dest = os.path.join(base, 'tree')
+        p = subprocess.run([UNSQUASHFS, *ORACLE_FLAGS, '-d', dest, img],
+                           capture_output=True, text=True)
+        if not os.path.isdir(dest):
+            raise OracleEnvError('unsquashfs produced no tree (exit %d): %s'
+                                 % (p.returncode, (p.stderr or p.stdout)[:200]))
+        # an extraction with restrictive modes must stay readable for the walk
+        subprocess.run(['chmod', '-R', 'u+rwX', dest], capture_output=True)
+        rows = []
+        for dirpath, dirs, names in os.walk(dest):
+            for name in names:
+                full = os.path.join(dirpath, name)
+                if os.path.islink(full) or not os.path.isfile(full):
+                    continue
+                h = hashlib.sha256()
+                size = 0
+                with open(full, 'rb') as fh:
+                    for blk in iter(lambda: fh.read(1 << 20), b''):
+                        h.update(blk)
+                        size += len(blk)
+                rows.append((os.path.relpath(full, dest).replace(os.sep, '/'),
+                             h.hexdigest(), size))
+        rows.sort()
+        return rows
+    finally:
+        subprocess.run(['chmod', '-R', 'u+rwX', base], capture_output=True)
+        shutil.rmtree(base, ignore_errors=True)

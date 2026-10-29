@@ -1,0 +1,79 @@
+# C1CarrierAdversary — round 50 wave 1 (pre-freeze)
+
+Seat: C1CarrierAdversary (leaf, read-only on the lane tree). Base `7c678ae6d97aedb969fd253b52b3d2882ef1e186`.
+Probe time: 2026-10-28 23:31–23:47 UTC. Scratch `/fast/scratch/hyaku/kaidoku-r50/C1CarrierAdversary` (removed before yield; receipts copied here).
+
+## Verdict
+
+**Carrier table NOT ready to freeze as written.** Two of the four pinned carriers (`c6490`, `c6430`) do not contain the member the chain pins (`./var/tmp/filesystem.image`); their `hsqs` member is `./var/remote/var/tmp/x86/filesystem.image`. The "dozens of boxes" count is an artefact of the L1 probe's first-match (`endswith('filesystem.image')`) on tar order. The "AVM marker" on the little-endian layout has no documentary source in the cited Freetz file (which describes the big-endian AVM-BE layout only). Four download URLs are live with no newer image in their directories. No public LE `hsqs` image without the marker exists in the 137-image census, so CTL-C1-4 must stay lane-built, as the plan already says.
+
+## Top findings
+
+1. **Two carriers do not match the pinned chain path (blocking).** In `FRITZ.Box_6490_Cable-07.57.image` and `FRITZ.Box_6430_Cable-07.30.image` the tar has no `./var/tmp/filesystem.image` (21 members; only `.image` members are `./var/remote/var/tmp/{kernel,filesystem}.image` and `./var/remote/var/tmp/x86/{kernel,filesystem}.image`). The LE `hsqs` member is the x86 one. Its sizes (28,200,968 and 23,863,304 B) are exactly the "28 MB" and "23.9 MB" in the plan's carrier table, so the table describes the wrong member. The probe in `.ufo/waves/round-50/l1/scan.py` returns the first `*filesystem.image` in tar order, which is the x86 member in 6430, 6490 and 6590-cable. That is why the probe reports `hsqs` at the pinned path for these boxes. The plain `./var/remote/var/tmp/filesystem.image` in both is `sqsh` big-endian v4.0 xz with the marker (AVM-BE class, not LE).
+2. **"Dozens" is not supported; the census is 16 models.** Read-only census of all 70 `fritzbox-*` roots (the L1 says 78) and their `fritz.os` indexes: 137 `.image` files in 69 models. Filesystem members: 28 LE v4 `hsqs` rows in 16 models, all marker-set. Of those, 23 rows (13 models) are at the exact path `./var/tmp/filesystem.image` (6850-4g, 6850-5g, 6850-5g-v2, 6850-lte, 7520, 7520-B, 7530, 7581, 7582, 7583, 7583-vdsl, 7590, 7590-ax). Five rows (6430, 6490 x2, 6590-cable x2) are at the x86 path. The L1's cited `scan-output.txt` has 2 lines, not a census. Other rows: 53 with no `filesystem.image` member (FIT/`uimg` layouts), 20 with a zero-length `./var/tmp/filesystem.image` header (unreadable here), 4 `sqsh` with version field 0.0 (unclassified), 5 `sqsh` BE v3.0.
+3. **The "AVM marker" on LE is undocumented in the cited source.** `Freetz/.../AVM-BE-format.txt` (sha256 `c1c43f6f…`, 1,496 B, fetched 2026-10-28 23:45 UTC) says AVM-BE "uses the big-endian layout", that LE is "the only layout supported by the original/unmodified code", and that `mkfs_time` equals `bytes_used` for AVM-BE. Nothing there covers an LE variant. For the four carriers, the marker is an empirical observation (28/28 LE census rows, 4/4 carriers). `unsquashfs -s` shows the "creation time" as `Sun Oct 4 1970` for the 6430 x86 member, i.e. `mkfs_time` is a byte count. That is a layout tag, not a provenance proof. "Genuine" must not be earned from the marker.
+4. **No public LE negative exists, so CTL-C1-4 is lane-built only.** No `hsqs` LE v4 in the 137-image census lacks the marker. Routing (below) means a marker-less LE image would still be named `squashfs_v4_le`, so the marker clause alone would turn CTL-C1-4 red. That is consistent with the plan's own text.
+5. **The "v3 `sqsh` comp 0" label is a misreading.** SquashFS v3 has no compression id at superblock offset 20. Offsets 20–23 are `inode_table_start_2` (unblob `squashfs.py:284-314`). The 3272 value of 0 is that field, not compression. The `marker` and `comp` columns of the probe for v3 rows are meaningless. Read-only Range read of 96 B (3272 deutschland member at data offset 2,284,032): `s_major` at 28 = 3, `s_minor` = 0, field at 20 = 0. Routing to `squashfs_v3` is correct and is the usable negative (see row N2).
+6. **All four carriers have no xattrs, 64 KiB blocks, one id.** `unsquashfs -s` (4.7.5) on each member: xz, block 65536, "Xattrs are not stored", "Duplicates are removed", "exportable", "Fragments are compressed", "Number of ids 1". Inodes 15,150 / 15,151 / 5,624 / 4,780. So the plan's limit (5) "xattr features are whatever the images contain" understates the fact that none of these four has xattrs.
+7. **Download-site facts (4/4 live).** HEAD 200 at 23:32 UTC for all four (`Accept-Ranges: bytes`). Newer images: none in these directories (see table). Older images: not listed; each `fritz.os/` index shows one `.image` per locale.
+
+## Findings table
+
+Commands are read-only (HTTP GET/HEAD/Range, `tar`/Python reads of scratch copies, `unsquashfs -s`). Exit codes: all 0 unless stated. Hashes are of the scratch receipts or of the vendor bytes in scratch (the vendor bytes are not in the lane tree).
+
+| ID | Check | Command / source | Result | Exit | Evidence |
+|---|---|---|---|---|---|
+| D1 | Availability, 4 URLs | `curl -sS -I https://download.avm.de/fritzbox/<model>/deutschland/fritz.os/<file>.image` | 200; 7530 CL 41,850,880 LM 22 Apr 2026, ETag `69e89ce3-27e9800`; 7590 CL 42,393,600 LM 26 Mar 2026, ETag `69c5383f-286e000`; 6490 CL 39,741,440 LM 04 Sep 2023, ETag `64f60ee7-25e6800`; 6430 CL 35,911,680 LM 05 Sep 2023, ETag `64f6f08b-223f800` | 0 | `census-members.json` (index), `newer-check.txt` |
+| D2 | Directory index, newer / older image | `curl` of `…/fritz.os/` and model roots; parsed in `census.py` | 7530: 08.25 in belgium/deutschland/other, no newer. 7590: 08.25 in deutschland/other. 6490: 07.57 in deutschland/other. 6430: 07.30 only in deutschland. No older image listed in any `fritz.os/` index | 0 | `newer-check.txt`, `census-images.json` |
+| D3 | Image bytes (scratch only) | `curl -o` ×4 | sha256 7530 `b17fe5cd0bd3faa713dd92513cb3a65c23e61f5f23366c343b78674955d35e9c` (= L1 value); 7590 `267ef427337d2141736ad6ed5d9389722a6a1234dd590bb7d4ebf11a00616c0d`; 6490 `f518ce6baa05b30d84264d9349cca9bf0b9402986d4112bda8ad73a04f9ede6d`; 6430 `52e3687d7363301453aa4fe0c712126874c90d3c138dee0792213dab11f5d815` | 0 | scratch `SHA256SUMS` (not copied) |
+| D4 | Tar member names (exact) | `python3 -I -B names.py` (`tarfile`) | 7530 and 7590: `./var/tmp/filesystem.image` present (exact). 6490 and 6430: `./var/tmp/filesystem.image` **absent**; `.image` members are `./var/remote/var/tmp/{kernel,filesystem}.image` and `./var/remote/var/tmp/x86/{kernel,filesystem}.image` | 0 | `names-out.txt` (sha256 `64770b12…`) |
+| D5 | Member sizes vs plan table | `inspect.py` | 7530 34,005,000; 7590 35,835,912; 6490 x86 28,200,968; 6430 x86 23,863,304. Plan table "34 MB / 35.8 MB / 28 MB / 23.9 MB" equals these (member sizes) | 0 | `inspect-out.txt` (sha256 `4b55d71a…`) |
+| D6 | Member sha256 (scratch) | `python3 -I -B inspect.py` | 7530 `./var/tmp/filesystem.image` `df6c22ddd009870404375aff606853c9d5171580437b6aae193114d2040c6e56`; 7590 `05ba6ac992f77076cd72d97ed98ab7612f3cc6969f6bbf736515537a9373c3dc`; 6490 x86 `7ea4c628def17c25dc05f6103f8563884022dd1a5baf0c4fba38a85b546a0419`; 6430 x86 `25194a87e54f98d868c614cef4ef8509c3e8f34bd6498bc03cdc3e7dcdd4934c`; 6490 plain `334e56dfba6a785590bb5cdbd78fcb5be183b9af160b51fc8935a3015ad3f3d4` (sqsh BE); 6430 plain `7d3677e679ad5d07d9d49b4c1567f7f2f82dac28795b946875a62eeb949c9251` (sqsh BE) | 0 | `inspect-out.txt` |
+| D7 | Superblocks of the four LE members | `unsquashfs -s` (4.7.5) on each member, and Python struct | All "SQUASHFS 4:0", xz, block 65,536, "Xattrs are not stored", "Duplicates are removed", "Number of ids 1"; mkfs_time == bytes_used (34,003,969; 35,834,769; 23,861,507; 28,200,029); creation times read 1970/1971 | 0 (the pipeline exit was captured by `head`; `unsquashfs` itself not separately re-run) | `unsquashfs-s.txt` (sha256 `9f1183c7…`) |
+| D8 | Census of all model roots | `census.py` (phase 1) + `census2.py` (phase 2, after bug fix) | 70 roots; 137 `.image` in 69 models; 142 filesystem member rows (see F2 breakdown). Phase-2 bugs fixed: tuple arg, 416 at EOF | 0 | `census-images.json` (sha256 `106a6f84…`), `census-members.json` (sha256 `e42dac7e…`), `census2-run.log` |
+| D9 | Census rows by class | Python over `census-members.json` | LE v4 `hsqs`: 28 (all marker-set), 23 at exact path, 5 at x86 path; BE v4 `sqsh` marker: 32; BE v3.0 `sqsh`: 5 (3272 ×2, 7272 ×2, 7369 ×1); 53 no-`filesystem.image` (FIT/`uimg`); 20 zero-length headers (unreadable); 4 `sqsh` version 0.0 (unclassified) | 0 | `analysis2.txt` (sha256 `e88c2f5a…`) |
+| D10 | Public LE negative (hsqs, no marker) | D9 filter `magic=hsqs and marker=False` | 0 rows of 28 | 0 | `analysis2.txt` |
+| N1 | Routing of LE v4 (no marker) | unblob 26.6.4 source (installed, `unblob --version` = 26.6.4): `handlers/filesystem/squashfs.py:454-466` pattern `hsqs [24] 04 00`; `:39-54` extractor: marker tested only in the BIG/v4 branch (`is_avm`), LITTLE branch is `-le` unconditional | Marker is not a routing input for `squashfs_v4_le` | read only | file read, not run |
+| N2 | Routing of v3 BE `sqsh` (3272, 7272, 7369) | unblob 26.6.4 `squashfs.py:253` pattern `sqsh [24] 00 03` (`squashfs_v3`); v4 BE pattern needs `00 04` at offset 28 (`:519`); raw bytes of 3272 member: `s_major`@28 = 0x0003 | Would route to `squashfs_v3` (BIG extractor, `sasquatch -be`), not `squashfs_v4_le`: handler-name clause red. This is a usable negative. REA itself not run | read only + Range 96 B | `inspect`/`census` + Python struct (3272 deutschland, data offset 2,284,032) |
+| N3 | REA handler naming | `rea-agents` 6.5.0 `dist/cli-runtime/cli.js:13854-13858` pins unblob 26.6.4; `:14228`, `:14786-14841` take `handler_name` from the unblob report | REA names the handler from unblob's registry; the marker is not read on LE | read only | file read |
+| B1 | Freetz AVM-BE format note | `curl -sS -o freetz-avm-be-format.txt https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/AVM-BE-format.txt` | 200, 1,496 B; describes AVM-BE (BE data layout), LE as the unmodified layout; `mkfs_time == bytes_used` stated for AVM-BE. No LE variant | 0 | `freetz-avm-be-format.txt` (sha256 `c1c43f6f…`) |
+| C1 | Hand-scan reproducibility | `.ufo/waves/round-50/l1/scan-output.txt` | 2 lines (`fritzbox-3272`, `fritzbox-3490`), 180 B; not the census the plan cites | not run | read only |
+
+## Wording fixes (quote → replace)
+
+Quotes are from `.ufo/waves/round-50/draft/plans/round-50-claims.md` (sha256 of the draft not computed; line numbers as displayed).
+
+1. **L20** "a capability: genuine vendor LE AVM members through REA" → "a capability: four pinned xz little-endian SquashFS v4 members with the AVM marker (`mkfs_time == bytes_used`), public AVM images, through REA". "Genuine" = bytes from the pinned URL at the pinned sha256; the marker does not establish provenance (F3).
+2. **L29 title** "genuine AVM-marker little-endian SquashFS v4 (`hsqs`) through REA `extract-firmware` → Core" → "four frozen xz little-endian SquashFS v4 carriers (`hsqs`, AVM marker set) through REA `extract-firmware` → Core".
+3. **L12–13** "the lane's coverage frontier still names 'LE AVM members (`hsqs`)' as unexplored. This round answers both." → the Frontier clause is retired for the four frozen carriers only; the class "LE AVM members (`hsqs`)" stays Frontier (the census has 16 models with the layout, four frozen). Same for `PROVINCE.md:405-406,408,416,430` and `corpus/README.md` Frontier.
+4. **L36–37** "dozens publish a `./var/tmp/filesystem.image` member that is `hsqs`, v4.0, xz … `mkfs_time == bytes_used`" → "13 models (23 image rows) publish a `./var/tmp/filesystem.image` member that is LE `hsqs` v4.0 xz with `mkfs_time == bytes_used`; 3 further models (6430, 6490, 6590-cable) carry the same layout at `./var/remote/var/tmp/x86/filesystem.image`; census of 70 roots, 69 with images".
+5. **L36** "78 model directories" → "70 `fritzbox-*` roots, 69 with images (census 2026-10-28)", unless the L1 can cite the 78 listing.
+6. **L48–53 table** rows c6490 and c6430: the chain pin `./var/tmp/filesystem.image` cannot be satisfied. Either pin `./var/remote/var/tmp/x86/filesystem.image` (state the x86 layout explicitly and cite the member sha256 above), or replace (documented pre-freeze reason = "member absent"). Sizes column: "member" not "image". Exact-path LE candidates from the census (not downloaded here): 7590-AX deutschland 08.25 (LM 26 Mar 2026), 7583 deutschland 08.26 (LM 01 Jul 2026), 7581 other 07.18, 7582 other 07.18, 6850-5G-v2 deutschland 08.25, 7520 deutschland 08.25.
+7. **L78** "row names `squashfs_v4_le` with the AVM marker and cites the entry path" → "row names `squashfs_v4_le`; the AVM marker is a property of the carriers, not a routing input (unblob reads no marker on the LE path, `squashfs.py:39-54`)".
+8. **L97–99** CTL-C1-4 "a standard LE carrier (round-36 lane-built …)" → keep as is; add "no public standard LE `hsqs` image without the marker exists in the 137-image census (D10)".
+9. **L102–104, disclosed limit (1)** "The marker is invisible to unblob" → correct; keep and cite `squashfs.py:39-54`.
+10. **L109–110, disclosed limit (5)** "Four carriers on three or more SoC lines are not 'every LE AVM image'; the compression is xz in all four; fragment/xattr/sparse features are whatever the images contain." → "Four carriers, all xz, 64 KiB blocks, one id, no xattrs, fragments present (`unsquashfs -s`). Not covered: xattr-bearing LE AVM images, LE AVM images with compression other than xz, nested sub-images below depth 1, hsqs v4 without the marker. The 'three or more SoC lines' clause is unsourced in the plan; drop it or cite the SoC of each carrier."
+11. **L159–160 Frontier step** theme name `avm-le-image-genuine-marker` → `avm-le-marker-observed` (the word "genuine" is not earned by the marker). Cite the AVM_LE define patch by URL only if fetched and read; otherwise record the LE marker as [INFERENCE] from the census.
+12. **L36 "Freetz AVM-BE-format / AVM_LE define patch"** (Frontier step sources): the cited AVM-BE format note contains no LE variant (B1). Either fetch and cite the AVM_LE patch with its sha256, or drop "AVM_LE".
+
+## Not run / limits
+
+- REA was not run (per assignment); routing statements are from the unblob 26.6.4 source (installed version confirmed) and the pinned REA release table.
+- The 20 zero-length `./var/tmp/filesystem.image` headers and the 4 version-0.0 `sqsh` rows are unresolved and not classified.
+- Other locales' bytes were not compared (only HEAD and index); e.g. 6490 `deutschland` and `other` share a name and an index size but were not hashed.
+- The AVM licence and the "ARM (IPQ4018)" and other SoC statements in the plan were not checked.
+- No vendor bytes are in the lane tree; the four images exist only in scratch, removed before yield.
+
+## Tooling
+
+No installs. Used: `curl` 8.x, `python3` (stdlib `tarfile`, `urllib`), `unsquashfs` 4.7.5 (`/usr/bin/unsquashfs`, read-only `-s`), unblob 26.6.4 (installed; source read, not run for this seat).
+
+## Receipts (in this seat dir)
+
+- `receipts.sha256` (sha256 of every receipt below)
+- `census-images.json`, `census-members.json` (the census), `census2-run.log`, `census-run.log`
+- `analysis2.txt`, `names-out.txt`, `inspect-out.txt`, `newer-check.txt`, `unsquashfs-s.txt`
+- `freetz-avm-be-format.txt` (public GitHub text, 1,496 B)
+- `tools/round-50/avm-census-readonly.py` (census instrument; reads only index pages and `Range` ≤512 B; phase 1 in `census.py`, phase 2 fixed in this file). Its v3 rows carry meaningless `comp` and `marker` labels (see finding 5).
+
+Draft instrument note: the census is a draft for the L1 to reuse or replace. It is not the frozen C1 or C2 counter.

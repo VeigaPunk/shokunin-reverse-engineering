@@ -1,0 +1,8 @@
+128	
+129	
+130	def carve_valid_chunk(extract_dir: Path, file: File, chunk: ValidChunk) -> Path:
+131	    filename = f"{chunk.start_offset}-{chunk.end_offset}.{chunk.handler.NAME}"
+132	    carve_path = extract_dir / filename
+133	    logger.info("Extracting valid chunk", path=carve_path, chunk=chunk)
+134	    carve_chunk_to_file(carve_path, file, chunk)
+135	    return carve_path

@@ -1,0 +1,21 @@
+L=/home/vgpnk/Projects/shokunin/kaidoku-shokunin; B=7c678ae6d97aedb969fd253b52b3d2882ef1e186
+run(){ local id=$1; shift; out=$(bash -c "$*" 2>&1); ec=$?; printf '%s\texit=%s\tsha256=%s\n  cmd: %s\n  out: %s\n' "$id" "$ec" "$(printf '%s\n' "$out" | sha256sum | cut -c1-16)" "$*" "$(printf '%s' "$out" | tr '\n' ' ' | cut -c1-200)"; }
+export L B
+run B1a 'git -C $L ls-tree -r --name-only $B corpus/knowledge | grep -c "\.md$"'
+run B1b 'git -C $L show $B:SCORECARD.md | sed -n 23p | grep -o "[0-9]*/[0-9]* knowledge files mapped" | head -1'
+run B2  'git -C $L show $B:SCORECARD.md | sed -n 25p | grep -c "rejected-harmed\|c2-final"'
+run B3  'git -C $L show $B:.ufo/waves/round-48/r48-w1-results.json | jq -r ".results[]|(.output|fromjson) as \$o|select((\$o.status//\"\")==\"blocked\" or \$o.aborted==true)|.name"'
+run B3b 'git -C $L show $B:SCORECARD.md | grep -n "all 75 seats settled" | cut -c1-12'
+run B4  'git -C $L show $B:corpus/lessons/round-48-verifier-spotcheck.md | grep -n "^- \*\*\(quality\|discernment\) " | cut -c1-70'
+run B4b 'git -C $L show $B:SCORECARD.md | sed -n 3741p | grep -o "quality \*\*[^*]*\*\*\|discernment \*\*[^*]*\*\*"'
+run B5  'git -C $L show $B:SCORECARD.md | grep -c "33f65a91\|8847042a"'
+run B6  'git -C $L show $B:corpus/SOURCES.md | grep -c "supersedes S149"'
+run B7  'git -C $L show $B:corpus/SOURCES.md | grep -c "supersedes S147"'
+run B7b 'git -C $L show $B:corpus/SOURCES.md | grep "^| S147 " | cut -d"|" -f5'
+run B8  'git -C $L show $B:corpus/SOURCES.md | grep -c "supersedes S138"'
+run B8b 'git -C $L ls-tree -r --name-only $B corpus/evidence/round-44/oracle | grep -vc manifest.json'
+run B9  'git -C $L show $B:SKILL.md | grep -c "^| `tools/round-49/"'
+run B10 'git -C $L cat-file -e $B:tools/round-50/selftest-r49-c2.py'
+run B10b 'git -C $L show $B:tools/round-49/c2-mismatch.py | grep -c -- "--selftest"'
+run B11 'git -C $L show $B:SCORECARD.md | sed -n 3762p | grep -o "discernment \*\*[^*]*\*\*"'
+run B11b 'git -C $L show $B:corpus/lessons/round-49-verifier-spotcheck.md | grep -n "^- \*\*discernment" | cut -c1-40'

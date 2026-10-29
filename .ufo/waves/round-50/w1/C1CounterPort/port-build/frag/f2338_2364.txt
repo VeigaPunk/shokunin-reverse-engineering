@@ -1,0 +1,65 @@
+    # ---- carrier layout controls: the frozen layout is little-endian `hsqs`,
+    # v4.0, compression id 4, `mkfs_time == bytes_used` (the AVM marker).
+    spec_probes = []
+
+    def layout_case(name, blob, reason_text):
+        lf, lr = build(blob_over={'a7530': blob})
+        add(name, [lf, lr], 0, 1, want_fail='layout_ok')
+        p = layout_probe(blob)
+        spec_probes.append({'desc': 'layout probe: ' + name, 'ok': bool(p.get('ok')),
+                            'problems': [p.get('reason') or ''],
+                            'want_ok': False, 'want_text': reason_text})
+
+    # CTL-C1-4 shape: a STANDARD little-endian image (real timestamp in mkfs_time)
+    layout_case('standard-LE carrier (mkfs_time is a timestamp, no AVM marker)',
+                sb_carrier(XZ_ID, b'a7530-std', marker=False), 'AVM marker absent')
+    layout_case('marker off by one (mkfs_time == bytes_used + 1)',
+                sb_carrier(XZ_ID, b'a7530-off', mkfs_value=641), 'AVM marker absent')
+    # the round-41 carriers' shape: a big-endian image carrying the marker
+    layout_case('big-endian AVM-marker image (sqsh) is not the little-endian layout',
+                sb_carrier(XZ_ID, b'a7530-be', big=True), 'not little-endian hsqs')
+    layout_case('standard big-endian image (sqsh, no marker)',
+                sb_carrier(XZ_ID, b'a7530-bestd', big=True, marker=False),
+                'not little-endian hsqs')
+    hybrid = b'hsqs' + sb_carrier(XZ_ID, b'a7530-hyb', big=True)[4:]
+    layout_case('hsqs magic over big-endian fields is not a little-endian image',
+                hybrid, 'version')
+    layout_case('compression id 1 (gzip) is not the frozen xz',
+                sb_carrier(1, b'a7530-gz'), 'compression id 1')
+    layout_case('compression id 2 (lzma; round 41 counted it as xz)',
+                sb_carrier(2, b'a7530-lzma'), 'compression id 2')
+    layout_case('compression id 6 (zstd)', sb_carrier(6, b'a7530-zstd'),
+                'compression id 6')
+    layout_case('squashfs 3.0 major', sb_carrier(XZ_ID, b'a7530-v3', major=3),
+                'version 3.0')
+    layout_case('squashfs 4.1 minor', sb_carrier(XZ_ID, b'a7530-v41', minor=1),
+                'version 4.1')
+    layout_case('bytes_used beyond the file',
+                sb_carrier(XZ_ID, b'a7530-used', marker_value=0xFFFFFFF0),
+                'bytes_used')
+    layout_case('inode table after the directory table',
+                sb_carrier(XZ_ID, b'a7530-order', its=128, dts=96),
+                'in order')
+    layout_case('directory table past bytes_used',
+                sb_carrier(XZ_ID, b'a7530-dts', dts=639, marker_value=600),
+                'in order')
+    layout_case('inode table at offset 0', sb_carrier(XZ_ID, b'a7530-its0', its=0),
+                'in order')
+    layout_case('shorter than a superblock', sb_carrier(XZ_ID, b'a7530-short')[:64],
+                'shorter than a 96-byte superblock')
+    spec_probes.append({
+        'desc': 'layout probe: the frozen layout is accepted',
+        'ok': bool(layout_probe(carriers['a7530']).get('ok')),
+        'problems': [layout_probe(carriers['a7530']).get('reason') or ''],
+        'want_ok': True, 'want_text': None})
+
+    # CTL-C1-4: a STANDARD little-endian carrier planted in a carrier slot under the
+    # genuine pin. The marker adds no evidence beyond the pin (it is a constant of
+    # the pinned bytes), so the case is red on carrier_pin_ok AND on layout_ok.
+    plant = sb_carrier(XZ_ID, b'a7530-plant', marker=False)
+    plant_frozen = frozen_files(blob_map={**carriers, 'a7530': plant}, pin_map=pins)
+    add('CTL-C1-4: a standard LE carrier planted under the genuine pin (carrier_pin_ok)',
+        [plant_frozen, good], 0, 1, want_fail='carrier_pin_ok')
+    add('CTL-C1-4: a standard LE carrier planted under the genuine pin (layout_ok)',
+        [plant_frozen, good], 0, 1, want_fail='layout_ok')
+

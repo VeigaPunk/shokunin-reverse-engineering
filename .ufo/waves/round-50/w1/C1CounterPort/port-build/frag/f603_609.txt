@@ -1,0 +1,27 @@
+    ids = [c.get('id') for c in cs if isinstance(c, dict)]
+    if len(ids) != target:
+        probs.append('carriers has %d entries, want %d' % (len(ids), target))
+    if len(set(ids)) != len(ids):
+        probs.append('duplicate carrier ids %r' % (ids,))
+    if expected_ids:
+        got = {str(i).lower() for i in ids if isinstance(i, str)}
+        want = {i.lower() for i in expected_ids}
+        if got != want:
+            probs.append('carrier ids %r != %r' % (sorted(map(str, ids)),
+                                                  list(expected_ids)))
+    # The REA extraction parameters are frozen data (round 50): the round-41
+    # counter replayed whatever `parameters` the committed receipt recorded, so a
+    # receipt made at any depth/budget was compared with a rerun at the same
+    # depth/budget. The claim is `--max-depth 1` and the budgets the frozen table
+    # names; `parameters_ok` binds the receipt to them and the rerun replays them.
+    rp = spec.get('rea_parameters')
+    if not isinstance(rp, dict):
+        probs.append('rea_parameters is not an object')
+    else:
+        for key in ('max_depth', 'max_output_bytes', 'max_output_files'):
+            v = rp.get(key)
+            if not (isinstance(v, int) and not isinstance(v, bool) and v > 0):
+                probs.append('rea_parameters.%s is not a positive int' % key)
+        if rp.get('max_depth') != 1:
+            probs.append('rea_parameters.max_depth %r != 1 (the claim is depth 1)'
+                         % (rp.get('max_depth'),))

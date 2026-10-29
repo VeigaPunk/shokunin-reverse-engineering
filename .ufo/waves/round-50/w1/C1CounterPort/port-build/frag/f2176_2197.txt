@@ -1,0 +1,25 @@
+    def frozen_files(blob_map=None, pin_map=None, nonreg_map=None, rule_text=None,
+                     oracle_map=None, **over):
+        bm = blob_map or carriers
+        pm = pin_map or pins
+        nm = nonreg_map if nonreg_map is not None else {
+            k: spec_data[k]['nonreg'] for k in ids}
+        om = oracle_map if oracle_map is not None else {k: oracle_tsv(k) for k in ids}
+        f = {XPIN: xpin,
+             CARRIERS: spec_json(pin_map=pm),
+             GAPRULE: (rule_text if rule_text is not None else rule).encode(),
+             'plans/round-50-claims.md': b'# plan\n',
+             'tools/round-50/c1-counter.py': open(os.path.abspath(__file__), 'rb').read(),
+             'tools/round-50/rea-pkg.json': rea_doc,
+             'tools/round-41/sqfs-list.py': b'# stand-in second reader\n',
+             'tools/round-41/fetch-vendor.py': b'# stand-in fetcher\n',
+             'PROVINCE.md': _province(),
+             ENTRY: _entry(),
+             'corpus/SOURCES.md': _registry(),
+             'corpus/README.md': _readme()}
+        for k in ids:
+            f[f'{AFTERDIR}/{k}/carrier.sqsh'] = bm[k]
+            f[f'{AFTERDIR}/{k}/oracle.tsv'] = om[k]
+            f[f'{AFTERDIR}/{k}/nonregular.tsv'] = nm[k].encode()
+        f.update(over)
+        return f

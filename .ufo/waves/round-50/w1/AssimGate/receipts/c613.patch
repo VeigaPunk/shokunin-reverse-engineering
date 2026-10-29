@@ -1,0 +1,209 @@
+From 86c23d96d76585825fa81b5cb29105e9d2ad6654 Mon Sep 17 00:00:00 2001
+From: YourFritz <git@yourfritz.de>
+Date: Fri, 28 Jun 2019 00:50:46 +0200
+Subject: [PATCH] squashfs4: enable timestamp at superblock
+
+(cherry picked from commit 214e9e5239e132b63904ce72e5edd4988826bff2)
+---
+ make/squashfs4-be/Config.in                   |  9 ++++
+ make/squashfs4-be/squashfs4-be.mk             |  7 ++-
+ make/squashfs4-le/Config.in                   |  9 ++++
+ make/squashfs4-le/squashfs4-le.mk             |  6 ++-
+ .../patches/613-avm_format_as_option.patch    | 54 +++++++++++++++++++
+ .../squashfs4-host-be/squashfs4-host-be.mk    |  2 +-
+ .../squashfs4-host-le/squashfs4-host-le.mk    |  2 +-
+ 7 files changed, 85 insertions(+), 4 deletions(-)
+ create mode 100644 tools/make/squashfs4-host-be/patches/613-avm_format_as_option.patch
+
+diff --git a/make/squashfs4-be/Config.in b/make/squashfs4-be/Config.in
+index d1ccb46119..7fe04ef48d 100644
+--- a/make/squashfs4-be/Config.in
++++ b/make/squashfs4-be/Config.in
+@@ -24,6 +24,15 @@ config FREETZ_PACKAGE_SQUASHFS4_BE_LEGACY
+ 		including a special header-less/LZMA1-compressed format used by AVM
+ 		on many boxes.
+ 
++config FREETZ_PACKAGE_SQUASHFS4_BE_AVM
++	depends on FREETZ_PACKAGE_SQUASHFS4_BE
++	bool "use CLI option for strict AVM format"
++	default y
++	help
++		Adds an option (-no-mkfs-time) for support of strict AVM format,
++		where the superblock field with date/time of image creation will
++		be replaced with an additional image size value.
++
+ choice
+ 	depends on FREETZ_PACKAGE_SQUASHFS4_BE
+ 	prompt "Link"
+diff --git a/make/squashfs4-be/squashfs4-be.mk b/make/squashfs4-be/squashfs4-be.mk
+index fa65484898..0637b6d69d 100644
+--- a/make/squashfs4-be/squashfs4-be.mk
++++ b/make/squashfs4-be/squashfs4-be.mk
+@@ -11,6 +11,7 @@ $(PKG)_REBUILD_SUBOPTS += FREETZ_PACKAGE_SQUASHFS4_BE_LEGACY
+ $(PKG)_REBUILD_SUBOPTS += FREETZ_PACKAGE_SQUASHFS4_BE_ALL_DYN
+ $(PKG)_REBUILD_SUBOPTS += FREETZ_PACKAGE_SQUASHFS4_BE_COMP_STAT
+ $(PKG)_REBUILD_SUBOPTS += FREETZ_PACKAGE_SQUASHFS4_BE_ALL_STAT
++$(PKG)_REBUILD_SUBOPTS += FREETZ_PACKAGE_SQUASHFS4_BE_AVM
+ 
+ $(PKG)_BUILD_DIR := $($(PKG)_DIR)/squashfs-tools
+ 
+@@ -18,6 +19,9 @@ $(PKG)_BINARIES            := mksquashfs unsquashfs
+ $(PKG)_BINARIES_BUILD_DIR  := $($(PKG)_BINARIES:%=$($(PKG)_BUILD_DIR)/%)
+ $(PKG)_BINARIES_TARGET_DIR := $($(PKG)_BINARIES:%=$($(PKG)_DEST_DIR)/usr/bin/%4-avm-be)
+ 
++$(PKG)_EXTRA_CPPFLAGS := -DTARGET_FORMAT=AVM_BE
++$(PKG)_EXTRA_CPPFLAGS += $(if $(FREETZ_PACKAGE_SQUASHFS4_BE_AVM),-DAVM_FORMAT_AS_OPTION)
++
+ $(PKG)_LDFLAGS := -Wl,--gc-sections
+ $(PKG)_LDFLAGS += $(if $(FREETZ_PACKAGE_SQUASHFS4_BE_ALL_STAT),-static)
+ 
+@@ -27,10 +31,11 @@ endif
+ $(PKG_UNPACKED)
+ $(PKG_CONFIGURED_NOP)
+ 
++
+ $($(PKG)_BINARIES_BUILD_DIR): $($(PKG)_DIR)/.configured
+ 	$(SUBMAKE) -C $(SQUASHFS4_BE_BUILD_DIR) \
+ 		CC="$(TARGET_CC)" \
+-		EXTRA_CFLAGS="$(TARGET_CFLAGS) -DTARGET_FORMAT=AVM_BE -ffunction-sections -fdata-sections" \
++		EXTRA_CFLAGS="$(TARGET_CFLAGS) $(SQUASHFS4_BE_EXTRA_CPPFLAGS) -ffunction-sections -fdata-sections" \
+ 		LEGACY_FORMATS_SUPPORT=$(if $(FREETZ_PACKAGE_SQUASHFS4_BE_LEGACY),1,0) \
+ 		GZIP_SUPPORT=$(if $(FREETZ_PACKAGE_SQUASHFS4_BE_LEGACY),1,0) \
+ 		LZMA_XZ_SUPPORT=$(if $(FREETZ_PACKAGE_SQUASHFS4_BE_LEGACY),1,0) \
+diff --git a/make/squashfs4-le/Config.in b/make/squashfs4-le/Config.in
+index a37ff7989f..ead6a2c55f 100644
+--- a/make/squashfs4-le/Config.in
++++ b/make/squashfs4-le/Config.in
+@@ -26,6 +26,15 @@ config FREETZ_PACKAGE_SQUASHFS4_LE_LEGACY
+ 		including a special header-less/LZMA1-compressed format used by AVM
+ 		on many boxes.
+ 
++config FREETZ_PACKAGE_SQUASHFS4_LE_AVM
++	depends on FREETZ_PACKAGE_SQUASHFS4_LE
++	bool "use CLI option for strict AVM format"
++	default y
++	help
++		Adds an option (-no-mkfs-time) for support of strict AVM format,
++		where the superblock field with date/time of image creation will
++		be replaced with an additional image size value.
++
+ choice
+ 	depends on FREETZ_PACKAGE_SQUASHFS4_LE
+ 	prompt "Link"
+diff --git a/make/squashfs4-le/squashfs4-le.mk b/make/squashfs4-le/squashfs4-le.mk
+index 7b7bfd6240..f57472925c 100644
+--- a/make/squashfs4-le/squashfs4-le.mk
++++ b/make/squashfs4-le/squashfs4-le.mk
+@@ -11,6 +11,7 @@ $(PKG)_REBUILD_SUBOPTS += FREETZ_PACKAGE_SQUASHFS4_LE_LEGACY
+ $(PKG)_REBUILD_SUBOPTS += FREETZ_PACKAGE_SQUASHFS4_LE_ALL_DYN
+ $(PKG)_REBUILD_SUBOPTS += FREETZ_PACKAGE_SQUASHFS4_LE_COMP_STAT
+ $(PKG)_REBUILD_SUBOPTS += FREETZ_PACKAGE_SQUASHFS4_LE_ALL_STAT
++$(PKG)_REBUILD_SUBOPTS += FREETZ_PACKAGE_SQUASHFS4_LE_AVM
+ 
+ $(PKG)_BUILD_DIR := $($(PKG)_DIR)/squashfs-tools
+ 
+@@ -18,6 +19,9 @@ $(PKG)_BINARIES            := mksquashfs unsquashfs
+ $(PKG)_BINARIES_BUILD_DIR  := $($(PKG)_BINARIES:%=$($(PKG)_BUILD_DIR)/%)
+ $(PKG)_BINARIES_TARGET_DIR := $($(PKG)_BINARIES:%=$($(PKG)_DEST_DIR)/usr/bin/%4-avm-le)
+ 
++$(PKG)_EXTRA_CPPFLAGS := -DTARGET_FORMAT=AVM_LE
++$(PKG)_EXTRA_CPPFLAGS += $(if $(FREETZ_PACKAGE_SQUASHFS4_LE_AVM),-DAVM_FORMAT_AS_OPTION)
++
+ $(PKG)_LDFLAGS := -Wl,--gc-sections
+ $(PKG)_LDFLAGS += $(if $(FREETZ_PACKAGE_SQUASHFS4_LE_ALL_STAT),-static)
+ 
+@@ -30,7 +34,7 @@ $(PKG_CONFIGURED_NOP)
+ $($(PKG)_BINARIES_BUILD_DIR): $($(PKG)_DIR)/.configured
+ 	$(SUBMAKE) -C $(SQUASHFS4_LE_BUILD_DIR) \
+ 		CC="$(TARGET_CC)" \
+-		EXTRA_CFLAGS="$(TARGET_CFLAGS) -DTARGET_FORMAT=AVM_LE -ffunction-sections -fdata-sections" \
++		EXTRA_CFLAGS="$(TARGET_CFLAGS) $(SQUASHFS4_LE_EXTRA_CPPFLAGS) -ffunction-sections -fdata-sections" \
+ 		LEGACY_FORMATS_SUPPORT=$(if $(FREETZ_PACKAGE_SQUASHFS4_LE_LEGACY),1,0) \
+ 		GZIP_SUPPORT=$(if $(FREETZ_PACKAGE_SQUASHFS4_LE_LEGACY),1,0) \
+ 		LZMA_XZ_SUPPORT=$(if $(FREETZ_PACKAGE_SQUASHFS4_LE_LEGACY),1,0) \
+diff --git a/tools/make/squashfs4-host-be/patches/613-avm_format_as_option.patch b/tools/make/squashfs4-host-be/patches/613-avm_format_as_option.patch
+new file mode 100644
+index 0000000000..79053863bc
+--- /dev/null
++++ b/tools/make/squashfs4-host-be/patches/613-avm_format_as_option.patch
+@@ -0,0 +1,54 @@
++--- squashfs-tools/mksquashfs.c
+++++ squashfs-tools/mksquashfs.c
++@@ -109,6 +109,9 @@
++ int use_regex = FALSE;
++ int nopad = FALSE;
++ int exit_on_error = FALSE;
+++#ifdef AVM_FORMAT_AS_OPTION
+++int use_standard_mkfs_time = TRUE;
+++#endif
++ 
++ long long global_uid = -1, global_gid = -1;
++ 
++@@ -4462,6 +4465,9 @@
++ 
++ 	sBlk->bytes_used = bytes;
++ #if (TARGET_FORMAT == AVM_BE || TARGET_FORMAT == AVM_LE)
+++#ifdef AVM_FORMAT_AS_OPTION
+++	if (!use_standard_mkfs_time)
+++#endif
++ 	sBlk->mkfs_time = (int) sBlk->bytes_used;
++ #endif
++ 
++@@ -4971,13 +4977,18 @@
++ 		} else if(strcmp(argv[i], "-no-duplicates") == 0)
++ 			duplicate_checking = FALSE;
++ 
+++#ifdef AVM_FORMAT_AS_OPTION		
+++		else if(strcmp(argv[i], "-no-mkfs-time") == 0)
+++			use_standard_mkfs_time = FALSE;
+++#endif
+++
++ 		else if(strcmp(argv[i], "-no-fragments") == 0)
++ 			no_fragments = TRUE;
++ 
++-		 else if(strcmp(argv[i], "-always-use-fragments") == 0)
+++		else if(strcmp(argv[i], "-always-use-fragments") == 0)
++ 			always_use_fragments = TRUE;
++ 
++-		 else if(strcmp(argv[i], "-sort") == 0) {
+++		else if(strcmp(argv[i], "-sort") == 0) {
++ 			if(++i == argc) {
++ 				ERROR("%s: -sort missing filename\n", argv[0]);
++ 				exit(1);
++@@ -5086,6 +5097,10 @@
++ 				"files larger than block size\n");
++ 			ERROR("-no-duplicates\t\tdo not perform duplicate "
++ 				"checking\n");
+++#ifdef AVM_FORMAT_AS_OPTION			
+++			ERROR("-no-mkfs-time\t\tuse AVM format (length instead "
+++				"of timestamp)\n");
+++#endif					
++ 			ERROR("-all-root\t\tmake all files owned by root\n");
++ 			ERROR("-force-uid uid\t\tset all file uids to uid\n");
++ 			ERROR("-force-gid gid\t\tset all file gids to gid\n");
+diff --git a/tools/make/squashfs4-host-be/squashfs4-host-be.mk b/tools/make/squashfs4-host-be/squashfs4-host-be.mk
+index a79e6488b6..9fd9a6a301 100644
+--- a/tools/make/squashfs4-host-be/squashfs4-host-be.mk
++++ b/tools/make/squashfs4-host-be/squashfs4-host-be.mk
+@@ -30,7 +30,7 @@ $(SQUASHFS4_HOST_BE_DIR)/.unpacked: $(DL_DIR)/$(SQUASHFS4_HOST_BE_SOURCE) | $(TO
+ $(SQUASHFS4_HOST_BE_TOOLS_BUILD_DIR): $(SQUASHFS4_HOST_BE_DIR)/.unpacked $(LZMA2_HOST_DIR)/liblzma.a
+ 	$(MAKE) -C $(SQUASHFS4_HOST_BE_BUILD_DIR) \
+ 		CC="$(TOOLS_CC)" \
+-		EXTRA_CFLAGS="-fcommon -DTARGET_FORMAT=AVM_BE" \
++		EXTRA_CFLAGS="-fcommon -DTARGET_FORMAT=AVM_BE -DAVM_FORMAT_AS_OPTION" \
+ 		LEGACY_FORMATS_SUPPORT=$(SQUASHFS4_HOST_BE_ENABLE_LEGACY_FORMATS_SUPPORT) \
+ 		GZIP_SUPPORT=$(SQUASHFS4_HOST_BE_ENABLE_LEGACY_FORMATS_SUPPORT) \
+ 		LZMA_XZ_SUPPORT=$(SQUASHFS4_HOST_BE_ENABLE_LEGACY_FORMATS_SUPPORT) \
+diff --git a/tools/make/squashfs4-host-le/squashfs4-host-le.mk b/tools/make/squashfs4-host-le/squashfs4-host-le.mk
+index 618b82f83e..750fcd65eb 100644
+--- a/tools/make/squashfs4-host-le/squashfs4-host-le.mk
++++ b/tools/make/squashfs4-host-le/squashfs4-host-le.mk
+@@ -32,7 +32,7 @@ $(SQUASHFS4_HOST_LE_DIR)/.unpacked: $(DL_DIR)/$(SQUASHFS4_HOST_LE_SOURCE) | $(TO
+ $(SQUASHFS4_HOST_LE_TOOLS_BUILD_DIR): $(SQUASHFS4_HOST_LE_DIR)/.unpacked $(LZMA2_HOST_DIR)/liblzma.a
+ 	$(MAKE) -C $(SQUASHFS4_HOST_LE_BUILD_DIR) \
+ 		CC="$(TOOLS_CC)" \
+-		EXTRA_CFLAGS="-fcommon -DTARGET_FORMAT=AVM_LE" \
++		EXTRA_CFLAGS="-fcommon -DTARGET_FORMAT=AVM_LE -DAVM_FORMAT_AS_OPTION" \
+ 		LEGACY_FORMATS_SUPPORT=$(SQUASHFS4_HOST_LE_ENABLE_LEGACY_FORMATS_SUPPORT) \
+ 		GZIP_SUPPORT=$(SQUASHFS4_HOST_LE_ENABLE_LEGACY_FORMATS_SUPPORT) \
+ 		LZMA_XZ_SUPPORT=$(SQUASHFS4_HOST_LE_ENABLE_LEGACY_FORMATS_SUPPORT) \

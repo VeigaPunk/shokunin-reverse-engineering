@@ -1,0 +1,17 @@
+# every command: exit code in brackets; UTC from the shell clock or the HTTP Date header
+date -u +%FT%TZ                                         [0] 2026-10-28T23:32:05Z
+curl -sS -D headers -o popper.live.html -w 'http=%{http_code} bytes=%{size_download}' https://plato.stanford.edu/entries/popper/   [0] http=200 bytes=118135; header Date: Wed, 28 Oct 2026 23:32:17 GMT
+sha256sum corpus/evidence/round-49/c2/popper.html        [0] 2c2d48c6891418c46c372a780ce2e76c00bcc9716bb7603f169976d61b6ec207
+git -C <lane> show 7c678ae6:corpus/evidence/round-49/c2/popper.html | sha256sum  [0] 2c2d48c6891418c46c372a780ce2e76c00bcc9716bb7603f169976d61b6ec207
+python3 w/locate.py popper.html > locate.out            [0] (tools/round-50/sep-quote-locate.py)
+python3 w/quotes2.py > quotes2.out                       [0]
+python3 w/grounds.py > grounds.out                       [0]
+sources-census.sh validate --root <lane> --file <lane>/corpus/SOURCES.md --today 2026-10-28   [0] base, 15 W04, 0 E
+sources-census.sh validate --root <clone> --file <clone>/corpus/SOURCES.md --today 2026-10-28 [0] with S152 row, 16 W04, 0 E
+variants (scratch mutants of the S152 row): variant-a (supersedes mask removed) [0]; variant-b (used-by path missing) [1, E11]; variant-c (tier C) [0, W01]
+sources-census.sh census (base) [0] rows 149 A138 B7 C4 ; (clone) [0] rows 150 A138 B8 C4 (S147 still counted A: append-only)
+sources-census.sh selftest [0]
+tools/round-49/c2-mismatch.py --root <clone> --rev 7c678ae6 --freeze decc5697 [0] atoms 9, mismatches 0
+tools/round-49/c2-mismatch.py --root <clone> --rev 132219ec (base + S152 row) --freeze decc5697 [1] A8 red: rows 146->149 derived 146->150; included/excluded 2/1 derived 3/1
+tools/round-49/c2-mismatch.py ... --battery  [0 at base; 1 at row rev]
+note: the first counter run used --freeze b6f7ca2a (round-48 A8 freeze) -> exit 2 counter_not_frozen; discarded, the round-49 freeze is decc5697 (commit "round-49: FREEZE")

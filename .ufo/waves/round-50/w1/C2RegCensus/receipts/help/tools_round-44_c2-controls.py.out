@@ -1,0 +1,32 @@
+usage: c2-controls.py [-h] [--root ROOT] --counter COUNTER [--rubric RUBRIC]
+                      [--rev REV] [--freeze FREEZE] [--work WORK] [--out OUT]
+                      [--json-out JSON_OUT] [--mode {auto,dev,real}]
+                      [--ctl CTL] [--fitness] [--fitness-limit FITNESS_LIMIT]
+                      [--dev-variant {stale,consistent}]
+
+R44-C2 controls: CTL-C2-0/1/2/3 against the frozen counter.
+
+options:
+  -h, --help            show this help message and exit
+  --root ROOT           lane root (real mode)
+  --counter COUNTER     path to c2-counter.py
+  --rubric RUBRIC       path to the frozen c2-rubric.json
+  --rev REV             measured revision
+  --freeze FREEZE       freeze revision
+  --work WORK           scratch directory
+  --out OUT             directory for the per-control receipts
+  --json-out JSON_OUT   summary receipt
+  --mode {auto,dev,real}
+  --ctl CTL
+  --fitness             run the per-entry fitness gate: every rubric entry is
+                        shown able to fail on its own statement (one asserted-
+                        value mutation per entry)
+  --fitness-limit FITNESS_LIMIT
+                        score only the first N entries (a bounded sample; the
+                        receipt says how many were scored)
+  --dev-variant {stale,consistent}
+                        dev fixture shape: `stale` = the fixture statement is
+                        wrong (the census reports a mismatch, the do-nothing
+                        control fails); `consistent` = the statement is right
+                        (the census reports zero mismatches — the honest-stop
+                        signal for R44-C2)

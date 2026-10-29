@@ -1,0 +1,21 @@
+REAL True 568 gaps (1 structural), 1 removals, 1 silent, on 824 non-regular entries
+MUT drop a published-symlink gap                   want=False got=False  | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['nohup.out']
+MUT removed entry also gapped                      want=False got=False  | entry 'usr/www/avm/cgi-bin/system_status' is both gapped and removed
+MUT removal diag kept, entry gap dropped = fine (exclusive) want=True got=True  
+MUT removal diag resolving to a dir                want=False got=False  | removal at 'bin' names a 'dir' entry; removed.kinds is ['symlink']
+MUT removal diag for unknown path                  want=False got=False  | removal resolves to 0 non-regular entries at 'nope/at/all'
+MUT symlink removed with no diagnostic             want=False got=False  | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['usr/www/avm/cgi-bin/system_status
+MUT symlink gap of a kind the rule does not allow  want=False got=False  | gap kind 'extractor-failure' not allowed for 'symlink' entry 'nohup.out' (allowed ['unpublished-entry'])
+MUT extra depth-limited gap                        want=False got=False  | structural gaps over allowance {'depth-limited': [2, 1]}
+MUT extra unknown-chunk-handler gap                want=False got=False  | structural gaps over allowance {'unknown-chunk-handler': [1, 0]}
+MUT no depth-limited gap is fine (<= allowance)    want=True got=True  
+MUT char-device with a detail the rule does not list want=False got=False  | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/led']
+MUT char-device published as special (root run)    want=True got=True  
+MUT char-device with extractor-failure gap         want=False got=False  | gap kind 'extractor-failure' not allowed for 'char-device' entry 'dev/led' (allowed ['unpublished-entry'])
+MUT unpublished-entry gap on a directory           want=False got=False  | gap kind 'unpublished-entry' not allowed for 'dir' entry 'bin' (allowed [])
+MUT gap for a path not in the table                want=False got=False  | gap path 'c6430.carved_extract/zz/none' matches 0 non-regular entries
+MUT empty-target symlink with no record (r41 silent label NOT carried) want=False got=False  | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['zz/empty']
+MUT round-41 rule accepts the real tree (device silent: required=false) want=True got=True  
+MUT round-41 rule REJECTS a privileged-run device gap (false-fail) want=False got=False  | gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/led' (allowed [])
+MUT round-41 rule ACCEPTS a device row with unlisted detail (laxer) want=True got=True  
+FAILS 0

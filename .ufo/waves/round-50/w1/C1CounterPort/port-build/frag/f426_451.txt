@@ -1,0 +1,36 @@
+def parse_oracle(raw):
+    """(rows[(rel, sha256, size)], error) for the oracle table.
+
+    Exactly three columns (round 50; the round-41 parser accepted two and never
+    compared the size): relative path, 64-hex sha256, non-negative decimal size.
+    The path is a filesystem-relative spelling (a tar-style `./` prefix is the
+    only normalisation; no absolute path, no `.`/`..` component)."""
+    if raw is None:
+        return [], 'absent'
+    rows = []
+    for line in raw.decode(errors='replace').splitlines():
+        if not line.strip():
+            continue
+        f = [c.rstrip('\r') for c in line.split('\t')]
+        if len(f) != 3:
+            return [], 'row %r has %d fields, want 3 (rel, sha256, size)' % (line, len(f))
+        rel = strip_rel(f[0].strip())
+        sha = f[1].strip().lower()
+        if not rel:
+            return [], 'empty path in %r' % (line,)
+        if rel.startswith('/') or any(x in ('', '.', '..') for x in rel.split('/')):
+            return [], 'illegal path spelling in %r' % (line,)
+        if not SHA_RE.match(sha):
+            return [], 'row %r sha256 is not 64 lowercase hex' % (line,)
+        size = f[2].strip()
+        if not size.isdigit():
+            return [], 'row %r size is not a non-negative decimal integer' % (line,)
+        rows.append((rel, sha, int(size)))
+    if not rows:
+        return [], 'no rows'
+    seen = set()
+    for rel, _, _ in rows:
+        if rel in seen:
+            return [], 'duplicate oracle path %r' % (rel,)
+        seen.add(rel)
+    return rows, None

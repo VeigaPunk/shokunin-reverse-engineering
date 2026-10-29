@@ -1,0 +1,28 @@
+50	                cleanup = stdout_file.close
+51	
+52	            res = subprocess.run(
+53	                cmd,
+54	                stdout=stdout_file,
+55	                stderr=subprocess.PIPE,
+56	                timeout=COMMAND_TIMEOUT,
+57	                check=False,
+58	            )
+59	            if res.returncode != 0:
+60	                error_report = ExtractCommandFailedReport(
+61	                    command=command,
+62	                    stdout=res.stdout,
+63	                    stderr=res.stderr,
+64	                    exit_code=res.returncode,
+65	                )
+66	
+67	                logger.error("Extract command failed", **error_report.model_dump())
+68	                raise ExtractError(error_report)
+69	        except FileNotFoundError:
+70	            error_report = ExtractorDependencyNotFoundReport(
+71	                dependencies=self.get_dependencies()
+72	            )
+73	            logger.error(
+74	                "Can't run extract command. Is the extractor installed?",
+75	                **error_report.model_dump(),
+76	            )
+77	            raise ExtractError(error_report) from None

@@ -1,0 +1,43 @@
+    def spec_json(pin_map=None, drop=None, target=None, receipt_override=None,
+                  projection=None, external=None, oracle_root=None,
+                  external_drop=None, prior_pins=None, rea=None, omit=()):
+        """carriers.json text. `external` (an id, or a set of ids) turns carriers
+        into vendor entries (with a member_sha256 block that `external_drop` can
+        remove a key from); `rea` replaces the frozen `rea_parameters`; `omit`
+        removes top-level keys."""
+        pm = pin_map or pins
+        ext_ids = {external} if isinstance(external, str) else set(external or ())
+        cs = []
+        for k in ids:
+            if drop and k in drop:
+                continue
+            c = {'id': k,
+                 'sha256': pm[k],
+                 'oracle': f'{AFTERDIR}/{k}/oracle.tsv',
+                 'nonregular': f'{AFTERDIR}/{k}/nonregular.tsv'}
+            if k in ext_ids:
+                ext = {'url': 'https://download.avm.de/fritzbox/x/y.image',
+                       'image_sha256': 'a' * 64,
+                       'member': './var/tmp/filesystem.image',
+                       'member_sha256': 'b' * 64,
+                       'length': len(carriers[k])}
+                for key in (external_drop or ()):
+                    ext.pop(key, None)
+                c['external'] = ext
+            else:
+                c['path'] = f'{AFTERDIR}/{k}/carrier.sqsh'
+            if oracle_root and k in oracle_root:
+                c['oracle_root'] = oracle_root[k]
+            if receipt_override and k in receipt_override:
+                c['receipt'] = receipt_override[k]
+            cs.append(c)
+        spec = {'claim': 'R50-C1', 'target': TARGET if target is None else target,
+                'projection': DEFAULT_PROFILE if projection is None else projection,
+                'rea_parameters': (dict(FIXTURE_REA_PARAMETERS) if rea is None
+                                   else rea),
+                'carriers': cs}
+        if prior_pins is not None:
+            spec['prior_pins'] = list(prior_pins)
+        for key in omit:
+            spec.pop(key, None)
+        return json.dumps(spec, indent=1)

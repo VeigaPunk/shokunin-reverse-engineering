@@ -1,0 +1,19 @@
+    probe_spec('target missing from carriers.json',
+               spec_json(omit=('target',)), False, 'frozen target')
+    probe_spec('target frozen at 3', spec_json(target=3), False, 'frozen target')
+    probe_spec('rea_parameters missing', spec_json(omit=('rea_parameters',)), False,
+               'rea_parameters is not an object')
+    probe_spec('rea_parameters at depth 3',
+               spec_json(rea=dict(FIXTURE_REA_PARAMETERS, max_depth=3)), False,
+               'max_depth')
+    probe_spec('rea_parameters without a budget',
+               spec_json(rea={'max_depth': 1, 'max_output_bytes': 1}), False,
+               'max_output_files')
+    probe_spec('rea_parameters with a non-integer budget',
+               spec_json(rea=dict(FIXTURE_REA_PARAMETERS, max_output_files='many')),
+               False, 'max_output_files')
+    probe_spec('carrier ids compare case-insensitively',
+               spec_json().replace('"a7530"', '"A7530"'), True)
+    probe_spec('a fifth carrier id outside the claim',
+               spec_json().replace('"a7530"', '"z9999"'), False, 'carrier ids')
+    # carve_ok: bytes longer than the superblock bytes_used

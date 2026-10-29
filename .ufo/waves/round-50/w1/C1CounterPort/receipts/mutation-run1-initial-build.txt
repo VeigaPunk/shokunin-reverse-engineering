@@ -1,0 +1,157 @@
+M1-marker-not-required {"applied": true, "selftest_exit": 1, "killed": true, "failures": 4, "first_failures": ["spec probe 'layout probe: standard-LE carrier (mkfs_time is a timestamp, no AVM marker)': ok=True want False (problems [''])", "spec probe 'layout probe: marker off by one (mkfs_time == bytes_used + 1)': ok=True want False (problems [''])", "standard-LE carrier (mkfs_time is a timestamp, no AVM marker): want 1 got 0"]}
+M2-compression-not-checked {"applied": true, "selftest_exit": 1, "killed": true, "failures": 7, "first_failures": ["spec probe 'layout probe: compression id 1 (gzip) is not the frozen xz': ok=True want False (problems [''])", "spec probe 'layout probe: compression id 2 (lzma; round 41 counted it as xz)': ok=True want False (problems [''])", "spec probe 'layout probe: compression id 6 (zstd)': ok=True want False (problems [''])"]}
+M3-magic-any {"applied": true, "selftest_exit": 1, "killed": true, "failures": 2, "first_failures": ["spec probe 'layout probe: big-endian AVM-marker image (sqsh) is not the little-endian layout': no problem mentions 'not little-endian hsqs' ", "spec probe 'layout probe: standard big-endian image (sqsh, no marker)': no problem mentions 'not little-endian hsqs' (problems ['version 102"]}
+M4-handler-prefix {"applied": true, "selftest_exit": 1, "killed": true, "failures": 6, "first_failures": ["chunk handler is the BE handler (squashfs_v4_be): want failing clause 'handler_ok', failing=['projection_ok']", "chunk handler is the BE handler (squashfs_v4_be): want 1 got 1", "chunk handler is the bare prefix squashfs_v4: want failing clause 'handler_ok', failing=['projection_ok']"]}
+M5-extra-files-allowed {"applied": true, "selftest_exit": 1, "killed": true, "failures": 2, "first_failures": ["an extra regular file published under the extract root: want failing clause 'oracle_hits_ok', failing=['projection_ok']", "an extra regular file published under the extract root: want 1 got 1"]}
+M6-size-not-compared {"applied": true, "selftest_exit": 1, "killed": true, "failures": 2, "first_failures": ["a published file with the oracle sha256 but another size: want failing clause 'oracle_hits_ok', failing=['projection_ok']", "a published file with the oracle sha256 but another size: want 1 got 1"]}
+M7-provenance-substring {"applied": true, "selftest_exit": 1, "killed": true, "failures": 1, "first_failures": ["provenance by substring only (/tmp/.../kaidoku-r50/...): want 1 got 0"]}
+M8-frontier-stem-token {"applied": true, "selftest_exit": 1, "killed": true, "failures": 2, "first_failures": ["frontier note without the LE-AVM token: want 1 got 0", "frontier note with the round-41 BE token (AVM BE): want 1 got 0"]}
+M9-params-not-bound {"applied": true, "selftest_exit": 1, "killed": true, "failures": 4, "first_failures": ["receipt made at max_depth 3 (the claim freezes depth 1): want 1 got 0", "receipt made under a smaller output budget than the frozen one: want 1 got 0", "receipt without recorded parameters: want 1 got 0"]}
+M10-envelope-not-checked {"applied": true, "selftest_exit": 1, "killed": true, "failures": 2, "first_failures": ["a score receipt (counter_sha256) committed as the after-receipt: want 1 got 0", "a score receipt (exit_code) committed as the after-receipt: want 1 got 0"]}
+M11-tables-order {"applied": true, "selftest_exit": 1, "killed": true, "failures": 7, "first_failures": ["spec probe 'layout probe: inode table after the directory table': ok=True want False (problems [''])", "spec probe 'layout probe: directory table past bytes_used': ok=True want False (problems [''])", "spec probe 'layout probe: inode table at offset 0': ok=True want False (problems [''])"]}
+M12-sasquatch-not-required {"applied": true, "selftest_exit": 1, "killed": true, "failures": 1, "first_failures": ["spec probe 'real runner: sasquatch not on the child PATH': no problem mentions 'missing-extractor-dependency' (problems [\"rea stdout is not "]}
+M13-drift-prefix {"applied": true, "selftest_exit": 1, "killed": true, "failures": 4, "first_failures": ["counter edited after freeze: want 2 got 0", "a new file under tools/round-50 after the freeze: want 2 got 0", "rea-pkg pin edited after the freeze: want 2 got 0"]}
+M14-removal-root-untrusted {"applied": true, "selftest_exit": 0, "killed": false, "failures": 0, "first_failures": []}
+{
+ "M1-marker-not-required": {
+  "applied": true,
+  "failures": 4,
+  "first_failures": [
+   "spec probe 'layout probe: standard-LE carrier (mkfs_time is a timestamp, no AVM marker)': ok=True want False (problems [''])",
+   "spec probe 'layout probe: marker off by one (mkfs_time == bytes_used + 1)': ok=True want False (problems [''])",
+   "standard-LE carrier (mkfs_time is a timestamp, no AVM marker): want 1 got 0"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M10-envelope-not-checked": {
+  "applied": true,
+  "failures": 2,
+  "first_failures": [
+   "a score receipt (counter_sha256) committed as the after-receipt: want 1 got 0",
+   "a score receipt (exit_code) committed as the after-receipt: want 1 got 0"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M11-tables-order": {
+  "applied": true,
+  "failures": 7,
+  "first_failures": [
+   "spec probe 'layout probe: inode table after the directory table': ok=True want False (problems [''])",
+   "spec probe 'layout probe: directory table past bytes_used': ok=True want False (problems [''])",
+   "spec probe 'layout probe: inode table at offset 0': ok=True want False (problems [''])"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M12-sasquatch-not-required": {
+  "applied": true,
+  "failures": 1,
+  "first_failures": [
+   "spec probe 'real runner: sasquatch not on the child PATH': no problem mentions 'missing-extractor-dependency' (problems [\"rea stdout is not "
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M13-drift-prefix": {
+  "applied": true,
+  "failures": 4,
+  "first_failures": [
+   "counter edited after freeze: want 2 got 0",
+   "a new file under tools/round-50 after the freeze: want 2 got 0",
+   "rea-pkg pin edited after the freeze: want 2 got 0"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M14-removal-root-untrusted": {
+  "applied": true,
+  "failures": 0,
+  "first_failures": [],
+  "killed": false,
+  "selftest_exit": 0
+ },
+ "M2-compression-not-checked": {
+  "applied": true,
+  "failures": 7,
+  "first_failures": [
+   "spec probe 'layout probe: compression id 1 (gzip) is not the frozen xz': ok=True want False (problems [''])",
+   "spec probe 'layout probe: compression id 2 (lzma; round 41 counted it as xz)': ok=True want False (problems [''])",
+   "spec probe 'layout probe: compression id 6 (zstd)': ok=True want False (problems [''])"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M3-magic-any": {
+  "applied": true,
+  "failures": 2,
+  "first_failures": [
+   "spec probe 'layout probe: big-endian AVM-marker image (sqsh) is not the little-endian layout': no problem mentions 'not little-endian hsqs' ",
+   "spec probe 'layout probe: standard big-endian image (sqsh, no marker)': no problem mentions 'not little-endian hsqs' (problems ['version 102"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M4-handler-prefix": {
+  "applied": true,
+  "failures": 6,
+  "first_failures": [
+   "chunk handler is the BE handler (squashfs_v4_be): want failing clause 'handler_ok', failing=['projection_ok']",
+   "chunk handler is the BE handler (squashfs_v4_be): want 1 got 1",
+   "chunk handler is the bare prefix squashfs_v4: want failing clause 'handler_ok', failing=['projection_ok']"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M5-extra-files-allowed": {
+  "applied": true,
+  "failures": 2,
+  "first_failures": [
+   "an extra regular file published under the extract root: want failing clause 'oracle_hits_ok', failing=['projection_ok']",
+   "an extra regular file published under the extract root: want 1 got 1"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M6-size-not-compared": {
+  "applied": true,
+  "failures": 2,
+  "first_failures": [
+   "a published file with the oracle sha256 but another size: want failing clause 'oracle_hits_ok', failing=['projection_ok']",
+   "a published file with the oracle sha256 but another size: want 1 got 1"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M7-provenance-substring": {
+  "applied": true,
+  "failures": 1,
+  "first_failures": [
+   "provenance by substring only (/tmp/.../kaidoku-r50/...): want 1 got 0"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M8-frontier-stem-token": {
+  "applied": true,
+  "failures": 2,
+  "first_failures": [
+   "frontier note without the LE-AVM token: want 1 got 0",
+   "frontier note with the round-41 BE token (AVM BE): want 1 got 0"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ },
+ "M9-params-not-bound": {
+  "applied": true,
+  "failures": 4,
+  "first_failures": [
+   "receipt made at max_depth 3 (the claim freezes depth 1): want 1 got 0",
+   "receipt made under a smaller output budget than the frozen one: want 1 got 0",
+   "receipt without recorded parameters: want 1 got 0"
+  ],
+  "killed": true,
+  "selftest_exit": 1
+ }
+}

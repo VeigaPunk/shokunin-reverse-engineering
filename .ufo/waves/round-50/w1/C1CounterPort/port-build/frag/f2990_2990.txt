@@ -1,0 +1,30 @@
+    add('a new file under tools/round-50 after the freeze',
+        [frozen, {**good, 'tools/round-50/extra.py': b'print(1)\n'}], 0, 2,
+        'frozen_path_changed')
+    add('rea-pkg pin edited after the freeze',
+        [frozen, {**good, 'tools/round-50/rea-pkg.json': b'{}\n'}], 0, 2,
+        'frozen_path_changed')
+    add('carried-over second reader edited after the freeze',
+        [frozen, {**good, 'tools/round-41/sqfs-list.py': b'# edited\n'}], 0, 2,
+        'frozen_path_changed')
+    add('carried-over fetcher edited after the freeze',
+        [frozen, {**good, 'tools/round-41/fetch-vendor.py': b'# edited\n'}], 0, 2,
+        'frozen_path_changed')
+    add('xpin tool edited after the freeze',
+        [frozen, {**good, XPIN: b'// edited\n'}], 0, 2, 'frozen_path_changed')
+    add('oracle table first committed after the freeze is not frozen',
+        [{**frozen, f'{AFTERDIR}/a7590/oracle.tsv': None},
+         {**good, f'{AFTERDIR}/a7590/oracle.tsv': oracle_tsv('a7590')}], 0, 1,
+        want_fail='b:frozen_tables_valid')
+    # merge-aware freeze walk (round 49): the edit is visible only through the
+    # merge commit's own diff against its first parent, or only inside the side branch
+    add('frozen plan edited only by the merge commit itself (evil merge)',
+        [frozen, {'__merge__': {'plans/round-50-claims.md': b'# new plan\n'}}], 0, 2,
+        'frozen_path_changed')
+    add('frozen counter edited on a side branch and merged',
+        [frozen, {'__merge__': {}, '__side__': {'tools/round-50/c1-counter.py':
+                                                 b'print(0)\n'}}], 0, 2,
+        'frozen_path_changed')
+    add('a clean merge touching nothing frozen does not trip the freeze walk',
+        [frozen, {**good}, {'__merge__': {'notes.txt': b'n\n'}}], 0, 0)
+

@@ -1,0 +1,128 @@
+def prior_pins(root, freeze, spec):
+    """(pins, sources) a previous C1 freeze already scored.
+
+    The claim's kill rule names relabelled earlier-round receipts as a control
+    that must stop C1, so a carrier whose bytes are a pin an earlier round scored
+    cannot be counted as new coverage however the table names it. Frozen sources,
+    all read at the FREEZE commit (a table added later cannot bless an old pin):
+      carriers.json `prior_pins`   an explicit list of 64-hex pins
+      PRIOR_CARRIER_TABLES         the round-41 BE carrier table and the round-49
+                                   v1/v2 carrier table (their `carriers[].sha256`)
+      PRIOR_PIN_CANDIDATES         `{pins: [...]}` documents (round 42/49/50)
+    """
+    pins, sources = set(), []
+    listed = spec.get('prior_pins')
+    if isinstance(listed, list):
+        for p in listed:
+            if isinstance(p, str) and SHA_RE.match(p.lower()):
+                pins.add(p.lower())
+        if listed:
+            sources.append('prior_pins')
+    for path in PRIOR_CARRIER_TABLES:
+        raw = show(root, freeze, path)
+        if raw is None:
+            continue
+        try:
+            doc = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(doc, dict):
+            for c in doc.get('carriers') or []:
+                if isinstance(c, dict) and isinstance(c.get('sha256'), str) \
+                        and SHA_RE.match(c['sha256'].lower()):
+                    pins.add(c['sha256'].lower())
+            sources.append(path)
+    for path in PRIOR_PIN_CANDIDATES:
+        raw = show(root, freeze, path)
+        if raw is None:
+            continue
+        try:
+            doc = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(doc, dict) and isinstance(doc.get('pins'), list):
+            for e in doc['pins']:
+                if isinstance(e, str) and SHA_RE.match(e.lower()):
+                    pins.add(e.lower())
+                elif isinstance(e, dict) and isinstance(e.get('sha256'), str) \
+                        and SHA_RE.match(e['sha256'].lower()):
+                    pins.add(e['sha256'].lower())
+            sources.append(path)
+    return pins, sources
+
+
+def _frozen_paths(spec):
+    frozen = set(FROZEN_PATHS)
+    for c in spec.get('carriers') or []:
+        if not isinstance(c, dict):
+            continue
+        for key in ('path', 'oracle', 'nonregular'):
+            v = c.get(key)
+            if isinstance(v, str) and v:
+                frozen.add(v)
+    return frozen
+
+
+def frozen_drift(root, freeze, rev, spec):
+    """Commits in FREEZE..REV that change a frozen C1 path (freeze-drift binding).
+
+    Merge-aware (`-m --diff-merges=first-parent`): a frozen path edited inside a
+    merged branch is a change. M/D/R/T/U are changes; A is a change under a
+    frozen prefix and for any frozen path that existed at FREEZE (a re-add is not
+    a restore). Each frozen blob that exists at FREEZE must also be
+    byte-identical at REV: a later restore does not un-block."""
+    frozen = _frozen_paths(spec)
+    prefixes = FROZEN_PREFIXES
+
+    def is_frozen(path):
+        return path in frozen or any(path.startswith(p) for p in prefixes)
+
+    p = git(root, '-c', 'core.quotePath=false', 'log', '-m', '--diff-merges=first-parent',
+            '--name-status', '--pretty=format:', f'{freeze}..{rev}', check=False)
+    if p.returncode != 0:
+        raise Unevaluable('git log freeze..rev failed')
+    existed_cache = {}
+    touched = set()
+    for line in p.stdout.decode(errors='replace').splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        f = line.split('\t')
+        status = f[0]
+        paths = [x for x in f[1:] if x]
+        if not paths:
+            continue
+        code = status[0]
+        for path in paths:
+            if not is_frozen(path):
+                continue
+            if code == 'A':
+                if any(path.startswith(pfx) for pfx in prefixes):
+                    touched.add(path)
+                else:
+                    if path not in existed_cache:
+                        existed_cache[path] = show(root, freeze, path) is not None
+                    if existed_cache[path]:
+                        touched.add(path)
+            elif code in 'MDRTU':
+                touched.add(path)
+    # blob equality at the endpoints (a path could be untouched in the log but
+    # differ through an exotic diff; this is cheap and exact). Prefix families are
+    # enumerated at the freeze.
+    at_freeze = set(frozen)
+    for pfx in prefixes:
+        t = git(root, 'ls-tree', '-r', '--name-only', freeze, '--', pfx, check=False)
+        if t.returncode == 0:
+            at_freeze |= {x.strip() for x in t.stdout.decode(errors='replace')
+                          .splitlines() if x.strip()}
+    for path in sorted(at_freeze):
+        b = git(root, 'rev-parse', f'{freeze}:{path}', check=False)
+        if b.returncode != 0:
+            continue
+        a = git(root, 'rev-parse', f'{rev}:{path}', check=False)
+        if a.returncode != 0:
+            touched.add(path)
+            continue
+        if a.stdout.strip() != b.stdout.strip():
+            touched.add(path)
+    return sorted(touched)

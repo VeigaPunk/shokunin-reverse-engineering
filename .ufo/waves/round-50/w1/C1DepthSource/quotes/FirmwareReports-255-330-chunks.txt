@@ -1,0 +1,76 @@
+255	                diagnostics.push(jsonValueSchema.parse({ input_path: path, report: item }));
+256	            noteMissingDependencies(path, [item]);
+257	            if (item.__typename__ === "ExtractorExecutionErrorReport" &&
+258	                !taskFailures.has(path)) {
+259	                taskFailures.add(path);
+260	                failedExtractionStages.push({
+261	                    input_path: path,
+262	                    provider_id: null,
+263	                    handler: null,
+264	                    dependencies: [],
+265	                    kind: "extractor-failure",
+266	                });
+267	            }
+268	            if (item.__typename__ === "ChunkReport" ||
+269	                item.__typename__ === "UnknownChunkReport") {
+270	                const parsed = region.parse(item);
+271	                if (parsed.end_offset <= parsed.start_offset ||
+272	                    parsed.end_offset > parsedStat.size ||
+273	                    parsed.size !== parsed.end_offset - parsed.start_offset)
+274	                    throw new AnalysisOutputError("extract_firmware", `Invalid chunk bounds for ${path}`);
+275	                const detail = item.__typename__ === "ChunkReport"
+276	                    ? z
+277	                        .object({
+278	                        handler_name: z.string(),
+279	                        is_encrypted: z.boolean(),
+280	                        extraction_reports: z.array(jsonValueSchema),
+281	                    })
+282	                        .parse(item)
+283	                    : null;
+284	                const extractionFailed = detail !== null && detail.extraction_reports.length > 0;
+285	                if (detail !== null)
+286	                    for (const problem of detail.extraction_reports) {
+287	                        diagnostics.push(extractionDiagnostic(path, detail.handler_name, jsonValueSchema.parse(problem)));
+288	                        // Nested under one chunk: keep the owning chunk, not the whole task.
+289	                        noteChunkMissingDependencies(path, parsed.id, [problem]);
+290	                    }
+291	                addBlobOrigin(path, parsed.id, {
+292	                    handler: detail?.handler_name ?? null,
+293	                    range: { offset: parsed.start_offset, length: parsed.size },
+294	                });
+295	                chunks.push({
+296	                    input_path: path,
+297	                    provider_id: parsed.id,
+298	                    range: { offset: parsed.start_offset, length: parsed.size },
+299	                    handler: detail?.handler_name ?? null,
+300	                    encrypted: detail?.is_encrypted ?? null,
+301	                    extraction_failed: extractionFailed,
+302	                    root_file_range: path === "$input"
+303	                        ? {
+304	                            offset: context.offset + parsed.start_offset,
+305	                            length: parsed.size,
+306	                        }
+307	                        : null,
+308	                });
+309	            }
+310	            if (item.__typename__ === "MultiFileReport") {
+311	                const parsed = multiFile.parse(item);
+312	                addBlobOrigin(path, parsed.id, {
+313	                    handler: parsed.handler_name,
+314	                    range: null,
+315	                });
+316	                if (parsed.extraction_reports.length > 0) {
+317	                    diagnostics.push(extractionDiagnostic(path, parsed.handler_name, jsonValueSchema.parse(item)));
+318	                    // The report owns its failure and dependencies. A produced subtask
+319	                    // is a derivation, not a new owner for the parent's report.
+320	                    const dependencies = dependencyNames(parsed.extraction_reports);
+321	                    const rows = dependencies === null
+322	                        ? [{ dependencies: [] }]
+323	                        : dependencyRows(dependencies);
+324	                    for (const row of rows)
+325	                        failedExtractionStages.push({
+326	                            input_path: path,
+327	                            provider_id: parsed.id,
+328	                            handler: parsed.handler_name,
+329	                            dependencies: dependencies === null
+330	                                ? []

@@ -1,0 +1,37 @@
+165	            if (stat === undefined)
+166	                continue;
+167	            if (stat.isDirectory()) {
+168	                pending.push(path);
+169	                continue;
+170	            }
+171	            if (stat.isFile())
+172	                bytes += stat.size;
+173	            if (bytes > maxBytes)
+174	                throw new AnalysisOutputError(operation, `Staging byte budget exceeded (${maxBytes})`);
+175	            entries.push({
+176	                path,
+177	                relativePath: relative(root, path).split(sep).join("/"),
+178	                size: stat.size,
+179	                kind: stat.isSymbolicLink()
+180	                    ? "symlink"
+181	                    : stat.isFile()
+182	                        ? "file"
+183	                        : "special",
+184	                linkTarget: stat.isSymbolicLink() ? await readlink(path) : null,
+185	            });
+186	        }
+187	    }
+188	    return entries.sort((a, b) => compareUnicodeCodePoints(a.relativePath, b.relativePath));
+189	};
+190	/** Bind producer paths to the selected input or private extraction tree. */
+191	export const firmwareLogicalPath = (path, inputPath, outputRoot) => {
+192	    if (path === inputPath)
+193	        return "$input";
+194	    const rel = relative(outputRoot, path);
+195	    if (!isAbsolute(path) ||
+196	        rel === ".." ||
+197	        rel.startsWith(`..${sep}`) ||
+198	        isAbsolute(rel))
+199	        throw new AnalysisOutputError("extract_firmware", `Provider reported a path outside its owned output: ${path}`);
+200	    return rel === "" ? "$output" : `$output/${rel.split(sep).join("/")}`;
+201	};

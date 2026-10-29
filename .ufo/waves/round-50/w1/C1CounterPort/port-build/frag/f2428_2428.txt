@@ -1,0 +1,323 @@
+    # ---- round-50 hardening cases (carried from round 49 / new in the port)
+    add('an extra regular file published under the extract root',
+        [frozen, mutant('a7590', lambda e: e['normalized_result']['files'].append({
+            'relative_path': 'firmware.bin_extract/var/extra.txt',
+            'path': '/x/extra.txt', 'size': 5, 'sha256': 'd' * 64}))], 0, 1,
+        want_fail='oracle_hits_ok')
+    add('a published file with the oracle sha256 but another size',
+        [frozen, mutant('a7590', lambda e: e['normalized_result']['files'][0]
+                        .__setitem__('size', 41))], 0, 1, want_fail='oracle_hits_ok')
+    add('oracle table row without the size column',
+        [{**frozen, f'{AFTERDIR}/a7530/oracle.tsv':
+          ''.join(f'{rel}\t{h}\n' for rel, h, _s in spec_data['a7530']['files']).encode()},
+         good], 0, 1, want_fail='oracle_ok')
+    add('oracle table row with a non-numeric size',
+        [{**frozen, f'{AFTERDIR}/a7530/oracle.tsv':
+          ''.join(f'{rel}\t{h}\tbig\n' for rel, h, _s in
+                  spec_data['a7530']['files']).encode()}, good], 0, 1,
+        want_fail='oracle_ok')
+    add('oracle table row with a .. component',
+        [{**frozen, f'{AFTERDIR}/a7590/oracle.tsv':
+          b'../etc/x\t' + fsha(3).encode() + b'\t40\n'}, good], 0, 1,
+        want_fail='oracle_ok')
+    add('receipt path with a .. component',
+        [frozen, mutant('a7590', lambda e: e['normalized_result']['files'].append({
+            'relative_path': 'firmware.bin_extract/../etc/x', 'path': '/x/etc/x',
+            'size': 5, 'sha256': 'd' * 64}))], 0, 1, want_fail='path_shape_ok')
+    add('a score receipt (counter_sha256) committed as the after-receipt',
+        [frozen, mutant('c6490', lambda e: e.__setitem__('counter_sha256', '0' * 64))],
+        0, 1, want_fail='evidence_envelope_ok')
+    add('a score receipt (exit_code) committed as the after-receipt',
+        [frozen, mutant('c6490', lambda e: e.__setitem__('exit_code', 0))],
+        0, 1, want_fail='evidence_envelope_ok')
+    add('provenance by substring only (/tmp/.../kaidoku-r50/...)',
+        [frozen, mutant('a7530', lambda e: e['parameters'].__setitem__(
+            'output_directory', '/tmp/fast/scratch/hyaku/kaidoku-r50/x'))],
+        0, 1, want_fail='run_provenance_ok')
+    add('provenance names the previous round scratch (kaidoku-r41)',
+        [frozen, mutant('a7530', lambda e: e['parameters'].__setitem__(
+            'output_directory', '/fast/scratch/hyaku/kaidoku-r41/run-V4/extract'))],
+        0, 1, want_fail='run_provenance_ok')
+    add('provenance is a relative path',
+        [frozen, mutant('a7530', lambda e: e['parameters'].__setitem__(
+            'output_directory', 'fast/scratch/hyaku/kaidoku-r50/x'))],
+        0, 1, want_fail='run_provenance_ok')
+    add('receipt made at max_depth 3 (the claim freezes depth 1)',
+        [frozen, mutant('a7530', lambda e: e['parameters'].__setitem__('max_depth', 3))],
+        0, 1, want_fail='parameters_ok')
+    add('receipt made under a smaller output budget than the frozen one',
+        [frozen, mutant('a7530', lambda e: e['parameters'].__setitem__(
+            'max_output_files', 10000))], 0, 1, want_fail='parameters_ok')
+    add('receipt without recorded parameters',
+        [frozen, mutant('a7530', lambda e: e['parameters'].pop('max_output_bytes'))],
+        0, 1, want_fail='parameters_ok')
+    add('missing-extractor-dependency gap (sasquatch absent from the child PATH)',
+        [frozen, mutant('a7590', lambda e: e['normalized_result']['extraction_gaps']
+                        .append({'kind': 'missing-extractor-dependency',
+                                 'input_path': '$output/firmware.bin_extract',
+                                 'relative_path': None, 'handler': HANDLER,
+                                 'dependencies': ['sasquatch'],
+                                 'continuation_id': 'continuation-dep'}))],
+        0, 1, want_fail='gaps_ok')
+    add('a failed chunk reported by REA when sasquatch is absent',
+        [frozen, mutant('a7590', lambda e: e['normalized_result']['chunks'][0]
+                        .__setitem__('extraction_failed', True))],
+        0, 1, want_fail='chunks_ok')
+
+    # ---- the rerun executes the REA package at --pkg65 (no npx) and binds its toolchain
+    stubdir = os.path.join(work, 'stubs')
+    os.makedirs(stubdir, exist_ok=True)
+
+    def stub_pkg(version=REA_VERSION, bin_entry='scripts/rea.mjs', name='rea'):
+        """A stand-in REA package whose CLI prints its argv/env as an evidence object."""
+        root_ = os.path.join(stubdir, 'pkg-' + name)
+        os.makedirs(os.path.join(root_, 'scripts'), exist_ok=True)
+        doc = {'name': 'rea-agents', 'version': version, 'type': 'module'}
+        if bin_entry:
+            doc['bin'] = {'rea-agents': bin_entry}
+        with open(os.path.join(root_, 'package.json'), 'w') as fh:
+            json.dump(doc, fh)
+        with open(os.path.join(root_, 'scripts', 'rea.mjs'), 'w') as fh:
+            fh.write('console.log(JSON.stringify({ok: true, data: {stub: true, '
+                     'argv: process.argv.slice(2), unblob: process.env.REA_UNBLOB_COMMAND, '
+                     'path: process.env.PATH, tmpdir: process.env.TMPDIR}}));\n')
+        return root_
+
+    def stub_unblob(version):
+        pth = os.path.join(stubdir, 'unblob-' + version)
+        with open(pth, 'w') as fh:
+            fh.write('#!/bin/sh\necho %s\n' % version)
+        os.chmod(pth, 0o755)
+        return pth
+
+    def runner_probe(desc, unblob, pkg, want_ok, want_text=None, cid=None, check=None):
+        rn = make_real_runner(work, unblob, 30, pkg)
+        try:
+            status, data = rn(b'carrier', cid or ('probe-' + str(len(spec_probes))),
+                              dict(FIXTURE_REA_PARAMETERS))
+            ok = status == 'ok' and (check is None or check(data, rn.toolchain))
+            problems = [] if ok else ['ran but the check failed: %r' % (data,)]
+        except RerunEnvError as e:
+            ok, problems = False, [str(e)]
+        spec_probes.append({'desc': 'real runner: ' + desc, 'ok': ok,
+                            'problems': problems, 'want_ok': want_ok,
+                            'want_text': want_text})
+
+    def argv_ok(data, tc):
+        a = data['argv']
+        return (data.get('stub') is True and a[0] == 'extract-firmware'
+                and a[a.index('--max-depth') + 1] == '1'
+                and a[a.index('--max-output-bytes') + 1] == '536870912'
+                and a[a.index('--max-output-files') + 1] == '100000'
+                and data['path'] == FIXED_PATH
+                and data['unblob'] == stub_unblob('26.6.4')
+                and tc['rea']['entry'].startswith(stub_pkg())
+                and tc['unblob']['version'] == UNBLOB_VERSION
+                and tc['sasquatch']['sha256'] and tc['sasquatch']['path']
+                and tc['node']['path'] and 'npx' not in ' '.join(a))
+
+    runner_probe('node executes the package CLI at --pkg65 (no npx), frozen flags, '
+                 'FIXED_PATH, toolchain recorded', stub_unblob('26.6.4'), stub_pkg(),
+                 True, check=argv_ok)
+    runner_probe('unblob that is not 26.6.4 is refused', stub_unblob('26.6.3'),
+                 stub_pkg(), False, 'unblob version')
+    runner_probe('a package that is not 6.5.0 is refused', stub_unblob('26.6.4'),
+                 stub_pkg(version='6.4.0', name='old'), False, 'REA package version')
+    runner_probe('a package without a bin entry is refused', stub_unblob('26.6.4'),
+                 stub_pkg(bin_entry=None, name='nobin'), False, 'no rea-agents bin')
+    runner_probe('a package whose bin entry is missing is refused',
+                 stub_unblob('26.6.4'), stub_pkg(bin_entry='scripts/gone.mjs',
+                                                 name='gone'), False, 'is not a file')
+
+    # a shim `sasquatch` first on the CALLER's PATH must not be what the child gets
+    shim = os.path.join(stubdir, 'shim')
+    os.makedirs(shim, exist_ok=True)
+    with open(os.path.join(shim, 'sasquatch'), 'w') as fh:
+        fh.write('#!/bin/sh\necho shim\n')
+    os.chmod(os.path.join(shim, 'sasquatch'), 0o755)
+    saved_path = os.environ.get('PATH', '')
+    os.environ['PATH'] = shim + ':' + saved_path
+    try:
+        runner_probe('a shim sasquatch on the caller PATH is not resolved', stub_unblob('26.6.4'),
+                     stub_pkg(), True, cid='probe-shim',
+                     check=lambda data, tc: (
+                         not tc['sasquatch']['path'].startswith(shim)
+                         and os.path.dirname(tc['sasquatch']['path']) in FIXED_PATH.split(':')
+                         and data['path'] == FIXED_PATH and shim not in data['path']))
+    finally:
+        os.environ['PATH'] = saved_path
+
+    # ---- the running counter is the frozen counter (round 50, S3)
+    add('the running counter is not the counter frozen at the freeze',
+        [{**frozen, 'tools/round-50/c1-counter.py': b'# some other counter\n'}, good],
+        0, 2, 'counter_not_frozen')
+    add('no counter at the freeze',
+        [{**frozen, 'tools/round-50/c1-counter.py': None}, good], 0, 2,
+        'counter_not_frozen')
+
+    # ---- receipt freshness reads the FULL history (round 50, S4)
+    fh_good = good
+    add('a receipt added pre-freeze on a side branch and re-added after the freeze, '
+        'merged: not fresh',
+        [{'base.txt': b'b\n'},
+         {'__ops__': [('git', 'checkout', '-q', '-b', 'side'), ('write', fh_good),
+                      ('commit', 'P1'), ('git', 'checkout', '-q', '-')]},
+         frozen, fh_good, {'__ops__': [('git', 'merge', '--no-ff', '-q', '-m', 'M',
+                                        'side')]}],
+        2, 1, want_fail='receipt_fresh')
+    add('the same history with the receipt added only after the freeze is fresh',
+        [{'base.txt': b'b\n'},
+         {'__ops__': [('git', 'checkout', '-q', '-b', 'side'),
+                      ('write', {'side.txt': b's\n'}), ('commit', 'S1'),
+                      ('git', 'checkout', '-q', '-')]},
+         frozen, fh_good, {'__ops__': [('git', 'merge', '--no-ff', '-q', '-m', 'M',
+                                        'side')]}],
+        2, 0)
+
+    # ---- the oracle is re-derived at scoring time (round 50, S5/S6)
+    def rows_of(k):
+        return sorted(spec_data[k]['files'])
+
+    def extra_row(raw, cid):
+        return rows_of(cid) + ([('usr/hidden.bin', fsha(77), 5)] if cid == 'a7530' else [])
+
+    def short_rows(raw, cid):
+        return rows_of(cid)[:-1] if cid == 'a7530' else rows_of(cid)
+
+    def wrong_sha(raw, cid):
+        rows = rows_of(cid)
+        return ([(rows[0][0], fsha(78), rows[0][2])] + rows[1:]) if cid == 'a7530' else rows
+
+    def wrong_size(raw, cid):
+        rows = rows_of(cid)
+        return ([(rows[0][0], rows[0][1], rows[0][2] + 1)] + rows[1:]) if cid == 'a7530' else rows
+
+    def nothing(raw, cid):
+        return []
+
+    def exact_rows(raw, cid):
+        return rows_of(cid)
+
+    def no_unsquashfs(raw, cid):
+        raise OracleEnvError('%s is not executable' % UNSQUASHFS)
+
+    add('oracle re-derivation equal to the frozen tables (green)', [frozen, good], 0, 0,
+        rederive=exact_rows)
+    add('frozen oracle table shrunk: the carrier holds a file the table omits',
+        [frozen, good], 0, 1, want_fail='oracle_rederived_ok', rederive=extra_row)
+    add('frozen oracle table extended: a row the carrier does not hold',
+        [frozen, good], 0, 1, want_fail='oracle_rederived_ok', rederive=short_rows)
+    add('frozen oracle row with another sha256 than the carrier holds',
+        [frozen, good], 0, 1, want_fail='oracle_rederived_ok', rederive=wrong_sha)
+    add('frozen oracle row with another size than the carrier holds',
+        [frozen, good], 0, 1, want_fail='oracle_rederived_ok', rederive=wrong_size)
+    add('the carrier derives nothing while the table lists files',
+        [frozen, good], 0, 1, want_fail='oracle_rederived_ok', rederive=nothing)
+    add('unsquashfs cannot run: unevaluable, never green', [frozen, good], 0, 2,
+        'oracle_env_error', rederive=no_unsquashfs)
+
+    # the real re-derivation (no simulation): a lane-built LE image through the
+    # host unsquashfs equals the tree it was built from, and a doctored table differs
+    probe_work = os.path.join(work, 'oracle-probe')
+    os.makedirs(probe_work, exist_ok=True)
+    img, img_why = lane_le_avm_image(probe_work)
+    if img is None:
+        spec_probes.append({'desc': 'real unsquashfs re-derivation: lane image',
+                            'ok': False, 'problems': [img_why], 'want_ok': True,
+                            'want_text': None})
+    else:
+        built = []
+        for dp, _dn, fns in os.walk(os.path.join(probe_work, 'src')):
+            for fn in fns:
+                full = os.path.join(dp, fn)
+                if os.path.isfile(full) and not os.path.islink(full):
+                    data = open(full, 'rb').read()
+                    built.append((os.path.relpath(full, os.path.join(probe_work, 'src')),
+                                  sha(data), len(data)))
+        built.sort()
+        got = rederive_oracle(img, probe_work, 'probe')
+        spec_probes.append({'desc': 'real unsquashfs re-derivation equals the built tree',
+                            'ok': got == built, 'problems': [repr(got[:2])],
+                            'want_ok': True, 'want_text': None})
+        spec_probes.append({'desc': 'real unsquashfs re-derivation differs from a '
+                                    'doctored table', 'ok': got == built[:-1],
+                            'problems': [], 'want_ok': False, 'want_text': None})
+        spec_probes.append({'desc': 'real unsquashfs re-derivation leaves no scratch tree',
+                            'ok': not [n for n in os.listdir(probe_work)
+                                       if n.startswith('oracle-')],
+                            'problems': [], 'want_ok': True, 'want_text': None})
+    for what, attr, value, text in (
+            ('a missing tool', 'UNSQUASHFS', '/nonexistent/unsquashfs', 'not executable'),
+            ('another version', 'UNSQUASHFS_VERSION', '9.9.9', 'lacks 9.9.9')):
+        saved_attr = globals()[attr]
+        globals()[attr] = value
+        try:
+            try:
+                rederive_oracle(b'x', probe_work, 'env')
+                res_txt = 'ran'
+            except OracleEnvError as e:
+                res_txt = str(e)
+        finally:
+            globals()[attr] = saved_attr
+        spec_probes.append({'desc': 'real unsquashfs re-derivation: ' + what,
+                            'ok': False, 'problems': [res_txt], 'want_ok': False,
+                            'want_text': text})
+
+    # ---- the real runner refuses a child PATH that does not resolve sasquatch
+    def runner_env_probe():
+        global FIXED_PATH
+        saved = FIXED_PATH
+        empty = tempfile.mkdtemp(prefix='c1-emptypath.', dir=sroot)
+        FIXED_PATH = empty
+        try:
+            try:
+                make_real_runner(work, stub_unblob('26.6.4'), 5, stub_pkg())(
+                    b'x', 'probe-nosas', dict(FIXTURE_REA_PARAMETERS))
+                return 'ran'
+            except RerunEnvError as e:
+                return str(e)
+        finally:
+            FIXED_PATH = saved
+            shutil.rmtree(empty, ignore_errors=True)
+
+    env_probe = runner_env_probe()
+    spec_probes.append({'desc': 'real runner: sasquatch not on the child PATH',
+                        'ok': False, 'problems': [env_probe], 'want_ok': False,
+                        'want_text': 'missing-extractor-dependency'})
+
+    # ---- external vendor carriers read through --carrier-cache (the real shape)
+    cache_ok = tempfile.mkdtemp(prefix='c1-cache.', dir=sroot)
+    cache_empty = tempfile.mkdtemp(prefix='c1-cache-empty.', dir=sroot)
+    cache_bad = tempfile.mkdtemp(prefix='c1-cache-bad.', dir=sroot)
+    for k in ids:
+        with open(os.path.join(cache_ok, pins[k] + '.bin'), 'wb') as fh:
+            fh.write(carriers[k])
+        with open(os.path.join(cache_bad, pins[k] + '.bin'), 'wb') as fh:
+            fh.write(carriers[k] + b'\x00')
+    ext_spec = spec_json(external=set(ids))
+    ext_frozen, ext_recs = build(spec_text=ext_spec)
+    add('four external carriers, bytes from --carrier-cache (green)',
+        [ext_frozen, ext_recs], 0, 0, cache=cache_ok)
+    add('four external carriers, empty cache', [ext_frozen, ext_recs], 0, 1,
+        want_fail='carrier_present', cache=cache_empty)
+    add('four external carriers, no --carrier-cache', [ext_frozen, ext_recs], 0, 1,
+        want_fail='carrier_present', cache=None)
+    add('four external carriers, cache bytes are not the pinned carrier',
+        [ext_frozen, ext_recs], 0, 1, want_fail='carrier_pin_ok', cache=cache_bad)
+    ext_len = json.loads(ext_spec)
+    for c in ext_len['carriers']:
+        if c['id'] == 'a7530':
+            c['external']['length'] = len(carriers['a7530']) - 64
+    add('external carve length differs from bytes_used',
+        [{**ext_frozen, CARRIERS: json.dumps(ext_len, indent=1)}, ext_recs], 0, 1,
+        want_fail='carve_ok', cache=cache_ok)
+
+    # ---- the frozen rea-agents package pin (round 49)
+    add('rea package does not match the frozen pin',
+        [{**frozen, 'tools/round-50/rea-pkg.json': json.dumps({
+            'version': REA_VERSION, 'package_json_sha256': '0' * 64,
+            'package_lock_sha256': '0' * 64})}, good], 0, 2, 'unevaluable')
+    add('no rea-pkg pin at the freeze', [{**frozen, 'tools/round-50/rea-pkg.json': None,
+                                          'tools/round-42/rea-pkg.json': None}, good],
+        0, 2, 'unevaluable')
+

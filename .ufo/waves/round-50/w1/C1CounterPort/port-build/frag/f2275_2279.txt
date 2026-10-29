@@ -1,0 +1,13 @@
+    def lane_rows(lane, cid):
+        """What the simulated unsquashfs re-derivation returns by default: the
+        frozen table of that lane (so the other cases isolate their own clause);
+        the dedicated cases pass `rederive=` to model a table that disagrees."""
+        rows, _err = parse_oracle(open(os.path.join(lane, AFTERDIR, cid,
+                                                    'oracle.tsv'), 'rb').read())
+        return rows
+
+    def add(name, steps, freeze_index, want, reason=None, want_fail=None,
+            runner=sim_runner, cache=None, rederive=None):
+        cases.append({'name': name, 'steps': steps, 'freeze': freeze_index,
+                      'want': want, 'reason': reason, 'want_fail': want_fail,
+                      'runner': runner, 'cache': cache, 'rederive': rederive})

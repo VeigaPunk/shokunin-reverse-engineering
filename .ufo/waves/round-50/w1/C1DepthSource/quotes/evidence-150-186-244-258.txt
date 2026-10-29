@@ -1,0 +1,52 @@
+150	/** Rebind a matching immutable artifact subject to the caller's selected path. */
+151	export const rebindEvidenceSubjectTargetPath = (subject, target) => subject.sha256 === target.sha256 &&
+152	    subject.format === target.format &&
+153	    (subject.architecture ?? null) === (target.architecture ?? null)
+154	    ? { ...subject, path: target.path }
+155	    : subject;
+156	const semanticProjection = (evidence) => ({
+157	    subject: evidence.subject === null
+158	        ? null
+159	        : {
+160	            digest: evidence.subject.digest,
+161	            format: evidence.subject.format,
+162	            architecture: evidence.subject.architecture,
+163	        },
+164	    provider: evidence.provider,
+165	    analysis_profile: evidence.analysis_profile,
+166	    predicate_type: evidence.predicate_type,
+167	    operation: evidence.operation,
+168	    parameters: evidence.parameters,
+169	    raw_result: evidence.raw_result,
+170	    normalized_result: evidence.normalized_result,
+171	    confidence: evidence.confidence,
+172	    authority: evidence.authority,
+173	    environment: evidence.environment,
+174	    limitations: evidence.limitations,
+175	    ...(evidence.relationship_coverage === null
+176	        ? {}
+177	        : { relationship_coverage: evidence.relationship_coverage }),
+178	    locations: evidence.locations,
+179	    evidence_links: evidence.evidence_links,
+180	});
+181	/** Hash semantic content, including raw results and excluding display-subject fields. */
+182	const computeEvidenceId = (evidence) => `ev_${digestCanonicalValue(semanticProjection(evidence), "Evidence")}`;
+183	/** Parse evidence and reject a syntactically valid but tampered semantic ID. */
+184	export const parseEvidence = (input) => {
+185	    const immutable = typeof input === "object" && input !== null
+186	        ? immutableEvidenceSnapshots.get(input)
+244	    if (!isImmutableJsonSnapshot(observation.result))
+245	        throw new TypeError("Cooperative Evidence requires an authenticated immutable result");
+246	    // The envelope parser below retains its usual diagnostics, using the completed
+247	    // immutable validation rather than traversing the payload synchronously again.
+248	    yield* jsonValueValidationSteps(observation.result);
+249	    const { normalized } = normalizeEvidenceObservation(target, provider, observation);
+250	    const digest = yield* canonicalJsonDigestSteps(semanticProjection(normalized));
+251	    return rememberImmutableEvidence({
+252	        ...normalized,
+253	        evidence_id: `ev_${digest}`,
+254	    });
+255	}
+256	const normalizeEvidenceObservation = (target, provider, observation) => {
+257	    const subject = target === undefined
+258	        ? null

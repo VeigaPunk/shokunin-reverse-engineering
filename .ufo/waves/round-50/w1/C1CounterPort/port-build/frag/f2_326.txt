@@ -1,0 +1,439 @@
+"""R50-C1 counter (coverage: genuine AVM-marker little-endian SquashFS v4 -> Core).
+
+Port of `tools/round-41/c1-counter.py` (the R41-C1 counter, genuine AVM-layout
+BIG-endian vendor carriers) to the little-endian layout, with the non-v1/v2-specific
+round-49 hardening carried over (see PORT-DELTA.md for every delta). The claims
+text is `plans/round-50-claims.md` R50-C1; the predicate is embedded here clause
+by clause:
+
+  At the measured revision REV, for each frozen carrier, the committed round-50
+  REA 6.5.0 `extract-firmware --max-depth 1` after-receipt (unblob 26.6.4,
+  sasquatch 4.5.1 on the child PATH, no `-be` binary needed), first added in a
+  commit that descends from the freeze, names the `squashfs_v4_le` handler for
+  the carrier's chunk with no failed chunk, publishes every regular file of the
+  frozen independent oracle (unsquashfs 4.7.5 listing + per-file sha256; the
+  lane's pure-Python `tools/round-41/sqfs-list.py` `auto` layout is the second
+  reader that equals it) at its exact path relative to the chunk extract root
+  (equality after mapping into the root, never a suffix) with the same sha256
+  and size, and no extra regular file; accounts for every non-regular oracle
+  entry by the frozen gap/removal rule (round-41 `gaps_ok` three-family
+  disposition); has a subject digest equal to the carrier pin and recomputes
+  its evidence id; the carrier bytes hash to the frozen pin and their superblock
+  reads the frozen layout -- little-endian `hsqs`, v4.0, compression id 4,
+  `mkfs_time == bytes_used` (the AVM marker); **and** a counter-time REA rerun
+  of the same bytes (scratch output directory, carriers fetched through the
+  pinned chain or the `--carrier-cache`; executed by node on the REA package at
+  `--pkg65`, never through `npx`) has the same semantic projection as the
+  committed receipt; **and** a scoring-time `unsquashfs` 4.7.5 re-derivation of
+  the carrier bytes yields exactly the frozen oracle table (both directions);
+  **and** the receipt's `parameters.output_directory` starts
+  with `/fast/scratch/hyaku/kaidoku-r50/` (prefix test, no `..`); documentation
+  bindings: `PROVINCE.md` holds a `## Round-50 additions to Core` section whose
+  row names `squashfs_v4_le` with the AVM marker and cites the entry path; one
+  line carries `Round-50 frontier note`, the entry stem and an LE-AVM token; the
+  entry exists at REV and its `source:` lines cite SOURCES rows opened
+  2026-10-28..2026-10-29 that list the entry in `used-by`; `corpus/README.md`
+  `## Coverage map` maps the entry stem; no frozen C1 path changed after the
+  freeze.
+
+Target: carriers_matched == 4 (a7530, a7590, c6490, c6430), every binding true,
+`frozen_path_changed []`, exit 0.
+
+What the layout test is NOT (round-50 delta, deliberate): there is no big-endian
+field and no little-endian-block-length special case. In the big-endian AVM layout
+the metadata block headers were little-endian inside a big-endian superblock, so
+the marker `mkfs_time == bytes_used` alone could not tell a genuine AVM image from
+a standard BE image with a normalised timestamp and the block-length endianness was
+the format test. A little-endian image has ONE byte order: `hsqs` fixes the whole
+file, so the superblock reads the marker directly and the only extra tests are
+sanity ones (v4.0, compression id 4, table starts inside `bytes_used`).
+The marker is invisible to unblob (`SquashFSExtractor` runs `sasquatch -le` for every
+little-endian image and only branches on `mkfs_time == bytes_used` for BIG-endian
+v4): the claim is "REA publishes every oracle file of the pinned LE AVM members",
+not "REA recognises AVM". The marker is a CONSTANT OF THE PINNED BYTES: once
+`carrier_pin_ok` holds the bytes are fixed and the marker adds no evidence beyond
+it; the counter does NOT claim that `layout_ok` separates genuine AVM images from
+re-stamped ones (anyone can write `mkfs_time = bytes_used`). `layout_ok` is kept as
+a frozen-layout statement about the pin and as the second red for a planted
+STANDARD little-endian carrier (control CTL-C1-4 is red on `carrier_pin_ok` AND on
+`layout_ok`).
+
+The extract root (R40-CL1 repair; R41C1Revenger 1 is the normative rule; R49 closure)
+  Every path comparison against the oracle and non-regular tables is equality
+  after mapping the receipt path into its chunk's extract root, never a suffix
+  test, and the root is never reconstructed from the path text:
+
+    strip once         `$output/` is stripped once: `files[].relative_path`,
+                       `unpublished_entries[].relative_path` and gap
+                       `relative_path` are bare, while gap `input_path`,
+                       `derivations[].parent_path/child_path` and
+                       `depth_limited_paths[]` are `$output/`-prefixed
+                       (rea-agents 6.5.0 FirmwareFiles.js:177 vs :191-200)
+    root               the child path of every `derivations[]` edge whose handler
+                       EQUALS `squashfs_v4_le` (round 49: equality, not the
+                       round-41 `startswith('squashfs_v4')` prefix); a whole-file
+                       chunk's root is `firmware.bin_extract`, and a carved or
+                       nested chunk's root is `<parent>/<start>-<end>.<handler>_extract`
+    one root           the subject root is that root when the receipt has exactly
+                       one; several roots are ambiguous and the freeze can name
+                       the intended one with the optional `oracle_root` key of the
+                       carrier entry, otherwise the path clauses fail closed with
+                       `extract_root: null`
+    whole segments     `P == root or P.startswith(root + '/')` (round 49
+                       `under_root`): a root `x_extract` does not own
+                       `x_extract2/...`; `rel(P)` is `''` for P == root, the
+                       remainder for a contained P, else None - an entry outside
+                       the root belongs to another namespace and is neither
+                       compared against this oracle nor reported as published
+    keyed by root      with one root per carrier the (root, rel) key collapses to
+                       rel, and a path outside the root cannot satisfy a row
+
+Removal disposition (R41C1DevCore 7.1-7.3, unchanged)
+  unblob deletes escaping symlinks after reporting `MaliciousSymlinkRemoved`,
+  deletes empty-target symlinks with no report at all, and never publishes a
+  link as a regular file. The frozen gap rule (`GAPRULE`) may carry a `removed`
+  block; `gaps_ok` is then a three-family disposition check:
+    path-resolved gap   kind allowed for that entry's kind
+    removal             every diagnostic the rule names (`removed.diagnostic`)
+                        must resolve at its exact path to a non-regular entry
+                        whose kind is in `removed.kinds`, and no entry may be
+                        both gapped and removed
+    silent              an entry whose kind and oracle detail are listed under
+                        `removed.silent` may carry no record at all (per row)
+  A diagnostic's path is its `report.link`, an absolute path that must lie
+  under the receipt's own trusted run root (round 49: the parent directory of
+  `parameters.output_directory`), then be mapped by locating the subject root as
+  whole segments. The rerun projection carries diagnostics as
+  `[__typename__, rel]`, so a rerun that removed a *different* link no longer
+  matches. A path-less gap kind that is not in `structural` (so
+  `missing-extractor-dependency`, the REA kind unblob reports when `sasquatch`
+  is absent from the child PATH) fails `gaps_ok`.
+
+Per-carrier clauses (all must hold; `matched` = conjunction):
+  carrier_present          the carrier blob exists at REV (committed `path`, or
+                           the `--carrier-cache` entry `<pin>.bin` of an
+                           `external` vendor carrier)
+  carrier_pin_ok           sha256(bytes) == the frozen pin
+  carrier_fresh_ok         the pin is not one a previous C1 freeze already scored
+                           (carriers.json `prior_pins`, the previous C1 carrier
+                           tables and the frozen prior-pins tables, all read at
+                           the freeze commit)
+  layout_ok                a statement about the pinned bytes, not a provenance
+                           test (see the note above): the frozen layout (see
+                           layout_probe): little-endian
+                           `hsqs` magic, v4.0, compression id 4 (xz),
+                           `mkfs_time == bytes_used` (the AVM marker),
+                           0 < bytes_used <= file size, 96-byte superblock, and
+                           0 < inode_table_start < directory_table_start <=
+                           bytes_used
+  oracle_ok                the oracle table parses (rel, sha256, size); >= 1 row;
+                           no duplicate paths; every sha256 is 64 hex; every
+                           size is a non-negative integer (round 50: size is
+                           mandatory, it is compared)
+  oracle_rederived_ok      scoring-time oracle re-derivation (round 50, from the
+                           wave-1 shortcut critique S5/S6): the counter runs
+                           `/usr/bin/unsquashfs` (version 4.7.5) on the carrier
+                           bytes (`-no-xattrs -no-progress -f -no-exit-code` into
+                           its scratch directory) and requires the set of regular
+                           files `(rel, sha256, size)` to EQUAL the frozen oracle
+                           table in both directions, so a shrunk, extended or
+                           lane-built oracle table fails. Non-regular entries are
+                           not re-derived (an unprivileged extraction cannot make
+                           device nodes). A tool that cannot run is unevaluable
+                           (exit 2 `oracle_env_error`), never a green.
+  nonregular_ok            the non-regular table parses (rel, kind[, detail]);
+                           empty is allowed; duplicate (rel, kind) rows are not
+  carve_ok                 the carrier is exactly the filesystem it claims: for an
+                           external carrier the frozen carve `length` equals the
+                           superblock `bytes_used` and the bytes are that length;
+                           for a committed carrier the file size equals
+                           `bytes_used`. A sloppy carve leaves trailing bytes, the
+                           chunk stops being the whole input, and the oracle root
+                           moves one `<start>-<end>.<handler>_extract` deeper
+  receipt_present          corpus/evidence/round-50/c1/<id>/after.json parses
+  receipt_fresh            EVERY commit that adds the receipt path in the full
+                           history of REV (`git log -m --full-history
+                           --diff-filter=A`; the default simplified history hid a
+                           pre-freeze add behind a TREESAME merge in round 49) is
+                           a strict descendant of --freeze (not the freeze commit
+                           itself)
+  evidence_envelope_ok     the after-receipt is an REA evidence envelope, not a
+                           score receipt (no `counter_sha256`/`exit_code` key)
+  subject_pin_ok           subject.digest.sha256 == the frozen pin
+  operation_ok             operation == extract_firmware and provider.id == unblob
+  handler_ok               the receipt's squashfs-family chunk handlers are
+                           exactly [`squashfs_v4_le`] (round 49: no prefix test,
+                           no default; `squashfs_v4_be`, `squashfs_v3`, ... fail)
+  chunks_ok                no chunk carries extraction_failed: true
+  oracle_hits_ok           every oracle regular file is published at its exact
+                           path under the chunk extract root (rel ==, sha256 ==
+                           and size ==), the root taken from the receipt's
+                           `derivations[]` edge, not from path text; and NO other
+                           regular file is published under that root (round 49
+                           `extra_published`; round 41 only counted hits)
+  gaps_ok                  disposition check (R41C1DevCore 7.1): every extraction
+                           gap lands on exactly one non-regular entry at its exact
+                           path and its kind is allowed for that entry's kind;
+                           every removal diagnostic the frozen rule names resolves
+                           to a non-regular entry of a listed kind and no entry is
+                           both gapped and removed; every entry the rule marks
+                           required carries exactly one disposition (an allowed
+                           gap, a removal diagnostic, or - only when the rule
+                           lists it under `silent` - nothing at all)
+  nonregular_unpublished_ok  no published regular file path equals a non-regular
+                           entry path (a materialised symlink/device would both
+                           publish the path and keep the gap); equality is exact
+                           relative to the chunk extract root
+  path_shape_ok            every normalised receipt path is a legal spelling (no
+                           empty/`.`/`..` component, no trailing slash, no
+                           absolute path) -- round 49, from the R41-D5 finding
+  run_provenance_ok        parameters.output_directory is an absolute path that
+                           STARTS WITH `/fast/scratch/hyaku/kaidoku-r50/` (prefix
+                           test, no `..`; round 41 tested a substring);
+                           `parameters` is inside the hashed 6.5.0
+                           semanticProjection, so it cannot be edited without
+                           breaking evidence_id_ok. It authenticates neither the
+                           writer nor the round: a relabelled genuine replay of
+                           real receipts passes (plan: disclosed limit 3)
+  parameters_ok            the receipt's `parameters` carry the FROZEN extraction
+                           parameters (`rea_parameters` of carriers.json:
+                           max_depth 1, max_output_bytes, max_output_files);
+                           round 41 froze nothing here and the rerun replayed
+                           whatever the receipt recorded
+  evidence_id_ok           stored evidence id == the id recomputed under the
+                           frozen rea-agents 6.5.0 rule (tools/round-27/
+                           xpin-attribute.mjs, the package's own
+                           semanticProjection)
+  projection_ok            the counter's own REA run of the carrier bytes (fresh
+                           scratch output directory, PATH fixed, `sasquatch`
+                           required on it) has the same semantic projection as
+                           the committed receipt (the frozen `plus-extractor`
+                           profile: `derivations[]`, the source of the oracle
+                           root, are compared). Skipped (and therefore false)
+                           when the carrier bytes or the receipt are absent / the
+                           pin fails. The run is node + the package CLI entry at
+                           `--pkg65` (no `npx`, no ambient PATH resolution);
+                           its toolchain is bound and recorded (see the rerun
+                           clause).
+
+Non-vacuity bindings (properties of the frozen set, so they cannot be gamed after
+the freeze):
+  carriers_spec_ok         `target` frozen in carriers.json equals this counter's
+                           target; exactly that many distinct ids; the expected id
+                           set (case-insensitive); distinct pins; id/sha256/oracle/
+                           nonregular present and well-formed (and `path` for a
+                           committed carrier); an external carrier also names
+                           `url`, `image_sha256`, `member`, `member_sha256` and a
+                           positive `length` (and `nested.sha256` when it has a
+                           `nested` block), so the fetch chain is bound in the
+                           table rather than in the fetcher (routed R40-CL6); an
+                           optional `oracle_root` must be a relative path string
+                           and `prior_pins` a list of 64-hex pins; `target` must
+                           be present; `projection` must be present and equal
+                           `plus-extractor` (round 50: it is no longer a free
+                           choice or a default); `rea_parameters` is an object with
+                           positive integer max_depth (== 1), max_output_bytes
+                           and max_output_files (round 50)
+  gap_rule_ok              the gap rule parses to {allowed: {kind: [gap kind]},
+                           required?: {kind: bool}, removed?: {diagnostic, kinds,
+                           disposition, silent?}, structural?: {kind: limit}} with
+                           claim R50-C1; every non-regular kind that appears in
+                           any frozen nonregular table is a key of `allowed`
+  frozen_tables_valid      carriers.json and gap-rule.json parse at the freeze
+                           commit itself (routed R39-CL4) and every oracle /
+                           nonregular table carriers.json lists exists at the
+                           freeze commit (round 50: a table first committed after
+                           the freeze would be an unfrozen oracle)
+  (REMOVED in round 50: `compression_coverage`, which demanded one gzip and one
+  xz carrier; all four frozen LE carriers are xz, so the per-carrier
+  `layout_ok` compression id 4 test replaces it.)
+
+Documentation bindings:
+  province_core_section    PROVINCE.md has the `## Round-50 additions to Core`
+                           heading
+  province_core_row        a table row in that section whose first cell names
+                           `squashfs_v4_le`, whose text names the AVM marker
+                           (AVM[ _-]marker) and cites the entry path
+  frontier_note            one line carries `Round-50 frontier note`, the entry
+                           stem and an LE-AVM token (LE AVM / AVM LE)
+  entry_present            the knowledge entry exists at REV
+  sourced                  the entry's `source:` lines name an S-id whose
+                           corpus/SOURCES.md row is opened 2026-10-28..2026-10-29
+                           and lists the entry (path or stem) in used-by
+  coverage_map_row         corpus/README.md `## Coverage map` maps the entry stem
+
+Counter bytes (round 50, from the shortcut critique S3): the counter file that is
+running must be byte-identical to `tools/round-50/c1-counter.py` at FREEZE, else
+exit 2 `counter_not_frozen` (and likewise when the freeze holds no counter).
+
+Freeze-drift binding (routed defect R38-CL4, kept; round-49 merge-aware form): if
+any commit in FREEZE..REV changes a frozen C1 path (the claims text, everything
+under `tools/round-50/`, the carried-over inputs the counter names, carriers.json,
+gap-rule.json, every carrier/oracle/nonregular file carriers.json lists) -- M/D/R/T/U,
+an A under a frozen prefix, or an A of a path that existed at the freeze, read with
+`-m --diff-merges=first-parent` so an edit inside a merged branch counts -- or a
+frozen blob differs between FREEZE and REV, the counter exits 2 with reason
+`frozen_path_changed` and never reports met. A later restore does not un-block (the
+log of the range is inspected, not the endpoints).
+
+The rerun clause (routed R39-CL5)
+  Between the receipt checks and the verdict, a carrier whose bytes hash to the
+  pin and whose receipt parses is re-run by this counter:
+      cwd = a private directory under $HYAKU_SCRATCH/kaidoku-r50 (or --work),
+      env REA_UNBLOB_COMMAND=<absolute unblob>, TMPDIR = that directory,
+          PATH = FIXED_PATH (round 49: a seat's shim directory cannot be what
+          `sasquatch` resolves to during a score),
+      argv = <node on FIXED_PATH> <--pkg65>/<package.json bin rea-agents>
+             extract-firmware --format json
+             --full-output --max-depth 1 --max-output-bytes B --max-output-files F
+             <carrier bytes> <fresh outdir>        (B, F, depth from `rea_parameters`)
+  Round 50 (shortcut critique S1): the REA that runs is the package at `--pkg65`
+  (version 6.5.0, the one the evidence-id recompute is bound to), executed by node
+  directly; `npx -y rea-agents@6.5.0` is gone, so no ambient PATH or registry
+  resolution picks a different REA. Before the first run the toolchain is bound:
+  `unblob --version` must equal the frozen `26.6.4` (else exit 2
+  `rerun_env_error`); `sasquatch` must resolve on FIXED_PATH; the unblob, sasquatch,
+  node and REA package paths, sha256 and versions are recorded in the counter
+  receipt (`rerun_toolchain`). A shim directory in the caller's PATH cannot
+  satisfy any of it.
+  and the fresh `.data` object is projected:
+
+      projection = {subject_sha256,
+                    files: sorted [path suffix after the chunk `*_extract`
+                                   directory, sha256, size],
+                    chunks: sorted [handler, range.offset, range.length,
+                                    extraction_failed],
+                    gaps: sorted [kind, path suffix, sorted dependencies],
+                    unpublished_entries: sorted [kind, path suffix],
+                    diagnostics: sorted [__typename__, rel]}
+                  + (plus-extractor) derivations, engine, published_bytes, coverage
+
+  Everything that varies between two runs of the same bytes (absolute paths,
+  output directory, evidence id, continuation ids, provider ids, timestamps,
+  selection and analysis fields) is excluded. The comparison profile is frozen
+  data: the optional `projection` key of carriers.json, default `plus-extractor`.
+  The rerun replays the FROZEN extraction parameters (`rea_parameters` of
+  carriers.json; `parameters_ok` binds the receipt to the same values): a depth-1
+  extraction is `partial` with a different published set, so a rerun at REA's
+  default depth 3 could never match a depth-1 receipt, and a ~13k-file rootfs
+  needs the raised budgets (REA's default 10000-entry staging budget fails).
+  `sasquatch` must resolve on FIXED_PATH: when it does not, the rerun is
+  unevaluable (exit 2 `rerun_env_error`, detail `missing-extractor-dependency`),
+  never a green and never a silent downgrade. `sasquatch-v4be` is NOT required
+  (round-41 needed it; a little-endian carrier never reaches it). A rerun that
+  cannot run at all (no npx/node/unblob, unusable REA output) is unevaluable
+  (exit 2 `rerun_env_error`). `--no-rerun` is not a mode of the predicate: it
+  exits 2 (`rerun_disabled`) and never reports met.
+
+Receipt identity (round 49): every receipt this counter writes (`--json-out`)
+carries `counter` (absolute path) and `counter_sha256` (sha256 of that file's
+bytes). `--verify-receipt PATH` re-reads a written receipt and exits 0 (match), 1
+(missing/mismatched key) or 2 (unreadable). The committed REA after-receipts must
+NOT carry the key (`evidence_envelope_ok`). The evidence-id recompute also binds
+the rea-agents package: the frozen `rea-pkg.json` (package.json and
+package-lock.json sha256 + version 6.5.0) must match the `--pkg65` package, else
+the run is unevaluable.
+
+Usage:
+  c1-counter.py --root LANE --rev REV --freeze FREEZE --pkg65 REA650_PKG_ROOT
+                [--work DIR] [--carrier-cache DIR] [--json-out PATH]
+                [--unblob PATH] [--rea-timeout SECONDS]
+  c1-counter.py --selftest  [--pkg65 REA650_PKG_ROOT] [--work DIR]
+  c1-counter.py --selftest-rea --pkg65 REA650_PKG_ROOT --dev-image LE_AVM_MEMBER
+                [--unblob PATH] [--rea-timeout SECONDS]
+  c1-counter.py --verify-receipt PATH
+Exit: 0 target met, 1 target not met, 2 unevaluable (bad args, git/node failure,
+frozen path changed, rerun environment error, --no-rerun). Reads lane bytes only
+through git objects (`git show REV:path`) and `--carrier-cache`; writes only a
+private scratch dir under $HYAKU_SCRATCH (default /fast/scratch/hyaku)/
+kaidoku-r50/counter (or --work) and --json-out. Never calls gettempdir().
+
+`--selftest` is offline and deterministic: it drives measure() in-process over a
+git fixture lane with a simulated REA runner (the simulator only exists inside
+selftest(); main() never passes anything but the real runner). The fixture
+carriers are synthetic little-endian `hsqs` superblocks: the layout clause is a
+superblock test and these bytes exercise it exactly. `--selftest-rea` is the
+real-path check: it runs REA 6.5.0 on a lane-supplied LE AVM member
+(`--dev-image`, NOT a C1 carrier unless the caller says so), builds a one-carrier
+fixture lane around two real runs and asserts a green verdict, then relabels an
+oracle-only fabrication and asserts it red. (Not run by the porting seat: no REA
+run in wave 1 of the port.)
+"""
+import argparse
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+CARRIERS = 'tools/round-50/carriers.json'
+GAPRULE = 'tools/round-50/gap-rule.json'
+AFTERDIR = 'corpus/evidence/round-50/c1'
+ENTRY = 'corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md'
+STEM = '2026-10-28-r50-avm-le-squashfs-core'
+CORE_HEADING = '## Round-50 additions to Core'
+FRONTIER_MARK = 'Round-50 frontier note'
+HANDLER = 'squashfs_v4_le'
+XPIN = 'tools/round-27/xpin-attribute.mjs'
+# Pins earlier C1 freezes already scored: the round-41 BE vendor/lane carriers and
+# the round-49 v1/v2 fixtures. Read at the freeze commit (a table added later
+# cannot bless an old pin).
+PRIOR_CARRIER_TABLES = ('.ufo/waves/round-41/c1/carriers.json',
+                        'tools/round-49/carriers.json')
+PRIOR_PIN_CANDIDATES = ('tools/round-50/prior-pins.json',
+                        'tools/round-49/prior-pins.json',
+                        'tools/round-42/prior-pins.json')
+REA_PKG_CANDIDATES = ('tools/round-50/rea-pkg.json', 'tools/round-49/rea-pkg.json',
+                      'tools/round-42/rea-pkg.json')
+OPENED_DATES = ('2026-10-28', '2026-10-29')
+TARGET = 4
+IDS = ('a7530', 'a7590', 'c6490', 'c6430')
+PROV_SEGMENT = '/kaidoku-r50/'
+PROV_BASE = '/fast/scratch/hyaku/kaidoku-r50/'
+REA_VERSION = '6.5.0'
+SB_SIZE = 96
+XZ_ID = 4
+UNBLOB_VERSION = '26.6.4'
+UNSQUASHFS = '/usr/bin/unsquashfs'
+UNSQUASHFS_VERSION = '4.7.5'
+COUNTER_PATH = 'tools/round-50/c1-counter.py'
+ORACLE_FLAGS = ('-no-xattrs', '-no-progress', '-f', '-no-exit-code')
+# H1 (carried from round 49): the REA child and the counter's own node/npx
+# lookups use one fixed PATH, so a seat's shim directory cannot be what
+# `sasquatch` resolves to during a score.
+FIXED_PATH = ':'.join(['/usr/local/bin', '/usr/bin', '/bin',
+                       os.path.expanduser('~/.local/bin'),
+                       os.path.expanduser('~/.local/share/fnm/node-versions/'
+                                          'v24.21.0/installation/bin')])
+FROZEN_PATHS = (
+    'plans/round-50-claims.md',
+    'tools/round-41/fetch-vendor.py',
+    'tools/round-41/sqfs-list.py',
+    'tools/round-42/prior-pins.json',
+    'tools/round-42/rea-pkg.json',
+    XPIN,
+    CARRIERS,
+    GAPRULE,
+)
+# `tools/round-50/**` (counter, run harness, carriers, gap rule, control
+# fixtures) is a frozen path family: a new or edited file under it is drift.
+FROZEN_PREFIXES = ('tools/round-50/',)
+HANDLER_RE = re.compile(r'(?<![A-Za-z0-9_-])' + HANDLER + r'(?![A-Za-z0-9_-])')
+AVM_MARKER_RE = re.compile(r'AVM[ _-]marker', re.IGNORECASE)
+LE_AVM_RE = re.compile(r'\bLE[ _-]AVM\b|\bAVM[ _-]LE\b', re.IGNORECASE)
+SQUASHFS_HANDLER_RE = re.compile(r'^squashfs_v[1-4](_[a-z0-9]+)*$')
+SID_RE = re.compile(r'(?<![0-9A-Za-z])(S\d{3,})(?![0-9A-Za-z])')
+SHA_RE = re.compile(r'^[0-9a-f]{64}$')
+BINDINGS = ('province_core_section', 'province_core_row', 'frontier_note',
+            'entry_present', 'sourced', 'coverage_map_row', 'carriers_spec_ok',
+            'gap_rule_ok', 'frozen_tables_valid')
+CLAUSES = ('carrier_present', 'carrier_pin_ok', 'carrier_fresh_ok', 'layout_ok',
+           'carve_ok', 'oracle_ok', 'oracle_rederived_ok', 'nonregular_ok',
+           'receipt_present',
+           'receipt_fresh', 'evidence_envelope_ok', 'subject_pin_ok',
+           'operation_ok', 'handler_ok', 'chunks_ok', 'oracle_hits_ok',
+           'gaps_ok', 'nonregular_unpublished_ok', 'path_shape_ok',
+           'run_provenance_ok', 'parameters_ok', 'evidence_id_ok', 'projection_ok')

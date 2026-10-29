@@ -1,0 +1,129 @@
+def path_shape_problem(path):
+    """Why a receipt path is not a legal spelling, or None (R41-D5, 2nd finding)."""
+    if not isinstance(path, str) or not path:
+        return 'empty path'
+    p = path
+    if p == '$input':
+        return None
+    if p.startswith('$output/'):
+        p = p[len('$output/'):]
+    elif p.startswith('/'):
+        return 'absolute path %r' % (path,)
+    if not p:
+        return 'empty path after $output/'
+    if p.endswith('/'):
+        return 'trailing slash in %r' % (path,)
+    for comp in p.split('/'):
+        if comp == '':
+            return 'empty component in %r' % (path,)
+        if comp in ('.', '..'):
+            return '%r component in %r' % (comp, path)
+    return None
+
+
+def path_shape_ok(env):
+    """(ok, first problem) over every path the receipt normalises."""
+    for p in receipt_paths(env):
+        problem = path_shape_problem(p)
+        if problem:
+            return False, problem
+    return True, None
+
+
+def under_root(path, root):
+    """Segment-bounded containment: `P == CR or P.startswith(CR + '/')` (R41-D5)."""
+    if not isinstance(path, str) or not isinstance(root, str) or not root:
+        return False
+    p = strip_output(path)
+    if p == root:
+        return True
+    return p.startswith(root.rstrip('/') + '/')
+
+
+def squashfs_roots(env):
+    """The receipt's chunk extract roots for the frozen handler (exact equality).
+
+    unblob's subtasks are published as `derivations[]` edges and the child path
+    is the directory a chunk was extracted into (rea-agents 6.5.0
+    FirmwareReports.js:341-357). Only edges whose handler EQUALS `squashfs_v4_le`
+    are filesystem roots for this claim (round 41 took every `squashfs_v4*`
+    prefix): a whole-file chunk's root is `firmware.bin_extract`, a carved
+    chunk's root is `<parent>/<start>-<end>.<handler>_extract`, and a nested
+    image's root is `<parent>/<path to image>_extract`.
+
+    Returns them deepest first; the counter never uses that order to guess
+    (see subject_root)."""
+    nr = env.get('normalized_result') or {}
+    out = set()
+    for d in nr.get('derivations') or []:
+        if not isinstance(d, dict):
+            continue
+        if d.get('handler') != HANDLER:
+            continue
+        child = strip_output(d.get('child_path'))
+        if isinstance(child, str) and child:
+            out.add(child.rstrip('/'))
+    return sorted(out, key=lambda r: (-len(r), r))
+
+
+def subject_root(env, hint=None):
+    """(extract root, how) of the chunk whose filesystem the oracle describes.
+
+    Exactly one `squashfs_v4_le` derivation root is the normal case and needs no
+    hint. Several roots (a wrapper carrier that also extracted a nested image)
+    cannot be resolved from the receipt alone, so the freeze may name the
+    intended root per carrier (`oracle_root` in carriers.json); without that hint
+    the answer is None and the three path clauses fail closed. A hint that names
+    no root at all is a frozen-table error and also resolves to None."""
+    roots = squashfs_roots(env)
+    if not roots:
+        return None, 'no %s derivation edge' % (HANDLER,)
+    if hint is not None:
+        if hint not in roots:
+            return None, 'oracle_root %r not among %r' % (hint, roots)
+        return hint, 'oracle_root from carriers.json'
+    if len(roots) == 1:
+        return roots[0], 'single %s derivation root' % (HANDLER,)
+    return None, 'ambiguous: %d %s roots %r (freeze oracle_root)' % (
+        len(roots), HANDLER, roots)
+
+
+def chunk_roots(env, hint=None):
+    """[{extract_root, subject}] for the receipt, for reporting."""
+    root, how = subject_root(env, hint)
+    return {'roots': squashfs_roots(env), 'subject': root, 'source': how}
+
+
+def diagnostic_rel(diagnostic, root, output_directory=None):
+    """A removal diagnostic's entry path relative to the chunk extract root.
+
+    unblob reports `MaliciousSymlinkRemoved(link=<absolute path inside its
+    extraction dir>, target=...)` (unblob extractor.py:79-87) and REA stores it
+    with `input_path` naming the task directory, so the entry path exists only in
+    `link`. Round 49: the link must lie under the run's trusted root (the parent
+    of `parameters.output_directory`, where TMPDIR pointed during the run), so a
+    forged `link` naming another tree cannot be mapped. The subject root is then
+    located as a run of whole segments after that prefix and the remainder is the
+    entry's path; None when the link carries no such run (that diagnostic cannot
+    be resolved and fails the disposition check closed)."""
+    if root is None or not isinstance(diagnostic, dict):
+        return None
+    report = diagnostic.get('report')
+    link = report.get('link') if isinstance(report, dict) else None
+    if not isinstance(link, str) or not link:
+        return None
+    trusted = trusted_run_root(output_directory)
+    if trusted is None:
+        return None
+    if not under_root(link, trusted):
+        return None
+    segs = [x for x in link.split('/') if x not in ('', '.')]
+    tsegs = [x for x in trusted.split('/') if x not in ('', '.')]
+    if segs[:len(tsegs)] != tsegs:
+        return None
+    rsegs = root.split('/')
+    start = len(tsegs)
+    for i in range(len(segs) - len(rsegs), start - 1, -1):
+        if segs[i:i + len(rsegs)] == rsegs:
+            return '/'.join(segs[i + len(rsegs):])
+    return None

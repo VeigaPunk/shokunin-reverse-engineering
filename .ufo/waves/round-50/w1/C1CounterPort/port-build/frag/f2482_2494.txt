@@ -1,0 +1,17 @@
+    deep_file, deep_recs = build(
+        env_over={'a7590': lambda e: (pub(e, 'usr/bin/busy', fsha(7)),
+                                      entry(e, 'bin/busy'))},
+        oracle_over={'a7590': oracle_rows([('var/info.txt', fsha(3), 40),
+                                           ('usr/bin/busy', fsha(7), 5)])},
+        nonreg_over={'a7590': 'bin/busy\tsymlink\n'})
+    add('regular usr/bin/busy does not satisfy the symlink entry bin/busy',
+        [deep_file, deep_recs], 0, 0, runner=same_run(deep_recs))
+    # dir 2: the symlink entry's path ends with a regular file's path
+    short_file, short_recs = build(
+        env_over={'a7590': lambda e: (pub(e, 'sbin/tool', fsha(8), 40),
+                                      entry(e, 'usr/sbin/tool', target='tool'))},
+        oracle_over={'a7590': oracle_rows([('var/info.txt', fsha(3), 40),
+                                           ('sbin/tool', fsha(8), 40)])},
+        nonreg_over={'a7590': 'usr/sbin/tool\tsymlink\n'})
+    add('regular sbin/tool does not satisfy the symlink entry usr/sbin/tool',
+        [short_file, short_recs], 0, 0, runner=same_run(short_recs))

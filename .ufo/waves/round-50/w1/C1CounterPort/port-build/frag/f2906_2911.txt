@@ -1,0 +1,13 @@
+    prior_tbl = json.dumps({'claim': 'R41-C1', 'target': 4, 'carriers': [
+        {'id': 'V3', 'sha256': pins['a7530']},
+        {'id': 'L4', 'sha256': pins['c6430']}]})
+    add('round-41 carrier table in the lane names two frozen pins',
+        [{**frozen, '.ufo/waves/round-41/c1/carriers.json': prior_tbl}, good], 0, 1,
+        want_fail='carrier_fresh_ok')
+    add('round-49 carrier table in the lane names a frozen pin',
+        [{**frozen, 'tools/round-49/carriers.json': json.dumps(
+            {'carriers': [{'id': 'v1le', 'sha256': pins['a7590']}]})}, good], 0, 1,
+        want_fail='carrier_fresh_ok')
+    add('prior-pins document names a frozen pin',
+        [{**frozen, 'tools/round-42/prior-pins.json': json.dumps(
+            {'pins': [pins['c6490']]})}, good], 0, 1, want_fail='carrier_fresh_ok')

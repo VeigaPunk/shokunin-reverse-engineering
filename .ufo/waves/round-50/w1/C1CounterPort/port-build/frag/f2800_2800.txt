@@ -1,0 +1,18 @@
+        [rem_frozen, rem_recs], 0, 0, runner=same_run(rem_recs))
+    foreign_frozen, foreign_recs = build(
+        rule_text=rule_removed, nonreg_over={'a7590': 'bin/link\tsymlink\t../usr/bin/x\n'},
+        env_over={'a7590': lambda e: (
+            one_symlink(e, gap=False, removal=True),
+            e['normalized_result']['diagnostics'][-1]['report'].__setitem__(
+                'link', '/e1/e2/e3/e4/e5/e6/firmware.bin_extract/bin/link'))})
+    add('a removal whose link lies outside the run root cannot be mapped',
+        [foreign_frozen, foreign_recs], 0, 1, want_fail='gaps_ok',
+        runner=same_run(foreign_recs))
+    nopar_frozen, nopar_recs = build(
+        rule_text=rule_removed, nonreg_over={'a7590': 'bin/link\tsymlink\t../usr/bin/x\n'},
+        env_over={'a7590': lambda e: (
+            one_symlink(e, gap=False, removal=True),
+            e['parameters'].__setitem__('output_directory', '/x'))})
+    add('a removal with a run root that is the filesystem root cannot be mapped',
+        [nopar_frozen, nopar_recs], 0, 1, want_fail='gaps_ok',
+        runner=same_run(nopar_recs))

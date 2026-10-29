@@ -1,0 +1,112 @@
+def disposition_check(gaps_list, diags, nonreg, model, root, output_directory=None):
+    """Three families, all frozen data (R41C1DevCore 7.1).
+
+    path-resolved gap   a gap with a relative_path must resolve (exact match after
+                        the chunk extract root) to exactly one non-regular entry
+                        and its kind must be listed for that entry's kind
+    structural gap      a gap with relative_path null (unblob's own bookkeeping:
+                        `unknown-chunk-handler` for a residual chunk,
+                        `depth-limited` for a truncated task) must have its kind in
+                        `structural` and must not exceed that kind's per-carrier
+                        allowance. A kind not listed (e.g. REA's
+                        `missing-extractor-dependency`, reported when `sasquatch`
+                        is absent from the child PATH) fails here.
+    removal             every diagnostic whose `__typename__` the rule names is a
+                        removal: it must resolve at its exact path to a
+                        non-regular entry whose kind is in `removed.kinds`, and
+                        that entry may not also carry a gap ('exclusive')
+
+    Then every entry whose kind is required must carry exactly one disposition:
+    an allowed gap, a removal, or - only when the rule lists the entry's
+    kind/detail under `silent` - nothing at all (unblob deletes an empty-target
+    symlink without any report, unblob extractor.py:68-71). The silent admission
+    is per row, so the routing text's count-based wording is met and nothing else
+    can hide behind the allowance. An unknown root fails closed.
+
+    Round 50: the entry lookups are dictionary lookups on the exact relative path
+    (the round-41 form scanned every non-regular row per gap, O(gaps x rows); a
+    rootfs carrier has ~850 non-regular rows and as many gaps).
+    """
+    if root is None:
+        return False, 'no extract root: paths cannot be resolved'
+    allowed = model.get('allowed') or {}
+    structural = model.get('structural') or {}
+    required = model.get('required') or {}
+    removed = model.get('removed') or {}
+    by_rel = {rel: (kind, detail) for rel, kind, detail in nonreg}
+    rows_at = {}
+    for rel, _kind, _detail in nonreg:
+        rows_at.setdefault(strip_rel(rel), []).append(rel)
+    gapped = {}
+    struct_count = {}
+    for g in gaps_list:
+        if not isinstance(g, dict):
+            return False, 'non-object gap'
+        kind = g.get('kind')
+        rp = g.get('relative_path')
+        if rp is None:
+            if kind not in structural:
+                return False, 'gap kind %r has no path and no structural allowance' % (kind,)
+            struct_count[kind] = struct_count.get(kind, 0) + 1
+            continue
+        if kind in structural:
+            return False, 'structural gap kind %r carries a path %r' % (kind, rp)
+        rel_in_root = extract_rel(rp, root)
+        hits = rows_at.get(rel_in_root, []) if rel_in_root else []
+        if len(hits) != 1:
+            return False, 'gap path %r matches %d non-regular entries' % (rp, len(hits))
+        entry_kind = by_rel[hits[0]][0]
+        if kind not in allowed.get(entry_kind, []):
+            return False, 'gap kind %r not allowed for %r entry %r (allowed %r)' % (
+                kind, entry_kind, hits[0], allowed.get(entry_kind, []))
+        gapped.setdefault(hits[0], []).append(kind)
+    over = {k: [n, structural[k]] for k, n in struct_count.items()
+            if n > structural[k]}
+    if over:
+        return False, 'structural gaps over allowance %r' % (over,)
+
+    removal_name = removed.get('diagnostic')
+    removal_kinds = removed.get('kinds') or []
+    removed_rels = {}
+    if removal_name:
+        for d in diags:
+            if diagnostic_typename(d) != removal_name:
+                continue
+            rel = diagnostic_rel(d, root, output_directory)
+            if rel is None:
+                return False, ('removal diagnostic without a path under the root: %r'
+                               % (d.get('input_path'),))
+            hits = rows_at.get(rel, [])
+            if len(hits) != 1:
+                return False, ('removal resolves to %d non-regular entries at %r'
+                               % (len(hits), rel))
+            entry_kind = by_rel[hits[0]][0]
+            if entry_kind not in removal_kinds:
+                return False, ('removal at %r names a %r entry; removed.kinds is %r'
+                               % (rel, entry_kind, removal_kinds))
+            if gapped.get(hits[0]):
+                return False, 'entry %r is both gapped and removed' % (hits[0],)
+            removed_rels.setdefault(hits[0], 0)
+            removed_rels[hits[0]] += 1
+
+    missing = []
+    silent_admitted = []
+    for rel, kind, detail in nonreg:
+        need = required.get(kind, bool(allowed.get(kind)))
+        if not need:
+            continue
+        if gapped.get(rel) or removed_rels.get(rel):
+            continue
+        allowed_details = (removed.get('silent') or {}).get(kind)
+        if allowed_details and silent_detail_matches(detail, allowed_details):
+            silent_admitted.append(rel)
+            continue
+        missing.append(rel)
+    if missing:
+        return False, ('required entry with no disposition (no gap, no %s) on %r'
+                       % (removal_name or 'removal', sorted(missing)[:8]))
+    return True, ('%d gaps (%d structural), %d removals, %d silent, on %d '
+                  'non-regular entries' % (
+                      len(gaps_list), sum(struct_count.values()),
+                      sum(removed_rels.values()), len(silent_admitted),
+                      len(nonreg)))

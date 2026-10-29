@@ -1,0 +1,108 @@
+{
+ "cases": 20,
+ "checks": [
+  {
+   "check": "constants are scraped from the counter, not imported",
+   "detail": "{\"handler\": \"squashfs_v4_le\", \"extractor\": \"sasquatch\", \"prov_base\": \"/fast/scratch/hyaku/kaidoku-r50\"}",
+   "ok": true
+  },
+  {
+   "check": "flag support is detected from the counter source (stub declares both)",
+   "detail": "True",
+   "ok": true
+  },
+  {
+   "check": "planted commit descends from the freeze",
+   "detail": "78338ccb -> 9ca30a24",
+   "ok": true
+  },
+  {
+   "check": "fixtures round-trip byte-exact (gzip + from_lane)",
+   "detail": "['a/b.json', 'a/lane.txt']",
+   "ok": true
+  },
+  {
+   "check": "gzip fixtures are deterministic",
+   "detail": "a2d96298062e",
+   "ok": true
+  },
+  {
+   "check": "a tampered fixture is refused",
+   "detail": "fixture does not hash to its manifest pin: {'encoding': 'gzip', 'fixture': 'file",
+   "ok": true
+  },
+  {
+   "check": "committed fixtures verify against the freeze",
+   "detail": "2",
+   "ok": true
+  },
+  {
+   "check": "a dirty fixture worktree is refused",
+   "detail": "fixture files differ from the freeze (1 of 2): ['fx/c0/files/a.json.gz']",
+   "ok": true
+  },
+  {
+   "check": "fixtures outside the lane are not verified",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "judge: red stub vs {\"doc_bindings_all_false\": true, \"exit\": \"exit1\", \"matched\": 0} -> True",
+   "detail": "behaved as the plan states",
+   "ok": true
+  },
+  {
+   "check": "judge: red stub vs {\"exit\": \"exit0\"} -> False",
+   "detail": "expected exit 0, got 1",
+   "ok": true
+  },
+  {
+   "check": "judge: green stub vs {\"all_bindings_true\": true, \"exit\": \"exit0\", \"matched\": \"target\"} -> True",
+   "detail": "behaved as the plan states",
+   "ok": true
+  },
+  {
+   "check": "judge: green stub vs {\"exit\": \"non-zero\"} -> False",
+   "detail": "expected non-zero, got 0 (the control reached the target)",
+   "ok": true
+  },
+  {
+   "check": "judge: unevaluable stub vs {\"exit\": \"non-zero\"} -> False",
+   "detail": "counter reported could-not-evaluate (exit 2)",
+   "ok": true
+  },
+  {
+   "check": "judge: a named refusal (exit 2) is accepted only when the control lists it",
+   "detail": "the counter refused to score it (exit 2, oracle_env_error): not a match",
+   "ok": true
+  },
+  {
+   "check": "judge: an unlisted exit 2 is could-not-evaluate",
+   "detail": "counter reported could-not-evaluate (exit 2)",
+   "ok": true
+  },
+  {
+   "check": "judge: exit 2 with no refusal list is never a pass",
+   "detail": "counter reported could-not-evaluate (exit 2)",
+   "ok": true
+  },
+  {
+   "check": "judge: slot_fails_exactly refuses extra failing clauses",
+   "detail": "slot a fails ['handler_ok', 'projection_ok', 'receipt_present', 'subject_pin_ok'] beyond the one clause the control may trip ['layout_ok']",
+   "ok": true
+  },
+  {
+   "check": "judge: a clause the counter never lists fails closed (a literal name is not a pass)",
+   "detail": "slot a: clauses ['nonexistent-clause-name'] did not fire (failing=['handler_ok', 'layout_ok', 'projection_ok', 'receipt_present', 'subject_pin_ok'])",
+   "ok": true
+  },
+  {
+   "check": "landing text names the handler, the AVM marker, the entry path and the frontier mark",
+   "detail": "ok",
+   "ok": true
+  }
+ ],
+ "failed": [],
+ "passed": 20,
+ "selftest": "c1-controls"
+}

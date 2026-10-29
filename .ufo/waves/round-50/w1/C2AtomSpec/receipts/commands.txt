@@ -1,0 +1,57 @@
+B1a	exit=0	sha256=690e07064753123c
+  cmd: git -C $L ls-tree -r --name-only $B corpus/knowledge | grep -c "\.md$"
+  out: 139
+B1b	exit=0	sha256=a18b529baef2962d
+  cmd: git -C $L show $B:SCORECARD.md | sed -n 23p | grep -o "[0-9]*/[0-9]* knowledge files mapped" | head -1
+  out: 138/138 knowledge files mapped
+B2	exit=1	sha256=9a271f2a916b0b6e
+  cmd: git -C $L show $B:SCORECARD.md | sed -n 25p | grep -c "rejected-harmed\|c2-final"
+  out: 0
+B3	exit=0	sha256=40c16dcb1cb734bb
+  cmd: git -C $L show $B:.ufo/waves/round-48/r48-w1-results.json | jq -r ".results[]|(.output|fromjson) as \$o|select((\$o.status//\"\")==\"blocked\" or \$o.aborted==true)|.name"
+  out: C1Meaning ScribeReportNumbers
+B3b	exit=0	sha256=70189a82b4034330
+  cmd: git -C $L show $B:SCORECARD.md | grep -n "all 75 seats settled" | cut -c1-12
+  out: 3733:Waves: 
+B4	exit=0	sha256=0285030e1d90c9ef
+  cmd: git -C $L show $B:corpus/lessons/round-48-verifier-spotcheck.md | grep -n "^- \*\*\(quality\|discernment\) " | cut -c1-70
+  out: 125:- **quality — harmed.** The admitted S145 row has a false section  126:- **discernment — improved (decision-level only).** The reopened p
+B4b	exit=0	sha256=5f9198aaa8a090b4
+  cmd: git -C $L show $B:SCORECARD.md | sed -n 3741p | grep -o "quality \*\*[^*]*\*\*\|discernment \*\*[^*]*\*\*"
+  out: quality **improved on the instruments** discernment **improved**
+B5	exit=1	sha256=9a271f2a916b0b6e
+  cmd: git -C $L show $B:SCORECARD.md | grep -c "33f65a91\|8847042a"
+  out: 0
+B6	exit=1	sha256=9a271f2a916b0b6e
+  cmd: git -C $L show $B:corpus/SOURCES.md | grep -c "supersedes S149"
+  out: 0
+B7	exit=1	sha256=9a271f2a916b0b6e
+  cmd: git -C $L show $B:corpus/SOURCES.md | grep -c "supersedes S147"
+  out: 0
+B7b	exit=0	sha256=eae3a54410e5dbad
+  cmd: git -C $L show $B:corpus/SOURCES.md | grep "^| S147 " | cut -d"|" -f5
+  out:  A 
+B8	exit=1	sha256=9a271f2a916b0b6e
+  cmd: git -C $L show $B:corpus/SOURCES.md | grep -c "supersedes S138"
+  out: 0
+B8b	exit=0	sha256=f14b4987904bcb58
+  cmd: git -C $L ls-tree -r --name-only $B corpus/evidence/round-44/oracle | grep -vc manifest.json
+  out: 22
+B9	exit=2	sha256=b93619d8916d8526
+  cmd: git -C $L show $B:SKILL.md | grep -c "^| `tools/round-49/"
+  out: bash: -c: line 1: unexpected EOF while looking for matching ``'
+B10	exit=128	sha256=ee02d29fc65ec531
+  cmd: git -C $L cat-file -e $B:tools/round-50/selftest-r49-c2.py
+  out: fatal: path 'tools/round-50/selftest-r49-c2.py' does not exist in '7c678ae6d97aedb969fd253b52b3d2882ef1e186'
+B10b	exit=1	sha256=9a271f2a916b0b6e
+  cmd: git -C $L show $B:tools/round-49/c2-mismatch.py | grep -c -- "--selftest"
+  out: 0
+B11	exit=0	sha256=5dc3d722ba938555
+  cmd: git -C $L show $B:SCORECARD.md | sed -n 3762p | grep -o "discernment \*\*[^*]*\*\*"
+  out: discernment **improved at decision level, with disagreements recorded**
+B11b	exit=0	sha256=a218ba5b519e4015
+  cmd: git -C $L show $B:corpus/lessons/round-49-verifier-spotcheck.md | grep -n "^- \*\*discernment" | cut -c1-40
+  out: 79:- **discernment: unchanged** — the ou
+B9	exit=1	sha256=9a271f2a916b0b6e
+  cmd: git -C $L show $B:SKILL.md | grep -c -F '| `tools/round-49/'
+  out: 0

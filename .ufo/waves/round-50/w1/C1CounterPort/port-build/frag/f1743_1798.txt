@@ -1,0 +1,88 @@
+def main(argv=None):
+    global WORK_OVERRIDE
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--root')
+    ap.add_argument('--rev')
+    ap.add_argument('--freeze')
+    ap.add_argument('--pkg65')
+    ap.add_argument('--json-out')
+    ap.add_argument('--unblob')
+    ap.add_argument('--work', help='scratch directory (default '
+                    '$HYAKU_SCRATCH/kaidoku-r50/counter)')
+    ap.add_argument('--carrier-cache',
+                    help='directory holding <sha256>.bin for external vendor carriers '
+                         '(filled by tools/round-41/fetch-vendor.py)')
+    ap.add_argument('--rea-timeout', type=int, default=900)
+    ap.add_argument('--no-rerun', action='store_true')
+    ap.add_argument('--selftest', action='store_true')
+    ap.add_argument('--selftest-rea', action='store_true')
+    ap.add_argument('--dev-image', help='LE AVM member for --selftest-rea')
+    ap.add_argument('--verify-receipt', help='exit 0 if the receipt at PATH carries '
+                    'a counter_sha256 that describes the counter file it names')
+    a = ap.parse_args(argv)
+    if a.work:
+        WORK_OVERRIDE = os.path.abspath(a.work)
+        os.makedirs(WORK_OVERRIDE, exist_ok=True)
+    if a.verify_receipt:
+        try:
+            with open(a.verify_receipt) as fh:
+                doc = json.load(fh)
+        except (OSError, json.JSONDecodeError) as e:
+            print(json.dumps({'verify': a.verify_receipt, 'reason': str(e),
+                              'ok': False}, sort_keys=True))
+            return 2
+        ok, why = receipt_identity_ok(doc)
+        print(json.dumps({'verify': a.verify_receipt, 'ok': ok,
+                          'counter': doc.get('counter') if isinstance(doc, dict) else None,
+                          'counter_sha256': (doc.get('counter_sha256')
+                                             if isinstance(doc, dict) else None),
+                          'detail': why}, sort_keys=True))
+        return 0 if ok else 1
+    if a.selftest:
+        return selftest(a.pkg65 or find_rea_pkg())
+    if a.selftest_rea:
+        return selftest_rea(a.pkg65, a.unblob, a.rea_timeout, a.dev_image)
+    if a.no_rerun:
+        out = {'reason': 'rerun_disabled',
+               'detail': 'P50-C1 binds a fresh REA run of each carrier; '
+                         '--no-rerun cannot be scored',
+               'argv': sys.argv, 'exit_code': 2}
+        print(json.dumps({k: out[k] for k in ('reason', 'detail')}, sort_keys=True))
+        if a.json_out:
+            write_receipt(out, a.json_out)
+        return 2
+    if not (a.root and a.rev and a.freeze and a.pkg65):
+        print('usage: --root --rev --freeze --pkg65 required', file=sys.stderr)
+        return 2
+    try:
+        res = measure(a.root, a.rev, a.freeze, a.pkg65, unblob=a.unblob,
+                      rea_timeout=a.rea_timeout, carrier_cache=a.carrier_cache)
+    except Unevaluable as e:
+        res = {'unevaluable': str(e), 'reason': e.reason, 'argv': sys.argv,
+               'exit_code': 2}
+        if isinstance(e, FrozenPathChanged):
+            res['frozen_path_changed'] = e.paths
+        print(json.dumps({'reason': e.reason, 'detail': str(e),
+                          'frozen_path_changed': res.get('frozen_path_changed', [])},
+                         sort_keys=True))
+        if a.json_out:
+            write_receipt(res, a.json_out)
+        return 2
+    fails, binds = failing_lists(res)
+    res['failing'] = fails
+    res['bindings_false'] = binds
+    res['argv'] = sys.argv
+    res['exit_code'] = 0 if res['met_target'] else 1
+    print(json.dumps({k: res[k] for k in ('revision', 'freeze', 'carriers_matched',
+                                          'target', 'carriers_unchanged',
+                                          'gap_rule_unchanged', 'frozen_path_changed',
+                                          'bindings', 'failing', 'bindings_false',
+                                          'met_target', 'exit_code')},
+                     sort_keys=True))
+    if a.json_out:
+        stamped, ok, why = write_receipt(res, a.json_out)
+        if not ok:
+            print(json.dumps({'reason': 'receipt_identity_failed', 'detail': why},
+                             sort_keys=True), file=sys.stderr)
+            return 2
+    return res['exit_code']

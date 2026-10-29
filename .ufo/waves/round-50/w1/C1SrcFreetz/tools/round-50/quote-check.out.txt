@@ -1,0 +1,111 @@
+[
+ {
+  "file": "AVM-BE-format.txt",
+  "lines": [
+   1,
+   2
+  ],
+  "quote": "a non-standard SquashFS format (called AVM-BE below) used by AVM since Fritz!OS Labor 6.35",
+  "located": true
+ },
+ {
+  "file": "AVM-BE-format.txt",
+  "lines": [
+   4,
+   7
+  ],
+  "quote": "it uses the big-endian layout for most of the data stored in the SquashFS image",
+  "located": true
+ },
+ {
+  "file": "AVM-BE-format.txt",
+  "lines": [
+   8,
+   9
+  ],
+  "quote": "the only data field stored in the little-endian format is the block length value at the beginning of each block",
+  "located": true
+ },
+ {
+  "file": "AVM-BE-format.txt",
+  "lines": [
+   10,
+   10
+  ],
+  "quote": "compression method is hardcoded to be XZ",
+  "located": true
+ },
+ {
+  "file": "AVM-BE-format.txt",
+  "lines": [
+   13,
+   14
+  ],
+  "quote": "super-block field 'mkfs_time' contains (instead of the filesystem creation time) the same value as the super-block field 'bytes_used'",
+  "located": true
+ },
+ {
+  "file": "101-TARGET_FORMAT__AVM_BE_AVM_LE_symbols_only.patch",
+  "lines": [
+   7,
+   8
+  ],
+  "quote": "+#define AVM_LE 2",
+  "located": true
+ },
+ {
+  "file": "101-TARGET_FORMAT__AVM_BE_AVM_LE_symbols_only.patch",
+  "lines": [
+   17,
+   18
+  ],
+  "quote": "+#if   defined(TARGET_FORMAT) && (TARGET_FORMAT == SQUASHFS4_LE || TARGET_FORMAT == AVM_LE)",
+  "located": true
+ },
+ {
+  "file": "550-mkfs_time__AVM_BE_AVM_LE.patch",
+  "lines": [
+   7,
+   9
+  ],
+  "quote": "+#if (TARGET_FORMAT == AVM_BE || TARGET_FORMAT == AVM_LE)",
+  "located": true
+ },
+ {
+  "file": "550-mkfs_time__AVM_BE_AVM_LE.patch",
+  "lines": [
+   25,
+   27
+  ],
+  "quote": "if (sBlk.s.s_major == 4 && sBlk.s.mkfs_time == (int)sBlk.s.bytes_used) {",
+  "located": true
+ },
+ {
+  "file": "550-mkfs_time__AVM_BE_AVM_LE.patch",
+  "lines": [
+   27,
+   28
+  ],
+  "quote": "mkfs_str = \"is not available because of modified AVM-format (mkfs_time == bytes_used)\\n\";",
+  "located": true
+ },
+ {
+  "file": "squashfs4-host-be.mk",
+  "lines": [
+   33,
+   33
+  ],
+  "quote": "EXTRA_CFLAGS=\"-DTARGET_FORMAT=AVM_BE\"",
+  "located": true
+ },
+ {
+  "file": "350-unsquashfs__AVM_BE.patch",
+  "lines": [
+   33,
+   35
+  ],
+  "quote": "block length in AVM-BE format is stored in LE order",
+  "located": true
+ }
+]
+QUOTE_CHECK located=12 missing=0

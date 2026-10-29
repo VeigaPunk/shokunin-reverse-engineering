@@ -1,0 +1,60 @@
+56	    let result;
+57	    try {
+58	        const materialized = new Set(context.entries
+59	            .filter((entry) => entry.kind === "file")
+60	            .map((entry) => `$output/${entry.relativePath}`));
+61	        for (const path of context.normalized.files.keys()) {
+62	            if (path !== "$input" && !materialized.has(path))
+63	                throw new AnalysisOutputError("extract_firmware", `Reported regular file is absent from materialized output: ${path}`);
+64	        }
+65	        const files = [];
+66	        const unpublished = [];
+67	        tree = await SafeOutputTree.create(context.outputDirectory);
+68	        for (const entry of context.entries) {
+69	            if (entry.kind !== "file") {
+70	                unpublished.push({
+71	                    relative_path: entry.relativePath,
+72	                    kind: entry.kind,
+73	                    link_target: entry.linkTarget,
+74	                });
+75	                continue;
+76	            }
+77	            const logicalPath = `$output/${entry.relativePath}`;
+78	            const reported = context.normalized.files.get(logicalPath);
+79	            const sha256 = await hashFirmwareFile(entry.path, context.signal);
+80	            if ((reported?.sha256 !== null &&
+81	                reported?.sha256 !== undefined &&
+82	                reported.sha256 !== sha256) ||
+83	                (context.normalized.sizes.has(logicalPath) &&
+84	                    context.normalized.sizes.get(logicalPath) !== entry.size))
+85	                throw new AnalysisOutputError("extract_firmware", `Extracted bytes disagree with provider report: ${entry.relativePath}`);
+86	            await tree.write(entry.relativePath, createReadStream(entry.path), { sha256, bytes: entry.size }, context.signal);
+87	            files.push({
+88	                relative_path: entry.relativePath,
+89	                path: join(tree.outputRoot, entry.relativePath),
+90	                size: entry.size,
+91	                sha256,
+92	                reported_sha256: reported?.sha256 ?? null,
+93	                mime_type: reported?.mimeType ?? null,
+94	                analysis_depth: reported?.depth ?? null,
+95	                runtime_address: null,
+96	                original_file_range: null,
+97	            });
+98	        }
+99	        result = firmwareResultSchemas.extract_firmware.parse({
+100	            engine: context.engine,
+101	            selection: context.selection,
+102	            output_directory: tree.outputRoot,
+103	            coverage: unpublished.length > 0 ? "partial" : context.normalized.coverage,
+104	            files,
+105	            unpublished_entries: unpublished,
+106	            chunks: context.normalized.chunks,
+107	            derivations: context.normalized.derivations,
+108	            depth_limited_paths: context.normalized.depth_limited_paths,
+109	            diagnostics: context.normalized.diagnostics,
+110	            ...extractionGaps(unpublished, files, context.normalized, context.maxDepth),
+111	            published_bytes: files.reduce((sum, file) => sum + file.size, 0),
+112	        });
+113	        context.signal.throwIfAborted();
+114	        await tree.commit(context.signal);
+115	        return result;

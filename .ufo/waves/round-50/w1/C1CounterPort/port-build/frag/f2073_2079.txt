@@ -1,0 +1,16 @@
+    # fixture carriers: the frozen LE AVM-marker layout, xz, four distinct pins
+    carriers = {k: sb_carrier(XZ_ID, ('%s-avm' % k).encode()) for k in ids}
+    # the frozen rea-pkg pin of the fixture lane, derived from the --pkg65 package
+    pkg_root = os.path.abspath(pkg65)
+    lock = next((p for p in (
+        os.path.join(os.path.dirname(pkg_root), 'package-lock.json'),
+        os.path.join(os.path.dirname(os.path.dirname(pkg_root)), 'package-lock.json'))
+        if os.path.isfile(p)), None)
+    rea_doc = json.dumps({
+        'schema': 'selftest', 'name': 'rea-agents', 'version': REA_VERSION,
+        'package_json_sha256': file_sha256(os.path.join(pkg_root, 'package.json')),
+        'package_lock_sha256': file_sha256(lock) if lock else None})
+
+    def lnk(e, rel):
+        """A removal-diagnostic link inside the receipt's own run root."""
+        return e['parameters']['output_directory'] + '/firmware.bin_extract/' + rel

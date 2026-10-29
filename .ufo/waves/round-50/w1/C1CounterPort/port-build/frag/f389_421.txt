@@ -1,0 +1,105 @@
+def find_rea_pkg():
+    """Locate a rea-agents 6.5.0 package root under the npm npx cache."""
+    cache = os.environ.get('npm_config_cache') or os.path.expanduser('~/.npm')
+    base = os.path.join(cache, '_npx')
+    if not os.path.isdir(base):
+        return None
+    for name in sorted(os.listdir(base)):
+        root = os.path.join(base, name, 'node_modules', 'rea-agents')
+        pj = os.path.join(root, 'package.json')
+        if not os.path.isfile(pj):
+            continue
+        try:
+            with open(pj) as fh:
+                if json.load(fh).get('version') == REA_VERSION:
+                    return root
+        except (OSError, json.JSONDecodeError):
+            continue
+    return None
+
+
+def rea_pkg_path(root, freeze):
+    """The frozen rea-pkg document, from the first candidate present at freeze."""
+    for path in REA_PKG_CANDIDATES:
+        raw = show(root, freeze, path)
+        if raw is not None:
+            return path, raw
+    return None, None
+
+
+def rea_package_problems(root, freeze, pkg65):
+    """(problems, doc, path) for the frozen rea-pkg document against the package."""
+    path, raw = rea_pkg_path(root, freeze)
+    if raw is None:
+        return ['rea-pkg pin absent at freeze (%r)' % (REA_PKG_CANDIDATES,)], None, None
+    try:
+        doc = json.loads(raw)
+    except json.JSONDecodeError as e:
+        return ['rea-pkg pin is not JSON: %s' % e], None, path
+    if not isinstance(doc, dict):
+        return ['rea-pkg pin is not an object'], None, path
+    probs = []
+    if doc.get('version') != REA_VERSION:
+        probs.append('rea-pkg version %r != %r' % (doc.get('version'), REA_VERSION))
+    pkg_root = os.path.abspath(pkg65)
+    lock_candidates = [os.path.join(os.path.dirname(pkg_root), 'package-lock.json'),
+                       os.path.join(os.path.dirname(os.path.dirname(pkg_root)),
+                                    'package-lock.json')]
+    lock_path = next((p for p in lock_candidates if os.path.isfile(p)), None)
+    candidates = (('package.json', os.path.join(pkg_root, 'package.json'),
+                   'package_json_sha256'),
+                  ('package-lock.json', lock_path, 'package_lock_sha256'))
+    for name, p, key in candidates:
+        want = doc.get(key)
+        if not (isinstance(want, str) and SHA_RE.match(want.lower())):
+            probs.append('rea-pkg %s is not 64 hex' % key)
+            continue
+        got = file_sha256(p) if p else None
+        if got is None:
+            probs.append('%s unreadable beside --pkg65' % name)
+        elif got != want.lower():
+            probs.append('%s sha256 %s != frozen %s' % (name, got, want))
+    return probs, doc, path
+
+
+def evidence_ids(root, freeze, pkg65, envelopes, work):
+    """Recompute the stored evidence id under the rea-agents 6.5.0 rule.
+
+    The rule is not retyped: the frozen xpin tool evaluates the package's own
+    `semanticProjection` and hashes it with the package's own digest code. The
+    package itself is bound to the frozen rea-pkg pin (round 49)."""
+    probs, _doc, _path = rea_package_problems(root, freeze, pkg65)
+    if probs:
+        raise Unevaluable('rea package does not match the freeze: '
+                          + '; '.join(probs[:3]))
+    tool = show(root, freeze, XPIN)
+    if tool is None:
+        raise Unevaluable('xpin tool absent at freeze')
+    node = which_fixed('node')
+    if node is None:
+        raise Unevaluable('node not found on the fixed PATH %r' % (FIXED_PATH,))
+    tpath = os.path.join(work, 'xpin-attribute.mjs')
+    with open(tpath, 'wb') as fh:
+        fh.write(tool)
+    paths = []
+    for name, env in envelopes.items():
+        p = os.path.join(work, name.replace('/', '_') + '.wrapped.json')
+        with open(p, 'w') as fh:
+            json.dump({'data': env}, fh)
+        paths.append((name, p))
+    if not paths:
+        return {}
+    r = subprocess.run([node, tpath, '--pkg65', pkg65, '--pkg67', pkg65]
+                       + [p for _, p in paths], capture_output=True, text=True)
+    if r.returncode != 0:
+        raise Unevaluable('xpin: ' + r.stderr.strip())
+    out = {}
+    lines = [l for l in r.stdout.splitlines() if l]
+    if len(lines) != len(paths):
+        raise Unevaluable('xpin line count mismatch')
+    for (name, _), line in zip(paths, lines):
+        f = line.split('\t')
+        if len(f) < 3:
+            raise Unevaluable('xpin bad line: ' + line)
+        out[name] = (f[1], f[2])
+    return out

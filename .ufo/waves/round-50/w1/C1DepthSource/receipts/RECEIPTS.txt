@@ -1,0 +1,54 @@
+# C1DepthSource receipts (round 50 wave 1, seat C1DepthSource)
+
+All times UTC (local mtimes were -0300). Nothing here contains vendor firmware bytes;
+the only firmware-like bytes are a 4 KiB lane-built test image (`img.sqfs`, built with
+mksquashfs 4.7.5 from a 3-file tree) whose sha256 is recorded below.
+
+## REA 6.5.0 extract-firmware runs (lab image img.sqfs, sha256 2e9ee99821d1fbafaf514036ccf81f6bb657123dc74970ce00bba9710ff2afec)
+
+R1 baseline (real sasquatch 4.5.1 on PATH)
+  cmd:  node /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/scripts/rea.mjs \
+        extract-firmware $L/img.sqfs $L/r-baseline --max-depth 1 --format json --full-output
+  exit: 0     stdout sha256: see SHA256SUMS.txt (rea-baseline.json)     time: 2026-10-28T23:43Z
+
+R2 sasquatch shimmed to exit 1 (PATH prepended shim-fail/ with a `sasquatch` that prints
+   "sasquatch: simulated fatal failure" to stderr and exits 1)
+  cmd:  PATH="$L/shim-fail:$PATH" node …/rea.mjs extract-firmware $L/img.sqfs $L/r-fail --max-depth 1 --format json --full-output
+  exit: 0     stdout sha256: rea-sasquatch-exit1.json                   time: 2026-10-28T23:44Z
+
+R3 sasquatch absent (PATH="$L/shim-nodep:/usr/bin:/bin", shim-nodep holds only an unblob symlink)
+  cmd:  PATH="$L/shim-nodep:/usr/bin:/bin" node …/rea.mjs extract-firmware $L/img.sqfs $L/r-nodep --max-depth 1 --format json --full-output
+  exit: 0     stdout sha256: rea-sasquatch-absent.json                  time: 2026-10-28T23:46Z
+
+TMPDIR was exported to $L/tmp for all three runs (nothing under /tmp).
+Evidence ids: R1 ev_9dc325f77794f395c2cb7319bc6c58ae9ecae582c8afe6d8ce6ea92b98592339,
+R2 ev_d4a0b2e767a60650f0f5a53109c79c0c18bc672f3ec7a6c18a49bc12f86984e3 (R3 in file).
+
+## sasquatch exit-code lab (lane-built LE xz image, mksquashfs 4.7.5, output pre-seeded with a
+   directory named like an image file to force a write failure)
+
+R4 sasquatch -le -f -d $L/out1 $L/img.sqfs
+  exit: 1 (FATAL ERROR: write_file: failed to create file … because Is a directory)
+  stdout/stderr: sasquatch-fatal-plain.txt                            time: 2026-10-28T23:42Z
+R5 sasquatch -le -no-exit-code -f -d $L/out2 $L/img.sqfs
+  exit: 1 (same FATAL error; -no-exit-code does not mask fatal errors)
+  stdout/stderr: sasquatch-fatal-noexitcode.txt                       time: 2026-10-28T23:42Z
+R6 sasquatch -h (usage captured; -no-exit documented as non-fatal masking only)
+  exit: 0    stdout: sasquatch-help.txt                               time: 2026-10-28T23:39Z
+
+## Source pins (sha256, see SHA256SUMS.txt for artifacts)
+
+REA 6.5.0 package root: /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents
+  package.json a5003023… ("version": "6.5.0"), dist/firmware/FirmwareFiles.js f6934b7b…,
+  FirmwareReports.js 6885966b…, FirmwarePublication.js bb4f3246…, FirmwareProvider.js 3c1e929b…,
+  dist/domain/evidence.js f992d93e…
+unblob 26.6.4 tree: /home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob
+  handlers/filesystem/squashfs.py 2d7b901b…, extractors/command.py 8ae7d2a3…,
+  processing.py 599afe91…, extractor.py 1bb49811…
+Counter read (lane, base 7c678ae6d97aedb969fd253b52b3d2882ef1e186):
+  tools/round-41/c1-counter.py (quote copies in quotes/), .ufo/waves/round-41/c1/gap-rule.json
+  (copy in receipts/round41-gap-rule.json.copy)
+
+Host tooling used (no installs performed; pacman untouched): node v24.21.0 (satisfies
+rea-agents engines ^22.19 || ^24.11 || >=26), mksquashfs/unsquashfs 4.7.5 (system),
+sasquatch + sasquatch-v4be 4.5.1 (~/.local/bin, pre-existing), unblob 26.6.4 (uv tool, pre-existing).

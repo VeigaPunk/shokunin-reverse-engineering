@@ -1,0 +1,54 @@
+    # ---- documentation bindings
+    add('province has no Core section at all',
+        [{**frozen, 'PROVINCE.md': '# P\n\n## Next\n- x\n'}, good], 0, 1,
+        want_fail='b:province_core_section')
+    add('province row outside the round-50 section',
+        [{**frozen, 'PROVINCE.md': _province(heading='## Round-49 additions to Core')},
+         good], 0, 1, want_fail='b:province_core_row')
+    add('province row names the BE handler, not the LE one',
+        [{**frozen, 'PROVINCE.md': _province(cell='`squashfs_v4_be`')}, good], 0, 1,
+        want_fail='b:province_core_row')
+    add('province row without the handler in the first cell',
+        [{**frozen, 'PROVINCE.md': _province(cell='`squashfs_v4`')}, good], 0, 1,
+        want_fail='b:province_core_row')
+    add('province row that does not name the AVM marker',
+        [{**frozen, 'PROVINCE.md': _province(layout='little-endian squashfs')}, good],
+        0, 1, want_fail='b:province_core_row')
+    add('province row that names the round-41 AVM layout, not the marker',
+        [{**frozen, 'PROVINCE.md': _province(layout='AVM layout')}, good], 0, 1,
+        want_fail='b:province_core_row')
+    add('province row absent', [{**frozen, 'PROVINCE.md': _province(row=False)}, good],
+        0, 1, want_fail='b:province_core_row')
+    add('province row cites another entry',
+        [{**frozen, 'PROVINCE.md': _province(
+            cited='corpus/knowledge/2026-10-26-r41-avm-be-squashfs-core.md')}, good],
+        0, 1, want_fail='b:province_core_row')
+    add('frontier note absent', [{**frozen, 'PROVINCE.md': _province(note=False)}, good],
+        0, 1, want_fail='b:frontier_note')
+    add('frontier note without the LE-AVM token',
+        [{**frozen, 'PROVINCE.md': (f'# P\n\n{CORE_HEADING}\n\n| Surface | Layout | a | Entry |\n'
+                                    f'|---|---|---|---|\n| `squashfs_v4_le` | AVM marker | x | '
+                                    f'`{ENTRY}` |\n\n## Next\n- {FRONTIER_MARK}: `{STEM}`.\n')},
+         good], 0, 1, want_fail='b:frontier_note')
+    add('frontier note with the round-41 BE token (AVM BE)',
+        [{**frozen, 'PROVINCE.md': _province(token='AVM BE')}, good], 0, 1,
+        want_fail='b:frontier_note')
+    add('frontier note with the AVM-LE spelling is accepted',
+        [{**frozen, 'PROVINCE.md': _province(token='AVM-LE')}, good], 0, 0)
+    add('entry absent', [{**frozen, ENTRY: None}, good], 0, 1, want_fail='b:entry_present')
+    add('S-id substring S1120', [{**frozen, ENTRY: _entry('S1120')}, good], 0, 1,
+        want_fail='b:sourced')
+    add('source row opened before the window',
+        [{**frozen, 'corpus/SOURCES.md': _registry(opened='2026-10-27')}, good], 0, 1,
+        want_fail='b:sourced')
+    add('source row opened after the window',
+        [{**frozen, 'corpus/SOURCES.md': _registry(opened='2026-10-30')}, good], 0, 1,
+        want_fail='b:sourced')
+    add('source row opened on the last day of the window (2026-10-29)',
+        [{**frozen, 'corpus/SOURCES.md': _registry(opened='2026-10-29')}, good], 0, 0)
+    add('used-by lacks the entry',
+        [{**frozen, 'corpus/SOURCES.md': _registry(used='corpus/lessons/round-49.md')},
+         good], 0, 1, want_fail='b:sourced')
+    add('coverage map lacks the stem',
+        [{**frozen, 'corpus/README.md': _readme(stem='2026-10-26-r41-other')}, good], 0, 1,
+        want_fail='b:coverage_map_row')

@@ -1,0 +1,22 @@
+224	                        },
+225	                    ]);
+226	                const outputRoot = join(root.path, "extracted");
+227	                const processRun = await run([
+228	                    "--process-num",
+229	                    "1",
+230	                    "--depth",
+231	                    String(request.input.max_depth),
+232	                    "--randomness-depth",
+233	                    "0",
+234	                    "--report",
+235	                    reportPath,
+236	                    "--log",
+237	                    join(root.path, "unblob.log"),
+238	                    "--extract-dir",
+239	                    outputRoot,
+240	                    target.inputPath,
+241	                ], {
+242	                    root: outputRoot,
+243	                    bytes: request.input.max_output_bytes,
+244	                    entries: request.input.max_output_files,
+245	                });

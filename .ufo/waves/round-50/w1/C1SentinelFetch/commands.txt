@@ -1,0 +1,45 @@
+C1SentinelFetch — commands run, exit codes (UTC 2026-10-28, lane base 7c678ae6d97aedb969fd253b52b3d2882ef1e186)
+S = /fast/scratch/hyaku/kaidoku-r50/C1SentinelFetch (scratch). L = lane root. No vendor image was downloaded. No mutating git in L.
+
+read-only lane checks
+- git -C L check-ignore -v / --no-index on x.image, filesystem.image, y.bin, z.part             -> exit 1 (none ignored)
+- cat L/.gitignore                                                                          -> "__pycache__/", "*.pyc" only; sha256 862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793
+- git config core.excludesfile / .git/info/exclude                                          -> no entries
+- git ls-tree -r --name-only 7c678ae | grep (.bin|.image|.part|.sqsh)                       -> 326 committed carrier-like files (corpus/evidence/*: lane-built .bin/.sqsh; .ufo/...: .bin)
+- git ls-tree -r --name-only 7c678ae -- corpus/evidence/round-49/c1 | wc -l                 -> 51 (firmware.bin_extract/ entries are lane-built apple/banana/cherry .txt)
+- git grep -nE 'set-cookie' 7c678ae -- <round-49 receipts>                                  -> exit 0; tree.hdr:15-17, top.hdr:15-17 now "[redacted by L1 ...]" placeholders
+- git show 7c678ae:.ufo/waves/round-45/w2/R45W2S138Top/receipts/f1.hdr | sha256sum          -> exit 0; sha256 5b8427796c8b47b121580c776adec2a6017499e0dff93cf30fa1427deae7daf1; blob ba6b0d6ec4d791ced391a08523bfd2e66ddbb2b6; lines 15 (_gh_sess, value withheld, len 352), 16 (_octo, len 26), 17 (logged_in=no)
+- git cat-file -p 5f8478b4fc25c8b1c5718eeafba2591f62010a1f | sha256sum                    -> exit 0; sha256 bee3ed2a38e68e970e3d4b97851ed5f94ae1b7c86ce217aba48e02ed484b956d (round-49 tree.hdr before redaction; _gh_sess 348, _octo 27 chars)
+- git log --all --oneline --find-object=5f8478b4fc25c8b1c5718eeafba2591f62010a1f            -> 6 commits (14936cb9, 5855962d, 3533793c, 7017c450, b1fa2ae3, 95016095)
+- git ls-files --others --exclude-standard .ufo/waves/round-50 | wc -l                       -> 417 at check time (siblings still writing); tracked 0
+- git rev-parse HEAD                                                                        -> 7c678ae6d97aedb969fd253b52b3d2882ef1e186
+- grep -rE 'set-cookie|_gh_sess=|_octo=' L/.ufo/waves/round-50                              -> prose only (C2RowS149.md:29 "headers: no cookies"); python scan for live-looking values (>4 chars, not [redacted) -> none
+
+source re-reads (sha256 of the files as read)
+- tools/round-41/fetch-vendor.py                 1cb0a34688488160bc693369dadf21152050cdd6e1654f7d1f6c168bc8ea0e04
+- tools/round-41/sqfs-list.py                    a8e633f5fe34ad9495ef1cf8d4dd43a718e25352b0f5ae13c760655b8664969d
+- tools/round-41/c1-run.sh                       bdb97632d21bac71d603b73f13372264efb89c84baaf07d902ead6f33149cc7f
+- tools/round-49/c1-run.py                       4a1527fb3d07120ac023f1cd1dd20d7eceac671d363ea6ed60cddf28a9e262f6
+- tools/round-49/c1-run.sh, plan 9B2A (read in full)  (not hashed; read)
+
+repro (scratch only) — artifacts/repro-custody.py, run as: python3 -I -B repro-custody.py $S
+- exit 0; stdout sha256 c23a1a2372054dbe83120943bcb69fbe573fd0abfb86b4b7ba254db414560928 (repro-custody.out, copied here); stderr empty; utc 2026-10-28T23:39:11Z
+  C1-COPY VIOLATION (REA-published file and symlink copied into evidence)
+  C1-GITIGNORE VIOLATION (git add --dry-run -A lists 2 firmware paths; exit 0)
+  C1-GITIGNORE-PROBE VIOLATION (check-ignore exit 1)
+  C1-REDIRECT VIOLATION (302 to another 127.0.0.1 origin followed; bytes returned)
+  C1-FILE-SCHEME VIOLATION (file:// accepted)
+  C1-TLS clean (self-signed https origin: URLError CERTIFICATE_VERIFY_FAILED)
+  C1-TIMEOUT VIOLATION (runner wall 2.6s, timeout 2s, exit 1; sleep-25 grandchild alive after return)
+  FV-SELFTEST clean (exit 0; SELFTEST cases=16 pass=16 fail=0)
+
+one-off repros (same scratch, earlier runs; outputs quoted in the report)
+- fetch-vendor.py --selftest with TMPDIR=S                                                    -> exit 0, 16/16
+- c1-run.py --fake-rea with --evidence-root under round-50 path                                -> exit 2 "outside .../round-49/c1 ... write-scope guard" (guard hard-codes round-49)
+- git -C clone add --dry-run -A corpus/evidence/round-49/c1/repro, tools/round-50/zz, *.image/*.bin/*.part -> exit 0 (all staged-eligible)
+- c1-run.sh after <dummy> <out> $S/x/kaidoku-r41/keep with PATH=/usr/bin:/bin (npx absent)    -> exit 2; keep/precious.txt DELETED by trap rm -rf
+- fetch-vendor.py --root S/clone --rev=--output=S/argv-inj --cache S/cache-a                 -> exit 2, no file written
+- timeout 2 sh -c 'sleep 25 & sleep 60' (round-41 shell path)                                  -> rc 124, no orphan (GNU timeout signals the group)
+- openssl req -x509 ... (test cert only, S/tls)                                              -> exit 0
+
+not run: any download from download.avm.de; any REA/unblob run on a vendor carrier; any counter; any round-50 control; `pacman` / installs (none installed).

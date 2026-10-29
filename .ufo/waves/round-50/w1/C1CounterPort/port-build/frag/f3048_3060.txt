@@ -1,0 +1,19 @@
+    # ---- projection profile: frozen explicitly as plus-extractor (round 50, S11)
+    def bump_bytes(e):
+        e['normalized_result']['published_bytes'] += 1
+    core_frozen, core_receipts = build(
+        env_over={'a7530': bump_bytes}, spec_text=spec_json(projection='core'))
+    add('a frozen core profile (oracle-closed: it would accept the fabrication) is refused',
+        [core_frozen, core_receipts], 0, 1, want_fail='b:carriers_spec_ok')
+    plus_frozen, plus_receipts = build(env_over={'a7530': bump_bytes})
+    add('the frozen plus-extractor profile refuses a projection-different fabrication',
+        [plus_frozen, plus_receipts], 0, 1, want_fail='projection_ok')
+    add('projection missing from carriers.json',
+        [{**frozen, CARRIERS: spec_json(omit=('projection',))}, good], 0, 1,
+        want_fail='b:carriers_spec_ok')
+    add('plus-mime is not the frozen profile',
+        [{**frozen, CARRIERS: spec_json(projection='plus-mime')}, good], 0, 1,
+        want_fail='b:carriers_spec_ok')
+    add('unknown projection profile in carriers.json',
+        [{**frozen, CARRIERS: spec_json(projection='plus-everything')}, good], 0, 1,
+        want_fail='b:carriers_spec_ok')

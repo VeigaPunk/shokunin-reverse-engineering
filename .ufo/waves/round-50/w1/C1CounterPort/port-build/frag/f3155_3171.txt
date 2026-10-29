@@ -1,0 +1,53 @@
+            def write_files(files):
+                for p, content in files.items():
+                    full = os.path.join(d, p)
+                    if content is None:
+                        if os.path.exists(full):
+                            os.remove(full)
+                        continue
+                    os.makedirs(os.path.dirname(full) or d, exist_ok=True)
+                    data = content if isinstance(content, bytes) else content.encode()
+                    with open(full, 'wb') as fh:
+                        fh.write(data)
+
+            def git_c(*a):
+                subprocess.run(['git', '-C', d] + ident + list(a), check=True,
+                               capture_output=True)
+
+            for step, files in enumerate(c['steps']):
+                if '__merge__' in files:
+                    # a real merge: a side branch (optionally carrying `__side__`
+                    # files), an unrelated commit on the first-parent line, then a
+                    # --no-ff merge whose own commit carries the `__merge__` files
+                    git_c('checkout', '-q', '-b', 'side')
+                    write_files(files.get('__side__') or {'side.txt': b'side\n'})
+                    git_c('add', '-A')
+                    git_c('commit', '-qm', 'side%d' % step, '--allow-empty')
+                    git_c('checkout', '-q', '-')
+                    write_files({'main-%d.txt' % step: b'main\n'})
+                    git_c('add', '-A')
+                    git_c('commit', '-qm', 'main%d' % step)
+                    git_c('merge', '--no-ff', '--no-commit', '-q', 'side')
+                    write_files(files['__merge__'])
+                    git_c('add', '-A')
+                    git_c('commit', '-qm', 'merge%d' % step, '--allow-empty')
+                    git_c('branch', '-q', '-D', 'side')
+                elif '__ops__' in files:
+                    # a scripted topology: ('write', files) / ('commit', msg) /
+                    # ('git', args...)
+                    for op in files['__ops__']:
+                        if op[0] == 'write':
+                            write_files(op[1])
+                        elif op[0] == 'commit':
+                            git_c('add', '-A')
+                            git_c('commit', '-qm', op[1], '--allow-empty')
+                        else:
+                            git_c(*op[1:])
+                else:
+                    write_files(files)
+                    subprocess.run(['git', '-C', d, 'add', '-A'], check=True)
+                    subprocess.run(['git', '-C', d] + ident
+                                   + ['commit', '-qm', 'step%d' % step, '--allow-empty'],
+                                   check=True)
+                revs.append(subprocess.run(['git', '-C', d, 'rev-parse', 'HEAD'],
+                                           capture_output=True, text=True).stdout.strip())

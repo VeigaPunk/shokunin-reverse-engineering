@@ -1,0 +1,135 @@
+2026-10-28 23:34.46 [debug    ] Logging configured             extract_root=. pid=3793013 vebosity_level=0
+2026-10-28 23:34.46 [info     ] Creating extraction directory  extract_root=. pid=3793013
+2026-10-28 23:34.46 [info     ] Start processing file          file=/fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/std-le-v4-xz.sqsh pid=3793013
+2026-10-28 23:34.46 [info     ] Activated FS access restrictions; rules=[Read("/"), ReadWrite("/dev/shm"), ReadWrite("/fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/ub-std-full/ex"), RemoveDir("/fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/ub-std-full/ex"), RemoveFile("/fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/ub-std-full/ex"), MakeDir("/fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/ub-std-full"), ReadWrite("ub-std-full/unblob.log"), ReadWrite("ub-std-full")], status=FullyEnforced pid=3793013
+2026-10-28 23:34.46 [debug    ] Detected file-magic            magic='Squashfs filesystem, little endian, version 4.0, xz compressed, 300433 bytes, 5 inodes, blocksize: 131072 bytes, created: Tue Nov 14 22:13:20 2023\\012- data' path=/fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/std-le-v4-xz.sqsh pid=3793169
+2026-10-28 23:34.46 [debug    ] Processing file                path=/fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/std-le-v4-xz.sqsh pid=3793169 size=0x4a000
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=squashfs_v4_le pid=3793169 real_offset=0x0 start_offset=0x0
+2026-10-28 23:34.46 [debug    ] Found valid chunk              chunk=0x0-0x4a000 handler=squashfs_v4_le pid=3793169
+2026-10-28 23:34.46 [debug    ] Ended searching for chunks     all_chunks=[0x0-0x4a000] pid=3793169
+2026-10-28 23:34.46 [debug    ] Removed inner chunks           outer_chunk_count=1 pid=3793169 removed_inner_chunk_count=0
+2026-10-28 23:34.46 [debug    ] Running extract command        command='sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/ub-std-full/ex/std-le-v4-xz.sqsh_extract /fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/std-le-v4-xz.sqsh' pid=3793169
+2026-10-28 23:34.46 [debug    ] Processing directory           path=std-le-v4-xz.sqsh_extract pid=3793172
+2026-10-28 23:34.46 [debug    ] Processing directory           path=std-le-v4-xz.sqsh_extract/etc pid=3793176
+2026-10-28 23:34.46 [debug    ] Ignoring special file (link, chrdev, blkdev, fifo, socket, door). path=std-le-v4-xz.sqsh_extract/link_motd pid=3793178
+2026-10-28 23:34.46 [debug    ] Detected file-magic            magic=data path=std-le-v4-xz.sqsh_extract/blob.bin pid=3793174
+2026-10-28 23:34.46 [debug    ] Processing file                path=std-le-v4-xz.sqsh_extract/blob.bin pid=3793174 size=0x493e0
+2026-10-28 23:34.46 [debug    ] Detected file-magic            magic='ASCII text' path=std-le-v4-xz.sqsh_extract/etc/motd pid=3793180
+2026-10-28 23:34.46 [debug    ] Processing file                path=std-le-v4-xz.sqsh_extract/etc/motd pid=3793180 size=0x17
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=cpio_binary pid=3793174 real_offset=0x9df1 start_offset=0x9df1
+2026-10-28 23:34.46 [debug    ] Ended searching for chunks     all_chunks=[] pid=3793180
+2026-10-28 23:34.46 [debug    ] File format is invalid         handler=cpio_binary pid=3793174
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/archive/cpio.py", line 422, in calculate_chunk
+    parser.parse()
+    ~~~~~~~~~~~~^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/archive/cpio.py", line 153, in parse
+    raise InvalidInputFormat("CPIO entry filename is too long.")
+unblob.file_utils.InvalidInputFormat: CPIO entry filename is too long.
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=compress pid=3793174 real_offset=0x120d6 start_offset=0x120d6
+2026-10-28 23:34.46 [debug    ] File format is invalid         handler=compress pid=3793174
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 257, in calculate_chunk
+    end_offset = self.unlzw(file, start_offset, max_len)
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 132, in unlzw
+    raise InvalidInputFormat("Flag & 0x60")
+unblob.file_utils.InvalidInputFormat: Flag & 0x60
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=arc pid=3793174 real_offset=0x176fb start_offset=0x176fb
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=compress pid=3793174 real_offset=0x1b945 start_offset=0x1b945
+2026-10-28 23:34.46 [debug    ] File format is invalid         handler=compress pid=3793174
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 257, in calculate_chunk
+    end_offset = self.unlzw(file, start_offset, max_len)
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 132, in unlzw
+    raise InvalidInputFormat("Flag & 0x60")
+unblob.file_utils.InvalidInputFormat: Flag & 0x60
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=cpio_binary pid=3793174 real_offset=0x2a231 start_offset=0x2a231
+2026-10-28 23:34.46 [debug    ] File format is invalid         handler=cpio_binary pid=3793174
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/archive/cpio.py", line 422, in calculate_chunk
+    parser.parse()
+    ~~~~~~~~~~~~^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/archive/cpio.py", line 153, in parse
+    raise InvalidInputFormat("CPIO entry filename is too long.")
+unblob.file_utils.InvalidInputFormat: CPIO entry filename is too long.
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=compress pid=3793174 real_offset=0x2daa9 start_offset=0x2daa9
+2026-10-28 23:34.46 [debug    ] File format is invalid         handler=compress pid=3793174
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 257, in calculate_chunk
+    end_offset = self.unlzw(file, start_offset, max_len)
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 132, in unlzw
+    raise InvalidInputFormat("Flag & 0x60")
+unblob.file_utils.InvalidInputFormat: Flag & 0x60
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=compress pid=3793174 real_offset=0x302a7 start_offset=0x302a7
+2026-10-28 23:34.46 [debug    ] File format is invalid         handler=compress pid=3793174
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 257, in calculate_chunk
+    end_offset = self.unlzw(file, start_offset, max_len)
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 132, in unlzw
+    raise InvalidInputFormat("Flag & 0x60")
+unblob.file_utils.InvalidInputFormat: Flag & 0x60
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=compress pid=3793174 real_offset=0x32480 start_offset=0x32480
+2026-10-28 23:34.46 [debug    ] File format is invalid         handler=compress pid=3793174
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 257, in calculate_chunk
+    end_offset = self.unlzw(file, start_offset, max_len)
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 132, in unlzw
+    raise InvalidInputFormat("Flag & 0x60")
+unblob.file_utils.InvalidInputFormat: Flag & 0x60
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=compress pid=3793174 real_offset=0x3aa42 start_offset=0x3aa42
+2026-10-28 23:34.46 [debug    ] File format is invalid         handler=compress pid=3793174
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 257, in calculate_chunk
+    end_offset = self.unlzw(file, start_offset, max_len)
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 132, in unlzw
+    raise InvalidInputFormat("Flag & 0x60")
+unblob.file_utils.InvalidInputFormat: Flag & 0x60
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=arc pid=3793174 real_offset=0x456d4 start_offset=0x456d4
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=compress pid=3793174 real_offset=0x46b7c start_offset=0x46b7c
+2026-10-28 23:34.46 [debug    ] File format is invalid         handler=compress pid=3793174
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 257, in calculate_chunk
+    end_offset = self.unlzw(file, start_offset, max_len)
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 157, in unlzw
+    raise InvalidInputFormat("Invalid Data: First code must be a literal")
+unblob.file_utils.InvalidInputFormat: Invalid Data: First code must be a literal
+2026-10-28 23:34.46 [debug    ] Calculating chunk for pattern match handler=compress pid=3793174 real_offset=0x48040 start_offset=0x48040
+2026-10-28 23:34.46 [debug    ] File format is invalid         handler=compress pid=3793174
+Traceback (most recent call last):
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/finder.py", line 36, in _calculate_chunk
+    return handler.calculate_chunk(file, real_offset)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 257, in calculate_chunk
+    end_offset = self.unlzw(file, start_offset, max_len)
+  File "/home/vgpnk/.local/share/uv/tools/unblob/lib/python3.13/site-packages/unblob/handlers/compression/compress.py", line 132, in unlzw
+    raise InvalidInputFormat("Flag & 0x60")
+unblob.file_utils.InvalidInputFormat: Flag & 0x60
+2026-10-28 23:34.46 [debug    ] Ended searching for chunks     all_chunks=[] pid=3793174
+2026-10-28 23:34.46 [info     ] JSON report written            path=ub-std-full/report.json pid=3793013

@@ -1,0 +1,76 @@
+case	want_fail	sole	failing
+do-nothing (freeze files only)	receipt_present	False	chunks_ok,evidence_id_ok,gaps_ok,handler_ok,nonregular_unpublished_ok,operation_ok,oracle_hits_ok,projection_ok,receipt_fresh,receipt_present,run_provenance_ok,subject_pin_ok
+receipt missing (V4)	receipt_present	False	chunks_ok,evidence_id_ok,gaps_ok,handler_ok,nonregular_unpublished_ok,operation_ok,oracle_hits_ok,projection_ok,receipt_fresh,receipt_present,run_provenance_ok,subject_pin_ok
+receipt added at freeze	receipt_fresh	True	receipt_fresh
+receipt added before freeze	receipt_fresh	True	receipt_fresh
+oracle-only fabrication with re-minted evidence id	projection_ok	False	handler_ok,projection_ok
+fabrication differing only in one published sha256	projection_ok	False	oracle_hits_ok,projection_ok
+fabrication differing only in an extra gap	gaps_ok	False	gaps_ok,projection_ok
+fabrication differing only in the diagnostics multiset	projection_ok	True	projection_ok
+rerun yields no evidence object (REA ok=false)	projection_ok	True	projection_ok
+subject digest names another carrier	subject_pin_ok	False	projection_ok,subject_pin_ok
+marker-stripped genuine-LE-lengths carrier	layout_ok	True	layout_ok
+standard-BE carrier (BE block lengths)	layout_ok	True	layout_ok
+metadata length plausible both ways (no identity)	layout_ok	True	layout_ok
+little-endian superblock magic	layout_ok	True	layout_ok
+bytes_used beyond the file	layout_ok	False	carve_ok,layout_ok
+carrier listed but never committed	carrier_present	False	carrier_pin_ok,carrier_present,carve_ok,layout_ok,projection_ok
+malformed oracle row	oracle_ok	False	oracle_hits_ok,oracle_ok
+malformed nonregular row	nonregular_ok	False	gaps_ok,nonregular_ok
+wrong operation (extract_filesystem)	operation_ok	True	operation_ok
+provider is not unblob	operation_ok	True	operation_ok
+failed chunk	chunks_ok	False	chunks_ok,projection_ok
+chunk handler is the LE handler	handler_ok	False	handler_ok,projection_ok
+disallowed gap kind on a symlink entry	gaps_ok	False	gaps_ok,projection_ok
+gap on a path that is not a non-regular entry	gaps_ok	False	gaps_ok,projection_ok
+required gap missing (symlink materialised)	gaps_ok	False	gaps_ok,nonregular_unpublished_ok,projection_ok
+escaping symlink published as a regular file	nonregular_unpublished_ok	False	nonregular_unpublished_ok,projection_ok
+oracle file missing from the published set	oracle_hits_ok	False	oracle_hits_ok,projection_ok
+foreign scratch provenance (/kaidoku-r39/)	run_provenance_ok	True	run_provenance_ok
+provenance path climbs out with ..	run_provenance_ok	True	run_provenance_ok
+evidence id stale after an edit	evidence_id_ok	False	evidence_id_ok,projection_ok
+published regular at the symlink entry usr/sbin/tool is still caught	nonregular_unpublished_ok	False	gaps_ok,nonregular_unpublished_ok
+deeper file with the oracle row sha256 does not publish oracle bin/busy	oracle_hits_ok	True	oracle_hits_ok
+gap on usr/bin/busy does not resolve to the symlink entry bin/busy	gaps_ok	True	gaps_ok
+two squashfs roots without oracle_root fail closed	oracle_hits_ok	False	gaps_ok,nonregular_unpublished_ok,oracle_hits_ok
+oracle_root that names no derivation root fails closed	oracle_hits_ok	False	gaps_ok,nonregular_unpublished_ok,oracle_hits_ok
+two chunks: the nested chunk file does not publish outer-root row lib/x	oracle_hits_ok	True	oracle_hits_ok
+padded carrier: the same rows one level too shallow score nothing	oracle_hits_ok	True	oracle_hits_ok
+two AVM chunks in one receipt are ambiguous, not guessed	gaps_ok	False	gaps_ok,nonregular_unpublished_ok,oracle_hits_ok
+two handler chunks and no input handler chunk fail closed	gaps_ok	False	gaps_ok,nonregular_unpublished_ok,oracle_hits_ok
+receipt with no squashfs derivation edge fails closed	gaps_ok	False	gaps_ok,nonregular_unpublished_ok,oracle_hits_ok
+an entry cannot be both gapped and removed	gaps_ok	True	gaps_ok
+a required symlink with no disposition fails	gaps_ok	True	gaps_ok
+a removal that resolves to no symlink row fails	gaps_ok	True	gaps_ok
+a removal naming a row of an unlisted kind fails	gaps_ok	True	gaps_ok
+a symlink with a non-empty target cannot hide behind the silent allowance	gaps_ok	True	gaps_ok
+a rerun that removed a different link breaks the projection	projection_ok	True	projection_ok
+relabelled previous-round pins (prior_pins)	carrier_fresh_ok	True	carrier_fresh_ok
+previous round table in the lane names two frozen pins	carrier_fresh_ok	True	carrier_fresh_ok
+prior_pins that are not 64-hex	b:carriers_spec_ok	True	b:carriers_spec_ok
+carrier longer than its bytes_used (sloppy carve)	carve_ok	True	carve_ok
+frozen pin wrong (carrier untouched)	carrier_pin_ok	False	carrier_pin_ok,projection_ok,subject_pin_ok
+carriers.json drops a carrier at the freeze (target 4)	b:carriers_spec_ok	True	b:carriers_spec_ok
+no xz carrier (compression coverage)	b:compression_coverage	True	b:compression_coverage
+gap rule omits the device kind	b:gap_rule_ok	False	b:gap_rule_ok,gaps_ok
+gap rule is JSON but not an object at the freeze	b:frozen_tables_valid	False	b:frozen_tables_valid,b:gap_rule_ok,gaps_ok
+gap rule names another claim	b:gap_rule_ok	True	b:gap_rule_ok
+structural gaps over the allowance	gaps_ok	False	gaps_ok,projection_ok
+path-less gap kind with no structural allowance	gaps_ok	False	gaps_ok,projection_ok
+structural gap kind that carries a path	gaps_ok	False	gaps_ok,projection_ok
+default profile (plus-extractor) refuses the same fabrication	projection_ok	True	projection_ok
+unknown projection profile in carriers.json	b:carriers_spec_ok	True	b:carriers_spec_ok
+rerun takes max_depth from the receipt, not a constant	projection_ok	True	projection_ok
+province has no Core section at all	b:province_core_section	False	b:frontier_note,b:province_core_row,b:province_core_section
+province row outside the round-41 section	b:province_core_row	False	b:province_core_row,b:province_core_section
+province row without the handler in the first cell	b:province_core_row	True	b:province_core_row
+province row that does not name the AVM layout	b:province_core_row	True	b:province_core_row
+province row absent	b:province_core_row	True	b:province_core_row
+province row cites another entry	b:province_core_row	True	b:province_core_row
+frontier note absent	b:frontier_note	True	b:frontier_note
+frontier note without the AVM token	b:frontier_note	True	b:frontier_note
+entry absent	b:entry_present	False	b:entry_present,b:sourced
+S-id substring S1120	b:sourced	True	b:sourced
+source row opened earlier	b:sourced	True	b:sourced
+used-by lacks the entry	b:sourced	True	b:sourced
+coverage map lacks the stem	b:coverage_map_row	True	b:coverage_map_row

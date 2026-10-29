@@ -1,0 +1,65 @@
+def layout_probe(raw):
+    """Decode the frozen layout of a carrier's little-endian SquashFS v4 superblock.
+
+    SquashFS v4 little-endian superblock (96 bytes): magic 0:4, inodes 4:8,
+    mkfs_time 8:12, block_size 12:16, fragments 16:20, compression 20:22,
+    block_log 22:24, flags 24:26, no_ids 26:28, s_major 28:30, s_minor 30:32,
+    root_inode 32:40, bytes_used 40:48, id_table_start 48:56,
+    xattr_id_table_start 56:64, inode_table_start 64:72,
+    directory_table_start 72:80, fragment_table_start 80:88,
+    lookup_table_start 88:96 (unblob 26.6.4 SquashFSv4LEHandler.C_DEFINITIONS).
+
+    The frozen layout (R50-C1) is: little-endian `hsqs`, v4.0, compression id 4
+    (xz), `mkfs_time == bytes_used` (the AVM marker: AVM writes the filesystem
+    size where a standard mksquashfs writes the build time), 0 < bytes_used <=
+    file size, and the inode/directory table starts inside `bytes_used` in order.
+    Every field is little-endian: `hsqs` fixes the whole file, so there is no
+    big-endian decode, and no block-length endianness to settle (the round-41
+    `layout_le` / plausibility / single-block-identity logic is removed with the
+    big-endian layout it separated). A standard little-endian image carries a
+    real timestamp, so the marker is what keeps it out of an AVM carrier slot
+    (control CTL-C1-4)."""
+    d = {'size': len(raw) if raw is not None else 0}
+    if raw is None:
+        d.update(ok=False, reason='absent')
+        return d
+    if len(raw) < SB_SIZE:
+        d.update(ok=False, reason='shorter than a %d-byte superblock' % SB_SIZE)
+        return d
+
+    def u(off, width):
+        return int.from_bytes(raw[off:off + width], 'little')
+
+    d['magic'] = raw[0:4].decode('latin1')
+    d['le_magic'] = raw[0:4] == b'hsqs'
+    d['mkfs_time'] = u(8, 4)
+    d['block_size'] = u(12, 4)
+    d['compression'] = u(20, 2)
+    d['major'] = u(28, 2)
+    d['minor'] = u(30, 2)
+    d['bytes_used'] = u(40, 8)
+    d['inode_table_start'] = its = u(64, 8)
+    d['directory_table_start'] = dts = u(72, 8)
+    d['marker'] = d['mkfs_time'] == d['bytes_used']
+    d['bytes_used_sane'] = 0 < d['bytes_used'] <= len(raw)
+    d['version_v4'] = (d['major'], d['minor']) == (4, 0)
+    d['compression_xz'] = d['compression'] == XZ_ID
+    d['tables_sane'] = 0 < its < dts <= d['bytes_used']
+    reason = None
+    if not d['le_magic']:
+        reason = 'magic %r is not little-endian hsqs' % (d['magic'],)
+    elif not d['version_v4']:
+        reason = 'version %d.%d is not 4.0' % (d['major'], d['minor'])
+    elif not d['compression_xz']:
+        reason = 'compression id %d is not %d (xz)' % (d['compression'], XZ_ID)
+    elif not d['marker']:
+        reason = 'AVM marker absent (mkfs_time %d != bytes_used %d)' % (
+            d['mkfs_time'], d['bytes_used'])
+    elif not d['bytes_used_sane']:
+        reason = 'bytes_used %d outside 1..%d' % (d['bytes_used'], len(raw))
+    elif not d['tables_sane']:
+        reason = ('inode_table_start %d / directory_table_start %d not inside '
+                  'bytes_used %d in order' % (its, dts, d['bytes_used']))
+    d['ok'] = reason is None
+    d['reason'] = reason
+    return d

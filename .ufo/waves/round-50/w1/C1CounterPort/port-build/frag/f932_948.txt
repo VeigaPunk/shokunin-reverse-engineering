@@ -1,0 +1,19 @@
+def extract_rel(path, root):
+    """A receipt path relative to its chunk extract root, or None if not inside.
+
+    Exact: the path must be `<root>/<rel>` (or the root itself) on whole
+    segments. Nothing else counts - not a suffix, not a basename. R40-CL1 was a
+    suffix test (`candidate.endswith('/' + rel)`), under which the regular file
+    `usr/bin/busy` scored as the symlink entry `bin/busy`."""
+    if root is None or not isinstance(path, str) or not path:
+        return None
+    if not under_root(path, root):
+        return None
+    parts = path_parts(path)
+    if parts is None:
+        return None
+    pret = root.split('/')
+    if parts[:len(pret)] != pret:
+        return None
+    rest = parts[len(pret):]
+    return '/'.join(rest) if rest else ''

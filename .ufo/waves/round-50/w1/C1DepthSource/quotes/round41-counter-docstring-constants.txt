@@ -1,0 +1,42 @@
+27	The extract root (R40-CL1 repair; R41C1Revenger 1 is the normative rule)
+28	  Every path comparison against the oracle and non-regular tables is equality
+29	  after mapping the receipt path into its chunk's extract root, never a suffix
+30	  test, and the root is never reconstructed from the path text:
+31	
+32	    strip once         `$output/` is stripped once: `files[].relative_path`,
+33	                       `unpublished_entries[].relative_path` and gap
+34	                       `relative_path` are bare, while gap `input_path`,
+35	                       `derivations[].parent_path/child_path` and
+36	                       `depth_limited_paths[]` are `$output/`-prefixed
+37	                       (rea-agents 6.5.0 FirmwareFiles.js:177 vs :191-200)
+38	    root               the child path of every `derivations[]` edge whose handler
+39	                       starts `squashfs_v4` (FirmwareReports.js:341-357 taken from
+40	                       unblob's own subtasks); a whole-file chunk's root is
+41	                       `firmware.bin_extract` (`selected.bin_extract` under a
+42	                       range selection), and a carved or nested chunk's root is
+43	                       `<parent>/<start>-<end>.<handler>_extract`
+44	    one root           the subject root is that root when the receipt has exactly
+45	                       one; several `squashfs_v4` roots are ambiguous and the
+46	                       freeze can name the intended one with the optional
+47	                       `oracle_root` key of the carrier entry, otherwise the
+48	                       three path clauses fail closed with `extract_root: null`
+49	    whole segments     `rel(P)` is `''` for P == root, `P[len(root)+1:]` for
+50	                       `P.startswith(root + '/')`, else None - an entry outside
+51	                       the root belongs to another namespace (a carve artifact of
+52	                       the parent, a sibling root, a deeper root) and is neither
+53	                       compared against this oracle nor reported as published
+54	    keyed by root      with one root per carrier the (root, rel) key collapses to
+55	                       rel, and a path outside the root cannot satisfy a row
+56	                       (R41C1Revenger C3: two roots carry `sbin/tool` with
+57	                       different bytes)
+58	  Round 40 matched with `candidate.endswith('/' + rel)` (defect R40-CL1: the
+59	  regular file `usr/bin/busy` scored as the symlink entry `bin/busy`). Neither a
+60	  suffix nor a fixed number of `_extract` segments is a root: a carve at a
+282	AFTERDIR = 'corpus/evidence/round-41/c1'
+283	ENTRY = 'corpus/knowledge/2026-10-26-r41-avm-be-squashfs-core.md'
+284	STEM = '2026-10-26-r41-avm-be-squashfs-core'
+285	CORE_HEADING = '## Round-41 additions to Core'
+286	FRONTIER_MARK = 'Round-41 frontier note'
+287	HANDLER = 'squashfs_v4_be'
+288	SQUASHFS_PREFIX = 'squashfs_v4'         # derivation handlers of a SquashFS chunk
+289	XPIN = 'tools/round-27/xpin-attribute.mjs'

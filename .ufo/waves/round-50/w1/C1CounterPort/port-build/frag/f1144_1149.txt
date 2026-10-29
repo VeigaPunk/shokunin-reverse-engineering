@@ -1,0 +1,17 @@
+def all_adds(root, rev, path):
+    """Every commit in the FULL history of `rev` that adds `path`, newest first.
+
+    `--full-history -m` (round 50, shortcut critique S4): the default simplified
+    history follows only the first TREESAME parent of a merge, so a pre-freeze add
+    on the other side of a merge was invisible in round 49. None when git fails."""
+    p = git(root, 'log', '-m', '--full-history', '--diff-filter=A', '--format=%H',
+            rev, '--', path, check=False)
+    if p.returncode != 0:
+        return None
+    seen, out = set(), []
+    for l in p.stdout.decode().splitlines():
+        l = l.strip()
+        if l and l not in seen:
+            seen.add(l)
+            out.append(l)
+    return out

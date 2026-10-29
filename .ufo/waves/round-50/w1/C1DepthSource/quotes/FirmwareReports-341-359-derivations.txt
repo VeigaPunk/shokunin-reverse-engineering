@@ -1,0 +1,19 @@
+341	    const derivations = records.flatMap((record) => record.subtasks.map((child) => {
+342	        const parentPath = logical(record.task.path);
+343	        const childPath = logical(child.path);
+344	        if (!seen.has(childPath))
+345	            throw new AnalysisOutputError("extract_firmware", `Missing child task: ${childPath}`);
+346	        const reportedChild = recordsByPath.get(child.path);
+347	        if (reportedChild?.depth !== child.depth ||
+348	            reportedChild.blob_id !== child.blob_id ||
+349	            reportedChild.is_multi_file !== child.is_multi_file)
+350	            throw new AnalysisOutputError("extract_firmware", `Child task identity disagrees with its analysis: ${childPath}`);
+351	        const origin = blobOrigins.get(JSON.stringify([parentPath, child.blob_id]));
+352	        return {
+353	            parent_path: parentPath,
+354	            child_path: childPath,
+355	            provider_blob_id: child.blob_id,
+356	            handler: origin?.handler ?? null,
+357	            parent_file_range: origin?.range ?? null,
+358	        };
+359	    }));

@@ -1,0 +1,36 @@
+UTC 2026-10-28T23:34:46Z
+fetch squashfs.py http/bytes: 200 19842
+sha256 squashfs.py: 2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287
+cmp vs installed uv copy exit=0
+[===================================================================|] 4/4 100%
+mksquashfs exit=0
+std superblock: magic b'hsqs' mkfs_time 1700000000 bytes_used 300433 comp 4 major 4 minor 0
+synthetic superblock: mkfs_time 300433 bytes_used 300433 equal True
+sha256 std-le-v4-xz.sqsh a3aa1a8c2c4f7916198ed37541096c93f913976e7417456eeb4b3876599865ac
+sha256 avmmarker-SYNTHETIC-le-v4-xz.sqsh 86ec8a04441b4765cd7f7eb9ca2c177e2e2c8f76b290960859f75f3497767240
+sasquatch -le std-le-v4-xz.sqsh exit=0 tree_sha=d99b1489bd07c3ee28d41f0fc7340ba5fe45a87da18442fd085f3397d736a9e8
+sasquatch -le avmmarker-SYNTHETIC-le-v4-xz.sqsh exit=0 tree_sha=d99b1489bd07c3ee28d41f0fc7340ba5fe45a87da18442fd085f3397d736a9e8
+unblob [std-full] std-le-v4-xz.sqsh exit=0
+  handlers ['squashfs_v4_le']
+  error_report_types []
+  dependency_reports []
+  extract_commands ['sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/ub-std-full/ex/std-le-v4-xz.sqsh_extract /fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/std-le-v4-xz.sqsh']
+unblob [synth-full] avmmarker-SYNTHETIC-le-v4-xz.sqsh exit=0
+  handlers ['squashfs_v4_le']
+  error_report_types []
+  dependency_reports []
+  extract_commands ['sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/ub-synth-full/ex/avmmarker-SYNTHETIC-le-v4-xz.sqsh_extract /fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/avmmarker-SYNTHETIC-le-v4-xz.sqsh']
+unblob [synth-nobe] avmmarker-SYNTHETIC-le-v4-xz.sqsh exit=0
+  handlers ['squashfs_v4_le']
+  error_report_types []
+  dependency_reports []
+  extract_commands ['sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/ub-synth-nobe/ex/avmmarker-SYNTHETIC-le-v4-xz.sqsh_extract /fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/avmmarker-SYNTHETIC-le-v4-xz.sqsh']
+unblob [std-nosasq] std-le-v4-xz.sqsh exit=1
+  handlers ['squashfs_v4_le']
+  error_report_types ['ExtractorDependencyNotFoundReport']
+  dependency_reports ['"dependencies": ["sasquatch"]']
+  extract_commands ['sasquatch -le -no-exit-code -f -d /fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/ub-std-nosasq/ex/std-le-v4-xz.sqsh_extract /fast/scratch/hyaku/kaidoku-r50/C1SrcUnblob/run1/probe/std-le-v4-xz.sqsh']
+tree ub-std-full c6621361ad458d733822ee1f9ea6275c6d932fe0a54ca268db0573c105b5aa24
+tree ub-synth-full 8b5c8a98250a945ceaf9de809046dce5db0f31bddd012207136ae5eef8981696
+tree ub-synth-nobe 8b5c8a98250a945ceaf9de809046dce5db0f31bddd012207136ae5eef8981696
+tree ub-std-nosasq f27b0073a1a2e6e5fb2b5bdbad8067bcf026aa9d912150759126acb7f9686e71

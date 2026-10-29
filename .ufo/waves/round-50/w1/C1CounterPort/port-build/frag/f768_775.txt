@@ -1,0 +1,20 @@
+def provenance_ok(output_directory):
+    """A receipt run by this round: an absolute path under the round's scratch
+    prefix `PROV_BASE` (a prefix, not a substring; no `..`; never /tmp)."""
+    if not isinstance(output_directory, str) or not os.path.isabs(output_directory):
+        return False
+    if '..' in output_directory.split('/'):
+        return False
+    return output_directory.startswith(PROV_BASE)
+
+
+def trusted_run_root(output_directory):
+    """The trusted directory a run's private extraction tree lives under."""
+    if not isinstance(output_directory, str) or not os.path.isabs(output_directory):
+        return None
+    if '..' in output_directory.split('/'):
+        return None
+    parent = os.path.dirname(output_directory.rstrip('/'))
+    if not parent or parent == '/':
+        return None
+    return parent

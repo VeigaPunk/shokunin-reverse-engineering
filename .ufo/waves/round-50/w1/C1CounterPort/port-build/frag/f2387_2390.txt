@@ -1,0 +1,24 @@
+    add('chunk handler is the BE handler (squashfs_v4_be)',
+        [frozen, mutant('c6430', lambda e: [c.__setitem__('handler', 'squashfs_v4_be')
+                                            for c in e['normalized_result']['chunks']])],
+        0, 1, want_fail='handler_ok')
+    add('chunk handler is squashfs_v3',
+        [frozen, mutant('c6430', lambda e: [c.__setitem__('handler', 'squashfs_v3')
+                                            for c in e['normalized_result']['chunks']])],
+        0, 1, want_fail='handler_ok')
+    add('chunk handler is the bare prefix squashfs_v4',
+        [frozen, mutant('c6430', lambda e: [c.__setitem__('handler', 'squashfs_v4')
+                                            for c in e['normalized_result']['chunks']])],
+        0, 1, want_fail='handler_ok')
+    add('one LE chunk and one BE chunk: every squashfs handler must be the frozen one',
+        [frozen, mutant('c6430', lambda e: e['normalized_result']['chunks'].append(
+            {'input_path': '$input', 'provider_id': 'p9',
+             'range': {'offset': 4096, 'length': 100}, 'handler': 'squashfs_v4_be',
+             'encrypted': False,
+             'root_file_range': {'offset': 4096, 'length': 100},
+             'extraction_failed': False}))],
+        0, 1, want_fail='handler_ok')
+    add('no squashfs chunk at all (padding only)',
+        [frozen, mutant('c6430', lambda e: [c.__setitem__('handler', 'padding')
+                                            for c in e['normalized_result']['chunks']])],
+        0, 1, want_fail='handler_ok')

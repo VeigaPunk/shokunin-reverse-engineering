@@ -1,0 +1,42 @@
+# The extraction parameters every fixture receipt carries: the frozen
+# `rea_parameters` of the fixture carriers.json (the real data run needs the
+# raised budgets: REA's default 10000-entry staging budget fails on a rootfs).
+FIXTURE_REA_PARAMETERS = {'max_depth': 1, 'max_output_bytes': 536870912,
+                          'max_output_files': 100000}
+
+
+def sb_carrier(compression, tag=b'', *, marker=True, big=False, major=4, minor=0,
+               marker_value=None, mkfs_value=None, its=96, dts=128, size=640):
+    """A fixture carrier: a coherent SquashFS v4 superblock and filler bytes.
+
+    Not a real filesystem - the layout clause is a superblock test and these
+    bytes exercise it exactly. The default is the frozen layout: little-endian
+    `hsqs`, v4.0, `compression`, `mkfs_time == bytes_used == size` and table
+    starts 96 < 128 <= bytes_used. `marker=False` writes a real timestamp (a
+    STANDARD little-endian image); `big=True` writes `sqsh` and every integer
+    big-endian (a big-endian image, with or without the marker);
+    `marker_value` sets bytes_used (and the marker) to another value;
+    `mkfs_value` sets mkfs_time alone."""
+    body = bytearray(size)
+    order = 'big' if big else 'little'
+
+    def put(off, width, value):
+        body[off:off + width] = value.to_bytes(width, order)
+
+    body[0:4] = b'sqsh' if big else b'hsqs'
+    used = size if marker_value is None else marker_value
+    if mkfs_value is not None:
+        mkfs = mkfs_value
+    else:
+        mkfs = (used & 0xFFFFFFFF) if marker else 1700000000
+    put(8, 4, mkfs)
+    put(12, 4, 4096)
+    put(20, 2, compression)
+    put(28, 2, major)
+    put(30, 2, minor)
+    put(40, 8, used)
+    put(64, 8, its)
+    put(72, 8, dts)
+    if tag:
+        body[-len(tag):] = tag
+    return bytes(body)
