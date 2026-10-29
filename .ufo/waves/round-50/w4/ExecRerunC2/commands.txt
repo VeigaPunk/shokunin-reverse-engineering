@@ -1,0 +1,37 @@
+# ExecRerunC2 — receipts index
+
+counter bytes: `tools/round-50/c2-record.py` sha256 `4749bcd86c8f61bfb6994baeab3bd990b61ea0c369b87197351d0a4618e71285`
+instrument bytes: `tools/round-50-c3/sqfs-triage-v5.py` sha256 `f29eb92073dfff0cae48658985a7df3a34b1558430183dacc9968c2dff71b16e`
+
+
+
+| receipt | UTC (file mtime) | sha256 |
+|---|---|---|
+| C2 battery @ stated tip c67b741e (`c2-rerun-at-tip.json`) | 2026-10-29T21:56:43Z | `99feef93f918c7dd035d56c714df31c3602e258fc332e8ed1537f13e6ebf9d70` |
+| C2 battery @ HEAD db61a907 (`c2-rerun-at-head.json`) | 2026-10-29T21:56:43Z | `26ad8ce8389768fee18e66820ec5817bef93cfd7bc6a2d0c55dfc8cd174aee48` |
+| C2 battery @ landed rev bff7d96c (repro) (`c2-landed-rev-repro.json`) | 2026-10-29T21:56:43Z | `cb08c69a06cd527b8731324cfb1055b447867d933dfd578f9875bf413fa17cbd` |
+| C2 offline selftest (29 cases) (`c2-selftest.json`) | 2026-10-29T21:56:43Z | `9d5b96431bf9599eb4c98026d49cb1164490c47df1c391106adedd49acb5bd48` |
+| C3 selftest (18 cases) (`c3-selftest.txt`) | 2026-10-29T21:56:43Z | `74d9918a6aae6705ceec1edfb9f028f109d4a62775220e5f25dca68fe16b7b00` |
+| C3 receipt, frozen drift present (M6) (`c3-m6-frozen-drift.json`) | 2026-10-29T21:56:43Z | `2eda00cc0af9132890dae3e61d2a585fb60ecb25c263758425157f58b8186798` |
+| C3 receipt, frozen drift, HEAD instrument (M6b) (`c3-m6b-frozen-drift-head-instrument.json`) | 2026-10-29T21:59:40Z | `e43ddbe9ef615cc75adb2c3fd279c10043ce7592baf21caa065bc9c68c07bddb` |
+| mutation matrix (all arms) (`mutations.json`) | 2026-10-29T22:03:16Z | `bc1f87651f401a62486f06c52d204ada13cd7b133ee212bc000b1a43ed3e1f2a` |
+| mutation arm receipt (`c2-m1.json`) | 2026-10-29T21:59:40Z | `2a2c73734600c5d8df804969857a2bb641014425f356b2976c884458c6f8f0bf` |
+| mutation arm receipt (`c2-m2.json`) | 2026-10-29T21:59:40Z | `310fcb792ed7be1692ca1868e0500097cdb3f401f59710ad0fe8fadafeab7292` |
+| mutation arm receipt (`c2-m3.json`) | 2026-10-29T22:03:16Z | `9cd1c2b63c7c12e0fee5ff4c4998eea7aeae38be5ba72eef3e44405827e62997` |
+| mutation arm receipt (`c2-m4.json`) | 2026-10-29T21:59:40Z | `ec0c172bdc25d33295428af06f9d622daa827cf29091283f9b31f9d3f5d44f34` |
+| mutation arm receipt (`c2-m5.json`) | 2026-10-29T21:59:40Z | `6ddebc108cd8f1a26cca180f75fb17a6a309619eefeb30161994aa1823adbdec` |
+| mutation arm receipt (`c2-m7.json`) | 2026-10-29T22:00:16Z | `ccbf056f97ec6ae3aa17ae95ec6e6c92c1d82baad32bd6f9787d1e2c1b5f8ae7` |
+
+## Exit codes
+
+| run | exit | meaning |
+|---|---|---|
+| C2 battery @ c67b741e | 0 | met — 11 atoms, 0 mismatches, battery clean |
+| C2 battery @ db61a907 | 0 | met — identical |
+| C2 battery @ bff7d96c | 0 | met — reproduces the landed receipt exactly |
+| C2 selftest | 0 | met — 29 cases, failures [] |
+| C3 selftest | 0 | met — 18 cases, pass 18 |
+| C3 @ frozen drift (M6/M6b) | 0 | **the defect**: exit 0 with `verdict: met` while frozen paths moved |
+| C2 @ M1 / M4 / M5 / M7 | 0 | **the defect**: exit 0 where a violation was expected |
+| C2 @ M2 / M3 | 1 | correct — the violation was detected |
+

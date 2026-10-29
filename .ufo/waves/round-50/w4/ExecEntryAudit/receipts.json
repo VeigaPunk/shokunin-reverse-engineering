@@ -1,0 +1,58 @@
+[
+ {
+  "name": "oracle-wc-l",
+  "command": "cd LANE && wc -l tools/round-50/oracle/*.tsv",
+  "exit_code": 0,
+  "stdout_sha256": "d3189993b149a83f56d62a475f53d4fa692a1332c955f799e54589124ab9446f",
+  "note": "frozen oracle table row counts vs results-table \"oracle regular files\" column",
+  "utc": "2026-10-29T21:56:27Z"
+ },
+ {
+  "name": "unsquashfs-rederive",
+  "command": "unsquashfs -ll -no-progress <carrier> (4 carriers, cached carrier bytes)",
+  "exit_code": 0,
+  "stdout_sha256": "26b85ffd9376a33aeaa686881fdbbaaeefe0e655f9d0cd77a7f8b12d0a42063c",
+  "note": "independent oracle re-derivation from the carrier bytes with unsquashfs 4.7.5 (per-kind counts); regular and non-regular totals equal the frozen table row counts",
+  "utc": "2026-10-29T21:56:27Z"
+ },
+ {
+  "name": "sqfs-list-rederive",
+  "command": "python3 tools/round-41/sqfs-list.py --layout auto --files F --nonregular N <carrier> (4 carriers) + diff vs frozen tables",
+  "exit_code": 0,
+  "stdout_sha256": "9971c93d8c7aba4742a08dd7879e8232a231b93826177c4aa6de726349b53952",
+  "note": "second-reader re-derivation; 0 diff lines means byte-identical to the frozen oracle tables",
+  "utc": "2026-10-29T21:56:40Z"
+ },
+ {
+  "name": "gap-rule-reapply",
+  "command": "cd LANE && python3 /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/ExecEntryAudit/gap-rule-reapply.py",
+  "exit_code": 0,
+  "stdout_sha256": "5265ad3d2f417b372b7dfc44f8f5f35ee2dc2419e0855e7ca7fdcdd811b81e69",
+  "note": "frozen gap-rule.json re-applied independently to the committed after.json + frozen nonregular table per carrier",
+  "utc": "2026-10-29T21:56:57Z"
+ },
+ {
+  "name": "counter-selftest-offline",
+  "command": "cd $S/clone && python3 -I -B tools/round-50/c1-counter.py --selftest --pkg65 <rea-agents 6.5.0 pkg root> --work $S/selftest-work",
+  "exit_code": 0,
+  "stdout_sha256": "fd43ee62e2719a25a17983f447d3134b3ad121208d9ad0624272d2b353e267d8",
+  "note": "offline selftest of the frozen counter at tip c67b741e; 169 cases, 17 green_ok, 152 red_ok",
+  "utc": "2026-10-29T21:56:57Z"
+ },
+ {
+  "name": "source-refetch",
+  "command": "curl -sS --max-time 25 -o <out> <S243 url> ; <S249 url> (2 sources)",
+  "exit_code": 0,
+  "stdout_sha256": "4b39b2f08e5a492501db0000ab940f97c55d6da7c63d6929b481bdc8dfb66893",
+  "note": "live re-fetch of S243 and S249; sha256 must equal the SOURCES-row value",
+  "utc": "2026-10-29T21:56:58Z"
+ },
+ {
+  "name": "controls-pos-extract",
+  "command": "read .ufo/waves/round-50/controls-attempt2.json (CTL-C1-POS + kill rule)",
+  "exit_code": 0,
+  "stdout_sha256": "ff2b909590d45deefa3dfa844fe0349b0a681e31671944765e2927f87c1dfb1e",
+  "note": "POS control verdict and kill-rule state as committed",
+  "utc": "2026-10-29T21:56:58Z"
+ }
+]

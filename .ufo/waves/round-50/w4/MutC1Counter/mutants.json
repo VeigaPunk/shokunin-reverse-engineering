@@ -1,0 +1,25 @@
+{
+ "M1": {
+  "file": "c1-counter-M1.py",
+  "sha256": "a0adbdf6764132bc99a4e953dea6e92990bbaf48a79effe88d409f5ccb826c50",
+  "frozen_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+  "diff": "--- c1-counter.py@435d41fd\n+++ c1-counter-M1.py\n@@ -1550,6 +1550,8 @@\n     silent_admitted = []\n     for rel, kind, detail in nonreg:\n         need = required.get(kind, bool(allowed.get(kind)))\n+        if kind == 'char-device':\n+            need = False\n         if not need:\n             continue\n         if gapped.get(rel) or removed_rels.get(rel):\n"
+ },
+ "M2": {
+  "file": "c1-counter-M2.py",
+  "sha256": "855472283443883c63c8aa18f818751c101dc4511d3343f5f552f3598336e74e",
+  "frozen_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+  "diff": "--- c1-counter.py@435d41fd\n+++ c1-counter-M2.py\n@@ -1555,6 +1555,9 @@\n         if gapped.get(rel) or removed_rels.get(rel):\n             continue\n         allowed_details = (removed.get('silent') or {}).get(kind)\n+        if kind == 'char-device':\n+            silent_admitted.append(rel)\n+            continue\n         if allowed_details and silent_detail_matches(detail, allowed_details):\n             silent_admitted.append(rel)\n             continue\n"
+ },
+ "M3": {
+  "file": "gap-rule-M3.json",
+  "sha256": "2d8182a7bd51beaa7b7c062a577ed82d87695e15d693491a3ca64745241c80c3",
+  "diff": "--- gap-rule.json@435d41fd\n+++ gap-rule-M3.json\n@@ -18,7 +18,7 @@\n  },\n  \"required\": {\n   \"symlink\": true,\n-  \"char-device\": true,\n+  \"char-device\": false,\n   \"block-device\": false,\n   \"fifo\": false,\n   \"socket\": false,\n"
+ },
+ "pristine": {
+  "file": "c1-counter-pristine.py",
+  "sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+  "frozen_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+  "diff": ""
+ }
+}

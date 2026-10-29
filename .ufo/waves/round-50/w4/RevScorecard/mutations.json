@@ -1,0 +1,60 @@
+{
+ "schema": "revscorecard-mutations-v1",
+ "base": "c67b741e8f6bd8d64adbdb15e059d47fde004c77",
+ "instrument": "tools/round-50-c3/sqfs-triage-v5.py (tip, sha256 ef4633c523ca8ab4ff096a7d90ef7074461a67f03952ad3652a048dce84d3ed0)",
+ "envelopes": ".ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/envelopes (126)",
+ "freeze": "435d41fd4ad9211d1579fc447936fb33d2b74467",
+ "mutations": [
+  {
+   "name": "m1-glob-revert",
+   "fixture_rev": "ba33eeea22325e324de630eaf80ba1ebe2d39b5e",
+   "mutation": "legacy failing-handler cell reverted to squashfs_v[123]*",
+   "verdict": "met",
+   "pair_mismatches": 0,
+   "process_exit": 0
+  },
+  {
+   "name": "m2-guard-deleted",
+   "fixture_rev": "593cf04619008f01f4e0837ba2c1736d2e03f338",
+   "mutation": "clean-unverified row deleted",
+   "verdict": "not met",
+   "pair_mismatches": 19,
+   "process_exit": 1
+  },
+  {
+   "name": "m3-action-swap",
+   "fixture_rev": "b4dc6ae929a893409e89935842abe5ef79c3069a",
+   "mutation": "record-unverified action swapped to none",
+   "verdict": "not met",
+   "pair_mismatches": 19,
+   "process_exit": 1
+  },
+  {
+   "name": "m4-silent-narrow",
+   "fixture_rev": "ebf7d16e16ed33106b3a5ff28a9a1e3612b913a8",
+   "mutation": "comma-list silently swapped to squashfs_v[123]",
+   "verdict": "not met",
+   "pair_mismatches": 1,
+   "process_exit": 1
+  },
+  {
+   "name": "m5-malformed-junk",
+   "fixture_rev": "688c06a6721d3ca2044861049595fb589e7f0fa8",
+   "mutation": "single catch-all clean row, cause cell missing -> separator",
+   "verdict": "refused (could-not-evaluate)",
+   "pair_mismatches": null,
+   "refusal": "sqfs-triage-v5: table error: line 555: cause -> action cell has no \"->\" separator",
+   "process_exit": 2
+  },
+  {
+   "name": "m5b-semantic-junk",
+   "fixture_rev": "ee6127ad25b3a2d9d72b7ea21f5b437bb94a5b0a",
+   "mutation": "single catch-all clean row, grammar-valid",
+   "verdict": "not met",
+   "pair_mismatches": 94,
+   "process_exit": 1
+  }
+ ],
+ "utc": "2026-10-29T21:56:28Z",
+ "note": "process_exit is the instrument exit code (0 met, 1 not met, 2 could-not-evaluate). m1 is corpus-green because the 126-envelope corpus holds zero no-reader extractor-failure envelopes (disclosed limit, ExecTriageV5 F4); the same mutation (legacy-glob-widened) flips pairs in the instrument selftest fixture scope, which pins a synthetic no-reader failure envelope. m5-malformed-junk was refused for a missing -> separator in the cause cell (my junk shape); m5b is the grammar-valid semantic junk (exit 1, never exit 2)."
+}
