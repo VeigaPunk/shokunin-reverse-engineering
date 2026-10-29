@@ -1,0 +1,105 @@
+{
+  "seat": "ExecC1Before",
+  "round": "kaidoku-shokunin round 50, attempt 2, wave 4 (falsify)",
+  "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "lane_tip_observed": "db61a90752657588817e78327c78106d486291d1",
+  "lane_tip_named_by_dispatch": "c67b741e8f6bd8d64adbdb15e059d47fde004c77",
+  "scratch": "/fast/scratch/hyaku/kaidoku-r50/w4-ExecC1Before",
+  "tooling": {
+    "installed": [],
+    "note": "no tool install was needed; python3 3.14.8 from the host was used with -I -B"
+  },
+  "commands": [
+    {
+      "id": "R1",
+      "intent": "re-take the C1 before receipt at the freeze (lane root), per seat spec",
+      "command": "python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/c1-counter.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 435d41fd4ad9211d1579fc447936fb33d2b74467 --freeze 435d41fd4ad9211d1579fc447936fb33d2b74467 --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents --work /fast/scratch/hyaku/kaidoku-r50/w4-ExecC1Before/w --carrier-cache /fast/scratch/hyaku/kaidoku-r50/carrier-cache --json-out /fast/scratch/hyaku/kaidoku-r50/w4-ExecC1Before/c1-before.json",
+      "exit_code": 1,
+      "wall_seconds": 2.18,
+      "utc_finished": "2026-10-29T21:27:32Z",
+      "stdout_sha256": "6d7f383453d0c84b2170c1c3625cbf29164e98eba0f40b9ac42c7098a082efc2",
+      "stderr_sha256": "ec54eacc1e5f8a8eece3794ab7bedca1236e15e878d6b1c5a04d0e2ee1151a9f",
+      "receipt_json_sha256": "be863941cb9bc2fcfb38c7116dcaa3d190c84b8b708600f694ff3689bfe37c55",
+      "stdout_artifact": "stdout.txt",
+      "receipt_artifact": "c1-before.json",
+      "measured": {
+        "carriers_matched": 0,
+        "target": 4,
+        "met_target": false,
+        "rerun_toolchain": null,
+        "evidence_digests": {},
+        "rea_reached": false,
+        "rea_reached_basis": "2.18 s wall, rerun_toolchain null, evidence_digests {} (no envelope exists at the freeze so no rerun and no xpin node call is issued)"
+      }
+    },
+    {
+      "id": "R2",
+      "intent": "worktree-independence: same freeze, --root = a clean clone checked out at the freeze rev",
+      "setup": "git clone --shared -q /home/vgpnk/Projects/shokunin/kaidoku-shokunin $S/clone && git -C $S/clone checkout --detach -q 435d41fd4ad9211d1579fc447936fb33d2b74467 (toplevel asserted: $S/clone)",
+      "command": "python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/c1-counter.py --root $S/clone --rev 435d41fd4ad9211d1579fc447936fb33d2b74467 --freeze 435d41fd4ad9211d1579fc447936fb33d2b74467 --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents --work $S/w2 --carrier-cache /fast/scratch/hyaku/kaidoku-r50/carrier-cache --json-out $S/c1-before-clone.json",
+      "exit_code": 1,
+      "wall_seconds": 4.82,
+      "utc_finished": "2026-10-29T21:28:10Z",
+      "stdout_sha256": "6d7f383453d0c84b2170c1c3625cbf29164e98eba0f40b9ac42c7098a082efc2",
+      "receipt_json_sha256": "527dfdc307d878000f8ae1fe26aeb067526e30fb239e89a6a3243d9bd78a89c5",
+      "stdout_artifact": "stdout-clone.txt",
+      "receipt_artifact": "c1-before-clone.json"
+    },
+    {
+      "id": "R3",
+      "intent": "identity binding of the landed before receipt (offline, no REA)",
+      "command": "python3 -I -B tools/round-50/c1-counter.py --verify-receipt .ufo/waves/round-50/l1/scores/c1-before-attempt2.json",
+      "exit_code": 0,
+      "result": {"ok": true, "detail": "ok", "counter_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813"}
+    },
+    {
+      "id": "R4",
+      "intent": "identity binding of my own re-take",
+      "command": "python3 -I -B tools/round-50/c1-counter.py --verify-receipt $S/c1-before.json",
+      "exit_code": 0,
+      "result": {"ok": true, "detail": "ok", "counter_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813"}
+    },
+    {
+      "id": "R5",
+      "intent": "identity binding of the landed after receipt",
+      "command": "python3 -I -B tools/round-50/c1-counter.py --verify-receipt .ufo/waves/round-50/l1/scores/c1-after-attempt2.json",
+      "exit_code": 0,
+      "result": {"ok": true, "detail": "ok", "counter_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813"}
+    },
+    {
+      "id": "R6",
+      "intent": "independent proof of the before state (git objects, not the counter)",
+      "command": "git -C $LANE ls-tree -r --name-only 435d41fd4ad9211d1579fc447936fb33d2b74467 -- corpus/evidence/round-50/ | wc -l  -> 0",
+      "exit_code": 0,
+      "note": "no evidence receipt exists at the freeze; the entry corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md is absent at the freeze (grep over the freeze knowledge tree: 0 rows matching r50|avm-le)"
+    },
+    {
+      "id": "R7",
+      "intent": "counter byte identity across freeze / worktree / tip",
+      "command": "sha256sum of tools/round-50/c1-counter.py at 435d41fd (git show), at the worktree, and at db61a907 (git show)",
+      "exit_code": 0,
+      "result": {"sha256_all_three": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813"}
+    },
+    {
+      "id": "R8",
+      "intent": "char-device census behind the landing's 'thirteen / twelve' prose",
+      "command": "grep -c char-device tools/round-50/oracle/<id>.nonregular.tsv",
+      "exit_code": 0,
+      "result": {"g7581": 13, "g7582": 13, "c6490": 1, "c6430": 1,
+                 "g7581_char_devices": ["dev/led 247:0", "dev/pts/0..7 136:0-7", "dev/tiatm 230:0", "dev/ttyp0..2 3:0-2"]}
+    },
+    {
+      "id": "R9",
+      "intent": "lane read-only proof",
+      "command": "git -C $LANE status --porcelain before vs after the runs",
+      "exit_code": 0,
+      "result": {"identical": true, "sha256": "1b75636ea74c1ee196f9c401c67d264e6155a00c305df29907d6a43c5066bfc1"}
+    }
+  ],
+  "comparison_to_landed": {
+    "landed_receipt": ".ufo/waves/round-50/l1/scores/c1-before-attempt2.json",
+    "landed_receipt_sha256": "131b9a454a1f910057d1f54bacba173a852c4fcc1876d9f9a03d195b15f3b109",
+    "structural_diff_mine_vs_landed": "1 field only: /argv (the absolute paths differ; every other key and value is identical)",
+    "structural_diff_mine_vs_clone": "1 field only: /argv"
+  }
+}

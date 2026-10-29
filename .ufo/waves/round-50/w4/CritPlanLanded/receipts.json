@@ -1,0 +1,189 @@
+{
+  "seat": "CritPlanLanded",
+  "assignment_tip": "c67b741e8f6bd8d64adbdb15e059d47fde004c77",
+  "live_head_observed": "92ec6e6d176467104384d80534fdf47975bad5cc",
+  "note": "The claims blob at c67 and HEAD is identical (sha256 0cf4047443575a982ae8f0a8ce87ce3c785fe9a7064c151c9258e53f12fe22de). The assigned-tip C3 executable was extracted from c67 and its selftest/before/after runs below use that extracted copy. No REA was invoked.",
+  "receipts": [
+    {
+      "id": "target-head",
+      "command": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin rev-parse HEAD",
+      "exit_code": 0,
+      "stdout_sha256": "a0fb5d78a90a1936b5f4628f862993c55e9b8c93119330318595c6ff40f532db",
+      "utc": "2026-10-29T21:37:55Z",
+      "result": "92ec6e6d176467104384d80534fdf47975bad5cc"
+    },
+    {
+      "id": "claims-at-c67",
+      "command": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show c67b741e8f6bd8d64adbdb15e059d47fde004c77:plans/round-50-attempt2-claims.md",
+      "exit_code": 0,
+      "stdout_sha256": "0cf4047443575a982ae8f0a8ce87ce3c785fe9a7064c151c9258e53f12fe22de",
+      "utc": "2026-10-29T21:37:55Z",
+      "result": "Claims blob hash equals HEAD's claims blob hash."
+    },
+    {
+      "id": "extract-c67-instrument",
+      "command": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show c67b741e8f6bd8d64adbdb15e059d47fde004c77:tools/round-50-c3/sqfs-triage-v5.py",
+      "exit_code": 0,
+      "stdout_sha256": "ef4633c523ca8ab4ff096a7d90ef7074461a67f03952ad3652a048dce84d3ed0",
+      "utc": "2026-10-29T21:38:44Z",
+      "result": "107434 bytes written to the assigned scratch only."
+    },
+    {
+      "id": "c67-selftest",
+      "command": "python3 -I -B /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/sqfs-triage-v5-c67.py --selftest --work /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/c67-selftest",
+      "exit_code": 0,
+      "stdout_sha256": "78cefa32bc2b25da4e9b8904a0d646a9c689b58e0986480f8c507f42dab8f37c",
+      "utc": "2026-10-29T21:38:44Z",
+      "result": "18 cases, pass 18, fail 0."
+    },
+    {
+      "id": "c67-before",
+      "command": "python3 -I -B /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/sqfs-triage-v5-c67.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev f890bbead20ca2c549487167f56876ae47f1e1a4 --freeze 435d41fd4ad9211d1579fc447936fb33d2b74467 --envelopes /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/envelopes --work /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/c67-before-work --json-out /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/c67-before.json",
+      "exit_code": 1,
+      "stdout_sha256": "29e51938a92788036fe41fd98a2ad56d9bf4bf5d9a89abf19eca799355eeac26",
+      "utc": "2026-10-29T21:38:44Z",
+      "result": "v4 table, 126 envelopes, 19 pair mismatches, evaluator_missing 0; JSON receipt copied to this directory as c67-before.json."
+    },
+    {
+      "id": "c67-after",
+      "command": "python3 -I -B /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/sqfs-triage-v5-c67.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev 1439dfe9dadb5c3cbc525658b300c23f3013cf87 --freeze 435d41fd4ad9211d1579fc447936fb33d2b74467 --envelopes /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/envelopes --work /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/c67-after-work --json-out /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/c67-after.json",
+      "exit_code": 0,
+      "stdout_sha256": "c057350b4d1bf1f3023c939da4e1dd85dfd16fd19ee2a04c25eb1e38a3d678b9",
+      "utc": "2026-10-29T21:38:44Z",
+      "result": "v5 table, 126 envelopes, pair_mismatches 0, evaluator_missing 0; JSON receipt copied to this directory as c67-after.json."
+    },
+    {
+      "id": "c67-after-receipt-blob",
+      "command": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show c67b741e8f6bd8d64adbdb15e059d47fde004c77:.ufo/waves/round-50/c3/c3-after.json",
+      "exit_code": 0,
+      "stdout_sha256": "e5df9be1ed42d718d812df345d5c2b230fea7a231890342763b967c66d12cbd1",
+      "utc": "2026-10-29T21:39:23Z",
+      "result": "instrument_sha256 ef4633c523ca8ab4ff096a7d90ef7074461a67f03952ad3652a048dce84d3ed0; rev 1439dfe9; verdict met; no mismatches or missing evaluators."
+    },
+    {
+      "id": "commit-1439",
+      "command": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show --stat --format=fuller 1439dfe9",
+      "exit_code": 0,
+      "stdout_sha256": "b513af1f11fb245f4134eeb61d917272b1b17fd73893f8270d7da3be9dec8c54",
+      "utc": "2026-10-29T21:34:18Z",
+      "result": "Commit subject says C3 freeze+landing; one commit includes SKILL.md, the v5 tool, C3 controls/before receipts and the plan."
+    },
+    {
+      "id": "landed-row-check",
+      "command": "python3 -I -B .ufo/waves/round-50/w3/ExecRegistryRow-2/verify-landed-row.py",
+      "exit_code": 0,
+      "stdout_sha256": "2b8897660f9ab89951aae17dc8f933215a37c362bbd89173bfe362dafd699d3e",
+      "utc": "2026-10-29T21:34:18Z",
+      "result": "Actual SKILL registry row: 7 cells, all grammar/pin/CLI checks true; row hash c7940cfc30fe16d11e9293fda4aa54bbca72a83d17b2f1bbf159473d83da4bb5; cell names rule block 26. The c67-to-HEAD SKILL diff changed only the status paragraph, not this row."
+    },
+    {
+      "id": "b9-scope-counterexample",
+      "command": "python3 -I -B .ufo/waves/round-50/w3/ExecRegistryRow-2/validate-peer-row.py",
+      "exit_code": 0,
+      "stdout_sha256": "710cf7a36afb0f00cc824d13d72d1f43b2b5d39daff367c68099eb0f52f3b89e",
+      "utc": "2026-10-29T21:34:18Z",
+      "result": "b9_census_contains_path false; b9_problems_with_deliberately_broken_row []; the probe's all_ok is false because it inserts a second copy of the peer row beside the already-landed row, not because B9 inspects that out-of-tree path."
+    },
+    {
+      "id": "skill-after-tip-diff",
+      "command": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff c67b741e8f6bd8d64adbdb15e059d47fde004c77 HEAD -- SKILL.md",
+      "exit_code": 0,
+      "stdout_sha256": "97a681ed79e52afb89566a65ce8e5605960f51b0e3c0d3385f921f20a9946b0a",
+      "utc": "2026-10-29T21:38:44Z",
+      "result": "Only the C3 status paragraph's instrument SHA changed after c67; the row and rule block 26 are unchanged."
+    },
+    {
+      "id": "after-tip-doc-diff",
+      "command": "git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff c67b741e8f6bd8d64adbdb15e059d47fde004c77 HEAD -- SCORECARD.md LOG.md PROVINCE.md corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "utc": "2026-10-29T21:39:23Z",
+      "result": "No differences after c67 in the SCORECARD/LOG/PROVINCE/entry surfaces checked."
+    },
+    {
+      "id": "source-hashes",
+      "command": "sha256sum plans/round-50-attempt2-claims.md SKILL.md LOG.md tools/round-50/c1-counter.py corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md .ufo/waves/round-50/w3/ExecRegistryRow-2/receipt-landed-row.json .ufo/waves/round-50/w3/ExecRegistryRow/row-final.txt .ufo/waves/round-50/w3/ExecTriageV5/receipts/reader-census.txt .ufo/waves/round-50/w3/ExecTriageV5/receipts/reader-boundary-whatif.txt .ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/REBUILD.md .ufo/waves/round-50/c3/c3-after.json .ufo/waves/round-50/l1/scores/c2-final-attempt2.json",
+      "exit_code": 0,
+      "stdout_sha256": "9f396ba8c042fd30751a62410efe18d14b352f2dfe54f7e1059871cd6d34a17d",
+      "utc": "2026-10-29T21:34:18Z",
+      "result": "Key content hashes: plan 0cf4047443575a982ae8f0a8ce87ce3c785fe9a7064c151c9258e53f12fe22de; c1-counter 9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813; row-final 3cce072798d598511393f3b84c6c19b99eeecda317e43a09e6c147cc5f88f64e; reader census bb539f0239d9d3d83205b44face1ca6bc45b21cd8fe10a0b614af0f8f3d17bb7; REBUILD.md b7869c937477b1128c5ca7d14c3f99aebd018f2fa8e3ddbb3173fd348a395f0d."
+    },
+    {
+      "id": "scorecard-open-work-hashes",
+      "command": "sha256sum SCORECARD.md .ufo/waves/round-50/l1/scores/c1-after-attempt2.json .ufo/waves/round-50/c3/c3-before.json .ufo/waves/round-50/c3/c3-after.json .ufo/waves/round-50/w3/ExecRegistryRow-2/receipt-validate-peer-row.json",
+      "exit_code": 0,
+      "stdout_sha256": "dcf30d431a30144975f6678cc75ac7e583bfe5b67b867f6ee77651ff7b8db94e",
+      "utc": "2026-10-29T21:40:32Z",
+      "result": "SCORECARD 1a4b2c3dcbfcc2353f1d492648914b4be8d5e6d7c978e92fac559c1c48435abc; C1 after receipt e1e0ac176a9ccd71876bfe3ce2032eb94067c29c86922ee56d7db211b7c62816; C3 before 75b9846828aa81e0e51af0fc05251bec7ab3f80d21b543d2f9cce9993d2ba0b0; C3 after bcb858d8c782cd7f9d0285cc5c15ecad242901816f8cf985d88d0a4593427315; B9 probe receipt 83e6a28fb90b7e57b8088ace8061cf5774717f6c6d12256708dbd6f89a457955."
+    },
+    {
+      "id": "copy-ddwrt-pristine",
+      "command": "cp /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C1Oracle/fixtures/squashfs_v3_ddwrt/big_endian/__input__/squashfs_v3.be.nopad.bin /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/squashfs_v3.be.nopad.bin",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "utc": "2026-10-29T21:35:21Z",
+      "result": "Copied only to assigned scratch; lane fixture unchanged."
+    },
+    {
+      "id": "derive-ddwrt-failure-copy",
+      "command": "python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/tools/v3tool.py /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/squashfs_v3.be.nopad.bin --zero inode-table --out /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/dmg_Z3_v3ddwrt_inode_table.bin --json",
+      "exit_code": 0,
+      "stdout_sha256": "7d63a5ae8f329e697ff4120216422eeb796210498d7434474359c825971df06d",
+      "utc": "2026-10-29T21:35:21Z",
+      "result": "Derived damaged copy; it zeroes the inode-table range 144..203 as REBUILD.md specifies."
+    },
+    {
+      "id": "pristine-input-hash",
+      "command": "sha256sum /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/squashfs_v3.be.nopad.bin",
+      "exit_code": 0,
+      "stdout_sha256": "053c68ae14554428b307cd7cd20390bcb82eb6fdfc9d34d37b838774844f5682",
+      "utc": "2026-10-29T21:35:21Z",
+      "result": "Fixture sha256 daa8e72d355db1067a36bacd4b15853fb49ce7bb4fa6d6efafc0e7f09be8c9e1; matches the reader-census row's daa8e72d355d prefix."
+    },
+    {
+      "id": "damaged-input-hash",
+      "command": "sha256sum /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/dmg_Z3_v3ddwrt_inode_table.bin",
+      "exit_code": 0,
+      "stdout_sha256": "c213fa3b39790225b54b56025e272e3e66f69a0c653e05b6baada7f996c227ad",
+      "utc": "2026-10-29T21:35:21Z",
+      "result": "Damaged fixture sha256 839c17a83b706589f1b634d0e19fbc6950c3028072e3952c1c74a290ad2150c8; matches REBUILD.md and envelope subject digest."
+    },
+    {
+      "id": "unsquashfs-damaged",
+      "command": "unsquashfs -lls /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/dmg_Z3_v3ddwrt_inode_table.bin",
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "utc": "2026-10-29T21:35:21Z",
+      "result": "Reader refused damaged copy; stderr reports no valid SquashFS superblock."
+    },
+    {
+      "id": "7z-damaged",
+      "command": "7z l -tSquashFS /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/dmg_Z3_v3ddwrt_inode_table.bin",
+      "exit_code": 2,
+      "stdout_sha256": "b5cc2ab91bc896a94769d61113544abe2048bcf12f03b1037185acc835ead6f9",
+      "utc": "2026-10-29T21:35:21Z",
+      "result": "Reader refused damaged copy; stderr reports cannot open as SquashFS archive."
+    },
+    {
+      "id": "unsquashfs-pristine",
+      "command": "unsquashfs -lls /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/squashfs_v3.be.nopad.bin",
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "utc": "2026-10-29T21:35:21Z",
+      "result": "Reader refused pristine no-pad baseline, reproducing the census."
+    },
+    {
+      "id": "7z-pristine",
+      "command": "7z l -tSquashFS /fast/scratch/hyaku/kaidoku-r50/w4-CritPlanLanded/squashfs_v3.be.nopad.bin",
+      "exit_code": 2,
+      "stdout_sha256": "dde32e5f3b4d4a2d273a659fb5c172d1cc45b8c486c84938616a4ae3eb47607e",
+      "utc": "2026-10-29T21:35:21Z",
+      "result": "Reader refused pristine no-pad baseline, reproducing the census."
+    }
+  ],
+  "not_run": [
+    "The REA-dependent C1 full predicate command was not run. No REA invocation was made.",
+    "The C2 full predicate/battery was not run; its attempt-2 receipt was read-only evidence."
+  ],
+  "tooling": "No tools installed or updated."
+}

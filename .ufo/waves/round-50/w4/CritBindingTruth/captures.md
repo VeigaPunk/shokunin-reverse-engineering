@@ -1,0 +1,21 @@
+# CritBindingTruth capture receipt
+
+Review window: 2026-10-29 21:28:51Z–21:31:54Z. Target revision: `c67b741e8f6bd8d64adbdb15e059d47fde004c77`.
+
+For each file below, the reported SHA-256 is over the raw bytes emitted by the `cat` or `git show` stage; `sha256sum` printed that digest. All listed capture commands exited 0. Worktree bytes and target-revision bytes match for every reviewed document and the C1 score receipt.
+
+## Worktree and target-revision hashes
+
+- Entry: worktree `cat '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md' | sha256sum` — exit 0, stdout SHA-256 `a6c113daf91eebe5056a261a58c961333471a2e690a6123d75da1f52a2bc7681`, 21:28:51Z; target `git -C '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' show 'c67b741e8f6bd8d64adbdb15e059d47fde004c77:corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md' | sha256sum` — exit 0, same hash, 21:29:08Z.
+- `PROVINCE.md`: worktree `cat '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/PROVINCE.md' | sha256sum` — exit 0, stdout SHA-256 `1d072b6a34e26c50a7f6051028e183996493eda1deef32e06474a4d43734bf54`, 21:28:51Z; target `git -C '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' show 'c67b741e8f6bd8d64adbdb15e059d47fde004c77:PROVINCE.md' | sha256sum` — exit 0, same hash, 21:29:08Z.
+- `corpus/README.md`: worktree `cat '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/README.md' | sha256sum` — exit 0, stdout SHA-256 `7ede85426c4baa5f205482375cf2966abfc21290b587d45ef6cdbdebf80786c4`, 21:28:51Z; target `git -C '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' show 'c67b741e8f6bd8d64adbdb15e059d47fde004c77:corpus/README.md' | sha256sum` — exit 0, same hash, 21:29:08Z.
+- `SCORECARD.md`: worktree `cat '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/SCORECARD.md' | sha256sum` — exit 0, stdout SHA-256 `1a4b2c3dcbfcc2353f1d492648914b4be8d5e6d7c978e92fac559c1c48435abc`, 21:28:51Z; target `git -C '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' show 'c67b741e8f6bd8d64adbdb15e059d47fde004c77:SCORECARD.md' | sha256sum` — exit 0, same hash, 21:29:08Z.
+- `LOG.md`: worktree `cat '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/LOG.md' | sha256sum` — exit 0, stdout SHA-256 `88952f0b84768ab89f16d3413813133cdcaaaa11b7530527edb4e86fcf8f99f9`, 21:28:51Z; target `git -C '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' show 'c67b741e8f6bd8d64adbdb15e059d47fde004c77:LOG.md' | sha256sum` — exit 0, same hash, 21:29:08Z.
+- `corpus/lessons/round-50.md`: worktree `cat '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-50.md' | sha256sum` — exit 0, stdout SHA-256 `05df8573dd8aedb935747e0cff8ddde8fa464a8948b378785615567e452eb21d`, 21:28:51Z; target `git -C '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' show 'c67b741e8f6bd8d64adbdb15e059d47fde004c77:corpus/lessons/round-50.md' | sha256sum` — exit 0, same hash, 21:29:08Z.
+- C1 receipt: worktree `cat '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/l1/scores/c1-after-attempt2.json' | sha256sum` — exit 0, stdout SHA-256 `e1e0ac176a9ccd71876bfe3ce2032eb94067c29c86922ee56d7db211b7c62816`, 21:28:51Z; target `git -C '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' show 'c67b741e8f6bd8d64adbdb15e059d47fde004c77:.ufo/waves/round-50/l1/scores/c1-after-attempt2.json' | sha256sum` — exit 0, same hash, 21:29:08Z.
+
+Receipt path existence check: exact command `test -f '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/l1/scores/c1-after-attempt2.json' > '/fast/scratch/hyaku/kaidoku-r50/w4-CritBindingTruth/receipt-exists.stdout'`; exit 0; SHA-256 of the command's stdout file `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`; 21:31:44Z.
+
+Inspection revision: exact command `git -C '/home/vgpnk/Projects/shokunin/kaidoku-shokunin' rev-parse HEAD | sha256sum`; exit 0; SHA-256 of `rev-parse` stdout `a0fb5d78a90a1936b5f4628f862993c55e9b8c93119330318595c6ff40f532db`; 21:31:54Z. The observed HEAD was `db61a90752657588817e78327c78106d486291d1` (later than requested `c67b741e`); the per-file hash equality above confirms the reviewed texts/receipt are byte-identical to the requested revision.
+
+Read-only inspection only. C1 full predicate/REA rerun: **not run** (prohibited by seat contract). No tools installed or updated.

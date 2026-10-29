@@ -1,0 +1,245 @@
+{
+  "scope": "R50-C1 miss falsification, read-only checks only",
+  "lane_tip": "c67b741e8f6bd8d64adbdb15e059d47fde004c77",
+  "checks": [
+    {
+      "label": "c6430-char-count",
+      "command": "awk -F'\\t' '$2==\"char-device\"' tools/round-50/oracle/c6430.nonregular.tsv | wc -l",
+      "exit_code": 0,
+      "stdout_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "stdout_bytes": 2,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/c6430-char-count.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "/bin/bash -c (shell=True)"
+    },
+    {
+      "label": "c6430-char-details",
+      "command": "awk -F'\\t' '$2==\"char-device\"' tools/round-50/oracle/c6430.nonregular.tsv",
+      "exit_code": 0,
+      "stdout_sha256": "eaff69ddcdcd2a1f1614c0a893fda13c761a402e0aee158dd6f7fcb0a7c63073",
+      "stdout_bytes": 26,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/c6430-char-details.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "/bin/bash -c (shell=True)"
+    },
+    {
+      "label": "c6430-receipt-json",
+      "command": [
+        "python3",
+        "-c",
+        "import json,sys\nfrom pathlib import Path\ncid,path,oracle_path=sys.argv[1:]\ndoc=json.loads(Path(path).read_text())\nnr=doc.get('normalized_result') or {}\ngaps=nr.get('extraction_gaps') or []\ndef rel(p):\n    if not isinstance(p,str): return None\n    marker='_extract/'\n    if marker in p: return p.split(marker,1)[1]\n    return p.removeprefix('$output/')\nall_gaps=[g.get('relative_path') for g in gaps if isinstance(g,dict)]\ngap_rels=[rel(p) for p in all_gaps]\nrem=[]\nfor d in nr.get('diagnostics') or []:\n    if not isinstance(d,dict): continue\n    report=d.get('report') or {}\n    if report.get('__typename__')=='MaliciousSymlinkRemoved': rem.append(rel(report.get('link')))\nrows=[]\nfor line in Path(oracle_path).read_text().splitlines():\n    cols=line.split('\\t')\n    if len(cols)>=2 and cols[1]=='char-device':\n        p=cols[0].removeprefix('./').lstrip('/')\n        rows.append({'path':p,'detail':cols[2] if len(cols)>2 else None,'gaps':[x for x in gap_rels if x==p], 'removals':[x for x in rem if x==p]})\nout={'id':cid,'gap_count':len(gaps),'gap_paths':all_gaps,'gap_dev_paths':[p for p in all_gaps if isinstance(p,str) and '/dev/' in p or isinstance(p,str) and p.startswith('dev/')], 'removed_dev_paths':[p for p in rem if isinstance(p,str) and (p.startswith('dev/') or '/dev/' in p)], 'malicious_symlink_removed_count':len(rem),'char_dispositions':rows}\nprint(json.dumps(out,sort_keys=True,ensure_ascii=False,indent=2))",
+        "c6430",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-50/c1/c6430/after.json",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/oracle/c6430.nonregular.tsv"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "a1e4d6bc3834a95292b7dd361a17ca82530b0ea38a3e06e47c20e03add96ef6b",
+      "stdout_bytes": 27524,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/c6430-receipt-json.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "argv (no shell)"
+    },
+    {
+      "label": "c6490-char-count",
+      "command": "awk -F'\\t' '$2==\"char-device\"' tools/round-50/oracle/c6490.nonregular.tsv | wc -l",
+      "exit_code": 0,
+      "stdout_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "stdout_bytes": 2,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/c6490-char-count.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "/bin/bash -c (shell=True)"
+    },
+    {
+      "label": "c6490-char-details",
+      "command": "awk -F'\\t' '$2==\"char-device\"' tools/round-50/oracle/c6490.nonregular.tsv",
+      "exit_code": 0,
+      "stdout_sha256": "eaff69ddcdcd2a1f1614c0a893fda13c761a402e0aee158dd6f7fcb0a7c63073",
+      "stdout_bytes": 26,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/c6490-char-details.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "/bin/bash -c (shell=True)"
+    },
+    {
+      "label": "c6490-receipt-json",
+      "command": [
+        "python3",
+        "-c",
+        "import json,sys\nfrom pathlib import Path\ncid,path,oracle_path=sys.argv[1:]\ndoc=json.loads(Path(path).read_text())\nnr=doc.get('normalized_result') or {}\ngaps=nr.get('extraction_gaps') or []\ndef rel(p):\n    if not isinstance(p,str): return None\n    marker='_extract/'\n    if marker in p: return p.split(marker,1)[1]\n    return p.removeprefix('$output/')\nall_gaps=[g.get('relative_path') for g in gaps if isinstance(g,dict)]\ngap_rels=[rel(p) for p in all_gaps]\nrem=[]\nfor d in nr.get('diagnostics') or []:\n    if not isinstance(d,dict): continue\n    report=d.get('report') or {}\n    if report.get('__typename__')=='MaliciousSymlinkRemoved': rem.append(rel(report.get('link')))\nrows=[]\nfor line in Path(oracle_path).read_text().splitlines():\n    cols=line.split('\\t')\n    if len(cols)>=2 and cols[1]=='char-device':\n        p=cols[0].removeprefix('./').lstrip('/')\n        rows.append({'path':p,'detail':cols[2] if len(cols)>2 else None,'gaps':[x for x in gap_rels if x==p], 'removals':[x for x in rem if x==p]})\nout={'id':cid,'gap_count':len(gaps),'gap_paths':all_gaps,'gap_dev_paths':[p for p in all_gaps if isinstance(p,str) and '/dev/' in p or isinstance(p,str) and p.startswith('dev/')], 'removed_dev_paths':[p for p in rem if isinstance(p,str) and (p.startswith('dev/') or '/dev/' in p)], 'malicious_symlink_removed_count':len(rem),'char_dispositions':rows}\nprint(json.dumps(out,sort_keys=True,ensure_ascii=False,indent=2))",
+        "c6490",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-50/c1/c6490/after.json",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/oracle/c6490.nonregular.tsv"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "3a4413d274539bda93e52389a1e81b8d97635f19547033752335e9e851459592",
+      "stdout_bytes": 29690,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/c6490-receipt-json.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "argv (no shell)"
+    },
+    {
+      "label": "counter-projection-state",
+      "command": [
+        "python3",
+        "-c",
+        "import json,sys; d=json.load(open(sys.argv[1])); print(json.dumps({'carriers_matched':d['carriers_matched'],'target':d['target'],'exit_code':d['exit_code'],'projection_profile':d.get('projection_profile'),'carriers':{k:{x:v.get(x) for x in ('gaps_ok','gaps_note','projection_ok','projection_error','projection_diff')} for k,v in d['carriers'].items()}},sort_keys=True,ensure_ascii=False))",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/l1/scores/c1-after-attempt2.json"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "aca0b154e4472f45d6ce00fd7d3edcb17d813eb67a14993fb13c3d7c21e2cb55",
+      "stdout_bytes": 2292,
+      "utc": "2026-10-29T21:31:49Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/counter-projection-state.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "argv (no shell)"
+    },
+    {
+      "label": "frozen-gap-rule-state",
+      "command": [
+        "python3",
+        "-c",
+        "import hashlib,json,sys; b=open(sys.argv[1],'rb').read(); d=json.loads(b); print(json.dumps({'rule_sha256':hashlib.sha256(b).hexdigest(),'required_char_device':d['required']['char-device'],'allowed_char_device':d['allowed']['char-device'],'removed_diagnostic':d['removed']['diagnostic'],'removed_kinds':d['removed']['kinds'],'silent_char_device':d['removed']['silent']['char-device']},sort_keys=True))",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/gap-rule.json"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "bf9eb60f207100ac058c8d16b52313042f95d927fe7f3c692325e8002c03b65b",
+      "stdout_bytes": 272,
+      "utc": "2026-10-29T21:31:50Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/frozen-gap-rule-state.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "argv (no shell)"
+    },
+    {
+      "label": "g7581-char-count",
+      "command": "awk -F'\\t' '$2==\"char-device\"' tools/round-50/oracle/g7581.nonregular.tsv | wc -l",
+      "exit_code": 0,
+      "stdout_sha256": "1a252402972f6057fa53cc172b52b9ffca698e18311facd0f3b06ecaaef79e17",
+      "stdout_bytes": 3,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/g7581-char-count.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "/bin/bash -c (shell=True)"
+    },
+    {
+      "label": "g7581-char-details",
+      "command": "awk -F'\\t' '$2==\"char-device\"' tools/round-50/oracle/g7581.nonregular.tsv",
+      "exit_code": 0,
+      "stdout_sha256": "333594a473b9e08d6a9166f8fe1e640ee8b2a951b9e463476497bc04991e3eb2",
+      "stdout_bytes": 356,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/g7581-char-details.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "/bin/bash -c (shell=True)"
+    },
+    {
+      "label": "g7581-dev-path-audit",
+      "command": [
+        "python3",
+        "-c",
+        "import json,sys; d=json.load(open(sys.argv[1])); n=d['normalized_result']; gaps=n.get('extraction_gaps') or []; gd=[g.get('relative_path') for g in gaps if isinstance(g,dict) and isinstance(g.get('relative_path'),str) and ('/dev/' in g['relative_path'] or g['relative_path'].startswith('dev/'))]; ds=[]; [(ds.append(x.get('report',{}).get('link'))) for x in n.get('diagnostics') or [] if isinstance(x,dict) and x.get('report',{}).get('__typename__')=='MaliciousSymlinkRemoved' and isinstance(x.get('report',{}).get('link'),str) and '/dev/' in x.get('report',{}).get('link')]; print(json.dumps({'gap_dev_paths':gd,'removed_dev_paths':[p.split('_extract/',1)[1] if '_extract/' in p else p for p in ds]},sort_keys=True,ensure_ascii=False))",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-50/c1/g7581/after.json"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "57cb33cce7be403e498905d18891b911234670288982358f2fb08ef61622d33e",
+      "stdout_bytes": 129,
+      "utc": "2026-10-29T21:33:09Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/g7581-dev-path-audit.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "execution_mode": "argv (no shell)",
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin"
+    },
+    {
+      "label": "g7581-receipt-json",
+      "command": [
+        "python3",
+        "-c",
+        "import json,sys\nfrom pathlib import Path\ncid,path,oracle_path=sys.argv[1:]\ndoc=json.loads(Path(path).read_text())\nnr=doc.get('normalized_result') or {}\ngaps=nr.get('extraction_gaps') or []\ndef rel(p):\n    if not isinstance(p,str): return None\n    marker='_extract/'\n    if marker in p: return p.split(marker,1)[1]\n    return p.removeprefix('$output/')\nall_gaps=[g.get('relative_path') for g in gaps if isinstance(g,dict)]\ngap_rels=[rel(p) for p in all_gaps]\nrem=[]\nfor d in nr.get('diagnostics') or []:\n    if not isinstance(d,dict): continue\n    report=d.get('report') or {}\n    if report.get('__typename__')=='MaliciousSymlinkRemoved': rem.append(rel(report.get('link')))\nrows=[]\nfor line in Path(oracle_path).read_text().splitlines():\n    cols=line.split('\\t')\n    if len(cols)>=2 and cols[1]=='char-device':\n        p=cols[0].removeprefix('./').lstrip('/')\n        rows.append({'path':p,'detail':cols[2] if len(cols)>2 else None,'gaps':[x for x in gap_rels if x==p], 'removals':[x for x in rem if x==p]})\nout={'id':cid,'gap_count':len(gaps),'gap_paths':all_gaps,'gap_dev_paths':[p for p in all_gaps if isinstance(p,str) and '/dev/' in p or isinstance(p,str) and p.startswith('dev/')], 'removed_dev_paths':[p for p in rem if isinstance(p,str) and (p.startswith('dev/') or '/dev/' in p)], 'malicious_symlink_removed_count':len(rem),'char_dispositions':rows}\nprint(json.dumps(out,sort_keys=True,ensure_ascii=False,indent=2))",
+        "g7581",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-50/c1/g7581/after.json",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/oracle/g7581.nonregular.tsv"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "67efef4be050f7a2f1f748fb42f585bae7eb271dc62ef918c12882d0a2f52033",
+      "stdout_bytes": 33091,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/g7581-receipt-json.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "argv (no shell)"
+    },
+    {
+      "label": "g7582-char-count",
+      "command": "awk -F'\\t' '$2==\"char-device\"' tools/round-50/oracle/g7582.nonregular.tsv | wc -l",
+      "exit_code": 0,
+      "stdout_sha256": "1a252402972f6057fa53cc172b52b9ffca698e18311facd0f3b06ecaaef79e17",
+      "stdout_bytes": 3,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/g7582-char-count.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "/bin/bash -c (shell=True)"
+    },
+    {
+      "label": "g7582-char-details",
+      "command": "awk -F'\\t' '$2==\"char-device\"' tools/round-50/oracle/g7582.nonregular.tsv",
+      "exit_code": 0,
+      "stdout_sha256": "333594a473b9e08d6a9166f8fe1e640ee8b2a951b9e463476497bc04991e3eb2",
+      "stdout_bytes": 356,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/g7582-char-details.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "/bin/bash -c (shell=True)"
+    },
+    {
+      "label": "g7582-receipt-json",
+      "command": [
+        "python3",
+        "-c",
+        "import json,sys\nfrom pathlib import Path\ncid,path,oracle_path=sys.argv[1:]\ndoc=json.loads(Path(path).read_text())\nnr=doc.get('normalized_result') or {}\ngaps=nr.get('extraction_gaps') or []\ndef rel(p):\n    if not isinstance(p,str): return None\n    marker='_extract/'\n    if marker in p: return p.split(marker,1)[1]\n    return p.removeprefix('$output/')\nall_gaps=[g.get('relative_path') for g in gaps if isinstance(g,dict)]\ngap_rels=[rel(p) for p in all_gaps]\nrem=[]\nfor d in nr.get('diagnostics') or []:\n    if not isinstance(d,dict): continue\n    report=d.get('report') or {}\n    if report.get('__typename__')=='MaliciousSymlinkRemoved': rem.append(rel(report.get('link')))\nrows=[]\nfor line in Path(oracle_path).read_text().splitlines():\n    cols=line.split('\\t')\n    if len(cols)>=2 and cols[1]=='char-device':\n        p=cols[0].removeprefix('./').lstrip('/')\n        rows.append({'path':p,'detail':cols[2] if len(cols)>2 else None,'gaps':[x for x in gap_rels if x==p], 'removals':[x for x in rem if x==p]})\nout={'id':cid,'gap_count':len(gaps),'gap_paths':all_gaps,'gap_dev_paths':[p for p in all_gaps if isinstance(p,str) and '/dev/' in p or isinstance(p,str) and p.startswith('dev/')], 'removed_dev_paths':[p for p in rem if isinstance(p,str) and (p.startswith('dev/') or '/dev/' in p)], 'malicious_symlink_removed_count':len(rem),'char_dispositions':rows}\nprint(json.dumps(out,sort_keys=True,ensure_ascii=False,indent=2))",
+        "g7582",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/evidence/round-50/c1/g7582/after.json",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/oracle/g7582.nonregular.tsv"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "05bbac05704af60f03d934c5d26cdd2712934ec1b2eb99858adc8af495b93447",
+      "stdout_bytes": 33091,
+      "utc": "2026-10-29T21:29:27Z",
+      "stdout_file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-50/w4/CritC1MissReal/g7582-receipt-json.stdout",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0,
+      "cwd": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+      "execution_mode": "argv (no shell)"
+    }
+  ],
+  "created_utc": "2026-10-29T21:33:09Z"
+}

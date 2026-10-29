@@ -1,0 +1,90 @@
+[
+ {
+  "tag": "counter-head",
+  "cmd": "python3 -c \"import json;r=json.load(open('.ufo/waves/round-50/l1/scores/c1-after-attempt2.json'));print(r['carriers_matched'],r['target'],r['exit_code'],r['frozen_path_changed'],r['freeze'][:8])\"",
+  "exit": 0,
+  "stdout_sha256": "a36a7a621460aec242fa5f9ebd34fa1b489279820195bdf5bbe895c6cb9659d5",
+  "stdout": "2 4 1 [] 435d41fd\n",
+  "utc": "2026-10-29T21:35:58Z"
+ },
+ {
+  "tag": "counter-failing-g7581",
+  "cmd": "python3 -c \"import json;r=json.load(open('.ufo/waves/round-50/l1/scores/c1-after-attempt2.json'));print(r['failing']);g=r['carriers']['g7581'];print('projection_ok',g['projection_ok']);print('attempts',g['projection_error']['replayed']['attempts']);print('code',g['projection_error']['error']['code'])\"",
+  "exit": 0,
+  "stdout_sha256": "1ef04fcb7fadc2a74d441b1d925b059eac54a65399c47a288a13143020fa6fb4",
+  "stdout": "['g7581:gaps_ok', 'g7581:projection_ok', 'g7582:gaps_ok']\nprojection_ok False\nattempts 1\ncode execution_failure\n",
+  "utc": "2026-10-29T21:35:58Z"
+ },
+ {
+  "tag": "oracle-published",
+  "cmd": "python3 -c \"import json;r=json.load(open('.ufo/waves/round-50/l1/scores/c1-after-attempt2.json'));[print(k,r['carriers'][k]['oracle_files'],r['carriers'][k]['published_files'],r['carriers'][k]['gaps_ok'],r['carriers'][k]['matched']) for k in ['g7581','g7582','c6490','c6430']]\"",
+  "exit": 0,
+  "stdout_sha256": "5bc3edf74fb9ac909afbc329fcf2c4740f3a5fdac630cc713b82efab69f17f9d",
+  "stdout": "g7581 4556 4556 False False\ng7582 4564 4564 False False\nc6490 4709 4709 True True\nc6430 3955 3955 True True\n",
+  "utc": "2026-10-29T21:35:58Z"
+ },
+ {
+  "tag": "char-device-counts",
+  "cmd": "for f in tools/round-50/oracle/*.nonregular.tsv; do printf '%s ' $f; awk -F'\\t' '$2==\"char-device\"{c++} END{print c+0}' $f; done",
+  "exit": 0,
+  "stdout_sha256": "035c97584fcfb22fbdc4b6e7892d87e16a6286eec25c93eae64d403e41b994c3",
+  "stdout": "tools/round-50/oracle/c6430.nonregular.tsv 1\ntools/round-50/oracle/c6490.nonregular.tsv 1\ntools/round-50/oracle/g7581.nonregular.tsv 13\ntools/round-50/oracle/g7582.nonregular.tsv 13\n",
+  "utc": "2026-10-29T21:35:58Z"
+ },
+ {
+  "tag": "gap-rule-silent",
+  "cmd": "python3 -c \"import json;r=json.load(open('tools/round-50/gap-rule.json'));print(r['required']['char-device'],r['removed']['silent'])\"",
+  "exit": 0,
+  "stdout_sha256": "17d6666448a0d9e4718531878e0f206460a1f62ac8aa30b692336ed9450dd3e8",
+  "stdout": "True {'char-device': ['247:0']}\n",
+  "utc": "2026-10-29T21:35:58Z"
+ },
+ {
+  "tag": "run-durations",
+  "cmd": "python3 -c \"import json;[print(c,json.load(open('corpus/evidence/round-50/c1/%s/run.json'%c))['duration_ms'],json.load(open('corpus/evidence/round-50/c1/%s/run.json'%c))['rea_attempts']) for c in ['g7581','g7582','c6490','c6430']]\"",
+  "exit": 0,
+  "stdout_sha256": "e8ca536f72d73edbe66cc62b8d762afbd446701e2b8ac1b3f4994ea2e461b33d",
+  "stdout": "g7581 12687 1\ng7582 21874 1\nc6490 20282 1\nc6430 8266 1\n",
+  "utc": "2026-10-29T21:35:58Z"
+ },
+ {
+  "tag": "afterjson-digests",
+  "cmd": "sha256sum corpus/evidence/round-50/c1/*/after.json",
+  "exit": 0,
+  "stdout_sha256": "3ed97e8027a6824cb3008a85acc46ea0b3a361506d1228e02aef101501c412b2",
+  "stdout": "30db72bdf2aa84e6d470b98acf5224c147eab5c070f845b38bc91b453f11c64c  corpus/evidence/round-50/c1/c6430/after.json\n2c21f26464235334c330d42058c4b92485a688db65c05438b56c7690a0381aed  corpus/evidence/round-50/c1/c6490/after.json\nff481957b42cb418c2264771c60ebf5c4fda2db76f225d86606b2c0bf96c74a7  corpus/evidence/round-50/c1/g7581/after.json\nf250f31585f6137755815062243a4fd5881affa794da583c5c64910e3dc19665  corpus/evidence/round-50/c1/g7582/after.json\n",
+  "utc": "2026-10-29T21:35:58Z"
+ },
+ {
+  "tag": "pos-control",
+  "cmd": "python3 -c \"import json;s=json.load(open('.ufo/waves/round-50/controls-attempt2/summary.json'));print(s['controls']['CTL-C1-POS'])\"",
+  "exit": 0,
+  "stdout_sha256": "9f10244bb8f00d8080e811d20bf89f7752e0130016d69ad93c5156e434d9b3cb",
+  "stdout": "{'carriers_matched': 2, 'exit_code': 1, 'stdout_sha256': '11956a04daf81bde2ddffe61ba8214fc917f084250ace63b265a3c2ae16516dc', 'verdict': 'misbehaved', 'wall_s': 78.432, 'why': 'expected exit 0, got 1'}\n",
+  "utc": "2026-10-29T21:35:58Z"
+ },
+ {
+  "tag": "toolchain",
+  "cmd": "python3 -c \"import json;r=json.load(open('.ufo/waves/round-50/l1/scores/c1-after-attempt2.json'));t=r['rerun_toolchain'];print(t['rea']['version'],t['unblob']['version'],t['sasquatch']['version_line'])\"",
+  "exit": 0,
+  "stdout_sha256": "40b0f7eddecf326d93e438098e65a00e9cb79d3b33ae6387280b1e224deb2b9a",
+  "stdout": "6.5.0 26.6.4 unsquashfs version 4.5.1 (2022/03/17)\n",
+  "utc": "2026-10-29T21:35:58Z"
+ },
+ {
+  "tag": "receipt-digests-bind",
+  "cmd": "python3 -c \"import json;r=json.load(open('.ufo/waves/round-50/l1/scores/c1-after-attempt2.json'));print(json.dumps(r['evidence_digests'],indent=1))\"",
+  "exit": 0,
+  "stdout_sha256": "aeff6db7760706f41b7fc9a9bcd6c1e729ac9455db0b38568ea8eb503db4c008",
+  "stdout": "{\n \"c6430\": {\n  \"path\": \"corpus/evidence/round-50/c1/c6430/after.json\",\n  \"sha256\": \"30db72bdf2aa84e6d470b98acf5224c147eab5c070f845b38bc91b453f11c64c\"\n },\n \"c6490\": {\n  \"path\": \"corpus/evidence/round-50/c1/c6490/after.json\",\n  \"sha256\": \"2c21f26464235334c330d42058c4b92485a688db65c05438b56c7690a0381aed\"\n },\n \"g7581\": {\n  \"path\": \"corpus/evidence/round-50/c1/g7581/after.json\",\n  \"sha256\": \"ff481957b42cb418c2264771c60ebf5c4fda2db76f225d86606b2c0bf96c74a7\"\n },\n \"g7582\": {\n  \"path\": \"corpus/evidence/round-50/c1/g7582/after.json\",\n  \"sha256\": \"f250f31585f6137755815062243a4fd5881affa794da583c5c64910e3dc19665\"\n }\n}\n",
+  "utc": "2026-10-29T21:35:58Z"
+ },
+ {
+  "tag": "g7581-dev-gaps",
+  "cmd": "python3 -c \"import json;a=json.load(open('corpus/evidence/round-50/c1/g7581/after.json'));g=[x.get('relative_path') for x in a['normalized_result']['extraction_gaps'] if 'dev/' in json.dumps(x)];print(g)\"",
+  "exit": 0,
+  "stdout_sha256": "ce0c613c29834647f6a600257d51a983280b81c386bdd2d69f25d4ad29832e53",
+  "stdout": "['firmware.bin_extract/dev/kdsld_misc', 'firmware.bin_extract/dev/new_led']\n",
+  "utc": "2026-10-29T21:36:12Z"
+ }
+]
