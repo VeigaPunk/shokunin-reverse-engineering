@@ -103,8 +103,12 @@ instrument `tools/round-50/sqfs-triage-v5.py`, such that:
 
 1. C3 freeze (instrument + registry row), C3 controls + before-run receipts.
 2. C3 table (rule block 22) lands in `SKILL.md`; C3 after-run.
-3. C1: controls-attempt2 receipts, data run, entry `corpus/knowledge/2026-10-29-r50-le-avm-hsqs-core.md`
-   (stem pinned here), `PROVINCE.md` `## Round-50 additions to Core` + frontier note,
+3. C1: controls-attempt2 receipts, data run, entry `corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md`
+   (the stem the FROZEN counter pins — `tools/round-50/c1-counter.py` constants `entry`/`stem`
+   `2026-10-28-r50-avm-le-squashfs-core`, `core_heading` `## Round-50 additions to Core`, `frontier_mark`
+   `Round-50 frontier note`, `opened` `2026-10-28`, `prov_base` `/fast/scratch/hyaku/kaidoku-r50`; this file's
+   first draft wrongly named a `2026-10-29-r50-le-avm-hsqs-core` stem and is corrected by this commit before any
+   data — the counter, not this file, is the rule), `PROVINCE.md` `## Round-50 additions to Core` + frontier note,
    `corpus/README.md` coverage-map row, SOURCES rows S243/S244/S245/S249 (opened 2026-10-28,
    re-opened 2026-10-29 this attempt) listing the entry in `used-by`, SCORECARD capability row +
    Owned-axes coverage head `140/140` (B1 stays green), attempt-2 SCORECARD/LOG/lesson sections.
