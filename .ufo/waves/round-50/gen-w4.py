@@ -1,0 +1,381 @@
+#!/usr/bin/env python3
+"""Generate the round-50 attempt-2 wave-4 spec (v1 policy, falsify wave), validate, write dispatch + ready."""
+import json
+import os
+import subprocess
+import sys
+
+ROOT = "/home/vgpnk/Projects/shokunin/kaidoku-shokunin"
+WAVE_DIR = os.path.join(ROOT, ".ufo/waves/round-50")
+BASE = "f890bbead20ca2c549487167f56876ae47f1e1a4"
+FREEZE = "435d41fd4ad9211d1579fc447936fb33d2b74467"
+GODSPEED = """/skill:godspeed
+
+You are a Godspeed-enabled subagent.
+
+1. **Name the axes.**
+2. **Iterate cheap, in parallel.**
+3. **Keep moves that improve any axis and harm none.**
+4. **Don't aim \\u2014 let the frontier walk itself.**
+
+## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.
+
+"""
+AXES = ["coverage", "depth", "calibration"]
+WAVE = "r50-w4"
+MILE = ("Round 50 attempt-2 wave 4 (falsify): re-run each counting command, attack each claim and new row, "
+        "mutation-test the v5 instrument and the landed table, re-open the new SOURCES rows")
+REPORT = ".ufo/waves/round-50/w4"
+W = REPORT + "/"
+SCRATCH = "/fast/scratch/hyaku/kaidoku-r50/"
+ENTRY = "2026-10-28-r50-avm-le-squashfs-core"
+TIP = "c67b741e8f6bd8d64adbdb15e059d47fde004c77"
+
+CTX = f"""# Target
+kaidoku-shokunin round 50, attempt 2, wave 4 of 2 = the FALSIFY wave, dispatched against the LANDED state. Everything below is committed at the lane tip `{TIP}` (branch `main`, pushed). Lane root (absolute): {ROOT}. L1 = KaidokuR50 (integration owner; it holds the section-3 planner seat \u2014 the validator rejects `planner` as a swarm role). Base for before-state comparisons where a seat needs one: `{BASE}`.
+
+# What landed (attack this, not the prompt)
+- **R50-C1 (coverage, RESUMED under the frozen bytes) \u2014 measured as a MISS**: the frozen counter `tools/round-50/c1-counter.py` at `{FREEZE}` scored the landing rev `646d29c9`: `carriers_matched 2` of `target 4`, exit 1 \u2014 REA published every frozen-oracle regular file on all four carriers (4 556/4 564/4 709/3 955) and the counter's own REA rerun reproduced every projection, but `gaps_ok` is false on `g7581`/`g7582` (twelve `char-device` oracle entries each with no gap and no removal; the frozen rule `tools/round-50/gap-rule.json` silently admits only `247:0`). Receipt `.ufo/waves/round-50/l1/scores/c1-after-attempt2.json`; data receipts `corpus/evidence/round-50/c1/<id>/{{after.json,run.json}}`; controls `.ufo/waves/round-50/controls-attempt2/` (POS red PRE-data, kill rule silent). Landing: entry `corpus/knowledge/{ENTRY}.md`, SOURCES rows S243/S244/S245/S249 + a new `## Search log` section (registry 152\u2192156, 19 W04), PROVINCE `## Round-50 measured, not promoted (R50-C1 honest stop)` + frontier note, README coverage-map + knowledge rows + frontier note, SCORECARD coverage head `140/140` + `## Round 50, attempt 2` section, LOG entry, lesson attempt-2 sections (M50-7..M50-10), QUALITY rows 94-95.
+- **R50-C3 (depth) \u2014 landed and scored**: instrument `tools/round-50-c3/sqfs-triage-v5.py` sha256 `ef4633c523ca8ab4ff096a7d90ef7074461a67f03952ad3652a048dce84d3ed0` (`--selftest` 18 cases; PREDICATE constant pinned to the claims file; receipts carry `predicate` + `instrument_sha256` and are gated on re-read); SKILL rule block 26 (table v5: `clean-unverified`/`record-unverified`, `no-reader-failure`/`preserve-unresolved`, `legacy-body-failure` narrowed to `squashfs_v1,squashfs_v2,squashfs_v3,squashfs_v3_ddwrt`) + one instrument-registry row; table landing `1439dfe9`; before at `{BASE}` exit 1 with the 19 no-reader `clean/none` rows (`.ufo/waves/round-50/c3/c3-before.json`), after exit 0 `pair_mismatches 0` over 126 envelopes (`.ufo/waves/round-50/c3/c3-after.json`); controls do-nothing/junk/guard-deleted/action-swapped semantic reds 19/126/26/51 (the literal all-`clean` junk variant is a parse refusal, `.ufo/waves/round-50/c3/ctl-junk-parse-refusal.log`). Disclosed residue: ddwrt no-pad bodies (failed body `dmg_Z3_v3ddwrt_inode_table` still routes `legacy-body-failure`/`cross-read-legacy`) \u2014 named in the claims file and the block.
+- **R50-C2 (record consistency, landed in attempt 1) re-verified green at the tip**: `c2-record.py --battery` = atoms 11, mismatches 0, battery failing [], do_nothing_red 11, 52 mutations (`.ufo/waves/round-50/l1/scores/c2-final-attempt2.json`).
+
+# Contract (binding on every seat)
+- **Read-only on the lane tree.** Write ONLY inside `{ROOT}/{W}<YourSeatName>/` (create it) and your report file `{ROOT}/{W}<YourSeatName>.md`. Never edit the lane's `tools/`, `plans/`, `corpus/`, `SKILL.md`, `PROVINCE.md`, `LOG.md`, `SCORECARD.md`, nor the fleet repo. Never commit, push, stage, stash, or run any mutating git/jj command in the lane or fleet repo. Read-only git is fine. A mutation you want to test runs on a COPY in your scratch, never in place.
+- **No REA runs** except where your task explicitly names one (none does): re-runs of the C3 instrument and the C2/C1 offline selftests are allowed and are named per seat; the C1 counter's full predicate command is NOT re-run by seats (it invokes REA; the L1 owns it).
+- **Fixture repos**: `D=$(mktemp -d -p "$S") && git -C "$D" init -q`; every later git call names `-C "$D"`; verify `git -C "$D" rev-parse --show-toplevel` equals `$D` before the first commit; set `user.name`/`user.email` in that clone only. Prefer `git clone --shared {ROOT} "$S/clone"` + `git -C "$S/clone" checkout --detach {TIP}` for a lane copy.
+- **Scratch**: `S={SCRATCH}w4-<YourSeatName>`; `mkdir -p "$S"`, `export TMPDIR="$S"`. Remove `$S` before you yield AFTER copying receipts into `{W}<YourSeatName>/`. Never write under `/tmp`. Check `/home/vgpnk/Projects/shokunin/scripts/hyaku/disk-guard.sh status` before a heavy pass.
+- **Honest capture beats a pass.** Every receipt carries the exact command, exit code, stdout sha256 and UTC time. A check you did not run is not passed \u2014 say "not run". Never fabricate output. Do not paste session cookies, tokens or `Set-Cookie` headers into any receipt: strip headers before saving.
+- **Exit codes are semantic**: 0 met/clean, 1 not met/violation, 2 could-not-evaluate.
+- **Absolute paths**: your tools start at the fleet root, not the lane. The `Report:` trailer path in your prompt is relative to {ROOT} \u2014 write it at `{ROOT}/<that path>` (`{ROOT}/{W}<YourSeatName>.md`).
+- **Tooling authorization (operator, 2026-10-19)**: you may install/upgrade tools that help the task; first read `/home/vgpnk/.omp/agent/RULES.md` (official channels, update-safety gate; record tool/version/channel/reason in your report). **pacman guard**: all pacman transactions are PAUSED host-wide \u2014 install only via `uv tool`/`npx`/an official binary in `~/.local/bin`, or nothing. Never `-Sy`, `-Syu`, `-U`, `-R`, downgrade, or restart a host service.
+- Never message `agent://all`; never touch a sibling lane, `.ufo/state/`, `.ufo/watchdog.log`, `/home/vgpnk/Projects/shokunin/.scratch/`, or the fleet repo. If you find a fleet-root stray, REPORT it \u2014 do not delete it (the L1 owns deletions).
+- Return a final message of at most 8 lines: your verdict, the 1-3 most important findings, your report path.
+
+# What the L1 does with your output
+It reads every report, lands corrections as new commits (append-only), and files the round report only after this wave settles. A finding that survives your attack is the L1's problem to fix or disclose; a finding that does not survive is recorded as attacked-and-held. Report; do not wait for others.
+"""
+
+T = []
+
+
+def add(name, agent, task):
+    t = GODSPEED + task + (
+        "\n\nWrite your findings to `<ROOT>/<W><SEAT>.md` (verdict first, then a findings table "
+        "with exact commands, exit codes, sha256s); extra artifacts under `<ROOT>/<W><SEAT>/`.")
+    T.append({"name": name, "agent": agent,
+              "task": t.replace("{ROOT}", ROOT).replace("{W}", W).replace("{FREEZE}", FREEZE)
+              .replace("{ENTRY}", ENTRY).replace("{BASE}", BASE).replace("{TIP}", TIP)
+              .replace("<ROOT>", ROOT).replace("<W>", W).replace("<SEAT>", name)
+              .replace("<FREEZE>", FREEZE).replace("<ENTRY>", ENTRY)
+              .replace("<BASE>", BASE).replace("<TIP>", TIP)
+              .replace("<SCR>", SCRATCH)})
+
+
+# ------------------------------------------------------------------ re-runs
+add("ExecRerunC3", "executor",
+    "Re-run the C3 instrument from the COMMITTED tip bytes in a fresh scratch and reconcile with the landed receipts. "
+    "`python3 -I -B {ROOT}/tools/round-50-c3/sqfs-triage-v5.py --selftest --work $S/st` (expect 18 cases, exit 0; verify the "
+    "file's sha256 at the tip equals `ef4633c5...` via `git show {TIP}:tools/round-50-c3/sqfs-triage-v5.py | sha256sum` AND that "
+    "the worktree bytes match); before at `--rev {BASE} --freeze {FREEZE} --envelopes "
+    "{ROOT}/.ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/envelopes --work $S/b --json-out $S/before.json` (expect exit 1, 19 "
+    "mismatches, receipt carries `predicate` + `instrument_sha256` = the tip sha); after at `--rev 1439dfe9...` (expect exit 0, 0 "
+    "mismatches). Also verify each landed control receipt (.ufo/waves/round-50/c3/ctl-*.json) carries `instrument_sha256` and "
+    "`predicate`, and that the junk parse-refusal log exists. Any drift from the landed numbers is a STOP finding.")
+add("ExecRerunC2", "executor",
+    "Re-run the C2 battery from the committed tip: `python3 -I -B {ROOT}/tools/round-50/c2-record.py --root {ROOT} --rev {TIP} "
+    "--freeze {FREEZE} --battery --work $S/w --json-out $S/c2.json` (expect exit 0, atoms_total 11, mismatches 0, battery failing "
+    "[], do_nothing_red 11). Compare with the landed receipt `.ufo/waves/round-50/l1/scores/c2-final-attempt2.json` (measured at "
+    "bff7d96c) \u2014 the tip has moved only by evidence commits; any atom flip at the new tip is a STOP finding (name the atom).")
+add("ExecRerunSelftests", "executor",
+    "Re-run the frozen instruments' OFFLINE selftests at the tip: `c1-counter.py --selftest` (expect 169 cases, failures []), "
+    "`c1-controls.py selftest` (20/20), `c2-record.py --selftest` (29 cases), "
+    "`python3 -I -B {ROOT}/tools/round-50/selftest-r49-c2.py --root {ROOT}` (exit 0), `fetch-vendor.py --selftest` (16/16). "
+    "Scratch under $S; c2-record needs `--work`. Record exit codes + case counts; any regression from the attempt-1/attempt-2 "
+    "records is a finding.")
+add("ExecEntryAudit", "executor",
+    "Verify every number in the landed entry `{ROOT}/corpus/knowledge/{ENTRY}.md` against the committed receipts: the results "
+    "table (published 4 556/4 564/4 709/3 955; gaps 637/637/613/568 with kinds; MaliciousSymlinkRemoved 3/3/1/1; evidence-id "
+    "prefixes) vs `corpus/evidence/round-50/c1/<id>/after.json`; the run facts (12.7 s, 1 attempt, output_directory_prefix_ok, "
+    "provenance segment ok, tool pins) vs `run.json`; the 13-vs-1 char-device census vs `tools/round-50/oracle/*.nonregular.tsv` "
+    "(count char-device rows per carrier and list their details); the POS statement vs `.ufo/waves/round-50/controls-attempt2.json`. "
+    "Also verify the frozen oracle regular-file counts equal the frozen table row counts (`wc -l`). Any number that does not "
+    "reproduce is a STOP finding.")
+add("ExecC1Before", "executor",
+    "Re-take the C1 before receipt cleanly at the freeze: `python3 -I -B {ROOT}/tools/round-50/c1-counter.py --root {ROOT} --rev "
+    "{FREEZE} --freeze {FREEZE} --pkg65 /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents --work $S/w "
+    "--carrier-cache /fast/scratch/hyaku/kaidoku-r50/carrier-cache --json-out $S/c1-before.json` (expect exit 1, "
+    "carriers_matched 0, ~8 s, no REA reached). Compare with the landed `.ufo/waves/round-50/l1/scores/c1-before-attempt2.json` "
+    "(same numbers?). NOTE: this command must NOT reach REA at the freeze rev (no receipts there) \u2014 if it takes more than ~60 s "
+    "or invokes REA, that is a finding about the counter's early-exit order.")
+
+# ------------------------------------------------------------------ attacks: the C1 miss
+add("CritC1MissReal", "critic",
+    "Try to BREAK the miss \u2014 if the frozen counter is wrong, the claim would be green and the round's honest-stop framing "
+    "collapses. (1) Re-derive the char-device census per carrier from the frozen oracle tables: `awk -F'\\t' '$2==\"char-device\"' "
+    "{ROOT}/tools/round-50/oracle/<id>.nonregular.tsv | wc -l` + list details (expect 13/13/1/1 with the g-pair carrying "
+    "136:0-7, 230:0, 247:0, 3:0-2 and the c-pair only 247:0). (2) Verify the data receipts contain NO disposition for those "
+    "entries: list every `extraction_gaps[]` path in `corpus/evidence/round-50/c1/g7581/after.json` and grep for `dev/` (expect "
+    "zero) and count `MaliciousSymlinkRemoved` diagnostics naming dev paths (expect zero). (3) Read the counter's "
+    "disposition check (the `required`/`silent` logic around its 'no disposition' message) and confirm the rule file's "
+    "`required.char-device: true` + `silent 247:0` really produce the observed verdict \u2014 hand-simulate one carrier. (4) The "
+    "counter-time rerun clause PASSED on g7581/g7582 (`projection_ok` true in the landed receipt? re-read it) \u2014 does the "
+    "projection comparison include the gap set? If yes, the no-dev-gap behaviour is stable and the miss stands. Verdict: does "
+    "the miss survive?")
+add("CritBindingTruth", "critic",
+    "Attack the truthfulness of 'documentation bindings true'. The landed C1 receipt reports `bindings_false = "
+    "['province_core_section', 'province_core_row']` \u2014 the two Core-promotion bindings. Check every landed text that describes "
+    "the outcome (`corpus/knowledge/{ENTRY}.md` status + What-moved, `PROVINCE.md` round-50 section, `corpus/README.md` rows + "
+    "frontier note, `SCORECARD.md` `## Round 50, attempt 2`, `LOG.md` attempt-2 entry, `corpus/lessons/round-50.md` attempt-2 "
+    "sections): does ANY of them overstate (say 'moved to Core', claim a promotion, or imply the claim verified)? Does any "
+    "UNDERstate (hide that the extraction half held on all four)? Also check the frozen counter's receipt in the SCORECARD row "
+    "quotes the receipt path that exists. Quote each text and pass/fail it.")
+add("CritEntryClaims", "critic",
+    "Attack every claim sentence in `{ROOT}/corpus/knowledge/{ENTRY}.md`: (1) QUALITY 5 labels \u2014 any observation that is really "
+    "inference or vice versa (esp. the 'the rule's requirement, generalised at the freeze from one carrier class, is falsified' "
+    "inference and the 'REA/unblob simply does not account device entries' inference \u2014 is the mechanism claim labelled "
+    "inference, and is it supported or overreached?); (2) QUALITY 13 \u2014 every count carries its command; (3) the census "
+    "sentences (70 directories, 28 marker rows, 16 models, 23+5 split) \u2014 re-derive what is re-derivable from committed bytes "
+    "(`.ufo/waves/round-50/l1/scan-output.txt`, `w1/C1CarrierAdversary.md`) and mark the rest unverifiable-here; (4) the marker "
+    "section's re-stampability claim \u2014 labelled and bounded?; (5) no universal clauses beyond the enumerated four carriers. "
+    "List every defect with a proposed replacement sentence.")
+add("CritRegistryIntegrity", "critic",
+    "Attack the registry landing: (1) 11 columns per new row, no `|` inside cells (`awk -F'|' 'NF!=13'` sweep on "
+    "{ROOT}/corpus/SOURCES.md \u2014 expect 0); (2) tallies re-derived: rows 156, tier A=142 B=9 C=5, status mined=147 rejected=9 "
+    "(frozen manual census commands from /home/vgpnk/Projects/shokunin/CORPUS.md); (3) no existing row mutated: `git diff "
+    "{BASE} {TIP} -- corpus/SOURCES.md` must show ONLY additions (verify with `git diff --stat` and a hunk review); (4) "
+    "duplicate ids none; enum violations none; mined rows' used-by paths exist; (5) the S150-S242 skip statement in the lesson "
+    "is still accurate (`git grep -c S150 {BASE} -- corpus` finds only lessons). Any E-code from "
+    "`/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` is a STOP "
+    "finding (expect exit 0, 19 W04).")
+add("CritLessonGate", "critic",
+    "Attack the lesson attempt-2 sections in `{ROOT}/corpus/lessons/round-50.md`: (1) the four Gate rows' quotes \u2014 <=25 words, "
+    "located, matching the receipts (`w3/ScribeLessonGate/receipts/`); (2) the mistakes table \u2014 every evidence pointer resolves "
+    "at the tip (run the commands), every captured-by is honest (`none` where no criterion existed), every fix is shown able to "
+    "fail or says so; (3) M50-7's class (`stale-premise`/survivor) vs the actual defect; (4) the assimilation block's "
+    "reaffirmation vs attempt-1's Gate (do the refused entries' reasons match what attempt 1 recorded?); (5) the census numbers "
+    "vs the two receipt files. Also: the lesson says 'the wave seats are the lane' for the spot-check \u2014 is the non-author "
+    "duty correctly left to the closure?")
+add("CritTrendDrafts", "critic",
+    "Attack the SCORECARD `## Round 50, attempt 2` trend verdicts (expansion unchanged; quality improved; discernment improved, "
+    "each 'bounded: lane-verified'): would an outside spot-check agree? For each verdict name the strongest attack: expansion "
+    "\u2014 is the new entry 'admitted knowledge on uncovered ground' (it is NOT, the text says so \u2014 is unchanged right)?; quality "
+    "\u2014 does 'improved' survive given the C1 miss (the entry is real knowledge; the scored table is real depth \u2014 or is the "
+    "miss itself a quality harm?); discernment \u2014 'the gate refused a promotion its own control had measured unreachable' \u2014 "
+    "is that discernment or just the process working? Quote LEARNING.md's improved/harmed conditions and give a verdict with "
+    "reasons; the L1 will not change a verdict without your argument.")
+add("CritPlanLanded", "critic",
+    "Attack the consistency of `{ROOT}/plans/round-50-attempt2-claims.md` with what landed: (1) any stale 'rule block 22' "
+    "remnant; (2) the ddwrt failed-body sentence present and accurate vs the instrument's reader-census receipt; (3) the stem "
+    "pin; (4) the B9 note vs the actual registry row (ExecRegistryRow's row-final.txt text landed \u2014 verify cell grammar); (5) "
+    "the landing-order section vs what actually happened (C3 freeze+landing in one commit 1439dfe9 \u2014 the file said freeze "
+    "commit then table lands after: is the single-commit deviation disclosed anywhere? If not, draft the disclosure sentence); "
+    "(6) the 'planned (round 51)' bullet vs the actual open work. Every divergence is a finding with its fix.")
+
+# ------------------------------------------------------------------ attacks: C3
+add("CritC3Score", "critic",
+    "Attack the C3 score: (1) evaluator independence \u2014 read `tools/round-50-c3/sqfs-triage-v5.py`'s evaluator: is it derived "
+    "from the claim's precedence text (fine) or does it import the table's own decision code (fatal)? Quote the derivation; "
+    "(2) re-run the after-score yourself from the tip bytes in fresh scratch (the exact command in the block-26 status line, "
+    "`--rev 1439dfe9`) and compare `pair_mismatches 0`; (3) attack the 19-row before-state: are the 19 exactly the no-reader "
+    "`_ddefault` clean/none rows (4 v2ns + 7 broadcom + 8 nonstandard)? Any OTHER mismatch class hiding in the before receipt "
+    "(e.g. depth-limited rows, ddwrt rows)? (4) the held-out set is round-42-era \u2014 does the after-run exclude or include the "
+    "two ddwrt no-pad clean envelopes, and does the landed text say so truthfully?")
+add("RevBlock26", "reviewer",
+    "Review the landed SKILL rule block 26 against the frozen rule details in `{ROOT}/plans/round-50-attempt2-claims.md`: the "
+    "comma-list cell exactly `squashfs_v1,squashfs_v2,squashfs_v3,squashfs_v3_ddwrt`; the no-reader set exactly "
+    "{v2ns, v3_broadcom, v3_nonstandard}; the two new rows present with actions `record-unverified`/`preserve-unresolved` in the "
+    "actions vocabulary line; every cause cell carries a `->`; every row's source cell names a resolvable citation; the status "
+    "line's numbers vs the receipts (19/126/26/51; sha `ef4633c5...`; 18 cases); the disclosed-residue sentence vs the "
+    "reader-census receipt; the supersession sentence (block 21 defers). Also parse-check: "
+    "`python3 -I -B {ROOT}/tools/round-50-c3/sqfs-triage-v5.py --root {ROOT} --rev {TIP} --freeze {FREEZE} --envelopes "
+    "{ROOT}/.ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/envelopes --work $S/w --json-out $S/tip.json` (expect exit 0 at "
+    "the tip too \u2014 the table is landed there).")
+add("RevC1MissReceipt", "reviewer",
+    "Re-derive the landed C1 receipt `.ufo/waves/round-50/l1/scores/c1-after-attempt2.json` field by field: `rev` = 646d29c9 "
+    "(the receipts commit), `freeze` = 435d41fd, `frozen_path_changed []`, `carriers_matched 2`, `exit_code 1`, per-carrier "
+    "`matched` (c6430/c6490 true; g7581 false on gaps_ok+projection_ok+matched; g7582 false on gaps_ok+matched \u2014 explain the "
+    "asymmetry from the receipt's own fields), bindings false exactly ['province_core_section','province_core_row'], "
+    "`opened_source_rows` = [S243,S244,S245,S249], `entry_present` true, `coverage_map_row` true, `frontier_note` true. Also "
+    "verify the receipt's counter_sha256 equals `git show {FREEZE}:tools/round-50/c1-counter.py | sha256sum`. Any field that "
+    "does not reproduce is a STOP finding.")
+add("RevScorecard", "reviewer",
+    "Review the landed `SCORECARD.md` `## Round 50, attempt 2` section + the coverage head: (1) B1 \u2014 the coverage row leads "
+    "`140/140 knowledge files mapped` and the knowledge count at the tip is 140 (`git ls-tree -r --name-only {TIP} -- "
+    "corpus/knowledge | grep -c '\\.md$'`); (2) the claims table's numbers vs the receipts (2/4; 19-before/0-after; 18 cases; "
+    "19/126/26/51); (3) the wave shape sentence vs the actual w3 registry (35 seats, role counts); (4) the planned-round-51 "
+    "bullet names the gap-rule re-freeze; (5) `## Record corrections \\u2014 round 50` is still the LAST `##` section of the file "
+    "(`grep -n '^## ' SCORECARD.md | tail -1`); (6) QUALITY rows 94-95 exist, cite the lesson, and their supersedes columns are "
+    "`\u2014`. Any defect with its minimal fix.")
+add("RevSourcesRows", "reviewer",
+    "Re-open the four new SOURCES rows' sources TODAY and verify each row: URL fetch (HTTP 200, byte size, sha256 vs the row's "
+    "anchor cell), the located quote <=25 words contiguous in the served bytes at the named location, `used-by` names "
+    "`corpus/knowledge/{ENTRY}.md`, status mined, opened 2026-10-28. Rows: S243 (Freetz patch 101), S244 (AVM index root + 4 "
+    "dirs), S245 (unblob 26.6.4 squashfs.py \u2014 same URL as S108/S112, distinct scope), S249 (info_en.txt). Receipts under your "
+    "seat dir; strip headers. Any quote that does not locate byte-contiguously is a STOP finding (QUALITY 42).")
+add("RevProvReadme", "reviewer",
+    "Review the landed `PROVINCE.md` `## Round-50 measured, not promoted (R50-C1 honest stop)` section + frontier note and the "
+    "`corpus/README.md` coverage-map row, knowledge row and frontier note: every number (2/4; 13/1 char-devices; 4 556/4 564/4 "
+    "709/3 955; 12.7 s) traces to a committed receipt; every path resolves; the frontier statements match the entry's Still-"
+    "Frontier list; the supersession wording ('adds the round-50 measurement to the LE-AVM clause ... supersedes nothing else') "
+    "is accurate; the placement (new section at file end; the dated note) matches the round-40 precedent. Also confirm no "
+    "sibling-ground bleed (firmware extraction is lane ground; the runtime-debug arbitration is untouched).")
+add("RevLessonQuality", "reviewer",
+    "Review `corpus/QUALITY.md` rows 94-95 and the LOG.md attempt-2 entry: (1) each QUALITY row cites the lesson that produced "
+    "it and can fail (name its red-before); (2) the LOG entry's bullets each carry a path or command that resolves at the tip "
+    "(run the git diff and ls commands it names); (3) the LOG entry's C3 sha + receipt paths exist; (4) nothing in LOG/lesson "
+    "contradicts the landed receipts (spot-check three numbers). Also: the lesson's `## Attempt 2` census block vs the two "
+    "census receipt files.")
+
+# ------------------------------------------------------------------ mutations
+add("MutC1Counter", "mutation-tester",
+    "Prove the miss is the rule's, not an accident: in a scratch COPY of the frozen `{ROOT}/tools/round-50/c1-counter.py`, "
+    "mutate the gaps_ok disposition check so `char-device` entries are NOT required (e.g. make `required.char-device` default "
+    "false, or admit any detail silently) and run the mutated copy against the LANDED data rev: "
+    "`python3 -I -B $S/c1-counter-mut.py --root {ROOT} --rev 646d29c9... --freeze {FREEZE} --pkg65 "
+    "/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents --work $S/w --carrier-cache "
+    "/fast/scratch/hyaku/kaidoku-r50/carrier-cache --json-out $S/mut.json --no-rerun`. EXPECT: `carriers_matched 4` (the "
+    "counterfactual goes green \u2014 proving the frozen clause is exactly what decides the miss, i.e. the kill-rule framing 'the "
+    "rule is falsified' is right and the extraction is not at fault). Record the mutation, the command, and the score. If the "
+    "mutant does NOT reach 4/4, name what else fails \u2014 that would be a new fact about the receipts.")
+add("MutC3Instrument", "mutation-tester",
+    "Mutation-test the committed instrument `{ROOT}/tools/round-50-c3/sqfs-triage-v5.py` (scratch copy, never in place): >=10 "
+    "single-point mutations \u2014 evaluator precedence order swap, comma-list matcher weakened to a single glob, guard-row pin "
+    "removed, receipt gate keys reduced, duplicate-glob refusal removed, instrument_sha256 key dropped, PREDICATE constant "
+    "edited, before-run rev constant changed, silent-admission widened, n_envelopes off-by-one. For each: `--selftest` must fail "
+    "(exit != 0) OR the after-score at `--rev 1439dfe9...` must flip from 0. Record every SURVIVOR with a one-line suggested "
+    "case. Use `--json-out` under $S and require the receipt to exist and parse (the receipt gate is part of the contract).")
+add("MutBlock26", "mutation-tester",
+    "Mutation-test the LANDED table (build mutated SKILL surfaces in scratch from `git show {TIP}:SKILL.md`): (1) the H2 swap "
+    "\u2014 `legacy-body-failure`'s cell narrowed to `squashfs_v[123]` (drops v3_ddwrt): the after-score must go red with the "
+    "v3_ddwrt envelopes mismatching; (2) the guard-row label swap (`clean-unverified` renamed): red; (3) an action swap "
+    "(`record-unverified` -> `none` on the guard row): red; (4) deleting the `no-reader-failure` row: red ONLY if a synthetic "
+    "case exercises it (the corpus has zero no-reader extractor-failure envelopes \u2014 verify the instrument's selftest carries "
+    "that synthetic and that deleting the row flips the SELFTEST, not the corpus run; state which). Run each via the instrument "
+    "with `--skill <mutated surface>`; receipts under $S.")
+add("MutClaimsPin", "mutation-tester",
+    "Mutation-test the claims-file pinning: copy `{ROOT}/plans/round-50-attempt2-claims.md` to scratch and produce three "
+    "mutants \u2014 (a) before-run rev changed to 8ccc05e6, (b) the ddwrt failed-body sentence deleted, (c) '19' weakened to '4' in "
+    "the counting bullet. For each, run the instrument's `--selftest` (with its `claim_counting_command_is_consistent`-class "
+    "cases pointed at the mutant file if the CLI allows a claims-path override; read the instrument source for how the selftest "
+    "locates the claims file \u2014 if it reads the lane path only, COPY the lane to scratch with the mutant claims file and run "
+    "there). EXPECT: each mutant fails the selftest. Record which mutants are caught and which survive (a survivor is a finding "
+    "about the pinning strength).")
+
+# ------------------------------------------------------------------ scouts
+add("ScoutCensusEnd", "scout",
+    "Run the frozen SOURCES census at the tip and record receipts under your seat dir: "
+    "`/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` (expect "
+    "exit 0, 19 W04, final line `kaidoku ok`), the row count (`grep -cE '^ {0,3}\\|[[:space:]]*S[0-9]{3,}' "
+    "{ROOT}/corpus/SOURCES.md` \u2192 156), the frozen manual census block from /home/vgpnk/Projects/shokunin/CORPUS.md "
+    "(malformed 0, tier A=142 B=9 C=5, status mined=147 rejected=9, duplicate ids none, enum violations none, mined used-by "
+    "paths exist). Compare with `.ufo/waves/round-50/l1/sources-census-end-attempt2.txt`.")
+add("ScoutMisroot", "scout",
+    "Fleet-root misroot sweep: `git -C /home/vgpnk/Projects/shokunin status --porcelain` (no pathspec). For every untracked "
+    "file, check whether its content names kaidoku/round-50 (grep). Known and already handled: `tools/round-50-c3/` was "
+    "removed by the L1's sweep (verify it is gone). Report any NEW stray that names this lane with its exact path and first "
+    "line \u2014 do NOT delete anything. Also verify the lane tree is clean of seat leftovers: `git -C {ROOT} status --porcelain` "
+    "should show nothing untracked outside `.ufo/waves/round-50/` and your own dir.")
+add("ScoutFrozenWalk", "scout",
+    "Verify no frozen path changed anywhere in the attempt: `git -C {ROOT} diff --stat {FREEZE} {TIP} -- tools/round-50/ "
+    "plans/round-50-claims.md tools/round-41/sqfs-list.py tools/round-27/xpin-attribute.mjs` (expect empty), "
+    "`git -C {ROOT} diff --stat e4f2cfa5 {TIP} -- tools/round-49/` (expect empty \u2014 the round-49 tree stayed byte-frozen), and "
+    "the C1 counter bytes at the freeze vs the tip (`git show {FREEZE}:tools/round-50/c1-counter.py | sha256sum` vs `git show "
+    "{TIP}:...`). Also confirm `tools/round-50-c3/` is the ONLY new tools directory at the tip (`git ls-tree {TIP} tools/`). "
+    "Any drift is a STOP finding.")
+add("ScoutAdjacency", "scout",
+    "Cross-domain bleed check on the landed texts (`PROVINCE.md` round-50 section + frontier note, the entry, README rows): "
+    "(1) grep them for claims about debugging/tracing/runtime ownership (revenger's arbitration ground) \u2014 expect none; (2) "
+    "grep sibling PROVINCEs (`/home/vgpnk/Projects/shokunin/*-shokunin/PROVINCE.md`, skip kaidoku) for `squashfs_v2_nonstandard`, "
+    "`v3_broadcom`, LE AVM, `hsqs`, `sqfs-triage` \u2014 does any sibling claim the no-reader triage ground or the LE AVM "
+    "measurement? (3) confirm the landed texts report contested scope rather than absorbing it (quote the adjacency sentences). "
+    "Expected: no bleed, no sibling claim \u2014 say so with the grep evidence.")
+
+# ------------------------------------------------------------------ scribes + sentinel + revenger + connector
+add("ScribeErrata", "scribe",
+    "Erratum sweep for the attempt-2 record: (1) attempt 1's report claimed source snapshots at `corpus/evidence/round-50/c1/index/` "
+    "\u2014 the entry now corrects this; verify every OTHER path attempt 1's report and lesson cite resolves at the tip (sample "
+    "ten: FREEZE file, dev-arm-timeouts.txt, oracle tables, controls-attempt1, w1 seats, assimilation dir, scores); (2) check "
+    "`LOG.md` attempt-1 entry for the same false pointer and draft the one-line correction the LOG needs (append-only); (3) "
+    "sweep `.ufo/waves/round-50/l1/` inherited scripts (land_c1.py, land_sources.py, land_registry.py, land_scorecard.py) for "
+    "stale constants a FUTURE round might trip on and draft a warning header line for the lesson's M50-8 row. Draft paste-ready "
+    "erratum text; the L1 lands it.")
+add("SentFinal", "sentinel",
+    "Final credential and containment sweep over everything this attempt added: (1) scan `corpus/evidence/round-50/c1/**`, "
+    "`.ufo/waves/round-50/c3/**`, `.ufo/waves/round-50/w3/**`, `.ufo/waves/round-50/l1/**` for `Set-Cookie`, `_gh_sess`, "
+    "`github_pat`, `op://`, `BEGIN.*PRIVATE KEY`, `logged_in=` (the round-45/49 precedents) \u2014 command + hit count; a hit in "
+    "COMMITTED bytes is a STOP finding; (2) re-verify `tools/round-50/fetch-vendor.py` at the tip: origin allowlist, cache "
+    "containment, TLS on, no header persistence; (3) confirm no vendor firmware bytes are committed: the largest new blobs in "
+    "the landing commits are the four after.json (~2-2.6 MB gzip'd JSON envelopes) \u2014 verify none is a filesystem image "
+    "(`file` on each; and their carrier pins never appear as file contents).")
+add("RevC1Origin", "revenger",
+    "Reverse-engineer WHY the FRITZ!Box carriers' device entries get no disposition while the Cable carriers' single `247:0` "
+    "device is silently admitted. Evidence available offline: the committed after.json envelopes (gap kinds, diagnostics, "
+    "`derivations[]` structure), `tools/round-50/oracle/*.nonregular.tsv`, and unblob 26.6.4's source (fetch "
+    "`https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/extractors/command.py` and "
+    "`.../handlers/filesystem/squashfs.py` raw; record date/status/sha; quote <=25 words with line numbers). Questions: does "
+    "sasquatch/unblob attempt device creation at all (mknod failures -> gaps) or does the `-no-exit-code` + error-swallowing "
+    "path drop device errors silently? Why would the Cable image's 247:0 (`dev/led`) differ \u2014 is it the SAME mechanism "
+    "(silent for all devices) with the rule's `247:0` allowance merely being the one entry the rule author SAW? State the "
+    "mechanism as [inference] with the cited lines, and what measurement would settle it (a next-round probe). No REA run.")
+add("ConnWave4Rollup", "connector",
+    "Cross-item pattern scan for the report's defect table: after the other wave-4 seats report (read their .md files under "
+    "`{ROOT}/{W}` as they appear; check twice during your run), list findings that RECUR across seats (same root cause named by "
+    ">=2 seats), findings that CONTRADICT each other (name both), and the three findings with the largest blast radius. Also "
+    "verify the round's cross-claim couplings held: no C3 text flipped a C1 binding and vice versa (spot-check the two counters' "
+    "receipts at the tip). Write the rollup as a table the L1 can paste.")
+
+add("ExecWave4Controls", "executor",
+    "Re-run the four C3 controls from the committed fixture tables against the tip instrument (fresh scratch): do-nothing, "
+    "guard-deleted, action-swapped from `{ROOT}/.ufo/waves/round-50/w3/ExecTriageControls/ctl-*.skill.md`, and the landed "
+    "syntactically-valid junk table `{ROOT}/.ufo/waves/round-50/c3/ctl-junk.skill.md` \u2014 each via the instrument at "
+    "`--rev 1439dfe9` (or `{TIP}`: state which and why the table bytes are identical there), expecting exit 1 with "
+    "pair_mismatches 19/26/51/126; plus the literal all-clean junk parse refusal (exit 2, log at "
+    "`.ufo/waves/round-50/c3/ctl-junk-parse-refusal.log` \u2014 verify the log exists and shows the duplicate-label error). "
+    "Receipts under your seat dir; any control that is not red is a STOP finding.")
+
+
+def main():
+    items = [{"name": t["name"], "role": t["agent"], "prompt": t["task"], "axes": AXES} for t in T]
+    spec = {"wave": WAVE, "milestone": MILE, "reportDir": REPORT, "context": CTX, "items": items}
+    spec_path = os.path.join(WAVE_DIR, "w4-spec.json")
+    with open(spec_path, "w") as f:
+        json.dump(spec, f, indent=1)
+    env = dict(os.environ, UFO_FLEET_ALLOW_EXTERNAL_TOOLS="1",
+               UFO_CONFIG_PATH="/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy.json",
+               UFO_PROJECT_ROOT=ROOT)
+    proc = subprocess.run(["node", os.path.expanduser("~/Projects/ufo-fsd-alpha/scripts/ufo-swarm-wave.mjs"),
+                           "plan", "--spec", spec_path], capture_output=True, text=True, env=env, cwd=ROOT)
+    if proc.returncode != 0 or not proc.stdout.strip().startswith("{"):
+        raise SystemExit("validator failed: rc=%s %s %s" % (proc.returncode, proc.stdout[:1500], proc.stderr[:1500]))
+    plan = json.loads(proc.stdout)
+    wave_tasks = plan["tasks"]
+    members = {t["name"]: {"kind": "spawn", "agentId": None, "role": t["agent"], "item": None,
+                           "axes": AXES, "milestone": MILE} for t in wave_tasks}
+    dispatch = {
+        "schema": "ufo-swarm-wave-dispatch-v1", "wave": WAVE, "policy": plan["policy"], "counts": plan["counts"],
+        "registry": {"schema": "ufo-swarm-registry-v1", "path": ".ufo/waves/round-50/w4/swarm-registry.json",
+                     "reportDir": REPORT, "members": members},
+        "compaction": plan.get("compaction", {"applied": False, "mechanism": None, "reason": None, "savedBytes": 0,
+                                              "payloadBytesBefore": 0, "payloadBytesAfter": 0}),
+        "taskCall": {"context": plan["context"], "tasks": wave_tasks},
+        "resumeSends": [],
+        "note": "Issue exactly one batched task call with taskCall ({context, tasks}); never split a wave.",
+    }
+    with open(os.path.join(WAVE_DIR, "w4-dispatch.json"), "w") as f:
+        json.dump(dispatch, f, indent=1)
+    os.makedirs(os.path.join(WAVE_DIR, "w4"), exist_ok=True)
+    with open(os.path.join(WAVE_DIR, "w4/swarm-registry.json"), "w") as f:
+        json.dump({"schema": "ufo-swarm-registry-v1", "wave": WAVE, "reportDir": REPORT, "members": members}, f, indent=1)
+    if "--no-ready" in sys.argv:
+        print("ready file NOT written (--no-ready)")
+    else:
+        with open(os.path.join(WAVE_DIR, "w4.ready"), "w") as f:
+            json.dump({"lane": "kaidoku", "round": 50, "wave": WAVE,
+                       "dispatch": os.path.join(WAVE_DIR, "w4-dispatch.json"), "l1": "KaidokuR50"}, f)
+        print("ready written:", os.path.join(WAVE_DIR, "w4.ready"))
+    print(json.dumps({"items": len(items), "counts": plan["counts"],
+                      "roles": {r: sum(1 for t in T if t["agent"] == r) for r in sorted({t["agent"] for t in T})}}, indent=1))
+
+
+if __name__ == "__main__":
+    main()
