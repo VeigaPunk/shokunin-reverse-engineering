@@ -124,9 +124,11 @@ instrument `tools/round-50-c3/sqfs-triage-v5.py`, such that:
   round 42). **Disclosed limit:** these are not fresh data — v4 scored 78 of them at R43-C1 and
   W2Skill re-read the four v2ns rows. The claim is depth (the rule the table adds), not held-out
   generalization; the before-state is measured, not assumed.
-- **Counting command**: the predicate's command, run twice — before at `--rev
-  8ccc05e6…` (exit 1, ≥4 mismatches incl. the four v2ns `_ddefault` rows) and after at the
-  landing REV (exit 0). Receipts under `.ufo/waves/round-50/l1/scores/c3-{before,after}.json`.
+- **Counting command**: the predicate's command, run twice — before at the declared base
+  `--rev f890bbea…` (exit 1 with the seat-measured **19** no-reader `clean/none` `_ddefault`
+  rows mismatched: 4 v2ns, 7 v3_broadcom, 8 v3_nonstandard) and after at the
+  landing REV (exit 0). Receipts under `.ufo/waves/round-50/l1/scores/c3-{before,after}.json`
+  → `.ufo/waves/round-50/c3/{c3-before,c3-after}.json`.
 - **C3 freeze (before any C3 data)**: one commit adding this file's C3 section (already),
   `tools/round-50-c3/sqfs-triage-v5.py` (instrument + evaluator + selftest + committed mutation
   battery) and its `instrument-registry v2` row. Controls scored with the frozen instrument

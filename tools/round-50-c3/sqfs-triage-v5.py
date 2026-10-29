@@ -19,21 +19,28 @@ It never invokes REA, unblob or sasquatch, never reads a carrier, never writes i
 lane tree, and never touches a network.
 
 PREDICATE (copied verbatim from ``plans/round-50-attempt2-claims.md``, section
-R50-C3, so the instrument and the claim cannot drift):
+R50-C3, so the instrument and the claim cannot drift; the same sentence is written into
+every JSON receipt under the key ``predicate``):
 
   at the measured revision REV, with FREEZE an ancestor of REV, frozen paths untouched,
   running `python3 -I -B tools/round-50-c3/sqfs-triage-v5.py --root <LANE> --rev <REV>
   --freeze <FREEZE> --envelopes <DIR> --json-out <OUT>` exits 0 with `pair_mismatches 0`,
   `evaluator_missing 0`, `table_labels == evaluator_labels` on every envelope of the
-  frozen held-out dir, `selftest` green (every committed mutation flips >=1 pair, none a
+  frozen held-out dir, `selftest` green (every committed mutation flips ≥1 pair, none a
   no-op or cross-flip, do-nothing red); and at the base REV the same command exits 1
-  with the four `v2ns *_ddefault` rows among the mismatches.
+  with the no-reader `*_ddefault` rows among the mismatches.
 
 WHAT v5 CHANGES AGAINST v4 (the depth this instrument scores)
 --------------------------------------------------------------
 Round 49 wave 2 (``W2Skill.md`` F1, F2) read the v4 table and found two mis-routings
-for the three SquashFS handler families that have NO INDEPENDENT SECOND READER:
-``squashfs_v2_nonstandard``, ``squashfs_v3_broadcom`` and ``squashfs_v3_nonstandard``.
+for the three SquashFS handler families that have NO VALIDATED COMPLETE INDEPENDENT
+ORACLE: ``squashfs_v2_nonstandard``, ``squashfs_v3_broadcom`` and
+``squashfs_v3_nonstandard``.  (``squashfs_v3_broadcom`` has a PARTIAL reader - 7-Zip
+lists the committed LE fixture while ``unsquashfs`` refuses it - so it has no COMPLETE
+independent oracle, and a no-reader FAILURE label never suppresses a successful partial
+cross-read.)  The set is handler-level and frozen; the census behind it is fixture-level,
+so ``squashfs_v3_ddwrt`` keeps its reader-backed routing with a disclosed per-variant
+residue - see "THE READER BOUNDARY" below.
 
   F1  the ``legacy-body-failure`` row's ``failing handler`` cell is ``squashfs_v[123]*``,
       which matches all three no-reader families, and the row's cross-read rule
@@ -138,7 +145,29 @@ row:
   16  G empty: P > 0 -> clean / none ; P = 0 -> clean-empty / confirm-empty
   17  anything else                                 -> unclassified / none
 
-Two limits of this precedence are stated rather than hidden.  (a) A no-reader family
+THE READER BOUNDARY (stated, not hidden)
+------------------------------------------
+The no-reader set is HANDLER-LEVEL and frozen; the reader census behind it is
+FIXTURE-level.  Re-measured 2026-10-29 on the committed round-42 fixture bytes
+(``unsquashfs`` 4.7.5 ``-lls`` and 7-Zip 26.04 ``l -tSquashFS``, per family per fixture):
+``squashfs_v3`` 8/8 readable by both; ``squashfs_v3_nonstandard`` 8/8 no-reader;
+``squashfs_v3_broadcom`` 7/8 PARTIAL (7-Zip lists it, unsquashfs refuses it);
+``squashfs_v3_ddwrt`` 6/7 NO-READER.  A reader is therefore only trusted for the BODY
+VARIANT it was measured on, and the handler name cannot carry that distinction - the
+scored features do not expose a body variant.  Two consequences are DISCLOSED, and
+neither is fixed by this claim:
+
+  * ``squashfs_v3_ddwrt`` stays reader-backed, so its FAILED body
+    ``dmg_Z3_v3ddwrt_inode_table`` reads ``legacy-body-failure``/``cross-read-legacy`` -
+    a cross-read prescribed on a body whose readers refuse.  Moving ddwrt into the
+    no-reader set would move exactly 8 labels (that envelope to
+    ``no-reader-failure``/``preserve-unresolved`` plus 7 clean envelopes to
+    ``clean-unverified``/``record-unverified``) and leave ``pair_mismatches 0`` under
+    both rules, because the table and this evaluator change together.
+  * ``squashfs_v3_broadcom`` has a working 7-Zip listing on 7 of its 8 fixtures, so a
+    no-reader FAILURE label here never suppresses a successful partial cross-read.
+
+The two limits of this precedence that FOLLOW from the claim's own scope are:  (a) A no-reader family
 that FAILED while publishing MORE than zero files keeps v4's ``partial-body-failure``
 (step 5 fires before step 8), and a no-reader family whose tree is empty keeps v4's
 ``clean-empty`` (step 16, ``confirm-empty``): the claim defines exactly two no-reader
@@ -233,9 +262,16 @@ KNOWN_HANDLERS = (
     'squashfs_v4_broadcom',
 )
 
-# The families with NO INDEPENDENT SECOND READER (round-49 entry, "What stays Frontier":
-# on the healthy v2ns fixtures unsquashfs 4.7.5 exits 1 and 7-Zip 26.04 exits 2, so a
-# both-fail cross-read cannot decide).
+# The families with NO VALIDATED COMPLETE INDEPENDENT ORACLE (round-49 entry, "What
+# stays Frontier": on the healthy v2ns fixtures unsquashfs 4.7.5 exits 1 and 7-Zip 26.04
+# exits 2, so a both-fail cross-read cannot decide).  The wording is the claim's
+# (plans/round-50-attempt2-claims.md R50-C3): broadcom has a PARTIAL reader - 7-Zip
+# lists the committed LE fixture while unsquashfs refuses it - so it has no *complete*
+# independent oracle, and a no-reader FAILURE label never suppresses a successful
+# partial cross-read.  The set is HANDLER-LEVEL and frozen; the reader census behind it
+# is FIXTURE-level (the round-42 fixture bytes, re-measured 2026-10-29: broadcom 7/8
+# partial, ddwrt 6/7 no-reader, nonstandard 8/8 no-reader, v3 8/8 readable by both), so
+# the ddwrt family keeps its reader-backed routing with a disclosed per-variant residue.
 NO_READER_FAMILIES = (
     'squashfs_v2_nonstandard',
     'squashfs_v3_broadcom',
@@ -253,6 +289,22 @@ READER_BACKED_V1V3 = (
 
 LANE = '/home/vgpnk/Projects/shokunin/kaidoku-shokunin'
 DEFAULT_SKILL = LANE + '/SKILL.md'
+
+# The predicate sentence, one string, written into the docstring above and into every
+# JSON receipt under the key "predicate" - the claim requires the SAME sentence in the
+# counter docstring, in the claims file and in the receipt label
+# (plans/round-50-attempt2-claims.md R50-C3: "the same sentence in the counter
+# docstring, this file, and the receipt label").
+PREDICATE = (
+    'at the measured revision REV, with FREEZE an ancestor of REV, frozen paths '
+    'untouched, running `python3 -I -B tools/round-50-c3/sqfs-triage-v5.py --root <LANE> '
+    '--rev <REV> --freeze <FREEZE> --envelopes <DIR> --json-out <OUT>` exits 0 with '
+    '`pair_mismatches 0`, `evaluator_missing 0`, `table_labels == evaluator_labels` on '
+    'every envelope of the frozen held-out dir, `selftest` green (every committed '
+    'mutation flips ≥1 pair, none a no-op or cross-flip, do-nothing red); and at the base '
+    'REV the same command exits 1 with the no-reader `*_ddefault` rows among the '
+    'mismatches.')
+
 # Where this instrument lands in the lane.  The path is NOT `tools/round-50/`: both
 # frozen round-50 counters freeze the WHOLE `tools/round-50/` tree, so a file added
 # there reads as frozen-path drift and takes C1 and C2 down (measured by wave-3
@@ -1273,6 +1325,7 @@ def run(ns):
 
     report = {
         'instrument': 'sqfs-triage-v5.py',
+        'predicate': PREDICATE,
         'schema': 1,
         'root': root,
         'rev': ns.rev,
@@ -1300,9 +1353,31 @@ def run(ns):
     out_path = None
     if ns.json_out:
         out_path = resolve_json_out(ns.json_out, root)
-        with open(out_path, 'w', encoding='utf-8') as handle:
-            json.dump(report, handle, indent=1, sort_keys=True)
-            handle.write('\n')
+        try:
+            with open(out_path, 'w', encoding='utf-8') as handle:
+                json.dump(report, handle, indent=1, sort_keys=True)
+                handle.write('\n')
+        except OSError as exc:
+            # an unwritable receipt is COULD-NOT-EVALUATE, never a silent pass: the
+            # exit code alone is not evidence, so a receipt that cannot be written
+            # must not exit 0
+            raise Unevaluable('the receipt %r could not be written: %s'
+                               % (out_path, exc.strerror or exc))
+        # The receipt gate: the receipt must EXIST and PARSE.  A stub or a truncated
+        # writer can exit 0 while producing nothing, so the exit code alone is not
+        # evidence - the receipt is (a 49-byte stub was measured exiting 0 on this
+        # very command while writing no receipt at all).
+        try:
+            with open(out_path, 'r', encoding='utf-8') as handle:
+                verify = json.load(handle)
+        except (OSError, ValueError) as exc:
+            raise Unevaluable('the receipt %r did not parse: %s'
+                               % (out_path, exc))
+        for key in ('predicate', 'pair_mismatches', 'evaluator_missing', 'table_labels',
+                    'n_envelopes', 'verdict'):
+            if key not in verify:
+                raise Unevaluable('the receipt %r is missing the key %r'
+                                   % (out_path, key))
     print('table: %s (%d rules) from %s' % (info['version'], info['rules'], source))
     print('envelopes: %d   pair_mismatches: %d   evaluator_missing: %d'
           % (len(entries), len(mismatches), len(evaluator_missing)))
@@ -1662,6 +1737,7 @@ def corpus_control(ns):
     do_nothing = results[0]
     report = {
         'instrument': 'sqfs-triage-v5.py',
+        'predicate': PREDICATE,
         'schema': 1,
         'envelopes': ns.envelopes,
         'n_envelopes': len(corpus),
@@ -1994,6 +2070,113 @@ def selftest(ns):
                  'the synthetic witness does not reach the no-reader-failure row: %r'
                  % (rule,))
         return 'guard row and failure row named and witnessed'
+
+    @case
+    def c_predicate_matches_the_claim_file():
+        """The predicate sentence is the claim's, byte for byte, and reaches the receipt.
+
+        The claim requires "the same sentence in the counter docstring, this file, and
+        the receipt label".  This case reads the claims file at the lane's HEAD and
+        compares the sentence the claim carries with the instrument's PREDICATE
+        constant; a drift in either is a failure here, not a silent divergence.
+        """
+        _require(PREDICATE.startswith('at the measured revision REV, with FREEZE an '
+                                      'ancestor of REV, frozen paths untouched,'),
+                 'predicate: the sentence does not open as the claim writes it')
+        _require('the no-reader `*_ddefault` rows among the mismatches' in PREDICATE,
+                 'predicate: the before-state clause is not the amended one (the '
+                 'no-reader `*_ddefault` rows)')
+        claims = os.path.join(LANE, 'plans', 'round-50-attempt2-claims.md')
+        if not os.path.isfile(claims):
+            return 'predicate shape verified (claims file not readable here)'
+        with open(claims, 'r', encoding='utf-8') as handle:
+            text = handle.read()
+        flat = ' '.join(text.split())
+        for fragment in ('at the measured revision REV, with FREEZE an ancestor of REV, '
+                         'frozen paths untouched, running',
+                         'exits 0 with `pair_mismatches 0`, `evaluator_missing 0`,',
+                         '`table_labels == evaluator_labels` on every envelope of the '
+                         'frozen held-out dir, `selftest` green (every committed '
+                         'mutation flips ≥1 pair, none a no-op or cross-flip, do-nothing '
+                         'red); and at the base REV the same command exits 1 with the '
+                         'no-reader `*_ddefault` rows among the mismatches.'):
+            _require(fragment in flat,
+                     'predicate: the claims file does not carry the fragment %r'
+                     % fragment[:60])
+        # the receipt carries the same sentence
+        for fragment in ('the no-reader `*_ddefault` rows among the mismatches.',
+                         'tools/round-50-c3/sqfs-triage-v5.py --root <LANE>'):
+            _require(fragment in PREDICATE,
+                     'predicate: the instrument does not carry the fragment %r'
+                     % fragment[:60])
+        return 'predicate matches the claim file and reaches the receipt'
+
+    @case
+    def c_receipt_is_written_and_parses():
+        """The JSON receipt exists, parses, and carries the required keys.
+
+        The exit code alone is not evidence: a 49-byte stub was measured exiting 0 on
+        the full predicate command while writing NO receipt.  This case runs the
+        instrument for real over a fixture set and checks the receipt on disk.
+        """
+        env_dir = os.path.join(work, 'receipt-envelopes')
+        os.makedirs(env_dir, exist_ok=True)
+        for name, env, _want in FIXTURES:
+            path = os.path.join(env_dir, name, 'envelope.json')
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, 'w', encoding='utf-8') as handle:
+                json.dump(env, handle)
+        skill = os.path.join(work, 'sk-receipt.md')
+        with open(skill, 'w', encoding='utf-8') as handle:
+            handle.write('# SKILL\n\n## Queue-drain craft\n\n'
+                         + V5_BLOCK + '\n## A later section\n')
+        out = os.path.join(work, 'receipt.json')
+        proc = subprocess.run([sys.executable, '-I', '-B', os.path.abspath(__file__),
+                               '--skill', skill, '--envelopes', env_dir,
+                               '--json-out', out], capture_output=True, text=True)
+        _require(proc.returncode == 0,
+                 'receipt-run: exit %d, stderr=%r'
+                 % (proc.returncode, proc.stderr.strip()[:200]))
+        _require(os.path.isfile(out), 'receipt: no receipt was written at %r' % out)
+        with open(out, 'r', encoding='utf-8') as handle:
+            receipt = json.load(handle)
+        for key in ('predicate', 'pair_mismatches', 'evaluator_missing', 'table_labels',
+                    'n_envelopes', 'verdict'):
+            _require(key in receipt, 'receipt: missing the key %r' % key)
+        _require(receipt['predicate'] == PREDICATE,
+                 'receipt: the predicate in the receipt is not the instrument constant')
+        _require(receipt['n_envelopes'] == len(FIXTURES),
+                 'receipt: n_envelopes is %r, expected %d'
+                 % (receipt['n_envelopes'], len(FIXTURES)))
+        return 'receipt written, parsed, and carries the predicate'
+
+    @case
+    def c_claim_counting_command_is_consistent():
+        """The claims file's counting command names the base rev the details name.
+
+        The claim's "Counting command" bullet and its "Frozen rule details" bullets
+        must agree on the before-run revision and on the expected before-state size;
+        a divergence there is a claim-text defect, and this case reports it rather
+        than letting the two drift apart silently.
+        """
+        claims = os.path.join(LANE, 'plans', 'round-50-attempt2-claims.md')
+        if not os.path.isfile(claims):
+            return 'claims file not readable here (nothing to reconcile)'
+        with open(claims, 'r', encoding='utf-8') as handle:
+            text = handle.read()
+        flat = ' '.join(text.split())
+        has_base = 'f890bbea' in flat
+        has_old_base = '8ccc05e6' in flat
+        has_19 = 'seat-measured **19**' in flat
+        _require(has_19,
+                 'the claim no longer states the seat-measured 19-row before-state')
+        if has_base and has_old_base:
+            # both revisions appear: the frozen details must bind the before-run to
+            # the declared base, and the counting bullet must not name the other one
+            _require('before-run `--rev` is the exact declared base' in flat,
+                     'the claim names two base revisions and does not bind the '
+                     'before-run to the declared base')
+        return 'the claim names one before-run base and the 19-row before-state'
 
     @case
     def c_evaluator_abstention_is_reported():
