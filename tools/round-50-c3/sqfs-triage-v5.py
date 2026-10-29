@@ -2181,12 +2181,15 @@ def selftest(ns):
 
     @case
     def c_claim_counting_command_is_consistent():
-        """The claims file's counting command names the base rev the details name.
+        """The claim's COUNTING BULLET names the base rev and the before-state size.
 
-        The claim's "Counting command" bullet and its "Frozen rule details" bullets
-        must agree on the before-run revision and on the expected before-state size;
-        a divergence there is a claim-text defect, and this case reports it rather
-        than letting the two drift apart silently.
+        The claim carries the before-run revision in TWO places - its "Counting
+        command" bullet and its "Frozen rule details" bullets - and they can drift
+        apart.  This case therefore binds the check to the COUNTING BULLET ITSELF
+        (the text between the "**Counting command**" heading and the next bullet),
+        not to the document at large: a check that searched the whole file would
+        still pass when the bullet went stale, because the frozen-details bullets
+        carry the right strings elsewhere.
         """
         claims = os.path.join(LANE, 'plans', 'round-50-attempt2-claims.md')
         if not os.path.isfile(claims):
@@ -2194,24 +2197,28 @@ def selftest(ns):
         with open(claims, 'r', encoding='utf-8') as handle:
             text = handle.read()
         flat = ' '.join(text.split())
-        has_base = 'f890bbea' in flat
-        has_old_base = '8ccc05e6' in flat
-        has_19 = 'seat-measured **19**' in flat
-        _require(has_19,
-                 'the claim no longer states the seat-measured 19-row before-state')
-        if has_base and has_old_base:
-            # both revisions appear: the frozen details must bind the before-run to
-            # the declared base, and the counting bullet must not name the other one
-            _require('before-run `--rev` is the exact declared base' in flat,
-                     'the claim names two base revisions and does not bind the '
-                     'before-run to the declared base')
-        # the claim must NAME the ddwrt failed-body residue, not only the two clean
-        # no-pad rows: the failed body is the sharper case (a cross-read prescribed
-        # where both readers refuse)
-        if 'dmg_Z3_v3ddwrt_inode_table' not in flat:
-            return ('the claim names one before-run base and the 19-row before-state; '
-                    'it does NOT yet name the ddwrt failed-body residue')
-        return 'the claim names one before-run base, the 19-row before-state and the ddwrt failed body'
+        # isolate the COUNTING BULLET: from its heading to the next bullet
+        start = flat.find('- **Counting command**:')
+        _require(start >= 0, 'the claim no longer carries a Counting command bullet')
+        end = flat.find('- **', start + 10)
+        bullet = flat[start:end if end > 0 else len(flat)]
+        # the bullet itself must name the DECLARED base and the seat-measued size
+        _require('f890bbea' in bullet,
+                 'the Counting command bullet does not name the declared base '
+                 'f890bbea (it reads %r)' % bullet[:160])
+        _require('19' in bullet,
+                 'the Counting command bullet does not name the 19-row before-state '
+                 '(it reads %r)' % bullet[:160])
+        _require('8ccc05e6' not in bullet,
+                 'the Counting command bullet still names the superseded base '
+                 '8ccc05e6 (it reads %r)' % bullet[:160])
+        _require('seat-measured **19**' in bullet,
+                 'the Counting command bullet does not carry the seat-measured 19-row '
+                 'before-state (it reads %r)' % bullet[:160])
+        # the ddwrt failed body must be NAMED, not only described
+        _require('dmg_Z3_v3ddwrt_inode_table' in flat,
+                 'the claim does not name the ddwrt failed-body residue')
+        return 'the Counting bullet names the declared base, the 19-row before-state and the ddwrt failed body'
 
     @case
     def c_evaluator_abstention_is_reported():
