@@ -1,0 +1,2306 @@
+[
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/evidence-id-recompute",
+  "description": "the stored evidence id is no longer compared with the recomputed one",
+  "duration_s": 34.3,
+  "exit_code": 1,
+  "mutant_sha256": "b2ee7a2adc0de17e8eedbb601b32b7e536dc7521e5a1471c6aa55921e849574b",
+  "name": "evidence-id-recompute",
+  "pristine_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+  "selftest_summary": {
+   "cases": 169,
+   "failures": [
+    "evidence id stale after an edit: want failing clause 'evidence_id_ok', failing=['oracle_hits_ok', 'projection_ok']",
+    "evidence id stale after an edit: want 1 got 1"
+   ],
+   "green_ok": 17,
+   "path_probes": 6,
+   "path_probes_discriminating": 3,
+   "probe_results": [
+    {
+     "candidate": "firmware.bin_extract/usr/bin/busy",
+     "desc": "dir 1: regular usr/bin/busy vs symlink entry bin/busy",
+     "legacy": true,
+     "new": false,
+     "rel": "bin/busy",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/sbin/tool",
+     "desc": "dir 2: regular sbin/tool vs symlink entry usr/sbin/tool",
+     "legacy": false,
+     "new": false,
+     "rel": "usr/sbin/tool",
+     "want_legacy": false,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/usr/sbin/tool",
+     "desc": "materialised symlink at its own entry path",
+     "legacy": true,
+     "new": true,
+     "rel": "usr/sbin/tool",
+     "want_legacy": true,
+     "want_new": true
+    },
+    {
+     "candidate": "firmware.bin_extract/x/usr/bin/busy",
+     "desc": "deeper-than-oracle file vs oracle row usr/bin/busy",
+     "legacy": true,
+     "new": false,
+     "rel": "usr/bin/busy",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/core.sqsh_extract/lib/x",
+     "desc": "nested chunk root file vs outer-root table row lib/x",
+     "legacy": true,
+     "new": false,
+     "rel": "lib/x",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/var/info.txt",
+     "desc": "plain oracle row",
+     "legacy": true,
+     "new": true,
+     "rel": "var/info.txt",
+     "want_legacy": true,
+     "want_new": true
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "single chunk root",
+     "root": "firmware.bin_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/core.sqsh_extract",
+       "firmware.bin_extract"
+      ],
+      "source": "oracle_root from carriers.json",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "two roots with oracle_root",
+     "root": "firmware.bin_extract",
+     "source": "oracle_root from carriers.json",
+     "want_root": "firmware.bin_extract",
+     "want_src": "oracle_root from carriers.json"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/core.sqsh_extract",
+       "firmware.bin_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "two roots without a hint",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+     },
+     "desc": "portion chunk root",
+     "root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+     },
+     "desc": "portion chunk, shallow publish",
+     "root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/2500-5000.squashfs_v4_le_extract",
+       "firmware.bin_extract/0-2500.squashfs_v4_le_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "two portion chunk roots",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/a.sqsh_extract",
+       "firmware.bin_extract/b.sqsh_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "ambiguous handler chunks",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "outside-namespace file",
+     "root": "firmware.bin_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "desc": "layout probe: standard-LE carrier (mkfs_time is a timestamp, no AVM marker)",
+     "ok": false,
+     "problems": [
+      "AVM marker absent (mkfs_time 1700000000 != bytes_used 640)"
+     ],
+     "want_ok": false,
+     "want_text": "AVM marker absent"
+    },
+    {
+     "desc": "layout probe: marker off by one (mkfs_time == bytes_used + 1)",
+     "ok": false,
+     "problems": [
+      "AVM marker absent (mkfs_time 641 != bytes_used 640)"
+     ],
+     "want_ok": false,
+     "want_text": "AVM marker absent"
+    },
+    {
+     "desc": "layout probe: big-endian AVM-marker image (sqsh) is not the little-endian layout",
+     "ok": false,
+     "problems": [
+      "magic 'sqsh' is not little-endian hsqs"
+     ],
+     "want_ok": false,
+     "want_text": "not little-endian hsqs"
+    },
+    {
+     "desc": "layout probe: standard big-endian image (sqsh, no marker)",
+     "ok": false,
+     "problems": [
+      "magic 'sqsh' is not little-endian hsqs"
+     ],
+     "want_ok": false,
+     "want_text": "not little-endian hsqs"
+    },
+    {
+     "desc": "layout probe: hsqs magic over big-endian fields is not a little-endian image",
+     "ok": false,
+     "problems": [
+      "version 1024.0 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version"
+    },
+    {
+     "desc": "layout probe: compression id 1 (gzip) is not the frozen xz",
+     "ok": false,
+     "problems": [
+      "compression id 1 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 1"
+    },
+    {
+     "desc": "layout probe: compression id 2 (lzma; round 41 counted it as xz)",
+     "ok": false,
+     "problems": [
+      "compression id 2 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 2"
+    },
+    {
+     "desc": "layout probe: compression id 6 (zstd)",
+     "ok": false,
+     "problems": [
+      "compression id 6 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 6"
+    },
+    {
+     "desc": "layout probe: squashfs 3.0 major",
+     "ok": false,
+     "problems": [
+      "version 3.0 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version 3.0"
+    },
+    {
+     "desc": "layout probe: squashfs 4.1 minor",
+     "ok": false,
+     "problems": [
+      "version 4.1 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version 4.1"
+    },
+    {
+     "desc": "layout probe: bytes_used beyond the file",
+     "ok": false,
+     "problems": [
+      "bytes_used 4294967280 outside 1..640"
+     ],
+     "want_ok": false,
+     "want_text": "bytes_used"
+    },
+    {
+     "desc": "layout probe: inode table after the directory table",
+     "ok": false,
+     "problems": [
+      "inode_table_start 128 / directory_table_start 96 not inside bytes_used 640 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: directory table past bytes_used",
+     "ok": false,
+     "problems": [
+      "inode_table_start 96 / directory_table_start 639 not inside bytes_used 600 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: inode table at offset 0",
+     "ok": false,
+     "problems": [
+      "inode_table_start 0 / directory_table_start 128 not inside bytes_used 640 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: shorter than a superblock",
+     "ok": false,
+     "problems": [
+      "shorter than a 96-byte superblock"
+     ],
+     "want_ok": false,
+     "want_text": "shorter than a 96-byte superblock"
+    },
+    {
+     "desc": "layout probe: the frozen layout is accepted",
+     "ok": true,
+     "problems": [
+      ""
+     ],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real runner: node executes the package CLI at --pkg65 (no npx), frozen flags, FIXED_PATH, toolchain recorded",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real runner: unblob that is not 26.6.4 is refused",
+     "ok": false,
+     "problems": [
+      "unblob version '26.6.3' != frozen '26.6.4' (/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/evidence-id-recompute/hyaku/kaidoku-r50/counter/c1-selftest-work.ner73haq/stubs/unblob-26.6.3)"
+     ],
+     "want_ok": false,
+     "want_text": "unblob version"
+    },
+    {
+     "desc": "real runner: a package that is not 6.5.0 is refused",
+     "ok": false,
+     "problems": [
+      "REA package version '6.4.0' != '6.5.0'"
+     ],
+     "want_ok": false,
+     "want_text": "REA package version"
+    },
+    {
+     "desc": "real runner: a package without a bin entry is refused",
+     "ok": false,
+     "problems": [
+      "REA package at --pkg65: package.json has no rea-agents bin"
+     ],
+     "want_ok": false,
+     "want_text": "no rea-agents bin"
+    },
+    {
+     "desc": "real runner: a package whose bin entry is missing is refused",
+     "ok": false,
+     "problems": [
+      "REA package at --pkg65: bin entry 'scripts/gone.mjs' is not a file"
+     ],
+     "want_ok": false,
+     "want_text": "is not a file"
+    },
+    {
+     "desc": "real runner: a shim sasquatch on the caller PATH is not resolved",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation equals the built tree",
+     "ok": true,
+     "problems": [
+      "[('README.txt', 'e80d4288ba5eb15358ebabc52afaa7262a0d179f56e945e5b735fa8df2bc2be6', 144), ('etc/app.conf', 'bea9318e9c0e117b3ad8b0d13f5e984bf0e944b03199e8fc759c90899771638b', 160)]"
+     ],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation differs from a doctored table",
+     "ok": false,
+     "problems": [],
+     "want_ok": false,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation leaves no scratch tree",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation: a missing tool",
+     "ok": false,
+     "problems": [
+      "/nonexistent/unsquashfs is not executable"
+     ],
+     "want_ok": false,
+     "want_text": "not executable"
+    },
+    {
+     "desc": "real unsquashfs re-derivation: another version",
+     "ok": false,
+     "problems": [
+      "unsquashfs version line 'unsquashfs version 4.7.5 (2026/03/01)' lacks 9.9.9"
+     ],
+     "want_ok": false,
+     "want_text": "lacks 9.9.9"
+    },
+    {
+     "desc": "real runner: sasquatch not on the child PATH",
+     "ok": false,
+     "problems": [
+      "missing-extractor-dependency: sasquatch is not on the fixed child PATH '/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/evidence-id-recompute/hyaku/kaidoku-r50/counter/c1-emptypath.j1g7cfz1'"
+     ],
+     "want_ok": false,
+     "want_text": "missing-extractor-dependency"
+    },
+    {
+     "desc": "external carrier without member_sha256",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' external lacks member_sha256",
+      "carrier 'g7581' external member_sha256 is not 64 hex"
+     ],
+     "want_ok": false,
+     "want_text": "lacks member_sha256"
+    },
+    {
+     "desc": "external carrier without a positive carve length",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' external lacks length",
+      "carrier 'g7581' external length is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "lacks length"
+    },
+    {
+     "desc": "external carrier with a member_sha256",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "external carrier with a nested block and no nested.sha256",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' nested.sha256 is not 64 hex"
+     ],
+     "want_ok": false,
+     "want_text": "nested.sha256"
+    },
+    {
+     "desc": "external carrier with nested.sha256",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "oracle_root is a relative path",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "oracle_root that is absolute",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' oracle_root is not a relative path"
+     ],
+     "want_ok": false,
+     "want_text": "oracle_root"
+    },
+    {
+     "desc": "target missing from carriers.json",
+     "ok": false,
+     "problems": [
+      "frozen target None != counter target 4"
+     ],
+     "want_ok": false,
+     "want_text": "frozen target"
+    },
+    {
+     "desc": "target frozen at 3",
+     "ok": false,
+     "problems": [
+      "frozen target 3 != counter target 4"
+     ],
+     "want_ok": false,
+     "want_text": "frozen target"
+    },
+    {
+     "desc": "rea_parameters missing",
+     "ok": false,
+     "problems": [
+      "rea_parameters is not an object"
+     ],
+     "want_ok": false,
+     "want_text": "rea_parameters is not an object"
+    },
+    {
+     "desc": "rea_parameters at depth 3",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_depth 3 != 1 (the claim is depth 1)"
+     ],
+     "want_ok": false,
+     "want_text": "max_depth"
+    },
+    {
+     "desc": "rea_parameters without a budget",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_output_files is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "max_output_files"
+    },
+    {
+     "desc": "rea_parameters with a non-integer budget",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_output_files is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "max_output_files"
+    },
+    {
+     "desc": "carrier ids compare case-insensitively",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "a fifth carrier id outside the claim",
+     "ok": false,
+     "problems": [
+      "carrier ids ['c6430', 'c6490', 'g7582', 'z9999'] != ['g7581', 'g7582', 'c6490', 'c6430']"
+     ],
+     "want_ok": false,
+     "want_text": "carrier ids"
+    }
+   ],
+   "red_ok": 151,
+   "root_probes": 8,
+   "selftest": "c1-counter",
+   "spec_probes": 43
+  },
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_bytes": 13688,
+  "stdout_sha256": "74f57137823188952a64adc52b422a2b0ba86f9d0240826600bd062d86e84ccc",
+  "utc_started": "2026-10-29T20:52:32Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/projection-files-key",
+  "description": "the published-file list is dropped from the projection comparison",
+  "duration_s": 36.6,
+  "exit_code": 1,
+  "mutant_sha256": "9015efba701ffdb82b38636a2035ca0da76bb05fec9d2e7e25aaf2270164d7e2",
+  "name": "projection-files-key",
+  "pristine_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+  "selftest_summary": {
+   "cases": 169,
+   "failures": [
+    "fabrication differing only in one published sha256: want failing clause 'projection_ok', failing=['oracle_hits_ok']",
+    "fabrication differing only in one published sha256: want 1 got 1"
+   ],
+   "green_ok": 17,
+   "path_probes": 6,
+   "path_probes_discriminating": 3,
+   "probe_results": [
+    {
+     "candidate": "firmware.bin_extract/usr/bin/busy",
+     "desc": "dir 1: regular usr/bin/busy vs symlink entry bin/busy",
+     "legacy": true,
+     "new": false,
+     "rel": "bin/busy",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/sbin/tool",
+     "desc": "dir 2: regular sbin/tool vs symlink entry usr/sbin/tool",
+     "legacy": false,
+     "new": false,
+     "rel": "usr/sbin/tool",
+     "want_legacy": false,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/usr/sbin/tool",
+     "desc": "materialised symlink at its own entry path",
+     "legacy": true,
+     "new": true,
+     "rel": "usr/sbin/tool",
+     "want_legacy": true,
+     "want_new": true
+    },
+    {
+     "candidate": "firmware.bin_extract/x/usr/bin/busy",
+     "desc": "deeper-than-oracle file vs oracle row usr/bin/busy",
+     "legacy": true,
+     "new": false,
+     "rel": "usr/bin/busy",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/core.sqsh_extract/lib/x",
+     "desc": "nested chunk root file vs outer-root table row lib/x",
+     "legacy": true,
+     "new": false,
+     "rel": "lib/x",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/var/info.txt",
+     "desc": "plain oracle row",
+     "legacy": true,
+     "new": true,
+     "rel": "var/info.txt",
+     "want_legacy": true,
+     "want_new": true
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "single chunk root",
+     "root": "firmware.bin_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/core.sqsh_extract",
+       "firmware.bin_extract"
+      ],
+      "source": "oracle_root from carriers.json",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "two roots with oracle_root",
+     "root": "firmware.bin_extract",
+     "source": "oracle_root from carriers.json",
+     "want_root": "firmware.bin_extract",
+     "want_src": "oracle_root from carriers.json"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/core.sqsh_extract",
+       "firmware.bin_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "two roots without a hint",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+     },
+     "desc": "portion chunk root",
+     "root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+     },
+     "desc": "portion chunk, shallow publish",
+     "root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/2500-5000.squashfs_v4_le_extract",
+       "firmware.bin_extract/0-2500.squashfs_v4_le_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "two portion chunk roots",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/a.sqsh_extract",
+       "firmware.bin_extract/b.sqsh_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "ambiguous handler chunks",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "outside-namespace file",
+     "root": "firmware.bin_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "desc": "layout probe: standard-LE carrier (mkfs_time is a timestamp, no AVM marker)",
+     "ok": false,
+     "problems": [
+      "AVM marker absent (mkfs_time 1700000000 != bytes_used 640)"
+     ],
+     "want_ok": false,
+     "want_text": "AVM marker absent"
+    },
+    {
+     "desc": "layout probe: marker off by one (mkfs_time == bytes_used + 1)",
+     "ok": false,
+     "problems": [
+      "AVM marker absent (mkfs_time 641 != bytes_used 640)"
+     ],
+     "want_ok": false,
+     "want_text": "AVM marker absent"
+    },
+    {
+     "desc": "layout probe: big-endian AVM-marker image (sqsh) is not the little-endian layout",
+     "ok": false,
+     "problems": [
+      "magic 'sqsh' is not little-endian hsqs"
+     ],
+     "want_ok": false,
+     "want_text": "not little-endian hsqs"
+    },
+    {
+     "desc": "layout probe: standard big-endian image (sqsh, no marker)",
+     "ok": false,
+     "problems": [
+      "magic 'sqsh' is not little-endian hsqs"
+     ],
+     "want_ok": false,
+     "want_text": "not little-endian hsqs"
+    },
+    {
+     "desc": "layout probe: hsqs magic over big-endian fields is not a little-endian image",
+     "ok": false,
+     "problems": [
+      "version 1024.0 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version"
+    },
+    {
+     "desc": "layout probe: compression id 1 (gzip) is not the frozen xz",
+     "ok": false,
+     "problems": [
+      "compression id 1 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 1"
+    },
+    {
+     "desc": "layout probe: compression id 2 (lzma; round 41 counted it as xz)",
+     "ok": false,
+     "problems": [
+      "compression id 2 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 2"
+    },
+    {
+     "desc": "layout probe: compression id 6 (zstd)",
+     "ok": false,
+     "problems": [
+      "compression id 6 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 6"
+    },
+    {
+     "desc": "layout probe: squashfs 3.0 major",
+     "ok": false,
+     "problems": [
+      "version 3.0 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version 3.0"
+    },
+    {
+     "desc": "layout probe: squashfs 4.1 minor",
+     "ok": false,
+     "problems": [
+      "version 4.1 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version 4.1"
+    },
+    {
+     "desc": "layout probe: bytes_used beyond the file",
+     "ok": false,
+     "problems": [
+      "bytes_used 4294967280 outside 1..640"
+     ],
+     "want_ok": false,
+     "want_text": "bytes_used"
+    },
+    {
+     "desc": "layout probe: inode table after the directory table",
+     "ok": false,
+     "problems": [
+      "inode_table_start 128 / directory_table_start 96 not inside bytes_used 640 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: directory table past bytes_used",
+     "ok": false,
+     "problems": [
+      "inode_table_start 96 / directory_table_start 639 not inside bytes_used 600 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: inode table at offset 0",
+     "ok": false,
+     "problems": [
+      "inode_table_start 0 / directory_table_start 128 not inside bytes_used 640 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: shorter than a superblock",
+     "ok": false,
+     "problems": [
+      "shorter than a 96-byte superblock"
+     ],
+     "want_ok": false,
+     "want_text": "shorter than a 96-byte superblock"
+    },
+    {
+     "desc": "layout probe: the frozen layout is accepted",
+     "ok": true,
+     "problems": [
+      ""
+     ],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real runner: node executes the package CLI at --pkg65 (no npx), frozen flags, FIXED_PATH, toolchain recorded",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real runner: unblob that is not 26.6.4 is refused",
+     "ok": false,
+     "problems": [
+      "unblob version '26.6.3' != frozen '26.6.4' (/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/projection-files-key/hyaku/kaidoku-r50/counter/c1-selftest-work.enmb4k8b/stubs/unblob-26.6.3)"
+     ],
+     "want_ok": false,
+     "want_text": "unblob version"
+    },
+    {
+     "desc": "real runner: a package that is not 6.5.0 is refused",
+     "ok": false,
+     "problems": [
+      "REA package version '6.4.0' != '6.5.0'"
+     ],
+     "want_ok": false,
+     "want_text": "REA package version"
+    },
+    {
+     "desc": "real runner: a package without a bin entry is refused",
+     "ok": false,
+     "problems": [
+      "REA package at --pkg65: package.json has no rea-agents bin"
+     ],
+     "want_ok": false,
+     "want_text": "no rea-agents bin"
+    },
+    {
+     "desc": "real runner: a package whose bin entry is missing is refused",
+     "ok": false,
+     "problems": [
+      "REA package at --pkg65: bin entry 'scripts/gone.mjs' is not a file"
+     ],
+     "want_ok": false,
+     "want_text": "is not a file"
+    },
+    {
+     "desc": "real runner: a shim sasquatch on the caller PATH is not resolved",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation equals the built tree",
+     "ok": true,
+     "problems": [
+      "[('README.txt', 'e80d4288ba5eb15358ebabc52afaa7262a0d179f56e945e5b735fa8df2bc2be6', 144), ('etc/app.conf', 'bea9318e9c0e117b3ad8b0d13f5e984bf0e944b03199e8fc759c90899771638b', 160)]"
+     ],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation differs from a doctored table",
+     "ok": false,
+     "problems": [],
+     "want_ok": false,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation leaves no scratch tree",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation: a missing tool",
+     "ok": false,
+     "problems": [
+      "/nonexistent/unsquashfs is not executable"
+     ],
+     "want_ok": false,
+     "want_text": "not executable"
+    },
+    {
+     "desc": "real unsquashfs re-derivation: another version",
+     "ok": false,
+     "problems": [
+      "unsquashfs version line 'unsquashfs version 4.7.5 (2026/03/01)' lacks 9.9.9"
+     ],
+     "want_ok": false,
+     "want_text": "lacks 9.9.9"
+    },
+    {
+     "desc": "real runner: sasquatch not on the child PATH",
+     "ok": false,
+     "problems": [
+      "missing-extractor-dependency: sasquatch is not on the fixed child PATH '/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/projection-files-key/hyaku/kaidoku-r50/counter/c1-emptypath.7hxagjnm'"
+     ],
+     "want_ok": false,
+     "want_text": "missing-extractor-dependency"
+    },
+    {
+     "desc": "external carrier without member_sha256",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' external lacks member_sha256",
+      "carrier 'g7581' external member_sha256 is not 64 hex"
+     ],
+     "want_ok": false,
+     "want_text": "lacks member_sha256"
+    },
+    {
+     "desc": "external carrier without a positive carve length",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' external lacks length",
+      "carrier 'g7581' external length is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "lacks length"
+    },
+    {
+     "desc": "external carrier with a member_sha256",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "external carrier with a nested block and no nested.sha256",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' nested.sha256 is not 64 hex"
+     ],
+     "want_ok": false,
+     "want_text": "nested.sha256"
+    },
+    {
+     "desc": "external carrier with nested.sha256",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "oracle_root is a relative path",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "oracle_root that is absolute",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' oracle_root is not a relative path"
+     ],
+     "want_ok": false,
+     "want_text": "oracle_root"
+    },
+    {
+     "desc": "target missing from carriers.json",
+     "ok": false,
+     "problems": [
+      "frozen target None != counter target 4"
+     ],
+     "want_ok": false,
+     "want_text": "frozen target"
+    },
+    {
+     "desc": "target frozen at 3",
+     "ok": false,
+     "problems": [
+      "frozen target 3 != counter target 4"
+     ],
+     "want_ok": false,
+     "want_text": "frozen target"
+    },
+    {
+     "desc": "rea_parameters missing",
+     "ok": false,
+     "problems": [
+      "rea_parameters is not an object"
+     ],
+     "want_ok": false,
+     "want_text": "rea_parameters is not an object"
+    },
+    {
+     "desc": "rea_parameters at depth 3",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_depth 3 != 1 (the claim is depth 1)"
+     ],
+     "want_ok": false,
+     "want_text": "max_depth"
+    },
+    {
+     "desc": "rea_parameters without a budget",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_output_files is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "max_output_files"
+    },
+    {
+     "desc": "rea_parameters with a non-integer budget",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_output_files is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "max_output_files"
+    },
+    {
+     "desc": "carrier ids compare case-insensitively",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "a fifth carrier id outside the claim",
+     "ok": false,
+     "problems": [
+      "carrier ids ['c6430', 'c6490', 'g7582', 'z9999'] != ['g7581', 'g7582', 'c6490', 'c6430']"
+     ],
+     "want_ok": false,
+     "want_text": "carrier ids"
+    }
+   ],
+   "red_ok": 151,
+   "root_probes": 8,
+   "selftest": "c1-counter",
+   "spec_probes": 43
+  },
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_bytes": 13706,
+  "stdout_sha256": "15adc71c03f60deb41fd30986866bc98d46a25e8f358fdb95f3a84861dc3e433",
+  "utc_started": "2026-10-29T20:53:07Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/oracle-path-map-size",
+  "description": "an oracle hit ignores the published file size",
+  "duration_s": 34.8,
+  "exit_code": 1,
+  "mutant_sha256": "0499c755d220559c1201d0ba011667f86a2a07afe6f12eae8f077bac6e124c90",
+  "name": "oracle-path-map-size",
+  "pristine_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+  "selftest_summary": {
+   "cases": 169,
+   "failures": [
+    "a published file with the oracle sha256 but another size: want failing clause 'oracle_hits_ok', failing=['projection_ok']",
+    "a published file with the oracle sha256 but another size: want 1 got 1"
+   ],
+   "green_ok": 17,
+   "path_probes": 6,
+   "path_probes_discriminating": 3,
+   "probe_results": [
+    {
+     "candidate": "firmware.bin_extract/usr/bin/busy",
+     "desc": "dir 1: regular usr/bin/busy vs symlink entry bin/busy",
+     "legacy": true,
+     "new": false,
+     "rel": "bin/busy",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/sbin/tool",
+     "desc": "dir 2: regular sbin/tool vs symlink entry usr/sbin/tool",
+     "legacy": false,
+     "new": false,
+     "rel": "usr/sbin/tool",
+     "want_legacy": false,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/usr/sbin/tool",
+     "desc": "materialised symlink at its own entry path",
+     "legacy": true,
+     "new": true,
+     "rel": "usr/sbin/tool",
+     "want_legacy": true,
+     "want_new": true
+    },
+    {
+     "candidate": "firmware.bin_extract/x/usr/bin/busy",
+     "desc": "deeper-than-oracle file vs oracle row usr/bin/busy",
+     "legacy": true,
+     "new": false,
+     "rel": "usr/bin/busy",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/core.sqsh_extract/lib/x",
+     "desc": "nested chunk root file vs outer-root table row lib/x",
+     "legacy": true,
+     "new": false,
+     "rel": "lib/x",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/var/info.txt",
+     "desc": "plain oracle row",
+     "legacy": true,
+     "new": true,
+     "rel": "var/info.txt",
+     "want_legacy": true,
+     "want_new": true
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "single chunk root",
+     "root": "firmware.bin_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/core.sqsh_extract",
+       "firmware.bin_extract"
+      ],
+      "source": "oracle_root from carriers.json",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "two roots with oracle_root",
+     "root": "firmware.bin_extract",
+     "source": "oracle_root from carriers.json",
+     "want_root": "firmware.bin_extract",
+     "want_src": "oracle_root from carriers.json"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/core.sqsh_extract",
+       "firmware.bin_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "two roots without a hint",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+     },
+     "desc": "portion chunk root",
+     "root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+     },
+     "desc": "portion chunk, shallow publish",
+     "root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/2500-5000.squashfs_v4_le_extract",
+       "firmware.bin_extract/0-2500.squashfs_v4_le_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "two portion chunk roots",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/a.sqsh_extract",
+       "firmware.bin_extract/b.sqsh_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "ambiguous handler chunks",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "outside-namespace file",
+     "root": "firmware.bin_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "desc": "layout probe: standard-LE carrier (mkfs_time is a timestamp, no AVM marker)",
+     "ok": false,
+     "problems": [
+      "AVM marker absent (mkfs_time 1700000000 != bytes_used 640)"
+     ],
+     "want_ok": false,
+     "want_text": "AVM marker absent"
+    },
+    {
+     "desc": "layout probe: marker off by one (mkfs_time == bytes_used + 1)",
+     "ok": false,
+     "problems": [
+      "AVM marker absent (mkfs_time 641 != bytes_used 640)"
+     ],
+     "want_ok": false,
+     "want_text": "AVM marker absent"
+    },
+    {
+     "desc": "layout probe: big-endian AVM-marker image (sqsh) is not the little-endian layout",
+     "ok": false,
+     "problems": [
+      "magic 'sqsh' is not little-endian hsqs"
+     ],
+     "want_ok": false,
+     "want_text": "not little-endian hsqs"
+    },
+    {
+     "desc": "layout probe: standard big-endian image (sqsh, no marker)",
+     "ok": false,
+     "problems": [
+      "magic 'sqsh' is not little-endian hsqs"
+     ],
+     "want_ok": false,
+     "want_text": "not little-endian hsqs"
+    },
+    {
+     "desc": "layout probe: hsqs magic over big-endian fields is not a little-endian image",
+     "ok": false,
+     "problems": [
+      "version 1024.0 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version"
+    },
+    {
+     "desc": "layout probe: compression id 1 (gzip) is not the frozen xz",
+     "ok": false,
+     "problems": [
+      "compression id 1 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 1"
+    },
+    {
+     "desc": "layout probe: compression id 2 (lzma; round 41 counted it as xz)",
+     "ok": false,
+     "problems": [
+      "compression id 2 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 2"
+    },
+    {
+     "desc": "layout probe: compression id 6 (zstd)",
+     "ok": false,
+     "problems": [
+      "compression id 6 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 6"
+    },
+    {
+     "desc": "layout probe: squashfs 3.0 major",
+     "ok": false,
+     "problems": [
+      "version 3.0 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version 3.0"
+    },
+    {
+     "desc": "layout probe: squashfs 4.1 minor",
+     "ok": false,
+     "problems": [
+      "version 4.1 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version 4.1"
+    },
+    {
+     "desc": "layout probe: bytes_used beyond the file",
+     "ok": false,
+     "problems": [
+      "bytes_used 4294967280 outside 1..640"
+     ],
+     "want_ok": false,
+     "want_text": "bytes_used"
+    },
+    {
+     "desc": "layout probe: inode table after the directory table",
+     "ok": false,
+     "problems": [
+      "inode_table_start 128 / directory_table_start 96 not inside bytes_used 640 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: directory table past bytes_used",
+     "ok": false,
+     "problems": [
+      "inode_table_start 96 / directory_table_start 639 not inside bytes_used 600 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: inode table at offset 0",
+     "ok": false,
+     "problems": [
+      "inode_table_start 0 / directory_table_start 128 not inside bytes_used 640 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: shorter than a superblock",
+     "ok": false,
+     "problems": [
+      "shorter than a 96-byte superblock"
+     ],
+     "want_ok": false,
+     "want_text": "shorter than a 96-byte superblock"
+    },
+    {
+     "desc": "layout probe: the frozen layout is accepted",
+     "ok": true,
+     "problems": [
+      ""
+     ],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real runner: node executes the package CLI at --pkg65 (no npx), frozen flags, FIXED_PATH, toolchain recorded",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real runner: unblob that is not 26.6.4 is refused",
+     "ok": false,
+     "problems": [
+      "unblob version '26.6.3' != frozen '26.6.4' (/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/oracle-path-map-size/hyaku/kaidoku-r50/counter/c1-selftest-work.q6hho5kc/stubs/unblob-26.6.3)"
+     ],
+     "want_ok": false,
+     "want_text": "unblob version"
+    },
+    {
+     "desc": "real runner: a package that is not 6.5.0 is refused",
+     "ok": false,
+     "problems": [
+      "REA package version '6.4.0' != '6.5.0'"
+     ],
+     "want_ok": false,
+     "want_text": "REA package version"
+    },
+    {
+     "desc": "real runner: a package without a bin entry is refused",
+     "ok": false,
+     "problems": [
+      "REA package at --pkg65: package.json has no rea-agents bin"
+     ],
+     "want_ok": false,
+     "want_text": "no rea-agents bin"
+    },
+    {
+     "desc": "real runner: a package whose bin entry is missing is refused",
+     "ok": false,
+     "problems": [
+      "REA package at --pkg65: bin entry 'scripts/gone.mjs' is not a file"
+     ],
+     "want_ok": false,
+     "want_text": "is not a file"
+    },
+    {
+     "desc": "real runner: a shim sasquatch on the caller PATH is not resolved",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation equals the built tree",
+     "ok": true,
+     "problems": [
+      "[('README.txt', 'e80d4288ba5eb15358ebabc52afaa7262a0d179f56e945e5b735fa8df2bc2be6', 144), ('etc/app.conf', 'bea9318e9c0e117b3ad8b0d13f5e984bf0e944b03199e8fc759c90899771638b', 160)]"
+     ],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation differs from a doctored table",
+     "ok": false,
+     "problems": [],
+     "want_ok": false,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation leaves no scratch tree",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation: a missing tool",
+     "ok": false,
+     "problems": [
+      "/nonexistent/unsquashfs is not executable"
+     ],
+     "want_ok": false,
+     "want_text": "not executable"
+    },
+    {
+     "desc": "real unsquashfs re-derivation: another version",
+     "ok": false,
+     "problems": [
+      "unsquashfs version line 'unsquashfs version 4.7.5 (2026/03/01)' lacks 9.9.9"
+     ],
+     "want_ok": false,
+     "want_text": "lacks 9.9.9"
+    },
+    {
+     "desc": "real runner: sasquatch not on the child PATH",
+     "ok": false,
+     "problems": [
+      "missing-extractor-dependency: sasquatch is not on the fixed child PATH '/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/oracle-path-map-size/hyaku/kaidoku-r50/counter/c1-emptypath.i3x6j0z1'"
+     ],
+     "want_ok": false,
+     "want_text": "missing-extractor-dependency"
+    },
+    {
+     "desc": "external carrier without member_sha256",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' external lacks member_sha256",
+      "carrier 'g7581' external member_sha256 is not 64 hex"
+     ],
+     "want_ok": false,
+     "want_text": "lacks member_sha256"
+    },
+    {
+     "desc": "external carrier without a positive carve length",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' external lacks length",
+      "carrier 'g7581' external length is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "lacks length"
+    },
+    {
+     "desc": "external carrier with a member_sha256",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "external carrier with a nested block and no nested.sha256",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' nested.sha256 is not 64 hex"
+     ],
+     "want_ok": false,
+     "want_text": "nested.sha256"
+    },
+    {
+     "desc": "external carrier with nested.sha256",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "oracle_root is a relative path",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "oracle_root that is absolute",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' oracle_root is not a relative path"
+     ],
+     "want_ok": false,
+     "want_text": "oracle_root"
+    },
+    {
+     "desc": "target missing from carriers.json",
+     "ok": false,
+     "problems": [
+      "frozen target None != counter target 4"
+     ],
+     "want_ok": false,
+     "want_text": "frozen target"
+    },
+    {
+     "desc": "target frozen at 3",
+     "ok": false,
+     "problems": [
+      "frozen target 3 != counter target 4"
+     ],
+     "want_ok": false,
+     "want_text": "frozen target"
+    },
+    {
+     "desc": "rea_parameters missing",
+     "ok": false,
+     "problems": [
+      "rea_parameters is not an object"
+     ],
+     "want_ok": false,
+     "want_text": "rea_parameters is not an object"
+    },
+    {
+     "desc": "rea_parameters at depth 3",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_depth 3 != 1 (the claim is depth 1)"
+     ],
+     "want_ok": false,
+     "want_text": "max_depth"
+    },
+    {
+     "desc": "rea_parameters without a budget",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_output_files is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "max_output_files"
+    },
+    {
+     "desc": "rea_parameters with a non-integer budget",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_output_files is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "max_output_files"
+    },
+    {
+     "desc": "carrier ids compare case-insensitively",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "a fifth carrier id outside the claim",
+     "ok": false,
+     "problems": [
+      "carrier ids ['c6430', 'c6490', 'g7582', 'z9999'] != ['g7581', 'g7582', 'c6490', 'c6430']"
+     ],
+     "want_ok": false,
+     "want_text": "carrier ids"
+    }
+   ],
+   "red_ok": 151,
+   "root_probes": 8,
+   "selftest": "c1-counter",
+   "spec_probes": 43
+  },
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_bytes": 13718,
+  "stdout_sha256": "47f8396f941d047e20ce49c1f74cd88936630d816497e04f4a89f782b1241258",
+  "utc_started": "2026-10-29T20:53:43Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "cwd": "/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/parameters-prefix-test",
+  "description": "only max_depth of the frozen extraction parameters is compared",
+  "duration_s": 55.7,
+  "exit_code": 1,
+  "mutant_sha256": "8e404ae1e940e4d612d5dd7a5d80d3b778cde18519ddc6d513b19dac59f1f2f2",
+  "name": "parameters-prefix-test",
+  "pristine_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+  "selftest_summary": {
+   "cases": 169,
+   "failures": [
+    "receipt made under a smaller output budget than the frozen one: want 1 got 0",
+    "receipt without recorded parameters: want 1 got 0"
+   ],
+   "green_ok": 17,
+   "path_probes": 6,
+   "path_probes_discriminating": 3,
+   "probe_results": [
+    {
+     "candidate": "firmware.bin_extract/usr/bin/busy",
+     "desc": "dir 1: regular usr/bin/busy vs symlink entry bin/busy",
+     "legacy": true,
+     "new": false,
+     "rel": "bin/busy",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/sbin/tool",
+     "desc": "dir 2: regular sbin/tool vs symlink entry usr/sbin/tool",
+     "legacy": false,
+     "new": false,
+     "rel": "usr/sbin/tool",
+     "want_legacy": false,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/usr/sbin/tool",
+     "desc": "materialised symlink at its own entry path",
+     "legacy": true,
+     "new": true,
+     "rel": "usr/sbin/tool",
+     "want_legacy": true,
+     "want_new": true
+    },
+    {
+     "candidate": "firmware.bin_extract/x/usr/bin/busy",
+     "desc": "deeper-than-oracle file vs oracle row usr/bin/busy",
+     "legacy": true,
+     "new": false,
+     "rel": "usr/bin/busy",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/core.sqsh_extract/lib/x",
+     "desc": "nested chunk root file vs outer-root table row lib/x",
+     "legacy": true,
+     "new": false,
+     "rel": "lib/x",
+     "want_legacy": true,
+     "want_new": false
+    },
+    {
+     "candidate": "firmware.bin_extract/var/info.txt",
+     "desc": "plain oracle row",
+     "legacy": true,
+     "new": true,
+     "rel": "var/info.txt",
+     "want_legacy": true,
+     "want_new": true
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "single chunk root",
+     "root": "firmware.bin_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/core.sqsh_extract",
+       "firmware.bin_extract"
+      ],
+      "source": "oracle_root from carriers.json",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "two roots with oracle_root",
+     "root": "firmware.bin_extract",
+     "source": "oracle_root from carriers.json",
+     "want_root": "firmware.bin_extract",
+     "want_src": "oracle_root from carriers.json"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/core.sqsh_extract",
+       "firmware.bin_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "two roots without a hint",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/core.sqsh_extract', 'firmware.bin_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+     },
+     "desc": "portion chunk root",
+     "root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract"
+     },
+     "desc": "portion chunk, shallow publish",
+     "root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract/4096-4500.squashfs_v4_le_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/2500-5000.squashfs_v4_le_extract",
+       "firmware.bin_extract/0-2500.squashfs_v4_le_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "two portion chunk roots",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/2500-5000.squashfs_v4_le_extract', 'firmware.bin_extract/0-2500.squashfs_v4_le_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract/a.sqsh_extract",
+       "firmware.bin_extract/b.sqsh_extract"
+      ],
+      "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)",
+      "subject": null
+     },
+     "desc": "ambiguous handler chunks",
+     "root": null,
+     "source": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)",
+     "want_root": null,
+     "want_src": "ambiguous: 2 squashfs_v4_le roots ['firmware.bin_extract/a.sqsh_extract', 'firmware.bin_extract/b.sqsh_extract'] (freeze oracle_root)"
+    },
+    {
+     "chunk_roots": {
+      "roots": [
+       "firmware.bin_extract"
+      ],
+      "source": "single squashfs_v4_le derivation root",
+      "subject": "firmware.bin_extract"
+     },
+     "desc": "outside-namespace file",
+     "root": "firmware.bin_extract",
+     "source": "single squashfs_v4_le derivation root",
+     "want_root": "firmware.bin_extract",
+     "want_src": "single squashfs_v4_le derivation root"
+    },
+    {
+     "desc": "layout probe: standard-LE carrier (mkfs_time is a timestamp, no AVM marker)",
+     "ok": false,
+     "problems": [
+      "AVM marker absent (mkfs_time 1700000000 != bytes_used 640)"
+     ],
+     "want_ok": false,
+     "want_text": "AVM marker absent"
+    },
+    {
+     "desc": "layout probe: marker off by one (mkfs_time == bytes_used + 1)",
+     "ok": false,
+     "problems": [
+      "AVM marker absent (mkfs_time 641 != bytes_used 640)"
+     ],
+     "want_ok": false,
+     "want_text": "AVM marker absent"
+    },
+    {
+     "desc": "layout probe: big-endian AVM-marker image (sqsh) is not the little-endian layout",
+     "ok": false,
+     "problems": [
+      "magic 'sqsh' is not little-endian hsqs"
+     ],
+     "want_ok": false,
+     "want_text": "not little-endian hsqs"
+    },
+    {
+     "desc": "layout probe: standard big-endian image (sqsh, no marker)",
+     "ok": false,
+     "problems": [
+      "magic 'sqsh' is not little-endian hsqs"
+     ],
+     "want_ok": false,
+     "want_text": "not little-endian hsqs"
+    },
+    {
+     "desc": "layout probe: hsqs magic over big-endian fields is not a little-endian image",
+     "ok": false,
+     "problems": [
+      "version 1024.0 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version"
+    },
+    {
+     "desc": "layout probe: compression id 1 (gzip) is not the frozen xz",
+     "ok": false,
+     "problems": [
+      "compression id 1 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 1"
+    },
+    {
+     "desc": "layout probe: compression id 2 (lzma; round 41 counted it as xz)",
+     "ok": false,
+     "problems": [
+      "compression id 2 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 2"
+    },
+    {
+     "desc": "layout probe: compression id 6 (zstd)",
+     "ok": false,
+     "problems": [
+      "compression id 6 is not 4 (xz)"
+     ],
+     "want_ok": false,
+     "want_text": "compression id 6"
+    },
+    {
+     "desc": "layout probe: squashfs 3.0 major",
+     "ok": false,
+     "problems": [
+      "version 3.0 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version 3.0"
+    },
+    {
+     "desc": "layout probe: squashfs 4.1 minor",
+     "ok": false,
+     "problems": [
+      "version 4.1 is not 4.0"
+     ],
+     "want_ok": false,
+     "want_text": "version 4.1"
+    },
+    {
+     "desc": "layout probe: bytes_used beyond the file",
+     "ok": false,
+     "problems": [
+      "bytes_used 4294967280 outside 1..640"
+     ],
+     "want_ok": false,
+     "want_text": "bytes_used"
+    },
+    {
+     "desc": "layout probe: inode table after the directory table",
+     "ok": false,
+     "problems": [
+      "inode_table_start 128 / directory_table_start 96 not inside bytes_used 640 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: directory table past bytes_used",
+     "ok": false,
+     "problems": [
+      "inode_table_start 96 / directory_table_start 639 not inside bytes_used 600 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: inode table at offset 0",
+     "ok": false,
+     "problems": [
+      "inode_table_start 0 / directory_table_start 128 not inside bytes_used 640 in order"
+     ],
+     "want_ok": false,
+     "want_text": "in order"
+    },
+    {
+     "desc": "layout probe: shorter than a superblock",
+     "ok": false,
+     "problems": [
+      "shorter than a 96-byte superblock"
+     ],
+     "want_ok": false,
+     "want_text": "shorter than a 96-byte superblock"
+    },
+    {
+     "desc": "layout probe: the frozen layout is accepted",
+     "ok": true,
+     "problems": [
+      ""
+     ],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real runner: node executes the package CLI at --pkg65 (no npx), frozen flags, FIXED_PATH, toolchain recorded",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real runner: unblob that is not 26.6.4 is refused",
+     "ok": false,
+     "problems": [
+      "unblob version '26.6.3' != frozen '26.6.4' (/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/parameters-prefix-test/hyaku/kaidoku-r50/counter/c1-selftest-work.hopa_aa5/stubs/unblob-26.6.3)"
+     ],
+     "want_ok": false,
+     "want_text": "unblob version"
+    },
+    {
+     "desc": "real runner: a package that is not 6.5.0 is refused",
+     "ok": false,
+     "problems": [
+      "REA package version '6.4.0' != '6.5.0'"
+     ],
+     "want_ok": false,
+     "want_text": "REA package version"
+    },
+    {
+     "desc": "real runner: a package without a bin entry is refused",
+     "ok": false,
+     "problems": [
+      "REA package at --pkg65: package.json has no rea-agents bin"
+     ],
+     "want_ok": false,
+     "want_text": "no rea-agents bin"
+    },
+    {
+     "desc": "real runner: a package whose bin entry is missing is refused",
+     "ok": false,
+     "problems": [
+      "REA package at --pkg65: bin entry 'scripts/gone.mjs' is not a file"
+     ],
+     "want_ok": false,
+     "want_text": "is not a file"
+    },
+    {
+     "desc": "real runner: a shim sasquatch on the caller PATH is not resolved",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation equals the built tree",
+     "ok": true,
+     "problems": [
+      "[('README.txt', 'e80d4288ba5eb15358ebabc52afaa7262a0d179f56e945e5b735fa8df2bc2be6', 144), ('etc/app.conf', 'bea9318e9c0e117b3ad8b0d13f5e984bf0e944b03199e8fc759c90899771638b', 160)]"
+     ],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation differs from a doctored table",
+     "ok": false,
+     "problems": [],
+     "want_ok": false,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation leaves no scratch tree",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "real unsquashfs re-derivation: a missing tool",
+     "ok": false,
+     "problems": [
+      "/nonexistent/unsquashfs is not executable"
+     ],
+     "want_ok": false,
+     "want_text": "not executable"
+    },
+    {
+     "desc": "real unsquashfs re-derivation: another version",
+     "ok": false,
+     "problems": [
+      "unsquashfs version line 'unsquashfs version 4.7.5 (2026/03/01)' lacks 9.9.9"
+     ],
+     "want_ok": false,
+     "want_text": "lacks 9.9.9"
+    },
+    {
+     "desc": "real runner: sasquatch not on the child PATH",
+     "ok": false,
+     "problems": [
+      "missing-extractor-dependency: sasquatch is not on the fixed child PATH '/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/parameters-prefix-test/hyaku/kaidoku-r50/counter/c1-emptypath.dzlanilq'"
+     ],
+     "want_ok": false,
+     "want_text": "missing-extractor-dependency"
+    },
+    {
+     "desc": "external carrier without member_sha256",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' external lacks member_sha256",
+      "carrier 'g7581' external member_sha256 is not 64 hex"
+     ],
+     "want_ok": false,
+     "want_text": "lacks member_sha256"
+    },
+    {
+     "desc": "external carrier without a positive carve length",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' external lacks length",
+      "carrier 'g7581' external length is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "lacks length"
+    },
+    {
+     "desc": "external carrier with a member_sha256",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "external carrier with a nested block and no nested.sha256",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' nested.sha256 is not 64 hex"
+     ],
+     "want_ok": false,
+     "want_text": "nested.sha256"
+    },
+    {
+     "desc": "external carrier with nested.sha256",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "oracle_root is a relative path",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "oracle_root that is absolute",
+     "ok": false,
+     "problems": [
+      "carrier 'g7581' oracle_root is not a relative path"
+     ],
+     "want_ok": false,
+     "want_text": "oracle_root"
+    },
+    {
+     "desc": "target missing from carriers.json",
+     "ok": false,
+     "problems": [
+      "frozen target None != counter target 4"
+     ],
+     "want_ok": false,
+     "want_text": "frozen target"
+    },
+    {
+     "desc": "target frozen at 3",
+     "ok": false,
+     "problems": [
+      "frozen target 3 != counter target 4"
+     ],
+     "want_ok": false,
+     "want_text": "frozen target"
+    },
+    {
+     "desc": "rea_parameters missing",
+     "ok": false,
+     "problems": [
+      "rea_parameters is not an object"
+     ],
+     "want_ok": false,
+     "want_text": "rea_parameters is not an object"
+    },
+    {
+     "desc": "rea_parameters at depth 3",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_depth 3 != 1 (the claim is depth 1)"
+     ],
+     "want_ok": false,
+     "want_text": "max_depth"
+    },
+    {
+     "desc": "rea_parameters without a budget",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_output_files is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "max_output_files"
+    },
+    {
+     "desc": "rea_parameters with a non-integer budget",
+     "ok": false,
+     "problems": [
+      "rea_parameters.max_output_files is not a positive int"
+     ],
+     "want_ok": false,
+     "want_text": "max_output_files"
+    },
+    {
+     "desc": "carrier ids compare case-insensitively",
+     "ok": true,
+     "problems": [],
+     "want_ok": true,
+     "want_text": null
+    },
+    {
+     "desc": "a fifth carrier id outside the claim",
+     "ok": false,
+     "problems": [
+      "carrier ids ['c6430', 'c6490', 'g7582', 'z9999'] != ['g7581', 'g7582', 'c6490', 'c6430']"
+     ],
+     "want_ok": false,
+     "want_text": "carrier ids"
+    }
+   ],
+   "red_ok": 150,
+   "root_probes": 8,
+   "selftest": "c1-counter",
+   "spec_probes": 43
+  },
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_bytes": 13656,
+  "stdout_sha256": "c4e17514720accde958403642e596f9004b928b3fe4440fb0b2b487bbbae6459",
+  "utc_started": "2026-10-29T20:54:18Z",
+  "verdict": "killed"
+ }
+]

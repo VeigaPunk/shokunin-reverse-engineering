@@ -1,0 +1,52 @@
+## V1 item2 provenance ids (expect 4)
+12:source: S243 — https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/patches/101-TARGET_FORMAT__AVM_BE_AVM_LE_symbols_only.patch — `+#define AVM_LE 2` (:7) and the byte-order condition naming `AVM_LE` (:17-18): the patch adds the symbol and the byte order and nothing else — no LE marker, no LE layout text; the shipped Freetz build compiles only `AVM_BE` (`squashfs4-host-be.mk:33`) — re-read 2026-10-28 (1,153 B, sha256 `e28b3341021c4c62560f48807de5c949b7bd55b127c687399a9afc289e84c707`)
+13:source: S244 — https://download.avm.de/fritzbox/ — the publisher's image listings for the four carrier directories (root index, plus `fritzbox-7581/other/fritz.os/`, `fritzbox-7582/other/fritz.os/`, `fritzbox-6490-cable/deutschland/fritz.os/`, `fritzbox-6430-cable/deutschland/fritz.os/`); the listing rows, sizes and dates are in the row, and the listing bodies are committed under `corpus/evidence/round-50/c1/index/` — re-read 2026-10-28
+14:source: S245 — https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py — `SquashFSv4LEHandler` (:454-511) with `NAME = squashfs_v4_le` (:455) and the LE pattern `68 73 71 73 [24] 04 00` (:463); the LE branch `case Endian.LITTLE, _:` (:53) then `commands_args.append("-le")` (:54); the only `is_avm` test (:48) sits inside `case Endian.BIG, 4:` (:40) — re-read 2026-10-28 (19,842 B, sha256 `2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287`, equal to the installed copy)
+15:source: S249 — https://download.avm.de/fritzbox/fritzbox-6490-cable/deutschland/fritz.os/info_en.txt — line 850, "The licensee may create only one copy of the software, which may be used exclusively for backup use." (18 words) — re-read 2026-10-28 (67,591 B, sha256 `6c601b342da91f7598dde1e7842ba92a61a1ec7f4b3d00564573fea3d11070a7`)
+exit=0
+## V2 source lines without sha256 (expect none)
+NO-SHA 13
+source-lines=4
+exit=0
+## V3 item6 unlabelled prose (expect 0)
+2:      (the stem the FROZEN counter pins: tools/round-50/c1-counter.py:377-378
+3:      ENTRY/STEM = 2026-10-28-r50-avm-le-squashfs-core; the attempt-2 claims file was
+4:      corrected to that stem at commit 6f4aba63).  Every <FILLED AT LANDING> is a
+5:      value the L1 writes from the committed receipts.  Body text only: no self-path.
+73: 1. [observation] The marker is invisible to unblob and re-stampable. The claim is "REA publishes every oracle file of these four pinned vendor members", not "REA or unblob recognises AVM"; a standard LE image takes the same handler (the round-36 Core). No source text describes an LE AVM layout — the Freetz documents define the big-endian variant and patch 101 only adds the byte-order symbol — so the marker is an empirical property of the four carriers and of all 28 census rows.
+unlabelled=11
+exit=0
+## V4 item7 NOT-examined labelled items
+1
+exit=0
+## V5 item8 version pins
+rea-agents@6\.5\.0 1
+unblob 26\.6\.4 2
+sasquatch 4\.5\.1 0
+unsquashfs 4\.7\.5 0
+## V6 item9 oracle counts vs entry table
+tools/round-50/oracle/g7581.oracle.tsv 4555
+tools/round-50/oracle/g7582.oracle.tsv 4563
+tools/round-50/oracle/c6490.oracle.tsv 4708
+tools/round-50/oracle/c6430.oracle.tsv 3954
+## V7 item11 carrier-swap
+3
+## V8 item12 marker disclosure
+3
+1
+## V9 item13 limits numbered
+7
+## V10 item15 credentials (expect 0)
+0
+## V11 item16 placeholders in draft (expect >0 now, 0 at landing)
+6
+## V12 item14 universals (inspect)
+10:status: R50-C1, resumed under the frozen bytes of attempt 2 — <FILLED AT LANDING: `carriers_matched N/4`, every binding true, `frozen_path_changed []`, counter exit 0, receipt `.ufo/waves/round-50/l1/scores/c1-final.json`> (the counting command is `python3 -I -B tools/round-50/c1-counter.py --root <LANE> --rev <REV> --freeze 435d41fd4ad9211d1579fc447936fb33d2b74467 --pkg65 <rea-agents 6.5.0 package root> --work <SCRATCH> --carrier-cache <CACHE> --json-out <OUT>`; `TARGET = 4`). The four carriers are chain-pinned vendor bytes and are never committed (S249).
+17:recheck: on-refetch — the carrier bytes are re-materialised through the pinned chain, never from the lane: `git show 435d41fd4ad9211d1579fc447936fb33d2b74467:tools/round-50/carriers.json > <SCRATCH>/carriers.json` then `python3 -I -B tools/round-50/fetch-vendor.py --spec <SCRATCH>/carriers.json --cache <CACHE>` (equivalent: `--root <LANE> --rev 435d41fd4ad9211d1579fc447936fb33d2b74467 --cache <CACHE>`); each link is checked in order — image sha256 → tar member sha256 → carve to `bytes_used` → carrier pin — and a broken link exits 1 and writes nothing (the tool accepts `download.avm.de` only, caps 64 MiB per member and refuses a lane-resident cache). The counter then re-runs REA on the fetched bytes and re-derives the oracle with `unsquashfs` 4.7.5; a persistent REA `provider_timeout` is exit 2, never a verdict.
+21:[observation] `PROVINCE.md` and `corpus/README.md` listed "LE AVM members (`hsqs`)" as Frontier in the round-41, round-42, round-44 and round-49 frontier notes. [observation] The four members below are the carriers the frozen counter scores; the class itself stays Frontier. [inference] The scope of the claim is one sentence: REA 6.5.0 `extract-firmware --max-depth 1` publishes every regular file of an independent oracle, at its exact path under the chunk extract root, for these four pinned vendor members — not "every LE AVM image", and not "REA recognises AVM".
+27:## The four carriers (chain-pinned, never committed)
+42:[observation] The harness runs REA 6.5.0 `extract-firmware` as `npx -y rea-agents@6.5.0 extract-firmware --format json --full-output --max-depth 1 --max-output-bytes 536870912 --max-output-files 100000 <carrier> <outdir>` (the byte and file budgets are frozen in `tools/round-50/carriers.json` under `rea_parameters`; the counter replays the receipt's own parameters). [observation] unblob 26.6.4 is the provider's extractor, `sasquatch` 4.5.1 is on the child `PATH`, and the LE argv is `sasquatch -le -no-exit-code -f -d <outdir> <inpath>` (S245 :53-54); no `-be` binary is needed for an LE body. [observation] The chunk is named `squashfs_v4_le`; a chunk is failed only when the provider records an extraction report, so the missing-extractor case is visible as a `missing-extractor-dependency` gap rather than as a different handler name. [observation] REA stages the input as `firmware.bin`, so the chunk's extract root is the `…_extract` directory of the chunk; every oracle path is compared by **equality after mapping into that root**, never by suffix. [observation] The default staging budget (10 000 entries) fails on a rootfs of this size with `unreadable_output` / `Staging entry budget exceeded (10000)`; the frozen budgets are what make the run possible. [observation] unblob rewrites the target text of every symlink it keeps, so a symlink row is compared by path and kind only. [observation] unblob passes `-no-exit-code` to `sasquatch`, which turns a non-fatal extractor failure into exit 0 and no gap; a partially failed extraction is therefore visible only through the oracle comparison, which is why the counter requires every oracle file to be published.
+61:[observation] unblob 26.6.4 tests `mkfs_time == bytes_used` only inside its **big-endian** v4 branch (S245 :48); every little-endian image takes `sasquatch -le -no-exit-code -f -d …`, marker or not, so an AVM-marker LE member and a standard LE member take one handler and one argv (a host-built standard LE image and its twin with `mkfs_time` patched to `bytes_used` produce the same REA projection). [observation] The marker is re-stampable: stock `mksquashfs -no-xattrs -mkfs-time <bytes_used>` writes a body that passes every superblock clause of this claim. [inference] The marker adds **no** evidence of origin once the carrier sha256 holds; `layout_ok` in the counter is a frozen-layout statement about the pinned bytes, and it is kept as the second red for a planted standard LE carrier (CTL-C1-4 is red on `carrier_pin_ok` **and** on `layout_ok`). [observation] "Genuine" in this entry means provenance — the sha256 chain from the vendor URL — and not the marker. [observation] No source text in the registry describes an LE AVM layout: the Freetz documents define the big-endian variant, patch 101 adds only the `AVM_LE` byte-order symbol (S243), and the marker-writing code branch (`550-TARGET_FORMAT__AVM_BE_AVM_LE.patch`) is a Freetz build option that the shipped Freetz build never compiles. [observation] One uncatalogued Freetz wiki page states the same relation for AVM-LE ("The only difference of this format to the original LE format is that the value of the mkfs_time superblock field is equal to the bytes_used field", `https://www.freetz.mhampicke.de/trunk/make/squashfs4-le/Config.in`, read 2026-10-28); the lane holds no `corpus/SOURCES.md` row for it, so it is cited here as prose and not as a `source:` row.
+74:2. [observation] Vendor bytes are fetched, never committed. An image AVM replaces makes the chain unfetchable (the four are the final or long-standing releases of their models, not a guarantee), and the counter-time rerun is unrunnable without a `--carrier-cache`. The committed receipts and oracle tables are the durable evidence.
+77:5. [observation] Four carriers, one vendor, xz only, depth 1: this is not "every LE AVM image". The SoC lines are not self-described by the images (the cable boxes' x86 member names its architecture by path only).
+78:6. [observation] REA's 120 s `provider_timeout` is a host-load property. The rerun repeats up to 3 times on a timeout only; a persistent timeout is exit 2, never a pass.

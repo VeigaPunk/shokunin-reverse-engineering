@@ -1030,10 +1030,12 @@ V5_ROWS = [
      'plans/round-50-attempt2-claims.md R50-C3'],
     ['no-reader-failure', 'extract_firmware', 'unblob', 'squashfs_*', NO_READER_CELL,
      'extractor-failure+', '*', '*', '*', '0', 'preserve-unresolved',
-     'the failing chunk is a family with no independent second reader and published zero '
-     'files -> keep the failure unresolved: reader absence forbids both the '
-     'damaged-body verdict and the broken-extractor verdict, so install nothing and '
-     'change nothing',
+     'the failing chunk is a family with no validated complete independent oracle and '
+     'published zero files -> keep the failure unresolved: reader absence forbids both '
+     'the damaged-body verdict and the broken-extractor verdict, so install nothing and '
+     'change nothing; a partial reader that DOES list the tree (7-Zip lists the '
+     'broadcom fixtures while unsquashfs refuses them) is not suppressed by this label, '
+     'so keep that cross-read result',
      'R50-C3; round-49 W2Skill.md F1; round-50 plans/round-50-attempt2-claims.md R50-C3'],
     ['body-extractor-failure', 'extract_firmware', 'unblob', 'squashfs_*', '*',
      'extractor-failure+', '*', '*', '*', '0', 'preserve-failure',
@@ -1131,6 +1133,17 @@ def blob_sha(root, rev, path):
     if proc.returncode != 0:
         return None
     return proc.stdout.strip()
+
+
+def _self_sha256():
+    """The sha256 of this instrument's own bytes, so a receipt names the code
+    that produced it and an external scorer can bind the receipt to the frozen
+    file instead of trusting the report's own word."""
+    try:
+        with open(os.path.abspath(__file__), 'rb') as handle:
+            return hashlib.sha256(handle.read()).hexdigest()
+    except OSError:
+        return None
 
 
 def sha256_text(text):
@@ -1325,6 +1338,7 @@ def run(ns):
 
     report = {
         'instrument': 'sqfs-triage-v5.py',
+        'instrument_sha256': _self_sha256(),
         'predicate': PREDICATE,
         'schema': 1,
         'root': root,
@@ -1737,6 +1751,7 @@ def corpus_control(ns):
     do_nothing = results[0]
     report = {
         'instrument': 'sqfs-triage-v5.py',
+        'instrument_sha256': _self_sha256(),
         'predicate': PREDICATE,
         'schema': 1,
         'envelopes': ns.envelopes,
@@ -2079,6 +2094,11 @@ def selftest(ns):
         the receipt label".  This case reads the claims file at the lane's HEAD and
         compares the sentence the claim carries with the instrument's PREDICATE
         constant; a drift in either is a failure here, not a silent divergence.
+
+        The comparison binds the WHOLE sentence, not fragments: the claim's text is
+        flattened (its line breaks are wrapping, not content) and compared against the
+        instrument's sentence flattened the same way, so a moved clause, a renamed flag
+        or a changed before-state clause all fail here.
         """
         _require(PREDICATE.startswith('at the measured revision REV, with FREEZE an '
                                       'ancestor of REV, frozen paths untouched,'),
@@ -2092,6 +2112,15 @@ def selftest(ns):
         with open(claims, 'r', encoding='utf-8') as handle:
             text = handle.read()
         flat = ' '.join(text.split())
+        # the FULL command, as one string, must appear in both the claim and the
+        # instrument - a fragment check would not notice a dropped flag
+        command = ('`python3 -I -B tools/round-50-c3/sqfs-triage-v5.py --root <LANE> '
+                   '--rev <REV> --freeze <FREEZE> --envelopes <DIR> --json-out <OUT>`')
+        _require(command in flat,
+                 'predicate: the claims file does not carry the full command %r' % command)
+        _require(command in PREDICATE,
+                 'predicate: the instrument does not carry the full command %r' % command)
+        # and the whole sentence, clause by clause
         for fragment in ('at the measured revision REV, with FREEZE an ancestor of REV, '
                          'frozen paths untouched, running',
                          'exits 0 with `pair_mismatches 0`, `evaluator_missing 0`,',
@@ -2109,7 +2138,7 @@ def selftest(ns):
             _require(fragment in PREDICATE,
                      'predicate: the instrument does not carry the fragment %r'
                      % fragment[:60])
-        return 'predicate matches the claim file and reaches the receipt'
+        return 'predicate matches the claim file, binds the full command, reaches the receipt'
 
     @case
     def c_receipt_is_written_and_parses():
@@ -2176,7 +2205,13 @@ def selftest(ns):
             _require('before-run `--rev` is the exact declared base' in flat,
                      'the claim names two base revisions and does not bind the '
                      'before-run to the declared base')
-        return 'the claim names one before-run base and the 19-row before-state'
+        # the claim must NAME the ddwrt failed-body residue, not only the two clean
+        # no-pad rows: the failed body is the sharper case (a cross-read prescribed
+        # where both readers refuse)
+        if 'dmg_Z3_v3ddwrt_inode_table' not in flat:
+            return ('the claim names one before-run base and the 19-row before-state; '
+                    'it does NOT yet name the ddwrt failed-body residue')
+        return 'the claim names one before-run base, the 19-row before-state and the ddwrt failed body'
 
     @case
     def c_evaluator_abstention_is_reported():

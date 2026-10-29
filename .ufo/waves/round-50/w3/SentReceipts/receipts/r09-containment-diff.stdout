@@ -1,0 +1,66 @@
+== A: round-50 fetcher, file:// URL ==
+ "carriers": [
+  {
+   "detail": "url outside https://download.avm.de: file:///fast/scratch/hyaku/kaidoku-r50/w3-SentReceipts/containment/local-firmware.image",
+   "id": "local-repro",
+   "link": "url",
+   "ok": false,
+   "pin": "f9465dee8b94f5a4b1004fec102a1becd92ee9b10bbdbc6fd3962ba6e6c3c2e4",
+   "url": "file:///fast/scratch/hyaku/kaidoku-r50/w3-SentReceipts/containment/local-firmware.image"
+  }
+ ],
+ "exit_code": 1
+}
+exit=1
+cache contents:
+ls: cannot access '/fast/scratch/hyaku/kaidoku-r50/w3-SentReceipts/containment/c50-file': No such file or directory
+
+== B: round-41 fetcher, file:// URL (the file the frozen counter names) ==
+   "id": "local-repro",
+   "image_sha256": "5f9f9f65cb6b7627e27400d44a02c59fce15e36fe794c7034c3181869291de9a",
+   "member_detail": "member 160 bytes, sha256 f9465dee8b94f5a4b1004fec102a1becd92ee9b10bbdbc6fd3962ba6e6c3c2e4",
+   "member_sha256": "f9465dee8b94f5a4b1004fec102a1becd92ee9b10bbdbc6fd3962ba6e6c3c2e4",
+   "ok": true,
+   "path": "/fast/scratch/hyaku/kaidoku-r50/w3-SentReceipts/containment/c41-file/f9465dee8b94f5a4b1004fec102a1becd92ee9b10bbdbc6fd3962ba6e6c3c2e4.bin",
+   "pin": "f9465dee8b94f5a4b1004fec102a1becd92ee9b10bbdbc6fd3962ba6e6c3c2e4",
+   "url": "file:///fast/scratch/hyaku/kaidoku-r50/w3-SentReceipts/containment/local-firmware.image"
+  }
+ ],
+ "exit_code": 0
+}
+exit=0
+cache contents:
+drwxr-xr-x 2 vgpnk vgpnk  82 Oct 29 17:49 .
+drwxr-xr-x 3 vgpnk vgpnk  98 Oct 29 17:41 ..
+-rw-r--r-- 1 vgpnk vgpnk 160 Oct 29 17:49 f9465dee8b94f5a4b1004fec102a1becd92ee9b10bbdbc6fd3962ba6e6c3c2e4.bin
+
+== C: round-50 fetcher, cache INSIDE the lane ==
+refusing: --cache is inside the lane (vendor bytes are never committed)
+exit=2
+
+== D: round-41 fetcher, cache INSIDE the lane ==
+   "pin": "f9465dee8b94f5a4b1004fec102a1becd92ee9b10bbdbc6fd3962ba6e6c3c2e4",
+   "url": "file:///fast/scratch/hyaku/kaidoku-r50/w3-SentReceipts/containment/local-firmware.image"
+  }
+ ],
+ "exit_code": 0
+}
+exit=0
+cache contents:
+drwxr-xr-x 1 vgpnk vgpnk 136 Oct 29 17:49 .
+drwxr-xr-x 1 vgpnk vgpnk  64 Oct 29 17:49 ..
+-rw-r--r-- 1 vgpnk vgpnk 160 Oct 29 17:49 f9465dee8b94f5a4b1004fec102a1becd92ee9b10bbdbc6fd3962ba6e6c3c2e4.bin
+
+== E: round-50 fetcher, cache = lane root itself (trailing-slash bypass?) ==
+refusing: --cache is inside the lane (vendor bytes are never committed)
+exit=2
+
+== F: round-50 fetcher, cache = lane root + '/.' ==
+refusing: --cache is inside the lane (vendor bytes are never committed)
+exit=2
+
+== G: round-50 fetcher, cache = a SYMLINK inside the lane pointing at the lane ==
+refusing: --cache is inside the lane (vendor bytes are never committed)
+exit=2
+cache contents:
+lrwxrwxrwx 1 vgpnk vgpnk 46 Oct 29 17:49 /fast/scratch/hyaku/kaidoku-r50/w3-SentReceipts/lanelink -> /home/vgpnk/Projects/shokunin/kaidoku-shokunin

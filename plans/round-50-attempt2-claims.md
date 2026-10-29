@@ -118,7 +118,11 @@ instrument `tools/round-50-c3/sqfs-triage-v5.py`, such that:
   forbids both the damaged-body verdict and the broken-extractor verdict); (2) the reader-backed
   v1/v2/v3/v3_ddwrt/v4 families keep the v4 rows exactly, with `legacy-body-failure`'s
   `failing handler` cell replaced by the frozen comma-list alternation above (the reader-backed
-  v1/v2/v3/v3_ddwrt families).
+  v1/v2/v3/v3_ddwrt families). The ddwrt residue, stated with its failed body: its FAILED no-pad
+  body `dmg_Z3_v3ddwrt_inode_table` still reads `legacy-body-failure`/`cross-read-legacy` — a
+  cross-read prescribed on a body whose readers refuse — while its two clean no-pad `_ddefault`
+  envelopes keep `clean`; moving ddwrt into the no-reader set would move exactly those 8 labels
+  and leave `pair_mismatches 0` under both rules (ExecTriageV5 reader-boundary what-if).
 - **Held-out dir**: the round-42 recon envelope corpus
   `.ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/envelopes/` (126 envelopes, committed since
   round 42). **Disclosed limit:** these are not fresh data — v4 scored 78 of them at R43-C1 and

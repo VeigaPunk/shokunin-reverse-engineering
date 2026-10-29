@@ -1,0 +1,279 @@
+[
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "bytes_used == 0 is accepted as sane",
+  "duration_s": 55.7,
+  "exit_code": 0,
+  "failures": [],
+  "mutant_sha256": "e47bd3a04ecb5ec32c580ac636fb62078f232debb98c90a1211feb44a2d634a5",
+  "name": "bytes-used-lower-bound",
+  "stdout_sha256": "9bd9fd283b1cd30e39a6c87097047f2c36f158600fb795f84fe65110df66b41d",
+  "utc": "2026-10-29T20:54:18Z",
+  "verdict": "survived"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "the stored evidence id is no longer compared with the recomputed one",
+  "duration_s": 34.3,
+  "exit_code": 1,
+  "failures": [
+   "evidence id stale after an edit: want failing clause 'evidence_id_ok', failing=['oracle_hits_ok', 'projection_ok']",
+   "evidence id stale after an edit: want 1 got 1"
+  ],
+  "mutant_sha256": "b2ee7a2adc0de17e8eedbb601b32b7e536dc7521e5a1471c6aa55921e849574b",
+  "name": "evidence-id-recompute",
+  "stdout_sha256": "74f57137823188952a64adc52b422a2b0ba86f9d0240826600bd062d86e84ccc",
+  "utc": "2026-10-29T20:52:32Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "a rename (R) of a frozen path is not treated as freeze drift",
+  "duration_s": 55.5,
+  "exit_code": 0,
+  "failures": [],
+  "mutant_sha256": "cb00e0698357eb283a261809066a2a2bc5cf72595bb896714c00958bffb07548",
+  "name": "frozen-drift-rename-code",
+  "stdout_sha256": "0eae1f36606003426dd6f09fa5a249dbf97d05dafc8efe44b0ba2d573f91b24c",
+  "utc": "2026-10-29T20:54:18Z",
+  "verdict": "survived"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "the --full-history flag is dropped from the receipt-add scan",
+  "duration_s": 34.9,
+  "exit_code": 0,
+  "failures": [],
+  "mutant_sha256": "b581997ba020ff99c4ae81900b2a1b5292627e782ed9d52690a5578d70de3241",
+  "name": "full-history-flag",
+  "stdout_sha256": "54df25883382520a173f6c39d6968ea7a95af4516a30671a6710a6b848d011c0",
+  "utc": "2026-10-29T20:53:44Z",
+  "verdict": "survived"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "the frozen handler constant itself is widened (self-consistent mutant)",
+  "duration_s": 36.7,
+  "exit_code": 1,
+  "failures": [
+   "root probe 'single chunk root': ('firmware.bin_extract', 'single squashfs_v4 derivation root'), want ('firmware.bin_extract', 'single squashfs_v4_le derivation root')",
+   "root probe 'portion chunk root': ('firmware.bin_extract/4096-4500.squashfs_v4_le_extract', 'single squashfs_v4 derivation root'), want ('firmware.bin_extract/4096-4500.squashfs_v4_le_extract', 'single squashfs_v4_le derivation root')",
+   "root probe 'portion chunk, shallow publish': ('firmware.bin_extract/4096-4500.squashfs_v4_le_extract', 'single squashfs_v4 derivation root'), want ('firmware.bin_extract/4096-4500.squashfs_v4_le_extract', 'single squashfs_v4_le derivation root')",
+   "root probe 'outside-namespace file': ('firmware.bin_extract', 'single squashfs_v4 derivation root'), want ('firmware.bin_extract', 'single squashfs_v4_le derivation root')",
+   "green (4 AVM carriers, fresh receipts, docs): want 0 got 1",
+   "chunk handler is the bare prefix squashfs_v4: want failing clause 'handler_ok', failing=['b:province_core_row']",
+   "chunk handler is the bare prefix squashfs_v4: want 1 got 1",
+   "the same history with the receipt added only after the freeze is fresh: want 0 got 1",
+   "oracle re-derivation equal to the frozen tables (green): want 0 got 1",
+   "four external carriers, bytes from --carrier-cache (green): want 0 got 1",
+   "regular usr/bin/busy does not satisfy the symlink entry bin/busy: want 0 got 1",
+   "regular sbin/tool does not satisfy the symlink entry usr/sbin/tool: want 0 got 1",
+   "two chunks with oracle_root: the nested file is another namespace: want 0 got 1",
+   "padded carrier: the oracle resolves under the portion chunk directory: want 0 got 1",
+   "a file outside the subject root is another namespace, not an extra: want 0 got 1",
+   "a removal diagnostic is an admitted disposition for a symlink row: want 0 got 1",
+   "a silent empty-target symlink is admitted with no record: want 0 got 1",
+   "a clean merge touching nothing frozen does not trip the freeze walk: want 0 got 1",
+   "structural gap within its frozen allowance: want 0 got 1",
+   "rerun passes the frozen max_depth (1) to REA: want 0 got 1",
+   "rerun passes the frozen output budgets to REA: want 0 got 1",
+   "province row without the handler in the first cell: want 1 got 0",
+   "frontier note with the AVM-LE spelling is accepted: want 0 got 1",
+   "source row opened on the last day of the window (2026-10-29): want 0 got 1"
+  ],
+  "mutant_sha256": "b1a65953d925b3cfe57725929d94e5825976035c34f9cb3ee378d5b2b4e42333",
+  "name": "handler-constant-widened",
+  "stdout_sha256": "e11a1f3c161daa8e67c705de6d4b1624446b39a4e31649f4030acb88b1310f7f",
+  "utc": "2026-10-29T20:53:07Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "handler_ok accepts any squashfs_v4* family, not exactly squashfs_v4_le",
+  "duration_s": 34.2,
+  "exit_code": 1,
+  "failures": [
+   "chunk handler is the BE handler (squashfs_v4_be): want failing clause 'handler_ok', failing=['projection_ok']",
+   "chunk handler is the BE handler (squashfs_v4_be): want 1 got 1",
+   "chunk handler is the bare prefix squashfs_v4: want failing clause 'handler_ok', failing=['projection_ok']",
+   "chunk handler is the bare prefix squashfs_v4: want 1 got 1",
+   "one LE chunk and one BE chunk: every squashfs handler must be the frozen one: want failing clause 'handler_ok', failing=['projection_ok']",
+   "one LE chunk and one BE chunk: every squashfs handler must be the frozen one: want 1 got 1"
+  ],
+  "mutant_sha256": "4afc29c1c6dd4ba25fe61ae87f7c827e0b93112f9fabc030ce28b177c7ee2558",
+  "name": "handler-name-compare",
+  "stdout_sha256": "c7226aef9fd6c07586ae70643d8074fb008e2ed0c9d1e60c4243b1401af634bb",
+  "utc": "2026-10-29T20:52:32Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "the AVM marker equality becomes an inequality (a real timestamp passes)",
+  "duration_s": 34.8,
+  "exit_code": 1,
+  "failures": [
+   "spec probe 'layout probe: standard-LE carrier (mkfs_time is a timestamp, no AVM marker)': ok=True want False (problems [''])",
+   "spec probe 'layout probe: marker off by one (mkfs_time == bytes_used + 1)': ok=True want False (problems [''])",
+   "standard-LE carrier (mkfs_time is a timestamp, no AVM marker): want 1 got 0",
+   "marker off by one (mkfs_time == bytes_used + 1): want 1 got 0",
+   "CTL-C1-4: a standard LE carrier planted under the genuine pin (layout_ok): want failing clause 'layout_ok', failing=['carrier_pin_ok', 'oracle_rederived_ok', 'projection_ok']",
+   "CTL-C1-4: a standard LE carrier planted under the genuine pin (layout_ok): want 1 got 1"
+  ],
+  "mutant_sha256": "30fee88366f6da5a3861b2a0d0ca8287b2adfb31a4e004f47819f787b659583b",
+  "name": "marker-equality",
+  "stdout_sha256": "ce14579eff9608e1952e250bbac12a7f1cf110ee6b7502d358aa488a38dd8db8",
+  "utc": "2026-10-29T20:53:43Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "the s_minor == 0 half of the frozen v4.0 clause is dropped",
+  "duration_s": 36.6,
+  "exit_code": 1,
+  "failures": [
+   "spec probe 'layout probe: squashfs 4.1 minor': ok=True want False (problems [''])",
+   "squashfs 4.1 minor: want 1 got 0"
+  ],
+  "mutant_sha256": "cd33d212d6ba69bd5af3fae70cbcacc5c03f7f8d72c51b886c2e8a221c8d9385",
+  "name": "minor-version-clause",
+  "stdout_sha256": "cbc0d276db1149400d2987c8a068400b49fa15407a32fc9c4a40684698982834",
+  "utc": "2026-10-29T20:53:07Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "an oracle hit ignores the published file size",
+  "duration_s": 34.8,
+  "exit_code": 1,
+  "failures": [
+   "a published file with the oracle sha256 but another size: want failing clause 'oracle_hits_ok', failing=['projection_ok']",
+   "a published file with the oracle sha256 but another size: want 1 got 1"
+  ],
+  "mutant_sha256": "0499c755d220559c1201d0ba011667f86a2a07afe6f12eae8f077bac6e124c90",
+  "name": "oracle-path-map-size",
+  "stdout_sha256": "47f8396f941d047e20ce49c1f74cd88936630d816497e04f4a89f782b1241258",
+  "utc": "2026-10-29T20:53:43Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "only max_depth of the frozen extraction parameters is compared",
+  "duration_s": 55.7,
+  "exit_code": 1,
+  "failures": [
+   "receipt made under a smaller output budget than the frozen one: want 1 got 0",
+   "receipt without recorded parameters: want 1 got 0"
+  ],
+  "mutant_sha256": "8e404ae1e940e4d612d5dd7a5d80d3b778cde18519ddc6d513b19dac59f1f2f2",
+  "name": "parameters-prefix-test",
+  "stdout_sha256": "c4e17514720accde958403642e596f9004b928b3fe4440fb0b2b487bbbae6459",
+  "utc": "2026-10-29T20:54:18Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "the published-file list is dropped from the projection comparison",
+  "duration_s": 36.6,
+  "exit_code": 1,
+  "failures": [
+   "fabrication differing only in one published sha256: want failing clause 'projection_ok', failing=['oracle_hits_ok']",
+   "fabrication differing only in one published sha256: want 1 got 1"
+  ],
+  "mutant_sha256": "9015efba701ffdb82b38636a2035ca0da76bb05fec9d2e7e25aaf2270164d7e2",
+  "name": "projection-files-key",
+  "stdout_sha256": "15adc71c03f60deb41fd30986866bc98d46a25e8f358fdb95f3a84861dc3e433",
+  "utc": "2026-10-29T20:53:07Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "a receipt added AT the freeze commit counts as fresh",
+  "duration_s": 36.8,
+  "exit_code": 1,
+  "failures": [
+   "receipt added at freeze: want 1 got 0"
+  ],
+  "mutant_sha256": "a3ac06e6ac6e7a964e500cc8a943f2daae5c67a5f6addb6cb4a22292bb991ca4",
+  "name": "receipt-first-add",
+  "stdout_sha256": "a0a2bb08c6ab565dbe7d03fa1038ddda165c5711fec67935c17ac3c1c92e066b",
+  "utc": "2026-10-29T20:53:07Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "a missing sasquatch on the fixed PATH no longer refuses the rerun",
+  "duration_s": 34.4,
+  "exit_code": 1,
+  "failures": [
+   "spec probe 'real runner: sasquatch not on the child PATH': no problem mentions 'missing-extractor-dependency' (problems [\"node is not on the fixed child PATH '/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/counter-mut/sasquatch-presence-pin/hyaku/kaidoku-r50/counter/c1-emptypath.xshwderi'\"])"
+  ],
+  "mutant_sha256": "ae419b73fd3983e159c808318ca22e274dd4ec763977ac047eca9281cb95820f",
+  "name": "sasquatch-presence-pin",
+  "stdout_sha256": "c9ea6ca27e73f18d3c6b922dd92c86ba8957d527a1a31007d54039c2d3705cda",
+  "utc": "2026-10-29T20:52:32Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "a committed receipt carrying a score exit_code is accepted as an after-receipt",
+  "duration_s": 34.7,
+  "exit_code": 1,
+  "failures": [
+   "a score receipt (exit_code) committed as the after-receipt: want 1 got 0"
+  ],
+  "mutant_sha256": "52bddf96bc4ab5a325c28ceca220909274f6db79b40f71de7d3fddeecdf4d062",
+  "name": "score-receipt-shape",
+  "stdout_sha256": "5a9eaa9d01677c658279bbf69247313761440bbc1d95ef541249be5f287920e7",
+  "utc": "2026-10-29T20:53:44Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "the carrier target is 3 instead of the frozen 4",
+  "duration_s": 34.3,
+  "exit_code": 1,
+  "failures": [
+   "spec probe 'external carrier with a member_sha256': ok=False want True (problems ['carriers has 4 entries, want 3'])",
+   "spec probe 'external carrier with nested.sha256': ok=False want True (problems ['carriers has 4 entries, want 3'])",
+   "spec probe 'oracle_root is a relative path': ok=False want True (problems ['carriers has 4 entries, want 3'])",
+   "spec probe 'target frozen at 3': no problem mentions 'frozen target' (problems ['carriers has 4 entries, want 3'])",
+   "spec probe 'carrier ids compare case-insensitively': ok=False want True (problems ['carriers has 4 entries, want 3'])",
+   "green (4 AVM carriers, fresh receipts, docs): want 0 got 1",
+   "the same history with the receipt added only after the freeze is fresh: want 0 got 1",
+   "oracle re-derivation equal to the frozen tables (green): want 0 got 1",
+   "four external carriers, bytes from --carrier-cache (green): want 0 got 1",
+   "regular usr/bin/busy does not satisfy the symlink entry bin/busy: want 0 got 1",
+   "regular sbin/tool does not satisfy the symlink entry usr/sbin/tool: want 0 got 1",
+   "two chunks with oracle_root: the nested file is another namespace: want 0 got 1",
+   "padded carrier: the oracle resolves under the portion chunk directory: want 0 got 1",
+   "a file outside the subject root is another namespace, not an extra: want 0 got 1",
+   "a removal diagnostic is an admitted disposition for a symlink row: want 0 got 1",
+   "a silent empty-target symlink is admitted with no record: want 0 got 1",
+   "a clean merge touching nothing frozen does not trip the freeze walk: want 0 got 1",
+   "structural gap within its frozen allowance: want 0 got 1",
+   "rerun passes the frozen max_depth (1) to REA: want 0 got 1",
+   "rerun passes the frozen output budgets to REA: want 0 got 1",
+   "frontier note with the AVM-LE spelling is accepted: want 0 got 1",
+   "source row opened on the last day of the window (2026-10-29): want 0 got 1"
+  ],
+  "mutant_sha256": "9137327bc6b62c10ff9d4f095a985f1b1aa9155d58b11a400a37e5f4241591b1",
+  "name": "target-constant",
+  "stdout_sha256": "4c287f7c89a3830cc8da3228770349b91d778fda91b16678dc0c8a640e9b313c",
+  "utc": "2026-10-29T20:52:32Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+  "description": "the unblob version pin accepts any 26.x",
+  "duration_s": 55.7,
+  "exit_code": 1,
+  "failures": [
+   "spec probe 'real runner: unblob that is not 26.6.4 is refused': ok=True want False (problems [])"
+  ],
+  "mutant_sha256": "1eb78380aec07f20ba663a417cc8f25e439005f2037702c29af67eca3d0d659d",
+  "name": "unblob-version-pin",
+  "stdout_sha256": "ada72e2af3d780c906da685da8c80df44ed1fcfc4d4a126caa39b24cc146a373",
+  "utc": "2026-10-29T20:54:18Z",
+  "verdict": "killed"
+ }
+]

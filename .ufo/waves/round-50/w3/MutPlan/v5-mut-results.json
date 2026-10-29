@@ -1,0 +1,211 @@
+[
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the no-reader family set loses squashfs_v3_broadcom",
+  "exit_code": 1,
+  "mutant_sha256": "9a33b5be46a446f3e6a86c4a54ec820d504aa89eaae11500cdb78bb6c61260d5",
+  "name": "no-reader-set-drops-broadcom",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_sha256": "ca0307aab33e40af6533f6df796ca04e76f92914b09d097c5e8669977b04ad60",
+  "stdout_tail": [
+   "  failed: v5_table_matches_evaluator: v5 draft: wrong pairs {'v3bc-clean': (('clean', 'none'), ('clean-unverified', 'record-unverified'))}",
+   "  failed: mutations_each_flip_their_own_pairs: mutation guard-row-deleted flipped ['v2ns-clean-be', 'v2ns-clean-le'], expected ['v2ns-clean-be', 'v2ns-clean-le', 'v3bc-clean']",
+   "  failed: blanked_cell_mutation_flips_its_pairs: blanked-cell mutation flipped ['v3bc-clean', 'v4bc-clean', 'v4be-clean', 'v4le-clean'], expected ['v4bc-clean', 'v4be-clean', 'v4le-clean']"
+  ],
+  "utc_started": "2026-10-29T21:17:34Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the no-reader family set loses squashfs_v2_nonstandard",
+  "exit_code": 1,
+  "mutant_sha256": "03f5b657edf023387ca0ce874894977f8672ca2348df468444827d443dcde6e5",
+  "name": "no-reader-set-drops-v2ns",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_sha256": "4085b911d4b651b125824a573a91b9ec8172d41ff7dae472fa642170332716c5",
+  "stdout_tail": [
+   "  failed: blanked_cell_mutation_flips_its_pairs: blanked-cell mutation flipped ['v2ns-clean-be', 'v2ns-clean-le', 'v4bc-clean', 'v4be-clean', 'v4le-clean'], expected ['v4bc-clean', 'v4be-clean', 'v4le-clean']",
+   "  failed: evaluator_is_independent_of_the_table: evaluator: ('clean', 'none', 16)",
+   "  failed: guard_row_and_failure_row_are_the_named_ones: the synthetic zero-file no-reader failure is not witnessed: ('body-extractor-failure', 'preserve-failure', 9)"
+  ],
+  "utc_started": "2026-10-29T21:17:34Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the reader-backed legacy set loses squashfs_v3_ddwrt",
+  "exit_code": 1,
+  "mutant_sha256": "e4702ed1a9a821a5b608d8c6ee2215a85ef2f048ec4568d590f418251f105345",
+  "name": "reader-backed-set-drops-ddwrt",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_sha256": "ab8239513b923452b3f071781a06a2603136340ddcf37669a3da1995472e70d6",
+  "stdout_tail": [
+   "  failed: v5_table_matches_evaluator: v5 draft: wrong pairs {'v3ddwrt-legacy': (('body-extractor-failure', 'preserve-failure'), ('legacy-body-failure', 'cross-read-legacy'))}",
+   "  failed: mutations_each_flip_their_own_pairs: mutation legacy-glob-widened flipped ['v2ns-failed', 'v3ddwrt-legacy'], expected ['v2ns-failed']",
+   "  failed: evaluator_is_independent_of_the_table: evaluator: ('body-extractor-failure', 'preserve-failure', 9)"
+  ],
+  "utc_started": "2026-10-29T21:17:34Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the table row that names no-reader-failure is renamed",
+  "exit_code": 1,
+  "mutant_sha256": "9977fbed622ba04b86691b21baf59f20b41ac04cb83598b47afe2955731283ba",
+  "name": "no-reader-failure-row-deleted-from-table",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "9d3b1ea8314332c4a1da0e7a87cdb3aff52ffe77a4c43496a39f803f6244fbf3",
+  "stderr_tail": "ratch/hyaku/kaidoku-r50/w3-MutPlan/v5-mut/no-reader-failure-row-deleted-from-table/sqfs-triage-v5.py\", line 2195, in selftest\n    note = fn()\n  File \"/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan/v5-mut/no-reader-failure-row-deleted-from-table/sqfs-triage-v5.py\", line 1879, in c_no_reader_rows_are_keyed_on_the_families\n    failure = [r for r in rules if r['label'] == 'no-reader-failure'][0]\n              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^\nIndexError: list index out of range\n",
+  "stdout_sha256": "75632256c7d9be355db325a3463b89e81ab76271cc65674bc1c06af16b0d2275",
+  "stdout_tail": [
+   "ok   v4_table_is_red_before                         v4 red before on v2ns-clean-be, v2ns-clean-le",
+   "FAIL v5_table_matches_evaluator                     v5 draft: wrong pairs {'v2ns-failed': (('no-reader-failure-DELETED', 'preserve-unresolved'), ('no-reader-failure', 'preserve-unresolved'))}",
+   "ok   ddwrt_is_reader_backed                         legacy failing-handler cell names squashfs_v1, squashfs_v2, squashfs_v3, squashfs_v3_ddwrt"
+  ],
+  "utc_started": "2026-10-29T21:17:34Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the clean-unverified row fires on zero-file runs too",
+  "exit_code": 0,
+  "mutant_sha256": "f95a2f382b53098a189dc9c4ab23767b4cba3b5fb4f33943ddc74fc4d5b001ee",
+  "name": "clean-unverified-row-files-cell-widened",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_sha256": "788945d22526e6567f1226da80468a4c89203ce29de68ce8147ac76e0bbcf441",
+  "stdout_tail": [
+   "ok   claim_counting_command_is_consistent           the claim names one before-run base and the 19-row before-state",
+   "ok   evaluator_abstention_is_reported               abstention path verified",
+   "selftest: 18 cases, pass 18, fail 0"
+  ],
+  "utc_started": "2026-10-29T21:17:34Z",
+  "verdict": "survived"
+ },
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the clean-unverified row no longer excludes a removed-symlink run",
+  "exit_code": 0,
+  "mutant_sha256": "01b5b1e1d4b766a7206cb109fda34d8fff22f371ea6bd93a12c441f5638f22f3",
+  "name": "clean-unverified-row-symlink-cell-widened",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_sha256": "788945d22526e6567f1226da80468a4c89203ce29de68ce8147ac76e0bbcf441",
+  "stdout_tail": [
+   "ok   claim_counting_command_is_consistent           the claim names one before-run base and the 19-row before-state",
+   "ok   evaluator_abstention_is_reported               abstention path verified",
+   "selftest: 18 cases, pass 18, fail 0"
+  ],
+  "utc_started": "2026-10-29T21:17:34Z",
+  "verdict": "survived"
+ },
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the no-reader test becomes an ALL-match instead of ANY-match",
+  "exit_code": 1,
+  "mutant_sha256": "954b970c2fa82234ce111f3ecf1baed28998e86f65e94a60e87135f8f77ebb26",
+  "name": "evaluator-no-reader-meets-all",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_sha256": "64e6fa5a8039256a558caf6967bbb08927122eda8c8c1f86f9c7fa6b2952de36",
+  "stdout_tail": [
+   "  failed: evaluator_is_independent_of_the_table: evaluator: ('clean', 'none', 16)",
+   "  failed: guard_row_and_failure_row_are_the_named_ones: the synthetic zero-file no-reader failure is not witnessed: ('body-extractor-failure', 'preserve-failure', 9)",
+   "  failed: receipt_is_written_and_parses: receipt-run: exit 1, stderr=''"
+  ],
+  "utc_started": "2026-10-29T21:17:34Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the evaluator never returns clean-unverified",
+  "exit_code": 1,
+  "mutant_sha256": "328e5572cdb0591f5cb3edde2c688b4d4eea93754c199d53a124113fcc8c8d0d",
+  "name": "evaluator-clean-unverified-step-dropped",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_sha256": "276e7ac219e455b615cc3543e40a8c46e6c449e43a17864291799bb77287db2c",
+  "stdout_tail": [
+   "selftest: 18 cases, pass 16, fail 2",
+   "  failed: evaluator_is_independent_of_the_table: evaluator: ('clean', 'none', 16)",
+   "  failed: receipt_is_written_and_parses: receipt-run: exit 1, stderr=''"
+  ],
+  "utc_started": "2026-10-29T21:17:34Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the evaluator never returns no-reader-failure",
+  "exit_code": 1,
+  "mutant_sha256": "4f5ed745b969a161bf52206ea59308b142a7455d59d5f83b4fe6017135b13a4f",
+  "name": "evaluator-no-reader-failure-step-dropped",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_sha256": "59ca56a27f17b8caed196ab5728f3fbcc4587da9676e0bb25c7507d7368aab84",
+  "stdout_tail": [
+   "  failed: evaluator_is_independent_of_the_table: evaluator: ('body-extractor-failure', 'preserve-failure', 9)",
+   "  failed: guard_row_and_failure_row_are_the_named_ones: the synthetic zero-file no-reader failure is not witnessed: ('body-extractor-failure', 'preserve-failure', 9)",
+   "  failed: receipt_is_written_and_parses: receipt-run: exit 1, stderr=''"
+  ],
+  "utc_started": "2026-10-29T21:17:34Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the evaluator sends every zero-file failure to cross-read-legacy",
+  "exit_code": 1,
+  "mutant_sha256": "27a664df6802a13c453db1255c6782b6a29a8c7f6f4ed0cbc4ae88c6528f560d",
+  "name": "evaluator-legacy-step-widened-to-all",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_sha256": "2cf61d962369327a09d64944db75135c49418d58032e036f7b92450d25af0e42",
+  "stdout_tail": [
+   "  failed: evaluator_is_independent_of_the_table: evaluator: ('legacy-body-failure', 'cross-read-legacy', 7)",
+   "  failed: guard_row_and_failure_row_are_the_named_ones: the synthetic zero-file no-reader failure is not witnessed: ('legacy-body-failure', 'cross-read-legacy', 7)",
+   "  failed: receipt_is_written_and_parses: receipt-run: exit 1, stderr=''"
+  ],
+  "utc_started": "2026-10-29T21:17:34Z",
+  "verdict": "killed"
+ },
+ {
+  "command": "python3 -I -B sqfs-triage-v5.py --selftest",
+  "description": "the table keeps the v4 wide failing-handler glob",
+  "exit_code": 1,
+  "mutant_sha256": "1e39aaea251a681a867cc564df8d18c62112a55df6d4a791f114cbd1ef4cae94",
+  "name": "table-legacy-row-keeps-the-wide-glob",
+  "pristine_sha256": "05df514ffff3ee07e1cc04d5a874986dd966a30873246c3cdb2591fdbe7198fd",
+  "status": "ran",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_tail": "",
+  "stdout_sha256": "b84ef95004874973b0a97ca4283e887cfc1c36fa7e1e90445387f3258c0c8118",
+  "stdout_tail": [
+   "  failed: mutations_each_flip_their_own_pairs: mutation legacy-glob-widened flipped no pair",
+   "  failed: guard_row_and_failure_row_are_the_named_ones: the synthetic witness does not reach the no-reader-failure row: {'index': 7, 'line': 17, 'label': 'legacy-body-failure', 'operation': 'extract_firmware', 'provider': 'unblob', 'handler': ('pattern', 'squashfs_*'), 'failing_handler': ('pattern', 'squashfs_v[123]*'), 'gap_kinds': ('contains', frozenset({'extractor-failure'})), 'dependencies': ('any', None), 'be': '*', 'symlink_removed': '*', 'files': '0', 'action': 'cross-read-legacy', 'cause': 'the failing chunk is a reader-backed v1-v3 body that published zero files -> cross-read the same chunk with unsquashfs and 7-Zip, and only a reader that lists the tree while sasquatch failed shows a broken extractor build', 'source': 'SKILL.md table v4 row 7 narrowed by R50-C3: the v4 cell squashfs_v[123]* also matched squashfs_v2_nonstandard, squashfs_v3_broadcom and squashfs_v3_nonstandard, which have no independent reader (round-49 W2Skill.md F1); round-50 plans/round-50-attempt2-claims.md R50-C3', 'cells': ['legacy-body-failure', 'extract_firmware', 'unblob', 'squashfs_*', 'squashfs_v[123]*', 'extractor-failure+', '*', '*', '*', '0', 'cross-read-legacy', 'the failing chunk is a reader-backed v1-v3 body that published zero files -> cross-read the same chunk with unsquashfs and 7-Zip, and only a reader that lists the tree while sasquatch failed shows a broken extractor build', 'SKILL.md table v4 row 7 narrowed by R50-C3: the v4 cell squashfs_v[123]* also matched squashfs_v2_nonstandard, squashfs_v3_broadcom and squashfs_v3_nonstandard, which have no independent reader (round-49 W2Skill.md F1); round-50 plans/round-50-attempt2-claims.md R50-C3']}",
+   "  failed: receipt_is_written_and_parses: receipt-run: exit 1, stderr=''"
+  ],
+  "utc_started": "2026-10-29T21:17:35Z",
+  "verdict": "killed"
+ }
+]

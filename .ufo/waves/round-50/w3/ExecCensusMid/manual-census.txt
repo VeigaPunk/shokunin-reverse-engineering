@@ -1,0 +1,77 @@
+### rows
+cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+command: grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+exit: 0
+stdout_sha256: a6ade98870a92fc7e8bfd6eee3662e7823131fe83fdcdab6b73af38144accd49
+utc: 2026-10-29T20:33:37Z
+--- output ---
+152
+--- end output ---
+
+### malformed-rows
+cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+command: awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13 {n++} END{print n+0}' corpus/SOURCES.md
+exit: 0
+stdout_sha256: 9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa
+utc: 2026-10-29T20:33:37Z
+--- output ---
+0
+--- end output ---
+
+### tier-histogram
+cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+command: awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {t=$5; gsub(/[[:space:]]/,"",t); n[t]++} END{for(k in n) printf "%s=%d ", k, n[k]; print ""}' corpus/SOURCES.md
+exit: 0
+stdout_sha256: eb79a825a8a1f17b03b4a1293b86d1dd1e9b9370e7b683d8f465374d93535d9d
+utc: 2026-10-29T20:33:37Z
+--- output ---
+A=139 B=8 C=5 
+--- end output ---
+
+### status-histogram
+cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+command: awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {s=$9; gsub(/[[:space:]]/,"",s); n[s]++} END{for(k in n) printf "%s=%d ", k, n[k]; print ""}' corpus/SOURCES.md
+exit: 0
+stdout_sha256: c9d7f75487c3692fbe1b16058b3948e79e642ff9d85e366273af55d98a6bc565
+utc: 2026-10-29T20:33:37Z
+--- output ---
+mined=143 rejected=9 
+--- end output ---
+
+### duplicate-ids
+cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+command: awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {i=$2; gsub(/[[:space:]]/,"",i); print i}' corpus/SOURCES.md | sort | uniq -d
+exit: 0
+stdout_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+utc: 2026-10-29T20:33:37Z
+--- output ---
+--- end output ---
+
+### enum-violations
+cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+command: awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF==13 {i=$2;k=$4;t=$5;s=$9; gsub(/[[:space:]]/,"",i); gsub(/[[:space:]]/,"",k); gsub(/[[:space:]]/,"",t); gsub(/[[:space:]]/,"",s); if (t !~ /^[ABC]$/) print "tier", i, t; if (s !~ /^(queued|mined|rejected)$/) print "status", i, s; if (k !~ /^(spec|docs|paper|code|tool|dataset|talk|book|community|own-work)$/) print "kind", i, k; if (t=="A" && k=="community") print "tier-inflation", i}' corpus/SOURCES.md
+exit: 0
+stdout_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+utc: 2026-10-29T20:33:37Z
+--- output ---
+--- end output ---
+
+### mined-used-by-missing
+cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+command: awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF==13 {s=$9; gsub(/[[:space:]]/,"",s); if (s=="mined") {n=split($12, a, /[,;]/); for (j=1;j<=n;j++) {p=a[j]; gsub(/^[[:space:]]+|[[:space:]]+$/,"",p); if (p!="" && p!="—") print p}}}' corpus/SOURCES.md | while read -r p; do [ -e "$p" ] || echo "missing: $p"; done
+exit: 0
+stdout_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+utc: 2026-10-29T20:33:37Z
+--- output ---
+--- end output ---
+
+### rows-spacing-tolerant
+cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+command: grep -cE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+exit: 0
+stdout_sha256: a6ade98870a92fc7e8bfd6eee3662e7823131fe83fdcdab6b73af38144accd49
+utc: 2026-10-29T20:33:37Z
+--- output ---
+152
+--- end output ---
+

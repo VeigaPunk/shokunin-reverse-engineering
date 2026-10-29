@@ -1,0 +1,53 @@
+$ unsquashfs -version
+unsquashfs version 4.7.5 (2026/03/01)
+copyright (C) 2026 Phillip Lougher <phillip@squashfs.org.uk>
+$ 7z i | head -3
+
+7-Zip 26.04 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-10-05
+ 64-bit locale=en_US.UTF-8 Threads:32 OPEN_MAX:524288, ASM
+# Reader census re-measured on the COMMITTED round-42 fixture bytes (lane tree,
+# .ufo/waves/round-42/w1/artifacts/R42C1Oracle/fixtures/<family>/<endian>/__input__/),
+# byte-exact per family per fixture: unsquashfs 4.7.5 -lls, 7-Zip 26.04 l -tSquashFS
+# sha256[:12] binds each row to the corpus envelope's subject.digest
+# family | fixture | sha256[:12] | unsquashfs | 7z | verdict
+squashfs_v3                squashfs_v3.be.1kpad.bin   d178985d5fee 0           0   readable-by-both
+squashfs_v3                squashfs_v3.be.4kpad.bin   90b2f247ba10 0           0   readable-by-both
+squashfs_v3                squashfs_v3.be.nopad.bin   c1eb3ac360e4 0           0   readable-by-both
+squashfs_v3                squashfs_v3.le.1kpad.bin   5109f62ffdee 0           0   readable-by-both
+squashfs_v3                squashfs_v3.le.4kpad.bin   5afb4387d027 0           0   readable-by-both
+squashfs_v3                squashfs_v3.le.nopad.bin   314d4bbe07b8 0           0   readable-by-both
+squashfs_v3                squashfs_v3_be.bin         4e9493d9c6f8 0           0   readable-by-both
+squashfs_v3                squashfs_v3_le.bin         0161351caec8 0           0   readable-by-both
+squashfs_v3_broadcom       squashfs_v3.be.1kpad.bin   2120dcca995a 1           0   PARTIAL (7z lists it; unsquashfs refuses)
+squashfs_v3_broadcom       squashfs_v3.be.4kpad.bin   2f9d832fe73c 1           0   PARTIAL (7z lists it; unsquashfs refuses)
+squashfs_v3_broadcom       squashfs_v3.be.nopad.bin   5baee74f14d4 1           0   PARTIAL (7z lists it; unsquashfs refuses)
+squashfs_v3_broadcom       squashfs_v3.le.1kpad.bin   fa9102933ca3 1           0   PARTIAL (7z lists it; unsquashfs refuses)
+squashfs_v3_broadcom       squashfs_v3.le.4kpad.bin   f999054ee3fb 1           0   PARTIAL (7z lists it; unsquashfs refuses)
+squashfs_v3_broadcom       squashfs_v3.le.nopad.bin   e763240ca30d 1           0   PARTIAL (7z lists it; unsquashfs refuses)
+squashfs_v3_broadcom       squashfs_v3_be.bin         4e9493d9c6f8 0           0   readable-by-both
+squashfs_v3_broadcom       squashfs_v3_le.bin         6baad4387dd5 1           0   PARTIAL (7z lists it; unsquashfs refuses)
+squashfs_v3_ddwrt          squashfs_v3.be.1kpad.bin   66967c181163 1           2   NO-READER (both refuse)
+squashfs_v3_ddwrt          squashfs_v3.be.4kpad.bin   6a5ab01dace7 1           2   NO-READER (both refuse)
+squashfs_v3_ddwrt          squashfs_v3.be.nopad.bin   daa8e72d355d 1           2   NO-READER (both refuse)
+squashfs_v3_ddwrt          squashfs_v3.le.1kpad.bin   6d340b84b25c 1           2   NO-READER (both refuse)
+squashfs_v3_ddwrt          squashfs_v3.le.4kpad.bin   cca294fd76e4 1           2   NO-READER (both refuse)
+squashfs_v3_ddwrt          squashfs_v3.le.nopad.bin   e7482db480f9 1           2   NO-READER (both refuse)
+squashfs_v3_ddwrt          squashfs_v3_le.bin         0161351caec8 0           0   readable-by-both
+squashfs_v3_nonstandard    squashfs_v3.be.1kpad.bin   d18ea9e97713 1           2   NO-READER (both refuse)
+squashfs_v3_nonstandard    squashfs_v3.be.4kpad.bin   93f3114d1474 1           2   NO-READER (both refuse)
+squashfs_v3_nonstandard    squashfs_v3.be.nopad.bin   ed6b0d13cfb4 1           2   NO-READER (both refuse)
+squashfs_v3_nonstandard    squashfs_v3.le.1kpad.bin   1db4b787d231 1           2   NO-READER (both refuse)
+squashfs_v3_nonstandard    squashfs_v3.le.4kpad.bin   7deb245c6c25 1           2   NO-READER (both refuse)
+squashfs_v3_nonstandard    squashfs_v3.le.nopad.bin   8c7ed2e81dd0 1           2   NO-READER (both refuse)
+squashfs_v3_nonstandard    squashfs_v3_be.bin         01b2792bd5b5 1           2   NO-READER (both refuse)
+squashfs_v3_nonstandard    squashfs_v3_le.bin         3bce6ae37831 1           2   NO-READER (both refuse)
+
+# Verdict per FAMILY (the claim's partition is FAMILY-level; this census is FIXTURE-level)
+# family | no-reader | partial | readable-by-both | of
+squashfs_v3                0           0        8                 8
+squashfs_v3_broadcom       0           7        1                 8
+squashfs_v3_ddwrt          6           0        1                 7
+squashfs_v3_nonstandard    8           0        0                 8
+exit_code: 0
+utc: 2026-10-29T21:11:09Z
+payload_sha256_before_this_line: 0a7eb1f7d23e7a8d4cf5dbd41acec3fb5b9827a4b48738598caf75a49d587ffc

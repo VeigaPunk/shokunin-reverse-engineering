@@ -1,0 +1,98 @@
+[
+ {
+  "name": "census-r49-r50-at-base",
+  "command": "git ls-tree -r --name-only f890bbead20ca2c549487167f56876ae47f1e1a4 -- tools/round-49 tools/round-50 | grep -E '\\.(py|sh)$' | grep -v control-fixtures | sort",
+  "exit_code": 0,
+  "stdout_sha256": "9533b7564d1ba55caa1ea82d5919de262ab716ebc2649b3068710d49cda74456",
+  "stdout_bytes": 344,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "rowcount-per-commit",
+  "command": "for c in 845e0586 11ccdb72 f890bbea; do n=$(git show $c:SKILL.md | sed -n '/<!-- instrument-registry v2 -->/,/<!-- \\/instrument-registry -->/p' | grep -c '^| `tools/'); echo \\\"$c rows=$n\\\"; done",
+  "exit_code": 0,
+  "stdout_sha256": "83e220e4cddf7c977e5b53f140880c08b57340cadf3cae4eee1768e07a1ad66c",
+  "stdout_bytes": 57,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "rows-added-at-attempt1-landing",
+  "command": "diff <(git show 845e0586:SKILL.md | sed -n '/<!-- instrument-registry v2 -->/,/<!-- \\/instrument-registry -->/p' | grep -o '^| `[^`]*`' | sort) <(git show 11ccdb72:SKILL.md | sed -n '/<!-- instrument-registry v2 -->/,/<!-- \\/instrument-registry -->/p' | grep -o '^| `[^`]*`' | sort)",
+  "exit_code": 1,
+  "stdout_sha256": "3cff4dd257a46a33b375c12efded10cabe8bc3d85f1f56e5670e9cd9a804a02e",
+  "stdout_bytes": 425,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "rows-f890-vs-11cc",
+  "command": "diff <(git show 11ccdb72:SKILL.md | sed -n '/<!-- instrument-registry v2 -->/,/<!-- \\/instrument-registry -->/p' | grep -o '^| `[^`]*`' | sort) <(git show f890bbea:SKILL.md | sed -n '/<!-- instrument-registry v2 -->/,/<!-- \\/instrument-registry -->/p' | grep -o '^| `[^`]*`' | sort) && echo IDENTICAL",
+  "exit_code": 0,
+  "stdout_sha256": "1e00073b48fe3b36fc839da3b74b515bbecc9def677e059553835bb86bde8c55",
+  "stdout_bytes": 10,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "b9-hand-replica",
+  "command": "python3 /fast/scratch/hyaku/kaidoku-r50/w3-RevB9Registry/b9-replica.py",
+  "exit_code": 0,
+  "stdout_sha256": "eabb2e9592d4be75e1f4b4a7d0eb377514b17af706b660341a538883a607fe7b",
+  "stdout_bytes": 883,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "drift-scan",
+  "command": "python3 /fast/scratch/hyaku/kaidoku-r50/w3-RevB9Registry/drift-scan.py",
+  "exit_code": 0,
+  "stdout_sha256": "2d956e51969b87bfac88976cfb7a04420b52d7f4f36d00562e11115121d7ced9",
+  "stdout_bytes": 3823,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "attempt1-cell-dump",
+  "command": "python3 /fast/scratch/hyaku/kaidoku-r50/w3-RevB9Registry/attempt1-cells.py",
+  "exit_code": 0,
+  "stdout_sha256": "2b69e682a03515975363cadc17419f5f88f84be859a059000031f25a972b94dd",
+  "stdout_bytes": 9664,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "header-separator-bytes",
+  "command": "git show f890bbea:SKILL.md | sed -n '1715,1718p' | cat -A",
+  "exit_code": 0,
+  "stdout_sha256": "464ed4b48f74448ddef2d3c0530e048bcf0a7a621376fb97f8123cb46238e61b",
+  "stdout_bytes": 191,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "skillmd-blob-f890-vs-head",
+  "command": "git rev-parse f890bbead20ca2c549487167f56876ae47f1e1a4:SKILL.md 6f4aba635fc47b5823ed42afe9c8b5dc3e28127f:SKILL.md",
+  "exit_code": 0,
+  "stdout_sha256": "632652c410ff6f0246c46e3082ca83f48a15d066ce530ed54c26a1bd5ceb7d9c",
+  "stdout_bytes": 82,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "c2record-blob-f890-vs-freeze",
+  "command": "git rev-parse f890bbead20ca2c549487167f56876ae47f1e1a4:tools/round-50/c2-record.py 435d41fd4ad9211d1579fc447936fb33d2b74467:tools/round-50/c2-record.py",
+  "exit_code": 0,
+  "stdout_sha256": "3b86e76971a2b0ef2da4109085125ff534417250778bcfee3b099310da1b8901",
+  "stdout_bytes": 82,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "tools49-unchanged-counterbase-to-base",
+  "command": "git diff --name-only 7c678ae6d97aedb969fd253b52b3d2882ef1e186 f890bbead20ca2c549487167f56876ae47f1e1a4 -- tools/round-49",
+  "exit_code": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "utc": "2026-10-29T20:39:36Z"
+ },
+ {
+  "name": "registry-marker-span",
+  "command": "git show f890bbea:SKILL.md | grep -n 'instrument-registry v2\\|/instrument-registry'",
+  "exit_code": 0,
+  "stdout_sha256": "a3439866116c18515ce672bc5558af09ebbdd1364279f51a0037937fc507bc2a",
+  "stdout_bytes": 72,
+  "utc": "2026-10-29T20:39:36Z"
+ }
+]
