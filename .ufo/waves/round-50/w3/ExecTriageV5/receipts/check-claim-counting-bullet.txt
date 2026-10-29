@@ -1,0 +1,33 @@
+# The standalone counting-bullet checker (2026-10-29)
+#
+# The frozen instrument's selftest case reads the claims file as a WHOLE, so it
+# passes on a stale 'Counting command' bullet (receipts/guard-defect-proof.txt A).
+# The instrument is FROZEN and every falsify receipt binds instrument_sha256,
+# so this checker carries the same assertion STANDALONE: it changes no frozen byte
+# and the falsify wave can run it against any claims file.
+#
+$ python3 -I -B patches/check-claim-counting-bullet.py [CLAIMS_FILE]
+# exit 0 = the bullet names the declared base and the seat-measured before-state;
+# exit 1 = the bullet is stale, names the superseded base, or drops the ddwrt name;
+# exit 2 = the claims file could not be read, or carries no Counting command bullet.
+
+## A. the REAL claim (expect 0)
+ok: the Counting command bullet names the declared base f890bbea, the seat-measured **19** before-state and the ddwrt failed body
+  exit=0
+
+## B. the STALE-bullet claim (expect 1)
+the Counting command bullet does not name the declared base f890bbea
+the Counting command bullet does not carry the seat-measured **19** before-state
+the Counting command bullet does not name the 19-row before-state
+the Counting command bullet still names the superseded base 8ccc05e6
+the bullet reads: - **Counting command**: the predicate's command, run twice — before at `--rev 8ccc05e6…` (exit 1, ≥4 mismatches incl. the four v2ns `_ddefault` rows) and after at the landing REV (exit 0). 
+  exit=1
+
+## C. a missing claims file (expect 2)
+cannot read '/nonexistent/claims.md': No such file or directory
+  exit=2
+
+checker sha256: b0155f248c4a65d6145f4db97c0e77c51d35f90c1f9cd29086b10ddb8de62ba9
+exit_code: 0
+utc: 2026-10-29T21:29:30Z
+payload_sha256_before_this_line: 790c062ae2fc1c0a629b64ac9ee6b999d5b0ab0c3f8c74657ea81b7c387e5379

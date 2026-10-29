@@ -1,0 +1,32 @@
+# The counting-bullet guard defect, reproduced and fixed (2026-10-29)
+#
+# The critic (CritC3Design) showed that the selftest case
+# c_claim_counting_command_is_consistent searched the claims file as a WHOLE, so it
+# still passed when the 'Counting command' bullet itself went stale - the frozen
+# details bullets carry the right strings elsewhere.  Reproduced below.
+
+$ (build a claim whose Counting bullet is reverted to the superseded wording
+   8ccc05e6… / '≥4 mismatches', leaving the rest of the claim intact)
+  -> scratch lane, claims file patched in place; the instrument NEVER edited
+
+## A. the FROZEN instrument (sha256 ef4633c523ca8ab4ff096a7d90ef7074461a67f03952ad3652a048dce84d3ed0) vs the STALE claim
+ok   claim_counting_command_is_consistent           the claim names one before-run base, the 19-row before-state and the ddwrt failed body
+  exit=0   <-- THE DEFECT: the guard passes on a stale bullet
+
+## B. the PATCHED instrument (patches/claim-counting-bullet-guard.patch) vs the SAME stale claim
+FAIL claim_counting_command_is_consistent           the Counting command bullet does not name the declared base f890bbea (it reads "- **Counting command**: the predicate's command, run twice — before at `--rev 8ccc05e6…` (exit 1, ≥4 mismatches incl. the four v2ns `_ddefault` rows) and after ")
+  failed: claim_counting_command_is_consistent: the Counting command bullet does not name the declared base f890bbea (it reads "- **Counting command**: the predicate's command, run twice — before at `--rev 8ccc05e6…` (exit 1, ≥4 mismatches incl. the four v2ns `_ddefault` rows) and after ")
+  exit=1   <-- the fix catches it
+
+## C. the PATCHED instrument vs the REAL claim (must stay green)
+ok   evaluator_abstention_is_reported               abstention path verified
+selftest: 18 cases, pass 18, fail 0
+  exit=0
+
+## D. the PATCHED instrument vs a claim that drops the ddwrt failed-body name
+FAIL claim_counting_command_is_consistent           the claim does not name the ddwrt failed-body residue
+  exit=1   <-- the fix also catches a dropped ddwrt name
+
+exit_code: 0
+utc: 2026-10-29T21:26:29Z
+payload_sha256_before_this_line: ab61e5c2704bf16adce7d28bfc7196d22cd778a9ecdad22367c0e6e89b92051b

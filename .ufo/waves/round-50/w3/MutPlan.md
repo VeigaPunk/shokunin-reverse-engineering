@@ -272,26 +272,49 @@ family its cross-read row).
 
 **The glob `squashfs_v[23]_[bn]*` is exact**: it matches the three no-reader
 names and excludes `squashfs_v3_ddwrt` (`_d` vs `_b`/`_n`), `squashfs_v3`, and
-all `squashfs_v4_*`. It needs no grammar extension.
+all `squashfs_v4_*`. It needs no grammar extension. (Measured directly against
+the ten handler names in `glob-reachability.json` -> `A_no_reader_set`,
+`is_exact: true`; and confirmed end-to-end, since the D table mutant used
+exactly this glob and produced 19 flips with 0 cross-flip.)
 
 ### 2.4 The reader-backed legacy set is NOT selectable by one v4-grammar glob
 
 The claim's evaluator narrows `legacy-body-failure`'s failing-handler cell to the
 reader-backed v1-v3 families. **Inside the v4 single-glob cell grammar that set
 {`squashfs_v1`, `squashfs_v2`, `squashfs_v3`, `squashfs_v3_ddwrt`} is not
-expressible as one glob.** Complete structural enumeration (5 847 candidates:
-every `[*]C[*]` form with every single-char class over the suffix alphabet,
-`?`, and star runs 0..3) returns **zero** globs selecting exactly that set,
-because any glob matching the one-character suffix `1` can carry at most one
-non-wildcard character before its trailing stars, and `3_ddwrt` vs `3_broadcom` /
-`3_nonstandard` differ only *after* the `3_` — a single trailing `*` cannot
-separate them. The v5 instrument therefore needs a **list-valued handler cell**
+expressible as one glob**, and here the search space **is** complete: the
+target contains the one-character suffix `1`, so any pattern matching it can
+consume at most one character outside its stars — the pattern must have the
+form `[*]X[*]` with a single non-star atom `X`. Enumerating every literal and
+every class over the suffix alphabet in that form (5 776 candidates, stars
+0..3) returns **zero** globs selecting exactly that set. The analytic reason:
+the pattern must match the 1-char suffix `1` *and* the 16-char
+`squashfs_v3_ddwrt`, so `X` must match `3` and a trailing star must absorb
+`_ddwrt` — and that same star also absorbs `_nonstandard` and `_broadcom`, so
+the rejected names cannot be excluded.
+
+The v5 instrument therefore needs a **list-valued handler cell**
 (`squashfs_v1,squashfs_v2,squashfs_v3,squashfs_v3_ddwrt`), which is exactly
 the grammar delta the landed draft implements
 (`_parse_handler_cell` accepts a comma-separated list; the v4 evaluator's
 `_parse_handler_cell` does not). **The landed v5 instrument is right to extend
 the grammar, and the v4 evaluator must keep refusing it** — the v4 table stays
 parseable by the v4 evaluator, which is what preserves the v4 instrument.
+
+**Correction to an earlier draft of this section (recorded, not hidden):** two
+earlier searches of mine reported `no_reader hit_count 0`, which contradicts the
+measured fact in §2.3 that `squashfs_v[23]_[bn]*` selects the no-reader set
+**exactly**. Those zeros were **bound artifacts of too-narrow candidate spaces**
+(one searched suffix globs of length <= 4; the other searched only the
+one-atom `[*]C[*]` form, while the answering glob needs three atoms), **not
+properties of the grammar**. The corrected artifact is
+`glob-reachability.py` / `glob-reachability.json`: it states the scope rule
+(a target with a one-character suffix has a complete `[*]X[*]` space; a target
+without one does **not**), gives the no-reader set as a **measured answer with
+no completeness claim**, and gives the reader-backed result as a **complete**
+enumeration. The two superseded JSONs are annotated
+(`_SUPERSEDED`) so their zero-hit fields cannot be misread. **The conclusion
+of §2.4 is unchanged and now rests on a soundly-bounded search.**
 
 ### 2.5 Corpus coverage gap in the C3 held-out dir (measured, not inferred)
 
@@ -433,10 +456,11 @@ Seat artifacts: `.ufo/waves/round-50/w3/MutPlan/`
 | `synthetic-probe.py` | the synthetic envelope probe (F1 shapes the corpus lacks) |
 | `survivor-probes.py`, `survivor-probes2.py`, `survivor-probes3.py` | the survivor characterisation probes (full-history topologies, rename drift, masking) |
 | `v5-survivor-probe.py`, `v5-survivor-probe2.py` | the v5 survivor characterisation (table-vs-evaluator on purpose-built shapes) |
-| `glob-reader-backed.py` | the complete glob-reachability enumeration (§2.4) |
+| `glob-reachability.py` | the **corrected, soundly-bounded** glob-reachability measurement (§2.4): the scope rule, the measured no-reader answer, and the *complete* reader-backed enumeration |
+| `glob-reader-backed.py`, `glob-targeted.py` | **SUPERSEDED** searches; their zero-hit fields are bound artifacts and are annotated as such in the matching JSONs. Kept only so the correction is auditable. |
 | `final-checks.py` | the D2 row-order variant |
 | `counter-mut-results-*.json`, `v5-mut-results.json`, `receipts.json` | the machine-readable receipts (command, exit, stdout sha256, UTC start, mutant sha256) |
-| `table-mut-report.json`, `synthetic-report.json`, `survivor-probes*.json`, `v5-survivor-probe*.json`, `glob-*.json`, `full-history-decisive.json` | the raw measurements |
+| `table-mut-report.json`, `synthetic-report.json`, `survivor-probes*.json`, `v5-survivor-probe*.json`, `glob-reachability.json`, `full-history-decisive.json` | the raw measurements |
 
 Scratch (removed before yield, after the receipts above were copied):
 `/fast/scratch/hyaku/kaidoku-r50/w3-MutPlan`.

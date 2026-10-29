@@ -142,15 +142,17 @@ instrument `tools/round-50-c3/sqfs-triage-v5.py`, such that:
 - **Kill rule**: do-nothing green at the freeze, a committed mutation leaving its pair green or
   flipping the wrong pair, or a no-op mutation, stops C3 and is reported as a miss.
 - **Registry (B9 coupling)**: the new `.py` file gets exactly one `instrument-registry v2` row
-  (gate|probe kind, verdict map 0/1/2, selftest spelling, pinned-value path), so the frozen C2
-  atom B9 stays green at the new REV; no other `.py`/`.sh` lands under `tools/round-50/`.
+  (gate|probe kind, verdict map 0/1/2, selftest spelling, pinned-value path), recorded as a registry
+  duty: B9 does not census this out-of-tree path (its census covers `tools/round-49/**` at BASE and
+  `tools/round-50/**` at REV) and stays green because the round-49/50 census gains no unregistered
+  path; no other `.py`/`.sh` lands under `tools/round-50/`.
 
 ## Landing order and shared-file rules
 
 1. C3 freeze (instrument + registry row), C3 controls + before-run receipts.
 2. C3 table (rule block 26) lands in `SKILL.md`; C3 after-run.
 3. C1: controls-attempt2 receipts, data run, entry `corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md`
-   (the stem the FROZEN counter pins — `tools/round-50/c1-counter.py` constants `entry`/`stem`
+   (the stem the FROZEN counter pins — `tools/round-50/c1-counter.py` constants `ENTRY`/`STEM`
    `2026-10-28-r50-avm-le-squashfs-core`, `core_heading` `## Round-50 additions to Core`, `frontier_mark`
    `Round-50 frontier note`, `opened` `2026-10-28`, `prov_base` `/fast/scratch/hyaku/kaidoku-r50`; this file's
    first draft wrongly named a `2026-10-29-r50-le-avm-hsqs-core` stem and is corrected by this commit before any
@@ -158,7 +160,11 @@ instrument `tools/round-50-c3/sqfs-triage-v5.py`, such that:
    `corpus/README.md` coverage-map row, SOURCES rows S243/S244/S245/S249 (opened 2026-10-28,
    re-opened 2026-10-29 this attempt) listing the entry in `used-by`, SCORECARD capability row +
    Owned-axes coverage head `140/140` (B1 stays green), attempt-2 SCORECARD/LOG/lesson sections.
-4. C2 consistency at the final REV: `tools/round-50/c2-record.py --rev <final> --freeze
+4. **Actual landing (disclosed):** the C3 freeze and the table landed together as one commit `1439dfe9`
+   (instrument + SKILL row + block 26 + pre-data receipts); the controls and the before-run were executed
+   against pre-table bytes BEFORE that commit, and the after-run followed it. Steps 1-2 above describe
+   execution order, not separate commit boundaries.
+5. C2 consistency at the final REV: `tools/round-50/c2-record.py --rev <final> --freeze
    435d41fd…` exits 0 (`atoms_total 11`, `mismatches 0`) — the record stays green at the new tip;
    B1's head is updated in the same commit as the entry.
 

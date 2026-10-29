@@ -1,0 +1,11 @@
+diff --git a/corpus/lessons/round-50.md b/corpus/lessons/round-50.md
+index 19ff83a8..cc4a8524 100644
+--- a/corpus/lessons/round-50.md
++++ b/corpus/lessons/round-50.md
+@@ -88,4 +88,6 @@ Controls before data (frozen order, quiet window): `.ufo/waves/round-50/controls
+ ### Census before → after (attempt 2)
+ 
+ - Round start: exit 0, 152 rows, 18 W04 (`.ufo/waves/round-50/l1/sources-census-start-attempt2.txt`).
+ - Round end: exit 0, 156 rows, 19 W04 (`.ufo/waves/round-50/l1/sources-census-end-attempt2.txt`).
++
++**Guard-defect note (appended after the first falsify findings):** the instrument's own `claim_counting_command_is_consistent` case originally searched the claims file as a whole, so it still passed when the "Counting command" bullet itself went stale (the frozen-details bullets carried the right values elsewhere in the document). Seat ExecTriageV5 reproduced the defect side by side (frozen bytes ef4633c5 pass a stale claim; the patched guard fails it) and delivered the fix as a patch (`w3/ExecTriageV5/patches/claim-counting-bullet-guard.patch`, applied with `-p1`); the landed instrument is sha256 `f29eb92073dfff0cae48658985a7df3a34b1558430183dacc9968c2dff71b16e`, selftest 18/18, before 19 at `f890bbea` and after 0 at `1439dfe9` re-measured with the patched bytes (receipts `.ufo/waves/round-50/c3/c3-{before,after}.json`). The defect class is M50-10's (a guard that cannot fail is not a guard), one level up: the guard that checked the guards.
