@@ -1,0 +1,35 @@
+# RevFetchGuards — static review
+
+Axes: origin confinement; offline execution; real mutation sensitivity; honest evidence; unchanged chain/CLI behavior.
+
+## Numbered findings (severity order)
+
+1. **P1 — observed draft does not yet implement routed repair 4.** At review, `ExecFetchSelftest/fetch-vendor.py` is the original 449-line fetcher: `selftest()` lines 326–361 injects `fake(image)` into `run()`, bypassing the actual `fetch()` guards at lines 110–125 and redirect handler at lines 99–107. The `bad-url` case at line 371 only trips the fake's sentinel at lines 328–329. Thus the observed draft cannot demonstrate refusal by any production network guard. This is an in-progress snapshot finding, not a claim that the executor's eventual replacement fails. No deleted-guard fixture or completed execution receipt was available in its directory at review. Before freeze, review the completed replacement and its actual mutation receipts; do not admit the currently observed draft as the repair.
+
+2. **P2 — canonical guard obligation omits redirect confinement explicitly.** `plans/round-51-claims.md:174–177` names only https-scheme and pinned-host. Production has two separately enforced boundaries: initial URL (`fetch`, lines 111–113) and each redirect (`_AvmOnlyRedirect.redirect_request`, lines 101–104). The wave assignment (`gen-w1.py:54`) adds redirect refusal, but the frozen obligation should explicitly include both redirect scheme and redirect host, separately from initial scheme and host. Otherwise initial-URL-only tests could satisfy the narrower claims wording while leaving redirect regressions untested. Same-host HTTPS redirects are permitted, not categorically refused.
+
+3. **P2 — test plan does not explicitly cover registration of the redirect guard.** `_OPENER = urllib.request.build_opener(_AvmOnlyRedirect)` at line 107 is security-significant wiring independent of the guard method. `/usr/lib/python3.14/urllib/request.py:537–571` shows that the custom subclass replaces the default redirect handler; without registration the default handler remains. Standalone calls to `_AvmOnlyRedirect.redirect_request` would not detect loss of registration. Require an offline test through the configured opener's redirect dispatch, preserving real guard code and replacing only the terminal transport, plus a real source-level registration-deletion fixture that makes that test red. This is a plan coverage gap, not a reproduced escaping request.
+
+## Complete network-surface inventory
+
+- Imports: `urllib.error`, `urllib.parse`, `urllib.request` (54–56); no second HTTP library, shell downloader, or explicit `urlopen` elsewhere in the full source.
+- Entry URL: JSON local spec or read-only `git show` (`load_spec`, 88–96), `external.url` forwarded literally by `materialise` at 201. No fetcher-side URL concatenation or joining. Four pinned initial URLs in `tools/round-50/carriers.json` use HTTPS and `download.avm.de`.
+- Initial validation: `urlsplit`, exact scheme and parsed hostname equality, before even a valid image-cache return (110–120). The pin is hostname, not a port/credential/origin tuple restriction.
+- Network sink: `_OPENER.open(url, timeout=300)` (121). One explicit sink; redirects re-enter the opener internally. `MAX_IMAGE + 1` bounded read and rejection (123–125) are resource guards, not origin guards, and are not covered by the named repair plan.
+- Redirect URL construction: inherited `HTTPRedirectHandler.http_error_302` normalizes Location/URI and `urljoin`s against the original URL before invoking the override (`urllib/request.py:660–697`). It then calls `self.parent.open(new, timeout=req.timeout)` (718); aliases cover 301/303/307/308 (720). Relative, scheme-relative, chained and HTTPS-to-HTTP redirects belong to this surface. A direct override-method test alone does not exercise resolution, dispatch, or registration.
+- Redirect policy: both HTTPS and the allowed hostname must hold on every normalized target (99–104). Positive allowed-host HTTPS redirects are useful controls so a blanket redirect rejection does not masquerade as correct policy.
+- Ambient transport: default `build_opener` includes `ProxyHandler` and HTTP/HTTPS handlers (`urllib/request.py:547–552`); `ProxyHandler` reads proxy configuration (764–773) and changes request proxy routing (775–801). Therefore hostname confinement does not assert a direct socket only to the vendor. Environment proxy behavior is a residual trust boundary, not a newly requested feature. Offline tests should replace transport below guard dispatch and use a network-denial backstop so a deleted guard cannot cause a real connection.
+- No firmware fetching occurs in nested extraction, tar handling, hashing, cache writes, or reader loading; these are local operations. Default `run`/`materialise` use the real fetch function; old selftests replace it explicitly.
+
+## Required evidence interpretation
+
+- Old selftest is offline by inspection: all chain cases inject `fake(image)` and fixture images are generated locally. **Not run here.** The statement “old 16/16” in the executor assignment is expected context, not an observed result of this seat.
+- Guard-present refusal should occur before the terminal transport is called; validate exception identity/message or a structured refusal, not just any exception. A transport-denial exception after a missing guard is a failing case, not proof that the guard refused.
+- Real mutation evidence requires byte-modified fixture files, exact changed ranges/diffs, unchanged test expectations, and subprocess `--selftest` receipts. Monkeypatching `fetch`/guard methods to simulate a deletion does not meet that requirement. A transport fake is acceptable for offline I/O, but is not itself a deleted-guard fixture.
+- A guard-deleted fixture should make the test suite exit 1 because expected refusal is missing. It need not itself refuse. The old unextended selftest passing is an honest **green-before coverage gap**, not red-before evidence. No genuine runtime red-before or mutant failure was observed by this seat.
+
+## Residual risk and verification gaps
+
+No LSP device is mounted: `read xd://lsp` returned “No such tool”; references/definition/diagnostics unavailable. Literal search and full source inspection were fallback evidence, not semantic-reference proof. No test, firmware download, REA run, runtime invocation, installation, or mutation was performed. The scoped read-only git diff against assignment base was empty (receipt below); the executor scratch draft was not a completed landed production change. No resume path or runtime identity reroute is changed by this fetcher snapshot; those broader checks are outside this seat.
+
+Read-only diff receipt: UTC `2026-10-30T04:57:40.367434+00:00`; command `git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff f04b51ddb8d5fedb234a5e40a2c38b016f07a4ab -- tools/round-50/fetch-vendor.py tools/round-51/fetch-vendor.py plans/round-51-claims.md`; exit 0; stdout empty; stdout SHA256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`; stderr empty. This is a source-diff receipt, not a passing test.

@@ -1,0 +1,16 @@
+mk_padded	mksquashfs src padded.sqfs -noappend -no-progress -all-root	rc=0	stdout_sha256=d2ad700e7563d91a1e08a1739bf61acf63411c797840a163de7b2625d7b67239	2026-10-30T05:05:23Z
+mk_nopad	mksquashfs src nopad.sqfs -noappend -no-progress -all-root -nopad	rc=0	stdout_sha256=5fd9094c26066ef45bd3a3216cbe58f8cc5cb70634f1a8ff9192ce15bb9da724	2026-10-30T05:05:23Z
+mk_padded2	mksquashfs src padded2.sqfs -noappend -no-progress -all-root	rc=0	stdout_sha256=11cf6c2db456c990b049ac4364390dfadcd77a5fd5d691bf5c21b9dc8b6018d5	2026-10-30T05:05:23Z
+mk_nopad_hyphen	mksquashfs rej rej.sqfs -noappend -no-progress -all-root -no-pad	rc=1	stdout_sha256=a051f8f81411e0f10ce3224473add19096883c1bf9417dd23cac8ac927a21b10	2026-10-30T05:05:23Z
+unsq_pad	unsquashfs -s padded.sqfs	rc=0	stdout_sha256=501a4bb81b9f2700c359e57a453fece190409be7dcb87c2f2f3292388deee7ff	2026-10-30T05:05:23Z
+unsq_nopad	unsquashfs -s nopad.sqfs	rc=0	stdout_sha256=3405f757a579fb6b1da852667ad31b5d7b80065d7f0f1fd6ab9c7d9403ac1ab4	2026-10-30T05:05:23Z
+sasq_pad	sasquatch -d out padded.sqfs	rc=0	stdout_sha256=e05ae5a5221f6cd9982a27f765e300b4e0608c57a202d1a86924784492deb2e7	2026-10-30T05:05:23Z
+sasq_nopad	sasquatch -d out nopad.sqfs	rc=1	stdout_sha256=85e6371ea71c24796297076a2a618378c357fc679c56d83f163d105d414fa6f3	2026-10-30T05:05:23Z
+superblock	python3 - /fast/scratch/hyaku/kaidoku-r51/w1-ScoutMksquashfs/canonical	rc=0	stdout_sha256=c47f2c1cb0aeeba7d62309474adf4a183660882d48b1a8fce8a73e0ca2836ec8	2026-10-30T05:05:23Z
+padshape	python3 - /fast/scratch/hyaku/kaidoku-r51/w1-ScoutMksquashfs/canonical	rc=0	stdout_sha256=6e6126be1313b12dc3fea06e8d3002ba08c677510732388d98b86cb7a77e640a	2026-10-30T05:05:23Z
+extract_cmp	bash -c 
+  cd "$0/run/pad"   && unsquashfs -d out "$0/padded.sqfs" >/dev/null 2>&1; echo "pad_unsquashfs_rc=$?"  > "$0/extract.txt"
+  cd "$0/run/nopad" && unsquashfs -d out "$0/nopad.sqfs"  >/dev/null 2>&1; echo "nopad_unsquashfs_rc=$?" >> "$0/extract.txt"
+  cd "$0/run/pad/out"   && find . -type f | sort | xargs sha256sum | sed "s|^|PAD |"   >> "$0/extract.txt"
+  cd "$0/run/nopad/out" && find . -type f | sort | xargs sha256sum | sed "s|^|NOPAD |" >> "$0/extract.txt"
+ /fast/scratch/hyaku/kaidoku-r51/w1-ScoutMksquashfs/canonical	rc=0	stdout_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	2026-10-30T05:05:23Z

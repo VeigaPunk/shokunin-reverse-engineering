@@ -1,0 +1,178 @@
+{
+  "base_revision": "f04b51ddb8d5fedb234a5e40a2c38b016f07a4ab",
+  "exit_code": 1,
+  "findings": [
+    {
+      "carriers_where_green": [
+        "c6430",
+        "c6490",
+        "g7581",
+        "g7582"
+      ],
+      "evidence": "probe_a.rules.sibling_draft_ExecRuleDerive_gap-rule-v2.json",
+      "finding": "the rule sibling_draft_ExecRuleDerive_gap-rule-v2.json goes GREEN on a receipt that reports a gap for a char-device row; the law says a device row carries no disposition at all, so the rule does not enforce the law",
+      "id": "A-device-gap-accepted",
+      "severity": "high"
+    },
+    {
+      "counter": "v1_round-50-counter",
+      "evidence": "probe_b.v1_round-50-counter",
+      "finding": "the counter's gap_rule_ok binding is FALSE for the round-51 rule: gap_rule_model rejects the rule's `claim` field because the counter still hardcodes the round-50 claim string, so the predicate would exit 1 with carriers_matched 4 and every binding but gap_rule_ok true",
+      "gap_rule_problems": [
+        "claim 'R51-C1' != R50-C1"
+      ],
+      "id": "B-claim-string-binding",
+      "severity": "high"
+    },
+    {
+      "carriers_spec_problems": [
+        "claim 'R51-C1' != R50-C1"
+      ],
+      "counter": "v1_round-50-counter",
+      "evidence": "probe_b.v1_round-50-counter",
+      "finding": "the counter's carriers_spec_ok binding is FALSE for a round-51 carriers.json: carriers_spec rejects a `claim` field that is not the round-50 claim string",
+      "id": "B-carriers-spec-claim",
+      "severity": "high"
+    },
+    {
+      "counter": "v2_draft_ExecCounterV2",
+      "evidence": "probe_b.v2_draft_ExecCounterV2",
+      "finding": "the counter's gap_rule_ok binding is FALSE for the round-51 rule: gap_rule_model rejects the rule's `claim` field because the counter still hardcodes the round-50 claim string, so the predicate would exit 1 with carriers_matched 4 and every binding but gap_rule_ok true",
+      "gap_rule_problems": [
+        "claim 'R51-C1' != R50-C1"
+      ],
+      "id": "B-claim-string-binding",
+      "severity": "high"
+    },
+    {
+      "carriers_spec_problems": [
+        "claim 'R51-C1' != R50-C1"
+      ],
+      "counter": "v2_draft_ExecCounterV2",
+      "evidence": "probe_b.v2_draft_ExecCounterV2",
+      "finding": "the counter's carriers_spec_ok binding is FALSE for a round-51 carriers.json: carriers_spec rejects a `claim` field that is not the round-50 claim string",
+      "id": "B-carriers-spec-claim",
+      "severity": "high"
+    }
+  ],
+  "generated_utc": "2026-10-30T05:14:18Z",
+  "probe_a": {
+    "law": "a char-device/fifo/socket oracle entry carries no disposition at all",
+    "question": "does the rule go RED when a receipt reports a gap for a char-device row?",
+    "rules": {
+      "sibling_draft_ExecRuleDerive_gap-rule-v2.json": {
+        "carriers": {
+          "c6430": {
+            "clean_verdict": "green",
+            "device_gap_note": "569 gaps (1 structural), 1 removals, 0 silent, on 824 non-regular entries",
+            "device_gap_verdict": "green",
+            "law_enforced": false,
+            "rule_model_problems": [
+              "claim 'R51-C1' != R50-C1"
+            ]
+          },
+          "c6490": {
+            "clean_verdict": "green",
+            "device_gap_note": "614 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries",
+            "device_gap_verdict": "green",
+            "law_enforced": false,
+            "rule_model_problems": [
+              "claim 'R51-C1' != R50-C1"
+            ]
+          },
+          "g7581": {
+            "clean_verdict": "green",
+            "device_gap_note": "638 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+            "device_gap_verdict": "green",
+            "law_enforced": false,
+            "rule_model_problems": [
+              "claim 'R51-C1' != R50-C1"
+            ]
+          },
+          "g7582": {
+            "clean_verdict": "green",
+            "device_gap_note": "638 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+            "device_gap_verdict": "green",
+            "law_enforced": false,
+            "rule_model_problems": [
+              "claim 'R51-C1' != R50-C1"
+            ]
+          }
+        },
+        "rule_sha256": "e5e9fb3f67f65bb87091d5ff7cca8785665dc870769ce8333af88e3abfd67518"
+      },
+      "strict_variant_device_kinds_admit_no_gap": {
+        "carriers": {
+          "c6430": {
+            "clean_verdict": "green",
+            "device_gap_note": "gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/led' (allowed [])",
+            "device_gap_verdict": "red",
+            "law_enforced": true,
+            "rule_model_problems": [
+              "claim 'R51-C1' != R50-C1"
+            ]
+          },
+          "c6490": {
+            "clean_verdict": "green",
+            "device_gap_note": "gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/led' (allowed [])",
+            "device_gap_verdict": "red",
+            "law_enforced": true,
+            "rule_model_problems": [
+              "claim 'R51-C1' != R50-C1"
+            ]
+          },
+          "g7581": {
+            "clean_verdict": "green",
+            "device_gap_note": "gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/led' (allowed [])",
+            "device_gap_verdict": "red",
+            "law_enforced": true,
+            "rule_model_problems": [
+              "claim 'R51-C1' != R50-C1"
+            ]
+          },
+          "g7582": {
+            "clean_verdict": "green",
+            "device_gap_note": "gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/led' (allowed [])",
+            "device_gap_verdict": "red",
+            "law_enforced": true,
+            "rule_model_problems": [
+              "claim 'R51-C1' != R50-C1"
+            ]
+          }
+        },
+        "rule_sha256": "9fbd1b012e0dbc353bb7f6489e0a9570b74fdba7147d4f968e3426e99129d28c"
+      }
+    }
+  },
+  "probe_b": {
+    "note": "gap_rule_ok = not plan_probs and not uncovered",
+    "question": "does the counter's gap_rule_ok binding hold for a round-51 rule?",
+    "v1_round-50-counter": {
+      "carriers_spec_ok": false,
+      "carriers_spec_problems": [
+        "claim 'R51-C1' != R50-C1"
+      ],
+      "counter_path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/c1-counter.py",
+      "counter_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+      "gap_rule_ok": false,
+      "gap_rule_problems": [
+        "claim 'R51-C1' != R50-C1"
+      ],
+      "gap_rule_uncovered_kinds": []
+    },
+    "v2_draft_ExecCounterV2": {
+      "carriers_spec_ok": false,
+      "carriers_spec_problems": [
+        "claim 'R51-C1' != R50-C1"
+      ],
+      "counter_path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-51/w1/ExecCounterV2/c1-counter.py",
+      "counter_sha256": "c0b4c98c6d3aaaefc5bb6b18b5e7c09de509bd1a4bd5d64b2caea130e65e97fc",
+      "gap_rule_ok": false,
+      "gap_rule_problems": [
+        "claim 'R51-C1' != R50-C1"
+      ],
+      "gap_rule_uncovered_kinds": []
+    }
+  },
+  "seat": "MutGapRule"
+}

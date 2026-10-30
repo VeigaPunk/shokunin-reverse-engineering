@@ -1,0 +1,66 @@
+# MutControlsV2 — exact commands, exit codes, stdout sha256, UTC
+# run (UTC): 2026-10-30T05:24:47Z
+# fixture: git clone --shared of the lane at f04b51ddb8d5fedb234a5e40a2c38b016f07a4ab,
+#          with the r51 carriers table + law rule committed on top; fixture rev = 97b429f6ad681c5242a09e30530ed045231247bd
+# counter: /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py
+# counter sha256 at run time: 028dde4ae38b1c6f64d3ee93a1ca724c4ec16161b5f66ef5d3ba45f29edc4117
+# receipts dir: corpus/evidence/round-50/c1 (committed round-50 after.json envelopes)
+
+## A. the C1 control arms (--controls mode)
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py --controls --root . --rev 97b429f6ad681c5242a09e30530ed045231247bd --receipts corpus/evidence/round-50/c1 --gap-rule rules/law.json
+  exit=0  carriers_scored=4  dispositions_matched=4  stdout_sha256=78001ef8bad71e1bae86113e405c85d809fec36d795e96b17df999629e0a79b4  
+  stderr: -
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py --controls --root . --rev 97b429f6ad681c5242a09e30530ed045231247bd --receipts corpus/evidence/round-50/c1 --gap-rule rules/mut_req_true_247only.json
+  exit=1  carriers_scored=4  dispositions_matched=2  stdout_sha256=4546ebc4b937ccc9078ddefe70d1d10fa7f03822ee315e2cbe06a6001298916b  
+  stderr: -
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py --controls --root . --rev 97b429f6ad681c5242a09e30530ed045231247bd --receipts corpus/evidence/round-50/c1 --gap-rule rules/mut_all13_whitelist.json
+  exit=0  carriers_scored=4  dispositions_matched=4  stdout_sha256=78001ef8bad71e1bae86113e405c85d809fec36d795e96b17df999629e0a79b4  
+  stderr: -
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py --controls --root . --rev 97b429f6ad681c5242a09e30530ed045231247bd --receipts corpus/evidence/round-50/c1 --gap-rule rules/mut_strict_subset7.json
+  exit=0  carriers_scored=4  dispositions_matched=4  stdout_sha256=78001ef8bad71e1bae86113e405c85d809fec36d795e96b17df999629e0a79b4  
+  stderr: -
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py --controls --root . --rev 97b429f6ad681c5242a09e30530ed045231247bd --receipts corpus/evidence/round-50/c1 --gap-rule rules/mut_allowed_chardev.json
+  exit=0  carriers_scored=4  dispositions_matched=4  stdout_sha256=78001ef8bad71e1bae86113e405c85d809fec36d795e96b17df999629e0a79b4  
+  stderr: -
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py --controls --root . --rev 97b429f6ad681c5242a09e30530ed045231247bd --receipts corpus/evidence/round-50/c1 --gap-rule rules/mut_req_true_subset7.json
+  exit=1  carriers_scored=4  dispositions_matched=2  stdout_sha256=4546ebc4b937ccc9078ddefe70d1d10fa7f03822ee315e2cbe06a6001298916b  
+  stderr: -
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py --controls --root . --rev 97b429f6ad681c5242a09e30530ed045231247bd --receipts corpus/evidence/round-50/c1 --gap-rule rules/mut_req_true_all13.json
+  exit=0  carriers_scored=4  dispositions_matched=4  stdout_sha256=78001ef8bad71e1bae86113e405c85d809fec36d795e96b17df999629e0a79b4  
+  stderr: -
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py --controls --root . --rev 97b429f6ad681c5242a09e30530ed045231247bd --receipts corpus/evidence/round-50/c1 --gap-rule rules/junk.json
+  exit=1  carriers_scored=4  dispositions_matched=0  stdout_sha256=426c1c4afa1a6808fc4fcfcf7eb87670c5ebf563e579be7425e5760aa9ff9205  
+  stderr: -
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py --controls --root . --rev 97b429f6ad681c5242a09e30530ed045231247bd --receipts corpus/evidence/round-50/c1 --gap-rule tools/round-50/gap-rule.json
+  exit=1  carriers_scored=4  dispositions_matched=2  stdout_sha256=4546ebc4b937ccc9078ddefe70d1d10fa7f03822ee315e2cbe06a6001298916b  # the r50 rule
+  stderr: -
+$ python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py --controls --root . --rev 97b429f6ad681c5242a09e30530ed045231247bd --receipts /fast/scratch/hyaku/kaidoku-r51/w1-MutControlsV2/absent --gap-rule tools/round-51/gap-rule.json
+  exit=1  carriers_scored=4  dispositions_matched=0  stdout_sha256=426c1c4afa1a6808fc4fcfcf7eb87670c5ebf563e579be7425e5760aa9ff9205  # no envelopes
+  stderr: -
+
+## B. the sibling draft's own command line (omits --rev) — the usage-error battery
+$ python3 -I -B .ufo/waves/round-51/w1/ExecControls/c1-controls.py --root . --counter $COUNTER --old-gap-rule tools/round-50/gap-rule.json --receipts corpus/evidence/round-50/c1 --out $S/draftout
+  draft exit=1
+  every arm's counter stderr: 'usage: --controls requires --root --rev'  (exit 2 for all 19 arms)
+  draft verdicts: CTL-OLD=misbehaved CTL-NEW=misbehaved CTL-JUNK=misbehaved (expected_count 2/4/0 vs observed None)
+                   CTL-DN=expected MUT-REQUIRE-CHAR-DEVICE=expected MUT-ONLY-247-0=expected
+                   MUT-STRICT-SUBSET-01..12 = expected (12 arms, all on the usage error)
+  the draft reads doc['carriers_matched']; the mode emits 'dispositions_matched'/'carriers_scored' -> always None
+
+## C. the wrong-carrier-set probe (a 2-carrier carriers table: c6430, c6490)
+$ git commit the 2-entry tools/round-51/carriers.json; then:
+$ python3 -I -B $COUNTER --controls --root . --rev $REV2 --receipts corpus/evidence/round-50/c1 --gap-rule tools/round-51/gap-rule.json
+  exit=0  carriers_scored=2  dispositions_matched=2   <-- GREEN with 2 of the 4 pinned carriers
+$ ... --gap-rule tools/round-50/gap-rule.json   (the r50 rule, same 2-carrier table)
+  exit=0  carriers_scored=2  dispositions_matched=2   <-- the OLD rule is also green on the Cable pair
+
+## D. the crash-vs-red probe (exit 1 is overloaded)
+$ python3 -I -B <script that raises> --controls --root . --rev HEAD
+  exit=1   <-- indistinguishable from a deliberate 'not met'
+
+## E. the C2 before-arm freeze-ancestor probe
+$ python3 -I -B tools/round-50-c3/sqfs-triage-v5.py --root . --rev 1aa273694f4409d3432fbcd73e83a33bee0dd8e9 --freeze f04b51ddb8d5fedb234a5e40a2c38b016f07a4ab --envelopes .ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/envelopes
+  exit=2  stderr: sqfs-triage-v5: could not evaluate: freeze 'f04b51dd...' is not an ancestor of '1aa27369...'
+  (the before-arm must name a freeze that IS an ancestor of the base rev)
+
+## F. tools installed: none. REA runs: none. data runs: none. network: none.

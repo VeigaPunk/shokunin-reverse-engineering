@@ -1,0 +1,117 @@
+{
+  "seat": "ScoutMksquashfs",
+  "wave": "round-51/w1",
+  "purpose": "ONE bounded probe grounding the observable of a padded vs no-pad squashfs image (R51-C2 discriminator ground).",
+  "script": "/fast/scratch/hyaku/kaidoku-r51/w1-ScoutMksquashfs/probe_final.sh (+ probe_readers.sh, + probe_magic.sh)",
+  "scratch_root": "/fast/scratch/hyaku/kaidoku-r51/w1-ScoutMksquashfs",
+  "tools": {
+    "mksquashfs": "mksquashfs version 4.7.5 (2026/03/01)",
+    "unsquashfs": "unsquashfs version 4.7.5 (2026/03/01)",
+    "sasquatch": "/home/vgpnk/.local/bin/sasquatch",
+    "pacman_package": "squashfs-tools 4.7.5-1"
+  },
+  "input_tree": {
+    "src/a.txt": "hello\\n (6 B)",
+    "src/sub/b.txt": "world\\n (6 B)",
+    "mtimes": "all set to 2020-01-01T00:00:00Z via touch -d"
+  },
+  "steps": [
+    {"name": "mk_padded",  "cmd": "mksquashfs src padded.sqfs -noappend -no-progress -all-root", "rc": 0, "utc": "2026-10-30T05:05:23Z"},
+    {"name": "mk_nopad",   "cmd": "mksquashfs src nopad.sqfs -noappend -no-progress -all-root -nopad", "rc": 0, "utc": "2026-10-30T05:05:23Z"},
+    {"name": "mk_padded2", "cmd": "mksquashfs src padded2.sqfs -noappend -no-progress -all-root", "rc": 0, "utc": "2026-10-30T05:05:23Z", "role": "determinism control"},
+    {"name": "mk_nopad_hyphen", "cmd": "mksquashfs rej rej.sqfs -noappend -no-progress -all-root -no-pad", "rc": 1, "utc": "2026-10-30T05:05:23Z", "role": "spell rejection: '-no-pad is an invalid option'"},
+    {"name": "unsq_pad",   "cmd": "unsquashfs -s padded.sqfs", "rc": 0, "stdout_sha256": "be40413fb69ae4fa9eaaba2be4c06df7739adba668bad18bcd956b2855b675ea", "utc": "2026-10-30T05:05:33Z"},
+    {"name": "unsq_nopad", "cmd": "unsquashfs -s nopad.sqfs", "rc": 0, "stdout_sha256": "ca258046c04a8f0d0a1cfc85942932e2d0f5937c7081c93325adaf7f7ad28ed2", "utc": "2026-10-30T05:05:33Z"},
+    {"name": "sasq_pad",   "cmd": "sasquatch -d out padded.sqfs", "rc": 0, "stdout_sha256": "e05ae5a5221f6cd9982a27f765e300b4e0608c57a202d1a86924784492deb2e7", "utc": "2026-10-30T05:05:33Z"},
+    {"name": "sasq_nopad", "cmd": "sasquatch -d out nopad.sqfs", "rc": 0, "stdout_sha256": "e05ae5a5221f6cd9982a27f765e300b4e0608c57a202d1a86924784492deb2e7", "utc": "2026-10-30T05:05:33Z"}
+  ],
+  "images": {
+    "padded":  {"bytes": 4096, "sha256": "3e775fb0402e80add75dc67d1203a6a78ddd094de2a41451967e330be6d7e648"},
+    "padded2": {"bytes": 4096, "sha256": "3e775fb0402e80add75dc67d1203a6a78ddd094de2a41451967e330be6d7e648"},
+    "nopad":   {"bytes": 281,  "sha256": "f25daa73dee02a01c7894fff9d09e0bd3e64212b649634410d6f0e4830363e5e"}
+  },
+  "byte_len_difference": 3815,
+  "padshape_stdout": {
+    "nopad_len": 281,
+    "padded_len": 4096,
+    "byte_len_difference": 3815,
+    "nopad_is_prefix_of_padded": true,
+    "padded_tail_len": 3815,
+    "padded_tail_all_zero": true,
+    "padded2_equals_padded": true
+  },
+  "superblock_stdout": {
+    "padded":  "magic=b'hsqs' endian=< inodes=4 mkfs_time=1793336723 block_size=131072 s_major=4 s_minor=0 bytes_used=281 file_size=4096 file_size_mod4096=0 tail_bytes=3815 file_size_eq_bytes_used=False",
+    "nopad":   "magic=b'hsqs' endian=< inodes=4 mkfs_time=1793336723 block_size=131072 s_major=4 s_minor=0 bytes_used=281 file_size=281 file_size_mod4096=281 tail_bytes=0 file_size_eq_bytes_used=True",
+    "padded2": "magic=b'hsqs' endian=< inodes=4 mkfs_time=1793336723 block_size=131072 s_major=4 s_minor=0 bytes_used=281 file_size=4096 file_size_mod4096=0 tail_bytes=3815 file_size_eq_bytes_used=False"
+  },
+  "extracted_trees": {
+    "identical": true,
+    "files": {
+      "./a.txt": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+      "./sub/b.txt": "e258d248fda94c63753607f7c4494ee0fcbe92f1a76bfdac795c9d84101eb317"
+    },
+    "note": "same content sha256 from both images; the pad is invisible to the reader's tree view"
+  },
+  "determinism_control": {
+    "padded_vs_padded2_identical": true,
+    "padded_vs_padded3_after_2s": "DIFFERENT (sha256 93aca3cc799500918788c726d7b94eedf24e4adf65f62543176c7d5d4fd4b19d)",
+    "cause": "superblock mkfs_time field (offset 8..11) changes with wall clock; padded3 mkfs_time=1793336861 vs 1793336723",
+    "lesson_for_the_counter": "an image sha256 is NOT a stable identity across builds; pin the mkfs_time field or the bytes_used/file_size pair instead"
+  },
+  "magic_vs_padding_probe": {
+    "purpose": "does the ddwrt reader refusal come from the missing 4K pad or from the non-standard magic?",
+    "fixtures": {
+      "orig.bin": {"source": ".ufo/waves/round-42/w1/artifacts/R42C1Oracle/fixtures/squashfs_v3_ddwrt/big_endian/__input__/squashfs_v3.be.nopad.bin", "bytes": 320, "mod4096": 320, "sha256": "daa8e72d355db1067a36bacd4b15853fb49ce7bb4fa6d6efafc0e7f09be8c9e1"},
+      "pad4k.bin": {"source": ".../squashfs_v3_ddwrt/big_endian/__input__/squashfs_v3.be.4kpad.bin", "bytes": 4096, "mod4096": 0, "sha256": "6a5ab01dace75f135c11f324be761ae82cc97290812988afb13ed3c9e6fd36a1"}
+    },
+    "mutation": "patched ONLY byte 0 (0x74 't' -> 0x73 's'), turning the non-standard magic 0x74717368 ('tqsh') into the standard BE magic 0x73717368 ('sqsh'); length and padding untouched",
+    "results": {
+      "unsquashfs_orig_rc": 1,
+      "unsquashfs_orig_magicfixed_rc": 0,
+      "unsquashfs_4k_rc": 1,
+      "unsquashfs_4k_magicfixed_rc": 0,
+      "sasquatch_be_orig_rc": 0,
+      "sasquatch_be_orig_magicfixed_rc": 0,
+      "sasquatch_be_4k_rc": 0,
+      "sasquatch_be_4k_magicfixed_rc": 0
+    },
+    "stdout_sha256": {
+      "unsq_orig": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unsq_orig_fixed": "30fd935b08415fe02c86beeb6f00d40e42930a46cda22d49321c6930eac96965",
+      "unsq_4k": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unsq_4k_fixed": "ac896c16751d73697e6d56412a339edc0e4c6895147dbbb2f8a6e19caccbaac1",
+      "sasq_orig": "a8386373a3372494a4ee94b96f90a15f3dfff6c6bdb34d08ba5751e0ad542095",
+      "sasq_orig_fixed": "a8386373a3372494a4ee94b96f90a15f3dfff6c6bdb34d08ba5751e0ad542095",
+      "sasq_4k": "a8386373a3372494a4ee94b96f90a15f3dfff6c6bdb34d08ba5751e0ad542095",
+      "sasq_4k_fixed": "a8386373a3372494a4ee94b96f90a15f3dfff6c6bdb34d08ba5751e0ad542095"
+    },
+    "conclusion": "unsquashfs refuses the ddwrt images BECAUSE of the non-standard magic, NOT because of the missing 4K pad: the 4096-byte 4kpad image is refused identically, and a one-byte magic patch makes BOTH the 320-byte nopad and the 4096-byte 4kpad image readable (rc 0). The pad state and the refusal are INDEPENDENT."
+  },
+  "lane_fixture_census": {
+    "note": "the R42C1Oracle unblob 26.6.4 squashfs fixture tree (24 padding-variant files) measured in-place, read-only",
+    "families": {
+      "squashfs_v3 (standard)": {"nopad": 320, "1kpad": 1024, "4kpad": 4096, "magic": "sqsh / hsqs"},
+      "squashfs_v3_ddwrt": {"nopad": 320, "1kpad": 1024, "4kpad": 4096, "magic": "tqsh (BE) / hsqt (LE)"},
+      "squashfs_v3_broadcom": {"nopad": 320, "1kpad": 1024, "4kpad": 4096, "magic": "qshs / shsq"},
+      "squashfs_v3_nonstandard": {"nopad": 320, "1kpad": 1024, "4kpad": 4096, "magic": "sqlz / zlqs"}
+    },
+    "observation": "the three padding variants of every family are the SAME image at 320 / 1024 / 4096 bytes; 'nopad' is the unpadded length and '4kpad' is the 4KiB-padded length. The 1kpad variant is padded to 1024, not 4096."
+  },
+  "failed_body_presence_sweep": {
+    "purpose": "is the round-42 failed body Z3_v3ddwrt_inode_table.bin (sha256 839c17a8...) present anywhere in the lane tree?",
+    "target_sha256": "839c17a83b706589f1b634d0e19fbc6950c3028072e3952c1c74a290ad2150c8",
+    "target_size": 320,
+    "target_magic_from_lane_envelope": "tqsh  (the committed envelope's base64 sasquatch stderr says: Non-standard SquashFS Magic: 'tqsh')",
+    "method": "magic-anchored 320-byte carve sweep: locate every b'tqsh'/b'hsqt' occurrence in every lane file and sha256 only those 320-byte windows (script probe/carve_sweep.py)",
+    "lane_result": {"files_read": 44835, "bytes_read": 911225189, "windows_hashed": 477, "verdict": "NO MATCH", "rc": 0, "captured": "probe/carve-sweep-lane.txt"},
+    "positive_control": {"planted_window_sha256": "daa8e72d355db1067a36bacd4b15853fb49ce7bb4fa6d6efafc0e7f09be8c9e1", "planted_offset": 500, "verdict": "MATCHES: ... offset=500", "rc": 0, "captured": "probe/carve-sweep-positive-control.txt"},
+    "control_meaning": "the sweep finds a 320-byte ddwrt-magic window when one IS present, so the negative lane result is a real absence and not a broken filter",
+    "superseded_run": "an earlier sweep hashing EVERY 320-byte window of every file was killed at its 400 s bound with no output (exit 143); that run was inconclusive and is not claimed as a result",
+    "conclusion": "the failed body is not in the lane tree; the round-42 scratch /fast/scratch/hyaku/kaidoku-r42 no longer exists"
+  },
+  "exit_code_semantics": {
+    "probe_verdict": 0,
+    "meaning": "the probe met its own acceptance (both images built, byte difference and shape measured, readers exercised, discriminator isolated, failed-body presence sweep run with a passing positive control)"
+  }
+}

@@ -1,0 +1,15 @@
+command: sed -n 74,82p /home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/lessons/round-50-verifier-spotcheck.md
+exit: 0
+stdout_sha256: 61be346b3d970564a51efed4e8e28fb2b2c883de9c40bf95acff4e8c19cfa312
+utc: 2026-10-30T05:03:29Z
+
+--- stdout ---
+## 6. Routed defects (the lane fixes these next round; status-neutral)
+
+1. **LOG.md never cites `646d29c9`** — the C1 after-receipts landing commit is named in the report's Landed-changes table (mapped to an "attempt-2 entry") and in `SCORECARD.md`, but the literal hash appears nowhere in LOG.md. Route: append-only LOG correction entry naming the hash next round.
+2. **SHONEN.md canonical-form drift** — the seed block and box texts are canonical, but boxes carry multiple extra indented note lines ("Round 43:", "Round 49:") plus trailing prose paragraphs; the file contract allows one indented evidence line per box and no other prose. Route: regenerate `SHONEN.md` verbatim from the template on the next steered round (the contract's own remedy), moving current evidence into the report/LOG citations.
+3. **C3 instrument freeze-drift is reported but not gating** (lane-disclosed, `ExecRerunC2` F1) — enforce drift in the next freeze (already the round-51 plan).
+4. **`fetch-vendor.py --selftest` (16/16) does not exercise the network guards** added by the w1 seat — the tool is frozen; repair lands next round shown able to fail.
+5. **No preventive fleet-root stray control** (M50-9 was containment only) — operator/orchestrator-side preventive check named in the lesson; nothing the lane can fix alone.
+6. **Open L0 (carried):** unredacted session-cookie values remain in pushed history (round-45 `f1.hdr`, commit `14936cb9`; redacted at tip only) — needs an operator-authorised force-push; `kaidoku | round-50` stands.
+

@@ -1,0 +1,314 @@
+{
+  "findings": [
+    {
+      "evidence": "observed.m1",
+      "finding": "the --controls mode (controls_mode) evaluates only gaps_ok and nonregular_unpublished_ok; law_shape_ok is computed only inside measure() and is absent from controls_mode (0 occurrences in its body). The F4-M1 all-thirteen-whitelist mutant therefore scores dispositions_matched 4 / exit 0 in the controls path -- GREEN -- while the claims require it to be RED. The kill rule (\"any mutant green that should be red\") cannot fire.",
+      "id": "law_shape_ok-absent-from-controls-mode",
+      "severity": "critical"
+    },
+    {
+      "evidence": "receipts[controls-mode:no-rev]",
+      "finding": "the counter requires --root AND --rev for --controls (\"usage: --controls requires --root --rev\", exit 2); the wave-1 control driver (ExecControls/c1-controls.py) does not pass --rev, so every arm exits 2",
+      "id": "controls-mode-requires-rev",
+      "severity": "medium"
+    },
+    {
+      "evidence": "receipts[controls-mode:absolute-rule-path]",
+      "finding": "--gap-rule is resolved with git show at --rev, so it must be a LANE-RELATIVE path; an absolute path yields \"rule ... absent at <rev>\" and exit 2. The wave-1 control driver passes an absolute path.",
+      "id": "controls-mode-gap-rule-must-be-lane-relative",
+      "severity": "medium"
+    },
+    {
+      "evidence": "receipts[sibling-driver] and observed",
+      "finding": "the wave-1 control driver exits 1 overall and marks CTL-OLD, CTL-NEW and CTL-JUNK \"misbehaved\" -- not because the rules misbehave but because every invocation exits 2 on the missing --rev. Measured directly with --rev added and a lane-relative rule path, the same counter scores old 2/4, law 4/4, m1 4/4, m3 2/4, m4 2/4, junk 0/4.",
+      "id": "sibling-driver-all-arms-exit-2",
+      "severity": "high"
+    }
+  ],
+  "fixture_rev": "c7c49b4755caadbefb639dd7f289601330024dd2",
+  "fixture_root": "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+  "generated_utc": "2026-10-30T05:22:11Z",
+  "note": "the fixture is a scratch git clone in the seat scratch dir; the lane tree was never written",
+  "observed": {
+    "gap-rule (the amended law)": {
+      "dispositions_matched": 4,
+      "exit_code": 0
+    },
+    "junk (impossible allowance)": {
+      "dispositions_matched": 0,
+      "exit_code": 1
+    },
+    "m1 (all-thirteen whitelist, F4 requires RED)": {
+      "dispositions_matched": 4,
+      "exit_code": 0
+    },
+    "m3 (247:0-only whitelist)": {
+      "dispositions_matched": 2,
+      "exit_code": 1
+    },
+    "m4 (strict subset)": {
+      "dispositions_matched": 2,
+      "exit_code": 1
+    },
+    "old (round-50 rule)": {
+      "dispositions_matched": 2,
+      "exit_code": 1
+    }
+  },
+  "purpose": "end-to-end measurement of the L1-in-flight tools/round-51/c1-counter.py --controls mode against a scratch fixture clone (never the lane tree); the counter changed bytes three times during this wave, so the sha256 below identifies the exact bytes measured",
+  "receipts": [
+    {
+      "command": [
+        "python3",
+        "-I",
+        "-B",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py",
+        "--root",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+        "--rev",
+        "c7c49b4755caadbefb639dd7f289601330024dd2",
+        "--controls",
+        "--gap-rule",
+        "tools/round-51/old.json",
+        "--receipts",
+        "corpus/evidence/round-50/c1"
+      ],
+      "cwd": "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+      "exit_code": 1,
+      "label": "controls-mode:old",
+      "output_file": null,
+      "output_sha256": null,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout": "{\"carriers_scored\": 4, \"dispositions_matched\": 2}\n",
+      "stdout_bytes": 50,
+      "stdout_sha256": "4546ebc4b937ccc9078ddefe70d1d10fa7f03822ee315e2cbe06a6001298916b",
+      "utc": "2026-10-30T05:22:08Z"
+    },
+    {
+      "command": [
+        "python3",
+        "-I",
+        "-B",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py",
+        "--root",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+        "--rev",
+        "c7c49b4755caadbefb639dd7f289601330024dd2",
+        "--controls",
+        "--gap-rule",
+        "tools/round-51/gap-rule.json",
+        "--receipts",
+        "corpus/evidence/round-50/c1"
+      ],
+      "cwd": "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+      "exit_code": 0,
+      "label": "controls-mode:gap-rule",
+      "output_file": null,
+      "output_sha256": null,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout": "{\"carriers_scored\": 4, \"dispositions_matched\": 4}\n",
+      "stdout_bytes": 50,
+      "stdout_sha256": "78001ef8bad71e1bae86113e405c85d809fec36d795e96b17df999629e0a79b4",
+      "utc": "2026-10-30T05:22:08Z"
+    },
+    {
+      "command": [
+        "python3",
+        "-I",
+        "-B",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py",
+        "--root",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+        "--rev",
+        "c7c49b4755caadbefb639dd7f289601330024dd2",
+        "--controls",
+        "--gap-rule",
+        "tools/round-51/m1.json",
+        "--receipts",
+        "corpus/evidence/round-50/c1"
+      ],
+      "cwd": "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+      "exit_code": 0,
+      "label": "controls-mode:m1",
+      "output_file": null,
+      "output_sha256": null,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout": "{\"carriers_scored\": 4, \"dispositions_matched\": 4}\n",
+      "stdout_bytes": 50,
+      "stdout_sha256": "78001ef8bad71e1bae86113e405c85d809fec36d795e96b17df999629e0a79b4",
+      "utc": "2026-10-30T05:22:09Z"
+    },
+    {
+      "command": [
+        "python3",
+        "-I",
+        "-B",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py",
+        "--root",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+        "--rev",
+        "c7c49b4755caadbefb639dd7f289601330024dd2",
+        "--controls",
+        "--gap-rule",
+        "tools/round-51/m3.json",
+        "--receipts",
+        "corpus/evidence/round-50/c1"
+      ],
+      "cwd": "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+      "exit_code": 1,
+      "label": "controls-mode:m3",
+      "output_file": null,
+      "output_sha256": null,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout": "{\"carriers_scored\": 4, \"dispositions_matched\": 2}\n",
+      "stdout_bytes": 50,
+      "stdout_sha256": "4546ebc4b937ccc9078ddefe70d1d10fa7f03822ee315e2cbe06a6001298916b",
+      "utc": "2026-10-30T05:22:09Z"
+    },
+    {
+      "command": [
+        "python3",
+        "-I",
+        "-B",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py",
+        "--root",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+        "--rev",
+        "c7c49b4755caadbefb639dd7f289601330024dd2",
+        "--controls",
+        "--gap-rule",
+        "tools/round-51/m4.json",
+        "--receipts",
+        "corpus/evidence/round-50/c1"
+      ],
+      "cwd": "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+      "exit_code": 1,
+      "label": "controls-mode:m4",
+      "output_file": null,
+      "output_sha256": null,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout": "{\"carriers_scored\": 4, \"dispositions_matched\": 2}\n",
+      "stdout_bytes": 50,
+      "stdout_sha256": "4546ebc4b937ccc9078ddefe70d1d10fa7f03822ee315e2cbe06a6001298916b",
+      "utc": "2026-10-30T05:22:09Z"
+    },
+    {
+      "command": [
+        "python3",
+        "-I",
+        "-B",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py",
+        "--root",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+        "--rev",
+        "c7c49b4755caadbefb639dd7f289601330024dd2",
+        "--controls",
+        "--gap-rule",
+        "tools/round-51/junk.json",
+        "--receipts",
+        "corpus/evidence/round-50/c1"
+      ],
+      "cwd": "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+      "exit_code": 1,
+      "label": "controls-mode:junk",
+      "output_file": null,
+      "output_sha256": null,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout": "{\"carriers_scored\": 4, \"dispositions_matched\": 0}\n",
+      "stdout_bytes": 50,
+      "stdout_sha256": "426c1c4afa1a6808fc4fcfcf7eb87670c5ebf563e579be7425e5760aa9ff9205",
+      "utc": "2026-10-30T05:22:09Z"
+    },
+    {
+      "command": [
+        "python3",
+        "-I",
+        "-B",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py",
+        "--root",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+        "--controls",
+        "--gap-rule",
+        "tools/round-51/old.json",
+        "--receipts",
+        "corpus/evidence/round-50/c1"
+      ],
+      "cwd": "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+      "exit_code": 2,
+      "label": "controls-mode:no-rev",
+      "output_file": null,
+      "output_sha256": null,
+      "stderr_sha256": "b589109ab5bdf6c618f91ba5be90c5ac422b69df1bb4ac5bd0c7c3af4fc1d3e9",
+      "stderr_tail": "usage: --controls requires --root --rev\n",
+      "stdout": "",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "utc": "2026-10-30T05:22:09Z"
+    },
+    {
+      "command": [
+        "python3",
+        "-I",
+        "-B",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py",
+        "--root",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+        "--rev",
+        "c7c49b4755caadbefb639dd7f289601330024dd2",
+        "--controls",
+        "--gap-rule",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture/tools/round-51/old.json",
+        "--receipts",
+        "corpus/evidence/round-50/c1"
+      ],
+      "cwd": "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+      "exit_code": 2,
+      "label": "controls-mode:absolute-rule-path",
+      "output_file": null,
+      "output_sha256": null,
+      "stderr_sha256": "75409d91109b04f044568fc9e7ecad05d9bc28957098e8d9c29286bee341eb2c",
+      "stderr_tail": "controls: rule /fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture/tools/round-51/old.json absent at c7c49b4755caadbefb639dd7f289601330024dd2\n",
+      "stdout": "",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "utc": "2026-10-30T05:22:09Z"
+    },
+    {
+      "command": [
+        "python3",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-51/w1/ExecControls/c1-controls.py",
+        "--root",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture",
+        "--counter",
+        "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py",
+        "--old-gap-rule",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture/tools/round-51/old.json",
+        "--receipts",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture/corpus/evidence/round-50/c1",
+        "--out",
+        "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/ctl3"
+      ],
+      "cwd": "/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule",
+      "exit_code": 1,
+      "label": "sibling-driver",
+      "output_file": null,
+      "output_sha256": null,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout": "{\"command\": [\"/usr/bin/python3\", \"-I\", \"-B\", \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-51/c1-counter.py\", \"--root\", \"/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/fixture\", \"--controls\", \"--gap-rule\", \"/fast/scratch/hyaku/kaidoku-r51/w1-MutGapRule/ctl3/rules/old.json\", \"--receipts\"",
+      "stdout_bytes": 12602,
+      "stdout_sha256": "c30710902bbc5bcb26128f400f64d9f3fbc4f3eac50c67384d52d8fc322c72b3",
+      "utc": "2026-10-30T05:22:11Z"
+    }
+  ],
+  "round": 51,
+  "seat": "MutGapRule",
+  "v2_lane_counter_sha256": "ecc0dc187fcd4d1422aa188ce00f00dbf28d172711300d79b63795f30aa2d629",
+  "wave": 1
+}

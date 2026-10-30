@@ -1,0 +1,42 @@
+## G. M2 probe (claims F4/M2): a 14th, unlisted device (dev/ttyS0 4:64) in the census
+# fixture: the carriers table repointed at a non-regular table carrying the 14th device
+# run (UTC): 2026-10-30T05:26:22Z
+# counter sha256: 565fafd2ee23fe9fa270f7cb1c65ea643a22e57739d4d610c2f1f16e03497454
+
+$ ... --gap-rule rules/rule-law.json
+  LAW (required=false)               exit=0  scored=4 matched=4  stdout_sha256=78001ef8bad71e1bae86113e405c85d809fec36d795e96b17df999629e0a79b4
+$ ... --gap-rule rules/rule-mut_all13_whitelist.json
+  all-13 whitelist, required=FALSE   exit=0  scored=4 matched=4  stdout_sha256=78001ef8bad71e1bae86113e405c85d809fec36d795e96b17df999629e0a79b4
+$ ... --gap-rule rules/rule-mut_strict_subset7.json
+  strict subset of 13, required=FALSE exit=0  scored=4 matched=4  stdout_sha256=78001ef8bad71e1bae86113e405c85d809fec36d795e96b17df999629e0a79b4
+$ ... --gap-rule rules/rule-mut_req_true_all13.json
+  all-13 whitelist, required=TRUE    exit=1  scored=4 matched=0  stdout_sha256=426c1c4afa1a6808fc4fcfcf7eb87670c5ebf563e579be7425e5760aa9ff9205
+$ ... --gap-rule rules/rule-mut_req_true_subset7.json
+  strict subset of 13, required=TRUE exit=1  scored=4 matched=0  stdout_sha256=426c1c4afa1a6808fc4fcfcf7eb87670c5ebf563e579be7425e5760aa9ff9205
+$ ... --gap-rule rules/rule-mut_req_true_247only.json
+  req=true + 247:0 only              exit=1  scored=4 matched=0  stdout_sha256=426c1c4afa1a6808fc4fcfcf7eb87670c5ebf563e579be7425e5760aa9ff9205
+
+## H. the same arms over the MEASURED census (no 14th device) for contrast
+
+## I. law_shape_ok evaluated on the sibling draft's OWN generated rules (the counter's own law_shape logic, counter lines ~2596-2617)
+# (law_shape_ok is a BINDING; --controls never evaluates it — this is evaluated here directly)
+  new                   law_shape_ok=False  allowed['char-device'] must be empty; removed.silent['char-device'] must be empty (names 13 detail(s)); ...
+  old                   law_shape_ok=False  allowed['char-device'] must be empty; removed.silent['char-device'] must be empty (names 1 detail(s)); ...
+  junk                  law_shape_ok=False  allowed[all six kinds] must be empty; ...
+  require-char-device   law_shape_ok=False
+  only-247-0            law_shape_ok=False
+  strict-subset-01      law_shape_ok=False
+
+  => the draft's OWN 'new' rule (CTL-NEW's scored rule) FAILS the law-shape clause it is meant to witness:
+     it sets required['char-device']=False BUT ALSO removed.silent['char-device'] = all 13 details.
+     Under the claims' F3 that is the FORBIDDEN detail-whitelist shape; under the disposition
+     verdict it is inert (required=false skips the disposition check), so it is green either way.
+
+## J. the --gap-rule path must be resolvable through git at --rev
+$ ... --gap-rule /fast/scratch/.../draftrules/new.json   (absolute, outside the repo — what the draft passes)
+  exit=2  stderr: controls: rule /fast/scratch/.../draftrules/new.json absent at <rev>
+$ ... --gap-rule rules/draft-new.json   (the same rule committed inside the repo)
+  exit=0  dispositions_matched 4/4
+  => the counter resolves --gap-rule via git show <rev>:<path>; an out-of-repo path is exit 2.
+     The sibling draft writes its rules to --out (outside the lane) and passes absolute paths:
+     every arm of that draft is exit 2 'rule absent' — a fourth independent way the draft is dead.

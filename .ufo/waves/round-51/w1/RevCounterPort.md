@@ -1,0 +1,19 @@
+# RevCounterPort — round 51 wave 1
+
+Verdict: checklist delivered; recommendation is to use its unchecked acceptance items before freeze. This is not a v2 implementation admission or a live score.
+
+Deliverable: `.ufo/waves/round-51/w1/RevCounterPort/checklist.md` — every v1 CLAUSES/BINDINGS member, identity/digest binding, full-history receipt freshness, projection and independent oracle rerun, error/exit map, exact documentation markers, R51 change ledger and offline-control isolation. Appendix enumerates 197 AST call sites for selftest cases/direct probes, with original expectation arguments and line ranges; loop-generated and separate real-REA probes are separately inventoried. Axes: fidelity, integrity, offline isolation, contract coverage, auditable inventory.
+
+## Findings by severity
+
+1. **High integration risk: offline controls must not weaken the production predicate.** `plans/round-51-claims.md:62-77` requires old committed R50 receipts and both rules without live rerun. v1 freshness/provenance/rerun gates (`tools/round-50/c1-counter.py:2313-2317,2379,2391-2417,2555-2563`) cannot honestly become production-green for this historical input. V2 must expose a labelled offline consistency result while retaining strict R51 production semantics; OLD's R50 claim tag also needs explicit offline handling (v1:792-793).
+2. **High contract gap in a mechanical port: landing checks exceed v1 bindings.** Plan:90-99 requires all S243/S244/S245/S249 citations, in-round source rows, fresh receipt references, active Frontier removal, SCORECARD 141/141 and LOG entry. V1's nine bindings at432-434 and implementation2439-2496 do not check those additional conditions. Plan command at56-57 also adds `--receipts` absent from v1 CLI2514-2531 and omits `--pkg65` required at2564-2566. Checklist gives concrete port acceptance for each.
+3. **Medium claim-text defect: v1 already fails closed on drift.** Plan:80-83 says v1 only reported drift; reviewed v1:2199-2202 raises FrozenPathChanged and main:2570-2580 emits exit2 with named paths; selftests4223-4278 already demand exit2. Preserve this existing gate and correct attribution before freeze, rather than weakening it. The separate real-REA selftest fixture4737-4743 lacks the projection field required by882-886; no evidence it passes, and it was not run.
+
+## Evidence and verification gaps
+
+`RevCounterPort/source-review.json` records exact read-only git diff command, exit0, empty-stdout SHA256 and UTC, plus reviewed source SHA256s; `RevCounterPort/base.diff` is its empty output. Both reviewed inputs match assignment base f04b51ddb8d5fedb234a5e40a2c38b016f07a4ab. LSP unavailable: xd://lsp returned No such tool; text/AST evidence is not semantic-reference proof. No v2 draft was assigned or scored. No tests, selftests, REA, controls, downloads, installs, heavy pass, fixture mutations, or scratch creation performed. L1 should exercise the frozen selftests, old/new/junk/subset controls, drift CLI exit2, exact predicate command, then L1-only post-freeze four-carrier scoring.
+
+## Self-evaluation
+
+Accuracy 4/5: anchored to actual source, explicitly distinguishes drift/multiplicity/parser implementation from prose; runtime behavior unexercised. Completeness 4/5: all requested clause/binding/change families and 197 call sites covered; no future v2 bytes reviewed. Clarity 4/5: compact acceptance tables, but verbatim inventory is long. Actionability 5/5: exact old sites, new constants, and expected control outcomes supplied. Conciseness 4/5: exhaustive appendix intentionally favors completeness. Overall 4.2/5. Highest-value improvements are L1 review against actual port, execution of mode-isolation controls, and correction of freeze-drift attribution. User should agree this is static acceptance evidence, not a runtime pass.

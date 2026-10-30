@@ -1,0 +1,46 @@
+{
+  "seat": "ScoutMksquashfs",
+  "wave": "round-51/w1",
+  "purpose": "R51-C2 grounding: the squashfs-tools mksquashfs padding source (the '-nopad' option and what padding it skips).",
+  "fetch": {
+    "url": "https://raw.githubusercontent.com/plougher/squashfs-tools/master/squashfs-tools/mksquashfs.c",
+    "method": "curl -sS -L -o <scratch>/mksquashfs.c -w '%{http_code}' <url>",
+    "http_status": 200,
+    "curl_rc": 0,
+    "bytes": 266790,
+    "sha256": "205f58e6394844317b58266ca351966e222a2cc49657c7cc68365030d4a2bc5c",
+    "utc_first_fetch": "2026-10-30T04:57:26Z",
+    "utc_second_fetch": "2026-10-30T05:09:13Z",
+    "sha256_stable_across_3_fetches": true,
+    "etag_header": "f67f5d0593f9575daf92fd84707a99efc5e1ba0e4d90820ee801835fe5bd5502",
+    "upstream_master_head_commit": "db038ef265ed00bb17aaf695a72f9b0c3489eb20",
+    "upstream_master_head_ref": "refs/heads/master",
+    "upstream_master_head_probe": "git ls-remote https://github.com/plougher/squashfs-tools.git refs/heads/master",
+    "note": "master is a moving ref; the sha256 above is the byte-identity pin. No Set-Cookie header was captured or stored.",
+    "stored_at": "/fast/scratch/hyaku/kaidoku-r51/w1-ScoutMksquashfs/mksquashfs.c (scratch only; removed at yield)"
+  },
+  "located": {
+    "option_spelling": "-nopad  (ONE token, no hyphen). '-no-pad' is NOT an option.",
+    "option_parse_sites": [
+      {"line": 8501, "text": "} else if(strcmp(argv[i], \"-nopad\") == 0)", "context": "mksquashfs option loop"},
+      {"line": 8502, "text": "nopad = TRUE;", "context": "mksquashfs option loop"},
+      {"line": 7362, "text": "} else if(strcmp(argv[i], \"-nopad\") == 0)", "context": "sqfstar option loop (same flag, same variable)"},
+      {"line": 7363, "text": "nopad = TRUE;", "context": "sqfstar option loop"}
+    ],
+    "flag_declaration": {"line": 205, "text": "int nopad = FALSE;", "comment_line": 204, "comment": "/* Will Mksquashfs pad the filesystem to a multiple of 4 Kbytes? */"},
+    "padding_site_file": {"lines": "571-591", "fn": "prep_destination()"},
+    "padding_site_stream": {"line": 6262, "fn": "write_superblock()", "note": "streaming mode: superblock offset is 4096-aligned unless nopad"},
+    "help_text_lives_in": "mksquashfs_help.h (included at :77) - upstream master no longer carries the option strings in mksquashfs.c",
+    "rationale_comment_in_source": "NONE. Upstream master mksquashfs.c carries no 'why' comment for the padding; the rationale lives in the shipped man page (USAGE-MKSQUASHFS)."
+  },
+  "installed_tool": {
+    "package": "squashfs-tools 4.7.5-1 (pacman)",
+    "mksquashfs": "mksquashfs version 4.7.5 (2026/03/01)",
+    "unsquashfs": "unsquashfs version 4.7.5 (2026/03/01)",
+    "sasquatch": "/home/vgpnk/.local/bin/sasquatch",
+    "usage_line": "-nopad\t\tdo not pad filesystem to a multiple of 4K   (from: mksquashfs -help-option pad)",
+    "man_page": "/usr/share/doc/squashfs-tools/USAGE-MKSQUASHFS",
+    "man_page_sha256": "b047ffbb3d9bb5389212d32d03e99d2850e0a211833e128f759c62aa26b12e7f",
+    "man_page_lines": "1431-1435"
+  }
+}
