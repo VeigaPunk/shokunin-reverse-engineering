@@ -1,0 +1,46 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50-c3/sqfs-triage-v5.py
++++ /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-51/w1/ExecTriV6/sqfs-triage-v6.py
+@@ -1,5 +1,6 @@
+-#!/usr/bin/env python3
+-"""sqfs-triage-v5.py - executable SquashFS extract-firmware outcome triage, table v5.
++"""sqfs-triage-v6.py - executable SquashFS extract-firmware outcome triage, table v6.
++ 
++R51-C2 scoring instrument. Ports v5 with a distinct unreadable-body route and audits.
+ 
+ R50-C3 scoring instrument (round 50, attempt 2, wave 3 build).  It reads exactly two
+ surfaces and nothing else:
+@@ -284,7 +285,7 @@
+     'squashfs_v1',
+     'squashfs_v2',
+     'squashfs_v3',
+-    'squashfs_v3_ddwrt',
++CUT 1033.=1033
+ )
+ 
+ LANE = '/home/vgpnk/Projects/shokunin/kaidoku-shokunin'
+@@ -1018,16 +1019,18 @@
+      'squashfs_v4_be', 'extractor-failure+', '*', 'no', '*', '0', 'wrap-extractor-be',
+      'the failing chunk is the v4 BE one and unblob dropped -be -> rerun through a PATH '
+      'executable named sasquatch-v4be that appends -be',
+-     'SKILL.md table v4 row 6; S112 :44-50; S121 -DFIX_BE build'],
+     ['legacy-body-failure', 'extract_firmware', 'unblob', 'squashfs_*', READER_BACKED_CELL,
+      'extractor-failure+', '*', '*', '*', '0', 'cross-read-legacy',
+      'the failing chunk is a reader-backed v1-v3 body that published zero files -> '
+-     'cross-read the same chunk with unsquashfs and 7-Zip, and only a reader that lists '
+-     'the tree while sasquatch failed shows a broken extractor build',
+-     'SKILL.md table v4 row 7 narrowed by R50-C3: the v4 cell squashfs_v[123]* also '
+-     'matched squashfs_v2_nonstandard, squashfs_v3_broadcom and squashfs_v3_nonstandard, '
+-     'which have no independent reader (round-49 W2Skill.md F1); round-50 '
+-     'plans/round-50-attempt2-claims.md R50-C3'],
++     'cross-read the same chunk with independent readers',
++     'R51-C2; retained v5 rule'],
++    ['legacy-body-unreadable', 'extract_firmware', 'unblob', 'squashfs_*',
++     'squashfs_v3_ddwrt', 'extractor-failure+', '*', '*', '*', '0',
++     'preserve-unresolved',
++     'both validated readers refuse this ddwrt body; preserve it unresolved, without '
++     'prescribing a cross-read',
++     'R51-C2; ddwrt reader-census evidence'],
++    ['no-reader-failure', 'extract_firmware', 'unblob', 'squashfs_*', NO_READER_CELL,
+     ['no-reader-failure', 'extract_firmware', 'unblob', 'squashfs_*', NO_READER_CELL,
+      'extractor-failure+', '*', '*', '*', '0', 'preserve-unresolved',
+      'the failing chunk is a family with no validated complete independent oracle and '

@@ -1,0 +1,118 @@
+{
+ "committed_receipt_the_enoent_path": {
+  "NOTE": "the committed g7581 receipt CONTAINS this symlink with a RELATIVE link_target (../../../www/cgi-bin/luacgi) -> unblob rewrote it; the oracle says the raw target is /usr/www/cgi-bin/luacgi (absolute)",
+  "entry": {
+   "kind": "symlink",
+   "link_target": "../../../www/cgi-bin/luacgi",
+   "relative_path": "firmware.bin_extract/usr/www.myfritz/avme/cgi-bin/luacgi"
+  },
+  "path": "usr/www.myfritz/avme/cgi-bin/luacgi",
+  "present_in_unpublished_entries": 2
+ },
+ "error_text_provenance": {
+  "CONCLUSION": "the committed reason is the NODE (JS) form, i.e. raised by REA/unblob-JS readlink, NOT python unblob os.readlink",
+  "committed_receipt_reason": "ENOENT: no such file or directory, readlink '/fast/scratch/.../luacgi'",
+  "node_readlink_message": "ENOENT: no such file or directory, readlink '/nope-xyz'",
+  "python_readlink_message": "[Errno 2] No such file or directory: '/nope-xyz'"
+ },
+ "oracle_row": [
+  "usr/www.myfritz/avme/cgi-bin/luacgi\tsymlink\t/usr/www/cgi-bin/luacgi"
+ ],
+ "probe": "CritRetry probe4: is the g7581 ENOENT a REPRODUCIBLE-TOCTOU on a symlink REA itself rewrites?",
+ "rea_readlink_sites": [
+  {
+   "code": "linkTarget: stat.isSymbolicLink() ? await readlink(path) : null,",
+   "file": "dist/firmware/FirmwareFiles.js",
+   "line": 184
+  },
+  {
+   "code": "const rawTarget = await readlink(absolute);",
+   "file": "dist/cli-runtime/cli.js",
+   "line": 11290
+  },
+  {
+   "code": "linkTarget: stat.isSymbolicLink() ? await readlink(path) : null",
+   "file": "dist/cli-runtime/cli.js",
+   "line": 14036
+  },
+  {
+   "code": "const target = resolve(dirname(path), await readlink(path));",
+   "file": "dist/cli-runtime/cli.js",
+   "line": 23371
+  },
+  {
+   "code": "const target = await readlink(absolute);",
+   "file": "dist/cli-runtime/cli.js",
+   "line": 36272
+  },
+  {
+   "code": "const destination = await readlink(descriptorPath);",
+   "file": "dist/cli-runtime/cli.js",
+   "line": 38865
+  },
+  {
+   "code": "const destination = await readlink(descriptorPath);",
+   "file": "dist/cli-runtime/cli.js",
+   "line": 40647
+  },
+  {
+   "code": "const target = resolve(dirname(path), await readlink(path));",
+   "file": "dist/process/capture/FilesystemSnapshot.js",
+   "line": 169
+  }
+ ],
+ "unblob_fix_symlink_window": {
+  "NOTE": "path.unlink() at 89 then path.symlink_to(relative_target) at 91 -> between them the path is ABSENT",
+  "lines": [
+   {
+    "line": 84,
+    "text": "            link=path.as_posix(), target=target.as_posix()"
+   },
+   {
+    "line": 85,
+    "text": "        )"
+   },
+   {
+    "line": 86,
+    "text": "        task_result.add_report(error_report)"
+   },
+   {
+    "line": 87,
+    "text": "        path.unlink()"
+   },
+   {
+    "line": 88,
+    "text": "    else:"
+   },
+   {
+    "line": 89,
+    "text": "        relative_target = os.path.relpath(outdir.joinpath(target), start=path.parent)"
+   },
+   {
+    "line": 90,
+    "text": "        path.unlink()"
+   },
+   {
+    "line": 91,
+    "text": "        path.symlink_to(relative_target)"
+   },
+   {
+    "line": 92,
+    "text": "    return path"
+   },
+   {
+    "line": 93,
+    "text": ""
+   },
+   {
+    "line": 94,
+    "text": ""
+   },
+   {
+    "line": 95,
+    "text": "def fix_extracted_directory(outdir: Path, task_result: TaskResult):"
+   }
+  ]
+ },
+ "utc": "2026-10-30T11:07:26.555444+00:00"
+}

@@ -1,0 +1,17 @@
+# CritClaims — verdict and top findings
+
+Round 52 wave 1, claims draft `ab0eafedc41402b43b41a4362084119578dfe7ce`. Attack only; no judgment or admission.
+
+**Verdict: attack — 5 high/critical findings require amendment before the freeze; 4 medium; 2 low. Both claims' predicates as written are not closable over committed bytes without amendment.**
+
+Top findings (full numbered list with evidence and smallest corrections: `.ufo/waves/round-52/w1/CritClaims/findings.md`):
+
+1. **C1 closure not re-derivable (critical).** The predicate names one command without `--pkg65`/`--carrier-cache` (the ported counter exits 2 without `--pkg65`) while requiring `projection_ok` (live REA), `carrier_pin_ok` and `census_rederived_ok` (`unsquashfs` over vendor bytes that are never committed). The closure runs greps/`jq`/git over committed bytes and never REA. Split into a named receipt-verdict command (fields listed) and an L1-only live command.
+2. **C2 before-arm not generatable at the base (high, 3 defects).** Measured exit 2: the `--freeze` gate refuses a freeze that descends from the base (`sqfs-triage-v5.py:1261-1263`, resolved hash `1842addcef…` not an ancestor of `ab0eafed…`); `--table` exists in no committed tool and `tools/round-50-c3/` holds the v5 instrument, not table bytes; the "1 violation" count is produced only by the v6 audit the claim ships. Fix: freeze a separate witness script over block 26 at BASE plus the named reader receipts, committed before the table.
+3. **`census_outside 0` after the landing is unreachable (high).** Measured: adding one `tools/round-52/` registry row makes `census3 --check` exit 1 (`census_outside` nonempty) because the claims never regenerate `tools/round-51/census3.json` (≥7 rows will be added). Also false separability sentence (both claims write the SKILL registry block), and the C1→C2 "special" phrasing obligation is absent from C2's spec.
+4. **Retry policy uncontrolled (high).** `projection_ok` has no pre-data control (CTL-OLD/NEW are envelope-only), the kill rule omits the retry control, and no transient-ENOENT fixture exists — only the deterministic-red one. Best supporting evidence (data run succeeded, rerun ENOENT on `usr/www.myfritz/avme/cgi-bin/luacgi`, oracle `nonregular.tsv:774`) is not cited. (A doubt I raised earlier about that oracle row was wrong — it is present at line 774.)
+5. **False rationale (high).** "the two clean ddwrt no-pad `_ddefault` envelopes keep `clean` (their readers succeeded)" — the committed reader census marks those two bodies NO-READER (both refuse); sasquatch succeeded, readers did not.
+
+Also: "every binding true" includes SCORECARD/LOG items the counter never reads (`grep -c 'SCORECARD|LOG.md' c1-counter.py` = 0); CTL-DN accepts exit 2 (vacuous); "round-52 carrier table" has no path; the C2 mutation battery is unenumerated and outside the counting command. Checks that held: law arithmetic (28 device rows, 12 non-`247:0` per FRITZ, all symlinks accounted on all four carriers), CTL-OLD's 2/4 vector against the committed score, 126-envelope corpus and v5 base labels, 141/141 coverage map, depth-limited gap fields present.
+
+Receipts: `receipts/probes.txt` (commands, exits, UTC, stdout sha256; one fabricated hash in the first R2 draft was replaced by the resolved `1842addcef3458515859b928b92d9bbd0a46c5d5`), `receipts/v5-base-labels.json`, `receipts/census-probe-after-one-row.json`. No tool installs; scratch removed after copy-out.

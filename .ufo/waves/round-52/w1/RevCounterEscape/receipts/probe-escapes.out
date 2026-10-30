@@ -1,0 +1,73 @@
+== P-REPLACE-show
+cmd: git -C /fast/scratch/hyaku/kaidoku-r52/w1-RevCounterEscape/tmp.dvqi9McmvN show HEAD:rule.json
+exit: 0
+utc: 2026-10-30T10:52:36Z
+stdout+stderr sha256: 094aec33c6d2a18c34f94e8ede16500d3ef3ed157ec77e26cf7876816559d59b
+{"forged":true}
+
+== P-REPLACE-catfile
+cmd: git -C /fast/scratch/hyaku/kaidoku-r52/w1-RevCounterEscape/tmp.dvqi9McmvN cat-file -p HEAD:rule.json
+exit: 0
+utc: 2026-10-30T10:52:36Z
+stdout+stderr sha256: 094aec33c6d2a18c34f94e8ede16500d3ef3ed157ec77e26cf7876816559d59b
+{"forged":true}
+
+== P-REPLACE-revparse
+cmd: git -C /fast/scratch/hyaku/kaidoku-r52/w1-RevCounterEscape/tmp.dvqi9McmvN rev-parse HEAD:rule.json
+exit: 0
+utc: 2026-10-30T10:52:36Z
+stdout+stderr sha256: b3ac9eb5c041b4cbbf5fbcbc91ba6dfd56196a007b9be0e844124f2af744629e
+8d489fb079d8d25991715137c1c6c1b49f3e2ec3
+
+== P-REPLACE-no-replace
+cmd: git -C /fast/scratch/hyaku/kaidoku-r52/w1-RevCounterEscape/tmp.dvqi9McmvN --no-replace-objects show HEAD:rule.json
+exit: 0
+utc: 2026-10-30T10:52:36Z
+stdout+stderr sha256: fed8e2a31e2a3cb1ea480c02e806be9e057c1d8d21aac06b19c1b56c9f31c248
+honest-rule
+
+== P-NODE-OPTIONS
+cmd: env NODE_OPTIONS=--require /fast/scratch/hyaku/kaidoku-r52/w1-RevCounterEscape/hook.js node -e console.log("child-body")
+exit: 0
+utc: 2026-10-30T10:52:36Z
+stdout+stderr sha256: 9d23704ea4a838e70f6d9b1277bb18d563e07e729342ff0014702cfb207a66b7
+HOOK-RAN
+child-body
+
+== P-LDPRELOAD-unsquashfs
+cmd: env LD_PRELOAD=/fast/scratch/hyaku/kaidoku-r52/w1-RevCounterEscape/hook.so /usr/bin/unsquashfs -version
+exit: 1
+utc: 2026-10-30T10:52:36Z
+stdout+stderr sha256: cc45206cc06543e7f22cdac60523fb36bca4ab6988f4ae6a989c360e98bb22bb
+LDPRELOAD-RAN
+unsquashfs version 4.7.5 (2026/03/01)
+copyright (C) 2026 Phillip Lougher <phillip@squashfs.org.uk>
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2,
+or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+== P-LDPRELOAD-control
+cmd: /usr/bin/unsquashfs -version
+exit: 1
+utc: 2026-10-30T10:52:36Z
+stdout+stderr sha256: be541b54ec4ef892fb39e51883c07d1345bf516692c8ee6957efe9d8685d0294
+unsquashfs version 4.7.5 (2026/03/01)
+copyright (C) 2026 Phillip Lougher <phillip@squashfs.org.uk>
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2,
+or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+

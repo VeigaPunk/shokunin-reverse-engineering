@@ -1,0 +1,356 @@
+[
+ {
+  "name": "census2-sha-worktree",
+  "argv": [
+   "sha256sum",
+   "tools/round-48/census2.json"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:33.446712+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "0096a1102b317d071e7290dd4d93dca0cfdbd248e953b1ec876cba50c0dfe9d4",
+  "stdout": "403b4c143b020f1a30905258543758b11992dbd2235358575fb09f63473d7b59  tools/round-48/census2.json\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census2-log",
+  "argv": [
+   "git",
+   "-C",
+   "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+   "log",
+   "--format=%H %ad %s",
+   "--date=short",
+   "--",
+   "tools/round-48/census2.json"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:33.481775+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "bdc19d0bd9e1cd7bd1fbd11c159b233b930778e5fa3c454cc2824f3064aa06e7",
+  "stdout": "7fe11332781356ec3d5b0b314698de27dd25b50d 2026-10-28 round-48: freeze \u2014 the meaning-bound registry counter and the record floor counter (R48-C1/R48-C2)\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census2-sha-at-landing",
+  "argv": [
+   "bash",
+   "-c",
+   "git -C /fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone show 7fe11332781356ec3d5b0b314698de27dd25b50d:tools/round-48/census2.json | sha256sum"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:33.485742+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "1d7e166a94f4ba6a188a164500ba155dc2403171c19556139224e5e5450241d3",
+  "stdout": "403b4c143b020f1a30905258543758b11992dbd2235358575fb09f63473d7b59  -\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census2-sha-at-base",
+  "argv": [
+   "bash",
+   "-c",
+   "git -C /fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone show ab0eafedc41402b43b41a4362084119578dfe7ce:tools/round-48/census2.json | sha256sum"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:33.488504+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "1d7e166a94f4ba6a188a164500ba155dc2403171c19556139224e5e5450241d3",
+  "stdout": "403b4c143b020f1a30905258543758b11992dbd2235358575fb09f63473d7b59  -\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census3-check-r51-claims-draft",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-51/census3.py",
+   "--root",
+   ".",
+   "--rev",
+   "f04b51ddb8d5fedb234a5e40a2c38b016f07a4ab",
+   "--check"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:33.591843+00:00",
+  "exit_code": 2,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "",
+  "stderr_tail": "{\"error\": \"census absent: tools/round-51/census3.json\", \"exit\": 2}\n"
+ },
+ {
+  "name": "census3-historical-r51-claims-draft",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-51/census3.py",
+   "--root",
+   ".",
+   "--rev",
+   "f04b51ddb8d5fedb234a5e40a2c38b016f07a4ab",
+   "--historical"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:33.699224+00:00",
+  "exit_code": 1,
+  "stdout_sha256": "008f8444d3b65b452d5aaff1b9f50158dda2836c56f6176b540a8f85fa863f13",
+  "stdout": "{\n  \"registry_paths\": 55,\n  \"census_paths\": 42,\n  \"census_outside\": [\n    \"tools/round-49/c1-controls.py\",\n    \"tools/round-49/c1-counter.py\",\n    \"tools/round-49/c1-oracle.py\",\n    \"tools/round-49/c1-run.py\",\n    \"tools/round-49/c1-run.sh\",\n    \"tools/round-49/c2-mismatch.py\",\n    \"tools/round-50-c3/sqfs-triage-v5.py\",\n    \"tools/round-50/c1-controls.py\",\n    \"tools/round-50/c1-counter.py\",\n    \"tools/round-50/c1-run.sh\",\n    \"tools/round-50/c2-record.py\",\n    \"tools/round-50/fetch-vendor.py\",\n    \"tools/round-50/selftest-r49-c2.py\"\n  ],\n  \"census_unregistered\": [],\n  \"duplicates\": [],\n  \"exit\": 1,\n  \"rev\": \"f04b51ddb8d5fedb234a5e40a2c38b016f07a4ab\",\n  \"census\": \"tools/round-48/census2.json\"\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census3-check-r51-landing",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-51/census3.py",
+   "--root",
+   ".",
+   "--rev",
+   "96aee1a502c23715aee72be09a8e934d384dea6c",
+   "--check"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:33.791212+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "97015acdc73d7bcb77e27d7adfa6da375dfb712af772fbabda24dc565c486794",
+  "stdout": "{\n  \"registry_paths\": 56,\n  \"census_paths\": 56,\n  \"census_outside\": [],\n  \"census_unregistered\": [],\n  \"duplicates\": [],\n  \"exit\": 0,\n  \"rev\": \"96aee1a502c23715aee72be09a8e934d384dea6c\",\n  \"census\": \"tools/round-51/census3.json\"\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census3-historical-r51-landing",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-51/census3.py",
+   "--root",
+   ".",
+   "--rev",
+   "96aee1a502c23715aee72be09a8e934d384dea6c",
+   "--historical"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:33.873933+00:00",
+  "exit_code": 1,
+  "stdout_sha256": "68fc333607c399770040ec8886fdb22d47457036e6b3de32baf5e67f4f3dd088",
+  "stdout": "{\n  \"registry_paths\": 56,\n  \"census_paths\": 42,\n  \"census_outside\": [\n    \"tools/round-49/c1-controls.py\",\n    \"tools/round-49/c1-counter.py\",\n    \"tools/round-49/c1-oracle.py\",\n    \"tools/round-49/c1-run.py\",\n    \"tools/round-49/c1-run.sh\",\n    \"tools/round-49/c2-mismatch.py\",\n    \"tools/round-50-c3/sqfs-triage-v5.py\",\n    \"tools/round-50/c1-controls.py\",\n    \"tools/round-50/c1-counter.py\",\n    \"tools/round-50/c1-run.sh\",\n    \"tools/round-50/c2-record.py\",\n    \"tools/round-50/fetch-vendor.py\",\n    \"tools/round-50/selftest-r49-c2.py\",\n    \"tools/round-51/census3.py\"\n  ],\n  \"census_unregistered\": [],\n  \"duplicates\": [],\n  \"exit\": 1,\n  \"rev\": \"96aee1a502c23715aee72be09a8e934d384dea6c\",\n  \"census\": \"tools/round-48/census2.json\"\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census3-check-r52-claims-base",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-51/census3.py",
+   "--root",
+   ".",
+   "--rev",
+   "ab0eafedc41402b43b41a4362084119578dfe7ce",
+   "--check"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:33.971541+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "6b2484fc157f52e6327d686cf3c36b54c55874a825af52c5b5ecdf47fef07bff",
+  "stdout": "{\n  \"registry_paths\": 56,\n  \"census_paths\": 56,\n  \"census_outside\": [],\n  \"census_unregistered\": [],\n  \"duplicates\": [],\n  \"exit\": 0,\n  \"rev\": \"ab0eafedc41402b43b41a4362084119578dfe7ce\",\n  \"census\": \"tools/round-51/census3.json\"\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census3-historical-r52-claims-base",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-51/census3.py",
+   "--root",
+   ".",
+   "--rev",
+   "ab0eafedc41402b43b41a4362084119578dfe7ce",
+   "--historical"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:34.065692+00:00",
+  "exit_code": 1,
+  "stdout_sha256": "92d0a75b05e5d2a79c48c03f03256eebd96c5efe34a88ee1b3c4752e2f1ca912",
+  "stdout": "{\n  \"registry_paths\": 56,\n  \"census_paths\": 42,\n  \"census_outside\": [\n    \"tools/round-49/c1-controls.py\",\n    \"tools/round-49/c1-counter.py\",\n    \"tools/round-49/c1-oracle.py\",\n    \"tools/round-49/c1-run.py\",\n    \"tools/round-49/c1-run.sh\",\n    \"tools/round-49/c2-mismatch.py\",\n    \"tools/round-50-c3/sqfs-triage-v5.py\",\n    \"tools/round-50/c1-controls.py\",\n    \"tools/round-50/c1-counter.py\",\n    \"tools/round-50/c1-run.sh\",\n    \"tools/round-50/c2-record.py\",\n    \"tools/round-50/fetch-vendor.py\",\n    \"tools/round-50/selftest-r49-c2.py\",\n    \"tools/round-51/census3.py\"\n  ],\n  \"census_unregistered\": [],\n  \"duplicates\": [],\n  \"exit\": 1,\n  \"rev\": \"ab0eafedc41402b43b41a4362084119578dfe7ce\",\n  \"census\": \"tools/round-48/census2.json\"\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census2-rederive-at-base",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-48/census2.py",
+   "--root",
+   ".",
+   "--rev",
+   "ab0eafedc41402b43b41a4362084119578dfe7ce"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:34.158587+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "2bb5be19b3f054292a35ad54f4603361ff3f7580d83f26d0bb824a60a6d01869",
+  "stdout": "{\n \"paths\": 42,\n \"named_but_absent\": [],\n \"per_file\": {\n  \"plans/round-41-claims.md\": 12,\n  \"plans/round-42-claims.md\": 10,\n  \"plans/round-43-claims.md\": 9,\n  \"plans/round-44-claims.md\": 5,\n  \"plans/round-45-claims.md\": 6,\n  \"plans/round-46-claims.md\": 4,\n  \"plans/round-47-claims.md\": 4,\n  \"plans/round-48-claims.md\": 5\n }\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census2-rederive-at-landing",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-48/census2.py",
+   "--root",
+   ".",
+   "--rev",
+   "7fe11332781356ec3d5b0b314698de27dd25b50d"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:34.257889+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "af2ff1909f60efcfb8316c5bd69b19d68cce038d8c90c6ca3743ba6042eb1c1d",
+  "stdout": "{\n \"paths\": 42,\n \"named_but_absent\": [],\n \"per_file\": {\n  \"plans/round-41-claims.md\": 12,\n  \"plans/round-42-claims.md\": 10,\n  \"plans/round-43-claims.md\": 9,\n  \"plans/round-44-claims.md\": 5,\n  \"plans/round-45-claims.md\": 6,\n  \"plans/round-46-claims.md\": 4,\n  \"plans/round-47-claims.md\": 4,\n  \"plans/round-48-claims.md\": 4\n }\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "meanings-r48-declared-freeze",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-48/meanings.py",
+   "--root",
+   ".",
+   "--freeze",
+   "b6f7ca2a6391964dfdedd477cd560bd42159873a",
+   "--rev",
+   "b6f7ca2a6391964dfdedd477cd560bd42159873a",
+   "--no-battery",
+   "--json-out",
+   "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone/out/meanings-r48-declared-freeze.json"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:34.459811+00:00",
+  "exit_code": 1,
+  "stdout_sha256": "b35a3876b760dd81920a99c6abc7ccd4f793f44f90e13a715dac917585febd67",
+  "stdout": "{\n \"block_present\": 0,\n \"counter\": \"round-48-c1\",\n \"failing\": [\n  \"marker_occurrences 0 != 1\",\n  \"marker_block_count 0 != 1\"\n ],\n \"freeze\": \"b6f7ca2a6391964dfdedd477cd560bd42159873a\",\n \"frozen_derived\": [\n  \"tools/round-48/\",\n  \"plans/round-48-claims.md\"\n ],\n \"frozen_path_changed\": [],\n \"marker_occurrences\": 0,\n \"met_target\": false,\n \"profile\": \"v3\",\n \"restored\": [],\n \"rev\": \"b6f7ca2a6391964dfdedd477cd560bd42159873a\",\n \"rule_blocks\": 24,\n \"touched\": 0\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "meanings-r51-claims-draft",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-48/meanings.py",
+   "--root",
+   ".",
+   "--freeze",
+   "b6f7ca2a6391964dfdedd477cd560bd42159873a",
+   "--rev",
+   "f04b51ddb8d5fedb234a5e40a2c38b016f07a4ab",
+   "--no-battery",
+   "--json-out",
+   "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone/out/meanings-r51-claims-draft.json"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:34.608320+00:00",
+  "exit_code": 1,
+  "stdout_sha256": "33b457436c91eddd2edfd7f728f238887398547d75339dd4dace020f8abc7ba4",
+  "stdout": "{\n \"arm_by_id\": {\n  \"R46-CL7\": \"meaning\",\n  \"R47-CL10\": \"floor\"\n },\n \"arm_tokens\": [\n  \"meaning\",\n  \"floor\"\n ],\n \"block_is_last\": true,\n \"block_present\": 1,\n \"block_title\": \"25. A verdict map binds \",\n \"census_paths\": 42,\n \"census_rederived_equal\": true,\n \"cited\": [\n  \"corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md\",\n  \"corpus/lessons/round-46.md\",\n  \"corpus/lessons/round-47.md\",\n  \"corpus/lessons/round-48.md\",\n  \"plans/round-48-claims.md\",\n  \"tools/round-48/meanings.py\"\n ],\n \"counter\": \"round-48-c1\",\n \"failing\": [\n  \"registry rows outside the census: ['tools/round-49/c1-controls.py', 'tools/round-49/c1-counter.py', 'tools/round-49/c1-oracle.py', 'tools/round-49/c1-run.py', 'tools/round-49/c1-run.sh', 'tools/round-49/c2-mismatch.py', 'tools/round-50-c3/sqfs-triage-v5.py', 'tools/round-50/c1-controls.py', 'tools/round-50/c1-counter.py', 'tools/round-50/c1-run.sh', 'tools/round-50/c2-record.py', 'tools/round-50/fetch-vendor.py', 'tools/round-50/selftest-r49-c2.py']\"\n ],\n \"freeze\": \"b6f7ca2a6391964dfdedd477cd560bd42159873a\",\n \"frozen_derived\": [\n  \"tools/round-48/\",\n  \"plans/round-48-claims.md\"\n ],\n \"frozen_path_changed\": [],\n \"header\": [\n  \"trigger\",\n  \"v1 hole\",\n  \"v2 arm\",\n  \"exit\"\n ],\n \"header_ok\": true,\n \"interpreter_sha256\": \"f5e5c35c59c33d2b5abe884b83c9739c20f180f7c6863133a4d880711122cf97\",\n \"interpreter_sha256_expected\": \"f5e5c35c59c33d2b5abe884b83c9739c20f180f7c6863133a4d880711122cf97\",\n \"marker_occurrences\": 1,\n \"meaning_failures\": [],\n \"meaning_rows_failed\": 0,\n \"met_target\": false,\n \"mutations_sha256\": \"25ce025f8b2be63a5122583191cbf7588db7dc2894c869fac2ab075a84f5c1ea\",\n \"mutations_sha256_expected\": \"25ce025f8b2be63a5122583191cbf7588db7dc2894c869fac2ab075a84f5c1ea\",\n \"profile\": \"v3\",\n \"refs\": 10,\n \"registry_duplicates\": [],\n \"registry_extra\": [\n  \"tools/round-49/c1-controls.py\",\n  \"tools/round-49/c1-counter.py\",\n  \"tools/round-49/c1-oracle.py\",\n  \"tools/round-49/c1-run.py\",\n  \"tools/round-49/c1-run.sh\",\n  \"tools/round-49/c2-mismatch.py\",\n  \"tools/round-50-c3/sqfs-triage-v5.py\",\n  \"tools/round-50/c1-controls.py\",\n  \"tools/round-50/c1-counter.py\",\n  \"tools/round-50/c1-run.sh\",\n  \"tools/round-50/c2-record.py\",\n  \"tools/round-50/fetch-vendor.py\",\n  \"tools/round-50/selftest-r49-c2.py\"\n ],\n \"registry_missing\": [],\n \"registry_rows\": 55,\n \"restored\": [],\n \"rev\": \"f04b51ddb8d5fedb234a5e40a2c38b016f07a4ab\",\n \"routed_counts\": {\n  \"R46-CL7\": 1,\n  \"R47-CL10\": 1\n },\n \"rows\": 2,\n \"rule_blocks\": 26,\n \"touched\": 0,\n \"unresolved_citations\": []\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "meanings-r51-landing-census3",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-48/meanings.py",
+   "--root",
+   ".",
+   "--freeze",
+   "b6f7ca2a6391964dfdedd477cd560bd42159873a",
+   "--rev",
+   "96aee1a502c23715aee72be09a8e934d384dea6c",
+   "--no-battery",
+   "--json-out",
+   "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone/out/meanings-r51-landing-census3.json"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:34.810195+00:00",
+  "exit_code": 1,
+  "stdout_sha256": "1ffe5501f399d8e22cf6f48c84803f7ec95af783ce88e31ecedb1d1714e6eb20",
+  "stdout": "{\n \"arm_by_id\": {\n  \"R46-CL7\": \"meaning\",\n  \"R47-CL10\": \"floor\"\n },\n \"arm_tokens\": [\n  \"meaning\",\n  \"floor\"\n ],\n \"block_is_last\": true,\n \"block_present\": 1,\n \"block_title\": \"25. A verdict map binds \",\n \"census_paths\": 42,\n \"census_rederived_equal\": true,\n \"cited\": [\n  \"corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md\",\n  \"corpus/lessons/round-46.md\",\n  \"corpus/lessons/round-47.md\",\n  \"corpus/lessons/round-48.md\",\n  \"plans/round-48-claims.md\",\n  \"tools/round-48/meanings.py\"\n ],\n \"counter\": \"round-48-c1\",\n \"failing\": [\n  \"registry rows outside the census: ['tools/round-49/c1-controls.py', 'tools/round-49/c1-counter.py', 'tools/round-49/c1-oracle.py', 'tools/round-49/c1-run.py', 'tools/round-49/c1-run.sh', 'tools/round-49/c2-mismatch.py', 'tools/round-50-c3/sqfs-triage-v5.py', 'tools/round-50/c1-controls.py', 'tools/round-50/c1-counter.py', 'tools/round-50/c1-run.sh', 'tools/round-50/c2-record.py', 'tools/round-50/fetch-vendor.py', 'tools/round-50/selftest-r49-c2.py', 'tools/round-51/census3.py']\",\n  \"verdict maps not bound to meanings: 1\"\n ],\n \"freeze\": \"b6f7ca2a6391964dfdedd477cd560bd42159873a\",\n \"frozen_derived\": [\n  \"tools/round-48/\",\n  \"plans/round-48-claims.md\"\n ],\n \"frozen_path_changed\": [],\n \"header\": [\n  \"trigger\",\n  \"v1 hole\",\n  \"v2 arm\",\n  \"exit\"\n ],\n \"header_ok\": true,\n \"interpreter_sha256\": \"f5e5c35c59c33d2b5abe884b83c9739c20f180f7c6863133a4d880711122cf97\",\n \"interpreter_sha256_expected\": \"f5e5c35c59c33d2b5abe884b83c9739c20f180f7c6863133a4d880711122cf97\",\n \"marker_occurrences\": 1,\n \"meaning_failures\": [\n  {\n   \"error\": \"exit 0 segment names no success meaning\",\n   \"path\": \"tools/round-51/census3.py\"\n  }\n ],\n \"meaning_rows_failed\": 1,\n \"met_target\": false,\n \"mutations_sha256\": \"25ce025f8b2be63a5122583191cbf7588db7dc2894c869fac2ab075a84f5c1ea\",\n \"mutations_sha256_expected\": \"25ce025f8b2be63a5122583191cbf7588db7dc2894c869fac2ab075a84f5c1ea\",\n \"profile\": \"v3\",\n \"refs\": 10,\n \"registry_duplicates\": [],\n \"registry_extra\": [\n  \"tools/round-49/c1-controls.py\",\n  \"tools/round-49/c1-counter.py\",\n  \"tools/round-49/c1-oracle.py\",\n  \"tools/round-49/c1-run.py\",\n  \"tools/round-49/c1-run.sh\",\n  \"tools/round-49/c2-mismatch.py\",\n  \"tools/round-50-c3/sqfs-triage-v5.py\",\n  \"tools/round-50/c1-controls.py\",\n  \"tools/round-50/c1-counter.py\",\n  \"tools/round-50/c1-run.sh\",\n  \"tools/round-50/c2-record.py\",\n  \"tools/round-50/fetch-vendor.py\",\n  \"tools/round-50/selftest-r49-c2.py\",\n  \"tools/round-51/census3.py\"\n ],\n \"registry_missing\": [],\n \"registry_rows\": 56,\n \"restored\": [],\n \"rev\": \"96aee1a502c23715aee72be09a8e934d384dea6c\",\n \"routed_counts\": {\n  \"R46-CL7\": 1,\n  \"R47-CL10\": 1\n },\n \"rows\": 2,\n \"rule_blocks\": 26,\n \"touched\": 0,\n \"unresolved_citations\": []\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "meanings-r51-landing-tip-02d6",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-48/meanings.py",
+   "--root",
+   ".",
+   "--freeze",
+   "b6f7ca2a6391964dfdedd477cd560bd42159873a",
+   "--rev",
+   "02d667cbeee405bd3f8b73a0631f095f088a7633",
+   "--no-battery",
+   "--json-out",
+   "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone/out/meanings-r51-landing-tip-02d6.json"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:34.946448+00:00",
+  "exit_code": 1,
+  "stdout_sha256": "291722f2cadc774c3b06a6c5e6855a08bb3890e6662c14d743c76fb42e4e4e96",
+  "stdout": "{\n \"arm_by_id\": {\n  \"R46-CL7\": \"meaning\",\n  \"R47-CL10\": \"floor\"\n },\n \"arm_tokens\": [\n  \"meaning\",\n  \"floor\"\n ],\n \"block_is_last\": true,\n \"block_present\": 1,\n \"block_title\": \"25. A verdict map binds \",\n \"census_paths\": 42,\n \"census_rederived_equal\": true,\n \"cited\": [\n  \"corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md\",\n  \"corpus/lessons/round-46.md\",\n  \"corpus/lessons/round-47.md\",\n  \"corpus/lessons/round-48.md\",\n  \"plans/round-48-claims.md\",\n  \"tools/round-48/meanings.py\"\n ],\n \"counter\": \"round-48-c1\",\n \"failing\": [\n  \"registry rows outside the census: ['tools/round-49/c1-controls.py', 'tools/round-49/c1-counter.py', 'tools/round-49/c1-oracle.py', 'tools/round-49/c1-run.py', 'tools/round-49/c1-run.sh', 'tools/round-49/c2-mismatch.py', 'tools/round-50-c3/sqfs-triage-v5.py', 'tools/round-50/c1-controls.py', 'tools/round-50/c1-counter.py', 'tools/round-50/c1-run.sh', 'tools/round-50/c2-record.py', 'tools/round-50/fetch-vendor.py', 'tools/round-50/selftest-r49-c2.py', 'tools/round-51/census3.py']\",\n  \"verdict maps not bound to meanings: 1\"\n ],\n \"freeze\": \"b6f7ca2a6391964dfdedd477cd560bd42159873a\",\n \"frozen_derived\": [\n  \"tools/round-48/\",\n  \"plans/round-48-claims.md\"\n ],\n \"frozen_path_changed\": [],\n \"header\": [\n  \"trigger\",\n  \"v1 hole\",\n  \"v2 arm\",\n  \"exit\"\n ],\n \"header_ok\": true,\n \"interpreter_sha256\": \"f5e5c35c59c33d2b5abe884b83c9739c20f180f7c6863133a4d880711122cf97\",\n \"interpreter_sha256_expected\": \"f5e5c35c59c33d2b5abe884b83c9739c20f180f7c6863133a4d880711122cf97\",\n \"marker_occurrences\": 1,\n \"meaning_failures\": [\n  {\n   \"error\": \"exit 0 segment names no success meaning\",\n   \"path\": \"tools/round-51/census3.py\"\n  }\n ],\n \"meaning_rows_failed\": 1,\n \"met_target\": false,\n \"mutations_sha256\": \"25ce025f8b2be63a5122583191cbf7588db7dc2894c869fac2ab075a84f5c1ea\",\n \"mutations_sha256_expected\": \"25ce025f8b2be63a5122583191cbf7588db7dc2894c869fac2ab075a84f5c1ea\",\n \"profile\": \"v3\",\n \"refs\": 10,\n \"registry_duplicates\": [],\n \"registry_extra\": [\n  \"tools/round-49/c1-controls.py\",\n  \"tools/round-49/c1-counter.py\",\n  \"tools/round-49/c1-oracle.py\",\n  \"tools/round-49/c1-run.py\",\n  \"tools/round-49/c1-run.sh\",\n  \"tools/round-49/c2-mismatch.py\",\n  \"tools/round-50-c3/sqfs-triage-v5.py\",\n  \"tools/round-50/c1-controls.py\",\n  \"tools/round-50/c1-counter.py\",\n  \"tools/round-50/c1-run.sh\",\n  \"tools/round-50/c2-record.py\",\n  \"tools/round-50/fetch-vendor.py\",\n  \"tools/round-50/selftest-r49-c2.py\",\n  \"tools/round-51/census3.py\"\n ],\n \"registry_missing\": [],\n \"registry_rows\": 56,\n \"restored\": [],\n \"rev\": \"02d667cbeee405bd3f8b73a0631f095f088a7633\",\n \"routed_counts\": {\n  \"R46-CL7\": 1,\n  \"R47-CL10\": 1\n },\n \"rows\": 2,\n \"rule_blocks\": 26,\n \"touched\": 0,\n \"unresolved_citations\": []\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "meanings-r52-claims-base",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-48/meanings.py",
+   "--root",
+   ".",
+   "--freeze",
+   "b6f7ca2a6391964dfdedd477cd560bd42159873a",
+   "--rev",
+   "ab0eafedc41402b43b41a4362084119578dfe7ce",
+   "--no-battery",
+   "--json-out",
+   "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone/out/meanings-r52-claims-base.json"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:35.107428+00:00",
+  "exit_code": 1,
+  "stdout_sha256": "c29161705742514dc6cfe5cd9d3ec2db354630a663ee206229c4c9b56482a1bd",
+  "stdout": "{\n \"arm_by_id\": {\n  \"R46-CL7\": \"meaning\",\n  \"R47-CL10\": \"floor\"\n },\n \"arm_tokens\": [\n  \"meaning\",\n  \"floor\"\n ],\n \"block_is_last\": true,\n \"block_present\": 1,\n \"block_title\": \"25. A verdict map binds \",\n \"census_paths\": 42,\n \"census_rederived_equal\": true,\n \"cited\": [\n  \"corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md\",\n  \"corpus/lessons/round-46.md\",\n  \"corpus/lessons/round-47.md\",\n  \"corpus/lessons/round-48.md\",\n  \"plans/round-48-claims.md\",\n  \"tools/round-48/meanings.py\"\n ],\n \"counter\": \"round-48-c1\",\n \"failing\": [\n  \"registry rows outside the census: ['tools/round-49/c1-controls.py', 'tools/round-49/c1-counter.py', 'tools/round-49/c1-oracle.py', 'tools/round-49/c1-run.py', 'tools/round-49/c1-run.sh', 'tools/round-49/c2-mismatch.py', 'tools/round-50-c3/sqfs-triage-v5.py', 'tools/round-50/c1-controls.py', 'tools/round-50/c1-counter.py', 'tools/round-50/c1-run.sh', 'tools/round-50/c2-record.py', 'tools/round-50/fetch-vendor.py', 'tools/round-50/selftest-r49-c2.py', 'tools/round-51/census3.py']\",\n  \"verdict maps not bound to meanings: 1\"\n ],\n \"freeze\": \"b6f7ca2a6391964dfdedd477cd560bd42159873a\",\n \"frozen_derived\": [\n  \"tools/round-48/\",\n  \"plans/round-48-claims.md\"\n ],\n \"frozen_path_changed\": [],\n \"header\": [\n  \"trigger\",\n  \"v1 hole\",\n  \"v2 arm\",\n  \"exit\"\n ],\n \"header_ok\": true,\n \"interpreter_sha256\": \"f5e5c35c59c33d2b5abe884b83c9739c20f180f7c6863133a4d880711122cf97\",\n \"interpreter_sha256_expected\": \"f5e5c35c59c33d2b5abe884b83c9739c20f180f7c6863133a4d880711122cf97\",\n \"marker_occurrences\": 1,\n \"meaning_failures\": [\n  {\n   \"error\": \"exit 0 segment names no success meaning\",\n   \"path\": \"tools/round-51/census3.py\"\n  }\n ],\n \"meaning_rows_failed\": 1,\n \"met_target\": false,\n \"mutations_sha256\": \"25ce025f8b2be63a5122583191cbf7588db7dc2894c869fac2ab075a84f5c1ea\",\n \"mutations_sha256_expected\": \"25ce025f8b2be63a5122583191cbf7588db7dc2894c869fac2ab075a84f5c1ea\",\n \"profile\": \"v3\",\n \"refs\": 10,\n \"registry_duplicates\": [],\n \"registry_extra\": [\n  \"tools/round-49/c1-controls.py\",\n  \"tools/round-49/c1-counter.py\",\n  \"tools/round-49/c1-oracle.py\",\n  \"tools/round-49/c1-run.py\",\n  \"tools/round-49/c1-run.sh\",\n  \"tools/round-49/c2-mismatch.py\",\n  \"tools/round-50-c3/sqfs-triage-v5.py\",\n  \"tools/round-50/c1-controls.py\",\n  \"tools/round-50/c1-counter.py\",\n  \"tools/round-50/c1-run.sh\",\n  \"tools/round-50/c2-record.py\",\n  \"tools/round-50/fetch-vendor.py\",\n  \"tools/round-50/selftest-r49-c2.py\",\n  \"tools/round-51/census3.py\"\n ],\n \"registry_missing\": [],\n \"registry_rows\": 56,\n \"restored\": [],\n \"rev\": \"ab0eafedc41402b43b41a4362084119578dfe7ce\",\n \"routed_counts\": {\n  \"R46-CL7\": 1,\n  \"R47-CL10\": 1\n },\n \"rows\": 2,\n \"rule_blocks\": 26,\n \"touched\": 0,\n \"unresolved_citations\": []\n}\n",
+  "stderr_tail": ""
+ },
+ {
+  "name": "census3-selftest",
+  "argv": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-51/census3.py",
+   "--selftest"
+  ],
+  "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-ScoutCensusRecheck/clone",
+  "utc": "2026-10-30T11:15:35.368777+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "d2f8664fce213a046ed91bbd9473c19212f4b487b5f507cd830e3cdfdd6229e3",
+  "stdout": "{\"cases\": 20, \"failures\": [], \"selftest\": {\"cli-clean\": true, \"cli-duplicate\": true, \"cli-extra\": true, \"cli-marker-refusal\": true, \"cli-missing\": true, \"cli-unknown\": true, \"duplicate\": true, \"duplicate-marker\": true, \"duplicate-row\": true, \"equal\": true, \"extra\": true, \"invalid-artifact\": true, \"malformed-row\": true, \"missing\": true, \"missing-file\": true, \"missing-marker\": true, \"parse-clean\": true, \"reversed-marker\": true, \"traversal\": true, \"unknown\": true}}\n",
+  "stderr_tail": ""
+ }
+]

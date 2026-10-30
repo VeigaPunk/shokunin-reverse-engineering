@@ -1,0 +1,120 @@
+{
+  "probes": [
+    {
+      "run": 1,
+      "probe": "mkfifo",
+      "command": "runuser -u nobody -- sh -c 'mkfifo p' (cwd=/fast/scratch/hyaku/kaidoku-r52/w1-LB4Mknod/unprivileged)",
+      "exit_code": 1,
+      "stdout": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "runuser: may not be used by non-root users\n",
+      "utc": "2026-10-30T10:48:07.010208+00:00"
+    },
+    {
+      "run": 1,
+      "probe": "mknod-char",
+      "command": "runuser -u nobody -- sh -c 'python3 -c import os,stat; os.mknod(\"char\", stat.S_IFCHR|0o600, os.makedev(0,0))' (cwd=/fast/scratch/hyaku/kaidoku-r52/w1-LB4Mknod/unprivileged)",
+      "exit_code": 1,
+      "stdout": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "runuser: may not be used by non-root users\n",
+      "utc": "2026-10-30T10:48:07.027883+00:00"
+    },
+    {
+      "run": 1,
+      "probe": "unix-bind",
+      "command": "runuser -u nobody -- sh -c 'python3 -c import socket; s=socket.socket(socket.AF_UNIX); s.bind(\"sock\"); s.close()' (cwd=/fast/scratch/hyaku/kaidoku-r52/w1-LB4Mknod/unprivileged)",
+      "exit_code": 1,
+      "stdout": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "runuser: may not be used by non-root users\n",
+      "utc": "2026-10-30T10:48:07.031931+00:00"
+    },
+    {
+      "run": 2,
+      "probe": "mkfifo",
+      "command": "runuser -u nobody -- sh -c 'mkfifo p' (cwd=/fast/scratch/hyaku/kaidoku-r52/w1-LB4Mknod/unprivileged)",
+      "exit_code": 1,
+      "stdout": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "runuser: may not be used by non-root users\n",
+      "utc": "2026-10-30T10:48:07.036990+00:00"
+    },
+    {
+      "run": 2,
+      "probe": "mknod-char",
+      "command": "runuser -u nobody -- sh -c 'python3 -c import os,stat; os.mknod(\"char\", stat.S_IFCHR|0o600, os.makedev(0,0))' (cwd=/fast/scratch/hyaku/kaidoku-r52/w1-LB4Mknod/unprivileged)",
+      "exit_code": 1,
+      "stdout": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "runuser: may not be used by non-root users\n",
+      "utc": "2026-10-30T10:48:07.040494+00:00"
+    },
+    {
+      "run": 2,
+      "probe": "unix-bind",
+      "command": "runuser -u nobody -- sh -c 'python3 -c import socket; s=socket.socket(socket.AF_UNIX); s.bind(\"sock\"); s.close()' (cwd=/fast/scratch/hyaku/kaidoku-r52/w1-LB4Mknod/unprivileged)",
+      "exit_code": 1,
+      "stdout": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "runuser: may not be used by non-root users\n",
+      "utc": "2026-10-30T10:48:07.043937+00:00"
+    }
+  ],
+  "initial_context_probes": [
+    {
+      "run": 1,
+      "probe": "mkfifo",
+      "command": "mkfifo p",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "",
+      "utc": "2026-10-30T10:48:00.447612+00:00"
+    },
+    {
+      "run": 1,
+      "probe": "mknod-char",
+      "command": "python3 -c os.mknod char as S_IFCHR dev 0:0",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "",
+      "utc": "2026-10-30T10:48:00.448332+00:00"
+    },
+    {
+      "run": 1,
+      "probe": "unix-bind",
+      "command": "python3 -c bind AF_UNIX at scratch sun_path",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "",
+      "utc": "2026-10-30T10:48:00.455875+00:00"
+    },
+    {
+      "run": 2,
+      "probe": "mkfifo",
+      "command": "mkfifo p",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "",
+      "utc": "2026-10-30T10:48:00.466877+00:00"
+    },
+    {
+      "run": 2,
+      "probe": "mknod-char",
+      "command": "python3 -c os.mknod char as S_IFCHR dev 0:0",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "",
+      "utc": "2026-10-30T10:48:00.467401+00:00"
+    },
+    {
+      "run": 2,
+      "probe": "unix-bind",
+      "command": "python3 -c bind AF_UNIX at scratch sun_path",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "",
+      "utc": "2026-10-30T10:48:00.475447+00:00"
+    }
+  ]
+}

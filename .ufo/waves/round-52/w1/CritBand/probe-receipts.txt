@@ -1,0 +1,89 @@
+## A1 checker on poisoned RENDERED dispatch (expect 1; got clean = vacuous)
+command: python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecWaveCheck/check-dispatch.py /fast/scratch/hyaku/kaidoku-r52/w1-CritBand/poison/dispatch-poisoned.json
+exit: 0
+stdout_sha256: 1b12ede7b5bfd2e5ac859e772b6bdf1602c310a91bd4044a05171195799c1836
+utc: 2026-10-30T11:13:27Z
+stdout:
+dispatch placeholder check: clean
+
+## A2 checker blind spot lower
+command: python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecWaveCheck/check-dispatch.py /fast/scratch/hyaku/kaidoku-r52/w1-CritBand/bs/lower.json
+exit: 0
+stdout_sha256: 1b12ede7b5bfd2e5ac859e772b6bdf1602c310a91bd4044a05171195799c1836
+utc: 2026-10-30T11:13:27Z
+stdout:
+dispatch placeholder check: clean
+
+## A2 checker blind spot single
+command: python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecWaveCheck/check-dispatch.py /fast/scratch/hyaku/kaidoku-r52/w1-CritBand/bs/single.json
+exit: 0
+stdout_sha256: 1b12ede7b5bfd2e5ac859e772b6bdf1602c310a91bd4044a05171195799c1836
+utc: 2026-10-30T11:13:27Z
+stdout:
+dispatch placeholder check: clean
+
+## A2 checker blind spot angle
+command: python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecWaveCheck/check-dispatch.py /fast/scratch/hyaku/kaidoku-r52/w1-CritBand/bs/angle.json
+exit: 0
+stdout_sha256: 1b12ede7b5bfd2e5ac859e772b6bdf1602c310a91bd4044a05171195799c1836
+utc: 2026-10-30T11:13:27Z
+stdout:
+dispatch placeholder check: clean
+
+## A2 checker blind spot ctxonly
+command: python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecWaveCheck/check-dispatch.py /fast/scratch/hyaku/kaidoku-r52/w1-CritBand/bs/ctxonly.json
+exit: 1
+stdout_sha256: c992f8b5e15d0e9f64bdba0f7c60805e53a134d4f2ae5340351edf85a2c3fbf0
+utc: 2026-10-30T11:13:28Z
+stdout:
+/fast/scratch/hyaku/kaidoku-r52/w1-CritBand/bs/ctxonly.json: <context>: {LANE}
+
+## B1 accounting --check with never-started expected seat (names not printed)
+command: python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecStatusHelper/wave-accounting.py /fast/scratch/hyaku/kaidoku-r52/w1-CritBand/fx --check --expected /fast/scratch/hyaku/kaidoku-r52/w1-CritBand/fx/names.txt
+exit: 1
+stdout_sha256: d4b6eea3fea2c1ed34e6f48676e800d66d670d9aae26291e54c4593bd9bd205b
+utc: 2026-10-30T11:13:28Z
+stdout:
+{"blocked": 1, "by_role": {"executor": 2}, "failed": 0, "missing": [], "parse_errors": ["trunc-seat: Unterminated string starting at: line 1 column 46 (char 45)"], "seats_total": 3, "settled": 1, "unknown": 1}
+
+## B2 accounting summary, seats_total from dirs only (spec=64)
+command: python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecStatusHelper/wave-accounting.py /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1
+exit: 0
+stdout_sha256: 820971f825c45df27ae9310e8c756e121ad849489e044370bf347acb05cf7567
+utc: 2026-10-30T11:13:28Z
+stdout:
+{"blocked": 4, "by_role": {"connector": 3, "critic": 3, "executor": 16, "labrat": 1, "mutation-tester": 4, "reviewer": 11, "scout": 4, "scribe": 8, "sentinel": 2, "task": 2}, "failed": 1, "missing": ["CritBand", "CritTriV6", "MutControlsV2", "ScoutCensusRecheck", "ScoutV6Corpus"], "parse_errors": [], "seats_total": 59, "settled": 49, "unknown": 5}
+
+## B3 --check passes a BLOCKED seat (doc says settled|failed)
+command: python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecStatusHelper/wave-accounting.py /fast/scratch/hyaku/kaidoku-r52/w1-CritBand/fxb --check --expected /fast/scratch/hyaku/kaidoku-r52/w1-CritBand/fxb/names.txt
+exit: 0
+stdout_sha256: 1c2223379a6a8a9ef5df415c222a9f67ce509d9b80e268d10800d67135e46c8b
+utc: 2026-10-30T11:13:28Z
+stdout:
+{"blocked": 1, "by_role": {"executor": 1}, "failed": 0, "missing": [], "parse_errors": [], "seats_total": 1, "settled": 0, "unknown": 0}
+
+## B4 --check against the real 64 spec names (dirs present: 52)
+command: python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecStatusHelper/wave-accounting.py /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1 --check --expected /fast/scratch/hyaku/kaidoku-r52/w1-CritBand/spec-names.txt
+exit: 1
+stdout_sha256: 820971f825c45df27ae9310e8c756e121ad849489e044370bf347acb05cf7567
+utc: 2026-10-30T11:13:28Z
+stdout:
+{"blocked": 4, "by_role": {"connector": 3, "critic": 3, "executor": 16, "labrat": 1, "mutation-tester": 4, "reviewer": 11, "scout": 4, "scribe": 8, "sentinel": 2, "task": 2}, "failed": 1, "missing": ["CritBand", "CritTriV6", "MutControlsV2", "ScoutCensusRecheck", "ScoutV6Corpus"], "parse_errors": [], "seats_total": 59, "settled": 49, "unknown": 5}
+
+## C1 interpolation checker on real spec
+command: python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecWaveCheck/check-dispatch.py /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1-spec.json
+exit: 0
+stdout_sha256: 1b12ede7b5bfd2e5ac859e772b6bdf1602c310a91bd4044a05171195799c1836
+utc: 2026-10-30T11:13:28Z
+stdout:
+dispatch placeholder check: clean
+
+## D1 fleet-root untracked strays (read-only status)
+command: git -C /home/vgpnk/Projects/shokunin status --porcelain --untracked-files=all
+exit: 0
+stdout_sha256: 77d40848510579ab9d749ce8da4f75098f7a688e7227cdf2675fb7ae589fae8c
+utc: 2026-10-30T11:13:28Z
+stdout:
+ M .scratch/goal-20261029-hyaku-run12.md
+ M .ufo/l0-questions.md
+

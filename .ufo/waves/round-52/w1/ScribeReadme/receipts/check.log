@@ -1,0 +1,82 @@
+== base measurements ==
+README blob identical at base / claims draft / HEAD: True
+README sha256: aad0c5907483f38fc0fcf82cb66f63d0b15a6554c3ad2d0d6d85c6a60b5da5db
+
+== variant A ==
+A: ## Coverage map section found                                         PASS 
+A: every coverage-map row is 3 cells (95 rows, 0 bad)                    PASS []
+A: coverage row cells == 3                                               PASS 3
+A: no pipe inside any coverage-row cell                                  PASS 
+A: coverage_map_row binding (c1-counter.py:2479-2482)                    PASS 
+A: map_token matches the row                                             PASS 
+A: unique section ## Coverage map                                        PASS 
+A: unique section ## Knowledge                                           PASS 
+A: unique section ## Frontier                                            PASS 
+A: exactly one Knowledge row for the stem                                PASS 
+A: Knowledge row is 4 cells                                              PASS 4
+A: frontier-note shape (mark + stem + LE-AVM token) on 2 line(s)         PASS 
+A: neither new frontier line carries a pipe                              PASS 
+A: new bullet is the last ## Frontier bullet                             PASS 
+A: new bullet drops the LE-AVM-members clause                            PASS 
+A: new bullet keeps the ~13k-file rootfs clause                          PASS 
+A: new bullet keeps AVM kernels / nested sub-images                      PASS 
+A: trailing note is the last non-blank line                              PASS 
+   [option A] historical still-frontier enumerations naming LE AVM members: 3 (expected; option B removes them)
+     - - sasquatch-v4be — 2026-10-26 round 40: genuine AVM-layout BE v4 **measured, not promoted** (`2026-10-26-r40-avm-be-squashfs-core`): every oracle file
+     - - sasquatch-v4be — 2026-10-26 round 41: the genuine AVM layout is **Core** (`2026-10-26-r41-avm-be-squashfs-core`), superseding the round-40 `measured
+     - - sasquatch — 2026-10-28 round 44: SquashFS v1/v2 was measured on four standard fixtures but **remains Frontier** (R44-C1 honest stop: frozen-claim/co
+   patch A: 34 diff lines, patched sha256 106710f1d97e2960adc0d6f727d20136399e22b9826511e3eaa28bb79337a058
+
+== variant B ==
+B: ## Coverage map section found                                         PASS 
+B: every coverage-map row is 3 cells (95 rows, 0 bad)                    PASS []
+B: coverage row cells == 3                                               PASS 3
+B: no pipe inside any coverage-row cell                                  PASS 
+B: coverage_map_row binding (c1-counter.py:2479-2482)                    PASS 
+B: map_token matches the row                                             PASS 
+B: unique section ## Coverage map                                        PASS 
+B: unique section ## Knowledge                                           PASS 
+B: unique section ## Frontier                                            PASS 
+B: exactly one Knowledge row for the stem                                PASS 
+B: Knowledge row is 4 cells                                              PASS 4
+B: frontier-note shape (mark + stem + LE-AVM token) on 2 line(s)         PASS 
+B: neither new frontier line carries a pipe                              PASS 
+B: new bullet is the last ## Frontier bullet                             PASS 
+B: new bullet drops the LE-AVM-members clause                            PASS 
+B: new bullet keeps the ~13k-file rootfs clause                          PASS 
+B: new bullet keeps AVM kernels / nested sub-images                      PASS 
+B: trailing note is the last non-blank line                              PASS 
+B: no ## Frontier enumeration lists LE AVM members as still-frontier     PASS []
+B: no trailing note enumeration lists LE AVM members as still-frontier   PASS []
+B: the ~13k-file clause survives the in-place edits (base 1 + 2 new lines) PASS (1, 3)
+   [option B] residual dated sentences naming the class (history, not an enumeration): 3
+     - | Genuine AVM-layout big-endian SquashFS v4 through REA (round 41) | `2026-10-26-r41-avm-be-squashfs-core` | **Core** — `extract-firmware --max-depth 
+     - | SquashFS LE AVM members (round 50) | `2026-10-28-r50-avm-le-squashfs-core` | measured, not promoted — REA published every oracle regular file on all
+     - | SquashFS LE AVM members (round 52) | `2026-10-30-r52-avm-le-squashfs-core` | **Core** — REA 6.5.0 `extract-firmware --max-depth 1` (unblob 26.6.4, `
+   patch B: 62 diff lines, patched sha256 e51dd152ed90a818d9e258ce84f3fbf1d4f78a7d259be6e3bfa38884cb1ff574
+
+== command A simulation on the patched tree ==
+base knowledge .md files == 141                                          PASS 141
+A: command A mapped == knowledge_files == 142                            PASS (142, 142)
+A: command A missing == []                                               PASS set()
+A: command A dangling == []                                              PASS set()
+A: coverage_score == 10.0 at 142/142                                     PASS 
+A: the new stem is in the mapped set                                     PASS 
+A: the r51 stem is still mapped (no regression)                          PASS 
+B: command A mapped == knowledge_files == 142                            PASS (142, 142)
+B: command A missing == []                                               PASS set()
+B: command A dangling == []                                              PASS set()
+B: coverage_score == 10.0 at 142/142                                     PASS 
+B: the new stem is in the mapped set                                     PASS 
+B: the r51 stem is still mapped (no regression)                          PASS 
+
+== fallbacks / negative controls ==
+fallback row is 3 cells                                                  PASS 
+fallback row says measured, not promoted                                 PASS 
+fallback row keeps LE AVM members Frontier                               PASS 
+core row asserts Core                                                    PASS 
+SOURCES rows at base: 158, highest id: S251, S252 present: False
+S252 is NOT yet in the registry (the row must not cite it before it lands) PASS 
+
+failures: 0
+utc: 2026-10-30T10:57:10Z

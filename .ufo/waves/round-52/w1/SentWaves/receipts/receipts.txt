@@ -1,0 +1,118 @@
+== spec-json-parse
+cmd: python3 -c import json;d=json.load(open('.ufo/waves/round-52/w1-spec.json'));print(len(d['items']),'items')
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 0914332b2426caedb4b1795826e261555ab921222dc565c341c9335d5b7fd7b7
+64 items
+
+== placeholder-scan
+cmd: python3 -c import json,re;d=json.load(open('.ufo/waves/round-52/w1-spec.json'));print(sum(len(re.findall(r'\{[A-Z_0-9]+\}',i['prompt'])) for i in d['items']),'placeholders')
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 27fe2184483e6135d2a50e2c49926a1273b85f7c83ebf67eb93ad40cb3ee573c
+0 placeholders
+
+== harness-after-without-data-run
+cmd: bash -c cd /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves && cp /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/c1-run.sh /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/c1-run.sh && printf x > /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/f.bin && bash /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/c1-run.sh after --id probe --carrier /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/f.bin --outdir /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/o2 --dry-run
+exit: 2  utc: 2026-10-30T11:13:42Z  stdout_sha256: 85c9585b0ad11e3d34bfbe363b07fc96dab267d154c3986be27c30895f7d2041
+c1-run.sh: the after arm refuses without --data-run (or KAIDOKU_C1_DATA_RUN=1): it is the post-freeze data procedure, run by the L1 only
+
+== harness-oracle-dryrun-default-scratch
+cmd: bash -c cd /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves && bash /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/c1-run.sh oracle --id probe --carrier /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/f.bin --outdir /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/o1 --dry-run
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: ddfb59d4ad6655c4caf907041b4967320bac7e2695eaa9e370f48e36c76fdb27
+c1-run.sh --dry-run: mode=oracle id=probe
+  carrier=/fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/f.bin  pin=none
+  outdir=/fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/o1  under_evidence=false  data_run=0 force=0
+  scratch_base=/fast/scratch/hyaku/kaidoku-r50  prov_segment_ok=true  prefix_ok=true
+  child_path=/usr/local/bin:/usr/bin:/bin:/home/vgpnk/.local/bin:/home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin  override=false
+  reader: python3 -I -- /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/sqfs-list.py --layout auto|le --files … --nonregular … --inspect /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/f.bin
+  unsquashfs: /usr/bin/unsquashfs -no-xattrs -f -no-exit-code -d <scratch>/usq/root /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/f.bin ; /usr/bin/unsquashfs -lln /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/f.bin
+  sasquatch: sasquatch -le -f -no-exit-code -n -d <scratch>/sq/root /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/f.bin
+
+== harness-after-dryrun-default-outdir
+cmd: bash -c cd /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves && bash /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/c1-run.sh after --id probe --carrier /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/f.bin --data-run --dry-run
+exit: 2  utc: 2026-10-30T11:13:42Z  stdout_sha256: 2bd954b2d742566c4e9acba556711782e80de84a8e25d643deeeb6c56448b150
+c1-run.sh: default OUTDIR needs the lane root two levels above /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves (no corpus/evidence there); pass --outdir
+
+== census-check-worktree-unchanged
+cmd: bash -c cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && git -C . rev-parse --verify -q ab0eafedc41402b43b41a4362084119578dfe7ce
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 86d50c51895e3999826835cba7cb95e998a64cf53d5f1a8708352cfd8bed2151
+ab0eafedc41402b43b41a4362084119578dfe7ce
+
+== py-compile-writes-pycache
+cmd: bash -c rm -rf /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/pyc && mkdir -p /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/pyc && printf 'x=1\n' > /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/pyc/m.py && python3 -m py_compile /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/pyc/m.py && find /fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/pyc -name '*.pyc'
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 3dddfc1a63e958e90dc01c3f12a66c885d323dffeebe9767b0c16e64d16f38e5
+/fast/scratch/hyaku/kaidoku-r52/w1-SentWaves/pyc/__pycache__/m.cpython-314.pyc
+
+== lane-preexisting-gitignored-pycache
+cmd: bash -c cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && find .ufo -name '*.pyc' | wc -l
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 1a6562590ef19d1045d06c4055742d38288e9e6dcd71ccde5cee80f1d5a774eb
+50
+
+== v1-counter-selftest-reaches-node
+cmd: bash -c cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && grep -n 'def selftest\|def recompute\|subprocess.run(\[node\|def find_rea_pkg\|a.selftest:' tools/round-50/c1-counter.py
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 521d39fe37a413f5c51e351e014e25c97c6f5f3d1de9f6c70fd47d7d4968ebc0
+595:def find_rea_pkg():
+686:    r = subprocess.run([node, tpath, '--pkg65', pkg65, '--pkg67', pkg65]
+2551:    if a.selftest:
+2868:def selftest(pkg65):
+4630:def selftest_rea(pkg65, unblob, timeout, dev_image=None):
+
+== census3-check-base
+cmd: bash -c cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 -I -B tools/round-51/census3.py --root . --rev ab0eafedc41402b43b41a4362084119578dfe7ce --check
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 8500f428668794f215e851f45e56af9c12627588d5c795074bd89c13fe6ae2fa
+{
+  "registry_paths": 56,
+  "census_paths": 56,
+  "census_outside": [],
+  "census_unregistered": [],
+  "duplicates": [],
+  "exit": 0,
+  "rev": "ab0eafedc41402b43b41a4362084119578dfe7ce",
+  "census": "tools/round-51/census3.json"
+}
+
+== census3-has-no-file-mode
+cmd: bash -c cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && python3 -I -B tools/round-51/census3.py --help | head -20
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 32217c34395eaa8eafd1dbffcf58597412eb95a40b8dec9e3fd2914438ca67bf
+usage: census3.py [-h] [--root ROOT] [--rev REV] (--generate | --check |
+                  --historical | --selftest) [--out OUT] [--census CENSUS]
+
+Registry inventory diagnostic, not the complete R51-C2 triage gate. The
+authority is the single instrument-registry v2 marker block at --rev.
+Historical mode compares it with the independent claims-derived census2; check
+mode compares it with the registry-derived census3. The two inventories have
+different scopes; this tool does not modify or repair frozen meanings.py. Exit
+0: exact inventory equality; 1: measured set/duplicate mismatch; 2: malformed
+or unavailable input. --generate writes only the named output.
+
+options:
+  -h, --help       show this help message and exit
+  --root ROOT
+  --rev REV
+  --generate
+  --check
+  --historical
+  --selftest
+  --out OUT
+
+== status-helper-scope
+cmd: bash -c cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && git status --porcelain | head -5
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 9da45b5ca27d206caf2c5cf6c3614e8a5276c9adfb2c9ccbdf83d3ab569c725b
+ M .ufo/waves/round-50/w3/ScribeEntryC1.md
+?? .ufo/waves/round-52/l1/
+?? .ufo/waves/round-52/w1.ready.dispatched
+?? .ufo/waves/round-52/w1/
+
+== sources-census-S-ids
+cmd: bash -c cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin && grep -oE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' corpus/SOURCES.md | grep -oE 'S[0-9]+' | sort -u | wc -l
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 7ed8f0f3b707956d9fb1e889e11153e0aa0a854983081d262fbe5eede32da7ca
+158
+
+== carrier-hosts
+cmd: python3 -c import json;d=json.load(open('/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/carriers.json'));print([c['external']['url'].split('/')[2] for c in d['carriers']])
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: 613a423d1c05499df94db2a5a213aabb2d8868b472ca810fbadd38be86dff4e0
+['download.avm.de', 'download.avm.de', 'download.avm.de', 'download.avm.de']
+
+== role-attack-share
+cmd: python3 -c import json,collections;d=json.load(open('/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1-spec.json'));c=collections.Counter(i['role'] for i in d['items']);a=sum(c[k] for k in ['reviewer','critic','mutation-tester','sentinel','revenger']);print(dict(c));print('attack',a,'of',len(d['items']))
+exit: 0  utc: 2026-10-30T11:13:42Z  stdout_sha256: ea55e40349b0e0394ab8f6932d39d16f67bf84a7236c978fd69041ad9d44258a
+{'executor': 21, 'scribe': 8, 'scout': 7, 'reviewer': 8, 'critic': 7, 'mutation-tester': 4, 'sentinel': 3, 'revenger': 2, 'connector': 3, 'simplifier': 1}
+attack 24 of 64
+

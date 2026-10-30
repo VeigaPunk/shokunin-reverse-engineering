@@ -1,0 +1,621 @@
+# CritRuleDerive — round 52 wave 1 receipts
+# All commands run from the seat scratch $TMPDIR; UTC timestamps below.
+
+=== probe.py
+cmd: python3 probe.py
+exit: 0
+stdout_sha256: ae4e4894860ec109aea157d1e1dd7b960bdbe61b24de049c5c206c735f8c8904
+utc: 2026-10-30T11:11:22Z
+--- output
+== CTL-OLD (round-50 rule): 0/4 dispositions green
+   g7581: ok=False removal diagnostic without a path under the root: '$input'
+   g7582: ok=False removal diagnostic without a path under the root: '$input'
+   c6490: ok=False removal diagnostic without a path under the root: '$input'
+   c6430: ok=False removal diagnostic without a path under the root: '$input'
+== CTL-NEW (law rule): 0/4 dispositions green
+   g7581: ok=False removal diagnostic without a path under the root: '$input'
+   g7582: ok=False removal diagnostic without a path under the root: '$input'
+   c6490: ok=False removal diagnostic without a path under the root: '$input'
+   c6430: ok=False removal diagnostic without a path under the root: '$input'
+== TOLERANT (law shape but device gap allowed): 0/4 dispositions green
+   g7581: ok=False removal diagnostic without a path under the root: '$input'
+   g7582: ok=False removal diagnostic without a path under the root: '$input'
+   c6490: ok=False removal diagnostic without a path under the root: '$input'
+   c6430: ok=False removal diagnostic without a path under the root: '$input'
+== OMITTED (device kinds not mentioned): 0/4 dispositions green
+   g7581: ok=False removal diagnostic without a path under the root: '$input'
+   g7582: ok=False removal diagnostic without a path under the root: '$input'
+   c6490: ok=False removal diagnostic without a path under the root: '$input'
+   c6430: ok=False removal diagnostic without a path under the root: '$input'
+== WHITELIST13 (M1): 0/4 dispositions green
+   g7581: ok=False removal diagnostic without a path under the root: '$input'
+   g7582: ok=False removal diagnostic without a path under the root: '$input'
+   c6490: ok=False removal diagnostic without a path under the root: '$input'
+   c6430: ok=False removal diagnostic without a path under the root: '$input'
+
+== gap injection: a future extractor emits an unpublished-entry gap on dev/pts/0 (a FRITZ!Box device row)
+   LAW       g7581: ok=False  gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/led' (allowed [])
+   LAW       c6490: ok=False  gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/led' (allowed [])
+   TOLERANT  g7581: ok=False  removal diagnostic without a path under the root: '$input'
+   TOLERANT  c6490: ok=False  removal diagnostic without a path under the root: '$input'
+   R50       g7581: ok=False  removal diagnostic without a path under the root: '$input'
+   R50       c6490: ok=False  removal diagnostic without a path under the root: '$input'
+
+== census coverage of the 28 device rows
+   g7581: 13 device rows; gap=[] published=[] unpublished_entries=[]
+      census kinds: ['char-device', 'dir', 'symlink']  entries=1001
+   g7582: 13 device rows; gap=[] published=[] unpublished_entries=[]
+      census kinds: ['char-device', 'dir', 'symlink']  entries=1001
+   c6490: 1 device rows; gap=[] published=[] unpublished_entries=[]
+      census kinds: ['char-device', 'dir', 'symlink']  entries=914
+   c6430: 1 device rows; gap=[] published=[] unpublished_entries=[]
+      census kinds: ['char-device', 'dir', 'symlink']  entries=824
+   total device rows = 28
+
+== published-file shape (does a materialized device show up?)
+   published count 4556
+   any device path published? ['etc/udev/rules.d/10-console.rules', 'etc/udev/rules.d/38-mobiled.rules', 'etc/udev/rules.d/40-usb.rules', 'etc/udev/rules.d/50-firmware.rules', 'etc/udev/rules.d/50-udev-default.rules']
+   sample symlink rows [('bin/adsl', 'symlink', 'xdslctl'), ('bin/adslctl', 'symlink', 'xdslctl'), ('bin/ash', 'symlink', 'busybox')]
+   are symlink paths among published? []
+   total symlink rows 639
+
+wrote probe-out.json
+
+=== probe2.py
+cmd: python3 probe2.py
+exit: 0
+stdout_sha256: 1d53aa3116a6ad66cd397fb43fe43ab53f1ab59951123618fa2f39917939d9c1
+utc: 2026-10-30T11:11:23Z
+--- output
+== CTL-OLD round-50 rule: 2/4 green
+   g7581: ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/
+   g7582: ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/
+   c6490: ok=True | 613 gaps (1 structural), 1 removals, 1 silent, on 914 non-regular entries
+   c6430: ok=True | 568 gaps (1 structural), 1 removals, 1 silent, on 824 non-regular entries
+== CTL-NEW law rule: 4/4 green
+   g7581: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   g7582: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   c6490: ok=True | 613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries
+   c6430: ok=True | 568 gaps (1 structural), 1 removals, 0 silent, on 824 non-regular entries
+== TOLERANT (device gap allowed): 4/4 green
+   g7581: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   g7582: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   c6490: ok=True | 613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries
+   c6430: ok=True | 568 gaps (1 structural), 1 removals, 0 silent, on 824 non-regular entries
+== OMITTED (device kinds absent): 4/4 green
+   g7581: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   g7582: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   c6490: ok=True | 613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries
+   c6430: ok=True | 568 gaps (1 structural), 1 removals, 0 silent, on 824 non-regular entries
+== LAW + required[char-device]=true, silent={}: 0/4 green
+   g7581: ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/led', 'dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4'
+   g7582: ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/led', 'dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4'
+   c6490: ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/led']
+   c6430: ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/led']
+== LAW + required[char-device]=true, silent={247:0}: 2/4 green
+   g7581: ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/
+   g7582: ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/
+   c6490: ok=True | 613 gaps (1 structural), 1 removals, 1 silent, on 914 non-regular entries
+   c6430: ok=True | 568 gaps (1 structural), 1 removals, 1 silent, on 824 non-regular entries
+
+== unpublished_entries channel in the committed envelopes
+   g7581: unpublished_entries type=list len=636
+      sample: {"relative_path": "firmware.bin_extract/bin/adsl", "kind": "symlink", "link_target": "xdslctl"}
+      kinds: {'symlink': 636}
+      keys of first entry: ['kind', 'link_target', 'relative_path']
+   g7582: unpublished_entries type=list len=636
+      sample: {"relative_path": "firmware.bin_extract/bin/adsl", "kind": "symlink", "link_target": "xdslctl"}
+      kinds: {'symlink': 636}
+      keys of first entry: ['kind', 'link_target', 'relative_path']
+   c6490: unpublished_entries type=list len=612
+      sample: {"relative_path": "firmware.bin_extract/bin/ash", "kind": "symlink", "link_target": "busybox"}
+      kinds: {'symlink': 612}
+      keys of first entry: ['kind', 'link_target', 'relative_path']
+   c6430: unpublished_entries type=list len=567
+      sample: {"relative_path": "firmware.bin_extract/bin/ash", "kind": "symlink", "link_target": "busybox"}
+      kinds: {'symlink': 567}
+      keys of first entry: ['kind', 'link_target', 'relative_path']
+
+== is unpublished_entries consulted by disposition_check?
+   "unpublished" appears in disposition_check source: False
+   counter references to unpublished_entries:
+69:                       `unpublished_entries[].relative_path` and gap
+309:                    unpublished_entries: sorted [kind, path suffix],
+1116:    for u in nr.get('unpublished_entries') or []:
+1138:    `unpublished_entries[].relative_path` and gap `relative_path` are bare, while
+1840:    for u in nr.get('unpublished_entries') or []:
+1870:        'unpublished_entries': unpub,
+1893:                   'unpublished_entries', 'diagnostics')
+2738:            'unpublished_entries': unpub_rows,
+2792:    for u in nr.get('unpublished_entries') or []:
+3298:            e['normalized_result']['unpublished_entries'].pop(),
+3669:        e['normalized_result']['unpublished_entries'].append({
+3851:        e['normalized_result']['unpublished_entries'] = []
+3913:        e['normalized_result']['unpublished_entries'] = []
+
+== M2: a fixture census with a fourteenth unlisted device (dev/ttyS0 4:64)
+   LAW: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1002 non-regular entries
+   WHITELIST13 (M1/M4): ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/ttyS0']
+   TOLERANT: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1002 non-regular entries
+   OMITTED: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1002 non-regular entries
+
+== gap injection: future extractor emits a device gap (dev/pts/0 on g7581)
+   LAW: ok=False | gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/pts/0' (allowed [])
+   TOLERANT: ok=True | 638 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   OMITTED: ok=False | gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/pts/0' (allowed [])
+
+== gap kind rename: same device gap but kind="device-node" (not in allowed at all)
+   LAW: ok=False | gap kind 'device-node' not allowed for 'char-device' entry 'dev/pts/0' (allowed [])
+   TOLERANT: ok=False | gap kind 'device-node' not allowed for 'char-device' entry 'dev/pts/0' (allowed ['unpublished-entry'])
+
+== gap on a path that maps to no census row (dev/newthing 99:0)
+   LAW: ok=False | gap path 'firmware.bin_extract/dev/newthing' matches 0 non-regular entries
+   TOLERANT: ok=False | gap path 'firmware.bin_extract/dev/newthing' matches 0 non-regular entries
+
+== structural channel: a null-path gap of kind depth-limited (device gap laundered)
+   LAW: ok=False | structural gaps over allowance {'depth-limited': [2, 1]}
+
+== depth-limited gap record in the committed envelope (F8 fields)
+   g7581: {"kind": "depth-limited", "input_path": "$output/firmware.bin_extract", "relative_path": null, "handler": null, "provider_id": null, "range": null, "root_file_range": null, "dependencies": [], "continuation_id": "3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab"}
+   g7582: {"kind": "depth-limited", "input_path": "$output/firmware.bin_extract", "relative_path": null, "handler": null, "provider_id": null, "range": null, "root_file_range": null, "dependencies": [], "continuation_id": "3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab"}
+   c6490: {"kind": "depth-limited", "input_path": "$output/firmware.bin_extract", "relative_path": null, "handler": null, "provider_id": null, "range": null, "root_file_range": null, "dependencies": [], "continuation_id": "3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab"}
+   c6430: {"kind": "depth-limited", "input_path": "$output/firmware.bin_extract", "relative_path": null, "handler": null, "provider_id": null, "range": null, "root_file_range": null, "dependencies": [], "continuation_id": "3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab"}
+
+=== probe3.py
+cmd: python3 probe3.py
+exit: 0
+stdout_sha256: 4776615c8a2807ce713c4209403282fd86220610fab69c5425fe83f616983374
+utc: 2026-10-30T11:11:23Z
+--- output
+== M1 (all-thirteen whitelist) over the committed corpus, disposition only
+   g7581: ok=True | 637 gaps (1 structural), 3 removals, 13 silent, on 1001 non-regular entries
+   g7582: ok=True | 637 gaps (1 structural), 3 removals, 13 silent, on 1001 non-regular entries
+   c6490: ok=True | 613 gaps (1 structural), 1 removals, 1 silent, on 914 non-regular entries
+   c6430: ok=True | 568 gaps (1 structural), 1 removals, 1 silent, on 824 non-regular entries
+   -> M1 is disposition-GREEN: its redness can only come from law_shape_ok
+
+== M5 candidate: fixture envelope carrying a device gap (g7581 dev/pts/0)
+   LAW: ok=False | gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/pts/0' (allowed [])
+   TOLERANT: ok=True | 638 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   WHITELIST13: ok=False | gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/pts/0' (allowed [])
+
+== structural-channel escape: the device gap REPLACES the depth-limited gap
+   LAW: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+
+== removal-channel escape: a MaliciousSymlinkRemoved diagnostic on a device row
+   sample diagnostic: {"input_path": "$input", "report": {"__typename__": "MaliciousSymlinkRemoved", "severity": "WARNING", "link": "/fast/scratch/hyaku/kaidoku-r50/c1-run.uVY6Hs/rea-firmware-6uPeRY/extracted/firmware.bin_extract/dev/log", "target": "/var/tmp/log"}}
+   diagnostic_rel of sample: dev/log
+
+== does the published-file channel ever contain a device row? (materialisation check)
+   g7581: published=4556 nonregular_published=0 device-rows-among-published=0
+   g7582: published=4564 nonregular_published=0 device-rows-among-published=0
+   c6490: published=4709 nonregular_published=0 device-rows-among-published=0
+   c6430: published=3955 nonregular_published=0 device-rows-among-published=0
+
+== projection channel: is unpublished_entries part of the compared projection?
+   PROJECTION_KEYS = ('subject_sha256', 'files', 'chunks', 'extraction_gaps', 'unpublished_entries', 'diagnostics')
+   PROJECTION_KEYS_BY_PROFILE = {'core': ('subject_sha256', 'files', 'chunks', 'extraction_gaps', 'unpublished_entries', 'diagnostics'), 'plus-mime': ('subject_sha256', 'files', 'chunks', 'extraction_gaps', 'unpublished_entries', 'diagnostics'), 'plus-content': ('subject_sha256', 'files', 'chunks', 'extraction_gaps', 'unpublished_entries', 'diagnostics'), 'plus-extractor': ('subject_sha256', 'files', 'chunks', 'extraction_gaps', 'unpublished_entries', 'diagnostics', 'derivations', 'engine', 'published_bytes', 'coverage')}
+   projection() mentions unpublished_entries: True
+
+== receipt_paths(): does it include unpublished_entries paths? (path_shape scope)
+   receipt_paths count 5093 sample ['firmware.bin_extract/bin/aicmd', 'firmware.bin_extract/bin/allcfgconv', 'firmware.bin_extract/bin/ar7cfgchanged']
+   receipt_paths source mentions unpublished_entries: True
+
+== the depth-limited gap: is its input_path the CHUNK ROOT (not the stop point)?
+   g7581: input_path='$output/firmware.bin_extract' relative_path=None continuation_id='3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab'
+        subject root = 'firmware.bin_extract'  output_directory='/fast/scratch/hyaku/kaidoku-r50/c1-run.uVY6Hs/extract'
+   g7582: input_path='$output/firmware.bin_extract' relative_path=None continuation_id='3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab'
+        subject root = 'firmware.bin_extract'  output_directory='/fast/scratch/hyaku/kaidoku-r50/c1-run.GNUccw/extract'
+   c6490: input_path='$output/firmware.bin_extract' relative_path=None continuation_id='3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab'
+        subject root = 'firmware.bin_extract'  output_directory='/fast/scratch/hyaku/kaidoku-r50/c1-run.GpkDyU/extract'
+   c6430: input_path='$output/firmware.bin_extract' relative_path=None continuation_id='3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab'
+        subject root = 'firmware.bin_extract'  output_directory='/fast/scratch/hyaku/kaidoku-r50/c1-run.NqjdN2/extract'
+   distinct continuation_id values across the four carriers: 1 {'3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab'}
+
+== do the device rows live in a subtree with no regular file? (F7 reachability)
+   g7581: 13 device rows; device rows whose parent subtree holds no published regular file: ['dev/led', 'dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7', 'dev/tiatm', 'dev/ttyp0', 'dev/ttyp1', 'dev/ttyp2']
+   g7582: 13 device rows; device rows whose parent subtree holds no published regular file: ['dev/led', 'dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7', 'dev/tiatm', 'dev/ttyp0', 'dev/ttyp1', 'dev/ttyp2']
+   c6490: 1 device rows; device rows whose parent subtree holds no published regular file: ['dev/led']
+   c6430: 1 device rows; device rows whose parent subtree holds no published regular file: ['dev/led']
+
+=== probe4.py
+cmd: python3 probe4.py
+exit: 0
+stdout_sha256: a79438071ff00985f6b17d3452c3143e4e57e3ec06a20e6f3ecead22c24e11b3
+utc: 2026-10-30T11:11:23Z
+--- output
+== g7581: extractor-side records by top-level dir: {'bin': 238, 'data': 1, 'dev': 3, 'etc': 1084, 'lib': 650, 'nohup.out': 1, 'opt': 14, 'sbin': 88, 'tmp': 1, 'usr': 3114, 'var.tar': 1}
+   records under dev/: ['dev/kdsld_misc', 'dev/log', 'dev/new_led']
+   device-row directories: ['dev', 'dev/pts']
+      dev: extractor-side records=3 ['dev/kdsld_misc', 'dev/log', 'dev/new_led']
+      dev: census rows=18 kinds={'dir': 2, 'symlink': 3, 'char-device': 13}
+      dev/pts: extractor-side records=0 []
+      dev/pts: census rows=9 kinds={'dir': 1, 'char-device': 8}
+   census rows under dev/: 18 {'dir': 2, 'symlink': 3, 'char-device': 13}
+   census dev/ rows sample: [('dev', 'dir', ''), ('dev/kdsld_misc', 'symlink', '/var/dev/kdsld_misc'), ('dev/led', 'char-device', '247:0'), ('dev/log', 'symlink', '../tmp/log'), ('dev/new_led', 'symlink', '/dev/null'), ('dev/pts', 'dir', '')]
+   depth-limited gap: input_path='$output/firmware.bin_extract' handler=None continuation_id=3b54e297653ef5bd...
+   rea_parameters in receipt: {'path': '/fast/scratch/hyaku/kaidoku-r50/carrier-cache/968d997d5401a483a9250ab0e4e34bd632a40bee000af3419a2b8d0e29fa6845.bin', 'output_directory': '/fast/scratch/hyaku/kaidoku-r50/c1-run.uVY6Hs/extract', 'max_depth': 1, 'max_output_bytes': 536870912, 'max_output_files': 100000}
+
+== g7582: extractor-side records by top-level dir: {'bin': 238, 'data': 1, 'dev': 3, 'etc': 1084, 'lib': 650, 'nohup.out': 1, 'opt': 14, 'sbin': 88, 'tmp': 1, 'usr': 3122, 'var.tar': 1}
+   records under dev/: ['dev/kdsld_misc', 'dev/log', 'dev/new_led']
+   device-row directories: ['dev', 'dev/pts']
+      dev: extractor-side records=3 ['dev/kdsld_misc', 'dev/log', 'dev/new_led']
+      dev: census rows=18 kinds={'dir': 2, 'symlink': 3, 'char-device': 13}
+      dev/pts: extractor-side records=0 []
+      dev/pts: census rows=9 kinds={'dir': 1, 'char-device': 8}
+   census rows under dev/: 18 {'dir': 2, 'symlink': 3, 'char-device': 13}
+   census dev/ rows sample: [('dev', 'dir', ''), ('dev/kdsld_misc', 'symlink', '/var/dev/kdsld_misc'), ('dev/led', 'char-device', '247:0'), ('dev/log', 'symlink', '../tmp/log'), ('dev/new_led', 'symlink', '/dev/null'), ('dev/pts', 'dir', '')]
+   depth-limited gap: input_path='$output/firmware.bin_extract' handler=None continuation_id=3b54e297653ef5bd...
+   rea_parameters in receipt: {'path': '/fast/scratch/hyaku/kaidoku-r50/carrier-cache/a119b64428e7128e376317472c504605f17f81a2b802439e32194431d94a5bd0.bin', 'output_directory': '/fast/scratch/hyaku/kaidoku-r50/c1-run.GNUccw/extract', 'max_depth': 1, 'max_output_bytes': 536870912, 'max_output_files': 100000}
+
+== c6490: extractor-side records by top-level dir: {'bin': 181, 'data': 1, 'dev': 2, 'etc': 743, 'lib': 797, 'nohup.out': 1, 'run': 1, 'sbin': 115, 'scripts': 6, 'tmp': 1, 'usr': 3473, 'var.tar': 1}
+   records under dev/: ['dev/kdsld_misc', 'dev/new_led']
+   device-row directories: ['dev']
+      dev: extractor-side records=2 ['dev/kdsld_misc', 'dev/new_led']
+      dev: census rows=5 kinds={'dir': 2, 'symlink': 2, 'char-device': 1}
+   census rows under dev/: 5 {'dir': 2, 'symlink': 2, 'char-device': 1}
+   census dev/ rows sample: [('dev', 'dir', ''), ('dev/kdsld_misc', 'symlink', '/var/dev/kdsld_misc'), ('dev/led', 'char-device', '247:0'), ('dev/new_led', 'symlink', '/dev/null'), ('dev/pts', 'dir', '')]
+   depth-limited gap: input_path='$output/firmware.bin_extract' handler=None continuation_id=3b54e297653ef5bd...
+   rea_parameters in receipt: {'path': '/fast/scratch/hyaku/kaidoku-r50/carrier-cache/880370e7f7e15d70b165a96ae3e6efef0cb8dc3e9a6b27b0b925c7fa62caf2d7.bin', 'output_directory': '/fast/scratch/hyaku/kaidoku-r50/c1-run.GpkDyU/extract', 'max_depth': 1, 'max_output_bytes': 536870912, 'max_output_files': 100000}
+
+== c6430: extractor-side records by top-level dir: {'bin': 166, 'data': 1, 'dev': 3, 'etc': 686, 'lib': 628, 'nohup.out': 1, 'run': 1, 'sbin': 112, 'tmp': 1, 'usr': 2923, 'var.tar': 1}
+   records under dev/: ['dev/kdsld_misc', 'dev/log', 'dev/new_led']
+   device-row directories: ['dev']
+      dev: extractor-side records=3 ['dev/kdsld_misc', 'dev/log', 'dev/new_led']
+      dev: census rows=6 kinds={'dir': 2, 'symlink': 3, 'char-device': 1}
+   census rows under dev/: 6 {'dir': 2, 'symlink': 3, 'char-device': 1}
+   census dev/ rows sample: [('dev', 'dir', ''), ('dev/kdsld_misc', 'symlink', '/var/dev/kdsld_misc'), ('dev/led', 'char-device', '247:0'), ('dev/log', 'symlink', '../tmp/log'), ('dev/new_led', 'symlink', '/dev/null'), ('dev/pts', 'dir', '')]
+   depth-limited gap: input_path='$output/firmware.bin_extract' handler=None continuation_id=3b54e297653ef5bd...
+   rea_parameters in receipt: {'path': '/fast/scratch/hyaku/kaidoku-r50/carrier-cache/da1c804940f49fcfb3727efbd4f79a4788f86c5819ddda23b5a8221fb898b46f.bin', 'output_directory': '/fast/scratch/hyaku/kaidoku-r50/c1-run.NqjdN2/extract', 'max_depth': 1, 'max_output_bytes': 536870912, 'max_output_files': 100000}
+
+=== probe5.py
+cmd: python3 probe5.py
+exit: 0
+stdout_sha256: ee513b65415a56ad901a83ee1f1514ef816492acd9e7e5fff0f24066cf8b68f9
+utc: 2026-10-30T11:11:23Z
+--- output
+== normalized_result keys: ['chunks', 'coverage', 'depth_limited_paths', 'derivations', 'diagnostics', 'engine', 'extraction_continuations', 'extraction_gaps', 'files', 'output_directory', 'published_bytes', 'selection', 'unpublished_entries']
+== a published file entry: {"relative_path": "firmware.bin_extract/bin/acs_cli", "path": "/fast/scratch/hyaku/kaidoku-r50/c1-run.uVY6Hs/extract/firmware.bin_extract/bin/acs_cli", "size": 24940, "sha256": "2e2c5dcfad6461e11787eb7d1a162847df405ec5d6678ca35b902427bb8a0b1f", "reported_sha256": null, "mime_type": null, "analysis_d
+== does `files` carry a type/kind field? ['analysis_depth', 'mime_type', 'original_file_range', 'path', 'relative_path', 'reported_sha256', 'runtime_address', 'sha256', 'size']
+
+== ESCAPE 1: the extractor materialises the device node and emits NO gap
+   disposition_check verdict (unchanged envelope): ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   nonregular_published WITH the materialised device: ['firmware.bin_extract/dev/led']
+   -> nonregular_unpublished_ok would be False
+
+== ESCAPE 2: the extractor reports the device in unpublished_entries (not a gap)
+   disposition_check verdict: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   -> disposition_check reads unpublished_entries: False
+
+== ESCAPE 3: the extractor emits the device gap as a STRUCTURAL gap (relative_path=null)
+   verdict: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries  <-- structural channel, device gap invisible
+
+== F8 remedy check: does input_path / continuation_id localise the depth limit?
+   g7581: input_path='$output/firmware.bin_extract' continuation_id=3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab
+   g7582: input_path='$output/firmware.bin_extract' continuation_id=3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab
+   c6490: input_path='$output/firmware.bin_extract' continuation_id=3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab
+   c6430: input_path='$output/firmware.bin_extract' continuation_id=3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab
+   distinct input_path across the four carriers: 1 -> {'$output/firmware.bin_extract'}
+   distinct continuation_id across the four carriers: 1
+   sha256('$output/firmware.bin_extract') = 7aad1bdb54457058...
+   sha256('firmware.bin_extract') = 21872a49e4ad8818...
+   sha256('$output/firmware.bin_extract/') = fec9e529d4fa9124...
+   -> the continuation_id is IDENTICAL for four different carriers and the input_path is
+      the chunk ROOT, so neither names the subtree the depth limit stopped in.
+
+== the depth limit itself: rea_parameters.max_depth in the committed envelopes
+   g7581: max_depth=1
+   c6490: max_depth=1
+
+== REACH test per device row: does the extractor-side record set contain the row's directory?
+   g7581: 13 device rows, 8 in a directory with NO extractor-side record: ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']
+   g7582: 13 device rows, 8 in a directory with NO extractor-side record: ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']
+   c6490: 1 device rows, 0 in a directory with NO extractor-side record: []
+   c6430: 1 device rows, 0 in a directory with NO extractor-side record: []
+
+=== probe6.py
+cmd: python3 probe6.py
+exit: 0
+stdout_sha256: a11986b6b616e3d01ce87637549880ac4e1f34909e45d699ad9deefc4c2a9552
+utc: 2026-10-30T11:11:23Z
+--- output
+== C1: law_shape_ok (claims wording) on the LAW and on EVIL
+   LAW: law_shape_ok=True []
+   EVIL (removed.kinds names device kinds): law_shape_ok=True []
+
+== C1b: EVIL over the committed corpus (CTL-NEW must still be 4/4)
+   g7581: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   g7582: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   c6490: ok=True | 613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries
+   c6430: ok=True | 568 gaps (1 structural), 1 removals, 0 silent, on 824 non-regular entries
+
+== C1c: EVIL + a MaliciousSymlinkRemoved diagnostic on a device row
+   LAW: ok=False | removal at 'dev/led' names a 'char-device' entry; removed.kinds is ['symlink']
+   EVIL: ok=True | 637 gaps (1 structural), 4 removals, 0 silent, on 1001 non-regular entries
+   -> under EVIL a device row carries a REMOVAL disposition; the law says it
+      carries no disposition at all, yet EVIL passes law_shape_ok and CTL-NEW.
+
+== C1d: EVIL + a fourteenth device (M2 fixture) -> still green?
+   EVIL + 14th device: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1002 non-regular entries
+
+== C2: the second claim check (carriers_spec) the claims' F10 does not mention
+def carriers_spec(spec, target, expected_ids):
+    """(ids, problems) for the frozen carrier list."""
+    probs = []
+    if 'claim' in spec and spec.get('claim') != 'R50-C1':
+        probs.append('claim %r != R50-C1' % (spec.get('claim'),))
+    cs = spec.get('carriers')
+    if not isinstance(cs, list):
+        return [], probs + ['carriers is not a list']
+    if spec.get('target') != target:
+        probs.append('frozen target %r != counter target %d' % (spec.get('target'), target))
+    prof = spec.get('projection')
+    if prof != DEFAULT_PROFILE:
+        probs.append('projection %r must be frozen explicitly as %r (round 50: '
+                     'derivations[], the source of the oracle roo
+   gap_rule_model also checks the claim label: True
+
+== C3: is unpublished_entries in the rule-scoped control scope?
+   disposition_check reads unpublished_entries: False
+   but projection compares it: True
+   PROJECTION_KEYS: ('subject_sha256', 'files', 'chunks', 'extraction_gaps', 'unpublished_entries', 'diagnostics')
+   -> a device row reported in unpublished_entries[] is invisible to the
+      rule-scoped controls (gaps_ok / nonregular_unpublished_ok) and would
+      only surface as a projection difference at the data run.
+
+== C3b: measure it: inject a char-device into unpublished_entries
+   LAW + device in unpublished_entries: disposition ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+   nonregular_published: []
+   -> the device entry now carries a disposition (an unpublished-entry record)
+      and the frozen rule still scores green.
+
+=== probe7.py
+cmd: python3 probe7.py
+exit: 0
+stdout_sha256: 9e950b1acff65729c208da80be1bacc0ef503efc36b53960cb73c1996bec2a60
+utc: 2026-10-30T11:11:23Z
+--- output
+== M2: fourteenth device (dev/ttyS0 4:64) -- which whitelists go RED?
+   LAW                                       : ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1002 non-regular entries
+   WHITELIST required=true + 13 details      : ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/ttyS0']
+   WHITELIST required=false + 13 details     : ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1002 non-regular entries
+   -> the claims require M2 RED "under any detail whitelist"; the
+      required=false whitelist stays GREEN.  M2 discriminates only against
+      whitelists that ALSO set required[char-device]=true.
+
+== M2 over the committed corpus WITHOUT the 14th device (the CTL-NEW arm)
+   g7581: ok=True | 637 gaps (1 structural), 3 removals, 13 silent, on 1001 non-regular entries
+   g7582: ok=True | 637 gaps (1 structural), 3 removals, 13 silent, on 1001 non-regular entries
+   c6490: ok=True | 613 gaps (1 structural), 1 removals, 1 silent, on 914 non-regular entries
+   c6430: ok=True | 568 gaps (1 structural), 1 removals, 1 silent, on 824 non-regular entries
+   -> the whitelist is disposition-GREEN on the committed corpus; only
+      law_shape_ok separates it from the law there.
+
+== law_shape_ok ambiguity: a rule that does not MENTION the device kinds
+   LAW: strict=(True, []) lenient=(True, [])
+   OMITTED: strict=(False, ['allowed[char-device] ABSENT', 'required[char-device] not false', 'allowed[block-device] ABSENT', 'required[block-device] not false', 'allowed[fifo] ABSENT', 'required[fifo] not false', 'allowed[socket] ABSENT', 'required[socket] not false']) lenient=(True, [])
+
+== does the OMITTED rule pass CTL-NEW over the committed corpus?
+   g7581: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries | model probs=[]
+   g7582: ok=True | 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries | model probs=[]
+   c6490: ok=True | 613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries | model probs=[]
+   c6430: ok=True | 568 gaps (1 structural), 1 removals, 0 silent, on 824 non-regular entries | model probs=[]
+   -> OMITTED (a rule that says NOTHING about device rows) is CTL-NEW 4/4
+      and passes a lenient law_shape_ok.  Only the STRICT reading of
+      law_shape_ok distinguishes it.
+
+== fifo/socket: what would the law rule do if a carrier HAD a fifo row?
+   LAW (allowed[fifo]=[]): ok=False | gap kind 'unpublished-entry' not allowed for 'fifo' entry 'dev/pipe0' (allowed [])
+   ROUND-50 rule (allowed[fifo]=[unpublished-entry]): ok=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4',
+   -> the law rule would go RED on a fifo gap; the round-50 rule tolerates it.
+      S250 says the FIFO/socket creation branches are NOT root-gated, so an
+      unprivileged unsquashfs DOES create them; the law sentence therefore
+      over-claims its own cited source for fifo/socket.
+
+=== probe8.py
+cmd: python3 probe8.py
+exit: 0
+stdout_sha256: 69d7fb1cb1b3581d79a95ad9d63f2babc6591353e28d5c78c101ae40f1f45bf0
+utc: 2026-10-30T11:11:24Z
+--- output
+== g7581
+   oracle regular files=4556 published=4556 oracle_hits=4556 -> every oracle regular file published: True
+   published path depth histogram: {0: 4556}
+   oracle regular files under dev/: 0 []
+   depth_limited_paths=['$output/firmware.bin_extract']
+   coverage=partial
+   extraction_continuations: 2
+      id=3b54e297653e... instruction=Rerun extract_firmware with a higher max_depth (up to 10) and a fresh output_directory to descend into this pa
+      id=602c674b7f83... instruction=The entry is retained as metadata; only regular files are published, without executable permission bits.
+   depth-limited gap continuation_id in continuations: True
+   census dir rows=349; under dev/: ['dev/pts']
+   analysis_depth histogram: {None: 4556}
+
+== c6490
+   oracle regular files=4709 published=4709 oracle_hits=4709 -> every oracle regular file published: True
+   published path depth histogram: {0: 4709}
+   oracle regular files under dev/: 0 []
+   depth_limited_paths=['$output/firmware.bin_extract']
+   coverage=partial
+   extraction_continuations: 2
+      id=3b54e297653e... instruction=Rerun extract_firmware with a higher max_depth (up to 10) and a fresh output_directory to descend into this pa
+      id=602c674b7f83... instruction=The entry is retained as metadata; only regular files are published, without executable permission bits.
+   depth-limited gap continuation_id in continuations: True
+   census dir rows=300; under dev/: ['dev/pts']
+   analysis_depth histogram: {None: 4709}
+
+=== probe9.py
+cmd: python3 probe9.py
+exit: 0
+stdout_sha256: 158a53080e7a5d2e811bce15ed8a3d670084183c637f56c16059ec24c32c029e
+utc: 2026-10-30T11:11:24Z
+--- output
+== control table over the committed corpus (disposition verdict)
+CTL-OLD  round-50 rule                        : 2/4 green
+    g7581: ok=False required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1'
+    g7582: ok=False required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1'
+    c6490: ok=True 613 gaps (1 structural), 1 removals, 1 silent, on 914 non-regular entries
+    c6430: ok=True 568 gaps (1 structural), 1 removals, 1 silent, on 824 non-regular entries
+CTL-NEW  law rule                             : 4/4 green
+    g7581: ok=True 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+    g7582: ok=True 637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries
+    c6490: ok=True 613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries
+    c6430: ok=True 568 gaps (1 structural), 1 removals, 0 silent, on 824 non-regular entries
+CTL-JUNK every kind required, no allowance    : 0/4 green
+    g7581: ok=False gap kind 'unpublished-entry' not allowed for 'symlink' entry 'bin/adsl' (allowed [])
+    g7582: ok=False gap kind 'unpublished-entry' not allowed for 'symlink' entry 'bin/adsl' (allowed [])
+    c6490: ok=False gap kind 'unpublished-entry' not allowed for 'symlink' entry 'bin/ash' (allowed [])
+    c6430: ok=False gap kind 'unpublished-entry' not allowed for 'symlink' entry 'bin/ash' (allowed [])
+
+== CTL-DN: do-nothing fixture (no receipts) -- the counter must exit 1 or 2
+   (the counter raises Unevaluable when a receipt is absent: measure() sets receipt_present=False and gaps_ok stays unset)
+   disposition_check with an empty envelope: ok=False | no extract root: paths cannot be resolved
+
+== the round-50 rule at its own freeze: carriers_matched 2 (the committed miss)
+   committed round-50 miss receipt keys: ['argv', 'bindings', 'bindings_false', 'carrier_ids', 'carriers', 'carriers_matched', 'carriers_spec_problems', 'carriers_unchanged', 'counter', 'counter_frozen_sha256', 'counter_sha256', 'evidence_digests', 'exit_code', 'failing']
+      carriers_matched = 2
+      exit_code = 1
+      predicate = P50-C1
+      revision = 646d29c9df4ef77499248f95589cb9526c6dea19
+      freeze = 435d41fd4ad9211d1579fc447936fb33d2b74467
+      c6430: gaps_ok=True projection_ok=True carriers_matched_ok=None
+      c6490: gaps_ok=True projection_ok=True carriers_matched_ok=None
+      g7581: gaps_ok=False projection_ok=False carriers_matched_ok=None
+      g7582: gaps_ok=False projection_ok=True carriers_matched_ok=None
+
+=== probe10.py
+cmd: python3 probe10.py
+exit: 1
+stdout_sha256: 4522ca3ef066391730ce9c28fa7e5f405b12964ec0996504aae03372747740a8
+utc: 2026-10-30T11:11:24Z
+--- output
+built image 396 bytes
+
+== unsquashfs -lln output (verbatim)
+exit 0
+drwxr-xr-x 0/0                      48 2023-11-14 19:13 squashfs-root
+drwxr-xr-x 0/0                      41 2023-11-14 19:13 squashfs-root/bin
+lrwxrwxrwx 0/0                       7 2023-11-14 19:13 squashfs-root/bin/ash -> busybox
+-rw-r--r-- 0/0                     503 2023-11-14 19:13 squashfs-root/bin/busybox
+drwxr-xr-x 0/0                      37 2023-11-14 19:13 squashfs-root/dev
+crw------- 0/0                 247,  0 2023-11-14 19:13 squashfs-root/dev/led
+drwxr-xr-x 0/0                      24 2023-11-14 19:13 squashfs-root/dev/pts
+crw------- 0/0                 136,  0 2023-11-14 19:13 squashfs-root/dev/pts/0
+drwxr-xr-x 0/0                      41 2023-11-14 19:13 squashfs-root/run
+prw-r--r-- 0/0                       0 2023-11-14 19:13 squashfs-root/run/pipe0
+srw-r--r-- 0/0                       0 2023-11-14 19:13 squashfs-root/run/sock0
+
+
+== does the listing name the device/fifo/socket rows?
+   contains 'led': True
+   contains 'pts/0': True
+   contains 'pipe0': True
+   contains 'sock0': True
+   contains "247" (the major): True
+   contains "136": True
+   contains "char": False
+   contains "fifo": False
+   contains "socket": False
+
+== the lane reader (tools/round-41/sqfs-list.py) on the same image
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/kaidoku-r52/w1-CritRuleDerive/probe10.py", line 60, in <module>
+    rows, nonreg, meta = sq._read_image(img, layout='le')
+    ^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 3, got 4)
+
+=== probe11.py
+cmd: python3 probe11.py
+exit: 0
+stdout_sha256: 5aa201bae62d6c958ff5f7b2f787805572568b01a906923057e4d75bf086305e
+utc: 2026-10-30T11:11:24Z
+--- output
+== F-A: law_shape_ok (r51 draft behaviour) on rule variants
+   LAW                                            law_shape_ok=True []
+   EVIL removed.kinds names device kinds          law_shape_ok=True []
+   required['fifo']=True                          law_shape_ok=True []
+   required['socket']=True                        law_shape_ok=True []
+   required['block-device']=True                  law_shape_ok=True []
+   allowed['fifo']=['unpublished-entry']          law_shape_ok=False ["allowed['fifo'] not empty"]
+
+== F-A consequence: with removed.kinds widened, does a device removal go green?
+   LAW      device removal -> ok=False | removal at 'dev/led' names a 'char-device' entry; removed.kinds is ['symlink']
+   EVIL     device removal -> ok=True | 637 gaps (1 structural), 4 removals, 0 silent, on 1001 non-regular entries
+
+== F-F: the census re-derivation reader formats disagree
+   sqfs-list.py --nonregular exit 2 usage: sqfs-list.py [-h] [--layout {auto,le,be,avm}] [--files OUT.tsv]
+                    [--nonregular OUT.tsv] [--extract REL] [--out FILE]
+                    [--inspect] [--selftest]
+            
+   unsquashfs -lln rows (the reader the R52 claims name):
+       'crw------- 0/0                 247,  0 2023-11-14 19:13 squashfs-root/dev/led'
+       'prw-r--r-- 0/0                       0 2023-11-14 19:13 squashfs-root/run/pipe0'
+       'srw-r--r-- 0/0                       0 2023-11-14 19:13 squashfs-root/run/sock0'
+   -> the frozen table format is rel TAB kind TAB detail ("247:0");
+      -lln emits a mode-char listing ("247,  0", "prw-", "srw-") with a
+      "squashfs-root/" prefix: no rel/kind/detail tuple to compare.
+
+=== probe12.py
+cmd: python3 probe12.py
+exit: 0
+stdout_sha256: a3c5c520ccfecaf0dd5b4a1bb12eb93da780532eab8773fd18e91746db490561
+utc: 2026-10-30T11:11:24Z
+--- output
+== g7581
+   path-resolved gaps=636  unpublished_entries=636  identical sets: True  gap-only=0 ue-only=0
+   published relative_path depth histogram: {1: 1, 2: 501, 3: 812, 4: 451, 5: 1103, 6: 427, 7: 1210, 8: 51}
+   device rows=13  parent dir HAS an extractor-side record: 5 ['dev/led', 'dev/tiatm', 'dev/ttyp0', 'dev/ttyp1', 'dev/ttyp2']
+   device rows whose parent dir has NO extractor-side record: 8 ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']
+   census rows under dev/pts/: [('dev/pts/0', 'char-device'), ('dev/pts/1', 'char-device'), ('dev/pts/2', 'char-device'), ('dev/pts/3', 'char-device'), ('dev/pts/4', 'char-device'), ('dev/pts/5', 'char-device'), ('dev/pts/6', 'char-device'), ('dev/pts/7', 'char-device')]
+
+== g7582
+   path-resolved gaps=636  unpublished_entries=636  identical sets: True  gap-only=0 ue-only=0
+   published relative_path depth histogram: {1: 1, 2: 501, 3: 820, 4: 451, 5: 1103, 6: 427, 7: 1210, 8: 51}
+   device rows=13  parent dir HAS an extractor-side record: 5 ['dev/led', 'dev/tiatm', 'dev/ttyp0', 'dev/ttyp1', 'dev/ttyp2']
+   device rows whose parent dir has NO extractor-side record: 8 ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']
+   census rows under dev/pts/: [('dev/pts/0', 'char-device'), ('dev/pts/1', 'char-device'), ('dev/pts/2', 'char-device'), ('dev/pts/3', 'char-device'), ('dev/pts/4', 'char-device'), ('dev/pts/5', 'char-device'), ('dev/pts/6', 'char-device'), ('dev/pts/7', 'char-device')]
+
+== c6490
+   path-resolved gaps=612  unpublished_entries=612  identical sets: True  gap-only=0 ue-only=0
+   published relative_path depth histogram: {1: 1, 2: 492, 3: 691, 4: 311, 5: 750, 6: 1701, 7: 752, 8: 11}
+   device rows=1  parent dir HAS an extractor-side record: 1 ['dev/led']
+   device rows whose parent dir has NO extractor-side record: 0 []
+   census rows under dev/pts/: []
+
+== c6430
+   path-resolved gaps=567  unpublished_entries=567  identical sets: True  gap-only=0 ue-only=0
+   published relative_path depth histogram: {1: 1, 2: 409, 3: 606, 4: 251, 5: 660, 6: 1199, 7: 809, 8: 20}
+   device rows=1  parent dir HAS an extractor-side record: 1 ['dev/led']
+   device rows whose parent dir has NO extractor-side record: 0 []
+   census rows under dev/pts/: []
+
+=== probe13.py
+cmd: python3 probe13.py
+exit: 0
+stdout_sha256: 832a3eabc3bb587e815de9053523c5fa96d8e8f844bec4e67f1e791c40b75136
+utc: 2026-10-30T11:11:24Z
+--- output
+== required on the NON-char device kinds: law_shape_ok (r51 draft) + CTL-NEW
+   required['block-device']=True : law_shape_ok=True []  CTL-NEW=4/4 green  (no such row exists in the corpus)
+   required['fifo']=True : law_shape_ok=True []  CTL-NEW=4/4 green  (no such row exists in the corpus)
+   required['socket']=True : law_shape_ok=True []  CTL-NEW=4/4 green  (no such row exists in the corpus)
+
+== the EVIL removal-kinds rule: law_shape_ok + CTL-NEW + M2 + device removal
+   law_shape_ok=True []   CTL-NEW=4/4 green
+   LAW   with a device-row removal: ok=False | removal at 'dev/led' names a 'char-device' entry; removed.kinds is ['symlink']
+   EVIL  with a device-row removal: ok=True | 637 gaps (1 structural), 4 removals, 0 silent, on 1001 non-regular entries
+
+== OMITTED rule (device kinds absent): CTL-NEW + law_shape_ok (r51 draft)
+   law_shape_ok (r51 draft: required[char-device] must be False) = False ["required['char-device']"]
+   CTL-NEW = 4/4 green   <- CTL-NEW ALONE cannot tell it from the law
+
+== the carriers-table claim label is a SECOND grammar site
+   carriers_spec claim check present in the v1 counter: True
+   the R52 claims F10 names only `gap_rule_model`; the v1 counter has TWO checks:
+     gap_rule_model  (c1-counter.py:790-791)
+     carriers_spec   (c1-counter.py:876-877)
+   the frozen carriers tables carry per-round labels:
+     .ufo/waves/round-41/c1/carriers.json: claim='R41-C1'
+     tools/round-49/carriers.json: claim='R49-C1'
+     tools/round-50/carriers.json: claim='R50-C1'
+

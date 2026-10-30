@@ -3874,3 +3874,40 @@ do not replace either original target or change the owned-axis numeric scores.
 Registry-only equality measured at `96aee1a502c23715aee72be09a8e934d384dea6c`:
 56/56, outside[], unregistered[], duplicates[], exit0; isolated CLI/helper
 selftest20/20 exit0. Both original claim verdicts remain unverified.
+
+## Round 52 (2026-10-30) — pre-freeze honest stop
+
+Declaration `ab0eafedc41402b43b41a4362084119578dfe7ce`, dispatch
+`1842addcef3458515859b928b92d9bbd0a46c5d5`. Neither declaration is a final
+instrument freeze. Original predicates and targets are not rewritten.
+
+| claim | axis | before | after / verdict | counting command |
+|---|---|---|---|---|
+| R52-C1 | coverage | historical round-50 full counter: 2/4, exit 1 | unmeasured / unprovable; no fresh receipts, no Core promotion | Original predicate in plans/round-52-claims.md, not run. Historical receipt .ufo/waves/round-50/l1/scores/c1-after-attempt2.json; internal rule-only probes independently reproduce old 2/4 and proposed 4/4 but are not this predicate. |
+| R52-C2 | depth | v5 route defect confirmed by internal probes; full new executability audit not implemented | unmeasured / unprovable; no v6 landed | Original predicate in plans/round-52-claims.md, not run; w1/ExecV5Baseline and LB1V5Audit retain bounded diagnostic results. |
+
+Documentary counting command (not a substitute claim counter):
+`python3 -I -B .ufo/waves/round-52/l1/round-evidence.py <LANE> <REV>`.
+At measured commit `1842addcef3458515859b928b92d9bbd0a46c5d5` it reports
+64 result rows, no R52 production tools, no R52 data receipts, and no freeze
+record. Receipt: `.ufo/waves/round-52/l1/accounting-start.json`.
+The same census is recorded against the evidence landing before the report.
+
+All owned-axis scores remain 10 on their historical finite proxies; numeric
+delta 0, no new capability or retirement. Coverage/depth/calibration unchanged.
+Expansion unchanged; quality unchanged conservatively (source-grounded rejection
+and evidence preservation do not complete either instrument); discernment
+unchanged pending outside spot-check. Lesson `corpus/lessons/round-52.md` admits
+S252 narrowly and rejects the unsupported shared-special-kind inference.
+
+Round shape: inherited single v2 build+attack wave, 64 seats; strict attack
+roles reviewer+critic+mutation-tester = 19/64. Per-seat files record 59 settled,
+4 blocked and 1 failed work outcomes, all 64 files present and parseable.
+Results handoff still lacks id/status fields, so provider-death count is
+unverifiable, not asserted zero. No further wave launched: pre-freeze stop,
+no claimed landing needing post-landing falsification.
+
+**planned (next steered round only):** resolve the durable pre-freeze findings
+in CritRuleDerive, CritRetry, CritTriV6, CritFetchChain and MutTriV6 before
+declaring a new implementation freeze; do not transplant these unverified
+targets or give internal rule-only controls full-predicate credit.

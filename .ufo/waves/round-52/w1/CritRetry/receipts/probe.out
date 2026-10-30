@@ -1,0 +1,76 @@
+{
+ "counter_path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/c1-counter.py",
+ "counter_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+ "probe": "CritRetry retry-policy probe",
+ "probe_A_always_enoent": {
+  "MAX_REA_ATTEMPTS_in_v1": 3,
+  "attempts_recorded_in_failure_payload": 1,
+  "err_text_len_if_serialised": 674,
+  "error_retryable_flag": false,
+  "failure_payload_keys": [
+   "error",
+   "exit",
+   "ok",
+   "replayed",
+   "stderr",
+   "stdout_head"
+  ],
+  "invocations_of_stub_REA": "1",
+  "mode": "every attempt raises the ENOENT",
+  "runner_status": "no_data"
+ },
+ "probe_A_measure_verdict": {
+  "always_enoent": "projection_ok=False -> exit 1 RED (the claim misses)",
+  "success_after_retry": "projection_ok=False -> exit 1 RED (the claim misses)"
+ },
+ "probe_A_note_no_REA_invoked": "the stub package is a local 3-line .mjs; the real rea-agents package was NEVER executed",
+ "probe_A_retry_then_success": {
+  "attempts_present_in_success_payload": true,
+  "invocations_of_stub_REA": "1",
+  "mode": "attempt1 raises the exact ENOENT, attempt2 succeeds",
+  "note": "the v1 runner returns (ok, data) on success and DISCARDS `replayed` (which holds attempts) - see c1-counter.py:2078-2088",
+  "payload_top_level_keys": [
+   "error",
+   "exit",
+   "ok",
+   "replayed",
+   "stderr",
+   "stdout_head"
+  ],
+  "replayed_present_in_success_payload": true,
+  "runner_status": "no_data"
+ },
+ "probe_B_predicate_breadth": {
+  "enoent_only_in_message": {
+   "claims_expectation": "claims say False (needs a PATH inside the tree)",
+   "predicate_says_retryable": true
+  },
+  "enoent_path_inside_tree": {
+   "claims_expectation": "claims say True",
+   "predicate_says_retryable": true
+  },
+  "enoent_path_outside_tree": {
+   "claims_expectation": "claims say False (path must be INSIDE the extraction tree)",
+   "predicate_says_retryable": true
+  },
+  "other_execution_failure": {
+   "claims_expectation": "claims say False",
+   "predicate_says_retryable": false
+  },
+  "real_g7581_error": {
+   "claims_expectation": "expected True",
+   "predicate_says_retryable": true
+  }
+ },
+ "probe_C_truncation": {
+  "captured_300": "{\"category\": \"execution_failure\", \"code\": \"execution_failure\", \"details\": {\"diagnostics\": {\"reason\": \"ENOENT: no such file or directory, readlink '/fast/scratch/hyaku/kaidoku-r50/c1-after-work2/c1-counter.rcz52k9z/rerun-g7581/rea-firmware-Ft6F7W/extracted/firmware.bin_extract/usr/www.myfritz/avme/cg",
+  "captured_len": 300,
+  "dropped_tail": "i-bin/luacgi'\"}, \"operation\": \"extract_firmware\", \"provider_id\": \"unblob\"}, \"message\": \"Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.\", \"remediation\": {\"action\": \"Analysis could not complete. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.\"}, \"retryable\": false}",
+  "drops_retryable_false": true,
+  "full_error_json_len": 717,
+  "full_path_visible_in_capture": false,
+  "full_path_visible_in_full": true,
+  "r51_capture_rule": "replayed['enoent_readlink_retry'] = err_text[:300]"
+ },
+ "utc": "2026-10-30T11:04:28.510610+00:00"
+}

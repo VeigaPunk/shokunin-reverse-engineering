@@ -1,0 +1,110 @@
+[
+ {
+  "probe": "P1 base selftest (16 cases)",
+  "command": "python3 -I -B tools/round-50/fetch-vendor.py --selftest",
+  "exit_code": 0,
+  "stdout_sha256": "828a9add44cff9e88dc7751bd290d981ba040eff20bb25a09666d9dad34804ec",
+  "stdout_bytes": 1027,
+  "utc": "2026-10-30T11:05:51.622492Z",
+  "note": "baseline: all chain-hash cases pass"
+ },
+ {
+  "probe": "MUT-A https+host guard deleted in fetch()",
+  "command": "mutant: fetch-vendor.py --selftest (guards deleted)",
+  "exit_code": 0,
+  "stdout_sha256": "a1592feeb9e50487b6bb61be2a1f888191d8ea6930d6c426298638e2a18a45e1",
+  "stdout_bytes": 78,
+  "utc": "2026-10-30T11:05:51.705756Z",
+  "note": "routed defect 4 requires guard-deletion -> selftest red"
+ },
+ {
+  "probe": "MUT-B redirect guard deleted",
+  "command": "mutant: fetch-vendor.py --selftest (guards deleted)",
+  "exit_code": 0,
+  "stdout_sha256": "a1592feeb9e50487b6bb61be2a1f888191d8ea6930d6c426298638e2a18a45e1",
+  "stdout_bytes": 78,
+  "utc": "2026-10-30T11:05:51.779419Z",
+  "note": "routed defect 4 requires guard-deletion -> selftest red"
+ },
+ {
+  "probe": "MUT-C both network guards deleted",
+  "command": "mutant: fetch-vendor.py --selftest (guards deleted)",
+  "exit_code": 0,
+  "stdout_sha256": "a1592feeb9e50487b6bb61be2a1f888191d8ea6930d6c426298638e2a18a45e1",
+  "stdout_bytes": 78,
+  "utc": "2026-10-30T11:05:51.852668Z",
+  "note": "routed defect 4 requires guard-deletion -> selftest red"
+ },
+ {
+  "probe": "P3 image-sha mismatch fails closed BEFORE member extraction",
+  "command": "in-process: fv.run(spec) with wrong image_sha256",
+  "exit_code": 0,
+  "stdout_sha256": "536ff4dca66bb8bb05f38266505a5fee38dc03cddc9729d5e333b973370e36f6",
+  "stdout_bytes": 66,
+  "utc": "2026-10-30T11:05:51.866515Z",
+  "note": ""
+ },
+ {
+  "probe": "P4 stale <pin>.bin survives a FAILED re-fetch (counter reads it as fresh)",
+  "command": "in-process: fv.run(spec_ok); then fv.run(spec_fail) into the SAME cache dir",
+  "exit_code": 1,
+  "stdout_sha256": "9d555386601820b85feb33dd338d30cbc899eb3d014d5d91826b00baea23c115",
+  "stdout_bytes": 175,
+  "utc": "2026-10-30T11:05:51.869548Z",
+  "note": "the fetcher never invalidates a pre-existing <pin>.bin and the counter never sees the fetch receipt"
+ },
+ {
+  "probe": "P5 --image-cache serves the chain with ZERO network contact",
+  "command": "in-process: fv.run(spec, cache, image_cache, fv.fetch) with _OPENER booby-trapped",
+  "exit_code": 0,
+  "stdout_sha256": "689375fb11786106ea0ba84dbc0fdd1fb5c4d62c666a615933e425e28711faab",
+  "stdout_bytes": 91,
+  "utc": "2026-10-30T11:05:51.869742Z",
+  "note": ""
+ },
+ {
+  "probe": "P6 network guard predicate: hostname-only (port and userinfo not checked)",
+  "command": "offline: replicate the fetch()/redirect guard predicate verbatim",
+  "exit_code": 0,
+  "stdout_sha256": "fd04a3c4771c4614cc623e3dd9b2f75edc7c6400d73eeb5855497e907676fb3f",
+  "stdout_bytes": 249,
+  "utc": "2026-10-30T11:05:51.869783Z",
+  "note": "scheme+hostname are checked; port and userinfo are NOT"
+ },
+ {
+  "probe": "P7 a non-tar container aborts the whole 4-carrier run with NO receipt",
+  "command": "python3 -I -B tools/round-50/fetch-vendor.py --spec <bad> --cache C --json-out out.json",
+  "exit_code": 1,
+  "stdout_sha256": "2193356fd548d43930581f40b636d4735623f38eba7a3e2672a8cecb6804cfc0",
+  "stdout_bytes": 39,
+  "utc": "2026-10-30T11:05:52.684454Z",
+  "note": "tarfile.ReadError is uncaught: no per-carrier link=, no --json-out receipt, no partial results"
+ },
+ {
+  "probe": "P8 the <pin>.bin.part write follows a pre-planted symlink (arbitrary overwrite)",
+  "command": "in-process: fv.run(spec) with <pin>.bin.part pre-planted as a symlink to VICTIM.txt",
+  "exit_code": 0,
+  "stdout_sha256": "ec66f2e25be0dcde028a76780e7064c6104f6d574de1752832f95993766e7202",
+  "stdout_bytes": 81,
+  "utc": "2026-10-30T11:05:52.684836Z",
+  "note": "os.replace() replaces the symlink but the write already followed it"
+ },
+ {
+  "probe": "P9 a carrier with no \"external\" key is silently dropped and rc is still 0",
+  "command": "in-process: fv.run(spec with 2 carriers, one lacking \"external\")",
+  "exit_code": 0,
+  "stdout_sha256": "fb85cecd6bb711360d050a0daf3975ebac907b2956c531d2eeaa67568dd7ce6e",
+  "stdout_bytes": 73,
+  "utc": "2026-10-30T11:05:52.684947Z",
+  "note": "the fetcher never checks it materialised the table's target count"
+ },
+ {
+  "probe": "P10 the fetch receipt carries no vendor revision, no UTC time and no fetch-event id",
+  "command": "read: fetch-vendor.py materialise()/fetch() receipt fields",
+  "exit_code": 0,
+  "stdout_sha256": "bf06b5777e629ad759ac7ed46f259850467558161e86d073dfff73293fbef66d",
+  "stdout_bytes": 257,
+  "utc": "2026-10-30T11:05:52.684956Z",
+  "note": "the round-50 carriers.json notes DO carry http_last_modified/http_etag (r50 notes)"
+ }
+]

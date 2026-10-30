@@ -1,0 +1,29 @@
+[
+ {
+  "probe": "P3 image-sha mismatch fails closed BEFORE member extraction",
+  "command": "in-process: fv.run(spec with image_sha256=0*64, fake fetcher returning a valid tar)",
+  "exit_code": 1,
+  "stdout_sha256": "a332b842e2309012a150447af9bc6d605b80756ab050d6db6067f24f0d8a5dbf",
+  "stdout_bytes": 106,
+  "utc": "2026-10-30T11:06:21.320661Z",
+  "note": "AVM re-publishing a changed image lands here: link=image_sha256, exit 1, nothing written"
+ },
+ {
+  "probe": "P7 an unreadable container aborts the whole run (no per-carrier link, no receipt)",
+  "command": "in-process: fv.run(spec whose pinned image is not a tar)",
+  "exit_code": 1,
+  "stdout_sha256": "9efcf597ef824b0c78f718ccd0632c820fb9a938b135f22abfba53543cf3de18",
+  "stdout_bytes": 72,
+  "utc": "2026-10-30T11:06:21.323526Z",
+  "note": "tarfile.ReadError escapes run(): remaining carriers never attempted, no link= recorded, no --json-out"
+ },
+ {
+  "probe": "P11 one unreadable carrier aborts the run and leaves a PARTIAL cache dir",
+  "command": "in-process: fv.run(spec with 2 carriers, the 2nd pinned to a non-tar image)",
+  "exit_code": 1,
+  "stdout_sha256": "d49d9e59569c6cd0642ca9780abff5e64598d94c2a6736aa01201b465cee0fa3",
+  "stdout_bytes": 181,
+  "utc": "2026-10-30T11:06:21.326382Z",
+  "note": "the counter would find carrier A present and score it; no receipt explains the abort"
+ }
+]

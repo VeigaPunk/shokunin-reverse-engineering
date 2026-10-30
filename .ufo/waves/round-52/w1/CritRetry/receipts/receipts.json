@@ -1,0 +1,54 @@
+{
+ "seat": "CritRetry",
+ "role": "critic",
+ "utc": "2026-10-30T11:10:52.846311+00:00",
+ "rea_invoked": false,
+ "note": "no REA run: the stub package is a 3-line local .mjs; the real rea-agents package was never executed",
+ "tools_installed": [],
+ "receipts": [
+  {
+   "command": "python3 -I -B probe.py",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-CritRetry",
+   "exit_code": 0,
+   "stdout_file": "probe.out",
+   "stdout_sha256": "2fe9727a4742bcf791b562b1387d87ebe6c9cdbe08e7c0686557d8e645bd7ba5",
+   "stdout_bytes": 3233,
+   "utc": "2026-10-30T11:10:52.501918+00:00",
+   "note": "probe A (v1 counter runner, stub REA package): v1 does NOT retry ENOENT (1 invocation); v1 success path DROPS replayed; truncation probe C",
+   "stderr_tail": ""
+  },
+  {
+   "command": "python3 -I -B probe2.py",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-CritRetry",
+   "exit_code": 0,
+   "stdout_file": "probe2.out",
+   "stdout_sha256": "fb92faa0759c82665110033fa66198c888d6cc581d568bd49ddc9594237b1fc7",
+   "stdout_bytes": 2077,
+   "utc": "2026-10-30T11:10:52.700612+00:00",
+   "note": "probe B (r51 L1 DRAFT counter = closest ancestor of the v2 counter): ENOENT retry DOES happen (2 invocations) but the success path DROPS replayed/attempts/enoent_readlink_retry; always-ENOENT -> 3 invocations -> measure stage raises RerunEnvError = exit 2 (NOT red); predicate breadth: ENOENT outside the tree and ENOENT-in-boilerplate are BOTH retried",
+   "stderr_tail": ""
+  },
+  {
+   "command": "python3 -I -B probe3.py",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-CritRetry",
+   "exit_code": 0,
+   "stdout_file": "probe3.out",
+   "stdout_sha256": "97510cbaf96524bdadf746e25445f05ef1740b87d84e022375c70384c621e4f8",
+   "stdout_bytes": 1791,
+   "utc": "2026-10-30T11:10:52.756150+00:00",
+   "note": "probe C: the frozen projection compares unpublished_entries as [kind, relative_path] ONLY -> two envelopes differing solely in link_target project EQUAL (masking surface); a DROPPED entry is caught",
+   "stderr_tail": ""
+  },
+  {
+   "command": "python3 -I -B probe4.py",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r52/w1-CritRetry",
+   "exit_code": 0,
+   "stdout_file": "probe4.out",
+   "stdout_sha256": "96d97bac6e2186efcb2ffcec07c1fbd8968a01aaf06e70b73b9da78802a725dd",
+   "stdout_bytes": 3345,
+   "utc": "2026-10-30T11:10:52.846292+00:00",
+   "note": "probe D: the committed ENOENT text is the NODE (JS) form (unblob is python and would print [Errno 2]); REA readlink sites; unblob fix_symlink unlink-then-symlink_to window; the ENOENT path is an ABSOLUTE-target symlink the oracle records with target /usr/www/cgi-bin/luacgi",
+   "stderr_tail": ""
+  }
+ ]
+}

@@ -1,0 +1,47 @@
+{
+  "captured_utc": "2026-10-30T10:48:27.891312+00:00",
+  "commands": [
+    {
+      "name": "mksquashfs",
+      "command": "mksquashfs /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/tree /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/synthetic.sqfs -noappend -comp xz -quiet",
+      "exit_code": 0,
+      "stdout_sha256": "236e303d407948301c396335f428ab5b66b18e2f77bdb8fc5963c61c7b80e2f3",
+      "stdout_file": "mksquashfs.stdout"
+    },
+    {
+      "name": "python-reader",
+      "command": "python3 -I -- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-41/sqfs-list.py --layout auto --files /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/python.tsv --nonregular /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/python.nonregular.tsv --inspect /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/synthetic.sqfs",
+      "exit_code": 0,
+      "stdout_sha256": "00235760f696b9cd0b8ffd956e5f0a06a71603af2ad1f321b6882d5058108ab2",
+      "stdout_file": "python.inspect.json"
+    },
+    {
+      "name": "unsquashfs-extract",
+      "command": "/usr/bin/unsquashfs -no-xattrs -f -no-exit-code -d /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/usq/root /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/synthetic.sqfs",
+      "exit_code": 0,
+      "stdout_sha256": "69171073b17f407d554b4f61f74f52c5e035bdb49272f1c8c321ef5370d1d44c",
+      "stdout_file": "unsquashfs.extract.log"
+    },
+    {
+      "name": "unsquashfs-list",
+      "command": "/usr/bin/unsquashfs -lln /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/synthetic.sqfs",
+      "exit_code": 0,
+      "stdout_sha256": "be9aa6385fe7ddd27c27ae187dbfad6fd94a3ceeff98ec099a2973c7536a552d",
+      "stdout_file": "unsquashfs.listing"
+    },
+    {
+      "name": "sasquatch",
+      "command": "sasquatch -le -f -no-exit-code -n -d /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/sasq/root /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/synthetic.sqfs",
+      "exit_code": 0,
+      "stdout_sha256": "435d505f3158846fc866bf5afb0feb2123b2a8d6e7a10910829e72af4c587f29",
+      "stdout_file": "sasquatch.log"
+    },
+    {
+      "name": "harness",
+      "command": "C1_ALLOW_NONAVM=1 C1_ALLOW_PIN_DRIFT=1 C1_ALLOW_FOREIGN_SCRATCH=1 C1_CHILD_PATH=/usr/local/bin:/usr/bin:/bin:/home/vgpnk/.local/bin bash /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/c1-run.sh oracle --id synthetic --carrier /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry/synthetic.sqfs --outdir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-52/w1/ExecOracleDry/harness --scratch /fast/scratch/hyaku/kaidoku-r52/w1-ExecOracleDry",
+      "exit_code": 3,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_file": "harness.stdout"
+    }
+  ]
+}

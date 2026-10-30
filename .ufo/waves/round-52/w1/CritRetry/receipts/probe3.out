@@ -1,0 +1,73 @@
+{
+ "PROJECTION_KEYS_BY_PROFILE": {
+  "core": [
+   "subject_sha256",
+   "files",
+   "chunks",
+   "extraction_gaps",
+   "unpublished_entries",
+   "diagnostics"
+  ],
+  "plus-content": [
+   "subject_sha256",
+   "files",
+   "chunks",
+   "extraction_gaps",
+   "unpublished_entries",
+   "diagnostics"
+  ],
+  "plus-extractor": [
+   "subject_sha256",
+   "files",
+   "chunks",
+   "extraction_gaps",
+   "unpublished_entries",
+   "diagnostics",
+   "derivations",
+   "engine",
+   "published_bytes",
+   "coverage"
+  ],
+  "plus-mime": [
+   "subject_sha256",
+   "files",
+   "chunks",
+   "extraction_gaps",
+   "unpublished_entries",
+   "diagnostics"
+  ]
+ },
+ "link_target_changed_absolute_vs_rewritten": {
+  "NOTE": "the two envelopes differ ONLY in unpublished_entries[0].link_target (the value unblob writes after its unlink+relink rewrite) -> the projection is BLIND to it",
+  "differing_keys": [],
+  "projection_equal": true
+ },
+ "probe": "CritRetry probe3: is the frozen projection sensitive to the symlink link_target and to a dropped symlink?",
+ "projection_profile_in_receipt": "plus-extractor",
+ "summary": [
+  "link_target is NOT in the projection (unpub rows are [kind, relative_path] only) -> a run whose symlink rewrite landed differently projects EQUAL",
+  "dropping the symlink entry entirely DOES change the projection (unpublished_entries) -> the projection catches a LOST entry but not a REWRITTEN one"
+ ],
+ "symlink_entry_dropped_entirely": {
+  "detail": {
+   "unpublished_entries": {
+    "committed_only": [
+     [
+      "symlink",
+      "usr/www.myfritz/avme/cgi-bin/luacgi"
+     ]
+    ],
+    "counts": [
+     1,
+     0
+    ],
+    "fresh_only": []
+   }
+  },
+  "differing_keys": [
+   "unpublished_entries"
+  ],
+  "projection_equal": false
+ },
+ "utc": "2026-10-30T11:06:21.273805+00:00"
+}

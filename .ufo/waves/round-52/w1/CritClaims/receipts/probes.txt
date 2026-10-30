@@ -1,0 +1,44 @@
+# CritClaims receipts (commands run from the fleet-independent clone /fast/scratch/hyaku/kaidoku-r52/w1-CritClaims/clone; lane read-only)
+## R1 base census3 --check at ab0eafed (lane)
+cmd: python3 -I -B tools/round-51/census3.py --root /home/vgpnk/Projects/shokunin/kaidoku-shokunin --rev ab0eafedc41402b43b41a4362084119578dfe7ce --check
+exit=0 utc=2026-10-30T11:14:51Z stdout_sha256=6b2484fc157f52e6327d686cf3c36b54c55874a825af52c5b5ecdf47fef07bff
+{
+  "registry_paths": 56,
+  "census_paths": 56,
+  "census_outside": [],
+  "census_unregistered": [],
+  "duplicates": [],
+  "exit": 0,
+  "rev": "ab0eafedc41402b43b41a4362084119578dfe7ce",
+  "census": "tools/round-51/census3.json"
+}
+## R2 v5 with a FREEZE that descends from the base (C2 before-arm shape) at ab0eafed
+cmd: python3 -I -B tools/round-50-c3/sqfs-triage-v5.py --root <LANE> --rev ab0eafedc41402b43b41a4362084119578dfe7ce --freeze 1842addcef3458515859b928b92d9bbd0a46c5d5 --envelopes <R42 envelopes> --json-out <scratch>
+exit=2 utc=2026-10-30T11:14:57Z stdout_sha256=d47956f81e96271f38f9e4b8dffa0c03292b95e661a52e5af65250d94000a5eb
+(stdout: freeze not an ancestor — see the r2 line printed in the session transcript)
+## R3 v5 at ab0eafed without --freeze (before-arm labels, the only part generatable with committed tools)
+exit=0 utc=2026-10-30T11:14:51Z stdout_sha256=bdf8ac252d8a8a633d15e8163a59364684dd1c5d206032efad6e6aa9f14e16dd
+table: v5 (17 rules) from git:ab0eafedc41402b43b41a4362084119578dfe7ce:SKILL.md
+envelopes: 126   pair_mismatches: 0   evaluator_missing: 0
+  clean                        table  32   evaluator  32
+## R4 v5 --table flag exists? (grep count)
+grep -c "'--table'" sqfs-triage-v5.py -> 0
+entries in tools/round-50-c3: __pycache__ sqfs-triage-v5.py 
+## R5 clone probe: one registry row added, census3.json untouched
+/fast/scratch/hyaku/kaidoku-r52/w1-CritClaims/clone
+5c0ee44e
+exit=1 utc=2026-10-30T11:14:52Z stdout_sha256=d56de6ea325be5644cd13449202ff587f9804419829ad2ada7cb54acdd9a0186
+{
+  "registry_paths": 57,
+  "census_paths": 56,
+  "census_outside": [
+    "tools/round-52/c1-counter.py"
+  ],
+  "census_unregistered": [],
+  "duplicates": [],
+  "exit": 1,
+  "rev": "HEAD",
+  "census": "tools/round-51/census3.json"
+}
+## R6 coverage map stems (lane at ab0eafed)
+knowledge .md=141; stems in map section=141 (python probe, see findings)

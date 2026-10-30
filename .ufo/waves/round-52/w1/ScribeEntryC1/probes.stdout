@@ -1,0 +1,62 @@
+## census: kinds and char-device rows per carrier
+c6430 kinds={"char-device": 1, "dir": 255, "symlink": 568} char-device=1 other-than-dev/led=0
+c6490 kinds={"char-device": 1, "dir": 300, "symlink": 613} char-device=1 other-than-dev/led=0
+g7581 kinds={"char-device": 13, "dir": 349, "symlink": 639} char-device=13 other-than-dev/led=12
+g7582 kinds={"char-device": 13, "dir": 349, "symlink": 639} char-device=13 other-than-dev/led=12
+## census: char-device rows of g7581
+  dev/led char-device 247:0
+  dev/pts/0 char-device 136:0
+  dev/pts/1 char-device 136:1
+  dev/pts/2 char-device 136:2
+  dev/pts/3 char-device 136:3
+  dev/pts/4 char-device 136:4
+  dev/pts/5 char-device 136:5
+  dev/pts/6 char-device 136:6
+  dev/pts/7 char-device 136:7
+  dev/tiatm char-device 230:0
+  dev/ttyp0 char-device 3:0
+  dev/ttyp1 char-device 3:1
+  dev/ttyp2 char-device 3:2
+## census: kinds present across all four tables
+  kinds=['char-device', 'dir', 'symlink'] device_kinds_present=['char-device']
+## law: device-row disposition census over the committed envelopes
+c6430 device_rows=1 gap_kinds=['symlink'] devices_with_gap=[] devices_published=[] gaps_total=567 files=3955
+c6490 device_rows=1 gap_kinds=['symlink'] devices_with_gap=[] devices_published=[] gaps_total=612 files=4709
+g7581 device_rows=13 gap_kinds=['symlink'] devices_with_gap=[] devices_published=[] gaps_total=636 files=4556
+g7582 device_rows=13 gap_kinds=['symlink'] devices_with_gap=[] devices_published=[] gaps_total=636 files=4564
+LAW-TOTAL device_rows=28 rows_with_a_gap=0 rows_published=0
+## rule-scoped disposition verdict over the committed envelopes
+CTL-OLD-R50-frozen | measured-13-row | 2/4 | c6430=T c6490=T g7581=F g7582=F | parser_problems=[]
+   CTL-OLD g7581 false: required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']
+   CTL-OLD g7582 false: required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']
+CTL-OLD-R50-frozen | M2-synthetic-14-row | 2/4 | c6430=T c6490=T g7581=F g7582=F | parser_problems=[]
+CTL-NEW-R52-law | measured-13-row | 4/4 | c6430=T c6490=T g7581=T g7582=T | parser_problems=["claim 'R52-C1' != R50-C1"]
+CTL-NEW-R52-law | M2-synthetic-14-row | 4/4 | c6430=T c6490=T g7581=T g7582=T | parser_problems=["claim 'R52-C1' != R50-C1"]
+M1-all-thirteen | measured-13-row | 4/4 | c6430=T c6490=T g7581=T g7582=T | parser_problems=["claim 'R52-C1' != R50-C1"]
+M1-all-thirteen | M2-synthetic-14-row | 3/4 | c6430=T c6490=T g7581=F g7582=T | parser_problems=["claim 'R52-C1' != R50-C1"]
+M3-required-247-only | measured-13-row | 2/4 | c6430=T c6490=T g7581=F g7582=F | parser_problems=["claim 'R52-C1' != R50-C1"]
+M3-required-247-only | M2-synthetic-14-row | 2/4 | c6430=T c6490=T g7581=F g7582=F | parser_problems=["claim 'R52-C1' != R50-C1"]
+M4-strict-subset | measured-13-row | 2/4 | c6430=T c6490=T g7581=F g7582=F | parser_problems=["claim 'R52-C1' != R50-C1"]
+M4-strict-subset | M2-synthetic-14-row | 2/4 | c6430=T c6490=T g7581=F g7582=F | parser_problems=["claim 'R52-C1' != R50-C1"]
+CTL-JUNK | measured-13-row | 0/4 | c6430=F c6490=F g7581=F g7582=F | parser_problems=["claim 'R52-C1' != R50-C1"]
+CTL-JUNK | M2-synthetic-14-row | 0/4 | c6430=F c6490=F g7581=F g7582=F | parser_problems=["claim 'R52-C1' != R50-C1"]
+## fail-closed: one synthetic device gap injected into the g7581 envelope
+CTL-OLD-R50-frozen | clean=False | injected_device_gap=False | required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']
+CTL-NEW-R52-law | clean=True | injected_device_gap=False | gap kind 'unpublished-entry' not allowed for 'char-device' entry 'dev/led' (allowed [])
+## committed round-50 miss receipt
+carriers_matched=2 target=4 exit_code=1
+c6430 gaps_ok=True projection_ok=True nonregular_unpublished_ok=True note='568 gaps (1 structural), 1 removals, 1 silent, on 824 non-regular entries'
+c6490 gaps_ok=True projection_ok=True nonregular_unpublished_ok=True note='613 gaps (1 structural), 1 removals, 1 silent, on 914 non-regular entries'
+g7581 gaps_ok=False projection_ok=False nonregular_unpublished_ok=True note="required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']"
+g7582 gaps_ok=False projection_ok=True nonregular_unpublished_ok=True note="required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']"
+## SOURCES state of the rows this entry cites
+S243 opened='2026-10-28' used_by='corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md'
+S244 opened='2026-10-28' used_by='corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md'
+S245 opened='2026-10-28' used_by='corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md'
+S249 opened='2026-10-28' used_by='corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md'
+S250 opened='2026-10-30' used_by='corpus/knowledge/2026-10-30-r51-avm-le-squashfs-core.md, corpus/lessons/round-51.md'
+S251 opened='2026-10-30' used_by='corpus/knowledge/2026-10-30-r51-avm-le-squashfs-core.md, corpus/lessons/round-51.md, SKILL.md'
+S252 ABSENT from corpus/SOURCES.md
+## lane counters
+knowledge_files=141
+sources_rows=158
