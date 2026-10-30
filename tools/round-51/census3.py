@@ -15,6 +15,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 
 OPEN = '<!-- instrument-registry v2 -->'
 CLOSE = '<!-- /instrument-registry -->'
@@ -145,6 +146,43 @@ def selftest():
         cases['invalid-artifact'] = False
     except CensusError:
         cases['invalid-artifact'] = True
+    # Exercise the actual CLI as well as pure helpers. These isolated fixtures
+    # never invoke the fixture scripts or touch a live checkout.
+    scratch = os.environ.get('TMPDIR') or os.path.join(
+        os.environ.get('HYAKU_SCRATCH', '/fast/scratch/hyaku'),
+        'kaidoku-r51', 'census-selftest')
+    os.makedirs(scratch, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='inventory.', dir=scratch) as root:
+        os.makedirs(os.path.join(root, 'tools'))
+        for name in good:
+            with open(os.path.join(root, name), 'w') as stream:
+                stream.write('# fixture; never executed\n')
+        scenarios = (
+            ('cli-clean', good, table, 0, [], []),
+            ('cli-missing', good[:1], table, 1, [good[1]], []),
+            ('cli-extra', good + ['tools/x.py'], table, 1, [], ['tools/x.py']),
+            ('cli-duplicate', good + [good[0]], table, 1, [], []),
+            ('cli-unknown', ['tools/z.py'], table, 1, good, ['tools/z.py']),
+            ('cli-marker-refusal', good, table.replace(CLOSE, ''), 2, None, None),
+        )
+        for name, paths, skill, code, outside, unregistered in scenarios:
+            with open(os.path.join(root, 'SKILL.md'), 'w') as stream:
+                stream.write(skill)
+            with open(os.path.join(root, 'census.json'), 'w') as stream:
+                json.dump({'paths': paths}, stream)
+            proc = subprocess.run(
+                [sys.executable, '-I', '-B', os.path.abspath(__file__),
+                 '--root', root, '--rev', 'WORKTREE', '--check',
+                 '--census', 'census.json'], capture_output=True, text=True)
+            result = json.loads(proc.stderr if code == 2 else proc.stdout)
+            cases[name] = proc.returncode == code
+            if code == 2:
+                cases[name] &= result.get('error') == 'missing or duplicate registry markers'
+            else:
+                cases[name] &= (result.get('census_outside') == outside
+                                and result.get('census_unregistered') == unregistered
+                                and result.get('duplicates') ==
+                                ([good[0]] if name == 'cli-duplicate' else []))
     print(json.dumps({'selftest': cases, 'cases': len(cases),
                       'failures': [k for k, v in cases.items() if not v]}, sort_keys=True))
     return 0 if all(cases.values()) else 1
