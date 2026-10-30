@@ -3862,3 +3862,15 @@ freezing a new carrier/accounting or v6 claim; retain original target history,
 explicit replay exemptions, source-to-producer scope and complete controls.
 Provider routes and independent-review capacity must actually exist; this round
 does not start or admit round 52.
+
+**Measured bounded delivery:** at correction commit
+`93c4d8be488288fa0e747a8ccf0630eb9a76b08f`, structural command A
+(`python3 -I -B .ufo/waves/round-51/l1/integrity.py --root . --base 1aa273694f4409d3432fbcd73e83a33bee0dd8e9 --rev 93c4d8be488288fa0e747a8ccf0630eb9a76b08f`)
+reports map140/140→141/141 and citation resolution25/26→26/26; registry
+156→158, zero deleted registry lines, LOG append-only, PROVINCE byte-identical.
+The first measured landing's invalid :15-69 pointer (68-line entry) is retained
+as the negative receipt and corrected to :15-68. These structural improvements
+do not replace either original target or change the owned-axis numeric scores.
+Registry-only equality measured at `96aee1a502c23715aee72be09a8e934d384dea6c`:
+56/56, outside[], unregistered[], duplicates[], exit0; isolated CLI/helper
+selftest20/20 exit0. Both original claim verdicts remain unverified.
