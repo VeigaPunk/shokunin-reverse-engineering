@@ -580,7 +580,7 @@ bullet is bounded by the lines it cites.
   upstream flag spelling. Neither fact establishes DD-WRT independent-reader
   support. Table v5 and its scored historical labels are unchanged; the proposed
   v6 discriminator/audit did not land. Evidence:
-  `corpus/knowledge/2026-10-30-r51-avm-le-squashfs-core.md:15-69`,
+  `corpus/knowledge/2026-10-30-r51-avm-le-squashfs-core.md:15-68`,
   `corpus/lessons/round-51.md`, S250/S251.
 
 - **22. Freeze integrity is an instrument, and every arm has a red case.** A freeze is

@@ -71,6 +71,7 @@ renumbering or collision-guard claim is made for this non-adoption.
 | M51-5 | editing/tool schema | L1 duplicate docstring incident; ExecTriV6 resumed malformed CUT writes | exact edit/read discipline | L1 restored pristine counter bytes and used small exact edits; draft selftest 184 cases eventually returned 21 green +163 red, zero failures (artifact 22111). No claim target measured and draft is evidence-only. Invalid triage draft never integrated. Tool issue filed; this is containment, not proof schema mismatch is repaired. |
 | M51-6 | dispatch interpolation | gen-w1.py item strings contain unresolved `{LANE}`/`{W1}` markers | none before dispatch | common context supplied absolute roots, but item-local placeholders violate the stronger per-item contract. Taken dispatch remains immutable; the final report records the defect rather than regenerating dispatch evidence. No checker fix is claimed. |
 | M51-7 | historical record | round-50 closure routed absent literal 646d29c9 in LOG and noncanonical SHONEN prose | closure | LOG append now names the omitted commit; SHONEN regenerated verbatim modulo name from template. Exact template comparison recorded in L1 receipts. Historical evidence stays in LOG/report, no author [x] promotion. |
+| M51-8 | citation-range drift | first bounded landing SKILL note cited :15-69 but the new knowledge file has 68 lines (`wc -l`); structural counter at 96aee1a5 resolved 25/26 blocks | QUALITY 77 and command A | corrected range to :15-68; preserved negative `l1/integrity-at-96aee1a5.json`; the same counter re-measures at the correction landing. Structural citation resolution is not v6/executability verification and gives no C2 target credit. |
 
 ## Disposition of the other routed round-50 defects
 
@@ -94,3 +95,10 @@ before/after are read-only comparisons, not external-target tests.
 Expansion unchanged: source corrections concern already-named SquashFS ground;
 no Frontier→Core or capability. Quality improved only for bounded corrections
 and the registry diagnostic. Discernment unchanged: outside spot-check pending.
+
+Generated-mirror cleanup: retained `w1/ScribeSources/mirror-SOURCES.md` after cmp,
+removed the seat's generated whole-corpus mirror from the wave (not admissible
+evidence under scratch discipline). Original counts and retained counts are in
+`l1/artifact-census.json` and `l1/artifact-census-retained.json`. Seat report paths
+into the discarded mirror describe that earlier measurement, not retained files.
+Full source bodies and fetch/quote/census receipts remain.
