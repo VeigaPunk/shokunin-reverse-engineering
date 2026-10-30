@@ -51,6 +51,36 @@ Scratch `/fast/scratch/hyaku/kaidoku-r50/w3-ScribeEntryC1` removed at yield; rec
   page was not fetched in this wave — the draft attributes it to the wave-1 seat that read it
   (`w1/C1MarkerCritic.md` F6, 2026-10-28), and this seat makes no claim about its bytes.
 
+## Addendum — the landing outcome (added after the L1's landing and the falsify wave)
+
+Round 50 has since landed, so this seat's draft was integrated and then corrected by the falsify wave;
+the addendum records the measured outcome for the audit trail (read-only, no claim of authorship of the
+landed text).
+
+- [observation] The entry landed at `corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md`
+  (sha256 `3b5f3119390361fc7a154022575b0716972c1fd7d8ca481f55abb16890f15b0d`), i.e. at the stem this
+  seat's F1 pointed at.
+- [observation] The frozen counter at the landing scored **`carriers_matched 2` of `target 4`,
+  `met_target` false, `failing` = `g7581:gaps_ok`, `g7581:projection_ok`, `g7582:gaps_ok`,
+  `frozen_path_changed []`** (receipt `.ufo/waves/round-50/l1/scores/c1-after-attempt2.json`, sha256
+  `e1e0ac176a9ccd71876bfe3ce2032eb94067c29c86922ee56d7db211b7c62816`): the extraction half held on all
+  four carriers (published regular files == the frozen oracle counts 4 556 / 4 564 / 4 709 / 3 955), and
+  the frozen gap rule failed on the two FRITZ!Box carriers, whose oracle tables carry 13 `char-device`
+  entries each against the one (`247:0`, `dev/led`) the rule admits silently.
+- [observation] **The documentation bindings this seat's draft controls are all true**: `entry_present`
+  true, `sourced` true with `entry_source_ids` = `['S243','S244','S245','S249']` and
+  `opened_source_rows` = the same four, `coverage_map_row` true, `frontier_note` true,
+  `carriers_spec_ok` true, `gap_rule_ok` true, `frozen_tables_valid` true. The two false ones
+  (`province_core_section`, `province_core_row`) are false because nothing was promoted to Core — the
+  correct outcome for a miss.
+- [observation] The falsify wave then amended this draft's text in the landed entry, among other things:
+  the marker clause is now scoped to the round-50 experiment actually run (a 4-byte `mkfs_time` patch on
+  standard-LE fixtures; no stock `mksquashfs` invocation), the census is stated as a re-count of
+  retained listing metadata rather than a superblock re-read, and the S244 listing bodies are cited at
+  their real committed path (`.ufo/waves/round-50/w3/ScribeLessonGate/receipts/`, not the never-committed
+  `corpus/evidence/round-50/c1/index/`). Those corrections are the falsify wave's, not this seat's, and
+  this seat's draft text remains in its seat directory as the pre-landing version.
+
 ## Deliverables (all under this seat's directory)
 
 | path | what |
