@@ -3911,3 +3911,9 @@ no claimed landing needing post-landing falsification.
 in CritRuleDerive, CritRetry, CritTriV6, CritFetchChain and MutTriV6 before
 declaring a new implementation freeze; do not transplant these unverified
 targets or give internal rule-only controls full-predicate credit.
+
+Measured evidence landing `8290ffcd99837c9a4b24041e04d3505c31490989`:
+same census exit 0, same absence findings and 64 seat records
+(`l1/accounting-landing.json`); production SKILL/PROVINCE/README/tools
+byte-unchanged from `1842addc` (`l1/production-unchanged.json`, diff exit 0).
+This is the after documentary measurement, not an executed R52 claim predicate.
