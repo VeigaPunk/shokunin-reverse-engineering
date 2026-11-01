@@ -447,7 +447,7 @@ Recorded 2026-10-29 after scoring: the frozen counter `tools/round-50/c1-counter
 
 Round-50 frontier note, 2026-10-29: the LE-AVM clause of the round-40/41/42/44/49 notes' Still-Frontier lists is unchanged by this round — `LE AVM members (hsqs)` stays Frontier after the measured attempt (`2026-10-28-r50-avm-le-squashfs-core`; 2/4 under the frozen gap-accounting rule). Still Frontier: LE AVM members (`hsqs`), LE AVM rootfs of ~13k files under REA's 120 s limit (FRITZ!Box 7530/7590, observed), AVM kernels, nested sub-images below depth 1.
 
-## Host migration — 2026-10-31 (Windows host; recorded under the round-53 absent-surface rule)
+## Host migration — 2026-10-31 (Windows host, recorded under the round-53 absent-surface rule)
 
 The Linux host every Core row above names (the `/home/vgpnk/...` trees) is gone from
 this lane's working environment. Measured on the new Windows host, 2026-10-31:

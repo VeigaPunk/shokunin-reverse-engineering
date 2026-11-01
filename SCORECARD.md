@@ -3966,7 +3966,7 @@ declared value from committed bytes at the measured revision):
 | T5 | start-exit=0; end-exit=0; w04-start=19; w04-end=19 |
 | T6 | sources-before=159; sources-after=160; new-rows=S253(A); used-by-ok=true |
 | T7 | atoms=10 |
-| T8 | depth-row-equal=true; calibration-row-equal=true; coverage-row-refresh=true; province-heading=## Host migration — 2026-10-31 (Windows host; recorded under the round-53 absent-surface rule); province-deletions=0; undeclared-production=0 |
+| T8 | depth-row-equal=true; calibration-row-equal=true; coverage-row-refresh=true; province-heading=## Host migration — 2026-10-31 (Windows host, recorded under the round-53 absent-surface rule); province-deletions=0; undeclared-production=0 |
 | T9 | ledger-row=round-53; ledger-verdict=FLAGGED; gate-exit=0 |
 | T10 | misroot-findings=0 |
 
