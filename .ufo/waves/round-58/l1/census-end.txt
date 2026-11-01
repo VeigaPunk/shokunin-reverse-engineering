@@ -1,0 +1,54 @@
+shokunin-reverse-engineering host-adapted census validate (round 58 end)
+$ bash <fleet-root>/scripts/sources-census.sh validate --root <fleet-root> <lane-repo-dir> (the host-adapted explicit-dir form; the literal kaidoku-name form exits 2 here, as disclosed since r53)
+
+Run 1 — at the record state 536c48650a5ccc435387b2060638a9d8a4bebf44 (the SOURCES.md as landed at the record commit): EXIT 1 — the census caught this round's own S258 drafting defect:
+shokunin-reverse-engineering	W04	S033 duplicate url github.com/NationalSecurityAgency/ghidra/pull/9348 across scopes
+shokunin-reverse-engineering	W04	S047 duplicate url go.dev/dl/?mode=json&include=all`, across scopes
+shokunin-reverse-engineering	W04	S054 duplicate url developer.android.com/ndk/guides/abis across scopes
+shokunin-reverse-engineering	W04	S062 duplicate url raw.githubusercontent.com/sigrokproject/sigrok-cli/sigrok-cli-0.7.2/doc/sigrok-cli.1 across scopes
+shokunin-reverse-engineering	W04	S069 duplicate url www.wireshark.org/docs/man-pages/tshark.html across scopes
+shokunin-reverse-engineering	W04	S083 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+shokunin-reverse-engineering	W04	S090 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+shokunin-reverse-engineering	W04	S092 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+shokunin-reverse-engineering	W04	S102 duplicate url learn.microsoft.com/en-us/windows/win32/debug/pe-format across scopes
+shokunin-reverse-engineering	W04	S112 duplicate url raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py across scopes
+shokunin-reverse-engineering	W04	S117 duplicate url raw.githubusercontent.com/onekey-sec/unblob/26.6.4/README.md across scopes
+shokunin-reverse-engineering	W04	S119 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+shokunin-reverse-engineering	W04	S123 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+shokunin-reverse-engineering	W04	S138 duplicate url github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs across scopes
+shokunin-reverse-engineering	W04	S142 duplicate url git-scm.com/docs/git-log across scopes
+shokunin-reverse-engineering	W04	S246 duplicate url plato.stanford.edu/entries/popper across scopes
+shokunin-reverse-engineering	W04	S247 duplicate url man.freebsd.org/cgi/man.cgi?query=sysexits&sektion=3 across scopes
+shokunin-reverse-engineering	W04	S248 duplicate url github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs across scopes
+shokunin-reverse-engineering	W04	S245 duplicate url raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py across scopes
+shokunin-reverse-engineering	E11	S258 missing used-by SKILL.md (the reworded registry row)
+
+The E11 is real and self-caught: the row's used-by cell carried the annotation token "SKILL.md (the reworded registry row)", which is not a resolvable path. The cell is corrected in the worktree to the bare comma-separated path form (the annotation moves into the row's scope/teaches cells, where it already appears) and the correction lands with the close commit — which adds only this receipt, the after-arm receipts, the landing gate receipts and this LOG entry, so the corpus bytes of run 2 are byte-identical to the close tip's corpus bytes.
+
+Run 2 — after the used-by correction (the state the close commit carries): EXIT 0, w04-count=19, sources-rows=165. One-line re-derivation at the tip:
+$ bash <fleet-root>/scripts/sources-census.sh validate --root <fleet-root> <lane-repo-dir>   (exit 0 required at round end: met)
+shokunin-reverse-engineering	W04	S033 duplicate url github.com/NationalSecurityAgency/ghidra/pull/9348 across scopes
+shokunin-reverse-engineering	W04	S047 duplicate url go.dev/dl/?mode=json&include=all`, across scopes
+shokunin-reverse-engineering	W04	S054 duplicate url developer.android.com/ndk/guides/abis across scopes
+shokunin-reverse-engineering	W04	S062 duplicate url raw.githubusercontent.com/sigrokproject/sigrok-cli/sigrok-cli-0.7.2/doc/sigrok-cli.1 across scopes
+shokunin-reverse-engineering	W04	S069 duplicate url www.wireshark.org/docs/man-pages/tshark.html across scopes
+shokunin-reverse-engineering	W04	S083 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+shokunin-reverse-engineering	W04	S090 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+shokunin-reverse-engineering	W04	S092 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+shokunin-reverse-engineering	W04	S102 duplicate url learn.microsoft.com/en-us/windows/win32/debug/pe-format across scopes
+shokunin-reverse-engineering	W04	S112 duplicate url raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py across scopes
+shokunin-reverse-engineering	W04	S117 duplicate url raw.githubusercontent.com/onekey-sec/unblob/26.6.4/README.md across scopes
+shokunin-reverse-engineering	W04	S119 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+shokunin-reverse-engineering	W04	S123 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+shokunin-reverse-engineering	W04	S138 duplicate url github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs across scopes
+shokunin-reverse-engineering	W04	S142 duplicate url git-scm.com/docs/git-log across scopes
+shokunin-reverse-engineering	W04	S246 duplicate url plato.stanford.edu/entries/popper across scopes
+shokunin-reverse-engineering	W04	S247 duplicate url man.freebsd.org/cgi/man.cgi?query=sysexits&sektion=3 across scopes
+shokunin-reverse-engineering	W04	S248 duplicate url github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs across scopes
+shokunin-reverse-engineering	W04	S245 duplicate url raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py across scopes
+shokunin-reverse-engineering	ok	C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/shokunin-reverse-engineering/corpus/SOURCES.md
+
+census-exit=0 (run 2, the round-end state)
+w04-count=19
+sources-rows=165
+W04 stays named debt (19 standing at both ends; the routed supersedes set closed vacuous-as-named — records/w04-supersedes-probe.txt + records/w04-disposition.tsv).

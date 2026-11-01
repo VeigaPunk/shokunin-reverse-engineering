@@ -1,0 +1,27 @@
+kaidoku round-58 AFTER arm, C2 (the registry-drift census runs again; measured at the record commit 536c48650a5ccc435387b2060638a9d8a4bebf44; probes pasted with observed outputs)
+
+== the check of record: registry vs the committed generated inventory at the record rev ==
+$ python -X utf8 -I -B tools/round-51/census3.py --root . --rev 536c48650a5ccc435387b2060638a9d8a4bebf44 --check --census .ufo/waves/round-58/l1/records/census58-at-landing.json
+{
+  "registry_paths": 63,
+  "census_paths": 63,
+  "census_outside": [],
+  "census_unregistered": [],
+  "duplicates": [],
+  "exit": 0,
+  "rev": "536c48650a5ccc435387b2060638a9d8a4bebf44",
+  "census": ".ufo/waves/round-58/l1/records/census58-at-landing.json"
+}
+tool rc=0 (base: exit 2 unparseable -> record: exit 0, exact equality, no duplicates, no unregistered; fix-is-the-only-delta — the row reword at 05865b6d is the relevant delta)
+
+== the instrument is unchanged (selftest at the record tree) ==
+$ python -X utf8 -I -B tools/round-51/census3.py --selftest
+{"cases": 20, "failures": [], "selftest": {"cli-clean": true, "cli-duplicate": true, "cli-extra": true, "cli-marker-refusal": true, "cli-missing": true, "cli-unknown": true, "duplicate": true, "duplicate-marker": true, "duplicate-row": true, "equal": true, "extra": true, "invalid-artifact": true, "malformed-row": true, "missing": true, "missing-file": true, "missing-marker": true, "parse-clean": true, "reversed-marker": true, "traversal": true, "unknown": true}}
+selftest rc=0 (pin a7538e5f5174b5f69cc7537fc1bcdf97cc2f062747123d0eb6f57e60e9acc7c0, unchanged; the repair is data-side, S258 grounds the side)
+
+== the registry row reword, both directions ==
+$ git show <REC>:SKILL.md | grep -cF 'table-pipe-leading line'
+1
+$ git show <REC>:SKILL.md | grep -cF 'consecutive `\|`-leading'
+0
+(1 then 0: the reworded fragment is in the registry row; the escaped-pipe fragment is gone from SKILL — it survives only in the frozen v6-block-digest.py docstring and historical records, where it is prose, not a table cell)

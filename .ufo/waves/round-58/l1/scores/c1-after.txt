@@ -1,0 +1,22 @@
+kaidoku round-58 AFTER arm, C1 (the r57-closure routed carry-in set, all closed; measured at the record commit 536c48650a5ccc435387b2060638a9d8a4bebf44, a descendant of the operative freeze 37e49cf33537ff182265c42f3fa546b1c0c0c0fa and the landing 05865b6d63b43b6f732e9013c86980d79ddcb52c; probes pasted with observed outputs)
+
+== (R1) the file-count precision correction note is in the LOG of record ==
+$ git show 536c48650a5ccc435387b2060638a9d8a4bebf44:LOG.md | grep -c '27 distinct filesystem paths'
+0
+(base: 0 -> record: 1; the note is the landing entry's first bullet and states: 26 = named items (the s257/ snapshot + digests as one), 27 = distinct filesystem paths; filed bytes stay as filed)
+
+== (R2) the sweep's named finding is repaired: the receipt resolves in round-55 scope and both audits are green ==
+$ git ls-tree -r --name-only 536c48650a5ccc435387b2060638a9d8a4bebf44 -- .ufo/waves/round-55/l1/scores/ | grep -c 'freeze-gate-tip-90f3a9b9.json'
+1
+(base: 0 -> record: 1; the landed copy is byte-identical to the committed round-54 original — sha256 b508a78ae25880c094ea42d74c48874d248b0cd527c60e4e951028ebccb23df1, equal to the original's; the green audit runs are receipted at the landing rev in records/record-audit-green-r55.txt)
+
+== (R3/R4) the w04 probe + disposition table are in the tree; W04 stays named debt ==
+$ git show 536c48650a5ccc435387b2060638a9d8a4bebf44:corpus/SOURCES.md | grep -c '^| S' ; the disposition table rows:
+165
+$ git show 536c48650a5ccc435387b2060638a9d8a4bebf44:.ufo/waves/round-58/l1/records/w04-disposition.tsv | grep -c 'stands'
+19
+(19 disposition rows + header; the census-end receipt at the record rev carries w04-count=19 — named debt, both ends)
+
+== no frozen byte was edited to get here ==
+$ git diff --numstat 37e49cf33537ff182265c42f3fa546b1c0c0c0fa 536c48650a5ccc435387b2060638a9d8a4bebf44 -- .ufo/waves/round-55/claims.json corpus/lessons/round-55.md corpus/lessons/round-56.md corpus/lessons/round-57.md
+(empty: the r55 container and the r55/r56/r57 lessons are byte-identical freeze->record — the landing edited nothing filed; the r56 texts stay true at the revs they cite, the never-resolves supersession note lives in the round-58 lesson)
