@@ -43,6 +43,11 @@ freeze once it exists (see `## Freeze` below).
 
 ## Freeze
 
-Recorded after the freeze commit lands: FREEZE = (this line is completed in the
-same commit that creates `.ufo/waves/round-53/l1/FREEZE`; the single-line rule of
-QUALITY 88 applies from that commit).
+Recorded 2026-10-31 (append-only correction of the placeholder above): the first
+freeze was `94efae0d8722626a71eed6ec1091692b558878d8`; the operative freeze after
+the pre-data amendments A8/A9 is `6ead6f1bc8cfe7dd74f39ed3a4880a3ad5c90c04`; the
+triage instrument's after-run cites `764e6ed8042160af28caa14f65c7bd358533afae`
+(whose claims file carries the A10 binding lines). The chain, each commit's role
+and the two FLAGGED findings the freeze gate audited are named in LOG and in
+SCORECARD's round-53 section; every after-counter's `--freeze` names one of these
+three commits, all descendants of the first.
