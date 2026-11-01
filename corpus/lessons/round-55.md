@@ -75,3 +75,58 @@ the r54 lesson but skipped it for five files; caught by the post-push citation
 sweep (`git show <tip>:<file> | grep -c '<orphan sha>'` per touched file). Fix:
 a substitution pass is verified by the SAME sweep that would catch its absence —
 run the grep before committing, not after pushing.
+
+## Corrections (round 56)
+
+Appended by round 56 for the round-55 non-author closure's §7 carry-in items 1, 2
+and 4. Nothing above this block is edited; each correction names the superseded
+text; the filed bytes everywhere stay as filed.
+
+1. **(V-1, wording; supersedes M55-2's "four files were hashed from disk but
+   planted under a `C:` directory in the repo tree (tools blobs read empty
+   through their intended paths)" and the round-55 report's "four files landed
+   under a `C:` tree directory".)** Object-accurate statement, re-verified by
+   this round at `29a7477bffc417dc5c8be1535f7139dee8c5443c`: the commit's
+   blob-level delta against its parent is EMPTY (`git diff-tree -r` prints
+   nothing — zero blobs added, nothing was ever hashed into the repo); the
+   tree-level delta (`git diff-tree -t -r`) is exactly the added `C:` chain
+   (`C:` `11ccbf51…` → `Users` → `jpvei` → `.zcode` → `workspace` →
+   `95b1ba4d…` → `fleet` → `shokunin-reverse-engineering` → `plans` + `tools`
+   → `tools/round-55`), every leaf the canonical empty tree `4b825dc6…`; the
+   four intended paths (`plans/round-55-claims.md`,
+   `tools/round-55/corrections-pin.py`, `tools/round-55/v6-block-digest.py`,
+   `LOG.md`) exist at no path in that commit (`git cat-file -e` rc=128). The
+   mechanism, verified this round: the helper's
+   `os.path.join(repo, *path.split("/"))` absorbs the bare `C:` component and
+   joins the remainder onto the repo directory, so every pathspec read as
+   missing-on-disk and the helper's missing-path branch planted empty directory
+   trees mirroring the pathspec. "Four files landed" is wrong in both halves:
+   no files landed anywhere, and no content was lost — the replay `c191d8df…`
+   landed all four properly.
+
+2. **(V-2 / M55-4; supersedes frozen atom T2's "freeze receipts committed:
+   census-start.txt, scores/(c1-before.txt, c2-before.txt,
+   freeze-gate-tip-90f3a9b9.json)".)** The freeze commit `1f9be6eb…` carried 12
+   of the 13 named paths and did NOT carry `scores/freeze-gate-tip-90f3a9b9.json`
+   — the pathspec named the round-55 directory for a receipt whose home is
+   `.ufo/waves/round-54/l1/scores/`; it landed at `627a9c20…`. The frozen
+   container text stays as filed; this block and the appended LOG entry are the
+   corrections of record. Mechanically demonstrated this round by the new
+   freeze-receipt completeness gate `tools/round-56/receipt-audit.py`: run
+   against the r55 container at its freeze, it exits 1 with `RECEIPT_ABSENT`
+   for the bare name `freeze-gate-tip-90f3a9b9.json` in round-55 scope (receipt
+   `.ufo/waves/round-56/l1/records/receipt-audit-red-demo.txt`) — the M55-4
+   event is now a reproducible finding of the instrument that closes it.
+
+3. **(V-5; canonical-parameter clarification for the round-55 green demo.)**
+   The receipt of record for the round-55 green demo is the freeze-committed
+   `records/pin-green-demo.txt`: `--base c753b24f96db335eeeca0003d2906457d6e71849
+   --rev 79421b757f36b2ddb776631ecfd57d42dc2f33e2` (the round base at freeze
+   time) — exit 0, clean, rows 2, appended 0. The prose elsewhere describing
+   `c753b24f…→e21be31a…` (SCORECARD R55-C2 row as filed) and
+   `c753b24f…→627a9c20…` (LOG record-landing entry; the verifier's closure
+   re-run) names LANDING-TIME re-verifications at later revisions, both clean —
+   additional evidence, never a replacement of the frozen receipt's parameters.
+   The `tools/round-55/corrections-pin.py` docstring now states the canonical
+   parameters (V-3 fix, this round); before the fix it carried stale
+   placeholders (`<measured rev>`, `rows_a 1`) alongside the stale "line 2".
