@@ -51,3 +51,36 @@ the LOG entry (M54-4); the wave files landed with the container at `85843f2e…`
 still precede every repair-data commit. No amendments; the operative freeze for every
 after-command is `85843f2e…`; the frozen oracle's bytes and pin are unchanged from the
 r53 container (`c9fd8c68…`).
+
+## Corrections (round 55)
+
+Appended by round 55 (nothing above this block is edited). Corrections to this
+lesson's claims, per the protocol's correction rule:
+
+- **Correction 1 — "the only executed instrument".** The header sentence above
+  ("the only executed instrument is the frozen `tools/round-53/r53-record.py`") is
+  superseded: TWO frozen instruments were executed in round 54 —
+  `tools/round-53/r53-record.py` (the selftest, control-battery and tip-reproduction
+  receipts) AND `tools/round-53/sqfs-triage-v6.py` (the landing re-score, receipt
+  `.ufo/waves/round-54/l1/scores/c1-v6-at-landing.json`, pin `5902a008…`, bytes
+  verified unchanged by the round-54 closure). Both were frozen, which is what the
+  sentence was trying to assert. Routed defect 2 of
+  `corpus/lessons/round-54-verifier-spotcheck.md` §5; the same correction is carried
+  by the round-55 LOG declaration entry and the round-55 report.
+- **Correction 2 — the v6-table digest.** The receipt line `table sha256
+  base=b340ed2b48facca7 landing=b340ed2b48facca7` (scores/c2-after.txt) names no
+  extraction command and the value was not reproducible (routed defect 3, spot-check
+  §5). Round 55 supersedes the value with the extraction of record —
+  `python -X utf8 -I -B tools/round-55/v6-block-digest.py --root . --rev <REV>` —
+  whose full digest `946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc`
+  is identical at the round-53 base, the round-54 landing, the round-54 close tip
+  and the round-55 base (receipt `.ufo/waves/round-55/l1/records/v6-digest-repro.txt`,
+  which also transcribes the ~100-boundary sweep that failed to reproduce
+  `b340ed2b48facca7`). The byte-identity claim this receipt supported is unchanged
+  and now re-derivable.
+- **Correction 3 — the tip gate run.** The no-harm section's "freeze gate at the
+  tip: exit 0, disclosures 29/29 exact" (spot-check §5 item 1: the assertion shipped
+  no artifact) is now receipted:
+  `.ufo/waves/round-54/l1/scores/freeze-gate-tip-90f3a9b9.json` — the gate executed
+  by round 55 at rev `90f3a9b9d3970ae87173787521a821132c10c66c`, exit 0, disclosures
+  exact 29 of 29, stray [], round-54 row CLEAN.
