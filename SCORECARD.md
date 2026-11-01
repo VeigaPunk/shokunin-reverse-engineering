@@ -4444,3 +4444,100 @@ receipts_checked-0 vacuous-clean shape if a future round wants receipt claims
 added there.
 
 **retired:** none.
+
+## Round 59 (2026-11-01) — the routed D58-1 annotation contradiction closes append-only, and the annotation-consistency gate becomes an instrument
+
+Fresh-start binding honored (the prompt's §7 list r50/r51/r52 re-read and
+spot-checked; probes pasted in `plans/round-59-claims.md`), L1-inline on the
+Windows host. Base `df62b6f9…` (the r58 spot-check commit), declaration
+`0a131b97…` (plans + the new instrument, committed before the claims file —
+the QUALITY #33 order), operative freeze `b6dadbd2…` (the first commit adding
+`.ufo/waves/round-59/claims.json`), landing `2ff5d308…`, landing fixup
+`203c07a7…` (one stray blank line removed from the SKILL insertion — M59-2,
+disclosed), receipt-prose fixup `94537372…` (the instrument self-caught its
+author's quoted-shape prose — M59-3, disclosed). No wave (no dispatch
+surface; the kaidoku round-53 L0 question stays open). Five frozen
+instruments unchanged; one new instrument registered. Claims: R59-C1
+(calibration) — the r58-closure routed defect D58-1 closes append-only (the
+correction appends to the r58 receipt; the marker probe is replaced by
+patterns that match their targets; the corrected counts are proved), and the
+round's orphaned-evidence duty runs to dispositions; R59-C2 (depth,
+capability acquisition) — `tools/round-59/annotation-audit.py` (the M57-1 /
+D58-1 class as an instrument), registered, demonstrated red on the defect
+itself and green on the correction receipt. Lowest-axis rule: all three owned
+axes tied at 10.0, so both claims are lowest-axis claims. Stagnation nudge
+not fired (window N=10, last capability r57; r58 entered none; r59 = 1/10).
+Sourced claim: S259 (the GNU Grep manual, opened this round) grounds C2's
+design — `grep -c` counts matching lines and exits 1 on none, so a pasted
+count is a function of pattern AND bytes, detectable by re-derivation.
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R59-C1 | calibration — the r58-closure routed defect D58-1 (the c1-after R1 annotation's "record: 1" unreachable by its cited pattern whose pasted output is 0) + the orphaned-evidence duty | at the base `df62b6f9…`: the defect open (receipt `.ufo/waves/round-59/l1/scores/c1-before.txt` — no correction block 0, the defective annotation as filed 1, cited probe `'27 distinct filesystem paths'` = 0 at 536c4865 while the annotation claims 1; duty: the r58 container red on its quoted bare name, RECEIPT_ABSENT in round-58 scope) | the correction appends to `.ufo/waves/round-58/l1/scores/c1-after.txt` (filed bytes stay as filed; numstat 21/0 at the landing, 0 deletions); the corrected probes prove the counts the original annotation intended — the note's wording `distinct filesystem paths number 27`: 0 at the base → 2 at the record rev (the declaration entry + the landing entry's R1 bullet), the note-of-record bullet `number 27 (`git diff`: 0 → 1; the substance (27 distinct filesystem paths in the r57 delta) re-verified; the duty's finding dispositioned disclosed-verbatim BEFORE the landing (`records/w58-sweep-finding-disposition.txt`, flip condition recorded), the record-audit green (r58 named 18 missing 0), the orphan census dispositioned (4 worktree-only + the 50-path aux/ class) | the probes are pasted with outputs in `scores/c1-before.txt`, in the appended correction block itself, and in `scores/d581-correction.txt` (`git show <rev>:LOG.md` piped to `grep -c` at both revs; `git diff-tree -r --name-only 63413677 67ec2c38` piped to `sort -u | wc -l` = 27) | `.ufo/waves/round-59/l1/scores/c1-after.txt` (the round-59 after-arm, rev = the close tip; lands with the close, the ordering note applies) |
+| R59-C2 | depth, capability acquisition — `tools/round-59/annotation-audit.py`: receipt-annotation consistency (pasted-output agreement + re-derivation from git objects at the command's own revision; fail-closed out-of-grammar; zero annotations unevaluable) | at the base: instrument absent (`cat-file -e` rc=128), 0 SKILL registry rows, 0 capability rows (receipt `scores/c2-before.txt`) | selftest 23 cases 0 failures (`records/annotation-selftest.txt`); red demo exit 1 on the D58-1 defect itself (`ANNOTATION_OUTPUT_MISMATCH@6` + `ANNOTATION_REDERIVATION_MISMATCH@6`, `records/annotation-red-demo.txt`); green demo exit 0 on the correction receipt at the prose-fixup rev (4 annotations, every one re-derives, `records/annotation-green-demo.txt`); the self-catch and the persistent finding disclosed (`records/annotation-selfcatch.txt`, `records/annotation-persistent-finding.txt` — M59-3; a correction does not clear filed bytes); registry row in SKILL (7 cells, pipe-free — M59-1), capability row above, container pin `ba9ccbb9…`, census3 `--generate` 64 paths at the fixup rev | `python -X utf8 -I -B tools/round-59/annotation-audit.py --selftest`; the demo commands pasted with outputs in `records/annotation-red-demo.txt`, `records/annotation-green-demo.txt`, `records/annotation-persistent-finding.txt` | `.ufo/waves/round-59/l1/records/annotation-green-demo.txt` (rev `94537372…`) |
+
+Owned scores: coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10` — the
+owned-axes rows are byte-equal base→tip; PROVINCE is untouched. LOG
+append-only (insertions only; the two disclosed fixups are new commits, not
+rewrites). PROVINCE diff empty. Learning trends: expansion **unchanged** (no
+Frontier→Core move; S259 is tool documentation, not an REA surface; one
+capability row enters — the repertoire grows, the map does not); quality
+**improved** (a routed receipt defect closes with the corrected probes
+provable from committed bytes; the lane gains a mechanical gate for the
+M57-1/D58-1 class, demonstrated on the defect itself; the registry re-enters
+its drift census at 64 paths); discernment **unchanged** pending the outside
+spot-check (the round executed the routed list verbatim, dispositioned its
+duty finding before the landing, self-caught its own registry-row draft,
+insertion residue, and receipt prose — each mined — and landed no unverified
+claim).
+
+Round-59 record atoms (each re-derived by the plain commands transcribed in
+`scores/c1-before.txt` / the after-arm, `scores/c2-before.txt` and the
+records receipts):
+
+| atom | declared value |
+|---|---|
+| T1 | log-declaration-entry=true; claims-file-cited=true; log-deletions=0 (the declaration entry lands with the declaration commit 0a131b97, the freeze entry with the freeze) |
+| T2 | freeze=b6dadbd2 (first commit adding the container); instruments=6 pinned (annotation-audit ba9ccbb9 new — committed at the declaration BEFORE the claims file; census3 a7538e5f, receipt-audit 897df532, record-receipt-audit 3a5fff9a, v6-block-digest 22785c1e, freeze-gate 25b54339 unchanged); gate-verdict=CLEAN (pre-flight at the freeze rc 0: audited 34, clean 14, round-59 CLEAN, required_failed [], receipt `scores/gate-preflight.txt`) |
+| T3 | c1-before: D58-1 open at the base (cited probe 0 where the annotation claims 1; no correction block); the duty's finding open (the r58 container red on its quoted bare name) |
+| T4 | c1-after: the correction appended (0 deletions); wording probe 0→2, bullet probe 0→1, substance 27 re-verified; the duty dispositioned (disclosed-verbatim, flip recorded; record-audit 18/0; orphan census 4+50 aux-class) |
+| T5 | c2-before: instrument absent rc=128 at the base; 0 registry rows; 0 capability rows; selftest 23/0; red demo exit 1 on the defect itself |
+| T6 | c2-after: registry row landed (7 cells, pipe-free); selftest 23/0; red exit 1 (2 findings at line 6); green exit 0 (4 annotations re-derive); self-catch + persistent finding disclosed (M59-3); census3 --generate 64 paths at the fixup rev |
+| T7 | sources-before=165; sources-after=166; new-rows=S259(A); used-by-ok=true |
+| T8 | census start-exit=0 (19 W04, 165 rows); end-exit=0 (19 W04, 166 rows); no-harm: owned-axes rows byte-equal; PROVINCE diff empty; LOG deletions 0; the SKILL delta freeze→fixup exactly `1 0` (the one added registry row — M59-2's fixup applied); the SKILL v6 marker block digest unchanged 946e5359 (re-derived by tools/round-55/v6-block-digest.py at base and fixup) |
+
+Landing receipts (each exists, parses, and carries the named check at the named
+revision):
+
+- `.ufo/waves/round-59/l1/census-start.txt` rev=none check=exit-0-19-w04-165-rows
+- `.ufo/waves/round-59/l1/scores/c1-before.txt` rev=none check=d581-open-at-base-duty-finding-open
+- `.ufo/waves/round-59/l1/scores/c2-before.txt` rev=df62b6f986fb460847037482e0199cdf1541e393 check=instrument-absent-selftest-23-0-red-exit-1
+- `.ufo/waves/round-59/l1/records/annotation-selftest.txt` rev=none check=23-cases-0-failures
+- `.ufo/waves/round-59/l1/records/annotation-red-demo.txt` rev=df62b6f986fb460847037482e0199cdf1541e393 check=exit-1-two-findings-line-6
+- `.ufo/waves/round-59/l1/records/receipt-audit-sweep.txt` rev=df62b6f986fb460847037482e0199cdf1541e393 check=5-clean-1-failed-r58-quoted-bare-name
+- `.ufo/waves/round-59/l1/records/w58-sweep-finding-disposition.txt` rev=none check=disclosed-verbatim-flip-recorded-before-landing
+- `.ufo/waves/round-59/l1/records/record-audit-r58.txt` rev=df62b6f986fb460847037482e0199cdf1541e393 check=named-18-missing-0-clean
+- `.ufo/waves/round-59/l1/records/orphan-census.txt` rev=none check=4-worktree-only-dispositioned-50-committed-not-on-disk-aux-class
+- `.ufo/waves/round-59/l1/s259/digests.txt` rev=none check=grep-html-517177d0
+- `.ufo/waves/round-59/l1/scores/gate-preflight.txt` rev=b6dadbd255907557c0c3ed8ff441d192cc06310e check=rc-0-audited-34-clean-14-round-59-clean
+- `.ufo/waves/round-58/l1/scores/c1-after.txt` rev=2ff5d30800df0184c0a63c778bb166c1650aa3a3 check=correction-appended-21-additions-0-deletions
+- `.ufo/waves/round-59/l1/scores/d581-correction.txt` rev=945373723aa842a4d8ae27947708e5ce4205065a check=wording-0-2-bullet-0-1-before-states-0-0 (the receipt-prose fixup; the landing copy stays as filed)
+- `.ufo/waves/round-59/l1/records/census59-at-landing.json` rev=203c07a7b68d683e8536b8f103c9f2c35d787168 check=generated-64-paths
+- `.ufo/waves/round-59/l1/records/annotation-green-demo.txt` rev=945373723aa842a4d8ae27947708e5ce4205065a check=exit-0-4-annotations-re-derive (lands with the close, ordering note)
+- `.ufo/waves/round-59/l1/records/annotation-persistent-finding.txt` rev=945373723aa842a4d8ae27947708e5ce4205065a check=exit-1-four-findings-all-accounted (lands with the close, ordering note)
+- `.ufo/waves/round-59/l1/scores/c1-after.txt` rev=<close tip> check=append-only-proof-and-corrected-probes-at-the-tip (lands with the close, ordering note)
+- `.ufo/waves/round-59/l1/records/census-check-at-record.txt` rev=<record commit> check=exit-0-exact-64 (lands with the close, ordering note)
+- `.ufo/waves/round-59/l1/scores/gate-landing.txt` rev=<record commit> check=landing-gate-exit-0-disclosures-exact (lands with the close, ordering note)
+- `.ufo/waves/round-59/l1/census-end.txt` rev=<close tip> check=exit-0-19-w04-166-rows (lands with the close, ordering note)
+
+**planned (next steered round only):** the AVM LE-SquashFS re-freeze stays
+routed (host absent surfaces unchanged); the r58 planned r53-container
+follow-up stays closed to container edits (reject 3) — its honest form, a
+new audit receipt, already exists in this round's sweep; a candidate
+follow-up is an annotation-audit sweep over ALL committed scores/ and
+records/ receipts (the instrument runs per-receipt; a multi-receipt sweep
+mode would need a new instrument and its own freeze); the registry-drift
+census re-runs every round a registry row lands (M58-2's rule, executed this
+round at 64 paths).
+
+**retired:** none.
