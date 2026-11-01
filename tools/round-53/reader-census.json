@@ -1,0 +1,83 @@
+{
+ "schema": 1,
+ "name": "reader-census",
+ "claim": "R53-C1",
+ "frozen_input_note": "Frozen input pinned by sha256 in plans/round-53-claims.md and .ufo/waves/round-53/claims.json (top-level instruments). The v6 instrument and the witness read this file from git at the named freeze revision, never from a worktree.",
+ "census_source": {
+  "path": ".ufo/waves/round-50/w3/ExecTriageV5/receipts/reader-census.txt",
+  "utc": "2026-10-29T21:11:09Z",
+  "payload_sha256": "0a7eb1f7d23e7a8d4cf5dbd41acec3fb5b9827a4b48738598caf75a49d587ffc",
+  "readers": {
+   "unsquashfs": "4.7.5 (2026/03/01)",
+   "seven_zip": "7-Zip 26.04 (x64)"
+  },
+  "fixture_bytes": ".ufo/waves/round-42/w1/artifacts/R42C1Oracle/fixtures/<family>/<endian>/__input__/",
+  "commands": [
+   "unsquashfs -lls FILE",
+   "7z l -tSquashFS FILE"
+  ],
+  "binding": "each row's sha256[:12] is the fixture bytes' digest prefix; the round-42 recon envelopes' data.subject.digest.sha256 starts with the same 12 hex chars when the envelope ran on those exact bytes"
+ },
+ "resolution_rule": [
+  "status(subject_digest) = fixture verdict of the census row whose sha256_12 equals the digest's first 12 chars, else",
+  "the parent verdict of the derived_lineage row whose carrier_sha256_12 equals the digest's first 12 chars, else",
+  "family fallback: NO-READER when the envelope's squashfs handler is in {squashfs_v2_nonstandard, squashfs_v3_broadcom, squashfs_v3_nonstandard}, readable-by-both when it is in {squashfs_v1, squashfs_v2, squashfs_v3, squashfs_v3_ddwrt}, else unknown",
+  "statuses are closed over: no-reader | partial | readable (readable-by-both normalized to readable, PARTIAL to partial, NO-READER to no-reader)"
+ ],
+ "fixtures": [
+  {"family": "squashfs_v3", "fixture": "squashfs_v3.be.1kpad.bin", "sha256_12": "d178985d5fee", "unsquashfs_exit": 0, "sevenzip_exit": 0, "status": "readable"},
+  {"family": "squashfs_v3", "fixture": "squashfs_v3.be.4kpad.bin", "sha256_12": "90b2f247ba10", "unsquashfs_exit": 0, "sevenzip_exit": 0, "status": "readable"},
+  {"family": "squashfs_v3", "fixture": "squashfs_v3.be.nopad.bin", "sha256_12": "c1eb3ac360e4", "unsquashfs_exit": 0, "sevenzip_exit": 0, "status": "readable"},
+  {"family": "squashfs_v3", "fixture": "squashfs_v3.le.1kpad.bin", "sha256_12": "5109f62ffdee", "unsquashfs_exit": 0, "sevenzip_exit": 0, "status": "readable"},
+  {"family": "squashfs_v3", "fixture": "squashfs_v3.le.4kpad.bin", "sha256_12": "5afb4387d027", "unsquashfs_exit": 0, "sevenzip_exit": 0, "status": "readable"},
+  {"family": "squashfs_v3", "fixture": "squashfs_v3.le.nopad.bin", "sha256_12": "314d4bbe07b8", "unsquashfs_exit": 0, "sevenzip_exit": 0, "status": "readable"},
+  {"family": "squashfs_v3", "fixture": "squashfs_v3_be.bin", "sha256_12": "4e9493d9c6f8", "unsquashfs_exit": 0, "sevenzip_exit": 0, "status": "readable"},
+  {"family": "squashfs_v3", "fixture": "squashfs_v3_le.bin", "sha256_12": "0161351caec8", "unsquashfs_exit": 0, "sevenzip_exit": 0, "status": "readable"},
+  {"family": "squashfs_v3_broadcom", "fixture": "squashfs_v3.be.1kpad.bin", "sha256_12": "2120dcca995a", "unsquashfs_exit": 1, "sevenzip_exit": 0, "status": "partial"},
+  {"family": "squashfs_v3_broadcom", "fixture": "squashfs_v3.be.4kpad.bin", "sha256_12": "2f9d832fe73c", "unsquashfs_exit": 1, "sevenzip_exit": 0, "status": "partial"},
+  {"family": "squashfs_v3_broadcom", "fixture": "squashfs_v3.be.nopad.bin", "sha256_12": "5baee74f14d4", "unsquashfs_exit": 1, "sevenzip_exit": 0, "status": "partial"},
+  {"family": "squashfs_v3_broadcom", "fixture": "squashfs_v3.le.1kpad.bin", "sha256_12": "fa9102933ca3", "unsquashfs_exit": 1, "sevenzip_exit": 0, "status": "partial"},
+  {"family": "squashfs_v3_broadcom", "fixture": "squashfs_v3.le.4kpad.bin", "sha256_12": "f999054ee3fb", "unsquashfs_exit": 1, "sevenzip_exit": 0, "status": "partial"},
+  {"family": "squashfs_v3_broadcom", "fixture": "squashfs_v3.le.nopad.bin", "sha256_12": "e763240ca30d", "unsquashfs_exit": 1, "sevenzip_exit": 0, "status": "partial"},
+  {"family": "squashfs_v3_broadcom", "fixture": "squashfs_v3_be.bin", "sha256_12": "4e9493d9c6f8", "unsquashfs_exit": 0, "sevenzip_exit": 0, "status": "readable"},
+  {"family": "squashfs_v3_broadcom", "fixture": "squashfs_v3_le.bin", "sha256_12": "6baad4387dd5", "unsquashfs_exit": 1, "sevenzip_exit": 0, "status": "partial"},
+  {"family": "squashfs_v3_ddwrt", "fixture": "squashfs_v3.be.1kpad.bin", "sha256_12": "66967c181163", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_ddwrt", "fixture": "squashfs_v3.be.4kpad.bin", "sha256_12": "6a5ab01dace7", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_ddwrt", "fixture": "squashfs_v3.be.nopad.bin", "sha256_12": "daa8e72d355d", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_ddwrt", "fixture": "squashfs_v3.le.1kpad.bin", "sha256_12": "6d340b84b25c", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_ddwrt", "fixture": "squashfs_v3.le.4kpad.bin", "sha256_12": "cca294fd76e4", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_ddwrt", "fixture": "squashfs_v3.le.nopad.bin", "sha256_12": "e7482db480f9", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_ddwrt", "fixture": "squashfs_v3_le.bin", "sha256_12": "0161351caec8", "unsquashfs_exit": 0, "sevenzip_exit": 0, "status": "readable"},
+  {"family": "squashfs_v3_nonstandard", "fixture": "squashfs_v3.be.1kpad.bin", "sha256_12": "d18ea9e97713", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_nonstandard", "fixture": "squashfs_v3.be.4kpad.bin", "sha256_12": "93f3114d1474", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_nonstandard", "fixture": "squashfs_v3.be.nopad.bin", "sha256_12": "ed6b0d13cfb4", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_nonstandard", "fixture": "squashfs_v3.le.1kpad.bin", "sha256_12": "1db4b787d231", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_nonstandard", "fixture": "squashfs_v3.le.4kpad.bin", "sha256_12": "7deb245c6c25", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_nonstandard", "fixture": "squashfs_v3.le.nopad.bin", "sha256_12": "8c7ed2e81dd0", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_nonstandard", "fixture": "squashfs_v3_be.bin", "sha256_12": "01b2792bd5b5", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"},
+  {"family": "squashfs_v3_nonstandard", "fixture": "squashfs_v3_le.bin", "sha256_12": "3bce6ae37831", "unsquashfs_exit": 1, "sevenzip_exit": 2, "status": "no-reader"}
+ ],
+ "derived_lineage": [
+  {
+   "envelope": "dmg_Z3_v3ddwrt_inode_table",
+   "carrier_name": "Z3_v3ddwrt_inode_table.bin",
+   "carrier_sha256": "839c17a83b706589f1b634d0e19fbc6950c3028072e3952c1c74a290ad2150c8",
+   "carrier_sha256_12": "839c17a83b70",
+   "parent_fixture": "squashfs_v3.be.nopad.bin (ddwrt)",
+   "parent_family": "squashfs_v3_ddwrt",
+   "parent_sha256_12": "daa8e72d355d",
+   "parent_status": "no-reader",
+   "recipe": "zero bytes 144..203 (v3 inode table chain; BE image)",
+   "evidence": ".ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/manifest.json (input.kind=derived, input.parent, input.recipe, input.sha256)",
+   "recaptured": false
+  }
+ ],
+ "recaptures": [],
+ "recapture_note": "No fresh recapture was attempted: the Windows host of 2026-10-31 has neither unsquashfs nor 7z installed, so no reader command exists to rerun. No lineage row contradicts the census source, so the declared kill rule (a recapture that contradicts the lineage stops the round before the freeze) never fired. Every census row stays lineage-bound to the committed round-50 receipt with recaptured:false where a lineage row exists.",
+ "fixture_family_totals": {
+  "squashfs_v3": {"no-reader": 0, "partial": 0, "readable": 8},
+  "squashfs_v3_broadcom": {"no-reader": 0, "partial": 7, "readable": 1},
+  "squashfs_v3_ddwrt": {"no-reader": 6, "partial": 0, "readable": 1},
+  "squashfs_v3_nonstandard": {"no-reader": 8, "partial": 0, "readable": 0}
+ }
+}

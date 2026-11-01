@@ -239,4 +239,53 @@ after the wave (freeze → controls → before-arms → landing → after-arms).
 
 ## Wave-1 amendment record
 
-(empty until wave-1 attacks land; amendments land in the freeze commit)
+The declared wave never executed (A2); the freeze amendments above are the round's amendment record — all pre-data, none post-freeze.
+
+## Freeze amendments (this host, 2026-10-31 — pre-data, listed before any counting run)
+
+The wave this file dispatched (`r53-w1`, commit `5c25d9cc`) never executed: its
+provider host died and the round resumed on a new Windows host with no seat dirs
+and no results file (measured absence, atom T3 below). This session continues the
+same round L1-inline; the amendments below adapt the mechanics to this host. None
+of them touches a claim's target, corpus, evaluator semantics or scoring arms.
+
+- **A1 — interpreter and paths.** Every counting command in this file reads
+  `python3 -I -B ...` with Linux-absolute roots. On this host `python3` is the
+  Microsoft Store stub and `python` is 3.13.15; text pipes decode with cp1252
+  unless UTF-8 is forced (measured: `.ufo/waves/round-53/l1/host-probes/
+  v5-at-base-cp1252.txt` exit 2 vs `v5-at-base-utf8.txt` exit 0). All commands are
+  amended to `python -X utf8 -I -B` with lane-relative `--root .`. The predicate
+  sentences below carry the amended spellings.
+- **A2 — the wave line (T3).** The inherited dispatch is evidence, not a plan: T3
+  now pins the four dispatch artifacts by blob sha256, and checks the measured
+  absence of `w1/` seat dirs and of `r53-w1-results.json`. Fabricating either
+  side is red.
+- **A3 — the census command.** `scripts/sources-census.sh validate` maps lane id
+  `kaidoku` to a `kaidoku-shokunin` directory that does not exist here (exit 2,
+  measured); the amended command passes the explicit lane directory. Receipts:
+  `.ufo/waves/round-53/l1/census-start.txt` (exit 0, 19 W04).
+- **A4 — T8 no-harm scope.** PROVINCE.md moves from byte-equal to exactly one
+  declared addition (the dated `## Host migration — 2026-10-31` section recording
+  this host's absent surfaces — the round prompt's absent-surface rule), and the
+  SCORECARD coverage row carries one declared refresh (the index moves 141→142
+  with the round-53 knowledge entry). Depth and calibration rows stay byte-equal.
+- **A5 — the census-conditioned clean label.** The table grammar refuses duplicate
+  labels, so the fixture-level catch lands as `clean-unverified-fixture` (same
+  action `record-unverified`, below the v5 family row `clean-unverified`, whose
+  v5 label stays byte-stable for the three no-reader families). The corpus effect
+  is exactly the declared eight label moves.
+- **A6 — the freeze ledger.** The gate at the round base exits 1 with two
+  historical round-35 rows missing from `corpus/claim-freezes-v2.tsv` (measured,
+  `.ufo/waves/round-53/l1/gate-at-base.txt`); the landing appends those two rows
+  verbatim to the gate's own audit verdicts plus the round-53 row, so T9's gate
+  receipt can honestly exit 0.
+- **A7 — S253.** The row was opened by this session on this host (cloned read-only,
+  snapshot bytes `.ufo/waves/round-53/l1/s253/`); the round-50 census receipt it
+  lines up with was already committed.
+
+The freeze container is `.ufo/waves/round-53/claims.json` (top-level
+`instruments` map, the shape the lane's freeze gate accepts); the T1/T2
+`frozen_atoms` live there because they must be green at the freeze, before any
+record section exists. The freeze is the single commit that adds the instruments,
+this file's amended text, the census and the container, recorded in LOG.md and
+`.ufo/waves/round-53/l1/FREEZE`, before any counting run over the scored corpus.
