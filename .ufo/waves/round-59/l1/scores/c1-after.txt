@@ -1,0 +1,41 @@
+kaidoku round-59 AFTER arm, C1 (D58-1 closed and the duty dispositioned; measured at the record commit 1110ba49c19d8851075bd3089a1632f7b52b08bf, a descendant of the operative freeze b6dadbd255907557c0c3ed8ff441d192cc06310e, the landing 2ff5d30800df0184c0a63c778bb166c1650aa3a3, and both disclosed fixups 203c07a7b68d683e8536b8f103c9f2c35d787168 / 945373723aa842a4d8ae27947708e5ce4205065a; probes pasted with observed outputs; lands with the close, the disclosed ordering note applies)
+
+== (D58-1) the correction is in the r58 receipt, appended, filed bytes untouched ==
+$ git show 1110ba49c19d8851075bd3089a1632f7b52b08bf:.ufo/waves/round-58/l1/scores/c1-after.txt | grep -c 'CORRECTION (round 59)'
+1
+(base: 0 -> record: 1; the correction block exists at the record rev — the before arm measured 0 at df62b6f9)
+$ git diff --numstat df62b6f986fb460847037482e0199cdf1541e393 1110ba49c19d8851075bd3089a1632f7b52b08bf -- .ufo/waves/round-58/l1/scores/c1-after.txt
+21	0	.ufo/waves/round-58/l1/scores/c1-after.txt
+[21 additions, 0 deletions base->record — append-only; the landing measured 21/0 at 2ff5d308, unchanged since]
+
+== the corrected marker probes re-derived at the record rev ==
+$ git show 536c48650a5ccc435387b2060638a9d8a4bebf44:LOG.md | grep -c 'distinct filesystem paths number 27'
+2
+(base: 0 -> record: 2; both entries carry the phrase — the declaration entry and the landing entry's R1 correction bullet)
+$ git show 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad:LOG.md | grep -c 'distinct filesystem paths number 27'
+0
+(base: 0 -> record: 0; the before state)
+$ git show 536c48650a5ccc435387b2060638a9d8a4bebf44:LOG.md | grep -c 'number 27 (`git diff'
+1
+(base: 0 -> record: 1; the note-of-record bullet — the value the original annotation intended, now reachable by the pattern that matches its target)
+$ git show 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad:LOG.md | grep -c 'number 27 (`git diff'
+0
+(base: 0 -> record: 0; the before state)
+
+== the substance (unchanged) ==
+$ git diff-tree -r --name-only 63413677 67ec2c38 | sort -u | wc -l
+27
+[27 distinct filesystem paths in the r57 delta]
+
+== the machine audit (the round-59 instrument; receipt revs = the prose fixup 945373723aa842a4d8ae27947708e5ce4205065a) ==
+$ python -X utf8 -I -B tools/round-59/annotation-audit.py --root . --receipt .ufo/waves/round-59/l1/scores/d581-correction.txt --rev 945373723aa842a4d8ae27947708e5ce4205065a --base-rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+exit 0 (4 annotations, every one re-derives — records/annotation-green-demo.txt)
+$ python -X utf8 -I -B tools/round-59/annotation-audit.py --root . --receipt .ufo/waves/round-58/l1/scores/c1-after.txt --rev 945373723aa842a4d8ae27947708e5ce4205065a --base-rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+exit 1 (4 findings, all accounted: the original D58-1 pair at line 6, persisting exactly as the append-only rule requires, + the M59-3 prose-mimicry pair on this receipt's own quoted-shape disclosure line — records/annotation-persistent-finding.txt)
+
+== the duty dispositions (the finding stays disclosed named debt) ==
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-58/claims.json --rev 1110ba49c19d8851075bd3089a1632f7b52b08bf | grep -c RECEIPT_ABSENT
+1
+(base: 1 -> record: 1; the r58 container's quoted bare name still resolves to zero paths in round-58 scope at the record rev — disclosed named debt per records/w58-sweep-finding-disposition.txt, which was recorded at the freeze BEFORE the landing; the flip condition stands)
+$ python -X utf8 -I -B tools/round-57/record-receipt-audit.py --root . --record SCORECARD.md --heading "Round 59" --rev 1110ba49c19d8851075bd3089a1632f7b52b08bf
+named 21, missing 6 at the record rev (exactly the six close-landing receipts the section's list annotates as close-landing — the disclosed ordering, the r57 T11 / r58 pattern; full output records/record-audit-r59-at-tip.txt); at the close tip, which carries them, the same command re-derives named 21, missing 0 — the one-line command is stated in that receipt

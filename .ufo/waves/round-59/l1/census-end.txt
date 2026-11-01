@@ -1,0 +1,18 @@
+shokunin-reverse-engineering host-adapted census validate (round 59 end)
+$ bash <fleet-root>/scripts/sources-census.sh validate --root <fleet-root> <lane-repo-dir>   (the host-adapted explicit-dir form; the literal kaidoku-name form exits 2 here, as disclosed since r53)
+
+Run 1 — at the record state 1110ba49c19d8851075bd3089a1632f7b52b08bf (the SOURCES.md as landed at the record commit): EXIT 1 — the census caught this round's own S259 placement defect:
+shokunin-reverse-engineering	E12	S259 row outside Registry section
+(plus the 19 standing W04 warnings, unchanged)
+
+The E12 is real and self-caught: the S259 row was appended at the file end, inside the '## Leads (unopened)' section, instead of the '## Registry' section. The row moves to its Registry position (directly after S258, the M53-4 used-by ordering) and lands with the close commit — whose corpus bytes are byte-identical to run 2's below (the move is a 1/1 line diff, nothing else changes).
+
+Run 2 — after the Registry-section move (the state the close commit carries): EXIT 0, w04-count=19, sources-rows=166. One-line re-derivation at the tip:
+$ bash <fleet-root>/scripts/sources-census.sh validate --root <fleet-root> <lane-repo-dir>   (exit 0 required at round end: met)
+shokunin-reverse-engineering	ok	C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/shokunin-reverse-engineering/corpus/SOURCES.md
+(plus the 19 standing W04 warnings, unchanged)
+
+census-exit=0 (run 2, the round-end state)
+w04-count=19
+sources-rows=166
+W04 stays named debt (19 standing at both ends).
