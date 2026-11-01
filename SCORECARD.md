@@ -20,7 +20,7 @@ explicitly marked current; the added lesson-index row shifts later README lines.
 
 | Axis | Baseline → current score, 0–10 | Observable and limitation | Evidence / counting command | Last-change round |
 |---|---|---|---|---|
-| coverage | 9.72 → 10.0 | Round-51 index integrity: 141/141 knowledge files mapped; no Frontier→Core promotion. The round-51 entry records source corrections and an unverified C1, not a held extraction capability. The dated round-50 140/140 head and earlier detailed history remain at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`. | `corpus/README.md` Coverage map; command A in this card; round-51 L1 `integrity-at-landing.json` | 51 (index count only; score unchanged) |
+| coverage | 9.72 → 10.0 | Round-53 index integrity: 142/142 knowledge files mapped at the landing (command A receipt `.ufo/waves/round-53/l1/scores/integrity-at-landing.json`, measured at `f78fc766b40aae9bae743c2b4642d7412cc0c60c`); the round-51 141/141 head remains historical below and at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`. The dated round-50 140/140 head and earlier detailed history remain at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`. | `corpus/README.md` Coverage map; command A; round-53 L1 `integrity-at-landing.json` | 53 (index count only; score unchanged) |
 | depth | 10 → 10 | 25/25 queue-drain rule blocks have resolvable file/range citations at the round-48 landing (command A, new block 25 with the verdict-meaning table, `citation_resolved_rules 25`; receipt `.ufo/waves/round-48/l1/scores/`); 20/20 queue-drain rule blocks have resolvable file/range citations at `e1c83313f33a3d97edbd8fef402db2d06172fcdc` (round 41, command A, new block 20 at `SKILL.md:387-449` with table v3; craft section `SKILL.md:81-449`; R41-C2 itself stopped, `## Round 41`); 19/19 queue-drain rule blocks have resolvable file/range citations at `4d62ee5a86b4692a13f682b29ed7975e8d7e5326` (round 40, command A, new block 19 at `SKILL.md:348-375` with table v2; `.ufo/waves/round-40/w2/R40W2DepthCount.md`); 18/18 at `52b0eb2907c704ed5f184c47b14c723208e5cbbc` (round 39, command A, `citation_resolved_rules 18`, new block 18 at `SKILL.md:316-343` with its citations resolving; 17/17 at `c369242fee9f559f895e3f7956b1242076c7b1be`, round 31; also 17/17 at `ebe2cb4a`, round 26). History: 9/9 at `638fb211` (luna-round-3); rule blocks grew from 9 to 17 in eight commits from `58116aa1` to `4072ebb3` (2026-10-18 and 2026-10-19), and the row kept 9/9 until round 25 added a recount at `08c7a7299ed61c3fdc30ddb0adfe4e812d5eac76`. **not** semantic correctness, generality, or fresh execution — the r3 semantic contradiction removal is measured by the contradiction census, not this proxy | craft section `SKILL.md:81-343` (heading line 81, last non-blank line 343 at `52b0eb29`; the baseline range was `SKILL.md:77-191` at `a79945c4`); command A; measured `52b0eb2907c704ed5f184c47b14c723208e5cbbc` (round 39; prior recount `c369242fee9f559f895e3f7956b1242076c7b1be`, round 31); baseline `a79945c4` | r1 measurement + luna-round-3; rule blocks added 2026-10-18 and 2026-10-19; count refreshed rounds 25, 26, 39 and 40 |
 | calibration | 0 → 10 | 4 → 0 self-assessment mismatches at the round-47 landing: `tools/round-47/record.py` re-derives 42 atoms (last two round sections plus the Owned-axes heads) and reports `mismatches []`, `corrections 2`, `exempted 1 <= 3`, battery `3/0` (`.ufo/waves/round-47/l1/scores/c2-at-A7.json`); 9/9 preselected reconciliation obligations aligned (2026-10-15); 2026-10-16 per-client REA surface reconciled to live receipts — **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; count measured at `c265db9bd3c0883fbaf4487f839559c85a736826` (`evidence/round-1-2026-10-15/result.json` `measured_revision`; the row said `75af886a` until round 26, which is the luna-round-2 receipt reconciliation, not command B's revision); luna-round-2 receipts `.ufo/waves/luna-round-2/receipts/` | operator-steered r1 + luna-round-2; later calibration claims are in the round sections (outside closures: round 24 rejected-honest-stop, round 25 admitted) Round 50: the round-48 closure `corpus/lessons/round-48-verifier-spotcheck.md` graded calibration `rejected-harmed`; the round-49 record corrections measured `mismatches 9 → 0` (`.ufo/waves/round-49/l1/scores/c2-final.json`); this row is a finite proxy over the atoms its counters name, not an expertise score. |
 
@@ -3917,3 +3917,78 @@ same census exit 0, same absence findings and 64 seat records
 (`l1/accounting-landing.json`); production SKILL/PROVINCE/README/tools
 byte-unchanged from `1842addc` (`l1/production-unchanged.json`, diff exit 0).
 This is the after documentary measurement, not an executed R52 claim predicate.
+
+## Round 53 (2026-10-31) — the fixture-level reader census closes the ddwrt executability debt; L1-inline on a new Windows host
+
+Fresh-start round, new Windows host: the inherited declaration (`4cb12b41…`) and
+dispatch (`5c25d9cc…`) were authored on the dead Linux host; the declared wave
+`r53-w1` never executed (no seat dirs, no results file — atom T3 pins the dispatch
+artifacts and the measured absence). Both claims are offline over committed bytes;
+every counting command runs on this host (`python -X utf8 -I -B`, plumbing git).
+Freeze chain, disclosed: first freeze `94efae0d8722626a71eed6ec1091692b558878d8`
+(A1-A7), re-freeze `6ead6f1bc8cfe7dd74f39ed3a4880a3ad5c90c04` (A8/A9, the operative
+freeze for the record oracle), amendments `81b4161…`, before-arms `7fd731e1…`,
+landings `ec2fa49…`/`764e6ed8…`, ledger fixes `fe8fab8…`/`f78fc766…` (L4). The
+AVM LE-SquashFS C1 stays unattempted; its routed findings stay routed.
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R53-C1 | depth — SKILL rule block 27 (triage table v6) + fixture-level reader census + executability audit; resolves CritTriV6 F1-F7, MutTriV6 F1-F4 | witness at base `6697518f`: exit 1, `executability_violations 1` naming `dmg_Z3_v3ddwrt_inode_table`, `clean_residue 7`, `pair_mismatches 0` (`.ufo/waves/round-53/l1/scores/c1-before.json`); controls 10/10 corpus-red with exact fixture flips (`c1-controls.json`); selftest 7/7 (`c1-selftest.json`) | exit 0 at `764e6ed8`: `pair_mismatches 0`, `evaluator_missing 0`, `executability_violations 0`, `clean_residue 0`, sources binding S253 ok; exactly 8 labels moved (1 `legacy-body-refused` + 7 `clean-unverified-fixture`); command A craft proxy 26 → 27 (`integrity-at-landing.json`); the first landing scored 1 mismatch (`dep_A2_squashfs_v4_le`) and the landed clean-row cell was corrected pre-scoring (A10, M53-5) — the instrument stayed frozen | `python -X utf8 -I -B tools/round-53/sqfs-triage-v6.py --root . --rev <REV> --freeze <FREEZE> --envelopes .ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/envelopes --json-out <OUT>`; before arm `tools/round-53/v5-baseline-witness.py` | `.ufo/waves/round-53/l1/scores/c1-after.json` (rev `764e6ed8…`) |
+| R53-C2 | calibration — the round-53 record oracle: atoms T1-T10 re-derived from committed bytes | at the operative freeze `6ead6f1b`: exit 1 with exactly `mismatches 8` (T3-T10 red, T1/T2 green; `.ufo/waves/round-53/l1/scores/c2-before.json`); selftest 32 cases green (green run + one red per atom, each flipping only its atom) | exit 0 at the record revision: `mismatches 0` (`.ufo/waves/round-53/l1/scores/c2-after.json`) | `python -X utf8 -I -B tools/round-53/r53-record.py --root . --rev <REV> --freeze <FREEZE> --json-out <OUT>` | `.ufo/waves/round-53/l1/scores/c2-after.json` (rev = the commit that introduced this section) |
+
+Owned scores: coverage `10 → 10` (index 141 → 142 with the declared row refresh
+above; map integrity held at the landing); depth `10 → 10` (rule block 27 landed
+and scored; the command-A citation proxy 26 → 27; the depth-row proxy of the
+round-48 landing remains the historical statement); calibration `10 → 10` (the
+record re-derives from committed bytes; a finite proxy, not an expertise score).
+Freeze-gate verdict for the round-53 container: FLAGGED `INSTRUMENT_NONE` — a
+container-shape finding (the gate reads claim-string values; the container pins
+via its instruments map), disclosed verbatim in the ledger row and
+`freeze-gate-landing.json` (gate exit 0, disclosures 28/28 exact, no missing, no
+stray). Misroot sweep: 0 findings (narrowed receipt; the first, over-broad sweep's
+390 hits are other lanes' own round-53 artifacts, retained in the round report).
+Learning trends: expansion **unchanged** (no Frontier→Core move; S253 grounds the
+reader category, not a new held surface); quality **improved** (a scored rule
+block with a frozen instrument, a measured before/after, two host-drift error
+signatures captured with receipts); discernment **unchanged** pending the outside
+spot-check (the round's own seats are not non-author verifiers; M53-1..M53-6 are
+recorded, not waived).
+
+Round-53 record atoms (the oracle `tools/round-53/r53-record.py` re-derives each
+declared value from committed bytes at the measured revision):
+
+| atom | declared value |
+|---|---|
+| T1 | instruments=4 pinned; added=4; pins-rederive=true |
+| T2 | log-declaration-entry=true; claims-file-cited=true; log-deletions=0 |
+| T3 | wave=none-inline; dispatch-sha256s=7ae1b3ec2e3556500b463a812d6e5d6f75d9bb6e9c91084949cf3a0b75e84489,b5a248f371302d38d737e5de8f2b68ecab2df64da88c29d9a52e480842578999,060f5ef5b33b0a7c58a14db5060f3b55a8b7d0a3f7d01710ad4c72a27841ddb3,dd36359e1cde2d251f256c0964a92312bdbc83b8a722410ab56f8688cb39f115; seat-dirs=0; results-file=absent |
+| T4 | landing=f78fc766b40aae9bae743c2b4642d7412cc0c60c; record-rev=section-commit; receipts=5 |
+| T5 | start-exit=0; end-exit=0; w04-start=19; w04-end=19 |
+| T6 | sources-before=159; sources-after=160; new-rows=S253(A); used-by-ok=true |
+| T7 | atoms=10 |
+| T8 | depth-row-equal=true; calibration-row-equal=true; coverage-row-refresh=true; province-heading=## Host migration — 2026-10-31 (Windows host; recorded under the round-53 absent-surface rule); province-deletions=0; undeclared-production=0 |
+| T9 | ledger-row=round-53; ledger-verdict=FLAGGED; gate-exit=0 |
+| T10 | misroot-findings=0 |
+
+Landing receipts (T4 re-derives each at the measured revision):
+
+- `.ufo/waves/round-53/l1/scores/c1-after.json` rev=764e6ed8042160af28caa14f65c7bd358533afae check=verdict="met"
+- `.ufo/waves/round-53/l1/scores/c1-selftest.json` rev=none check=fail=0
+- `.ufo/waves/round-53/l1/scores/c1-controls.json` rev=none check=all_controls_red_somewhere=true
+- `.ufo/waves/round-53/l1/scores/freeze-gate-landing.json` rev=f78fc766b40aae9bae743c2b4642d7412cc0c60c check=exit=0
+- `.ufo/waves/round-53/l1/misroot-sweep.json` rev=none check=findings=[]
+
+Freeze-line (QUALITY 88): the operative freeze named by every after-counter is
+`6ead6f1bc8cfe7dd74f39ed3a4880a3ad5c90c04` for the record oracle and
+`764e6ed8042160af28caa14f65c7bd358533afae` for the triage instrument (whose
+claims-file binding must read the A10 lines); both descend from the first freeze
+`94efae0d…`, whose instrument and census bytes are identical; the chain and each
+commit's role are named above and in LOG.
+
+**planned (next steered round only):** the AVM LE-SquashFS re-freeze stays routed
+(CritRuleDerive/CritRetry/CritFetchChain findings); the registry-drift census
+(`census3` outside-13) stays routed; if this host remains the lane's substrate, a
+portability pass over the frozen instruments (encoding-explicit reads) declared as
+its own claim, never a silent patch.
+
+**retired:** none.
