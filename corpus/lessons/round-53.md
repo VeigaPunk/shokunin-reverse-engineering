@@ -51,3 +51,22 @@ triage instrument's after-run cites `764e6ed8042160af28caa14f65c7bd358533afae`
 and the two FLAGGED findings the freeze gate audited are named in LOG and in
 SCORECARD's round-53 section; every after-counter's `--freeze` names one of these
 three commits, all descendants of the first.
+
+## Gate — correction (round 54, appended 2026-11-01; the section above stays as filed)
+
+The `## Gate` table above records the admitted row and the receipt rows but no explicit
+rejected-candidate rows (routed defect 8 of `corpus/lessons/round-53-verifier-spotcheck.md`;
+LEARNING.md's Gate format wants candidates/admitted/rejected/spot-check). The round's
+rejected candidates, recorded here from the round's own records (plans `## Fresh-start
+compliance`, the report's ruled-out list, amendment A8):
+
+| row | candidate | decision and reason |
+|---|---|---|
+| R53 reject 1 | re-attempt the AVM LE-SquashFS Frontier→Core claim (the r50/r51/r52 twin) | reject — REA 6.5.0, sasquatch, unblob and vendor fetches are absent on this host (PROVINCE `## Host migration — 2026-10-31`); three consecutive rounds died re-attempting it; the routed findings stay routed, untouched |
+| R53 reject 2 | patch the frozen v5 instrument for the host's cp1252 text decoding | reject — the frozen bytes are pinned by the container; the port landed as the new encoding-explicit v6 instrument instead (M53-2) |
+| R53 reject 3 | satisfy the first freeze's T2 `claims-commit` self-reference by editing LOG in place | reject — append-only violation (a commit cannot cite its own hash in LOG); the pre-data re-freeze (A8/A9) replaced the clause with `claims-file-cited` instead |
+
+Spot-check: performed post-filing by the non-author closure
+(`corpus/lessons/round-53-verifier-spotcheck.md`) — **admitted**; its §7 table re-opened
+S253, the AVM reject, the A10 cell correction and the freeze-gate INSTRUMENT_NONE
+disclosure, and agreed with all four.

@@ -98,3 +98,29 @@ SKILL.md at revision …`, exit 2 (receipt
 `.ufo/waves/round-53/l1/host-probes/v5-at-base-cp1252.txt`; the same command under
 `python -X utf8` completes). v6 passes `encoding='utf-8'` on every subprocess and
 file read; the frozen v5 file stays byte-identical and refuses honestly here.
+
+## Corrections (round 54, appended 2026-11-01 — append-only; everything above stays as filed)
+
+- `verified-at:` 2026-10-31 (round 53) — the observation, before-arm and after-state
+  sections were measured on this host against committed bytes, with the receipts the
+  sections name (`.ufo/waves/round-53/l1/scores/c1-before.json`, `c1-after.json`,
+  `c1-controls.json`, `c1-selftest.json`). The entry was filed without this field
+  (routed defect 1 of `corpus/lessons/round-53-verifier-spotcheck.md` §6).
+- `recheck:` on-release — the census is lineage-bound to committed round-50 receipt
+  bytes and carries `recaptured: false` with a kill rule on a contradicting recapture;
+  a recheck re-runs the frozen `tools/round-53/v5-baseline-witness.py` and
+  `tools/round-53/sqfs-triage-v6.py` at their pinned revisions over the same corpus
+  (they refuse on drift), not on a calendar.
+- Source-pointer correction (routed defect 2): the `source:` line above cites
+  `.ufo/waves/round-53/l1/s253/control-sha256.txt`, which does not exist. The digest
+  lives in `.ufo/waves/round-53/l1/s253/digests.txt`, whose control line reads
+  `89ff4a11fa260bcd411a7861d0bdac84dd0ec744ff0b3b371acfa3d4318154c4 *.ufo/waves/round-53/l1/s253/control`
+  — the same value the `source:` line abbreviates as `89ff4a11…`. The absent path was
+  never created; this block is the correction of record.
+- Census-row count precision (routed defect 7, the lane-side half): the frozen
+  `tools/round-53/reader-census.json` carries **31** fixture rows, 1 derived-lineage
+  row and 4 family totals; the "35 rows" figure in the Observation section above is
+  the round-50 receipt table's row count
+  (`.ufo/waves/round-50/w3/ExecTriageV5/receipts/reader-census.txt`), which is the
+  census's declared source. Both counts stand; the JSON is authoritative for the
+  instrument.
