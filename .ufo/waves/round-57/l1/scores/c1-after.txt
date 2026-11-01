@@ -1,0 +1,56 @@
+kaidoku round-57 AFTER arm, C1 (the eight r56-closure routed defects, all closed; measured at the record commit 06caea12321ca6c1f7ae8ba6ec5007d38894da56, a descendant of the carry-in landing e304cb0dbfc4140de984e938be0cf794964b2759 where D1-D7 landed; D8's fix is the record section itself, landed at 06caea12321ca6c1f7ae8ba6ec5007d38894da56; probes pasted with observed outputs)
+
+== (D1/D2) erratum of record present; corrected markers re-run ==
+$ git show 06caea12321ca6c1f7ae8ba6ec5007d38894da56:corpus/lessons/round-56.md | grep -c 'Corrections (round 57)'
+1
+(base: 0 -> record: 1 — the erratum lands; it names the superseded c1-after V-1/V-5 lines and the report's after-arm sentence)
+$ git show e304cb0dbfc4140de984e938be0cf794964b2759:corpus/lessons/round-55.md | grep -c 'planted empty directory trees mirroring the pathspec'
+0
+$ git show e304cb0dbfc4140de984e938be0cf794964b2759:corpus/lessons/round-55.md | grep -c 'canonical-parameter clarification'
+1
+$ git show e304cb0dbfc4140de984e938be0cf794964b2759:corpus/lessons/round-55.md | grep -c 'supersedes M55-2'
+1
+(the three content-check markers that occur in the committed correction wording — the D2 after-arm restated on markers that re-derive, each 1; V-2/V-3 re-derive as filed: 'supersedes frozen atom T2' 1, stale prose 0 at the new pin 22f77c34, below)
+$ git show e304cb0dbfc4140de984e938be0cf794964b2759:tools/round-55/corrections-pin.py | grep -c "line 2's leading cell"
+0
+
+== (D3) overbroad sentence superseded by the erratum's correction 2 ==
+$ git show 06caea12321ca6c1f7ae8ba6ec5007d38894da56:corpus/lessons/round-56.md | grep -c 'Overbroad. Re-verified by round 57'
+1
+(the object facts, re-verified this round at 29a7477bffc417dc5c8be1535f7139dee8c5443c:)
+$ git cat-file -e 29a7477b:LOG.md && git rev-parse 29a7477b:LOG.md 79421b75:LOG.md
+70d3f2af8ba542f2550b2f0f4ee48267ee90cf5f
+70d3f2af8ba542f2550b2f0f4ee48267ee90cf5f
+(LOG.md EXISTS at 29a7477b, rc=0; blob 70d3f2af8ba542f2550b2f0f4ee48267ee90cf5f byte-identical in commit and parent — present but UNCHANGED; the three new-file paths rc=128, measured in c1-before.txt)
+
+== (D4) the missed receipt is in the tree; the record resolves 13/13 ==
+$ git ls-tree -r --name-only 06caea12321ca6c1f7ae8ba6ec5007d38894da56 -- .ufo/waves/round-56/ | grep -c 'receipt-audit-green-r56.txt'
+1
+(base: 0 -> record: 1; the new gate's green demo over the r56 record section at e304cb0dbfc4140de984e938be0cf794964b2759: exit 0, named 14, missing 0 — records/record-audit-green-r56.txt)
+
+== (D5) the 45/0-vs-49/0 reconciliation is in the erratum ==
+$ git show 06caea12321ca6c1f7ae8ba6ec5007d38894da56:corpus/lessons/round-56.md | grep -c 'it is 49/0'
+1
+$ git diff --numstat fe3a804fa8c2d5ff078c6253a5df1bdbc2f28fca b94348580dfff147d4f43597a85c28a5d0609fe7 -- LOG.md
+49	0	LOG.md
+(49/0 at the cited tip, re-derived; 45/0 is base-to-close, both stated in the erratum)
+
+== (D6) the discarded sha is printed in the LOG of record ==
+$ git show 06caea12321ca6c1f7ae8ba6ec5007d38894da56:LOG.md | grep -c 'db3e94cdd155aea8c3cff2b0ced96bd16ceed1a9'
+1
+(base: 0 -> record: >=1; the entry states its status: not an ancestor of main, absent from origin/main, never evidence of round work)
+
+== (D7) the 047bd98e gate run is receipted ==
+$ git ls-tree -r --name-only 06caea12321ca6c1f7ae8ba6ec5007d38894da56 -- .ufo/waves/round-57/l1/scores/ | grep -c 'gate-at-r56-close-tip'
+1
+(base: no such receipt -> record: 1; the receipt: exit 0, audited 31, disclosures 31/31 exact — matching the r56 report's transcription)
+
+== (D8) the corrected item list is in the record section ==
+$ git show 06caea12321ca6c1f7ae8ba6ec5007d38894da56:SCORECARD.md | grep -c 'items 1, 2, 3, 5 plus the D5-D8 notes'
+1
+$ git show 06caea12321ca6c1f7ae8ba6ec5007d38894da56:SCORECARD.md | grep -c "corrects the r56 C1 row's .r55 spot-check .7 items 1-4. wording"
+1
+(the r56 row stays as filed; the correction names it from the round-57 section)
+
+== summary ==
+before at 63413677ec0531e38722b8dbfb0b89a0bc113d04: 8 of 8 open (scores/c1-before.txt); after at 06caea12321ca6c1f7ae8ba6ec5007d38894da56: 8 of 8 closed, each by a committed artifact at or reachable from the carry-in landing e304cb0dbfc4140de984e938be0cf794964b2759 / record 06caea12321ca6c1f7ae8ba6ec5007d38894da56

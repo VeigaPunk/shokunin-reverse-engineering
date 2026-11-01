@@ -1,0 +1,23 @@
+kaidoku round-57 AFTER arm, C2 (re-derived at the landing e4112db6cfedc81a20f893da55fff33a62c15c2b; probes pasted with observed outputs)
+
+== selftest ==
+$ python -X utf8 -I -B tools/round-57/record-receipt-audit.py --selftest
+record-receipt-audit selftest: extraction 3 + section 2 + audit 4 cases, failures 0
+exit=0
+
+== red demo at the base (committed receipt records/red-demo-at-base.txt, exit 1 named-14-missing-1) ==
+$ git show 63413677:SCORECARD.md does not carry the instrument; the demo runs the frozen tool bytes over the base record bytes:
+exit 1 named 14 missing 1 verdict missing finding .ufo/waves/round-56/l1/records/receipt-audit-green-r56.txt
+(exit=1 expected and observed above; full JSON in the committed red-demo receipt)
+
+== green demo at the carry-in landing (committed receipt records/record-audit-green-r56.txt) ==
+exit 0 named 14 missing 0 verdict clean
+(exit=0 expected and observed above; full JSON in the committed green receipt)
+
+== registry and capability rows ==
+$ git show e4112db6cfedc81a20f893da55fff33a62c15c2b:SKILL.md | grep -c 'round-57/record-receipt-audit'
+1
+$ git show e4112db6cfedc81a20f893da55fff33a62c15c2b:SCORECARD.md | grep -c 'named-path completeness gate'
+1
+$ git cat-file -e e4112db6cfedc81a20f893da55fff33a62c15c2b:tools/round-57/record-receipt-audit.py && echo present
+present
