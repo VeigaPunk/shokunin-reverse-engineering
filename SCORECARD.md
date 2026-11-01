@@ -3992,3 +3992,94 @@ portability pass over the frozen instruments (encoding-explicit reads) declared 
 its own claim, never a silent patch.
 
 **retired:** none.
+
+## Round 54 (2026-11-01) — the routed-record repair round: ten routed round-53 defects close with receipts
+
+Fresh-start repair round, L1-inline on the Windows host. Base `45c68786…` (the r53
+spot-check commit), declaration `9dc73005…`, operative freeze `85843f2e…` (first commit
+adding `.ufo/waves/round-54/claims.json`; the earlier `5f768669…` carried only the LOG
+entry — helper directory arguments are not expanded, M54-4), landing `c753b24f…`. No
+wave (no dispatch surface; the kaidoku round-53 L0 question stays open). The only
+executed instrument is the frozen `tools/round-53/r53-record.py` (bytes unchanged since
+round 53; pin `c9fd8c68…` re-derived by the gate). Claims: R54-C1 (calibration) — the
+nine routed-record closures D1,D2,D4,D5,D6,D7,D8,D9,D10; R54-C2 (depth) — block-27
+prose/table agreement. Lowest-axis rule: all three owned axes tied at 10.0, so C1
+(calibration) is a lowest-axis claim; stagnation nudge not fired (window N=10, last
+capability r49, r54 = 5/10).
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R54-C1 | calibration — the round-53 record's receipted completeness (spotcheck §6 items 1,2,4,5,6,7,8,9,10) | at the base `45c68786…`: 0 of 9 closures present (receipt `.ufo/waves/round-54/l1/scores/c1-before.txt`, committed at the freeze) | 21/21 checks pass, 9/9 closures content-checked at the landing (receipt `.../scores/c1-after.txt`): provenance trio appended (header bytes 1-100 unchanged), pointer re-pointed to `s253/digests.txt` with value `89ff4a11…4c4` (absent path still absent), selftest receipt 32/0/32 + battery 3/3 arms red, QUALITY row 100 + corrections ledger `round-53/correction-1`, retention listing committed (272 vs 390, drift disclosed) + LOG/record pointer corrections, 35-vs-31 erratum with both counts, r53 lesson Gate gains 3 reject rows + spot-check result, tip-reproduction receipt `met 0` at `7c0630ce…`, E11 receipt exit 1 with the exact M53-4 line | the per-check commands are transcribed in `.../scores/c1-after.txt` (each `git show <rev>:<path> | grep -c …` / `python -X utf8 -I -c json` field read, pasted with output and PASS/FAIL) | `.ufo/waves/round-54/l1/scores/c1-after.txt` (rev `c753b24f…`) |
+| R54-C2 | depth — SKILL rule-block 27 prose/table agreement | at the base: the drifted clause count 1 (prose named the clean row `partial,readable`; the landed cell is `*`) — receipt `.../scores/c2-before.txt` | drift count 0; the `legacy-body-failure` narrowing attributed and the clean row's `*` stated under the two guard rows; the v6 marker-block table bytes byte-identical base→landing (sha256 `b340ed2b48facca7…` both); the frozen `tools/round-53/sqfs-triage-v6.py` at the landing: exit 0, `pair_mismatches 0`, `evaluator_missing 0`, `executability_violations 0`, `clean_residue 0`; command A: mapped 142/142, `citation_resolved_rules 27` | `git show <rev>:SKILL.md \| grep -c 'row itself narrows its census cell to'`; `python -X utf8 -I -B tools/round-53/sqfs-triage-v6.py --root . --rev <REV> --freeze 764e6ed8… --envelopes .ufo/waves/round-42/w1/artifacts/R42C2ReconLegacy/envelopes --json-out <OUT>` | `.ufo/waves/round-54/l1/scores/c2-after.txt`, `.../c1-v6-at-landing.json` (rev `c753b24f…`) |
+
+Owned scores: coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10` — the Owned-axes
+rows are byte-equal base→landing (measured: `git diff 45c68786..c753b24f --numstat --
+SCORECARD.md PROVINCE.md` is empty; the depth/calibration/coverage rows are untouched;
+PROVINCE is untouched; LOG append-only `24/0` at the landing). Learning trends:
+expansion **unchanged** (no Frontier→Core move; S254 grounds a record-keeping form, not
+a surface); quality **improved** (ten routed defects closed with receipts and a
+convention, the block-27 surface made self-consistent with its scored table, the frozen
+instrument re-scored green); discernment **unchanged** pending the outside spot-check
+(the round closes the record defects the last spot-check routed and defines the
+correction convention that spot-check asked for; every claim is a routed-defect closure,
+not a self-certified judgment).
+
+Round-54 record atoms (each re-derived by the plain command in `scores/c1-after.txt` /
+`c2-after.txt` at the measured revision):
+
+| atom | declared value |
+|---|---|
+| T1 | log-declaration-entry=true; claims-file-cited=true; log-deletions=0 |
+| T2 | freeze=85843f2e; instruments=1 pinned (tools/round-53/r53-record.py, c9fd8c68…); gate-verdict=CLEAN |
+| T3 | c1-before: 0-of-9 closures at base 45c68786 |
+| T4 | c1-after: 21 pass / 0 fail at landing c753b24f; closures 9-of-9 |
+| T5 | c2-before: drift-clause=1; clean-cell=* |
+| T6 | c2-after: drift=0; table-identity=true (b340ed2b…); v6 exit 0 (0/0/0/0); command A 142/142 rules 27 |
+| T7 | sources-before=160; sources-after=161; new-rows=S254(A); used-by-ok=true |
+| T8 | census start-exit=0; end-exit=0; w04-start=19; w04-end=19 |
+| T9 | misroot-findings=0 (r54 narrowed sweep) |
+| T10 | ledger-row=round-54; ledger-verdict=CLEAN; gate-exit=0; disclosures 29/29 |
+| T11 | corrections-rows=1 (round-53/correction-1); quality-row-100=true |
+| T12 | no-harm: owned-axes rows byte-equal; province-deletions=0; province-additions=0; log-deletions=0 |
+
+Landing receipts (each exists, parses, and carries the named check at the named revision):
+
+- `.ufo/waves/round-54/l1/scores/c1-before.txt` rev=none check=0-of-9-at-base
+- `.ufo/waves/round-54/l1/scores/c2-before.txt` rev=none check=drift-1-clean-cell-*
+- `.ufo/waves/round-54/l1/scores/c1-after.txt` rev=c753b24f96db335eeeca0003d2906457d6e71849 check=pass-21-fail-0
+- `.ufo/waves/round-54/l1/scores/c2-after.txt` rev=c753b24f96db335eeeca0003d2906457d6e71849 check=drift-0-identity-true
+- `.ufo/waves/round-54/l1/scores/c1-v6-at-landing.json` rev=c753b24f96db335eeeca0003d2906457d6e71849 check=verdict="met"
+- `.ufo/waves/round-54/l1/scores/freeze-gate-landing.json` rev=c753b24f96db335eeeca0003d2906457d6e71849 check=exit=0
+- `.ufo/waves/round-54/l1/records/c2-selftest-receipt.json` rev=none check=cases-32-fail-0
+- `.ufo/waves/round-54/l1/records/c2-control-battery.txt` rev=none check=arms-3-of-3-red
+- `.ufo/waves/round-54/l1/records/c2-after-tip-7c0630ce.json` rev=7c0630ce9114c6b8bcaedb15d1f9d6c9931247a1 check=mismatch-count-0-verdict-met
+- `.ufo/waves/round-54/l1/records/census-e11-repro.txt` rev=none check=exit-1-exact-E11-line
+- `.ufo/waves/round-54/l1/misroot/r53-broad-sweep-retained.txt` rev=none check=total-272-drift-disclosed
+- `.ufo/waves/round-54/l1/misroot/r54-misroot-sweep.json` rev=none check=findings-[]
+
+**Record corrections — round 54** (appended, per QUALITY 65: measured corrections in the
+next record, never a rewrite of the filed text):
+
+- Pointer correction (routed defect 6): the round-53 `misroot-sweep.json` "command" note
+  and the round-53 section above say the over-broad first sweep's 390 hits are "retained
+  in the round report"; the filed report retains only the narrowed 0-findings receipt.
+  The retention target is now `.ufo/waves/round-54/l1/misroot/r53-broad-sweep-retained.txt`
+  (the sweep regenerated 2026-11-01: fleet root 0 hits, lane-checkout root 272 vs the
+  original 390 — the working copies changed after round 53; the drift is disclosed in
+  the listing, not reconciled). The r53 receipt and r53 section text stay as filed.
+- Erratum (routed defect 7): the r53 report's "reader-census.json (35 rows…)" miscounts
+  the pinned JSON — it carries 31 fixture rows + 1 derived lineage + 4 family totals;
+  35 is the round-50 receipt table's row count. The JSON is authoritative; the erratum
+  of record is the knowledge entry's `## Corrections (round 54)` block. The filed
+  report is fleet-owned and stays as filed.
+- Freeze-gate verdict correction event (routed defect 5): recorded as
+  `round-53/correction-1` 
+in `corpus/claim-freezes-corrections.tsv` under QUALITY row
+  100; the round-53 ledger row stays byte-identical.
+
+**planned (next steered round only):** the AVM LE-SquashFS re-freeze stays routed (host
+absent surfaces unchanged); the registry-drift census (`census3` outside-13) stays
+routed; the frozen-instrument portability pass stays planned (a port is a new instrument
+with its own freeze, never a silent patch — M53-2/M54-3 leave the frozen bytes intact).
+
+**retired:** none.
