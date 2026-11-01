@@ -56,3 +56,47 @@ the reset first attempt is disclosed above (M56-2). The frozen instruments and p
 `tools/round-55/corrections-pin.py` `22f77c34…9ece81` (the V-3-revised bytes,
 superseded into the r55 container at `31c2bd50…`), `tools/round-29/freeze-gate.py`
 `25b54339…93eb2` — bytes unchanged from the claims commit `1e2f6cf7…`.
+
+## Corrections (round 57)
+
+Appended by round 57 for the round-56 non-author closure's §7 routed defects
+D1, D2, D3 and D5 (corpus/lessons/round-56-verifier-spotcheck.md). Nothing
+above this block is edited; each correction names the superseded text; the
+filed bytes everywhere stay as filed.
+
+1. **(D1/D2, receipt; supersedes `.ufo/waves/round-56/l1/scores/c1-after.txt`'s
+   V-1/V-5 annotation lines and the round-56 report's after-arm sentence "After
+   at the carry-in landing `31c2bd50` — 4 of 4 (receipt `c1-after.txt`, same
+   commands: 1 / 1 / 0 at `22f77c34…` / 1)".)** The receipt's "== (V-1) ==" and
+   "== (V-5) ==" blocks print 0 and then annotate "grep exit=1 (>=1 -> V-1
+   closed)" / "(>=1 -> V-5 closed)" — the annotations assert the opposite of
+   their own observed output: the probe strings occur nowhere in the committed
+   correction wording. The report's "1 / 1 / 0 / 1" misquotes its own receipt
+   (which prints 0 / 1 / 0 / 0). The corrected after-arm, re-run by round 57
+   with observed outputs (`.ufo/waves/round-57/l1/scores/c1-after.txt`), states
+   V-1 and V-5 as content-checks on markers that DO occur in the committed
+   bytes at `31c2bd506c9c3572124799607edfe4474e8df995`: V-1 `planted empty
+   directory trees mirroring the pathspec` → 1 and `supersedes M55-2` → 1 (the
+   correction block names the superseded text); V-5 `canonical-parameter
+   clarification` → 1 (correction 3's own words). V-2/V-3 re-derive as filed
+   (`supersedes frozen atom T2` → 1; stale prose 0 at the new pin).
+
+2. **(D3, wording; supersedes the same lesson's correction 1 sentence "the four
+   intended paths (`plans/round-55-claims.md`, `tools/round-55/corrections-pin.py`,
+   `tools/round-55/v6-block-digest.py`, `LOG.md`) exist at no path in that
+   commit (`git cat-file -e` rc=128)".)** Overbroad. Re-verified by round 57 at
+   `29a7477bffc417dc5c8be1535f7139dee8c5443c`: `LOG.md` EXISTS there
+   (`git cat-file -e` rc=0), blob `70d3f2af8ba542f2550b2f0f4ee48267ee90cf5f`,
+   byte-identical to the parent `79421b757f36b2ddb776631ecfd57d42dc2f33e2`'s
+   LOG.md blob and carrying no round-55 content — the append never landed.
+   Accurate statement: the THREE new-file paths are absent (rc=128); `LOG.md`
+   is present but unchanged. The tree-level delta statement (the added `C:`
+   chain, every leaf the canonical empty tree) is unaffected.
+
+3. **(D5, number; supersedes the round-56 report's "Every change is tied to a
+   LOG.md entry (LOG insertions only: 45/0 across the round)".)** 45/0 is
+   base→close `047bd98edf19eecad088c5a9a9d3d00135533a18`; at the report's cited
+   tip `b94348580dfff147d4f43597a85c28a5d0609fe7` it is 49/0
+   (`git diff --numstat` re-run by round 57, before receipt
+   `.ufo/waves/round-57/l1/scores/c1-before.txt`). The direction stands —
+   0 deletions at every one of the 7 commits.
