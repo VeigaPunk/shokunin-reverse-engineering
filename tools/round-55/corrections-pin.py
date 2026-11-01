@@ -39,13 +39,17 @@ revision, ledger absent at a revision, or a failed git call).
 writes outside an optional --json-out) and asserts both the exit class and
 the finding id of every case; it is the gate-standard self-invocation mode.
 
-Demonstrations on the committed tree (round 55 receipts):
+Demonstrations on the committed tree (round 55 freeze receipts, transcribed from
+the receipt bytes in round 56 - routed defect V-3 of the round-55 closure fixed
+the stale "line 2"/"<measured rev>" prose here):
   green  --ledger corpus/claim-freezes-corrections.tsv
              --base c753b24f96db335eeeca0003d2906457d6e71849
-             --rev <measured rev>            (appended 0; rows_a 1)
+             --rev 79421b757f36b2ddb776631ecfd57d42dc2f33e2   (the canonical
+             frozen-receipt run, records/pin-green-demo.txt: exit 0, clean,
+             rows 2, appended 0; later re-runs at newer revs verify clean too)
   red    --ledger corpus/claim-freezes-v2.tsv
              --base fe8fab8d --rev f78fc766  (the round-53 in-place verdict
-             edit: row_edited naming line 2's leading cell ``round-53``)
+             edit: row_edited at line 29, leading cell ``round-53``)
 """
 
 from __future__ import annotations
