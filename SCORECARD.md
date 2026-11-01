@@ -4201,3 +4201,82 @@ receipt are corrected in place in the same commit (disclosed in LOG; the pinned
 instruments are untouched and the gate re-run is CLEAN). The ledger row's sha
 citations are corrected by the appended `round-55/correction-1` row, never by an
 in-place edit (QUALITY row 100).
+
+## Round 56 (2026-11-01) — the carry-in repair round: the four r55-closure items close, and the M55-4 rule becomes an instrument
+
+Fresh-start binding honored (the prompt's §7 list r50/r51/r52 re-read; note: the three
+listed rejections predate the admitted r53-r55 chain), L1-inline on the Windows host.
+Base `fe3a804f…` (the r55 spot-check commit), declaration `1e2f6cf7…`, carry-in landing
+`31c2bd50…` (the r55 lesson's `## Corrections (round 56)` block + the supersession
+disclosed in the r55 container), operative freeze `19eef5ee…` (first commit adding
+`.ufo/waves/round-56/claims.json`; the first freeze attempt was reset pre-data and
+disclosed — M56-2, the M55-3 pattern), landing `6314b99b…`. No wave (no dispatch
+surface; the kaidoku round-53 L0 question stays open). Executed instruments: the new
+frozen round-56 gate (`tools/round-56/receipt-audit.py` pin `897df532…`), the
+V-3-revised corrections-pin (`tools/round-55/corrections-pin.py` pin `22f77c34…`,
+superseded into the r55 container), and the R29 gate itself (pin `25b54339…`). Claims:
+R56-C1 (calibration) — the four r55-closure carry-in items (V-1 wording, V-2 T2
+correction, V-3 docstring+re-pin, V-5 canonical rev); R56-C2 (depth, capability
+acquisition) — the freeze-receipt completeness gate. Lowest-axis rule: all three owned
+axes tied at 10.0, so C1 (calibration) is a lowest-axis claim; stagnation nudge not
+fired (window N=10, last capability r55, r56 = 7/10).
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R56-C1 | calibration — the four r55-closure carry-in items (r55 spot-check §7 items 1-4, status-neutral) | at the base `fe3a804f…`: 0 of 4 present — V-1/V-2/V-5 correction markers 0 in the r55 lesson, stale docstring prose 1 match at the old pin `f71e6b21…` (receipt `.ufo/waves/round-56/l1/scores/c1-before.txt`, committed at the freeze) | 4-of-4 content-checked at the carry-in landing `31c2bd50…` (receipt `.../scores/c1-after.txt`): V-1 the object-accurate `C:`-subtree wording correction (ONLY empty directory trees, zero blobs — re-verified by this round at `29a7477b`); V-2 the frozen-atom-T2 correction block (the receipt landed at `627a9c20…`, container stays as filed); V-3 stale prose 0 matches at the new pin `22f77c34…`, selftest 11/0, both demos re-run unchanged, supersession disclosed; V-5 the canonical green-demo clarification (frozen receipt `c753b24f…→79421b75…` is the receipt of record) | the per-check commands are transcribed in `.../scores/c1-after.txt` (`git show <rev>:<file> | grep -c`, `| sha256sum`, pasted with outputs) | `.ufo/waves/round-56/l1/scores/c1-after.txt` (rev `31c2bd50…`) |
+| R56-C2 | depth, capability acquisition — `tools/round-56/receipt-audit.py`: the M55-4 fix rule as an instrument (freeze-receipt completeness: every receipt a claims container claims must resolve at the named revision) | at the base: instrument absent (`cat-file -e` rc=128), 0 SKILL registry rows, 0 capability rows (receipt `.../scores/c2-before.txt`) | selftest 9 cases 0 failures; red demo exit 1 `RECEIPT_ABSENT` on the historical M55-4 event (r55 container at its freeze `1f9be6eb…`, bare name `freeze-gate-tip-90f3a9b9.json` in round-55 scope); at `627a9c20…` still ABSENT in round-55 scope (recorded truthfully; the repair is this round's container); green demo exit 0 on this round's own freeze (receipts_checked 10); the round's own freeze verified by the gate (13 landed = 13 intended, every claimed receipt `cat-file -e` OK); registry row in SKILL; capability row below | `python -X utf8 -I -B tools/round-56/receipt-audit.py --selftest`; the demo commands pasted with outputs in `.../scores/c2-after.txt` | `.ufo/waves/round-56/l1/scores/c2-after.txt` (rev `6314b99b…`) |
+
+Owned scores: coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10` — the
+Owned-axes rows are byte-equal base→landing; PROVINCE is untouched. LOG append-only
+(insertions only). The SKILL v6 marker block is untouched by this round (the SKILL
+delta is exactly one registry row + one disclosed pin-cell note). Learning trends:
+expansion **unchanged** (no Frontier→Core move; S256 grounds an existence-check
+discipline, not a surface); quality **improved** (all four carry-in items closed with
+committed, content-checked receipts; a stale docstring superseded by a disclosed
+instrument revision; the corrections ledger's append legality this round re-verified by
+the r55 pin — appended 1, clean); discernment **unchanged** pending the outside
+spot-check (the round executes the last closure's routed list verbatim and self-routes
+three mistakes M56-1..M56-3; the round's own freeze was red-flagged by its own new gate
+pre-data and re-frozen with disclosure).
+
+Round-56 record atoms (each re-derived by the plain command in `scores/c1-after.txt` /
+`c2-after.txt` at the measured revision):
+
+| atom | declared value |
+|---|---|
+| T1 | log-declaration-entry=true; claims-file-cited=true; log-deletions=0 |
+| T2 | freeze=19eef5ee; instruments=3 pinned (round-56 receipt-audit 897df532, round-55 corrections-pin 22f77c34 — V-3-revised, superseded in the r55 container at 31c2bd50, round-29 freeze-gate 25b54339); gate-verdict=CLEAN (pre-flight at the freeze: round-56 CLEAN with disclosures 30/31 exact + missing [round-56], the row landing later) |
+| T3 | c1-before: 0-of-4 carry-in items at base fe3a804f |
+| T4 | c1-after: 4-of-4 content-checked at the carry-in landing 31c2bd50 |
+| T5 | c2-before: instrument absent; registry rows 0; capability rows 0 |
+| T6 | c2-after: selftest 9/0; red demo exit 1 RECEIPT_ABSENT at 1f9be6eb; r55-at-627a9c20 still ABSENT in round-55 scope (truthful); green demo exit 0 at the freeze 19eef5ee; registry row 1; capability row 1 |
+| T7 | sources-before=162; sources-after=163; new-rows=S256(A); used-by-ok=true |
+| T8 | census start-exit=0; end-exit=0; w04-start=19; w04-end=19 |
+| T9 | r55-lesson Corrections (round 56) block present naming V-1/V-2/V-5; r55 container instrument_supersessions entry naming 1e2f6cf7; r55 freeze CLEAN at 31c2bd50 with disclosures 30/30 |
+| T10 | ledger-row=round-56; ledger-verdict=CLEAN; gate-exit=0; disclosures 31/31 at the landing 6314b99b |
+| T11 | M55-4 rule executed on this round's own freeze: 13 landed = 13 intended; every claimed receipt cat-file -e OK; the gate's green pre-flight caught the first attempt's T3 defect pre-data (M56-2) |
+| T12 | no-harm: owned-axes rows byte-equal; province-diff empty; log-deletions=0; the SKILL v6 marker block untouched; the three frozen instrument pins re-derived by the gate at the landing |
+
+Landing receipts (each exists, parses, and carries the named check at the named revision):
+
+- `.ufo/waves/round-56/l1/scores/c1-before.txt` rev=none check=0-of-4-at-base
+- `.ufo/waves/round-56/l1/scores/c2-before.txt` rev=none check=instrument-absent-0-0
+- `.ufo/waves/round-56/l1/scores/c1-after.txt` rev=31c2bd506c9c3572124799607edfe4474e8df995 check=4-of-4-content-checked
+- `.ufo/waves/round-56/l1/scores/c2-after.txt` rev=6314b99b179260eb6906c30ad981a3968d7c80c2 check=selftest-9-0-red-1-green-0-rows-1-1
+- `.ufo/waves/round-56/l1/scores/freeze-gate-preflight.json` rev=19eef5ee93c14972be5756bd1d8bc1f346c3b1dd check=round-56-CLEAN-30-of-31-missing-round-56-disclosed
+- `.ufo/waves/round-56/l1/scores/freeze-gate-landing.json` rev=6314b99b179260eb6906c30ad981a3968d7c80c2 check=exit-0-disclosures-31-of-31
+- `.ufo/waves/round-56/l1/records/selftests.txt` rev=none check=9-0-and-11-0
+- `.ufo/waves/round-56/l1/records/pin-green-demo.txt` rev=none check=clean-rows-2-appended-0-canonical-79421b75
+- `.ufo/waves/round-56/l1/records/pin-red-demo.txt` rev=none check=exit-1-row_edited-line-29
+- `.ufo/waves/round-56/l1/records/receipt-audit-red-demo.txt` rev=none check=exit-1-RECEIPT_ABSENT-at-1f9be6eb
+- `.ufo/waves/round-56/l1/records/receipt-audit-r55-at-landing.txt` rev=none check=still-ABSENT-in-round-55-scope-at-627a9c20
+- `.ufo/waves/round-56/l1/records/receipt-audit-green-r56.txt` rev=19eef5ee93c14972be5756bd1d8bc1f346c3b1dd check=exit-0-clean-checked-10
+- `.ufo/waves/round-56/l1/s256/digests.txt` rev=none check=git-cat-file-html-624464ef
+
+**planned (next steered round only):** the AVM LE-SquashFS re-freeze stays routed
+(host absent surfaces unchanged); the registry-drift census (census3 outside-13) stays
+routed; a census-safe W04 supersedes set stays open (19 standing warnings; the r56
+ruling — the W04 check precedes status, no appended row clears a cross-scope duplicate
+— is recorded in LOG and the plans file).
+
+**retired:** none.

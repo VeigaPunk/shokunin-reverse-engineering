@@ -1,0 +1,44 @@
+kaidoku round-56 AFTER arm, C2 (the receipt-audit capability at the landing 6314b99b179260eb6906c30ad981a3968d7c80c2)
+
+== selftest ==
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --selftest
+receipt-audit selftest: extraction 2 + audit 7 cases, failures 0
+exit=0
+
+== red demo (the M55-4 event) ==
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-55/claims.json --rev 1f9be6eb
+ "exit": 1,
+   "finding": "RECEIPT_ABSENT",
+   "name": "freeze-gate-tip-90f3a9b9.json",
+ "verdict": "failed"
+exit=1 (1 with RECEIPT_ABSENT -> red)
+
+== r55 container at the landing 627a9c20 (still ABSENT in round-55 scope) ==
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-55/claims.json --rev 627a9c20 | grep '"verdict"'
+ "verdict": "failed"
+exit=1
+
+== green demo (this round's container at its freeze) ==
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-56/claims.json --rev 19eef5ee | grep -E '"verdict"|"receipts_checked"'
+ "receipts_checked": 10,
+ "verdict": "clean"
+exit=0 (0 -> clean)
+
+== registry row in SKILL ==
+$ git show 6314b99b179260eb6906c30ad981a3968d7c80c2:SKILL.md | grep -c 'round-56/receipt-audit'
+1
+grep exit=0 (>=1 -> row landed)
+
+== capability row in SCORECARD ==
+$ git show 6314b99b179260eb6906c30ad981a3968d7c80c2:SCORECARD.md | grep -c 'freeze-receipt completeness gate'
+1
+grep exit=0 (1 -> capability row landed)
+
+== the corrections-pin re-demos at this landing (V-3 unchanged verdicts) ==
+$ python -X utf8 -I -B tools/round-55/corrections-pin.py --selftest
+corrections-pin selftest: cases 11, failures 0
+exit=0
+$ python -X utf8 -I -B tools/round-55/corrections-pin.py --root . --ledger corpus/claim-freezes-v2.tsv --base 19eef5ee --rev 6314b99b179260eb6906c30ad981a3968d7c80c2 | grep -E 'verdict|appended'
+ "appended": 1,
+ "verdict": "clean"
+exit=0 (0, appended 1, clean -> this round's own ledger append is pin-verified)
