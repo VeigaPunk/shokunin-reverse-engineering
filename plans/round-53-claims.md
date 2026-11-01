@@ -36,6 +36,9 @@ rule. **Stagnation nudge:** saturation line 10.0, window N=10, last capability r
 is round 4 of the window, so the nudge has not fired; the round is not obliged to be a
 frontier/capability move and declares none.
 
+claim_row: S253
+entry: corpus/knowledge/2026-10-31-r53-triage-v6-reader-census.md
+
 ## R53-C1 — depth: triage table v6, the fixture-level reader census, and the executability audit
 
 Surface moved: `SKILL.md` `## Queue-drain craft` — rule block 26 (triage table v5) gains block
@@ -286,6 +289,8 @@ of them touches a claim's target, corpus, evaluator semantics or scoring arms.
 
 
 - **A9 — the record oracle's T2 grammar (same re-freeze as A8, commit 6ead6f1bc8cfe7dd74f39ed3a4880a3ad5c90c04).** T2 became key-driven over the claims container's frozen_atoms and the container's T2 clause became `claims-file-cited` (A8); the instrument pin for `tools/round-53/r53-record.py` was re-taken in the same commit. Consequence, declared before data: the freeze gate compares pins against blobs at the FIRST commit that added the container, so round-53 audits as `INSTRUMENT_PIN_MISMATCH,INSTRUMENT_REVISED` and the ledger row records that verdict verbatim (the gate requires agreement, not cleanliness; its exit-0 needs the disclosures exact, which the landing provides). The operative freeze is the re-freeze commit; the before-receipts are taken against it (instrument and census bytes are identical to the first freeze; the first freeze stays an ancestor and is disclosed in LOG and SCORECARD).
+
+- **A10 — the landed clean row's census cell (pre-scoring table correction; the instrument stays frozen).** The first landing scored the frozen instrument against the landed table and caught one real divergence: `dep_A2_squashfs_v4_le` (a v4-family clean run whose fixture lies outside the census, census status unknown) — the declared `partial,readable` cell cannot express the evaluator's else-branch. The landed cell is `*`: the two census-conditioned rows above are the guard, so the clean row with `*` is equivalent to the evaluator on every input (the corpus now scores 0 mismatches). The embedded selftest draft keeps the old cell and is disclosed as M53-5; the instrument's bytes, pin and evaluator are unchanged — the table is the scored surface, and this amendment lands with the corrected table before any score is cited.
 
 The freeze container is `.ufo/waves/round-53/claims.json` (top-level
 `instruments` map, the shape the lane's freeze gate accepts); the T1/T2
