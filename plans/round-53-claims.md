@@ -282,6 +282,8 @@ of them touches a claim's target, corpus, evaluator semantics or scoring arms.
 - **A7 — S253.** The row was opened by this session on this host (cloned read-only,
   snapshot bytes `.ufo/waves/round-53/l1/s253/`); the round-50 census receipt it
   lines up with was already committed.
+- **A8 — T2's frozen atom grammar (single pre-data re-freeze of the claims container).** The first freeze (94efae0d…) carried frozen T2 `claims-commit=4cb12b41…`, but the declaration commit cannot cite its own hash in LOG, so the clause was unsatisfiable at the freeze it names (measured: the c2-before run at that commit scored T2 red). The container's T2 clause is amended to `claims-file-cited` (LOG names `plans/round-53-claims.md`), the oracle's T2 becomes key-driven, and the operative freeze is the commit that lands this amendment. The C1 receipts pin the first freeze, which stays an ancestor; census and instrument bytes are identical in both commits. Disclosed before any data landing; no counter bug was patched, the oracle change is in the freeze itself.
+
 
 The freeze container is `.ufo/waves/round-53/claims.json` (top-level
 `instruments` map, the shape the lane's freeze gate accepts); the T1/T2

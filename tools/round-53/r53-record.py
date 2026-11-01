@@ -310,17 +310,33 @@ def atom_t1(root, rev, freeze, base, atoms):
 
 def atom_t2(root, rev, base, atoms):
     log = blob_text(root, rev, 'LOG.md')
-    claims_commit = _cell(atoms, 'T2', 'claims-commit')
-    entry_ok = ('round 53' in log and 'KaidokuR53' in log
-                and claims_commit[:12] in log)
     diff = git(root, ['diff', '%s..%s' % (base, rev), '--', 'LOG.md'])
     deletions = [l for l in diff.stdout.splitlines()
                  if l.startswith('-') and not l.startswith('---')]
-    declared_deletions = _cell_int(atoms, 'T2', 'log-deletions')
-    return (entry_ok is (_cell(atoms, 'T2', 'log-declaration-entry') == 'true')
-            and declared_deletions == len(deletions),
-            'entry %s, deletions %d/%d' % (entry_ok, declared_deletions,
-                                           len(deletions)))
+    observed = {
+        'log-declaration-entry': ('round 53' in log and 'KaidokuR53' in log),
+        'claims-file-cited': 'plans/round-53-claims.md' in log,
+        'log-deletions': len(deletions),
+    }
+    declared = {}
+    for part in atoms['T2'].split(';'):
+        key, _, value = part.strip().partition('=')
+        if not value:
+            raise ValueError('T2 clause %r is not key=value' % part.strip())
+        declared[key.strip()] = value.strip()
+    unknown = set(declared) - set(observed)
+    if unknown:
+        raise ValueError('T2 declares unknown keys %r' % sorted(unknown))
+    for key, value in declared.items():
+        want = observed[key]
+        if key == 'log-deletions':
+            if not re.match(r'^\d+$', value) or int(value) != want:
+                return False, 'log-deletions %s vs observed %d' % (value, want)
+        elif value != ('true' if want else 'false'):
+            return False, '%s declared %s, observed %s' % (key, value, want)
+    return True, 'entry %s, file-cited %s, deletions %d' % (
+        observed['log-declaration-entry'], observed['claims-file-cited'],
+        observed['log-deletions'])
 
 
 def atom_t3(root, rev, atoms):
@@ -742,15 +758,15 @@ SOURCES_V1 = ('## Registry\n\n| id | source | kind | tier '
 SOURCES_V2 = SOURCES_V1.rstrip('\n') + (
     '\n| S253 | d | code | A | s | a | t | mined | 2026-10-31 | on-release | '
     'corpus/knowledge/2026-10-31-r53-triage-v6-reader-census.md |\n')
-ENTRY = '## 2026-10-30 - round 53, KaidokuR53 - declared (claims commit %s)\n'
+ENTRY = ('## 2026-10-30 - round 53, KaidokuR53 - declared'
+         ' (claims commit %s; plans/round-53-claims.md)' + chr(10))
 CLAIMS_COMMIT = '0' * 40
 
 
 def _frozen_atoms_text():
     return {
         'T1': 'instruments=3; added=3; pins-rederive=true',
-        'T2': 'log-declaration-entry=true; claims-commit=%s; log-deletions=0'
-              % CLAIMS_COMMIT,
+        'T2': 'log-declaration-entry=true; claims-file-cited=true; log-deletions=0',
     }
 
 
