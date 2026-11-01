@@ -1,0 +1,87 @@
+kaidoku round-55 — the v6-table digest made reproducible (routed defect: round-54 spot-check §5 item 3)
+
+== The superseded value ==
+.ufo/waves/round-54/l1/scores/c2-after.txt line 9 states: table sha256
+base=b340ed2b48facca7 landing=b340ed2b48facca7 identical=True — a 16-hex prefix
+with NO extraction command. The round-54 closure (§2 C2, §5 item 3) re-derived
+byte-identity under three independent boundaries (rows+markers 946e5359…,
+rows-only f1061a13…, marker+actions+rows 13f36f36…) but reproduced none of them
+at b340ed2b48facca7.
+
+== Disclosure sweep (2026-11-01, this round): ~100 extraction boundaries tried ==
+Boundary families attempted against SKILL.md at the base 45c68786…, the landing
+c753b24f…, the close tip 90f3a9b9… and the r55 base 79421b75… (each hashed with
+sha256 and compared to the target prefix b340ed2b48facca7):
+ 1. section boundaries: marker..last-table-row ± 0/1/2 trailing blank lines;
+    marker..next-non-blank; marker..end-of-file
+ 2. section starts: marker / actions line / header row / separator+rows /
+    data-rows-only
+ 3. joiners: LF / no separator / single space; suffixes: with and without one
+    trailing LF
+ 4. normalizations: right-stripped lines; two-space dedent; CRLF translation
+ 5. combinations: base-extraction + landing-extraction concatenated; the two
+    hex digests concatenated; the table lines as a JSON array
+ 6. the worktree file bytes read directly (LF; whole file; same boundaries)
+ 7. instrument-native: tools/round-53/sqfs-triage-v6.py parse_table +
+    render_table output, and the parsed rules as sorted JSON
+Result: ZERO of the ~100 extractions reproduce b340ed2b48facca7. The original
+command died with the round-54 scratch and is not recoverable; the value is
+herewith SUPERSEDED (never deleted from the filed receipt, which stays as
+landed) by the pinned command below.
+
+== The extraction of record ==
+Command: python -X utf8 -I -B tools/round-55/v6-block-digest.py --root . --rev <REV>
+Definition: SKILL.md bytes at REV from git objects; split on LF; the single line
+containing '<!-- sqfs-triage-table v6 -->' through the last consecutive
+'|'-leading line (marker + actions comment + header + separator + 19 data rows),
+LF-joined with one trailing LF; sha256 of those bytes.
+
+-- rev 45c6878634c16caa8e3e63472b30e439581b3a0d
+{
+ "bytes": 8961,
+ "extraction": "marker line through the last consecutive '|'-leading line, LF-joined with one trailing LF (see module docstring)",
+ "lines": 23,
+ "marker": "<!-- sqfs-triage-table v6 -->",
+ "path": "SKILL.md",
+ "rev": "45c6878634c16caa8e3e63472b30e439581b3a0d",
+ "sha256": "946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc"
+}
+-- rev c753b24f96db335eeeca0003d2906457d6e71849
+{
+ "bytes": 8961,
+ "extraction": "marker line through the last consecutive '|'-leading line, LF-joined with one trailing LF (see module docstring)",
+ "lines": 23,
+ "marker": "<!-- sqfs-triage-table v6 -->",
+ "path": "SKILL.md",
+ "rev": "c753b24f96db335eeeca0003d2906457d6e71849",
+ "sha256": "946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc"
+}
+-- rev 90f3a9b9d3970ae87173787521a821132c10c66c
+{
+ "bytes": 8961,
+ "extraction": "marker line through the last consecutive '|'-leading line, LF-joined with one trailing LF (see module docstring)",
+ "lines": 23,
+ "marker": "<!-- sqfs-triage-table v6 -->",
+ "path": "SKILL.md",
+ "rev": "90f3a9b9d3970ae87173787521a821132c10c66c",
+ "sha256": "946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc"
+}
+-- rev 79421b757f36b2ddb776631ecfd57d42dc2f33e2
+{
+ "bytes": 8961,
+ "extraction": "marker line through the last consecutive '|'-leading line, LF-joined with one trailing LF (see module docstring)",
+ "lines": 23,
+ "marker": "<!-- sqfs-triage-table v6 -->",
+ "path": "SKILL.md",
+ "rev": "79421b757f36b2ddb776631ecfd57d42dc2f33e2",
+ "sha256": "946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc"
+}
+
+== Reading ==
+The full digest 946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc
+(23 lines, 8961 bytes) is identical at the round-53 base, the round-54 landing,
+the round-54 close tip and the round-55 base: the claim the round-54 receipt
+supported (table bytes byte-identical base->landing) is TRUE and is now
+re-derivable by the command above. The r54 closure's independent boundaries
+(946e5359… equals this command's marker..lastrow extraction; f1061a13…;
+13f36f36…) agree on the identity finding.

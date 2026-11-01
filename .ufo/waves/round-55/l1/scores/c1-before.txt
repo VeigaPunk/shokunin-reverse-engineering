@@ -1,0 +1,29 @@
+kaidoku round-55 BEFORE arm, C1 (the four routed r54 closure defects at the base 79421b757f36b2ddb776631ecfd57d42dc2f33e2)
+
+== (a) tip gate receipt absent ==
+$ git cat-file -e 79421b757f36b2ddb776631ecfd57d42dc2f33e2:.ufo/waves/round-54/l1/scores/freeze-gate-tip-90f3a9b9.json
+fatal: path '.ufo/waves/round-54/l1/scores/freeze-gate-tip-90f3a9b9.json' exists on disk, but not in '79421b757f36b2ddb776631ecfd57d42dc2f33e2'
+cat-file exit=128 (absent -> closure (a) open)
+
+== (b) no Corrections (round 55) block in the r54 lesson ==
+$ git show 79421b757f36b2ddb776631ecfd57d42dc2f33e2:corpus/lessons/round-54.md | grep -c 'Corrections (round 55)'
+0
+grep exit=1 (0 matches -> closure (b) open)
+
+== (c) no reproducible-digest instrument and no extraction command in the r54 receipt ==
+$ git cat-file -e 79421b757f36b2ddb776631ecfd57d42dc2f33e2:tools/round-55/v6-block-digest.py
+fatal: path 'tools/round-55/v6-block-digest.py' exists on disk, but not in '79421b757f36b2ddb776631ecfd57d42dc2f33e2'
+cat-file exit=128 (absent)
+$ git show 79421b757f36b2ddb776631ecfd57d42dc2f33e2:.ufo/waves/round-54/l1/scores/c2-after.txt | grep -c 'extraction'
+0
+grep exit=1 (0 matches -> the receipt names no extraction command -> closure (c) open)
+
+== (d) no anchoring convention row and no mechanical pin ==
+$ git show 79421b757f36b2ddb776631ecfd57d42dc2f33e2:corpus/QUALITY.md | grep -c 'correction-block list item'
+0
+grep exit=1 (0 matches)
+$ git cat-file -e 79421b757f36b2ddb776631ecfd57d42dc2f33e2:tools/round-55/corrections-pin.py
+fatal: path 'tools/round-55/corrections-pin.py' exists on disk, but not in '79421b757f36b2ddb776631ecfd57d42dc2f33e2'
+cat-file exit=128 (absent -> closure (d) open)
+
+SUMMARY: 0 of 4 routed-r54-closure repairs present at the base
