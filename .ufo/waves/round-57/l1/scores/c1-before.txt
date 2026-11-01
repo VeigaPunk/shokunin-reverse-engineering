@@ -1,0 +1,59 @@
+kaidoku round-57 BEFORE arm, C1 (the eight r56-closure routed defects D1-D8, all open at the base 63413677ec0531e38722b8dbfb0b89a0bc113d04; probes pasted with observed outputs)
+
+== (D1) c1-after.txt V-1/V-5 lines conclude ">=1 -> closed" on observed 0 ==
+$ git show 63413677:.ufo/waves/round-56/l1/scores/c1-after.txt | grep -c '>=1 -> V-1 closed'
+1
+$ git show 63413677:.ufo/waves/round-56/l1/scores/c1-after.txt | grep -c '>=1 -> V-5 closed'
+1
+(the receipt's own printed outputs on those lines are 0 and 0; the annotations assert the opposite; the r56 spot-check re-derived the same greps. The r57 erratum is absent at base:)
+$ git show 63413677:corpus/lessons/round-56.md | grep -c 'Corrections (round 57)'
+0
+
+== (D2) the C1 after-arm as stated re-derives only for V-2/V-3 ==
+(the report quotes "1 / 1 / 0 / 1" where its own receipt prints 0 / 1 / 0 / 0. The content-check markers that DO occur in the committed correction wording at 31c2bd50, measured now for the after arm:)
+$ git show 31c2bd50:corpus/lessons/round-55.md | grep -c 'planted empty directory trees mirroring the pathspec'
+1
+$ git show 31c2bd50:corpus/lessons/round-55.md | grep -c 'canonical-parameter clarification'
+1
+$ git show 31c2bd50:corpus/lessons/round-55.md | grep -c 'supersedes M55-2'
+1
+(at the base no erratum restates the after-arm on these markers — see D1's 0.)
+
+== (D3) the V-1 correction block's path claim is overbroad ==
+$ git show 63413677:corpus/lessons/round-55.md | grep -c 'exist at no path in that commit'
+1
+(object facts re-verified by this round at 29a7477bffc417dc5c8be1535f7139dee8c5443c: git cat-file -e 29a7477b:LOG.md -> rc=0, blob 70d3f2af8ba542f2550b2f0f4ee48267ee90cf5f, byte-identical to the parent 79421b75's LOG.md blob; the three NEW-file paths plans/round-55-claims.md, tools/round-55/corrections-pin.py, tools/round-55/v6-block-digest.py -> rc=128 each. So "the four intended paths exist at no path" is false for LOG.md: it is present but UNCHANGED — the append never landed. No erratum names this at base.)
+
+== (D4) the third worktree-only receipt ==
+$ git ls-tree -r --name-only 63413677 -- .ufo/waves/round-56/ | grep -c 'receipt-audit-green-r56.txt'
+0
+$ git cat-file -e 63413677:.ufo/waves/round-56/l1/records/receipt-audit-green-r56.txt
+fatal: path '.ufo/waves/round-56/l1/records/receipt-audit-green-r56.txt' exists on disk, but not in '63413677ec0531e38722b8dbfb0b89a0bc113d04'  (rc=128)
+(the record section names it rev=19eef5ee... check=exit-0-clean-checked-10; cited by SCORECARD 2x, the LOG landing entry, the SKILL registry row. The new instrument's red demo at the base: named 14, missing 1 — records/red-demo-at-base.txt, committed with the freeze.)
+
+== (D5) the r56 report's "LOG insertions only: 45/0 across the round" ==
+$ git diff --numstat fe3a804fa8c2d5ff078c6253a5df1bdbc2f28fca 047bd98edf19eecad088c5a9a9d3d00135533a18 -- LOG.md
+45	0	LOG.md
+$ git diff --numstat fe3a804fa8c2d5ff078c6253a5df1bdbc2f28fca b94348580dfff147d4f43597a85c28a5d0609fe7 -- LOG.md
+49	0	LOG.md
+(45/0 is base->close 047bd98e; at the report's cited tip b9434858 it is 49/0. Direction conservative — 0 deletions at every one of the 7 commits — but the number as stated is the close, not the tip.)
+
+== (D6) the LOG freeze entry's disclosure clause overstates ==
+$ git show 63413677:LOG.md | grep -c 'The discarded sha is disclosed here'
+1
+(no sha value is printed anywhere in that entry; the discarded first freeze attempt is unpushed and uncited. This round locates it in the main reflog: db3e94cdd155aea8c3cff2b0ced96bd16ceed1a9, parent 31c2bd50, not an ancestor of main (merge-base --is-ancestor rc=1), absent from origin/main — the correction entry prints it.)
+
+== (D7) the R29 tip-run (047bd98e) has no committed receipt ==
+$ git ls-tree -r --name-only 63413677 -- .ufo/waves/round-56/l1/scores/
+.ufo/waves/round-56/l1/scores/c1-after.txt
+.ufo/waves/round-56/l1/scores/c1-before.txt
+.ufo/waves/round-56/l1/scores/c2-after.txt
+.ufo/waves/round-56/l1/scores/c2-before.txt
+.ufo/waves/round-56/l1/scores/freeze-gate-landing.json
+.ufo/waves/round-56/l1/scores/freeze-gate-preflight.json
+(the committed receipts cover the preflight 19eef5ee and the landing 6314b99b only; the close-tip run at 047bd98e — exit 0, 31/31 — is transcribed in the r56 report's verification block alone. This round re-runs the gate at 047bd98e and lands the receipt.)
+
+== (D8) the SCORECARD C1 row says "r55 spot-check §7 items 1-4" ==
+$ git show 63413677:SCORECARD.md | grep -c 'spot-check §7 items 1-4'
+1
+(the r55 spot-check §7 routes items 1, 2, 3 and 5 to the lane; item 4 (V-4) is an operator note, correctly not claimed by r56 — the report and every other artifact say 1, 2, 3, 5.)
