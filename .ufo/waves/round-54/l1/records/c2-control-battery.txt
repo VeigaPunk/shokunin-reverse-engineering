@@ -1,0 +1,60 @@
+kaidoku round-54 receipt: the round-53 C2 control battery, now with a committed receipt
+utc: 2026-11-01T05:23:23Z
+Routed defect 4: the r53 report asserted a pre-data C2 control battery (junk record /
+forged receipt / falsified wave / >=10-mutation battery) with no committed receipt
+artifact. This transcript drives the FROZEN tools/round-53/r53-record.py (bytes
+unchanged; sha256 below) over a miniature r53 fixture built in scratch, one arm per
+asserted control; the >=10-mutation arm is the oracle's own --selftest battery (10
+single-atom mutations), receipted separately as c2-selftest-receipt.json.
+oracle sha256: c9fd8c682040e3fa283a5268ddb9db26d1696c3dcb3a63fe4053e53ab90591d2
+
+## arm: junk-record
+$ python -X utf8 -I -B tools/round-53/r53-record.py --root <fixture> --rev 14b53b7a9bb1 --freeze b1ff12622776 --base 3b13c47bf169
+[stdout] T1   ok added 3/3, pins 3/3
+    T2   ok entry True, file-cited True, deletions 0
+    T3   ok dispatch digests match; seat-dirs 0; results absent
+    T4   MISMATCH receipts 99 declared, 6 lines
+    T5   ok w04 start 1/1 end 1/1
+    T6   ok rows 3->4, new rows S253(A)
+    T7   ok 10 atoms parse
+    T8   ok owned rows and province and production diffs re-derive
+    T9   ok ledger row round-53 CLEAN and gate receipt re-derive
+    T10  ok misroot findings 0/0
+  atoms: 10   mismatches: 1 ['T4']
+exit=1   expected-fragment 'T4' present: True
+
+## arm: forged-receipt
+$ python -X utf8 -I -B tools/round-53/r53-record.py --root <fixture> --rev ab29a764f1fb --freeze b1ff12622776 --base 3b13c47bf169
+[stdout] T1   ok added 3/3, pins 3/3
+    T2   ok entry True, file-cited True, deletions 0
+    T3   ok dispatch digests match; seat-dirs 0; results absent
+    T4   MISMATCH .ufo/waves/round-53/l1/scores/c1-after.json rev '3b13c47bf16945385d562fb581cec30933ba5e4a' != declared 'b65e1641a3dd9d932134673a2a1c56a7214fc225'
+    T5   ok w04 start 1/1 end 1/1
+    T6   ok rows 3->4, new rows S253(A)
+    T7   ok 10 atoms parse
+    T8   ok owned rows and province and production diffs re-derive
+    T9   ok ledger row round-53 CLEAN and gate receipt re-derive
+    T10  ok misroot findings 0/0
+  atoms: 10   mismatches:
+exit=1   expected-fragment 'T4' present: True
+
+## arm: falsified-wave
+$ python -X utf8 -I -B tools/round-53/r53-record.py --root <fixture> --rev c8d9d2df9610 --freeze b1ff12622776 --base 3b13c47bf169
+[stdout] T1   ok added 3/3, pins 3/3
+    T2   ok entry True, file-cited True, deletions 0
+    T3   MISMATCH results file absent
+    T4   ok 6 receipts re-derive; section introduced at fea3e957c92e
+    T5   ok w04 start 1/1 end 1/1
+    T6   ok rows 3->4, new rows S253(A)
+    T7   ok 10 atoms parse
+    T8   ok owned rows and province and production diffs re-derive
+    T9   ok ledger row round-53 CLEAN and gate receipt re-derive
+    T10  ok misroot findings 0/0
+  atoms: 10   mismatches: 1 ['T3']
+exit=1   expected-fragment 'T3' present: True
+
+## arm: mutation-battery (>=10 mutations)
+delegated to the frozen oracle's own --selftest (10 single-atom mutations, each
+flipping exactly its own atom): receipt c2-selftest-receipt.json (32 cases).
+
+battery verdict: ALL ARMS RED AS ASSERTED (3/3 red arms matched their atom)
