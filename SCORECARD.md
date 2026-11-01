@@ -4083,3 +4083,106 @@ routed; the frozen-instrument portability pass stays planned (a port is a new in
 with its own freeze, never a silent patch — M53-2/M54-3 leave the frozen bytes intact).
 
 **retired:** none.
+
+## Round 55 (2026-11-01) — the carry-in repair round: four routed round-54 closure defects close, and the corrections ledger gains its mechanical pin
+
+Fresh-start repair round, L1-inline on the Windows host. Base `79421b75…` (the r54
+spot-check commit), declaration `23f746f3…`, operative freeze `622b8e38…` (first commit
+adding `.ufo/waves/round-55/claims.json`; an unpinned first freeze attempt was reset
+before landing, M55-3), landing `765118a4…`, landing follow-up `e21be31a…` (the r54
+tip-gate receipt the freeze pathspec had silently dropped, M55-4). No wave (no
+dispatch surface; the kaidoku round-53 L0 question stays open). Executed instruments:
+the two new frozen round-55 tools (`tools/round-55/corrections-pin.py` pin
+`f71e6b21…`, `tools/round-55/v6-block-digest.py` pin `22785c1e…`, both re-derived by
+the gate) and the R29 gate itself (pin `25b54339…` — the first claims file to pin it).
+CORRECTION to this card's round-54 section (below). Claims: R55-C1 (calibration) —
+the four routed-r54 closure repairs (a)-(d); R55-C2 (depth, capability acquisition) —
+the corrections-ledger mechanical pin. Lowest-axis rule: all three owned axes tied at
+10.0, so C1 (calibration) is a lowest-axis claim; stagnation nudge not fired (window
+N=10, last capability r49, r55 = 6/10).
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R55-C1 | calibration — the round-54 record's receipted completeness against the r54 closure's §5 list (items 1-4) | at the base `79421b75…`: 0 of 4 repairs present — tip-receipt path absent, zero `Corrections (round 55)` blocks in the r54 lesson, no digest instrument and no extraction command in the r54 c2-after receipt, no anchoring row in QUALITY and no pin (receipt `.ufo/waves/round-55/l1/scores/c1-before.txt`, committed at the freeze) | 4/4 repairs present and content-checked (receipt `.../scores/c1-after.txt`): (a) tip receipt exit 0 + CLEAN + exact 29; (b) correction block naming both frozen instruments; (c) full digest `946e5359…d204bcc` identical at 45c68786/c753b24f/90f3a9b9/e21be31a with the disclosure sweep transcribed; (d) QUALITY row 101 with the anchoring convention | the per-check commands are transcribed in `.../scores/c1-after.txt` (`git cat-file -e` / `git show <rev>:<path> \| grep -c` / the pinned digest probe, pasted with outputs) | `.ufo/waves/round-55/l1/scores/c1-after.txt` (rev `e21be31a…`) |
+| R55-C2 | depth, capability acquisition — `tools/round-55/corrections-pin.py`: the mechanical pin for append-only TSV ledgers the r54 closure observed missing (spot-check §3 observation a) | at the base: no pin instrument (`git cat-file -e` fails), 0 SKILL registry rows, 0 capability rows naming corrections-pin (receipt `.../scores/c2-before.txt`) | selftest 11 cases 0 failures; green demo: corrections ledger `c753b24f…→e21be31a…` clean, rows 2, appended 0; red demo: the historical r53 in-place verdict edit `fe8fab8d→f78fc766` — exit 1, `row_edited` line 29 `round-53`; registry row in SKILL; capability row below | `python -X utf8 -I -B tools/round-55/corrections-pin.py --selftest`; the two demonstration commands pasted with outputs in `.../scores/c2-after.txt` | `.ufo/waves/round-55/l1/scores/c2-after.txt` (rev `e21be31a…`) |
+
+Owned scores: coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10` — the
+Owned-axes rows are byte-equal base→landing; PROVINCE is untouched
+(`git diff 79421b75..e21be31a --numstat -- PROVINCE.md` empty); LOG append-only
+(insertions only; measured at the record). The SKILL v6 marker block is byte-identical
+to the base under the new pinned probe (digest `946e5359…d204bcc` at the landing;
+the SKILL delta is exactly the two appended instrument-registry rows). Learning
+trends: expansion **unchanged** (no Frontier→Core move; S255 grounds a read
+discipline, not a surface); quality **improved** (the four carry-in defects closed
+with committed, content-checked receipts; a filed-but-unreproducible digest value
+superseded by a pinned command with an honest disclosure); discernment **unchanged**
+pending the outside spot-check (the round executes the last closure's routed list
+verbatim and self-routes four new mistakes M55-1..M55-4 into the lesson; every claim
+rests on re-runnable commands over committed bytes).
+
+Round-55 record atoms (each re-derived by the plain command in `scores/c1-after.txt` /
+`c2-after.txt` at the measured revision):
+
+| atom | declared value |
+|---|---|
+| T1 | log-declaration-entry=true; claims-file-cited=true; log-deletions=0 |
+| T2 | freeze=622b8e38; instruments=3 pinned (round-29 freeze-gate 25b54339, round-55 corrections-pin f71e6b21, round-55 v6-block-digest 22785c1e); gate-verdict=CLEAN (pre-flight at the freeze: CLEAN with disclosures 29/29 + missing [round-55], the row landing later) |
+| T3 | c1-before: 0-of-4 repairs at base 79421b75 |
+| T4 | c1-after: 4-of-4 content-checked at landing e21be31a (the (a) receipt landed at e21be31a itself, M55-4 disclosed) |
+| T5 | c2-before: pin absent; registry rows 0; capability rows 0 |
+| T6 | c2-after: selftest 11/0; green demo exit 0 rows 2 appended 0; red demo exit 1 row_edited line 29 round-53; registry row 1 |
+| T7 | sources-before=161; sources-after=162; new-rows=S255(A); used-by-ok=true |
+| T8 | census start-exit=0; end-exit=0; w04-start=19; w04-end=19 |
+| T9 | digest-of-record=946e5359…d204bcc at four revisions; b340ed2b48facca7 disclosed unreproduced (~100-boundary sweep) and superseded |
+| T10 | ledger-row=round-55; ledger-verdict=CLEAN; gate-exit=0; disclosures 30/30 |
+| T11 | quality-row-101=true; r54-lesson-corrections-block=1 naming both instruments |
+| T12 | no-harm: owned-axes rows byte-equal; province-diff empty; log-deletions=0; v6 marker-block digest unchanged; the three frozen instrument pins re-derived by the gate at the landing |
+
+Landing receipts (each exists, parses, and carries the named check at the named revision):
+
+- `.ufo/waves/round-55/l1/scores/c1-before.txt` rev=none check=0-of-4-at-base
+- `.ufo/waves/round-55/l1/scores/c2-before.txt` rev=none check=pin-absent-0-0
+- `.ufo/waves/round-55/l1/scores/c1-after.txt` rev=e21be31a0f53a2bfde7ce1e1876679b1e45031cf check=4-of-4-content-checked
+- `.ufo/waves/round-55/l1/scores/c2-after.txt` rev=e21be31a0f53a2bfde7ce1e1876679b1e45031cf check=selftest-11-0-green-0-red-1
+- `.ufo/waves/round-55/l1/scores/freeze-gate-landing.json` rev=765118a46436a1abb741e2ea4ef1588836331569 check=exit-0-disclosures-30-of-30-CLEAN
+- `.ufo/waves/round-55/l1/scores/freeze-gate-tip-90f3a9b9.json` rev=e21be31a0f53a2bfde7ce1e1876679b1e45031cf (receipt of the gate run AT rev 90f3a9b9d3970ae87173787521a821132c10c66c) check=exit-0-CLEAN-29-of-29
+- `.ufo/waves/round-55/l1/records/selftests.txt` rev=none check=11-0-and-5-0
+- `.ufo/waves/round-55/l1/records/pin-green-demo.txt` rev=none check=clean-rows-2-appended-0
+- `.ufo/waves/round-55/l1/records/pin-red-demo.txt` rev=none check=exit-1-row_edited-line-29
+- `.ufo/waves/round-55/l1/records/v6-digest-repro.txt` rev=none check=command-transcribed-sweep-disclosed
+- `.ufo/waves/round-55/l1/s255/digests.txt` rev=none check=git-show-html-0a95cbcd
+
+### Capability addition (append-only)
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| corrections-ledger mechanical pin (`tools/round-55/corrections-pin.py`) | refuse, by exit 1 with named findings, any in-place edit, deletion, mid-insert or header change of an append-only TSV ledger between two revisions — demonstrated red on the lane's own historical r53 in-place verdict edit (`fe8fab8d→f78fc766`, line 29 `round-53`) and green on the untouched corrections ledger; general `--ledger` form | selftest 11/11 (`records/selftests.txt`); demos `records/pin-green-demo.txt`, `records/pin-red-demo.txt`; registry row in SKILL (instrument-registry v2) | 55 |
+
+**Record corrections — round 55** (appended, per QUALITY 65: measured corrections in
+the next record, never a rewrite of the filed text):
+
+- Wording correction (routed defect 2 of the r54 spot-check): the round-54 section
+  above says "The only executed instrument is the frozen
+  `tools/round-53/r53-record.py`" — TWO frozen instruments were executed in round 54:
+  `tools/round-53/r53-record.py` (three record receipts) AND
+  `tools/round-53/sqfs-triage-v6.py` (the landing re-score,
+  `.ufo/waves/round-54/l1/scores/c1-v6-at-landing.json`, pin `5902a008…`, bytes
+  verified unchanged by the r54 closure). The durable correction row is the r54
+  lesson's appended `## Corrections (round 55)` block, correction 1. The r54 section
+  text stays as filed.
+- Value correction (routed defect 3 of the r54 spot-check): the round-54 section's
+  atom T6 and claim row carry the digest `b340ed2b48facca7…`, which no extractable
+  command reproduces (r54 closure section 5 item 3; this round's ~100-boundary sweep
+  transcribed in `.ufo/waves/round-55/l1/records/v6-digest-repro.txt`). The digest of
+  record is superseded by the pinned extraction
+  (`tools/round-55/v6-block-digest.py`): full sha256
+  `946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc`, 23 lines /
+  8961 bytes, identical at 45c68786/c753b24f/90f3a9b9/e21be31a — the identity claim
+  the r54 atom asserted is unchanged and now re-derivable. The r54 text stays as
+  filed; this row is the supersession of record.
+
+**planned (next steered round only):** the AVM LE-SquashFS re-freeze stays routed
+(host absent surfaces unchanged); the registry-drift census (`census3` outside-13)
+stays routed; a census-safe W04 supersedes set stays open (19 standing warnings).
+
+**retired:** none.

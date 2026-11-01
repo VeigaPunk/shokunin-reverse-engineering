@@ -1,0 +1,42 @@
+kaidoku round-55 AFTER arm, C1 (the four routed r54 closure repairs at the landing 627a9c20a27ceae90986e290cd8dfff8867f839f; M55-4 note: the (a) receipt landed in the follow-up commit 627a9c20a27ceae90986e290cd8dfff8867f839f after the freeze pathspec slip; chain re-based, see M55-5)
+
+== (a) tip gate receipt present and content-checked ==
+$ git cat-file -e 627a9c20a27ceae90986e290cd8dfff8867f839f:.ufo/waves/round-54/l1/scores/freeze-gate-tip-90f3a9b9.json
+cat-file exit=0 (present)
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:.ufo/waves/round-54/l1/scores/freeze-gate-tip-90f3a9b9.json | grep -c '"exit": 0'
+1
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:.ufo/waves/round-54/l1/scores/freeze-gate-tip-90f3a9b9.json | grep -c '"verdict": "CLEAN"'
+10
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:.ufo/waves/round-54/l1/scores/freeze-gate-tip-90f3a9b9.json | grep -c '"exact": 29'
+1
+PASS (a) tip gate receipt: present, exit 0, CLEAN, disclosures exact 29
+
+== (b) the executed-instruments correction block ==
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:corpus/lessons/round-54.md | grep -c '## Corrections (round 55)'
+1
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:corpus/lessons/round-54.md | grep -c 'tools/round-53/sqfs-triage-v6.py'
+2
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:corpus/lessons/round-54.md | grep -c 'tools/round-53/r53-record.py'
+4
+PASS (b) correction block names BOTH frozen instruments
+
+== (c) the reproducible digest ==
+$ python -X utf8 -I -B tools/round-55/v6-block-digest.py --root . --rev <REV>  (x4: 45c68786 / c753b24f / 90f3a9b9 / 627a9c20a27ceae90986e290cd8dfff8867f839f)
+45c68786 946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc
+c753b24f 946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc
+90f3a9b9 946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc
+627a9c20 946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:.ufo/waves/round-55/l1/records/v6-digest-repro.txt | grep -c 'SUPERSEDED'
+1
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:.ufo/waves/round-55/l1/records/v6-digest-repro.txt | grep -c 'tools/round-55/v6-block-digest.py'
+1
+PASS (c) full digest 946e5359...d204bcc identical at four revisions; receipt names the command and the supersession
+
+== (d) the anchoring convention row ==
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:corpus/QUALITY.md | grep -c 'Row 101 (provenance fields appended in a correction block'
+1
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:corpus/QUALITY.md | grep -c 'greps unanchored and states that the count is occurrence-based'
+1
+PASS (d) QUALITY row 101 present with the anchoring convention
+
+SUMMARY: 4 of 4 routed-r54 closure repairs present and content-checked at the landing

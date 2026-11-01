@@ -1,0 +1,55 @@
+kaidoku round-55 AFTER arm, C2 (the corrections-ledger mechanical pin, measured at the landing 627a9c20a27ceae90986e290cd8dfff8867f839f)
+
+== selftest ==
+$ python -X utf8 -I -B tools/round-55/corrections-pin.py --selftest
+corrections-pin selftest: cases 11, failures 0
+selftest exit=0 (0 expected)
+
+== green demo at the measured revision: the corrections ledger is append-only ==
+$ python -X utf8 -I -B tools/round-55/corrections-pin.py --root . --ledger corpus/claim-freezes-corrections.tsv --base c753b24f96db335eeeca0003d2906457d6e71849 --rev 627a9c20a27ceae90986e290cd8dfff8867f839f
+{
+ "appended": 0,
+ "base": "c753b24f96db335eeeca0003d2906457d6e71849",
+ "exit": 0,
+ "findings": [],
+ "ledger": "corpus/claim-freezes-corrections.tsv",
+ "rev": "627a9c20a27ceae90986e290cd8dfff8867f839f",
+ "rows_base": 2,
+ "rows_rev": 2,
+ "verdict": "clean"
+}
+green exit=0 (0 expected)
+
+== red demo: the historical r53 in-place verdict edit (the event QUALITY row 100 governs) ==
+$ python -X utf8 -I -B tools/round-55/corrections-pin.py --root . --ledger corpus/claim-freezes-v2.tsv --base fe8fab8d --rev f78fc766
+{
+ "appended": 0,
+ "base": "fe8fab8d",
+ "exit": 1,
+ "findings": [
+  {
+   "count": 1,
+   "finding": "row_edited",
+   "line": 29,
+   "now": "round-53",
+   "was": "round-53"
+  }
+ ],
+ "ledger": "corpus/claim-freezes-v2.tsv",
+ "rev": "f78fc766",
+ "rows_base": 29,
+ "rows_rev": 29,
+ "verdict": "failed"
+}
+red exit=1 (1 expected, finding row_edited line 29 round-53)
+
+== registry row ==
+$ git show 627a9c20a27ceae90986e290cd8dfff8867f839f:SKILL.md | grep -c 'tools/round-55/corrections-pin.py' (registry rows naming the instrument)
+1
+
+== instrument bytes unchanged from the claims commit (the gate at the landing verified the pin; re-derived here) ==
+corrections-pin.py @ 627a9c20 f71e6b2135ccd9b3a71bb7d9f78ff1a6a063b0ce4a4208edc9841a48aec9d40a
+PASS C2: selftest green, green demo clean, red demo red on the edited row, registry row present, bytes pinned
+
+== no-harm: the v6 marker block at the landing (SKILL changed only by the two registry rows) ==
+627a9c20 946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc == 946e5359...: True
