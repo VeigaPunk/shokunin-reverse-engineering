@@ -4281,3 +4281,79 @@ ruling — the W04 check precedes status, no appended row clears a cross-scope d
 — is recorded in LOG and the plans file).
 
 **retired:** none.
+
+## Round 57 (2026-11-01) — the carry-in repair round: the eight r56-closure routed defects close, and the extended M56-4 rule becomes an instrument
+
+Fresh-start binding honored (the prompt's §7 list r50/r51/r52 re-read and
+spot-checked; note: the three listed rejections predate the admitted r53-r56
+chain), L1-inline on the Windows host. Base `63413677…` (the r56 spot-check
+commit), declaration `5d5bcb92…`, carry-in landing `e304cb0d…` (the D4 receipt
+lands; the D1/D2/D3/D5 erratum lands in `corpus/lessons/round-56.md ## Corrections
+(round 57)`; D6's discarded sha printed; D7's gate run receipted), operative
+freeze `bc261681…`, landing `e4112db6…`. No wave (no dispatch surface; the
+kaidoku round-53 L0 question stays open). Executed instruments: the new frozen
+round-57 gate (`tools/round-57/record-receipt-audit.py` pin `3a5fff9a…`), the
+unchanged corrections-pin (`22f77c34…`), and the R29 gate itself (`25b54339…`).
+Claims: R57-C1 (calibration) — the eight r56-closure routed defects D1-D8 close
+with committed, append-only artifacts; R57-C2 (depth, capability acquisition) —
+the named-path completeness gate. Lowest-axis rule: all three owned axes tied
+at 10.0, so C1 (calibration) is a lowest-axis claim; stagnation nudge not fired
+(window N=10, last capability r56, r57 = 2/10).
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R57-C1 | calibration — the eight r56-closure routed defects D1-D8 (r56 spot-check §7 items 1, 2, 3, 5 plus the D5-D8 notes; **this sentence corrects the r56 C1 row's "r55 spot-check §7 items 1-4" wording — the routing is items 1, 2, 3 and 5, V-4 being an operator note; the r56 row stays as filed**) | at the base `63413677…`: all eight open (receipt `.ufo/waves/round-57/l1/scores/c1-before.txt`, committed at the freeze — D1 both self-contradictory annotations 1, D2 no erratum exists 0, D3 overbroad sentence 1, D4 receipt uncommitted 0-in-tree, D5 49/0 at tip unreconciled, D6 clause 1 with no sha printed, D7 no committed tip-run receipt, D8 "items 1-4" 1) | all eight closed with committed, append-only artifacts (per-defect landing: D1/D2/D3/D5 erratum + D4 receipt + D6 sha + D7 receipt at the carry-in landing `e304cb0d…`; D8 this section; after receipt `.../scores/c1-after.txt`) | the per-check commands are transcribed in `.../scores/c1-before.txt` and `.../scores/c1-after.txt` (`git show <rev>:<file>` piped to `grep -c`, `git ls-tree -r --name-only`, `git diff --numstat`, pasted with outputs) | `.ufo/waves/round-57/l1/scores/c1-after.txt` (rev = the record commit; lands with the close, the ordering note applies) |
+| R57-C2 | depth, capability acquisition — `tools/round-57/record-receipt-audit.py`: the M56-4 rule as D4's fix clause extends it (named-path completeness: EVERY backtick-quoted `.ufo/waves/round-N/` path a record section names must resolve at the named revision) | at the base: instrument absent (`cat-file -e` rc=128), 0 SKILL registry rows, 0 capability rows (receipt `.../scores/c2-before.txt`) | selftest 9 cases 0 failures (extraction 3 + section 2 + audit 4); red demo exit 1 `NAMED_PATH_ABSENT` on the D4 defect itself (r56 record section at the base, named 14 missing 1); green demo exit 0 at the carry-in landing `e304cb0d…` (named 14, missing 0); registry row in SKILL; capability row above | `python -X utf8 -I -B tools/round-57/record-receipt-audit.py --selftest`; the demo commands pasted with outputs in `.../records/red-demo-at-base.txt` and `.../records/record-audit-green-r56.txt` | `.ufo/waves/round-57/l1/records/record-audit-green-r56.txt` (rev `e304cb0d…`) |
+
+Owned scores: coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10` — the
+owned-axes rows are byte-equal base→landing; PROVINCE is untouched. LOG
+append-only (insertions only; the M57-3 ordering slip is a landing-order
+disclosure, not a deletion). PROVINCE diff empty. Learning trends: expansion
+**unchanged** (no Frontier→Core move; S257 grounds a listing discipline, not a
+surface); quality **improved** (all eight routed defects closed with committed
+artifacts; a second unguarded naming surface mechanized shut); discernment
+**unchanged** pending the outside spot-check (the round executes the last
+closure's routed list verbatim, self-routes three mistakes M57-1..M57-3, and
+its own new gate reproduced the routed D4 defect from committed bytes before
+demonstrating its closure).
+
+Round-57 record atoms (each re-derived by the plain commands transcribed in
+`scores/c1-before.txt` / `c1-after.txt` and the records receipts):
+
+| atom | declared value |
+|---|---|
+| T1 | log-declaration-entry=true; claims-file-cited=true; log-deletions=0 |
+| T2 | freeze=bc261681; instruments=3 pinned (round-57 record-receipt-audit 3a5fff9a, round-55 corrections-pin 22f77c34 unchanged since the r56 disclosed revision, round-29 freeze-gate 25b54339 unchanged since r29); gate-verdict=CLEAN (pre-flight at the freeze: round-57 CLEAN with all three instruments audited, disclosures 31/32 exact + missing [round-57], the row landing with the record) |
+| T3 | c1-before: all eight routed defects open at base 63413677 |
+| T4 | c1-after: all eight closed (D1/D2/D3/D4/D6/D7 at the carry-in landing e304cb0d; D5 erratum same commit; D8 this section) |
+| T5 | c2-before: instrument absent; registry rows 0; capability rows 0 |
+| T6 | c2-after: selftest 9/0; red demo exit 1 NAMED_PATH_ABSENT named-14-missing-1 at the base; green demo exit 0 named-14-missing-0 at e304cb0d; registry row 1; capability row 1 |
+| T7 | sources-before=163; sources-after=164; new-rows=S257(A); used-by-ok=true |
+| T8 | census start-exit=0; end-exit=0; w04-start=19; w04-end=19 |
+| T9 | the r56 record section's receipts list resolves 13/13 at the carry-in landing e304cb0d (the D4 receipt in the tree; instrument green) |
+| T10 | ledger-row=round-57; ledger-verdict=CLEAN; gate-exit=0 at the record rev with disclosures exact; preflight missing [round-57] disclosed |
+| T11 | M56-4 rule executed extended on this round's own record section: every named path resolves at the record rev (audited at the close, receipt landed with it) |
+| T12 | no-harm: owned-axes rows byte-equal; province-diff empty; log-deletions=0; the SKILL v6 marker block untouched; the three frozen instrument pins re-derived at the landing |
+
+Landing receipts (each exists, parses, and carries the named check at the named
+revision):
+
+- `.ufo/waves/round-57/l1/scores/c1-before.txt` rev=none check=all-eight-open-at-base
+- `.ufo/waves/round-57/l1/scores/c2-before.txt` rev=none check=instrument-absent-0-0
+- `.ufo/waves/round-57/l1/census-start.txt` rev=none check=exit-0-19-w04-163-rows
+- `.ufo/waves/round-57/l1/records/selftests.txt` rev=none check=9-0-and-11-0
+- `.ufo/waves/round-57/l1/records/red-demo-at-base.txt` rev=63413677ec0531e38722b8dbfb0b89a0bc113d04 check=exit-1-named-14-missing-1
+- `.ufo/waves/round-57/l1/records/record-audit-green-r56.txt` rev=e304cb0dbfc4140de984e938be0cf794964b2759 check=exit-0-named-14-missing-0
+- `.ufo/waves/round-57/l1/scores/gate-at-r56-close-tip.txt` rev=047bd98edf19eecad088c5a9a9d3d00135533a18 check=exit-0-31-31-exact (D7)
+- `.ufo/waves/round-56/l1/records/receipt-audit-green-r56.txt` rev=19eef5ee93c14972be5756bd1d8bc1f346c3b1dd check=exit-0-clean-checked-10 (D4, landed this round)
+- `.ufo/waves/round-57/l1/scores/gate-preflight.json` rev=bc261681ef89833693c039c80762aa31189bfbed check=round-57-CLEAN-31-of-32-missing-round-57-disclosed
+- `.ufo/waves/round-57/l1/scores/c1-after.txt` rev=<record commit> check=all-eight-closed (lands with the close, ordering note)
+- `.ufo/waves/round-57/l1/scores/c2-after.txt` rev=e4112db6cfedc81a20f893da55fff33a62c15c2b check=selftest-9-0-red-1-green-0-rows-1-1
+- `.ufo/waves/round-57/l1/s257/digests.txt` rev=none check=git-ls-tree-html-2c298383
+
+**planned (next steered round only):** the AVM LE-SquashFS re-freeze stays
+routed (host absent surfaces unchanged); the registry-drift census (census3
+outside-13) stays routed; a census-safe W04 supersedes set stays open (19
+standing warnings).
+
+**retired:** none.
