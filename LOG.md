@@ -3573,3 +3573,8 @@ fractions — and requires zero mismatches with at least two corrections that ea
 - **Freeze gate at the landing:** exit 0; disclosures 29/29 exact, no missing, no stray; round-54 audits CLEAN with the pinned instrument re-derived (receipt `scores/freeze-gate-landing.json`, gate stdout embedded; the round-54 row: `{"claims_file": ".ufo/waves/round-54/claims.json", "findings": [], "freeze": "85843f2e…", "verdict": "CLEAN"}`).
 - **Record section filed** in SCORECARD (round 54, atoms T1-T12, receipts list, record-corrections sub-block carrying the D6 pointer correction and the D7 erratum of record); M54-5 appended to the lesson (the E11 receipt carries no `verdict:` line — the append was lost in an edit; the landed receipt stays as landed, the after-arm checker derives the verdict).
 - **No-harm at the landing:** `git diff 45c68786..c753b24f --numstat -- SCORECARD.md PROVINCE.md` empty (this entry is the first SCORECARD change of the round after the record section); LOG append-only (insertions only); the owned-axes depth/calibration/coverage rows are byte-equal to the base.
+
+## 2026-11-01 — round 54, KaidokuR54 — close
+
+- Census end at the filing tip `8f1c3fa7…`: exit 0, 19 standing W04 warnings (receipt `.ufo/waves/round-54/l1/census-end.txt`; the same host-adapted command as the round-start receipt). W04 stays named debt.
+- Round-54 close: both claims measured end-to-end (C1 21/21 content checks, 9/9 closures; C2 0 drift, table bytes identical, the frozen v6 instrument green at the landing, command A 142/142 rules 27). The outside spot-check remains pending and is not self-certified. Scratch deleted at round end.
