@@ -1,0 +1,27 @@
+kaidoku round-59 — RED demonstration on the D58-1 defect itself (the uncorrected r58 receipt at the round base; both revs are ancestors of main)
+$ python -X utf8 -I -B tools/round-59/annotation-audit.py --root . --receipt .ufo/waves/round-58/l1/scores/c1-after.txt --rev df62b6f986fb460847037482e0199cdf1541e393 --base-rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+ANNOTATION_OUTPUT_MISMATCH@6: annotation claims record: 1 but the bound command's pasted output is 0
+ANNOTATION_REDERIVATION_MISMATCH@6: annotation claims record: 1 but the probe re-derives to 0 at 536c48650a5c
+{
+ "receipt": ".ufo/waves/round-58/l1/scores/c1-after.txt",
+ "rev": "df62b6f986fb460847037482e0199cdf1541e393",
+ "base_rev": "42c794afc5cdf2f72d80edb839cfbcbfe32e6bad",
+ "annotations": 2,
+ "checked": 2,
+ "findings": [
+  {
+   "class": "ANNOTATION_OUTPUT_MISMATCH",
+   "line": 6,
+   "detail": "annotation claims record: 1 but the bound command's pasted output is 0"
+  },
+  {
+   "class": "ANNOTATION_REDERIVATION_MISMATCH",
+   "line": 6,
+   "detail": "annotation claims record: 1 but the probe re-derives to 0 at 536c48650a5c"
+  }
+ ],
+ "exit": 1
+}
+rc=1
+
+(exit 1 with exactly two findings, both on line 6 — the R1 annotation D58-1 names: the annotation claims record: 1, the pasted output is 0, the re-derivation of the cited pattern at 536c4865 is 0. The R2 annotation (line 11) is clean, and both base re-derivations agree with their claimed base values — the tool separates the defect from its neighbors.)

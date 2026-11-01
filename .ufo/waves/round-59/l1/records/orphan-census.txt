@@ -1,0 +1,48 @@
+kaidoku round-59 — the two-direction orphan census (worktree vs committed tree), run read-only with core.quotepath=off (the M58-3 rule: any probe that string-compares git listing output to filesystem names must disable path quoting first)
+
+$ git -c core.quotepath=off ls-tree -r --name-only HEAD | sort > <scratch>/committed.list
+$ find . -type f -not -path './.git/*' | sed 's|^\./||' | sort > <scratch>/worktree.list
+committed=48690 worktree=48644
+
+== direction 1: worktree-only (on disk, not committed), outside this round's wave dir ==
+$ comm -13 <scratch>/committed.list <scratch>/worktree.list | grep -v '^\.ufo/waves/round-59/'
+.ufo/waves/round-55/l1/scores/freeze-gate-tip-25b5b256.json
+tools/round-53/__pycache__/r53-record.cpython-313.pyc
+tools/round-53/__pycache__/sqfs-triage-v6.cpython-313.pyc
+tools/round-59/annotation-audit.py
+(4 paths; count re-derived: 4)
+
+Per-path dispositions:
+1. `.ufo/waves/round-55/l1/scores/freeze-gate-tip-25b5b256.json` — the known
+   first-chain orphan, retained on disk and disclosed since the r58 census
+   (`corpus/lessons/round-58.md` M58-era orphan-census.txt); r58 reject 1
+   ruled it must NOT land (nothing committed claims it — the M56-2
+   pre-claiming class). Unchanged: retained-and-disclosed.
+2-3. `tools/round-53/__pycache__/*.pyc` — gitignored caches (`.gitignore`
+   carries `__pycache__/` and `*.pyc`); the same disposition as the r58
+   census gave its two caches. Unchanged.
+4. `tools/round-59/annotation-audit.py` — this round's own instrument,
+   committed at the declaration commit `0a131b97a37880ac29c33252c4bfdbc778aa8bfd`
+   BEFORE this census ran against HEAD's predecessor in the worktree
+   listing above; at the freeze commit it resolves in the tree (verified:
+   `git cat-file -e <freeze>:tools/round-59/annotation-audit.py`). Not an
+   orphan at the freeze.
+
+== direction 2: committed-not-on-disk (in the tree, absent from this host's worktree) ==
+$ comm -23 <scratch>/committed.list <scratch>/worktree.list | wc -l
+50
+$ comm -23 <scratch>/committed.list <scratch>/worktree.list | grep -c aux
+50      (all 50; non-aux count: 0)
+All 50 are `.ufo/waves/arc3-loop1-round3/claims/c1/EX-08/aux/*` — exactly the
+PROVINCE-documented Windows reserved-device-name collision (`PROVINCE.md`
+`## Host migration — 2026-10-31`: "the tracked directory
+`.ufo/waves/arc3-loop1-round3/claims/c1/EX-08/aux/` (50 files, the only
+reserved-name collision in `git ls-tree -r --name-only HEAD`) collides with
+the Windows reserved device name `aux`"). Known host boundary, disclosed
+since r53; every lane read on this host is plumbing against committed bytes.
+The census itself reads the tree through `git ls-tree` (objects), so the
+boundary does not affect any committed-byte probe this round.
+
+Note on method: this census is a DISK-vs-TREE comparison; the git index on
+this host is unreliable (the round contract's plumbing-only rule), so no
+index-based command (`git status`, `git diff HEAD`) was used as evidence.

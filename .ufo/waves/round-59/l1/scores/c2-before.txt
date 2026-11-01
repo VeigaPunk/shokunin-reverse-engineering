@@ -1,0 +1,25 @@
+kaidoku round-59 BEFORE arm, C2 (the annotation-consistency instrument absent at the base; probes pasted with observed outputs)
+
+$ git cat-file -e df62b6f986fb460847037482e0199cdf1541e393:tools/round-59/annotation-audit.py ; echo rc=$?
+rc=128
+(128 = the instrument does not exist at the base — the capability is absent)
+$ git show df62b6f986fb460847037482e0199cdf1541e393:SKILL.md | grep -c 'round-59/annotation-audit'
+0
+(0 = no registry row)
+$ git show df62b6f986fb460847037482e0199cdf1541e393:SCORECARD.md | grep -c 'annotation-audit'
+0
+(0 = no capability row and no claim row)
+$ python -X utf8 -I -B tools/round-59/annotation-audit.py --selftest
+{
+ "tool": "tools/round-59/annotation-audit.py",
+ "selftest": true,
+ "cases": 23,
+ "failures": [],
+ "exit": 0
+}
+rc=0
+(23 cases, 0 failures — the instrument runs from its committed bytes (first landed at the declaration commit 0a131b97a37880ac29c33252c4bfdbc778aa8bfd, before this claims file: the QUALITY #33 order; full receipt records/annotation-selftest.txt))
+$ python -X utf8 -I -B tools/round-59/annotation-audit.py --root . --receipt .ufo/waves/round-58/l1/scores/c1-after.txt --rev df62b6f986fb460847037482e0199cdf1541e393 --base-rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+ANNOTATION_OUTPUT_MISMATCH@6: annotation claims record: 1 but the bound command's pasted output is 0
+ANNOTATION_REDERIVATION_MISMATCH@6: annotation claims record: 1 but the probe re-derives to 0 at 536c48650a5c
+(exit 1, 2 findings, both on line 6 — the R1 annotation D58-1 names; the R2 annotation clean; both base re-derivations clean. Full receipt records/annotation-red-demo.txt. The instrument mechanically catches what the r58 closure caught by hand — and what the r58 close's own post-close correction proved the M57-1 rule was still catching only after landing)
