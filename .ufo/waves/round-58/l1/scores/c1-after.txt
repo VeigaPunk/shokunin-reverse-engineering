@@ -20,3 +20,24 @@ $ git show 536c48650a5ccc435387b2060638a9d8a4bebf44:.ufo/waves/round-58/l1/recor
 == no frozen byte was edited to get here ==
 $ git diff --numstat 37e49cf33537ff182265c42f3fa546b1c0c0c0fa 536c48650a5ccc435387b2060638a9d8a4bebf44 -- .ufo/waves/round-55/claims.json corpus/lessons/round-55.md corpus/lessons/round-56.md corpus/lessons/round-57.md
 (empty: the r55 container and the r55/r56/r57 lessons are byte-identical freeze->record — the landing edited nothing filed; the r56 texts stay true at the revs they cite, the never-resolves supersession note lives in the round-58 lesson)
+
+== CORRECTION (round 59) — D58-1, routed by the round-58 non-author closure §8 (spot-check file corpus/lessons/round-58-verifier-spotcheck.md): the R1 annotation above was written from arithmetic, not from its own pasted output ==
+(filed bytes above stay as filed — receipts are append-only. The R1 annotation's claim "base: 0 -> record: 1" is unreachable by the probe it cites: the cited pattern '27 distinct filesystem paths' cannot match the correction note's actual wording, and the annotation's own pasted observed output, line 5, is 0. The substance was independently verified true by the r58 closure §3 R1 and is re-verified below. The corrected probes follow, each with a pattern that actually matches what it claims to count.)
+
+-- corrected probe 1: the note's actual wording (the phrase the landing entry's R1 bullet and the declaration entry both carry) --
+$ git show 536c48650a5ccc435387b2060638a9d8a4bebf44:LOG.md | grep -c 'distinct filesystem paths number 27'
+2
+(base: 0 -> record: 2; both entries carry the phrase — the round-58 declaration entry and the landing entry's R1 correction bullet; the r58 spot-check §5 counted the same 2 with the shorter pattern 'number 27')
+
+-- corrected probe 2: the note-of-record bullet specifically (the value the original R1 annotation intended) --
+$ git show 536c48650a5ccc435387b2060638a9d8a4bebf44:LOG.md | grep -c 'number 27 (`git diff'
+1
+(base: 0 -> record: 1; the landing entry's R1 correction bullet alone — 0 at the round-58 base 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad, re-derived in .ufo/waves/round-59/l1/scores/d581-correction.txt and machine-audited by tools/round-59/annotation-audit.py)
+
+-- the substance re-verified (the count the note states; wc-form probe, outside the base:->record: annotation grammar by design) --
+$ git diff-tree -r --name-only 63413677 67ec2c38 | sort -u | wc -l
+27
+[27 distinct filesystem paths in the r57 delta — the note's number, reproduced]
+
+-- mechanical enforcement and the persistent state --
+(the round-59 instrument tools/round-59/annotation-audit.py fires exactly on the defect above when run at the uncorrected bytes: exit 1, ANNOTATION_OUTPUT_MISMATCH@6 + ANNOTATION_REDERIVATION_MISMATCH@6, receipt .ufo/waves/round-59/l1/records/annotation-red-demo.txt. Run on THIS file after this correction, the original line-6 finding persists — a correction appended later does not clear filed bytes; that persistent state is receipted as .ufo/waves/round-59/l1/records/annotation-persistent-finding.txt, and this appended block's own annotations re-derive clean in .ufo/waves/round-59/l1/records/annotation-green-demo.txt)

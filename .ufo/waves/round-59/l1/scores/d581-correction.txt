@@ -1,0 +1,27 @@
+kaidoku round-59 — the D58-1 correction receipt (the machine-audited annotation set; every annotation below re-derives from committed bytes; audited by tools/round-59/annotation-audit.py, receipt .ufo/waves/round-59/l1/records/annotation-green-demo.txt — rev = the landing commit, lands with the record, the disclosed ordering note applies)
+
+== probe 1: the corrected marker pattern (the note's actual wording) at the record rev ==
+$ git show 536c48650a5ccc435387b2060638a9d8a4bebf44:LOG.md | grep -c 'distinct filesystem paths number 27'
+2
+(base: 0 -> record: 2; both the round-58 declaration entry and the landing entry's R1 correction bullet carry the phrase — the r58 spot-check §5 counted the same 2 with the shorter pattern 'number 27')
+
+== probe 2: the note-of-record bullet specifically ==
+$ git show 536c48650a5ccc435387b2060638a9d8a4bebf44:LOG.md | grep -c 'number 27 (`git diff'
+1
+(base: 0 -> record: 1; the value the original R1 annotation intended, now reachable by the pattern that matches its target)
+
+== the before states (the same two probes at the round-58 base) ==
+$ git show 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad:LOG.md | grep -c 'distinct filesystem paths number 27'
+0
+(base: 0 -> record: 0; the note does not exist before round 58)
+$ git show 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad:LOG.md | grep -c 'number 27 (`git diff'
+0
+(base: 0 -> record: 0; same)
+
+== the substance (wc-form probe; unannotated — outside the base:->record: grammar by design) ==
+$ git diff-tree -r --name-only 63413677 67ec2c38 | sort -u | wc -l
+27
+[27 distinct filesystem paths in the r57 delta — the number the note states]
+
+-- what this receipt closes --
+(the r58 c1-after.txt R1 annotation claimed "base: 0 -> record: 1" through the cited pattern '27 distinct filesystem paths', which matches 0 lines at the record rev — the unreachable value D58-1 names. The corrected counts, with patterns that match their targets: the note's wording is present 2x at the record rev and 0x at the base; the note-of-record bullet is present 1x at the record rev and 0x at the base. The correction is appended to the r58 receipt itself; its filed bytes stay as filed and its original line-6 finding persists by design, receipted separately.)
