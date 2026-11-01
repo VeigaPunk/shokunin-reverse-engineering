@@ -4357,3 +4357,88 @@ outside-13) stays routed; a census-safe W04 supersedes set stays open (19
 standing warnings).
 
 **retired:** none.
+
+## Round 58 (2026-11-01) — the carry-in repair round: the r57-closure routed set closes with receipts, and the registry-drift census runs again
+
+Fresh-start binding honored (the prompt's §7 list r50/r51/r52 re-read and
+spot-checked; probes pasted in `plans/round-58-claims.md`), L1-inline on the
+Windows host. Base `42c794af…` (the r57 spot-check commit), helper attempts
+`634d12d6…` / `9e8ee220…` (no payload — M58-1, disclosed, never cited), operative
+freeze `37e49cf3…` (the first commit adding `.ufo/waves/round-58/claims.json`;
+carries the declaration bytes, both LOG entries, and the removal of the
+attempts' bogus `C:` directory), landing `05865b6d…`. No wave (no dispatch
+surface; the kaidoku round-53 L0 question stays open). No new instrument: six
+frozen tools pinned in the container and audited by the R29 gate. Claims:
+R58-C1 (calibration) — the r57-closure routed carry-in set R1-R4 closes with
+committed, append-only artifacts, including the hygiene sweep's named finding
+repaired byte-identically; R58-C2 (depth) — the registry-drift census runs
+again after a data-side registry-row reword (the parser stays frozen).
+Lowest-axis rule: all three owned axes tied at 10.0, so C1 (calibration) is a
+lowest-axis claim; stagnation nudge not fired (window N=10, last capability
+r57, r58 = 1/10). Sourced claim: S258 (the GFM spec, opened this round)
+grounds C2's defect class and repair side.
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R58-C1 | calibration — the r57-closure routed carry-in set (R1 the file-count precision note; R2 the orphaned-evidence hygiene sweep and the repair of what it names; R3 the W04 supersedes feasibility probe + 19-row disposition table; R4 W04 stays named debt) | at the base `42c794af…`: all four open (receipt `.ufo/waves/round-58/l1/scores/c1-before.txt` — R1 marker count 0, R2 no round-58 hygiene receipts + 3 worktree-only paths undisclosed, R3 no probe/table) and the sweep names one live finding (`RECEIPT_ABSENT freeze-gate-tip-90f3a9b9.json` in round-55 scope; the bytes committed under round-54 since the r54 close) | R1 the correction note lands (the landing LOG entry's first bullet; marker re-derived in `scores/c1-after.txt`); R2 the byte-identical receipt landing at `05865b6d…` — receipt-audit on the r55 container clean (checked 4), record-audit "Round 55" named 13 missing 0 (`records/record-audit-green-r55.txt`); the orphan census's 3 paths dispositioned (`records/orphan-census.txt`); R3 the probe + `records/w04-disposition.tsv` (19 rows, vacuous-as-named); R4 W04 stays named debt (19 at both census ends) | the sweep probes are pasted with outputs in `records/receipt-audit-sweep.txt`; the green re-runs in `records/record-audit-green-r55.txt`; the R1 marker probe in `scores/c1-after.txt` (grep count of the correction marker at the record rev: 0 → 1) | `.ufo/waves/round-58/l1/records/record-audit-green-r55.txt` (rev `05865b6d…`; lands with the record) |
+| R58-C2 | depth — the routed registry-drift census runs again (data-side repair of the one malformed registry row; every instrument frozen) | at the base: `census3.py --check --rev 42c794af…` exits 2, `registry row must have seven cells` — the r55 v6-block-digest row's GFM-escaped pipe (S258's grammar conflict); the routed "census3 outside-13" item was unrunnable as filed from r55 until now | the row reworded (SKILL delta exactly 1 line); the registry parses (63 rows / 0 malformed); `--generate` at the landing derives 63 paths; `--check` at the record rev against the committed inventory exits 0, exact equality, no duplicates (`records/census58-at-landing.json` + `scores/c2-after.txt`); historical mode stays exit 1 (frozen census2, the r51 authority note); the v6 triage-table digest `946e5359…` byte-identical base→landing (no-harm, `records/historical-and-v6-noharm.txt`) | the probe commands are pasted in `scores/c2-before.txt` and `scores/c2-after.txt` (the `--check`, `--generate` and `--check --census` forms with outputs) | `.ufo/waves/round-58/l1/scores/c2-after.txt` (rev = the record commit; lands with the close, the ordering note applies) |
+
+Owned scores: coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10` — the
+owned-axes rows are byte-equal base→landing; PROVINCE is untouched. LOG
+append-only (insertions only; the two no-payload helper attempts and the
+recovery ordering are disclosed, nothing rewritten). PROVINCE diff empty.
+Learning trends: expansion **unchanged** (no Frontier→Core move; S258 grounds
+a writer/reader grammar boundary, not an REA surface); quality **improved**
+(the lane's named-absent evidence count drops 1 → 0 with the receipt landing;
+a registry unparseable for three rounds parses and re-enters its own drift
+census; the routed W04 item is resolved to its precise truth — the empty set —
+with per-row dispositions); discernment **unchanged** pending the outside
+spot-check (the round executes the routed list verbatim, self-caught its own
+helper incident before any payload-less state was cited, corrected its own
+census before filing, and landed no unverified claim).
+
+Round-58 record atoms (each re-derived by the plain commands transcribed in
+`scores/c1-before.txt` / `c1-after.txt`, `scores/c2-before.txt` / `c2-after.txt`
+and the records receipts):
+
+| atom | declared value |
+|---|---|
+| T1 | log-declaration-entry=true; claims-file-cited=true; log-deletions=0 (the declaration and freeze LOG entries both land with the operative freeze — the M58-1 ordering disclosure) |
+| T2 | freeze=37e49cf3 (first commit adding the container; the attempts 634d12d6/9e8ee220 disclosed in declaration_pointer, never evidence); instruments=6 pinned (census3 a7538e5f, receipt-audit 897df532, record-receipt-audit 3a5fff9a, v6-block-digest 22785c1e, corrections-pin 22f77c34, freeze-gate 25b54339 — all unchanged from the claims commit through the tip); gate-verdict=CLEAN (pre-flight at the freeze: audited 33, clean 13, disclosures 32/33 exact + missing [round-58], exit 1 honestly printed, receipt `scores/gate-preflight.txt`) |
+| T3 | c1-before: the routed carry-in set open at the base; the sweep names freeze-gate-tip-90f3a9b9.json absent in round-55 scope |
+| T4 | c1-after: R1 marker 0→1; R2 receipt landed byte-identically (sha256 b508a78a… = the committed round-54 original) and both audits green at 05865b6d; R3 probe + 19-row table landed; R4 W04 named debt at both ends |
+| T5 | c2-before: census3 --check at the base exit 2 (registry unparseable); selftest 20/0 (instrument healthy); the malformed row located (SKILL.md:1845, cells=8) |
+| T6 | c2-after: 63 rows / 0 malformed; --generate at the landing → 63 paths; --check at the record rev → exit 0 exact; historical exit 1 (frozen census2) disclosed; v6 digest unchanged 946e5359 |
+| T7 | sources-before=164; sources-after=165; new-rows=S258(A); used-by-ok=true |
+| T8 | census start-exit=0 (19 W04, 164 rows); end-exit=0 (19 W04, 165 rows); no-harm: owned-axes rows byte-equal; PROVINCE diff empty; LOG deletions 0; the SKILL v6 marker block digest unchanged 946e5359 |
+
+Landing receipts (each exists, parses, and carries the named check at the named
+revision):
+
+- `.ufo/waves/round-58/l1/census-start.txt` rev=none check=exit-0-19-w04-164-rows
+- `.ufo/waves/round-58/l1/scores/c1-before.txt` rev=none check=routed-set-open-at-base
+- `.ufo/waves/round-58/l1/scores/c2-before.txt` rev=42c794afc5cdf2f72d80edb839cfbcbfe32e6bad check=check-exit-2-selftest-20-0-row-located
+- `.ufo/waves/round-58/l1/records/orphan-census.txt` rev=none check=3-worktree-only-paths-dispositioned-quotepath-trap-disclosed
+- `.ufo/waves/round-58/l1/records/receipt-audit-sweep.txt` rev=42c794afc5cdf2f72d80edb839cfbcbfe32e6bad check=4-clean-1-failed-named-finding-bytes-verified-under-round-54
+- `.ufo/waves/round-58/l1/records/w04-supersedes-probe.txt` rev=none check=supersedes-guard-e04-only-script-bytes-pinned
+- `.ufo/waves/round-58/l1/records/w04-disposition.tsv` rev=none check=19-rows-plus-header-first-holder-named
+- `.ufo/waves/round-58/l1/s258/digests.txt` rev=none check=gfm-html-b153d814
+- `.ufo/waves/round-58/l1/scores/gate-preflight.txt` rev=37e49cf33537ff182265c42f3fa546b1c0c0c0fa check=audited-33-clean-13-disclosures-32-of-33-missing-round-58-disclosed
+- `.ufo/waves/round-58/l1/records/record-audit-green-r55.txt` rev=05865b6d63b43b6f732e9013c86980d79ddcb52c check=record-audit-named-13-missing-0-and-receipt-audit-clean-checked-4
+- `.ufo/waves/round-58/l1/records/historical-and-v6-noharm.txt` rev=05865b6d63b43b6f732e9013c86980d79ddcb52c check=historical-exit-1-frozen-census2-v6-digest-unchanged
+- `.ufo/waves/round-58/l1/records/census58-at-landing.json` rev=05865b6d63b43b6f732e9013c86980d79ddcb52c check=generated-63-paths-every-registered-path-present
+- `.ufo/waves/round-58/l1/scores/c1-after.txt` rev=<record commit> check=R1-marker-0-to-1 (lands with the close, ordering note)
+- `.ufo/waves/round-58/l1/scores/c2-after.txt` rev=<record commit> check=check-exit-0-at-record-rev (lands with the close, ordering note)
+- `.ufo/waves/round-58/l1/records/census-check-at-record.txt` rev=<record commit> check=exit-0-exact (lands with the close, ordering note)
+- `.ufo/waves/round-58/l1/scores/gate-landing.txt` rev=<record commit> check=exit-0-disclosures-33-of-33 (lands with the close, ordering note)
+- `.ufo/waves/round-58/l1/census-end.txt` rev=<record commit> check=exit-0-19-w04-165-rows (lands with the close, ordering note)
+
+**planned (next steered round only):** the AVM LE-SquashFS re-freeze stays
+routed (host absent surfaces unchanged); a census-safe W04 resolution is CLOSED
+as vacuous-as-named this round (the probe + disposition table); the r55
+container bare-name claim and the r55 record section now resolve (this round's
+landing); a remaining honest follow-up is the round-53 container's
+receipts_checked-0 vacuous-clean shape if a future round wants receipt claims
+added there.
+
+**retired:** none.

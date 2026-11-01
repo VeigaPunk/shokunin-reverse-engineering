@@ -1,0 +1,11 @@
+== census3 historical mode at the landing 05865b6d63b43b6f732e9013c86980d79ddcb52c (frozen census2; the r51 authority note: 'The authority changed deliberately from historical claims-naming census to registry inventory; census2 remains frozen') ==
+$ python -X utf8 -I -B tools/round-51/census3.py --root . --rev 05865b6d63b43b6f732e9013c86980d79ddcb52c --historical
+{"census_paths": 42, "exit": 1, "registry_paths": 63}
+outside 21 unregistered 0 duplicates 0
+rc=1 expected and disclosed: the historical drift number grows with the registry (55/13 at the r51 claims base, 63/21 at this landing) because census2 is frozen; the r58 claim's after-state is the --check form against the committed generated inventory, not the historical form
+
+== v6 triage-table digest, no-harm (base vs landing) ==
+$ python -X utf8 -I -B tools/round-55/v6-block-digest.py --root . --rev <REV>   (run at 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad and 05865b6d63b43b6f732e9013c86980d79ddcb52c)
+base    946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc 23 lines 8961 bytes
+landing 946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc 23 lines 8961 bytes
+(byte-identical digest 946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc — the registry-row reword did not touch the triage-table block)
