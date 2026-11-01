@@ -167,6 +167,7 @@
 
 
 
+| S253 | onekey-sec/sasquatch project tree — https://github.com/onekey-sec/sasquatch/tree/b34aa5ef67068a2137ac04e2272915bd45388260 (README, USAGE, debian/control; snapshot bytes and sha256s in `.ufo/waves/round-53/l1/s253/`) | code | A | The project's own one-line purpose statement ("Tool to extract vendor specific SquashFS images") and its upstream writer-side `-nopad` option text, as packaged at commit `b34aa5ef67068a2137ac04e2272915bd45388260` | `debian/control:15` Description "Tool to extract vendor specific SquashFS images"; `USAGE:246` "-nopad		do not pad filesystem to a multiple of 4K" | Grounds the reader-category fact that a reader dedicated to vendor-specific SquashFS variants exists as a packaged project (why standard-reader refusal on legacy variants is expected, not anomalous), and the writer-side pad option behind the recon corpus's nopad fixtures; it is not evidence that any reader validates the round-42 fixtures, and it does not extend the frozen census. | mined | 2026-10-31 | on-release | corpus/knowledge/2026-10-31-r53-triage-v6-reader-census.md, corpus/lessons/round-53.md |
 ## Paths
 
 - GNU ELF version-needs — S103 → S104: read field meaning and record-relative links before numeric widths/constants; S105 is rejected for GNU-specific authority, not for generic ELF usefulness.

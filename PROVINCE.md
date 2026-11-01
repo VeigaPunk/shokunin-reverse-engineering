@@ -446,3 +446,37 @@ Recorded 2026-10-29 after scoring: the frozen counter `tools/round-50/c1-counter
 | genuine AVM-marker little-endian SquashFS v4 (`hsqs`, v4.0 xz, `mkfs_time == bytes_used`) members of four public FRITZ!OS images (7581/7582 07.18, 6490 Cable 07.57, 6430 Cable 07.30 x86 members) — handler `squashfs_v4_le` | no new REA key — unblob 26.6.4 runs plain `sasquatch -le` for every LE v4 chunk (S245 :53-54; the AVM marker test exists only in the BE branch, :48); `REA_UNBLOB_COMMAND` = unblob 26.6.4; `extract-firmware --max-depth 1` with the frozen `rea_parameters` budgets | entry `corpus/knowledge/2026-10-28-r50-avm-le-squashfs-core.md` (S243, S244, S245, S249); carriers chain-pinned by `tools/round-50/fetch-vendor.py`, never committed; receipts `corpus/evidence/round-50/c1/`; counter `tools/round-50/c1-counter.py` at the freeze `435d41fd` — carriers_matched 2 of 4, `frozen_path_changed []`, citation and map bindings true with the two Core-promotion bindings false (`province_core_section`, `province_core_row` — nothing was promoted), receipt `.ufo/waves/round-50/l1/scores/c1-after-attempt2.json` |
 
 Round-50 frontier note, 2026-10-29: the LE-AVM clause of the round-40/41/42/44/49 notes' Still-Frontier lists is unchanged by this round — `LE AVM members (hsqs)` stays Frontier after the measured attempt (`2026-10-28-r50-avm-le-squashfs-core`; 2/4 under the frozen gap-accounting rule). Still Frontier: LE AVM members (`hsqs`), LE AVM rootfs of ~13k files under REA's 120 s limit (FRITZ!Box 7530/7590, observed), AVM kernels, nested sub-images below depth 1.
+
+## Host migration — 2026-10-31 (Windows host; recorded under the round-53 absent-surface rule)
+
+The Linux host every Core row above names (the `/home/vgpnk/...` trees) is gone from
+this lane's working environment. Measured on the new Windows host, 2026-10-31:
+
+- A full `git clone` of this lane fails checkout: `error: invalid path
+  '.ufo/waves/arc3-loop1-round3/claims/c1/EX-08/aux/CarrierB.abi.json'` followed by
+  `unable to checkout working tree` — the tracked directory
+  `.ufo/waves/arc3-loop1-round3/claims/c1/EX-08/aux/` (50 files, the only
+  reserved-name collision in `git ls-tree -r --name-only HEAD`) collides with the
+  Windows reserved device name `aux`; a pathspec checkout that excludes it succeeds.
+  Every lane read on this host is therefore plumbing (`git show`, `git ls-tree`,
+  `git rev-parse`) against committed bytes — the round contract's plumbing-only
+  rule is this measured constraint.
+- `python3` is the Microsoft Store stub ("Python was not found"); the real
+  interpreter is `python` (3.13.15). Text-mode subprocess pipes decode with the ANSI
+  codepage (cp1252): the frozen v5 instrument exits 2 on SKILL.md's UTF-8 bytes
+  (`UnicodeDecodeError: 'charmap' codec can't decode byte 0x9d in position 80044`),
+  and the same command completes under `python -X utf8`
+  (`.ufo/waves/round-53/l1/host-probes/`).
+- ABSENT here, recorded absent with this date: the `rea` CLI and its npx caches,
+  the Ghidra 12.1.4 install and JDK 21, the client configs (Devin/OMP/Kimi),
+  sasquatch/sasquatch-v4be, unblob, unsquashfs, 7-Zip. Every Core-row probe column
+  above is a historical receipt from the Linux host, not a current-host holding; no
+  REA verb is exercisable on this host, and no row above is promoted or re-based by
+  this note.
+- Reachable surfaces on this host: this lane repo's committed fixtures and
+  instruments via plumbing git plus `python -X utf8`, and public artifacts fetched
+  read-only (first use: S253, round 53).
+- Fleet census naming: `scripts/sources-census.sh` maps the lane id `kaidoku` to a
+  `kaidoku-shokunin` directory that does not exist here; the lane checkout is named
+  `shokunin-reverse-engineering`, so the validate run passes the explicit lane
+  directory (exit 0 with the 19 standing W04 warnings, round-53 census receipts).
