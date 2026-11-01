@@ -4186,3 +4186,17 @@ the next record, never a rewrite of the filed text):
 stays routed; a census-safe W04 supersedes set stays open (19 standing warnings).
 
 **retired:** none.
+
+**Record corrections — round 55, sha re-citation (appended after the push):** the
+rebase builder skipped its orphan-sha substitution for this section, the claims
+container, the FREEZE receipt, the ledger row and the round-55 lesson (M55-6), so
+the pushed section above cites the orphaned first-chain shas. Corrections of
+record, by role (the section text above stays as filed): declaration `c191d8df…`
+(was `23f746f3…`); freeze `1f9be6eb…` (was `622b8e38…`); landing `fa4cd11…` (was
+`765118a4…`); landing follow-up `627a9c20…` (was `e21be31a…`); record/measured-at
+`d79e630d…` (was `25b5b256…`; this section's own introducing commit is `d79e630d…`
+and the citations correct to it). The container's `claims_commit` and the FREEZE
+receipt are corrected in place in the same commit (disclosed in LOG; the pinned
+instruments are untouched and the gate re-run is CLEAN). The ledger row's sha
+citations are corrected by the appended `round-55/correction-1` row, never by an
+in-place edit (QUALITY row 100).

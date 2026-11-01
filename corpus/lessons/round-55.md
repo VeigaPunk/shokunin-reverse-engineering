@@ -53,3 +53,25 @@ instruments and pins: `tools/round-29/freeze-gate.py` `25b54339…93eb2`,
 `tools/round-55/corrections-pin.py` `f71e6b21…d40a`,
 `tools/round-55/v6-block-digest.py` `22785c1e…741c` — bytes unchanged from the
 claims commit `23f746f3…`.
+
+## Corrections (round 55, sha re-citation)
+
+Appended after the push (nothing above is edited). The rebase builder (M55-6)
+skipped its sha-substitution pass for this lesson, the claims container, the FREEZE
+receipt, the ledger row and the SCORECARD record section, so the pushed bytes of
+those files cite the orphaned first-chain shas (`23f746f3…`, `622b8e38…`,
+`765118a4…`, `e21be31a…`, `25b5b256…` — objects that exist only in this host's
+object store). Corrections of record for THIS file, by role:
+
+- declaration: `c191d8df…` (was `23f746f3…`) — in the header, M55-3 and the Freeze
+  section below;
+- freeze: `1f9be6eb…` (was `622b8e38…`) — in the header, M55-4 and the Freeze section;
+- landing: `fa4cd11…` (was `765118a4…`) — in M55-4;
+- landing follow-up: `627a9c20…` (was `e21be31a…`) — in M55-4.
+
+M55-6 (mined here, class receipt-authoring/tooling): the rebase helper's per-file
+renderers applied the orphan-sha substitution to LOG, SOURCES, QUALITY, SKILL and
+the r54 lesson but skipped it for five files; caught by the post-push citation
+sweep (`git show <tip>:<file> | grep -c '<orphan sha>'` per touched file). Fix:
+a substitution pass is verified by the SAME sweep that would catch its absence —
+run the grep before committing, not after pushing.
