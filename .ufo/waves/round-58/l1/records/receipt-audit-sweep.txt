@@ -1,0 +1,40 @@
+kaidoku round-58 receipt-audit sweep (the r57-closure routed hygiene duty's committed-tree arm; run at the base 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad; instruments' bytes pinned in the round-58 claims container)
+
+== A. tools/round-56/receipt-audit.py (sha256 897df532d4707fc5c190b8c52b4c33176efe07ac878839efb14de56820d72512) over the five host-era claims containers ==
+(scope: rounds 53-57, the five rounds of this host; rounds 14-52 are historical — the R29 gate audits their instruments, and the r56 bare-name fail-closed standard postdates them; disclosed scope, not an omission)
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-53/claims.json --rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+verdict clean exit 0 receipts_checked 0 findings []
+rc=0 (of the summarizing pipe; the tool's own verdict is the line above)
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-54/claims.json --rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+verdict clean exit 0 receipts_checked 9 findings []
+rc=0 (of the summarizing pipe; the tool's own verdict is the line above)
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-55/claims.json --rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+verdict failed exit 1 receipts_checked 4 findings [{"finding": "RECEIPT_ABSENT", "name": "freeze-gate-tip-90f3a9b9.json", "scope": "round-55"}]
+rc=0 (of the summarizing pipe; the tool's own verdict is the line above)
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-56/claims.json --rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+verdict clean exit 0 receipts_checked 10 findings []
+rc=0 (of the summarizing pipe; the tool's own verdict is the line above)
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-57/claims.json --rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+verdict clean exit 0 receipts_checked 7 findings []
+rc=0 (of the summarizing pipe; the tool's own verdict is the line above)
+(round-53: clean with receipts_checked 0 — the container names zero receipt paths; disclosed vacuous-clean, the r56 fail-closed standard postdates it. round-55: FAILED — RECEIPT_ABSENT freeze-gate-tip-90f3a9b9.json in round-55 scope, the sweep's one live finding)
+
+== B. tools/round-57/record-receipt-audit.py (sha256 3a5fff9adcb472e2cfb8ba42225520f49539b0493c2c144c9684fc296add8151) over the last three record sections ==
+$ python -X utf8 -I -B tools/round-57/record-receipt-audit.py --root . --record SCORECARD.md --heading "Round 55" --rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+verdict missing exit 1 named 13 missing 1 findings ['.ufo/waves/round-55/l1/scores/freeze-gate-tip-90f3a9b9.json']
+$ python -X utf8 -I -B tools/round-57/record-receipt-audit.py --root . --record SCORECARD.md --heading "Round 56" --rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+verdict clean exit 0 named 14 missing 0 findings []
+$ python -X utf8 -I -B tools/round-57/record-receipt-audit.py --root . --record SCORECARD.md --heading "Round 57" --rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+verdict clean exit 0 named 12 missing 0 findings []
+(Round 55 section: named 13, missing 1 — the same 90f3a9b9 path its landing-receipts list claims 'each exists'; Rounds 56/57: green)
+
+== C. the named receipt's bytes exist — under round-54 (the M55-4 pathspec defect's actual landing) ==
+$ git show 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad:.ufo/waves/round-54/l1/scores/freeze-gate-tip-90f3a9b9.json | python -X utf8 -I -c "import json,sys; d=json.load(sys.stdin); gs=d['gate_stdout']; print('exit',d['exit'],'audited',gs['audited'],'clean',gs['clean'],'disclosures',gs['disclosures']['exact'],'/',gs['disclosures']['of'],'missing',gs['disclosures']['missing'],'round54_verdict',d['round54_gate_row']['verdict'])"
+exit 0 audited 29 clean 9 disclosures 29 / 29 missing [] round54_verdict CLEAN
+(matches the r55 container T2's transcription 'exit 0, disclosures 29/29, round-54 CLEAN' exactly; the receipt's round-54 home is the M55-4 defect itself — the r55 records name it in round-55 scope, the bytes landed under round-54)
+sha256 of the committed round-54 bytes:
+b508a78ae25880c094ea42d74c48874d248b0cd527c60e4e951028ebccb23df1
+
+== D. disposition ==
+The sweep names ONE evidence path absent: .ufo/waves/round-55/l1/scores/freeze-gate-tip-90f3a9b9.json — named by the r55 claims container (T2, bare name), the r55 SCORECARD landing-receipts list ('each exists'), and nowhere else. Its bytes exist and match every transcription; only the home directory is wrong (committed under round-54 during the r54-close/r55 window). The r56 round adjudicated the CONTAINER's bare-name grammar (M56-2) and rejected CALLING the run green (R56 reject 2) — it did not land the receipt, and its 'never resolves' statements were true at every rev it cited. This round lands a byte-identical copy at the named path (cmp/sha256-verified against the committed round-54 original), which makes the r55 records' claims true in the tree WITHOUT editing any frozen byte; the r56 texts stay as filed and remain true at the revs they cite, with the supersession note ('never resolves' → 'did not resolve before the round-58 landing') carried in the round-58 LOG and lesson.
+After the landing the same commands re-run: receipt-audit on the r55 container → clean (bare name resolves to exactly one path in round-55 scope); record-audit 'Round 55' → named 13, missing 0; the red demo at the r55 freeze 1f9be6eb stays red (the historical freeze commit genuinely lacked the file — history is not rewritten).

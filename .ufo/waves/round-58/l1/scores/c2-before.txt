@@ -1,0 +1,20 @@
+kaidoku round-58 BEFORE arm, C2 (the routed registry-drift census cannot run at the base: the SKILL instrument-registry is unparseable by its own frozen census; probes pasted with observed outputs)
+
+== the drift census at the base ==
+$ python -X utf8 -I -B tools/round-51/census3.py --root . --rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad --check
+{"error": "registry row must have seven cells", "exit": 2}
+tool rc=2 (exit 2: could-not-evaluate — the registry does not parse, so the routed drift check is unrunnable, not failing)
+
+== the instrument is healthy; the defect is data ==
+$ python -X utf8 -I -B tools/round-51/census3.py --selftest
+{"cases": 20, "failures": [], "selftest": {"cli-clean": true, "cli-duplicate": true, "cli-extra": true, "cli-marker-refusal": true, "cli-missing": true, "cli-unknown": true, "duplicate": true, "duplicate-marker": true, "duplicate-row": true, "equal": true, "extra": true, "invalid-artifact": true, "malformed-row": true, "missing": true, "missing-file": true, "missing-marker": true, "parse-clean": true, "reversed-marker": true, "traversal": true, "unknown": true}}
+selftest rc=0
+
+== the malformed row, located ==
+$ git show <BASE>:SKILL.md | python -X utf8 -I -c <cell-count probe over the instrument-registry v2 block>
+malformed rows: 1
+cells=8 row starts: | `tools/round-55/v6-block-digest.py` | probe — R55-C1(c): the reproducible digest of the 
+The one malformed row is the r55 `tools/round-55/v6-block-digest.py` registry row: its purpose cell contains the GFM-escaped pipe written as backslash-pipe inside backticks — spec-legal table-cell content (S258), but the frozen parser splits each row on the plain pipe character with no GFM unescaping, so the row reads as eight cells and the parser fails closed (CensusError, exit 2).
+$ git show <BASE>:SKILL.md | grep -n v6-block-digest | head -1
+1845:| `tools/round-55/v6-block-digest.py` | probe — R55-C1(c): the reproducib
+(SKILL.md line 1845 at the base; the offending cell fragment reads: marker line through the last consecutive backtick-backslash-pipe-backtick-leading line — i.e. the escaped-pipe token inside backticks)

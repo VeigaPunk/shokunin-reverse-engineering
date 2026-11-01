@@ -1,0 +1,25 @@
+kaidoku round-58 W04 supersedes feasibility probe (the r57 planned item 'a census-safe W04 supersedes set', 19 standing warnings; all probes on the FLEET repo's committed bytes at its HEAD 76fd33314807dacca4a31349c097622c91725583, read-only)
+
+== the census's supersedes guard: exactly one occurrence, in the E04 branch ==
+$ git -C <fleet-root> show 76fd33314807dacca4a31349c097622c91725583:scripts/sources-census.sh | grep -n 'supersedes'
+25:#             E03 duplicate id                   E04 duplicate URL+scope (no supersedes)
+648:            teaches !~ /supersedes S[0-9]{3}/)
+(line 25 is the header comment about E04; line 648 is the guard itself — inside the E04 (same URL, SAME scope) condition only)
+
+== the W04 branch verbatim (lines 644-652): no status test, no supersedes test ==
+$ git -C <fleet-root> show 76fd33314807dacca4a31349c097622c91725583:scripts/sources-census.sh | sed -n '644,652p'
+        if (u!="" && (u in url_seen) && !(scope_key in url_scopes))
+          printf "%s\tW04\t%s duplicate url %s across scopes\n",lane,id,u
+        if (u!="" && (scope_key in url_scopes) && status!="rejected" &&
+            url_scope_nonrejected[scope_key] &&
+            teaches !~ /supersedes S[0-9]{3}/)
+          printf "%s\tE04\t%s duplicate url %s within scope %s\n",lane,id,u,scope
+        if (u!="") {
+          url_seen[u]=1
+          url_scopes[scope_key]=1
+(W04 fires when the URL was seen at all and this (url,scope) pair is new — regardless of row status and regardless of any 'supersedes S###' annotation; the r56 ruling 'the W04 check precedes status' is here extended to supersedes)
+
+== verdict ==
+The routed 'census-safe W04 supersedes set' is the EMPTY SET as named: the mechanism the item names (a supersedes annotation clearing a W04) does not exist in the census. The 19 standing warnings are cross-scope duplicates of earlier same-URL rows; each is dispositioned in records/w04-disposition.tsv (19 rows + header, first holder named per row). The census-safe resolutions that DO exist (reject the newer row, or change its URL/scope) would falsify opened sources or their scopes — refused. W04 stays named debt; the routed item closes as vacuous-as-named, not as fixed.
+
+Byte pin: the probed script is byte-identical at the two fleet heads read this round (464606fc… and 76fd3331…; sha256 3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30) — the fleet repo is a live surface (the orchestrator commits between reads); the byte pin, not the moving head, is the reference. records/w04-disposition.tsv cites the same byte pin.

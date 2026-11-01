@@ -1,0 +1,25 @@
+kaidoku round-58 BEFORE arm, C1 (the r57-closure routed carry-in set, all open at the base 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad; probes pasted with observed outputs)
+
+== (R1) the r57 spot-check §7 defect 2, file-count precision: no correction note exists ==
+$ git show 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad:LOG.md | grep -c '27 distinct filesystem paths'
+0
+(0 = open; the r57 report line 'exactly the 26 files named above' counts named items — the s257/ snapshot + digests named as one — while distinct filesystem paths number 27; routed wording: 'tighten the count next append')
+$ git grep -c '27 distinct filesystem paths' 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad; echo rc=$?
+rc=1
+
+== (R2) the orphaned-evidence hygiene duty: no committed sweep at the base ==
+$ git ls-tree -r --name-only 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad -- .ufo/waves/round-58/ | wc -l
+0
+(0 = no round-58 hygiene receipts exist at the base; the duty's instruments — the receipt-audit.py sweep over the claims containers, the record-receipt-audit.py run over the record sections, the worktree-vs-tree orphan census — have never been run as one receipted sweep)
+
+-- the worktree-vs-tree orphan census (read-only plumbing; core.quotepath=off so committed non-ASCII paths string-match their worktree names; the round-58 wave files this receipt lands inside are excluded — they are the round's own staged landing, not orphans; the exclusion is part of the command) --
+$ git -c core.quotepath=off ls-tree -r --name-only HEAD | sort > <scratch>/committed.list && find . -type f -not -path './.git/*' | sed 's|^\./||' | sort > <scratch>/worktree.list && comm -13 <scratch>/committed.list <scratch>/worktree.list | grep -v '^\.ufo/waves/round-58/'
+.ufo/waves/round-55/l1/scores/freeze-gate-tip-25b5b256.json
+tools/round-53/__pycache__/r53-record.cpython-313.pyc
+tools/round-53/__pycache__/sqfs-triage-v6.cpython-313.pyc
+(3 worktree-only paths outside this round's wave dir; per-path dispositions in records/orphan-census.txt. First run of this census without core.quotepath=off reported 5 paths, naming two COMMITTED non-ASCII round-39 fixture paths as worktree-only — a false orphan produced by git's default path quoting; the corrected count is 3 and the trap is mined as M58-3)
+
+== (R3) the r57 planned item 'a census-safe W04 supersedes set': no feasibility probe on record ==
+$ git ls-tree -r --name-only 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad -- .ufo/waves/round-58/ | grep -c w04
+0
+(0 = the probe and the 19-row disposition table do not exist at the base; the probe itself runs in records/w04-supersedes-probe.txt)

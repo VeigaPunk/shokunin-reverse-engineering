@@ -1,0 +1,20 @@
+kaidoku round-58 orphaned-evidence census and dispositions (worktree vs committed tree at the freeze; the r57-closure routed hygiene duty's worktree arm)
+
+The census (scores/c1-before.txt R2) finds 3 worktree-only paths outside this round's wave dir. Per-path disposition:
+
+1. .ufo/waves/round-55/l1/scores/freeze-gate-tip-25b5b256.json
+   class: unnamed orphan receipt of the superseded r55 first chain
+   probe: $ git grep -c 'freeze-gate-tip-25b5b256' 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad; echo rc=$?
+rc=1
+   (named by NO committed byte: no container, record section, or receipt list claims it; 25b5b256 is the discarded first-chain freeze whose sha the r55 section's sha re-citation corrected to d79e630d)
+   disposition: RETAINED ON DISK, DISCLOSED HERE, NOT LANDED — landing it would put an in-tree receipt no record claims (the M56-2 pre-claiming class); its gate run is superseded by the d79e630d re-run recorded in the r55 sha re-citation
+   sha256 (worktree bytes, for identification):
+   51da45446b340e22e632648c7f015ad81a755632daf330d145a651aa68dd0c4d
+
+2-3. tools/round-53/__pycache__/r53-record.cpython-313.pyc and tools/round-53/__pycache__/sqfs-triage-v6.cpython-313.pyc
+   class: gitignored interpreter caches (the lane .gitignore lists __pycache__/ and *.pyc)
+   disposition: REGENERABLE CACHE — left in place; invisible to every committed-byte probe by construction, never evidence
+
+Not orphans (a census defect this round caught and mined as M58-3): the first census run, string-comparing git's DEFAULT-QUOTED ls-tree output against raw worktree names, reported the two committed non-ASCII round-39 fixture paths (…/icons/アイコン.txt in .ufo/waves/round-39/w1/artifacts/R39C1CarrierK5/ and corpus/evidence/round-39/c1/K5/) as worktree-only; with core.quotepath=off both resolve in HEAD's tree (2 and 2). False orphans from path quoting, corrected before anything acted on them.
+
+Sweep verdict: zero worktree-only paths carry an existence claim in any committed byte. The only named-absent evidence path in the lane is freeze-gate-tip-90f3a9b9.json in round-55 scope — an in-tree defect the receipt-audit sweep names (records/receipt-audit-sweep.txt); this round lands a byte-identical copy at the path the r55 records name (the LOG landing entry discloses it).
