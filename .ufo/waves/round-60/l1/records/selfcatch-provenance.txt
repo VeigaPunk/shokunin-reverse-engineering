@@ -18,9 +18,12 @@ Truth check (the receipt's own demonstration re-executed this round at the r59 l
 $ python -X utf8 -I -B tools/round-59/annotation-audit.py --root . --receipt .ufo/waves/round-59/l1/scores/d581-correction.txt --rev 2ff5d30800df0184c0a63c778bb166c1650aa3a3
 exit 1, findings include ANNOTATION_OUTPUT_MISMATCH@27 and COMMAND_UNREEXECUTABLE@22 — exactly the two findings the selfcatch receipt records (its pasted run at the fixup 203c07a7 shows the same pair; the receipt-prose fixup 94537372 is what turned the same audit green, records/annotation-green-demo.txt)
 
-Post-landing verification (run after the carry-in commit exists):
+Post-landing verification (re-run after the carry-in commit ec9d93d7dcf72ba2aff88b3d72a3e39910bbc820 exists — this receipt's own copy lands in that commit, so the sha was filled by the disclosed fixup that follows it, the r59 fixup pattern; the landing copy of THIS receipt keeps the placeholder as filed):
 
-$ git cat-file -e "<carry-in commit>:.ufo/waves/round-59/l1/records/annotation-selfcatch.txt"
+$ git cat-file -e "ec9d93d7dcf72ba2aff88b3d72a3e39910bbc820:.ufo/waves/round-59/l1/records/annotation-selfcatch.txt"
 rc=0
+$ git show ec9d93d7dcf72ba2aff88b3d72a3e39910bbc820:.ufo/waves/round-59/l1/records/annotation-selfcatch.txt | sha256sum
+175ef2416bbe11a26d20df1c2e28a9e722488f02c6c01ab6f8ec5311e07d1f67  -
+(byte-identical to the worktree bytes hashed before landing)
 
 Limits: this round does not amend any r59 filed byte; the landing ADDS the missing file only. The r59 SCORECARD receipts list (the landing-receipts table) never claimed this file — the omission is in the prose evidence pointers, which is why the class is an orphaned-evidence repair, not a record correction.
