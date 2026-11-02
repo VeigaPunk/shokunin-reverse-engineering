@@ -1,0 +1,25 @@
+kaidoku round-61 — PERSISTENT arm: the routed defect still fires at the landing rev (the correction appends; filed bytes stay as filed — a correction does not clear the original line, the r58 persistent-finding pattern)
+$ python -X utf8 -I -B tools/round-61/numstat-edge-audit.py --root . --receipt .ufo/waves/round-60/l1/scores/c1-after.txt --rev e97e621e21bd285bbff2cc95c184c16f10efb04a
+.ufo/waves/round-60/l1/scores/c1-after.txt:10:NUMSTAT_EDGE_MISMATCH: SKILL delta landing→record (SKILL.md) claims 1 0 but the edge re-derives to 0 0 at bbdb03abdafd..29083b0c18ec
+{
+ "receipt": ".ufo/waves/round-60/l1/scores/c1-after.txt",
+ "rev": "e97e621e21bd285bbff2cc95c184c16f10efb04a",
+ "claims_found": 1,
+ "findings": [
+  {
+   "class": "NUMSTAT_EDGE_MISMATCH",
+   "line": 10,
+   "detail": "SKILL delta landing\u2192record (SKILL.md) claims 1 0 but the edge re-derives to 0 0 at bbdb03abdafd..29083b0c18ec"
+  }
+ ],
+ "exit": 1,
+ "exit_reason": "1 finding(s) named",
+ "bindings_used": {
+  "landing": "bbdb03abdafd777b10767071f3a16267bcccf866",
+  "record": "29083b0c18ecb2620e8a8812688a9b65acedb592"
+ },
+ "caller_supplied_names": [],
+ "tool": "tools/round-61/numstat-edge-audit.py"
+}
+rc=1
+(exit 1: exactly ONE finding — NUMSTAT_EDGE_MISMATCH@10, the ORIGINAL defective line; the appended correction block deliberately avoids restating the strict claim shape, so the gate fires on the original line only)

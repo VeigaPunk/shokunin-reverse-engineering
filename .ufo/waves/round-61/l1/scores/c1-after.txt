@@ -1,0 +1,40 @@
+kaidoku round-61 AFTER arm, C1+C2 (measured at the record commit 1fcb9ab90aa776d17da3ac3d69e8662563cab786, a descendant of the operative freeze 5286dccf86bdb598af23fd3a034592af5a5c97b6 and the landing e97e621e21bd285bbff2cc95c184c16f10efb04a; probes pasted with observed outputs. Ordering note: this receipt lands with the close commit, whose corpus/record bytes are byte-identical to this record state — the close adds only wave receipts and the LOG close entry; every probe below re-derives at the close tip unchanged)
+
+== C1: the correction is landed ==
+$ git cat-file -e 1fcb9ab90aa776d17da3ac3d69e8662563cab786:.ufo/waves/round-61/l1/scores/d601-correction.txt
+rc=0
+$ git show 1fcb9ab90aa776d17da3ac3d69e8662563cab786:.ufo/waves/round-60/l1/scores/c1-after.txt | grep -c 'CORRECTION (round 61)'
+1
+(one correction block appended; the filed bytes above it unchanged — freeze→landing numstat on the append exactly 14 0, the first 37 lines byte-identical sha256 873c447f re-hashed both sides before the landing)
+$ git diff --numstat 5286dccf86bdb598af23fd3a034592af5a5c97b6 e97e621e21bd285bbff2cc95c184c16f10efb04a -- .ufo/waves/round-60/l1/scores/c1-after.txt
+14	0	.ufo/waves/round-60/l1/scores/c1-after.txt
+
+== C1: the corrected edges stand at the record rev ==
+$ git diff --numstat 8e58366300aa30c097c81e68df2d0d30c689ed6f bbdb03abdafd777b10767071f3a16267bcccf866 -- SKILL.md  (freeze→landing)
+1	0	SKILL.md
+$ git diff --numstat bbdb03abdafd777b10767071f3a16267bcccf866 29083b0c18ecb2620e8a8812688a9b65acedb592 -- SKILL.md  (landing→record)
+(empty output above: the edge re-derives to 0 0 — the corrected reading, now on the record)
+$ git diff --numstat 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 29083b0c18ecb2620e8a8812688a9b65acedb592 -- SKILL.md  (base→record)
+1	0	SKILL.md
+
+== C2: the gate is registered ==
+$ git show 1fcb9ab90aa776d17da3ac3d69e8662563cab786:SKILL.md | grep -c 'tools/round-61/numstat-edge-audit.py'
+1
+(one SKILL registry row; the SKILL delta freeze→tip exactly 1 0 by numstat — precisely named this round, the D60-1 lesson applied to this round's own atoms: the row is added by the landing e97e621e and nothing after touches SKILL)
+$ git diff --numstat 5286dccf86bdb598af23fd3a034592af5a5c97b6 1fcb9ab90aa776d17da3ac3d69e8662563cab786 -- SKILL.md  (freeze→record)
+1	0	SKILL.md
+$ git show 1fcb9ab90aa776d17da3ac3d69e8662563cab786:SCORECARD.md | grep -c 'numstat-edge-audit.py'
+3
+(three SCORECARD matching LINES = the capability row, the round-61 section's header para, and the section's claim row)
+
+== C2: the demos stand at the record rev ==
+selftest 25/0 (records/edge-selftest.txt); red on the routed defect at the base (records/edge-red-c1after.txt: exit 1 NUMSTAT_EDGE_MISMATCH@10); red on the T7 sibling (records/edge-red-scorecard.txt: exit 1 @4606, the r59 T8 atom green on the same run); red on the LOG r60-close sibling (records/edge-red-log.txt: exit 1 @3857, the r59 claim green on the same run); fail-closed (records/edge-failclosed-scorecard.txt: 2x NAME_UNRESOLVED); zero-claims (records/edge-uneval-d581.txt: exit 2); the green arm over the correction receipt at its landing rev and the persistent arm over the defective receipt land with THIS close (records/edge-green-correction.txt, records/edge-persistent-c1after.txt — outputs re-derived at the landing rev, the disclosed ordering)
+
+== no frozen byte moved ==
+$ git diff --numstat 5286dccf86bdb598af23fd3a034592af5a5c97b6 1fcb9ab90aa776d17da3ac3d69e8662563cab786 -- PROVINCE.md
+(empty: PROVINCE untouched base→record)
+$ git diff --numstat 5286dccf86bdb598af23fd3a034592af5a5c97b6 1fcb9ab90aa776d17da3ac3d69e8662563cab786 -- LOG.md
+15	0	LOG.md
+(LOG additions-only; the r60 entries byte-identical inside it)
+$ git diff --numstat 5286dccf86bdb598af23fd3a034592af5a5c97b6 1fcb9ab90aa776d17da3ac3d69e8662563cab786 -- tools/round-59/annotation-audit.py tools/round-60/annotation-sweep.py tools/round-29/freeze-gate.py
+(empty: the frozen gates byte-identical freeze→record)
