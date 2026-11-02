@@ -1,0 +1,42 @@
+kaidoku round-62 AFTER arm, C1 (the capability landed and registered, measured at the record commit 6093f062015bb1d0d29113ff7f05b09d10514d16; probes pasted with observed outputs)
+
+$ git cat-file -e 6093f062015bb1d0d29113ff7f05b09d10514d16:tools/round-62/base-binding-sweep.py
+cat-file-rc=0 (the instrument exists at the record)
+
+$ git show 6093f062015bb1d0d29113ff7f05b09d10514d16:SKILL.md | grep -c 'base-binding-sweep'
+1
+(the registry row: exactly 1 — the capability is registered; the SKILL delta freeze->record numstat is exactly 1 0, pasted below)
+
+$ git diff --numstat b866cd8672f505c894c3c07f6496f30cfb720255 6093f062015bb1d0d29113ff7f05b09d10514d16 -- SKILL.md
+1	0	SKILL.md
+(freeze->record SKILL delta exactly 1 0 — the one added registry row; the D60-1 discipline: the edge is named with its exact revs)
+
+$ git diff --numstat f3adef27383ef7acc20ad98064b167c7e6b521dd 6093f062015bb1d0d29113ff7f05b09d10514d16 -- SKILL.md
+(landing->record: empty — nothing touched SKILL after the landing; grep exits 1 on empty)
+
+$ git show 6093f062015bb1d0d29113ff7f05b09d10514d16:SCORECARD.md | grep -c 'base-binding-sweep'
+4
+(the capability row + the round-62 section's mentions: observed count above; the capability row itself is the line ending '| 62 |' — grep -c '| 62 |' below)
+
+$ git show 6093f062015bb1d0d29113ff7f05b09d10514d16:SCORECARD.md | grep -c '| 62 |'
+1
+(exactly 1 capability row, first-working round 62)
+
+$ git ls-tree -r --name-only 6093f062015bb1d0d29113ff7f05b09d10514d16 -- .ufo/waves | grep -c 'records/basesweep-'
+4
+(the four basesweep demo receipts landed)
+
+no-harm re-derivations at the record:
+$ git diff --numstat 8374754b873c1f95ffddcbbe17007b5ef8eeadfc 6093f062015bb1d0d29113ff7f05b09d10514d16 -- PROVINCE.md
+(PROVINCE diff empty)
+$ git diff --numstat 8374754b873c1f95ffddcbbe17007b5ef8eeadfc 6093f062015bb1d0d29113ff7f05b09d10514d16 -- LOG.md
+30	0	LOG.md
+(LOG insertions only; deletions 0)
+$ python -X utf8 -I -B tools/round-55/v6-block-digest.py --root . --rev 6093f062015bb1d0d29113ff7f05b09d10514d16
+ "sha256": "946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc"
+}
+(the SKILL v6 marker block digest unchanged 946e5359 at base and record)
+$ git diff --numstat 8374754b873c1f95ffddcbbe17007b5ef8eeadfc 6093f062015bb1d0d29113ff7f05b09d10514d16 -- tools/round-59/annotation-audit.py tools/round-60/annotation-sweep.py tools/round-61/numstat-edge-audit.py tools/round-29/freeze-gate.py tools/round-51/census3.py tools/round-56/receipt-audit.py tools/round-57/record-receipt-audit.py tools/round-55/v6-block-digest.py
+(the eight standing instruments byte-identical base->record — numstat empty; grep exits 1 on empty)
+$ git diff --numstat 8374754b873c1f95ffddcbbe17007b5ef8eeadfc 6093f062015bb1d0d29113ff7f05b09d10514d16 -- .ufo/waves/round-53 .ufo/waves/round-54 .ufo/waves/round-55 .ufo/waves/round-56 .ufo/waves/round-57 .ufo/waves/round-58 .ufo/waves/round-59 .ufo/waves/round-60 .ufo/waves/round-61
+(NO prior-round wave byte amended base->record — numstat empty; zero exceptions this round)
