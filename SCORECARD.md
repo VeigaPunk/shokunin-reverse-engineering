@@ -4762,3 +4762,112 @@ re-runs every round a registry row lands (M58-2's rule, executed this round
 at 66 paths).
 
 **retired:** none.
+
+## Round 62 (2026-11-02) — the receipt corpus's base half becomes checkable: the base-binding sweep threads the frozen gate's --base-rev from each receipt's own bytes
+
+Fresh-start binding honored (the prompt's §7 list r50/r51/r52 re-read and
+spot-checked with fresh probes; the six ruled-out items receipted in
+`scores/freshstart-spotcheck.txt` at the freeze), L1-inline on the Windows
+host. Base `8374754b…` (the r61 verifier spot-check commit, which admitted
+r61 with no new routed defects); carry-in `5047ec55…` (the r61 outside
+decision recorded per QUALITY #34 BEFORE any claim was measured; the
+carried items restated — 19 standing W04, the r53 L0 open, the two
+standing bare-name findings, the host adaptations); declaration
+`dd193e88…` (the plans + the new instrument, committed BEFORE the claims
+file — QUALITY #33); operative freeze `b866cd86…` (the first commit adding
+`.ufo/waves/round-62/claims.json`); landing `f3adef27…` (the SKILL row +
+the capability row; the seven-cell recount covers the new row and the r61
+neighbor — both 7 cells, pipe-free). No wave (no dispatch surface; the
+kaidoku round-53 L0 question stays open). Nine frozen instruments
+unchanged except one new (`tools/round-62/base-binding-sweep.py`, pin
+`18273023…`), which COMPOSES the frozen `tools/round-59/annotation-audit.py`
+(pin `ba9ccbb9…`, byte-checked via `--expect-sha256` before every run).
+Claims: R62-C1 (depth, capability acquisition) — the base-binding sweep:
+the twice-named r60/r61 planned candidate; the frozen gate's `--base-rev`
+option threaded from each receipt's OWN rev-name bindings (the r61 grammar
+— name exactly `base`, first occurrence wins, 40-hex, run-ons rejected;
+S262 grounds the 40-hex completeness), so the base half of every
+`base: N -> record: M` annotation becomes mechanically checkable with no
+caller context; finding keys keep the r60 format and `--no-base-thread`
+reproduces the r60 semantics exactly. Lowest-axis rule: all three owned
+axes tied at 10.0, so the claim is a lowest-axis claim. Stagnation nudge
+not fired (window N=10; capabilities entered r60 and r61; r62 = 2/10).
+Sourced claim: S262 (the gitrevisions documentation, opened this round)
+grounds C1's design — the full SHA-1 object name is a 40-byte hexadecimal
+string, so a receipt-own `base <40hex>` binding is a complete revision and
+a complete per-receipt base context, while abbreviations and sha256-length
+run-ons are not object names and never bind.
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R62-C1 | depth, capability acquisition — `tools/round-62/base-binding-sweep.py`: the multi-receipt sweep that threads the frozen r59 annotation gate's `--base-rev` from each receipt's own bytes (the r60 sweep's limits line documents the gap: "`--base-rev` re-derivation is not swept"); the receipt corpus's base half (`base: N -> record: M` annotations' base values) becomes mechanically checkable with no caller context | at the base `8374754b…`: instrument absent (`git cat-file -e …:tools/round-62/base-binding-sweep.py` rc=128), 0 SKILL registry rows, 0 SCORECARD capability rows, 0 `records/basesweep-` receipts, and the gap on the record: the r60 sweep's checker argv never carries the option (`grep -c '"--base-rev"'` → 0) while its limits line documents it (`grep -c 'base-rev'` → 1, the documenting line itself; the plans draft predicted 0 there — corrected pre-freeze, M62-2; receipt `scores/c1-before.txt`) | the instrument registered (SKILL row 7 cells pipe-free with the neighbor recounted, capability row, container pin `18273023…`); selftest 50 cases 0 failures (`records/basesweep-selftest.txt`); the FIRST THREADED INVENTORY at the base rev: 241 receipts enumerated, 0 invocation errors, 29 receipts threaded from receipt-own bindings (each a real commit), 5 base annotation instances threaded of which 4 are grammar-matched base probes the frozen gate re-derives FOR THE FIRST TIME (the r60 semantics checked 0), 0 base-class findings — the corpus's one annotated+bound receipt (the r58 c1-after) is internally true at its own bound base — and the standing 5 finding keys UNCHANGED (threading adds checks that pass; filed defects persist); GREEN with the STANDING r60 disposition TSV unchanged (exit 0, no uncovered, no orphans); the `--no-base-thread` equivalence arm (same 5 keys, 0 threaded, 0 base probes, per-receipt classes identical); the pin fail-closed arm (wrong `--expect-sha256` → exit 2 before any audit) | `python -X utf8 -I -B tools/round-62/base-binding-sweep.py --selftest`; the demo commands pasted with outputs in `records/basesweep-*.txt` (the inventory's JSON base_threading block is the counting record: receipts_with_base_binding 29, base_annotation_instances 5, base_probe_instances 4, base_class_findings []; the equivalence and pin arms in the same receipts; the before greps in `scores/c1-before.txt`) | `.ufo/waves/round-62/l1/records/basesweep-inventory-red.txt` (rev = the base `8374754b…`; the after-arm at the record rev lands with the close, the disclosed ordering) |
+
+Owned scores: coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10` — the
+owned-axes rows are byte-equal base→tip; PROVINCE is untouched. LOG
+append-only (insertions only). PROVINCE diff empty. Learning trends:
+expansion **unchanged** (no Frontier→Core move; S262 is tool documentation,
+not an REA surface; one capability row grows the repertoire, not the map);
+quality **improved** (the base half of the receipt corpus's annotation
+class — unchecked since the corpus began, documented as unswept by the r60
+record itself — is now mechanically checkable wherever a receipt binds its
+own base; the first threaded inventory re-derived 4 base probes with zero
+disagreements and left the standing findings exactly intact; two of three
+mistakes self-caught before any commit, the third before the receipt
+landed); discernment **unchanged** pending the outside spot-check (the
+round executed its planned field verbatim, refused to read the zero
+base-class findings as a corpus-wide base-true verdict — reject 2 — and
+kept the mirror reporting-only — reject 3).
+
+Round-62 record atoms (each re-derived by the plain commands transcribed in
+`scores/c1-before.txt`, the basesweep receipts, and this section):
+
+| atom | declared value |
+|---|---|
+| T1 | log-carry-in-entry=true (with the carry-in `5047ec55…`, which records the r61 non-author closure admitted-true, QUALITY #34, no new routed defects, the carried items restated); log-deletions=0 |
+| T2 | freeze=b866cd86 (first commit adding the container); instruments=9 pinned (base-binding-sweep 18273023 new — committed at the declaration dd193e88 before the claims file; numstat-edge-audit 6b967e20, annotation-sweep 38614088, annotation-audit ba9ccbb9, census3 a7538e5f, receipt-audit 897df532, record-receipt-audit 3a5fff9a, v6-block-digest 22785c1e, freeze-gate 25b54339 unchanged); gate-verdict=CLEAN (pre-flight at the freeze rc 0: audited 37, clean 17, round-62 CLEAN, required_failed [], receipt `scores/gate-preflight.txt` + .json) |
+| T3 | c1-before: instrument absent rc=128 at the base (present rc=0 at the declaration); 0 registry rows; 0 capability rows; 0 basesweep receipts; the r60 argv-token probe 0 with the limits line verbatim (the loose-token probe 1 — the documenting line; the draft note preserved, M62-2) |
+| T4 | basesweep demos: selftest 50/0; the threaded inventory red exit 1 (241/29/5/4/0-base-findings/5-standing-keys/0-invocation-errors); green with the standing TSV exit 0; no-thread equivalence same keys 0 threaded; pin fail-closed exit 2 |
+| T5 | duties: the nine-container receipt-audit sweep 7 clean + 2 standing findings (the r61 container clean on first entry; dispositions BEFORE the landing, the fifth refusal to plant); record-audit-r61 clean; orphan census 4 worktree-only (one new gitignored .pyc, check-ignored) + 8 in-progress + the 50-path aux/ class |
+| T6 | sources-before=168; sources-after=169; new-rows=S262(A); used-by-ok=true; S262 placed directly after S261 BEFORE the record commit (the r59 E12 lesson applied pre-landing) |
+| T7 | census start-exit=0 (19 W04, 168 rows); end-exit=0 (19 W04, 169 rows expected, whatever the run prints is pasted); no-harm: owned-axes rows byte-equal; PROVINCE diff empty; LOG deletions 0; the SKILL delta landing→tip exactly `1 0` (the one added registry row — numstat-verified at the landing `f3adef27`); the SKILL v6 marker block digest unchanged 946e5359 (re-derived by tools/round-55/v6-block-digest.py at base and tip); NO prior-round filed byte amended anywhere base→tip (zero exceptions) |
+| T8 | the mistakes: M62-1 (the compose-seam signature mismatch, selftest-invisible, caught by the pre-commit dry run, fixed with a dedicated seam case — the instrument's bytes hash-verified worktree-vs-blob identical at the declaration), M62-2 (the predicted-0 loose grep — the limits line names the token it documents; corrected to the argv-token probe, the plans correction appended at the freeze), M62-3 (the verification snippet's own index bug, traceback kept out of the landed receipt, re-run fixed pre-commit with the note) |
+
+Landing receipts (each exists, parses, and carries the named check at the named
+revision):
+
+- `.ufo/waves/round-62/l1/census-start.txt` rev=none check=exit-0-19-w04-168-rows
+- `.ufo/waves/round-62/l1/scores/c1-before.txt` rev=none check=instrument-absent-0-rows-argv-token-0-limits-line-verbatim-draft-note
+- `.ufo/waves/round-62/l1/scores/freshstart-spotcheck.txt` rev=none check=r50-honest-stop-r51-floor64-false-r52-unprovable-x4-six-ruled-out
+- `.ufo/waves/round-62/l1/records/basesweep-selftest.txt` rev=none check=50-cases-0-failures
+- `.ufo/waves/round-62/l1/records/basesweep-inventory-red.txt` rev=8374754b873c1f95ffddcbbe17007b5ef8eeadfc check=exit-1-241-receipts-29-threaded-5-ann-4-probes-0-base-findings-5-standing-keys-0-invocation-errors
+- `.ufo/waves/round-62/l1/records/basesweep-green-and-nothread.txt` rev=8374754b873c1f95ffddcbbe17007b5ef8eeadfc check=green-exit-0-standing-tsv-unchanged-plus-nothread-equivalence-same-keys
+- `.ufo/waves/round-62/l1/records/basesweep-pin-mismatch.txt` rev=8374754b873c1f95ffddcbbe17007b5ef8eeadfc check=exit-2-pin-mismatch-before-any-audit
+- `.ufo/waves/round-62/l1/records/receipt-audit-sweep.txt` rev=8374754b873c1f95ffddcbbe17007b5ef8eeadfc check=nine-containers-7-clean-r61-clean-on-first-entry-2-standing-findings
+- `.ufo/waves/round-62/l1/records/duty-finding-dispositions.txt` rev=none check=both-dispositioned-before-landing-fifth-refusal-pyc-cache-check-ignored
+- `.ufo/waves/round-62/l1/records/record-audit-r61.txt` rev=8374754b873c1f95ffddcbbe17007b5ef8eeadfc check=r61-record-section-clean
+- `.ufo/waves/round-62/l1/records/orphan-census.txt` rev=dd193e888462d6bdfae38191fde1abadaac81036 check=4-worktree-only-8-in-progress-50-aux-class
+- `.ufo/waves/round-62/l1/s262/digests.txt` rev=none check=gitrevisions-1ab7124a-74654-bytes-plain-quote-locator-verified
+- `.ufo/waves/round-62/l1/scores/gate-preflight.txt` rev=b866cd8672f505c894c3c07f6496f30cfb720255 check=rc-0-audited-37-clean-17-round-62-clean
+- `.ufo/waves/round-62/l1/scores/gate-preflight.json` rev=b866cd8672f505c894c3c07f6496f30cfb720255 check=full-audit-json
+- `.ufo/waves/round-62/l1/records/census62-at-landing.json` rev=f3adef27383ef7acc20ad98064b167c7e6b521dd check=generated-67-paths
+- `.ufo/waves/round-62/l1/scores/c1-after.txt` rev=<record commit> check=after-arm-at-the-record-rev (lands with the close, ordering note)
+- `.ufo/waves/round-62/l1/records/census-check-at-record.txt` rev=<record commit> check=exit-0-exact-67 (lands with the close, ordering note)
+- `.ufo/waves/round-62/l1/scores/gate-landing.txt` rev=<record commit> check=landing-gate-exit-0-disclosures-exact (lands with the close, ordering note)
+- `.ufo/waves/round-62/l1/records/sweep-at-r62-record.txt` rev=<record commit> check=standing-halfway-sweep-exit-0-5-keys-unchanged (lands with the close, ordering note)
+- `.ufo/waves/round-62/l1/census-end.txt` rev=<close tip> check=exit-0-19-w04-169-rows (lands with the close, ordering note)
+
+**planned (next steered round only):** the sweep's threading set is bounded
+by receipts binding `base` in their OWN bytes — the natural next depth step
+is the edge-numstat grammar's base analog (edge claims whose receipts bind
+both edge endpoints could gain a base-edge re-derivation the r61 gate does
+not attempt; a new instrument and its own freeze per the r60 rule); the
+standing halfway sweep re-runs every round that lands receipts (executed
+this round at the r62 record rev, dispositions extended append-only if the
+red state names anything new); the r58/r60 quoted bare-name findings stay
+standing disclosed named debt (the flip condition is ruled not-firing; no
+copy is ever planted — the fifth refusal this round); the AVM LE-SquashFS
+re-freeze stays routed (host absent surfaces unchanged); the registry-drift
+census re-runs every round a registry row lands (M58-2's rule, executed
+this round at 67 paths).
+
+**retired:** none.
