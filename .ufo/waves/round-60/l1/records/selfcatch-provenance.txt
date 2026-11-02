@@ -1,0 +1,26 @@
+kaidoku round-60 — provenance for the byte-identical landing of .ufo/waves/round-59/l1/records/annotation-selfcatch.txt (the r58-R2 pattern: a receipt that committed records name as an evidence pointer but that never reached the tree lands byte-identically, with its provenance receipted, in a disclosed carry-in commit BEFORE the freeze)
+
+The discovery, made by this round's two-direction orphan census before any repair landed:
+
+$ git cat-file -e "48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4:.ufo/waves/round-59/l1/records/annotation-selfcatch.txt"
+fatal: path '.ufo/waves/round-59/l1/records/annotation-selfcatch.txt' exists on disk, but not in '48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4'
+rc=128
+
+git ls-tree -r --name-only 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 -- .ufo/waves/round-59/l1/records/ names twelve files; annotation-selfcatch.txt is not one of them. The file is cited as a committed evidence pointer by the SCORECARD round-59 section (the R59-C2 row and the M59-3 mistake row cite `records/annotation-selfcatch.txt`) and by corpus/lessons/round-59.md — committed records pointing at a file that exists only in the worktree. The r59 record-receipt-audit reported named 21 missing 0 because the section cites it in the SHORT relative form (`records/...`), which the frozen extractor's full-path grammar (`.ufo/waves/round-N/...`) does not extract — a grammar boundary disclosed here, not an instrument defect; the frozen r57 tool stays byte-identical.
+
+The landing: the worktree bytes land byte-identically at the named round-59 path in this round's carry-in commit (before the freeze), with this provenance receipt under round-60 scope. Worktree sha256 of the landed bytes:
+
+$ sha256sum .ufo/waves/round-59/l1/records/annotation-selfcatch.txt
+175ef2416bbe11a26d20df1c2e28a9e722488f02c6c01ab6f8ec5311e07d1f67 *.ufo/waves/round-59/l1/records/annotation-selfcatch.txt
+
+Truth check (the receipt's own demonstration re-executed this round at the r59 landing rev, the rev the receipt's finding was raised against — the receipt's pasted run was at the fixup 203c07a7; both revs carry the landing copy of the correction receipt):
+
+$ python -X utf8 -I -B tools/round-59/annotation-audit.py --root . --receipt .ufo/waves/round-59/l1/scores/d581-correction.txt --rev 2ff5d30800df0184c0a63c778bb166c1650aa3a3
+exit 1, findings include ANNOTATION_OUTPUT_MISMATCH@27 and COMMAND_UNREEXECUTABLE@22 — exactly the two findings the selfcatch receipt records (its pasted run at the fixup 203c07a7 shows the same pair; the receipt-prose fixup 94537372 is what turned the same audit green, records/annotation-green-demo.txt)
+
+Post-landing verification (run after the carry-in commit exists):
+
+$ git cat-file -e "<carry-in commit>:.ufo/waves/round-59/l1/records/annotation-selfcatch.txt"
+rc=0
+
+Limits: this round does not amend any r59 filed byte; the landing ADDS the missing file only. The r59 SCORECARD receipts list (the landing-receipts table) never claimed this file — the omission is in the prose evidence pointers, which is why the class is an orphaned-evidence repair, not a record correction.

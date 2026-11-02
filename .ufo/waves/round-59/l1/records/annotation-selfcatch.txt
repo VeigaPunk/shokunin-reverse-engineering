@@ -1,0 +1,27 @@
+kaidoku round-59 — SELF-CATCH receipt (mined as M59-3): the instrument flagged THIS round's own receipt prose. Run at the landing fixup 203c07a7b68d683e8536b8f103c9f2c35d787168, the correction receipt d581-correction.txt audited exit 1 with two findings — its closing prose line opened with '(' and carried the quoted base:->record: shape, so the extractor bound it to the preceding wc-form probe (output 27, claim 1 -> ANNOTATION_OUTPUT_MISMATCH@27) and fail-closed the out-of-grammar probe (COMMAND_UNREEXECUTABLE@22). The tool is behaving to contract: prose that mimics the annotation grammar inside a parenthesis-led line is indistinguishable from an annotation. The receipt's prose was reworded in the disclosed receipt-prose fixup; the green demonstration at the fixed rev is records/annotation-green-demo.txt. The original run output follows, unmodified.
+$ python -X utf8 -I -B tools/round-59/annotation-audit.py --root . --receipt .ufo/waves/round-59/l1/scores/d581-correction.txt --rev 203c07a7b68d683e8536b8f103c9f2c35d787168 --base-rev 42c794afc5cdf2f72d80edb839cfbcbfe32e6bad
+ANNOTATION_OUTPUT_MISMATCH@27: annotation claims record: 1 but the bound command's pasted output is 27
+COMMAND_UNREEXECUTABLE@22: annotated command outside both supported grammars: git diff-tree -r --name-only 63413677 67ec2c38 | sort -u | wc -l
+{
+ "receipt": ".ufo/waves/round-59/l1/scores/d581-correction.txt",
+ "rev": "203c07a7b68d683e8536b8f103c9f2c35d787168",
+ "base_rev": "42c794afc5cdf2f72d80edb839cfbcbfe32e6bad",
+ "annotations": 5,
+ "checked": 5,
+ "findings": [
+  {
+   "class": "ANNOTATION_OUTPUT_MISMATCH",
+   "line": 27,
+   "detail": "annotation claims record: 1 but the bound command's pasted output is 27"
+  },
+  {
+   "class": "COMMAND_UNREEXECUTABLE",
+   "line": 22,
+   "detail": "annotated command outside both supported grammars: git diff-tree -r --name-only 63413677 67ec2c38 | sort -u | wc -l"
+  }
+ ],
+ "exit": 1
+}
+rc=1
+
+(exit 0: 4 annotations checked — the wording probe 2 at the record rev with base 0, the bullet probe 1 with base 0, and both before-state probes 0/0; every pasted output, every claimed value and every re-derivation agree)
