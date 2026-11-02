@@ -35,3 +35,17 @@ orphan census, both directions, quotepath off: five worktree-only paths at the b
 
 == no frozen byte moved ==
 the frozen gate's worktree bytes hash to the container pin before every sweep run (--expect-sha256 ba9ccbb9... — a mismatch is exit 2); v6-block-digest at base and record: 946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc both; PROVINCE diff base..record empty; LOG base..record exactly 38 0 (additions only)
+
+== CORRECTION (round 61) — D60-1, routed by the round-60 non-author closure note 1 (spot-check file corpus/lessons/round-60-verifier-spotcheck.md): the numstat EDGE in this receipt's registration note is mislabeled ==
+(filed bytes above stay as filed — receipts are append-only. The line above names the SKILL delta landing→record edge and annotates it "exactly `1 0` by numstat"; the `1 0` numstat is the freeze→landing EDGE — the landing commit bbdb03ab added the registry row — and the landing→record edge re-derives to 0 0: no SKILL change after the landing. This block deliberately avoids restating the strict claim shape, so the mechanical gate for this class keeps firing on the ORIGINAL line above only. The substance stands exactly as the r60 closure stated: one line added, the neighbor row intact, the report's own landed-changes table correct. The same mislabel sits in two sibling sites of the same round, each named with its corrected reading here rather than restated: the LOG round-60 close entry repeats the landing→record annotation at exactly `1 0` (the edge re-derives to 0 0), and the SCORECARD round-60 atom T7 names the landing→tip edge at exactly `1 0` (the edge re-derives to 0 0; base→tip re-derives to `1 0`). The corrected edges, each re-derived by numstat:)
+$ git diff --numstat 8e58366300aa30c097c81e68df2d0d30c689ed6f bbdb03abdafd777b10767071f3a16267bcccf866 -- SKILL.md
+1	0	SKILL.md
+(freeze→landing: the one added registry row — the edge the `1 0` belongs to)
+$ git diff --numstat bbdb03abdafd777b10767071f3a16267bcccf866 29083b0c18ecb2620e8a8812688a9b65acedb592 -- SKILL.md
+(empty output: the landing→record edge re-derives to 0 0, not the annotated `1 0`)
+$ git diff --numstat bbdb03abdafd777b10767071f3a16267bcccf866 1c1d68805039596bea4498beef5352e42d84ad98 -- SKILL.md
+(empty output: the landing→close-tip edge re-derives to 0 0 — T7's corrected reading)
+$ git diff --numstat 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 29083b0c18ecb2620e8a8812688a9b65acedb592 -- SKILL.md
+1	0	SKILL.md
+(base→record: one added registry row net — the corrected no-harm statement)
+(the mechanical gate for this class is tools/round-61/numstat-edge-audit.py, R61-C2; its red demo names exactly the defect at line 10 above — receipt .ufo/waves/round-61/l1/records/edge-red-c1after.txt, exit 1 NUMSTAT_EDGE_MISMATCH, claims `1 0`, re-derives `0 0`, resolved from THIS receipt's own header bindings; the defect still fires at the round-61 close tip — a correction appended later does not clear filed bytes, the r58 persistent-finding pattern; the full corrected probe set is receipted at .ufo/waves/round-61/l1/scores/d601-correction.txt)

@@ -1,0 +1,29 @@
+kaidoku round 61 — the D60-1 correction receipt (the routed r60-closure edge mislabel, corrected; the whole lineage named)
+
+DEFECT (routed by the round-60 non-author closure, corpus/lessons/round-60-verifier-spotcheck.md note 1): the r60 after-arm receipt .ufo/waves/round-60/l1/scores/c1-after.txt annotates its registration note with the SKILL delta landing→record edge at exactly `1 0` (line 10 as filed); the `1 0` numstat is the freeze→landing edge. Two sibling sites carry the same mislabel: the LOG round-60 close entry (LOG.md line 3857 at the r60 close) repeats the landing→record annotation at exactly `1 0`, and the SCORECARD round-60 atom T7 (SCORECARD.md line 4606 at the base) names the landing→tip edge at exactly `1 0`.
+
+CORRECTED READINGS — the true edges, each re-derived by numstat (the bindings are this receipt's own, full 40-hex): the r60 operative freeze 8e58366300aa30c097c81e68df2d0d30c689ed6f, the r60 landing bbdb03abdafd777b10767071f3a16267bcccf866, the r60 record commit 29083b0c18ecb2620e8a8812688a9b65acedb592, the r60 base 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4. (Later mentions of the r61 base 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe do not override the first-occurrence binding of the name "base" — the gate binds first occurrence, disclosed here.)
+
+the SKILL delta freeze→landing exactly `1 0` (the edge the `1 0` belongs to — the landing added the one registry row)
+$ git diff --numstat 8e58366300aa30c097c81e68df2d0d30c689ed6f bbdb03abdafd777b10767071f3a16267bcccf866 -- SKILL.md
+1	0	SKILL.md
+
+the SKILL delta landing→record exactly `0 0` (the corrected edge — nothing after the landing touches SKILL)
+$ git diff --numstat bbdb03abdafd777b10767071f3a16267bcccf866 29083b0c18ecb2620e8a8812688a9b65acedb592 -- SKILL.md
+(empty output: no rows — the edge re-derives to 0 0)
+
+the SKILL delta base→record exactly `1 0` (the corrected no-harm statement — one added registry row net across the whole round)
+$ git diff --numstat 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 29083b0c18ecb2620e8a8812688a9b65acedb592 -- SKILL.md
+1	0	SKILL.md
+
+SIBLING READINGS AS FILED at the r61 base 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe (each mislabel present exactly once, never waived away — the corrections live in the new LOG entry and the SCORECARD round-61 section, never in a rewrite):
+$ git show 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe:LOG.md | grep -c 'the SKILL delta landing→record exactly'
+1
+$ git show 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe:SCORECARD.md | grep -c 'delta landing→tip exactly'
+1
+$ git show 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe:.ufo/waves/round-60/l1/scores/c1-after.txt | grep -c 'landing→record exactly'
+1
+
+THE GATE (R61-C2): tools/round-61/numstat-edge-audit.py run over THIS receipt at its landing rev re-derives all three edge claims above — exit 0, the green arm (receipt records/edge-green-correction.txt, lands with the close, the disclosed r59/r60 ordering). The defect's own receipt keeps firing at line 10 forever (records/edge-persistent-c1after.txt, the r58 persistent-finding pattern — a correction appended later does not clear filed bytes).
+
+FILED-BYTES DISCIPLINE: the correction block appended to the r60 after-arm is additions-only (numstat-verified at the landing); the r60 LOG entries and SCORECARD sections are never edited; this receipt's own probes name only commits that existed before it was authored (no placeholder — the M60-2 rule).
