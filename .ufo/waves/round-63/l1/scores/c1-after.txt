@@ -1,0 +1,65 @@
+kaidoku round-63 AFTER arm, C1 (measured at the record commit df727606ab884fd6d03ed905990f5d20cddeb159; probes pasted with observed outputs - lands with the close, the disclosed r59-r62 ordering)
+
+== the instrument is present and registered at the record ==
+$ git cat-file -e df727606ab884fd6d03ed905990f5d20cddeb159:tools/round-63/edge-numstat-sweep.py; echo rc=$?
+rc=0
+$ git show df727606ab884fd6d03ed905990f5d20cddeb159:SKILL.md | grep -c 'edge-numstat-sweep'
+1
+$ git show df727606ab884fd6d03ed905990f5d20cddeb159:SCORECARD.md | grep -c '^| corpus-wide numstat-edge claim sweep'
+1
+$ git show df727606ab884fd6d03ed905990f5d20cddeb159:SCORECARD.md | grep -c '| 63 |'
+1
+$ git ls-tree -r --name-only df727606ab884fd6d03ed905990f5d20cddeb159 -- .ufo/waves | grep -c 'records/edgesweep-'
+5
+
+== the SKILL deltas (numstat) ==
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- SKILL.md
+1	0	SKILL.md
+(freeze->record exactly 1 0 - the one added registry row; landing->record:)
+$ git diff --numstat c77c5392b6954d66bab3690289988ea9b2ba4fa5 df727606ab884fd6d03ed905990f5d20cddeb159 -- SKILL.md
+(empty output: no rows - the record commit touches SKILL not at all)
+
+== no-harm: PROVINCE / LOG / owned axes / v6 ==
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- PROVINCE.md
+(empty: PROVINCE untouched)
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- LOG.md
+32	0	LOG.md
+(insertions only)
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- corpus/SOURCES.md
+1	0	corpus/SOURCES.md
+(exactly 1 0 - the S263 row)
+
+== the v6 marker-block digest unchanged at the record ==
+$ python -X utf8 -I -B tools/round-55/v6-block-digest.py --root . --rev df727606ab884fd6d03ed905990f5d20cddeb159
+ "sha256": "946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc"
+(the standing value 946e5359...d204bcc - unchanged)
+
+== the eight standing instruments byte-equal base->record (numstat empty each) ==
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- tools/round-61/numstat-edge-audit.py
+(empty)
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- tools/round-60/annotation-sweep.py
+(empty)
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- tools/round-59/annotation-audit.py
+(empty)
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- tools/round-56/receipt-audit.py
+(empty)
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- tools/round-57/record-receipt-audit.py
+(empty)
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- tools/round-51/census3.py
+(empty)
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- tools/round-29/freeze-gate.py
+(empty)
+$ git diff --numstat 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 df727606ab884fd6d03ed905990f5d20cddeb159 -- tools/round-55/v6-block-digest.py
+(empty)
+
+== the nine prior-round wave dirs byte-equal base->record (numstat empty each) ==
+round-53: numstat-lines=0 (0 = byte-equal)
+round-54: numstat-lines=0 (0 = byte-equal)
+round-55: numstat-lines=0 (0 = byte-equal)
+round-56: numstat-lines=0 (0 = byte-equal)
+round-57: numstat-lines=0 (0 = byte-equal)
+round-58: numstat-lines=0 (0 = byte-equal)
+round-59: numstat-lines=0 (0 = byte-equal)
+round-60: numstat-lines=0 (0 = byte-equal)
+round-61: numstat-lines=0 (0 = byte-equal)
+round-62: numstat-lines=0 (0 = byte-equal)

@@ -1,0 +1,71 @@
+kaidoku round-63 — the corpus-wide numstat-edge sweep re-run (this round's own halfway duty): the frozen r63 sweep (pin 0e67bd45, composing the frozen r61 gate pin 6b967e20 via --expect-sha256) over the round-63 record rev, with the COMMITTED r63 disposition table (extended append-only if the red state names anything new)
+$ python -X utf8 -I -B tools/round-63/edge-numstat-sweep.py --root . --rev df727606ab884fd6d03ed905990f5d20cddeb159 --expect-sha256 6b967e20e8f717ca560db1fd406134a461a56fbbcb6dea0bded8657905d32f45 --dispositions .ufo/waves/round-63/l1/records/edgesweep-dispositions.tsv
+FINDING .ufo/waves/round-60/l1/scores/c1-after.txt:10:NUMSTAT_EDGE_MISMATCH
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:15:NUMSTAT_NAME_UNRESOLVED
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:16:NUMSTAT_NAME_UNRESOLVED
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:17:NUMSTAT_NAME_UNRESOLVED
+FINDING .ufo/waves/round-63/l1/records/edgesweep-dispositions.tsv:3:NUMSTAT_NAME_UNRESOLVED
+{
+ "sweep_rev": "df727606ab884fd6d03ed905990f5d20cddeb159",
+ "receipts_total": 273,
+ "counts": {
+  "green": 1,
+  "findings": 3,
+  "unevaluable": 269,
+  "invocation_error": 0
+ },
+ "findings_total": 5,
+ "edge_inventory": {
+  "edge_claims_total": 8,
+  "receipts_with_edge_claims": 4,
+  "receipts_binding_all_endpoints": 2,
+  "receipts_with_unresolved_names": 2,
+  "receipts_without_edge_claims": 269,
+  "findings_by_class": {
+   "NUMSTAT_EDGE_MISMATCH": 1,
+   "NUMSTAT_NAME_UNRESOLVED": 4
+  }
+ },
+ "exit": 1,
+ "exit_reason": "1 uncovered finding(s), 0 disposition orphan(s)"
+}
+rc=1
+
+(the pre-run expectation was exit 0 with the same 4 keys - the round-63 RECEIPTS were written grammar-free, but the run red-flagged a NEW fifth key the expectation missed: the disposition TSV itself lives under records/ and its row 3 QUOTES the T7 sibling claim in the gate grammar as its citation - self-referential, exactly the class the append-only discipline anticipates; the red run above stands as filed-in-this-receipt)
+
+== the append-only extension and the green re-run ==
+
+the new key .ufo/waves/round-63/l1/records/edgesweep-dispositions.tsv:3:NUMSTAT_NAME_UNRESOLVED was hand-verified against the committed bytes (the TSV's row 3 names the quoted T7-sibling claim to cite it; no bindings in the table), then dispositioned by an APPENDED row (the TSV grows 4 -> 5 rows; rows 1-4 byte-identical; the appended row's own text is grammar-free, so the inventory is stable at five keys):
+
+$ python -X utf8 -I -B tools/round-63/edge-numstat-sweep.py --root . --rev df727606ab884fd6d03ed905990f5d20cddeb159 --expect-sha256 6b967e20e8f717ca560db1fd406134a461a56fbbcb6dea0bded8657905d32f45 --dispositions .ufo/waves/round-63/l1/records/edgesweep-dispositions.tsv
+FINDING .ufo/waves/round-60/l1/scores/c1-after.txt:10:NUMSTAT_EDGE_MISMATCH
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:15:NUMSTAT_NAME_UNRESOLVED
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:16:NUMSTAT_NAME_UNRESOLVED
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:17:NUMSTAT_NAME_UNRESOLVED
+FINDING .ufo/waves/round-63/l1/records/edgesweep-dispositions.tsv:3:NUMSTAT_NAME_UNRESOLVED
+{
+ "sweep_rev": "df727606ab884fd6d03ed905990f5d20cddeb159",
+ "receipts_total": 273,
+ "counts": {
+  "green": 1,
+  "findings": 3,
+  "unevaluable": 269,
+  "invocation_error": 0
+ },
+ "findings_total": 5,
+ "edge_inventory": {
+  "edge_claims_total": 8,
+  "receipts_with_edge_claims": 4,
+  "receipts_binding_all_endpoints": 2,
+  "receipts_with_unresolved_names": 2,
+  "receipts_without_edge_claims": 269,
+  "findings_by_class": {
+   "NUMSTAT_EDGE_MISMATCH": 1,
+   "NUMSTAT_NAME_UNRESOLVED": 4
+  }
+ },
+ "exit": 0,
+ "exit_reason": "inventory complete; 5 finding(s) all dispositioned"
+}
+GREEN-RC=0
+(green re-run appended above; expected exit 0, 273 receipts, the five keys all dispositioned, 0 uncovered, 0 orphans)
