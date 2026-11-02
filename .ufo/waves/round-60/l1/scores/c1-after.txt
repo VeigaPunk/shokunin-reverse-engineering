@@ -1,0 +1,37 @@
+kaidoku round-60 AFTER arm, C1 (measured at the record commit 29083b0c18ecb2620e8a8812688a9b65acedb592, a descendant of the operative freeze 8e58366300aa30c097c81e68df2d0d30c689ed6f and the landing bbdb03abdafd777b10767071f3a16267bcccf866; probes pasted with observed outputs. Ordering note: this receipt lands with the close commit, whose corpus/record bytes are byte-identical to this record state — the close adds only wave receipts and the LOG close entry; every probe below re-derives at the close tip unchanged)
+
+== the instrument is registered ==
+$ git cat-file -e 29083b0c18ecb2620e8a8812688a9b65acedb592:tools/round-60/annotation-sweep.py
+rc=0
+$ git show 29083b0c18ecb2620e8a8812688a9b65acedb592:SKILL.md | grep -c 'tools/round-60/annotation-sweep.py'
+1
+$ git show 29083b0c18ecb2620e8a8812688a9b65acedb592:SCORECARD.md | grep -c 'annotation-sweep.py'
+3
+(one SKILL registry row; three SCORECARD matching LINES = the capability row, the round-60 section's header para, and the section's claim row — the draft of this receipt wrote 2 from arithmetic and the probe's own re-run corrected it to 3 before the close landed, mined as M60-3; SKILL delta landing→record exactly `1 0` by numstat — the one added registry row, M60-1's repair verified)
+
+== the sweep is demonstrated red-green-red on the committed base bytes ==
+red, no dispositions  -> exit 1 (records/sweep-red-nodispo.txt: the FIRST complete inventory — 188 receipts, 2 green, 2 findings-class, 184 unevaluable, 0 invocation errors, 5 finding keys named)
+green, 5 dispositions -> exit 0 (records/sweep-base-green.txt: inventory complete; 5 finding(s) all dispositioned)
+red, one row removed  -> exit 1 (records/sweep-red-missing-key.txt: 1 uncovered finding(s), the key named)
+selftest              -> 28 cases, 0 failures (records/annotation-sweep-selftest.txt)
+(the base is immutable and pushed; all four runs re-derive from the receipts' own pasted commands)
+
+== the first-inventory finding is hand re-verified and dispositioned ==
+.ufo/waves/round-59/l1/scores/c1-after.txt:37:COMMAND_UNREEXECUTABLE — named for the first time by this round's sweep (the r59 after-arm landed at the r59 close, after the r59 demos). Hand re-verification BEFORE its disposition row was written (records/sweep-first-inventory.txt): the annotation's pasted output is 1 and its record value is 1 (agreement), and the exact bound command re-runs to 1 at the revision it names:
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-58/claims.json --rev 1110ba49c19d8851075bd3089a1632f7b52b08bf | grep -c RECEIPT_ABSENT
+1
+(the finding is the frozen gate's documented fail-closed grammar boundary — a python-piped grep is outside the two piped-git grammars — not a contradiction; the disposition row cites this receipt and the r59 sweep receipt)
+
+== the sweep at the record rev: the inventory holds as the corpus grows ==
+$ python -X utf8 -I -B tools/round-60/annotation-sweep.py --root . --rev 29083b0c18ecb2620e8a8812688a9b65acedb592 --expect-sha256 ba9ccbb9e0d803eb75e10ae07408fab9c6cdb8af25946f561808181b2874a0bf --dispositions .ufo/waves/round-60/l1/records/sweep-dispositions.tsv
+exit 0
+{"sweep_rev": "29083b0c18ecb2620e8a8812688a9b65acedb592", "receipts_total": 213, "counts": {"green": 2, "findings": 2, "unevaluable": 209, "invocation_error": 0}, "findings_total": 5, "exit": 0, "exit_reason": "inventory complete; 5 finding(s) all dispositioned"}
+(213 receipts at the record rev = the 188 base receipts + the 25 this round's freeze/record commits added; every new receipt is prose/JSON/TSV without the annotation shape, so all 25 classify unevaluable — named, never clean; the findings set is identical to the base's: 5 keys, all dispositioned; 0 invocation errors)
+
+== the duty is run to dispositions ==
+receipt-audit over the SEVEN host-era containers r53-r59 at the base: six clean + the r58 container's quoted bare name RECEIPT_ABSENT freeze-gate-tip-90f3a9b9.json in round-58 scope — standing disclosed named debt, no copy planted, flip condition on record with the r59 non-author closure's not-firing ruling (records/receipt-audit-sweep.txt)
+record-audit over the r59 record section at the base: named 21, missing 0, clean (records/record-audit-r59.txt + .json)
+orphan census, both directions, quotepath off: five worktree-only paths at the base, each dispositioned — the live discovery (the r59 selfcatch receipt, on disk since r59, never committed) repaired byte-identically by the carry-in ec9d93d7 (sha256 175ef241 re-hashed from the commit object, rc=0), the r55 first-chain orphan retained-and-disclosed per r58 reject 1, two gitignored .pyc caches, and this round's own instrument landed at the declaration; direction 2 = exactly the 50-path EX-08/aux/ reserved-name class (records/orphan-census.txt, records/selfcatch-provenance.txt)
+
+== no frozen byte moved ==
+the frozen gate's worktree bytes hash to the container pin before every sweep run (--expect-sha256 ba9ccbb9... — a mismatch is exit 2); v6-block-digest at base and record: 946e535947ba6d17da9f4b1ca7993af285e66103547a5c2107b253e5dd204bcc both; PROVINCE diff base..record empty; LOG base..record exactly 38 0 (additions only)
