@@ -1,0 +1,67 @@
+kaidoku round-63 — the green arm over the whole corpus with the committed r63 disposition table, then the --only equivalence arm (the three claim-bearing receipts, the r61 recorded classes reproduced)
+
+== green fleet-wide ==
+$ python -X utf8 -I -B tools/round-63/edge-numstat-sweep.py --root . --rev 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 --expect-sha256 6b967e20e8f717ca560db1fd406134a461a56fbbcb6dea0bded8657905d32f45 --dispositions .ufo/waves/round-63/l1/records/edgesweep-dispositions.tsv
+FINDING .ufo/waves/round-60/l1/scores/c1-after.txt:10:NUMSTAT_EDGE_MISMATCH
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:15:NUMSTAT_NAME_UNRESOLVED
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:16:NUMSTAT_NAME_UNRESOLVED
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:17:NUMSTAT_NAME_UNRESOLVED
+{
+ "sweep_rev": "4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7",
+ "receipts_total": 258,
+ "counts": {
+  "green": 1,
+  "findings": 2,
+  "unevaluable": 255,
+  "invocation_error": 0
+ },
+ "findings_total": 4,
+ "edge_inventory": {
+  "edge_claims_total": 7,
+  "receipts_with_edge_claims": 3,
+  "receipts_binding_all_endpoints": 2,
+  "receipts_with_unresolved_names": 1,
+  "receipts_without_edge_claims": 255,
+  "findings_by_class": {
+   "NUMSTAT_EDGE_MISMATCH": 1,
+   "NUMSTAT_NAME_UNRESOLVED": 3
+  }
+ },
+ "exit": 0,
+ "exit_reason": "inventory complete; 4 finding(s) all dispositioned"
+}
+rc=0
+
+== --only arm (restricted to the three claim-bearing receipts; same 4 keys, the classes match the r61 recorded demos: red MISMATCH on c1-after, fail-closed UNRESOLVED on the c2-before quote-prose, green on d601-correction) ==
+$ python -X utf8 -I -B tools/round-63/edge-numstat-sweep.py --root . --rev 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 --expect-sha256 6b967e20e8f717ca560db1fd406134a461a56fbbcb6dea0bded8657905d32f45 --only .ufo/waves/round-60/l1/scores/c1-after.txt --only .ufo/waves/round-61/l1/scores/c2-before.txt --only .ufo/waves/round-61/l1/scores/d601-correction.txt
+FINDING .ufo/waves/round-60/l1/scores/c1-after.txt:10:NUMSTAT_EDGE_MISMATCH
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:15:NUMSTAT_NAME_UNRESOLVED
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:16:NUMSTAT_NAME_UNRESOLVED
+FINDING .ufo/waves/round-61/l1/scores/c2-before.txt:17:NUMSTAT_NAME_UNRESOLVED
+{
+ "sweep_rev": "4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7",
+ "receipts_total": 3,
+ "counts": {
+  "green": 1,
+  "findings": 2,
+  "unevaluable": 0,
+  "invocation_error": 0
+ },
+ "findings_total": 4,
+ "edge_inventory": {
+  "edge_claims_total": 7,
+  "receipts_with_edge_claims": 3,
+  "receipts_binding_all_endpoints": 2,
+  "receipts_with_unresolved_names": 1,
+  "receipts_without_edge_claims": 0,
+  "findings_by_class": {
+   "NUMSTAT_EDGE_MISMATCH": 1,
+   "NUMSTAT_NAME_UNRESOLVED": 3
+  }
+ },
+ "exit": 1,
+ "exit_reason": "4 finding(s) named, no --dispositions given"
+}
+rc=1
+
+(green = inventory complete; 4 finding(s) all dispositioned - never defects erased; the disposition texts cite the standing D60-1 correction receipt and the r61 demo records; --only reproduces the same 4 keys over its restricted enumeration: receipts_total 3, the r61 recorded classes unchanged)

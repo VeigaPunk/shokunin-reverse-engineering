@@ -1,0 +1,23 @@
+kaidoku round-63 — the two-direction orphan census (worktree vs committed tree), run read-only with core.quotepath=off (the M58-3 rule), at the current HEAD 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 (the round base; the freeze artifacts are in progress on disk, uncommitted)
+
+$ git -c core.quotepath=off ls-tree -r --name-only 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 | sort > committed.list
+$ find . -type f -not -path './.git/*' | sed 's|^\./||' | sort > worktree.list
+committed=48820 worktree=48779
+
+== direction 1: worktree-only (on disk, not committed), outside this round's wave dir ==
+.ufo/waves/round-55/l1/scores/freeze-gate-tip-25b5b256.json
+tools/round-53/__pycache__/r53-record.cpython-313.pyc
+tools/round-53/__pycache__/sqfs-triage-v6.cpython-313.pyc
+tools/round-61/__pycache__/numstat-edge-audit.cpython-313.pyc
+tools/round-63/edge-numstat-sweep.py
+(count re-derived: 5)
+
+== direction 1 addendum: this round's in-progress wave dir (each file lands with the freeze commit that carries this census) ==
+4
+
+== direction 2: committed but not on disk ==
+50
+(the reserved-name aux/ class and any others, counted by top-2 segments:)
+     50 .ufo/waves/arc3-loop1-round3
+
+(ordering note: tools/round-63/edge-numstat-sweep.py is worktree-only at this census because it lands with the DECLARATION commit, which precedes this freeze — the QUALITY #33 order; every other worktree-only item is the standing gitignored class: the r55 tip json + three __pycache__ files, check-ignored class, as in r62)

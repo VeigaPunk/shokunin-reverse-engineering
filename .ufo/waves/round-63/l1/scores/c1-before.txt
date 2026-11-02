@@ -1,0 +1,28 @@
+kaidoku round-63 BEFORE arm, C1 (measured at the round base 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7; probes pasted with observed outputs, re-derived before the freeze commit - the M57-1/M60-3/M62-2 lineage)
+
+== the instrument is absent at the base ==
+$ git cat-file -e 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7:tools/round-63/edge-numstat-sweep.py
+fatal: path 'tools/round-63/edge-numstat-sweep.py' exists on disk, but not in '4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7'
+rc=128
+$ git show 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7:SKILL.md | grep -c 'edge-numstat-sweep'
+0
+$ git show 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7:SCORECARD.md | grep -c 'edge-numstat-sweep'
+0
+$ git ls-tree -r --name-only 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 -- .ufo/waves | grep -c 'records/edgesweep-'
+0
+
+== no corpus-wide edge inventory exists at the base (the behavior probes - grep the BEHAVIOR token, not the mention: M62-2) ==
+$ git show 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7:.ufo/waves/round-62/l1/records/basesweep-inventory-red.txt | grep -c '"edge_inventory"'
+0
+(the r62 sweep's inventory JSON carries NO edge fields - its grammar is the annotation class, a different checker)
+$ git show 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7:.ufo/waves/round-61/l1/records/edge-red-c1after.txt | grep -c 'receipts_total'
+0
+(the r61 gate demos are single-receipt runs - no receipts_total inventory anywhere; the composed gate exists but was only ever hand-aimed)
+
+== the composed gate is frozen and green at the base (the sweep composes these bytes, never re-implements them) ==
+$ git cat-file -e 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7:tools/round-61/numstat-edge-audit.py; echo rc=$?
+rc=0
+
+== the r62 planned field names the candidate (the mention probe - the claim itself is the naming) ==
+$ git show 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7:SCORECARD.md | grep -c 'base-edge re-derivation'
+1

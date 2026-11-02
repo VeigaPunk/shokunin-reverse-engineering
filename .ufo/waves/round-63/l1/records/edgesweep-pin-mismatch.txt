@@ -1,0 +1,11 @@
+kaidoku round-63 — the pin fail-closed arm: a wrong --expect-sha256 refuses the sweep BEFORE any enumeration
+$ python -X utf8 -I -B tools/round-63/edge-numstat-sweep.py --root . --rev 4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 --expect-sha256 deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+{
+ "exit": 2,
+ "exit_reason": "audit-tool pin mismatch",
+ "audit_tool": "tools/round-61/numstat-edge-audit.py",
+ "expected_sha256": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+ "actual_sha256": "6b967e20e8f717ca560db1fd406134a461a56fbbcb6dea0bded8657905d32f45"
+}
+rc=2
+(exit 2, audit-tool pin mismatch, actual 6b967e20... named; zero receipts enumerated, zero gate spawns - the sweep never audits with unpinned checker bytes; the digest is computed with hashlib.sha256, the S263 family)
