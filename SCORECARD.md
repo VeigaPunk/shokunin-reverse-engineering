@@ -4643,3 +4643,121 @@ unchanged); the registry-drift census re-runs every round a registry row
 lands (M58-2's rule, executed this round at 65 paths).
 
 **retired:** none.
+
+
+## Round 61 (2026-11-01) — the routed edge mislabel closes append-only, and the edge-numstat class becomes an instrument
+
+Fresh-start binding honored (the prompt's §7 list r50/r51/r52 re-read and
+spot-checked; probes pasted in `scores/freshstart-spotcheck.txt` at the
+freeze), L1-inline on the Windows host. Base `2d976fba…` (the r60 verifier
+spot-check commit, which admitted r60 with no new routed defects and routed
+its status-neutral note 1 to this round); carry-in `319e5244…` (the r60
+outside decision recorded per QUALITY #34 BEFORE any claim was measured,
+note 1 accepted as the routed correction target D60-1, the two sibling sites
+named); declaration `9eb5f0e4…` (the plans + the new instrument, committed
+before the claims file — QUALITY #33); operative freeze `5286dccf…` (the
+first commit adding `.ufo/waves/round-61/claims.json`); landing `e97e621e…`
+(the correction append + the correction receipt + the SKILL row + the
+capability row; the subject-alternation pipes in the registry-row draft
+self-caught by the recount before any commit — M61-2). No wave (no dispatch
+surface; the kaidoku round-53 L0 question stays open). Seven frozen
+instruments unchanged, one new instrument
+(`tools/round-61/numstat-edge-audit.py`, pin `6b967e20…`). Claims: R61-C1
+(calibration) — the routed D60-1 edge mislabel closes append-only (the
+correction appends to the r60 c1-after, additions-only; the correction
+receipt re-derives every edge; the two siblings are corrected in the new
+LOG entry and this section, the filed bytes stay as filed); R61-C2 (depth,
+capability acquisition) — the edge-numstat gate: rev-name bindings +
+strict-grammar claims re-derived by `git diff --numstat`, demonstrated red
+on the defect itself and on both siblings (the r59 true claims green on the
+same runs), fail-closed and zero-claims arms receipted. Lowest-axis rule:
+all three owned axes tied at 10.0, so both claims are lowest-axis claims.
+Stagnation nudge not fired (window N=10, last capability r60; r61 = 1/10).
+Sourced claim: S261 (the git-diff documentation, opened this round) grounds
+C2's design — `--numstat` prints added/deleted line counts in decimal
+notation for the named paths, and binary files print two `-` instead of
+saying `0 0`, so an edge-labeled `A B` claim is a function of the
+(X, Y, path) triple alone and a binary edge is not a count.
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R61-C1 | calibration — the r60-closure routed defect D60-1 (the c1-after registration note's "SKILL delta landing→record exactly `1 0`" — the `1 0` numstat is freeze→landing; landing→record re-derives `0 0`) + the two sibling sites (the LOG r60-close entry, the SCORECARD T7 atom) | at the base `2d976fba…`: the correction absent (`git cat-file -e …d601-correction.txt` rc=128), the mislabel as filed at all three sites (grep counts 1/1/1: `git show <base>:…c1-after.txt` piped to `grep -c 'landing→record exactly'`; `git show <base>:LOG.md` piped to `grep -c 'the SKILL delta landing→record exactly'`; `git show <base>:SCORECARD.md` piped to `grep -c 'delta landing→tip exactly'`), no correction block (grep 0), the true edges re-derived in `scores/c1-before.txt` (freeze→landing `1 0`; landing→record empty; landing→close-tip empty; base→record `1 0`) | the correction block appends to `.ufo/waves/round-60/l1/scores/c1-after.txt` (filed bytes stay as filed; freeze→landing numstat exactly `14 0` — additions only; the append avoids restating the strict claim shape, so the gate keeps firing on the original line 10 only); the correction receipt `scores/d601-correction.txt` lands (three true edge claims — freeze→landing `1 0`, landing→record `0 0`, base→record `1 0` — each with its numstat probe pasted, full 40-hex bindings, no placeholder per the M60-2 rule); the LOG gains a NEW round-61 correction entry (the r60 entries never edited); this section names both siblings with the corrected readings (T7's landing→tip re-derives `0 0`; base→tip is `1 0`) | the before/after grep counts pasted with outputs in `scores/c1-before.txt`, the correction block itself, and `scores/d601-correction.txt` (`git diff --numstat <40hex> <40hex> -- SKILL.md` at every edge; `git show <base>:<path>` piped to `grep -c` at every site) | `.ufo/waves/round-61/l1/scores/d601-correction.txt` (rev = the landing `e97e621e…`; the after-arm `scores/c1-after.txt` pins the record rev and lands with the close, the disclosed ordering) |
+| R61-C2 | depth, capability acquisition — `tools/round-61/numstat-edge-audit.py`: edge-labeled numstat claim consistency (rev-name bindings + strict-grammar claims re-derived by `git diff --numstat` as an argv subprocess; binary edges and unresolvable names fail closed; zero claims unevaluable, never clean) | at the base `2d976fba…`: instrument absent (`cat-file -e` rc=128), 0 SKILL registry rows, 0 SCORECARD capability rows, 0 `records/edge-` receipts (receipt `scores/c2-before.txt`) | selftest 25 cases 0 failures (`records/edge-selftest.txt`); RED on the routed defect itself — the r60 c1-after as filed at the base: exit 1, NUMSTAT_EDGE_MISMATCH@10, claims `1 0`, re-derives `0 0`, internal header bindings only (`records/edge-red-c1after.txt` — the routed defect named mechanically for the first time); RED on the SCORECARD T7 sibling (exit 1, NUMSTAT_EDGE_MISMATCH@4606; the r59 T8 `freeze→fixup` `1 0` atom re-derives green on the same run — the true claim stays true; `records/edge-red-scorecard.txt`, `--name` overrides disclosed in the receipt); RED on the LOG r60-close sibling (exit 1, NUMSTAT_EDGE_MISMATCH@3857; the r59 close entry's true claim green on the same run; `records/edge-red-log.txt`); fail-closed arm (no overrides: exit 1 on 2× NUMSTAT_NAME_UNRESOLVED, `records/edge-failclosed-scorecard.txt`); zero-claims arm (the r59 d581-correction.txt: exit 2, unevaluable never clean — the QUALITY #66 boundary, `records/edge-uneval-d581.txt`); GREEN on the correction receipt at its landing rev: exit 0, 3 claims, all re-derive (`records/edge-green-correction.txt`, lands with the close, the disclosed ordering); PERSISTENT at the landing rev: the defect still fires, exit 1 at line 10 only (`records/edge-persistent-c1after.txt`, the r58 pattern); registry row in SKILL (7 cells, pipe-free — M61-2 self-catch), capability row above, container pin `6b967e20…`, census3 `--generate` 66 paths at the landing rev | `python -X utf8 -I -B tools/round-61/numstat-edge-audit.py --selftest`; the demo commands pasted with outputs in `records/edge-*.txt` (`git cat-file -e`, `git show REV:SKILL.md` piped to `grep -c`, `git ls-tree -r --name-only REV -- .ufo/waves` piped to `grep -c` in `scores/c2-before.txt`) | `.ufo/waves/round-61/l1/records/edge-green-correction.txt` (rev `e97e621e…`, the landing; the after-arm and the persistent receipt land with the close, the disclosed ordering) |
+
+Owned scores: coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10` — the
+owned-axes rows are byte-equal base→tip; PROVINCE is untouched. LOG
+append-only (insertions only; the correction is a new entry + an
+additions-only append to the r60 receipt, never a rewrite). PROVINCE diff
+empty. Learning trends: expansion **unchanged** (no Frontier→Core move; S261
+is tool documentation, not an REA surface; one capability row grows the
+repertoire, not the map); quality **improved** (the routed edge-mislabel
+class — three sites named by the r60 closure and its lineage — now carries a
+mechanical gate demonstrated red on every site with the true claims green on
+the same runs; the correction closes append-only with every edge re-derived;
+the registry re-enters its drift census at 66 paths); discernment
+**unchanged** pending the outside spot-check (the round executed the routed
+note verbatim and extended it to the two sibling sites honestly rather than
+quietly, dispositioned the duty's new eighth-container finding before the
+landing with a hand re-verification and a fourth refusal to plant the copy,
+and self-caught its own edge-draft (M61-1) and registry-row pipes (M61-2)
+before any commit).
+
+Round-61 record atoms (each re-derived by the plain commands transcribed in
+`scores/c1-before.txt`, `scores/c2-before.txt`, the correction receipt, and
+the records receipts):
+
+| atom | declared value |
+|---|---|
+| T1 | log-carry-in-entry=true (with the carry-in `319e5244…`, which records the r60 non-author closure admitted-true, QUALITY #34, and accepts note 1 as the routed target D60-1); log-declaration-entry=true (with `9eb5f0e4…`); log-deletions=0 |
+| T2 | freeze=5286dccf (first commit adding the container); instruments=8 pinned (numstat-edge-audit 6b967e20 new — committed at the declaration BEFORE the claims file; annotation-sweep 38614088, annotation-audit ba9ccbb9, census3 a7538e5f, receipt-audit 897df532, record-receipt-audit 3a5fff9a, v6-block-digest 22785c1e, freeze-gate 25b54339 unchanged); gate-verdict=CLEAN (pre-flight at the freeze rc 0: audited 36, clean 16, round-61 CLEAN, required_failed [], receipt `scores/gate-preflight.txt` + .json) |
+| T3 | c1-before: the correction absent at the base (rc=128); the mislabel as filed at all three sites (grep 1/1/1); no correction block (grep 0); the true edges re-derived (freeze→landing `1 0`; landing→record `0 0`; landing→close-tip `0 0`; base→record `1 0`); the baseline probe's edge corrected pre-landing (M61-1) |
+| T4 | c1-after: the correction appended (freeze→landing `14 0`, additions-only, the first 37 lines byte-identical sha256 `873c447f…`); the correction receipt landed with three true edge claims; the siblings corrected in the new LOG entry and this section, never by rewriting filed bytes |
+| T5 | c2-before: instrument absent rc=128 at the base; 0 registry rows; 0 capability rows; 0 edge receipts |
+| T6 | c2-after: registry row landed (7 cells, pipe-free — M61-2); selftest 25/0; red on the defect (MISMATCH@10) and both siblings (MISMATCH@4606, MISMATCH@3857) with the r59 true claims green on the same runs; fail-closed 2× NAME_UNRESOLVED; zero-claims exit 2; green 3/0 at the landing; persistent exit 1 at line 10 only; census3 `--generate` 66 paths at the landing rev |
+| T7 | sources-before=167; sources-after=168; new-rows=S261(A); used-by-ok=true |
+| T8 | census start-exit=0 (19 W04, 167 rows); end-exit=0 (19 W04, 168 rows); no-harm: owned-axes rows byte-equal; PROVINCE diff empty; LOG deletions 0; the SKILL delta freeze→tip exactly `1 0` (the one added registry row — precisely named this time, the D60-1 lesson applied to this round's own atoms); the SKILL v6 marker block digest unchanged 946e5359 (re-derived by tools/round-55/v6-block-digest.py at base and tip); the r60 filed bytes never amended except the ONE disclosed additions-only append to c1-after.txt |
+
+Landing receipts (each exists, parses, and carries the named check at the named
+revision):
+
+- `.ufo/waves/round-61/l1/census-start.txt` rev=none check=exit-0-19-w04-167-rows
+- `.ufo/waves/round-61/l1/scores/c1-before.txt` rev=none check=correction-absent-mislabel-1-1-1-edges-re-derived
+- `.ufo/waves/round-61/l1/scores/c2-before.txt` rev=none check=instrument-absent-0-rows-0-receipts
+- `.ufo/waves/round-61/l1/scores/freshstart-spotcheck.txt` rev=none check=r50-report-present-r51-floor64-false-r52-unprovable-2-w04-19
+- `.ufo/waves/round-61/l1/records/edge-selftest.txt` rev=none check=25-cases-0-failures
+- `.ufo/waves/round-61/l1/records/edge-red-c1after.txt` rev=2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe check=exit-1-mismatch-at-10-internal-bindings
+- `.ufo/waves/round-61/l1/records/edge-red-scorecard.txt` rev=2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe check=exit-1-mismatch-at-4606-t8-green-same-run
+- `.ufo/waves/round-61/l1/records/edge-red-log.txt` rev=1c1d68805039596bea4498beef5352e42d84ad98 check=exit-1-mismatch-at-3857-r59-claim-green-same-run
+- `.ufo/waves/round-61/l1/records/edge-failclosed-scorecard.txt` rev=2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe check=exit-1-2x-name-unresolved
+- `.ufo/waves/round-61/l1/records/edge-uneval-d581.txt` rev=2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe check=exit-2-zero-claims
+- `.ufo/waves/round-61/l1/records/receipt-audit-sweep.txt` rev=2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe check=six-clean-two-same-class-findings-r60-container-first-time
+- `.ufo/waves/round-61/l1/records/r60-finding-hand-reverify.txt` rev=none check=name-at-one-line-t5-quote-bytes-exist-byte-identical
+- `.ufo/waves/round-61/l1/records/duty-finding-dispositions.txt` rev=none check=both-dispositioned-before-landing-no-copy-planted
+- `.ufo/waves/round-61/l1/records/record-audit-r60.txt` rev=2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe check=named-21-missing-0-clean
+- `.ufo/waves/round-61/l1/records/orphan-census.txt` rev=9eb5f0e4cb134a320abbd2e9679c69d4dea8c6b6 check=3-worktree-only-dispositioned-15-wave-in-progress-50-committed-aux-class
+- `.ufo/waves/round-61/l1/s261/digests.txt` rev=none check=git-diff-html-5ae80d1d
+- `.ufo/waves/round-61/l1/scores/gate-preflight.txt` rev=5286dccf86bdb598af23fd3a034592af5a5c97b6 check=rc-0-audited-36-clean-16-round-61-clean
+- `.ufo/waves/round-61/l1/scores/gate-preflight.json` rev=5286dccf86bdb598af23fd3a034592af5a5c97b6 check=full-audit-json
+- `.ufo/waves/round-61/l1/records/census61-at-landing.json` rev=e97e621e21bd285bbff2cc95c184c16f10efb04a check=generated-66-paths
+- `.ufo/waves/round-61/l1/records/edge-green-correction.txt` rev=<landing> check=exit-0-3-claims-all-re-derive (lands with the close, ordering note)
+- `.ufo/waves/round-61/l1/records/edge-persistent-c1after.txt` rev=<landing> check=exit-1-still-fires-line-10-only (lands with the close, ordering note)
+- `.ufo/waves/round-61/l1/scores/c1-after.txt` rev=<record commit> check=after-arm-at-the-record-rev (lands with the close, ordering note)
+- `.ufo/waves/round-61/l1/records/census-check-at-record.txt` rev=<record commit> check=exit-0-exact-66 (lands with the close, ordering note)
+- `.ufo/waves/round-61/l1/scores/gate-landing.txt` rev=<record commit> check=landing-gate-exit-0-disclosures-exact (lands with the close, ordering note)
+- `.ufo/waves/round-61/l1/census-end.txt` rev=<close tip> check=exit-0-19-w04-168-rows (lands with the close, ordering note)
+
+**planned (next steered round only):** the r60 planned `--base-rev` sweep
+candidate stays the named depth candidate (re-deriving each annotation's
+base value needs the frozen single-receipt gate's option threaded through a
+new instrument and its own freeze; this round's receipt-bindings work is the
+complementary half — the edge gate's binding grammar is the pattern for
+per-receipt context); the standing halfway sweep re-runs every round that
+lands receipts (executed this round at the r61 tip, dispositions extended
+append-only if the red state names anything new); the r58/r60 quoted
+bare-name findings stay standing disclosed named debt (the flip condition is
+ruled not-firing; no copy is ever planted); the AVM LE-SquashFS re-freeze
+stays routed (host absent surfaces unchanged); the registry-drift census
+re-runs every round a registry row lands (M58-2's rule, executed this round
+at 66 paths).
+
+**retired:** none.
