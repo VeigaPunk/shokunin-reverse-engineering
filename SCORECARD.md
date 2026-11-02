@@ -4542,3 +4542,103 @@ census re-runs every round a registry row lands (M58-2's rule, executed this
 round at 64 paths).
 
 **retired:** none.
+
+## Round 60 (2026-11-01) — the halfway receipt-corpus sweep: the multi-receipt annotation-consistency instrument, and the first complete inventory of the lane's own receipts
+
+Fresh-start binding honored (the prompt's §7 list r50/r51/r52 re-read and
+spot-checked; probes pasted in `plans/round-60-claims.md`), L1-inline on the
+Windows host. Base `48c41830…` (the r59 verifier spot-check commit, which
+admitted r59 with no new routed defects); carry-in `ec9d93d7…` (the orphaned
+r59 selfcatch receipt lands byte-identically with provenance — the r58-R2
+pattern — and the r59 outside decision is recorded per QUALITY #34; the
+disclosed provenance-receipt fixup is `691460fa…`); declaration `eb4f6a7f…`
+(the plans + the new instrument, committed before the claims file — QUALITY
+#33); operative freeze `8e583663…` (the first commit adding
+`.ufo/waves/round-60/claims.json`); landing `bbdb03ab…` (the SKILL row +
+capability row; the glued-insertion self-catch repaired before any commit,
+mined M60-1). No wave (no dispatch surface; the kaidoku round-53 L0 question
+stays open). Six frozen instruments unchanged, one new instrument
+(`tools/round-60/annotation-sweep.py`, pin `38614088…`). Claim: R60-C1
+(depth, capability acquisition) — the multi-receipt annotation-consistency
+sweep: 188 receipts enumerated at one revision, each audited by the frozen
+single-receipt gate, every named finding forced to an exact disposition
+coverage; the first complete inventory of the receipt corpus, one finding
+named for the first time and hand re-verified before its disposition.
+Lowest-axis rule: all three owned axes tied at 10.0, so the claim is a
+lowest-axis claim. Stagnation nudge not fired (window N=10, last capability
+r59; r60 = 1/10). Sourced claim: S260 (the Python subprocess module
+documentation, opened this round) grounds the sweep's composition — the
+frozen gate runs through `subprocess.run`'s argv form, the documented
+recommended helper, no shell.
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R60-C1 | depth, capability acquisition — `tools/round-60/annotation-sweep.py`: the multi-receipt annotation-consistency sweep (enumeration filter + frozen-gate composition via argv subprocess + exact disposition-table coverage; fail-closed on uncovered findings, orphan rows, zero receipts, invocation errors, pin mismatch) + the round's orphaned-evidence duty | at the base `48c41830…`: instrument absent (`cat-file -e` rc=128), 0 SKILL registry rows, 0 SCORECARD capability rows, 188 receipts enumerated with 0 complete inventories (receipt `scores/c1-before.txt`); the receipt-audit duty over seven containers and the two-direction orphan census unrun this round | selftest 28 cases 0 failures (`records/annotation-sweep-selftest.txt`); the FIRST complete inventory: red run exit 1 at the base — 188 receipts, 2 green, 2 findings-class, 184 unevaluable, 0 invocation errors, 5 finding keys named (`records/sweep-red-nodispo.txt` + .json); disposition table 5 rows, each citing its standing disclosure or the fresh hand re-verification (`records/sweep-dispositions.tsv`); green run exit 0 — inventory complete, 5 findings all dispositioned (`records/sweep-base-green.txt` + .json); red with one disposition row removed exit 1 naming the uncovered key (`records/sweep-red-missing-key.txt`); the first-inventory finding (r59 c1-after.txt:37 COMMAND_UNREEXECUTABLE) hand re-verified BEFORE its disposition — pasted output 1 = record 1, the exact bound command re-runs to 1 at the rev it names (`records/sweep-first-inventory.txt`); the duty: receipt-audit over the SEVEN host-era containers = six clean + the r58 container's quoted bare name (standing disclosed named debt, flip condition on record, ruled not firing by the r59 non-author closure; `records/receipt-audit-sweep.txt`), record-audit over the r59 record section named 21 missing 0 clean (`records/record-audit-r59.txt` + .json), the two-direction orphan census dispositioned five worktree-only paths (the live discovery — the r59 selfcatch receipt, on disk since r59, never committed, cat-file rc 128 at the base — repaired byte-identically by the carry-in `ec9d93d7…`, sha256 `175ef241…`; `records/orphan-census.txt`, `records/selfcatch-provenance.txt`) and the 50-path `EX-08/aux/` reserved-name class; registry row in SKILL (7 cells, pipe-free — M60-1 self-catch), capability row above, container pin `38614088…`, census3 `--generate` 65 paths at the landing rev | `python -X utf8 -I -B tools/round-60/annotation-sweep.py --selftest`; the sweep commands pasted with outputs in `records/sweep-red-nodispo.txt`, `records/sweep-base-green.txt`, `records/sweep-red-missing-key.txt` (`git cat-file -e`, `git show REV:SKILL.md` piped to `grep -c`, `git ls-tree -r --name-only REV -- .ufo/waves` piped to `grep -cE` in `scores/c1-before.txt`) | `.ufo/waves/round-60/l1/records/sweep-base-green.txt` (rev `48c41830…`, the round base; the after-arm receipt `scores/c1-after.txt` pins the record rev and lands with the close, the disclosed ordering) |
+
+Owned scores: coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10` — the
+owned-axes rows are byte-equal base→tip; PROVINCE is untouched. LOG
+append-only (insertions only; the disclosed provenance-receipt fixup
+`691460fa…` is a new commit, not a rewrite). PROVINCE diff empty. Learning
+trends: expansion **unchanged** (no Frontier→Core move; S260 is tool
+documentation, not an REA surface; one capability row grows the repertoire,
+not the map); quality **improved** (the receipt corpus — the lane's whole
+evidence base for the annotation-contradiction class — now carries a
+mechanical, disposition-enforced inventory, demonstrated red-green-red on
+committed bytes; the frozen per-receipt gate stays byte-identical and is
+composed, not duplicated; the registry re-enters its drift census at 65
+paths); discernment **unchanged** pending the outside spot-check (the round
+executed the r59 planned field verbatim, named its first-inventory finding
+before writing its disposition, self-caught its own glued SKILL insertion
+before any commit, landed the orphaned r59 receipt with provenance and
+disclosure, and declared one claim rather than an inseparable pair).
+
+Round-60 record atoms (each re-derived by the plain commands transcribed in
+`scores/c1-before.txt`, the after-arm, and the records receipts):
+
+| atom | declared value |
+|---|---|
+| T1 | log-carry-in-entry=true (with the carry-in `ec9d93d7…`, which also records the r59 non-author closure admitted-true, QUALITY #34); log-declaration-entry=true (with `eb4f6a7f…`); log-deletions=0 |
+| T2 | freeze=8e583663 (first commit adding the container); instruments=7 pinned (annotation-sweep 38614088 new — committed at the declaration BEFORE the claims file; annotation-audit ba9ccbb9, census3 a7538e5f, receipt-audit 897df532, record-receipt-audit 3a5fff9a, v6-block-digest 22785c1e, freeze-gate 25b54339 unchanged); gate-verdict=CLEAN (pre-flight at the freeze rc 0: audited 35, clean 15, round-60 CLEAN, required_failed [], receipt `scores/gate-preflight.txt`) |
+| T3 | c1-before: instrument absent at the base (rc=128), 0 registry rows, 0 capability rows, 188 receipts, 0 complete inventories, the red run's 5 findings named |
+| T4 | c1-after: the sweep demonstrated red-green-red at the base (exit 1 no-dispositions with 5 findings named; exit 0 with all 5 dispositioned; exit 1 with one row removed naming the uncovered key); selftest 28/0; the first-inventory finding hand re-verified before its disposition; the duty run to dispositions (six clean containers + the standing r58 finding; record-audit 21/0 clean; orphan census 5 worktree-only + 50 aux-class, the selfcatch repaired byte-identically in the carry-in) |
+| T5 | the disposition table covers exactly the 5 named keys; no orphans; no empty texts (the green run's coverage check is the proof) |
+| T6 | sources-before=166; sources-after=167; new-rows=S260(A); used-by-ok=true |
+| T7 | census start-exit=0 (19 W04, 166 rows); end-exit=0 (19 W04, 167 rows); no-harm: owned-axes rows byte-equal; PROVINCE diff empty; LOG deletions 0; the SKILL delta landing→tip exactly `1 0` (the one added registry row — M60-1's repair verified by numstat); the SKILL v6 marker block digest unchanged 946e5359 (re-derived by tools/round-55/v6-block-digest.py at base and tip) |
+| T8 | the r59 filed bytes never amended (the carry-in diff-tree names exactly three paths; the selfcatch file byte-identical, sha256 175ef241 re-hashed from the commit object); the provenance-receipt fixup `691460fa…` is a disclosed new commit |
+
+Landing receipts (each exists, parses, and carries the named check at the named
+revision):
+
+- `.ufo/waves/round-60/l1/census-start.txt` rev=none check=exit-0-19-w04-166-rows
+- `.ufo/waves/round-60/l1/scores/c1-before.txt` rev=none check=instrument-absent-188-receipts-0-inventories
+- `.ufo/waves/round-60/l1/records/annotation-sweep-selftest.txt` rev=none check=28-cases-0-failures
+- `.ufo/waves/round-60/l1/records/sweep-red-nodispo.txt` rev=48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 check=exit-1-first-inventory-5-findings
+- `.ufo/waves/round-60/l1/records/sweep-dispositions.tsv` rev=none check=5-rows-exact-coverage
+- `.ufo/waves/round-60/l1/records/sweep-base-green.txt` rev=48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 check=exit-0-all-5-dispositioned
+- `.ufo/waves/round-60/l1/records/sweep-red-missing-key.txt` rev=48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 check=exit-1-uncovered-key-named
+- `.ufo/waves/round-60/l1/records/sweep-first-inventory.txt` rev=none check=r59-37-hand-reverified-before-disposition
+- `.ufo/waves/round-60/l1/records/receipt-audit-sweep.txt` rev=48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 check=six-clean-r58-standing-finding
+- `.ufo/waves/round-60/l1/records/record-audit-r59.txt` rev=48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 check=named-21-missing-0-clean
+- `.ufo/waves/round-60/l1/records/orphan-census.txt` rev=none check=5-worktree-only-dispositioned-selfcatch-repaired-50-aux-class
+- `.ufo/waves/round-60/l1/records/selfcatch-provenance.txt` rev=ec9d93d7dcf72ba2aff88b3d72a3e39910bbc820 check=byte-identical-175ef241-catfile-rc0
+- `.ufo/waves/round-60/l1/s260/digests.txt` rev=none check=subprocess-html-6e86cc82
+- `.ufo/waves/round-60/l1/scores/gate-preflight.txt` rev=8e58366300aa30c097c81e68df2d0d30c689ed6f check=rc-0-audited-35-clean-15-round-60-clean
+- `.ufo/waves/round-60/l1/records/census60-at-landing.json` rev=bbdb03abdafd777b10767071f3a16267bcccf866 check=generated-65-paths
+- `.ufo/waves/round-59/l1/records/annotation-selfcatch.txt` rev=ec9d93d7dcf72ba2aff88b3d72a3e39910bbc820 check=byte-identical-landing-the-carry-in
+- `.ufo/waves/round-60/l1/scores/c1-after.txt` rev=<record commit> check=after-arm-at-the-record-rev (lands with the close, ordering note)
+- `.ufo/waves/round-60/l1/records/census-check-at-record.txt` rev=<record commit> check=exit-0-exact-65 (lands with the close, ordering note)
+- `.ufo/waves/round-60/l1/scores/gate-landing.txt` rev=<record commit> check=landing-gate-exit-0-disclosures-exact (lands with the close, ordering note)
+- `.ufo/waves/round-60/l1/census-end.txt` rev=<close tip> check=exit-0-19-w04-167-rows (lands with the close, ordering note)
+
+**planned (next steered round only):** the sweep's re-run at a later tip is
+the standing halfway audit — every round that lands receipts can re-run the
+sweep at its own tip with the disposition table extended append-only (a new
+finding is named by the red state, hand-verified, then dispositioned — the
+r60 first-inventory pattern); a candidate follow-up is a `--base-rev`
+sweep mode (re-deriving each annotation's base value needs the frozen
+single-receipt gate's option threaded through a new instrument and its own
+freeze); the AVM LE-SquashFS re-freeze stays routed (host absent surfaces
+unchanged); the registry-drift census re-runs every round a registry row
+lands (M58-2's rule, executed this round at 65 paths).
+
+**retired:** none.
