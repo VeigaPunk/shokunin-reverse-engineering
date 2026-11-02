@@ -1,0 +1,54 @@
+kaidoku round-60 — the two-direction orphan census (worktree vs committed tree), run read-only with core.quotepath=off (the M58-3 rule: any probe that string-compares git listing output to filesystem names must disable path quoting first)
+
+$ git -c core.quotepath=off ls-tree -r --name-only 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 | sort > <scratch>/committed.list
+$ find . -type f -not -path './.git/*' | sed 's|^\./||' | sort > <scratch>/worktree.list
+committed=48720 worktree=48689
+
+== direction 1: worktree-only (on disk, not committed), outside this round's wave dir — run at the base, BEFORE the carry-in repair ==
+$ comm -13 <scratch>/committed.list <scratch>/worktree.list | grep -v '^\.ufo/waves/round-60/'
+.ufo/waves/round-55/l1/scores/freeze-gate-tip-25b5b256.json
+.ufo/waves/round-59/l1/records/annotation-selfcatch.txt
+tools/round-53/__pycache__/r53-record.cpython-313.pyc
+tools/round-53/__pycache__/sqfs-triage-v6.cpython-313.pyc
+tools/round-60/annotation-sweep.py
+(5 paths; count re-derived: 5)
+
+Per-path dispositions:
+1. `.ufo/waves/round-59/l1/records/annotation-selfcatch.txt` — THE LIVE
+   DISCOVERY of this census: on disk since r59, never committed (cat-file
+   rc 128 at the base, fatal "exists on disk, but not in", pasted in
+   `records/selfcatch-provenance.txt`); cited as an evidence pointer by the
+   committed SCORECARD round-59 section and `corpus/lessons/round-59.md`
+   (the M55-4 class). REPAIRED by the carry-in commit
+   `ec9d93d7dcf72ba2aff88b3d72a3e39910bbc820` BEFORE the freeze: the
+   worktree bytes land byte-identically at the named round-59 path (sha256
+   `175ef2416bbe11a26d20df1c2e28a9e722488f02c6c01ab6f8ec5311e07d1f67`,
+   hashed before landing and re-hashed from the commit object after), the
+   receipt's own demonstration re-executed at the r59 landing rev `2ff5d308`
+   reproduces its two findings, and the provenance receipt commits with the
+   freeze. The r58-R2 pattern; no r59 filed byte amended.
+2. `.ufo/waves/round-55/l1/scores/freeze-gate-tip-25b5b256.json` — the known
+   first-chain orphan, retained on disk and disclosed since the r58 census;
+   r58 reject 1 ruled it must NOT land (nothing committed claims it — the
+   M56-2 pre-claiming class). Unchanged: retained-and-disclosed.
+3-4. `tools/round-53/__pycache__/*.pyc` — gitignored caches (`.gitignore`
+   carries `__pycache__/` and `*.pyc`); the same disposition the r58 and r59
+   censuses gave their caches. Unchanged.
+5. `tools/round-60/annotation-sweep.py` — this round's own instrument,
+   which the declaration commit `eb4f6a7f8b37bc8a8843bcade7cbe959dc7dfff9`
+   lands (the same self-resolution the r59 census recorded for its
+   instrument). Resolves in the tree at the freeze.
+
+Post-repair re-derivation (direction 1 at the carry-in tip
+`ec9d93d7dcf72ba2aff88b3d72a3e39910bbc820`, round-60 paths still excluded):
+4 paths — items 2, 3, 4 above and this round's instrument; item 1 has
+resolved.
+
+== direction 2: committed, not on disk ==
+$ comm -23 <scratch>/committed.list <scratch>/worktree.list | wc -l
+50
+$ comm -23 <scratch>/committed.list <scratch>/worktree.list | sed -E 's|(.*/)[^/]*$|\1|' | sort | uniq -c | sort -rn
+50 .ufo/waves/arc3-loop1-round3/claims/c1/EX-08/aux/
+(all 50 paths are the PROVINCE-documented Windows reserved-device-name class
+under `EX-08/aux/` — the host checkout boundary, disclosed since r53; see
+PROVINCE.md `## Host migration`; unchanged from the r58/r59 censuses)

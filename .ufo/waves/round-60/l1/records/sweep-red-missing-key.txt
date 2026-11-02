@@ -1,0 +1,8 @@
+kaidoku round-60 — RED demo, fail-closed disposition coverage: the same corpus at the same revision as the green run, with ONE disposition row removed (records/sweep-red-missing-key.tsv — the reduced copy of records/sweep-dispositions.tsv lacking the r59 c1-after.txt:37 key). Exit 1 with the uncovered key named; a table that misses one finding is never green.
+
+$ python -X utf8 -I -B tools/round-60/annotation-sweep.py --root . --rev 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 --expect-sha256 ba9ccbb9e0d803eb75e10ae07408fab9c6cdb8af25946f561808181b2874a0bf --dispositions .ufo/waves/round-60/l1/records/sweep-red-missing-key.tsv --json-out records/sweep-red-missing-key.json
+exit 1
+{"sweep_rev": "48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4", "receipts_total": 188, "counts": {"green": 2, "findings": 2, "unevaluable": 184, "invocation_error": 0}, "findings_total": 5, "exit": 1, "exit_reason": "1 uncovered finding(s), 0 disposition orphan(s)"}
+uncovered: ['.ufo/waves/round-59/l1/scores/c1-after.txt:37:COMMAND_UNREEXECUTABLE']
+
+(full stderr: records/sweep-red-missing-key.stderr.txt; the DISPOSITION_ORPHAN direction — a table key no finding matches — is exercised by selftest case sweep-exit-orphan and the empty-text boundary by sweep-empty-text-uncovered)

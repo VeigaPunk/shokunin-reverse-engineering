@@ -1,0 +1,21 @@
+kaidoku round-60 BEFORE arm, C1 (measured at the round base 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4, before any round-60 data lands; probes pasted with observed outputs)
+
+== the sweep instrument is absent at the base ==
+$ git cat-file -e 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4:tools/round-60/annotation-sweep.py
+rc=128 (fatal: path ... does not exist in '48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4')
+
+== the registry and capability rows are absent at the base ==
+$ git show 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4:SKILL.md | grep -c 'annotation-sweep'
+0
+$ git show 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4:SCORECARD.md | grep -c 'annotation-sweep'
+0
+
+== the receipt corpus exists but has no complete annotation-consistency inventory at the base ==
+$ git ls-tree -r --name-only 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 -- .ufo/waves | grep -cE '^\.ufo/waves/round-[0-9]+/l1/(scores|records)/'
+188
+$ git ls-tree -r --name-only 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 -- .ufo/waves | grep -cE 'annotation-consistency inventory|sweep-base-green|sweep-red-nodispo'
+0
+(complete-inventory receipts at the base: 0. The frozen single-receipt gate tools/round-59/annotation-audit.py audits ONE receipt per run -- its own docstring states the limit -- and the r59 demos exercised exactly three receipts; no committed artifact inventories the corpus. The r59 planned field names exactly this gap: "a candidate follow-up is an annotation-audit sweep over ALL committed scores/ and records/ receipts (the instrument runs per-receipt; a multi-receipt sweep mode would need a new instrument and its own freeze)".)
+
+== the class the sweep gates is live at the base (named by the round's red run, records/sweep-red-nodispo.txt) ==
+5 finding keys named across 2 receipts (2 green, 184 unevaluable, 0 invocation errors); with no disposition table the corpus audit exits 1. A do-nothing control cannot produce the inventory, the disposition table, or the green arm.

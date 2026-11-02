@@ -1,0 +1,16 @@
+kaidoku round-60 — the first-inventory finding, hand re-verified before its disposition landed
+
+Finding: .ufo/waves/round-59/l1/scores/c1-after.txt:37:COMMAND_UNREEXECUTABLE — the bound command at line 37 of the r59 after-arm receipt is a python-piped grep (`python ... receipt-audit.py ... | grep -c RECEIPT_ABSENT`), outside the frozen gate's two piped-git grammars; the frozen gate fails closed by design (COMMAND_UNREEXECUTABLE is a could-not-check, not a contradiction claim). The annotation the gate could not check reads: pasted output 1, claims base: 1 -> record: 1.
+
+Two checks, both run this round before the disposition row was written:
+
+1. Output agreement: the annotation's record value equals the bound command's pasted output (1 = 1, as filed in the r59 receipt).
+2. Fresh re-run of the exact bound command at the revision it names (1110ba49c19d8851075bd3089a1632f7b52b08bf, the r59 close-landing state it audited):
+
+$ python -X utf8 -I -B tools/round-56/receipt-audit.py --root . --claims .ufo/waves/round-58/claims.json --rev 1110ba49c19d8851075bd3089a1632f7b52b08bf | grep -c RECEIPT_ABSENT
+1
+rc=0
+
+The count re-derives to 1 — the annotation is true; the finding is the grammar boundary only. The same RECEIPT_ABSENT=1 state is independently receipted at .ufo/waves/round-59/l1/records/receipt-audit-sweep.txt (the r59 duty sweep: five containers clean + the r58 container's quoted bare name) and this round's own duty sweep .ufo/waves/round-60/l1/records/receipt-audit-sweep.txt (six clean + the same r58 finding), which re-runs the r56 gate over the r58 container at this round's base and names exactly the same finding.
+
+Disposition row: records/sweep-dispositions.tsv (key: .ufo/waves/round-59/l1/scores/c1-after.txt:37:COMMAND_UNREEXECUTABLE).

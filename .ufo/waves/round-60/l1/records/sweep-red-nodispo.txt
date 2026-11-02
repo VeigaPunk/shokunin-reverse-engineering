@@ -1,0 +1,14 @@
+kaidoku round-60 — RED demo, the sweep with no --dispositions at the round base 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 (the first complete annotation-consistency inventory of the receipt corpus; exit 1 by design: findings named, none dispositioned). Full inventory: records/sweep-red-nodispo.json; per-finding stderr: records/sweep-red-nodispo.stderr.txt.
+
+$ python -X utf8 -I -B tools/round-60/annotation-sweep.py --root . --rev 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 --expect-sha256 ba9ccbb9e0d803eb75e10ae07408fab9c6cdb8af25946f561808181b2874a0bf --json-out records/sweep-red-nodispo.json
+exit 1
+{"sweep_rev": "48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4", "receipts_total": 188, "counts": {"green": 2, "findings": 2, "unevaluable": 184, "invocation_error": 0}, "findings_total": 5, "exit": 1, "exit_reason": "5 finding(s) named, no --dispositions given"}
+
+The five finding keys (first inventory of the corpus; the two receipts with findings and the two green receipts are named in the inventory JSON; 184 receipts are unevaluable under the frozen gate's grammar — named as such, never clean):
+.ufo/waves/round-58/l1/scores/c1-after.txt:6:ANNOTATION_OUTPUT_MISMATCH
+.ufo/waves/round-58/l1/scores/c1-after.txt:6:ANNOTATION_REDERIVATION_MISMATCH
+.ufo/waves/round-58/l1/scores/c1-after.txt:21:COMMAND_UNREEXECUTABLE
+.ufo/waves/round-58/l1/scores/c1-after.txt:25:OUTPUT_MISSING
+.ufo/waves/round-59/l1/scores/c1-after.txt:37:COMMAND_UNREEXECUTABLE
+
+Four of the five are the standing disclosed classes (persistent D58-1 pair at line 6; the M59-3 prose-mimicry pair at lines 21/25). One is named for the FIRST time by this sweep: the r59 c1-after.txt:37 COMMAND_UNREEXECUTABLE — the r59 after-arm receipt landed at the r59 close, after the r59 demos ran, so no r59 instrument ever audited it. Its disposition (records/sweep-dispositions.tsv) cites a fresh hand re-verification, pasted in records/sweep-first-inventory.txt.
