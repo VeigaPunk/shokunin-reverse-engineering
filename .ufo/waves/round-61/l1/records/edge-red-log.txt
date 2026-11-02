@@ -1,0 +1,32 @@
+kaidoku round-61 — RED demo on the LOG r60-close sibling (line 3857 at the r60 close rev): caller-supplied --name overrides DISCLOSED (same reason as the SCORECARD arm)
+$ python -X utf8 -I -B tools/round-61/numstat-edge-audit.py --root . --receipt LOG.md --rev 1c1d68805039596bea4498beef5352e42d84ad98 --name landing=bbdb03abdafd777b10767071f3a16267bcccf866 --name record=29083b0c18ecb2620e8a8812688a9b65acedb592 --name freeze=b6dadbd255907557c0c3ed8ff441d192cc06310e --name fixup=203c07a7b68d683e8536b8f103c9f2c35d787168
+LOG.md:3857:NUMSTAT_EDGE_MISMATCH: SKILL delta landing→record (SKILL.md) claims 1 0 but the edge re-derives to 0 0 at bbdb03abdafd..29083b0c18ec
+{
+ "receipt": "LOG.md",
+ "rev": "1c1d68805039596bea4498beef5352e42d84ad98",
+ "claims_found": 2,
+ "findings": [
+  {
+   "class": "NUMSTAT_EDGE_MISMATCH",
+   "line": 3857,
+   "detail": "SKILL delta landing\u2192record (SKILL.md) claims 1 0 but the edge re-derives to 0 0 at bbdb03abdafd..29083b0c18ec"
+  }
+ ],
+ "exit": 1,
+ "exit_reason": "1 finding(s) named",
+ "bindings_used": {
+  "fixup": "203c07a7b68d683e8536b8f103c9f2c35d787168",
+  "freeze": "b6dadbd255907557c0c3ed8ff441d192cc06310e",
+  "landing": "bbdb03abdafd777b10767071f3a16267bcccf866",
+  "record": "29083b0c18ecb2620e8a8812688a9b65acedb592"
+ },
+ "caller_supplied_names": [
+  "fixup",
+  "freeze",
+  "landing",
+  "record"
+ ],
+ "tool": "tools/round-61/numstat-edge-audit.py"
+}
+rc=1
+(exit 1, 2 claims found, exactly one finding: NUMSTAT_EDGE_MISMATCH@3857 — the r60 close entry's landing→record claims 1 0, re-derives 0 0; the r59 close entry's freeze→fixup `1 0` claim on the same run re-derives GREEN)

@@ -1,0 +1,33 @@
+kaidoku round-61 BEFORE arm, C1 (measured at the round base 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe; probes pasted with observed outputs)
+
+== the correction is absent at the base ==
+$ git cat-file -e 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe:.ufo/waves/round-61/l1/scores/d601-correction.txt
+fatal: path '.ufo/waves/round-61/l1/scores/d601-correction.txt' does not exist in '2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe'
+rc=128
+
+== the mislabel stands as filed at all three sites ==
+$ git show 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe:.ufo/waves/round-60/l1/scores/c1-after.txt | grep -c 'landing→record exactly'
+1
+$ git show 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe:LOG.md | grep -c 'the SKILL delta landing→record exactly'
+1
+$ git show 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe:SCORECARD.md | grep -c 'delta landing→tip exactly'
+1
+
+== no correction block exists in the defective receipt ==
+$ git show 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe:.ufo/waves/round-60/l1/scores/c1-after.txt | grep -c 'CORRECTION (round 61)'
+0
+
+== the true edges, re-derived by numstat at the base ==
+$ git diff --numstat 8e58366300aa30c097c81e68df2d0d30c689ed6f bbdb03abdafd777b10767071f3a16267bcccf866 -- SKILL.md  (freeze→landing)
+1	0	SKILL.md
+$ git diff --numstat bbdb03abdafd777b10767071f3a16267bcccf866 29083b0c18ecb2620e8a8812688a9b65acedb592 -- SKILL.md  (landing→record)
+(empty output above: the edge re-derives to 0 0 — the mislabel, confirmed at the base)
+$ git diff --numstat bbdb03abdafd777b10767071f3a16267bcccf866 1c1d68805039596bea4498beef5352e42d84ad98 -- SKILL.md  (landing→close-tip)
+(empty output above: the edge re-derives to 0 0 — T7's mislabel, confirmed at the base)
+$ git diff --numstat 48c418305b71ea603e58f4fe9bd0dfbf2aafa9e4 29083b0c18ecb2620e8a8812688a9b65acedb592 -- SKILL.md  (base→record)
+1	0	SKILL.md
+
+== the filed-bytes baseline before the append (the after-arm is untouched since the r60 close) ==
+$ git diff --numstat 1c1d68805039596bea4498beef5352e42d84ad98 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe -- .ufo/waves/round-60/l1/scores/c1-after.txt
+(empty output above: no change since the r60 close tip — the append this round lands on top of this baseline)
+(draft note, mined pre-landing: this probe was first drafted against the r60 ROUND base 48c41830 and its prose claimed "empty" — the probe actually prints 37 0 there, the file's own creation during round 60; the edge was corrected to the r60 close tip 1c1d6880 before anything was committed, the D60-1 class caught in this round's own draft — M61-1)

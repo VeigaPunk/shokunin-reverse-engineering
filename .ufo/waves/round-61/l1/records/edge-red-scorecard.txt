@@ -1,0 +1,32 @@
+kaidoku round-61 — RED demo on the SCORECARD T7 sibling (r60 atom T7, line 4606 at the base): caller-supplied --name overrides DISCLOSED (the r60 section prints abbreviated hashes + ellipsis, so its names cannot resolve internally; the overrides are caller context, not receipt bytes)
+$ python -X utf8 -I -B tools/round-61/numstat-edge-audit.py --root . --receipt SCORECARD.md --rev 2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe --name landing=bbdb03abdafd777b10767071f3a16267bcccf866 --name tip=1c1d68805039596bea4498beef5352e42d84ad98 --name freeze=b6dadbd255907557c0c3ed8ff441d192cc06310e --name fixup=203c07a7b68d683e8536b8f103c9f2c35d787168
+SCORECARD.md:4606:NUMSTAT_EDGE_MISMATCH: SKILL delta landing→tip (SKILL.md) claims 1 0 but the edge re-derives to 0 0 at bbdb03abdafd..1c1d68805039
+{
+ "receipt": "SCORECARD.md",
+ "rev": "2d976fba2bfc3b85dcc0546f9ec8e149fa2185fe",
+ "claims_found": 2,
+ "findings": [
+  {
+   "class": "NUMSTAT_EDGE_MISMATCH",
+   "line": 4606,
+   "detail": "SKILL delta landing\u2192tip (SKILL.md) claims 1 0 but the edge re-derives to 0 0 at bbdb03abdafd..1c1d68805039"
+  }
+ ],
+ "exit": 1,
+ "exit_reason": "1 finding(s) named",
+ "bindings_used": {
+  "fixup": "203c07a7b68d683e8536b8f103c9f2c35d787168",
+  "freeze": "b6dadbd255907557c0c3ed8ff441d192cc06310e",
+  "landing": "bbdb03abdafd777b10767071f3a16267bcccf866",
+  "tip": "1c1d68805039596bea4498beef5352e42d84ad98"
+ },
+ "caller_supplied_names": [
+  "fixup",
+  "freeze",
+  "landing",
+  "tip"
+ ],
+ "tool": "tools/round-61/numstat-edge-audit.py"
+}
+rc=1
+(exit 1, 2 claims found, exactly one finding: NUMSTAT_EDGE_MISMATCH@4606 — T7's landing→tip claims 1 0, re-derives 0 0; the r59 T8 freeze→fixup `1 0` atom on the same run re-derives GREEN — the true claim stays true)
