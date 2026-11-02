@@ -4872,3 +4872,115 @@ census re-runs every round a registry row lands (M58-2's rule, executed
 this round at 67 paths).
 
 **retired:** none.
+
+## Round 63 (2026-11-02) — the receipt corpus's edge half becomes enumerable: the edge-numstat sweep audits every receipt with the frozen r61 gate
+
+Fresh-start binding honored (the prompt's §7 list r50/r51/r52 re-read and
+spot-checked with fresh probes; the seven ruled-out items receipted in
+`scores/freshstart-spotcheck.txt` at the freeze), L1-inline on the Windows
+host. Base `4ce1d64e…` (the r62 verifier spot-check commit, which verified
+R62-C1 improved with no routed defects); carry-in `0fadbd06…` (the r62
+outside decision recorded per QUALITY #34 BEFORE any claim was measured;
+the carried items restated — 19 standing W04, the r53 L0 open, the two
+standing bare-name findings, the host adaptations; the two cosmetic wording
+nits acknowledged at receipt level); declaration `feebe7b9…` (the plans +
+the new instrument, committed BEFORE the claims file — QUALITY #33);
+operative freeze `fbc0f950…` (the first commit adding
+`.ufo/waves/round-63/claims.json`); landing `c77c5392…` (the SKILL row +
+the capability row; the seven-cell recount covers the new row and the r62
+neighbor — both 7 cells, pipe-free). No wave (no dispatch surface; the
+kaidoku round-53 L0 question stays open). Nine frozen instruments unchanged
+except one new (`tools/round-63/edge-numstat-sweep.py`, pin `0e67bd45…`),
+which COMPOSES the frozen `tools/round-61/numstat-edge-audit.py` (pin
+`6b967e20…`, byte-checked via `--expect-sha256` before any enumeration).
+Claims: R63-C1 (depth, capability acquisition) — the corpus-wide
+numstat-edge claim sweep: the r62 planned candidate ("the edge-numstat
+grammar's base analog … edge claims whose receipts bind both edge endpoints
+could gain a base-edge re-derivation the r61 gate does not attempt
+[corpus-wide]; a new instrument and its own freeze per the r60 rule").
+The frozen r61 gate is single-receipt and every application since r61 was
+hand-aimed; no instrument ever enumerated the receipt corpus for edge
+claims. The sweep composes the gate per receipt (never `--name` fleet-wide
+— receipt-own bindings only), routes rc 2 on the gate's own reason
+fail-closed, refuses a body naming another receipt than the one passed,
+and computes the inventory ONLY from the gate's own JSON bodies (stricter
+than the r62 reporting-only mirror: there is nothing to mirror — the sweep
+never reads receipt bytes). Lowest-axis rule: all three owned axes tied at
+10.0, so the claim is a lowest-axis claim. Stagnation nudge not fired
+(window N=10; capabilities entered r60, r61 and r62; r63 = 3/10). Sourced
+claim: S263 (the Python hashlib documentation, opened this round) grounds
+C1's composition trust anchor — the `--expect-sha256` byte-pin that makes
+"never audit with unpinned checker bytes" mechanical is a hashlib.sha256
+content digest of the checker's exact bytes.
+
+| claim | axis / surface | before | after | counting command | measured at |
+|---|---|---|---|---|---|
+| R63-C1 | depth, capability acquisition — `tools/round-63/edge-numstat-sweep.py`: the multi-receipt sweep that audits every enumerated receipt with the frozen r61 edge gate (sha-pinned composition, one argv subprocess per receipt, `--name` NEVER passed fleet-wide, rc-2 reason routing fail-closed, body-vs-enumerated-path consistency check, inventory from the gate's own JSON bodies only); the corpus's edge half (which receipts carry claims in the r61 grammar, and do their edges re-derive) becomes enumerable for the first time | at the base `4ce1d64e…`: instrument absent (`git cat-file -e …:tools/round-63/edge-numstat-sweep.py` rc=128), 0 SKILL registry rows, 0 SCORECARD rows, 0 `records/edgesweep-` receipts, and the gap on the record: the r62 sweep's inventory JSON carries no edge fields (`grep -c '"edge_inventory"'` → 0 — the behavior token), the r61 demos carry no corpus inventory (`grep -c 'receipts_total'` → 0), while the r62 planned field names the candidate (`grep -c 'base-edge re-derivation'` → 1, the naming line); receipt `scores/c1-before.txt` | the instrument registered (SKILL row 7 cells pipe-free with the neighbor recounted, capability row, container pin `0e67bd45…`); selftest 53 cases 0 failures (`records/edgesweep-selftest.txt`); the FIRST CORPUS-WIDE EDGE INVENTORY at the base rev: 258 receipts enumerated, 0 invocation errors, 3 receipts with edge claims / 7 claim instances, 2 receipts binding all edge endpoints from receipt-own bytes, 1 receipt with unresolvable quote-prose names, 255 receipts without edge claims, 4 findings named — 1 NUMSTAT_EDGE_MISMATCH (the standing D60-1 at `c1-after.txt:10`, filed bytes stay as filed) + 3 NUMSTAT_NAME_UNRESOLVED (the r61 before-arm's quote-prose at `c2-before.txt:15-17`, fail-closed on every override-free fleet run) — red exit 1; GREEN with the r63 disposition TSV (exit 0, inventory complete; 4 finding(s) all dispositioned — never defects erased; no uncovered, no orphans); the `--only` arm over the three claim-bearing receipts (same 4 keys — the r61 recorded classes reproduced); the pin fail-closed arm (wrong `--expect-sha256` → exit 2 before any enumeration) | `python -X utf8 -I -B tools/round-63/edge-numstat-sweep.py --selftest`; the demo commands pasted with outputs in `records/edgesweep-*.txt` (the fleet inventory's JSON edge_inventory block is the counting record: receipts_total 258, edge_claims_total 7, receipts_with_edge_claims 3, receipts_binding_all_endpoints 2, receipts_with_unresolved_names 1, receipts_without_edge_claims 255, findings_by_class {EDGE_MISMATCH 1, NAME_UNRESOLVED 3}; the before greps in `scores/c1-before.txt`; the after-arm at the record rev lands with the close, the disclosed ordering) | `.ufo/waves/round-63/l1/records/edgesweep-inventory-red.txt` (rev = the base `4ce1d64e…`) |
+
+Owned scores: coverage `10 → 10`, depth `10 → 10`, calibration `10 → 10` — the
+owned-axes rows are byte-equal base→tip; PROVINCE is untouched. LOG
+append-only (insertions only). PROVINCE diff empty. Learning trends:
+expansion **unchanged** (no Frontier→Core move; S263 is tool documentation,
+not an REA surface; one capability row grows the repertoire, not the map);
+quality **improved** (the receipt corpus's edge half — unchecked and
+unenumerated since the corpus began, with the composed gate present but only
+ever hand-aimed — is now mechanically enumerable and audited corpus-wide;
+the first inventory re-derives the r61 recorded classes exactly and leaves
+the standing findings named and dispositioned; both mistakes self-caught
+before any commit); discernment **unchanged** pending the outside
+spot-check (the round executed its planned field verbatim, refused caller
+overrides fleet-wide — reject 2 — refused to re-implement the gate —
+reject 1 — and refused a receipt-reading mirror — reject 3).
+
+Round-63 record atoms (each re-derived by the plain commands transcribed in
+`scores/c1-before.txt`, the edgesweep receipts, and this section):
+
+| atom | declared value |
+|---|---|
+| T1 | log-carry-in-entry=true (with the carry-in `0fadbd06…`, which records the r62 non-author closure verified improved, admitted not barred, QUALITY #34, no routed defects, before any claim was measured; the carried items restated); log-deletions=0 |
+| T2 | freeze=fbc0f950 (first commit adding the container); instruments=9 pinned (edge-numstat-sweep 0e67bd45 new — committed at the declaration feebe7b9 before the claims file; numstat-edge-audit 6b967e20, annotation-sweep 38614088, annotation-audit ba9ccbb9, receipt-audit 897df532, record-receipt-audit 3a5fff9a, census3 a7538e5f, freeze-gate 25b54339, v6-block-digest 22785c1e unchanged); gate-verdict=CLEAN (pre-flight at the freeze rc 0: audited 38, clean 18, round-63 CLEAN, required_failed [], receipt `scores/gate-preflight.txt` + .json; disclosed shape note: the gate extracts one path-named instrument from the container strings, the map pins nine, the verdict is CLEAN) |
+| T3 | c1-before: instrument absent rc=128 at the base (present rc=0 at the declaration); 0 registry rows; 0 SCORECARD rows; 0 edgesweep receipts; the no-edge-inventory behavior probes 0 (the r62 inventory JSON, the r61 demos); the composed gate present at the base rc=0; the r62 planned-field mention probe 1 |
+| T4 | edgesweep demos: selftest 53/0; the corpus-wide inventory red exit 1 (258/3/7/2/1/255/4-findings/0-invocation-errors); green with the r63 TSV exit 0 (4 all dispositioned); the --only arm same 4 keys over 3 receipts (the r61 recorded classes); pin fail-closed exit 2 |
+| T5 | duties: the TEN-container receipt-audit sweep 8 clean + 2 standing findings (the r62 container clean on first entry; dispositions BEFORE the landing, the sixth refusal to plant, the two-path tree-wide re-verification named); record-audit-r62 clean (named 21 missing 0); orphan census 5 worktree-only (the gitignored class + the declaration-committed instrument, ordering note) + 4 in-progress wave files + the 50-path aux/ class |
+| T6 | sources-before=169; sources-after=170; new-rows=S263(A); used-by-ok=true; S263 placed directly after S262 BEFORE the record commit (the r59 E12 lesson applied pre-landing) |
+| T7 | census start-exit=0 (19 W04, 169 rows, absolute-dir adapted form; the literal form exits 2 as disclosed since r53; M63-1 mined); end-exit=0 expected at the close (19 W04, 170 rows expected, whatever the run prints is pasted); no-harm: owned-axes rows byte-equal; PROVINCE diff empty; LOG deletions 0; the SKILL delta freeze→landing exactly `1 0` (the one added registry row — numstat-verified at the landing `c77c5392`); the SKILL v6 marker block digest unchanged 946e5359 (re-derived by the round-55 probe at the landing); NO prior-round filed byte amended anywhere base→tip (zero exceptions) |
+| T8 | the mistakes: M63-1 (the census lane arg is cwd-relative — the relative-arg adapted form failed from the lane-repo cwd with `ERROR: unknown lane`; the absolute-dir form exits 0; the failed form recorded as a form correction, never as a census result), M63-2 (the drafted dispositions receipt named the genuine tip-file copies from memory as round-55/round-56 where the tree says round-54/round-55 — the tree-wide ls-tree re-derivation caught it before any commit of the affected bytes; the landed receipt names the two true paths with the command and count) |
+
+Landing receipts (each exists, parses, and carries the named check at the named
+revision):
+
+- `.ufo/waves/round-63/l1/scores/census-start.txt` rev=none check=literal-exit-2-disclosed-adapted-absolute-exit-0-19-w04-169-rows
+- `.ufo/waves/round-63/l1/scores/c1-before.txt` rev=none check=instrument-absent-0-rows-no-edge-inventory-behavior-probes-0-planned-field-mention-1
+- `.ufo/waves/round-63/l1/scores/freshstart-spotcheck.txt` rev=none check=r50-honest-stop-r51-floor64-false-r52-unprovable-x4-seven-ruled-out
+- `.ufo/waves/round-63/l1/records/edgesweep-selftest.txt` rev=none check=53-cases-0-failures
+- `.ufo/waves/round-63/l1/records/edgesweep-inventory-red.txt` rev=4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 check=first-corpus-wide-edge-inventory-exit-1-258-receipts-3-with-claims-7-instances-2-all-endpoints-1-unresolved-255-without-4-findings-0-invocation-errors
+- `.ufo/waves/round-63/l1/records/edgesweep-green-and-only.txt` rev=4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 check=green-exit-0-4-all-dispositioned-never-defects-erased-plus-only-arm-same-4-keys
+- `.ufo/waves/round-63/l1/records/edgesweep-pin-mismatch.txt` rev=4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 check=exit-2-pin-mismatch-before-any-enumeration
+- `.ufo/waves/round-63/l1/records/receipt-audit-sweep.txt` rev=4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 check=ten-containers-8-clean-r62-clean-on-first-entry-2-standing-findings
+- `.ufo/waves/round-63/l1/records/duty-finding-dispositions.txt` rev=none check=both-dispositioned-before-landing-sixth-refusal-two-path-tree-re-verification
+- `.ufo/waves/round-63/l1/records/record-audit-r62.txt` rev=4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 check=r62-record-section-clean-named-21-missing-0
+- `.ufo/waves/round-63/l1/records/orphan-census.txt` rev=4ce1d64ed62f4dff42ceab43aba085ad0fc1fed7 check=5-worktree-only-with-ordering-note-4-in-progress-50-aux-class
+- `.ufo/waves/round-63/l1/s263/digests.txt` rev=none check=hashlib-d0b45c7e-121928-bytes-plain-quote-locator-verified
+- `.ufo/waves/round-63/l1/scores/gate-preflight.txt` rev=fbc0f95034cd6b371cab8189b3b351415945524c check=rc-0-audited-38-clean-18-round-63-clean
+- `.ufo/waves/round-63/l1/scores/gate-preflight.json` rev=fbc0f95034cd6b371cab8189b3b351415945524c check=full-audit-json
+- `.ufo/waves/round-63/l1/records/census63-at-landing.json` rev=c77c5392b6954d66bab3690289988ea9b2ba4fa5 check=generated-68-paths
+- `.ufo/waves/round-63/l1/scores/c1-after.txt` rev=<record commit> check=after-arm-at-the-record-rev (lands with the close, ordering note)
+- `.ufo/waves/round-63/l1/records/census-check-at-record.txt` rev=<record commit> check=exit-0-exact-68 (lands with the close, ordering note)
+- `.ufo/waves/round-63/l1/records/sweep-at-r63-record.txt` rev=<record commit> check=standing-halfway-sweep-exit-0-5-keys-unchanged (lands with the close, ordering note)
+- `.ufo/waves/round-63/l1/records/edgesweep-at-r63-record.txt` rev=<record commit> check=edge-sweep-green-exit-0-dispositioned (lands with the close, ordering note)
+- `.ufo/waves/round-63/l1/census-end.txt` rev=<close tip> check=exit-0-19-w04-170-rows (lands with the close, ordering note)
+
+**planned (next steered round only):** the sweep's corpus-wide inventory is
+the edge half only — the natural next depth step is the LOG/SCORECARD edge
+sibling half (the r61 T7 and LOG-close siblings live in SCORECARD.md and
+LOG.md sections, outside the wave enumeration; a section-scoped sweep over
+the record sections with their own bindings would close the corpus's last
+unchecked edge class; a new instrument and its own freeze per the r60
+rule); the standing halfway sweep re-runs every round that lands receipts
+(executed this round at the r63 record rev, dispositions extended
+append-only if the red state names anything new); the r58/r60 quoted
+bare-name findings stay standing disclosed named debt (the flip condition
+is ruled not-firing; no copy is ever planted — the sixth refusal this
+round); the AVM LE-SquashFS re-freeze stays routed (host absent surfaces
+unchanged); the registry-drift census re-runs every round a registry row
+lands (M58-2's rule, executed this round at 68 paths).
