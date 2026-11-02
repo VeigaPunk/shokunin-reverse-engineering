@@ -138,3 +138,7 @@ runner with its 5-parameter signature, so unthreaded receipts passed
 selftest-invisible because the injected fakes shared the wrong shape).
 Fixed before any commit; the seam now has a dedicated selftest case
 (the production closure shape wired through `sweep()`); mined as M62-1.
+
+## Correction (appended at the freeze, naming the superseded text — the plans bullet above stays as filed)
+
+The BEFORE bullet's probe "`git show 8374754b…:tools/round-60/annotation-sweep.py | grep -c 'base-rev'` → 0" predicted **0**; the observed output at the base is **1** — the token occurs exactly once, in the r60 limits line that *documents* the gap ("`--base-rev` re-derivation is not swept…"). The claim never rested on that count; the precise statement of the gap is the argv-token probe — `grep -c '"--base-rev"'` → 0 (the r60 sweep's checker argv never carries the option) — which is what `scores/c1-before.txt` pastes, with the draft note preserving the first-draft outputs (the M61-1/M60-3 discipline applied to this round's own draft; mined as M62-2).

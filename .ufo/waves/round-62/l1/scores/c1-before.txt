@@ -1,0 +1,41 @@
+kaidoku round-62 BEFORE arm, C1 (the capability gap, measured at the base 8374754b873c1f95ffddcbbe17007b5ef8eeadfc; probes pasted with observed outputs)
+
+$ git cat-file -e 8374754b873c1f95ffddcbbe17007b5ef8eeadfc:tools/round-62/base-binding-sweep.py
+fatal: path 'tools/round-62/base-binding-sweep.py' exists on disk, but not in '8374754b873c1f95ffddcbbe17007b5ef8eeadfc'
+cat-file-rc=128 (128 at the base: the instrument does not exist)
+
+$ git cat-file -e dd193e888462d6bdfae38191fde1abadaac81036:tools/round-62/base-binding-sweep.py
+cat-file-rc=0 (0 at the declaration: the instrument lands there, BEFORE the claims file — the QUALITY #33 order)
+
+$ git show 8374754b873c1f95ffddcbbe17007b5ef8eeadfc:SKILL.md | grep -c 'base-binding-sweep'
+0
+(0 registry rows at the base; grep exits 1 on zero)
+
+$ git show 8374754b873c1f95ffddcbbe17007b5ef8eeadfc:SCORECARD.md | grep -c 'base-binding-sweep'
+0
+(0 capability rows at the base)
+
+$ git ls-tree -r --name-only 8374754b873c1f95ffddcbbe17007b5ef8eeadfc -- .ufo/waves | grep -c 'records/basesweep-'
+0
+(0 round-62 basesweep receipts at the base)
+
+the gap itself, on the record — the standing sweep never PASSES the option:
+$ git show 8374754b873c1f95ffddcbbe17007b5ef8eeadfc:tools/round-60/annotation-sweep.py | grep -c '"--base-rev"'
+0
+(0 — the r60 sweep's argv never carries the option; grep exits 1 on zero)
+
+$ git show 8374754b873c1f95ffddcbbe17007b5ef8eeadfc:tools/round-60/annotation-sweep.py | grep -c 'base-rev'
+1
+(1 — the token occurs ONCE: the limits line that DOCUMENTS the gap, quoted below; the plans file's before-bullet predicted 0 here, the observed output is 1, the draft note below and the plans correction at the freeze carry the fix — the M60-3 rule applied to this round's own draft)
+
+the r60 limits line verbatim, at the base:
+Limits: the per-receipt check is the frozen gate's grammar only (`base: N ->
+record: M` annotations against piped `grep -c` probes); receipts without that
+shape are unevaluable, named as such, never clean; `--base-rev` re-derivation
+is not swept (the base of each historical annotation is the single gate's
+option, available per receipt); disposition text is not truth-checked - a
+disposition's honesty rests on the citations it names, which a non-author can
+
+draft note (preserved per the M61-1 pattern): the first draft of this receipt probed
+cat-file against the DECLARATION rev (rc 0, mislabeled 'expected 128') and predicted
+the loose 'base-rev' grep at 0; both were corrected BEFORE any commit of this receipt.
