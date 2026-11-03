@@ -1,0 +1,33 @@
+{
+ "schema": 1,
+ "round": "round-64",
+ "base": "c7fe6898e9a8b3ff04486b4a1d672e9db37610c9",
+ "declaration_commit": "3fd8468c1a8c5b90a440b3aabe99cb6f139c892b",
+ "declaration_pointer": "plans/round-64-claims.md (declared at 3fd8468c, before this claims file; the instrument tools/round-64/jsc-route-matrix.py and its frozen predictions were committed in that declaration)",
+ "claims": {
+  "R64-C1": {
+   "axis": "depth",
+   "type": "capability acquisition",
+   "surface": ".jsc -> source frontier (PROVINCE.md Frontier): the jsc2js route's outcome triage v1 over 2 artifacts x 3 d8 builds x 3 repetitions",
+   "predicate": "R64-C1 is verified iff all 18 runs reproduce the frozen predicted label of their cell (dump|view8|check), with every input and binary sha256 equal to its pin.",
+   "counting_command": "python3 tools/round-64/jsc-route-matrix.py --probe <probe.jsc> --typora <typora.jsc> --d8-match ~/.local/share/kaidoku-jsc/d8-14.8.178.14 --d8-neighbour ~/.local/share/kaidoku-jsc/d8-14.8.178.1 --d8-cross ~/.local/share/kaidoku-jsc/d8-14.7.173 --view8-dir ~/.local/share/kaidoku-jsc/jsc2js-src/View8 --python ~/.local/share/kaidoku-jsc/venv/bin/python --node node --work <scratch>/matrix --out <receipt.json>",
+   "target": "18 of 18 runs match; exit 0",
+   "kill_rule": "any run whose label differs from its predicted label, or any pin mismatch (exit 2), means R64-C1 is not verified",
+   "controls": {
+    "do_nothing": "--skip-run -> 0/18, exit 1 (.ufo/waves/round-64/l1/c1-before-donothing.json)",
+    "fake_green": "every run labelled dump-ok|view8-ok|node-pass -> 0/18 (selftest verdict-fake-green-count)",
+    "one_off": "one repetition mismatched -> 17/18, exit 1 (selftest verdict-one-mismatch-count)"
+   },
+   "sourced_by": "S264 (jsc2js README, opened 2026-11-03; see the round-64 lesson ## Gate)"
+  }
+ },
+ "frozen_atoms": {
+  "F1": "instrument tools/round-64/jsc-route-matrix.py sha256 29efef4fb5492e7a4aa9cfb88ac2a7bf8b30c5462aafaf692c407ededba20deb (committed at 3fd8468c before this file)",
+  "F2": "selftest at freeze: 22 cases, 0 failures (python3 tools/round-64/jsc-route-matrix.py --selftest)",
+  "F3": "predicted labels: PREDICTED table in the instrument, identical to plans/round-64-claims.md section 'Frozen predicted labels'",
+  "F4": "inputs: probe tools/round-64 mkcache.js sha256 f052eafb5c6200c82a896cbfa72ba930bd232a5e0ed4d41637f9b4f93766ff11 generated the probe cache .ufo/waves/round-64/inputs/probe-electron.jsc sha256 a86f6ea04b95c9796b87b24aa8a414aba97b4468a6c39bb2298310e28fd1d710 (Electron 42.2.0 run-as-node, v8 14.8.178.14-electron.0)",
+  "F5": "typora input: /usr/share/typora/resources/app.asar entry /atom.compiled.dist.jsc, size 388080, sha256 6a0cb7b32270498ed190c589ca29c990a0e4b5f06f0cd6a5516e19a715c2dfe9 (extracted by the python asar reader recorded in the round-64 lesson; the extracted copy is outside the repo at ~/.local/share/kaidoku-jsc/inputs)",
+  "F6": "binaries (sha256): d8 14.8.178.14 bc70d3c0…; d8 14.8.178.1 4060ff2e…; d8 14.7.173 c240ffae…; snapshot_blob.bin 14.8.178.14 b5c418dc…; icudtl.dat (from electron-v42.2.0-linux-x64.zip, sha256 9caeeb15…) c5da2fc3…; view8.py at jsc2js 01fc264d22055865a460b322399a15d84b71f5aa View8/view8.py b3123e4a…; the same commit's View8 tree is git object c125db10c7ce6f9cfc48a0cf80def3dc23b378bf",
+  "F7": "matrix run: 18 runs executed by the round-64 wave (receipt under .ufo/waves/round-64/w1/); no predicted label is revised after the first run"
+ }
+}
