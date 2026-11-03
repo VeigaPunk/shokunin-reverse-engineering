@@ -1,0 +1,5 @@
+# Explicit omissions and reproduction limits
+
+New65–68 binary subject fixtures and full raw comparison/development outputs are omitted; inspected construction recipes, comparators and transparent controls are included. Recipes require a chosen salt and new output directory. This export does not carry every original salt/invocation, frozen oracle instance, gate script, registry, ledger, original ancestry or runtime. Admission-history/prefile checks therefore cannot be reproduced here. New scripts were read, not run. Earlier checkpoint009 round64 synthetic fixtures remain inherited unchanged.
+
+All original ancestry and every path outside the per-file PROVENANCE-011.json allowlist are excluded from this addition. Private/reviewer-only expectations and active later rounds are not exported. Full third-party documents and original licensed captures remain local. Only previously reviewed export ancestry is inherited. Historical reports may cite omitted originals; such references are not included dependencies or fresh verification claims.

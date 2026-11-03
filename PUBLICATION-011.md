@@ -1,0 +1,13 @@
+# Checkpoint011: kaidoku selective reviewed export
+
+Closed original lane pin: 82aaf86abbbc8e9f70227e44a8d98ad78a5dbbfd. Selected rounds: 65 66 67 68. Original source identities differ from the new export identity.
+
+Rounds 65–68: four bounded static-byte-custody capabilities admitted. Their known synthetic cases are not unbiased accuracy or universal format validation. Numerical axes held; round68 authorship/landing defect retained.
+
+This is original owned code/recipes where selected, original analysis, released review and reports, with cited sources. It is not the full training repository or a freshly tested reproduction. No candidate, runner, fixture generator, baseline or provider was executed to prepare this export. Historical claims remain historical. No extra round, numerical gain, promotion or master/main merge follows.
+
+Read PROVENANCE-011.json for every selected original repository/commit/path/blob, original bytes/SHA256, exported blob/bytes/SHA256, and transformations. All source quotations selected for omission are replaced with an explicit marker. Source attribution, URLs, locations and original analysis remain. Quotation counts/locations in preserved historical prose or receipt fields describe ORIGINAL local documents, not the redacted export copy; this package does not certify those source-body checks. Task filesystem prefixes and one personal runtime path are redacted where recorded. A modified export is never represented as byte-identical to its original.
+
+New65–68 binary subject fixtures and full raw comparison/development outputs are omitted; inspected construction recipes, comparators and transparent controls are included. Recipes require a chosen salt and new output directory. This export does not carry every original salt/invocation, frozen oracle instance, gate script, registry, ledger, original ancestry or runtime. Admission-history/prefile checks therefore cannot be reproduced here. New scripts were read, not run. Earlier checkpoint009 round64 synthetic fixtures remain inherited unchanged.
+
+Only the explicit allowlist is selected. No original lane .git history is imported. Existing reviewed-export ancestry is retained by ordinary fast-forward where available; new Kama/Kake exports have a single new root. No unsafe005 capture, full third-party page/PDF/code file, private oracle, nested archive/bundle/history, credential or unrelated personal data is selected. Referenced files outside the allowlist are deliberately missing. Source links do not grant redistribution rights or new license/ownership. Earlier publication artifacts remain unchanged; this checkpoint neither cleans up nor rewrites old public branches or Space files.
