@@ -5093,3 +5093,13 @@ boundaries: a post-`python_probe` cache check folded into `closure.ok`, a frozen
 reviewer's A1/A3/A5 residuals (M65-5); (c) the r63 planned record-section sweep stays open; (d) the standing
 duties re-run every round that lands receipts; the r58/r60 bare-name findings and the r64 placeholder-token
 disposition stay named debt; (e) the AVM LE-SquashFS re-freeze stays routed (host-absent surfaces unchanged).
+
+**Record corrections — round 65** (appended per QUALITY #65: measured corrections in a later block, never a
+rewrite of the filed text):
+
+- Count correction: the round-65 table's R65-C1 before-column reads "round 64: 9 pinned objects". The r64
+  instrument's `PINS` map holds **8** keys (`D1`, `D2`, `D3`, `D1-snapshot`, `D1-icudtl`, `probe`, `typora`,
+  `view8.py`): three d8 binaries, two artifacts, two D1 companions and `view8.py`. The round-65 closure's
+  30-entry count is unaffected. Check:
+  `python3 -c "import importlib.util; s=importlib.util.spec_from_file_location('m','tools/round-64/jsc-route-matrix.py'); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); print(len(m.PINS))"` -> `8`.
+- The same correction is appended to `corpus/knowledge/2026-11-03-r65-jsc-closure-matrix.md` as an erratum.

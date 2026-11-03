@@ -4039,3 +4039,9 @@ fractions — and requires zero mismatches with at least two corrections that ea
 - Wave: `r65-w1` 12 seats, 12/12 settled, 0 dead (`r65-w1-results.json`); dispatch and ready files committed with the wave evidence. Round total 12 seats, no residual call.
 - Scratch deleted (`/fast/scratch/hyaku/kaidoku-r65` purged after landing); no tool installed or upgraded this round. The outside non-author spot-check remains pending and is not self-certified.
 - Files touched by this entry: `.ufo/waves/round-65/l1/close/`, `.ufo/waves/round-65/l1/scores/gate-landing.txt`, `.ufo/waves/round-65/l1/census-end.txt`, this LOG — append-only.
+
+## 2026-11-03 — round 65, KaidokuR65 — correction: the round-64 pin count is eight, not nine
+
+- Measured correction (QUALITY #65): the filed round-65 section's R65-C1 before-column said "round 64: 9 pinned objects", and the knowledge entry's opening said the r64 instrument "pinned nine objects (three d8 binaries, three inputs, two D1 companions, view8.py)". The r64 `PINS` map holds eight keys — `D1`, `D2`, `D3`, `D1-snapshot`, `D1-icudtl`, `probe`, `typora`, `view8.py` (three d8 binaries, two artifacts, two D1 companions, one source file); the ninth came from counting the D1 companions twice in the prose sum. Command: `python3 -c "import importlib.util; s=importlib.util.spec_from_file_location('m','tools/round-64/jsc-route-matrix.py'); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); print(len(m.PINS), sorted(m.PINS))"` -> `8`.
+- Filed bytes are not rewritten: the SCORECARD gains the "Record corrections — round 65" block and the knowledge entry an appended erratum; this LOG entry records the correction. Neither the round-65 closure count (30) nor any verdict changes.
+- Files touched by this entry: SCORECARD.md (one correction block), corpus/knowledge/2026-11-03-r65-jsc-closure-matrix.md (appended erratum), this LOG — append-only.

@@ -89,3 +89,13 @@ not an inference from the mapper's documentation. That distinction is the round-
   under a complete closure, not a source recovery.
 - The census excludes `jsc2js-src/.git/` (git metadata, not a run input; a read-only `git`
   invocation can refresh it). No other exclusion exists.
+
+## Erratum — round 65 close (append-only, QUALITY #65)
+
+The sentence above the table reads "the instrument pinned nine objects (three d8 binaries, three inputs,
+two D1 companions, `view8.py`)". The round-64 instrument's `PINS` map holds **eight** keys — `D1`, `D2`,
+`D3`, `D1-snapshot`, `D1-icudtl`, `probe`, `typora`, `view8.py` — i.e. three d8 binaries, **two** artifacts,
+two D1 companions and one source file. The number came from counting the two D1 companions under a third
+"input" and adding the item twice; the grouping, not the repair story, was wrong. Check:
+`python3 -c "import importlib.util; s=importlib.util.spec_from_file_location('m','tools/round-64/jsc-route-matrix.py'); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); print(len(m.PINS), sorted(m.PINS))"` -> `8 [...]`.
+The filed sentence is not rewritten; this erratum supersedes its count.
