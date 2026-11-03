@@ -4984,3 +4984,37 @@ is ruled not-firing; no copy is ever planted — the sixth refusal this
 round); the AVM LE-SquashFS re-freeze stays routed (host absent surfaces
 unchanged); the registry-drift census re-runs every round a registry row
 lands (M58-2's rule, executed this round at 68 paths).
+
+## Round 64 — jsc2js route trial; honest stop on incomplete dependency pins
+
+One claim, R64-C1 (depth, capability acquisition), on an axis tied for lowest at 10.0.
+Base c7fe6898e9a8b3ff04486b4a1d672e9db37610c9; declaration 3fd8468c1a8c5b90a440b3aabe99cb6f139c892b;
+freeze a35e514105234515e266440aa33a578536b0007b. Instrument committed before claims.
+
+Frozen predicate: R64-C1 is verified iff all 18 runs reproduce the frozen predicted label of their cell (dump|view8|check), with every input and binary sha256 equal to its pin.
+
+Before: `python3 tools/round-64/jsc-route-matrix.py --skip-run` produced 0/18, exit 1
+(`.ufo/waves/round-64/l1/c1-before-donothing.json`). After: the exact counting command in
+`.ufo/waves/round-64/w1/ExecMatrixRun/findings.md:12-22`, using instrument bytes from
+the frozen declaration, produced 18/18 labels, exit 0 (`matrix-run.json`).
+The stronger predicate is UNPROVABLE: ReviewerMatrix/review.md F1 establishes missing
+D2/D3 companion and transitive View8 pins; F2 establishes uncontrolled Python cache writes.
+The numeric target is not substituted for the full predicate. No capability row enters.
+Owned numeric axis scores remain unchanged; PROVINCE is unchanged; Typora source mapping
+remains Frontier. No promotion claim. Saturation/window unchanged.
+
+Mutation: MutCounter/mutants.md M5 survives (unbracketed signature regex); five other
+mutants killed. Pin mutation findings are in w1/MutPins/pins.md. Frozen instrument unchanged.
+
+Sources: 170 to 172 registry rows (S264/S265, tier A docs), two assimilated entries,
+mapped in corpus/README.md. Count: `grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md`.
+The old measurement A regex accepts October-dated names only; it cannot measure these
+November/non-date-named additions and is not reinterpreted as a current score.
+
+Trends: expansion improved for bounded documentation ground; quality unchanged overall
+(real trial but instrument defects); discernment unchanged pending outside verification.
+Lesson: corpus/lessons/round-64.md. LOG round-64 entries record all work.
+
+Planned: repair pin closure, stage subprocesses with bytecode writes disabled and add
+negative signature fixtures under a NEW freeze before claiming this capability; retain
+the r63 planned record-section sweep as open, not silently fulfilled by this different trial.

@@ -1,0 +1,152 @@
+{
+  "instrument": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-64/jsc-route-matrix.py",
+  "instrument_sha256": "29efef4fb5492e7a4aa9cfb88ac2a7bf8b30c5462aafaf692c407ededba20deb",
+  "base_copy_sha256": "29efef4fb5492e7a4aa9cfb88ac2a7bf8b30c5462aafaf692c407ededba20deb",
+  "skeleton_unmutated": null,
+  "mutants": {
+    "P1": {
+      "desc": "D1 snapshot_blob.bin check removed (extra-file loop keeps only icudtl.dat)",
+      "edits": [
+        {
+          "from": "(\"snapshot_blob.bin\", \"D1-snapshot\"), (\"icudtl.dat\", \"D1-icudtl\")",
+          "to": "(\"icudtl.dat\", \"D1-icudtl\"),"
+        }
+      ],
+      "mutant_sha256": "00fc948ea4a27911e4d6047f54367e7dc2ee6edb6d7bc790e4e16230ffc5287c"
+    },
+    "P2": {
+      "desc": "view8.py pin check removed",
+      "edits": [
+        {
+          "from": "    view8 = Path(args.view8_dir) / \"view8.py\"\n    if not view8.is_file() or sha256_file(view8) != PINS[\"view8.py\"]:\n        return f\"pin mismatch view8.py: {view8}\"\n",
+          "to": ""
+        }
+      ],
+      "mutant_sha256": "eb7d3ece3e5160fc05c6a24d222b3d40b63b6f597d046a794d8a437513c07245"
+    },
+    "P3": {
+      "desc": "D3 d8 entry dropped from the builds dict of check_pins",
+      "edits": [
+        {
+          "from": "            return f\"pin mismatch {name}: {p}\"\n    builds = {\"D1\": Path(args.d8_match), \"D2\": Path(args.d8_neighbour),\n              \"D3\": Path(args.d8_cross)}",
+          "to": "            return f\"pin mismatch {name}: {p}\"\n    builds = {\"D1\": Path(args.d8_match), \"D2\": Path(args.d8_neighbour)}"
+        }
+      ],
+      "mutant_sha256": "27bfd22b229e25010eceeabbf710b3b4ae826a156f477dee5e044409e0366d4a"
+    },
+    "P4": {
+      "desc": "every pin compared on the first 8 hex digits only (4 comparison sites)",
+      "edits": [
+        {
+          "from": "if sha256_file(p) != PINS[name]:",
+          "to": "if sha256_file(p)[:8] != PINS[name][:8]:"
+        },
+        {
+          "from": "if sha256_file(d8) != PINS[name]:",
+          "to": "if sha256_file(d8)[:8] != PINS[name][:8]:"
+        },
+        {
+          "from": "if not f.is_file() or sha256_file(f) != PINS[key]:",
+          "to": "if not f.is_file() or sha256_file(f)[:8] != PINS[key][:8]:"
+        },
+        {
+          "from": "if not view8.is_file() or sha256_file(view8) != PINS[\"view8.py\"]:",
+          "to": "if not view8.is_file() or sha256_file(view8)[:8] != PINS[\"view8.py\"][:8]:"
+        }
+      ],
+      "mutant_sha256": "3c1da95553753e4a7e1c82d3663443865911fda277a8457006ce32f1d7123ec7"
+    },
+    "P5": {
+      "desc": "typora pin check removed (inputs loop keeps only probe)",
+      "edits": [
+        {
+          "from": "    \"\"\"Return an error message when an input or binary does not match its pin.\"\"\"\n    inputs = {\"probe\": Path(args.probe), \"typora\": Path(args.typora)}",
+          "to": "    \"\"\"Return an error message when an input or binary does not match its pin.\"\"\"\n    inputs = {\"probe\": Path(args.probe)}"
+        }
+      ],
+      "mutant_sha256": "258bad82e4a6a4672a7b7ce0a8b73444938a27a405b116a5f23cf491197f8ad6"
+    }
+  },
+  "results": [
+    {
+      "mutant": "P1",
+      "mutation": "D1 snapshot_blob.bin check removed (extra-file loop keeps only icudtl.dat)",
+      "violation": "d1/snapshot_blob.bin wrong",
+      "valid_unmutated": null,
+      "valid_mutant": null,
+      "violated_unmutated": "pin mismatch D1 snapshot_blob.bin",
+      "violated_mutant": null,
+      "survived": true,
+      "extra": {
+        "violation": "d1/icudtl.dat wrong bytes",
+        "unmutated": "pin mismatch D1 icudtl.dat",
+        "mutant": "pin mismatch D1 icudtl.dat",
+        "mutant_still_rejects": true
+      }
+    },
+    {
+      "mutant": "P2",
+      "mutation": "view8.py pin check removed",
+      "violation": "view8/view8.py absent",
+      "valid_unmutated": null,
+      "valid_mutant": null,
+      "violated_unmutated": "pin mismatch view8.py: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P2-viol/view8/view8.py",
+      "violated_mutant": null,
+      "survived": true,
+      "extra": {
+        "violation": "inputs/probe.jsc wrong bytes",
+        "unmutated": "pin mismatch probe: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P2-extra/inputs/probe.jsc",
+        "mutant": "pin mismatch probe: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P2-extra/inputs/probe.jsc",
+        "mutant_still_rejects": true
+      }
+    },
+    {
+      "mutant": "P3",
+      "mutation": "D3 d8 entry dropped from the builds dict of check_pins",
+      "violation": "d3/d8 absent",
+      "valid_unmutated": null,
+      "valid_mutant": null,
+      "violated_unmutated": "missing d8 D3: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P3-viol/d3/d8",
+      "violated_mutant": null,
+      "survived": true,
+      "extra": {
+        "violation": "d2/d8 wrong bytes",
+        "unmutated": "pin mismatch d8 D2: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P3-extra/d2/d8",
+        "mutant": "pin mismatch d8 D2: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P3-extra/d2/d8",
+        "mutant_still_rejects": true
+      }
+    },
+    {
+      "mutant": "P4",
+      "mutation": "every pin compared on the first 8 hex digits only (4 comparison sites)",
+      "violation": "inputs/probe.jsc collision",
+      "valid_unmutated": null,
+      "valid_mutant": null,
+      "violated_unmutated": "pin mismatch probe: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P4-viol/inputs/probe.jsc",
+      "violated_mutant": null,
+      "survived": true,
+      "extra": {
+        "violation": "inputs/probe.jsc wrong bytes",
+        "unmutated": "pin mismatch probe: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P4-extra/inputs/probe.jsc",
+        "mutant": "pin mismatch probe: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P4-extra/inputs/probe.jsc",
+        "mutant_still_rejects": true
+      }
+    },
+    {
+      "mutant": "P5",
+      "mutation": "typora pin check removed (inputs loop keeps only probe)",
+      "violation": "inputs/typora.jsc wrong",
+      "valid_unmutated": null,
+      "valid_mutant": null,
+      "violated_unmutated": "pin mismatch typora: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P5-viol/inputs/typora.jsc",
+      "violated_mutant": null,
+      "survived": true,
+      "extra": {
+        "violation": "inputs/probe.jsc wrong bytes",
+        "unmutated": "pin mismatch probe: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P5-extra/inputs/probe.jsc",
+        "mutant": "pin mismatch probe: /fast/scratch/hyaku/kaidoku-r64/MutPins/fixtures-P5-extra/inputs/probe.jsc",
+        "mutant_still_rejects": true
+      }
+    }
+  ]
+}

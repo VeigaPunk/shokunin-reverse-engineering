@@ -1,0 +1,98 @@
+# S265 release count — commands and outputs
+
+Seat ScribeSources, 2026-11-03. Scratch: /fast/scratch/hyaku/kaidoku-r64/ScribeSources (deleted after the seat).
+All commands below ran once; no release asset was requested or downloaded.
+
+## 1. Page fetch
+
+$ curl -fsSL -o s265-releases.html https://github.com/xqy2006/jsc2js/releases
+exit 0
+
+$ wc -c s265-releases.html
+328667 s265-releases.html
+
+$ sha256sum s265-releases.html
+4aeaed401d1cff230a2ba7e9031a53a591906e607965bb93345467f20a13654b  s265-releases.html
+
+## 2. Tags visible on the fetched page (page 1 only)
+
+$ grep -c 'href="/xqy2006/jsc2js/releases/tag/' s265-releases.html
+10
+
+$ grep -o 'href="/xqy2006/jsc2js/releases/tag/[^"]*"' s265-releases.html | sort -u | wc -l
+10
+
+$ grep -o 'href="/xqy2006/jsc2js/releases/tag/[^"]*"' s265-releases.html | sort -u
+href="/xqy2006/jsc2js/releases/tag/15.2.124.37"
+href="/xqy2006/jsc2js/releases/tag/15.2.124.43"
+href="/xqy2006/jsc2js/releases/tag/15.2.124.45"
+href="/xqy2006/jsc2js/releases/tag/15.5.35"
+href="/xqy2006/jsc2js/releases/tag/15.6.69"
+href="/xqy2006/jsc2js/releases/tag/15.6.75"
+href="/xqy2006/jsc2js/releases/tag/15.6.75.16"
+href="/xqy2006/jsc2js/releases/tag/15.6.75.19"
+href="/xqy2006/jsc2js/releases/tag/15.6.75.25"
+href="/xqy2006/jsc2js/releases/tag/15.6.75.8"
+
+Pagination evidence (page is not the whole list):
+
+$ sed -n '625,640p' s265-releases.html
+      <div class="paginate-container tmp-mt-3" data-pjax="#repo-content-pjax-container" data-turbo-frame="repo-content-turbo-frame">
+        <div role="navigation" aria-label="Release list pagination" class="pagination d-flex flex-justify-between flex-nowrap"><span class="previous_page disabled" role="link" aria-label="Previous page" aria-disabled="true">Previous</span> <a class="next_page" aria-label="Next page" rel="next" href="/xqy2006/jsc2js/releases?page=2">Next</a></div>
+      </div>
+
+$ grep -o 'href="/xqy2006/jsc2js/releases?page=2"' s265-releases.html
+href="/xqy2006/jsc2js/releases?page=2"   (5 occurrences in the saved bytes)
+
+## 3. API total (the count cited in the S265 row)
+
+$ curl -fsSL -D s265-link-headers.txt -o /dev/null 'https://api.github.com/repos/xqy2006/jsc2js/releases?per_page=1'
+exit 0
+
+$ grep -i '^link:' s265-link-headers.txt
+link: <https://api.github.com/repositories/1042605456/releases?per_page=1&page=2>; rel="next", <https://api.github.com/repositories/1042605456/releases?per_page=1&page=679>; rel="last"
+
+=> per_page=1 with rel="last" page=679 gives 679 releases.
+
+$ curl -fsSL -H 'Accept: application/vnd.github+json' 'https://api.github.com/repos/xqy2006/jsc2js/releases?per_page=100' -o s265-api.json
+exit 0
+
+$ python3 -c "import json;d=json.load(open('s265-api.json'));print(len(d))"
+100
+
+(one full page of 100, consistent with a total above 100; the exact total is the Link rel=last page.)
+
+$ curl -fsSL -D s265-tags-headers.txt -o /dev/null 'https://api.github.com/repos/xqy2006/jsc2js/tags?per_page=1'
+$ grep -i '^link:' s265-tags-headers.txt
+link: <https://api.github.com/repositories/1042605456/tags?per_page=1&page=2>; rel="next", <https://api.github.com/repositories/1042605456/tags?per_page=1&page=679>; rel="last"
+
+=> tags total 679, equal to the releases total.
+
+## 4. The three R64-C1 d8 pins are release tags (metadata only)
+
+$ curl -fsSL -H 'Accept: application/vnd.github+json' https://api.github.com/repos/xqy2006/jsc2js/releases/tags/14.8.178.14 -o rel-14.8.178.14.json
+exit 0
+$ python3 -c "import json;d=json.load(open('rel-14.8.178.14.json'));print(d['tag_name'], d['published_at'], [a['name'] for a in d['assets']])"
+14.8.178.14 2026-08-11T20:07:35Z ['d8-14.8.178.14-linux.tar.gz', 'd8-14.8.178.14-windows.zip']
+
+$ curl -fsSL -H 'Accept: application/vnd.github+json' https://api.github.com/repos/xqy2006/jsc2js/releases/tags/14.8.178.1 -o rel-14.8.178.1.json
+exit 0
+$ python3 -c "import json;d=json.load(open('rel-14.8.178.1.json'));print(d['tag_name'], d['published_at'], [a['name'] for a in d['assets']])"
+14.8.178.1 2026-08-11T14:57:35Z ['d8-14.8.178.1-linux.tar.gz', 'd8-14.8.178.1-windows.zip']
+
+$ curl -fsSL -H 'Accept: application/vnd.github+json' https://api.github.com/repos/xqy2006/jsc2js/releases/tags/14.7.173 -o rel-14.7.173.json
+exit 0
+$ python3 -c "import json;d=json.load(open('rel-14.7.173.json'));print(d['tag_name'], d['published_at'], [a['name'] for a in d['assets']])"
+14.7.173 2026-08-11T14:55:52Z ['d8-14.7.173-linux.tar.gz', 'd8-14.7.173-windows.zip']
+
+Asset-level digest fields returned by the same metadata (not fetched, not verified against any local file):
+
+14.8.178.14 linux.tar.gz sha256:9326e285066c5d06b76f4c8487091be9695888202b823a796b950a22691ee5f6
+14.8.178.14 windows.zip  sha256:6d44f06fd964e59dd8d7a22fcb3c442cd655dc39e49367a988ce048576d8e90b
+14.8.178.1  linux.tar.gz sha256:87a8afe9869235aeece3d4461335b52e2ec5e8c9d73da9ad5fa261cc4abb6ea3
+14.8.178.1  windows.zip  sha256:53dc5826a8f666b72603049b639d9186f211eb7861bea252f4d47b20076e592d
+14.7.173    linux.tar.gz sha256:fe51888335060dab0a00e741c92539b8cdd72f44d8955180d58b12b8c80738de
+14.7.173    windows.zip  sha256:7151eafb1e6bccd00f0971fa4614ce5acfe169ac5fe8e2b0447dfb0247cfc5b5
+
+These are per-asset (archive) digests; the instrument's PINS are per-file (d8, snapshot_blob.bin, icudtl.dat), so the two sets
+are not directly comparable and no match is claimed here.

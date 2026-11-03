@@ -3985,3 +3985,19 @@ fractions — and requires zero mismatches with at least two corrections that ea
 - The closure's operator note (all four SHONEN boxes checkable by a non-author on the evidence) is recorded; promotion review stays operator-owned, and no `[x]` is written by this lane.
 - Scope of this round: the `.jsc` → source frontier named in PROVINCE.md. Declaration (plan and matrix instrument) is committed before the claims file; the frozen predicted labels are in the instrument, not in the claims file alone.
 - Log deletions: 0.
+
+## 2026-11-03 — round 64, KaidokuR64 — trial landing and honest stop
+
+- Declaration 3fd8468c1a8c5b90a440b3aabe99cb6f139c892b; operative freeze a35e514105234515e266440aa33a578536b0007b. R64-C1 depth/capability target labels reproduced 18/18, exit 0, after do-nothing 0/18 exit 1. Counting command and producing receipt: `.ufo/waves/round-64/w1/ExecMatrixRun/findings.md` and `matrix-run.json`.
+- Full frozen predicate UNPROVABLE: ReviewerMatrix F1 finds incomplete dependency/companion pins, F2 Python cache writes; MutCounter M5 survives. No instrument repair after freeze and no capability row or Core promotion. The claims container additionally lacks the required top-level instruments map; frozen_atoms text is not that map. R29 freeze validation is not claimed.
+- Assimilation: two corrected jsc2js entries; SOURCES S264/S265 opened this round, registry 170 to 172, two A-doc rows. Collision guard 44 collisions and indented-row positive; scratch census exit 0 before append. See corpus/lessons/round-64.md Gate/Mistakes and `.ufo/waves/round-64/assimilation/`.
+- One v1 wave, 12 seats, 4 attack seats, one connector; L1 holds planner role. Main sent WAVE-DONE for all 12 seats and results at `.ufo/waves/round-64/r64-w1-results.json` before report. No residual wave.
+- PROVINCE and SHONEN unchanged. Owned numeric scores unchanged; old October-only coverage recipe is not an adequate current completeness measure. Historical receipt-audit, freeze-gate and registry-drift duties were not rerun this round: disclosed conformance debt, not clean verdicts.
+- Tools: upstream jsc2js 01fc264d, patched d8 14.8.178.14 / 14.8.178.1 / 14.7.173; official Electron 42.2.0 zip; parse 1.22.4 through uv/PyPI. Persistent toolchain ~/.local/share/kaidoku-jsc. Pacman not used.
+
+## 2026-11-03 — round 64, KaidokuR64 — closing duty receipts (supersedes the preceding not-rerun statement)
+
+- Duties subsequently executed at named committed revisions: `.ufo/waves/round-64/l1/duties/` contains annotation-sweep green (five standing dispositioned findings), record-audit-r63 clean, registry-census generation, and eleven container audits (nine exit 0; r58/r60 exit 1, the standing receipt findings). Initial annotation invocation failed on a cwd-relative audit-tool path; absolute `--audit-tool` retry recorded separately, not hidden.
+- Freeze gate at a35e5141 with `--require-clean round-64` returned exit 1, required_failed round-64. Red gate retained; no CLEAN claim or false disclosure row. Numeric labels do not repair the freeze defect.
+- Final literal contract census command on this Linux host exits 0, 19 W04, rows 172. Start adapted command also exited 0, 19 W04, rows 170. Unlike the Windows host, the literal lane mapping now resolves; the old L0 question is still operator-owned, not edited.
+- These closing receipts supersede only the preceding statement that those duties were not run. No historical filed bytes or frozen instruments changed.
