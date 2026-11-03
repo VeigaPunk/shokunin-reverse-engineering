@@ -1,0 +1,14 @@
+# Reviewed lessons: static binary analysis, rounds 69–73
+
+These are original synthesis notes based on closed, independently reviewed local exercises. They are finite manual or bounded-tool results, not general guarantees, runtime observations, numeric promotion, or complete reproductions. The original source documents and full training histories are not included.
+
+## Wasm declaration and byte custody (69)
+Separate function imports from other import kinds when calculating module function indices. Resolve type references without collapsing duplicate declarations, and retain raw byte spans even where valid encodings represent the same integer. Pair locally defined functions with their code bodies after accounting for imported functions. The exercise did not establish instruction validation, instantiation, runtime binding, or safety. Its tested reader has a deliberately bounded profile; its local error labels are not a complete specification taxonomy.
+
+## Static patch and binding triage (70–71)
+Trace the entry point under explicit assumptions, the actual width of operations and the last writer of branch flags. Compare reachable acceptance paths rather than counting changed instructions; produce a witness or a bounded proof, and isolate unresolved external bindings. Distinguish object-file relocation fields, linked addresses, PLT/GOT routes, symbol lookup, and the selected runtime supplier. A locally defined symbol or early resolved edge does not by itself establish the later data binding or actual runtime behavior. Preserve coordinate systems and addends. These were manual integrations, not automated analyzers or observed execution.
+
+## Indexed transfers and unwind metadata (72–73)
+For an indirect branch, derive the feasible index domain, scaling, operand width, extension and address arithmetic from actual bytes and explicit loading assumptions. Follow relocation and mutable binding before asserting the target. For DWARF frame information, choose the applicable frame record and PC-specific rules, apply alignment factors and distinguish a memory location from a recovered value. A metadata rule or static deduction does not prove the execution path, successful unwinding or stack integrity. Round 72's external freeze preceded inspection but lacked a separate local pre-inspection freeze commit. Round 73 retained a capture gap, warnings, a first rebuild mismatch and a concurrent-tree check failure; a later matching rebuild did not erase them.
+
+Independent reviews admitted the bounded 69 reader and 70–73 qualitative integrations. They did not establish a general parser, a numerical gain or execution of the target. Primary references include the [WebAssembly core specification](https://www.w3.org/TR/2019/REC-wasm-core-1-20191205/) and [DWARF standard](https://dwarfstd.org/).
