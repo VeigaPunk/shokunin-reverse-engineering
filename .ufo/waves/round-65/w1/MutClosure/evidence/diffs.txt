@@ -1,0 +1,77 @@
+===== M1  sha256=a6adb10867e31c836f7cc7ac81a49953a19a6ac5ef6fccb641138d8b70c531bb
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-65/jsc-closure-matrix.py	2026-11-03 20:19:51.689222457 -0300
++++ /fast/scratch/hyaku/kaidoku-r65/MutClosure/ins-M1.py	2026-11-03 20:29:44.656387113 -0300
+@@ -83,7 +83,6 @@
+     "d8-14.8.178.14/snapshot_blob.bin": "b5c418dc0c6006d8dc6f4ac9981182eecf783cd892ae4c4b4ba16977c17bf2bb",
+     "d8-14.8.178.14/icudtl.dat": "c5da2fc389d1bb0ecb13fe22a8e069b7abc491f8aa5d16eb65d4ff32c85a46b6",
+     "d8-14.8.178.1/d8": "4060ff2ea9e0955dd1dee27e3b77b3013140368d370833e4a99184a1f1ae49b8",
+-    "d8-14.8.178.1/snapshot_blob.bin": "601efdc639d9f439cca3d1274e0917ab28ee09d6870787d6052d8949fa73e24d",
+     "d8-14.8.178.1/icudtl.dat": "c5da2fc389d1bb0ecb13fe22a8e069b7abc491f8aa5d16eb65d4ff32c85a46b6",
+     "d8-14.7.173/d8": "c240ffaef3b9022a44f36e35c124400c225906e5e9dd6f373b4323ba62bcdcf2",
+     "d8-14.7.173/snapshot_blob.bin": "80590f459ddbac237de5f282196b2c551e24982f31150cb8998a3b4898ea2720",
+===== M2  sha256=184677e019a8c9eb2a60e1af60649f09031327933c9fbff2d21ffed65329e527
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-65/jsc-closure-matrix.py	2026-11-03 20:19:51.689222457 -0300
++++ /fast/scratch/hyaku/kaidoku-r65/MutClosure/ins-M2.py	2026-11-03 20:29:44.658759233 -0300
+@@ -192,6 +192,7 @@
+ 
+ def cache_entries(root: Path) -> list[str]:
+     """Every __pycache__ directory and every *.pyc file under root."""
++    return []  # M2: cache control disabled
+     out = []
+     if not root.is_dir():
+         return out
+===== M3  sha256=df9e0345e7c58d607c5635ba6b8a3492cb9ae1795b596c00ba05e1e90e22b79f
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-65/jsc-closure-matrix.py	2026-11-03 20:19:51.689222457 -0300
++++ /fast/scratch/hyaku/kaidoku-r65/MutClosure/ins-M3.py	2026-11-03 20:29:44.661151423 -0300
+@@ -219,6 +219,7 @@
+ 
+ 
+ def compare_censuses(before: dict, after: dict) -> dict:
++    return {"equal": True, "added": [], "removed": [], "changed": []}  # M3
+     added = sorted(set(after) - set(before))
+     removed = sorted(set(before) - set(after))
+     changed = sorted(k for k in set(before) & set(after) if before[k] != after[k])
+===== M4  sha256=8ab56f8fb994b7b0aa784d93ec85ee2ba2331ad9359d0aaf4629bbd14bd25f1c
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-65/jsc-closure-matrix.py	2026-11-03 20:19:51.689222457 -0300
++++ /fast/scratch/hyaku/kaidoku-r65/MutClosure/ins-M4.py	2026-11-03 20:29:44.663487033 -0300
+@@ -126,7 +126,7 @@
+ }
+ 
+ SFI_RE = re.compile(rb"\[SharedFunctionInfo\]")
+-SUBPROCESS_ENV = {"PYTHONDONTWRITEBYTECODE": "1"}
++SUBPROCESS_ENV = {}
+ 
+ 
+ def sha256_file(path: Path) -> str:
+@@ -321,7 +321,7 @@
+             if dump == "dump-ok":
+                 out_js = cell / "reconstruction.js"
+                 r = subprocess.run(
+-                    [args.python, "-B", "view8.py", "--disassembled",
++                    [args.python, "view8.py", "--disassembled",
+                      str(cell / "dump.txt"), str(out_js)],
+                     cwd=str(view8_dir), capture_output=True, timeout=600, env=env)
+                 out_size = out_js.stat().st_size if out_js.exists() else None
+===== M5  sha256=31014bc95fa159857b729c53aab7931c81ca552e079e2620ca9791142bad5cce
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-65/jsc-closure-matrix.py	2026-11-03 20:19:51.689222457 -0300
++++ /fast/scratch/hyaku/kaidoku-r65/MutClosure/ins-M5.py	2026-11-03 20:29:44.665856312 -0300
+@@ -143,6 +143,7 @@
+ 
+ 
+ def classify_dump(rc, stdout: bytes) -> str:
++    return "dump-ok"  # M5: any rc
+     if rc == "timeout":
+         return "dump-timeout"
+     code = norm_rc(rc)
+===== M6  sha256=48e2f6fd0c21aca4799354516986b8516f46663b8346acf4fd73123f41c02a36
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-65/jsc-closure-matrix.py	2026-11-03 20:19:51.689222457 -0300
++++ /fast/scratch/hyaku/kaidoku-r65/MutClosure/ins-M6.py	2026-11-03 20:29:44.668649202 -0300
+@@ -344,7 +344,7 @@
+ def emit(labels: dict, receipts: list, skip_run: bool, args, closure: dict,
+          delta: dict) -> int:
+     _, summary = verdict(labels)
+-    verified = bool(summary["verified"] and closure["ok"] and delta["equal"]) and not skip_run
++    verified = bool(summary["verified"] and closure["ok"]) and not skip_run  # M6
+     if not closure["ok"]:
+         exit_code = 2
+     elif verified:
