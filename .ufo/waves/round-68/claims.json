@@ -1,0 +1,50 @@
+{
+ "schema": 1,
+ "round": "round-68",
+ "base": "fcbe200f6739c38939e0dabf3f251de2cc6bd727",
+ "declaration_pointer": "plans/round-68-claims.md (no amendments). Both instruments and the control driver were committed BEFORE this claims file (QUALITY #33) at 6020eb60, with the six control arms and the base dry runs in .ufo/waves/round-68/l1/pre/; the carry-in LOG entry and the round-67 closure record are in that same commit and are ancestors of this freeze (QUALITY #34, the M65-3 order check). The operative freeze is the commit that first adds this file: git log --diff-filter=A --format=%H -- .ufo/waves/round-68/claims.json. No amendment series; no instrument supersession at the freeze.",
+ "instruments": {
+  "tools/round-68/registry-conformance.py": "a300d831c7ef1de47448c2feb8dcbd9ceaf597f7e5f4b996a8e4cc510c6e8315",
+  "tools/round-68/packed-elf.py": "48ef4c688a14faf381abbd2cc2b29061035f38c97815e2365957843433e5276e",
+  "tools/round-68/controls.py": "0657ee080ba92459cfc2916715dce8c0f1c49930e03c8c3d36ac60dbd5618fb4"
+ },
+ "instrument_supersessions": [],
+ "claims": {
+  "R68-C1": {
+   "axis": "calibration",
+   "type": "capability acquisition (registry-conformance census) + the round-67 closure's routed defect 2 repair",
+   "predicate": "R68-C1 is verified iff the frozen registry-conformance census, run at the measured revision, reports mismatches 0 with scope_size 71 and registry_rows 77, while the same census run at the base revision fcbe200f6739c38939e0dabf3f251de2cc6bd727 reports mismatches 2 and names exactly tools/round-67/avm-le-counter.py and tools/round-67/mutation-battery.py as unregistered.",
+   "target": "mismatches 0, scope_size 71, registry_rows 77 at the measured revision; the base reports mismatches 2 naming the two round-67 instruments",
+   "counter": "python3 -I -B tools/round-68/registry-conformance.py --root <lane> --rev <rev> --json-out <receipt>",
+   "kill_rule": "an unregistered, duplicate, absent-at-rev or thin registry row at the measured revision; a before-arm that does not name the two round-67 instruments; an undisclosed post-freeze instrument edit; or a run that needs the predicate changed -> not verified, reported, never narrowed"
+  },
+  "R68-C2": {
+   "axis": "coverage",
+   "type": "capability acquisition (the packed-ELF triage route: detect, unpack with byte identity, recover the REA inventory)",
+   "predicate": "R68-C2 is verified iff the frozen packed-ELF counter, run at the measured revision over its two pinned carriers, reports carriers_matched 2 of target 2 and control_ok true with every arm true on both carriers (detected, before_ok, identity_ok, recovery_ok, and refusal_ok on the carrier that pins an address), reports the packed bytes of both carriers at exactly 3 procedures, and reports the non-packed original as neither listed nor decompressible by the packer.",
+   "target": "carriers_matched 2 of 2, control_ok true, failing [], before_procedures [3, 3], exit 0 at the measured revision",
+   "counter": "python3 -I -B tools/round-68/packed-elf.py --root <lane> --rev <rev> --pkg <rea-agents root> --work <scratch> --json-out <receipt>",
+   "kill_rule": "a carrier pin drift; a detection that fires on the original bytes; an unpack that does not restore the pinned bytes; a recovered inventory that does not equal the original's; a packed-bytes inventory at or above the carrier's floor; a refusal arm that does not separate packed from unpacked; an undisclosed post-freeze instrument edit; or a run that needs the predicate changed -> not verified, never narrowed"
+  }
+ },
+ "frozen_atoms": {
+  "A0": "declaration order: instruments, controls and the carry-in committed at 6020eb60 before this container; the carry-in LOG entry and the round-67 closure record are ancestors of the freeze (git merge-base --is-ancestor 6020eb60 <freeze> exit 0, receipt l1/records/r68-order.txt); no prompt amendment and no claim amendment after this file",
+  "A1": "base: fcbe200f6739c38939e0dabf3f251de2cc6bd727; the base census (l1/pre/c1-at-base.json) reports scope_size 69, registry_rows 73, mismatches 2 = the two round-67 instruments, legacy_unregistered 26, named_but_absent 12",
+  "A2": "before-arms: l1/pre/c1-at-base.json (mismatches 2, the two round-67 paths) and l1/pre/c2-dryrun-at-base.json (carriers_matched 2, control_ok true, before_procedures [3,3] against original inventories 167/30/190 and 99/29/103; the route is measured at the base revision because the route, not the revision, is the claim's surface)",
+  "A3": "controls (committed before the first data commit): l1/pre/controls-at-base.json, six arms green — c1-base (2), c1-shortcut-self (0, false green), c1-constant-zero (0, false green), c2-packed-only (not met), c2-no-identity (not met), c2-real (met)",
+  "A4": "R68-C1 regime: scope is each plan's OWN round N >= 41 tools that exist at the revision; rounds below 41 are reported as legacy_unregistered and never counted; a foreign round's tool in a plan is not scope; named_but_absent is reported and excluded; the registry section is read between the two instrument-registry v2 markers at --rev; thin = a verdict cell that does not name all three exit codes",
+  "A5": "R68-C1 repair surface: the four rows added to SKILL.md's registry are the two round-67 instruments and this round's two counters; SKILL.md is the measurement's subject, never a pinned instrument",
+  "A6": "R68-C2 pins: carriers by sha256 (jq e8156675…, xxd 7b1e5d0c…), the packer /usr/bin/upx by sha256 and version, the REA package by version 6.5.0 plus package.json sha256 a5003023…, with the npx cache-level lock RECORDED (lock_sha256, lock_recorded_not_pinned) and never pinned (QUALITY #110); the CLI is invoked as `node <pkg>/scripts/rea.mjs`, never `npx -y`, so no cache rewrite can occur",
+  "A7": "R68-C2 arms: detect = `upx -l` rc 0 AND readelf section count 0; before = the packed-bytes inventory's procedure_count below half the carrier's pinned original floor; identity = unpacked sha256 equals the carrier pin; recovery = unpacked inventory equals the original inventory on all three counts; refusal (jq only, address 0x103fa0) = packed decompile rc != 0 and unpacked rc 0 with the pinned symbol present; control = the original is not listed by `upx -l` and `upx -d` on it refuses",
+  "A8": "sourced claim: R68-C2's knowledge entry cites the round's new SOURCES row, opened this round with its access date and a located quote, and the entry carries the provenance trio (observation/inference/unknown discipline)",
+  "A9": "receipts name both the measured revision (rev) and the revision that bears the instrument (instrument.rev), closing the round-67 closure's routed defect 6 for this round's receipts"
+ },
+ "repairs": [
+  "the round-67 entry's appended correction block (superseded rule sha b55d5e87…, actual e66ba022…, silent row absent)",
+  "registry rows for tools/round-67/avm-le-counter.py and tools/round-67/mutation-battery.py",
+  "registry rows for tools/round-68/registry-conformance.py and tools/round-68/packed-elf.py",
+  "the QUALITY #100 companion row for the round-64 findings-cell correction",
+  "the prefile gate's output as a committed receipt; the superseded corpus/claim-freezes.tsv retired with a named erratum",
+  "the round-67 report's prompt-hash erratum, in this round's report"
+ ]
+}
