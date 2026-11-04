@@ -135,7 +135,7 @@ def main(argv: list[str] | None = None) -> int:
                      if r["verdict"] == "killed_wrong_case"]
     no_case_ok = (after_pristine["rc"] == 0 and renamed_scored["pristine_ok"]
                   and not renamed_killed
-                  and len(renamed_wrong) >= 6)
+                  and sorted(renamed_wrong) == sorted(closed))
     arms.append(arm("c1_no_declared_cases", no_case_ok,
                     {"pristine_rc": after_pristine["rc"],
                      "renamed_pristine_ok": renamed_scored["pristine_ok"],
