@@ -123,6 +123,7 @@ A row is written when its file exists, never before.
 | Instrument and record layer, round 82 | `2026-11-04-r82-conjunction-and-printed-commands` | bounded apparatus knowledge — full-conjunction receipt checks and pinned printed-command execution; no artifact class or frontier promotion; final measured limits are in round-82 lesson |
 | Instrument and record layer, round 83 | `2026-11-04-r83-positive-source-attribution` | bounded apparatus knowledge — positive source attribution versus lexical presence; no new artifact surface (map row added in round 84, repairing the round-83 omission) |
 | Nested container chain, round 84 | `2026-11-04-r84-nested-container-chain` | held — a reproducible three-level LE SquashFS v4 gzip chain through REA 6.5.0: 8/8 oracle members at `--max-depth 3` and `4`, depth-3 `coverage partial` with one `depth-limited` path and level-3 `analysis_depth null`, depth-4 `complete` with level-3 `analysis_depth 3`; publication is not analysis |
+| Mutant-kill binding, round 85 | `2026-11-04-r85-mutant-kill-binding` | bounded apparatus knowledge — a kill is an observed outcome change under a declared case, bound by name; no artifact class or frontier promotion (sourced by S304) |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -258,6 +259,7 @@ A row is written when its file exists, never before.
 | `2026-10-30-r51-avm-le-squashfs-core` | source-grounded accounting prerequisites; filename is the declared slot, not Core promotion | S250/S251; round-51 lesson and wave-1 receipts | 2026-10-30 |
 
 | `2026-11-04-r84-nested-container-chain` | nested container-chain depth semantics: publication is not analysis — 8/8 oracle members at `--max-depth 3` and `4`, but depth 3 reports `coverage partial` with one `depth-limited` path at the deepest extract root and level-3 `analysis_depth null`, while depth 4 reports `complete` with level-3 `analysis_depth 3`; bounded to a lane-built three-level standard LE v4 gzip chain | S301, S302; `tools/round-84/nested-sqfs.py`; receipts `.ufo/waves/round-84/` | 2026-11-04 |
+| `2026-11-04-r85-mutant-kill-binding` | a mutant is killed only by an observed outcome change under the mutant; the frozen r84 counter binds the kill to a declared case name, not to the case's semantics | S304; `tools/round-84/mutation-closure.py`; `.ufo/waves/round-85/mutants.json` | 2026-11-04 |
 ## Lessons
 | entry | round | gist |
 |---|---|---|
