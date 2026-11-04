@@ -101,6 +101,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--root", required=True)
     ap.add_argument("--base-rev", required=True)
     ap.add_argument("--decl-rev", required=True)
+    ap.add_argument("--receipt-rev")
     ap.add_argument("--receipt", required=True)
     ap.add_argument("--commitment", required=True)
     ap.add_argument("--expect-upx", required=True)
@@ -136,7 +137,9 @@ def main(argv: list[str] | None = None) -> int:
 
     # c1_base_world
     res = run([sys.executable, "-I", "-B", lane(PROBE), "--root", root,
-               "--rev", args.decl_rev, "--tool", ROUTE71,
+               "--rev", args.decl_rev,
+               *(["--receipt-rev", args.receipt_rev] if args.receipt_rev else []),
+               "--tool", ROUTE71,
                "--battery", "tools/round-70/mutation-check.py",
                "--pkg", REA_PKG, "--work", scratch,
                "--receipt", rebased, "--nonce-commitment", args.commitment,
