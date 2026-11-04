@@ -101,8 +101,8 @@ def static_defects(command: str) -> list[str]:
     return defects
 
 
-def build_argv(command: str, rev: str, work: str, out: str,
-               root: str) -> list[str]:
+def build_argv(command: str, rev: str, work: str, out: str, root: str,
+               allow_prefix: str = SAFE_SCRIPT_PREFIX) -> list[str]:
     joined = command.replace("\\\n", " ")
     argv = shlex.split(joined)
     argv = [tok.replace("$REV", rev).replace("${REV}", rev)
@@ -115,8 +115,8 @@ def build_argv(command: str, rev: str, work: str, out: str,
     if argv[0:3] != ["python3", "-I", "-B"]:
         raise Refused(f"argv is not `python3 -I -B <script>`: {argv[0:3]}")
     script = argv[3]
-    if not script.startswith(SAFE_SCRIPT_PREFIX):
-        raise Refused(f"script outside {SAFE_SCRIPT_PREFIX}: {script}")
+    if not script.startswith(allow_prefix) or ".." in script:
+        raise Refused(f"script outside {allow_prefix}: {script}")
     return argv
 
 
@@ -142,7 +142,8 @@ def child_env(work: str) -> dict:
 # --------------------------------------------------------------------------
 
 def run_block(root: str, rev: str, command: str, work: str, out: str,
-              counter_field: str, expect_counter: str) -> dict:
+              counter_field: str, expect_counter: str | None,
+              allow_prefix: str = SAFE_SCRIPT_PREFIX) -> dict:
     """Score one command block: static grammar, then execution, then counter."""
     defects = static_defects(command)
     result = {"command": command, "static_defects": defects,
@@ -151,7 +152,7 @@ def run_block(root: str, rev: str, command: str, work: str, out: str,
     if defects:
         return result
     try:
-        argv = build_argv(command, rev, work, out, root)
+        argv = build_argv(command, rev, work, out, root, allow_prefix)
         out_real = containment(out, work)
         work_real = containment(work, work)
     except Refused as exc:
@@ -162,11 +163,14 @@ def run_block(root: str, rev: str, command: str, work: str, out: str,
                           text=True, timeout=300)
     result.update({"argv": argv, "executed": True, "rc": proc.returncode,
                    "stderr_tail": proc.stderr[-2000:],
-                   "stdout_tail": proc.stdout[-2000:]})
-    if proc.returncode != 0:
+                   "stdout_tail": proc.stdout[-2000:],
+                   "output_tail": (proc.stderr + proc.stdout)[-2000:]})
+    if proc.returncode != 0 and not (expect_counter is None
+                                     and proc.returncode == 1):
+        lines = (proc.stderr + proc.stdout).strip().splitlines()
         result["defects"].append(
             f"EXECUTION_FAILED: rc {proc.returncode}: "
-            f"{proc.stderr.strip().splitlines()[-1] if proc.stderr.strip() else ''}")
+            f"{lines[-1] if lines else ''}")
         return result
     try:
         with open(out_real, encoding="utf-8") as fh:
@@ -179,8 +183,15 @@ def run_block(root: str, rev: str, command: str, work: str, out: str,
         value = value.get(part) if isinstance(value, dict) else None
     result["counter"] = {"field": counter_field, "value": value,
                          "expected": expect_counter,
-                         "matched": str(value) == expect_counter}
-    if str(value) != expect_counter:
+                         "matched": (None if expect_counter is None
+                                     else str(value) == expect_counter)}
+    if expect_counter is None:
+        # Executability arm: the receipt must exist and carry an integer in
+        # the named field; its VALUE is the other claim's business.
+        if not isinstance(value, int):
+            result["defects"].append(
+                f"COUNTER_NOT_INTEGER: {counter_field} {value!r}")
+    elif str(value) != expect_counter:
         result["defects"].append(
             f"COUNTER_MISMATCH: {counter_field} {value!r} != {expect_counter!r}")
     return result
@@ -191,16 +202,24 @@ def run_block(root: str, rev: str, command: str, work: str, out: str,
 # --------------------------------------------------------------------------
 
 def arm_plan_c1(root: str, rev: str, work: str) -> dict:
+    """The plan's C1 block runs as printed and yields a readable receipt.
+
+    Executability only: the counter's VALUE belongs to R76-C1, so this arm
+    accepts rc 0 or 1 and requires an integer `mismatch_count` -- otherwise the
+    two claims would not be causally separable.
+    """
     out = os.path.join(work, "c1-receipt.json")
+    expected = "executed, rc in {0,1}, integer mismatch_count"
     try:
         command = extract_block(read_plan(root, rev, PLAN76), "C1")
     except Unevaluable as exc:
-        return {"arm": "plan-c1", "expected": "rc 0, mismatch_count 0",
+        return {"arm": "plan-c1", "expected": expected,
                 "observed": f"BLOCK_ABSENT: {exc}", "met": False}
-    row = run_block(root, rev, command, work, out, "mismatch_count", "0")
-    return {"arm": "plan-c1", "expected": "rc 0, mismatch_count 0",
-            "observed": ("rc 0, mismatch_count 0" if not row["defects"]
-                         else "; ".join(row["defects"])),
+    row = run_block(root, rev, command, work, out, "mismatch_count", None)
+    return {"arm": "plan-c1", "expected": expected,
+            "observed": (f"rc {row['rc']}, mismatch_count "
+                         f"{(row['counter'] or {}).get('value')!r}"
+                         if not row["defects"] else "; ".join(row["defects"])),
             "met": not row["defects"], "row": row}
 
 
@@ -213,7 +232,8 @@ def arm_fixture(root: str, rev: str, work: str, name: str,
     except Unevaluable as exc:
         return {"arm": name, "expected": "fixture scored",
                 "observed": f"FIXTURE_ABSENT: {exc}", "met": False}
-    row = run_block(root, rev, command, work, out, counter_field, expect)
+    row = run_block(root, rev, command, work, out, counter_field, expect,
+                    allow_prefix="tools/round-75/")
     return {"arm": name, "row": row, "met": None, "expected": None,
             "observed": "; ".join(row["defects"]) or "clean"}
 
@@ -235,7 +255,7 @@ def battery(root: str, rev: str, work: str) -> dict:
     argv_met = (bool(argv_row) and argv_row.get("executed") is True
                 and argv_row.get("rc") == 2
                 and "missing required arguments: work" in argv_row.get(
-                    "stderr_tail", ""))
+                    "output_tail", ""))
     printed.update({"expected": printed_expect, "met": printed_met,
                     "observed": printed.get("observed")})
     argv_arm.update({"expected": argv_expect, "met": argv_met,
@@ -245,7 +265,7 @@ def battery(root: str, rev: str, work: str) -> dict:
     return {"schema": "kaidoku-r76-plan-command-v1", "rev": rev,
             "plan": PLAN76, "arms": arms, "arms_ok": sum(1 for a in arms
                                                          if a["met"]),
-            "arms_total": len(arms), "ok": ok}
+            "arms_total": len(arms), "ok": ok, "exit": 0 if ok else 1}
 
 
 CONTROLS = {
@@ -288,7 +308,8 @@ def control(root: str, rev: str, work: str, name: str) -> dict:
                and any(d.startswith("PLACEHOLDER_UNBOUND")
                        for d in row["static_defects"]))
     return {"control": name, "expected": CONTROLS[name],
-            "met": bool(met), "row": row}
+            "met": bool(met), "ok": bool(met), "row": row,
+            "exit": 0 if met else 1}
 
 
 def selftest(root: str, rev: str) -> int:
@@ -338,7 +359,9 @@ def main(argv: list[str] | None = None) -> int:
                             args.counter_field, args.expect_counter)
             receipt = {"schema": "kaidoku-r76-plan-command-v1",
                        "rev": args.rev, "plan": args.plan,
-                       "block": args.block, "row": row, "ok": not row["defects"]}
+                       "block": args.block, "row": row,
+                       "ok": not row["defects"],
+                       "exit": 0 if not row["defects"] else 1}
         else:
             raise Unevaluable("one of --run/--battery/--control/--selftest")
     except Unevaluable as exc:

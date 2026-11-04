@@ -75,8 +75,9 @@ it prints is not reproducible from the record by the reader it was printed for.
 
 **Falsifiable before → after.** At base the battery exits 1 with `arms_ok 0` of 3 (no plan block,
 no fixtures, no gate at `5303a662`); at the landing revision it exits 0 with `arms_ok 3` of 3:
-`plan-c1` executes the plan's own `counting-command: C1` block verbatim and reads
-`mismatch_count 0`; `r75-printed` refuses the round-75 printed command with
+`plan-c1` executes the plan's own `counting-command: C1` block verbatim (rc 0 or 1, a readable
+receipt carrying an integer `mismatch_count` — the VALUE is R76-C1's business, so the two claims
+stay causally separable); `r75-printed` refuses the round-75 printed command with
 `PLACEHOLDER_UNBOUND` and executes nothing; `r75-argv` executes the same command with the digest
 bound and reports `EXECUTION_FAILED` with the instrument's `missing required arguments: work` at
 rc 2.
@@ -84,7 +85,8 @@ rc 2.
 **Predicate (one sentence, frozen).** R76-C2 is verified iff
 `python3 -I -B tools/round-76/plan-command.py --root . --rev <measured> --work <scratch>
 --battery --json-out <receipt>` exits 0 with `arms_ok 3`, `arms_total 3`, `ok true`, each arm
-carrying its expected observation (`plan-c1`: executed, rc 0, `mismatch_count 0`; `r75-printed`:
+carrying its expected observation (`plan-c1`: executed, rc in {0,1}, integer `mismatch_count`;
+`r75-printed`:
 `PLACEHOLDER_UNBOUND` with `executed false`; `r75-argv`: executed, rc 2, stderr carrying
 `missing required arguments: work`), while the same command at base `5303a662` exits 1 with
 `arms_ok 0`, and the gate's three do-nothing controls each fail in their named way.

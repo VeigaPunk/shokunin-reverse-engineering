@@ -705,6 +705,8 @@ def audit(root: str, rev: str) -> dict:
                "ok": not mismatches}
     receipt["validate"] = {"defects": [], "atoms": len(rows)}
     receipt["validate"]["defects"] = receipt_defects(receipt)
+    receipt["exit"] = 0 if (receipt["ok"]
+                            and not receipt["validate"]["defects"]) else 1
     return receipt
 
 
