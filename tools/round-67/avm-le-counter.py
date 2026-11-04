@@ -137,9 +137,15 @@ def claims_predicate(path: Path) -> str:
     return pred
 
 
-def patch_engine(mod, rule: Path, work: Path) -> dict:
+def patch_engine(mod, rule: Path, work: Path, repo: Path) -> dict:
     """The six disclosed patches.  Everything else is the pinned engine."""
-    mod.GAPRULE = str(rule)
+    # the engine reads its rule through `git show <rev>:<path>`, so the patched
+    # name must be lane-relative; an absolute path is a git-object lookup miss
+    try:
+        rule_rel = str(rule.resolve().relative_to(repo.resolve()))
+    except ValueError:
+        raise Unevaluable(f"gap rule outside the lane: {rule}")
+    mod.GAPRULE = rule_rel
     mod.AFTERDIR = AFTERDIR
     mod.ENTRY = ENTRY
     mod.STEM = STEM
@@ -183,7 +189,7 @@ def score(args) -> int:
         work = Path(args.work or tempfile.mkdtemp(prefix="r67-c1-",
                                                   dir=os.environ.get("TMPDIR") or None))
         work.mkdir(parents=True, exist_ok=True)
-        patches = patch_engine(mod, rule, work)
+        patches = patch_engine(mod, rule, work, repo)
         res = mod.measure(str(repo), args.rev, args.freeze, args.pkg65,
                           target=TARGET, expected_ids=mod.IDS, unblob=args.unblob,
                           rea_timeout=args.rea_timeout,
