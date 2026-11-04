@@ -6096,3 +6096,8 @@ scan's scope is the round's own cells (Capabilities rows with first-working roun
 `- **Core — ` bullets that name a round-78 path); a cell outside that scope is not judged. The surface
 recheck reads the host's live objects at its `checked_at`: a later host change invalidates the receipt, and
 the next round re-runs the command.
+The genuine control also requires a population floor (4 in-scope cells, 8 bound clauses), so a record that
+deletes its own cells cannot pass. The wave named three more limits: a receipt is read at the *measured* rev,
+never re-derived at its own (the round-77 survivor `c1-rev-show-to-worktree` stays open); a named receipt is
+never validated by its own `--validate`; and the surface recheck's scalar parses take the first regex match in
+the file, so a historical sentence placed above the operative one would win.
