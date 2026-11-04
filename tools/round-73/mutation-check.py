@@ -108,8 +108,8 @@ PATCH_SETS["r73"] = [
      '                   env=None, capture=capture)',
      "git-reader-allowlisted-exec"),
     ("readelf_env_dropped",
-     '            rh = readelf_header(row["source"], env=cenv, capture=capture)',
-     '            rh = readelf_header(row["source"], capture=capture)',
+     '    return run(["readelf", "-h", path], env=env, capture=capture)',
+     '    return run(["readelf", "-h", path], capture=capture)',
      "checker-readelf-allowlisted-exec"),
     ("implicit_capsule_dropped",
      '    if not isinstance(observed, dict) or not isinstance(observed.get("log"), str):\n'
@@ -131,10 +131,11 @@ PATCH_SETS["r73base"] = [
      '            rh = run(["readelf", "-h", row["source"]], env=cenv, capture=capture)',
      '            rh = run(["readelf", "-h", row["source"]], capture=capture)', None),
     ("implicit_capsule_dropped",
-     '    if capsule_path is None and isinstance(observed, dict) \\\n'
-     '            and isinstance(observed.get("log"), str):',
-     '    if False and isinstance(observed, dict) \\\n'
-     '            and isinstance(observed.get("log"), str):', None),
+     '    elif isinstance(observed, dict) and isinstance(observed.get("log"), str):\n'
+     '        cand = observed["log"]',
+     '    elif False and isinstance(observed, dict) \\\n'
+     '            and isinstance(observed.get("log"), str):\n'
+     '        cand = observed["log"]', None),
 ]
 EXPECTED_SURVIVORS = {"r68": 5, "r69": 0, "r70": 0, "r71": 1, "r72": 0,
                       "r73": 0, "r73base": 3}

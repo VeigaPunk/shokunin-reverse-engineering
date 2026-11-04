@@ -1315,7 +1315,8 @@ def selftest(work: str | None = None) -> int:
     try:
         seam_bin = os.path.join(seam, "bin")
         os.makedirs(seam_bin, exist_ok=True)
-        seam_seen = os.path.join(seam, "seen")
+        seam_seen = {name: os.path.join(seam, "seen-" + name)
+                     for name in ("git", "readelf")}
         for tool_name in ("git", "readelf"):
             shim = os.path.join(seam_bin, tool_name)
             with open(shim, "w", encoding="utf-8") as fh:
@@ -1324,7 +1325,7 @@ def selftest(work: str | None = None) -> int:
                          "print $o $ENV{PATH} . \"\\n\";\n"
                          "close $o;\n"
                          "print \"seam\\n\";\n"
-                         "exit 0;\n" % seam_seen)
+                         "exit 0;\n" % seam_seen[tool_name])
             os.chmod(shim, 0o755)
         seam_env = {"HOME": os.path.join(seam, "home"), "LANG": "C",
                     "PATH": seam_bin, "TMPDIR": os.path.join(seam, "tmp")}
@@ -1332,15 +1333,18 @@ def selftest(work: str | None = None) -> int:
         os.makedirs(seam_env["TMPDIR"], exist_ok=True)
         git_blob_sha256(seam, "HEAD", "x", env=seam_env)
         readelf_header(os.path.join(seam, "carrier"), env=seam_env)
-        try:
-            with open(seam_seen, encoding="utf-8") as fh:
-                seam_paths = [ln.strip() for ln in fh if ln.strip()]
-        except OSError:
-            seam_paths = []
+
+        def _seen(name: str) -> list[str]:
+            try:
+                with open(seam_seen[name], encoding="utf-8") as fh:
+                    return [ln.strip() for ln in fh if ln.strip()]
+            except OSError:
+                return []
+
         cases.append(("git-reader-allowlisted-exec",
-                      seam_paths[:1] == [seam_bin]))
+                      _seen("git") == [seam_bin]))
         cases.append(("checker-readelf-allowlisted-exec",
-                      seam_paths[1:2] == [seam_bin]))
+                      _seen("readelf") == [seam_bin]))
         polluted = os.path.join(seam, "polluted.jsonl")
         seam_allow = build_child_env(seam)
         with open(polluted, "w", encoding="utf-8") as fh:
