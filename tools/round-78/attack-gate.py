@@ -511,6 +511,26 @@ def scan_record(root: str, rev: str, rules: set[str]) -> dict:
             "findings": findings}
 
 
+FILE_MODES = ("100644", "100755")
+
+
+def mode_ok(mode: str, kind: str) -> bool:
+    """A pinned instrument must be a regular file blob, never a tree or a symlink."""
+    return mode in FILE_MODES and kind == "blob"
+
+
+def blob_mode(root: str, rev: str, path: str) -> tuple[str, str] | None:
+    """The git object mode and type at `<rev>:<path>`, or None when absent."""
+    proc = git(root, "ls-tree", rev, "--", path)
+    line = proc.stdout.strip().splitlines()
+    if not line:
+        return None
+    parts = line[0].split(None, 3)
+    if len(parts) < 2:
+        return None
+    return parts[0], parts[1]
+
+
 def auth_findings(root: str, rev: str, path: str, receipt: dict) -> list[dict]:
     """A receipt is admitted only when its own instrument pin re-derives."""
     out: list[dict] = []
@@ -527,6 +547,12 @@ def auth_findings(root: str, rev: str, path: str, receipt: dict) -> list[dict]:
     if blob is None:
         return [{"rule": "receipt_auth", "receipt": path,
                  "reason": f"instrument {inst['path']} absent at {r}"}]
+    mode = blob_mode(root, r, inst["path"])
+    if mode is None or not mode_ok(*mode):
+        return [{"rule": "receipt_auth", "receipt": path,
+                 "reason": f"the pinned path {inst['path']} is not a regular file "
+                           f"at {r} (mode {mode[0] if mode else 'absent'}, "
+                           f"type {mode[1] if mode else 'absent'})"}]
     if sha256_bytes(blob) != inst["sha256"]:
         out.append({"rule": "receipt_auth", "receipt": path,
                     "reason": "instrument sha256 is not the blob at its own rev"})
@@ -852,6 +878,10 @@ def selftest() -> int:
     case("red-receipt-auth",
          [f["rule"] for f in auth_findings(".", "HEAD", "x.json", {})],
          ["receipt_auth"])
+    case("green-mode-file", mode_ok("100644", "blob"), True)
+    case("green-mode-exec", mode_ok("100755", "blob"), True)
+    case("red-mode-tree", mode_ok("040000", "tree"), False)
+    case("red-mode-link", mode_ok("120000", "blob"), False)
     case("red-auth-no-instrument",
          [f["reason"] for f in auth_findings(".", "HEAD", "x.json",
                                              {"rev": "0" * 40})],
