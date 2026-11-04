@@ -17,7 +17,10 @@ A pointer with no line, a line past end of file, an absent path and a line that
 does not carry the token are all mismatches.  The receipt keeps the pointed
 lines' sha256, never their bytes (the configs' non-pin content is not evidence).
 
-    --battery   bind every check at --rev against the live files; write a receipt.
+    --battery   bind every check at --rev against the live files; write a receipt
+                (the default mode whenever --rev is supplied: the frozen R79-C2
+                counting command omits this flag, and a printed command must run
+                as printed).
     --selftest  unit cases, one red per failure shape plus the look-alikes.
     --validate  re-derive a receipt's counts from its own check list.
     --control   `path-only`: the round-78 rule (the path exists, the line is not
@@ -33,6 +36,7 @@ import datetime as dt
 import hashlib
 import json
 import os
+import pathlib
 import re
 import subprocess
 import sys
@@ -57,6 +61,39 @@ RE_POINTER = re.compile(r"^(?P<path>.+?):(?P<start>\d+)(?:-(?P<end>\d+))?$")
 
 BASHRC_TOKENS = ("GHIDRA_INSTALL_DIR=", "JAVA_HOME=")
 
+# The live object each cell must name (round 78's `same_path` rule, kept).
+DECLARED = {
+    "devin-pin": "/home/vgpnk/.config/devin/mcp_config.json",
+    "omp-pin": "/home/vgpnk/.omp/agent/mcp.json",
+    "kimi-pin": "~/.kimi-code/config.toml",
+    "ghidra-version": "<GHIDRA_INSTALL_DIR>/Ghidra/application.properties",
+    "bashrc-exports": "/home/vgpnk/.bashrc",
+}
+
+
+def ghidra_dir() -> str:
+    """The installed Ghidra root: the live env var, else the .bashrc export."""
+    env = os.environ.get("GHIDRA_INSTALL_DIR")
+    if env:
+        return env
+    for line in read_lines("/home/vgpnk/.bashrc") or []:
+        match = re.search(r"""export\s+GHIDRA_INSTALL_DIR=["']?([^"'\s]+)""", line)
+        if match:
+            return os.path.expandvars(os.path.expanduser(match.group(1)))
+    return ""
+
+
+def declared_ok(check_id: str, path: str) -> bool:
+    want = DECLARED.get(check_id)
+    if want is None:
+        return False
+    if want.startswith("<GHIDRA_INSTALL_DIR>"):
+        root = ghidra_dir()
+        if not root:
+            return False
+        want = want.replace("<GHIDRA_INSTALL_DIR>", root)
+    return os.path.realpath(expand(path)) == os.path.realpath(expand(want))
+
 
 class Unevaluable(Exception):
     """Exit-2 class: the battery cannot read the record."""
@@ -76,8 +113,7 @@ def expand(path: str) -> str:
     return os.path.abspath(os.path.expanduser(path))
 
 
-def bind(pointer: str, tokens: list[str], line_count: int,
-         lines: list[str] | None) -> dict:
+def bind(pointer: str, tokens: list[str], lines: list[str] | None) -> dict:
     """Bind one pointer to its tokens; no I/O, so the selftest can inject lines."""
     out = {"pointer": pointer, "tokens": tokens, "path": "", "line_start": None,
            "line_end": None, "matched": False, "unparsed": False, "reason": "",
@@ -182,9 +218,17 @@ def battery(root: str, rev: str, control: str | None) -> dict:
                      "reason": "" if exists else "path does not exist",
                      "line_sha256": ""}
         else:
-            entry = bind(check["pointer"], check["tokens"], 0, lines)
+            entry = bind(check["pointer"], check["tokens"], lines)
             entry = {"id": check["id"], **entry}
             entry["path"] = expand(entry["path"])
+        entry["declared_path"] = expand(DECLARED.get(check["id"], ""))
+        entry["path_is_declared"] = declared_ok(check["id"], check["pointer"].rsplit(":", 1)[0])
+        if not entry["path_is_declared"]:
+            entry["matched"] = False
+            entry["reason"] = (entry.get("reason") or "") + (
+                " (the pointer does not name the declared live object)"
+                if not entry.get("reason") else
+                "; the pointer does not name the declared live object")
         results.append(entry)
     matched = sum(1 for r in results if r["matched"])
     unparsed = sum(1 for r in results if r["unparsed"])
@@ -193,6 +237,8 @@ def battery(root: str, rev: str, control: str | None) -> dict:
         "round": ROUND,
         "predicate": PREDICATE,
         "checked_at": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
+        "instrument": {"path": "tools/round-79/pointer-bind.py",
+                       "sha256": sha256_bytes(pathlib.Path(__file__).read_bytes())},
         "record": {"path": PROVINCE, "rev": rev,
                    "sha256": sha256_bytes(blob)},
         "control": control,
@@ -202,8 +248,9 @@ def battery(root: str, rev: str, control: str | None) -> dict:
         "unparsed": unparsed,
         "checks": results,
     }
-    receipt["ok"] = bool(len(results) == 5 and matched == len(results)
-                         and unparsed == 0)
+    receipt["would_pass"] = bool(len(results) == 5 and matched == len(results)
+                                 and unparsed == 0)
+    receipt["ok"] = bool(receipt["would_pass"] and control is None)
     return receipt
 
 
@@ -226,6 +273,8 @@ def validate_receipt(receipt: dict) -> dict:
     for check in checks:
         if check.get("matched") and check.get("unparsed"):
             defects.append(f"{check.get('id')}: matched and unparsed")
+        if check.get("matched") and check.get("path_is_declared") is not True:
+            defects.append(f"{check.get('id')}: matched without naming the declared live object")
         if check.get("matched") and not check.get("line_sha256"):
             defects.append(f"{check.get('id')}: matched without a pointed-line digest")
         start, end = check.get("line_start"), check.get("line_end")
@@ -235,8 +284,19 @@ def validate_receipt(receipt: dict) -> dict:
     record = receipt.get("record") or {}
     if not isinstance(record.get("sha256"), str) or len(record.get("sha256") or "") != 64:
         defects.append("record sha256 is not a 64-hex digest")
+    rev = record.get("rev")
+    if not (isinstance(rev, str) and len(rev) == 40
+            and all(c in "0123456789abcdef" for c in rev)):
+        defects.append("record rev is not a 40-hex commit")
+    if not receipt.get("checked_at"):
+        defects.append("checked_at is absent")
+    inst = receipt.get("instrument") or {}
+    if inst.get("sha256") != sha256_bytes(pathlib.Path(__file__).read_bytes()):
+        defects.append("instrument sha256 is not this file's digest")
     if receipt.get("ok") and (len(checks) != 5 or matched != len(checks) or unparsed):
         defects.append("ok true but the check set is not fully bound")
+    if receipt.get("ok") and receipt.get("control") is not None:
+        defects.append("ok true under a control")
     return {"defects": defects, "checks": len(checks), "matched": matched}
 
 
@@ -247,24 +307,24 @@ def selftest() -> int:
         cases.append({"case": name, "got": got, "want": want, "pass": got == want})
 
     lines = ["a\n", '        "rea-agents@6.7.0",\n', "c\n", "d\n"]
-    case("green-line", bind("f.json:2", ["rea-agents@6.7.0"], 4, lines)["matched"], True)
-    stale = bind("f.json:1", ["rea-agents@6.7.0"], 4, lines)
+    case("green-line", bind("f.json:2", ["rea-agents@6.7.0"], lines)["matched"], True)
+    stale = bind("f.json:1", ["rea-agents@6.7.0"], lines)
     case("red-stale-line", (stale["matched"], stale["reason"]),
          (False, "token 'rea-agents@6.7.0' is not on line 1"))
-    case("red-past-end", bind("f.json:9", ["x"], 4, lines)["reason"],
+    case("red-past-end", bind("f.json:9", ["x"], lines)["reason"],
          "line range 9-9 runs past end of file (4 lines)")
-    absent = bind("f.json:2", ["x"], 4, None)
+    absent = bind("f.json:2", ["x"], None)
     case("red-path-absent", (absent["matched"], absent["reason"]),
          (False, "path f.json does not exist"))
-    noline = bind("f.json", ["x"], 4, lines)
+    noline = bind("f.json", ["x"], lines)
     case("red-no-line", (noline["unparsed"], noline["reason"]),
          (True, "pointer carries no line number"))
-    case("red-backwards", bind("f.json:3-2", ["x"], 4, lines)["reason"],
+    case("red-backwards", bind("f.json:3-2", ["x"], lines)["reason"],
          "line range 3-2 is not a forward 1-based range")
-    rng = bind("f.toml:1-2", ["a", "rea-agents@6.7.0"], 4, lines)
+    rng = bind("f.toml:1-2", ["a", "rea-agents@6.7.0"], lines)
     case("green-range", rng["matched"], True)
     case("green-range-digest", bool(rng["line_sha256"]), True)
-    miss = bind("f.toml:1-2", ["a", "d"], 4, lines)
+    miss = bind("f.toml:1-2", ["a", "d"], lines)
     case("red-range-token-outside", (miss["matched"], miss["reason"]),
          (False, "token 'd' is not on line 1-2"))
     record = (
@@ -279,8 +339,12 @@ def selftest() -> int:
     case("green-parse-range", parsed[4]["pointer"], "/home/x/.bashrc:28-29")
     case("green-parse-tokens", parsed[4]["tokens"], list(BASHRC_TOKENS))
     forged = {"checks_total": 5, "matched": 5, "mismatches": 0, "unparsed": 0,
-              "record": {"sha256": "a" * 64}, "ok": True,
+              "checked_at": "2026-11-04T00:00:00-03:00", "control": None,
+              "instrument": {"path": "tools/round-79/pointer-bind.py",
+                             "sha256": sha256_bytes(pathlib.Path(__file__).read_bytes())},
+              "record": {"sha256": "a" * 64, "rev": "b" * 40}, "ok": True,
               "checks": [{"id": f"c{i}", "matched": True, "unparsed": False,
+                          "path_is_declared": True,
                           "line_start": 1, "line_end": 1,
                           "line_sha256": "b" * 64} for i in range(5)]}
     case("green-forged-consistent", validate_receipt(forged)["defects"], [])
@@ -290,6 +354,17 @@ def selftest() -> int:
     bad2 = json.loads(json.dumps(forged))
     bad2["matched"] = 4
     case("red-forged-count", bool(validate_receipt(bad2)["defects"]), True)
+    bad3 = json.loads(json.dumps(forged))
+    bad3["checks"][0]["path_is_declared"] = False
+    case("red-forged-self-pointer", bool(validate_receipt(bad3)["defects"]), True)
+    bad4 = json.loads(json.dumps(forged))
+    del bad4["checked_at"]
+    case("red-forged-no-checked-at", bool(validate_receipt(bad4)["defects"]), True)
+    bad5 = json.loads(json.dumps(forged))
+    bad5["control"] = "path-only"
+    case("red-forged-control-ok", bool(validate_receipt(bad5)["defects"]), True)
+    case("green-declared-path", declared_ok("bashrc-exports", "/home/vgpnk/.bashrc"), True)
+    case("red-undeclared-path", declared_ok("bashrc-exports", "/etc/hosts"), False)
     failures = [c for c in cases if not c["pass"]]
     for case_ in cases:
         print(json.dumps(case_, sort_keys=True))
@@ -316,8 +391,8 @@ def main(argv: list[str] | None = None) -> int:
         result = validate_receipt(receipt)
         print(json.dumps(result, sort_keys=True))
         return 0 if not result["defects"] else 1
-    if not args.battery or args.rev is None:
-        print("usage: --battery --rev <rev> [--json-out <path>] [--control path-only]",
+    if args.rev is None:
+        print("usage: --rev <rev> [--battery] [--json-out <path>] [--control path-only]",
               file=sys.stderr)
         return 2
     try:

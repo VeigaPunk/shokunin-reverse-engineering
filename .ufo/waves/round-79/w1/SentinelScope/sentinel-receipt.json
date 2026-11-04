@@ -1,0 +1,521 @@
+{
+ "schema": "kaidoku-r79-sentinel-scope-v1",
+ "seat": "SentinelScope",
+ "round": 79,
+ "wave": "r79-w1",
+ "base": "29d2ca30b83a6a0d85b0aa979de0138fde1660e6",
+ "freeze": "ed68cd0a6cc790cca342380a2d80d1927a668c8c",
+ "instruments": {
+  "tools/round-79/gate-mutation.py": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+  "tools/round-79/pointer-bind.py": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+  "worktree_state": {
+   "note": "tools/round-79/pointer-bind.py was modified in the lane worktree at 2026-11-04T10:11:49-03:00, after this review had measured the frozen pin",
+   "frozen_sha256": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "worktree_sha256": "3f07bd2a03a10fda353d74863690103f32ba9e1e1e59d3625af91f57f38b4387",
+   "committed": false,
+   "effect": "makes --battery the default whenever --rev is supplied; the frozen R79-C2 command now exits 0 on the worktree, but the frozen text still omits the flag and the claims instrument pin no longer matches the worktree"
+  }
+ },
+ "receipt_fields": {
+  "gate-mutation": [
+   {
+    "field": "schema",
+    "can_carry_secret": "no",
+    "guard": "constant"
+   },
+   {
+    "field": "round",
+    "can_carry_secret": "no",
+    "guard": "constant"
+   },
+   {
+    "field": "predicate",
+    "can_carry_secret": "no",
+    "guard": "constant"
+   },
+   {
+    "field": "measured_at",
+    "can_carry_secret": "no",
+    "guard": "local wall clock"
+   },
+   {
+    "field": "control",
+    "can_carry_secret": "no",
+    "guard": "CLI choice, None|empty-set"
+   },
+   {
+    "field": "target.path",
+    "can_carry_secret": "no",
+    "guard": "the pinned tracked path constant"
+   },
+   {
+    "field": "target.rev",
+    "can_carry_secret": "no",
+    "guard": "40-hex revision arg"
+   },
+   {
+    "field": "target.bytes",
+    "can_carry_secret": "no",
+    "guard": "blob length"
+   },
+   {
+    "field": "target.sha256",
+    "can_carry_secret": "no",
+    "guard": "sha256 of the tracked blob"
+   },
+   {
+    "field": "target_pin.expected",
+    "can_carry_secret": "no",
+    "guard": "pinned sha256"
+   },
+   {
+    "field": "target_pin.actual",
+    "can_carry_secret": "no",
+    "guard": "measured sha256"
+   },
+   {
+    "field": "target_pin.matched",
+    "can_carry_secret": "no",
+    "guard": "boolean"
+   },
+   {
+    "field": "pristine.exit",
+    "can_carry_secret": "no",
+    "guard": "integer"
+   },
+   {
+    "field": "pristine.cases",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "pristine.failures",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "pristine.ok",
+    "can_carry_secret": "no",
+    "guard": "boolean"
+   },
+   {
+    "field": "pristine.failed_cases[]",
+    "can_carry_secret": "no",
+    "guard": "selftest case names"
+   },
+   {
+    "field": "mutants_total",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "killed",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "survivors",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "survivor_ids[]",
+    "can_carry_secret": "no",
+    "guard": "mutant ids"
+   },
+   {
+    "field": "declared_case_hits",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "mutants[].id",
+    "can_carry_secret": "no",
+    "guard": "mutant id"
+   },
+   {
+    "field": "mutants[].edit",
+    "can_carry_secret": "no",
+    "guard": "constant description"
+   },
+   {
+    "field": "mutants[].declared_case",
+    "can_carry_secret": "no",
+    "guard": "selftest case name"
+   },
+   {
+    "field": "mutants[].applied",
+    "can_carry_secret": "no",
+    "guard": "boolean"
+   },
+   {
+    "field": "mutants[].apply_note",
+    "can_carry_secret": "no",
+    "guard": "\"applied\" or an occurrence count"
+   },
+   {
+    "field": "mutants[].exit",
+    "can_carry_secret": "no",
+    "guard": "integer"
+   },
+   {
+    "field": "mutants[].failed_cases[]",
+    "can_carry_secret": "no",
+    "guard": "selftest case names"
+   },
+   {
+    "field": "mutants[].case_absent",
+    "can_carry_secret": "no",
+    "guard": "boolean"
+   },
+   {
+    "field": "mutants[].killed",
+    "can_carry_secret": "no",
+    "guard": "boolean"
+   },
+   {
+    "field": "mutants[].killed_by_declared",
+    "can_carry_secret": "no",
+    "guard": "boolean"
+   },
+   {
+    "field": "mutants[].detector_count",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "mutants[].sole_detector",
+    "can_carry_secret": "no",
+    "guard": "boolean"
+   },
+   {
+    "field": "mutants[].inconclusive",
+    "can_carry_secret": "no",
+    "guard": "boolean"
+   },
+   {
+    "field": "mutants[].stderr_tail[]",
+    "can_carry_secret": "conditional",
+    "guard": "absent unless the copy emits no SELFTEST summary; then the last stderr line, which can carry the run_root path but no env/config value because the target selftest reads neither; no guard, recommend stderr_sha256 or omit"
+   }
+  ],
+  "pointer-bind": [
+   {
+    "field": "schema",
+    "can_carry_secret": "no",
+    "guard": "constant"
+   },
+   {
+    "field": "round",
+    "can_carry_secret": "no",
+    "guard": "constant"
+   },
+   {
+    "field": "predicate",
+    "can_carry_secret": "no",
+    "guard": "constant"
+   },
+   {
+    "field": "checked_at",
+    "can_carry_secret": "no",
+    "guard": "local wall clock"
+   },
+   {
+    "field": "control",
+    "can_carry_secret": "no",
+    "guard": "CLI choice, None|path-only"
+   },
+   {
+    "field": "record.path",
+    "can_carry_secret": "no",
+    "guard": "the record constant PROVINCE.md"
+   },
+   {
+    "field": "record.rev",
+    "can_carry_secret": "no",
+    "guard": "40-hex revision arg"
+   },
+   {
+    "field": "record.sha256",
+    "can_carry_secret": "no",
+    "guard": "sha256 of the tracked record"
+   },
+   {
+    "field": "checks_total",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "matched",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "mismatches",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "unparsed",
+    "can_carry_secret": "no",
+    "guard": "count"
+   },
+   {
+    "field": "checks[].id",
+    "can_carry_secret": "no",
+    "guard": "check id constant"
+   },
+   {
+    "field": "checks[].pointer",
+    "can_carry_secret": "no",
+    "guard": "the record's own pointer cell (path:line) as declared in PROVINCE.md"
+   },
+   {
+    "field": "checks[].path",
+    "can_carry_secret": "no",
+    "guard": "the record cell path, expanded with abspath/expanduser; a path, not file content"
+   },
+   {
+    "field": "checks[].tokens[]",
+    "can_carry_secret": "no",
+    "guard": "declared tokens only: package pin rea-agents@<pin>, application.version=<value>, and the key names GHIDRA_INSTALL_DIR= / JAVA_HOME="
+   },
+   {
+    "field": "checks[].line_start",
+    "can_carry_secret": "no",
+    "guard": "record line number"
+   },
+   {
+    "field": "checks[].line_end",
+    "can_carry_secret": "no",
+    "guard": "record line number"
+   },
+   {
+    "field": "checks[].reason",
+    "can_carry_secret": "no",
+    "guard": "token names and line numbers, never file bytes"
+   },
+   {
+    "field": "checks[].line_sha256",
+    "can_carry_secret": "no",
+    "guard": "sha256 of the decoded pointed lines (digest only, never bytes); computed before the token check so mismatched checks also carry a digest of the stale line"
+   },
+   {
+    "field": "checks[].matched",
+    "can_carry_secret": "no",
+    "guard": "boolean"
+   },
+   {
+    "field": "checks[].unparsed",
+    "can_carry_secret": "no",
+    "guard": "boolean"
+   }
+  ]
+ },
+ "paths": [
+  {
+   "writer": "gate-mutation",
+   "target": "--work <dir>",
+   "escapable": true,
+   "guard": "none; gate-mutation.py:251 os.makedirs(work) and :252 tempfile.mkdtemp(dir=work); accepts the fleet root, /tmp or a sibling lane verbatim. Bounds rely on the seat prompt, not code."
+  },
+  {
+   "writer": "gate-mutation",
+   "target": "default work dir",
+   "escapable": true,
+   "guard": "none; gate-mutation.py:395 args.work or tempfile.mkdtemp(prefix=\"gate-mutation-work-\") -> TMPDIR, else /tmp; never removed."
+  },
+  {
+   "writer": "gate-mutation",
+   "target": "--json-out <file>",
+   "escapable": true,
+   "guard": "none; gate-mutation.py:402-404 open(path,\"w\") truncates any caller path; no parent mkdir, no containment check."
+  },
+  {
+   "writer": "gate-mutation",
+   "target": "mutant copies under run_root",
+   "escapable": false,
+   "guard": "only two-level containment by construction: run_root = mkdtemp(dir=work), copies are run_root/<id>.py; escaping requires --work to escape. Mode 0700 dir; copies are of the public tracked target, no secrets."
+  },
+  {
+   "writer": "gate-mutation",
+   "target": "git reads (--root, --rev)",
+   "escapable": false,
+   "guard": "read-only `git -C <root> show <rev>:<path>` (:142); no write. rev is interpolated as one argv, not shell. No 40-hex validation, so a leading -- could be parsed as a git option (LOW)."
+  },
+  {
+   "writer": "gate-mutation",
+   "target": "--validate <file>",
+   "escapable": false,
+   "guard": "read-only open (:384-385); arbitrary path, no write."
+  },
+  {
+   "writer": "pointer-bind",
+   "target": "--json-out <file>",
+   "escapable": true,
+   "guard": "none; pointer-bind.py:329-331 open(path,\"w\") truncates any caller path."
+  },
+  {
+   "writer": "pointer-bind",
+   "target": "live files named by PROVINCE.md",
+   "escapable": false,
+   "guard": "read-only open via read_lines(expand(path)) (:115-121, :75-76); absolute and ~ paths honoured; only the pointed lines' sha256 is retained (:105), never bytes."
+  },
+  {
+   "writer": "pointer-bind",
+   "target": "git reads (--root, --rev)",
+   "escapable": false,
+   "guard": "read-only `git -C <root> show <rev>:PROVINCE.md` (:70); no write; rev not validated as 40-hex (LOW)."
+  }
+ ],
+ "scratch": {
+  "create": "gate-mutation.py:251-252 creates --work if absent and one tempfile.mkdtemp(prefix=\"gate-mutation-\", dir=work) per battery run; pointer-bind creates no temp dir.",
+  "removal": "none: no shutil/rmtree/cleanup in either instrument; the run_root is not removed on success, on an uncaught error, or on the 300 s subprocess timeout.",
+  "observed": "two runs left work/gate-mutation-93mrdjbj (436K) and work/gate-mutation-h3edc72s (400K), 9 files each (pristine.py + 8 mutants), under the seat scratch --work.",
+  "consequence": "scratch litter only; the copies are of the public tracked tools/round-78/attack-gate.py and the directory is mode 0700; no secret. If --work is omitted the same leftover lands in TMPDIR (else /tmp), outside any lane cleanup. The driver's reaper covers the wave only if it wipes /fast/scratch/hyaku/kaidoku-r79/<seat>/; the lane landing cleanup has nothing to remove as long as --work never points inside the lane (all 12 prompts say scratch).",
+  "round_affected": false
+ },
+ "child_env": {
+  "keys": [
+   "HOME",
+   "LANG",
+   "PATH",
+   "TMPDIR"
+  ],
+  "source": "gate-mutation.py:253 env = {k: os.environ.get(k, \"\") for k in (\"HOME\",\"LANG\",\"PATH\",\"TMPDIR\")}",
+  "canary_excluded": true,
+  "canary_key": "KAIDOKU_ENV_CANARY",
+  "credentials_excluded": true,
+  "child_argv": "[sys.executable,\"-I\",\"-B\",<copy>,\"--selftest\"] (:178); isolated mode, no shell, no PYTHON* inheritance, script dir not on sys.path",
+  "residual": "values are inherited verbatim (paths, not secrets); an unset key becomes \"\" not absent; the target selftest performs no filesystem or env read (attack-gate.py:813-929 builds in-memory fixtures; its only open() is the battery-only write_json at :692)."
+ },
+ "wave_bounds": {
+  "seats_total": 12,
+  "all_write_only_lane": true,
+  "all_name_scratch_root": true,
+  "no_seat_told_to_commit": true,
+  "all_report_at_in_lane": true,
+  "all_dispatch_prefix_match": true,
+  "all_dispatch_extra_contained": true,
+  "reportDir": ".ufo/waves/round-79/w1",
+  "wave": "r79-w1",
+  "items": 12
+ },
+ "independent_reproduction": {
+  "c1_base_equiv_pre_receipt": true,
+  "c2_base_equiv_pre_receipt": true,
+  "c1_freeze_equiv_landing_score": true,
+  "c2_freeze_equiv_landing_score": true,
+  "note": "my runs reproduce the four committed receipts byte-for-byte except measured_at/checked_at",
+  "runs": {
+   "gate-mutation base": "mutants_total 8, killed 5, survivors 3 (m03,m05,m08), pin_matched false, exit 1",
+   "gate-mutation freeze": "mutants_total 8, killed 8, survivors 0, declared_case_hits 8, pin_matched true, pristine 29/0, exit 0",
+   "pointer-bind base": "checks_total 5, matched 3, mismatches 2 (omp-pin,kimi-pin), unparsed 0, exit 1",
+   "pointer-bind base path-only": "checks_total 5, matched 5, mismatches 0, exit 0",
+   "pointer-bind freeze": "checks_total 5, matched 5, mismatches 0, unparsed 0, exit 0"
+  }
+ },
+ "findings": [
+  {
+   "id": "F1",
+   "severity": "HIGH",
+   "surface": "R79-C2 predicate/CLI contract",
+   "finding": "The frozen predicate (pointer-bind.py:43-47, plans/round-79-claims.md:85-86, .ufo/waves/round-79/claims.json:22 and :25) names `python3 -I -B tools/round-79/pointer-bind.py --root . --rev <measured> --json-out <receipt>` as the command that \"exits 0\". The CLI requires --battery: pointer-bind.py:319-321 returns 2 with a usage line when it is absent. Run verbatim at the freeze, it exits 2 and writes no receipt.",
+   "evidence": "evidence/c2-predicate-as-frozen.txt; instrument PREDICATE constant line 43; claims.json:22 counting_command and :25 predicate",
+   "impact": "The stated verification command cannot verify the claim; every auditor who follows the frozen sentence gets \"could not evaluate\", not the claimed exit 0. The underlying measurement is sound (my --battery run reproduces base 3/2 and freeze 5/0), so this is a frozen-text defect, not a false measurement.",
+   "remediation": "Add --battery to the counting_command and predicate text (record edit by the L1), or make --battery the default when --rev is present.",
+   "frozen_state": "verified against the pinned instrument 91d23dad at 10:08-10:09",
+   "worktree_note": "the uncommitted worktree edit (3f07bd2a) removes this defect; F1 stays open for the frozen text/pin until the L1 commits it with a claims supersession"
+  },
+  {
+   "id": "F2",
+   "severity": "LOW",
+   "surface": "pointer-bind receipt digest scope",
+   "finding": "line_sha256 is computed at pointer-bind.py:105 before the token test, so a mismatched check also retains a sha256 of the live line at the stale line number (base omp-pin :8 and kimi-pin :4126). It is a digest, never bytes, and the bound permits a pointed line digest; but it is a digest of a line the check rejects, i.e. evidence the claim does not use.",
+   "evidence": "evidence/pb-base.json (both mismatch checks carry a 64-hex line_sha256 equal to the live stale-line digest; verified in memory); evidence/receipt-field-inventory.json digest_checks",
+   "impact": "No content exposure; a low-entropy stale-line digest is an offline guess oracle, and it contradicts the minimal-evidence rule.",
+   "remediation": "Set line_sha256 only after matched (or rename it mismatch_line_sha256 and document it); one-line move."
+  },
+  {
+   "id": "F3",
+   "severity": "LOW",
+   "surface": "gate-mutation scratch hygiene",
+   "finding": "battery() creates tempfile.mkdtemp(prefix=\"gate-mutation-\", dir=work) at :252 and never removes it; there is no shutil/rmtree/cleanup anywhere in either instrument. Two runs in my scratch left 436K and 400K (9 files each). With --work omitted, main (:395) creates a second, also unreaped, gate-mutation-work-* under TMPDIR (else /tmp).",
+   "evidence": "evidence/gm-freeze.json run; scratch listing (two dirs, 18 files); grep absence of rmtree",
+   "impact": "Scratch clutter and, if a seat omits --work, /tmp litter outside the driver reaper. No secret and no lane pollution: copies are the public tracked attack-gate.py inside a 0700 dir.",
+   "remediation": "try/finally shutil.rmtree(run_root) (or keep on failure only) and remove the default work dir; two lines."
+  },
+  {
+   "id": "F4",
+   "severity": "LOW",
+   "surface": "write path containment",
+   "finding": "Neither instrument has a containment guard for --work/--json-out (no commonpath, is_relative_to or realpath check; grep confirms). A caller can create gate-mutation-* under /home/vgpnk/Projects/shokunin (fleet root), /tmp or a sibling lane, and --json-out truncates any named file. pointer-bind has no --work but the same unrestricted --json-out.",
+   "evidence": "gate-mutation.py:251-252,395,402-404; pointer-bind.py:329-331; guard grep empty",
+   "impact": "Only reachable by the caller that already holds the argv; the wave prompts pin the scratch and evidence dirs, so the round is not affected. It is a defence-in-depth gap: a mistyped relative --work lands in the fleet root because seat tools start there.",
+   "remediation": "Reject --work/--json-out outside an explicit --allow-root (lane root plus /fast/scratch), or document that the caller owns containment."
+  },
+  {
+   "id": "F5",
+   "severity": "INFO",
+   "surface": "receipt secret exposure",
+   "finding": "Field-by-field review finds no field that can carry a client-config line, an env value or a credential. The only pointed-line string that appears verbatim in a pointer-bind receipt is the Ghidra application.version=12.1.4 token, which is the record's own declared token (the pointed line is exactly that 26-character string). The .bashrc range lines (111 chars) and the pin lines in the devin/omp/kimi configs do not appear; only the pin, the key names and line digests do. gate-mutation carries no file content, no env and no stderr in a normal run; its conditional stderr_tail can carry only the last stderr line (scratch path), never config or env, because the target selftest reads neither.",
+   "evidence": "evidence/receipt-field-inventory.json marker_scan and pointed_line_bytes_in_receipts; in-memory scan, no content written",
+   "impact": "Compliant with the security bound as written.",
+   "remediation": "If the conditional stderr_tail is kept for future targets, store its sha256 and line count instead of the raw line."
+  },
+  {
+   "id": "F6",
+   "severity": "INFO",
+   "surface": "provenance naming",
+   "finding": "l1/scores/c1-at-landing.json and c2-at-landing.json are untracked, timestamped 2026-11-04T10:03:14, before the 10:06:25 dispatch, and record rev ed68cd0a (the freeze), not a later landing commit. Their content matches my independent freeze runs exactly, so the measurements are genuine; only the \"at-landing\" name overstates (freeze-time measurement at the revision that will be the landing input). freeze-audit-at-freeze.json likewise is untracked but records round-79 CLEAN, no findings, with the three instrument paths, matching the wave context.",
+   "evidence": "git status (?? l1/scores/), measured_at/checked_at and target.rev fields, equality checks true",
+   "impact": "No false claim; a naming/commit-state trap for the landing auditor.",
+   "remediation": "The L1 commits the three scores at landing and either keeps the name with a note that landing rev == freeze rev for these instruments or renames them -at-freeze."
+  },
+  {
+   "id": "F7",
+   "severity": "LOW",
+   "surface": "digest semantics",
+   "finding": "line_sha256 hashes the decoded text (open(..., errors=\"replace\") + readlines + join), so it is the raw line bytes only for UTF-8/LF files. A CRLF or non-UTF-8 pointed file would digest a normalised line, and the selftest only exercises ASCII/LF.",
+   "evidence": "pointer-bind.py:115-121,105; selftest cases green-line/green-range use \"\\n\" strings",
+   "impact": "None for the five live files (all UTF-8/LF); a future pointer could claim a digest that is not a byte digest.",
+   "remediation": "Read bytes, split on b\"\\n\", digest the raw slice; or state the normalisation in the docstring."
+  },
+  {
+   "id": "F8",
+   "severity": "LOW",
+   "surface": "--rev option parsing",
+   "finding": "git_show interpolates rev as f\"{rev}:{path}\" into a single argv after `git -C <root> show` (both instruments). rev is not validated as a commit name, so a leading \"--\" makes git parse the operand as an option rather than <rev>:<path>.",
+   "evidence": "gate-mutation.py:140-143; pointer-bind.py:68-71",
+   "impact": "Not reachable in the wave (callers pass 40-hex); an adversarial caller controlling --rev could at best make git error or, with option shapes, misparse; no execution path demonstrated.",
+   "remediation": "Reject --rev unless it matches ^[0-9a-f]{7,40}$ before the call."
+  },
+  {
+   "id": "F9",
+   "severity": "INFO",
+   "surface": "wave bounds",
+   "finding": "All 12 prompts: exactly one Write-only-under line, path = <lane>/.ufo/waves/round-79/w1/<seat>/; scratch root /fast/scratch/hyaku/kaidoku-r79/<your-seat-name>/ named in every prompt; no imperative commit or push (only prohibitions and \"committed bytes/receipts\"); each Report-at target is <lane>/.ufo/waves/round-79/w1/<seat>.md; each dispatched task is the spec prompt plus the lane-bounds/milestone/report trailer with no path outside the lane. All three required bounds hold.",
+   "evidence": "evidence/wave-bounds-audit.json",
+   "impact": "None; the bounds are sound on paper.",
+   "remediation": "None."
+  },
+  {
+   "id": "F10",
+   "severity": "INFO",
+   "surface": "working tree outside evidence dirs",
+   "finding": "The lane working tree carries uncommitted edits to SCORECARD.md, SKILL.md, corpus/QUALITY.md, corpus/README.md, corpus/SOURCES.md and untracked corpus/knowledge/2026-11-04-r79-mutation-and-pointers.md and corpus/lessons/round-79.md, mtimes 10:05:56-10:09:04, straddling the 10:06:25 dispatch. No seat prompt authorizes writes outside its evidence dir (ScribeLesson is told to draft rows, not to land them); the L1 is the lane writer. Local evidence cannot attribute them.",
+   "evidence": "git status --porcelain; ls --time-style=full-iso",
+   "impact": "If a seat produced these, it is a seat-bounds violation; if the L1 did, it is ordinary landing work in progress. No production file was modified by this seat.",
+   "remediation": "The L1 should confirm ownership before landing; seats stay read-only on lane files."
+  },
+  {
+   "id": "F11",
+   "severity": "HIGH",
+   "surface": "post-freeze instrument drift",
+   "finding": "tools/round-79/pointer-bind.py changed in the lane worktree at 10:11:49, during this review: sha256 3f07bd2a\u2026 vs the frozen pin 91d23dad\u2026; the diff makes --battery the default when --rev is supplied and rewrites the usage/docstring. It is uncommitted. Seat prompts forbid seats to edit lane files (\"Editing a lane file ... is a blocking defect of your seat\") and reserve lane edits to the L1, so either the L1 is landing a fix (needs a claims supersession so the instrument pin matches) or a seat edited a frozen instrument (blocking defect).",
+   "evidence": "evidence/working-tree-drift.txt (hashes, mtime, diff, and the frozen command exiting 0 on the worktree)",
+   "impact": "The measurement arm that produced the committed receipts and my F1 evidence is the frozen 91d23dad blob; the worktree no longer equals it. A landing that commits the worktree without updating claims.json instrument pins and the predicate text leaves the round in INSTRUMENT_PIN_MISMATCH / predicate-mismatch state.",
+   "remediation": "The L1 owns the edit: commit it and update claims.json instruments[pointer-bind] plus the predicate text (the flag is then optional), or revert it and fix only the predicate text."
+  }
+ ]
+}

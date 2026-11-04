@@ -659,6 +659,8 @@ Retired: none.
 | `prefile gate receipt` | runs the round-29 prefile gate under a four-key child environment and retains a receipt binding argv, revision, exit, verdict line and stdout digest, re-derivable by `--check-receipt` | `tools/round-77/prefile-receipt.py`; `.ufo/waves/round-77/pre/selftest-c2.json` (13 cases, 0 failures) | 77 |
 | `attack-class refusal` | materialises ten committed attack fixtures, measures that the frozen round-77 instruments accept each one, and refuses it by its declared rule (receipt authentication, qualified atom, near miss, negation, nested unique binding, dropped defect, clean run, filing rev, gate-receipt schema and revision) while the real record stays clean under every rule | `tools/round-78/attack-gate.py`; `.ufo/waves/round-78/pre/c1-at-base.json` (fixtures_total 10, base_accepted 10, refused 10, validate defect-free); the record run is `.ufo/waves/round-78/l1/scores/c1-at-record.json` | 78 |
 | `surface recheck` | parses eight drift-prone surface values from `PROVINCE.md` with declared patterns and compares them typed to the live object the record names, with a `checked_at` date and an unparsed id list | `tools/round-78/surface-recheck.py`; `.ufo/waves/round-78/pre/c2-at-base.json` (checks_total 8, unparsed 0, and its mismatches 2 are the two corrections); the record run is `.ufo/waves/round-78/l1/scores/c2-at-record.json` | 78 |
+| `selftest mutation battery` | applies eight exact single-occurrence edits to a committed instrument at a measured revision and kills each only when its declared selftest case is present and failing there; an absent case survives, an anchor applied 0/>1 times and a copy without a summary line are inconclusive, and `sole_detector` records case independence | `.ufo/waves/round-79/l1/scores/c1-at-landing.json`, `pre/c1-at-base.json`, `pre/selftest-c1.json` | round-79 |
+| `line-bound pointer rule` (a revision of the round-78 `surface recheck` pointer rule) | binds five record pointer cells at the 1-based line or range they name, requires each pointer to name the declared live object and each declared token to occur there, and retains only a digest of the pointed lines; a path-only control is recorded as unable to fail on a moved line and never `ok` | `.ufo/waves/round-79/l1/scores/c2-at-landing.json`, `pre/c2-at-base.json`, `pre/controls/c2-path-only.json`, `pre/selftest-c2.json` | round-79 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -6123,3 +6125,90 @@ the prefile gate passes in a clean clone (`l1/scores/gate-at-tip.json`).
 **Mutation (wave seat, unclaimed).** `w1/MutGate/mutation-receipt.json`: 8 mutants, 6 killed, 2 survivors —
 `m03` (`NEAR_MISS_RE` matches nothing; the parsed-field branch covers the same shapes) and `m08`
 (`validate_receipt`'s refused-without-reason guard; nothing exercises it). Both route to round 79.
+
+## 2026-11-04 — round 79: the gate's selftest detectors close, and the record's pointers bind at their lines
+
+Base `29d2ca30b83a6a0d85b0aa979de0138fde1660e6`; declaration `a1f9b81cf0cd5065df3a9b25b30ce2eb184d012d`;
+freeze `ed68cd0a6cc790cca342380a2d80d1927a668c8c` — the round-29 gate audits it **CLEAN** with no findings
+and three instrument paths (`l1/scores/freeze-audit-at-freeze.json`). Two claims on two distinct axes, both
+capability acquisitions, causally separable: C1 applies eight exact single-occurrence edits to the round-78
+gate and reads only that instrument's selftest output; C2 parses `PROVINCE.md`'s pointer cells and reads the
+live files they name. Neither counter reads the other's receipt.
+
+**lowest-axis: calibration** (coverage/depth/calibration tied at 10.0 behind different proxies; R79-C1 works
+a tied-lowest axis). No nudge waiver is claimed — capability rows entered in rounds 74–79, inside the window.
+
+| claim | axis | type | predicate (frozen) | before → after | verdict |
+|---|---|---|---|---|---|
+| R79-C1 | calibration | capability acquisition (selftest mutation battery) | `tools/round-79/gate-mutation.py --battery` at the measured revision exits 0 with `mutants_total 8`, `killed 8`, `survivors 0`, `declared_case_hits 8`, `target_pin.matched true`, a pristine selftest of 29 cases and 0 failures, and a defect-free `validate`; each mutant's declared case is present and failing, and `m03`, `m05`, `m08` are each the sole failing case | base `29d2ca30`: `pre/c1-at-base.json` — 8 mutants, 5 killed, **survivors 3** (`m03-near-miss-re-dead`, `m05-atom-absent-bound`, `m08-validate-no-refusal-guard`), `declared_case_hits 5`, pin unmatched; freeze `ed68cd0a`: `l1/scores/c1-at-landing.json` — exit 0, killed 8, survivors 0, hits 8, pin matched, pristine 29/0, `validate` defect-free | **verified** |
+| R79-C2 | freshness | capability acquisition (line-bound pointer binding) | `tools/round-79/pointer-bind.py` at the measured revision exits 0 with `checks_total 5`, `matched 5`, `mismatches 0`, `unparsed 0` and a defect-free `validate`, every pointer bound at the line or range it names | base `29d2ca30`: `pre/c2-at-base.json` — **mismatches 2** (`omp-pin` `:8` vs the pin at `:12`; `kimi-pin` `:4126` vs `:4722`), matched 3; the `path-only` control reports `mismatches 0` on the same record (`pre/controls/c2-path-only.json`); freeze `ed68cd0a`: `l1/scores/c2-at-landing.json` — checks_total 5, matched 5, mismatches 0, unparsed 0, `validate` defect-free | **verified** |
+
+**Capabilities entered.** (1) *selftest mutation battery* — eight exact single-occurrence edits of a committed
+instrument at a measured revision, each killed only by its declared selftest case; an absent case survives, an
+anchor applied 0/>1 times and a copy without a `SELFTEST` summary are inconclusive, and `sole_detector` records
+case independence. (2) *line-bound pointer binding* — five record pointer cells bound at the 1-based line or
+range they name, with only a digest of the pointed lines retained and a path-only control recorded as unable
+to fail.
+
+**Capabilities rows appended** in the table above (`## Capabilities`): `selftest mutation battery` and
+`line-bound pointer binding`, each with its landing receipt.
+
+**Name by surface.** R79-C1's surface is the round-78 gate's own selftest *detectors* and the eight mutation
+classes, not the gate's rules or its fixture battery (the fixtures' `refused 10` is unchanged and unmeasured
+this round). R79-C2's surface is `PROVINCE.md`'s pointer *cells* and the lines they name, not the eight
+surface values round 78 compared (that instrument is unchanged and its own receipt stays at `round-78`).
+
+**Repairs carried (not claims).** The round-78 non-author spot-check's items 1, 2, 5 and 6 are record/prose
+repairs closed in this round's record and report (the receipts named, the supersession count restated, the
+stale line range corrected to the measured `wc -l`, and this round's LOG entry opened under its own heading).
+Item 4 (an instrument's final selftest tally in a machine receipt) closes with `pre/selftest-gate.txt`
+(`SELFTEST cases=29 failures=0`) at the instrument revision the claims pin. The round-78 freeze container
+gains a fifth `instrument_supersessions` entry disclosing the round-79 revision of `tools/round-78/attack-gate.py`;
+the round-78 ledger row stays byte-identical (`da8e5d5e`; both freezes audit CLEAN at that revision).
+
+**In-round repairs the wave forced (all disclosed in `claims.json` `instrument_supersessions`).**
+(1) ReviewerC2, SentinelScope F1 and ScribeLesson G showed the frozen R79-C2 counting-command text omits the
+mode flag: `pointer-bind.py` required `--battery`, so the printed sentence exited 2. The instrument now treats
+battery as its default mode whenever `--rev` is supplied, so the frozen sentence runs verbatim; the mode
+flags, counter, target, kill rule and every receipt's counts are unchanged. (2) CriticClaims Q4 showed the
+`path-only` control receipt self-declared `ok true`; a control now records `would_pass` and never `ok`.
+(3) CriticClaims Q4 (regression against round 78) showed the binder trusted the record's own path; each check
+now also requires the pointer path to be the declared live object (round 78's `same_path` rule) with a red
+self-pointer case. (4) CriticClaims Q2, ScribeLesson A1/A2 showed the predicate's pristine `29 cases` and
+`sole detector` conjuncts were recorded but not scored; `ok` and `--validate` now score them (the three named
+mutants only — `m01`/`m06`/`m07` are legitimately multi-detector). (5) Both instruments record their own
+`instrument.sha256`, `measured_at`/`checked_at`, a 40-hex `rev` and (C1) `target_pin.actual`, and `--validate`
+re-derives them; `pointer-bind.py`'s dead `line_count` parameter was removed. None of these changes a claim's
+predicate, counter, kill rule or target; every receipt is re-taken at the record revision.
+
+**Routed (not adopted).** CriticClaims Q2's constructive class: a declared selftest case that asserts a
+source literal rather than behaviour kills the same mutant, and neither the frozen predicate nor the
+instrument distinguishes it (the landed three cases are behavioural — they call `judge_group`, `bind_clause`
+and `validate_receipt` — so the measured after state is true; the *clause* is the gap). Also: `--validate` is
+an internal-consistency check, not an authenticity check, and a hand-authored receipt consistent with itself
+is accepted (round 78's receipt-author limit); CriticClaims Q1's §9 reading that R79-C2 is a strictness
+increment on the round-78 pointer rule rather than a new surface, and Q5's note that `freshness` is a fleet
+axis, not a lane-owned proxy — recorded, and the capability row is worded as a revision. MutInstruments'
+six-mutant closure of the round-79 instruments' own selftests:
+four `validate_receipt` guards (declared-case-failing, `pristine.ok` with failures, killed-without-an-applied-
+edit, and the refused-without-a-reason guard it deletes) and the `battery()` receipt-construction cell are
+exercised but not pinned by an isolating case; none contradicts a frozen predicate. ReviewerC2's named limits:
+a duplicate client cell collapses last-wins, and a substring pin (`rea-agents@6.7.05` against `@6.7.0`) binds.
+All route to round 80.
+
+**Wave.** `r79-w1`: 12 seats in one v1 wave (3 executor, 2 reviewer, 1 critic, 1 mutation-tester, 1 sentinel,
+1 scout, 1 connector, 2 scribe); attack roles 4/12 = 33 %; one connector; the L1 held the planner seat (the
+validator rejects a planner role). All 12 seats settled and wrote a report under `.ufo/waves/round-79/w1/`
+(`r79-w1-results.json`: 12 seats, 12 non-empty outputs, 0 dead, 0 notes). No claim was contradicted: the
+independent re-derivations (ExecBaseArm, ExecCaseInventory, ExecRebind) reproduce both arms, ReviewerC1's 17
+forged receipts are all refused, and the three seats that found defects (ReviewerC2, CriticClaims,
+ScribeLesson) are answered by the in-round repairs above or routed below.
+
+**planned (next steered round only):** (a) a selftest case that binds the *call site* of each `validate_receipt`
+guard and a case-behaviour check for declared detectors (CriticClaims Q2); (b) one isolating selftest case per surviving `validate_receipt` guard
+and for the `battery()` unparsable-copy cell, with a mutation patch set that scores them (MutInstruments'
+receipt); (b) a duplicate-cell rule and an anchored (word-boundary) pin match in `pointer-bind.py`, each with a
+red case; (c) execute every plan's printed counting command verbatim at the freeze (the round-76
+`plan-command.py` instrument already does this — run it) and pin the base gate digest in the base control;
+(d) the round-78 spot-check's `receipt_auth`/`gate-exits` limits stay named debt; (e) standing duties every
+round that lands receipts; the r63 record-section sweep and the r58/r60/r64 items stay named debt.

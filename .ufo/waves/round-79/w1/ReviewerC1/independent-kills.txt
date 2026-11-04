@@ -1,0 +1,31 @@
+# R79-C1 independent re-derivation (reviewer C1): anchors applied by this seat, selftest parsed by this seat
+# target = tools/round-78/attack-gate.py at ed68cd0a6cc790cca342380a2d80d1927a668c8c
+
+## anchor multiplicity in the freeze blob (want 1) and in the base blob
+m01-auth-dead                    freeze=1 base=1 noop=False
+m02-qualified-atom-dead          freeze=1 base=1 noop=False
+m03-near-miss-re-dead            freeze=1 base=1 noop=False
+m04-negation-dead                freeze=1 base=1 noop=False
+m05-atom-absent-bound            freeze=1 base=1 noop=False
+m06-near-miss-stems-empty        freeze=1 base=1 noop=False
+m07-mode-ok-always               freeze=1 base=1 noop=False
+m08-validate-no-refusal-guard    freeze=1 base=1 noop=False
+
+## per-mutant: applied by hand, selftest --selftest parsed here
+m01-auth-dead                    exit=1 summary=(29, 2) declared=red-receipt-auth present=True fails=True failing=['red-auth-no-instrument', 'red-receipt-auth']
+m02-qualified-atom-dead          exit=1 summary=(29, 1) declared=red-qualified-atom present=True fails=True failing=['red-qualified-atom']
+m03-near-miss-re-dead            exit=1 summary=(29, 1) declared=red-near-miss-unparsed present=True fails=True failing=['red-near-miss-unparsed']
+m04-negation-dead                exit=1 summary=(29, 1) declared=red-negated present=True fails=True failing=['red-negated']
+m05-atom-absent-bound            exit=1 summary=(29, 1) declared=red-atom-absent present=True fails=True failing=['red-atom-absent']
+m06-near-miss-stems-empty        exit=1 summary=(29, 2) declared=red-near-miss-plural present=True fails=True failing=['red-near-miss', 'red-near-miss-plural']
+m07-mode-ok-always               exit=1 summary=(29, 2) declared=red-mode-tree present=True fails=True failing=['red-mode-link', 'red-mode-tree']
+m08-validate-no-refusal-guard    exit=1 summary=(29, 1) declared=red-validate-refused-no-reason present=True fails=True failing=['red-validate-refused-no-reason']
+
+## pristine target, direct run (not via the battery)
+freeze: exit=0 summary=(29, 0) failing=[]
+base: exit=0 summary=(26, 0) failing=[]
+
+## are the three declared cases present at base? (absence is the survivor mechanism)
+red-near-miss-unparsed               base_present=False freeze_present=True freeze_pass=True
+red-atom-absent                      base_present=False freeze_present=True freeze_pass=True
+red-validate-refused-no-reason       base_present=False freeze_present=True freeze_pass=True

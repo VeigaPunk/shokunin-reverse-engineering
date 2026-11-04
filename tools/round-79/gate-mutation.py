@@ -32,6 +32,7 @@ import datetime as dt
 import hashlib
 import json
 import os
+import pathlib
 import re
 import subprocess
 import sys
@@ -40,6 +41,9 @@ import tempfile
 ROUND = 79
 TARGET = "tools/round-78/attack-gate.py"
 TARGET_SHA256 = "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf"
+EXPECTED_PRISTINE_CASES = 29
+SOLE_REQUIRED = ("m03-near-miss-re-dead", "m05-atom-absent-bound",
+                 "m08-validate-no-refusal-guard")
 PREDICATE = (
     "R79-C1 is verified iff `python3 -I -B tools/round-79/gate-mutation.py --root . "
     "--rev <measured> --work <scratch> --battery --json-out <receipt>` exits 0 with "
@@ -229,12 +233,36 @@ def validate_receipt(receipt: dict) -> dict:
     target = receipt.get("target") or {}
     if not isinstance(target.get("sha256"), str) or len(target.get("sha256") or "") != 64:
         defects.append("target sha256 is not a 64-hex digest")
+    rev = target.get("rev")
+    if not (isinstance(rev, str) and len(rev) == 40
+            and all(c in "0123456789abcdef" for c in rev)):
+        defects.append("target rev is not a 40-hex commit")
+    if not receipt.get("measured_at"):
+        defects.append("measured_at is absent")
+    inst = receipt.get("instrument") or {}
+    if inst.get("sha256") != sha256_bytes(pathlib.Path(__file__).read_bytes()):
+        defects.append("instrument sha256 is not this file's digest")
     pin = receipt.get("target_pin") or {}
+    if pin.get("expected") != target.get("sha256"):
+        defects.append("target_pin.expected differs from target.sha256")
+    if pin.get("actual") != target.get("sha256"):
+        defects.append("target_pin.actual differs from target.sha256")
     if pin.get("matched") and pin.get("expected") != target.get("sha256"):
         defects.append("target_pin.matched with a non-equal expected digest")
+    sole = receipt.get("sole_required")
+    if isinstance(sole, list):
+        by_id = {m.get("id"): m for m in mutants}
+        for mid in sole:
+            if mid not in by_id:
+                defects.append(f"{mid}: required sole detector absent from the mutant list")
+            elif not by_id[mid].get("sole_detector"):
+                defects.append(f"{mid}: required sole detector is not sole")
     pristine = receipt.get("pristine") or {}
     if pristine.get("ok") and pristine.get("failures") != 0:
         defects.append("pristine.ok with nonzero failures")
+    if pristine.get("cases") not in (None, EXPECTED_PRISTINE_CASES):
+        defects.append(f"pristine cases {pristine.get('cases')} != "
+                       f"{EXPECTED_PRISTINE_CASES}")
     ok = bool(receipt.get("ok"))
     if ok and (len(mutants) != len(MUTANTS) or survivors or not pin.get("matched")
                or not pristine.get("ok")):
@@ -291,11 +319,15 @@ def battery(root: str, rev: str, work: str, control: str | None) -> dict:
                if m["killed"] and m["declared_case"] in m["failed_cases"])
     pin = {"expected": TARGET_SHA256, "actual": actual,
            "matched": TARGET_SHA256 == actual}
+    sole_missing = [m["id"] for m in results
+                    if m["id"] in SOLE_REQUIRED and not m.get("sole_detector")]
     receipt = {
         "schema": "kaidoku-r79-gate-mutation-v1",
         "round": ROUND,
         "predicate": PREDICATE,
         "measured_at": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
+        "instrument": {"path": "tools/round-79/gate-mutation.py",
+                       "sha256": sha256_bytes(pathlib.Path(__file__).read_bytes())},
         "target": {"path": TARGET, "rev": rev, "bytes": len(blob),
                    "sha256": actual},
         "target_pin": pin,
@@ -307,11 +339,15 @@ def battery(root: str, rev: str, work: str, control: str | None) -> dict:
         "survivors": len(survivors),
         "survivor_ids": survivors,
         "declared_case_hits": hits,
+        "sole_required": list(SOLE_REQUIRED),
+        "sole_missing": sole_missing,
         "control": control,
         "mutants": results,
     }
-    receipt["ok"] = bool(pristine_ok and pin["matched"] and results
+    receipt["ok"] = bool(pristine_ok and p_cases_n == EXPECTED_PRISTINE_CASES
+                         and pin["matched"] and results
                          and not survivors and hits == len(results)
+                         and not sole_missing
                          and all(m["applied"] and not m["inconclusive"] for m in results)
                          and len(results) == len(MUTANTS))
     return receipt
@@ -346,16 +382,28 @@ def selftest() -> int:
     case("green-parse", (cases_n, failures_n, sorted(parsed_cases)),
          (2, 1, ["a", "b"]))
     forged = {"mutants_total": 8, "killed": 8, "survivors": 0, "survivor_ids": [],
-              "declared_case_hits": 8,
-              "target": {"sha256": "a" * 64},
-              "target_pin": {"expected": "a" * 64, "matched": True},
-              "pristine": {"ok": True, "failures": 0},
+              "declared_case_hits": 8, "sole_required": ["m3"],
+              "measured_at": "2026-11-04T00:00:00-03:00",
+              "instrument": {"path": "tools/round-79/gate-mutation.py",
+                             "sha256": sha256_bytes(pathlib.Path(__file__).read_bytes())},
+              "target": {"sha256": "a" * 64, "rev": "b" * 40},
+              "target_pin": {"expected": "a" * 64, "actual": "a" * 64, "matched": True},
+              "pristine": {"ok": True, "failures": 0, "cases": EXPECTED_PRISTINE_CASES},
               "ok": True,
               "mutants": [{"id": f"m{i}", "declared_case": "c", "killed": True,
-                           "applied": True, "failed_cases": []} for i in range(8)]}
-    case("red-forged-kill", bool(validate_receipt(forged)["defects"]), True)
+                           "applied": True, "failed_cases": ["c"],
+                           "sole_detector": i == 3} for i in range(8)]}
+    case("green-forged-consistent", validate_receipt(forged)["defects"], [])
+    case("red-forged-kill", bool(validate_receipt(
+        dict(forged, mutants=[dict(m, failed_cases=[]) for m in forged["mutants"]]))["defects"]),
+        True)
+    case("red-forged-sole-not-sole", bool(validate_receipt(
+        dict(forged, mutants=[dict(m, sole_detector=False) for m in forged["mutants"]]))["defects"]),
+        True)
+    case("red-forged-pristine-26", bool(validate_receipt(
+        dict(forged, pristine={"ok": True, "failures": 0, "cases": 26}))["defects"]), True)
     empty = dict(forged, mutants=[], mutants_total=0, killed=0,
-                 declared_case_hits=0, ok=False)
+                 declared_case_hits=0, sole_required=[], ok=False)
     case("green-empty-battery-refused", validate_receipt(empty)["defects"], [])
     failures = [c for c in cases if not c["pass"]]
     for case_ in cases:

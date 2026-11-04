@@ -1,0 +1,429 @@
+{
+ "inconclusive_ids": [],
+ "instrument_pins": {
+  "tools/round-79/gate-mutation.py": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+  "tools/round-79/pointer-bind.py": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90"
+ },
+ "killed": 5,
+ "lane_instruments": {
+  "gate-mutation": {
+   "freeze_sha256": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+   "matches_claim_pin": true,
+   "matches_freeze": true,
+   "path": "tools/round-79/gate-mutation.py",
+   "worktree_sha256": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d"
+  },
+  "pointer-bind": {
+   "freeze_sha256": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "matches_claim_pin": true,
+   "matches_freeze": true,
+   "path": "tools/round-79/pointer-bind.py",
+   "worktree_sha256": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90"
+  }
+ },
+ "missing_case_proof": {
+  "all_kill": true,
+  "rows": [
+   {
+    "case": "a forged pointer receipt whose matched check sits at line 0 must yield a validate defect",
+    "instrument": "pointer-bind",
+    "missing_case_for": "pb-e-validate-range-guard",
+    "mutant_value": false,
+    "pristine_value": true,
+    "would_kill": true
+   },
+   {
+    "case": "a record cell that does not parse must come back matched False and unparsed True from battery",
+    "instrument": "pointer-bind",
+    "missing_case_for": "pb-f-nonparse-matched",
+    "mutant_value": false,
+    "pristine_value": true,
+    "would_kill": true
+   },
+   {
+    "case": "a forged gate receipt with killed true, case_absent true and its declared case in failed_cases must yield a validate defect",
+    "instrument": "gate-mutation",
+    "missing_case_for": "gm-f-validate-no-guard",
+    "mutant_value": false,
+    "pristine_value": true,
+    "would_kill": true
+   },
+   {
+    "case": "a forged gate receipt with pristine.ok true and failures 2 must yield a validate defect",
+    "instrument": "gate-mutation",
+    "missing_case_for": "gm-g-pristine-guard",
+    "mutant_value": false,
+    "pristine_value": true,
+    "would_kill": true
+   },
+   {
+    "case": "a forged gate receipt with killed true and applied false must yield a validate defect",
+    "instrument": "gate-mutation",
+    "missing_case_for": "gm-h-applied-guard",
+    "mutant_value": false,
+    "pristine_value": true,
+    "would_kill": true
+   }
+  ],
+  "schema": "kaidoku-r79-missing-case-proof-v1"
+ },
+ "missing_cases": {
+  "gm-f-validate-no-guard": "a forged gate receipt with killed true, case_absent true and its declared case in failed_cases must yield a validate defect",
+  "gm-g-pristine-guard": "a forged gate receipt with pristine.ok true and failures 2 must yield a validate defect",
+  "gm-h-applied-guard": "a forged gate receipt with killed true and applied false must yield a validate defect",
+  "pb-e-validate-range-guard": "a forged pointer receipt whose matched check sits at line 0 must yield a validate defect",
+  "pb-f-nonparse-matched": "a record cell that does not parse must come back matched False and unparsed True from battery"
+ },
+ "mutants": [
+  {
+   "anchor_occurrences": 1,
+   "applied": true,
+   "cases": 16,
+   "declared_case": "red-stale-line",
+   "diff": "--- tools/round-79/pointer-bind.py@ed68cd0a6cc7\n+++ mutants/pb-a-path-only.py\n@@ -99,2 +99,4 @@\n         return out\n+    out[\"matched\"] = True\n+    return out\n     if end > len(lines):\n",
+   "diff_added_lines": 2,
+   "diff_removed_lines": 0,
+   "edit": "bind() returns matched=True as soon as the pointed path exists (the path-only rule)",
+   "exit": 1,
+   "failing_cases": [
+    "green-range-digest",
+    "red-past-end",
+    "red-range-token-outside",
+    "red-stale-line"
+   ],
+   "failures": 4,
+   "id": "pb-a-path-only",
+   "inconclusive": false,
+   "instrument": "pointer-bind",
+   "killed": true,
+   "killed_by": [
+    "green-range-digest",
+    "red-past-end",
+    "red-range-token-outside",
+    "red-stale-line"
+   ],
+   "mutant_sha256": "d9d0e8f7c7f30cad21fc25afc7e45589e6769592a53b15a59a924d356ae9e66e",
+   "sha256_after": "d9d0e8f7c7f30cad21fc25afc7e45589e6769592a53b15a59a924d356ae9e66e",
+   "sha256_before": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "syntax_ok": true
+  },
+  {
+   "anchor_occurrences": 1,
+   "applied": true,
+   "cases": 16,
+   "declared_case": "green-line",
+   "diff": "--- tools/round-79/pointer-bind.py@ed68cd0a6cc7\n+++ mutants/pb-b-zero-based.py\n@@ -103,3 +103,3 @@\n         return out\n-    pointed = lines[start - 1:end]\n+    pointed = lines[start:end]\n     out[\"line_sha256\"] = sha256_bytes(\"\".join(pointed).encode(\"utf-8\"))\n",
+   "diff_added_lines": 1,
+   "diff_removed_lines": 1,
+   "edit": "the pointed slice is taken 0-based (lines[start:end])",
+   "exit": 1,
+   "failing_cases": [
+    "green-line"
+   ],
+   "failures": 1,
+   "id": "pb-b-zero-based",
+   "inconclusive": false,
+   "instrument": "pointer-bind",
+   "killed": true,
+   "killed_by": [
+    "green-line"
+   ],
+   "mutant_sha256": "b7a3ca3eea17e4f866022997824fc1b6a6a7b759fecc79ff712aae8f91630ddb",
+   "sha256_after": "b7a3ca3eea17e4f866022997824fc1b6a6a7b759fecc79ff712aae8f91630ddb",
+   "sha256_before": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "syntax_ok": true
+  },
+  {
+   "anchor_occurrences": 1,
+   "applied": true,
+   "cases": 16,
+   "declared_case": "green-range",
+   "diff": "--- tools/round-79/pointer-bind.py@ed68cd0a6cc7\n+++ mutants/pb-c-range-first-line.py\n@@ -103,3 +103,3 @@\n         return out\n-    pointed = lines[start - 1:end]\n+    pointed = lines[start - 1:start]\n     out[\"line_sha256\"] = sha256_bytes(\"\".join(pointed).encode(\"utf-8\"))\n",
+   "diff_added_lines": 1,
+   "diff_removed_lines": 1,
+   "edit": "a range is compared as its first line only (lines[start - 1:start])",
+   "exit": 1,
+   "failing_cases": [
+    "green-range"
+   ],
+   "failures": 1,
+   "id": "pb-c-range-first-line",
+   "inconclusive": false,
+   "instrument": "pointer-bind",
+   "killed": true,
+   "killed_by": [
+    "green-range"
+   ],
+   "mutant_sha256": "e43d20c86aa737ac4d10f1be1434b0c54b10f82caa08f4317fe93949f2538c68",
+   "sha256_after": "e43d20c86aa737ac4d10f1be1434b0c54b10f82caa08f4317fe93949f2538c68",
+   "sha256_before": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "syntax_ok": true
+  },
+  {
+   "anchor_occurrences": 1,
+   "applied": true,
+   "cases": 16,
+   "declared_case": "red-no-line",
+   "diff": "--- tools/round-79/pointer-bind.py@ed68cd0a6cc7\n+++ mutants/pb-d-unparsed-never.py\n@@ -86,3 +86,3 @@\n     if not match:\n-        out[\"unparsed\"] = True\n+        out[\"unparsed\"] = False\n         out[\"reason\"] = \"pointer carries no line number\"\n",
+   "diff_added_lines": 1,
+   "diff_removed_lines": 1,
+   "edit": "bind() never sets the unparsed flag (out[\"unparsed\"] = False)",
+   "exit": 1,
+   "failing_cases": [
+    "red-no-line"
+   ],
+   "failures": 1,
+   "id": "pb-d-unparsed-never",
+   "inconclusive": false,
+   "instrument": "pointer-bind",
+   "killed": true,
+   "killed_by": [
+    "red-no-line"
+   ],
+   "mutant_sha256": "bb6b913e5822d4ab0b1c63a6a862017a7656626619896ddf782d0fa4e07537c5",
+   "sha256_after": "bb6b913e5822d4ab0b1c63a6a862017a7656626619896ddf782d0fa4e07537c5",
+   "sha256_before": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "syntax_ok": true
+  },
+  {
+   "anchor_occurrences": 1,
+   "applied": true,
+   "cases": 16,
+   "declared_case": null,
+   "diff": "--- tools/round-79/pointer-bind.py@ed68cd0a6cc7\n+++ mutants/pb-e-validate-range-guard.py\n@@ -230,6 +230,2 @@\n             defects.append(f\"{check.get('id')}: matched without a pointed-line digest\")\n-        start, end = check.get(\"line_start\"), check.get(\"line_end\")\n-        if check.get(\"matched\") and not (isinstance(start, int) and isinstance(end, int)\n-                                         and 1 <= start <= end):\n-            defects.append(f\"{check.get('id')}: matched without a 1-based line range\")\n     record = receipt.get(\"record\") or {}\n",
+   "diff_added_lines": 0,
+   "diff_removed_lines": 4,
+   "edit": "validate_receipt drops the matched-without-a-1-based-range guard",
+   "exit": 0,
+   "failing_cases": [],
+   "failures": 0,
+   "id": "pb-e-validate-range-guard",
+   "inconclusive": false,
+   "instrument": "pointer-bind",
+   "killed": false,
+   "killed_by": [],
+   "mutant_sha256": "a767da5c79e15f5bb327413937927b669fa599d55f81ebe7b3cfd03545d60f15",
+   "sha256_after": "a767da5c79e15f5bb327413937927b669fa599d55f81ebe7b3cfd03545d60f15",
+   "sha256_before": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "syntax_ok": true
+  },
+  {
+   "anchor_occurrences": 1,
+   "applied": true,
+   "cases": 16,
+   "declared_case": null,
+   "diff": "--- tools/round-79/pointer-bind.py@ed68cd0a6cc7\n+++ mutants/pb-f-nonparse-matched.py\n@@ -169,3 +169,3 @@\n                             \"path\": \"\", \"line_start\": None, \"line_end\": None,\n-                            \"matched\": False, \"unparsed\": True,\n+                            \"matched\": True, \"unparsed\": True,\n                             \"reason\": \"the record cell does not parse\",\n",
+   "diff_added_lines": 1,
+   "diff_removed_lines": 1,
+   "edit": "battery counts a record cell that does not parse as matched",
+   "exit": 0,
+   "failing_cases": [],
+   "failures": 0,
+   "id": "pb-f-nonparse-matched",
+   "inconclusive": false,
+   "instrument": "pointer-bind",
+   "killed": false,
+   "killed_by": [],
+   "mutant_sha256": "8a19d3da782f66b5d5b1ffe247445b5985be8f271714079709851ce939955997",
+   "sha256_after": "8a19d3da782f66b5d5b1ffe247445b5985be8f271714079709851ce939955997",
+   "sha256_before": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "syntax_ok": true
+  },
+  {
+   "anchor_occurrences": 1,
+   "applied": true,
+   "cases": 11,
+   "declared_case": "red-case-absent",
+   "diff": "--- tools/round-79/gate-mutation.py@ed68cd0a6cc7\n+++ mutants/gm-e-absent-killed.py\n@@ -187,3 +187,3 @@\n     failed = sorted(name for name, ok in cases.items() if not ok)\n-    killed = (not absent) and cases[declared] is False\n+    killed = absent or cases[declared] is False\n     return {\n",
+   "diff_added_lines": 1,
+   "diff_removed_lines": 1,
+   "edit": "judge counts an absent declared case as killed (killed = absent or cases[declared] is False)",
+   "exit": 1,
+   "failing_cases": [
+    "red-case-absent"
+   ],
+   "failures": 1,
+   "id": "gm-e-absent-killed",
+   "inconclusive": false,
+   "instrument": "gate-mutation",
+   "killed": true,
+   "killed_by": [
+    "red-case-absent"
+   ],
+   "mutant_sha256": "a80fca751dc7380149827ca0f01293883f45d4c62c03bc9a42e333ce6cf7267c",
+   "sha256_after": "a80fca751dc7380149827ca0f01293883f45d4c62c03bc9a42e333ce6cf7267c",
+   "sha256_before": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+   "syntax_ok": true
+  },
+  {
+   "anchor_occurrences": 1,
+   "applied": true,
+   "cases": 11,
+   "declared_case": null,
+   "diff": "--- tools/round-79/gate-mutation.py@ed68cd0a6cc7\n+++ mutants/gm-f-validate-no-guard.py\n@@ -210,6 +210,2 @@\n             defects.append(f\"{mutant.get('id')}: no declared case\")\n-        if mutant.get(\"killed\") and (\n-                mutant.get(\"case_absent\")\n-                or mutant.get(\"declared_case\") not in (mutant.get(\"failed_cases\") or [])):\n-            defects.append(f\"{mutant.get('id')}: killed without its declared case failing\")\n         if mutant.get(\"killed\") and mutant.get(\"applied\") is not True:\n",
+   "diff_added_lines": 0,
+   "diff_removed_lines": 4,
+   "edit": "validate_receipt skips the killed-without-its-declared-case-failing guard",
+   "exit": 0,
+   "failing_cases": [],
+   "failures": 0,
+   "id": "gm-f-validate-no-guard",
+   "inconclusive": false,
+   "instrument": "gate-mutation",
+   "killed": false,
+   "killed_by": [],
+   "mutant_sha256": "99c2014bde90a2d2eba54c518e6d8702bb750a1c25672043c6110c8dbfbc9819",
+   "sha256_after": "99c2014bde90a2d2eba54c518e6d8702bb750a1c25672043c6110c8dbfbc9819",
+   "sha256_before": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+   "syntax_ok": true
+  },
+  {
+   "anchor_occurrences": 1,
+   "applied": true,
+   "cases": 11,
+   "declared_case": null,
+   "diff": "--- tools/round-79/gate-mutation.py@ed68cd0a6cc7\n+++ mutants/gm-g-pristine-guard.py\n@@ -235,4 +235,2 @@\n     pristine = receipt.get(\"pristine\") or {}\n-    if pristine.get(\"ok\") and pristine.get(\"failures\") != 0:\n-        defects.append(\"pristine.ok with nonzero failures\")\n     ok = bool(receipt.get(\"ok\"))\n",
+   "diff_added_lines": 0,
+   "diff_removed_lines": 2,
+   "edit": "validate_receipt drops the pristine.ok-with-nonzero-failures guard",
+   "exit": 0,
+   "failing_cases": [],
+   "failures": 0,
+   "id": "gm-g-pristine-guard",
+   "inconclusive": false,
+   "instrument": "gate-mutation",
+   "killed": false,
+   "killed_by": [],
+   "mutant_sha256": "5e33c9ea716c29af717e6df51a13b52614b1b9cba2c527df2837497ccec63af3",
+   "sha256_after": "5e33c9ea716c29af717e6df51a13b52614b1b9cba2c527df2837497ccec63af3",
+   "sha256_before": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+   "syntax_ok": true
+  },
+  {
+   "anchor_occurrences": 1,
+   "applied": true,
+   "cases": 11,
+   "declared_case": null,
+   "diff": "--- tools/round-79/gate-mutation.py@ed68cd0a6cc7\n+++ mutants/gm-h-applied-guard.py\n@@ -214,4 +214,2 @@\n             defects.append(f\"{mutant.get('id')}: killed without its declared case failing\")\n-        if mutant.get(\"killed\") and mutant.get(\"applied\") is not True:\n-            defects.append(f\"{mutant.get('id')}: killed without an applied edit\")\n     killed = sum(1 for m in mutants if m.get(\"killed\"))\n",
+   "diff_added_lines": 0,
+   "diff_removed_lines": 2,
+   "edit": "validate_receipt drops the killed-without-an-applied-edit guard",
+   "exit": 0,
+   "failing_cases": [],
+   "failures": 0,
+   "id": "gm-h-applied-guard",
+   "inconclusive": false,
+   "instrument": "gate-mutation",
+   "killed": false,
+   "killed_by": [],
+   "mutant_sha256": "379df102fc6a7ad040bf3df18eeb1b533e9d505799688c306a7e82122da81f3b",
+   "sha256_after": "379df102fc6a7ad040bf3df18eeb1b533e9d505799688c306a7e82122da81f3b",
+   "sha256_before": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+   "syntax_ok": true
+  }
+ ],
+ "mutants_total": 10,
+ "pristine": {
+  "gate-mutation": {
+   "cases": 11,
+   "exit": 0,
+   "failing_cases": [],
+   "failures": 0,
+   "ok": true,
+   "path": "gate-mutation.orig.py",
+   "sha256": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+   "summary_present": true
+  },
+  "pointer-bind": {
+   "cases": 16,
+   "exit": 0,
+   "failing_cases": [],
+   "failures": 0,
+   "ok": true,
+   "path": "pointer-bind.orig.py",
+   "sha256": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "summary_present": true
+  }
+ },
+ "pristine_summary": {
+  "gate-mutation": {
+   "cases": 11,
+   "exit": 0,
+   "failures": 0
+  },
+  "pointer-bind": {
+   "cases": 16,
+   "exit": 0,
+   "failures": 0
+  }
+ },
+ "required_six": [
+  "pb-a-path-only",
+  "pb-b-zero-based",
+  "pb-c-range-first-line",
+  "pb-d-unparsed-never",
+  "gm-e-absent-killed",
+  "gm-f-validate-no-guard"
+ ],
+ "required_six_status": {
+  "gm-e-absent-killed": {
+   "killed": true,
+   "killed_by": [
+    "red-case-absent"
+   ]
+  },
+  "gm-f-validate-no-guard": {
+   "killed": false,
+   "killed_by": []
+  },
+  "pb-a-path-only": {
+   "killed": true,
+   "killed_by": [
+    "green-range-digest",
+    "red-past-end",
+    "red-range-token-outside",
+    "red-stale-line"
+   ]
+  },
+  "pb-b-zero-based": {
+   "killed": true,
+   "killed_by": [
+    "green-line"
+   ]
+  },
+  "pb-c-range-first-line": {
+   "killed": true,
+   "killed_by": [
+    "green-range"
+   ]
+  },
+  "pb-d-unparsed-never": {
+   "killed": true,
+   "killed_by": [
+    "red-no-line"
+   ]
+  }
+ },
+ "restoration": {
+  "claim_pins_match": true,
+  "lane_unchanged_since_freeze": true,
+  "mode": "lane instruments never written; all mutants are scratch copies"
+ },
+ "round": 79,
+ "schema": "kaidoku-r79-instrument-mutation-v1",
+ "survivor_ids": [
+  "pb-e-validate-range-guard",
+  "pb-f-nonparse-matched",
+  "gm-f-validate-no-guard",
+  "gm-g-pristine-guard",
+  "gm-h-applied-guard"
+ ],
+ "survivors": [
+  "pb-e-validate-range-guard",
+  "pb-f-nonparse-matched",
+  "gm-f-validate-no-guard",
+  "gm-g-pristine-guard",
+  "gm-h-applied-guard"
+ ],
+ "survivors_count": 5
+}

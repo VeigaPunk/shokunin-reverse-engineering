@@ -1,0 +1,172 @@
+{
+ "control": null,
+ "declared_case_hits": 8,
+ "killed": 8,
+ "measured_at": "2026-11-04T10:03:14-03:00",
+ "mutants": [
+  {
+   "applied": true,
+   "apply_note": "applied",
+   "case_absent": false,
+   "declared_case": "red-receipt-auth",
+   "detector_count": 2,
+   "edit": "auth_findings returns [] before any check (dead rule)",
+   "exit": 1,
+   "failed_cases": [
+    "red-auth-no-instrument",
+    "red-receipt-auth"
+   ],
+   "id": "m01-auth-dead",
+   "inconclusive": false,
+   "killed": true,
+   "killed_by_declared": true,
+   "sole_detector": false
+  },
+  {
+   "applied": true,
+   "apply_note": "applied",
+   "case_absent": false,
+   "declared_case": "red-qualified-atom",
+   "detector_count": 1,
+   "edit": "QUALIFIED_ATOM_RE matches nothing",
+   "exit": 1,
+   "failed_cases": [
+    "red-qualified-atom"
+   ],
+   "id": "m02-qualified-atom-dead",
+   "inconclusive": false,
+   "killed": true,
+   "killed_by_declared": true,
+   "sole_detector": true
+  },
+  {
+   "applied": true,
+   "apply_note": "applied",
+   "case_absent": false,
+   "declared_case": "red-near-miss-unparsed",
+   "detector_count": 1,
+   "edit": "NEAR_MISS_RE matches nothing (round-78 survivor)",
+   "exit": 1,
+   "failed_cases": [
+    "red-near-miss-unparsed"
+   ],
+   "id": "m03-near-miss-re-dead",
+   "inconclusive": false,
+   "killed": true,
+   "killed_by_declared": true,
+   "sole_detector": true
+  },
+  {
+   "applied": true,
+   "apply_note": "applied",
+   "case_absent": false,
+   "declared_case": "red-negated",
+   "detector_count": 1,
+   "edit": "NEGATION_RE matches nothing",
+   "exit": 1,
+   "failed_cases": [
+    "red-negated"
+   ],
+   "id": "m04-negation-dead",
+   "inconclusive": false,
+   "killed": true,
+   "killed_by_declared": true,
+   "sole_detector": true
+  },
+  {
+   "applied": true,
+   "apply_note": "applied",
+   "case_absent": false,
+   "declared_case": "red-atom-absent",
+   "detector_count": 1,
+   "edit": "the atom branch returns (True, bound) when the receipt has no atoms table",
+   "exit": 1,
+   "failed_cases": [
+    "red-atom-absent"
+   ],
+   "id": "m05-atom-absent-bound",
+   "inconclusive": false,
+   "killed": true,
+   "killed_by_declared": true,
+   "sole_detector": true
+  },
+  {
+   "applied": true,
+   "apply_note": "applied",
+   "case_absent": false,
+   "declared_case": "red-near-miss-plural",
+   "detector_count": 2,
+   "edit": "NEAR_MISS_STEMS emptied (the parsed-field branch goes blind)",
+   "exit": 1,
+   "failed_cases": [
+    "red-near-miss",
+    "red-near-miss-plural"
+   ],
+   "id": "m06-near-miss-stems-empty",
+   "inconclusive": false,
+   "killed": true,
+   "killed_by_declared": true,
+   "sole_detector": false
+  },
+  {
+   "applied": true,
+   "apply_note": "applied",
+   "case_absent": false,
+   "declared_case": "red-mode-tree",
+   "detector_count": 2,
+   "edit": "mode_ok accepts any object mode",
+   "exit": 1,
+   "failed_cases": [
+    "red-mode-link",
+    "red-mode-tree"
+   ],
+   "id": "m07-mode-ok-always",
+   "inconclusive": false,
+   "killed": true,
+   "killed_by_declared": true,
+   "sole_detector": false
+  },
+  {
+   "applied": true,
+   "apply_note": "applied",
+   "case_absent": false,
+   "declared_case": "red-validate-refused-no-reason",
+   "detector_count": 1,
+   "edit": "validate_receipt skips the refused-without-a-reason guard (round-78 survivor)",
+   "exit": 1,
+   "failed_cases": [
+    "red-validate-refused-no-reason"
+   ],
+   "id": "m08-validate-no-refusal-guard",
+   "inconclusive": false,
+   "killed": true,
+   "killed_by_declared": true,
+   "sole_detector": true
+  }
+ ],
+ "mutants_total": 8,
+ "ok": true,
+ "predicate": "R79-C1 is verified iff `python3 -I -B tools/round-79/gate-mutation.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>` exits 0 with `mutants_total 8`, `killed 8`, `survivors 0`, `declared_case_hits 8`, `target_pin.matched true`, a pristine selftest of 29 cases and 0 failures, and a defect-free `validate`; each mutant's declared case is present and fails in that mutant's selftest and the three mutants `m03`, `m05` and `m08` (the two round-78 survivors plus the atom-absent conjunct) are detected by that one case alone, while at base `29d2ca30` the same battery exits 1 with `survivors 3` naming `m03`, `m05` and `m08`.",
+ "pristine": {
+  "cases": 29,
+  "exit": 0,
+  "failed_cases": [],
+  "failures": 0,
+  "ok": true
+ },
+ "round": 79,
+ "schema": "kaidoku-r79-gate-mutation-v1",
+ "survivor_ids": [],
+ "survivors": 0,
+ "target": {
+  "bytes": 46214,
+  "path": "tools/round-78/attack-gate.py",
+  "rev": "ed68cd0a6cc790cca342380a2d80d1927a668c8c",
+  "sha256": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf"
+ },
+ "target_pin": {
+  "actual": "0000000000000000000000000000000000000000000000000000000000000000",
+  "expected": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf",
+  "matched": false
+ }
+}

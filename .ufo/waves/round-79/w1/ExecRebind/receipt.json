@@ -1,0 +1,316 @@
+{
+ "claim": "R79-C2",
+ "controls": {
+  "path_only_at_base": {
+   "matched": 5,
+   "mismatches": 0,
+   "note": "path existence alone binds all five, including the two stale pointers - the round-78 rule cannot fail on a moved line",
+   "rev": "29d2ca30"
+  },
+  "positive_unmodified_freeze_copy": {
+   "exit": 0,
+   "matched": 5,
+   "mismatches": 0,
+   "note": "the same --record-file path used by the negative control is green before the rewrite"
+  }
+ },
+ "digest_convergence": {
+  "base": {
+   "bashrc-exports": "db162b4cbfd4a0cd2033e63c095b25f2155f3d165b190935da338faf490c9ac4",
+   "devin-pin": "d62ab8dad36380a4fd6fb3a90ee070feee0e34866f6f0bcebffb7133f6326a5d",
+   "ghidra-version": "e655d6c552eb40758474dfbc79dcbf290e71dc3974df4782fcf7c2ac57e9d512",
+   "kimi-pin": "c00d8456d7bb64b7bc88a64983be6dd755a08bd5a5275af47322960d80920185",
+   "omp-pin": "6c97fd49f723202a438f9dac3b85b0f80d9f40a1f7e5daf804adb86fbc0feedb"
+  },
+  "freeze": {
+   "bashrc-exports": "db162b4cbfd4a0cd2033e63c095b25f2155f3d165b190935da338faf490c9ac4",
+   "devin-pin": "d62ab8dad36380a4fd6fb3a90ee070feee0e34866f6f0bcebffb7133f6326a5d",
+   "ghidra-version": "e655d6c552eb40758474dfbc79dcbf290e71dc3974df4782fcf7c2ac57e9d512",
+   "kimi-pin": "eb1c7da74fc5f870d7c6537e87beeaf043491b5cdd00ee7a2f65e426d9f2b675",
+   "omp-pin": "d62ab8dad36380a4fd6fb3a90ee070feee0e34866f6f0bcebffb7133f6326a5d"
+  },
+  "note": "my pointed-line sha256 values equal the frozen instrument receipts' values at both revisions (independent parser, independent binder)"
+ },
+ "instrument_identity": {
+  "record_sha256": {
+   "agrees_with_frozen_receipts": true,
+   "base": "cf2c5fe4e543256505ceb16d234dbc723740ac824aec67b5181c4c16d92a71ec",
+   "freeze": "99d29a00ecabf492afee5ec1e393455761bf2947bac6ec1e25e14951b8752ca0"
+  },
+  "tools/round-78/attack-gate.py": {
+   "agrees_with_claims_pin": true,
+   "sha256": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf"
+  },
+  "tools/round-79/pointer-bind.py": {
+   "agrees_with_claims_pin": true,
+   "sha256": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90"
+  },
+  "worktree_after_measurement": {
+   "affects_this_seat": false,
+   "attack-gate.py": {
+    "pin": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf",
+    "worktree": "unchanged"
+   },
+   "gate-mutation.py": {
+    "pin": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+    "worktree": "75fbf1a7"
+   },
+   "landing_implication": "pin already broken in worktree; supersession entry required regardless of commit",
+   "note": "uncommitted worktree edits to both round-79 instruments post-date this seat's digest measurement",
+   "pointer-bind.py": {
+    "pin_at_measurement": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+    "worktree_reported": "3f07bd2a"
+   },
+   "source": "ScoutRouted-2 (reported, not re-run)",
+   "why": "rebind.py reads neither instrument and reads PROVINCE.md from committed bytes"
+  }
+ },
+ "live_pin_lines": {
+  "devin": {
+   "live_lines": [
+    7
+   ],
+   "path": "/home/vgpnk/.config/devin/mcp_config.json",
+   "record_agrees": {
+    "base": true,
+    "freeze": true
+   },
+   "record_line": {
+    "base": 7,
+    "freeze": 7
+   }
+  },
+  "kimi": {
+   "live_lines": [
+    4722
+   ],
+   "path": "/home/vgpnk/.kimi-code/config.toml",
+   "record_agrees": {
+    "base": false,
+    "freeze": true
+   },
+   "record_line": {
+    "base": 4126,
+    "freeze": 4722
+   }
+  },
+  "omp": {
+   "live_lines": [
+    12
+   ],
+   "path": "/home/vgpnk/.omp/agent/mcp.json",
+   "record_agrees": {
+    "base": false,
+    "freeze": true
+   },
+   "record_line": {
+    "base": 8,
+    "freeze": 12
+   }
+  },
+  "probe": "grep -n -o 'rea-agents@6.7.0' <file> | cut -d: -f1 (line numbers only; no file bytes retained)"
+ },
+ "method": {
+  "binding_rule": "expand ~, read the live file, require every declared token on a line inside the declared 1-based inclusive range, digest the pointed lines only",
+  "cell_extraction": "client-scoped bounded adjacency for the three pins; blank-line paragraph for the Ghidra version+pointer pair and for the .bashrc export range",
+  "independent_of": "tools/round-79/pointer-bind.py (not imported, not copied; parse table re-derived from the claim text)",
+  "record": "PROVINCE.md at --rev via `git show <rev>:PROVINCE.md`",
+  "script": ".ufo/waves/round-79/w1/ExecRebind/rebind.py"
+ },
+ "negative_control": {
+  "can_fail": true,
+  "exit": 1,
+  "matched": 4,
+  "mismatch_ids": [
+   "omp-pin"
+  ],
+  "mismatches": 1,
+  "reasons": {
+   "omp-pin": "token 'rea-agents@6.7.0' is not on line 1"
+  },
+  "record": "scratch copy of PROVINCE.md@ed68cd0a with the single pointer `/home/vgpnk/.omp/agent/mcp.json:12` rewritten to `:1` (exactly 1 occurrence rewritten)"
+ },
+ "peer_observation": {
+  "affects_this_seat": false,
+  "finding": "the printed R79-C2 command omits --battery and exits 2 with usage at both revs; with --battery the frozen instrument reproduces the claimed counts",
+  "printed_predicate_executable": false,
+  "repair_owner": "L1 lane edit; changes pointer-bind.py sha256 and requires a supersession entry",
+  "source": "ScoutRouted-2 (reported, not re-run by this seat)",
+  "why": "rebind.py has no --battery switch; its measurements are an independent implementation, not the printed argv"
+ },
+ "per_rev": [
+  {
+   "check_table": [
+    {
+     "id": "devin-pin",
+     "line_end": 7,
+     "line_sha256": "d62ab8dad36380a4fd6fb3a90ee070feee0e34866f6f0bcebffb7133f6326a5d",
+     "line_start": 7,
+     "matched": true,
+     "path": "/home/vgpnk/.config/devin/mcp_config.json",
+     "pointer": "/home/vgpnk/.config/devin/mcp_config.json:7",
+     "reason": "",
+     "tokens": [
+      "rea-agents@6.7.0"
+     ]
+    },
+    {
+     "id": "omp-pin",
+     "line_end": 8,
+     "line_sha256": "6c97fd49f723202a438f9dac3b85b0f80d9f40a1f7e5daf804adb86fbc0feedb",
+     "line_start": 8,
+     "matched": false,
+     "path": "/home/vgpnk/.omp/agent/mcp.json",
+     "pointer": "/home/vgpnk/.omp/agent/mcp.json:8",
+     "reason": "token 'rea-agents@6.7.0' is not on line 8",
+     "tokens": [
+      "rea-agents@6.7.0"
+     ]
+    },
+    {
+     "id": "kimi-pin",
+     "line_end": 4126,
+     "line_sha256": "c00d8456d7bb64b7bc88a64983be6dd755a08bd5a5275af47322960d80920185",
+     "line_start": 4126,
+     "matched": false,
+     "path": "/home/vgpnk/.kimi-code/config.toml",
+     "pointer": "~/.kimi-code/config.toml:4126",
+     "reason": "token 'rea-agents@6.7.0' is not on line 4126",
+     "tokens": [
+      "rea-agents@6.7.0"
+     ]
+    },
+    {
+     "id": "ghidra-version",
+     "line_end": 17,
+     "line_sha256": "e655d6c552eb40758474dfbc79dcbf290e71dc3974df4782fcf7c2ac57e9d512",
+     "line_start": 17,
+     "matched": true,
+     "path": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties",
+     "pointer": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties:17",
+     "reason": "",
+     "tokens": [
+      "application.version=12.1.4"
+     ]
+    },
+    {
+     "id": "bashrc-exports",
+     "line_end": 29,
+     "line_sha256": "db162b4cbfd4a0cd2033e63c095b25f2155f3d165b190935da338faf490c9ac4",
+     "line_start": 28,
+     "matched": true,
+     "path": "/home/vgpnk/.bashrc",
+     "pointer": "/home/vgpnk/.bashrc:28-29",
+     "reason": "",
+     "tokens": [
+      "GHIDRA_INSTALL_DIR=",
+      "JAVA_HOME="
+     ]
+    }
+   ],
+   "checks": 5,
+   "exit": 1,
+   "matched": 3,
+   "mismatch_ids": [
+    "omp-pin",
+    "kimi-pin"
+   ],
+   "mismatches": 2,
+   "reasons": {
+    "kimi-pin": "token 'rea-agents@6.7.0' is not on line 4126",
+    "omp-pin": "token 'rea-agents@6.7.0' is not on line 8"
+   },
+   "record_sha256": "cf2c5fe4e543256505ceb16d234dbc723740ac824aec67b5181c4c16d92a71ec",
+   "rev": "29d2ca30b83a6a0d85b0aa979de0138fde1660e6",
+   "unparsed": 0
+  },
+  {
+   "check_table": [
+    {
+     "id": "devin-pin",
+     "line_end": 7,
+     "line_sha256": "d62ab8dad36380a4fd6fb3a90ee070feee0e34866f6f0bcebffb7133f6326a5d",
+     "line_start": 7,
+     "matched": true,
+     "path": "/home/vgpnk/.config/devin/mcp_config.json",
+     "pointer": "/home/vgpnk/.config/devin/mcp_config.json:7",
+     "reason": "",
+     "tokens": [
+      "rea-agents@6.7.0"
+     ]
+    },
+    {
+     "id": "omp-pin",
+     "line_end": 12,
+     "line_sha256": "d62ab8dad36380a4fd6fb3a90ee070feee0e34866f6f0bcebffb7133f6326a5d",
+     "line_start": 12,
+     "matched": true,
+     "path": "/home/vgpnk/.omp/agent/mcp.json",
+     "pointer": "/home/vgpnk/.omp/agent/mcp.json:12",
+     "reason": "",
+     "tokens": [
+      "rea-agents@6.7.0"
+     ]
+    },
+    {
+     "id": "kimi-pin",
+     "line_end": 4722,
+     "line_sha256": "eb1c7da74fc5f870d7c6537e87beeaf043491b5cdd00ee7a2f65e426d9f2b675",
+     "line_start": 4722,
+     "matched": true,
+     "path": "/home/vgpnk/.kimi-code/config.toml",
+     "pointer": "~/.kimi-code/config.toml:4722",
+     "reason": "",
+     "tokens": [
+      "rea-agents@6.7.0"
+     ]
+    },
+    {
+     "id": "ghidra-version",
+     "line_end": 17,
+     "line_sha256": "e655d6c552eb40758474dfbc79dcbf290e71dc3974df4782fcf7c2ac57e9d512",
+     "line_start": 17,
+     "matched": true,
+     "path": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties",
+     "pointer": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties:17",
+     "reason": "",
+     "tokens": [
+      "application.version=12.1.4"
+     ]
+    },
+    {
+     "id": "bashrc-exports",
+     "line_end": 29,
+     "line_sha256": "db162b4cbfd4a0cd2033e63c095b25f2155f3d165b190935da338faf490c9ac4",
+     "line_start": 28,
+     "matched": true,
+     "path": "/home/vgpnk/.bashrc",
+     "pointer": "/home/vgpnk/.bashrc:28-29",
+     "reason": "",
+     "tokens": [
+      "GHIDRA_INSTALL_DIR=",
+      "JAVA_HOME="
+     ]
+    }
+   ],
+   "checks": 5,
+   "exit": 0,
+   "matched": 5,
+   "mismatch_ids": [],
+   "mismatches": 0,
+   "reasons": {},
+   "record_sha256": "99d29a00ecabf492afee5ec1e393455761bf2947bac6ec1e25e14951b8752ca0",
+   "rev": "ed68cd0a6cc790cca342380a2d80d1927a668c8c",
+   "unparsed": 0
+  }
+ ],
+ "schema": "exec-rebind-r79-c2-v1",
+ "seat": "ExecRebind",
+ "verdict": {
+  "base_expectation": "exit 1, checks_total 5, matched 3, mismatches 2 = [omp-pin, kimi-pin]",
+  "base_observed": "exit 1, checks_total 5, matched 3, mismatches 2 = [omp-pin, kimi-pin]",
+  "claim_holds": true,
+  "freeze_expectation": "exit 0, checks_total 5, matched 5, mismatches 0, unparsed 0",
+  "freeze_observed": "exit 0, checks_total 5, matched 5, mismatches 0, unparsed 0"
+ }
+}

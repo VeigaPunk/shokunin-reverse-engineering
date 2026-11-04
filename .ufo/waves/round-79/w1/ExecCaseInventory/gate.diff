@@ -1,0 +1,34 @@
+--- /fast/scratch/hyaku/kaidoku-r79/ExecCaseInventory/attack-gate-base.py	2026-11-04 10:06:42.167169591 -0300
++++ /fast/scratch/hyaku/kaidoku-r79/ExecCaseInventory/attack-gate-freeze.py	2026-11-04 10:06:42.168169594 -0300
+@@ -895,6 +895,31 @@
+          [f["reason"] for f in auth_findings(".", "HEAD", "x.json",
+                                              {"rev": "0" * 40})],
+          ["no instrument path+sha256"])
++    # round 79 (R79-C1): the round-78 wave's two mutation survivors and one
++    # uncovered conjunct.  A near-miss clause the grammar cannot parse is
++    # caught only by NEAR_MISS_RE; a receipt that refuses without a reason
++    # only by validate_receipt's guard; an atom clause against a receipt with
++    # no atoms table only by the atom branch's defect return.
++    case("red-near-miss-unparsed",
++         [f["rule"] for f in judge_group("mismatch abc", genuine,
++                                         {"near_miss_field"})],
++         ["near_miss_field"])
++    case("red-atom-absent",
++         bind_clause(parse_clause("D24 true"), {"mismatch_count": 0})[:2],
++         (False, "defect"))
++    no_reason = {
++        "fixtures": [{"id": a["id"], "fixture": a["fixture"],
++                      "base": {"accepted": True},
++                      "refused": a["id"] == ATTACKS[0]["id"],
++                      "rule": a["rule"], "reasons": []}
++                     for a in ATTACKS],
++        "base_accepted": len(ATTACKS), "refused": 1,
++        "instrument": {"path": "tools/round-78/attack-gate.py",
++                       "sha256": sha256_bytes(
++                           pathlib.Path(__file__).read_bytes())},
++    }
++    case("red-validate-refused-no-reason", validate_receipt(no_reason)["defects"],
++         [f"{ATTACKS[0]['id']}: refused without a reason"])
+     failures = [c for c in cases if not c["pass"]]
+     for case_ in cases:
+         print(json.dumps(case_, sort_keys=True))

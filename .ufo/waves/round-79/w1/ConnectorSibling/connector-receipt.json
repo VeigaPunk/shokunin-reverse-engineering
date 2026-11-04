@@ -1,0 +1,200 @@
+{
+  "seat": "ConnectorSibling",
+  "round": 79,
+  "wave": "w1",
+  "mode": "cross-lane read-only",
+  "question": "does a sibling lane already implement (a) a selftest-mutation battery or (b) a line-bound pointer/source-position checker, and what does this lane's version add or miss",
+  "sibling_lane_writes": 0,
+  "sibling_gate_runs": 0,
+  "answers": {
+    "a_mutation_battery": "yes",
+    "b_line_bound_pointer_checker": "yes"
+  },
+  "precedents": [
+    {
+      "id": "P1",
+      "lane": "tameshi-shokunin",
+      "path": "tools/pointer-recheck.py",
+      "line": "41-44",
+      "quote": "a row is met when its verdict equals its expect (an expect=miss row is the standing red arm: the drift is MEASURED on every sweep, never assumed, and stays measured until a superseding record carries the correction - the r48/r69/r70 append-only precedent).",
+      "supporting": [
+        {"line": "36", "quote": "A row whose defect does not exist in the record bytes is refused, not passed (the r70 mistake-1 practice one level up)."},
+        {"line": "58", "quote": "record_rev (40-hex; pin the revision whose bytes you verified against, never \"tip\")"},
+        {"line": "59", "quote": "start, end (1-indexed inclusive)"},
+        {"line": "104", "quote": "def sed_span"}
+      ],
+      "surface": "line-bound pointer binder",
+      "properties": {
+        "absent_detector_counts_as_pass": false,
+        "absent_detector_note": "a row whose cited token is absent from the record bytes is an ERROR (unexpected), exit 1 - refused, not passed",
+        "treats_pointer_line_or_range": true,
+        "range_note": "1-indexed inclusive start/end; span extracted from git objects at target_rev via sed -n, never the worktree; sed unspawnable = exit 2, never a silent fallback",
+        "pins_target_by_digest": "n/a",
+        "pins_note": "no mutation surface; pins record_rev and target_rev as 40-hex, explicitly never \"tip\""
+      }
+    },
+    {
+      "id": "P2",
+      "lane": "tameshi-shokunin",
+      "path": "tools/mutate-and-run.sh",
+      "line": "36",
+      "quote": "Per-defect verdicts: KILLED (suite exit != 0) | SURVIVED (suite exit 0) | INCONCLUSIVE (timeout 124, or 126/127 = suite not runnable).",
+      "supporting": [
+        {"line": "31", "quote": "every mutant is a fresh copy of a pinned pristine; one exact edit per copy with a uniqueness assert; a green control run; killed/survived recorded per defect; sha256 before/after as the restore proof"},
+        {"line": "228", "quote": "git show <rev>:<path> - immune to working-tree drift"},
+        {"line": "542", "quote": "control run on the pristine copy is red (exit=$ctl_rc); cannot attribute kills"}
+      ],
+      "surface": "generic mutation battery",
+      "properties": {
+        "absent_detector_counts_as_pass": false,
+        "absent_detector_note": "an unrunnable suite is a third bucket, INCONCLUSIVE, never counted as killed; a red control exits 2 rather than attributing kills",
+        "treats_pointer_line_or_range": false,
+        "pins_target_by_digest": "partial",
+        "pins_note": "revision-pinned with git show <rev>:<path>; sha256 before/after is a restore proof, not a declared digest equality on the mutated copy"
+      }
+    },
+    {
+      "id": "P3",
+      "lane": "kama-shokunin",
+      "path": "tools/round75-survivor-probe.py",
+      "line": "20",
+      "quote": "runs the pristine module's selftest green and every mutated copy's selftest red, and names for each mutant the selftest arm that fails - case-hex, kind-boundary, paragraph-scope, conflict-off and header-window",
+      "supporting": [
+        {"line": "87-89", "quote": "killed = sum(row[\"mutant_exit\"] == 1 and EXPECTED_ARMS.get(row[\"mutant\"]) in row[\"failed_arms\"] for row in rows)"},
+        {"line": "72-73", "quote": "or not REQUIRED_ARMS.issubset(names)): raise CouldNotEvaluate(\"incomplete module selftest receipt\")"},
+        {"line": "102", "quote": "git clone --shared"},
+        {"line": "120", "quote": "if original.count(old) != 1"}
+      ],
+      "surface": "selftest-arm mutation battery (closest twin of R79-C1)",
+      "properties": {
+        "absent_detector_counts_as_pass": false,
+        "absent_detector_note": "an absent declared arm is not in failed_arms, so the mutant escapes; an arm missing from the whole output raises CouldNotEvaluate (exit 2) - it aborts rather than being enumerated",
+        "treats_pointer_line_or_range": false,
+        "pins_target_by_digest": false,
+        "pins_note": "git clone --shared then mutate the clone's copy; only anchor uniqueness original.count(old) != 1, no digest assertion on the target"
+      }
+    },
+    {
+      "id": "P4",
+      "lane": "tsukuroi-shokunin",
+      "path": "tools/mutants-kernel-taint.py",
+      "line": "12",
+      "quote": "A mutant is ACCEPTED when the counter exits 0 with verified_rows 6.",
+      "supporting": [
+        {"line": "14-15", "quote": "should_fail_total, should_fail_accepted, control_verified_rows, and, for information, other_accepted (accepted mutants outside the declared set)"},
+        {"line": "85", "quote": "return rev, hashlib.sha256(blob).hexdigest()"},
+        {"line": "134", "quote": "assert text.count(old) == 1"},
+        {"line": "395", "quote": "'counter_sha256': COUNTER_SHA"}
+      ],
+      "surface": "inverted-polarity should-fail battery",
+      "properties": {
+        "absent_detector_counts_as_pass": true,
+        "absent_detector_note": "yes by declared polarity - non-detection is the expected outcome, but only for a declaratively enumerated set; acceptance outside that set lands in other_accepted and is never counted as satisfaction",
+        "treats_pointer_line_or_range": false,
+        "pins_target_by_digest": true,
+        "pins_note": "counter_sha256 of the blob at counter_rev, carried in the receipt"
+      }
+    }
+  ],
+  "gap": {
+    "id": "G1",
+    "title": "multiplicity laundering in the record parser (R79-C2)",
+    "item": "pointer-bind.py discovers its five checks by regex instead of enumerating them. parse_record builds pins = {name: (pin, pointer) for name, pin, pointer in RE_PIN.findall(text)}, a dict comprehension where a second cell for the same client silently overwrites the first (last wins); RE_GHIDRA_PTR and RE_BASHRC_PTR use .search(), so a stale quotation placed earlier in the record wins over the live cell. A record carrying more than five pointer cells still reports checks_total 5, matched 5, mismatches 0, unparsed 0 - the guard is cardinality over parsed results, not exhaustiveness over the record.",
+    "measured": {
+      "probe": "ConnectorSibling/parse-multiplicity-probe.txt",
+      "duplicate_client": {"parsed": 5, "unparsed": [], "devin_pin_binds": "/h/devin.json:999"},
+      "ordered_quotation": {"parsed": 5, "unparsed": [], "bashrc_exports_binds": "/h/.bashrc:23-24"},
+      "conclusion": "checks_total and unparsed are indistinguishable between a 5-cell and a 6-cell record"
+    },
+    "sibling_pattern_that_catches_it": "P1 tameshi pointer-recheck: each manifest row carries an explicit id and 'the exact cited token', and a row whose token is absent from the record bytes is refused, not passed (line 36) - multiplicity must be written down and each occurrence measures miss or ERROR. P4 closes the same hole by making the accepted set declarative and reporting everything outside it.",
+    "falsifies_frozen_arm": false,
+    "falsifies_note": "latent only; the live PROVINCE.md at the freeze parses exactly five cells with no duplicates",
+    "command": "grep -rlE 'mutant|survivor|mutation' --include='*.py' --include='*.sh' --include='*.md' */tools/ */scripts/ | grep -v '^kaidoku-shokunin/' | wc -l",
+    "command_count": 176,
+    "pointer_command": "grep -rlE 'line_sha256|line_sha|line number|line-number|pointer|expected_line|line_no|lineno' --include='*.py' --include='*.sh' --include='*.md' */tools/ */scripts/ | grep -v '^kaidoku-shokunin/' | wc -l",
+    "pointer_command_count": 189
+  },
+  "secondary_finding": {
+    "id": "G2",
+    "title": "unattributed kill (R79-C1)",
+    "item": "gate-mutation.py computes sole_detector and detector_count per mutant and never grades them: ok requires only len(mutants)==len(MUTANTS), survivors==0, pin.matched and pristine.ok, and validate_receipt ignores both fields. A mass-failure mutant (all 29 cases red) is judged killed=True with detector_count=29, sole_detector=False, and a receipt of eight such mutants validates with defects=[].",
+    "measured": {
+      "probe": "ConnectorSibling/sole-detector-probe.txt",
+      "judge": {"killed": true, "case_absent": false, "detector_count": 29, "sole_detector": false},
+      "validate_defects": []
+    },
+    "sibling_pattern_that_catches_it": "tameshi tools/shrink-case.py:11 - 'A kill is the round-49 generator's oracle read of the pair: check passes on the pristine guard and fails on the mutant', reduced to a fixpoint so the result is 1-minimal: removing any one unit loses the kill",
+    "falsifies_frozen_arm": false,
+    "falsifies_note": "latent; m03, m05 and m08 are sole in the landed receipt as the predicate states",
+    "note": "not the declared gap; same structural property as G1 - singularity of the evidence"
+  },
+  "lane_adds_or_misses": {
+    "mutation_adds": [
+      "--rev: mutate the target at an arbitrary measured revision, not the clone's HEAD",
+      "target_pin.matched: declared 64-hex digest of the mutated file (P3 has none; P2 has only a restore proof)",
+      "absent declared case is a SURVIVOR counted against - stricter than P2 (INCONCLUSIVE bucket) and P3 (abort at exit 2)",
+      "per-case attribution: declared_case, failed_cases, detector_count, sole_detector (P2 grades suite exit only; P3 names one arm but records no detector count)",
+      "pristine 29 cases / 0 failures as a literal pass precondition"
+    ],
+    "mutation_misses": [
+      "sole_detector computed but never graded (G2)",
+      "no expected-red arm field (P1's pattern adapted)"
+    ],
+    "pointer_adds": [
+      "bespoke to a prose record: five named drift-prone cells each bound to a declared token",
+      "--control path-only reproduces the round-78 rule on the same stale record to show it cannot fail; neither sibling has a rule-reproduction control",
+      "line_sha256 of the pointed span instead of its bytes, matching kama tools/append-only-audit.py:176 (DHEADER = commit/file/line_sha256/count/class/note)",
+      "unparsed as a first-class failure plus checks_total==5, so a vanished cell fails rather than passing vacuously (same instinct as P1's zero-row guard)"
+    ],
+    "pointer_misses": [
+      "no expect field, so a known-stale pointer that cannot be repaired has no representable met state (P1 lines 41-44)",
+      "regex-discovered rather than manifest-enumerated cells; multiplicity collapses (G1)",
+      "validate_receipt re-derives counts only from the receipt's own checks list and never re-reads bytes; the lane's selftest enshrines green-forged-consistent, so a fabricated receipt with plausible digests validates with defects []",
+      "line_sha256 is tested only for truthiness, never 64-hex shape, unlike record.sha256 which is length-checked",
+      "targets read from the worktree while the record is read from git - forced, not a defect: the pointed targets are ambient host files outside any git object store, so P1's target_rev device cannot apply and line_sha256 is the only available pin"
+    ]
+  },
+  "registry_hits": {
+    "checked": "corpus/SOURCES.md (331 lines in the working tree)",
+    "verdict": "both rows already present in the working tree - do not append",
+    "revision_detail": {
+      "freeze": "ed68cd0a6cc790cca342380a2d80d1927a668c8c",
+      "in_freeze": false,
+      "freeze_row_count": 200,
+      "freeze_line_count": 329,
+      "worktree_row_count": 202,
+      "worktree_line_count": 331,
+      "evidence": "git show ed68cd0a:corpus/SOURCES.md | grep -cE '^\\| S[0-9]+ \\|' -> 200; grep -cE '^\\| S[0-9]+ \\|' corpus/SOURCES.md -> 202; git show ed68cd0a:corpus/SOURCES.md | grep -E '^\\| S29[56] \\|' -> no match",
+      "consequence": "both rows arrived as uncommitted working-tree additions after the freeze; lines 212 and 213 are worktree-relative, not freeze-relative. A source seat working from the freeze revision will find them absent and must still not append."
+    },
+    "rows": [
+      {"id": "S295", "line": 212, "line_basis": "working tree", "source": "POSIX.1-2024 grep", "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html", "status": "mined", "opened": "2026-11-04", "snapshot": ".ufo/waves/round-79/l1/sources/grep-posix.html", "sha256_prefix": "9473205c", "already_grounds": "tools/round-79/pointer-bind.py 1-based per-file line rule"},
+      {"id": "S296", "line": 213, "line_basis": "working tree", "source": "cargo-mutants book, Welcome", "url": "https://mutants.rs/", "status": "mined", "opened": "2026-11-04", "snapshot": ".ufo/waves/round-79/l1/sources/cargo-mutants.html", "sha256_prefix": "d056b2b3", "already_grounds": "tools/round-79/gate-mutation.py survivor rule"}
+    ]
+  },
+  "live_state_note": {
+    "observation": "concurrent seat (not my write): tools/round-79/pointer-bind.py is modified in the working tree",
+    "diff_is": "CLI-only - --battery becomes optional when --rev is supplied, plus docstring and usage line",
+    "probe_validity": "parse_record is byte-identical to the freeze, so the G1 probes were taken against the live parser and remain valid; the frozen counting command still runs unchanged"
+  },
+  "proposed_move": {
+    "bounded": true,
+    "post_freeze": true,
+    "changes_frozen_predicate": false,
+    "move": "record the singularity diagnostic as a falsification artifact, additively - state detector_count/sole_detector for all eight mutants in the round-79 lesson draft (already emitted), and record cells_parsed beside checks_total in the pointer receipt (matches already in hand at parse_record)",
+    "axes_improved": ["falsification", "lesson draft"],
+    "axes_unharmed": ["freeze integrity", "re-derivation", "source rows", "security review"],
+    "risk": "a reader could mistake the added diagnostic for a contract tightening; it must be labelled post-freeze and non-enforcing"
+  },
+  "bounds_attestation": {
+    "wrote_outside_lane": false,
+    "wrote_outside_evidence_dir": false,
+    "edited_production_file": false,
+    "ran_sibling_gate": false,
+    "ran_git_write": false,
+    "messaged_agent_all": false,
+    "recorded_secret_values": false,
+    "retained_pointer_bytes": false,
+    "scratch_removed": true
+  }
+}

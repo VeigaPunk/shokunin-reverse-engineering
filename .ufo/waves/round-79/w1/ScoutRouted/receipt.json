@@ -1,0 +1,312 @@
+{
+  "seat": "ScoutRouted",
+  "role": "scout",
+  "round": 79,
+  "wave": "r79-w1",
+  "freeze": "ed68cd0a6cc790cca342380a2d80d1927a668c8c",
+  "base": "29d2ca30b83a6a0d85b0aa979de0138fde1660e6",
+  "declaration": "a1f9b81cf0cd5065df3a9b25b30ce2eb184d012d",
+  "head_at_measurement": "da8e5d5e401c3567d87f0ff58ecee34726c1aecc",
+  "instrument_digests": {
+    "tools/round-79/gate-mutation.py": {
+      "at_freeze": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+      "at_head": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+      "at_declaration": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+      "pin_in_claims": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+      "pin_matched": true
+    },
+    "tools/round-79/pointer-bind.py": {
+      "at_freeze": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+      "at_head": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+      "at_declaration": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+      "pin_in_claims": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+      "pin_matched": true
+    },
+    "tools/round-78/attack-gate.py": {
+      "at_freeze": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf",
+      "pin_in_claims": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf",
+      "pin_matched": true
+    }
+  },
+  "worktree_drift_at_yield": {
+    "measured_against": "pinned bytes for all four arms; each instrument was verified equal to its pin immediately before its first measurement",
+    "tools/round-79/gate-mutation.py": {"pinned": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d", "worktree_at_yield": "75fbf1a714105c2d44a11df5f23c409dde93dc527ccfa999004c722b32162cfd", "changed_at": "after the C1 arms were measured", "diff_lines": "+41/-9"},
+    "tools/round-79/pointer-bind.py": {"pinned": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90", "worktree_at_yield": "3f07bd2a03a10fda353d74863690103f32ba9e1e1e59d3625af91f57f38b4387", "changed_at": "after the C2 arms were measured", "diff_lines": "+6/-3"},
+    "tools/round-78/attack-gate.py": {"pinned": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf", "worktree_at_yield": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf", "changed_at": null},
+    "note": "Uncommitted edits by other seats; HEAD and the freeze still carry the pinned bytes. Landing either edit invalidates the corresponding claims.json instrument pin and needs a supersession entry, not a silent re-pin."
+  },
+  "cli": {
+    "tools/round-79/gate-mutation.py": {
+      "argv_shape": "python3 -I -B tools/round-79/gate-mutation.py [--root DIR] [--rev REV] [--work DIR] [--json-out PATH] [--battery] [--selftest] [--validate PATH] [--control empty-set]",
+      "mode_precedence": ["--selftest", "--validate", "--battery"],
+      "modes": {
+        "--selftest": {
+          "argv": "python3 -I -B tools/round-79/gate-mutation.py --selftest",
+          "exit": {"0": "every unit case passed", "1": "at least one case failed"},
+          "fields": "stdout only: one {case,got,want,pass} JSON line per case plus 'SELFTEST cases=N failures=M'; writes no receipt file",
+          "measured": {"cases": 11, "failures": 0, "exit": 0}
+        },
+        "--validate": {
+          "argv": "python3 -I -B tools/round-79/gate-mutation.py --validate PATH",
+          "exit": {"0": "defects == []", "1": "defects non-empty, OR path unreadable (uncaught FileNotFoundError)", "2": "never used"},
+          "fields": "stdout only: {defects:[...], mutants:N, survivors:K}",
+          "measured": [
+            {"receipt": "c1-at-freeze.json", "exit": 0, "defects": []},
+            {"receipt": "c1-at-base.json", "exit": 0, "defects": []},
+            {"receipt": "pre/controls/c1-empty-set.json", "exit": 0, "defects": [], "note": "mutants 0, survivors 0 admitted"},
+            {"receipt": "/nonexistent.json", "exit": 1, "defects": "FileNotFoundError traceback, no {defects} object"}
+          ]
+        },
+        "--battery": {
+          "argv": "python3 -I -B tools/round-79/gate-mutation.py --root . --rev REV --work DIR --battery --json-out PATH [--control empty-set]",
+          "exit": {"0": "receipt.ok true", "1": "receipt.ok false (a red or unpinned battery)", "2": "--rev missing, or target absent at rev (prints {ok:false, unevaluable:...})"},
+          "fields": [
+            "schema", "round", "predicate", "measured_at",
+            "target{path,rev,bytes,sha256}",
+            "target_pin{expected,actual,matched}",
+            "pristine{exit,cases,failures,ok,failed_cases}",
+            "mutants_total", "killed", "survivors", "survivor_ids", "declared_case_hits",
+            "control",
+            "mutants[]{id,edit,declared_case,applied,apply_note,exit,failed_cases,case_absent,killed,killed_by_declared,detector_count,sole_detector,inconclusive[,stderr_tail]}",
+            "ok"
+          ],
+          "stdout_summary_fields": ["exit", "mutants_total", "killed", "survivors", "survivor_ids", "declared_case_hits", "pin_matched", "ok"],
+          "measured": {
+            "base_29d2ca30": {"exit": 1, "mutants_total": 8, "killed": 5, "survivors": 3, "survivor_ids": ["m03-near-miss-re-dead", "m05-atom-absent-bound", "m08-validate-no-refusal-guard"], "declared_case_hits": 5, "pin_matched": false, "pristine": {"cases": 26, "failures": 0}},
+            "freeze_ed68cd0a": {"exit": 0, "mutants_total": 8, "killed": 8, "survivors": 0, "declared_case_hits": 8, "pin_matched": true, "pristine": {"cases": 29, "failures": 0}, "sole_detectors": ["m02-qualified-atom-dead", "m03-near-miss-re-dead", "m04-negation-dead", "m05-atom-absent-bound", "m08-validate-no-refusal-guard"]}
+          }
+        },
+        "--control empty-set": {
+          "argv": "python3 -I -B tools/round-79/gate-mutation.py --root . --rev REV --battery --control empty-set --json-out PATH",
+          "exit": {"0": "never on a do-nothing control (receipt.ok requires len(mutants)==len(MUTANTS)==8)", "1": "always"},
+          "fields": "same receipt schema; mutants_total 0, killed 0, survivors 0, declared_case_hits 0, control 'empty-set', ok false",
+          "measured": {"receipt": ".ufo/waves/round-79/pre/controls/c1-empty-set.json", "ok": false, "validate_exit": 0, "validate_defects": []}
+        },
+        "no mode": {
+          "argv": "python3 -I -B tools/round-79/gate-mutation.py",
+          "exit": 2,
+          "fields": "stderr usage line only"
+        }
+      }
+    },
+    "tools/round-79/pointer-bind.py": {
+      "argv_shape": "python3 -I -B tools/round-79/pointer-bind.py [--root DIR] [--rev REV] [--json-out PATH] [--battery] [--selftest] [--validate PATH] [--control path-only]",
+      "mode_precedence": ["--selftest", "--validate", "--battery"],
+      "modes": {
+        "--selftest": {
+          "argv": "python3 -I -B tools/round-79/pointer-bind.py --selftest",
+          "exit": {"0": "every unit case passed", "1": "at least one case failed"},
+          "fields": "stdout only: {case,got,want,pass} lines plus 'SELFTEST cases=N failures=M'; no receipt",
+          "measured": {"cases": 16, "failures": 0, "exit": 0}
+        },
+        "--validate": {
+          "argv": "python3 -I -B tools/round-79/pointer-bind.py --validate PATH",
+          "exit": {"0": "defects == []", "1": "defects non-empty, OR path unreadable (uncaught FileNotFoundError)", "2": "never used"},
+          "fields": "stdout only: {defects:[...], checks:N, matched:K}",
+          "measured": [
+            {"receipt": "c2-at-freeze.json", "exit": 0, "defects": []},
+            {"receipt": "c2-at-base.json", "exit": 0, "defects": []},
+            {"receipt": "pre/controls/c2-path-only.json", "exit": 1, "defects": "10 defects: matched without a pointed-line digest / without a 1-based line range, one pair per check"},
+            {"receipt": "/nonexistent.json", "exit": 1, "defects": "FileNotFoundError traceback"}
+          ]
+        },
+        "--battery": {
+          "argv": "python3 -I -B tools/round-79/pointer-bind.py --root . --rev REV --battery --json-out PATH [--control path-only]",
+          "exit": {"0": "receipt.ok true", "1": "receipt.ok false", "2": "--rev missing, --battery missing (frozen bytes), or PROVINCE.md absent at rev"},
+          "fields": [
+            "schema", "round", "predicate", "checked_at",
+            "record{path,rev,sha256}",
+            "control",
+            "checks_total", "matched", "mismatches", "unparsed",
+            "checks[]{id,pointer,tokens,path,line_start,line_end,matched,unparsed,reason,line_sha256}",
+            "ok"
+          ],
+          "stdout_summary_fields": ["exit", "checks_total", "matched", "mismatches", "unparsed", "mismatch_ids", "ok"],
+          "measured": {
+            "base_29d2ca30": {"exit": 1, "checks_total": 5, "matched": 3, "mismatches": 2, "unparsed": 0, "mismatch_ids": ["omp-pin", "kimi-pin"], "pointers": {"omp-pin": "/home/vgpnk/.omp/agent/mcp.json:8", "kimi-pin": "~/.kimi-code/config.toml:4126"}},
+            "freeze_ed68cd0a": {"exit": 0, "checks_total": 5, "matched": 5, "mismatches": 0, "unparsed": 0, "pointers": {"omp-pin": "/home/vgpnk/.omp/agent/mcp.json:12", "kimi-pin": "~/.kimi-code/config.toml:4722"}}
+          }
+        },
+        "--control path-only": {
+          "argv": "python3 -I -B tools/round-79/pointer-bind.py --root . --rev REV --battery --control path-only --json-out PATH",
+          "exit": {"0": "always on a record whose five paths exist", "1": "a pointed path is absent"},
+          "fields": "same schema; control 'path-only'; line_start/line_end null and line_sha256 empty on every check",
+          "measured": {"exit": 0, "checks_total": 5, "matched": 5, "mismatches": 0, "unparsed": 0}
+        },
+        "no mode / --rev without --battery": {
+          "argv": "python3 -I -B tools/round-79/pointer-bind.py --root . --rev REV [--json-out PATH]",
+          "exit": 2,
+          "fields": "stderr usage line only; no receipt written",
+          "note": "this is exactly the argv printed in the frozen R79-C2 predicate and counting_command, so the printed command cannot run against the frozen bytes"
+        }
+      }
+    }
+  },
+  "wave_accounting": {
+    "source": ".ufo/waves/round-78/r78-w1-results.json",
+    "evidence_root": ".ufo/waves/round-78/w1/",
+    "seats": 12,
+    "seats_field_matches_results_length": true,
+    "nonempty": 11,
+    "evidence_dirs": 10,
+    "zero_byte_output": 1,
+    "seat_names": ["ScoutRouted", "ConnectorSibling", "ExecAttackFixtures", "ExecSurfaceProbe", "ReviewerC1", "ReviewerC2", "CriticClaims", "MutGate", "SentinelScope", "ScribeSources", "ScribeLesson", "RevengerInstruments"],
+    "seats_without_evidence_dir": [
+      {"name": "CriticClaims", "agent": "critic", "output_bytes": 2133, "note": "substantive prose, no files under the w1 dir"},
+      {"name": "SentinelScope", "agent": "sentinel", "output_bytes": 272, "note": "progress note, no files under the w1 dir"}
+    ],
+    "seats_with_zero_byte_output": [
+      {"name": "ExecSurfaceProbe", "agent": "executor", "output_bytes": 0, "evidence_dir": true}
+    ],
+    "report_claim": "SCORECARD.md:6107-6114 '**Wave.** `r78-w1`: 12 seats in one v1 wave (2 executor, 2 reviewer, 1 critic, 1 mutation-tester, 1 scout, 1 connector, 1 sentinel, 2 scribe, 1 revenger), attack roles 6/12 = 50 %, one connector; the L1 held the planner seat (the validator rejects a planner role). 10 seats returned substantive evidence (all files under `.ufo/waves/round-78/w1/`), 1 returned a progress note only (`SentinelScope`, ...) and 1 returned a truncated final answer (`ExecSurfaceProbe`, whose independent receipt did land ...)'",
+    "report_bins": {"substantive": 10, "progress_note": 1, "truncated": 1},
+    "verdict": "The three counts re-derive (12 / 11 non-empty / 10 dirs) and the bins add to 12, but the membership clause is off by one: the 10 'substantive evidence (all files under .ufo/waves/round-78/w1/)' must include CriticClaims, which has no file there, while ExecSurfaceProbe, which does have files there, sits in the truncated bin. Two seats have no evidence dir; the sentence names only one of them."
+  },
+  "claim_fields": {
+    "R79-C1": [
+      {"clause": "base: mutants_total 8", "value": 8, "field": "receipt.mutants_total", "status": "present"},
+      {"clause": "base: killed 5", "value": 5, "field": "receipt.killed", "status": "present"},
+      {"clause": "base: survivors 3", "value": 3, "field": "receipt.survivors", "status": "present"},
+      {"clause": "base: survivors name m03/m05/m08", "value": ["m03-near-miss-re-dead", "m05-atom-absent-bound", "m08-validate-no-refusal-guard"], "field": "receipt.survivor_ids", "status": "present"},
+      {"clause": "base: declared_case_hits 5", "value": 5, "field": "receipt.declared_case_hits", "status": "present"},
+      {"clause": "freeze: mutants_total 8", "value": 8, "field": "receipt.mutants_total", "status": "present"},
+      {"clause": "freeze: killed 8", "value": 8, "field": "receipt.killed", "status": "present"},
+      {"clause": "freeze: survivors 0", "value": 0, "field": "receipt.survivors", "status": "present"},
+      {"clause": "freeze: declared_case_hits 8", "value": 8, "field": "receipt.declared_case_hits", "status": "present"},
+      {"clause": "target_pin.matched true", "value": true, "field": "receipt.target_pin.matched", "status": "present"},
+      {"clause": "pristine 29 cases", "value": 29, "field": "receipt.pristine.cases", "status": "present"},
+      {"clause": "pristine 0 failures", "value": 0, "field": "receipt.pristine.failures", "status": "present"},
+      {"clause": "each mutant's declared case present and fails", "value": true, "field": "receipt.mutants[].case_absent (false) and receipt.mutants[].failed_cases (contains declared_case)", "status": "present"},
+      {"clause": "m03/m05/m08 each the sole failing case", "value": true, "field": "receipt.mutants[].sole_detector and receipt.mutants[].detector_count == 1", "status": "present"},
+      {"clause": "eight exact single-occurrence edits", "value": 8, "field": "receipt.mutants[].applied == true and apply_note == 'applied'", "status": "partial", "gap": "the occurrence count, the anchor text and the replace text are not in the receipt; apply_mutant is the only place the 'exactly 1' rule lives, so the receipt cannot re-derive single-occurrence"},
+      {"clause": "defect-free validate", "value": true, "field": null, "status": "absent", "gap": "produced by a separate --validate invocation; its result is never recorded in the receipt"},
+      {"clause": "exits 0 (freeze) / exits 1 (base)", "value": [0, 1], "field": null, "status": "absent", "gap": "process status only; the receipt carries ok:true/false and no exit field (the printed stdout summary has one, the receipt file does not)"},
+      {"clause": "measured at revision <rev>", "value": "rev", "field": "receipt.target.rev", "status": "present"}
+    ],
+    "R79-C2": [
+      {"clause": "checks_total 5", "value": 5, "field": "receipt.checks_total", "status": "present"},
+      {"clause": "base: matched 3", "value": 3, "field": "receipt.matched", "status": "present"},
+      {"clause": "base: mismatches 2", "value": 2, "field": "receipt.mismatches", "status": "present"},
+      {"clause": "base: omp-pin record :8", "value": 8, "field": "receipt.checks[id=omp-pin].pointer and .line_start", "status": "present"},
+      {"clause": "base: omp-pin the pin at :12", "value": 12, "field": null, "status": "absent", "gap": "the receipt records only the asserted line (8), its failing digest and the reason 'token ... is not on line 8'; the true line 12 appears in no field"},
+      {"clause": "base: kimi-pin record :4126", "value": 4126, "field": "receipt.checks[id=kimi-pin].pointer and .line_start", "status": "present"},
+      {"clause": "base: kimi-pin the pin at :4722", "value": 4722, "field": null, "status": "absent", "gap": "same shape as omp-pin :12"},
+      {"clause": "control path-only mismatches 0 on the same record", "value": 0, "field": "control receipt .mismatches, with .control == 'path-only'", "status": "present", "gap": "carried by a separate receipt file, and .ufo/waves/round-79/claims.json counting_command does not name the --control invocation that produces it"},
+      {"clause": "freeze: matched 5", "value": 5, "field": "receipt.matched", "status": "present"},
+      {"clause": "freeze: mismatches 0", "value": 0, "field": "receipt.mismatches", "status": "present"},
+      {"clause": "freeze: unparsed 0", "value": 0, "field": "receipt.unparsed", "status": "present"},
+      {"clause": "every pointer bound at the line and range it names", "value": true, "field": "receipt.checks[].line_start, .line_end, .line_sha256, .matched", "status": "present"},
+      {"clause": "defect-free validate", "value": true, "field": null, "status": "absent", "gap": "separate --validate invocation; not recorded in the receipt, and it is green on the red base receipt too"},
+      {"clause": "exits 0 (freeze) / exits 1 (base)", "value": [0, 1], "field": null, "status": "absent", "gap": "process status only; no exit field in the receipt"}
+    ],
+    "both": [
+      {"clause": "the printed counting command", "value": "argv", "field": null, "status": "absent", "gap": "neither receipt records argv or --root, so no receipt can be tied to the command printed in claims.json"}
+    ]
+  },
+  "freeze_gate": {
+    "file": ".ufo/waves/round-79/l1/scores/freeze-audit-at-freeze.json",
+    "entry_verbatim": {
+      "claims_file": ".ufo/waves/round-79/claims.json",
+      "findings": [],
+      "freeze": "ed68cd0a6cc790cca342380a2d80d1927a668c8c",
+      "instruments": ["tools/round-78/attack-gate.py", "tools/round-79/gate-mutation.py", "tools/round-79/pointer-bind.py"],
+      "verdict": "CLEAN"
+    },
+    "context_verbatim": {
+      "claim": "R29-freeze-gate",
+      "rev": "ed68cd0a6cc790cca342380a2d80d1927a668c8c",
+      "audited": 54,
+      "clean": 29,
+      "required_clean": ["round-79"],
+      "required_failed": [],
+      "summary": {"INSTRUMENT_ABSENT": 12, "INSTRUMENT_NONE": 7, "INSTRUMENT_PIN_MISMATCH": 3, "INSTRUMENT_REVISED": 18, "INSTRUMENT_UNPINNED": 12, "INSTRUMENT_UNRESOLVED": 11},
+      "flagged_count": 25,
+      "round_79_in_flagged": false
+    },
+    "scope_note": "auth_findings (tools/round-78/attack-gate.py:534-551) admits a claims receipt when its instrument {path, sha256} re-derives at the receipt's rev; it never executes the predicate's counting command. CLEAN therefore means the three instrument pins resolve, not that the frozen predicates are runnable."
+  },
+  "findings": [
+    {
+      "id": "S1",
+      "severity": "blocking-for-reproducibility",
+      "title": "R79-C2's frozen predicate and counting_command omit --battery, and the frozen instrument exits 2 on them",
+      "evidence": "argv `python3 -I -B tools/round-79/pointer-bind.py --root . --rev <rev> --json-out <receipt>` against the bytes at ed68cd0a exits 2, prints 'usage: --battery --rev <rev> [--json-out <path>] [--control path-only]' on stderr and writes no receipt; the same argv at base 29d2ca30 also exits 2. With --battery added the freeze arm exits 0 (5/5/0/0) and the base arm exits 1 (5/3/2), so every number in the claim is true of the command-with-flag and false of the command-as-printed.",
+      "files": ["tools/round-79/pointer-bind.py:320-322 (at ed68cd0a)", ".ufo/waves/round-79/claims.json (R79-C2 predicate and counting_command)"],
+      "in_flight": "The worktree at measurement carries an uncommitted edit by another seat making --rev imply --battery (git status ' M tools/round-79/pointer-bind.py', sha256 3f07bd2a... vs pinned 91d23dad...). HEAD and the freeze still carry the pinned bytes. This seat did not touch it."
+    },
+    {
+      "id": "S2",
+      "severity": "medium",
+      "title": "--validate is a consistency check, not an admission check",
+      "evidence": "It returns defects [] (exit 0) for the red base receipts (c1-at-base survivors 3, c2-at-base mismatches 2), for the C1 empty-set control (mutants 0, survivors 0) and for the C2 path-only control it returns 10 defects only because a control row legitimately has no line binding. 'A defect-free validate' therefore adds nothing to either predicate and cannot be pointed at as evidence."
+    },
+    {
+      "id": "S3",
+      "severity": "medium",
+      "title": "A missing receipt file exits 1, the same status as a false claim",
+      "evidence": "Both --validate paths do json.loads(open(path)) with no guard: /nonexistent.json raises FileNotFoundError and the process exits 1. Exit 2 exists in both instruments but is only reachable from argparse and Unevaluable, never from an unreadable receipt."
+    },
+    {
+      "id": "S4",
+      "severity": "medium",
+      "title": "Neither receipt records argv or --root",
+      "evidence": "The receipt schemas carry target{path,rev,bytes,sha256} / record{path,rev,sha256} but no argv, no root and no instrument self-digest. A receipt therefore cannot be tied to the counting command printed in claims.json, and cannot prove which instrument revision produced it without a separate pin."
+    },
+    {
+      "id": "S5",
+      "severity": "low",
+      "title": "The single-occurrence edit rule is not carried into the C1 receipt",
+      "evidence": "apply_mutant refuses text.count(anchor) != 1, but the receipt stores only applied:true and apply_note:'applied'. The anchor, the replacement and the occurrence count are absent, so 'eight exact single-occurrence edits' is assertable only from the instrument table, not from the receipt."
+    },
+    {
+      "id": "S6",
+      "severity": "low",
+      "title": "killed_by_declared is a dead field",
+      "evidence": "judge() sets killed_by_declared = killed unconditionally, and killed already requires the declared case to be present and false, so the field can never differ from killed."
+    },
+    {
+      "id": "S7",
+      "severity": "low",
+      "title": "The C2 base arm is unpinned by construction and the predicate does not say so",
+      "evidence": "TARGET_SHA256 is the freeze-time digest of tools/round-78/attack-gate.py; at base 29d2ca30 the file differs, so target_pin.matched is false on the base receipt. The C1 base clause claims only survivors 3, so this is not a falsehood, but a validator that requires pin.matched on every arm would reject the base arm."
+    },
+    {
+      "id": "S8",
+      "severity": "low",
+      "title": "pointer-bind's --rev scopes only the record, not the pointed files",
+      "evidence": "read_lines() opens expand(path) on the live filesystem; --rev selects PROVINCE.md via git show. The five pointed objects ($HOME configs, Ghidra properties, .bashrc) are always read as they are on disk now, which is the intended freshness semantics but is not stated in the predicate."
+    },
+    {
+      "id": "S9",
+      "severity": "informational",
+      "title": "Round-78 wave accounting is off by one in its membership clause",
+      "evidence": "seats 12, non-empty outputs 11, evidence dirs 10. The sentence's bins (10 substantive / 1 progress / 1 truncated) sum to 12 and the counts hold, but CriticClaims (2133 B, no dir) must be inside 'substantive evidence (all files under .ufo/waves/round-78/w1/)' while ExecSurfaceProbe (0 B, dir present) is the truncated one. Two seats have no evidence dir; the sentence names one."
+    },
+    {
+      "id": "S10",
+      "severity": "informational",
+      "title": "The freeze gate cannot see S1",
+      "evidence": "auth_findings checks instrument path+sha256 at the receipt rev only (tools/round-78/attack-gate.py:534-551); it never runs the predicate. The round-79 entry is therefore correctly CLEAN under its own rule while the predicate it audits is unrunnable as printed."
+    }
+  ],
+  "evidence": {
+    "measured_receipts": [
+      "c1-at-base.json", "c1-at-freeze.json", "c2-at-base.json", "c2-at-freeze.json", "c2-control-base.json",
+      "pred-argv-freeze.txt", "pred-argv-base.txt"
+    ],
+    "cross_checked": {
+      "c1_at_base_matches_pre": true,
+      "c2_at_base_matches_pre": true,
+      "c2_control_matches_pre": true
+    },
+    "selftests": {"gate-mutation": {"cases": 11, "failures": 0}, "pointer-bind": {"cases": 16, "failures": 0}, "attack-gate-pristine-at-freeze": {"cases": 29, "failures": 0}},
+    "digest_pins_match_at_base_head_freeze_declaration": true,
+    "instruments_absent_at_base": ["tools/round-79/gate-mutation.py", "tools/round-79/pointer-bind.py"]
+  },
+  "risks": [
+    "S1 is being repaired in an uncommitted worktree edit by another seat; if the L1 lands it, the instrument digest changes and the freeze pin 91d23dad... no longer resolves, which needs a supersession entry rather than a silent edit.",
+    "Re-running any receipt now from the worktree would exercise the modified pointer-bind.py, not the pinned bytes; my measurements were taken while the worktree still matched the pin (verified before the edit appeared).",
+    "S2 means a green validate on a red receipt is easy to mislabel as admission; any reviewer reading 'validate defect-free' as corroboration is reading a tautology."
+  ],
+  "tooling": {"installed": [], "upgraded": [], "pacman_used": false, "note": "no tool installs were needed; python3 and read-only git sufficed"}
+}

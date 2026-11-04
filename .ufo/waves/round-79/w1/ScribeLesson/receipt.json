@@ -1,0 +1,213 @@
+{
+ "coverage_map_note": {
+  "cited_fraction_restatement": "SCORECARD.md:23 must carry the observed pair 162/162 (not 158): 157 is the round-76 count and was already 4 behind at the round-77 tip (159/159). The selfcheck exits 1 until it is restated.",
+  "measured_at_base": {
+   "a2_claimed": [
+    157,
+    157
+   ],
+   "a2_observed": [
+    161,
+    161
+   ],
+   "exit": 1,
+   "knowledge_files": 161,
+   "recipe_a_mapped": 142,
+   "rev": "29d2ca30b83a6a0d85b0aa979de0138fde1660e6",
+   "stem_mapped": 161
+  },
+  "measured_at_freeze": {
+   "a2_claimed": [
+    157,
+    157
+   ],
+   "a2_observed": [
+    161,
+    161
+   ],
+   "a2_ok": false,
+   "exit": 1,
+   "knowledge_files": 161,
+   "recipe_a_hidden": 19,
+   "recipe_a_mapped": 142,
+   "recipe_a_score": 8.82,
+   "rev": "ed68cd0a6cc790cca342380a2d80d1927a668c8c",
+   "stem_head_score": 10.0,
+   "stem_mapped": 161
+  },
+  "measured_at_round77_tip": {
+   "a2_observed": [
+    159,
+    159
+   ],
+   "exit": 1,
+   "knowledge_files": 159,
+   "recipe_a_mapped": 142,
+   "recipe_a_score": 8.93,
+   "rev": "749c5717",
+   "stem_mapped": 159
+  },
+  "one_entry_landed": {
+   "population": 162,
+   "recipe_a": {
+    "mapped": 142,
+    "note": "DATE_TOKEN_RE matches `2026-10-` only; a November stem is invisible to the transcribed recipe A",
+    "score": 8.77
+   },
+   "with_map_row": {
+    "A1": "holds",
+    "head_score": 10.0,
+    "missing": [],
+    "stem_mapped": 162
+   },
+   "without_map_row": {
+    "A1": "fails",
+    "head_score": 9.94,
+    "missing": [
+     "2026-11-04-r79-mutation-and-pointers"
+    ],
+    "stem_mapped": 161
+   }
+  },
+  "parser_precision": "coverage_row() splits on the first `## Owned axes` (exactly one, SCORECARD.md:19) and returns its first `| coverage |` line (line 23); the restatement must be in place, and the current pair must be the first `n/m knowledge files` match in that row.",
+  "placement": "corpus/README.md, after the round-78 row (currently line 119; the wave worktree already carries a variant at line 120).",
+  "row_text": "| Instrument and record layer, round 79 | `2026-11-04-r79-mutation-and-pointers` | held \u2014 the selftest mutation battery (eight exact single-occurrence edits to `tools/round-78/attack-gate.py` at the measured rev, each killed only by its own declared selftest case, an absent case a survivor, and `m03`/`m05`/`m08` each caught by that one case alone) and the line-bound pointer binder (five `PROVINCE.md` pointer cells read at the 1-based line or range they name, the pointed lines retained as a sha256, with a committed `path-only` control that cannot fail); the lane's own record layer, not a new carrier class |"
+ },
+ "findings": [
+  "The frozen R79-C2 counting command cannot run against the frozen instrument: `claims.json:22` omits `--battery`, `pointer-bind.py:319-321` @ ed68cd0a exits 2. The two C2 receipts were taken with the flag. An uncommitted worktree repair (`--rev` alone selects battery mode, mtime 2026-11-04T10:11:49) closes it only when landed and disclosed as a supersession.",
+  "R79-C1's predicate has two conjuncts the counter records but never scores (`pristine.cases == 29`; sole-detector for m03/m05/m08). A forged receipt with `cases 1` and with m03 killed by three cases passes `--validate` with `defects []` (proofs A1/A2).",
+  "`pointer-bind.py` resolves duplicate record cells two ways (last-wins for client pins, first-wins for Ghidra/.bashrc); `PROVINCE.md:27` passes only because the operative range precedes the historical `.bashrc:63-69` at `:28`.",
+  "`pointer-bind.py`'s `len(results) == 5` is the parser's own constant (always five), and a six-cell record is truncated to five; `bind()`'s `line_count` parameter is dead (0 and 999 behave identically).",
+  "`.ufo/waves/round-79/pre/selftest-gate.txt` closes spot-check item 4 only by commit context: no rev/path/digest of its own; the binding is the a1f9b81c blob sha `4e4baf00...` plus a byte-identical re-run.",
+  "`--selfcheck` has been exit 1 since at least 749c5717: SCORECARD.md:23 cites the round-76 pair 157/157 while the observed population is 159/159 (round-77 tip) and 161/161 (base and freeze). Landing the r79 entry makes it 162/162 and requires restating the row in place; the assignment's 157->158 framing is 4 stale.",
+  "Spot-check item 2's count is now five, not four: at the freeze rev round-78's `instrument_supersessions` held 01768ac5 / 59a92fbd / 1a99064b / e134045e and the round-29 gate flagged the freeze INSTRUMENT_REVISED on a1f9b81c; da8e5d5e then disclosed a1f9b81c in the round-78 container, clearing the flag. The round-79 correction must say five and name it.",
+  "Spot-check items 1, 2, 5 and 6 are all still open in the committed text at the freeze (SCORECARD.md:6041/6043, LOG.md:4656, fleet-root report line 32, LOG heading at 4574); none can be fixed by rewriting filed bytes, so the round-79 record/report must carry the corrections.",
+  "Routed item 3 is fully closed: base 3/5 with the two named mismatches, control 0 mismatches on the same record, freeze 5/5 with `unparsed 0`.",
+  "Freeze gate re-run read-only at two revs (tools/round-29/freeze-gate.py --root . --rev <rev> --require-clean round-79): at ed68cd0a, 54 audited / 29 clean, exit 1, round-79 CLEAN with three instrument paths, round-78 FLAGGED INSTRUMENT_REVISED (a1f9b81c, disclosed 4), round-73 FLAGGED INSTRUMENT_PIN_MISMATCH; at HEAD da8e5d5e, 30 clean, round-78 now CLEAN, round-73 still FLAGGED and the gate still exits 1. 'round-79's entry audits CLEAN' is true at both revs; 'the gate exits 0' is false.",
+  "The tree moved during this seat: HEAD advanced ed68cd0a -> e0c19339 -> da8e5d5e, and the worktree also carries edits to SCORECARD.md, LOG.md, SKILL.md, corpus/{QUALITY,README,SOURCES}.md and both round-79 instruments. Residual-pointer citations are verified against `git show HEAD:` at da8e5d5e; instrument line citations are against the freeze blob ed68cd0a."
+ ],
+ "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "limits": [
+  "I did not execute either claim's battery as a claim measurement; I re-derived counters from the committed receipts and ran only read-only re-derivations of the instruments' own logic (copies in scratch) plus the printed-command reproduction.",
+  "The instruments' line citations are to the freeze blob `ed68cd0a`; `tools/round-79/pointer-bind.py` was being modified in the worktree during this seat (6 insertions / 3 deletions, uncommitted), so worktree line numbers differ from the freeze blob's.",
+  "The coverage restatement numbers are measured at `749c5717`, `29d2ca30` and `ed68cd0a`; a later knowledge entry or map row invalidates them.",
+  "I read no client-config bytes for this seat; the pointer digests quoted in the receipts are the instruments' own and were not re-read."
+ ],
+ "mistakes": [
+  {
+   "captured_by": "QUALITY 141 (new); Row 76 (printed command runs as printed) and Row 87 (a clause the instrument never implements)",
+   "class": "unrunnable counter \u2014 a frozen predicate's counting command that the frozen instrument refuses: R79-C2's printed command omits `--battery`, the freeze-era `main` required it, so the command as printed exits 2 and writes no receipt; the two C2 receipts were taken with the flag, so the frozen evidence never shows the gap.",
+   "evidence": "`.ufo/waves/round-79/claims.json:22`; `git show ed68cd0a:tools/round-79/pointer-bind.py` lines 319-321; `.ufo/waves/round-79/w1/ScribeLesson/proofs.txt` section G (as printed: exit 2, no receipt; with `--battery`: exit 0). Uncommitted worktree repair makes `--rev` alone select battery mode.",
+   "fix": "the instrument accepts the predicate's command (`--rev` alone selects battery mode) and the repair is disclosed as a post-freeze supersession; the regression test is the printed command run verbatim against the pinned blob (exit 2 before, exit 0 with checks_total 5 after).",
+   "id": "M79-5"
+  },
+  {
+   "captured_by": "QUALITY 141; sharpens Row 87",
+   "class": "unscored conjunct \u2014 the predicate's 'pristine 29 cases' and 'm03/m05/m08 detected by that one case alone' are written into the receipt (`pristine.cases`, `sole_detector`) and read by neither `receipt['ok']` nor `validate_receipt`; a forged receipt with `cases 1` or with m03 killed by three cases returns `defects []`.",
+   "evidence": "`tools/round-79/gate-mutation.py:184-196,200-242,236,260,303,313`; `proofs.txt` section A1/A2 (shipped validator clean; fixed validator names both defects; m01 legitimately two-detector stays clean).",
+   "fix": "score the named subset (`SOLE_REQUIRED = {m03-near-miss-re-dead, m05-atom-absent-bound, m08-validate-no-refusal-guard}`) and `pristine.cases == 29`; a blanket sole-detector rule would be a false defect because m01/m06/m07 have two detectors at the freeze.",
+   "id": "M79-6"
+  },
+  {
+   "captured_by": "QUALITY 142 (new)",
+   "class": "undeclared precedence \u2014 `parse_record` resolves a repeated client pin last-wins (dict comprehension) and a repeated Ghidra/.bashrc cell first-wins (`re.search`); a record keeping a superseded cell above the live one binds the superseded cell.",
+   "evidence": "`tools/round-79/pointer-bind.py:127,138,147`; `proofs.txt` section B (`Kimi :4126` then `:4722` binds `:4722`; `.bashrc:23-24` then `:28-29` binds the stale `:23-24`); `PROVINCE.md:27` precedes the historical `.bashrc:63-69` at `:28`, so the freeze passes on document order.",
+   "fix": "one declared precedence per shape with the ordinal recorded, and a selftest whose stale cell comes first; the two-cell fixture must bind `:28-29`.",
+   "id": "M79-7"
+  },
+  {
+   "captured_by": "QUALITY 142; Row 139's control clause",
+   "class": "vacuous floor \u2014 `ok` requires `len(results) == 5` but `parse_record` always emits five checks (three clients incl. placeholders, one Ghidra, one .bashrc), so the floor cannot fail and a six-cell record is silently truncated; `bind()`'s `line_count` parameter is never read (0 and 999 behave identically; the bound is `len(lines)`).",
+   "evidence": "`tools/round-79/pointer-bind.py:79,123-157,205`; `proofs.txt` section C (empty record -> 5 checks, all unparsed; six-cell record -> 5 checks, one dropped) and D (line_count 0 vs 999 identical; past-end message uses len(lines)).",
+   "fix": "`cells_present` counted from the record's bytes before collapse must equal `checks_total`, and a declared-but-dropped cell is `unparsed`; delete `line_count` or make it authoritative; selftests `red-extra-cell-dropped`, `red-line-count-mismatch`.",
+   "id": "M79-8"
+  },
+  {
+   "captured_by": "QUALITY 143 (new); extends 18 and 130",
+   "class": "context-bound receipt \u2014 `.ufo/waves/round-79/pre/selftest-gate.txt` carries the 29-case tally and no rev, path or digest (zero 8+-hex tokens); its link to the declaration's instrument is external (blob at a1f9b81c hashes to the pin 4e4baf00..., re-run byte-identical).",
+   "evidence": "`.ufo/waves/round-79/pre/selftest-gate.txt`; `tools/round-79/gate-mutation.py:42`; `corpus/lessons/round-78-verifier-spotcheck.md:165-167`; `proofs.txt` section F.",
+   "fix": "open the tally with `rev=<40hex> target=<path> sha256=<64hex>` (or JSON with those fields) and refuse a receipt without them; the test is declared digest == blob digest at the declared rev.",
+   "id": "M79-9"
+  }
+ ],
+ "quality_rows": [
+  {
+   "evidence": "`.ufo/waves/round-79/claims.json:22`; `tools/round-79/gate-mutation.py:196,236,260,303,313`; `proofs.txt` sections A and G",
+   "id": 141,
+   "supersedes": "sharpens 76 and 87",
+   "text": "The predicate's own counting command must execute against the instrument the freeze pins (R79-C2's command omits `--battery`, the frozen main required it -> exit 2), and every conjunct the predicate states must be an input to the counter's ok/validate path (`sole_detector`, `pristine.cases` are written and never read). Score the subset the predicate quantifies over, never a superset.",
+   "title": "a frozen predicate runs as printed, and every conjunct it states is scored"
+  },
+  {
+   "evidence": "`tools/round-79/pointer-bind.py:79,123-157,205`; `PROVINCE.md:27-28`; `proofs.txt` sections B-D",
+   "id": 142,
+   "supersedes": "new; extends 139's control clause",
+   "text": "One shape resolving a repeated cell last-wins and another first-wins leaves the operative cell to undeclared document order; a population floor that is the parser's own constant can never fail while extra cells are dropped; a bound parameter the body never reads is deleted or made authoritative.",
+   "title": "a record parser declares its cell precedence and its cell population"
+  },
+  {
+   "evidence": "`.ufo/waves/round-79/pre/selftest-gate.txt`; `SCORECARD.md:23`; `tools/round-66/coverage-selfcheck.py` A2; `proofs.txt` section F",
+   "id": 143,
+   "supersedes": "extends 18 and 130",
+   "text": "A tally with only case lines binds to its commit, not to the instrument (`pre/selftest-gate.txt`); a scorecard cell citing `157/157` from the round-76 record measures a different population (`A2-cited-fraction` ok false, selfcheck exit 1 at 749c5717 / 29d2ca30 / ed68cd0a). Name the domain in the artefact's own bytes and restate the pair in the round that moves it.",
+   "title": "a cited count carries the revision and population it was measured at, and is restated when the population moves"
+  }
+ ],
+ "revs": {
+  "base": "29d2ca30b83a6a0d85b0aa979de0138fde1660e6",
+  "declaration": "a1f9b81cf0cd5065df3a9b25b30ce2eb184d012d",
+  "freeze": "ed68cd0a6cc790cca342380a2d80d1927a668c8c"
+ },
+ "round": 79,
+ "routed_items": [
+  {
+   "closed_by": "the round-79 record/report correction (not yet landed). Filed bytes are append-only, so the repair is an appended correction naming both hashes, never a rewrite.",
+   "item": "Stale filing-receipt revisions in prose (round-78 report + SCORECARD)",
+   "mistake_row_would_say": "**superseded revision in prose** \u2014 a prose citation of a receipt revision is a claim about the current receipt; when the receipt is re-taken, every prose copy is corrected in the next record with old and operative hash side by side (QUALITY 132).",
+   "n": 1,
+   "pointer": "SCORECARD.md:6043 still says the gate at the record rev `3bb87162`; LOG.md:4656 still names `bc73b27a` and `3bb87162`. The operative rev is `e2846648b2af6fcc5af8bf36547a405aea13ae46`, read from `.ufo/waves/round-78/l1/scores/prefile-at-filing.json` and `.../gate-at-tip.json` (`rev`, `exit 0`).",
+   "status": "open at the freeze; unclaimed record repair"
+  },
+  {
+   "closed_by": "the round-79 record correction (not yet landed)",
+   "item": "SCORECARD supersession count (`changed twice`)",
+   "mistake_row_would_say": "**supersession count restated from memory** \u2014 the count is re-derived from the disclosures in the same file (`len(instrument_supersessions)`), not from the first two hashes quoted in the prose (QUALITY 132).",
+   "n": 2,
+   "pointer": "SCORECARD.md:6041 says 'The gate changed twice after the freeze; both (`59a92fbd`, `01768ac5`)' (verified at HEAD da8e5d5e). Round-78's `instrument_supersessions` now holds 5 entries: `01768ac5`, `59a92fbd`, `1a99064b`, `e134045e` and `a1f9b81c`; the fifth was appended post-freeze by `da8e5d5e` ('round-79: disclose the round-79 revision of the round-78 gate in the round-78 freeze container'). At the freeze rev ed68cd0a the file held 4 and the round-29 gate flagged the round-78 freeze INSTRUMENT_REVISED on `a1f9b81c`.",
+   "status": "open at the freeze; unclaimed record repair \u2014 and the correct count is now five, not four"
+  },
+  {
+   "closed_by": "`tools/round-79/pointer-bind.py` binds each pointer at its 1-based line or range; the record's two stale cells were rebound and a `path-only` control was committed as the rule that cannot fail.",
+   "item": "Stale line pointers + path-only pointer rule",
+   "mistake_row_would_say": "the two landed rows (reference-drift + vacuous control) already say it; the drafted M79-7/M79-8 add the parser-side residue (undeclared duplicate precedence; a floor that cannot fail).",
+   "n": 3,
+   "pointer": "base `.ufo/waves/round-79/pre/c2-at-base.json` 5 checks / 3 matched / 2 mismatches (`omp-pin`, `kimi-pin`); control `pre/controls/c2-path-only.json` 5/5, `mismatches 0` on the same record; freeze `l1/scores/c2-at-landing.json` 5/5, `mismatches 0`, `unparsed 0`. Record cells now `PROVINCE.md:16-18` (OMP `:12`, Kimi `:4722`) and `PROVINCE.md:27` (`.bashrc:28-29`).",
+   "status": "CLOSED by R79-C2"
+  },
+  {
+   "closed_by": "`.ufo/waves/round-79/pre/selftest-gate.txt` records the final instrument's tally; it is committed in `a1f9b81c`, whose `tools/round-78/attack-gate.py` blob is sha256 `4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf` (the pin at `tools/round-79/gate-mutation.py:42`), and re-running that blob reproduces the file byte-for-byte.",
+   "item": "No self-test receipt at the final instrument revision",
+   "mistake_row_would_say": "**context-bound receipt** \u2014 a machine tally that carries no revision/digest binds only through the commit that contains it; a reader holding the file alone cannot say which bytes it scored (extends QUALITY 18 and 130).",
+   "n": 4,
+   "pointer": "`.ufo/waves/round-79/pre/selftest-gate.txt` last line `SELFTEST cases=29 failures=0`; zero `[0-9a-f]{8,}` tokens in the file, so it names no rev, path or digest of its own. Re-derivation: `.ufo/waves/round-79/w1/ScribeLesson/proofs.txt` section F (both sides hash `7a01905a7381c724`). Drafted mistake row M79-9 and QUALITY 143.",
+   "status": "CLOSED by commit context, NOT by the receipt's own bytes"
+  },
+  {
+   "closed_by": "the round-79 record names the measured counts instead of repeating the range",
+   "item": "Stale line range `tools/round-78/attack-gate.py:1-940`",
+   "mistake_row_would_say": "**line range without a revision** \u2014 a range is a measurement of the file at a named rev; state the counted lines with the rev, and let the filed report be corrected by an appended erratum (QUALITY 18).",
+   "n": 5,
+   "pointer": "fleet-root `.ufo/reports/round-78/kaidoku.md:32` cites `tools/round-78/attack-gate.py:1-940`. Measured: 949 lines at `29d2ca30`, 974 at `ed68cd0a` (`git show <rev>:tools/round-78/attack-gate.py | wc -l`). The lane's own SCORECARD/LOG/lesson carry no copy of `1-940` (grep at the freeze).",
+   "status": "open in the filed report; the lane cannot rewrite it"
+  },
+  {
+   "closed_by": "the round-79 LOG entry opens its own `## 2026-11-04 \u2014 round 79: \u2026` heading",
+   "item": "LOG structure (round-78 block appended under the round-77 heading)",
+   "mistake_row_would_say": "**heading-less append** \u2014 an entry appended under the previous round's heading makes two rounds one entry; every round opens its own `##` heading before its first bullet (QUALITY 18 / CORPUS record shape).",
+   "n": 6,
+   "pointer": "`LOG.md`: the last `## ` heading is `## 2026-11-04 \u2014 round 77: \u2026` at line 4574; the round-78 block runs as bullet items beneath it to the file tail (`tail -6 LOG.md` = round-78 wave accounting).",
+   "status": "open at the freeze"
+  }
+ ],
+ "seat": "ScribeLesson"
+}

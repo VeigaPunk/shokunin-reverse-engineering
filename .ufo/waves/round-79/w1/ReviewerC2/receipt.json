@@ -1,0 +1,556 @@
+{
+ "schema": "kaidoku-r79-reviewer-c2-v1",
+ "round": 79,
+ "seat": "ReviewerC2",
+ "target": "R79-C2 (freshness: pointer binding at the named line)",
+ "revs": {
+  "base": "29d2ca30b83a6a0d85b0aa979de0138fde1660e6",
+  "declaration": "a1f9b81cf0cd5065df3a9b25b30ce2eb184d012d",
+  "freeze": "ed68cd0a6cc790cca342380a2d80d1927a668c8c"
+ },
+ "verdict": "counters reproduce; five attack shapes behave as the frozen rule requires; digest-only holds; path-only control is non-vacuous; ONE high-severity record defect: the frozen counting command omits the mandatory --battery flag",
+ "counts": {
+  "landing_receipt": {
+   "path": ".ufo/waves/round-79/l1/scores/c2-at-landing.json",
+   "sha256": "5a1c8cb7c6c32db4b33b39dc432d317a1c87c48f2e389155d20f126d926be4b2",
+   "checks_total": 5,
+   "matched": 5,
+   "mismatches": 0,
+   "unparsed": 0,
+   "ok": true,
+   "checked_at": "2026-11-04T10:03:14-03:00",
+   "record_sha256": "99d29a00ecabf492afee5ec1e393455761bf2947bac6ec1e25e14951b8752ca0",
+   "record_rev": "ed68cd0a6cc790cca342380a2d80d1927a668c8c"
+  },
+  "rederived_from_check_list": {
+   "checks_total": 5,
+   "matched": 5,
+   "mismatches": 0,
+   "unparsed": 0,
+   "ok": true
+  },
+  "validate_landing": {
+   "exit": 0,
+   "defects": []
+  },
+  "fresh_freeze_run": {
+   "checks_total": 5,
+   "matched": 5,
+   "mismatches": 0,
+   "unparsed": 0,
+   "ok": true,
+   "exit": 0,
+   "identical_to_landing": "counts and all ten check fields equal; checked_at differs"
+  },
+  "fresh_base_run": {
+   "checks_total": 5,
+   "matched": 3,
+   "mismatches": 2,
+   "unparsed": 0,
+   "ok": false,
+   "exit": 1,
+   "mismatch_ids": [
+    "omp-pin",
+    "kimi-pin"
+   ],
+   "identical_to_base_receipt": "counts, ids and all ten check fields equal; checked_at differs"
+  },
+  "independent_parser": {
+   "freeze": {
+    "checks_total": 5,
+    "matched": 5,
+    "mismatches": 0,
+    "unparsed": 0,
+    "ok": true
+   },
+   "base": {
+    "checks_total": 5,
+    "matched": 3,
+    "mismatches": 2,
+    "unparsed": 0,
+    "ok": false,
+    "mismatch_ids": [
+     "omp-pin",
+     "kimi-pin"
+    ]
+   },
+   "agrees_with_receipts": "counts, ids, line ranges and every line_sha256 equal",
+   "declaration_counts_in_record": {
+    "pin_pairs": 3,
+    "ghidra_pointer": 1,
+    "ghidra_value": 2,
+    "bashrc_pointer": 6
+   }
+  },
+  "instrument_pin": {
+   "declared": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "worktree": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "at_declaration": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90",
+   "at_freeze": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90"
+  },
+  "not_run": "the frozen command without --battery: exit 2, usage on stderr, no receipt written"
+ },
+ "fixtures": [
+  {
+   "id": "a-line-zero",
+   "level": "unit",
+   "shape": "pointer at line 0 (f.json:0)",
+   "expected": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": false,
+    "reason": "line range 0-0 is not a forward 1-based range"
+   },
+   "observed": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": false,
+    "reason": "line range 0-0 is not a forward 1-based range",
+    "line_start": 0,
+    "line_end": 0
+   },
+   "ok": true
+  },
+  {
+   "id": "a-backwards",
+   "level": "unit",
+   "shape": "backwards range (f.json:3-2)",
+   "expected": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": false,
+    "reason": "line range 3-2 is not a forward 1-based range"
+   },
+   "observed": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": false,
+    "reason": "line range 3-2 is not a forward 1-based range",
+    "line_start": 3,
+    "line_end": 2
+   },
+   "ok": true
+  },
+  {
+   "id": "a-zero-start-range",
+   "level": "unit",
+   "shape": "range 0-2",
+   "expected": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": false,
+    "reason": "line range 0-2 is not a forward 1-based range"
+   },
+   "observed": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": false,
+    "reason": "line range 0-2 is not a forward 1-based range",
+    "line_start": 0,
+    "line_end": 2
+   },
+   "ok": true
+  },
+  {
+   "id": "b-range-second-line",
+   "level": "unit",
+   "shape": "range 1-2 where only line 2 carries the token",
+   "expected": {
+    "matched": true,
+    "unparsed": false,
+    "reason": "",
+    "line_start": 1,
+    "line_end": 2,
+    "has_digest": true
+   },
+   "observed": {
+    "matched": true,
+    "unparsed": false,
+    "reason": "",
+    "line_start": 1,
+    "line_end": 2,
+    "has_digest": true
+   },
+   "ok": true
+  },
+  {
+   "id": "c-past-eof",
+   "level": "unit",
+   "shape": "pointer :9 on a 4-line file",
+   "expected": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": false,
+    "reason": "line range 9-9 runs past end of file (4 lines)"
+   },
+   "observed": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": false,
+    "reason": "line range 9-9 runs past end of file (4 lines)"
+   },
+   "ok": true
+  },
+  {
+   "id": "c-range-past-eof",
+   "level": "unit",
+   "shape": "range 3-9 on a 4-line file",
+   "expected": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": false,
+    "reason": "line range 3-9 runs past end of file (4 lines)"
+   },
+   "observed": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": false,
+    "reason": "line range 3-9 runs past end of file (4 lines)"
+   },
+   "ok": true
+  },
+  {
+   "id": "c-last-line-inside",
+   "level": "unit",
+   "shape": "boundary pointer :4 on a 4-line file",
+   "expected": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": true,
+    "reason": "token 'rea-agents@6.7.0' is not on line 4"
+   },
+   "observed": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": true,
+    "reason": "token 'rea-agents@6.7.0' is not on line 4"
+   },
+   "ok": true
+  },
+  {
+   "id": "d-token-elsewhere",
+   "level": "unit",
+   "shape": "token on line 2, pointer names line 1",
+   "expected": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": true,
+    "reason": "token 'rea-agents@6.7.0' is not on line 1"
+   },
+   "observed": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": true,
+    "reason": "token 'rea-agents@6.7.0' is not on line 1"
+   },
+   "ok": true
+  },
+  {
+   "id": "d-token-outside-range",
+   "level": "unit",
+   "shape": "token on line 2, pointer names range 3-4",
+   "expected": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": true,
+    "reason": "token 'rea-agents@6.7.0' is not on line 3-4"
+   },
+   "observed": {
+    "matched": false,
+    "unparsed": false,
+    "has_digest": true,
+    "reason": "token 'rea-agents@6.7.0' is not on line 3-4"
+   },
+   "ok": true
+  },
+  {
+   "id": "e-no-line",
+   "level": "unit",
+   "shape": "record cell with no :line",
+   "expected": {
+    "matched": false,
+    "unparsed": true,
+    "has_digest": false,
+    "reason": "pointer carries no line number"
+   },
+   "observed": {
+    "matched": false,
+    "unparsed": true,
+    "has_digest": false,
+    "reason": "pointer carries no line number"
+   },
+   "ok": true
+  },
+  {
+   "id": "e-trailing-colon",
+   "level": "unit",
+   "shape": "pointer ends with a bare colon",
+   "expected": {
+    "matched": false,
+    "unparsed": true,
+    "has_digest": false,
+    "reason": "pointer carries no line number"
+   },
+   "observed": {
+    "matched": false,
+    "unparsed": true,
+    "has_digest": false,
+    "reason": "pointer carries no line number"
+   },
+   "ok": true
+  },
+  {
+   "id": "e2e-five-shapes",
+   "level": "end-to-end",
+   "shape": "fixture repo: green devin, no-line OMP, past-EOF Kimi, line-0 Ghidra, backwards .bashrc",
+   "expected": {
+    "exit": 1,
+    "checks_total": 5,
+    "matched": 1,
+    "mismatches": 4,
+    "unparsed": 1,
+    "ok": false,
+    "unparsed_ids": [
+     "omp-pin"
+    ]
+   },
+   "observed": {
+    "exit": 1,
+    "checks_total": 5,
+    "matched": 1,
+    "mismatches": 4,
+    "unparsed": 1,
+    "ok": false,
+    "unparsed_ids": [
+     "omp-pin"
+    ]
+   },
+   "ok": true
+  },
+  {
+   "id": "f-duplicate-cell-collapse",
+   "level": "unit",
+   "shape": "two OMP declarations; the first is stale, the last is green",
+   "expected": {
+    "count": 5,
+    "unparsed": [],
+    "omp_pointer": "/home/x/new.json:2"
+   },
+   "observed": {
+    "count": 5,
+    "unparsed": [],
+    "omp_pointer": "/home/x/new.json:2",
+    "note": "dict comprehension keeps the last declaration; the stale first cell is never checked"
+   },
+   "ok": true
+  },
+  {
+   "id": "f-e2e-duplicate-masking",
+   "level": "end-to-end",
+   "shape": "fixture repo whose first OMP pointer is stale (old.json:1) and second is green (new.json:2)",
+   "expected": {
+    "checks_total": 5,
+    "matched": 5,
+    "mismatches": 0,
+    "unparsed": 0,
+    "ok": true,
+    "omp_matched": true
+   },
+   "observed": {
+    "exit": 0,
+    "checks_total": 5,
+    "matched": 5,
+    "mismatches": 0,
+    "unparsed": 0,
+    "ok": true,
+    "omp_pointer": ".../dup-repo/new.json:2",
+    "omp_matched": true,
+    "note": "stale duplicate silently dropped; receipt green"
+   },
+   "ok": true
+  },
+  {
+   "id": "g-substring-pin",
+   "level": "unit",
+   "shape": "live line carries rea-agents@6.7.05 against declared token rea-agents@6.7.0",
+   "expected": {
+    "matched": true
+   },
+   "observed": {
+    "matched": true,
+    "note": "substring match: a longer pin containing the token passes"
+   },
+   "ok": true
+  },
+  {
+   "id": "g-substring-version",
+   "level": "unit",
+   "shape": "live line carries application.version=12.1.40 against token application.version=12.1.4",
+   "expected": {
+    "matched": true
+   },
+   "observed": {
+    "matched": true,
+    "note": "same substring semantics on the Ghidra value"
+   },
+   "ok": true
+  },
+  {
+   "id": "h-colon-in-path",
+   "level": "unit",
+   "shape": "pointer path itself contains a colon and digits (/home/x/a:1.json:2)",
+   "expected": {
+    "matched": true,
+    "line_start": 2,
+    "line_end": 2
+   },
+   "observed": {
+    "matched": true,
+    "line_start": 2,
+    "line_end": 2,
+    "note": "path split on the last colon only"
+   },
+   "ok": true
+  }
+ ],
+ "digest_only": {
+  "receipt": "c2-at-landing.json",
+  "fields_per_check": [
+   "id",
+   "line_end",
+   "line_sha256",
+   "line_start",
+   "matched",
+   "path",
+   "pointer",
+   "reason",
+   "tokens",
+   "unparsed"
+  ],
+  "digest_length_bits": 256,
+  "digests_recomputed_from_live_pointed_lines": "5/5 equal",
+  "line_bytes_present": false,
+  "scan": "12-byte sliding windows of each pointed line, minus the declared tokens and path: 0 windows occur in the receipt; no 'env' key; no api_key/secret/token=/ghp_/sk-/Bearer substrings",
+  "tokens_recorded": [
+   "rea-agents@6.7.0",
+   "application.version=12.1.4",
+   "GHIDRA_INSTALL_DIR=",
+   "JAVA_HOME="
+  ],
+  "tokens_note": "package pin / key names only; no environment block, no secret value",
+  "checked_at_present": true
+ },
+ "path_only_control": {
+  "freeze": {
+   "checks_total": 5,
+   "matched": 5,
+   "mismatches": 0,
+   "unparsed": 0,
+   "ok": true,
+   "exit": 0,
+   "line_start": null,
+   "line_end": null,
+   "line_sha256": ""
+  },
+  "base": {
+   "checks_total": 5,
+   "matched": 5,
+   "mismatches": 0,
+   "unparsed": 0,
+   "ok": true,
+   "exit": 0
+  },
+  "base_line_bound_arm": {
+   "matched": 3,
+   "mismatches": 2,
+   "mismatch_ids": [
+    "omp-pin",
+    "kimi-pin"
+   ]
+  },
+  "validate_on_control_receipt": {
+   "exit": 1,
+   "defects": 10,
+   "kinds": [
+    "matched without a pointed-line digest",
+    "matched without a 1-based line range"
+   ]
+  },
+  "non_vacuity": "The control reads no line, so its 0 is structural and carries no evidence: at base it returned 0 on the same stale record where the line-bound arm returned 2. It therefore demonstrates the round-78 rule's blindness, not the claim. It also cannot be laundered as the claim's receipt: its own checks carry null ranges and empty digests, and --validate rejects it with 10 defects. The claim's counter is the line-bound arm, whose five matched checks carry 1-based ranges and digests that recompute from the live bytes."
+ },
+ "findings": [
+  {
+   "id": "F1",
+   "severity": "high",
+   "kind": "frozen record / predicate, not instrument logic",
+   "summary": "The frozen R79-C2 counting command omits --battery. Executed verbatim it exits 2 with the usage line and writes no receipt, so the predicate's literal command cannot exit 0 (landing) or 1 (base) as written.",
+   "evidence": [
+    "plans/round-79-claims.md:86 predicate has no --battery",
+    "claims.json R79-C2 counting_command and predicate have no --battery",
+    "tools/round-79/pointer-bind.py:319 requires --battery for any --rev run",
+    "verbatim run: exit 2, usage, no file written",
+    "with --battery appended: freeze exit 0 5/5/0/0, base exit 1 3/5/2/0, both byte-identical in counts and checks to the frozen receipts",
+    "freeze-audit-at-freeze.json records round-79 clean with required_failed [], so the freeze gate did not catch the non-runnable command; executing it would have exited 2"
+   ],
+   "effect": "The measured semantic content of R79-C2 reproduces exactly; the frozen sentence is not re-runnable as written. Repair: add --battery to the plan, the claims.json counting_command+predicate and the instrument's PREDICATE constant (which is copied into every receipt), then re-pin the instrument hash and re-freeze.",
+   "blocks_claim": false,
+   "blocks_verbatim_rederivation": true
+  },
+  {
+   "id": "F2",
+   "severity": "low",
+   "kind": "residual instrument gap",
+   "summary": "Duplicate declarations collapse silently: pin cells are last-wins (parse_record dict comprehension), while the Ghidra pointer/value and the .bashrc pointer are first-wins. A stale duplicate can therefore be dropped before it is compared.",
+   "evidence": [
+    "tools/round-79/pointer-bind.py:127 last-wins pin dict",
+    "tools/round-79/pointer-bind.py:138,147 first-match search for Ghidra/.bashrc",
+    "fixture f-e2e-duplicate-masking: stale first OMP cell dropped, receipt ok true",
+    "record probe: 3 pin pairs, 1 Ghidra pointer but 2 application.version values, 6 .bashrc pointers \u2014 the frozen record's scoped cells are single, so its counts stand"
+   ],
+   "effect": "Not triggered by the frozen record; a future record carrying a second, divergent declaration would bind only one and still report checks_total 5. A uniqueness assertion per cell family would close it.",
+   "blocks_claim": false
+  },
+  {
+   "id": "F3",
+   "severity": "info",
+   "kind": "residual precision",
+   "summary": "Tokens are substring tests, so a live value that merely contains the declared token passes (rea-agents@6.7.05 vs 6.7.0; application.version=12.1.40 vs 12.1.4).",
+   "evidence": [
+    "tools/round-79/pointer-bind.py:106 'token in line'",
+    "fixtures g-substring-pin and g-substring-version both matched"
+   ],
+   "effect": "The claim's literal wording ('each declared token to occur there') is satisfied; version-boundary drift such as a 6.7.0-rc or 12.1.40 value would pass. Exact token-boundary matching would strengthen a future claim.",
+   "blocks_claim": false
+  },
+  {
+   "id": "F4",
+   "severity": "info",
+   "kind": "maintainability / invariant",
+   "summary": "bind()'s line_count parameter is dead (every call passes 0; EOF uses len(lines)); lines arrive through text-mode readlines with errors='replace', so the digest is over decoded, newline-normalised text rather than raw file bytes.",
+   "evidence": [
+    "tools/round-79/pointer-bind.py:79,100,104,117,166",
+    "all five live digests recompute equal from the pointed lines (LF files, UTF-8)"
+   ],
+   "effect": "No effect on these five checks; a CRLF or non-UTF-8 config would hash a normalised line. Removing the dead parameter and reading bytes would make the digest a raw-byte claim.",
+   "blocks_claim": false
+  }
+ ],
+ "residual_risks": [
+  "The instrument's input is the live filesystem; the receipt's checked_at cannot be tied cryptographically to those bytes. My re-run at a later clock reproduces every digest, so the files did not drift in the interval, but a future reader can only re-check against the then-live files.",
+  "--validate proves internal re-derivation only; its own selftest accepts a forged receipt whose digests are arbitrary ('green-forged-consistent'). Live recomputation (done here, 5/5) is what makes the digest a claim about bytes.",
+  "The record carries six .bashrc pointers and two application.version values; only the declared scoped cell of each is checked (see F2)."
+ ],
+ "verification_gaps": [
+  "Cannot prove the landing run used --battery; only that adding it reproduces the receipt exactly.",
+  "The freeze-gate audit was not re-run by this seat (out of scope); its recorded result at the freeze is clean 29 with required_failed []."
+ ],
+ "tooling": {
+  "installs": [],
+  "note": "no tool installed or upgraded for this seat"
+ },
+ "scratch": "/fast/scratch/hyaku/kaidoku-r79/ReviewerC2 (removed before yield)",
+ "observations": [
+  "An unparsed cell is also counted in mismatches (mismatches = len(checks) - matched); at both frozen revisions unparsed is 0, so the claim's counters are unaffected.",
+  "The 12-byte leak scan covers each pointed line minus the declared tokens and path; zero windows appear anywhere in the receipt."
+ ]
+}

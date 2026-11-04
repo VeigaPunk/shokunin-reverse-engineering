@@ -1,0 +1,176 @@
+{
+ "ablation": {
+  "each_declared_case_sole_failure": true,
+  "method": "each mutant is one exact single-occurrence edit of the freeze copy; the copy's --selftest is run and its failing cases listed",
+  "results": {
+   "atom-absent-bound": {
+    "cases": 29,
+    "exit": 1,
+    "failures": [
+     "red-atom-absent"
+    ],
+    "stderr": "",
+    "summary": "SELFTEST cases=29 failures=1"
+   },
+   "near-miss-re-dead": {
+    "cases": 29,
+    "exit": 1,
+    "failures": [
+     "red-near-miss-unparsed"
+    ],
+    "stderr": "",
+    "summary": "SELFTEST cases=29 failures=1"
+   },
+   "validate-no-refusal-guard": {
+    "cases": 29,
+    "exit": 1,
+    "failures": [
+     "red-validate-refused-no-reason"
+    ],
+    "stderr": "",
+    "summary": "SELFTEST cases=29 failures=1"
+   }
+  }
+ },
+ "added": [
+  "red-near-miss-unparsed",
+  "red-atom-absent",
+  "red-validate-refused-no-reason"
+ ],
+ "added_matches_declared_claim": true,
+ "base": {
+  "cases": 26,
+  "failures": 0,
+  "instrument_sha256": "961d5a23c1d38116f5b992434fa2295b5a90643b4a52233e205837ac73bf48c0",
+  "names": [
+   "green-field",
+   "green-nested-unique",
+   "green-of",
+   "green-pristine",
+   "green-validate",
+   "green-atom",
+   "green-prose",
+   "red-qualified-atom",
+   "red-near-miss",
+   "red-near-miss-plural",
+   "red-negated",
+   "red-ambiguous",
+   "red-absent-field",
+   "red-type-mismatch",
+   "green-receipt",
+   "red-receipt-no-exit",
+   "red-receipt-bool-exit",
+   "red-receipt-stale-rev",
+   "green-true-value",
+   "green-pass-token",
+   "red-receipt-auth",
+   "green-mode-file",
+   "green-mode-exec",
+   "red-mode-tree",
+   "red-mode-link",
+   "red-auth-no-instrument"
+  ],
+  "names_digest": "414548210c6dceeb50572e87862769e28d4b721db9552f329161f5eb3ec6d92b",
+  "names_digest_emitted_order": "4159d201df0bfb9ad6fea4d6ffeeb77b0adc908233176030d719a1fd65ef9aeb",
+  "rev": "29d2ca30b83a6a0d85b0aa979de0138fde1660e6",
+  "summary_line": "SELFTEST cases=26 failures=0"
+ },
+ "base_is_prefix_of_freeze": true,
+ "case_to_path": [
+  {
+   "ablation": "near-miss-re-dead",
+   "branch": "near is None and NEAR_MISS_RE.match(clause) -> 'near_miss_field' finding",
+   "case": "red-near-miss-unparsed",
+   "function": "judge_group",
+   "line": 394,
+   "path": "tools/round-78/attack-gate.py"
+  },
+  {
+   "ablation": "atom-absent-bound",
+   "branch": "kind == 'field' and ATOM_ID_RE.match(field) and not isinstance(receipt.get('atoms'), list) -> (False, 'defect', {'reason': 'no_atoms'})",
+   "case": "red-atom-absent",
+   "function": "bind_clause",
+   "line": 311,
+   "path": "tools/round-78/attack-gate.py"
+  },
+  {
+   "ablation": "validate-no-refusal-guard",
+   "branch": "fixture.refused and not fixture.reasons -> defect '<id>: refused without a reason'",
+   "case": "red-validate-refused-no-reason",
+   "function": "validate_receipt",
+   "line": 794,
+   "path": "tools/round-78/attack-gate.py"
+  }
+ ],
+ "count_delta": 3,
+ "cwd_independence": {
+  "checked": true,
+  "identical_output_from_scratch_cwd": true
+ },
+ "duplicates": {
+  "base": [],
+  "freeze": []
+ },
+ "expected_added": [
+  "red-near-miss-unparsed",
+  "red-atom-absent",
+  "red-validate-refused-no-reason"
+ ],
+ "freeze": {
+  "cases": 29,
+  "failures": 0,
+  "instrument_sha256": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf",
+  "names": [
+   "green-field",
+   "green-nested-unique",
+   "green-of",
+   "green-pristine",
+   "green-validate",
+   "green-atom",
+   "green-prose",
+   "red-qualified-atom",
+   "red-near-miss",
+   "red-near-miss-plural",
+   "red-negated",
+   "red-ambiguous",
+   "red-absent-field",
+   "red-type-mismatch",
+   "green-receipt",
+   "red-receipt-no-exit",
+   "red-receipt-bool-exit",
+   "red-receipt-stale-rev",
+   "green-true-value",
+   "green-pass-token",
+   "red-receipt-auth",
+   "green-mode-file",
+   "green-mode-exec",
+   "red-mode-tree",
+   "red-mode-link",
+   "red-auth-no-instrument",
+   "red-near-miss-unparsed",
+   "red-atom-absent",
+   "red-validate-refused-no-reason"
+  ],
+  "names_digest": "10f3402d2a495c0c025afa5451fa307808c0a56ccd032984133b1e8fe4a1afe8",
+  "names_digest_emitted_order": "d975b3f5425e2474317f022bbb4cfbb434db0df6b1c0f93e1663a4a419f51335",
+  "rev": "ed68cd0a6cc790cca342380a2d80d1927a668c8c",
+  "summary_line": "SELFTEST cases=29 failures=0"
+ },
+ "instrument": "tools/round-78/attack-gate.py",
+ "landing_receipt": {
+  "byte_identical_to_freeze_selftest_output": true,
+  "path": ".ufo/waves/round-79/pre/selftest-gate.txt"
+ },
+ "method": "git show <rev>:tools/round-78/attack-gate.py into scratch, then python3 <copy> --selftest; case list = JSON lines keyed 'case'; counts from the SELFTEST summary line; names_digest = sha256 of sorted names joined by '\\n' with no trailing newline",
+ "paths_present_at_base": {
+  "bind_clause_atom_absent_return": 311,
+  "instrument_lines_base": 949,
+  "instrument_lines_freeze": 974,
+  "judge_group_near_miss_branch": 394,
+  "note": "the three exercised branches exist at base at the same lines; the round-79 delta is 25 added lines inside selftest() only (+3 cases), so the instrument grew 949 -> 974 lines",
+  "validate_receipt_refusal_guard": 794
+ },
+ "removed": [],
+ "round": 79,
+ "seat": "ExecCaseInventory"
+}

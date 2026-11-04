@@ -1,0 +1,40 @@
+== A1/A2  gate-mutation.py: predicate conjuncts recorded, never scored
+  ok path reads pristine.failures only: gate-mutation.py:236; ok at :313; sole_detector written at :196/:269
+  pristine.cases 1 (predicate: 29)
+  [ok] A1 shipped validate -> no defect: []
+  [ok] A1 fixed validate -> defect: ['pristine.ok with 1 cases, want 29']
+  m03 killed by three cases (predicate: that one case alone)
+  [ok] A2 shipped validate -> no defect: []
+  [ok] A2 fixed validate -> defect: ['m03-near-miss-re-dead: killed but not by its declared case alone']
+  m01 killed by three cases (legitimately multi-detector at the freeze)
+  [ok] A2 fixed validate stays clean for m01: []
+== B  pointer-bind.py: two duplicate-cell precedence rules
+  [ok] B kimi (dict comprehension, last wins): '/h/kimi.toml:4722'
+  [ok] B bashrc (re.search, first wins -- the stale cell): '/h/.bashrc:23-24'
+  live PROVINCE.md bashrc cell: /home/vgpnk/.bashrc:28-29 (operative range at PROVINCE.md:27, historical .bashrc:63-69 at :28)
+  [ok] B live cell is the operative range (by document order only): True
+== C  pointer-bind.py: the population floor is the parser's constant
+  empty record -> 5 checks: ['devin-pin', 'omp-pin', 'kimi-pin', 'ghidra-version', 'bashrc-exports']
+  [ok] C empty record still reports 5 (the floor cannot fail): 5
+  record carries 6 pointer cells -> 5 checks
+  [ok] C extra cell silently dropped: 1
+== D  pointer-bind.py: bind()'s line_count parameter is never read
+  [ok] D line_count=0 binds: True
+  [ok] D line_count=999 binds identically: True
+  [ok] D past-end bound comes from len(lines): 'line range 9-9 runs past end of file (4 lines)'
+== E  pointer-bind.py: the read destination comes from the record's bytes
+  [ok] E out-of-lane absolute path is read and bound: True
+  [ok] E receipt retains a digest, never the bytes: (64, False)
+== F  pre/selftest-gate.txt: the tally names no revision
+  [ok] F tally carries the 29-case summary: 'SELFTEST cases=29 failures=0'
+  [ok] F tally carries no hex token (no rev, no digest): []
+  [ok] F declaration blob equals the frozen pin: '4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf'
+  [ok] F re-run of the pinned blob reproduces the receipt byte-for-byte: (True, '7a01905a7381c724', '7a01905a7381c724')
+== G  the frozen R79-C2 counting command is refused by the frozen instrument
+  claims.json counting_command: python3 -I -B tools/round-79/pointer-bind.py --root . --rev <measured> --json-out <receipt>
+  [ok] G the frozen command omits --battery: False
+  [ok] G the frozen command exits 2 and writes no receipt: (2, False, 'usage: --battery --rev <rev> [--json-out <path>] [--control path-only]')
+  [ok] G the same bytes with --battery exit 0: 0
+  [ok] G the C1 command does carry --battery: True
+
+RESULT: 0 failed checks

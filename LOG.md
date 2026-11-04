@@ -4680,3 +4680,57 @@ tied-lowest axis). No nudge waiver is claimed.
   C2 exit 0 (8 of 8 matched, `checked_at 2026-11-04T09:41:21-03:00`), the three controls re-scored
   (`base-only` refused 0, `all-refuse` genuine 1, `no-fixtures` base_accepted 0) and the prefile gate PASS
   in a clean clone (`l1/scores/gate-at-tip.json`).
+
+## 2026-11-04 — round 79: the gate's selftest detectors close, and the record's pointers bind at their lines
+
+- **Round 79 — claims.** Base `29d2ca30b83a6a0d85b0aa979de0138fde1660e6`; declaration
+  `a1f9b81cf0cd5065df3a9b25b30ce2eb184d012d`; freeze `ed68cd0a6cc790cca342380a2d80d1927a668c8c` (the round-29
+  gate audits it CLEAN, findings [], three instrument paths). R79-C1 (calibration) freezes the round-78
+  wave's mutation question as `tools/round-79/gate-mutation.py`: eight exact single-occurrence edits of
+  `tools/round-78/attack-gate.py`, each killed only by its ONE declared selftest case; an absent case is a
+  survivor. Base: 8 mutants, 5 killed, survivors 3 (`m03`, `m05`, `m08`). Freeze: 8/8 killed, survivors 0,
+  `declared_case_hits 8`, pin matched, pristine 29 cases 0 failures, `m03`/`m05`/`m08` each the sole failing
+  case. R79-C2 (freshness) lands `tools/round-79/pointer-bind.py`: five `PROVINCE.md` pointer cells bound at the
+  1-based line or range they name, only a digest of the pointed lines retained. Base: mismatches 2 (`omp-pin`
+  `:8` -> `:12`, `kimi-pin` `:4126` -> `:4722`); freeze: 5/5, mismatches 0, unparsed 0. The `path-only`
+  control reports `mismatches 0` on the stale record — the round-78 rule that could not fail.
+- **Round 79 — the three new selftest cases.** `red-near-miss-unparsed` (a near-miss clause the grammar
+  cannot parse, caught only by `NEAR_MISS_RE`), `red-validate-refused-no-reason` (`validate_receipt`'s guard),
+  and `red-atom-absent` (the atom branch against a receipt with no atoms table). The gate's selftest moves
+  26 -> 29 cases; `pre/selftest-gate.txt` is the machine receipt at the pinned instrument revision (round-78
+  spot-check item 4).
+- **Round 79 — record repair.** `PROVINCE.md`'s OMP and Kimi pointers are rebound to `:12` and `:4722` with a
+  round-79 recheck pointer; the round-78 freeze container gains a fifth `instrument_supersessions` entry
+  disclosing the round-79 revision of `tools/round-78/attack-gate.py` (`da8e5d5e`), so both freezes audit
+  CLEAN at that revision. Round-78 spot-check items 1, 2, 5 and 6 are closed in this record and the report.
+- **Round 79 — in-round repairs the wave forced.** ReviewerC2, SentinelScope F1 and ScribeLesson G showed the
+  frozen R79-C2 counting-command text omits `--battery`; `pointer-bind.py` now defaults to its battery whenever
+  `--rev` is supplied, so the frozen sentence runs verbatim. CriticClaims Q4 showed the `path-only` control
+  self-declared `ok true` (now `would_pass`, never `ok`) and that the binder trusted the record's own path
+  (each check now also requires round 78's `same_path` declared-object rule); CriticClaims Q2 and ScribeLesson
+  A1/A2 showed the predicate's pristine `29 cases` and the three sole-detector conjuncts were recorded but not
+  scored (now in `ok` and `--validate`). Both instruments record their own digest, timestamp and a 40-hex rev,
+  and `--validate` re-derives them; the dead `line_count` parameter is gone. Predicates, counters, kill rules
+  and targets are unchanged; every receipt is re-taken at the record revision and the changes are disclosed in
+  `claims.json` `instrument_supersessions`.
+- **Round 79 — routed, not adopted.** CriticClaims Q2's class (a declared case that asserts source text rather
+  than behaviour kills the same mutant; the landed three cases are behavioural, so the measured after state is
+  true but the clause is weaker than it reads); `--validate` is an internal-consistency check, not an
+  authenticity check; the Critic's §9 reading that R79-C2 is a strictness increment on the round-78 pointer
+  rule (capability row worded as a revision) and that `freshness` is a fleet axis, not a lane-owned proxy;
+  MutInstruments' four surviving `validate_receipt` guards and the `battery()` cell; SentinelScope F2-F8.
+- **Round 79 — sources.** `corpus/SOURCES.md` 200 -> 202 rows: S295 (POSIX.1-2024 `grep` OPTIONS `-n`, tier A,
+  18-word located quote at snapshot line 97) and S296 (cargo-mutants book Welcome, tier B, 17-word located
+  quote at snapshot lines 184-186). The pre-append check at the freeze rev found neither host held
+  (`l1/pre-append-url-check.txt`); both snapshots are byte-identical to the source seat's independent fetches.
+  New knowledge entry `corpus/knowledge/2026-11-04-r79-mutation-and-pointers.md`; the coverage map gains the
+  round-79 row.
+- **Round 79 — wave.** `r79-w1`: 12 seats in one v1 wave, attack share 4/12 (two reviewers, one critic, one
+  mutation-tester), one connector; the L1 held the planner seat (the validator rejects a planner role).
+  Independent re-derivations: ExecBaseArm (second mutation implementation, survivor set identical),
+  ExecCaseInventory (26 -> 29 cases, three added, each the sole failure of its mutant), ExecRebind (second
+  parser/binder; digests converge; base 2 mismatches, freeze 5/5), ReviewerC1 (17 forged receipts, all
+  refused), ReviewerC2 (sixteen attack shapes; found the counting-command defect), MutInstruments (four
+  `validate_receipt` guards and the `battery()` cell survive their six mutants — routed to round 80),
+  SentinelScope (no secret-bearing receipt field; path/scratch/`--rev` findings routed), ScribeSources,
+  ScribeLesson, ScoutRouted and ConnectorSibling as filed. No claim was contradicted by a seat.

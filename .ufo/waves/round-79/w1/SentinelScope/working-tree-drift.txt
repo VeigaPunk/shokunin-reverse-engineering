@@ -1,0 +1,47 @@
++ echo '# working-tree drift of tools/round-79/pointer-bind.py after the freeze'
+# working-tree drift of tools/round-79/pointer-bind.py after the freeze
++ echo frozen_sha256=91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90
+frozen_sha256=91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90
++++ sha256sum tools/round-79/pointer-bind.py
++++ cut '-d ' -f1
++ echo worktree_sha256=3f07bd2a03a10fda353d74863690103f32ba9e1e1e59d3625af91f57f38b4387
+worktree_sha256=3f07bd2a03a10fda353d74863690103f32ba9e1e1e59d3625af91f57f38b4387
+++ stat -c %y tools/round-79/pointer-bind.py
++ echo 'mtime=2026-11-04 10:11:49.732384892 -0300'
+mtime=2026-11-04 10:11:49.732384892 -0300
++ echo '--- diff vs HEAD ---'
+--- diff vs HEAD ---
++ git diff -- tools/round-79/pointer-bind.py
+diff --git i/tools/round-79/pointer-bind.py w/tools/round-79/pointer-bind.py
+index b496dd18..31d62145 100755
+--- i/tools/round-79/pointer-bind.py
++++ w/tools/round-79/pointer-bind.py
+@@ -17,7 +17,10 @@ A pointer with no line, a line past end of file, an absent path and a line that
+ does not carry the token are all mismatches.  The receipt keeps the pointed
+ lines' sha256, never their bytes (the configs' non-pin content is not evidence).
+ 
+-    --battery   bind every check at --rev against the live files; write a receipt.
++    --battery   bind every check at --rev against the live files; write a receipt
++                (the default mode whenever --rev is supplied: the frozen R79-C2
++                counting command omits this flag, and a printed command must run
++                as printed).
+     --selftest  unit cases, one red per failure shape plus the look-alikes.
+     --validate  re-derive a receipt's counts from its own check list.
+     --control   `path-only`: the round-78 rule (the path exists, the line is not
+@@ -316,8 +319,8 @@ def main(argv: list[str] | None = None) -> int:
+         result = validate_receipt(receipt)
+         print(json.dumps(result, sort_keys=True))
+         return 0 if not result["defects"] else 1
+-    if not args.battery or args.rev is None:
+-        print("usage: --battery --rev <rev> [--json-out <path>] [--control path-only]",
++    if args.rev is None:
++        print("usage: --rev <rev> [--battery] [--json-out <path>] [--control path-only]",
+               file=sys.stderr)
+         return 2
+     try:
++ echo '--- frozen R79-C2 command (no --battery) against the worktree ---'
+--- frozen R79-C2 command (no --battery) against the worktree ---
++ python3 -I -B tools/round-79/pointer-bind.py --root . --rev ed68cd0a6cc790cca342380a2d80d1927a668c8c --json-out /fast/scratch/hyaku/kaidoku-r79/SentinelScope/worktree-frozen-cmd.json
+{"checks_total": 5, "exit": 0, "matched": 5, "mismatch_ids": [], "mismatches": 0, "ok": true, "unparsed": 0}
++ echo rc=0
+rc=0

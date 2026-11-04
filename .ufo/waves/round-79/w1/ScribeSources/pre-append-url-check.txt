@@ -1,0 +1,31 @@
+# pre-append duplicate check — corpus/SOURCES.md @ working tree (HEAD e0c19339 + 2 uncommitted rows)
+# date: 2026-11-04T13:09:36Z
+# cwd: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+
+$ grep -nF -- 'https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html' corpus/SOURCES.md
+212:| S295 | POSIX.1-2024 `grep` — https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html (snapshot `grep-posix.html`, 21 316 B, sha256 `9473205c9203676853dd5dfb486f2d7a7e223aa7336a59a
+
+$ grep -nF -- 'https://mutants.rs/' corpus/SOURCES.md
+213:| S296 | cargo-mutants book, Welcome — https://mutants.rs/ (snapshot `cargo-mutants.html`, 22 602 B, sha256 `d056b2b3580903a000f3b7852a85768c61ac190e5da70690281f5175f4a2ec6d`, in `.ufo/waves/rou
+
+$ grep -nF -- 'pubs.opengroup.org' corpus/SOURCES.md
+212:| S295 | POSIX.1-2024 `grep` — https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html (snapshot `grep-posix.html`, 21 316 B, sha256 `9473205c9203676853dd5dfb486f2d7a7e223aa7336a59a
+
+$ grep -nF -- 'mutants.rs' corpus/SOURCES.md
+213:| S296 | cargo-mutants book, Welcome — https://mutants.rs/ (snapshot `cargo-mutants.html`, 22 602 B, sha256 `d056b2b3580903a000f3b7852a85768c61ac190e5da70690281f5175f4a2ec6d`, in `.ufo/waves/rou
+
+$ grep -cE '^\| S[0-9]{3,}' corpus/SOURCES.md
+202
+
+$ grep -oE 'S[0-9](3,)' corpus/SOURCES.md | sort -u | tail -3   # spec command verbatim
+(no output: '(3,)' is an ERE group, not an interval)
+
+$ grep -oE 'S[0-9]{3,}' corpus/SOURCES.md | sort -u | tail -5
+S292
+S293
+S294
+S295
+S296
+
+$ grep -oE '^\| S[0-9]{3,} ' corpus/SOURCES.md | grep -oE '[0-9]{3,}' | sort -n | tail -1
+296

@@ -1,0 +1,33 @@
+--- /fast/scratch/hyaku/kaidoku-r79/ExecCaseInventory/attack-gate-freeze.py	2026-11-04 10:06:42.168169594 -0300
++++ /fast/scratch/hyaku/kaidoku-r79/ExecCaseInventory/mut-near-miss-re-dead.py	2026-11-04 10:07:23.479789817 -0300
+@@ -105,7 +105,7 @@
+ PRISTINE_RE = re.compile(r"^pristine\s+(?P<n>\d+)(?:\s+cases)?$")
+ VALIDATE_RE = re.compile(r"^validate\s+defect-free$")
+ NEAR_MISS_RE = re.compile(
+-    r"^(?:mismatch|survivor|atom|pristine|validate|match|matches)\s+\S+$")
++    r"^(?:mismatch|survivor|atom|pristine|validate|match|matches)\s+ZZZ$")
+ NEGATION_RE = re.compile(r"\b(not|no|none|never|neither)\b", re.IGNORECASE)
+ JSON_PATH_RE = re.compile(
+     r"(?<![A-Za-z0-9_./-])((?:\.ufo/)?[A-Za-z0-9_./-]+\.json)"
+--- /fast/scratch/hyaku/kaidoku-r79/ExecCaseInventory/attack-gate-freeze.py	2026-11-04 10:06:42.168169594 -0300
++++ /fast/scratch/hyaku/kaidoku-r79/ExecCaseInventory/mut-atom-absent-bound.py	2026-11-04 10:07:23.513967937 -0300
+@@ -308,7 +308,7 @@
+         if ATOM_ID_RE.match(field):
+             atoms = receipt.get("atoms")
+             if not isinstance(atoms, list):
+-                return False, "defect", {"reason": "no_atoms", "field": field}
++                return False, "bound", {"reason": "no_atoms", "field": field}
+             matches = [a for a in atoms if isinstance(a, dict)
+                        and (a.get("id") == field
+                             or str(a.get("id", "")).startswith(field + "_"))]
+--- /fast/scratch/hyaku/kaidoku-r79/ExecCaseInventory/attack-gate-freeze.py	2026-11-04 10:06:42.168169594 -0300
++++ /fast/scratch/hyaku/kaidoku-r79/ExecCaseInventory/mut-validate-no-refusal-guard.py	2026-11-04 10:07:23.547510038 -0300
+@@ -790,8 +790,6 @@
+             defects.append(f"{fixture.get('id')}: fixture dir mismatch")
+         if not isinstance((fixture.get("base") or {}).get("accepted"), bool):
+             defects.append(f"{fixture.get('id')}: base.accepted is not a bool")
+-        if fixture.get("refused") and not fixture.get("reasons"):
+-            defects.append(f"{fixture.get('id')}: refused without a reason")
+         for reason in fixture.get("reasons") or []:
+             if reason.get("rule") != fixture.get("rule"):
+                 defects.append(f"{fixture.get('id')}: refused by "
