@@ -47,3 +47,8 @@ Both rows were corrected after ScoutSource reversed the L1’s first drafts (M71
 
 - Start: `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` exit 0, 179 rows, 0 malformed, 21 W04 duplicate-URL warnings (`l1/census-start.txt`).
 - End: the same command exit 0, **181 rows**, 0 malformed, 22 W04 (21 standing + S273’s URL shared with S258) (`l1/census-end.txt`). Rows added: S273 (mined, tier A `spec`), S274 (rejected, tier A `docs`, reason + flip). Rows touched old→new: none of the pre-existing rows changed.
+
+## Dispositions
+
+- **`tools/round-56/receipt-audit.py` bare-name `package.json` finding (round-70 M70-7, ExecSweep r71).** The container’s string “REA package 6.5.0 package.json sha256 …” is an external package-metadata pin (atom A5), not a promised wave receipt; the frozen audit’s bare-name rule still reports `RECEIPT_ABSENT package.json scope round-71` and exits 1. Disposition: a narrowly scoped declared exception — the REA package metadata pin is excluded from the receipt-promise rule; the gate’s exit 1 is recorded, never called clean, and a future semantic extractor fix (parse only receipt-shaped references) is the alternative. No in-wave package file was manufactured to quiet the gate.
+- **Round-70 settlement evidence shape.** This round writes `r71-w1-settlement.json` and says the dispatcher carries no per-seat status field; the receipt records only what it can observe (16 result entries, the orchestrator’s WAVE-DONE) and does not invent statuses (the round-70 routed item 6).
