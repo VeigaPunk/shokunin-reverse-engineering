@@ -6101,3 +6101,25 @@ deletes its own cells cannot pass. The wave named three more limits: a receipt i
 never re-derived at its own (the round-77 survivor `c1-rev-show-to-worktree` stays open); a named receipt is
 never validated by its own `--validate`; and the surface recheck's scalar parses take the first regex match in
 the file, so a historical sentence placed above the operative one would win.
+
+**Wave.** `r78-w1`: 12 seats in one v1 wave (2 executor, 2 reviewer, 1 critic, 1 mutation-tester, 1 scout,
+1 connector, 1 sentinel, 2 scribe, 1 revenger), attack roles 6/12 = 50 %, one connector; the L1 held the
+planner seat (the validator rejects a planner role). 10 seats returned substantive evidence (all files
+under `.ufo/waves/round-78/w1/`), 1 returned a progress note only (`SentinelScope`, whose claimed escape
+primitive and `/tmp` writer are unverified — no receipt landed, so it is routed, not adopted) and 1 returned
+a truncated final answer (`ExecSurfaceProbe`, whose independent receipt did land and reports the same two
+value drifts; its third mismatch is a literal-string reading of `.bashrc`'s `$HOME/…` where the instrument
+expands and resolves). No replacement, no residual call.
+
+**In-round repairs the wave forced.** `receipt_auth` now requires the pinned path to be a regular file blob
+(a symlink or tree is refused; `1a99064b`); the near-miss stem list carries the plural forms and the genuine
+control requires a population floor (`e134045e`). Both are disclosed in `claims.json`
+`instrument_supersessions`; the predicates, counters, kill rules and targets are unchanged.
+
+**Tip re-measurement.** At `51c08cda` the battery and the recheck reproduce both claims with the final
+instrument bytes (`l1/scores/c1-at-tip.json`, `c2-at-tip.json`; controls `pre/controls/*-at-tip.json`), and
+the prefile gate passes in a clean clone (`l1/scores/gate-at-tip.json`).
+
+**Mutation (wave seat, unclaimed).** `w1/MutGate/mutation-receipt.json`: 8 mutants, 6 killed, 2 survivors —
+`m03` (`NEAR_MISS_RE` matches nothing; the parsed-field branch covers the same shapes) and `m08`
+(`validate_receipt`'s refused-without-reason guard; nothing exercises it). Both route to round 79.

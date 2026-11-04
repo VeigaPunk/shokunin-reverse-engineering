@@ -4669,3 +4669,14 @@ tied-lowest axis). No nudge waiver is claimed.
   carries the `Stale-lane` statement ("open > 2 ticks, progressing"). §8 items 8–11 ride R78-C1
   (`clean_run`, `filing_rev`, `receipt_auth`, the red cases). §8 item 12: the inherited `CriticClaims`
   evidence is committed at the base commit, and this round waits for `WAVE-DONE` before filing.
+- **Round 78 — wave and tip.** `r78-w1`: 12 seats in one v1 wave (2 executor, 2 reviewer, 1 critic, 1
+  mutation-tester, 1 scout, 1 connector, 1 sentinel, 2 scribe, 1 revenger; attack share 6/12; the L1 held
+  the planner seat). 10 substantive seat reports, 1 progress-only (`SentinelScope`: its escape-primitive
+  claim has no receipt and is routed unverified), 1 truncated (`ExecSurfaceProbe`, whose independent receipt
+  landed and agrees on the two drifts). The wave found the `receipt_auth` regular-file gap (closed at
+  `1a99064b`), the plural near-miss class and the missing population floor (closed at `e134045e`), and its
+  mutation battery scores 8 mutants, 6 killed, 2 survivors (`w1/MutGate/mutation-receipt.json`). Tip
+  re-measurement at `51c08cda`: C1 exit 0 (10 of 10 refused, genuine clean, floor 4 cells / 12 clauses),
+  C2 exit 0 (8 of 8 matched, `checked_at 2026-11-04T09:41:21-03:00`), the three controls re-scored
+  (`base-only` refused 0, `all-refuse` genuine 1, `no-fixtures` base_accepted 0) and the prefile gate PASS
+  in a clean clone (`l1/scores/gate-at-tip.json`).
