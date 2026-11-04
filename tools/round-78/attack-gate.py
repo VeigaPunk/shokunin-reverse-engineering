@@ -114,8 +114,8 @@ GROUP_RE = re.compile(r"\(([^()]{2,220})\)")
 ROUND_NUM_RE = re.compile(r"^\d+$")
 NUM_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
              "seven": 7, "eight": 8, "nine": 9, "ten": 10}
-NEAR_MISS_STEMS = {"mismatch", "survivor", "atom", "pristine", "validate",
-                   "match", "matches"}
+NEAR_MISS_STEMS = {"mismatch", "mismatches", "survivor", "survivors", "atom",
+                   "atoms", "pristine", "validate", "match", "matches"}
 
 
 class Unevaluable(Exception):
@@ -742,10 +742,14 @@ def battery(root: str, rev: str, work: str, control: str | None,
     if control == "all-refuse":
         genuine_record = dict(genuine_record,
                               mismatch_count=max(genuine_record["mismatch_count"], 1))
+    floor = {"cells": 4, "clauses": 8,
+             "met": (genuine_record["in_scope_cells"] >= 4
+                     and genuine_record["bound_clauses"] >= 8)}
     genuine = {"mismatch_count": genuine_record["mismatch_count"],
                "defects": genuine_record["findings"] + genuine_receipts,
                "record": {k: genuine_record[k] for k in
-                          ("in_scope_cells", "groups", "bound_clauses")}}
+                          ("in_scope_cells", "groups", "bound_clauses")},
+               "population_floor": floor}
     receipt = {
         "schema": "kaidoku-r78-attack-gate-v1",
         "predicate": PREDICATE,
@@ -764,6 +768,7 @@ def battery(root: str, rev: str, work: str, control: str | None,
     ok = (receipt["fixtures_total"] == len(ATTACKS)
           and base_accepted == len(ATTACKS) and refused == len(ATTACKS)
           and not genuine["mismatch_count"] and not genuine["defects"]
+          and floor["met"]
           and not receipt["validate"]["defects"])
     receipt["ok"] = ok
     receipt["exit"] = 0 if ok else 1
@@ -840,6 +845,10 @@ def selftest() -> int:
          ["qualified_atom"])
     case("red-near-miss",
          [f["rule"] for f in judge_group("mismatch 0", genuine,
+                                         {"near_miss_field"})],
+         ["near_miss_field"])
+    case("red-near-miss-plural",
+         [f["rule"] for f in judge_group("survivors 2", genuine,
                                          {"near_miss_field"})],
          ["near_miss_field"])
     case("red-negated",
