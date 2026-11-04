@@ -44,3 +44,17 @@ Outside spot-check of this round's gate decisions remains for the non-author int
 R80 outside D5 observed report author-time earlier than the cited lane tip, while committer-time and content ordering were correct. Round 81 invokes the serialized fleet helper only after the final lane push; the helper's `metaedit --update-author` sets the fresh author identity/time. No historical commit or filed report is rewritten.
 
 The printed-command executor's round-specific prefix restriction, round-78 receipt-auth/gate-exits limits and the r63 record-section sweep stay explicit debt; no third claim is inferred. The actual printed commands will be executed by L1 against the integrated commit and retained, with their real exit codes.
+
+## Integrated measurements and newly discovered disclosure defect
+
+Measured work `047d18ff49d3f41d8199fadfb545e2d4cbf475e1`:
+
+- Frozen census: exit 0, 131 rows, zero nonconformant/duplicate, four multicell exceptions; its unchanged selftest 14/0. Independent retained population review finds no base path removed and exactly two new tool rows; all seven repaired rows are seven cells and the four round-69 rows byte-identical (`l1/scores/full-obligations.json`).
+- Frozen omission counter: exit 0, one mutant killed, zero survivors; pristine 11/0 and mutant 11/2. The exact frozen binder digest is retained and matches; all nine old case names appear first in pristine output. Direct canonical-layout selftest also exits 0, 11/0 (`l1/scores/selftest-canonical.txt`).
+- Source census end exits 0: 203 rows, malformed 0, A185/B10/C8 and mined184/rejected19 unchanged (`sources-end.txt`, `sources-end-counts.json`). Corpus index retains 164/164 knowledge files mapped (`coverage-no-harm.json`); this is index hygiene, not new domain expansion.
+
+**M81-9 — landing / unresolved frozen name.** `freeze-audit-before-ledger.json` reports the bare `pointer-bind.py` name inside the first round-81 container as `INSTRUMENT_UNRESOLVED`. The full path's top-level digest does not make the frozen gate resolve a bare spelling. Captured-by: QUALITY 33 and the maintained round-29 freeze audit. The defect remains permanent at this freeze; do not rewrite the predicate after data. Fix shown able to fail is the actual flagged audit and a truthful disclosure row, not a claim that the freeze became clean. Next freeze must name full script paths before data.
+
+The same maintained audit found the inherited round-80 ledger row absent and its real state FLAGGED: `INSTRUMENT_UNPINNED` for the round-79 control binder and `INSTRUMENT_REVISED` for three c935b543 counter revisions missing from supersessions. The prior outside review explicitly did not execute the lane's gates; these new results do not rewrite its reviewed observations. Round 81 appends the actual round-80 and round-81 disclosure rows. Exit 0 of a disclosures consistency gate is not a clean-freeze verdict.
+
+The 11-seat WAVE-DONE handoff contains seven substantive outputs and four empty outputs. No replacements were dispatched. L1 completed the source/lesson work that empty drafting seats did not deliver; these empties receive no verification credit. Actual provider error text is recorded only when the orchestrator supplies it.

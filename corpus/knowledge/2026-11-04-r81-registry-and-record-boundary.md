@@ -32,3 +32,7 @@ The candidate's retained demonstration (`w1/ExecRecord/counter.json`) has pristi
 - A crash or missing SELFTEST summary is not a kill. An absent or wrong detector is not a kill.
 - Source selection: `git diff --no-index` compares filesystem paths, so it was refused as proof of this committed-object boundary. Its primary documentation remains authoritative for its own semantics. No duplicate URL row was added for a source already held as S261.
 - No real client configuration, attached process, REA provider or inspected artifact was read by these synthetic integration cases. Neither this apparatus nor its unit fakes authenticates arbitrary receipts.
+
+## Integrated committed result
+
+L1 measured `047d18ff49d3f41d8199fadfb545e2d4cbf475e1` after WAVE-DONE: census exit 0, 131 rows / zero nonconformant / four unchanged exceptions; omission counter exit 0, one killed / zero survivors; pristine 11/0 and mutant 11/2; canonical selftest 11/0. Receipts: `.ufo/waves/round-81/l1/scores/c1-at-landing.json`, `c2-at-landing.json`, `full-obligations.json`, `selftest-canonical.txt`. The full-obligations review separately confirms the old nine cases and frozen binder digest; the counter's weaker `ok` remains disclosed.
