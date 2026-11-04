@@ -1,0 +1,43 @@
+{
+ "base": "6205ec8c575fb070243c0c40e34a2b0daacde46a",
+ "claim_row": "plans/round-78-claims.md",
+ "claims": [
+  {
+   "after": "landing: exit 0, fixtures_total 10, base_accepted 10, refused 10, genuine.mismatch_count 0, genuine.defects [], validate defect-free",
+   "axis": "calibration",
+   "before": "base 6205ec8c: the frozen round-77 instruments accept 10 of 10 attack fixtures (base_accepted 10, measured in the same battery) and the file the counter names does not exist; a battery that only re-runs them refuses 0 of 10 (--control base-only)",
+   "counter": "refused",
+   "counting_command": "python3 -I -B tools/round-78/attack-gate.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>",
+   "id": "R78-C1",
+   "kill_rule": "a fixture the base instruments already refuse counted as refused; a fixture refused by a rule other than its declared one; the genuine record refused (over-tightening); a rule that reads a hard-coded fixture name instead of the fixture's bytes; a receipt admitted without re-deriving its own instrument pin; a validate defect; a fixture missing from the set or counted twice",
+   "predicate": "R78-C1 is verified iff `python3 -I -B tools/round-78/attack-gate.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>` exits 0 with `fixtures_total 10`, `base_accepted 10`, `refused 10`, `genuine.mismatch_count 0`, `genuine.defects []` and a defect-free `validate`, every fixture refused by its declared rule id and every base acceptance re-derived by running the frozen round-77 instruments on the same fixture tree, while the do-nothing control `--control base-only` reports `refused 0` of 10 and `--control all-refuse` reports `genuine.mismatch_count >= 1`, and the selftest carries the legitimate look-alikes beside reds for the rule boundaries (qualified atom, near miss, negation, ambiguous and absent field, typed comparison, receipt schema and stale revision).",
+   "surface": "the lane's evidence instruments and the ten committed attack classes under .ufo/waves/round-78/attacks/ \u2014 each fixture names one receipt; the gate measures the frozen round-77 instrument's verdict on it and applies the one declared rule that must refuse it",
+   "type": "capability acquisition"
+  },
+  {
+   "after": "landing: exit 0, checks_total 8, matched 8, mismatches 0, unparsed 0, validate defect-free",
+   "axis": "freshness",
+   "before": "base 6205ec8c: exit 1, checks_total 8, matched 6, mismatches 2 \u2014 `jdk-version` (record 21.0.12.1, live 21.0.13) and `omp-rea-disable` (the record says the live OMP file no longer records the disable; the live file carries disabledServers [rea])",
+   "counter": "mismatches",
+   "counting_command": "python3 -I -B tools/round-78/surface-recheck.py --battery --root . --rev <measured> --json-out <receipt>",
+   "id": "R78-C2",
+   "kill_rule": "a recorded value that does not parse counted as matched; a live value read from a file the record does not name; a path compared as a string when one side is $HOME-relative; a mismatch suppressed by normalising it away; a control that cannot fail; a receipt without its checked_at date",
+   "predicate": "R78-C2 is verified iff `python3 -I -B tools/round-78/surface-recheck.py --battery --root . --rev <measured> --json-out <receipt>` exits 0 with `checks_total 8`, `matched 8`, `mismatches 0`, `unparsed 0` and a defect-free `validate`, every value re-derived from the live object the record names and compared typed to the record's parsed value, while at base `6205ec8c` the same command exits 1 with `mismatches 2` naming `jdk-version` (record `21.0.12.1`, live `21.0.13`) and `omp-rea-disable` (the record says the live file no longer records the disable; the live file carries `disabledServers: [\"rea\"]`), and the control `--control token-grep` accepts a forged record whose `ghidra_version` token `8.5` appears in the live `application.properties` but not as `application.version`.",
+   "surface": "PROVINCE.md's eight drift-prone surface values (the three REA pins, the OMP rea disable claim, the Ghidra version and install dir, the JDK version, JAVA_HOME) and the live objects the record names for each",
+   "type": "capability acquisition"
+  }
+ ],
+ "declaration_pointer": "3e6b1efcad3a743913baa09f46427e5f8877a62b",
+ "instruments": {
+  "tools/round-78/attack-gate.py": "780089e3fa5888d3550dde14043f8f83108a972da1e43be5ad1e661b0da6d173",
+  "tools/round-78/surface-recheck.py": "e7ea1717176f3dce2660a10197056b359311c25c5f2490bf9bfbd256c6681a13"
+ },
+ "loaded_by_counter": {
+  ".ufo/waves/round-78/attacks/gen-fixtures.py": "6ef90aa4cd1e4f36ea34363488146473d1b30a9fed79b7b5c76952cd1fb2907d",
+  "tools/round-29/prefile-check.sh": "9a403dc11594a78a23629034bced6b6e0b33160f08a30d00a53d4bd860c1390d",
+  "tools/round-77/prefile-receipt.py": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd",
+  "tools/round-77/verdict-bind.py": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7"
+ },
+ "round": 78,
+ "schema": "kaidoku-r78-claims-v1"
+}

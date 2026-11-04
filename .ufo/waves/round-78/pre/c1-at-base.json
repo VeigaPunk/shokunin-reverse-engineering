@@ -1,0 +1,298 @@
+{
+ "base_accepted": 10,
+ "control": null,
+ "exit": 1,
+ "fixtures": [
+  {
+   "base": {
+    "accepted": true,
+    "observed": "exit 0, mismatch_count 0"
+   },
+   "base_name": "record_clean",
+   "base_receipt_exit": 0,
+   "fixture": "a1-forged-receipt",
+   "id": "receipt-unauth",
+   "instrument": "verdict-bind",
+   "reasons": [
+    {
+     "reason": "no 40-hex rev",
+     "receipt": ".ufo/waves/round-78/l1/scores/green-forged.json",
+     "rule": "receipt_auth"
+    }
+   ],
+   "refused": true,
+   "rule": "receipt_auth"
+  },
+  {
+   "base": {
+    "accepted": true,
+    "observed": "exit 0, mismatch_count 0"
+   },
+   "base_name": "record_clean",
+   "base_receipt_exit": 0,
+   "fixture": "a2-repunctuated",
+   "id": "qualified-atom",
+   "instrument": "verdict-bind",
+   "reasons": [
+    {
+     "clause": "D24: true",
+     "group": "D24: true, mismatch 0, D24 true",
+     "reason": "an atom id carrying a qualifier",
+     "receipt": ".ufo/waves/round-78/l1/scores/green-authed.json",
+     "rule": "qualified_atom",
+     "where": "PROVINCE core bullet - **Core \u2014 repunctuated:** `.ufo/waves/round-78/l1/scores/green-authed"
+    }
+   ],
+   "refused": true,
+   "rule": "qualified_atom"
+  },
+  {
+   "base": {
+    "accepted": true,
+    "observed": "exit 0, mismatch_count 0"
+   },
+   "base_name": "record_clean",
+   "base_receipt_exit": 0,
+   "fixture": "a3-near-miss",
+   "id": "near-miss-field",
+   "instrument": "verdict-bind",
+   "reasons": [
+    {
+     "clause": "mismatch 0",
+     "group": "mismatch 0, D24 true",
+     "reason": "a verdict token in a spelling the grammar does not define",
+     "receipt": ".ufo/waves/round-78/l1/scores/green-authed.json",
+     "rule": "near_miss_field",
+     "where": "PROVINCE core bullet - **Core \u2014 near miss:** `.ufo/waves/round-78/l1/scores/green-authed.js"
+    }
+   ],
+   "refused": true,
+   "rule": "near_miss_field"
+  },
+  {
+   "base": {
+    "accepted": true,
+    "observed": "exit 0, mismatch_count 0"
+   },
+   "base_name": "record_clean",
+   "base_receipt_exit": 0,
+   "fixture": "a4-negated",
+   "id": "negated-verdict",
+   "instrument": "verdict-bind",
+   "reasons": [
+    {
+     "group": "the receipt does not record D24 false, D24 true",
+     "reason": "a verdict group that says what is not",
+     "receipt": ".ufo/waves/round-78/l1/scores/green-authed.json",
+     "rule": "negated_verdict",
+     "where": "PROVINCE core bullet - **Core \u2014 negated:** `.ufo/waves/round-78/l1/scores/green-authed.json"
+    }
+   ],
+   "refused": true,
+   "rule": "negated_verdict"
+  },
+  {
+   "base": {
+    "accepted": true,
+    "observed": "exit 0, mismatch_count 0"
+   },
+   "base_name": "record_clean",
+   "base_receipt_exit": 0,
+   "fixture": "a5-nested-field",
+   "id": "nested-hidden-mismatch",
+   "instrument": "verdict-bind",
+   "reasons": [
+    {
+     "clause": "forged_detected true",
+     "detail": {
+      "actual": false,
+      "claimed": true,
+      "field": "forged_detected",
+      "path": "/arms[0]/observed/verdict/forged_detected"
+     },
+     "group": "forged_detected true, D24 true",
+     "receipt": ".ufo/waves/round-78/l1/scores/nested.json",
+     "rule": "value_mismatch",
+     "where": "PROVINCE core bullet - **Core \u2014 nested:** `.ufo/waves/round-78/l1/scores/nested.json` recor"
+    }
+   ],
+   "refused": true,
+   "rule": "value_mismatch"
+  },
+  {
+   "base": {
+    "accepted": true,
+    "observed": "exit 0, mismatch_count 0"
+   },
+   "base_name": "record_clean",
+   "base_receipt_exit": 0,
+   "fixture": "a6-dropped-defect",
+   "id": "dropped-defect",
+   "instrument": "verdict-bind",
+   "reasons": [
+    {
+     "clause": "D24 true",
+     "detail": {
+      "field": "D24",
+      "reason": "no_atoms"
+     },
+     "group": "D24 true, mismatch_count 0",
+     "receipt": ".ufo/waves/round-78/l1/scores/dropped.json",
+     "rule": "unbound_verdict",
+     "where": "PROVINCE core bullet - **Core \u2014 dropped defect:** `.ufo/waves/round-78/l1/scores/dropped.js"
+    }
+   ],
+   "refused": true,
+   "rule": "unbound_verdict"
+  },
+  {
+   "base": {
+    "accepted": true,
+    "observed": "arm clone-run met True: rc 1, prefile: FAIL, receipt_defects []"
+   },
+   "base_name": "arm:clone-run",
+   "base_receipt_exit": 1,
+   "fixture": "b1-fail-run",
+   "id": "unclean-clone-run",
+   "instrument": "prefile-receipt",
+   "reasons": [
+    {
+     "reason": "the retained run exits 1 with passed False",
+     "rule": "clean_run"
+    }
+   ],
+   "refused": true,
+   "rule": "clean_run"
+  },
+  {
+   "base": {
+    "accepted": true,
+    "observed": "arm record-receipt met True: exit 0, defects []"
+   },
+   "base_name": "arm:record-receipt",
+   "base_receipt_exit": 1,
+   "fixture": "b2-stale-filing",
+   "id": "stale-filing-rev",
+   "instrument": "prefile-receipt",
+   "reasons": [
+    {
+     "reason": "filing rev 0000000000000000000000000000000000000000 is not an ancestor of the measured a0b040c5c9b37594c51959a943d15c001b237c28",
+     "rule": "filing_rev"
+    }
+   ],
+   "refused": true,
+   "rule": "filing_rev"
+  },
+  {
+   "base": {
+    "accepted": true,
+    "observed": "arm gate-exits met True: round-78: 1 gate receipts, missing []"
+   },
+   "base_name": "arm:gate-exits",
+   "base_receipt_exit": 0,
+   "fixture": "b3-one-key-gate",
+   "id": "gate-receipt-schema",
+   "instrument": "prefile-receipt",
+   "reasons": [
+    {
+     "reason": "missing key rev",
+     "receipt": ".ufo/waves/round-78/l1/scores/gate-at-tip.json",
+     "rule": "gate_receipt_schema"
+    },
+    {
+     "reason": "missing key argv",
+     "receipt": ".ufo/waves/round-78/l1/scores/gate-at-tip.json",
+     "rule": "gate_receipt_schema"
+    },
+    {
+     "reason": "missing key passed",
+     "receipt": ".ufo/waves/round-78/l1/scores/gate-at-tip.json",
+     "rule": "gate_receipt_schema"
+    },
+    {
+     "reason": "missing key prefile_line",
+     "receipt": ".ufo/waves/round-78/l1/scores/gate-at-tip.json",
+     "rule": "gate_receipt_schema"
+    },
+    {
+     "reason": "missing key stdout",
+     "receipt": ".ufo/waves/round-78/l1/scores/gate-at-tip.json",
+     "rule": "gate_receipt_schema"
+    },
+    {
+     "reason": "missing key stdout_sha256",
+     "receipt": ".ufo/waves/round-78/l1/scores/gate-at-tip.json",
+     "rule": "gate_receipt_schema"
+    },
+    {
+     "reason": "missing key env_keys",
+     "receipt": ".ufo/waves/round-78/l1/scores/gate-at-tip.json",
+     "rule": "gate_receipt_schema"
+    }
+   ],
+   "refused": true,
+   "rule": "gate_receipt_schema"
+  },
+  {
+   "base": {
+    "accepted": true,
+    "observed": "arm gate-exits met True: round-78: 1 gate receipts, missing []"
+   },
+   "base_name": "arm:gate-exits",
+   "base_receipt_exit": 0,
+   "fixture": "b4-stale-gate-rev",
+   "id": "gate-receipt-stale-rev",
+   "instrument": "prefile-receipt",
+   "reasons": [
+    {
+     "reason": "rev 0000000000000000000000000000000000000000 is not an ancestor of the measured 4838efc49b7402d7da21c2cab605b51c8460442b",
+     "receipt": ".ufo/waves/round-78/l1/scores/gate-at-tip.json",
+     "rule": "gate_receipt_rev"
+    }
+   ],
+   "refused": true,
+   "rule": "gate_receipt_rev"
+  }
+ ],
+ "fixtures_total": 10,
+ "genuine": {
+  "defects": [
+   {
+    "reason": "no filing receipt",
+    "rule": "clean_run"
+   },
+   {
+    "reason": "no filing receipt",
+    "rule": "filing_rev"
+   },
+   {
+    "reason": "no gate receipt in the round dir",
+    "rule": "gate_receipt_schema"
+   },
+   {
+    "reason": "no gate receipt in the round dir",
+    "rule": "gate_receipt_rev"
+   }
+  ],
+  "mismatch_count": 0,
+  "record": {
+   "bound_clauses": 0,
+   "groups": 0,
+   "in_scope_cells": 0
+  }
+ },
+ "instrument": {
+  "path": "tools/round-78/attack-gate.py",
+  "sha256": "780089e3fa5888d3550dde14043f8f83108a972da1e43be5ad1e661b0da6d173"
+ },
+ "ok": false,
+ "predicate": "R78-C1 is verified iff `python3 -I -B tools/round-78/attack-gate.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>` exits 0 with `fixtures_total 10`, `base_accepted 10`, `refused 10`, `genuine.mismatch_count 0`, `genuine.defects []` and a defect-free `validate`, every fixture refused by its declared rule id and every base acceptance re-derived by running the frozen round-77 instruments on the same fixture tree, while the do-nothing control `--control base-only` reports `refused 0` of 10 and `--control all-refuse` reports `genuine.mismatch_count >= 1`, and the selftest carries the legitimate look-alikes beside reds for the rule boundaries (qualified atom, near miss, negation, ambiguous and absent field, typed comparison, receipt schema and stale revision).",
+ "refused": 10,
+ "rev": "3e6b1efcad3a743913baa09f46427e5f8877a62b",
+ "root": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "schema": "kaidoku-r78-attack-gate-v1",
+ "validate": {
+  "defects": [],
+  "fixtures": 10
+ }
+}
