@@ -635,6 +635,14 @@ Retired: none.
 | `.jsc` route closure matrix (`tools/round-65/jsc-closure-matrix.py`) | run the `.jsc` dump, then View8, then node-check matrix (2 artifacts x 3 d8 builds x 3 repetitions) under a complete 30-entry closure: every d8 build with its snapshot_blob.bin and icudtl.dat, the 12-file View8 tree, the venv identity, both artifacts, the resolved node binary and the resolved interpreter pinned; cache-free start enforced, `-B` and PYTHONDONTWRITEBYTECODE on every subprocess, and a toolchain census before and after the run proving no write; 18 of 18 frozen labels reproduced with an equal census at the round-65 dry run | selftest 34 cases (`l1/selftest-c1.txt`); dry-run receipt `l1/probe/dryrun-matrix.json` (exit 0, 18 of 18, census equal); wave receipt `w1/ExecMatrix/matrix-run.json`; registry row in SKILL (instrument-registry v2) | 65 |
 | registry-conformance census over the lane's instrument inventory (`tools/round-68/registry-conformance.py`) | compares every own-round instrument a `plans/round-N-claims.md` names (N >= 41) against the SKILL.md registry and reports unregistered, duplicate, absent-at-rev and thin rows, with legacy rounds out of regime — the check the round-67 closure found missing | `.ufo/waves/round-68/l1/scores/c1-at-landing.json` (mismatches 0, scope 71, rows 77) and the base arm `.ufo/waves/round-68/l1/pre/c1-at-base.json` (2) | round 68 |
 | packed-ELF triage route (`tools/round-68/packed-elf.py`) | detects UPX packing, unpacks to bytes whose sha256 equals the carrier pin, and recovers the original's REA inventory (procedure/segment/string counts), with the packed stub's 3-procedure inventory as the before-arm and the non-packed original as the control | `.ufo/waves/round-68/l1/scores/c2-at-landing.json` (2 of 2 carriers, control_ok, failing []) | round 68 |
+| provenance-bound receipt readers (`--check-receipt --root . --rev <rev>`) | a saved receipt scores only when its recorded revision and instrument sha256 are the measured ones, every carrier row matches the frozen table (ids, pins, sources, kinds, ceilings, declared original counts, ratio = round(ceiling/orig, 4), packed <= ceiling), and the arms/control/packer/runs/before_ceilings blocks re-derive; a field-consistent forgery is rejected with a named clause | `.ufo/waves/round-70/l1/scores/c1-at-landing.json` (10/10 shapes base-accepted and landing-rejected); `tools/round-70/packed-elf.py --check-receipt` | round 70 |
+| the safe packer seam (hash-before-exec, threaded path, four-key child env, typed refusals, per-run scratch) | the caller's `--upx` is hashed and pin-compared before its first execution, the validated path is threaded through pack/list/unpack/control, children get exactly HOME/LANG/PATH/TMPDIR under the run root, a broken `node` and an exec-format-less packer are typed exit-2 refusals, and every battery run records its own work_dir | `.ufo/waves/round-70/l1/scores/c2-at-landing.json` (7 of 7 arms; base 0 of 7); `tools/round-70/seam-probe.py` | round 70 |
+| a packed statically linked executable as a carrier class (`static-exe`) | the route packs, unpacks with sha256 identity and recovers the original inventory of `/usr/bin/docker-init` (1268/29/1111 -> 3/3/5, ceiling ratio 0.0079) beside two executables and one shared object; the frozen checker binds target 4 of 4 | `.ufo/waves/round-70/l1/scores/c3-at-landing.json`, `c3-check-at-landing.json` | round 70 |
+| runtime-observed child environment on the packed route (`--child-env-log`) | every child (packer, REA node, readelf, git) runs under the four-key allowlist and the route records each child's OBSERVED `/proc/self/environ` via a launcher, summarising key set, children, HOME/TMPDIR-under-run and canary presence in the receipt; one declared launcher artifact (`PYTHONCOERCECLOCALE`) is excluded before the observation and the exec | `.ufo/waves/round-71/l1/scores/c1-at-landing.json` (A8); `tools/round-71/packed-elf.py --child-env-log` | round 71 |
+| concurrent scratch isolation and per-run identity | three battery runs and three route preflights started concurrently on one `--work` parent record distinct work_dirs and distinct run_roots, each env log under its own root, with no cross-run collision | `.ufo/waves/round-71/l1/scores/c1-at-landing.json` (A9) | round 71 |
+| a pre-committed run binding for saved receipts | the route takes `--challenge` + `--nonce-commitment`, records `run_nonce` and `run_binding = sha256(nonce:instrument.sha256:packed pins)`, and `--check-receipt --nonce-commitment` rejects a transplanted round-70 receipt, a wrong-nonce copy and a broken-binding copy each with its clause; replay/transplant rejection, not cryptographic authenticity | `.ufo/waves/round-71/l1/scores/c1-at-landing.json` (A10) | round 71 |
+| a lying-field forged-receipt battery over the first-cut defect world | the six verdict-relevant classes (unpacked_counts, packed_sha256, section_count/upx_list_rc, runs argv, refusal, format) are cut from the round-70 landing receipt, relabelled to the round-70 first-cut world, accepted by that first cut and rejected by the superseded reader naming the class | `.ufo/waves/round-71/l1/scores/c2-at-landing.json` (six lying rows); `tools/round-71/forged-receipts.py` | round 71 |
+| the SKILL registry block under row grammar v2 | the drift census splits on unescaped pipes, unescapes `\|`, reads owner/write/pinned positionally (pinned = the joined middle cells), reports every nonconformant row and duplicate instead of dying, and reads the four filed round-69 eight-cell rows without rewriting them | `.ufo/waves/round-71/l1/scores/c3-at-landing.json` (93 rows, 0 nonconformant); `tools/round-71/registry-census.py` | round 71 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -5550,3 +5558,80 @@ registry rows — fix at the next freeze as a disclosed census3 supersession or 
 rewriting the filed r69 rows; (d) the persistent receipt-audit bare-name `package.json` finding gets a disposition;
 (e) the r63 planned record-section sweep stays open; (f) the standing duties re-run every round that lands receipts;
 the r58/r60 bare-name findings and the r64 placeholder-token disposition stay named debt.
+
+## 2026-11-04 — round 71: the registry's own row grammar, the seam's runtime class, and the lying-field receipt
+
+Base `82c8e620c9222fb218aa0260570a3765da2afb44`; declaration `329208cf4a234aac391b7f02b50769c5920f1beb`
+(the pre-receipt/generator commit `46366cc5525f661b97d26a8c70ed3a53d0b4b916` is named in the
+container erratum); operative freeze `b827a8b5d54f2885ec9be7786389f356c59226ce` (the first commit
+adding `.ufo/waves/round-71/claims.json`; the round-29 gate audits it CLEAN at the freeze,
+`l1/scores/gate-at-freeze.json`); supersession `5cecf4c0f879f3e60884c5625226a0d68ced8458` (the
+wave's findings bound into all five instruments; predicates byte-unchanged); landing
+`c46ea96bd4659f9d346da5fe2b1d0843109402a4`. Three claims on three distinct axes, all capability
+acquisitions; the stagnation nudge applies (every owned axis at 10.0, saturation 10.0, window 10),
+so the lowest-axis obligation is waived.
+
+| claim | axis | type | predicate (frozen, in `plans/round-71-claims.md` and the container) | before → after | verdict |
+|---|---|---|---|---|---|
+| R71-C1 | coverage | capability acquisition (the seam's runtime evidence class; Frontier → Core) | the frozen seam probe at the measured revision reports 10 of 10 arms (A8 observed child env, A9 concurrent isolation, A10 pre-committed binding), 7 of 10 at the round-70 landing | base `7c155617`: 7 of 10, A8/A9/A10 false (`l1/pre/c1-at-base.json`); landing: `arms_passed 10`/`target 10`, `failed []`, exit 0 (`l1/scores/c1-at-landing.json`); checker `met true` target 4 (`c1-check-at-landing.json`) | **verified** |
+| R71-C2 | calibration | capability acquisition (the six lying-field classes enter the frozen battery) | the battery reports 18 forged rows: ten base-world + six lying-field (first-cut accepted, superseded rejected with the declared clause) + two landing-world; genuine receipts still pass | base: the round-70 receipt carries 12 rows and no lying row (`l1/pre/c2-do-nothing.json`); landing: `ok true`, `failures []`, 10+6+2 rows, genuine 6/6 (`l1/scores/c2-at-landing.json`) | **verified** |
+| R71-C3 | operability | capability acquisition (the registry drift census runs under grammar v2) | the frozen census at the measured revision exits 0 with every row conformant and no duplicate; base 6 nonconformant rows and census3 exit 2 | base `82c8e620`: 88 rows, 6 `pinned-empty`, exit 1 (`l1/pre/c3-at-base.json`); landing: 93 rows, `nonconformant []`, `duplicates []`, exit 0 (`l1/scores/c3-at-landing.json`); census3 exit 2 (`scores/c3-census3-at-base.txt`) | **verified** |
+
+**Capabilities entered.** (round 70 backlog, routed defect 1) provenance-bound receipt readers; the
+safe packer seam; a packed statically linked executable as a carrier class — evidence in the
+round-70 receipts. (round 71) runtime-observed child environment on the packed route
+(`--child-env-log`); concurrent scratch isolation and per-run identity; a pre-committed run binding
+for saved receipts (replay/transplant rejection); a lying-field forged-receipt battery over the
+first-cut defect world; the SKILL registry block under row grammar v2.
+
+**Repairs carried (not claims).** R71-G1 the three round-70 capability rows enter this table;
+R71-G2 the census W04 erratum (21 warnings, not “the same 20”); R71-G3 the `ca9817cf` →
+`ca9817cdf9c73801569bff8a20aac6856647cbb2` erratum; R71-G4 `r71-w1-settlement.json`; R71-G5 the
+round-70 search-log backfill and the tempfile rejection row S274; the PROVINCE round-70 row now
+attributes the six lying-field classes to round 71's battery; the container errata (declaration
+attribution; the plan's C2 target typo); the standing duties re-run (census start 179 → end 181,
+registry census 93 rows, receipt audits, no-`/tmp` scan).
+
+**Sources and frontier.** `corpus/SOURCES.md` 179 → 181 rows: S273 (GFM 4.10 body-row cell-count
+tolerance, tier A `spec`, snapshot sha `b153d814…`, 13-word located quote, grounds R71-C3's no-pad
+decision) and S274 (the Python `tempfile` page, REJECTED on name properties: only “a string of
+random characters”, no uniqueness/collision statement; flip recorded). S258 remains the
+escaped-pipe authority. The new knowledge entry is
+`corpus/knowledge/2026-11-04-r71-registry-grammar.md`; `corpus/README.md` gains its index row, a
+round-71 frontier note and the map update; `PROVINCE.md` gains `## Round-71 additions to Core`;
+`corpus/QUALITY.md` gains rows 117–122; `SKILL.md` registers the five round-71 instruments and
+repairs the six round-70 rows' omitted owner cell (old→new in the landing LOG entry; the four
+round-69 rows stay byte-identical).
+
+**Wave.** One v1 wave `r71-w1`: 16 seats (5 executor, 2 reviewer, 1 critic, 2 mutation-tester,
+1 sentinel, 1 scout, 1 connector, 2 scribe), attack share 6/16 = 37.5%, one connector; all 16
+settled, none dead (`r71-w1-results.json`, `r71-w1-settlement.json`; the dispatcher writes no
+per-seat status field). L1 held the planner seat. No residual call.
+
+**Name by surface.** R71-C1's surface is the route's runtime evidence class (observed child
+environment, concurrent scratch identity, pre-committed run binding) named Frontier by the round-70
+note, not a re-score of an existing rule; R71-C2's surface is the receipt-judging battery's
+lying-field class coverage on the first-cut defect world; R71-C3's surface is the registry's own
+row grammar and the drift census that had been unevaluable since `616a5f2f`.
+
+**Trends.** expansion **improved** (one admitted entry on ground held only as a Frontier line —
+runtime env-capture/concurrent coverage/receipt authenticity — citing mined S273; registry
+179 → 181; five capability rows enter the table beside the three round-70 backlog rows). quality
+**improved** (routed defect 3 closed with committed first-cut/superseded receipts; the registry
+census re-armed to 93 rows/0 nonconformant; the round-70 capability rows and three errata landed;
+the wave's instrument defects were bound under a disclosed supersession; no admitted entry failed
+a re-check). discernment **improved** (the wave's critic/reviewer/mutation/sentinel seats falsified
+the first cut on capture coverage, containment, log association and the kill rule; the lane
+superseded under disclosure with predicates unchanged, and ScoutSource reversed BOTH landed source
+rows before filing — recorded as M71-12 and in the search log).
+
+**planned (next steered round only):** (a) bind A10's binding verdict to the checker's JSON rather
+than a probe-side boolean — the self-mutant `binding_ok=True` survives the probe's own test while
+the genuine checker still rejects (MutReaders survivor i); (b) checker-mode children
+(`readelf`/`git`) inherit the caller environment: pass a cenv or keep the scope exclusion explicit;
+(c) the raw-witness capsule audit as a checked instrument (ConnectorCross proposal: hash the
+retained child log and re-derive the four-key sets/canary/containment from it); (d) seam-probe and
+forged-receipts scratch cleanup on failure (Sentinel SS-4); (e) the r63 planned record-section
+sweep stays open; (f) the standing duties re-run every round that lands receipts; the r58/r60
+bare-name findings and the r64 placeholder-token disposition stay named debt; the round-70 lesson
+errata are landed, not rewritten.

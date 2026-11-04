@@ -50,3 +50,9 @@ Fetches and quote counts above are attributed to `ScoutSource/sources.md`, re-op
 - End: the same command exit 0, **179 rows** after S272, malformed 0, the same 20 W04 (`.ufo/waves/round-70/l1/census-end.txt`; the pre-insertion intermediate `census-end-preS272.txt` records the E11 used-by refusal while the knowledge entry was not yet landed — the gate firing as design).
 
 VERDICT: met — lesson draft prepared; wave measurements, source decisions and round admission remain explicitly unasserted pending L1 evidence.
+
+## Errata (round 71, appended)
+
+- **Census W04 count.** The round-70 report, LOG entry and this lesson's Census section say “the same 20 W04 duplicate-URL warnings”. The committed `l1/census-end.txt` prints **21** (the 20 standing plus S272, which shares S260’s URL across scopes). The superseded text is named here, never rewritten (R71-G2).
+- **Short hash.** The round-70 report’s **Landed changes** cites `ca9817cf`; the supersession commit is `ca9817cdf9c73801569bff8a20aac6856647cbb2` (`git rev-parse --short` → `ca9817cd`). The full hash cited two lines earlier resolves; the short form is corrected here (R71-G3).
+- **Battery coverage wording.** The trend sentence “reject all sixteen forgery shapes” is not carried by `c1-at-landing.json` (10 frozen shapes + 2 landing-world identity shapes). The six lying-field classes are carried by round 71’s `tools/round-71/forged-receipts.py` and its `c2-at-landing.json`; this round closes routed defect 3.

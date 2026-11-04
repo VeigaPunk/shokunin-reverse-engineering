@@ -4240,3 +4240,61 @@ fractions — and requires zero mismatches with at least two corrections that ea
 - **Wave.** `r70-w1`: 16 seats, all settled, none dead; dispatch evidence `r70-w1-dispatch.json` + `r70-w1.ready.dispatched`; results `r70-w1-results.json`. No residual dispatch.
 - **Scratch.** `/fast/scratch/hyaku/kaidoku-r70` removed after the close; no pacman transaction ran this round.
 - Files touched by this entry: `.ufo/waves/round-70/l1/scores/gate-at-record.json`, this LOG — append-only.
+
+## 2026-11-04 — round 71, KaidokuR71 — landing: the registry's own grammar, observed children, and the lying-field receipt
+
+- **Three claimed capability acquisitions land.** R71-C1 (coverage) adds the route's runtime
+  evidence class: every child (packer, REA node, readelf, git) runs under the four-key allowlist,
+  `--child-env-log` records the OBSERVED child environment via a launcher (one declared launcher
+  artifact, `PYTHONCOERCECLOCALE`, popped before the observation and the exec), and the receipt
+  carries `run_root`, `child_env_observed`, `run_nonce` and `run_binding`; the seam probe gains
+  A8/A9/A10 (10 of 10 at the landing, 7 of 10 at the round-70 landing `7c155617`). R71-C2
+  (calibration) puts the six lying-field classes into the frozen battery: each shape is cut from
+  the round-70 landing receipt and relabelled to the round-70 first-cut world `4737a542`, accepted
+  there and rejected by the superseded reader `7c155617` with its declared clause (18 forged rows).
+  R71-C3 (operability) restores the registry drift census: grammar v2 splits on unescaped pipes,
+  unescapes a backslash-pipe, reads owner/write/pinned positionally, accepts an over-count row only
+  for the four filed round-69 paths and names blank cells; the four round-69 rows stay
+  byte-identical, and the six round-70 rows gain the owner cell they omitted.
+- **SKILL.md repair (old→new, six rows).** Each round-70 registry row ended `... | <write scope> |`
+  with six cells; this round appends the owner cell: `... | <write scope> | kaidoku |`. Rows:
+  `tools/round-70/packed-elf.py`, `mutation-check.py`, `contract-probe.py`, `seam-probe.py`,
+  `forged-receipts.py`, `controls.py`. Nothing else in those rows changes; the four round-69 rows
+  are byte-identical at the landing. The five round-71 instruments are registered as new rows.
+- **Supersession (disclosed, predicates byte-unchanged).** `5cecf4c0` binds the wave's findings
+  into all five instruments: capture threaded through REA analyze/decompile and the route's git;
+  `os.path.commonpath` containment; A9 run-relative logs under their own run root plus exact key
+  sets; over-count rows only for the four declared round-69 paths and blank cells named;
+  validator type checks; a scratch-owned controls fixture receipt; the battery's genuine and
+  landing-world arms bound to the material's own superseded rev. The container's
+  `instrument_supersessions` names each path, commit and reason; the predicates are byte-unchanged.
+- **Landing receipts.** C1 checker `met true` target 4 (`l1/scores/c1-check-at-landing.json`), C1
+  probe 10/10 (`c1-at-landing.json`), C2 battery `ok true` 10+6+2
+  (`c2-at-landing.json`), C3 census 93 rows/0 nonconformant (`c3-at-landing.json`), controls 6/6
+  (`controls-at-landing.json`), gate at the landing CLEAN (`gate-at-landing.json`). The raw
+  nonce-bearing route receipt is withheld (atom A2); the filed evidence is the checker output, the
+  probe receipt, a redacted route summary and the retained raw child log + its audit
+  (`c1-route-summary.json`, `c1-env-at-landing.jsonl`, `c1-env-audit.json`).
+- **Wave.** `r71-w1`: 16 seats, 6 attack roles (reviewer x2, critic, mutation-tester x2, sentinel),
+  one connector; all 16 settled, none dead; results `r71-w1-results.json`, settlement
+  `r71-w1-settlement.json` (the dispatcher writes no per-seat status field — named, not invented).
+  Wave findings drove the supersession (M71-3..M71-11) and the two source-row reversals (M71-12).
+- **Repairs carried.** The round-70 capability rows enter `SCORECARD.md`; the census W04 erratum
+  (21 warnings, not “the same 20”), the `ca9817cf` → `ca9817cd` erratum and the battery-coverage
+  wording are appended to the round-70 lesson; the SOURCES search log gains round-70 (backfill) and
+  round-71 entries and the tempfile rejection row S274; the dead scratch pointers inside receipts
+  are named as run pointers, not evidence; PROVINCE's round-70 row now attributes the six
+  lying-field classes to this round's battery.
+- Files touched: `SKILL.md`, `.ufo/waves/round-71/**`, this LOG.
+
+## 2026-11-04 — round 71, KaidokuR71 — record
+
+- SCORECARD round-71 section (three claims, five capability rows plus the three round-70 backlog
+  rows, the repairs, the trends); `corpus/knowledge/2026-11-04-r71-registry-grammar.md` (S273 +
+  S258, the S274 screen); `corpus/lessons/round-71.md` (Gate, Mistakes M71-1..M71-12, Outcome,
+  Census); `corpus/QUALITY.md` rows 117–122; `corpus/SOURCES.md` S273/S274 and the search-log
+  entries; `corpus/README.md` index/map/frontier; `PROVINCE.md` `## Round-71 additions to Core`
+  and the round-70 attribution repair; `corpus/claim-freezes-v2.tsv` round-71 row; the container
+  errata (declaration attribution, C2 target typo); census end (181 rows, exit 0, 22 W04).
+- Gate at the record: `.ufo/waves/round-71/l1/scores/gate-at-record.json`; registry conformance at
+  the record: `.ufo/waves/round-71/l1/scores/registry-conformance-at-record.json`.
