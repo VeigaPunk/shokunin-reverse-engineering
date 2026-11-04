@@ -138,8 +138,8 @@ exec as NUL-separated `name=value` strings — the ground for measuring a child'
 exec boundary from its own bytes rather than trusting a summary. Its row id, access date, located
 quote and snapshot digest land in the round lesson `## Gate`; the knowledge entry
 `corpus/knowledge/2026-11-04-r72-checker-env-capsule.md` cites it, and the container names
-`claim_row: "S276"` (the id assigned after the duplicate-id check; the order is fixed at the
-append, not here).
+`claim_row: "S275"` (the next id after the registry's S274; confirmed against the duplicate-id
+check before the append, and the append re-checks it).
 
 ## Frontier step (§2b)
 
